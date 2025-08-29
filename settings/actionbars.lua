@@ -118,15 +118,15 @@ Engine:NewStaticConfig("ActionBars", {
 				size = { 61*3 + 10*2, 55 }
 			},
 			chatmenu = {
-				padding = 3,
+				padding = 0,
 				position = {
 					point = "BOTTOMLEFT",
 					anchor = "UICenter", 
 					anchor_point = "BOTTOMLEFT",
-					xoffset = 20,
-					yoffset = 20 + 10
+					xoffset = 0,
+					yoffset = 0
 				},
-				size = { 61*2 + 10*2, 55 }
+				size = { 0, 0 }
 			}
 	
 			
@@ -891,13 +891,13 @@ Engine:NewStaticConfig("ActionBars", {
 			chat = {
 				input = {
 					button = {
-						size = { 61, 55 }, 
+						size = { 1, 1 }, 
 						anchor = "TOPLEFT", -- where buttons are anchored
 						growthX = "RIGHT", -- horizontal layout direction
 						growthY = "DOWN", -- vertical layout direction
 						justify = "RIGHT", -- which side the last row of buttons should be on
-						padding = 3, spacing = 6, -- horizontal and vertical padding
-						texture_size = { 128, 128 },
+						padding = 1, spacing = 6, -- horizontal and vertical padding
+						texture_size = { 1, 1 },
 						texture_position = { "TOPLEFT", -34, 37 },
 						textures = {
 							normal = path .. [[textures\DiabolicUI_UIButton_61x55_Normal.tga]],

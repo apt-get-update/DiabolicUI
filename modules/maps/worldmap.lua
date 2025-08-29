@@ -659,8 +659,29 @@ Module.OnEnable = function(self)
 	local BlizzardUI = self:GetHandler("BlizzardUI")
 	BlizzardUI:GetElement("WorldMap"):Remove("BlackoutWorld")
 
+	self:SetUpWorldMap()
+
+	-- Force a specific font for the world map hover labels
+	do
+	  local FONT_PATH = "Interface\\AddOns\\DiabolicUI\\media\\fonts\\ExocetBlizzardMedium.ttf"
+
+	  local function ApplyMapFonts()
+	    if WorldMapFrameAreaLabel then
+	      local _, size, flags = WorldMapFrameAreaLabel:GetFont()
+	      WorldMapFrameAreaLabel:SetFont(FONT_PATH, size, flags)
+	    end
+	    if WorldMapFrameAreaDescription then
+	      local _, size, flags = WorldMapFrameAreaDescription:GetFont()
+	      WorldMapFrameAreaDescription:SetFont(FONT_PATH, size, flags)
+	    end
+	  end
+
+	  -- Apply once and re-apply if Blizzard refreshes the map text
+	  ApplyMapFonts()
+	  hooksecurefunc("WorldMapFrame_Update", ApplyMapFonts)
+	end
+
 	if ENGINE_LEGION then
-		self:SetUpWorldMap()
 		self:SetUpQuestLinks()
 		self:SetUpFogOfWar()
 

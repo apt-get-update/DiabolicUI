@@ -88,7 +88,7 @@ Engine:NewStaticConfig("Objectives", {
 					lineSpacing = 7,
 					leftMargin = 0, 
 					rightMargin = 0, -- 56, -- space for quest items
-					normalFont = DiabolicFont_SansRegular12Title
+					normalFont = DiabolicFont_HeaderBold12Title
 				},
 				item = {
 					size = { 26, 26 },

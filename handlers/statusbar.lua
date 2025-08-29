@@ -428,7 +428,7 @@ StatusBar.GetAlpha = function(self)
 end
 
 StatusBar.GetParent = function(self)
-	return self.scaffold:GetParent()
+	return self.scaffold and self.scaffold:GetParent()
 end
 
 StatusBar.GetObjectType = function(self) return "StatusBar" end

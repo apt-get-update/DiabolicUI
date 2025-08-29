@@ -202,6 +202,7 @@ MenuWidget.OnEnable = function(self)
 
 	-- Texts
 	---------------------------------------------
+	--[[
 	local Gold = ChatButton:CreateFontString()
 	Gold:SetDrawLayer("ARTWORK")
 	Gold:SetFontObject(input_config.people.normalFont)
@@ -224,7 +225,7 @@ MenuWidget.OnEnable = function(self)
 
 	ChatButton:RegisterEvent("PLAYER_MONEY")
 	ChatButton:RegisterEvent("PLAYER_ENTERING_WORLD")
-
+	--]]
 
 	local People = SocialButton:CreateFontString()
 	People:SetDrawLayer("ARTWORK")

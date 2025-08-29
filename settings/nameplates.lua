@@ -23,7 +23,7 @@ Engine:NewStaticConfig("NamePlates", {
 			place = { "TOPLEFT", 0, -12 },
 			color = { .5, .5, 1 }, 
 			name = {
-				place = { "BOTTOM", 0, 26 },
+				place = { "BOTTOM", 0, 38 },
 				fontObject = DiabolicFont_SansBold10,
 				color = { C.General.Prefix[1], C.General.Prefix[2], C.General.Prefix[3] }
 			},

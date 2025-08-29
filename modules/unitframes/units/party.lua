@@ -159,6 +159,9 @@ local buffFilter = function(self, name, rank, icon, count, debuffType, duration,
 	if (isBossDebuff) or (isStealable) then 
 		return true 
 
+	elseif UnitIsFriend("player", unit) and (isCastByPlayer or unitCaster == "vehicle") then
+    	return true
+
 	elseif (isCastByPlayer or (unitCaster == "vehicle")) and (duration and ((duration > 0) and (duration < TIME_LIMIT_LOW))) then 
 		return true 
 
@@ -213,6 +216,19 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	local isStatic = (not duration) or (duration == 0)
 	local isCC = ENGINE_LEGION and spellId and AuraData.cc[spellId] -- Any CC 
 	local isLoC = ENGINE_LEGION and spellId and AuraData.loc[spellId] -- Loss of Control CC
+
+	-- If this is a friendly unitframe, prioritize useful/dispellable info
+	if UnitIsFriend("player", unit) then
+	  -- Show dispellable debuffs (Magic/Curse/Disease/Poison)
+	  if debuffType then
+	    return true
+	  end
+	  -- Also show debuffs cast by enemies (not by us), regardless of whitelist
+	  if unitCaster and not isCastByPlayer then
+	    return true
+	  end
+	  -- fall through to original logic for any edge cases
+	end
 
 	-- Always show boss debuffs on your target
 	if isBossDebuff then
@@ -487,12 +503,21 @@ UnitFrameWidget.OnEnable = function(self)
 	self.UnitFrame:SetSize(config.size[1], config.size[2]*4 + config.offset*3)
 	RegisterStateDriver(self.UnitFrame, "visibility", "[@raid1,exists]hide;show")
 
-	for i = 1,4 do 
-		local unitFrame = UnitFrame:New("party"..i, self.UnitFrame, Style) 
-		--local unitFrame = UnitFrame:New("player", self.UnitFrame, Style) 
+	local function LayoutPartyFrames()
+		for i = 1,4 do 
+			local unitFrame = UnitFrame:New("party"..i, self.UnitFrame, Style) 
+			--local unitFrame = UnitFrame:New("player", self.UnitFrame, Style) 
 
-		self.UnitFrame[i] = unitFrame
+			self.UnitFrame[i] = unitFrame
+		end
 	end 
+
+	-- Update when party changes
+    self.UnitFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    self.UnitFrame:SetScript("OnEvent", LayoutPartyFrames)
+
+    -- Initial layout
+    LayoutPartyFrames()
 
 end 
 

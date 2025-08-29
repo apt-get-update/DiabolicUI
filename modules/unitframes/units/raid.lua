@@ -37,7 +37,7 @@ local postUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavaila
 
             for _, buffName in ipairs(importantBuffs) do
                 if not UnitBuff(unit, buffName) then
-                    missingImportantBuff = true
+                    missingImportantBuff = false
                     break
                 end
             end

@@ -311,14 +311,24 @@
 
 
  	
-	 <!-- Header Medium (12, 14, 16, 18, 24, 32) -->
+	 <!-- Header Medium (10, 12, 14, 16, 18, 24, 32) -->
+	<Font name="DiabolicFont_HeaderBold10" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardMedium.ttf" justifyH="LEFT" virtual="true">
+		<Shadow>
+			<Offset><AbsDimension x="-1.0" y="-1.0"/></Offset>
+			<Color r="0" g="0" b="0" a="1"/>
+		</Shadow>
+		<FontHeight><AbsValue val="10"/></FontHeight>
+	</Font>
 	<Font name="DiabolicFont_HeaderBold12" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardMedium.ttf" justifyH="LEFT" virtual="true">
 		<Shadow>
 			<Offset><AbsDimension x="-1.0" y="-1.0"/></Offset>
 			<Color r="0" g="0" b="0" a="1"/>
 		</Shadow>
 		<FontHeight><AbsValue val="12"/></FontHeight>
-	</Font>
+		</Font>
+		<Font name="DiabolicFont_HeaderBold12Title" inherits="DiabolicFont_HeaderBold12" justifyH="CENTER" justifyV="BOTTOM" virtual="true">
+			<Color r="1.0" g="0.917647058824" b="0.537254901961"/>
+		</Font>
 	<Font name="DiabolicFont_HeaderBold14" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardMedium.ttf" justifyH="LEFT" virtual="true">
 		<Shadow>
 			<Offset><AbsDimension x="-1.0" y="-1.0"/></Offset>

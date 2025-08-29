@@ -617,6 +617,8 @@ NamePlate_WotLK.ApplyUnitData = function(self)
 		self.BossIcon:Hide()
 	end
 
+	self.Health.Value:SetText(self.info and self.info.name or "")
+
 	if info.isMarked then
 		self.RaidIcon:SetTexCoord(self.old.regions.raidicon:GetTexCoord()) -- ?
 		self.RaidIcon:Show()
@@ -650,7 +652,11 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 
 	health:SetMinMaxValues(0, info.healthMax)
 	health:SetValue(info.health)
-	health.Value:SetFormattedText("( %s / %s )", abbreviateNumber(info.health), abbreviateNumber(info.healthMax))
+
+	health.Value:SetFont(select(1, health.Value:GetFont()), select(2, health.Value:GetFont()), "OUTLINE")
+
+	health.Value:SetTextColor(unpack(info.healthColor))
+	--health.Value:SetFormattedText("( %s / %s )", abbreviateNumber(info.health), abbreviateNumber(info.healthMax))
 end
 
 NamePlate_WotLK.UpdateAlpha = function(self)
@@ -664,14 +670,14 @@ NamePlate_WotLK.UpdateAlpha = function(self)
 			if info.isTarget then
 				self.targetAlpha = ALPHA_TARGET
 			elseif info.isPlayer then
-				self.targetAlpha = ALPHA_MINIMAL
+				self.targetAlpha = ALPHA_LOW
 			elseif info.isFriendly then
 				self.targetAlpha = ALPHA_MINIMAL 
 			else
-				self.targetAlpha = ALPHA_TRIVIAL
+				self.targetAlpha = ALPHA_FULL
 			end
 		elseif info.isPlayer then
-			self.targetAlpha = ALPHA_MINIMAL 
+			self.targetAlpha = ALPHA_FULL 
 		elseif info.isFriendly then
 			self.targetAlpha = ALPHA_MINIMAL
 		else
@@ -689,15 +695,15 @@ NamePlate_WotLK.UpdateFrameLevel = function(self)
 		if self:GetFrameLevel() ~= FRAMELEVEL_TARGET then
 			self:SetFrameLevel(FRAMELEVEL_TARGET)
 		end
-		--if not healthValue:IsShown() then
-			--healthValue:Show()
-		--end
+		if not healthValue:IsShown() then
+			healthValue:Show()
+		end
 	else 
 		if self:GetFrameLevel() ~= self.frameLevel then
 			self:SetFrameLevel(self.frameLevel)
 		end
-		if healthValue:IsShown() then
-			healthValue:Hide()
+		if not healthValue:IsShown() then
+			healthValue:Show()
 		end
 	end	
 end
@@ -1780,14 +1786,12 @@ NamePlate.CreateRegions = function(self)
 
 	-- This is a total copout, but it does what we want, 
 	-- which is to replace the health value text with spell name.
-	Cast:HookScript("OnShow", function() 
-		HealthValue:SetAlpha(0) 
+	Cast:HookScript("OnShow", function()  
 		CastShadow:Show()
 		CastGlow:Show()
 		if Cast.Icon then Cast.Icon:Show() end
 	end)
-	Cast:HookScript("OnHide", function() 
-		HealthValue:SetAlpha(1) 
+	Cast:HookScript("OnHide", function()  
 		CastShadow:Hide()
 		CastGlow:Hide()
 		if Cast.Icon then Cast.Icon:SetTexture(nil); Cast.Icon:Hide() end

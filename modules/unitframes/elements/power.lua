@@ -110,29 +110,29 @@ local Update = function(self, event, ...)
 				if Power.Value.showDeficit then
 					if Power.Value.showPercent then
 						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s - %d%%", F.Short(powermax - power), F.Short(powermax), math_floor(power/powermax * 100))
+							Power.Value:SetFormattedText("%s / %s - %d%%", (powermax - power), powermax, math_floor(power/powermax * 100))
 						else
-							Power.Value:SetFormattedText("%s / %d%%", F.Short(powermax - power), math_floor(power/powermax * 100))
+							Power.Value:SetFormattedText("%s / %d%%", (powermax - power), math_floor(power/powermax * 100))
 						end
 					else
 						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s", F.Short(powermax - power), F.Short(powermax))
+							Power.Value:SetFormattedText("%s / %s", (powermax - power), powermax)
 						else
-							Power.Value:SetFormattedText("%s", F.Short(powermax - power))
+							Power.Value:SetFormattedText("%s", (powermax - power))
 						end
 					end
 				else
 					if Power.Value.showPercent then
 						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s - %d%%", F.Short(power), F.Short(powermax), math_floor(power/powermax * 100))
+							Power.Value:SetFormattedText("%s / %s - %d%%", power, powermax, math_floor(power/powermax * 100))
 						else
-							Power.Value:SetFormattedText("%s / %d%%", F.Short(power), math_floor(power/powermax * 100))
+							Power.Value:SetFormattedText("%s / %d%%", power, math_floor(power/powermax * 100))
 						end
 					else
 						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s", F.Short(power), F.Short(powermax))
+							Power.Value:SetFormattedText("%s / %s", power, powermax)
 						else
-							Power.Value:SetFormattedText("%s", F.Short(power))
+							Power.Value:SetFormattedText("%s", power)
 						end
 					end
 				end

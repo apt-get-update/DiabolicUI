@@ -60,31 +60,31 @@ local Update = function(self, event, ...)
 				if Health.Value.showDeficit then
 					if Health.Value.showPercent then
 						if Health.Value.showMaximum then
-							Health.Value:SetFormattedText("%s / %s - %d%%", F.Short(maxHealth - curHealth), F.Short(maxHealth), math_floor(curHealth/maxHealth * 100))
+							Health.Value:SetFormattedText("%s / %s - %d%%", (maxHealth - curHealth), maxHealth, math_floor(curHealth/maxHealth * 100))
 						else
-							Health.Value:SetFormattedText("%s / %d%%", F.Short(maxHealth - curHealth), math_floor(curHealth/maxHealth * 100))
+							Health.Value:SetFormattedText("%s / %d%%", (maxHealth - curHealth), math_floor(curHealth/maxHealth * 100))
 						end
 					else
 						if Health.Value.showMaximum then
-							Health.Value:SetFormattedText("%s / %s", F.Short(maxHealth - curHealth), F.Short(maxHealth))
+							Health.Value:SetFormattedText("%s / %s", (maxHealth - curHealth), maxHealth)
 						else
-							Health.Value:SetFormattedText("%s / %s", F.Short(maxHealth - curHealth))
+							Health.Value:SetFormattedText("%s / %s", (maxHealth - curHealth))
 						end
 					end
 				else
 					if Health.Value.showPercent then
 						if Health.Value.showMaximum then
-							Health.Value:SetFormattedText("%s / %s - %d%%", F.Short(curHealth), F.Short(maxHealth), math_floor(curHealth/maxHealth * 100))
+							Health.Value:SetFormattedText("%s / %s - %d%%", curHealth, maxHealth, math_floor(curHealth/maxHealth * 100))
 						elseif Health.Value.hideMinimum then
 							Health.Value:SetFormattedText("%d%%", math_floor(curHealth/maxHealth * 100))
 						else
-							Health.Value:SetFormattedText("%s / %d%%", F.Short(curHealth), math_floor(curHealth/maxHealth * 100))
+							Health.Value:SetFormattedText("%s / %d%%", curHealth, math_floor(curHealth/maxHealth * 100))
 						end
 					else
 						if Health.Value.showMaximum then
-							Health.Value:SetFormattedText("%s / %s", F.Short(curHealth), F.Short(maxHealth))
+							Health.Value:SetFormattedText("%s / %s", curHealth, maxHealth)
 						else
-							Health.Value:SetFormattedText("%s / %s", F.Short(curHealth))
+							Health.Value:SetFormattedText("%s / %s", curHealth)
 						end
 					end
 				end

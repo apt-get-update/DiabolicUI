@@ -89,7 +89,7 @@ local postUpdatePower = function(power)
 
 		-- Update the label
 		local label = power.Label
-		label:SetText(_G[powerType] or "")
+		--label:SetText(_G[powerType] or "")
 
 		-- Store the powertype to avoid extra updates.
 		-- Note that this isn't stored before this point
@@ -582,7 +582,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health.Label = Health:GetOverlay():CreateFontString(nil, "OVERLAY")
 	Health.Label:SetFontObject(configHealthTexts.font_object)
 	Health.Label:SetPoint("BOTTOM", Health.Value, "TOP", 0, 2)
-	Health.Label:SetText(HEALTH)
+	Health.Label:SetText("")
 
 	Health.Value.showPercent = false
 	Health.Value.showDeficit = false

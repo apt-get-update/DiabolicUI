@@ -1343,6 +1343,10 @@ Module.OnEnable = function(self)
 	-- Character Info Sheet
 	-- TODO: move this somewhere more fitting.
 	hooksecurefunc("PaperDollFrame_SetArmor", function(frame, unit)
+		
+		return
+
+		--[[
 		if ENGINE_LEGION then
 			if unit ~= "player" then 
 				return 
@@ -1387,6 +1391,7 @@ Module.OnEnable = function(self)
 				msg:SetFormattedText("%s |cffffeeaa%s|r", gearPrefix, NONE)
 			end
 		end
+		--]]
 		
 	end)
 end

@@ -253,7 +253,7 @@ local config = {
 
 local db = {
 	autoscale = true, -- whether or not to automatically scale the UI
-	hasbeenqueried = false -- whether or not the user has been asked about the previous
+	hasbeenqueried = true -- whether or not the user has been asked about the previous
 }
 
 Engine:NewStaticConfig("UI", config)

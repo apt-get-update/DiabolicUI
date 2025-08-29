@@ -2,6 +2,8 @@ local ADDON, Engine = ...
 local Module = Engine:NewModule("Blizzard: Character")
 local C = Engine:GetDB("Data: Colors")
 
+Module:SetIncompatible("DiabolicUI")
+
 -- Lua API
 local _G = _G
 local pairs = pairs

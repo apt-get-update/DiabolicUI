@@ -484,15 +484,16 @@ Orb.GetMinMaxValues = function(self)
 end
 
 Orb.GetStatusBarColor = function(self, id)
-	if id and self.colors[id] then
-		return self.colors[1], self.colors[2], self.colors[3], self.colors[4]
-	else
-		return self.colors.smoke[1], self.colors.smoke[2], self.colors.smoke[3], self.colors.smoke[4]
+	local colors = self.scaffold and self.scaffold.colors or self.colors
+	if id and colors and colors[id] then
+	  return colors[id][1], colors[id][2], colors[id][3], colors[id][4]
+	elseif colors and colors.smoke then
+	  return colors.smoke[1], colors.smoke[2], colors.smoke[3], colors.smoke[4]
 	end
 end
 
 Orb.GetParent = function(self)
-	return self.scaffold:GetParent()
+	return self.scaffold and self.scaffold:GetParent()
 end
 
 Orb.CreateTexture = function(self, ...)
