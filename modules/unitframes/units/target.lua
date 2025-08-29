@@ -598,7 +598,7 @@ local Style = function(self, unit)
 	health.Value.showDeficit = false
 	health.Value.showMaximum = true
 	health.PostUpdate = PostUpdateHealth
-	health.useClassColor = false
+	health.useClassColor = true
 
 	
 	-- Power

@@ -11,6 +11,7 @@ local C = Engine:GetDB("Data: Colors")
 Module:SetIncompatible("!KalielsTracker")
 Module:SetIncompatible("EskaQuestTracker")
 Module:SetIncompatible("rObjectiveTracker")
+Module:SetIncompatible("Questie")
 
 -- Lua API
 local _G = _G

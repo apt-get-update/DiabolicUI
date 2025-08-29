@@ -45,6 +45,9 @@ local subDomain = (setmetatable({
 
 local wowheadLoc = subDomain..".wowhead.com"
 
+-- Register incompabilities
+Module:SetIncompatible("Mapster")
+
 ----------------------------------------------------------------------------------------
 --	Fog of War on World Map (module from LeatrixPlus by Leatrix)
 ----------------------------------------------------------------------------------------
