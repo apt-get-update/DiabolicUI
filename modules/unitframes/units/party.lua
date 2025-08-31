@@ -156,6 +156,12 @@ local Filter_UnitIsHostileNPC = Filter.UnitIsHostileNPC
 local buffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
 
 	local unit = self.unit
+
+	-- If it's a party member, only show buffs from me (or vehicle)
+	if UnitIsFriend("player", unit) then
+	    return isCastByPlayer or (unitCaster == "vehicle")
+	end
+
 	if (isBossDebuff) or (isStealable) then 
 		return true 
 
@@ -219,15 +225,20 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 
 	-- If this is a friendly unitframe, prioritize useful/dispellable info
 	if UnitIsFriend("player", unit) then
-	  -- Show dispellable debuffs (Magic/Curse/Disease/Poison)
-	  if debuffType then
-	    return true
-	  end
-	  -- Also show debuffs cast by enemies (not by us), regardless of whitelist
-	  if unitCaster and not isCastByPlayer then
-	    return true
-	  end
-	  -- fall through to original logic for any edge cases
+	    -- Always show boss debuffs on party
+	    if isBossDebuff then 
+	    	return true
+	    end
+	    -- Show dispellables (Magic/Curse/Disease/Poison)
+	    if debuffType then 
+	    	return true 
+	    end
+	    -- Show my own debuffs (e.g., Weakened Soul) and vehicle
+	    if isCastByPlayer or (unitCaster == "vehicle") then 
+	    	return true 
+	    end
+	    -- Otherwise hide
+	    return false
 	end
 
 	-- Always show boss debuffs on your target

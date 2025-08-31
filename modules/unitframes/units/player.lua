@@ -949,12 +949,12 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 	elseif event == "ENGINE_ACTIONBAR_PET_CHANGED" then
 		local isPetBarVisible = ...
 		if isPetBarVisible then 
-			self.Right.AltPower:Place(unpack(self.config.altpower.positionPet))
+			--self.Right.AltPower:Place(unpack(self.config.altpower.positionPet))
 			self.Left.CastBar:Place(unpack(self.config.castbar.positionPet))
 			self.Left.Buffs:Place(unpack(self.config.buffs.positionPet))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.positionPet))
 		else
-			self.Right.AltPower:Place(unpack(self.config.altpower.position))
+			--self.Right.AltPower:Place(unpack(self.config.altpower.position))
 			self.Left.CastBar:Place(unpack(self.config.castbar.position))
 			self.Left.Buffs:Place(unpack(self.config.buffs.position))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.position))
