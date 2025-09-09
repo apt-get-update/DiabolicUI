@@ -372,7 +372,8 @@ local whiteList = {
 	[160455]	= true, 	-- Fatigued "Cannot benefit from Netherwinds or other similar effects." (Pet version)
 	[95809] 	= true, 	-- Insanity "Cannot benefit from Ancient Hysteria or other similar effects." (Pet version)
 
-	[15007] 	= true 		-- Resurrection Sickness
+	[15007] 	= true, 	-- Resurrection Sickness
+	[19752]		= true 		-- Divine Intervention
 
 }
 
@@ -394,9 +395,9 @@ local shortDebuffFilter = function(self, name, rank, icon, count, debuffType, du
 		return true
 	end
 	if duration and (duration > 0) then
-		if UnitAffectingCombat("player") and (duration > TIME_LIMIT) then
-			return false
-		end
+		--if UnitAffectingCombat("player") and (duration > TIME_LIMIT) then
+			--return false
+		--end
 		return true
 	elseif (count and count > 0) then -- Decomposing Aura
 		return true
@@ -694,7 +695,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Buffs.spacingV = config.buffs.spacingV
 	Buffs.growthX = "RIGHT"
 	Buffs.growthY = "UP"
-	Buffs.filter = "HELPFUL|PLAYER"
+	Buffs.filter = "HELPFUL"
 	Buffs.sortByTime = true
 	Buffs.sortByDuration = true
 	Buffs.sortByName = true

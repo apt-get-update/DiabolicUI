@@ -432,9 +432,9 @@ local Style = function(self, unit)
 	Health.Value = HealthValueHolder:CreateFontString(nil, "OVERLAY")
 	Health.Value:SetFontObject(config.texts.health.font_object)
 	Health.Value:SetPoint(unpack(config.texts.health.position))
-	Health.Value.showPercent = true
+	Health.Value.showPercent = false
 	Health.Value.showDeficit = false
-	Health.Value.showMaximum = false
+	Health.Value.showMaximum = true
 	Health.Value.hideMinimum = true
 
 	Health.PostUpdate = postUpdateHealth
