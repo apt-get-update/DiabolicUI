@@ -621,6 +621,7 @@ NamePlate_WotLK.ApplyUnitData = function(self)
 
 	if info.isMarked then
 		self.RaidIcon:SetTexCoord(self.old.regions.raidicon:GetTexCoord()) -- ?
+		self.RaidIcon:SetTexture(self.old.regions.raidicon:GetTexture())
 		self.RaidIcon:Show()
 	else
 		self.RaidIcon:Hide()
@@ -716,6 +717,7 @@ NamePlate_WotLK.UpdateRaidTarget = function(self)
 
 	if info.isMarked then
 		self.RaidIcon:SetTexCoord(oldRegions.raidicon:GetTexCoord()) -- ?
+		self.RaidIcon:SetTexture(oldRegions.raidicon:GetTexture())
 		self.RaidIcon:Show()
 	else
 		self.RaidIcon:Hide()
