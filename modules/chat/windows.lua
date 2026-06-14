@@ -311,7 +311,7 @@ Module.StyleFrame = function(self, frame)
 	
 	for i,v in pairs(CHAT_FRAME_TEXTURES) do
 		if strfind(v, "ButtonFrame") then
-			_G[name .. v]:SetTexture(nil)
+			_G[name .. v]:SetTexture("")
 		end
 	end
 
@@ -331,18 +331,18 @@ Module.StyleFrame = function(self, frame)
 
 	-- Tabs
 	------------------------------
-	_G[name.."TabLeft"]:SetTexture(nil)
-	_G[name.."TabMiddle"]:SetTexture(nil)
-	_G[name.."TabRight"]:SetTexture(nil)
-	_G[name.."TabSelectedLeft"]:SetTexture(nil)
-	_G[name.."TabSelectedMiddle"]:SetTexture(nil)
-	_G[name.."TabSelectedRight"]:SetTexture(nil)
-	_G[name.."TabHighlightLeft"]:SetTexture(nil)
-	_G[name.."TabHighlightMiddle"]:SetTexture(nil)
-	_G[name.."TabHighlightRight"]:SetTexture(nil)
+	_G[name.."TabLeft"]:SetTexture("")
+	_G[name.."TabMiddle"]:SetTexture("")
+	_G[name.."TabRight"]:SetTexture("")
+	_G[name.."TabSelectedLeft"]:SetTexture("")
+	_G[name.."TabSelectedMiddle"]:SetTexture("")
+	_G[name.."TabSelectedRight"]:SetTexture("")
+	_G[name.."TabHighlightLeft"]:SetTexture("")
+	_G[name.."TabHighlightMiddle"]:SetTexture("")
+	_G[name.."TabHighlightRight"]:SetTexture("")
 
 	if _G[name.."TabConversationIcon"] then
-		_G[name.."TabConversationIcon"]:SetTexture(nil)
+		_G[name.."TabConversationIcon"]:SetTexture("")
 		_G[name.."TabConversationIcon"]:SetAlpha(0)
 	end
 
@@ -378,15 +378,14 @@ Module.StyleFrame = function(self, frame)
 
 	-- Inputbox
 	------------------------------
-	_G[name.."EditBoxLeft"]:SetTexture(nil)
-	_G[name.."EditBoxRight"]:SetTexture(nil)
-	_G[name.."EditBoxMid"]:SetTexture(nil)
-	_G[name.."EditBoxFocusLeft"]:SetTexture(nil)
-	_G[name.."EditBoxFocusMid"]:SetTexture(nil)
-	_G[name.."EditBoxFocusRight"]:SetTexture(nil)
+	_G[name.."EditBoxLeft"]:SetTexture("")
+	_G[name.."EditBoxRight"]:SetTexture("")
+	_G[name.."EditBoxMid"]:SetTexture("")
+	_G[name.."EditBoxFocusLeft"]:SetTexture("")
+	_G[name.."EditBoxFocusMid"]:SetTexture("")
+	_G[name.."EditBoxFocusRight"]:SetTexture("")
  
-	--_G[name.."EditBox"]:Hide()
-	_G[name.."EditBox"]:Show()
+	_G[name.."EditBox"]:Hide()
 	_G[name.."EditBox"]:SetAltArrowKeyMode(false)
 	_G[name.."EditBox"]:SetHeight(config.editbox.size)
 	_G[name.."EditBox"]:ClearAllPoints()
@@ -428,8 +427,7 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."EditBoxIconTexture"]:SetPoint(unpack(config.editbox.icon.texture_position))
 	_G[name.."EditBoxIconTexture"]:SetTexture(config.editbox.icon.texture)
 	_G[name.."EditBox"]:HookScript("OnEditFocusGained", function(self) self:Show() end)
-	--_G[name.."EditBox"]:HookScript("OnEditFocusLost", function(self) self:Hide() end)
-	_G[name.."EditBox"]:HookScript("OnEditFocusLost", function(self) self:Show() end)
+	_G[name.."EditBox"]:HookScript("OnEditFocusLost", function(self) self:Hide() end)
 
 	-- hook editbox updates to our coloring method
 	--hooksecurefunc("ChatEdit_UpdateHeader", function(...) self:UpdateEditBox(...) end)
@@ -743,10 +741,6 @@ end
 Module.PositionChatFrames = function(self)
 	local config = self.config
 	local db = self.db
-	
-	-- Disable to force the autoposition query to pop back up
-	-- This was needed to reproduce and figure out the 8.2.0 popup errors! 
-	--db.hasbeenqueried = nil
 
 	local ChatFrame = ChatFrame1
 	ChatFrame:SetFading(config.fade)
@@ -823,8 +817,8 @@ Module.OnEnable = function(self, event, ...)
 	self:RegisterEvent("UI_SCALE_CHANGED", "PositionChatFrames")
 	self:RegisterEvent("DISPLAY_SIZE_CHANGED", "PositionChatFrames")
 
-	--GameMenuFrame:HookScript("OnShow", function() self:PositionChatFrames() end)
-	--GameMenuFrame:HookScript("OnHide", function() self:PositionChatFrames() end)
+--	GameMenuFrame:HookScript("OnShow", function() self:PositionChatFrames() end)
+--	GameMenuFrame:HookScript("OnHide", function() self:PositionChatFrames() end)
 	
 	-- Register the chat command to re-enable autopositioning
 	self:GetHandler("ChatCommand"):Register("autoposition", function() 

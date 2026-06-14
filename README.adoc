@@ -1,0 +1,17 @@
+= DiabolicUI for Wotlk 3.3.5
+
+Forked from https://github.com/Hrishi29x/DiabolicUI
+
+== Changes
+
+* Reputation bar, take the place of the experience bar if tracked
+* Disabled Objectif tracker window to use Questie's
+* Disabled WorldMap to use SexyMap
+* Updated chat window
+* Targets unitframe with class color
+* Tooltip follow cursor
+* Help Request menu reintroduced
+* Display gold instead of fps
+* Change action bars numbers with
+** /diabolic num_bars [1,2,3]
+** /diabolic num_side_bars [0,1,2]

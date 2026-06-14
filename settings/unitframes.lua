@@ -754,8 +754,8 @@ Engine:NewStaticConfig("UnitFrames", {
 			},
 			raid = {
 				size = { 90, 24 },
-				position = { "TOPLEFT", "UICenter", "TOPLEFT", 60, -90 },
-				offset = 30,
+				position = { "TOPLEFT", "UICenter", "TOPLEFT", 35, -35 },
+				offset = 25,
 				shade = {
 					size = { 234, 78 }, -- scaled from 384×128
 					position = { "CENTER", 0, 0 },

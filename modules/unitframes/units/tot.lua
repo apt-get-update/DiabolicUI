@@ -137,7 +137,7 @@ local Style = function(self, unit)
 	Health.Value.hideMinimum = true
 
 	Health.PostUpdate = postUpdateHealth
-	Health.useClassColor = false
+	Health.useClassColor = true
 
 
 	-- CastBar

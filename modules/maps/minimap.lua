@@ -24,6 +24,7 @@ end)
 -- Complete Minimap replacements
 Module:SetIncompatible("Mappy")
 Module:SetIncompatible("SexyMap")
+Module:SetIncompatible("DragonUI")
 
 -- Speed constants, because we can never get enough
 ------------------------------------------------------------------

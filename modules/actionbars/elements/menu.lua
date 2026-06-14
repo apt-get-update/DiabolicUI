@@ -382,7 +382,7 @@ MenuWidget.OnEnable = function(self)
 	MicroMenuWindow:SetButtonGrowthX("LEFT")
 	MicroMenuWindow:SetButtonGrowthY("UP")
 	MicroMenuWindow:SetJustify("LEFT")
-	MicroMenuWindow:SetRowSize(4)
+	MicroMenuWindow:SetRowSize(5)
 
 	self.MicroMenuWindow = MicroMenuWindow -- needed for some callbacks later on
 	
@@ -490,7 +490,7 @@ MenuWidget.OnEnable = function(self)
 		MicroMenuWindow:InsertButton(PVPMicroButton)
 		MicroMenuWindow:InsertButton(LFDMicroButton)
 		MicroMenuWindow:InsertButton(MainMenuMicroButton)
-		--MicroMenuWindow:InsertButton(HelpMicroButton)
+		MicroMenuWindow:InsertButton(HelpMicroButton)
 
 		button_to_icon = {
 			[CharacterMicroButton] = "character", 
@@ -501,8 +501,8 @@ MenuWidget.OnEnable = function(self)
 			[SocialsMicroButton] = "group", 
 			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
 			[LFDMicroButton] = "raid", 
-			[MainMenuMicroButton] = "cogs"
-			--[HelpMicroButton] = "bug" -- do we really need this?
+			[MainMenuMicroButton] = "cogs",
+			[HelpMicroButton] = "bug"
 		}
 
 	end
@@ -1084,19 +1084,43 @@ MenuWidget.OnEnable = function(self)
 	local FPS_ABBR = FPS_ABBR
 	
 	local floor = math.floor
-	
-	MasterMenuButton:SetScript("OnUpdate", function(self, elapsed) 
-		self.elapsed = (self.elapsed or 0) + elapsed
-		if self.elapsed > performance_hz then
-			local _, _, chat_latency, cast_latency = GetNetStats()
-			local fps = floor(GetFramerate())
-			if not cast_latency or cast_latency == 0 then
-				cast_latency = chat_latency
-			end
-			self.Performance:SetFormattedText(performance_string, cast_latency, MILLISECONDS_ABBR, fps, FPS_ABBR)
-			self.elapsed = 0
+
+
+	local Gold = MasterMenuButton:CreateFontString()
+	Gold:SetDrawLayer("ARTWORK")
+	Gold:SetFontObject(micro_menu_config.performance.normalFont)
+	Gold:SetPoint(unpack(micro_menu_config.performance.position))
+	MasterMenuButton.Gold = Gold
+
+	MasterMenuButton:SetScript("OnEvent", function(self, event, ...) 
+		local money = GetMoney()
+		local gold = floor(money / 100 / 100)
+		local silver = floor((money / 100) % 100)
+		local copper = money % 100
+		if (gold > 0) then
+			self.Gold:SetFormattedText("%d|cffc98910g|r %d|cffa8a8a8s|r %d|cffb87333c|r", gold, silver, copper)
+		elseif (silver > 0) then
+			self.Gold:SetFormattedText("%d|cffa8a8a8s|r %d|cffb87333c|r", silver, copper)
+		else 
+			self.Gold:SetFormattedText("%d|cffb87333c|r", copper)
 		end
 	end)
+
+	MasterMenuButton:RegisterEvent("PLAYER_MONEY")
+	MasterMenuButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+	
+	-- MasterMenuButton:SetScript("OnUpdate", function(self, elapsed) 
+	-- 	self.elapsed = (self.elapsed or 0) + elapsed
+	-- 	if self.elapsed > performance_hz then
+	-- 		local _, _, chat_latency, cast_latency = GetNetStats()
+	-- 		local fps = floor(GetFramerate())
+	-- 		if not cast_latency or cast_latency == 0 then
+	-- 			cast_latency = chat_latency
+	-- 		end
+	-- 		self.Performance:SetFormattedText(performance_string, cast_latency, MILLISECONDS_ABBR, fps, FPS_ABBR)
+	-- 		self.elapsed = 0
+	-- 	end
+	-- end)
 
 
 	-- Sounds

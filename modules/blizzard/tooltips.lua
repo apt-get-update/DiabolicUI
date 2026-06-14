@@ -955,9 +955,16 @@ Module.Tooltip_SetDefaultAnchor = function(self, tooltip, owner)
 		return 
 	end
 
-	--tooltip:SetOwner(owner or self.anchor, "ANCHOR_NONE")
-	tooltip:ClearAllPoints()
-	tooltip:SetPoint(self.anchor:GetPoint())
+  -- local scale = UIParent:GetEffectiveScale()
+  -- mX, mY = GetCursorPosition()
+  -- mX, mY = mX / scale, mY / scale
+  -- mX = mX - (tooltip:GetWidth() / 2)
+
+	-- tooltip:SetOwner(owner or self.anchor, "ANCHOR_NONE")
+  tooltip:SetOwner(owner or self.anchor, "ANCHOR_CURSOR")
+	-- tooltip:ClearAllPoints()
+  -- tooltip:SetPoint("BOTTOMLEFT", "UIParent", "BOTTOMLEFT", 0 + mX, 0 + mY)
+	-- tooltip:SetPoint(self.anchor:GetPoint())
 end
 
 -- StatusBars 

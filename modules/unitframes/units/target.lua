@@ -456,8 +456,8 @@ local PostUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavaila
 			r, g, b = unpack(C.Orb.HEALTH[1])
 		elseif (not UnitIsFriend("player", unit)) and UnitIsTapDenied(unit) then
 			r, g, b = unpack(C.Status.Tapped)
-		--elseif UnitReaction(unit, "player") then
-			--r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
+		elseif UnitReaction(unit, "player") then
+			r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
 		else
 			r, g, b = unpack(C.Orb.HEALTH[1])
 		end

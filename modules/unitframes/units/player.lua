@@ -573,7 +573,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health:SetSparkFlashSize(unpack(configHealthSpark.flash_size))
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
 
-	Health.useClassColor = false -- make this a user option later on
+	Health.useClassColor = true -- make this a user option later on
 	Health.frequent = 1/120
 
 	Health.Value = Health:GetOverlay():CreateFontString(nil, "OVERLAY")

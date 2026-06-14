@@ -16,7 +16,7 @@ local ENGINE_CATA = Engine:IsBuild("Cata")
 local targetSize = 260 -- 230 should be min, 290 max
 local origSize = 290
 local mapScale = targetSize/origSize
-local mapSize = origSize * mapScale -- moronic math, Goldie. This IS 'targetSize'
+local mapSize = targetSize
 local mapTexSize = 512 * (mapSize / origSize)
 local mapOffset = math.floor((origSize - mapSize)/2)
 

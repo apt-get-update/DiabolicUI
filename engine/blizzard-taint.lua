@@ -83,106 +83,106 @@ end
 ---------------------------------------------------------------
 -- WorldMapBlobFrame Taint Fix (WotLK, Cata, MoP)
 ---------------------------------------------------------------
-if not WOD then
-	
-	-- WoW API
-	local WatchFrame_Update = _G.WatchFrame_Update
-	local ShowUIPanel = _G.ShowUIPanel
-	local HideUIPanel = _G.HideUIPanel
-	local WorldMap_ToggleSizeDown = _G.WorldMap_ToggleSizeDown
-
-	-- WoW Frames
-	local WorldMapQuestShowObjectives = _G.WorldMapQuestShowObjectives
-	local WorldMapTrackQuest = _G.WorldMapTrackQuest
-	local WorldMapTitleButton = _G.WorldMapTitleButton
-	local WorldMapFrameSizeUpButton = _G.WorldMapFrameSizeUpButton
-	local WorldMapBlobFrame = _G.WorldMapBlobFrame
-	local WorldMapPOIFrame = _G.WorldMapPOIFrame
-
-	local frame = CreateFrame("Frame", nil, UIParent)
-	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	frame:RegisterEvent("PLAYER_REGEN_ENABLED") 
-	frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-
-	frame:SetScript("OnEvent", function(self)
-		if event == "PLAYER_ENTERING_WORLD" then
-			-- Toggling the WorldMap on entering the world 
-			-- prevents it from being tainted by what we're doing later on.
-			ShowUIPanel(WorldMapFrame)
-			HideUIPanel(WorldMapFrame)
-		
-		elseif event == "PLAYER_REGEN_DISABLED" then
-
-			-- Store the current user setting for WorldMap quest tracking
-			if WorldMapQuestShowObjectives:GetChecked() then
-				self.worldMapQuestTrack = true
-			else
-				self.worldMapQuestTrack = false
-			end
-			
-			-- Size the map down and hide it upon entering combat
-			HideUIPanel(WorldMapFrame)
-			WorldMap_ToggleSizeDown()
-
-			-- Kill and hide the ability to track quests on the WorldMap in combat
-			WatchFrame.showObjectives = nil
-			WorldMapQuestShowObjectives:SetChecked(false)
-
-			-- Hide the POI and tracking system 
-			-- by hiding the frames and replacing their Show methods
-			-- with an empty function call. 
-			WorldMapQuestShowObjectives:Hide()
-			WorldMapTrackQuest:Hide()
-			WorldMapTitleButton:Hide()
-			WorldMapFrameSizeUpButton:Hide()
-			WorldMapBlobFrame:Hide()
-			WorldMapPOIFrame:Hide()
-
-			WorldMapQuestShowObjectives.Show = function() end
-			WorldMapTrackQuest.Show = function() end
-			WorldMapTitleButton.Show = function() end
-			WorldMapFrameSizeUpButton.Show = function() end
-			WorldMapBlobFrame.Show = function() end
-			WorldMapPOIFrame.Show = function() end
-			
-			-- Update the map with the changes
-			WatchFrame_Update()
-		
-		elseif event == "PLAYER_REGEN_ENABLED" then
-			
-			-- Restore the original Show metamethod
-			-- by deleting our empty dummy function
-			WorldMapFrameSizeUpButton.Show = nil
-			WorldMapQuestShowObjectives.Show = nil
-			WorldMapTrackQuest.Show = nil
-			WorldMapTitleButton.Show = nil
-			WorldMapBlobFrame.Show = nil
-			WorldMapPOIFrame.Show = nil
-
-			-- Restore visibility of the quest tracking and map maximizing buttons
-			WorldMapQuestShowObjectives:Show()
-			WorldMapTitleButton:Show()
-			WorldMapFrameSizeUpButton:Show()
-			
-			-- Restore the quest tracking setting, 
-			-- and restore visibility of the POI system.
-			if self.worldMapQuestTrack then
-				WatchFrame.showObjectives = true
-				WorldMapQuestShowObjectives:SetChecked(true)
-				
-				WorldMapTrackQuest:Show()
-				WorldMapBlobFrame:Show()
-				WorldMapPOIFrame:Show()
-				
-				WatchFrame_Update()
-			else
-				WatchFrame.showObjectives = nil
-				WorldMapQuestShowObjectives:SetChecked(false)
-			end
-
-		end
-	end)
-end
+-- if not WOD then
+-- 	
+-- 	-- WoW API
+-- 	local WatchFrame_Update = _G.WatchFrame_Update
+-- 	local ShowUIPanel = _G.ShowUIPanel
+-- 	local HideUIPanel = _G.HideUIPanel
+-- 	local WorldMap_ToggleSizeDown = _G.WorldMap_ToggleSizeDown
+-- 
+-- 	-- WoW Frames
+-- 	local WorldMapQuestShowObjectives = _G.WorldMapQuestShowObjectives
+-- 	local WorldMapTrackQuest = _G.WorldMapTrackQuest
+-- 	local WorldMapTitleButton = _G.WorldMapTitleButton
+-- 	local WorldMapFrameSizeUpButton = _G.WorldMapFrameSizeUpButton
+-- 	local WorldMapBlobFrame = _G.WorldMapBlobFrame
+-- 	local WorldMapPOIFrame = _G.WorldMapPOIFrame
+-- 
+-- 	local frame = CreateFrame("Frame", nil, UIParent)
+-- 	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+-- 	frame:RegisterEvent("PLAYER_REGEN_ENABLED") 
+-- 	frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+-- 
+-- 	frame:SetScript("OnEvent", function(self)
+-- 		if event == "PLAYER_ENTERING_WORLD" then
+-- 			-- Toggling the WorldMap on entering the world 
+-- 			-- prevents it from being tainted by what we're doing later on.
+-- 			ShowUIPanel(WorldMapFrame)
+-- 			HideUIPanel(WorldMapFrame)
+-- 		
+-- 		elseif event == "PLAYER_REGEN_DISABLED" then
+-- 
+-- 			-- Store the current user setting for WorldMap quest tracking
+-- 			if WorldMapQuestShowObjectives:GetChecked() then
+-- 				self.worldMapQuestTrack = true
+-- 			else
+-- 				self.worldMapQuestTrack = false
+-- 			end
+-- 			
+-- 			-- Size the map down and hide it upon entering combat
+-- 			HideUIPanel(WorldMapFrame)
+-- 			WorldMap_ToggleSizeDown()
+-- 
+-- 			-- Kill and hide the ability to track quests on the WorldMap in combat
+-- 			WatchFrame.showObjectives = nil
+-- 			WorldMapQuestShowObjectives:SetChecked(false)
+-- 
+-- 			-- Hide the POI and tracking system 
+-- 			-- by hiding the frames and replacing their Show methods
+-- 			-- with an empty function call. 
+-- 			WorldMapQuestShowObjectives:Hide()
+-- 			WorldMapTrackQuest:Hide()
+-- 			WorldMapTitleButton:Hide()
+-- 			WorldMapFrameSizeUpButton:Hide()
+-- 			WorldMapBlobFrame:Hide()
+-- 			WorldMapPOIFrame:Hide()
+-- 
+-- 			WorldMapQuestShowObjectives.Show = function() end
+-- 			WorldMapTrackQuest.Show = function() end
+-- 			WorldMapTitleButton.Show = function() end
+-- 			WorldMapFrameSizeUpButton.Show = function() end
+-- 			WorldMapBlobFrame.Show = function() end
+-- 			WorldMapPOIFrame.Show = function() end
+-- 			
+-- 			-- Update the map with the changes
+-- 			WatchFrame_Update()
+-- 		
+-- 		elseif event == "PLAYER_REGEN_ENABLED" then
+-- 			
+-- 			-- Restore the original Show metamethod
+-- 			-- by deleting our empty dummy function
+-- 			WorldMapFrameSizeUpButton.Show = nil
+-- 			WorldMapQuestShowObjectives.Show = nil
+-- 			WorldMapTrackQuest.Show = nil
+-- 			WorldMapTitleButton.Show = nil
+-- 			WorldMapBlobFrame.Show = nil
+-- 			WorldMapPOIFrame.Show = nil
+-- 
+-- 			-- Restore visibility of the quest tracking and map maximizing buttons
+-- 			WorldMapQuestShowObjectives:Show()
+-- 			WorldMapTitleButton:Show()
+-- 			WorldMapFrameSizeUpButton:Show()
+-- 			
+-- 			-- Restore the quest tracking setting, 
+-- 			-- and restore visibility of the POI system.
+-- 			if self.worldMapQuestTrack then
+-- 				WatchFrame.showObjectives = true
+-- 				WorldMapQuestShowObjectives:SetChecked(true)
+-- 				
+-- 				WorldMapTrackQuest:Show()
+-- 				WorldMapBlobFrame:Show()
+-- 				WorldMapPOIFrame:Show()
+-- 				
+-- 				WatchFrame_Update()
+-- 			else
+-- 				WatchFrame.showObjectives = nil
+-- 				WorldMapQuestShowObjectives:SetChecked(false)
+-- 			end
+-- 
+-- 		end
+-- 	end)
+-- end
 
 
 ---------------------------------------------------------------

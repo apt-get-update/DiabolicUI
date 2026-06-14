@@ -191,6 +191,11 @@ L["Manual"] = true
 L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] = true
 L["Auto positioning of chat windows has been enabled."] = true
 L["Auto positioning of chat windows has been disabled."] = true
+L["Side Bars set to %d."] = true
+L["Action Bars set to %d."] = true
+L["Reputation: "] = true
+L["Failed to update side bars, must be %d or %d or %d"] = true
+L["Failed to update action bars, must be %d or %d or %d"] = true
 
 
 -- minimap module
