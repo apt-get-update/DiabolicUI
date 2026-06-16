@@ -10,11 +10,6 @@ local type = type
 -- WoW API
 local CreateFrame = _G.CreateFrame
 
--- Client versions
-local ENGINE_BFA_820 = Engine:IsBuild("8.2.0")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
-
 ----------------------------------------------------------------
 -- Statusbar template
 ----------------------------------------------------------------
@@ -252,21 +247,13 @@ end
 
 StatusBar.SetStatusBarTexture = function(self, ...)
 	local arg = ...
-	if ENGINE_LEGION and type(arg) == "number" then
-		self.bar:SetColorTexture(...)
-	else
-		self.bar:SetTexture(...)
-	end
+	self.bar:SetTexture(...)
 	self:Update()
 end
 
 StatusBar.SetSparkTexture = function(self, ...)
 	local arg = ...
-	if ENGINE_LEGION and type(arg) == "number" then
-		self.spark:SetColorTexture(...)
-	else
-		self.spark:SetTexture(...)
-	end
+	self.spark:SetTexture(...)
 end
 
 StatusBar.SetSparkSize = function(self, width, height)
@@ -360,11 +347,7 @@ StatusBar.GetWidth = function(self, ...)
 	end
 end
 
-StatusBar.GetSize = ENGINE_BFA_820 and function(self)
-	return self.scaffold:GetWidth(), self.scaffold:GetHeight()
-end
-or
-function(self, ...)
+StatusBar.GetSize = function(self, ...)
 	local width, height
 
 	local top = self:GetTop()

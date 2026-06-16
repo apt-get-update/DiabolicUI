@@ -977,7 +977,7 @@ UnitFrameWidget.OnEnable = function(self)
 
 	-- get the main actionbar controller, as we need some info from it
 	self.ActionBarController = Engine:GetModule("ActionBars"):GetWidget("Controller: Main"):GetFrame()
-	self.IsMinimapVisible = Engine:GetModule("Minimap").IsMinimapVisible
+	self.IsMinimapVisible = false
 
 	-- set our constants for number of visible bars and vehicleUI
 	NUM_VISIBLE_BARS = self.ActionBarController:GetNumBars() or 1 -- fallback value

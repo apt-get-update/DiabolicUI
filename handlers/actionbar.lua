@@ -9,11 +9,6 @@ local tinsert = table.insert
 -- WoW API
 local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
 
--- Client Constants
-local ENGINE_LEGION_730 = Engine:IsBuild("7.3.0")
-local ENGINE_LEGION_725 = Engine:IsBuild("7.2.5")
-local ENGINE_LEGION_715 = Engine:IsBuild("7.1.5")
-
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }
 

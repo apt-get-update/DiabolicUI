@@ -72,13 +72,6 @@ local UnitOnTaxi = _G.UnitOnTaxi
 -- Will replace these with our custom tooltiplib later on!
 local GameTooltip = _G.GameTooltip 
 
--- Cache the client version constants we need
-local ENGINE_BFA = Engine:IsBuild("BfA")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_WOD = Engine:IsBuild("WoD")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-
 -- Cooldown type constants
 local COOLDOWN_TYPE_LOSS_OF_CONTROL = _G.COOLDOWN_TYPE_LOSS_OF_CONTROL
 local COOLDOWN_TYPE_NORMAL = _G.COOLDOWN_TYPE_NORMAL
@@ -342,11 +335,7 @@ Button.Update = function(self)
 			NonActionButtons[self] = nil
 
 			local name, subtext, isToken, autoCastAllowed, autoCastEnabled
-			if ENGINE_BFA then 
-				name, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
-			else 
-				name, subtext, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
-			end 
+			name, subtext, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
 		
 			-- needed for tooltip functionality
 			self.tooltipName = isToken and _G[name] or name -- :GetActionText() also returns this
@@ -419,10 +408,6 @@ Button.Update = function(self)
 	self:UpdateBindings()
 	self:UpdateGrid()
 	self:UpdateCount()
-
-	if ENGINE_CATA then 
-		self:UpdateOverlayGlow()
-	end
 
 	self:UpdateFlyout()
 
@@ -671,86 +656,7 @@ Button.OnCooldownDone = function(self)
 end
 
 -- Updates the cooldown of a button
-Button.UpdateCooldown = ENGINE_WOD and function(self)
-
-	-- Gather data
-	local locStart, locDuration = self:GetLossOfControlCooldown()
-	local start, duration, enable, modRate = self:GetCooldown()
-	local charges, maxCharges, chargeStart, chargeDuration = self:GetCharges()
-
-	-- This is a loss of control cooldown, as any normal cooldown is shorter
-	if ( (locStart + locDuration) > (start + duration) ) then
-		if (self.cooldown.currentCooldownType ~= COOLDOWN_TYPE_LOSS_OF_CONTROL) then
-			self.cooldown.currentCooldownType = COOLDOWN_TYPE_LOSS_OF_CONTROL
-			self.cooldown:SetSwipeColor(.17, 0, 0, .75)
-
-		end
-
-		-- Remove charge cooldown
-		self.chargeCooldown:Hide()
-
-		-- Update cooldown to be a loss of control cooldown
-		self.cooldown.cooldownDuration = nil
-		self.cooldown:SetCooldown(locStart, locDuration)
-		self.cooldown:Show()
-		self.cooldown:SetScript("OnCooldownDone", Button.OnSecondaryCooldownDone)
-
-	else
-		if (self.cooldown.currentCooldownType ~= COOLDOWN_TYPE_NORMAL) then
-			self.cooldown.currentCooldownType = COOLDOWN_TYPE_NORMAL
-			self.cooldown:SetSwipeColor(0, 0, 0, .75)
-		end
-
-		-- Is this a charge cooldown?
-		if (charges and maxCharges and (maxCharges > 1) and (charges < maxCharges) and (charges > 0)) then
-			self.chargeCooldown:Show()
-			self.chargeCooldown:SetCooldown(chargeStart, chargeDuration)
-			self.chargeCooldown:SetScript("OnCooldownDone", Button.OnSecondaryCooldownDone)
-
-		else
-			-- Remove charge cooldown
-			self.chargeCooldown:Hide()
-		end
-
-		-- Start the regular cooldown
-		if (enable ~= 0) and (duration > .5) then
-			self.cooldown.cooldownDuration = duration
-			self.cooldown:SetCooldown(start, duration)
-			self.cooldown:Show()
-			self.cooldown:SetScript("OnCooldownDone", Button.OnCooldownDone)
-		else
-			self.cooldown.cooldownDuration = nil
-			self.cooldown:Hide()
-			self.cooldown:SetScript("OnCooldownDone", nil)
-		end
-
-	end
-
-end or ENGINE_MOP and function(self)
-	-- Gather data
-	local start, duration, enable, modRate = self:GetCooldown()
-	local charges, maxCharges, chargeStart, chargeDuration = self:GetCharges()
-
-	-- Is this a charge cooldown?
-	if (charges and maxCharges and (maxCharges > 1) and (charges < maxCharges) and (charges > 0)) then
-		self.chargeCooldown:Show()
-		self.chargeCooldown:SetCooldown(chargeStart, chargeDuration)
-
-		self.cooldown:Hide()
-	else
-		-- Remove charge cooldown
-		self.chargeCooldown:Hide()
-	end
-
-	-- Start the regular cooldown
-	if (enable ~= 0) and (duration > .5) then
-		self.cooldown:SetCooldown(start, duration)
-		self.cooldown:Show()
-	else
-		self.cooldown:Hide()
-	end
-
-end or function(self)
+Button.UpdateCooldown = function(self)
 	local start, duration, enable = self:GetCooldown()
 	if (enable ~= 0) and (duration > .5) then
 		self.cooldown:SetCooldown(start, duration)
@@ -1178,11 +1084,7 @@ Button.GetLossOfControlCooldown 		= function(self) return 0, 0 end
 ActionButton.HasAction					= function(self) return HasAction(self.action_by_state) end
 ActionButton.GetActionText				= function(self) return GetActionText(self.action_by_state) end
 ActionButton.GetTexture					= function(self) return GetActionTexture(self.action_by_state) end
-ActionButton.GetCharges					= ENGINE_WOD and function(self) return GetActionCharges(self.action_by_state) end 
-										or ENGINE_MOP and function(self)
-											local start, duration, enable, charges, maxCharges = GetActionCooldown(self.action_by_state)
-											return charges, maxCharges, start, duration
-										end or function(self) return nil end
+ActionButton.GetCharges					= function(self) return nil end
 ActionButton.GetCount					= function(self) return GetActionCount(self.action_by_state) end
 ActionButton.GetCooldown				= function(self) return GetActionCooldown(self.action_by_state) end
 ActionButton.IsAttack					= function(self) return IsAttackAction(self.action_by_state) end
@@ -1190,7 +1092,7 @@ ActionButton.IsEquipped					= function(self) return IsEquippedAction(self.action
 ActionButton.IsCurrentlyActive			= function(self) return IsCurrentAction(self.action_by_state) end
 ActionButton.IsAutoRepeat				= function(self) return IsAutoRepeatAction(self.action_by_state) end
 ActionButton.IsUsable					= function(self) return IsUsableAction(self.action_by_state) end
-ActionButton.IsConsumableOrStackable	= function(self) return IsConsumableAction(self.action_by_state) or IsStackableAction(self.action_by_state) or (ENGINE_MOP and (not IsItemAction(self.action_by_state) and GetActionCount(self.action_by_state) > 0)) end
+ActionButton.IsConsumableOrStackable	= function(self) return IsConsumableAction(self.action_by_state) or IsStackableAction(self.action_by_state) end
 ActionButton.IsUnitInRange				= function(self, unit) return IsActionInRange(self.action_by_state, unit) end
 ActionButton.SetTooltip					= function(self) return (not GameTooltip:IsForbidden()) and GameTooltip:SetAction(self.action_by_state) end
 ActionButton.GetSpellId					= function(self)
@@ -1265,7 +1167,7 @@ MacroButton.GetSpellId					= function(self) return nil end
 --- Pet Button
 PetActionButton.HasAction				= function(self) return GetPetActionInfo(self.id) end
 PetActionButton.GetCooldown				= function(self) return GetPetActionCooldown(self.id) end
-PetActionButton.IsCurrentlyActive		= function(self) return select(ENGINE_BFA and 4 or 5, GetPetActionInfo(self.id)) end
+PetActionButton.IsCurrentlyActive		= function(self) return select(5, GetPetActionInfo(self.id)) end
 PetActionButton.IsAutoRepeat			= function(self) return nil end -- select(7, GetPetActionInfo(self.id))
 PetActionButton.SetTooltip				= function(self) 
 	if (not self.tooltipName) then
@@ -1290,22 +1192,12 @@ end
 PetActionButton.IsAttack				= function(self) return nil end
 PetActionButton.IsUsable				= function(self) return GetPetActionsUsable() end
 PetActionButton.GetActionText			= function(self)
-	if ENGINE_BFA then 
-		local name, _, isToken = GetPetActionInfo(self.id)
-		return isToken and _G[name] or name
-	else 
-		local name, _, _, isToken = GetPetActionInfo(self.id)
-		return isToken and _G[name] or name
-	end 
+	local name, _, _, isToken = GetPetActionInfo(self.id)
+	return isToken and _G[name] or name
 end
 PetActionButton.GetTexture				= function(self)
-	if ENGINE_BFA then 
-		local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
-		return isToken and _G[texture] or texture
-	else 
-		local _, _, texture, isToken = GetPetActionInfo(self.id)
-		return isToken and _G[texture] or texture
-	end 
+	local _, _, texture, isToken = GetPetActionInfo(self.id)
+	return isToken and _G[texture] or texture
 end
 
 --- Stance Button
@@ -1702,7 +1594,7 @@ Handler.Start = function(self, event)
 	self:LoadEvents()
 
 	-- Start the range and flash updates
-	Engine:CreateFrame("Frame", nil, "UICenter"):SetScript("OnUpdate", ENGINE_LEGION and OnUpdate or WaitForUpdates)
+	Engine:CreateFrame("Frame", nil, "UICenter"):SetScript("OnUpdate", WaitForUpdates)
 
 	-- Fire the original event in the new event handler
 	self:OnEvent(event)
@@ -1759,11 +1651,7 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 		button:SetScript("OnReceiveDrag", nil)
 		
 	elseif (buttonType == "stance") then
-		if ENGINE_MOP then
-			button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "StanceButtonTemplate"), Button_MT)
-		else
-			button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "ShapeshiftButtonTemplate"), Button_MT)
-		end
+		button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "ShapeshiftButtonTemplate"), Button_MT)
 		button:UnregisterAllEvents()
 		button:SetScript("OnEvent", nil)
 		
@@ -1906,39 +1794,8 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	button.cooldown:SetAllPoints(button.icon)
 	button.cooldown:SetFrameLevel(button:GetFrameLevel() + 3)
 
+	button.cooldown:SetAlpha(.75)
 
-	if ENGINE_MOP then
-		button.chargeCooldown = button:CreateFrame("Cooldown", nil, "CooldownFrameTemplate")
-		button.chargeCooldown:SetAllPoints(button.icon)
-		button.chargeCooldown:SetFrameLevel(button:GetFrameLevel() + 2)
-	end
-	
-	if ENGINE_WOD then
-		button.cooldown:SetSwipeColor(0, 0, 0, .75)
-		button.cooldown:SetDrawSwipe(true)
-		button.cooldown:SetEdgeTexture(EDGE_NORMAL_TEXTURE)
-		button.cooldown:SetDrawEdge(false)
-		button.cooldown:SetHideCountdownNumbers(false) -- just until we can make a better one ourselves
-		button.cooldown:SetBlingTexture(BLANK_TEXTURE, 0, 0, 0, 0) 
-		button.cooldown:SetDrawBling(false)
-
-		button.cooldown.shine = Engine:GetHandler("Shine"):ApplyShine(button, .5, .5, 3) -- alpha, duration, scale
-		button.cooldown.shine:SetFrameLevel(button:GetFrameLevel() + 4)
-
-		button.chargeCooldown:SetSwipeColor(0, 0, 0, .75)
-		button.chargeCooldown:SetDrawSwipe(true)
-		button.chargeCooldown:SetEdgeTexture(EDGE_NORMAL_TEXTURE)
-		button.chargeCooldown:SetDrawEdge(true)
-		button.chargeCooldown:SetHideCountdownNumbers(true) 
-		button.chargeCooldown:SetBlingTexture(BLANK_TEXTURE, 0, 0, 0, 0) 
-		button.chargeCooldown:SetDrawBling(false)
-	else
-		button.cooldown:SetAlpha(.75)
-		if ENGINE_MOP then
-			button.chargeCooldown:SetAlpha(.75)
-		end
-	end
-	
 	-- let blizz handle this one
 	button.pushed = button:CreateTexture(nil, "OVERLAY")
 	button.pushed:SetAllPoints(button.icon)

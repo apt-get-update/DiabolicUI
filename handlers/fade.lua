@@ -31,13 +31,6 @@ local UnregisterStateDriver = _G.UnregisterStateDriver
 -- WoW frames and objects
 local UIParent = _G.UIParent
 
--- Client version speed constants
-local ENGINE_BFA 		= Engine:IsBuild("BfA")
-local ENGINE_WOD 		= Engine:IsBuild("WoD")
-local ENGINE_MOP 		= Engine:IsBuild("MoP")
-local ENGINE_CATA 		= Engine:IsBuild("Cata")
-
-
 local FadeManager = CreateFrame("Frame", nil, UIParent)
 local FadeManager_MT = { __index = FadeManager }
 
@@ -437,44 +430,7 @@ Handler.UpdateSecureState = function(self, state)
 end
 
 local first
-local unitEvents = ENGINE_BFA and {
-	ENTER = {
-		PLAYER_ENTERING_WORLD = true
-	},
-	HEALTH = {
-		UNIT_HEALTH = true,
-		UNIT_HEALTH_FREQUENT = true,
-		UNIT_MAXHEALTH = true
-	},
-	POWER = {
-		UNIT_POWER_UPDATE = true,
-		UNIT_POWER_FREQUENT = true,
-		UNIT_MAXPOWER = true,
-		UNIT_DISPLAYPOWER = true
-	},
-	AURA = {
-		UNIT_AURA = true
-	}
-
-} or ENGINE_CATA and {
-	ENTER = {
-		PLAYER_ENTERING_WORLD = true
-	},
-	HEALTH = {
-		UNIT_HEALTH = true,
-		UNIT_HEALTH_FREQUENT = true,
-		UNIT_MAXHEALTH = true
-	},
-	POWER = {
-		UNIT_POWER = true,
-		UNIT_POWER_FREQUENT = true,
-		UNIT_MAXPOWER = true,
-		UNIT_DISPLAYPOWER = true
-	},
-	AURA = {
-		UNIT_AURA = true
-	}
-} or {
+local unitEvents = {
 	ENTER = {
 		PLAYER_ENTERING_WORLD = true
 	},
@@ -609,8 +565,8 @@ Handler.OnEnable = function(self)
 	local driver = "[@target,exists]target;"
 	driver = driver .. "[@player,dead]dead;"
 	driver = driver .. "[combat]combat;"
-	driver = driver .. (ENGINE_WOD and "[resting]resting;" or "")
-	driver = driver .. (ENGINE_MOP and "[possessbar][overridebar][vehicleui]override;" or "[bonusbar:5][vehicleui]override;")
+	driver = driver .. ""
+	driver = driver .. "[bonusbar:5][vehicleui]override;"
 	driver = driver .. "[flying][mounted]mounted;"
 	driver = driver .. "nocombat"
 

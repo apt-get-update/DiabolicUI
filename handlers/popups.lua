@@ -49,7 +49,7 @@ PopUp.SetStyle = function(self, styleTable)
 
 	self:Update(styleTable)
 
-	Handler:UpdateLayout()	
+	Handler:UpdateLayout()
 end
 
 
@@ -61,24 +61,24 @@ PopUp.OnShow = function(self)
 	if popup.OnShow then
 		popup.OnShow(self)
 	end
-	
+
 	activePopups[id] = self
-	
-	Handler:UpdateLayout()	
+
+	Handler:UpdateLayout()
 end
 
 PopUp.OnHide = function(self)
 	PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX")
-	
+
 	local id = self.id
 	local popup = popups[id]
 	if popup.OnHide then
 		popup.OnHide(self)
 	end
-	
+
 	activePopups[id] = nil
 
-	Handler:UpdateLayout()	
+	Handler:UpdateLayout()
 end
 
 
@@ -113,8 +113,8 @@ PopUp.OnUpdate = function(self, elapsed)
 		if popup.OnUpdate then
 			popup.OnUpdate(self, elapsed)
 		else
-			-- just in case the popup content changed while being active, 
-			-- and we for some reason missed this script. 
+			-- just in case the popup content changed while being active,
+			-- and we for some reason missed this script.
 			self:SetScript("OnUpdate", nil)
 		end
 		self.elapsed = 0 -- inaccurate, but avoids burst calls after a lag spike
@@ -126,14 +126,14 @@ end
 
 -- updates the content, style and layout of a popup frame
 PopUp.Update = function(self, styleTable)
-	
+
 	-- Get the virtual popup registered to this frame
 	local id = self.id
 	local popup = popups[id]
-	
-	-- Always use the passed styleTable if it exists, 
-	-- but store it and re-use it if the Update function 
-	-- is recalled later with no styleTable argument. 
+
+	-- Always use the passed styleTable if it exists,
+	-- but store it and re-use it if the Update function
+	-- is recalled later with no styleTable argument.
 	-- TODO: Only update body content/message when called without a styleTable!!
 	-- TODO: Add generic fallback styles using blizzard textures.
 	if styleTable then
@@ -141,7 +141,7 @@ PopUp.Update = function(self, styleTable)
 	elseif self.styleTable then
 		styleTable = self.styleTable
 	end
-	
+
 	-- style table shortcuts
 	local style = styleTable.header
 	local styleBody = styleTable.body
@@ -167,16 +167,16 @@ PopUp.Update = function(self, styleTable)
 		self:SetBackdropBorderColor(unpack(styleTable.backdropBorderColor))
 	end
 
-	
+
 	-- header
 	------------------------------------------------------
 	if popup.title then
 
-		title:SetFontObject(style.title.normalFont)  
+		title:SetFontObject(style.title.normalFont)
 		title:SetText(popup.title)
 		--title:SetTextColor(unpack(style.title.fontColor))
 		title:Show()
-		
+
 		header:SetBackdrop(nil)
 		if style.backdrop then
 			header:SetBackdrop(style.backdrop)
@@ -201,8 +201,8 @@ PopUp.Update = function(self, styleTable)
 		header:SetBackdrop(nil)
 		--header:Hide()
 	end
-	
-	
+
+
 	-- body
 	------------------------------------------------------
 	body:ClearAllPoints()
@@ -225,7 +225,7 @@ PopUp.Update = function(self, styleTable)
 	if popup.hideOnEscape == 1 then
 	else
 	end
-	
+
 	if popup.timeout and popup.timeout > 0 then
 	else
 	end
@@ -235,7 +235,7 @@ PopUp.Update = function(self, styleTable)
 	else
 		input:Hide()
 	end
-	
+
 	if popup.hasItemFrame == 1 then
 	else
 	end
@@ -244,7 +244,7 @@ PopUp.Update = function(self, styleTable)
 	else
 	end
 
-	
+
 	-- footer
 	------------------------------------------------------
 
@@ -276,7 +276,7 @@ PopUp.Update = function(self, styleTable)
 		button2:SetText("")
 		button2:Hide()
 	end
-	
+
 	-- center button (alternate option)
 	if popup.button3 then
 		button3:SetText(popup.button3)
@@ -286,7 +286,7 @@ PopUp.Update = function(self, styleTable)
 		button3:Hide()
 	end
 
-	-- figure out number of visible buttons, 
+	-- figure out number of visible buttons,
 	-- and re-align them if need be
 	local numButtons = 0
 	local buttonWidth = 0
@@ -294,7 +294,7 @@ PopUp.Update = function(self, styleTable)
 		local button = self["button"..i]
 		if button:IsShown() then
 			button:SetSize(unpack(styleFooterButton.size))
-			
+
 			button.normal:SetTexture(styleFooterButton.texture.normal)
 			button.normal:SetSize(unpack(styleFooterButton.texture_size))
 			button.normal:ClearAllPoints()
@@ -309,7 +309,7 @@ PopUp.Update = function(self, styleTable)
 			button.pushed:SetSize(unpack(styleFooterButton.texture_size))
 			button.pushed:ClearAllPoints()
 			button.pushed:SetPoint("CENTER")
-			
+
 			button.text:SetFontObject(styleFooterButton.normalFont)
 			button.text.normalColor = styleFooterButton.fontColor.normal
 			button.text.highlightColor = styleFooterButton.fontColor.highlight
@@ -321,8 +321,8 @@ PopUp.Update = function(self, styleTable)
 
 			numButtons = numButtons + 1
 		end
-	end	
-	
+	end
+
 	-- anchor all buttons to the footer, not each other
 	if numButtons == 3 then
 		button1:ClearAllPoints()
@@ -331,7 +331,7 @@ PopUp.Update = function(self, styleTable)
 		button2:SetPoint("BOTTOMRIGHT", -styleFooterButton.insets[1], styleFooterButton.insets[4])
 		button3:ClearAllPoints()
 		button3:SetPoint("BOTTOM", 0, styleFooterButton.insets[4])
-		
+
 		-- calculate size of the button area
 		buttonWidth = buttonWidth + styleFooter.insets[1]
 		buttonWidth = buttonWidth + styleFooterButton.insets[1]
@@ -339,7 +339,7 @@ PopUp.Update = function(self, styleTable)
 		buttonWidth = buttonWidth + styleFooter.button_spacing * 2
 		buttonWidth = buttonWidth + styleFooterButton.insets[2]
 		buttonWidth = buttonWidth + styleFooter.insets[2]
-		
+
 	elseif numButtons == 2 then
 		if button1:IsShown() then
 			button1:ClearAllPoints()
@@ -374,17 +374,17 @@ PopUp.Update = function(self, styleTable)
 				button:SetPoint("BOTTOM", 0, styleFooterButton.insets[4])
 				break
 			end
-		end	
-		
+		end
+
 		-- calculate size of the button area
 		buttonWidth = buttonWidth + styleFooter.insets[1]
 		buttonWidth = buttonWidth + styleFooterButton.insets[1]
 		buttonWidth = buttonWidth + styleFooterButton.size[1]
 		buttonWidth = buttonWidth + styleFooterButton.insets[2]
 		buttonWidth = buttonWidth + styleFooter.insets[2]
-		
+
 	end
-	
+
 	local footerHeight = 0.0001
 	if numButtons > 0 then
 		footerHeight = footerHeight + styleFooter.insets[3]
@@ -405,20 +405,20 @@ PopUp.Update = function(self, styleTable)
 	local messageHeight = 0.0001
 	if popup.text then
 		-- We need this, or the text will become truncated
-		message:SetSpacing(0) 
-		
-		-- If we don't set the width, but only the points, the fontstring will still truncate 
-		-- as if it had its original width (which is tiny), and this is what leads to the 
+		message:SetSpacing(0)
+
+		-- If we don't set the width, but only the points, the fontstring will still truncate
+		-- as if it had its original width (which is tiny), and this is what leads to the
 		-- super long and narrow message body we've seen so far in Legion!
 		message:SetWidth(width - (styleMessage.insets[1] + styleMessage.insets[2]))
 		message:ClearAllPoints()
 		message:SetPoint("TOP", 0, -styleMessage.insets[3])
 		message:SetPoint("LEFT", styleMessage.insets[1], 0)
 		message:SetPoint("RIGHT", -styleMessage.insets[2], 0)
-		message:SetFontObject(styleMessage.normalFont)  
+		message:SetFontObject(styleMessage.normalFont)
 		message:SetText(popup.text)
 		message:SetTextColor(unpack(styleMessage.fontColor))
-		
+
 		-- unless I add height matching a line of text, the last line gets truncated no matter what
 		-- *I've only experienced this so far in WotLK, and it seems like a bug
 		local _, messageFontHeight = message:GetFontObject():GetFont()
@@ -427,7 +427,7 @@ PopUp.Update = function(self, styleTable)
 		message:Show()
 		message:SetHeight(messageHeight)
 		message.spacing = (messageFontHeight * 4)
-		
+
 	else
 		if message:GetFontObject() then
 			message:SetHeight(0.0001)
@@ -450,7 +450,7 @@ PopUp.Update = function(self, styleTable)
 		bodyHeight = bodyHeight + input:GetHeight()
 	end
 	body:SetHeight(bodyHeight)
-	
+
 	-- figure out the frame height
 	local frameHeight = 0.0001
 	if header:IsShown() then
@@ -463,7 +463,7 @@ PopUp.Update = function(self, styleTable)
 		frameHeight = frameHeight + footerHeight
 	end
 	self:SetHeight(frameHeight)
-	
+
 end
 
 -- register a new popup
@@ -479,7 +479,7 @@ end
 -- show a popup
 Handler.ShowPopUp = function(self, id, styleTable)
 	local popup = popups[id]
-	
+
 	-- is it already visible?
 	local frame = activePopups[id]
 
@@ -493,7 +493,7 @@ Handler.ShowPopUp = function(self, id, styleTable)
 				break
 			end
 		end
-		
+
 		-- create a new frame if none are available
 		if not frame_id then
 			frame_id = #popupFrames + 1
@@ -512,12 +512,12 @@ Handler.ShowPopUp = function(self, id, styleTable)
 			header:SetPoint("LEFT")
 			header:SetPoint("RIGHT")
 			header:SetHeight(0.0001)
-			
+
 			-- artwork
 			header.left = header:CreateTexture(nil, "ARTWORK")
 			header.right = header:CreateTexture(nil, "ARTWORK")
 			header.top = header:CreateTexture(nil, "ARTWORK")
-			
+
 			-- title
 			local title = header:CreateFontString(nil, "ARTWORK")
 			title:SetPoint("CENTER")
@@ -532,7 +532,7 @@ Handler.ShowPopUp = function(self, id, styleTable)
 			body:SetPoint("LEFT")
 			body:SetPoint("RIGHT")
 			body:SetHeight(0.0001)
-			
+
 			-- message
 			local message = body:CreateFontString(nil, "ARTWORK")
 			message:SetPoint("TOP")
@@ -543,10 +543,10 @@ Handler.ShowPopUp = function(self, id, styleTable)
 			message:SetIndentedWordWrap(false)
 			message:SetWordWrap(true)
 			message:SetNonSpaceWrap(false)
-			
+
 			-- inputbox
 			local input = CreateFrame("EditBox", body)
-			input:Hide() 
+			input:Hide()
 			input:ClearAllPoints()
 			input:SetPoint("TOP", message, "BOTTOM")
 			input:SetPoint("LEFT", message)
@@ -568,45 +568,45 @@ Handler.ShowPopUp = function(self, id, styleTable)
 
 				button.normal = button:CreateTexture(nil, "ARTWORK")
 				button.normal:SetPoint("CENTER")
-			
+
 				button.highlight = button:CreateTexture(nil, "ARTWORK")
 				button.highlight:SetPoint("CENTER")
 
 				button.pushed = button:CreateTexture(nil, "ARTWORK")
 				button.pushed:SetPoint("CENTER")
-				
+
 				button.text = button:CreateFontString(nil, "OVERLAY")
 				button.text:SetPoint("CENTER")
-				
-				button:SetScript("OnEnter", function(self) 
+
+				button:SetScript("OnEnter", function(self)
 					if new:IsShown() then
-						self:UpdateLayers() 
-					end
-				end)
-				button:SetScript("OnLeave", function(self) 
-					if new:IsShown() then
-						self:UpdateLayers() 
-					end
-				end)
-				button:SetScript("OnMouseDown", function(self) 
-					if new:IsShown() then
-						self.isDown = true 
 						self:UpdateLayers()
 					end
 				end)
-				button:SetScript("OnMouseUp", function(self) 
+				button:SetScript("OnLeave", function(self)
+					if new:IsShown() then
+						self:UpdateLayers()
+					end
+				end)
+				button:SetScript("OnMouseDown", function(self)
+					if new:IsShown() then
+						self.isDown = true
+						self:UpdateLayers()
+					end
+				end)
+				button:SetScript("OnMouseUp", function(self)
 					if new:IsShown() then
 						self.isDown = false
 						self:UpdateLayers()
 					end
 				end)
-				button:SetScript("OnShow", function(self) 
+				button:SetScript("OnShow", function(self)
 					if new:IsShown() then
 						self.isDown = false
 						self:UpdateLayers()
 					end
 				end)
-				button:SetScript("OnHide", function(self) 
+				button:SetScript("OnHide", function(self)
 					if new:IsShown() then
 						self.isDown = false
 						self:UpdateLayers()
@@ -651,37 +651,37 @@ Handler.ShowPopUp = function(self, id, styleTable)
 						end
 					end
 				end
-				
+
 				new["button"..i] = button
 			end
 
 			-- 1st button (left)
-			new.button1:SetScript("OnClick", function(self) 
+			new.button1:SetScript("OnClick", function(self)
 				local popup = popups[new.id]
 				if popup.OnAccept then
 					popup.OnAccept(new)
 				end
 				new:Hide()
 			end)
-			
+
 			-- 2nd button (right)
-			new.button2:SetScript("OnClick", function(self) 
+			new.button2:SetScript("OnClick", function(self)
 				local popup = popups[new.id]
 				if popup.OnCancel then
 					popup.OnCancel(new)
 				end
 				new:Hide()
 			end)
-			
+
 			-- 3rd button (center)
-			new.button3:SetScript("OnClick", function(self) 
+			new.button3:SetScript("OnClick", function(self)
 				local popup = popups[new.id]
 				if popup.OnAlt then
 					popup.OnAlt(new)
 				end
 				new:Hide()
 			end)
-			
+
 			new.body = body
 			new.footer = footer
 			new.header = header
@@ -691,9 +691,9 @@ Handler.ShowPopUp = function(self, id, styleTable)
 
 			new:SetScript("OnShow", PopUp.OnShow)
 			new:SetScript("OnHide", PopUp.OnHide)
-			
+
 			popupFrames[frame_id] = new
-			
+
 			frame = new
 		end
 	end
@@ -723,14 +723,14 @@ Handler.UpdateLayout = function(self)
 	end
 	for activeID, popupFrame in pairs(activePopups) do
 		if popupFrame then
-			table_insert(order, activeID) 
+			table_insert(order, activeID)
 		end
 	end
 	if #order > 0 then
 		table_sort(order)
 	end
 	local first, previous
-	for i, activeID in ipairs(order) do	
+	for i, activeID in ipairs(order) do
 		local popupFrame = activePopups[activeID]
 		if previous then
 			popupFrame:ClearAllPoints()
@@ -741,18 +741,18 @@ Handler.UpdateLayout = function(self)
 			first = popupFrame
 		end
 		previous = popupFrame
-	end	
-	
+	end
+
 	-- re-align the vertical layout for multiple frames
 	if first and previous then
 		local top = first:GetTop()
 		local bottom = previous:GetBottom()
 		local available = Engine:GetFrame():GetHeight()
-		
+
 		first:ClearAllPoints()
 		first:SetPoint("TOP", Engine:GetFrame(), "TOP", 0, -(available - (top-bottom))/3)
 	end
-	
+
 	self.order = order
 end
 

@@ -14,11 +14,6 @@ local tostring = tostring
 -- WoW API
 local CreateFrame = _G.CreateFrame
 
-
--- Client version constants
-local ENGINE_MOP = Engine:IsBuild("MoP")
-
-
 local Controller = Engine:CreateFrame("Frame")
 local Controller_MT = { __index = Controller }
 
@@ -106,39 +101,21 @@ ControllerWidget.OnEnable = function(self)
 	local driver = {}
 	local _, playerClass = UnitClass("player")
 
-	if ENGINE_MOP then -- also applies to WoD and (possibly) Legion
-		table_insert(driver, "[overridebar][possessbar][shapeshift]vehicle")
-		table_insert(driver, "[vehicleui]vehicle")
-		table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
+	table_insert(driver, "[bonusbar:5]vehicle")
+	table_insert(driver, "[vehicleui]vehicle")
+	--table_insert(driver, "[bonusbar:5]11")
+	table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
 
-		if playerClass == "DRUID" then
-			table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
-		elseif playerClass == "MONK" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
-		elseif playerClass == "PRIEST" then
-			table_insert(driver, "[bonusbar:1] 7")
-		elseif playerClass == "ROGUE" then
-			table_insert(driver, ("[%s:%s] %s; "):format("form", GetNumShapeshiftForms() + 1, 7) .. "[form:1] 7; [form:3] 7")
-		end
-
-	else
-		table_insert(driver, "[bonusbar:5]vehicle")
-		table_insert(driver, "[vehicleui]vehicle")
-		--table_insert(driver, "[bonusbar:5]11")
-		table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
-
-		if playerClass == "DRUID" then
-			table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
-		elseif playerClass == "PRIEST" then
-			table_insert(driver, "[bonusbar:1] 7")
-		elseif playerClass == "ROGUE" then
-			table_insert(driver, "[bonusbar:1] 7; [form:3] 8")
-		elseif playerClass == "WARLOCK" then
-			table_insert(driver, "[form:2] 7")
-		elseif playerClass == "WARRIOR" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
-		end
-		
+	if playerClass == "DRUID" then
+		table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
+	elseif playerClass == "PRIEST" then
+		table_insert(driver, "[bonusbar:1] 7")
+	elseif playerClass == "ROGUE" then
+		table_insert(driver, "[bonusbar:1] 7; [form:3] 8")
+	elseif playerClass == "WARLOCK" then
+		table_insert(driver, "[form:2] 7")
+	elseif playerClass == "WARRIOR" then
+		table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
 	end
 	
 	table_insert(driver, "1")

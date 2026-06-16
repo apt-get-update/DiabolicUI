@@ -1,9 +1,5 @@
 local ADDON, Engine = ...
 
-local ENGINE_LEGION 	= Engine:IsBuild("Legion")
-local ENGINE_MOP 		= Engine:IsBuild("MoP")
-local ENGINE_CATA 		= Engine:IsBuild("Cata")
-
 -- Lua API
 local math_floor = math.floor
 local select = select
@@ -494,11 +490,11 @@ C.Power[0] = C.Power.MANA
 C.Power[1] = C.Power.RAGE
 C.Power[2] = C.Power.FOCUS
 C.Power[3] = C.Power.ENERGY
-C.Power[4] = ENGINE_MOP and C.Power.CHI or ENGINE_CATA and C.Power.UNUSED or C.Power.HAPPINESS
+C.Power[4] = C.Power.HAPPINESS
 C.Power[5] = C.Power.RUNES
 C.Power[6] = C.Power.RUNIC_POWER
 C.Power[7] = C.Power.SOUL_SHARDS
-C.Power[8] = ENGINE_LEGION and C.Power.LUNAR_POWER or ENGINE_CATA and C.Power.ECLIPSE 
+C.Power[8] = C.Power.LUNAR_POWER
 C.Power[9] = C.Power.HOLY_POWER
 C.Power[11] = C.Power.MAELSTROM
 C.Power[13] = C.Power.INSANITY

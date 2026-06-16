@@ -29,7 +29,7 @@ local ENGINE_LEGION_725 = Engine:IsBuild("7.2.5")
 local bubbles = {} -- local bubble registry
 local numChildren, numBubbles = -1, 0 -- bubble counters
 
-local minsize, maxsize, fontsize = 12, 16, 12 -- bubble font size
+local minsize, maxsize, fontsize = 14, 16, 14 -- bubble font size
 local offsetX, offsetY = 0, -100 -- bubble offset from its original position
 
 -- Textures
@@ -43,13 +43,13 @@ end
 
 -- let the bubble size scale from 400 to 660ish (font size 22)
 local getMaxWidth = function()
-	return 400 + math_floor((fontsize - 12)/22 * 260)
+	return 400 + math_floor((fontsize - 14)/22 * 260)
 end
 
-local getBackdrop = function(scale) 
+local getBackdrop = function(scale)
 	return {
-		bgFile = BLANK_TEXTURE,  
-		edgeFile = TOOLTIP_BORDER, 
+		bgFile = BLANK_TEXTURE,
+		edgeFile = TOOLTIP_BORDER,
 		edgeSize = 16 * scale,
 		insets = {
 			left = 2.5 * scale,
@@ -71,20 +71,20 @@ Updater:SetFrameStrata("TOOLTIP")
 -- check whether the given frame is a bubble or not
 Updater.IsBubble = ENGINE_LEGION_720 and function(self, bubble)
 	if (bubble.IsForbidden and bubble:IsForbidden()) then
-		return 
+		return
 	end
 	local name = bubble.GetName and bubble:GetName()
 	local region = bubble.GetRegions and bubble:GetRegions()
-	if name or not region then 
-		return 
+	if name or not region then
+		return
 	end
 	local texture = region.GetTexture and region:GetTexture()
 	return texture and texture == BUBBLE_TEXTURE
 end or function(self, bubble)
 	local name = bubble.GetName and bubble:GetName()
 	local region = bubble.GetRegions and bubble:GetRegions()
-	if name or not region then 
-		return 
+	if name or not region then
+		return
 	end
 	local texture = region.GetTexture and region:GetTexture()
 	return texture and texture == BUBBLE_TEXTURE
@@ -101,16 +101,16 @@ Updater.OnUpdate = function(self, elapsed)
 		end
 		numChildren = children
 	end
-	
+
 	-- bubble, bubble.text = original bubble and message
 	-- bubbles[bubble], bubbles[bubble].text = our custom bubble and message
 	local scale = WorldFrame:GetHeight()/UIParent:GetHeight()
 	for bubble in pairs(bubbles) do
 		local msg = bubble and bubble.text:GetText()
 		if bubble:IsShown() and msg and (msg ~= "") then
-			-- continuing the fight against overlaps blending into each other! 
+			-- continuing the fight against overlaps blending into each other!
 			bubbles[bubble]:SetFrameLevel(bubble:GetFrameLevel()) -- this works?
-			
+
 			local blizzTextWidth = math_floor(bubble.text:GetWidth())
 			local blizzTextHeight = math_floor(bubble.text:GetHeight())
 			local point, anchor, rpoint, blizzX, blizzY = bubble.text:GetPoint()
@@ -145,7 +145,7 @@ Updater.OnUpdate = function(self, elapsed)
 				bubbles[bubble]:Hide() -- hide while sizing and moving, to gain fps
 				bubbles[bubble]:SetSize(ourWidth, ourHeight)
 				local oldX, oldY = select(4, bubbles[bubble]:GetPoint())
-				if not(oldX and oldY) or ((math_abs(oldX - ourX) > .5) or (math_abs(oldY - ourY) > .5)) then -- avoid updates if we can. performance. 
+				if not(oldX and oldY) or ((math_abs(oldX - ourX) > .5) or (math_abs(oldY - ourY) > .5)) then -- avoid updates if we can. performance.
 					bubbles[bubble]:ClearAllPoints()
 					bubbles[bubble]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", ourX, ourY)
 				end
@@ -191,17 +191,17 @@ Updater.InitBubble = function(self, bubble)
 	bubbles[bubble]:SetFrameStrata("BACKGROUND")
 	bubbles[bubble]:SetFrameLevel(numBubbles%128 + 1) -- try to avoid overlapping bubbles blending into each other
 	bubbles[bubble]:SetBackdrop(getBackdrop(1))
-	
+
 	bubbles[bubble].text = bubbles[bubble]:CreateFontString()
 	bubbles[bubble].text:SetPoint("BOTTOMLEFT", space, space)
-	bubbles[bubble].text:SetFontObject(ChatFontNormal)
-	bubbles[bubble].text:SetFont(ChatFontNormal:GetFont(), fontsize + 1, "")
+	bubbles[bubble].text:SetFontObject(MailFont_Large)
+	bubbles[bubble].text:SetFont(MailFont_Large:GetFont(), fontsize + 1, "")
 	bubbles[bubble].text:SetShadowOffset(-.75, -.75)
 	bubbles[bubble].text:SetShadowColor(0, 0, 0, 1)
-	
+
 	bubbles[bubble].regions = {}
 	bubbles[bubble].color = { 1, 1, 1, 1 }
-	
+
 	-- gather up info about the existing blizzard bubble
 	for i = 1, bubble:GetNumRegions() do
 		local region = select(i, bubble:GetRegions())
@@ -221,17 +221,17 @@ Module.OnInit = function(self, event, ...)
 	self.db = self:GetConfig("ChatBubbles") -- user settings
 
 	self.Updater = Updater
-	
+
 	-- this will be our bubble parent
 	self.BubbleBox = Engine:CreateFrame("Frame", nil, "UIParent")
 	self.BubbleBox:SetAllPoints()
 	self.BubbleBox:Hide()
-	
+
 	-- give the updater a reference to the bubble parent
 	self.Updater.BubbleBox = self.BubbleBox
-	
-	-- Just kill off the chat bubbles within instances in 7.2.5, 
-	-- as these have become forbidden to change.  
+
+	-- Just kill off the chat bubbles within instances in 7.2.5,
+	-- as these have become forbidden to change.
 	-- The original Blizzard bubbles are screen covering spam, and suck.
 	if ENGINE_LEGION_725 then
 		self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateBubbleDisplay")
@@ -243,7 +243,7 @@ end
 
 Module.UpdateBubbleDisplay = function(self)
 	local _, instanceType = IsInInstance()
-	if ENGINE_LEGION_720 then 
+	if ENGINE_LEGION_720 then
 		if (instanceType == "none") then
 			SetCVar("chatBubbles", 1)
 			self.Updater:SetScript("OnUpdate", self.Updater.OnUpdate)

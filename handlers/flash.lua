@@ -8,9 +8,6 @@ local _G = _G
 local CreateFrame = _G.CreateFrame
 local GetTime = _G.GetTime
 
--- Client constants
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
 -- Shine defaults
 local MAXALPHA = .5
 local SCALE = 5
@@ -56,45 +53,7 @@ Shine.OnFinished = function(self)
 	end
 end
 
-Shine.CreateShineAnimation = ENGINE_LEGION and function(self, maxAlpha, duration, scale)
-	local MAXALPHA = maxAlpha or MAXALPHA
-	local SCALE = scale or SCALE
-	local DURATION = duration or DURATION
-
-	local g = self:CreateAnimationGroup() 
-	g:SetLooping("NONE") 
-	g:SetScript("OnFinished", Shine.OnFinished) 
-
-	local a1 = g:CreateAnimation("Alpha")
-	a1:SetToAlpha(0) 
-	a1:SetDuration(0) 
-	a1:SetOrder(0) 
-
-	local a2 = g:CreateAnimation("Scale") 
-	a2:SetOrigin("CENTER", 0, 0) 
-	a2:SetScale(SCALE, SCALE) 
-	a2:SetDuration(DURATION/2) 
-	a2:SetOrder(1) 
-
-	local a3 = g:CreateAnimation("Alpha") 
-	a3:SetToAlpha(MAXALPHA) 
-	a3:SetDuration(DURATION/2) 
-	a3:SetOrder(1)
-
-	local a4 = g:CreateAnimation("Scale") 
-	a4:SetOrigin("CENTER", 0, 0) 
-	a4:SetScale(-SCALE, -SCALE) 
-	a4:SetDuration(DURATION/2) 
-	a4:SetOrder(2)
-
-    local a5 = g:CreateAnimation("Alpha") 
-    a5:SetToAlpha(0) 
-    a5:SetDuration(DURATION/2) 
-    a5:SetOrder(2)
-
-	return g
-
-end or function(self, maxAlpha, duration, scale)
+Shine.CreateShineAnimation = function(self, maxAlpha, duration, scale)
 	local MAXALPHA = maxAlpha or MAXALPHA
 	local SCALE = scale or SCALE
 	local DURATION = duration or DURATION
