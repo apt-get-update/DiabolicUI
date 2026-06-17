@@ -20,12 +20,7 @@ local GetItemInfo = _G.GetItemInfo
 local GetItemQualityColor = _G.GetItemQualityColor
 local IsArtifactRelicItem = _G.IsArtifactRelicItem
 
--- WoW Client Constants
-local ENGINE_LEGION_730 = Engine:IsBuild("7.3.0") 
-local LEGION_730_CRUCIBLE = ENGINE_LEGION_730 and select(4, GetAchievementInfo(12072))
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_CATA = Engine:IsBuild("Cata")
+local LEGION_730_CRUCIBLE = false
 
 -- Tooltip used for scanning
 local scanner = CreateFrame("GameTooltip", "DiabolicUIPaperDollScannerTooltip", WorldFrame, "GameTooltipTemplate")
@@ -449,12 +444,6 @@ Module.OnInit = function(self)
 	if _G.ContainerFrame_Update then
 		hooksecurefunc("ContainerFrame_Update", updateContainer)
 	end
-
-	-- In case of a fresh character in patch 7.3.0, we listen for the achievement
-	if ENGINE_LEGION_730 and (not LEGION_730_CRUCIBLE) then
-		self:RegisterEvent("ACHIEVEMENT_EARNED", "CrucibleListener")
-	end
-
 end
 
 Module.CrucibleListener = function(self, event, id) 

@@ -21,13 +21,6 @@ local UnregisterStateDriver = _G.UnregisterStateDriver
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
 
--- WoW Client Constants
-local ENGINE_WOTLK = Engine:IsBuild("WotLK")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_WOD = Engine:IsBuild("WoD")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
 -- Tracking number of visible forms
 local NUM_FORMS = 0
 
@@ -65,7 +58,7 @@ BarWidget.UpdateStanceButtonVisibility = function(self, event, ...)
 		RegisterStateDriver(self.StanceBarButton, "hide")
 	else
 		UnregisterStateDriver(self.StanceBarButton, "visibility")
-		RegisterStateDriver(self.StanceBarButton, "visibility", ENGINE_MOP and "[overridebar][possessbar][shapeshift][vehicleui]hide;show" or "[bonusbar:5][vehicleui]hide;show")
+		RegisterStateDriver(self.StanceBarButton, "visibility", "[bonusbar:5][vehicleui]hide;show")
 	end
 end
 
@@ -88,9 +81,6 @@ BarWidget.OnEnable = function(self)
 	-- Exit buttons
 	self.VehicleExitButton = self:SpawnVehicleExitButton()
 	self.TaxiBar, self.TaxiExitButton = self:SpawnTaxiExitButton()
-
-	-- Extra button
-	self.ExtraActionButton = self:StyleExtraActionButton()
 
 	-- Zone ability buttons
 	self.DraenorZoneAbilityButton = self:StyleZoneButton(_G.DraenorZoneAbilityFrame) -- this was removed at some point
@@ -189,10 +179,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 end
 
 BarWidget.SpawnVehicleExitButton = function(self)
-	if (not ENGINE_WOTLK) then
-		return
-	end
-
 	local visualConfig = Module.config.visuals.floaters.exit
 
 	local VehicleExitButton = FloatButton:New("Action", self:GetFrame(), "EngineVehicleExitButton")
@@ -235,18 +221,14 @@ BarWidget.SpawnVehicleExitButton = function(self)
 	end
 
 	VehicleExitButton:SetAttribute("type", "macro")
-	VehicleExitButton:SetAttribute("macrotext", ENGINE_MOP and "/leavevehicle [target=vehicle,exists,canexitvehicle]" or "/leavevehicle [target=vehicle,exists]")
+	VehicleExitButton:SetAttribute("macrotext", "/leavevehicle [target=vehicle,exists]")
 	
-	RegisterStateDriver(VehicleExitButton, "visibility", ENGINE_MOP and "[target=vehicle,exists,canexitvehicle] show; hide" or "[target=vehicle,exists] show; hide")
+	RegisterStateDriver(VehicleExitButton, "visibility", "[target=vehicle,exists] show; hide")
 
 	return VehicleExitButton
 end
 
 BarWidget.SpawnTaxiExitButton = function(self)
-	if (not ENGINE_WOD) then
-		return
-	end
-
 	local visualConfig = Module.config.visuals.floaters.exit
 	
 	local TaxiBar = self:GetFrame():CreateFrame("Frame")
@@ -318,14 +300,6 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists,canexitvehicle] hide; show")
 	
 	return TaxiBar, TaxiExitButton
-end
-
-BarWidget.StyleExtraActionButton = function(self)
-	local frame = ENGINE_CATA and ExtraActionBarFrame
-	if frame then
-		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
-		return self:StyleButton(ExtraActionButton1, frame, Module.config.visuals.floaters.extra)
-	end
 end
 
 BarWidget.StyleZoneButton = function(self, frame)

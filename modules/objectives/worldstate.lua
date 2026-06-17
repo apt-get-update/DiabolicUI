@@ -18,9 +18,6 @@ local GetTime = _G.GetTime
 local GetWorldStateUIInfo = _G.GetWorldStateUIInfo
 local UnitAffectingCombat = _G.UnitAffectingCombat
 
--- WoW Client Constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
-
 -- Height of the UIs
 local uiHeight = 24
 
@@ -474,15 +471,13 @@ Module.OnEnable = function(self)
 	self.frame:Place("TOP", "UICenter", "TOP", 0, -30)
 	self.frame:SetSize(32, 32)
 
-	if (not ENGINE_BFA) then 
-		self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
-		self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
-		self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
-		self:UpdateStates() 
-	end 
+	self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
+	self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
+	self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
+	self:UpdateStates() 
 end

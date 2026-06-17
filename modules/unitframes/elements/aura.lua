@@ -42,13 +42,6 @@ local EDGE_NORMAL_TEXTURE = [[Interface\Cooldown\edge]]
 -- Retrive the current game client version
 local BUILD = tonumber((select(2, GetBuildInfo()))) 
 
--- Shortcuts to identify client versions
--- *3.3.0 was the first patch to include spellID as a return argument from UnitAura
-local ENGINE_LEGION 	= Engine:IsBuild("Legion")
-local ENGINE_WOD 		= Engine:IsBuild("WoD")
-local ENGINE_MOP 		= Engine:IsBuild("MoP")
-local ENGINE_CATA 		= Engine:IsBuild("Cata")
-
 -- Speeeeed!
 local day = L["d"]
 local hour = L["h"]
@@ -125,18 +118,7 @@ Aura.OnLeave = function(self)
 	end
 end
 
-Aura.OnClick = ENGINE_CATA and function(self)
-	if not InCombatLockdown() then
-		local unit = self.unit
-		if not UnitExists(unit) then
-			return
-		end
-		if self.isBuff then
-			CancelUnitBuff(unit, self:GetID(), self.filter)
-		end
-	end
-end
-or function(self)
+Aura.OnClick = function(self)
 	local unit = self.unit
 	if not UnitExists(unit) then
 		return
@@ -146,25 +128,7 @@ or function(self)
 	end
 end
 
-Aura.SetCooldownTimer = ENGINE_WOD and function(self, start, duration)
-	local cooldown = self:GetElement("Cooldown")
-	cooldown:SetSwipeColor(0, 0, 0, .75)
-	cooldown:SetDrawEdge(false)
-	cooldown:SetDrawBling(false)
-	cooldown:SetDrawSwipe(true)
-
-	if duration > .5 then
-		cooldown:SetCooldown(start, duration)
-		if self._owner.hideCooldownSpiral then
-			cooldown:Hide()
-		else
-			cooldown:Show()
-		end
-	else
-		cooldown:Hide()
-	end
-	
-end or function(self, start, duration)
+Aura.SetCooldownTimer = function(self, start, duration)
 	local cooldown = self:GetElement("Cooldown")
 
 	-- Try to prevent the strange WotLK bug where the end shine effect
@@ -289,16 +253,6 @@ local CreateAuraButton = function(self)
 	Cooldown:SetPoint("TOPLEFT", Icon, "TOPLEFT", 0, 0)
 	Cooldown:SetPoint("BOTTOMRIGHT", Icon, "BOTTOMRIGHT", 0, 0)
 	Cooldown:SetAlpha(1)
-
-	if ENGINE_WOD then
-		Cooldown:SetSwipeColor(0, 0, 0, .75)
-		Cooldown:SetBlingTexture(BLING_TEXTURE, .3, .6, 1, .75) -- what wow uses, only with slightly lower alpha
-		Cooldown:SetEdgeTexture(EDGE_NORMAL_TEXTURE)
-		Cooldown:SetDrawSwipe(true)
-		Cooldown:SetDrawBling(true)
-		Cooldown:SetDrawEdge(false)
-		Cooldown:SetHideCountdownNumbers(true) -- todo: add better numbering
-	end
 
 	local Overlay = button:CreateFrame()
 	Overlay:SetFrameLevel(button:GetFrameLevel() + 3)

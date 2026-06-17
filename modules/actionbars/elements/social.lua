@@ -19,10 +19,6 @@ local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundK
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
 
--- WoW Client Constants
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-
 MenuWidget.Skin = function(self, button, config, icon)
 	local icon_config = Module.config.visuals.menus.icons
 
@@ -165,7 +161,7 @@ MenuWidget.OnEnable = function(self)
 		local numFriends = onlineFriends or 0
 
 		GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 6, 16)
-		GameTooltip:AddLine(((numTotalGuildMembers > 0) or (not ENGINE_CATA)) and L["Friends & Guild"] or FRIENDS)
+		GameTooltip:AddLine((numTotalGuildMembers > 0) and L["Friends & Guild"] or FRIENDS)
 
 		if (numGuildies > 1) or (numFriends > 0) then
 			GameTooltip:AddLine(" ")

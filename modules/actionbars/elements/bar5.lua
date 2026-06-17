@@ -11,9 +11,6 @@ local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe
 local CreateFrame = CreateFrame
 local RegisterStateDriver = RegisterStateDriver
 
--- Client version constants
-local ENGINE_MOP = Engine:IsBuild("MoP")
-
 local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local NUM_ACTIONBAR_BUTTONS = NUM_ACTIONBAR_BUTTONS or 12
 
@@ -58,44 +55,14 @@ BarWidget.OnEnable = function(self)
 		button:SetAttribute("flyoutDirection", "LEFT")
 	end
 
-	
-	if ENGINE_MOP then
-		-- The whole bar system changed in MoP, adding a lot of macro conditionals
-		-- and changing a lot of the old structure. 
-		-- So different conditionals and drivers are needed.
-		Bar:SetAttribute("_onstate-page", [[ 
-			if newstate == "possess" or newstate == "11" then
-				if HasVehicleActionBar() then
-					newstate = GetVehicleBarIndex();
-				elseif HasOverrideActionBar() then
-					newstate = GetOverrideBarIndex();
-				elseif HasTempShapeshiftActionBar() then
-					newstate = GetTempShapeshiftBarIndex();
-				else
-					newstate = nil;
-				end
-				if not newstate then
-					newstate = 12;
-				end
-			end
-			self:SetAttribute("state", newstate);
-			for i = 1, self:GetAttribute("num_buttons") do
-				local Button = self:GetFrameRef("Button"..i);
-				Button:SetAttribute("actionpage", tonumber(newstate)); 
-			end
-			control:CallMethod("UpdateAction");
-		]])	
-		
-	else
-		Bar:SetAttribute("_onstate-page", [[ 
-			self:SetAttribute("state", newstate);
-			for i = 1, self:GetAttribute("num_buttons") do
-				local Button = self:GetFrameRef("Button"..i);
-				Button:SetAttribute("actionpage", tonumber(newstate)); 
-			end
-			control:CallMethod("UpdateAction");
-		]])	
-	end
+	Bar:SetAttribute("_onstate-page", [[ 
+		self:SetAttribute("state", newstate);
+		for i = 1, self:GetAttribute("num_buttons") do
+			local Button = self:GetFrameRef("Button"..i);
+			Button:SetAttribute("actionpage", tonumber(newstate)); 
+		end
+		control:CallMethod("UpdateAction");
+	]])
 
 	-- reset the page before applying a new page driver
 	Bar:SetAttribute("state-page", "0") 

@@ -480,7 +480,6 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		end
 
 		-- Register our vehicleswitcher
-		--RegisterStateDriver(VehicleUpdater, "vehicleupdate", (ENGINE_MOP and "[overridebar][possessbar][shapeshift]" or "[bonusbar:5]") .. "[vehicleui] invehicle; notinvehicle")
 		RegisterStateDriver(VehicleUpdater, "vehicleupdate", "[bonusbar:5]" .. "[vehicleui] invehicle; notinvehicle")
 	else
 		-- Other units only need their own existence checks.

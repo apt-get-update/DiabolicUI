@@ -26,9 +26,6 @@ local UnitAffectingCombat = UnitAffectingCombat
 -- WoW Frames and Objects
 local FriendsMicroButton = FriendsMicroButton or QuickJoinToastButton -- changed name in Legion
 
--- WoW Client Constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
-
 local selectedFrame = function()
 	return SELECTED_CHAT_FRAME
 end
@@ -392,11 +389,7 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."EditBox"]:SetPoint("LEFT", frame, "LEFT", -config.editbox.offsets[1], 0)
 
 	local scrollToBottomButton = _G[name].ScrollToBottomButton
-	if ENGINE_BFA and scrollToBottomButton then 
-		_G[name.."EditBox"]:SetPoint("RIGHT", frame, "RIGHT", config.editbox.offsets[2] + scrollToBottomButton:GetWidth(), 0)
-	else 
-		_G[name.."EditBox"]:SetPoint("RIGHT", frame, "RIGHT", config.editbox.offsets[2], 0)
-	end 
+	_G[name.."EditBox"]:SetPoint("RIGHT", frame, "RIGHT", config.editbox.offsets[2], 0)
 	_G[name.."EditBox"]:SetPoint("TOP", frame, "BOTTOM", 0, -config.editbox.offsets[3])
 
 	-- new smooth backdrop
@@ -486,14 +479,12 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."EditBox"]:HookScript("OnShow", function(self) 
 		local frame = selectedFrame()
 		if frame then
-			if (not ENGINE_BFA) then
-				local name = frame:GetName()
-				local buttonframe = _G[name.."ButtonFrame"]
-				if buttonframe then
-					buttonframe:Show()
-					buttonframe:SetAlpha(1)
-				end
-			end 
+			local name = frame:GetName()
+			local buttonframe = _G[name.."ButtonFrame"]
+			if buttonframe then
+				buttonframe:Show()
+				buttonframe:SetAlpha(1)
+			end
 			if isDocked(frame) then
 				ChatFrameMenuButton:Show()
 			end
@@ -536,64 +527,61 @@ Module.StyleFrame = function(self, frame)
 		end 
 	end)
 
-	if not ENGINE_BFA then 
-		-- size the buttonframe
-		_G[name.."ButtonFrame"]:Hide()
-		_G[name.."ButtonFrame"]:SetWidth(config.button_frame.size)
+	-- size the buttonframe
+	_G[name.."ButtonFrame"]:Hide()
+	_G[name.."ButtonFrame"]:SetWidth(config.button_frame.size)
 
-		-- bottom button
-		_G[name.."ButtonFrameBottomButton"]:ClearAllPoints()
-		_G[name.."ButtonFrameBottomButton"]:SetPoint("BOTTOM", 0, -(7) + 1) 
-		_G[name.."ButtonFrameBottomButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	-- bottom button
+	_G[name.."ButtonFrameBottomButton"]:ClearAllPoints()
+	_G[name.."ButtonFrameBottomButton"]:SetPoint("BOTTOM", 0, -(7) + 1) 
+	_G[name.."ButtonFrameBottomButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-		_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():ClearAllPoints()
-		_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.bottom.normal)
+	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.bottom.normal)
 
-		_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():ClearAllPoints()
-		_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.bottom.highlight)
-		_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.bottom.highlight)
+	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-		_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():ClearAllPoints()
-		_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.bottom.highlight)
+	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.bottom.highlight)
 
-		_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():ClearAllPoints()
-		_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.bottom.disabled)
+	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.bottom.disabled)
 
-		-- down button
-		_G[name.."ButtonFrameDownButton"]:ClearAllPoints()
-		_G[name.."ButtonFrameDownButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameBottomButton"], "TOP", 0, 0) 
-		_G[name.."ButtonFrameDownButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	-- down button
+	_G[name.."ButtonFrameDownButton"]:ClearAllPoints()
+	_G[name.."ButtonFrameDownButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameBottomButton"], "TOP", 0, 0) 
+	_G[name.."ButtonFrameDownButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-		_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameDownButton"]:GetNormalTexture():ClearAllPoints()
-		_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.down.normal)
+	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.down.normal)
 
-		_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():ClearAllPoints()
-		_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.down.highlight)
-		_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.down.highlight)
+	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-		_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameDownButton"]:GetPushedTexture():ClearAllPoints()
-		_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.down.highlight)
+	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.down.highlight)
 
-		_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():ClearAllPoints()
-		_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.down.disabled)
-
-	end 
+	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.down.disabled)
 
 	-- minimize button on floating windows
 	_G[name.."ButtonFrameMinimizeButton"]:ClearAllPoints()
@@ -624,33 +612,31 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."ButtonFrameMinimizeButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
 
 	-- Keep this down here, order matters when they are hooked to each other!
-	if not ENGINE_BFA then 
-		_G[name.."ButtonFrameUpButton"]:ClearAllPoints()
-		_G[name.."ButtonFrameUpButton"]:SetPoint("TOP", _G[name.."ButtonFrameMinimizeButton"], "BOTTOM", 0, 0) 
-		--_G[name.."ButtonFrameUpButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameDownButton"], "TOP", 0, 0) 
-		_G[name.."ButtonFrameUpButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	_G[name.."ButtonFrameUpButton"]:ClearAllPoints()
+	_G[name.."ButtonFrameUpButton"]:SetPoint("TOP", _G[name.."ButtonFrameMinimizeButton"], "BOTTOM", 0, 0) 
+	--_G[name.."ButtonFrameUpButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameDownButton"], "TOP", 0, 0) 
+	_G[name.."ButtonFrameUpButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-		_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameUpButton"]:GetNormalTexture():ClearAllPoints()
-		_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.up.normal)
+	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.up.normal)
 
-		_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():ClearAllPoints()
-		_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
-		_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
+	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-		_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameUpButton"]:GetPushedTexture():ClearAllPoints()
-		_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
+	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
 
-		_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-		_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():ClearAllPoints()
-		_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-		_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.up.disabled)
-	end 
+	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.up.disabled)
 
 	-- add a super fancy slider to our chat frame
 	--[[

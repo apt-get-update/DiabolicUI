@@ -18,11 +18,6 @@ local UnitFactionGroup = _G.UnitFactionGroup
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
 
--- Client version constants
-local ENGINE_WOD 	= Engine:IsBuild("WoD")
-local ENGINE_MOP 	= Engine:IsBuild("MoP")
-local ENGINE_CATA 	= Engine:IsBuild("Cata")
-
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
@@ -392,121 +387,30 @@ MenuWidget.OnEnable = function(self)
 	-- There are no visual changes from WoD to Legion, so we're using the same code.
 	-- Should be noted though that the HelpMicroButton was removed from the game 
 	-- in wow client patch 7.2.0 (Legion), so it can't be referenced at all from this point.
-	if ENGINE_WOD then
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(GuildMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(CollectionsMicroButton)
-		MicroMenuWindow:InsertButton(EJMicroButton)
-		
-		-- Starter Edition accounts haven't got this feature.
-		if C_StorePublic and C_StorePublic.IsEnabled() then
-			MicroMenuWindow:InsertButton(StoreMicroButton)
-		end
-		
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
+	MicroMenuWindow:InsertButton(CharacterMicroButton)
+	MicroMenuWindow:InsertButton(SpellbookMicroButton)
+	MicroMenuWindow:InsertButton(TalentMicroButton)
+	MicroMenuWindow:InsertButton(AchievementMicroButton)
+	MicroMenuWindow:InsertButton(QuestLogMicroButton)
+	MicroMenuWindow:InsertButton(SocialsMicroButton)
+	MicroMenuWindow:InsertButton(PVPMicroButton)
+	MicroMenuWindow:InsertButton(LFDMicroButton)
+	MicroMenuWindow:InsertButton(MainMenuMicroButton)
+	MicroMenuWindow:InsertButton(HelpMicroButton)
 
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "worldmap", 
-			[GuildMicroButton] = "guild", 
-			[LFDMicroButton] = "raid", 
-			[CollectionsMicroButton] = "mount", 
-			[EJMicroButton] = "encounterjournal", 
-			[StoreMicroButton] = "store", 
-			[MainMenuMicroButton] = "cogs"
-		}
-	
-	elseif ENGINE_MOP then
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(GuildMicroButton)
-		MicroMenuWindow:InsertButton(PVPMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(CompanionsMicroButton)
-		MicroMenuWindow:InsertButton(EJMicroButton)
-		MicroMenuWindow:InsertButton(StoreMicroButton)
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
+	button_to_icon = {
+		[CharacterMicroButton] = "character", 
+		[SpellbookMicroButton] = "spellbook", 
+		[TalentMicroButton] = "talents", 
+		[AchievementMicroButton] = "achievements", 
+		[QuestLogMicroButton] = "questlog", 
+		[SocialsMicroButton] = "group", 
+		[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
+		[LFDMicroButton] = "raid", 
+		[MainMenuMicroButton] = "cogs",
+		[HelpMicroButton] = "bug"
+	}
 
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "questlog", 
-			[GuildMicroButton] = "guild", 
-			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
-			[LFDMicroButton] = "raid", 
-			[CompanionsMicroButton] = "mount", 
-			[EJMicroButton] = "encounterjournal", 
-			[StoreMicroButton] = "store", 
-			[MainMenuMicroButton] = "cogs"
-		}
-
-	elseif ENGINE_CATA then
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(GuildMicroButton)
-		MicroMenuWindow:InsertButton(PVPMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(RaidMicroButton)
-		MicroMenuWindow:InsertButton(EJMicroButton)
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
-		
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "questlog", 
-			[GuildMicroButton] = "guild", 
-			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
-			[LFDMicroButton] = "group", 
-			[RaidMicroButton] = "raid", 
-			[EJMicroButton] = "encounterjournal", 
-			[MainMenuMicroButton] = "cogs"
-		}
-
-	else
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(SocialsMicroButton)
-		MicroMenuWindow:InsertButton(PVPMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
-		MicroMenuWindow:InsertButton(HelpMicroButton)
-
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "questlog", 
-			[SocialsMicroButton] = "group", 
-			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
-			[LFDMicroButton] = "raid", 
-			[MainMenuMicroButton] = "cogs",
-			[HelpMicroButton] = "bug"
-		}
-
-	end
-	
 	-- Disable Blizzard texture changes and stuff from these buttons.
 	-- Also re-align their tooltips to be above our menu.
 	for index,button in MicroMenuWindow:GetAll() do
@@ -924,20 +828,12 @@ MenuWidget.OnEnable = function(self)
 	CharacterBag3Slot:SetParent(BagBarMenuWindow)
 
 	-- The keyring was removed in 4.2.0 in Cata
-	if not ENGINE_CATA then
-		KeyRingButton:SetParent(BagBarMenuWindow)
-		KeyRingButton:Show()
-	end
+	KeyRingButton:SetParent(BagBarMenuWindow)
+	KeyRingButton:Show()
 
 	BagBarMenuButton.OnClick = function(self, button) 
 		if button == "LeftButton" then
-			if ENGINE_CATA then
-				-- This leads to a taint sometimes:
-				-- Global variable BACKPACK_HEIGHT tainted by DiabolicUI - Interface\FrameXML\ContainerFrame.lua:792 ContainerFrame_GenerateFrame()
-				ToggleAllBags() -- functionality on OpenAllBags was changed in Cata from toggle to pure open.
-			else
-				OpenAllBags() -- Toggle bag frames. This was actually a toggle function in WotLK.
-			end
+			OpenAllBags() -- Toggle bag frames. This was actually a toggle function in WotLK.
 		elseif button == "RightButton" then
 			-- Bagbar was toggled by the secure environement. Put any post updates here, if needed.
 		end

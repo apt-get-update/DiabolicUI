@@ -24,7 +24,7 @@ local SPELL_POWER_MANA = _G.SPELL_POWER_MANA or Enum.PowerType.Mana
 local _,CLASS = UnitClass("player")
 
 -- bar visibility constants
-local HAS_VEHICLE_UI = false -- entering a value just to reserve the memory. semantics. 
+local HAS_VEHICLE_UI = false -- entering a value just to reserve the memory. semantics.
 local NUM_VISIBLE_BARS = 1 -- need a fallback here or the spawn will bug out
 
 
@@ -68,13 +68,13 @@ local postUpdatePower = function(power)
 	local owner = power._owner
 	local unit = owner.unit
 
-	-- Check if mana is the current resource or not, 
-	-- and crop the primary power bar as needed to 
-	-- give room for the secondary mana orb. 
+	-- Check if mana is the current resource or not,
+	-- and crop the primary power bar as needed to
+	-- give room for the secondary mana orb.
 	local powerID, powerType = UnitPowerType(unit)
 
-	-- Only do any of this if the type has changed, 
-	-- or if it's the first time calling this. 
+	-- Only do any of this if the type has changed,
+	-- or if it's the first time calling this.
 	if (power.currentPowerType ~= powerType) then
 		if (powerType == "MANA") then
 			power:SetCrop(0, 0)
@@ -113,20 +113,20 @@ local postUpdatePower = function(power)
 
 	Value.alpha = orbAlpha
 	Label.alpha = labelAlpha
-		
+
 end
 
 local maxPower = CLASS == "DEATHKNIGHT" and 6 or 5
 local postUpdateClassPower = function(element, min, max, powerType, newMax)
 	if (not newMax) or (not min) or (not max) or (max == 0) then
-		return 
-	end  
-	if (max > maxPower) then 
+		return
+	end
+	if (max > maxPower) then
 		max = maxPower
-	end 
+	end
 	local config = Module:GetDB("UnitFrames").visuals.units.player
 	element:SetSize(config.classpower.point.size[1]*max + config.classpower.point.padding*(max-1), config.classpower.point.size[2])
-end 
+end
 
 local onEnterLeft = function(self)
 	self.mouseIsOver = true
@@ -146,7 +146,7 @@ local onEnterLeft = function(self)
 
 	Value.alpha = orbAlpha
 	Label.alpha = labelAlpha
-		
+
 end
 
 local onEnterRight = function(self)
@@ -167,7 +167,7 @@ local onEnterRight = function(self)
 
 	Value.alpha = orbAlpha
 	Label.alpha = labelAlpha
-		
+
 end
 
 local onLeaveLeft = function(self)
@@ -188,7 +188,7 @@ local onLeaveLeft = function(self)
 
 	Value.alpha = orbAlpha
 	Label.alpha = labelAlpha
-	
+
 end
 
 local onLeaveRight = function(self)
@@ -209,7 +209,7 @@ local onLeaveRight = function(self)
 
 	Value.alpha = orbAlpha
 	Label.alpha = labelAlpha
-	
+
 end
 
 local postCreateAuraButton = function(self, button)
@@ -292,24 +292,24 @@ local postUpdateAuraButton = function(self, button, ...)
 	else
 		glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
 	end
-	
+
 	if self.hideTimerBar then
 		local color = config.color
-		button:SetBorderColor(color[1], color[2], color[3]) 
+		button:SetBorderColor(color[1], color[2], color[3])
 		icon:SetDesaturated(false)
 		icon:SetVertexColor(.85, .85, .85)
 	else
 		if button.isBuff then
 			if button.isStealable then
 				local color = C.General.Title
-				button:SetBorderColor(color[1], color[2], color[3]) 
+				button:SetBorderColor(color[1], color[2], color[3])
 				icon:SetDesaturated(false)
 				icon:SetVertexColor(1, 1, 1)
 				icon.Overlay:Hide()
 
 			elseif button.isCastByPlayer then
 				local color = C.General.XP
-				button:SetBorderColor(color[1], color[2], color[3]) 
+				button:SetBorderColor(color[1], color[2], color[3])
 				icon:SetDesaturated(false)
 				icon:SetVertexColor(1, 1, 1)
 				icon.Overlay:Hide()
@@ -317,7 +317,7 @@ local postUpdateAuraButton = function(self, button, ...)
 			else
 
 				local color = config.color
-				button:SetBorderColor(color[1], color[2], color[3]) 
+				button:SetBorderColor(color[1], color[2], color[3])
 
 				if icon:SetDesaturated(true) then
 					icon:SetVertexColor(1, 1, 1)
@@ -328,7 +328,7 @@ local postUpdateAuraButton = function(self, button, ...)
 					icon:SetVertexColor(.7, .7, .7)
 					icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
 					icon.Overlay:Show()
-				end		
+				end
 			end
 
 		elseif button.isCastByPlayer then
@@ -350,7 +350,7 @@ local postUpdateAuraButton = function(self, button, ...)
 				icon:SetVertexColor(.7, .7, .7)
 				icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
 				icon.Overlay:Show()
-			end		
+			end
 		end
 	end
 
@@ -366,7 +366,7 @@ local TIME_LIMIT_LOW = Engine:GetConstant("AURA_TIME_LIMIT_LOW")
 
 -- Move to the general aura lists later
 local whiteList = {
-	-- Player debuffs of importance 
+	-- Player debuffs of importance
 	[57723] 	= true, 	-- Exhaustion "Cannot benefit from Heroism or other similar effects." (Alliance version)
 	[57724] 	= true, 	-- Sated "Cannot benefit from Bloodlust or other similar effects." (Horde version)
 	[160455]	= true, 	-- Fatigued "Cannot benefit from Netherwinds or other similar effects." (Pet version)
@@ -421,7 +421,7 @@ end
 
 -- Custom Combo Point Template
 ------------------------------------------------------------------
--- Doing it this way since neither the blizz bars, our bars, 
+-- Doing it this way since neither the blizz bars, our bars,
 -- or any textures as they are will do for our purpose.
 
 local Point = Engine:CreateFrame("Frame")
@@ -459,7 +459,7 @@ local CreatePoint = function(parent)
 	hooksecurefunc(point, "Show", function() point.__glow:Show() end)
 
 	return point
-end 
+end
 
 Point.Update = function(self)
 	local bg = self.__bg
@@ -471,79 +471,79 @@ Point.Update = function(self)
 	local left, right, top, bottom = unpack(self.__statusbarTexCoord)
 	local leftGlow, rightGlow, topGlow, bottomGlow = unpack(self.__glowTexCoord)
 	local percent = (cur-min)/(max-min)
-	if percent > 1 then percent = 1 end 
-	if percent < 0 then percent = 0 end 
+	if percent > 1 then percent = 1 end
+	if percent < 0 then percent = 0 end
 	bar:SetPoint("TOP", 0, -(self:GetHeight() * (1-percent)))
 	bar:SetTexCoord(left, right, top + (bottom-top)*(1-percent), bottom)
 	glow:SetTexCoord(leftGlow, rightGlow, topGlow + (bottomGlow-topGlow)*(1-percent), bottomGlow)
-end 
+end
 
 Point.SetValue = function(self, value)
 	self.__currentValue = value
 	self:Update()
-end 
+end
 
 Point.GetValue = function(self)
 	return self.__currentValue
-end 
+end
 
 Point.SetMinMaxValues = function(self, min, max)
 	self.__minValue = min
 	self.__maxValue = max
 	self:Update()
-end 
+end
 
 Point.GetMinMaxValues = function(self)
 	return self.__minValue, self.__maxValue
-end 
+end
 
 Point.IsObjectType = function(_, objectType)
 	return objectType == "StatusBar"
-end 
+end
 
 Point.GetObjectType = function()
 	return "StatusBar"
-end 
+end
 
 Point.SetStatusBarTexture = function(self, path)
 	self.__bar:SetTexture(path)
-end 
+end
 
 Point.SetBackgroundTexture = function(self, path)
 	self.__bg:SetTexture(path)
-end 
+end
 
 Point.SetGlowTexture = function(self, path)
 	self.__glow:SetTexture(path)
-end 
+end
 
 Point.SetStatusBarTexCoord = function(self, left, right, top, bottom)
 	self.__statusbarTexCoord = { left, right, top, bottom }
-end 
+end
 
 Point.SetBackgroundTexCoord = function(self, left, right, top, bottom)
 	self.__bg:SetTexCoord(left, right, top, bottom)
-end 
+end
 
 Point.SetGlowTexCoord = function(self, left, right, top, bottom)
 	self.__glowTexCoord = { left, right, top, bottom }
-end 
+end
 
 Point.SetGlowBlendMode = function(self, blendMode)
 	self.__glow:SetBlendMode(blendMode)
-end 
+end
 
 Point.SetStatusBarColor = function(self, r, g, b, a)
 	self.__bar:SetVertexColor(r, g, b, a)
 	self.__bg:SetVertexColor(r*1/4, g*1/4, b*1/4, .85 * a)
 	self.__glow:SetVertexColor(r, g, b, .75 * a)
-end 
+end
 
 
--- Left orb (health, castbar, actionbar auras)	
+-- Left orb (health, castbar, actionbar auras)
 local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	local config = Module:GetDB("UnitFrames").visuals.units.player
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
 	local configHealth = config.left.health
 	local configHealthSpark = config.left.health.spark
@@ -591,9 +591,9 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health.Value.showAtZero = true
 
 	Health.PostUpdate = postUpdateHealth
-	
 
-	
+
+
 	-- CastBar
 	-------------------------------------------------------------------
 	if (not Engine:IsAddOnEnabled("Quartz")) and (not Engine:IsAddOnEnabled("Castbars")) then
@@ -607,7 +607,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 		CastBar:SetSparkFlash(unpack(config.castbar.spark.flash))
 		CastBar:DisableSmoothing(true)
 		CastBar:Place(unpack(hasPet and config.castbar.positionPet or config.castbar.position))
-		
+
 		CastBar.Backdrop = CastBar:CreateTexture(nil, "BACKGROUND")
 		CastBar.Backdrop:SetSize(unpack(config.castbar.backdrop.size))
 		CastBar.Backdrop:SetPoint(unpack(config.castbar.backdrop.position))
@@ -655,18 +655,18 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 
 	-- Class Resource
 	-------------------------------------------------------------------
-	if Engine:IsBuild("Legion") and false then -- just disable until I get the element build 
+	if Engine:IsBuild("Legion") and false then -- just disable until I get the element build
 		local ClassPower = self:CreateFrame()
 		ClassPower:SetSize(config.classpower.point.size[1]*maxPower + config.classpower.point.padding*(maxPower-1), config.classpower.point.size[2])
 		ClassPower:Place(unpack(config.classpower.position))
 		ClassPower.PostUpdate = postUpdateClassPower
 		for i = 1,maxPower do
 			local point = CreatePoint(ClassPower)
-			if i == 1 then 
+			if i == 1 then
 				point:SetPoint("LEFT", 0, 0)
-			else 
+			else
 				point:SetPoint("LEFT", ClassPower[i-1], "RIGHT", config.classpower.point.padding, 0)
-			end 
+			end
 			point:SetSize(unpack(config.classpower.point.size))
 			point:SetStatusBarTexture(config.classpower.point.texture)
 			point:SetBackgroundTexture(config.classpower.point.texture)
@@ -677,15 +677,15 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 			point:SetGlowBlendMode("ADD")
 
 			ClassPower[i] = point
-		end 
+		end
 		self.ClassPower = ClassPower
-	end 
+	end
 
 
 	-- Buffs (combat)
 	-------------------------------------------------------------------
 	local Buffs = self:CreateFrame()
-	Buffs:SetSize(unpack(config.buffs.size[HAS_VEHICLE_UI and "vehicle" or tostring(NUM_VISIBLE_BARS)])) 
+	Buffs:SetSize(unpack(config.buffs.size[HAS_VEHICLE_UI and "vehicle" or tostring(NUM_VISIBLE_BARS)]))
 	Buffs:Place(unpack(hasPet and config.buffs.positionPet or config.buffs.position))
 
 	Buffs.config = config.buffs
@@ -710,7 +710,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	-- Debuffs
 	-------------------------------------------------------------------
 	local Debuffs = self:CreateFrame()
-	Debuffs:SetSize(unpack(config.debuffs.size[HAS_VEHICLE_UI and "vehicle" or tostring(NUM_VISIBLE_BARS)]))  
+	Debuffs:SetSize(unpack(config.debuffs.size[HAS_VEHICLE_UI and "vehicle" or tostring(NUM_VISIBLE_BARS)]))
 	Debuffs:Place(unpack(hasPet and config.debuffs.positionPet or config.debuffs.position))
 
 	Debuffs.config = config.debuffs
@@ -737,19 +737,19 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	self.Buffs = Buffs
 	self.Debuffs = Debuffs
 	self.Health = Health
-	
+
 end
 
 -- Right orb (power, minimap auras)
 local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	local config = Module:GetDB("UnitFrames").visuals.units.player
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
 	local configPower = config.right.power
 	local configPowerSpark = config.right.power.spark
 	local configPowerLayers = config.right.power.layers
 	local configPowerTexts = config.texts.power
-	
+
 	self:Size(unpack(config.right.size))
 	self:Place(unpack(config.right.position))
 
@@ -787,14 +787,14 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Power.Label:SetFontObject(configPowerTexts.font_object)
 	Power.Label:SetPoint("BOTTOM", Power.Value, "TOP", 0, 2)
 	Power.Label:SetText("")
-	
+
 	Power.frequent = 1/120
 	Power.PostUpdate = postUpdatePower
 
 	-- Adding a mana only power resource for classes or specs with mana as the secondary resource.
-	-- This is compatible with all current and future classes and specs that function this way, 
-	-- since the only thing this element does is to show mana if the player has mana but 
-	-- mana isn't the currently displayed resource. 
+	-- This is compatible with all current and future classes and specs that function this way,
+	-- since the only thing this element does is to show mana if the player has mana but
+	-- mana isn't the currently displayed resource.
 	local Mana = self:CreateOrb()
 	Mana:Hide()
 	Mana:SetCrop(configPower.size[1]/2, 0)
@@ -828,7 +828,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 
 	-- Player Alternate Power Bar
 	-------------------------------------------------------------------
-	if Engine:IsBuild("BfA") then 
+	if Engine:IsBuild("BfA") then
 		local AltPower = self:CreateStatusBar()
 		AltPower:Hide()
 		AltPower:SetSize(unpack(config.altpower.size))
@@ -839,7 +839,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 		AltPower:SetSparkFlash(unpack(config.altpower.spark.flash))
 		AltPower:DisableSmoothing(true)
 		AltPower:Place(unpack(hasPet and config.altpower.positionPet or config.altpower.position))
-		
+
 		AltPower.Backdrop = AltPower:CreateTexture(nil, "BACKGROUND")
 		AltPower.Backdrop:SetSize(unpack(config.altpower.backdrop.size))
 		AltPower.Backdrop:SetPoint(unpack(config.altpower.backdrop.position))
@@ -868,7 +868,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	-- Buffs (no duration)
 	-------------------------------------------------------------------
 	local Buffs = self:CreateFrame()
-	Buffs:SetSize(config.auras.size[1], config.auras.size[2]) 
+	Buffs:SetSize(config.auras.size[1], config.auras.size[2])
 	Buffs:Place(unpack(config.auras.position)) -- Minimap is always visible on /reload
 
 	Buffs.position = config.auras.position
@@ -897,7 +897,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	self.Buffs = Buffs
 	self.Power = Power
 	self.Mana = Mana
-	
+
 end
 
 UnitFrameWidget.OnEvent = function(self, event, ...)
@@ -912,7 +912,7 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 		else
 			self.Left.Buffs:SetSize(unpack(self.config.buffs.size[tostring(numVisibleBars)]))
 			self.Left.Debuffs:SetSize(unpack(self.config.debuffs.size[tostring(numVisibleBars)]))
-		end	
+		end
 
 		NUM_VISIBLE_BARS = numVisibleBars
 		HAS_VEHICLE_UI = hasVehicleUI
@@ -931,7 +931,7 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 			end
 			self.Left.Buffs:ForceUpdate("Buffs")
 			HAS_VEHICLE_UI = hasVehicleUI
-		end 
+		end
 
 	elseif event == "ENGINE_ACTIONBAR_VISIBLE_CHANGED" then
 		local numVisibleBars = ...
@@ -949,7 +949,7 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 
 	elseif event == "ENGINE_ACTIONBAR_PET_CHANGED" then
 		local isPetBarVisible = ...
-		if isPetBarVisible then 
+		if isPetBarVisible then
 			--self.Right.AltPower:Place(unpack(self.config.altpower.positionPet))
 			self.Left.CastBar:Place(unpack(self.config.castbar.positionPet))
 			self.Left.Buffs:Place(unpack(self.config.buffs.positionPet))
@@ -960,7 +960,7 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 			self.Left.Buffs:Place(unpack(self.config.buffs.position))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.position))
 		end
-	
+
 	elseif event == "ENGINE_MINIMAP_VISIBLE_CHANGED" then
 		local isMinimapVisible = ...
 		if isMinimapVisible then
@@ -973,7 +973,7 @@ end
 
 UnitFrameWidget.OnEnable = function(self)
 	self.config = self:GetDB("UnitFrames").visuals.units.player
-	self.db = self:GetConfig("UnitFrames") 
+	self.db = self:GetConfig("UnitFrames")
 
 	-- get the main actionbar controller, as we need some info from it
 	self.ActionBarController = Engine:GetModule("ActionBars"):GetWidget("Controller: Main"):GetFrame()
@@ -994,7 +994,7 @@ UnitFrameWidget.OnEnable = function(self)
 		BlizzardUI:GetElement("Menu_Panel"):Remove(11, "InterfaceOptionsBuffsPanel")
 	end
 
-	-- Disable Blizzard's castbars for player 
+	-- Disable Blizzard's castbars for player
 	BlizzardUI:GetElement("Auras"):Disable()
 	BlizzardUI:GetElement("CastBars"):Remove("player")
 
@@ -1003,41 +1003,6 @@ UnitFrameWidget.OnEnable = function(self)
 	self:RegisterMessage("ENGINE_ACTIONBAR_VISIBLE_CHANGED", "OnEvent")
 	self:RegisterMessage("ENGINE_MINIMAP_VISIBLE_CHANGED", "OnEvent")
 	self:RegisterMessage("ENGINE_ACTIONBAR_PET_CHANGED", "OnEvent")
-	
-
-	--[[
-	local box = UIParent:CreateTexture(nil, "OVERLAY")
-	box:SetSize(400, 300)
-	box:SetPoint("BOTTOMRIGHT", -20, 100)
-	box:SetColorTexture(1, 1, 1, .5)
-	box:Hide()
-
-	local frame = CreateFrame("Frame")
-	frame.elapsed = 0
-	frame.HZ = 1/120
-	frame:SetScript("OnUpdate", function(self, elapsed) 
-		self.elapsed = self.elapsed + elapsed
-		if self.elapsed > self.HZ then
-			local mouseover = UnitExists("mouseover")
-			if mouseover and UnitIsPlayer("mouseover") then
-				local _, class = UnitClass("mouseover")
-				if class then
-					local r, g, b = unpack(C.Class[class])
-					box:SetVertexColor(r, g, b)
-				else
-					box:SetVertexColor(0, 0, 0)
-				end
-				if not box:IsShown() then
-					box:Show()
-				end
-			else
-				if box:IsShown() then
-					box:Hide()
-				end
-			end
-			self.elapsed = 0
-		end
-	end)]]
 end
 
 UnitFrameWidget.GetFrame = function(self)

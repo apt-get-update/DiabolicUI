@@ -11,11 +11,6 @@ local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe
 local InCombatLockdown = _G.InCombatLockdown
 local RegisterStateDriver = _G.RegisterStateDriver
 
--- Client version constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-
 local NUM_BUTTONS = NUM_PET_ACTION_SLOTS or 10
 
 BarWidget.OnEnable = function(self)
@@ -92,12 +87,10 @@ BarWidget.OnEnable = function(self)
 
 	self:RegisterMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", "UpdatePosition")
 
-	if not ENGINE_BFA then 
-		self:RegisterEvent("PLAYER_ENTERING_VEHICLE", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERED_VEHICLE", "OnEvent")
-		self:RegisterEvent("PLAYER_EXITING_VEHICLE", "OnEvent")
-		self:RegisterEvent("PLAYER_EXITED_VEHICLE", "OnEvent")
-	end 
+	self:RegisterEvent("PLAYER_ENTERING_VEHICLE", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERED_VEHICLE", "OnEvent")
+	self:RegisterEvent("PLAYER_EXITING_VEHICLE", "OnEvent")
+	self:RegisterEvent("PLAYER_EXITED_VEHICLE", "OnEvent")
 
 	self:UpdateVisibility()
 
@@ -130,11 +123,7 @@ BarWidget.UpdateVisibility = function(self, event, ...)
 		self:UnregisterEvent("PLAYER_LEVEL_UP", "UpdateVisibility")
 	end
 	if (UnitLevel("player") >= 10) then 
-		-- Register a proxy visibility driver
-		--local visibility_driver = ENGINE_MOP and "[overridebar][possessbar][shapeshift]hide;[vehicleui]hide;[pet]show;hide" or "[bonusbar:5]hide;[vehicleui]hide;[pet]show;hide"
-		
-		local visibility_driver = ENGINE_MOP and "[petbattle] hide;[pet,novehicleui,nooverridebar,nopossessbar] show;hide"
-		or "[bonusbar:5]hide;[vehicleui][target=vehicle,exists]hide;[pet]show;hide"
+		local visibility_driver = "[bonusbar:5]hide;[vehicleui][target=vehicle,exists]hide;[pet]show;hide"
 
 		UnregisterStateDriver(self.Bar, "vis")
 		RegisterStateDriver(self.Bar, "vis", visibility_driver)

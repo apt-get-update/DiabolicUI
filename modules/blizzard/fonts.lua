@@ -4,10 +4,6 @@ local Module = Engine:NewModule("Blizzard: Fonts")
 local gameLocale = Engine:GetGameLocale()
 local isLatin = ({ enUS  = true, enGB = true, deDE = true, esES = true, esMX = true, frFR = true, itIT = true, ptBR = true, ptPT = true })[gameLocale]
 
--- Client version constants
-local ENGINE_LEGION 	= Engine:IsBuild("Legion")
-local ENGINE_WOD 		= Engine:IsBuild("WoD")
-
 -- Sets up the module font lists
 Module.SetUp = function(self)
 	-- shortcuts to the fonts
@@ -37,19 +33,6 @@ Module.SetUp = function(self)
 	}
 
 	self.hasReplacement = {}
-	if ENGINE_LEGION then
-		for fontID in pairs(config.fonts) do
-			local localeTable = config.fonts[fontID]
-			if localeTable.replacements then
-				for locale, path in pairs(localeTable.replacements) do
-					if (locale == gameLocale) then
-						self.hasReplacement[fonts[fontID]] = path
-					end
-				end
-			end
-		end
-	end
-
 end
 
 -- Changes the fonts rendered by the game engine 
@@ -66,22 +49,13 @@ Module.SetGameEngineFonts = function(self)
 		UNIT_NAME_FONT = fonts.header_light 
 
 		-- the following need the string to be the global name of a fontobject. weird. 
-		if ENGINE_WOD then
-			NAMEPLATE_FONT = "GameFontWhite" -- 12
-			NAMEPLATE_SPELLCAST_FONT = "GameFontWhiteTiny" -- 9
-			self:SetFont(GameFontWhite, fonts.header_light)
-
-		else 
-			NAMEPLATE_FONT = fonts.header_light
-		end
+		NAMEPLATE_FONT = fonts.header_light
 	end
 	
 	-- Legion features much nicer and smoother damage, 
 	-- so we should just leave that as it is. 
-	if not ENGINE_LEGION then
-		if canIUse[fonts.damage] then 
-			DAMAGE_TEXT_FONT = fonts.damage 
-		end
+	if canIUse[fonts.damage] then 
+		DAMAGE_TEXT_FONT = fonts.damage 
 	end
 	
 	if canIUse[fonts.text_normal] then 
@@ -91,26 +65,6 @@ Module.SetGameEngineFonts = function(self)
 	-- default values
 	UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = 14
 	CHAT_FONT_HEIGHTS = { 12, 13, 14, 15, 16, 18, 20, 22 }
-	
-	if ENGINE_WOD then
-		if gameLocale == "ruRU" then -- cyrillic/russian
-			if canIUse[fonts.header_light] then
-				UNIT_NAME_FONT_CYRILLIC = fonts.header_light
-			end
-		elseif gameLocale == "koKR" then -- korean
-			if canIUse[fonts.header_light] then
-				UNIT_NAME_FONT_KOREAN = fonts.header_light
-			end
-		elseif gameLocale == "zhTW" or gameLocale == "zhCN" then -- chinese
-			if canIUse[fonts.header_light] then
-				UNIT_NAME_FONT_CHINESE = fonts.header_light
-			end
-		elseif isLatin then -- roman/latin
-			if canIUse[fonts.header_light] then
-				UNIT_NAME_FONT_ROMAN = fonts.header_light
-			end
-		end	
-	end
 end
 
 -- Change some of the Blizzard font objects to use the fonts we've chosen.
@@ -136,9 +90,7 @@ Module.SetFontObjects = function(self)
 	-- floating combat text
 	-- Legion features much nicer and smoother damage, 
 	-- so we should just leave that as it is. 
-	if not ENGINE_LEGION then
-		self:SetFont(CombatTextFont, fonts.damage, 100, "", -2.5, -2.5, .35) 
-	end
+	self:SetFont(CombatTextFont, fonts.damage, 100, "", -2.5, -2.5, .35) 
 
 	-- chat font
 	-- *Choosing not to override this, as the default chat fonts are fairly good 
@@ -211,24 +163,7 @@ Module.SetEngineFontObjects = function(self)
 	-- Our replacements are only for Asian realms (zhCN, zhTW, koKR), 
 	-- and our fonts are stored in the Microsoft .otf format
 	-- which isn't supported in older versions of WoW. 
-	if not ENGINE_LEGION then
-		return
-	end
-
-	local config = self:GetDB("Fonts")
-	local fontObjects = config.fontObjects
-	for group in pairs(fontObjects) do
-		local replacement = fontObjects[group].replacements[gameLocale]
-		if replacement then
-			for _,objectName in ipairs(fontObjects[group].objects) do
-				local fontObject = _G[objectName]
-				if fontObject then
-					local font, size, style = fontObject:GetFont()
-					fontObject:SetFont(replacement, size, style)
-				end
-			end
-		end
-	end
+	return
 end
 
 

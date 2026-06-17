@@ -16,10 +16,6 @@ local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
 local RegisterStateDriver = _G.RegisterStateDriver
 local UnitClass = _G.UnitClass
 
--- Client version constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-
 local NUM_ACTIONBAR_BUTTONS = _G.NUM_ACTIONBAR_BUTTONS or 12
 
 Widget.OnEnable = function(self)
@@ -55,79 +51,16 @@ Widget.OnEnable = function(self)
 	-- After a state change the state-page childupdate is called 
 	-- on all the bar's children, which in turn updates button actions 
 	-- and initiate a texture update!
-	if ENGINE_BFA then 
-		
-		-- The whole bar system changed in MoP, adding a lot of macro conditionals
-		-- and changing a lot of the old structure. 
-		-- So different conditionals and drivers are needed.
-		Bar:SetAttribute("_onstate-page", [[ 
-			if (newstate == "possess") or (newstate == "11") then
-				if HasVehicleActionBar() then
-					newstate = GetVehicleBarIndex(); 
-				elseif HasOverrideActionBar() then 
-					newstate = GetOverrideBarIndex(); 
-				elseif HasTempShapeshiftActionBar() then
-					newstate = GetTempShapeshiftBarIndex(); 
-				elseif HasBonusActionBar() and (GetActionBarPage() == 1) then 
-					newstate = GetBonusBarIndex();
-				else
-					newstate = nil;
-				end
-				if not newstate then
-					newstate = 12; 
-				end
-			end
-			self:SetAttribute("state", newstate);
+	Bar:SetAttribute("_onstate-page", [[ 
+		self:SetAttribute("state", newstate);
 
-			for i = 1, self:GetAttribute("num_buttons") do
-				local Button = self:GetFrameRef("Button"..i);
-				Button:SetAttribute("actionpage", tonumber(newstate)); 
-			end
+		for i = 1, self:GetAttribute("num_buttons") do
+			local Button = self:GetFrameRef("Button"..i);
+			Button:SetAttribute("actionpage", tonumber(newstate)); 
+		end
 
-			control:CallMethod("UpdateAction");
-		]])	
-	
-	elseif ENGINE_MOP then
-		-- The whole bar system changed in MoP, adding a lot of macro conditionals
-		-- and changing a lot of the old structure. 
-		-- So different conditionals and drivers are needed.
-		Bar:SetAttribute("_onstate-page", [[ 
-			if newstate == "possess" or newstate == "11" then
-				if HasVehicleActionBar() then
-					newstate = GetVehicleBarIndex(); -- 12
-				elseif HasOverrideActionBar() then 
-					newstate = GetOverrideBarIndex(); --14
-				elseif HasTempShapeshiftActionBar() then
-					newstate = GetTempShapeshiftBarIndex(); --13
-				else
-					newstate = nil;
-				end
-				if not newstate then
-					newstate = 12; -- "possess"
-				end
-			end
-			self:SetAttribute("state", newstate);
-
-			for i = 1, self:GetAttribute("num_buttons") do
-				local Button = self:GetFrameRef("Button"..i);
-				Button:SetAttribute("actionpage", tonumber(newstate)); 
-			end
-
-			control:CallMethod("UpdateAction");
-		]])	
-		
-	else
-		Bar:SetAttribute("_onstate-page", [[ 
-			self:SetAttribute("state", newstate);
-
-			for i = 1, self:GetAttribute("num_buttons") do
-				local Button = self:GetFrameRef("Button"..i);
-				Button:SetAttribute("actionpage", tonumber(newstate)); 
-			end
-
-			control:CallMethod("UpdateAction");
-		]])	
-	end
+		control:CallMethod("UpdateAction");
+	]])	
 
 	-- reset the page before applying a new page driver
 	Bar:SetAttribute("state-page", "0") 
@@ -137,59 +70,21 @@ Widget.OnEnable = function(self)
 	local driver = {}
 	local _, playerClass = UnitClass("player")
 
-	if ENGINE_BFA then 
-		table_insert(driver, "[vehicleui][overridebar][possessbar][shapeshift]possess")
-		table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
+	table_insert(driver, "[bonusbar:5]11")
+	table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
 
-		local _, playerClass = UnitClass("player")
-		if playerClass == "DRUID" then
-			table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
-		elseif playerClass == "MONK" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
-		elseif playerClass == "PRIEST" then
-			table_insert(driver, "[bonusbar:1] 7")
-		elseif playerClass == "ROGUE" then
-			table_insert(driver, "[bonusbar:1] 7") --driver = driver .. "; [form:1] 7;  [form:2] 7; [form:3] 7"
-		elseif playerClass == "WARRIOR" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8") -- [bonusbar:3] 9
-		end
-		table_insert(driver, "[form] 1")
-	
-
-	elseif ENGINE_MOP then -- also applies to WoD and (possibly) Legion
-		table_insert(driver, "[vehicleui][overridebar][possessbar][shapeshift]possess")
-		table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
-
-		if playerClass == "DRUID" then
-			table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
-		elseif playerClass == "MONK" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
-		elseif playerClass == "PRIEST" then
-			table_insert(driver, "[bonusbar:1] 7")
-		elseif playerClass == "ROGUE" then
-			table_insert(driver, ("[%s:%s] %s; "):format("form", GetNumShapeshiftForms() + 1, 7) .. "[form:1] 7; [form:3] 7")
-		elseif playerClass == "WARRIOR" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
-		end
-
-	else -- also applies to Cata
-		table_insert(driver, "[bonusbar:5]11")
-		table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
-
-		if playerClass == "DRUID" then
-			table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
-		elseif playerClass == "PRIEST" then
-			table_insert(driver, "[bonusbar:1] 7")
-		elseif playerClass == "ROGUE" then
-			table_insert(driver, "[bonusbar:1] 7; [form:3] 8")
-		elseif playerClass == "WARLOCK" then
-			table_insert(driver, "[form:2] 7")
-		elseif playerClass == "WARRIOR" then
-			table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
-		end
-		
+	if playerClass == "DRUID" then
+		table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
+	elseif playerClass == "PRIEST" then
+		table_insert(driver, "[bonusbar:1] 7")
+	elseif playerClass == "ROGUE" then
+		table_insert(driver, "[bonusbar:1] 7; [form:3] 8")
+	elseif playerClass == "WARLOCK" then
+		table_insert(driver, "[form:2] 7")
+	elseif playerClass == "WARRIOR" then
+		table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
 	end
-	
+
 	table_insert(driver, "1")
 	local pageDriver = table_concat(driver, "; ")
 	
@@ -209,13 +104,7 @@ Widget.OnEnable = function(self)
 	]])
 
 	table_wipe(driver)
-	if ENGINE_BFA then 
-		table_insert(driver, "[overridebar][possessbar][shapeshift]hide;[vehicleui]hide;show")
-	elseif ENGINE_MOP then -- also applies to WoD and (possibly) Legion
-		table_insert(driver, "[vehicleui][overridebar][possessbar][shapeshift]hide")
-	else
-		table_insert(driver, "[bonusbar:5]hide")
-	end
+	table_insert(driver, "[bonusbar:5]hide")
 	table_insert(driver, "[vehicleui]hide")
 	table_insert(driver, "show")
 

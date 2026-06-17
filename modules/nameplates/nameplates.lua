@@ -17,7 +17,7 @@ Module:SetIncompatible("TidyPlates")
 Module:SetIncompatible("TidyPlates_ThreatPlates")
 Module:SetIncompatible("TidyPlatesContinued")
 
--- Hack'ish manual disable switch. 
+-- Hack'ish manual disable switch.
 -- Will be implemented as a user choice later.
 --Module:SetIncompatible("DiabolicUI")
 
@@ -38,7 +38,7 @@ local tostring = tostring
 local unpack = unpack
 
 -- WoW API
-local C_NamePlate = _G.C_NamePlate 
+local C_NamePlate = _G.C_NamePlate
 local C_NamePlate_GetNamePlateForUnit = C_NamePlate and C_NamePlate.GetNamePlateForUnit
 local CreateFrame = _G.CreateFrame
 local GetLocale = _G.GetLocale
@@ -93,10 +93,10 @@ local WORLDFRAME_CHILDREN, WORLDFRAME_PLATES = -1, 0
 
 -- This will be updated later on by the addon,
 -- we just need a value of some sort here as a fallback.
-local SCALE = 768/1080 
+local SCALE = 768/1080
 
 -- This will be true if forced updates are needed on all plates
--- All plates will be updated in the next frame cycle 
+-- All plates will be updated in the next frame cycle
 local FORCEUPDATE = false
 
 -- Frame level constants and counters
@@ -122,7 +122,7 @@ local DAY = Engine:GetConstant("DAY")
 local HOUR = Engine:GetConstant("HOUR")
 local MINUTE = Engine:GetConstant("MINUTE")
 
--- Maximum displayed buffs. 
+-- Maximum displayed buffs.
 local BUFF_MAX_DISPLAY = Engine:GetConstant("BUFF_MAX_DISPLAY")
 
 -- Time limit in seconds where we separate between short and long buffs
@@ -134,30 +134,18 @@ local LEVEL = UnitLevel("player") -- our current level
 local TARGET -- our current target, if any
 local COMBAT -- whether or not the player is affected by combat
 
--- Blizzard textures we use to identify plates and more 
+-- Blizzard textures we use to identify plates and more
 local CATA_PLATE 		= [[Interface\Tooltips\Nameplate-Border]]
-local WOTLK_PLATE 		= [[Interface\TargetingFrame\UI-TargetingFrame-Flash]] 
+local WOTLK_PLATE 		= [[Interface\TargetingFrame\UI-TargetingFrame-Flash]]
 local ELITE_TEXTURE 	= [[Interface\Tooltips\EliteNameplateIcon]] -- elite/rare dragon texture
 local BOSS_TEXTURE 		= [[Interface\TargetingFrame\UI-TargetingFrame-Skull]] -- skull textures
 local EMPTY_TEXTURE 	= Engine:GetConstant("EMPTY_TEXTURE") -- used to make textures invisible
 
--- Client version constants, to avoid extra function calls and database lookups 
--- during the rather performance intensive OnUpdate handling.
--- Hopefully we'll gain a FPS or two by doing this. 
-local ENGINE_BFA_820	= Engine:IsBuild("8.2.0")
-local ENGINE_BFA 		= Engine:IsBuild("BfA")
-local ENGINE_LEGION_730 = Engine:IsBuild("7.3.0")
-local ENGINE_LEGION 	= Engine:IsBuild("Legion")
-local ENGINE_WOD 		= Engine:IsBuild("WoD")
-local ENGINE_MOP 		= Engine:IsBuild("MoP")
-local ENGINE_CATA 		= Engine:IsBuild("Cata")
-local ENGINE_WOTLK 		= Engine:IsBuild("WotLK")
-
 -- Adding support for WeakAuras' personal resource attachments
-local WEAKAURAS = ENGINE_LEGION and Engine:IsAddOnEnabled("WeakAuras")
+local WEAKAURAS = false
 
--- We use the visibility of some items to determine info about a plate's owner, 
--- but still wish these itemse to be hidden from view. 
+-- We use the visibility of some items to determine info about a plate's owner,
+-- but still wish these itemse to be hidden from view.
 -- So we simply parent them to this hidden frame.
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
@@ -184,8 +172,8 @@ local getDifficultyColorByLevel = function(level)
 end
 
 -- In Diablo they don't abbreviate numbers at all
--- Since that would be messy with the insanely high health numbers in WoW, 
--- we compromise and abbreviate numbers larger than 100k. 
+-- Since that would be messy with the insanely high health numbers in WoW,
+-- we compromise and abbreviate numbers larger than 100k.
 local abbreviateNumber = function(number)
 	local abbreviated
 	if number >= 1e6  then
@@ -210,7 +198,7 @@ local formatTime = function(time)
 		return ("%.1f"):format(time)
 	else
 		return ""
-	end	
+	end
 end
 
 local utf8sub = function(str, i, dots)
@@ -262,19 +250,13 @@ local NamePlate_MoP_MT = { __index = NamePlate_MoP }
 local NamePlate_WoD = setmetatable({}, { __index = NamePlate_MoP })
 local NamePlate_WoD_MT = { __index = NamePlate_WoD }
 
--- Legion NamePlates do NOT inherit from the other expansions, 
--- as the system for NamePlates was completely changed here. 
+-- Legion NamePlates do NOT inherit from the other expansions,
+-- as the system for NamePlates was completely changed here.
 local NamePlate_Legion = setmetatable({}, { __index = NamePlate })
 local NamePlate_Legion_MT = { __index = NamePlate_Legion }
 
 -- Set the nameplate metatable to whatever the current expansion is.
-local NamePlate_Current_MT = ENGINE_LEGION and 	NamePlate_Legion_MT 
-						  or ENGINE_WOD and 	NamePlate_WoD_MT 
-						  or ENGINE_MOP and 	NamePlate_MoP_MT 
-						  or ENGINE_CATA and 	NamePlate_Cata_MT
-						  or ENGINE_WOTLK and 	NamePlate_WotLK_MT 
-
-
+local NamePlate_Current_MT = NamePlate_WotLK_MT
 
 ------------------------------------------------------------------------------
 -- 	NamePlate Aura Button Template
@@ -320,33 +302,33 @@ Aura.CreateTimer = function(self, elapsed)
 					-- more than a day
 					if (self.timeLeft > DAY) then
 						self.Time:SetFormattedText("%1dd", math_floor(self.timeLeft / DAY))
-						
+
 					-- more than an hour
 					elseif (self.timeLeft > HOUR) then
 						self.Time:SetFormattedText("%1dh", math_floor(self.timeLeft / HOUR))
-					
+
 					-- more than a minute
 					elseif (self.timeLeft > MINUTE) then
 						self.Time:SetFormattedText("%1dm", math_floor(self.timeLeft / MINUTE))
-					
+
 					-- more than 10 seconds
-					elseif (self.timeLeft > 10) then 
+					elseif (self.timeLeft > 10) then
 						self.Time:SetFormattedText("%1d", math_floor(self.timeLeft))
-					
+
 					-- between 6 and 10 seconds
 					elseif (self.timeLeft >= 6) then
 						self.Time:SetFormattedText("|cffff8800%1d|r", math_floor(self.timeLeft))
-						
+
 					-- between 3 and 5 seconds
 					elseif (self.timeLeft >= 3) then
 						self.Time:SetFormattedText("|cffff0000%1d|r", math_floor(self.timeLeft))
-						
+
 					-- less than 3 seconds
 					elseif (self.timeLeft > 0) then
 						self.Time:SetFormattedText("|cffff0000%.1f|r", self.timeLeft)
 					else
 						self.Time:SetText("")
-					end	
+					end
 				end
 			else
 				self.Time:SetText("")
@@ -369,34 +351,29 @@ NamePlate_WotLK.UpdateUnitData = function(self)
 	local r, g, b
 
 	info.name = oldRegions.name:GetText()
-	info.isBoss = oldRegions.bossicon:IsShown() 
+	info.isBoss = oldRegions.bossicon:IsShown()
 
 	-- If the dragon texture is shown, this is an elite or a rare or both
 	local dragon = oldRegions.eliteicon:IsShown()
-	if dragon then 
+	if dragon then
 		-- Speeeeed!
-		local math_floor = math_floor 
+		local math_floor = math_floor
 
 		-- The texture is golden, so a white vertexcolor means it's not a rare, but an elite
 		r, g, b = oldRegions.eliteicon:GetVertexColor()
 		r, g, b = math_floor(r*100 + .5)/100, math_floor(g*100 + .5)/100, math_floor(b*100 + .5)/100
-		if r + g + b == 3 then 
+		if r + g + b == 3 then
 			info.isElite = true
 			info.isRare = false
 		else
 			-- The problem with the following is that only elites have the dragontexture,
 			-- while it is possible for mobs to be rares without having elite status.
-			info.isElite = oldRegions.eliteicon:GetTexture() == ELITE_TEXTURE 
-			info.isRare = true 
+			info.isElite = oldRegions.eliteicon:GetTexture() == ELITE_TEXTURE
+			info.isRare = true
 		end
 	else
 		info.isElite = false
 		info.isRare = false
-	end
-
-	-- Trivial mobs wasn't introduced until WoD
-	if ENGINE_WOD then
-		info.isTrivial = not(self.old.bars.group:GetScale() > .9)
 	end
 
 	info.level = self.info.isBoss and -1 or tonumber(oldRegions.level:GetText()) or -1
@@ -404,7 +381,7 @@ end
 
 NamePlate_WotLK.UpdateTargetData = function(self)
 	self.info.isTarget = TARGET and (self.baseFrame:GetAlpha() == 1)
-	self.info.isMouseOver = self.old.regions.highlight:IsShown() == 1 
+	self.info.isMouseOver = self.old.regions.highlight:IsShown() == 1
 end
 
 NamePlate_WotLK.UpdateCombatData = function(self)
@@ -434,7 +411,7 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 	r, g, b = oldRegions.name:GetTextColor()
 	r, g, b = math_floor(r*100 + .5)/100, math_floor(g*100 + .5)/100, math_floor(b*100 + .5)/100
 	info.isInCombat = r > .5 and g < .5 -- seems to be working
-	
+
 	-- check for threat situation
 	if oldRegions.threat:IsShown() then
 		r, g, b = oldRegions.threat:GetVertexColor()
@@ -458,7 +435,7 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 
 	info.health = oldBars.health:GetValue() or 0
 	info.healthMax = select(2, oldBars.health:GetMinMaxValues()) or 1
-		
+
 	-- check for raid marks
 	info.isMarked = oldRegions.raidicon:IsShown()
 
@@ -512,7 +489,7 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 			info.isFriendly = true
 			info.isTapped = false
 			info.isPlayer = true
-		else 
+		else
 			if r == 0 and (g > b) and (g + b > 1.5) and (g + b < 1.65) then -- monk?
 				info.isNeutral = false
 				info.isCivilian = false
@@ -666,19 +643,19 @@ NamePlate_WotLK.UpdateAlpha = function(self)
 		local oldHealth = self.old.bars.health
 		local current, min, max = oldHealth:GetValue(), oldHealth:GetMinMaxValues()
 		if ((current == 0) or (max == 0)) then
-			self.targetAlpha = 0 -- just fade out the dead units fast, they tend to get stuck. weird. 
+			self.targetAlpha = 0 -- just fade out the dead units fast, they tend to get stuck. weird.
 		elseif TARGET then
 			if info.isTarget then
 				self.targetAlpha = ALPHA_TARGET
 			elseif info.isPlayer then
 				self.targetAlpha = ALPHA_LOW
 			elseif info.isFriendly then
-				self.targetAlpha = ALPHA_MINIMAL 
+				self.targetAlpha = ALPHA_MINIMAL
 			else
 				self.targetAlpha = ALPHA_FULL
 			end
 		elseif info.isPlayer then
-			self.targetAlpha = ALPHA_FULL 
+			self.targetAlpha = ALPHA_FULL
 		elseif info.isFriendly then
 			self.targetAlpha = ALPHA_MINIMAL
 		else
@@ -699,18 +676,18 @@ NamePlate_WotLK.UpdateFrameLevel = function(self)
 		if not healthValue:IsShown() then
 			healthValue:Show()
 		end
-	else 
+	else
 		if self:GetFrameLevel() ~= self.frameLevel then
 			self:SetFrameLevel(self.frameLevel)
 		end
 		if not healthValue:IsShown() then
 			healthValue:Show()
 		end
-	end	
+	end
 end
 
 NamePlate_WotLK.UpdateRaidTarget = function(self)
-	local info = self.info 
+	local info = self.info
 	local oldRegions = self.old.regions
 
 	info.isMarked = oldRegions.raidicon:IsShown()
@@ -722,7 +699,7 @@ NamePlate_WotLK.UpdateRaidTarget = function(self)
 	else
 		self.RaidIcon:Hide()
 	end
-end 
+end
 
 NamePlate_WotLK.UpdateLevel = function(self)
 	self:UpdateUnitData() -- update 'cosmetic' info like name, level, and elite/boss textures
@@ -738,7 +715,7 @@ end
 NamePlate_WotLK.UpdateThreat = function(self)
 	self:UpdateCombatData() -- updates colors, threat, classes, etc
 	self:ApplyHealthData() -- applies health values and coloring
-end 
+end
 
 NamePlate_WotLK.UpdateFaction = function(self)
 	self:UpdateUnitData() -- update 'cosmetic' info like name, level, and elite/boss textures
@@ -793,7 +770,7 @@ NamePlate_WotLK.OnShow = function(self)
 	self.Cast.Shadow:Hide()
 	self.Auras:Hide()
 
-	self.visiblePlates[self] = self.baseFrame -- this will trigger the fadein 
+	self.visiblePlates[self] = self.baseFrame -- this will trigger the fadein
 
 	self.currentAlpha = 0
 	self:SetAlpha(0)
@@ -804,13 +781,13 @@ NamePlate_WotLK.OnShow = function(self)
 	self:UpdateFrameLevel()
 
 	if self.targetAlpha > 0 then
-		if self.baseFrame:IsShown() then 
-			self:Show() 
+		if self.baseFrame:IsShown() then
+			self:Show()
 		end
 	end
-	
+
 	-- Force an update to catch alpha changes when our target moves back into sight
-	FORCEUPDATE = true 
+	FORCEUPDATE = true
 
 	-- setup player classbars
 	-- setup auras
@@ -848,31 +825,31 @@ NamePlate_WotLK.OnHide = function(self)
 	self.visiblePlates[self] = false -- this will trigger the fadeout and hiding
 
 	-- Force an update to catch alpha changes when our target moves out of sight
-	FORCEUPDATE = true 
+	FORCEUPDATE = true
 end
 
 NamePlate_WotLK.HandleBaseFrame = function(self, baseFrame)
 	local old = {
 		baseFrame = baseFrame,
 		bars = {},
-		regions = {} 
+		regions = {}
 	}
 
-	old.bars.health, 
+	old.bars.health,
 	old.bars.cast = baseFrame:GetChildren()
-	
-	old.regions.threat, 
-	old.regions.healthborder, 
-	old.regions.castshield, 
-	old.regions.castborder, 
-	old.regions.casticon, 
-	old.regions.highlight, 
-	old.regions.name, 
-	old.regions.level, 
-	old.regions.bossicon, 
-	old.regions.raidicon, 
+
+	old.regions.threat,
+	old.regions.healthborder,
+	old.regions.castshield,
+	old.regions.castborder,
+	old.regions.casticon,
+	old.regions.highlight,
+	old.regions.name,
+	old.regions.level,
+	old.regions.bossicon,
+	old.regions.raidicon,
 	old.regions.eliteicon = baseFrame:GetRegions()
-	
+
 	old.bars.health:SetStatusBarTexture(EMPTY_TEXTURE)
 	old.bars.health:Hide()
 	old.bars.cast:SetStatusBarTexture(EMPTY_TEXTURE)
@@ -893,7 +870,7 @@ NamePlate_WotLK.HandleBaseFrame = function(self, baseFrame)
 	old.regions.castshield:SetTexture(nil)
 	old.regions.casticon:SetTexCoord(0, 0, 0, 0)
 	old.regions.casticon:SetWidth(.0001)
-	
+
 	self.baseFrame = baseFrame
 	self.old = old
 
@@ -925,11 +902,11 @@ NamePlate_Legion.UpdateAlpha = function(self)
 	if self.visiblePlates[self] then
 		if UnitExists("target") then
 			if UnitIsUnit(unit, "target") then
-				self.targetAlpha = ALPHA_TARGET 
-			elseif UnitIsTrivial(unit) then 
+				self.targetAlpha = ALPHA_TARGET
+			elseif UnitIsTrivial(unit) then
 				self.targetAlpha = ALPHA_MINIMAL
 			elseif UnitIsPlayer(unit) then
-				self.targetAlpha = .35 
+				self.targetAlpha = .35
 			elseif UnitIsFriend("player", unit) then
 				self.targetAlpha = ALPHA_MINIMAL
 			else
@@ -939,9 +916,9 @@ NamePlate_Legion.UpdateAlpha = function(self)
 					self.targetAlpha = ALPHA_FULL
 				else
 					self.targetAlpha = ALPHA_LOW
-				end	
+				end
 			end
-		elseif UnitIsTrivial(unit) then 
+		elseif UnitIsTrivial(unit) then
 			self.targetAlpha = ALPHA_TRIVIAL
 		elseif UnitIsPlayer(unit) then
 			self.targetAlpha = ALPHA_FULL
@@ -954,7 +931,7 @@ NamePlate_Legion.UpdateAlpha = function(self)
 				self.targetAlpha = ALPHA_TARGET
 			else
 				self.targetAlpha = ALPHA_FULL
-			end	
+			end
 		end
 	else
 		self.targetAlpha = 0 -- fade out hidden frames
@@ -968,8 +945,8 @@ NamePlate_Legion.UpdateFrameLevel = function(self)
 	end
 	if self.visiblePlates[self] then
 		local healthValue = self.Health.Value
-		-- We're placing targets at an elevated frame level, 
-		-- as we want that frame visible above everything else. 
+		-- We're placing targets at an elevated frame level,
+		-- as we want that frame visible above everything else.
 		if UnitIsUnit(unit, "target") then
 			if self:GetFrameLevel() ~= FRAMELEVEL_TARGET then
 				self:SetFrameLevel(FRAMELEVEL_TARGET)
@@ -978,10 +955,10 @@ NamePlate_Legion.UpdateFrameLevel = function(self)
 				healthValue:Show()
 			end
 		else
-			-- We're also elevating rares and bosses to almost the same level as our target, 
+			-- We're also elevating rares and bosses to almost the same level as our target,
 			-- as we want these frames to stand out above all the others to make Legion rares easier to see.
-			-- Note that this doesn't actually make it easier to click, as we can't raise the secure uniframe itself, 
-			-- so it only affects the visible part created by us. 
+			-- Note that this doesn't actually make it easier to click, as we can't raise the secure uniframe itself,
+			-- so it only affects the visible part created by us.
 			local level = UnitLevel(unit)
 			local classificiation = UnitClassification(unit)
 			if (classificiation == "worldboss") or (classificiation == "rare") or (classificiation == "rareelite") or (level and level < 1) then
@@ -992,7 +969,7 @@ NamePlate_Legion.UpdateFrameLevel = function(self)
 					healthValue:Show()
 				end
 			else
-				-- If the current nameplate isn't a rare, boss or our target, 
+				-- If the current nameplate isn't a rare, boss or our target,
 				-- we return it to its original framelevel, if the framelevel has been changed.
 				if self:GetFrameLevel() ~= self.frameLevel then
 					self:SetFrameLevel(self.frameLevel)
@@ -1010,7 +987,7 @@ NamePlate_Legion.UpdateHealth = function(self)
 	if not UnitExists(unit) then
 		return
 	end
-	
+
 	local oldHealth = self.Health:GetValue()
 	local _, oldHealthMax = self.Health:GetMinMaxValues()
 
@@ -1021,7 +998,7 @@ NamePlate_Legion.UpdateHealth = function(self)
 		self.Health:SetMinMaxValues(0, healthMax)
 		self.Health:SetValue(health)
 		self.Health.Value:SetFormattedText("( %s / %s )", abbreviateNumber(health), abbreviateNumber(healthMax))
-	end 
+	end
 end
 
 NamePlate_Legion.UpdateName = function(self)
@@ -1094,7 +1071,7 @@ NamePlate_Legion.UpdateColor = function(self)
 			self.Health:SetStatusBarColor(unpack(C.Reaction[2]))
 		end
 	end
-		
+
 end
 
 NamePlate_Legion.UpdateThreat = function(self)
@@ -1127,41 +1104,41 @@ NamePlate_Legion.AddAuraButton = function(self, id)
 	aura:SetSize(width, height)
 	aura:ClearAllPoints()
 	aura:SetPoint(auraConfig.anchor, ((id-1)%rowsize*(width + gap))*auraConfig.growthX, (math_floor((id-1)/rowsize)*(height + gap)*auraConfig.growthY))
-	
+
 	aura.Scaffold = aura:CreateFrame("Frame")
 	aura.Scaffold:SetPoint("TOPLEFT", aura, 1, -1)
 	aura.Scaffold:SetPoint("BOTTOMRIGHT", aura, -1, 1)
 	aura.Scaffold:SetBackdrop(auraConfig.backdrop)
-	aura.Scaffold:SetBackdropColor(0, 0, 0, 1) 
-	aura.Scaffold:SetBackdropBorderColor(.15, .15, .15) 
+	aura.Scaffold:SetBackdropColor(0, 0, 0, 1)
+	aura.Scaffold:SetBackdropBorderColor(.15, .15, .15)
 
-	aura.Overlay = aura.Scaffold:CreateFrame("Frame") 
-	aura.Overlay:SetAllPoints(aura) 
-	aura.Overlay:SetFrameLevel(aura.Scaffold:GetFrameLevel() + 2) 
+	aura.Overlay = aura.Scaffold:CreateFrame("Frame")
+	aura.Overlay:SetAllPoints(aura)
+	aura.Overlay:SetFrameLevel(aura.Scaffold:GetFrameLevel() + 2)
 
-	aura.Icon = aura.Scaffold:CreateTexture() 
-	aura.Icon:SetDrawLayer("ARTWORK", 0) 
+	aura.Icon = aura.Scaffold:CreateTexture()
+	aura.Icon:SetDrawLayer("ARTWORK", 0)
 	aura.Icon:SetSize(unpack(auraConfig.icon.size))
 	aura.Icon:SetPoint(unpack(auraConfig.icon.place))
 	aura.Icon:SetTexCoord(unpack(auraConfig.icon.texCoord))
-	
-	aura.Shade = aura.Scaffold:CreateTexture() 
-	aura.Shade:SetDrawLayer("ARTWORK", 2) 
-	aura.Shade:SetTexture(auraConfig.icon.shade) 
-	aura.Shade:SetAllPoints(aura.Icon) 
-	aura.Shade:SetVertexColor(0, 0, 0, 1) 
 
-	aura.Time = aura.Overlay:CreateFontString() 
-	aura.Time:SetDrawLayer("OVERLAY", 1) 
-	aura.Time:SetTextColor(unpack(C.General.OffWhite)) 
+	aura.Shade = aura.Scaffold:CreateTexture()
+	aura.Shade:SetDrawLayer("ARTWORK", 2)
+	aura.Shade:SetTexture(auraConfig.icon.shade)
+	aura.Shade:SetAllPoints(aura.Icon)
+	aura.Shade:SetVertexColor(0, 0, 0, 1)
+
+	aura.Time = aura.Overlay:CreateFontString()
+	aura.Time:SetDrawLayer("OVERLAY", 1)
+	aura.Time:SetTextColor(unpack(C.General.OffWhite))
 	aura.Time:SetFontObject(auraConfig.time.fontObject)
 	aura.Time:SetShadowOffset(unpack(auraConfig.time.shadowOffset))
 	aura.Time:SetShadowColor(unpack(auraConfig.time.shadowColor))
 	aura.Time:SetPoint(unpack(auraConfig.time.place))
 
-	aura.Count = aura.Overlay:CreateFontString() 
-	aura.Count:SetDrawLayer("OVERLAY", 1) 
-	aura.Count:SetTextColor(unpack(C.General.Normal)) 
+	aura.Count = aura.Overlay:CreateFontString()
+	aura.Count:SetDrawLayer("OVERLAY", 1)
+	aura.Count:SetTextColor(unpack(C.General.Normal))
 	aura.Count:SetFontObject(auraConfig.count.fontObject)
 	aura.Count:SetShadowOffset(unpack(auraConfig.count.shadowOffset))
 	aura.Count:SetShadowColor(unpack(auraConfig.count.shadowColor))
@@ -1200,16 +1177,16 @@ NamePlate_Legion.UpdateAuras = function(self)
 		--filter = "HARMFUL|PLAYER" -- blizz use INCLUDE_NAME_PLATE_ONLY, but that sucks. So we don't.
 		filter = "HARMFUL" -- blizz use INCLUDE_NAME_PLATE_ONLY, but that sucks. So we don't.
 	else
-		filter = "HELPFUL|PLAYER" -- blizz don't show beneficial auras, but we do. 
+		filter = "HELPFUL|PLAYER" -- blizz don't show beneficial auras, but we do.
 	end
 
 	--local reaction = UnitReaction(unit, "player")
-	--if reaction then 
+	--if reaction then
 	--	if (reaction <= 4) then
 	--		-- Reaction 4 is neutral and less than 4 becomes increasingly more hostile
 	--		filter = "HARMFUL|PLAYER" -- blizz use INCLUDE_NAME_PLATE_ONLY, but that sucks. So we don't.
 	--	else
-	--		filter = "HELPFUL|PLAYER" -- blizz don't show beneficial auras, but we do. 
+	--		filter = "HELPFUL|PLAYER" -- blizz don't show beneficial auras, but we do.
 	--	end
 	--end
 
@@ -1220,9 +1197,9 @@ NamePlate_Legion.UpdateAuras = function(self)
 	local visible = 0
 	if filter then
 		for i = 1, BUFF_MAX_DISPLAY do
-			
+
 			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = UnitAura(unit, i, filter)
-			
+
 			if (not name) then
 				break
 			end
@@ -1234,12 +1211,12 @@ NamePlate_Legion.UpdateAuras = function(self)
 
 			if hostile then
 
-				-- Hide Loss of Control from the plates, 
+				-- Hide Loss of Control from the plates,
 				-- but show it on the big CC display.
 				local lossOfControlPrio = AuraData.loc[spellId]
 				if lossOfControlPrio then
 
-					-- Display the LoC with higher prio if one already exists 
+					-- Display the LoC with higher prio if one already exists
 					if (lossOfControlPrio > locSpellPrio) then
 						locSpellID = spellId
 						locSpellPrio = lossOfControlPrio
@@ -1249,7 +1226,7 @@ NamePlate_Legion.UpdateAuras = function(self)
 						locExpirationTime = expirationTime
 					end
 
-					-- Leaving all LoC effects out 
+					-- Leaving all LoC effects out
 					name = nil
 				end
 			end
@@ -1263,13 +1240,13 @@ NamePlate_Legion.UpdateAuras = function(self)
 				end
 
 				local button = auras[visibleKey]
-			
+
 				if (duration and (duration > 0)) then
 					button.Time:Show()
 				else
 					button.Time:Hide()
 				end
-				
+
 				button.first = true
 				button.duration = duration
 				button.timeLeft = expirationTime
@@ -1282,7 +1259,7 @@ NamePlate_Legion.UpdateAuras = function(self)
 				end
 
 				if filter:find("HARMFUL") then
-					local color = C.Debuff[debuffType] 
+					local color = C.Debuff[debuffType]
 					if not(color and color.r and color.g and color.b) then
 						color = { r = 0.7, g = 0, b = 0 }
 					end
@@ -1292,13 +1269,13 @@ NamePlate_Legion.UpdateAuras = function(self)
 				end
 
 				button.Icon:SetTexture(icon)
-				
+
 				if (not button:IsShown()) then
 					button:Show()
 				end
 			end
 		end
-	end 
+	end
 
 	if (visible == 0) then
 		if auras:IsShown() then
@@ -1349,7 +1326,7 @@ NamePlate_Legion.UpdateAuras = function(self)
 		cc.currentPrio = nil
 		cc.currentSpellID = nil
 	end
-			
+
 end
 
 NamePlate_Legion.UpdateRaidTarget = function(self)
@@ -1411,7 +1388,7 @@ NamePlate_Legion.OnShow = function(self)
 	self:UpdateAll() -- update all elements while it's still transparent
 	self:Show() -- make the fully transparent frame visible
 
-	self.visiblePlates[self] = self.baseFrame -- this will trigger the fadein 
+	self.visiblePlates[self] = self.baseFrame -- this will trigger the fadein
 
 	self:UpdateFrameLevel() -- must be called after the plate has been added to VisiblePlates
 end
@@ -1424,7 +1401,7 @@ NamePlate_Legion.HandleBaseFrame = function(self, baseFrame)
 	local unitframe = baseFrame.UnitFrame
 	if unitframe then
 		unitframe:Hide()
-		unitframe:HookScript("OnShow", function(unitframe) unitframe:Hide() end) 
+		unitframe:HookScript("OnShow", function(unitframe) unitframe:Hide() end)
 	end
 	self.baseFrame = baseFrame
 end
@@ -1455,39 +1432,39 @@ end
 NamePlate_WoD.HandleBaseFrame = function(self, baseFrame)
 	local old = {
 		baseFrame = baseFrame,
-		bars = {}, groups = {}, regions = {} 
+		bars = {}, groups = {}, regions = {}
 	}
 
 	local oldBars = old.bars
 	local oldGroups = old.groups
 	local oldRegions = old.regions
 
-	oldGroups.bars, 
+	oldGroups.bars,
 	oldGroups.name = baseFrame:GetChildren()
-	
+
 	local artContainer = baseFrame.ArtContainer
 
 	oldBars.group = oldGroups.bars
-	
+
 	-- 6.2.2 healthbar
 	oldBars.health = artContainer.HealthBar
-	oldBars.health.texture = oldBars.health:GetRegions() 
-	
+	oldBars.health.texture = oldBars.health:GetRegions()
+
 	-- 6.2.2 absorbbar
 	oldBars.absorb = artContainer.AbsorbBar
-	oldBars.absorb.texture = oldBars.absorb:GetRegions() 
+	oldBars.absorb.texture = oldBars.absorb:GetRegions()
 	oldBars.absorb.overlay = oldBars.absorb.Overlay
 
 	-- 6.2.2 castbar
 	oldBars.cast = artContainer.castBar
-	oldBars.cast.texture = oldBars.cast:GetRegions() 
-	
+	oldBars.cast.texture = oldBars.cast:GetRegions()
+
 	oldRegions.castborder = artContainer.castBarBorder
 	oldRegions.castshield = artContainer.castBarFrameShield
 	oldRegions.spellicon = artContainer.castBarSpellIcon
 	oldRegions.spelltext = artContainer.castBarText
 	oldRegions.spellshadow = artContainer.castBarTextBG
-	
+
 	-- 6.2.2 frame
 	oldRegions.threat = artContainer.AggroWarningTexture
 	oldRegions.healthborder = artContainer.Border
@@ -1499,7 +1476,7 @@ NamePlate_WoD.HandleBaseFrame = function(self, baseFrame)
 
 	-- 6.2.2 name
 	oldRegions.name = baseFrame.NameContainer.NameText
-		
+
 	-- kill off everything blizzard
 	oldBars.health:SetStatusBarTexture(EMPTY_TEXTURE)
 	oldBars.health:Hide()
@@ -1544,32 +1521,32 @@ end
 NamePlate_MoP.HandleBaseFrame = function(self, baseFrame)
 	local old = {
 		baseFrame = baseFrame,
-		bars = {}, frames = {}, regions = {} 
+		bars = {}, frames = {}, regions = {}
 	}
-	
+
 	local oldBars = old.bars
 	local oldFrames = old.frames
 	local oldRegions = old.regions
 
-	oldFrames.bars, 
+	oldFrames.bars,
 	oldFrames.name = baseFrame:GetChildren()
 
-	oldBars.health, 
+	oldBars.health,
 	oldBars.cast = oldFrames.bars:GetChildren()
 
-	oldRegions.castbar, 
-	oldRegions.castborder, 
-	oldRegions.castshield, 
+	oldRegions.castbar,
+	oldRegions.castborder,
+	oldRegions.castshield,
 	oldRegions.casticon,
 	oldRegions.casttext,
 	oldRegions.castshadow = oldBars.cast:GetRegions()
 
-	oldRegions.threat, 
-	oldRegions.healthborder, 
-	oldRegions.highlight, 
-	oldRegions.level,  
-	oldRegions.bossicon, 
-	oldRegions.raidicon, 
+	oldRegions.threat,
+	oldRegions.healthborder,
+	oldRegions.highlight,
+	oldRegions.level,
+	oldRegions.bossicon,
+	oldRegions.raidicon,
 	oldRegions.eliteicon = oldFrames.bars:GetRegions()
 
 	oldRegions.name = oldFrames.name:GetRegions()
@@ -1593,7 +1570,7 @@ NamePlate_MoP.HandleBaseFrame = function(self, baseFrame)
 	oldRegions.castshield:SetTexture(nil)
 	oldRegions.casticon:SetTexCoord(0, 0, 0, 0)
 	oldRegions.casticon:SetWidth(.0001)
-	
+
 	oldRegions.casttext:SetWidth(.0001)
 	oldRegions.casttext:Hide()
 	oldRegions.castshadow:SetTexture(nil)
@@ -1607,29 +1584,29 @@ end
 -- Cata Plates
 ----------------------------------------------------------
 NamePlate_Cata.HandleBaseFrame = function(self, baseFrame)
-	local old = { 
-		baseFrame = baseFrame, 
-		bars = {}, regions = {} 
+	local old = {
+		baseFrame = baseFrame,
+		bars = {}, regions = {}
 	}
 
 	local oldBars = old.bars
 	local oldRegions = old.regions
 
-	oldBars.health, 
+	oldBars.health,
 	oldBars.cast = baseFrame:GetChildren()
 
 	oldRegions.castbar, -- what is this?
-	oldRegions.castborder, 
-	oldRegions.castshield, 
+	oldRegions.castborder,
+	oldRegions.castshield,
 	oldRegions.casticon = oldBars.cast:GetRegions()
 
-	oldRegions.threat, 
-	oldRegions.healthborder, 
-	oldRegions.highlight, 
-	oldRegions.name, 
-	oldRegions.level, 
-	oldRegions.bossicon, 
-	oldRegions.raidicon, 
+	oldRegions.threat,
+	oldRegions.healthborder,
+	oldRegions.highlight,
+	oldRegions.name,
+	oldRegions.level,
+	oldRegions.bossicon,
+	oldRegions.raidicon,
 	oldRegions.eliteicon = baseFrame:GetRegions()
 
 	oldBars.health:SetStatusBarTexture(EMPTY_TEXTURE)
@@ -1688,7 +1665,7 @@ NamePlate.CreateRegions = function(self)
 	HealthBackdrop:SetTexture(textureConfig.bar_backdrop.path)
 	HealthBackdrop:SetVertexColor(.15, .15, .15, .85)
 	Health.Backdrop = HealthBackdrop
-	
+
 	local HealthGlow = Health:CreateTexture()
 	HealthGlow:SetDrawLayer("OVERLAY")
 	HealthGlow:SetSize(unpack(textureConfig.bar_glow.size))
@@ -1741,7 +1718,7 @@ NamePlate.CreateRegions = function(self)
 	CastBackdrop:SetTexture(textureConfig.bar_backdrop.path)
 	CastBackdrop:SetVertexColor(0, 0, 0, 1)
 	Cast.Backdrop = CastBackdrop
-	
+
 	local CastGlow = Cast:CreateTexture()
 	CastGlow:SetDrawLayer("OVERLAY")
 	CastGlow:SetSize(unpack(textureConfig.bar_glow.size))
@@ -1786,14 +1763,14 @@ NamePlate.CreateRegions = function(self)
 	CastName:SetTextColor(unpack(widgetConfig.cast.name.color))
 	Cast.Name = CastName
 
-	-- This is a total copout, but it does what we want, 
+	-- This is a total copout, but it does what we want,
 	-- which is to replace the health value text with spell name.
-	Cast:HookScript("OnShow", function()  
+	Cast:HookScript("OnShow", function()
 		CastShadow:Show()
 		CastGlow:Show()
 		if Cast.Icon then Cast.Icon:Show() end
 	end)
-	Cast:HookScript("OnHide", function()  
+	Cast:HookScript("OnHide", function()
 		CastShadow:Hide()
 		CastGlow:Hide()
 		if Cast.Icon then Cast.Icon:SetTexture(nil); Cast.Icon:Hide() end
@@ -1828,7 +1805,7 @@ NamePlate.CreateRegions = function(self)
 	Highlight:SetAllPoints()
 	Highlight:SetBlendMode("ADD")
 	Highlight:SetColorTexture(1, 1, 1, 1/4)
-	Highlight:SetDrawLayer("BACKGROUND", 1) 
+	Highlight:SetDrawLayer("BACKGROUND", 1)
 
 	-- Unit Level
 	local Level = Health:CreateFontString()
@@ -1855,76 +1832,13 @@ NamePlate.CreateRegions = function(self)
 
 	-- Auras
 	local Auras = self:CreateFrame()
-	Auras:Hide() 
+	Auras:Hide()
 	Auras:SetPoint(unpack(widgetConfig.auras.place))
 	Auras:SetWidth(widgetConfig.auras.rowsize * widgetConfig.auras.button.size[1] + ((widgetConfig.auras.rowsize - 1) * widgetConfig.auras.padding))
 	Auras:SetHeight(widgetConfig.auras.button.size[2])
 
 	-- GitHub issue #62: Experimental CC highlight suggested by dualcoding.
 	-- https://github.com/cogwerkz/DiabolicUI/issues/62
-	if ENGINE_LEGION then
-		local cc = widgetConfig.cc -- adding a tiny amount of speed
-		local CC = self:CreateFrame()
-		CC:Hide() 
-		CC:SetPoint(unpack(cc.place))
-		CC:SetSize(unpack(cc.size))
-
-		CC.Glow = CC:CreateFrame()
-		CC.Glow:SetFrameLevel(CC:GetFrameLevel())
-		CC.Glow:SetSize(unpack(cc.glow.size))
-		CC.Glow:SetPoint(unpack(cc.glow.place))
-		CC.Glow:SetBackdrop(cc.glow.backdrop)
-		CC.Glow:SetBackdropColor(0, 0, 0, 0)
-		CC.Glow:SetBackdropBorderColor(unpack(cc.glow.borderColor)) 
-
-		CC.Scaffold = CC:CreateFrame()
-		CC.Scaffold:SetFrameLevel(CC:GetFrameLevel() + 1)
-		CC.Scaffold:SetAllPoints()
-
-		CC.Border = CC:CreateFrame("Frame")
-		CC.Border:SetFrameLevel(CC:GetFrameLevel() + 2)
-		CC.Border:SetSize(unpack(cc.border.size))
-		CC.Border:SetPoint(unpack(cc.border.place))
-		CC.Border:SetBackdrop(cc.border.backdrop) 
-		CC.Border:SetBackdropColor(0, 0, 0, 0)
-		CC.Border:SetBackdropBorderColor(unpack(cc.border.borderColor))
-
-		CC.Icon = CC.Scaffold:CreateTexture() 
-		CC.Icon:SetDrawLayer("BACKGROUND") 
-		CC.Icon:SetSize(unpack(cc.icon.size))
-		CC.Icon:SetPoint(unpack(cc.icon.place))
-		CC.Icon:SetTexCoord(unpack(cc.icon.texCoord))
-		
-		CC.Icon.Shade = CC.Scaffold:CreateTexture() 
-		CC.Icon.Shade:SetDrawLayer("BORDER") 
-		CC.Icon.Shade:SetSize(unpack(cc.icon.shade.size)) 
-		CC.Icon.Shade:SetPoint(unpack(cc.icon.shade.place)) 
-		CC.Icon.Shade:SetTexture(cc.icon.shade.path) 
-		CC.Icon.Shade:SetVertexColor(unpack(cc.icon.shade.color)) 
-
-		CC.Overlay = CC:CreateFrame("Frame") 
-		CC.Overlay:SetFrameLevel(CC:GetFrameLevel() + 3)
-		CC.Overlay:SetAllPoints() 
-
-		CC.Time = CC.Overlay:CreateFontString() 
-		CC.Time:SetDrawLayer("OVERLAY") 
-		CC.Time:SetTextColor(unpack(C.General.OffWhite)) 
-		CC.Time:SetFontObject(cc.time.fontObject)
-		CC.Time:SetShadowOffset(unpack(cc.time.shadowOffset))
-		CC.Time:SetShadowColor(unpack(cc.time.shadowColor))
-		CC.Time:SetPoint(unpack(cc.time.place))
-	
-		CC.Count = CC.Overlay:CreateFontString() 
-		CC.Count:SetDrawLayer("OVERLAY") 
-		CC.Count:SetTextColor(unpack(C.General.Normal)) 
-		CC.Count:SetFontObject(cc.count.fontObject)
-		CC.Count:SetShadowOffset(unpack(cc.count.shadowOffset))
-		CC.Count:SetShadowColor(unpack(cc.count.shadowColor))
-		CC.Count:SetPoint(unpack(cc.count.place))
-
-		self.CC = CC
-	end
-
 	self.Health = Health
 	self.Cast = Cast
 	self.Auras = Auras
@@ -1934,7 +1848,6 @@ NamePlate.CreateRegions = function(self)
 	self.RaidIcon = RaidIcon
 	self.BossIcon = BossIcon
 	self.Auras = Auras
-
 end
 
 -- Create the sizer frame that handles nameplate positioning
@@ -1969,14 +1882,14 @@ NamePlate.CreateSizer = function(self, baseFrame, worldFrame)
 end
 
 
--- This is where a name plate is first created, 
+-- This is where a name plate is first created,
 -- but it hasn't been assigned a unit (Legion) or shown yet.
 Module.CreateNamePlate = function(self, baseFrame, name)
 	local config = self.config
 	local worldFrame = self.worldFrame
-	
+
 	local plate = setmetatable(Engine:CreateFrame("Frame", "Engine" .. (name or baseFrame:GetName()), worldFrame), NamePlate_Current_MT)
-	plate.info = not(ENGINE_LEGION) and {} or nil
+	plate.info = {}
 	plate.config = config
 	plate.allPlates = self.allPlates
 	plate.visiblePlates = self.visiblePlates
@@ -1984,10 +1897,10 @@ Module.CreateNamePlate = function(self, baseFrame, name)
 	plate.targetAlpha = 0
 	plate.currentAlpha = 0
 
-	-- Since constantly updating frame levels can cause quite the performance drop, 
-	-- we're just giving each frame a set frame level when they spawn. 
+	-- Since constantly updating frame levels can cause quite the performance drop,
+	-- we're just giving each frame a set frame level when they spawn.
 	-- We can still get frames overlapping, but in most cases we avoid it now.
-	-- Targets, bosses and rares have an elevated frame level, 
+	-- Targets, bosses and rares have an elevated frame level,
 	-- but when a nameplate returns to "normal" status, its previous stored level is used instead.
 	FRAMELEVEL_CURRENT = FRAMELEVEL_CURRENT + FRAMELEVEL_STEP
 	if FRAMELEVEL_CURRENT > FRAMELEVEL_MAX then
@@ -2002,15 +1915,10 @@ Module.CreateNamePlate = function(self, baseFrame, name)
 	plate:HandleBaseFrame(baseFrame) -- hide and reference the baseFrame and original blizzard objects
 	plate:CreateRegions() -- create our custom regions and objects
 
-	if (ENGINE_BFA_820) then 
-		plate:SetPoint("TOP", baseFrame, "TOP", 0, 0)
-		plate:Show()
-	else
-		plate:CreateSizer(baseFrame, worldFrame) -- create the sizer that positions the nameplate
-	end 
+	plate:CreateSizer(baseFrame, worldFrame) -- create the sizer that positions the nameplate
 	plate:HookScripts(baseFrame, worldFrame)
 
-	-- Support for WeakAuras personal resource display attachment! :) 
+	-- Support for WeakAuras personal resource display attachment! :)
 	-- (We're pretty much faking it, pretending to be KUINamePlates)
 	if WEAKAURAS then
 		local background = plate:CreateFrame("Frame")
@@ -2037,13 +1945,8 @@ Module.UpdateNamePlateOptions = function(self)
 end
 
 -- Adjust the maximum distance from which a Legion nameplate is visible.
-Module.UpdateNamePlateMaxDistance = ENGINE_LEGION and Engine:Wrap(function(self)
-	if IsInInstance() then
-		SetCVar("nameplateMaxDistance", 45)
-	else
-		SetCVar("nameplateMaxDistance", 30)
-	end
-end)
+Module.UpdateNamePlateMaxDistance = function(self)
+end
 
 Module.UpdateAllScales = function(self)
 	local oldScale = SCALE
@@ -2064,115 +1967,7 @@ end
 -- NamePlate Event Handling
 ----------------------------------------------------------
 local hasSetBlizzardSettings
-Module.OnEvent = ENGINE_LEGION and function(self, event, ...)
-
-	-- This is called when new Legion plates are spawned
-	if (event == "NAME_PLATE_CREATED") then
-		self:CreateNamePlate((...)) -- local namePlateFrameBase = ...
-
-	-- This is called when Legion plates are shown
-	elseif (event == "NAME_PLATE_UNIT_ADDED") then
-		local unit = ...
-		local baseFrame = C_NamePlate_GetNamePlateForUnit(unit)
-		local plate = baseFrame and self.allPlates[baseFrame] 
-		if plate then
-			plate.unit = unit
-			plate:OnShow(unit)
-		end
-
-	-- This is called when Legion plates are hidden
-	elseif (event == "NAME_PLATE_UNIT_REMOVED") then
-		local unit = ...
-		local baseFrame = C_NamePlate_GetNamePlateForUnit(unit)
-		local plate = baseFrame and self.allPlates[baseFrame] 
-		if plate then
-			plate.unit = nil
-			plate:OnHide()
-		end
-
-	elseif (event == "PLAYER_TARGET_CHANGED") then
-		for baseFrame, plate in pairs(self.allPlates) do
-			plate:UpdateAlpha()
-			plate:UpdateFrameLevel()
-		end	
-		
-	elseif (event == "UNIT_AURA") then
-		local unit = ...
-		local baseFrame = C_NamePlate_GetNamePlateForUnit(unit)
-		local plate = baseFrame and self.allPlates[baseFrame]
-		if plate then
-			plate:UpdateAuras()
-		end
-		
-	--elseif (event == "VARIABLES_LOADED") then
-	--	self:UpdateNamePlateOptions()
-	
-	--elseif event == "CVAR_UPDATE" then
-	--	local name = ...
-	--	if name == "SHOW_CLASS_COLOR_IN_V_KEY" or name == "SHOW_NAMEPLATE_LOSE_AGGRO_FLASH" then
-	--		self:UpdateNamePlateOptions()
-	--	end
-
-	elseif (event == "UNIT_FACTION") then
-		local unit = ...
-		local baseFrame = C_NamePlate_GetNamePlateForUnit(unit)
-		local plate = baseFrame and self.allPlates[baseFrame] 
-		if plate then
-			plate:UpdateFaction()
-		end
-
-	elseif (event == "UNIT_THREAT_SITUATION_UPDATE") then
-		for baseFrame, plate in pairs(self.allPlates) do
-			plate:UpdateColor()
-			plate:UpdateThreat()
-		end	
-
-
-	elseif (event == "RAID_TARGET_UPDATE") then
-		for baseFrame, plate in pairs(self.allPlates) do
-		end
-
-	elseif (event == "PLAYER_ENTERING_WORLD") then
-		if (not hasSetBlizzardSettings) then
-			if _G.C_NamePlate then
-				self:UpdateBlizzardSettings()
-			else
-				self:RegisterEvent("ADDON_LOADED", "OnEvent")
-			end
-			hasSetBlizzardSettings = true
-		end
-		self:UpdateAllScales()
-		self:UpdateNamePlateMaxDistance() -- Only available in Legion
-		self.Updater:SetScript("OnUpdate", function(_, ...) self:OnUpdate(...) end)
-
-	elseif (event == "PLAYER_LEVEL_UP") then
-		local level = ...
-		if (level and (level > LEVEL)) then
-			LEVEL = level
-		else
-			local level = UnitLevel("player")
-			if (level > LEVEL) then
-				LEVEL = level
-			end
-		end
-
-	elseif (event == "DISPLAY_SIZE_CHANGED") then
-		self:UpdateNamePlateOptions()
-		self:UpdateAllScales()
-
-	elseif (event == "UI_SCALE_CHANGED") then
-		self:UpdateAllScales()
-
-	elseif (event == "ADDON_LOADED") then
-		local addon = ...
-		if (addon == "Blizzard_NamePlates") then
-			self:UpdateBlizzardSettings()
-			self:UnregisterEvent("ADDON_LOADED")
-		end
-
-	end
-end
-or ENGINE_WOTLK and function(self, event, ...)
+Module.OnEvent = function(self, event, ...)
 	if (event == "PLAYER_ENTERING_WORLD") then
 
 		if (not hasSetBlizzardSettings) then
@@ -2184,12 +1979,12 @@ or ENGINE_WOTLK and function(self, event, ...)
 	--elseif (event == "PLAYER_CONTROL_GAINED") then
 		--for baseFrame, plate in pairs(self.allPlates) do
 		--	plate:UpdateAll()
-		--end	
+		--end
 
 	--elseif (event == "PLAYER_CONTROL_LOST") then
 		--for baseFrame, plate in pairs(self.allPlates) do
 		--	plate:UpdateAll()
-		--end	
+		--end
 
 	elseif (event == "PLAYER_TARGET_CHANGED") then
 		local oldTarget = TARGET
@@ -2218,27 +2013,27 @@ or ENGINE_WOTLK and function(self, event, ...)
 	elseif event == "RAID_TARGET_UPDATE" then
 		for baseFrame, plate in pairs(self.allPlates) do
 			plate:UpdateRaidTarget()
-		end	
+		end
 
 	elseif (event == "UNIT_FACTION") then
 		for baseFrame, plate in pairs(self.allPlates) do
 			plate:UpdateFaction()
-		end	
+		end
 
 	elseif (event == "UNIT_THREAT_SITUATION_UPDATE") then
 		for baseFrame, plate in pairs(self.allPlates) do
 			plate:UpdateThreat()
-		end	
+		end
 
 	elseif (event == "ZONE_CHANGED_NEW_AREA") then
 		for baseFrame, plate in pairs(self.allPlates) do
 			plate:UpdateAll()
-		end	
+		end
 
 	elseif (event == "UNIT_LEVEL") then
 		for baseFrame, plate in pairs(self.allPlates) do
 			plate:UpdateLevel()
-		end	
+		end
 
 	elseif (event == "PLAYER_LEVEL_UP") then
 		local level = ...
@@ -2252,549 +2047,14 @@ or ENGINE_WOTLK and function(self, event, ...)
 		end
 
 	elseif (event == "DISPLAY_SIZE_CHANGED") then
-		self:UpdateAllScales() 
+		self:UpdateAllScales()
 
 	elseif (event == "UI_SCALE_CHANGED") then
 		self:UpdateAllScales()
 	end
 end
 
-Module.OnSpellCast = ENGINE_BFA and function(self, event, unit, ...)
-	if ((not unit) or (not UnitExists(unit))) then
-		return
-	end
-
-	local baseFrame = C_NamePlate_GetNamePlateForUnit(unit)
-	local plate = baseFrame and self.allPlates[baseFrame] 
-	if (not plate) then
-		return
-	end
-
-	local castBar = plate.Cast
-	if (not CastData[castBar]) then
-		CastData[castBar] = {}
-	end
-
-	local castData = CastData[castBar]
-	if (not CastBarPool[plate]) then
-		CastBarPool[plate] = castBar
-	end
-
-	if (event == "UNIT_SPELLCAST_START") then
-		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-		if (not name) then
-			castBar:Hide()
-			return
-		end
-
-		endTime = endTime / 1e3
-		startTime = startTime / 1e3
-
-		local now = GetTime()
-		local max = endTime - startTime
-
-		castData.castID = castID
-		castData.duration = now - startTime
-		castData.max = max
-		castData.delay = 0
-		castData.casting = true
-		castData.interrupt = notInterruptible
-		castData.tradeskill = isTradeSkill
-		castData.total = nil
-		castData.starttime = nil
-
-		castBar:SetMinMaxValues(0, castData.total or castData.max)
-		castBar:SetValue(castData.duration) 
-
-		if castBar.Name then castBar.Name:SetText(utf8sub(text, 32, true)) end
-		if castBar.Icon then castBar.Icon:SetTexture(texture) end
-		if castBar.Value then castBar.Value:SetText("") end
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-
-		castBar:Show()
-		
-		
-	elseif (event == "UNIT_SPELLCAST_FAILED") then
-		local castID, spellID = ...
-		if (castData.castID ~= castID) then
-			return
-		end
-
-		castData.tradeskill = nil
-		castData.total = nil
-		castData.casting = nil
-		castData.interrupt = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-		
-	elseif (event == "UNIT_SPELLCAST_STOP") then
-		local castID, spellID = ...
-		if (castData.castID ~= castID) then
-			return
-		end
-
-		castData.casting = nil
-		castData.interrupt = nil
-		castData.tradeskill = nil
-		castData.total = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-		
-	elseif (event == "UNIT_SPELLCAST_INTERRUPTED") then
-		local castID, spellID = ...
-		if (castData.castID ~= castID) then
-			return
-		end
-
-		castData.tradeskill = nil
-		castData.total = nil
-		castData.casting = nil
-		castData.interrupt = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-		
-	elseif (event == "UNIT_SPELLCAST_INTERRUPTIBLE") then	
-		if castData.casting then
-			local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-		elseif castData.channeling then
-			local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-		end
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-	
-	elseif (event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE") then	
-		if castData.casting then
-			local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-		elseif castData.channeling then
-			local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-		end
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-	
-	elseif (event == "UNIT_SPELLCAST_DELAYED") then
-		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
-		if (not startTime) or (not castData.duration) then 
-			return 
-		end
-		
-		local duration = GetTime() - (startTime / 1000)
-		if (duration < 0) then 
-			duration = 0 
-		end
-
-		castData.delay = (castData.delay or 0) + castData.duration - duration
-		castData.duration = duration
-
-		castBar:SetValue(duration)
-		
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then	
-		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
-		if (not name) then
-			castBar:Hide()
-			return
-		end
-		
-		endTime = endTime / 1e3
-		startTime = startTime / 1e3
-
-		local max = endTime - startTime
-		local duration = endTime - GetTime()
-
-		castData.duration = duration
-		castData.max = max
-		castData.delay = 0
-		castData.channeling = true
-		castData.interrupt = notInterruptible
-
-		castData.casting = nil
-		castData.castID = nil
-
-		castBar:SetMinMaxValues(0, max)
-		castBar:SetValue(duration)
-		
-		if castBar.Name then castBar.Name:SetText(utf8sub(name, 32, true)) end
-		if castBar.Icon then castBar.Icon:SetTexture(texture) end
-		if castBar.Value then castBar.Value:SetText("") end
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-
-		castBar:Show()
-		
-		
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
-		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
-		if (not name) or (not castData.duration) then 
-			return 
-		end
-
-		local duration = (endTime / 1000) - GetTime()
-		castData.delay = (castData.delay or 0) + castData.duration - duration
-		castData.duration = duration
-		castData.max = (endTime - startTime) / 1000
-		
-		castBar:SetMinMaxValues(0, castData.max)
-		castBar:SetValue(duration)
-	
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_STOP") then
-		if castBar:IsShown() then
-			castData.channeling = nil
-			castData.interrupt = nil
-
-			castBar:SetValue(castData.max)
-			castBar:Hide()
-		end
-		
-	else
-		if UnitCastingInfo(unit) then
-			return self:OnSpellCast("UNIT_SPELLCAST_START", unit)
-		end
-		if UnitChannelInfo(unit) then
-			return self:OnSpellCast("UNIT_SPELLCAST_CHANNEL_START", unit)
-		end
-		
-		castData.casting = nil
-		castData.interrupt = nil
-		castData.tradeskill = nil
-		castData.total = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-	end
-
-end
-
-or ENGINE_LEGION and function(self, event, ...)
-	local unit = ...
-	if ((not unit) or (not UnitExists(unit))) then
-		return
-	end
-
-	local baseFrame = C_NamePlate_GetNamePlateForUnit(unit)
-	local plate = baseFrame and self.allPlates[baseFrame] 
-	if (not plate) then
-		return
-	end
-
-	local castBar = plate.Cast
-	if (not CastData[castBar]) then
-		CastData[castBar] = {}
-	end
-
-	local castData = CastData[castBar]
-	if (not CastBarPool[plate]) then
-		CastBarPool[plate] = castBar
-	end
-
-	if (event == "UNIT_SPELLCAST_START") then
-		local unit, spell = ...
-
-		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
-		if (not name) then
-			castBar:Hide()
-			return
-		end
-
-		endTime = endTime / 1e3
-		startTime = startTime / 1e3
-
-		local now = GetTime()
-		local max = endTime - startTime
-
-		castData.castID = castID
-		castData.duration = now - startTime
-		castData.max = max
-		castData.delay = 0
-		castData.casting = true
-		castData.interrupt = notInterruptible
-		castData.tradeskill = isTradeSkill
-		castData.total = nil
-		castData.starttime = nil
-
-		castBar:SetMinMaxValues(0, castData.total or castData.max)
-		castBar:SetValue(castData.duration) 
-
-		if castBar.Name then castBar.Name:SetText(utf8sub(text, 32, true)) end
-		if castBar.Icon then castBar.Icon:SetTexture(texture) end
-		if castBar.Value then castBar.Value:SetText("") end
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-
-		castBar:Show()
-		
-		
-	elseif (event == "UNIT_SPELLCAST_FAILED") then
-		local unit, spellname, _, castID = ...
-		if (castData.castID ~= castID) then
-			return
-		end
-
-		castData.tradeskill = nil
-		castData.total = nil
-		castData.casting = nil
-		castData.interrupt = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-		
-	elseif (event == "UNIT_SPELLCAST_STOP") then
-		local unit, spellname, _, castID = ...
-		if (castData.castID ~= castID) then
-			return
-		end
-
-		castData.casting = nil
-		castData.interrupt = nil
-		castData.tradeskill = nil
-		castData.total = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-		
-	elseif (event == "UNIT_SPELLCAST_INTERRUPTED") then
-		local unit, spellname, _, castID = ...
-		if (castData.castID ~= castID) then
-			return
-		end
-
-		castData.tradeskill = nil
-		castData.total = nil
-		castData.casting = nil
-		castData.interrupt = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-		
-	elseif (event == "UNIT_SPELLCAST_INTERRUPTIBLE") then	
-		local unit, spellname = ...
-
-		if castData.casting then
-			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-
-		elseif castData.channeling then
-			local name, _, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitChannelInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-		end
-
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-	
-	elseif (event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE") then	
-		local unit, spellname = ...
-
-		if castData.casting then
-			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-
-		elseif castData.channeling then
-			local name, _, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitChannelInfo(unit)
-			if name then
-				castData.interrupt = notInterruptible
-			end
-		end
-
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-	
-	elseif (event == "UNIT_SPELLCAST_DELAYED") then
-		local unit, spellname, _, castID = ...
-
-		local name, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
-		if (not startTime) or (not castData.duration) then 
-			return 
-		end
-		
-		local duration = GetTime() - (startTime / 1000)
-		if (duration < 0) then 
-			duration = 0 
-		end
-
-		castData.delay = (castData.delay or 0) + castData.duration - duration
-		castData.duration = duration
-
-		castBar:SetValue(duration)
-		
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then	
-		local unit, spellname = ...
-
-		local name, _, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitChannelInfo(unit)
-		if (not name) then
-			castBar:Hide()
-			return
-		end
-		
-		endTime = endTime / 1e3
-		startTime = startTime / 1e3
-
-		local max = endTime - startTime
-		local duration = endTime - GetTime()
-
-		castData.duration = duration
-		castData.max = max
-		castData.delay = 0
-		castData.channeling = true
-		castData.interrupt = notInterruptible
-
-		castData.casting = nil
-		castData.castID = nil
-
-		castBar:SetMinMaxValues(0, max)
-		castBar:SetValue(duration)
-		
-		if castBar.Name then castBar.Name:SetText(utf8sub(name, 32, true)) end
-		if castBar.Icon then castBar.Icon:SetTexture(texture) end
-		if castBar.Value then castBar.Value:SetText("") end
-		if castBar.Shield then 
-			if castData.interrupt and not UnitIsUnit(unit ,"player") then
-				castBar.Shield:Show()
-				castBar.Glow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-				castBar.Shadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
-			else
-				castBar.Shield:Hide()
-				castBar.Glow:SetVertexColor(0, 0, 0, .75)
-				castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-			end
-		end
-
-		castBar:Show()
-		
-		
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
-		local unit, spellname = ...
-
-		local name, _, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit)
-		if (not name) or (not castData.duration) then 
-			return 
-		end
-
-		local duration = (endTime / 1000) - GetTime()
-		castData.delay = (castData.delay or 0) + castData.duration - duration
-		castData.duration = duration
-		castData.max = (endTime - startTime) / 1000
-		
-		castBar:SetMinMaxValues(0, castData.max)
-		castBar:SetValue(duration)
-	
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_STOP") then
-		local unit, spellname = ...
-
-		if castBar:IsShown() then
-			castData.channeling = nil
-			castData.interrupt = nil
-
-			castBar:SetValue(castData.max)
-			castBar:Hide()
-		end
-		
-	elseif (event == "UNIT_TARGET")	or (event == "PLAYER_TARGET_CHANGED") or (event == "PLAYER_FOCUS_CHANGED") then 
-		local unit = self.unit
-		if (not UnitExists(unit)) then
-			return
-		end
-		if UnitCastingInfo(unit) then
-			return self:OnSpellCast("UNIT_SPELLCAST_START", unit)
-		end
-		if UnitChannelInfo(self.unit) then
-			return self:OnSpellCast("UNIT_SPELLCAST_CHANNEL_START", unit)
-		end
-		
-		castData.casting = nil
-		castData.interrupt = nil
-		castData.tradeskill = nil
-		castData.total = nil
-
-		castBar:SetValue(0)
-		castBar:Hide()
-	end
-
-end
-
-or ENGINE_WOTLK and function(self, event, unit)
+Module.OnSpellCast = function(self, event, unit)
 	-- Only care about units Wrath exposes cast info for.
 	if not unit or (unit ~= "target" and unit ~= "focus" and unit ~= "mouseover") then
 		return
@@ -2940,23 +2200,21 @@ or ENGINE_WOTLK and function(self, event, unit)
 	end
 end or Module.OnSpellCast
 
-
-
 -- NamePlate Update Cycle
 ----------------------------------------------------------
 
 -- Proxy function to allow us to exit the update by returning,
 -- but still continue looping through the remaining castbars, if any!
 Module.UpdateCastBar = function(self, castBar, unit, castData, elapsed)
-	
+
 	unit = unit or (castData and castData.unit)
-	if (not UnitExists(unit)) then 
+	if (not UnitExists(unit)) then
 		castData.casting = nil
 		castData.castID = nil
 		castData.channeling = nil
 		castBar:SetValue(0)
 		castBar:Hide()
-		return 
+		return
 	end
 	local r, g, b
 	if (castData.casting or castData.tradeskill) then
@@ -3005,69 +2263,10 @@ Module.UpdateCastBar = function(self, castBar, unit, castData, elapsed)
 	end
 end
 
-Module.OnUpdate = ENGINE_LEGION and function(self, elapsed)
-	-- Update any running castbars, before we throttle.
-	-- We need to do this on every update to make sure the values are correct.
-	for owner, castBar in pairs(CastBarPool) do
-		self:UpdateCastBar(castBar, owner.unit, CastData[castBar], elapsed)
-	end
+Module.OnUpdate = function(self, elapsed)
 
-	-- Throttle the updates, to increase the performance. 
-	self.elapsed = (self.elapsed or 0) + elapsed
-	if self.elapsed < HZ then
-		return
-	end
-
-	for plate, baseFrame in pairs(self.visiblePlates) do
-		if baseFrame then
-			plate:UpdateAlpha()
-			plate:UpdateHealth()
-		else
-			plate.targetAlpha = 0
-		end
-
-		if (plate.currentAlpha ~= plate.targetAlpha) then
-
-			local difference
-			if (plate.targetAlpha > plate.currentAlpha) then
-				difference = plate.targetAlpha - plate.currentAlpha
-			else
-				difference = plate.currentAlpha - plate.targetAlpha
-			end
-
-			local step_in = elapsed/(FADE_IN * difference)
-			local step_out = elapsed/(FADE_OUT * difference)
-
-			if (plate.targetAlpha > plate.currentAlpha) then
-				if (plate.targetAlpha > plate.currentAlpha + step_in) then
-					plate.currentAlpha = plate.currentAlpha + step_in -- fade in
-				else
-					plate.currentAlpha = plate.targetAlpha -- fading done
-				end
-			elseif (plate.targetAlpha < plate.currentAlpha) then
-				if (plate.targetAlpha < plate.currentAlpha - step_out) then
-					plate.currentAlpha = plate.currentAlpha - step_out -- fade out
-				else
-					plate.currentAlpha = plate.targetAlpha -- fading done
-				end
-			else
-				plate.currentAlpha = plate.targetAlpha -- fading done
-			end
-			plate:SetAlpha(plate.currentAlpha)
-		end
-
-		if ((plate.currentAlpha == 0) and (plate.targetAlpha == 0)) then
-			plate.visiblePlates[plate] = nil
-			plate:Hide()
-		end
-	end	
-	self.elapsed = 0
-
-end 
-or ENGINE_WOTLK and function(self, elapsed)
-
-	-- If the number of children in the WorldFrame 
-	--  is different from the number we have stored, 
+	-- If the number of children in the WorldFrame
+	--  is different from the number we have stored,
 	-- we parse the children to check for new NamePlates.
 	for owner, castBar in pairs(CastBarPool) do
 		self:UpdateCastBar(castBar, owner.unit, CastData[castBar], elapsed)
@@ -3080,19 +2279,19 @@ or ENGINE_WOTLK and function(self, elapsed)
 		local allPlates = self.allPlates
 		local allChildren = self.allChildren
 		local worldFrame = self.worldFrame
-		local isNamePlate = self.IsNamePlate 
+		local isNamePlate = self.IsNamePlate
 		local createNamePlate = self.CreateNamePlate
 
 		for i = 1, numChildren do
 			local object = select(i, worldFrame:GetChildren())
-			if not(allChildren[object]) then 
+			if not(allChildren[object]) then
 				local isPlate = isNamePlate(_, object)
 				if (isPlate and not(allPlates[object])) then
 					-- Update our NamePlate counter
 					WORLDFRAME_PLATES = WORLDFRAME_PLATES + 1
 
 					-- Create and show the nameplate
-					-- The constructor function returns the plate, 
+					-- The constructor function returns the plate,
 					-- so we can chain the OnShow method in the same call.
 					createNamePlate(self, object, "NamePlate"..WORLDFRAME_PLATES):OnShow()
 				elseif (not isPlate) then
@@ -3106,7 +2305,7 @@ or ENGINE_WOTLK and function(self, elapsed)
 
 		-- Debugging the performance drops in AV and Wintergrasp
 		-- by printing out number of new plates and comparing it to when the spikes occur.
-		-- *verified that nameplate creation is NOT a reason for the spikes. 
+		-- *verified that nameplate creation is NOT a reason for the spikes.
 		--if WORLDFRAME_PLATES ~= oldNumPlates then
 		--	print(("Total plates: %d - New this cycle: %d"):format(WORLDFRAME_PLATES, WORLDFRAME_PLATES - oldNumPlates))
 		--end
@@ -3151,7 +2350,7 @@ or ENGINE_WOTLK and function(self, elapsed)
 				else
 					difference = plate.currentAlpha - plate.targetAlpha
 				end
-			
+
 				local step_in = elapsed/(FADE_IN * difference)
 				local step_out = elapsed/(FADE_OUT * difference)
 
@@ -3177,7 +2376,7 @@ or ENGINE_WOTLK and function(self, elapsed)
 				plate.visiblePlates[plate] = nil
 				plate:Hide()
 			end
-		end	
+		end
 	end
 	FORCEUPDATE = false
 
@@ -3188,134 +2387,25 @@ end
 -- NamePlate Parsing (pre Legion)
 ----------------------------------------------------------
 -- Figure out if the given frame is a NamePlate
-Module.IsNamePlate = ENGINE_MOP and function(self, baseFrame)
-	local name = baseFrame:GetName()
-	if name and string_find(name, "^NamePlate%d") then
-		local _, name_frame = baseFrame:GetChildren()
-		if name_frame then
-			local name_region = name_frame:GetRegions()
-			return (name_region and (name_region:GetObjectType() == "FontString"))
-		end
-	end
-end
-or ENGINE_CATA and function(self, baseFrame)
-	local threat_region, border_region = baseFrame:GetRegions()
-	return (border_region and (border_region:GetObjectType() == "Texture") and (border_region:GetTexture() == CATA_PLATE))
-end
-or ENGINE_WOTLK and function(self, baseFrame)
+Module.IsNamePlate = function(self, baseFrame)
 	local region = baseFrame:GetRegions()
 	return (region and (region:GetObjectType() == "Texture") and (region:GetTexture() == WOTLK_PLATE))
 end
 
 
--- Blizzard Settings 
+-- Blizzard Settings
 ----------------------------------------------------------
--- Note that setting CVars in Legion is protected, 
--- and can only be done outside of combat. 
+-- Note that setting CVars in Legion is protected,
+-- and can only be done outside of combat.
 
 -- Force some blizzard console variables to our liking
-Module.UpdateBlizzardSettings = ENGINE_LEGION and Engine:Wrap(function(self)
-	local config = self.config
-	local SetCVar = SetCVar
-
-	-- Because we want friendly NPC nameplates
-	-- We're toning them down a lot as it is, 
-	-- but we still prefer to have them visible, 
-	-- and not the fugly super sized names we get otherwise.
-	SetCVar("nameplateShowFriendlyNPCs", 1)
-
-	-- If these are enabled the GameTooltip will become protected, 
-	-- and all sort of taints and bugs will occur.
-	-- This happens on specs that can dispel when hovering over nameplate auras.
-	-- We create our own auras anyway, so we don't need these. 
-	if ENGINE_LEGION_730 then
-		SetCVar("nameplateShowDebuffsOnFriendly", 0) 
-	end
-		
-	-- Insets at the top and bottom of the screen 
-	-- which the target nameplate will be kept away from. 
-	-- Used to avoid the target plate being overlapped 
-	-- by the target frame or actionbars and keep it in view.
-	SetCVar("nameplateLargeTopInset", .22) -- default .1
-	SetCVar("nameplateOtherTopInset", .22) -- default .08
-	SetCVar("nameplateLargeBottomInset", .22) -- default .15
-	SetCVar("nameplateOtherBottomInset", .22) -- default .1
-	
-	SetCVar("nameplateClassResourceTopInset", 0)
-	SetCVar("nameplateGlobalScale", 1)
-	SetCVar("NamePlateHorizontalScale", 1)
-	SetCVar("NamePlateVerticalScale", 1)
-
-	-- Scale modifier for large plates, used for important monsters
-	SetCVar("nameplateLargerScale", 1) -- default 1.2
-
-	-- The minimum scale and alpha of nameplates
-	SetCVar("nameplateMinScale", 1) -- .5 default .8
-	SetCVar("nameplateMinAlpha", .3) -- default .5
-
-	-- The minimum distance from the camera plates will reach their minimum scale and alpa
-	SetCVar("nameplateMinScaleDistance", 30) -- default 10
-	SetCVar("nameplateMinAlphaDistance", 30) -- default 10
-
-	-- The maximum scale and alpha of nameplates
-	SetCVar("nameplateMaxScale", 1) -- default 1
-	SetCVar("nameplateMaxAlpha", 0.85) -- default 0.9
-	
-	-- The maximum distance from the camera where plates will still have max scale and alpa
-	SetCVar("nameplateMaxScaleDistance", 10) -- default 10
-	SetCVar("nameplateMaxAlphaDistance", 10) -- default 10
-
-	-- Show nameplates above heads or at the base (0 or 2)
-	SetCVar("nameplateOtherAtBase", 0)
-
-	-- Scale and Alpha of the selected nameplate (current target)
-	SetCVar("nameplateSelectedAlpha", 1) -- default 1
-	SetCVar("nameplateSelectedScale", 1) -- default 1
-	
-
-	-- Setting the base size involves changing the size of secure unit buttons, 
-	-- but since we're using our out of combat wrapper, we should be safe.
-	local width, height = config.size[1], config.size[2]
-
-	C_NamePlate.SetNamePlateFriendlySize(width, height)
-	C_NamePlate.SetNamePlateEnemySize(width, height)
-
-	NamePlateDriverFrame.UpdateNamePlateOptions = function() end
-
-	--NamePlateDriverMixin:SetBaseNamePlateSize(unpack(config.size))
-
-	--[[
-		7.1 new methods in C_NamePlate:
-
-		Added:
-		SetNamePlateFriendlySize,
-		GetNamePlateFriendlySize,
-		SetNamePlateEnemySize,
-		GetNamePlateEnemySize,
-		SetNamePlateSelfClickThrough,
-		GetNamePlateSelfClickThrough,
-		SetNameplateFriendlyClickThrough,
-		GetNameplateFriendlyClickThrough,
-		SetNamePlateEnemyClickThrough,
-		GetNamePlateEnemyClickThrough
-
-		These functions allow a specific area on the nameplate to be marked as a preferred click area such that if the nameplate position query results in two overlapping nameplates, the nameplate with the position inside its preferred area will be returned:
-
-		SetNamePlateSelfPreferredClickInsets,
-		GetNamePlateSelfPreferredClickInsets,
-		SetNamePlateFriendlyPreferredClickInsets,
-		GetNamePlateFriendlyPreferredClickInsets,
-		SetNamePlateEnemyPreferredClickInsets,
-		GetNamePlateEnemyPreferredClickInsets,
-	]]
-end)
-or Engine:Wrap(function(self)
+Module.UpdateBlizzardSettings = Engine:Wrap(function(self)
 	local config = self.config
 	local SetCVar = SetCVar
 
 	-- These are from which expansion...? /slap myself for not commenting properly!!
 
-	--SetCVar("bloatthreat", 0) -- scale plates based on the gained threat on a mob with multiple threat targets. weird. 
+	--SetCVar("bloatthreat", 0) -- scale plates based on the gained threat on a mob with multiple threat targets. weird.
 	--SetCVar("bloattest", 0) -- weird setting that shrinks plates for values > 0
 	--SetCVar("bloatnameplates", 0) -- don't change frame size based on threat. it's silly.
 	--SetCVar("repositionfrequency", 1) -- don't skip frames between updates
@@ -3338,90 +2428,45 @@ end
 Module.OnEnable = function(self)
 
 	if (not self.Updater) then
-		-- We parent our update frame to the WorldFrame, 
+		-- We parent our update frame to the WorldFrame,
 		-- as we need it to run even if the user has hidden the UI.
 		self.Updater = CreateFrame("Frame", nil, self.worldFrame)
 
-		-- When parented to the WorldFrame, setting the strata to TOOLTIP 
-		-- will cause its updates to run close to last in the update cycle. 
-		self.Updater:SetFrameStrata("TOOLTIP") 
+		-- When parented to the WorldFrame, setting the strata to TOOLTIP
+		-- will cause its updates to run close to last in the update cycle.
+		self.Updater:SetFrameStrata("TOOLTIP")
 	end
 
-	if ENGINE_LEGION then
-		-- Detection, showing and hidding
-		self:RegisterEvent("NAME_PLATE_CREATED", "OnEvent")
-		self:RegisterEvent("NAME_PLATE_UNIT_ADDED", "OnEvent")
-		self:RegisterEvent("NAME_PLATE_UNIT_REMOVED", "OnEvent")
+	self:UpdateBlizzardSettings()
 
-		-- Updates
-		self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
-		self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")
-		self:RegisterEvent("RAID_TARGET_UPDATE", "OnEvent")
-		self:RegisterEvent("UNIT_AURA", "OnEvent")
-		self:RegisterEvent("UNIT_FACTION", "OnEvent")
-		self:RegisterEvent("UNIT_LEVEL", "OnEvent")
-		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnEvent")
+	-- Update
+	self:RegisterEvent("PLAYER_CONTROL_GAINED", "OnEvent")
+	self:RegisterEvent("PLAYER_CONTROL_LOST", "OnEvent")
+	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")
+	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
+	self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
+	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
+	self:RegisterEvent("RAID_TARGET_UPDATE", "OnEvent")
+	--self:RegisterEvent("UNIT_FACTION", "OnEvent")
+	self:RegisterEvent("UNIT_LEVEL", "OnEvent")
+	--self:RegisterEvent("UNIT_TARGET", "OnEvent")
+	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
 
-		-- NamePlate Update Cycles
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	-- NamePlate Update Cycles
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 
-		-- Scale Changes
-		self:RegisterEvent("DISPLAY_SIZE_CHANGED", "OnEvent")
-		self:RegisterEvent("UI_SCALE_CHANGED", "OnEvent")
+	-- Scale Changes
+	self:RegisterEvent("DISPLAY_SIZE_CHANGED", "OnEvent")
+	self:RegisterEvent("UI_SCALE_CHANGED", "OnEvent")
 
-		--self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
-		--self:RegisterEvent("PLAYER_CONTROL_GAINED", "OnEvent")
-		--self:RegisterEvent("PLAYER_CONTROL_LOST", "OnEvent")
-		--self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
-		--self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
-		--self:RegisterEvent("CVAR_UPDATE", "OnEvent")
-		--self:RegisterEvent("VARIABLES_LOADED", "OnEvent")
-
-		-- Castbars
-		self:RegisterEvent("UNIT_SPELLCAST_START", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_FAILED", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_STOP", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnSpellCast")
-		
-	elseif ENGINE_WOTLK then
-		self:UpdateBlizzardSettings()
-
-		-- Update
-		self:RegisterEvent("PLAYER_CONTROL_GAINED", "OnEvent")
-		self:RegisterEvent("PLAYER_CONTROL_LOST", "OnEvent")
-		self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")
-		self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent") 
-		self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
-		self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
-		self:RegisterEvent("RAID_TARGET_UPDATE", "OnEvent")
-		--self:RegisterEvent("UNIT_FACTION", "OnEvent")
-		self:RegisterEvent("UNIT_LEVEL", "OnEvent")
-		--self:RegisterEvent("UNIT_TARGET", "OnEvent")
-		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
-	
-		-- NamePlate Update Cycles
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-
-		-- Scale Changes
-		self:RegisterEvent("DISPLAY_SIZE_CHANGED", "OnEvent")
-		self:RegisterEvent("UI_SCALE_CHANGED", "OnEvent")
-
-		-- Castbars (Wrath)
-		self:RegisterEvent("UNIT_SPELLCAST_START", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_FAILED", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_STOP", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnSpellCast")
-		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnSpellCast")
-	end
-
+	-- Castbars (Wrath)
+	self:RegisterEvent("UNIT_SPELLCAST_START", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_STOP", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnSpellCast")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnSpellCast")
 end

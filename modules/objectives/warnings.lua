@@ -10,20 +10,10 @@ local strmatch = string.match
 -- WoW API
 local GetTime = _G.GetTime
 
--- WoW Client Constants
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
--- Crazy personal fishing fix
-local FELSONG = ENGINE_LEGION and (GetRealmName() == "Felsong") and (UnitName("player") == "Goldpaw")
 local INTERRUPTED = _G.INTERRUPTED
 
 local OnUpdate = function(self, elapsed)
 	if self.new_message then
-		-- My personal fishing fix on the Felsong realm.
-		if FELSONG and (self.new_message == INTERRUPTED) and (not IsEquippedItemType("Daggers")) then 
-			self.new_message = nil
-			return 
-		end 
 		self.showing_message = self.new_message
 		self.message:SetText(self.new_message)
 		self.message:SetAlpha(1)
@@ -162,35 +152,21 @@ end
 Module.OnEvent = function(self, event, ...)
 	if event == "UI_ERROR_MESSAGE" then
 		local messageType, msg
-		if ENGINE_LEGION then
-			messageType, msg = ...
-			if self.blackListedMessageTypes[messageType] then
-				return
-			end
-		else
-			msg = ...
-		end
+		msg = ...
 		self:AddMessage(msg, "error")
 	elseif event == "UI_INFO_MESSAGE" then
 		local messageType, msg
-		if ENGINE_LEGION then
-			messageType, msg = ...
-			if self.blackListedMessageTypes[messageType] then
-				return
-			end
-		else
-			msg = ...
-		end
+		msg = ...
 		self:AddMessage(msg, "info")
 	end
 end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Warnings")
-	
+
 	self.frames = {}
 	self.frames.player = Engine:CreateFrame("Frame")
-	
+
 	-- error frame
 	self.frames.player.message = self.frames.player:CreateFontString(nil, "OVERLAY")
 	self.frames.player.message.shade = self.frames.player:CreateTexture(nil, "BACKGROUND")
@@ -203,14 +179,14 @@ Module.OnInit = function(self)
 	self.player = self.frames.player
 	self.message = self.frames.player.message
 	self.message_quest = self.frames.player.message_quest
-	
+
 end
 
 Module.OnEnable = function(self)
 	self:GetHandler("BlizzardUI"):GetElement("Warnings"):Disable()
 
 	local config = self.config
-	
+
 	self.player:SetPoint(unpack(config.point))
 	self.player:SetSize(unpack(config.size))
 	self.player.time_to_show = config.time_to_show
@@ -222,7 +198,7 @@ Module.OnEnable = function(self)
 	self.player.time_fading_quest = 0 -- how long the message currently has been displayed
 	self.player.is_fading_quest = false -- if the frame has started fading
 	self.player:Show()
-	
+
 	self.message:SetFontObject(config.font.font_object)
 	self.message:SetPoint(unpack(config.font.point))
 	self.message:SetSize(unpack(config.font.size))
@@ -230,7 +206,7 @@ Module.OnEnable = function(self)
 	self.message.shade:SetTexture(config.shade.texture)
 	self.message.shade:SetVertexColor(0, 0, 0)
 	self.message.shade:SetAlpha(0)
-	
+
 	self.message_quest:SetFontObject(config.font.font_object_quest)
 	self.message_quest:SetPoint(unpack(config.font.point_quest))
 	self.message_quest:SetSize(unpack(config.font.size_quest))
@@ -243,41 +219,10 @@ Module.OnEnable = function(self)
 	hooksecurefunc(self.frames.player.message, "SetText", function(self, alpha) self.shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48) end)
 	hooksecurefunc(self.frames.player.message_quest, "SetAlpha", function(self, alpha) self.shade:SetAlpha(alpha * 2/3) end)
 	hooksecurefunc(self.frames.player.message_quest, "SetText", function(self, alpha) self.shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48) end)
-	
+
 	self:RegisterEvent("UI_ERROR_MESSAGE", "OnEvent")
 	self:RegisterEvent("UI_INFO_MESSAGE", "OnEvent")
 	self:RegisterEvent("SYSMSG", "OnEvent")
-	
-	if ENGINE_LEGION then
-		
-		-- copied from the Blizzard FrameXML file UIErrorsFrame.lua
-		self.blackListedMessageTypes = {
-			[LE_GAME_ERR_ABILITY_COOLDOWN] = true,
-			[LE_GAME_ERR_SPELL_COOLDOWN] = true,
-			[LE_GAME_ERR_SPELL_FAILED_ANOTHER_IN_PROGRESS] = true,
-
-			[LE_GAME_ERR_OUT_OF_HOLY_POWER] = true,
-			[LE_GAME_ERR_OUT_OF_POWER_DISPLAY] = true,
-			[LE_GAME_ERR_OUT_OF_SOUL_SHARDS] = true,
-			[LE_GAME_ERR_OUT_OF_FOCUS] = true,
-			[LE_GAME_ERR_OUT_OF_COMBO_POINTS] = true,
-			[LE_GAME_ERR_OUT_OF_CHI] = true,
-			[LE_GAME_ERR_OUT_OF_PAIN] = true,
-			[LE_GAME_ERR_OUT_OF_HEALTH] = true,
-			[LE_GAME_ERR_OUT_OF_RAGE] = true,
-			[LE_GAME_ERR_OUT_OF_ARCANE_CHARGES] = true,
-			[LE_GAME_ERR_OUT_OF_RANGE] = true,
-			[LE_GAME_ERR_OUT_OF_ENERGY] = true,
-			[LE_GAME_ERR_OUT_OF_LUNAR_POWER] = true,
-			[LE_GAME_ERR_OUT_OF_RUNIC_POWER] = true,
-			[LE_GAME_ERR_OUT_OF_INSANITY] = true,
-			[LE_GAME_ERR_OUT_OF_RUNES] = true,
-			[LE_GAME_ERR_OUT_OF_FURY] = true,
-			[LE_GAME_ERR_OUT_OF_MAELSTROM] = true
-		}
-
-	end
-
 	self.player:SetScript("OnUpdate", OnUpdate)
-	
+
 end

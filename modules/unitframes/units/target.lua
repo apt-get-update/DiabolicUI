@@ -36,13 +36,6 @@ local UnitIsUnit = _G.UnitIsUnit
 local TIME_LIMIT = Engine:GetConstant("AURA_TIME_LIMIT")
 local TIME_LIMIT_LOW = Engine:GetConstant("AURA_TIME_LIMIT_LOW")
 
--- Client Constants
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
--- Constant tracking Legion nameplate visibility
-local ENEMY_PLATES = ENGINE_LEGION and GetCVarBool("nameplateShowEnemies") 
-
-
 -- Utility Functions
 --------------------------------------------------------------------------
 
@@ -320,8 +313,6 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	local isShortDuration = duration and (duration > 0) and (duration < TIME_LIMIT)
 	local isLongDuration = duration and (duration > TIME_LIMIT)
 	local isStatic = (not duration) or (duration == 0)
-	local isCC = ENGINE_LEGION and spellId and AuraData.cc[spellId] -- Any CC 
-	local isLoC = ENGINE_LEGION and spellId and AuraData.loc[spellId] -- Loss of Control CC
 
 	-- Always show boss debuffs on your target
 	if isBossDebuff then
@@ -331,20 +322,8 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	elseif casterIsVehicle then
 		return true
 
-	-- Hide Loss of Control CC from the target when enemy plates are visible
-	--elseif ENEMY_PLATES and isLoC then
-	--elseif ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then 
-	--	return false
-
 	-- Show debuffs cast by the player, unless it's currently visible on a nameplate
 	elseif isCastByPlayer then
-
-		-- Enemy plates are visible (implies Legion)and the target is hostile.
-		-- Filter out debuffs shown on the nameplates. This must match the nameplate filter.
-		--if ENEMY_PLATES and (unitIsHostilePlayer or unitIsHostileNPC) and isShortDuration then 
-		--if ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then 
-		--	return false
-		--end
 		return true
 
 	elseif (not unitCaster) and (not IsInInstance()) then
@@ -796,8 +775,6 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 		else
 			PlaySoundKitID(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT, "SFX")
 		end
-	elseif (event == "PLAYER_ENTERING_WORLD") or (event == "VARIABLES_LOADED") or (event == "CVAR_UPDATE") then
-		ENEMY_PLATES = GetCVarBool("nameplateShowEnemies")
 	end
 end
 
@@ -805,12 +782,6 @@ UnitFrameWidget.OnEnable = function(self)
 	self.UnitFrame = UnitFrame:New("target", Engine:GetFrame(), Style)
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
-
-	if ENGINE_LEGION then
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-		self:RegisterEvent("CVAR_UPDATE", "OnEvent")
-		self:RegisterEvent("VARIABLES_LOADED", "OnEvent")
-	end
 end
 
 UnitFrameWidget.GetFrame = function(self)

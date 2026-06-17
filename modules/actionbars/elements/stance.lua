@@ -169,7 +169,7 @@ BarWidget.UpdateStanceButton = function(self)
 		RegisterStateDriver(Bar, "visibility", "hide")
 	else
 		UnregisterStateDriver(Bar, "visibility")
-		RegisterStateDriver(Bar, "visibility", ENGINE_MOP and "[overridebar][possessbar][shapeshift][vehicleui]hide;show" or "[bonusbar:5][vehicleui]hide;show")
+		RegisterStateDriver(Bar, "visibility", "[bonusbar:5][vehicleui]hide;show")
 	end
 
 	Bar.numForms = numForms

@@ -20,11 +20,6 @@ local IsInInstance = _G.IsInInstance
 local SetCVar = _G.SetCVar
 local WorldFrame = _G.WorldFrame
 
--- Client Constants
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_LEGION_720 = Engine:IsBuild("7.2.0")
-local ENGINE_LEGION_725 = Engine:IsBuild("7.2.5")
-
 -- Bubble Data
 local bubbles = {} -- local bubble registry
 local numChildren, numBubbles = -1, 0 -- bubble counters
@@ -69,18 +64,7 @@ local Updater = Engine:CreateFrame("Frame", nil, WorldFrame)
 Updater:SetFrameStrata("TOOLTIP")
 
 -- check whether the given frame is a bubble or not
-Updater.IsBubble = ENGINE_LEGION_720 and function(self, bubble)
-	if (bubble.IsForbidden and bubble:IsForbidden()) then
-		return
-	end
-	local name = bubble.GetName and bubble:GetName()
-	local region = bubble.GetRegions and bubble:GetRegions()
-	if name or not region then
-		return
-	end
-	local texture = region.GetTexture and region:GetTexture()
-	return texture and texture == BUBBLE_TEXTURE
-end or function(self, bubble)
+Updater.IsBubble = function(self, bubble)
 	local name = bubble.GetName and bubble:GetName()
 	local region = bubble.GetRegions and bubble:GetRegions()
 	if name or not region then
@@ -230,34 +214,14 @@ Module.OnInit = function(self, event, ...)
 	-- give the updater a reference to the bubble parent
 	self.Updater.BubbleBox = self.BubbleBox
 
-	-- Just kill off the chat bubbles within instances in 7.2.5,
-	-- as these have become forbidden to change.
-	-- The original Blizzard bubbles are screen covering spam, and suck.
-	if ENGINE_LEGION_725 then
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateBubbleDisplay")
-	end
-
 	-- Enforcing this now
 	SetCVar("chatBubbles", 1)
 end
 
 Module.UpdateBubbleDisplay = function(self)
 	local _, instanceType = IsInInstance()
-	if ENGINE_LEGION_720 then
-		if (instanceType == "none") then
-			SetCVar("chatBubbles", 1)
-			self.Updater:SetScript("OnUpdate", self.Updater.OnUpdate)
-		else
-			self.Updater:SetScript("OnUpdate", nil)
-			SetCVar("chatBubbles", 0)
-			for bubble in pairs(bubbles) do
-				bubbles[bubble]:Hide()
-			end
-		end
-	else
-		SetCVar("chatBubbles", 1)
-		self.Updater:SetScript("OnUpdate", self.Updater.OnUpdate)
-	end
+	SetCVar("chatBubbles", 1)
+	self.Updater:SetScript("OnUpdate", self.Updater.OnUpdate)
 end
 
 Module.OnEnable = function(self, event, ...)

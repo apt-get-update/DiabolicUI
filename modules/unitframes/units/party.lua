@@ -147,7 +147,7 @@ local PostCreateAuraButton = function(self, button)
 end
 
 
--- TODO: Add PvP relevant buffs to a whitelist in these filters 
+-- TODO: Add PvP relevant buffs to a whitelist in these filters
 -- TODO: Optimize the code once we're happy with the functionality
 
 local Filter = Engine:GetDB("Library: AuraFilters")
@@ -162,14 +162,14 @@ local buffFilter = function(self, name, rank, icon, count, debuffType, duration,
 	    return isCastByPlayer or (unitCaster == "vehicle")
 	end
 
-	if (isBossDebuff) or (isStealable) then 
-		return true 
+	if (isBossDebuff) or (isStealable) then
+		return true
 
 	elseif UnitIsFriend("player", unit) and (isCastByPlayer or unitCaster == "vehicle") then
     	return true
 
-	elseif (isCastByPlayer or (unitCaster == "vehicle")) and (duration and ((duration > 0) and (duration < TIME_LIMIT_LOW))) then 
-		return true 
+	elseif (isCastByPlayer or (unitCaster == "vehicle")) and (duration and ((duration > 0) and (duration < TIME_LIMIT_LOW))) then
+		return true
 
 	elseif ((unitCaster and UnitIsUnit(unit, unitCaster)) and duration and ((duration > 0) and (duration < TIME_LIMIT_LOW))) then
 		return true
@@ -210,9 +210,9 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	local unitClassificiation = UnitClassification(unit)
 	local unitIsHostilePlayer = UnitIsPlayer(unit) and UnitIsEnemy("player", unit)
 	local unitIsHostileNPC = UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit))
-	local unitIsImportant = (unitClassificiation == "worldboss") or (unitClassificiation == "rare") or (unitClassificiation == "rareelite") or (level and level < 1) 
+	local unitIsImportant = (unitClassificiation == "worldboss") or (unitClassificiation == "rare") or (unitClassificiation == "rareelite") or (level and level < 1)
 
-	-- Info about the caster of the auras 
+	-- Info about the caster of the auras
 	local casterIsUnit = unitCaster and ((unitCaster == unit) or UnitIsUnit(unit, unitCaster))
 	local casterIsVehicle = unitCaster and ((unitCaster == "vehicle") or UnitIsUnit("vehicle", unitCaster))
 
@@ -220,22 +220,20 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	local isShortDuration = duration and (duration > 0) and (duration < TIME_LIMIT)
 	local isLongDuration = duration and (duration > TIME_LIMIT)
 	local isStatic = (not duration) or (duration == 0)
-	local isCC = ENGINE_LEGION and spellId and AuraData.cc[spellId] -- Any CC 
-	local isLoC = ENGINE_LEGION and spellId and AuraData.loc[spellId] -- Loss of Control CC
 
 	-- If this is a friendly unitframe, prioritize useful/dispellable info
 	if UnitIsFriend("player", unit) then
 	    -- Always show boss debuffs on party
-	    if isBossDebuff then 
+	    if isBossDebuff then
 	    	return true
 	    end
 	    -- Show dispellables (Magic/Curse/Disease/Poison)
-	    if debuffType then 
-	    	return true 
+	    if debuffType then
+	    	return true
 	    end
 	    -- Show my own debuffs (e.g., Weakened Soul) and vehicle
-	    if isCastByPlayer or (unitCaster == "vehicle") then 
-	    	return true 
+	    if isCastByPlayer or (unitCaster == "vehicle") then
+	    	return true
 	    end
 	    -- Otherwise hide
 	    return false
@@ -245,13 +243,13 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	if isBossDebuff then
 		return true
 
-	-- Always show debuffs cast by your vehicle 
+	-- Always show debuffs cast by your vehicle
 	elseif casterIsVehicle then
 		return true
 
 	-- Hide Loss of Control CC from the target when enemy plates are visible
 	--elseif ENEMY_PLATES and isLoC then
-	--elseif ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then 
+	--elseif ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then
 	--	return false
 
 	-- Show debuffs cast by the player, unless it's currently visible on a nameplate
@@ -259,8 +257,8 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 
 		-- Enemy plates are visible (implies Legion)and the target is hostile.
 		-- Filter out debuffs shown on the nameplates. This must match the nameplate filter.
-		--if ENEMY_PLATES and (unitIsHostilePlayer or unitIsHostileNPC) and isShortDuration then 
-		--if ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then 
+		--if ENEMY_PLATES and (unitIsHostilePlayer or unitIsHostileNPC) and isShortDuration then
+		--if ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then
 		--	return false
 		--end
 		return true
@@ -298,30 +296,30 @@ local PostUpdateAuraButton = function(self, button, ...)
 	else
 		glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
 	end
-	
+
 	if self.hideTimerBar then
 		local color = config.color
-		button:SetBorderColor(color[1], color[2], color[3]) 
+		button:SetBorderColor(color[1], color[2], color[3])
 		icon:SetDesaturated(false)
 		icon:SetVertexColor(.85, .85, .85)
 	else
 		if button.isBuff then
 			if button.isStealable then
 				local color = C.General.Title
-				button:SetBorderColor(color[1], color[2], color[3]) 
+				button:SetBorderColor(color[1], color[2], color[3])
 				icon:SetDesaturated(false)
 				icon:SetVertexColor(1, 1, 1)
 				icon.Overlay:Hide()
 
 			elseif button.isCastByPlayer then
 				local color = C.General.XP
-				button:SetBorderColor(color[1], color[2], color[3]) 
+				button:SetBorderColor(color[1], color[2], color[3])
 				icon:SetDesaturated(false)
 				icon:SetVertexColor(1, 1, 1)
 				icon.Overlay:Hide()
 			else
 				local color = config.color
-				button:SetBorderColor(color[1], color[2], color[3]) 
+				button:SetBorderColor(color[1], color[2], color[3])
 
 				if icon:SetDesaturated(true) then
 					icon:SetVertexColor(1, 1, 1)
@@ -332,7 +330,7 @@ local PostUpdateAuraButton = function(self, button, ...)
 					icon:SetVertexColor(.7, .7, .7)
 					icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
 					icon.Overlay:Show()
-				end		
+				end
 			end
 
 		elseif button.isCastByPlayer then
@@ -354,7 +352,7 @@ local PostUpdateAuraButton = function(self, button, ...)
 				icon:SetVertexColor(.7, .7, .7)
 				icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
 				icon.Overlay:Show()
-			end		
+			end
 		end
 	end
 end
@@ -363,16 +361,16 @@ end
 local fakeUnitNum = 0
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.party
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
 	--self:Size(unpack(config.size))
 	--self:Place(unpack(config.position))
 
 	local unitNum = string_match(unit, "%d")
-	if (not unitNum) then 
+	if (not unitNum) then
 		fakeUnitNum = fakeUnitNum + 1
 		unitNum = fakeUnitNum
-	end 
+	end
 
 	self:Size(unpack(config.size))
 	self:Place("TOP", 0, -((unitNum-1) * 90))
@@ -395,12 +393,12 @@ local Style = function(self, unit)
 	local Border = self:CreateFrame("Frame")
 	Border:SetFrameLevel(self:GetFrameLevel() + 4)
 	Border:SetAllPoints()
-	
+
 	local BorderNormal = Border:CreateTexture(nil, "BORDER")
 	BorderNormal:SetSize(unpack(config.border.texture_size))
 	BorderNormal:SetPoint(unpack(config.border.texture_position))
 	BorderNormal:SetTexture(config.border.textures.normal)
-	
+
 	local BorderNormalHighlight = Border:CreateTexture(nil, "BORDER")
 	BorderNormalHighlight:SetSize(unpack(config.border.texture_size))
 	BorderNormalHighlight:SetPoint(unpack(config.border.texture_position))
@@ -415,7 +413,7 @@ local Style = function(self, unit)
 	Threat:SetSize(unpack(config.border.texture_size))
 	Threat:SetPoint(unpack(config.border.texture_position))
 	Threat:SetTexture(config.border.textures.threat)
-	
+
 
 	-- Health
 	-------------------------------------------------------------------
@@ -428,7 +426,7 @@ local Style = function(self, unit)
 	local HealthValueHolder = Health:CreateFrame("Frame")
 	HealthValueHolder:SetAllPoints()
 	HealthValueHolder:SetFrameLevel(Border:GetFrameLevel() + 1)
-	
+
 	Health.Value = HealthValueHolder:CreateFontString(nil, "OVERLAY")
 	Health.Value:SetFontObject(config.texts.health.font_object)
 	Health.Value:SetPoint(unpack(config.texts.health.position))
@@ -456,7 +454,7 @@ local Style = function(self, unit)
 	local auras = self:CreateFrame()
 	auras:SetSize(unpack(config.auras.size))
 	auras:Place(unpack(config.auras.position))
-	
+
 	auras.config = config.auras
 	auras.buttonConfig = config.auras.button
 	auras.auraSize = config.auras.button.size
@@ -497,13 +495,13 @@ local Style = function(self, unit)
 
 	self:HookScript("OnEnter", updateLayers)
 	self:HookScript("OnLeave", updateLayers)
-	
 
-end 
+
+end
 
 UnitFrameWidget.OnEnable = function(self)
 	local config = self:GetDB("UnitFrames").visuals.units.party
-	local db = self:GetConfig("UnitFrames") 
+	local db = self:GetConfig("UnitFrames")
 
 	-- Retrieve the unitframe handler
 	local UnitFrame = Engine:GetHandler("UnitFrame")
@@ -515,13 +513,13 @@ UnitFrameWidget.OnEnable = function(self)
 	RegisterStateDriver(self.UnitFrame, "visibility", "[@raid1,exists]hide;show")
 
 	local function LayoutPartyFrames()
-		for i = 1,4 do 
-			local unitFrame = UnitFrame:New("party"..i, self.UnitFrame, Style) 
-			--local unitFrame = UnitFrame:New("player", self.UnitFrame, Style) 
+		for i = 1,4 do
+			local unitFrame = UnitFrame:New("party"..i, self.UnitFrame, Style)
+			--local unitFrame = UnitFrame:New("player", self.UnitFrame, Style)
 
 			self.UnitFrame[i] = unitFrame
 		end
-	end 
+	end
 
 	-- Update when party changes
     self.UnitFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -530,7 +528,7 @@ UnitFrameWidget.OnEnable = function(self)
     -- Initial layout
     LayoutPartyFrames()
 
-end 
+end
 
 UnitFrameWidget.GetFrame = function(self, numPartyMember)
 	return self.UnitFrame[numPartyMember] or self.UnitFrame

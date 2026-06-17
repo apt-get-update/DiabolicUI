@@ -20,12 +20,7 @@ local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetInventorySlotInfo = _G.GetInventorySlotInfo
 local GetItemInfo = _G.GetItemInfo
 
--- WoW Client Constants
-local ENGINE_LEGION_730 = Engine:IsBuild("7.3.0") 
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-local CRUCIBLE = ENGINE_LEGION_730 and select(4, GetAchievementInfo(12072))
+local CRUCIBLE = false
 
 -- Tooltip used for scanning
 local scannerTip = CreateFrame("GameTooltip", "DiabolicUIPaperDollScannerTooltip", WorldFrame, "GameTooltipTemplate")
@@ -242,19 +237,5 @@ Module.OnInit = function(self)
 	self:InitializePaperDoll()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateEquippeditemLevels")
-	if ENGINE_CATA then
-		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "UpdateEquippeditemLevels")
-		if ENGINE_MOP then
-			self:RegisterEvent("ITEM_UPGRADE_MASTER_UPDATE", "UpdateEquippeditemLevels")
-			self:RegisterEvent("ITEM_UPGRADE_MASTER_SET_ITEM", "UpdateEquippeditemLevels")
-		end
-	else
-		self:RegisterEvent("UNIT_INVENTORY_CHANGED", "UpdateEquippeditemLevels")
-	end
-
-	-- Adding in compatibility with the 7.3.0 upgraded artifact relic itemlevels
-	if (ENGINE_LEGION_730 and (not CRUCIBLE)) then
-		self:RegisterEvent("ACHIEVEMENT_EARNED", "CrucibleAchievementListener")
-	end
-	
+	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "UpdateEquippeditemLevels")
 end
