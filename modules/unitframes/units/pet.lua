@@ -147,7 +147,7 @@ local Style = function(self, unit)
 	--self:HookScript("OnEnter", UpdateLayers)
 	--self:HookScript("OnLeave", UpdateLayers)
 	
-	--self:SetAttribute("toggleForVehicle", true)
+	-- self:SetAttribute("toggleForVehicle", true)
 
 end
 

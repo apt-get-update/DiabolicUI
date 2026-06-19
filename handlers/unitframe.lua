@@ -427,21 +427,20 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 	end
 
 	-- When we have a vehicleUI, we switch the player frame to vehicle, and pet frame to player.
-	if (real_unit == "player") or (real_unit == "playerpet") or (real_unit == "pet") then
+	if (unit == "player") or (unit == "pet") then
 		local VehicleUpdater = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
 		VehicleUpdater:SetFrameRef("unitframe", object)
 		VehicleUpdater:SetAttribute("real-unit", unit)
 		VehicleUpdater:SetAttribute("unit", unit)
 		VehicleUpdater.UpdateUnit = function(self, unit) object.unit = unit end
 
-
-		--VehicleUpdater:SetAttribute("_onstate-vis", [[
-		--	if newstate == "hide" then
-		--		self:Hide();
-		--	elseif newstate == "show" then
-		--		self:Show();
-		--	end
-		--]])
+		-- VehicleUpdater:SetAttribute("_onstate-vis", [[
+		-- 	if newstate == "hide" then
+		-- 		self:Hide();
+		-- 	elseif newstate == "show" then
+		-- 		self:Show();
+		-- 	end
+		-- ]])
 
 
 		if (unit == "player") then
@@ -449,7 +448,7 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 
 				-- figure out if we have a new unit, and which
 				local unit = self:GetAttribute("unit");
-				local newUnit = (newstate == "invehicle") and "vehicle" or "player";
+				local newUnit = (newstate == "invehicle") and "pet" or "player";
 
 				-- update lua unit
 				control:CallMethod("UpdateUnit", newUnit);
