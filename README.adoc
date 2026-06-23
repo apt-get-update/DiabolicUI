@@ -15,3 +15,5 @@ Forked from https://github.com/Hrishi29x/DiabolicUI
 * Change action bars numbers with
 ** /diabolic num_bars [1,2,3]
 ** /diabolic num_side_bars [0,1,2]
+* Chat bubble and damage font
+** Best result with https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5

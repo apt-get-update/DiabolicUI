@@ -90,7 +90,7 @@ Module.SetFontObjects = function(self)
 	-- floating combat text
 	-- Legion features much nicer and smoother damage, 
 	-- so we should just leave that as it is. 
-	self:SetFont(CombatTextFont, fonts.damage, 100, "", -2.5, -2.5, .35) 
+	self:SetFont(CombatTextFont, fonts.header_normal, nil, "", -2.5, -2.5, .35) 
 
 	-- chat font
 	-- *Choosing not to override this, as the default chat fonts are fairly good 
@@ -142,9 +142,9 @@ end
 
 Module.HookCombatText = function(self)
 	-- combat text
-	COMBAT_TEXT_HEIGHT = 16
-	COMBAT_TEXT_CRIT_MAXHEIGHT = 16
-	COMBAT_TEXT_CRIT_MINHEIGHT = 16
+	COMBAT_TEXT_HEIGHT = 8
+	COMBAT_TEXT_CRIT_MAXHEIGHT = 8
+	COMBAT_TEXT_CRIT_MINHEIGHT = 8
 	COMBAT_TEXT_SCROLLSPEED = 3
 
 	hooksecurefunc("CombatText_UpdateDisplayedMessages", function() 
