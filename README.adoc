@@ -2,11 +2,15 @@
 
 Forked from https://github.com/Hrishi29x/DiabolicUI
 
+== Addon
+
+* Minimap available at https://github.com/apt-get-update/DiabolicUI-Minimap
+
 == Changes
 
 * Reputation bar, take the place of the experience bar if tracked
-* Disabled Objectif tracker window to use Questie's
-* Disabled WorldMap to use SexyMap
+* Disabled Objectif tracker window to use `Questie`'s
+* Disabled WorldMap to use `DiabolicUI-Minimap` or `SexyMap`
 * Updated chat window
 * Targets unitframe with class color
 * Tooltip follow cursor
