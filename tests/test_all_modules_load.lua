@@ -116,6 +116,7 @@ local FILES = {
 	"modules/unitframes/elements/role.lua",
 	"modules/unitframes/elements/runes.lua",
 	"modules/unitframes/elements/threat.lua",
+	"modules/unitframes/elements/weaponenchants.lua",
 	"modules/unitframes/unitframes.lua",
 	"modules/unitframes/units/arena.lua",
 	"modules/unitframes/units/boss.lua",

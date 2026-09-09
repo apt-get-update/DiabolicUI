@@ -731,12 +731,14 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Debuffs.PostCreateButton = postCreateAuraButton
 	Debuffs.PostUpdateButton = postUpdateAuraButton
 
+
 	self:HookScript("OnEnter", onEnterLeft)
 	self:HookScript("OnLeave", onLeaveLeft)
 
 	self.Buffs = Buffs
 	self.Debuffs = Debuffs
 	self.Health = Health
+	self.WeaponEnchants = true -- drives a periodic refresh so weapon enchants (shown inline in Buffs) don't go stale
 
 end
 

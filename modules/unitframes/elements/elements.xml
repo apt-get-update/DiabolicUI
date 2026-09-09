@@ -13,5 +13,6 @@
 <Script file='role.lua'/>
 <Script file='runes.lua'/>
 <Script file='threat.lua'/>
+<Script file='weaponenchants.lua'/>
 
 </Ui>
