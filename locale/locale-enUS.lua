@@ -219,6 +219,27 @@ L["Caster:"] = true
 
 -- unitframe module
 ---------------------------------------------------------------------
+L["Unit Frames"] = true
+L["Show class colors"] = true
+L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = true
+
+-- tooltip module
+---------------------------------------------------------------------
+L["Tooltips"] = true
+L["Horizontal Offset"] = true
+L["Vertical Offset"] = true
+L["At 0, the tooltip is centered horizontally on the cursor."] = true
+L["At 0, the cursor is at the bottom edge of the tooltip."] = true
+L["Anchor Point"] = true
+L["Top Left"] = true
+L["Top"] = true
+L["Top Right"] = true
+L["Left"] = true
+L["Center"] = true
+L["Right"] = true
+L["Bottom Left"] = true
+L["Bottom"] = true
+L["Bottom Right"] = true
 
 
 -- worldmap module

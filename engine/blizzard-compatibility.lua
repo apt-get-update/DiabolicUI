@@ -82,6 +82,7 @@ local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetItemInfo = _G.GetItemInfo
 local GetItemStats = _G.GetItemStats
 local IsEquippableItem = _G.IsEquippableItem
+local UnitLevel = _G.UnitLevel
 
 -- WoW Constants
 local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
@@ -252,6 +253,7 @@ end
 -- This isn't perfect, but for most purposes it'll do.
 addGlobal("GetAverageItemLevel", function()
 	local _, class = UnitClass("player")
+	local player_level = UnitLevel("player")
 
 	local equip_average_level, equip_total_level, equip_count = 0, 0, 17 -- include the relic/ranged slot in WotLK/Cata
 	local mainhand, offhand, twohand = 1, 1, 0

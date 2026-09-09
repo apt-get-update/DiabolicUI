@@ -1724,6 +1724,12 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	]])
 	setmetatable(button, button_type_meta_map[buttonType]) -- assign correct metatable
 
+	-- Explicitly place the button above its own bar, instead of relying on
+	-- whatever level the button template or CreateFrame's default happens
+	-- to pick. Without this, decorative overlay artwork (like the demon
+	-- and angel textures next to the side bars) could end up drawn on top
+	-- of the buttons instead of behind them.
+	button:SetFrameLevel(header:GetFrameLevel() + 1)
 
 	-- Frames and Layers
 	---------------------------------------------------------

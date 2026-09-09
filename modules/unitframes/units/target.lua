@@ -577,7 +577,7 @@ local Style = function(self, unit)
 	health.Value.showDeficit = false
 	health.Value.showMaximum = true
 	health.PostUpdate = PostUpdateHealth
-	health.useClassColor = true
+	health.useClassColor = db.showClassColors
 
 	
 	-- Power

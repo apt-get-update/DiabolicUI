@@ -63,7 +63,29 @@ L["Left Arrow"] = "GA"
 L["Right Arrow"] = "DA"
 L["Up Arrow"] = "HA"
 
--- minimap 
+-- minimap
 L["Calendar"] = "Calendrier"
 L["New Event!"] = "Nouvel événement"
 L["New Mail!"] = "Nouveau courrier"
+
+-- unitframe module
+L["Unit Frames"] = "Cadres d'unité"
+L["Show class colors"] = "Afficher les couleurs de classe"
+L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = "Colore les barres de vie du joueur, de la cible, du groupe, du raid et de la cible de la cible selon la classe de l'unité.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+
+-- tooltip module
+L["Tooltips"] = "Infobulles"
+L["Horizontal Offset"] = "Décalage horizontal"
+L["Vertical Offset"] = "Décalage vertical"
+L["At 0, the tooltip is centered horizontally on the cursor."] = "À 0, l'infobulle est centrée horizontalement sur le curseur."
+L["At 0, the cursor is at the bottom edge of the tooltip."] = "À 0, le curseur se trouve sur le bord inférieur de l'infobulle."
+L["Anchor Point"] = "Point d'ancrage"
+L["Top Left"] = "Haut gauche"
+L["Top"] = "Haut"
+L["Top Right"] = "Haut droite"
+L["Left"] = "Gauche"
+L["Center"] = "Centre"
+L["Right"] = "Droite"
+L["Bottom Left"] = "Bas gauche"
+L["Bottom"] = "Bas"
+L["Bottom Right"] = "Bas droite"

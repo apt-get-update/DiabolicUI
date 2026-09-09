@@ -34,29 +34,28 @@ local GameTooltip = _G.GameTooltip
 local MAX_PLAYER_LEVEL_TABLE = _G.MAX_PLAYER_LEVEL_TABLE
 
 -- Whether or not the XP bar area is used.
--- This will return true for the artifact bar as well,
--- and for reputation when we introduce reputation tracking.
--- @return xp, reputation -- where 'xp' relates to any bar at all
+-- This will return true for the artifact bar as well.
 Module.IsXPVisible = function(self)
-  local repName, _, _, _, _ = GetWatchedFactionInfo()
-  local Main = self:GetWidget("Controller: Main"):GetFrame()
-
   if UnitHasVehicleUI("player") or UnitIsPossessed("pet") == 1 then
     return false
-  else
-    if repName then
-      return true, true
-    else
-      if
-        ((MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel() or #MAX_PLAYER_LEVEL_TABLE] or
-          MAX_PLAYER_LEVEL_TABLE[#MAX_PLAYER_LEVEL_TABLE]) == UnitLevel("player"))
-       then
-        return false
-      else
-        return true
-      end
-    end
   end
+  if
+    ((MAX_PLAYER_LEVEL_TABLE[GetAccountExpansionLevel() or #MAX_PLAYER_LEVEL_TABLE] or
+      MAX_PLAYER_LEVEL_TABLE[#MAX_PLAYER_LEVEL_TABLE]) == UnitLevel("player"))
+  then
+    return false
+  end
+  return true
+end
+
+-- Whether or not the reputation bar area is used,
+-- i.e. whether the player is currently watching a faction.
+Module.IsReputationVisible = function(self)
+  if UnitHasVehicleUI("player") or UnitIsPossessed("pet") == 1 then
+    return false
+  end
+  local repName = GetWatchedFactionInfo()
+  return repName and true or false
 end
 
 Module.ApplySettings =
@@ -128,6 +127,7 @@ Module.OnInit = function(self, event, ...)
   self:GetWidget("Bar: Pet"):Enable()
   self:GetWidget("Bar: Stance"):Enable()
   self:GetWidget("Bar: XP"):Enable()
+  self:GetWidget("Bar: Reputation"):Enable()
   self:GetWidget("Bar: Floaters"):Enable()
 
   self:GetWidget("Menu: Main"):Enable()

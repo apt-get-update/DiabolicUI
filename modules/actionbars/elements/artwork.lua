@@ -420,6 +420,7 @@ Widget.OnEnable = function(self)
 	self:RegisterMessage("ENGINE_ACTIONBAR_VEHICLE_CHANGED", "UpdateArtwork")
 	self:RegisterMessage("ENGINE_ACTIONBAR_VISIBLE_CHANGED", "UpdateArtwork")
 	self:RegisterMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", "UpdateArtwork")
+	self:RegisterMessage("ENGINE_ACTIONBAR_REPUTATION_VISIBLE_CHANGED", "UpdateArtwork")
 
 end
 
@@ -516,7 +517,7 @@ Widget.UpdateArtwork = function(self, event, ...)
 	-- figure out which backdrop texture to show
 	local Main = Module:GetWidget("Controller: Main"):GetFrame()
 	local Pet = Module:GetWidget("Bar: Pet"):GetFrame()
-	local hasXP = Module:IsXPVisible() 
+	local hasXP = Module:IsXPVisible() or Module:IsReputationVisible()
 	local hasPet = Pet:IsShown() 
 	local numBars = tostring(Main:GetAttribute("numbars"))
 	local barState = tostring(Main:GetAttribute("state-page"))
@@ -558,7 +559,23 @@ Widget.UpdateArtwork = function(self, event, ...)
 
 	-- we do a load on demand system here
 	-- that creates the artwork upon the first bar update
+	local firstLoad = not self.artworkCache
 	self.artworkCache = self.artworkCache or self:LoadArtwork()
+
+	-- On a fresh login (as opposed to a UI reload), this first artwork load
+	-- can happen well after the action buttons were created, and for
+	-- reasons that weren't fully pinned down, the buttons can end up
+	-- z-ordered behind this newly created artwork despite their frame
+	-- level already being higher. Explicitly re-asserting it here, now
+	-- that the artwork definitely exists, corrects it without requiring
+	-- the user to /reload.
+	if firstLoad then
+		for barNum, bar in pairs(Module:GetBars()) do
+			for i, button in bar:GetAll() do
+				button:SetFrameLevel(bar:GetFrameLevel() + 1)
+			end
+		end
+	end
 
 	for artwork, artworkDB in pairs(self.artworkCache) do
 

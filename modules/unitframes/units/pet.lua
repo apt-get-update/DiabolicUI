@@ -87,8 +87,8 @@ local Style = function(self, unit)
 	Health:SetSparkFlashSize(unpack(configHealthSpark.flash_size))
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
 
-	Health.useClassColor = true 
-	Health.useClassColorPet = true 
+	Health.useClassColor = db.showClassColors
+	Health.useClassColorPet = db.showClassColors
 	Health.frequent = 1/120
 
 	Health.PostUpdate = postUpdateHealth

@@ -30,6 +30,7 @@ local unpack = unpack
 local CanInspect = _G.CanInspect
 local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
+local GetCursorPosition = _G.GetCursorPosition
 local GetItemInfo = _G.GetItemInfo
 local GetItemStats = _G.GetItemStats
 local GetMouseFocus = _G.GetMouseFocus
@@ -843,6 +844,45 @@ end
 
 -- General
 ------------------------------------------------------------
+-- Where on the tooltip the cursor (plus the user's offset) is anchored to,
+-- as a fraction of its width/height measured from its bottom-left corner -
+-- e.g. BOTTOM is horizontally centered (half the width) and at the bottom
+-- edge (no height), CENTER is half the width and half the height, and so on.
+local ANCHOR_POINTS = {
+	TOPLEFT     = { 0,   1   },
+	TOP         = { .5,  1   },
+	TOPRIGHT    = { 1,   1   },
+	LEFT        = { 0,   .5  },
+	CENTER      = { .5,  .5  },
+	RIGHT       = { 1,   .5  },
+	BOTTOMLEFT  = { 0,   0   },
+	BOTTOM      = { .5,  0   },
+	BOTTOMRIGHT = { 1,   0   }
+}
+
+Module.Tooltip_GetAnchorFractions = function(self)
+	local point = ANCHOR_POINTS[self.db.anchorPoint] and self.db.anchorPoint or "BOTTOM"
+	local fractions = ANCHOR_POINTS[point]
+	return fractions[1], fractions[2]
+end
+
+-- At an offset of (0, 0), the cursor sits at the user's chosen anchor point
+-- on the tooltip - the corresponding fraction of its current width/height is
+-- folded into the base position to make that happen, so the offset is
+-- always measured from that point rather than from a fixed corner.
+Module.Tooltip_PositionAtCursor = function(self, tooltip)
+	local db = self.db
+	local scale = tooltip:GetEffectiveScale()
+	local x, y = GetCursorPosition()
+	x, y = (x / scale), (y / scale)
+
+	local width, height = tooltip:GetWidth(), tooltip:GetHeight()
+	local hFraction, vFraction = self:Tooltip_GetAnchorFractions()
+
+	tooltip:ClearAllPoints()
+	tooltip:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x - (width * hFraction) + db.offsetX, y - (height * vFraction) + db.offsetY)
+end
+
 Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
 	-- correct the backdrop color for world items (benches, signs)
 	--if self.scheduleRefresh then
@@ -859,12 +899,56 @@ Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
 		self.scheduleHide = false
 	end
 
-	-- lock the tooltip to our anchor
-	--local point, owner, relpoint, x, y = tooltip:GetPoint()
-	--if owner == UIParent then -- self:GetOwner() == UIParent -- this bugs out
-	--	tooltip:ClearAllPoints()
-	--	tooltip:SetPoint(self.anchor:GetPoint())
-	--end
+	if (tooltip:GetAnchorType() == "ANCHOR_CURSOR") then
+		-- World mouseover tooltips (units and objects like mailboxes
+		-- alike) are fully managed by the client every frame - including
+		-- deciding when to fade/hide once nothing is hovered anymore.
+		-- Taking over their anchor entirely (flipping to
+		-- ANCHOR_NONE and setting our own point) disconnects them from
+		-- that management, which is what left them stuck on screen after
+		-- moving away from whatever was hovered. So instead we leave them
+		-- in native ANCHOR_CURSOR mode and nudge them on top of wherever
+		-- the client just put them, by adjusting the existing point's
+		-- offset rather than replacing the point outright, so it doesn't
+		-- fight the client's own positioning the way ClearAllPoints did.
+		--
+		-- We want the same "user's chosen anchor point on the tooltip, plus
+		-- offset" result Tooltip_PositionAtCursor gives everywhere else,
+		-- but we don't know what base position the client picked for this
+		-- tooltip, so we can't compute that directly - instead we measure
+		-- where that point actually ended up this frame (its bottom-left
+		-- corner plus the configured fraction of its current width/height)
+		-- and nudge the existing anchor point by the difference to where we
+		-- want it, which comes out the same regardless of the client's own
+		-- unknown default offset from the cursor.
+		--
+		-- (AdjustPointsOffset would be the tidy way to do that nudge, but
+		-- it doesn't exist in this client - nudging the point's own xOfs/
+		-- yOfs by hand via GetPoint/SetPoint has the same effect.)
+		local db = self.db
+		local scale = tooltip:GetEffectiveScale()
+		local cursorX, cursorY = GetCursorPosition()
+		cursorX, cursorY = (cursorX / scale), (cursorY / scale)
+
+		local left, bottom = tooltip:GetLeft(), tooltip:GetBottom()
+		local point, relativeTo, relativePoint, xOfs, yOfs = tooltip:GetPoint()
+		if left and bottom and point then
+			local width, height = tooltip:GetWidth(), tooltip:GetHeight()
+			local hFraction, vFraction = self:Tooltip_GetAnchorFractions()
+			local refX = left + (width * hFraction)
+			local refY = bottom + (height * vFraction)
+			tooltip:SetPoint(point, relativeTo, relativePoint, xOfs + ((cursorX + db.offsetX) - refX), yOfs + ((cursorY + db.offsetY) - refY))
+		end
+	else
+		-- Everything else (action bar/spell tooltips, unit frames, items,
+		-- menu buttons...) is anchored once by whatever showed it and then
+		-- left alone by the client, so we can safely take over fully here
+		-- and recompute the cursor position ourselves every frame to make
+		-- these follow along too. Hiding these is unaffected, since it's
+		-- driven by an explicit Hide() call from their owner's OnLeave,
+		-- not by their current anchor or position.
+		self:Tooltip_PositionAtCursor(tooltip)
+	end
 end
 
 Module.Tooltip_OnShow = function(self, tooltip)
@@ -890,16 +974,11 @@ Module.Tooltip_SetDefaultAnchor = function(self, tooltip, owner)
 		return
 	end
 
-  -- local scale = UIParent:GetEffectiveScale()
-  -- mX, mY = GetCursorPosition()
-  -- mX, mY = mX / scale, mY / scale
-  -- mX = mX - (tooltip:GetWidth() / 2)
-
-	-- tooltip:SetOwner(owner or self.anchor, "ANCHOR_NONE")
-  tooltip:SetOwner(owner or self.anchor, "ANCHOR_CURSOR")
-	-- tooltip:ClearAllPoints()
-  -- tooltip:SetPoint("BOTTOMLEFT", "UIParent", "BOTTOMLEFT", 0 + mX, 0 + mY)
-	-- tooltip:SetPoint(self.anchor:GetPoint())
+	-- Give it a sane starting position immediately, to avoid a one-frame
+	-- flicker at the wrong spot - Tooltip_OnUpdate re-enforces this (and
+	-- everything else) every frame regardless.
+	tooltip:SetOwner(owner or self.anchor, "ANCHOR_NONE")
+	self:Tooltip_PositionAtCursor(tooltip)
 end
 
 -- StatusBars
@@ -1131,9 +1210,15 @@ end
 -- This requires both VARIABLES_LOADED and PLAYER_ENTERING_WORLD to have fired!
 Module.HookGameTooltip = function(self)
 	local tooltip = _G.GameTooltip
-	--tooltip:HookScript("OnUpdate", function(...) self:Tooltip_OnUpdate(...) end)
+
+	-- Without this, a large vertical offset can push the tooltip's anchor
+	-- corner above the top of the screen, clipping off however many lines
+	-- stick out past the edge and making it look like the tooltip shrank.
+	tooltip:SetClampedToScreen(true)
+
+	tooltip:HookScript("OnUpdate", function(...) self:Tooltip_OnUpdate(...) end)
 	--tooltip:HookScript("OnShow", function(...) self:Tooltip_OnShow(...) end)
-	--tooltip:HookScript("OnHide", function(...) self:Tooltip_OnHide(...) end)
+	tooltip:HookScript("OnHide", function(...) self:Tooltip_OnHide(...) end)
 	--tooltip:HookScript("OnTooltipCleared", function(...) self:Tooltip_OnTooltipCleared(...) end)
 	--tooltip:HookScript("OnTooltipSetItem", function(...) self:Tooltip_OnTooltipSetItem(...) end)
 
@@ -1236,6 +1321,7 @@ end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").tooltips
+	self.db = self:GetConfig("Tooltips") -- user settings
 
 	-- create an anchor to hook the tooltip to
 	self.anchor = CreateFrame("Frame", nil, Engine:GetFrame())

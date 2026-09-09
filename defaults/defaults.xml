@@ -3,6 +3,7 @@
 <Script file="actionbars.lua"/>
 <Script file="chat.lua"/>
 <Script file="minimap.lua"/>
+<Script file="tooltips.lua"/>
 <Script file="tracker.lua"/>
 <Script file="unitframes.lua"/>
 

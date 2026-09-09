@@ -62,13 +62,7 @@ local vehicleEvents = {
 ----------------------------------------------------------
 
 local Bar = Engine:CreateFrame("Frame")
-local Bar_MT = { __index = Bar }
 
--- high priority, will override almost everything else (not that it's implemented yet...)
-local Bar_Reputation = setmetatable({}, { __index = Bar })
-local Bar_Reputation_MT = { __index = Bar_Reputation }
-
--- shown if no reputation is tracked, and user still can gain experience
 local Bar_XP = setmetatable({}, { __index = Bar })
 local Bar_XP_MT = { __index = Bar_XP }
 
@@ -189,79 +183,6 @@ Bar_XP.OnLeave = function(self)
 	end
 end
 
--- Reputation Bar Methods
---------------------------------------------------
-Bar_Reputation.UpdateData = function(self)
-  local repName, repStanding, repMin, repMax, repValue = GetWatchedFactionInfo()
-
-  if repName then
-    local curRep, maxRep = repValue - repMin, repMax - repMin
-    if maxRep <= 0 then maxRep = 1 end
-    local standingLabel = _G["FACTION_STANDING_LABEL"..repStanding] or ""
-
-    self.data.curRep = curRep
-    self.data.maxRep = maxRep
-    self.data.repName = repName
-    self.data.repStanding = repStanding
-    self.data.standingLabel = standingLabel
-  else
-    self.data.curRep = nil
-    self.data.maxRep = nil
-    self.data.repName = nil
-    self.data.repStanding = nil
-    self.data.standingLabel = nil
-  end
-	return self.data
-end
-
-Bar_Reputation.Update = function(self)
-	local data = self:UpdateData()
-	if (not data.repName) then return end
-  local r, g, b = unpack(C.Reaction[data.repStanding])
-
-	self.XP:SetStatusBarColor(r, g, b)
-	self.XP:SetMinMaxValues(0, data.maxRep)
-	self.XP:SetValue(data.curRep)
-  self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
-	if self.mouseIsOver then
-    self.Value:SetFormattedText(fullXPString, F.Colorize(F.Short(data.curRep), "Normal"), F.Colorize(F.Short(data.maxRep), "Normal"), F.Colorize(F.Short(math_floor(data.curRep/data.maxRep*100)), "Normal"))
-  else
-		self.Value:SetFormattedText(shortXPString, F.Colorize(F.Short(math_floor(data.curRep/data.maxRep*100)), "Normal"))
-  end
-end
-
-Bar_Reputation.OnEnter = function(self)
-	local data = self:UpdateData()
-	if (not data.repName) then return end
-
-	if GameTooltip:IsForbidden() then
-		return
-	end
-
-	GameTooltip_SetDefaultAnchor(GameTooltip, self)
-
-	local r, g, b = unpack(C.General.Highlight)
-	local r2, g2, b2 = unpack(C.General.OffWhite)
-  local r3, g3, b3 = unpack(C.Reaction[data.repStanding])
-
-	GameTooltip:AddLine(data.repName)
-	GameTooltip:AddLine(" ")
-
-	GameTooltip:AddLine(F.Colorize(data.standingLabel, {r3, g3, b3} ))
-	GameTooltip:AddDoubleLine(L["Reputation: "], longXPString:format(F.Colorize(F.Short(data.curRep), "Normal"), F.Colorize(F.Short(data.maxRep), "Normal")), r, g, b, r2, g2, b2)
-	GameTooltip:Show()
-end
-
-Bar_Reputation.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
-end
-
-Bar_Reputation.OnClick = function(self)
-  ToggleCharacter("ReputationFrame")
-end
-
 BarWidget.OnEnter = function(self)
 	self.Bar.mouseIsOver = true
 	self.Bar:OnEnter()
@@ -279,7 +200,6 @@ BarWidget.Update = function(self, event, unit)
 		return
 	end
 	if self:UpdateVisibility() then
-		self:UpdateBarType()
 		self:UpdateBar()
 	end
 end
@@ -291,7 +211,9 @@ BarWidget.OnClick = function(self, ...)
 end
 
 BarWidget.UpdateVisibility = function(self)
-	local isXPVisible = Module:IsXPVisible()
+	-- The reputation bar takes this same slot whenever a faction is
+	-- being watched, so we hide in favor of it.
+	local isXPVisible = Module:IsXPVisible() and not Module:IsReputationVisible()
 	if isXPVisible then
 		if (not self.Controller:IsShown()) then
 			self.Controller:Show()
@@ -306,38 +228,6 @@ BarWidget.UpdateVisibility = function(self)
 		XPBARVISIBLE = isXPVisible
 	end
 	return isXPVisible
-end
-
-BarWidget.UpdateBarType = function(self)
-
-	-- Get info about visible XP type
-	local xp, reputation = Module:IsXPVisible()
-	local barType = reputation and "reputation" or xp and "xp" or "none"
-
-	-- Initiate a bar change if the XP type has changed
-	if (self.barType ~= barType) then
-
-		-- Store the old tooltip state in case it's visible
-		local mouseIsOver = self.mouseIsOver
-
-		-- Kill of old tooltip if visible on bar changes
-		self:OnLeave()
-
-		-- Choose the correct inheritance for our current bar
-		if (barType == "xp") then
-			setmetatable(self.Bar, Bar_XP_MT)
-		elseif (barType == "reputation") then
-			setmetatable(self.Bar, Bar_Reputation_MT)
-		end
-
-		-- Store the current bartype
-		self.barType = barType
-
-		-- Show the tooltip belonging to the current bartype
-		if mouseIsOver then
-			self:OnEnter()
-		end
-	end
 end
 
 BarWidget.UpdateBar = function(self)
@@ -374,7 +264,7 @@ BarWidget.OnEnable = function(self)
 	controller:SetScript("OnMouseUp", function(_, ...) self:OnClick(...) end)
 	self.Controller = controller
 
-	local bar = setmetatable(controller:CreateFrame("Frame"), Bar_MT)
+	local bar = setmetatable(controller:CreateFrame("Frame"), Bar_XP_MT)
 	bar:SetSize(controller:GetSize())
 	bar:SetAllPoints(controller)
 	bar.data = {}
@@ -449,11 +339,10 @@ BarWidget.OnEnable = function(self)
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "Update")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "Update")
   self:RegisterEvent("UNIT_PET", "Update")
-  self:RegisterEvent("UPDATE_FACTION")
-	-- Note to self for later:
-	-- 	ReputationWatchBarStatusBar ( >= WoD)
-	-- 	ReputationWatchBar.StatusBar (Legion > )
 
+	-- The reputation bar takes our slot whenever a faction is watched,
+	-- so we need to hide/reappear the moment that changes too.
+	self:RegisterEvent("UPDATE_FACTION", "Update")
 end
 
 BarWidget.GetFrame = function(self)

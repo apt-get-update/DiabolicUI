@@ -65,8 +65,19 @@ Engine:NewStaticConfig("ActionBars", {
 				}
 			},
 			
-			-- xp / rep bar holders
+			-- xp bar holder
 			xp = {
+				position = { "TOP", 0, 10 + 6 },
+				size = {
+					["1"] = { 2 + BUTTON_SIZE_SINGLE*NUM_ACTIONBAR_SLOTS + padding*(NUM_ACTIONBAR_SLOTS-1) + 2, 10 },
+					["2"] = { 2 + BUTTON_SIZE_DOUBLE*NUM_ACTIONBAR_SLOTS + padding*(NUM_ACTIONBAR_SLOTS-1) + 2, 10 },
+					["3"] = { 2 + BUTTON_SIZE_TRIPLE*NUM_ACTIONBAR_SLOTS + padding*(NUM_ACTIONBAR_SLOTS-1) + 2, 10 }
+				}
+			},
+
+			-- reputation bar holder - always takes the xp bar's own slot,
+			-- the two are never shown at the same time
+			reputation = {
 				position = { "TOP", 0, 10 + 6 },
 				size = {
 					["1"] = { 2 + BUTTON_SIZE_SINGLE*NUM_ACTIONBAR_SLOTS + padding*(NUM_ACTIONBAR_SLOTS-1) + 2, 10 },
@@ -258,7 +269,7 @@ Engine:NewStaticConfig("ActionBars", {
 			pet = {
 				--position = { "BOTTOM", 0, xpoffset_before + xpsize + xpoffset_after },
 				position = { "BOTTOM", 0, 0 }, -- where the bar is anchored to its controller
-				positionXP = { "BOTTOM", 0, xpoffset_before + xpsize + xpoffset_after },
+				positionXP = { "BOTTOM", 0, xpoffset_before + xpsize + xpoffset_after }, -- xp or reputation bar visible
 				flyout_direction = "UP",
 				growth = "RIGHT",
 				padding = padding_pet,
@@ -592,7 +603,8 @@ Engine:NewStaticConfig("ActionBars", {
 					texture = nil
 				},
 				cooldown_numbers = {
-					normalFont = DiabolicFont_SansBold16,
+					normalFont = DiabolicFont_SansBold10,
+          -- normalFont = DiabolicFont_SansBold16,
 					points = { { "CENTER", 0, 0 } }
 				},
 				
