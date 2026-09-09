@@ -366,6 +366,17 @@ local Style = function(self, unit)
 	Health.useClassColor = db.showClassColors
 
 
+	-- Role Icon
+	-------------------------------------------------------------------
+	-- Parented to Border (elevated frame level) so it isn't drawn behind
+	-- the border/backdrop skin, but positioned relative to Health.
+	local Role = Border:CreateTexture(nil, "OVERLAY")
+	Role:SetSize(unpack(config.role.size))
+	Role:SetPoint(config.role.position[1], Health, unpack(config.role.position))
+	Role:SetTexture(config.role.texture)
+	Role:Hide()
+
+
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
@@ -415,6 +426,7 @@ local Style = function(self, unit)
 	self.CastBar = CastBar
 	self.Health = Health
 	self.Name = Name
+	self.Role = Role
 	self.Threat = Threat
 
 	self.BorderNormal = BorderNormal

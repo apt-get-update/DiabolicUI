@@ -89,3 +89,11 @@ L["Right"] = "Droite"
 L["Bottom Left"] = "Bas gauche"
 L["Bottom"] = "Bas"
 L["Bottom Right"] = "Bas droite"
+
+-- chat module
+L["Fade Chat"] = "Fondu du chat"
+L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] = "Estompe le texte du chat après un certain temps, au lieu de le laisser affiché en permanence."
+L["Time Fading"] = "Durée du fondu"
+L["How many seconds it takes for chat text to fade out."] = "Nombre de secondes nécessaires pour que le texte du chat s'estompe."
+L["Time Visible"] = "Durée visible"
+L["How many seconds chat text stays fully visible before it starts fading."] = "Nombre de secondes pendant lesquelles le texte du chat reste pleinement visible avant de commencer à s'estomper."

@@ -214,10 +214,13 @@ Module.OnInit = function(self, event, ...)
 		end
 	end)
 	
-	for _,name in ipairs(CHAT_FRAMES) do 
+	for _,name in ipairs(CHAT_FRAMES) do
 		self:StyleFrame(_G[name])
-	end	
-		
+	end
+
+	-- sets CHAT_FRAME_FADE_OUT_TIME, which StyleFrame doesn't touch
+	self:ApplyFadeSettings()
+
 	FCF_SetWindowColor(ChatFrame1, 0, 0, 0, 0)
 	FCF_SetWindowAlpha(ChatFrame1, 0, 1)
 	FCF_UpdateButtonSide(ChatFrame1)
@@ -293,6 +296,22 @@ Module.OnInit = function(self, event, ...)
 	--	ChatFrame2:SetClampRectInsets(-40, -40, -40, -210)
 end
 
+-- Applies the user's fade settings to every current chat frame, plus the
+-- global fade-out duration Blizzard's own chat frame fading reads from.
+-- Called once at init, and again whenever the options menu changes a value,
+-- so changes take effect immediately without needing a UI reload.
+Module.ApplyFadeSettings = function(self)
+	local db = self.db
+	_G.CHAT_FRAME_FADE_OUT_TIME = db.timeFading
+	for _, name in ipairs(CHAT_FRAMES) do
+		local frame = _G[name]
+		if frame then
+			frame:SetFading(db.fadeChat)
+			frame:SetTimeVisible(db.timeVisible)
+		end
+	end
+end
+
 Module.StyleFrame = function(self, frame)
 	local config = self.config
 	local name = frame:GetName()
@@ -300,8 +319,8 @@ Module.StyleFrame = function(self, frame)
 
 	-- Window
 	------------------------------
-	frame:SetFading(config.fade)
-	frame:SetTimeVisible(config.time_visible)
+	frame:SetFading(self.db.fadeChat)
+	frame:SetTimeVisible(self.db.timeVisible)
 	frame:SetIndentedWordWrap(true)
 	frame:SetClampRectInsets(unpack(config.clamps))
 	frame:SetMinResize(unpack(config.minimum_size))
@@ -729,8 +748,8 @@ Module.PositionChatFrames = function(self)
 	local db = self.db
 
 	local ChatFrame = ChatFrame1
-	ChatFrame:SetFading(config.fade)
-	ChatFrame:SetTimeVisible(config.time_visible)
+	ChatFrame:SetFading(db.fadeChat)
+	ChatFrame:SetTimeVisible(db.timeVisible)
 	ChatFrame:SetIndentedWordWrap(true)
 	ChatFrame:SetClampRectInsets(unpack(config.clamps))
 	ChatFrame:SetMinResize(unpack(config.minimum_size))
@@ -788,8 +807,31 @@ Module.PositionChatFrames = function(self)
 		if ChatFrame:IsMovable() then
 			ChatFrame:SetUserPlaced(true)
 		end
+	else
+		-- Re-apply whatever the user last dragged/resized it to, instead of
+		-- leaving it at its previous (or Blizzard default) layout.
+		if db.width and db.height then
+			ChatFrame:SetSize(db.width, db.height)
+		end
+		if db.positionX and db.positionY then
+			ChatFrame:ClearAllPoints()
+			ChatFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.positionX, db.positionY)
+		end
 	end
-	
+
+end
+
+-- Remembers the main chat window's current position and size, so it can be
+-- restored on the next login/reload instead of resetting. Only meaningful
+-- while autoposition is off - the frame can't be dragged while it's locked
+-- to the styled default layout.
+Module.SaveChatFrameLayout = function(self)
+	local ChatFrame = ChatFrame1
+	local db = self.db
+	db.positionX = ChatFrame:GetLeft()
+	db.positionY = ChatFrame:GetBottom()
+	db.width = ChatFrame:GetWidth()
+	db.height = ChatFrame:GetHeight()
 end
 
 Module.OnEnable = function(self, event, ...)
@@ -802,6 +844,15 @@ Module.OnEnable = function(self, event, ...)
 
 	self:RegisterEvent("UI_SCALE_CHANGED", "PositionChatFrames")
 	self:RegisterEvent("DISPLAY_SIZE_CHANGED", "PositionChatFrames")
+
+	-- Remember it whenever the user finishes dragging or resizing the main
+	-- chat window by hand (only meaningful while autoposition is off, since
+	-- the frame is locked in place otherwise).
+	hooksecurefunc(ChatFrame1, "StopMovingOrSizing", function()
+		if not self.db.autoposition then
+			self:SaveChatFrameLayout()
+		end
+	end)
 
 --	GameMenuFrame:HookScript("OnShow", function() self:PositionChatFrames() end)
 --	GameMenuFrame:HookScript("OnHide", function() self:PositionChatFrames() end)

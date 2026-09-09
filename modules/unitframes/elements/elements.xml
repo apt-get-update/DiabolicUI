@@ -10,6 +10,7 @@
 <Script file='name.lua'/>
 <Script file='portraits.lua'/>
 <Script file='power.lua'/>
+<Script file='role.lua'/>
 <Script file='runes.lua'/>
 <Script file='threat.lua'/>
 

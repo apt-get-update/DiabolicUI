@@ -45,6 +45,16 @@ Module.LoadArtWork = function(self)
 
 end
 
+-- The small lettermark crest shown top-right on the submenu pages.
+local CreateSubmenuLogo = function(panel)
+	local logo = panel:CreateTexture(nil, "ARTWORK")
+	logo:SetSize(32, 32)
+	logo:SetPoint("TOPRIGHT", -16, -16)
+	logo:SetTexture(([[Interface\AddOns\%s\media\textures\diabolic-lettermark.tga]]):format(Addon))
+	logo:SetTexCoord(90/512, 422/512, 90/512, 422/512)
+	return logo
+end
+
 local CreateSubHeader = function(panel, anchorTo, text)
 	local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	header:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 2, -30)
@@ -53,19 +63,22 @@ local CreateSubHeader = function(panel, anchorTo, text)
 end
 
 -- Values dragged this close to 0 snap to it, since landing on exactly the
--- centered position by hand is otherwise fiddly.
+-- centered position by hand is otherwise fiddly. Only meaningful for
+-- sliders whose range spans 0, like the tooltip offsets below.
 local SLIDER_SNAP_RANGE = 5
 local SLIDER_MIN, SLIDER_MAX = -200, 200
 
--- anchorSpec optionally overrides the default "stack below anchorTo" layout
--- with an explicit { point, relativePoint, x, y } anchor of its own.
-local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, getValue, setValue, anchorSpec)
+-- A slider plus a manual numeric entry box next to it, kept in sync both
+-- ways. anchorSpec optionally overrides the default "stack below anchorTo"
+-- layout with an explicit { point, relativePoint, x, y } anchor of its own.
+-- snapRange, if given, makes values dragged near 0 snap to it.
+local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, minValue, maxValue, getValue, setValue, anchorSpec, snapRange)
 	local slider = CreateFrame("Slider", "DiabolicUIOptionsPanel"..name, panel, "OptionsSliderTemplate")
 	slider:SetOrientation("HORIZONTAL")
 	slider:SetWidth(160)
 	slider:SetHeight(16)
 	slider:SetHitRectInsets(0, 0, -10, 0)
-	slider:SetMinMaxValues(SLIDER_MIN, SLIDER_MAX)
+	slider:SetMinMaxValues(minValue, maxValue)
 	slider:SetValueStep(1)
 
 	if anchorSpec then
@@ -74,21 +87,21 @@ local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, g
 		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 4, -40)
 	end
 
-	_G[slider:GetName().."Low"]:SetText(SLIDER_MIN)
-	_G[slider:GetName().."High"]:SetText(SLIDER_MAX)
+	_G[slider:GetName().."Low"]:SetText(minValue)
+	_G[slider:GetName().."High"]:SetText(maxValue)
 	_G[slider:GetName().."Text"]:SetText(label)
 
 	slider.tooltipText = label
 	slider.tooltipRequirement = tooltipText
 
-	-- manual numeric entry, for typing an exact value (like 0) directly
-	-- instead of having to land on it with the slider
+	-- manual numeric entry, for typing an exact value directly instead of
+	-- having to land on it with the slider
 	local input = CreateFrame("EditBox", "DiabolicUIOptionsPanel"..name.."Input", panel, "InputBoxTemplate")
-	input:SetSize(40, 20)
+	input:SetSize(44, 20)
 	input:SetPoint("LEFT", slider, "RIGHT", 16, 0)
 	input:SetAutoFocus(false)
 	input:SetJustifyH("CENTER")
-	input:SetMaxLetters(4) -- "-200"
+	input:SetMaxLetters(5) -- "-200" / "120"
 
 	local silent = false -- true while we're driving the slider/input from code, not the user
 
@@ -103,10 +116,10 @@ local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, g
 	end
 
 	local commitValue = function(value)
-		if (value < SLIDER_MIN) then
-			value = SLIDER_MIN
-		elseif (value > SLIDER_MAX) then
-			value = SLIDER_MAX
+		if (value < minValue) then
+			value = minValue
+		elseif (value > maxValue) then
+			value = maxValue
 		end
 		setSilently(value)
 		setValue(value)
@@ -117,7 +130,7 @@ local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, g
 			return
 		end
 		value = math_floor(value + .5)
-		if (value ~= 0) and (value > -SLIDER_SNAP_RANGE) and (value < SLIDER_SNAP_RANGE) then
+		if snapRange and (value ~= 0) and (value > -snapRange) and (value < snapRange) then
 			value = 0
 		end
 		commitValue(value)
@@ -145,6 +158,12 @@ local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, g
 	slider.SetValueSilently = setSilently
 
 	return slider
+end
+
+-- anchorSpec optionally overrides the default "stack below anchorTo" layout
+-- with an explicit { point, relativePoint, x, y } anchor of its own.
+local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, getValue, setValue, anchorSpec)
+	return CreateValueSlider(panel, name, anchorTo, label, tooltipText, SLIDER_MIN, SLIDER_MAX, getValue, setValue, anchorSpec, SLIDER_SNAP_RANGE)
 end
 
 -- Order they're visited in when building/refreshing the anchor point picker.
@@ -215,10 +234,9 @@ Module.CreateOptionsPanel = function(self)
 	title:SetText("DiabolicUI")
 
 	local logo = panel:CreateTexture(nil, "ARTWORK")
-	logo:SetSize(32, 32)
+	logo:SetSize(160, 80)
 	logo:SetPoint("TOPRIGHT", -16, -16)
-	logo:SetTexture(([[Interface\AddOns\%s\media\textures\diabolic-lettermark.tga]]):format(Addon))
-	logo:SetTexCoord(90/512, 422/512, 90/512, 422/512)
+	logo:SetTexture(([[Interface\AddOns\%s\media\textures\DiabolicUI_Logo.tga]]):format(Addon))
 
 	-- Unit Frames
 	-------------------------------------------------------
@@ -238,33 +256,104 @@ Module.CreateOptionsPanel = function(self)
 		end
 	end)
 
-	-- Tooltips
-	-------------------------------------------------------
-	local tooltipsHeader = CreateSubHeader(panel, classColors, L["Tooltips"])
-
-	local anchorPreview, refreshAnchorPoint = CreateAnchorPointPicker(panel, tooltipsHeader, L["Anchor Point"],
-		function() return tooltipsDB.anchorPoint end,
-		function(value) tooltipsDB.anchorPoint = value end)
-
-	local offsetX = CreateOffsetSlider(panel, "TooltipOffsetX", anchorPreview, L["Horizontal Offset"], L["At 0, the tooltip is centered horizontally on the cursor."],
-		function() return tooltipsDB.offsetX end,
-		function(value) tooltipsDB.offsetX = value end,
-		{ "TOPLEFT", "TOPRIGHT", 40, 0 })
-
-	local offsetY = CreateOffsetSlider(panel, "TooltipOffsetY", offsetX, L["Vertical Offset"], L["At 0, the cursor is at the bottom edge of the tooltip."],
-		function() return tooltipsDB.offsetY end,
-		function(value) tooltipsDB.offsetY = value end)
-
 	panel.okay = function() end
 	panel.cancel = function()
 		classColors:SetChecked(db.showClassColors)
-		offsetX:SetValueSilently(tooltipsDB.offsetX)
-		offsetY:SetValueSilently(tooltipsDB.offsetY)
-		refreshAnchorPoint()
 	end
 	panel.refresh = panel.cancel
 
 	InterfaceOptions_AddCategory(panel)
+
+	-- Tooltips (submenu)
+	-------------------------------------------------------
+	local tooltipsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelTooltips", InterfaceOptionsFramePanelContainer)
+	tooltipsPanel.name = L["Tooltips"]
+	tooltipsPanel.parent = panel.name
+	tooltipsPanel:Hide()
+
+	local tooltipsTitle = tooltipsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	tooltipsTitle:SetPoint("TOPLEFT", 16, -16)
+	tooltipsTitle:SetText(L["Tooltips"])
+
+	CreateSubmenuLogo(tooltipsPanel)
+
+	local anchorPreview, refreshAnchorPoint = CreateAnchorPointPicker(tooltipsPanel, tooltipsTitle, L["Anchor Point"],
+		function() return tooltipsDB.anchorPoint end,
+		function(value) tooltipsDB.anchorPoint = value end)
+
+	local offsetX = CreateOffsetSlider(tooltipsPanel, "TooltipOffsetX", anchorPreview, L["Horizontal Offset"], L["At 0, the tooltip is centered horizontally on the cursor."],
+		function() return tooltipsDB.offsetX end,
+		function(value) tooltipsDB.offsetX = value end,
+		{ "TOPLEFT", "TOPRIGHT", 40, 0 })
+
+	local offsetY = CreateOffsetSlider(tooltipsPanel, "TooltipOffsetY", offsetX, L["Vertical Offset"], L["At 0, the cursor is at the bottom edge of the tooltip."],
+		function() return tooltipsDB.offsetY end,
+		function(value) tooltipsDB.offsetY = value end)
+
+	tooltipsPanel.okay = function() end
+	tooltipsPanel.cancel = function()
+		offsetX:SetValueSilently(tooltipsDB.offsetX)
+		offsetY:SetValueSilently(tooltipsDB.offsetY)
+		refreshAnchorPoint()
+	end
+	tooltipsPanel.refresh = tooltipsPanel.cancel
+
+	InterfaceOptions_AddCategory(tooltipsPanel)
+
+	-- Chat (submenu)
+	-------------------------------------------------------
+	local chatDB = Engine:GetConfig("ChatWindows")
+	local applyChatFadeSettings = function()
+		Engine:GetModule("ChatWindows"):ApplyFadeSettings()
+	end
+
+	local chatPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelChat", InterfaceOptionsFramePanelContainer)
+	chatPanel.name = L["Chat"]
+	chatPanel.parent = panel.name
+	chatPanel:Hide()
+
+	local chatTitle = chatPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	chatTitle:SetPoint("TOPLEFT", 16, -16)
+	chatTitle:SetText(L["Chat"])
+
+	CreateSubmenuLogo(chatPanel)
+
+	local fadeChat = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeChat", chatPanel, "InterfaceOptionsCheckButtonTemplate")
+	fadeChat:SetPoint("TOPLEFT", chatTitle, "BOTTOMLEFT", -2, -16)
+	fadeChat:SetChecked(chatDB.fadeChat)
+	_G[fadeChat:GetName().."Text"]:SetText(L["Fade Chat"])
+	fadeChat.tooltipText = L["Fade Chat"]
+	fadeChat.tooltipRequirement = L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."]
+	fadeChat:SetScript("OnClick", function(button)
+		chatDB.fadeChat = button:GetChecked() and true or false
+		applyChatFadeSettings()
+	end)
+
+	local timeFading = CreateValueSlider(chatPanel, "ChatTimeFading", fadeChat, L["Time Fading"], L["How many seconds it takes for chat text to fade out."],
+		1, 5,
+		function() return chatDB.timeFading end,
+		function(value)
+			chatDB.timeFading = value
+			applyChatFadeSettings()
+		end)
+
+	local timeVisible = CreateValueSlider(chatPanel, "ChatTimeVisible", timeFading, L["Time Visible"], L["How many seconds chat text stays fully visible before it starts fading."],
+		5, 120,
+		function() return chatDB.timeVisible end,
+		function(value)
+			chatDB.timeVisible = value
+			applyChatFadeSettings()
+		end)
+
+	chatPanel.okay = function() end
+	chatPanel.cancel = function()
+		fadeChat:SetChecked(chatDB.fadeChat)
+		timeFading:SetValueSilently(chatDB.timeFading)
+		timeVisible:SetValueSilently(chatDB.timeVisible)
+	end
+	chatPanel.refresh = chatPanel.cancel
+
+	InterfaceOptions_AddCategory(chatPanel)
 
 	self.OptionsPanel = panel
 

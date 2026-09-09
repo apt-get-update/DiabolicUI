@@ -699,6 +699,11 @@ Engine:NewStaticConfig("UnitFrames", {
 						position = { "CENTER", 6, 0 }
 					}
 				},
+				role = {
+					size = { 22, 22 },
+					position = { "LEFT", -18, 0 }, -- relative to the health bar
+					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
+				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
 					position = { "TOP", 0.5, 24.5 + 17 },
@@ -786,6 +791,11 @@ Engine:NewStaticConfig("UnitFrames", {
 						font_object = DiabolicFont_SansBold8, -- smaller font
 						position = { "CENTER", 4, 0 }
 					}
+				},
+				role = {
+					size = { 32, 32 },
+					position = { "LEFT", -48, 0 }, -- relative to the health bar
+					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular12,

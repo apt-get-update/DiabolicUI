@@ -241,6 +241,15 @@ L["Bottom Left"] = true
 L["Bottom"] = true
 L["Bottom Right"] = true
 
+-- chat module
+---------------------------------------------------------------------
+L["Fade Chat"] = true
+L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] = true
+L["Time Fading"] = true
+L["How many seconds it takes for chat text to fade out."] = true
+L["Time Visible"] = true
+L["How many seconds chat text stays fully visible before it starts fading."] = true
+
 
 -- worldmap module
 ---------------------------------------------------------------------

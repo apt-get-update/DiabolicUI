@@ -9,8 +9,6 @@ Engine:NewStaticConfig("ChatWindows", {
 	position = { "BOTTOMLEFT", "UICenter", "BOTTOMLEFT", (13 + 36 + 2), (150 + 36 + 3) },
 	-- position = { "BOTTOMRIGHT", "UICenter", "BOTTOMRIGHT", -(13 + 36 + 2), (125 + 36 + 3) }, -- not really used
 	clamps = { -(13 + 36 + 2), -(13 + 36 + 2), -13, -(20 + 36 + 3) }, -- required padding to screen edges (with room for buttons and inputbox)
-	fade = true, 
-	time_visible = UnitName("player") == "Goldpaw" and 15 or 25, 
 	button_frame = {
 		size = 36,
 		position = { "BOTTOMLEFT", -(36 + 2), 0 }, -- not used?
