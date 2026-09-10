@@ -3,6 +3,7 @@
 <Include file='actionbars\actionbars.xml'/>
 <Include file='blizzard\blizzard.xml'/>
 <Include file='chat\chat.xml'/>
+<Include file='minimap\minimap.xml'/>
 <Include file='nameplates\nameplates.xml'/>
 <Include file='objectives\objectives.xml'/>
 <Include file='tooltips\tooltips.xml'/>

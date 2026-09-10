@@ -143,8 +143,12 @@ Engine:NewStaticConfig("UnitFrames", {
 					}
 				},
 				auras = {
-					position = { "TOPRIGHT", "Minimap", "TOPLEFT", -20, 0 }, 
-					positionWithoutMinimap = { "TOPRIGHT", "UICenter", "TOPRIGHT", -30, -74 }, 
+					position = { "TOPRIGHT", "Minimap", "TOPLEFT", -20, 0 },
+					-- Mirror of the above, used when the minimap has been
+					-- moved to the left half of the screen, so the auras
+					-- grow out to its right instead of running offscreen.
+					positionMinimapLeft = { "TOPLEFT", "Minimap", "TOPRIGHT", 20, 0 },
+					positionWithoutMinimap = { "TOPRIGHT", "UICenter", "TOPRIGHT", -30, -74 },
 					size = { 200, 200 },
 					spacingH = 4, 
 					spacingV = 4, 

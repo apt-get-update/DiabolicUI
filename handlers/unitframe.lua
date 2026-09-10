@@ -18,6 +18,8 @@ local tonumber = tonumber
 local CreateFrame = _G.CreateFrame
 local FriendsDropDown = _G.FriendsDropDown
 local GameTooltip = _G.GameTooltip
+local GetCurrentTitle = _G.GetCurrentTitle
+local GetTitleName = _G.GetTitleName
 local ToggleDropDownMenu = _G.ToggleDropDownMenu
 
 local UnitFrames = {} -- unitframe registry
@@ -290,6 +292,18 @@ UnitFrame.OnEnter = function(self)
 		GameTooltip:Hide()
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetUnit(self.unit)
+
+		-- The default tooltip doesn't include your own title, unlike
+		-- other players (whose title comes from the server as part of
+		-- their name), so it's added here manually.
+		if (self.unit == "player") then
+			local titleIndex = GetCurrentTitle and GetCurrentTitle()
+			local title = titleIndex and titleIndex > 0 and GetTitleName(titleIndex)
+			if title then
+				GameTooltip:AddLine(title)
+				GameTooltip:Show()
+			end
+		end
 	end
 	local r, g, b = GameTooltip_UnitColor(self.unit)
 	GameTooltipTextLeft1:SetTextColor(r, g, b)

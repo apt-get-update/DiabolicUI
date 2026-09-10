@@ -742,6 +742,43 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 
 end
 
+-- Which half of the screen the (real, Blizzard) minimap is currently on,
+-- so the long-duration buffs anchored beside it can be told to grow out
+-- into open screen space instead of running off whichever edge it's near.
+local GetMinimapSide = function()
+	local minimap = _G.Minimap
+	local minimapX = minimap and minimap:GetCenter()
+	local screenX = _G.UIParent:GetCenter()
+	if (minimapX and screenX and minimapX < screenX) then
+		return "LEFT"
+	end
+	return "RIGHT"
+end
+
+-- Flips the minimap buffs to the opposite side of the minimap when it's
+-- moved to the left half of the screen, and back when it isn't.
+local UpdateAuraSide = function(self)
+	local Buffs = self.Right and self.Right.Buffs
+	if (not Buffs) or (not Buffs.positionMinimapLeft) then
+		return
+	end
+
+	local side = GetMinimapSide()
+	if (side == self.auraSide) then
+		return
+	end
+	self.auraSide = side
+
+	if (side == "LEFT") then
+		Buffs:Place(unpack(Buffs.positionMinimapLeft))
+		Buffs.growthX = "RIGHT"
+	else
+		Buffs:Place(unpack(Buffs.position))
+		Buffs.growthX = "LEFT"
+	end
+	Buffs:ForceUpdate("Buffs")
+end
+
 -- Right orb (power, minimap auras)
 local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	local config = Module:GetDB("UnitFrames").visuals.units.player
@@ -874,6 +911,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Buffs:Place(unpack(config.auras.position)) -- Minimap is always visible on /reload
 
 	Buffs.position = config.auras.position
+	Buffs.positionMinimapLeft = config.auras.positionMinimapLeft
 	Buffs.positionWithoutMinimap = config.auras.positionWithoutMinimap
 	Buffs.config = config.auras
 	Buffs.buttonConfig = config.auras.button
@@ -920,6 +958,7 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 		HAS_VEHICLE_UI = hasVehicleUI
 
 		self.Left.Buffs:ForceUpdate("Buffs")
+		UpdateAuraSide(self)
 
 	elseif event == "ENGINE_ACTIONBAR_VEHICLE_CHANGED" then
 		local hasVehicleUI = ...
@@ -1005,6 +1044,20 @@ UnitFrameWidget.OnEnable = function(self)
 	self:RegisterMessage("ENGINE_ACTIONBAR_VISIBLE_CHANGED", "OnEvent")
 	self:RegisterMessage("ENGINE_MINIMAP_VISIBLE_CHANGED", "OnEvent")
 	self:RegisterMessage("ENGINE_ACTIONBAR_PET_CHANGED", "OnEvent")
+
+	-- No event fires when the minimap itself is moved (e.g. dragged in
+	-- the minimap module's own edit mode), so this polls for it instead.
+	local auraSideTicker = CreateFrame("Frame")
+	auraSideTicker:SetScript("OnUpdate", function(ticker, elapsed)
+		ticker.elapsed = (ticker.elapsed or 0) + elapsed
+		if (ticker.elapsed < 1) then
+			return
+		end
+		ticker.elapsed = 0
+		UpdateAuraSide(self)
+	end)
+
+	UpdateAuraSide(self)
 end
 
 UnitFrameWidget.GetFrame = function(self)
