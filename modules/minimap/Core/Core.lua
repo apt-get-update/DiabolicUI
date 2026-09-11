@@ -66,7 +66,7 @@ local defaults = {
 			storedFrames = {},
 			useServerTime = false,
 			useHalfClock = true,
-			userScale = 1
+			userScale = .8
 		},
 		tracker = {
 			storedFrames = {},

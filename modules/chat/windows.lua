@@ -54,7 +54,7 @@ local updateWindowAlpha = function(frame)
 	local editbox = getEditbox(frame)
 	local alpha
 	if editbox:IsShown() then
-		alpha = 0.25
+		alpha = (Module.db and Module.db.backgroundOpacity or 0) / 100
 	else
 		alpha = 0
 	end
@@ -308,6 +308,18 @@ Module.ApplyFadeSettings = function(self)
 		if frame then
 			frame:SetFading(db.fadeChat)
 			frame:SetTimeVisible(db.timeVisible)
+		end
+	end
+end
+
+-- Re-applies the background opacity to every chat frame currently
+-- showing its editbox, since updateWindowAlpha only fires on its own
+-- when the editbox is shown/hidden, not when the option itself changes.
+Module.ApplyBackgroundOpacity = function(self)
+	for _, name in ipairs(CHAT_FRAMES) do
+		local frame = _G[name]
+		if frame then
+			updateWindowAlpha(frame)
 		end
 	end
 end

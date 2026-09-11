@@ -243,12 +243,18 @@ L["Bottom Right"] = true
 
 -- chat module
 ---------------------------------------------------------------------
+L["Appearance"] = true
+L["Miscellaneous"] = true
 L["Fade Chat"] = true
 L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] = true
 L["Time Fading"] = true
 L["How many seconds it takes for chat text to fade out."] = true
 L["Time Visible"] = true
 L["How many seconds chat text stays fully visible before it starts fading."] = true
+L["Background Opacity"] = true
+L["How opaque the chat window's background is while you're typing."] = true
+L["Right-Click to Copy"] = true
+L["Right-click a chat message's text (not the sender's name) to open a popup with it, selected and ready to copy. Doesn't work on messages containing an item, spell or quest link."] = true
 
 
 -- worldmap module

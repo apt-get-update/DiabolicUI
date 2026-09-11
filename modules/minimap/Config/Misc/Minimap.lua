@@ -82,11 +82,7 @@ Config.Minimap = {
 	LatencyFont = GetFont(12, true),
 	LatencyColor = { Colors.offwhite[1], Colors.offwhite[2], Colors.offwhite[3], .5 },
 
-	MailPosition = { "BOTTOM", 0, 20 },
-	MailJustifyH = "CENTER",
-	MailJustifyV = "MIDDLE",
-	MailFont = GetFont(15, true),
-	MailColor = { Colors.offwhite[1], Colors.offwhite[2], Colors.offwhite[3], .85 },
+	MailSize = { 48, 48 },
 
 	-- Dungeon Eye
 	EyePosition = { "CENTER", math.cos(225 * (math.pi / 180)) * (280 / 2 + 10), math.sin(225 * (math.pi / 180)) * (280 / 2 + 10) },

@@ -54,9 +54,9 @@ local ANCHOR_OFFSETS = {
 -- Strings
 local L_PARENT_CATEGORY = "DiabolicUI"
 local L_MINIMAP_CATEGORY = "Minimap"
-local L_MINIMAP_DESC = "Options for the DiabolicUI minimap."
 local L_TOGGLE_EDIT_MODE = "Toggle Edit Mode"
-local L_EDIT_MODE_DESC = "Move and resize the minimap freely. An |cffffffffExit Edit Mode|r button will appear once you're done."
+local L_SIZE_SLIDER_TOOLTIP = "Resizes the minimap."
+local L_EDIT_MODE_TOOLTIP = "Left-click and drag the minimap to move it. Right-click and drag to resize it instead. An |cffffffffExit Edit Mode|r button will appear once you're done."
 
 -- Minimap Options Panel
 --------------------------------------------
@@ -193,16 +193,26 @@ MenuMod.CreatePanel = function(self)
 	icon:SetTexCoord(90 / 512, 422 / 512, 90 / 512, 422 / 512)
 	panel.icon = icon
 
-	local desc = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	desc:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
-	desc:SetPoint("RIGHT", -32, 0)
-	desc:SetJustifyH("LEFT")
-	desc:SetJustifyV("TOP")
-	desc:SetText(L_MINIMAP_DESC)
-	panel.desc = desc
+	local editButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	editButton:SetSize(190, 24)
+	editButton:SetPoint("TOPLEFT", title, "BOTTOMLEFT", -2, -20)
+	editButton:SetText(L_TOGGLE_EDIT_MODE)
+	editButton:SetScript("OnClick", EditButton_OnClick)
+	editButton:SetScript("OnEnter", function(self)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		GameTooltip:SetText(L_TOGGLE_EDIT_MODE)
+		GameTooltip:AddLine(L_EDIT_MODE_TOOLTIP, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	editButton:SetScript("OnLeave", function(self)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip:Hide()
+	end)
+	panel.editButton = editButton
 
 	local anchorLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	anchorLabel:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -18)
+	anchorLabel:SetPoint("TOPLEFT", editButton, "BOTTOMLEFT", 2, -20)
 	anchorLabel:SetJustifyH("LEFT")
 	anchorLabel:SetText("Anchor Point")
 
@@ -243,13 +253,15 @@ MenuMod.CreatePanel = function(self)
 	sizeSlider:SetOrientation("HORIZONTAL")
 	sizeSlider:SetWidth(160)
 	sizeSlider:SetHeight(16)
-	sizeSlider:SetPoint("TOPLEFT", anchorBox, "BOTTOMLEFT", -10, -44)
+	sizeSlider:SetPoint("TOPLEFT", anchorBox, "TOPRIGHT", 40, -14)
 	sizeSlider:SetMinMaxValues(minPct, maxPct)
 	sizeSlider:SetValueStep(1)
 	sizeSlider:SetScript("OnValueChanged", SizeSlider_OnValueChanged)
 	_G[sizeSlider:GetName() .. "Text"]:SetText("Size (% of default)")
 	_G[sizeSlider:GetName() .. "Low"]:SetText(string_format("%d%%", minPct))
 	_G[sizeSlider:GetName() .. "High"]:SetText(string_format("%d%%", maxPct))
+	sizeSlider.tooltipText = "Size (% of default)"
+	sizeSlider.tooltipRequirement = L_SIZE_SLIDER_TOOLTIP
 	panel.sizeSlider = sizeSlider
 
 	local sizeInput = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
@@ -262,20 +274,6 @@ MenuMod.CreatePanel = function(self)
 	sizeInput:SetScript("OnEscapePressed", SizeInput_OnEscapePressed)
 	sizeInput:SetScript("OnEditFocusLost", SizeInput_OnEditFocusLost)
 	panel.sizeInput = sizeInput
-
-	local editButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	editButton:SetSize(190, 24)
-	editButton:SetPoint("TOPLEFT", sizeSlider, "BOTTOMLEFT", 0, -26)
-	editButton:SetText(L_TOGGLE_EDIT_MODE)
-	editButton:SetScript("OnClick", EditButton_OnClick)
-	panel.editButton = editButton
-
-	local editDesc = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	editDesc:SetPoint("TOPLEFT", editButton, "BOTTOMLEFT", 0, -8)
-	editDesc:SetPoint("RIGHT", -32, 0)
-	editDesc:SetJustifyH("LEFT")
-	editDesc:SetJustifyV("TOP")
-	editDesc:SetText(L_EDIT_MODE_DESC)
 
 	InterfaceOptions_AddCategory(panel)
 

@@ -157,6 +157,32 @@ local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, mi
 	-- re-triggering a snap or a write-back
 	slider.SetValueSilently = setSilently
 
+	-- exposed so a dependent control (e.g. a checkbox toggling whether
+	-- this slider's setting even applies) can grey it out and block
+	-- interaction, along with its numeric entry box.
+	-- *EditBox has no Enable()/Disable() of its own in this client (only
+	--  Button/CheckButton/Slider do), so it's faked here instead: block
+	--  mouse and keyboard input, drop any current focus, and dim the text.
+	slider.Input = input
+	slider.SetEnabled = function(self, enabled)
+		if enabled then
+			slider:Enable()
+			input:EnableMouse(true)
+			input:EnableKeyboard(true)
+			input:SetTextColor(1, 1, 1)
+			slider:SetAlpha(1)
+			input:SetAlpha(1)
+		else
+			slider:Disable()
+			input:ClearFocus()
+			input:EnableMouse(false)
+			input:EnableKeyboard(false)
+			input:SetTextColor(.5, .5, .5)
+			slider:SetAlpha(.5)
+			input:SetAlpha(.5)
+		end
+	end
+
 	return slider
 end
 
@@ -303,6 +329,7 @@ Module.CreateOptionsPanel = function(self)
 	-- Chat (submenu)
 	-------------------------------------------------------
 	local chatDB = Engine:GetConfig("ChatWindows")
+	local chatFiltersDB = Engine:GetConfig("ChatFilters")
 	local applyChatFadeSettings = function()
 		Engine:GetModule("ChatWindows"):ApplyFadeSettings()
 	end
@@ -318,8 +345,42 @@ Module.CreateOptionsPanel = function(self)
 
 	CreateSubmenuLogo(chatPanel)
 
-	local fadeChat = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeChat", chatPanel, "InterfaceOptionsCheckButtonTemplate")
-	fadeChat:SetPoint("TOPLEFT", chatTitle, "BOTTOMLEFT", -2, -16)
+	-- Forward-declared: assigned once Time Fading/Time Visible exist below,
+	-- but referenced by fadeChat's OnClick here already.
+	local updateFadeSlidersEnabled
+
+	local appearanceHeader = CreateSubHeader(chatPanel, chatTitle, L["Appearance"])
+
+	-- A bordered group around Background Opacity + Fade Chat + Time Fading
+	-- + Time Visible, styled like the anchor point picker's backdrop
+	-- elsewhere in this menu.
+	local fadeGroup = CreateFrame("Frame", nil, chatPanel)
+	fadeGroup:SetPoint("TOPLEFT", appearanceHeader, "BOTTOMLEFT", -2, -12)
+	fadeGroup:SetSize(380, 195)
+	fadeGroup:SetBackdrop({
+		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
+		edgeSize = 12,
+		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+	})
+	fadeGroup:SetBackdropColor(0, 0, 0, .25)
+	fadeGroup:SetBackdropBorderColor(1, 1, 1, 1)
+
+	local applyChatBackgroundOpacity = function()
+		Engine:GetModule("ChatWindows"):ApplyBackgroundOpacity()
+	end
+
+	local backgroundOpacity = CreateValueSlider(fadeGroup, "ChatBackgroundOpacity", fadeGroup, L["Background Opacity"], L["How opaque the chat window's background is while you're typing."],
+		0, 100,
+		function() return chatDB.backgroundOpacity end,
+		function(value)
+			chatDB.backgroundOpacity = value
+			applyChatBackgroundOpacity()
+		end,
+		{ "TOPLEFT", "TOPLEFT", 16, -26 })
+
+	local fadeChat = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeChat", fadeGroup, "InterfaceOptionsCheckButtonTemplate")
+	fadeChat:SetPoint("TOPLEFT", backgroundOpacity, "BOTTOMLEFT", 2, -40)
 	fadeChat:SetChecked(chatDB.fadeChat)
 	_G[fadeChat:GetName().."Text"]:SetText(L["Fade Chat"])
 	fadeChat.tooltipText = L["Fade Chat"]
@@ -327,17 +388,22 @@ Module.CreateOptionsPanel = function(self)
 	fadeChat:SetScript("OnClick", function(button)
 		chatDB.fadeChat = button:GetChecked() and true or false
 		applyChatFadeSettings()
+		updateFadeSlidersEnabled()
 	end)
 
-	local timeFading = CreateValueSlider(chatPanel, "ChatTimeFading", fadeChat, L["Time Fading"], L["How many seconds it takes for chat text to fade out."],
+	-- Anchored to the checkbox's own label text (not the checkbox frame,
+	-- which is much narrower than the label), so the gap to the sliders
+	-- is measured from where "Fade Chat" actually ends on screen.
+	local timeFading = CreateValueSlider(fadeGroup, "ChatTimeFading", _G[fadeChat:GetName().."Text"], L["Time Fading"], L["How many seconds it takes for chat text to fade out."],
 		1, 5,
 		function() return chatDB.timeFading end,
 		function(value)
 			chatDB.timeFading = value
 			applyChatFadeSettings()
-		end)
+		end,
+		{ "TOPLEFT", "TOPRIGHT", 30, -4 })
 
-	local timeVisible = CreateValueSlider(chatPanel, "ChatTimeVisible", timeFading, L["Time Visible"], L["How many seconds chat text stays fully visible before it starts fading."],
+	local timeVisible = CreateValueSlider(fadeGroup, "ChatTimeVisible", timeFading, L["Time Visible"], L["How many seconds chat text stays fully visible before it starts fading."],
 		5, 120,
 		function() return chatDB.timeVisible end,
 		function(value)
@@ -345,11 +411,34 @@ Module.CreateOptionsPanel = function(self)
 			applyChatFadeSettings()
 		end)
 
+	-- Time Fading / Time Visible only matter while chat is actually
+	-- set to fade, so grey them out and block input otherwise.
+	updateFadeSlidersEnabled = function()
+		timeFading:SetEnabled(chatDB.fadeChat)
+		timeVisible:SetEnabled(chatDB.fadeChat)
+	end
+	updateFadeSlidersEnabled()
+
+	local miscHeader = CreateSubHeader(chatPanel, fadeGroup, L["Miscellaneous"])
+
+	local copyText = CreateFrame("CheckButton", "DiabolicUIOptionsPanelChatCopyText", chatPanel, "InterfaceOptionsCheckButtonTemplate")
+	copyText:SetPoint("TOPLEFT", miscHeader, "BOTTOMLEFT", -2, -8)
+	copyText:SetChecked(chatFiltersDB.copyText)
+	_G[copyText:GetName().."Text"]:SetText(L["Right-Click to Copy"])
+	copyText.tooltipText = L["Right-Click to Copy"]
+	copyText.tooltipRequirement = L["Right-click a chat message's text (not the sender's name) to open a popup with it, selected and ready to copy. Doesn't work on messages containing an item, spell or quest link."]
+	copyText:SetScript("OnClick", function(button)
+		chatFiltersDB.copyText = button:GetChecked() and true or false
+	end)
+
 	chatPanel.okay = function() end
 	chatPanel.cancel = function()
 		fadeChat:SetChecked(chatDB.fadeChat)
 		timeFading:SetValueSilently(chatDB.timeFading)
 		timeVisible:SetValueSilently(chatDB.timeVisible)
+		updateFadeSlidersEnabled()
+		backgroundOpacity:SetValueSilently(chatDB.backgroundOpacity)
+		copyText:SetChecked(chatFiltersDB.copyText)
 	end
 	chatPanel.refresh = chatPanel.cancel
 

@@ -7,6 +7,7 @@ Engine:NewConfig("ChatWindows", {
 	fadeChat = true, -- whether chat text fades out after being visible for a while
 	timeFading = 3, -- seconds it takes for chat text to fade out, 1-5
 	timeVisible = 20, -- seconds chat text stays fully visible before it starts fading, 5-120
+	backgroundOpacity = 25, -- opacity (%) of the chat window background while typing, 0-100.
 
 	-- the user's own manually dragged/resized main chat window layout,
 	-- applied instead of the styled default position/size while
@@ -18,7 +19,9 @@ Engine:NewConfig("ChatWindows", {
 })
 
 -- chat filters and emoticons
-Engine:NewConfig("ChatFilters", {})
+Engine:NewConfig("ChatFilters", {
+	copyText = true -- right-click a chat message's text to copy it
+})
 
 -- chat bubbles
 Engine:NewConfig("ChatBubbles", {})

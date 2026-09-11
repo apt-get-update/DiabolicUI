@@ -36,7 +36,19 @@ Each `tests/test_*.lua` file is self-contained and runnable on its own.
   reputation bar is shown.
 - `test_chat_fade_settings.lua` - `modules/chat/windows.lua`'s
   `ApplyFadeSettings` - pushing the Fade Chat / Time Fading / Time Visible
-  options onto the real chat frames and Blizzard's own fade-out timing.
+  options onto the real chat frames and Blizzard's own fade-out timing -
+  and `ApplyBackgroundOpacity`, which pushes the Background Opacity slider
+  (25% by default) onto the chat window's background texture - only while
+  its editbox is shown, fully transparent otherwise.
+- `test_chat_copy_text.lua` - `modules/chat/filters.lua`'s "right-click
+  chat text to copy it" feature (toggled by its own "Click to Copy" option,
+  on by default): wrapping the message body (after the sender's name) in a
+  custom hyperlink with a plain-text copy stashed by index, and the
+  replaced `SetItemRef` that opens the copy popup on a right-click of that
+  link, swallows a left-click on it, and forwards every other link type to
+  the original unchanged - exercised by calling the (mocked-in-place-of-
+  Blizzard's-own) `SetItemRef` directly, since there's no real chat frame
+  to click in this environment.
 
 ## How it works
 

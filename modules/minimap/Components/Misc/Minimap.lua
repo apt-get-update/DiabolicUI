@@ -56,7 +56,6 @@ local L_FPS = FPS_ABBR -- "fps"
 local L_MS = MILLISECONDS_ABBR -- "ms"
 local L_RESTING = TUTORIAL_TITLE30 -- "Resting"
 local L_NEW = NEW -- "New"
-local L_MAIL = MAIL_LABEL -- "Mail"
 local L_HAVE_MAIL = HAVE_MAIL -- "You have unread mail"
 local L_HAVE_MAIL_FROM = HAVE_MAIL_FROM -- "Unread mail from:"
 
@@ -539,6 +538,28 @@ MinimapMod.InitializeMBB = function(self)
     end)
 end
 
+-- Aligns the zone name's outer edge with the minimap's outer edge -
+-- right edges flush when the minimap sits on the right half of the
+-- screen (the default), mirrored to the left edges when it's been
+-- moved to the left half - so the label never runs past the minimap
+-- towards the nearest side of the screen.
+MinimapMod.UpdateZoneTextPosition = function(self)
+    local zoneName = self.zoneName
+    if (not zoneName) then return end
+
+    local minimapX = Minimap:GetCenter()
+    local screenX = UIParent:GetCenter()
+
+    zoneName:ClearAllPoints()
+    if (minimapX and screenX and minimapX < screenX) then
+        zoneName:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 25)
+        zoneName:SetJustifyH("LEFT")
+    else
+        zoneName:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 25)
+        zoneName:SetJustifyH("RIGHT")
+    end
+end
+
 -- Keeps the MBB button on the outer side of the minimap - bottom-left
 -- when the minimap sits on the right half of the screen (the default),
 -- mirrored to bottom-right when it's been moved to the left half.
@@ -554,6 +575,22 @@ MinimapMod.UpdateMBBButtonPosition = function(self)
         button:SetPoint("BOTTOMRIGHT", Minimap, 4, -2)
     else
         button:SetPoint("BOTTOMLEFT", Minimap, -4, -2)
+    end
+end
+
+-- Same outer-side alignment as the MBB button, mirrored to the top.
+MinimapMod.UpdateMailButtonPosition = function(self)
+    local button = self.mail and self.mail.frame
+    if (not button) then return end
+
+    local minimapX = Minimap:GetCenter()
+    local screenX = UIParent:GetCenter()
+
+    button:ClearAllPoints()
+    if (minimapX and screenX and minimapX < screenX) then
+        button:SetPoint("TOPRIGHT", Minimap, 4, 2)
+    else
+        button:SetPoint("TOPLEFT", Minimap, -4, 2)
     end
 end
 
@@ -732,8 +769,8 @@ MinimapMod.CreateCustomElements = function(self)
     zoneName:SetDrawLayer("OVERLAY", 1)
     zoneName:SetFontObject(GetFont(16,true))
     zoneName:SetAlpha(.85)
-    zoneName:SetPoint("TOP", Minimap, "TOP", 0, 25)
     self.zoneName = zoneName
+    self:UpdateZoneTextPosition()
   
     -- Time
     local timeFrame = CreateFrame("Button", nil, Minimap)
@@ -774,22 +811,29 @@ MinimapMod.CreateCustomElements = function(self)
     self.coordinates = coordinates
 
     -- Mail
-    local mailFrame = CreateFrame("Button", nil, frame)
-    mailFrame:SetFrameLevel(mailFrame:GetFrameLevel() + 5)
-    mailFrame:SetScript("OnEnter", Mail_OnEnter)
-    mailFrame:SetScript("OnLeave", Mail_OnLeave)
+    -- Styled the same simple way as the MBB "+" button: a single icon
+    -- texture filling a plain frame, parented straight to the minimap.
+    -- button-mail.tga already has the mail icon baked into the button art.
+    local mailFrame = CreateFrame("Frame", nil, Minimap)
+    mailFrame:SetFrameLevel(mailFrame:GetFrameLevel() + 10)
+    mailFrame:SetFrameStrata("LOW")
+    mailFrame:SetSize(unpack(db.MailSize))
 
-    local mail = frame:CreateFontString(nil, "OVERLAY", nil, 1)
+    local mailButton = CreateFrame("Button", nil, mailFrame)
+    mailButton:SetAllPoints(mailFrame)
+    mailButton:SetScript("OnEnter", Mail_OnEnter)
+    mailButton:SetScript("OnLeave", Mail_OnLeave)
+
+    local mail = mailFrame:CreateTexture(nil, "ARTWORK")
+    mail:SetAllPoints(mailFrame)
+    mail:SetTexture(GetMedia("button-mail"))
+    mail:SetTexCoord(0, 1, 0, 1)
+    mail:SetAlpha(.85)
+
     mail.frame = mailFrame
-    mail:SetFontObject(db.MailFont)
-    mail:SetTextColor(unpack(db.MailColor))
-    mail:SetJustifyH(db.MailJustifyH)
-    mail:SetJustifyV(db.MailJustifyV)
-    mail:SetFormattedText("%s", L_MAIL)
-    mail:SetPoint(unpack(db.MailPosition))
-    mailFrame:SetAllPoints(mail)
-
+    mail.base = mailBase
     self.mail = mail
+    self:UpdateMailButtonPosition()
 
     self:UpdateCustomElements()
     self.CreateCustomElements = noop
@@ -882,6 +926,8 @@ MinimapMod.UpdatePosition = function(self)
     Minimap:SetMovable(true)
 
     self:UpdateMBBButtonPosition()
+    self:UpdateMailButtonPosition()
+    self:UpdateZoneTextPosition()
 end
 
 -- Stores the minimap's current position, relative to UIParent,
@@ -891,6 +937,8 @@ MinimapMod.SavePosition = function(self)
     ns.db.global.minimap.storedPosition = { point = point, x = x, y = y }
 
     self:UpdateMBBButtonPosition()
+    self:UpdateMailButtonPosition()
+    self:UpdateZoneTextPosition()
 end
 
 MinimapMod.UpdateSettings = function(self)
