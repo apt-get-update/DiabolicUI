@@ -559,21 +559,19 @@ Widget.UpdateArtwork = function(self, event, ...)
 
 	-- we do a load on demand system here
 	-- that creates the artwork upon the first bar update
-	local firstLoad = not self.artworkCache
 	self.artworkCache = self.artworkCache or self:LoadArtwork()
 
 	-- On a fresh login (as opposed to a UI reload), this first artwork load
-	-- can happen well after the action buttons were created, and for
-	-- reasons that weren't fully pinned down, the buttons can end up
-	-- z-ordered behind this newly created artwork despite their frame
-	-- level already being higher. Explicitly re-asserting it here, now
-	-- that the artwork definitely exists, corrects it without requiring
-	-- the user to /reload.
-	if firstLoad then
-		for barNum, bar in pairs(Module:GetBars()) do
-			for i, button in bar:GetAll() do
-				button:SetFrameLevel(bar:GetFrameLevel() + 1)
-			end
+	-- can happen well before some bars - the side bars in particular - have
+	-- finished enabling and registered themselves with Module:GetBars(), so
+	-- gating this reassignment on "firstLoad" alone let a side bar's buttons
+	-- slip past it entirely, leaving them z-ordered behind this artwork for
+	-- the rest of the session (only a /reload, where every bar is already
+	-- enabled before this first fires, happened to cover all of them). It's
+	-- cheap and idempotent, so just reassert it on every update instead.
+	for barNum, bar in pairs(Module:GetBars()) do
+		for i, button in bar:GetAll() do
+			button:SetFrameLevel(bar:GetFrameLevel() + 1)
 		end
 	end
 
