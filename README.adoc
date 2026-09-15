@@ -2,11 +2,7 @@
 
 Forked from https://github.com/Hrishi29x/DiabolicUI
 
-Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it for 3.3.5, and mended what small things I could along my travels through Northrend - a reputation bar here, a splash of class colour there, the possessed and taxi orbs finally behaving, a chat window that knows to fade quietly away. Nothing grand, just a few fixes gathered on the road and shared freely, should they serve you as well as they have served me. The full list of these small deeds lies below.
-
-== Addon
-
-* The minimap is now included - no separate `DiabolicUI-Minimap` download needed anymore, it ships as part of this addon and its options are nested directly under DiabolicUI in the Interface Options.
+Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it for 3.3.5, and mended what small things I could along my travels through Northrend. Nothing grand, just a few fixes and features gathered on the road and shared freely, should they serve you as well as they have served me. The full list lies below.
 
 == Recommended Addons
 
@@ -19,21 +15,28 @@ Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it fo
 * https://www.wowinterface.com/downloads/info11047-MBBMiniMapButtonBag.html[MBB] - minimap button collector
 * https://github.com/sloan-008/Questie-335[Questie] - quests and quest log
 
-== Changes since the fork
+== Features
 
 === Unit Frames
 
-* Reputation bar takes the place of the experience bar when a reputation is tracked, now as a proper dedicated element instead of a hack on the xp bar.
-* Class-color option: color the player, target, party, raid and tab-target-of-target health bars by the unit's class, toggleable in the options menu (`Show class colors`).
-* Role icons (tank / healer / damage) next to party and raid unit frames.
+* Reputation bar takes the place of the experience bar when a reputation is tracked.
+* Role icons (tank / healer / damage) next to party and raid frames.
+* Optional animated 3D model portrait on party and focus frames, sitting above the health bar with matching border/backdrop/hover-glow chrome (`Show Portrait`).
+* Class-color option for player, target, party, raid and tab-target-of-target health bars (`Show class colors`).
 * Weapon enchants (temporary buffs from poisons, oils, stones, etc.) shown as auras on the player frame.
-* Mind-controlled enemies and vehicles now correctly display their orb/frame as intended.
+* Mind-controlled enemies and vehicles correctly display their orb/frame.
+* `Toggle Fake Party` / `Toggle Fake Raid` buttons preview the party/raid frame styling without needing a real group.
+
+=== Action Bars & Micro Menu
+
+* Number of action bars and side bars configurable with `/diabolic num_bars [1,2,3]` and `/diabolic num_side_bars [0,1,2]`.
+* Gold, FPS and latency shown next to the micro-menu button, each independently toggleable (`Show Gold`, `Show FPS & Latency`); gold uses proper coin icons instead of colored letters.
+* Help Request menu reintroduced.
 
 === Chat
 
-* Updated chat window layout.
-* Options reorganized into clear "Appearance" (background opacity, fade chat, time fading, time visible) and "Miscellaneous" sections, with a bordered group in the options panel.
-* Right-click a chat message's text (not the sender's name) to open a popup with it selected and ready to copy - skips messages containing an item/spell/quest link to avoid breaking them.
+* Updated layout, with options grouped into "Appearance" (background opacity, fade chat, time fading, time visible) and "Miscellaneous".
+* `Copy Web Links`: left-click a web link (http:// or https://) in chat to open a popup with it selected and ready to copy.
 * Chat bubble and damage fonts set to Exocet - best results paired with https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5.
 
 === Tooltips
@@ -43,23 +46,21 @@ Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it fo
 
 === Minimap
 
-* The previously-separate `DiabolicUI-Minimap` addon is now a built-in module: reskinned border, clock, zone text and a mail icon, edit mode, and draggable buttons (mirroring the MinimapButtonBag "+" button's own positioning logic).
-* Zone text aligns to whichever screen edge the minimap is currently on, so it never runs off-screen.
+* Built in as a module - no separate `DiabolicUI-Minimap` download needed.
+* Reskinned border, clock, zone text and mail icon, edit mode, and draggable buttons.
+* Zone text hugs whichever screen edge the minimap is currently on, and cross-fades on zone change (`Animate Zone Text`, with configurable fade-out/fade-in durations).
 
-=== Action Bars & Misc
+=== Objectives
 
-* Number of action bars and side bars configurable with `/diabolic num_bars [1,2,3]` and `/diabolic num_side_bars [0,1,2]`.
-* Gold shown instead of fps.
-* Help Request menu reintroduced.
-* Objective tracker window disabled in favor of `Questie`'s.
-* WorldMap disabled in favor of the bundled minimap module or `SexyMap`.
+* `Fade Quest Tracker`: fades Questie's tracker out after it hasn't been moused over for a while, with configurable delay (`Time Fading`) and faded `Opacity`.
+
+NOTE: DiabolicUI does not disable Blizzard's own objective tracker - that's `Questie`'s job, and it already takes care of it when installed.
+
+=== Options
+
+Everything above lives under a single "DiabolicUI" category in Interface Options, with dedicated *Units*, *Tooltips*, *Chat* and *Minimap* submenus for the settings that belong to each.
+
+=== Misc
+
+* WorldMap disabled in favor of the bundled minimap module.
 * Dropped compatibility code for other WoW versions - this fork targets WotLK 3.3.5 only, keeping the codebase smaller and simpler.
-* Dedicated "Diabolic Options" menu in the Interface Options consolidating all of the above toggles in one place.
-
-== Why you might find this version useful
-
-* *All-in-one*: the minimap is a module of this addon now, not a second addon to install and keep in sync - one settings menu, one set of files.
-* *More configurable*: class colors, reputation bar, bar counts, tooltip anchor/offset, and the minimap's mail icon/zone text are all real options now instead of being hardcoded or missing entirely.
-* *Extra quality-of-life features* the original fork doesn't have: right-click-to-copy chat text, weapon enchant auras, party/raid role icons, and correct mind-control/vehicle frame handling.
-* *Leaner and focused*: dead cross-version compatibility code was stripped out, since this fork only ever targets WotLK 3.3.5.
-* *Actually tested*: a LuaUnit-based automated test suite (`tests/`) covers unit frames, chat, tooltips and module loading, so changes can be verified without needing a live client every time - the upstream fork has no test coverage at all.

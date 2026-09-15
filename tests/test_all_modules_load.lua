@@ -93,6 +93,7 @@ local FILES = {
 	"modules/objectives/capturebars.lua",
 	"modules/objectives/orderhall.lua",
 	"modules/objectives/pvpemotes.lua",
+	"modules/objectives/questie.lua",
 	"modules/objectives/questtimers.lua",
 	"modules/objectives/warnings.lua",
 	"modules/objectives/worldstate.lua",
@@ -126,6 +127,7 @@ local FILES = {
 	"modules/unitframes/units/player.lua",
 	"modules/unitframes/units/raid.lua",
 	"modules/unitframes/units/target.lua",
+	"modules/unitframes/units/testmode.lua",
 	"modules/unitframes/units/tot.lua",
 }
 

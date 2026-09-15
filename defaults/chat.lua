@@ -20,7 +20,7 @@ Engine:NewConfig("ChatWindows", {
 
 -- chat filters and emoticons
 Engine:NewConfig("ChatFilters", {
-	copyText = true -- right-click a chat message's text to copy it
+	copyWebLinks = true -- left-click a http(s) web link in chat to copy it
 })
 
 -- chat bubbles

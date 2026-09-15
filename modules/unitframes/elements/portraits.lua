@@ -3,6 +3,7 @@ local Handler = Engine:GetHandler("UnitFrame")
 
 -- WoW API
 local GetShapeshiftForm = GetShapeshiftForm
+local IsMounted = IsMounted
 local UnitAura = UnitAura
 local UnitExists = UnitExists
 local UnitGUID = UnitGUID
@@ -103,9 +104,18 @@ local Update = function(self, event, ...)
 		end
 		Portrait:ClearModel()
 		Portrait:SetUnit(unit)
-		Portrait:SetCamera(0)
-		if HasFemaleHumanPortrait(unit) then
-			Portrait:SetCamera(1)
+		-- Camera 0 is a close-up bust preset tuned for a plain humanoid -
+		-- forcing it onto a much bigger mounted unit is what blows the
+		-- framing up into a huge, spilling-out mess. Leave the widget's
+		-- own default (whole-unit) camera in place while mounted instead.
+		-- *SetCamDistanceScale() would be the proper fix for this, but
+		--  Immersion hooks that method with code incompatible with this
+		--  client and errors on any call to it, from any addon.
+		if not IsMounted(unit) then
+			Portrait:SetCamera(0)
+			if HasFemaleHumanPortrait(unit) then
+				Portrait:SetCamera(1)
+			end
 		end
 	end
 end

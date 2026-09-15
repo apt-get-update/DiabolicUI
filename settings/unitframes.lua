@@ -603,16 +603,19 @@ Engine:NewStaticConfig("UnitFrames", {
 					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
 				},
 				portrait = {
-					size = { 70, 70 },
-					position = { "TOP", 0, 0 },
-					texture_size = { 128, 128 }, 
+					size = { 40, 40 }, -- the model's own viewport
+					position = { "BOTTOM", "TOP", 0, 4 }, -- { point, relativePoint, x, y }, anchored to the health bar, on top of it
+					texture_size = { 72, 72 }, -- the decorative ring around the model, bigger than its viewport
 					texture_position = { "CENTER", 0, 0 },
 					textures = {
 						backdrop = path .. [[textures\DiabolicUI_Target_80x80_PortraitBackdrop.tga]],
 						border = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorder.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorderHighlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
-					}
+						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
+					},
+					-- Where the name moves to when the portrait takes over the
+					-- space it normally floats in above the frame: { point, relativePoint, x, y }, anchored to the health bar.
+					name_position = { "TOP", "BOTTOM", 0, -2 }
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular14,
@@ -704,9 +707,24 @@ Engine:NewStaticConfig("UnitFrames", {
 					}
 				},
 				role = {
-					size = { 22, 22 },
-					position = { "LEFT", -18, 0 }, -- relative to the health bar
+					size = { 32, 32 },
+					position = { "LEFT", -70, 0 }, -- relative to the health bar, clear of the frame's left edge
 					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
+				},
+				portrait = {
+					size = { 40, 40 }, -- the model's own viewport
+					position = { "BOTTOM", "TOP", 0, 4 }, -- { point, relativePoint, x, y }, anchored to the health bar, on top of it
+					texture_size = { 72, 72 }, -- the decorative ring around the model, bigger than its viewport
+					texture_position = { "CENTER", 0, 0 },
+					textures = {
+						backdrop = path .. [[textures\DiabolicUI_Target_80x80_PortraitBackdrop.tga]],
+						border = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorder.tga]],
+						highlight = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorderHighlight.tga]],
+						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
+					},
+					-- Where the name moves to when the portrait takes over the
+					-- space it normally floats in above the frame: { point, relativePoint, x, y }, anchored to the health bar.
+					name_position = { "TOP", "BOTTOM", 0, -2 }
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
@@ -797,8 +815,8 @@ Engine:NewStaticConfig("UnitFrames", {
 					}
 				},
 				role = {
-					size = { 32, 32 },
-					position = { "LEFT", -48, 0 }, -- relative to the health bar
+					size = { 22, 22 },
+					position = { "LEFT", -42, 0 }, -- relative to the health bar
 					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
 				},
 				name = {

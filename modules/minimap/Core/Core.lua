@@ -66,7 +66,10 @@ local defaults = {
 			storedFrames = {},
 			useServerTime = false,
 			useHalfClock = true,
-			userScale = .8
+			userScale = .8,
+			zoneFadeEnabled = true,
+			zoneFadeInDuration = .5, -- matches Blizzard's own ZoneText.lua ZoneFadeInDuration
+			zoneFadeOutDuration = 2.0 -- matches Blizzard's own ZoneText.lua ZoneFadeOutDuration
 		},
 		tracker = {
 			storedFrames = {},

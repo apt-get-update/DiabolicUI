@@ -439,7 +439,15 @@ Widget.LoadArtwork = function(self)
 	-- artwork overlaying the globes (demon and angel)
 	local overlay = Main:CreateFrame("Frame")
 	overlay:SetFrameStrata("MEDIUM")
-	overlay:SetFrameLevel(35) -- room for the player unit frame and actionbuttons
+	-- Deliberately low: the player unit frame/globes are a lower frame
+	-- STRATA entirely ("LOW", see handlers/unitframe.lua), so strata alone
+	-- already keeps this artwork above them regardless of level - what
+	-- actually matters here is staying *below* the action buttons (also
+	-- MEDIUM strata), and their bar has been observed dropping from its
+	-- intended level 50 down to ~28 on a fresh login (see UpdateArtwork's
+	-- own comment) - so this needs a comfortable margin under that, not
+	-- just under 50.
+	overlay:SetFrameLevel(20)
 	overlay:SetAllPoints()
 
 	local artworkCache = {}
@@ -509,6 +517,21 @@ end
 Widget.UpdateArtwork = function(self, event, ...)
 	local db = self.db
 
+	-- On a fresh login (as opposed to a UI reload), a side bar (bar4/bar5 -
+	-- confirmed by direct in-game print debugging) loses its explicitly-set
+	-- frame level at some point after creation - dropping from 50 down to
+	-- ~28, well below this artwork - for reasons that weren't pinned down
+	-- (it isn't a Show()/Hide() transition, and it isn't caused by anything
+	-- else in this addon's own code). This re-levels every button relative
+	-- to whatever its bar's *current* level actually is, on every single
+	-- call, unconditionally and before the "avoid pointless updates"
+	-- early-return below - cheap and idempotent to just always redo it.
+	for barNum, bar in pairs(Module:GetBars()) do
+		for i, button in bar:GetAll() do
+			button:SetFrameLevel(bar:GetFrameLevel() + 1)
+		end
+	end
+
 	if (self.LoadPetBarArtwork) then
 		self:LoadPetBarArtwork()
 	end
@@ -560,20 +583,6 @@ Widget.UpdateArtwork = function(self, event, ...)
 	-- we do a load on demand system here
 	-- that creates the artwork upon the first bar update
 	self.artworkCache = self.artworkCache or self:LoadArtwork()
-
-	-- On a fresh login (as opposed to a UI reload), this first artwork load
-	-- can happen well before some bars - the side bars in particular - have
-	-- finished enabling and registered themselves with Module:GetBars(), so
-	-- gating this reassignment on "firstLoad" alone let a side bar's buttons
-	-- slip past it entirely, leaving them z-ordered behind this artwork for
-	-- the rest of the session (only a /reload, where every bar is already
-	-- enabled before this first fires, happened to cover all of them). It's
-	-- cheap and idempotent, so just reassert it on every update instead.
-	for barNum, bar in pairs(Module:GetBars()) do
-		for i, button in bar:GetAll() do
-			button:SetFrameLevel(bar:GetFrameLevel() + 1)
-		end
-	end
 
 	for artwork, artworkDB in pairs(self.artworkCache) do
 

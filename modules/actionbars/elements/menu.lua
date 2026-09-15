@@ -21,6 +21,20 @@ local GameTooltip = _G.GameTooltip
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
+-- Inline |T..|t texture markup for the gold/silver/copper coin icons,
+-- built once (in OnEnable, below - by which point settings/ui.lua has
+-- definitely loaded) from the shared coin style in settings/ui.lua,
+-- instead of the plain colored-letter suffixes ("12g 34s 56c") used
+-- previously.
+local BuildCoinIcon = function(texture, texcoord, size, offset)
+	local width, height = size[1], size[2]
+	local atlasSize = 64 -- the texcoords below are fractions of this
+	local left, right = texcoord[1] * atlasSize, texcoord[2] * atlasSize
+	local top, bottom = texcoord[3] * atlasSize, texcoord[4] * atlasSize
+	local xOffset, yOffset = offset[1], offset[2]
+	return ("|T%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|t"):format(texture, height, width, xOffset, yOffset, atlasSize, atlasSize, left, right, top, bottom)
+end
+
 
 MenuWidget.UpdateMicroButtons = function(self, event, ...)
 	self.MicroMenuWindow:Arrange()
@@ -970,15 +984,14 @@ MenuWidget.OnEnable = function(self)
 	local Performance = MasterMenuButton:CreateFontString()
 	Performance:SetDrawLayer("ARTWORK")
 	Performance:SetFontObject(micro_menu_config.performance.normalFont)
-	Performance:SetPoint(unpack(micro_menu_config.performance.position))
-	
+
 	MasterMenuButton.Performance = Performance
-	
+
 	local performance_string = "%d%s - %d%s"
 	local performance_hz = 1
 	local MILLISECONDS_ABBR = MILLISECONDS_ABBR
 	local FPS_ABBR = FPS_ABBR
-	
+
 	local floor = math.floor
 
 
@@ -988,35 +1001,47 @@ MenuWidget.OnEnable = function(self)
 	Gold:SetPoint(unpack(micro_menu_config.performance.position))
 	MasterMenuButton.Gold = Gold
 
-	MasterMenuButton:SetScript("OnEvent", function(self, event, ...) 
+	local coin = Engine:GetDB("UI").coin
+	local GOLD_ICON = BuildCoinIcon(coin.gold_texture, coin.gold_texcoord, coin.gold_size, coin.coin_offset)
+	local SILVER_ICON = BuildCoinIcon(coin.silver_texture, coin.silver_texcoord, coin.silver_size, coin.coin_offset)
+	local COPPER_ICON = BuildCoinIcon(coin.copper_texture, coin.copper_texcoord, coin.copper_size, coin.coin_offset)
+
+	MasterMenuButton:SetScript("OnEvent", function(self, event, ...)
 		local money = GetMoney()
 		local gold = floor(money / 100 / 100)
 		local silver = floor((money / 100) % 100)
 		local copper = money % 100
 		if (gold > 0) then
-			self.Gold:SetFormattedText("%d|cffc98910g|r %d|cffa8a8a8s|r %d|cffb87333c|r", gold, silver, copper)
+			self.Gold:SetFormattedText("%d%s %d%s %d%s", gold, GOLD_ICON, silver, SILVER_ICON, copper, COPPER_ICON)
 		elseif (silver > 0) then
-			self.Gold:SetFormattedText("%d|cffa8a8a8s|r %d|cffb87333c|r", silver, copper)
-		else 
-			self.Gold:SetFormattedText("%d|cffb87333c|r", copper)
+			self.Gold:SetFormattedText("%d%s %d%s", silver, SILVER_ICON, copper, COPPER_ICON)
+		else
+			self.Gold:SetFormattedText("%d%s", copper, COPPER_ICON)
 		end
 	end)
 
 	MasterMenuButton:RegisterEvent("PLAYER_MONEY")
 	MasterMenuButton:RegisterEvent("PLAYER_ENTERING_WORLD")
-	
-	-- MasterMenuButton:SetScript("OnUpdate", function(self, elapsed) 
-	-- 	self.elapsed = (self.elapsed or 0) + elapsed
-	-- 	if self.elapsed > performance_hz then
-	-- 		local _, _, chat_latency, cast_latency = GetNetStats()
-	-- 		local fps = floor(GetFramerate())
-	-- 		if not cast_latency or cast_latency == 0 then
-	-- 			cast_latency = chat_latency
-	-- 		end
-	-- 		self.Performance:SetFormattedText(performance_string, cast_latency, MILLISECONDS_ABBR, fps, FPS_ABBR)
-	-- 		self.elapsed = 0
-	-- 	end
-	-- end)
+
+	MasterMenuButton:SetScript("OnUpdate", function(self, elapsed)
+		if not db.showPerformance then
+			return
+		end
+		self.elapsed = (self.elapsed or 0) + elapsed
+		if self.elapsed > performance_hz then
+			local _, _, chat_latency, cast_latency = GetNetStats()
+			local fps = floor(GetFramerate())
+			if not cast_latency or cast_latency == 0 then
+				cast_latency = chat_latency
+			end
+			self.Performance:SetFormattedText(performance_string, cast_latency, MILLISECONDS_ABBR, fps, FPS_ABBR)
+			self.elapsed = 0
+		end
+	end)
+
+	self.MasterMenuButton = MasterMenuButton
+	self:UpdateGoldVisibility()
+	self:UpdatePerformanceVisibility()
 
 
 	-- Sounds
@@ -1034,6 +1059,38 @@ MenuWidget.OnEnable = function(self)
 	-- We need to manually handle this, as our actionbar script 
 	-- is blocking this event for the talent button. Or?
 	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")	
+end
+
+-- The performance text (fps/latency) sits to the left of the gold text
+-- when both are shown, but falls back to the gold text's own base
+-- position (taking its place) whenever gold is disabled.
+MenuWidget.UpdatePerformanceAnchor = function(self)
+	local button = self.MasterMenuButton
+	if not (button and button.Performance and button.Gold) then
+		return
+	end
+	button.Performance:ClearAllPoints()
+	if Module.db.showGold then
+		button.Performance:SetPoint("RIGHT", button.Gold, "LEFT", -8, 0)
+	else
+		button.Performance:SetPoint(unpack(Module.config.visuals.menus.main.micromenu.performance.position))
+	end
+end
+
+MenuWidget.UpdateGoldVisibility = function(self)
+	local button = self.MasterMenuButton
+	if button and button.Gold then
+		button.Gold:SetShown(Module.db.showGold)
+	end
+	self:UpdatePerformanceAnchor()
+end
+
+MenuWidget.UpdatePerformanceVisibility = function(self)
+	local button = self.MasterMenuButton
+	if button and button.Performance then
+		button.Performance:SetShown(Module.db.showPerformance)
+	end
+	self:UpdatePerformanceAnchor()
 end
 
 MenuWidget.OnEvent = function(self, event, ...)

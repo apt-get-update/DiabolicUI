@@ -984,7 +984,7 @@ Engine:NewStaticConfig("ActionBars", {
 					backdrop_border_color = { 1, 1, 1, 1 },
 					performance = {
 						normalFont = DiabolicFont_SansBold10Gray,
-						position = { "BOTTOMRIGHT", -6, -20  } -- relative to the micromenu's menubutton
+						position = { "BOTTOMRIGHT", -6, -20  } -- relative to the micromenu's menubutton (gold, or fps/latency if gold is disabled)
 					}
 				},
 				barmenu = {

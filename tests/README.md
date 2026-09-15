@@ -40,15 +40,53 @@ Each `tests/test_*.lua` file is self-contained and runnable on its own.
   and `ApplyBackgroundOpacity`, which pushes the Background Opacity slider
   (25% by default) onto the chat window's background texture - only while
   its editbox is shown, fully transparent otherwise.
-- `test_chat_copy_text.lua` - `modules/chat/filters.lua`'s "right-click
-  chat text to copy it" feature (toggled by its own "Click to Copy" option,
-  on by default): wrapping the message body (after the sender's name) in a
-  custom hyperlink with a plain-text copy stashed by index, and the
-  replaced `SetItemRef` that opens the copy popup on a right-click of that
-  link, swallows a left-click on it, and forwards every other link type to
-  the original unchanged - exercised by calling the (mocked-in-place-of-
-  Blizzard's-own) `SetItemRef` directly, since there's no real chat frame
-  to click in this environment.
+- `test_chat_copy_weblinks.lua` - `modules/chat/filters.lua`'s "Copy Web
+  Links" feature (toggled by its own option, on by default): wrapping any
+  http:// or https:// URL found in a message (there can be more than one)
+  in a custom hyperlink, keeping the URL itself as the link's visible text
+  and stashing a copy of it by index, leaving everything else in the
+  message - including any other real hyperlink - untouched, and the
+  replaced `SetItemRef` that opens the copy popup on a left-click of that
+  link, swallows a right-click on it, and forwards every other link type
+  to the original unchanged - exercised by calling the (mocked-in-place-
+  of-Blizzard's-own) `SetItemRef` directly, since there's no real chat
+  frame to click in this environment.
+- `test_chat_commands.lua` - `handlers/commands.lua`'s `/diabolic` /
+  `/diabolicui` / `/dui` slash command plumbing: `ParseCommand` (trims and
+  collapses whitespace, splits into command + args), `PerformCommand`
+  (defaults an empty/nil command to "config", so a bare `/dui` opens the
+  options panel; looks up and calls whatever `Register` put in the
+  registry), and `Register` itself (first-write-wins).
+- `test_objectives_capturebars.lua` - `modules/objectives/capturebars.lua`'s
+  `UpdateCaptureBar` - the tug-of-war progress bar shown for battleground
+  and outdoor objectives: resizing the neutral-zone middle section,
+  clamping it to a sane range, repositioning the spark to the current
+  value, and showing the left/right "moving" indicator based on which way
+  the value just changed (or hiding both near the edges).
+- `test_blizzard_mirrortimers.lua` - `modules/blizzard/mirrortimers.lua`'s
+  `UpdateTimer` (crops, not shrinks, a mirror/start timer's statusbar
+  texture to the current value, clamped to its own min/max) and
+  `UpdateAnchors` (only visible timers get anchored, mirrors sorted before
+  regular timers then by id, stacked with a configured padding, anchored at
+  one of two configured positions depending on whether a capture bar is
+  currently occupying that screen spot).
+- `test_unitframes_elements.lua` - two of
+  `modules/unitframes/elements/*.lua`'s per-unit-frame element `Update`
+  functions: `name.lua` (colors the name text white by default, blue for an
+  elite only if the frame opted in via `Name.colorElite`, purple for a
+  world boss only if `Name.colorBoss` - and bails out if the unit doesn't
+  exist or, on `UNIT_TARGET`, isn't the frame's own current target) and
+  `threat.lua` (shows the threat glow in the aggro-status color while the
+  unit has a threat situation, hides it otherwise, ignoring the event
+  entirely for a different unit than its own).
+- `test_minimap_api.lua` - three of the embedded minimap module's own small
+  `Core/API/*.lua` utility functions: `Positions.lua`'s
+  `GetParsedPosition` (which of the 9 anchor regions a coordinate within a
+  frame falls into), `Abbreviations.lua`'s `AbbreviateNumber` /
+  `AbbreviateNumberBalanced` / `AbbreviateTime` (number/time -> short
+  display-string formatting), and `Addons.lua`'s `IsAddOnAvailable` /
+  `IsAddOnEnabled` / `IsAddOnLoadable` (case-insensitive lookups against a
+  faked addon listing).
 
 ## How it works
 
@@ -98,7 +136,51 @@ files (not reimplementations of their logic) without a WoW client:
   effect on it - install one fixed mock function before loading, and have
   tests mutate a shared table it reads from instead (see
   `test_tooltip_positioning.lua`'s `cursor` table, or
-  `test_actionbars_visibility.lua`'s `state` table, for the pattern).
+  `test_actionbars_visibility.lua`'s `state` table, for the pattern). This
+  also applies to a few WoW-custom Lua extensions that aren't part of
+  standard Lua 5.1 and so aren't there to capture unless a test installs
+  them first - `string.split` (`test_chat_commands.lua`) and `table.wipe`
+  (`test_blizzard_mirrortimers.lua`) are the two hit so far.
+- Per-element unit frame files (`modules/unitframes/elements/*.lua`) all
+  end with `Handler:RegisterElement(name, Enable, Disable, Update)` instead
+  of exposing those three functions as module methods. Since
+  `engine_mock.lua`'s handler stand-in doesn't define `RegisterElement`,
+  override it on the handler *before* loading the file to capture the three
+  local functions directly (see `test_unitframes_elements.lua`) - the same
+  "small hand-written fake standing in for a WoW object" idiom above, just
+  applied to the handler instead of a frame.
+- A hand-written fake that uses a catch-all metatable to auto-vivify *any*
+  missing method into a recording stub (so you don't have to list every
+  method up front) can reintroduce the exact same kind of "always resolves
+  to a truthy stub instead of nil" problem `engine_mock.lua`'s `permissive()`
+  has, described above, for its *own* plain data fields - e.g. a fake fontstring
+  built this way makes `Name.colorBoss` resolve to an always-truthy stub
+  function instead of nil when a test leaves it unset, silently breaking an
+  `if Name.colorBoss then ...` check in the real code. Prefer a small
+  fake with only the specific methods a test needs explicitly defined (see
+  `test_unitframes_elements.lua`'s `newFakeNameText`); reserve a catch-all
+  spy for objects that only ever receive method calls, never plain field
+  reads (see `test_objectives_capturebars.lua` / `test_blizzard_mirrortimers.lua`'s
+  `newSpy`).
+- Relatedly: don't embed a spy object *inside the same tuple you're
+  comparing against one of that spy's own recorded calls* (e.g.
+  `assertEquals(spy.calls[1], {"SetWidth", spy, 20})`) - the spy's `.calls`
+  list already contains a call embedding the spy itself, so the freshly
+  built "expected" tuple and the "actual" one both reach the same
+  self-referential structure and LuaUnit's deep comparison doesn't handle
+  it consistently. Have the spy's recorder drop the leading `self` a colon
+  call passes instead, so a recorded call is just `{methodName, arg1, ...}`
+  with no reference back to the spy.
+- The embedded minimap module (`modules/minimap/`) doesn't use the
+  `Engine`/`local Addon, Engine = ...` convention at all - its files do
+  `local Addon, ns = ..., DiabolicUIMinimapNS`, reading a *global*
+  `DiabolicUIMinimapNS` table instead. Set `_G.DiabolicUIMinimapNS = {}`
+  once before loading any of its files, and call `chunk("DiabolicUI")`
+  with just the one argument (see `test_minimap_api.lua`). Its
+  `Core/API/*.lua` files each do `local API = ns.API or {}; ns.API = API`,
+  so loading several of them against the same table accumulates all of
+  their functions onto one shared `ns.API`, same as the real addon's own
+  load order.
 
 ## Scope and limitations
 

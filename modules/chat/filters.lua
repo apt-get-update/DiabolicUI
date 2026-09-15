@@ -17,44 +17,28 @@ local hooksecurefunc = _G.hooksecurefunc
 
 local handled = {}
 
--- Click-to-copy: the message body (everything after the sender's name)
--- gets wrapped in our own custom hyperlink, so clicking it (instead of
--- the name itself, which keeps its own normal whisper/insert-name click
--- behaviour) opens a popup with the plain text, selected and ready to copy.
+-- Copy Web Links: any http:// or https:// URL found in a chat message gets
+-- wrapped in our own custom hyperlink (keeping the URL itself as the link's
+-- visible text), so left-clicking it opens a popup with that URL, selected
+-- and ready to copy. Everything else in the message - including other
+-- hyperlinks - is left completely untouched.
 -- Bounded so it can't grow forever over a long play session.
 local COPY_TEXT_HISTORY_LIMIT = 200
 local copyTextByIndex = {}
 local nextCopyIndex = 0
 
-local WrapCopyableText = function(msg)
-	local senderLink, rest = msg:match("(|H%a-player:.-|h.-|h)(.*)$")
-	if (not senderLink) or (rest == "") then
-		return msg
-	end
+-- Deliberately excludes "|" (would break WoW's own link escape codes) and
+-- whitespace from the URL itself.
+local URL_PATTERN = "(https?://[^%s|]+)"
 
-	-- |H...|h...|h isn't a truly nestable format - wrapping our own link
-	-- around an existing one (an item, spell, quest, etc. mentioned in the
-	-- message) would corrupt that link's own click region. Leave the whole
-	-- message untouched rather than risk breaking those.
-	if rest:find("|H") then
-		return msg
-	end
+local WrapWebLinks = function(msg)
+	return (msg:gsub(URL_PATTERN, function(url)
+		nextCopyIndex = nextCopyIndex + 1
+		copyTextByIndex[nextCopyIndex] = url
+		copyTextByIndex[nextCopyIndex - COPY_TEXT_HISTORY_LIMIT] = nil
 
-	-- Plain-text version to actually show in the copy popup - strips color
-	-- codes and textures (no other hyperlinks can be present at this point,
-	-- guaranteed by the check above), so what's shown is plain, readable,
-	-- copyable text.
-	local clean = rest:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T.-|t", "")
-	clean = clean:gsub("^:%s*", "") -- drop the leading ": " separator
-	if (clean == "") then
-		return msg
-	end
-
-	nextCopyIndex = nextCopyIndex + 1
-	copyTextByIndex[nextCopyIndex] = clean
-	copyTextByIndex[nextCopyIndex - COPY_TEXT_HISTORY_LIMIT] = nil
-
-	return senderLink .. "|HDiabolicCopyText:" .. nextCopyIndex .. "|h" .. rest .. "|h"
+		return "|HDiabolicCopyText:" .. nextCopyIndex .. "|h" .. url .. "|h"
+	end))
 end
 
 local ShowCopyTextPopup = function(text)
@@ -93,10 +77,11 @@ local Original_SetItemRef = _G.SetItemRef
 _G.SetItemRef = function(link, text, button, ...)
 	local index = link:match("^DiabolicCopyText:(%d+)$")
 	if index then
-		-- Right-click only. Still swallowed (not forwarded) on any other
-		-- button, since the original errors on this unrecognized link
-		-- type regardless of which button was used.
-		if button == "RightButton" then
+		-- Left-click only, same as opening any other chat link. Still
+		-- swallowed (not forwarded) on any other button, since the
+		-- original errors on this unrecognized link type regardless of
+		-- which button was used.
+		if button == "LeftButton" then
 			ShowCopyTextPopup(copyTextByIndex[tonumber(index)])
 		end
 		return
@@ -131,8 +116,8 @@ local AddMessage = function(frame, msg, ...)
 	-- raid warnings
 	msg = msg:gsub("^%["..RAID_WARNING.."%]", "|cffff0000!|r")
 
-	if Module.db and Module.db.copyText then
-		msg = WrapCopyableText(msg)
+	if Module.db and Module.db.copyWebLinks then
+		msg = WrapWebLinks(msg)
 	end
 
 	return frame.old.message(frame, msg, ...)

@@ -11,11 +11,20 @@ local CanInspect = CanInspect
 local NotifyInspect = NotifyInspect
 local GetTalentTabInfo = GetTalentTabInfo
 local GetTime = GetTime
+local IsInGroup = IsInGroup
 
+-- Each role icon occupies one quadrant of a 64x64 grid, but the artwork's
+-- edge glow bleeds a texel or two past its own quadrant boundary. Sampled
+-- at the exact 0.5 seam, bilinear filtering blends that bleed in from the
+-- *neighboring* icon, showing up as a faint line along the shared edge
+-- (most visibly along the top of the DAMAGER icon, fed by TANK's glow
+-- right above it). Insetting the crop by a couple of texels keeps it
+-- safely inside its own quadrant instead.
+local epsilon = 2/64
 local texcoords = {
-	TANK = { 0, 0.5, 0, 0.5 },
-	HEALER = { 0.5, 1, 0, 0.5 },
-	DAMAGER = { 0, 0.5, 0.5, 1 }
+	TANK = { 0 + epsilon, 0.5 - epsilon, 0 + epsilon, 0.5 - epsilon },
+	HEALER = { 0.5 + epsilon, 1 - epsilon, 0 + epsilon, 0.5 - epsilon },
+	DAMAGER = { 0 + epsilon, 0.5 - epsilon, 0.5 + epsilon, 1 - epsilon }
 }
 
 -- Role guessed from a class's primary (most points spent) talent tree,
@@ -141,6 +150,14 @@ Update = function(self, event, ...)
 	local Role = self.Role
 	local unit = self.unit
 
+	-- Party/raid roles only mean anything while actually grouped - skip
+	-- the assigned-role lookup and the inspect-queue fallback entirely
+	-- otherwise, instead of polling/inspecting nonexistent unit tokens.
+	if not IsInGroup() then
+		Role:Hide()
+		return
+	end
+
 	local role = UnitGroupRolesAssigned(unit)
 	if role ~= "TANK" and role ~= "HEALER" and role ~= "DAMAGER" then
 		role = nil
@@ -166,6 +183,29 @@ Update = function(self, event, ...)
 		return Role:PostUpdate(unit, role)
 	end
 end
+
+-- Update only re-queues an inspect when CanInspect(unit) is true *at that
+-- exact moment* - out of range/line of sight at login is common for party
+-- members, and since that's a one-shot attempt gated behind fairly rare
+-- events (GROUP_ROSTER_UPDATE, PARTY_MEMBER_ENABLE, entering/exiting a
+-- vehicle), a frame that missed its window could otherwise be stuck
+-- roleless for the rest of the session even once the unit comes into
+-- range. Periodically retrying every active frame is what actually makes
+-- this "refresh" instead of relying on the right event firing at the
+-- right time - Update itself is cheap and idempotent when the role is
+-- already known or an inspect is already queued.
+local refresher = CreateFrame("Frame")
+refresher:SetScript("OnUpdate", function(self, elapsed)
+	self.elapsed = (self.elapsed or 0) + elapsed
+	if self.elapsed < 3 then
+		return
+	end
+	self.elapsed = 0
+
+	for unit, frame in pairs(activeFrames) do
+		Update(frame, "ROLE_REFRESH")
+	end
+end)
 
 local Enable = function(self, unit)
 	local Role = self.Role

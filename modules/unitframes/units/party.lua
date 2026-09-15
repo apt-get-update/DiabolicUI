@@ -74,9 +74,19 @@ local updateLayers = function(self)
 	if self:IsMouseOver() then
 		self.BorderNormalHighlight:Show()
 		self.BorderNormal:Hide()
+		if self.PortraitBorderNormal then
+			self.PortraitBorderNormal:Hide()
+			self.PortraitBorderHighlight:Show()
+			self.PortraitGlow:Show()
+		end
 	else
 		self.BorderNormal:Show()
 		self.BorderNormalHighlight:Hide()
+		if self.PortraitBorderNormal then
+			self.PortraitBorderNormal:Show()
+			self.PortraitBorderHighlight:Hide()
+			self.PortraitGlow:Hide()
+		end
 	end
 end
 
@@ -439,17 +449,6 @@ local Style = function(self, unit)
 	Health.useClassColor = db.showClassColors
 
 
-	-- Role Icon
-	-------------------------------------------------------------------
-	-- Parented to Border (elevated frame level) so it isn't drawn behind
-	-- the border/backdrop skin, but positioned relative to Health.
-	local Role = Border:CreateTexture(nil, "OVERLAY")
-	Role:SetSize(unpack(config.role.size))
-	Role:SetPoint(config.role.position[1], Health, unpack(config.role.position))
-	Role:SetTexture(config.role.texture)
-	Role:Hide()
-
-
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
@@ -486,30 +485,108 @@ local Style = function(self, unit)
 	-------------------------------------------------------------------
 	local Name = Border:CreateFontString(nil, "OVERLAY")
 	Name:SetFontObject(config.name.font_object)
-	Name:SetPoint(unpack(config.name.position))
+	if db.showPortrait then
+		-- The portrait takes the space above the frame the name normally
+		-- floats in, so the name moves below the health bar instead.
+		-- Justified TOP (instead of BOTTOM) so the text hugs the anchor
+		-- right under the health bar, instead of sinking to the bottom
+		-- of its own (much taller) text box.
+		local namePos = config.portrait.name_position
+		Name:SetPoint(namePos[1], Health, namePos[2], namePos[3], namePos[4])
+		Name:SetJustifyV("TOP")
+	else
+		Name:SetPoint(unpack(config.name.position))
+		Name:SetJustifyV("BOTTOM")
+	end
 	Name:SetSize(unpack(config.name.size))
-	Name:SetJustifyV("BOTTOM")
 	Name:SetJustifyH("CENTER")
 	Name:SetIndentedWordWrap(false)
 	Name:SetWordWrap(true)
 	Name:SetNonSpaceWrap(false)
 
 
+	-- Role Icon
+	-------------------------------------------------------------------
+	-- Parented to Border (elevated frame level) so it isn't drawn behind
+	-- the border/backdrop skin, positioned to the left of the health bar.
+	local Role = Border:CreateTexture(nil, "OVERLAY")
+	Role:SetSize(unpack(config.role.size))
+	Role:SetPoint(config.role.position[1], Health, config.role.position[2], config.role.position[3])
+	Role:SetTexture(config.role.texture)
+	Role:Hide()
+
+
+	-- Portrait
+	-------------------------------------------------------------------
+	-- Optional animated 3D model portrait, sitting on top of the health
+	-- bar. Off by default, and only created here at frame-creation time
+	-- (like Show Class Colors) since adding or removing it after the
+	-- fact needs a UI reload anyway.
+	local Portrait, PortraitBorderNormal, PortraitBorderHighlight, PortraitGlow
+	if db.showPortrait then
+		local portraitPos = config.portrait.position
+		local PortraitHolder = self:CreateFrame("Frame")
+		PortraitHolder:SetSize(unpack(config.portrait.size))
+		PortraitHolder:SetPoint(portraitPos[1], Health, portraitPos[2], portraitPos[3], portraitPos[4])
+
+		local PortraitBackdrop = PortraitHolder:CreateTexture(nil, "BACKGROUND")
+		PortraitBackdrop:SetSize(unpack(config.portrait.texture_size))
+		PortraitBackdrop:SetPoint(unpack(config.portrait.texture_position))
+		PortraitBackdrop:SetTexture(config.portrait.textures.backdrop)
+
+		-- Above Border's own frame level (self:GetFrameLevel() + 4), so the
+		-- portrait and its chrome always draw on top of the frame's skin.
+		Portrait = PortraitHolder:CreateFrame("PlayerModel")
+		Portrait:SetFrameLevel(self:GetFrameLevel() + 5)
+		Portrait:SetAllPoints()
+
+		local PortraitBorder = PortraitHolder:CreateFrame("Frame")
+		PortraitBorder:SetFrameLevel(self:GetFrameLevel() + 6)
+		PortraitBorder:SetAllPoints()
+
+		PortraitBorderNormal = PortraitBorder:CreateTexture(nil, "ARTWORK")
+		PortraitBorderNormal:SetSize(unpack(config.portrait.texture_size))
+		PortraitBorderNormal:SetPoint(unpack(config.portrait.texture_position))
+		PortraitBorderNormal:SetTexture(config.portrait.textures.border)
+
+		PortraitBorderHighlight = PortraitBorder:CreateTexture(nil, "ARTWORK")
+		PortraitBorderHighlight:SetSize(unpack(config.portrait.texture_size))
+		PortraitBorderHighlight:SetPoint(unpack(config.portrait.texture_position))
+		PortraitBorderHighlight:SetTexture(config.portrait.textures.highlight)
+		PortraitBorderHighlight:Hide()
+
+		PortraitGlow = PortraitBorder:CreateTexture(nil, "OVERLAY")
+		PortraitGlow:SetSize(unpack(config.portrait.texture_size))
+		PortraitGlow:SetPoint(unpack(config.portrait.texture_position))
+		PortraitGlow:SetTexture(config.portrait.textures.glow)
+		PortraitGlow:Hide()
+	end
+
+
 	self.Auras = auras
 	self.CastBar = CastBar
 	self.Health = Health
 	self.Name = Name
+	self.Portrait = Portrait
 	self.Role = Role
 	self.Threat = Threat
 
 	self.BorderNormal = BorderNormal
 	self.BorderNormalHighlight = BorderNormalHighlight
+	self.PortraitBorderNormal = PortraitBorderNormal
+	self.PortraitBorderHighlight = PortraitBorderHighlight
+	self.PortraitGlow = PortraitGlow
 
 	self:HookScript("OnEnter", updateLayers)
 	self:HookScript("OnLeave", updateLayers)
 
 
 end
+
+-- Exposed so units/testmode.lua's Toggle Fake Party can reuse this purely-visual
+-- builder to construct mock preview frames, without needing to go through
+-- the real (unit-token-driven) UnitFrame:New/Handler.New pipeline.
+UnitFrameWidget.Style = Style
 
 UnitFrameWidget.OnEnable = function(self)
 	local config = self:GetDB("UnitFrames").visuals.units.party

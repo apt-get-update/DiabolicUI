@@ -4,6 +4,7 @@
 <Script file='capturebars.lua'/>
 <Script file='orderhall.lua'/>
 <Script file='pvpemotes.lua'/>
+<Script file='questie.lua'/>
 <Script file='questtimers.lua'/>
 <Script file='warnings.lua'/>
 <Script file='worldstate.lua'/>

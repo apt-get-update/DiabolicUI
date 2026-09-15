@@ -48,7 +48,14 @@ end
 Bar.NewButton = function(self, button_type, button_id, ...)
 	local Button = ActionButton:New(button_type, button_id, self, ...)
 	Button:SetFrameStrata("MEDIUM")
-	
+	-- A new frame's level otherwise just defaults to whatever WoW resolves
+	-- at creation time and never updates on its own afterwards - setting it
+	-- explicitly, relative to the bar's own (by-then-already-correct)
+	-- level, is what actually keeps every button above the demon/angel
+	-- artwork, rather than relying on artwork.lua to notice and fix it up
+	-- after the fact once the mismatch is already visible on screen.
+	Button:SetFrameLevel(self:GetFrameLevel() + 1)
+
 	-- Increase the bar's local button count
 	local num = #self.buttons + 1
 

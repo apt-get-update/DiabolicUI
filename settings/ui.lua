@@ -28,7 +28,7 @@ local config = {
 		copper_size = { 16, 16 },
 		
 		price_offsetY = -1, -- value added to the Y coordinate of numbers following text, to align
-		coin_offset = { -2, 1 }, -- x,y values added to the position of the coin textures to align them properly
+		coin_offset = { 2, -4 }, -- x,y values added to the position of the coin textures to align them properly
 		coin_padding = 4
 	},
 	backdrops = {

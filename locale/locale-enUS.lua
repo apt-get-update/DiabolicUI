@@ -219,9 +219,27 @@ L["Caster:"] = true
 
 -- unitframe module
 ---------------------------------------------------------------------
-L["Unit Frames"] = true
+L["Units"] = true
 L["Show class colors"] = true
 L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = true
+L["Show Portrait"] = true
+L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] = true
+L["Advanced"] = true
+L["Toggle Fake Party"] = true
+L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] = true
+L["Toggle Fake Raid"] = true
+L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."] = true
+L["Menu"] = true
+L["Show Gold"] = true
+L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] = true
+L["Show FPS & Latency"] = true
+L["Shows your framerate and latency, next to the menu button in the bottom right corner."] = true
+L["Objectives"] = true
+L["Fade Quest Tracker"] = true
+L["Fades Questie's quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nRequires Questie."] = true
+L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = true
+L["Opacity"] = true
+L["How visible the tracker stays once it has fully faded, as a percentage."] = true
 
 -- tooltip module
 ---------------------------------------------------------------------
@@ -253,8 +271,8 @@ L["Time Visible"] = true
 L["How many seconds chat text stays fully visible before it starts fading."] = true
 L["Background Opacity"] = true
 L["How opaque the chat window's background is while you're typing."] = true
-L["Right-Click to Copy"] = true
-L["Right-click a chat message's text (not the sender's name) to open a popup with it, selected and ready to copy. Doesn't work on messages containing an item, spell or quest link."] = true
+L["Copy Web Links"] = true
+L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."] = true
 
 
 -- worldmap module

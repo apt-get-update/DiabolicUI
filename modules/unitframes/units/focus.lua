@@ -63,14 +63,20 @@ end
 local UpdateLayers = function(self)
 	if self:IsMouseOver() then
 		self.BorderNormalHighlight:Show()
-		--self.PortraitBorderNormalHighlight:Show()
 		self.BorderNormal:Hide()
-		--self.PortraitBorderNormal:Hide()
+		if self.PortraitBorderNormal then
+			self.PortraitBorderNormal:Hide()
+			self.PortraitBorderHighlight:Show()
+			self.PortraitGlow:Show()
+		end
 	else
 		self.BorderNormal:Show()
-		--self.PortraitBorderNormal:Show()
 		self.BorderNormalHighlight:Hide()
-		--self.PortraitBorderNormalHighlight:Hide()
+		if self.PortraitBorderNormal then
+			self.PortraitBorderNormal:Show()
+			self.PortraitBorderHighlight:Hide()
+			self.PortraitGlow:Hide()
+		end
 	end
 end
 
@@ -147,35 +153,49 @@ local Style = function(self, unit)
 
 	-- Portrait
 	-------------------------------------------------------------------
-	--[[
-	local PortraitHolder = self:CreateFrame("Frame")
-	PortraitHolder:SetSize(unpack(config.portrait.size))
-	PortraitHolder:SetPoint(unpack(config.portrait.position))
-	
-	local PortraitBackdrop = PortraitHolder:CreateTexture(nil, "BACKGROUND")
-	PortraitBackdrop:SetSize(unpack(config.portrait.texture_size))
-	PortraitBackdrop:SetPoint(unpack(config.portrait.texture_position))
-	PortraitBackdrop:SetTexture(config.portrait.textures.backdrop)
-	
-	local Portrait = PortraitHolder:CreateFrame("PlayerModel")
-	Portrait:SetFrameLevel(self:GetFrameLevel() + 1)
-	Portrait:SetAllPoints()
-	
-	local PortraitBorder = PortraitHolder:CreateFrame("Frame")
-	PortraitBorder:SetFrameLevel(self:GetFrameLevel() + 2)
-	PortraitBorder:SetAllPoints()
+	-- Optional animated 3D model portrait, sitting on top of the health
+	-- bar. Off by default, and only created here at frame-creation time
+	-- (like Show Class Colors) since adding or removing it after the
+	-- fact needs a UI reload anyway.
+	local Portrait, PortraitBorderNormal, PortraitBorderHighlight, PortraitGlow
+	if db.showPortrait then
+		local portraitPos = config.portrait.position
+		local PortraitHolder = self:CreateFrame("Frame")
+		PortraitHolder:SetSize(unpack(config.portrait.size))
+		PortraitHolder:SetPoint(portraitPos[1], Health, portraitPos[2], portraitPos[3], portraitPos[4])
 
-	local PortraitBorderNormal = PortraitBorder:CreateTexture(nil, "ARTWORK")
-	PortraitBorderNormal:SetSize(unpack(config.portrait.texture_size))
-	PortraitBorderNormal:SetPoint(unpack(config.portrait.texture_position))
-	PortraitBorderNormal:SetTexture(config.portrait.textures.border)
+		local PortraitBackdrop = PortraitHolder:CreateTexture(nil, "BACKGROUND")
+		PortraitBackdrop:SetSize(unpack(config.portrait.texture_size))
+		PortraitBackdrop:SetPoint(unpack(config.portrait.texture_position))
+		PortraitBackdrop:SetTexture(config.portrait.textures.backdrop)
 
-	local PortraitBorderNormalHighlight = PortraitBorder:CreateTexture(nil, "ARTWORK")
-	PortraitBorderNormalHighlight:SetSize(unpack(config.portrait.texture_size))
-	PortraitBorderNormalHighlight:SetPoint(unpack(config.portrait.texture_position))
-	PortraitBorderNormalHighlight:SetTexture(config.portrait.textures.highlight)
-	PortraitBorderNormalHighlight:Hide()
-	]]
+		-- Above Border's own frame level (self:GetFrameLevel() + 5), so the
+		-- portrait and its chrome always draw on top of the frame's skin.
+		Portrait = PortraitHolder:CreateFrame("PlayerModel")
+		Portrait:SetFrameLevel(self:GetFrameLevel() + 6)
+		Portrait:SetAllPoints()
+
+		local PortraitBorder = PortraitHolder:CreateFrame("Frame")
+		PortraitBorder:SetFrameLevel(self:GetFrameLevel() + 7)
+		PortraitBorder:SetAllPoints()
+
+		PortraitBorderNormal = PortraitBorder:CreateTexture(nil, "ARTWORK")
+		PortraitBorderNormal:SetSize(unpack(config.portrait.texture_size))
+		PortraitBorderNormal:SetPoint(unpack(config.portrait.texture_position))
+		PortraitBorderNormal:SetTexture(config.portrait.textures.border)
+
+		PortraitBorderHighlight = PortraitBorder:CreateTexture(nil, "ARTWORK")
+		PortraitBorderHighlight:SetSize(unpack(config.portrait.texture_size))
+		PortraitBorderHighlight:SetPoint(unpack(config.portrait.texture_position))
+		PortraitBorderHighlight:SetTexture(config.portrait.textures.highlight)
+		PortraitBorderHighlight:Hide()
+
+		PortraitGlow = PortraitBorder:CreateTexture(nil, "OVERLAY")
+		PortraitGlow:SetSize(unpack(config.portrait.texture_size))
+		PortraitGlow:SetPoint(unpack(config.portrait.texture_position))
+		PortraitGlow:SetTexture(config.portrait.textures.glow)
+		PortraitGlow:Hide()
+	end
 
 
 	-- Threat
@@ -188,27 +208,16 @@ local Style = function(self, unit)
 	Threat.Border:SetPoint(unpack(config.border.texture_position))
 	Threat.Border:SetTexture(config.border.textures.threat)
 
-	--[[
-	Threat.Portrait = Portrait:CreateTexture(nil, "BACKGROUND")
-	Threat.Portrait:Hide()
-	Threat.Portrait:SetSize(unpack(config.portrait.texture_size))
-	Threat.Portrait:SetPoint(unpack(config.portrait.texture_position))
-	Threat.Portrait:SetTexture(config.portrait.textures.threat)
-	]]
-	
 	Threat.Hide = function(self)
 		self.Border:Hide()
-		--self.Portrait:Hide()
 	end
 
 	Threat.Show = function(self)
 		self.Border:Show()
-		--self.Portrait:Show()
 	end
-	
+
 	Threat.SetVertexColor = function(self, ...)
 		self.Border:SetVertexColor(...)
-		--self.Portrait:SetVertexColor(...)
 	end
 
 
@@ -216,9 +225,20 @@ local Style = function(self, unit)
 	-------------------------------------------------------------------
 	local Name = Border:CreateFontString(nil, "OVERLAY")
 	Name:SetFontObject(config.name.font_object)
-	Name:SetPoint(unpack(config.name.position))
+	if db.showPortrait then
+		-- The portrait takes the space above the frame the name normally
+		-- floats in, so the name moves below the health bar instead.
+		-- Justified TOP (instead of BOTTOM) so the text hugs the anchor
+		-- right under the health bar, instead of sinking to the bottom
+		-- of its own (much taller) text box.
+		local namePos = config.portrait.name_position
+		Name:SetPoint(namePos[1], Health, namePos[2], namePos[3], namePos[4])
+		Name:SetJustifyV("TOP")
+	else
+		Name:SetPoint(unpack(config.name.position))
+		Name:SetJustifyV("BOTTOM")
+	end
 	Name:SetSize(unpack(config.name.size))
-	Name:SetJustifyV("BOTTOM")
 	Name:SetJustifyH("CENTER")
 	Name:SetIndentedWordWrap(false)
 	Name:SetWordWrap(true)
@@ -228,14 +248,15 @@ local Style = function(self, unit)
 	self.CastBar = CastBar
 	self.Health = Health
 	self.Name = Name
-	--self.Portrait = Portrait
+	self.Portrait = Portrait
 	self.Power = Power
 	self.Threat = Threat
 
 	self.BorderNormal = BorderNormal
 	self.BorderNormalHighlight = BorderNormalHighlight
-	--self.PortraitBorderNormal = PortraitBorderNormal
-	--self.PortraitBorderNormalHighlight = PortraitBorderNormalHighlight
+	self.PortraitBorderNormal = PortraitBorderNormal
+	self.PortraitBorderHighlight = PortraitBorderHighlight
+	self.PortraitGlow = PortraitGlow
 
 	self:HookScript("OnEnter", UpdateLayers)
 	self:HookScript("OnLeave", UpdateLayers)

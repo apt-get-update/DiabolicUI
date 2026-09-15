@@ -366,17 +366,6 @@ local Style = function(self, unit)
 	Health.useClassColor = db.showClassColors
 
 
-	-- Role Icon
-	-------------------------------------------------------------------
-	-- Parented to Border (elevated frame level) so it isn't drawn behind
-	-- the border/backdrop skin, but positioned relative to Health.
-	local Role = Border:CreateTexture(nil, "OVERLAY")
-	Role:SetSize(unpack(config.role.size))
-	Role:SetPoint(config.role.position[1], Health, unpack(config.role.position))
-	Role:SetTexture(config.role.texture)
-	Role:Hide()
-
-
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
@@ -422,6 +411,17 @@ local Style = function(self, unit)
 	Name:SetNonSpaceWrap(false)
 
 
+	-- Role Icon
+	-------------------------------------------------------------------
+	-- Parented to Border (elevated frame level) so it isn't drawn behind
+	-- the border/backdrop skin, positioned to the left of the health bar.
+	local Role = Border:CreateTexture(nil, "OVERLAY")
+	Role:SetSize(unpack(config.role.size))
+	Role:SetPoint(config.role.position[1], Health, config.role.position[2], config.role.position[3])
+	Role:SetTexture(config.role.texture)
+	Role:Hide()
+
+
 	self.Auras = auras
 	self.CastBar = CastBar
 	self.Health = Health
@@ -434,9 +434,14 @@ local Style = function(self, unit)
 
 	self:HookScript("OnEnter", updateLayers)
 	self:HookScript("OnLeave", updateLayers)
-	
 
-end 
+
+end
+
+-- Exposed so units/testmode.lua's Toggle Fake Raid can reuse this purely-visual
+-- builder to construct mock preview frames, without needing to go through
+-- the real (unit-token-driven) UnitFrame:New/Handler.New pipeline.
+UnitFrameWidget.Style = Style
 
 UnitFrameWidget.OnEnable = function(self)
     local config = self:GetDB("UnitFrames").visuals.units.raid

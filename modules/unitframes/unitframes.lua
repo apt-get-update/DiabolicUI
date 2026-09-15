@@ -11,6 +11,7 @@ local CreateFrame = CreateFrame
 local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
 
+
 Module.LoadArtWork = function(self)
 	local config = self.config.visuals.artwork
 	local db = self.db
@@ -250,6 +251,8 @@ end
 Module.CreateOptionsPanel = function(self)
 	local db = self.db
 	local tooltipsDB = Engine:GetConfig("Tooltips")
+	local actionbarsDB = Engine:GetConfig("ActionBars", "character")
+	local objectivesDB = Engine:GetConfig("ObjectiveTracker")
 
 	local panel = CreateFrame("Frame", "DiabolicUIOptionsPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "DiabolicUI"
@@ -264,27 +267,79 @@ Module.CreateOptionsPanel = function(self)
 	logo:SetPoint("TOPRIGHT", -16, -16)
 	logo:SetTexture(([[Interface\AddOns\%s\media\textures\DiabolicUI_Logo.tga]]):format(Addon))
 
-	-- Unit Frames
+	-- Menu
 	-------------------------------------------------------
-	local unitframesHeader = CreateSubHeader(panel, title, L["Unit Frames"])
+	local menuHeader = CreateSubHeader(panel, title, L["Menu"])
 
-	local classColors = CreateFrame("CheckButton", "DiabolicUIOptionsPanelClassColors", panel, "InterfaceOptionsCheckButtonTemplate")
-	classColors:SetPoint("TOPLEFT", unitframesHeader, "BOTTOMLEFT", -2, -8)
-	classColors:SetChecked(db.showClassColors)
-	_G[classColors:GetName().."Text"]:SetText(L["Show class colors"])
-	classColors.tooltipText = L["Show class colors"]
-	classColors.tooltipRequirement = L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."]
-	classColors:SetScript("OnClick", function(button)
-		local checked = button:GetChecked() and true or false
-		if (checked ~= db.showClassColors) then
-			db.showClassColors = checked
-			Engine:ReloadUI()
-		end
+	local showGold = CreateFrame("CheckButton", "DiabolicUIOptionsPanelShowGold", panel, "InterfaceOptionsCheckButtonTemplate")
+	showGold:SetPoint("TOPLEFT", menuHeader, "BOTTOMLEFT", -2, -8)
+	showGold:SetChecked(actionbarsDB.showGold)
+	_G[showGold:GetName().."Text"]:SetText(L["Show Gold"])
+	showGold.tooltipText = L["Show Gold"]
+	showGold.tooltipRequirement = L["Shows how much money you're carrying, next to the menu button in the bottom right corner."]
+	showGold:SetScript("OnClick", function(button)
+		actionbarsDB.showGold = button:GetChecked() and true or false
+		Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdateGoldVisibility()
+	end)
+
+	local showPerformance = CreateFrame("CheckButton", "DiabolicUIOptionsPanelShowPerformance", panel, "InterfaceOptionsCheckButtonTemplate")
+	showPerformance:SetPoint("TOPLEFT", showGold, "BOTTOMLEFT", 0, -4)
+	showPerformance:SetChecked(actionbarsDB.showPerformance)
+	_G[showPerformance:GetName().."Text"]:SetText(L["Show FPS & Latency"])
+	showPerformance.tooltipText = L["Show FPS & Latency"]
+	showPerformance.tooltipRequirement = L["Shows your framerate and latency, next to the menu button in the bottom right corner."]
+	showPerformance:SetScript("OnClick", function(button)
+		actionbarsDB.showPerformance = button:GetChecked() and true or false
+		Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdatePerformanceVisibility()
+	end)
+
+	-- Objectives
+	-------------------------------------------------------
+	local objectivesHeader = CreateSubHeader(panel, showPerformance, L["Objectives"])
+
+	local fadeTracker = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeTracker", panel, "InterfaceOptionsCheckButtonTemplate")
+	fadeTracker:SetPoint("TOPLEFT", objectivesHeader, "BOTTOMLEFT", -2, -8)
+	fadeTracker:SetChecked(objectivesDB.fadeTracker)
+	_G[fadeTracker:GetName().."Text"]:SetText(L["Fade Quest Tracker"])
+	fadeTracker.tooltipText = L["Fade Quest Tracker"]
+	fadeTracker.tooltipRequirement = L["Fades Questie's quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nRequires Questie."]
+
+	-- Anchored to the checkbox's own label text (not the checkbox frame,
+	-- which is much narrower than the label), so the gap to the sliders
+	-- is measured from where "Fade Quest Tracker" actually ends on screen.
+	local trackerTimeFading = CreateValueSlider(panel, "ObjectivesTimeFading", _G[fadeTracker:GetName().."Text"], L["Time Fading"], L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."],
+		1, 30,
+		function() return objectivesDB.fadeDelay end,
+		function(value) objectivesDB.fadeDelay = value end,
+		{ "TOPLEFT", "TOPRIGHT", 30, -4 })
+
+	local trackerOpacity = CreateValueSlider(panel, "ObjectivesOpacity", trackerTimeFading, L["Opacity"], L["How visible the tracker stays once it has fully faded, as a percentage."],
+		0, 100,
+		function() return objectivesDB.fadeOpacity end,
+		function(value) objectivesDB.fadeOpacity = value end)
+
+	-- Time Fading / Opacity only matter while the tracker fade is
+	-- actually enabled, so grey them out and block input otherwise.
+	local updateTrackerSlidersEnabled = function()
+		trackerTimeFading:SetEnabled(objectivesDB.fadeTracker)
+		trackerOpacity:SetEnabled(objectivesDB.fadeTracker)
+	end
+	updateTrackerSlidersEnabled()
+
+	fadeTracker:SetScript("OnClick", function(button)
+		objectivesDB.fadeTracker = button:GetChecked() and true or false
+		Engine:GetModule("ObjectiveTracker"):ApplyFadeSetting()
+		updateTrackerSlidersEnabled()
 	end)
 
 	panel.okay = function() end
 	panel.cancel = function()
-		classColors:SetChecked(db.showClassColors)
+		showGold:SetChecked(actionbarsDB.showGold)
+		showPerformance:SetChecked(actionbarsDB.showPerformance)
+		fadeTracker:SetChecked(objectivesDB.fadeTracker)
+		trackerTimeFading:SetValueSilently(objectivesDB.fadeDelay)
+		trackerOpacity:SetValueSilently(objectivesDB.fadeOpacity)
+		updateTrackerSlidersEnabled()
 	end
 	panel.refresh = panel.cancel
 
@@ -325,6 +380,100 @@ Module.CreateOptionsPanel = function(self)
 	tooltipsPanel.refresh = tooltipsPanel.cancel
 
 	InterfaceOptions_AddCategory(tooltipsPanel)
+
+	-- Units (submenu)
+	-------------------------------------------------------
+	local unitsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelUnits", InterfaceOptionsFramePanelContainer)
+	unitsPanel.name = L["Units"]
+	unitsPanel.parent = panel.name
+	unitsPanel:Hide()
+
+	local unitsTitle = unitsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	unitsTitle:SetPoint("TOPLEFT", 16, -16)
+	unitsTitle:SetText(L["Units"])
+
+	CreateSubmenuLogo(unitsPanel)
+
+	local classColors = CreateFrame("CheckButton", "DiabolicUIOptionsPanelClassColors", unitsPanel, "InterfaceOptionsCheckButtonTemplate")
+	classColors:SetPoint("TOPLEFT", unitsTitle, "BOTTOMLEFT", -2, -20)
+	classColors:SetChecked(db.showClassColors)
+	_G[classColors:GetName().."Text"]:SetText(L["Show class colors"])
+	classColors.tooltipText = L["Show class colors"]
+	classColors.tooltipRequirement = L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."]
+	classColors:SetScript("OnClick", function(button)
+		local checked = button:GetChecked() and true or false
+		if (checked ~= db.showClassColors) then
+			db.showClassColors = checked
+			Engine:ReloadUI()
+		end
+	end)
+
+	local showPortrait = CreateFrame("CheckButton", "DiabolicUIOptionsPanelShowPortrait", unitsPanel, "InterfaceOptionsCheckButtonTemplate")
+	showPortrait:SetPoint("TOPLEFT", classColors, "BOTTOMLEFT", 0, -4)
+	showPortrait:SetChecked(db.showPortrait)
+	_G[showPortrait:GetName().."Text"]:SetText(L["Show Portrait"])
+	showPortrait.tooltipText = L["Show Portrait"]
+	showPortrait.tooltipRequirement = L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."]
+	showPortrait:SetScript("OnClick", function(button)
+		local checked = button:GetChecked() and true or false
+		if (checked ~= db.showPortrait) then
+			db.showPortrait = checked
+			Engine:ReloadUI()
+		end
+	end)
+
+	-- Advanced
+	-------------------------------------------------------
+	local advancedHeader = CreateSubHeader(unitsPanel, showPortrait, L["Advanced"])
+
+	local toggleFakeParty = CreateFrame("Button", "DiabolicUIOptionsPanelToggleFakeParty", unitsPanel, "UIPanelButtonTemplate")
+	toggleFakeParty:SetSize(150, 24)
+	toggleFakeParty:SetPoint("TOPLEFT", advancedHeader, "BOTTOMLEFT", -2, -8)
+	toggleFakeParty:SetText(L["Toggle Fake Party"])
+	toggleFakeParty:SetScript("OnClick", function(button)
+		db.testPartyMode = not db.testPartyMode
+		self:SetPartyMockShown(db.testPartyMode)
+	end)
+	toggleFakeParty:SetScript("OnEnter", function(button)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip_SetDefaultAnchor(GameTooltip, button)
+		GameTooltip:AddLine(L["Toggle Fake Party"])
+		GameTooltip:AddLine(L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."], 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	toggleFakeParty:SetScript("OnLeave", function(button)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip:Hide()
+	end)
+
+	local toggleFakeRaid = CreateFrame("Button", "DiabolicUIOptionsPanelToggleFakeRaid", unitsPanel, "UIPanelButtonTemplate")
+	toggleFakeRaid:SetSize(150, 24)
+	toggleFakeRaid:SetPoint("LEFT", toggleFakeParty, "RIGHT", 8, 0)
+	toggleFakeRaid:SetText(L["Toggle Fake Raid"])
+	toggleFakeRaid:SetScript("OnClick", function(button)
+		db.testRaidMode = not db.testRaidMode
+		self:SetRaidMockShown(db.testRaidMode)
+	end)
+	toggleFakeRaid:SetScript("OnEnter", function(button)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip_SetDefaultAnchor(GameTooltip, button)
+		GameTooltip:AddLine(L["Toggle Fake Raid"])
+		GameTooltip:AddLine(L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."], 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	toggleFakeRaid:SetScript("OnLeave", function(button)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip:Hide()
+	end)
+
+	unitsPanel.okay = function() end
+	unitsPanel.cancel = function()
+		classColors:SetChecked(db.showClassColors)
+		showPortrait:SetChecked(db.showPortrait)
+	end
+	unitsPanel.refresh = unitsPanel.cancel
+
+	InterfaceOptions_AddCategory(unitsPanel)
 
 	-- Chat (submenu)
 	-------------------------------------------------------
@@ -421,14 +570,14 @@ Module.CreateOptionsPanel = function(self)
 
 	local miscHeader = CreateSubHeader(chatPanel, fadeGroup, L["Miscellaneous"])
 
-	local copyText = CreateFrame("CheckButton", "DiabolicUIOptionsPanelChatCopyText", chatPanel, "InterfaceOptionsCheckButtonTemplate")
-	copyText:SetPoint("TOPLEFT", miscHeader, "BOTTOMLEFT", -2, -8)
-	copyText:SetChecked(chatFiltersDB.copyText)
-	_G[copyText:GetName().."Text"]:SetText(L["Right-Click to Copy"])
-	copyText.tooltipText = L["Right-Click to Copy"]
-	copyText.tooltipRequirement = L["Right-click a chat message's text (not the sender's name) to open a popup with it, selected and ready to copy. Doesn't work on messages containing an item, spell or quest link."]
-	copyText:SetScript("OnClick", function(button)
-		chatFiltersDB.copyText = button:GetChecked() and true or false
+	local copyWebLinks = CreateFrame("CheckButton", "DiabolicUIOptionsPanelChatCopyWebLinks", chatPanel, "InterfaceOptionsCheckButtonTemplate")
+	copyWebLinks:SetPoint("TOPLEFT", miscHeader, "BOTTOMLEFT", -2, -8)
+	copyWebLinks:SetChecked(chatFiltersDB.copyWebLinks)
+	_G[copyWebLinks:GetName().."Text"]:SetText(L["Copy Web Links"])
+	copyWebLinks.tooltipText = L["Copy Web Links"]
+	copyWebLinks.tooltipRequirement = L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."]
+	copyWebLinks:SetScript("OnClick", function(button)
+		chatFiltersDB.copyWebLinks = button:GetChecked() and true or false
 	end)
 
 	chatPanel.okay = function() end
@@ -438,7 +587,7 @@ Module.CreateOptionsPanel = function(self)
 		timeVisible:SetValueSilently(chatDB.timeVisible)
 		updateFadeSlidersEnabled()
 		backgroundOpacity:SetValueSilently(chatDB.backgroundOpacity)
-		copyText:SetChecked(chatFiltersDB.copyText)
+		copyWebLinks:SetChecked(chatFiltersDB.copyWebLinks)
 	end
 	chatPanel.refresh = chatPanel.cancel
 
@@ -470,6 +619,9 @@ Module.OnInit = function(self)
 	self:GetWidget("Unit: Raid"):Enable()
 	self:GetWidget("Unit: Arena"):Enable()
 	self:GetWidget("Unit: Boss"):Enable()
+
+	self:SetPartyMockShown(self.db.testPartyMode)
+	self:SetRaidMockShown(self.db.testRaidMode)
 
 	-- Set a keyword for our petframe,
 	-- for modules like the actionbars to hook into.

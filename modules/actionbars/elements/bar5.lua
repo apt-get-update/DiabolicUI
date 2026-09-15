@@ -55,7 +55,7 @@ BarWidget.OnEnable = function(self)
 		button:SetAttribute("flyoutDirection", "LEFT")
 	end
 
-	Bar:SetAttribute("_onstate-page", [[ 
+	Bar:SetAttribute("_onstate-page", [[
 		self:SetAttribute("state", newstate);
 		for i = 1, self:GetAttribute("num_buttons") do
 			local Button = self:GetFrameRef("Button"..i);

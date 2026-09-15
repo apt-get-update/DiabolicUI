@@ -770,6 +770,7 @@ MinimapMod.CreateCustomElements = function(self)
     zoneName:SetFontObject(GetFont(16,true))
     zoneName:SetAlpha(.85)
     self.zoneName = zoneName
+    self.zoneTargetAlpha = .85 -- the "resting" alpha FadeZoneText fades in towards
     self:UpdateZoneTextPosition()
   
     -- Time
@@ -892,25 +893,87 @@ MinimapMod.UpdateSize = function(self)
     end
 end
 
+-- Steps the zone text through a fade-out/fade-in when the zone changes:
+-- alpha ramps down to 0, the (already-computed) new text/color is applied
+-- right at the bottom, then alpha ramps back up to its resting value and
+-- stays there - the label is always visible except for this brief
+-- transition. Durations are user-configurable (see the Minimap options
+-- menu). ScheduleRepeatingTimer only accepts a method name (see
+-- UpdateCompass/UpdateClock above), not an inline closure, so this is its
+-- own method.
+MinimapMod.FadeZoneText = function(self)
+  local zoneName = self.zoneName
+  if (not zoneName) then
+    return
+  end
+  local db = ns.db.global.minimap
+  -- _G.GetTime, not the local GetTime upvalue above (that one's this
+  -- module's own clock-display wrapper, not WoW's real elapsed-time API).
+  local elapsed = _G.GetTime() - (self.zoneFadeStart or 0)
+
+  if (self.zoneFadePhase == "out") then
+    local progress = elapsed / db.zoneFadeOutDuration
+    if (progress >= 1) then
+      local pending = self.zonePendingZone
+      zoneName:SetText(pending.text)
+      zoneName:SetTextColor(pending.r, pending.g, pending.b, self.zoneTargetAlpha)
+      zoneName:SetAlpha(0)
+      self.zonePendingZone = nil
+      self.zoneFadePhase = "in"
+      self.zoneFadeStart = _G.GetTime()
+    else
+      zoneName:SetAlpha(self.zoneTargetAlpha * (1 - progress))
+    end
+  else -- "in"
+    local progress = elapsed / db.zoneFadeInDuration
+    if (progress >= 1) then
+      zoneName:SetAlpha(self.zoneTargetAlpha)
+      self:CancelTimer(self.zoneFadeTimer)
+      self.zoneFadeTimer = nil
+      self.zoneFadePhase = nil
+    else
+      zoneName:SetAlpha(self.zoneTargetAlpha * progress)
+    end
+  end
+end
+
 MinimapMod.UpdateZone = function(self)
   local zoneName = self.zoneName
   if (not zoneName) then
     return
   end
-  local a = zoneName:GetAlpha() -- needed to preserve alpha after text color changes
+  local a = self.zoneTargetAlpha or zoneName:GetAlpha() -- needed to preserve alpha after text color changes
   local minimapZoneName = GetMinimapZoneText()
   local pvpType, isSubZonePvP, factionName = GetZonePVPInfo()
+  local r, g, b
   if (pvpType) then
     local color = Colors.zone[pvpType]
     if (color) then
-      zoneName:SetTextColor(color[1], color[2], color[3], a)
+      r, g, b = color[1], color[2], color[3]
     else
-      zoneName:SetTextColor(Colors.normal[1], Colors.normal[2], Colors.normal[3], a)
+      r, g, b = Colors.normal[1], Colors.normal[2], Colors.normal[3]
     end
   else
-    zoneName:SetTextColor(Colors.normal[1], Colors.normal[2], Colors.normal[3], a)
+    r, g, b = Colors.normal[1], Colors.normal[2], Colors.normal[3]
   end
-  zoneName:SetText(minimapZoneName)
+
+  -- Fade the text out then in whenever the zone actually changes (and the
+  -- option's enabled), rather than on every call to this (also triggered
+  -- by unrelated PvP-status updates) - the new text/color only gets
+  -- applied once the fade-out reaches 0, by FadeZoneText itself.
+  if (minimapZoneName ~= self.lastZoneName) and ns.db.global.minimap.zoneFadeEnabled then
+    self.lastZoneName = minimapZoneName
+    self.zonePendingZone = { text = minimapZoneName, r = r, g = g, b = b }
+    self.zoneFadePhase = "out"
+    self.zoneFadeStart = _G.GetTime()
+    if (not self.zoneFadeTimer) then
+      self.zoneFadeTimer = self:ScheduleRepeatingTimer("FadeZoneText", 1/30)
+    end
+  else
+    self.lastZoneName = minimapZoneName
+    zoneName:SetTextColor(r, g, b, a)
+    zoneName:SetText(minimapZoneName)
+  end
 end
 
 MinimapMod.UpdatePosition = function(self)
