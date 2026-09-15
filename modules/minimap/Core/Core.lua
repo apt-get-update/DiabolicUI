@@ -68,8 +68,7 @@ local defaults = {
 			useHalfClock = true,
 			userScale = .8,
 			zoneFadeEnabled = true,
-			zoneFadeInDuration = .5, -- matches Blizzard's own ZoneText.lua ZoneFadeInDuration
-			zoneFadeOutDuration = 2.0 -- matches Blizzard's own ZoneText.lua ZoneFadeOutDuration
+			zoneFadeDuration = .25 -- seconds each half (out, then in) of the zone label's crossfade takes
 		},
 		tracker = {
 			storedFrames = {},

@@ -59,8 +59,59 @@ local L_SIZE_SLIDER_TOOLTIP = "Resizes the minimap."
 local L_EDIT_MODE_TOOLTIP = "Left-click and drag the minimap to move it. Right-click and drag to resize it instead. An |cffffffffExit Edit Mode|r button will appear once you're done."
 local L_ZONE_FADE_CHECKBOX = "Animate Zone Text"
 local L_ZONE_FADE_TOOLTIP = "Fades the zone label out and back in whenever you change zones, instead of swapping it instantly."
-local L_ZONE_FADE_OUT_SLIDER = "Fade Out Duration"
-local L_ZONE_FADE_IN_SLIDER = "Fade In Duration"
+local L_ZONE_FADE_DURATION_SLIDER = "Fade Duration"
+local L_ZONE_LABEL_HEADER = "Zone Label"
+local L_ANCHOR_HEADER = "Minimap Screen Anchor"
+local L_ANCHOR_TOOLTIP = "Which corner or edge of the screen the minimap snaps to when moved, and which side it stays clear of when resized."
+
+-- Styled to match how Immersion (and other AceGUI-3.0 based addons) render
+-- their own options sliders: a flat backdrop-textured bar instead of
+-- Blizzard's thin grooved track, a gold label, and the numeric entry box
+-- centered directly underneath the slider instead of sitting beside it.
+local SLIDER_BACKDROP = {
+	bgFile = [[Interface\Buttons\UI-SliderBar-Background]],
+	edgeFile = [[Interface\Buttons\UI-SliderBar-Border]],
+	tile = true, tileSize = 8, edgeSize = 8,
+	insets = { left = 3, right = 3, top = 6, bottom = 6 }
+}
+local SLIDER_THUMB_TEXTURE = [[Interface\Buttons\UI-SliderBar-Button-Horizontal]]
+
+local INPUT_BACKDROP = {
+	bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+	edgeFile = [[Interface\ChatFrame\ChatFrameBackground]],
+	tile = true, tileSize = 5, edgeSize = 1
+}
+local INPUT_BORDER_COLOR = { .3, .3, .3, .8 }
+local INPUT_BORDER_COLOR_HOVER = { .5, .5, .5, 1 }
+local LABEL_COLOR = { 1, .82, 0 }
+local LABEL_COLOR_DISABLED = { .5, .5, .5 }
+
+-- Applies the shared bar/thumb backdrop to a slider, and builds the
+-- centered numeric entry box below it. Returns the input box.
+local SkinDurationSlider = function(slider)
+	slider:SetBackdrop(SLIDER_BACKDROP)
+	slider:SetThumbTexture(SLIDER_THUMB_TEXTURE)
+
+	local lowText, highText, labelText = _G[slider:GetName() .. "Low"], _G[slider:GetName() .. "High"], _G[slider:GetName() .. "Text"]
+	lowText:SetTextColor(1, 1, 1)
+	highText:SetTextColor(1, 1, 1)
+	labelText:SetTextColor(unpack(LABEL_COLOR))
+
+	local input = CreateFrame("EditBox", nil, slider:GetParent())
+	input:SetSize(70, 14)
+	input:SetPoint("TOP", slider, "BOTTOM", 0, -6)
+	input:SetAutoFocus(false)
+	input:SetJustifyH("CENTER")
+	input:SetFontObject(GameFontHighlightSmall)
+	input:SetMaxLetters(5)
+	input:SetBackdrop(INPUT_BACKDROP)
+	input:SetBackdropColor(0, 0, 0, .5)
+	input:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR))
+	input:SetScript("OnEnter", function(self) self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR_HOVER)) end)
+	input:SetScript("OnLeave", function(self) self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR)) end)
+
+	return input, lowText, highText, labelText
+end
 
 -- Minimap Options Panel
 --------------------------------------------
@@ -140,27 +191,33 @@ local ZoneFadeCheckbox_OnClick = function(self)
 	ns.db.global.minimap.zoneFadeEnabled = checked
 
 	local panel = self:GetParent()
-	panel.zoneFadeOutSlider:SetEnabled(checked)
-	panel.zoneFadeInSlider:SetEnabled(checked)
+	panel.zoneFadeDurationSlider:SetEnabled(checked)
 end
 
 -- Builds a labeled slider + numeric input pair for a millisecond duration
--- setting, styled like the Size slider/input above (title above the
--- slider, low/high under its ends, the input box to its right). Returns
--- the slider; call slider.Refresh() to sync both widgets to the current
--- saved value (e.g. from UpdateInfo, or right after creating it), and
--- slider.SetEnabled(enabled) to grey it and its input out together.
+-- setting, styled like Immersion's own options sliders (title above the
+-- slider, low/high under its ends, the input box centered underneath).
+-- Returns the slider; call slider.Refresh() to sync both widgets to the
+-- current saved value (e.g. from UpdateInfo, or right after creating it),
+-- and slider.SetEnabled(enabled) to grey it and its input out together.
 -- anchorSpec optionally overrides the default "stack below anchorTo"
 -- layout with an explicit { point, relativePoint, x, y } anchor of its own.
 local CreateDurationSlider = function(panel, name, anchorTo, label, tooltipText, minMs, maxMs, getValue, setValue, anchorSpec)
 	local slider = CreateFrame("Slider", name, panel, "OptionsSliderTemplate")
 	slider:SetOrientation("HORIZONTAL")
 	slider:SetWidth(160)
-	slider:SetHeight(16)
+	slider:SetHeight(15)
 	if (anchorSpec) then
 		slider:SetPoint(anchorSpec[1], anchorTo, anchorSpec[2], anchorSpec[3], anchorSpec[4])
 	else
-		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 0, -30)
+		-- Always anchored to anchorTo itself (never its .input), so this
+		-- slider's own left edge lines up with anchorTo's - anchoring to
+		-- .input instead would misalign it, since that box is centered
+		-- under the slider above it, not flush with its left edge. If
+		-- anchorTo is itself a slider, though, its input box now sits
+		-- below it, so the gap needs to be bigger to actually clear it.
+		local gap = anchorTo.input and -50 or -30
+		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 0, gap)
 	end
 	slider:SetMinMaxValues(minMs, maxMs)
 	slider:SetValueStep(10)
@@ -170,12 +227,7 @@ local CreateDurationSlider = function(panel, name, anchorTo, label, tooltipText,
 	slider.tooltipText = label
 	slider.tooltipRequirement = tooltipText
 
-	local input = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
-	input:SetSize(40, 20)
-	input:SetAutoFocus(false)
-	input:SetMaxLetters(5)
-	input:SetJustifyH("CENTER")
-	input:SetPoint("LEFT", slider, "RIGHT", 20, 0)
+	local input = SkinDurationSlider(slider)
 	slider.input = input
 
 	local commit = function(self)
@@ -218,12 +270,16 @@ local CreateDurationSlider = function(panel, name, anchorTo, label, tooltipText,
 	-- *EditBox has no Enable()/Disable() of its own in this client (only
 	--  Button/CheckButton/Slider do), so it's faked here instead: block
 	--  mouse and keyboard input, drop any current focus, and dim the text.
+	local lowText, highText, labelText = _G[slider:GetName() .. "Low"], _G[slider:GetName() .. "High"], _G[slider:GetName() .. "Text"]
 	slider.SetEnabled = function(self, enabled)
 		if (enabled) then
 			slider:Enable()
 			input:EnableMouse(true)
 			input:EnableKeyboard(true)
 			input:SetTextColor(1, 1, 1)
+			labelText:SetTextColor(unpack(LABEL_COLOR))
+			lowText:SetTextColor(1, 1, 1)
+			highText:SetTextColor(1, 1, 1)
 			slider:SetAlpha(1)
 			input:SetAlpha(1)
 		else
@@ -232,6 +288,9 @@ local CreateDurationSlider = function(panel, name, anchorTo, label, tooltipText,
 			input:EnableMouse(false)
 			input:EnableKeyboard(false)
 			input:SetTextColor(.5, .5, .5)
+			labelText:SetTextColor(unpack(LABEL_COLOR_DISABLED))
+			lowText:SetTextColor(.5, .5, .5)
+			highText:SetTextColor(.5, .5, .5)
 			slider:SetAlpha(.5)
 			input:SetAlpha(.5)
 		end
@@ -260,10 +319,8 @@ UpdateInfo = function(panel)
 
 	local zoneFadeEnabled = ns.db.global.minimap.zoneFadeEnabled
 	panel.zoneFadeCheckbox:SetChecked(zoneFadeEnabled)
-	panel.zoneFadeOutSlider.Refresh()
-	panel.zoneFadeInSlider.Refresh()
-	panel.zoneFadeOutSlider:SetEnabled(zoneFadeEnabled)
-	panel.zoneFadeInSlider:SetEnabled(zoneFadeEnabled)
+	panel.zoneFadeDurationSlider.Refresh()
+	panel.zoneFadeDurationSlider:SetEnabled(zoneFadeEnabled)
 end
 
 local Panel_OnShow = function(panel)
@@ -330,11 +387,28 @@ MenuMod.CreatePanel = function(self)
 	local anchorLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	anchorLabel:SetPoint("TOPLEFT", editButton, "BOTTOMLEFT", 2, -20)
 	anchorLabel:SetJustifyH("LEFT")
-	anchorLabel:SetText("Anchor Point")
+	anchorLabel:SetText(L_ANCHOR_HEADER)
+
+	-- FontStrings can't take mouse input themselves, so a same-sized
+	-- frame on top of it is what actually shows the description on hover.
+	local anchorLabelHitbox = CreateFrame("Frame", nil, panel)
+	anchorLabelHitbox:SetAllPoints(anchorLabel)
+	anchorLabelHitbox:EnableMouse(true)
+	anchorLabelHitbox:SetScript("OnEnter", function(self)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		GameTooltip:AddLine(L_ANCHOR_HEADER)
+		GameTooltip:AddLine(L_ANCHOR_TOOLTIP, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	anchorLabelHitbox:SetScript("OnLeave", function(self)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip:Hide()
+	end)
 
 	-- A rectangle with a radio button on each of the 8 anchor
 	-- points around it - click one to snap the minimap there.
-	-- Styled to match DiabolicUI's own Tooltips "Anchor Point" picker
+	-- Styled to match DiabolicUI's own Tooltips anchor picker
 	-- (same size and tooltip-border skin).
 	local anchorBox = CreateFrame("Frame", nil, panel)
 	anchorBox:SetSize(120, 80)
@@ -368,7 +442,7 @@ MenuMod.CreatePanel = function(self)
 	local sizeSlider = CreateFrame("Slider", "DiabolicMinimapSizeSlider", panel, "OptionsSliderTemplate")
 	sizeSlider:SetOrientation("HORIZONTAL")
 	sizeSlider:SetWidth(160)
-	sizeSlider:SetHeight(16)
+	sizeSlider:SetHeight(15)
 	sizeSlider:SetPoint("TOPLEFT", anchorBox, "TOPRIGHT", 40, -14)
 	sizeSlider:SetMinMaxValues(minPct, maxPct)
 	sizeSlider:SetValueStep(1)
@@ -380,19 +454,33 @@ MenuMod.CreatePanel = function(self)
 	sizeSlider.tooltipRequirement = L_SIZE_SLIDER_TOOLTIP
 	panel.sizeSlider = sizeSlider
 
-	local sizeInput = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
-	sizeInput:SetSize(40, 20)
-	sizeInput:SetAutoFocus(false)
-	sizeInput:SetMaxLetters(5)
-	sizeInput:SetJustifyH("CENTER")
-	sizeInput:SetPoint("LEFT", sizeSlider, "RIGHT", 20, 0)
+	local sizeInput = SkinDurationSlider(sizeSlider)
 	sizeInput:SetScript("OnEnterPressed", SizeInput_OnEnterPressed)
 	sizeInput:SetScript("OnEscapePressed", SizeInput_OnEscapePressed)
 	sizeInput:SetScript("OnEditFocusLost", SizeInput_OnEditFocusLost)
 	panel.sizeInput = sizeInput
 
-	local zoneFadeCheckbox = CreateFrame("CheckButton", "DiabolicMinimapZoneFadeCheckbox", panel, "InterfaceOptionsCheckButtonTemplate")
-	zoneFadeCheckbox:SetPoint("TOPLEFT", anchorBox, "BOTTOMLEFT", -2, -20)
+	local zoneLabelHeader = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	zoneLabelHeader:SetPoint("TOPLEFT", anchorBox, "BOTTOMLEFT", 2, -20)
+	zoneLabelHeader:SetJustifyH("LEFT")
+	zoneLabelHeader:SetText(L_ZONE_LABEL_HEADER)
+
+	-- A bordered group around Animate Zone Text + Fade Duration, styled
+	-- like the anchor point picker's backdrop elsewhere in this menu.
+	local zoneFadeGroup = CreateFrame("Frame", nil, panel)
+	zoneFadeGroup:SetPoint("TOPLEFT", zoneLabelHeader, "BOTTOMLEFT", -16, -8)
+	zoneFadeGroup:SetSize(380, 100)
+	zoneFadeGroup:SetBackdrop({
+		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
+		edgeSize = 12,
+		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+	})
+	zoneFadeGroup:SetBackdropColor(0, 0, 0, .25)
+	zoneFadeGroup:SetBackdropBorderColor(1, 1, 1, 1)
+
+	local zoneFadeCheckbox = CreateFrame("CheckButton", "DiabolicMinimapZoneFadeCheckbox", zoneFadeGroup, "InterfaceOptionsCheckButtonTemplate")
+	zoneFadeCheckbox:SetPoint("TOPLEFT", zoneFadeGroup, "TOPLEFT", 18, -16)
 	_G[zoneFadeCheckbox:GetName() .. "Text"]:SetText(L_ZONE_FADE_CHECKBOX)
 	zoneFadeCheckbox.tooltipText = L_ZONE_FADE_CHECKBOX
 	zoneFadeCheckbox.tooltipRequirement = L_ZONE_FADE_TOOLTIP
@@ -400,26 +488,24 @@ MenuMod.CreatePanel = function(self)
 	panel.zoneFadeCheckbox = zoneFadeCheckbox
 
 	-- Anchored to the checkbox's own label text (not the checkbox frame,
-	-- which is much narrower than the label), so the gap to the sliders
+	-- which is much narrower than the label), so the gap to the slider
 	-- is measured from where "Animate Zone Text" actually ends on screen -
 	-- same layout as DiabolicUI's own "Fade Chat" + Time Fading/Visible.
-	local zoneFadeOutSlider = CreateDurationSlider(panel, "DiabolicMinimapZoneFadeOutSlider", _G[zoneFadeCheckbox:GetName() .. "Text"], L_ZONE_FADE_OUT_SLIDER, L_ZONE_FADE_TOOLTIP,
-		50, 3000,
-		function() return ns.db.global.minimap.zoneFadeOutDuration end,
-		function(value) ns.db.global.minimap.zoneFadeOutDuration = value end,
+	-- One duration covers both halves of the crossfade (out, then in).
+	local zoneFadeDurationSlider = CreateDurationSlider(zoneFadeGroup, "DiabolicMinimapZoneFadeDurationSlider", _G[zoneFadeCheckbox:GetName() .. "Text"], L_ZONE_FADE_DURATION_SLIDER, L_ZONE_FADE_TOOLTIP,
+		50, 1000,
+		function() return ns.db.global.minimap.zoneFadeDuration end,
+		function(value) ns.db.global.minimap.zoneFadeDuration = value end,
 		{ "TOPLEFT", "TOPRIGHT", 30, -4 })
-	panel.zoneFadeOutSlider = zoneFadeOutSlider
+	panel.zoneFadeDurationSlider = zoneFadeDurationSlider
+	-- ZoneFadeCheckbox_OnClick reaches this via self:GetParent() on the
+	-- checkbox, which is zoneFadeGroup now that it's grouped in its own
+	-- bordered frame - not the options panel itself.
+	zoneFadeGroup.zoneFadeDurationSlider = zoneFadeDurationSlider
 
-	local zoneFadeInSlider = CreateDurationSlider(panel, "DiabolicMinimapZoneFadeInSlider", zoneFadeOutSlider, L_ZONE_FADE_IN_SLIDER, L_ZONE_FADE_TOOLTIP,
-		50, 3000,
-		function() return ns.db.global.minimap.zoneFadeInDuration end,
-		function(value) ns.db.global.minimap.zoneFadeInDuration = value end)
-	panel.zoneFadeInSlider = zoneFadeInSlider
-
-	-- Fade Out/In Duration only matter while zone fade is actually
-	-- enabled, so grey them out and block input otherwise.
-	zoneFadeOutSlider:SetEnabled(ns.db.global.minimap.zoneFadeEnabled)
-	zoneFadeInSlider:SetEnabled(ns.db.global.minimap.zoneFadeEnabled)
+	-- Fade Duration only matters while zone fade is actually enabled,
+	-- so grey it out and block input otherwise.
+	zoneFadeDurationSlider:SetEnabled(ns.db.global.minimap.zoneFadeEnabled)
 
 	InterfaceOptions_AddCategory(panel)
 

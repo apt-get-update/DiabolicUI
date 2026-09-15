@@ -5,5 +5,5 @@ Engine:NewConfig("ActionBars", {
 	num_side_bars = 0, -- number of side bars (0-2)
 	cast_on_down = 0, -- this setting is only used for WotLK
 	showGold = true,
-	showPerformance = true
+	showPerformance = false
 })

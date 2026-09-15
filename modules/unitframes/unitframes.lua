@@ -69,39 +69,80 @@ end
 local SLIDER_SNAP_RANGE = 5
 local SLIDER_MIN, SLIDER_MAX = -200, 200
 
--- A slider plus a manual numeric entry box next to it, kept in sync both
--- ways. anchorSpec optionally overrides the default "stack below anchorTo"
--- layout with an explicit { point, relativePoint, x, y } anchor of its own.
--- snapRange, if given, makes values dragged near 0 snap to it.
+-- Styled to match how Immersion (and other AceGUI-3.0 based addons) render
+-- their own options sliders: a flat backdrop-textured bar instead of
+-- Blizzard's thin grooved track, a gold label, and the numeric entry box
+-- centered directly underneath the slider instead of sitting beside it.
+local SLIDER_BACKDROP = {
+	bgFile = [[Interface\Buttons\UI-SliderBar-Background]],
+	edgeFile = [[Interface\Buttons\UI-SliderBar-Border]],
+	tile = true, tileSize = 8, edgeSize = 8,
+	insets = { left = 3, right = 3, top = 6, bottom = 6 }
+}
+local SLIDER_THUMB_TEXTURE = [[Interface\Buttons\UI-SliderBar-Button-Horizontal]]
+
+local INPUT_BACKDROP = {
+	bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+	edgeFile = [[Interface\ChatFrame\ChatFrameBackground]],
+	tile = true, tileSize = 5, edgeSize = 1
+}
+local INPUT_BORDER_COLOR = { .3, .3, .3, .8 }
+local INPUT_BORDER_COLOR_HOVER = { .5, .5, .5, 1 }
+local LABEL_COLOR = { 1, .82, 0 }
+local LABEL_COLOR_DISABLED = { .5, .5, .5 }
+
+-- A slider plus a manual numeric entry box centered below it, kept in sync
+-- both ways. anchorSpec optionally overrides the default "stack below
+-- anchorTo" layout with an explicit { point, relativePoint, x, y } anchor
+-- of its own. snapRange, if given, makes values dragged near 0 snap to it.
 local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, minValue, maxValue, getValue, setValue, anchorSpec, snapRange)
 	local slider = CreateFrame("Slider", "DiabolicUIOptionsPanel"..name, panel, "OptionsSliderTemplate")
 	slider:SetOrientation("HORIZONTAL")
 	slider:SetWidth(160)
-	slider:SetHeight(16)
+	slider:SetHeight(15)
 	slider:SetHitRectInsets(0, 0, -10, 0)
 	slider:SetMinMaxValues(minValue, maxValue)
 	slider:SetValueStep(1)
+	slider:SetBackdrop(SLIDER_BACKDROP)
+	slider:SetThumbTexture(SLIDER_THUMB_TEXTURE)
 
 	if anchorSpec then
 		slider:SetPoint(anchorSpec[1], anchorTo, anchorSpec[2], anchorSpec[3], anchorSpec[4])
 	else
-		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 4, -40)
+		-- Always anchored to anchorTo itself (never its .Input), so this
+		-- slider's own left edge lines up with anchorTo's - anchoring to
+		-- .Input instead would misalign it, since that box is centered
+		-- under the slider above it, not flush with its left edge. If
+		-- anchorTo is itself a slider, though, its input box now sits
+		-- below it, so the gap needs to be bigger to actually clear it.
+		local gap = anchorTo.Input and -50 or -20
+		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 4, gap)
 	end
 
-	_G[slider:GetName().."Low"]:SetText(minValue)
-	_G[slider:GetName().."High"]:SetText(maxValue)
-	_G[slider:GetName().."Text"]:SetText(label)
+	local lowText, highText, labelText = _G[slider:GetName().."Low"], _G[slider:GetName().."High"], _G[slider:GetName().."Text"]
+	lowText:SetText(minValue)
+	highText:SetText(maxValue)
+	labelText:SetText(label)
+	lowText:SetTextColor(1, 1, 1)
+	highText:SetTextColor(1, 1, 1)
+	labelText:SetTextColor(unpack(LABEL_COLOR))
 
 	slider.tooltipText = label
 	slider.tooltipRequirement = tooltipText
 
 	-- manual numeric entry, for typing an exact value directly instead of
 	-- having to land on it with the slider
-	local input = CreateFrame("EditBox", "DiabolicUIOptionsPanel"..name.."Input", panel, "InputBoxTemplate")
-	input:SetSize(44, 20)
-	input:SetPoint("LEFT", slider, "RIGHT", 16, 0)
+	local input = CreateFrame("EditBox", "DiabolicUIOptionsPanel"..name.."Input", panel)
+	input:SetSize(70, 14)
+	input:SetPoint("TOP", slider, "BOTTOM", 0, -6)
 	input:SetAutoFocus(false)
 	input:SetJustifyH("CENTER")
+	input:SetFontObject(GameFontHighlightSmall)
+	input:SetBackdrop(INPUT_BACKDROP)
+	input:SetBackdropColor(0, 0, 0, .5)
+	input:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR))
+	input:SetScript("OnEnter", function(self) self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR_HOVER)) end)
+	input:SetScript("OnLeave", function(self) self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR)) end)
 	input:SetMaxLetters(5) -- "-200" / "120"
 
 	local silent = false -- true while we're driving the slider/input from code, not the user
@@ -171,6 +212,9 @@ local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, mi
 			input:EnableMouse(true)
 			input:EnableKeyboard(true)
 			input:SetTextColor(1, 1, 1)
+			labelText:SetTextColor(unpack(LABEL_COLOR))
+			lowText:SetTextColor(1, 1, 1)
+			highText:SetTextColor(1, 1, 1)
 			slider:SetAlpha(1)
 			input:SetAlpha(1)
 		else
@@ -179,6 +223,9 @@ local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, mi
 			input:EnableMouse(false)
 			input:EnableKeyboard(false)
 			input:SetTextColor(.5, .5, .5)
+			labelText:SetTextColor(unpack(LABEL_COLOR_DISABLED))
+			lowText:SetTextColor(.5, .5, .5)
+			highText:SetTextColor(.5, .5, .5)
 			slider:SetAlpha(.5)
 			input:SetAlpha(.5)
 		end
@@ -206,10 +253,27 @@ local ANCHOR_POINT_LABELS = {
 -- A small rectangle representing the tooltip, with a radio button on each
 -- corner, edge midpoint and its center, to pick which of those points gets
 -- anchored to the cursor (plus the offset sliders above).
-local CreateAnchorPointPicker = function(panel, anchorTo, label, getValue, setValue)
+local CreateAnchorPointPicker = function(panel, anchorTo, label, tooltipText, getValue, setValue)
 	local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	header:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", -2, -30)
 	header:SetText(label)
+
+	-- FontStrings can't take mouse input themselves, so a same-sized
+	-- frame on top of it is what actually shows the description on hover.
+	local headerHitbox = CreateFrame("Frame", nil, panel)
+	headerHitbox:SetAllPoints(header)
+	headerHitbox:EnableMouse(true)
+	headerHitbox:SetScript("OnEnter", function(self)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		GameTooltip:AddLine(label)
+		GameTooltip:AddLine(tooltipText, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	headerHitbox:SetScript("OnLeave", function(self)
+		if (GameTooltip:IsForbidden()) then return end
+		GameTooltip:Hide()
+	end)
 
 	local preview = CreateFrame("Frame", nil, panel)
 	preview:SetSize(120, 80)
@@ -358,7 +422,7 @@ Module.CreateOptionsPanel = function(self)
 
 	CreateSubmenuLogo(tooltipsPanel)
 
-	local anchorPreview, refreshAnchorPoint = CreateAnchorPointPicker(tooltipsPanel, tooltipsTitle, L["Anchor Point"],
+	local anchorPreview, refreshAnchorPoint = CreateAnchorPointPicker(tooltipsPanel, tooltipsTitle, L["Tooltip mouse anchor"], L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."],
 		function() return tooltipsDB.anchorPoint end,
 		function(value) tooltipsDB.anchorPoint = value end)
 
@@ -500,12 +564,30 @@ Module.CreateOptionsPanel = function(self)
 
 	local appearanceHeader = CreateSubHeader(chatPanel, chatTitle, L["Appearance"])
 
-	-- A bordered group around Background Opacity + Fade Chat + Time Fading
-	-- + Time Visible, styled like the anchor point picker's backdrop
-	-- elsewhere in this menu.
+	local applyChatBackgroundOpacity = function()
+		Engine:GetModule("ChatWindows"):ApplyBackgroundOpacity()
+	end
+
+	local backgroundOpacity = CreateValueSlider(chatPanel, "ChatBackgroundOpacity", appearanceHeader, L["Background Opacity"], L["How opaque the chat window's background is while you're typing."],
+		0, 100,
+		function() return chatDB.backgroundOpacity end,
+		function(value)
+			chatDB.backgroundOpacity = value
+			applyChatBackgroundOpacity()
+		end,
+		{ "TOPLEFT", "BOTTOMLEFT", 14, -38 })
+
+	-- A bordered group around Fade Chat + Time Fading + Time Visible,
+	-- styled like the anchor point picker's backdrop elsewhere in this
+	-- menu. Background Opacity stays outside/above it, on its own.
+	-- *Anchored to backgroundOpacity itself (not its .Input), with the
+	--  x-offset cancelling out backgroundOpacity's own +14 offset from
+	--  appearanceHeader - so the frame's left edge lines up exactly with
+	--  "Appearance" above it. The y-offset accounts for the extra height
+	--  of backgroundOpacity's input box, which sits below its slider.
 	local fadeGroup = CreateFrame("Frame", nil, chatPanel)
-	fadeGroup:SetPoint("TOPLEFT", appearanceHeader, "BOTTOMLEFT", -2, -12)
-	fadeGroup:SetSize(380, 195)
+	fadeGroup:SetPoint("TOPLEFT", backgroundOpacity, "BOTTOMLEFT", -14, -36)
+	fadeGroup:SetSize(380, 145)
 	fadeGroup:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
@@ -515,21 +597,8 @@ Module.CreateOptionsPanel = function(self)
 	fadeGroup:SetBackdropColor(0, 0, 0, .25)
 	fadeGroup:SetBackdropBorderColor(1, 1, 1, 1)
 
-	local applyChatBackgroundOpacity = function()
-		Engine:GetModule("ChatWindows"):ApplyBackgroundOpacity()
-	end
-
-	local backgroundOpacity = CreateValueSlider(fadeGroup, "ChatBackgroundOpacity", fadeGroup, L["Background Opacity"], L["How opaque the chat window's background is while you're typing."],
-		0, 100,
-		function() return chatDB.backgroundOpacity end,
-		function(value)
-			chatDB.backgroundOpacity = value
-			applyChatBackgroundOpacity()
-		end,
-		{ "TOPLEFT", "TOPLEFT", 16, -26 })
-
 	local fadeChat = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeChat", fadeGroup, "InterfaceOptionsCheckButtonTemplate")
-	fadeChat:SetPoint("TOPLEFT", backgroundOpacity, "BOTTOMLEFT", 2, -40)
+	fadeChat:SetPoint("TOPLEFT", fadeGroup, "TOPLEFT", 18, -16)
 	fadeChat:SetChecked(chatDB.fadeChat)
 	_G[fadeChat:GetName().."Text"]:SetText(L["Fade Chat"])
 	fadeChat.tooltipText = L["Fade Chat"]
@@ -568,7 +637,16 @@ Module.CreateOptionsPanel = function(self)
 	end
 	updateFadeSlidersEnabled()
 
+	-- Anchored below timeVisible's input box (the lowest point of the
+	-- Appearance section now that each slider's input sits underneath it),
+	-- then pulled back from that (right-hand) column to the left-hand one
+	-- "Appearance" itself sits in, by a fixed estimate of the gap between
+	-- them (fadeChat's checkbox + label + the gap to timeFading/timeVisible).
+	-- Anchored to fadeGroup itself (not anything inside it), so it just
+	-- inherits the group's own left edge - already aligned with
+	-- "Appearance" - and its bottom edge, both by a single simple anchor.
 	local miscHeader = CreateSubHeader(chatPanel, fadeGroup, L["Miscellaneous"])
+	miscHeader:SetPoint("TOPLEFT", fadeGroup, "BOTTOMLEFT", 2, -20)
 
 	local copyWebLinks = CreateFrame("CheckButton", "DiabolicUIOptionsPanelChatCopyWebLinks", chatPanel, "InterfaceOptionsCheckButtonTemplate")
 	copyWebLinks:SetPoint("TOPLEFT", miscHeader, "BOTTOMLEFT", -2, -8)

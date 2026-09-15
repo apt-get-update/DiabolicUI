@@ -912,7 +912,7 @@ MinimapMod.FadeZoneText = function(self)
   local elapsed = _G.GetTime() - (self.zoneFadeStart or 0)
 
   if (self.zoneFadePhase == "out") then
-    local progress = elapsed / db.zoneFadeOutDuration
+    local progress = elapsed / db.zoneFadeDuration
     if (progress >= 1) then
       local pending = self.zonePendingZone
       zoneName:SetText(pending.text)
@@ -925,7 +925,7 @@ MinimapMod.FadeZoneText = function(self)
       zoneName:SetAlpha(self.zoneTargetAlpha * (1 - progress))
     end
   else -- "in"
-    local progress = elapsed / db.zoneFadeInDuration
+    local progress = elapsed / db.zoneFadeDuration
     if (progress >= 1) then
       zoneName:SetAlpha(self.zoneTargetAlpha)
       self:CancelTimer(self.zoneFadeTimer)
