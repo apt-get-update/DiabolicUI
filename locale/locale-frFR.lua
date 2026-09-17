@@ -90,6 +90,10 @@ L["Fades Questie's quest tracker out after it hasn't been moused over for a whil
 L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = "Nombre de secondes pendant lesquelles le suivi reste pleinement visible avant de commencer à s'estomper, une fois que vous cessez de le survoler."
 L["Opacity"] = "Opacité"
 L["How visible the tracker stays once it has fully faded, as a percentage."] = "À quel point le suivi reste visible une fois entièrement estompé, en pourcentage."
+L["Loot"] = "Butin"
+L["Items"] = "Objets" -- loot window title
+L["Reskin Loot Window"] = "Relooker la fenêtre de butin"
+L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = "Relooke la fenêtre de butin pour correspondre au reste de l'interface. Si désactivé, la fenêtre de butin par défaut de Blizzard est utilisée à la place.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 
 -- tooltip module
 L["Tooltips"] = "Infobulles"

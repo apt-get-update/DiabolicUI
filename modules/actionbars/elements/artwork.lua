@@ -548,12 +548,6 @@ Widget.UpdateArtwork = function(self, event, ...)
 	local petID = hasPet and "pet" or ""
 	local xpID = hasXP and "xp" or ""
 
-	if Engine:IsBuild("MoP") and (HasVehicleActionBar() or HasOverrideActionBar() or HasTempShapeshiftActionBar()) then 
-		barState = "vehicle"
-		xpID = ""
-		petID = ""
-	end 
-
 	-- Avoid pointless updates
 	if (PLAYER_HAS_XP == hasXP) 
 	and (PLAYER_VISIBLE_BARS == numBars) 

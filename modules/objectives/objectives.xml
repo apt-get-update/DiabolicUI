@@ -1,11 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
-<Script file='alerts.lua'/>
 <Script file='capturebars.lua'/>
-<Script file='orderhall.lua'/>
 <Script file='pvpemotes.lua'/>
 <Script file='questie.lua'/>
-<Script file='questtimers.lua'/>
 <Script file='warnings.lua'/>
 <Script file='worldstate.lua'/>
 <Script file='zone.lua'/>

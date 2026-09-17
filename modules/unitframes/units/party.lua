@@ -560,6 +560,13 @@ local Style = function(self, unit)
 		PortraitGlow:SetPoint(unpack(config.portrait.texture_position))
 		PortraitGlow:SetTexture(config.portrait.textures.glow)
 		PortraitGlow:Hide()
+
+		-- The portrait sits above the health bar, outside the secure
+		-- button's own rect, so clicking it wouldn't select the unit
+		-- without extending the button's hit-test area to cover it.
+		local chromeOverflow = (config.portrait.texture_size[2] - config.portrait.size[2]) / 2
+		local topOverflow = config.health.position[3] + config.health.size[2] + portraitPos[4] + config.portrait.size[2] + chromeOverflow - config.size[2]
+		self:SetHitRectInsets(0, 0, -topOverflow, 0)
 	end
 
 

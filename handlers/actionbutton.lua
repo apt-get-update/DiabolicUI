@@ -87,11 +87,6 @@ local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local EMPTY_SLOT = [[Interface\Buttons\UI-Quickslot]]
 local FILLED_SLOT = [[Interface\Buttons\UI-Quickslot2]]
 
--- these exist in WoD and beyond
-local EDGE_LOC_TEXTURE = [[Interface\Cooldown\edge-LoC]]
-local EDGE_NORMAL_TEXTURE = [[Interface\Cooldown\edge]]
-local BLING_TEXTURE = [[Interface\Cooldown\star4]]
-
 -- Timer values for range and flash updates
 local FLASH_TIMER = 0
 local RANGE_TIMER = -1

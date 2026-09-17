@@ -116,18 +116,6 @@ local postUpdatePower = function(power)
 
 end
 
-local maxPower = CLASS == "DEATHKNIGHT" and 6 or 5
-local postUpdateClassPower = function(element, min, max, powerType, newMax)
-	if (not newMax) or (not min) or (not max) or (max == 0) then
-		return
-	end
-	if (max > maxPower) then
-		max = maxPower
-	end
-	local config = Module:GetDB("UnitFrames").visuals.units.player
-	element:SetSize(config.classpower.point.size[1]*max + config.classpower.point.padding*(max-1), config.classpower.point.size[2])
-end
-
 local onEnterLeft = function(self)
 	self.mouseIsOver = true
 
@@ -419,127 +407,6 @@ local longBuffFilter = function(self, name, rank, icon, count, debuffType, durat
 	end
 end
 
--- Custom Combo Point Template
-------------------------------------------------------------------
--- Doing it this way since neither the blizz bars, our bars,
--- or any textures as they are will do for our purpose.
-
-local Point = Engine:CreateFrame("Frame")
-local Point_MT = { __index = Point }
-
-local CreatePoint = function(parent)
-	local point = setmetatable(parent:CreateFrame("Frame"), Point_MT)
-
-	point.__bg = point:CreateTexture()
-	point.__bg:SetDrawLayer("BACKGROUND")
-	point.__bg:SetAllPoints()
-
-	point.__bar = point:CreateTexture()
-	point.__bar:SetDrawLayer("BORDER")
-	point.__bar:SetPoint("TOP", 0, 0)
-	point.__bar:SetPoint("BOTTOM", 0, 0)
-	point.__bar:SetPoint("LEFT", 0, 0)
-	point.__bar:SetPoint("RIGHT", 0, 0)
-
-	point.__glow = point:CreateTexture()
-	point.__glow:SetDrawLayer("ARTWORK")
-	point.__glow:SetAllPoints(point.__bar)
-
-	point.__currentValue = 0
-	point.__minValue = 0
-	point.__maxValue = 1
-	point.__statusbarTexture = nil
-	point.__backgroundTexture = nil
-	point.__glowTexture = nil
-	point.__statusbarTexCoord = { 0, 1, 0, 1 }
-	point.__backgroundTexCoord = { 0, 1, 0, 1 }
-	point.__glowTexCoord = { 0, 1, 0, 1 }
-
-	hooksecurefunc(point, "Hide", function() point.__glow:Hide() end)
-	hooksecurefunc(point, "Show", function() point.__glow:Show() end)
-
-	return point
-end
-
-Point.Update = function(self)
-	local bg = self.__bg
-	local bar = self.__bar
-	local glow = self.__glow
-	local min = self.__minValue or 0
-	local max = self.__maxValue or 1
-	local cur = self.__currentValue or 0
-	local left, right, top, bottom = unpack(self.__statusbarTexCoord)
-	local leftGlow, rightGlow, topGlow, bottomGlow = unpack(self.__glowTexCoord)
-	local percent = (cur-min)/(max-min)
-	if percent > 1 then percent = 1 end
-	if percent < 0 then percent = 0 end
-	bar:SetPoint("TOP", 0, -(self:GetHeight() * (1-percent)))
-	bar:SetTexCoord(left, right, top + (bottom-top)*(1-percent), bottom)
-	glow:SetTexCoord(leftGlow, rightGlow, topGlow + (bottomGlow-topGlow)*(1-percent), bottomGlow)
-end
-
-Point.SetValue = function(self, value)
-	self.__currentValue = value
-	self:Update()
-end
-
-Point.GetValue = function(self)
-	return self.__currentValue
-end
-
-Point.SetMinMaxValues = function(self, min, max)
-	self.__minValue = min
-	self.__maxValue = max
-	self:Update()
-end
-
-Point.GetMinMaxValues = function(self)
-	return self.__minValue, self.__maxValue
-end
-
-Point.IsObjectType = function(_, objectType)
-	return objectType == "StatusBar"
-end
-
-Point.GetObjectType = function()
-	return "StatusBar"
-end
-
-Point.SetStatusBarTexture = function(self, path)
-	self.__bar:SetTexture(path)
-end
-
-Point.SetBackgroundTexture = function(self, path)
-	self.__bg:SetTexture(path)
-end
-
-Point.SetGlowTexture = function(self, path)
-	self.__glow:SetTexture(path)
-end
-
-Point.SetStatusBarTexCoord = function(self, left, right, top, bottom)
-	self.__statusbarTexCoord = { left, right, top, bottom }
-end
-
-Point.SetBackgroundTexCoord = function(self, left, right, top, bottom)
-	self.__bg:SetTexCoord(left, right, top, bottom)
-end
-
-Point.SetGlowTexCoord = function(self, left, right, top, bottom)
-	self.__glowTexCoord = { left, right, top, bottom }
-end
-
-Point.SetGlowBlendMode = function(self, blendMode)
-	self.__glow:SetBlendMode(blendMode)
-end
-
-Point.SetStatusBarColor = function(self, r, g, b, a)
-	self.__bar:SetVertexColor(r, g, b, a)
-	self.__bg:SetVertexColor(r*1/4, g*1/4, b*1/4, .85 * a)
-	self.__glow:SetVertexColor(r, g, b, .75 * a)
-end
-
-
 -- Left orb (health, castbar, actionbar auras)
 local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	local config = Module:GetDB("UnitFrames").visuals.units.player
@@ -650,35 +517,6 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 		hooksecurefunc(CastBar.Name, "SetText", function(self) self.Shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48) end)
 
 		self.CastBar = CastBar
-	end
-
-
-	-- Class Resource
-	-------------------------------------------------------------------
-	if Engine:IsBuild("Legion") and false then -- just disable until I get the element build
-		local ClassPower = self:CreateFrame()
-		ClassPower:SetSize(config.classpower.point.size[1]*maxPower + config.classpower.point.padding*(maxPower-1), config.classpower.point.size[2])
-		ClassPower:Place(unpack(config.classpower.position))
-		ClassPower.PostUpdate = postUpdateClassPower
-		for i = 1,maxPower do
-			local point = CreatePoint(ClassPower)
-			if i == 1 then
-				point:SetPoint("LEFT", 0, 0)
-			else
-				point:SetPoint("LEFT", ClassPower[i-1], "RIGHT", config.classpower.point.padding, 0)
-			end
-			point:SetSize(unpack(config.classpower.point.size))
-			point:SetStatusBarTexture(config.classpower.point.texture)
-			point:SetBackgroundTexture(config.classpower.point.texture)
-			point:SetGlowTexture(config.classpower.point.texture)
-			point:SetStatusBarTexCoord((i-1)*128/1024, i*128/1024, 128/512, 256/512)
-			point:SetBackgroundTexCoord((i-1)*128/1024, i*128/1024, 0/512, 128/512)
-			point:SetGlowTexCoord((i-1)*128/1024, i*128/1024,256/512, 384/512)
-			point:SetGlowBlendMode("ADD")
-
-			ClassPower[i] = point
-		end
-		self.ClassPower = ClassPower
 	end
 
 
@@ -865,44 +703,6 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Separator:SetPoint(unpack(configPower.separator.position))
 	Separator:SetTexture(configPower.separator.texture)
 
-	-- Player Alternate Power Bar
-	-------------------------------------------------------------------
-	if Engine:IsBuild("BfA") then
-		local AltPower = self:CreateStatusBar()
-		AltPower:Hide()
-		AltPower:SetSize(unpack(config.altpower.size))
-		AltPower:SetStatusBarTexture(config.altpower.texture)
-		AltPower:SetStatusBarColor(unpack(config.altpower.color))
-		AltPower:SetSparkTexture(config.altpower.spark.texture)
-		AltPower:SetSparkSize(unpack(config.altpower.spark.size))
-		AltPower:SetSparkFlash(unpack(config.altpower.spark.flash))
-		AltPower:DisableSmoothing(true)
-		AltPower:Place(unpack(hasPet and config.altpower.positionPet or config.altpower.position))
-
-		AltPower.Backdrop = AltPower:CreateTexture(nil, "BACKGROUND")
-		AltPower.Backdrop:SetSize(unpack(config.altpower.backdrop.size))
-		AltPower.Backdrop:SetPoint(unpack(config.altpower.backdrop.position))
-		AltPower.Backdrop:SetTexture(config.altpower.backdrop.texture)
-
-		AltPower.Overlay = AltPower:CreateFrame()
-		AltPower.Overlay:SetAllPoints()
-
-		AltPower.Border = AltPower.Overlay:CreateTexture(nil, "BORDER")
-		AltPower.Border:SetSize(unpack(config.altpower.border.size))
-		AltPower.Border:SetPoint(unpack(config.altpower.border.position))
-		AltPower.Border:SetTexture(config.altpower.border.texture)
-
-		AltPower.Value = AltPower.Overlay:CreateFontString(nil, "OVERLAY")
-		AltPower.Value:SetFontObject(config.altpower.value.font_object)
-		AltPower.Value:SetPoint(unpack(config.altpower.value.position))
-		AltPower.Value.Shade = AltPower:CreateTexture(nil, "BACKGROUND")
-		AltPower.Value.Shade:SetPoint("CENTER", AltPower.Value, "CENTER", 0, 4)
-		AltPower.Value.Shade:SetTexture(config.altpower.shade.texture)
-		AltPower.Value.Shade:SetVertexColor(0, 0, 0)
-		AltPower.Value.Shade:SetAlpha(1/3)
-
-		self.AltPower = AltPower
-	end
 
 	-- Buffs (no duration)
 	-------------------------------------------------------------------
@@ -991,12 +791,10 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 	elseif event == "ENGINE_ACTIONBAR_PET_CHANGED" then
 		local isPetBarVisible = ...
 		if isPetBarVisible then
-			--self.Right.AltPower:Place(unpack(self.config.altpower.positionPet))
 			self.Left.CastBar:Place(unpack(self.config.castbar.positionPet))
 			self.Left.Buffs:Place(unpack(self.config.buffs.positionPet))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.positionPet))
 		else
-			--self.Right.AltPower:Place(unpack(self.config.altpower.position))
 			self.Left.CastBar:Place(unpack(self.config.castbar.position))
 			self.Left.Buffs:Place(unpack(self.config.buffs.position))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.position))

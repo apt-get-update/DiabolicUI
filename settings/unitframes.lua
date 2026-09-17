@@ -59,45 +59,6 @@ Engine:NewStaticConfig("UnitFrames", {
 		},
 		units = {
 			player = {
-				classpower = {
-					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + 15 + 20 }, -- above castbar? 
-					point = {
-						texture = path .. [[textures\DiabolicUI_Runes.tga]], -- only one texture here
-						size = { 70, 70 },
-						padding = 0, 
-					}
-				},
-				altpower = {
-					size = { 227, 15 },
-					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + 30 }, -- 0, 210
-					positionPet = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + 30 + petOffset }, 
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
-					color = { .9, .3, .1 }, 
-					value = {
-						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 3.5, .5 }
-					},
-					spark = {
-						size = { 128, 128 },
-						texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_Spark_Warcraft.tga]],
-						flash = { 2.75, 1.25, .45, .95 }
-					},
-					shade = {
-						position = { "CENTER", 0, 0 },
-						color = { 0, 0, 0, .5 },
-						texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
-					},
-					backdrop = {
-						size = { 512, 64 },
-						position =  { "TOPLEFT", -142, 25 },
-						texture = path .. [[textures\DiabolicUI_Target_227x15_Backdrop.tga]]
-					},
-					border = {
-						size = { 512, 64 },
-						position =  { "TOPLEFT", -142, 25 },
-						texture = path .. [[textures\DiabolicUI_Target_227x15_Border.tga]]
-					}
-				},
 				castbar = {
 					size = { 227, 15 },
 					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 }, -- 0, 210

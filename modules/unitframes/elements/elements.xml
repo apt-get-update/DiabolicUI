@@ -3,7 +3,6 @@
 <Script file='aura.lua'/>
 <Script file='cast.lua'/>
 <Script file='classification.lua'/>
-<Script file='classpower.lua'/>
 <Script file='combatfeedback.lua'/>
 <Script file='happiness.lua'/>
 <Script file='health.lua'/>

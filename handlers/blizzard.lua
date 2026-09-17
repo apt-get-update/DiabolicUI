@@ -420,17 +420,6 @@ local elements = {
 			ConsolidatedBuffs:SetParent(UIHider)
 		end
 	},
-	Alerts = {
-		OnDisable = function(self)
-			self:DisableAlerts()
-		end,
-		DisableAlerts = function(self)
-			if AlertFrame then
-				--AlertFrame:UnregisterAllEvents()
-				--AlertFrame:SetParent(UIHider)
-			end
-		end
-	},
 	CaptureBars = {
 		OnDisable = function(self)
 		end
@@ -556,48 +545,10 @@ local elements = {
 		OnDisable = function(self)
 			local WatchFrame = _G.WatchFrame
 			WatchFrame:UnregisterAllEvents()
-			WatchFrame:SetScript("OnEvent", nil) 
-			WatchFrame:SetScript("OnUpdate", nil) 
+			WatchFrame:SetScript("OnEvent", nil)
+			WatchFrame:SetScript("OnUpdate", nil)
 			WatchFrame:SetParent(UIHider)
 			WatchFrame:Hide()
-		end,
-		-- Not strictly certain what I'm doing here
-		DisableTracker = function(self, event, ...)
-			local arg1 = ... 
-			if (arg1 == "Blizzard_ObjectiveTracker") then
-				local ObjectiveTrackerFrame = _G.ObjectiveTrackerFrame
-				ObjectiveTrackerFrame:UnregisterAllEvents()
-				ObjectiveTrackerFrame:SetScript("OnLoad", nil)
-				ObjectiveTrackerFrame:SetScript("OnEvent", nil)
-				ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
-				ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
-				ObjectiveTrackerFrame:SetParent(UIHider)
-
-				local ObjectiveTrackerBlocksFrame = _G.ObjectiveTrackerBlocksFrame
-				ObjectiveTrackerBlocksFrame:UnregisterAllEvents()
-				ObjectiveTrackerBlocksFrame:SetScript("OnLoad", nil)
-				ObjectiveTrackerBlocksFrame:SetScript("OnEvent", nil)
-				ObjectiveTrackerBlocksFrame:SetScript("OnUpdate", nil)
-				ObjectiveTrackerBlocksFrame:SetScript("OnSizeChanged", nil)
-				ObjectiveTrackerBlocksFrame:SetParent(UIHider)
-
-				-- Will this kill the keystoned mythic spam errors?
-				local ScenarioBlocksFrame = _G.ScenarioBlocksFrame
-				ScenarioBlocksFrame:UnregisterAllEvents()
-				ScenarioBlocksFrame:SetScript("OnLoad", nil)
-				ScenarioBlocksFrame:SetScript("OnEvent", nil)
-				ScenarioBlocksFrame:SetScript("OnUpdate", nil)
-				ScenarioBlocksFrame:SetScript("OnSizeChanged", nil)
-				ScenarioBlocksFrame:SetParent(UIHider)
-				
-				if self:IsEventRegistered("ADDON_LOADED") then
-					self:UnregisterEvent("ADDON_LOADED", "DisableTracker")
-				end
-			end
-		end	
-	},
-	OrderHall = {
-		OnDisable = function(self)
 		end
 	},
 	TimerTracker = {

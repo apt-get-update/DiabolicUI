@@ -1135,12 +1135,10 @@ Engine:NewStaticConfig("ActionBars", {
 					
 				},
 				bagmenu = {
-					size = Engine:IsBuild("Cata") and { 158 + ( 24 * 2) + 2+2 , 30 + ( 24*2 ) + 2+3 }
-						or Engine:IsBuild("WotLK") and { 198 + ( 24 * 2) + 2+2 , 37 + ( 24*2 ) + 3+3 },
+					size = { 198 + ( 24 * 2) + 2+2 , 37 + ( 24*2 ) + 3+3 },
 					--position = { "BOTTOMRIGHT", -(0 -15) + (61 + 3)*2, (55 + 10) -15 }, -- relative to its parent menubutton
 					position = { "TOPRIGHT", -50 , 15 }, -- relative to its parent menubutton
-					insets = Engine:IsBuild("Cata") and { 24 + 2, 24 + 2, 24 + 2, 24 + 3 }
-						or Engine:IsBuild("WotLK") and { 24 + 2, 24 + 2, 24 + 3, 24 + 3 }, -- insets from the frame edge to the content
+					insets = { 24 + 2, 24 + 2, 24 + 3, 24 + 3 }, -- insets from the frame edge to the content
 					bag_offset = 37 + 6*2 + 10, -- vertical offset of the bag frame when the bag bar is visible
 					button = {
 						size = { 61, 55 }, 

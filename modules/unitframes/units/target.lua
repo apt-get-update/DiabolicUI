@@ -15,7 +15,7 @@ local unpack = unpack
 -- WoW API
 local GetCVarBool = _G.GetCVarBool
 local IsInInstance = _G.IsInInstance
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySoundKitID = _G.PlaySoundKitID
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitCanAttack = _G.UnitCanAttack
 local UnitClass = _G.UnitClass

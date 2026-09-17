@@ -203,8 +203,6 @@ function IsDispellableByPlayer(debuffType)
 		return (debuffType == "Magic" or debuffType == "Curse")
 	elseif class == "MAGE" then
 		return (debuffType == "Curse")
-	elseif class == "MONK" then
-		return (debuffType == "Magic" or debuffType == "Disease" or debuffType == "Poison")
 	end
 	return false
 end

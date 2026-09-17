@@ -1554,15 +1554,8 @@ Engine.IsAddOnLoadable = function(self, target)
 	end
 end
 
--- Matching the pre-MoP return arguments of the Blizzard API call
 Engine.GetAddOnInfo = function(self, index)
-	local name, title, notes, enabled, loadable, reason, security
-	if self:IsBuild("WoD") then
-		name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(index)
-		enabled = not(GetAddOnEnableState(UnitName("player"), index) == 0) -- not a boolean, messed that one up! o.O
-	else
-		name, title, notes, enabled, loadable, reason, security = GetAddOnInfo(index)
-	end
+	local name, title, notes, enabled, loadable, reason, security = GetAddOnInfo(index)
 	-- Unlike the blizz API call, we want our "enabled" return to explain
 	-- wether or not the addon is actually going to be loaded. 
 	if (reason and (reason == "DISABLED" or reason == "DEP_DISABLED")) then 
@@ -1807,13 +1800,8 @@ do
 		-- from slightly modifying the stored scale everytime we enter the video options. 
 		-- If we don't do this, the user will either get spammed with reload requests, 
 		-- or the scale will eventually become slightly wrong, and the graphics slightly fuzzy.
-		if self:IsBuild("Cata") then
-			self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "Advanced_UIScaleSlider")
-			self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "Advanced_UseUIScale")
-		else
-			self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "VideoOptionsResolutionPanelUseUIScale")
-			self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "VideoOptionsResolutionPanelUIScaleSlider")
-		end
+		self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "VideoOptionsResolutionPanelUseUIScale")
+		self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "VideoOptionsResolutionPanelUIScaleSlider")
 		
 		onlyRunOnce = true
 	end)
@@ -1896,25 +1884,6 @@ Engine.Init = function(self, event, ...)
 	self:ParseSavedVariables()
 
 	SetDisplaySize(self:GetConfig("ScreenScaling").scale)
-	
-	-- Might as well do this
-	if self:IsBuild("MoP") then
-		RegisterStateDriver(UICenter, "visibility", "[petbattle]hide;show")
-	end
-
-	-- Previous RothUI users don't always get they need to manually enable these
-	if self:IsBuild("Cata") then
-		for _,v in ipairs({ "Blizzard_CUFProfiles", "Blizzard_CompactRaidFrames" }) do
-			EnableAddOn(v)
-			LoadAddOn(v)
-		end
-	end
-
-	-- Also adding the Blizzard_ObjectiveTracker here, mainly because I tried disabling it myself. Which was bad, bad, bad.
-	if self:IsBuild("WoD") then
-		EnableAddOn("Blizzard_ObjectiveTracker")
-		LoadAddOn("Blizzard_ObjectiveTracker")
-	end
 
 	-- Initialize all handlers here.
 	-- They will not be optional.
@@ -2066,26 +2035,19 @@ Engine:RegisterEvent("PLAYER_REGEN_DISABLED", combatStarts)
 Engine:RegisterEvent("PLAYER_REGEN_ENABLED", combatEnds)
 
 -- Register basic startup events with our event handler.
-if Engine:IsBuild("Cata") then
-	-- From Cata and up saved variables are always loaded before the addon, 
-	-- and the event VARIABLES_LOADED simply refer to Blizzard settings here.
-	Engine:RegisterEvent("ADDON_LOADED", "Init")
-	Engine:RegisterEvent("PLAYER_LOGIN", "Enable")
-else
-	-- In WotLK the VARIABLES_LOADED event would fire when saved variables
-	-- for addons were fully loaded, meaning we should hold back all init procedures
-	-- relying on the saved settings until after this event has fired. 
-	--
-	-- The order was often random, so the only secure way was to register both events, 
-	-- and start the init procedures once both had fired for our addon.
-	--  
-	-- This is also why I'm holding back the PLAYER_LOGIN enable event here, 
-	-- because we don't want to risk it firing before the variables are loaded. 
-	-- So the PLAYER_LOGIN event is registered during initialization instead,  
-	-- or its method fired directly if the player already has logged into the game. 
-	Engine:RegisterEvent("ADDON_LOADED", "PreInit")
-	Engine:RegisterEvent("VARIABLES_LOADED", "PreInit")
-end
+-- In WotLK the VARIABLES_LOADED event fires when saved variables for
+-- addons are fully loaded, meaning we should hold back all init procedures
+-- relying on the saved settings until after this event has fired.
+--
+-- The order was often random, so the only secure way was to register both
+-- events, and start the init procedures once both had fired for our addon.
+--
+-- This is also why we're holding back the PLAYER_LOGIN enable event here,
+-- because we don't want to risk it firing before the variables are loaded.
+-- So the PLAYER_LOGIN event is registered during initialization instead,
+-- or its method fired directly if the player already has logged into the game.
+Engine:RegisterEvent("ADDON_LOADED", "PreInit")
+Engine:RegisterEvent("VARIABLES_LOADED", "PreInit")
 
 -- Our offworld tracking allows us to know when we're on a loading screen.
 Engine:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateOffWorld")

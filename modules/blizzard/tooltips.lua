@@ -67,9 +67,6 @@ local UnitReaction = _G.UnitReaction
 local GetAverageItemLevel = _G.GetAverageItemLevel
 
 -- WoW API (New in MoP)
-local GetInspectSpecialization = _G.GetInspectSpecialization
-local GetSpecializationInfo = _G.GetSpecializationInfo
-local GetSpecializationInfoByID = _G.GetSpecializationInfoByID
 local UnitBattlePetLevel = _G.UnitBattlePetLevel
 local UnitIsBattlePetCompanion = _G.UnitIsBattlePetCompanion
 local UnitIsWildBattlePet = _G.UnitIsWildBattlePet

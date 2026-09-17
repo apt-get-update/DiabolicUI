@@ -12,7 +12,7 @@ local CreateFrame = _G.CreateFrame
 local GetFramerate = _G.GetFramerate
 local GetNetStats = _G.GetNetStats
 local InCombatLockdown = _G.InCombatLockdown
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySoundKitID = _G.PlaySoundKitID
 local UnitFactionGroup = _G.UnitFactionGroup
 
 -- WoW Frames & Objects

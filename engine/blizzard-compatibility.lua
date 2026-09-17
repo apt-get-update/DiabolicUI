@@ -429,17 +429,6 @@ end)
 addGlobal("SetGuildBankWithdrawGoldLimit", _G.SetGuildBankWithdrawLimit)
 addGlobal("GetGuildBankWithdrawGoldLimit", _G.GetGuildBankWithdrawLimit)
 
---local reverseSoundKit
---local playSound = function(ID, channel, forceNoDuplicates)
---	if (not reverseSoundKit) then
---		for key,id in pairs(SOUNDKIT) do
---			reverseSoundKit[id] = key
---		end
---	end
---	local willPlay, soundHandle = PlaySound(reverseSoundKit[ID], channel, forceNoDuplicates)
---	return willPlay, soundHandle
---end
---
 -- This was added in Cata
 -- The normal PlaySound API call does however accept soundkitIDs, 
 -- so we're simply making an alias here instead of the suggested translation table above. 
@@ -939,9 +928,6 @@ addGlobal("LE_QUEST_FREQUENCY_WEEKLY", 3)
 addGlobal("LE_RAID_BUFF_HASTE", 4)
 addGlobal("LE_RAID_BUFF_CRITICAL_STRIKE", 7) -- 6 in WoD
 addGlobal("LE_RAID_BUFF_MASTERY", 8) -- 7 in WoD
-
---addGlobal("LE_RAID_BUFF_MULITSTRIKE", 8)
---addGlobal("LE_RAID_BUFF_VERSATILITY", 9)
 
 addGlobal("LE_TRACKER_SORTING_MANUAL", 1)
 addGlobal("LE_TRACKER_SORTING_PROXIMITY", 2)

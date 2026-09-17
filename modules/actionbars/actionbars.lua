@@ -223,7 +223,6 @@ end
 Module.OnEnable = function(self, event, ...)
   local BlizzardUI = self:GetHandler("BlizzardUI")
   BlizzardUI:GetElement("ActionBars"):Disable()
-  BlizzardUI:GetElement("Alerts"):Disable()
   BlizzardUI:GetElement("LevelUpDisplay"):Disable()
   BlizzardUI:GetElement("Tutorials"):Disable()
 

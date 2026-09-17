@@ -152,9 +152,6 @@ Engine:NewStaticConfig("Objectives", {
 	-- waves of enemies in dungeons and raid instances, 
 	-- as well as class order hall information. 
 	zoneinfo = {
-		orderhall = {
-
-		},
 		worldstate = {
 			size = { 200, 32 },
 			place = { "TOP", "UICENTER", "TOP", 0, -300 }, -- can't be there, just for testing

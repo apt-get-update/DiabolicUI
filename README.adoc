@@ -12,7 +12,7 @@ Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it fo
 * https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] - the Diablo font
 * https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] - nameplates
 * https://github.com/paokkerkir/Mapster[Mapster] - map
-* https://www.wowinterface.com/downloads/info11047-MBBMiniMapButtonBag.html[MBB] - minimap button collector
+* https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] - minimap button bag collector
 * https://github.com/sloan-008/Questie-335[Questie] - quests and quest log
 
 == Features

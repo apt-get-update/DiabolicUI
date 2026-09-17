@@ -17,7 +17,7 @@ local table_wipe = table.wipe
 local CreateFrame = _G.CreateFrame
 local GetBindingFromClick = _G.GetBindingFromClick
 local InCinematic = _G.InCinematic
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySoundKitID = _G.PlaySoundKitID
 local RunBinding = _G.RunBinding
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 

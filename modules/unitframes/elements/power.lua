@@ -11,11 +11,10 @@ local tostring = tostring
 local unpack = unpack
 
 -- WoW API
-local GetSpecialization = _G.GetSpecialization
 local UnitHealthMax = _G.UnitHealthMax
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsTapDenied = _G.UnitIsTapDenied 
+local UnitIsTapDenied = _G.UnitIsTapDenied
 local UnitPower = _G.UnitPower
 local UnitPowerMax = _G.UnitPowerMax
 local UnitPowerType = _G.UnitPowerType
@@ -23,14 +22,7 @@ local UnitStagger = _G.UnitStagger
 
 local _, playerClass = UnitClass("player")
 
-local _SECONDARY_RESOURCE_NAME = "MANA"
-local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA or Enum.PowerType.Mana
-
-local playerSpec
-local UpdateSpec = function(Self, event, ...)
-	local spec = GetSpecialization()
-
-end
+local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA
 
 local Update = function(self, event, ...)
 	local Power = self.Power
@@ -227,15 +219,6 @@ local Enable = function(self)
 			self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
 		end
 
-		-- We want to track these events regardless of wheter or not we're using frequent updates
-		if (playerClass == "MONK") then
-			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", UpdateSpec)
-			self:RegisterEvent("CHARACTER_POINTS_CHANGED", UpdateSpec)
-			self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED", UpdateSpec)
-			self:RegisterEvent("PLAYER_TALENT_UPDATE", UpdateSpec)
-
-			UpdateSpec(self)
-		end
 	end
 end
 

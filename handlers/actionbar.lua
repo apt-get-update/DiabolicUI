@@ -7,7 +7,7 @@ local setmetatable = setmetatable
 local tinsert = table.insert
 
 -- WoW API
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySoundKitID = _G.PlaySoundKitID
 
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }

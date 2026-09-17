@@ -240,6 +240,10 @@ L["Fades Questie's quest tracker out after it hasn't been moused over for a whil
 L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = true
 L["Opacity"] = true
 L["How visible the tracker stays once it has fully faded, as a percentage."] = true
+L["Loot"] = true
+L["Items"] = true -- loot window title
+L["Reskin Loot Window"] = true
+L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = true
 
 -- tooltip module
 ---------------------------------------------------------------------

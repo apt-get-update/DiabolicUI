@@ -2,6 +2,7 @@
 
 <Script file="actionbars.lua"/>
 <Script file="chat.lua"/>
+<Script file="lootframe.lua"/>
 <Script file="tooltips.lua"/>
 <Script file="tracker.lua"/>
 <Script file="unitframes.lua"/>

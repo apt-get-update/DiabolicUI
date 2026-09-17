@@ -14,7 +14,7 @@ local GetNumFriends = _G.GetNumFriends
 local GetNumGuildMembers = _G.GetNumGuildMembers
 local GetTime = _G.GetTime
 local GuildRoster = _G.GuildRoster
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySoundKitID = _G.PlaySoundKitID
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
