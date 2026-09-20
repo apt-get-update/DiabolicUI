@@ -296,6 +296,12 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("VEHICLE_UPDATE", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateTaxiExitButtonVisibility")
+	-- A taxi ride isn't a vehicle, so none of the events above fire the
+	-- moment a flight actually ends - only these do, leaving the button
+	-- stuck shown after landing until some unrelated event happens to
+	-- trigger a recheck.
+	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateTaxiExitButtonVisibility")
+	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdateTaxiExitButtonVisibility")
 	
 	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists,canexitvehicle] hide; show")
 	
