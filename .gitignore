@@ -1,0 +1,9 @@
+.claude
+
+### Hugo ###
+/public/
+/resources/_gen/
+/assets/jsconfig.json
+hugo_stats.json
+hugo.linux
+/.hugo_build.lock
