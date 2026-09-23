@@ -78,9 +78,6 @@ Bar.OnEnter = function(self)
 	local data = self:UpdateData()
 	if (not data.repName) then return end
 
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 
@@ -97,9 +94,7 @@ Bar.OnEnter = function(self)
 end
 
 Bar.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 Bar.OnClick = function(self)

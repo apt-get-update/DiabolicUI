@@ -118,7 +118,6 @@ StatusBar.Update = function(self, elapsed)
 					spark._direction = "IN"
 				end
 			end
-			--spark:SetAlpha(current_alpha)
 			spark:SetAlpha(current_alpha)
 		end
 		if not spark:IsShown() then
@@ -420,8 +419,6 @@ StatusBar.IsObjectType = function(self, type) return type == "StatusBar" end
 StatusBar.Show = function(self) self.scaffold:Show() end
 StatusBar.Hide = function(self) self.scaffold:Hide() end
 StatusBar.IsShown = function(self) return self.scaffold:IsShown() end
-
-StatusBar.IsForbidden = function(self) return true end
 
 Handler.New = function(self, parent)
 

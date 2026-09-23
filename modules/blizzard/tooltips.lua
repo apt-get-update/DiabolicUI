@@ -63,16 +63,7 @@ local UnitOnTaxi = _G.UnitOnTaxi
 local UnitPVPName = _G.UnitPVPName
 local UnitReaction = _G.UnitReaction
 
--- WoW API (New in Cata)
-local GetAverageItemLevel = _G.GetAverageItemLevel
-
--- WoW API (New in MoP)
-local UnitBattlePetLevel = _G.UnitBattlePetLevel
-local UnitIsBattlePetCompanion = _G.UnitIsBattlePetCompanion
-local UnitIsWildBattlePet = _G.UnitIsWildBattlePet
-
--- WOW API (New in Legion, but added to previous clients by our own API)
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
@@ -138,7 +129,6 @@ local menus = {
 	"FriendsTooltip",
 	"LanguageMenu",
 	"VoiceMacroMenu"
-	--"PetBattleUnitFrameDropDown"
 }
 
 -- Tooltips to skin
@@ -156,28 +146,9 @@ local tooltips = {
 	"WorldMapCompareTooltip2",
 	"WorldMapCompareTooltip3",
 	"DatatextTooltip",
-	"VengeanceTooltip",
 	"hbGameTooltip",
 	"EventTraceTooltip",
-	"FrameStackTooltip",
-	"FloatingGarrisonFollowerTooltip",
-	"PetBattlePrimaryUnitTooltip",
-	"PetBattlePrimaryAbilityTooltip",
-	"QueueStatusFrame"
-}
-
--- Textures in the combat pet tooltips
--- introduced in MoP.
-local pet_textures = {
-	"BorderTopLeft",
-	"BorderTopRight",
-	"BorderBottomRight",
-	"BorderBottomLeft",
-	"BorderTop",
-	"BorderRight",
-	"BorderBottom",
-	"BorderLeft",
-	"Background"
+	"FrameStackTooltip"
 }
 
 local GearDB, SpecDB = {}, {}
@@ -195,32 +166,6 @@ local playerLevel = UnitLevel("player")
 
 -- Utility Functions
 ------------------------------------------------------------
---[[
-local getlevelcolor = function(level)
-	level = level - playerLevel
-	if level > 4 then
-		return C.General.DimRed
-	elseif level > 2 then
-		return C.General.Orange
-	elseif level >= -2 then
-		return C.General.Normal
-	elseif level >= -GetQuestGreenRange() then
-		return C.General.OffGreen
-	else
-		return C.General.Gray
-	end
-end
-
-local GetDifficultyColor = function(self, level, isboss)
-	local color
-	if isboss then
-		color = getlevelcolor(playerLevel + 4)
-	elseif level and level > 0 then
-		color = getlevelcolor(level)
-	end
-	return color or getlevelcolor(playerLevel)
-end
-]]--
 
 local IsPVPItem = function(itemLink)
 	local itemStats = GetItemStats(itemLink)
@@ -280,12 +225,6 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 
 	-- We leave player tooltips to our own custom module
 	local isplayer = UnitIsPlayer(unit)
-	--if isplayer then
-	--	tooltip:Hide()
-	--	tooltip.unit = nil
-	--	self.unit = nil
-	--	return
-	--end
 
 	self.unit = unit
 
@@ -432,9 +371,6 @@ end
 
 -- Set Unit Info
 Module.SetUnitInfo = function(self, gear, spec)
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	if not(gear and spec) or not(IsShiftKeyDown()) then
 		return
@@ -581,11 +517,7 @@ Module.GetUnitGear = function(self, unit)
 	end
 
 	if not delay then
-		if (unit == "player") and (GetAverageItemLevel() > 0) then
-			_, ilvl = GetAverageItemLevel()
-		else
-			ilvl = total / count
-		end
+		ilvl = total / count
 		if ilvl > 0 then
 			ilvl = string_format("%.1f", ilvl)
 			if boa > 0 and pvp > 0 then
@@ -670,15 +602,9 @@ Module.ScanUnit = function(self, unit, forced)
 			if cachedGear and cachedSpec then return end
 		end
 
-		--if cachedGear or forced then
-		--	self:SetUnitInfo(cachedGear or CONTINUED, cachedSpec)
-		--end
-
 		--if cachedGear then
 			self:SetUnitInfo(cachedGear or CONTINUED, cachedSpec)
 		--end
-
-		--self:SetUnitInfo(CONTINUED, cachedSpec or CONTINUED)
 
 		if InCombatLockdown() then
 			self.inspect:Hide()
@@ -742,9 +668,6 @@ local remainingTime = {
 }
 
 Module.Tooltip_SetUnitBuff = function(self, tooltip, unit, index, filter)
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, _, spellId = UnitBuff(unit, index, filter)
 	local color = debuffType and C.Debuff[debuffType] or C.General.Title
@@ -792,9 +715,6 @@ Module.Tooltip_SetUnitBuff = function(self, tooltip, unit, index, filter)
 end
 
 Module.Tooltip_SetUnitDebuff = function(self, tooltip, unit, index, filter)
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, _, spellId  = UnitDebuff(unit, index, filter)
 	local color = debuffType and C.Debuff[debuffType] or C.General.Title
@@ -949,9 +869,6 @@ Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
 end
 
 Module.Tooltip_OnShow = function(self, tooltip)
-	--if tooltip:IsOwned(UIParent) and not tooltip:GetUnit() then
-	--	self.scheduleRefresh = true
-	--end
 end
 
 Module.Tooltip_OnHide = function(self, tooltip)
@@ -961,9 +878,6 @@ end
 Module.Tooltip_SetDefaultAnchor = function(self, tooltip, owner)
 	-- On behalf of the whole community I would like to say
 	-- FUCK YOUR FORBIDDEN TOOLTIPS BLIZZARD! >:(
-	if tooltip:IsForbidden() then
-		return
-	end
 
 	-- We're only repositioning from the default position,
 	-- and we shouldn't interfere with tooltips placed next to their owners.
@@ -1078,13 +992,6 @@ end
 
 Module.StyleTooltip = function(self, object)
 	local config = self.config
-
-	-- remove pet textures
-	for _,t in ipairs(pet_textures) do
-		if object[t] then
-			object[t]:SetTexture(nil)
-		end
-	end
 
 	-- add our own backdrop
 	self:CreateBackdrop(object)
@@ -1214,10 +1121,7 @@ Module.HookGameTooltip = function(self)
 	tooltip:SetClampedToScreen(true)
 
 	tooltip:HookScript("OnUpdate", function(...) self:Tooltip_OnUpdate(...) end)
-	--tooltip:HookScript("OnShow", function(...) self:Tooltip_OnShow(...) end)
 	tooltip:HookScript("OnHide", function(...) self:Tooltip_OnHide(...) end)
-	--tooltip:HookScript("OnTooltipCleared", function(...) self:Tooltip_OnTooltipCleared(...) end)
-	--tooltip:HookScript("OnTooltipSetItem", function(...) self:Tooltip_OnTooltipSetItem(...) end)
 
 	tooltip:HookScript("OnTooltipSetUnit", function(...) self:Tooltip_OnTooltipSetUnit(...) end)
 	tooltip:HookScript("OnTooltipSetSpell", function(...) self:Tooltip_OnTooltipSetSpell(...) end)
@@ -1265,9 +1169,6 @@ Module.OnEvent = function(self, event, ...)
 		self:ScanUnit(arg1, true)
 
 	elseif (event == "MODIFIER_STATE_CHANGED") and ((arg1 == "LSHIFT") or (arg1 == "RSHIFT")) then
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if GameTooltip:IsShown() then
 			local unit = self:GetTooltipUnit(GameTooltip)
 			if (unit and currentUNIT and currentGUID) and (UnitIsUnit(unit, currentUNIT) and (UnitGUID(unit) == currentGUID)) then

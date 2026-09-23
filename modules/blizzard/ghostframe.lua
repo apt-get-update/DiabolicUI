@@ -17,11 +17,4 @@ Module.OnInit = function(self)
 	content:ClearAllPoints()
 	content:SetPoint("BOTTOM", holder, "BOTTOM", 0, 0)
 
-	--	hooksecurefunc(content, "SetPoint", function(self, _, anchor) 
-	--		if anchor == "MinimapCluster" or anchor == _G["MinimapCluster"] then
-	--			self:ClearAllPoints()
-	--			self:SetPoint("BOTTOM", holder, "BOTTOM", 0, 0)
-	--		end
-	--	end)
-
 end

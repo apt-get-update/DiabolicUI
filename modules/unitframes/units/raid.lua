@@ -17,6 +17,9 @@ local tostring = tostring
 local unpack = unpack
 
 -- WoW API
+local UnitIsTapDenied = Engine.UnitIsTapDenied
+local GetNumRaidMembers = _G.GetNumRaidMembers
+local GetSpellInfo = _G.GetSpellInfo
 local UnitClass = _G.UnitClass
 
 -- Time limit in seconds where we separate between short and long buffs
@@ -127,13 +130,13 @@ local PostCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetColorTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, .15)
 
 	local iconOverlay = overlay:CreateTexture()
 	iconOverlay:Hide()
 	iconOverlay:SetDrawLayer("OVERLAY")
 	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetColorTexture(0, 0, 0, 1)
+	iconOverlay:SetTexture(0, 0, 0, 1)
 	icon.Overlay = iconOverlay
 
 	local timerOverlay = timer:CreateFrame()
@@ -175,6 +178,32 @@ local buffFilter = function(self, ...)
 end
 
 
+-- Cleanse Spirit is a talent. GetSpellInfo by ID always returns the
+-- localized name; GetSpellInfo by *name* only returns something when the
+-- spell is in the player's spellbook, which also tracks respecs.
+local CLEANSE_SPIRIT = GetSpellInfo(51886)
+
+-- What the player can remove from a friendly target, as of WotLK.
+-- Druids and shamans only gained Magic removal in Cataclysm.
+local IsDispellableByPlayer = function(debuffType)
+	local _, class = UnitClass("player")
+	if class == "PRIEST" then
+		return (debuffType == "Magic" or debuffType == "Disease")
+	elseif class == "PALADIN" then
+		return (debuffType == "Magic" or debuffType == "Poison" or debuffType == "Disease")
+	elseif class == "DRUID" then
+		return (debuffType == "Curse" or debuffType == "Poison")
+	elseif class == "SHAMAN" then
+		if (debuffType == "Poison" or debuffType == "Disease") then
+			return true
+		end
+		return (debuffType == "Curse") and (CLEANSE_SPIRIT ~= nil) and (GetSpellInfo(CLEANSE_SPIRIT) ~= nil)
+	elseif class == "MAGE" then
+		return (debuffType == "Curse")
+	end
+	return false
+end
+
 -- Only show the most important dispellable debuff
 local debuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff)
 	-- If it's a boss debuff, always show it
@@ -187,23 +216,6 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 		return true
 	end
 
-	return false
-end
-
--- Helper to check what the player can dispel
-function IsDispellableByPlayer(debuffType)
-	local _, class = UnitClass("player")
-	if class == "PRIEST" then
-		return (debuffType == "Magic" or debuffType == "Disease")
-	elseif class == "PALADIN" then
-		return (debuffType == "Magic" or debuffType == "Poison" or debuffType == "Disease")
-	elseif class == "DRUID" then
-		return (debuffType == "Magic" or debuffType == "Curse" or debuffType == "Poison")
-	elseif class == "SHAMAN" then
-		return (debuffType == "Magic" or debuffType == "Curse")
-	elseif class == "MAGE" then
-		return (debuffType == "Curse")
-	end
 	return false
 end
 
@@ -287,9 +299,6 @@ local fakeUnitNum = 0
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.raid
 	local db = Module:GetConfig("UnitFrames") 
-
-	--self:Size(unpack(config.size))
-	--self:Place(unpack(config.position))
 
 	local unitNum = string_match(unit, "%d")
 	if (not unitNum) then 
@@ -474,7 +483,7 @@ UnitFrameWidget.OnEnable = function(self)
         local groupRows = {}
         for g = 1, 8 do groupRows[g] = 0 end
 
-        for i = 1, GetNumGroupMembers() do
+        for i = 1, GetNumRaidMembers() do
             local name, _, subgroup = GetRaidRosterInfo(i)
             if name and subgroup >= 1 and subgroup <= 8 then
                 local frame = self.UnitFrames[i]

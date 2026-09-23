@@ -14,11 +14,10 @@ local unpack = unpack
 local UnitHealthMax = _G.UnitHealthMax
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitPower = _G.UnitPower
 local UnitPowerMax = _G.UnitPowerMax
 local UnitPowerType = _G.UnitPowerType
-local UnitStagger = _G.UnitStagger
 
 local _, playerClass = UnitClass("player")
 

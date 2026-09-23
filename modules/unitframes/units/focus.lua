@@ -19,7 +19,7 @@ local UnitClass = _G.UnitClass
 local UnitIsEnemy = _G.UnitIsEnemy
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitPlayerControlled = _G.UnitPlayerControlled
 local UnitReaction = _G.UnitReaction
 
@@ -145,9 +145,6 @@ local Style = function(self, unit)
 	CastBar:SetAllPoints()
 	CastBar:SetStatusBarTexture(1, 1, 1, .15)
 	CastBar:SetSize(Health:GetSize())
-	--CastBar:SetSparkTexture(config.castbar.spark.texture)
-	--CastBar:SetSparkSize(unpack(config.castbar.spark.size))
-	--CastBar:SetSparkFlash(unpack(config.castbar.spark.flash))
 	CastBar:DisableSmoothing(true)
 
 
@@ -268,8 +265,6 @@ local Style = function(self, unit)
 	self:HookScript("OnEnter", UpdateLayers)
 	self:HookScript("OnLeave", UpdateLayers)
 	
-	--self:SetAttribute("toggleForVehicle", true)
-
 end
 
 UnitFrameWidget.OnEnable = function(self)

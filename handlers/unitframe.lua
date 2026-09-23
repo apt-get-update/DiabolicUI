@@ -288,21 +288,19 @@ UnitFrame.EnableFrequentUpdates = function(self, element, frequency)
 end
 
 UnitFrame.OnEnter = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-		GameTooltip_SetDefaultAnchor(GameTooltip, self)
-		GameTooltip:SetUnit(self.unit)
+	GameTooltip:Hide()
+	GameTooltip_SetDefaultAnchor(GameTooltip, self)
+	GameTooltip:SetUnit(self.unit)
 
-		-- The default tooltip doesn't include your own title, unlike
-		-- other players (whose title comes from the server as part of
-		-- their name), so it's added here manually.
-		if (self.unit == "player") then
-			local titleIndex = GetCurrentTitle and GetCurrentTitle()
-			local title = titleIndex and titleIndex > 0 and GetTitleName(titleIndex)
-			if title then
-				GameTooltip:AddLine(title)
-				GameTooltip:Show()
-			end
+	-- The default tooltip doesn't include your own title, unlike
+	-- other players (whose title comes from the server as part of
+	-- their name), so it's added here manually.
+	if (self.unit == "player") then
+		local titleIndex = GetCurrentTitle and GetCurrentTitle()
+		local title = titleIndex and titleIndex > 0 and GetTitleName(titleIndex)
+		if title then
+			GameTooltip:AddLine(title)
+			GameTooltip:Show()
 		end
 	end
 	local r, g, b = GameTooltip_UnitColor(self.unit)
@@ -310,9 +308,7 @@ UnitFrame.OnEnter = function(self)
 end
 
 UnitFrame.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 UnitFrame.OnAttributeChanged = function(self, name, value)
@@ -447,14 +443,6 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		VehicleUpdater:SetAttribute("real-unit", unit)
 		VehicleUpdater:SetAttribute("unit", unit)
 		VehicleUpdater.UpdateUnit = function(self, unit) object.unit = unit end
-
-		-- VehicleUpdater:SetAttribute("_onstate-vis", [[
-		-- 	if newstate == "hide" then
-		-- 		self:Hide();
-		-- 	elseif newstate == "show" then
-		-- 		self:Show();
-		-- 	end
-		-- ]])
 
 
 		if (unit == "player") then

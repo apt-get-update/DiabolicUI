@@ -1,0 +1,28 @@
+baseURL = '/'
+locale = 'en-us'
+title = 'DiabolicUI Developer Docs'
+theme = 'hugo-book'
+
+# Needed for hugo-book's search index and RSS-less setup.
+disableKinds = ['RSS']
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.highlight]
+    style = 'gruvbox'
+    noClasses = false
+
+[params]
+  BookTheme = 'dark'
+  BookLogo = 'images/logo.png'
+  BookToC = true
+  BookSection = 'docs'
+  BookRepo = ''
+  BookEditPath = ''
+  BookSearch = true
+  BookComments = false
+  BookPortableLinks = true
+  BookServiceWorker = false
+
+[menu]

@@ -69,21 +69,6 @@ local updateWindowAlpha = function(frame)
 	end
 end
 
---[[
-local updateWindowAlpha = function(frame)
-	if not frame.oldAlpha then return end
-	for index, value in pairs(CHAT_FRAME_TEXTURES) do
-		if not value:find("Tab") then
-			local object = _G[frame:GetName()..value]
-			if object:IsShown() then
-				UIFrameFadeRemoveFrame(object)
-				object:SetAlpha(frame.oldAlpha)
-			end
-		end
-	end
-end
-]]
-
 Module.UpdateEditBox = function(self, editbox)
 	if not editbox:GetBackdrop() then 
 		return 
@@ -155,40 +140,6 @@ Module.OnInit = function(self, event, ...)
 	--UIPARENT_MANAGED_FRAME_POSITIONS["ChatFrame2"] = nil
 	
 	-- CAUSES TAINT!!! 
-	--[[
-	local point, anchor, rpoint, xOffset, yOffset = unpack(config.position)
-	UIPARENT_MANAGED_FRAME_POSITIONS.ChatFrame1 = { 
-		baseY = true, 
-		bottomLeft = 0, 
-		justBottomRightAndStance = 0, 
-		overrideActionBar = 0, 
-		petBattleFrame = 0, 
-		bonusActionBar = 1, 
-		pet = 1, 
-		watchBar = 1, 
-		maxLevel = 1, 
-		point = point, 
-		rpoint = rpoint, 
-		xOffset = xOffset,
-		yOffset = yOffset 
-	}
-	
-	local point2, anchor2, rpoint2, xOffset2, yOffset2 = unpack(config.position2)
-	UIPARENT_MANAGED_FRAME_POSITIONS.ChatFrame2 = { 
-		baseY = true, 
-		bottomRight = 0, 
-		rightLeft = 0, 
-		rightRight = 0, 
-		overrideActionBar = 0, 
-		petBattleFrame = 0, 
-		bonusActionBar = 1, 
-		watchBar = 1, 
-		maxLevel = 1, 
-		point = point2, 
-		rpoint = rpoint2, 
-		xOffset = xOffset2, 
-		yOffset = yOffset2
-	}]]
 
 	-- style any additional BNet frames when they are opened
 	hooksecurefunc("FCF_OpenTemporaryWindow", function(chatType, chatTarget, sourceChatFrame, selectWindow)
@@ -293,7 +244,6 @@ Module.OnInit = function(self, event, ...)
 
 	-- FCF_SetWindowAlpha(frame, alpha, doNotSave)
 	
-	--	ChatFrame2:SetClampRectInsets(-40, -40, -40, -210)
 end
 
 -- Applies the user's fade settings to every current chat frame, plus the
@@ -491,15 +441,6 @@ Module.StyleFrame = function(self, frame)
 	-- Buttons
 	------------------------------
 
-	--		UIFrameFadeIn(chatFrame.buttonFrame, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
-	--		UIFrameFadeOut(chatFrame.buttonFrame, CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), CHAT_FRAME_BUTTON_FRAME_MIN_ALPHA);
-
-	--	hooksecurefunc("FCF_FadeInChatFrame", function(chatFrame) 
-	--		if ( not chatFrame.isDocked ) then
-	--			UIFrameFadeIn(chatFrame.buttonFrame, CHAT_FRAME_FADE_TIME, chatFrame.buttonFrame:GetAlpha(), 1);
-	--		end
-	--	end)
-		
 	--	hooksecurefunc("FCF_FadeOutChatFrame", function(chatFrame) 
 			--Fade out the ButtonFrame
 	--		if ( not chatFrame.isDocked ) then
@@ -617,7 +558,6 @@ Module.StyleFrame = function(self, frame)
 	-- minimize button on floating windows
 	_G[name.."ButtonFrameMinimizeButton"]:ClearAllPoints()
 	_G[name.."ButtonFrameMinimizeButton"]:SetPoint("TOP", _G[name.."ButtonFrame"], "TOP", 0, 7 - 2) 
---	_G[name.."ButtonFrameMinimizeButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameUpButton"], "TOP", 0, 0) 
 	_G[name.."ButtonFrameMinimizeButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
 	_G[name.."ButtonFrameMinimizeButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
@@ -645,7 +585,6 @@ Module.StyleFrame = function(self, frame)
 	-- Keep this down here, order matters when they are hooked to each other!
 	_G[name.."ButtonFrameUpButton"]:ClearAllPoints()
 	_G[name.."ButtonFrameUpButton"]:SetPoint("TOP", _G[name.."ButtonFrameMinimizeButton"], "BOTTOM", 0, 0) 
-	--_G[name.."ButtonFrameUpButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameDownButton"], "TOP", 0, 0) 
 	_G[name.."ButtonFrameUpButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
 	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
@@ -670,13 +609,6 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.up.disabled)
 
 	-- add a super fancy slider to our chat frame
-	--[[
-	_G[name.."ButtonFrameSlider"] = CreateFrame("Slider", nil, _G[name.."ButtonFrame"])
-	_G[name.."ButtonFrameSlider"]:SetWidth(config.button_frame.slider.size)
-	_G[name.."ButtonFrameSlider"]:SetPoint("TOP", _G[name.."ButtonFrameUpButton"], "BOTTOM", 0, 0) 
-	_G[name.."ButtonFrameSlider"]:SetPoint("BOTTOM", _G[name.."ButtonFrameDownButton"], "TOP", 0, 0) 
-	_G[name.."ButtonFrameSlider"]:SetOrientation("VERTICAL")
-	]]
 	
 	-- Slider placeholder!
 	_G[name.."ButtonFrameSlider"] = CreateFrame("Slider", nil, _G[name.."ButtonFrame"])
@@ -711,30 +643,6 @@ Module.StyleFrame = function(self, frame)
 	-- maximize button on minimized windows
 --	_G[name.."ButtonFrameMaximizeButton"]:ClearAllPoints()
 --	_G[name.."ButtonFrameMaximizeButton"]:SetPoint("RIGHT", -3, 0) 
---[[
-	_G[name.."ButtonFrameMaximizeButton"]:SetSize(unpack(config.button_frame.buttons.size))
-
-	_G[name.."ButtonFrameMaximizeButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMaximizeButton"]:GetNormalTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMaximizeButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMaximizeButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.maximize.normal)
-
-	_G[name.."ButtonFrameMaximizeButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMaximizeButton"]:GetHighlightTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMaximizeButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMaximizeButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.maximize.highlight)
-	_G[name.."ButtonFrameMaximizeButton"]:GetHighlightTexture():SetBlendMode("BLEND")
-
-	_G[name.."ButtonFrameMaximizeButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMaximizeButton"]:GetPushedTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMaximizeButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMaximizeButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.maximize.highlight)
-
-	_G[name.."ButtonFrameMaximizeButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMaximizeButton"]:GetDisabledTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMaximizeButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMaximizeButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.maximize.disabled)
-]]
 	
 	
 end
@@ -866,9 +774,6 @@ Module.OnEnable = function(self, event, ...)
 		end
 	end)
 
---	GameMenuFrame:HookScript("OnShow", function() self:PositionChatFrames() end)
---	GameMenuFrame:HookScript("OnHide", function() self:PositionChatFrames() end)
-	
 	-- Register the chat command to re-enable autopositioning
 	self:GetHandler("ChatCommand"):Register("autoposition", function() 
 		self.db.autoposition = not self.db.autoposition

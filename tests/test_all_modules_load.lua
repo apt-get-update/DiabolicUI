@@ -64,16 +64,12 @@ local FILES = {
 	"modules/actionbars/templates/flyoutbar_template.lua",
 	"modules/actionbars/templates/menubutton_template.lua",
 
-	"modules/blizzard/altpower.lua",
-	"modules/blizzard/character.lua",
 	"modules/blizzard/containers.lua",
 	"modules/blizzard/durability.lua",
 	"modules/blizzard/fonts.lua",
 	"modules/blizzard/gamemenu.lua",
 	"modules/blizzard/ghostframe.lua",
-	"modules/blizzard/levelup.lua",
 	"modules/blizzard/lootframe.lua",
-	"modules/blizzard/merchant.lua",
 	"modules/blizzard/mirrortimers.lua",
 	"modules/blizzard/popups.lua",
 	"modules/blizzard/styling.lua",
@@ -83,7 +79,6 @@ local FILES = {
 
 	"modules/chat/bubbles.lua",
 	"modules/chat/filters.lua",
-	"modules/chat/sounds.lua",
 	"modules/chat/windows.lua",
 
 	"modules/menu/menu.lua",
@@ -92,16 +87,13 @@ local FILES = {
 
 	"modules/objectives/capturebars.lua",
 	"modules/objectives/pvpemotes.lua",
-	"modules/objectives/questie.lua",
+	"modules/objectives/tracker.lua",
 	"modules/objectives/warnings.lua",
 	"modules/objectives/worldstate.lua",
 	"modules/objectives/zone.lua",
 
-	"modules/tooltips/tooltips.lua",
-
 	"modules/unitframes/controllers/controller_party.lua",
 	"modules/unitframes/controllers/controller_raid.lua",
-	"modules/unitframes/elements/altpower.lua",
 	"modules/unitframes/elements/aura.lua",
 	"modules/unitframes/elements/cast.lua",
 	"modules/unitframes/elements/classification.lua",

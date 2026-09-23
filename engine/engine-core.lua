@@ -59,7 +59,6 @@ local StaticPopupDialogs = _G.StaticPopupDialogs
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitFactionGroup = _G.UnitFactionGroup
 local UnitName = _G.UnitName
---local GetTime, C_TimerAfter = GetTime, C_Timer.After
 
 
 -------------------------------------------------------------
@@ -105,9 +104,6 @@ local dependencies = {} -- table holding module/widget/handler dependencies
 -------------------------------------------------------------
 -- Flags and other values meant to be read-only
 -------------------------------------------------------------
-local PATCH, BUILD = GetBuildInfo() -- current game client build (default to WOTLK)
-BUILD = tonumber(BUILD) or 12340
-
 local INCOMBAT = UnitAffectingCombat("player") -- flag to track combat status
 local INLOCKDOWN = InCombatLockdown() -- flag to track combat lockdown status
 
@@ -116,51 +112,6 @@ local PRIORITY_INDEX = { "HIGH", "NORMAL", "LOW" } -- indexed/ordered priority t
 local DEFAULT_MODULE_PRIORITY = "NORMAL" -- default load priority for new modules
 
 local KEYWORD_DEFAULT -- default keyword used as a fallback. this will not be user editable.
-
--- Expansion and patch to game client build translation table
--- *Changed from the original full list to only include relevant client versions.
--- *source: http://wow.gamepedia.com/Public_client_builds
-local GAME_VERSIONS_TO_BUILD = {
-	["The Burning Crusade"] 		=  8606, 	["TBC"] 	=  8606, 	["2.4.3"] 	=  8606,
-	["Wrath of the Lich King"] 		= 12340, 	["WotLK"]	= 12340, 	["3.3.5a"] 	= 12340,
-	["Cataclysm"] 					= 15595, 	["Cata"] 	= 15595, 	["4.3.4"] 	= 15595,
-	["Mists of Pandaria"] 			= 18414, 	["MoP"] 	= 18414, 	["5.4.8"] 	= 18414,
-	["Warlords of Draenor"] 		= 20779, 	["WoD"] 	= 20779, 	["6.2.3"] 	= 20779, 
-																		["6.2.3a"] 	= 21742,
-	["Legion"] 						= 23420, 							["7.0.3"] 	= 22410, 
-																		["7.1.0"] 	= 22578,
-																		["7.1.5"] 	= 23420, 
-																		["7.2.0"] 	= 24015,
-																		["7.2.5"] 	= 24461, -- 24367
-																		["7.3.0"] 	= 24500, -- 25195
-																		["7.3.2"] 	= 25549,
-																		["7.3.5"] 	= 26365, -- 26972 on live realms, but Firestorm is behind that
-
-	["Battle for Azeroth"] 			= 28724, 	["BfA"] 	= 28724, 	["8.0.1"] 	= 26970, 
-																		["8.1.0"] 	= 28724,
-																		["8.2.0"] 	= 30920
-}
-
--- [patchName] = "x.x.x"
-local PATCH_EXCEPTIONS = {
-	--["Battle for Azeroth"] = "8.1.0", ["BfA"] = "8.1.0", ["8.0.1"] = "8.1.0"
-}
-
--- Much faster lookup table to determine if we're at 
--- at least the given build, patch, expansion or higher.
---
--- Note that it is still recommended for modules to cache up 
--- constants at startup for the various patch/expansion checks, 
--- because a local constant is seriously much faster than any function. 
-local CLIENT_IS_GAME_VERSION = {}
-do
-	for version, build in pairs(GAME_VERSIONS_TO_BUILD) do
-		local isBuild = BUILD >= build
-		CLIENT_IS_GAME_VERSION[version] = isBuild 
-		CLIENT_IS_GAME_VERSION[build] = isBuild 
-		CLIENT_IS_GAME_VERSION[tostring(build)] = isBuild 
-	end
-end
 
 -------------------------------------------------------------
 -- Saved variables
@@ -181,9 +132,7 @@ local FrameMethods = getmetatable(Frame).__index
 local UICenter = CreateFrame("Frame", nil, UIParent, "SecureHandlerAttributeTemplate")
 UICenter:SetFrameLevel(UIParent:GetFrameLevel())
 UICenter:SetSize(UIParent:GetSize())
---UICenter:SetPoint("TOP", UIParent, "TOP")
 UICenter:SetPoint("BOTTOM", UIParent, "BOTTOM")
---UICenter:SetPoint("CENTER", UIParent, "CENTER")
 
 -- Frame for all UI config dialogs
 local UIConfig = CreateFrame("Frame", nil, UICenter, "SecureHandlerAttributeTemplate")
@@ -249,10 +198,6 @@ end
 local math_round = function(n, accuracy) 
 	return (math_floor(n*accuracy + .5))/accuracy -- adding the .5 to fix numbers blizzard have rounded down (?)
 end
-
---local math_compare = function(a, b, accuracy) 
---	return not(math_abs(a-b) > 1/accuracy) 
---end
 
 -- Translate keywords to frame handles used for anchoring.
 local parseAnchor = function(anchor)
@@ -652,12 +597,6 @@ local UnregisterMessage = function(self, message, func)
 	for i = #events[message][self], 1, -1 do
 		if events[message][self][i] == func then 
 			events[message][self][i] = nil
-			--if Frame.eventRegistry and Frame.eventRegistry[message] then
-			--	Frame.eventRegistry[message] = Frame.eventRegistry[message] - 1
-			--	if Frame.eventRegistry[message] == 0 then
-			--		Frame:UnregisterEvent(message)
-			--	end
-			--end
 			return 
 		end
 	end
@@ -739,17 +678,6 @@ Engine.ParseSavedVariables = function(self)
 		wipe(DiabolicUI_DB) 
 	end
 
-	--[[
-	-- Fix broken saved settings during development. 
-	for name,data in pairs(DiabolicUI_DB) do
-		for i,v in pairs(DiabolicUI_DB[name]) do
-			if i ~= "profiles" then
-				i = nil
-			end
-		end
-	end
-	]]--
-	
 	-- Merge and/or overwrite current configs with stored settings.
 	-- *doesn't matter that we mess up any links by replacing the tables, 
 	--  because this all happens before any module's OnInit or OnEnable,
@@ -1440,50 +1368,6 @@ end
 
 
 -------------------------------------------------------------
--- WoW client checks
--------------------------------------------------------------
-
--- This method is mainly meant for other modules to have 
--- access to an easy patch/expansion to build number translation table.
--- For reasons of speed we prefer to access the GAME_VERSIONS_TO_BUILD table directly instead.
-Engine.GetBuildFor = function(self, buildOrVersion)
-	return GAME_VERSIONS_TO_BUILD[buildOrVersion]
-end
-
--- This is the old IsBuild method
--- It allows us to check for exact version, but is far slower 
-Engine.IsBuildVersion = function(self, buildOrVersion, exact)
-	local client_build = tonumber(buildOrVersion)
-	if client_build then
-		if exact then
-			return client_build == BUILD
-		else
-			return client_build <= BUILD
-		end
-	elseif type(buildOrVersion) == "string" then
-		if exact then
-			return GAME_VERSIONS_TO_BUILD[buildOrVersion] == BUILD
-		else
-			return GAME_VERSIONS_TO_BUILD[buildOrVersion] <= BUILD
-		end
-	end
-end
-
--- This is the new method introduced in v1.1 of the Engine, 
--- and since it's just a true/false table it is much faster. 
-Engine.IsBuild = function(self, version)
-	-- Working around the issue where patch 7.3.5 has a higher build number than 8.0.1
-	local patchException = PATCH_EXCEPTIONS[version]
-	if patchException then 
-		return (patchException == PATCH) and CLIENT_IS_GAME_VERSION[version]
-	else
-		return CLIENT_IS_GAME_VERSION[version]
-	end 
-end
-
-
-
--------------------------------------------------------------
 -- Track loading screens
 -------------------------------------------------------------
 do
@@ -1648,11 +1532,9 @@ Engine.ForAll = function(self, func, priorityFilter, ...)
 		for name,module in pairs(moduleLoadPriority[priorityFilter]) do
 			if type(func) == "string" then
 				if module[func] then
-					--protected_call(module[func], module, ...)
 					module[func](module, ...)
 				end
 			else
-				--protected_call(func, module, ...)
 				func(module, ...)
 			end
 		end
@@ -1664,11 +1546,9 @@ Engine.ForAll = function(self, func, priorityFilter, ...)
 		for name,module in pairs(moduleLoadPriority[priority]) do
 			if type(func) == "string" then
 				if module[func] then
-					--protected_call(module[func], module, ...)
 					module[func](module, ...)
 				end
 			else
-				--protected_call(func, module, ...)
 				func(module, ...)
 			end
 		end
@@ -1791,8 +1671,9 @@ do
 		end 
 	end
 
+	local onlyRunOnce
 	Engine.KillBlizzard = wrap(Engine, function(self)
-		if onlyRunOnce then 
+		if onlyRunOnce then
 			return
 		end
 		

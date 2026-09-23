@@ -38,49 +38,6 @@ local managers = {} -- table to hold all managers
 local STATE
 local FORCED -- when true, all managers are forcefully shown
 
---[[
--- cache up spellnames so we only need one actual function call per spellID
--- tempo tempo tempo tempo... woooooooh!
-local _GetSpellInfo = GetSpellInfo
-local spellcache = setmetatable({}, { __index = function(t, v) 
-	local a = {  _GetSpellInfo(v) } 
-	if _GetSpellInfo(v) then 
-		t[v] = a 
-	end 
-	return a 
-end})
-local GetSpellInfo = function(a) return unpack(spellcache[a]) end
-
--- keeping it safe. and fast. 
-local _UnitAura = UnitAura
-local UnitAura = function(unit, spell) 
-	if not(unit and spell) then
-		return
-	else
-		return _UnitAura(unit, spell)
-	end
-end
-
--- auras that we wish to treat as if the player were mounted
-local mountAuras = {
-	-- classes
-	--------------------------------------------------------
-	-- Druid
-	[1066] = true, -- Aquatic Form
-	[33943] = true, -- Flight Form
-	[40120] = true, -- Swift Flight Form
-	[783] = true, -- Travel Form
-	-- Shaman
-	[2645] = true, -- Ghost Wolf
-
-	-- races
-	--------------------------------------------------------
-	-- Worgen
-	[87840] = true -- Running Wild (Racial)
-	
-}
-]]--
-
 -- debuffs we ignore, so the ui can still fade out with them active
 local whiteList = {
 	-- deserters
@@ -220,7 +177,6 @@ FadeManager.UpdateFadeAlpha = function(self, elapsed)
 			self.delay = 0 -- prevent the delay unless the previous state was fully achieved
 		else
 			if self.oldTargetAlpha == self.currentAlpha then
-				-- self.delay = self.settings.states[state].fadeDelay -- only delay when we reached whatever the previous goal was 
 			else
 				self.delay = 0
 			end
@@ -510,23 +466,6 @@ Handler.UpdateNonSecureState = function(self, event, ...)
 	elseif self.unitData.badaura then 
 		state = "debuff"
 	end
-	
-	-- if UnitOnTaxi("player") then
-		-- state = "taxi"
-		-- return 
-	-- end
-	
-	-- for spellID in pairs(mountAuras) do
-		-- self.unitData.mountaura = false
-		-- if UnitAura("player", GetSpellInfo(spellID)) then
-			-- self.unitData.mountaura = true
-			-- break
-		-- end
-	-- end
-	-- if self.unitData.mountaura then 
-		-- state = "travelform"
-		-- return 
-	-- end
 	
 	self:SetNonSecureState(state)
 	self:UpdateState()

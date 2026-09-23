@@ -4,10 +4,8 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 -- chat windows and frames
 Engine:NewStaticConfig("ChatWindows", {
 	size = { 395, 228 }, -- Diablo 3 uses a large 308 height window, but that's too big for WoW, so we shrink it a bit. 
-	--size = { 475, 308 }, -- 440, 136 
 	minimum_size = { 330, 136 }, -- was 120, but need more to fit the buttons! 
 	position = { "BOTTOMLEFT", "UICenter", "BOTTOMLEFT", (13 + 36 + 2), (150 + 36 + 3) },
-	-- position = { "BOTTOMRIGHT", "UICenter", "BOTTOMRIGHT", -(13 + 36 + 2), (125 + 36 + 3) }, -- not really used
 	clamps = { -(13 + 36 + 2), -(13 + 36 + 2), -13, -(20 + 36 + 3) }, -- required padding to screen edges (with room for buttons and inputbox)
 	button_frame = {
 		size = 36,
@@ -115,8 +113,6 @@ Engine:NewStaticConfig("ChatWindows", {
 	tab = {
 		
 	}
-	--clamps = { -40, -40, -40, -220 },
-	--position = { "BOTTOMLEFT", UICenter, "BOTTOMLEFT", 0, 0 },
 })
 
 -- chat filters and emoticons
@@ -127,5 +123,3 @@ Engine:NewStaticConfig("ChatFilters", {
 -- chat bubbles
 Engine:NewStaticConfig("ChatBubbles", {})
 
--- chat sounds
-Engine:NewStaticConfig("ChatSounds", {})

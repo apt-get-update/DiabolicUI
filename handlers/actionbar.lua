@@ -7,7 +7,7 @@ local setmetatable = setmetatable
 local tinsert = table.insert
 
 -- WoW API
-local PlaySoundKitID = _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }
@@ -111,8 +111,8 @@ Handler.New = function(self, id, parent, barTemplate, ...)
 	bar:SetFrameRef("Visibility", visibility)
 
 	-- Sounds
-	bar:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_CHARACTER_INFO_OPEN, "SFX") end)
-	bar:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_CHARACTER_INFO_CLOSE, "SFX") end)
+	bar:HookScript("OnShow", function(self) PlaySound("igCharacterInfoOpen") end)
+	bar:HookScript("OnHide", function(self) PlaySound("igCharacterInfoClose") end)
 
 	-- Tell the visibility layer where to find the bar
 	visibility:SetFrameRef("Bar", bar)

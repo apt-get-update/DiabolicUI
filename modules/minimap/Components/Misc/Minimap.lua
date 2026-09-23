@@ -68,7 +68,6 @@ local getTimeStrings = function(h, m, suffix, useHalfClock, abbreviateSuffix)
 end
 
 local Time_UpdateTooltip = function(self)
-	if (GameTooltip:IsForbidden()) then return end
 
 	-- local useHalfClock = ns.db.global.minimap.useHalfClock -- the outlandish 12 hour clock the colonials seem to favor so much
 	local useHalfClock = false
@@ -93,7 +92,6 @@ end
 
 local Time_OnLeave = function(self)
 	self.UpdateTooltip = nil
-	if (GameTooltip:IsForbidden()) then return end
 	GameTooltip:Hide()
 end
 
@@ -519,7 +517,6 @@ MinimapMod.InitializeMBB = function(self)
         over = true
         setalpha()
 
-        if (GameTooltip:IsForbidden()) then return end
 
         GameTooltip_SetDefaultAnchor(GameTooltip, self)
         GameTooltip:AddLine("MinimapButtonBag v" .. MBB_Version)
@@ -532,7 +529,6 @@ MinimapMod.InitializeMBB = function(self)
         over = false
         setalpha()
 
-        if (GameTooltip:IsForbidden()) then return end
 
         GameTooltip:Hide()
     end)

@@ -17,7 +17,7 @@ local table_wipe = table.wipe
 local CreateFrame = _G.CreateFrame
 local GetBindingFromClick = _G.GetBindingFromClick
 local InCinematic = _G.InCinematic
-local PlaySoundKitID = _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 local RunBinding = _G.RunBinding
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
@@ -54,7 +54,7 @@ end
 
 
 PopUp.OnShow = function(self)
-	PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX")
+	PlaySound("igMainMenuOpen")
 
 	local id = self.id
 	local popup = popups[id]
@@ -68,7 +68,7 @@ PopUp.OnShow = function(self)
 end
 
 PopUp.OnHide = function(self)
-	PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX")
+	PlaySound("igMainMenuClose")
 
 	local id = self.id
 	local popup = popups[id]
@@ -174,7 +174,6 @@ PopUp.Update = function(self, styleTable)
 
 		title:SetFontObject(style.title.normalFont)
 		title:SetText(popup.title)
-		--title:SetTextColor(unpack(style.title.fontColor))
 		title:Show()
 
 		header:SetBackdrop(nil)
@@ -189,7 +188,6 @@ PopUp.Update = function(self, styleTable)
 		header:SetPoint("LEFT", style.insets[1], 0)
 		header:SetPoint("RIGHT", -style.insets[2], 0)
 		header:SetHeight(style.height)
-		--header:Show()
 
 	else
 		if title:GetFontObject() then
@@ -199,7 +197,6 @@ PopUp.Update = function(self, styleTable)
 
 		header:SetHeight(0.0001)
 		header:SetBackdrop(nil)
-		--header:Hide()
 	end
 
 

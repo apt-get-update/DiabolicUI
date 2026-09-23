@@ -17,6 +17,7 @@ local tostring = tostring
 local unpack = unpack
 
 -- WoW API
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitClass = _G.UnitClass
 
 -- Time limit in seconds where we separate between short and long buffs
@@ -121,13 +122,13 @@ local PostCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetColorTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, .15)
 
 	local iconOverlay = overlay:CreateTexture()
 	iconOverlay:Hide()
 	iconOverlay:SetDrawLayer("OVERLAY")
 	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetColorTexture(0, 0, 0, 1)
+	iconOverlay:SetTexture(0, 0, 0, 1)
 	icon.Overlay = iconOverlay
 
 	local timerOverlay = timer:CreateFrame()
@@ -373,9 +374,6 @@ local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.party
 	local db = Module:GetConfig("UnitFrames")
 
-	--self:Size(unpack(config.size))
-	--self:Place(unpack(config.position))
-
 	local unitNum = string_match(unit, "%d")
 	if (not unitNum) then
 		fakeUnitNum = fakeUnitNum + 1
@@ -522,7 +520,7 @@ local Style = function(self, unit)
 	-- bar. Off by default, and only created here at frame-creation time
 	-- (like Show Class Colors) since adding or removing it after the
 	-- fact needs a UI reload anyway.
-	local Portrait, PortraitBorderNormal, PortraitBorderHighlight, PortraitGlow
+	local Portrait, Portrait2D, PortraitBorderNormal, PortraitBorderHighlight, PortraitGlow
 	if db.showPortrait then
 		local portraitPos = config.portrait.position
 		local PortraitHolder = self:CreateFrame("Frame")
@@ -539,6 +537,15 @@ local Style = function(self, unit)
 		Portrait = PortraitHolder:CreateFrame("PlayerModel")
 		Portrait:SetFrameLevel(self:GetFrameLevel() + 5)
 		Portrait:SetAllPoints()
+
+		-- Sits directly behind the 3D model above (lower frame level) and
+		-- stays kept in sync (see elements/portraits.lua): whenever the
+		-- model itself fails to render - e.g. too far away for it to
+		-- have streamed in - it's fully transparent, so this shows
+		-- through by itself with no extra detection logic needed.
+		Portrait2D = PortraitHolder:CreateTexture(nil, "ARTWORK")
+		Portrait2D:SetAllPoints(Portrait)
+		Portrait2D:Hide()
 
 		local PortraitBorder = PortraitHolder:CreateFrame("Frame")
 		PortraitBorder:SetFrameLevel(self:GetFrameLevel() + 6)
@@ -575,6 +582,7 @@ local Style = function(self, unit)
 	self.Health = Health
 	self.Name = Name
 	self.Portrait = Portrait
+	self.Portrait2D = Portrait2D
 	self.Role = Role
 	self.Threat = Threat
 
@@ -611,7 +619,6 @@ UnitFrameWidget.OnEnable = function(self)
 	local function LayoutPartyFrames()
 		for i = 1,4 do
 			local unitFrame = UnitFrame:New("party"..i, self.UnitFrame, Style)
-			--local unitFrame = UnitFrame:New("player", self.UnitFrame, Style)
 
 			self.UnitFrame[i] = unitFrame
 		end

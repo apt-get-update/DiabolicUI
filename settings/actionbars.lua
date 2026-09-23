@@ -254,20 +254,9 @@ Engine:NewStaticConfig("ActionBars", {
 					[9] = { BUTTON_SIZE_TRIPLE, BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-1) + padding_small*(NUM_STANCE_SLOTS-2) },
 					[10] = { BUTTON_SIZE_TRIPLE, BUTTON_SIZE_TRIPLE*NUM_STANCE_SLOTS + padding_small*(NUM_STANCE_SLOTS-1) }
 
-					--[1] = { BUTTON_SIZE_TRIPLE, BUTTON_SIZE_TRIPLE },
-					--[2] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-8) + padding_small*(NUM_STANCE_SLOTS-9), BUTTON_SIZE_TRIPLE },
-					--[3] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-7) + padding_small*(NUM_STANCE_SLOTS-8), BUTTON_SIZE_TRIPLE },
-					--[4] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-6) + padding_small*(NUM_STANCE_SLOTS-7), BUTTON_SIZE_TRIPLE },
-					--[5] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-5) + padding_small*(NUM_STANCE_SLOTS-6), BUTTON_SIZE_TRIPLE },
-					--[6] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-4) + padding_small*(NUM_STANCE_SLOTS-5), BUTTON_SIZE_TRIPLE },
-					--[7] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-3) + padding_small*(NUM_STANCE_SLOTS-4), BUTTON_SIZE_TRIPLE },
-					--[8] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-2) + padding_small*(NUM_STANCE_SLOTS-3), BUTTON_SIZE_TRIPLE },
-					--[9] = { BUTTON_SIZE_TRIPLE*(NUM_STANCE_SLOTS-1) + padding_small*(NUM_STANCE_SLOTS-2), BUTTON_SIZE_TRIPLE },
-					--[10] = { BUTTON_SIZE_TRIPLE*NUM_STANCE_SLOTS + padding_small*(NUM_STANCE_SLOTS-1), BUTTON_SIZE_TRIPLE }
 				}
 			},
 			pet = {
-				--position = { "BOTTOM", 0, xpoffset_before + xpsize + xpoffset_after },
 				position = { "BOTTOM", 0, 0 }, -- where the bar is anchored to its controller
 				positionXP = { "BOTTOM", 0, xpoffset_before + xpsize + xpoffset_after }, -- xp or reputation bar visible
 				flyout_direction = "UP",
@@ -604,7 +593,6 @@ Engine:NewStaticConfig("ActionBars", {
 				},
 				cooldown_numbers = {
 					normalFont = DiabolicFont_SansBold10,
-          -- normalFont = DiabolicFont_SansBold16,
 					points = { { "CENTER", 0, 0 } }
 				},
 				
@@ -815,25 +803,6 @@ Engine:NewStaticConfig("ActionBars", {
 				}
 			},
 			extra = {
-				size = { 38, 38 },
-				position = { "BOTTOMRIGHT", 54, 0 },
-				icon = {
-					texcoords = { 5/64, 59/64, 5/64, 59/64 },
-					size = { 38, 38 },
-					position = { "CENTER", 0, 0 },
-					position_pushed = { "CENTER", 0, -2 }
-				},
-				border = {
-					size = { 64, 64 },
-					position = { "CENTER", 0, 0 },
-					textures = {
-						normal = path .. [[textures\DiabolicUI_Button_37x37_Normal.tga]],
-						highlight = path .. [[textures\DiabolicUI_Button_37x37_Highlight.tga]]
-					}
-				}
-			},
-			-- Zone abilities (WoD, Legion)
-			zone = {
 				size = { 38, 38 },
 				position = { "BOTTOMRIGHT", 54, 0 },
 				icon = {
@@ -1136,7 +1105,6 @@ Engine:NewStaticConfig("ActionBars", {
 				},
 				bagmenu = {
 					size = { 198 + ( 24 * 2) + 2+2 , 37 + ( 24*2 ) + 3+3 },
-					--position = { "BOTTOMRIGHT", -(0 -15) + (61 + 3)*2, (55 + 10) -15 }, -- relative to its parent menubutton
 					position = { "TOPRIGHT", -50 , 15 }, -- relative to its parent menubutton
 					insets = { 24 + 2, 24 + 2, 24 + 3, 24 + 3 }, -- insets from the frame edge to the content
 					bag_offset = 37 + 6*2 + 10, -- vertical offset of the bag frame when the bag bar is visible

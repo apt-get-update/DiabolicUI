@@ -253,8 +253,6 @@ Update = function(self, event, ...)
 		
 		if CastBar.SafeZone then
 			if unit == "player" then
-				--CastBar.SafeZone:SetWidth()
-				--CastBar.SafeZone:Show()
 			else
 				CastBar.SafeZone:Hide()
 			end
@@ -393,8 +391,6 @@ Update = function(self, event, ...)
 		end
 		if CastBar.SafeZone then
 			if unit == "player" then
-				--CastBar.SafeZone:SetWidth()
-				--CastBar.SafeZone:Show()
 			else
 				CastBar.SafeZone:Hide()
 			end

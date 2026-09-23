@@ -14,7 +14,7 @@ local GetNumFriends = _G.GetNumFriends
 local GetNumGuildMembers = _G.GetNumGuildMembers
 local GetTime = _G.GetTime
 local GuildRoster = _G.GuildRoster
-local PlaySoundKitID = _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
@@ -97,11 +97,11 @@ MenuWidget.OnEnable = function(self)
 
 	InputBox:HookScript("OnShow", function() 
 		ChatButton:SetButtonState("PUSHED", 1)
-		PlaySoundKitID(SOUNDKIT.IG_CHARACTER_INFO_OPEN, "SFX")
+		PlaySound("igCharacterInfoOpen")
 	end)
 	InputBox:HookScript("OnHide", function() 
 		ChatButton:SetButtonState("NORMAL") 
-		PlaySoundKitID(SOUNDKIT.IG_CHARACTER_INFO_CLOSE, "SFX")
+		PlaySound("igCharacterInfoClose")
 	end)
 
 
@@ -115,9 +115,6 @@ MenuWidget.OnEnable = function(self)
 	FriendsWindow:HookScript("OnHide", function() SocialButton:SetButtonState("NORMAL") end)
 
 	ChatButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if ChatButton:GetButtonState() == "PUSHED"
 		or SocialButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -130,9 +127,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	ChatButton:SetScript("OnEnter", ChatButton.OnEnter)
 	ChatButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	
@@ -151,9 +145,6 @@ MenuWidget.OnEnable = function(self)
 	
 	
 	SocialButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 
 		local numTotalGuildMembers, numOnlineGuildMembers, numOnlineAndMobileMembers = GetNumGuildMembers()
 		local numberOfFriends, onlineFriends = GetNumFriends() 
@@ -180,9 +171,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	SocialButton:SetScript("OnEnter", SocialButton.OnEnter)
 	SocialButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	
@@ -198,30 +186,6 @@ MenuWidget.OnEnable = function(self)
 
 	-- Texts
 	---------------------------------------------
-	--[[
-	local Gold = ChatButton:CreateFontString()
-	Gold:SetDrawLayer("ARTWORK")
-	Gold:SetFontObject(input_config.people.normalFont)
-	Gold:SetPoint(unpack(input_config.people.position))
-	ChatButton.Gold = Gold
-
-	ChatButton:SetScript("OnEvent", function(self, event, ...) 
-		local money = GetMoney()
-		local gold = math_floor(money / 100 / 100)
-		local silver = math_floor((money / 100) % 100)
-		local copper = money % 100
-		if (gold > 0) then
-			self.Gold:SetFormattedText("%d|cffc98910g|r %d|cffa8a8a8s|r %d|cffb87333c|r", gold, silver, copper)
-		elseif (silver > 0) then
-			self.Gold:SetFormattedText("%d|cffa8a8a8s|r %d|cffb87333c|r", silver, copper)
-		else 
-			self.Gold:SetFormattedText("%d|cffb87333c|r", copper)
-		end
-	end)
-
-	ChatButton:RegisterEvent("PLAYER_MONEY")
-	ChatButton:RegisterEvent("PLAYER_ENTERING_WORLD")
-	--]]
 
 	local People = SocialButton:CreateFontString()
 	People:SetDrawLayer("ARTWORK")

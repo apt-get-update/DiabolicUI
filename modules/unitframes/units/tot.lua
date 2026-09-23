@@ -1,4 +1,5 @@
 local Addon, Engine = ...
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrame = Engine:GetHandler("UnitFrame")
@@ -147,9 +148,6 @@ local Style = function(self, unit)
 	CastBar:SetAllPoints()
 	CastBar:SetStatusBarTexture(1, 1, 1, .15)
 	CastBar:SetSize(Health:GetSize())
-	--CastBar:SetSparkTexture(config.castbar.spark.texture)
-	--CastBar:SetSparkSize(unpack(config.castbar.spark.size))
-	--CastBar:SetSparkFlash(unpack(config.castbar.spark.flash))
 	CastBar:DisableSmoothing(true)
 
 

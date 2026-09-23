@@ -21,6 +21,7 @@ local tostring = tostring
 local unpack = unpack
 
 -- WoW API
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitClass = _G.UnitClass
 
 -- Time limit in seconds where we separate between short and long buffs
@@ -111,13 +112,13 @@ local PostCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetColorTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, .15)
 
 	local iconOverlay = overlay:CreateTexture()
 	iconOverlay:Hide()
 	iconOverlay:SetDrawLayer("OVERLAY")
 	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetColorTexture(0, 0, 0, 1)
+	iconOverlay:SetTexture(0, 0, 0, 1)
 	icon.Overlay = iconOverlay
 
 	local timerOverlay = timer:CreateFrame()
@@ -324,9 +325,6 @@ local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.arena
 	local db = Module:GetConfig("UnitFrames")
 
-	--self:Size(unpack(config.size))
-	--self:Place(unpack(config.position))
-
 	local unitNum = string_match(unit, "%d")
 	if (not unitNum) then
 		fakeUnitNum = fakeUnitNum + 1
@@ -475,7 +473,6 @@ UnitFrameWidget.OnEnable = function(self)
 
 	for i = 1,5 do
 		local unitFrame = UnitFrame:New("arena"..i, self.UnitFrame, Style)
-		--local unitFrame = UnitFrame:New("player", self.UnitFrame, Style)
 
 		self.UnitFrame[i] = unitFrame
 	end

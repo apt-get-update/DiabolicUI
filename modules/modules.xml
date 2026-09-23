@@ -7,7 +7,6 @@
 <Include file='minimap\minimap.xml'/>
 <Include file='nameplates\nameplates.xml'/>
 <Include file='objectives\objectives.xml'/>
-<Include file='tooltips\tooltips.xml'/>
 <Include file='unitframes\unitframes.xml'/>
 
 <!--

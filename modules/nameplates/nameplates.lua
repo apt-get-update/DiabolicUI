@@ -56,7 +56,7 @@ local UnitHealthMax = _G.UnitHealthMax
 local UnitIsEnemy = _G.UnitIsEnemy
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitIsTrivial = _G.UnitIsTrivial
 local UnitIsUnit = _G.UnitIsUnit
 local UnitLevel = _G.UnitLevel
@@ -261,9 +261,7 @@ Aura.OnEnter = function(self)
 end
 
 Aura.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 Aura.CreateTimer = function(self, elapsed)
@@ -581,7 +579,6 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 	local health = self.Health
 
 	if info.healthColor then
-		--health:SetStatusBarColor(unpack(info.healthColor))
 		health:SetStatusBarColor(unpack(C.Orb.HEALTH[1]))
 	end
 
@@ -605,7 +602,6 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 	health.Value:SetFont(select(1, health.Value:GetFont()), select(2, health.Value:GetFont()), "OUTLINE")
 
 	health.Value:SetTextColor(unpack(info.healthColor))
-	--health.Value:SetFormattedText("( %s / %s )", abbreviateNumber(info.health), abbreviateNumber(info.healthMax))
 end
 
 NamePlate_WotLK.UpdateAlpha = function(self)
@@ -711,7 +707,6 @@ NamePlate_WotLK.OnShow = function(self)
 
 	info.level = nil
 	info.name = nil
-	--info.rawname = nil
 	info.isInCombat = nil
 	info.isCasting = nil
 	info.isClass = nil
@@ -731,10 +726,6 @@ NamePlate_WotLK.OnShow = function(self)
 	info.health = 0
 
 	self.Highlight:Hide() -- hide custom highlight
-	-- self.old.regions.highlight:Hide() -- hide old highlight
-
-	--self.old.regions.highlight:ClearAllPoints()
-	--self.old.regions.highlight:SetAllPoints(self.Health)
 
 	self.Health:Show()
 	self.Cast:Hide()
@@ -770,7 +761,6 @@ NamePlate_WotLK.OnHide = function(self)
 
 	info.level = nil
 	info.name = nil
-	--info.rawname = nil
 	info.isInCombat = nil
 	info.isCasting = nil
 	info.isClass = nil
@@ -834,7 +824,6 @@ NamePlate_WotLK.HandleBaseFrame = function(self, baseFrame)
 	old.regions.level:Hide()
 	old.regions.bossicon:SetTexture(nil)
 	old.regions.raidicon:SetAlpha(0)
-	-- old.regions.eliteicon:SetTexture(nil)
 	UIHider[old.regions.eliteicon] = old.regions.eliteicon:GetParent()
 	old.regions.eliteicon:SetParent(UIHider)
 	old.regions.castborder:SetTexture(nil)
@@ -855,9 +844,6 @@ NamePlate_WotLK.HookScripts = function(self, baseFrame)
 	self.old.bars.health:HookScript("OnValueChanged", function() self:UpdateHealth() end)
 	self.old.bars.health:HookScript("OnMinMaxChanged", function() self:UpdateHealth() end)
 
-	--self.old.bars.cast:HookScript("OnShow", OldcastBar.OnShowCast)
-	--self.old.bars.cast:HookScript("OnHide", OldcastBar.OnHideCast)
-	--self.old.bars.cast:HookScript("OnValueChanged", OldcastBar.OnUpdateCast)
 end
 
 -- General Plates
@@ -933,7 +919,6 @@ NamePlate.CreateRegions = function(self)
 	CastShadow:SetPoint(unpack(textureConfig.bar_glow.position))
 	CastShadow:SetTexture(textureConfig.bar_glow.path)
 	CastShadow:SetVertexColor(0, 0, 0, 1)
-	--CastShadow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
 	Cast.Shadow = CastShadow
 
 	local CastBackdrop = Cast:CreateTexture()
@@ -950,7 +935,6 @@ NamePlate.CreateRegions = function(self)
 	CastGlow:SetPoint(unpack(textureConfig.bar_glow.position))
 	CastGlow:SetTexture(textureConfig.bar_glow.path)
 	CastGlow:SetVertexColor(0, 0, 0, .75)
-	--CastGlow:SetVertexColor(widgetConfig.cast.color[1], widgetConfig.cast.color[2], widgetConfig.cast.color[3], 1)
 	Cast.Glow = CastGlow
 
 	local CastOverlay = Cast:CreateTexture()
@@ -965,7 +949,6 @@ NamePlate.CreateRegions = function(self)
 	CastValue:SetDrawLayer("OVERLAY")
 	CastValue:SetJustifyV("TOP")
 	CastValue:SetHeight(10)
-	--CastValue:SetPoint("BOTTOM", Cast, "TOP", 0, 6)
 	CastValue:SetPoint("TOPLEFT", Cast, "TOPRIGHT", 4, -(Cast:GetHeight() - Cast:GetHeight())/2)
 	CastValue:SetFontObject(DiabolicFont_SansBold10)
 	CastValue:SetTextColor(C.General.Prefix[1], C.General.Prefix[2], C.General.Prefix[3])
@@ -1015,21 +998,12 @@ NamePlate.CreateRegions = function(self)
 	--SpellIcon = Spell:CreateTexture()
 	--Spell.Icon = SpellIcon
 
-	--SpellIconBorder = Spell:CreateTexture()
-	--Spell.Icon.Border = SpellIconBorder
-
-	--SpellIconShield = Spell:CreateTexture()
-	--Spell.Icon.Shield = SpellIconShield
-
-	--SpellIconShade = Spell:CreateTexture()
-	--Spell.Icon.Shade = SpellIconShade
-
 	-- Mouse hover highlight
 	local Highlight = Health:CreateTexture()
 	Highlight:Hide()
 	Highlight:SetAllPoints()
 	Highlight:SetBlendMode("ADD")
-	Highlight:SetColorTexture(1, 1, 1, 1/4)
+	Highlight:SetTexture(1, 1, 1, 1/4)
 	Highlight:SetDrawLayer("BACKGROUND", 1)
 
 	-- Unit Level
@@ -1614,14 +1588,7 @@ Module.UpdateBlizzardSettings = Engine:Wrap(function(self)
 
 	-- These are from which expansion...? /slap myself for not commenting properly!!
 
-	--SetCVar("bloatthreat", 0) -- scale plates based on the gained threat on a mob with multiple threat targets. weird.
-	--SetCVar("bloattest", 0) -- weird setting that shrinks plates for values > 0
-	--SetCVar("bloatnameplates", 0) -- don't change frame size based on threat. it's silly.
-	--SetCVar("repositionfrequency", 1) -- don't skip frames between updates
-	--SetCVar("ShowClassColorInNameplate", 1) -- display class colors -- let the user decide later
 	SetCVar("ShowVKeyCastbar", 1) -- display castbars
-	--SetCVar("showVKeyCastbarSpellName", 1) -- display spell names on castbars
-	--SetCVar("showVKeyCastbarOnlyOnTarget", 0) -- display castbars only on your current target
 end)
 
 
@@ -1656,9 +1623,7 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
 	self:RegisterEvent("RAID_TARGET_UPDATE", "OnEvent")
-	--self:RegisterEvent("UNIT_FACTION", "OnEvent")
 	self:RegisterEvent("UNIT_LEVEL", "OnEvent")
-	--self:RegisterEvent("UNIT_TARGET", "OnEvent")
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
 
