@@ -357,89 +357,27 @@ Module.OnInit = function(self)
 	self.frame:SetParent(UICenter)
 
 
-	if Engine:IsBuild("WoD") then
-		self.buttons = {
-			{ content = GameMenuButtonHelp, label = GAMEMENU_HELP },
-			{ content = GameMenuButtonStore, label = BLIZZARD_STORE },
-			{ content = GameMenuButtonWhatsNew, label = GAMEMENU_NEW_BUTTON },
-			{ content = GameMenuButtonOptions, label = SYSTEMOPTIONS_MENU },
-			{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
-			{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
-			{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
-			{ content = GameMenuButtonMacros, label = MACROS },
-			{ content = GameMenuButtonAddons, label = ADDONS },
-			{ content = GameMenuButtonRatings, label = RATINGS_MENU },
-			{ content = GameMenuButtonLogout, label = LOGOUT },
-			{ content = GameMenuButtonQuit, label = EXIT_GAME },
-			{ content = GameMenuButtonContinue, label = RETURN_TO_GAME, anchor = "BOTTOM" }
-		}
-		
-	elseif Engine:IsBuild("MoP") then
-		local Fix_ACP = function(self)
-			self:SetScript("OnLoad", nil)
-			self:SetScript("OnShow", nil)
-			self:SetScript("OnHide", nil)
-		end
+	local Fix_ACP = function(self)
+		self:SetScript("OnShow", nil)
+		self:SetScript("OnHide", nil)
+	end
 
-		self.buttons = {
-			{ content = GameMenuButtonHelp, label = GAMEMENU_HELP },
-			{ content = GameMenuButtonStore, label = BLIZZARD_STORE },
-			{ content = GameMenuButtonOptions, label = SYSTEMOPTIONS_MENU },
-			{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
-			{ content = GameMenuButtonMacOptions, label = MAC_OPTIONS },
-			{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
-			{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
-			{ content = GameMenuButtonMacros, label = MACROS },
-			{ content = "GameMenuButtonAddOns", label = function() return GameMenuButtonAddOns:GetText() end, run = Fix_ACP, addon = true }, -- ACP (Addon Control Panel)
-			{ content = GameMenuButtonRatings, label = RATINGS_MENU },
-			{ content = GameMenuButtonLogout, label = LOGOUT },
-			{ content = GameMenuButtonQuit, label = EXIT_GAME },
-			{ content = GameMenuButtonContinue, label = RETURN_TO_GAME, anchor = "BOTTOM" }
-		}
-	elseif Engine:IsBuild("Cata") then
-		local Fix_ACP = function(self)
-			self:SetScript("OnShow", nil)
-			self:SetScript("OnHide", nil)
-		end
-	
-		self.buttons = {
-			{ content = GameMenuButtonHelp, label = GAMEMENU_HELP },
-			{ content = GameMenuButtonOptions, label = SYSTEMOPTIONS_MENU },
-			{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
-			{ content = GameMenuButtonMacOptions, label = MAC_OPTIONS },
-			{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
-			{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
-			{ content = GameMenuButtonMacros, label = MACROS },
-			{ content = "GameMenuButtonAddOns", label = function() return GameMenuButtonAddOns:GetText() end, run = Fix_ACP, addon = true }, -- ACP (Addon Control Panel)
-			{ content = GameMenuButtonRatings, label = RATINGS_MENU },
-			{ content = GameMenuButtonLogout, label = LOGOUT },
-			{ content = GameMenuButtonQuit, label = EXIT_GAME },
-			{ content = GameMenuButtonContinue, label = RETURN_TO_GAME, anchor = "BOTTOM" }
-		}
-		
-	elseif Engine:IsBuild("WotLK") then
-		local Fix_ACP = function(self)
-			self:SetScript("OnShow", nil)
-			self:SetScript("OnHide", nil)
-		end
+	self.buttons = {
+		{ content = GameMenuButtonOptions, label = VIDEOOPTIONS_MENU },
+		{ content = GameMenuButtonSoundOptions, label = VOICE_SOUND }, -- SOUNDOPTIONS_MENU
+		{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
+		{ content = GameMenuButtonMacOptions, label = MAC_OPTIONS },
+		{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
+		{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
+		{ content = GameMenuButtonMacros, label = MACROS },
+		{ content = "GameMenuButtonAddOns", label = function() return GameMenuButtonAddOns:GetText() end, run = Fix_ACP, addon = true }, -- ACP (Addon Control Panel)
+		{ content = GameMenuButtonRatings, label = RATINGS_MENU },
+		{ content = GameMenuButtonLogout, label = LOGOUT },
+		{ content = GameMenuButtonQuit, label = EXIT_GAME },
+		{ content = GameMenuButtonContinue, label = RETURN_TO_GAME, anchor = "BOTTOM" }
+	}
 
-		self.buttons = {
-			{ content = GameMenuButtonOptions, label = VIDEOOPTIONS_MENU },
-			{ content = GameMenuButtonSoundOptions, label = VOICE_SOUND }, -- SOUNDOPTIONS_MENU
-			{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
-			{ content = GameMenuButtonMacOptions, label = MAC_OPTIONS },
-			{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
-			{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
-			{ content = GameMenuButtonMacros, label = MACROS },
-			{ content = "GameMenuButtonAddOns", label = function() return GameMenuButtonAddOns:GetText() end, run = Fix_ACP, addon = true }, -- ACP (Addon Control Panel)
-			{ content = GameMenuButtonRatings, label = RATINGS_MENU },
-			{ content = GameMenuButtonLogout, label = LOGOUT },
-			{ content = GameMenuButtonQuit, label = EXIT_GAME },
-			{ content = GameMenuButtonContinue, label = RETURN_TO_GAME, anchor = "BOTTOM" }
-		}
-		
-	end	
-	
+
 	local UIHider = CreateFrame("Frame")
 	UIHider:Hide()
 	self.UIHider = UIHider
@@ -457,24 +395,6 @@ Module.OnInit = function(self)
 		end
 	end
 	
-	-- Remove store button if there's no store available,
-	-- if we're currently using a trial account,
-	-- or if the account is in limited (no paid gametime) mode.
-	if GameMenuButtonStore 
-	and ((C_StorePublic and not C_StorePublic.IsEnabled())
-	or (IsTrialAccount and IsTrialAccount()) 
-	or (GameLimitedMode_IsActive and GameLimitedMode_IsActive())) then
-		for i,v in ipairs(self.buttons) do
-			if v.content == GameMenuButtonStore then
-				GameMenuButtonStore:UnregisterAllEvents()
-				GameMenuButtonStore:SetParent(UIHider)
-				GameMenuButtonStore.SetParent = function() end
-				tremove(self.buttons, i)
-				break
-			end
-		end
-	end
-
 	-- add a hook to blizzard's button visibility function to properly re-align the buttons when needed
 	if GameMenuFrame_UpdateVisibleButtons then
 		hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", function() self:UpdateButtonLayout() end)

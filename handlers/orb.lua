@@ -141,7 +141,6 @@ Orb.Update = function(self, elapsed)
 				end
 			end
 			spark:SetAlpha(currentAlpha)
-			--spark:SetAlpha(spark.maxAlpha)
 			glow:SetAlpha(currentAlpha)
 		end
 		if not spark:IsShown() then
@@ -362,17 +361,8 @@ Orb.SetStatusBarTexture = function(self, ...)
 	if path then
 		self.scaffold[id]:SetTexture(path)
 	else
-		self.scaffold[id]:SetColorTexture(r, g, b, a)
+		self.scaffold[id]:SetTexture(r, g, b, a)
 	end
-	--if id == "shade" then
-	--	local id = "backgroundShade"
-	--	if path then
-	--		self.scaffold[id]:SetTexture(path)
-	--		self.scaffold[id]:SetVertexColor(0, 0, 0, .75)
-	--	else
-	--		self.scaffold[id]:SetColorTexture(0, 0, 0, .75)
-	--	end
-	--end
 end
 
 Orb.SetSparkTexture = function(self, path)
@@ -384,7 +374,6 @@ Orb.SetSparkSize = function(self, width, height)
 	local spark = self.overlay.spark
 	spark._width = width
 	spark._height = height
---	spark:SetHeight(height)
 	self:Update()
 end
 
@@ -519,8 +508,6 @@ Orb.Show = function(self) self.scaffold:Show() end
 Orb.Hide = function(self) self.scaffold:Hide() end
 Orb.IsShown = function(self) return self.scaffold:IsShown() end
 
-Orb.IsForbidden = function(self) return true end
-
 -- proxy method to return the orbs's overlay frame, for adding texts, icons etc
 Orb.GetOverlay = function(self) return self.overlay end
 
@@ -626,7 +613,6 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	scaffold.moon = moon
 	scaffold.smoke = smoke
 	scaffold.shade = shade
-	--scaffold.backgroundShade = backgroundShade -- not part of the layer cache, still grabs the same texture as 'shade', though'
 	scaffold.layers = { bar, moon, smoke, shade }
 	scaffold.colors = {
 		bar = { .6, .6, .6, 1 },

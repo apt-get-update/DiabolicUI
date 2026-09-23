@@ -105,96 +105,6 @@ local elements = {
 	["WorldMapFrame"] = true,
 	["WorldMapFrame.BorderFrame"] = true,
 
-	["ConquestFrame"] = "Blizzard_PVPUI",
-	["ConquestFrame.Inset"] = "Blizzard_PVPUI",
-	["ConquestFrame.RoleInset"] = "Blizzard_PVPUI",
-	["ConquestJoinButton"] = "Blizzard_PVPUI",
-
-	["HonorFrame"] = "Blizzard_PVPUI",
-	["HonorFrame.Inset"] = "Blizzard_PVPUI",
-	["HonorFrame.RoleInset"] = "Blizzard_PVPUI",
-	["HonorFrameQueueButton"] = "Blizzard_PVPUI",
-	["HonorFrameTypeDropDown"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton1"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton2"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton3"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton4"] = "Blizzard_PVPUI",
-
-	["WarGamesFrame"] = "Blizzard_PVPUI",
-	["WarGamesFrame.HorizontalBar"] = "Blizzard_PVPUI",
-	["WarGamesFrame.RightInset"] = "Blizzard_PVPUI",
-	["WarGamesFrameInfoScrollFrameScrollBar"] = "Blizzard_PVPUI",
-	["WarGamesFrameInfoScrollFrameScrollBarScrollUpButton"] = "Blizzard_PVPUI",
-	["WarGamesFrameInfoScrollFrameScrollBarScrollDownButton"] = "Blizzard_PVPUI",
-	["WarGamesFrameScrollFrameScrollBar"] = "Blizzard_PVPUI",
-	["WarGamesFrameScrollFrameScrollBarScrollUpButton"] = "Blizzard_PVPUI",
-	["WarGamesFrameScrollFrameScrollBarScrollDownButton"] = "Blizzard_PVPUI",
-	["WarGameStartButton"] = "Blizzard_PVPUI",
-
-	["PlayerTalentFrame"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameTab1"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameTab2"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameTab3"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameTab4"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameTab5"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameInset"] = "Blizzard_TalentUI",
-	["PlayerTalentFramePVPTalents"] = "Blizzard_TalentUI",
-	["PlayerTalentFramePVPTalents.Talents"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecialization"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpellScrollFrameScrollChild"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton1"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton2"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton3"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton4"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationLearnButton"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameTalents"] = "Blizzard_TalentUI",
-
-	["TradeSkillFrame"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.ResultIcon"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent1"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent2"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent3"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent4"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent5"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent6"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent7"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.Contents.Reagent8"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.CreateAllButton"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.CreateAllButton.LeftSeparator"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.CreateAllButton.RightSeparator"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.CreateButton"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.CreateButton.LeftSeparator"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.CreateMultipleInputBox"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.ExitButton"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.ExitButton.LeftSeparator"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.ExitButton.RightSeparator"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.ScrollBar"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsInset"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.FilterButton"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.LinkToButton"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.RecipeInset"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.RecipeList"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.RecipeList.LearnedTab"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.RecipeList.UnlearnedTab"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.RecipeList.scrollBar"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.SearchBox"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.RankFrame"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrameScrollDownButton"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrameScrollUpButton"] = "Blizzard_TradeSkillUI",
-	["DiabolicUITradeSkillCreateScrollButton"] = "Blizzard_TradeSkillUI",
-
-	["GarrisonCapacitiveDisplayFrame"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrameInset"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.CapacitiveDisplay.ShipmentIconFrame.Follower"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.CapacitiveDisplay.ShipmentIconFrame.Follower.PortraitRing"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.CreateAllWorkOrdersButton"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.CreateAllWorkOrdersButton.RightSeparator"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.StartWorkOrderButton"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.StartWorkOrderButton.LeftSeparator"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.Count"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.IncrementButton"] = "Blizzard_GarrisonUI",
-	["GarrisonCapacitiveDisplayFrame.DecrementButton"] = "Blizzard_GarrisonUI",
-
 	["MerchantFrame"] = true,
 	["MerchantFrameInset"] = true,
 	["MerchantFrameLootFilter"] = true,
@@ -254,30 +164,8 @@ local whiteList = {
 	["RaidFinderFrameFindRaidButtonText"] = true,
 	["RaidFinderFrameRoleBackground"] = true,
 	["SpellBookPage1"] = true,
-	["SpellBookPage2"] = true,
-
-	["PlayerTalentFramePortrait"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationLearnButtonText"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpellScrollFrameScrollChild.gradient"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton1.selectedTex"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton2.selectedTex"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton3.selectedTex"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton4.selectedTex"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton1SpecIcon"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton2SpecIcon"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton3SpecIcon"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton4SpecIcon"] = "Blizzard_TalentUI",
-
-	["ConquestFrame.RoleInset.Background"] = "Blizzard_PVPUI",
-	["ConquestJoinButtonText"] = "Blizzard_PVPUI",
-	["HonorFrame.RoleInset.Background"] = "Blizzard_PVPUI",
-	["HonorFrameQueueButtonText"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton1.Icon"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton2.Icon"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton3.Icon"] = "Blizzard_PVPUI",
-	["PVPQueueFrameCategoryButton4.Icon"] = "Blizzard_PVPUI",
-	["WarGameStartButtonText"] = "Blizzard_PVPUI"
-} 
+	["SpellBookPage2"] = true
+}
 
 -- Elements we'll hide
 local blackList = {
@@ -291,22 +179,6 @@ local blackList = {
 	["RaidFinderFrameFindRaidButton_LeftSeparator"] = true,
 	["RaidFinderFrameFindRaidButton_RightSeparator"] = true,
 
-	["ConquestJoinButton_LeftSeparator"] = "Blizzard_PVPUI",
-	["ConquestJoinButton_RightSeparator"] = "Blizzard_PVPUI",
-	["HonorFrameQueueButton_LeftSeparator"] = "Blizzard_PVPUI",
-	["HonorFrameQueueButton_RightSeparator"] = "Blizzard_PVPUI",
-	["WarGameStartButton_LeftSeparator"] = "Blizzard_PVPUI",
-
-	["PlayerTalentFrameSpecializationSpecButton1Glow"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton2Glow"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton3Glow"] = "Blizzard_TalentUI",
-	["PlayerTalentFrameSpecializationSpecButton4Glow"] = "Blizzard_TalentUI",
-
-	["TradeSkillFrame.DetailsFrame.CreateButton.LeftSeparator"] = "Blizzard_TradeSkillUI",
-	["TradeSkillFrame.DetailsFrame.ExitButton.LeftSeparator"] = "Blizzard_TradeSkillUI",
-	["DiabolicUITradeSkillCreateScrollButton_LeftSeparator"] = "Blizzard_TradeSkillUI",
-	["DiabolicUITradeSkillCreateScrollButton_RightSeparator"] = "Blizzard_TradeSkillUI",
-
 	["MerchantExtraCurrencyBg"] = true,
 	["MerchantExtraCurrencyInset"] = true,
 	["MerchantMoneyBg"] = true,
@@ -315,12 +187,10 @@ local blackList = {
 }
 
 -- Frames that'll have nameless child elements styled too.
--- Note that these frames aren't currently hooked to addon loading, 
--- so a full iteration of this table is run on every frame styling API call. 
--- Also, frames here will only be styled if they are listed in the elements table above. 
-local iterateNameless = {
-	["PlayerTalentFrameSpecialization"] = "Blizzard_TalentUI"
-}
+-- Note that these frames aren't currently hooked to addon loading,
+-- so a full iteration of this table is run on every frame styling API call.
+-- Also, frames here will only be styled if they are listed in the elements table above.
+local iterateNameless = {}
 
 -- Character Frame
 do
@@ -349,36 +219,6 @@ do
 			end
 		end
 	end
-end
-
--- Talent Frame
-for row = 1,7 do
-	elements["PlayerTalentFrameTalentsTalentRow"..row] = "Blizzard_TalentUI"
-	for talent = 1,3 do
-		elements["PlayerTalentFrameTalentsTalentRow"..row.."Talent"..talent] = "Blizzard_TalentUI"
-		whiteList["PlayerTalentFrameTalentsTalentRow"..row.."Talent"..talent.."IconTexture"] = "Blizzard_TalentUI"
-		--whiteList["PlayerTalentFrameTalentsTalentRow"..row.."Talent"..talent.."Name"] = "Blizzard_TalentUI"
-		whiteList["PlayerTalentFrameTalentsTalentRow"..row.."Talent"..talent.."Slot"] = "Blizzard_TalentUI"
-		whiteList["PlayerTalentFrameTalentsTalentRow"..row.."Talent"..talent.."Selection"] = "Blizzard_TalentUI"
-	end
-end
-
--- PvP Talent Frame
-for row = 1,6 do
-	elements["PlayerTalentFramePVPTalents.Talents.Tier"..row] = "Blizzard_TalentUI"
-	for talent = 1,3 do
-		elements["PlayerTalentFramePVPTalents.Talents.Tier"..row..".Talent"..talent] = "Blizzard_TalentUI"
-		whiteList["PlayerTalentFramePVPTalents.Talents.Tier"..row..".Talent"..talent..".Cover"] = "Blizzard_TalentUI"
-		whiteList["PlayerTalentFramePVPTalents.Talents.Tier"..row..".Talent"..talent..".Icon"] = "Blizzard_TalentUI"
-		whiteList["PlayerTalentFramePVPTalents.Talents.Tier"..row..".Talent"..talent..".Slot"] = "Blizzard_TalentUI"
-	end
-end 
-
--- WarGames Frame
-for i = 1,32 do -- overkill
-	elements["WarGamesFrameScrollFrameButton"..i] = "Blizzard_PVPUI"
-	elements["WarGamesFrameScrollFrameButton"..i..".Entry"] = "Blizzard_PVPUI"
-	whiteList["WarGamesFrameScrollFrameButton"..i..".Entry.Icon"] = "Blizzard_PVPUI"
 end
 
 local styled = {}
@@ -548,84 +388,4 @@ Module.OnEnable = function(self)
 	if (unstyledAddonFrames > 0) or (unhiddenAddonFrames > 0) then
 		self:RegisterEvent("ADDON_LOADED", "OnEvent")
 	end
-
-	self:OnInitBlizz()
 end
-
-
--- Lua API
-local _G = _G
-local math_min = math.min
-
--- WoW API
-local hooksecurefunc = hooksecurefunc
-local GetScreenHeight = _G.GetScreenHeight
-
-Module.StyleTracker = function(self)
-	hooksecurefunc("ObjectiveTracker_Update", function()
-		local frame = ObjectiveTrackerFrame.MODULES
-		if frame then
-			for i = 1, #frame do
-				local modules = frame[i]
-				if modules then
-					local header = modules.Header
-					local background = modules.Header.Background
-					background:SetAtlas(nil)
-
-					local text = modules.Header.Text
-					text:SetParent(header)
-				end
-			end
-		end
-	end)
-end 
-
-Module.PositionTracker = function(self)
-	if (not ObjectiveTrackerFrame) then 
-		return self:RegisterEvent("ADDON_LOADED", "OnEventBlizz")
-	end 
-
-	local ObjectiveFrameHolder = Engine:CreateFrame("Frame", nil, "UICenter")
-	ObjectiveFrameHolder:SetWidth(110)
-	ObjectiveFrameHolder:SetHeight(22)
-	ObjectiveFrameHolder:Point("TOP", "UICenter", "TOP", 0, -(84+ 260 +30))
-	ObjectiveFrameHolder:Point("RIGHT", "UICenter", "RIGHT", -21.5, 0)
-	ObjectiveFrameHolder:Point("LEFT", "UICenter", "RIGHT", -293, 0)
-	ObjectiveFrameHolder:Point("BOTTOM", "UICenter", "BOTTOM", 0, 220)
-	
-	ObjectiveTrackerFrame:ClearAllPoints()
-	ObjectiveTrackerFrame:SetPoint("TOP", ObjectiveFrameHolder, "TOP")
-
-	local top = ObjectiveTrackerFrame:GetTop() or 0
-	local screenHeight = GetScreenHeight()
-	local gap = screenHeight - top
-	local maxHeight = screenHeight - gap
-	local objectiveFrameHeight = math_min(maxHeight, 480)
-
-	ObjectiveTrackerFrame:SetHeight(objectiveFrameHeight)
-	ObjectiveTrackerFrame:SetClampedToScreen(false)
-
-	local ObjectiveTrackerFrame_SetPosition = function(_,_, parent)
-		if parent ~= ObjectiveFrameHolder then
-			ObjectiveTrackerFrame:ClearAllPoints()
-			ObjectiveTrackerFrame:SetPoint("TOP", ObjectiveFrameHolder, "TOP")
-		end
-	end
-	hooksecurefunc(ObjectiveTrackerFrame,"SetPoint", ObjectiveTrackerFrame_SetPosition)
-
-	self:StyleTracker()
-end
-
-Module.OnEventBlizz = function(self, event, ...)
-	if (event == "ADDON_LOADED") then 
-		local addon = ...
-		if (addon == "Blizzard_ObjectiveTracker") then 
-			self:UnregisterEvent("ADDON_LOADED", "OnEventBlizz")
-			self:PositionTracker()
-		end 
-	end 
-end
-
-Module.OnInitBlizz = function(self)
-	self:PositionTracker()	
-end 

@@ -31,62 +31,12 @@ local UnregisterStateDriver = _G.UnregisterStateDriver
 -- WoW frames and objects
 local UIParent = _G.UIParent
 
--- Client version speed constants
-local ENGINE_BFA 		= Engine:IsBuild("BfA")
-local ENGINE_WOD 		= Engine:IsBuild("WoD")
-local ENGINE_MOP 		= Engine:IsBuild("MoP")
-local ENGINE_CATA 		= Engine:IsBuild("Cata")
-
-
 local FadeManager = CreateFrame("Frame", nil, UIParent)
 local FadeManager_MT = { __index = FadeManager }
 
 local managers = {} -- table to hold all managers
 local STATE
 local FORCED -- when true, all managers are forcefully shown
-
---[[
--- cache up spellnames so we only need one actual function call per spellID
--- tempo tempo tempo tempo... woooooooh!
-local _GetSpellInfo = GetSpellInfo
-local spellcache = setmetatable({}, { __index = function(t, v) 
-	local a = {  _GetSpellInfo(v) } 
-	if _GetSpellInfo(v) then 
-		t[v] = a 
-	end 
-	return a 
-end})
-local GetSpellInfo = function(a) return unpack(spellcache[a]) end
-
--- keeping it safe. and fast. 
-local _UnitAura = UnitAura
-local UnitAura = function(unit, spell) 
-	if not(unit and spell) then
-		return
-	else
-		return _UnitAura(unit, spell)
-	end
-end
-
--- auras that we wish to treat as if the player were mounted
-local mountAuras = {
-	-- classes
-	--------------------------------------------------------
-	-- Druid
-	[1066] = true, -- Aquatic Form
-	[33943] = true, -- Flight Form
-	[40120] = true, -- Swift Flight Form
-	[783] = true, -- Travel Form
-	-- Shaman
-	[2645] = true, -- Ghost Wolf
-
-	-- races
-	--------------------------------------------------------
-	-- Worgen
-	[87840] = true -- Running Wild (Racial)
-	
-}
-]]--
 
 -- debuffs we ignore, so the ui can still fade out with them active
 local whiteList = {
@@ -227,7 +177,6 @@ FadeManager.UpdateFadeAlpha = function(self, elapsed)
 			self.delay = 0 -- prevent the delay unless the previous state was fully achieved
 		else
 			if self.oldTargetAlpha == self.currentAlpha then
-				-- self.delay = self.settings.states[state].fadeDelay -- only delay when we reached whatever the previous goal was 
 			else
 				self.delay = 0
 			end
@@ -437,44 +386,7 @@ Handler.UpdateSecureState = function(self, state)
 end
 
 local first
-local unitEvents = ENGINE_BFA and {
-	ENTER = {
-		PLAYER_ENTERING_WORLD = true
-	},
-	HEALTH = {
-		UNIT_HEALTH = true,
-		UNIT_HEALTH_FREQUENT = true,
-		UNIT_MAXHEALTH = true
-	},
-	POWER = {
-		UNIT_POWER_UPDATE = true,
-		UNIT_POWER_FREQUENT = true,
-		UNIT_MAXPOWER = true,
-		UNIT_DISPLAYPOWER = true
-	},
-	AURA = {
-		UNIT_AURA = true
-	}
-
-} or ENGINE_CATA and {
-	ENTER = {
-		PLAYER_ENTERING_WORLD = true
-	},
-	HEALTH = {
-		UNIT_HEALTH = true,
-		UNIT_HEALTH_FREQUENT = true,
-		UNIT_MAXHEALTH = true
-	},
-	POWER = {
-		UNIT_POWER = true,
-		UNIT_POWER_FREQUENT = true,
-		UNIT_MAXPOWER = true,
-		UNIT_DISPLAYPOWER = true
-	},
-	AURA = {
-		UNIT_AURA = true
-	}
-} or {
+local unitEvents = {
 	ENTER = {
 		PLAYER_ENTERING_WORLD = true
 	},
@@ -555,23 +467,6 @@ Handler.UpdateNonSecureState = function(self, event, ...)
 		state = "debuff"
 	end
 	
-	-- if UnitOnTaxi("player") then
-		-- state = "taxi"
-		-- return 
-	-- end
-	
-	-- for spellID in pairs(mountAuras) do
-		-- self.unitData.mountaura = false
-		-- if UnitAura("player", GetSpellInfo(spellID)) then
-			-- self.unitData.mountaura = true
-			-- break
-		-- end
-	-- end
-	-- if self.unitData.mountaura then 
-		-- state = "travelform"
-		-- return 
-	-- end
-	
 	self:SetNonSecureState(state)
 	self:UpdateState()
 end
@@ -609,8 +504,8 @@ Handler.OnEnable = function(self)
 	local driver = "[@target,exists]target;"
 	driver = driver .. "[@player,dead]dead;"
 	driver = driver .. "[combat]combat;"
-	driver = driver .. (ENGINE_WOD and "[resting]resting;" or "")
-	driver = driver .. (ENGINE_MOP and "[possessbar][overridebar][vehicleui]override;" or "[bonusbar:5][vehicleui]override;")
+	driver = driver .. ""
+	driver = driver .. "[bonusbar:5][vehicleui]override;"
 	driver = driver .. "[flying][mounted]mounted;"
 	driver = driver .. "nocombat"
 

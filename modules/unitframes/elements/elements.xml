@@ -3,14 +3,15 @@
 <Script file='aura.lua'/>
 <Script file='cast.lua'/>
 <Script file='classification.lua'/>
-<Script file='classpower.lua'/>
 <Script file='combatfeedback.lua'/>
 <Script file='happiness.lua'/>
 <Script file='health.lua'/>
 <Script file='name.lua'/>
 <Script file='portraits.lua'/>
 <Script file='power.lua'/>
+<Script file='role.lua'/>
 <Script file='runes.lua'/>
 <Script file='threat.lua'/>
+<Script file='weaponenchants.lua'/>
 
 </Ui>

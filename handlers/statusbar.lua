@@ -10,11 +10,6 @@ local type = type
 -- WoW API
 local CreateFrame = _G.CreateFrame
 
--- Client versions
-local ENGINE_BFA_820 = Engine:IsBuild("8.2.0")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
-
 ----------------------------------------------------------------
 -- Statusbar template
 ----------------------------------------------------------------
@@ -123,7 +118,6 @@ StatusBar.Update = function(self, elapsed)
 					spark._direction = "IN"
 				end
 			end
-			--spark:SetAlpha(current_alpha)
 			spark:SetAlpha(current_alpha)
 		end
 		if not spark:IsShown() then
@@ -252,21 +246,13 @@ end
 
 StatusBar.SetStatusBarTexture = function(self, ...)
 	local arg = ...
-	if ENGINE_LEGION and type(arg) == "number" then
-		self.bar:SetColorTexture(...)
-	else
-		self.bar:SetTexture(...)
-	end
+	self.bar:SetTexture(...)
 	self:Update()
 end
 
 StatusBar.SetSparkTexture = function(self, ...)
 	local arg = ...
-	if ENGINE_LEGION and type(arg) == "number" then
-		self.spark:SetColorTexture(...)
-	else
-		self.spark:SetTexture(...)
-	end
+	self.spark:SetTexture(...)
 end
 
 StatusBar.SetSparkSize = function(self, width, height)
@@ -360,11 +346,7 @@ StatusBar.GetWidth = function(self, ...)
 	end
 end
 
-StatusBar.GetSize = ENGINE_BFA_820 and function(self)
-	return self.scaffold:GetWidth(), self.scaffold:GetHeight()
-end
-or
-function(self, ...)
+StatusBar.GetSize = function(self, ...)
 	local width, height
 
 	local top = self:GetTop()
@@ -437,8 +419,6 @@ StatusBar.IsObjectType = function(self, type) return type == "StatusBar" end
 StatusBar.Show = function(self) self.scaffold:Show() end
 StatusBar.Hide = function(self) self.scaffold:Hide() end
 StatusBar.IsShown = function(self) return self.scaffold:IsShown() end
-
-StatusBar.IsForbidden = function(self) return true end
 
 Handler.New = function(self, parent)
 

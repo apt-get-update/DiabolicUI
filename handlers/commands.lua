@@ -29,6 +29,9 @@ Handler.ParseCommand = function(self, msg)
 end
 
 Handler.PerformCommand = function(self, command, ...)
+	if (not command) or (command == "") then
+		command = "config"
+	end
 	if not commandRegistry[command] then
 		return
 	end

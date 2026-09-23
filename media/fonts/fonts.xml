@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/"
-	xmlGUIS:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
 	<!-- 
@@ -469,26 +469,6 @@
 	</Font>
 	<Font name="DiabolicFont_TooltipNumberRight" inherits="DiabolicFont_TooltipNumber" justifyH="RIGHT" virtual="true">
 	</Font>
-
-	<Font name="DiabolicWatchFrameHeader" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardLight.ttf" justifyH="LEFT" virtual="true">
-		<Color r="1.0" g="0.9176470588235294" b="0.5372549019607843"/>
-		<Shadow>
-			<Offset><AbsDimension x="-0.75" y="-0.75"/></Offset>
-			<Color r="0" g="0" b="0" a="1"/>
-		</Shadow>
-		<FontHeight><AbsValue val="16"/></FontHeight>
-	</Font>
-	
-	<Font name="DiabolicWatchFrameNormal" font="Interface\AddOns\DiabolicUI\media\fonts\NotoSans-Bold.ttf" justifyH="LEFT" virtual="true">
-		<Color r="0.5" g="0.5" b="0.5"/>
-		<Shadow>
-			<Offset><AbsDimension x="-0.75" y="-0.75"/></Offset>
-			<Color r="0" g="0" b="0" a="1"/>
-		</Shadow>
-		<FontHeight><AbsValue val="12"/></FontHeight>
-	</Font>
-	
-	
 
 	<Font name="DiabolicDialogNormal" font="Interface\AddOns\DiabolicUI\media\fonts\NotoSans-Bold.ttf" justifyH="LEFT" virtual="true">
 		<Color r="0.941176470588" g="0.941176470588" b="0.941176470588"/>

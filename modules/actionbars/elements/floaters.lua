@@ -11,7 +11,6 @@ local unpack = unpack
 
 -- WoW API
 local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
-local HasExtraActionBar = _G.HasExtraActionBar
 local InCombatLockdown = _G.InCombatLockdown
 local RegisterStateDriver = _G.RegisterStateDriver
 local TaxiRequestEarlyLanding = _G.TaxiRequestEarlyLanding
@@ -20,13 +19,6 @@ local UnregisterStateDriver = _G.UnregisterStateDriver
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
-
--- WoW Client Constants
-local ENGINE_WOTLK = Engine:IsBuild("WotLK")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_WOD = Engine:IsBuild("WoD")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
 
 -- Tracking number of visible forms
 local NUM_FORMS = 0
@@ -65,7 +57,7 @@ BarWidget.UpdateStanceButtonVisibility = function(self, event, ...)
 		RegisterStateDriver(self.StanceBarButton, "hide")
 	else
 		UnregisterStateDriver(self.StanceBarButton, "visibility")
-		RegisterStateDriver(self.StanceBarButton, "visibility", ENGINE_MOP and "[overridebar][possessbar][shapeshift][vehicleui]hide;show" or "[bonusbar:5][vehicleui]hide;show")
+		RegisterStateDriver(self.StanceBarButton, "visibility", "[bonusbar:5][vehicleui]hide;show")
 	end
 end
 
@@ -88,13 +80,6 @@ BarWidget.OnEnable = function(self)
 	-- Exit buttons
 	self.VehicleExitButton = self:SpawnVehicleExitButton()
 	self.TaxiBar, self.TaxiExitButton = self:SpawnTaxiExitButton()
-
-	-- Extra button
-	self.ExtraActionButton = self:StyleExtraActionButton()
-
-	-- Zone ability buttons
-	self.DraenorZoneAbilityButton = self:StyleZoneButton(_G.DraenorZoneAbilityFrame) -- this was removed at some point
-	self.LegionZoneAbilityButton = self:StyleZoneButton(_G.ZoneAbilityFrame)
 
 end
 
@@ -129,9 +114,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 	StanceBarButton.Pushed:SetTexture(visualConfig.border.textures.highlight)
 
 	StanceBarButton.PostEnter = function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetText(L["Stances"], 1, 1, 1)
 		GameTooltip:AddLine(L["<Left-click> to toggle stance bar."], unpack(C.General.OffGreen))
@@ -145,9 +127,7 @@ BarWidget.SpawnStanceBarButton = function(self)
 	end
 	
 	StanceBarButton.PostLeave = function(self) 
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:Hide()
-		end
+		GameTooltip:Hide()
 	end
 
 	StanceBarButton:SetClickTarget(Module:GetWidget("Bar: Stance"):GetFrame())
@@ -163,9 +143,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 	ProxyButton:SetScript("OnLeave", function() StanceBarButton:GetScript("OnLeave")(StanceBarButton) end)
 
 	ProxyButton:SetScript("OnEvent", function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if (GameTooltip:GetOwner() == StanceBarButton) then
 			self:GetScript("OnEnter")()
 		end
@@ -189,10 +166,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 end
 
 BarWidget.SpawnVehicleExitButton = function(self)
-	if (not ENGINE_WOTLK) then
-		return
-	end
-
 	local visualConfig = Module.config.visuals.floaters.exit
 
 	local VehicleExitButton = FloatButton:New("Action", self:GetFrame(), "EngineVehicleExitButton")
@@ -219,9 +192,6 @@ BarWidget.SpawnVehicleExitButton = function(self)
 	VehicleExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
 	
 	VehicleExitButton.PostEnter = function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetText(LEAVE_VEHICLE, 1, 1, 1)
 		GameTooltip:AddLine(L["<Left-click> to leave the vehicle."], unpack(C.General.OffGreen))
@@ -229,24 +199,18 @@ BarWidget.SpawnVehicleExitButton = function(self)
 	end
 	
 	VehicleExitButton.PostLeave = function(self) 
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:Hide()
-		end
+		GameTooltip:Hide()
 	end
 
 	VehicleExitButton:SetAttribute("type", "macro")
-	VehicleExitButton:SetAttribute("macrotext", ENGINE_MOP and "/leavevehicle [target=vehicle,exists,canexitvehicle]" or "/leavevehicle [target=vehicle,exists]")
+	VehicleExitButton:SetAttribute("macrotext", "/leavevehicle [target=vehicle,exists]")
 	
-	RegisterStateDriver(VehicleExitButton, "visibility", ENGINE_MOP and "[target=vehicle,exists,canexitvehicle] show; hide" or "[target=vehicle,exists] show; hide")
+	RegisterStateDriver(VehicleExitButton, "visibility", "[target=vehicle,exists] show; hide")
 
 	return VehicleExitButton
 end
 
 BarWidget.SpawnTaxiExitButton = function(self)
-	if (not ENGINE_WOD) then
-		return
-	end
-
 	local visualConfig = Module.config.visuals.floaters.exit
 	
 	local TaxiBar = self:GetFrame():CreateFrame("Frame")
@@ -284,9 +248,6 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	TaxiExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
 	
 	TaxiExitButton.PostEnter = function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if UnitOnTaxi("player") then
 			GameTooltip_SetDefaultAnchor(GameTooltip, self)
 			GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1)
@@ -296,9 +257,7 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	end
 	
 	TaxiExitButton.PostLeave = function(self) 
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:Hide()
-		end
+		GameTooltip:Hide()
 	end
 
 	TaxiExitButton.PostClick = function(self, button)
@@ -314,56 +273,14 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("VEHICLE_UPDATE", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateTaxiExitButtonVisibility")
+	-- A taxi ride isn't a vehicle, so none of the events above fire the
+	-- moment a flight actually ends - only these do, leaving the button
+	-- stuck shown after landing until some unrelated event happens to
+	-- trigger a recheck.
+	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateTaxiExitButtonVisibility")
+	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdateTaxiExitButtonVisibility")
 	
 	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists,canexitvehicle] hide; show")
 	
 	return TaxiBar, TaxiExitButton
-end
-
-BarWidget.StyleExtraActionButton = function(self)
-	local frame = ENGINE_CATA and ExtraActionBarFrame
-	if frame then
-		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
-		return self:StyleButton(ExtraActionButton1, frame, Module.config.visuals.floaters.extra)
-	end
-end
-
-BarWidget.StyleZoneButton = function(self, frame)
-	return frame and self:StyleButton(frame.SpellButton, frame, Module.config.visuals.floaters.zone)
-end
-
-BarWidget.StyleButton = function(self, button, parent, visualConfig)
-
-	FloatButton:Build(button)
-
-	-- The Zone ability buttons have this
-	if parent then
-		parent:SetParent(self:GetFrame())
-		parent:SetSize(unpack(visualConfig.size))
-		parent:ClearAllPoints()
-		parent:SetPoint(unpack(visualConfig.position))
-		parent.ignoreFramePositionManager = true
-	end
-
-	button:SetSize(unpack(visualConfig.size))
-	button:ClearAllPoints()
-	button:SetPoint("CENTER", 0, 0)
-
-	button.Icon:SetTexture(visualConfig.icon.texture)
-	button.Icon:SetSize(unpack(visualConfig.icon.size))
-	button.Icon:SetTexCoord(unpack(visualConfig.icon.texcoords))
-
-	button.Normal:SetSize(unpack(visualConfig.border.size))
-	button.Normal:SetPoint(unpack(visualConfig.border.position))
-	button.Normal:SetTexture(visualConfig.border.textures.normal)
-
-	button.Highlight:SetSize(unpack(visualConfig.border.size))
-	button.Highlight:SetPoint(unpack(visualConfig.border.position))
-	button.Highlight:SetTexture(visualConfig.border.textures.highlight)
-
-	button.Pushed:SetSize(unpack(visualConfig.border.size))
-	button.Pushed:SetPoint(unpack(visualConfig.border.position))
-	button.Pushed:SetTexture(visualConfig.border.textures.highlight)
-
-	return button
 end

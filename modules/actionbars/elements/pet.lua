@@ -11,12 +11,18 @@ local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe
 local InCombatLockdown = _G.InCombatLockdown
 local RegisterStateDriver = _G.RegisterStateDriver
 
--- Client version constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-
 local NUM_BUTTONS = NUM_PET_ACTION_SLOTS or 10
+
+-- Picks the pet bar's vertical clearance depending on whether the
+-- combined xp/reputation bar slot above it is currently in use.
+-- The xp and reputation bars are never both shown at once.
+local GetPetBarPosition = function(bar_config)
+	if (Module:IsXPVisible() or Module:IsReputationVisible()) then
+		return bar_config.positionXP
+	else
+		return bar_config.position
+	end
+end
 
 BarWidget.OnEnable = function(self)
 	local config = Module.config
@@ -29,7 +35,7 @@ BarWidget.OnEnable = function(self)
 	Bar:SetFrameStrata("MEDIUM")
 	Bar:SetFrameLevel(5)
 	Bar:SetSize(unpack(bar_config.bar_size))
-	Bar:Place(unpack(Module:IsXPVisible() and bar_config.positionXP or bar_config.position))
+	Bar:Place(unpack(GetPetBarPosition(bar_config)))
 	Bar:SetAttribute("old_button_size", bar_config.buttonsize)
 
 	Bar.hideGrid = bar_config.hideGrid
@@ -91,13 +97,12 @@ BarWidget.OnEnable = function(self)
 	self.Bar = Bar
 
 	self:RegisterMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", "UpdatePosition")
+	self:RegisterMessage("ENGINE_ACTIONBAR_REPUTATION_VISIBLE_CHANGED", "UpdatePosition")
 
-	if not ENGINE_BFA then 
-		self:RegisterEvent("PLAYER_ENTERING_VEHICLE", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERED_VEHICLE", "OnEvent")
-		self:RegisterEvent("PLAYER_EXITING_VEHICLE", "OnEvent")
-		self:RegisterEvent("PLAYER_EXITED_VEHICLE", "OnEvent")
-	end 
+	self:RegisterEvent("PLAYER_ENTERING_VEHICLE", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERED_VEHICLE", "OnEvent")
+	self:RegisterEvent("PLAYER_EXITING_VEHICLE", "OnEvent")
+	self:RegisterEvent("PLAYER_EXITED_VEHICLE", "OnEvent")
 
 	self:UpdateVisibility()
 
@@ -130,11 +135,7 @@ BarWidget.UpdateVisibility = function(self, event, ...)
 		self:UnregisterEvent("PLAYER_LEVEL_UP", "UpdateVisibility")
 	end
 	if (UnitLevel("player") >= 10) then 
-		-- Register a proxy visibility driver
-		--local visibility_driver = ENGINE_MOP and "[overridebar][possessbar][shapeshift]hide;[vehicleui]hide;[pet]show;hide" or "[bonusbar:5]hide;[vehicleui]hide;[pet]show;hide"
-		
-		local visibility_driver = ENGINE_MOP and "[petbattle] hide;[pet,novehicleui,nooverridebar,nopossessbar] show;hide"
-		or "[bonusbar:5]hide;[vehicleui][target=vehicle,exists]hide;[pet]show;hide"
+		local visibility_driver = "[bonusbar:5]hide;[vehicleui][target=vehicle,exists]hide;[pet]show;hide"
 
 		UnregisterStateDriver(self.Bar, "vis")
 		RegisterStateDriver(self.Bar, "vis", visibility_driver)
@@ -153,7 +154,7 @@ BarWidget.UpdatePosition = function(self, event, ...)
 	if (event == "PLAYER_REGEN_ENABLED") then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdatePosition")
 	end
-	self.Bar:Place(unpack(Module:IsXPVisible() and Module.config.structure.bars.pet.positionXP or Module.config.structure.bars.pet.position))
+	self.Bar:Place(unpack(GetPetBarPosition(Module.config.structure.bars.pet)))
 end
 
 BarWidget.GetFrame = function(self)

@@ -7,12 +7,7 @@ local setmetatable = setmetatable
 local tinsert = table.insert
 
 -- WoW API
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
-
--- Client Constants
-local ENGINE_LEGION_730 = Engine:IsBuild("7.3.0")
-local ENGINE_LEGION_725 = Engine:IsBuild("7.2.5")
-local ENGINE_LEGION_715 = Engine:IsBuild("7.1.5")
+local PlaySound = _G.PlaySound
 
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }
@@ -53,7 +48,14 @@ end
 Bar.NewButton = function(self, button_type, button_id, ...)
 	local Button = ActionButton:New(button_type, button_id, self, ...)
 	Button:SetFrameStrata("MEDIUM")
-	
+	-- A new frame's level otherwise just defaults to whatever WoW resolves
+	-- at creation time and never updates on its own afterwards - setting it
+	-- explicitly, relative to the bar's own (by-then-already-correct)
+	-- level, is what actually keeps every button above the demon/angel
+	-- artwork, rather than relying on artwork.lua to notice and fix it up
+	-- after the fact once the mismatch is already visible on screen.
+	Button:SetFrameLevel(self:GetFrameLevel() + 1)
+
 	-- Increase the bar's local button count
 	local num = #self.buttons + 1
 
@@ -109,8 +111,8 @@ Handler.New = function(self, id, parent, barTemplate, ...)
 	bar:SetFrameRef("Visibility", visibility)
 
 	-- Sounds
-	bar:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_CHARACTER_INFO_OPEN, "SFX") end)
-	bar:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_CHARACTER_INFO_CLOSE, "SFX") end)
+	bar:HookScript("OnShow", function(self) PlaySound("igCharacterInfoOpen") end)
+	bar:HookScript("OnHide", function(self) PlaySound("igCharacterInfoClose") end)
 
 	-- Tell the visibility layer where to find the bar
 	visibility:SetFrameRef("Bar", bar)

@@ -1,6 +1,5 @@
 local _, Engine = ...
 local Module = Engine:NewModule("WorldState")
---do return end
 
 -- Lua API
 local _G = _G
@@ -17,9 +16,6 @@ local GetNumWorldStateUI = _G.GetNumWorldStateUI
 local GetTime = _G.GetTime
 local GetWorldStateUIInfo = _G.GetWorldStateUIInfo
 local UnitAffectingCombat = _G.UnitAffectingCombat
-
--- WoW Client Constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
 
 -- Height of the UIs
 local uiHeight = 24
@@ -98,7 +94,6 @@ WorldStateUI:SetScript("OnUpdate", function(self, elapsed)
 			if activeTimers[timer.msg].enabled then
 				if timer.ui then
 					timer.ui.text:SetText(formatTime(math_floor(timer.timeLeft)))
-					--timer.ui.text:SetText(timer.msg .. formatTime(math_floor(timer.timeLeft)))
 				end
 			end
 
@@ -112,20 +107,16 @@ end)
 
 WorldStateUI.OnEnter = function(self)
 	if self.tooltip then
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-			GameTooltip:ClearAllPoints()
-			GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", 6, -6)
-			GameTooltip:AddLine(self.tooltip, 0, 1, 0)
-			GameTooltip:Show()
-		end
+		GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
+		GameTooltip:ClearAllPoints()
+		GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", 6, -6)
+		GameTooltip:AddLine(self.tooltip, 0, 1, 0)
+		GameTooltip:Show()
 	end
 end
 
 WorldStateUI.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then	
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 WorldStateUI.EnableMouseScripts = function(self)
@@ -325,11 +316,9 @@ Module.UpdateStates = function(self)
 				ui:SetSize(32, uiHeight or 32)
 				ui:SetHitRectInsets(0, 0, 0, 0)
 				height = height + (uiHeight or 32)
-				-- ui:SetIcon("icon", icon, true)
 				ui:SetIcon("icon", "", true) -- only show icons we have customs for
 				ui.icon:Place("TOPLEFT", 0, 0)
 				ui.text:Place("LEFT", 0, 0) -- center the timer?
-				--ui.text:Place("LEFT", 32, 0)
 				ui.tooltip = tooltip
 
 				-- calculate actual seconds remaining and grab blizzards msg here
@@ -384,7 +373,6 @@ Module.UpdateStates = function(self)
 					ui:SetSize(32, uiHeight or 32)
 					ui:SetHitRectInsets(0, 0, 0, 0)
 					height = height + (uiHeight or 32)
-					-- ui:SetIcon("icon", icon, true)
 					ui:SetIcon("icon", "", true) -- only show icons we have customs for
 					ui.icon:Place("TOPLEFT", 0, 0)
 					ui.text:Place("LEFT", 32, 0)
@@ -401,18 +389,14 @@ Module.UpdateStates = function(self)
 						ui.dynamicIcon:Place("TOPLEFT", ui.text, "TOPRIGHT", 0, 0)
 					end
 					if (state == 2) then -- start flashing ui.holder
-						--ui.holder:StartFlash(.5, .5, .5, 1, true)
 						ui.dynamicIcon:Show()
 					elseif (state == 3) then -- stop flashing ui.holder
-						--ui.holder:StopFlash()
 						ui.dynamicIcon:Show()
 					else -- stop flashing ui.holder
-						--ui.holder:StopFlash()
 						ui.dynamicIcon:Hide()
 					end
 				else -- stop flashing ui.holder
 					ui:SetIcon("dynamicIcon", "")
-					--ui.holder:StopFlash()
 					ui.dynamicIcon:Hide()
 				end	
 				
@@ -474,15 +458,13 @@ Module.OnEnable = function(self)
 	self.frame:Place("TOP", "UICenter", "TOP", 0, -30)
 	self.frame:SetSize(32, 32)
 
-	if (not ENGINE_BFA) then 
-		self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
-		self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
-		self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
-		self:UpdateStates() 
-	end 
+	self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
+	self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
+	self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
+	self:UpdateStates() 
 end

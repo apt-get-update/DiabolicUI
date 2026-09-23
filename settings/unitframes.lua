@@ -59,45 +59,6 @@ Engine:NewStaticConfig("UnitFrames", {
 		},
 		units = {
 			player = {
-				classpower = {
-					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + 15 + 20 }, -- above castbar? 
-					point = {
-						texture = path .. [[textures\DiabolicUI_Runes.tga]], -- only one texture here
-						size = { 70, 70 },
-						padding = 0, 
-					}
-				},
-				altpower = {
-					size = { 227, 15 },
-					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + 30 }, -- 0, 210
-					positionPet = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + 30 + petOffset }, 
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
-					color = { .9, .3, .1 }, 
-					value = {
-						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 3.5, .5 }
-					},
-					spark = {
-						size = { 128, 128 },
-						texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_Spark_Warcraft.tga]],
-						flash = { 2.75, 1.25, .45, .95 }
-					},
-					shade = {
-						position = { "CENTER", 0, 0 },
-						color = { 0, 0, 0, .5 },
-						texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
-					},
-					backdrop = {
-						size = { 512, 64 },
-						position =  { "TOPLEFT", -142, 25 },
-						texture = path .. [[textures\DiabolicUI_Target_227x15_Backdrop.tga]]
-					},
-					border = {
-						size = { 512, 64 },
-						position =  { "TOPLEFT", -142, 25 },
-						texture = path .. [[textures\DiabolicUI_Target_227x15_Border.tga]]
-					}
-				},
 				castbar = {
 					size = { 227, 15 },
 					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 }, -- 0, 210
@@ -143,8 +104,12 @@ Engine:NewStaticConfig("UnitFrames", {
 					}
 				},
 				auras = {
-					position = { "TOPRIGHT", "Minimap", "TOPLEFT", -20, 0 }, 
-					positionWithoutMinimap = { "TOPRIGHT", "UICenter", "TOPRIGHT", -30, -74 }, 
+					position = { "TOPRIGHT", "Minimap", "TOPLEFT", -20, 0 },
+					-- Mirror of the above, used when the minimap has been
+					-- moved to the left half of the screen, so the auras
+					-- grow out to its right instead of running offscreen.
+					positionMinimapLeft = { "TOPLEFT", "Minimap", "TOPRIGHT", 20, 0 },
+					positionWithoutMinimap = { "TOPRIGHT", "UICenter", "TOPRIGHT", -30, -74 },
 					size = { 200, 200 },
 					spacingH = 4, 
 					spacingV = 4, 
@@ -303,7 +268,6 @@ Engine:NewStaticConfig("UnitFrames", {
 						size = { 150, 150 },
 						position = { "CENTER" },
 						color = { 175/255, 17/255, 28/255 }, -- blood
-						--color = { 138/255, 7/255, 7/255 }, -- blood
 						spark = {
 							size = { 128, 128 },
 							overflow = 8,
@@ -564,10 +528,7 @@ Engine:NewStaticConfig("UnitFrames", {
 			},
 			focus = {
 				size = { 90, 17 },
-				--position = { "TOPLEFT", "UICenter", "TOPLEFT", 60, -50 },
-				--position = { "CENTER", "UICenter", "CENTER", -440, -50 },
 				position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", orbOffsetX -140 + (140 - 160)/2 -8 + (140-90)/2, 440 },
-				--position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", -(158/2 + 90/2), 220 },
 				shade = {
 					size = { 196, 64 },
 					position = { "BOTTOM", 0, -20 },
@@ -599,16 +560,19 @@ Engine:NewStaticConfig("UnitFrames", {
 					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
 				},
 				portrait = {
-					size = { 70, 70 },
-					position = { "TOP", 0, 0 },
-					texture_size = { 128, 128 }, 
+					size = { 40, 40 }, -- the model's own viewport
+					position = { "BOTTOM", "TOP", 0, 4 }, -- { point, relativePoint, x, y }, anchored to the health bar, on top of it
+					texture_size = { 72, 72 }, -- the decorative ring around the model, bigger than its viewport
 					texture_position = { "CENTER", 0, 0 },
 					textures = {
 						backdrop = path .. [[textures\DiabolicUI_Target_80x80_PortraitBackdrop.tga]],
 						border = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorder.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorderHighlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
-					}
+						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
+					},
+					-- Where the name moves to when the portrait takes over the
+					-- space it normally floats in above the frame: { point, relativePoint, x, y }, anchored to the health bar.
+					name_position = { "TOP", "BOTTOM", 0, -2 }
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular14,
@@ -623,7 +587,6 @@ Engine:NewStaticConfig("UnitFrames", {
 					size = { 75 *1.15, 75 *1.15 },
 					position = { "CENTER" },
 					color = { 175/255, 17/255, 28/255 }, -- blood
-					--color = { 138/255, 7/255, 7/255 }, -- blood
 					spark = {
 						size = { 64, 64 },
 						overflow = 8,
@@ -699,6 +662,26 @@ Engine:NewStaticConfig("UnitFrames", {
 						position = { "CENTER", 6, 0 }
 					}
 				},
+				role = {
+					size = { 32, 32 },
+					position = { "LEFT", -70, 0 }, -- relative to the health bar, clear of the frame's left edge
+					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
+				},
+				portrait = {
+					size = { 40, 40 }, -- the model's own viewport
+					position = { "BOTTOM", "TOP", 0, 4 }, -- { point, relativePoint, x, y }, anchored to the health bar, on top of it
+					texture_size = { 72, 72 }, -- the decorative ring around the model, bigger than its viewport
+					texture_position = { "CENTER", 0, 0 },
+					textures = {
+						backdrop = path .. [[textures\DiabolicUI_Target_80x80_PortraitBackdrop.tga]],
+						border = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorder.tga]],
+						highlight = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorderHighlight.tga]],
+						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
+					},
+					-- Where the name moves to when the portrait takes over the
+					-- space it normally floats in above the frame: { point, relativePoint, x, y }, anchored to the health bar.
+					name_position = { "TOP", "BOTTOM", 0, -2 }
+				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
 					position = { "TOP", 0.5, 24.5 + 17 },
@@ -754,8 +737,8 @@ Engine:NewStaticConfig("UnitFrames", {
 			},
 			raid = {
 				size = { 90, 24 },
-				position = { "TOPLEFT", "UICenter", "TOPLEFT", 60, -90 },
-				offset = 30,
+				position = { "TOPLEFT", "UICenter", "TOPLEFT", 35, -35 },
+				offset = 25,
 				shade = {
 					size = { 234, 78 }, -- scaled from 384×128
 					position = { "CENTER", 0, 0 },
@@ -786,6 +769,11 @@ Engine:NewStaticConfig("UnitFrames", {
 						font_object = DiabolicFont_SansBold8, -- smaller font
 						position = { "CENTER", 4, 0 }
 					}
+				},
+				role = {
+					size = { 22, 22 },
+					position = { "LEFT", -42, 0 }, -- relative to the health bar
+					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular12,

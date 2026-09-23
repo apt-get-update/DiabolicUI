@@ -9,5 +9,6 @@
 <Script file='raid.lua'/>
 <Script file='arena.lua'/>
 <Script file='boss.lua'/>
+<Script file='testmode.lua'/>
 
 </Ui>

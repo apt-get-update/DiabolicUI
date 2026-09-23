@@ -5,9 +5,6 @@ local ControllerWidget = Module:SetWidget("Controller: Pet")
 -- Lua API
 local setmetatable = setmetatable
 
--- Client version constants
-local ENGINE_MOP = Engine:IsBuild("MoP")
-
 local Controller = Engine:CreateFrame("Frame")
 local Controller_MT = { __index = Controller }
 

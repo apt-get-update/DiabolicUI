@@ -2,12 +2,6 @@
 -- WoW API
 local blizzardCollectgarbage = _G.collectgarbage
 
--- Retrive the current game client version (default to WOTLK)
-local BUILD = tonumber((select(2, GetBuildInfo()))) or 12340
-
--- Shortcuts to identify client versions
-local LEGION_730 = BUILD >= 24500 
-
 -- Fix the bug where trainer window bugs out 
 -- after being automatically opened when a quest window close.
 --[[
@@ -69,7 +63,6 @@ separator = ""
 (*temporary) = nil
 (*temporary) = "attempt to compare number with nil"
 ]]
---LoadAddOn("Blizzard_TrainerUI")
 
 -- Garbage collection is being overused and misused,
 -- and it's causing lag and performance drops. 

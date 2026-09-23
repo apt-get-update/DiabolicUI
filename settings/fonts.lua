@@ -184,7 +184,7 @@ Engine:NewStaticConfig("Fonts", {
 			}
 		},
 		damage = {
-			path = path .. "Coalition.ttf", -- Coalition has high res
+			path = path .. "ExocetBlizzardMedium.ttf",
 			locales = {
 				enUS = true,
 				enGB = true,

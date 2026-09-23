@@ -11,31 +11,17 @@ local tostring = tostring
 local unpack = unpack
 
 -- WoW API
-local GetSpecialization = _G.GetSpecialization
 local UnitHealthMax = _G.UnitHealthMax
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsTapDenied = _G.UnitIsTapDenied 
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitPower = _G.UnitPower
 local UnitPowerMax = _G.UnitPowerMax
 local UnitPowerType = _G.UnitPowerType
-local UnitStagger = _G.UnitStagger
 
 local _, playerClass = UnitClass("player")
 
-local ENGINE_BFA = Engine:IsBuild("BfA")
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-local ENGINE_MOP = Engine:IsBuild("MoP")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-
-local _SECONDARY_RESOURCE_NAME = "MANA"
-local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA or Enum.PowerType.Mana
-
-local playerSpec
-local UpdateSpec = function(Self, event, ...)
-	local spec = GetSpecialization()
-
-end
+local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA
 
 local Update = function(self, event, ...)
 	local Power = self.Power
@@ -218,37 +204,20 @@ local Enable = function(self)
 		if Power.frequent or Mana.frequent then
 			self:EnableFrequentUpdates("Power", Power.frequent or Mana.frequent)
 		else
-			if ENGINE_BFA then 
-				self:RegisterEvent("UNIT_POWER_UPDATE", Update)
-				self:RegisterEvent("UNIT_MAXPOWER", Update)
-			elseif ENGINE_CATA then
-				self:RegisterEvent("UNIT_POWER", Update)
-				self:RegisterEvent("UNIT_MAXPOWER", Update)
-			else
-				self:RegisterEvent("UNIT_MANA", Update)
-				self:RegisterEvent("UNIT_RAGE", Update)
-				self:RegisterEvent("UNIT_FOCUS", Update)
-				self:RegisterEvent("UNIT_ENERGY", Update)
-				self:RegisterEvent("UNIT_RUNIC_POWER", Update)
-				self:RegisterEvent("UNIT_MAXMANA", Update)
-				self:RegisterEvent("UNIT_MAXRAGE", Update)
-				self:RegisterEvent("UNIT_MAXFOCUS", Update)
-				self:RegisterEvent("UNIT_MAXENERGY", Update)
-				self:RegisterEvent("UNIT_DISPLAYPOWER", Update)
-				self:RegisterEvent("UNIT_MAXRUNIC_POWER", Update)
-			end
+			self:RegisterEvent("UNIT_MANA", Update)
+			self:RegisterEvent("UNIT_RAGE", Update)
+			self:RegisterEvent("UNIT_FOCUS", Update)
+			self:RegisterEvent("UNIT_ENERGY", Update)
+			self:RegisterEvent("UNIT_RUNIC_POWER", Update)
+			self:RegisterEvent("UNIT_MAXMANA", Update)
+			self:RegisterEvent("UNIT_MAXRAGE", Update)
+			self:RegisterEvent("UNIT_MAXFOCUS", Update)
+			self:RegisterEvent("UNIT_MAXENERGY", Update)
+			self:RegisterEvent("UNIT_DISPLAYPOWER", Update)
+			self:RegisterEvent("UNIT_MAXRUNIC_POWER", Update)
 			self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
 		end
 
-		-- We want to track these events regardless of wheter or not we're using frequent updates
-		if (playerClass == "MONK") then
-			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", UpdateSpec)
-			self:RegisterEvent("CHARACTER_POINTS_CHANGED", UpdateSpec)
-			self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED", UpdateSpec)
-			self:RegisterEvent("PLAYER_TALENT_UPDATE", UpdateSpec)
-
-			UpdateSpec(self)
-		end
 	end
 end
 
@@ -257,25 +226,17 @@ local Disable = function(self)
 	local Mana = self.Mana
 	if Power or Mana then
 		if not (Power.frequent or Mana.frequent) then
-			if ENGINE_BFA then
-				self:UnregisterEvent("UNIT_POWER_UPDATE", Update)
-				self:UnregisterEvent("UNIT_MAXPOWER", Update)
-			elseif ENGINE_CATA then 
-				self:UnregisterEvent("UNIT_POWER", Update)
-				self:UnregisterEvent("UNIT_MAXPOWER", Update)
-			else
-				self:UnregisterEvent("UNIT_MANA", Update)
-				self:UnregisterEvent("UNIT_RAGE", Update)
-				self:UnregisterEvent("UNIT_FOCUS", Update)
-				self:UnregisterEvent("UNIT_ENERGY", Update)
-				self:UnregisterEvent("UNIT_RUNIC_POWER", Update)
-				self:UnregisterEvent("UNIT_MAXMANA", Update)
-				self:UnregisterEvent("UNIT_MAXRAGE", Update)
-				self:UnregisterEvent("UNIT_MAXFOCUS", Update)
-				self:UnregisterEvent("UNIT_MAXENERGY", Update)
-				self:UnregisterEvent("UNIT_DISPLAYPOWER", Update)
-				self:UnregisterEvent("UNIT_MAXRUNIC_POWER", Update)
-			end
+			self:UnregisterEvent("UNIT_MANA", Update)
+			self:UnregisterEvent("UNIT_RAGE", Update)
+			self:UnregisterEvent("UNIT_FOCUS", Update)
+			self:UnregisterEvent("UNIT_ENERGY", Update)
+			self:UnregisterEvent("UNIT_RUNIC_POWER", Update)
+			self:UnregisterEvent("UNIT_MAXMANA", Update)
+			self:UnregisterEvent("UNIT_MAXRAGE", Update)
+			self:UnregisterEvent("UNIT_MAXFOCUS", Update)
+			self:UnregisterEvent("UNIT_MAXENERGY", Update)
+			self:UnregisterEvent("UNIT_DISPLAYPOWER", Update)
+			self:UnregisterEvent("UNIT_MAXRUNIC_POWER", Update)
 			self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
 		end
 		return true

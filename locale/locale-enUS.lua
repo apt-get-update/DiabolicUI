@@ -191,6 +191,11 @@ L["Manual"] = true
 L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] = true
 L["Auto positioning of chat windows has been enabled."] = true
 L["Auto positioning of chat windows has been disabled."] = true
+L["Side Bars set to %d."] = true
+L["Action Bars set to %d."] = true
+L["Reputation: "] = true
+L["Failed to update side bars, must be %d or %d or %d"] = true
+L["Failed to update action bars, must be %d or %d or %d"] = true
 
 
 -- minimap module
@@ -214,6 +219,65 @@ L["Caster:"] = true
 
 -- unitframe module
 ---------------------------------------------------------------------
+L["Units"] = true
+L["Show class colors"] = true
+L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = true
+L["Show Portrait"] = true
+L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] = true
+L["Advanced"] = true
+L["Toggle Fake Party"] = true
+L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] = true
+L["Toggle Fake Raid"] = true
+L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."] = true
+L["Menu"] = true
+L["Show Gold"] = true
+L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] = true
+L["Show FPS & Latency"] = true
+L["Shows your framerate and latency, next to the menu button in the bottom right corner."] = true
+L["Objectives"] = true
+L["Fade Quest Tracker"] = true
+L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."] = true
+L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = true
+L["Opacity"] = true
+L["How visible the tracker stays once it has fully faded, as a percentage."] = true
+L["Loot"] = true
+L["Items"] = true -- loot window title
+L["Reskin Loot Window"] = true
+L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = true
+
+-- tooltip module
+---------------------------------------------------------------------
+L["Tooltips"] = true
+L["Horizontal Offset"] = true
+L["Vertical Offset"] = true
+L["At 0, the tooltip is centered horizontally on the cursor."] = true
+L["At 0, the cursor is at the bottom edge of the tooltip."] = true
+L["Tooltip mouse anchor"] = true
+L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."] = true
+L["Top Left"] = true
+L["Top"] = true
+L["Top Right"] = true
+L["Left"] = true
+L["Center"] = true
+L["Right"] = true
+L["Bottom Left"] = true
+L["Bottom"] = true
+L["Bottom Right"] = true
+
+-- chat module
+---------------------------------------------------------------------
+L["Appearance"] = true
+L["Miscellaneous"] = true
+L["Fade Chat"] = true
+L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] = true
+L["Time Fading"] = true
+L["How many seconds it takes for chat text to fade out."] = true
+L["Time Visible"] = true
+L["How many seconds chat text stays fully visible before it starts fading."] = true
+L["Background Opacity"] = true
+L["How opaque the chat window's background is while you're typing."] = true
+L["Copy Web Links"] = true
+L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."] = true
 
 
 -- worldmap module

@@ -19,6 +19,7 @@ local PLAYER_HAS_XP
 local PLAYER_VISIBLE_BARS
 local PLAYER_HAS_PET
 local PLAYER_BAR_STATE
+local PLAYER_BAR_ID
 
 local colors = {
 	-- icon overlays
@@ -299,7 +300,7 @@ Button.PostCreate = function(self, buttonType)
 	local iconDimmer = self:CreateTexture(nil, "OVERLAY")
 	iconDimmer:SetAlpha(0)
 	iconDimmer:SetAllPoints(icon)
-	iconDimmer:SetColorTexture(.3, .3, .3, 1)
+	iconDimmer:SetTexture(.3, .3, .3, 1)
 
 	-- backdrop and shadow
 	local backdrop = self:CreateTexture(nil, "BACKGROUND")
@@ -363,9 +364,6 @@ Button.PostCreate = function(self, buttonType)
 
 	local chargeCooldown = self.chargeCooldown
 	if chargeCooldown then
-		--chargeCooldown:ClearAllPoints()
-		--chargeCooldown:SetPoint("TOPLEFT", self.icon, 2, -2)
-		--chargeCooldown:SetPoint("BOTTOMRIGHT", self.icon, -2, 2)
 	end
 
 	-- Reparent existing texts to our border frame
@@ -381,8 +379,6 @@ Button.PostCreate = function(self, buttonType)
 	self.backdrop = backdrop
 	self.slot = slot
 	self.border = border
-
-	--self:UpdateStyle()
 
 end
 
@@ -420,6 +416,7 @@ Widget.OnEnable = function(self)
 	self:RegisterMessage("ENGINE_ACTIONBAR_VEHICLE_CHANGED", "UpdateArtwork")
 	self:RegisterMessage("ENGINE_ACTIONBAR_VISIBLE_CHANGED", "UpdateArtwork")
 	self:RegisterMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", "UpdateArtwork")
+	self:RegisterMessage("ENGINE_ACTIONBAR_REPUTATION_VISIBLE_CHANGED", "UpdateArtwork")
 
 end
 
@@ -438,7 +435,15 @@ Widget.LoadArtwork = function(self)
 	-- artwork overlaying the globes (demon and angel)
 	local overlay = Main:CreateFrame("Frame")
 	overlay:SetFrameStrata("MEDIUM")
-	overlay:SetFrameLevel(35) -- room for the player unit frame and actionbuttons
+	-- Deliberately low: the player unit frame/globes are a lower frame
+	-- STRATA entirely ("LOW", see handlers/unitframe.lua), so strata alone
+	-- already keeps this artwork above them regardless of level - what
+	-- actually matters here is staying *below* the action buttons (also
+	-- MEDIUM strata), and their bar has been observed dropping from its
+	-- intended level 50 down to ~28 on a fresh login (see UpdateArtwork's
+	-- own comment) - so this needs a comfortable margin under that, not
+	-- just under 50.
+	overlay:SetFrameLevel(20)
 	overlay:SetAllPoints()
 
 	local artworkCache = {}
@@ -468,31 +473,12 @@ Widget.LoadPetBarArtwork = function(self)
 	local config = Module.config.visuals.artwork.pet
 	local db = Module.db
 
-	--do return end
-	
 	-- Hooking the visibility to the bar, the position to the controller
 	local artworkHolder = Module:GetWidget("Bar: Pet"):GetFrame():CreateFrame("Frame")
 	artworkHolder:SetAllPoints()
 	artworkHolder:SetFrameStrata("BACKGROUND")
 	artworkHolder:SetFrameLevel(5)
 	
-	--[=[
-	artworkHolder:SetPoint("TOPLEFT", -8, 8)
-	artworkHolder:SetPoint("BOTTOMRIGHT", 8, -8)
-	artworkHolder:SetBackdrop({
-		bgFile = [[Interface\ChatFrame\ChatFrameBackground]], 
-		edgeFile = ([[Interface\AddOns\%s\media\]]):format(ADDON) .. [[textures\DiabolicUI_Tooltip_Small.tga]],
-		edgeSize = 32,
-		insets = {
-			left = 7,
-			right = 7,
-			top = 7,
-			bottom = 7
-		}
-	})
-	artworkHolder:SetBackdropColor(0, 0, 0, 1)
-	]=]
-
 	local artwork = artworkHolder:CreateTexture()
 	artwork:SetDrawLayer("ARTWORK")
 	artwork:SetSize(unpack(config.size))
@@ -508,6 +494,21 @@ end
 Widget.UpdateArtwork = function(self, event, ...)
 	local db = self.db
 
+	-- On a fresh login (as opposed to a UI reload), a side bar (bar4/bar5 -
+	-- confirmed by direct in-game print debugging) loses its explicitly-set
+	-- frame level at some point after creation - dropping from 50 down to
+	-- ~28, well below this artwork - for reasons that weren't pinned down
+	-- (it isn't a Show()/Hide() transition, and it isn't caused by anything
+	-- else in this addon's own code). This re-levels every button relative
+	-- to whatever its bar's *current* level actually is, on every single
+	-- call, unconditionally and before the "avoid pointless updates"
+	-- early-return below - cheap and idempotent to just always redo it.
+	for barNum, bar in pairs(Module:GetBars()) do
+		for i, button in bar:GetAll() do
+			button:SetFrameLevel(bar:GetFrameLevel() + 1)
+		end
+	end
+
 	if (self.LoadPetBarArtwork) then
 		self:LoadPetBarArtwork()
 	end
@@ -516,19 +517,13 @@ Widget.UpdateArtwork = function(self, event, ...)
 	-- figure out which backdrop texture to show
 	local Main = Module:GetWidget("Controller: Main"):GetFrame()
 	local Pet = Module:GetWidget("Bar: Pet"):GetFrame()
-	local hasXP = Module:IsXPVisible() 
+	local hasXP = Module:IsXPVisible() or Module:IsReputationVisible()
 	local hasPet = Pet:IsShown() 
 	local numBars = tostring(Main:GetAttribute("numbars"))
 	local barState = tostring(Main:GetAttribute("state-page"))
 	local barID = ((barState == "possess") or (barState == "vehicle")) and "vehicle" or numBars
 	local petID = hasPet and "pet" or ""
 	local xpID = hasXP and "xp" or ""
-
-	if Engine:IsBuild("MoP") and (HasVehicleActionBar() or HasOverrideActionBar() or HasTempShapeshiftActionBar()) then 
-		barState = "vehicle"
-		xpID = ""
-		petID = ""
-	end 
 
 	-- Avoid pointless updates
 	if (PLAYER_HAS_XP == hasXP) 

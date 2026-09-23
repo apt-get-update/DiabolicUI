@@ -17,10 +17,6 @@ local unpack = unpack
 local GetNumWorldStateUI = _G.GetNumWorldStateUI
 local GetWorldStateUIInfo = _G.GetWorldStateUIInfo
 
--- Client constants
-local ENGINE_BFA = Engine:IsBuild("BfA")
-local ENGINE_CATA = Engine:IsBuild("Cata")
-
 local CaptureBar = Engine:CreateFrame("Frame")
 local CaptureBar_MT = { __index = CaptureBar }
 
@@ -191,11 +187,7 @@ Module.UpdateWorldStates = function(self)
 		-- extendedUIState2 = size of neutral zone in percent
 		-- extendedUIState3 = id of the capture bar
 		local uiType, state, hidden, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3
-		if ENGINE_CATA then
-			uiType, state, hidden, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(i)
-		else
-			uiType, state, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(i)
-		end
+		uiType, state, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(i)
 
 
 		if ((state > 0) and (extendedUI == "CAPTUREPOINT") and (not hidden)) then
@@ -267,15 +259,12 @@ end
 Module.OnEnable = function(self)
 	Engine:GetHandler("BlizzardUI"):GetElement("CaptureBars"):Disable()
 
-	if (not ENGINE_BFA) then 
-		self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
-		self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
-		self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND", "OnEvent")
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
-		self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
-	end 
-
+	self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
+	self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
+	self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
 end

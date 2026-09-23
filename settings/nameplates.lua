@@ -96,12 +96,10 @@ Engine:NewStaticConfig("NamePlates", {
 		},
 		auras = {
 			place = { "BOTTOM", 0, -(4 + 28) }, -- below the frame
-			--place = { "TOP", 0, 4 + 12 + 4 + 28 }, -- above the name
 			rowsize = math_ceil((64 + 8 + 4)/(28 + 2)), -- maximum number of auras per row
 			padding = 2, -- space between auras
 			button = {
 				size = { 28, 28 },
-				--anchor = "BOTTOMLEFT", 
 				anchor = "TOPLEFT", 
 				growthY = -1,
 				growthX = 1,

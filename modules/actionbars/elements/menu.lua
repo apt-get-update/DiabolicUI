@@ -12,19 +12,28 @@ local CreateFrame = _G.CreateFrame
 local GetFramerate = _G.GetFramerate
 local GetNetStats = _G.GetNetStats
 local InCombatLockdown = _G.InCombatLockdown
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 local UnitFactionGroup = _G.UnitFactionGroup
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
 
--- Client version constants
-local ENGINE_WOD 	= Engine:IsBuild("WoD")
-local ENGINE_MOP 	= Engine:IsBuild("MoP")
-local ENGINE_CATA 	= Engine:IsBuild("Cata")
-
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
+
+-- Inline |T..|t texture markup for the gold/silver/copper coin icons,
+-- built once (in OnEnable, below - by which point settings/ui.lua has
+-- definitely loaded) from the shared coin style in settings/ui.lua,
+-- instead of the plain colored-letter suffixes ("12g 34s 56c") used
+-- previously.
+local BuildCoinIcon = function(texture, texcoord, size, offset)
+	local width, height = size[1], size[2]
+	local atlasSize = 64 -- the texcoords below are fractions of this
+	local left, right = texcoord[1] * atlasSize, texcoord[2] * atlasSize
+	local top, bottom = texcoord[3] * atlasSize, texcoord[4] * atlasSize
+	local xOffset, yOffset = offset[1], offset[2]
+	return ("|T%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|t"):format(texture, height, width, xOffset, yOffset, atlasSize, atlasSize, left, right, top, bottom)
+end
 
 
 MenuWidget.UpdateMicroButtons = function(self, event, ...)
@@ -382,7 +391,7 @@ MenuWidget.OnEnable = function(self)
 	MicroMenuWindow:SetButtonGrowthX("LEFT")
 	MicroMenuWindow:SetButtonGrowthY("UP")
 	MicroMenuWindow:SetJustify("LEFT")
-	MicroMenuWindow:SetRowSize(4)
+	MicroMenuWindow:SetRowSize(5)
 
 	self.MicroMenuWindow = MicroMenuWindow -- needed for some callbacks later on
 	
@@ -392,121 +401,30 @@ MenuWidget.OnEnable = function(self)
 	-- There are no visual changes from WoD to Legion, so we're using the same code.
 	-- Should be noted though that the HelpMicroButton was removed from the game 
 	-- in wow client patch 7.2.0 (Legion), so it can't be referenced at all from this point.
-	if ENGINE_WOD then
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(GuildMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(CollectionsMicroButton)
-		MicroMenuWindow:InsertButton(EJMicroButton)
-		
-		-- Starter Edition accounts haven't got this feature.
-		if C_StorePublic and C_StorePublic.IsEnabled() then
-			MicroMenuWindow:InsertButton(StoreMicroButton)
-		end
-		
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
+	MicroMenuWindow:InsertButton(CharacterMicroButton)
+	MicroMenuWindow:InsertButton(SpellbookMicroButton)
+	MicroMenuWindow:InsertButton(TalentMicroButton)
+	MicroMenuWindow:InsertButton(AchievementMicroButton)
+	MicroMenuWindow:InsertButton(QuestLogMicroButton)
+	MicroMenuWindow:InsertButton(SocialsMicroButton)
+	MicroMenuWindow:InsertButton(PVPMicroButton)
+	MicroMenuWindow:InsertButton(LFDMicroButton)
+	MicroMenuWindow:InsertButton(MainMenuMicroButton)
+	MicroMenuWindow:InsertButton(HelpMicroButton)
 
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "worldmap", 
-			[GuildMicroButton] = "guild", 
-			[LFDMicroButton] = "raid", 
-			[CollectionsMicroButton] = "mount", 
-			[EJMicroButton] = "encounterjournal", 
-			[StoreMicroButton] = "store", 
-			[MainMenuMicroButton] = "cogs"
-		}
-	
-	elseif ENGINE_MOP then
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(GuildMicroButton)
-		MicroMenuWindow:InsertButton(PVPMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(CompanionsMicroButton)
-		MicroMenuWindow:InsertButton(EJMicroButton)
-		MicroMenuWindow:InsertButton(StoreMicroButton)
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
+	button_to_icon = {
+		[CharacterMicroButton] = "character", 
+		[SpellbookMicroButton] = "spellbook", 
+		[TalentMicroButton] = "talents", 
+		[AchievementMicroButton] = "achievements", 
+		[QuestLogMicroButton] = "questlog", 
+		[SocialsMicroButton] = "group", 
+		[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
+		[LFDMicroButton] = "raid", 
+		[MainMenuMicroButton] = "cogs",
+		[HelpMicroButton] = "bug"
+	}
 
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "questlog", 
-			[GuildMicroButton] = "guild", 
-			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
-			[LFDMicroButton] = "raid", 
-			[CompanionsMicroButton] = "mount", 
-			[EJMicroButton] = "encounterjournal", 
-			[StoreMicroButton] = "store", 
-			[MainMenuMicroButton] = "cogs"
-		}
-
-	elseif ENGINE_CATA then
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(GuildMicroButton)
-		MicroMenuWindow:InsertButton(PVPMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(RaidMicroButton)
-		MicroMenuWindow:InsertButton(EJMicroButton)
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
-		
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "questlog", 
-			[GuildMicroButton] = "guild", 
-			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
-			[LFDMicroButton] = "group", 
-			[RaidMicroButton] = "raid", 
-			[EJMicroButton] = "encounterjournal", 
-			[MainMenuMicroButton] = "cogs"
-		}
-
-	else
-		MicroMenuWindow:InsertButton(CharacterMicroButton)
-		MicroMenuWindow:InsertButton(SpellbookMicroButton)
-		MicroMenuWindow:InsertButton(TalentMicroButton)
-		MicroMenuWindow:InsertButton(AchievementMicroButton)
-		MicroMenuWindow:InsertButton(QuestLogMicroButton)
-		MicroMenuWindow:InsertButton(SocialsMicroButton)
-		MicroMenuWindow:InsertButton(PVPMicroButton)
-		MicroMenuWindow:InsertButton(LFDMicroButton)
-		MicroMenuWindow:InsertButton(MainMenuMicroButton)
-		--MicroMenuWindow:InsertButton(HelpMicroButton)
-
-		button_to_icon = {
-			[CharacterMicroButton] = "character", 
-			[SpellbookMicroButton] = "spellbook", 
-			[TalentMicroButton] = "talents", 
-			[AchievementMicroButton] = "achievements", 
-			[QuestLogMicroButton] = "questlog", 
-			[SocialsMicroButton] = "group", 
-			[PVPMicroButton] = faction == "Alliance" and "alliance" or faction == "Horde" and "horde" or "neutral", 
-			[LFDMicroButton] = "raid", 
-			[MainMenuMicroButton] = "cogs"
-			--[HelpMicroButton] = "bug" -- do we really need this?
-		}
-
-	end
-	
 	-- Disable Blizzard texture changes and stuff from these buttons.
 	-- Also re-align their tooltips to be above our menu.
 	for index,button in MicroMenuWindow:GetAll() do
@@ -518,9 +436,6 @@ MenuWidget.OnEnable = function(self)
 		button.OnLeave = button:GetScript("OnLeave")
 
 		button:SetScript("OnEnter", function(self) 
-			if GameTooltip:IsForbidden() then
-				return
-			end
 			self:OnEnter()
 			if GameTooltip:IsShown() and GameTooltip:GetOwner() == self then
 				GameTooltip:ClearAllPoints()
@@ -529,9 +444,6 @@ MenuWidget.OnEnable = function(self)
 		end)
 		
 		button:SetScript("OnLeave", function(self) 
-			if GameTooltip:IsForbidden() then
-				return
-			end
 			self:OnLeave()
 		end)
 		
@@ -561,9 +473,6 @@ MenuWidget.OnEnable = function(self)
 	-- wild hacks to control the tooltip position
 	if MainMenuBarPerformanceBarFrame_OnEnter then
 		hooksecurefunc("MainMenuBarPerformanceBarFrame_OnEnter", function() 
-			if GameTooltip:IsForbidden() then
-				return
-			end
 			if GameTooltip:IsShown() and GameTooltip:GetOwner() == MainMenuMicroButton then
 				GameTooltip:ClearAllPoints()
 				GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
@@ -793,7 +702,6 @@ MenuWidget.OnEnable = function(self)
 	---------------------------------------------
 	local BagBarMenuWindow = FlyoutBar:New(BagBarMenuButton)
 	BagBarMenuWindow:Hide()
-	--BagBarMenuWindow:AttachToButton(BagBarMenuButton)
 	BagBarMenuWindow:SetSize(unpack(bagbar_menu_config.size))
 	BagBarMenuWindow:SetPoint(unpack(bagbar_menu_config.position))
 	BagBarMenuWindow:SetBackdrop(bagbar_menu_config.backdrop)
@@ -801,9 +709,6 @@ MenuWidget.OnEnable = function(self)
 	BagBarMenuWindow:SetBackdropBorderColor(unpack(bagbar_menu_config.backdrop_border_color))
 	
 	BagBarMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if MasterMenuButton:GetButtonState() == "PUSHED"
 		or BagBarMenuButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -817,16 +722,10 @@ MenuWidget.OnEnable = function(self)
 	end
 	BagBarMenuButton:SetScript("OnEnter", BagBarMenuButton.OnEnter)
 	BagBarMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 
 	MasterMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if MasterMenuButton:GetButtonState() == "PUSHED" 
 		or BagBarMenuButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -839,9 +738,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	MasterMenuButton:SetScript("OnEnter", MasterMenuButton.OnEnter)
 	MasterMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	MasterMenuButton.OnClick = function(self, button) 
@@ -852,9 +748,6 @@ MenuWidget.OnEnable = function(self)
 
 
 	ActionBarMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if ActionBarMenuButton:GetButtonState() == "PUSHED"
 		or MicroMenuButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -869,9 +762,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	ActionBarMenuButton:SetScript("OnEnter", ActionBarMenuButton.OnEnter)
 	ActionBarMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	ActionBarMenuButton.OnClick = function(self, button) 
@@ -881,9 +771,6 @@ MenuWidget.OnEnable = function(self)
 	end
 
 	MicroMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if MicroMenuButton:GetButtonState() == "PUSHED" 
 		or ActionBarMenuButton:GetButtonState() == "PUSHED" then
 				GameTooltip:Hide()
@@ -899,9 +786,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	MicroMenuButton:SetScript("OnEnter", MicroMenuButton.OnEnter)
 	MicroMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	MicroMenuButton.OnClick = function(self, button) 
@@ -924,20 +808,12 @@ MenuWidget.OnEnable = function(self)
 	CharacterBag3Slot:SetParent(BagBarMenuWindow)
 
 	-- The keyring was removed in 4.2.0 in Cata
-	if not ENGINE_CATA then
-		KeyRingButton:SetParent(BagBarMenuWindow)
-		KeyRingButton:Show()
-	end
+	KeyRingButton:SetParent(BagBarMenuWindow)
+	KeyRingButton:Show()
 
 	BagBarMenuButton.OnClick = function(self, button) 
 		if button == "LeftButton" then
-			if ENGINE_CATA then
-				-- This leads to a taint sometimes:
-				-- Global variable BACKPACK_HEIGHT tainted by DiabolicUI - Interface\FrameXML\ContainerFrame.lua:792 ContainerFrame_GenerateFrame()
-				ToggleAllBags() -- functionality on OpenAllBags was changed in Cata from toggle to pure open.
-			else
-				OpenAllBags() -- Toggle bag frames. This was actually a toggle function in WotLK.
-			end
+			OpenAllBags() -- Toggle bag frames. This was actually a toggle function in WotLK.
 		elseif button == "RightButton" then
 			-- Bagbar was toggled by the secure environement. Put any post updates here, if needed.
 		end
@@ -1048,7 +924,6 @@ MenuWidget.OnEnable = function(self)
 	MicroMenuButton:SetAttribute("leftclick", [[
 		self:GetFrameRef("otherwindow1"):Hide()
 		self:GetFrameRef("otherwindow2"):Hide()
-		--self:GetFrameRef("otherwindow3"):Hide()
 	]])
 
 	-- Make sure clicking one main button hides the rest and their windows.
@@ -1074,18 +949,49 @@ MenuWidget.OnEnable = function(self)
 	local Performance = MasterMenuButton:CreateFontString()
 	Performance:SetDrawLayer("ARTWORK")
 	Performance:SetFontObject(micro_menu_config.performance.normalFont)
-	Performance:SetPoint(unpack(micro_menu_config.performance.position))
-	
+
 	MasterMenuButton.Performance = Performance
-	
+
 	local performance_string = "%d%s - %d%s"
 	local performance_hz = 1
 	local MILLISECONDS_ABBR = MILLISECONDS_ABBR
 	local FPS_ABBR = FPS_ABBR
-	
+
 	local floor = math.floor
-	
-	MasterMenuButton:SetScript("OnUpdate", function(self, elapsed) 
+
+
+	local Gold = MasterMenuButton:CreateFontString()
+	Gold:SetDrawLayer("ARTWORK")
+	Gold:SetFontObject(micro_menu_config.performance.normalFont)
+	Gold:SetPoint(unpack(micro_menu_config.performance.position))
+	MasterMenuButton.Gold = Gold
+
+	local coin = Engine:GetDB("UI").coin
+	local GOLD_ICON = BuildCoinIcon(coin.gold_texture, coin.gold_texcoord, coin.gold_size, coin.coin_offset)
+	local SILVER_ICON = BuildCoinIcon(coin.silver_texture, coin.silver_texcoord, coin.silver_size, coin.coin_offset)
+	local COPPER_ICON = BuildCoinIcon(coin.copper_texture, coin.copper_texcoord, coin.copper_size, coin.coin_offset)
+
+	MasterMenuButton:SetScript("OnEvent", function(self, event, ...)
+		local money = GetMoney()
+		local gold = floor(money / 100 / 100)
+		local silver = floor((money / 100) % 100)
+		local copper = money % 100
+		if (gold > 0) then
+			self.Gold:SetFormattedText("%d%s %d%s %d%s", gold, GOLD_ICON, silver, SILVER_ICON, copper, COPPER_ICON)
+		elseif (silver > 0) then
+			self.Gold:SetFormattedText("%d%s %d%s", silver, SILVER_ICON, copper, COPPER_ICON)
+		else
+			self.Gold:SetFormattedText("%d%s", copper, COPPER_ICON)
+		end
+	end)
+
+	MasterMenuButton:RegisterEvent("PLAYER_MONEY")
+	MasterMenuButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	MasterMenuButton:SetScript("OnUpdate", function(self, elapsed)
+		if not db.showPerformance then
+			return
+		end
 		self.elapsed = (self.elapsed or 0) + elapsed
 		if self.elapsed > performance_hz then
 			local _, _, chat_latency, cast_latency = GetNetStats()
@@ -1098,22 +1004,58 @@ MenuWidget.OnEnable = function(self)
 		end
 	end)
 
+	self.MasterMenuButton = MasterMenuButton
+	self:UpdateGoldVisibility()
+	self:UpdatePerformanceVisibility()
+
 
 	-- Sounds
 	---------------------------------------------
-	ActionBarMenuWindow:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX") end)
-	ActionBarMenuWindow:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX") end)
+	ActionBarMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
+	ActionBarMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 
-	MicroMenuWindow:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX") end)
-	MicroMenuWindow:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX") end)
+	MicroMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
+	MicroMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 
-	MasterMenuWindow:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX") end)
-	MasterMenuWindow:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX") end)
+	MasterMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
+	MasterMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 	
 
 	-- We need to manually handle this, as our actionbar script 
 	-- is blocking this event for the talent button. Or?
 	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")	
+end
+
+-- The performance text (fps/latency) sits to the left of the gold text
+-- when both are shown, but falls back to the gold text's own base
+-- position (taking its place) whenever gold is disabled.
+MenuWidget.UpdatePerformanceAnchor = function(self)
+	local button = self.MasterMenuButton
+	if not (button and button.Performance and button.Gold) then
+		return
+	end
+	button.Performance:ClearAllPoints()
+	if Module.db.showGold then
+		button.Performance:SetPoint("RIGHT", button.Gold, "LEFT", -8, 0)
+	else
+		button.Performance:SetPoint(unpack(Module.config.visuals.menus.main.micromenu.performance.position))
+	end
+end
+
+MenuWidget.UpdateGoldVisibility = function(self)
+	local button = self.MasterMenuButton
+	if button and button.Gold then
+		if Module.db.showGold then button.Gold:Show() else button.Gold:Hide() end
+	end
+	self:UpdatePerformanceAnchor()
+end
+
+MenuWidget.UpdatePerformanceVisibility = function(self)
+	local button = self.MasterMenuButton
+	if button and button.Performance then
+		if Module.db.showPerformance then button.Performance:Show() else button.Performance:Hide() end
+	end
+	self:UpdatePerformanceAnchor()
 end
 
 MenuWidget.OnEvent = function(self, event, ...)

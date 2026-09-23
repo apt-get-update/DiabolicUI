@@ -15,7 +15,7 @@ local unpack = unpack
 -- WoW API
 local GetCVarBool = _G.GetCVarBool
 local IsInInstance = _G.IsInInstance
-local PlaySoundKitID = Engine:IsBuild("7.3.0") and _G.PlaySound or _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitCanAttack = _G.UnitCanAttack
 local UnitClass = _G.UnitClass
@@ -29,19 +29,12 @@ local UnitPowerMax = _G.UnitPowerMax
 local UnitIsEnemy = _G.UnitIsEnemy
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitIsUnit = _G.UnitIsUnit
 
 -- Time limit in seconds where we separate between short and long buffs
 local TIME_LIMIT = Engine:GetConstant("AURA_TIME_LIMIT")
 local TIME_LIMIT_LOW = Engine:GetConstant("AURA_TIME_LIMIT_LOW")
-
--- Client Constants
-local ENGINE_LEGION = Engine:IsBuild("Legion")
-
--- Constant tracking Legion nameplate visibility
-local ENEMY_PLATES = ENGINE_LEGION and GetCVarBool("nameplateShowEnemies") 
-
 
 -- Utility Functions
 --------------------------------------------------------------------------
@@ -223,13 +216,13 @@ local PostCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetColorTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, .15)
 
 	local iconOverlay = overlay:CreateTexture()
 	iconOverlay:Hide()
 	iconOverlay:SetDrawLayer("OVERLAY")
 	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetColorTexture(0, 0, 0, 1)
+	iconOverlay:SetTexture(0, 0, 0, 1)
 	icon.Overlay = iconOverlay
 
 	local timerOverlay = timer:CreateFrame()
@@ -320,8 +313,6 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	local isShortDuration = duration and (duration > 0) and (duration < TIME_LIMIT)
 	local isLongDuration = duration and (duration > TIME_LIMIT)
 	local isStatic = (not duration) or (duration == 0)
-	local isCC = ENGINE_LEGION and spellId and AuraData.cc[spellId] -- Any CC 
-	local isLoC = ENGINE_LEGION and spellId and AuraData.loc[spellId] -- Loss of Control CC
 
 	-- Always show boss debuffs on your target
 	if isBossDebuff then
@@ -331,20 +322,8 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	elseif casterIsVehicle then
 		return true
 
-	-- Hide Loss of Control CC from the target when enemy plates are visible
-	--elseif ENEMY_PLATES and isLoC then
-	--elseif ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then 
-	--	return false
-
 	-- Show debuffs cast by the player, unless it's currently visible on a nameplate
 	elseif isCastByPlayer then
-
-		-- Enemy plates are visible (implies Legion)and the target is hostile.
-		-- Filter out debuffs shown on the nameplates. This must match the nameplate filter.
-		--if ENEMY_PLATES and (unitIsHostilePlayer or unitIsHostileNPC) and isShortDuration then 
-		--if ENEMY_PLATES and unitIsHostilePlayer and isShortDuration then 
-		--	return false
-		--end
 		return true
 
 	elseif (not unitCaster) and (not IsInInstance()) then
@@ -456,8 +435,8 @@ local PostUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavaila
 			r, g, b = unpack(C.Orb.HEALTH[1])
 		elseif (not UnitIsFriend("player", unit)) and UnitIsTapDenied(unit) then
 			r, g, b = unpack(C.Status.Tapped)
-		--elseif UnitReaction(unit, "player") then
-			--r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
+		elseif UnitReaction(unit, "player") then
+			r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
 		else
 			r, g, b = unpack(C.Orb.HEALTH[1])
 		end
@@ -598,7 +577,7 @@ local Style = function(self, unit)
 	health.Value.showDeficit = false
 	health.Value.showMaximum = true
 	health.PostUpdate = PostUpdateHealth
-	health.useClassColor = true
+	health.useClassColor = db.showClassColors
 
 	
 	-- Power
@@ -764,7 +743,6 @@ local Style = function(self, unit)
 	self.Health = health
 	self.Name = name
 	self.Power = power
-	--self.Power.PostUpdate = function() Update(self) end
 	self.Threat = threat
 	self.Threat.SetVertexColor = function(_, ...) 
 		for i,v in pairs(self.layers.threat) do
@@ -787,17 +765,15 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 	if (event == "PLAYER_TARGET_CHANGED") then
 		if UnitExists("target") then
 			if UnitIsEnemy("target", "player") then
-				PlaySoundKitID(SOUNDKIT.IG_CREATURE_AGGRO_SELECT, "SFX")
+				PlaySound("igCreatureAggroSelect")
 			elseif UnitIsFriend("player", "target") then
-				PlaySoundKitID(SOUNDKIT.IG_CHARACTER_NPC_SELECT, "SFX")
+				PlaySound("igCharacterNPCSelect")
 			else
-				PlaySoundKitID(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT, "SFX")
+				PlaySound("igCreatureNeutralSelect")
 			end
 		else
-			PlaySoundKitID(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT, "SFX")
+			PlaySound("INTERFACESOUND_LOSTTARGETUNIT")
 		end
-	elseif (event == "PLAYER_ENTERING_WORLD") or (event == "VARIABLES_LOADED") or (event == "CVAR_UPDATE") then
-		ENEMY_PLATES = GetCVarBool("nameplateShowEnemies")
 	end
 end
 
@@ -805,12 +781,6 @@ UnitFrameWidget.OnEnable = function(self)
 	self.UnitFrame = UnitFrame:New("target", Engine:GetFrame(), Style)
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
-
-	if ENGINE_LEGION then
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-		self:RegisterEvent("CVAR_UPDATE", "OnEvent")
-		self:RegisterEvent("VARIABLES_LOADED", "OnEvent")
-	end
 end
 
 UnitFrameWidget.GetFrame = function(self)

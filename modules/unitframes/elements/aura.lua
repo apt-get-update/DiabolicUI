@@ -17,11 +17,16 @@ local setmetatable = setmetatable
 -- WoW API
 local CancelUnitBuff = _G.CancelUnitBuff
 local CreateFrame = _G.CreateFrame
+local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetTime = _G.GetTime
+local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
 local InCombatLockdown = _G.InCombatLockdown
 local UnitExists = _G.UnitExists
 local UnitHasVehicleUI = _G.UnitHasVehicleUI
 local UnitReaction = _G.UnitReaction
+
+-- Inventory slot ids for the main hand and off hand weapons
+local MAINHAND_SLOT, OFFHAND_SLOT = 16, 17
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
@@ -34,20 +39,6 @@ local UnitDebuff = AuraFunctions.UnitDebuff
 -- Blank texture used as a fallback for borders and bars
 local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]] 
 
--- these exist (or are used) in WoD and beyond
-local BLING_TEXTURE = [[Interface\Cooldown\star4]]
-local EDGE_LOC_TEXTURE = [[Interface\Cooldown\edge-LoC]]
-local EDGE_NORMAL_TEXTURE = [[Interface\Cooldown\edge]]
-
--- Retrive the current game client version
-local BUILD = tonumber((select(2, GetBuildInfo()))) 
-
--- Shortcuts to identify client versions
--- *3.3.0 was the first patch to include spellID as a return argument from UnitAura
-local ENGINE_LEGION 	= Engine:IsBuild("Legion")
-local ENGINE_WOD 		= Engine:IsBuild("WoD")
-local ENGINE_MOP 		= Engine:IsBuild("MoP")
-local ENGINE_CATA 		= Engine:IsBuild("Cata")
 
 -- Speeeeed!
 local day = L["d"]
@@ -106,13 +97,12 @@ Aura.OnEnter = function(self)
 	if not UnitExists(unit) then
 		return
 	end
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 
-	if self.isBuff then
+	if self.isWeaponEnchant then
+		GameTooltip:SetInventoryItem("player", self.weaponSlot)
+	elseif self.isBuff then
 		GameTooltip:SetUnitBuff(unit, self:GetID(), self.filter)
 	else
 		GameTooltip:SetUnitDebuff(unit, self:GetID(), self.filter)
@@ -120,25 +110,15 @@ Aura.OnEnter = function(self)
 end
 
 Aura.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
-Aura.OnClick = ENGINE_CATA and function(self)
-	if not InCombatLockdown() then
-		local unit = self.unit
-		if not UnitExists(unit) then
-			return
-		end
-		if self.isBuff then
-			CancelUnitBuff(unit, self:GetID(), self.filter)
-		end
-	end
-end
-or function(self)
+Aura.OnClick = function(self)
 	local unit = self.unit
 	if not UnitExists(unit) then
+		return
+	end
+	if self.isWeaponEnchant then
 		return
 	end
 	if self.isBuff then
@@ -146,25 +126,7 @@ or function(self)
 	end
 end
 
-Aura.SetCooldownTimer = ENGINE_WOD and function(self, start, duration)
-	local cooldown = self:GetElement("Cooldown")
-	cooldown:SetSwipeColor(0, 0, 0, .75)
-	cooldown:SetDrawEdge(false)
-	cooldown:SetDrawBling(false)
-	cooldown:SetDrawSwipe(true)
-
-	if duration > .5 then
-		cooldown:SetCooldown(start, duration)
-		if self._owner.hideCooldownSpiral then
-			cooldown:Hide()
-		else
-			cooldown:Show()
-		end
-	else
-		cooldown:Hide()
-	end
-	
-end or function(self, start, duration)
+Aura.SetCooldownTimer = function(self, start, duration)
 	local cooldown = self:GetElement("Cooldown")
 
 	-- Try to prevent the strange WotLK bug where the end shine effect
@@ -290,16 +252,6 @@ local CreateAuraButton = function(self)
 	Cooldown:SetPoint("BOTTOMRIGHT", Icon, "BOTTOMRIGHT", 0, 0)
 	Cooldown:SetAlpha(1)
 
-	if ENGINE_WOD then
-		Cooldown:SetSwipeColor(0, 0, 0, .75)
-		Cooldown:SetBlingTexture(BLING_TEXTURE, .3, .6, 1, .75) -- what wow uses, only with slightly lower alpha
-		Cooldown:SetEdgeTexture(EDGE_NORMAL_TEXTURE)
-		Cooldown:SetDrawSwipe(true)
-		Cooldown:SetDrawBling(true)
-		Cooldown:SetDrawEdge(false)
-		Cooldown:SetHideCountdownNumbers(true) -- todo: add better numbering
-	end
-
 	local Overlay = button:CreateFrame()
 	Overlay:SetFrameLevel(button:GetFrameLevel() + 3)
 	Overlay:SetPoint("TOPLEFT", Scaffold, "TOPLEFT", -3, 3)
@@ -402,9 +354,6 @@ local SetPosition = function(self, visible)
 end
 
 local UpdateTooltip = function(self, event, ...)
-	if GameTooltip:IsForbidden() then
-		return
-	end
 	if (event == "MODIFIER_STATE_CHANGED") and ((arg1 == "LSHIFT") or (arg1 == "RSHIFT")) then
 		if GameTooltip:IsShown() and auraCache[GameTooltip:GetOwner()] then 
 			GameTooltip:GetOwner():UpdateTooltip()
@@ -629,6 +578,68 @@ local Update = function(self, event, ...)
 		else
 			local visible = 0
 			local filter = Buffs.filter
+
+			-- Weapon enchants (temporary main/off hand buffs) never come
+			-- through UnitAura, so they're injected here manually, ahead
+			-- of the real auras, so they always get a guaranteed slot
+			-- instead of being the first thing dropped when the bar is full.
+			if (unit == "player") then
+				local hasMainHand, mainExpiration, mainCharges, hasOffHand, offExpiration, offCharges = GetWeaponEnchantInfo()
+
+				local weaponEnchants = {}
+				if hasMainHand then
+					weaponEnchants[#weaponEnchants + 1] = { mainExpiration, mainCharges, MAINHAND_SLOT }
+				end
+				if hasOffHand then
+					weaponEnchants[#weaponEnchants + 1] = { offExpiration, offCharges, OFFHAND_SLOT }
+				end
+
+				for _, weaponEnchant in ipairs(weaponEnchants) do
+					local expiration, charges, slotID = weaponEnchant[1], weaponEnchant[2], weaponEnchant[3]
+
+					visible = visible + 1
+					local visibleKey = tostring(visible)
+
+					if (not Buffs[visibleKey]) then
+						Buffs[visibleKey] = Buffs.CreateButton and Buffs:CreateButton() or CreateAuraButton(Buffs)
+						if Buffs.PostCreateButton then
+							Buffs:PostCreateButton(Buffs[visibleKey])
+						end
+					end
+
+					local button = Buffs[visibleKey]
+					if button:IsShown() then
+						button:Hide()
+					end
+
+					local enchantDuration = expiration / 1000
+					local expirationTime = GetTime() + enchantDuration
+
+					button:SetID(0)
+					button.isBuff = true
+					button.isWeaponEnchant = true
+					button.weaponSlot = slotID
+					button.unit = unit
+					button.filter = filter
+					button.name = nil
+					button.count = charges
+					button.duration = enchantDuration
+					button.expirationTime = expirationTime
+
+					button:GetElement("Icon"):SetTexture(GetInventoryItemTexture("player", slotID))
+					button:GetElement("Count"):SetText((charges and charges > 1) and charges or "")
+
+					button:SetTimer(enchantDuration, expirationTime)
+
+					if Buffs.PostUpdateButton then
+						Buffs:PostUpdateButton(button)
+					end
+
+					if (not button:IsShown()) then
+						button:Show()
+					end
+				end
+			end
 
 			for i = 1, BUFF_MAX_DISPLAY do
 
@@ -857,6 +868,10 @@ local Enable = function(self, unit)
 			if (unit == "target") or (unit == "targettarget") then
 				self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
 			end
+
+			if (unit == "player") then
+				self:RegisterEvent("UNIT_INVENTORY_CHANGED", Update)
+			end
 		end
 
 		return true
@@ -888,6 +903,10 @@ local Disable = function(self, unit)
 
 			if (unit == "target") or (unit == "targettarget") then
 				self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update)
+			end
+
+			if (unit == "player") then
+				self:UnregisterEvent("UNIT_INVENTORY_CHANGED", Update)
 			end
 		end
 	end

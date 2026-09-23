@@ -10,6 +10,7 @@
 <Script file='stance.lua'/>
 <Script file='vehicle.lua'/>
 <Script file='xp.lua'/>
+<Script file='reputation.lua'/>
 
 <!-- Floating buttons not attached to real bars -->
 <Script file='floaters.lua'/>
