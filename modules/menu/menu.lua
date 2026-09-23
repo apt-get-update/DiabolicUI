@@ -4,6 +4,7 @@ local Module = Engine:NewModule("Menu")
 
 -- Lua API
 local math_floor = math.floor
+local setmetatable = setmetatable
 local unpack = unpack
 
 -- WoW API
@@ -11,21 +12,159 @@ local CreateFrame = CreateFrame
 local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
 
+-- Layout grid
+-------------------------------------------------------
+-- Every control is positioned from its page's top left corner on a shared
+-- grid, never relative to its neighbour, so columns line up across all the
+-- pages no matter how wide a (localized) label is.
+-- modules/minimap/Components/Menu/Menu.lua uses the same numbers.
+local EDGE = 16                  -- page padding, and the left column
+local CHECK_X = EDGE - 2         -- checkbox art has a 2px transparent margin
+local INDENT = EDGE + 24         -- settings that belong to the checkbox above
+local SLIDER_WIDTH = 160
+local SLIDER_COLUMN = 200        -- distance between two sliders on one row
+local RADIO_OVERHANG = 8         -- picker radios stick out past the box
+
+local TITLE_HEIGHT = 16
+local HEADER_HEIGHT = 16
+local LABEL_HEIGHT = 14
+local CHECK_HEIGHT = 26
+local BUTTON_HEIGHT = 24
+local SLIDER_LABEL_HEIGHT = 16   -- the template's label sits above the bar
+local SLIDER_BLOCK_HEIGHT = SLIDER_LABEL_HEIGHT + 15 + 22 -- label, bar, low/high + input
+local PICKER_HEIGHT = 80 + RADIO_OVERHANG * 2
+
+local SECTION_GAP = 24           -- above a section header
+local HEADER_GAP = 8             -- between a header and its first row
+local ROW_GAP = 4                -- between rows of the same section
+
+local GROUP_PAD = 10             -- a group's border sits this far outside its columns
+local GROUP_WIDTH = (INDENT + SLIDER_COLUMN + SLIDER_WIDTH + GROUP_PAD) - (EDGE - GROUP_PAD)
+local GROUP_BACKDROP = {
+	bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+	edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
+	edgeSize = 12,
+	insets = { left = 3, right = 3, top = 3, bottom = 3 }
+}
+
+local Layout = {}
+Layout.__index = Layout
+
+local NewLayout = function(page)
+	return setmetatable({ page = page, y = -EDGE }, Layout)
+end
+
+-- Reserves the next row and returns the y offset its top edge sits at.
+Layout.Row = function(self, height, gap)
+	local top = self.y - (gap or 0)
+	self.y = top - height
+	return top
+end
+
+Layout.Place = function(self, region, x, top)
+	region:SetPoint("TOPLEFT", self.page, "TOPLEFT", x, top)
+end
+
+-- Sliders are placed by the top of their label, not of the bar itself.
+Layout.PlaceSlider = function(self, slider, x, top)
+	slider:SetPoint("TOPLEFT", self.page, "TOPLEFT", x, top - SLIDER_LABEL_HEIGHT)
+end
+
+-- A bordered box around a checkbox and the settings it controls. Controls
+-- inside it keep using the page's columns; only the border sits outside.
+-- Parent those controls to the returned frame so they draw above it.
+Layout.BeginGroup = function(self, gap)
+	local group = CreateFrame("Frame", nil, self.page)
+	group:SetBackdrop(GROUP_BACKDROP)
+	group:SetBackdropColor(0, 0, 0, .25)
+	group:SetBackdropBorderColor(1, 1, 1, 1)
+	group.top = self.y - (gap or 0)
+	self.y = group.top - GROUP_PAD
+	return group
+end
+
+Layout.EndGroup = function(self, group)
+	self.y = self.y - GROUP_PAD
+	group:SetPoint("TOPLEFT", self.page, "TOPLEFT", EDGE - GROUP_PAD, group.top)
+	group:SetSize(GROUP_WIDTH, group.top - self.y)
+end
+
+-- Widgets
+-------------------------------------------------------
+local CreateTitle = function(page, layout, text)
+	local title = page:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetText(text)
+	layout:Place(title, EDGE, layout:Row(TITLE_HEIGHT))
+	return title
+end
+
 -- The small lettermark crest shown top-right on the submenu pages.
-local CreateSubmenuLogo = function(panel)
-	local logo = panel:CreateTexture(nil, "ARTWORK")
+local CreateSubmenuLogo = function(page)
+	local logo = page:CreateTexture(nil, "ARTWORK")
 	logo:SetSize(32, 32)
-	logo:SetPoint("TOPRIGHT", -16, -16)
+	logo:SetPoint("TOPRIGHT", -EDGE, -EDGE)
 	logo:SetTexture(([[Interface\AddOns\%s\media\textures\diabolic-lettermark.tga]]):format(Addon))
 	logo:SetTexCoord(90/512, 422/512, 90/512, 422/512)
 	return logo
 end
 
-local CreateSubHeader = function(panel, anchorTo, text)
-	local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	header:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 2, -30)
+local CreateHeader = function(page, layout, text)
+	local header = page:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	header:SetText(text)
+	layout:Place(header, EDGE, layout:Row(HEADER_HEIGHT, SECTION_GAP))
 	return header
+end
+
+-- A smaller gold label naming the control below it, with its description
+-- shown on hover.
+local CreateFieldLabel = function(page, layout, text, tooltipText, gap)
+	local label = page:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	label:SetJustifyH("LEFT")
+	label:SetText(text)
+	layout:Place(label, EDGE, layout:Row(LABEL_HEIGHT, gap))
+
+	-- FontStrings can't take mouse input themselves, so a same-sized
+	-- frame on top of it is what actually shows the description on hover.
+	local hitbox = CreateFrame("Frame", nil, page)
+	hitbox:SetAllPoints(label)
+	hitbox:EnableMouse(true)
+	hitbox:SetScript("OnEnter", function(self)
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		GameTooltip:AddLine(text)
+		GameTooltip:AddLine(tooltipText, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	hitbox:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	return label
+end
+
+-- Placed by the caller; checkboxes on a row of their own use CHECK_X.
+local CreateCheckbox = function(parent, name, label, tooltipText, onClick)
+	local checkbox = CreateFrame("CheckButton", "DiabolicUIOptionsPanel"..name, parent, "InterfaceOptionsCheckButtonTemplate")
+	_G[checkbox:GetName().."Text"]:SetText(label)
+	checkbox.tooltipText = label
+	checkbox.tooltipRequirement = tooltipText
+	checkbox:SetScript("OnClick", onClick)
+	return checkbox
+end
+
+local CreateButton = function(parent, name, label, tooltipText, onClick)
+	local button = CreateFrame("Button", "DiabolicUIOptionsPanel"..name, parent, "UIPanelButtonTemplate")
+	button:SetSize(150, BUTTON_HEIGHT)
+	button:SetText(label)
+	button:SetScript("OnClick", onClick)
+	button:SetScript("OnEnter", function(self)
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		GameTooltip:AddLine(label)
+		GameTooltip:AddLine(tooltipText, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	button:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	return button
 end
 
 -- Values dragged this close to 0 snap to it, since landing on exactly the
@@ -57,32 +196,18 @@ local LABEL_COLOR = { 1, .82, 0 }
 local LABEL_COLOR_DISABLED = { .5, .5, .5 }
 
 -- A slider plus a manual numeric entry box centered below it, kept in sync
--- both ways. anchorSpec optionally overrides the default "stack below
--- anchorTo" layout with an explicit { point, relativePoint, x, y } anchor
--- of its own. snapRange, if given, makes values dragged near 0 snap to it.
-local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, minValue, maxValue, getValue, setValue, anchorSpec, snapRange)
-	local slider = CreateFrame("Slider", "DiabolicUIOptionsPanel"..name, panel, "OptionsSliderTemplate")
+-- both ways. Placed by the caller with Layout:PlaceSlider. snapRange, if
+-- given, makes values dragged near 0 snap to it.
+local CreateValueSlider = function(parent, name, label, tooltipText, minValue, maxValue, getValue, setValue, snapRange)
+	local slider = CreateFrame("Slider", "DiabolicUIOptionsPanel"..name, parent, "OptionsSliderTemplate")
 	slider:SetOrientation("HORIZONTAL")
-	slider:SetWidth(160)
+	slider:SetWidth(SLIDER_WIDTH)
 	slider:SetHeight(15)
 	slider:SetHitRectInsets(0, 0, -10, 0)
 	slider:SetMinMaxValues(minValue, maxValue)
 	slider:SetValueStep(1)
 	slider:SetBackdrop(SLIDER_BACKDROP)
 	slider:SetThumbTexture(SLIDER_THUMB_TEXTURE)
-
-	if anchorSpec then
-		slider:SetPoint(anchorSpec[1], anchorTo, anchorSpec[2], anchorSpec[3], anchorSpec[4])
-	else
-		-- Always anchored to anchorTo itself (never its .Input), so this
-		-- slider's own left edge lines up with anchorTo's - anchoring to
-		-- .Input instead would misalign it, since that box is centered
-		-- under the slider above it, not flush with its left edge. If
-		-- anchorTo is itself a slider, though, its input box now sits
-		-- below it, so the gap needs to be bigger to actually clear it.
-		local gap = anchorTo.Input and -50 or -20
-		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 4, gap)
-	end
 
 	local lowText, highText, labelText = _G[slider:GetName().."Low"], _G[slider:GetName().."High"], _G[slider:GetName().."Text"]
 	lowText:SetText(minValue)
@@ -97,7 +222,7 @@ local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, mi
 
 	-- manual numeric entry, for typing an exact value directly instead of
 	-- having to land on it with the slider
-	local input = CreateFrame("EditBox", "DiabolicUIOptionsPanel"..name.."Input", panel)
+	local input = CreateFrame("EditBox", "DiabolicUIOptionsPanel"..name.."Input", parent)
 	input:SetSize(70, 14)
 	input:SetPoint("TOP", slider, "BOTTOM", 0, -6)
 	input:SetAutoFocus(false)
@@ -162,7 +287,9 @@ local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, mi
 
 	-- exposed so the panel's cancel/refresh can reset the display without
 	-- re-triggering a snap or a write-back
-	slider.SetValueSilently = setSilently
+	slider.SetValueSilently = function(self, value)
+		setSilently(value)
+	end
 
 	-- exposed so a dependent control (e.g. a checkbox toggling whether
 	-- this slider's setting even applies) can grey it out and block
@@ -199,10 +326,8 @@ local CreateValueSlider = function(panel, name, anchorTo, label, tooltipText, mi
 	return slider
 end
 
--- anchorSpec optionally overrides the default "stack below anchorTo" layout
--- with an explicit { point, relativePoint, x, y } anchor of its own.
-local CreateOffsetSlider = function(panel, name, anchorTo, label, tooltipText, getValue, setValue, anchorSpec)
-	return CreateValueSlider(panel, name, anchorTo, label, tooltipText, SLIDER_MIN, SLIDER_MAX, getValue, setValue, anchorSpec, SLIDER_SNAP_RANGE)
+local CreateOffsetSlider = function(parent, name, label, tooltipText, getValue, setValue)
+	return CreateValueSlider(parent, name, label, tooltipText, SLIDER_MIN, SLIDER_MAX, getValue, setValue, SLIDER_SNAP_RANGE)
 end
 
 -- Order they're visited in when building/refreshing the anchor point picker.
@@ -217,38 +342,14 @@ local ANCHOR_POINT_LABELS = {
 
 -- A small rectangle representing the tooltip, with a radio button on each
 -- corner, edge midpoint and its center, to pick which of those points gets
--- anchored to the cursor (plus the offset sliders above).
-local CreateAnchorPointPicker = function(panel, anchorTo, label, tooltipText, getValue, setValue)
-	local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	header:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", -2, -30)
-	header:SetText(label)
-
-	-- FontStrings can't take mouse input themselves, so a same-sized
-	-- frame on top of it is what actually shows the description on hover.
-	local headerHitbox = CreateFrame("Frame", nil, panel)
-	headerHitbox:SetAllPoints(header)
-	headerHitbox:EnableMouse(true)
-	headerHitbox:SetScript("OnEnter", function(self)
-		if (GameTooltip:IsForbidden()) then return end
-		GameTooltip_SetDefaultAnchor(GameTooltip, self)
-		GameTooltip:AddLine(label)
-		GameTooltip:AddLine(tooltipText, 1, 1, 1, true)
-		GameTooltip:Show()
-	end)
-	headerHitbox:SetScript("OnLeave", function(self)
-		if (GameTooltip:IsForbidden()) then return end
-		GameTooltip:Hide()
-	end)
-
-	local preview = CreateFrame("Frame", nil, panel)
+-- anchored to the cursor. Placed at the given row; the radios hang past the
+-- box by RADIO_OVERHANG, so the box is inset by that much to keep the
+-- outermost radios on the page's column.
+local CreateAnchorPointPicker = function(page, layout, top, getValue, setValue)
+	local preview = CreateFrame("Frame", nil, page)
 	preview:SetSize(120, 80)
-	preview:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 4, -28)
-	preview:SetBackdrop({
-		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
-		edgeSize = 12,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
-	})
+	layout:Place(preview, EDGE + RADIO_OVERHANG, top - RADIO_OVERHANG)
+	preview:SetBackdrop(GROUP_BACKDROP)
 	preview:SetBackdropColor(0, 0, 0, .75)
 	preview:SetBackdropBorderColor(1, 1, 1, 1)
 
@@ -277,6 +378,8 @@ local CreateAnchorPointPicker = function(panel, anchorTo, label, tooltipText, ge
 	return preview, refresh
 end
 
+-- Pages
+-------------------------------------------------------
 Module.CreateOptionsPanel = function(self)
 	local db = self:GetConfig("UnitFrames")
 	local tooltipsDB = Engine:GetConfig("Tooltips")
@@ -285,101 +388,83 @@ Module.CreateOptionsPanel = function(self)
 	local lootDB = Engine:GetConfig("LootFrame")
 	local UnitFrames = Engine:GetModule("UnitFrames")
 
+	-- Main page
+	-------------------------------------------------------
 	local panel = CreateFrame("Frame", "DiabolicUIOptionsPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "DiabolicUI"
 	panel:Hide()
 
-	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	title:SetPoint("TOPLEFT", 16, -16)
-	title:SetText("DiabolicUI")
+	local layout = NewLayout(panel)
+	CreateTitle(panel, layout, "DiabolicUI")
 
 	local logo = panel:CreateTexture(nil, "ARTWORK")
 	logo:SetSize(160, 80)
-	logo:SetPoint("TOPRIGHT", -16, -16)
+	logo:SetPoint("TOPRIGHT", -EDGE, -EDGE)
 	logo:SetTexture(([[Interface\AddOns\%s\media\textures\DiabolicUI_Logo.tga]]):format(Addon))
 
 	-- Menu
-	-------------------------------------------------------
-	local menuHeader = CreateSubHeader(panel, title, L["Menu"])
+	CreateHeader(panel, layout, L["Menu"])
 
-	local showGold = CreateFrame("CheckButton", "DiabolicUIOptionsPanelShowGold", panel, "InterfaceOptionsCheckButtonTemplate")
-	showGold:SetPoint("TOPLEFT", menuHeader, "BOTTOMLEFT", -2, -8)
-	showGold:SetChecked(actionbarsDB.showGold)
-	_G[showGold:GetName().."Text"]:SetText(L["Show Gold"])
-	showGold.tooltipText = L["Show Gold"]
-	showGold.tooltipRequirement = L["Shows how much money you're carrying, next to the menu button in the bottom right corner."]
-	showGold:SetScript("OnClick", function(button)
+	local showGold = CreateCheckbox(panel, "ShowGold", L["Show Gold"], L["Shows how much money you're carrying, next to the menu button in the bottom right corner."], function(button)
 		actionbarsDB.showGold = button:GetChecked() and true or false
 		Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdateGoldVisibility()
 	end)
+	layout:Place(showGold, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
-	local showPerformance = CreateFrame("CheckButton", "DiabolicUIOptionsPanelShowPerformance", panel, "InterfaceOptionsCheckButtonTemplate")
-	showPerformance:SetPoint("TOPLEFT", showGold, "BOTTOMLEFT", 0, -4)
-	showPerformance:SetChecked(actionbarsDB.showPerformance)
-	_G[showPerformance:GetName().."Text"]:SetText(L["Show FPS & Latency"])
-	showPerformance.tooltipText = L["Show FPS & Latency"]
-	showPerformance.tooltipRequirement = L["Shows your framerate and latency, next to the menu button in the bottom right corner."]
-	showPerformance:SetScript("OnClick", function(button)
+	local showPerformance = CreateCheckbox(panel, "ShowPerformance", L["Show FPS & Latency"], L["Shows your framerate and latency, next to the menu button in the bottom right corner."], function(button)
 		actionbarsDB.showPerformance = button:GetChecked() and true or false
 		Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdatePerformanceVisibility()
 	end)
+	layout:Place(showPerformance, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
 	-- Objectives
-	-------------------------------------------------------
-	local objectivesHeader = CreateSubHeader(panel, showPerformance, L["Objectives"])
+	CreateHeader(panel, layout, L["Objectives"])
 
-	local fadeTracker = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeTracker", panel, "InterfaceOptionsCheckButtonTemplate")
-	fadeTracker:SetPoint("TOPLEFT", objectivesHeader, "BOTTOMLEFT", -2, -8)
-	fadeTracker:SetChecked(objectivesDB.fadeTracker)
-	_G[fadeTracker:GetName().."Text"]:SetText(L["Fade Quest Tracker"])
-	fadeTracker.tooltipText = L["Fade Quest Tracker"]
-	fadeTracker.tooltipRequirement = L["Fades Questie's quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nRequires Questie."]
+	local updateTrackerSlidersEnabled -- assigned once the sliders exist
 
-	-- Anchored to the checkbox's own label text (not the checkbox frame,
-	-- which is much narrower than the label), so the gap to the sliders
-	-- is measured from where "Fade Quest Tracker" actually ends on screen.
-	local trackerTimeFading = CreateValueSlider(panel, "ObjectivesTimeFading", _G[fadeTracker:GetName().."Text"], L["Time Fading"], L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."],
-		1, 30,
-		function() return objectivesDB.fadeDelay end,
-		function(value) objectivesDB.fadeDelay = value end,
-		{ "TOPLEFT", "TOPRIGHT", 30, -4 })
+	local trackerGroup = layout:BeginGroup(HEADER_GAP)
 
-	local trackerOpacity = CreateValueSlider(panel, "ObjectivesOpacity", trackerTimeFading, L["Opacity"], L["How visible the tracker stays once it has fully faded, as a percentage."],
-		0, 100,
-		function() return objectivesDB.fadeOpacity end,
-		function(value) objectivesDB.fadeOpacity = value end)
-
-	-- Time Fading / Opacity only matter while the tracker fade is
-	-- actually enabled, so grey them out and block input otherwise.
-	local updateTrackerSlidersEnabled = function()
-		trackerTimeFading:SetEnabled(objectivesDB.fadeTracker)
-		trackerOpacity:SetEnabled(objectivesDB.fadeTracker)
-	end
-	updateTrackerSlidersEnabled()
-
-	fadeTracker:SetScript("OnClick", function(button)
+	local fadeTracker = CreateCheckbox(trackerGroup, "FadeTracker", L["Fade Quest Tracker"], L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."], function(button)
 		objectivesDB.fadeTracker = button:GetChecked() and true or false
 		Engine:GetModule("ObjectiveTracker"):ApplyFadeSetting()
 		updateTrackerSlidersEnabled()
 	end)
+	layout:Place(fadeTracker, CHECK_X, layout:Row(CHECK_HEIGHT))
+
+	local trackerTimeFading = CreateValueSlider(trackerGroup, "ObjectivesTimeFading", L["Time Fading"], L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."],
+		1, 30,
+		function() return objectivesDB.fadeDelay end,
+		function(value) objectivesDB.fadeDelay = value end)
+
+	local trackerOpacity = CreateValueSlider(trackerGroup, "ObjectivesOpacity", L["Opacity"], L["How visible the tracker stays once it has fully faded, as a percentage."],
+		0, 100,
+		function() return objectivesDB.fadeOpacity end,
+		function(value) objectivesDB.fadeOpacity = value end)
+
+	local trackerSliders = layout:Row(SLIDER_BLOCK_HEIGHT, ROW_GAP)
+	layout:PlaceSlider(trackerTimeFading, INDENT, trackerSliders)
+	layout:PlaceSlider(trackerOpacity, INDENT + SLIDER_COLUMN, trackerSliders)
+
+	layout:EndGroup(trackerGroup)
+
+	-- Time Fading / Opacity only matter while the tracker fade is
+	-- actually enabled, so grey them out and block input otherwise.
+	updateTrackerSlidersEnabled = function()
+		trackerTimeFading:SetEnabled(objectivesDB.fadeTracker)
+		trackerOpacity:SetEnabled(objectivesDB.fadeTracker)
+	end
 
 	-- Loot
-	-------------------------------------------------------
-	local lootHeader = CreateSubHeader(panel, trackerOpacity, L["Loot"])
+	CreateHeader(panel, layout, L["Loot"])
 
-	local reskinLoot = CreateFrame("CheckButton", "DiabolicUIOptionsPanelReskinLoot", panel, "InterfaceOptionsCheckButtonTemplate")
-	reskinLoot:SetPoint("TOPLEFT", lootHeader, "BOTTOMLEFT", -2, -8)
-	reskinLoot:SetChecked(lootDB.enableSkin)
-	_G[reskinLoot:GetName().."Text"]:SetText(L["Reskin Loot Window"])
-	reskinLoot.tooltipText = L["Reskin Loot Window"]
-	reskinLoot.tooltipRequirement = L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."]
-	reskinLoot:SetScript("OnClick", function(button)
+	local reskinLoot = CreateCheckbox(panel, "ReskinLoot", L["Reskin Loot Window"], L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."], function(button)
 		local checked = button:GetChecked() and true or false
 		if (checked ~= lootDB.enableSkin) then
 			lootDB.enableSkin = checked
 			Engine:ReloadUI()
 		end
 	end)
+	layout:Place(reskinLoot, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
 	panel.okay = function() end
 	panel.cancel = function()
@@ -392,34 +477,38 @@ Module.CreateOptionsPanel = function(self)
 		reskinLoot:SetChecked(lootDB.enableSkin)
 	end
 	panel.refresh = panel.cancel
+	panel.cancel()
 
 	InterfaceOptions_AddCategory(panel)
 
-	-- Tooltips (submenu)
+	-- Tooltips page
 	-------------------------------------------------------
 	local tooltipsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelTooltips", InterfaceOptionsFramePanelContainer)
 	tooltipsPanel.name = L["Tooltips"]
 	tooltipsPanel.parent = panel.name
 	tooltipsPanel:Hide()
 
-	local tooltipsTitle = tooltipsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	tooltipsTitle:SetPoint("TOPLEFT", 16, -16)
-	tooltipsTitle:SetText(L["Tooltips"])
-
+	layout = NewLayout(tooltipsPanel)
+	CreateTitle(tooltipsPanel, layout, L["Tooltips"])
 	CreateSubmenuLogo(tooltipsPanel)
 
-	local anchorPreview, refreshAnchorPoint = CreateAnchorPointPicker(tooltipsPanel, tooltipsTitle, L["Tooltip mouse anchor"], L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."],
-		function() return tooltipsDB.anchorPoint end,
-		function(value) tooltipsDB.anchorPoint = value end)
+	CreateFieldLabel(tooltipsPanel, layout, L["Tooltip mouse anchor"], L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."], SECTION_GAP)
 
-	local offsetX = CreateOffsetSlider(tooltipsPanel, "TooltipOffsetX", anchorPreview, L["Horizontal Offset"], L["At 0, the tooltip is centered horizontally on the cursor."],
+	-- The picker on the left, its offset sliders stacked in the second column.
+	local offsetX = CreateOffsetSlider(tooltipsPanel, "TooltipOffsetX", L["Horizontal Offset"], L["At 0, the tooltip is centered horizontally on the cursor."],
 		function() return tooltipsDB.offsetX end,
-		function(value) tooltipsDB.offsetX = value end,
-		{ "TOPLEFT", "TOPRIGHT", 40, 0 })
+		function(value) tooltipsDB.offsetX = value end)
 
-	local offsetY = CreateOffsetSlider(tooltipsPanel, "TooltipOffsetY", offsetX, L["Vertical Offset"], L["At 0, the cursor is at the bottom edge of the tooltip."],
+	local offsetY = CreateOffsetSlider(tooltipsPanel, "TooltipOffsetY", L["Vertical Offset"], L["At 0, the cursor is at the bottom edge of the tooltip."],
 		function() return tooltipsDB.offsetY end,
 		function(value) tooltipsDB.offsetY = value end)
+
+	local pickerRow = layout:Row(math.max(PICKER_HEIGHT, SLIDER_BLOCK_HEIGHT * 2 + ROW_GAP), HEADER_GAP)
+	local _, refreshAnchorPoint = CreateAnchorPointPicker(tooltipsPanel, layout, pickerRow,
+		function() return tooltipsDB.anchorPoint end,
+		function(value) tooltipsDB.anchorPoint = value end)
+	layout:PlaceSlider(offsetX, EDGE + SLIDER_COLUMN, pickerRow)
+	layout:PlaceSlider(offsetY, EDGE + SLIDER_COLUMN, pickerRow - SLIDER_BLOCK_HEIGHT - ROW_GAP)
 
 	tooltipsPanel.okay = function() end
 	tooltipsPanel.cancel = function()
@@ -431,90 +520,53 @@ Module.CreateOptionsPanel = function(self)
 
 	InterfaceOptions_AddCategory(tooltipsPanel)
 
-	-- Units (submenu)
+	-- Units page
 	-------------------------------------------------------
 	local unitsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelUnits", InterfaceOptionsFramePanelContainer)
 	unitsPanel.name = L["Units"]
 	unitsPanel.parent = panel.name
 	unitsPanel:Hide()
 
-	local unitsTitle = unitsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	unitsTitle:SetPoint("TOPLEFT", 16, -16)
-	unitsTitle:SetText(L["Units"])
-
+	layout = NewLayout(unitsPanel)
+	CreateTitle(unitsPanel, layout, L["Units"])
 	CreateSubmenuLogo(unitsPanel)
 
-	local classColors = CreateFrame("CheckButton", "DiabolicUIOptionsPanelClassColors", unitsPanel, "InterfaceOptionsCheckButtonTemplate")
-	classColors:SetPoint("TOPLEFT", unitsTitle, "BOTTOMLEFT", -2, -20)
-	classColors:SetChecked(db.showClassColors)
-	_G[classColors:GetName().."Text"]:SetText(L["Show class colors"])
-	classColors.tooltipText = L["Show class colors"]
-	classColors.tooltipRequirement = L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."]
-	classColors:SetScript("OnClick", function(button)
+	CreateHeader(unitsPanel, layout, L["Appearance"])
+
+	local classColors = CreateCheckbox(unitsPanel, "ClassColors", L["Show class colors"], L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."], function(button)
 		local checked = button:GetChecked() and true or false
 		if (checked ~= db.showClassColors) then
 			db.showClassColors = checked
 			Engine:ReloadUI()
 		end
 	end)
+	layout:Place(classColors, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
-	local showPortrait = CreateFrame("CheckButton", "DiabolicUIOptionsPanelShowPortrait", unitsPanel, "InterfaceOptionsCheckButtonTemplate")
-	showPortrait:SetPoint("TOPLEFT", classColors, "BOTTOMLEFT", 0, -4)
-	showPortrait:SetChecked(db.showPortrait)
-	_G[showPortrait:GetName().."Text"]:SetText(L["Show Portrait"])
-	showPortrait.tooltipText = L["Show Portrait"]
-	showPortrait.tooltipRequirement = L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."]
-	showPortrait:SetScript("OnClick", function(button)
+	local showPortrait = CreateCheckbox(unitsPanel, "ShowPortrait", L["Show Portrait"], L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."], function(button)
 		local checked = button:GetChecked() and true or false
 		if (checked ~= db.showPortrait) then
 			db.showPortrait = checked
 			Engine:ReloadUI()
 		end
 	end)
+	layout:Place(showPortrait, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
 	-- Advanced
-	-------------------------------------------------------
-	local advancedHeader = CreateSubHeader(unitsPanel, showPortrait, L["Advanced"])
+	CreateHeader(unitsPanel, layout, L["Advanced"])
 
-	local toggleFakeParty = CreateFrame("Button", "DiabolicUIOptionsPanelToggleFakeParty", unitsPanel, "UIPanelButtonTemplate")
-	toggleFakeParty:SetSize(150, 24)
-	toggleFakeParty:SetPoint("TOPLEFT", advancedHeader, "BOTTOMLEFT", -2, -8)
-	toggleFakeParty:SetText(L["Toggle Fake Party"])
-	toggleFakeParty:SetScript("OnClick", function(button)
+	local toggleFakeParty = CreateButton(unitsPanel, "ToggleFakeParty", L["Toggle Fake Party"], L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."], function(button)
 		db.testPartyMode = not db.testPartyMode
 		UnitFrames:SetPartyMockShown(db.testPartyMode)
 	end)
-	toggleFakeParty:SetScript("OnEnter", function(button)
-		if (GameTooltip:IsForbidden()) then return end
-		GameTooltip_SetDefaultAnchor(GameTooltip, button)
-		GameTooltip:AddLine(L["Toggle Fake Party"])
-		GameTooltip:AddLine(L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."], 1, 1, 1, true)
-		GameTooltip:Show()
-	end)
-	toggleFakeParty:SetScript("OnLeave", function(button)
-		if (GameTooltip:IsForbidden()) then return end
-		GameTooltip:Hide()
-	end)
 
-	local toggleFakeRaid = CreateFrame("Button", "DiabolicUIOptionsPanelToggleFakeRaid", unitsPanel, "UIPanelButtonTemplate")
-	toggleFakeRaid:SetSize(150, 24)
-	toggleFakeRaid:SetPoint("LEFT", toggleFakeParty, "RIGHT", 8, 0)
-	toggleFakeRaid:SetText(L["Toggle Fake Raid"])
-	toggleFakeRaid:SetScript("OnClick", function(button)
+	local toggleFakeRaid = CreateButton(unitsPanel, "ToggleFakeRaid", L["Toggle Fake Raid"], L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."], function(button)
 		db.testRaidMode = not db.testRaidMode
 		UnitFrames:SetRaidMockShown(db.testRaidMode)
 	end)
-	toggleFakeRaid:SetScript("OnEnter", function(button)
-		if (GameTooltip:IsForbidden()) then return end
-		GameTooltip_SetDefaultAnchor(GameTooltip, button)
-		GameTooltip:AddLine(L["Toggle Fake Raid"])
-		GameTooltip:AddLine(L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."], 1, 1, 1, true)
-		GameTooltip:Show()
-	end)
-	toggleFakeRaid:SetScript("OnLeave", function(button)
-		if (GameTooltip:IsForbidden()) then return end
-		GameTooltip:Hide()
-	end)
+
+	local buttonRow = layout:Row(BUTTON_HEIGHT, HEADER_GAP)
+	layout:Place(toggleFakeParty, EDGE, buttonRow)
+	layout:Place(toggleFakeRaid, EDGE + SLIDER_COLUMN, buttonRow)
 
 	unitsPanel.okay = function() end
 	unitsPanel.cancel = function()
@@ -522,10 +574,11 @@ Module.CreateOptionsPanel = function(self)
 		showPortrait:SetChecked(db.showPortrait)
 	end
 	unitsPanel.refresh = unitsPanel.cancel
+	unitsPanel.cancel()
 
 	InterfaceOptions_AddCategory(unitsPanel)
 
-	-- Chat (submenu)
+	-- Chat page
 	-------------------------------------------------------
 	local chatDB = Engine:GetConfig("ChatWindows")
 	local chatFiltersDB = Engine:GetConfig("ChatFilters")
@@ -538,76 +591,42 @@ Module.CreateOptionsPanel = function(self)
 	chatPanel.parent = panel.name
 	chatPanel:Hide()
 
-	local chatTitle = chatPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	chatTitle:SetPoint("TOPLEFT", 16, -16)
-	chatTitle:SetText(L["Chat"])
-
+	layout = NewLayout(chatPanel)
+	CreateTitle(chatPanel, layout, L["Chat"])
 	CreateSubmenuLogo(chatPanel)
 
-	-- Forward-declared: assigned once Time Fading/Time Visible exist below,
-	-- but referenced by fadeChat's OnClick here already.
-	local updateFadeSlidersEnabled
+	-- Appearance
+	CreateHeader(chatPanel, layout, L["Appearance"])
 
-	local appearanceHeader = CreateSubHeader(chatPanel, chatTitle, L["Appearance"])
-
-	local applyChatBackgroundOpacity = function()
-		Engine:GetModule("ChatWindows"):ApplyBackgroundOpacity()
-	end
-
-	local backgroundOpacity = CreateValueSlider(chatPanel, "ChatBackgroundOpacity", appearanceHeader, L["Background Opacity"], L["How opaque the chat window's background is while you're typing."],
+	local backgroundOpacity = CreateValueSlider(chatPanel, "ChatBackgroundOpacity", L["Background Opacity"], L["How opaque the chat window's background is while you're typing."],
 		0, 100,
 		function() return chatDB.backgroundOpacity end,
 		function(value)
 			chatDB.backgroundOpacity = value
-			applyChatBackgroundOpacity()
-		end,
-		{ "TOPLEFT", "BOTTOMLEFT", 14, -38 })
+			Engine:GetModule("ChatWindows"):ApplyBackgroundOpacity()
+		end)
+	layout:PlaceSlider(backgroundOpacity, EDGE, layout:Row(SLIDER_BLOCK_HEIGHT, HEADER_GAP))
 
-	-- A bordered group around Fade Chat + Time Fading + Time Visible,
-	-- styled like the anchor point picker's backdrop elsewhere in this
-	-- menu. Background Opacity stays outside/above it, on its own.
-	-- *Anchored to backgroundOpacity itself (not its .Input), with the
-	--  x-offset cancelling out backgroundOpacity's own +14 offset from
-	--  appearanceHeader - so the frame's left edge lines up exactly with
-	--  "Appearance" above it. The y-offset accounts for the extra height
-	--  of backgroundOpacity's input box, which sits below its slider.
-	local fadeGroup = CreateFrame("Frame", nil, chatPanel)
-	fadeGroup:SetPoint("TOPLEFT", backgroundOpacity, "BOTTOMLEFT", -14, -36)
-	fadeGroup:SetSize(380, 145)
-	fadeGroup:SetBackdrop({
-		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
-		edgeSize = 12,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
-	})
-	fadeGroup:SetBackdropColor(0, 0, 0, .25)
-	fadeGroup:SetBackdropBorderColor(1, 1, 1, 1)
+	local updateFadeSlidersEnabled -- assigned once the sliders exist
 
-	local fadeChat = CreateFrame("CheckButton", "DiabolicUIOptionsPanelFadeChat", fadeGroup, "InterfaceOptionsCheckButtonTemplate")
-	fadeChat:SetPoint("TOPLEFT", fadeGroup, "TOPLEFT", 18, -16)
-	fadeChat:SetChecked(chatDB.fadeChat)
-	_G[fadeChat:GetName().."Text"]:SetText(L["Fade Chat"])
-	fadeChat.tooltipText = L["Fade Chat"]
-	fadeChat.tooltipRequirement = L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."]
-	fadeChat:SetScript("OnClick", function(button)
+	local fadeGroup = layout:BeginGroup(SECTION_GAP)
+
+	local fadeChat = CreateCheckbox(fadeGroup, "FadeChat", L["Fade Chat"], L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."], function(button)
 		chatDB.fadeChat = button:GetChecked() and true or false
 		applyChatFadeSettings()
 		updateFadeSlidersEnabled()
 	end)
+	layout:Place(fadeChat, CHECK_X, layout:Row(CHECK_HEIGHT))
 
-	-- Anchored to the checkbox's own label text (not the checkbox frame,
-	-- which is much narrower than the label), so the gap to the sliders
-	-- is measured from where "Fade Chat" actually ends on screen.
-	local timeFading = CreateValueSlider(fadeGroup, "ChatTimeFading", _G[fadeChat:GetName().."Text"], L["Time Fading"], L["How many seconds it takes for chat text to fade out."],
+	local timeFading = CreateValueSlider(fadeGroup, "ChatTimeFading", L["Time Fading"], L["How many seconds it takes for chat text to fade out."],
 		1, 5,
 		function() return chatDB.timeFading end,
 		function(value)
 			chatDB.timeFading = value
 			applyChatFadeSettings()
-		end,
-		{ "TOPLEFT", "TOPRIGHT", 30, -4 })
+		end)
 
-	local timeVisible = CreateValueSlider(fadeGroup, "ChatTimeVisible", timeFading, L["Time Visible"], L["How many seconds chat text stays fully visible before it starts fading."],
+	local timeVisible = CreateValueSlider(fadeGroup, "ChatTimeVisible", L["Time Visible"], L["How many seconds chat text stays fully visible before it starts fading."],
 		5, 120,
 		function() return chatDB.timeVisible end,
 		function(value)
@@ -615,34 +634,26 @@ Module.CreateOptionsPanel = function(self)
 			applyChatFadeSettings()
 		end)
 
+	local fadeSliders = layout:Row(SLIDER_BLOCK_HEIGHT, ROW_GAP)
+	layout:PlaceSlider(timeFading, INDENT, fadeSliders)
+	layout:PlaceSlider(timeVisible, INDENT + SLIDER_COLUMN, fadeSliders)
+
+	layout:EndGroup(fadeGroup)
+
 	-- Time Fading / Time Visible only matter while chat is actually
 	-- set to fade, so grey them out and block input otherwise.
 	updateFadeSlidersEnabled = function()
 		timeFading:SetEnabled(chatDB.fadeChat)
 		timeVisible:SetEnabled(chatDB.fadeChat)
 	end
-	updateFadeSlidersEnabled()
 
-	-- Anchored below timeVisible's input box (the lowest point of the
-	-- Appearance section now that each slider's input sits underneath it),
-	-- then pulled back from that (right-hand) column to the left-hand one
-	-- "Appearance" itself sits in, by a fixed estimate of the gap between
-	-- them (fadeChat's checkbox + label + the gap to timeFading/timeVisible).
-	-- Anchored to fadeGroup itself (not anything inside it), so it just
-	-- inherits the group's own left edge - already aligned with
-	-- "Appearance" - and its bottom edge, both by a single simple anchor.
-	local miscHeader = CreateSubHeader(chatPanel, fadeGroup, L["Miscellaneous"])
-	miscHeader:SetPoint("TOPLEFT", fadeGroup, "BOTTOMLEFT", 2, -20)
+	-- Miscellaneous
+	CreateHeader(chatPanel, layout, L["Miscellaneous"])
 
-	local copyWebLinks = CreateFrame("CheckButton", "DiabolicUIOptionsPanelChatCopyWebLinks", chatPanel, "InterfaceOptionsCheckButtonTemplate")
-	copyWebLinks:SetPoint("TOPLEFT", miscHeader, "BOTTOMLEFT", -2, -8)
-	copyWebLinks:SetChecked(chatFiltersDB.copyWebLinks)
-	_G[copyWebLinks:GetName().."Text"]:SetText(L["Copy Web Links"])
-	copyWebLinks.tooltipText = L["Copy Web Links"]
-	copyWebLinks.tooltipRequirement = L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."]
-	copyWebLinks:SetScript("OnClick", function(button)
+	local copyWebLinks = CreateCheckbox(chatPanel, "ChatCopyWebLinks", L["Copy Web Links"], L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."], function(button)
 		chatFiltersDB.copyWebLinks = button:GetChecked() and true or false
 	end)
+	layout:Place(copyWebLinks, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
 	chatPanel.okay = function() end
 	chatPanel.cancel = function()
@@ -654,6 +665,7 @@ Module.CreateOptionsPanel = function(self)
 		copyWebLinks:SetChecked(chatFiltersDB.copyWebLinks)
 	end
 	chatPanel.refresh = chatPanel.cancel
+	chatPanel.cancel()
 
 	InterfaceOptions_AddCategory(chatPanel)
 

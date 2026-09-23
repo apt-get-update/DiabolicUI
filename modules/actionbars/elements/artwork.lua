@@ -19,6 +19,7 @@ local PLAYER_HAS_XP
 local PLAYER_VISIBLE_BARS
 local PLAYER_HAS_PET
 local PLAYER_BAR_STATE
+local PLAYER_BAR_ID
 
 local colors = {
 	-- icon overlays
@@ -299,7 +300,7 @@ Button.PostCreate = function(self, buttonType)
 	local iconDimmer = self:CreateTexture(nil, "OVERLAY")
 	iconDimmer:SetAlpha(0)
 	iconDimmer:SetAllPoints(icon)
-	iconDimmer:SetColorTexture(.3, .3, .3, 1)
+	iconDimmer:SetTexture(.3, .3, .3, 1)
 
 	-- backdrop and shadow
 	local backdrop = self:CreateTexture(nil, "BACKGROUND")
@@ -363,9 +364,6 @@ Button.PostCreate = function(self, buttonType)
 
 	local chargeCooldown = self.chargeCooldown
 	if chargeCooldown then
-		--chargeCooldown:ClearAllPoints()
-		--chargeCooldown:SetPoint("TOPLEFT", self.icon, 2, -2)
-		--chargeCooldown:SetPoint("BOTTOMRIGHT", self.icon, -2, 2)
 	end
 
 	-- Reparent existing texts to our border frame
@@ -381,8 +379,6 @@ Button.PostCreate = function(self, buttonType)
 	self.backdrop = backdrop
 	self.slot = slot
 	self.border = border
-
-	--self:UpdateStyle()
 
 end
 
@@ -477,31 +473,12 @@ Widget.LoadPetBarArtwork = function(self)
 	local config = Module.config.visuals.artwork.pet
 	local db = Module.db
 
-	--do return end
-	
 	-- Hooking the visibility to the bar, the position to the controller
 	local artworkHolder = Module:GetWidget("Bar: Pet"):GetFrame():CreateFrame("Frame")
 	artworkHolder:SetAllPoints()
 	artworkHolder:SetFrameStrata("BACKGROUND")
 	artworkHolder:SetFrameLevel(5)
 	
-	--[=[
-	artworkHolder:SetPoint("TOPLEFT", -8, 8)
-	artworkHolder:SetPoint("BOTTOMRIGHT", 8, -8)
-	artworkHolder:SetBackdrop({
-		bgFile = [[Interface\ChatFrame\ChatFrameBackground]], 
-		edgeFile = ([[Interface\AddOns\%s\media\]]):format(ADDON) .. [[textures\DiabolicUI_Tooltip_Small.tga]],
-		edgeSize = 32,
-		insets = {
-			left = 7,
-			right = 7,
-			top = 7,
-			bottom = 7
-		}
-	})
-	artworkHolder:SetBackdropColor(0, 0, 0, 1)
-	]=]
-
 	local artwork = artworkHolder:CreateTexture()
 	artwork:SetDrawLayer("ARTWORK")
 	artwork:SetSize(unpack(config.size))

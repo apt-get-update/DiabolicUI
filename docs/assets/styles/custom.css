@@ -1,0 +1,131 @@
+/*
+  A "Diablo tooltip" reskin of hugo-book, reusing DiabolicUI's own bundled
+  assets (media/fonts, data/colors.lua's palette) so the docs read like an
+  extension of the addon itself rather than a generic theme.
+*/
+
+@font-face {
+  font-family: "Exocet";
+  src: url("/fonts/ExocetBlizzardMedium.ttf") format("truetype");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Exocet";
+  src: url("/fonts/ExocetBlizzardLight.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Diabolic Serif";
+  src: url("/fonts/NotoSerif-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Diabolic Serif";
+  src: url("/fonts/NotoSerif-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Diabolic Serif";
+  src: url("/fonts/NotoSerif-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+:root {
+  color-scheme: dark;
+
+  --border-radius: 0.125rem;
+  --icon-filter: brightness(0) invert(1);
+
+  /* Base surface: near-black embered brown, not flat black */
+  --body-background: #120b08;
+  --body-background-tint:
+    radial-gradient(ellipse 70rem 40rem at 50% -8rem, rgba(178, 25, 25, .10), transparent 60%),
+    radial-gradient(ellipse 60rem 30rem at 100% 100%, rgba(178, 25, 25, .06), transparent 60%);
+  --body-font-color: #d9d0c1;
+
+  /* Gold, same as the addon's own General.Normal / General.Title */
+  --color-link: #e5b226;
+  --color-visited-link: #b4763f;
+
+  /* Panels / borders / secondary text, from data/colors.lua's UI* trio */
+  --gray-100: #1c1410;
+  --gray-200: #5a4a3d;
+  --gray-500: #8c766e;
+
+  /* Admonitions, mapped to the addon's own semantic + item-quality colors */
+  --color-accent-default:   #8c766e;
+  --color-accent-note:      #4080ff;
+  --color-accent-tip:       #26c926;
+  --color-accent-important: #a335ee; /* epic-quality purple */
+  --color-accent-warning:   #ff8040;
+  --color-accent-caution:   #b21919;
+}
+
+body {
+  font-family: "Diabolic Serif", Georgia, serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.book-brand span {
+  font-family: "Exocet", "Diabolic Serif", serif;
+  letter-spacing: .03em;
+}
+
+.markdown h1 {
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--gray-200);
+  background: linear-gradient(180deg, #f6e7b0, #caa23a 55%, #8a6a1e);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.markdown h2 {
+  color: #f0dfa0;
+}
+
+a[href], a[role=button] {
+  text-shadow: 0 0 12px rgba(229, 178, 38, 0);
+  transition: text-shadow .15s ease-in-out, color .15s ease-in-out;
+}
+a[href]:hover, a[role=button]:hover {
+  color: #ffea89;
+  text-shadow: 0 0 12px rgba(255, 234, 137, .35);
+}
+
+.book-menu a.active {
+  text-shadow: 0 0 10px rgba(229, 178, 38, .35);
+}
+
+.book-brand {
+  border-bottom: 1px solid var(--gray-200);
+  padding-bottom: var(--space-16);
+}
+
+.book-search input {
+  font-family: "Diabolic Serif", serif;
+}
+
+.markdown pre,
+.markdown code {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4);
+}
+
+.icon-filter,
+.book-icon {
+  filter: var(--icon-filter);
+  opacity: .8;
+}
+
+::selection {
+  background: rgba(229, 178, 38, .35);
+  color: #fff;
+}
+
+/* Native scrollbars, matching the warm dark palette */
+* {
+  scrollbar-color: var(--gray-200) var(--body-background);
+}

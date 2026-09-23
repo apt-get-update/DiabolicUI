@@ -226,7 +226,7 @@ FloatButtonWidget.New = function(self, buttonType, parent, name)
 	-- *note that this is the icon overlay, not the border!
 	local buttonPushed = button:CreateTexture(nil, "OVERLAY")
 	buttonPushed:SetAllPoints(button.Icon)
-	buttonPushed:SetColorTexture(1, 1, 1, .25)
+	buttonPushed:SetTexture(1, 1, 1, .25)
 
 	button:SetPushedTexture(buttonPushed)
 	button:GetPushedTexture():SetBlendMode("BLEND")
@@ -238,7 +238,6 @@ end
 -- which can't have their original scripts or methods replaced.
 FloatButtonWidget.Build = function(self, button, parent)
 
-	--button:SetParent(parent) 
 	button:SetFrameStrata("MEDIUM")
 	button:RegisterForClicks("AnyUp")
 
@@ -292,7 +291,7 @@ FloatButtonWidget.Build = function(self, button, parent)
 	if button.SetCheckedTexture then
 		local checked = button:CreateTexture(nil, "BORDER")
 		checked:SetAllPoints(button.Icon)
-		checked:SetColorTexture(.9, .8, .1, .3)
+		checked:SetTexture(.9, .8, .1, .3)
 
 		button:SetCheckedTexture(checked)
 	end
@@ -366,7 +365,7 @@ FloatButtonWidget.Build = function(self, button, parent)
 	-- *note that this is the icon overlay, not the border!
 	local buttonPushed = button:CreateTexture(nil, "OVERLAY")
 	buttonPushed:SetAllPoints(button.Icon)
-	buttonPushed:SetColorTexture(1, 1, 1, .25)
+	buttonPushed:SetTexture(1, 1, 1, .25)
 
 	button:SetPushedTexture(buttonPushed)
 	button:GetPushedTexture():SetBlendMode("BLEND")

@@ -39,13 +39,6 @@ local UnitDebuff = AuraFunctions.UnitDebuff
 -- Blank texture used as a fallback for borders and bars
 local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]] 
 
--- these exist (or are used) in WoD and beyond
-local BLING_TEXTURE = [[Interface\Cooldown\star4]]
-local EDGE_LOC_TEXTURE = [[Interface\Cooldown\edge-LoC]]
-local EDGE_NORMAL_TEXTURE = [[Interface\Cooldown\edge]]
-
--- Retrive the current game client version
-local BUILD = tonumber((select(2, GetBuildInfo()))) 
 
 -- Speeeeed!
 local day = L["d"]
@@ -104,9 +97,6 @@ Aura.OnEnter = function(self)
 	if not UnitExists(unit) then
 		return
 	end
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 
@@ -120,9 +110,7 @@ Aura.OnEnter = function(self)
 end
 
 Aura.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 Aura.OnClick = function(self)
@@ -366,9 +354,6 @@ local SetPosition = function(self, visible)
 end
 
 local UpdateTooltip = function(self, event, ...)
-	if GameTooltip:IsForbidden() then
-		return
-	end
 	if (event == "MODIFIER_STATE_CHANGED") and ((arg1 == "LSHIFT") or (arg1 == "RSHIFT")) then
 		if GameTooltip:IsShown() and auraCache[GameTooltip:GetOwner()] then 
 			GameTooltip:GetOwner():UpdateTooltip()

@@ -86,6 +86,29 @@ local INPUT_BORDER_COLOR_HOVER = { .5, .5, .5, 1 }
 local LABEL_COLOR = { 1, .82, 0 }
 local LABEL_COLOR_DISABLED = { .5, .5, .5 }
 
+-- Layout grid, identical to DiabolicUI's own option pages in
+-- modules/menu/menu.lua, so this page lines up with its siblings.
+-- Everything is positioned from the panel's top left corner.
+local EDGE = 16
+local CHECK_X = EDGE - 2
+local INDENT = EDGE + 24
+local SLIDER_WIDTH = 160
+local SLIDER_COLUMN = 200
+local RADIO_OVERHANG = 8
+local TITLE_HEIGHT = 16
+local HEADER_HEIGHT = 16
+local LABEL_HEIGHT = 14
+local CHECK_HEIGHT = 26
+local BUTTON_HEIGHT = 24
+local SLIDER_LABEL_HEIGHT = 16
+local SLIDER_BLOCK_HEIGHT = SLIDER_LABEL_HEIGHT + 15 + 22
+local PICKER_HEIGHT = 80 + RADIO_OVERHANG * 2
+local SECTION_GAP = 24
+local HEADER_GAP = 8
+local ROW_GAP = 4
+local GROUP_PAD = 10
+local GROUP_WIDTH = (INDENT + SLIDER_COLUMN + SLIDER_WIDTH + GROUP_PAD) - (EDGE - GROUP_PAD)
+
 -- Applies the shared bar/thumb backdrop to a slider, and builds the
 -- centered numeric entry box below it. Returns the input box.
 local SkinDurationSlider = function(slider)
@@ -200,25 +223,12 @@ end
 -- Returns the slider; call slider.Refresh() to sync both widgets to the
 -- current saved value (e.g. from UpdateInfo, or right after creating it),
 -- and slider.SetEnabled(enabled) to grey it and its input out together.
--- anchorSpec optionally overrides the default "stack below anchorTo"
--- layout with an explicit { point, relativePoint, x, y } anchor of its own.
-local CreateDurationSlider = function(panel, name, anchorTo, label, tooltipText, minMs, maxMs, getValue, setValue, anchorSpec)
+-- Positioned by the caller.
+local CreateDurationSlider = function(panel, name, label, tooltipText, minMs, maxMs, getValue, setValue)
 	local slider = CreateFrame("Slider", name, panel, "OptionsSliderTemplate")
 	slider:SetOrientation("HORIZONTAL")
-	slider:SetWidth(160)
+	slider:SetWidth(SLIDER_WIDTH)
 	slider:SetHeight(15)
-	if (anchorSpec) then
-		slider:SetPoint(anchorSpec[1], anchorTo, anchorSpec[2], anchorSpec[3], anchorSpec[4])
-	else
-		-- Always anchored to anchorTo itself (never its .input), so this
-		-- slider's own left edge lines up with anchorTo's - anchoring to
-		-- .input instead would misalign it, since that box is centered
-		-- under the slider above it, not flush with its left edge. If
-		-- anchorTo is itself a slider, though, its input box now sits
-		-- below it, so the gap needs to be bigger to actually clear it.
-		local gap = anchorTo.input and -50 or -30
-		slider:SetPoint("TOPLEFT", anchorTo, "BOTTOMLEFT", 0, gap)
-	end
 	slider:SetMinMaxValues(minMs, maxMs)
 	slider:SetValueStep(10)
 	_G[slider:GetName() .. "Text"]:SetText(label)
@@ -351,8 +361,16 @@ MenuMod.CreatePanel = function(self)
 	panel:SetScript("OnUpdate", Panel_OnUpdate)
 	panel:Hide()
 
+	-- Rows are stacked top to bottom from here; see the layout grid above.
+	local y = -EDGE
+	local Row = function(height, gap)
+		local top = y - (gap or 0)
+		y = top - height
+		return top
+	end
+
 	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	title:SetPoint("TOPLEFT", 16, -16)
+	title:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE, Row(TITLE_HEIGHT))
 	title:SetText(L_MINIMAP_CATEGORY)
 	panel.title = title
 
@@ -361,31 +379,29 @@ MenuMod.CreatePanel = function(self)
 	-- (same size, position, source texture and crop).
 	local icon = panel:CreateTexture(nil, "ARTWORK")
 	icon:SetSize(32, 32)
-	icon:SetPoint("TOPRIGHT", -16, -16)
+	icon:SetPoint("TOPRIGHT", -EDGE, -EDGE)
 	icon:SetTexture(([[Interface\AddOns\%s\media\textures\diabolic-lettermark.tga]]):format(Addon))
 	icon:SetTexCoord(90 / 512, 422 / 512, 90 / 512, 422 / 512)
 	panel.icon = icon
 
 	local editButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	editButton:SetSize(190, 24)
-	editButton:SetPoint("TOPLEFT", title, "BOTTOMLEFT", -2, -20)
+	editButton:SetSize(190, BUTTON_HEIGHT)
+	editButton:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE, Row(BUTTON_HEIGHT, SECTION_GAP))
 	editButton:SetText(L_TOGGLE_EDIT_MODE)
 	editButton:SetScript("OnClick", EditButton_OnClick)
 	editButton:SetScript("OnEnter", function(self)
-		if (GameTooltip:IsForbidden()) then return end
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetText(L_TOGGLE_EDIT_MODE)
 		GameTooltip:AddLine(L_EDIT_MODE_TOOLTIP, 1, 1, 1, true)
 		GameTooltip:Show()
 	end)
 	editButton:SetScript("OnLeave", function(self)
-		if (GameTooltip:IsForbidden()) then return end
 		GameTooltip:Hide()
 	end)
 	panel.editButton = editButton
 
 	local anchorLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	anchorLabel:SetPoint("TOPLEFT", editButton, "BOTTOMLEFT", 2, -20)
+	anchorLabel:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE, Row(LABEL_HEIGHT, SECTION_GAP))
 	anchorLabel:SetJustifyH("LEFT")
 	anchorLabel:SetText(L_ANCHOR_HEADER)
 
@@ -395,14 +411,12 @@ MenuMod.CreatePanel = function(self)
 	anchorLabelHitbox:SetAllPoints(anchorLabel)
 	anchorLabelHitbox:EnableMouse(true)
 	anchorLabelHitbox:SetScript("OnEnter", function(self)
-		if (GameTooltip:IsForbidden()) then return end
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:AddLine(L_ANCHOR_HEADER)
 		GameTooltip:AddLine(L_ANCHOR_TOOLTIP, 1, 1, 1, true)
 		GameTooltip:Show()
 	end)
 	anchorLabelHitbox:SetScript("OnLeave", function(self)
-		if (GameTooltip:IsForbidden()) then return end
 		GameTooltip:Hide()
 	end)
 
@@ -410,9 +424,12 @@ MenuMod.CreatePanel = function(self)
 	-- points around it - click one to snap the minimap there.
 	-- Styled to match DiabolicUI's own Tooltips anchor picker
 	-- (same size and tooltip-border skin).
+	-- The size slider sits beside it, in the second column.
+	local pickerRow = Row(math.max(PICKER_HEIGHT, SLIDER_BLOCK_HEIGHT), HEADER_GAP)
+
 	local anchorBox = CreateFrame("Frame", nil, panel)
 	anchorBox:SetSize(120, 80)
-	anchorBox:SetPoint("TOPLEFT", anchorLabel, "BOTTOMLEFT", 10, -20)
+	anchorBox:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE + RADIO_OVERHANG, pickerRow - RADIO_OVERHANG)
 	anchorBox:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
@@ -441,9 +458,9 @@ MenuMod.CreatePanel = function(self)
 	-- ends, and the numeric box sitting to the right of it.
 	local sizeSlider = CreateFrame("Slider", "DiabolicMinimapSizeSlider", panel, "OptionsSliderTemplate")
 	sizeSlider:SetOrientation("HORIZONTAL")
-	sizeSlider:SetWidth(160)
+	sizeSlider:SetWidth(SLIDER_WIDTH)
 	sizeSlider:SetHeight(15)
-	sizeSlider:SetPoint("TOPLEFT", anchorBox, "TOPRIGHT", 40, -14)
+	sizeSlider:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE + SLIDER_COLUMN, pickerRow - SLIDER_LABEL_HEIGHT)
 	sizeSlider:SetMinMaxValues(minPct, maxPct)
 	sizeSlider:SetValueStep(1)
 	sizeSlider:SetScript("OnValueChanged", SizeSlider_OnValueChanged)
@@ -460,16 +477,18 @@ MenuMod.CreatePanel = function(self)
 	sizeInput:SetScript("OnEditFocusLost", SizeInput_OnEditFocusLost)
 	panel.sizeInput = sizeInput
 
-	local zoneLabelHeader = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	zoneLabelHeader:SetPoint("TOPLEFT", anchorBox, "BOTTOMLEFT", 2, -20)
+	local zoneLabelHeader = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	zoneLabelHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE, Row(HEADER_HEIGHT, SECTION_GAP))
 	zoneLabelHeader:SetJustifyH("LEFT")
 	zoneLabelHeader:SetText(L_ZONE_LABEL_HEADER)
 
 	-- A bordered group around Animate Zone Text + Fade Duration, styled
 	-- like the anchor point picker's backdrop elsewhere in this menu.
+	-- Its contents stay on the page's columns; only the border sits
+	-- GROUP_PAD outside them. Sized once its contents are placed.
+	local groupTop = y - HEADER_GAP
+	y = groupTop - GROUP_PAD
 	local zoneFadeGroup = CreateFrame("Frame", nil, panel)
-	zoneFadeGroup:SetPoint("TOPLEFT", zoneLabelHeader, "BOTTOMLEFT", -16, -8)
-	zoneFadeGroup:SetSize(380, 100)
 	zoneFadeGroup:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
@@ -480,23 +499,24 @@ MenuMod.CreatePanel = function(self)
 	zoneFadeGroup:SetBackdropBorderColor(1, 1, 1, 1)
 
 	local zoneFadeCheckbox = CreateFrame("CheckButton", "DiabolicMinimapZoneFadeCheckbox", zoneFadeGroup, "InterfaceOptionsCheckButtonTemplate")
-	zoneFadeCheckbox:SetPoint("TOPLEFT", zoneFadeGroup, "TOPLEFT", 18, -16)
+	zoneFadeCheckbox:SetPoint("TOPLEFT", panel, "TOPLEFT", CHECK_X, Row(CHECK_HEIGHT))
 	_G[zoneFadeCheckbox:GetName() .. "Text"]:SetText(L_ZONE_FADE_CHECKBOX)
 	zoneFadeCheckbox.tooltipText = L_ZONE_FADE_CHECKBOX
 	zoneFadeCheckbox.tooltipRequirement = L_ZONE_FADE_TOOLTIP
 	zoneFadeCheckbox:SetScript("OnClick", ZoneFadeCheckbox_OnClick)
 	panel.zoneFadeCheckbox = zoneFadeCheckbox
 
-	-- Anchored to the checkbox's own label text (not the checkbox frame,
-	-- which is much narrower than the label), so the gap to the slider
-	-- is measured from where "Animate Zone Text" actually ends on screen -
-	-- same layout as DiabolicUI's own "Fade Chat" + Time Fading/Visible.
 	-- One duration covers both halves of the crossfade (out, then in).
-	local zoneFadeDurationSlider = CreateDurationSlider(zoneFadeGroup, "DiabolicMinimapZoneFadeDurationSlider", _G[zoneFadeCheckbox:GetName() .. "Text"], L_ZONE_FADE_DURATION_SLIDER, L_ZONE_FADE_TOOLTIP,
+	-- Indented under its checkbox, same as DiabolicUI's "Fade Chat" sliders.
+	local zoneFadeDurationSlider = CreateDurationSlider(zoneFadeGroup, "DiabolicMinimapZoneFadeDurationSlider", L_ZONE_FADE_DURATION_SLIDER, L_ZONE_FADE_TOOLTIP,
 		50, 1000,
 		function() return ns.db.global.minimap.zoneFadeDuration end,
-		function(value) ns.db.global.minimap.zoneFadeDuration = value end,
-		{ "TOPLEFT", "TOPRIGHT", 30, -4 })
+		function(value) ns.db.global.minimap.zoneFadeDuration = value end)
+	zoneFadeDurationSlider:SetPoint("TOPLEFT", panel, "TOPLEFT", INDENT, Row(SLIDER_BLOCK_HEIGHT, ROW_GAP) - SLIDER_LABEL_HEIGHT)
+
+	y = y - GROUP_PAD
+	zoneFadeGroup:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE - GROUP_PAD, groupTop)
+	zoneFadeGroup:SetSize(GROUP_WIDTH, groupTop - y)
 	panel.zoneFadeDurationSlider = zoneFadeDurationSlider
 	-- ZoneFadeCheckbox_OnClick reaches this via self:GetParent() on the
 	-- checkbox, which is zoneFadeGroup now that it's grouped in its own

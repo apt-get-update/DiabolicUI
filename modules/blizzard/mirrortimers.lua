@@ -136,24 +136,6 @@ Module.MirrorTimer_Show = function(self, timer, value, maxvalue, scale, paused, 
 	self:UpdateAnchors()
 end
 
-Module.StartTimer_OnShow = function(self, frame)
-	local timers = self.timers
-	for i = 1, #TimerTracker.timerList do
-		local frame = TimerTracker.timerList[i]
-		if frame and (not timers[frame]) then
-			timers[frame] = {}
-			timers[frame].frame = frame
-			timers[frame].bar = _G[frame:GetName().."StatusBar"] or frame.bar
-			timers[frame].msg = _G[frame:GetName().."TimeText"] or _G[frame:GetName().."StatusBarTimeText"] or frame.timeText
-			timers[frame].border = _G[frame:GetName().."Border"] or _G[frame:GetName().."StatusBarBorder"]
-			timers[frame].type = "timer"
-			timers[frame].id = i
-			self:Skin(frame)
-		end
-	end
-	self:UpdateAnchors()
-end
-
 Module.CaptureBarVisible = function(self)
 	self.captureBarVisible = true
 end
@@ -170,17 +152,9 @@ Module.OnInit = function(self)
 		hooksecurefunc("MirrorTimer_Show", function(...) self:MirrorTimer_Show(...) end)
 	end
 	
-	if StartTimer_OnShow then
-		hooksecurefunc("StartTimer_OnShow", function(...) self:StartTimer_OnShow(...) end)
-	end
-
 	self:RegisterMessage("ENGINE_CAPTUREBAR_VISIBLE", "CaptureBarVisible")
 	self:RegisterMessage("ENGINE_CAPTUREBAR_HIDDEN", "CaptureBarHidden")
 
-	-- Battleground start countdown timers aren't properly aligned,
-	-- so I'm trying to figure out the right event to hook into.
-	-- If these don't work, I'll have to dive into the Blizz code and see.
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAnchors")
-	self:RegisterEvent("START_TIMER", "UpdateAnchors")
 end
 

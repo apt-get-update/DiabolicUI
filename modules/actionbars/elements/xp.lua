@@ -129,12 +129,8 @@ Bar_XP.OnEnter = function(self)
 	local data = self:UpdateData()
 	if not data.xpMax then return end
 
-	if GameTooltip:IsForbidden() then
-		return
-	end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
-	--GameTooltip:SetOwner(self.Controller, "ANCHOR_NONE")
 
 	local r, g, b = unpack(C.General.Highlight)
 	local r2, g2, b2 = unpack(C.General.OffWhite)
@@ -178,9 +174,7 @@ Bar_XP.OnEnter = function(self)
 end
 
 Bar_XP.OnLeave = function(self)
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 end
 
 BarWidget.OnEnter = function(self)

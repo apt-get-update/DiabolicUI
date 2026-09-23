@@ -78,7 +78,6 @@ ControllerWidget.OnEnable = function(self)
 	local controlConfig = config.structure.controllers.main
 	local controlPosition = config.structure.controllers.main.position
 
-	--self.Controller = setmetatable(CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"), Controller_MT)
 	self.Controller = setmetatable(Engine:CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"), Controller_MT)
 	self.Controller:SetFrameStrata("BACKGROUND")
 	self.Controller:SetAllPoints()
@@ -103,7 +102,6 @@ ControllerWidget.OnEnable = function(self)
 
 	table_insert(driver, "[bonusbar:5]vehicle")
 	table_insert(driver, "[vehicleui]vehicle")
-	--table_insert(driver, "[bonusbar:5]11")
 	table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
 
 	if playerClass == "DRUID" then

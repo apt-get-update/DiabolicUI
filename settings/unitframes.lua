@@ -268,7 +268,6 @@ Engine:NewStaticConfig("UnitFrames", {
 						size = { 150, 150 },
 						position = { "CENTER" },
 						color = { 175/255, 17/255, 28/255 }, -- blood
-						--color = { 138/255, 7/255, 7/255 }, -- blood
 						spark = {
 							size = { 128, 128 },
 							overflow = 8,
@@ -529,10 +528,7 @@ Engine:NewStaticConfig("UnitFrames", {
 			},
 			focus = {
 				size = { 90, 17 },
-				--position = { "TOPLEFT", "UICenter", "TOPLEFT", 60, -50 },
-				--position = { "CENTER", "UICenter", "CENTER", -440, -50 },
 				position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", orbOffsetX -140 + (140 - 160)/2 -8 + (140-90)/2, 440 },
-				--position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", -(158/2 + 90/2), 220 },
 				shade = {
 					size = { 196, 64 },
 					position = { "BOTTOM", 0, -20 },
@@ -591,7 +587,6 @@ Engine:NewStaticConfig("UnitFrames", {
 					size = { 75 *1.15, 75 *1.15 },
 					position = { "CENTER" },
 					color = { 175/255, 17/255, 28/255 }, -- blood
-					--color = { 138/255, 7/255, 7/255 }, -- blood
 					spark = {
 						size = { 64, 64 },
 						overflow = 8,

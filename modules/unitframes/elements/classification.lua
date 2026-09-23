@@ -88,7 +88,6 @@ local Update = function(self, event, ...)
 				end
 			end
 			if classification == "worldboss" then
-				--msg = add(msg, ("(%s)"):format(BOSS)) 
 			end
 			
 		else

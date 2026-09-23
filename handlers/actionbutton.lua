@@ -19,12 +19,9 @@ local AutoCastShine_AutoCastStart = _G.AutoCastShine_AutoCastStart
 local AutoCastShine_AutoCastStop = _G.AutoCastShine_AutoCastStop
 local CreateFrame = _G.CreateFrame
 local FindSpellBookSlotBySpellID = _G.FindSpellBookSlotBySpellID
-local FlyoutHasSpell = _G.FlyoutHasSpell
-local GetActionCharges = _G.GetActionCharges
 local GetActionCooldown = _G.GetActionCooldown
 local GetActionCount = _G.GetActionCount
 local GetActionInfo = _G.GetActionInfo
-local GetActionLossOfControlCooldown = _G.GetActionLossOfControlCooldown
 local GetActionText = _G.GetActionText
 local GetActionTexture = _G.GetActionTexture
 local GetItemCooldown = _G.GetItemCooldown
@@ -71,10 +68,6 @@ local UnitOnTaxi = _G.UnitOnTaxi
 
 -- Will replace these with our custom tooltiplib later on!
 local GameTooltip = _G.GameTooltip 
-
--- Cooldown type constants
-local COOLDOWN_TYPE_LOSS_OF_CONTROL = _G.COOLDOWN_TYPE_LOSS_OF_CONTROL
-local COOLDOWN_TYPE_NORMAL = _G.COOLDOWN_TYPE_NORMAL
 
 -- Registries
 local ButtonRegistry = {} -- all buttons
@@ -240,9 +233,6 @@ end
 --------------------------------------------------------------------
 local UpdateTooltip
 UpdateTooltip = function(self)
-	if GameTooltip:IsForbidden() then
-		return
-	end
 	if (GetCVar("UberTooltips") == "1") then
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	else
@@ -329,8 +319,7 @@ Button.Update = function(self)
 			ActionButtons[self] = nil
 			NonActionButtons[self] = nil
 
-			local name, subtext, isToken, autoCastAllowed, autoCastEnabled
-			name, subtext, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
+			local name, subtext, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
 		
 			-- needed for tooltip functionality
 			self.tooltipName = isToken and _G[name] or name -- :GetActionText() also returns this
@@ -404,9 +393,8 @@ Button.Update = function(self)
 	self:UpdateGrid()
 	self:UpdateCount()
 
-	self:UpdateFlyout()
 
-	if (not GameTooltip:IsForbidden()) and (GameTooltip:GetOwner() == self) then
+	if (GameTooltip:GetOwner() == self) then
 		UpdateTooltip(self)
 	end
 
@@ -483,9 +471,7 @@ end
 
 Button.OnLeave = function(self)
 	self._highlighted = nil
-	if (not GameTooltip:IsForbidden()) then
-		GameTooltip:Hide()
-	end
+	GameTooltip:Hide()
 	if self.PostMouseLeave then
 		return self:PostMouseLeave()
 	end	
@@ -663,7 +649,6 @@ end
 
 Button.StartFlash = function(self)
 	self.flashing = 1
-	--self.flash:Show()
 end
 
 Button.StopFlash = function(self)
@@ -705,338 +690,6 @@ Button.UpdateCount = function(self)
 		end
 	end
 end
-
-
-local unusedOverlays = {}
-local numOverlays = 0
-
-local overlayGlowAnimOutFinished = function(animGroup)
-	local overlay = animGroup:GetParent()
-	local frame = overlay:GetParent()
-	overlay:Hide()
-	table_insert(unusedOverlays, overlay)
-	frame.OverlayGlow = nil
-end
-
-local createScaleAnim = function(group, target, order, duration, x, y, delay)
-	local scale = group:CreateAnimation("Scale")
-	scale:SetTarget(target:GetName())
-	scale:SetOrder(order)
-	scale:SetDuration(duration)
-	scale:SetScale(x, y)
-
-	if delay then
-		scale:SetStartDelay(delay)
-	end
-end
-
-local createAlphaAnim = function(group, target, order, duration, fromAlpha, toAlpha, delay)
-	local alpha = group:CreateAnimation("Alpha")
-	alpha:SetTarget(target:GetName())
-	alpha:SetOrder(order)
-	alpha:SetDuration(duration)
-	alpha:SetFromAlpha(fromAlpha)
-	alpha:SetToAlpha(toAlpha)
-
-	if delay then
-		alpha:SetStartDelay(delay)
-	end
-end
-
-local createOverlayGlow = function()
-	numOverlays = numOverlays + 1
-
-	-- create frame and textures
-	local name = "ButtonGlowOverlay" .. tostring(numOverlays)
-	local overlay = CreateFrame("Frame", name, UIParent)
-
-	-- spark
-	overlay.spark = overlay:CreateTexture(name .. "Spark", "BACKGROUND")
-	overlay.spark:SetPoint("CENTER")
-	overlay.spark:SetAlpha(0)
-	overlay.spark:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
-	overlay.spark:SetTexCoord(0.00781250, 0.61718750, 0.00390625, 0.26953125)
-
-	-- inner glow
-	overlay.innerGlow = overlay:CreateTexture(name .. "InnerGlow", "ARTWORK")
-	overlay.innerGlow:SetPoint("CENTER")
-	overlay.innerGlow:SetAlpha(0)
-	overlay.innerGlow:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
-	overlay.innerGlow:SetTexCoord(0.00781250, 0.50781250, 0.27734375, 0.52734375)
-
-	-- inner glow over
-	overlay.innerGlowOver = overlay:CreateTexture(name .. "InnerGlowOver", "ARTWORK")
-	overlay.innerGlowOver:SetPoint("TOPLEFT", overlay.innerGlow, "TOPLEFT")
-	overlay.innerGlowOver:SetPoint("BOTTOMRIGHT", overlay.innerGlow, "BOTTOMRIGHT")
-	overlay.innerGlowOver:SetAlpha(0)
-	overlay.innerGlowOver:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
-	overlay.innerGlowOver:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
-
-	-- outer glow
-	overlay.outerGlow = overlay:CreateTexture(name .. "OuterGlow", "ARTWORK")
-	overlay.outerGlow:SetPoint("CENTER")
-	overlay.outerGlow:SetAlpha(0)
-	overlay.outerGlow:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
-	overlay.outerGlow:SetTexCoord(0.00781250, 0.50781250, 0.27734375, 0.52734375)
-
-	-- outer glow over
-	overlay.outerGlowOver = overlay:CreateTexture(name .. "OuterGlowOver", "ARTWORK")
-	overlay.outerGlowOver:SetPoint("TOPLEFT", overlay.outerGlow, "TOPLEFT")
-	overlay.outerGlowOver:SetPoint("BOTTOMRIGHT", overlay.outerGlow, "BOTTOMRIGHT")
-	overlay.outerGlowOver:SetAlpha(0)
-	overlay.outerGlowOver:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
-	overlay.outerGlowOver:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
-
-	-- ants
-	overlay.ants = overlay:CreateTexture(name .. "Ants", "OVERLAY")
-	overlay.ants:SetPoint("CENTER")
-	overlay.ants:SetAlpha(0)
-	overlay.ants:SetTexture([[Interface\SpellActivationOverlay\IconAlertAnts]])
-
-	-- setup antimations
-	overlay.animIn = overlay:CreateAnimationGroup()
-	createScaleAnim(overlay.animIn, overlay.spark,          1, 0.2, 1.5, 1.5)
-	createAlphaAnim(overlay.animIn, overlay.spark,          1, 0.2, 0, 1)
-	createScaleAnim(overlay.animIn, overlay.innerGlow,      1, 0.3, 2, 2)
-	createScaleAnim(overlay.animIn, overlay.innerGlowOver,  1, 0.3, 2, 2)
-	createAlphaAnim(overlay.animIn, overlay.innerGlowOver,  1, 0.3, 1, 0)
-	createScaleAnim(overlay.animIn, overlay.outerGlow,      1, 0.3, 0.5, 0.5)
-	createScaleAnim(overlay.animIn, overlay.outerGlowOver,  1, 0.3, 0.5, 0.5)
-	createAlphaAnim(overlay.animIn, overlay.outerGlowOver,  1, 0.3, 1, 0)
-	createScaleAnim(overlay.animIn, overlay.spark,          1, 0.2, 2/3, 2/3, 0.2)
-	createAlphaAnim(overlay.animIn, overlay.spark,          1, 0.2, 1, 0, 0.2)
-	createAlphaAnim(overlay.animIn, overlay.innerGlow,      1, 0.2, 1, 0, 0.3)
-	createAlphaAnim(overlay.animIn, overlay.ants,           1, 0.2, 0, 1, 0.3)
-
-	overlay.animIn:SetScript("OnPlay", function(group)
-		local frame = group:GetParent()
-		local frameWidth, frameHeight = frame:GetSize()
-		frame.spark:SetSize(frameWidth, frameHeight)
-		frame.spark:SetAlpha(0.3)
-		frame.innerGlow:SetSize(frameWidth / 2, frameHeight / 2)
-		frame.innerGlow:SetAlpha(1.0)
-		frame.innerGlowOver:SetAlpha(1.0)
-		frame.outerGlow:SetSize(frameWidth * 2, frameHeight * 2)
-		frame.outerGlow:SetAlpha(1.0)
-		frame.outerGlowOver:SetAlpha(1.0)
-		frame.ants:SetSize(frameWidth * 0.85, frameHeight * 0.85)
-		frame.ants:SetAlpha(0)
-		frame:Show()
-	end)
-	overlay.animIn:SetScript("OnFinished", function(group)
-		local frame = group:GetParent()
-		local frameWidth, frameHeight = frame:GetSize()
-		frame.spark:SetAlpha(0)
-		frame.innerGlow:SetAlpha(0)
-		frame.innerGlow:SetSize(frameWidth, frameHeight)
-		frame.innerGlowOver:SetAlpha(0.0)
-		frame.outerGlow:SetSize(frameWidth, frameHeight)
-		frame.outerGlowOver:SetAlpha(0.0)
-		frame.outerGlowOver:SetSize(frameWidth, frameHeight)
-		frame.ants:SetAlpha(1.0)
-	end)
-
-	overlay.animOut = overlay:CreateAnimationGroup()
-	createAlphaAnim(overlay.animOut, overlay.outerGlowOver, 1, 0.2, 0, 1)
-	createAlphaAnim(overlay.animOut, overlay.ants,          1, 0.2, 1, 0)
-	createAlphaAnim(overlay.animOut, overlay.outerGlowOver, 2, 0.2, 1, 0)
-	createAlphaAnim(overlay.animOut, overlay.outerGlow,     2, 0.2, 1, 0)
-
-	overlay.animOut:SetScript("OnFinished", overlayGlowAnimOutFinished)
-
-	-- scripts
-	overlay:SetScript("OnUpdate", function(self, elapsed)
-		AnimateTexCoords(self.ants, 256, 256, 48, 48, 22, elapsed, 0.01)
-		local cooldown = self:GetParent().cooldown
-		-- we need some threshold to avoid dimming the glow during the gdc
-		-- (using 1500 exactly seems risky, what if casting speed is slowed or something?)
-		if(cooldown and cooldown:IsShown() and cooldown:GetCooldownDuration() > 3000) then
-			self:SetAlpha(.5)
-		else
-			self:SetAlpha(1)
-		end
-	end)
-	overlay:SetScript("OnHide", function(self)
-		if self.animOut:IsPlaying() then
-			self.animOut:Stop()
-			overlayGlowAnimOutFinished(self.animOut)
-		end
-	end)
-
-	return overlay
-end
-
-local GetOverlayGlow = function()
-	local overlay = table_remove(unusedOverlays)
-	if not overlay then
-		overlay = createOverlayGlow()
-	end
-	return overlay
-end
-
-Button.ShowOverlayGlow = function(self)
-	if self.OverlayGlow then
-		if self.OverlayGlow.animOut:IsPlaying() then
-			self.OverlayGlow.animOut:Stop()
-			self.OverlayGlow.animIn:Play()
-		end
-	else
-		local overlay = GetOverlayGlow()
-		local frameWidth, frameHeight = self:GetSize()
-		overlay:SetParent(self)
-		overlay:SetFrameLevel(self:GetFrameLevel() + 6)
-		overlay:ClearAllPoints()
-		--Make the height/width available before the next frame:
-		overlay:SetSize(frameWidth * 1.4, frameHeight * 1.4)
-		overlay:SetPoint("TOPLEFT", self, "TOPLEFT", -frameWidth * 0.2, frameHeight * 0.2)
-		overlay:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", frameWidth * 0.2, -frameHeight * 0.2)
-		overlay.animIn:Play()
-		self.OverlayGlow = overlay
-	end
-end
-
-Button.HideOverlayGlow = function(self)
-	if self.OverlayGlow then
-		if self.OverlayGlow.animIn:IsPlaying() then
-			self.OverlayGlow.animIn:Stop()
-		end
-		if self:IsVisible() then
-			self.OverlayGlow.animOut:Play()
-		else
-			overlayGlowAnimOutFinished(self.OverlayGlow.animOut)
-		end
-	end
-end
-
-Button.UpdateOverlayGlow = function(self)
-	local spellId = self:GetSpellId()
-	if spellId and IsSpellOverlayed(spellId) then
-		self:ShowOverlayGlow()
-	else
-		self:HideOverlayGlow()
-	end
-end 
-
-Button.UpdateFlyout = function(self)
-	if not self.FlyoutBorder or not self.FlyoutBorderShadow then
-		return
-	end
-
-	self.FlyoutBorder:Hide()
-	self.FlyoutBorderShadow:Hide()
-
-	if self.type_by_state == "action" then
-		-- based on ActionButton_UpdateFlyout in ActionButton.lua
-		local actionType = GetActionInfo(self.action_by_state)
-		if actionType == "flyout" then
-			-- Update border and determine arrow position
-			local arrowDistance
-			if (SpellFlyout and SpellFlyout:IsShown() and SpellFlyout:GetParent() == self) or GetMouseFocus() == self then
-				arrowDistance = 5
-			else
-				arrowDistance = 2
-			end
-
-			-- Update arrow
-			self.FlyoutArrow:Show()
-			self.FlyoutArrow:ClearAllPoints()
-			local direction = self:GetAttribute("flyoutDirection")
-			if direction == "LEFT" then
-				self.FlyoutArrow:SetPoint("LEFT", self, "LEFT", -arrowDistance, 0)
-				SetClampedTextureRotation(self.FlyoutArrow, 270)
-			elseif direction == "RIGHT" then
-				self.FlyoutArrow:SetPoint("RIGHT", self, "RIGHT", arrowDistance, 0)
-				SetClampedTextureRotation(self.FlyoutArrow, 90)
-			elseif direction == "DOWN" then
-				self.FlyoutArrow:SetPoint("BOTTOM", self, "BOTTOM", 0, -arrowDistance)
-				SetClampedTextureRotation(self.FlyoutArrow, 180)
-			else
-				self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, arrowDistance)
-				SetClampedTextureRotation(self.FlyoutArrow, 0)
-			end
-
-			-- return here, otherwise flyout is hidden
-			return
-		end
-	end 
-	self.FlyoutArrow:Hide()
-end
-
-Handler.StyleFlyouts = function(self)
-	if not SpellFlyout then 
-		return 
-	end
-
-	local GetFlyoutInfo = GetFlyoutInfo
-	local GetNumFlyouts = GetNumFlyouts
-	local GetFlyoutID = GetFlyoutID
-	local SpellFlyout = SpellFlyout
-	local SpellFlyoutBackgroundEnd = SpellFlyoutBackgroundEnd
-	local SpellFlyoutHorizontalBackground = SpellFlyoutHorizontalBackground
-	local SpellFlyoutVerticalBackground = SpellFlyoutVerticalBackground
-	local numFlyoutButtons = 0
-	local flyoutButtons = {}
-	local buttonBackdrop = {
-		bgFile = BLANK_TEXTURE,
-		edgeFile = BLANK_TEXTURE,
-		edgeSize = 1,
-		insets = { 
-			left = -1, 
-			right = -1, 
-			top = -1, 
-			bottom = -1
-		}
-	}
-	local UpdateFlyout = function(self)
-		if not self.FlyoutArrow then return end
-		SpellFlyoutHorizontalBackground:SetAlpha(0)
-		SpellFlyoutVerticalBackground:SetAlpha(0)
-		SpellFlyoutBackgroundEnd:SetAlpha(0)
-		-- self.FlyoutBorder:SetAlpha(0)
-		-- self.FlyoutBorderShadow:SetAlpha(0)
-		for i = 1, GetNumFlyouts() do
-			local _, _, numSlots, isKnown = GetFlyoutInfo(GetFlyoutID(i))
-			if isKnown then
-				numFlyoutButtons = numSlots
-				break
-			end
-		end
-	end
-	local updateFlyoutButton = function(self)
-		self.icon:SetTexCoord(5/64, 59/64, 5/64, 59/64)
-		self.icon:ClearAllPoints()
-		self.icon:SetPoint("TOPLEFT", 2, -2)
-		self.icon:SetPoint("BOTTOMRIGHT", -2, 2)
-		self.icon:SetDrawLayer("BORDER", 0) -- tends to disappear into BACKGROUND, 0
-		self:SetBackdrop(buttonBackdrop)
-		self:SetBackdropColor(0, 0, 0, 1)
-		self:SetBackdropBorderColor(.15, .15, .15, 1)
-	end
-	local SetupFlyoutButton = function()
-		local button
-		for i = 1, numFlyoutButtons do
-			button = _G["SpellFlyoutButton"..i]
-			if button then
-				if not flyoutButtons[button] then
-					updateFlyoutButton(button)
-					flyoutButtons[button] = true
-				end
-				if (button:GetChecked() == true) then
-					button:SetChecked(false) -- do we need to see this?
-				end
-			else
-				return
-			end
-		end
-	end
-	SpellFlyout:HookScript("OnShow", SetupFlyoutButton)
-	hooksecurefunc("ActionButton_UpdateFlyout", function(self, ...)
-		if ButtonRegistry[self] and self.UpdateFlyout then
-			self:UpdateFlyout()
-		end
-	end)
-end
-
 
 
 -- Button API Mapping
@@ -1089,7 +742,7 @@ ActionButton.IsAutoRepeat				= function(self) return IsAutoRepeatAction(self.act
 ActionButton.IsUsable					= function(self) return IsUsableAction(self.action_by_state) end
 ActionButton.IsConsumableOrStackable	= function(self) return IsConsumableAction(self.action_by_state) or IsStackableAction(self.action_by_state) end
 ActionButton.IsUnitInRange				= function(self, unit) return IsActionInRange(self.action_by_state, unit) end
-ActionButton.SetTooltip					= function(self) return (not GameTooltip:IsForbidden()) and GameTooltip:SetAction(self.action_by_state) end
+ActionButton.SetTooltip					= function(self) return GameTooltip:SetAction(self.action_by_state) end
 ActionButton.GetSpellId					= function(self)
 	local actionType, id, subType = GetActionInfo(self.action_by_state)
 	if (actionType == "spell") then
@@ -1099,9 +752,6 @@ ActionButton.GetSpellId					= function(self)
 		return spellId
 	end
 end
-ActionButton.GetLossOfControlCooldown 	= GetActionLossOfControlCooldown and function(self) 
-	return GetActionLossOfControlCooldown(self.action_by_state) 
-end or function() return 0, 0 end
 
 
 -- Spell Button API mapping
@@ -1118,7 +768,7 @@ SpellButton.IsAutoRepeat				= function(self) return IsAutoRepeatSpell(FindSpellB
 SpellButton.IsUsable					= function(self) return IsUsableSpell(self.action_by_state) end
 SpellButton.IsConsumableOrStackable		= function(self) return IsConsumableSpell(self.action_by_state) end
 SpellButton.IsUnitInRange				= function(self, unit) return IsSpellInRange(FindSpellBookSlotBySpellID(self.action_by_state), "spell", unit) end -- needs spell book id as of 4.0.1.13066
-SpellButton.SetTooltip					= function(self) return (not GameTooltip:IsForbidden()) and GameTooltip:SetSpellByID(self.action_by_state) end
+SpellButton.SetTooltip					= function(self) return GameTooltip:SetSpellByID(self.action_by_state) end
 SpellButton.GetSpellId					= function(self) return self.action_by_state end
 
 
@@ -1138,7 +788,7 @@ ItemButton.IsConsumableOrStackable		= function(self)
 	return IsConsumableItem(self.action_by_state) or (stackSize and (stackSize > 1))
 end
 ItemButton.IsUnitInRange				= function(self, unit) return IsItemInRange(self.action_by_state, unit) end
-ItemButton.SetTooltip					= function(self) return (not GameTooltip:IsForbidden()) and GameTooltip:SetHyperlink(self.action_by_state) end
+ItemButton.SetTooltip					= function(self) return GameTooltip:SetHyperlink(self.action_by_state) end
 ItemButton.GetSpellId					= function(self) return nil end
 
 
@@ -1166,9 +816,6 @@ PetActionButton.IsCurrentlyActive		= function(self) return select(5, GetPetActio
 PetActionButton.IsAutoRepeat			= function(self) return nil end -- select(7, GetPetActionInfo(self.id))
 PetActionButton.SetTooltip				= function(self) 
 	if (not self.tooltipName) then
-		return
-	end
-	if GameTooltip:IsForbidden() then
 		return
 	end
 
@@ -1202,7 +849,7 @@ StanceButton.GetActionText 				= function(self) return select(2,GetShapeshiftFor
 StanceButton.GetTexture 				= function(self) return GetShapeshiftFormInfo(self.id) end
 StanceButton.IsCurrentlyActive 			= function(self) return select(3,GetShapeshiftFormInfo(self.id)) end
 StanceButton.IsUsable 					= function(self) return select(4,GetShapeshiftFormInfo(self.id)) end
-StanceButton.SetTooltip					= function(self) return (not GameTooltip:IsForbidden()) and GameTooltip:SetShapeshift(self.id) end
+StanceButton.SetTooltip					= function(self) return GameTooltip:SetShapeshift(self.id) end
 
 
 -- returns an iterator containing button frame handles as keys
@@ -1290,7 +937,6 @@ Handler.OnEvent = function(self, event, ...)
 		end
 		
 	elseif (event == "PLAYER_TARGET_CHANGED") then
-		-- UpdateRangeTimer()
 		
 	elseif (event == "ACTIONBAR_UPDATE_STATE") 
 	or ((event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and (arg1 == "player")) 
@@ -1376,46 +1022,11 @@ Handler.OnEvent = function(self, event, ...)
 			end
 		end
 	
-	elseif (event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW") then
-		for button in next, ActiveButtons do
-			local spellId = button:GetSpellId()
-			if spellId then 
-				if (spellId == arg1) or IsSpellOverlayed(spellId) then
-					button:ShowOverlayGlow()
-				elseif (button.type_by_state == "action") then
-					local actionType, id = GetActionInfo(button.action_by_state)
-					if (actionType == "flyout") and FlyoutHasSpell(id, arg1) then
-						button:ShowOverlayGlow()
-					end
-				end
-			end
-		end
-	
-	elseif (event == "SPELL_ACTIVATION_OVERLAY_GLOW_HIDE") then
-		for button in next, ActiveButtons do
-			local spellId = button:GetSpellId()
-			if spellId then 
-				if (spellId == arg1) or IsSpellOverlayed(spellId) then
-					button:HideOverlayGlow()
-				elseif (button.type_by_state == "action") then
-					local actionType, id = GetActionInfo(button.action_by_state)
-					if (actionType == "flyout") and FlyoutHasSpell(id, arg1) then
-						button:HideOverlayGlow()
-					end
-				end
-			end
-		end
-	
 	elseif (event == "PLAYER_EQUIPMENT_CHANGED") then
 		for button in next, ActiveButtons do
 			if (button.type_by_state == "item") then
 				button:Update()
 			end
-		end
-	
-	elseif (event == "SPELL_UPDATE_CHARGES") then
-		for button in next, ActiveButtons do
-			button:UpdateCount()
 		end
 	
 	elseif (event == "UPDATE_SUMMONPETS_ACTION") then
@@ -1516,7 +1127,6 @@ Handler.LoadEvents = function(self)
 	-- Ordering them by the alphabet, because my brain turns to mush here.
 
 	self:RegisterEvent("ACTIONBAR_HIDEGRID", "OnEvent")
-	--self:RegisterEvent("ACTIONBAR_PAGE_CHANGED", "OnEvent")
 	self:RegisterEvent("ACTIONBAR_SHOWGRID", "OnEvent")
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "OnEvent")
 	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", "OnEvent")
@@ -1546,9 +1156,6 @@ Handler.LoadEvents = function(self)
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
-	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE", "OnEvent") -- Cata
-	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW", "OnEvent") -- Cata
-	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
 	self:RegisterEvent("START_AUTOREPEAT_SPELL", "OnEvent")
@@ -1558,11 +1165,9 @@ Handler.LoadEvents = function(self)
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
 	self:RegisterEvent("UNIT_AURA", "OnEvent")
-	--self:RegisterEvent("UNIT_FLAGS", "OnEvent")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
 	self:RegisterEvent("UNIT_PET", "OnEvent")
 	self:RegisterEvent("UPDATE_BINDINGS", "OnEvent")
-	--self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN", "OnEvent")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORM", "OnEvent")
 	self:RegisterEvent("UPDATE_SUMMONPETS_ACTION", "OnEvent")
@@ -1572,12 +1177,6 @@ Handler.LoadEvents = function(self)
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN", "OnEvent")
 
-	--hooksecurefunc("TakeTaxiNode", function() 
-	--	for button in next, ActionButtons do
-	--		button:UpdateUsable("taxi")
-	--	end
-	--end) 
-	
 end
 
 Handler.Start = function(self, event)
@@ -1585,7 +1184,6 @@ Handler.Start = function(self, event)
 	self:UnregisterEvent(event, "Start")
 
 	-- Initialize the handler for real
-	self:StyleFlyouts()
 	self:LoadEvents()
 
 	-- Start the range and flash updates
@@ -1736,7 +1334,7 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 
 	button.flash = button:CreateTexture(nil, "OVERLAY")
 	button.flash:SetAllPoints(button.icon)
-	button.flash:SetColorTexture(.7, 0, 0, .3)
+	button.flash:SetTexture(.7, 0, 0, .3)
 	button.flash:Hide()
 
 	button.name = button:CreateFontString(nil, "OVERLAY")
@@ -1764,24 +1362,6 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 		button:SetNormalTexture("")
 	end
 
-	-- exists on action, pet and stance templates
-	local old_flyoutarrow = _G[button:GetName().."FlyoutArrow"]
-	if old_flyoutarrow then
-		button.FlyoutArrow = old_flyoutarrow
-	end
-	local old_flyoutborder = _G[button:GetName().."FlyoutBorder"]
-	if old_flyoutborder then
-		button.FlyoutBorder = old_flyoutborder
-		button.FlyoutBorder:SetAlpha(0)
-		button.FlyoutBorder:SetParent(UIHider)
-	end
-	local old_flyoutbordershadow = _G[button:GetName().."FlyoutBorderShadow"]
-	if old_flyoutbordershadow then
-		button.FlyoutBorderShadow = old_flyoutbordershadow
-		button.FlyoutBorderShadow:SetAlpha(0)
-		button.FlyoutBorderShadow:SetParent(UIHider)
-	end
-
 	-- cooldown frame
 	-- stance and pet buttons have this in their template, I think
 	local oldCooldown = _G[button:GetName().."Cooldown"] 
@@ -1800,7 +1380,7 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- let blizz handle this one
 	button.pushed = button:CreateTexture(nil, "OVERLAY")
 	button.pushed:SetAllPoints(button.icon)
-	button.pushed:SetColorTexture(1, 1, 1, .25)
+	button.pushed:SetTexture(1, 1, 1, .25)
 
 	button:SetPushedTexture(button.pushed)
 	button:GetPushedTexture():SetBlendMode("BLEND")

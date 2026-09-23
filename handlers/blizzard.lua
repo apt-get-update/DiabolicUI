@@ -379,10 +379,6 @@ local elements = {
 				MultiBarLeftButton:SetAttribute("statehidden", true)
 			end
 
-			--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarRight"] = nil
-			--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarLeft"] = nil
-			--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomLeft"] = nil
-			--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomRight"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["StanceBarFrame"] = nil
@@ -443,23 +439,6 @@ local elements = {
 				PetCastingBarFrame:SetScript("OnUpdate", nil)
 				PetCastingBarFrame:SetParent(UIHider)
 				PetCastingBarFrame:UnregisterAllEvents()
-			end
-		end
-	},
-	LevelUpDisplay = {
-		OnDisable = function(self)
-			if _G.LevelUpDisplay then
-				self:DisableLevelUpDisplay()
-			end
-		end,
-		DisableLevelUpDisplay = function(self)
-			local LevelUpDisplay = _G.LevelUpDisplay
-			
-			LevelUpDisplay:UnregisterAllEvents()
-
-			-- Older versions (Cata) lack this method
-			if LevelUpDisplay.StopBanner then
-				LevelUpDisplay:StopBanner()
 			end
 		end
 	},
@@ -551,26 +530,6 @@ local elements = {
 			WatchFrame:Hide()
 		end
 	},
-	TimerTracker = {
-		OnDisable = function(self)
-			-- Added in cata, but since we check for the existence anyway, 
-			-- it's faster to skip the client check for this one.
-			local TimerTracker = _G.TimerTracker
-			if TimerTracker then
-				TimerTracker:SetScript("OnEvent", nil)
-				TimerTracker:SetScript("OnUpdate", nil)
-				TimerTracker:UnregisterAllEvents()
-				if TimerTracker.timerList then
-					for _, bar in pairs(TimerTracker.timerList) do
-						bar:SetScript("OnEvent", nil)
-						bar:SetScript("OnUpdate", nil)
-						bar:SetParent(UIHider)
-						bar:UnregisterAllEvents()
-					end
-				end
-			end
-		end
-	},
 	Tutorials = {
 		OnDisable = function(self)
 			if _G.TutorialFrame then
@@ -627,17 +586,7 @@ local elements = {
 			-- I do the same simple existence checks here too. 
 			-- Will just have to do for now.
 			if _G.CompactPartyFrame then -- 4.0?
-				--killUnitFrame(_G.CompactPartyFrame)
-				--for i=1, _G.MEMBERS_PER_RAID_GROUP do
-				--	killUnitFrame(_G["CompactPartyFrameMember" .. i])
-				--end	
 			elseif _G.CompactPartyFrame_Generate then -- 4.1?
-				--hooksecurefunc("CompactPartyFrame_Generate", function() 
-				--	killUnitFrame(_G.CompactPartyFrame)
-				--	for i=1, _G.MEMBERS_PER_RAID_GROUP do
-				--		killUnitFrame(_G["CompactPartyFrameMember" .. i])
-				--	end	
-				--end)
 			end
 
 		end,
@@ -660,75 +609,10 @@ local elements = {
 			RaidBossEmoteFrame:UnregisterAllEvents()
 		end
 	},
-	WorldMap = {
-		Remove = function(self, element)
-
-			if (element == "BlackoutWorld") then
-
-				-- Don't black out the world with the full screen WorldMap, 
-				-- we want to see what's going on in the background in case of danger!
-				if _G.BlackoutWorld then
-					_G.BlackoutWorld:SetAlpha(0)
-				end
-
-			elseif (element == "QuestTracking") then
-
-				-- WoW API
-				local CanAbandonQuest = _G.CanAbandonQuest
-				local GetQuestLogIndexByID = _G.GetQuestLogIndexByID
-				local GetQuestLogPushable = _G.GetQuestLogPushable
-				local IsInGroup = _G.IsInGroup
-				local UIDropDownMenu_AddButton = _G.UIDropDownMenu_AddButton
-				local UIDropDownMenu_CreateInfo = _G.UIDropDownMenu_CreateInfo
-				local UIDropDownMenu_Initialize = _G.UIDropDownMenu_Initialize
-				local QuestMapQuestOptions_AbandonQuest = _G.QuestMapQuestOptions_AbandonQuest
-
-				-- WoW Frames & Objects
-				local QuestMapQuestOptionsDropDown = _G.QuestMapQuestOptionsDropDown
-
-				-- Remove the blizzard tracking options from the WorldMapFrame, 
-				-- since we're replacing this tracking system with our own.
-				if _G.QuestMapQuestOptions_TrackQuest then
-					_G.QuestMapQuestOptions_TrackQuest = function() end
-				end 
-
-				-- Replace the WorldMap questlog dropdown with one without "Track Quest".
-				if _G.QuestMapQuestOptionsDropDown_Initialize then 
-					_G.QuestMapQuestOptionsDropDown_Initialize = function(self)
-						local questLogIndex = GetQuestLogIndexByID(self.questID)
-						local info = UIDropDownMenu_CreateInfo()
-						info.isNotRadio = true
-						info.notCheckable = true
-
-						info.text = SHARE_QUEST
-						info.func = function(_, questID) QuestMapQuestOptions_ShareQuest(questID) end
-						info.arg1 = self.questID
-
-						if ( not GetQuestLogPushable(questLogIndex) or not IsInGroup() ) then
-							info.disabled = 1
-						end
-
-						UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-
-						if CanAbandonQuest(self.questID) then
-							info.text = ABANDON_QUEST
-							info.func = function(_, questID) QuestMapQuestOptions_AbandonQuest(questID) end
-							info.arg1 = self.questID
-							info.disabled = nil
-							UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-						end
-					end
-					QuestMapQuestOptionsDropDown.questID = 0
-					UIDropDownMenu_Initialize(QuestMapQuestOptionsDropDown, QuestMapQuestOptionsDropDown_Initialize, "MENU")
-				end	
-			end
-		end
-	},
 	WorldState = {
 		OnDisable = function(self)
-			WorldStateAlwaysUpFrame = _G.WorldStateAlwaysUpFrame
+			local WorldStateAlwaysUpFrame = _G.WorldStateAlwaysUpFrame
 			WorldStateAlwaysUpFrame:SetParent(UIHider)
-			-- WorldStateAlwaysUpFrame:Hide()
 			WorldStateAlwaysUpFrame:SetScript("OnEvent", nil) 
 			WorldStateAlwaysUpFrame:SetScript("OnUpdate", nil) 
 			WorldStateAlwaysUpFrame:UnregisterAllEvents()
@@ -745,17 +629,14 @@ local elements = {
 			ZoneTextFrame:SetParent(UIHider)
 			ZoneTextFrame:UnregisterAllEvents()
 			ZoneTextFrame:SetScript("OnUpdate", nil)
-			-- ZoneTextFrame:Hide()
 			
 			SubZoneTextFrame:SetParent(UIHider)
 			SubZoneTextFrame:UnregisterAllEvents()
 			SubZoneTextFrame:SetScript("OnUpdate", nil)
-			-- SubZoneTextFrame:Hide()
 			
 			AutoFollowStatus:SetParent(UIHider)
 			AutoFollowStatus:UnregisterAllEvents()
 			AutoFollowStatus:SetScript("OnUpdate", nil)
-			-- AutoFollowStatus:Hide()
 		end
 	}
 	

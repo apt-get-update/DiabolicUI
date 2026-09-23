@@ -5,19 +5,6 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 -- Blizzard elements we can't replace, like the gamemenu,
 -- ...or Blizzard elements we can't be arsed to replace, like the rest. 
 Engine:NewStaticConfig("Blizzard", {
-	altpower = {
-		position = { "CENTER", "UICenter", "CENTER", 0, -120 }
-	},
-	character = {
-		itemLevel = {
-			point = { "TOPLEFT", 4, -4 },
-			fontObject = DiabolicFont_SansBold12ThinOutline, -- DiabolicFont_SansBold10,
-			shadeTexture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
-		}
-	},
-	containers = {
-
-	},
 	durability = {
 		position = { "CENTER", "UICenter", "CENTER", 190, 0 }
 	},
@@ -26,27 +13,6 @@ Engine:NewStaticConfig("Blizzard", {
 		dim = false,
 		dim_color = { 0, 0, 0, .75 },
 		button_spacing = 4,
-		button_anchor_wod = {
-			position = "TOP",
-			anchor = "UICenter", 
-			rposition = "TOP",
-			xoffset = 0, -- 0 when TOP, 88 when anchored TOPLEFT 
-			yoffset = -200 -- -260 -293
-		},
-		button_anchor = {
-			position = "TOP",
-			anchor = "UICenter", 
-			rposition = "TOP",
-			xoffset = 0, -- 0 when TOP, 88 when anchored TOPLEFT 
-			yoffset = -240 -- -260 -293
-		},
-		resume_button_anchor = {
-			position = "BOTTOM",
-			anchor = "UICenter", 
-			rposition = "BOTTOM",
-			xoffset = 0,
-			yoffset = 160 -- Diablo value is 78
-		},
 		show_logo = false,
 		logo = {
 			size = { 480, 240 },
@@ -59,42 +25,10 @@ Engine:NewStaticConfig("Blizzard", {
 				xoffset = 0, -- 0 when TOP, 16ish when anchored TOPLEFT
 				yoffset = 0 -- -20
 			},
-		},
-		show_model = false,
-		model = {
-			size = { 600, 800 },
-			position = {
-				point = "CENTER", 
-				anchor = "UICenter",
-				rpoint = "CENTER", 
-				xoffset = 0, 
-				yoffset = 0
-			}
-		},
-		window = {
-			insets = { 6, 6, 6, 6 }, -- left, right, top, bottom
-			backdrop = {
-				bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-				edgeFile = path .. [[textures\DiabolicUI_Tooltip_Border.tga]],
-				edgeSize = 32,
-				tile = false,
-				tileSize = 0,
-				insets = {
-					left = 23,
-					right = 23,
-					top = 23,
-					bottom = 23
-				}
-			},
-			backdrop_color = { 0, 0, 0, .95 },
-			backdrop_border_color = { 1, 1, 1, 1 },
 		}
 	},
 	ghostframe = {
 		position = { "CENTER", "UIParent", "CENTER", 0, -50 }
-	},
-	levelup = {
-		position = { "TOP", 0, -250 }
 	},
 	loot = {
 		-- This builds its own standalone loot window (see
@@ -160,7 +94,6 @@ Engine:NewStaticConfig("Blizzard", {
 			}
 		}
 	},
-	-- also applies to the new TimerTrackers in ... uh... WoD? MoP? :/
 	mirrortimers = {
 		position = { "TOP", "UIParent", "TOP", 0, -300 }, -- default anchor -180
 		positionOffsetByOne = { "TOP", "UIParent", "TOP", 0, -(300 + 50) }, -- notch it 1 bar down (give room for the capture bar)
@@ -174,34 +107,8 @@ Engine:NewStaticConfig("Blizzard", {
 		spark_size = { 128, 128 },
 		spark_texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_Spark_Warcraft.tga]]
 	},
-	tracker = {
-		togglebutton = {
-			size = { 22, 21 },
-			--position = { "TOPRIGHT", -5, 0 }, -- blizzard "TOPRIGHT", -12, -5
-			position = { "TOPRIGHT", 0, 0 }, -- blizzard "TOPRIGHT", -12, -5
-			texture_size = { 32, 32 },
-			texture = path .. [[textures\DiabolicUI_ExpandCollapseButton_22x21.tga]],
-			texture_disabled = path .. [[textures\DiabolicUI_ExpandCollapseButton_22x21_Disabled.tga]]
-		},
-		title = {
-			position = { "TOPRIGHT", "WatchFrameCollapseExpandButton", "TOPLEFT", -16, 0 },
-			font_object = DiabolicWatchFrameHeader
-		},
-		line = {
-			font_object = DiabolicWatchFrameNormal
-		},
-		colors = {
-			title = { 1, 1, 1 },
-			title_disabled = { .5, .5, .5 },
-			quest_title = { 229/255, 178/255, 25/255, .9 },
-			quest_title_highlight = { 255/255, 234/255, 137/255, 1 },
-			line = { 240/250, 240/255, 240/255, .9 },
-			line_highlight = { 1, 1, 1, 1 }
-		}
-	},
 	tooltips = {
 		position = { "BOTTOMRIGHT", -(30 + 8), 20 + 55 + 20 + 10 }, -- relative to UICenter
-		--position = { "BOTTOMRIGHT", -8, 12 }, -- relative to UICenter
 		offsets = { 8, 8, 8, 8 + 4 },
 		backdrop = {
 			bgFile = [[Interface\ChatFrame\ChatFrameBackground]],

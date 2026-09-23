@@ -26,5 +26,3 @@ Engine:NewConfig("ChatFilters", {
 -- chat bubbles
 Engine:NewConfig("ChatBubbles", {})
 
--- chat sounds
-Engine:NewConfig("ChatSounds", {})

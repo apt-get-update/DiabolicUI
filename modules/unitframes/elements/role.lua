@@ -10,8 +10,9 @@ local UnitIsConnected = UnitIsConnected
 local CanInspect = CanInspect
 local NotifyInspect = NotifyInspect
 local GetTalentTabInfo = GetTalentTabInfo
+local GetNumPartyMembers = GetNumPartyMembers
+local GetNumRaidMembers = GetNumRaidMembers
 local GetTime = GetTime
-local IsInGroup = IsInGroup
 
 -- Each role icon occupies one quadrant of a 64x64 grid, but the artwork's
 -- edge glow bleeds a texel or two past its own quadrant boundary. Sampled
@@ -153,7 +154,7 @@ Update = function(self, event, ...)
 	-- Party/raid roles only mean anything while actually grouped - skip
 	-- the assigned-role lookup and the inspect-queue fallback entirely
 	-- otherwise, instead of polling/inspecting nonexistent unit tokens.
-	if not IsInGroup() then
+	if (GetNumRaidMembers() == 0) and (GetNumPartyMembers() == 0) then
 		Role:Hide()
 		return
 	end

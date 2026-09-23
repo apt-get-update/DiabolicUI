@@ -3,7 +3,7 @@
 ## Title: |TInterface\Addons\DiabolicUI\media\textures\diabolic-lettermark.tga:16:16:0:0:512:512:90:422:90:422|t |cffaa0022Diabolic|r |cfffafafaUI|r
 ## Notes: A full UI designed to replicate the DiabloIII feeling.
 ## Author: Lars "Goldpaw" Norberg, modified by apt-get-update
-## Version: 1.6-Release
+## Version: 1.6.1-Release
 ## DefaultState: Enabled
 ## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB
 ## X-Category: Interface Enhancements

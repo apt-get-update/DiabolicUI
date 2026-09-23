@@ -12,7 +12,7 @@ local CreateFrame = _G.CreateFrame
 local GetFramerate = _G.GetFramerate
 local GetNetStats = _G.GetNetStats
 local InCombatLockdown = _G.InCombatLockdown
-local PlaySoundKitID = _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 local UnitFactionGroup = _G.UnitFactionGroup
 
 -- WoW Frames & Objects
@@ -436,9 +436,6 @@ MenuWidget.OnEnable = function(self)
 		button.OnLeave = button:GetScript("OnLeave")
 
 		button:SetScript("OnEnter", function(self) 
-			if GameTooltip:IsForbidden() then
-				return
-			end
 			self:OnEnter()
 			if GameTooltip:IsShown() and GameTooltip:GetOwner() == self then
 				GameTooltip:ClearAllPoints()
@@ -447,9 +444,6 @@ MenuWidget.OnEnable = function(self)
 		end)
 		
 		button:SetScript("OnLeave", function(self) 
-			if GameTooltip:IsForbidden() then
-				return
-			end
 			self:OnLeave()
 		end)
 		
@@ -479,9 +473,6 @@ MenuWidget.OnEnable = function(self)
 	-- wild hacks to control the tooltip position
 	if MainMenuBarPerformanceBarFrame_OnEnter then
 		hooksecurefunc("MainMenuBarPerformanceBarFrame_OnEnter", function() 
-			if GameTooltip:IsForbidden() then
-				return
-			end
 			if GameTooltip:IsShown() and GameTooltip:GetOwner() == MainMenuMicroButton then
 				GameTooltip:ClearAllPoints()
 				GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
@@ -711,7 +702,6 @@ MenuWidget.OnEnable = function(self)
 	---------------------------------------------
 	local BagBarMenuWindow = FlyoutBar:New(BagBarMenuButton)
 	BagBarMenuWindow:Hide()
-	--BagBarMenuWindow:AttachToButton(BagBarMenuButton)
 	BagBarMenuWindow:SetSize(unpack(bagbar_menu_config.size))
 	BagBarMenuWindow:SetPoint(unpack(bagbar_menu_config.position))
 	BagBarMenuWindow:SetBackdrop(bagbar_menu_config.backdrop)
@@ -719,9 +709,6 @@ MenuWidget.OnEnable = function(self)
 	BagBarMenuWindow:SetBackdropBorderColor(unpack(bagbar_menu_config.backdrop_border_color))
 	
 	BagBarMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if MasterMenuButton:GetButtonState() == "PUSHED"
 		or BagBarMenuButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -735,16 +722,10 @@ MenuWidget.OnEnable = function(self)
 	end
 	BagBarMenuButton:SetScript("OnEnter", BagBarMenuButton.OnEnter)
 	BagBarMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 
 	MasterMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if MasterMenuButton:GetButtonState() == "PUSHED" 
 		or BagBarMenuButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -757,9 +738,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	MasterMenuButton:SetScript("OnEnter", MasterMenuButton.OnEnter)
 	MasterMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	MasterMenuButton.OnClick = function(self, button) 
@@ -770,9 +748,6 @@ MenuWidget.OnEnable = function(self)
 
 
 	ActionBarMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if ActionBarMenuButton:GetButtonState() == "PUSHED"
 		or MicroMenuButton:GetButtonState() == "PUSHED" then
 			GameTooltip:Hide()
@@ -787,9 +762,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	ActionBarMenuButton:SetScript("OnEnter", ActionBarMenuButton.OnEnter)
 	ActionBarMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	ActionBarMenuButton.OnClick = function(self, button) 
@@ -799,9 +771,6 @@ MenuWidget.OnEnable = function(self)
 	end
 
 	MicroMenuButton.OnEnter = function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if MicroMenuButton:GetButtonState() == "PUSHED" 
 		or ActionBarMenuButton:GetButtonState() == "PUSHED" then
 				GameTooltip:Hide()
@@ -817,9 +786,6 @@ MenuWidget.OnEnable = function(self)
 	end
 	MicroMenuButton:SetScript("OnEnter", MicroMenuButton.OnEnter)
 	MicroMenuButton:SetScript("OnLeave", function(self) 
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip:Hide() 
 	end)
 	MicroMenuButton.OnClick = function(self, button) 
@@ -958,7 +924,6 @@ MenuWidget.OnEnable = function(self)
 	MicroMenuButton:SetAttribute("leftclick", [[
 		self:GetFrameRef("otherwindow1"):Hide()
 		self:GetFrameRef("otherwindow2"):Hide()
-		--self:GetFrameRef("otherwindow3"):Hide()
 	]])
 
 	-- Make sure clicking one main button hides the rest and their windows.
@@ -1046,14 +1011,14 @@ MenuWidget.OnEnable = function(self)
 
 	-- Sounds
 	---------------------------------------------
-	ActionBarMenuWindow:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX") end)
-	ActionBarMenuWindow:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX") end)
+	ActionBarMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
+	ActionBarMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 
-	MicroMenuWindow:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX") end)
-	MicroMenuWindow:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX") end)
+	MicroMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
+	MicroMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 
-	MasterMenuWindow:HookScript("OnShow", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_OPEN, "SFX") end)
-	MasterMenuWindow:HookScript("OnHide", function(self) PlaySoundKitID(SOUNDKIT.IG_MAINMENU_CLOSE, "SFX") end)
+	MasterMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
+	MasterMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 	
 
 	-- We need to manually handle this, as our actionbar script 
@@ -1080,7 +1045,7 @@ end
 MenuWidget.UpdateGoldVisibility = function(self)
 	local button = self.MasterMenuButton
 	if button and button.Gold then
-		button.Gold:SetShown(Module.db.showGold)
+		if Module.db.showGold then button.Gold:Show() else button.Gold:Hide() end
 	end
 	self:UpdatePerformanceAnchor()
 end
@@ -1088,7 +1053,7 @@ end
 MenuWidget.UpdatePerformanceVisibility = function(self)
 	local button = self.MasterMenuButton
 	if button and button.Performance then
-		button.Performance:SetShown(Module.db.showPerformance)
+		if Module.db.showPerformance then button.Performance:Show() else button.Performance:Hide() end
 	end
 	self:UpdatePerformanceAnchor()
 end

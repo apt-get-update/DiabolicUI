@@ -37,7 +37,7 @@ local postUpdateHealth = function(health, unit)
 				health:SetStatusBarColor(v[1], v[2], v[3], v[4], v[5])
 			end
 		else
-			r, g, b = unpack(C.Class[class] or C.Class.UNKNOWN)
+			local r, g, b = unpack(C.Class[class] or C.Class.UNKNOWN)
 			health:SetStatusBarColor(r, g, b, "ALL")
 		end
 	else
@@ -89,7 +89,6 @@ local postUpdatePower = function(power)
 
 		-- Update the label
 		local label = power.Label
-		--label:SetText(_G[powerType] or "")
 
 		-- Store the powertype to avoid extra updates.
 		-- Note that this isn't stored before this point
@@ -231,13 +230,13 @@ local postCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetColorTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, .15)
 
 	local iconOverlay = overlay:CreateTexture()
 	iconOverlay:Hide()
 	iconOverlay:SetDrawLayer("OVERLAY")
 	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetColorTexture(0, 0, 0, 1)
+	iconOverlay:SetTexture(0, 0, 0, 1)
 	icon.Overlay = iconOverlay
 
 	local timerOverlay = timer:CreateFrame()
@@ -383,9 +382,6 @@ local shortDebuffFilter = function(self, name, rank, icon, count, debuffType, du
 		return true
 	end
 	if duration and (duration > 0) then
-		--if UnitAffectingCombat("player") and (duration > TIME_LIMIT) then
-			--return false
-		--end
 		return true
 	elseif (count and count > 0) then -- Decomposing Aura
 		return true
@@ -400,9 +396,6 @@ local longBuffFilter = function(self, name, rank, icon, count, debuffType, durat
 		end
 		return false
 	elseif (not duration) or (duration == 0) then
-		--if isCastByPlayer then
-		--	return false
-		--end
 		return true
 	end
 end
@@ -436,7 +429,6 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health:SetSparkTexture(configHealthSpark.texture)
 	Health:SetSparkSize(unpack(configHealthSpark.size))
 	Health:SetSparkOverflow(configHealthSpark.overflow)
-	--Health:SetSparkFlash(unpack(configHealthSpark.flash))
 	Health:SetSparkFlashSize(unpack(configHealthSpark.flash_size))
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
 
@@ -648,7 +640,6 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Power:SetSparkTexture(configPowerSpark.texture)
 	Power:SetSparkSize(unpack(configPowerSpark.size))
 	Power:SetSparkOverflow(configPowerSpark.overflow)
-	--Power:SetSparkFlash(unpack(configPowerSpark.flash))
 	Power:SetSparkFlashSize(unpack(configPowerSpark.flash_size))
 	Power:SetSparkFlashTexture(configPowerSpark.flash_texture)
 
@@ -686,7 +677,6 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Mana:SetSparkTexture(configPowerSpark.texture)
 	Mana:SetSparkSize(unpack(configPowerSpark.size))
 	Mana:SetSparkOverflow(configPowerSpark.overflow)
-	--Mana:SetSparkFlash(unpack(configPowerSpark.flash))
 	Mana:SetSparkFlashSize(unpack(configPowerSpark.flash_size))
 	Mana:SetSparkFlashTexture(configPowerSpark.flash_texture)
 
@@ -827,11 +817,8 @@ UnitFrameWidget.OnEnable = function(self)
 	self.Left = UnitFrame:New("player", "UICenter", StyleLeftOrb) -- health / main
 	self.Right = UnitFrame:New("player", "UICenter", StyleRightOrb) -- power / mana in forms
 
-	-- check for correct numbers in all clients!
 	local BlizzardUI = self:GetHandler("BlizzardUI")
-	if Engine:IsBuild("WotLK") then
-		BlizzardUI:GetElement("Menu_Panel"):Remove(11, "InterfaceOptionsBuffsPanel")
-	end
+	BlizzardUI:GetElement("Menu_Panel"):Remove(11, "InterfaceOptionsBuffsPanel")
 
 	-- Disable Blizzard's castbars for player
 	BlizzardUI:GetElement("Auras"):Disable()

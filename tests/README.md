@@ -21,6 +21,12 @@ Each `tests/test_*.lua` file is self-contained and runnable on its own.
 
 ## What's covered
 
+- `test_no_global_leaks.lua` - fails if any addon file assigns a global
+  variable (a missing `local`) that isn't on its explicit per-file `ALLOWED`
+  list. Reads the compiler's bytecode listing (`luac5.1 -l`), so it needs
+  `luac5.1` on the PATH (override with `LUAC=...`). Vendored code under
+  `modules/minimap/` is skipped.
+
 - `test_all_modules_load.lua` - a load-only "smoke test" for **every**
   module/handler file in the addon (91 files at time of writing): each one
   is loaded standalone and we assert it doesn't error while doing so. This

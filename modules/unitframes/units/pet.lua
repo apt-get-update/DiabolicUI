@@ -17,7 +17,7 @@ local UnitClass = _G.UnitClass
 local UnitIsEnemy = _G.UnitIsEnemy
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitPlayerControlled = _G.UnitPlayerControlled
 local UnitReaction = _G.UnitReaction
 
@@ -30,7 +30,7 @@ local postUpdateHealth = function(health, unit)
 				health:SetStatusBarColor(v[1] * .75, v[2] * .75, v[3] * .75, v[4], v[5])
 			end
 		else
-			r, g, b = unpack(C.Class[class] or C.Class.UNKNOWN)
+			local r, g, b = unpack(C.Class[class] or C.Class.UNKNOWN)
 			health:SetStatusBarColor(r, g, b, "ALL")
 		end
 	elseif (health.useClassColorPet and UnitIsUnit("pet", unit)) then 
@@ -39,7 +39,7 @@ local postUpdateHealth = function(health, unit)
 				health:SetStatusBarColor(v[1] * .5, v[2] * .5, v[3] * .5, v[4], v[5])
 			end
 		else
-			r, g, b = unpack(C.Class[playerClass] or C.Class.UNKNOWN)
+			local r, g, b = unpack(C.Class[playerClass] or C.Class.UNKNOWN)
 			health:SetStatusBarColor(r, g, b, "ALL")
 		end
 	else 
@@ -49,16 +49,6 @@ local postUpdateHealth = function(health, unit)
 	end 
 end
 
-
---local UpdateLayers = function(self)
---	if self:IsMouseOver() then
---		self.BorderNormalHighlight:Show()
---		self.BorderNormal:Hide()
---	else
---		self.BorderNormal:Show()
---		self.BorderNormalHighlight:Hide()
---	end
---end
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.pet
@@ -117,37 +107,8 @@ local Style = function(self, unit)
 
 	-- Threat
 	-------------------------------------------------------------------
-	--local Threat = {}
 	
-	--[[
-	Threat.Border = self:CreateTexture(nil, "BACKGROUND")
-	Threat.Border:Hide()
-	Threat.Border:SetSize(unpack(config.border.texture_size))
-	Threat.Border:SetPoint(unpack(config.border.texture_position))
-	Threat.Border:SetTexture(config.border.textures.threat)
-
-	Threat.Hide = function(self)
-		self.Border:Hide()
-	end
-
-	Threat.Show = function(self)
-		self.Border:Show()
-	end
-	
-	Threat.SetVertexColor = function(self, ...)
-		self.Border:SetVertexColor(...)
-	end]]
-
 	self.Health = Health
-	--self.Threat = Threat
-
-	--self.BorderNormal = BorderNormal
-	--self.BorderNormalHighlight = BorderNormalHighlight
-
-	--self:HookScript("OnEnter", UpdateLayers)
-	--self:HookScript("OnLeave", UpdateLayers)
-	
-	-- self:SetAttribute("toggleForVehicle", true)
 
 end
 

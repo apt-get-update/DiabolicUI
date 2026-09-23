@@ -15,7 +15,7 @@ local unpack = unpack
 -- WoW API
 local GetCVarBool = _G.GetCVarBool
 local IsInInstance = _G.IsInInstance
-local PlaySoundKitID = _G.PlaySoundKitID
+local PlaySound = _G.PlaySound
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitCanAttack = _G.UnitCanAttack
 local UnitClass = _G.UnitClass
@@ -29,7 +29,7 @@ local UnitPowerMax = _G.UnitPowerMax
 local UnitIsEnemy = _G.UnitIsEnemy
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = _G.UnitIsTapDenied
+local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitIsUnit = _G.UnitIsUnit
 
 -- Time limit in seconds where we separate between short and long buffs
@@ -216,13 +216,13 @@ local PostCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetColorTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, .15)
 
 	local iconOverlay = overlay:CreateTexture()
 	iconOverlay:Hide()
 	iconOverlay:SetDrawLayer("OVERLAY")
 	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetColorTexture(0, 0, 0, 1)
+	iconOverlay:SetTexture(0, 0, 0, 1)
 	icon.Overlay = iconOverlay
 
 	local timerOverlay = timer:CreateFrame()
@@ -743,7 +743,6 @@ local Style = function(self, unit)
 	self.Health = health
 	self.Name = name
 	self.Power = power
-	--self.Power.PostUpdate = function() Update(self) end
 	self.Threat = threat
 	self.Threat.SetVertexColor = function(_, ...) 
 		for i,v in pairs(self.layers.threat) do
@@ -766,14 +765,14 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 	if (event == "PLAYER_TARGET_CHANGED") then
 		if UnitExists("target") then
 			if UnitIsEnemy("target", "player") then
-				PlaySoundKitID(SOUNDKIT.IG_CREATURE_AGGRO_SELECT, "SFX")
+				PlaySound("igCreatureAggroSelect")
 			elseif UnitIsFriend("player", "target") then
-				PlaySoundKitID(SOUNDKIT.IG_CHARACTER_NPC_SELECT, "SFX")
+				PlaySound("igCharacterNPCSelect")
 			else
-				PlaySoundKitID(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT, "SFX")
+				PlaySound("igCreatureNeutralSelect")
 			end
 		else
-			PlaySoundKitID(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT, "SFX")
+			PlaySound("INTERFACESOUND_LOSTTARGETUNIT")
 		end
 	end
 end

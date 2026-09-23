@@ -2,7 +2,7 @@
 
 <Script file='capturebars.lua'/>
 <Script file='pvpemotes.lua'/>
-<Script file='questie.lua'/>
+<Script file='tracker.lua'/>
 <Script file='warnings.lua'/>
 <Script file='worldstate.lua'/>
 <Script file='zone.lua'/>

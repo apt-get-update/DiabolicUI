@@ -11,7 +11,6 @@ local unpack = unpack
 
 -- WoW API
 local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
-local HasExtraActionBar = _G.HasExtraActionBar
 local InCombatLockdown = _G.InCombatLockdown
 local RegisterStateDriver = _G.RegisterStateDriver
 local TaxiRequestEarlyLanding = _G.TaxiRequestEarlyLanding
@@ -82,10 +81,6 @@ BarWidget.OnEnable = function(self)
 	self.VehicleExitButton = self:SpawnVehicleExitButton()
 	self.TaxiBar, self.TaxiExitButton = self:SpawnTaxiExitButton()
 
-	-- Zone ability buttons
-	self.DraenorZoneAbilityButton = self:StyleZoneButton(_G.DraenorZoneAbilityFrame) -- this was removed at some point
-	self.LegionZoneAbilityButton = self:StyleZoneButton(_G.ZoneAbilityFrame)
-
 end
 
 BarWidget.GetFrame = function(self)
@@ -119,9 +114,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 	StanceBarButton.Pushed:SetTexture(visualConfig.border.textures.highlight)
 
 	StanceBarButton.PostEnter = function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetText(L["Stances"], 1, 1, 1)
 		GameTooltip:AddLine(L["<Left-click> to toggle stance bar."], unpack(C.General.OffGreen))
@@ -135,9 +127,7 @@ BarWidget.SpawnStanceBarButton = function(self)
 	end
 	
 	StanceBarButton.PostLeave = function(self) 
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:Hide()
-		end
+		GameTooltip:Hide()
 	end
 
 	StanceBarButton:SetClickTarget(Module:GetWidget("Bar: Stance"):GetFrame())
@@ -153,9 +143,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 	ProxyButton:SetScript("OnLeave", function() StanceBarButton:GetScript("OnLeave")(StanceBarButton) end)
 
 	ProxyButton:SetScript("OnEvent", function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if (GameTooltip:GetOwner() == StanceBarButton) then
 			self:GetScript("OnEnter")()
 		end
@@ -205,9 +192,6 @@ BarWidget.SpawnVehicleExitButton = function(self)
 	VehicleExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
 	
 	VehicleExitButton.PostEnter = function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetText(LEAVE_VEHICLE, 1, 1, 1)
 		GameTooltip:AddLine(L["<Left-click> to leave the vehicle."], unpack(C.General.OffGreen))
@@ -215,9 +199,7 @@ BarWidget.SpawnVehicleExitButton = function(self)
 	end
 	
 	VehicleExitButton.PostLeave = function(self) 
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:Hide()
-		end
+		GameTooltip:Hide()
 	end
 
 	VehicleExitButton:SetAttribute("type", "macro")
@@ -266,9 +248,6 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	TaxiExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
 	
 	TaxiExitButton.PostEnter = function(self)
-		if GameTooltip:IsForbidden() then
-			return
-		end
 		if UnitOnTaxi("player") then
 			GameTooltip_SetDefaultAnchor(GameTooltip, self)
 			GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1)
@@ -278,9 +257,7 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	end
 	
 	TaxiExitButton.PostLeave = function(self) 
-		if (not GameTooltip:IsForbidden()) then
-			GameTooltip:Hide()
-		end
+		GameTooltip:Hide()
 	end
 
 	TaxiExitButton.PostClick = function(self, button)
@@ -306,44 +283,4 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists,canexitvehicle] hide; show")
 	
 	return TaxiBar, TaxiExitButton
-end
-
-BarWidget.StyleZoneButton = function(self, frame)
-	return frame and self:StyleButton(frame.SpellButton, frame, Module.config.visuals.floaters.zone)
-end
-
-BarWidget.StyleButton = function(self, button, parent, visualConfig)
-
-	FloatButton:Build(button)
-
-	-- The Zone ability buttons have this
-	if parent then
-		parent:SetParent(self:GetFrame())
-		parent:SetSize(unpack(visualConfig.size))
-		parent:ClearAllPoints()
-		parent:SetPoint(unpack(visualConfig.position))
-		parent.ignoreFramePositionManager = true
-	end
-
-	button:SetSize(unpack(visualConfig.size))
-	button:ClearAllPoints()
-	button:SetPoint("CENTER", 0, 0)
-
-	button.Icon:SetTexture(visualConfig.icon.texture)
-	button.Icon:SetSize(unpack(visualConfig.icon.size))
-	button.Icon:SetTexCoord(unpack(visualConfig.icon.texcoords))
-
-	button.Normal:SetSize(unpack(visualConfig.border.size))
-	button.Normal:SetPoint(unpack(visualConfig.border.position))
-	button.Normal:SetTexture(visualConfig.border.textures.normal)
-
-	button.Highlight:SetSize(unpack(visualConfig.border.size))
-	button.Highlight:SetPoint(unpack(visualConfig.border.position))
-	button.Highlight:SetTexture(visualConfig.border.textures.highlight)
-
-	button.Pushed:SetSize(unpack(visualConfig.border.size))
-	button.Pushed:SetPoint(unpack(visualConfig.border.position))
-	button.Pushed:SetTexture(visualConfig.border.textures.highlight)
-
-	return button
 end
