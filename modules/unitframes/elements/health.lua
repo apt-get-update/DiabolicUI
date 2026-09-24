@@ -1,3 +1,6 @@
+-- "Health" element: the health bar and its value text, including the dead,
+-- ghost and offline states (frame.Health). Bar coloring is left to each
+-- unit's Health.PostUpdate.
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")

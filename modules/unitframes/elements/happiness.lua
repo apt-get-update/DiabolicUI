@@ -1,3 +1,5 @@
+-- "Happiness" element: placeholder for the hunter pet happiness icon, not
+-- implemented yet.
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 

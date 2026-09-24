@@ -1,3 +1,5 @@
+-- "Controller: Pet" widget: the secure frame the pet bar sits in. It resizes
+-- itself for the vehicle UI and moves the pet bar artwork with it.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Pet")

@@ -1,3 +1,6 @@
+-- "Shine" handler: the short shine/sparkle animation played on buttons.
+-- Handler:ApplyShine(frame, maxAlpha, duration, scale) returns an object with
+-- :Start().
 local _, Engine = ...
 local Handler = Engine:NewHandler("Shine")
 

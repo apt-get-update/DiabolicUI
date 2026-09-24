@@ -1,3 +1,4 @@
+-- Static layout, textures and colors for the nameplates ("NamePlates").
 local ADDON, Engine = ...
 local C = Engine:GetDB("Data: Colors")
 local BLANK_TEXTURE = Engine:GetConstant("BLANK_TEXTURE")

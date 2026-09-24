@@ -1,3 +1,8 @@
+-- "ActionButton" handler: DiabolicUI's own action button implementation.
+-- Handler:New(buttonType, id, header, template) builds a secure button for an
+-- action, pet, stance, spell, item or macro slot, and this file keeps them all
+-- updated: icons, cooldowns, counts, range and usability coloring, keybind
+-- text, grid visibility while dragging, and tooltips.
 local ADDON, Engine = ...
 local Handler = Engine:NewHandler("ActionButton")
 

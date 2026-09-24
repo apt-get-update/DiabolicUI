@@ -1,3 +1,5 @@
+-- Capture bars: the tug-of-war progress bars for battleground and world PvP
+-- objectives, replacing Blizzard's WorldStateCaptureBar.
 local _, Engine = ...
 local Module = Engine:NewModule("CaptureBars")
 local C = Engine:GetDB("Data: Colors")

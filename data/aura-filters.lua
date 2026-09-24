@@ -26,7 +26,7 @@ local filters = {
 	UnitIsHostileNPC = 		function(unit, unitCaster) return UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit)) end,
 	UnitIsImportant = 		function(unit, unitCaster) 
 								local level, classification = UnitLevel(unit), UnitClassification(unit)
-								return (classification and classification[unitIsImportant]) or (level and level < 1)
+								return (classification and unitIsImportant[classification]) or (level and level < 1)
 							end,
 
 	-- Caster filters

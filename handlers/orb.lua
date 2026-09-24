@@ -1,3 +1,7 @@
+-- "Orb" handler: the round health and power globes. Handler:New(parent)
+-- returns an object that behaves like a StatusBar (SetValue, SetMinMaxValues,
+-- SetStatusBarColor, ...) but fills a circle from the bottom, with smoothing,
+-- rotating layers and a spark riding the fluid surface.
 local _, Engine = ...
 local Handler = Engine:NewHandler("Orb")
 

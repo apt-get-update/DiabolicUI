@@ -1,3 +1,5 @@
+-- Moves the shaman totem bar (MultiCastActionBarFrame) next to the action bars
+-- and stops Blizzard from moving it back.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: TotemBar")
 

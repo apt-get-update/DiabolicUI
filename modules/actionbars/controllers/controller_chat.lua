@@ -1,3 +1,5 @@
+-- "Controller: Chat" widget: the secure anchor frame the chat menu buttons
+-- (bottom left) are placed in.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Chat")

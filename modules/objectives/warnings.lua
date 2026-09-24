@@ -1,3 +1,8 @@
+-- Error and info messages (UI_ERROR_MESSAGE, UI_INFO_MESSAGE) in place of
+-- Blizzard's UIErrorsFrame: whitelisted messages and quest progress go to
+-- DiabolicUI's own warning display, blacklisted ones are dropped, the rest go
+-- to the chat frame, and the same message repeated right away is ignored.
+-- The lists live in settings/warnings.lua.
 local _, Engine = ...
 local Module = Engine:NewModule("Warnings")
 

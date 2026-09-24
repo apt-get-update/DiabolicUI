@@ -1,3 +1,4 @@
+-- User settings for the quest tracker fade (saved per profile in DiabolicUI_DB).
 local Addon, Engine = ...
 
 Engine:NewConfig("ObjectiveTracker", {

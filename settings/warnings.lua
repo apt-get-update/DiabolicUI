@@ -23,11 +23,11 @@ Engine:NewStaticConfig("Warnings", {
 	font = {
 		size = { 600, 18 }, -- size of the font object's total area, not the text size
 		point = { "BOTTOM", .5, .5 }, -- position relative to the frame
-		font_object = DiabolicFont_SerifRegular16Red, 
+		font_object = DiabolicFont_HeaderRegular16Red, -- Exocet, like the Diablo UI
 		
 		size_quest = { 600, 18 }, -- size of the font object's total area, not the text size
 		point_quest = { "BOTTOM", .5, 4 + 18 + .5 }, -- position relative to the frame
-		font_object_quest = DiabolicFont_SerifRegular16Orange, 
+		font_object_quest = DiabolicFont_HeaderRegular16Orange, -- Exocet, like the Diablo UI
 		
 	},
 	
@@ -52,7 +52,8 @@ Engine:NewStaticConfig("Warnings", {
 		-- and we would like to identify them as fast as possible. It's a big list after all! o.O
 		plain = (function(list) 
 			local plain_list = {}
-			-- *note: don't use ipairs, as the values that are 'nil' in a given expansion will break the table
+			-- *note: pairs, not ipairs, so a nil entry can't cut the list short.
+			--  Every entry must exist in 3.3.5 (tests/test_wotlk_globals.lua checks).
 			for i,v in pairs(list) do
 				if v then
 					plain_list[v] = true
@@ -68,9 +69,7 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_ATTACK_DEAD, -- "Can't attack while dead."
 			ERR_ATTACK_FLEEING, -- "Can't attack while fleeing."
 			ERR_ATTACK_MOUNTED, -- "Can't attack while mounted."
-			ERR_ATTACK_NO_ACTIONS, -- "Can't attack while actions are prevented."
 			ERR_ATTACK_PACIFIED, -- "Can't attack while pacified."
-			ERR_ATTACK_PVP_TARGET_WHILE_UNFLAGGED, -- "You cannot do that to a PVP target while PVP is disabled."
 			ERR_ATTACK_STUNNED, -- "Can't attack while stunned."
 
 			ERR_BADATTACKFACING, -- "You are facing the wrong way!"; -- Melee combat error
@@ -96,7 +95,6 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_GENERIC_NO_VALID_TARGETS, -- "No valid targets."
 			ERR_GENERIC_STUNNED, -- "You are stunned"
 
-			ERR_GUILD_TOO_MUCH_MONEY, -- "The guild bank is at gold limit"
 
 			ERR_INV_FULL, -- "Inventory is full." 
 
@@ -124,26 +122,14 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_NO_ATTACK_TARGET, -- "There is nothing to attack."
 			ERR_NO_ITEMS_WHILE_SHAPESHIFTED, -- "Can't use items while shapeshifted."
 
-			ERR_OUT_OF_ARCANE_CHARGES, -- "Not enough arcane charges."
-			ERR_OUT_OF_BALANCE_NEGATIVE, -- "Not enough lunar energy"
-			ERR_OUT_OF_BALANCE_POSITIVE, -- "Not enough solar energy"
-			ERR_OUT_OF_BURNING_EMBERS, -- "Not enough burning embers"
-			ERR_OUT_OF_CHI, -- "Not enough chi"
-			ERR_OUT_OF_COMBO_POINTS, -- "That ability requires combo points"
-			ERR_OUT_OF_DARK_FORCE, -- "Not enough dark force"
-			ERR_OUT_OF_DEMONIC_FURY, -- "Not enough fury"
 			ERR_OUT_OF_ENERGY, -- "Not enough energy"
 			ERR_OUT_OF_FOCUS, -- "Not enough focus"
 			ERR_OUT_OF_HEALTH, -- "Not enough health"
-			ERR_OUT_OF_HOLY_POWER, -- "Not enough holy power"
-			ERR_OUT_OF_LIGHT_FORCE, -- "Not enough light force"
 			ERR_OUT_OF_MANA, -- "Not enough mana"
 			ERR_OUT_OF_RAGE, -- "Not enough rage"
 			ERR_OUT_OF_RANGE, -- "Out of range."
 			ERR_OUT_OF_RUNES, -- "Not enough runes"
 			ERR_OUT_OF_RUNIC_POWER, -- "Not enough runic power"
-			ERR_OUT_OF_SHADOW_ORBS, -- "Not enough shadow orbs"
-			ERR_OUT_OF_SOUL_SHARDS, -- "Not enough soul shards"
 
 			ERR_PLAYER_DEAD, -- "You can't do that when you're dead."
 
@@ -173,7 +159,6 @@ Engine:NewStaticConfig("Warnings", {
 			SPELL_FAILED_AFFECTING_COMBAT, -- "You are in combat"
 			SPELL_FAILED_ALREADY_BEING_TAMED, -- "That creature is already being tamed"
 			SPELL_FAILED_ALREADY_HAVE_CHARM, -- "You already control a charmed creature"
-			SPELL_FAILED_ALREADY_HAVE_PET, -- "You must dismiss your current pet first."
 			SPELL_FAILED_ALREADY_HAVE_SUMMON, -- "You already control a summoned creature"
 			SPELL_FAILED_ALREADY_OPEN, -- "Already open"
 			SPELL_FAILED_AURA_BOUNCED, -- "A more powerful spell is already active"
@@ -187,7 +172,6 @@ Engine:NewStaticConfig("Warnings", {
 			SPELL_FAILED_CHARMED, -- "Can't do that while charmed"
 			SPELL_FAILED_CHEST_IN_USE, -- "That is already being used"
 			SPELL_FAILED_CONFUSED, -- "Can't do that while confused"
-			SPELL_FAILED_FALLING, -- "Can't do that while falling"
 			SPELL_FAILED_FIZZLE, -- "Fizzled"
 			SPELL_FAILED_FLEEING, -- "Can't do that while fleeing"
 			SPELL_FAILED_HIGHLEVEL, -- "Target is too high level"
@@ -208,13 +192,10 @@ Engine:NewStaticConfig("Warnings", {
 			SPELL_FAILED_NOT_INACTIVE, -- "Can't use while Inactive"
 			SPELL_FAILED_NOT_INFRONT, -- "You must be in front of your target."
 			SPELL_FAILED_NOT_IN_ARENA, -- "You can't do that in an arena."
-			SPELL_FAILED_NOT_IN_ARENA_FIXME, -- "You can't do that in an arena."
 			SPELL_FAILED_NOT_IN_BARBERSHOP, -- "You can't do that while in the barber shop"
 			SPELL_FAILED_NOT_IN_BATTLEGROUND, -- "You can't do that in a battleground."
 			SPELL_FAILED_NOT_IN_CONTROL, -- "You are not in control of your actions"
-			SPELL_FAILED_NOT_IN_LFG_DUNGEON, -- "You can't do that in an LFG Dungeon."
 			SPELL_FAILED_NOT_IN_RAID_INSTANCE, -- "You can't do that in a raid instance."
-			SPELL_FAILED_NOT_IN_RATED_BATTLEGROUND, -- "You can't do that in a rated battleground."
 			SPELL_FAILED_NOT_KNOWN, -- "Spell not learned"
 			SPELL_FAILED_NOT_MOUNTED, -- "You are mounted."
 			SPELL_FAILED_NOT_ON_DAMAGE_IMMUNE, -- "Spell cannot be cast on a damage immune target."
@@ -231,11 +212,9 @@ Engine:NewStaticConfig("Warnings", {
 			SPELL_FAILED_NO_EVASIVE_CHARGES, -- "You need Evasive Charges"
 			SPELL_FAILED_NO_FISH, -- "There aren't any fish here"
 			SPELL_FAILED_NO_ITEMS_WHILE_SHAPESHIFTED, -- "Can't use items while shapeshifted"
-			SPELL_FAILED_NO_LIQUID, -- "Requires water surface"
 			SPELL_FAILED_NO_MAGIC_TO_CONSUME, -- "No magic to consume"
 			SPELL_FAILED_NO_MOUNTS_ALLOWED, -- "You can't mount here."
 			SPELL_FAILED_NO_PET, -- "You do not have a pet"
-			SPELL_FAILED_NO_VACANT_SEAT, -- "There is no available seat"
 			SPELL_FAILED_ONLY_ABOVEWATER, -- "Cannot use while swimming"SPELL_FAILED_NO_FISH = "There aren't any fish here"
 			SPELL_FAILED_ONLY_BATTLEGROUNDS, -- "Can only use in battlegrounds"
 			SPELL_FAILED_ONLY_DAYTIME, -- "Can only use during the day"
@@ -243,7 +222,6 @@ Engine:NewStaticConfig("Warnings", {
 			SPELL_FAILED_ONLY_IN_ARENA, -- "You can only do that in an arena."
 			SPELL_FAILED_ONLY_MOUNTED, -- "Can only use while mounted"
 			SPELL_FAILED_ONLY_NIGHTTIME, -- "Can only use during the night"
-			SPELL_FAILED_ONLY_NOT_SWIMMING, -- "Cannot use while swimming"
 			SPELL_FAILED_ONLY_OUTDOORS, -- "Can only use outside"
 			SPELL_FAILED_ONLY_STEALTHED, -- "You must be in stealth mode."
 			SPELL_FAILED_ONLY_UNDERWATER, -- "Can only use while swimming"
@@ -342,7 +320,8 @@ Engine:NewStaticConfig("Warnings", {
 	tracker = {
 		plain = (function(list) 
 			local plain_list = {}
-			-- *note: don't use ipairs, as the values that are 'nil' in a given expansion will break the table
+			-- *note: pairs, not ipairs, so a nil entry can't cut the list short.
+			--  Every entry must exist in 3.3.5 (tests/test_wotlk_globals.lua checks).
 			for i,v in pairs(list) do
 				if v then
 					plain_list[v] = true
@@ -366,9 +345,7 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_QUEST_UNKNOWN_COMPLETE, -- "Objective Complete."
 			
 			QUEST_COMPLETE, -- "Quest completed"
-			QUEST_FAILED, -- "Quest completion failed."
-
-			WORLD_QUEST_COMPLETE -- "World Quest Complete!"
+			QUEST_FAILED -- "Quest completion failed."
 		}),
 		pattern = (function(list) 
 			local pattern_list = {}

@@ -188,8 +188,8 @@ L["Auto positioning of chat windows has been disabled."] = "聊天窗口自动�
 -- minimap module
 ---------------------------------------------------------------------
 L["<Left-click> to toggle calendar."] = "<点击左键>打开日历。"
-L["<Middle-click> to toggle stopwatch."] = "<点击中键>打开秒表。"
-L["<Right-click> to configure clock."] = "<点击右键>配置时钟。"
+--L["<Middle-click> to toggle stopwatch."] = "<点击中键>打开秒表。"
+--L["<Right-click> to configure clock."] = "<点击右键>配置时钟。"
 L["Calendar"] = "行事历"
 L["New Event!"] = "新事件"
 L["New Mail!"] = "新邮件"

@@ -1,3 +1,6 @@
+-- "Keybinds" widget: copies the player's key bindings from Blizzard's bars
+-- onto DiabolicUI's buttons (override bindings, refreshed on UPDATE_BINDINGS),
+-- and hands the main bar's keys to the vehicle bar while in a vehicle.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local Widget = Module:SetWidget("Keybinds")

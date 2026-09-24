@@ -1,3 +1,5 @@
+-- Static layout for the chat windows, their buttons and the edit box
+-- ("ChatWindows" and friends). Not user settings: see defaults/chat.lua.
 local ADDON, Engine = ...
 local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 

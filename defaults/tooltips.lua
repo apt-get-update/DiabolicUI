@@ -1,3 +1,4 @@
+-- User settings for tooltip placement (saved per profile in DiabolicUI_DB).
 local ADDON, Engine = ...
 
 Engine:NewConfig("Tooltips", {

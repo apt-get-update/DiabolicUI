@@ -1,3 +1,5 @@
+-- "Template: MenuButton" widget: the plain, highlight-on-hover buttons used in
+-- the menus.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local MenuButtonWidget = Module:SetWidget("Template: MenuButton")

@@ -1,3 +1,4 @@
+-- Moves Blizzard's "Return to Graveyard" ghost frame to DiabolicUI's layout.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: GhostFrame")
 

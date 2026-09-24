@@ -450,6 +450,9 @@ end
 -- the real (unit-token-driven) UnitFrame:New/Handler.New pipeline.
 UnitFrameWidget.Style = Style
 
+-- Exposed for tests/test_unitframes_raid.lua.
+UnitFrameWidget.DebuffFilter = debuffFilter
+
 UnitFrameWidget.OnEnable = function(self)
     local config = self:GetDB("UnitFrames").visuals.units.raid
     local db = self:GetConfig("UnitFrames") 

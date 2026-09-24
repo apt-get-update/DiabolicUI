@@ -250,8 +250,8 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	TaxiExitButton.PostEnter = function(self)
 		if UnitOnTaxi("player") then
 			GameTooltip_SetDefaultAnchor(GameTooltip, self)
-			GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1)
-			GameTooltip:AddLine(TAXI_CANCEL_DESCRIPTION, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+			GameTooltip:SetText(L["Request Stop"], 1, 1, 1)
+			GameTooltip:AddLine(L["<Left-click> to land at the next flight point."], unpack(C.General.OffGreen))
 			GameTooltip:Show()
 		end
 	end
