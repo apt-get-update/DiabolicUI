@@ -58,4 +58,48 @@ end
 
 
 
+-- Money with coin icons ("12[g] 34[s] 56[c]"), leaving out leading zero
+-- denominations. The icons come from the shared coin style in
+-- settings/ui.lua, built on first use since settings load after data.
+-- yOffset (optional) moves the coins up or down, to center them on text
+-- of a different size than the micro menu's gold counter they're tuned for.
+---------------------------------------------------------------------
+local coinIconSets = {}
+
+local BuildCoinIcon = function(texture, texcoord, size, offset)
+	local width, height = size[1], size[2]
+	local atlasSize = 64 -- the texcoords are fractions of this
+	local left, right = texcoord[1] * atlasSize, texcoord[2] * atlasSize
+	local top, bottom = texcoord[3] * atlasSize, texcoord[4] * atlasSize
+	return ("|T%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|t"):format(texture, height, width, offset[1], offset[2], atlasSize, atlasSize, left, right, top, bottom)
+end
+
+F.Money = function(money, yOffset)
+	local coin = Engine:GetDB("UI").coin
+	yOffset = yOffset or coin.coin_offset[2]
+	local coinIcons = coinIconSets[yOffset]
+	if (not coinIcons) then
+		local offset = { coin.coin_offset[1], yOffset }
+		coinIcons = {
+			gold = BuildCoinIcon(coin.gold_texture, coin.gold_texcoord, coin.gold_size, offset),
+			silver = BuildCoinIcon(coin.silver_texture, coin.silver_texcoord, coin.silver_size, offset),
+			copper = BuildCoinIcon(coin.copper_texture, coin.copper_texcoord, coin.copper_size, offset)
+		}
+		coinIconSets[yOffset] = coinIcons
+	end
+	money = math_floor(tonumber(money) or 0)
+	local gold = math_floor(money / 10000)
+	local silver = math_floor((money / 100) % 100)
+	local copper = money % 100
+	if (gold > 0) then
+		return ("%d%s %d%s %d%s"):format(gold, coinIcons.gold, silver, coinIcons.silver, copper, coinIcons.copper)
+	elseif (silver > 0) then
+		return ("%d%s %d%s"):format(silver, coinIcons.silver, copper, coinIcons.copper)
+	else
+		return ("%d%s"):format(copper, coinIcons.copper)
+	end
+end
+
+
+
 Engine:NewStaticConfig("Library: Format", F)

@@ -21,20 +21,6 @@ local GameTooltip = _G.GameTooltip
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
--- Inline |T..|t texture markup for the gold/silver/copper coin icons,
--- built once (in OnEnable, below - by which point settings/ui.lua has
--- definitely loaded) from the shared coin style in settings/ui.lua,
--- instead of the plain colored-letter suffixes ("12g 34s 56c") used
--- previously.
-local BuildCoinIcon = function(texture, texcoord, size, offset)
-	local width, height = size[1], size[2]
-	local atlasSize = 64 -- the texcoords below are fractions of this
-	local left, right = texcoord[1] * atlasSize, texcoord[2] * atlasSize
-	local top, bottom = texcoord[3] * atlasSize, texcoord[4] * atlasSize
-	local xOffset, yOffset = offset[1], offset[2]
-	return ("|T%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|t"):format(texture, height, width, xOffset, yOffset, atlasSize, atlasSize, left, right, top, bottom)
-end
-
 
 MenuWidget.UpdateMicroButtons = function(self, event, ...)
 	self.MicroMenuWindow:Arrange()
@@ -966,23 +952,9 @@ MenuWidget.OnEnable = function(self)
 	Gold:SetPoint(unpack(micro_menu_config.performance.position))
 	MasterMenuButton.Gold = Gold
 
-	local coin = Engine:GetDB("UI").coin
-	local GOLD_ICON = BuildCoinIcon(coin.gold_texture, coin.gold_texcoord, coin.gold_size, coin.coin_offset)
-	local SILVER_ICON = BuildCoinIcon(coin.silver_texture, coin.silver_texcoord, coin.silver_size, coin.coin_offset)
-	local COPPER_ICON = BuildCoinIcon(coin.copper_texture, coin.copper_texcoord, coin.copper_size, coin.coin_offset)
-
+	local F = Engine:GetDB("Library: Format")
 	MasterMenuButton:SetScript("OnEvent", function(self, event, ...)
-		local money = GetMoney()
-		local gold = floor(money / 100 / 100)
-		local silver = floor((money / 100) % 100)
-		local copper = money % 100
-		if (gold > 0) then
-			self.Gold:SetFormattedText("%d%s %d%s %d%s", gold, GOLD_ICON, silver, SILVER_ICON, copper, COPPER_ICON)
-		elseif (silver > 0) then
-			self.Gold:SetFormattedText("%d%s %d%s", silver, SILVER_ICON, copper, COPPER_ICON)
-		else
-			self.Gold:SetFormattedText("%d%s", copper, COPPER_ICON)
-		end
+		self.Gold:SetText(F.Money(GetMoney()))
 	end)
 
 	MasterMenuButton:RegisterEvent("PLAYER_MONEY")

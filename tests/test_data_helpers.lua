@@ -3,7 +3,8 @@
 -- The small shared helper libraries in data/ and engine/wotlk-helpers.lua,
 -- loaded for real under the Engine mock:
 --  - data/functions.lua ("Library: Format"): F.Short number abbreviation
---    (1500 -> "1.5k", trailing ".0" dropped) and F.Colorize
+--    (1500 -> "1.5k", trailing ".0" dropped), F.Colorize, and F.Money
+--    (money with coin icons)
 --  - data/aura-filters.lua ("Library: AuraFilters"): unit and caster checks
 --  - data/aura-functions.lua ("Library: AuraFunctions"): UnitAura/UnitBuff/
 --    UnitDebuff wrappers that add isBossDebuff and isCastByPlayer
@@ -104,6 +105,42 @@ end
 
 function TestFormatColorize:test_nil_text_becomes_empty()
 	lu.assertEquals(self.Colorize(nil, 1, 1, 1), "|cffFFFFFF|r")
+end
+
+TestFormatMoney = {}
+
+function TestFormatMoney:setUp()
+	_G.GetLocale = function() return "enUS" end
+	local Engine = loadFiles({ "data/functions.lua" }, function(Engine)
+		local coin = function(x, y) return { x, x + .5, y, y + .5 } end
+		Engine:NewStaticConfig("UI", { coin = {
+			gold_texture = "coins", gold_texcoord = coin(0, 0), gold_size = { 16, 16 },
+			silver_texture = "coins", silver_texcoord = coin(.5, 0), silver_size = { 16, 16 },
+			copper_texture = "coins", copper_texcoord = coin(0, .5), copper_size = { 16, 16 },
+			coin_offset = { 2, -4 },
+		} })
+	end)
+	self.Money = Engine:GetDB("Library: Format").Money
+	self.GOLD = "|Tcoins:16:16:2:-4:64:64:0:32:0:32|t"
+	self.SILVER = "|Tcoins:16:16:2:-4:64:64:32:64:0:32|t"
+	self.COPPER = "|Tcoins:16:16:2:-4:64:64:0:32:32:64|t"
+end
+
+function TestFormatMoney:test_all_three_denominations()
+	lu.assertEquals(self.Money(123456), "12" .. self.GOLD .. " 34" .. self.SILVER .. " 56" .. self.COPPER)
+end
+
+function TestFormatMoney:test_coin_offset_can_be_moved()
+	lu.assertEquals(self.Money(56, -2), "56|Tcoins:16:16:2:-2:64:64:0:32:32:64|t")
+	lu.assertEquals(self.Money(56), "56" .. self.COPPER) -- the default is untouched
+end
+
+function TestFormatMoney:test_leading_zero_denominations_are_left_out()
+	lu.assertEquals(self.Money(3456), "34" .. self.SILVER .. " 56" .. self.COPPER)
+	lu.assertEquals(self.Money(56), "56" .. self.COPPER)
+	lu.assertEquals(self.Money(0), "0" .. self.COPPER)
+	-- but zeros after the first one stay
+	lu.assertEquals(self.Money(10000), "1" .. self.GOLD .. " 0" .. self.SILVER .. " 0" .. self.COPPER)
 end
 
 ------------------------------------------------------------------------
