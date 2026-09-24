@@ -492,6 +492,11 @@ Module.CreateOptionsPanel = function(self)
 	CreateTitle(tooltipsPanel, layout, L["Tooltips"])
 	CreateSubmenuLogo(tooltipsPanel)
 
+	local reskinTooltip = CreateCheckbox(tooltipsPanel, "ReskinTooltip", L["Reskin Tooltip"], L["Shows item tooltips in the Diablo III style: the item's name on a title banner in its quality color, its icon on the left, damage per second or armor as a big number, and the sell price and durability at the bottom.|n|nWhen disabled, Blizzard's own item tooltips are used."], function(button)
+		tooltipsDB.reskinTooltip = button:GetChecked() and true or false
+	end)
+	layout:Place(reskinTooltip, CHECK_X, layout:Row(CHECK_HEIGHT, SECTION_GAP))
+
 	CreateFieldLabel(tooltipsPanel, layout, L["Tooltip mouse anchor"], L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."], SECTION_GAP)
 
 	-- The picker on the left, its offset sliders stacked in the second column.
@@ -512,6 +517,7 @@ Module.CreateOptionsPanel = function(self)
 
 	tooltipsPanel.okay = function() end
 	tooltipsPanel.cancel = function()
+		reskinTooltip:SetChecked(tooltipsDB.reskinTooltip)
 		offsetX:SetValueSilently(tooltipsDB.offsetX)
 		offsetY:SetValueSilently(tooltipsDB.offsetY)
 		refreshAnchorPoint()
