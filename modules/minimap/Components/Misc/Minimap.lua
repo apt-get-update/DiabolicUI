@@ -131,6 +131,24 @@ local Elements = {}
 local Objects = {}
 local ObjectOwners = {}
 
+-- The group finder eye is a button on the minimap's border, sized and
+-- offset exactly like the mail button, in the top corner on the screen-edge
+-- side: top right while the minimap is on the right half of the screen (the
+-- default), mirrored to top left once it's been moved to the left half.
+-- The mail button takes the opposite top corner, so the two never overlap.
+local EYE_BUTTON_SIZE = 48 -- same as the mail and MBB buttons
+local PlaceGroupFinderEye = function()
+    local minimapX = Minimap:GetCenter()
+    local screenX = UIParent:GetCenter()
+
+    MiniMapLFGFrame:ClearAllPoints()
+    if (minimapX and screenX and minimapX < screenX) then
+        MiniMapLFGFrame:SetPoint("TOPLEFT", Minimap, -4, 2)
+    else
+        MiniMapLFGFrame:SetPoint("TOPRIGHT", Minimap, 4, 2)
+    end
+end
+
 -- Snippets to be run upon object toggling.
 ----------------------------------------------------
 local ObjectSnippets = {
@@ -179,15 +197,32 @@ local ObjectSnippets = {
         Enable = function(object)
             MiniMapLFGFrame:SetParent(Minimap)
             MiniMapLFGFrame:SetFrameLevel(100)
-            MiniMapLFGFrame:ClearAllPoints()
-            MiniMapLFGFrame:SetPoint("TOPRIGHT", Minimap, -4, -2)
-            MiniMapLFGFrame:SetHitRectInsets(-8, -8, -8, -8)
+            if (not MiniMapLFGFrame.blizzardSize) then
+                MiniMapLFGFrame.blizzardSize = { MiniMapLFGFrame:GetSize() }
+            end
+            MiniMapLFGFrame:SetSize(EYE_BUTTON_SIZE, EYE_BUTTON_SIZE)
+            MiniMapLFGFrame:SetScale(1) -- same scale as the mail button
+            PlaceGroupFinderEye()
+            MiniMapLFGFrame:SetHitRectInsets(0, 0, 0, 0)
+            -- Blizzard's own hover glow, desaturated to a neutral white so
+            -- it doesn't clash with the orange eye.
+            local highlight = MiniMapLFGFrame:GetHighlightTexture()
+            if (highlight) then
+                highlight:SetDesaturated(true)
+            end
             MiniMapLFGFrameBorder:Hide()
             MiniMapLFGFrameIcon:Hide()
         end,
         Disable = function(object)
             MiniMapLFGFrame:SetParent(_G[ObjectOwners.Eye])
             MiniMapLFGFrame:SetFrameLevel(MinimapBackdrop:GetFrameLevel() + 2)
+            if (MiniMapLFGFrame.blizzardSize) then
+                MiniMapLFGFrame:SetSize(unpack(MiniMapLFGFrame.blizzardSize))
+            end
+            local highlight = MiniMapLFGFrame:GetHighlightTexture()
+            if (highlight) then
+                highlight:SetDesaturated(false)
+            end
             MiniMapLFGFrame:ClearAllPoints()
             MiniMapLFGFrame:SetPoint("TOPLEFT", 25, -100)
             MiniMapLFGFrame:SetHitRectInsets(0, 0, 0, 0)
@@ -301,7 +336,9 @@ local Skins = {
                 DrawLayer = "BORDER",
                 DrawLevel = 2,
                 Path = GetMedia("group-finder-eye-orange"),
-                Size = { 64, 64 },
+                -- a little larger than the mail button's art, as the eye
+                -- was before it moved onto the border
+                Size = { 40, 40 },
                 Point = { "CENTER", 0, 0 },
                 Color = { .90, .95, 1 }
             },
@@ -571,6 +608,14 @@ MinimapMod.UpdateMBBButtonPosition = function(self)
         button:SetPoint("BOTTOMRIGHT", Minimap, 4, -2)
     else
         button:SetPoint("BOTTOMLEFT", Minimap, -4, -2)
+    end
+end
+
+-- Only while the Diabolic theme owns the eye; Blizzard's theme puts it
+-- back where Blizzard had it.
+MinimapMod.UpdateGroupFinderEyePosition = function(self)
+    if (CURRENT_THEME == "Diabolic") then
+        PlaceGroupFinderEye()
     end
 end
 
@@ -868,6 +913,12 @@ MinimapMod.PostUpdatePositionAndScale = function(self)
             element:SetScale(ns.API.GetEffectiveScale() / baseScale)
         end
     end
+
+    -- The Diabolic theme's eye is a border button like the mail button,
+    -- so it keeps the minimap's own scale.
+    if (CURRENT_THEME == "Diabolic") then
+        MiniMapLFGFrame:SetScale(1)
+    end
 end
 
 -- Applies the base map scale together with the user's
@@ -987,6 +1038,7 @@ MinimapMod.UpdatePosition = function(self)
     self:UpdateMBBButtonPosition()
     self:UpdateMailButtonPosition()
     self:UpdateZoneTextPosition()
+    self:UpdateGroupFinderEyePosition()
 end
 
 -- Stores the minimap's current position, relative to UIParent,
@@ -998,6 +1050,7 @@ MinimapMod.SavePosition = function(self)
     self:UpdateMBBButtonPosition()
     self:UpdateMailButtonPosition()
     self:UpdateZoneTextPosition()
+    self:UpdateGroupFinderEyePosition()
 end
 
 MinimapMod.UpdateSettings = function(self)
@@ -1177,8 +1230,20 @@ MinimapMod.ExitEditMode = function(self)
     self:SavePosition()
 end
 
+-- Blizzard_TimeManager creates its saved stopwatch settings table when it
+-- loads, and writes to it on logout and /reload. Loaded this early on 3.3.5,
+-- a late VARIABLES_LOADED can reset that table to nil afterwards, and the
+-- stopwatch then errors ("attempt to index global 'BlizzardStopwatchOptions'").
+-- Recreate it the same way Blizzard's own code does.
+local EnsureStopwatchOptions = function()
+    if (not _G.BlizzardStopwatchOptions) then
+        _G.BlizzardStopwatchOptions = {}
+    end
+end
+
 MinimapMod.OnEnable = function(self)
     LoadAddOn("Blizzard_TimeManager")
+    EnsureStopwatchOptions()
     self:InitializeObjectTables()
 
     MinimapCluster:EnableMouse(false)
@@ -1192,10 +1257,12 @@ MinimapMod.OnEnable = function(self)
     Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     Minimap:SetScript("OnEvent", function(frame, event, ...)
         if (event == "PLAYER_ENTERING_WORLD") then
+          EnsureStopwatchOptions()
           self:UpdateZone()
           self:UpdateMail()
           self:UpdateTimers()
         elseif (event == "VARIABLES_LOADED") then
+          EnsureStopwatchOptions()
           self:UpdateTimers()
           self:UpdateSize()
           self:UpdatePosition()

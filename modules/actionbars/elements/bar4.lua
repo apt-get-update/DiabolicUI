@@ -1,3 +1,4 @@
+-- "Bar: 4" widget: the first side bar (Blizzard's right bar).
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: 4")

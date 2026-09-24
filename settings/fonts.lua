@@ -1,3 +1,5 @@
+-- Static font setup ("Fonts"): which font files and sizes replace Blizzard's
+-- game fonts, chat bubble fonts and floating combat text.
 local Addon, Engine = ...
 local path = ([[Interface\AddOns\%s\media\fonts\]]):format(Addon)
 
@@ -8,6 +10,8 @@ Engine:NewStaticConfig("Fonts", {
 				"DiabolicFont_HeaderRegular14",
 				"DiabolicFont_HeaderRegular16",
 					"DiabolicFont_HeaderRegular16White",
+					"DiabolicFont_HeaderRegular16Orange",
+					"DiabolicFont_HeaderRegular16Red",
 				"DiabolicFont_HeaderRegular18",
 					"DiabolicFont_HeaderRegular18Title",
 					"DiabolicFont_HeaderRegular18Text",

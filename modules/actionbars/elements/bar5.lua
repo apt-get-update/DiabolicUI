@@ -1,3 +1,4 @@
+-- "Bar: 5" widget: the second side bar (Blizzard's second right bar).
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: 5")
@@ -82,7 +83,7 @@ BarWidget.OnEnable = function(self)
 	]])
 
 	-- Register a proxy visibility driver
-	local visibility_driver = ENGINE_MOP and "[overridebar][possessbar][shapeshift]hide;[vehicleui]hide;show" or "[bonusbar:5]hide;[vehicleui]hide;show"
+	local visibility_driver = "[bonusbar:5]hide;[vehicleui]hide;show"
 	RegisterStateDriver(Bar, "vis", visibility_driver)
 	
 	local Visibility = Bar:GetParent()

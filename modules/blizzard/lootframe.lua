@@ -1,3 +1,4 @@
+-- Optional custom loot window ("LootFrame" settings, off by default).
 local ADDON, Engine = ...
 local Module = Engine:NewModule("Blizzard: LootFrame")
 local L = Engine:GetLocale()

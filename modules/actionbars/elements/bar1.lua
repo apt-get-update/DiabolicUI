@@ -1,3 +1,5 @@
+-- "Bar: 1" widget: the main action bar (ACTIONBUTTON1-12), including its
+-- stance, possess and bonus bar paging.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local Widget = Module:SetWidget("Bar: 1")

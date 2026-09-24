@@ -1,3 +1,7 @@
+-- "StatusBar" handler: a StatusBar lookalike with smoothing and a spark.
+-- Handler:New(parent) returns an object with the usual SetValue /
+-- SetMinMaxValues / SetStatusBarColor / SetOrientation API; the texture is
+-- cropped (not squashed) to the current value.
 local _, Engine = ...
 local Handler = Engine:NewHandler("StatusBar")
 

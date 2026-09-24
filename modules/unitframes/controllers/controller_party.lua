@@ -1,3 +1,4 @@
+-- "Controller: Party" widget: placeholder, the party frames anchor themselves.
 local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local ControllerWidget = Module:SetWidget("Controller: Party")

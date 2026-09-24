@@ -1,3 +1,5 @@
+-- "Controller: Menu" widget: the secure anchor frame the main menu button
+-- (bottom right) is placed in.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Menu")

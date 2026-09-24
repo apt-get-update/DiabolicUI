@@ -1,3 +1,5 @@
+-- "Threat" element: a glow colored by the unit's threat situation
+-- (frame.Threat).
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 

@@ -1,3 +1,6 @@
+-- Shared color palette ("Data: Colors"): general UI colors, class, reaction,
+-- quality, power and threat colors. Each entry is an {r, g, b} table that also
+-- carries a ready-made |cff color code in .colorCode.
 local ADDON, Engine = ...
 
 -- Lua API

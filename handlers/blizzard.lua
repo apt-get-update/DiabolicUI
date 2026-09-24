@@ -1,3 +1,9 @@
+-- "BlizzardUI" handler: hides and disables pieces of Blizzard's default UI
+-- that DiabolicUI replaces. Every piece is a handler element (ActionBars,
+-- UnitFrames, Minimap, CastBars, ZoneText, ...) that starts out enabled;
+-- modules call :GetElement(name):Disable() for what they take over, and
+-- Menu_Panel / Menu_Option remove Interface Options entries that no longer
+-- apply.
 local _, Engine = ... 
 local Handler = Engine:NewHandler("BlizzardUI")
 local L = Engine:GetLocale()

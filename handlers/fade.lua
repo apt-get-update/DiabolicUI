@@ -1,3 +1,9 @@
+-- "Fade" handler: fades frames out when the player is out of danger and back
+-- in when they're not. It tracks a global "peril"/"safe" state (combat,
+-- target, low health or power, harmful debuffs) and fires
+-- ENGINE_FADESTATE_UPDATE when it changes. Handler:CreateFadeManager() returns
+-- a secure manager that frames register with to follow that state, plus
+-- mouseover and forced-visible overrides.
 local ADDON, Engine = ...
 local Handler = Engine:NewHandler("Fade")
 local L = Engine:GetLocale()

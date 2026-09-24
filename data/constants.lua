@@ -23,9 +23,6 @@ Engine:NewStaticConfig("Data: Constants", {
 	AURA_TIME_LIMIT = 300,
 	AURA_TIME_LIMIT_LOW = 60,
 
-	-- Quest that needs to be completed for world quests to be available
-	WORLD_QUESTS_AVAILABLE_QUEST_ID = WORLD_QUESTS_AVAILABLE_QUEST_ID or 43341,
-
 	-- ActionButton Numbers
 	NUM_ACTIONBAR_SLOTS = NUM_ACTIONBAR_BUTTONS or 12, -- number of buttons on a standard bar
 	NUM_PET_SLOTS = NUM_PET_ACTION_SLOTS or 10, -- number of pet buttons

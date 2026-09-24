@@ -1,3 +1,44 @@
+-- The Engine: DiabolicUI's own small framework. Every file reaches it
+-- through the addon table: `local ADDON, Engine = ...`.
+--
+-- Objects
+--   Handlers  Engine:NewHandler(name)   Reusable libraries (unit frames,
+--             action buttons, orbs...). Enabled before any module, and get
+--             events before modules do.
+--   Elements  handler:SetElement(name)  Parts of a handler, such as the
+--             Blizzard UI pieces handlers/blizzard.lua can disable.
+--   Modules   Engine:NewModule(name[, priority])  Features. They get an
+--             OnInit and an OnEnable call; priority is "HIGH", "NORMAL"
+--             (default) or "LOW".
+--   Widgets   module:SetWidget(name)    Parts of a module, which enables
+--             them itself. They receive events while their module is enabled.
+--
+-- Startup
+--   Once both ADDON_LOADED and VARIABLES_LOADED have fired (in either order):
+--   saved settings are merged in (ParseSavedVariables), handlers are enabled,
+--   every module's OnInit runs, then OnEnable for HIGH and NORMAL modules.
+--   LOW modules are enabled on PLAYER_LOGIN, or straight away after a /reload.
+--   A module marked with SetIncompatible or SetDependency is skipped entirely
+--   when that addon is (or isn't) enabled.
+--
+-- Events and messages
+--   object:RegisterEvent(event[, method]), object:RegisterMessage(message
+--   [, method]) and Engine:Fire(message, ...). The method is a method name or
+--   a function, "Update" by default: that calls object[event] if it exists,
+--   object:OnEvent otherwise. Disabled objects don't receive anything.
+--
+-- Settings
+--   Engine:NewConfig(name, defaults)    Saved settings, with global, realm,
+--   Engine:GetConfig(name[, profile])   faction and character profiles.
+--   Engine:NewStaticConfig(name, t)     Static tables (layouts, textures,
+--   Engine:GetDB(name)                  colors) that are never saved.
+--
+-- Combat
+--   Engine:Wrap(func) returns a function that runs func right away out of
+--   combat, and once, with the latest arguments, when combat ends otherwise.
+--   Module Enable/Disable calls go through it.
+--
+-- Covered by tests/test_engine_core.lua; docs/ goes into more depth.
 local ADDON, Engine = ...
 local L = Engine:GetLocale()
 
@@ -371,6 +412,8 @@ local OnUpdate = function(self, elapsed, ...)
 end
 
 -- engine and object methods
+-- Sends an addon message to every object registered for it: the Engine,
+-- then enabled handlers, then enabled modules (by priority) and their widgets.
 local Fire = function(self, message, ...)
 	self:Check(message, 1, "string")
 	local eventRegistry = events[message]
@@ -458,6 +501,9 @@ local Fire = function(self, message, ...)
 	end
 end
 
+-- Calls func (a method name, a function, or "Update" when nil) on this
+-- object whenever the game event fires. Registering the same func twice
+-- is ignored.
 local RegisterEvent = function(self, event, func)
 	self:Check(event, 1, "string")
 	self:Check(func, 2, "string", "function", "nil")
@@ -510,6 +556,7 @@ local IsEventRegistered = function(self, event, func)
 	return false	
 end
 
+-- Undoes RegisterEvent for the same func. Errors when it wasn't registered.
 local UnregisterEvent = function(self, event, func)
 	self:Check(event, 1, "string")
 	self:Check(func, 2, "string", "function", "nil")
@@ -545,6 +592,7 @@ local UnregisterEvent = function(self, event, func)
 	end
 end
 
+-- Like RegisterEvent, for the addon's own messages sent with Engine:Fire.
 local RegisterMessage = function(self, message, func)
 	self:Check(message, 1, "string")
 	self:Check(func, 2, "string", "function", "nil")
@@ -672,6 +720,10 @@ end
 -- Config
 -------------------------------------------------------------
 
+-- Merges the saved DiabolicUI_DB into the registered configs (saved values
+-- win over defaults, profile by profile), then points DiabolicUI_DB back at
+-- the live profiles so changes are saved on logout. Runs once, before any
+-- module's OnInit. Saved data for configs nobody registers is left alone.
 Engine.ParseSavedVariables = function(self)
 	-- Fix format changes during development. 
 	if DEVELOPER_RESET then
@@ -724,6 +776,8 @@ Engine.ParseSavedVariables = function(self)
 end
 
 
+-- Registers saved settings. `config` holds the defaults; each profile
+-- (global, realm, faction, character) starts as its own copy of them.
 local NewConfig = function(self, name, config)
 	self:Check(name, 1, "string")
 	self:Check(config, 2, "table")
@@ -784,6 +838,8 @@ local GetConfigDefaults = function(self, name)
 	return configs[name].defaults
 end
 
+-- Returns a static table registered with NewStaticConfig. Private ones
+-- (such as "Data: Constants") are for the Engine itself only.
 local GetDB = function(self, name, private)
 	self:Check(name, 1, "string")
 	if (private and (self ~= Engine)) then
@@ -796,6 +852,8 @@ local GetDB = function(self, name, private)
 	return configTable[name]
 end
 
+-- Registers a static (never saved) table under a name. It's copied, so
+-- changing the original afterwards has no effect.
 local NewStaticConfig = function(self, name, config, private)
 	self:Check(name, 1, "string")
 	self:Check(config, 2, "table")
@@ -919,6 +977,7 @@ local Update = function(self, event, ...)
 	end
 end
 
+-- Runs OnInit once, unless the object is incompatible or missing a dependency.
 local Init = function(self, ...)
 	if (self:IsIncompatible() or self:DependencyFailed()) then
 		return
@@ -931,6 +990,8 @@ local Init = function(self, ...)
 	end
 end
 
+-- Runs OnEnable once and marks the object enabled (so it gets events),
+-- unless it's incompatible or missing a dependency.
 local Enable = function(self, ...)
 	if (self:IsIncompatible() or self:DependencyFailed()) then
 		return
@@ -944,6 +1005,7 @@ local Enable = function(self, ...)
 	end
 end
 
+-- Marks the object disabled (no more events) and runs OnDisable.
 local Disable = function(self, ...)
 	if enabledObjects[self] then 
 		enabledObjects[self] = false
@@ -1018,6 +1080,9 @@ local DependencyFailed = function(self)
 	return dependencyFailed
 end
 
+-- object:SetIncompatible("AddOn"[, condition], ...): skip this object while
+-- that addon is enabled. With a condition function, skip only when it
+-- returns true.
 local SetIncompatible = function(self, ...)
 	if (not incompats[self]) then
 		incompats[self] = {}
@@ -1042,6 +1107,8 @@ local SetIncompatible = function(self, ...)
 	end
 end
 
+-- object:SetDependency("AddOn"[, condition], ...): skip this object unless
+-- that addon is enabled (and the condition, if any, returns true).
 local SetDependency = function(self, ...)
 	if (not dependencies[self]) then
 		dependencies[self] = {}

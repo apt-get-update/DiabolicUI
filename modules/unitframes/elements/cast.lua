@@ -1,3 +1,5 @@
+-- "CastBar" element: cast and channel bars with spell name, timer, latency and
+-- a shield when the cast can't be interrupted (frame.CastBar).
 local _, Engine = ...
 local L = Engine:GetLocale()
 local Handler = Engine:GetHandler("UnitFrame")

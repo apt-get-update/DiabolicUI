@@ -1,3 +1,5 @@
+-- "Menu: Chat" widget: the chat and social buttons next to the chat window
+-- (open the edit box, friends and guild windows).
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local MenuWidget = Module:SetWidget("Menu: Chat")
@@ -78,7 +80,7 @@ MenuWidget.OnEnable = function(self)
 
 	-- WoW Frames and Objects
 	local InputBox = ChatFrame1EditBox
-	local FriendsMicroButton = FriendsMicroButton or QuickJoinToastButton -- changed name in Legion
+	local FriendsMicroButton = FriendsMicroButton
 	local FriendsWindow = FriendsFrame
 
 	-- config table shortcuts

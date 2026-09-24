@@ -1,3 +1,4 @@
+-- "Bar: 3" widget: the third bottom bar (Blizzard's bottom right bar).
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: 3")

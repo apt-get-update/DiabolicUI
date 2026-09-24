@@ -1,3 +1,7 @@
+-- Tooltip styling and behavior: DiabolicUI backdrops on tooltips, menus and
+-- dropdowns, following the cursor at the configured anchor point and offset,
+-- unit info (level, class, guild, target, health bar), inspected gear level and
+-- talent spec, and spell and aura IDs.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Tooltips")
 local L = Engine:GetLocale()
@@ -76,42 +80,9 @@ local FACTION_ALLIANCE_TEXTURE = "|TInterface\\TargetingFrame\\UI-PVP-Alliance:1
 local FACTION_NEUTRAL_TEXTURE = "|TInterface\\TargetingFrame\\UI-PVP-Neutral:16:12:-2:1:64:64:6:34:0:40|t"
 local FACTION_HORDE_TEXTURE = "|TInterface\\TargetingFrame\\UI-PVP-Horde:16:16:-4:0:64:64:0:40:0:40|t"
 
--- Upgraded Item Bonus
-local UGBonus = {
-	["001"] =  8, ["373"] =  4, ["374"] =  8, ["375"] =  4,
-	["376"] =  4, ["377"] =  4, ["379"] =  4, ["380"] =  4,
-	["446"] =  4, ["447"] =  8, ["452"] =  8, ["454"] =  4,
-	["455"] =  8, ["457"] =  8, ["459"] =  4, ["460"] =  8,
-	["461"] = 12, ["462"] = 16, ["466"] =  4, ["467"] =  8,
-	["469"] =  4, ["470"] =  8, ["471"] = 12, ["472"] = 16,
-	["492"] =  4, ["493"] =  8, ["494"] =  4, ["495"] =  8,
-	["496"] =  8, ["497"] = 12, ["498"] = 16, ["504"] = 12,
-	["505"] = 16, ["506"] = 20, ["507"] = 24, ["530"] =  5,
-	["531"] = 10
-}
-
--- Timewarped Items
-local TWItems = {
-	-- Timewarped
-	["615"] = 660, ["692"] = 675,
-	-- Warforged
-	["656"] = 675
-}
-
--- BOA Items
-local BOAItems = {
-	["133585"] = true, -- Judgment of the Naaru
-	["133595"] = true, -- Gronntooth War Horn
-	["133596"] = true, -- Orb of Voidsight
-	["133597"] = true, -- Infallible Tracking Charm
-	["133598"] = true -- Purified Shard of the Third Moon
-}
-
 -- Item stats indicating an item is a PvP item
--- *both do not exist in all expansions, but one of them always does
 local KnownPvPStats = {
-	ITEM_MOD_RESILIENCE_RATING_SHORT = true,
-	ITEM_MOD_PVP_POWER_SHORT = true
+	ITEM_MOD_RESILIENCE_RATING_SHORT = true
 }
 
 -- Inventory Slot IDs we need to check for average item levels
@@ -176,20 +147,10 @@ local IsPVPItem = function(itemLink)
 	end
 end
 
-local GetBOALevel = function(level, id)
-	if level > 97 then
-		if BOAItems[id] then
-			level = 715
-		else
-			level = 605 - (100 - level) * 5
-		end
-	elseif level > 90 then
-		level = 590 - (97 - level) * 10
-	elseif level > 85 then
-		level = 463 - (90 - level) * 19.5
-	elseif level > 80 then
-		level = 333 - (85 - level) * 13.5
-	elseif level > 67 then
+-- Heirlooms scale with the wearer's level, so their item level has to be
+-- estimated from it.
+local GetBOALevel = function(level)
+	if level > 67 then
 		level = 187 - (80 - level) * 4
 	elseif level > 57 then
 		level = 105 - (67 - level) * 2.8
@@ -305,18 +266,6 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 				end
 				if text == FACTION_ALLIANCE or text == FACTION_HORDE then
 					line:SetText("") -- kill faction name, the pvp icons will describe this well enough!
-				end
-				if text == " " then
-					local nextLine = _G[tooltip:GetName().."TextLeft"..(i + 1)]
-					if nextLine then
-						local nextText = nextLine:GetText()
-						if COALESCED_REALM_TOOLTIP and INTERACTIVE_REALM_TOOLTIP then -- super simple check for connected realms
-							if nextText == COALESCED_REALM_TOOLTIP or nextText == INTERACTIVE_REALM_TOOLTIP then
-								line:SetText("")
-								nextLine:SetText(nil)
-							end
-						end
-					end
 				end
 			end
 		end
@@ -472,21 +421,10 @@ Module.GetUnitGear = function(self, unit)
 					else
 						if (quality == 7) then
 							boa = boa + 1
-							local id = string_match(itemLink, "item:(%d+)")
-							total = total + GetBOALevel(ulvl, id)
+							total = total + GetBOALevel(ulvl)
 						else
 							if IsPVPItem(itemLink) then
 								pvp = pvp + 1
-							end
-
-							local tid = string_match(itemLink, ".+:512:22.+:(%d+):100")
-							if TWItems[tid] then
-								level = TWItems[tid]
-							elseif level >= 458 then
-								local uid = string_match(itemLink, ".+:(%d+)")
-								if UGBonus[uid] then
-									level = level + UGBonus[uid]
-								end
 							end
 
 							total = total + level

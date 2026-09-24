@@ -1,3 +1,6 @@
+-- World state UI: the battleground and zone objective indicators (scores,
+-- bases, flags, timers) at the top of the screen, replacing Blizzard's
+-- WorldStateAlwaysUpFrame.
 local _, Engine = ...
 local Module = Engine:NewModule("WorldState")
 

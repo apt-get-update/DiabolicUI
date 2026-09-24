@@ -1,3 +1,4 @@
+-- Static styling for tooltips and their health bars ("Tooltips").
 local Addon, Engine = ...
 local path = ([[Interface\AddOns\%s\media\]]):format(Addon)
 

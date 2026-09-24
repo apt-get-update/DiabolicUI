@@ -1,3 +1,5 @@
+-- "Name" element: the unit name, colored for elites and bosses when the frame
+-- opts in (frame.Name).
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 

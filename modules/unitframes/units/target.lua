@@ -1,3 +1,5 @@
+-- "Unit: Target" widget: the target frame at the top of the screen, sized and
+-- placed by classification (normal, elite, boss).
 local Addon, Engine = ...
 
 local UnitFrame = Engine:GetHandler("UnitFrame")

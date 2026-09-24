@@ -1,3 +1,6 @@
+-- "Portrait" element: the 3D model portrait (frame.Portrait), and the 2D
+-- picture (frame.Portrait2D) shown instead when the unit is too far away for
+-- the model to render, like Blizzard's party frames do.
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 

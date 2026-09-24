@@ -1,3 +1,6 @@
+-- Static layout, sizes and textures for every unit frame ("UnitFrames"):
+-- player orbs, target, focus, pet, party, raid, arena and boss frames.
+-- Not user settings: see defaults/unitframes.lua.
 local ADDON, Engine = ...
 local C = Engine:GetDB("Data: Colors")
 local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
@@ -59,6 +62,21 @@ Engine:NewStaticConfig("UnitFrames", {
 		},
 		units = {
 			player = {
+				-- Death knight runes: a row of six rune glyphs between the
+				-- player auras and the castbar (layout from DiabolicUI2).
+				runes = {
+					size = { 420, 70 },
+					position = { "BOTTOM", "Main", "TOP", 0, 140 },
+					positionPet = { "BOTTOM", "Main", "TOP", 0, 140 + petOffset },
+					rune_size = 70,
+					texture = path .. [[textures\DiabolicUI_Runes.tga]], -- 8 glyphs x 3 rows (slot, fill, glow)
+					glyph_size = { 128/1024, 128/512 }, -- one glyph, in texture coordinates
+					glyph_rows = { slot = 0, fill = 1, glow = 2 },
+					fill_multiplier = .5, -- the fill art is white; halve the rune color so it isn't neon
+					slot_multiplier = .25,
+					glow_alpha = .75,
+					alpha_recharging = .5
+				},
 				castbar = {
 					size = { 227, 15 },
 					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 }, -- 0, 210

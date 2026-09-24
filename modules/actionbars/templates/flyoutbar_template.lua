@@ -1,3 +1,6 @@
+-- "Template: FlyoutBar" widget: pop-up button bars (the micro menu and social
+-- flyouts). A grid of buttons with configurable row size, spacing, padding,
+-- anchor and growth direction.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local FlyoutBarWidget = Module:SetWidget("Template: FlyoutBar")

@@ -1,3 +1,4 @@
+-- "Unit: Focus" widget: the focus frame.
 local Addon, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Focus")

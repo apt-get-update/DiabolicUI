@@ -24,7 +24,7 @@ local UIFrameFadeRemoveFrame = UIFrameFadeRemoveFrame
 local UnitAffectingCombat = UnitAffectingCombat
 
 -- WoW Frames and Objects
-local FriendsMicroButton = FriendsMicroButton or QuickJoinToastButton -- changed name in Legion
+local FriendsMicroButton = FriendsMicroButton
 
 local selectedFrame = function()
 	return SELECTED_CHAT_FRAME

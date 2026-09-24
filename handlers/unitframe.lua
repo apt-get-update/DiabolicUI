@@ -1,3 +1,10 @@
+-- "UnitFrame" handler: builds unit frames and runs their elements.
+-- Handler:New(unit, parent, styleFunc) creates a secure unit button and calls
+-- styleFunc to build its widgets; every element file in
+-- modules/unitframes/elements/ registers itself with
+-- :RegisterElement(name, Enable, Disable, Update) and is enabled on each frame
+-- that has the matching widget (frame.Health, frame.Portrait, ...).
+-- Elements can ask for OnUpdate polling with :EnableFrequentUpdates().
 local _, Engine = ...
 local Handler = Engine:NewHandler("UnitFrame")
 local Orb = Engine:GetHandler("Orb")
