@@ -25,6 +25,23 @@ function WowApiMock.install()
 	-- modules/blizzard/containers.lua builds a bag-slot-count match pattern
 	-- from this at file scope
 	_G.CONTAINER_SLOTS = "%d Slots"
+
+	-- modules/blizzard/itemtooltips.lua builds its DPS / armor / durability
+	-- match patterns from these at file scope
+	_G.DPS_TEMPLATE = "(%.1f damage per second)"
+	_G.ARMOR_TEMPLATE = "%d Armor"
+	_G.DURABILITY_TEMPLATE = "Durability %d / %d"
+	_G.ITEM_CLASSES_ALLOWED = "Classes: %s"
+	_G.ITEM_UNIQUE_MULTIPLE = "Unique (%d)"
+	_G.ITEM_LIMIT_CATEGORY = "Unique: %s (%d)"
+	_G.ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)"
+	_G.ITEM_MIN_LEVEL = "Requires Level %d"
+	_G.ITEM_LEVEL_RANGE = "Requires level %d to %d"
+	_G.ITEM_LEVEL_RANGE_CURRENT = "Requires level %d to %d (%d)"
+	_G.ITEM_MIN_SKILL = "Requires %s (%d)"
+	_G.ITEM_REQ_SKILL = "Requires %s"
+	_G.ITEM_REQ_REPUTATION = "Requires %s - %s"
+	_G.ITEM_REQ_ARENA_RATING = "Requires personal and team arena rating of %d"
 end
 
 return WowApiMock

@@ -125,6 +125,11 @@ L["<Left-click> to toggle stance bar."] = true
 L["<Right-click> to cancel current form."] = true
 L["<Left-click> to leave the vehicle."] = true
 L["Request Stop"] = true
+
+-- item tooltips
+L["Equipped"] = true
+L["Reskin Tooltip"] = true
+L["Shows item tooltips in the Diablo III style: the item's name on a title banner in its quality color, its icon on the left, damage per second or armor as a big number, and the sell price and durability at the bottom.|n|nWhen disabled, Blizzard's own item tooltips are used."] = true
 L["<Left-click> to land at the next flight point."] = true
 
 -- added to the interface options menu in WotLK

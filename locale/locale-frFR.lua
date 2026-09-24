@@ -67,6 +67,11 @@ L["Up Arrow"] = "HA"
 L["Request Stop"] = "Demander l'arrêt"
 L["<Left-click> to land at the next flight point."] = "<Clic gauche> pour atterrir au prochain point de vol."
 
+-- item tooltips
+L["Equipped"] = "Équipé"
+L["Reskin Tooltip"] = "Relooker les infobulles"
+L["Shows item tooltips in the Diablo III style: the item's name on a title banner in its quality color, its icon on the left, damage per second or armor as a big number, and the sell price and durability at the bottom.|n|nWhen disabled, Blizzard's own item tooltips are used."] = "Affiche les infobulles d'objets dans le style de Diablo III : le nom de l'objet sur un bandeau de la couleur de sa qualité, son icône à gauche, les dégâts par seconde ou l'armure en gros chiffre, et le prix de vente et la durabilité en bas.|n|nDésactivé, les infobulles d'objets de Blizzard sont utilisées."
+
 -- minimap
 L["Calendar"] = "Calendrier"
 L["New Event!"] = "Nouvel événement"

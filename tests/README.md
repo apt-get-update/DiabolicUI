@@ -124,6 +124,13 @@ hits (`stats.out`) and `report.txt` are git-ignored.
   clamping it to a sane range, repositioning the spark to the current
   value, and showing the left/right "moving" indicator based on which way
   the value just changed (or hiding both near the edges).
+- `test_blizzard_itemtooltips.lua` - `modules/blizzard/itemtooltips.lua`,
+  the Diablo III style item tooltips: Blizzard's DPS / armor / durability
+  format strings turned into patterns (English and French clients), and
+  what it reads and rewrites when a tooltip shows an item (name, icon,
+  quality color, sell price, the big-number line, the durability line
+  moved to the footer, comparison tooltips, uncached items). The layout
+  itself needs real frame geometry and is checked in game.
 - `test_blizzard_mirrortimers.lua` - `modules/blizzard/mirrortimers.lua`'s
   `UpdateTimer` (crops, not shrinks, a mirror/start timer's statusbar
   texture to the current value, clamped to its own min/max) and
