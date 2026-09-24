@@ -1,3 +1,5 @@
+-- "Unit: Player" widget: the player's health and power orbs at the bottom
+-- corners, plus the player cast bar, buffs and debuffs.
 local ADDON, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Player")
@@ -5,6 +7,7 @@ local C = Engine:GetDB("Data: Colors")
 
 -- Lua API
 local _G = _G
+local ipairs = ipairs
 local unpack = unpack
 local pairs = pairs
 local tostring = tostring
@@ -562,9 +565,57 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Debuffs.PostUpdateButton = postUpdateAuraButton
 
 
+	-- Runes (death knights)
+	-------------------------------------------------------------------
+	-- Six glyphs from one texture: row 0 is the empty slot, row 1 the fill
+	-- and row 2 its glow. The Runes element fills and colors them.
+	local Runes
+	if (CLASS == "DEATHKNIGHT") then
+		local configRunes = config.runes
+		local glyphWidth, glyphHeight = unpack(configRunes.glyph_size)
+		local size = configRunes.rune_size
+
+		Runes = self:CreateFrame("Frame")
+		Runes:SetSize(unpack(configRunes.size))
+		Runes:Place(unpack(hasPet and configRunes.positionPet or configRunes.position))
+		Runes.config = configRunes
+
+		for i = 1, 6 do
+			local rune = CreateFrame("Frame", nil, Runes)
+			rune:SetSize(size, size)
+			rune:SetPoint("BOTTOMLEFT", (i - 1) * size, 0)
+			rune.size = size
+
+			local glyph = function(row, drawLayer)
+				local texture = rune:CreateTexture(nil, drawLayer)
+				local top = row * glyphHeight
+				texture.texCoords = { (i - 1) * glyphWidth, i * glyphWidth, top, top + glyphHeight }
+				texture:SetTexture(configRunes.texture)
+				texture:SetTexCoord(unpack(texture.texCoords))
+				return texture
+			end
+
+			rune.Slot = glyph(configRunes.glyph_rows.slot, "BACKGROUND")
+			rune.Slot:SetAllPoints()
+
+			rune.Fill = glyph(configRunes.glyph_rows.fill, "ARTWORK")
+			rune.Glow = glyph(configRunes.glyph_rows.glow, "OVERLAY")
+			rune.Glow:SetBlendMode("ADD")
+			rune.layers = { rune.Fill, rune.Glow }
+			for _, texture in ipairs(rune.layers) do
+				texture:SetPoint("BOTTOMLEFT")
+				texture:SetPoint("BOTTOMRIGHT")
+				texture:SetHeight(size)
+			end
+
+			Runes[i] = rune
+		end
+	end
+
 	self:HookScript("OnEnter", onEnterLeft)
 	self:HookScript("OnLeave", onLeaveLeft)
 
+	self.Runes = Runes
 	self.Buffs = Buffs
 	self.Debuffs = Debuffs
 	self.Health = Health
@@ -784,10 +835,16 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 			self.Left.CastBar:Place(unpack(self.config.castbar.positionPet))
 			self.Left.Buffs:Place(unpack(self.config.buffs.positionPet))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.positionPet))
+			if self.Left.Runes then
+				self.Left.Runes:Place(unpack(self.config.runes.positionPet))
+			end
 		else
 			self.Left.CastBar:Place(unpack(self.config.castbar.position))
 			self.Left.Buffs:Place(unpack(self.config.buffs.position))
 			self.Left.Debuffs:Place(unpack(self.config.debuffs.position))
+			if self.Left.Runes then
+				self.Left.Runes:Place(unpack(self.config.runes.position))
+			end
 		end
 
 	elseif event == "ENGINE_MINIMAP_VISIBLE_CHANGED" then

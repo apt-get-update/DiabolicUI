@@ -1,3 +1,6 @@
+-- English strings, and the reference list of every locale key. `L[key] = true`
+-- means the text is the key itself; other locale files only translate keys
+-- listed here (tests/test_locales.lua checks that).
 local _, Engine = ...
 
 local L = Engine:NewLocale("enUS")
@@ -121,6 +124,8 @@ L["Stances"] = true
 L["<Left-click> to toggle stance bar."] = true
 L["<Right-click> to cancel current form."] = true
 L["<Left-click> to leave the vehicle."] = true
+L["Request Stop"] = true
+L["<Left-click> to land at the next flight point."] = true
 
 -- added to the interface options menu in WotLK
 L["Cast action keybinds on key down"] = true

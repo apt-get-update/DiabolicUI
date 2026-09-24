@@ -35,6 +35,15 @@ that: DiabolicUI2's polyfills defined it, so the gold/FPS toggles worked
 until DiabolicUI2 was disabled. Before relying on a function, check that
 3.3.5 itself has it.
 
+**UI strings and constants too.** Blizzard adds global strings and
+constants with every expansion, and code written for a later client reads
+them as nil on 3.3.5. The taxi button's tooltip used `TAXI_CANCEL`, a
+Cataclysm string, and hovering it failed with `GameTooltip:SetText(nil)`.
+When 3.3.5 has no string for what you need, add one to the addon's own
+locale files (`L["Request Stop"]`). `tests/test_wotlk_globals.lua` checks
+every ALL-CAPS global the addon reads against the list of names the 3.3.5
+client defines, `tests/data/wotlk-globals.txt`.
+
 ## Everything is `local`
 
 A missing `local` makes a variable global, shared with Blizzard's UI and
@@ -106,9 +115,12 @@ fully predict; a frame you built yourself has none of that.
    seconds.
 2. `bash tests/run_all.sh` — full LuaUnit suite; watch for `0 failures` on
    every sub-suite listed.
-3. If you added/removed/renamed a top-level `.lua` file under `modules/` or
-   `handlers/`, update `tests/test_all_modules_load.lua`'s file list —
-   nothing catches a stale entry there automatically.
-4. Actual in-game verification (does it look right, does clicking it work)
+3. If you added, removed or renamed a `.lua` file, update the XML file that
+   loads it: `tests/test_addon_loads.lua` fails on a file nothing loads, and
+   on an XML entry pointing at a file that no longer exists.
+4. Give a new file a short header comment saying what it's for, like the
+   rest of the addon has, and a behaviour test if its logic can run without
+   the client (see [Testing]({{< relref "testing" >}})).
+5. Actual in-game verification (does it look right, does clicking it work)
    still has to happen by hand — say so explicitly rather than claiming a
    UI change works when it's only been syntax- and load-tested.

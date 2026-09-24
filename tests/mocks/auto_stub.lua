@@ -19,7 +19,10 @@
 local AutoStub = {}
 
 local Stub = {}
-Stub.__index = function(_, _) return Stub.new() end
+-- A table (itself permissive) rather than a function, so code that grabs
+-- the shared frame methods with `getmetatable(frame).__index` - the engine
+-- does - gets something it can index, just like with a real frame.
+Stub.__index = setmetatable({}, { __index = function() return Stub.new() end })
 Stub.__call = function(_, ...) return Stub.new() end
 Stub.__concat = function(a, b)
 	local function str(v)

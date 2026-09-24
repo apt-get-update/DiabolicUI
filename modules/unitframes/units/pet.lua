@@ -1,3 +1,5 @@
+-- "Unit: Pet" widget: the pet frame. Also registered as the "PetFrame" anchor
+-- keyword for other modules.
 local Addon, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Pet")

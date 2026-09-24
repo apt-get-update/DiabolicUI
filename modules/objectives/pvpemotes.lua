@@ -1,3 +1,5 @@
+-- Emotes at players you land the killing blow on: a /hug until the "Make Love,
+-- Not Warcraft" achievement is earned, then a random emote.
 local _, Engine = ...
 local Module = Engine:NewModule("PvPEmotes")
 

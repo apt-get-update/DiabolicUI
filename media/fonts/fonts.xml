@@ -288,6 +288,12 @@
 		<Font name="DiabolicFont_HeaderRegular16White" inherits="DiabolicFont_HeaderRegular16" justifyH="LEFT" virtual="true">
 			<Color r="0.941176470588" g="0.941176470588" b="0.941176470588"/>
 		</Font>
+		<Font name="DiabolicFont_HeaderRegular16Orange" inherits="DiabolicFont_HeaderRegular16" justifyH="CENTER" justifyV="BOTTOM" virtual="true">
+			<Color r="1.00" g="0.819607843137" b="0.0392156862745"/>
+		</Font>
+		<Font name="DiabolicFont_HeaderRegular16Red" inherits="DiabolicFont_HeaderRegular16" justifyH="CENTER" justifyV="BOTTOM" virtual="true">
+			<Color r="0.850980392157" g="0.149019607843" b="0.0392156862745"/>
+		</Font>
 
 	<Font name="DiabolicFont_HeaderRegular18" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardLight.ttf" justifyH="LEFT" virtual="true">
 		<Shadow>

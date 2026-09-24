@@ -1,3 +1,4 @@
+-- "CombatFeedback" element: placeholder, not implemented yet.
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 

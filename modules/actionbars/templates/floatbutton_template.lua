@@ -1,3 +1,7 @@
+-- "Template: FloatButton" widget: the round standalone buttons around the
+-- action bars (vehicle exit, taxi early landing, stance toggle).
+-- :New(type, parent, name) makes one; :Build(button, parent) restyles an
+-- existing secure button.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local FloatButtonWidget = Module:SetWidget("Template: FloatButton")

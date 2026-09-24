@@ -1,3 +1,4 @@
+-- Turns off Blizzard's zone text; the minimap module shows the zone instead.
 local _, Engine = ...
 local Module = Engine:NewModule("ZoneText")
 

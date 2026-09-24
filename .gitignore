@@ -1,9 +1,30 @@
-.claude
+# Claude Code local config
+.claude/
 
-### Hugo ###
-/public/
-/resources/_gen/
-/assets/jsconfig.json
-hugo_stats.json
+# Hugo developer docs (built output; the site source in docs/ is tracked)
+docs/public/
+docs/resources/_gen/
+docs/assets/jsconfig.json
+docs/hugo_stats.json
+docs/.hugo_build.lock
 hugo.linux
-/.hugo_build.lock
+
+# Lua test coverage
+luacov.stats.out
+luacov.report.out
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test coverage output (tests/coverage/run.sh)
+tests/coverage/stats.out
+tests/coverage/report.txt

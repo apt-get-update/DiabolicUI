@@ -1,3 +1,5 @@
+-- "Auras" element: buff and debuff icon grids on unit frames, with timers,
+-- stack counts and per-frame filters (frame.Auras / Buffs / Debuffs).
 local ADDON, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local StatusBar = Engine:GetHandler("StatusBar")

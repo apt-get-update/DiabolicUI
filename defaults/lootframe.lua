@@ -1,3 +1,4 @@
+-- User settings for the custom loot window (saved per profile in DiabolicUI_DB).
 local ADDON, Engine = ...
 
 Engine:NewConfig("LootFrame", {

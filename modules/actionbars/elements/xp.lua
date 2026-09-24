@@ -1,3 +1,5 @@
+-- "Bar: XP" widget: the experience bar along the action bar artwork, with rested
+-- experience and a tooltip. Hidden at the level cap (actionbars.lua decides).
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: XP")
@@ -30,7 +32,6 @@ local SocketInventoryItem = _G.SocketInventoryItem
 local UnitHasVehicleUI = _G.UnitHasVehicleUI
 local UnitHasVehiclePlayerFrameUI = _G.UnitHasVehiclePlayerFrameUI
 local UnitLevel = _G.UnitLevel
-local UnitRace = _G.UnitRace
 local UnitXP = _G.UnitXP
 local UnitXPMax = _G.UnitXPMax
 
@@ -40,8 +41,8 @@ local GameTooltip = _G.GameTooltip
 -- Track XP/Rep bar visibility
 local XPBARVISIBLE
 
--- Pandaren can get 300% rested bonus
-local maxRested = select(2, UnitRace("player")) == "Pandaren" and 3 or 1.5
+-- Rested experience caps at 150% of a level
+local maxRested = 1.5
 
 -- Various string formatting for our tooltips and bars
 local shortXPString = "%s%%"

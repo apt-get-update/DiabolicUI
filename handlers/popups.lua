@@ -1,3 +1,7 @@
+-- "PopUpMessage" handler: DiabolicUI-styled replacement for StaticPopup.
+-- Register a popup once with :RegisterPopUp(id, info), then :ShowPopUp(id) /
+-- :HidePopUp(id). The info table follows StaticPopupDialogs (text, buttons,
+-- OnAccept, timeout, edit box, ...).
 local _, Engine = ...
 local Handler = Engine:NewHandler("PopUpMessage")
 

@@ -1,3 +1,5 @@
+-- "Classification" element: level, class and creature type text for a unit,
+-- with elite, rare and boss markers (frame.Classification).
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 

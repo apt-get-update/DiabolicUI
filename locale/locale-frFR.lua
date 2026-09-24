@@ -63,6 +63,10 @@ L["Left Arrow"] = "GA"
 L["Right Arrow"] = "DA"
 L["Up Arrow"] = "HA"
 
+-- floating buttons
+L["Request Stop"] = "Demander l'arrêt"
+L["<Left-click> to land at the next flight point."] = "<Clic gauche> pour atterrir au prochain point de vol."
+
 -- minimap
 L["Calendar"] = "Calendrier"
 L["New Event!"] = "Nouvel événement"

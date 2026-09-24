@@ -1,3 +1,6 @@
+-- UnitFrames module: enables every unit frame widget (units/*.lua), loads the
+-- shared artwork, and turns off Blizzard's own unit frames and their
+-- Interface Options panels.
 local Addon, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:NewModule("UnitFrames")

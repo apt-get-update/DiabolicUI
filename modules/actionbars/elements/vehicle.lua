@@ -1,3 +1,5 @@
+-- "Bar: Vehicle" widget: the vehicle action bar, shown instead of the main bar
+-- while the player controls a vehicle.
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: Vehicle")

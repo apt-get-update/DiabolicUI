@@ -1,3 +1,6 @@
+-- Restyles and re-anchors Blizzard's mirror timers (breath, fatigue, feign
+-- death): cropped bar textures, stacked at one of two configured spots
+-- depending on whether a capture bar is taking up the first one.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: MirrorTimers")
 local C = Engine:GetDB("Data: Colors")

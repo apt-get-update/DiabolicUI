@@ -1,3 +1,4 @@
+-- "Unit: ToT" widget: the target of target frame.
 local Addon, Engine = ...
 local UnitIsTapDenied = Engine.UnitIsTapDenied
 

@@ -19,6 +19,19 @@ lua5.1 tests/test_tooltip_positioning.lua   # a single file
 
 Each `tests/test_*.lua` file is self-contained and runnable on its own.
 
+### Coverage
+
+```bash
+tests/coverage/run.sh            # summary per area; per-file table in tests/coverage/report.txt
+tests/coverage/run.sh --readme   # also refresh the table in README.adoc
+```
+
+`coverage/hook.lua` is loaded in front of each test file and records every
+addon line that runs (a `debug.sethook` line hook; test files, `docs/` and
+vendored `Libs/` are left out). `coverage/report.lua` counts a line as
+executable when `luac5.1 -l` shows code for it. No luacov needed. The raw
+hits (`stats.out`) and `report.txt` are git-ignored.
+
 ## What's covered
 
 - `test_no_global_leaks.lua` - fails if any addon file assigns a global
@@ -27,12 +40,54 @@ Each `tests/test_*.lua` file is self-contained and runnable on its own.
   `luac5.1` on the PATH (override with `LUAC=...`). Vendored code under
   `modules/minimap/` is skipped.
 
+- `test_addon_loads.lua` - loads the **whole addon** the way the client
+  does: `DiabolicUI.toc`, then every `<Include>`/`<Script>` of its XML files
+  in order, with one shared addon table - the real engine, handlers,
+  settings, and the minimap module with its vendored Ace3 libraries. Also
+  fails when an XML file points at a file that doesn't exist, or when a
+  `.lua` file (outside vendored `Libs/`) isn't loaded by anything - except
+  the ones listed in its `NOT_LOADED` table, with the reason.
 - `test_all_modules_load.lua` - a load-only "smoke test" for **every**
-  module/handler file in the addon (91 files at time of writing): each one
-  is loaded standalone and we assert it doesn't error while doing so. This
-  can't verify behaviour, but it catches load-time regressions across the
-  whole addon - typos, a removed function a file still calls at file scope,
-  a bad reference, etc. - without having to hand-write a test for each file.
+  `handlers/` and `modules/` file (found on disk, so new files are covered
+  automatically; the minimap module is left to `test_addon_loads.lua`):
+  each one is loaded standalone against a fresh Engine mock and we assert
+  it doesn't error while doing so. This can't verify behaviour, but it
+  catches load-time regressions - typos, a removed function a file still
+  calls at file scope, a bad reference, etc.
+- `test_engine_core.lua` - the real `engine/engine-core.lua` on
+  `mocks/frame_mock.lua`, driven by firing events through its own event
+  frame: module/handler/widget registration and its errors, the startup
+  order (every OnInit before any OnEnable, LOW priority waiting for
+  PLAYER_LOGIN), SetIncompatible/SetDependency, event and message dispatch,
+  `Engine:Wrap` deferring calls until combat ends, and saved config
+  profiles (`NewConfig`, `GetConfig`, `ParseSavedVariables`).
+- `test_wotlk_globals.lua` - fails when addon code reads an ALL-CAPS
+  Blizzard global (a UI string like `TAXI_CANCEL`, or a constant) that the
+  3.3.5 client doesn't define: code written for a later expansion, which
+  reads nil on WotLK. `tests/data/wotlk-globals.txt` is the list of names
+  the 3.3.5 (12340) client's own UI defines, generated from
+  [Goldpaw/WoW_UI_Source_WotLK](https://github.com/Goldpaw/WoW_UI_Source_WotLK).
+- `test_locales.lua` - `locale/locale_handler.lua`'s fallback to English,
+  every locale file loading, translations only using keys that exist in
+  `locale-enUS.lua`, and every literal `L["..."]` key in the code existing
+  there too.
+- `test_data_helpers.lua` - `data/functions.lua` (`F.Short`, `F.Colorize`),
+  `data/aura-filters.lua`, `data/aura-functions.lua` (the `isBossDebuff` /
+  `isCastByPlayer` extras) and `engine/wotlk-helpers.lua`
+  (`Engine.UnitIsTapDenied`, `/rl`).
+- `test_unitframes_portraits.lua` - `elements/portraits.lua`: 3D model in
+  range, 2D portrait out of range, both hidden offline, camera choice.
+- `test_unitframes_runes.lua` - `elements/runes.lua`, the death knight
+  runes: Blizzard's display order, colors by rune type (death runes too),
+  the fill cropped to recharge progress, and the DiabolicUI2 visibility
+  rules (dimmed while recharging, hidden out of combat when all are ready,
+  hidden in vehicles).
+- `test_unitframes_raid.lua` - `units/raid.lua`'s debuff filter: the WotLK
+  dispel list per class, Cleanse Spirit for shaman curses, boss debuffs.
+- `test_objectives_tracker.lua` - `objectives/tracker.lua`'s quest tracker
+  fade (delay, fade, hover, Questie vs. Blizzard tracker switching).
+- `test_actionbars_floaters.lua` - `elements/floaters.lua`'s taxi "request
+  early landing" button visibility, including waiting out combat.
 - `test_tooltip_positioning.lua` - `modules/blizzard/tooltips.lua`'s
   cursor-anchoring math (`Tooltip_GetAnchorFractions`, `Tooltip_PositionAtCursor`):
   all 9 anchor points, the offset, and effective-scale handling.
@@ -120,6 +175,10 @@ files (not reimplementations of their logic) without a WoW client:
   over those (a real `string.gsub` call needs a real string, not a mock
   object). Extend this only when a newly-tested file needs another such
   global; don't add globals speculatively.
+- `tests/mocks/frame_mock.lua` is a small fake of the frame API for tests
+  that drive frames through their scripts (`frame:Fire("OnEvent", ...)`,
+  `frame:Fire("OnUpdate", elapsed)`). It only has the methods it lists - no
+  catch-all - so unset fields read as nil, like on a real frame.
 - `tests/mocks/auto_stub.lua` is the permissive catch-all used by the
   whole-addon smoke test: once installed, *any* undefined global resolves to
   a Stub value that can be called, indexed (however deep) or concatenated
@@ -199,13 +258,12 @@ attempt to test:
   frame hierarchies, templates like `OptionsSliderTemplate`).
 - Anything that depends on real game state beyond what a test explicitly
   fakes (units, items, combat, SavedVariables).
-- The options panel UI itself (`modules/unitframes/unitframes.lua`) - it's
+- The options panel UI itself (`modules/menu/menu.lua`) - it's
   almost entirely frame construction and Blizzard template wiring, which
   would need a much larger UI mock to exercise meaningfully.
 
 If you want a new file's *behaviour* covered (beyond the load-only smoke
-test it already gets automatically as long as it's added to
-`test_all_modules_load.lua`'s file list), the file first needs to be
+tests it already gets automatically), the file first needs to be
 checked for what it touches *at file scope* (outside any `function...end`)
 - those are the only calls that must be individually mocked for `loadfile`
 to succeed without the permissive auto-stub. Everything inside a function

@@ -1,3 +1,5 @@
+-- "Power" element: mana, rage, energy, focus and runic power bars and value
+-- text (frame.Power, frame.Mana).
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
