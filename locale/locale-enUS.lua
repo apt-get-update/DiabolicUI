@@ -17,9 +17,6 @@ L["The handler '%s' has no method named '%s'!"] = true
 L["The handler element '%s' has no method named '%s'!"] = true
 L["The module '%s' has no method named '%s'!"] = true
 L["The module widget '%s' has no method named '%s'!"] = true
-L["The Engine has no method named '%s'!"] = true
-L["The handler '%s' has no method named '%s'!"] = true
-L["The module '%s' has no method named '%s'!"] = true
 L["The event '%s' isn't currently registered to any object."] = true
 L["The event '%s' isn't currently registered to the object '%s'."] = true
 L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] = true
@@ -44,24 +41,13 @@ L["A handler named '%s' is already registered!"] = true
 L["Bad argument #%d to '%s': The name '%s' is reserved for a handler!"] = true
 L["Bad argument #%d to '%s': A module named '%s' already exists!"] = true
 L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"] = true
-L["Attention!"] = true
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it, you won't be asked about this issue again.|n|nFix this issue now?"] = true
-L["UI scaling is activated and needs to be disabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = true
-L["UI scaling was turned off but needs to be enabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = true
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = true
-L["Your resolution is too low for this UI, but the UI scale can still be adjusted to make it fit. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = true
 L["Accept"] = true
 L["Cancel"] = true
-L["Ignore"] = true
-L["You can re-enable the auto scaling by typing |cff448800/diabolic autoscale|r in the chat at any time."] = true
-L["Auto scaling of the UI has been enabled."] = true
-L["Auto scaling of the UI has been disabled."] = true
 L["Reload Needed"] = true
 L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = true
 L["The Engine can't be tampered with!"] = true
 
 -- Blizzard Handler
-L["Bad argument #%d to '%s'. No object named '%s' exists."] = true
 
 
 ---------------------------------------------------------------------
@@ -76,7 +62,6 @@ L["Main Menu"] = true
 L["<Left-click> to toggle menu."] = true
 L["Blizzard Micro Menu"] = true
 L["Here you'll find all the common interface panels|nlike the spellbook, talents, achievements etc."] = true
-L["Diabolic Options"] = true
 
 L["Action Bars"] = true
 L["<Left-click> to toggle action bar menu."] = true
@@ -102,6 +87,7 @@ L["Three"] = true
 
 -- xp bar
 L["Current XP: "] = true
+L["Experience"] = true
 L["Rested Bonus: "] = true
 L["Rested"] = true
 L["%s of normal experience\ngained from monsters."] = true
@@ -112,12 +98,8 @@ L["Normal"] = true
 L["You should rest at an Inn."] = true
 
 -- artifact bar 
-L["Current Artifact Power: "] = true 
-L["<Left-Click to toggle Artifact Window>"] = true
 
 -- honor bar 
-L["Current Honor Points: "] = true
-L["<Left-Click to toggle Honor Talents Window>"] = true
 
 -- floating buttons
 L["Stances"] = true
@@ -210,14 +192,8 @@ L["Failed to update action bars, must be %d or %d or %d"] = true
 
 -- minimap module
 ---------------------------------------------------------------------
-L["<Left-click> to toggle calendar."] = true
-L["<Middle-click> to toggle local/game time."] = true
-L["<Right-click> to toggle 12/24-hour clock."] = true
 --L["<Middle-click> to toggle stopwatch."] = true
 --L["<Right-click> to configure clock."] = true
-L["Calendar"] = true
-L["New Event!"] = true
-L["New Mail!"] = true
 
 -- tooltips
 ---------------------------------------------------------------------
@@ -292,12 +268,6 @@ L["Left-click a web link (http:// or https://) in the chat to open a popup with 
 
 -- worldmap module
 ---------------------------------------------------------------------
-L["Reveal"] = true
-L["Reveal Hidden Areas"] = true
-L["Hide Undiscovered Areas"] = true
-L["Disable to hide areas|nyou have not yet discovered."] = true
-L["Enable to show hidden areas|nyou have not yet discovered."] = true
-L["Press <CTRL+C> to copy."] = true
 
 -- abbreviations
 ---------------------------------------------------------------------

@@ -16,8 +16,6 @@ Module:SetIncompatible("TinyTooltip")
 -- Lua API
 local _G = _G
 local ipairs = ipairs
-local math_floor = math.floor
-local math_max = math.max
 local pairs= pairs
 local select = select
 local string_find = string.find
@@ -26,8 +24,6 @@ local string_match = string.match
 local table_concat = table.concat
 local table_insert = table.insert
 local table_wipe = table.wipe
-local tonumber = tonumber
-local tostring = tostring
 local unpack = unpack
 
 -- WoW API
@@ -37,24 +33,19 @@ local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetCursorPosition = _G.GetCursorPosition
 local GetItemInfo = _G.GetItemInfo
 local GetItemStats = _G.GetItemStats
-local GetMouseFocus = _G.GetMouseFocus
 local GetTime = _G.GetTime
-local GetQuestGreenRange = _G.GetQuestGreenRange
 local hooksecurefunc = _G.hooksecurefunc
 local InCombatLockdown = _G.InCombatLockdown
 local IsShiftKeyDown = _G.IsShiftKeyDown
 local NotifyInspect = _G.NotifyInspect
 local UnitClass = _G.UnitClass
 local UnitClassification = _G.UnitClassification
-local UnitCreatureFamily = _G.UnitCreatureFamily
 local UnitExists = _G.UnitExists
 local UnitFactionGroup = _G.UnitFactionGroup
 local UnitGUID = _G.UnitGUID
-local UnitIsAFK = _G.UnitIsAFK
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDead = _G.UnitIsDead
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsDND = _G.UnitIsDND
 local UnitIsGhost = _G.UnitIsGhost
 local UnitIsPlayer = _G.UnitIsPlayer
 local UnitIsPVP = _G.UnitIsPVP
@@ -64,7 +55,6 @@ local UnitIsVisible = _G.UnitIsVisible
 local UnitLevel = _G.UnitLevel
 local UnitName = _G.UnitName
 local UnitOnTaxi = _G.UnitOnTaxi
-local UnitPVPName = _G.UnitPVPName
 local UnitReaction = _G.UnitReaction
 
 local UnitIsTapDenied = Engine.UnitIsTapDenied
@@ -132,8 +122,6 @@ gearPrefix = ITEM_LEVEL:gsub("(%%d)", ""):gsub("(%s)$", "") .. ": "
 local specPrefix
 specPrefix = TALENTS .. ": " -- still using talent builds in WotLK and Cata
 
-local playerLevel = UnitLevel("player")
-
 
 -- Utility Functions
 ------------------------------------------------------------
@@ -179,7 +167,6 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	local unit = self:GetTooltipUnit(tooltip)
 	if not unit then
 		tooltip:Hide()
-		tooltip.unit = nil
 		self.unit = nil
 		return
 	end
@@ -190,12 +177,11 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	self.unit = unit
 
 	local level = UnitLevel(unit)
-	local name, realm = UnitName(unit)
+	local name = UnitName(unit)
 	local faction = UnitFactionGroup(unit)
 	local isdead = UnitIsDead(unit) or UnitIsGhost(unit)
 
-	local disconnected, pvp, ffa, pvpname, afk, dnd, class, classname, caninspect
-	local classification, creaturetype, iswildpet, isbattlepet
+	local disconnected, pvp, ffa, class, caninspect
 	local isboss, reaction, istapped
 	local color
 
@@ -203,22 +189,12 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 		disconnected = not UnitIsConnected(unit)
 		pvp = UnitIsPVP(unit)
 		ffa = UnitIsPVPFreeForAll(unit)
-		pvpname = UnitPVPName(unit)
-		afk = UnitIsAFK(unit)
-		dnd = UnitIsDND(unit)
-		classname, class = UnitClass(unit)
+		class = select(2, UnitClass(unit))
 		caninspect = CanInspect(unit) and (level and level > 10)
 	else
-		classification = UnitClassification(unit)
-		creaturetype = UnitCreatureFamily(unit) or UnitCreatureType(unit)
-		isboss = classification == "worldboss"
+		isboss = (UnitClassification(unit) == "worldboss") or (level == -1)
 		reaction = UnitReaction(unit, "player")
 		istapped = UnitIsTapDenied(unit)
-
-		if level == -1 then
-			classification = "worldboss"
-			isboss = true
-		end
 	end
 
 	-- inspect the target if possible
@@ -229,18 +205,16 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 
 	-- figure out name coloring based on collected data
 	if isdead then
-		color = C.General.Dead
+		color = C.Status.Dead
 	elseif isplayer then
 		if disconnected then
-			color = C.General.Disconnected
-		elseif class then
-			color = C.Class[class]
+			color = C.Status.Disconnected
 		else
-			color = C.General.Normal
+			color = C.Class[class]
 		end
 	elseif reaction then
 		if istapped then
-			color = C.General.Tapped
+			color = C.Status.Tapped
 		else
 			color = C.Reaction[reaction]
 		end
@@ -248,17 +222,10 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 		color = C.General.Normal
 	end
 
-	-- this can sometimes happen when hovering over battlepets
-	if not name or not color then
-		tooltip:Hide()
-		return
-	end
-
 	-- clean up the tip
 	for i = 2, tooltip:NumLines() do
 		local line = _G[tooltip:GetName().."TextLeft"..i]
 		if line then
-			--line:SetTextColor(unpack(C.General.Gray)) -- for the time being this will just be confusing
 			local text = line:GetText()
 			if text then
 				if text == PVP_ENABLED then
@@ -374,103 +341,73 @@ Module.GetUnitGear = function(self, unit)
 	if (not unit) or (UnitGUID(unit) ~= currentGUID) then return end
 
 	local ulvl = UnitLevel(unit)
-	local class = select(2, UnitClass(unit))
-
-	local _
 	local delay
-	local ilvl, boa, pvp = 0, 0, 0
+	local boa, pvp = 0, 0
 	local total, count = 0, 17 -- include the relic/ranged slot in WotLK
 	local mainhand, offhand, twohand = 1, 1, 0
 
-	if UnitIsUnit("player", unit) then
-		for _,i in ipairs(InventorySlots) do
-			local itemTexture = GetInventoryItemTexture(unit, i)
-			if itemTexture then
-				local itemLink = GetInventoryItemLink(unit, i)
-				if not itemLink then
+	for _,i in ipairs(InventorySlots) do
+		local itemTexture = GetInventoryItemTexture(unit, i)
+		if itemTexture then
+			local itemLink = GetInventoryItemLink(unit, i)
+
+			if not itemLink then
+				delay = true
+			else
+				local _, _, quality, level, _, _, _, _, slot = GetItemInfo(itemLink)
+
+				if (not quality) or (not level) then
 					delay = true
 				else
-					local _, _, quality, level = GetItemInfo(itemLink)
-					if (not quality) or (not level) then
-						delay = true
+					if (quality == 7) then
+						boa = boa + 1
+						total = total + GetBOALevel(ulvl)
 					else
-						if (quality == 7) then
-							boa = boa + 1
-						else
-							if IsPVPItem(itemLink) then
-								pvp = pvp + 1
-							end
+						if IsPVPItem(itemLink) then
+							pvp = pvp + 1
+						end
+
+						total = total + level
+					end
+
+					if (i >= 16) then
+						-- INVTYPE_RANGED = Bows
+						-- INVTYPE_RANGEDRIGHT = Wands, Guns, and Crossbows
+						-- INVTYPE_THROWN = Ranged (throwing weapons for Warriors, Rogues in WotLK/Cata)
+						if (slot == "INVTYPE_2HWEAPON") then
+							twohand = twohand + 1
 						end
 					end
 				end
 			end
-		end
-	else
-		for _,i in ipairs(InventorySlots) do
-			local itemTexture = GetInventoryItemTexture(unit, i)
-			if itemTexture then
-				local itemLink = GetInventoryItemLink(unit, i)
-
-				if not itemLink then
-					delay = true
-				else
-					local _, _, quality, level, _, _, _, _, slot = GetItemInfo(itemLink)
-
-					if (not quality) or (not level) then
-						delay = true
-					else
-						if (quality == 7) then
-							boa = boa + 1
-							total = total + GetBOALevel(ulvl)
-						else
-							if IsPVPItem(itemLink) then
-								pvp = pvp + 1
-							end
-
-							total = total + level
-						end
-
-						if (i >= 16) then
-							-- INVTYPE_RANGED = Bows
-							-- INVTYPE_RANGEDRIGHT = Wands, Guns, and Crossbows
-							-- INVTYPE_THROWN = Ranged (throwing weapons for Warriors, Rogues in WotLK/Cata)
-							if (slot == "INVTYPE_2HWEAPON") then
-								twohand = twohand + 1
-							end
-						end
-					end
-				end
-			else
-				if i == 16 then
-					mainhand = 0
-				elseif i == 17 then
-					offhand = 0
-				end
+		else
+			if i == 16 then
+				mainhand = 0
+			elseif i == 17 then
+				offhand = 0
 			end
-		end
-
-		if (mainhand == 0) and (offhand == 0) or (twohand == 1) then
-			count = count - 1
 		end
 	end
 
-	if not delay then
-		ilvl = total / count
-		if ilvl > 0 then
-			ilvl = string_format("%.1f", ilvl)
-			if boa > 0 and pvp > 0 then
-				return string_format("%.1f  %s %s, %d %s", ilvl, F.Colorize(boa, unpack(C.General.BoA)), F.Colorize(L["BoA"], unpack(C.General.BoA)), pvp, F.Colorize(L["PvP"], unpack(C.General.PvP)))
-			elseif boa > 0 then
-				return string_format("%.1f  %s %s", ilvl, F.Colorize(boa, unpack(C.General.BoA)), F.Colorize(L["BoA"], unpack(C.General.BoA)))
-			elseif pvp > 0 then
-				return string_format("%.1f  %s %s", ilvl, F.Colorize(pvp, unpack(C.General.PvP)), F.Colorize(L["PvP"], unpack(C.General.PvP)))
-			else
-			end
-		end
-	else
-		ilvl = nil
+	if (mainhand == 0) and (offhand == 0) or (twohand == 1) then
+		count = count - 1
 	end
 
+	if delay then
+		return -- some item isn't in the cache yet
+	end
+
+	local ilvl = string_format("%.1f", total / count)
+	local extras = {}
+	if boa > 0 then
+		table_insert(extras, F.Colorize(boa, unpack(C.General.BoA)) .. " " .. F.Colorize(L["BoA"], unpack(C.General.BoA)))
+	end
+	if pvp > 0 then
+		table_insert(extras, F.Colorize(pvp, unpack(C.General.PvP)) .. " " .. F.Colorize(L["PvP"], unpack(C.General.PvP)))
+	end
+	if #extras > 0 then
+		return ilvl .. "  " .. table_concat(extras, ", ")
+	end
 	return ilvl
 end
 
@@ -560,21 +497,6 @@ Module.ScanUnit = function(self, unit, forced)
 end
 
 
--- Item Tooltips
-------------------------------------------------------------
-Module.Tooltip_OnTooltipSetItem = function(self, tooltip)
-end
-
-
--- Spell Tooltips
-------------------------------------------------------------
-Module.Tooltip_OnTooltipSetSpell = function(self, tooltip)
-	local spellName, spellRank, spellID = GameTooltip:GetSpell()
-	if IsShiftKeyDown() then
-	end
-end
-
-
 local singlePattern = function(msg, plain)
 	msg = msg:gsub("%%%d?$?c", ".+")
 	msg = msg:gsub("%%%d?$?d", "%%d+")
@@ -605,9 +527,8 @@ local remainingTime = {
 	pluralPattern(_G.SPELL_TIME_REMAINING_SEC)
 }
 
-Module.Tooltip_SetUnitBuff = function(self, tooltip, unit, index, filter)
-
-	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, _, spellId = UnitBuff(unit, index, filter)
+-- Recolors an aura tooltip, and with Shift down adds its spell ID and caster.
+local StyleAuraTooltip = function(tooltip, name, rank, debuffType, unitCaster, spellId)
 	local color = debuffType and C.Debuff[debuffType] or C.General.Title
 	local gray = C.General.Gray
 
@@ -617,83 +538,47 @@ Module.Tooltip_SetUnitBuff = function(self, tooltip, unit, index, filter)
 	_G[tooltipName.."TextRight1"]:SetText(rank)
 	_G[tooltipName.."TextRight1"]:SetTextColor(gray[1], gray[2], gray[3])
 
+	-- the remaining time in the title color, the description grayed out
 	for i = 2, tooltip:NumLines() do
 		local line = _G[tooltipName.."TextLeft"..i]
-		if line then
-			local msg = line:GetText()
-			if msg then
-				local isTime
-				for i = 1,#remainingTime do
-					if string_match(msg, remainingTime[i]) then
-						isTime = true
-						break
-					end
+		local msg = line and line:GetText()
+		if msg then
+			local isTime
+			for j = 1, #remainingTime do
+				if string_match(msg, remainingTime[j]) then
+					isTime = true
+					break
 				end
-				if isTime then
-					line:SetTextColor(C.General.Title[1], C.General.Title[2], C.General.Title[3])
-				else
-					line:SetTextColor(gray[1], gray[2], gray[3])
-				end
+			end
+			if isTime then
+				line:SetTextColor(C.General.Title[1], C.General.Title[2], C.General.Title[3])
+			else
+				line:SetTextColor(gray[1], gray[2], gray[3])
 			end
 		end
 	end
 
 	if IsShiftKeyDown() then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddDoubleLine(L["SpellID:"], spellId, C.General.Blue[1], C.General.Blue[2], C.General.Blue[3], C.General.OffWhite[1], C.General.OffWhite[2], C.General.OffWhite[3])
-		if (unitCaster) then
+		local blue, white = C.General.Blue, C.General.OffWhite
+		tooltip:AddLine(" ")
+		tooltip:AddDoubleLine(L["SpellID:"], spellId, blue[1], blue[2], blue[3], white[1], white[2], white[3])
+		if unitCaster then
 			local casterName = UnitName(unitCaster)
 			local caster = (unitCaster == "player") and YOU or (casterName and (casterName ~= "")) and casterName or unitCaster
-			if caster then
-				GameTooltip:AddDoubleLine(L["Caster:"], caster, C.General.Blue[1], C.General.Blue[2], C.General.Blue[3], C.General.OffWhite[1], C.General.OffWhite[2], C.General.OffWhite[3])
-			end
+			tooltip:AddDoubleLine(L["Caster:"], caster, blue[1], blue[2], blue[3], white[1], white[2], white[3])
 		end
-		GameTooltip:Show()
+		tooltip:Show()
 	end
 end
 
+Module.Tooltip_SetUnitBuff = function(self, tooltip, unit, index, filter)
+	local name, rank, _, _, debuffType, _, _, unitCaster, _, _, spellId = UnitBuff(unit, index, filter)
+	StyleAuraTooltip(tooltip, name, rank, debuffType, unitCaster, spellId)
+end
+
 Module.Tooltip_SetUnitDebuff = function(self, tooltip, unit, index, filter)
-
-	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, _, spellId  = UnitDebuff(unit, index, filter)
-	local color = debuffType and C.Debuff[debuffType] or C.General.Title
-	local gray = C.General.Gray
-
-	local tooltipName = tooltip:GetName()
-	_G[tooltipName.."TextLeft1"]:SetText(name)
-	_G[tooltipName.."TextLeft1"]:SetTextColor(color[1], color[2], color[3])
-	_G[tooltipName.."TextRight1"]:SetText(rank)
-	_G[tooltipName.."TextRight1"]:SetTextColor(gray[1], gray[2], gray[3])
-
-	for i = 2, tooltip:NumLines() do
-		local line = _G[tooltipName.."TextLeft"..i]
-		if line then
-			local msg = line:GetText()
-			if msg then
-				local isTime
-				for i = 1,#remainingTime do
-					if string_match(msg, remainingTime[i]) then
-						isTime = true
-						break
-					end
-				end
-				if isTime then
-					line:SetTextColor(C.General.Title[1], C.General.Title[2], C.General.Title[3])
-				else
-					line:SetTextColor(gray[1], gray[2], gray[3])
-				end
-			end
-		end
-	end
-
-	if IsShiftKeyDown() then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddDoubleLine(L["SpellID:"], spellId, C.General.Blue[1], C.General.Blue[2], C.General.Blue[3], C.General.OffWhite[1], C.General.OffWhite[2], C.General.OffWhite[3])
-		local caster = unitCaster == "player" and YOU or unitCaster
-		if caster then
-			GameTooltip:AddDoubleLine(L["Caster:"], caster, C.General.Blue[1], C.General.Blue[2], C.General.Blue[3], C.General.OffWhite[1], C.General.OffWhite[2], C.General.OffWhite[3])
-		end
-		GameTooltip:Show()
-	end
+	local name, rank, _, _, debuffType, _, _, unitCaster, _, _, spellId = UnitDebuff(unit, index, filter)
+	StyleAuraTooltip(tooltip, name, rank, debuffType, unitCaster, spellId)
 end
 
 
@@ -739,19 +624,11 @@ Module.Tooltip_PositionAtCursor = function(self, tooltip)
 end
 
 Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
-	-- correct the backdrop color for world items (benches, signs)
-	--if self.scheduleRefresh then
-	--	self:SetBackdropColor(tooltip)
-	--	self.scheduleRefresh = false
-	--end
 
-	-- instantly hide tips instead of fading
-	if self.scheduleHide
-	or (tooltip.unit and not UnitExists("mouseover")) -- fading unit tips
-	or (tooltip:GetAlpha() < 1) then -- fading structure tips (walls, gates, etc)
+	-- instantly hide fading structure tips (walls, gates, etc) instead of fading
+	if (tooltip:GetAlpha() < 1) then
 		tooltip:Show() -- this kills the blizzard fading
 		tooltip:Hide()
-		self.scheduleHide = false
 	end
 
 	if (tooltip:GetAnchorType() == "ANCHOR_CURSOR") then
@@ -806,17 +683,11 @@ Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
 	end
 end
 
-Module.Tooltip_OnShow = function(self, tooltip)
-end
-
 Module.Tooltip_OnHide = function(self, tooltip)
 	self.unit = nil
 end
 
 Module.Tooltip_SetDefaultAnchor = function(self, tooltip, owner)
-	-- On behalf of the whole community I would like to say
-	-- FUCK YOUR FORBIDDEN TOOLTIPS BLIZZARD! >:(
-
 	-- We're only repositioning from the default position,
 	-- and we shouldn't interfere with tooltips placed next to their owners.
 	if (tooltip:GetAnchorType() ~= "ANCHOR_NONE") then
@@ -844,18 +715,10 @@ Module.StatusBar_OnValueChanged = function(self, statusbar)
 	local value = statusbar:GetValue()
 	local min, max = statusbar:GetMinMaxValues()
 
-	-- Hide the bar if values are missing, or if max or min is 0.
-	if (not min) or (not max) or (not value) or (max == 0) or (value == min) then
+	-- Hide the bar when it's empty, or has nothing to show.
+	if (max == 0) or (value == min) then
 		statusbar:Hide()
 		return
-	end
-
-	-- Just in case somebody messed up,
-	-- we silently correct out of range values.
-	if value > max then
-		value = max
-	elseif value < min then
-		value = min
 	end
 
 	if statusbar.value then
@@ -1062,7 +925,6 @@ Module.HookGameTooltip = function(self)
 	tooltip:HookScript("OnHide", function(...) self:Tooltip_OnHide(...) end)
 
 	tooltip:HookScript("OnTooltipSetUnit", function(...) self:Tooltip_OnTooltipSetUnit(...) end)
-	tooltip:HookScript("OnTooltipSetSpell", function(...) self:Tooltip_OnTooltipSetSpell(...) end)
 	hooksecurefunc(tooltip, "SetUnitBuff", function(...) self:Tooltip_SetUnitBuff(...) end)
 	hooksecurefunc(tooltip, "SetUnitDebuff", function(...) self:Tooltip_SetUnitDebuff(...) end)
 	hooksecurefunc("GameTooltip_SetDefaultAnchor", function(...) self:Tooltip_SetDefaultAnchor(...) end)
@@ -1096,8 +958,6 @@ Module.OnEvent = function(self, event, ...)
 		self:UnregisterEvent("ADDON_LOADED", "OnEvent")
 		self:SkinDebugTools()
 
-	elseif event == "PLAYER_LEVEL_UP" then
-		playerLevel = UnitLevel("player")
 
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		self:HookGameTooltip()
@@ -1115,19 +975,6 @@ Module.OnEvent = function(self, event, ...)
 				GameTooltip:Show()
 			end
 		end
-	elseif (event == "INSPECT_READY") and (arg1 == currentGUID) then
-		local gear = self:GetUnitGear(currentUNIT)
-		GearDB[currentGUID] = gear
-
-		local spec = self:GetUnitSpec(currentUNIT)
-		SpecDB[currentGUID] = spec
-
-		if not(gear and spec) then
-			self:ScanUnit(currentUNIT, true)
-		else
-			self:SetUnitInfo(gear, spec)
-		end
-
 	elseif event == "INSPECT_TALENT_READY" then
 		local GUID = UnitGUID("mouseover")
 		if GUID == currentGUID then
@@ -1170,8 +1017,6 @@ end
 
 Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-	self:RegisterEvent("VARIABLES_LOADED", "OnEvent")
-	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
 	self:RegisterEvent("MODIFIER_STATE_CHANGED", "OnEvent")
 	self:RegisterEvent("ADDON_LOADED", "OnEvent")
@@ -1196,12 +1041,5 @@ Module.OnEnable = function(self)
 			NotifyInspect(currentUNIT)
 		end
 
-	end)
-
-	-- Character Info Sheet
-	-- TODO: move this somewhere more fitting.
-	hooksecurefunc("PaperDollFrame_SetArmor", function(frame, unit)
-
-		return
 	end)
 end

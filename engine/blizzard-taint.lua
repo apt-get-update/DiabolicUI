@@ -11,39 +11,28 @@
 
 ]]--
 
--- WoW API
-local SetCVar = _G.SetCVar
-
--- Forcefully showing script errors because I need this.
--- I also forcefully enable the taint log.
---
--- TODO:
--- Write an error handler of my own that is unintrusive,
--- which people can use to copy premade bug reports to me!
-SetCVar("scriptErrors", 1)
-SetCVar("taintLog", 1)
-
 ---------------------------------------------------------------
 -- UIDropDown taints
 ---------------------------------------------------------------
-if UIDropDownMenu_InitializeHelper then
-	if ((UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2) then
-		UIDROPDOWNMENU_VALUE_PATCH_VERSION = 2
-		hooksecurefunc("UIDropDownMenu_InitializeHelper", function()
-			if UIDROPDOWNMENU_VALUE_PATCH_VERSION ~= 2 then
-				return
-			end
-			for i=1, UIDROPDOWNMENU_MAXLEVELS do
-				for j=1, UIDROPDOWNMENU_MAXBUTTONS do
-					local b = _G["DropDownList" .. i .. "Button" .. j]
-					if not (issecurevariable(b, "value") or b:IsShown()) then
-						b.value = nil
-						repeat
-							j, b["fx" .. j] = j+1
-						until issecurevariable(b, "value")
-					end
+-- A hidden menu button still holding a value an addon gave it taints the
+-- next Blizzard menu that uses it; clear those values. The version is
+-- shared with the other addons carrying this same fix, so it runs once.
+if ((UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2) then
+	UIDROPDOWNMENU_VALUE_PATCH_VERSION = 2
+	hooksecurefunc("UIDropDownMenu_InitializeHelper", function()
+		if UIDROPDOWNMENU_VALUE_PATCH_VERSION ~= 2 then
+			return
+		end
+		for i=1, UIDROPDOWNMENU_MAXLEVELS do
+			for j=1, UIDROPDOWNMENU_MAXBUTTONS do
+				local b = _G["DropDownList" .. i .. "Button" .. j]
+				if not (issecurevariable(b, "value") or b:IsShown()) then
+					b.value = nil
+					repeat
+						j, b["fx" .. j] = j+1
+					until issecurevariable(b, "value")
 				end
 			end
-		end)
-	end
+		end
+	end)
 end

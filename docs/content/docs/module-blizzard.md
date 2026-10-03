@@ -26,16 +26,14 @@ The rest:
 
 | File | Reskins |
 |---|---|
-| `containers.lua` | Bags (quality borders, item levels on gear), unless `Backpacker`/`BlizzardBagsPlus` is loaded |
-| `durability.lua` | `DurabilityFrame` |
+| `anchors.lua` | Moves `DurabilityFrame` and `VehicleSeatIndicator`, and keeps them there |
+| `containers.lua` | Bags and bank (quality borders, item levels on gear), unless `Backpacker`/`BlizzardBagsPlus` is loaded |
 | `fonts.lua` | Wires the addon's own font objects (see [Settings & Locale]({{< relref "settings-and-locale" >}})), including a Latin-vs-non-Latin locale check |
 | `gamemenu.lua` | The Escape-menu button list |
-| `ghostframe.lua` | `GhostFrame` (release-spirit prompt) |
 | `mirrortimers.lua` | Mirror timers (breath, feign death, etc.) |
 | `popups.lua` | `StaticPopup` dialogs |
-| `styling.lua` | A grab-bag of remaining Blizzard frames (character/quest/talent-adjacent chrome); see below |
+| `styling.lua` | Tints the character, spell book, dungeon finder, world map and merchant frames; see below |
 | `totembar.lua` | `MultiCastActionBarFrame` (totem bar) |
-| `vehicleseat.lua` | `VehicleSeatIndicator` |
 | `tooltips.lua` | `GameTooltip` skin + inspected-player gear info |
 
 Several modules that only ever targeted later clients (an alternate power
@@ -44,16 +42,19 @@ and a few empty stubs) were removed in the WotLK-only cleanup.
 
 ## `styling.lua`
 
-The catch-all for Blizzard frames that get styled but don't warrant their
-own file — a big `elements`/`whiteList`/`blackList` table plus
-`iterateNameless` for anonymous regions, driving a generic "walk this
-frame's regions/children and restyle anything matching" pass. Already
-trimmed once during the
+The catch-all for Blizzard frames that get tinted but don't warrant their
+own file: an `elements` list of frame names (the character, spell book,
+dungeon finder, world map and merchant frames, and the bags unless a bag
+addon replaces them), whose textures get the backdrop color and whose text
+gets the title color, minus a small `whiteList` of regions left alone.
+Every name in the list exists in the 3.3.5 FrameXML; trimmed during the
 [WotLK-only dead-code sweep]({{< relref "conventions#wotlk-335a-only" >}}):
 roughly 130 entries tied to `Blizzard_PVPUI`/`Blizzard_TalentUI`/
 `Blizzard_TradeSkillUI`/`Blizzard_GarrisonUI` (none of which exist as
-load-on-demand addons on this client) were removed, along with an entire
-dead objective-tracker positioning subsystem.
+load-on-demand addons on this client), a dead objective-tracker
+positioning subsystem, the machinery for frames from addons loaded later
+(nothing used it), and the character slot cleanup aimed at textures 3.3.5
+doesn't have.
 
 ## `gamemenu.lua`
 

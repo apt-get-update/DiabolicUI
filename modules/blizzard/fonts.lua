@@ -1,8 +1,7 @@
-local ADDON, Engine = ...
+local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Fonts")
 
 local gameLocale = Engine:GetGameLocale()
-local isLatin = ({ enUS  = true, enGB = true, deDE = true, esES = true, esMX = true, frFR = true, itIT = true, ptBR = true, ptPT = true })[gameLocale]
 
 -- Sets up the module font lists
 Module.SetUp = function(self)
@@ -31,8 +30,6 @@ Module.SetUp = function(self)
 		[fonts.number] = config.fonts.number.locales[gameLocale], 
 		[fonts.damage] = config.fonts.damage.locales[gameLocale]
 	}
-
-	self.hasReplacement = {}
 end
 
 -- Changes the fonts rendered by the game engine 
@@ -75,21 +72,12 @@ Module.SetFontObjects = function(self)
 	self:SetFont(NumberFontNormal, fonts.number)
 
 	self:SetFont(FriendsFont_Large, fonts.header_light)
-	self:SetFont(GameFont_Gigantic, fonts.header_light) -- not present in WotLK
-	self:SetFont(ChatBubbleFont, fonts.text_normal) -- not present in WotLK...?
 	self:SetFont(FriendsFont_UserText, fonts.header_light)
 	self:SetFont(QuestFont_Large, fonts.header_normal, 14, "", 0, 0, 0) -- 15
 	self:SetFont(QuestFont_Shadow_Huge, fonts.header_normal, 16, "", 0, 0, 0) -- 18
-	self:SetFont(QuestFont_Super_Huge, fonts.header_light, 18, "", 0, 0, 0) -- 24 garrison mission list -- not present in WotLK
-	self:SetFont(DestinyFontLarge, fonts.header_normal) -- 18 -- not present in WotLK
-	self:SetFont(DestinyFontHuge, fonts.header_light) -- 32 -- not present in WotLK
-	self:SetFont(CoreAbilityFont, fonts.header_light) -- 32 -- not present in WotLK
-	self:SetFont(QuestFont_Shadow_Small, fonts.header_normal, nil, "", 0, 0, 0) -- 14 -- not present in WotLK
 	self:SetFont(MailFont_Large, fonts.header_normal, nil, "", 0, 0, 0) -- 15
 	
 	-- floating combat text
-	-- Legion features much nicer and smoother damage, 
-	-- so we should just leave that as it is. 
 	self:SetFont(CombatTextFont, fonts.header_normal, nil, "", -2.5, -2.5, .35) 
 
 	-- chat font
@@ -99,11 +87,9 @@ Module.SetFontObjects = function(self)
 	
 end
 
-Module.SetFont = function(self, fontObject, font, size, style, shadowX, shadowY, shadowA, r, g, b, shadowR, shadowG, shadowB)
-	-- simple copout for non-existing fontobjects
-	if not fontObject then
-		return
-	end
+-- Changes a font object's face (when it supports the game's locale), size,
+-- style and shadow; nil keeps the current one.
+Module.SetFont = function(self, fontObject, font, size, style, shadowX, shadowY, shadowA)
 	local oldFont, oldSize, oldStyle  = fontObject:GetFont()
 
 	if not font then
@@ -120,24 +106,11 @@ Module.SetFont = function(self, fontObject, font, size, style, shadowX, shadowY,
 	end
 
 	-- don't change the font face if it doesn't support the current locale
-	--fontObject:SetFont(self.canIUse[font] and font or self.hasReplacement[font] or oldFont, size, style) 
-	if self.canIUse[font] then
-		fontObject:SetFont(font, size, style) 
-	elseif self.hasReplacement[font] then
-		fontObject:SetFont(self.hasReplacement[font], size, style) 
-	else
-		fontObject:SetFont(oldFont, size, style) 
-	end
+	fontObject:SetFont(self.canIUse[font] and font or oldFont, size, style)
 	if shadowX and shadowY then
 		fontObject:SetShadowOffset(shadowX, shadowY)
-		fontObject:SetShadowColor(shadowR or 0, shadowG or 0, shadowB or 0, shadowA or 1)
+		fontObject:SetShadowColor(0, 0, 0, shadowA or 1)
 	end
-	
-	if r and g and b then
-		fontObject:SetTextColor(r, g, b)
-	end
-	
-	return fontObject	
 end
 
 Module.HookCombatText = function(self)
@@ -153,22 +126,11 @@ Module.HookCombatText = function(self)
 	end)
 end
 
--- Change the font object of our own custom fonts,
--- since not all our fonts support all the localized regions. 
-Module.SetEngineFontObjects = function(self)
-	-- Our replacements are only for Asian realms (zhCN, zhTW, koKR), 
-	-- and our fonts are stored in the Microsoft .otf format
-	-- which isn't supported in older versions of WoW. 
-	return
-end
-
-
 -- Fonts (especially game engine fonts) need to be set very early in the loading process, 
 -- so for this specific module we'll bypass the normal loading order, and just fire away!
 Module:SetUp()
 Module:SetGameEngineFonts()
 Module:SetFontObjects()
-Module:SetEngineFontObjects()
 
 if IsAddOnLoaded("Blizzard_CombatText") then
 	Module:HookCombatText()

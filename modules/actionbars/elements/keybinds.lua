@@ -7,14 +7,12 @@ local Widget = Module:SetWidget("Keybinds")
 
 -- Lua API
 local ipairs = ipairs
-local table_insert = table.insert
 
 -- WoW API
 local ClearOverrideBindings = _G.ClearOverrideBindings
 local GetBindingKey = _G.GetBindingKey
 local RegisterStateDriver = _G.RegisterStateDriver
 local SetOverrideBindingClick = _G.SetOverrideBindingClick
-local UnregisterStateDriver = _G.UnregisterStateDriver
 
 Widget.OnEnable = function(self)
 	self.config = self:GetDB("ActionBars") -- static config

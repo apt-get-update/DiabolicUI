@@ -2,11 +2,11 @@
 --
 -- Loads the *real* modules/blizzard/mirrortimers.lua under a minimal
 -- Engine/WoW mock and exercises:
---  - Module.UpdateTimer: crops (not shrinks) a mirror/start timer's
+--  - Module.UpdateTimer: crops (not shrinks) a mirror timer's
 --    statusbar texture to the current value, clamping to the bar's own
 --    min/max first.
---  - Module.UpdateAnchors: only visible timers get anchored, sorted with
---    mirror timers first (then by id), stacked one below the previous with
+--  - Module.UpdateAnchors: only visible timers get anchored, sorted by
+--    id, stacked one below the previous with
 --    a configured padding, and the first one anchored either at the normal
 --    position or the "one slot down" position depending on whether a
 --    capture bar is currently occupying that spot.
@@ -125,8 +125,8 @@ end
 function TestMirrorTimers:test_hidden_timers_are_skipped_but_still_cleared()
 	local shownFrame = newFakeTimerFrame(true)
 	local hiddenFrame = newFakeTimerFrame(false)
-	Module.timers[shownFrame] = { frame = shownFrame, type = "timer", id = 1 }
-	Module.timers[hiddenFrame] = { frame = hiddenFrame, type = "timer", id = 2 }
+	Module.timers[shownFrame] = { frame = shownFrame, id = 1 }
+	Module.timers[hiddenFrame] = { frame = hiddenFrame, id = 2 }
 
 	Module:UpdateAnchors()
 
@@ -137,25 +137,11 @@ function TestMirrorTimers:test_hidden_timers_are_skipped_but_still_cleared()
 	lu.assertEquals(#hiddenFrame.calls, 1)
 end
 
-function TestMirrorTimers:test_mirrors_are_ordered_before_timers_regardless_of_id()
-	local timerFrame = newFakeTimerFrame(true)
-	local mirrorFrame = newFakeTimerFrame(true)
-	Module.timers[timerFrame] = { frame = timerFrame, type = "timer", id = 1 }
-	Module.timers[mirrorFrame] = { frame = mirrorFrame, type = "mirror", id = 99 }
-
-	Module:UpdateAnchors()
-
-	-- The mirror timer sorts first, so it gets the top anchor...
-	lu.assertEquals(mirrorFrame.calls[2], { "SetPoint", "TOP", "UIParent", "TOP", 0, -10 })
-	-- ...and the regular timer is stacked below it.
-	lu.assertEquals(timerFrame.calls[2], { "SetPoint", "CENTER", mirrorFrame, "CENTER", 0, -5 })
-end
-
-function TestMirrorTimers:test_same_type_timers_are_ordered_by_id()
+function TestMirrorTimers:test_timers_are_ordered_by_id()
 	local first = newFakeTimerFrame(true)
 	local second = newFakeTimerFrame(true)
-	Module.timers[second] = { frame = second, type = "timer", id = 2 }
-	Module.timers[first] = { frame = first, type = "timer", id = 1 }
+	Module.timers[second] = { frame = second, id = 2 }
+	Module.timers[first] = { frame = first, id = 1 }
 
 	Module:UpdateAnchors()
 
@@ -163,42 +149,28 @@ function TestMirrorTimers:test_same_type_timers_are_ordered_by_id()
 	lu.assertEquals(second.calls[2], { "SetPoint", "CENTER", first, "CENTER", 0, -5 })
 end
 
-function TestMirrorTimers:test_uses_the_normal_position_while_a_capture_bar_is_visible()
-	-- Counter-intuitive at first glance, but this is genuinely what the
-	-- source does: `config.position` is used *while* a capture bar is
-	-- occupying the screen (self.captureBarVisible truthy), and the
-	-- "offset by one" position otherwise - presumably because the capture
-	-- bar itself already sits where the timers' offset position would be.
+function TestMirrorTimers:test_moves_one_slot_down_while_a_capture_bar_is_visible()
 	local frame = newFakeTimerFrame(true)
-	Module.timers[frame] = { frame = frame, type = "timer", id = 1 }
+	Module.timers[frame] = { frame = frame, id = 1 }
 
-	Module:CaptureBarVisible()
-	Module:UpdateAnchors()
-
-	lu.assertEquals(frame.calls[2], { "SetPoint", "TOP", "UIParent", "TOP", 0, -10 })
-end
-
-function TestMirrorTimers:test_uses_the_offset_position_once_the_capture_bar_hides()
-	local frame = newFakeTimerFrame(true)
-	Module.timers[frame] = { frame = frame, type = "timer", id = 1 }
-
-	Module:CaptureBarVisible()
-	Module:CaptureBarHidden()
-	-- CaptureBarHidden sets self.captureBarVisible to nil, but
-	-- EngineMock's permissive fallback makes a nil field read back as a
-	-- truthy stub instead (see tests/README.md's "mock permissiveness"
-	-- pitfall) - force a real falsy value so this actually exercises the
-	-- "no capture bar showing" branch rather than silently re-triggering
-	-- the "visible" one.
-	Module.captureBarVisible = false
-	Module:UpdateAnchors()
+	Module:CaptureBarVisible() -- re-anchors right away
 
 	lu.assertEquals(frame.calls[2], { "SetPoint", "TOP", "UIParent", "TOP", 0, -40 })
 end
 
+function TestMirrorTimers:test_moves_back_up_once_the_capture_bar_hides()
+	local frame = newFakeTimerFrame(true)
+	Module.timers[frame] = { frame = frame, id = 1 }
+
+	Module:CaptureBarVisible()
+	Module:CaptureBarHidden()
+
+	lu.assertEquals(frame.calls[4], { "SetPoint", "TOP", "UIParent", "TOP", 0, -10 })
+end
+
 function TestMirrorTimers:test_does_nothing_when_no_timer_is_visible()
 	local frame = newFakeTimerFrame(false)
-	Module.timers[frame] = { frame = frame, type = "timer", id = 1 }
+	Module.timers[frame] = { frame = frame, id = 1 }
 
 	Module:UpdateAnchors() -- must not error with an empty visible-order list
 end

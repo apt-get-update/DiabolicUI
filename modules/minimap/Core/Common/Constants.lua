@@ -25,52 +25,9 @@
 --]]
 local Addon, ns = ..., DiabolicUIMinimapNS
 
--- Addon version
-------------------------------------------------------
--- Keyword substitution requires the packager,
--- and does not affect direct GitHub repo pulls.
-local version = "4.0.38-Release"
-if (version:find("project%-version")) then
-	version = "Development"
-end
-ns.Private.Version = version
-ns.Private.IsDevelopment = version == "Development"
-ns.Private.IsAlpha = string.find(version, "%-Alpha$")
-ns.Private.IsBeta = string.find(version, "%-Beta$")
-ns.Private.IsRC = string.find(version, "%-RC$")
-ns.Private.IsRelease = string.find(version, "%-Release$")
-
--- WoW client version
-------------------------------------------------------
-local patch, build, date, version = GetBuildInfo()
-local major, minor = string.split(".", patch)
-
-ns.Private.ClientVersion = version
-ns.Private.ClientDate = date
-ns.Private.ClientPatch = patch
-ns.Private.ClientMajor = tonumber(major)
-ns.Private.ClientMinor = tonumber(minor)
-ns.Private.ClientBuild = tonumber(build)
-
--- Simple flags for client version checks
-ns.Private.IsRetail = false
-ns.Private.IsClassic = false
-ns.Private.IsTBC = false
-ns.Private.IsWrath = true
-ns.Private.WoW10 = false
-
 -- Prefix for frame names
-------------------------------------------------------
 ns.Private.Prefix = string.match(Addon, "^(.*)UI") or Addon
 
--- Player constants
-------------------------------------------------------
-local _, playerClass = UnitClass("player")
-ns.Private.PlayerClass = playerClass
-ns.Private.PlayerRealm = GetRealmName()
-ns.Private.PlayerName = UnitName("player")
-
--- Scaling Constants
-------------------------------------------------------
+-- Scaling: the user's /setscale factor applies to this default
 ns.UIScale = 768 / 1080
 ns.Private.UIDefaultScale = 768 / 1080

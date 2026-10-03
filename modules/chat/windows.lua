@@ -1,4 +1,4 @@
-local Addon, Engine = ...
+local _, Engine = ...
 local Module = Engine:NewModule("ChatWindows")
 local L = Engine:GetLocale()
 
@@ -11,14 +11,11 @@ local pairs, unpack = pairs, unpack
 local strlen, strfind, strsub = string.len, string.find, string.sub
 
 -- WoW API
-local ChatTypeInfo = ChatTypeInfo
 local FCF_GetCurrentChatFrame = FCF_GetCurrentChatFrame
 local FCF_SetWindowAlpha = FCF_SetWindowAlpha
 local FCF_SetWindowColor = FCF_SetWindowColor
 local FCF_Tab_OnClick = FCF_Tab_OnClick
 local FCF_UpdateButtonSide = FCF_UpdateButtonSide
-local FCFTab_UpdateAlpha = FCFTab_UpdateAlpha
-local GetChannelName = GetChannelName
 local IsShiftKeyDown = IsShiftKeyDown
 local UIFrameFadeRemoveFrame = UIFrameFadeRemoveFrame
 local UnitAffectingCombat = UnitAffectingCombat
@@ -69,49 +66,6 @@ local updateWindowAlpha = function(frame)
 	end
 end
 
-Module.UpdateEditBox = function(self, editbox)
-	if not editbox:GetBackdrop() then 
-		return 
-	end
-	
-	local r, g, b
-	if ACTIVE_CHAT_EDIT_BOX then
-		local type = editbox:GetAttribute("chatType")
-		if type == "CHANNEL" then
-			local id = GetChannelName(editbox:GetAttribute("channelTarget"))
-			if id == 0 then	
-				-- default coloring
-			else 
-				-- 4.3
-				if type and ChatTypeInfo[type..id] then
-					r = ChatTypeInfo[type..id].r
-					g = ChatTypeInfo[type..id].g
-					b = ChatTypeInfo[type..id].b
-				end
-			end
-		else
-			-- 4.3
-			if type and ChatTypeInfo[type] then
-				r = ChatTypeInfo[type].r
-				g = ChatTypeInfo[type].g
-				b = ChatTypeInfo[type].b
-			end
-		end
-	end
-	
-	local glow = _G[editbox:GetName().."Glow"]
-	if r and g and b then
-		glow:SetBackdropBorderColor(r *.3, g *.3, b *.3)
-		editbox:SetBackdropColor(r *.5, g *.5, b *.5)
-		editbox:SetBackdropBorderColor(r, g, b)
-	else
-		local colors = Engine:GetDB("ChatWindows").editbox.colors
-		editbox:SetBackdropColor(unpack(colors.backdrop))
-		editbox:SetBackdropBorderColor(unpack(colors.border))
-		glow:SetBackdropBorderColor(unpack(colors.glow))
-	end
-end
-
 Module.OnEnter = function(self)
 	if not self.UIHider then
 		self.UIHider = CreateFrame("Frame")
@@ -135,11 +89,8 @@ Module.OnInit = function(self, event, ...)
 	
 	CHAT_FRAME_BUTTON_FRAME_MIN_ALPHA = 0
 
-	-- Removing these will make FCF_ResetChatWindows() and FCF_ResetAllWindows() bug out!
-	--UIPARENT_MANAGED_FRAME_POSITIONS["ChatFrame1"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["ChatFrame2"] = nil
-	
-	-- CAUSES TAINT!!! 
+	-- (ChatFrame1 and 2 stay in UIPARENT_MANAGED_FRAME_POSITIONS: removing
+	-- them taints, and breaks FCF_ResetChatWindows and FCF_ResetAllWindows.)
 
 	-- style any additional BNet frames when they are opened
 	hooksecurefunc("FCF_OpenTemporaryWindow", function(chatType, chatTarget, sourceChatFrame, selectWindow)
@@ -241,9 +192,6 @@ Module.OnInit = function(self, event, ...)
 	-- kill friends button
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEnter")
 	self:OnEnter()
-
-	-- FCF_SetWindowAlpha(frame, alpha, doNotSave)
-	
 end
 
 -- Applies the user's fade settings to every current chat frame, plus the
@@ -254,11 +202,8 @@ Module.ApplyFadeSettings = function(self)
 	local db = self.db
 	_G.CHAT_FRAME_FADE_OUT_TIME = db.timeFading
 	for _, name in ipairs(CHAT_FRAMES) do
-		local frame = _G[name]
-		if frame then
-			frame:SetFading(db.fadeChat)
-			frame:SetTimeVisible(db.timeVisible)
-		end
+		_G[name]:SetFading(db.fadeChat)
+		_G[name]:SetTimeVisible(db.timeVisible)
 	end
 end
 
@@ -267,10 +212,7 @@ end
 -- when the editbox is shown/hidden, not when the option itself changes.
 Module.ApplyBackgroundOpacity = function(self)
 	for _, name in ipairs(CHAT_FRAMES) do
-		local frame = _G[name]
-		if frame then
-			updateWindowAlpha(frame)
-		end
+		updateWindowAlpha(_G[name])
 	end
 end
 
@@ -350,10 +292,6 @@ Module.StyleFrame = function(self, frame)
 		end
 	end)
 
-
-	--_G[name.."Tab"].conversationIcon
-
-
 	-- Inputbox
 	------------------------------
 	_G[name.."EditBoxLeft"]:SetTexture("")
@@ -369,7 +307,6 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."EditBox"]:ClearAllPoints()
 	_G[name.."EditBox"]:SetPoint("LEFT", frame, "LEFT", -config.editbox.offsets[1], 0)
 
-	local scrollToBottomButton = _G[name].ScrollToBottomButton
 	_G[name.."EditBox"]:SetPoint("RIGHT", frame, "RIGHT", config.editbox.offsets[2], 0)
 	_G[name.."EditBox"]:SetPoint("TOP", frame, "BOTTOM", 0, -config.editbox.offsets[3])
 
@@ -403,9 +340,6 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."EditBox"]:HookScript("OnEditFocusGained", function(self) self:Show() end)
 	_G[name.."EditBox"]:HookScript("OnEditFocusLost", function(self) self:Hide() end)
 
-	-- hook editbox updates to our coloring method
-	--hooksecurefunc("ChatEdit_UpdateHeader", function(...) self:UpdateEditBox(...) end)
-
 	-- Avoid dying from having the editbox open in combat
 	_G[name.."EditBox"]:HookScript("OnTextChanged", function(self)
 		local msg = self:GetText()
@@ -426,11 +360,6 @@ Module.StyleFrame = function(self, frame)
 		end
 	end)
 
-	local UICenter = Engine:GetFrame()
-	if (_G[name.."EditBox"]:GetParent() == UIParent) then
-		_G[name.."EditBox"]:SetParent(UICenter)
-	end
-
 	hooksecurefunc(_G[name.."EditBox"], "SetParent", function(self, parent) 
 		if (parent == UIParent) then
 			self:SetParent(UICenter)
@@ -441,12 +370,6 @@ Module.StyleFrame = function(self, frame)
 	-- Buttons
 	------------------------------
 
-	--	hooksecurefunc("FCF_FadeOutChatFrame", function(chatFrame) 
-			--Fade out the ButtonFrame
-	--		if ( not chatFrame.isDocked ) then
-	--			UIFrameFadeOut(chatFrame.buttonFrame, CHAT_FRAME_FADE_OUT_TIME, chatFrame.buttonFrame:GetAlpha(), CHAT_FRAME_BUTTON_FRAME_MIN_ALPHA);
-	--		end
-	--	end)
 	
 	_G[name.."EditBox"]:HookScript("OnShow", function(self) 
 		local frame = selectedFrame()
@@ -634,17 +557,6 @@ Module.StyleFrame = function(self, frame)
 	_G[name.."ButtonFrameSliderGlow"]:SetBackdropBorderColor(unpack(config.editbox.colors.glow))
 
 
-
-	-- Minimized Window
-	------------------------------
-	
-
-
-	-- maximize button on minimized windows
---	_G[name.."ButtonFrameMaximizeButton"]:ClearAllPoints()
---	_G[name.."ButtonFrameMaximizeButton"]:SetPoint("RIGHT", -3, 0) 
-	
-	
 end
 
 local SetPoint = function(self, ...)
@@ -704,22 +616,6 @@ Module.PositionChatFrames = function(self)
 		ChatFrame:SetSize(unpack(config.size))
 		ChatFrame:ClearAllPoints()
 		SetPoint(ChatFrame, unpack(config.position))
-		
-		--	if width > 1600 then
-				-- 1920x1080
-		--		ChatFrame:SetClampRectInsets(-40, -40, -40, -220)
-		--		ChatFrame:ClearAllPoints()
-		--		ChatFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-		--		ChatFrame:SetMinResize(440, 120)
-		--		ChatFrame:SetSize(440,120)
-		--	else
-				-- 1280x800
-		--		ChatFrame:SetClampRectInsets(-40, -40, -40, -210)
-		--		ChatFrame:ClearAllPoints()
-		--		ChatFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-		--		ChatFrame:SetMinResize(320,120)
-		--		ChatFrame:SetSize(320,120)
-		--	end
 
 		FCF_SetLocked(ChatFrame, true)
 		FCF_SavePositionAndDimensions(ChatFrame, true)

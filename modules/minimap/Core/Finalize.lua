@@ -23,8 +23,6 @@
 	SOFTWARE.
 
 --]]
-local Addon, ns = ..., DiabolicUIMinimapNS
+local _, ns = ..., DiabolicUIMinimapNS
 
 ns.Private = nil
-
-getmetatable(ns).____metatable = false

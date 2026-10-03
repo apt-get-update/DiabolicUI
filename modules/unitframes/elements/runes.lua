@@ -144,19 +144,4 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self, unit)
-	local Runes = self.Runes
-	if Runes then
-		self:UnregisterEvent("RUNE_POWER_UPDATE", Update)
-		self:UnregisterEvent("RUNE_TYPE_UPDATE", Update)
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
-		self:UnregisterEvent("PLAYER_REGEN_DISABLED", Update)
-		self:UnregisterEvent("PLAYER_REGEN_ENABLED", Update)
-		self:UnregisterEvent("UNIT_ENTERED_VEHICLE", Update)
-		self:UnregisterEvent("UNIT_EXITED_VEHICLE", Update)
-		Runes:SetScript("OnUpdate", nil)
-		Runes:Hide()
-	end
-end
-
-Handler:RegisterElement("Runes", Enable, Disable, Update)
+Handler:RegisterElement("Runes", Enable, Update)

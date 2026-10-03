@@ -8,6 +8,9 @@
 --   DRUID   Curse, Poison          MAGE    Curse
 --   SHAMAN  Poison, Disease, plus Curse with the Cleanse Spirit talent
 -- (druids and shamans only gained Magic removal in Cataclysm).
+-- And its layout: the 40 raid frames are placed by subgroup whenever the
+-- roster changes, but being secure frames they can't move in combat, so a
+-- change in combat is laid out when combat ends.
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -96,6 +99,71 @@ end
 function TestRaidDebuffFilter:test_typeless_debuffs_are_hidden()
 	state.class = "PALADIN"
 	lu.assertFalse(shows(self.filter, nil))
+end
+
+TestRaidLayout = {}
+
+local function newFrame()
+	local frame = { points = {}, shown = true, events = {} }
+	function frame:ClearAllPoints() self.points = {} end
+	function frame:SetPoint(...) self.points[#self.points + 1] = { ... } end
+	function frame:Show() self.shown = true end
+	function frame:Hide() self.shown = false end
+	function frame:Place() end
+	function frame:RegisterEvent(event) self.events[event] = true end
+	function frame:UnregisterEvent(event) self.events[event] = nil end
+	function frame:SetScript(script, func) self.onEvent = func end
+	return frame
+end
+
+function TestRaidLayout:setUp()
+	state = { class = "PRIEST", inCombat = false, roster = { { "Tank", 1 }, { "Healer", 2 } } }
+	_G.UnitClass = function() return state.class, state.class end
+	_G.GetSpellInfo = function() end
+	_G.InCombatLockdown = function() return state.inCombat end
+	_G.RegisterStateDriver = function() end
+	_G.GetNumRaidMembers = function() return #state.roster end
+	_G.GetRaidRosterInfo = function(i) return state.roster[i][1], nil, state.roster[i][2] end
+
+	local Engine = EngineMock.new()
+	Engine:NewStaticConfig("UnitFrames", { visuals = { units = { raid = {
+		position = { "TOPLEFT", 0, 0 }, size = { 100, 30 }, offset = 5, auras = { button = { size = { 20, 20 } } },
+	} } } })
+	Engine.CreateFrame = function() return newFrame() end
+	local UnitFrame = Engine:NewHandler("UnitFrame")
+	UnitFrame.New = function() return newFrame() end
+	local Module = Engine:NewModule("UnitFrames")
+	assert(loadfile("modules/unitframes/units/raid.lua"))("DiabolicUI", Engine)
+	self.Widget = Module:GetWidget("Unit: Raid")
+end
+
+function TestRaidLayout:rosterChanges()
+	local holder = self.Widget.UnitFrame
+	holder.onEvent(holder, "RAID_ROSTER_UPDATE")
+end
+
+function TestRaidLayout:test_members_are_placed_out_of_combat()
+	self.Widget:OnEnable()
+	local frames = self.Widget.UnitFrames
+	lu.assertTrue(frames[1].shown)
+	lu.assertEquals(#frames[1].points, 1)
+	lu.assertTrue(frames[2].shown)
+	lu.assertFalse(frames[3].shown) -- nobody in slot 3
+end
+
+function TestRaidLayout:test_roster_change_in_combat_waits_for_the_end_of_combat()
+	self.Widget:OnEnable()
+	local frames, holder = self.Widget.UnitFrames, self.Widget.UnitFrame
+	state.inCombat = true
+	state.roster[3] = { "Newcomer", 1 }
+	self:rosterChanges()
+	lu.assertFalse(frames[3].shown) -- secure frames untouched in combat
+	lu.assertTrue(holder.events.PLAYER_REGEN_ENABLED)
+
+	state.inCombat = false
+	holder.onEvent(holder, "PLAYER_REGEN_ENABLED")
+	lu.assertTrue(frames[3].shown)
+	lu.assertNil(holder.events.PLAYER_REGEN_ENABLED)
 end
 
 os.exit(lu.LuaUnit.run())

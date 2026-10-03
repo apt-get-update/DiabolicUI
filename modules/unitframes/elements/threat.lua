@@ -29,10 +29,6 @@ local Update = function(self, event, unit)
 	else
 		Threat:Hide()
 	end
-	
-	if Threat.PostUpdate then
-		return Threat:PostUpdate()
-	end
 end
 
 local Enable = function(self)
@@ -48,16 +44,4 @@ local Enable = function(self)
 	end
 end
 
-local Disable = function(self)
-	local Threat = self.Threat
-	if Threat then
-		self:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE", Update)
-		if self.unit == "target" then
-			self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update)
-		elseif self.unit == "focus" then
-			self:UnregisterEvent("PLAYER_FOCUS_CHANGED", Update)
-		end
-	end
-end
-
-Handler:RegisterElement("Threat", Enable, Disable, Update)
+Handler:RegisterElement("Threat", Enable, Update)

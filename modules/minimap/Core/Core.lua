@@ -24,78 +24,26 @@
 
 --]]
 local Addon, ns = ..., DiabolicUIMinimapNS
-ns = LibStub("AceAddon-3.0"):NewAddon(ns, Addon, "AceConsole-3.0", "LibMoreEvents-1.0", "AceHook-3.0")
-ns.L = LibStub("AceLocale-3.0"):GetLocale(Addon)                       -- Addon localization
-ns.callbacks = LibStub("CallbackHandler-1.0"):New(ns, nil, nil, false) -- Addon callback handler
+ns = LibStub("AceAddon-3.0"):NewAddon(ns, Addon, "AceConsole-3.0")
 ns.Hider = CreateFrame("Frame"); ns.Hider:Hide()
 ns.Noop = function() end
-_G[Addon] = ns
 
 -- Default settings
 local defaults = {
-	char = {
-	},
 	global = {
 		core = {
-			enableDevelopmentMode = false,
 			relativeScale = 1
 		},
-		actionbars = {
-			enableBarFading = true,
-			enableBar1 = true,
-			numButtonsBar1 = 12, -- accepts 7-12
-			enableBar2 = false,
-			numButtonsBar2 = 12, -- accepts 1-12
-			enablePetBar = true,
-			enableStanceBar = true
-		},
-		chat = {
-			storedFrames = {},
-			enableChat = true
-		},
-		chatbubbles = {
-			enableChatBubbles = true,
-			visibility = {
-				world = true,
-				worldcombat = true,
-				instance = true,
-				instancecombat = false
-			}
-		},
 		minimap = {
-			storedFrames = {},
 			useServerTime = false,
-			useHalfClock = true,
 			userScale = .8,
 			zoneFadeEnabled = true,
 			zoneFadeDuration = .25 -- seconds each half (out, then in) of the zone label's crossfade takes
-		},
-		tracker = {
-			storedFrames = {},
-			enableTracker = true
-		},
-		unitframes = {
-			storedFrames = {},
-			enablePlayer = true,
-			enablePlayerHUD = true,
-			enableTarget = true,
-			enableToT = true,
-			enableFocus = true,
-			enablePet = true,
-			enableBoss = true,
-			enableParty = true,
-			enableRaid = true
-		},
-	},
+		}
+	}
 }
 
-local moduleDefaults = {
-	enabled = true,
-}
-
-ns.moduleDefaults = moduleDefaults
 -- Lua API
-local ipairs = ipairs
 local math_max = math.max
 local math_min = math.min
 local next = next
@@ -106,26 +54,19 @@ local tonumber = tonumber
 local EnableAddOn = EnableAddOn
 local DisableAddOn = DisableAddOn
 local InCombatLockdown = InCombatLockdown
-local LoadAddOn = LoadAddOn
 local ReloadUI = ReloadUI
 
 -- Addon API
 local IsAddOnAvailable = ns.API.IsAddOnAvailable
 local SetRelativeScale = ns.API.SetRelativeScale
-local UpdateObjectScales = ns.API.UpdateObjectScales
 
 
 local LimitScale = function(scale)
 	return math_min(1.5, math_max(.5, scale))
 end
 
--- Purge deprecated settings,
--- translate to new where applicable,
--- make sure important ones are within bounds.
+-- Keeps the relative scale within bounds.
 local SanitizeSettings = function(db)
-	if (not db) then
-		return
-	end
 	local scale = db.global.core.relativeScale
 	if (scale) then
 		db.global.core.relativeScale = LimitScale(scale)
@@ -133,50 +74,40 @@ local SanitizeSettings = function(db)
 	return db
 end
 
--- Proxy method to avoid modules using the callback object directly
-ns.Fire = function(self, name, ...)
-	ns.callbacks:Fire(name, ...)
+-- Stores and applies a new relative scale.
+local ApplyRelativeScale = function(self, scale)
+	self.db.global.core.relativeScale = scale
+	SetRelativeScale(scale)
+	self:GetModule("Minimap"):UpdateSize()
 end
 
-
-
+-- /resetscale
 ns.ResetScale = function(self)
 	if (InCombatLockdown()) then
 		return
 	end
-	local db = self.db
-	local scale = db.global.core.relativeScale
 	local defaultScale = defaults.global.core.relativeScale
-	if (scale and scale ~= defaultScale) then
-		db.global.core.relativeScale = defaultScale -- Store the saved setting
-		SetRelativeScale(defaultScale)        -- Store it in the addon namespace
-		UpdateObjectScales()                  -- Apply it to existing objects
-		-- Fire callbacks to submodules.
-		ns.callbacks:Fire("Relative_Scale_Updated", db.global.core.relativeScale)
+	if (self.db.global.core.relativeScale ~= defaultScale) then
+		ApplyRelativeScale(self, defaultScale)
 	end
 end
 
+-- /setscale 0.5-1.5
 ns.SetScale = function(self, input)
 	if (InCombatLockdown()) then
 		return
 	end
 	local scale = tonumber((self:GetArgs(string_lower(input))))
 	if (scale) then
-		local db = self.db
-		local oldScale = db.global.core.relativeScale
 		-- Sanitize it, don't want crazy values
 		scale = LimitScale(scale)
-		if (oldScale ~= scale) then
-			-- Store and apply new relative user scale
-			db.global.core.relativeScale = scale -- Store the saved setting
-			SetRelativeScale(scale)     -- Store it in the addon namespace
-			UpdateObjectScales()        -- Apply it to existing objects
-			-- Fire callbacks to submodules.
-			ns.callbacks:Fire("Relative_Scale_Updated", db.global.core.relativeScale)
+		if (self.db.global.core.relativeScale ~= scale) then
+			ApplyRelativeScale(self, scale)
 		end
 	end
 end
 
+-- /go and /switchto: switches to another of Goldpaw's UIs.
 ns.SwitchUI = function(self, input)
 	if (not self._ui_list) then
 		-- Create a list of currently installed UIs.
@@ -188,7 +119,7 @@ ns.SwitchUI = function(self, input)
 			["JourneyUI"]   = { "journey", "jui" }
 		} do
 			-- Only include existing UIs that can be switched to.
-			if (ui ~= Addon) and (IsAddOnAvailable(ui)) then
+			if (IsAddOnAvailable(ui)) then
 				for _, cmd in next, cmds do
 					self._ui_list[cmd] = ui
 				end
@@ -200,7 +131,7 @@ ns.SwitchUI = function(self, input)
 	if (target) then
 		EnableAddOn(target)      -- Enable the desired UI
 		for cmd, ui in next, self._ui_list do
-			if (ui and ui ~= target) then -- Don't disable target UI
+			if (ui ~= target) then -- Don't disable target UI
 				DisableAddOn(ui) -- Disable all other UIs
 			end
 		end
@@ -209,23 +140,11 @@ ns.SwitchUI = function(self, input)
 	end
 end
 
-ns.UpdateSettings = function(self, event, ...)
-	print(event, ...)
-
-	-- Fire callbacks to submodules.
-	ns.callbacks:Fire("Saved_Settings_Updated")
-end
-
 ns.OnInitialize = function(self)
 	self.db = SanitizeSettings(LibStub("AceDB-3.0"):New("DiabolicUI_Minimap_DB", defaults, true))
-	self.db.RegisterCallback(self, "OnProfileChanged", "UpdateSettings")
-	self.db.RegisterCallback(self, "OnProfileCopied", "UpdateSettings")
-	self.db.RegisterCallback(self, "OnProfileReset", "UpdateSettings")
 
 	-- Apply user scale to all elements
-	if (self.db.global.core.relativeScale) then
-		SetRelativeScale(self.db.global.core.relativeScale)
-	end
+	SetRelativeScale(self.db.global.core.relativeScale)
 
 	-- Add a command to clear all chat frames.
 	-- I mainly use this to remove clutter before taking screenshots.
@@ -233,7 +152,7 @@ ns.OnInitialize = function(self)
 	self:RegisterChatCommand("clear", function()
 		for _, frameName in pairs(_G.CHAT_FRAMES) do
 			local frame = _G[frameName]
-			if (frame and frame:IsShown()) then
+			if (frame:IsShown()) then
 				frame:Clear()
 			end
 		end

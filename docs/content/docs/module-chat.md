@@ -24,10 +24,12 @@ alpha/color.
 ## `ChatBubbles`
 
 Restyles the little floating speech-bubble frames above characters' heads
-in the 3D world (distinct from the chat window itself). Maintains its own
-bubble registry (`bubbles`, `numChildren`/`numBubbles` counters) since these
-are anonymous frames Blizzard creates and destroys as people talk nearby,
-not named globals this addon can just grab once.
+in the 3D world (distinct from the chat window itself). Blizzard's bubble is
+emptied (no artwork, invisible text) and a bubble of ours, with the same
+text in a bigger font on a dark backdrop, follows it every frame. Maintains
+its own bubble registry (`bubbles`, `numChildren`/`numBubbles` counters)
+since these are anonymous frames Blizzard creates and reuses as people talk
+nearby, not named globals this addon can just grab once.
 
 ## `ChatFilters`
 

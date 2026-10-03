@@ -2,16 +2,11 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: Pet")
 
--- Lua API
-local select = select
-local setmetatable = setmetatable
-local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe
-
 -- WoW API
 local InCombatLockdown = _G.InCombatLockdown
 local RegisterStateDriver = _G.RegisterStateDriver
 
-local NUM_BUTTONS = NUM_PET_ACTION_SLOTS or 10
+local NUM_BUTTONS = NUM_PET_ACTION_SLOTS
 
 -- Picks the pet bar's vertical clearance depending on whether the
 -- combined xp/reputation bar slot above it is currently in use.
@@ -26,7 +21,6 @@ end
 
 BarWidget.OnEnable = function(self)
 	local config = Module.config
-	local db = Module.db
 	local bar_config = Module.config.structure.bars.pet
 
 	local Artwork = Module:GetWidget("Artwork")
@@ -39,31 +33,12 @@ BarWidget.OnEnable = function(self)
 	Bar:SetAttribute("old_button_size", bar_config.buttonsize)
 
 	Bar.hideGrid = bar_config.hideGrid
-	Bar.position = bar_config.position
-	Bar.positionXP = bar_config.positionXP
 
 	--------------------------------------------------------------------
 	-- Buttons
 	--------------------------------------------------------------------
 	-- figure out anchor points
-	local banchor, bx, by
-	if bar_config.growth == "UP" then
-		banchor = "BOTTOM"
-		bx = 0
-		by = 1
-	elseif bar_config.growth == "DOWN" then
-		banchor = "TOP"
-		bx = 0
-		by = -1
-	elseif bar_config.growth == "LEFT" then
-		banchor = "RIGHT"
-		bx = -1
-		by = 0
-	elseif bar_config.growth == "RIGHT" then
-		banchor = "LEFT"
-		bx = 1
-		by = 0
-	end
+	local banchor, bx, by = unpack(Module.GROWTH[bar_config.growth])
 	local padding = config.structure.controllers.pet.padding
 
 	-- Spawn the action buttons
@@ -99,53 +74,21 @@ BarWidget.OnEnable = function(self)
 	self:RegisterMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", "UpdatePosition")
 	self:RegisterMessage("ENGINE_ACTIONBAR_REPUTATION_VISIBLE_CHANGED", "UpdatePosition")
 
-	self:RegisterEvent("PLAYER_ENTERING_VEHICLE", "OnEvent")
-	self:RegisterEvent("PLAYER_ENTERED_VEHICLE", "OnEvent")
-	self:RegisterEvent("PLAYER_EXITING_VEHICLE", "OnEvent")
-	self:RegisterEvent("PLAYER_EXITED_VEHICLE", "OnEvent")
-
 	self:UpdateVisibility()
 
 end
 
-BarWidget.OnEvent = function(self, event, ...)
-	if (event == "PLAYER_ENTERING_VEHICLE") then
-		return self.Bar:SetAlpha(0)
-	elseif (event == "PLAYER_ENTERED_VEHICLE") then
-		return self.Bar:SetAlpha(0)
-	elseif (event == "PLAYER_EXITING_VEHICLE") then
-		return self.Bar:SetAlpha(0)
-	elseif (event == "PLAYER_EXITED_VEHICLE") then
-		return self.Bar:SetAlpha(1)
-	end
-end
-
-BarWidget.UpdateVisibility = function(self, event, ...)
+-- Shown with a pet (a warlock's imp from level 1, a hunter's from 10),
+-- but not while possessing something or in a vehicle.
+BarWidget.UpdateVisibility = function(self, event)
 	if InCombatLockdown() then
 		return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateVisibility")
 	end
 	if (event == "PLAYER_REGEN_ENABLED") then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateVisibility")
 	end
-	if (event == "PLAYER_LEVEL_UP") then
-		local level = ...
-		if (level < 10) then 
-			return 
-		end 
-		self:UnregisterEvent("PLAYER_LEVEL_UP", "UpdateVisibility")
-	end
-	if (UnitLevel("player") >= 10) then 
-		local visibility_driver = "[bonusbar:5]hide;[vehicleui][target=vehicle,exists]hide;[pet]show;hide"
-
-		UnregisterStateDriver(self.Bar, "vis")
-		RegisterStateDriver(self.Bar, "vis", visibility_driver)
-	else
-		UnregisterStateDriver(self.Bar, "vis")
-		RegisterStateDriver(self.Bar, "vis", "hide")
-
-		self:RegisterEvent("PLAYER_LEVEL_UP", "UpdateVisibility")
-	end 
-end 
+	RegisterStateDriver(self.Bar, "vis", "[bonusbar:5]hide;[vehicleui][target=vehicle,exists]hide;[pet]show;hide")
+end
 
 BarWidget.UpdatePosition = function(self, event, ...)
 	if InCombatLockdown() then

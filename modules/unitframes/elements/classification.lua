@@ -11,7 +11,6 @@ local UnitLevel = UnitLevel
 local UnitIsDead = UnitIsDead
 local UnitIsGhost = UnitIsGhost
 local UnitIsPlayer = UnitIsPlayer
-local UnitLevel = UnitLevel
 
 local add = function(msg, addition)
 	if msg then
@@ -43,7 +42,6 @@ local Update = function(self, event, ...)
 	local creaturetype = UnitCreatureType(unit)
 	local creaturefamily = UnitCreatureFamily(unit)
 	local level = UnitLevel(unit)
-	local name = UnitName(unit)
 	local class = UnitClass(unit)
 	local race = UnitRace(unit)
 	
@@ -89,9 +87,6 @@ local Update = function(self, event, ...)
 					msg = add(msg, type)
 				end
 			end
-			if classification == "worldboss" then
-			end
-			
 		else
 			if level then
 				if type then
@@ -109,74 +104,21 @@ local Update = function(self, event, ...)
 
 	Classification:SetText(msg)
 	Classification:SetTextColor(1, 1, 1, 1)
-	
-	if Classification.PostUpdate then
-		return Classification:PostUpdate(unit)
-	end
-	
 end
 
 local Enable = function(self, unit)
 	local Classification = self.Classification
 	if Classification then
-		if Classification.frequent then
-			self:EnableFrequentUpdates("Classification", Classification.frequent)
-		else
-			self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update)
-			self:RegisterEvent("UNIT_EXITED_VEHICLE", Update)
-			self:RegisterEvent("UNIT_NAME_UPDATE", Update)
-			self:RegisterEvent("UNIT_TARGET", Update)
-			self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
-			
-			if unit:find("^target") then
-				self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
-			end
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update)
+		self:RegisterEvent("UNIT_EXITED_VEHICLE", Update)
+		self:RegisterEvent("UNIT_NAME_UPDATE", Update)
+		self:RegisterEvent("UNIT_TARGET", Update)
+		self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
 
-			if unit:find("^focus") then
-				self:RegisterEvent("PLAYER_FOCUS_CHANGED", Update)
-			end
-
-			if unit:find("^mouseover") then
-				self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", Update)
-			end
-			
-			if unit:find("party") then
-				self:RegisterEvent("PARTY_MEMBER_ENABLE", Update)
-				self:RegisterEvent("GROUP_ROSTER_UPDATE", Update)
-			end
-		end
+		-- (only the target frame has one)
+		self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
 		return true
 	end
 end
 
-local Disable = function(self, unit)
-	local Classification = self.Classification
-	if Classification then
-		if not Classification.frequent then
-			self:UnregisterEvent("UNIT_ENTERED_VEHICLE", Update)
-			self:UnregisterEvent("UNIT_EXITED_VEHICLE", Update)
-			self:UnregisterEvent("UNIT_NAME_UPDATE", Update)
-			self:UnregisterEvent("UNIT_TARGET", Update)
-			self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
-			
-			if unit:find("^target") then
-				self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update)
-			end
-
-			if unit:find("^focus") then
-				self:UnregisterEvent("PLAYER_FOCUS_CHANGED", Update)
-			end
-
-			if unit:find("^mouseover") then
-				self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT", Update)
-			end
-			
-			if unit:find("party") then
-				self:UnregisterEvent("PARTY_MEMBER_ENABLE", Update)
-				self:UnregisterEvent("GROUP_ROSTER_UPDATE", Update)
-			end
-		end
-	end
-end
-
-Handler:RegisterElement("Classification", Enable, Disable, Update)
+Handler:RegisterElement("Classification", Enable, Update)

@@ -523,6 +523,7 @@ Module.CreateOptionsPanel = function(self)
 		refreshAnchorPoint()
 	end
 	tooltipsPanel.refresh = tooltipsPanel.cancel
+	tooltipsPanel.cancel()
 
 	InterfaceOptions_AddCategory(tooltipsPanel)
 

@@ -1,18 +1,45 @@
+-- The Escape menu: Blizzard's buttons in DiabolicUI's big menu buttons,
+-- centered on the screen, on a bare window. Buttons added by MoveAnything
+-- and ACP get the same look once those addons have loaded.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: GameMenu")
 
 -- Lua API
+local _G = _G
 local ipairs = ipairs
-local tinsert = table.insert
+local select = select
+local table_insert = table.insert
+local type = type
+local unpack = unpack
 
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
+-- A button's three looks
+local LAYERS = { "normal", "highlight", "pushed" }
+
+-- Shows the look for the button's state: pushed while held down with the
+-- mouse over it, highlighted while hovered or held, normal otherwise.
+local updateLayers = function(self)
+	local over = self:IsMouseOver()
+	local layer = (self.isDown and over) and "pushed" or (self.isDown or over) and "highlight" or "normal"
+	for _, name in ipairs(LAYERS) do
+		local alpha = (name == layer) and 1 or 0
+		self[name]:SetAlpha(alpha)
+		self.text[name]:SetAlpha(alpha)
+	end
+	self.text:ClearAllPoints()
+	self.text:SetPoint("CENTER", 0, (layer == "pushed") and -4 or 0)
+end
+
+local setDown = function(self, isDown)
+	self.isDown = isDown
+	self:UpdateLayers()
+end
 
 -- to avoid potential taint, we safewrap the layout method
 Module.UpdateButtonLayout = Module:Wrap(function(self)
 	local config = self.config
 	local UICenter = Engine:GetFrame()
 
-	local previous, bottom_previous
+	local previous
 	local first, last
 	for i,v in ipairs(self.buttons) do
 		local button = v.button
@@ -42,9 +69,7 @@ Module.UpdateButtonLayout = Module:Wrap(function(self)
 end)
 
 Module.StyleButtons = function(self)
-	local config = self.config
 	local uiconfig = self.uiconfig
-	local UICenter = Engine:GetFrame()
 
 	local need_addon_watch
 	for i,v in ipairs(self.buttons) do
@@ -55,296 +80,111 @@ Module.StyleButtons = function(self)
 		else
 			button = v.content
 		end
-		
-		-- style it unless we've already done it
-		if not v.styled then
-			
-			if button then
-				-- Ignore hidden buttons, because that means Blizzard aren't using them.
-				-- An example of this is the mac options button which is hidden on windows/linux.
-				--if button:IsShown() then
-					local label
-					if type(v.label) == "function" then
-						label = v.label()
-					else
-						label = v.label
-					end
-					local anchor = v.anchor
-					
-					-- run custom scripts on the button, if any
-					if v.run then
-						v.run(button)
-					end
 
-					-- Hide some textures added in Legion that cause flickering
-					if button.Left then
-						button.Left:SetAlpha(0)
-					end
-					if button.Right then
-						button.Right:SetAlpha(0)
-					end
-					if button.Middle then
-						button.Middle:SetAlpha(0)
-					end
-
-					-- Clear away blizzard artwork
-					button:SetNormalTexture("")
-					button:SetHighlightTexture("")
-					button:SetPushedTexture("")
-
-					--button:SetText(" ") -- this is not enough, blizzard adds it back in some cases
-					
-					local fontstring = button:GetFontString()
-					if fontstring then
-						fontstring:SetAlpha(0) -- this is compatible with the Shop button
-					end
-					
-					-- We can NOT modify the :SetText function durictly, as it sometimes is called by secure code, 
-					-- and we would end up with a tainted GameMenuFrame!
-					--hooksecurefunc(button, "SetText", function(self, msg)
-					--	if not msg or msg == "" then
-					--		return
-					--	end
-						--self:SetText(" ")
-					--end)
-					
-					-- create our own artwork
-					button.normal = button:CreateTexture(nil, "ARTWORK")
-					button.normal:SetPoint("CENTER")
-				
-					button.highlight = button:CreateTexture(nil, "ARTWORK")
-					button.highlight:SetPoint("CENTER")
-
-					button.pushed = button:CreateTexture(nil, "ARTWORK")
-					button.pushed:SetPoint("CENTER")
-					
-					button.text = {
-						normal = button:CreateFontString(nil, "OVERLAY"),
-						highlight = button:CreateFontString(nil, "OVERLAY"),
-						pushed = button:CreateFontString(nil, "OVERLAY"),
-
-						SetPoint = function(self, ...)
-							self.normal:SetPoint(...)
-							self.highlight:SetPoint(...)
-							self.pushed:SetPoint(...)
-						end,
-
-						ClearAllPoints = function(self)
-							self.normal:ClearAllPoints()
-							self.highlight:ClearAllPoints()
-							self.pushed:ClearAllPoints()
-						end,
-
-						SetText = function(self, ...)
-							self.normal:SetText(...)
-							self.highlight:SetText(...)
-							self.pushed:SetText(...)
-						end
-
-					}
-					button.text:SetPoint("CENTER")
-					
-					button:HookScript("OnEnter", function(self) self:UpdateLayers() end)
-					button:HookScript("OnLeave", function(self) self:UpdateLayers() end)
-					button:HookScript("OnMouseDown", function(self) 
-						self.isDown = true 
-						self:UpdateLayers()
-					end)
-					button:HookScript("OnMouseUp", function(self) 
-						self.isDown = false
-						self:UpdateLayers()
-					end)
-					button:HookScript("OnShow", function(self) 
-						self.isDown = false
-						self:UpdateLayers()
-					end)
-					button:HookScript("OnHide", function(self) 
-						self.isDown = false
-						self:UpdateLayers()
-					end)
-					button.UpdateLayers = function(self)
-						if self.isDown then
-							if self:IsMouseOver() then
-								self.pushed:SetAlpha(1)
-								self.text.pushed:SetAlpha(1)
-								self.text:ClearAllPoints()
-								self.text:SetPoint("CENTER", 0, -4)
-								self.highlight:SetAlpha(0)
-								self.text.normal:SetAlpha(0)
-								self.text.highlight:SetAlpha(0)
-							else
-								self.highlight:SetAlpha(1)
-								self.text.highlight:SetAlpha(1)
-								self.text:ClearAllPoints()
-								self.text:SetPoint("CENTER", 0, 0)
-								self.pushed:SetAlpha(0)
-								self.normal:SetAlpha(0)
-								self.text.pushed:SetAlpha(0)
-								self.text.normal:SetAlpha(0)
-							end
-							self.normal:SetAlpha(0)
-						else
-							self.text:ClearAllPoints()
-							self.text:SetPoint("CENTER", 0, 0)
-							if self:IsMouseOver() then
-								self.highlight:SetAlpha(1)
-								self.text.highlight:SetAlpha(1)
-								self.pushed:SetAlpha(0)
-								self.normal:SetAlpha(0)
-								self.text.pushed:SetAlpha(0)
-								self.text.normal:SetAlpha(0)
-							else
-								self.normal:SetAlpha(1)
-								self.text.normal:SetAlpha(1)
-								self.highlight:SetAlpha(0)
-								self.pushed:SetAlpha(0)
-								self.text.pushed:SetAlpha(0)
-								self.text.highlight:SetAlpha(0)
-							end
-						end
-					end
-					
-					button:SetSize(unpack(uiconfig.menubutton.size))
-					
-					button.normal:SetTexture(uiconfig.menubutton.texture.normal)
-					button.normal:SetSize(unpack(uiconfig.menubutton.texture_size))
-					button.normal:ClearAllPoints()
-					button.normal:SetPoint("CENTER")
-
-					button.highlight:SetTexture(uiconfig.menubutton.texture.highlight)
-					button.highlight:SetSize(unpack(uiconfig.menubutton.texture_size))
-					button.highlight:ClearAllPoints()
-					button.highlight:SetPoint("CENTER")
-
-					button.pushed:SetTexture(uiconfig.menubutton.texture.pushed)
-					button.pushed:SetSize(unpack(uiconfig.menubutton.texture_size))
-					button.pushed:ClearAllPoints()
-					button.pushed:SetPoint("CENTER")
-					
-					button.text.normal:SetFontObject(uiconfig.menubutton.normalFont)
-					button.text.highlight:SetFontObject(uiconfig.menubutton.highlightFont)
-					button.text.pushed:SetFontObject(uiconfig.menubutton.pushedFont)
-
-					button.text:SetText(label)
-
-					button:UpdateLayers() -- update colors and layers
-					
-					v.button = button -- add a reference to the frame handle for the layout function
-					v.styled = true -- avoid double styling
-					
-				--end
+		if v.styled then
+			-- already done
+		elseif button then
+			local label
+			if type(v.label) == "function" then
+				label = v.label()
 			else
-				-- If the button doesn't exist, it could be something added by an addon later.
-				if v.addon then
-					need_addon_watch = true
-				end
+				label = v.label
 			end
 
+			-- run custom scripts on the button, if any
+			if v.run then
+				v.run(button)
+			end
+
+			-- Clear away blizzard artwork
+			button:SetNormalTexture("")
+			button:SetHighlightTexture("")
+			button:SetPushedTexture("")
+
+			-- Hide Blizzard's label. We can NOT replace its SetText, as secure code
+			-- sometimes calls it, and we would end up with a tainted GameMenuFrame!
+			local fontstring = button:GetFontString()
+			if fontstring then
+				fontstring:SetAlpha(0)
+			end
+
+			-- create our own artwork and label, one per look
+			button.text = {
+				SetPoint = function(self, ...)
+					for _, name in ipairs(LAYERS) do
+						self[name]:SetPoint(...)
+					end
+				end,
+				ClearAllPoints = function(self)
+					for _, name in ipairs(LAYERS) do
+						self[name]:ClearAllPoints()
+					end
+				end
+			}
+			for _, name in ipairs(LAYERS) do
+				local texture = button:CreateTexture(nil, "ARTWORK")
+				texture:SetTexture(uiconfig.menubutton.texture[name])
+				texture:SetSize(unpack(uiconfig.menubutton.texture_size))
+				texture:SetPoint("CENTER")
+				button[name] = texture
+
+				local text = button:CreateFontString(nil, "OVERLAY")
+				text:SetFontObject(uiconfig.menubutton[name.."Font"])
+				text:SetText(label)
+				button.text[name] = text
+			end
+
+			button.UpdateLayers = updateLayers
+			button:HookScript("OnEnter", updateLayers)
+			button:HookScript("OnLeave", updateLayers)
+			button:HookScript("OnMouseDown", function(self) setDown(self, true) end)
+			button:HookScript("OnMouseUp", function(self) setDown(self, false) end)
+			button:HookScript("OnShow", function(self) setDown(self, false) end)
+			button:HookScript("OnHide", function(self) setDown(self, false) end)
+
+			button:SetSize(unpack(uiconfig.menubutton.size))
+			button:UpdateLayers() -- update colors and layers
+
+			v.button = button -- add a reference to the frame handle for the layout function
+			v.styled = true -- avoid double styling
+
+		elseif v.addon then
+			-- a button from an addon that isn't loaded yet
+			need_addon_watch = true
 		end
 	end
-	
-	-- Add this as a callback if a button from an addon wasn't loaded.
-	-- *Could add in specific addons to look for here, but I'm not going to bother with it.
+
+	-- Watch for the addons whose buttons are missing.
 	if need_addon_watch then
 		if not self.looking_for_addons then
 			self:RegisterEvent("ADDON_LOADED", "StyleButtons")
 			self.looking_for_addons = true
 		end
-	else
-		if self.looking_for_addons then
-			self:UnregisterEvent("ADDON_LOADED", "StyleButtons")
-			self.looking_for_addons = nil
-		end
+	elseif self.looking_for_addons then
+		self:UnregisterEvent("ADDON_LOADED", "StyleButtons")
+		self.looking_for_addons = nil
 	end
-	
+
 	self:UpdateButtonLayout()
 end
 
-Module.StyleWindow = function(self, frame)
-	local config = self.config
+-- A bare window: only the buttons take the mouse.
+Module.StyleWindow = function(self)
+	self.frame:EnableMouse(false)
+	self.frame:SetBackdrop(nil)
 
-	self.frame:EnableMouse(false) -- only need the mouse on the actual buttons
-	self.frame:SetBackdrop(nil) 
-	
 	self.frame:SetFrameStrata("DIALOG")
 	self.frame:SetFrameLevel(120)
-	
-	if not self.objects then
-		self.objects = {} -- registry of objects we won't strip
-	end
-	
+
 	for i = 1, self.frame:GetNumRegions() do
 		local region = select(i, self.frame:GetRegions())
-		if region and not self.objects[region] then
-			local object_type = region.GetObjectType and region:GetObjectType()
-			local hide
-			if object_type == "Texture" then
-				region:SetTexture(nil)
-				region:SetAlpha(0)
-			elseif object_type == "FontString" then
-				region:SetText("")
-			end
+		if (region:GetObjectType() == "Texture") then
+			region:SetTexture(nil)
+			region:SetAlpha(0)
+		else
+			region:SetText("")
 		end
 	end
-	
-	-- kill off mouse input?
-	if config.capture_mouse then
-		if not self.mouse then
-			self.mouse = CreateFrame("Frame", nil, self.frame)
-			self.mouse:SetFrameLevel(0)
-			self.mouse:SetAllPoints(UIParent)
-			self.mouse:EnableMouse(true)
-		end
-		self.mouse:Show()
-	else
-		if self.mouse then
-			self.mouse:Hide()
-		end
-	end
-	
-	if config.dim then
-		if not self.dimmer then
-			self.dimmerframe = CreateFrame("Frame", nil, self.frame)
-			self.dimmerframe:SetFrameLevel(0)
-
-			self.dimmer = self.dimmerframe:CreateTexture(nil, "BACKGROUND")
-			self.dimmer:SetPoint("TOP", UIParent, 0, 10)
-			self.dimmer:SetPoint("BOTTOM", UIParent, 0, -10)
-			self.dimmer:SetPoint("RIGHT", UIParent, 10, 0)
-			self.dimmer:SetPoint("LEFT", UIParent, -10, 0)
-			self.dimmer:SetTexture(BLANK_TEXTURE)
-
-			self.objects[self.dimmer] = true
-		end
-		self.dimmer:SetVertexColor(unpack(config.dim_color))
-		self.dimmer:Show()
-	else
-		if self.dimmer then
-			self.dimmer:Hide()
-		end
-	end
-	
-	if config.show_logo then
-		if not self.logo then
-			self.logo = self.frame:CreateTexture(nil, "ARTWORK")
-			self.logo:SetSize(unpack(config.logo.size))
-			self.logo:SetTexture(config.logo.texture)
-			local p = config.logo.position
-			self.logo:SetPoint(p.point, Engine:GetFrame(), p.rpoint, p.xoffset, p.yoffset)
-			self.objects[self.logo] = true
-		end
-		self.logo:Show()
-	else
-		if self.logo then
-			self.logo:Hide()
-		end
-	end
-
-	-- 8.2.0 weirdness
-	if self.frame.Border then 
-		self.frame.Border:SetParent(self.UIHider)
-	end
-	
 end
 
 Module.OnInit = function(self)
@@ -352,11 +192,9 @@ Module.OnInit = function(self)
 	self.uiconfig = self:GetDB("UI")
 	self.frame = GameMenuFrame
 
-	-- does this taint? :/
-	local UICenter = Engine:GetFrame()
-	self.frame:SetParent(UICenter)
+	self.frame:SetParent(Engine:GetFrame())
 
-
+	-- ACP's own show and hide scripts would move its button
 	local Fix_ACP = function(self)
 		self:SetScript("OnShow", nil)
 		self:SetScript("OnHide", nil)
@@ -366,7 +204,6 @@ Module.OnInit = function(self)
 		{ content = GameMenuButtonOptions, label = VIDEOOPTIONS_MENU },
 		{ content = GameMenuButtonSoundOptions, label = VOICE_SOUND }, -- SOUNDOPTIONS_MENU
 		{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
-		{ content = GameMenuButtonMacOptions, label = MAC_OPTIONS },
 		{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
 		{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
 		{ content = GameMenuButtonMacros, label = MACROS },
@@ -374,43 +211,25 @@ Module.OnInit = function(self)
 		{ content = GameMenuButtonRatings, label = RATINGS_MENU },
 		{ content = GameMenuButtonLogout, label = LOGOUT },
 		{ content = GameMenuButtonQuit, label = EXIT_GAME },
-		{ content = GameMenuButtonContinue, label = RETURN_TO_GAME, anchor = "BOTTOM" }
+		{ content = GameMenuButtonContinue, label = RETURN_TO_GAME }
 	}
 
-
-	local UIHider = CreateFrame("Frame")
-	UIHider:Hide()
-	self.UIHider = UIHider
-	
-	-- kill mac options button if not a mac client
-	if GameMenuButtonMacOptions and (not IsMacClient()) then
-		for i,v in ipairs(self.buttons) do
-			if v.content == GameMenuButtonMacOptions then
-				GameMenuButtonMacOptions:UnregisterAllEvents()
-				GameMenuButtonMacOptions:SetParent(UIHider)
-				GameMenuButtonMacOptions.SetParent = function() end
-				tremove(self.buttons, i)
-				break
-			end
-		end
-	end
-	
-	-- add a hook to blizzard's button visibility function to properly re-align the buttons when needed
-	if GameMenuFrame_UpdateVisibleButtons then
-		hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", function() self:UpdateButtonLayout() end)
+	-- the mac options button, on a mac client only
+	if IsMacClient() then
+		table_insert(self.buttons, 4, { content = GameMenuButtonMacOptions, label = MAC_OPTIONS })
+	else
+		local UIHider = CreateFrame("Frame")
+		UIHider:Hide()
+		GameMenuButtonMacOptions:UnregisterAllEvents()
+		GameMenuButtonMacOptions:SetParent(UIHider)
+		GameMenuButtonMacOptions.SetParent = function() end
 	end
 
 	self:RegisterEvent("UI_SCALE_CHANGED", "UpdateButtonLayout")
 	self:RegisterEvent("DISPLAY_SIZE_CHANGED", "UpdateButtonLayout")
 
-	if VideoOptionsFrameApply then
-		VideoOptionsFrameApply:HookScript("OnClick", function() self:UpdateButtonLayout() end)
-	end
-
-	if VideoOptionsFrameOkay then
-		VideoOptionsFrameOkay:HookScript("OnClick", function() self:UpdateButtonLayout() end)
-	end
-
+	VideoOptionsFrameApply:HookScript("OnClick", function() self:UpdateButtonLayout() end)
+	VideoOptionsFrameOkay:HookScript("OnClick", function() self:UpdateButtonLayout() end)
 end
 
 Module.OnEnable = function(self)

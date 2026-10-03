@@ -6,15 +6,11 @@ local Widget = Module:SetWidget("Bar: 1")
 
 -- Lua API
 local _G = _G
-local select = select
-local setmetatable = setmetatable
 local table_concat = table.concat
 local table_insert = table.insert
 local table_wipe = table.wipe
 
 -- WoW API
-local CreateFrame = _G.CreateFrame
-local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
 local RegisterStateDriver = _G.RegisterStateDriver
 local UnitClass = _G.UnitClass
 
@@ -22,7 +18,6 @@ local NUM_ACTIONBAR_BUTTONS = _G.NUM_ACTIONBAR_BUTTONS or 12
 
 Widget.OnEnable = function(self)
 	local config = Module.config
-	local db = Module.db
 
 	local Artwork = Module:GetWidget("Artwork")
 	local Bar = Module:GetHandler("ActionBar"):New(1, Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())

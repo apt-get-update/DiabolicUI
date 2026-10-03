@@ -9,6 +9,10 @@
 --    price), frees the DPS or armor line for the big number, moves the
 --    durability line to the footer, finds the name under "Currently
 --    Equipped" on comparison tooltips, and leaves uncached items alone
+--  - CheckLayout: the per-frame check re-runs a layout that never completed,
+--    and stays hooked when a tooltip replaces its OnUpdate script (chat links)
+--  - Guard: a step that errors is reported once, and the item goes back to
+--    Blizzard's plain tooltip for the rest of the session
 --  - SpaceComparisons: side by side comparison tooltips pushed apart, on
 --    whichever side Blizzard put them
 --  - OnTooltipAddMoney: Blizzard's "Sell Price:" line goes to the footer on
@@ -35,6 +39,7 @@ local FRENCH = {
 }
 
 local items -- link -> GetItemInfo returns
+local errors -- what reached the error handler
 
 local function loadModule(strings)
 	for key, value in pairs(strings) do
@@ -72,13 +77,30 @@ local function loadModule(strings)
 	_G.GetItemQualityColor = function(quality)
 		return quality / 10, .5, 1
 	end
-	_G.hooksecurefunc = function() end
+	-- a working hooksecurefunc: the hook runs after the original
+	_G.hooksecurefunc = function(tbl, name, hook)
+		if type(tbl) == "string" then
+			tbl, name, hook = _G, tbl, name
+		end
+		local original = tbl[name]
+		tbl[name] = function(...)
+			if original then
+				original(...)
+			end
+			hook(...)
+		end
+	end
+	errors = {}
+	_G.geterrorhandler = function()
+		return function(err) errors[#errors + 1] = err end
+	end
 
 	local Engine = EngineMock.new()
 	Engine:NewStaticConfig("Library: Format", { Money = function(money) return money .. "c" end })
 	assert(loadfile("modules/blizzard/itemtooltips.lua"))("DiabolicUI", Engine)
 	local Module = Engine:GetModule("Blizzard: ItemTooltips")
 	Module.db = { reskinTooltip = true } -- the "Reskin Tooltip" option
+	Module.failed = {} -- set up by OnEnable
 	return Module
 end
 
@@ -346,6 +368,116 @@ function TestItemTooltipCompare:test_pushes_comparisons_apart()
 	lu.assertEquals(right.point, { "TOPLEFT", "Anchor", "TOPRIGHT", 24, -10 })
 	lu.assertEquals(left.point, { "TOPRIGHT", "Anchor", "TOPLEFT", -24, -10 })
 	lu.assertEquals(hidden.point[4], 0)
+end
+
+TestItemTooltipCheckLayout = {}
+
+function TestItemTooltipCheckLayout:test_retries_a_layout_that_never_ran()
+	-- A chat link tooltip can be shown before it has a place on screen: the
+	-- first layout stops early (no size recorded yet), so the next frame's
+	-- check must run it again. Here the tooltip already shows another item, which
+	-- makes that layout reset it: proof that it ran.
+	local Module = loadModule(ENGLISH)
+	local tooltip = newTooltip("item:2", { "Chestguard", "Soulbound" })
+	tooltip.DiabolicItemInfo = { link = "item:1", titleIndex = 1 }
+	Module.CheckLayout(tooltip)
+	lu.assertNil(tooltip.DiabolicItemInfo)
+end
+
+function TestItemTooltipCheckLayout:test_ignores_unstyled_tooltips()
+	local Module = loadModule(ENGLISH)
+	local tooltip = newTooltip("item:2", { "Chestguard" })
+	Module.CheckLayout(tooltip) -- no DiabolicItemInfo: nothing to do, no error
+	lu.assertNil(tooltip.DiabolicItemInfo)
+end
+
+-- Script handlers like a real frame's: SetScript replaces the handler and
+-- every hook on it, HookScript adds one.
+local function addScripts(tooltip)
+	tooltip.scripts = {}
+	function tooltip:SetScript(script, func)
+		self.scripts[script] = { func }
+	end
+	function tooltip:HookScript(script, func)
+		local handlers = self.scripts[script] or {}
+		handlers[#handlers + 1] = func
+		self.scripts[script] = handlers
+	end
+	function tooltip:RunScript(script)
+		for _, func in pairs(self.scripts[script] or {}) do
+			func(self)
+		end
+	end
+	return tooltip
+end
+
+local function enable(Module)
+	Module.GetConfig = function() return Module.db end
+	Module.GetDB = function() return { border = { offsets = { 0, 0 } } } end
+	_G.GameTooltip_OnTooltipAddMoney = function() end
+	Module:OnEnable()
+end
+
+function TestItemTooltipCheckLayout:tearDown()
+	_G.ItemRefTooltip = nil
+end
+
+function TestItemTooltipCheckLayout:test_check_survives_the_script_being_replaced()
+	-- ItemRefTooltip sets its own OnUpdate on enter, leave and hide, which
+	-- drops hooks: the check must be hooked on again each time.
+	local Module = loadModule(ENGLISH)
+	local tooltip = addScripts(newTooltip("item:2", { "Chestguard", "Soulbound" }, "ItemRefTooltip"))
+	_G.ItemRefTooltip = tooltip
+	enable(Module)
+
+	tooltip:SetScript("OnUpdate", nil) -- what its OnHide does
+	tooltip.DiabolicItemInfo = { link = "item:1", titleIndex = 1 } -- another item: the layout resets it
+	tooltip:RunScript("OnUpdate")
+	lu.assertNil(tooltip.DiabolicItemInfo)
+end
+
+TestItemTooltipGuard = {}
+
+function TestItemTooltipGuard:setUp()
+	self.Module = loadModule(ENGLISH)
+	self.added = {}
+	self.Module.AddMoney = function(tooltip, cost)
+		table.insert(self.added, cost)
+	end
+	items = { ["item:1"] = { name = "Gladiator's Sword", quality = 4, icon = "icon", sellPrice = 100 } }
+	self.tooltip = newTooltip("item:1", { "Gladiator's Sword", "(50.5 damage per second)", "Durability 31 / 50" })
+end
+
+function TestItemTooltipGuard:test_failing_step_puts_back_blizzards_tooltip()
+	local tooltip = self.tooltip
+	self.Module:OnTooltipSetItem(tooltip)
+	tooltip.DiabolicSellPrice = 2000 -- held back for the footer
+	lu.assertEquals(lineText(2), " ")
+
+	self.Module:Guard(tooltip, function() error("boom") end)
+
+	lu.assertEquals(#errors, 1)
+	lu.assertStrContains(errors[1], "boom")
+	lu.assertNil(tooltip.DiabolicItemInfo)
+	lu.assertEquals(tooltip.DiabolicItemState, "plain")
+	lu.assertEquals(lineText(2), "(50.5 damage per second)")
+	lu.assertEquals(lineText(3), "Durability 31 / 50")
+	lu.assertEquals(self.added, { 2000 }) -- Blizzard's sell price line
+end
+
+function TestItemTooltipGuard:test_failed_item_stays_plain()
+	self.Module:Guard(self.tooltip, function() error("boom") end)
+	self.Module:OnTooltipSetItem(self.tooltip) -- the next refresh
+	lu.assertNil(self.tooltip.DiabolicItemInfo)
+	lu.assertEquals(lineText(2), "(50.5 damage per second)")
+	lu.assertEquals(#errors, 1) -- reported once
+end
+
+function TestItemTooltipGuard:test_working_step_is_left_alone()
+	self.Module:OnTooltipSetItem(self.tooltip)
+	self.Module:Guard(self.tooltip, function() end)
+	lu.assertEquals(#errors, 0)
+	lu.assertNotNil(self.tooltip.DiabolicItemInfo)
 end
 
 os.exit(lu.LuaUnit.run())

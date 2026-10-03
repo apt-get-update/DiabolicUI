@@ -1,5 +1,5 @@
 -- User settings for tooltip placement (saved per profile in DiabolicUI_DB).
-local ADDON, Engine = ...
+local _, Engine = ...
 
 Engine:NewConfig("Tooltips", {
 	offsetX = 0, -- horizontal offset from the cursor, in pixels

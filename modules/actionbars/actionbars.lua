@@ -1,4 +1,4 @@
-local ADDON, Engine = ...
+local _, Engine = ...
 local L = Engine:GetLocale()
 
 -- This module requires a "HIGH" priority,
@@ -8,33 +8,28 @@ local Module = Engine:NewModule("ActionBars", "HIGH")
 
 -- Lua API
 local _G = _G
-local ipairs = ipairs
-local select = select
-local table_insert = table.insert
 local tonumber = tonumber
-local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetAccountExpansionLevel = _G.GetAccountExpansionLevel
-local GetScreenWidth = _G.GetScreenWidth
-local GetTimeToWellRested = _G.GetTimeToWellRested
-local GetXPExhaustion = _G.GetXPExhaustion
-local IsXPUserDisabled = _G.IsXPUserDisabled
-local IsPossessBarVisible = _G.IsPossessBarVisible
 local SetActionBarToggles = _G.SetActionBarToggles
 local UnitHasVehicleUI = _G.UnitHasVehicleUI
-local UnitHasVehiclePlayerFrameUI = _G.UnitHasVehiclePlayerFrameUI
 local UnitLevel = _G.UnitLevel
-local UnitXP = _G.UnitXP
-local UnitXPMax = _G.UnitXPMax
 
 -- WoW tables and objects
-local GameTooltip = _G.GameTooltip
 local MAX_PLAYER_LEVEL_TABLE = _G.MAX_PLAYER_LEVEL_TABLE
 
+-- By a bar's growth direction: where its first button sits, and which way
+-- (x, y) the next ones go. Used by the pet and stance bars.
+Module.GROWTH = {
+  UP = { "BOTTOM", 0, 1 },
+  DOWN = { "TOP", 0, -1 },
+  LEFT = { "RIGHT", -1, 0 },
+  RIGHT = { "LEFT", 1, 0 }
+}
+
 -- Whether or not the XP bar area is used.
--- This will return true for the artifact bar as well.
 Module.IsXPVisible = function(self)
   if UnitHasVehicleUI("player") or UnitIsPossessed("pet") == 1 then
     return false
@@ -148,77 +143,54 @@ Module.OnInit = function(self, event, ...)
   -- Fire up the artwork
   self:GetWidget("Artwork"):Enable()
 
-  -- Tutorial nonsense repositioned
-  if IsAddOnLoaded("Blizzard_Tutorial") and NPE_TutorialInterfaceHelp then
-    NPE_TutorialInterfaceHelp:ClearAllPoints()
-    NPE_TutorialInterfaceHelp:SetPoint("BOTTOM", DiabolicUISkullTexture, "TOP", 0, -20)
-  else
-    local fixTutorialFrame
-    fixTutorialFrame = function(self, event, addon)
-      if (addon == "Blizzard_Tutorial") then
-        if NPE_TutorialInterfaceHelp then
-          NPE_TutorialInterfaceHelp:ClearAllPoints()
-          NPE_TutorialInterfaceHelp:SetPoint("BOTTOM", DiabolicUISkullTexture, "TOP", 0, -20)
-        end
-        self:UnregisterEvent("ADDON_LOADED", fixTutorialFrame)
-      end
-    end
-    self:RegisterEvent("ADDON_LOADED", fixTutorialFrame)
-  end
   -- WotLK didn't have an option to cast on key down, though the code and addons support it.
   -- To better mimic future functionality, we splice the option into the blizzard interface menu,
   -- and create a fake CVar for it so other modules easier can track changes to it.
-  --
-  -- ...Is this something that should be baked into the handler itself...?
-  --
-  local value, defaultValue, serverStoredAccountWide, serverStoredPerCharacter = GetCVarInfo("ActionButtonUseKeyDown")
-  if value == nil and defaultValue == nil and serverStoredAccountWide == nil and serverStoredPerCharacter == nil then
+  -- A registered CVar lasts until the game closes, through /reload: it's only registered once.
+  if (GetCVarInfo("ActionButtonUseKeyDown") == nil) then
     RegisterCVar("ActionButtonUseKeyDown", false)
-    hooksecurefunc(
-      "SetCVar",
-      function(name, value)
-        if name == "ActionButtonUseKeyDown" then
-          self:GetHandler("ActionButton"):OnEvent("CVAR_UPDATE", "ACTION_BUTTON_USE_KEY_DOWN", value)
-          self.db.cast_on_down = GetCVarBool("ActionButtonUseKeyDown") and 1 or 0 -- store the change
-        end
-      end
-    )
-
-    -- set the newly created CVar to our stored setting
-    SetCVar("ActionButtonUseKeyDown", self.db.cast_on_down == 1 and "1" or "0")
-
-    -- add the button to the same menu as it's found in from Cata and up
-    local name = "InterfaceOptionsCombatPanelActionButtonUseKeyDown"
-    if (not _G[name]) then
-      -- We're mimicking what blizzard do to create the button in Cata and higher here
-      -- We can't directly add it to their system, though, because the menu is secure and that would taint it
-      local button =
-        CreateFrame(
-        "CheckButton",
-        "$parentActionButtonUseKeyDown",
-        InterfaceOptionsCombatPanel,
-        "InterfaceOptionsCheckButtonTemplate"
-      )
-      button:SetPoint("TOPLEFT", button:GetParent():GetName() .. "SelfCastKeyDropDown", "BOTTOMLEFT", 14, -24)
-      button:SetChecked(GetCVarBool("ActionButtonUseKeyDown"))
-      button:SetScript(
-        "OnClick",
-        function()
-          if button:GetChecked() then
-            SetCVar("ActionButtonUseKeyDown", "1")
-          else
-            SetCVar("ActionButtonUseKeyDown", "0")
-          end
-          self:GetHandler("ActionButton"):OnEvent(
-            "CVAR_UPDATE",
-            "ACTION_BUTTON_USE_KEY_DOWN",
-            GetCVar("ActionButtonUseKeyDown")
-          )
-        end
-      )
-      _G[button:GetName() .. "Text"]:SetText(L["Cast action keybinds on key down"])
-    end
   end
+  hooksecurefunc(
+    "SetCVar",
+    function(name, value)
+      if name == "ActionButtonUseKeyDown" then
+        self:GetHandler("ActionButton"):OnEvent("CVAR_UPDATE", "ACTION_BUTTON_USE_KEY_DOWN", value)
+        self.db.cast_on_down = GetCVarBool("ActionButtonUseKeyDown") and 1 or 0 -- store the change
+      end
+    end
+  )
+
+  -- set the CVar to our stored setting
+  SetCVar("ActionButtonUseKeyDown", self.db.cast_on_down == 1 and "1" or "0")
+
+  -- add the button to the same menu as it's found in from Cata and up
+  -- We're mimicking what blizzard do to create the button in Cata and higher here
+  -- We can't directly add it to their system, though, because the menu is secure and that would taint it
+  local button =
+    CreateFrame(
+    "CheckButton",
+    "$parentActionButtonUseKeyDown",
+    InterfaceOptionsCombatPanel,
+    "InterfaceOptionsCheckButtonTemplate"
+  )
+  button:SetPoint("TOPLEFT", button:GetParent():GetName() .. "SelfCastKeyDropDown", "BOTTOMLEFT", 14, -24)
+  button:SetChecked(GetCVarBool("ActionButtonUseKeyDown"))
+  button:SetScript(
+    "OnClick",
+    function()
+      if button:GetChecked() then
+        SetCVar("ActionButtonUseKeyDown", "1")
+      else
+        SetCVar("ActionButtonUseKeyDown", "0")
+      end
+      self:GetHandler("ActionButton"):OnEvent(
+        "CVAR_UPDATE",
+        "ACTION_BUTTON_USE_KEY_DOWN",
+        GetCVar("ActionButtonUseKeyDown")
+      )
+    end
+  )
+  _G[button:GetName() .. "Text"]:SetText(L["Cast action keybinds on key down"])
 end
 Module.OnEnable = function(self, event, ...)
   local BlizzardUI = self:GetHandler("BlizzardUI")

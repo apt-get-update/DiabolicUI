@@ -3,7 +3,6 @@ local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Main")
 
 -- Lua API
-local _G = _G
 local pairs = pairs
 local setmetatable = setmetatable
 local table_concat = table.concat
@@ -11,27 +10,28 @@ local table_insert = table.insert
 local tonumber = tonumber
 local tostring = tostring
 
--- WoW API
-local CreateFrame = _G.CreateFrame
-
 local Controller = Engine:CreateFrame("Frame")
 local Controller_MT = { __index = Controller }
 
+-- The next three are called from the secure bar toggles (control:CallMethod)
+
 -- Saves settings when the number of bars are changed
+-- (self.db is set before the bar counts can change)
 Controller.SaveNumBars = function(self)
-	local db = self.db
-	if not db then
-		return
-	end
-	db.num_bars = tonumber(self:GetAttribute("numbars"))
+	self.db.num_bars = tonumber(self:GetAttribute("numbars"))
 end
 
 Controller.SaveNumSideBars = function(self)
-	local db = self.db
-	if not db then
-		return
+	self.db.num_side_bars = tonumber(self:GetAttribute("numsidebars"))
+end
+
+Controller.UpdateSideBarArtwork = function(self)
+	for i = 1,self:GetAttribute("numsidebars") do
+		local Bar = Module:GetWidget("Bar: "..(i+3)):GetFrame()
+		if Bar and Bar.PostUpdate then
+			Bar:PostUpdate()
+		end
 	end
-	db.num_side_bars = tonumber(self:GetAttribute("numsidebars"))
 end
 
 Controller.InVehicle = function(self)
@@ -41,10 +41,6 @@ end
 
 Controller.GetNumBars = function(self)
 	return tonumber(self:GetAttribute("numbars"))
-end
-
-Controller.GetNumSideBars = function(self)
-	return tonumber(self:GetAttribute("numsidebars"))
 end
 
 Controller.UpdateLayout = function(self)
@@ -57,15 +53,6 @@ end
 Controller.UpdateBarArtwork = function(self)
 	for i = 1,self:GetAttribute("numbars") do
 		local Bar = Module:GetWidget("Bar: "..i):GetFrame()
-		if Bar and Bar.PostUpdate then
-			Bar:PostUpdate()
-		end
-	end
-end
-
-Controller.UpdateSideBarArtwork = function(self)
-	for i = 1,self:GetAttribute("numsidebars") do
-		local Bar = Module:GetWidget("Bar: "..(i+3)):GetFrame()
 		if Bar and Bar.PostUpdate then
 			Bar:PostUpdate()
 		end
@@ -139,8 +126,7 @@ ControllerWidget.OnEnable = function(self)
 					self:SetWidth(width);
 					self:SetHeight(height);
 
-					-- tell the addon to update artwork
-					--control:CallMethod("UpdateArtwork");
+					-- tell the addon to lay the bars out again
 					control:CallMethod("UpdateLayout");
 				end
 				value = 11;
@@ -156,8 +142,7 @@ ControllerWidget.OnEnable = function(self)
 					self:SetWidth(width);
 					self:SetHeight(height);
 
-					-- tell the addon to update artwork
-					--control:CallMethod("UpdateArtwork");
+					-- tell the addon to lay the bars out again
 					control:CallMethod("UpdateLayout");
 				end
 			end
@@ -166,10 +151,6 @@ ControllerWidget.OnEnable = function(self)
 			if page then
 				self:SetAttribute("state", page);
 			end
-		end
-		
-		-- new action page
-		if name == "state" then
 		end
 		
 		-- user changed number of visible bars
@@ -198,8 +179,7 @@ ControllerWidget.OnEnable = function(self)
 						self:SetWidth(width);
 						self:SetHeight(height);
 
-						-- tell the addon to update artwork
-						--control:CallMethod("UpdateArtwork");
+						-- tell the addon to lay the bars out again
 						control:CallMethod("UpdateLayout");
 					end
 					

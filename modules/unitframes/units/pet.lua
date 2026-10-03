@@ -1,54 +1,37 @@
 -- "Unit: Pet" widget: the pet frame. Also registered as the "PetFrame" anchor
 -- keyword for other modules.
-local Addon, Engine = ...
+local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Pet")
 
 local UnitFrame = Engine:GetHandler("UnitFrame")
-local StatusBar = Engine:GetHandler("StatusBar")
 local C = Engine:GetDB("Data: Colors")
 
 -- Lua API
-local tostring = tostring
-local unpack, pairs = unpack, pairs
-local tinsert, tconcat = table.insert, table.concat
+local ipairs, unpack = ipairs, unpack
 
 -- WoW API
-local CreateFrame = _G.CreateFrame
 local UnitClass = _G.UnitClass
-local UnitIsEnemy = _G.UnitIsEnemy
-local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = Engine.UnitIsTapDenied
-local UnitPlayerControlled = _G.UnitPlayerControlled
-local UnitReaction = _G.UnitReaction
 
 local _, playerClass = UnitClass("player")
+-- Health: in a vehicle the player is the pet unit, in its class colors a
+-- shade darker; the pet itself can take the player's class colors, darker
+-- still; otherwise it's blood red.
 local postUpdateHealth = function(health, unit)
+	local colors, shade
 	if (health.useClassColor and UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
-		if (class and C.Orb[class]) then
-			for i,v in pairs(C.Orb[class]) do
-				health:SetStatusBarColor(v[1] * .75, v[2] * .75, v[3] * .75, v[4], v[5])
-			end
-		else
-			local r, g, b = unpack(C.Class[class] or C.Class.UNKNOWN)
-			health:SetStatusBarColor(r, g, b, "ALL")
-		end
-	elseif (health.useClassColorPet and UnitIsUnit("pet", unit)) then 
-		if (C.Orb[playerClass]) then
-			for i,v in pairs(C.Orb[playerClass]) do
-				health:SetStatusBarColor(v[1] * .5, v[2] * .5, v[3] * .5, v[4], v[5])
-			end
-		else
-			local r, g, b = unpack(C.Class[playerClass] or C.Class.UNKNOWN)
-			health:SetStatusBarColor(r, g, b, "ALL")
-		end
-	else 
-		for i,v in pairs(C.Orb.HEALTH) do
-			health:SetStatusBarColor(v[1], v[2], v[3], v[4], v[5])
-		end
-	end 
+		colors, shade = C.Orb[class], .75
+	elseif (health.useClassColorPet and UnitIsUnit("pet", unit)) then
+		colors, shade = C.Orb[playerClass], .5
+	end
+	if (not colors) then
+		colors, shade = C.Orb.HEALTH, 1
+	end
+	for _, layer in ipairs(colors) do
+		health:SetStatusBarColor(layer[1] * shade, layer[2] * shade, layer[3] * shade, layer[4], layer[5])
+	end
 end
 
 
@@ -60,7 +43,7 @@ local Style = function(self, unit)
 	local configHealthSpark = config.health.spark
 	local configHealthLayers = config.health.layers
 
-	self:Size(unpack(config.size))
+	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
 
 
@@ -75,7 +58,6 @@ local Style = function(self, unit)
 	Health:SetStatusBarTexture(configHealthLayers.shade.texture, "shade")
 	Health:SetSparkTexture(configHealthSpark.texture)
 	Health:SetSparkSize(unpack(configHealthSpark.size))
-	Health:SetSparkOverflow(configHealthSpark.overflow)
 	Health:SetSparkFlashSize(unpack(configHealthSpark.flash_size))
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
 

@@ -6,22 +6,15 @@
 -- apply.
 local _, Engine = ... 
 local Handler = Engine:NewHandler("BlizzardUI")
-local L = Engine:GetLocale()
 
 -- Lua API
 local _G = _G
-local assert = assert
-local error = error
 local pairs = pairs
-local select = select
 local type = type
-local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
-local GetCVarBool = _G.GetCVarBool
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 local RegisterStateDriver = _G.RegisterStateDriver
 local SetCVar = _G.SetCVar
 local TargetofTarget_Update = _G.TargetofTarget_Update
@@ -41,9 +34,6 @@ RegisterStateDriver(UIHider, "visibility", "hide")
 --	Utility Functions
 ------------------------------------------------------------------------
 
--- proxy function (we eliminate the need for the 'self' argument)
-local check = function(...) return Engine:Check(...) end
-
 local getFrame = function(baseName)
 	if type(baseName) == "string" then
 		return _G[baseName]
@@ -53,20 +43,9 @@ local getFrame = function(baseName)
 end
 
 -- kill off an existing frame in a secure, taint free way
--- @usage kill(object, [keepEvents], [silent])
--- @param object <table, string> frame, fontstring or texture to hide
--- @param keepEvents <boolean, nil> 'true' to leave a frame's events untouched
--- @param silent <boolean, nil> 'true' to return 'false' instead of producing an error for non existing objects
-local kill = function(object, keepEvents, silent)
-	check(object, 1, "string", "table")
-	check(keepEvents, 2, "boolean", "nil")
-	if type(object) == "string" then
-		if silent and not _G[object] then
-			return false
-		end
-		assert(_G[object], L["Bad argument #%d to '%s'. No object named '%s' exists."]:format(1, "Kill", object))
-		object = _G[object]
-	end
+-- @usage kill(object)
+-- @param object <table> frame, fontstring or texture to hide
+local kill = function(object)
 	if not UIHider[object] then
 		UIHider[object] = {
 			parent = object:GetParent(),
@@ -75,10 +54,9 @@ local kill = function(object, keepEvents, silent)
 		}
 	end
 	object:SetParent(UIHider)
-	if object.UnregisterAllEvents and not keepEvents then
+	if object.UnregisterAllEvents then
 		object:UnregisterAllEvents()
 	end
-	return true
 end
 
 
@@ -86,12 +64,11 @@ end
 --	Unit Frames
 ------------------------------------------------------------------------
 
-local killUnitFrame = function(baseName, keepParent)
+-- (baseName: the frame, or its name; frames that don't exist are skipped)
+local killUnitFrame = function(baseName)
 	local frame = getFrame(baseName)
 	if frame then
-		if not keepParent then
-			kill(frame, false, true)
-		end
+		kill(frame)
 		frame:Hide()
 		frame:ClearAllPoints()
 		frame:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", -400, 500)
@@ -110,11 +87,6 @@ local killUnitFrame = function(baseName, keepParent)
 		if spell then
 			spell:UnregisterAllEvents()
 		end
-
-		local altpowerbar = frame.powerBarAlt
-		if altpowerbar then
-			altpowerbar:UnregisterAllEvents()
-		end
 	end
 end
 
@@ -122,12 +94,8 @@ end
 -- @description disables a unitframe based on "unit"
 -- @param unit <string> the unitID of the unit whose blizzard frame to disable (http://wowpedia.org/UnitId)
 local disableUnitFrame = function(unit)
-	if unit == "focus-target" then unit = "focustarget" end
-	if unit == "playerpet" then unit = "pet" end
-	if unit == "tot" then unit = "targettarget" end
 	if unit == "player" then
 		local PlayerFrame = _G.PlayerFrame
-		local MonkStaggerBar = _G.MonkStaggerBar
 
 		killUnitFrame(PlayerFrame)
 		
@@ -143,11 +111,6 @@ local disableUnitFrame = function(unit)
 		PlayerFrame:SetUserPlaced(true)
 		PlayerFrame:SetDontSavePosition(true)
 
-		-- Disable stagger bar events in MoP and higher
-		if MonkStaggerBar then
-			MonkStaggerBar:UnregisterAllEvents()
-		end
-
 	elseif unit == "pet" then
 		killUnitFrame(_G.PetFrame)
 	elseif unit == "target" then
@@ -158,37 +121,22 @@ local disableUnitFrame = function(unit)
 		killUnitFrame(_G.TargetofFocusFrame)
 	elseif unit == "targettarget" then
 		local TargetFrameToT = _G.TargetFrameToT
-		-- originalValue["showTargetOfTarget"] = GetCVar("showTargetOfTarget")
-		--SetCVar("showTargetOfTarget", "0", "SHOW_TARGET_OF_TARGET_TEXT")
-		--SHOW_TARGET_OF_TARGET = "0" -- causes taint!!
+		-- (killed rather than turned off through the showTargetOfTarget
+		-- CVar or SHOW_TARGET_OF_TARGET: changing those taints)
 		TargetofTarget_Update(TargetFrameToT)
 		killUnitFrame(TargetFrameToT)
-	elseif unit:match("(boss)%d?$") == "boss" then
-		local id = unit:match("boss(%d)")
-		if id then
-			killUnitFrame("Boss" .. id .. "TargetFrame")
-		else
-			for i=1, 4 do
-				killUnitFrame(("Boss%dTargetFrame"):format(i))
-			end
+	elseif unit == "boss" then
+		for i = 1, 4 do -- MAX_BOSS_FRAMES
+			killUnitFrame("Boss" .. i .. "TargetFrame")
 		end
-	elseif unit:match("(party)%d?$") == "party" then
-		local id = unit:match("party(%d)")
-		if id then
-			killUnitFrame("PartyMemberFrame" .. id)
-		else
-			for i=1, 4 do
-				killUnitFrame(("PartyMemberFrame%d"):format(i))
-			end
+	elseif unit == "party" then
+		for i = 1, 4 do -- MAX_PARTY_MEMBERS
+			killUnitFrame("PartyMemberFrame" .. i)
 		end
-	elseif unit:match("(arena)%d?$") == "arena" then
-		local id = unit:match("arena(%d)")
-		if id then
-			killUnitFrame("ArenaEnemyFrame" .. id)
-		else
-			for i=1, 4 do
-				killUnitFrame(("ArenaEnemyFrame%d"):format(i))
-			end
+	elseif unit == "arena" then
+		-- (only there when another addon loaded Blizzard's arena UI)
+		for i = 1, 5 do -- MAX_ARENA_ENEMIES
+			killUnitFrame("ArenaEnemyFrame" .. i)
 		end
 
 		-- Blizzard_ArenaUI should not be loaded
@@ -252,7 +200,6 @@ local elements = {
 		OnDisable = function(self, ...)
 			local _G = _G
 			local UIHider = UIHider
-			local ExtraActionBarFrame = _G.ExtraActionBarFrame
 			local MainMenuBar = _G.MainMenuBar
 			local MainMenuBarArtFrame = _G.MainMenuBarArtFrame
 			local MainMenuBarMaxLevelBar = _G.MainMenuBarMaxLevelBar
@@ -264,7 +211,6 @@ local elements = {
 			local PetActionBarFrame = _G.PetActionBarFrame
 			local PossessBarFrame = _G.PossessBarFrame
 			local ReputationWatchBar = _G.ReputationWatchBar
-			local StreamingIcon = _G.StreamingIcon
 			local TutorialFrameAlertButton = _G.TutorialFrameAlertButton
 			local UIPARENT_MANAGED_FRAME_POSITIONS = _G.UIPARENT_MANAGED_FRAME_POSITIONS
 
@@ -274,7 +220,7 @@ local elements = {
 			MainMenuBar:SetScale(0.00001)
 
 			MainMenuBarArtFrame:UnregisterAllEvents()
-			MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE") -- make the character currency tab appear (not working in BfA)
+			MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE") -- make the character currency tab appear
 			MainMenuBarArtFrame:Hide()
 			MainMenuBarArtFrame:SetAlpha(0)
 			MainMenuBarArtFrame:SetParent(UIHider)
@@ -330,13 +276,6 @@ local elements = {
 			MainMenuBarMaxLevelBar:SetParent(UIHider)
 			MainMenuBarMaxLevelBar:Hide()
 			ReputationWatchBar:SetParent(UIHider)
-
-			-- Attempting to avoid bugs related to container frame repositioning,
-			-- as events fired by the honor bare will initiate container anchor updates.
-			if HonorWatchBar then
-				HonorWatchBar:UnregisterAllEvents()
-				HonorWatchBar:Hide()
-			end
 			
 			local ShapeshiftBarFrame = _G.ShapeshiftBarFrame
 			local ShapeshiftBarLeft = _G.ShapeshiftBarLeft
@@ -387,7 +326,6 @@ local elements = {
 
 			UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = nil
-			UIPARENT_MANAGED_FRAME_POSITIONS["StanceBarFrame"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["PossessBarFrame"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["MultiCastActionBarFrame"] = nil
@@ -422,10 +360,6 @@ local elements = {
 			ConsolidatedBuffs:SetParent(UIHider)
 		end
 	},
-	CaptureBars = {
-		OnDisable = function(self)
-		end
-	},
 	CastBars = {
 		Remove = function(self, unit)
 			if unit == "player" then
@@ -446,94 +380,6 @@ local elements = {
 				PetCastingBarFrame:SetParent(UIHider)
 				PetCastingBarFrame:UnregisterAllEvents()
 			end
-		end
-	},
-	Minimap = {
-		OnDisable = function(self)
-			local _G = _G
-			local UIHider = UIHider
-			local GameTimeFrame = _G.GameTimeFrame
-			local TimeManagerClockButton = _G.TimeManagerClockButton
-
-			GameTimeFrame:SetParent(UIHider)
-			GameTimeFrame:UnregisterAllEvents()
-
-			_G.MinimapBorder:SetParent(UIHider)
-			_G.MinimapBorderTop:SetParent(UIHider)
-			_G.MinimapCluster:SetParent(UIHider)
-			_G.MiniMapMailBorder:SetParent(UIHider)
-			_G.MiniMapMailFrame:SetParent(UIHider)
-			_G.MinimapBackdrop:SetParent(UIHider) -- MinimapCompassTexture
-			_G.MinimapNorthTag:SetParent(UIHider)
-			_G.MiniMapTracking:SetParent(UIHider)
-			_G.MiniMapTrackingButton:SetParent(UIHider)
-
-		  _G.MiniMapVoiceChatFrame:SetParent(UIHider)
-
-			_G.MiniMapWorldMapButton:SetParent(UIHider)
-			_G.MinimapZoomIn:SetParent(UIHider)
-			_G.MinimapZoomOut:SetParent(UIHider)
-			_G.MinimapZoneTextButton:SetParent(UIHider)
-			
-			-- Instance difficulty
-			_G.MiniMapInstanceDifficulty:SetParent(UIHider)
-
-			-- Elements that got removed in MoP
-			local MiniMapLFGFrame = _G.MiniMapLFGFrame
-			local MiniMapLFGFrameBorder = _G.MiniMapLFGFrameBorder
-			local MiniMapBattlefieldFrame = _G.MiniMapBattlefieldFrame
-			local MiniMapBattlefieldBorder = _G.MiniMapBattlefieldBorder
-			local BattlegroundShine = _G.BattlegroundShine
-			local MiniMapBattlefieldIcon = _G.MiniMapBattlefieldIcon
-
-			-- WotLK and Cata Dungeon Finder Eye
-			MiniMapLFGFrame:SetHighlightTexture("") -- the annoying blue hover circle around it
-			MiniMapLFGFrame.eye.texture:SetParent(UIHider)
-			MiniMapLFGFrame.eye.texture:SetAlpha(0)
-			MiniMapLFGFrameBorder:SetTexture(nil)
-
-			-- WotLK and Cata PvP battleground and Wintergrasp queue
-			MiniMapBattlefieldBorder:SetTexture(nil) -- the butt fugly standard border
-			BattlegroundShine:SetTexture(nil) -- annoying background "shine"
-			MiniMapBattlefieldIcon:SetParent(UIHider)
-			MiniMapBattlefieldIcon:SetAlpha(0)
-
-			if TimeManagerClockButton then
-				TimeManagerClockButton:SetParent(UIHider)
-				TimeManagerClockButton:UnregisterAllEvents()
-			else
-				self:RegisterEvent("ADDON_LOADED", "DisableClock")
-			end
-		end,
-		DisableClock = function(self, event, ...)
-			local arg1 = ... 
-			if arg1 == "Blizzard_TimeManager" then
-				local TimeManagerClockButton = _G.TimeManagerClockButton
-				TimeManagerClockButton:SetParent(UIHider)
-				TimeManagerClockButton:UnregisterAllEvents()
-				self:UnregisterEvent("ADDON_LOADED", "DisableClock")
-			end
-		end
-	}, 
-	MirrorTimer = {
-		OnDisable = function(self)
-			for i = 1, MIRRORTIMER_NUMTIMERS or 1 do
-				local timer = _G["MirrorTimer"..i]
-				timer:SetScript("OnEvent", nil)
-				timer:SetScript("OnUpdate", nil)
-				timer:SetParent(UIHider)
-				timer:UnregisterAllEvents()
-			end
-		end
-	},
-	ObjectiveTracker = {
-		OnDisable = function(self)
-			local WatchFrame = _G.WatchFrame
-			WatchFrame:UnregisterAllEvents()
-			WatchFrame:SetScript("OnEvent", nil)
-			WatchFrame:SetScript("OnUpdate", nil)
-			WatchFrame:SetParent(UIHider)
-			WatchFrame:Hide()
 		end
 	},
 	Tutorials = {
@@ -557,16 +403,13 @@ local elements = {
 
 			local _G = _G
 			local InterfaceOptionsUnitFramePanelPartyBackground = _G.InterfaceOptionsUnitFramePanelPartyBackground
-			local MEMBERS_PER_RAID_GROUP = _G.MEMBERS_PER_RAID_GROUP
 			local PartyMemberBackground = _G.PartyMemberBackground
 
 			disableUnitFrame("player")
 			disableUnitFrame("pet")
-			disableUnitFrame("pettarget")
 			disableUnitFrame("target")
 			disableUnitFrame("targettarget")
 			disableUnitFrame("focus")
-			disableUnitFrame("focustarget")
 
 			disableUnitFrame("party")
 			disableUnitFrame("boss")
@@ -583,16 +426,6 @@ local elements = {
 				PartyMemberBackground:SetParent(UIHider)
 				PartyMemberBackground:Hide()
 				PartyMemberBackground:SetAlpha(0)
-			end
-
-			-- I can't remember when the compact version of party frames 
-			-- got absorbed into the compact raid frame system, 
-			-- nor can I remember exactly when it was added. 
-			-- So instead of doing build checks and the required research, 
-			-- I do the same simple existence checks here too. 
-			-- Will just have to do for now.
-			if _G.CompactPartyFrame then -- 4.0?
-			elseif _G.CompactPartyFrame_Generate then -- 4.1?
 			end
 
 		end,

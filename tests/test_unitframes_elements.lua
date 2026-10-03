@@ -13,8 +13,8 @@
 --    UNIT_THREAT_SITUATION_UPDATE event for a different unit than its own.
 --
 -- Both files end with `Handler:RegisterElement("Name"/"Threat", Enable,
--- Disable, Update)` - since the shared EngineMock's module/handler stand-in
--- doesn't define RegisterElement, it's overridden here to capture the three
+-- Update)` - since the shared EngineMock's module/handler stand-in
+-- doesn't define RegisterElement, it's overridden here to capture the two
 -- local functions directly, the same "small hand-written fake standing in
 -- for a WoW object" idiom the rest of the suite uses, just applied to the
 -- handler instead of a frame (see tests/README.md).
@@ -68,8 +68,8 @@ local function loadUnitFrameElements()
 	local Engine = EngineMock.new()
 	local Handler = Engine:NewHandler("UnitFrame")
 	local captured = {}
-	Handler.RegisterElement = function(self, name, Enable, Disable, Update)
-		captured[name] = { Enable = Enable, Disable = Disable, Update = Update }
+	Handler.RegisterElement = function(self, name, Enable, Update)
+		captured[name] = { Enable = Enable, Update = Update }
 	end
 
 	assert(loadfile("modules/unitframes/elements/name.lua"))("DiabolicUI", Engine)

@@ -1,80 +1,22 @@
 -- "Unit: ToT" widget: the target of target frame.
-local Addon, Engine = ...
-local UnitIsTapDenied = Engine.UnitIsTapDenied
+local _, Engine = ...
 
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrame = Engine:GetHandler("UnitFrame")
 local StatusBar = Engine:GetHandler("StatusBar")
-local C = Engine:GetDB("Data: Colors")
+local Library = Engine:GetDB("Library: UnitFrames")
 
 local UnitFrameWidget = Module:SetWidget("Unit: ToT")
 
 -- Lua API
-local unpack, pairs = unpack, pairs
-
-local postUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavailable)
-
-	local r, g, b
-	if (not isUnavailable) then
-		if UnitIsPlayer(unit) then
-			if health.useClassColor then
-				local _, class = UnitClass(unit)
-				r, g, b = unpack(class and C.Class[class] or C.Class.UNKNOWN)
-			else
-				r, g, b = unpack(C.Orb.HEALTH[1])
-			end
-		elseif UnitPlayerControlled(unit) then
-			if UnitIsFriend("player", unit) then
-				r, g, b = unpack(C.Reaction[5])
-			elseif UnitIsEnemy(unit, "player") then
-				r, g, b = unpack(C.Reaction[1])
-			else
-				r, g, b = unpack(C.Reaction[4])
-			end
-		elseif (not UnitIsFriend("player", unit)) and UnitIsTapDenied(unit) then
-			r, g, b = unpack(C.Status.Tapped)
-		elseif UnitReaction(unit, "player") then
-			r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
-		else
-			r, g, b = unpack(C.Orb.HEALTH[1])
-		end
-	elseif (isUnavailable == "dead") or (isUnavailable == "ghost") then
-		r, g, b = unpack(C.Status.Dead)
-	elseif (isUnavailable == "offline") then
-		r, g, b = unpack(C.Status.Disconnected)
-	end
-
-	if r then
-		if not((r == health.r) and (g == health.g) and (b == health.b)) then
-			health:SetStatusBarColor(r, g, b)
-			health.r, health.g, health.b = r, g, b
-		end
-	end
-
-	if UnitAffectingCombat("player") then
-		health.Value:SetAlpha(1)
-	else
-		health.Value:SetAlpha(.7)
-	end
-
-end
-
-local updateLayers = function(self)
-	if self:IsMouseOver() then
-		self.BorderNormalHighlight:Show()
-		self.BorderNormal:Hide()
-	else
-		self.BorderNormal:Show()
-		self.BorderNormalHighlight:Hide()
-	end
-end
+local unpack = unpack
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.tot
 	local db = Module:GetConfig("UnitFrames") 
 
 	
-	self:Size(unpack(config.size))
+	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
 
 
@@ -85,7 +27,7 @@ local Style = function(self, unit)
 	Shade:SetSize(unpack(config.shade.size))
 	Shade:SetPoint(unpack(config.shade.position))
 	Shade:SetTexture(config.shade.texture)
-	Shade:SetVertexColor(config.shade.color)
+	Shade:SetVertexColor(unpack(config.shade.color))
 
 	local Backdrop = self:CreateTexture(nil, "BORDER")
 	Backdrop:SetSize(unpack(config.backdrop.texture_size))
@@ -138,8 +80,9 @@ local Style = function(self, unit)
 	Health.Value.showMaximum = false
 	Health.Value.hideMinimum = true
 
-	Health.PostUpdate = postUpdateHealth
+	Health.PostUpdate = Library.PostUpdateHealth
 	Health.useClassColor = db.showClassColors
+	Health.dimOutOfCombat = true
 
 
 	-- CastBar
@@ -173,8 +116,8 @@ local Style = function(self, unit)
 	self.BorderNormal = BorderNormal
 	self.BorderNormalHighlight = BorderNormalHighlight
 
-	self:HookScript("OnEnter", updateLayers)
-	self:HookScript("OnLeave", updateLayers)
+	self:HookScript("OnEnter", Library.UpdateLayers)
+	self:HookScript("OnLeave", Library.UpdateLayers)
 	
 end
 

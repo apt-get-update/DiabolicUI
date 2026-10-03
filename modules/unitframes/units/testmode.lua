@@ -1,4 +1,4 @@
-local Addon, Engine = ...
+local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 
 -- Lua API
@@ -81,14 +81,9 @@ local ApplyFakeData = function(frame, data, showClassColors)
 		frame.Name:SetText(data.name)
 	end
 
-	if frame.Role then
-		local texcoord = ROLE_TEXCOORDS[data.role]
-		if texcoord then
-			frame.Role:SetTexCoord(unpack(texcoord))
-			frame.Role:Show()
-		else
-			frame.Role:Hide()
-		end
+	if frame.Role then -- (every fake member has a role)
+		frame.Role:SetTexCoord(unpack(ROLE_TEXCOORDS[data.role]))
+		frame.Role:Show()
 	end
 
 	-- There's no real unit behind these fake members to model, so the

@@ -8,7 +8,6 @@ local F = Engine:GetDB("Library: Format")
 
 -- Lua API
 local _G = _G
-local math_floor = math.floor
 local unpack = unpack
 
 -- WoW API
@@ -21,10 +20,8 @@ local GameTooltip = _G.GameTooltip
 -- Track reputation bar visibility
 local REPBARVISIBLE
 
--- Various string formatting for our tooltips and bar, matching the XP bar
-local shortXPString = "%s%%"
+-- String formatting for our tooltip, matching the XP bar
 local longXPString = "%s / %s"
-local fullXPString = "%s / %s - %s%%"
 
 -- Bar Template
 ----------------------------------------------------------
@@ -67,11 +64,6 @@ Bar.Update = function(self)
 	self.XP:SetMinMaxValues(0, data.maxRep)
 	self.XP:SetValue(data.curRep)
 	self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
-	if self.mouseIsOver then
-		self.Value:SetFormattedText(fullXPString, F.Colorize(F.Short(data.curRep), "Normal"), F.Colorize(F.Short(data.maxRep), "Normal"), F.Colorize(F.Short(math_floor(data.curRep/data.maxRep*100)), "Normal"))
-	else
-		self.Value:SetFormattedText(shortXPString, F.Colorize(F.Short(math_floor(data.curRep/data.maxRep*100)), "Normal"))
-	end
 end
 
 Bar.OnEnter = function(self)
@@ -101,26 +93,10 @@ Bar.OnClick = function(self)
 	ToggleCharacter("ReputationFrame")
 end
 
-BarWidget.OnEnter = function(self)
-	self.Bar.mouseIsOver = true
-	self.Bar:OnEnter()
-	self:UpdateBar()
-end
-
-BarWidget.OnLeave = function(self)
-	self.Bar.mouseIsOver = false
-	self.Bar:OnLeave()
-	self:UpdateBar()
-end
-
 BarWidget.Update = function(self)
 	if self:UpdateVisibility() then
 		self:UpdateBar()
 	end
-end
-
-BarWidget.OnClick = function(self, ...)
-	self.Bar:OnClick(...)
 end
 
 BarWidget.UpdateVisibility = function(self)
@@ -169,12 +145,12 @@ BarWidget.OnEnable = function(self)
 	controller:SetSize(unpack(structure_config.size[num_bars]))
 	controller:SetPoint(unpack(structure_config.position))
 	controller:EnableMouse(true)
-	controller:SetScript("OnEnter", function() self:OnEnter() end)
-	controller:SetScript("OnLeave", function() self:OnLeave() end)
-	controller:SetScript("OnMouseUp", function(_, ...) self:OnClick(...) end)
 	self.Controller = controller
 
 	local bar = setmetatable(controller:CreateFrame("Frame"), Bar_MT)
+	controller:SetScript("OnEnter", function() bar:OnEnter() end)
+	controller:SetScript("OnLeave", function() bar:OnLeave() end)
+	controller:SetScript("OnMouseUp", function() bar:OnClick() end)
 	bar:SetSize(controller:GetSize())
 	bar:SetAllPoints(controller)
 	bar.data = {}
@@ -195,25 +171,14 @@ BarWidget.OnEnable = function(self)
 	xp:SetSparkSize(unpack(art_config.bar.spark.size))
 	xp:SetSparkFlash(2.75, 1.25, .35, .85)
 
-	local overlay = controller:CreateFrame("Frame")
-	overlay:SetFrameStrata("MEDIUM")
-	overlay:SetFrameLevel(35) -- above the actionbar artwork
-	overlay:SetAllPoints()
-
-	local value = overlay:CreateFontString(nil, "OVERLAY")
-	value:SetPoint("CENTER")
-	value:SetFontObject(art_config.normalFont)
-	value:Hide()
-
 	bar.Backdrop = backdrop
 	bar.XP = xp
-	bar.Value = value
 
 	self.Bar = bar
 
 	-- Our reputation bar isn't secure, so we need to update its size
 	-- from normal Lua, not the secure environment.
-	Main:HookScript("OnAttributeChanged", function(_, name, value)
+	Main:HookScript("OnAttributeChanged", function(_, name)
 		if (name == "numbars") then
 			self:UpdateBarSettings()
 		end

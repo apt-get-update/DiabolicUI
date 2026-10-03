@@ -1,11 +1,9 @@
 -- "Unit: Target" widget: the target frame at the top of the screen, sized and
 -- placed by classification (normal, elite, boss).
-local Addon, Engine = ...
+local _, Engine = ...
 
 local UnitFrame = Engine:GetHandler("UnitFrame")
-local StatusBar = Engine:GetHandler("StatusBar")
-local AuraData = Engine:GetDB("Data: Auras")
-local C = Engine:GetDB("Data: Colors")
+local Library = Engine:GetDB("Library: UnitFrames")
 
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Target")
@@ -15,12 +13,9 @@ local _G = _G
 local unpack = unpack
 
 -- WoW API
-local GetCVarBool = _G.GetCVarBool
 local IsInInstance = _G.IsInInstance
 local PlaySound = _G.PlaySound
-local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitCanAttack = _G.UnitCanAttack
-local UnitClass = _G.UnitClass
 local UnitClassification = _G.UnitClassification
 local UnitPlayerControlled = _G.UnitPlayerControlled
 local UnitExists = _G.UnitExists
@@ -31,101 +26,22 @@ local UnitPowerMax = _G.UnitPowerMax
 local UnitIsEnemy = _G.UnitIsEnemy
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = Engine.UnitIsTapDenied
 local UnitIsUnit = _G.UnitIsUnit
 
 -- Time limit in seconds where we separate between short and long buffs
 local TIME_LIMIT = Engine:GetConstant("AURA_TIME_LIMIT")
-local TIME_LIMIT_LOW = Engine:GetConstant("AURA_TIME_LIMIT_LOW")
 
 -- Utility Functions
 --------------------------------------------------------------------------
 
--- reposition the unit classification when needed
-local PostUpdateClassification = function(self, unit)
-	if not unit then
-		return
-	end
-
-	local isPlayer = UnitIsPlayer(unit)
-
-	local powerID, powerType = UnitPowerType(unit)
-	local power = UnitPower(unit, powerID)
-	local powermax = UnitPowerMax(unit, powerID)
-
-	local haspower = isPlayer or not(power == 0 or powermax == 0)
-
-	local level = UnitLevel(unit)
-	local classification = UnitClassification(unit)
-
-	local isboss = (classification == "worldboss") or (level and level < 1)
-	local isElite = (classification == "elite") or (classification == "rare") or (classification == "rareelite")
-
-	local hadpower = self.haspower
-	local wasboss = self.isboss
-	local waselite = self.iselite
-	
-	-- todo: clean this mess up
-	if isboss then
-		if haspower then
-			if hadpower and wasboss then
-				return
-			end
-			self:Place(unpack(self.position.boss_double))
-			self.haspower = true
-		else
-			if wasboss and (not hadpower) then
-				return
-			end
-			self:Place(unpack(self.position.boss_single))
-			self.haspower = false
-		end
-		self.isboss = true
-		self.iselite = false
-	elseif isElite then
-		if haspower then
-			if hadpower and waselite then
-				return
-			end
-			self:Place(unpack(self.position.elite_double))
-			self.haspower = true
-		else
-			if waselite and (not hadpower) then
-				return
-			end
-			self:Place(unpack(self.position.elite_single))
-			self.haspower = false
-		end
-		self.iselite = true
-		self.isboss = false
-	else
-		if haspower then
-			if hadpower and (not wasboss) then
-				return
-			end
-			self:Place(unpack(self.position.normal_double))
-			self.haspower = true
-		else
-			if (not hadpower) and (not wasboss) then
-				return
-			end
-			self:Place(unpack(self.position.normal_single))
-			self.haspower = false
-		end
-		self.isboss = false
-		self.iselite = false
-	end
-end
-
+-- The border (normal, elite or boss, with or without a power bar, lit on
+-- mouseover), backdrop and threat textures for the frame's unit.
 local PostUpdateArtwork = function(self)
 	local unit = self.unit
-	if not unit then
-		return
-	end
 
 	local isPlayer = UnitIsPlayer(unit)
 
-	local powerID, powerType = UnitPowerType(unit)
+	local powerID = UnitPowerType(unit)
 	local power = UnitPower(unit, powerID)
 	local powermax = UnitPowerMax(unit, powerID)
 
@@ -187,78 +103,9 @@ local PostUpdateArtwork = function(self)
 	
 end
 
-local PostCreateAuraButton = function(self, button)
-	local config = self.buttonConfig
-	local width, height = unpack(config.size)
-	local r, g, b = unpack(config.color)
 
-	local icon = button:GetElement("Icon")
-	local overlay = button:GetElement("Overlay")
-	local scaffold = button:GetElement("Scaffold")
-	local timer = button:GetElement("Timer")
+-- TODO: Add PvP relevant buffs to a whitelist in these filters
 
-	local timerBar = timer.Bar
-	local timerBarBackground = timer.Background
-	local timerScaffold = timer.Scaffold
-
-	overlay:SetBackdrop(config.glow.backdrop)
-
-	local glow = button:CreateFrame()
-	glow:SetFrameLevel(button:GetFrameLevel())
-	glow:SetPoint("TOPLEFT", scaffold, "TOPLEFT", -4, 4)
-	glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
-	glow:SetBackdrop(config.glow.backdrop)
-
-	local iconShade = scaffold:CreateTexture()
-	iconShade:SetDrawLayer("OVERLAY")
-	iconShade:SetAllPoints(icon)
-	iconShade:SetTexture(config.shade.texture)
-	iconShade:SetVertexColor(0, 0, 0, 1)
-
-	local iconDarken = scaffold:CreateTexture()
-	iconDarken:SetDrawLayer("OVERLAY")
-	iconDarken:SetAllPoints(icon)
-	iconDarken:SetTexture(0, 0, 0, .15)
-
-	local iconOverlay = overlay:CreateTexture()
-	iconOverlay:Hide()
-	iconOverlay:SetDrawLayer("OVERLAY")
-	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetTexture(0, 0, 0, 1)
-	icon.Overlay = iconOverlay
-
-	local timerOverlay = timer:CreateFrame()
-	timerOverlay:SetFrameLevel(timer:GetFrameLevel() + 3)
-	timerOverlay:SetPoint("TOPLEFT", -3, 3)
-	timerOverlay:SetPoint("BOTTOMRIGHT", 3, -3)
-	timerOverlay:SetBackdrop(config.glow.backdrop)
-
-	button.SetBorderColor = function(self, r, g, b)
-		timerBarBackground:SetVertexColor(r * 1/3, g * 1/3, b * 1/3)
-		timerBar:SetStatusBarColor(r * 2/3, g * 2/3, b * 2/3)
-
-		overlay:SetBackdropBorderColor(r, g, b, .5)
-		glow:SetBackdropBorderColor(r/3, g/3, b/3, .75)
-		timerOverlay:SetBackdropBorderColor(r, g, b, .5)
-
-		scaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
-		scaffold:SetBackdropBorderColor(r, g, b)
-
-		timerScaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
-		timerScaffold:SetBackdropBorderColor(r, g, b)
-	end
-
-	button:SetElement("Glow", glow)
-	button:SetSize(width, height)
-	button:SetBorderColor(r * 4/5, g * 4/5, b * 4/5)
-end
-
-
--- TODO: Add PvP relevant buffs to a whitelist in these filters 
--- TODO: Optimize the code once we're happy with the functionality
-
-local Filter = Engine:GetDB("Library: AuraFilters")
-local Filter_UnitIsHostileNPC = Filter.UnitIsHostileNPC
 
 local buffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
 
@@ -283,15 +130,9 @@ local buffFilter = function(self, name, rank, icon, count, debuffType, duration,
 		-- Show auras of unknown origin
 		return true
 
-	elseif (not isCastByPlayer) then
-		-- Need to make a whitelist of certain pvp related player shields, cooldowns and stuff here
-		return spellId and AuraData[spellId] or false
-
-	elseif (duration and (duration > 0)) then
-		if (duration > TIME_LIMIT) then
-			return false
-		end
-		return true
+	else
+		-- others' (see the TODO above)
+		return false
 	end
 end
 
@@ -301,20 +142,12 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	local unit = self.unit
 
 	-- Info about the unitframe's unit (the unit the auras are applied to)
-	local unitLevel = UnitLevel(unit)
-	local unitClassificiation = UnitClassification(unit)
-	local unitIsHostilePlayer = UnitIsPlayer(unit) and UnitIsEnemy("player", unit)
 	local unitIsHostileNPC = UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit))
-	local unitIsImportant = (unitClassificiation == "worldboss") or (unitClassificiation == "rare") or (unitClassificiation == "rareelite") or (level and level < 1) 
 
 	-- Info about the caster of the auras 
-	local casterIsUnit = unitCaster and ((unitCaster == unit) or UnitIsUnit(unit, unitCaster))
 	local casterIsVehicle = unitCaster and ((unitCaster == "vehicle") or UnitIsUnit("vehicle", unitCaster))
 
 	-- Info about the auras themselves
-	local isShortDuration = duration and (duration > 0) and (duration < TIME_LIMIT)
-	local isLongDuration = duration and (duration > TIME_LIMIT)
-	local isStatic = (not duration) or (duration == 0)
 
 	-- Always show boss debuffs on your target
 	if isBossDebuff then
@@ -335,144 +168,17 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	elseif unitIsHostileNPC then
 		return (not unitCaster) or (unitCaster == unit)
 
-	elseif (not isCastByPlayer) then
-		-- Need to make a whitelist of certain pvp related player shields, cooldowns and stuff here
-		return spellId and AuraData[spellId] or false
-
-	elseif duration and (duration > 0) then
-		if duration > TIME_LIMIT then
-			return false
-		end
-		return true
-	end
-end
-
-local PostUpdateAuraButton = function(self, button, ...)
-	local updateType = ...
-	local config = self.buttonConfig
-
-	local icon = button:GetElement("Icon")
-	local glow = button:GetElement("Glow")
-	local timer = button:GetElement("Timer")
-	local scaffold = button:GetElement("Scaffold")
-
-	if timer:IsShown() then
-		glow:SetPoint("BOTTOMRIGHT", timer, "BOTTOMRIGHT", 3, -3)
 	else
-		glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
+		-- others' (see the TODO above)
+		return false
 	end
-	
-	if self.hideTimerBar then
-		local color = config.color
-		button:SetBorderColor(color[1], color[2], color[3]) 
-		icon:SetDesaturated(false)
-		icon:SetVertexColor(.85, .85, .85)
-	else
-		if button.isBuff then
-			if button.isStealable then
-				local color = C.General.Title
-				button:SetBorderColor(color[1], color[2], color[3]) 
-				icon:SetDesaturated(false)
-				icon:SetVertexColor(1, 1, 1)
-				icon.Overlay:Hide()
-
-			elseif button.isCastByPlayer then
-				local color = C.General.XP
-				button:SetBorderColor(color[1], color[2], color[3]) 
-				icon:SetDesaturated(false)
-				icon:SetVertexColor(1, 1, 1)
-				icon.Overlay:Hide()
-			else
-				local color = config.color
-				button:SetBorderColor(color[1], color[2], color[3]) 
-
-				if icon:SetDesaturated(true) then
-					icon:SetVertexColor(1, 1, 1)
-					icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .5)
-					icon.Overlay:Show()
-				else
-					icon:SetDesaturated(false)
-					icon:SetVertexColor(.7, .7, .7)
-					icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
-					icon.Overlay:Show()
-				end		
-			end
-
-		elseif button.isCastByPlayer then
-			button:SetBorderColor(.7, .1, .1)
-			icon:SetDesaturated(false)
-			icon:SetVertexColor(1, 1, 1)
-			icon.Overlay:Hide()
-
-		else
-			local color = config.color
-			button:SetBorderColor(color[1], color[2], color[3])
-
-			if icon:SetDesaturated(true) then
-				icon:SetVertexColor(1, 1, 1)
-				icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .5)
-				icon.Overlay:Show()
-			else
-				icon:SetDesaturated(false)
-				icon:SetVertexColor(.7, .7, .7)
-				icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
-				icon.Overlay:Show()
-			end		
-		end
-	end
-end
-
-local PostUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavailable)
-
-	local r, g, b
-	if (not isUnavailable) then
-		if UnitIsPlayer(unit) then
-			if health.useClassColor then
-				local _, class = UnitClass(unit)
-				r, g, b = unpack(class and C.Class[class] or C.Class.UNKNOWN)
-			else
-				r, g, b = unpack(C.Orb.HEALTH[1])
-			end
-		elseif UnitPlayerControlled(unit) then
-			r, g, b = unpack(C.Orb.HEALTH[1])
-		elseif (not UnitIsFriend("player", unit)) and UnitIsTapDenied(unit) then
-			r, g, b = unpack(C.Status.Tapped)
-		elseif UnitReaction(unit, "player") then
-			r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
-		else
-			r, g, b = unpack(C.Orb.HEALTH[1])
-		end
-	elseif (isUnavailable == "dead") or (isUnavailable == "ghost") then
-		r, g, b = unpack(C.Status.Dead)
-	elseif (isUnavailable == "offline") then
-		r, g, b = unpack(C.Status.Disconnected)
-	end
-
-	if r then
-		if not((r == health.r) and (g == health.g) and (b == health.b)) then
-			health:SetStatusBarColor(r, g, b)
-			health.r, health.g, health.b = r, g, b
-		end
-	end
-
-	if UnitAffectingCombat("player") then
-		health.Value:SetAlpha(1)
-	else
-		health.Value:SetAlpha(.7)
-	end
-
-end
-
-local PostUpdateFrame = function(self, event, ...)
-	PostUpdateArtwork(self)
-	PostUpdateClassification(self.Classification, self.unit)
 end
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.target
 	local db = Module:GetConfig("UnitFrames") 
 	
-	self:Size(unpack(config.size))
+	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
 
 
@@ -483,7 +189,7 @@ local Style = function(self, unit)
 	shade:SetSize(unpack(config.textures.layers.shade.size))
 	shade:SetPoint(unpack(config.textures.layers.shade.position))
 	shade:SetTexture(config.textures.layers.shade.texture)
-	shade:SetVertexColor(config.textures.layers.shade.color)
+	shade:SetVertexColor(unpack(config.textures.layers.shade.color))
 
 	local backdrop = self:CreateTexture(nil, "BACKGROUND")
 	backdrop:SetSize(unpack(config.textures.size))
@@ -578,8 +284,10 @@ local Style = function(self, unit)
 	health.Value.showPercent = false
 	health.Value.showDeficit = false
 	health.Value.showMaximum = true
-	health.PostUpdate = PostUpdateHealth
+	health.PostUpdate = Library.PostUpdateHealth
 	health.useClassColor = db.showClassColors
+	health.plainControlled = true -- pets and vehicles in the plain health color
+	health.dimOutOfCombat = true
 
 	
 	-- Power
@@ -593,9 +301,6 @@ local Style = function(self, unit)
 	-- Add a postupdate to dynamically toggle powerbar artwork when needed
 	power.PostUpdate = function(power, min, max)
 		local unit = self.unit
-		if (not unit) then
-			return
-		end
 		local showPower = (UnitIsPlayer(unit) or not(min == 0 or max == 0))
 		if (showPower == self.haspower) then 
 			return 
@@ -629,12 +334,10 @@ local Style = function(self, unit)
 	auras.growthX = "RIGHT"
 	auras.growthY = "DOWN"
 	auras.filter = nil
-	auras.hideTimerBar = true
 
 	auras.BuffFilter = buffFilter
 	auras.DebuffFilter = debuffFilter
-	auras.PostCreateButton = PostCreateAuraButton
-	auras.PostUpdateButton = PostUpdateAuraButton
+	auras.PostCreateButton = Library.PostCreateAuraButton
 
 	
 
@@ -685,8 +388,7 @@ local Style = function(self, unit)
 	
 	local classification = border:CreateFontString(nil, "OVERLAY")
 	classification:SetFontObject(config.classification.font_object)
-	classification:SetPoint(unpack(config.classification.position.normal_single))
-	classification.position = config.classification.position -- should contain all 4 positions
+	classification:SetPoint(unpack(config.classification.position))
 
 	local spellName = castBar:CreateFontString(nil, "OVERLAY")
 	spellName:SetFontObject(config.classification.font_object)
@@ -741,13 +443,12 @@ local Style = function(self, unit)
 	self.CastBar.Name = spellName
 	self.CastBar.Value = castTime
 	self.Classification = classification
-	self.Classification.PostUpdate = PostUpdateClassification
 	self.Health = health
 	self.Name = name
 	self.Power = power
 	self.Threat = threat
 	self.Threat.SetVertexColor = function(_, ...) 
-		for i,v in pairs(self.layers.threat) do
+		for _,v in pairs(self.layers.threat) do
 			v:SetVertexColor(...)
 		end
 	end
@@ -755,11 +456,11 @@ local Style = function(self, unit)
 	self:HookScript("OnEnter", PostUpdateArtwork)
 	self:HookScript("OnLeave", PostUpdateArtwork)
 
-	self:HookScript("OnShow", PostUpdateFrame)
+	self:HookScript("OnShow", PostUpdateArtwork)
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD", PostUpdateFrame)
-	self:RegisterEvent("PLAYER_TARGET_CHANGED", PostUpdateFrame)
-	self:RegisterEvent("UNIT_NAME_UPDATE", PostUpdateFrame)
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", PostUpdateArtwork)
+	self:RegisterEvent("PLAYER_TARGET_CHANGED", PostUpdateArtwork)
+	self:RegisterEvent("UNIT_NAME_UPDATE", PostUpdateArtwork)
 
 end
 

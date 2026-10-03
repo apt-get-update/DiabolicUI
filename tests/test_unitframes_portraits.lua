@@ -9,7 +9,9 @@
 --    Blizzard's own party frames do for far-away group members
 --  - unit in range: 2D hidden, 3D model shown and pointed at the unit,
 --    with the close-up camera unless the unit is mounted, and camera 1 for
---    female humans (their close-up is framed wrong otherwise)
+--    female humans, female humanoid NPCs and anyone under the Caverns of
+--    Time's human illusion (their close-up is framed wrong otherwise),
+--    unless it's the player as a druid in a form
 --  - events for a different unit are ignored
 --
 -- Same RegisterElement capture as test_unitframes_elements.lua.
@@ -54,6 +56,7 @@ local function callNames(recorder)
 end
 
 local portraitTextures
+local form -- the player's shapeshift form
 
 local function loadPortraitElement()
 	units = {}
@@ -64,11 +67,20 @@ local function loadPortraitElement()
 	_G.UnitIsVisible = function(unit) return units[unit] and not units[unit].far end
 	_G.IsMounted = function(unit) return units[unit] and units[unit].mounted end
 	_G.UnitSex = function(unit) return units[unit] and units[unit].sex or 2 end
-	_G.UnitIsPlayer = function() return true end
+	_G.UnitIsPlayer = function(unit) return not units[unit].npc end
 	_G.UnitRace = function(unit) return units[unit].race, units[unit].race end
+	_G.UnitClass = function(unit) return units[unit].class, units[unit].class end
+	_G.UnitCreatureType = function(unit) return units[unit].creature end
 	_G.UnitIsUnit = function(a, b) return a == b end
-	_G.GetShapeshiftForm = function() return 0 end
-	_G.UnitAura = function() return nil end
+	form = 0
+	_G.GetShapeshiftForm = function() return form end
+	-- the name and spell id (the 11th return) of the unit's i-th aura
+	_G.UnitAura = function(unit, i)
+		local spellId = units[unit].auras and units[unit].auras[i]
+		if spellId then
+			return "Aura", nil, nil, nil, nil, nil, nil, nil, nil, nil, spellId
+		end
+	end
 	_G.SetPortraitTexture = function(texture, unit)
 		table.insert(portraitTextures, { texture, unit })
 	end
@@ -76,8 +88,8 @@ local function loadPortraitElement()
 	local Engine = EngineMock.new()
 	local Handler = Engine:NewHandler("UnitFrame")
 	local captured = {}
-	Handler.RegisterElement = function(self, name, Enable, Disable, Update)
-		captured[name] = { Enable = Enable, Disable = Disable, Update = Update }
+	Handler.RegisterElement = function(self, name, Enable, Update)
+		captured[name] = { Enable = Enable, Update = Update }
 	end
 	assert(loadfile("modules/unitframes/elements/portraits.lua"))("DiabolicUI", Engine)
 	return captured.Portrait
@@ -160,27 +172,68 @@ function TestUnitFramePortrait:test_female_humans_get_camera_one()
 	lu.assertEquals(calls[#calls], { "SetCamera", 1 })
 end
 
+local function camera(frame)
+	local calls = frame.Portrait.calls
+	return calls[#calls][2]
+end
+
+function TestUnitFramePortrait:test_female_humanoid_npcs_get_camera_one()
+	units.party1 = { npc = true, sex = 3, creature = "Humanoid" }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 1)
+	units.party1 = { npc = true, sex = 3, creature = "Beast" }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 0)
+	units.party1 = { npc = true, sex = 2, creature = "Humanoid" }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 0)
+end
+
+function TestUnitFramePortrait:test_the_human_illusion_gets_camera_one()
+	-- Caverns of Time: everyone looks human
+	units.party1 = { sex = 3, race = "Orc", auras = { 1234, 35481 } }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 1)
+	units.party1 = { sex = 3, race = "Orc", auras = { 1234 } }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 0)
+	local forty = {}
+	for i = 1, 40 do
+		forty[i] = 1000 + i -- forty auras, none of them the illusion
+	end
+	units.party1 = { sex = 3, race = "Orc", auras = forty }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 0)
+
+	-- the player too, unless she's a druid in a form
+	self.frame.unit = "player"
+	units.player = { sex = 3, race = "Tauren", class = "DRUID", auras = { 35483 } }
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 1)
+	form = 3 -- cat form
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 0)
+	units.player = { sex = 3, race = "Orc", class = "WARRIOR", auras = { 35483 } }
+	form = 1 -- battle stance
+	self.Update(self.frame)
+	lu.assertEquals(camera(self.frame), 1)
+end
+
 function TestUnitFramePortrait:test_ignores_events_for_other_units()
 	units.party1 = {}
 	self.Update(self.frame, "UNIT_MODEL_CHANGED", "party2")
 	lu.assertEquals(self.frame.Portrait.calls, {})
 end
 
-function TestUnitFramePortrait:test_disable_hides_both()
+function TestUnitFramePortrait:test_enable_registers_and_paints()
 	local element = loadPortraitElement()
 	local registered = {}
 	self.frame.RegisterEvent = function(_, event) registered[event] = true end
-	self.frame.UnregisterEvent = function(_, event) registered[event] = nil end
 	units.party1 = { far = true }
 
 	lu.assertTrue(element.Enable(self.frame, "party1"))
 	lu.assertTrue(registered.PARTY_MEMBER_ENABLE)
 	lu.assertTrue(self.frame.Portrait2D.shown)
-
-	element.Disable(self.frame, "party1")
-	lu.assertEquals(registered, {})
-	lu.assertFalse(self.frame.Portrait.shown)
-	lu.assertFalse(self.frame.Portrait2D.shown)
 end
 
 os.exit(lu.LuaUnit.run())

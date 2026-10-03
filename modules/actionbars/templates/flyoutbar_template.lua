@@ -32,21 +32,11 @@ FlyoutBar.SetButtonPadding = function(self, padding)
 end
 
 FlyoutBar.SetWindowInsets = function(self, left, right, top, bottom)
-	if not self.insets then
-		self.insets = {}
-	end
-	self.insets[1] = left
-	self.insets[2] = right
-	self.insets[3] = top
-	self.insets[4] = bottom
+	self.insets = { left, right, top, bottom }
 end
 
 FlyoutBar.SetButtonSize = function(self, width, height)
-	if not self.buttonsize then
-		self.buttonsize = {}
-	end
-	self.buttonsize[1] = width
-	self.buttonsize[2] = height
+	self.buttonsize = { width, height }
 end
 
 FlyoutBar.SetButtonAnchor = function(self, anchor)
@@ -77,17 +67,12 @@ FlyoutBar.GetButtonPadding = function(self)
 	return self.buttonpadding or 0
 end
 
+-- (every bar sets its insets and button size)
 FlyoutBar.GetWindowInsets = function(self)
-	if not self.insets then
-		return 0, 0, 0, 0
-	end
 	return unpack(self.insets)
 end
 
 FlyoutBar.GetButtonSize = function(self)
-	if not self.buttonsize then
-		return 64, 64 -- fallback to avoid bugs
-	end
 	return unpack(self.buttonsize)
 end
 
@@ -112,10 +97,6 @@ end
 -- so it should only be used in cases where identical buttons are desired.
 -- This will also resize the bar's window to fit the buttons.
 FlyoutBar.Arrange = function(self)
-	if not self.buttons then
-		return
-	end
-
 	local rowsize = self:GetRowSize()
 	local rows = ceil(self:NumButtons() / rowsize)
 	local padding = self:GetButtonPadding()
@@ -147,29 +128,18 @@ FlyoutBar.Arrange = function(self)
 end
 
 -- Inserts an already existing button into the bar's button pool
-FlyoutBar.InsertButton = function(self, button, index)
-	if not self.buttons then
-		self.buttons = {}
-	end
+FlyoutBar.InsertButton = function(self, button)
 	button:SetParent(self)
 	tinsert(self.buttons, button)
 end
 
--- Returns a specific button
-FlyoutBar.GetButton = function(self, index)
-	return self.buttons and self.buttons[index]
-end
-
 -- Returns the current number of buttons
 FlyoutBar.NumButtons = function(self)
-	return self.buttons and #self.buttons or 0
+	return #self.buttons
 end
 
 -- Returns an iterator for the bar's buttons
 FlyoutBar.GetAll = function(self)
-	if not self.buttons then
-		self.buttons = {} -- create it to avoid nil bugs
-	end
 	return ipairs(self.buttons)
 end
 
@@ -233,6 +203,7 @@ FlyoutBarWidget.New = function(self, parent)
 	
 	bar:Hide()
 	bar:EnableMouse(true)
+	bar.buttons = {}
 	
 	return bar
 end

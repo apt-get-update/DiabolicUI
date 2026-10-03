@@ -12,8 +12,9 @@ local select = select
 -- Wow API
 local DoEmote = _G.DoEmote
 local GetAchievementInfo = _G.GetAchievementInfo
+local GetTime = _G.GetTime
 local UnitGUID = _G.UnitGUID
-local UnitIsPlayer = _G.UnitIsPlayer
+local COMBATLOG_OBJECT_TYPE_PLAYER = _G.COMBATLOG_OBJECT_TYPE_PLAYER
 
 -- Obey the alphabet!
 local emotes = {
@@ -25,57 +26,53 @@ local emotes = {
 	"TAP", "TAUNT", "TEASE", "THANK", "TICKLE", "VETO", "VIOLIN", "YAWN"
 }
 
--- We need to check these for overkill damage in cases where
--- PARTY_KILL for some reason refuse to fire.
-local damageEvents = {
-	SWING_DAMAGE = true,
-	RANGE_DAMAGE = true,
-	SPELL_DAMAGE = true,
-	SPELL_BUILDING_DAMAGE = true,
-	SPELL_PERIODIC_DAMAGE = true
+-- The damage events whose overkill also marks a killing blow, in case
+-- PARTY_KILL doesn't fire, and where their overkill is in the 3.3.5 combat
+-- log (timestamp, event, sourceGUID, sourceName, sourceFlags, destGUID,
+-- destName, destFlags, then the event's own values).
+local overkillIndex = {
+	SWING_DAMAGE = 10, -- amount, overkill, ...
+	RANGE_DAMAGE = 13, -- spellId, spellName, spellSchool, amount, overkill, ...
+	SPELL_DAMAGE = 13,
+	SPELL_BUILDING_DAMAGE = 13,
+	SPELL_PERIODIC_DAMAGE = 13
 }
 
-local playerGUID = UnitGUID("player")
-local unitFilter = COMBATLOG_OBJECT_CONTROL_PLAYER
+Module.OnEvent = function(self, event, _, subEvent, sourceGUID, _, _, destGUID, destName, destFlags, ...)
+	if (bit_band(destFlags or 0, COMBATLOG_OBJECT_TYPE_PLAYER) == 0) then
+		return
+	end
+
+	local isKillingBlow
+	if (subEvent == "PARTY_KILL") then
+		isKillingBlow = (sourceGUID == UnitGUID("player"))
+	elseif overkillIndex[subEvent] then
+		local overkill = select(overkillIndex[subEvent] - 8, ...)
+		isKillingBlow = overkill and (overkill > 0) and ((sourceGUID == UnitGUID("player")) or (sourceGUID == UnitGUID("pet")))
+	end
+
+	-- one emote per kill: the overkill hit and PARTY_KILL both report it
+	local now = GetTime()
+	if (not isKillingBlow) or ((destGUID == self.lastVictim) and (now - self.lastKillTime < 2)) then
+		return
+	end
+	self.lastVictim, self.lastKillTime = destGUID, now
+
+	if self.alreadyHugged or select(4, GetAchievementInfo(247)) then
+		-- Fire off a random emote, to keep it interesting.
+		DoEmote(emotes[math_random(1, #emotes)], destName)
+	else
+		-- Do a hug to attempt to get the achievement "Make love, not Warcraft".
+		DoEmote("HUG", destName)
+
+		-- Set a flag indicating we have tried it once,
+		-- in case we're dealing with a bugged achievement.
+		-- No point spamming hug forever when the issue requires
+		-- a server restart or client relog to be fixed anyway.
+		self.alreadyHugged = true
+	end
+end
 
 Module.OnEnable = function(self)
-	local alreadyHugged
-
-	local frame = CreateFrame("Frame", nil, WorldFrame)
-	frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	frame:SetScript("OnEvent", function(self, event, ...)
-		local _, subEvent, _, sourceGUID, sourceName, _, _, destGUID, destName,  destFlags = ...
-
-		local isKillingBlow
-
-		-- Note that UnitIsPlayer
-		if ((subEvent == "PARTY_KILL") and (sourceGUID == playerGUID) and (bit_band(destFlags, unitFilter) and UnitIsPlayer(destName))) then
-			isKillingBlow = true
-		
-		-- Workarounds for situations where the PARTY_KILL event won't fire
-		elseif damageEvents[subEvent] then
-			local overkill = select(16, ...)
-			if (overkill and overkill > 0) then
-				if ((sourceGUID == playerGUID) or (sourceGUID == UnitGUID("pet"))) and (bit_band(destFlags, unitFilter) and UnitIsPlayer(destName)) then
-					isKillingBlow = true
-				end
-			end
-		end
-
-		if isKillingBlow then
-			if alreadyHugged or select(4, GetAchievementInfo(247)) then
-				-- Fire off a random emote, to keep it interesting.
-				DoEmote(emotes[math_random(1, #emotes)], destName)
-			else
-				-- Do a hug to attempt to get the achievement "Make love, not Warcraft".
-				DoEmote("HUG", destName) 
-
-				-- Set a flag indicating we have tried it once, 
-				-- in case we're dealing with a bugged achievement.
-				-- No point spamming hug forever when the issue requires
-				-- a server restart or client relog to be fixed anyway.
-				alreadyHugged = true 
-			end
-        end
-	end)
+	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "OnEvent")
 end

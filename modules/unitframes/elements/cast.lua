@@ -1,5 +1,6 @@
--- "CastBar" element: cast and channel bars with spell name, timer, latency and
--- a shield when the cast can't be interrupted (frame.CastBar).
+-- "CastBar" element: cast and channel bars with spell name, timer and, on the
+-- player's own bar, the latency (frame.CastBar, with the optional .Name,
+-- .Value and .SafeZone).
 local _, Engine = ...
 local L = Engine:GetLocale()
 local Handler = Engine:GetHandler("UnitFrame")
@@ -7,9 +8,7 @@ local Handler = Engine:GetHandler("UnitFrame")
 -- Lua API
 local _G = _G
 local math_floor = math.floor
-local setmetatable = setmetatable
-local tonumber = tonumber
-local unpack = unpack
+local select = select
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
@@ -47,7 +46,7 @@ local formatTime = function(time)
 		return ("%.1f"):format(time)
 	else
 		return ""
-	end	
+	end
 end
 
 local utf8sub = function(str, i, dots)
@@ -79,58 +78,49 @@ local utf8sub = function(str, i, dots)
 	end
 end
 
--- returns the latency in ms
-local GetLatency
-GetLatency = function()
-	local down, up, lagWorld = GetNetStats()
-	return lagWorld
+-- Empties and hides a bar whose cast or channel is over.
+local Stop = function(CastBar, castdata)
+	castdata.casting = nil
+	castdata.castID = nil
+	castdata.channeling = nil
+	castdata.tradeskill = nil
+	CastBar:Clear()
+	CastBar:Hide()
+end
+
+-- The end of the player's own cast bar that the latency takes up: the
+-- next spell can be queued from there on. (Not for channels: the bar's
+-- right end is their start.)
+local UpdateSafeZone = function(CastBar, unit, castdata)
+	local SafeZone = CastBar.SafeZone
+	if (not SafeZone) then
+		return
+	end
+	local _, _, latency = GetNetStats() -- in milliseconds
+	if (unit ~= "player") or (not castdata.casting) or (latency == 0) then
+		SafeZone:Hide()
+		return
+	end
+	local share = (latency / 1e3) / castdata.max
+	if (share > 1) then
+		share = 1
+	end
+	SafeZone:SetWidth(CastBar:GetWidth() * share)
+	SafeZone:Show()
 end
 
 -- Proxy function to allow us to exit the update by returning,
 -- but still continue looping through the remaining castbars, if any!
 local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
-	if not UnitExists(unit) then 
-		castdata.casting = nil
-		castdata.castID = nil
-		castdata.channeling = nil
-		CastBar:SetValue(0)
-		CastBar:Clear()
-		CastBar:Hide()
-		return 
+	if not UnitExists(unit) then
+		return Stop(CastBar, castdata)
 	end
-	local r, g, b
 	if castdata.casting or castdata.tradeskill then
 		local duration = castdata.duration + elapsed
 		if duration >= castdata.max then
-			castdata.casting = nil
-			castdata.tradeskill = nil
-			CastBar:Clear()
-			CastBar:Hide()
+			Stop(CastBar, castdata)
 		end
-		if CastBar.SafeZone then
-			if unit == "player" then
-				local width = CastBar:GetWidth()
-				local ms = GetLatency()
-				if ms ~= 0 then
-					local safeZonePercent = (width / castdata.max) * (ms / 1e5)
-					if safeZonePercent > 1 then safeZonePercent = 1 end
-					CastBar.SafeZone:SetWidth(width * safeZonePercent)
-					if CastBar.SafeZone.Delay then
-						CastBar.SafeZone.Delay:SetFormattedText("%s", ms .. MILLISECONDS_ABBR)
-					end
-					if not CastBar.SafeZone:IsShown() then
-						CastBar.SafeZone:Show()
-					end
-				else
-					CastBar.SafeZone:Hide()
-					if CastBar.SafeZone.Delay then
-						CastBar.SafeZone.Delay:SetText("")
-					end
-				end
-			else
-				CastBar.SafeZone:Hide()
-			end
-		end
+		UpdateSafeZone(CastBar, unit, castdata)
 		if CastBar.Value then
 			if castdata.tradeskill then
 				CastBar.Value:SetText(formatTime(castdata.max - duration))
@@ -146,30 +136,7 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 	elseif castdata.channeling then
 		local duration = castdata.duration - elapsed
 		if duration <= 0 then
-			castdata.channeling = nil
-			CastBar:Clear()
-			CastBar:Hide()
-		end
-		if CastBar.SafeZone then
-			if unit == "player" then
-				local width = CastBar:GetWidth()
-				local ms = GetLatency()
-				if ms ~= 0 then
-					local safeZonePercent = (width / castdata.max) * (ms / 1e5)
-					if safeZonePercent > 1 then safeZonePercent = 1 end
-					CastBar.SafeZone:SetWidth(width * safeZonePercent)
-					if CastBar.SafeZone.Delay then
-						CastBar.SafeZone.Delay:SetFormattedText("%s", ms .. MILLISECONDS_ABBR)
-					end
-				else
-					CastBar.SafeZone:Hide()
-					if CastBar.SafeZone.Delay then 
-						CastBar.SafeZone.Delay:SetText("")
-					end
-				end
-			else
-				CastBar.SafeZone:Hide()
-			end
+			Stop(CastBar, castdata)
 		end
 		if CastBar.Value then
 			if castdata.delay and castdata.delay ~= 0 then
@@ -180,45 +147,35 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 		end
 		castdata.duration = duration
 		CastBar:SetValue(duration)
-	else
-		castdata.casting = nil
-		castdata.castID = nil
-		castdata.channeling = nil
-		CastBar:SetValue(0)
-		CastBar:Clear()
-		CastBar:Hide()
 	end
 end
 
+-- Only bars with a cast running need a tick. (A bar shows only while one
+-- does: Stop hides it.)
 local OnUpdate = function(self, elapsed)
 	for owner, CastBar in pairs(CastBarPool) do
-		UpdateCastBar(CastBar, owner.unit, CastData[CastBar], elapsed)
+		local castdata = CastData[CastBar]
+		if castdata.casting or castdata.channeling or castdata.tradeskill then
+			UpdateCastBar(CastBar, owner.unit, castdata, elapsed)
+		end
 	end
 end
 CastTimer:SetScript("OnUpdate", OnUpdate)
-
-local special_events = {
-	UNIT_TARGET = true,
-	PLAYER_FOCUS_CHANGED = true,
-	PLAYER_TARGET_CHANGED = true,
-}
 
 local Update -- so we can call it from within itself
 Update = function(self, event, ...)
 	local arg1 = ...
 	local unit = self.unit
-	if not arg1 and not special_events[event] then
-		return
-	end
+	-- (only the unit change events at the end come without a unit)
 	if arg1 and not UnitIsUnit(unit, arg1) then
 		return
 	end
-	
+
 	local CastBar = self.CastBar
 	local castdata = CastData[CastBar]
 	if event == "UNIT_SPELLCAST_START" then
-		local unit, spell = ...
-		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
+		local unit = ...
+		local name, _, text, _, startTime, endTime, isTradeSkill, castID = UnitCastingInfo(unit)
 		if not name then
 			CastBar:Clear()
 			CastBar:Hide()
@@ -227,183 +184,71 @@ Update = function(self, event, ...)
 		endTime = endTime / 1e3
 		startTime = startTime / 1e3
 
-		local now = GetTime()
-		local max = endTime - startTime
-
 		castdata.castID = castID
-		castdata.duration = now - startTime
-		castdata.max = max
+		castdata.duration = GetTime() - startTime
+		castdata.max = endTime - startTime
 		castdata.delay = 0
 		castdata.casting = true
-		castdata.interrupt = notInterruptible
+		castdata.channeling = nil
 		castdata.tradeskill = isTradeSkill
-		castdata.starttime = nil
-		
+
 		CastBar:SetMinMaxValues(0, castdata.max)
-		CastBar:SetValue(castdata.duration) 
+		CastBar:SetValue(castdata.duration)
 
 		if CastBar.Name then CastBar.Name:SetText(utf8sub(text, 32, true)) end
-		if CastBar.Icon then CastBar.Icon:SetTexture(texture) end
 		if CastBar.Value then CastBar.Value:SetText("") end
-		if CastBar.Shield then 
-			if castdata.interrupt and not UnitIsUnit(unit ,"player") then
-				CastBar.Shield:Show()
-			else
-				CastBar.Shield:Hide()
-			end
-		end
-		
-		if CastBar.SafeZone then
-			if unit == "player" then
-			else
-				CastBar.SafeZone:Hide()
-			end
-		end
-		
+		UpdateSafeZone(CastBar, unit, castdata)
+
 		CastBar:Show()
-		
-		
-	elseif event == "UNIT_SPELLCAST_FAILED" then
-		local unit, spellname, _, castID = ...
-		if castdata.castID ~= castID then
-			return
+
+	-- (the 4th argument of these is the cast's ID)
+	elseif (event == "UNIT_SPELLCAST_FAILED") or (event == "UNIT_SPELLCAST_STOP") or (event == "UNIT_SPELLCAST_INTERRUPTED") then
+		if castdata.castID == select(4, ...) then
+			Stop(CastBar, castdata)
 		end
-		castdata.tradeskill = nil
-		castdata.casting = nil
-		castdata.interrupt = nil
-		CastBar:SetValue(0)
-		CastBar:Clear()
-		CastBar:Hide()
-		
-	elseif event == "UNIT_SPELLCAST_STOP" then
-		local unit, spellname, _, castID = ...
-		if castdata.castID ~= castID then
-			return
-		end
-		castdata.casting = nil
-		castdata.interrupt = nil
-		castdata.tradeskill = nil
-		CastBar:SetValue(0)
-		CastBar:Clear()
-		CastBar:Hide()
-		
-	elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
-		local unit, spellname, _, castID = ...
-		if castdata.castID ~= castID then
-			return
-		end
-		castdata.tradeskill = nil
-		castdata.casting = nil
-		castdata.interrupt = nil
-		CastBar:SetValue(0)
-		CastBar:Clear()
-		CastBar:Hide()
-		
-	elseif event == "UNIT_SPELLCAST_INTERRUPTIBLE" then	
-		local unit, spellname = ...
-		if castdata.casting then
-			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
-			if name then
-				castdata.interrupt = notInterruptible
-			end
-		elseif castdata.channeling then
-			local name, _, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitChannelInfo(unit)
-			if name then
-				castdata.interrupt = notInterruptible
-			end
-		end
-		if CastBar.Shield then 
-			if castdata.interrupt and not UnitIsUnit(unit ,"player") then
-				CastBar.Shield:Show()
-			else
-				CastBar.Shield:Hide()
-			end
-		end
-	
-	
-	elseif event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" then	
-		local unit, spellname = ...
-		if castdata.casting then
-			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
-			if name then
-				castdata.interrupt = notInterruptible
-			end
-		elseif castdata.channeling then
-			local name, _, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitChannelInfo(unit)
-			if name then
-				castdata.interrupt = notInterruptible
-			end
-		end
-		if CastBar.Shield and not UnitIsUnit(unit ,"player") then 
-			if castdata.interrupt then
-				CastBar.Shield:Show()
-			else
-				CastBar.Shield:Hide()
-			end
-		end
-	
-	
+
 	elseif event == "UNIT_SPELLCAST_DELAYED" then
-		local unit, spellname, _, castID = ...
-		local name, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
+		local unit = ...
+		local _, _, _, _, startTime = UnitCastingInfo(unit)
 		if not startTime or not castdata.duration then return end
 		local duration = GetTime() - (startTime / 1000)
 		if duration < 0 then duration = 0 end
 		castdata.delay = (castdata.delay or 0) + castdata.duration - duration
 		castdata.duration = duration
 		CastBar:SetValue(duration)
-	
-		
-	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then	
-		local unit, spellname = ...
-		local name, _, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitChannelInfo(unit)
+
+	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
+		local unit = ...
+		local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
 		if not name then
 			CastBar:Clear()
 			CastBar:Hide()
 			return
 		end
-		
+
 		endTime = endTime / 1e3
 		startTime = startTime / 1e3
 
-		local max = endTime - startTime
-		local duration = endTime - GetTime()
-
-		castdata.duration = duration
-		castdata.max = max
+		castdata.duration = endTime - GetTime()
+		castdata.max = endTime - startTime
 		castdata.delay = 0
 		castdata.channeling = true
-		castdata.interrupt = notInterruptible
-
 		castdata.casting = nil
 		castdata.castID = nil
+		castdata.tradeskill = nil
 
-		CastBar:SetMinMaxValues(0, max)
-		CastBar:SetValue(duration)
-		
+		CastBar:SetMinMaxValues(0, castdata.max)
+		CastBar:SetValue(castdata.duration)
+
 		if CastBar.Name then CastBar.Name:SetText(utf8sub(name, 32, true)) end
-		if CastBar.Icon then CastBar.Icon:SetTexture(texture) end
 		if CastBar.Value then CastBar.Value:SetText("") end
-		if CastBar.Shield then 
-			if castdata.interrupt and not UnitIsUnit(unit ,"player") then
-				CastBar.shield:Show()
-			else
-				CastBar.shield:Hide()
-			end
-		end
-		if CastBar.SafeZone then
-			if unit == "player" then
-			else
-				CastBar.SafeZone:Hide()
-			end
-		end
+		UpdateSafeZone(CastBar, unit, castdata)
 
 		CastBar:Show()
-		
-		
+
 	elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-		local unit, spellname = ...
-		local name, _, text, texture, startTime, endTime, oldStart = UnitChannelInfo(unit)
+		local unit = ...
+		local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
 		if not name or not castdata.duration then return end
 		local duration = (endTime / 1000) - GetTime()
 		castdata.delay = (castdata.delay or 0) + castdata.duration - duration
@@ -411,39 +256,27 @@ Update = function(self, event, ...)
 		castdata.max = (endTime - startTime) / 1000
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(duration)
-	
+
 	elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-		local unit, spellname = ...
 		if CastBar:IsShown() then
-			castdata.channeling = nil
-			castdata.interrupt = nil
-			CastBar:SetValue(castdata.max)
-			CastBar:Clear()
-			CastBar:Hide()
+			Stop(CastBar, castdata)
 		end
-		
-	elseif event == "UNIT_TARGET" 
-	or event == "PLAYER_TARGET_CHANGED" 
-	or event == "PLAYER_FOCUS_CHANGED" then 
-		local unit = self.unit
+
+	else
+		-- The unit may have changed (UNIT_TARGET, PLAYER_TARGET_CHANGED,
+		-- PLAYER_FOCUS_CHANGED): show whatever it's casting now. Also on
+		-- PLAYER_ENTERING_WORLD, what the frame updates with when it shows:
+		-- a frame that was hidden when its unit changed missed that event.
 		if not UnitExists(unit) then
 			return
 		end
 		if UnitCastingInfo(unit) then
-			Update(self, "UNIT_SPELLCAST_START", unit)
-			return
+			return Update(self, "UNIT_SPELLCAST_START", unit)
 		end
-		if UnitChannelInfo(self.unit) then
-			Update(self, "UNIT_SPELLCAST_CHANNEL_START", unit)
-			return
+		if UnitChannelInfo(unit) then
+			return Update(self, "UNIT_SPELLCAST_CHANNEL_START", unit)
 		end
-		castdata.casting = nil
-		castdata.interrupt = nil
-		castdata.tradeskill = nil
-		CastBar:SetValue(0)
-		CastBar:Clear()
-		CastBar:Hide()
-		
+		Stop(CastBar, castdata)
 	end
 end
 
@@ -460,8 +293,6 @@ local Enable = function(self, unit)
 		self:RegisterEvent("UNIT_SPELLCAST_FAILED", Update)
 		self:RegisterEvent("UNIT_SPELLCAST_STOP", Update)
 		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", Update)
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", Update)
-		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", Update)
 		self:RegisterEvent("UNIT_SPELLCAST_DELAYED", Update)
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", Update)
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", Update)
@@ -474,26 +305,4 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self, unit)
-	local CastBar = self.CastBar
-	if CastBar then
-		CastData[CastBar] = nil
-		CastBarPool[self] = nil
-		
-		self:UnregisterEvent("UNIT_SPELLCAST_START", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_FAILED", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_STOP", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_DELAYED", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_START", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", Update)
-		self:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", Update)
-		self:UnregisterEvent("UNIT_TARGET", Update)
-		self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update)
-		self:UnregisterEvent("PLAYER_FOCUS_CHANGED", Update)
-	end
-end
-
-Handler:RegisterElement("CastBar", Enable, Disable, Update)
+Handler:RegisterElement("CastBar", Enable, Update)

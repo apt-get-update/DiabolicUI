@@ -1,8 +1,7 @@
 -- UnitFrames module: enables every unit frame widget (units/*.lua), loads the
 -- shared artwork, and turns off Blizzard's own unit frames and their
 -- Interface Options panels.
-local Addon, Engine = ...
-local L = Engine:GetLocale()
+local _, Engine = ...
 local Module = Engine:NewModule("UnitFrames")
 
 -- Lua API
@@ -14,7 +13,6 @@ local CreateFrame = CreateFrame
 
 Module.LoadArtWork = function(self)
 	local config = self.config.visuals.artwork
-	local db = self.db
 
 	local Main = Engine:GetModule("ActionBars"):GetWidget("Controller: Main"):GetFrame()
 
@@ -29,12 +27,12 @@ Module.LoadArtWork = function(self)
 	overlay:SetAllPoints()
 
 	local new = function(parent, config, flip)
-		local artwork = parent:CreateTexture(nil, drawLayer or "ARTWORK")
+		local artwork = parent:CreateTexture(nil, "ARTWORK")
 		artwork:SetSize(unpack(config.size))
 		artwork:SetTexture(config.texture)
 		artwork:SetVertexColor(unpack(config.color))
 		artwork:SetPoint(unpack(config.position))
-		artwork:SetBlendMode(alhpaMode or "BLEND")
+		artwork:SetBlendMode("BLEND")
 		return artwork
 	end
 

@@ -7,12 +7,9 @@ local C = Engine:GetDB("Data: Colors")
 -- Lua API
 local _G = _G
 local ipairs = ipairs
-local math_floor = math.floor
 local math_max = math.max
 local math_min = math.min
 local pairs = pairs
-local table_insert = table.insert
-local tostring = tostring
 local unpack = unpack
 
 -- WoW API
@@ -32,10 +29,7 @@ Module.NewCaptureBar = function(self, barID)
 
 	captureBar.id = barID
 	captureBar.width = config.size[1]
-	captureBar.neutralZone = 0.0001
-	captureBar.min = 0
-	captureBar.max = 1
-	captureBar.value = 1/2
+	captureBar.neutralZone = 0.0001 -- value, min and max: none yet
 
 	local backdrop = captureBar:CreateTexture()
 	backdrop:SetDrawLayer("BACKGROUND")
@@ -145,8 +139,8 @@ Module.UpdateCaptureBar = function(self, barID, value, neutralZone, min, max)
 		captureBar.spark:ClearAllPoints()
 		captureBar.spark:SetPoint("CENTER", x, 0 )
 
-		-- hide directional indicators close to the edges
-		if (fraction < .005) or (fraction > .995) or (value == oldValue) then 
+		-- hide directional indicators close to the edges, and on a new bar
+		if (not oldValue) or (fraction < .005) or (fraction > .995) or (value == oldValue) then 
 			captureBar.leftIndicator:Hide()
 			captureBar.rightIndicator:Hide()
 
@@ -188,11 +182,8 @@ Module.UpdateWorldStates = function(self)
 		-- extendedUIState1 = value ( from 100 - 0, where 100 is all ally side (left))
 		-- extendedUIState2 = size of neutral zone in percent
 		-- extendedUIState3 = id of the capture bar
-		local uiType, state, hidden, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3
-		uiType, state, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(i)
-
-
-		if ((state > 0) and (extendedUI == "CAPTUREPOINT") and (not hidden)) then
+		local _, state, _, _, _, _, _, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(i)
+		if ((state > 0) and (extendedUI == "CAPTUREPOINT")) then
 			-- Let's create a unique text based identifier for the bar, for faster lookups
 			local barID = (type(extendedUIState3) == "number") and "BlizzardCaptureBar"..extendedUIState3 or extendedUIState3
 
@@ -259,8 +250,6 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	Engine:GetHandler("BlizzardUI"):GetElement("CaptureBars"):Disable()
-
 	self:RegisterEvent("UPDATE_WORLD_STATES", "OnEvent")
 	self:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnEvent")
 	self:RegisterEvent("BATTLEGROUND_POINTS_UPDATE", "OnEvent")

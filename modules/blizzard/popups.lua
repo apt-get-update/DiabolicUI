@@ -1,20 +1,16 @@
+-- Blizzard's StaticPopup dialogs in DiabolicUI's frames: a wide backdrop
+-- with room for bigger buttons, flat buttons that light up on hover, and a
+-- plain input box.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: PopUps")
 
 -- Lua API
 local _G = _G
+local select = select
+local unpack = unpack
 
 Module.StylePopUp = function(self, popup)
-	if not self.styled then
-		self.styled = {}
-	end
 	local config = self.config.popup
-
-	-- 8.2.0 Additions
-	if (popup.Border) then 
-		popup.Border:Hide()
-		popup.Border:SetAlpha(0)
-	end
 
 	-- add a bigger backdrop frame with room for our larger buttons
 	if not popup.backdrop then
@@ -62,19 +58,15 @@ Module.StylePopUp = function(self, popup)
 		end
 	end
 
-	-- remove editbox artwork
-	local name = popup:GetName()
+	-- remove editbox artwork (Blizzard's chat input border, nameless)
+	local editbox = _G[popup:GetName() .. "EditBox"]
+	for i = 1, select("#", editbox:GetRegions()) do
+		local region = select(i, editbox:GetRegions())
+		if (region:GetObjectType() == "Texture") then
+			region:SetTexture(nil)
+		end
+	end
 
-	local editbox = _G[name .. "EditBox"]
-	local editbox_left = _G[name .. "EditBoxLeft"]
-	local editbox_mid = _G[name .. "EditBoxMid"]
-	local editbox_right = _G[name .. "EditBoxRight"]
-
-	-- these got added in... uh... cata?
-	if editbox_left then editbox_left:SetTexture(nil) end
-	if editbox_mid then editbox_mid:SetTexture(nil) end
-	if editbox_right then editbox_right:SetTexture(nil) end
-	
 	editbox:SetBackdrop(nil)
 	editbox:SetBackdrop(config.body.input.backdrop)
 	editbox:SetBackdropColor(unpack(config.body.input.backdropColor))
@@ -89,7 +81,7 @@ Module.UpdateLayout = Module:Wrap(function(self)
 	local previous
 	for i = 1, STATICPOPUP_NUMDIALOGS do
 		local popup = _G["StaticPopup"..i]
-		local point, anchor, rpoint, x, y = popup:GetPoint()
+		local point, anchor, rpoint = popup:GetPoint()
 		if anchor == previous then
 			-- We only change the offsets values, not the anchor points, 
 			-- since experience tells me that this is a safer way to avoid potential taint!
@@ -102,10 +94,7 @@ end)
 
 Module.StylePopUps = function(self)
 	for i = 1, STATICPOPUP_NUMDIALOGS do
-		local popup = _G["StaticPopup"..i]
-		if popup then
-			self:StylePopUp(popup)
-		end
+		self:StylePopUp(_G["StaticPopup"..i])
 	end
 end
 

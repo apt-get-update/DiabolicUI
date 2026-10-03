@@ -6,6 +6,12 @@
 -- A line counts as "executable" when the Lua 5.1 compiler emits at least one
 -- instruction for it (read from `luac5.1 -l`), so comments, blank lines and
 -- the insides of table constructors spanning several lines don't count.
+-- Two kinds of instructions that can never run are left out, as they'd
+-- leave a line (often an `end`) that never counts as covered:
+--  - the jump back that follows a `for ... in` loop's TFORLOOP, which
+--    TFORLOOP carries out itself
+--  - a jump right after a `return` that nothing jumps to: the compiler
+--    still ends a `return`ing `if` branch with a jump past the rest
 --
 -- Writes the full per-file table to tests/coverage/report.txt and prints the
 -- per-area summary. With --readme, also rewrites the block between the
@@ -36,11 +42,38 @@ end
 
 local function executableLines(path)
 	local lines, count = {}, 0
+	-- the listing, one function at a time: { number, line, opcode, target }
+	local functions, current = {}, nil
 	for _, row in ipairs(readLines(LUAC .. " -p -l '" .. path .. "' 2>/dev/null")) do
-		local line = tonumber(row:match("^%s+%d+%s+%[(%d+)%]"))
-		if line and line > 0 and not lines[line] then
-			lines[line] = true
-			count = count + 1
+		if row:match("^%a*function <") or row:match("^main <") then
+			current = {}
+			functions[#functions + 1] = current
+		else
+			local number, line, opcode = row:match("^%s+(%d+)%s+%[(%d+)%]%s+(%u+)")
+			if number and current then
+				current[#current + 1] = {
+					line = tonumber(line), opcode = opcode,
+					target = tonumber(row:match("; to (%d+)")),
+				}
+			end
+		end
+	end
+	for _, code in ipairs(functions) do
+		local targets = {}
+		for _, instruction in ipairs(code) do
+			if instruction.target then
+				targets[instruction.target] = true
+			end
+		end
+		for i, instruction in ipairs(code) do
+			local previous = code[i - 1] and code[i - 1].opcode
+			local unreachable = (instruction.opcode == "JMP") and ((previous == "TFORLOOP")
+				or ((previous == "RETURN") and (not targets[i])))
+			local line = instruction.line
+			if (not unreachable) and (line > 0) and (not lines[line]) then
+				lines[line] = true
+				count = count + 1
+			end
 		end
 	end
 	return lines, count

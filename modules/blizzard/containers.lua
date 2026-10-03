@@ -1,4 +1,7 @@
-local ADDON, Engine = ...
+-- Bag and bank slots: a border in the item's quality color (gold for quest
+-- items), the item level on gear, greyed out junk, and a smaller quest
+-- starter "!".
+local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Containers")
 local C = Engine:GetDB("Data: Colors")
 
@@ -7,45 +10,36 @@ Module:SetIncompatible("Backpacker")
 
 -- Lua API
 local _G = _G
-local string_find = string.find
-local string_gsub = string.gsub
-local string_match = string.match
-local tonumber = tonumber
+local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetContainerItemInfo = _G.GetContainerItemInfo
+local GetContainerItemLink = _G.GetContainerItemLink
 local GetContainerItemQuestInfo = _G.GetContainerItemQuestInfo
 local GetItemInfo = _G.GetItemInfo
 local GetItemQualityColor = _G.GetItemQualityColor
+local hooksecurefunc = _G.hooksecurefunc
+local BANK_CONTAINER = _G.BANK_CONTAINER
 
--- Item quality index for common (white) items.
+-- Item qualities
+local QUALITY_POOR = 0
 local QUALITY_COMMON = 1
 
-local styleFrameCache = {} -- Cache of style frames
-local itemLevelCache = {} -- Cache of itemlevel texts
-local newItemCache = {} -- Cache of new item flash textures
-local borderCache = {} -- Cache of custom old client borders
+local borderCache = {} -- item button -> our border
+local itemLevelCache = {} -- item button -> its item level text
 
--- Retrieve or create the master style frame
-local getStyleFrame = function(self)
-	if (not styleFrameCache[self]) then
-		local styleFrame = CreateFrame("Frame", nil, self)
-		styleFrame:SetAllPoints()
-		styleFrameCache[self] = styleFrame
-	end
-	return styleFrameCache[self]
-end
-
--- Retrieve or create the itemlevel frame
+-- The item level text, created the first time a button shows one.
 local getItemLevelFrame = function(self)
 	if (not itemLevelCache[self]) then
+		local holder = CreateFrame("Frame", nil, self)
+		holder:SetAllPoints()
 
 		-- Using standard blizzard fonts here
-		local itemLevel = getStyleFrame(self):CreateFontString()
+		local itemLevel = holder:CreateFontString()
 		itemLevel:SetDrawLayer("ARTWORK")
 		itemLevel:SetPoint("TOPLEFT", 4, -4)
-		itemLevel:SetFontObject(_G.NumberFont_Outline_Med or _G.NumberFontNormal) 
+		itemLevel:SetFontObject(_G.NumberFont_Outline_Med)
 		itemLevel:SetFont(itemLevel:GetFont(), 14, "OUTLINE")
 		itemLevel:SetShadowOffset(1, -1)
 		itemLevel:SetShadowColor(0, 0, 0, .5)
@@ -55,56 +49,36 @@ local getItemLevelFrame = function(self)
 	return itemLevelCache[self]
 end
 
+-- Replaces the slot's square normal texture with our border, doubled up
+-- with an additive copy to make the quality colors stand out.
 local styleItem = function(self)
-	local buttonName = self:GetName()
+	local normalTexture = _G[self:GetName().."NormalTexture"]
+	normalTexture:Hide()
+	normalTexture:SetAlpha(0)
 
-	-- Tone down the over emphasized texture for flashing new items
-	--
-	-- *Note that this is for default Blizzard bags only, 
-	--  the user still has to manually disable new item  
-	--  flashing in third party addons like Bagnon.
-	local newItemTexture = self.NewItemTexture
-	if newItemTexture then
-		local proxy = CreateFrame("Frame", nil, newItemTexture:GetParent())
-		proxy:SetAllPoints()
-		newItemTexture:SetParent(proxy)
-		newItemTexture:SetAlpha(.25)
-		newItemCache[self] = proxy
-	end
+	local iconBorder = self:CreateTexture()
+	iconBorder:SetDrawLayer("ARTWORK")
+	iconBorder:SetTexture([[Interface\Buttons\UI-Quickslot2]])
+	iconBorder:SetAllPoints(normalTexture)
+	iconBorder:Hide()
 
-	local normalTexture = _G[buttonName.."NormalTexture"] or self:GetNormalTexture()
-	if normalTexture then
-		normalTexture:Hide()
-		normalTexture:SetAlpha(0)
-	end
+	local iconBorderDoubler = self:CreateTexture()
+	iconBorderDoubler:SetDrawLayer("OVERLAY")
+	iconBorderDoubler:SetAllPoints(iconBorder)
+	iconBorderDoubler:SetTexture(iconBorder:GetTexture())
+	iconBorderDoubler:SetBlendMode("ADD")
+	iconBorderDoubler:Hide()
 
-	local iconBorder = self.IconBorder
-	if (not iconBorder) then
-		local iconBorder = self:CreateTexture()
-		iconBorder:SetDrawLayer("ARTWORK")
-		iconBorder:SetTexture([[Interface\Buttons\UI-Quickslot2]])
-		iconBorder:SetAllPoints(normalTexture or self)
-		iconBorder:Hide()
+	hooksecurefunc(iconBorder, "SetVertexColor", function(_, ...) iconBorderDoubler:SetVertexColor(...) end)
+	hooksecurefunc(iconBorder, "Show", function() iconBorderDoubler:Show() end)
 
-		local iconBorderDoubler = self:CreateTexture()
-		iconBorderDoubler:SetDrawLayer("OVERLAY")
-		iconBorderDoubler:SetAllPoints(iconBorder)
-		iconBorderDoubler:SetTexture(iconBorder:GetTexture())
-		iconBorderDoubler:SetBlendMode("ADD")
-		iconBorderDoubler:Hide()
-
-		hooksecurefunc(iconBorder, "SetVertexColor", function(_, ...) iconBorderDoubler:SetVertexColor(...) end)
-		hooksecurefunc(iconBorder, "Show", function() iconBorderDoubler:Show() end)
-		hooksecurefunc(iconBorder, "Hide", function() iconBorderDoubler:Hide() end)
-
-		borderCache[self] = iconBorder
-	end
+	borderCache[self] = iconBorder
 end
 
--- Show the item level on equippable gear of uncommon quality or better.
+-- Shows the item level on equippable gear of uncommon quality or better.
 local updateItemLevel = function(self, itemLink)
 	if itemLink then
-		local itemLevel = itemLevelCache[self] or getItemLevelFrame(self)
+		local itemLevel = getItemLevelFrame(self)
 		local _, _, itemRarity, iLevel, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
 		if (itemRarity and (itemRarity > QUALITY_COMMON)) and (itemEquipLoc and _G[itemEquipLoc]) then
 			local r, g, b = GetItemQualityColor(itemRarity)
@@ -118,156 +92,79 @@ local updateItemLevel = function(self, itemLink)
 	end
 end
 
+-- Restyles a slot after Blizzard updated it.
+local updateItem = function(self, bagID)
+	local iconBorder = borderCache[self]
+	if (not iconBorder) then
+		return -- not an item slot (the bank's bag slots use the same update)
+	end
 
-local updateItem = function(self)
-
-	local bagID = self:GetParent():GetID()
 	local slotID = self:GetID()
-	local buttonName = self:GetName()
-
-	local texture, itemCount, locked, itemRarity, readable, _, _, isFiltered, noValue, itemID = GetContainerItemInfo(bagID, slotID)
+	local _, _, _, quality = GetContainerItemInfo(bagID, slotID)
 	local isQuestItem, questId, isActive = GetContainerItemQuestInfo(bagID, slotID)
-	local itemLink = GetContainerItemLink(bagID, slotID)
 
-	local iconBorder = self.IconBorder
-	if iconBorder then
-		iconBorder:SetTexture([[Interface\Common\WhiteIconFrame]])
-		if itemRarity then
-			if (itemRarity >= (QUALITY_COMMON + 1)) and C.Quality[itemRarity] then
-				iconBorder:Show()
-				iconBorder:SetVertexColor(unpack(C.Quality[itemRarity]))
-			else
-				iconBorder:Show()
-				iconBorder:SetVertexColor(unpack(C.General.UIBorder))
-			end
-		else
-			iconBorder:Hide()
-		end
+	if (questId or isQuestItem) then
+		iconBorder:SetVertexColor(unpack(C.General.Gold))
+	elseif (quality and (quality > QUALITY_COMMON) and C.Quality[quality]) then
+		iconBorder:SetVertexColor(unpack(C.Quality[quality]))
 	else
-		iconBorder = borderCache[self]
-		if iconBorder then
-			if itemRarity then
-				if (itemRarity >= (QUALITY_COMMON + 1)) and C.Quality[itemRarity] then
-					iconBorder:Show()
-					iconBorder:SetVertexColor(unpack(C.Quality[itemRarity]))
-				else
-					iconBorder:Show()
-					iconBorder:SetVertexColor(unpack(C.General.UIBorder))
-				end
-			else
-				iconBorder:Hide()
-				iconBorder:Show()
-				iconBorder:SetVertexColor(unpack(C.General.UIBorder))
-			end
-		end
+		iconBorder:SetVertexColor(unpack(C.General.UIBorder))
+	end
+	iconBorder:Show()
+
+	local iconTexture = _G[self:GetName().."IconTexture"]
+	if (quality == QUALITY_POOR) then
+		iconTexture:SetDesaturated(true)
+		iconTexture:SetVertexColor(unpack(C.General.UIBackdrop))
+	else
+		iconTexture:SetDesaturated(false)
+		iconTexture:SetVertexColor(1, 1, 1)
 	end
 
-	local iconTexture = buttonName and _G[buttonName.."IconTexture"]
-	if iconTexture then
-		if itemRarity and (itemRarity < QUALITY_COMMON) and (itemRarity > -1) then
-			iconTexture:SetDesaturated(true)
-			iconTexture:SetVertexColor(unpack(C.General.UIBackdrop))
-		else
-			iconTexture:SetDesaturated(false)
-			iconTexture:SetVertexColor(1, 1, 1)
-		end
-		if itemRarity and (itemRarity < (QUALITY_COMMON + 1)) and (itemRarity > -1) then
-			if newItemCache[self] then
-				newItemCache[self]:Hide()
-			end
-		else
-			if newItemCache[self] then
-				newItemCache[self]:Show()
-			end
-		end
+	-- A smaller quest starter "!" (Blizzard's is a bit too bright), and
+	-- the gold border instead of Blizzard's quest item one.
+	local questTexture = _G[self:GetName().."IconQuestTexture"]
+	if (questId and (not isActive)) then
+		questTexture:SetDrawLayer("ARTWORK")
+		questTexture:SetAlpha(1)
+		questTexture:SetTexCoord(10/64, 54/64, 10/64, 54/64)
+		questTexture:ClearAllPoints()
+		questTexture:SetPoint("TOPLEFT", 6, -6)
+		questTexture:SetPoint("BOTTOMRIGHT", -6, 6)
+	else
+		questTexture:Hide()
 	end
 
-	-- Tone down the quest item and quest starter overlays, 
-	-- as they are a bit too bright for my taste.				
-	local questTexture = buttonName and _G[buttonName.."IconQuestTexture"]
-	if questTexture then
-		if questId and not isActive then 
-			questTexture:SetDrawLayer("ARTWORK")
-			questTexture:SetAlpha(1)
-			questTexture:SetTexCoord(10/64, 54/64, 10/64, 54/64)
-			questTexture:ClearAllPoints()
-			questTexture:SetPoint("TOPLEFT",6,-6)
-			questTexture:SetPoint("BOTTOMRIGHT",-6,6)
-			local iconBorder = iconBorder or borderCache[self]
-			if iconBorder then 
-				iconBorder:Show()
-				iconBorder:SetVertexColor(unpack(C.General.Gold))
-			end
-		elseif questId or isQuestItem then
-			questTexture:Hide()
-			local iconBorder = iconBorder or borderCache[self]
-			if iconBorder then 
-				iconBorder:Show()
-				iconBorder:SetVertexColor(unpack(C.General.Gold))
-			end
-		else
-			questTexture:Hide()
-		end
-	end
-
-	updateItemLevel(self, itemLink, bagID, slotID)
-	
+	updateItemLevel(self, GetContainerItemLink(bagID, slotID))
 end
 
 local updateContainer = function(self)
-	local name = self:GetName()
-	for i = 1, self.size, 1 do
-		updateItem(_G[name.."Item"..i])
+	local name, bagID = self:GetName(), self:GetID()
+	for i = 1, self.size do
+		updateItem(_G[name.."Item"..i], bagID)
 	end
 end
 
+local updateBankItem = function(self)
+	updateItem(self, BANK_CONTAINER)
+end
+
 Module.OnInit = function(self)
-
-	--[[
-		TODO:
-
-		create proxy items:
-		- each proxy references the original bagbutton
-		- each proxy has :methods() to update various aspects
-		- each proxy should be identifiable by original button (table index?)
-		- inheritance?
-
-	]]
-
-	local currentContainer = 1
-	local currentItem = 1
-	local container = _G["ContainerFrame"..currentContainer]
-	local item = _G["ContainerFrame"..currentContainer.."Item"..currentItem]
-	
-	-- Setup all container itembuttons
-	while container do 
-		while item do 
+	-- every bag's slots
+	for container = 1, NUM_CONTAINER_FRAMES do
+		local item, i = _G["ContainerFrame"..container.."Item1"], 1
+		while item do
 			styleItem(item)
-			currentItem = currentItem + 1
-			item = _G["ContainerFrame"..currentContainer.."Item"..currentItem]
+			i = i + 1
+			item = _G["ContainerFrame"..container.."Item"..i]
 		end
-		currentContainer = currentContainer + 1
-		container = _G["ContainerFrame"..currentContainer]
 	end
 
-	-- Setup bankframe itembuttons
-	currentItem = 1
-	item = _G["BankFrameItem"..currentItem]
-	while item do 
-		styleItem(item)
-		currentItem = currentItem + 1
-		item = _G["BankFrameItem"..currentItem]
+	-- the bank's own slots
+	for i = 1, NUM_BANKGENERIC_SLOTS do
+		styleItem(_G["BankFrameItem"..i])
 	end
 
-	-- Hook bankframe itembutton updates
-	-- This is where we update the itembuttons found within the main bankframe.
-	if _G.BankFrameItemButton_Update then
-		hooksecurefunc("BankFrameItemButton_Update", updateItem)
-	end
-
-	-- Hook bag- and bankframe subcontainer updates
-	-- This is where we update all the other itembuttons
-	if _G.ContainerFrame_Update then
-		hooksecurefunc("ContainerFrame_Update", updateContainer)
-	end
+	hooksecurefunc("BankFrameItemButton_Update", updateBankItem)
+	hooksecurefunc("ContainerFrame_Update", updateContainer)
 end

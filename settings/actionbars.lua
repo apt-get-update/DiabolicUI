@@ -13,7 +13,6 @@ Engine:SetConstant("BUTTON_SIZE_TRIPLE", BUTTON_SIZE_TRIPLE)
 
 local NUM_ACTIONBAR_SLOTS = Engine:GetConstant("NUM_ACTIONBAR_SLOTS") -- number of buttons on a standard bar
 local NUM_PET_SLOTS = Engine:GetConstant("NUM_PET_SLOTS") -- number of pet buttons
-local NUM_POSSESS_SLOTS = Engine:GetConstant("NUM_POSSESS_SLOTS") -- number of possess buttons
 local NUM_STANCE_SLOTS = Engine:GetConstant("NUM_STANCE_SLOTS") -- number of stance buttons
 local NUM_VEHICLE_SLOTS = Engine:GetConstant("NUM_VEHICLE_SLOTS") -- number of vehicle buttons
 
@@ -22,7 +21,7 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 
 -- padding between bars and buttons
 local padding, padding_small, padding_pet = 4, 2, 2
-local bar_inset, sidebar_inset = 10, 20 
+local bar_inset = 10 
 local artwork_offscreen = 20 -- how many pixels to move the bottom artwork below the screen edge
 
 -- size of the xpbar
@@ -32,8 +31,6 @@ local xpoffset_before, xpsize, xpoffset_after = 2, 7, 2
 local skulloffset = 78
 
 -- offset for the petbar
---local petoffset = 46 + 38 + 4 + 38 + 6
---local petskulloffset = petoffset + BUTTON_SIZE_TRIPLE - 3
 local petoffset = 10
 local petskulloffset = petoffset + BUTTON_SIZE_TRIPLE - 3
 
@@ -100,21 +97,6 @@ Engine:NewStaticConfig("ActionBars", {
 				size_vehicle = { BUTTON_SIZE_TRIPLE*NUM_PET_SLOTS + padding_pet*(NUM_PET_SLOTS-1), BUTTON_SIZE_TRIPLE }
 			},
 
-			-- holder for stance bar
-			--stance = {
-			--	padding = padding_pet,
-			--	position = {
-			--		point = "BOTTOMRIGHT",
-			--		anchor = "Main", 
-			--		anchor_point = "BOTTOMRIGHT",
-			--		xoffset = 200,
-			--		yoffset = 155
-			--		--anchor_point = "TOP",
-			--		--xoffset = 0,
-			--		--yoffset = 91
-			--	},
-			--	size = { 38, 38 }
-			--},
 			
 			-- holders for menu buttons
 			mainmenu = {
@@ -915,12 +897,8 @@ Engine:NewStaticConfig("ActionBars", {
 				-- Top level objects are menubuttons onscreen
 				-- that opens windows with more buttons.
 				micromenu = {
-					-- without the backdrop
 					position = { "BOTTOMRIGHT", 0, 55 + 10 }, -- relative to its parent menubutton
 					insets = { 0, 0, 0, 0 }, -- insets from the frame edge to the content
-					-- with a backdrop
-					--position = { "BOTTOMRIGHT", -(0 -15), (55 + 3) -15 }, -- relative to its parent menubutton
-					--insets = { 24 + 6, 24 + 6, 24 + 6, 24 + 6 }, -- insets from the frame edge to the content
 					button = {
 						size = { 61, 55 }, 
 						anchor = "TOPLEFT", -- where buttons are anchored
@@ -1141,7 +1119,6 @@ Engine:NewStaticConfig("ActionBars", {
 
 		},
 		xp = {
-			normalFont = DiabolicFont_SansBold12White,
 			bar = {
 				alpha = 1,
 				texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],

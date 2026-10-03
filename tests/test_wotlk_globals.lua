@@ -20,7 +20,6 @@ local KNOWN_FILE = "tests/data/wotlk-globals.txt"
 
 -- Reads that are fine even though 3.3.5 doesn't define them, and why.
 local ALLOWED = {
-	DEVELOPER_RESET = "developer-only flag in engine-core.lua, nil on purpose",
 	MBB_M = "defined by the optional MBB addon; the minimap checks for it",
 	MBB_TOOLTIP1 = "defined by the optional MBB addon; the minimap checks for it",
 }

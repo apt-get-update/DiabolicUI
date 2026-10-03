@@ -9,8 +9,8 @@ local GetShapeshiftForm = GetShapeshiftForm
 local IsMounted = IsMounted
 local SetPortraitTexture = SetPortraitTexture
 local UnitAura = UnitAura
+local UnitClass = UnitClass
 local UnitExists = UnitExists
-local UnitGUID = UnitGUID
 local UnitIsConnected = UnitIsConnected
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
@@ -63,33 +63,27 @@ local HasFemaleHumanPortrait = function(unit)
 		end
 	end
 
-	-- druids in a form doesn't get the human illusion
-	if UnitIsUnit("player", unit) and GetShapeshiftForm() == 0 then -- returns zero for no form
+	-- a druid in a form isn't shown as the human illusion
+	-- (warrior stances and the like are forms too: they don't count)
+	if UnitIsUnit("player", unit) and (GetShapeshiftForm() ~= 0) and (select(2, UnitClass(unit)) == "DRUID") then
 		return false
 	end
 
 	-- Do we have an illusion?
-	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff
-	for i = 1,40 do
-
-		name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff = UnitAura(unit, i)
-		-- return true if we find a match
-		if spellId and female_human[spellId] then
-			return true
-		end
-
-		-- break and return if we hit the last/empty aura
-		if not name then
+	for i = 1, 40 do
+		local name, _, _, _, _, _, _, _, _, _, spellId = UnitAura(unit, i)
+		if (not name) then
 			return false
 		end
+		if female_human[spellId] then
+			return true
+		end
 	end
+	return false
 end
 
 local Update = function(self, event, ...)
 	local unit = self.unit
-	if not unit then
-		return
-	end
 
 	-- don't waste updates on other units events
 	local arg = ...
@@ -177,28 +171,4 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self, unit)
-	local Portrait = self.Portrait
-	if Portrait then
-		self:UnregisterEvent("UNIT_PORTRAIT_UPDATE", Update)
-		self:UnregisterEvent("UNIT_MODEL_CHANGED", Update)
-		self:UnregisterEvent("UNIT_ENTERED_VEHICLE", Update)
-		self:UnregisterEvent("UNIT_EXITED_VEHICLE", Update)
-		self:UnregisterEvent("UNIT_NAME_UPDATE", Update)
-		self:UnregisterEvent("UNIT_AURA", Update)
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
-		self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update)
-		self:UnregisterEvent("PLAYER_FOCUS_CHANGED", Update)
-
-		if unit:find("party") then
-			self:UnregisterEvent("PARTY_MEMBER_ENABLE", Update)
-		end
-
-		Portrait:Hide()
-		if self.Portrait2D then
-			self.Portrait2D:Hide()
-		end
-	end
-end
-
-Handler:RegisterElement("Portrait", Enable, Disable, Update)
+Handler:RegisterElement("Portrait", Enable, Update)

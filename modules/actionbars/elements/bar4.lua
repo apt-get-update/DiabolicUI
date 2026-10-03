@@ -4,19 +4,14 @@ local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: 4")
 
 -- Lua API
-local select = select
-local setmetatable = setmetatable
 
 -- WoW API
-local CreateFrame = CreateFrame
 local RegisterStateDriver = RegisterStateDriver
 
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local NUM_ACTIONBAR_BUTTONS = NUM_ACTIONBAR_BUTTONS or 12
 
 BarWidget.OnEnable = function(self)
 	local config = Module.config
-	local db = Module.db
 	local bar_config = config.structure.bars.bar4
 
 	local Artwork = Module:GetWidget("Artwork")
@@ -52,7 +47,6 @@ BarWidget.OnEnable = function(self)
 		for state = 1,14 do
 			button:SetStateAction(state, "action", (state - 1) * NUM_ACTIONBAR_BUTTONS + i)
 		end
-		button:SetAttribute("flyoutDirection", "LEFT")
 	end
 
 	Bar:SetAttribute("_onstate-page", [[

@@ -1,4 +1,8 @@
-local ADDON, Engine = ...
+-- Translations: locale-enUS.lua fills in the English texts, and the file of
+-- the client's own locale (if there is one) its translations. Code reads
+-- them all through Engine:GetLocale(). In both, `L[key] = true` means the
+-- text is the key itself.
+local _, Engine = ...
 
 -- Lua API
 local rawset, rawget = rawset, rawget
@@ -6,67 +10,36 @@ local rawset, rawget = rawset, rawget
 local gameLocale = GetLocale() -- current game client locale
 local fallbackLocale = "enUS" -- fallback language for the UI if no translation is present
 
--- fallback locale
-local L_fallback = setmetatable({}, {
-	__newindex = function(self, key, value)
-		if value == true then
-			rawset(self, key, key)
-		else
-			rawset(self, key, value)
-		end
-	end,
-	
-	-- Slight little copout that will remove all localization errors.
+local store = function(self, key, value)
+	rawset(self, key, (value == true) and key or value)
+end
+
+-- the English texts
+local L_fallback = setmetatable({}, { __newindex = store })
+
+-- the client's own locale, English where it has no translation
+local L = setmetatable({}, {
+	__newindex = store,
 	__index = function(self, key)
-		local value = rawget(self, key)
-		if value == true then 
-			return key
-		else
-			if (not value) then
-				print("Tell Goldpaw! There's a missing locale: ", key)
-			end
-			return value or key
+		local value = rawget(L_fallback, key)
+		if (not value) then
+			print("Tell Goldpaw! There's a missing locale: ", key)
 		end
-	end,
-	metatable = false
+		return value or key
+	end
 })
 
--- game client locale
-local L = setmetatable({}, { 
-	__newindex = function(self, key, value)
-		if value == true then
-			rawset(self, key, key)
-		else
-			rawset(self, key, value)
-		end
-	end,
-	__index = function(self, key)
-		local value = rawget(self, key) or rawget(L_fallback, key)
-		if value == true then 
-			return key
-		else
-			if (not value) then
-				print("Tell Goldpaw! There's a missing locale: ", key)
-			end
-			return value or key
-		end
-	end,
-	--__index = L_fallback,
-	metatable = false
-})
-
--- Set a locale 
+-- The table a locale file fills in: English's, the client's own, or none
+-- (a locale the client isn't in).
 Engine.NewLocale = function(self, locale)
 	if locale == fallbackLocale then
 		return L_fallback
 	elseif locale == gameLocale then
 		return L
-	else
-		return 
 	end
 end
 
--- Proxy function to get the game locale, 
+-- Proxy function to get the game locale,
 -- allows us to override the locale for testing.
 Engine.GetGameLocale = function(self)
 	return gameLocale
@@ -76,8 +49,3 @@ end
 Engine.GetLocale = function(self)
 	return L
 end
-
--- Uncomment to test another locale 
--- (Developers only, as it doesn't change the game's own localization)
---gameLocale = "zhCN"
-

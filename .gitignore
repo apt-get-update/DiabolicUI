@@ -27,4 +27,5 @@ desktop.ini
 
 # Test coverage output (tests/coverage/run.sh)
 tests/coverage/stats.out
+tests/coverage/stats.d/
 tests/coverage/report.txt

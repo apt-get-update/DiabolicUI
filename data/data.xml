@@ -7,12 +7,10 @@
 <Script file="colors.lua"/>
 
 <!-- databases of blizzard stuff used by the modules -->
-<Script file="auras.lua"/>
 <Script file="quests.lua"/>
 
 <!-- some functions relies on the previous being available -->
 <Script file="functions.lua"/> <!-- text- and number formatting -->
-<Script file="aura-filters.lua"/> 
 <Script file="aura-functions.lua"/> 
 
 </Ui>

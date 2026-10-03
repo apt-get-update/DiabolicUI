@@ -1,9 +1,10 @@
 # Tests
 
-Unit tests for pieces of DiabolicUI that are pure enough to run outside the
-WoW client, using [LuaUnit](https://github.com/bluebird75/luaunit) (vendored
-in `tests/luaunit.lua`, BSD licensed) under plain Lua 5.1 (the version WotLK
-3.3.5 embeds).
+Tests for DiabolicUI that run outside the WoW client, using
+[LuaUnit](https://github.com/bluebird75/luaunit) (vendored in
+`tests/luaunit.lua`, BSD licensed) under plain Lua 5.1 (the version WotLK
+3.3.5 embeds): unit tests for single functions, and session tests that boot
+the whole addon in a fake 3.3.5 client and play the game at it.
 
 This is **not** in-game testing and never touches the `.toc` - none of this
 runs for players, it's a local dev tool only.
@@ -28,9 +29,19 @@ tests/coverage/run.sh --readme   # also refresh the table in README.adoc
 
 `coverage/hook.lua` is loaded in front of each test file and records every
 addon line that runs (a `debug.sethook` line hook; test files, `docs/` and
-vendored `Libs/` are left out). `coverage/report.lua` counts a line as
-executable when `luac5.1 -l` shows code for it. No luacov needed. The raw
-hits (`stats.out`) and `report.txt` are git-ignored.
+vendored `Libs/` are left out). The test files run in parallel, one per CPU
+(`JOBS=2 tests/coverage/run.sh` to change that), each into its own file
+under `coverage/stats.d/`, merged at the end; the session tests are the
+slow ones under the hook. Lua 5.1.5 itself crashes now and then under a
+line hook on a busy machine ("double free or corruption"): a test file that
+crashes is run once more. `coverage/report.lua` counts a line as
+executable when `luac5.1 -l` shows code for it, leaving out two kinds of
+jumps that can never run, whose line (often an `if`'s `end`) would never
+count as covered: the jump back after a `for ... in` loop's TFORLOOP
+(which does the jump itself), and a jump right after a `return` that
+nothing jumps to (the compiler still ends a `return`ing branch with a jump
+past the rest of the `if`). No luacov needed. The raw hits (`stats.out`) and `report.txt` are
+git-ignored.
 
 ## What's covered
 
@@ -38,7 +49,7 @@ hits (`stats.out`) and `report.txt` are git-ignored.
   variable (a missing `local`) that isn't on its explicit per-file `ALLOWED`
   list. Reads the compiler's bytecode listing (`luac5.1 -l`), so it needs
   `luac5.1` on the PATH (override with `LUAC=...`). Vendored code under
-  `modules/minimap/` is skipped.
+  `modules/minimap/Libs/` is skipped.
 
 - `test_addon_loads.lua` - loads the **whole addon** the way the client
   does: `DiabolicUI.toc`, then every `<Include>`/`<Script>` of its XML files
@@ -58,32 +69,70 @@ hits (`stats.out`) and `report.txt` are git-ignored.
   `mocks/frame_mock.lua`, driven by firing events through its own event
   frame: module/handler/widget registration and its errors, the startup
   order (every OnInit before any OnEnable, LOW priority waiting for
-  PLAYER_LOGIN), SetIncompatible/SetDependency, event and message dispatch,
-  `Engine:Wrap` deferring calls until combat ends, and saved config
-  profiles (`NewConfig`, `GetConfig`, `ParseSavedVariables`).
+  PLAYER_LOGIN), SetIncompatible, event and message dispatch and their
+  misuse errors, `Engine:Wrap` deferring calls until combat ends (`nil`
+  arguments included), `Place` and `ForAll`, and saved config profiles
+  (`NewConfig`, `GetConfig`, `ParseSavedVariables`).
 - `test_wotlk_globals.lua` - fails when addon code reads an ALL-CAPS
   Blizzard global (a UI string like `TAXI_CANCEL`, or a constant) that the
   3.3.5 client doesn't define: code written for a later expansion, which
   reads nil on WotLK. `tests/data/wotlk-globals.txt` is the list of names
   the 3.3.5 (12340) client's own UI defines, generated from
   [Goldpaw/WoW_UI_Source_WotLK](https://github.com/Goldpaw/WoW_UI_Source_WotLK).
+- `test_api_usage.lua` - the same idea for the rest of the API: fails when
+  addon code reads a lowercase global nobody defines (a typo or a missing
+  `local`, which reads nil), registers an event only later expansions fire
+  (`GROUP_ROSTER_UPDATE` instead of `PARTY_MEMBERS_CHANGED` /
+  `RAID_ROSTER_UPDATE`, ...), or uses a function or frame method from a
+  later expansion (`SetShown`, `GetSpellCharges`, ...). Each list says
+  what 3.3.5 uses instead; a planted-mistakes test checks the detectors.
+  Also fails when a secure snippet calls a method nobody defines
+  (`control:CallMethod("SaveNumBars")`): code in a string, which otherwise
+  only fails in game, as "Invalid method".
 - `test_locales.lua` - `locale/locale_handler.lua`'s fallback to English,
-  every locale file loading, translations only using keys that exist in
-  `locale-enUS.lua`, and every literal `L["..."]` key in the code existing
-  there too.
-- `test_data_helpers.lua` - `data/functions.lua` (`F.Short`, `F.Colorize`),
-  `data/aura-filters.lua`, `data/aura-functions.lua` (the `isBossDebuff` /
+  every locale file loading and assigning each key once, translations only
+  using keys that exist in `locale-enUS.lua`, every literal `L["..."]` key
+  in the code existing there too, and every English text being used.
+- `test_data_helpers.lua` - `data/functions.lua` (`F.Short`, in 万 and 亿
+  on Chinese clients too, `F.Colorize`),
+  `data/aura-functions.lua` (the `isBossDebuff` /
   `isCastByPlayer` extras) and `engine/wotlk-helpers.lua`
   (`Engine.UnitIsTapDenied`, `/rl`).
 - `test_unitframes_portraits.lua` - `elements/portraits.lua`: 3D model in
-  range, 2D portrait out of range, both hidden offline, camera choice.
+  range, 2D portrait out of range, both hidden offline, camera choice
+  (female humans and humanoid NPCs, the Caverns of Time illusion, a druid
+  in a form).
 - `test_unitframes_runes.lua` - `elements/runes.lua`, the death knight
   runes: Blizzard's display order, colors by rune type (death runes too),
   the fill cropped to recharge progress, and the DiabolicUI2 visibility
   rules (dimmed while recharging, hidden out of combat when all are ready,
   hidden in vehicles).
 - `test_unitframes_raid.lua` - `units/raid.lua`'s debuff filter: the WotLK
-  dispel list per class, Cleanse Spirit for shaman curses, boss debuffs.
+  dispel list per class, Cleanse Spirit for shaman curses, boss debuffs;
+  and its layout by subgroup, which waits for the end of combat when the
+  roster changes in combat (the frames are secure).
+- `test_unitframes_shared.lua` - `units/shared.lua`, what the smaller unit
+  frames share: health colors by status, class and reaction, the colors
+  set only on change, the borders lit on mouseover, and the enemy and
+  group aura filters branch by branch.
+- `test_unitframes_health_power.lua` - `elements/health.lua` and
+  `elements/power.lua`: bar values, the value text, dead / ghost /
+  offline, power colors (an orb's too), the druid's mana orb in forms, `Enable` reporting
+  success (a frame with only a mana bar too), and polls (`"FREQUENT"`) that
+  find nothing changed skipping the work but still refreshing twice a
+  second.
+- `test_bars_layout.lua` - `handlers/statusbar.lua` and `handlers/orb.lua`
+  on fake frames that count calls: the spark pulses every frame, but the bar
+  or orb is only laid out again when its value, range, size, texture or crop
+  changes.
+- `test_actionbars_combat.lua` - combat lockdown in `handlers/actionbutton.lua`
+  (cast on key down), `elements/pet.lua` and `elements/stance.lua`: nothing
+  secure changes in combat, the change happens when combat ends, and the
+  end-of-combat event is let go again.
+- `test_actionbars_buttons.lua` - `handlers/actionbutton.lua`'s
+  `UpdateUsable` (usable / out of range / out of mana / unusable, redrawn
+  only on change or when forced) and `elements/artwork.lua`'s border layers
+  (empty, normal, checked; hovered or not).
 - `test_objectives_tracker.lua` - `objectives/tracker.lua`'s quest tracker
   fade (delay, fade, hover, Questie vs. Blizzard tracker switching).
 - `test_actionbars_floaters.lua` - `elements/floaters.lua`'s taxi "request
@@ -155,6 +204,56 @@ hits (`stats.out`) and `report.txt` are git-ignored.
   display-string formatting), and `Addons.lua`'s `IsAddOnAvailable` /
   `IsAddOnEnabled` / `IsAddOnLoadable` (case-insensitive lookups against a
   faked addon listing).
+
+### Session tests
+
+Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
+"The fake client" below) and checks a part of it the way a player meets it:
+
+- `test_session_login.lua` - every class logs in cleanly; a `/reload` with
+  the last session's saved variables, and a new character's first login;
+  every event the addon listens to, in and out of combat; every frame with
+  a mouse script hovered and clicked.
+- `test_session_unitframes.lua` - the player's orbs (every power type, the
+  druid's mana in forms, auras, weapon enchants, the vehicle), target by
+  classification, its aura filters and sounds, cast bars (latency, channels,
+  long names), target of target, focus, party (roles: assigned, or guessed
+  from inspected talents), raid, boss and arena frames, the pet, the test
+  mode previews.
+- `test_session_actionbars.lua` - the menus (main, micro buttons, bar
+  layout, bags, gold and fps), the chat and social buttons, the XP and
+  reputation bars, the pet and stance bars, the vehicle and taxi buttons,
+  the bar count commands and the cast-on-key-down option (after a reload
+  too).
+- `test_session_handlers.lua` - the shared handlers through their own API:
+  popups (one to three buttons, no title or text, pressed looks, several at
+  once), status bars and orbs (directions, smoothing, the spark, crops,
+  colors), the action buttons (flashing, usability, cooldowns, stacks,
+  grid, pet actions, tooltips), the unit frames' menus and tooltips, and
+  the engine's `/diabolic setscale` and `resetsetup`.
+- `test_session_nameplates.lua` - 3.3.5's nameplates read and restyled:
+  name, level, icons, reaction and class colors, threat, the target's
+  plate, fading, castbars.
+- `test_session_tooltips.lua` / `test_session_itemtooltips.lua` - unit and
+  aura tooltips, inspecting with Shift, following the cursor, the skins;
+  the Diablo III item tooltip layout.
+- `test_session_minimap.lua` - the embedded minimap module: its look, zone
+  text, clock, mail, compass, edit mode, options page and slash commands.
+- `test_session_objectives.lua` - world state scores and timers, capture
+  bars, error and quest messages, PvP emotes.
+- `test_session_blizzard.lua` - the loot window, bag and bank slots, tinted
+  panels, the Escape menu, mirror timers, durability and vehicle seat
+  anchors, fonts and combat text, popups.
+- `test_session_chat.lua` - chat bubbles, the chat windows (input box,
+  buttons, IM style, whisper windows, the stuck key guard, the layout
+  question, a hand-placed window kept) and copying web links.
+- `test_session_menu.lua` - every widget of the options pages, the reload
+  question, cancel and refresh, `/diabolic config`.
+
+`tests/mocks/session.lua` has their shared helpers: `assertClean(client)`
+(fails with every Lua error and blocked action the client recorded; end
+each test with it), `item(...)` to put an item in the client's item cache,
+`tooltipLines(tooltip)` and `stripColors(text)`.
 
 ## How it works
 
@@ -254,20 +353,63 @@ files (not reimplementations of their logic) without a WoW client:
   their functions onto one shared `ns.API`, same as the real addon's own
   load order.
 
+## The fake client
+
+`tests/mocks/client.lua` boots the real addon the way WoW does:
+`addon_loader.lua` reads `DiabolicUI.toc` and every XML file it includes
+(running the scripts, creating the `<Font>` objects), the saved variables
+are put in place after the files ran and before `ADDON_LOADED`, then the
+login events fire. A test then drives it:
+
+```lua
+local client = Client.boot({ class = "DRUID", world = function(world) ... end,
+	savedVariables = { DiabolicUI_DB = { ... } } })
+client:FireEvent("PLAYER_TARGET_CHANGED")
+client:Tick(0.5)                 -- OnUpdate, animations, state drivers
+client:Hover(frame); client:Click(button)
+client:EnterCombat()             -- protected frames refuse changes
+Session.assertClean(client)
+```
+
+- `client_widgets.lua` - the widget types with the 3.3.5 method set (a
+  method that came later is missing, like in game) and real state: points
+  and a layout engine (`GetLeft`, `GetWidth`... of anchored frames),
+  visibility through parents, scripts and hooks, fonts that measure text,
+  strict color setters. Every widget table holds a `[0]` userdata handle,
+  so a deep-copied frame table still counts as a frame.
+- `client_api.lua` - the game API, answering from `client.world` (units,
+  items, bags, loot, world states, CVars, addons, ...). Change the world in
+  `options.world` before login, or in `client.world` during a test.
+- `client_blizzard.lua` - Blizzard's frames and FrameXML functions the
+  addon touches, built after the 3.3.5 FrameXML (names, parents, templates,
+  which ones start hidden). Load-on-demand addons are built when loaded.
+- `client_secure.lua` - the secure handler templates: snippets run in a
+  restricted environment against frame handles, state drivers, unit
+  watches, `WrapScript`, `RunFor`, `ChildUpdate`, auto hide.
+
+Handlers run protected: an error is recorded in `client.errors` with a
+traceback instead of stopping the test, and an action refused in combat in
+`client.blocked`. Globals nobody defines read nil, except ALL CAPS names
+(UI strings), which read as their own name; both are listed in
+`client.missing`.
+
+When the addon needs a frame or function the fake client lacks, add it
+there the way the 3.3.5 client has it (check the FrameXML), not the way the
+test would like it.
+
+Two LuaUnit pitfalls with it: LuaUnit prints the test table between tests,
+so keep the client out of `self` (or clear it in `tearDown`); and
+`assertEquals` on long strings is slow to diff, so report a long problem
+list with `lu.fail` (as `assertClean` does).
+
 ## Scope and limitations
 
-This approach only works for logic that's reachable without a deep tree of
+The unit tests only work for logic that's reachable without a deep tree of
 frame/widget interactions - mostly pure calculations, plus anything whose
-inputs and outputs are plain values/tables. It deliberately does **not**
-attempt to test:
-
-- Frame creation/layout (`CreateFrame`, `SetPoint` chains that depend on real
-  frame hierarchies, templates like `OptionsSliderTemplate`).
-- Anything that depends on real game state beyond what a test explicitly
-  fakes (units, items, combat, SavedVariables).
-- The options panel UI itself (`modules/menu/menu.lua`) - it's
-  almost entirely frame construction and Blizzard template wiring, which
-  would need a much larger UI mock to exercise meaningfully.
+inputs and outputs are plain values/tables. Frame layout, templates, game
+state and the options pages are the session tests' job. Neither can tell
+whether the art looks right, or where the real client behaves differently
+from the fake one; that still needs a `/reload` in game.
 
 If you want a new file's *behaviour* covered (beyond the load-only smoke
 tests it already gets automatically), the file first needs to be

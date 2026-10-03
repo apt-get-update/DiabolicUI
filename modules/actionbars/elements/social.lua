@@ -7,14 +7,10 @@ local L = Engine:GetLocale()
 
 -- Lua API
 local _G = _G
-local math_floor = math.floor
-local setmetatable = setmetatable
 
 -- WoW API
-local CreateFrame = _G.CreateFrame
 local GetNumFriends = _G.GetNumFriends
 local GetNumGuildMembers = _G.GetNumGuildMembers
-local GetTime = _G.GetTime
 local GuildRoster = _G.GuildRoster
 local PlaySound = _G.PlaySound
 
@@ -70,17 +66,35 @@ MenuWidget.Skin = function(self, button, config, icon)
 	button:OnButtonState(button:GetButtonState())
 end
 
+-- The friends and other guild members online, shown on the social button.
+-- (3.3.5's GetNumGuildMembers only gives one count: the roster, offline
+-- members included, says who's online.)
+local CountPeople = function(button)
+	local numGuildies = 0
+	if IsInGuild() then
+		for i = 1, GetNumGuildMembers(true) do
+			if select(9, GetGuildRosterInfo(i)) then
+				numGuildies = numGuildies + 1
+			end
+		end
+	end
+	local _, onlineFriends = GetNumFriends()
+
+	button.numGuildies = numGuildies
+	button.numOtherGuildies = (numGuildies > 1) and (numGuildies - 1) or 0
+	button.numFriends = onlineFriends or 0
+	button.numPeople = button.numFriends + button.numOtherGuildies
+	button.People:SetText(((numGuildies > 1) or (button.numFriends > 0)) and button.numPeople or "")
+end
+
 MenuWidget.OnEnable = function(self)
 	local config = Module.config
-	local db = Module.db
 
 	local Menu = Module:GetWidget("Controller: Chat"):GetFrame()
 	local MenuButton = Module:GetWidget("Template: MenuButton")
-	local FlyoutBar = Module:GetWidget("Template: FlyoutBar")
 
 	-- WoW Frames and Objects
 	local InputBox = ChatFrame1EditBox
-	local FriendsMicroButton = FriendsMicroButton
 	local FriendsWindow = FriendsFrame
 
 	-- config table shortcuts
@@ -146,15 +160,15 @@ MenuWidget.OnEnable = function(self)
 	ChatButton:SetAttribute("_onclick", [[ control:CallMethod("OnClick", button); ]])
 	
 	
+	-- (the online guild members are counted from the roster, see OnEvent:
+	-- 3.3.5's GetNumGuildMembers only gives one count)
 	SocialButton.OnEnter = function(self) 
-
-		local numTotalGuildMembers, numOnlineGuildMembers, numOnlineAndMobileMembers = GetNumGuildMembers()
-		local numberOfFriends, onlineFriends = GetNumFriends() 
-		local numGuildies = numOnlineAndMobileMembers or numOnlineGuildMembers or 0
+		local _, onlineFriends = GetNumFriends() 
+		local numGuildies = self.numGuildies or 0
 		local numFriends = onlineFriends or 0
 
 		GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 6, 16)
-		GameTooltip:AddLine((numTotalGuildMembers > 0) and L["Friends & Guild"] or FRIENDS)
+		GameTooltip:AddLine(IsInGuild() and L["Friends & Guild"] or FRIENDS)
 
 		if (numGuildies > 1) or (numFriends > 0) then
 			GameTooltip:AddLine(" ")
@@ -178,10 +192,10 @@ MenuWidget.OnEnable = function(self)
 	
 	SocialButton.OnClick = function(self, button)
 		if (button == "LeftButton") then
-			FriendsMicroButton:GetScript("OnClick")(FriendsMicroButton, button)
+			ToggleFriendsFrame()
 		elseif (button == "RightButton") then
-			GuildMicroButton:GetScript("OnClick")(GuildMicroButton, button)
-		end 
+			ToggleFriendsFrame(3) -- the guild tab
+		end
 	end
 	SocialButton:SetAttribute("_onclick", [[ control:CallMethod("OnClick", button); ]])
 
@@ -208,16 +222,7 @@ MenuWidget.OnEnable = function(self)
 				GuildRoster()
 			end
 		end
-
-		local numTotalGuildMembers, numOnlineGuildMembers, numOnlineAndMobileMembers = GetNumGuildMembers()
-		local numberOfFriends, onlineFriends = GetNumFriends() 
-		
-		self.numGuildies = numOnlineAndMobileMembers or numOnlineGuildMembers or 0
-		self.numOtherGuildies = (self.numGuildies > 1) and (self.numGuildies - 1) or 0
-		self.numFriends = onlineFriends or 0
-		self.numPeople = self.numFriends + self.numOtherGuildies
-	
-		self.People:SetText(((self.numGuildies > 1) or (self.numFriends > 0)) and self.numPeople or "")
+		CountPeople(self)
 	end)
 
 	SocialButton.elapsed = 0
@@ -239,22 +244,15 @@ MenuWidget.OnEnable = function(self)
 	end)
 
 
-	local numTotalGuildMembers, numOnlineGuildMembers, numOnlineAndMobileMembers = GetNumGuildMembers()
-	local numberOfFriends, onlineFriends = GetNumFriends() 
-
-	SocialButton.numFriends = onlineFriends or 0
-	SocialButton.numGuildies = numOnlineAndMobileMembers or numOnlineGuildMembers or 0
-	SocialButton.numOtherGuildies = (SocialButton.numGuildies > 1) and (SocialButton.numGuildies - 1) or 0
-	SocialButton.numPeople = SocialButton.numFriends + SocialButton.numOtherGuildies
-
 	SocialButton.People = People
-	SocialButton.People:SetText(((SocialButton.numGuildies > 1) or (SocialButton.numFriends > 0)) and SocialButton.numPeople or "")
+	CountPeople(SocialButton)
+
+	self.ChatButton = ChatButton
+	self.SocialButton = SocialButton
 	
 	SocialButton:RegisterEvent("FRIENDLIST_UPDATE")
-	SocialButton:RegisterEvent("GUILD_RANKS_UPDATE")
 	SocialButton:RegisterEvent("GUILD_ROSTER_UPDATE")
 	SocialButton:RegisterEvent("GUILDTABARD_UPDATE")
-	SocialButton:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 	SocialButton:RegisterEvent("PLAYER_ENTERING_WORLD")
 	SocialButton:RegisterEvent("PLAYER_GUILD_UPDATE")
 

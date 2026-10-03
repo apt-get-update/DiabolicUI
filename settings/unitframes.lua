@@ -14,12 +14,9 @@ local BUTTON_SIZE_DOUBLE = Engine:GetConstant("BUTTON_SIZE_DOUBLE") -- button si
 local BUTTON_SIZE_TRIPLE = Engine:GetConstant("BUTTON_SIZE_TRIPLE") -- button size with three action bars
 
 local NUM_ACTIONBAR_SLOTS = Engine:GetConstant("NUM_ACTIONBAR_SLOTS") -- number of buttons on a standard bar
-local NUM_PET_SLOTS = Engine:GetConstant("NUM_PET_SLOTS") -- number of pet buttons
-local NUM_POSSESS_SLOTS = Engine:GetConstant("NUM_POSSESS_SLOTS") -- number of possess buttons
-local NUM_STANCE_SLOTS = Engine:GetConstant("NUM_STANCE_SLOTS") -- number of stance buttons
 local NUM_VEHICLE_SLOTS = Engine:GetConstant("NUM_VEHICLE_SLOTS") -- number of vehicle buttons
 
-local padding, bar_padding = 2, 4 -- for the auras
+local bar_padding = 4 -- for the auras
 local petOffset = 10 + BUTTON_SIZE_TRIPLE - 3 -- copied from 'petskulloffset' in the actionbar settings
 
 local orbOffsetX, orbOffsetY = 0, 0 -- -4
@@ -83,12 +80,6 @@ Engine:NewStaticConfig("UnitFrames", {
 					positionPet = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + petOffset }, 
 					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 					color = { .4, .4, .9 }, 
-					safezone = {
-						delay = {
-							font_object = DiabolicFont_SansBold8,
-							position = { "BOTTOMRIGHT", -4.5, 1.5 }
-						}
-					},
 					name = {
 						font_object = DiabolicFont_HeaderRegular16White,
 						position = { "BOTTOM", .5, -30.5 }
@@ -127,7 +118,6 @@ Engine:NewStaticConfig("UnitFrames", {
 					-- moved to the left half of the screen, so the auras
 					-- grow out to its right instead of running offscreen.
 					positionMinimapLeft = { "TOPLEFT", "Minimap", "TOPRIGHT", 20, 0 },
-					positionWithoutMinimap = { "TOPRIGHT", "UICenter", "TOPRIGHT", -30, -74 },
 					size = { 200, 200 },
 					spacingH = 4, 
 					spacingV = 4, 
@@ -288,7 +278,6 @@ Engine:NewStaticConfig("UnitFrames", {
 						color = { 175/255, 17/255, 28/255 }, -- blood
 						spark = {
 							size = { 128, 128 },
-							overflow = 8,
 							texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],
 							flash = { 2.75, 1.25, .45, .95 },
 							flash_size = { 64, 16 },
@@ -323,7 +312,6 @@ Engine:NewStaticConfig("UnitFrames", {
 						color = { 37/255, 37/255, 198/255 },
 						spark = {
 							size = { 128, 128 },
-							overflow = 8,
 							texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],
 							flash = { 2.75, 1.25, .45, .95 },
 							flash_size = { 64, 16 },
@@ -385,14 +373,7 @@ Engine:NewStaticConfig("UnitFrames", {
 				},
 				classification = {
 					font_object = DiabolicFont_HeaderRegular10, -- will also apply to spell name when casting
-					position = {
-						normal_single = { "TOP", 0.5, 26.5 },
-						normal_double = { "TOP", 0.5, 26.5 },
-						elite_single = { "TOP", 0.5, 26.5 },
-						elite_double = { "TOP", 0.5, 26.5 },
-						boss_single = { "TOP", 0.5, 26.5 },
-						boss_double = { "TOP", 0.5, 26.5 }
-					}
+					position = { "TOP", 0.5, 26.5 }
 				},
 				texts = {
 					health = {
@@ -607,7 +588,6 @@ Engine:NewStaticConfig("UnitFrames", {
 					color = { 175/255, 17/255, 28/255 }, -- blood
 					spark = {
 						size = { 64, 64 },
-						overflow = 8,
 						texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],
 						flash = { 2.75, 1.25, .45, .95 },
 						flash_size = { 64, 16 },

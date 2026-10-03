@@ -9,11 +9,12 @@ local Handler = Engine:NewHandler("Orb")
 local _G = _G
 local math_abs = math.abs
 local math_max = math.max
+local math_min = math.min
 local math_sqrt = math.sqrt
+local pairs = pairs
 local select = select
 local setmetatable = setmetatable
 local type = type
-local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
@@ -21,42 +22,38 @@ local CreateFrame = _G.CreateFrame
 local Orb = CreateFrame("Frame")
 local Orb_MT = { __index = Orb }
 
+-- How bright each layer is drawn when one color is given for them all
+-- (SetStatusBarColor(r, g, b, "ALL")). These are the factors the hand-picked
+-- orb colors in data/colors.lua started from.
+local SHADES = { bar = 1/4, moon = 1/2, smoke = 1, shade = 1/10 }
+
 
 Orb.Update = function(self, elapsed)
 	local value = self._ignoresmoothing and self.value or self.smoothing and self.displayValue or self.value
 	local min, max = self.minValue, self.maxValue
 	local width, height = self.scaffold:GetSize()
 	local spark = self.overlay.spark
-	
-	if value > max then
-		value = max
-	elseif value < min then
-		value = min
-	end
-		
-	local newHeight
-	if value > 0 and value > min and max > min then
-		newHeight = (value-min)/(max-min) * height
-	else
-		newHeight = 0
-	end
-	
-	if value <= min or max == min then
-		-- this just bugs out at small values in Legion, 
-		-- so it's easier to simply hide it. 
-		self.scrollframe:Hide()
-	else
-		local new_size
-		local mult = max > min and ((value-min)/(max-min)) or min
-		if max > min then
-			new_size = mult * width
-		else
-			new_size = 0
-			mult = 0.0001
-		end
-		local displaySize = math_max(new_size, 0.0001) -- sizes can't be 0 in Legion
+	-- (SetValue and SetMinMaxValues keep both values in range)
 
-		self.scrollframe:SetHeight(displaySize)
+	-- The spark and its glow pulse every frame, but the fluid and the spark
+	-- only need placing again when the value or the shape changed.
+	local laid = self._laid
+	local glow = spark.glow
+	local changed = (value ~= laid.value) or (min ~= laid.min) or (max ~= laid.max) or (width ~= laid.width) or (height ~= laid.height)
+		or (self.leftCrop ~= laid.leftCrop) or (self.rightCrop ~= laid.rightCrop) or (spark._height ~= laid.sparkHeight) or (glow._height ~= laid.glowHeight)
+	if changed then
+		laid.value, laid.min, laid.max, laid.width, laid.height = value, min, max, width, height
+		laid.leftCrop, laid.rightCrop, laid.sparkHeight, laid.glowHeight = self.leftCrop, self.rightCrop, spark._height, glow._height
+	end
+
+	local newHeight = (max > min) and (value-min)/(max-min) * height or 0
+
+	if value <= min or max == min then
+		-- empty: no fluid at all, rather than a sliver of it
+		self.scrollframe:Hide()
+		laid.value = nil -- placed again once it shows
+	elseif changed then
+		self.scrollframe:SetHeight(math_max(newHeight, 0.0001)) -- (WoW takes a size of 0 as no size set at all)
 		self.scrollframe:SetVerticalScroll(height - newHeight)
 		
 		if not self.scrollframe:IsShown() then
@@ -73,55 +70,54 @@ Orb.Update = function(self, elapsed)
 			spark.glow:SetAlpha(spark.minAlpha)
 		end
 	else
-		local spark = spark
-		local glow = spark.glow
+		if changed then
+			-- freaking pythagoras
+			--	r^2 = x^2 + y^2
+			--	x^2 = r^2 - y^2
+			--	x = sqrt(r^2 - y^2)
+			local y = math_abs(height/2 - newHeight)
+			local r = height/2
+			local x = math_sqrt(r^2 - y^2) * 2 -- never 0: neither empty nor full here
+			local sparkWidth = x
+			local sparkHeight = spark._height/2 + sparkWidth/width * spark._height
 
-		-- freaking pythagoras
-		--	r^2 = x^2 + y^2
-		--	x^2 = r^2 - y^2
-		--	x = sqrt(r^2 - y^2)
-		local y = math_abs(height/2 - newHeight)
-		local r = height/2
-		local x = math_sqrt(r^2 - y^2) * 2
-		local sparkWidth = x == 0 and 0.0001 or x
-		local sparkHeight = spark._height/2 + sparkWidth/width * spark._height
+			local scrollframe = self.scrollframe
+			local leftCrop, rightCrop = self.leftCrop, self.rightCrop
 
-		local scrollframe = self.scrollframe
-		local leftCrop, rightCrop = self.leftCrop, self.rightCrop
+			local texLeft, texRight = 0, 1 -- spark texcoords
+			local sparkSpace = (width - x)/2 -- space between spark and the full frame width
 
-		local texLeft, texRight = 0, 1 -- spark texcoords
-		local sparkSpace = (width - x)/2 -- space between spark and the full frame width
+			local sparkAnchor = "TOP"
+			local sparkPoint = "CENTER"
 
-		local sparkAnchor = "TOP"
-		local sparkPoint = "CENTER"
+			-- The orb is cropped over the edges of the spark, 
+			-- so we need to adjust its size and texcoords.
+			if leftCrop > sparkSpace then
+				local overflow = leftCrop - sparkSpace
+				texLeft = overflow/x
+				sparkWidth = sparkWidth - overflow
+				sparkAnchor = "TOPLEFT"
+				sparkPoint = "LEFT"
+			end
 
-		-- The orb is cropped over the edges of the spark, 
-		-- so we need to adjust its size and texcoords.
-		if leftCrop > sparkSpace then
-			local overflow = leftCrop - sparkSpace
-			texLeft = overflow/x
-			sparkWidth = sparkWidth - overflow
-			sparkAnchor = "TOPLEFT"
-			sparkPoint = "LEFT"
+			if rightCrop > sparkSpace then
+				local overflow = rightCrop - sparkSpace
+				texRight = 1 - overflow/x
+				sparkWidth = sparkWidth - overflow
+				sparkAnchor = "TOPRIGHT"
+				sparkPoint = "RIGHT"
+			end
+
+			spark:SetTexCoord(texLeft, texRight, 0, 1)
+			spark:ClearAllPoints()
+			spark:SetPoint(sparkPoint, scrollframe, sparkAnchor, 0, -1)
+			spark:SetSize(sparkWidth, sparkHeight)
+
+			glow:SetTexCoord(texLeft, texRight, 0, 1)
+			glow:ClearAllPoints()
+			glow:SetPoint(sparkPoint, scrollframe, sparkAnchor, 0, -1)
+			glow:SetSize(sparkWidth, sparkHeight/spark._height * spark.glow._height)
 		end
-
-		if rightCrop > sparkSpace then
-			local overflow = rightCrop - sparkSpace
-			texRight = 1 - overflow/x
-			sparkWidth = sparkWidth - overflow
-			sparkAnchor = "TOPRIGHT"
-			sparkPoint = "RIGHT"
-		end
-
-		spark:SetTexCoord(texLeft, texRight, 0, 1)
-		spark:ClearAllPoints()
-		spark:SetPoint(sparkPoint, scrollframe, sparkAnchor, sparkOffset, -1)
-		spark:SetSize(sparkWidth, sparkHeight)
-
-		glow:SetTexCoord(texLeft, texRight, 0, 1)
-		glow:ClearAllPoints()
-		glow:SetPoint(sparkPoint, scrollframe, sparkAnchor, sparkOffset, -1)
-		glow:SetSize(sparkWidth, sparkHeight/spark._height * spark.glow._height)
 
 		if elapsed then
 			local currentAlpha = spark.glow:GetAlpha()
@@ -137,7 +133,7 @@ Orb.Update = function(self, elapsed)
 					spark.flashDirection = "OUT"
 				end
 			elseif spark.flashDirection == "OUT" then
-				if currentAlpha + alphaChange > targetAlpha then
+				if currentAlpha - alphaChange > targetAlpha then
 					currentAlpha = currentAlpha - alphaChange
 				else
 					currentAlpha = targetAlpha
@@ -155,8 +151,9 @@ Orb.Update = function(self, elapsed)
 end
 
 local smoothMinValue = 1 -- if a value is lower than this, we won't smoothe
-local smoothHZ = .2 -- time for the smooth transition to complete
+local smoothHZ = .2 -- each frame closes elapsed/smoothHZ of the gap
 local smoothLimit = 1/120 -- max updates per second
+local smoothFinish = 1/1000 -- the last bit of the gap (a share of the range) is jumped
 Orb.OnUpdate = function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed < smoothLimit then
@@ -167,30 +164,14 @@ Orb.OnUpdate = function(self, elapsed)
 	if self.smoothing then
 		local goal = self.value
 		local display = self.displayValue
-		local change = (goal-display)*(elapsed/(self._smoothHZ or smoothHZ))
-
-		if display < smoothMinValue then
+		-- Closing a share of the gap every frame never quite gets there,
+		-- so the last bit is jumped (and so is all of it from nothing).
+		local nextDisplay = display + (goal - display) * math_min(elapsed/smoothHZ, 1)
+		if (display < smoothMinValue) or (math_abs(goal - nextDisplay) <= (self.maxValue - self.minValue) * smoothFinish) then
 			self.displayValue = goal
 			self.smoothing = nil
 		else
-			if goal > display then
-				if goal > (display + change) then
-					self.displayValue = display + change
-				else
-					self.displayValue = goal
-					self.smoothing = nil
-				end
-			elseif goal < display then
-				if goal < (display + change) then
-					self.displayValue = display + change
-				else
-					self.displayValue = goal
-					self.smoothing = nil
-				end
-			else
-				self.displayValue = goal
-				self.smoothing = nil
-			end
+			self.displayValue = nextDisplay
 		end
 	else
 		if self.displayValue <= self.minValue or self.displayValue >= self.maxValue then
@@ -199,10 +180,6 @@ Orb.OnUpdate = function(self, elapsed)
 		end
 	end
 	self:Update(elapsed)
-end
-
-Orb.SetSmoothHZ = function(self, HZ)
-	self._smoothHZ = smoothHZ
 end
 
 Orb.DisableSmoothing = function(self, disable)
@@ -216,13 +193,6 @@ Orb.SetValue = function(self, value)
 		value = max
 	elseif value < min then
 		value = min
-	end
-	if not self._ignoresmoothing then
-		if self.displayValue > max then
-			self.displayValue = max
-		elseif self.displayValue < min then
-			self.displayValue = min
-		end
 	end
 	self.value = value
 	if value ~= self.displayValue then
@@ -276,44 +246,26 @@ Orb.SetStatusBarColor = function(self, r, g, b, ...)
 	local scaffold = self.scaffold
 	local colors = scaffold.colors
 
-	id = id or "bar" -- redundant? we don't think of any layer as "the real one" any more.
+	id = id or "bar"
 
 	if id == "ALL" then
-		for layerID,colorTable in pairs(colors) do
-			local factor
-			-- These factors are the same I use as a basis
-			-- for my own custom orb colors. 
-			-- I do however reduce the green component of yellow and orange colors by A LOT,
-			-- and this script doesn't take special considerations like that. Maybe one day.
-			if layerID == "bar" then
-				factor = 1/4
-			elseif layerID == "moon" then
-				factor = 1/2
-			elseif layerID == "smoke" then
-				factor = 1
-			elseif layerID == "shade" then 
-				factor = 1/10
-			else
-				-- This never happens unless you screw up, 
-				-- but I actually expect that to happen. So there! :)
-				factor = 1/2
-			end
+		for layerID, colorTable in pairs(colors) do
+			local factor = SHADES[layerID]
 			colorTable[1] = r * factor
 			colorTable[2] = g * factor
 			colorTable[3] = b * factor
 			if a then 
 				colorTable[4] = a
 			end
-			scaffold[layerID]:SetVertexColor(r, g, b, a)
+			scaffold[layerID]:SetVertexColor(colorTable[1], colorTable[2], colorTable[3], colorTable[4])
 		end
 	else
-		if id and colors[id] then
-			colors[id][1] = r
-			colors[id][2] = g
-			colors[id][3] = b
-			if a then 
-				colors[id][4] = a
-			end
+		local colorTable = colors[id]
+		colorTable[1] = r
+		colorTable[2] = g
+		colorTable[3] = b
+		if a then
+			colorTable[4] = a
 		end
 		scaffold[id]:SetVertexColor(r, g, b, a)
 	end
@@ -333,8 +285,6 @@ Orb.SetStatusBarColor = function(self, r, g, b, ...)
 			newGreen = newGreen * .75
 			newRed = newRed * .5
 		end
-		if (newGreen > newRed) and (newGreen > newBlue) then
-		end
 
 		self.overlay.spark:SetVertexColor(newRed, newGreen, newBlue)
 		self.overlay.spark.glow:SetVertexColor(newRed, newGreen, newBlue)
@@ -352,11 +302,8 @@ Orb.SetStatusBarTexture = function(self, ...)
 		r, g, b = ...
 	elseif numArgs == 4 then
 		r, g, b, a = ...
-		if type(a) == "string" then
-			id = arg
-			a = nil
-		elseif type(a) == "number" then
-			a = arg
+		if type(a) == "string" then -- r, g, b, id
+			id, a = a, nil
 		end
 	elseif numArgs == 5 then
 		r, g, b, a, id = ...
@@ -371,18 +318,13 @@ end
 
 Orb.SetSparkTexture = function(self, path)
 	self.overlay.spark:SetTexture(path)
+	self._laid.value = nil
 	self:Update()
 end
 
+-- Only the height counts: the spark is as wide as the fluid's surface.
 Orb.SetSparkSize = function(self, width, height)
-	local spark = self.overlay.spark
-	spark._width = width
-	spark._height = height
-	self:Update()
-end
-
-Orb.SetSparkOverflow = function(self, overflow)
-	self.overlay.spark.overflowWidth = overflow
+	self.overlay.spark._height = height
 	self:Update()
 end
 
@@ -397,15 +339,15 @@ Orb.SetSparkFlash = function(self, durationIn, durationOut, minAlpha, maxAlpha)
 	spark.glow:SetAlpha(minAlpha)
 end
 
+-- Only the height counts, as for the spark.
 Orb.SetSparkFlashSize = function(self, width, height)
-	local glow = self.overlay.spark.glow
-	glow._width = width
-	glow._height = height
+	self.overlay.spark.glow._height = height
 end
 
 Orb.SetSparkFlashTexture = function(self, texture)
 	local glow = self.overlay.spark.glow
 	glow:SetTexture(texture)
+	self._laid.value = nil
 end
 
 Orb.ClearAllPoints = function(self)
@@ -465,7 +407,7 @@ Orb.SetHeight = function(self, height)
 end
 
 Orb.SetParent = function(self, parent)
-	self.scaffold:SetParent()
+	self.scaffold:SetParent(parent)
 end
 
 Orb.GetValue = function(self)
@@ -476,25 +418,14 @@ Orb.GetMinMaxValues = function(self)
 	return self.minValue, self.maxValue
 end
 
+-- The color of a layer, the smoke's by default (the orb's main color).
 Orb.GetStatusBarColor = function(self, id)
-	local colors = self.scaffold and self.scaffold.colors or self.colors
-	if id and colors and colors[id] then
-	  return colors[id][1], colors[id][2], colors[id][3], colors[id][4]
-	elseif colors and colors.smoke then
-	  return colors.smoke[1], colors.smoke[2], colors.smoke[3], colors.smoke[4]
-	end
+	local color = self.scaffold.colors[id or "smoke"]
+	return color[1], color[2], color[3], color[4]
 end
 
 Orb.GetParent = function(self)
 	return self.scaffold and self.scaffold:GetParent()
-end
-
-Orb.CreateTexture = function(self, ...)
-	self.scaffold:CreateTexture(...)
-end
-
-Orb.CreateFontString = function(self, ...)
-	self.scaffold:CreateFontString(...)
 end
 
 Orb.SetScript = function(self, ...)
@@ -520,14 +451,6 @@ Orb.SetCrop = function(self, leftCrop, rightCrop)
 	self.leftCrop = leftCrop
 	self.rightCrop = rightCrop
 	self:SetSize(self.scrollchild:GetSize()) 
-end
-
-Orb.GetCrop = function(self)
-	return self.leftCrop, self.rightCrop
-end
-
-Handler.OnEnable = function(self)
-
 end
 
 Handler.New = function(self, parent, rotateClockwise, speedModifier)
@@ -582,32 +505,20 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	local shade = shadeFrame:CreateTexture(nil, "OVERLAY")
 	shade:SetAllPoints()
 
-	-- Backdrop frame
-	local backdropFrame  = CreateFrame("Frame", nil, scaffold)
-	backdropFrame:SetFrameLevel(scaffold:GetFrameLevel() - 1)
-	backdropFrame:SetAllPoints(scaffold)
-
-	-- We want the backdrops darker, to be easier on the eye on bright backgrounds.
-	--local backgroundShade = backdropFrame:CreateTexture(nil, "BACKGROUND")
-	--backgroundShade:SetAllPoints()
-
 	local spark = scrollchild:CreateTexture(nil, "OVERLAY")
 	spark:SetPoint("CENTER", scrollframe, "TOP", 0, -1)
 	spark:SetSize(1,1)
 	spark:SetAlpha(.35)
 	spark._height = 1
-	spark._width = 1
-	spark.overflowWidth = 0 
 	spark.flashDirection = "IN"
-	spark.durationIn = .75 -- 2.75
-	spark.durationOut = .55 -- 1.25
+	spark.durationIn = .75
+	spark.durationOut = .55
 	spark.minAlpha = .35
 	spark.maxAlpha = .85
 
 	local glow = overlay:CreateTexture(nil, "ARTWORK")
 	glow:SetPoint("CENTER", scrollframe, "TOP", 0, -1)
 	glow:SetSize(1, 1)
-	glow._width = 1
 	glow._height = 1
 	spark.glow = glow
 
@@ -617,7 +528,6 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	scaffold.moon = moon
 	scaffold.smoke = smoke
 	scaffold.shade = shade
-	scaffold.layers = { bar, moon, smoke, shade }
 	scaffold.colors = {
 		bar = { .6, .6, .6, 1 },
 		smoke = { .6, .6, .6, .9 },
@@ -626,7 +536,9 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	}
 
 	-- The orb is the virtual object that we return to the user.
-	-- This contains all the methods.
+	-- This contains all the methods. As an engine frame it also has the
+	-- engine's CreateFrame, CreateTexture, ... : what's made with them
+	-- sits on the orb frame, above the scaffold.
 	local orb = Engine:CreateFrame("Frame", nil, scaffold)
 	orb:SetAllPoints() -- lock down the points before we overwrite the methods
 
@@ -638,6 +550,7 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	orb.displayValue = 0
 	orb.leftCrop = 0
 	orb.rightCrop = 0
+	orb._laid = {} -- what Update last placed
 
 	-- I usually don't like exposing things like this to the user, 
 	-- but we're going for maximum performance here. 

@@ -15,7 +15,7 @@ addon.
 
 Two kinds of objects get registered with the Engine:
 
-- **Modules** (`Engine:NewModule(name, loadPriority, makeUnsecure)`) — one
+- **Modules** (`Engine:NewModule(name, loadPriority)`) — one
   per feature (`"UnitFrames"`, `"ActionBars"`, `"Menu"`, `"Blizzard: LootFrame"`, ...).
   A module owns its own lifecycle (`OnInit`/`OnEnable`) and, optionally, a set
   of **widgets** (see below).
@@ -62,6 +62,34 @@ runs is always safe. Put anything another module's `OnEnable` might need
 `"LOW"` priority modules are the exception: their `OnEnable` is deferred to a
 separate pass after `PLAYER_LOGIN`, run from `Engine.Enable` rather than
 `Engine.Init`.
+
+## Events and messages
+
+`object:RegisterEvent(event, func)` (and `RegisterMessage` for the addon's
+own messages, sent with `SendMessage`/`Engine:Fire`) calls `func` (a method
+name, a function, or the method named after the event when left out) with
+`(object, event, ...)`. One engine frame listens to every game event and
+delivers it to the Engine, then the enabled handlers and their elements,
+then the enabled modules by priority and their widgets.
+
+An object can have several functions on one event; they run in the order
+they were registered. A function may unregister itself (or another) while
+the event is being delivered, the usual way to wait for combat to end:
+
+```lua
+Widget.UpdateLayout = function(self, event)
+	if InCombatLockdown() then
+		return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateLayout")
+	end
+	if (event == "PLAYER_REGEN_ENABLED") then
+		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateLayout")
+	end
+	-- ...
+end
+```
+
+The others registered for that event still run, and a function registered
+while it is being delivered waits for the next one.
 
 ## Config and static data
 
@@ -118,8 +146,7 @@ self.db = self:GetConfig("ActionBars", "character")    -- per character
 
 `ActionBars` is the main user of a non-global profile — bar layout is
 per-character, since two characters rarely want the same bars. Most other
-settings are global. `Engine:GetConfigDefaults(name)` returns the untouched
-defaults, e.g. for a "reset to defaults" button.
+settings are global.
 
 ### How it gets saved: `Engine:ParseSavedVariables`
 
@@ -160,10 +187,6 @@ Consequences worth knowing:
 - **The Engine assumes it owns every top-level key it has a config for.**
   This is why the embedded minimap keeps its own SavedVariable; see
   [Module Tour: Minimap]({{< relref "module-minimap#why-it-keeps-its-own-savedvariable" >}}).
-
-There's also a `DEVELOPER_RESET` switch at the top of `engine-core.lua`
-that `wipe()`s all of `DiabolicUI_DB` before parsing. It's commented out
-and meant only for development, when the stored format changes.
 
 ## `engine/wotlk-helpers.lua`
 

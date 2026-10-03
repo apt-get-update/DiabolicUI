@@ -3,18 +3,13 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 
 -- This is a general config meant to streamline 
 -- the look of UI elements used by multiple modules.
---
--- This is also where we store the default user settings for UI scaling!
 -- 
 -- Example (shows a popup with the style created here):
 -- 		local PopUpMessage = Engine:GetHandler("PopUpMessage") -- get the popup handler
 -- 		PopUpMessage:RegisterPopUp("MY_POP", popup_table) -- register a virtual popup
 -- 		PopUpMessage:ShowPopUp("MY_POP", Engine:GetDB("UI").popup) -- show the popup with this visual style
--- 		PopUpMessage:HidePopUp("MY_POP") -- hide it
 local config = {
 	coin = {
-		font_object = DiabolicTooltipNumber, -- doesn't exist anymore
-
 		gold_texture = path .. [[textures\DiabolicUI_Coins_32x32.tga]],
 		gold_texcoord = { 0/64, 32/64, 0/64, 32/64 }, 
 		gold_size = { 16, 16 },
@@ -30,59 +25,6 @@ local config = {
 		price_offsetY = -1, -- value added to the Y coordinate of numbers following text, to align
 		coin_offset = { 2, -4 }, -- x,y values added to the position of the coin textures to align them properly
 		coin_padding = 4
-	},
-	backdrops = {
-		glow = {
-			backdrop = {
-				bgFile = nil,
-				edgeFile = path .. [[textures\Diabolic_GlowBorder_128x16.tga]],
-				edgeSize = 16,
-				tile = false,
-				tileSize = 0,
-				insets = {
-					left = 0,
-					right = 0,
-					top = 0,
-					bottom = 0
-				}
-			},
-			color = { 0, 0, 0, 0 },
-			color_border = { 0, 0, 0, .5 }
-		},
-		clean = {
-			backdrop = {
-				bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-				edgeFile = [[Interface\ChatFrame\ChatFrameBackground]],
-				edgeSize = 32,
-				tile = false,
-				tileSize = 0,
-				insets = {
-					left = 0,
-					right = 0,
-					top = 0,
-					bottom = 0
-				}
-			},
-			color = { 0, 0, 0, .75 },
-			color_border = { 0, 0, 0, 1 }
-		},
-		simple = {
-			backdrop = {
-				bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-				edgeFile = [[Interface\ChatFrame\ChatFrameBackground]],
-				edgeSize = 32,
-				tile = false,
-				tileSize = 0,
-				insets = {
-					left = -1,
-					right = -1,
-					top = -1,
-					bottom = -1
-				}
-			},
-			color = { 0, 0, 0, .75 },
-			color_border = { .3, .3, .3, 1 }
-		}
 	},
 	menubutton = {
 		size = { 300, 51 },
@@ -132,29 +74,8 @@ local config = {
 			},
 			backdropColor = { 0, 0, 0, .5 },
 			backdropBorderColor = { 1, 1, 1, 1 },
-			texture = {
-				left = {
-					texture = path .. [[textures\DiabolicUI_Tooltip_TitleDecoration.tga]],
-					offset = -5,
-					size = { 32, 64 },
-					texcoord = { 0, 31/128, 0, 1 }
-				},
-				right = {
-					texture = path .. [[textures\DiabolicUI_Tooltip_TitleDecoration.tga]],
-					offset = 12,
-					size = { 64, 64 },
-					texcoord = { 32/128, 95/128, 0, 1 }
-				},
-				top = {
-					texture = path .. [[textures\DiabolicUI_Tooltip_TitleDecoration.tga]],
-					offset = 5,
-					size = { 32, 64 },
-					texcoord = { 96/128, 1, 0, 1 }
-				}
-			},
 			title = {
-				normalFont = DiabolicFont_HeaderRegular18Title,
-				insets = { 30, 30, 0, 0 }
+				normalFont = DiabolicFont_HeaderRegular18Title
 			}
 		},
 		body = {
@@ -176,8 +97,6 @@ local config = {
 				insets = { 15, 15, 15, 15 },
 				normalFont = DiabolicFont_SansRegular14,
 				fontColor = { 240/255, 240/255, 240/255 } -- { 255/255, 234/255, 137/255 }
-			},
-			item = {
 			},
 			input = {
 				backdrop = {
@@ -251,10 +170,4 @@ local config = {
 	}
 }
 
-local db = {
-	autoscale = true, -- whether or not to automatically scale the UI
-	hasbeenqueried = true -- whether or not the user has been asked about the previous
-}
-
 Engine:NewStaticConfig("UI", config)
-Engine:NewConfig("UI", db)

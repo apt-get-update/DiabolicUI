@@ -124,6 +124,17 @@ function TestTrackerFade:test_unticking_the_option_restores_full_alpha()
 	lu.assertEquals(_G.WatchFrame.alpha, 1)
 end
 
+function TestTrackerFade:test_a_tracker_not_placed_yet_is_never_under_the_cursor()
+	-- (no rect: GetLeft and friends give nothing)
+	_G.WatchFrame.GetLeft = function() return nil end
+	hover(true)
+	tick()
+	hover(false)
+	tick(5)
+	tick(0.3)
+	lu.assertEquals(_G.WatchFrame.alpha, 1) -- never hovered, so never left either
+end
+
 function TestTrackerFade:test_uses_questies_tracker_when_shown()
 	local questie = newTracker()
 	_G.Questie_BaseFrame = questie

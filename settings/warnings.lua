@@ -3,12 +3,40 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 	
 -- Utility function to convert a formatstring 
 -- to a searchable pattern.
-local to_pattern = function(msg, plain)
+local to_pattern = function(msg)
 	msg = msg:gsub("%%%d?$?c", ".+")
 	msg = msg:gsub("%%%d?$?d", "%%d+")
 	msg = msg:gsub("%%%d?$?s", ".+")
 	msg = msg:gsub("([%(%)])", "%%%1")
-	return plain and msg or ("^" .. msg)
+	return "^" .. msg
+end
+
+-- A set of the messages, looked up as they are. (pairs, not ipairs, so a
+-- nil entry can't cut the list short; every entry must exist in 3.3.5,
+-- tests/test_wotlk_globals.lua checks.)
+local to_set = function(list)
+	local set = {}
+	for _, msg in pairs(list) do
+		set[msg] = true
+	end
+	return set
+end
+
+-- The messages as search patterns, each once (in 3.3.5 several read the
+-- same), in a list so they're always tried in the same order.
+local to_patterns = function(list)
+	local patterns, seen = {}, {}
+	for i = 1, table.maxn(list) do
+		local msg = list[i]
+		if msg then
+			local pattern = to_pattern(msg)
+			if (not seen[pattern]) then
+				seen[pattern] = true
+				patterns[#patterns + 1] = pattern
+			end
+		end
+	end
+	return patterns
 end
 
 Engine:NewStaticConfig("Warnings", {
@@ -48,19 +76,7 @@ Engine:NewStaticConfig("Warnings", {
 	-- custom error frame, located above the player character's head. 
 	-- All other messages will still be shown, but in the default chat frame.
 	whitelist = {
-		-- Our 'plain' list is a hashed table, since these messages always are the same, 
-		-- and we would like to identify them as fast as possible. It's a big list after all! o.O
-		plain = (function(list) 
-			local plain_list = {}
-			-- *note: pairs, not ipairs, so a nil entry can't cut the list short.
-			--  Every entry must exist in 3.3.5 (tests/test_wotlk_globals.lua checks).
-			for i,v in pairs(list) do
-				if v then
-					plain_list[v] = true
-				end
-			end
-			return plain_list
-		end)({
+		plain = to_set({
 			ERR_ABILITY_COOLDOWN, -- "Ability is not ready yet."
 
 			ERR_ATTACK_CHANNEL, -- "Can't attack while channeling."
@@ -243,27 +259,7 @@ Engine:NewStaticConfig("Warnings", {
 			TOO_FAR_TO_LOOT -- "You are too far away to loot that corpse!"; -- The player is too far away to loot a corpse
 		}),
 		
-		-- Our 'pattern' list is an indexed table, 
-		-- as we want to iterate in the same order every time.
-		pattern = (function(list) 
-			local pattern_list = {}
-			for i,v in pairs(list) do
-				if v then
-					local pattern = to_pattern(v)
-					local exists
-					for _,old in ipairs(pattern_list) do
-						if old == pattern then
-							exists = true
-							break
-						end
-					end
-					if not exists then
-						pattern_list[#pattern_list + 1] = to_pattern(v)
-					end
-				end
-			end
-			return pattern_list
-		end)({
+		pattern = to_patterns({
 			ERR_USE_LOCKED_WITH_SPELL_KNOWN_SI, -- "Requires %s %d"
 			ERR_USE_LOCKED_WITH_ITEM_S, -- "Requires %s"
 			ERR_USE_LOCKED_WITH_SPELL_S, -- "Requires %s"
@@ -292,43 +288,13 @@ Engine:NewStaticConfig("Warnings", {
 	
 	-- blacklisted stuff
 	blacklist = {
-		-- Our 'pattern' list is an indexed table, 
-		-- as we want to iterate in the same order every time.
-		pattern = (function(list) 
-			local pattern_list = {}
-			for i,v in pairs(list) do
-				if v then
-					local pattern = to_pattern(v)
-					local exists
-					for _,old in ipairs(pattern_list) do
-						if old == pattern then
-							exists = true
-							break
-						end
-					end
-					if not exists then
-						pattern_list[#pattern_list + 1] = to_pattern(v)
-					end
-				end
-			end
-			return pattern_list
-		end)({
+		pattern = to_patterns({
 			ERR_LOOT_GONE, -- "Already looted (%d/%d)" -- Happens on Felsong ALL the time! Appears to be a TrinityCore issue.
 		})			
 	},
 
 	tracker = {
-		plain = (function(list) 
-			local plain_list = {}
-			-- *note: pairs, not ipairs, so a nil entry can't cut the list short.
-			--  Every entry must exist in 3.3.5 (tests/test_wotlk_globals.lua checks).
-			for i,v in pairs(list) do
-				if v then
-					plain_list[v] = true
-				end
-			end
-			return plain_list
-		end)({
+		plain = to_set({
 			ERR_QUEST_ALREADY_DONE, -- "You have completed that quest."
 			ERR_QUEST_ALREADY_DONE_DAILY, -- "You have completed that daily quest today."
 			ERR_QUEST_ALREADY_ON, -- "You are already on that quest"
@@ -347,25 +313,7 @@ Engine:NewStaticConfig("Warnings", {
 			QUEST_COMPLETE, -- "Quest completed"
 			QUEST_FAILED -- "Quest completion failed."
 		}),
-		pattern = (function(list) 
-			local pattern_list = {}
-			for i,v in pairs(list) do
-				if v then
-					local pattern = to_pattern(v)
-					local exists
-					for _,old in ipairs(pattern_list) do
-						if old == pattern then
-							exists = true
-							break
-						end
-					end
-					if not exists then
-						pattern_list[#pattern_list + 1] = to_pattern(v)
-					end
-				end
-			end
-			return pattern_list
-		end)({
+		pattern = to_patterns({
 			ERR_QUEST_ACCEPTED_S, -- "Quest accepted: %s"
 			ERR_QUEST_ADD_FOUND_SII, -- "%s: %d/%d"
 			ERR_QUEST_ADD_ITEM_SII, -- %s: %d/%d"

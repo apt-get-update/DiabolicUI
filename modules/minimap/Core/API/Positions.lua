@@ -23,7 +23,7 @@
 	SOFTWARE.
 
 --]]
-local Addon, ns = ..., DiabolicUIMinimapNS
+local _, ns = ..., DiabolicUIMinimapNS
 local API = ns.API or {}
 ns.API = API
 

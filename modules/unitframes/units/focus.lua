@@ -1,91 +1,20 @@
 -- "Unit: Focus" widget: the focus frame.
-local Addon, Engine = ...
+local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Focus")
 
 local UnitFrame = Engine:GetHandler("UnitFrame")
 local StatusBar = Engine:GetHandler("StatusBar")
-local C = Engine:GetDB("Data: Colors")
+local Library = Engine:GetDB("Library: UnitFrames")
 
 -- Lua API
-local _G = _G
-local pairs = pairs
-local table_concat = table.concat
-local table_insert = table.insert
-local tostring = tostring
 local unpack = unpack
-
--- WoW API
-local UnitClass = _G.UnitClass
-local UnitIsEnemy = _G.UnitIsEnemy
-local UnitIsFriend = _G.UnitIsFriend
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = Engine.UnitIsTapDenied
-local UnitPlayerControlled = _G.UnitPlayerControlled
-local UnitReaction = _G.UnitReaction
-
-local postUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavailable)
-
-	local r, g, b
-	if (not isUnavailable) then
-		if UnitIsPlayer(unit) then
-			local _, class = UnitClass(unit)
-			r, g, b = unpack(class and C.Class[class] or C.Class.UNKNOWN)
-		elseif UnitPlayerControlled(unit) then
-			if UnitIsFriend("player", unit) then
-				r, g, b = unpack(C.Reaction[5])
-			elseif UnitIsEnemy(unit, "player") then
-				r, g, b = unpack(C.Reaction[1])
-			else
-				r, g, b = unpack(C.Reaction[4])
-			end
-		elseif (not UnitIsFriend("player", unit)) and UnitIsTapDenied(unit) then
-			r, g, b = unpack(C.Status.Tapped)
-		elseif UnitReaction(unit, "player") then
-			r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
-		else
-			r, g, b = unpack(C.Orb.HEALTH[1])
-		end
-	elseif (isUnavailable == "dead") or (isUnavailable == "ghost") then
-		r, g, b = unpack(C.Status.Dead)
-	elseif (isUnavailable == "offline") then
-		r, g, b = unpack(C.Status.Disconnected)
-	end
-
-	if r then
-		if not((r == health.r) and (g == health.g) and (b == health.b)) then
-			health:SetStatusBarColor(r, g, b)
-			health.r, health.g, health.b = r, g, b
-		end
-	end
-
-end
-
-local UpdateLayers = function(self)
-	if self:IsMouseOver() then
-		self.BorderNormalHighlight:Show()
-		self.BorderNormal:Hide()
-		if self.PortraitBorderNormal then
-			self.PortraitBorderNormal:Hide()
-			self.PortraitBorderHighlight:Show()
-			self.PortraitGlow:Show()
-		end
-	else
-		self.BorderNormal:Show()
-		self.BorderNormalHighlight:Hide()
-		if self.PortraitBorderNormal then
-			self.PortraitBorderNormal:Show()
-			self.PortraitBorderHighlight:Hide()
-			self.PortraitGlow:Hide()
-		end
-	end
-end
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.focus
 	local db = Module:GetConfig("UnitFrames") 
 
-	self:Size(unpack(config.size))
+	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
 
 	
@@ -96,7 +25,7 @@ local Style = function(self, unit)
 	Shade:SetSize(unpack(config.shade.size))
 	Shade:SetPoint(unpack(config.shade.position))
 	Shade:SetTexture(config.shade.texture)
-	Shade:SetVertexColor(config.shade.color)
+	Shade:SetVertexColor(unpack(config.shade.color))
 
 	local Backdrop = self:CreateTexture(nil, "BORDER")
 	Backdrop:SetSize(unpack(config.backdrop.texture_size))
@@ -127,7 +56,8 @@ local Style = function(self, unit)
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
 	Health.frequent = 1/120
-	Health.PostUpdate = postUpdateHealth
+	Health.PostUpdate = Library.PostUpdateHealth
+	Health.useClassColor = true
 
 	
 	-- Power
@@ -263,17 +193,13 @@ local Style = function(self, unit)
 	self.PortraitBorderHighlight = PortraitBorderHighlight
 	self.PortraitGlow = PortraitGlow
 
-	self:HookScript("OnEnter", UpdateLayers)
-	self:HookScript("OnLeave", UpdateLayers)
+	self:HookScript("OnEnter", Library.UpdateLayers)
+	self:HookScript("OnLeave", Library.UpdateLayers)
 	
 end
 
 UnitFrameWidget.OnEnable = function(self)
-	local config = Module:GetDB("UnitFrames").visuals.units.focus
-	local db = Module:GetConfig("UnitFrames") 
-
-	self.UnitFrame = UnitFrame:New("focus", Engine:GetFrame(), Style) 
-
+	self.UnitFrame = UnitFrame:New("focus", Engine:GetFrame(), Style)
 end
 
 UnitFrameWidget.GetFrame = function(self)

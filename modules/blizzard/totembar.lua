@@ -4,10 +4,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: TotemBar")
 
 Module.OnInit = function(self)
-	if not MultiCastActionBarFrame then
-		return
-	end
-
 	local config = self:GetDB("Blizzard").totembar
 
 	local point, anchor, rpoint, x, y = unpack(config.position)

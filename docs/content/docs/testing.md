@@ -38,13 +38,14 @@ Runs every `tests/test_*.lua` file under plain Lua 5.1 with fake WoW API
 globals, and prints a `Ran N tests in Xs, N successes, 0 failures` line per
 file. The script exits non-zero if any file failed.
 
-The suite has three layers:
+The suite has four layers:
 
 | Layer | Files | Catches |
 |---|---|---|
 | Whole addon | `test_addon_loads.lua` | The addon loaded like the client does: `DiabolicUI.toc`, then every `<Include>`/`<Script>` in order, with the real engine and the minimap module's Ace3 libraries. Also fails on an XML entry pointing at a missing file, or a `.lua` file nothing loads. |
-| Every file | `test_all_modules_load.lua`, `test_no_global_leaks.lua`, `test_locales.lua` | Each `handlers/` and `modules/` file loaded on its own against a mock Engine (found on disk, no list to maintain); accidental globals; translation keys that don't exist in English. |
-| Behaviour | the other `test_*.lua` files | Real functions called with fake frames and a scripted game state: the engine's lifecycle, events, combat queue and saved profiles; unit frame elements; raid dispel list; tracker fade; taxi button; chat, tooltip and capture bar logic; data helpers. |
+| Every file | `test_all_modules_load.lua`, `test_no_global_leaks.lua`, `test_locales.lua`, `test_wotlk_globals.lua`, `test_api_usage.lua` | Each `handlers/` and `modules/` file loaded on its own against a mock Engine (found on disk, no list to maintain); accidental globals; translation keys that don't exist in English; typos (undefined lowercase globals); UI strings, events and API that 3.3.5 doesn't have. |
+| Behaviour | the other `test_*.lua` files | Real functions called with fake frames and a scripted game state: the engine's lifecycle, events, combat queue and saved profiles; unit frame elements (health, power, runes, ...); raid dispel list and layout; bar and orb layout; action button usability, artwork and combat lockdown; tracker fade; taxi button; chat, tooltip and capture bar logic; data helpers. |
+| Sessions | `test_session_*.lua` | The whole addon booted in a fake 3.3.5 client (`tests/mocks/client*.lua`), then played: logging in, events, time passing, hovering, clicking, entering combat, saved variables across a reload. Covers the unit frames, nameplates, tooltips, minimap, objectives, Blizzard skins, chat and the options pages as the player sees them. |
 
 `tests/README.md` explains the mocking approach and its pitfalls in detail.
 Read it before writing a new test.
@@ -56,10 +57,18 @@ tests/coverage/run.sh            # summary per area, full table in tests/coverag
 tests/coverage/run.sh --readme   # also refresh the coverage table in README.adoc
 ```
 
+The test files run in parallel, one per CPU (set `JOBS` to change that).
+The session tests are the slow ones under the line hook: expect a few
+minutes for the whole run.
+
 The coverage tool is part of the repo (`tests/coverage/hook.lua` and
 `report.lua`) and needs nothing beyond Lua 5.1 and `luac5.1`. It records
 which lines run through a debug hook, and counts a line as executable when
-`luac5.1 -l` shows the compiler emitted code for it.
+`luac5.1 -l` shows the compiler emitted code for it, except jumps that can
+never run: the jump back after a `for ... in` loop's TFORLOOP, and a jump
+right after a `return` that nothing jumps to. A test
+file that crashes Lua under the hook (it happens now and then on a busy
+machine) is run once more.
 
 Read the numbers with care. Loading the whole addon runs every file's top
 level, so data, settings and locale files are close to 100% just from being
@@ -68,6 +77,17 @@ reflect tested behaviour: most of those lines sit inside functions that only
 a behaviour test reaches.
 
 ## Writing a new test
+
+For behaviour a player would see, start from a session test: boot the fake
+client (`Client.boot`, with `world` to set the game up and
+`savedVariables` for settings), drive it (`FireEvent`, `Tick`, `Hover`,
+`Click`, `EnterCombat`, `SetUnit`) and check frames, texts and settings.
+End each test with `Session.assertClean(client)`, which fails on any Lua
+error or blocked action the client recorded. The fake client follows the
+3.3.5 FrameXML: when it lacks a frame or function the addon needs, add it
+the way the real client has it.
+
+For a single function:
 
 1. Pick a function whose inputs and outputs you can fake: WoW API calls
    answered from a small table, frames replaced by tables recording the
@@ -83,9 +103,10 @@ a behaviour test reaches.
 
 ## What the suite can't catch
 
-- Whether a frame is positioned where you meant it to be.
 - Whether a texture actually looks right at the size it's stretched to.
-- Whether a click handler fires correctly on a real, live Blizzard widget.
+- How the real client differs from the fake one: Blizzard's own code is
+  only imitated where the addon touches it, so a click handler can still
+  behave differently on a live Blizzard widget.
 - Timing-dependent bugs (a value not yet populated by the client when your
   code reads it).
 

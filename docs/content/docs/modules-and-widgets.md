@@ -83,10 +83,6 @@ example of the pattern in the wild: `ChatWindows` bails on
 same job, rather than fighting it. `modules/nameplates/nameplates.lua` does
 the same for half a dozen other nameplate addons.
 
-`Engine:SetDependency`/`self:DependencyFailed()` is the mirror-image
-mechanism for a *required* dependency instead of a conflicting one, checked
-the same way.
-
 ## Modules vs. Handlers, one more time
 
 If you're adding a new **feature**, it's a module. If you're adding

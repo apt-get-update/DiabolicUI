@@ -3,18 +3,14 @@
 -- action, pet, stance, spell, item or macro slot, and this file keeps them all
 -- updated: icons, cooldowns, counts, range and usability coloring, keybind
 -- text, grid visibility while dragging, and tooltips.
-local ADDON, Engine = ...
+local _, Engine = ...
 local Handler = Engine:NewHandler("ActionButton")
 
 -- Lua API
 local _G = _G
-local ipairs = ipairs
 local pairs = pairs
 local select = select
 local setmetatable = setmetatable
-local string_match = string.match
-local table_insert = table.insert
-local table_remove = table.remove
 local tonumber = tonumber
 local tostring = tostring
 local unpack = unpack
@@ -23,53 +19,24 @@ local unpack = unpack
 local AutoCastShine_AutoCastStart = _G.AutoCastShine_AutoCastStart
 local AutoCastShine_AutoCastStop = _G.AutoCastShine_AutoCastStop
 local CreateFrame = _G.CreateFrame
-local FindSpellBookSlotBySpellID = _G.FindSpellBookSlotBySpellID
 local GetActionCooldown = _G.GetActionCooldown
 local GetActionCount = _G.GetActionCount
-local GetActionInfo = _G.GetActionInfo
-local GetActionText = _G.GetActionText
 local GetActionTexture = _G.GetActionTexture
-local GetItemCooldown = _G.GetItemCooldown
-local GetItemCount = _G.GetItemCount
-local GetItemIcon = _G.GetItemIcon
-local GetItemInfo = _G.GetItemInfo
-local GetMacroInfo = _G.GetMacroInfo
-local GetMacroSpell = _G.GetMacroSpell
 local GetPetActionCooldown = _G.GetPetActionCooldown
 local GetPetActionInfo = _G.GetPetActionInfo
 local GetPetActionsUsable = _G.GetPetActionsUsable
 local GetShapeshiftFormCooldown = _G.GetShapeshiftFormCooldown
 local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetSpellCharges = _G.GetSpellCharges
-local GetSpellCooldown = _G.GetSpellCooldown
-local GetSpellCount = _G.GetSpellCount
-local GetSpellTexture = _G.GetSpellTexture
 local HasAction = _G.HasAction
 local InCombatLockdown = _G.InCombatLockdown
 local IsActionInRange = _G.IsActionInRange
 local IsAttackAction = _G.IsAttackAction
-local IsAttackSpell = _G.IsAttackSpell
 local IsAutoRepeatAction = _G.IsAutoRepeatAction
-local IsAutoRepeatSpell = _G.IsAutoRepeatSpell
 local IsCurrentAction = _G.IsCurrentAction
 local IsConsumableAction = _G.IsConsumableAction
-local IsConsumableItem = _G.IsConsumableItem
-local IsConsumableSpell = _G.IsConsumableSpell
-local IsCurrentItem = _G.IsCurrentItem
-local IsCurrentSpell = _G.IsCurrentSpell
-local IsEquippedAction = _G.IsEquippedAction
-local IsEquippedItem = _G.IsEquippedItem
-local IsFlying = _G.IsFlying
-local IsInInstance = _G.IsInInstance
-local IsItemAction = _G.IsItemAction
-local IsItemInRange = _G.IsItemInRange
-local IsSpellInRange = _G.IsSpellInRange
 local IsStackableAction = _G.IsStackableAction
 local IsUsableAction = _G.IsUsableAction
-local IsUsableItem = _G.IsUsableItem
-local IsUsableSpell = _G.IsUsableSpell
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitOnTaxi = _G.UnitOnTaxi
 
 -- Will replace these with our custom tooltiplib later on!
 local GameTooltip = _G.GameTooltip 
@@ -77,13 +44,10 @@ local GameTooltip = _G.GameTooltip
 -- Registries
 local ButtonRegistry = {} -- all buttons
 local ActiveButtons = {} -- currently active buttons
-local ActionButtons = {} -- buttons that currently hold an action
-local NonActionButtons = {} -- buttons that don't hold an action (spell, macro, etc)
+local ActionButtons = {} -- action and stance buttons that currently hold an action
 
--- Blizzard textures needed
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
-local EMPTY_SLOT = [[Interface\Buttons\UI-Quickslot]]
-local FILLED_SLOT = [[Interface\Buttons\UI-Quickslot2]]
+-- Stacks above this show as "*"
+local MAX_DISPLAY_COUNT = 9999
 
 -- Timer values for range and flash updates
 local FLASH_TIMER = 0
@@ -93,12 +57,6 @@ local RANGE_TIMER = -1
 -- We're using this to correcly fire the show/hide grid functions when holding the modifiers, 
 -- without destroying the normal show/hide behaviour of the button grids.
 local MODIFIERS_DOWN = false
-
--- Tracking whether or not the player is currently flying
-local IS_FLYING = nil
-
--- Tracking whether or not the player is in an instance
-local INSTANCE = IsInInstance()
 
 
 -- Button Prototypes
@@ -112,35 +70,15 @@ local ActionButton_MT = { __index = ActionButton }
 local PetActionButton = setmetatable({}, { __index = Button })
 local PetActionButton_MT = { __index = PetActionButton }
 
-local SpellButton = setmetatable({}, { __index = Button })
-local SpellButton_MT = { __index = SpellButton }
-
-local ItemButton = setmetatable({}, { __index = Button })
-local ItemButton_MT = { __index = ItemButton }
-
-local MacroButton = setmetatable({}, { __index = Button })
-local MacroButton_MT = { __index = MacroButton }
-
-local CustomButton = setmetatable({}, { __index = Button })
-local CustomButton_MT = { __index = CustomButton }
-
-local ExtraButton = setmetatable({}, { __index = Button })
-local ExtraButton_MT = { __index = ExtraButton }
-
 local StanceButton = setmetatable({}, { __index = Button })
 local StanceButton_MT = { __index = StanceButton }
 
--- button type meta mapping 
--- *types are the same as used by the secure templates
+-- button type meta mapping: the types the bars use (the same names as the
+-- secure templates' button types)
 local button_type_meta_map = {
 	empty = Button_MT,
 	action = ActionButton_MT,
 	pet = PetActionButton_MT,
-	spell = SpellButton_MT,
-	item = ItemButton_MT,
-	macro = MacroButton_MT,
-	custom = CustomButton_MT,
-	extra = ExtraButton_MT,
 	stance = StanceButton_MT
 }
 
@@ -153,17 +91,12 @@ local colors = {
 	-- icon coloring
 	usable 				= { 1, 1, 1 }, -- normal icons
 	unusable 			= { .3, .3, .3 }, -- used when icons can't be desaturated
-	outOfRange 			= { 1, 0, 0 }, -- spell target is out of range (too far / too close) -- C.Status.OutOfRange
-	outOfMana 			= { 77/255, 77/255, 179/255 }, -- player has too little mana -- C.Status.OutOfMana
+	outOfRange 			= { 1, 0, 0 }, -- spell target is out of range (too far / too close)
+	outOfMana 			= { 77/255, 77/255, 179/255 }, -- player has too little mana
 
 	-- button texts
-	stackText 			= { 1, 1, 1, 1 },
-	nameText 			= { 1, 1, 1, 1 },
 	keyText 			= { 1, 1, 1, 1 },
-	keyTextDisabled 	= { .3 + .5*73/255, .3 + .5*25/255, .3 + .5*9/255 }, -- C.Status.Dead
-
-	-- cooldown counters
-	cooldownText = {}
+	keyTextDisabled 	= { .3 + .5*73/255, .3 + .5*25/255, .3 + .5*9/255 } -- C.Status.Dead
 }
 
 -- Button frequent update handler (range, flash)
@@ -195,11 +128,11 @@ local OnUpdate = function(self, elapsed)
 		end
 
 		if (FLASH_TIMER <= 0) then
-			FLASH_TIMER = .4 -- FLASH_TIMER + .4 -- ATTACK_BUTTON_FLASH_TIME (0.4)
+			FLASH_TIMER = .4 -- ATTACK_BUTTON_FLASH_TIME
 		end
 
 		if (RANGE_TIMER <= 0) then
-			RANGE_TIMER = .2 -- .05 -- TOOLTIP_UPDATE_TIME (0.2)
+			RANGE_TIMER = .2 -- TOOLTIP_UPDATE_TIME
 		end
 	end
 end
@@ -223,14 +156,6 @@ local WaitForUpdates = function(self, elapsed)
 		self:SetScript("OnUpdate", OnUpdate)
 		self.scheduleUpdate = nil
 	end
-end
-
-
--- Utility Functions
---------------------------------------------------------------------
--- Item Button API mapping
-local getItemId = function(input) 
-	return input:match("^item:(%d+)") 
 end
 
 
@@ -271,15 +196,7 @@ Button.UpdateGrid = function(self)
 		showGrid = true
 	end
 
-	if self.PreUpdateGrid then
-		self:PreUpdateGrid(showGrid)
-	end	
-
 	self:SetAlpha(showGrid and 1 or 0)
-
-	if self.PostUpdateGrid then
-		return self:PostUpdateGrid(showGrid)
-	end	
 end
 
 -- Called when a show grid event is fired, 
@@ -300,11 +217,9 @@ end
 Button.UpdateTexture = function(self)
 	local texture = self:GetTexture()
 	if texture then
-		if (texture ~= self.icon:GetTexture()) then
-			self.icon:SetTexture(texture)
-			self.icon:Show()
-			self.keybind:SetVertexColor(unpack(colors.keyText))
-		end
+		self.icon:SetTexture(texture)
+		self.icon:Show()
+		self.keybind:SetVertexColor(unpack(colors.keyText))
 	else
 		self.icon:Hide()
 		self.cooldown:Hide()
@@ -316,19 +231,13 @@ Button.Update = function(self)
 	if self:HasAction() then
 		ActiveButtons[self] = true
 		
-		if (self.type_by_state == "action") then
-			ActionButtons[self] = true
-			NonActionButtons[self] = nil
-		
-		elseif (self.type_by_state == "pet") then
+		if (self.type_by_state == "pet") then
 			ActionButtons[self] = nil
-			NonActionButtons[self] = nil
 
 			local name, subtext, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
 		
 			-- needed for tooltip functionality
-			self.tooltipName = isToken and _G[name] or name -- :GetActionText() also returns this
-			self.isToken = isToken
+			self.tooltipName = isToken and _G[name] or name
 			self.tooltipSubtext = subtext
 			
 			if autoCastAllowed then
@@ -344,12 +253,9 @@ Button.Update = function(self)
 				AutoCastShine_AutoCastStop(self.autocast)
 			end
 
-		elseif (self.type_by_state == "stance") then
-			ActionButtons[self] = true -- good idea? bad?
-			NonActionButtons[self] = nil
 		else
-			ActionButtons[self] = nil
-			NonActionButtons[self] = true
+			-- (only action, pet and stance buttons ever hold an action)
+			ActionButtons[self] = true
 		end
 
 		self.icon:Show()
@@ -364,12 +270,8 @@ Button.Update = function(self)
 	else
 		ActiveButtons[self] = nil
 		ActionButtons[self] = nil
-		NonActionButtons[self] = nil
 
 		if (self.type_by_state == "pet") then
-			ActionButtons[self] = nil
-			NonActionButtons[self] = nil
-
 			self.autocastable:Hide()
 			AutoCastShine_AutoCastStop(self.autocast)
 
@@ -381,23 +283,11 @@ Button.Update = function(self)
 
 		self:SetChecked(false)
 	end
-	
-	local texture = self:GetTexture()
-	if texture then
-		self.icon:SetTexture(texture)
-		self.icon:Show()
-		self.keybind:SetVertexColor(unpack(colors.keyText))
-	else
-		self.icon:Hide()
-		self.cooldown:Hide()
-		self.keybind:SetVertexColor(unpack(colors.keyTextDisabled))
-	end
-	
+
 	self:UpdateTexture()
 	self:UpdateBindings()
 	self:UpdateGrid()
 	self:UpdateCount()
-
 
 	if (GameTooltip:GetOwner() == self) then
 		UpdateTooltip(self)
@@ -435,35 +325,12 @@ end
 
 -- assign a type and an action to a button for the given state
 Button.SetStateAction = function(self, button_state, button_type, button_action)
-	if (not button_state) then 
-		button_state = self.header:GetAttribute("state") 
-	end
 	button_state = tostring(button_state)
-	if (not button_type) then 
-		button_type = "empty" 
-	end
-	if (button_type == "item") then
-		if tonumber(button_action) then
-			button_action = format("item:%s", button_action)
-		else
-			local itemString = string_match(button_action, "^|c%x+|H(item[%d:]+)|h%[")
-			if itemString then
-				button_action = itemString
-			end
-		end
-	end
-
 	self._type_by_state[button_state] = button_type
 	self._action_by_state[button_state] = button_action
 	
 	self:SetAttribute(format("type-by-state-%s", button_state), button_type)
 	self:SetAttribute(format("action-by-state-%s", button_state), button_action)
-end
-
-Button.PreClick = function(self)
-end
-
-Button.PostClick = function(self)
 end
 
 Button.OnEnter = function(self)
@@ -520,25 +387,10 @@ Button.UpdateChecked = function(self)
 	end	
 end
 
+-- The button template's OverrideBindingKey writes the binding text
+-- (shortened, see modules/actionbars/elements/artwork.lua).
 Button.UpdateBindings = function(self)
-	-- Allow the user to completely override this method
-	-- Use this for custom or abbreviated keybinds
-	if self.OverrideBindingKey then
-		return self:OverrideBindingKey((self:GetKeyBind() or ""))
-	end 
-
-	-- Set to the default blizzard keybind text
-	local keybind = self.keybind
-	if keybind then
-		keybind:SetText((self:GetKeyBind() or ""))
-		keybind:Show()
-	end
-
-	-- The postupdate is only meant for other visuals, 
-	-- not to affect the actual binding text.
-	if self.PostUpdateBindings then
-		return self:PostUpdateBindings()
-	end
+	return self:OverrideBindingKey((self:GetKeyBind() or ""))
 end
 
 Button.GetKeyBind = function(self)
@@ -550,37 +402,31 @@ Button.SetBindingAction = function(self, keybindAction)
 end
 
 -- updates whether or not the button is usable
-Button.UpdateUsable = function(self, updateType, ...)
-	if self.OverrideUsable then
-		return self:OverrideUsable(updateType, ...)
-	end
-
+Button.UpdateUsable = function(self, updateType)
 	-- Speed!
 	local colors = colors
 	local icon = self.icon
 
 	local isUsable, notEnoughMana = self:IsUsable()
 	local previousUsableState = self.usableState
-	local cooldown = self:GetCooldown() 
 
 	-- Values we pass on to PostUpdate
 	local canDesaturate, usableState
+	-- (IsUsableAction reports "not enough mana" as not usable, so it's checked first)
 	if UnitIsDeadOrGhost("player") then
 		usableState = "taxi"
+	elseif notEnoughMana then
+		usableState = "mana"
 	elseif (not isUsable) then
 		usableState = "unusable"
 	elseif (self.outOfRange or not(self:IsInRange())) then
 		usableState = "range"
-	elseif isUsable then
-		usableState = "usable"
-	elseif (notEnoughMana) then 
-		usableState = "mana"
 	else
-		usableState = "unusable"
+		usableState = "usable"
 	end
 
 	-- bail out of nothing actually has changed
-	if (previousUsableState == usableState) and (not forced) then 
+	if (previousUsableState == usableState) and (updateType ~= "forced") then 
 		return
 	end
 
@@ -627,20 +473,6 @@ Button.UpdateUsable = function(self, updateType, ...)
 	end	
 end
 
-Button.OnSecondaryCooldownDone = function(self)
-	self:SetScript("OnCooldownDone", nil)
-	self:GetParent():UpdateCooldown()
-end
-
-Button.OnCooldownDone = function(self)
-	self:SetScript("OnCooldownDone", nil)
-
-	-- Avoid the shine effect for very short cooldowns (global cooldown, etc)
-	if (self.cooldownDuration) and (self.cooldownDuration >= 2) then
-		self.shine:Start()
-	end
-end
-
 -- Updates the cooldown of a button
 Button.UpdateCooldown = function(self)
 	local start, duration, enable = self:GetCooldown()
@@ -662,16 +494,11 @@ Button.StopFlash = function(self)
 end
 
 Button.UpdateFlash = function(self)
-	local action = self.action_by_state
 	if (self:IsAttack() and self:IsCurrentlyActive()) or self:IsAutoRepeat() then
 		self:StartFlash()
 	else
 		self:StopFlash()
 	end
-end
-
-Button.IsFlashing = function(self)
-	return (self.flashing == 1)
 end
 
 Button.UpdateCount = function(self)
@@ -681,18 +508,13 @@ Button.UpdateCount = function(self)
 	end
 	if self:IsConsumableOrStackable() then
 		local count = self:GetCount()
-		if count > (self.maxDisplayCount or 9999) then
+		if count > MAX_DISPLAY_COUNT then
 			self.stack:SetText("*")
 		else
 			self.stack:SetText(count)
 		end
 	else
-		local charges, maxCharges, chargeStart, chargeDuration = self:GetCharges()
-		if charges and maxCharges and (maxCharges > 1) and (charges > 0) then
-			self.stack:SetText(charges)
-		else
-			self.stack:SetText("")
-		end
+		self.stack:SetText("")
 	end
 end
 
@@ -702,123 +524,40 @@ end
 
 --- Generic Button API mapping
 Button.HasAction						= function(self) return nil end
-Button.GetActionText					= function(self) return "" end
 Button.GetTexture						= function(self) return nil end
-Button.GetCharges						= function(self) return nil end
 Button.GetCount							= function(self) return 0 end
 Button.GetCooldown						= function(self) return 0, 0, 0 end
 Button.IsAttack							= function(self) return nil end
-Button.IsEquipped						= function(self) return nil end
 Button.IsCurrentlyActive				= function(self) return nil end
 Button.IsAutoRepeat						= function(self) return nil end
 Button.IsUsable							= function(self) return nil end
 Button.IsConsumableOrStackable 			= function(self) return nil end
-Button.IsUnitInRange					= function(self, unit) return nil end
+Button.GetRangeCheck					= function(self) return nil end -- 1 in range, 0 out of it, nil no range
 Button.IsInRange						= function(self)
-	local unit = self:GetAttribute("unit")
-	if (unit == "player") then
-		unit = nil
-	end
-	local val = self:IsUnitInRange(unit)
-	
-	-- map 1/0 to true false, since the return values are inconsistent between actions and spells
-	if val == 1 then val = true elseif val == 0 then val = false end
-	
-	-- map nil to true, to avoid marking spells with no range as out of range
-	if val == nil then val = true end
-
-	return val
+	-- (no range counts as in range)
+	return self:GetRangeCheck() ~= 0
 end
 Button.SetTooltip						= function(self) return nil end
-Button.GetSpellId						= function(self) return nil end
-Button.GetLossOfControlCooldown 		= function(self) return 0, 0 end
 
 -- Action Button API mapping
 ActionButton.HasAction					= function(self) return HasAction(self.action_by_state) end
-ActionButton.GetActionText				= function(self) return GetActionText(self.action_by_state) end
 ActionButton.GetTexture					= function(self) return GetActionTexture(self.action_by_state) end
-ActionButton.GetCharges					= function(self) return nil end
 ActionButton.GetCount					= function(self) return GetActionCount(self.action_by_state) end
 ActionButton.GetCooldown				= function(self) return GetActionCooldown(self.action_by_state) end
 ActionButton.IsAttack					= function(self) return IsAttackAction(self.action_by_state) end
-ActionButton.IsEquipped					= function(self) return IsEquippedAction(self.action_by_state) end
 ActionButton.IsCurrentlyActive			= function(self) return IsCurrentAction(self.action_by_state) end
 ActionButton.IsAutoRepeat				= function(self) return IsAutoRepeatAction(self.action_by_state) end
 ActionButton.IsUsable					= function(self) return IsUsableAction(self.action_by_state) end
 ActionButton.IsConsumableOrStackable	= function(self) return IsConsumableAction(self.action_by_state) or IsStackableAction(self.action_by_state) end
-ActionButton.IsUnitInRange				= function(self, unit) return IsActionInRange(self.action_by_state, unit) end
+ActionButton.GetRangeCheck				= function(self) return IsActionInRange(self.action_by_state) end
 ActionButton.SetTooltip					= function(self) return GameTooltip:SetAction(self.action_by_state) end
-ActionButton.GetSpellId					= function(self)
-	local actionType, id, subType = GetActionInfo(self.action_by_state)
-	if (actionType == "spell") then
-		return id
-	elseif (actionType == "macro") then
-		local _, _, spellId = GetMacroSpell(id)
-		return spellId
-	end
-end
 
-
--- Spell Button API mapping
-SpellButton.HasAction					= function(self) return true end
-SpellButton.GetActionText				= function(self) return "" end
-SpellButton.GetTexture					= function(self) return GetSpellTexture(self.action_by_state) end
-SpellButton.GetCharges					= function(self) return GetSpellCharges(self.action_by_state) end
-SpellButton.GetCount					= function(self) return GetSpellCount(self.action_by_state) end
-SpellButton.GetCooldown					= function(self) return GetSpellCooldown(self.action_by_state) end
-SpellButton.IsAttack					= function(self) return IsAttackSpell(FindSpellBookSlotBySpellID(self.action_by_state), "spell") end -- needs spell book id as of 4.0.1.13066
-SpellButton.IsEquipped					= function(self) return nil end
-SpellButton.IsCurrentlyActive			= function(self) return IsCurrentSpell(self.action_by_state) end
-SpellButton.IsAutoRepeat				= function(self) return IsAutoRepeatSpell(FindSpellBookSlotBySpellID(self.action_by_state), "spell") end -- needs spell book id as of 4.0.1.13066
-SpellButton.IsUsable					= function(self) return IsUsableSpell(self.action_by_state) end
-SpellButton.IsConsumableOrStackable		= function(self) return IsConsumableSpell(self.action_by_state) end
-SpellButton.IsUnitInRange				= function(self, unit) return IsSpellInRange(FindSpellBookSlotBySpellID(self.action_by_state), "spell", unit) end -- needs spell book id as of 4.0.1.13066
-SpellButton.SetTooltip					= function(self) return GameTooltip:SetSpellByID(self.action_by_state) end
-SpellButton.GetSpellId					= function(self) return self.action_by_state end
-
-
-ItemButton.HasAction					= function(self) return true end
-ItemButton.GetActionText				= function(self) return "" end
-ItemButton.GetTexture					= function(self) return GetItemIcon(self.action_by_state) end
-ItemButton.GetCharges					= function(self) return nil end
-ItemButton.GetCount						= function(self) return GetItemCount(self.action_by_state, nil, true) end
-ItemButton.GetCooldown					= function(self) return GetItemCooldown(getItemId(self.action_by_state)) end
-ItemButton.IsAttack						= function(self) return nil end
-ItemButton.IsEquipped					= function(self) return IsEquippedItem(self.action_by_state) end
-ItemButton.IsCurrentlyActive			= function(self) return IsCurrentItem(self.action_by_state) end
-ItemButton.IsAutoRepeat					= function(self) return nil end
-ItemButton.IsUsable						= function(self) return IsUsableItem(self.action_by_state) end
-ItemButton.IsConsumableOrStackable		= function(self) 
-	local stackSize = select(8, GetItemInfo(self.action_by_state)) -- salvage crates and similar don't register as consumables
-	return IsConsumableItem(self.action_by_state) or (stackSize and (stackSize > 1))
-end
-ItemButton.IsUnitInRange				= function(self, unit) return IsItemInRange(self.action_by_state, unit) end
-ItemButton.SetTooltip					= function(self) return GameTooltip:SetHyperlink(self.action_by_state) end
-ItemButton.GetSpellId					= function(self) return nil end
-
-
---- Macro Button API mapping
-MacroButton.HasAction					= function(self) return true end
-MacroButton.GetActionText				= function(self) return (GetMacroInfo(self.action_by_state)) end
-MacroButton.GetTexture					= function(self) return (select(2, GetMacroInfo(self.action_by_state))) end
-MacroButton.GetCharges					= function(self) return nil end
-MacroButton.GetCount					= function(self) return 0 end
-MacroButton.GetCooldown					= function(self) return 0, 0, 0 end
-MacroButton.IsAttack					= function(self) return nil end
-MacroButton.IsEquipped					= function(self) return nil end
-MacroButton.IsCurrentlyActive			= function(self) return nil end
-MacroButton.IsAutoRepeat				= function(self) return nil end
-MacroButton.IsUsable					= function(self) return nil end
-MacroButton.IsConsumableOrStackable		= function(self) return nil end
-MacroButton.IsUnitInRange				= function(self, unit) return nil end
-MacroButton.SetTooltip					= function(self) return nil end
-MacroButton.GetSpellId					= function(self) return nil end
 
 --- Pet Button
 PetActionButton.HasAction				= function(self) return GetPetActionInfo(self.id) end
 PetActionButton.GetCooldown				= function(self) return GetPetActionCooldown(self.id) end
 PetActionButton.IsCurrentlyActive		= function(self) return select(5, GetPetActionInfo(self.id)) end
-PetActionButton.IsAutoRepeat			= function(self) return nil end -- select(7, GetPetActionInfo(self.id))
+PetActionButton.IsAutoRepeat			= function(self) return nil end
 PetActionButton.SetTooltip				= function(self) 
 	if (not self.tooltipName) then
 		return
@@ -827,21 +566,15 @@ PetActionButton.SetTooltip				= function(self)
 	GameTooltip:SetText(self.tooltipName, 1.0, 1.0, 1.0)
 
 	if self.tooltipSubtext then
-		GameTooltip:AddLine(self.tooltipSubtext, "", 0.5, 0.5, 0.5)
+		GameTooltip:AddLine(self.tooltipSubtext, 0.5, 0.5, 0.5)
 	end
 
-	-- We need an extra :Show(), or the tooltip will get the wrong height if it has a subtext
-	return GameTooltip:Show() 
-
-	-- This isn't good enough, as it don't work for the generic attack/defense and so on
-	--return GameTooltip:SetPetAction(self.id) 
+	-- We need an extra :Show(), or the tooltip will get the wrong height if it has a subtext.
+	-- (Not GameTooltip:SetPetAction: it doesn't work for the generic attack, defend and so on.)
+	return GameTooltip:Show()
 end
 PetActionButton.IsAttack				= function(self) return nil end
 PetActionButton.IsUsable				= function(self) return GetPetActionsUsable() end
-PetActionButton.GetActionText			= function(self)
-	local name, _, _, isToken = GetPetActionInfo(self.id)
-	return isToken and _G[name] or name
-end
 PetActionButton.GetTexture				= function(self)
 	local _, _, texture, isToken = GetPetActionInfo(self.id)
 	return isToken and _G[texture] or texture
@@ -850,27 +583,15 @@ end
 --- Stance Button
 StanceButton.HasAction 					= function(self) return GetShapeshiftFormInfo(self.id) end
 StanceButton.GetCooldown 				= function(self) return GetShapeshiftFormCooldown(self.id) end
-StanceButton.GetActionText 				= function(self) return select(2,GetShapeshiftFormInfo(self.id)) end
 StanceButton.GetTexture 				= function(self) return GetShapeshiftFormInfo(self.id) end
 StanceButton.IsCurrentlyActive 			= function(self) return select(3,GetShapeshiftFormInfo(self.id)) end
 StanceButton.IsUsable 					= function(self) return select(4,GetShapeshiftFormInfo(self.id)) end
 StanceButton.SetTooltip					= function(self) return GameTooltip:SetShapeshift(self.id) end
 
 
--- returns an iterator containing button frame handles as keys
-Handler.GetAll = function(self)
-	return pairs(ButtonRegistry)
-end
-
 Handler.OnEvent = function(self, event, ...)
 	local arg1 = ...
 
-	--if (event == "UNIT_INVENTORY_CHANGED" and arg1 == "player") 
-	--or (event == "LEARNED_SPELL_IN_TAB") then
-		-- local tooltipOwner = GameTooltip:GetOwner()
-		-- if ButtonRegistry[tooltipOwner] then
-			-- tooltipOwner:SetTooltip()
-		-- end
 
 	if (event == "ACTIONBAR_SLOT_CHANGED") then
 		for button in next, ButtonRegistry do
@@ -892,15 +613,12 @@ Handler.OnEvent = function(self, event, ...)
 			end
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") or (event == "UPDATE_VEHICLE_ACTIONBAR") then
-		local INSTANCE = IsInInstance()
-
 		for button in next, ButtonRegistry do
 			if (button:IsShown()) then
 				button:Update()
 			end
 		end
-		
-	-- elseif event == "ACTIONBAR_PAGE_CHANGED" or event == "UPDATE_BONUS_ACTIONBAR" then
+
 	elseif (event == "ACTIONBAR_SHOWGRID") then
 		for button in next, ButtonRegistry do
 			if (button:IsShown()) and (button.type_by_state ~= "pet") then
@@ -940,9 +658,7 @@ Handler.OnEvent = function(self, event, ...)
 				button:UpdateBindings()
 			end
 		end
-		
-	elseif (event == "PLAYER_TARGET_CHANGED") then
-		
+
 	elseif (event == "ACTIONBAR_UPDATE_STATE") 
 	or ((event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and (arg1 == "player")) 
 	or ((event == "COMPANION_UPDATE") and (arg1 == "MOUNT")) then
@@ -960,34 +676,13 @@ Handler.OnEvent = function(self, event, ...)
 			button:UpdateUsable()
 		end
 		
-	elseif (event == "SPELL_UPDATE_USABLE") then
-		for button in next, NonActionButtons do
-			button:UpdateUsable()
-		end
-
-		-- for taxis?
-		--for button in next, ActionButtons do
-		--	button:UpdateUsable()
-		--end
-		
 	elseif (event == "UPDATE_SHAPESHIFT_COOLDOWN")
 	or (event == "ACTIONBAR_UPDATE_COOLDOWN") then
 		for button in next, ActionButtons do
 			button:UpdateCooldown()
 		end
-		
-	elseif (event == "SPELL_UPDATE_COOLDOWN") then
-		for button in next, NonActionButtons do
-			button:UpdateCooldown()
-		end
-		
-	elseif (event == "LOSS_OF_CONTROL_ADDED")
-	or (event == "LOSS_OF_CONTROL_UPDATE") then
-		for button in next, ActiveButtons do
-			button:UpdateCooldown()
-		end
-	
-	elseif (event == "TRADE_SKILL_SHOW") or (event == "TRADE_SKILL_CLOSE") or (event == "ARCHAEOLOGY_CLOSED") then
+
+	elseif (event == "TRADE_SKILL_SHOW") or (event == "TRADE_SKILL_CLOSE") then
 		for button in next, ActiveButtons do
 			button:UpdateChecked()
 		end
@@ -1024,26 +719,6 @@ Handler.OnEvent = function(self, event, ...)
 		for button in next, ButtonRegistry do
 			if (button:IsShown()) then
 				button:Update()
-			end
-		end
-	
-	elseif (event == "PLAYER_EQUIPMENT_CHANGED") then
-		for button in next, ActiveButtons do
-			if (button.type_by_state == "item") then
-				button:Update()
-			end
-		end
-	
-	elseif (event == "UPDATE_SUMMONPETS_ACTION") then
-		for button in next, ActiveButtons do
-			if (button.type_by_state == "action") then
-				local actionType, id = GetActionInfo(button.action_by_state)
-				if (actionType == "summonpet") then
-					local texture = GetActionTexture(button.action_by_state)
-					if texture then
-						button.icon:SetTexture(texture)
-					end
-				end
 			end
 		end
 	
@@ -1090,41 +765,20 @@ Handler.OnEvent = function(self, event, ...)
 			end
 		end
 
-	-- If an item is placed at the actionbars, 
-	-- we need to update its display when it changes in the bags. 
-	elseif (event == "BAG_UPDATE") then
-		for button in next, ActiveButtons do
-			if (button.type_by_state == "item") then
-				button:Update()
-			end
-		end
-	
-	-- In most cases this won't happen in combat, but better to be safe than sorry
-	elseif ((event == "CVAR_UPDATE") and ((arg1 == "ACTION_BUTTON_USE_KEY_DOWN") or (arg1 == "LOCK_ACTIONBAR_TEXT"))) then
+	-- Cast on key down or up. In most cases this won't happen in combat,
+	-- but better to be safe than sorry.
+	elseif ((event == "CVAR_UPDATE") and ((arg1 == "ACTION_BUTTON_USE_KEY_DOWN") or (arg1 == "LOCK_ACTIONBAR_TEXT")))
+	or (event == "PLAYER_REGEN_ENABLED") then
 		if InCombatLockdown() then
 			return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
-		end 
-
-		local cast_on_down = GetCVarBool("ActionButtonUseKeyDown")
-		for button in next, ButtonRegistry do
-			if cast_on_down then
-				button:RegisterForClicks("AnyDown")
-			else
-				button:RegisterForClicks("AnyUp")
-			end
 		end
-
-	elseif (event == "PLAYER_REGEN_ENABLED") then
-
-		local cast_on_down = GetCVarBool("ActionButtonUseKeyDown")
-		for button in next, ButtonRegistry do
-			if cast_on_down then
-				button:RegisterForClicks("AnyDown")
-			else
-				button:RegisterForClicks("AnyUp")
-			end
+		if (event == "PLAYER_REGEN_ENABLED") then
+			self:UnregisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
 		end
-		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
+		local clicks = GetCVarBool("ActionButtonUseKeyDown") and "AnyDown" or "AnyUp"
+		for button in next, ButtonRegistry do
+			button:RegisterForClicks(clicks)
+		end
 	end
 end
 
@@ -1137,15 +791,9 @@ Handler.LoadEvents = function(self)
 	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("ACTIONBAR_UPDATE_STATE", "OnEvent")
 	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE", "OnEvent")
-	self:RegisterEvent("ARCHAEOLOGY_CLOSED", "OnEvent")
-	self:RegisterEvent("BAG_UPDATE", "OnEvent") 
-	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("COMPANION_UPDATE", "OnEvent")
 	self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED", "OnEvent")
 	self:RegisterEvent("CVAR_UPDATE", "OnEvent") -- cast on up/down
-	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "OnEvent")
-	self:RegisterEvent("LOSS_OF_CONTROL_ADDED", "OnEvent")
-	self:RegisterEvent("LOSS_OF_CONTROL_UPDATE", "OnEvent")
 	self:RegisterEvent("MODIFIER_STATE_CHANGED", "OnEvent") -- to track modifier / grid display
 	self:RegisterEvent("PET_BAR_HIDEGRID", "OnEvent")
 	self:RegisterEvent("PET_BAR_SHOWGRID", "OnEvent")
@@ -1158,11 +806,7 @@ Handler.LoadEvents = function(self)
 	self:RegisterEvent("PLAYER_ENTER_COMBAT", "OnEvent")
 	self:RegisterEvent("PLAYER_LEAVE_COMBAT", "OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED", "OnEvent")
-	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
 	self:RegisterEvent("START_AUTOREPEAT_SPELL", "OnEvent")
 	self:RegisterEvent("STOP_AUTOREPEAT_SPELL", "OnEvent")
 	self:RegisterEvent("TRADE_SKILL_CLOSE", "OnEvent")
@@ -1170,18 +814,13 @@ Handler.LoadEvents = function(self)
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
 	self:RegisterEvent("UNIT_AURA", "OnEvent")
-	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
 	self:RegisterEvent("UNIT_PET", "OnEvent")
 	self:RegisterEvent("UPDATE_BINDINGS", "OnEvent")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN", "OnEvent")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORM", "OnEvent")
-	self:RegisterEvent("UPDATE_SUMMONPETS_ACTION", "OnEvent")
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
-
-
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN", "OnEvent")
-
 end
 
 Handler.Start = function(self, event)
@@ -1213,7 +852,7 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- the keybind functionality of the blizzard UI. >:(
 	local name
 	if (type(header.id) == "number") and (header.id > 0) then
-		local button_num = id > NUM_ACTIONBAR_BUTTONS and id%NUM_ACTIONBAR_BUTTONS or id -- better?
+		local button_num = id > NUM_ACTIONBAR_BUTTONS and id%NUM_ACTIONBAR_BUTTONS or id
 		local bar_num
 		if header.id == 1 then
 			bar_num = 1
@@ -1233,10 +872,6 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 		name = "EnginePetBarButton"..id
 	elseif (header.id == "vehicle") then
 		name = "EngineVehicleBarButton"..id
-	elseif (header.id == "extra") then
-		name = "EngineExtraBarButton"..id
-	elseif (header.id == "custom") then
-		name = "EngineCustomBarButton"..id
 	end
 	
 	local button
@@ -1253,11 +888,6 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 		button:UnregisterAllEvents()
 		button:SetScript("OnEvent", nil)
 		
-	--elseif (buttonType == "extra") then
-		--button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "ExtraActionButtonTemplate"), Button_MT)
-		--button:UnregisterAllEvents()
-		--button:SetScript("OnEvent", nil)
-	
 	else
 		button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "SecureActionButtonTemplate, ActionButtonTemplate"), Button_MT)
 		button:RegisterForDrag("LeftButton", "RightButton")
@@ -1276,11 +906,8 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	button.showgrid = 0 -- mostly used for pet and stance, but we're adding it in for all
 	button.hidegrid = header.hideGrid
 
-	-- Variables used for our own push/check/highlight textures
-	-- They are only listed here for semantic reasons
-	button._pushed = nil
-	button._checked = nil
-	button._highlighted = nil
+	-- (Our own checked and highlight looks are kept in button._checked
+	-- and button._highlighted.)
 
 	-- tables to hold the button type and button action, 
 	-- for the various states the button can have. 
@@ -1294,8 +921,6 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 
 	-- TODO: let the user control clicks and locks
 	button:SetAttribute("buttonlock", true)
-	button:SetAttribute("flyoutDirection", "UP")
-	button.action = 0 -- hack needed for the flyouts to not bug out
 
 	-- Drag N Drop Fuctionality, allow the user to pick up and drop stuff on the buttons! 
 	-- params:
@@ -1311,7 +936,6 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 			return
 		end
 		local action_by_state = self:GetAttribute(format("action-by-state-%s", button_state));
-		local type_by_state = self:GetAttribute(format("type-by-state-%s", button_state));
 		if action_by_state and (IsShiftKeyDown() and IsAltKeyDown() and IsControlKeyDown()) then
 			if self:GetAttribute("type") == "pet" then
 				return "petaction", action_by_state
@@ -1357,15 +981,9 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- We're doing these ourselves with our own system, 
 	-- so we simply blank out the ones existing
 	-- in the blizzard templates. 
-	if button.SetCheckedTexture then
-		button:SetCheckedTexture("")
-	end
-	if button.SetHighlightTexture then
-		button:SetHighlightTexture("")
-	end
-	if button.SetNormalTexture then
-		button:SetNormalTexture("")
-	end
+	button:SetCheckedTexture("")
+	button:SetHighlightTexture("")
+	button:SetNormalTexture("")
 
 	-- cooldown frame
 	-- stance and pet buttons have this in their template, I think
@@ -1416,9 +1034,6 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	button:SetScript("OnLeave", button.OnLeave)
 	button:SetScript("OnMouseDown", button.OnMouseDown)
 	button:SetScript("OnMouseUp", button.OnMouseUp)
-	button:SetScript("PreClick", button.PreClick)
-	button:SetScript("PostClick", button.PostClick)
-
 
 	-- This solves the checking for our custom textures
 	hooksecurefunc(button, "SetChecked", function(self)

@@ -23,7 +23,7 @@
 	SOFTWARE.
 
 --]]
-local Addon, ns = ...
+local _, ns = ...
 
 -- This module now loads as part of DiabolicUI's own .toc, so the second
 -- vararg every file receives is no longer a fresh private table - it's

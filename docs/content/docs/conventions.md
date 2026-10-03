@@ -22,12 +22,23 @@ later expansions. Write against the 3.3.5 API directly:
 | `frame:SetShown(flag)` | `if flag then frame:Show() else frame:Hide() end` |
 | `GameTooltip:IsForbidden()` | nothing: tooltips are never forbidden on 3.3.5 |
 | `UnitIsTapDenied(unit)` | `Engine.UnitIsTapDenied(unit)` |
+| `GROUP_ROSTER_UPDATE` | `PARTY_MEMBERS_CHANGED` and `RAID_ROSTER_UPDATE` |
+| `PLAYER_ENTERED_VEHICLE` (and entering/exiting/exited) | `UNIT_ENTERED_VEHICLE` with `unit == "player"` |
+| `local total, online = GetNumGuildMembers()` | one value; count `select(9, GetGuildRosterInfo(i))` over `GetNumGuildMembers(true)` |
+| `FriendsMicroButton`, `GuildMicroButton` | `SocialsMicroButton`; `ToggleFriendsFrame()`, `ToggleFriendsFrame(3)` for the guild tab |
 
-**Never add a missing API name to the global namespace.** Other addons
-check whether names like `GetNumGroupMembers` or `SOUNDKIT` exist to decide
-which client they're running on, and a backfill makes them take the wrong
-code path. If a small helper is genuinely shared, put it on the private
-`Engine` table in `engine/wotlk-helpers.lua`.
+**Never add a missing API name to the global namespace**, or to the frame
+methods every frame shares (`getmetatable(frame).__index`). Other addons
+check whether names like `GetNumGroupMembers`, `SOUNDKIT` or
+`frame.RegisterUnitEvent` exist to decide which client they're running on,
+and a backfill makes them take the wrong code path. If a small helper is
+genuinely shared, put it on the private `Engine` table in
+`engine/wotlk-helpers.lua`.
+
+**Events too.** Registering an event 3.3.5 doesn't have doesn't fail: the
+handler just never runs. `tests/test_api_usage.lua` fails on events,
+functions and frame methods known to come from later expansions, and on
+reads of lowercase globals nobody defines (typos, missing `local`s).
 
 **Watch for hidden dependencies.** A later-client function can seem to work
 only because another installed addon backfills it. `SetShown` did exactly

@@ -1,11 +1,7 @@
-local ADDON, Engine = ...
+local _, Engine = ...
 local Module = Engine:NewModule("NamePlates")
-local StatusBar = Engine:GetHandler("StatusBar")
-local AuraData = Engine:GetDB("Data: Auras")
 local C = Engine:GetDB("Data: Colors")
-local F = Engine:GetDB("Library: Format")
 local L = Engine:GetLocale()
-local AuraFunctions = Engine:GetDB("Library: AuraFunctions")
 local UICenter = Engine:GetFrame()
 
 -- Register incompatibilities
@@ -17,62 +13,31 @@ Module:SetIncompatible("TidyPlates")
 Module:SetIncompatible("TidyPlates_ThreatPlates")
 Module:SetIncompatible("TidyPlatesContinued")
 
--- Hack'ish manual disable switch.
--- Will be implemented as a user choice later.
---Module:SetIncompatible("DiabolicUI")
-
 -- Lua API
 local _G = _G
-local ipairs = ipairs
-local math_ceil = math.ceil
 local math_floor = math.floor
+local math_max = math.max
+local math_min = math.min
 local pairs = pairs
 local select = select
 local setmetatable = setmetatable
-local string_find = string.find
-local table_insert = table.insert
-local table_sort = table.sort
-local table_wipe = table.wipe
 local tonumber = tonumber
-local tostring = tostring
 local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
-local GetLocale = _G.GetLocale
-local GetRaidTargetIndex = _G.GetRaidTargetIndex
 local GetTime = _G.GetTime
 local GetQuestGreenRange = _G.GetQuestGreenRange
-local InCombatLockdown = _G.InCombatLockdown
 local SetCVar = _G.SetCVar
 local UnitCastingInfo = _G.UnitCastingInfo
 local UnitChannelInfo = _G.UnitChannelInfo
-local UnitClass = _G.UnitClass
-local UnitClassification = _G.UnitClassification
 local UnitExists = _G.UnitExists
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-local UnitHealth = _G.UnitHealth
-local UnitHealthMax = _G.UnitHealthMax
-local UnitIsEnemy = _G.UnitIsEnemy
-local UnitIsFriend = _G.UnitIsFriend
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsTapDenied = Engine.UnitIsTapDenied
-local UnitIsTrivial = _G.UnitIsTrivial
-local UnitIsUnit = _G.UnitIsUnit
 local UnitLevel = _G.UnitLevel
 local UnitName = _G.UnitName
-local UnitReaction = _G.UnitReaction
-local UnitThreatSituation = _G.UnitThreatSituation
 
 -- Engine API
-local short = F.Short
-local UnitAura = AuraFunctions.UnitAura
-local UnitBuff = AuraFunctions.UnitBuff
-local UnitDebuff = AuraFunctions.UnitDebuff
 
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
-local UIParent = UIParent
 local WorldFrame = WorldFrame
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
@@ -84,7 +49,6 @@ local CastData, CastBarPool = {}, {}
 local AllChildren = {}
 
 -- Plate FrameLevel ordering
-local FRAMELEVELS = {}
 
 -- Counters to keep track of WorldFrame frames and NamePlates
 local WORLDFRAME_CHILDREN, WORLDFRAME_PLATES = -1, 0
@@ -99,15 +63,12 @@ local FORCEUPDATE = false
 
 -- Frame level constants and counters
 local FRAMELEVEL_TARGET = 126
-local FRAMELEVEL_IMPORTANT = 124 -- rares, bosses, etc
 local FRAMELEVEL_CURRENT, FRAMELEVEL_MIN, FRAMELEVEL_MAX, FRAMELEVEL_STEP = 21, 21, 125, 2
-local FRAMELEVEL_TRIVAL_CURRENT, FRAMELEVEL_TRIVIAL_MIN, FRAMELEVEL_TRIVIAL_MAX, FRAMELEVEL_TRIVIAL_STEP = 1, 1, 20, 2
 
 -- Opacity Settings
 local ALPHA_TARGET = 1 -- For the current target, if any
 local ALPHA_FULL = .7 -- For players when not having a target, also for World Bosses when not targeted
 local ALPHA_LOW = .35 -- For non-targeted players when having a target
-local ALPHA_TRIVIAL = .25 -- For non-targeted trivial mobs
 local ALPHA_MINIMAL = .01 -- For non-targeted NPCs
 
 -- Update and fading frequencies
@@ -121,26 +82,18 @@ local HOUR = Engine:GetConstant("HOUR")
 local MINUTE = Engine:GetConstant("MINUTE")
 
 -- Maximum displayed buffs.
-local BUFF_MAX_DISPLAY = Engine:GetConstant("BUFF_MAX_DISPLAY")
 
 -- Time limit in seconds where we separate between short and long buffs
-local TIME_LIMIT = Engine:GetConstant("AURA_TIME_LIMIT")
-local TIME_LIMIT_LOW = Engine:GetConstant("AURA_TIME_LIMIT_LOW")
 
 -- Player and Target data
 local LEVEL = UnitLevel("player") -- our current level
 local TARGET -- our current target, if any
-local COMBAT -- whether or not the player is affected by combat
 
 -- Blizzard textures we use to identify plates and more
-local CATA_PLATE 		= [[Interface\Tooltips\Nameplate-Border]]
 local WOTLK_PLATE 		= [[Interface\TargetingFrame\UI-TargetingFrame-Flash]]
 local ELITE_TEXTURE 	= [[Interface\Tooltips\EliteNameplateIcon]] -- elite/rare dragon texture
 local BOSS_TEXTURE 		= [[Interface\TargetingFrame\UI-TargetingFrame-Skull]] -- skull textures
 local EMPTY_TEXTURE 	= Engine:GetConstant("EMPTY_TEXTURE") -- used to make textures invisible
-
--- Adding support for WeakAuras' personal resource attachments
-local WEAKAURAS = false
 
 -- We use the visibility of some items to determine info about a plate's owner,
 -- but still wish these itemse to be hidden from view.
@@ -167,19 +120,6 @@ local getDifficultyColorByLevel = function(level)
 	else
 		return C.General.Gray.colorCode
 	end
-end
-
--- In Diablo they don't abbreviate numbers at all
--- Since that would be messy with the insanely high health numbers in WoW,
--- we compromise and abbreviate numbers larger than 100k.
-local abbreviateNumber = function(number)
-	local abbreviated
-	if number >= 1e6  then
-		abbreviated = short(number)
-	else
-		abbreviated = tostring(number)
-	end
-	return abbreviated
 end
 
 -- Return a more readable time format for auras and castbars
@@ -234,92 +174,9 @@ end
 ----------------------------------------------------------
 
 local NamePlate = Engine:CreateFrame("Frame")
-local NamePlate_MT = { __index = NamePlate }
 
 local NamePlate_WotLK = setmetatable({}, { __index = NamePlate })
 local NamePlate_WotLK_MT = { __index = NamePlate_WotLK }
-
-------------------------------------------------------------------------------
--- 	NamePlate Aura Button Template
-------------------------------------------------------------------------------
-
-local Aura = CreateFrame("Frame")
-local Aura_MT = { __index = Aura }
-
-local auraFilter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
-
-
-end
-
-Aura.OnEnter = function(self)
-	local unit = self:GetParent().unit
-	if (not UnitExists(unit)) then
-		return
-	end
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-	GameTooltip:SetUnitAura(unit, self:GetID(), self:GetParent().filter)
-end
-
-Aura.OnLeave = function(self)
-	GameTooltip:Hide()
-end
-
-Aura.CreateTimer = function(self, elapsed)
-	if (self.timeLeft) then
-		self.elapsed = (self.elapsed or 0) + elapsed
-		if (self.elapsed >= 0.1) then
-			if (not self.first) then
-				self.timeLeft = self.timeLeft - self.elapsed
-			else
-				self.timeLeft = self.timeLeft - GetTime()
-				self.first = false
-			end
-			if (self.timeLeft > 0) then
-				if self.currentSpellID then
-					self.Time:SetFormattedText("%1d", math_ceil(self.timeLeft))
-				else
-					-- more than a day
-					if (self.timeLeft > DAY) then
-						self.Time:SetFormattedText("%1dd", math_floor(self.timeLeft / DAY))
-
-					-- more than an hour
-					elseif (self.timeLeft > HOUR) then
-						self.Time:SetFormattedText("%1dh", math_floor(self.timeLeft / HOUR))
-
-					-- more than a minute
-					elseif (self.timeLeft > MINUTE) then
-						self.Time:SetFormattedText("%1dm", math_floor(self.timeLeft / MINUTE))
-
-					-- more than 10 seconds
-					elseif (self.timeLeft > 10) then
-						self.Time:SetFormattedText("%1d", math_floor(self.timeLeft))
-
-					-- between 6 and 10 seconds
-					elseif (self.timeLeft >= 6) then
-						self.Time:SetFormattedText("|cffff8800%1d|r", math_floor(self.timeLeft))
-
-					-- between 3 and 5 seconds
-					elseif (self.timeLeft >= 3) then
-						self.Time:SetFormattedText("|cffff0000%1d|r", math_floor(self.timeLeft))
-
-					-- less than 3 seconds
-					elseif (self.timeLeft > 0) then
-						self.Time:SetFormattedText("|cffff0000%.1f|r", self.timeLeft)
-					else
-						self.Time:SetText("")
-					end
-				end
-			else
-				self.Time:SetText("")
-				self.Time:Hide()
-				self:SetScript("OnUpdate", nil)
-			end
-			self.elapsed = 0
-		end
-	end
-end
-
-
 
 -- WotLK Plates
 ----------------------------------------------------------
@@ -343,16 +200,13 @@ NamePlate_WotLK.UpdateUnitData = function(self)
 		r, g, b = math_floor(r*100 + .5)/100, math_floor(g*100 + .5)/100, math_floor(b*100 + .5)/100
 		if r + g + b == 3 then
 			info.isElite = true
-			info.isRare = false
 		else
-			-- The problem with the following is that only elites have the dragontexture,
-			-- while it is possible for mobs to be rares without having elite status.
+			-- A rare: only elites have the dragon texture, while a rare
+			-- doesn't have to be elite.
 			info.isElite = oldRegions.eliteicon:GetTexture() == ELITE_TEXTURE
-			info.isRare = true
 		end
 	else
 		info.isElite = false
-		info.isRare = false
 	end
 
 	info.level = self.info.isBoss and -1 or tonumber(oldRegions.level:GetText()) or -1
@@ -360,12 +214,10 @@ end
 
 NamePlate_WotLK.UpdateTargetData = function(self)
 	self.info.isTarget = TARGET and (self.baseFrame:GetAlpha() == 1)
-	self.info.isMouseOver = self.old.regions.highlight:IsShown() == 1
 end
 
 NamePlate_WotLK.UpdateCombatData = function(self)
 	-- Shortcuts to our own objects
-	local config = self.config
 	local info = self.info
 	local oldBars = self.old.bars
 	local oldRegions = self.old.regions
@@ -380,16 +232,10 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 	local math_floor = math_floor
 	local pairs = pairs
 	local select = select
-	local unpack = unpack
 
-	local r, g, b, _
-	local class, hasClass
+	local r, g, b
+	local hasClass
 
-
-	-- check if unit is in combat
-	r, g, b = oldRegions.name:GetTextColor()
-	r, g, b = math_floor(r*100 + .5)/100, math_floor(g*100 + .5)/100, math_floor(b*100 + .5)/100
-	info.isInCombat = r > .5 and g < .5 -- seems to be working
 
 	-- check for threat situation
 	if oldRegions.threat:IsShown() then
@@ -425,7 +271,6 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 	for class in pairs(RAID_CLASS_COLORS) do
 		if RAID_CLASS_COLORS[class].r == r and RAID_CLASS_COLORS[class].g == g and RAID_CLASS_COLORS[class].b == b then
 			info.isNeutral = false
-			info.isCivilian = false
 			info.isClass = class
 			info.isFriendly = false
 			info.isTapped = false
@@ -440,37 +285,31 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 		info.isClass = false
 		if (r + g + b) >= 1.5 and (r == g and r == b) then -- tapped npc (.53, .53, .53)
 			info.isNeutral = false
-			info.isCivilian = false
 			info.isFriendly = false
 			info.isTapped = true
 			info.isPlayer = false
 		elseif g + b == 0 then -- hated/hostile/unfriendly npc
 			info.isNeutral = false
-			info.isCivilian = false
 			info.isFriendly = false
 			info.isTapped = false
 			info.isPlayer = false
 		elseif r + b == 0 then -- friendly npc
 			info.isNeutral = false
-			info.isCivilian = false
 			info.isFriendly = true
 			info.isTapped = false
 			info.isPlayer = false
 		elseif r + g > 1.95 then -- neutral npc
 			info.isNeutral = true
-			info.isCivilian = false
 			info.isFriendly = false
 			info.isTapped = false
 			info.isPlayer = false
 		elseif r + g == 0 then -- friendly player
 			info.isNeutral = false
-			info.isCivilian = true
 			info.isFriendly = true
 			info.isTapped = false
 			info.isPlayer = true
 		else -- enemy player (no class colors enabled)
 			info.isNeutral = false
-			info.isCivilian = false
 			info.isFriendly = false
 			info.isTapped = false
 			info.isPlayer = false
@@ -497,13 +336,9 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 		info.healthColor[3] = b
 	else
 		if info.isClass then
-			if config.showEnemyClassColor then
-				local color = C.Class[info.isClass]
-				r, g, b = color[1], color[2], color[3]
-			else
-				local color = C.Reaction[1]
-				r, g, b = color[1], color[2], color[3]
-			end
+			-- an enemy player (only players have class colored health bars)
+			local color = C.Reaction[1]
+			r, g, b = color[1], color[2], color[3]
 		elseif info.isFriendly then
 			if info.isPlayer then
 				local color = C.Reaction.civilian
@@ -513,19 +348,14 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 				r, g, b = color[1], color[2], color[3]
 			end
 		elseif info.isTapped then
-			local color = C.tapped
+			local color = C.Status.Tapped
+			r, g, b = color[1], color[2], color[3]
+		elseif info.isNeutral then
+			local color = C.Reaction[4]
 			r, g, b = color[1], color[2], color[3]
 		else
-			if info.isPlayer then
-				local color = C.Reaction[1]
-				r, g, b = color[1], color[2], color[3]
-			elseif info.isNeutral then
-				local color = C.Reaction[4]
-				r, g, b = color[1], color[2], color[3]
-			else
-				local color = C.Reaction[2]
-				r, g, b = color[1], color[2], color[3]
-			end
+			local color = C.Reaction[2]
+			r, g, b = color[1], color[2], color[3]
 		end
 
 		info.healthColor[1] = r
@@ -536,6 +366,33 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 end
 
 NamePlate_WotLK.ApplyUnitData = function(self)
+	local info = self.info
+
+	-- This runs 30 times a second for every plate on screen: the level and
+	-- name texts are only built again when what they show changed.
+	local shown = self.shownUnitData
+	if (not shown) then
+		shown = {}
+		self.shownUnitData = shown
+	end
+	local playerLevel = UnitLevel("player") -- the level's color depends on it
+	if (info.level ~= shown.level) or (info.isBoss ~= shown.isBoss) or (info.isElite ~= shown.isElite) or (info.isFriendly ~= shown.isFriendly)
+	or (info.isNeutral ~= shown.isNeutral) or (info.name ~= shown.name) or (playerLevel ~= shown.playerLevel) then
+		shown.level, shown.isBoss, shown.isElite, shown.isFriendly = info.level, info.isBoss, info.isElite, info.isFriendly
+		shown.isNeutral, shown.name, shown.playerLevel = info.isNeutral, info.name, playerLevel
+		self:ApplyLevelAndName()
+	end
+
+	if info.isMarked then
+		self.RaidIcon:SetTexCoord(self.old.regions.raidicon:GetTexCoord()) -- ?
+		self.RaidIcon:SetTexture(self.old.regions.raidicon:GetTexture())
+		self.RaidIcon:Show()
+	else
+		self.RaidIcon:Hide()
+	end
+end
+
+NamePlate_WotLK.ApplyLevelAndName = function(self)
 	local info = self.info
 
 	local level
@@ -564,14 +421,6 @@ NamePlate_WotLK.ApplyUnitData = function(self)
 	end
 
 	self.Health.Value:SetText(self.info and self.info.name or "")
-
-	if info.isMarked then
-		self.RaidIcon:SetTexCoord(self.old.regions.raidicon:GetTexCoord()) -- ?
-		self.RaidIcon:SetTexture(self.old.regions.raidicon:GetTexture())
-		self.RaidIcon:Show()
-	else
-		self.RaidIcon:Hide()
-	end
 end
 
 NamePlate_WotLK.ApplyHealthData = function(self)
@@ -583,14 +432,9 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 	end
 
 	if info.unitThreatSituation and info.unitThreatSituation > 0 then
-		if info.threatColor then
-			local r, g, b = info.threatColor[1], info.threatColor[2], info.threatColor[3]
-			health.Glow:SetVertexColor(r, g, b, 1)
-			health.Shadow:SetVertexColor(r, g, b)
-		else
-			health.Glow:SetVertexColor(0, 0, 0, .25)
-			health.Shadow:SetVertexColor(0, 0, 0, 1)
-		end
+		local r, g, b = info.threatColor[1], info.threatColor[2], info.threatColor[3]
+		health.Glow:SetVertexColor(r, g, b, 1)
+		health.Shadow:SetVertexColor(r, g, b)
 	else
 		health.Glow:SetVertexColor(0, 0, 0, .25)
 		health.Shadow:SetVertexColor(0, 0, 0, 1)
@@ -599,7 +443,10 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 	health:SetMinMaxValues(0, info.healthMax)
 	health:SetValue(info.health)
 
-	health.Value:SetFont(select(1, health.Value:GetFont()), select(2, health.Value:GetFont()), "OUTLINE")
+	local font, size, flags = health.Value:GetFont()
+	if (flags ~= "OUTLINE") then
+		health.Value:SetFont(font, size, "OUTLINE")
+	end
 
 	health.Value:SetTextColor(unpack(info.healthColor))
 end
@@ -608,7 +455,7 @@ NamePlate_WotLK.UpdateAlpha = function(self)
 	local info = self.info
 	if self.visiblePlates[self] then
 		local oldHealth = self.old.bars.health
-		local current, min, max = oldHealth:GetValue(), oldHealth:GetMinMaxValues()
+		local current, max = oldHealth:GetValue(), select(2, oldHealth:GetMinMaxValues())
 		if ((current == 0) or (max == 0)) then
 			self.targetAlpha = 0 -- just fade out the dead units fast, they tend to get stuck. weird.
 		elseif TARGET then
@@ -635,21 +482,12 @@ end
 
 NamePlate_WotLK.UpdateFrameLevel = function(self)
 	local info = self.info
-	local healthValue = self.Health.Value
 	if TARGET and info.isTarget then
 		if self:GetFrameLevel() ~= FRAMELEVEL_TARGET then
 			self:SetFrameLevel(FRAMELEVEL_TARGET)
 		end
-		if not healthValue:IsShown() then
-			healthValue:Show()
-		end
-	else
-		if self:GetFrameLevel() ~= self.frameLevel then
-			self:SetFrameLevel(self.frameLevel)
-		end
-		if not healthValue:IsShown() then
-			healthValue:Show()
-		end
+	elseif self:GetFrameLevel() ~= self.frameLevel then
+		self:SetFrameLevel(self.frameLevel)
 	end
 end
 
@@ -707,30 +545,21 @@ NamePlate_WotLK.OnShow = function(self)
 
 	info.level = nil
 	info.name = nil
-	info.isInCombat = nil
-	info.isCasting = nil
 	info.isClass = nil
 	info.isBoss = nil
 	info.isElite = nil
 	info.isFriendly = nil
-	info.isMouseOver = nil
 	info.isNeutral = nil
 	info.isPlayer = nil
-	info.isRare = nil
-	info.isShieldedCast = nil
 	info.isTapped = nil
 	info.isTarget = nil
-	info.isTrivial = nil
 	info.unitThreatSituation = nil
 	info.healthMax = 0
 	info.health = 0
 
-	self.Highlight:Hide() -- hide custom highlight
-
 	self.Health:Show()
 	self.Cast:Hide()
 	self.Cast.Shadow:Hide()
-	self.Auras:Hide()
 
 	self.visiblePlates[self] = self.baseFrame -- this will trigger the fadein
 
@@ -761,27 +590,20 @@ NamePlate_WotLK.OnHide = function(self)
 
 	info.level = nil
 	info.name = nil
-	info.isInCombat = nil
-	info.isCasting = nil
 	info.isClass = nil
 	info.isBoss = nil
 	info.isElite = nil
 	info.isFriendly = nil
-	info.isMouseOver = nil
 	info.isNeutral = nil
 	info.isPlayer = nil
-	info.isRare = nil
-	info.isShieldedCast = nil
 	info.isTapped = nil
 	info.isTarget = nil
-	info.isTrivial = nil
 	info.unitThreatSituation = nil
 	info.healthMax = 0
 	info.health = 0
 
 	self.Cast:Hide()
 	self.Cast.Shadow:Hide()
-	self.Auras:Hide()
 
 	self.visiblePlates[self] = false -- this will trigger the fadeout and hiding
 
@@ -824,7 +646,6 @@ NamePlate_WotLK.HandleBaseFrame = function(self, baseFrame)
 	old.regions.level:Hide()
 	old.regions.bossicon:SetTexture(nil)
 	old.regions.raidicon:SetAlpha(0)
-	UIHider[old.regions.eliteicon] = old.regions.eliteicon:GetParent()
 	old.regions.eliteicon:SetParent(UIHider)
 	old.regions.castborder:SetTexture(nil)
 	old.regions.castshield:SetTexture(nil)
@@ -985,26 +806,6 @@ NamePlate.CreateRegions = function(self)
 	end)
 
 
-	-- Cast Name
-	--local Spell = Cast:CreateFrame()
-	--SpellName = Spell:CreateFontString()
-	--SpellName:SetDrawLayer("OVERLAY")
-	--SpellName:SetPoint("BOTTOM", Health, "TOP", 0, 6)
-	--SpellName:SetFontObject(DiabolicFont_SansBold10)
-	--SpellName:SetTextColor(C.General.Prefix[1], C.General.Prefix[2], C.General.Prefix[3])
-	--Spell.Name = SpellName
-
-	-- Cast Icon
-	--SpellIcon = Spell:CreateTexture()
-	--Spell.Icon = SpellIcon
-
-	-- Mouse hover highlight
-	local Highlight = Health:CreateTexture()
-	Highlight:Hide()
-	Highlight:SetAllPoints()
-	Highlight:SetBlendMode("ADD")
-	Highlight:SetTexture(1, 1, 1, 1/4)
-	Highlight:SetDrawLayer("BACKGROUND", 1)
 
 	-- Unit Level
 	local Level = Health:CreateFontString()
@@ -1017,9 +818,6 @@ NamePlate.CreateRegions = function(self)
 
 
 	-- Icons
-	local EliteIcon = Health:CreateTexture()
-	EliteIcon:Hide()
-
 	local RaidIcon = Health:CreateTexture()
 	RaidIcon:Hide()
 
@@ -1029,24 +827,11 @@ NamePlate.CreateRegions = function(self)
 	BossIcon:SetPoint("TOPLEFT", self.Health, "TOPRIGHT", 2, 2)
 	BossIcon:Hide()
 
-	-- Auras
-	local Auras = self:CreateFrame()
-	Auras:Hide()
-	Auras:SetPoint(unpack(widgetConfig.auras.place))
-	Auras:SetWidth(widgetConfig.auras.rowsize * widgetConfig.auras.button.size[1] + ((widgetConfig.auras.rowsize - 1) * widgetConfig.auras.padding))
-	Auras:SetHeight(widgetConfig.auras.button.size[2])
-
-	-- GitHub issue #62: Experimental CC highlight suggested by dualcoding.
-	-- https://github.com/cogwerkz/DiabolicUI/issues/62
 	self.Health = Health
 	self.Cast = Cast
-	self.Auras = Auras
-	self.Highlight = Highlight
 	self.Level = Level
-	self.EliteIcon = EliteIcon
 	self.RaidIcon = RaidIcon
 	self.BossIcon = BossIcon
-	self.Auras = Auras
 end
 
 -- Create the sizer frame that handles nameplate positioning
@@ -1101,35 +886,11 @@ Module.CreateNamePlate = function(self, baseFrame, name)
 	plate:CreateSizer(baseFrame, worldFrame) -- create the sizer that positions the nameplate
 	plate:HookScripts(baseFrame, worldFrame)
 
-	-- Support for WeakAuras personal resource display attachment! :)
-	-- (We're pretty much faking it, pretending to be KUINamePlates)
-	if WEAKAURAS then
-		local background = plate:CreateFrame("Frame")
-		background:SetFrameLevel(1)
-
-		local anchor = plate:CreateFrame("Frame")
-		anchor:SetPoint("TOPLEFT", plate.Health, 0, 0)
-		anchor:SetPoint("BOTTOMRIGHT", plate.Cast, 0, 0)
-
-		baseFrame.kui = background
-		baseFrame.kui.bg = anchor
-	end
-
 	plate.allPlates[baseFrame] = plate
 
 	return plate
 end
 
-
--- NamePlate Handling
-----------------------------------------------------------
--- Not actually something we're going to do
-Module.UpdateNamePlateOptions = function(self)
-end
-
--- Adjust the maximum distance from which a Legion nameplate is visible.
-Module.UpdateNamePlateMaxDistance = function(self)
-end
 
 Module.UpdateAllScales = function(self)
 	local oldScale = SCALE
@@ -1159,16 +920,6 @@ Module.OnEvent = function(self, event, ...)
 		end
 		self:UpdateAllScales()
 		self.Updater:SetScript("OnUpdate", function(_, ...) self:OnUpdate(...) end)
-	--elseif (event == "PLAYER_CONTROL_GAINED") then
-		--for baseFrame, plate in pairs(self.allPlates) do
-		--	plate:UpdateAll()
-		--end
-
-	--elseif (event == "PLAYER_CONTROL_LOST") then
-		--for baseFrame, plate in pairs(self.allPlates) do
-		--	plate:UpdateAll()
-		--end
-
 	elseif (event == "PLAYER_TARGET_CHANGED") then
 		local oldTarget = TARGET
 		local name, realm = UnitName("target")
@@ -1190,8 +941,6 @@ Module.OnEvent = function(self, event, ...)
 			self:OnSpellCast("UNIT_SPELLCAST_CHANNEL_START", "target")
 		end
 
-	elseif ((event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_REGEN_DISABLED")) then
-		COMBAT = InCombatLockdown()
 
 	elseif event == "RAID_TARGET_UPDATE" then
 		for baseFrame, plate in pairs(self.allPlates) do
@@ -1261,13 +1010,15 @@ Module.OnSpellCast = function(self, event, unit)
 	if not CastData[castBar] then
 		CastData[castBar] = {}
 	end
+	-- the unit the bar follows (and gets hidden with, see UpdateCastBar)
+	CastData[castBar].unit = unit
 	local castData = CastData[castBar]
 	if not CastBarPool[plate] then
 		CastBarPool[plate] = castBar
 	end
 
 	if event == "UNIT_SPELLCAST_START" then
-		local spellName, _, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
+		local spellName, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
 		if not spellName then
 			castBar:Hide()
 			return
@@ -1283,9 +1034,6 @@ Module.OnSpellCast = function(self, event, unit)
 		castData.duration  = now - startTime
 		castData.max       = endTime - startTime
 		castData.delay     = 0
-		castData.tradeskill = isTradeSkill
-		castData.interrupt = nil -- Wrath doesn't give interruptible flag here.
-		castData.unit = unit
 
 		castBar:SetMinMaxValues(0, castData.max)
 		castBar:SetValue(castData.duration)
@@ -1293,13 +1041,6 @@ Module.OnSpellCast = function(self, event, unit)
 		if castBar.Name then castBar.Name:SetText(utf8sub(text or spellName, 32, true)) end
 		if castBar.Icon then castBar.Icon:SetTexture(texture) end
 		if castBar.Value then castBar.Value:SetText("") end
-
-		-- Use default Diabolic glow/shadow (already skinned)
-		if castBar.Shield then
-			castBar.Shield:Hide()
-			castBar.Glow:SetVertexColor(0, 0, 0, .75)
-			castBar.Shadow:SetVertexColor(0, 0, 0, 1)
-		end
 
 		castBar:Show()
 
@@ -1320,8 +1061,6 @@ Module.OnSpellCast = function(self, event, unit)
 	elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" then
 		castData.casting   = nil
 		castData.channeling = nil
-		castData.tradeskill = nil
-		castData.interrupt  = nil
 		castBar:SetValue(0)
 		castBar:Hide()
 		if castBar.Icon then castBar.Icon:SetTexture(nil); castBar.Icon:Hide() end
@@ -1362,88 +1101,49 @@ Module.OnSpellCast = function(self, event, unit)
 	elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
 		if castBar:IsShown() then
 			castData.channeling = nil
-			castData.interrupt  = nil
 			castBar:SetValue(castData.max or 0)
 			castBar:Hide()
 			if castBar.Icon then castBar.Icon:SetTexture(nil); castBar.Icon:Hide() end
 		end
-
-	else
-		-- Fallback: if we get here via manual checks, try to show a cast.
-		if UnitCastingInfo(unit) then
-			return self:OnSpellCast("UNIT_SPELLCAST_START", unit)
-		end
-		if UnitChannelInfo(unit) then
-			return self:OnSpellCast("UNIT_SPELLCAST_CHANNEL_START", unit)
-		end
-		-- Otherwise clear.
-		castData.casting, castData.channeling = nil, nil
-		castBar:SetValue(0)
-		castBar:Hide()
 	end
-end or Module.OnSpellCast
+end
 
 -- NamePlate Update Cycle
 ----------------------------------------------------------
 
 -- Proxy function to allow us to exit the update by returning,
 -- but still continue looping through the remaining castbars, if any!
-Module.UpdateCastBar = function(self, castBar, unit, castData, elapsed)
-
-	unit = unit or (castData and castData.unit)
-	if (not UnitExists(unit)) then
+Module.UpdateCastBar = function(self, castBar, castData, elapsed)
+	if (not UnitExists(castData.unit)) then
 		castData.casting = nil
-		castData.castID = nil
 		castData.channeling = nil
 		castBar:SetValue(0)
 		castBar:Hide()
 		return
 	end
-	local r, g, b
-	if (castData.casting or castData.tradeskill) then
-		local duration = castData.duration + elapsed
-		if (duration >= castData.max) then
+	local duration, remaining
+	if castData.casting then
+		duration = castData.duration + elapsed
+		remaining = castData.max - duration
+		if (remaining <= 0) then
 			castData.casting = nil
-			castData.tradeskill = nil
-			castData.total = nil
 			castBar:Hide()
 		end
-		if castBar.Value then
-			if castData.tradeskill then
-				castBar.Value:SetText(formatTime(castData.max - duration))
-			elseif (castData.delay and (castData.delay ~= 0)) then
-				castBar.Value:SetFormattedText("%s|cffff0000 -%s|r", formatTime(floor(castData.max - duration)), formatTime(castData.delay))
-			else
-				castBar.Value:SetText(formatTime(castData.max - duration))
-			end
-		end
-		castData.duration = duration
-		castBar:SetValue(duration)
-
-	elseif castData.channeling then
-		local duration = castData.duration - elapsed
+	else -- a channel counts down
+		duration = castData.duration - elapsed
+		remaining = duration
 		if (duration <= 0) then
 			castData.channeling = nil
 			castBar:Hide()
 		end
-		if castBar.Value then
-			if castData.tradeskill then
-				castBar.Value:SetText(formatTime(duration))
-			elseif (castData.delay and (castData.delay ~= 0)) then
-				castBar.Value:SetFormattedText("%s|cffff0000 -%s|r", formatTime(duration), formatTime(castData.delay))
-			else
-				castBar.Value:SetText(formatTime(duration))
-			end
-		end
-		castData.duration = duration
-		castBar:SetValue(duration)
-	else
-		castData.casting = nil
-		castData.castID = nil
-		castData.channeling = nil
-		castBar:SetValue(0)
-		castBar:Hide()
 	end
+	if (castData.delay ~= 0) then
+		castBar.Value:SetFormattedText("%s|cffff0000 -%s|r", formatTime(remaining), formatTime(castData.delay))
+	else
+		castBar.Value:SetText(formatTime(remaining))
+	end
+	castData.duration = duration
+	castBar:SetValue(duration)
 end
 
 Module.OnUpdate = function(self, elapsed)
@@ -1451,22 +1151,27 @@ Module.OnUpdate = function(self, elapsed)
 	-- If the number of children in the WorldFrame
 	--  is different from the number we have stored,
 	-- we parse the children to check for new NamePlates.
-	for owner, castBar in pairs(CastBarPool) do
-		self:UpdateCastBar(castBar, owner.unit, CastData[castBar], elapsed)
+	for _, castBar in pairs(CastBarPool) do
+		local castData = CastData[castBar]
+		if castData.casting or castData.channeling then
+			self:UpdateCastBar(castBar, castData, elapsed)
+		end
 	end
 
-	local numChildren = select("#", self.worldFrame:GetChildren())
+	local numChildren = self.worldFrame:GetNumChildren()
 	if (WORLDFRAME_CHILDREN ~= numChildren) then
 		-- Localizing even more to reduce the load when entering large scale raids
-		local select = select
 		local allPlates = self.allPlates
 		local allChildren = self.allChildren
 		local worldFrame = self.worldFrame
 		local isNamePlate = self.IsNamePlate
 		local createNamePlate = self.CreateNamePlate
 
+		-- one list, rather than asking the WorldFrame for all its children
+		-- again for each one of them
+		local children = { worldFrame:GetChildren() }
 		for i = 1, numChildren do
-			local object = select(i, worldFrame:GetChildren())
+			local object = children[i]
 			if not(allChildren[object]) then
 				local isPlate = isNamePlate(_, object)
 				if (isPlate and not(allPlates[object])) then
@@ -1485,33 +1190,23 @@ Module.OnUpdate = function(self, elapsed)
 
 		-- Update our WorldFrame subframe counter to the current number of frames
 		WORLDFRAME_CHILDREN = numChildren
-
-		-- Debugging the performance drops in AV and Wintergrasp
-		-- by printing out number of new plates and comparing it to when the spikes occur.
-		-- *verified that nameplate creation is NOT a reason for the spikes.
-		--if WORLDFRAME_PLATES ~= oldNumPlates then
-		--	print(("Total plates: %d - New this cycle: %d"):format(WORLDFRAME_PLATES, WORLDFRAME_PLATES - oldNumPlates))
-		--end
 	end
 
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if (self.elapsed < HZ) then
 		return
 	end
+	elapsed = self.elapsed -- the time since the last update, not the last frame
 
 	-- Update visibility, health values and target alpha
 	for plate, baseFrame in pairs(self.visiblePlates) do
 		if baseFrame then
-			local force = FORCEUPDATE or plate.FORCEUPDATE
-			if force then
-				if (force == "TARGET") then
-					plate:UpdateTargetData()
-					plate:UpdateAlpha()
-					plate:UpdateFrameLevel()
-				else
-					plate:UpdateAll()
-				end
-				plate.FORCEUPDATE = false
+			if FORCEUPDATE == "TARGET" then
+				plate:UpdateTargetData()
+				plate:UpdateAlpha()
+				plate:UpdateFrameLevel()
+			elseif FORCEUPDATE then
+				plate:UpdateAll()
 			else
 				plate:UpdateTargetData()
 				plate:UpdateAlpha()
@@ -1520,45 +1215,25 @@ Module.OnUpdate = function(self, elapsed)
 		else
 			plate.targetAlpha = 0
 		end
+	end
 
-		for plate, baseFrame in pairs(self.visiblePlates) do
-			if (not baseFrame) then
-				plate.targetAlpha = 0
+	-- Fade each plate toward its target alpha (a full fade takes FADE_IN or
+	-- FADE_OUT seconds), and let go of the faded out ones.
+	local step_in, step_out = elapsed/FADE_IN, elapsed/FADE_OUT
+	for plate in pairs(self.visiblePlates) do
+		local current, target = plate.currentAlpha, plate.targetAlpha
+		if (current ~= target) then
+			if (target > current) then
+				current = math_min(target, current + step_in)
+			else
+				current = math_max(target, current - step_out)
 			end
-
-			if (plate.currentAlpha ~= plate.targetAlpha) then
-				local difference
-				if (plate.targetAlpha > plate.currentAlpha) then
-					difference = plate.targetAlpha - plate.currentAlpha
-				else
-					difference = plate.currentAlpha - plate.targetAlpha
-				end
-
-				local step_in = elapsed/(FADE_IN * difference)
-				local step_out = elapsed/(FADE_OUT * difference)
-
-				if (plate.targetAlpha > plate.currentAlpha) then
-					if (plate.targetAlpha > plate.currentAlpha + step_in) then
-						plate.currentAlpha = plate.currentAlpha + step_in -- fade in
-					else
-						plate.currentAlpha = plate.targetAlpha -- fading done
-					end
-				elseif (plate.targetAlpha < plate.currentAlpha) then
-					if (plate.targetAlpha < plate.currentAlpha - step_out) then
-						plate.currentAlpha = plate.currentAlpha - step_out -- fade out
-					else
-						plate.currentAlpha = plate.targetAlpha -- fading done
-					end
-				else
-					plate.currentAlpha = plate.targetAlpha -- fading done
-				end
-				plate:SetAlpha(plate.currentAlpha)
-			end
-
-			if ((plate.currentAlpha == 0) and (plate.targetAlpha == 0)) then
-				plate.visiblePlates[plate] = nil
-				plate:Hide()
-			end
+			plate.currentAlpha = current
+			plate:SetAlpha(current)
+		end
+		if ((current == 0) and (target == 0)) then
+			plate.visiblePlates[plate] = nil
+			plate:Hide()
 		end
 	end
 	FORCEUPDATE = false
@@ -1583,12 +1258,7 @@ end
 
 -- Force some blizzard console variables to our liking
 Module.UpdateBlizzardSettings = Engine:Wrap(function(self)
-	local config = self.config
-	local SetCVar = SetCVar
-
-	-- These are from which expansion...? /slap myself for not commenting properly!!
-
-	SetCVar("ShowVKeyCastbar", 1) -- display castbars
+	SetCVar("ShowVKeyCastbar", 1) -- 3.3's castbars on nameplates
 end)
 
 
@@ -1616,13 +1286,10 @@ Module.OnEnable = function(self)
 	self:UpdateBlizzardSettings()
 
 	-- Update
-	self:RegisterEvent("PLAYER_CONTROL_GAINED", "OnEvent")
-	self:RegisterEvent("PLAYER_CONTROL_LOST", "OnEvent")
 	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
 	self:RegisterEvent("RAID_TARGET_UPDATE", "OnEvent")
+	self:RegisterEvent("UNIT_FACTION", "OnEvent")
 	self:RegisterEvent("UNIT_LEVEL", "OnEvent")
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
