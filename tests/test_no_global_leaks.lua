@@ -40,10 +40,16 @@ local ALLOWED = {
 	["modules/chat/windows.lua"] = {
 		CHAT_FRAME_BUTTON_FRAME_MIN_ALPHA = true, -- Blizzard chat constant
 	},
+	["modules/minimap/Core/Private.lua"] = {
+		DiabolicUIMinimapNS = true, -- the minimap module's namespace, shared by its files
+	},
+	["modules/minimap/Components/Misc/Minimap.lua"] = {
+		MBB_ShowTimeout = true, -- a setting of the optional MBB addon
+	},
 }
 
 -- Vendored third-party code (Ace3 etc.) manages its own globals.
-local EXCLUDED_PREFIXES = { "modules/minimap/" }
+local EXCLUDED_PREFIXES = { "modules/minimap/Libs/" }
 
 local listSourceFiles = function()
 	local files = {}

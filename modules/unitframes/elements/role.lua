@@ -159,10 +159,10 @@ Update = function(self, event, ...)
 		return
 	end
 
-	local role = UnitGroupRolesAssigned(unit)
-	if role ~= "TANK" and role ~= "HEALER" and role ~= "DAMAGER" then
-		role = nil
-
+	-- (3.3.5 answers with three flags, not a role name)
+	local isTank, isHealer, isDamager = UnitGroupRolesAssigned(unit)
+	local role = (isTank and "TANK") or (isHealer and "HEALER") or (isDamager and "DAMAGER")
+	if (not role) then
 		local name = UnitName(unit)
 		if name then
 			role = roleByName[name]
@@ -179,16 +179,12 @@ Update = function(self, event, ...)
 	else
 		Role:Hide()
 	end
-
-	if Role.PostUpdate then
-		return Role:PostUpdate(unit, role)
-	end
 end
 
 -- Update only re-queues an inspect when CanInspect(unit) is true *at that
 -- exact moment* - out of range/line of sight at login is common for party
 -- members, and since that's a one-shot attempt gated behind fairly rare
--- events (GROUP_ROSTER_UPDATE, PARTY_MEMBER_ENABLE, entering/exiting a
+-- events (PARTY_MEMBERS_CHANGED, RAID_ROSTER_UPDATE, PARTY_MEMBER_ENABLE, entering/exiting a
 -- vehicle), a frame that missed its window could otherwise be stuck
 -- roleless for the rest of the session even once the unit comes into
 -- range. Periodically retrying every active frame is what actually makes
@@ -216,7 +212,8 @@ local Enable = function(self, unit)
 		self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update)
 		self:RegisterEvent("UNIT_EXITED_VEHICLE", Update)
 		self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
-		self:RegisterEvent("GROUP_ROSTER_UPDATE", Update)
+		self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update)
+		self:RegisterEvent("RAID_ROSTER_UPDATE", Update)
 
 		if unit:find("party") then
 			self:RegisterEvent("PARTY_MEMBER_ENABLE", Update)
@@ -226,20 +223,4 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self, unit)
-	local Role = self.Role
-	if Role then
-		activeFrames[unit] = nil
-
-		self:UnregisterEvent("UNIT_ENTERED_VEHICLE", Update)
-		self:UnregisterEvent("UNIT_EXITED_VEHICLE", Update)
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
-		self:UnregisterEvent("GROUP_ROSTER_UPDATE", Update)
-
-		if unit:find("party") then
-			self:UnregisterEvent("PARTY_MEMBER_ENABLE", Update)
-		end
-	end
-end
-
-Handler:RegisterElement("Role", Enable, Disable, Update)
+Handler:RegisterElement("Role", Enable, Update)

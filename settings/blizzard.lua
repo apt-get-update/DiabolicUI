@@ -9,26 +9,7 @@ Engine:NewStaticConfig("Blizzard", {
 		position = { "CENTER", "UICenter", "CENTER", 190, 0 }
 	},
 	gamemenu = {
-		capture_mouse = false,
-		dim = false,
-		dim_color = { 0, 0, 0, .75 },
-		button_spacing = 4,
-		show_logo = false,
-		logo = {
-			size = { 480, 240 },
-			texture_size = { 1024, 512 },
-			texture = path .. [[textures\DiabolicUI_Logo.tga]],
-			position = {
-				point = "TOP", 
-				anchor = "UICenter",
-				rpoint = "TOP", 
-				xoffset = 0, -- 0 when TOP, 16ish when anchored TOPLEFT
-				yoffset = 0 -- -20
-			},
-		}
-	},
-	ghostframe = {
-		position = { "CENTER", "UIParent", "CENTER", 0, -50 }
+		button_spacing = 4
 	},
 	loot = {
 		-- This builds its own standalone loot window (see
@@ -98,7 +79,7 @@ Engine:NewStaticConfig("Blizzard", {
 		position = { "TOP", "UIParent", "TOP", 0, -300 }, -- default anchor -180
 		positionOffsetByOne = { "TOP", "UIParent", "TOP", 0, -(300 + 50) }, -- notch it 1 bar down (give room for the capture bar)
 		padding = 50, -- padding from one bar to the next
-		font_object = DiabolicTooltipNormal,
+		font_object = DiabolicFont_SansBold13,
 		backdrop_texture = path .. [[textures\DiabolicUI_Target_227x15_Backdrop.tga]],
 		texture = path .. [[textures\DiabolicUI_Target_195x13_Border.tga]],
 		texture_size = { 512, 64 },

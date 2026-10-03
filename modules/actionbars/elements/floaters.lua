@@ -41,7 +41,12 @@ BarWidget.UpdateTaxiExitButtonVisibility = Engine:Wrap(function(self, event, ...
 	end
 end)
 
-BarWidget.UpdateStanceButtonVisibility = function(self, event, ...)
+-- The stance bar toggle: shown while the player has forms, outside
+-- vehicles and possession.
+BarWidget.UpdateStanceButtonVisibility = function(self, event)
+	if (event == "PLAYER_REGEN_ENABLED") then
+		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButtonVisibility")
+	end
 	local numForms = GetNumShapeshiftForms()
 	if (numForms == NUM_FORMS) then
 		return
@@ -49,20 +54,16 @@ BarWidget.UpdateStanceButtonVisibility = function(self, event, ...)
 	if InCombatLockdown() then
 		return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButtonVisibility")
 	end
-	if (event == "PLAYER_REGEN_ENABLED") then
-		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButtonVisibility")
-	end
-	if (GetNumShapeshiftForms() == 0) then
-		UnregisterStateDriver(self.StanceBarButton, "visibility")
-		RegisterStateDriver(self.StanceBarButton, "hide")
+	UnregisterStateDriver(self.StanceBarButton, "visibility")
+	if (numForms == 0) then
+		RegisterStateDriver(self.StanceBarButton, "visibility", "hide")
 	else
-		UnregisterStateDriver(self.StanceBarButton, "visibility")
 		RegisterStateDriver(self.StanceBarButton, "visibility", "[bonusbar:5][vehicleui]hide;show")
 	end
+	NUM_FORMS = numForms
 end
 
 BarWidget.OnEnable = function(self)
-	local db = Module.db
 	local barConfig = Module.config.structure.bars.floaters
 
 	local Artwork = Module:GetWidget("Artwork")
@@ -155,7 +156,6 @@ BarWidget.SpawnStanceBarButton = function(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "UpdateStanceButtonVisibility")
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("ACTIONBAR_PAGE_CHANGED", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORM", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", "UpdateStanceButtonVisibility")
@@ -224,25 +224,18 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	TaxiExitButton:SetSize(unpack(visualConfig.size))
 	TaxiExitButton:SetPoint(unpack(visualConfig.position))
 
-	TaxiExitButton.Normal = TaxiExitButton:CreateTexture(nil, "BORDER")
 	TaxiExitButton.Normal:SetSize(unpack(visualConfig.texture_size))
 	TaxiExitButton.Normal:SetPoint(unpack(visualConfig.texture_position))
 	TaxiExitButton.Normal:SetTexture(visualConfig.textures.normal)
 
-	TaxiExitButton.Highlight = TaxiExitButton:CreateTexture(nil, "BORDER")
-	TaxiExitButton.Highlight:Hide()
 	TaxiExitButton.Highlight:SetSize(unpack(visualConfig.texture_size))
 	TaxiExitButton.Highlight:SetPoint(unpack(visualConfig.texture_position))
 	TaxiExitButton.Highlight:SetTexture(visualConfig.textures.highlight)
 
-	TaxiExitButton.Pushed = TaxiExitButton:CreateTexture(nil, "BORDER")
-	TaxiExitButton.Pushed:Hide()
 	TaxiExitButton.Pushed:SetSize(unpack(visualConfig.texture_size))
 	TaxiExitButton.Pushed:SetPoint(unpack(visualConfig.texture_position))
 	TaxiExitButton.Pushed:SetTexture(visualConfig.textures.pushed)
 
-	TaxiExitButton.Disabled = TaxiExitButton:CreateTexture(nil, "BORDER")
-	TaxiExitButton.Disabled:Hide()
 	TaxiExitButton.Disabled:SetSize(unpack(visualConfig.texture_size))
 	TaxiExitButton.Disabled:SetPoint(unpack(visualConfig.texture_position))
 	TaxiExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
@@ -265,6 +258,9 @@ BarWidget.SpawnTaxiExitButton = function(self)
 			TaxiRequestEarlyLanding()
 		end
 	end
+
+	-- It doesn't toggle a window, so no click target: a plain click.
+	TaxiExitButton:SetScript("OnClick", TaxiExitButton.OnClick)
 
 			
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "UpdateTaxiExitButtonVisibility")

@@ -11,21 +11,18 @@ local pairs = pairs
 local table_insert = table.insert
 local table_remove = table.remove
 local tonumber = tonumber
-local tostring = tostring
 local unpack = unpack
 
 -- WoW API
 local GetNumWorldStateUI = _G.GetNumWorldStateUI
 local GetTime = _G.GetTime
 local GetWorldStateUIInfo = _G.GetWorldStateUIInfo
-local UnitAffectingCombat = _G.UnitAffectingCombat
 
 -- Height of the UIs
 local uiHeight = 24
 
 -- Module registries
 local activeTimers = {}
-local activeUIs = {}
 local timerInfo = {}
 local uiInfo = {}
 
@@ -48,21 +45,17 @@ local icons = { -- todo: add the objectives icon used in Ashran!
 
 local iconData = {}
 
+-- The texture, size, texcoords and hit rect insets of a known Blizzard icon
 local getIconData = function(pathName)
-	local pathName = icons[pathName]
-
-	local tex = iconData[pathName].path
-	local w, h = unpack(iconData[pathName].size)
-	local y = (h-(uiHeight or h))/2
-	return tex, w, h, y, iconData[pathName].coords
+	local data = iconData[icons[pathName]]
+	local w, h = unpack(data.size)
+	return data.path, w, h, data.coords, data.rects
 end
 
-local DAY, HOUR, MINUTE = 86400, 3600, 60
+local MINUTE = 60
+-- (ran out timers are taken away before they get here)
 local formatTime = function(value)
-	if (value < 0) then 
-		value = 0
-	end
-	return ("%02d:%02d"):format(floor(value / MINUTE), value%MINUTE)
+	return ("%02d:%02d"):format(math_floor(value / MINUTE), value%MINUTE)
 end
 
 ------------------------------------------------------------------------
@@ -128,27 +121,13 @@ WorldStateUI.EnableMouseScripts = function(self)
 	self:SetScript("OnLeave", self.OnLeave)
 end
 
-WorldStateUI.DisableMouseScripts = function(self)
-	self:EnableMouse(false)
-	self:SetScript("OnEnter", nil)
-	self:SetScript("OnLeave", nil)
-end
-
-WorldStateUI.SetType = function(self, uiType)
-	self.uiType = uiType
-end
-
-WorldStateUI.GetType = function(self)
-	return self.uiType
-end
-
 WorldStateUI.SetIcon = function(self, iconType, pathName, reset)
 	if (reset or (pathName == "") or (not pathName)) then
 		self[iconType]:SetSize(32, 32)
 		self[iconType]:SetTexture(pathName or "")
 		self[iconType]:SetTexCoord(0, 1, 0, 1)
 	else
-		local tex, w, h, y, coords = getIconData(pathName)
+		local tex, w, h, coords = getIconData(pathName)
 		self[iconType]:SetSize(w, h)
 		self[iconType]:SetTexture(tex)
 		self[iconType]:SetTexCoord(unpack(coords))
@@ -157,7 +136,7 @@ end
 
 WorldStateUI.Clear = function(self)
 	self:Hide()
-	self:SetSize(32, uiHeight or 32)
+	self:SetSize(32, uiHeight)
 	self:SetHitRectInsets(0, 0, 0, 0)
 	self:SetIcon("icon", "")
 	self:SetIcon("dynamicIcon", "")
@@ -214,17 +193,11 @@ Module.GetNumUIs = function(self)
 	return self.numTotalUIs or 0
 end
 
-Module.GetNumActiveUIs = function(self)
-	return self.numActiveUIs or -1
-end
-
 Module.UpdateUIPositions = function(self)
 	if (not self.numTotalUIs) then 
 		return 
 	end
 
-	local height = 0
-	
 	-- hide all redundant uis, if any
 	for i = 1, self:GetNumUIs() do
 		local ui = self:GetUI(i)
@@ -244,7 +217,6 @@ Module.UpdateUIPositions = function(self)
 			else
 				ui:Place("TOPLEFT", uiInfo[i-1].ui, "BOTTOMLEFT", 0, -4)
 			end
-			height = height + (ui.height or 32)
 			ui:Show()
 		end
 	end
@@ -261,30 +233,21 @@ Module.UpdateUIPositions = function(self)
 			else -- not the first timer ui
 				ui:Place("TOPLEFT", timerInfo[i-1].ui, "BOTTOMLEFT", 0, -4)
 			end
-			height = height + (ui.height or 32)
 			ui:Show()
 		end
 	end
 	
 	-- update master visibility
-	if (currentPosition == 0) then
-		if (self.frame:IsShown()) then
-			self.frame:Hide()
-		end
-		self.height = 10
+	if (currentPosition > 0) then
+		self.frame:Show()
 	else
-		if (not self.frame:IsShown()) then
-			self.frame:Show()
-		end
-		self.height = height + 10
+		self.frame:Hide()
 	end
-	
 end
 
 Module.UpdateStates = function(self)
 	local numBlizzardUI = GetNumWorldStateUI() or 0
 	local uiIndex, infoIndex, timerIndex = 0, 0, 0
-	local height = 0
 	
 	-- halt all timers until new data has been processed
 	for msg, info in pairs(activeTimers) do
@@ -302,13 +265,12 @@ Module.UpdateStates = function(self)
 	
 	for blizzardID = 1, numBlizzardUI do
 		-- retrieve info about this specific blizzardUI
-		local uiType, state, hidden, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extendedUIState1, extendedUIState2, extendedUIState3 = GetWorldStateUIInfo(blizzardID)
-		if state > 0 and extendedUI == "" and text ~= nil and not hidden then
+		local _, state, text, icon, dynamicIcon, tooltip, _, extendedUI = GetWorldStateUIInfo(blizzardID)
+		if state > 0 and extendedUI == "" and text ~= nil then
 			uiIndex = uiIndex + 1 -- increase the ui counter
 
 			local ui = self:GetUI(uiIndex) -- get or create a custom ui
 			ui.blizzardID = blizzardID -- store blizzards id here
-			ui.height = uiHeight or 32
 			
 			-- figure out what kind of UI this is
 			local mins, secs = text:match("(%d+):(%d+)") -- we assume only 1 time value will be listed in any single ui
@@ -316,9 +278,8 @@ Module.UpdateStates = function(self)
 				ui.uiType = "timer"
 				timerIndex = timerIndex + 1 -- increase the timer ui counter
 
-				ui:SetSize(32, uiHeight or 32)
+				ui:SetSize(32, uiHeight)
 				ui:SetHitRectInsets(0, 0, 0, 0)
-				height = height + (uiHeight or 32)
 				ui:SetIcon("icon", "", true) -- only show icons we have customs for
 				ui.icon:Place("TOPLEFT", 0, 0)
 				ui.text:Place("LEFT", 0, 0) -- center the timer?
@@ -360,22 +321,16 @@ Module.UpdateStates = function(self)
 				ui.text:SetText(text)
 				
 				if (icon and icons[icon]) then
-					local tex, w, h, y, coords = getIconData(icon)
-					ui:SetSize(w, uiHeight or h)
-					height = height + uiHeight
-					if coords then
-						ui:SetHitRectInsets(unpack(coords))
-					else 
-						ui:SetHitRectInsets(0, 0, 0, 0)
-					end
+					local _, w, _, _, rects = getIconData(icon)
+					ui:SetSize(w, uiHeight)
+					ui:SetHitRectInsets(unpack(rects))
 					ui:SetIcon("icon", icon)
 					ui.icon:Place("TOPLEFT", 0, 0)
 					ui.text:Place("LEFT", 32, 0)
 					ui.tooltip = tooltip
 				else
-					ui:SetSize(32, uiHeight or 32)
+					ui:SetSize(32, uiHeight)
 					ui:SetHitRectInsets(0, 0, 0, 0)
-					height = height + (uiHeight or 32)
 					ui:SetIcon("icon", "", true) -- only show icons we have customs for
 					ui.icon:Place("TOPLEFT", 0, 0)
 					ui.text:Place("LEFT", 32, 0)
@@ -411,8 +366,6 @@ Module.UpdateStates = function(self)
 		end	
 	end
 
-	self.height = height
-	self.numActiveUIs = uiIndex
 	self.numInfoUIs = infoIndex
 	self.numTimerUIs = timerIndex
 

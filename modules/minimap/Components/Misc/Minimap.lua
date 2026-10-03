@@ -24,20 +24,14 @@
 
 --]]
 local _, ns = ..., DiabolicUIMinimapNS
-local MinimapMod = ns:NewModule("Minimap", "LibMoreEvents-1.0", "AceHook-3.0", "AceTimer-3.0",
-    "AceConsole-3.0")
+local MinimapMod = ns:NewModule("Minimap", "AceTimer-3.0")
 
 -- Lua API
-local ipairs = ipairs
 local math_cos = math.cos
 local half_pi = math.pi / 2
 local math_sin = math.sin
 local next = next
-local pairs = pairs
 local string_format = string.format
-local string_lower = string.lower
-local table_insert = table.insert
-local type = type
 local unpack = unpack
 
 -- Addon API
@@ -46,41 +40,23 @@ local GetMedia = ns.API.GetMedia
 local IsAddOnEnabled = ns.API.IsAddOnEnabled
 local UIHider = ns.Hider
 local noop = ns.Noop
-local GetTime = ns.API.GetTime
 local GetFont = ns.API.GetFont
 local GetLocalTime = ns.API.GetLocalTime
 local GetServerTime = ns.API.GetServerTime
 
 -- WoW Strings
-local L_FPS = FPS_ABBR -- "fps"
-local L_MS = MILLISECONDS_ABBR -- "ms"
-local L_RESTING = TUTORIAL_TITLE30 -- "Resting"
-local L_NEW = NEW -- "New"
 local L_HAVE_MAIL = HAVE_MAIL -- "You have unread mail"
 local L_HAVE_MAIL_FROM = HAVE_MAIL_FROM -- "Unread mail from:"
 
-local getTimeStrings = function(h, m, suffix, useHalfClock, abbreviateSuffix)
-	if (useHalfClock) then
-		return "%.0f:%02.0f |cff888888%s|r", h, m, abbreviateSuffix and string_match(suffix, "^.") or suffix
-	else
-		return "%02.0f:%02.0f", h, m
-	end
-end
-
 local Time_UpdateTooltip = function(self)
-
-	-- local useHalfClock = ns.db.global.minimap.useHalfClock -- the outlandish 12 hour clock the colonials seem to favor so much
-	local useHalfClock = false
-	local lh, lm, lsuffix = GetLocalTime(useHalfClock) -- local computer time
-	local sh, sm, ssuffix = GetServerTime(useHalfClock) -- realm time
 	local r, g, b = unpack(Colors.normal)
 	local rh, gh, bh = unpack(Colors.highlight)
 
 	GameTooltip:SetOwner(self:GetParent(), "ANCHOR_NONE")
 	GameTooltip:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -40, 0)
 	GameTooltip:AddLine(TIMEMANAGER_TOOLTIP_TITLE, unpack(Colors.title))
-	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, string_format(getTimeStrings(lh, lm, lsuffix, useHalfClock)), rh, gh, bh, r, g, b)
-	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, string_format(getTimeStrings(sh, sm, ssuffix, useHalfClock)), rh, gh, bh, r, g, b)
+	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, string_format("%02.0f:%02.0f", GetLocalTime()), rh, gh, bh, r, g, b)
+	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, string_format("%02.0f:%02.0f", GetServerTime()), rh, gh, bh, r, g, b)
 	GameTooltip:AddLine("<"..GAMETIME_TOOLTIP_TOGGLE_CALENDAR..">", unpack(Colors.quest.green))
 	GameTooltip:Show()
 end
@@ -96,22 +72,13 @@ local Time_OnLeave = function(self)
 end
 
 local Time_OnClick = function(self, mouseButton)
-	if (ToggleCalendar) and (not InCombatLockdown()) then
+	if (not InCombatLockdown()) then
 		ToggleCalendar()
 	end
 end
 
--- local mapScale = 198 / 140
+-- The map's size in the Diabolic look (198 / 140 would be Blizzard's).
 local mapScale = 1.614
-
-local defaults = {
-    enabled = true,
-    theme = "Diabolic"
-}
-
-MinimapMod.GetScale = function(self)
-    return mapScale
-end
 
 -- Returns the base scale of the minimap widget,
 -- before the user's own edit mode resizing is factored in.
@@ -124,12 +91,25 @@ MinimapMod.GetUserScale = function(self)
     return (ns.db and ns.db.global.minimap.userScale) or 1
 end
 
-local DEFAULT_THEME = "Blizzard"
-local CURRENT_THEME = DEFAULT_THEME
-
-local Elements = {}
+-- Blizzard's own minimap pieces, and the parents they normally have.
 local Objects = {}
 local ObjectOwners = {}
+
+-- The ones the Diabolic look hides: it draws its own border, clock, zone
+-- name and mail button. The dungeon finder eye and the battleground queue
+-- button stay.
+local HIDDEN = {
+    BorderTop = true, BorderClassic = true, Calendar = true, Clock = true, Compass = true,
+    Difficulty = true, Mail = true, Tracking = true, Zone = true, ZoomIn = true, ZoomOut = true,
+    WorldMap = true
+}
+
+-- Its own textures behind and around the map (sizes before the map scale).
+local MAP_TEXTURES = {
+    { path = "minimap-mask-opaque", size = 280, point = { "CENTER" }, layer = "BACKGROUND", level = -7, color = { 0, 0, 0, .75 } },
+    { path = "minimap-border", size = 340, point = { "CENTER", -1, 0 }, layer = "BORDER", level = 1, color = { Colors.ui[1], Colors.ui[2], Colors.ui[3] } },
+    { path = "shade-circle", size = 280, point = { "CENTER", -1, 0 }, layer = "BORDER", level = 1, color = { Colors.ui[1], Colors.ui[2], Colors.ui[3] } }
+}
 
 -- The group finder eye is a button on the minimap's border, sized and
 -- offset exactly like the mail button, in the top corner on the screen-edge
@@ -149,220 +129,24 @@ local PlaceGroupFinderEye = function()
     end
 end
 
--- Snippets to be run upon object toggling.
-----------------------------------------------------
-local ObjectSnippets = {
-    -- Blizzard Objects
-    ------------------------------------------
-    Crafting = {
-        Enable = function(object)
-            object:OnLoad()
-            object:SetScript("OnEvent", object.OnEvent)
-        end,
-        Disable = function(object)
-            object:SetScript("OnEvent", nil)
-        end,
-        Update = function(object)
-            object:OnEvent("CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS")
-        end
-    },
-    Eye = {
-        Enable = function(object)
-            object:SetFrameLevel(object:GetParent():GetFrameLevel() + 2)
-        end,
-        Disable = function() end,
-        Update = function() end
-    },
-    EyeClassicPvP = {
-        Enable = function(object)
-            MiniMapBattlefieldIcon:Show()
-            MiniMapBattlefieldBorder:Show()
-            BattlegroundShine:Show()
-            if (BattlefieldIconText) then BattlefieldIconText:Show() end
-        end,
-        Disable = function(object)
-            MiniMapBattlefieldIcon:Hide()
-            MiniMapBattlefieldBorder:Hide()
-            BattlegroundShine:Hide()
-            if (BattlefieldIconText) then BattlefieldIconText:Hide() end
-        end,
-        Update = function(object)
-            if (PVPBattleground_UpdateQueueStatus) then PVPBattleground_UpdateQueueStatus() end
-            BattlefieldFrame_UpdateStatus(false)
-        end
-    },
-    -- AzeriteUI Objects
-    ------------------------------------------
-    AzeriteEye = {
-        Enable = function(object)
-            MiniMapLFGFrame:SetParent(Minimap)
-            MiniMapLFGFrame:SetFrameLevel(100)
-            if (not MiniMapLFGFrame.blizzardSize) then
-                MiniMapLFGFrame.blizzardSize = { MiniMapLFGFrame:GetSize() }
-            end
-            MiniMapLFGFrame:SetSize(EYE_BUTTON_SIZE, EYE_BUTTON_SIZE)
-            MiniMapLFGFrame:SetScale(1) -- same scale as the mail button
-            PlaceGroupFinderEye()
-            MiniMapLFGFrame:SetHitRectInsets(0, 0, 0, 0)
-            -- Blizzard's own hover glow, desaturated to a neutral white so
-            -- it doesn't clash with the orange eye.
-            local highlight = MiniMapLFGFrame:GetHighlightTexture()
-            if (highlight) then
-                highlight:SetDesaturated(true)
-            end
-            MiniMapLFGFrameBorder:Hide()
-            MiniMapLFGFrameIcon:Hide()
-        end,
-        Disable = function(object)
-            MiniMapLFGFrame:SetParent(_G[ObjectOwners.Eye])
-            MiniMapLFGFrame:SetFrameLevel(MinimapBackdrop:GetFrameLevel() + 2)
-            if (MiniMapLFGFrame.blizzardSize) then
-                MiniMapLFGFrame:SetSize(unpack(MiniMapLFGFrame.blizzardSize))
-            end
-            local highlight = MiniMapLFGFrame:GetHighlightTexture()
-            if (highlight) then
-                highlight:SetDesaturated(false)
-            end
-            MiniMapLFGFrame:ClearAllPoints()
-            MiniMapLFGFrame:SetPoint("TOPLEFT", 25, -100)
-            MiniMapLFGFrame:SetHitRectInsets(0, 0, 0, 0)
-            MiniMapLFGFrameBorder:Show()
-            MiniMapLFGFrameIcon:Show()
-        end,
-        Update = function(object) end
-    },
-    AzeriteEyeClassicPvP = {
-        Enable = function(object)
-            MiniMapBattlefieldFrame:SetFrameStrata("MEDIUM")
-            MiniMapBattlefieldFrame:SetFrameLevel(70) -- Minimap's XP button is 60
-            MiniMapBattlefieldFrame:ClearAllPoints()
-            MiniMapBattlefieldFrame:SetPoint("BOTTOMLEFT", Minimap, 4, 2)
-            MiniMapBattlefieldFrame:SetHitRectInsets(-8, -8, -8, -8)
-            MiniMapBattlefieldIcon:Hide()
-            MiniMapBattlefieldBorder:Hide()
-            BattlegroundShine:Hide()
-            if (BattlefieldIconText) then BattlefieldIconText:Hide() end
-        end,
-        Disable = function(object)
-            MiniMapBattlefieldFrame:SetFrameStrata(Minimap:GetFrameStrata())
-            MiniMapBattlefieldFrame:SetFrameLevel(Minimap:GetFrameLevel() + 1)
-            MiniMapBattlefieldFrame:ClearAllPoints()
-            MiniMapBattlefieldFrame:SetPoint("BOTTOMLEFT", Minimap, 13, -13)
-            MiniMapBattlefieldFrame:SetHitRectInsets(0, 0, 0, 0)
-            MiniMapBattlefieldIcon:Show()
-            MiniMapBattlefieldBorder:Show()
-            BattlegroundShine:Show()
-            if (BattlefieldIconText) then BattlefieldIconText:Show() end
-        end,
-        Update = function(object)
-        end
-    }
-}
-
--- Element type of custom elements.
-local ElementTypes = {
-    Backdrop = "Texture",
-    Border = "Texture",
-    Shade = "Texture",
-    AzeriteEye = "Texture",
-    AzeriteEyeClassicPvP = "Texture"
-}
-
--- Mask textures for the supported shapes.
-local Shapes = {
-    Round = GetMedia("minimap-mask-opaque"),
-    RoundTransparent = GetMedia("minimap-mask-transparent")
-}
-
--- Our custom embedded skins.
-local Skins = {
-    Blizzard = {
-        Version = 1,
-        Shape = "Round"
-    },
-    ["Diabolic"] = {
-        Version = 1,
-        Shape = "RoundTransparent",
-        HideElements = {
-            Addons = true,        -- retail
-            BattleField = false,  -- classic + wrath
-            BorderTop = true,
-            BorderClassic = true, -- wrath
-            Calendar = true,
-            Clock = true,
-            Compass = true,
-            Crafting = true,  -- retail
-            Difficulty = true,
-            Expansion = true, -- retail
-            Eye = false,      -- wrath + retail
-            Mail = true,
-            Tracking = true,
-            ToggleButton = true, -- classic
-            Zone = true,
-            ZoomIn = true,
-            ZoomOut = true,
-            WorldMap = true -- wrath
-        },
-        Elements = {
-            Backdrop = {
-                Owner = "Minimap",
-                DrawLayer = "BACKGROUND",
-                DrawLevel = -7,
-                Path = GetMedia("minimap-mask-opaque"),
-                Size = function() return (280 / mapScale), (280 / mapScale) end,
-                Point = { "CENTER" },
-                Color = { 0, 0, 0, .75 },
-            },
-            Border = {
-                Owner = "Backdrop",
-                DrawLayer = "BORDER",
-                DrawLevel = 1,
-                Path = GetMedia("minimap-border"),
-                Size = function() return (340 / mapScale), (340 / mapScale) end,
-                Point = { "CENTER", -1, 0 },
-                Color = { Colors.ui[1], Colors.ui[2], Colors.ui[3] },
-            },
-            Shade = {
-                Owner = "Backdrop",
-                DrawLayer = "BORDER",
-                DrawLevel = 1,
-                Path = GetMedia("shade-circle"),
-                Size = function() return (280 / mapScale), (280 / mapScale) end,
-                Point = { "CENTER", -1, 0 },
-                Color = { Colors.ui[1], Colors.ui[2], Colors.ui[3] },
-            },
-            AzeriteEye = {
-                Owner = "Eye",
-                DrawLayer = "BORDER",
-                DrawLevel = 2,
-                Path = GetMedia("group-finder-eye-orange"),
-                -- a little larger than the mail button's art, as the eye
-                -- was before it moved onto the border
-                Size = { 40, 40 },
-                Point = { "CENTER", 0, 0 },
-                Color = { .90, .95, 1 }
-            },
-            -- CATA: check
-            AzeriteEyeClassicPvP = (ns.IsClassic or ns.IsWrath or ns.IsCata) and {
-                Owner = "EyeClassicPvP",
-                DrawLayer = "BORDER",
-                DrawLevel = 2,
-                Path = GetMedia("group-finder-eye-orange"),
-                Size = { 64, 64 },
-                Point = { "CENTER", 0, 0 },
-                Color = { .90, .95, 1 }
-            }
-        }
-    }
-}
+-- A texture on `parent` in the Diabolic look's orange eye.
+local CreateEye = function(parent, size)
+    local eye = parent:CreateTexture()
+    eye:SetSize(size, size)
+    eye:SetPoint("CENTER", 0, 0)
+    eye:SetTexture(GetMedia("group-finder-eye-orange"))
+    eye:SetDrawLayer("BORDER", 2)
+    eye:SetVertexColor(.90, .95, 1)
+    return eye
+end
 
 -- Element Callbacks
 --------------------------------------------
 local Minimap_OnMouseWheel = function(self, delta)
     if (delta > 0) then
-        (Minimap.ZoomIn or MinimapZoomIn):Click()
+        MinimapZoomIn:Click()
     elseif (delta < 0) then
-        (Minimap.ZoomOut or MinimapZoomOut):Click()
+        MinimapZoomOut:Click()
     end
 end
 
@@ -370,10 +154,7 @@ local Minimap_OnMouseUp = function(self, button)
     if (button == "RightButton") then
         ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "cursor")
     else
-        local func = Minimap.OnClick or Minimap_OnClick
-        if (func) then
-            func(self)
-        end
+        Minimap_OnClick(self)
     end
 end
 
@@ -408,27 +189,15 @@ end
 --------------------------------------------
 MinimapMod.UpdateCompass = function(self)
     local compass = self.compass
-    if (not compass) then
-        return
-    end
     if (self.rotateMinimap) then
-        local radius = self.compassRadius
-        if (not radius) then
-            local width = compass:GetWidth()
-            if (not width) then
-                return
-            end
-            radius = width / 2
-        end
-
         local playerFacing = GetPlayerFacing()
-        if (not playerFacing) or (self.supressCompass) then
+        if (not playerFacing) then
             compass:SetAlpha(0)
-        else
-            compass:SetAlpha(1)
+            return
         end
-
-        local angle = (self.rotateMinimap and playerFacing) and -playerFacing or 0
+        compass:SetAlpha(1)
+        local radius = compass:GetWidth() / 2
+        local angle = -playerFacing
         compass.north:SetPoint("CENTER", radius * math_cos(angle + half_pi), radius * math_sin(angle + half_pi))
     else
         compass:SetAlpha(0)
@@ -436,38 +205,16 @@ MinimapMod.UpdateCompass = function(self)
 end
 
 MinimapMod.UpdateClock = function(self)
-	local time = self.time
-  -- local useHalfClock = ns.db.global.minimap.useHalfClock
-  local useHalfClock = false
-	if (not time) then
-		return
-	end
 	if (ns.db.global.minimap.useServerTime) then
-		if (useHalfClock) then
-			local h, m, suffix = GetServerTime(true)
-			time:SetFormattedText("%.0f:%02d", h, m)
-			time.suffix:SetFormattedText(" %s", suffix)
-		else
-			time:SetFormattedText("%02d:%02d", GetServerTime(false))
-			time.suffix:SetText(nil)
-		end
+		self.time:SetFormattedText("%02d:%02d", GetServerTime())
 	else
-		if (useHalfClock) then
-			local h, m, suffix = GetLocalTime(true)
-			time:SetFormattedText("%.0f:%02d", h, m)
-			time.suffix:SetFormattedText(" %s", suffix)
-		else
-			time:SetFormattedText("%02d:%02d", GetLocalTime(false))
-			time.suffix:SetText(nil)
-		end
+		self.time:SetFormattedText("%02d:%02d", GetLocalTime())
 	end
 end
 
 MinimapMod.UpdateMail = function(self)
     local mail = self.mail
-    if (not mail) then return end
-    local hasMail = HasNewMail()
-    if (hasMail) then
+    if (HasNewMail()) then
         mail:Show()
         mail.frame:Show()
     else
@@ -482,12 +229,12 @@ MinimapMod.UpdateTimers = function(self)
   if (self.rotateMinimap) then
       if (not self.compassTimer) then
           self.compassTimer = self:ScheduleRepeatingTimer("UpdateCompass", 1 / 60)
-          self:UpdateCompass()
       end
   elseif (self.compassTimer) then
       self:CancelTimer(self.compassTimer)
-      self:UpdateCompass()
+      self.compassTimer = nil
   end
+  self:UpdateCompass()
   if (not self.clockTimer) then
     self.clockTimer = self:ScheduleRepeatingTimer("UpdateClock", 1)
     self:UpdateClock()
@@ -554,7 +301,6 @@ MinimapMod.InitializeMBB = function(self)
         over = true
         setalpha()
 
-
         GameTooltip_SetDefaultAnchor(GameTooltip, self)
         GameTooltip:AddLine("MinimapButtonBag v" .. MBB_Version)
         GameTooltip:AddLine(MBB_TOOLTIP1, 0, 1, 0, true)
@@ -565,7 +311,6 @@ MinimapMod.InitializeMBB = function(self)
         MBB_ShowTimeout = 0
         over = false
         setalpha()
-
 
         GameTooltip:Hide()
     end)
@@ -578,8 +323,6 @@ end
 -- towards the nearest side of the screen.
 MinimapMod.UpdateZoneTextPosition = function(self)
     local zoneName = self.zoneName
-    if (not zoneName) then return end
-
     local minimapX = Minimap:GetCenter()
     local screenX = UIParent:GetCenter()
 
@@ -611,19 +354,9 @@ MinimapMod.UpdateMBBButtonPosition = function(self)
     end
 end
 
--- Only while the Diabolic theme owns the eye; Blizzard's theme puts it
--- back where Blizzard had it.
-MinimapMod.UpdateGroupFinderEyePosition = function(self)
-    if (CURRENT_THEME == "Diabolic") then
-        PlaceGroupFinderEye()
-    end
-end
-
 -- Same outer-side alignment as the MBB button, mirrored to the top.
 MinimapMod.UpdateMailButtonPosition = function(self)
-    local button = self.mail and self.mail.frame
-    if (not button) then return end
-
+    local button = self.mail.frame
     local minimapX = Minimap:GetCenter()
     local screenX = UIParent:GetCenter()
 
@@ -639,149 +372,66 @@ MinimapMod.InitializeAddon = function(self, addon)
     if (not IsAddOnEnabled(addon)) then
         return
     end
-    local method = self["Initialize" .. addon]
-    if (method) then
-        if (not IsAddOnLoaded(addon)) then
-            LoadAddOn(addon)
-        end
-        method(self)
+    if (not IsAddOnLoaded(addon)) then
+        LoadAddOn(addon)
     end
+    self["Initialize" .. addon](self)
 end
 
--- Module Theme API (really...?)
---------------------------------------------
-MinimapMod.RegisterTheme = function(self, name, skin)
-    if (Skins[name] or name == DEFAULT_THEME) then return end
-    Skins[name] = skin
-end
-
-MinimapMod.SetMinimapTheme = function(self, input)
-    if (InCombatLockdown()) then return end
-    local theme = "diabolic"
-    self:SetTheme(theme)
-end
-
-MinimapMod.SetTheme = function(self, requestedTheme)
-    if (InCombatLockdown()) then return end
-
-    -- Theme names are case sensitive,
-    -- but we don't want the input to be.
-    local name
-    for theme in next, Skins do
-        if (string_lower(theme) == string_lower(requestedTheme)) then
-            name = theme
-            break
-        end
-    end
-    if (not name or not Skins[name] or name == CURRENT_THEME) then return end
-
-    local current, new = Skins[CURRENT_THEME], Skins[name]
-
-    -- Disable unused custom elements.
-    if (current.Elements) then
-        for element, data in next, current.Elements do
-            if (data) and (not new.Elements or not new.Elements[element]) then
-                Elements[element]:SetParent(UIHider)
-                if (ObjectSnippets[element]) then
-                    ObjectSnippets[element].Disable(Objects[element])
-                end
-            end
-        end
-    end
-
-    -- Update Blizzard element visibility.
+-- The Diabolic look: hides the Blizzard pieces it replaces, keeps the
+-- others under their usual parent, and adds its own backdrop, border and
+-- shade, and its own dungeon finder eye and battleground queue button.
+MinimapMod.ApplyTheme = function(self)
     for element, object in next, Objects do
-        if (new.HideElements and new.HideElements[element]) then
-            object:SetParent(UIHider)
-            if (ObjectSnippets[element]) then
-                ObjectSnippets[element].Disable(object)
-            end
-        else
-            object:SetParent(ObjectOwners[element])
-            if (ObjectSnippets[element]) then
-                ObjectSnippets[element].Enable(object)
-                ObjectSnippets[element].Update(object)
-            end
-        end
+        object:SetParent(HIDDEN[element] and UIHider or ObjectOwners[element])
     end
 
-    -- Enable new theme's custom elements.
-    if (new.Elements) then
-        for element, data in next, new.Elements do
-            if (data) then
-                -- Retrieve the owner of the object
-                local owner = data and data.Owner and ObjectOwners[data.Owner] or Minimap
-
-                -- Retrieve the object
-                local object, objectParent = Elements[element]
-
-                -- If a custom object does not exist, create it.
-                if (not object) then
-                    -- Figure out what our custom object should be parented to.
-                    objectParent = data and data.Owner and Objects[data.Owner] or Minimap
-
-                    -- Create!
-                    if (ElementTypes[element] == "Texture") then
-                        object = objectParent:CreateTexture()
-                        Elements[element] = object
-                    end
-                end
-
-                -- Silently ignore non-supported objects.
-                if (object) then
-                    object:SetParent(objectParent or owner)
-
-                    if (data.Size) then
-                        if (type(data.Size) == "function") then
-                            object:SetSize(data.Size())
-                        else
-                            object:SetSize(unpack(data.Size))
-                        end
-                    else
-                        object:SetSize(Minimap:GetSize())
-                    end
-
-                    if (data.Point) then
-                        object:ClearAllPoints()
-                        if (type(data.Point) == "function") then
-                            object:SetPoint(data.Point())
-                        else
-                            object:SetPoint(unpack(data.Point))
-                        end
-                    end
-
-                    if (ElementTypes[element] == "Texture") then
-                        object:SetTexture(data.Path)
-                        object:SetDrawLayer(data.DrawLayer or "ARTWORK", data.DrawLevel or 0)
-                        if (data.Color) then
-                            object:SetVertexColor(unpack(data.Color))
-                        else
-                            object:SetVertexColor(1, 1, 1, 1)
-                        end
-                    end
-
-                    -- Run object callbacks.
-                    if (ObjectSnippets[element]) then
-                        ObjectSnippets[element].Enable(Elements[element])
-                        ObjectSnippets[element].Update(Elements[element])
-                    end
-                end
-            end
-        end
+    for _, texture in next, MAP_TEXTURES do
+        local object = Minimap:CreateTexture()
+        object:SetSize(texture.size / mapScale, texture.size / mapScale)
+        object:SetPoint(unpack(texture.point))
+        object:SetTexture(GetMedia(texture.path))
+        object:SetDrawLayer(texture.layer, texture.level)
+        object:SetVertexColor(unpack(texture.color))
     end
 
-    CURRENT_THEME = name
+    -- Dungeon finder eye: a border button like the mail button, a little
+    -- larger art than the mail icon
+    CreateEye(MiniMapLFGFrame, 40)
+    MiniMapLFGFrame:SetParent(Minimap)
+    MiniMapLFGFrame:SetFrameLevel(100)
+    MiniMapLFGFrame:SetSize(EYE_BUTTON_SIZE, EYE_BUTTON_SIZE)
+    MiniMapLFGFrame:SetScale(1) -- same scale as the mail button
+    PlaceGroupFinderEye()
+    MiniMapLFGFrame:SetHitRectInsets(0, 0, 0, 0)
+    -- Blizzard's own hover glow, desaturated to a neutral white so
+    -- it doesn't clash with the orange eye.
+    local highlight = MiniMapLFGFrame:GetHighlightTexture()
+    if (highlight) then
+        highlight:SetDesaturated(true)
+    end
+    MiniMapLFGFrameBorder:Hide()
+    MiniMapLFGFrameIcon:Hide()
 
-    -- Update custom element visibility
-    self:UpdateCustomElements()
+    -- Battleground queue: the same eye at the bottom left, instead of
+    -- Blizzard's icon, border and shine
+    CreateEye(MiniMapBattlefieldFrame, 64)
+    PVPBattleground_UpdateQueueStatus()
+    BattlefieldFrame_UpdateStatus(false)
+    MiniMapBattlefieldFrame:SetFrameStrata("MEDIUM")
+    MiniMapBattlefieldFrame:SetFrameLevel(70) -- Minimap's XP button is 60
+    MiniMapBattlefieldFrame:ClearAllPoints()
+    MiniMapBattlefieldFrame:SetPoint("BOTTOMLEFT", Minimap, 4, 2)
+    MiniMapBattlefieldFrame:SetHitRectInsets(-8, -8, -8, -8)
+    MiniMapBattlefieldIcon:Hide()
+    MiniMapBattlefieldBorder:Hide()
+    BattlegroundShine:Hide()
+    BattlefieldIconText:Hide()
 end
 
 -- Minimap Widget Settings
 --------------------------------------------
 -- Create our custom elements
--- *This is a temporary and clunky measure,
---  eventually I want this baked into the themes,
---  including the position based visibility.
 MinimapMod.CreateCustomElements = function(self)
     local db = ns.Config.Minimap
 
@@ -813,7 +463,7 @@ MinimapMod.CreateCustomElements = function(self)
     self.zoneName = zoneName
     self.zoneTargetAlpha = .85 -- the "resting" alpha FadeZoneText fades in towards
     self:UpdateZoneTextPosition()
-  
+
     -- Time
     local timeFrame = CreateFrame("Button", nil, Minimap)
     timeFrame:SetScript("OnEnter", Time_OnEnter)
@@ -831,26 +481,6 @@ MinimapMod.CreateCustomElements = function(self)
     time:SetPoint("TOP", Minimap, "BOTTOM", 0, 20)
     timeFrame:SetAllPoints(time)
     self.time = time
-
-    local timeSuffix = timeFrame:CreateFontString()
-    timeSuffix:SetDrawLayer("OVERLAY", 1)
-    timeSuffix:SetJustifyH("CENTER")
-    timeSuffix:SetJustifyV("TOP")
-    timeSuffix:SetFontObject(GetFont(11,true))
-    timeSuffix:SetTextColor(unpack(Colors.darkgray))
-    timeSuffix:SetAlpha(.75)
-    timeSuffix:SetPoint("TOPLEFT", time, "TOPRIGHT", 0, -2)
-    time.suffix = timeSuffix
-
-    -- Coordinates
-    local coordinates = frame:CreateFontString(nil, "OVERLAY", nil, 1)
-    coordinates:SetJustifyH("CENTER")
-    coordinates:SetJustifyV("MIDDLE")
-    coordinates:SetFontObject(db.CoordinateFont)
-    coordinates:SetTextColor(unpack(db.CoordinateColor))
-    coordinates:SetPoint(unpack(db.CoordinatePlace))
-
-    self.coordinates = coordinates
 
     -- Mail
     -- Styled the same simple way as the MBB "+" button: a single icon
@@ -873,59 +503,23 @@ MinimapMod.CreateCustomElements = function(self)
     mail:SetAlpha(.85)
 
     mail.frame = mailFrame
-    mail.base = mailBase
     self.mail = mail
     self:UpdateMailButtonPosition()
-
-    self:UpdateCustomElements()
-    self.CreateCustomElements = noop
-end
-
--- Update the visibility of the custom elements
-MinimapMod.UpdateCustomElements = function(self)
-    if (not self.widgetFrame) then return end
-    if (CURRENT_THEME == "Diabolic") then
-        self.widgetFrame:Show()
-    else
-        self.widgetFrame:Hide()
-    end
 end
 
 MinimapMod.PostUpdatePositionAndScale = function(self)
-    local baseScale = self:GetBaseScale()
-
-    self.widgetFrame:SetScale(ns.API.GetEffectiveScale() / baseScale)
-    self:UpdateCustomElements()
-
-    if (ns.IsRetail) then
-        MinimapCluster.MinimapContainer:SetScale(1)
-    end
-
-    -- TODO: Figure out all the elements I should rescale.
-
-    for name in next, {
-        MiniMapBattlefieldFrame = true,
-        MiniMapLFGFrame = true,
-        QueueStatusButton = true
-    } do
-        local element = _G[name]
-        if (element) then
-            element:SetScale(ns.API.GetEffectiveScale() / baseScale)
-        end
-    end
-
-    -- The Diabolic theme's eye is a border button like the mail button,
+    local scale = ns.API.GetEffectiveScale() / self:GetBaseScale()
+    self.widgetFrame:SetScale(scale)
+    MiniMapBattlefieldFrame:SetScale(scale)
+    -- The eye is a border button like the mail button,
     -- so it keeps the minimap's own scale.
-    if (CURRENT_THEME == "Diabolic") then
-        MiniMapLFGFrame:SetScale(1)
-    end
+    MiniMapLFGFrame:SetScale(1)
 end
 
 -- Applies the base map scale together with the user's
 -- own edit mode size adjustment, then updates dependent elements.
+-- In combat it waits for the end of it (see OnEnable).
 MinimapMod.UpdateSize = function(self)
-    if (not self.frame) then return end
-
     if (InCombatLockdown()) then
         self.updateneeded = true
         return
@@ -934,10 +528,7 @@ MinimapMod.UpdateSize = function(self)
     self.updateneeded = nil
 
     self.frame:SetScale(self:GetBaseScale() * self:GetUserScale())
-
-    if (self.PostUpdatePositionAndScale) then
-        self:PostUpdatePositionAndScale()
-    end
+    self:PostUpdatePositionAndScale()
 end
 
 -- Steps the zone text through a fade-out/fade-in when the zone changes:
@@ -950,13 +541,8 @@ end
 -- own method.
 MinimapMod.FadeZoneText = function(self)
   local zoneName = self.zoneName
-  if (not zoneName) then
-    return
-  end
   local db = ns.db.global.minimap
-  -- _G.GetTime, not the local GetTime upvalue above (that one's this
-  -- module's own clock-display wrapper, not WoW's real elapsed-time API).
-  local elapsed = _G.GetTime() - (self.zoneFadeStart or 0)
+  local elapsed = GetTime() - self.zoneFadeStart
 
   if (self.zoneFadePhase == "out") then
     local progress = elapsed / db.zoneFadeDuration
@@ -967,7 +553,7 @@ MinimapMod.FadeZoneText = function(self)
       zoneName:SetAlpha(0)
       self.zonePendingZone = nil
       self.zoneFadePhase = "in"
-      self.zoneFadeStart = _G.GetTime()
+      self.zoneFadeStart = GetTime()
     else
       zoneName:SetAlpha(self.zoneTargetAlpha * (1 - progress))
     end
@@ -986,23 +572,10 @@ end
 
 MinimapMod.UpdateZone = function(self)
   local zoneName = self.zoneName
-  if (not zoneName) then
-    return
-  end
-  local a = self.zoneTargetAlpha or zoneName:GetAlpha() -- needed to preserve alpha after text color changes
+  local a = self.zoneTargetAlpha -- needed to preserve alpha after text color changes
   local minimapZoneName = GetMinimapZoneText()
-  local pvpType, isSubZonePvP, factionName = GetZonePVPInfo()
-  local r, g, b
-  if (pvpType) then
-    local color = Colors.zone[pvpType]
-    if (color) then
-      r, g, b = color[1], color[2], color[3]
-    else
-      r, g, b = Colors.normal[1], Colors.normal[2], Colors.normal[3]
-    end
-  else
-    r, g, b = Colors.normal[1], Colors.normal[2], Colors.normal[3]
-  end
+  local color = Colors.zone[GetZonePVPInfo() or ""] or Colors.normal
+  local r, g, b = color[1], color[2], color[3]
 
   -- Fade the text out then in whenever the zone actually changes (and the
   -- option's enabled), rather than on every call to this (also triggered
@@ -1012,7 +585,7 @@ MinimapMod.UpdateZone = function(self)
     self.lastZoneName = minimapZoneName
     self.zonePendingZone = { text = minimapZoneName, r = r, g = g, b = b }
     self.zoneFadePhase = "out"
-    self.zoneFadeStart = _G.GetTime()
+    self.zoneFadeStart = GetTime()
     if (not self.zoneFadeTimer) then
       self.zoneFadeTimer = self:ScheduleRepeatingTimer("FadeZoneText", 1/30)
     end
@@ -1021,6 +594,14 @@ MinimapMod.UpdateZone = function(self)
     zoneName:SetTextColor(r, g, b, a)
     zoneName:SetText(minimapZoneName)
   end
+end
+
+-- Everything placed on the minimap's outer side follows it around.
+MinimapMod.UpdateOuterElements = function(self)
+    self:UpdateMBBButtonPosition()
+    self:UpdateMailButtonPosition()
+    self:UpdateZoneTextPosition()
+    PlaceGroupFinderEye()
 end
 
 MinimapMod.UpdatePosition = function(self)
@@ -1034,11 +615,7 @@ MinimapMod.UpdatePosition = function(self)
         Minimap:SetPoint(unpack(db.Position))
     end
     Minimap:SetMovable(true)
-
-    self:UpdateMBBButtonPosition()
-    self:UpdateMailButtonPosition()
-    self:UpdateZoneTextPosition()
-    self:UpdateGroupFinderEyePosition()
+    self:UpdateOuterElements()
 end
 
 -- Stores the minimap's current position, relative to UIParent,
@@ -1046,21 +623,7 @@ end
 MinimapMod.SavePosition = function(self)
     local point, x, y = ns.API.GetPosition(Minimap)
     ns.db.global.minimap.storedPosition = { point = point, x = x, y = y }
-
-    self:UpdateMBBButtonPosition()
-    self:UpdateMailButtonPosition()
-    self:UpdateZoneTextPosition()
-    self:UpdateGroupFinderEyePosition()
-end
-
-MinimapMod.UpdateSettings = function(self)
-    self:SetTheme(defaults.theme)
-    self:UpdateCompass()
-    self:UpdateMail()
-    self:UpdateTimers()
-    self:UpdateCustomElements()
-    self:UpdatePosition()
-    self:UpdateSize()
+    self:UpdateOuterElements()
 end
 
 MinimapMod.InitializeObjectTables = function(self)
@@ -1085,7 +648,6 @@ MinimapMod.InitializeObjectTables = function(self)
     ObjectOwners.Clock = MinimapCluster
     ObjectOwners.Compass = MinimapBackdrop
     ObjectOwners.Difficulty = MinimapCluster
-    ObjectOwners.Expansion = MinimapBackdrop
     ObjectOwners.Eye = MinimapBackdrop
     ObjectOwners.EyeClassicPvP = Minimap
     ObjectOwners.Mail = Minimap
@@ -1249,6 +811,7 @@ MinimapMod.OnEnable = function(self)
     MinimapCluster:EnableMouse(false)
     MinimapCluster:SetFrameLevel(1)
     Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
+    Minimap:RegisterEvent("PLAYER_REGEN_ENABLED")
     Minimap:RegisterEvent("VARIABLES_LOADED")
     Minimap:RegisterEvent("CVAR_UPDATE")
     Minimap:RegisterEvent("UPDATE_PENDING_MAIL")
@@ -1261,6 +824,10 @@ MinimapMod.OnEnable = function(self)
           self:UpdateZone()
           self:UpdateMail()
           self:UpdateTimers()
+        elseif (event == "PLAYER_REGEN_ENABLED") then
+          if (self.updateneeded) then
+            self:UpdateSize() -- a resize asked for in combat
+          end
         elseif (event == "VARIABLES_LOADED") then
           EnsureStopwatchOptions()
           self:UpdateTimers()
@@ -1270,12 +837,11 @@ MinimapMod.OnEnable = function(self)
             self:UpdateMail()
         elseif (event == "CVAR_UPDATE") then
             self:UpdateTimers()
-        elseif (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
+        else -- the zone changed
             self:UpdateZone()
         end
     end)
     self.frame = Minimap
-    -- self.frame:SetSize(180,180)
     self.frame:SetSize(280 / mapScale, 280 / mapScale)
     self.frame:SetMovable(true)
     self.frame:EnableMouseWheel(true)
@@ -1283,7 +849,10 @@ MinimapMod.OnEnable = function(self)
     self.frame:SetScript("OnMouseUp", Minimap_OnMouseUp)
 
     self:CreateCustomElements()
-    self:UpdateSettings()
-    self:RegisterChatCommand("setminimaptheme", "SetMinimapTheme")
+    self:ApplyTheme()
+    self:UpdateMail()
+    self:UpdateTimers()
+    self:UpdatePosition()
+    self:UpdateSize()
     self:InitializeAddon("MBB")
 end

@@ -12,25 +12,15 @@ local F = Engine:GetDB("Library: Format")
 local _G = _G
 local math_floor = math.floor
 local math_min = math.min
-local select = select
-local tonumber = tonumber
 local tostring = tostring
 local unpack = unpack
 
 -- WoW API
 
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
-local CreateFrame = _G.CreateFrame
 local GetRestState = _G.GetRestState
 local GetTimeToWellRested = _G.GetTimeToWellRested
 local GetXPExhaustion = _G.GetXPExhaustion
-local HideUIPanel = _G.HideUIPanel
 local IsResting = _G.IsResting
-local IsXPUserDisabled = _G.IsXPUserDisabled
-local MAX_PLAYER_LEVEL_TABLE = _G.MAX_PLAYER_LEVEL_TABLE
-local SocketInventoryItem = _G.SocketInventoryItem
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-local UnitHasVehiclePlayerFrameUI = _G.UnitHasVehiclePlayerFrameUI
 local UnitLevel = _G.UnitLevel
 local UnitXP = _G.UnitXP
 local UnitXPMax = _G.UnitXPMax
@@ -38,17 +28,17 @@ local UnitXPMax = _G.UnitXPMax
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
 
+local MINUTE, HOUR = 60, 3600
+
 -- Track XP/Rep bar visibility
 local XPBARVISIBLE
 
 -- Rested experience caps at 150% of a level
 local maxRested = 1.5
 
--- Various string formatting for our tooltips and bars
+-- String formatting for our tooltip
 local shortXPString = "%s%%"
 local longXPString = "%s / %s"
-local fullXPString = "%s / %s - %s%%"
-local restedString = " (%s%% %s)"
 local shortLevelString = "%s %d"
 
 -- Just to avoid some updates we don't need
@@ -62,21 +52,12 @@ local vehicleEvents = {
 -- Bar Templates
 ----------------------------------------------------------
 
+-- An actual frame, the fallback native frame methods resolve through once
+-- the bar's own methods don't match (its metatable is swapped below).
 local Bar = Engine:CreateFrame("Frame")
 
 local Bar_XP = setmetatable({}, { __index = Bar })
 local Bar_XP_MT = { __index = Bar_XP }
-
--- Standard methods we'll let the module assume always exist
-Bar.UpdateData = function(self) return self.data end
-Bar.Update = function(self) end
-Bar.OnEnter = function(self) end
-Bar.OnLeave = function(self) end
-
--- Colors
---local C_XP = "XP"
---local C_XP_RESTED = "XPRested"
---local C_XP_BONUS = "XPRestedBonus"
 
 local C_XP = "XPBright"
 local C_XP_RESTED = "XPRestedBright"
@@ -106,24 +87,10 @@ Bar_XP.Update = function(self)
 	self.XP:SetValue(data.xp)
 	self.Rested:SetMinMaxValues(0, data.xpMax)
 	self.Rested:SetValue(math_min(data.xpMax, data.xp + (data.restedLeft or 0)))
-	if (not self.Rested:IsShown()) then
-		self.Rested:Show()
-	end
 	if data.restedLeft then
-		local r, g, b = unpack(C.General.XPRestedBonus)
-		self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
-	else
-		self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
+		r, g, b = unpack(C.General.XPRestedBonus)
 	end
-	if self.mouseIsOver then
-		if data.restedLeft then
-			self.Value:SetFormattedText(fullXPString..F.Colorize(restedString, "OffGreen"), F.Colorize(F.Short(data.xp), "Normal"), F.Colorize(F.Short(data.xpMax), "Normal"), F.Colorize(F.Short(math_floor(data.xp/data.xpMax*100)), "Normal"), F.Short(math_floor(data.restedLeft/data.xpMax*100)), L["Rested"])
-		else
-			self.Value:SetFormattedText(fullXPString, F.Colorize(F.Short(data.xp), "Normal"), F.Colorize(F.Short(data.xpMax), "Normal"), F.Colorize(F.Short(math_floor(data.xp/data.xpMax*100)), "Normal"))
-		end
-	else
-		self.Value:SetFormattedText(shortXPString, F.Colorize(F.Short(math_floor(data.xp/data.xpMax*100)), "Normal"))
-	end
+	self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
 end
 
 Bar_XP.OnEnter = function(self)
@@ -139,7 +106,7 @@ Bar_XP.OnEnter = function(self)
 	GameTooltip:AddLine(shortLevelString:format(LEVEL, UnitLevel("player")))
 	GameTooltip:AddLine(" ")
 
-	GameTooltip:AddLine(F.Colorize("Experience", "Normal"))
+	GameTooltip:AddLine(F.Colorize(L["Experience"], "Normal"))
 	GameTooltip:AddDoubleLine(L["Current XP: "], longXPString:format(F.Colorize(F.Short(data.xp), "Normal"), F.Colorize(F.Short(data.xpMax), "Normal")), r2, g2, b2, r2, g2, b2)
 
 	-- add rested bonus if it exists
@@ -154,10 +121,10 @@ Bar_XP.OnEnter = function(self)
 		if data.resting and data.restedTimeLeft and data.restedTimeLeft > 0 then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(L["Resting"], unpack(C.General.Highlight))
-			if data.restedTimeLeft > hour*2 then
-				GameTooltip:AddLine(L["You must rest for %s additional\nhours to become fully rested."]:format(F.Colorize(math_floor(data.restedTimeLeft/hour), "OffWhite")), unpack(C.General.Normal))
+			if data.restedTimeLeft > HOUR*2 then
+				GameTooltip:AddLine(L["You must rest for %s additional\nhours to become fully rested."]:format(F.Colorize(math_floor(data.restedTimeLeft/HOUR), "OffWhite")), unpack(C.General.Normal))
 			else
-				GameTooltip:AddLine(L["You must rest for %s additional\nminutes to become fully rested."]:format(F.Colorize(math_floor(data.restedTimeLeft/minute), "OffWhite")), unpack(C.General.Normal))
+				GameTooltip:AddLine(L["You must rest for %s additional\nminutes to become fully rested."]:format(F.Colorize(math_floor(data.restedTimeLeft/MINUTE), "OffWhite")), unpack(C.General.Normal))
 			end
 		end
 	elseif data.restState >= 2 then
@@ -178,30 +145,12 @@ Bar_XP.OnLeave = function(self)
 	GameTooltip:Hide()
 end
 
-BarWidget.OnEnter = function(self)
-	self.Bar.mouseIsOver = true
-	self.Bar:OnEnter()
-	self:UpdateBar()
-end
-
-BarWidget.OnLeave = function(self)
-	self.Bar.mouseIsOver = false
-	self.Bar:OnLeave()
-	self:UpdateBar()
-end
-
 BarWidget.Update = function(self, event, unit)
 	if event and vehicleEvents[event] and (vehicleEvents[event] ~= unit) then
 		return
 	end
 	if self:UpdateVisibility() then
 		self:UpdateBar()
-	end
-end
-
-BarWidget.OnClick = function(self, ...)
-	if (self.Bar.OnClick) then
-		self.Bar:OnClick(...)
 	end
 end
 
@@ -254,12 +203,11 @@ BarWidget.OnEnable = function(self)
 	controller:SetSize(unpack(Module.config.structure.controllers.xp.size[num_bars]))
 	controller:SetPoint(unpack(Module.config.structure.controllers.xp.position))
 	controller:EnableMouse(true)
-	controller:SetScript("OnEnter", function() self:OnEnter() end)
-	controller:SetScript("OnLeave", function() self:OnLeave() end)
-	controller:SetScript("OnMouseUp", function(_, ...) self:OnClick(...) end)
 	self.Controller = controller
 
 	local bar = setmetatable(controller:CreateFrame("Frame"), Bar_XP_MT)
+	controller:SetScript("OnEnter", function() bar:OnEnter() end)
+	controller:SetScript("OnLeave", function() bar:OnLeave() end)
 	bar:SetSize(controller:GetSize())
 	bar:SetAllPoints(controller)
 	bar.data = {}
@@ -291,30 +239,17 @@ BarWidget.OnEnable = function(self)
 	xp:SetSparkSize(unpack(art_config.bar.spark.size))
 	xp:SetSparkFlash(2.75, 1.25, .35, .85)
 
-	local overlay = controller:CreateFrame("Frame")
-	overlay:SetFrameStrata("MEDIUM")
-	overlay:SetFrameLevel(35) -- above the actionbar artwork
-	overlay:SetAllPoints()
-
-	local value = overlay:CreateFontString(nil, "OVERLAY")
-	value:SetPoint("CENTER")
-	value:SetFontObject(art_config.normalFont)
-	value:Hide()
-
 	bar.Backdrop = backdrop
 	bar.Rested = rested
 	bar.XP = xp
-	bar.Value = value
 
 	self.Bar = bar
 
 	-- Our XP/Rep bars aren't secure, so we need to update their sizes
 	-- from normal Lua, not the secure environment.
-	Main:HookScript("OnAttributeChanged", function(_, name, value)
+	Main:HookScript("OnAttributeChanged", function(_, name)
 		if (name == "numbars") then
 			self:UpdateBarSettings()
-		elseif (name == "state-page") then
-			self.InVehicle = (value == "possess") or (value == "vehicle")
 		end
 		bar:Update()
 	end)

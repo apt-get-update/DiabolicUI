@@ -1,16 +1,12 @@
-local Addon, Engine = ...
+local _, Engine = ...
 local Module = Engine:NewModule("ChatFilters")
 
 Module:SetIncompatible("gUI4_Chat")
 
 -- Lua API
 local _G = _G
-local string_gsub = string.gsub
-local string_match = string.match
 
 -- WoW API
-local ChatFrame_AddMessageEventFilter = _G.ChatFrame_AddMessageEventFilter
-local ChatFrame_RemoveMessageEventFilter = _G.ChatFrame_RemoveMessageEventFilter
 local FCF_GetCurrentChatFrame = _G.FCF_GetCurrentChatFrame
 local StaticPopup_Show = _G.StaticPopup_Show
 local hooksecurefunc = _G.hooksecurefunc
@@ -64,7 +60,6 @@ _G.StaticPopupDialogs["DIABOLICUI_COPY_CHAT_TEXT"] = {
 	timeout = 0,
 	whileDead = true,
 	hideOnEscape = true,
-	preferredIndex = 3,
 }
 
 -- A real override, not hooksecurefunc: Blizzard's own SetItemRef falls
@@ -90,10 +85,6 @@ _G.SetItemRef = function(link, text, button, ...)
 end
 
 local AddMessage = function(frame, msg, ...)
-	-- uncomment to break the chat
-	-- for development purposes only. weird stuff happens when used.
-	-- msg = gsub(msg, "|", "||")
-
 	-- player names
 	msg = msg:gsub("|Hplayer:(.-)-(.-):(.-)|h%[%|c(%w%w%w%w%w%w%w%w)(.-)-(.-)|r%]|h", "|Hplayer:%1-%2:%3|h|c%4%5|r|h") -- player name removing realm
 	msg = msg:gsub("|Hplayer:(.-)|h%[(.-)%]|h", "|Hplayer:%1|h%2|h") -- player names with realm

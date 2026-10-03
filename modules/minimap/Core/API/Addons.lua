@@ -23,58 +23,30 @@
 	SOFTWARE.
 
 --]]
-local Addon, ns = ..., DiabolicUIMinimapNS
+local _, ns = ..., DiabolicUIMinimapNS
 local API = ns.API or {}
 ns.API = API
 
-local PLAYER_NAME = UnitName("player")
+-- Lua API
+local string_lower = string.lower
 
-local GetAddOnInfo = function(index)
-	local name, title, notes, enabled, loadable, reason, security = _G.GetAddOnInfo(index)
-	return name, title, notes, enabled, loadable, reason, security
-end
-
--- Check if an addon exists	in the addon listing
-local IsAddOnAvailable = function(target)
-	local target = string.lower(target)
+-- Is an addon (any letter case) in the addon list?
+API.IsAddOnAvailable = function(target)
+	target = string_lower(target)
 	for i = 1, _G.GetNumAddOns() do
-		local name, title, notes, enabled, loadable, reason, security = GetAddOnInfo(i)
-		if (string.lower(name) == target) then
+		if (string_lower((_G.GetAddOnInfo(i))) == target) then
 			return true
 		end
 	end
 end
 
--- Check if an addon is enabled	in the addon listing
--- *Making this available as a generic library method.
-local IsAddOnEnabled = function(target)
-	local target = string.lower(target)
+-- Is an addon in the addon list, enabled and loadable?
+API.IsAddOnEnabled = function(target)
+	target = string_lower(target)
 	for i = 1, _G.GetNumAddOns() do
-		local name, title, notes, enabled, loadable, reason, security = GetAddOnInfo(i)
-		if (string.lower(name) == target) then
-			if (enabled and loadable) then
-				return true
-			end
+		local name, _, _, enabled, loadable = _G.GetAddOnInfo(i)
+		if (string_lower(name) == target) then
+			return (enabled and loadable) and true or nil
 		end
 	end
 end
-
--- Check if an addon exists in the addon listing and loadable on demand
-local IsAddOnLoadable = function(target, ignoreLoD)
-	local target = string.lower(target)
-	for i = 1, _G.GetNumAddOns() do
-		local name, title, notes, enabled, loadable, reason, security = GetAddOnInfo(i)
-		if (string.lower(name) == target) then
-			if (loadable or ignoreLoD) then
-				return true
-			end
-		end
-	end
-end
-
--- Global API
----------------------------------------------------------
-API.GetAddOnInfo = GetAddOnInfo
-API.IsAddOnLoadable = IsAddOnLoadable
-API.IsAddOnEnabled = IsAddOnEnabled
-API.IsAddOnAvailable = IsAddOnAvailable

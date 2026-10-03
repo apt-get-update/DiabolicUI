@@ -2,21 +2,19 @@
 -- Handler:New(unit, parent, styleFunc) creates a secure unit button and calls
 -- styleFunc to build its widgets; every element file in
 -- modules/unitframes/elements/ registers itself with
--- :RegisterElement(name, Enable, Disable, Update) and is enabled on each frame
+-- :RegisterElement(name, Enable, Update) and is enabled on each frame
 -- that has the matching widget (frame.Health, frame.Portrait, ...).
 -- Elements can ask for OnUpdate polling with :EnableFrequentUpdates().
 local _, Engine = ...
 local Handler = Engine:NewHandler("UnitFrame")
-local Orb = Engine:GetHandler("Orb")
-local StatusBar = Engine:GetHandler("StatusBar")
 
 -- Lua API
 local _G = _G
 local pairs = pairs
-local select = select
 local setmetatable = setmetatable
 local string_format = string.format
 local string_match = string.match
+local string_upper = string.upper
 local table_insert = table.insert
 local table_remove = table.remove
 local tonumber = tonumber
@@ -29,7 +27,6 @@ local GetCurrentTitle = _G.GetCurrentTitle
 local GetTitleName = _G.GetTitleName
 local ToggleDropDownMenu = _G.ToggleDropDownMenu
 
-local UnitFrames = {} -- unitframe registry
 local Elements = {} -- element registry
 local Events = {} -- registry of frame and element event callbacks
 local FrequentUpdates = {} -- registry of frame updates
@@ -79,7 +76,7 @@ local UnitFrameMenu = function(self)
 	if self.unit == "targettarget" or self.unit == "focustarget" or self.unit == "pettarget" then
 		return
 	end
-	local unit = self.unit:gsub("(.)", strupper, 1)
+	local unit = self.unit:gsub("(.)", string_upper, 1)
 	if _G[unit.."FrameDropDown"] then
 		ToggleDropDownMenu(1, nil, _G[unit.."FrameDropDown"], "cursor")
 		return
@@ -97,26 +94,25 @@ local UnitFrameMenu = function(self)
 end
 
 
--- Handler Updates
---------------------------------------------------------------------------
-local OnEvent = function(self, event, ...)
-end
-
+-- Hidden frames (empty raid and party slots, boss and arena frames outside
+-- those fights, everything while the UI is hidden) are skipped: they're
+-- brought up to date by the first update after they show again.
 local OnUpdate = function(self, elapsed)
 	for object, elements in pairs(FrequentUpdates) do
-		for element, frequency in pairs(elements) do
-			if frequency.hz then
+		if object:IsVisible() then
+			for element, frequency in pairs(elements) do
 				frequency.elapsed = frequency.elapsed + elapsed
 				if frequency.elapsed >= frequency.hz then
 					Elements[element].Update(object, "FREQUENT", elapsed)
 					frequency.elapsed = 0
 				end
-			else
-				Elements[element].Update(object, "FREQUENT", elapsed)
 			end
 		end
 	end
 end
+
+-- the one frame running every frequent update
+local updater
 
 
 
@@ -128,8 +124,6 @@ local UnitFrame_MT = { __index = UnitFrame }
 
 -- store some meta methods
 local RegisterEvent = UnitFrame_MT.__index.RegisterEvent
-local UnregisterEvent = UnitFrame_MT.__index.UnregisterEvent
-local UnregisterAllEvents = UnitFrame_MT.__index.UnregisterAllEvents
 local IsEventRegistered = UnitFrame_MT.__index.IsEventRegistered
 
 
@@ -156,12 +150,10 @@ UnitFrame.RegisterEvent = function(self, event, func)
 
 	local events = Events[self][event]
 
-	if #events > 0 then
-		-- silently fail for duplicate calls
-		for i = #events, 1, -1 do
-			if events[i] == func then
-				return
-			end
+	-- silently fail for duplicate calls
+	for i = 1, #events do
+		if events[i] == func then
+			return
 		end
 	end
 
@@ -174,123 +166,28 @@ UnitFrame.RegisterEvent = function(self, event, func)
 	end
 end
 
-UnitFrame.UnregisterEvent = function(self, event, func)
-	-- silently fail if the event isn't even registered
-	if not Events[self] or not Events[self][event] then
-		return
-	end
-
-	local events = Events[self][event]
-
-	if #events > 0 then
-		-- find the function's id
-		for i = #events, 1, -1 do
-			if events[i] == func then
-				events[i] = nil -- remove the function from the event's registry
-				if #events == 0 then
-					UnregisterEvent(self, event)
-				end
-			end
-		end
-	end
-end
-
-UnitFrame.UnregisterAllEvents = function(self)
-	if not Events[self] then
-		return
-	end
-	for event, funcs in pairs(Events[self]) do
-		for i = #funcs, 1, -1 do
-			funcs[i] = nil
-		end
-	end
-	UnregisterAllEvents(self)
-end
-
 UnitFrame.UpdateAllElements = function(self)
-	if not self._enabledelements then
-		return
-	end
 	for element in pairs(self._enabledelements) do
 		Elements[element].Update(self, "PLAYER_ENTERING_WORLD")
 	end
 end
 
+-- (Handler.New enables each registered element once)
 UnitFrame.EnableElement = function(self, element)
-	if not self._elements then
-		self._elements = {}
-		self._enabledelements = {}
-	end
-
-	-- avoid duplicates
-	local found
-	for i = 1, #self._elements do
-		if self._elements[i] == element then
-			found = true
-			break
-		end
-	end
-	if not found then
-		if Elements[element].Enable(self, self.unit) then
-			table_insert(self._elements, element)
-			self._enabledelements[element] = true
-		end
+	if Elements[element].Enable(self, self.unit) then
+		self._enabledelements[element] = true
 	end
 end
 
-UnitFrame.DisableElement = function(self, element)
-	-- silently fail if the element hasn't been enabled for the frame
-	if not self._enabledelements or self._enabledelements[element] then
-		return
-	end
-
-	Elements[element].Disable(self, self.unit)
-
-	for i = #self._elements, 1, -1 do
-		if self._elements[i] == element then
-			self._elements[i] = nil
-		end
-	end
-
-	self._enabledelements[element] = nil
-
-	if FrequentUpdates[self][element] then
-		-- remove the element's frequent update entry
-		FrequentUpdates[self][element].elapsed = nil
-		FrequentUpdates[self][element].hz = nil
-		FrequentUpdates[self][element] = nil
-
-		-- Remove the frame object's frequent update entry
-		-- if no elements require it anymore.
-		local count = 0
-		for i,v in pairs(FrequentUpdates[self]) do
-			count = count + 1
-		end
-		if count == 0 then
-			FrequentUpdates[self] = nil
-		end
-
-		-- Disable the entire script handler if no elements
-		-- on any frames require frequent updates.
-		count = 0
-		for i,v in pairs(FrequentUpdates) do
-			count = count + 1
-		end
-		if count == 0 then
-			if Handler:GetScript("OnUpdate") then
-				Handler:SetScript("OnUpdate", nil)
-			end
-		end
-	end
-end
-
+-- Updates the element every `frequency` seconds while the frame is visible.
 UnitFrame.EnableFrequentUpdates = function(self, element, frequency)
 	if not FrequentUpdates[self] then
 		FrequentUpdates[self] = {}
 	end
-	FrequentUpdates[self][element] = { elapsed = 0, hz = tonumber(frequency) }
-	if not Handler:GetScript("OnUpdate") then
-		Handler:SetScript("OnUpdate", OnUpdate)
+	FrequentUpdates[self][element] = { elapsed = 0, hz = frequency }
+	if not updater then
+		updater = CreateFrame("Frame", nil, Engine:GetFrame())
+		updater:SetScript("OnUpdate", OnUpdate)
 	end
 end
 
@@ -333,39 +230,16 @@ end
 
 -- Handler API
 --------------------------------------------------------------------------
--- until we can build this into the Engine
-local scriptHandlers = {}
-local scriptFrame
-Handler.SetScript = function(self, scriptHandler, script)
-	scriptHandlers[scriptHandler] = script
-	if scriptHandler == "OnUpdate" then
-		if not scriptFrame then
-			scriptFrame = CreateFrame("Frame", nil, Engine:GetFrame())
-		end
-		if script then
-			scriptFrame:SetScript("OnUpdate", function(self, ...)
-				script(Handler, ...)
-			end)
-		else
-			scriptFrame:SetScript("OnUpdate", nil)
-		end
-	end
-end
-
-Handler.GetScript = function(self, scriptHandler)
-	return scriptHandlers[scriptHandler]
-end
-
 -- spawn and style a new unitframe
--- if the 'nonSecure' argument is true,
+-- (a plain button rather than a secure unit button if 'nonSecure' is true)
 Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 	local secure = not nonSecure
 	local object = setmetatable(Engine:CreateFrame("Button", nil, parent, secure and "SecureUnitButtonTemplate" or nil), UnitFrame_MT)
-	object.CreateFrame = UnitFrame.CreateFrame
 	object:SetFrameStrata("LOW")
 
 	object.unit = unit
 	object.id = tonumber((string_match(unit, "%d+"))) -- the index of numbered units
+	object._enabledelements = {}
 
 	-- Apply these script before the styling function,
 	-- so the styling has the option to override them.
@@ -380,7 +254,7 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 
 	-- Parse the unitframe for known elements
 	for element in pairs(Elements) do
-		object:EnableElement(element, object.unit)
+		object:EnableElement(element)
 	end
 
 	-- Store the actual unit for later,
@@ -406,12 +280,6 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		object:SetAttribute("alt-type1", "focus")
 	end
 
-	-- These units won't get events fired for themselves,
-	-- so we need to manually force their updates,
-	-- or stuff like their names will very often be wrong.
-	if (unit:match("%w+target")) or (unit:match("(boss)%d?$") == "boss") then
-	end
-
 	object:SetScript("OnEvent", UnitFrame.OnEvent)
 	object:SetScript("OnAttributeChanged", UnitFrame.OnAttributeChanged)
 	object:HookScript("OnShow", UnitFrame.UpdateAllElements)
@@ -419,21 +287,17 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 
 	if (unit == "target") then
 		object:RegisterEvent("PLAYER_TARGET_CHANGED", UnitFrame.UpdateAllElements)
-	elseif (unit == "mouseover") then
-		object:RegisterEvent("UPDATE_MOUSEOVER_UNIT", UnitFrame.UpdateAllElements)
 	elseif (unit == "focus") then
 		object:RegisterEvent("PLAYER_FOCUS_CHANGED", UnitFrame.UpdateAllElements)
 	elseif (unit:match("boss%d?$")) then
-		object:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", object.UpdateAllElements, true)
-		object:RegisterEvent("UNIT_TARGETABLE_CHANGED", UnitFrame.UpdateAllElements)
+		object:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", UnitFrame.UpdateAllElements)
 	elseif (unit:match("arena%d?$")) then
 		object:RegisterEvent("ARENA_OPPONENT_UPDATE", UnitFrame.UpdateAllElements)
 	elseif (unit:match("%w+target")) then
+		-- No events fire for these units changing, so they're polled,
+		-- or stuff like their names would very often be wrong.
 		local timer = 0
 		local OnUpdate = function(self, elapsed)
-			if not self.unit then
-				return
-			end
 			timer = timer + elapsed
 			if timer >= .5 then
 				self:UpdateAllElements()
@@ -448,15 +312,12 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		local VehicleUpdater = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
 		VehicleUpdater:SetFrameRef("unitframe", object)
 		VehicleUpdater:SetAttribute("real-unit", unit)
-		VehicleUpdater:SetAttribute("unit", unit)
 		VehicleUpdater.UpdateUnit = function(self, unit) object.unit = unit end
 
 
 		if (unit == "player") then
 			VehicleUpdater:SetAttribute("_onstate-vehicleupdate", [[
-
-				-- figure out if we have a new unit, and which
-				local unit = self:GetAttribute("unit");
+				-- the vehicle's unit while in one
 				local newUnit = (newstate == "invehicle") and "pet" or "player";
 
 				-- update lua unit
@@ -464,16 +325,13 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 
 				-- update secure unit
 				self:GetFrameRef("unitframe"):SetAttribute("unit", newUnit);
-
 			]])
 
 			-- We never hide the player unitframe. Ever.
 			RegisterStateDriver(object, "visibility", "show")
 		else
 			VehicleUpdater:SetAttribute("_onstate-vehicleupdate", [[
-
-				-- figure out if we have a new unit, and which
-				local unit = self:GetAttribute("unit");
+				-- the player while in a vehicle
 				local newUnit = (newstate == "invehicle") and "player" or self:GetAttribute("real-unit");
 
 				-- update lua unit
@@ -488,30 +346,19 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		end
 
 		-- Register our vehicleswitcher
-		RegisterStateDriver(VehicleUpdater, "vehicleupdate", "[bonusbar:5]" .. "[vehicleui] invehicle; notinvehicle")
+		RegisterStateDriver(VehicleUpdater, "vehicleupdate", "[bonusbar:5][vehicleui] invehicle; notinvehicle")
 	else
 		-- Other units only need their own existence checks.
 		RegisterStateDriver(object, "visibility", string_format("[@%s,exists]show;hide", object.unit))
 	end
 
-	-- Store the unitframe in the registry
-	UnitFrames[object] = true
-
 	return object
 end
 
--- spawn and style a new group header
-Handler.NewHeader = function(self, visibility_macro, parent, styleFunc)
-end
-
 -- register a widget/element
-Handler.RegisterElement = function(self, element, enableFunc, disableFunc, updateFunc)
-	Elements[element] = setmetatable({
+Handler.RegisterElement = function(self, element, enableFunc, updateFunc)
+	Elements[element] = {
 		Enable = enableFunc,
-		Disable = disableFunc,
 		Update = updateFunc
-	}, Element_MT)
-end
-
-Handler.OnEnable = function(self)
+	}
 end

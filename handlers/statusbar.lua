@@ -7,7 +7,9 @@ local Handler = Engine:NewHandler("StatusBar")
 
 -- Lua API
 local _G = _G
+local math_abs = math.abs
 local math_max = math.max
+local math_min = math.min
 local setmetatable = setmetatable
 local type = type
 
@@ -27,14 +29,10 @@ StatusBar.Update = function(self, elapsed)
 	local width, height = self:GetSize() 
 	local bar = self.bar
 	local spark = self.spark
-	
-	if value > max then
-		value = max
-	elseif value < min then
-		value = min
-	end
-	
+
+	-- (SetValue and SetMinMaxValues keep both values in range)
 	if value == min or max == min then
+		self._laid.value = nil -- laid out again once it shows
 		bar:Hide()
 		if spark:IsShown() then
 			spark:Hide()
@@ -42,65 +40,67 @@ StatusBar.Update = function(self, elapsed)
 			spark._direction = "IN"
 		end
 	else
-		local new_size
-		local mult = max > min and ((value-min)/(max-min)) or min
-		if max > min then
-			new_size = mult * ((orientation == "RIGHT" or orientation == "LEFT") and width or height)
-		else
-			new_size = 0
-			mult = 0.0001
+		-- The spark pulses every frame, but the bar only needs laying out again
+		-- when its value or shape changed.
+		local laid = self._laid
+		if (value ~= laid.value) or (min ~= laid.min) or (max ~= laid.max) or (width ~= laid.width) or (height ~= laid.height)
+		or (orientation ~= laid.orientation) or (spark._width ~= laid.sparkWidth) or (spark._height ~= laid.sparkHeight) then
+			laid.value, laid.min, laid.max, laid.width, laid.height = value, min, max, width, height
+			laid.orientation, laid.sparkWidth, laid.sparkHeight = orientation, spark._width, spark._height
+			local mult = (value-min)/(max-min)
+			-- (WoW takes a size of 0 as no size set at all)
+			local display_size = math_max(mult * ((orientation == "RIGHT" or orientation == "LEFT") and width or height), 0.0001)
+		
+			if orientation == "RIGHT" then
+				bar:SetTexCoord(0, mult, 0, 1)
+				bar:ClearAllPoints()
+				bar:SetPoint("TOP")
+				bar:SetPoint("BOTTOM")
+				bar:SetPoint("LEFT")
+				bar:SetSize(display_size, height)
+			
+				spark:ClearAllPoints()
+				spark:SetPoint("CENTER", bar, "RIGHT", 0, 0)
+				spark:SetSize(spark._width, height)
+		
+			elseif orientation == "LEFT" then
+				bar:SetTexCoord(1-mult, 1, 0, 1)
+				bar:ClearAllPoints()
+				bar:SetPoint("TOP")
+				bar:SetPoint("BOTTOM")
+				bar:SetPoint("RIGHT")
+				bar:SetSize(display_size, height)
+			
+				spark:ClearAllPoints()
+				spark:SetPoint("CENTER", bar, "LEFT", 0, 0)
+				spark:SetSize(spark._width, height)
+
+			elseif orientation == "UP" then
+				bar:SetTexCoord(0, 1, 1-mult, 1)
+				bar:ClearAllPoints()
+				bar:SetPoint("LEFT")
+				bar:SetPoint("RIGHT")
+				bar:SetPoint("BOTTOM")
+				bar:SetSize(width, display_size)
+			
+				spark:ClearAllPoints()
+				spark:SetPoint("CENTER", bar, "TOP", 0, 0)
+				spark:SetSize(width, spark._height)
+
+			elseif orientation == "DOWN" then
+				bar:SetTexCoord(0, 1, 0, mult)
+				bar:ClearAllPoints()
+				bar:SetPoint("LEFT")
+				bar:SetPoint("RIGHT")
+				bar:SetPoint("TOP")
+				bar:SetSize(width, display_size)
+
+				spark:ClearAllPoints()
+				spark:SetPoint("CENTER", bar, "BOTTOM", 0, 0)
+				spark:SetSize(width, spark._height)
+			end
 		end
-		local display_size = math_max(new_size, 0.0001) -- sizes can't be 0 in Legion
-		
-		if orientation == "RIGHT" then
-			bar:SetTexCoord(0, mult, 0, 1)
-			bar:ClearAllPoints()
-			bar:SetPoint("TOP")
-			bar:SetPoint("BOTTOM")
-			bar:SetPoint("LEFT")
-			bar:SetSize(display_size, height)
-			
-			spark:ClearAllPoints()
-			spark:SetPoint("CENTER", bar, "RIGHT", 0, 0)
-			spark:SetSize(spark._width, height)
-		
-		elseif orientation == "LEFT" then
-			bar:SetTexCoord(1-mult, 1, 0, 1)
-			bar:ClearAllPoints()
-			bar:SetPoint("TOP")
-			bar:SetPoint("BOTTOM")
-			bar:SetPoint("RIGHT")
-			bar:SetSize(display_size, height)
-			
-			spark:ClearAllPoints()
-			spark:SetPoint("CENTER", bar, "LEFT", 0, 0)
-			spark:SetSize(spark._width, height)
 
-		elseif orientation == "UP" then
-			bar:SetTexCoord(0, 1, 1-mult, 1)
-			bar:ClearAllPoints()
-			bar:SetPoint("LEFT")
-			bar:SetPoint("RIGHT")
-			bar:SetPoint("BOTTOM")
-			bar:SetSize(width, display_size)
-			
-			spark:ClearAllPoints()
-			spark:SetPoint("CENTER", bar, "TOP", 0, 0)
-			spark:SetSize(width, spark._height)
-
-		elseif orientation == "DOWN" then
-			bar:SetTexCoord(0, 1, 0, mult)
-			bar:ClearAllPoints()
-			bar:SetPoint("LEFT")
-			bar:SetPoint("RIGHT")
-			bar:SetPoint("TOP")
-			bar:SetSize(width, display_size)
-
-			spark:ClearAllPoints()
-			spark:SetPoint("CENTER", bar, "BOTTOM", 0, 0)
-			spark:SetSize(width, spark._height)
-		end
-		
 		if elapsed then
 			local current_alpha = spark:GetAlpha()
 			local target_alpha = spark._direction == "IN" and spark._max_alpha or spark._min_alpha
@@ -115,7 +115,7 @@ StatusBar.Update = function(self, elapsed)
 					spark._direction = "OUT"
 				end
 			elseif spark._direction == "OUT" then
-				if current_alpha + alpha_change > target_alpha then
+				if current_alpha - alpha_change > target_alpha then
 					current_alpha = current_alpha - alpha_change
 				else
 					current_alpha = target_alpha
@@ -135,8 +135,9 @@ StatusBar.Update = function(self, elapsed)
 end
 
 local smooth_minimum_value = 1 -- if a value is lower than this, we won't smoothe
-local smooth_HZ = .2 -- time for the smooth transition to complete
+local smooth_HZ = .2 -- each frame closes elapsed/smooth_HZ of the gap
 local smooth_limit = 1/120 -- max updates per second
+local smooth_finish = 1/1000 -- the last bit of the gap (a share of the range) is jumped
 
 StatusBar.OnUpdate = function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
@@ -153,30 +154,14 @@ StatusBar.OnUpdate = function(self, elapsed)
 		if self.smoothing then
 			local goal = self._value
 			local display = self._displayvalue
-			local change = (goal-display)*(elapsed/(self._smooth_HZ or smooth_HZ))
-
-			if display < smooth_minimum_value then
+			-- Closing a share of the gap every frame never quite gets there,
+			-- so the last bit is jumped (and so is all of it from nothing).
+			local next_display = display + (goal - display) * math_min(elapsed/smooth_HZ, 1)
+			if (display < smooth_minimum_value) or (math_abs(goal - next_display) <= (self._max - self._min) * smooth_finish) then
 				self._displayvalue = goal
 				self.smoothing = nil
 			else
-				if goal > display then
-					if goal > (display + change) then
-						self._displayvalue = display + change
-					else
-						self._displayvalue = goal
-						self.smoothing = nil
-					end
-				elseif goal < display then
-					if goal < (display + change) then
-						self._displayvalue = display + change
-					else
-						self._displayvalue = goal
-						self.smoothing = nil
-					end
-				else
-					self._displayvalue = goal
-					self.smoothing = nil
-				end
+				self._displayvalue = next_display
 			end
 		else
 			if self._displayvalue <= self._min or self._displayvalue >= self._max then
@@ -186,10 +171,6 @@ StatusBar.OnUpdate = function(self, elapsed)
 		end
 	end
 	self:Update(elapsed)
-end
-
-StatusBar.SetSmoothHZ = function(self, HZ)
-	self._smooth_HZ = smooth_HZ
 end
 
 StatusBar.DisableSmoothing = function(self, disable)
@@ -202,13 +183,6 @@ StatusBar.SetValue = function(self, value)
 		value = max
 	elseif value < min then
 		value = min
-	end
-	if not self._ignoresmoothing then
-		if self._displayvalue > max then
-			self._displayvalue = max
-		elseif self._displayvalue < min then
-			self._displayvalue = min
-		end
 	end
 	self._value = value
 	if value ~= self._displayvalue then
@@ -249,13 +223,12 @@ StatusBar.SetStatusBarColor = function(self, ...)
 end
 
 StatusBar.SetStatusBarTexture = function(self, ...)
-	local arg = ...
 	self.bar:SetTexture(...)
+	self._laid.value = nil -- a new texture needs its crop again
 	self:Update()
 end
 
 StatusBar.SetSparkTexture = function(self, ...)
-	local arg = ...
 	self.spark:SetTexture(...)
 end
 
@@ -381,8 +354,8 @@ StatusBar.SetAlpha = function(self, ...)
 	self.scaffold:SetAlpha(...)
 end
 
-StatusBar.SetParent = function(self, ...)
-	self.scaffold:SetParent()
+StatusBar.SetParent = function(self, parent)
+	self.scaffold:SetParent(parent)
 end
 
 StatusBar.GetValue = function(self)
@@ -395,10 +368,6 @@ end
 
 StatusBar.GetStatusBarColor = function(self)
 	return self.bar:GetVertexColor()
-end
-
-StatusBar.GetOrientation = function(self)
-	return self._orientation
 end
 
 StatusBar.GetFrameLevel = function(self)
@@ -463,6 +432,7 @@ Handler.New = function(self, parent)
 	statusbar._value = 0 -- real value
 	statusbar._displayvalue = 0 -- displayed value while smoothing
 	statusbar._orientation = "RIGHT" -- direction the bar is growing in 
+	statusbar._laid = {} -- what Update last laid out
 
 	-- I usually don't like exposing things like this to the user, 
 	-- but we're going for performance here. 

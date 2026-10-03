@@ -7,7 +7,6 @@ local C = Engine:GetDB("Data: Colors")
 
 -- Lua API
 local _G = _G
-local math_floor = math.floor
 local table_insert = table.insert
 local table_sort = table.sort
 local table_wipe = table.wipe
@@ -17,11 +16,7 @@ local unpack = unpack
 local hooksecurefunc = hooksecurefunc
 
 local sort = function(a, b)
-	if a.type == b.type then
-		return a.id < b.id -- same type, order by their id
-	else
-		return a.type == "mirror" -- different type, so we want any mirrors first
-	end
+	return a.id < b.id
 end
 
 Module.UpdateTimer = function(self, frame)
@@ -39,11 +34,11 @@ Module.UpdateTimer = function(self, frame)
 	timer.bar:GetStatusBarTexture():SetTexCoord(0, (value-min)/(max-min), 0, 1) -- cropping, not shrinking
 end
 
--- These aren't secure, no? So it's safe to move whenever?
+-- Stacks the visible timers (not secure frames: movable in combat too).
 Module.UpdateAnchors = function(self)
 	local config = self.config
 	local timers = self.timers
-	local order = self.order or {}
+	local order = self.order
 
 	table_wipe(order)
 	
@@ -57,12 +52,11 @@ Module.UpdateAnchors = function(self)
 	
 	-- sort and arrange visible timers
 	if #order > 0 then
-		table_sort(order, sort) -- sort by type -> id
-		order[1].frame:SetPoint(unpack(self.captureBarVisible and config.position or config.positionOffsetByOne))
-		if #order > 1 then
-			for i = 2, #order do
-				order[i].frame:SetPoint("CENTER", order[i-1].frame, "CENTER", 0, -config.padding)
-			end
+		table_sort(order, sort)
+		-- one slot down while a capture bar sits in the first one
+		order[1].frame:SetPoint(unpack(self.captureBarVisible and config.positionOffsetByOne or config.position))
+		for i = 2, #order do
+			order[i].frame:SetPoint("CENTER", order[i-1].frame, "CENTER", 0, -config.padding)
 		end
 	end
 end
@@ -110,7 +104,10 @@ Module.Skin = function(self, frame)
 	
 	hooksecurefunc(timer.bar, "SetValue", function(...) self:UpdateTimer(frame) end)
 	hooksecurefunc(timer.bar, "SetMinMaxValues", function(...) self:UpdateTimer(frame) end)
-	
+
+	-- the others move up when one is done
+	frame:HookScript("OnHide", function() self:UpdateAnchors() end)
+
 	self:UpdateAnchors()
 end
 
@@ -125,7 +122,6 @@ Module.MirrorTimer_Show = function(self, timer, value, maxvalue, scale, paused, 
 			timers[frame].bar = _G[frame:GetName().."StatusBar"]
 			timers[frame].msg = _G[frame:GetName().."Text"] or _G[frame:GetName().."StatusBarTimeText"]
 			timers[frame].border = _G[frame:GetName().."Border"] or _G[frame:GetName().."StatusBarBorder"]
-			timers[frame].type = "mirror"
 			timers[frame].id = i
 			self:Skin(frame)
 		end
@@ -141,15 +137,19 @@ end
 
 Module.CaptureBarVisible = function(self)
 	self.captureBarVisible = true
+	self:UpdateAnchors()
 end
 
 Module.CaptureBarHidden = function(self)
-	self.captureBarVisible = nil
+	self.captureBarVisible = false
+	self:UpdateAnchors()
 end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").mirrortimers
 	self.timers = {}
+	self.order = {}
+	self.captureBarVisible = false
 	
 	if MirrorTimer_Show then
 		hooksecurefunc("MirrorTimer_Show", function(...) self:MirrorTimer_Show(...) end)

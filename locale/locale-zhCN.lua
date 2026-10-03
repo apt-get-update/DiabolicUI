@@ -14,9 +14,6 @@ L["The handler '%s' has no method named '%s'!"] = true
 L["The handler element '%s' has no method named '%s'!"] = true
 L["The module '%s' has no method named '%s'!"] = true
 L["The module widget '%s' has no method named '%s'!"] = true
-L["The Engine has no method named '%s'!"] = true
-L["The handler '%s' has no method named '%s'!"] = true
-L["The module '%s' has no method named '%s'!"] = true
 L["The event '%s' isn't currently registered to any object."] = true
 L["The event '%s' isn't currently registered to the object '%s'."] = true
 L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] = true
@@ -41,24 +38,13 @@ L["A handler named '%s' is already registered!"] = true
 L["Bad argument #%d to '%s': The name '%s' is reserved for a handler!"] = true
 L["Bad argument #%d to '%s': A module named '%s' already exists!"] = true
 L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"] = true
-L["Attention!"] = "注意!"
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it, you won't be asked about this issue again.|n|nFix this issue now?"] = "UI尺寸是错误的，所以图形可能会出现模糊或失真。如果你选择忽略，则不会再次询问此问题。|n|n是否修复?"
-L["UI scaling is activated and needs to be disabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "需要关闭UI缩放，否则你会得到边界模糊或失真的图形。如果你选择忽略，则不会再次询问此问题。|n|n是否修复?"
-L["UI scaling was turned off but needs to be enabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "需要启用UI缩放，否则你会得到边界模糊或失真的图形。如果你选择忽略，则不会再次询问此问题。|n|n是否修复?"
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "UI尺寸是错误的，所以图形可能会出现模糊或失真。如果你选择忽略自己并处理UI缩放，则不会再次询问此问题。|n|n是否修复?"
-L["Your resolution is too low for this UI, but the UI scale can still be adjusted to make it fit. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "你的分辨率对于此界面来说太低，但界面的大小仍然可以调整以使其适合。如果你选择忽略它并自己处理UI缩放，则不会再次询问此问题。|n|n是否修复?"
 L["Accept"] = "接受"
 L["Cancel"] = "取消"
-L["Ignore"] = "忽略"
-L["You can re-enable the auto scaling by typing |cff448800/diabolic autoscale|r in the chat at any time."] = "你可以通过在聊天框输入|cff448800/diabolic autoscale|r启用自动缩放"
-L["Auto scaling of the UI has been enabled."] = "用户界面自动缩放已启用"
-L["Auto scaling of the UI has been disabled."] = "用户界面自动缩放已禁用"
 L["Reload Needed"] = "需要重新加载"
 L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = "用户界面必须重新加载应用更改.你想现在这样做吗?"
 L["The Engine can't be tampered with!"] = "引擎不能被篡改!"
 
 -- Blizzard Handler
-L["Bad argument #%d to '%s'. No object named '%s' exists."] = true
 
 
 ---------------------------------------------------------------------
@@ -92,6 +78,7 @@ L["Three"] = "三栏"
 
 -- xp bar
 L["Current XP: "] = "当前经验: "
+L["Experience"] = "经验"
 L["Rested Bonus: "] = "休息奖励: "
 L["Rested"] = "精力充沛"
 L["%s of normal experience\ngained from monsters."] = "从怪物身上获得%s的经验值"
@@ -102,12 +89,8 @@ L["Normal"] = "正常"
 L["You should rest at an Inn."] = "你应该在一个旅馆休息"
 
 -- artifact bar 
-L["Current Artifact Power: "] = "目前神器能量: "
-L["<Left-Click to toggle Artifact Window>"] = "<点击左键切换神器窗口>"
 
 -- honor bar 
-L["Current Honor Points: "] = "当前荣誉点: "
-L["<Left-Click to toggle Honor Talents Window>"] = "<点击左键切换荣誉窗口>"
 
 -- floating buttons
 L["Stances"] = "姿态栏"
@@ -187,12 +170,8 @@ L["Auto positioning of chat windows has been disabled."] = "聊天窗口自动�
 
 -- minimap module
 ---------------------------------------------------------------------
-L["<Left-click> to toggle calendar."] = "<点击左键>打开日历。"
 --L["<Middle-click> to toggle stopwatch."] = "<点击中键>打开秒表。"
 --L["<Right-click> to configure clock."] = "<点击右键>配置时钟。"
-L["Calendar"] = "行事历"
-L["New Event!"] = "新事件"
-L["New Mail!"] = "新邮件"
 
 -- tooltips
 ---------------------------------------------------------------------

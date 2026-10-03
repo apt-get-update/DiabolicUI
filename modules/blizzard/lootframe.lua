@@ -1,5 +1,5 @@
 -- Optional custom loot window ("LootFrame" settings, off by default).
-local ADDON, Engine = ...
+local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: LootFrame")
 local L = Engine:GetLocale()
 local C = Engine:GetDB("Data: Colors")
@@ -63,6 +63,10 @@ Module.CreateWindow = function(self)
 	frame:SetScript("OnDragStart", frame.StartMoving)
 	frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 	frame:Hide()
+
+	-- Escape closes it, and closing it ends the looting, like Blizzard's
+	frame:SetScript("OnHide", function() CloseLoot() end)
+	table.insert(UISpecialFrames, "DiabolicLootFrame")
 
 	local title = frame:CreateFontString(nil, "OVERLAY")
 	title:SetFontObject(config.title_font)
@@ -221,6 +225,7 @@ Module.Update = function(self)
 	end
 
 	if (shown == 0) then
+		self.frame:Hide()
 		return
 	end
 
@@ -279,9 +284,7 @@ Module.OnEnable = function(self)
 	LootFrame:UnregisterEvent("LOOT_SLOT_CLEARED")
 	LootFrame:UnregisterEvent("LOOT_CLOSED")
 
-	-- OnUpdate scripts run every frame regardless of Show/Hide state, so
-	-- leaving Blizzard's own in place would keep doing whatever per-frame
-	-- work it does for a frame that now never actually opens.
+	-- Nothing of Blizzard's window should run any more.
 	LootFrame:SetScript("OnUpdate", nil)
 
 	self:RegisterEvent("LOOT_OPENED", "Update")

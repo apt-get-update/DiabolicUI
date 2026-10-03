@@ -1,17 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
+<Script file='anchors.lua'/>
 <Script file='containers.lua'/>
-<Script file='durability.lua'/>
 <Script file='fonts.lua'/>
 <Script file='gamemenu.lua'/>
-<Script file='ghostframe.lua'/>
 <Script file='lootframe.lua'/>
 <Script file='mirrortimers.lua'/>
 <Script file='popups.lua'/>
 <Script file='tooltips.lua'/>
 <Script file='itemtooltips.lua'/>
 <Script file='totembar.lua'/>
-<Script file='vehicleseat.lua'/>
 
 <!-- Styling of the frames -->
 <Script file='styling.lua'/>

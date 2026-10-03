@@ -1,4 +1,7 @@
-local Addon, Engine = ...
+-- Chat bubbles in DiabolicUI's style: Blizzard's bubbles (nameless
+-- children of the WorldFrame) are emptied, and a bubble of ours with the
+-- same text, in a bigger font on a dark backdrop, follows each of them.
+local _, Engine = ...
 local Module = Engine:NewModule("ChatBubbles")
 
 -- Allow the user to use the stand-alone instead
@@ -7,16 +10,13 @@ Module:SetIncompatible("NiceBubbles")
 -- Lua API
 local _G = _G
 
-local ipairs = ipairs
 local math_abs = math.abs
 local math_floor = math.floor
 local pairs = pairs
 local select = select
-local tostring = tostring
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
-local IsInInstance = _G.IsInInstance
 local SetCVar = _G.SetCVar
 local WorldFrame = _G.WorldFrame
 
@@ -24,7 +24,7 @@ local WorldFrame = _G.WorldFrame
 local bubbles = {} -- local bubble registry
 local numChildren, numBubbles = -1, 0 -- bubble counters
 
-local minsize, maxsize, fontsize = 14, 16, 14 -- bubble font size
+local fontsize = 14 -- bubble font size
 local offsetX, offsetY = 0, -100 -- bubble offset from its original position
 
 -- Textures
@@ -75,10 +75,11 @@ Updater.IsBubble = function(self, bubble)
 end
 
 Updater.OnUpdate = function(self, elapsed)
-	local children = select("#", WorldFrame:GetChildren())
+	local children = WorldFrame:GetNumChildren()
 	if numChildren ~= children then
+		local frames = { WorldFrame:GetChildren() }
 		for i = 1, children do
-			local frame = select(i, WorldFrame:GetChildren())
+			local frame = frames[i]
 			if not(bubbles[frame]) and self:IsBubble(frame) then
 				self:InitBubble(frame)
 			end
@@ -90,25 +91,21 @@ Updater.OnUpdate = function(self, elapsed)
 	-- bubbles[bubble], bubbles[bubble].text = our custom bubble and message
 	local scale = WorldFrame:GetHeight()/UIParent:GetHeight()
 	for bubble in pairs(bubbles) do
-		local msg = bubble and bubble.text:GetText()
+		local msg = bubble.text:GetText()
 		if bubble:IsShown() and msg and (msg ~= "") then
 			-- continuing the fight against overlaps blending into each other!
 			bubbles[bubble]:SetFrameLevel(bubble:GetFrameLevel()) -- this works?
 
 			local blizzTextWidth = math_floor(bubble.text:GetWidth())
 			local blizzTextHeight = math_floor(bubble.text:GetHeight())
-			local point, anchor, rpoint, blizzX, blizzY = bubble.text:GetPoint()
+			local point, _, rpoint, blizzX, blizzY = bubble.text:GetPoint()
 			local r, g, b = bubble.text:GetTextColor()
-			bubbles[bubble].color[1] = r
-			bubbles[bubble].color[2] = g
-			bubbles[bubble].color[3] = b
 			if blizzTextWidth and blizzTextHeight and point and rpoint and blizzX and blizzY then
 				if (not bubbles[bubble]:IsShown()) then
 					bubbles[bubble]:Show()
 				end
-				local msg = bubble.text:GetText()
-				if msg and (bubbles[bubble].last ~= msg) then
-					bubbles[bubble].text:SetText(msg or "")
+				if (bubbles[bubble].last ~= msg) then
+					bubbles[bubble].text:SetText(msg)
 					bubbles[bubble].text:SetTextColor(r, g, b)
 					bubbles[bubble].last = msg
 					local sWidth = bubbles[bubble].text:GetStringWidth()
@@ -126,16 +123,16 @@ Updater.OnUpdate = function(self, elapsed)
 				local ourY = math_floor(offsetY + blizzY/scale - (ourTextHeight-blizzTextHeight)/2) -- get correct bottom coordinate
 				local ourWidth = math_floor(ourTextWidth + space*2)
 				local ourHeight = math_floor(ourTextHeight + space*2)
-				bubbles[bubble]:Hide() -- hide while sizing and moving, to gain fps
-				bubbles[bubble]:SetSize(ourWidth, ourHeight)
+				-- only resize and move when it changed: this runs every frame
+				if (ourWidth ~= bubbles[bubble].width) or (ourHeight ~= bubbles[bubble].height) then
+					bubbles[bubble]:SetSize(ourWidth, ourHeight)
+					bubbles[bubble].width, bubbles[bubble].height = ourWidth, ourHeight
+				end
 				local oldX, oldY = select(4, bubbles[bubble]:GetPoint())
-				if not(oldX and oldY) or ((math_abs(oldX - ourX) > .5) or (math_abs(oldY - ourY) > .5)) then -- avoid updates if we can. performance.
+				if not(oldX and oldY) or ((math_abs(oldX - ourX) > .5) or (math_abs(oldY - ourY) > .5)) then
 					bubbles[bubble]:ClearAllPoints()
 					bubbles[bubble]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", ourX, ourY)
 				end
-				bubbles[bubble]:SetBackdropColor(0, 0, 0, .5)
-				bubbles[bubble]:SetBackdropBorderColor(0, 0, 0, .25)
-				bubbles[bubble]:Show() -- show the bubble again
 			end
 			bubble.text:SetTextColor(r, g, b, 0)
 		else
@@ -148,24 +145,6 @@ Updater.OnUpdate = function(self, elapsed)
 	end
 end
 
-Updater.HideBlizzard = function(self, bubble)
-	local r, g, b = bubble.text:GetTextColor()
-	bubbles[bubble].color[1] = r
-	bubbles[bubble].color[2] = g
-	bubbles[bubble].color[3] = b
-	bubble.text:SetTextColor(r, g, b, 0)
-	for region, texture in pairs(bubbles[bubble].regions) do
-		region:SetTexture(nil)
-	end
-end
-
-Updater.ShowBlizzard = function(self, bubble)
-	bubble.text:SetTextColor(bubbles[bubble].color[1], bubbles[bubble].color[2], bubbles[bubble].color[3], 1)
-	for region, texture in pairs(bubbles[bubble].regions) do
-		region:SetTexture(texture)
-	end
-end
-
 Updater.InitBubble = function(self, bubble)
 	numBubbles = numBubbles + 1
 
@@ -175,6 +154,8 @@ Updater.InitBubble = function(self, bubble)
 	bubbles[bubble]:SetFrameStrata("BACKGROUND")
 	bubbles[bubble]:SetFrameLevel(numBubbles%128 + 1) -- try to avoid overlapping bubbles blending into each other
 	bubbles[bubble]:SetBackdrop(getBackdrop(1))
+	bubbles[bubble]:SetBackdropColor(0, 0, 0, .5)
+	bubbles[bubble]:SetBackdropBorderColor(0, 0, 0, .25)
 
 	bubbles[bubble].text = bubbles[bubble]:CreateFontString()
 	bubbles[bubble].text:SetPoint("BOTTOMLEFT", space, space)
@@ -183,59 +164,26 @@ Updater.InitBubble = function(self, bubble)
 	bubbles[bubble].text:SetShadowOffset(-.75, -.75)
 	bubbles[bubble].text:SetShadowColor(0, 0, 0, 1)
 
-	bubbles[bubble].regions = {}
-	bubbles[bubble].color = { 1, 1, 1, 1 }
-
-	-- gather up info about the existing blizzard bubble
+	-- empty the blizzard bubble: no artwork, invisible text
 	for i = 1, bubble:GetNumRegions() do
 		local region = select(i, bubble:GetRegions())
 		if region:GetObjectType() == "Texture" then
-			bubbles[bubble].regions[region] = region:GetTexture()
+			region:SetTexture(nil)
 		elseif region:GetObjectType() == "FontString" then
 			bubble.text = region
 		end
 	end
-
-	-- hide the blizzard bubble
-	self:HideBlizzard(bubble)
+	local r, g, b = bubble.text:GetTextColor()
+	bubble.text:SetTextColor(r, g, b, 0)
 end
 
-Module.OnInit = function(self, event, ...)
-	self.config = self:GetDB("ChatBubbles") -- setup
-	self.db = self:GetConfig("ChatBubbles") -- user settings
-
-	self.Updater = Updater
-
+Module.OnInit = function(self)
 	-- this will be our bubble parent
-	self.BubbleBox = Engine:CreateFrame("Frame", nil, "UIParent")
-	self.BubbleBox:SetAllPoints()
-	self.BubbleBox:Hide()
+	Updater.BubbleBox = Engine:CreateFrame("Frame", nil, "UIParent")
+	Updater.BubbleBox:SetAllPoints()
+end
 
-	-- give the updater a reference to the bubble parent
-	self.Updater.BubbleBox = self.BubbleBox
-
-	-- Enforcing this now
+Module.OnEnable = function(self)
 	SetCVar("chatBubbles", 1)
-end
-
-Module.UpdateBubbleDisplay = function(self)
-	local _, instanceType = IsInInstance()
-	SetCVar("chatBubbles", 1)
-	self.Updater:SetScript("OnUpdate", self.Updater.OnUpdate)
-end
-
-Module.OnEnable = function(self, event, ...)
-	self:UpdateBubbleDisplay()
-	self.BubbleBox:Show()
-	for bubble in pairs(bubbles) do
-		self.Updater:HideBlizzard(bubble)
-	end
-end
-
-Module.OnDisable = function(self)
-	self:UpdateBubbleDisplay()
-	self.BubbleBox:Hide()
-	for bubble in pairs(bubbles) do
-		self.Updater:ShowBlizzard(bubble)
-	end
+	Updater:SetScript("OnUpdate", Updater.OnUpdate)
 end

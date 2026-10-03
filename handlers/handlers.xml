@@ -6,16 +6,10 @@
 <!-- Chat command handler for the UI -->
 <Script file="commands.lua"/>
 
-<!-- Stuff I eventually want gone -->
-<Script file="fade.lua"/>
-<Script file="flash.lua"/>
-
 <!-- UI widget handlers -->
 <Script file="orb.lua"/>
 <Script file="popups.lua"/>
-<Script file="slider.lua"/>
 <Script file="statusbar.lua"/>
-<Script file="tooltip.lua"/>
 
 <!-- The unitframe handler requires orb and statusbar to be loaded first -->
 <Script file="unitframe.lua"/>

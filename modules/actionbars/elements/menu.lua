@@ -11,6 +11,7 @@ local floor = math.floor
 local CreateFrame = _G.CreateFrame
 local GetFramerate = _G.GetFramerate
 local GetNetStats = _G.GetNetStats
+local hooksecurefunc = _G.hooksecurefunc
 local InCombatLockdown = _G.InCombatLockdown
 local PlaySound = _G.PlaySound
 local UnitFactionGroup = _G.UnitFactionGroup
@@ -44,27 +45,19 @@ MenuWidget.Strip = function(self, button)
 		pushed:SetSize(.0001, .0001)
 	end
 
-	local highlight = button:GetNormalTexture()
+	local highlight = button:GetHighlightTexture()
 	if highlight then
 		button:SetHighlightTexture("")
 		highlight:SetAlpha(0)
 		highlight:SetSize(.0001, .0001)
 	end
-	
-	-- in cata some buttons are missing this
+
+	-- the character and PvP buttons have none
 	local disabled = button:GetDisabledTexture()
 	if disabled then
-		button:SetNormalTexture("")
+		button:SetDisabledTexture("")
 		disabled:SetAlpha(0)
 		disabled:SetSize(.0001, .0001)
-	end
-	
-	-- this was first introduced in cata
-	local flash = _G[button:GetName().."Flash"]
-	if flash then
-		flash:SetTexture(nil)
-		flash:SetAlpha(0)
-		flash:SetSize(.0001, .0001)
 	end
 end
 
@@ -384,9 +377,6 @@ MenuWidget.OnEnable = function(self)
 	local button_to_icon = {} -- simple mapping of icons to the buttons
 	local faction = UnitFactionGroup("player") -- to get the right faction icon, or neutral
 	
-	-- There are no visual changes from WoD to Legion, so we're using the same code.
-	-- Should be noted though that the HelpMicroButton was removed from the game 
-	-- in wow client patch 7.2.0 (Legion), so it can't be referenced at all from this point.
 	MicroMenuWindow:InsertButton(CharacterMicroButton)
 	MicroMenuWindow:InsertButton(SpellbookMicroButton)
 	MicroMenuWindow:InsertButton(TalentMicroButton)
@@ -437,69 +427,30 @@ MenuWidget.OnEnable = function(self)
 	end
 	
 	-- Remove the character button portrait
-	if MicroButtonPortrait then
-		MicroButtonPortrait:SetParent(UIHider)
-	end
-	
-	-- Remove the guild tabard
-	if GuildMicroButtonTabard then
-		GuildMicroButtonTabard:SetParent(UIHider)
-	end	
+	MicroButtonPortrait:SetParent(UIHider)
 
 	-- Remove the pvp frame icon, and add our own
-	if PVPMicroButtonTexture then 
-		PVPMicroButtonTexture:SetParent(UIHider)
-	end
-	
+	PVPMicroButtonTexture:SetParent(UIHider)
+
 	-- Kill off the game menu button latency display
-	if MainMenuBarPerformanceBar then
-		MainMenuBarPerformanceBar:SetParent(UIHider)
-	end
-	
+	MainMenuBarPerformanceBar:SetParent(UIHider)
+
 	-- wild hacks to control the tooltip position
-	if MainMenuBarPerformanceBarFrame_OnEnter then
-		hooksecurefunc("MainMenuBarPerformanceBarFrame_OnEnter", function() 
-			if GameTooltip:IsShown() and GameTooltip:GetOwner() == MainMenuMicroButton then
-				GameTooltip:ClearAllPoints()
-				GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
-			end
-		end)
-	end
+	hooksecurefunc("MainMenuBarPerformanceBarFrame_OnEnter", function()
+		if GameTooltip:IsShown() and GameTooltip:GetOwner() == MainMenuMicroButton then
+			GameTooltip:ClearAllPoints()
+			GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
+		end
+	end)
 
-	-- Kill of the game menu button download texture
-	if MainMenuBarDownload then
-		MainMenuBarDownload:SetParent(UIHider)
-	end
-
-	if UpdateMicroButtonsParent then
-		hooksecurefunc("UpdateMicroButtonsParent", function(parent) 
-			if InCombatLockdown() then
-				self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateMicroButtons")
-			else
-				MicroMenuWindow:Arrange()
-			end
-		end)
-	end
-
-	if MoveMicroButtons then
-		hooksecurefunc("MoveMicroButtons", function() 
-			if InCombatLockdown() then
-				self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateMicroButtons")
-			else
-				MicroMenuWindow:Arrange()
-			end
-		end)
-	end
-	
-	if UpdateMicroButtons then
-		hooksecurefunc("UpdateMicroButtons", function() 
-			if InCombatLockdown() then
-				self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateMicroButtons")
-			else
-				MicroMenuWindow:Arrange()
-			end
-		end)
-	end
+	-- re-arranged after combat if Blizzard changed the buttons in it
+	hooksecurefunc("UpdateMicroButtons", function()
+		if InCombatLockdown() then
+			self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateMicroButtons")
+		else
+			MicroMenuWindow:Arrange()
+		end
+	end)
 
 	-- Arrange the buttons and size the window
 	MicroMenuWindow:Arrange()
@@ -526,10 +477,6 @@ MenuWidget.OnEnable = function(self)
 
 	-- Raise your hand if you hate writing menus!!!1 >:(
 	do
-		local insets = actionbar_menu_config.insets
-		local ui_width = ActionBarMenuWindow:GetWidth() - (insets[1] + insets[2])
-		local ui_padding = 4
-		local ui_paragraph = 10
 		
 		local style_table = actionbar_menu_config.ui.window
 		local style_table_button = actionbar_menu_config.ui.menubutton
@@ -803,14 +750,6 @@ MenuWidget.OnEnable = function(self)
 		elseif button == "RightButton" then
 			-- Bagbar was toggled by the secure environement. Put any post updates here, if needed.
 		end
-		-- toggle anchors
-		if false then
-			if updateContainerFrameAnchors then
-				updateContainerFrameAnchors() 
-			elseif UpdateContainerFrameAnchors then
-				UpdateContainerFrameAnchors()
-			end
-		end 
 		self:OnEnter() -- update tooltips
 	end
 	
@@ -943,8 +882,6 @@ MenuWidget.OnEnable = function(self)
 	local MILLISECONDS_ABBR = MILLISECONDS_ABBR
 	local FPS_ABBR = FPS_ABBR
 
-	local floor = math.floor
-
 
 	local Gold = MasterMenuButton:CreateFontString()
 	Gold:SetDrawLayer("ARTWORK")
@@ -966,12 +903,9 @@ MenuWidget.OnEnable = function(self)
 		end
 		self.elapsed = (self.elapsed or 0) + elapsed
 		if self.elapsed > performance_hz then
-			local _, _, chat_latency, cast_latency = GetNetStats()
+			local _, _, latency = GetNetStats()
 			local fps = floor(GetFramerate())
-			if not cast_latency or cast_latency == 0 then
-				cast_latency = chat_latency
-			end
-			self.Performance:SetFormattedText(performance_string, cast_latency, MILLISECONDS_ABBR, fps, FPS_ABBR)
+			self.Performance:SetFormattedText(performance_string, latency, MILLISECONDS_ABBR, fps, FPS_ABBR)
 			self.elapsed = 0
 		end
 	end)
@@ -979,6 +913,10 @@ MenuWidget.OnEnable = function(self)
 	self.MasterMenuButton = MasterMenuButton
 	self:UpdateGoldVisibility()
 	self:UpdatePerformanceVisibility()
+
+	-- Ctrl+R (Blizzard's "Toggle Framerate" key binding) toggles our
+	-- fps & latency text instead of Blizzard's own framerate display.
+	hooksecurefunc("ToggleFramerate", function() self:TogglePerformance() end)
 
 
 	-- Sounds
@@ -1003,9 +941,6 @@ end
 -- position (taking its place) whenever gold is disabled.
 MenuWidget.UpdatePerformanceAnchor = function(self)
 	local button = self.MasterMenuButton
-	if not (button and button.Performance and button.Gold) then
-		return
-	end
 	button.Performance:ClearAllPoints()
 	if Module.db.showGold then
 		button.Performance:SetPoint("RIGHT", button.Gold, "LEFT", -8, 0)
@@ -1028,6 +963,16 @@ MenuWidget.UpdatePerformanceVisibility = function(self)
 		if Module.db.showPerformance then button.Performance:Show() else button.Performance:Hide() end
 	end
 	self:UpdatePerformanceAnchor()
+end
+
+-- Same setting as the "Show FPS & Latency" option. Blizzard's framerate
+-- text stays hidden, so its toggle always takes the "show" branch.
+MenuWidget.TogglePerformance = function(self)
+	for _, name in ipairs({ "FramerateLabel", "FramerateText", "MapFramerateLabel", "MapFramerateText" }) do
+		_G[name]:Hide()
+	end
+	Module.db.showPerformance = not Module.db.showPerformance
+	self:UpdatePerformanceVisibility()
 end
 
 MenuWidget.OnEvent = function(self, event, ...)

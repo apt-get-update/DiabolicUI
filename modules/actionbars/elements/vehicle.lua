@@ -5,22 +5,15 @@ local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: Vehicle")
 
 -- Lua API
-local select = select
-local setmetatable = setmetatable
 local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe
 
 -- WoW API
-local CreateFrame = CreateFrame
-local GetNumShapeshiftForms = GetNumShapeshiftForms
 local RegisterStateDriver = RegisterStateDriver
-local UnitClass = UnitClass
 
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local NUM_BUTTONS = VEHICLE_MAX_ACTIONBUTTONS or 6
 
 BarWidget.OnEnable = function (self)
   local config = Module.config
-  local db = Module.db
 
   local Artwork = Module:GetWidget("Artwork")
   local Bar = Module:GetHandler("ActionBar"):New("vehicle", Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
@@ -31,10 +24,6 @@ BarWidget.OnEnable = function (self)
 
   -- Spawn the action buttons
   for i = 1, NUM_BUTTONS do
-    -- Make sure the standard bars
-    -- get button IDs that reflect their actual actions
-    -- local button_id = (Bar.id - 1) * NUM_ACTIONBAR_BUTTONS + i
-
     local button = Bar:NewButton("action", i, Artwork:GetButtonTemplate())
     button:SetStateAction(0, "action", i)
     for state = 1, 14 do
@@ -69,7 +58,6 @@ BarWidget.OnEnable = function (self)
   -- Main actionbar paging based on class/stance
   -- also supports user changed paging
   local driver = {}
-  local _, player_class = UnitClass("player")
 
   tinsert(driver, "[bonusbar:5]11")
 

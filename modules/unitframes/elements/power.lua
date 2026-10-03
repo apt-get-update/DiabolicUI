@@ -3,17 +3,12 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
-local F = Engine:GetDB("Library: Format")
 
 -- Lua API
-local math_floor = math.floor
-local pairs = pairs
-local tonumber = tonumber
-local tostring = tostring
+local ipairs = ipairs
 local unpack = unpack
 
 -- WoW API
-local UnitHealthMax = _G.UnitHealthMax
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 local UnitIsTapDenied = Engine.UnitIsTapDenied
@@ -21,9 +16,12 @@ local UnitPower = _G.UnitPower
 local UnitPowerMax = _G.UnitPowerMax
 local UnitPowerType = _G.UnitPowerType
 
-local _, playerClass = UnitClass("player")
 
 local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA
+
+-- Like health: a "FREQUENT" poll that finds nothing changed skips the work,
+-- with a full refresh this often regardless.
+local IDLE_REFRESH = .5
 
 local Update = function(self, event, ...)
 	local Power = self.Power
@@ -38,6 +36,23 @@ local Update = function(self, event, ...)
 	local powerID, powerType = UnitPowerType(unit)
 	local power = UnitPower(unit, powerID)
 	local powermax = UnitPowerMax(unit, powerID)
+	local mana = Mana and UnitPower(unit, _SECONDARY_RESOURCE_TOKEN)
+	local manamax = Mana and UnitPowerMax(unit, _SECONDARY_RESOURCE_TOKEN)
+
+	local last = self._lastPower
+	if (not last) then
+		last = {}
+		self._lastPower = last
+	end
+	if (event == "FREQUENT") and (unit == last.unit) and (powerType == last.powerType) and (power == last.power) and (powermax == last.powermax)
+	and (mana == last.mana) and (manamax == last.manamax) and (dead == last.dead) and (connected == last.connected) and (tapped == last.tapped) then
+		last.idle = last.idle + ((...) or 0)
+		if (last.idle < IDLE_REFRESH) then
+			return
+		end
+	end
+	last.unit, last.powerType, last.power, last.powermax, last.mana, last.manamax = unit, powerType, power, powermax, mana, manamax
+	last.dead, last.connected, last.tapped, last.idle = dead, connected, tapped, 0
 
 	if Power then 
 		if dead then
@@ -92,39 +107,7 @@ local Update = function(self, event, ...)
 		end
 		
 		if Power.Value then
-			if (power == 0 or powermax == 0) and (not Power.Value.showAtZero) then
-				Power.Value:SetText("")
-			else
-				if Power.Value.showDeficit then
-					if Power.Value.showPercent then
-						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s - %d%%", (powermax - power), powermax, math_floor(power/powermax * 100))
-						else
-							Power.Value:SetFormattedText("%s / %d%%", (powermax - power), math_floor(power/powermax * 100))
-						end
-					else
-						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s", (powermax - power), powermax)
-						else
-							Power.Value:SetFormattedText("%s", (powermax - power))
-						end
-					end
-				else
-					if Power.Value.showPercent then
-						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s - %d%%", power, powermax, math_floor(power/powermax * 100))
-						else
-							Power.Value:SetFormattedText("%s / %d%%", power, math_floor(power/powermax * 100))
-						end
-					else
-						if Power.Value.showMaximum then
-							Power.Value:SetFormattedText("%s / %s", power, powermax)
-						else
-							Power.Value:SetFormattedText("%s", power)
-						end
-					end
-				end
-			end
+			Power.Value:SetText(((power == 0) or (powermax == 0)) and "" or power)
 		end
 				
 		if Power.PostUpdate then
@@ -133,9 +116,6 @@ local Update = function(self, event, ...)
 	end
 
 	if Mana then
-		local mana = UnitPower(unit, _SECONDARY_RESOURCE_TOKEN)
-		local manamax = UnitPowerMax(unit, _SECONDARY_RESOURCE_TOKEN)
-
 		if powerType == "MANA" or manamax == 0 then
 			Mana:Hide()
 		else
@@ -144,51 +124,16 @@ local Update = function(self, event, ...)
 				manamax = 0
 			end
 
-			local objectType = Mana:GetObjectType()
-
-			if (objectType == "Orb") then
-				local colorMulti = C.Orb.MANA 
-				local colorSingle = C.Power.MANA or C.Power.UNUSED
-
-				Mana:SetMinMaxValues(0, manamax)
-				Mana:SetValue(mana)
-				
-				if colorMulti then
-					for i = 1,4 do
-						Mana:SetStatusBarColor(unpack(colorMulti[i]))
-					end
-				else
-					for i = 1,4 do
-						Mana:SetStatusBarColor(unpack(colorSingle))
-					end
-				end
-
-			elseif (objectType == "StatusBar") then
-				local color = C.Power.MANA or C.Power.UNUSED
-
-				Mana:SetMinMaxValues(0, manamax)
-				Mana:SetValue(mana)
-				
-				local r, g, b
-				if not connected then
-					r, g, b = unpack(C.Status.Disconnected)
-				elseif dead then
-					r, g, b = unpack(C.Status.Dead)
-				elseif tapped then
-					r, g, b = unpack(C.Status.Tapped)
-				else
-					r, g, b = unpack(color)
-				end
-				Mana:SetStatusBarColor(r, g, b)
+			-- (the only mana bar is the player's orb, beside a druid's form power)
+			Mana:SetMinMaxValues(0, manamax)
+			Mana:SetValue(mana)
+			for _, layer in ipairs(C.Orb.MANA) do
+				Mana:SetStatusBarColor(unpack(layer))
 			end
-			
+
 			if not Mana:IsShown() then
 				Mana:Show()
 			end
-
-			if Mana.PostUpdate then
-				Mana:PostUpdate(mana, manamax)
-			end		
 		end
 	end
 end
@@ -203,8 +148,9 @@ local Enable = function(self)
 		if Mana then
 			Mana._owner = self
 		end
-		if Power.frequent or Mana.frequent then
-			self:EnableFrequentUpdates("Power", Power.frequent or Mana.frequent)
+		local frequent = (Power and Power.frequent) or (Mana and Mana.frequent)
+		if frequent then
+			self:EnableFrequentUpdates("Power", frequent)
 		else
 			self:RegisterEvent("UNIT_MANA", Update)
 			self:RegisterEvent("UNIT_RAGE", Update)
@@ -219,30 +165,8 @@ local Enable = function(self)
 			self:RegisterEvent("UNIT_MAXRUNIC_POWER", Update)
 			self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
 		end
-
-	end
-end
-
-local Disable = function(self)
-	local Power = self.Power
-	local Mana = self.Mana
-	if Power or Mana then
-		if not (Power.frequent or Mana.frequent) then
-			self:UnregisterEvent("UNIT_MANA", Update)
-			self:UnregisterEvent("UNIT_RAGE", Update)
-			self:UnregisterEvent("UNIT_FOCUS", Update)
-			self:UnregisterEvent("UNIT_ENERGY", Update)
-			self:UnregisterEvent("UNIT_RUNIC_POWER", Update)
-			self:UnregisterEvent("UNIT_MAXMANA", Update)
-			self:UnregisterEvent("UNIT_MAXRAGE", Update)
-			self:UnregisterEvent("UNIT_MAXFOCUS", Update)
-			self:UnregisterEvent("UNIT_MAXENERGY", Update)
-			self:UnregisterEvent("UNIT_DISPLAYPOWER", Update)
-			self:UnregisterEvent("UNIT_MAXRUNIC_POWER", Update)
-			self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
-		end
 		return true
 	end
 end
 
-Handler:RegisterElement("Power", Enable, Disable, Update)
+Handler:RegisterElement("Power", Enable, Update)

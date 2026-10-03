@@ -18,8 +18,8 @@
 --   saved settings are merged in (ParseSavedVariables), handlers are enabled,
 --   every module's OnInit runs, then OnEnable for HIGH and NORMAL modules.
 --   LOW modules are enabled on PLAYER_LOGIN, or straight away after a /reload.
---   A module marked with SetIncompatible or SetDependency is skipped entirely
---   when that addon is (or isn't) enabled.
+--   A module marked with SetIncompatible is skipped entirely when that addon
+--   is enabled.
 --
 -- Events and messages
 --   object:RegisterEvent(event[, method]), object:RegisterMessage(message
@@ -42,10 +42,6 @@
 local ADDON, Engine = ...
 local L = Engine:GetLocale()
 
--- Uncomment when the saved settings bug out,
--- or just to reset the saved settings.
---local DEVELOPER_RESET = true
-
 -------------------------------------------------------------
 -- Lua API
 -------------------------------------------------------------
@@ -55,48 +51,30 @@ local debugstack = debugstack
 local error = error
 local getmetatable = getmetatable
 local ipairs = ipairs
-local math_abs = math.abs
 local math_floor = math.floor
 local pairs = pairs
-local pcall = pcall
-local print = print
 local select = select
 local setmetatable = setmetatable
 local string_join = string.join
 local string_lower = string.lower
 local string_match = string.match
 local table_concat = table.concat
+local table_remove = table.remove
 local tonumber = tonumber
 local tostring = tostring
 local type = type
+local unpack = unpack
 
 
 -------------------------------------------------------------
 -- WOW API
 -------------------------------------------------------------
 local CreateFrame = _G.CreateFrame
-local GetAddOnEnableState = _G.GetAddOnEnableState
 local GetAddOnInfo = _G.GetAddOnInfo
-local GetBuildInfo = _G.GetBuildInfo
-local GetCurrentResolution = _G.GetCurrentResolution
-local GetCVar = _G.GetCVar
-local GetCVarBool = _G.GetCVarBool
-local GetLocale = _G.GetLocale
 local GetNumAddOns = _G.GetNumAddOns
 local GetRealmName = _G.GetRealmName
-local GetResolution = _G.GetResolution
-local GetScreenHeight = _G.GetScreenHeight
-local GetScreenWidth = _G.GetScreenWidth
-local GetScreenResolutions = _G.GetScreenResolutions
-local EnableAddOn = _G.EnableAddOn
 local InCombatLockdown = _G.InCombatLockdown
-local InCinematic = _G.InCinematic
 local IsLoggedIn = _G.IsLoggedIn
-local IsMacClient = _G.IsMacClient
-local LoadAddOn = _G.LoadAddOn
-local RegisterStateDriver = _G.RegisterStateDriver
-local StaticPopup_Show = _G.StaticPopup_Show
-local StaticPopupDialogs = _G.StaticPopupDialogs
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitFactionGroup = _G.UnitFactionGroup
 local UnitName = _G.UnitName
@@ -113,7 +91,6 @@ local WorldFrame = _G.WorldFrame
 -- Engine Registries
 -------------------------------------------------------------
 local events = {} -- event registry
-local timers = {} -- timer registry
 
 local configs = {} -- config registry saved between sessions
 local staticConfigs = {} -- static configurations set by the modules
@@ -133,14 +110,11 @@ local enabledObjects = {} -- hash table for enabled modules, widgets and handler
 local objectName = {} -- table to hold the display names (ID) of all handlers, modules, widgets and elements
 local objectType = {} -- table to quickly look up what sort of object we're working with (handler, module, widget, element)
 
-local stack = {} -- local table stack for indexed tables
-local queue = {} -- queued function calls for the secure out of combat wrapper
-local scale = {} -- screen resolution and UI scale data (not used?)
+local queue = {} -- [func] = its arguments, for calls the out of combat wrapper put off
 
 local keyWords = {} -- keyword registry to translate words to frame handles used for anchoring or parenting
 
 local incompats = {} -- table holding module/widget/handler incompatibilities
-local dependencies = {} -- table holding module/widget/handler dependencies
 
 -------------------------------------------------------------
 -- Flags and other values meant to be read-only
@@ -163,7 +137,7 @@ DiabolicUI_DB = {}
 -- Engine Frames & UI Widgets
 -------------------------------------------------------------
 
--- Frame meant for events, timers, etc
+-- Frame meant for events
 local Frame = CreateFrame("Frame", nil, WorldFrame) -- parented to world frame to keep running even if the UI is hidden
 local FrameMethods = getmetatable(Frame).__index
 
@@ -206,40 +180,6 @@ local check = function(self, value, num, ...)
 	error(L["Bad argument #%d to '%s': %s expected, got %s"]:format(num, name, types, type(value)), 3)
 end
 
--- Error handling to keep the Engine running.
-local protected_call = function(...)
-	local _, catch = pcall(...)
-	if catch and GetCVarBool("scriptErrors") then
-		ScriptErrorsFrame_OnError(catch, false)
-	end
-end
-
--- Wipe a table and push it to the stack.
-local push = function(tbl)
-	if #tbl > 0 then
-		for i = #tbl, 1, -1 do
-			tbl[i] = nil
-		end
-	end
-	stack[#stack + 1] = tbl
-end
-
--- Pull a table from the stack, or create a new one.
-local pop = function()
-	if #stack > 0 then
-		local tbl = stack[#stack]
-		stack[#stack] = nil
-		return tbl
-	end
-	return {}
-end
-
--- Not using camel case for the names of these two, 
--- since we're sort of pretending they're regular lua math calls.
-local math_round = function(n, accuracy) 
-	return (math_floor(n*accuracy + .5))/accuracy -- adding the .5 to fix numbers blizzard have rounded down (?)
-end
-
 -- Translate keywords to frame handles used for anchoring.
 local parseAnchor = function(anchor)
 	return anchor and (keyWords[anchor] and keyWords[anchor]() or _G[anchor] and _G[anchor] or anchor) or KEYWORD_DEFAULT and keyWords[KEYWORD_DEFAULT]() or WorldFrame
@@ -274,25 +214,6 @@ copyTable = function(source, target)
 	return new
 end
 
--- Using this as sort of a "catch all" copy function
-local fullCopy
-fullCopy = function(source)
-	do return source end
-
-	-- Tables need to be deep copied, or the referenced table can disappear, causing mayhem.
-	if (type(source) == "table") then
-		-- If it's a WoW UI object, we just return it as is. 
-		if source.GetObjectType then
-			return source
-		-- If it's a normal table, we do a full deep copy of it.
-		else
-			return copyTable(source)
-		end 
-	end
-
-	-- Non table values are copied by default, simply returning the value is enough.
-	return source
-end
 
 
 
@@ -300,115 +221,79 @@ end
 -- Event & OnUpdate Handler
 -------------------------------------------------------------
 
--- script handler for Frame's OnEvent
-local OnEvent = function(self, event, ...)
-	local eventRegistry = events[event]
-	if not eventRegistry then
-		return 
-	end
-	
-	-- iterate engine events first
-	local engine = Engine
-	local engineEvents = eventRegistry[engine]
-	if engineEvents then
-		for index,func in ipairs(engineEvents) do
-			if type(func) == "string" then
-				if engine[func] then
-					engine[func](engine, event, ...)
-				else
-					return error(L["The Engine has no method named '%s'!"]:format(func))
-				end
-			else
-				func(engine, event, ...)
+-- Calls everything one object registered for an event or message, in
+-- order. A function can unregister itself (or another) while this runs:
+-- the list closes up, so the one after it moves into its place.
+local call = function(object, list, missing, event, ...)
+	local i, calls, max = 1, 0, #list -- (max: anything registered meanwhile waits for the next time)
+	local func = list[i]
+	while func and (calls < max) do
+		calls = calls + 1
+		if type(func) == "string" then
+			local method = object[func]
+			if not method then
+				return error((object == Engine) and L[missing]:format(func) or L[missing]:format(tostring(object), func))
 			end
+			method(object, event, ...)
+		else
+			func(object, event, ...)
 		end
-	end
-	
-	-- iterate handlers
-	for name,handler in pairs(handlers) do
-		if enabledObjects[handler] then
-			local handler_events = eventRegistry[handler]
-			if handler_events then
-				for index,func in ipairs(handler_events) do
-					if type(func) == "string" then
-						if handler[func] then
-							handler[func](handler, event, ...)
-						else
-							return error(L["The handler '%s' has no method named '%s'!"]:format(tostring(handler), func))
-						end
-					else
-						func(handler, event, ...)
-					end
-				end
-			end
-			
-			-- iterate the elements registered to the current handler
-			local elementPool = handlerElements[handler]
-			for name,element in pairs(elementPool) do
-				local element_events = eventRegistry[element]
-				if element_events then
-					for index,func in ipairs(element_events) do
-						if type(func) == "string" then
-							if element[func] then
-								element[func](element, event, ...)
-							else
-								return error(L["The handler element '%s' has no method named '%s'!"]:format(tostring(element), func))
-							end
-						else
-							func(element, event, ...)
-						end
-					end
-				end
-			end
-			
+		if (list[i] == func) then
+			i = i + 1
 		end
+		func = list[i]
 	end
-
-	-- iterate module events and fire according to priorities
-	for index,priority in ipairs(PRIORITY_INDEX) do
-		for name,module in pairs(moduleLoadPriority[priority]) do
-			if enabledObjects[module] then
-				local moduleEvents = eventRegistry[module]
-				if moduleEvents then
-					for index,func in ipairs(moduleEvents) do
-						if type(func) == "string" then
-							if module[func] then
-								module[func](module, event, ...)
-							else
-								return error(L["The module '%s' has no method named '%s'!"]:format(tostring(module), func))
-							end
-						else
-							func(module, event, ...)
-						end
-					end
-				end
-
-				-- iterate the widgets registered to the current module
-				local widgetPool = moduleWidgets[module]
-				for name,widget in pairs(widgetPool) do
-					local widgetEvents = eventRegistry[widget]
-					if widgetEvents then
-						for index,func in ipairs(widgetEvents) do
-							if type(func) == "string" then
-								if widget[func] then
-									widget[func](widget, event, ...)
-								else
-									return error(L["The module widget '%s' has no method named '%s'!"]:format(tostring(widget), func))
-								end
-							else
-								func(widget, event, ...)
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-
 end
 
--- script handler for Frame's OnUpdate
-local OnUpdate = function(self, elapsed, ...)
+-- Delivers a game event (withElements) or an addon message to every object
+-- registered for it: the Engine, then enabled handlers (and for events,
+-- their elements), then enabled modules by priority, and their widgets.
+local deliver = function(withElements, event, ...)
+	local registry = events[event]
+	if not registry then
+		return
+	end
+	local list = registry[Engine]
+	if list then
+		call(Engine, list, "The Engine has no method named '%s'!", event, ...)
+	end
+	for _, handler in pairs(handlers) do
+		if enabledObjects[handler] then
+			list = registry[handler]
+			if list then
+				call(handler, list, "The handler '%s' has no method named '%s'!", event, ...)
+			end
+			if withElements then
+				for _, element in pairs(handlerElements[handler]) do
+					list = registry[element]
+					if list then
+						call(element, list, "The handler element '%s' has no method named '%s'!", event, ...)
+					end
+				end
+			end
+		end
+	end
+	for _, priority in ipairs(PRIORITY_INDEX) do
+		for _, module in pairs(moduleLoadPriority[priority]) do
+			if enabledObjects[module] then
+				list = registry[module]
+				if list then
+					call(module, list, "The module '%s' has no method named '%s'!", event, ...)
+				end
+				for _, widget in pairs(moduleWidgets[module]) do
+					list = registry[widget]
+					if list then
+						call(widget, list, "The module widget '%s' has no method named '%s'!", event, ...)
+					end
+				end
+			end
+		end
+	end
+end
+
+-- script handler for Frame's OnEvent
+local OnEvent = function(self, event, ...)
+	return deliver(true, event, ...)
 end
 
 -- engine and object methods
@@ -416,89 +301,7 @@ end
 -- then enabled handlers, then enabled modules (by priority) and their widgets.
 local Fire = function(self, message, ...)
 	self:Check(message, 1, "string")
-	local eventRegistry = events[message]
-	if not eventRegistry then
-		return 
-	end
-
-	-- iterate engine messages first
-	local engine = Engine
-	local engineEvents = eventRegistry[engine]
-	if engineEvents then
-		for index,func in ipairs(engineEvents) do
-			if type(func) == "string" then
-				if engine[func] then
-					engine[func](engine, message, ...)
-				else
-					return error(L["The Engine has no method named '%s'!"]:format(func))
-				end
-			else
-				func(engine, message, ...)
-			end
-		end
-	end
-	
-	-- iterate handlers
-	for name,handler in pairs(handlers) do
-		if enabledObjects[handler] then
-			local handler_events = eventRegistry[handler]
-			if handler_events then
-				for index,func in ipairs(handler_events) do
-					if type(func) == "string" then
-						if handler[func] then
-							handler[func](handler, message, ...)
-						else
-							return error(L["The handler '%s' has no method named '%s'!"]:format(tostring(handler), func))
-						end
-					else
-						func(handler, message, ...)
-					end
-				end
-			end
-		end
-	end
-	
-	-- iterate module messages and fire according to priorities
-	for index,priority in ipairs(PRIORITY_INDEX) do
-		for name,module in pairs(moduleLoadPriority[priority]) do
-			if enabledObjects[module] then
-				local moduleEvents = eventRegistry[module]
-				if moduleEvents then
-					for index,func in ipairs(moduleEvents) do
-						if type(func) == "string" then
-							if module[func] then
-								module[func](module, message, ...)
-							else
-								return error(L["The module '%s' has no method named '%s'!"]:format(tostring(module), func))
-							end
-						else
-							func(module, message, ...)
-						end
-					end
-				end
-
-				-- iterate the widgets registered to the current module
-				local widgetPool = moduleWidgets[module]
-				for name,widget in pairs(widgetPool) do
-					local widgetEvents = eventRegistry[widget]
-					if widgetEvents then
-						for index,func in ipairs(widgetEvents) do
-							if type(func) == "string" then
-								if widget[func] then
-									widget[func](widget, message, ...)
-								else
-									return error(L["The module widget '%s' has no method named '%s'!"]:format(tostring(widget), func))
-								end
-							else
-								func(widget, message, ...)
-							end
-						end
-					end
-				end
-
-			end
-		end
-	end
+	return deliver(false, message, ...)
 end
 
 -- Calls func (a method name, a function, or "Update" when nil) on this
@@ -571,7 +374,7 @@ local UnregisterEvent = function(self, event, func)
 	end
 	for i = #events[event][self], 1, -1 do
 		if events[event][self][i] == func then 
-			events[event][self][i] = nil
+			table_remove(events[event][self], i)
 			if Frame.eventRegistry and Frame.eventRegistry[event] then
 				Frame.eventRegistry[event] = Frame.eventRegistry[event] - 1
 				if Frame.eventRegistry[event] == 0 then
@@ -644,13 +447,13 @@ local UnregisterMessage = function(self, message, func)
 	end
 	for i = #events[message][self], 1, -1 do
 		if events[message][self][i] == func then 
-			events[message][self][i] = nil
+			table_remove(events[message][self], i)
 			return 
 		end
 	end
 	if type(func) == "string" then
 		if func == "Update" then
-			return error(L["Attempting to unregister the general occurence of the message '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterMessage?"]:format(event, tostring(self)))
+			return error(L["Attempting to unregister the general occurence of the message '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterMessage?"]:format(message, tostring(self)))
 		else
 			return error(L["The method named '%s' isn't registered for the message '%s' in the object '%s'."]:format(func, message, tostring(self)))
 		end
@@ -658,60 +461,6 @@ local UnregisterMessage = function(self, message, func)
 		return error(L["The function call assigned to the message '%s' in the object '%s' doesn't exist."]:format(message, tostring(self)))
 	end
 	
-end
-
-
-
--------------------------------------------------------------
--- Timers
--- *Not implemented yet. So don't use them!
--------------------------------------------------------------
-
--- create a new timer object
-local new_timer = function(owner, method, delay, loop, ...)
-
-end
-
-local ScheduleTimer = function(self, method, delay, ...)
-	self:Check(method, 1, "string", "function")
-	self:Check(delay, 2, "number")
-
-	if not timers[self] then
-		timers[self] = {}
-	end
-	
-	local timer = new_timer(owner, method, delay, false, ...)
-
-	timers[self][timer] = method
-
-	return timer
-end
-
-local ScheduleRepeatingTimer = function(self, method, callback, ...)
-	self:Check(method, 1, "string", "function")
-	self:Check(delay, 2, "number")
-
-	if not timers[self] then
-		timers[self] = {}
-	end
-	
-	local timer = new_timer(owner, method, delay, true, ...)
-
-	timers[self][timer] = method
-
-	return timer
-end
-
-local CancelTimer = function(self, id)
-	if not timers[self] then
-		return 
-	end
-end
-
-local CancelAllTimers = function(self)
-	if not timers[self] then
-		return 
-	end
 end
 
 
@@ -725,11 +474,6 @@ end
 -- the live profiles so changes are saved on logout. Runs once, before any
 -- module's OnInit. Saved data for configs nobody registers is left alone.
 Engine.ParseSavedVariables = function(self)
-	-- Fix format changes during development. 
-	if DEVELOPER_RESET then
-		wipe(DiabolicUI_DB) 
-	end
-
 	-- Merge and/or overwrite current configs with stored settings.
 	-- *doesn't matter that we mess up any links by replacing the tables, 
 	--  because this all happens before any module's OnInit or OnEnable,
@@ -830,14 +574,6 @@ local GetConfig = function(self, name, profile, option, silentFail)
 	return config
 end
 
-local GetConfigDefaults = function(self, name)
-	self:Check(name, 1, "string")
-	if (not configs[name]) then
-		return error(L["The config '%s' doesn't exist!"]:format(name))
-	end	
-	return configs[name].defaults
-end
-
 -- Returns a static table registered with NewStaticConfig. Private ones
 -- (such as "Data: Constants") are for the Engine itself only.
 local GetDB = function(self, name, private)
@@ -870,60 +606,19 @@ end
 -- Secure/OutOfCombat Wrapper
 -------------------------------------------------------------
 
+-- Runs func(...) now, or once combat ends if it's locked down. Calls put
+-- off for the same function are merged: the last arguments are kept.
 local safeCall = function(func, ...)
-
-	-- perform the function right away when not in combat
-	if (not INCOMBAT) then
-		if queue[func] then -- check if the function has been previously queued during combat
-			push(queue[func]) -- push the table to the stack
-			queue[func] = nil -- remove the element's reference from the queue
-		end
-		func(...) 
+	-- (PLAYER_REGEN_DISABLED fires just before the lockdown starts:
+	-- until then, calls still run right away)
+	if INCOMBAT and (not INLOCKDOWN) then
+		INLOCKDOWN = InCombatLockdown()
+	end
+	if (not INCOMBAT) or (not INLOCKDOWN) then
+		func(...)
 		return
 	end
-
-	-- combat has ended but the event hasn't fired yet
-	if (not INLOCKDOWN) then
-		INLOCKDOWN = InCombatLockdown() -- still in PLAYER_REGEN_DISABLED?
-		if (not INLOCKDOWN) then
-			if queue[func] then -- check if the function has been previously queued during combat
-				push(queue[func]) -- push the table to the stack
-				queue[func] = nil -- remove the element's reference from the queue
-			end
-			func(...)
-			return
-		end
-	end
-	
-	-- we're still in combat, we need to queue the function call.
-	-- if it has been previously queued, we simply update the arguments
-	if queue[func] then
-		local tbl, oldArgs = queue[func], #queue[func]
-		local numArgs = select("#", ...)
-		for i = 1, numArgs do
-			tbl[i] = fullCopy(select(i, ...)) -- give each argument its own entry
-		end
-		if (oldArgs > numArgs) then
-			for i = oldArgs + 1, numArgs do
-				tbl[i] = nil -- kill of excess args from the previous queue, if any
-			end
-		end
-	else
-		local tbl = pop() -- request a fresh table from the stack
-		local numArgs = select("#", ...)
-		for i = 1, numArgs do
-			tbl[i] = fullCopy(select(i, ...)) -- give each argument its own entry
-		end
-		-- To avoid multiple calls of the same function, 
-		-- we use the actual function as the key.
-		--
-		-- 	Note: 	This isn't guaranteed to work, though, since a function 
-		-- 			can easily be copied when passed, and thus we can still get 
-		-- 			multiple calls to the same function. 
-		-- 			So I should rewrite the whole freaking system to use 
-		--			some kind of unique IDs. Major TODO. -_-
-		queue[func] = tbl 
-	end
+	queue[func] = { n = select("#", ...), ... }
 end
 
 local combatStarts = function(self, event, ...)
@@ -933,17 +628,9 @@ end
 local combatEnds = function(self, event, ...)
 	INCOMBAT = false
 	INLOCKDOWN = false
-	for func,args in pairs(queue) do
-		if func then
-			local args = args
-			func(unpack(args)) 
-			if queue[func] then -- the previous function may have deleted itself
-				push(queue[func]) -- push the table to the stack
-				queue[func] = nil -- remove the element from the queue
-			elseif args then -- the table might still be there, even if the reference is gone
-				push(args) -- push the table to the stack
-			end
-		end
+	for func, args in pairs(queue) do
+		queue[func] = nil
+		func(unpack(args, 1, args.n))
 	end
 end
 
@@ -977,9 +664,9 @@ local Update = function(self, event, ...)
 	end
 end
 
--- Runs OnInit once, unless the object is incompatible or missing a dependency.
+-- Runs OnInit once, unless the object is incompatible.
 local Init = function(self, ...)
-	if (self:IsIncompatible() or self:DependencyFailed()) then
+	if self:IsIncompatible() then
 		return
 	end
 	if (not initializedObjects[self]) then 
@@ -991,9 +678,9 @@ local Init = function(self, ...)
 end
 
 -- Runs OnEnable once and marks the object enabled (so it gets events),
--- unless it's incompatible or missing a dependency.
+-- unless it's incompatible.
 local Enable = function(self, ...)
-	if (self:IsIncompatible() or self:DependencyFailed()) then
+	if self:IsIncompatible() then
 		return
 	end
 	if (not enabledObjects[self]) then 
@@ -1059,27 +746,6 @@ local IsIncompatible = function(self)
 	return false
 end
 
-local DependencyFailed = function(self)
-	if (not dependencies[self]) then
-		return false
-	end
-	local dependencyFailed = false
-	for addonName, condition in pairs(dependencies[self]) do
-		if (type(condition) == "function") then
-			if Engine:IsAddOnEnabled(addonName) then
-				if (not condition(self)) then
-					dependencyFailed = true
-				end
-			end
-		else
-			if (not Engine:IsAddOnEnabled(addonName)) then
-				dependencyFailed = true
-			end
-		end
-	end
-	return dependencyFailed
-end
-
 -- object:SetIncompatible("AddOn"[, condition], ...): skip this object while
 -- that addon is enabled. With a condition function, skip only when it
 -- returns true.
@@ -1107,31 +773,6 @@ local SetIncompatible = function(self, ...)
 	end
 end
 
--- object:SetDependency("AddOn"[, condition], ...): skip this object unless
--- that addon is enabled (and the condition, if any, returns true).
-local SetDependency = function(self, ...)
-	if (not dependencies[self]) then
-		dependencies[self] = {}
-	end
-	local numArgs = select("#", ...)
-	local currentArg = 1
-
-	while currentArg <= numArgs do
-		local addonName = select(currentArg, ...)
-		self:Check(addonName, currentArg, "string")
-
-		local condition
-		if (numArgs > currentArg) then
-			local nextArg = select(currentArg + 1, ...)
-			if (type(nextArg) == "function") then
-				condition = nextArg
-				currentArg = currentArg + 1
-			end
-		end
-		currentArg = currentArg + 1
-		dependencies[self][addonName] = condition and condition or true
-	end
-end
 
 -- core object that all inherits from
 local corePrototype = {
@@ -1148,8 +789,6 @@ local corePrototype = {
 	IsMessageRegistered = IsMessageRegistered,
 	SetIncompatible = SetIncompatible,
 	IsIncompatible = IsIncompatible,
-	SetDependency = SetDependency,
-	DependencyFailed = DependencyFailed,
 	SendMessage = Fire,
 	GetHandler = GetHandler,
 	GetModule = GetModule,
@@ -1172,14 +811,9 @@ local corePrototype_MT = { __index = corePrototype, __tostring = function(t) ret
 -- 	This is intentional.
 -------------------------------------------------------------
 
--- handler element prototypes
+-- handler element prototype
 local elementPrototype = setmetatable({}, corePrototype_MT)
-local elementUnsecurePrototype = setmetatable({
-	Enable = Enable,
-	Disable = Disable
-}, { __index = elementPrototype })
 local elementPrototype_MT = { __index = elementPrototype, __tostring = function(t) return objectName[t] end }
-local elementUnsecurePrototype_MT = { __index = elementUnsecurePrototype }
 
 -- handler prototype
 local handlerPrototype = setmetatable({
@@ -1189,25 +823,18 @@ local handlerPrototype = setmetatable({
 		return elementPool[name]
 	end, 
 	
-	-- Handler elements are by default blocked from usage in combat. 
-	-- To avoid this behavior the 'makeUnsecure' flag must be set to 
-	-- 'true' during element creation!
-	SetElement = function(self, name, template, makeUnsecure)
+	-- Handler elements, like every object, are enabled and disabled out of
+	-- combat only (see Engine:Wrap).
+	SetElement = function(self, name, template)
 		self:Check(name, 1, "string")
-		self:Check(template, 2, "table", "nil", "boolean")
-		self:Check(makeUnsecure, 3, "boolean", "nil")
-		
-		if makeUnsecure == nil and type(template) == "boolean" then
-			makeUnsecure = template
-			template = nil
-		end
-		
+		self:Check(template, 2, "table", "nil")
+
 		local elementPool = handlerElements[self]
 		if elementPool[name] then
 			return error(L["The element '%s' is already registered to the '%s' handler!"]:format(name, tostring(self)))
 		end
 
-		local element = setmetatable(template or {}, makeUnsecure and elementUnsecurePrototype_MT or elementPrototype_MT)
+		local element = setmetatable(template or {}, elementPrototype_MT)
 
 		objectName[element] = name
 		objectType[element] = "element"
@@ -1223,10 +850,6 @@ local handlerPrototype = setmetatable({
 	
 	SetElementDefaultEnabledState = function(self, state)
 		handlerElementsEnabledState[self] = state
-	end,
-
-	IterateElements = function(self)
-		return pairs(handlerElements[self])
 	end
 
 }, corePrototype_MT)
@@ -1244,12 +867,7 @@ local handlerPrototype_MT = { __index = handlerPrototype, __tostring = function(
 local widgetPrototype = setmetatable({
 	Init = Init,
 }, corePrototype_MT)
-local widgetUnsecurePrototype = setmetatable({
-	Enable = Enable,
-	Disable = Disable
-}, { __index = widgetPrototype })
 local widgetPrototype_MT = { __index = widgetPrototype, __tostring = function(t) return objectName[t] end }
-local widgetUnsecurePrototype_MT = { __index = widgetUnsecurePrototype, __tostring = function(t) return objectName[t] end }
 
 -- module prototype
 local modulePrototype = setmetatable({
@@ -1259,16 +877,15 @@ local modulePrototype = setmetatable({
 		local widgetPool = moduleWidgets[self]
 		return widgetPool[name]
 	end, 
-	SetWidget = function(self, name, makeUnsecure)
+	SetWidget = function(self, name)
 		self:Check(name, 1, "string")
-		self:Check(makeUnsecure, 2, "boolean", "nil")
-		
+
 		local widgetPool = moduleWidgets[self]
 		if widgetPool[name] then
 			return error(L["The widget '%s' is already registered to the '%s' module!"]:format(name, tostring(self)))
 		end
 
-		local widget = setmetatable({}, makeUnsecure and widgetUnsecurePrototype_MT or widgetPrototype_MT)
+		local widget = setmetatable({}, widgetPrototype_MT)
 		
 		objectName[widget] = name -- store the name
 		objectType[widget] = "widget" -- store the object type
@@ -1278,12 +895,7 @@ local modulePrototype = setmetatable({
 		return widget
 	end
 }, corePrototype_MT)
-local moduleUnsecurePrototype = setmetatable({
-	Enable = Enable,
-	Disable = Disable
-}, { __index = modulePrototype })
 local modulePrototype_MT = { __index = modulePrototype, __tostring = function(t) return objectName[t] end }
-local moduleUnsecurePrototype_MT = { __index = moduleUnsecurePrototype, __tostring = function(t) return objectName[t] end }
 
 
 
@@ -1300,59 +912,13 @@ frameWidgetPrototype = {
 
 	-- Position a frame, and accept keywords as anchors
 	-- to easily hook frames into the secure actionbar controllers.
-	Place = function(self, ...)
-		local numArgs = select("#", ...)
-		if numArgs == 1 then
-			local point = ...
-			self:ClearAllPoints()
+	-- Place(point) or Place(point, anchor[, relativePoint[, x, y]])
+	Place = function(self, point, anchor, ...)
+		self:ClearAllPoints()
+		if (anchor == nil) then
 			self:SetPoint(point)
-		elseif numArgs == 2 then
-			local point, anchor = ...
-			self:ClearAllPoints()
-			self:SetPoint(point, parseAnchor(anchor))
-		elseif numArgs == 3 then
-			local point, anchor, rpoint = ...
-			self:ClearAllPoints()
-			self:SetPoint(point, parseAnchor(anchor), rpoint)
-		elseif numArgs == 5 then
-			local point, anchor, rpoint, xoffset, yoffset = ...
-			self:ClearAllPoints()
-			self:SetPoint(point, parseAnchor(anchor), rpoint, xoffset, yoffset)
 		else
-			self:ClearAllPoints()
-			self:SetPoint(...)
-		end
-	end,
-
-	-- Set a single point on a frame without clearing first. 
-	-- Like the above function, this too accepts keywords as anchors.
-	Point = function(self, ...)
-		local numArgs = select("#", ...)
-		if numArgs == 1 then
-			local point = ...
-			self:SetPoint(point)
-		elseif numArgs == 2 then
-			local point, anchor = ...
-			self:SetPoint(point, parseAnchor(anchor))
-		elseif numArgs == 3 then
-			local point, anchor, rpoint = ...
-			self:SetPoint(point, parseAnchor(anchor), rpoint)
-		elseif numArgs == 5 then
-			local point, anchor, rpoint, xoffset, yoffset = ...
-			self:SetPoint(point, parseAnchor(anchor), rpoint, xoffset, yoffset)
-		else
-			self:SetPoint(...)
-		end
-	end,
-
-	-- Size a frame, and accept single input values for square frames.
-	Size = function(self, ...)
-		local numArgs = select("#", ...)
-		if numArgs == 1 then
-			local size = ...
-			self:SetSize(size, size)
-		elseif numArgs == 2 then
-			self:SetSize(...)
+			self:SetPoint(point, parseAnchor(anchor), ...)
 		end
 	end
 }
@@ -1430,36 +996,6 @@ end
 -- Create a frame with certain extra methods we like to have
 Engine.CreateFrame = function(self, frameType, frameName, parent, template) 
 	return embed(CreateFrame(frameType or "Frame", frameName, parseAnchor(parent), template), framePrototype)
-end
-
-
-
--------------------------------------------------------------
--- Track loading screens
--------------------------------------------------------------
-do
-	local offWorldStatus
-	Engine.UpdateOffWorld = function(self, event, ...)
-		if event == "PLAYER_LEAVING_WORLD" then
-			offWorldStatus = true
-		elseif event == "PLAYER_ENTERING_WORLD" then
-			offWorldStatus = false
-		end
-	end
-
-	-- Returns true if the player is in the world.
-	-- This is defined by whether the player has entered the world after the last login or reload, 
-	-- and will return false if the game client is still starting up or the player is on a loading screen. 
-	Engine.IsInWorld = function(self)
-		return offWorldStatus == false
-	end
-
-	-- Returns true if the player is currently on a loading screen,
-	-- but will return false both when the player is in the world or not yet have fully logged in.
-	-- The purpose if this function is to specifically check for loading screens while in-game.
-	Engine.IsOffWorld = function(self)
-		return offWorldStatus == true
-	end
 end
 
 
@@ -1554,11 +1090,10 @@ end
 
 -- create a new user module
 -- *set loadPriority to "LOW" to delay OnEnable until after PLAYER_LOGIN!
-Engine.NewModule = function(self, name, loadPriority, makeUnsecure)
+Engine.NewModule = function(self, name, loadPriority)
 	self:Check(name, 1, "string")
 	self:Check(loadPriority, 2, "string", "nil")
-	self:Check(makeUnsecure, 3, "boolean", "nil")
-	
+
 	if handlers[name] then
 		return error(L["Bad argument #%d to '%s': The name '%s' is reserved for a handler!"]:format(1, "New", name))
 	end
@@ -1566,13 +1101,13 @@ Engine.NewModule = function(self, name, loadPriority, makeUnsecure)
 		return error(L["Bad argument #%d to '%s': A module named '%s' already exists!"]:format(1, "New", name))
 	end
 	if loadPriority and not PRIORITY_HASH[loadPriority] then
-		return error(L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"]:format(5, "New", loadPriority, table_concat(PRIORITY_INDEX, ", ")))
+		return error(L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"]:format(2, "New", loadPriority, table_concat(PRIORITY_INDEX, ", ")))
 	end
 	if not loadPriority then
 		loadPriority = DEFAULT_MODULE_PRIORITY
 	end
 	
-	local module = setmetatable({}, makeUnsecure and moduleUnsecurePrototype_MT or modulePrototype_MT) 
+	local module = setmetatable({}, modulePrototype_MT)
 
 	moduleWidgets[module] = {} -- local widgetpool for the module
 
@@ -1586,38 +1121,16 @@ Engine.NewModule = function(self, name, loadPriority, makeUnsecure)
 	return module
 end
 
--- perform a function or method on all registered modules
-Engine.ForAll = function(self, func, priorityFilter, ...) 
-	self:Check(func, 1, "string", "function")
-	self:Check(priorityFilter, 2, "string", "nil")
-
-	-- if a valid priority filter is set, only modules of that given priority will be called
-	if priorityFilter then
-		if (not PRIORITY_HASH[priorityFilter]) then
-			return error(L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"]:format(2, "ForAll", priorityFilter, table_concat(PRIORITY_INDEX, ", ")))
-		end
-		for name,module in pairs(moduleLoadPriority[priorityFilter]) do
-			if type(func) == "string" then
-				if module[func] then
-					module[func](module, ...)
-				end
-			else
-				func(module, ...)
-			end
-		end
-		return
+-- Calls the method `method` of every module of load priority `priority` that has it.
+Engine.ForAll = function(self, method, priority, ...)
+	self:Check(method, 1, "string")
+	self:Check(priority, 2, "string")
+	if (not PRIORITY_HASH[priority]) then
+		return error(L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"]:format(2, "ForAll", priority, table_concat(PRIORITY_INDEX, ", ")))
 	end
-	
-	-- if no priority filter is set, we iterate through all modules, but still by priority
-	for index,priority in ipairs(PRIORITY_INDEX) do
-		for name,module in pairs(moduleLoadPriority[priority]) do
-			if type(func) == "string" then
-				if module[func] then
-					module[func](module, ...)
-				end
-			else
-				func(module, ...)
-			end
+	for name, module in pairs(moduleLoadPriority[priority]) do
+		if module[method] then
+			module[method](module, ...)
 		end
 	end
 end
@@ -1650,12 +1163,10 @@ do
 		width = round(width)
 		height = round(height)
 	
-		local precision = 1e5
 		local scale = height/1080 * (tonumber(scale) or 1)
 	
 		local displayWidth = (((width/height) >= (16/10)*3) and width/3 or width)/scale
 		local displayHeight = height/scale
-		local displayRatio = displayWidth/displayHeight
 	
 		UICenter:SetFrameStrata(UIParent:GetFrameStrata())
 		UICenter:SetFrameLevel(UIParent:GetFrameLevel())
@@ -1675,9 +1186,6 @@ do
 
 		local oldWidth, oldHeight = data.worldWidth, data.worldHeight
 		local newWidth, newHeight = self:GetFrameSize(WorldFrame)
-		if (not newWidth) or (not newHeight) then 
-			return 
-		end 
 
 		local oldScale
 		if (oldWidth and oldHeight) then
@@ -1696,9 +1204,6 @@ do
 
 		local oldWidth, oldHeight = data.interfaceWidth, data.interfaceHeight
 		local newWidth, newHeight = self:GetFrameSize(UIParent)
-		if (not newWidth) or (not newHeight) then 
-			return 
-		end 
 
 		local oldScale
 		if (oldWidth and oldHeight) then
@@ -1713,20 +1218,14 @@ do
 		return (newScale ~= oldScale) or (newWidth ~= oldWidth) or (newHeight ~= oldHeight)
 	end 
 
-	Engine.UpdateDisplaySize = function(self)
-		if (InCombatLockdown()) then 
-			return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent") 
-		end 
-		SetDisplaySize()
-	end
-
+	-- (UICenter is secure: it's resized out of combat only)
 	Engine.OnDisplaySizeEvent = function(self, event, ...)
-		if (InCombatLockdown()) then 
-			return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnDisplaySizeEvent") 
-		elseif (event == "PLAYER_REGEN_ENABLED") then 
+		if (InCombatLockdown()) then
+			return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnDisplaySizeEvent")
+		elseif (event == "PLAYER_REGEN_ENABLED") then
 			self:UnregisterEvent("PLAYER_REGEN_ENABLED", "OnDisplaySizeEvent")
-		end 
-		self:UpdateDisplaySize()
+		end
+		SetDisplaySize()
 	end
 
 	Engine.OnDisplayScaleEvent = function(self, event, ...)
@@ -1738,21 +1237,6 @@ do
 		end 
 	end
 
-	local onlyRunOnce
-	Engine.KillBlizzard = wrap(Engine, function(self)
-		if onlyRunOnce then
-			return
-		end
-		
-		-- Killing the UI scale checkbox and slider will prevent blizzards' UI 
-		-- from slightly modifying the stored scale everytime we enter the video options. 
-		-- If we don't do this, the user will either get spammed with reload requests, 
-		-- or the scale will eventually become slightly wrong, and the graphics slightly fuzzy.
-		self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "VideoOptionsResolutionPanelUseUIScale")
-		self:GetHandler("BlizzardUI"):GetElement("Menu_Option"):Remove(true, "VideoOptionsResolutionPanelUIScaleSlider")
-		
-		onlyRunOnce = true
-	end)
 
 end
 
@@ -1811,18 +1295,8 @@ do
 	end
 end
 
--- called when the addon is fully loaded
+-- called by PreInit once the addon and its saved variables are loaded
 Engine.Init = function(self, event, ...)
-	local arg1 = ...
-	if (arg1 ~= ADDON) then
-		return 
-	end
-
-	-- Kill off the event, we don't need it anymore
-	if self:IsEventRegistered("ADDON_LOADED", "Init") then
-		self:UnregisterEvent("ADDON_LOADED", "Init")
-	end
-
 	-- chat filters and emoticons
 	Engine:NewConfig("ScreenScaling", {
 		scale = 1
@@ -1864,10 +1338,15 @@ Engine.Init = function(self, event, ...)
 		self:GetModule("ChatWindows"):PositionChatFrames()
 	end)
 
-	ChatCommand:Register("setscale", function(scale, ...) 
-		local db = self:GetConfig("ScreenScaling")
-		db.scale = scale
-		SetDisplaySize(scale)
+	-- /diabolic setscale <number>: saved, and applied out of combat only
+	-- (UICenter is secure)
+	ChatCommand:Register("setscale", function(scale)
+		scale = tonumber(scale)
+		if (not scale) then
+			return
+		end
+		self:GetConfig("ScreenScaling").scale = scale
+		self:OnDisplaySizeEvent()
 	end)
 
 	-- initialize all modules
@@ -1879,23 +1358,15 @@ Engine.Init = function(self, event, ...)
 	for i = 1, 2 do
 		self:ForAll("Enable", PRIORITY_INDEX[i], event, ...)
 	end
-	
-	initializedObjects[self] = true
-	
+
 	-- this could happen on WotLK clients
 	if (IsLoggedIn() and (not self:IsEnabled())) then
 		self:Enable()
 	end
 end
 
--- called after the player has logged in
+-- called after the player has logged in (always after Init)
 Engine.Enable = function(self, event, ...)
-	if (not self:IsInitialized()) then
-		-- Since the :Init() procedure will call this function, 
-		-- we need to return to avoid duplicate calls
-		return self:Init("Forced", ADDON)
-	end
-
 	-- enable all objects of LOW priority
 	for i = 3, #PRIORITY_INDEX do
 		self:ForAll("Enable", PRIORITY_INDEX[i], event, ...)
@@ -1911,11 +1382,6 @@ Engine.Enable = function(self, event, ...)
 	end
 
 	enabledObjects[self] = true
-end
-
--- check if the engine has been initialized
-Engine.IsInitialized = function(self)
-	return initializedObjects[self]
 end
 
 -- check if the engine is fully enabled
@@ -1955,21 +1421,7 @@ local protected_MT = {
 	end,
 	__metatable = false
 }
-(function(tbl)
-	local old_MT = getmetatable(tbl)
-	if old_MT then
-		local new_meta = {}
-		for i,v in pairs(old_MT) do
-			new_meta[i] = v
-		end
-		for i,v in pairs(protected_MT) do
-			new_meta[i] = v
-		end
-		return setmetatable(tbl, new_meta)
-	else
-		return setmetatable(tbl, protected_MT)
-	end
-end)(Engine)
+setmetatable(Engine, protected_MT)
 
 
 -- Set the UICenter frame as the default keyword
@@ -1997,10 +1449,5 @@ Engine:RegisterEvent("PLAYER_REGEN_ENABLED", combatEnds)
 Engine:RegisterEvent("ADDON_LOADED", "PreInit")
 Engine:RegisterEvent("VARIABLES_LOADED", "PreInit")
 
--- Our offworld tracking allows us to know when we're on a loading screen.
-Engine:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateOffWorld")
-Engine:RegisterEvent("PLAYER_LEAVING_WORLD", "UpdateOffWorld")
-
--- apply scripts to our event/update frame
+-- apply scripts to our event frame
 Frame:SetScript("OnEvent", OnEvent)
-Frame:SetScript("OnUpdate", OnUpdate)

@@ -1,176 +1,20 @@
-local Addon, Engine = ...
+local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Raid")
 
-local UnitFrame = Engine:GetHandler("UnitFrame")
 local StatusBar = Engine:GetHandler("StatusBar")
-local C = Engine:GetDB("Data: Colors")
-local AuraData = Engine:GetDB("Data: Auras")
+local Library = Engine:GetDB("Library: UnitFrames")
 
 -- Lua API
 local _G = _G
-local pairs = pairs
 local string_match = string.match
-local table_concat = table.concat
-local table_insert = table.insert
-local tostring = tostring
 local unpack = unpack
 
 -- WoW API
-local UnitIsTapDenied = Engine.UnitIsTapDenied
 local GetNumRaidMembers = _G.GetNumRaidMembers
 local GetSpellInfo = _G.GetSpellInfo
 local UnitClass = _G.UnitClass
 
--- Time limit in seconds where we separate between short and long buffs
-local TIME_LIMIT = Engine:GetConstant("AURA_TIME_LIMIT")
-local TIME_LIMIT_LOW = Engine:GetConstant("AURA_TIME_LIMIT_LOW")
-
-
-local postUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavailable)
-	local r, g, b
-	if (not isUnavailable) then
-		if UnitIsPlayer(unit) then
-			local missingImportantBuff = false
-            local importantBuffs = {
-                "Power Word: Fortitude",
-                "Divine Spirit",
-                "Shadow Protection"
-            }	
-
-            for _, buffName in ipairs(importantBuffs) do
-                if not UnitBuff(unit, buffName) then
-                    missingImportantBuff = false
-                    break
-                end
-            end
-
-            if missingImportantBuff then
-                r, g, b = 0.6, 0, 1 -- purple for missing buffs
-			elseif health.useClassColor then
-				local _, class = UnitClass(unit)
-				r, g, b = unpack(class and C.Class[class] or C.Class.UNKNOWN)
-			else
-				r, g, b = unpack(C.Orb.HEALTH[1])
-			end
-		elseif UnitPlayerControlled(unit) then
-			if UnitIsFriend("player", unit) then
-				r, g, b = unpack(C.Reaction[5])
-			elseif UnitIsEnemy(unit, "player") then
-				r, g, b = unpack(C.Reaction[1])
-			else
-				r, g, b = unpack(C.Reaction[4])
-			end
-		elseif (not UnitIsFriend("player", unit)) and UnitIsTapDenied(unit) then
-			r, g, b = unpack(C.Status.Tapped)
-		elseif UnitReaction(unit, "player") then
-			r, g, b = unpack(C.Reaction[UnitReaction(unit, "player")])
-		else
-			r, g, b = unpack(C.Orb.HEALTH[1])
-		end
-	elseif (isUnavailable == "dead") or (isUnavailable == "ghost") then
-		r, g, b = unpack(C.Status.Dead)
-	elseif (isUnavailable == "offline") then
-		r, g, b = unpack(C.Status.Disconnected)
-	end
-
-	if r then
-		if not((r == health.r) and (g == health.g) and (b == health.b)) then
-			health:SetStatusBarColor(r, g, b)
-			health.r, health.g, health.b = r, g, b
-		end
-	end
-
-	if UnitAffectingCombat("player") then
-		health.Value:SetAlpha(1)
-	else
-		health.Value:SetAlpha(.7)
-	end
-
-end
-
-local updateLayers = function(self)
-	if self:IsMouseOver() then
-		self.BorderNormalHighlight:Show()
-		self.BorderNormal:Hide()
-	else
-		self.BorderNormal:Show()
-		self.BorderNormalHighlight:Hide()
-	end
-end
-
-local PostCreateAuraButton = function(self, button)
-	local config = self.buttonConfig
-	local width, height = unpack(config.size)
-	local r, g, b = unpack(config.color)
-
-	local icon = button:GetElement("Icon")
-	local overlay = button:GetElement("Overlay")
-	local scaffold = button:GetElement("Scaffold")
-	local timer = button:GetElement("Timer")
-
-	local timerBar = timer.Bar
-	local timerBarBackground = timer.Background
-	local timerScaffold = timer.Scaffold
-
-	overlay:SetBackdrop(config.glow.backdrop)
-
-	local glow = button:CreateFrame()
-	glow:SetFrameLevel(button:GetFrameLevel())
-	glow:SetPoint("TOPLEFT", scaffold, "TOPLEFT", -4, 4)
-	glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
-	glow:SetBackdrop(config.glow.backdrop)
-
-	local iconShade = scaffold:CreateTexture()
-	iconShade:SetDrawLayer("OVERLAY")
-	iconShade:SetAllPoints(icon)
-	iconShade:SetTexture(config.shade.texture)
-	iconShade:SetVertexColor(0, 0, 0, 1)
-
-	local iconDarken = scaffold:CreateTexture()
-	iconDarken:SetDrawLayer("OVERLAY")
-	iconDarken:SetAllPoints(icon)
-	iconDarken:SetTexture(0, 0, 0, .15)
-
-	local iconOverlay = overlay:CreateTexture()
-	iconOverlay:Hide()
-	iconOverlay:SetDrawLayer("OVERLAY")
-	iconOverlay:SetAllPoints(icon)
-	iconOverlay:SetTexture(0, 0, 0, 1)
-	icon.Overlay = iconOverlay
-
-	local timerOverlay = timer:CreateFrame()
-	timerOverlay:SetFrameLevel(timer:GetFrameLevel() + 3)
-	timerOverlay:SetPoint("TOPLEFT", -3, 3)
-	timerOverlay:SetPoint("BOTTOMRIGHT", 3, -3)
-	timerOverlay:SetBackdrop(config.glow.backdrop)
-
-	button.SetBorderColor = function(self, r, g, b)
-		timerBarBackground:SetVertexColor(r * 1/3, g * 1/3, b * 1/3)
-		timerBar:SetStatusBarColor(r * 2/3, g * 2/3, b * 2/3)
-
-		overlay:SetBackdropBorderColor(r, g, b, .5)
-		glow:SetBackdropBorderColor(r/3, g/3, b/3, .75)
-		timerOverlay:SetBackdropBorderColor(r, g, b, .5)
-
-		scaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
-		scaffold:SetBackdropBorderColor(r, g, b)
-
-		timerScaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
-		timerScaffold:SetBackdropBorderColor(r, g, b)
-	end
-
-	button:SetElement("Glow", glow)
-	button:SetSize(width, height)
-	button:SetBorderColor(r * 4/5, g * 4/5, b * 4/5)
-end
-
-
--- TODO: Add PvP relevant buffs to a whitelist in these filters 
--- TODO: Optimize the code once we're happy with the functionality
-
-local Filter = Engine:GetDB("Library: AuraFilters")
-local Filter_UnitIsHostileNPC = Filter.UnitIsHostileNPC
 
 -- No buffs at all on raid frames
 local buffFilter = function(self, ...)
@@ -219,94 +63,14 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	return false
 end
 
-local PostUpdateAuraButton = function(self, button, ...)
-	local updateType = ...
-	local config = self.buttonConfig
 
-	local icon = button:GetElement("Icon")
-	local glow = button:GetElement("Glow")
-	local timer = button:GetElement("Timer")
-	local scaffold = button:GetElement("Scaffold")
-
-	if timer:IsShown() then
-		glow:SetPoint("BOTTOMRIGHT", timer, "BOTTOMRIGHT", 3, -3)
-	else
-		glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
-	end
-	
-	if self.hideTimerBar then
-		local color = config.color
-		button:SetBorderColor(color[1], color[2], color[3]) 
-		icon:SetDesaturated(false)
-		icon:SetVertexColor(.85, .85, .85)
-	else
-		if button.isBuff then
-			if button.isStealable then
-				local color = C.General.Title
-				button:SetBorderColor(color[1], color[2], color[3]) 
-				icon:SetDesaturated(false)
-				icon:SetVertexColor(1, 1, 1)
-				icon.Overlay:Hide()
-
-			elseif button.isCastByPlayer then
-				local color = C.General.XP
-				button:SetBorderColor(color[1], color[2], color[3]) 
-				icon:SetDesaturated(false)
-				icon:SetVertexColor(1, 1, 1)
-				icon.Overlay:Hide()
-			else
-				local color = config.color
-				button:SetBorderColor(color[1], color[2], color[3]) 
-
-				if icon:SetDesaturated(true) then
-					icon:SetVertexColor(1, 1, 1)
-					icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .5)
-					icon.Overlay:Show()
-				else
-					icon:SetDesaturated(false)
-					icon:SetVertexColor(.7, .7, .7)
-					icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
-					icon.Overlay:Show()
-				end		
-			end
-
-		elseif button.isCastByPlayer then
-			button:SetBorderColor(.7, .1, .1)
-			icon:SetDesaturated(false)
-			icon:SetVertexColor(1, 1, 1)
-			icon.Overlay:Hide()
-
-		else
-			local color = config.color
-			button:SetBorderColor(color[1], color[2], color[3])
-
-			if icon:SetDesaturated(true) then
-				icon:SetVertexColor(1, 1, 1)
-				icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .5)
-				icon.Overlay:Show()
-			else
-				icon:SetDesaturated(false)
-				icon:SetVertexColor(.7, .7, .7)
-				icon.Overlay:SetVertexColor(C.General.UIOverlay[1], C.General.UIOverlay[2], C.General.UIOverlay[3], .25)
-				icon.Overlay:Show()
-			end		
-		end
-	end
-end
-
-
-local fakeUnitNum = 0
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.raid
 	local db = Module:GetConfig("UnitFrames") 
 
-	local unitNum = string_match(unit, "%d")
-	if (not unitNum) then 
-		fakeUnitNum = fakeUnitNum + 1
-		unitNum = fakeUnitNum
-	end 
+	local unitNum = string_match(unit, "%d") -- (raid1 to raid40)
 
-	self:Size(unpack(config.size))
+	self:SetSize(unpack(config.size))
 	self:Place("TOP", 0, -((unitNum-1) * 90))
 
 	-- Artwork
@@ -316,7 +80,7 @@ local Style = function(self, unit)
 	Shade:SetSize(unpack(config.shade.size))
 	Shade:SetPoint(unpack(config.shade.position))
 	Shade:SetTexture(config.shade.texture)
-	Shade:SetVertexColor(config.shade.color)
+	Shade:SetVertexColor(unpack(config.shade.color))
 
 	local Backdrop = self:CreateTexture(nil, "BORDER")
 	Backdrop:SetSize(unpack(config.backdrop.texture_size))
@@ -369,8 +133,9 @@ local Style = function(self, unit)
 	Health.Value.showMaximum = false
 	Health.Value.hideMinimum = true
 
-	Health.PostUpdate = postUpdateHealth
+	Health.PostUpdate = Library.PostUpdateHealth
 	Health.useClassColor = db.showClassColors
+	Health.dimOutOfCombat = true
 
 
 	-- CastBar
@@ -397,12 +162,10 @@ local Style = function(self, unit)
 	auras.growthX = "RIGHT"
 	auras.growthY = "DOWN"
 	auras.filter = nil
-	auras.hideTimerBar = true
 
 	auras.BuffFilter = buffFilter
 	auras.DebuffFilter = debuffFilter
-	auras.PostCreateButton = PostCreateAuraButton
-	auras.PostUpdateButton = PostUpdateAuraButton
+	auras.PostCreateButton = Library.PostCreateAuraButton
 
 
 	-- Texts
@@ -439,8 +202,8 @@ local Style = function(self, unit)
 	self.BorderNormal = BorderNormal
 	self.BorderNormalHighlight = BorderNormalHighlight
 
-	self:HookScript("OnEnter", updateLayers)
-	self:HookScript("OnLeave", updateLayers)
+	self:HookScript("OnEnter", Library.UpdateLayers)
+	self:HookScript("OnLeave", Library.UpdateLayers)
 
 
 end
@@ -455,7 +218,6 @@ UnitFrameWidget.DebuffFilter = debuffFilter
 
 UnitFrameWidget.OnEnable = function(self)
     local config = self:GetDB("UnitFrames").visuals.units.raid
-    local db = self:GetConfig("UnitFrames") 
     local UnitFrame = Engine:GetHandler("UnitFrame")
 
     -- Spawn a holder for all raid frames
@@ -470,7 +232,17 @@ UnitFrameWidget.OnEnable = function(self)
         self.UnitFrames[i] = unitFrame
     end
 
-    local function LayoutRaidFrames()
+    -- The frames are secure, so they can't be moved in combat: a roster
+    -- change in combat is laid out as soon as it ends.
+    local function LayoutRaidFrames(_, event)
+        if InCombatLockdown() then
+            self.UnitFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            return
+        end
+        if (event == "PLAYER_REGEN_ENABLED") then
+            self.UnitFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        end
+
         local membersPerGroup = 5
         local groupsPerColumn = 2
         local xOffset = config.size[1] + (config.offset or 5) + (config.auras.button.size[1] or 0) + 3 --aura size and a little extra padding
@@ -509,7 +281,6 @@ UnitFrameWidget.OnEnable = function(self)
     end
 
     -- Update when raid changes
-    self.UnitFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     self.UnitFrame:RegisterEvent("RAID_ROSTER_UPDATE")
     self.UnitFrame:SetScript("OnEvent", LayoutRaidFrames)
 
@@ -517,6 +288,7 @@ UnitFrameWidget.OnEnable = function(self)
     LayoutRaidFrames()
 end
 
+-- The frame of raid member `raidIndex`, or the holder of them all.
 UnitFrameWidget.GetFrame = function(self, raidIndex)
-	return self.UnitFrame[raidIndex] or self.UnitFrame
+	return raidIndex and self.UnitFrames[raidIndex] or self.UnitFrame
 end

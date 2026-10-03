@@ -12,11 +12,8 @@ L["Bad argument #%d to '%s': %s expected, got %s"] = "Неверный аргу�
 L["The Engine has no method named '%s'!"] = "У движка нет метода с именем '%s'!"
 L["The handler '%s' has no method named '%s'!"] = "Обработчик '%s' не имеет метода с именем '%s'!"
 L["The handler element '%s' has no method named '%s'!"] = "Элемент обработчика '%s' не имеет метода с именем '%s'!"
-L["The module '%s' has no method named '%s'!"] = "The module '%s' не имеет метода с именем '%s'!"
+L["The module '%s' has no method named '%s'!"] = "Модуль '%s' не имеет метода с именем '%s'!"
 L["The module widget '%s' has no method named '%s'!"] = "Виджет модуля '%s' не имеет метода с именем '%s'!"
-L["The Engine has no method named '%s'!"] = "У движка нет метода с именем '%s'!"
-L["The handler '%s' has no method named '%s'!"] = "Обработчик '%s' не имеет метода с именем '%s'!"
-L["The module '%s' has no method named '%s'!"] = "The module '%s' не имеет метода с именем '%s'!"
 L["The event '%s' isn't currently registered to any object."] = "Событие '%s' в настоящее время не зарегистрировано ни одному объекту."
 L["The event '%s' isn't currently registered to the object '%s'."] = "Событие '%s' в настоящее время не зарегистрировано для объекта '%s'."
 L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] = "Попытка отменить регистрацию общего события события '%s' в объекте '%s', не была зарегистрирована. Забыли ли вы добавить имя функции или имя метода в UnregisterEvent?"
@@ -41,24 +38,13 @@ L["A handler named '%s' is already registered!"] = "Обработчик с им
 L["Bad argument #%d to '%s': The name '%s' is reserved for a handler!"] = "Неверный аргумент #%d to '%s': Имя '%s' уже зарезервировано для обработчика!"
 L["Bad argument #%d to '%s': A module named '%s' already exists!"] = "Неверный аргумент #%d to '%s': Имя модуля '%s' уже существует!"
 L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"] = "Неверный аргумент #%d в '%s': Приоритет нагрузки '%s' недопустим! Правильный приоритет: %s"
-L["Attention!"] = "Внимание!"
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it, you won't be asked about this issue again.|n|nFix this issue now?"] = "Масштабирование пользовательского интерфейса неверно, поэтому графика может показаться нечеткой или пиксельной. Если вы решите проигнорировать ее, вас больше не будут уведомлять об этой проблеме.|n|nИсправить эту проблему сейчас?"
-L["UI scaling is activated and needs to be disabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "Масштабирование пользовательского интерфейса активируется и его необходимо отключить, иначе вы можете получить нечеткие границы или пиксельную графику. Если вы решите игнорировать его и обрабатывать собственный пользовательский интерфейс, вас больше не будут уведомлять об этой проблеме.|n|nИсправить эту проблему сейчас?"
-L["UI scaling was turned off but needs to be enabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "Масштабирование пользовательского интерфейса было отключено, но оно должно быть включено, иначе вы можете получить нечеткие границы или пиксельную графику. Если вы решите игнорировать его и обрабатывать собственный пользовательский интерфейс, вас больше не будут уведомлять об этой проблеме.|n|nИсправить эту проблему сейчас?"
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "Масштабирование пользовательского интерфейса неверно, поэтому графика может показаться нечеткой или пиксельной. Если вы решите игнорировать ее и обработать масштабированием пользовательского интерфейса самостоятельно, вас больше не будут уведомлять об этой проблеме.|n|nИсправить эту проблему сейчас?"
-L["Your resolution is too low for this UI, but the UI scale can still be adjusted to make it fit. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "Ваше разрешение экрана слишком мало для этого пользовательского интерфейса, но пользовательский интерфейс все еще может быть скорректирован, чтобы сделать его подходящим. Если вы решите игнорировать его и обрабатывать собственный пользовательский интерфейс, вас больше не будут уведомлять об этой проблеме.|n|nИсправить эту проблему сейчас?"
 L["Accept"] = "Принять"
 L["Cancel"] = "Отменить"
-L["Ignore"] = "Игнорировать"
-L["You can re-enable the auto scaling by typing |cff448800/diabolic autoscale|r in the chat at any time."] = "Вы можете снова включить автоматическое масштабирование, набрав |cff448800/diabolic autoscale|r в чате в любое время."
-L["Auto scaling of the UI has been enabled."] = "Автоматическое масштабирование пользовательского интерфейса включено."
-L["Auto scaling of the UI has been disabled."] = "Автоматическое масштабирование пользовательского интерфейса отключено."
 L["Reload Needed"] = "Необходима перезагрузка"
 L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = "Пользовательский интерфейс должен быть перезагружен для внесения изменений.|n|nВы хотите сделать это сейчас?"
 L["The Engine can't be tampered with!"] = "В работу движка нельзя вмешиваться!"
 
 -- Blizzard Handler  -- Обработчик Blizzard
-L["Bad argument #%d to '%s'. No object named '%s' exists."] = "Неверный аргумент #%d в '%s'. Объект с именем '%s' не существует."
 
 
 ---------------------------------------------------------------------
@@ -73,7 +59,6 @@ L["Main Menu"] = true
 L["<Left-click> to toggle menu."] = "<Щелкните левой кнопкой мыши> для переключения меню."
 L["Blizzard Micro Menu"] = "Blizzard микро меню"
 L["Here you'll find all the common interface panels|nlike the spellbook, talents, achievements etc."] = "Здесь вы найдете все общие интерфейсные панели|nнапример, книгу заклинаний, таланты, достижения и т.д."
-L["Diabolic Options"] = "Diabolic опции"
 
 L["Action Bars"] = "Панели действия"
 L["<Left-click> to toggle action bar menu."] = "<Щелкните левой кнопкой мыши> для переключения панели действия."
@@ -99,6 +84,7 @@ L["Three"] = "Три"
 
 -- xp bar -- панель опыта
 L["Current XP: "] = "Текущий опыт: "
+L["Experience"] = "Опыт"
 L["Rested Bonus: "] = "Бонус отдыха: "
 L["Rested"] = "Отдохнувший"
 L["%s of normal experience\ngained from monsters."] = "%s от нормального опыта\nполучаемого от монстров."
@@ -109,12 +95,8 @@ L["Normal"] = "Нормально"
 L["You should rest at an Inn."] = "Ты должен отдохнуть в трактире."
 
 -- artifact bar -- панель артефакта
-L["Current Artifact Power: "] = "Текущая мощь артефакта: "
-L["<Left-Click to toggle Artifact Window>"] = "<Щелкните левой кнопкой мыши, для переключения окна артефакта>"
 
 -- honor bar -- панель чести
-L["Current Honor Points: "] = "Текущие почетные очки: "
-L["<Left-Click to toggle Honor Talents Window>"] = "<Щелкните левой кнопкой мыши, чтобы переключения окна талантов Чести>"
 
 -- floating buttons -- всплывающие кнопки
 L["Stances"] = "Стойки"
@@ -196,14 +178,8 @@ L["Auto positioning of chat windows has been disabled."] = "Автоматиче
 
 -- minimap module -- модуль миникарты
 ---------------------------------------------------------------------
-L["<Left-click> to toggle calendar."] = "<Щелкните левой кнопкой мыши> для переключения в календаря."
-L["<Middle-click> to toggle local/game time."] = "<Щелкните средней кнопкой мыши> для переключения между локальным/игровым временем."
-L["<Right-click> to toggle 12/24-hour clock."] = "<Щелкните правой кнопкой мыши> для переключения 12/24-часового времени."
 --L["<Middle-click> to toggle stopwatch."] = "<Щелкните средней кнопкой мыши> для переключения секундомера."
 --L["<Right-click> to configure clock."] = "<Щелкните правой кнопкой мыши> для конфигурации часов."
-L["Calendar"] = "Календарь"
-L["New Event!"] = "Новое событие!"
-L["New Mail!"] = "Новое письмо!"
 
 -- tooltips -- подсказки
 ---------------------------------------------------------------------
@@ -219,12 +195,6 @@ L["Caster:"] = "Заклинатель:"
 
 -- worldmap module -- модуль мировой карты
 ---------------------------------------------------------------------
-L["Reveal"] = "Отобразить" 
-L["Reveal Hidden Areas"] = "Показать скрытые области"
-L["Hide Undiscovered Areas"] = "Скрыть не открытые области"
-L["Disable to hide areas|nyou have not yet discovered."] = "Выключить отображение скрытых областей|nкоторые вы ещё не обнаружили"
-L["Enable to show hidden areas|nyou have not yet discovered."] = "Включение отображения скрытых областей|nкоторые вы ещё не обнаружили"
-L["Press <CTRL+C> to copy."] = "Нажмите <CTRL+C> для копирования."
 
 -- abbreviations -- аббревиатуры 
 ---------------------------------------------------------------------

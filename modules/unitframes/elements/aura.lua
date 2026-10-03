@@ -1,31 +1,27 @@
--- "Auras" element: buff and debuff icon grids on unit frames, with timers,
--- stack counts and per-frame filters (frame.Auras / Buffs / Debuffs).
-local ADDON, Engine = ...
+-- "Auras" element: buff and debuff icon grids on unit frames, with time
+-- left, cooldown spirals, stack counts and per-frame filters
+-- (frame.Auras / Buffs / Debuffs).
+local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
-local StatusBar = Engine:GetHandler("StatusBar")
-local C = Engine:GetDB("Data: Colors")
 local AuraFunctions = Engine:GetDB("Library: AuraFunctions")
 local L = Engine:GetLocale()
-local UICenter = Engine:GetFrame()
 
 -- Lua API
 local _G = _G
 local math_ceil = math.ceil
 local math_floor = math.floor
 local math_min = math.min
-local select = select
+local ipairs = ipairs
 local setmetatable = setmetatable
+local tostring = tostring
 
 -- WoW API
 local CancelUnitBuff = _G.CancelUnitBuff
-local CreateFrame = _G.CreateFrame
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetTime = _G.GetTime
 local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
-local InCombatLockdown = _G.InCombatLockdown
 local UnitExists = _G.UnitExists
 local UnitHasVehicleUI = _G.UnitHasVehicleUI
-local UnitReaction = _G.UnitReaction
 
 -- Inventory slot ids for the main hand and off hand weapons
 local MAINHAND_SLOT, OFFHAND_SLOT = 16, 17
@@ -38,7 +34,7 @@ local UnitAura = AuraFunctions.UnitAura
 local UnitBuff = AuraFunctions.UnitBuff
 local UnitDebuff = AuraFunctions.UnitDebuff
 
--- Blank texture used as a fallback for borders and bars
+-- Blank texture used for the borders
 local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]] 
 
 
@@ -59,11 +55,9 @@ local formatTime = function(time)
 		return "%1d%s", math_ceil(time / MINUTE), minute
 	elseif time > 5 then -- more than 5 seconds
 		return "%d", math_ceil(time)
-	elseif time > 0 then
+	else -- (only ever asked with some time left)
 		return "|cffff0000%.1f|r", time
-	else
-		return ""
-	end	
+	end
 end
 
 -- Cache of all aura buttons from all frames
@@ -153,45 +147,23 @@ Aura.UpdateTimer = function(self, elapsed)
 			self.timeLeft = self.expirationTime - GetTime()
 			if self.timeLeft > 0 then
 				self:GetElement("Time"):SetFormattedText(formatTime(self.timeLeft))
-				self:GetElement("Timer").Bar:SetValue(self.timeLeft)
-
-				if self._owner.PostUpdateButton then
-					self._owner:PostUpdateButton(self, "Timer")
-				end
 			else
 				self:SetScript("OnUpdate", nil)
 				self:SetCooldownTimer(0, 0)
-
-				local timer = self:GetElement("Timer")
-				timer:Hide()
-				timer.Bar:SetValue(0)
-				timer.Bar:SetMinMaxValues(0,0)
-
 				self:GetElement("Time"):SetText("")
-
-				if self._owner.PostUpdateButton then
-					self._owner:PostUpdateButton(self, "Timer")
-				end
 			end	
 			self.elapsed = 0
 		end
 	end
 end
 
--- Use this to initiate the timer bars and spirals on the auras
+-- Starts the time left and the cooldown spiral of an aura (or clears them,
+-- for one without a duration)
 Aura.SetTimer = function(self, fullDuration, expirationTime)
 	if fullDuration and (fullDuration > 0) then
 		self.fullDuration = fullDuration
 		self.timeStarted = expirationTime - fullDuration
 		self.timeLeft = expirationTime - GetTime()
-
-		local bar = self:GetElement("Timer").Bar
-		bar:SetMinMaxValues(0, fullDuration)
-		bar:SetValue(self.timeLeft)
-
-		if (not self._owner.hideTimerBar) then
-			self:GetElement("Timer"):Show()
-		end
 
 		self:SetScript("OnUpdate", self.UpdateTimer)
 		self:SetCooldownTimer(self.timeStarted, self.fullDuration)
@@ -200,19 +172,10 @@ Aura.SetTimer = function(self, fullDuration, expirationTime)
 		self:SetCooldownTimer(0,0)
 
 		self:GetElement("Time"):SetText("")
-		self:GetElement("Timer"):Hide()
-
-		local bar = self:GetElement("Timer").Bar
-		bar:SetValue(0)
-		bar:SetMinMaxValues(0,0)
 
 		self.fullDuration = 0
 		self.timeStarted = 0
 		self.timeLeft = 0
-
-		if self._owner.PostUpdateButton then
-			self._owner:PostUpdateButton(self, "Timer")
-		end
 	end
 end
 
@@ -268,51 +231,11 @@ local CreateAuraButton = function(self)
 	Time:SetDrawLayer("OVERLAY")
 	Time:SetFontObject(DiabolicFont_SansBold10)
 	Time:SetPoint("TOPLEFT", Icon, "TOPLEFT", -1, 1)
-
-	local Timer = button:CreateFrame()
-	Timer:Hide()
-	Timer:SetPoint("TOPLEFT", Scaffold, "BOTTOMLEFT", 0, -1)
-	Timer:SetPoint("TOPRIGHT", Scaffold, "BOTTOMRIGHT", 0, -1)
-	Timer:SetPoint("BOTTOMLEFT", Scaffold, "BOTTOMLEFT", 0, -9)
-	Timer:SetPoint("BOTTOMRIGHT", Scaffold, "BOTTOMRIGHT", 0, -9)
-
-	local TimerScaffold = Timer:CreateFrame()
-	TimerScaffold:SetPoint("TOPLEFT", 0, 0)
-	TimerScaffold:SetPoint("BOTTOMRIGHT", 0, 0)
-	TimerScaffold:SetBackdrop(currentBackdrop)
-	TimerScaffold:SetFrameLevel(Timer:GetFrameLevel() + 1)
-	Timer.Scaffold = TimerScaffold
-
-	local TimerBarBackground = TimerScaffold:CreateTexture()
-	TimerBarBackground:SetDrawLayer("BACKGROUND")
-	TimerBarBackground:SetPoint("TOPLEFT", 2, -2)
-	TimerBarBackground:SetPoint("BOTTOMRIGHT", -2, 2)
-	TimerBarBackground:SetTexture(BLANK_TEXTURE)
-	Timer.Background = TimerBarBackground
-
-	local TimerBar = Timer:CreateStatusBar()
-	TimerBar:SetStatusBarTexture(BLANK_TEXTURE)
-	TimerBar:SetPoint("TOPLEFT", 2, -2)
-	TimerBar:SetPoint("BOTTOMRIGHT", -2, 2)
-	TimerBar:SetFrameLevel(Timer:GetFrameLevel() + 2)
-	Timer.Bar = TimerBar
-
-	button.SetBorderColor = function(self, r, g, b)
-		Scaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
-		Scaffold:SetBackdropBorderColor(r, g, b)
-
-		TimerScaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
-		TimerScaffold:SetBackdropBorderColor(r, g, b)
-
-		TimerBarBackground:SetVertexColor(r * 1/3, g * 1/3, b * 1/3)
-		TimerBar:SetStatusBarColor(r * 2/3, g * 2/3, b * 2/3)
-	end
 	
 	button:SetElement("Icon", Icon)
 	button:SetElement("Count", Count)
 	button:SetElement("Cooldown", Cooldown)
 	button:SetElement("Time", Time)
-	button:SetElement("Timer", Timer)
 	button:SetElement("Scaffold", Scaffold)
 	button:SetElement("Overlay", Overlay)
 
@@ -339,7 +262,6 @@ local SetPosition = function(self, visible)
 	local growthX = self.growthX
 	local growthY = self.growthY
 
-	local previous
 	for i = 1, visibleButtons do
 		if (i == 1) then
 			local point = ((growthY == "UP") and "BOTTOM" or (growthY == "DOWN") and "TOP") .. ((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT")
@@ -356,6 +278,7 @@ local SetPosition = function(self, visible)
 end
 
 local UpdateTooltip = function(self, event, ...)
+	local arg1 = ...
 	if (event == "MODIFIER_STATE_CHANGED") and ((arg1 == "LSHIFT") or (arg1 == "RSHIFT")) then
 		if GameTooltip:IsShown() and auraCache[GameTooltip:GetOwner()] then 
 			GameTooltip:GetOwner():UpdateTooltip()
@@ -364,13 +287,117 @@ local UpdateTooltip = function(self, event, ...)
 end
 
 
--- Thanks to Blazeflack and Azilroka over at 
--- the TukUI forums for figuring this one out. 
--- http://www.tukui.org/forums/topic.php?id=34384
-local FixFrameStack = function(header, index)
-	-- /framestack fails when frames that are created as indices of a table are visible,
-	-- so in order for it to work we need to have hashed names for all of them. Blizzard bug. 
-	--header[tostring(index)] = header[index]
+-- The owner's (Auras, Buffs or Debuffs) visible-th button, made on first
+-- use and styled by the owner's PostCreateButton (its look, and the
+-- SetBorderColor it brings).
+local GetButton = function(owner, visible)
+	local key = tostring(visible)
+	local button = owner[key]
+	if (not button) then
+		button = CreateAuraButton(owner)
+		owner[key] = button
+		owner:PostCreateButton(button)
+	end
+	if button:IsShown() then
+		button:Hide()
+	end
+	return button
+end
+
+-- Shows a button: its icon, stack count and time left.
+local ShowButton = function(owner, button, icon, count, duration, expirationTime)
+	button:GetElement("Icon"):SetTexture(icon)
+	button:GetElement("Count"):SetText((count and count > 1) and count or "")
+	button:SetTimer(duration, expirationTime)
+	if (not button:IsShown()) then
+		button:Show()
+	end
+end
+
+-- Adds the unit's auras from `query` (UnitBuff, UnitDebuff or UnitAura,
+-- with `filter`) that `accept` lets through, after the `visible` buttons
+-- already shown. Returns the new number of shown buttons.
+local AddAuras = function(owner, unit, visible, query, filter, maxAuras, isBuff, accept)
+	for i = 1, maxAuras do
+		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = query(unit, i, filter)
+		if (not name) then
+			break
+		end
+		if (not accept) or accept(owner, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer) then
+			visible = visible + 1
+			local button = GetButton(owner, visible)
+			button:SetID(i)
+			button.isBuff = isBuff
+			button.isWeaponEnchant = nil
+			button.unit = unit
+			button.filter = filter
+			button.name = name
+			button.rank = rank
+			button.count = count
+			button.debuffType = debuffType
+			button.duration = duration
+			button.expirationTime = expirationTime
+			button.unitCaster = unitCaster
+			button.isStealable = isStealable
+			button.isBossDebuff = isBossDebuff
+			button.isCastByPlayer = isCastByPlayer
+			ShowButton(owner, button, icon, count, duration, expirationTime)
+		end
+	end
+	return visible
+end
+
+-- The player's weapon enchants (temporary main/off hand buffs) never come
+-- through UnitAura, so they're added here, ahead of the real auras, so they
+-- always get a slot instead of being the first thing dropped when the bar
+-- is full.
+local AddWeaponEnchants = function(owner, unit, filter)
+	local visible = 0
+	local hasMainHand, mainExpiration, mainCharges, hasOffHand, offExpiration, offCharges = GetWeaponEnchantInfo()
+	for _, enchant in ipairs({ { hasMainHand, mainExpiration, mainCharges, MAINHAND_SLOT }, { hasOffHand, offExpiration, offCharges, OFFHAND_SLOT } }) do
+		local has, expiration, charges, slotID = enchant[1], enchant[2], enchant[3], enchant[4]
+		if has then
+			visible = visible + 1
+			local button = GetButton(owner, visible)
+			local duration = expiration / 1000
+			local expirationTime = GetTime() + duration
+			button:SetID(0)
+			button.isBuff = true
+			button.isWeaponEnchant = true
+			button.weaponSlot = slotID
+			button.unit = unit
+			button.filter = filter
+			button.name = nil
+			button.count = charges
+			button.duration = duration
+			button.expirationTime = expirationTime
+			ShowButton(owner, button, GetInventoryItemTexture("player", slotID), charges, duration, expirationTime)
+		end
+	end
+	return visible
+end
+
+-- Hides the buttons after the visible ones, lays the rest out, and shows
+-- or hides the whole owner.
+local Finish = function(owner, visible)
+	if (visible == 0) then
+		if owner:IsShown() then
+			owner:Hide()
+		end
+	else
+		local nextButton = SetPosition(owner, visible) + 1
+		local key = tostring(nextButton)
+		while (owner[key]) do
+			owner[key]:Hide()
+			owner[key]:SetScript("OnUpdate", nil)
+			owner[key]:SetTimer(0,0)
+			nextButton = nextButton + 1
+			key = tostring(nextButton)
+		end
+		if (not owner:IsShown()) then
+			owner:Show()
+		end
+	end
 end
 
 local Update = function(self, event, ...)
@@ -381,9 +408,6 @@ local Update = function(self, event, ...)
 	-- can sometimes be fairly slow, so when relying on that alone auras won't
 	-- be properly updated before the auras on your vehicle change again. 
 	-- So we hook into vehicle events to figure out what unit actually to query.
-	-- 
-	-- Todo: Let the unitframe handler deal with this entire thing, 
-	--       and fire callbacks to update the unitframes automatically. 
 	local realUnit = self:GetRealUnit()
 	if (realUnit == "player") and ((event == "UNIT_ENTERED_VEHICLE") or (event == "UNIT_ENTERING_VEHICLE") or (event == "UNIT_EXITED_VEHICLE") or (event == "UNIT_EXITING_VEHICLE")) then
 		if UnitHasVehicleUI(realUnit) then
@@ -391,443 +415,45 @@ local Update = function(self, event, ...)
 		else
 			unit = realUnit
 		end
-	else
-		if not((event == "PLAYER_ENTERING_WORLD") or (event == "FREQUENT") or (event == "FORCED") or (event == "PLAYER_TARGET_CHANGED")) and (unit ~= arg1) then
-			return
-		end
+	elseif not((event == "PLAYER_ENTERING_WORLD") or (event == "FORCED") or (event == "PLAYER_TARGET_CHANGED")) and (unit ~= arg1) then
+		return
 	end
+	local exists = UnitExists(unit)
 
+	-- Buffs and debuffs together
 	local Auras = self.Auras
 	if Auras then
-		if not UnitExists(unit) then
+		if (not exists) then
 			Auras:Hide()
 		else
-			local visible = 0
-			local visibleBuffs = 0
-			local visibleDebuffs = 0
-
-			if Auras.PreUpdate then
-				Auras:PreUpdate(unit)
-			end
-
-			local filter = Auras.filter
-
-			-- count buffs
-			for i = 1, BUFF_MAX_DISPLAY do
-
-				local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = UnitBuff(unit, i, filter)
-
-				if not name then
-					break
-				end
-
-				-- This won't replace the normal filter, but be applied after it
-				if name and (Auras.BuffFilter or Auras.AuraFilter) then
-					local show = (Auras.BuffFilter or Auras.AuraFilter)(Auras, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
-					if not show then
-						name = nil
-					end
-				end
-
-				if name then
-					visible = visible + 1
-					visibleBuffs = visibleBuffs + 1
-
-					local visibleKey = tostring(visible)
-
-					if (not Auras[visibleKey]) then
-						Auras[visibleKey] = Auras.CreateButton and Auras:CreateButton() or CreateAuraButton(Auras)
-						if Auras.PostCreateButton then
-							Auras:PostCreateButton(Auras[visibleKey])
-						end
-					end
-
-					local button = Auras[visibleKey]
-					if button:IsShown() then
-						button:Hide() 
-					end
-
-					button:SetID(i)
-
-					button.isBuff = true
-					button.unit = unit
-					button.filter = filter
-					button.name = name
-					button.rank = rank
-					button.count = count
-					button.debuffType = debuffType
-					button.duration = duration
-					button.expirationTime = expirationTime
-					button.unitCaster = unitCaster
-					button.isStealable = isStealable
-					button.isBossDebuff = isBossDebuff
-					button.isCastByPlayer = isCastByPlayer
-
-					button:GetElement("Icon"):SetTexture(icon)
-					button:GetElement("Count"):SetText((count > 1) and count or "")
-					
-					button:SetTimer(duration, expirationTime)
-
-					if Auras.PostUpdateButton then
-						Auras:PostUpdateButton(button)
-					end
-
-					if (not button:IsShown()) then
-						button:Show()
-					end
-
-				end
-	
-			end
-
-
-			-- count debuffs
-			for i = 1, DEBUFF_MAX_DISPLAY do
-
-				local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = UnitDebuff(unit, i, filter)
-
-				if not name then
-					break
-				end
-
-				-- This won't replace the normal filter, but be applied after it
-				if name and (Auras.DebuffFilter or Auras.AuraFilter) then
-					local show = (Auras.DebuffFilter or Auras.AuraFilter)(Auras, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
-					if not show then
-						name = nil
-					end
-				end
-
-				if name then
-					visible = visible + 1
-					visibleDebuffs = visibleDebuffs + 1
-
-					local visibleKey = tostring(visible)
-
-					if (not Auras[visibleKey]) then
-						Auras[visibleKey] = Auras.CreateButton and Auras:CreateButton() or CreateAuraButton(Auras)
-						if Auras.PostCreateButton then
-							Auras:PostCreateButton(Auras[visibleKey])
-						end
-					end
-
-					local button = Auras[visibleKey]
-					if button:IsShown() then
-						button:Hide() 
-					end
-
-					button:SetID(i)
-
-					button.isBuff = false
-					button.unit = unit
-					button.filter = filter
-					button.name = name
-					button.rank = rank
-					button.count = count
-					button.debuffType = debuffType
-					button.duration = duration
-					button.expirationTime = expirationTime
-					button.unitCaster = unitCaster
-					button.isStealable = isStealable
-					button.isBossDebuff = isBossDebuff
-					button.isCastByPlayer = isCastByPlayer
-
-					button:GetElement("Icon"):SetTexture(icon)
-					button:GetElement("Count"):SetText((count > 1) and count or "")
-					
-					button:SetTimer(duration, expirationTime)
-					
-					if Auras.PostUpdateButton then
-						Auras:PostUpdateButton(button)
-					end
-
-					if not button:IsShown() then
-						button:Show()
-					end
-
-				end
-			end
-
-			if (visible == 0) then
-				if Auras:IsShown() then
-					Auras:Hide()
-				end
-			else
-				local nextAura = SetPosition(Auras, visible) + 1
-				local visibleKey = tostring(nextAura)
-				while (Auras[visibleKey]) do
-					Auras[visibleKey]:Hide()
-					Auras[visibleKey]:SetScript("OnUpdate", nil)
-					Auras[visibleKey]:SetTimer(0,0)
-					nextAura = nextAura + 1
-					visibleKey = tostring(nextAura)
-				end
-				if (not Auras:IsShown()) then
-					Auras:Show()
-				end
-			end
-
-			if Auras.PostUpdate then
-				Auras:PostUpdate()
-			end	
+			local visible = AddAuras(Auras, unit, 0, UnitBuff, Auras.filter, BUFF_MAX_DISPLAY, true, Auras.BuffFilter)
+			visible = AddAuras(Auras, unit, visible, UnitDebuff, Auras.filter, DEBUFF_MAX_DISPLAY, false, Auras.DebuffFilter)
+			Finish(Auras, visible)
 		end
 	end
 
+	-- Buffs, the player's weapon enchants first
 	local Buffs = self.Buffs
 	if Buffs then
-		if not UnitExists(unit) then
+		if (not exists) then
 			Buffs:Hide()
 		else
-			local visible = 0
-			local filter = Buffs.filter
-
-			-- Weapon enchants (temporary main/off hand buffs) never come
-			-- through UnitAura, so they're injected here manually, ahead
-			-- of the real auras, so they always get a guaranteed slot
-			-- instead of being the first thing dropped when the bar is full.
-			if (unit == "player") then
-				local hasMainHand, mainExpiration, mainCharges, hasOffHand, offExpiration, offCharges = GetWeaponEnchantInfo()
-
-				local weaponEnchants = {}
-				if hasMainHand then
-					weaponEnchants[#weaponEnchants + 1] = { mainExpiration, mainCharges, MAINHAND_SLOT }
-				end
-				if hasOffHand then
-					weaponEnchants[#weaponEnchants + 1] = { offExpiration, offCharges, OFFHAND_SLOT }
-				end
-
-				for _, weaponEnchant in ipairs(weaponEnchants) do
-					local expiration, charges, slotID = weaponEnchant[1], weaponEnchant[2], weaponEnchant[3]
-
-					visible = visible + 1
-					local visibleKey = tostring(visible)
-
-					if (not Buffs[visibleKey]) then
-						Buffs[visibleKey] = Buffs.CreateButton and Buffs:CreateButton() or CreateAuraButton(Buffs)
-						if Buffs.PostCreateButton then
-							Buffs:PostCreateButton(Buffs[visibleKey])
-						end
-					end
-
-					local button = Buffs[visibleKey]
-					if button:IsShown() then
-						button:Hide()
-					end
-
-					local enchantDuration = expiration / 1000
-					local expirationTime = GetTime() + enchantDuration
-
-					button:SetID(0)
-					button.isBuff = true
-					button.isWeaponEnchant = true
-					button.weaponSlot = slotID
-					button.unit = unit
-					button.filter = filter
-					button.name = nil
-					button.count = charges
-					button.duration = enchantDuration
-					button.expirationTime = expirationTime
-
-					button:GetElement("Icon"):SetTexture(GetInventoryItemTexture("player", slotID))
-					button:GetElement("Count"):SetText((charges and charges > 1) and charges or "")
-
-					button:SetTimer(enchantDuration, expirationTime)
-
-					if Buffs.PostUpdateButton then
-						Buffs:PostUpdateButton(button)
-					end
-
-					if (not button:IsShown()) then
-						button:Show()
-					end
-				end
-			end
-
-			for i = 1, BUFF_MAX_DISPLAY do
-
-				local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = UnitAura(unit, i, filter)
-
-				if (not name) then
-					break
-				end
-
-				-- This won't replace the normal filter, but be applied after it
-				if (name and Buffs.BuffFilter) then
-					if (not Buffs:BuffFilter(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)) then
-						name = nil
-					end
-				end
-
-				if name then
-					visible = visible + 1
-					local visibleKey = tostring(visible)
-
-					if (not Buffs[visibleKey]) then
-						Buffs[visibleKey] = Buffs.CreateButton and Buffs:CreateButton() or CreateAuraButton(Buffs)
-						if Buffs.PostCreateButton then
-							Buffs:PostCreateButton(Buffs[visibleKey])
-						end
-					end
-
-					local button = Buffs[visibleKey]
-					if button:IsShown() then
-						button:Hide() 
-					end
-
-					button:SetID(i)
-
-					button.isBuff = true
-					button.unit = unit
-					button.filter = filter
-					button.name = name
-					button.rank = rank
-					button.count = count
-					button.debuffType = debuffType
-					button.duration = duration
-					button.expirationTime = expirationTime
-					button.unitCaster = unitCaster
-					button.isStealable = isStealable
-					button.isBossDebuff = isBossDebuff
-					button.isCastByPlayer = isCastByPlayer
-
-					button:GetElement("Icon"):SetTexture(icon)
-					button:GetElement("Count"):SetText((count > 1) and count or "")
-					
-					button:SetTimer(duration, expirationTime)
-					
-					if Buffs.PostUpdateButton then
-						Buffs:PostUpdateButton(button)
-					end
-
-					if (not button:IsShown()) then
-						button:Show()
-					end
-
-				end
-			end
-
-			if (visible == 0) then
-				if Buffs:IsShown() then
-					Buffs:Hide()
-				end
-			else
-				local nextBuff = SetPosition(Buffs, visible) + 1
-				local visibleKey = tostring(nextBuff)
-				while (Buffs[visibleKey]) do
-					Buffs[visibleKey]:Hide()
-					Buffs[visibleKey]:SetScript("OnUpdate", nil)
-					Buffs[visibleKey]:SetTimer(0,0)
-					nextBuff = nextBuff + 1
-					visibleKey = tostring(nextBuff)
-				end
-				if (not Buffs:IsShown()) then
-					Buffs:Show()
-				end
-			end
-
-			if Buffs.PostUpdate then
-				Buffs:PostUpdate()
-			end		
+			local visible = (unit == "player") and AddWeaponEnchants(Buffs, unit, Buffs.filter) or 0
+			visible = AddAuras(Buffs, unit, visible, UnitAura, Buffs.filter, BUFF_MAX_DISPLAY, true, Buffs.BuffFilter)
+			Finish(Buffs, visible)
 		end
 	end
 
+	-- Debuffs
 	local Debuffs = self.Debuffs
 	if Debuffs then
-		if not UnitExists(unit) then
+		if (not exists) then
 			Debuffs:Hide()
 		else
-			local visible = 0
-			local filter = Debuffs.filter
-
-			for i = 1, DEBUFF_MAX_DISPLAY do
-
-				local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = UnitAura(unit, i, filter)
-
-				if not name then
-					break
-				end
-
-				-- This won't replace the normal filter, but be applied after it
-				if name and Debuffs.DebuffFilter then
-					local show = Debuffs:DebuffFilter(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
-					if not show then
-						name = nil
-					end
-				end
-
-				if name then
-					visible = visible + 1
-					local visibleKey = tostring(visible)
-
-					if (not Debuffs[visibleKey]) then
-						Debuffs[visibleKey] = Debuffs.CreateButton and Debuffs:CreateButton() or CreateAuraButton(Debuffs)
-						if Debuffs.PostCreateButton then
-							Debuffs:PostCreateButton(Debuffs[visibleKey])
-						end
-					end
-
-					local button = Debuffs[visibleKey]
-					if button:IsShown() then
-						button:Hide() 
-					end
-
-					button:SetID(i)
-
-					button.isBuff = false
-					button.unit = unit
-					button.filter = filter
-					button.name = name
-					button.rank = rank
-					button.count = count
-					button.debuffType = debuffType
-					button.duration = duration
-					button.expirationTime = expirationTime
-					button.unitCaster = unitCaster
-					button.isStealable = isStealable
-					button.isBossDebuff = isBossDebuff
-					button.isCastByPlayer = isCastByPlayer
-
-					button:GetElement("Icon"):SetTexture(icon)
-					button:GetElement("Count"):SetText((count > 1) and count or "")
-					
-					button:SetTimer(duration, expirationTime)
-					
-					if Debuffs.PostUpdateButton then
-						Debuffs:PostUpdateButton(button)
-					end
-
-					if (not button:IsShown()) then
-						button:Show()
-					end
-
-				end
-			end
-
-			if (visible == 0) then
-				if Debuffs:IsShown() then
-					Debuffs:Hide()
-				end
-			else
-				local nextDebuff = SetPosition(Debuffs, visible) + 1
-				local visibleKey = tostring(nextDebuff)
-				while (Debuffs[visibleKey]) do
-					Debuffs[visibleKey]:Hide()
-					Debuffs[visibleKey]:SetScript("OnUpdate", nil)
-					Debuffs[visibleKey]:SetTimer(0,0)
-					nextDebuff = nextDebuff + 1
-					visibleKey = tostring(nextDebuff)
-				end
-				if (not Debuffs:IsShown()) then
-					Debuffs:Show()
-				end
-			end
-
-			if Debuffs.PostUpdate then
-				Debuffs:PostUpdate()
-			end
+			local visible = AddAuras(Debuffs, unit, 0, UnitAura, Debuffs.filter, DEBUFF_MAX_DISPLAY, false, Debuffs.DebuffFilter)
+			Finish(Debuffs, visible)
 		end
 	end
-
 end
 
 local ForceUpdate = function(element)
@@ -854,64 +480,25 @@ local Enable = function(self, unit)
 			Debuffs.unit = unit
 			Debuffs.ForceUpdate = ForceUpdate
 		end
-		local frequent = (Auras and Auras.frequent) or (Buffs and Buffs.frequent) or (Debuffs and Debuffs.frequent)
-		if frequent then
-			self:EnableFrequentUpdates("Auras", frequent)
-		else
-			self:RegisterEvent("UNIT_AURA", Update)
-			self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
-			self:RegisterEvent("VEHICLE_UPDATE", Update)
-			self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update)
-			self:RegisterEvent("UNIT_ENTERING_VEHICLE", Update)
-			self:RegisterEvent("UNIT_EXITING_VEHICLE", Update)
-			self:RegisterEvent("UNIT_EXITED_VEHICLE", Update)
-			self:RegisterEvent("MODIFIER_STATE_CHANGED", UpdateTooltip)
+		self:RegisterEvent("UNIT_AURA", Update)
+		self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
+		self:RegisterEvent("VEHICLE_UPDATE", Update)
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update)
+		self:RegisterEvent("UNIT_ENTERING_VEHICLE", Update)
+		self:RegisterEvent("UNIT_EXITING_VEHICLE", Update)
+		self:RegisterEvent("UNIT_EXITED_VEHICLE", Update)
+		self:RegisterEvent("MODIFIER_STATE_CHANGED", UpdateTooltip)
 
-			if (unit == "target") or (unit == "targettarget") then
-				self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
-			end
+		if (unit == "target") or (unit == "targettarget") then
+			self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
+		end
 
-			if (unit == "player") then
-				self:RegisterEvent("UNIT_INVENTORY_CHANGED", Update)
-			end
+		if (unit == "player") then
+			self:RegisterEvent("UNIT_INVENTORY_CHANGED", Update)
 		end
 
 		return true
 	end
 end
 
-local Disable = function(self, unit)
-	local Auras = self.Auras
-	local Buffs = self.Buffs
-	local Debuffs = self.Debuffs
-	if Auras or Buffs or Debuffs then
-		if Auras then
-			Auras.unit = nil
-		end
-		if Buffs then
-			Buffs.unit = nil
-		end
-		if Debuffs then
-			Debuffs.unit = nil
-		end
-		if not ((Auras and Auras.frequent) or (Buffs and Buffs.frequent) or (Debuffs and Debuffs.frequent)) then
-			self:UnregisterEvent("UNIT_AURA", Update)
-			self:UnregisterEvent("PLAYER_ENTERING_WORLD", Update)
-			self:UnregisterEvent("UNIT_ENTERED_VEHICLE", Update)
-			self:UnregisterEvent("UNIT_ENTERING_VEHICLE", Update)
-			self:UnregisterEvent("UNIT_EXITING_VEHICLE", Update)
-			self:UnregisterEvent("UNIT_EXITED_VEHICLE", Update)
-			self:UnregisterEvent("MODIFIER_STATE_CHANGED", UpdateTooltip)
-
-			if (unit == "target") or (unit == "targettarget") then
-				self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update)
-			end
-
-			if (unit == "player") then
-				self:UnregisterEvent("UNIT_INVENTORY_CHANGED", Update)
-			end
-		end
-	end
-end
-
-Handler:RegisterElement("Auras", Enable, Disable, Update)
+Handler:RegisterElement("Auras", Enable, Update)

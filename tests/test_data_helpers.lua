@@ -5,7 +5,6 @@
 --  - data/functions.lua ("Library: Format"): F.Short number abbreviation
 --    (1500 -> "1.5k", trailing ".0" dropped), F.Colorize, and F.Money
 --    (money with coin icons)
---  - data/aura-filters.lua ("Library: AuraFilters"): unit and caster checks
 --  - data/aura-functions.lua ("Library: AuraFunctions"): UnitAura/UnitBuff/
 --    UnitDebuff wrappers that add isBossDebuff and isCastByPlayer
 --  - engine/wotlk-helpers.lua: Engine.UnitIsTapDenied and /rl
@@ -75,6 +74,17 @@ function TestFormatShort:test_negative_thousands_are_abbreviated()
 	lu.assertEquals((self.Short(-1500)), "-1.5k")
 end
 
+function TestFormatShort:test_chinese_counts_in_wan_and_yi()
+	_G.GetLocale = function() return "zhCN" end
+	local Short = loadFiles({ "data/functions.lua" }):GetDB("Library: Format").Short
+	lu.assertEquals(Short(9999), "9999")
+	lu.assertEquals(Short(15000), "1.5万")
+	lu.assertEquals(Short(10000), "1万")
+	lu.assertEquals(Short(200000000), "2亿")
+	lu.assertEquals(Short(-1500), "-0.1万") -- (-0.15, to one decimal)
+	lu.assertEquals(Short("lots"), "")
+end
+
 function TestFormatShort:test_accepts_numeric_strings_and_rejects_garbage()
 	lu.assertEquals((self.Short("2000")), "2k")
 	lu.assertEquals((self.Short("lots")), "")
@@ -141,64 +151,6 @@ function TestFormatMoney:test_leading_zero_denominations_are_left_out()
 	lu.assertEquals(self.Money(0), "0" .. self.COPPER)
 	-- but zeros after the first one stay
 	lu.assertEquals(self.Money(10000), "1" .. self.GOLD .. " 0" .. self.SILVER .. " 0" .. self.COPPER)
-end
-
-------------------------------------------------------------------------
--- data/aura-filters.lua
-------------------------------------------------------------------------
-
-TestAuraFilters = {}
-
-function TestAuraFilters:setUp()
-	install({
-		UnitPlayerControlled = unitField("player"),
-		UnitIsFriend = function(_, unit) return units[unit] and units[unit].friend end,
-		UnitIsEnemy = function(_, unit) return units[unit] and not units[unit].friend end,
-		UnitCanAttack = function(_, unit) return units[unit] and not units[unit].friend end,
-		UnitLevel = unitField("level"),
-		UnitClassification = unitField("classification"),
-		UnitIsUnit = function(a, b) return a == b or (units[a] and units[a].is == b) end,
-	})
-	self.Filter = loadFiles({ "data/aura-filters.lua" }):GetDB("Library: AuraFilters")
-end
-
-function TestAuraFilters:test_unit_reactions()
-	units.target = { player = true, friend = true }
-	units.focus = { player = true, friend = false }
-	units.boss1 = { player = false, friend = false }
-	lu.assertTrue(self.Filter.UnitIsFriendlyPlayer("target"))
-	lu.assertFalse(self.Filter.UnitIsHostilePlayer("target"))
-	lu.assertTrue(self.Filter.UnitIsHostilePlayer("focus"))
-	lu.assertFalse(self.Filter.UnitIsHostileNPC("focus"))
-	lu.assertTrue(self.Filter.UnitIsHostileNPC("boss1"))
-end
-
-function TestAuraFilters:test_unit_is_important()
-	units.boss1 = { level = -1, classification = "worldboss" }
-	units.target = { level = 80, classification = "rare" }
-	units.focus = { level = 80, classification = "rareelite" }
-	units.mouseover = { level = 80, classification = "elite" }
-	units.pet = { level = 80, classification = "normal" }
-	lu.assertTrue(self.Filter.UnitIsImportant("boss1"))
-	lu.assertTrue(self.Filter.UnitIsImportant("target"))
-	lu.assertTrue(self.Filter.UnitIsImportant("focus"))
-	lu.assertFalse(self.Filter.UnitIsImportant("mouseover") or false)
-	lu.assertFalse(self.Filter.UnitIsImportant("pet") or false)
-
-	-- skull-level units count even without a classification
-	units.target = { level = -1 }
-	lu.assertTrue(self.Filter.UnitIsImportant("target"))
-end
-
-function TestAuraFilters:test_caster_checks()
-	units.target = { is = "party1" }
-	lu.assertTrue(self.Filter.CasterIsPlayer("target", "player"))
-	lu.assertTrue(self.Filter.CasterIsPlayer("target", "pet"))
-	lu.assertNil(self.Filter.CasterIsPlayer("target", "party1"))
-	lu.assertTrue(self.Filter.CasterIsUnit("target", "target"))
-	lu.assertTrue(self.Filter.CasterIsUnit("target", "party1"))
-	lu.assertNil(self.Filter.CasterIsUnit("target", nil))
-	lu.assertTrue(self.Filter.CasterIsVehicle("target", "vehicle"))
 end
 
 ------------------------------------------------------------------------

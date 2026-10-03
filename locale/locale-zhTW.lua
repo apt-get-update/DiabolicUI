@@ -8,18 +8,8 @@ if not L then return end
 ---------------------------------------------------------------------
 
 
-L["Attention!"] = "註意!"
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it, you won't be asked about this issue again.|n|nFix this issue now?"] = "界面尺寸是錯誤的,所以圖形可能會出現模糊或失真.如果妳選擇忽略,妳就不會再被問到這個問題了|n|n是否修復?"
-L["UI scaling is activated and needs to be disabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "需要關閉UI縮放,否則妳會得到邊界模糊或失真的圖形.如果妳選擇忽略,妳就不會再被問到這個問題了|n|n是否修復?"
-L["UI scaling was turned off but needs to be enabled, otherwise you'll might get fuzzy borders or pixelated graphics. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "UI縮放被關閉但需要啟用，否則妳會得到邊界模糊或像素化圖形.如果妳選擇忽略,妳就不會再被問到這個問題了|n|n是否修復?"
-L["The UI scale is wrong, so the graphics might appear fuzzy or pixelated. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "界面尺寸是錯誤的,所以圖形可能會出現模糊或失真.如果妳選擇忽略自己並處理UI縮放,妳就不會再被問到這個問題了|n|n是否修復?"
-L["Your resolution is too low for this UI, but the UI scale can still be adjusted to make it fit. If you choose to ignore it and handle the UI scaling yourself, you won't be asked about this issue again.|n|nFix this issue now?"] = "您的分辨率太低,但是UI規模仍然可以進行調整,使它適合.如果妳選擇忽略並自己處理UI縮放,妳就不會再被問到這個問題了|n|n是否修復?"
 L["Accept"] = "接受"
 L["Cancel"] = "取消" 
-L["Ignore"] = "忽略" 
-L["You can re-enable the auto scaling by typing |cff448800/diabolic autoscale|r in the chat at any time."] = "妳可以通過在聊天框輸入|cff448800/diabolic autoscale|r啟用自動縮放"
-L["Auto scaling of the UI has been enabled."] = "用戶界面自動縮放已啟用"
-L["Auto scaling of the UI has been disabled."] = "用戶界面自動縮放已禁用"
 L["Reload Needed"] = "需要重新加載"
 L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = "用戶界面必須重新加載應用更改.妳想現在這樣做嗎?"
 L["The Engine can't be tampered with!"] = "引擎不能被篡改!"
@@ -53,6 +43,7 @@ L["Three"] = "三栏"
 
 -- xp bar
 L["Current XP: "] = "當前經驗: "
+L["Experience"] = "經驗"
 L["Rested Bonus: "] = "休息獎勵: "
 L["Rested"] = "精力充沛"
 L["%s of normal experience\ngained from monsters."] = "從怪物身上獲得%s的經驗值"
@@ -132,9 +123,6 @@ L["Auto positioning of chat windows has been enabled."] = "聊天窗口自動定
 L["Auto positioning of chat windows has been disabled."] = "聊天窗口自動定位已禁用"
 
 -- minimap 
-L["Calendar"] = "行事曆"
-L["New Event!"] = "新事件"
-L["New Mail!"] = "新郵件"
 
 --Tooltip
 L["BoA"] = "件傳家寶"

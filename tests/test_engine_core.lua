@@ -9,10 +9,12 @@
 --  - the startup sequence: every OnInit runs before any OnEnable, NORMAL
 --    and HIGH modules enable on ADDON_LOADED + VARIABLES_LOADED, LOW ones
 --    only on PLAYER_LOGIN
---  - SetIncompatible / SetDependency gating OnInit and OnEnable
+--  - SetIncompatible gating OnInit and OnEnable
 --  - event and message dispatch (only to enabled objects, no duplicate
 --    registrations, unregistering the frame event once nobody listens)
---  - Engine:Wrap deferring calls made in combat until PLAYER_REGEN_ENABLED
+--  - Engine:Wrap deferring calls made in combat until PLAYER_REGEN_ENABLED,
+--    nil arguments included
+--  - the frame helpers (Place) and Engine:ForAll
 --  - saved config profiles: NewConfig, GetConfig and ParseSavedVariables
 --  - static configs, private configs, IsAddOnEnabled and the write guard
 --
@@ -133,6 +135,11 @@ end
 
 function TestEngineRegistry:test_argument_check_names_the_expected_type()
 	lu.assertErrorMsgContains("string expected, got number", Engine.NewModule, Engine, 42)
+end
+
+function TestEngineRegistry:test_get_handler_errors_unless_silent()
+	lu.assertErrorMsgContains("No handler named 'Missing' exist", Engine.GetHandler, Engine, "Missing")
+	lu.assertNil(Engine:GetHandler("Missing", true))
 end
 
 function TestEngineRegistry:test_duplicate_handler_name_errors()
@@ -282,19 +289,15 @@ function TestEngineStartup:test_incompatibility_condition_function_decides()
 	lu.assertEquals(log, { "A:init", "A:enable" })
 end
 
-function TestEngineStartup:test_missing_dependency_blocks_the_module()
-	local log = {}
-	trackedModule(log, "A"):SetDependency("Masque")
-	startUp()
-	lu.assertEquals(log, {})
-
-	loadEngine()
-	addStartupHandlers()
-	addAddOn("masque", true) -- lookups are case-insensitive
-	log = {}
-	trackedModule(log, "A"):SetDependency("Masque")
-	startUp()
-	lu.assertEquals(log, { "A:init", "A:enable" })
+function TestEngineStartup:test_for_all_calls_a_method_by_priority()
+	local calls = {}
+	local high = Engine:NewModule("H", "HIGH")
+	high.Ping = function(self, value) calls[#calls + 1] = "H" .. value end
+	Engine:NewModule("N") -- no Ping: skipped
+	Engine:ForAll("Ping", "HIGH", 1)
+	Engine:ForAll("Ping", "NORMAL", 2)
+	lu.assertEquals(calls, { "H1" })
+	lu.assertErrorMsgContains("The load priority 'SOON' is invalid", Engine.ForAll, Engine, "Ping", "SOON")
 end
 
 ------------------------------------------------------------------------
@@ -348,6 +351,37 @@ function TestEngineEvents:test_function_callbacks_and_no_duplicates()
 	lu.assertEquals(count, 1)
 end
 
+function TestEngineEvents:test_a_widget_not_enabled_yet_gets_nothing()
+	local received = 0
+	local module = Engine:NewModule("A")
+	local widget = module:SetWidget("Bar: One")
+	widget.UPDATE_BINDINGS = function() received = received + 1 end
+	widget:RegisterEvent("UPDATE_BINDINGS") -- through the default Update
+	startUp()
+	fire("UPDATE_BINDINGS")
+	lu.assertEquals(received, 0)
+	widget:Enable()
+	fire("UPDATE_BINDINGS")
+	lu.assertEquals(received, 1)
+end
+
+function TestEngineEvents:test_unregistering_the_first_of_two()
+	local calls = {}
+	local module = Engine:NewModule("A")
+	module.First = function() calls[#calls + 1] = "First" end
+	module.Second = function() calls[#calls + 1] = "Second" end
+	module:RegisterEvent("UNIT_AURA", "First")
+	module:RegisterEvent("UNIT_AURA", "Second")
+	module:RegisterMessage("DIABOLICUI_TEST", "First")
+	module:RegisterMessage("DIABOLICUI_TEST", "Second")
+	module:UnregisterEvent("UNIT_AURA", "First")
+	module:UnregisterMessage("DIABOLICUI_TEST", "First")
+	startUp()
+	fire("UNIT_AURA")
+	Engine:Fire("DIABOLICUI_TEST")
+	lu.assertEquals(calls, { "Second", "Second" })
+end
+
 function TestEngineEvents:test_widgets_receive_events_with_their_module()
 	local received = 0
 	local module = Engine:NewModule("A")
@@ -372,11 +406,115 @@ function TestEngineEvents:test_frame_event_is_dropped_when_last_listener_leaves(
 	lu.assertFalse(a:IsEventRegistered("UNIT_AURA", "OnAura"))
 end
 
+function TestEngineEvents:test_one_of_several_handlers_leaving_keeps_the_rest()
+	-- an object with two handlers for one event, the first one leaving as
+	-- it runs (a combat-deferred update): the second still runs, then and
+	-- every time after
+	local calls = {}
+	local module = Engine:NewModule("A")
+	module.First = function(self, event)
+		calls[#calls + 1] = "First"
+		self:UnregisterEvent(event, "First")
+	end
+	module.Second = function(self) calls[#calls + 1] = "Second" end
+	module:RegisterEvent("PLAYER_REGEN_ENABLED", "First")
+	module:RegisterEvent("PLAYER_REGEN_ENABLED", "Second")
+	startUp()
+	fire("PLAYER_REGEN_ENABLED")
+	fire("PLAYER_REGEN_ENABLED")
+	lu.assertEquals(calls, { "First", "Second", "Second" })
+
+	-- and one registered again later comes after it
+	module:RegisterEvent("PLAYER_REGEN_ENABLED", "First")
+	fire("PLAYER_REGEN_ENABLED")
+	lu.assertEquals(calls, { "First", "Second", "Second", "Second", "First" })
+end
+
+function TestEngineEvents:test_a_handler_registered_while_dispatching_waits()
+	local calls = 0
+	local module = Engine:NewModule("A")
+	module.Again = function(self, event)
+		calls = calls + 1
+		self:UnregisterEvent(event, "Again")
+		self:RegisterEvent(event, "Again")
+	end
+	module:RegisterEvent("UNIT_AURA", "Again")
+	startUp()
+	fire("UNIT_AURA")
+	lu.assertEquals(calls, 1)
+	fire("UNIT_AURA")
+	lu.assertEquals(calls, 2)
+end
+
+function TestEngineEvents:test_messages_with_several_handlers()
+	local calls = {}
+	local module = Engine:NewModule("A")
+	module.First = function(self, message)
+		calls[#calls + 1] = "First"
+		self:UnregisterMessage(message, "First")
+	end
+	module.Second = function(self) calls[#calls + 1] = "Second" end
+	module:RegisterMessage("DIABOLICUI_TEST", "First")
+	module:RegisterMessage("DIABOLICUI_TEST", "Second")
+	startUp()
+	Engine:Fire("DIABOLICUI_TEST")
+	Engine:Fire("DIABOLICUI_TEST")
+	lu.assertEquals(calls, { "First", "Second", "Second" })
+end
+
 function TestEngineEvents:test_unregistering_unknown_event_errors()
 	local module = Engine:NewModule("A")
 	lu.assertErrorMsgContains("isn't currently registered to any object", module.UnregisterEvent, module, "NEVER_REGISTERED")
 	module:RegisterEvent("UNIT_AURA", "OnAura")
 	lu.assertErrorMsgContains("The method named 'Other' isn't registered", module.UnregisterEvent, module, "UNIT_AURA", "Other")
+	lu.assertErrorMsgContains("general occurence of the event 'UNIT_AURA'", module.UnregisterEvent, module, "UNIT_AURA")
+	lu.assertErrorMsgContains("The function call assigned to the event 'UNIT_AURA'", module.UnregisterEvent, module, "UNIT_AURA", function() end)
+	local other = Engine:NewModule("B")
+	lu.assertErrorMsgContains("isn't currently registered to the object 'B'", other.UnregisterEvent, other, "UNIT_AURA", "OnAura")
+end
+
+function TestEngineEvents:test_is_event_registered()
+	local module, other = Engine:NewModule("A"), Engine:NewModule("B")
+	lu.assertFalse(module:IsEventRegistered("UNIT_HEALTH")) -- nobody listens
+	other:RegisterEvent("UNIT_HEALTH")
+	lu.assertFalse(module:IsEventRegistered("UNIT_HEALTH")) -- somebody else does
+	module:RegisterEvent("UNIT_HEALTH", "OnHealth")
+	lu.assertFalse(module:IsEventRegistered("UNIT_HEALTH")) -- not through Update
+	lu.assertTrue(module:IsEventRegistered("UNIT_HEALTH", "OnHealth"))
+	module:RegisterEvent("UNIT_HEALTH")
+	lu.assertTrue(module:IsEventRegistered("UNIT_HEALTH"))
+	module:UnregisterEvent("UNIT_HEALTH")
+	lu.assertFalse(module:IsEventRegistered("UNIT_HEALTH"))
+end
+
+function TestEngineEvents:test_unregistering_unknown_message_errors()
+	local module = Engine:NewModule("A")
+	lu.assertErrorMsgContains("The message 'NEVER' isn't currently registered to any object", module.UnregisterMessage, module, "NEVER")
+	module:RegisterMessage("DIABOLICUI_TEST", "OnTest")
+	lu.assertErrorMsgContains("The method named 'Other' isn't registered for the message", module.UnregisterMessage, module, "DIABOLICUI_TEST", "Other")
+	lu.assertErrorMsgContains("general occurence of the message 'DIABOLICUI_TEST'", module.UnregisterMessage, module, "DIABOLICUI_TEST")
+	lu.assertErrorMsgContains("The function call assigned to the message 'DIABOLICUI_TEST'", module.UnregisterMessage, module, "DIABOLICUI_TEST", function() end)
+	local other = Engine:NewModule("B")
+	lu.assertErrorMsgContains("isn't currently registered to the object 'B'", other.UnregisterMessage, other, "DIABOLICUI_TEST", "OnTest")
+
+	-- and the default "Update" method
+	lu.assertFalse(module:IsMessageRegistered("DIABOLICUI_TEST"))
+	lu.assertFalse(other:IsMessageRegistered("DIABOLICUI_TEST"))
+	module:RegisterMessage("DIABOLICUI_TEST")
+	module:RegisterMessage("DIABOLICUI_TEST") -- once only
+	lu.assertTrue(module:IsMessageRegistered("DIABOLICUI_TEST"))
+	module:UnregisterMessage("DIABOLICUI_TEST")
+	lu.assertFalse(module:IsMessageRegistered("DIABOLICUI_TEST"))
+end
+
+function TestEngineEvents:test_a_handler_elements_missing_method_is_reported()
+	local handler = Engine:GetHandler("Orb")
+	local element = handler:SetElement("Glow")
+	element:RegisterEvent("UNIT_AURA", "DoesNotExist")
+	handler:SetElementDefaultEnabledState(true)
+	startUp()
+	element:Enable()
+	lu.assertErrorMsgContains("The handler element 'Glow' has no method named 'DoesNotExist'", fire, "UNIT_AURA")
 end
 
 function TestEngineEvents:test_missing_method_is_reported()
@@ -402,13 +540,27 @@ function TestEngineEvents:test_messages()
 	lu.assertFalse(module:IsMessageRegistered("DIABOLICUI_CONFIG_CHANGED", "OnConfig"))
 end
 
-function TestEngineEvents:test_loading_screen_tracking()
-	lu.assertFalse(Engine:IsInWorld())
-	lu.assertFalse(Engine:IsOffWorld())
-	fire("PLAYER_ENTERING_WORLD")
-	lu.assertTrue(Engine:IsInWorld())
-	fire("PLAYER_LEAVING_WORLD")
-	lu.assertTrue(Engine:IsOffWorld())
+------------------------------------------------------------------------
+-- Frames
+------------------------------------------------------------------------
+
+TestEngineFrames = {}
+
+function TestEngineFrames:setUp()
+	loadEngine()
+end
+
+function TestEngineFrames:test_place_reads_keywords_and_names_as_anchors()
+	local frame = Engine:CreateFrame("Frame")
+	frame:Place("TOP")
+	lu.assertEquals(frame.points, { { "TOP" } })
+	frame:Place("TOP", "UICenter", "BOTTOM", 0, 10)
+	lu.assertEquals(frame.points, { { "TOP", Engine:GetFrame(), "BOTTOM", 0, 10 } })
+	frame:Place("CENTER", "UIParent")
+	lu.assertEquals(frame.points, { { "CENTER", _G.UIParent } })
+	local other = Engine:CreateFrame("Frame")
+	frame:Place("LEFT", other, "RIGHT")
+	lu.assertEquals(frame.points, { { "LEFT", other, "RIGHT" } })
 end
 
 ------------------------------------------------------------------------
@@ -445,6 +597,18 @@ function TestEngineWrap:test_combat_calls_are_deferred_and_merged()
 
 	wrapped("after")
 	lu.assertEquals(calls, { { "second" }, { "after" } })
+end
+
+function TestEngineWrap:test_deferred_calls_keep_nil_arguments()
+	local calls = {}
+	local wrapped = Engine:Wrap(function(...) table.insert(calls, { n = select("#", ...), ... }) end)
+	fire("PLAYER_REGEN_DISABLED")
+	state.lockdown = true
+	wrapped("a", "b", "c")
+	wrapped(nil, "y") -- fewer arguments, a nil first
+	state.lockdown = false
+	fire("PLAYER_REGEN_ENABLED")
+	lu.assertEquals(calls, { { n = 2, [2] = "y" } })
 end
 
 function TestEngineWrap:test_runs_when_lockdown_already_lifted()

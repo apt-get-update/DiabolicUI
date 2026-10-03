@@ -1,4 +1,4 @@
-local ADDON, Engine = ...
+local _, Engine = ...
 
 -- chat windows and frames
 Engine:NewConfig("ChatWindows", {
@@ -22,7 +22,4 @@ Engine:NewConfig("ChatWindows", {
 Engine:NewConfig("ChatFilters", {
 	copyWebLinks = true -- left-click a http(s) web link in chat to copy it
 })
-
--- chat bubbles
-Engine:NewConfig("ChatBubbles", {})
 

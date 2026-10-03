@@ -23,86 +23,25 @@
 	SOFTWARE.
 
 --]]
-local Addon, ns = ..., DiabolicUIMinimapNS
+local _, ns = ..., DiabolicUIMinimapNS
 local Config = ns.Config or {}
 ns.Config = Config
 
 -- Addon API
 local Colors = ns.Colors
 local GetFont = ns.API.GetFont
-local GetMedia = ns.API.GetMedia
 
 Config.Minimap = {
-
-	Size = { 280, 280 },
 	Position = { "TOPRIGHT", UIParent, "TOPRIGHT", -30, -30 },
-	MaskTexture = GetMedia("minimap-mask-transparent"),
 
 	-- Limits for the user-adjustable size set in edit mode.
 	MinUserScale = .6,
 	MaxUserScale = 1.8,
-
-	BackdropSize = { 280, 280 },
-	BackdropPosition = { "CENTER", 0, 0 },
-	BackdropTexture = GetMedia("minimap-mask-opaque"),
-	BackdropColor = { 0, 0, 0, .75 },
-
-	BorderSize = { 340, 340 },
-	BorderPosition = { "CENTER", 0, 0 },
-	BorderTexture = GetMedia("minimap-border"),
-	BorderColor = { Colors.ui[1], Colors.ui[2], Colors.ui[3] },
 
 	CompassInset = 10,
 	CompassFont = GetFont(16, true),
 	CompassColor = { Colors.normal[1], Colors.normal[2], Colors.normal[3], .75 },
 	CompassNorthTag = "N",
 
-	CoordinateColor = { Colors.offwhite[1], Colors.offwhite[2], Colors.offwhite[3], .75 },
-	CoordinateFont = GetFont(12, true),
-	CoordinatePlace = { "BOTTOM", 3, 23 },
-
-	ClockPosition = { "BOTTOMRIGHT", -226, -8 },
-	ClockFont = GetFont(15, true),
-	ClockColor = { Colors.offwhite[1], Colors.offwhite[2], Colors.offwhite[3] },
-
-	-- About 8px to the left of the clock.
-	ZoneTextPosition = { "TOPRIGHT", -(226 + 60), -8 },            -- adjust this
-	ZoneTextPositionHalfClock = { "BOTTOMRIGHT", -(226 + 60 + 20), -8 }, -- adjust this
-	ZoneTextFont = GetFont(15, true),
-	ZoneTextAlpha = .85,
-
-	-- About 6px Above the clock, slightly indented towards the left.
-	FrameRatePosition = { "BOTTOMRIGHT", -(226 + 6), -8 + 15 + 6 },
-	FrameRateFont = GetFont(12, true),
-	FrameRateColor = { Colors.offwhite[1], Colors.offwhite[2], Colors.offwhite[3], .5 },
-
-	-- To the left of the framerate, right above the zone text.
-	LatencyPosition = { "BOTTOMRIGHT", -(226 + 60), -8 + 15 + 6 },            -- adjust this
-	LatencyPositionHalfClock = { "BOTTOMRIGHT", -(226 + 60 + 20), -8 + 15 + 6 }, -- adjust this
-	LatencyFont = GetFont(12, true),
-	LatencyColor = { Colors.offwhite[1], Colors.offwhite[2], Colors.offwhite[3], .5 },
-
-	MailSize = { 48, 48 },
-
-	-- Dungeon Eye
-	EyePosition = { "CENTER", math.cos(225 * (math.pi / 180)) * (280 / 2 + 10), math.sin(225 * (math.pi / 180)) * (280 / 2 + 10) },
-	EyeSize = { 64, 64 },
-	EyeTexture = GetMedia("group-finder-eye-orange"),
-	EyeTextureColor = { .90, .95, 1 },
-	EyeTextureSize = { 64, 64 },
-	EyeGroupSizePosition = { "BOTTOMRIGHT", 0, 0 },
-	EyeGroupSizeFont = GetFont(15, true),
-	EyeGroupStatusFramePosition = { "TOPRIGHT", MiniMapLFGFrame, "BOTTOMLEFT", 0, 0 },
-
-	-- MBB Integration
-	MBBPosition = { "BOTTOMRIGHT", -244, 35 },
-	MBBSize = { 32, 32 },
-	MBBTexture = GetMedia("button-toggle-plus"),
-
-	-- Narcissus Integragtion
-	NarciPosition = { "CENTER", Minimap, "TOP", 0, 8 },
-	NarciSize = { 56, 56 },
-	NarciColor = { .85, .85, .85, 1 },
-	NarciBackgroundSize = { 46, 46 },
-	NarciBackgroundColor = { .75, .75, .75, 1 },
+	MailSize = { 48, 48 }
 }

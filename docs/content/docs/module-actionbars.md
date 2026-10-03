@@ -45,13 +45,23 @@ those last two, the button gets stuck shown after landing, since none of the
 
 ## Button usability state (`handlers/actionbutton.lua`)
 
-Not part of this module folder, but the handler every action/spell/item
-button on every bar is built from. `Button:UpdateUsable()` desaturates a
-button's icon based on a `usableState` string — `"normal"`, `"unusable"`,
-`"nomana"`, `"taxi"`, ... — computed from `IsUsableAction`/`IsActionInRange`/
-`UnitOnTaxi`. `"taxi"` covers "unusable because you're on a flight or
-otherwise out of normal control," desaturating the whole bar rather than
-graying out one button at a time.
+Not part of this module folder, but the handler every button on every bar
+is built from. The bars use three button types: `"action"` (the action
+bars), `"pet"` and `"stance"`. `Button:UpdateUsable()` colors a button's
+icon by a `usableState` string, computed from `IsUsableAction` and the range
+check, in this order:
+
+| State | When | Icon |
+|---|---|---|
+| `"taxi"` | the player is dead or a ghost | desaturated |
+| `"mana"` | not enough mana (`IsUsableAction` also reports it as not usable, so this is checked first) | blue tint |
+| `"unusable"` | not usable for any other reason | darkened |
+| `"range"` | the target is out of range | red tint |
+| `"usable"` | everything else | normal |
+
+A button is only recolored when its state changes, except for the
+`"forced"` refresh the handler sends once, a second after login: the
+client can fail to desaturate icons that early.
 
 ## Artwork & desaturation (`elements/artwork.lua`)
 

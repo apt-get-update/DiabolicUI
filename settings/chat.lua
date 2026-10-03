@@ -122,6 +122,3 @@ Engine:NewStaticConfig("ChatFilters", {
 	useCustomClassColors = true
 })
 
--- chat bubbles
-Engine:NewStaticConfig("ChatBubbles", {})
-

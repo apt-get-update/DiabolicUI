@@ -21,9 +21,8 @@ local Handler = Engine:GetHandler("UnitFrame")
 
 local Update = function(self, event, ...) ... end
 local Enable = function(self, unit) ... end
-local Disable = function(self, unit) ... end
 
-Handler:RegisterElement("Power", Enable, Disable, Update)
+Handler:RegisterElement("Power", Enable, Update)
 ```
 
 - **`Enable(self, unit)`** — called once when a frame turns this element on.
@@ -31,17 +30,16 @@ Handler:RegisterElement("Power", Enable, Disable, Update)
   needs and return a truthy value if it actually enabled something (a
   falsy/no return means "this frame doesn't have this element", e.g. no
   `self.Power` sub-widget was created for it).
-- **`Disable(self, unit)`** — the mirror image: unregister events, hide the
-  widget.
 - **`Update(self, event, ...)`** — does the actual work. Called directly by
   `Enable` for the initial paint, and again every time a registered event
   fires.
 
 A unit frame opts into an element simply by having created the
-correspondingly-named child widget before calling `self:EnableElement(name)`
-— e.g. `units/party.lua` creates `self.Power` and later the frame
-construction code calls `self:EnableElement("Power")`, which looks up
-`Elements["Power"].Enable(self, self.unit)`.
+correspondingly-named child widget in its style function — e.g.
+`units/party.lua` creates `self.Power`. Right after the style function,
+`Handler:New` calls `Enable` for every registered element on the new frame,
+and keeps the ones that returned true for its updates (on `OnShow` and when
+the frame's unit changes).
 
 ## Frequent (polled) vs. event-driven updates
 
@@ -63,12 +61,24 @@ else
 end
 ```
 
-`EnableFrequentUpdates` registers the frame/element pair in a shared table
-that a single `OnUpdate` script (on the handler itself, not per-frame) walks
-every frame, calling `Update(object, "FREQUENT", elapsed)` once the
-element's own `hz` threshold has elapsed. `event` will be the literal string
+`EnableFrequentUpdates(element, seconds)` registers the frame/element pair
+in a shared table that a single `OnUpdate` script (on one frame for all of
+them, not per unit frame) walks every frame, calling
+`Update(object, "FREQUENT", elapsed)` once that many seconds have passed.
+Only health and power poll; every other element is event-driven. `event` will be the literal string
 `"FREQUENT"` in that call — make sure any `event`-based filtering in your
 `Update` function (see below) doesn't accidentally reject it.
+
+Two things keep polling cheap, since most frames poll every frame:
+
+- Frames that aren't on screen (`IsVisible()`) are skipped: empty raid and
+  party slots, boss and arena frames outside those fights. A frame is
+  brought up to date by the first poll after it shows again.
+- A polled `Update` that finds nothing changed returns early. Health and
+  power compare the unit and the values they'd show with the last ones
+  drawn, and still refresh fully twice a second (`IDLE_REFRESH`), for
+  colors that change without the value changing, like a mob getting
+  tapped. Events always update fully.
 
 ## Filtering events by unit
 

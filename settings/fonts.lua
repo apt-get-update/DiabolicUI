@@ -91,9 +91,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -106,9 +103,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -121,9 +115,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -136,9 +127,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -151,9 +139,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -166,9 +151,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -181,9 +163,6 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true,
 				ruRU = true
 			}
 		},
@@ -195,10 +174,7 @@ Engine:NewStaticConfig("Fonts", {
 				deDE = true,
 				esES = true,
 				esMX = true,
-				frFR = true,
-				itIT = true,
-				ptBR = true,
-				ptPT = true
+				frFR = true
 			}
 		}
 	}

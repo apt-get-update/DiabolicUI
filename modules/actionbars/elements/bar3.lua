@@ -5,19 +5,14 @@ local BarWidget = Module:SetWidget("Bar: 3")
 
 
 -- Lua API
-local select = select
-local setmetatable = setmetatable
 
 -- WoW API
-local CreateFrame = CreateFrame
 local RegisterStateDriver = RegisterStateDriver
 
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local NUM_ACTIONBAR_BUTTONS = NUM_ACTIONBAR_BUTTONS or 12
 
 BarWidget.OnEnable = function(self)
 	local config = Module.config
-	local db = Module.db
 
 	local Artwork = Module:GetWidget("Artwork")
 	local Bar = Module:GetHandler("ActionBar"):New(BOTTOMRIGHT_ACTIONBAR_PAGE, Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
@@ -28,10 +23,6 @@ BarWidget.OnEnable = function(self)
 
 	-- Spawn the action buttons
 	for i = 1,NUM_ACTIONBAR_BUTTONS do
-		-- Make sure the standard bars
-		-- get button IDs that reflect their actual actions
-		-- local button_id = (Bar.id - 1) * NUM_ACTIONBAR_BUTTONS + i
-		
 		local button = Bar:NewButton("action", i, Artwork:GetButtonTemplate())
 		button:SetStateAction(0, "action", i)
 		for state = 1,14 do

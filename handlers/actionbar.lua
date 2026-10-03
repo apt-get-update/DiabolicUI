@@ -1,43 +1,28 @@
+-- "ActionBar" handler: Handler:New(id, parent, barTemplate) builds a
+-- secure action bar header inside its own visibility layer (for the user's
+-- bar toggles), with the methods of barTemplate added; bar:NewButton(...)
+-- adds an ActionButton to it, numbered for the secure snippets.
 local _, Engine = ...
 local Handler = Engine:NewHandler("ActionBar")
 local ActionButton = Engine:GetHandler("ActionButton")
 
 -- Lua API
+local ipairs = ipairs
+local pairs = pairs
 local setmetatable = setmetatable
-local tinsert = table.insert
 
 -- WoW API
+local CreateFrame = _G.CreateFrame
 local PlaySound = _G.PlaySound
 
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }
 
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
-
-local visibilityHandlers = {}
-local visibilityDrivers = {}
-
--- update button lock, text visibility, cast on down/up here!
-Bar.UpdateButtonSettings = function(self)
-end
-
 -- update the action and action textures
+-- (called by the bars' secure page snippets, through control:CallMethod)
 Bar.UpdateAction = function(self)
-	local buttons = self.buttons
-	for i in ipairs(self.buttons) do 
-		buttons[i]:UpdateAction()
-	end
-end
-
-Bar.Update = function(self)
-	if self.PostUpdate then
-		return self:PostUpdate()
-	end
-end
-
-Bar.ForAll = function(self, method, ...)
-	for i, button in self:GetAll() do
-		button[method](button, ...)
+	for _, button in ipairs(self.buttons) do
+		button:UpdateAction()
 	end
 end
 
@@ -71,28 +56,7 @@ Bar.NewButton = function(self, button_type, button_id, ...)
 	return Button
 end
 
-Bar.RegisterVisibilityDriver = function(self, driver)
-	local visibility = visibilityHandlers[self]
-	local driver = visibilityDrivers[self]
-	if driver then
-		visibilityDrivers[self] = nil
-		UnregisterStateDriver(visibility, "visibility")
-	end
-	RegisterStateDriver(visibility, "visibility", driver)
-end
-
-Bar.UnregisterVisibilityDriver = function(self)
-	if (visibilityDrivers[self]) then
-		visibilityDrivers[self] = nil
-		UnregisterStateDriver(visibilityHandlers[self], "visibility")
-	end
-end
-
-Bar.GetVisibilityDriver = function(self)
-	return visibilityDrivers[self]
-end
-
-Handler.New = function(self, id, parent, barTemplate, ...)
+Handler.New = function(self, id, parent, barTemplate)
 
 	-- the visibility layer is used for user controlled toggling of bars
 	local visibility = CreateFrame("Frame", nil, parent, "SecureHandlerStateTemplate")
@@ -103,11 +67,7 @@ Handler.New = function(self, id, parent, barTemplate, ...)
 	bar.id = id or 0
 	bar.buttons = {}
 
-	-- Store this bar's visibility handler locally, but avoid giving the user direct access.
-	visibilityHandlers[bar] = visibility
-
 	-- Tell the bar where to find its visibility layer
-	-- *Let's try NOT giving it access
 	bar:SetFrameRef("Visibility", visibility)
 
 	-- Sounds
@@ -117,20 +77,12 @@ Handler.New = function(self, id, parent, barTemplate, ...)
 	-- Tell the visibility layer where to find the bar
 	visibility:SetFrameRef("Bar", bar)
 
-	-- Add any methods from the optional template.
+	-- Add the template's methods.
 	-- This can NOT override existing methods!
-	if barTemplate then
-		for name, method in pairs(barTemplate) do
-			if (not bar[name]) then
-				bar[name] = method
-			end
+	for name, method in pairs(barTemplate) do
+		if (not bar[name]) then
+			bar[name] = method
 		end
-	end
-
-	-- Call the post create method if it exists, and pass along any remaining arguments.
-	-- This is to allow user modules to add their own styling during creation.
-	if bar.PostCreate then
-		bar:PostCreate(...)
 	end
 
 	return bar

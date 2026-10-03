@@ -22,10 +22,10 @@ local PLAYER_BAR_STATE
 local PLAYER_BAR_ID
 
 local colors = {
-	-- icon overlays
-	unusableOverlay 	= { 51/255, 17/255, 6/255, .25 }, -- C.General.UIOverlay
-	flightOverlay 		= { 51/255, 17/255, 6/255, .7 }, -- C.General.UIOverlay
-	rangeOverlay 		= { 51/255, 17/255, 6/255, .10 }, -- C.General.UIOverlay
+	-- icon overlays, a dark brown at different strengths
+	unusableOverlay 	= { 51/255, 17/255, 6/255, .25 },
+	flightOverlay 		= { 51/255, 17/255, 6/255, .7 },
+	rangeOverlay 		= { 51/255, 17/255, 6/255, .10 },
 }
 
 -- Hotkey abbreviations for better readability
@@ -73,17 +73,11 @@ local ToShortKey = function(key)
 	end
 end
 
--- utility function to set multiple points at once
+-- utility function to set multiple points at once ({ { point, ... }, ... })
 local SetPoints = function(element, points)
 	element:ClearAllPoints()
-
-	-- multiple points or a single one?
-	if (#points > 0) then
-		for i,pos in ipairs(points) do
-			element:SetPoint(unpack(pos))
-		end
-	else
-		element:SetPoint(unpack(points))
+	for _, point in ipairs(points) do
+		element:SetPoint(unpack(point))
 	end
 end
 
@@ -109,37 +103,18 @@ local SetTexture = function(element, config)
 	element.visibleAlpha = config.alpha or 1
 end
 
+-- (the button texts' styles are a font and points)
 local SetFont = function(element, config)
-	if config.normalFont then
-		element:SetFontObject(config.normalFont)
-	end
-	if config.size then
-		element:SetSize(unpack(config.size))
-	end
-	if config.points then
-		SetPoints(element, config.points)
-	end
-	if config.alpha then
-		element:SetAlpha(config.alpha)
-	end
-	element.visibleAlpha = config.alpha or 1
+	element:SetFontObject(config.normalFont)
+	SetPoints(element, config.points)
 end
 
 -- Called whenever the visibility of the artwork layers need
 -- to be updated, like when the button is hovered over or checked.
-Button.PostUpdate = function(self, forced)
+Button.PostUpdate = function(self)
 	local hasAction = self:HasAction()
 	local isChecked = self._checked
 	local isHighlighted = self._highlighted
-
-	local isActionShown = self.isActionShown
-	local isCheckedShown = self.isCheckedShown
-	local isHighlightShown = self.isHighlightShown
-
-	-- Bail out if there's no change
-	if (not forced) and ((isChecked == isCheckedShown) and (isHighlighted == isHighlightShown) and (hasAction == isActionShown)) then
-		return
-	end
 
 	local border = self.border
 
@@ -147,7 +122,7 @@ Button.PostUpdate = function(self, forced)
 		border.empty:SetAlpha(0)
 		border.empty_highlight:SetAlpha(0)
 
-		if checked then
+		if isChecked then
 			border.normal:SetAlpha(0)
 			border.normal_highlight:SetAlpha(0)
 			if isHighlighted then
@@ -185,10 +160,6 @@ Button.PostUpdate = function(self, forced)
 		self._checked = nil
 		self._pushed = nil
 	end
-
-	self.isActionShown = isActionShown
-	self.isCheckedShown = isCheckedShown
-	self.isHighlightShown = isHighlightShown
 end
 
 -- No need for extra functions here, 
@@ -236,7 +207,7 @@ Button.OverrideBindingKey = function(self, key)
 		keybind:SetAlpha(0)
 	else
 		keybind:SetText(ToShortKey(key))
-		keybind:SetAlpha(keybind.visibleAlpha or 1)
+		keybind:SetAlpha(1)
 	end
 end
 
@@ -274,12 +245,9 @@ Button.UpdateStyle = function(self, STYLE)
 	-- cooldowncount
 	SetFont(self.cooldowncount, STYLE.cooldown_numbers)
 
-	-- Need a post update to adjust alpha values upon bar layout changes, 
+	-- Need a post update to adjust alpha values upon bar layout changes,
 	-- or we'll end with a situation where all the layers are visible at once.
-	-- * 	this still happens in cata. weird. 
-	-- ** 	added a 'forced' flag to the post update to make sure the one called
-	-- 		called from this styling function always gets through. 
-	self:PostUpdate(true)
+	self:PostUpdate()
 end
 
 Button.PostCreate = function(self, buttonType)

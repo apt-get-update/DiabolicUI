@@ -36,8 +36,10 @@ local string_gmatch = string.gmatch
 local string_lower = string.lower
 local string_match = string.match
 local table_concat = table.concat
+local xpcall = xpcall
 
 -- WoW API
+local geterrorhandler = _G.geterrorhandler
 local GetItemInfo = _G.GetItemInfo
 local GetItemQualityColor = _G.GetItemQualityColor
 local hooksecurefunc = _G.hooksecurefunc
@@ -457,7 +459,7 @@ local Layout = function(tooltip)
 	local titleTop = OffsetFromTop(tooltip, titleLine, "TOP")
 	local titleBottom = OffsetFromTop(tooltip, titleLine, "BOTTOM")
 	if (not titleTop) or (not titleBottom) then
-		return -- not placed on screen yet; the next Show lays it out
+		return -- not placed on screen yet; CheckLayout retries next frame
 	end
 
 	-- Title banner
@@ -579,11 +581,15 @@ end
 -- added on its own re-measures the tooltip (dropping the extra room made
 -- above), and the item refresh every 0.2 seconds puts the lines back in
 -- their default place without changing the size. Either way, redo the
--- layout as soon as it happens.
-local OnUpdate = function(tooltip)
+-- layout as soon as it happens - or for the first time, if the tooltip
+-- wasn't placed on screen yet when it was shown (chat links can be).
+local CheckLayout = function(tooltip)
 	local info = tooltip.DiabolicItemInfo
-	if (not info) or (not info.width) then
+	if (not info) then
 		return
+	end
+	if (not info.width) then
+		return Layout(tooltip)
 	end
 	local width, height = tooltip:GetWidth(), tooltip:GetHeight()
 	if (math_abs(width - info.width) > .5) or (math_abs(height - info.height) > .5) then
@@ -613,17 +619,14 @@ Module.OnTooltipSetItem = function(self, tooltip)
 
 	local _, link = tooltip:GetItem()
 	local itemName, quality, icon, sellPrice
-	if link and self.db.reskinTooltip then
+	if link and self.db.reskinTooltip and (not self.failed[link]) then
 		itemName, _, quality, _, _, _, _, _, _, icon, sellPrice = GetItemInfo(link)
 	end
 	if (not itemName) or (not quality) then
-		-- Reskin turned off, not an item, or not cached yet: Blizzard's plain
-		-- tooltip, including the sell price line held back for the footer.
+		-- Reskin turned off, not an item, not cached yet, or its layout failed
+		-- before: Blizzard's plain tooltip.
 		tooltip.DiabolicItemState = "plain"
-		local heldBack = tooltip.DiabolicSellPrice
-		if heldBack then
-			tooltip.DiabolicSellPrice = nil
-			self.AddMoney(tooltip, heldBack)
+		if self:ReleasePrice(tooltip) then
 			tooltip:Show()
 		end
 		return
@@ -646,6 +649,7 @@ Module.OnTooltipSetItem = function(self, tooltip)
 		titleIndex = titleIndex,
 		r = r, g = g, b = b
 	}
+	tooltip.DiabolicItemInfo = info -- already, so Unstyle can undo a partial edit
 
 	for i = titleIndex + 1, tooltip:NumLines() do
 		local line = _G[name .. "TextLeft" .. i]
@@ -657,16 +661,17 @@ Module.OnTooltipSetItem = function(self, tooltip)
 				info.bigLine = i
 				info.bigNumber = dps or armor
 				info.bigLabel = dps and _G.ITEM_MOD_DAMAGE_PER_SECOND_SHORT or _G.ARMOR
+				info.bigText = text
 				line:SetText(" ")
 			elseif string_match(text, DURABILITY_PATTERN) then
 				info.durability = text
+				info.durabilityLine = i
 				line:SetText("")
 			end
 		end
 	end
 
 	HighlightTagLines(tooltip, info)
-	tooltip.DiabolicItemInfo = info
 	tooltip.DiabolicItemState = "styled"
 	tooltip:Show() -- Blizzard re-measures the edited lines, then Layout runs
 end
@@ -701,6 +706,58 @@ local OnTooltipCleared = function(tooltip)
 	Reset(tooltip)
 end
 
+-- Adds the sell price line held back for the footer, if any.
+Module.ReleasePrice = function(self, tooltip)
+	local heldBack = tooltip.DiabolicSellPrice
+	if heldBack then
+		tooltip.DiabolicSellPrice = nil
+		self.AddMoney(tooltip, heldBack)
+		return true
+	end
+end
+
+-- Puts back Blizzard's plain tooltip: the lines emptied for the big number
+-- and the footer, and the held back price.
+Module.Unstyle = function(self, tooltip)
+	local info = tooltip.DiabolicItemInfo
+	if info then
+		local name = tooltip:GetName()
+		if info.bigText then
+			_G[name .. "TextLeft" .. info.bigLine]:SetText(info.bigText)
+		end
+		if info.durabilityLine then
+			_G[name .. "TextLeft" .. info.durabilityLine]:SetText(info.durability)
+		end
+	end
+	Reset(tooltip)
+	tooltip.DiabolicItemState = "plain"
+	self:ReleasePrice(tooltip)
+	tooltip:Show()
+end
+
+-- Runs one of the steps above. Should it error, the error is reported once
+-- and the item stays in Blizzard's plain style for the rest of the session,
+-- rather than erroring again on every frame the tooltip is shown.
+local guardedStep, guardedTooltip
+local RunGuardedStep = function()
+	return guardedStep(guardedTooltip)
+end
+local ReportError = function(err)
+	return geterrorhandler()(err)
+end
+
+Module.Guard = function(self, tooltip, step)
+	guardedStep, guardedTooltip = step, tooltip
+	if xpcall(RunGuardedStep, ReportError) then
+		return
+	end
+	local _, link = tooltip:GetItem()
+	if link then
+		self.failed[link] = true
+	end
+	self:Unstyle(tooltip)
+end
+
 -- Blizzard puts comparison tooltips edge to edge; our backdrop reaches past
 -- those edges, so they get pushed apart once Blizzard has placed them.
 Module.SpaceComparisons = function(self, tooltip)
@@ -729,17 +786,38 @@ Module.OnEnable = function(self)
 		return self:OnTooltipAddMoney(tooltip, cost, maxcost)
 	end
 
+	self.failed = {} -- links whose layout errored: shown plain from then on
+	local setItem = function(tooltip) return self:OnTooltipSetItem(tooltip) end
+	local onTooltipSetItem = function(tooltip) self:Guard(tooltip, setItem) end
+	local onShow = function(tooltip) self:Guard(tooltip, Layout) end
+	local onUpdate = function(tooltip)
+		if tooltip.DiabolicItemInfo then
+			self:Guard(tooltip, CheckLayout)
+		end
+	end
+
 	for _, tooltipName in ipairs(TOOLTIPS) do
 		local tooltip = _G[tooltipName]
 		if tooltip then
-			tooltip:HookScript("OnTooltipSetItem", function(tooltip) self:OnTooltipSetItem(tooltip) end)
+			tooltip:HookScript("OnTooltipSetItem", onTooltipSetItem)
 			tooltip:HookScript("OnTooltipCleared", OnTooltipCleared)
 			tooltip:HookScript("OnHide", OnTooltipCleared)
-			tooltip:HookScript("OnUpdate", OnUpdate)
-			hooksecurefunc(tooltip, "Show", Layout)
+			hooksecurefunc(tooltip, "Show", onShow)
+			-- The check runs in the tooltip's own OnUpdate, right after
+			-- Blizzard's refresh and before the frame is drawn (a separate
+			-- frame's OnUpdate may run first, and the tooltip then blinks).
+			-- ItemRefTooltip (chat links) replaces that script on enter, leave
+			-- and hide, which drops hooks: hook it again each time.
+			tooltip:HookScript("OnUpdate", onUpdate)
+			hooksecurefunc(tooltip, "SetScript", function(tooltip, script)
+				if (script == "OnUpdate") then
+					tooltip:HookScript("OnUpdate", onUpdate)
+				end
+			end)
 		end
 	end
 end
 
 -- Exposed for tests/test_blizzard_itemtooltips.lua.
 Module.ToPattern = ToPattern
+Module.CheckLayout = CheckLayout

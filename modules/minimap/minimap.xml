@@ -3,9 +3,6 @@
 <!-- Libraries -->
 <Include file='Libs\Libs_Wrath.xml'/>
 
-<!-- Addon localization -->
-<Include file='Locale\Locale.xml'/>
-
 <!-- Addon core -->
 <Include file='Core\Core.xml'/>
 

@@ -1,5 +1,5 @@
 -- User settings for the unit frames (saved per profile in DiabolicUI_DB).
-local ADDON, Engine = ...
+local _, Engine = ...
 
 Engine:NewConfig("UnitFrames", {
 	showClassColors = true, -- color unit frame health bars by class

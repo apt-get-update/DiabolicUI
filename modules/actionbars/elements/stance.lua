@@ -10,18 +10,17 @@ local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
 local GetShapeshiftForm = _G.GetShapeshiftForm
 local RegisterStateDriver = _G.RegisterStateDriver
 
-local NUM_BUTTONS = NUM_SHAPESHIFT_SLOTS or 10
+local NUM_BUTTONS = NUM_SHAPESHIFT_SLOTS
 
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
 -- Update visible number of buttons, and adjust the bar size to match
 local UpdateStanceButtons = Engine:Wrap(function(self)
-	local buttons = self.buttons or {}
+	local buttons = self.buttons
 
 	local numShown = 0
-	local numForms = GetNumShapeshiftForms() or 0
-	local currentForm = GetShapeshiftForm()
+	local numForms = GetNumShapeshiftForms()
 	local needUpdate
 	
 	for i = 1, #buttons do
@@ -46,12 +45,6 @@ local UpdateStanceButtons = Engine:Wrap(function(self)
 		buttons[i]:SetChecked(nil)
 	end
 
-	if (numForms == 0) then
-		self.disabled = true
-	else
-		self.disabled = false
-	end
-	
 	if needUpdate then
 		self:SetSize(unpack(Module.config.structure.bars.stance.bar_size[numForms]))	
 	end
@@ -59,7 +52,7 @@ end)
 
 -- Update the checked state of the buttons
 local UpdateButtonStates = function(self)
-	local buttons = self.buttons or {}
+	local buttons = self.buttons
 	local numForms = GetNumShapeshiftForms()
 	local currentForm = GetShapeshiftForm()
 	for i = 1, numForms do 
@@ -74,13 +67,12 @@ end
 
 BarWidget.OnEnable = function(self)
 	local config = Module.config
-	local db = Module.db
 	local barConfig = Module.config.structure.bars.stance
 
 	local Artwork = Module:GetWidget("Artwork")
 
 	local Bar = Module:GetHandler("ActionBar"):New("stance", Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
-	Bar:SetSize(unpack(barConfig.bar_size[GetNumShapeshiftForms() or 0]))
+	Bar:SetSize(unpack(barConfig.bar_size[GetNumShapeshiftForms()]))
 	Bar:Place(unpack(barConfig.position))
 	Bar:SetAttribute("old_button_size", barConfig.buttonsize)
 	Bar:GetParent():Hide()
@@ -94,24 +86,7 @@ BarWidget.OnEnable = function(self)
 	-- Buttons
 	--------------------------------------------------------------------
 	-- figure out anchor points
-	local banchor, bx, by
-	if (barConfig.growth == "UP") then
-		banchor = "BOTTOM"
-		bx = 0
-		by = 1
-	elseif (barConfig.growth == "DOWN") then
-		banchor = "TOP"
-		bx = 0
-		by = -1
-	elseif (barConfig.growth == "LEFT") then
-		banchor = "RIGHT"
-		bx = -1
-		by = 0
-	elseif (barConfig.growth == "RIGHT") then
-		banchor = "LEFT"
-		bx = 1
-		by = 0
-	end
+	local banchor, bx, by = unpack(Module.GROWTH[barConfig.growth])
 	local padding = config.structure.controllers.main.padding
 
 	-- Spawn the action buttons
@@ -127,7 +102,6 @@ BarWidget.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("ACTIONBAR_PAGE_CHANGED", "OnEvent")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORM", "OnEvent")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", "OnEvent")
@@ -143,14 +117,14 @@ BarWidget.OnEvent = function(self, event, ...)
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD", "OnEvent") -- should only need it once
 	end
 	self:UpdateStanceButton()
-
-	local Bar = self:GetFrame()
-	if Bar then
-		Bar:UpdateButtonStates()
-	end
+	self.Bar:UpdateButtonStates()
 end
 
-BarWidget.UpdateStanceButton = function(self)
+BarWidget.UpdateStanceButton = function(self, event)
+	if (event == "PLAYER_REGEN_ENABLED") then
+		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButton")
+	end
+
 	local Bar = self.Bar
 
 	local oldNumForms = Bar.numForms
@@ -173,13 +147,6 @@ BarWidget.UpdateStanceButton = function(self)
 	end
 
 	Bar.numForms = numForms
-		
-	--Bar:RegisterVisibilityDriver()
-	-- should be options somewhere for this
-	--local Bar = Module:GetWidget("Bar: Stance"):GetFrame()
-	--if Bar then
-	--	self.StanceWindow:SetSize(Bar:GetSize())
-	--end
 end
 
 -- Callback to update the actual stance bar's button artwork.

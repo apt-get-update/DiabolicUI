@@ -88,8 +88,8 @@ local function loadRunesElement()
 	Engine:NewStaticConfig("Data: Colors", { Power = COLORS })
 	local Handler = Engine:NewHandler("UnitFrame")
 	local captured
-	Handler.RegisterElement = function(self, name, Enable, Disable, Update)
-		captured = { Enable = Enable, Disable = Disable, Update = Update }
+	Handler.RegisterElement = function(self, name, Enable, Update)
+		captured = { Enable = Enable, Update = Update }
 	end
 	assert(loadfile("modules/unitframes/elements/runes.lua"))("DiabolicUI", Engine)
 	return captured
@@ -130,6 +130,20 @@ function TestRunes:test_death_rune_recolors()
 	state.runes[5][4] = 4 -- a frost rune converted to death
 	self:update("RUNE_TYPE_UPDATE", 5)
 	lu.assertAlmostEquals(self.Runes[3].Fill.color[1], COLORS.RUNES_DEATH[1] * .5, 1e-9)
+end
+
+function TestRunes:test_progress_stays_between_empty_and_full()
+	-- (the ready event can come a moment late, and a queued rune's start
+	-- can lie ahead)
+	recharge(1, 98)
+	self:update("RUNE_POWER_UPDATE", 1)
+	state.now = 112 -- past the end, still not ready
+	self.Runes.onUpdate(self.Runes, .1)
+	lu.assertEquals(self.Runes[1].progress, 1)
+	recharge(1, 120)
+	self:update("RUNE_POWER_UPDATE", 1)
+	lu.assertEquals(self.Runes[1].progress, 0)
+	lu.assertFalse(self.Runes[1].Fill.shown)
 end
 
 function TestRunes:test_recharging_fill_is_cropped()

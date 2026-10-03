@@ -20,6 +20,5 @@ local Enable = function(self, unit)
 	end
 end
 
-local Disable = function(self, unit) end
 
-Handler:RegisterElement("WeaponEnchants", Enable, Disable, Update)
+Handler:RegisterElement("WeaponEnchants", Enable, Update)

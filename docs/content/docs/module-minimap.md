@@ -13,7 +13,7 @@ ported.
 ```text
 modules/minimap/
 ├── minimap.xml       # single entry point, replicates the original .toc's load order
-├── Libs/              # Ace3 (AceAddon/AceDB/AceGUI/AceHook/AceTimer/AceConsole/...),
+├── Libs/              # Ace3 (AceAddon/AceConsole/AceDB/AceHook/AceLocale/AceTimer),
 │                       # LibMoreEvents-1.0, UTF8
 ├── Locale/
 ├── Core/               # Core.lua (AceAddon registration), API/, Common/, Widgets/, Finalize.lua, Private.lua
@@ -53,8 +53,7 @@ one root table, and each one assumes it owns that table:
   collide (keys are case-sensitive), but one named `"global"` would silently
   wipe the minimap's global settings on the next login, with no error.
 - **Resets would stop being independent.** Anything that clears
-  `DiabolicUI_DB` (like the development-only `DEVELOPER_RESET` switch)
-  would take the minimap's settings with it.
+  `DiabolicUI_DB` would take the minimap's settings with it.
 - **AceDB's profile features assume sole ownership.** Profile switching,
   copying and resetting, and their callbacks, aren't written to coexist
   with a second system rewriting parts of the same root table.

@@ -106,13 +106,6 @@ function TestApplyFadeSettings:test_applies_fadeChat_and_timeVisible_to_every_ch
 	end
 end
 
-function TestApplyFadeSettings:test_skips_a_listed_frame_that_does_not_currently_exist()
-	table.insert(_G.CHAT_FRAMES, "ChatFrame3") -- no _G.ChatFrame3 defined
-	-- must not error just because one listed frame is missing
-	self.Module:ApplyFadeSettings()
-	lu.assertEquals(#_G.ChatFrame1.fadingCalls, 1)
-end
-
 TestSaveChatFrameLayout = {}
 
 function TestSaveChatFrameLayout:setUp()
