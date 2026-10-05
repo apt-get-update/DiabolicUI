@@ -57,9 +57,10 @@ tests/coverage/run.sh            # summary per area, full table in tests/coverag
 tests/coverage/run.sh --readme   # also refresh the coverage table in README.adoc
 ```
 
-The test files run in parallel, one per CPU (set `JOBS` to change that).
-The session tests are the slow ones under the line hook: expect a few
-minutes for the whole run.
+The tests run in parallel, one job per CPU (set `JOBS` to change that):
+the session tests one test per job, the other files one file per job. The
+line hook makes the code about 8 times slower, and the session tests boot
+the whole addon for every test: expect several minutes for the whole run.
 
 The coverage tool is part of the repo (`tests/coverage/hook.lua` and
 `report.lua`) and needs nothing beyond Lua 5.1 and `luac5.1`. It records

@@ -509,12 +509,15 @@ end
 function TestPopups:test_popups_get_our_frames()
 	boot()
 	local config = client.Engine:GetDB("UI").popup
-	-- Blizzard's input border is gone
+	-- Blizzard's input border is gone, the editbox's other textures (its
+	-- text selection) stay
+	local textures = {}
 	for _, region in ipairs({ _G.StaticPopup1EditBox:GetRegions() }) do
 		if region:GetObjectType() == "Texture" then
-			lu.assertNil(region:GetTexture())
+			textures[#textures + 1] = region:GetTexture() or false
 		end
 	end
+	lu.assertEquals(textures, { false, false, [[Interface\Buttons\WHITE8X8]] })
 	lu.assertNotNil(_G.StaticPopup1EditBox:GetBackdrop())
 	-- the buttons light up
 	local button = _G.StaticPopup1Button1
@@ -523,6 +526,28 @@ function TestPopups:test_popups_get_our_frames()
 	near(color(button:GetBackdropColor()), config.footer.button.backdropColor_hover)
 	client:Leave()
 	near(color(button:GetBackdropColor()), config.footer.button.backdropColor)
+	assertClean(client)
+end
+
+function TestPopups:test_the_dungeon_finder_gets_our_frames()
+	boot()
+	local config = client.Engine:GetDB("UI").popup
+	for _, name in ipairs({ "LFDRoleCheckPopup", "LFDDungeonReadyDialog", "LFDDungeonReadyStatus" }) do
+		lu.assertEquals(_G[name]:GetBackdrop(), config.header.backdrop, name)
+		lu.assertEquals(_G[name].backdrop:GetBackdrop(), config.backdrop, name)
+	end
+	-- the dungeon's picture stays, the gold filigree goes
+	lu.assertNotNil(_G.LFDDungeonReadyDialogBackground:GetTexture())
+	lu.assertNil(_G.LFDDungeonReadyDialogFiligree:GetTexture())
+	lu.assertNil(_G.LFDDungeonReadyDialogBottomArt:GetTexture())
+	-- flat buttons: Blizzard's own three textures, swapped on clicks, stay invisible
+	local enter = _G.LFDDungeonReadyDialogEnterDungeonButton
+	lu.assertEquals(select(4, _G.LFDDungeonReadyDialogEnterDungeonButtonMiddle:GetVertexColor()), 0)
+	client:Hover(enter)
+	near(color(enter:GetBackdropColor()), config.footer.button.backdropColor_hover)
+	client:Leave()
+	-- the queue's status is one of our tooltips, on the minimap's eye
+	lu.assertEquals(_G.LFDSearchStatus:GetBackdrop(), client.Engine:GetDB("Blizzard").tooltips.dummy_backdrop)
 	assertClean(client)
 end
 

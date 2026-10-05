@@ -129,7 +129,7 @@ local function constants()
 		ITEM_LEVEL = "Item Level %d", TALENTS = "Talents", LEVEL = "Level", DEAD = "Dead",
 		PLAYER_OFFLINE = "Offline", AFK = "AFK", DND = "DND", ELITE = "Elite", NONE = "None",
 		HAVE_MAIL = "You have unread mail", HAVE_MAIL_FROM = "Unread mail from:",
-		FPS_ABBR = "fps", MILLISECONDS_ABBR = "ms", YOU = "You", CLOSE = "Close", CONTINUED = "...",
+		FPS_ABBR = "fps", MILLISECONDS_ABBR = "ms", YOU = "You", CLOSE = "Close", CONTINUED = "...", GROUP = "Group",
 		FACTION_ALLIANCE = "Alliance", FACTION_HORDE = "Horde", PVP_ENABLED = "PvP",
 		SPELL_TIME_REMAINING_DAYS = "%d |4day:days; remaining", SPELL_TIME_REMAINING_HOURS = "%d |4hour:hours; remaining",
 		SPELL_TIME_REMAINING_MIN = "%d |4minute:minutes; remaining", SPELL_TIME_REMAINING_SEC = "%d |4second:seconds; remaining",
@@ -355,6 +355,8 @@ local function staticPopup(index)
 	-- its chat input border: nameless left and right textures
 	new("Texture", nil, popup.editBox):SetTexture([[Interface\ChatFrame\UI-ChatInputBorder-Left]])
 	new("Texture", nil, popup.editBox):SetTexture([[Interface\ChatFrame\UI-ChatInputBorder-Right]])
+	-- and a texture of its own (as the client's text selection is)
+	new("Texture", nil, popup.editBox):SetTexture([[Interface\Buttons\WHITE8X8]])
 	popup.wideEditBox = hidden(new("EditBox", name .. "WideEditBox", popup))
 	popup.moneyFrame = hidden(new("Frame", name .. "MoneyFrame", popup))
 	popup.moneyInputFrame = hidden(new("Frame", name .. "MoneyInputFrame", popup))
@@ -668,6 +670,27 @@ local function buildFrames()
 	local scrollBar = new("Slider", "LFDQueueFrameSpecificListScrollFrameScrollBar", scroll)
 	button("Button", "LFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton", scrollBar)
 	button("Button", "LFDQueueFrameSpecificListScrollFrameScrollBarScrollDownButton", scrollBar)
+	-- the Dungeon Finder's dialogs (LFDFrame.xml), with UIPanelButtonTemplate2
+	-- buttons: no button textures, but three of their own
+	local function button2(name, parent)
+		local b = new("Button", name, parent, "UIPanelButtonTemplate2")
+		state[b].highlightTexture = new("Texture", nil, b)
+		for _, side in ipairs({ "Left", "Middle", "Right" }) do
+			new("Texture", name .. side, b)
+		end
+		return b
+	end
+	local roleCheck = hidden(new("Frame", "LFDRoleCheckPopup", UIParent))
+	button2("LFDRoleCheckPopupAcceptButton", roleCheck)
+	button2("LFDRoleCheckPopupDeclineButton", roleCheck)
+	local readyPopup = hidden(new("Frame", "LFDDungeonReadyPopup", UIParent))
+	new("Frame", "LFDDungeonReadyStatus", readyPopup)
+	local readyDialog = new("Frame", "LFDDungeonReadyDialog", readyPopup)
+	new("Texture", "LFDDungeonReadyDialogBackground", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-BACKGROUND-RANDOMDUNGEON]])
+	new("Texture", "LFDDungeonReadyDialogFiligree", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-FILIGREE]])
+	new("Texture", "LFDDungeonReadyDialogBottomArt", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-FILIGREE]])
+	button2("LFDDungeonReadyDialogEnterDungeonButton", readyDialog)
+	button2("LFDDungeonReadyDialogLeaveQueueButton", readyDialog)
 	local merchant = hidden(new("Frame", "MerchantFrame", UIParent))
 	for i = 1, 2 do
 		button("Button", "MerchantFrameTab" .. i, merchant)
@@ -730,6 +753,7 @@ local function buildFrames()
 	lfg.eye = eye
 	eye.texture = new("Texture", "MiniMapLFGFrameIconTexture", eye)
 	new("Frame", "MiniMapLFGFrameDropDown", lfg, "UIDropDownMenuTemplate")
+	hidden(new("Frame", "LFDSearchStatus", lfg)):SetBackdrop({})
 	local difficulty = hidden(new("Frame", "MiniMapInstanceDifficulty", minimap))
 	new("Texture", "MiniMapInstanceDifficultyTexture", difficulty)
 	new("FontString", "MiniMapInstanceDifficultyText", difficulty)
@@ -990,6 +1014,7 @@ local function frameXML(client)
 		local popup = _G.StaticPopup1
 		popup.which, popup.data = which, data
 		popup.text:SetText(string.format(info.text or "", text1 or "", text2 or ""))
+		if info.hasEditBox then popup.editBox:Show() else popup.editBox:Hide() end
 		popup:Show()
 		if info.OnShow then client:Call(info.OnShow, popup, data) end
 		return popup

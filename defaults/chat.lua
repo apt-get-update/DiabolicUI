@@ -20,6 +20,6 @@ Engine:NewConfig("ChatWindows", {
 
 -- chat filters and emoticons
 Engine:NewConfig("ChatFilters", {
-	copyWebLinks = true -- left-click a http(s) web link in chat to copy it
+	copyWebLinks = true -- left-click a web link in chat to copy it
 })
 

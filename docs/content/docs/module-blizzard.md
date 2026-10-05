@@ -31,7 +31,7 @@ The rest:
 | `fonts.lua` | Wires the addon's own font objects (see [Settings & Locale]({{< relref "settings-and-locale" >}})), including a Latin-vs-non-Latin locale check |
 | `gamemenu.lua` | The Escape-menu button list |
 | `mirrortimers.lua` | Mirror timers (breath, feign death, etc.) |
-| `popups.lua` | `StaticPopup` dialogs |
+| `popups.lua` | `StaticPopup` dialogs and the Dungeon Finder's |
 | `styling.lua` | Tints the character, spell book, dungeon finder, world map and merchant frames; see below |
 | `totembar.lua` | `MultiCastActionBarFrame` (totem bar) |
 | `tooltips.lua` | `GameTooltip` skin + inspected-player gear info |

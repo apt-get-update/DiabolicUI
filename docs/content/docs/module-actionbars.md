@@ -19,10 +19,9 @@ modules/actionbars/
     ├── artwork.lua            # bar background art + range/mana desaturation
     ├── floaters.lua           # stance bar toggle, vehicle/taxi exit buttons
     ├── keybinds.lua           # keybind text overlay on buttons
-    ├── menu.lua               # the Micro Menu (main menu button row)
+    ├── menu.lua               # the Micro Menu (main menu button row), online friends and guild on its social button
     ├── pet.lua                # pet action bar
     ├── reputation.lua         # reputation/XP-adjacent bar bits
-    ├── social.lua              # social/raid/PvP micro-buttons
     ├── stance.lua              # stance/shapeshift bar
     ├── vehicle.lua              # vehicle action bar
     └── xp.lua                    # experience bar

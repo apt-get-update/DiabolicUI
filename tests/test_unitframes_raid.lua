@@ -8,9 +8,10 @@
 --   DRUID   Curse, Poison          MAGE    Curse
 --   SHAMAN  Poison, Disease, plus Curse with the Cleanse Spirit talent
 -- (druids and shamans only gained Magic removal in Cataclysm).
--- And its layout: the 40 raid frames are placed by subgroup whenever the
--- roster changes, but being secure frames they can't move in combat, so a
--- change in combat is laid out when combat ends.
+-- And its layout: the 40 raid frames are placed by subgroup, under a
+-- "Group N" label, whenever the roster changes, but being secure frames
+-- they can't move in combat, so a change in combat is laid out when combat
+-- ends.
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -113,6 +114,11 @@ local function newFrame()
 	function frame:RegisterEvent(event) self.events[event] = true end
 	function frame:UnregisterEvent(event) self.events[event] = nil end
 	function frame:SetScript(script, func) self.onEvent = func end
+	function frame:SetFontObject() end
+	function frame:SetWidth(width) self.width = width end
+	function frame:SetJustifyH(justify) self.justify = justify end
+	function frame:SetText(text) self.text = text end
+	function frame:CreateFontString() return newFrame() end
 	return frame
 end
 
@@ -124,10 +130,12 @@ function TestRaidLayout:setUp()
 	_G.RegisterStateDriver = function() end
 	_G.GetNumRaidMembers = function() return #state.roster end
 	_G.GetRaidRosterInfo = function(i) return state.roster[i][1], nil, state.roster[i][2] end
+	_G.GROUP = "Group"
 
 	local Engine = EngineMock.new()
 	Engine:NewStaticConfig("UnitFrames", { visuals = { units = { raid = {
 		position = { "TOPLEFT", 0, 0 }, size = { 100, 30 }, offset = 5, auras = { button = { size = { 20, 20 } } },
+		groups = { label_height = 40, spacing = 10 },
 	} } } })
 	Engine.CreateFrame = function() return newFrame() end
 	local UnitFrame = Engine:NewHandler("UnitFrame")
@@ -149,6 +157,35 @@ function TestRaidLayout:test_members_are_placed_out_of_combat()
 	lu.assertEquals(#frames[1].points, 1)
 	lu.assertTrue(frames[2].shown)
 	lu.assertFalse(frames[3].shown) -- nobody in slot 3
+end
+
+-- the points of `frame`'s one anchor: x, y
+local function at(frame)
+	return { frame.points[1][4], frame.points[1][5] }
+end
+
+function TestRaidLayout:test_members_are_placed_by_group_under_its_label()
+	-- groups 1 and 2 share a column, 3 has the next; 2 rows of 35, a column of 128
+	state.roster = { { "A", 1 }, { "B", 2 }, { "C", 1 }, { "D", 3 }, { "E", 2 } }
+	self.Widget:OnEnable()
+	local frames, labels = self.Widget.UnitFrames, self.Widget.GroupLabels
+	lu.assertEquals(at(frames[1]), { 0, -40 })
+	lu.assertEquals(at(frames[3]), { 0, -75 }) -- group 1's second
+	lu.assertEquals(at(frames[2]), { 0, -265 }) -- group 2 under group 1's 40 + 5 * 35 + 10, then its label
+	lu.assertEquals(at(frames[5]), { 0, -300 })
+	lu.assertEquals(at(frames[4]), { 128, -40 })
+	lu.assertEquals(labels[2].text, "Group 2")
+	lu.assertEquals({ labels[2].width, labels[2].justify }, { 100, "CENTER" }) -- over the frames
+	lu.assertEquals(at(labels[2]), { 0, -225 })
+	lu.assertEquals(at(labels[3]), { 128, 0 })
+	-- only the groups with someone in them are labeled
+	lu.assertEquals({ labels[1].shown, labels[2].shown, labels[3].shown, labels[4].shown }, { true, true, true, false })
+
+	-- group 3 leaves
+	state.roster[4] = { "D", 1 }
+	self:rosterChanges()
+	lu.assertFalse(labels[3].shown)
+	lu.assertEquals(at(frames[4]), { 0, -110 })
 end
 
 function TestRaidLayout:test_roster_change_in_combat_waits_for_the_end_of_combat()

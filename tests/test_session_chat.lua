@@ -342,16 +342,26 @@ function TestCopyLinks:test_clicking_a_link_opens_the_copy_box()
 	local frame = _G.ChatFrame1
 	frame:AddMessage("guide at https://example.com/guide please")
 	local last = client.widgetState[frame].messages[#client.widgetState[frame].messages].text
-	local id = last:match("|HDiabolicCopyText:(%d+)|h")
-	lu.assertNotNil(id)
-	_G.SetItemRef("DiabolicCopyText:" .. id, "https://example.com/guide", "LeftButton", frame)
+	local link = last:match("|H(url:.-)|h")
+	lu.assertEquals(link, "url:https://example.com/guide")
+	_G.SetItemRef(link, "https://example.com/guide", "LeftButton", frame)
+	-- the hover tooltip
+	client:RunScript(frame, "OnHyperlinkEnter", link, "https://example.com/guide")
+	lu.assertEquals(Session.tooltipLines(_G.GameTooltip)[1], client.Engine:GetLocale()["Click to copy the link."])
+	client:RunScript(frame, "OnHyperlinkLeave", link)
 	lu.assertTrue(shown(_G.StaticPopup1))
-	lu.assertEquals(_G.StaticPopup1.editBox:GetText(), "https://example.com/guide")
+	local editBox = _G.StaticPopup1.editBox
+	lu.assertEquals(editBox:GetText(), "https://example.com/guide")
+	-- read only: typing puts the link back (Blizzard's popup passes on its
+	-- OnTextChanged with the popup's data)
+	local info = _G.StaticPopupDialogs.DIABOLICUI_COPY_CHAT_TEXT
+	editBox:SetText("oops")
+	info.EditBoxOnTextChanged(editBox, _G.StaticPopup1.data)
+	lu.assertEquals(editBox:GetText(), "https://example.com/guide")
+	info.EditBoxOnTextChanged(editBox, _G.StaticPopup1.data) -- unchanged: left alone
+	lu.assertEquals(editBox:GetText(), "https://example.com/guide")
 
-	-- a link that's no longer kept: nothing
 	_G.StaticPopup1:Hide()
-	_G.SetItemRef("DiabolicCopyText:99999", "gone", "LeftButton", frame)
-	lu.assertFalse(shown(_G.StaticPopup1))
 	assertClean(client)
 end
 

@@ -1,46 +1,95 @@
 local _, Engine = ...
 local Module = Engine:NewModule("ChatFilters")
+local L = Engine:GetLocale()
 
 Module:SetIncompatible("gUI4_Chat")
 
 -- Lua API
 local _G = _G
+local ipairs = ipairs
+local select = select
+local table_concat = table.concat
 
 -- WoW API
 local FCF_GetCurrentChatFrame = _G.FCF_GetCurrentChatFrame
 local StaticPopup_Show = _G.StaticPopup_Show
 local hooksecurefunc = _G.hooksecurefunc
 
+-- WoW Frames & Objects
+local GameTooltip = _G.GameTooltip
+
 local handled = {}
 
--- Copy Web Links: any http:// or https:// URL found in a chat message gets
--- wrapped in our own custom hyperlink (keeping the URL itself as the link's
--- visible text), so left-clicking it opens a popup with that URL, selected
--- and ready to copy. Everything else in the message - including other
--- hyperlinks - is left completely untouched.
--- Bounded so it can't grow forever over a long play session.
-local COPY_TEXT_HISTORY_LIMIT = 200
-local copyTextByIndex = {}
-local nextCopyIndex = 0
+-- Copy Web Links: web addresses in chat messages become light blue links,
+-- |Hurl:<address>|h<address>|h, that open a popup with the address
+-- selected, ready to copy, when left-clicked. Counted as web addresses:
+-- anything with a scheme (https://, ftp://, ...), www.<domain>, mailto: and
+-- e-mail addresses, IPv4 addresses, a domain with a port or a path, and a
+-- bare domain with a common top level domain (so "etc." or "wait.no" stay
+-- text). Brackets and quotes around an address, and the punctuation ending
+-- a sentence after it, stay out of the link. Other links, textures and
+-- colors in the message are left alone.
+local URL_COLOR = "|cff40a6ff"
 
--- Deliberately excludes "|" (would break WoW's own link escape codes) and
--- whitespace from the URL itself.
-local URL_PATTERN = "(https?://[^%s|]+)"
+local COMMON_TLDS = {
+	app = true, biz = true, co = true, com = true, dev = true, edu = true, gg = true, gl = true, gov = true,
+	info = true, io = true, me = true, net = true, online = true, org = true, tv = true, wiki = true, xyz = true,
+}
+
+local IsWebAddress = function(word)
+	if word:find("^%a[%w%+%.%-]*://.") -- scheme://...
+	or word:find("^[Ww][Ww][Ww]%.[%w%.%-]+%.%a%a") -- www.domain.tld
+	or word:find("^mailto:.")
+	or word:find("^[%w%.%-_%+]+@[%w%.%-]+%.%a%a+$") -- e-mail
+	or word:find("^%d+%.%d+%.%d+%.%d+") -- IPv4, with a port or a path
+	or word:find("^[%w%.%-]+%.[%w%-]+[:/]") then -- domain.tld:port or domain.tld/path
+		return true
+	end
+	local tld = word:match("^[%w%.%-]+%.(%a%a+)$") -- domain.tld
+	return (tld ~= nil) and COMMON_TLDS[tld:lower()] or false
+end
+
+-- A word of plain text, linked when it's a web address.
+local LinkWord = function(word)
+	local lead, address, trail = word:match("^([%(%[<\"']*)(.-)([%)%]>\"'%.,;:!%?]*)$")
+	if (address ~= "") and IsWebAddress(address) then
+		return lead .. URL_COLOR .. "|Hurl:" .. address .. "|h" .. address .. "|h|r" .. trail
+	end
+end
+
+-- The escape sequences copied over as they are: links, textures, colors
+-- and an escaped "|".
+local ESCAPES = { "^|H.-|h.-|h", "^|T.-|t", "^|c%x%x%x%x%x%x%x%x", "^|r", "^||" }
 
 local WrapWebLinks = function(msg)
-	return (msg:gsub(URL_PATTERN, function(url)
-		nextCopyIndex = nextCopyIndex + 1
-		copyTextByIndex[nextCopyIndex] = url
-		copyTextByIndex[nextCopyIndex - COPY_TEXT_HISTORY_LIMIT] = nil
-
-		return "|HDiabolicCopyText:" .. nextCopyIndex .. "|h" .. url .. "|h"
-	end))
+	if (not msg:find(".", 1, true)) then -- every web address has a dot
+		return msg
+	end
+	local out, plain, pos = {}, 1, 1
+	while true do
+		local bar = msg:find("|", pos, true)
+		if (not bar) then
+			break
+		end
+		local last
+		for _, pattern in ipairs(ESCAPES) do
+			last = select(2, msg:find(pattern, bar))
+			if last then
+				break
+			end
+		end
+		if last then
+			out[#out + 1] = msg:sub(plain, bar - 1):gsub("[^%s|]+", LinkWord)
+			out[#out + 1] = msg:sub(bar, last)
+			plain = last + 1
+		end
+		pos = (last or bar) + 1
+	end
+	out[#out + 1] = msg:sub(plain):gsub("[^%s|]+", LinkWord)
+	return table_concat(out)
 end
 
 local ShowCopyTextPopup = function(text)
-	if (not text) or (text == "") then
-		return
-	end
 	StaticPopup_Show("DIABOLICUI_COPY_CHAT_TEXT", nil, nil, text)
 end
 
@@ -54,6 +103,13 @@ _G.StaticPopupDialogs["DIABOLICUI_COPY_CHAT_TEXT"] = {
 		self.editBox:SetText(self.data or "")
 		self.editBox:HighlightText()
 		self.editBox:SetFocus()
+	end,
+	-- read only: any change puts the text back, selected
+	EditBoxOnTextChanged = function(self, data)
+		if (self:GetText() ~= (data or "")) then
+			self:SetText(data or "")
+			self:HighlightText()
+		end
 	end,
 	EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
 	EditBoxOnEnterPressed = function(self) self:GetParent():Hide() end,
@@ -70,18 +126,33 @@ _G.StaticPopupDialogs["DIABOLICUI_COPY_CHAT_TEXT"] = {
 -- ever sees it.
 local Original_SetItemRef = _G.SetItemRef
 _G.SetItemRef = function(link, text, button, ...)
-	local index = link:match("^DiabolicCopyText:(%d+)$")
-	if index then
+	local address = link:match("^url:(.+)$")
+	if address then
 		-- Left-click only, same as opening any other chat link. Still
 		-- swallowed (not forwarded) on any other button, since the
 		-- original errors on this unrecognized link type regardless of
 		-- which button was used.
 		if button == "LeftButton" then
-			ShowCopyTextPopup(copyTextByIndex[tonumber(index)])
+			ShowCopyTextPopup(address)
 		end
 		return
 	end
 	return Original_SetItemRef(link, text, button, ...)
+end
+
+-- Hovering a web link says what a click does.
+local OnHyperlinkEnter = function(frame, link)
+	if link:find("^url:") then
+		GameTooltip:SetOwner(frame, "ANCHOR_CURSOR")
+		GameTooltip:SetText(L["Click to copy the link."])
+		GameTooltip:Show()
+	end
+end
+
+local OnHyperlinkLeave = function(frame)
+	if (GameTooltip:GetOwner() == frame) then
+		GameTooltip:Hide()
+	end
 end
 
 local AddMessage = function(frame, msg, ...)
@@ -127,6 +198,9 @@ Module.SetUpFrame = function(self, frame)
 	if frame.AddMessage and frame ~= _G["ChatFrame2"] then
 		frame.AddMessage = frame.custom.message
 	end
+
+	frame:HookScript("OnHyperlinkEnter", OnHyperlinkEnter)
+	frame:HookScript("OnHyperlinkLeave", OnHyperlinkLeave)
 end
 
 Module.SetUpFilters = function(self)

@@ -4,15 +4,20 @@ local MenuWidget = Module:SetWidget("Menu: Main")
 local L = Engine:GetLocale()
 
 -- Lua API
-local ipairs, unpack = ipairs, unpack
+local ipairs, select, unpack = ipairs, select, unpack
 local floor = math.floor
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetFramerate = _G.GetFramerate
+local GetGuildRosterInfo = _G.GetGuildRosterInfo
 local GetNetStats = _G.GetNetStats
+local GetNumFriends = _G.GetNumFriends
+local GetNumGuildMembers = _G.GetNumGuildMembers
+local GuildRoster = _G.GuildRoster
 local hooksecurefunc = _G.hooksecurefunc
 local InCombatLockdown = _G.InCombatLockdown
+local IsInGuild = _G.IsInGuild
 local PlaySound = _G.PlaySound
 local UnitFactionGroup = _G.UnitFactionGroup
 
@@ -22,6 +27,34 @@ local GameTooltip = _G.GameTooltip
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
+
+-- Adds the other guild members and the friends online to `tooltip` (the
+-- social button's), after a blank line, when there are any. 3.3.5's
+-- GetNumGuildMembers only gives one count: the roster, offline members
+-- included, says who's online. A fresh roster is asked for the next time.
+local AddPeopleLines = function(tooltip)
+	local guildies = 0
+	if IsInGuild() then
+		GuildRoster()
+		for i = 1, GetNumGuildMembers(true) do
+			if select(9, GetGuildRosterInfo(i)) then
+				guildies = guildies + 1
+			end
+		end
+		guildies = guildies - 1 -- not you
+	end
+	local _, friends = GetNumFriends()
+
+	if (guildies > 0) or (friends > 0) then
+		tooltip:AddLine(" ")
+		if (guildies > 0) then
+			tooltip:AddDoubleLine(L["Guild Members Online:"], guildies, 1,1,1,1,.82,0)
+		end
+		if (friends > 0) then
+			tooltip:AddDoubleLine(L["Friends Online:"], friends, 1,1,1,1,.82,0)
+		end
+	end
+end
 
 MenuWidget.UpdateMicroButtons = function(self, event, ...)
 	self.MicroMenuWindow:Arrange()
@@ -414,6 +447,10 @@ MenuWidget.OnEnable = function(self)
 		button:SetScript("OnEnter", function(self) 
 			self:OnEnter()
 			if GameTooltip:IsShown() and GameTooltip:GetOwner() == self then
+				if (self == SocialsMicroButton) then
+					AddPeopleLines(GameTooltip)
+					GameTooltip:Show() -- resize to the new lines
+				end
 				GameTooltip:ClearAllPoints()
 				GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
 			end

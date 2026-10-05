@@ -111,7 +111,6 @@ Module.OnInit = function(self, event, ...)
   -- Enable everything
   self:GetWidget("Controller: Pet"):Enable()
   self:GetWidget("Controller: Menu"):Enable()
-  self:GetWidget("Controller: Chat"):Enable()
 
   self:GetWidget("Bar: Vehicle"):Enable()
   self:GetWidget("Bar: 1"):Enable()
@@ -126,7 +125,6 @@ Module.OnInit = function(self, event, ...)
   self:GetWidget("Bar: Floaters"):Enable()
 
   self:GetWidget("Menu: Main"):Enable()
-  self:GetWidget("Menu: Chat"):Enable()
 
   -- Add our bars to the registry, and register their action name for keybind grabbing
   self:AddBar(self:GetWidget("Bar: 1"):GetFrame(), "ACTIONBUTTON%d")

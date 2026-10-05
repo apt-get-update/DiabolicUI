@@ -39,17 +39,19 @@ temporary window via a `FCF_OpenTemporaryWindow` hook) — normalizing player-
 name/channel-name link formatting, coloring AFK/DND tags and raid warnings,
 and (optionally, `Module.db.copyWebLinks`) the **copy web links** feature:
 
-Any `http://`/`https://` URL found in a message gets wrapped in a custom
-`|HDiabolicCopyText:<id>|h` hyperlink (keeping the URL itself as the visible
-text, everything else in the message untouched) via `WrapWebLinks`. The
-actual popup — an editable, pre-selected text box the player can copy from —
-opens on left-click through a **real override of `_G.SetItemRef`**, not
+Web addresses found in a message become light blue
+`|Hurl:<address>|h<address>|h` links, through `WrapWebLinks` (the same rules
+as CleanerChat's Glass backport): anything with a scheme (`https://`,
+`ftp://`, ...), `www.` domains, `mailto:` and e-mail addresses, IPv4
+addresses, domains with a port or a path, and bare domains with a common top
+level domain, so "etc." or "v3.3.5a" stay text. Brackets and quotes around an
+address and the punctuation ending a sentence after it stay out of the link;
+links, textures and colors already in the message are copied over as they
+are. Hovering one shows "Click to copy the link." (an `OnHyperlinkEnter`
+hook on each chat frame). The popup (the address selected, read only) opens
+on left-click through a **real override of `_G.SetItemRef`**, not
 `hooksecurefunc`: Blizzard's own `SetItemRef` falls through to
 `ItemRefTooltip:SetHyperlink()` for any link type it doesn't recognize,
 which *errors* outright rather than no-op'ing, so a secure hook running
 *alongside* the original isn't enough — this custom link type has to be
 caught and handled *instead of* calling through to the original at all.
-
-The URL-to-popup-text mapping (`copyTextByIndex`) is a small ring buffer
-(`COPY_TEXT_HISTORY_LIMIT = 200`) so it can't grow unboundedly over a long
-play session.

@@ -657,7 +657,7 @@ Module.CreateOptionsPanel = function(self)
 	-- Miscellaneous
 	CreateHeader(chatPanel, layout, L["Miscellaneous"])
 
-	local copyWebLinks = CreateCheckbox(chatPanel, "ChatCopyWebLinks", L["Copy Web Links"], L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."], function(button)
+	local copyWebLinks = CreateCheckbox(chatPanel, "ChatCopyWebLinks", L["Copy Web Links"], L["Left-click a web link (like https://..., www.... or name@mail.com) in the chat to open a popup with it, selected and ready to copy."], function(button)
 		chatFiltersDB.copyWebLinks = button:GetChecked() and true or false
 	end)
 	layout:Place(copyWebLinks, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))

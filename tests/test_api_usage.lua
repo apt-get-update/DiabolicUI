@@ -16,6 +16,12 @@ package.path = "./tests/?.lua;" .. package.path
 
 local lu = require("luaunit")
 
+-- A temporary file name in $TMPDIR (os.tmpname() always uses /tmp, which a
+-- sandbox may not let us write to).
+local function tempName()
+	return (os.getenv("TMPDIR") or "/tmp") .. "/diabolicui_test_" .. os.time() .. "_" .. math.random(1e9)
+end
+
 local LUAC = os.getenv("LUAC") or "luac5.1"
 
 -- Lowercase globals that exist: Lua's own, and the ones WoW adds.
@@ -244,7 +250,7 @@ function TestApiUsage:test_secure_snippets_only_call_methods_that_exist()
 end
 
 function TestApiUsage:test_detectors_catch_planted_mistakes()
-	local tmp = os.tmpname()
+	local tmp = tempName()
 	local source = table.concat({
 		"local f = CreateFrame('Frame')",
 		"f:RegisterEvent(\"GROUP_ROSTER_UPDATE\")",

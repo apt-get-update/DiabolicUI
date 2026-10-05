@@ -22,7 +22,6 @@
 <Script file='keybinds.lua'/>
 
 <!-- Corner menus -->
-<Script file='social.lua'/>
 <Script file='menu.lua'/>
 
 </Ui>

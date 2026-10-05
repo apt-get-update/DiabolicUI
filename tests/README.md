@@ -29,10 +29,10 @@ tests/coverage/run.sh --readme   # also refresh the table in README.adoc
 
 `coverage/hook.lua` is loaded in front of each test file and records every
 addon line that runs (a `debug.sethook` line hook; test files, `docs/` and
-vendored `Libs/` are left out). The test files run in parallel, one per CPU
+vendored `Libs/` are left out). The tests run in parallel, one job per CPU
 (`JOBS=2 tests/coverage/run.sh` to change that), each into its own file
-under `coverage/stats.d/`, merged at the end; the session tests are the
-slow ones under the hook. Lua 5.1.5 itself crashes now and then under a
+under `coverage/stats.d/`, merged at the end: the session tests, the slow
+ones under the hook, one test per job, the other files one file per job. Lua 5.1.5 itself crashes now and then under a
 line hook on a busy machine ("double free or corruption"): a test file that
 crashes is run once more. `coverage/report.lua` counts a line as
 executable when `luac5.1 -l` shows code for it, leaving out two kinds of
@@ -109,8 +109,8 @@ git-ignored.
   hidden in vehicles).
 - `test_unitframes_raid.lua` - `units/raid.lua`'s debuff filter: the WotLK
   dispel list per class, Cleanse Spirit for shaman curses, boss debuffs;
-  and its layout by subgroup, which waits for the end of combat when the
-  roster changes in combat (the frames are secure).
+  and its layout by subgroup under "Group N" labels, which waits for the
+  end of combat when the roster changes in combat (the frames are secure).
 - `test_unitframes_shared.lua` - `units/shared.lua`, what the smaller unit
   frames share: health colors by status, class and reaction, the colors
   set only on change, the borders lit on mouseover, and the enemy and
@@ -151,13 +151,13 @@ git-ignored.
   (25% by default) onto the chat window's background texture - only while
   its editbox is shown, fully transparent otherwise.
 - `test_chat_copy_weblinks.lua` - `modules/chat/filters.lua`'s "Copy Web
-  Links" feature (toggled by its own option, on by default): wrapping any
-  http:// or https:// URL found in a message (there can be more than one)
-  in a custom hyperlink, keeping the URL itself as the link's visible text
-  and stashing a copy of it by index, leaving everything else in the
-  message - including any other real hyperlink - untouched, and the
-  replaced `SetItemRef` that opens the copy popup on a left-click of that
-  link, swallows a right-click on it, and forwards every other link type
+  Links" feature (toggled by its own option, on by default): what counts
+  as a web address (schemes, www., e-mails, IPv4, domains with a path or a
+  common top level domain) and what doesn't ("etc.", "v3.3.5a"), the light
+  blue `|Hurl:...|h` link, brackets and punctuation kept out of it, links,
+  textures and colors left alone, the hover tooltip, and the replaced
+  `SetItemRef` that opens the copy popup on a left-click of that link,
+  swallows a right-click on it, and forwards every other link type
   to the original unchanged - exercised by calling the (mocked-in-place-
   of-Blizzard's-own) `SetItemRef` directly, since there's no real chat
   frame to click in this environment.
@@ -221,7 +221,7 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   from inspected talents), raid, boss and arena frames, the pet, the test
   mode previews.
 - `test_session_actionbars.lua` - the menus (main, micro buttons, bar
-  layout, bags, gold and fps), the chat and social buttons, the XP and
+  layout, bags, gold and fps), the online count on the social button, the XP and
   reputation bars, the pet and stance bars, the vehicle and taxi buttons,
   the bar count commands and the cast-on-key-down option (after a reload
   too).
@@ -243,7 +243,7 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   bars, error and quest messages, PvP emotes.
 - `test_session_blizzard.lua` - the loot window, bag and bank slots, tinted
   panels, the Escape menu, mirror timers, durability and vehicle seat
-  anchors, fonts and combat text, popups.
+  anchors, fonts and combat text, popups and the Dungeon Finder's dialogs.
 - `test_session_chat.lua` - chat bubbles, the chat windows (input box,
   buttons, IM style, whisper windows, the stuck key guard, the layout
   question, a hand-placed window kept) and copying web links.

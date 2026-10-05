@@ -14,6 +14,12 @@ package.path = "./tests/?.lua;" .. package.path
 
 local lu = require("luaunit")
 
+-- A temporary file name in $TMPDIR (os.tmpname() always uses /tmp, which a
+-- sandbox may not let us write to).
+local function tempName()
+	return (os.getenv("TMPDIR") or "/tmp") .. "/diabolicui_test_" .. os.time() .. "_" .. math.random(1e9)
+end
+
 local LUAC = os.getenv("LUAC") or "luac5.1"
 
 -- Intentional global writes, per file.
@@ -108,7 +114,7 @@ end
 function TestNoGlobalLeaks:test_detector_catches_a_leak()
 	-- Proves the bytecode pattern actually matches, so a luac output
 	-- format change can't make the main test pass vacuously.
-	local tmp = os.tmpname()
+	local tmp = tempName()
 	local f = io.open(tmp, "w")
 	f:write("local x = 1\nleaked = x\n")
 	f:close()

@@ -245,7 +245,7 @@ function TestMenus:test_bag_addons_loaded_before_us()
 	assertClean(client)
 end
 
-function TestMenus:test_the_social_button_counts_friends_and_guild_members()
+function TestMenus:test_the_social_button_counts_friends_and_guild_members_online()
 	boot({ world = function(world)
 		world.guild = { name = "Testers", members = {
 			{ name = "Tester", class = "WARRIOR", online = true },
@@ -254,29 +254,27 @@ function TestMenus:test_the_social_button_counts_friends_and_guild_members()
 		} }
 		world.friends = { { name = "Pal", connected = true }, { name = "Gone" } }
 	end })
-	local social = widget("Menu: Chat").SocialButton
 	local L = client.Engine:GetLocale()
-	lu.assertEquals(social.People:GetText(), "2") -- one other guild member, one friend
+	local social = _G.SocialsMicroButton
 	client:Hover(social)
 	local lines = tooltip()
-	lu.assertEquals(lines[1], L["Friends & Guild"])
-	lu.assertStrContains(table.concat(lines, "\n"), L["Guild Members Online:"] .. "|1")
+	lu.assertEquals(lines[1], "SocialsMicroButton") -- Blizzard's title
+	lu.assertStrContains(table.concat(lines, "\n"), L["Guild Members Online:"] .. "|1") -- not you
 	lu.assertStrContains(table.concat(lines, "\n"), L["Friends Online:"] .. "|1")
 	client:Leave()
 
-	-- the guild window asked for the roster again: so do we
-	client:FireEvent("GUILD_ROSTER_UPDATE", 1)
-	client.world.guild.members[2].online = nil
-	client:Tick(16) -- and every 15 seconds
-	client:FireEvent("GUILD_ROSTER_UPDATE")
-	lu.assertEquals(social.People:GetText(), "1")
-
-	-- out of the guild, without friends online
-	client.world.guild, client.world.friends = nil, {}
-	client:FireEvent("PLAYER_GUILD_UPDATE")
-	lu.assertEquals(social.People:GetText(), "")
+	-- only friends
+	client.world.guild = nil
 	client:Hover(social)
-	lu.assertEquals(tooltip()[1], _G.FRIENDS)
+	lines = tooltip()
+	lu.assertNotStrContains(table.concat(lines, "\n"), L["Guild Members Online:"])
+	lu.assertStrContains(table.concat(lines, "\n"), L["Friends Online:"] .. "|1")
+	client:Leave()
+
+	-- nobody: just the title
+	client.world.friends = {}
+	client:Hover(social)
+	lu.assertEquals(#tooltip(), 1)
 	client:Leave()
 	assertClean(client)
 end

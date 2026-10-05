@@ -109,17 +109,6 @@ Engine:NewStaticConfig("ActionBars", {
 					yoffset = 20 + 10
 				},
 				size = { 61*3 + 10*2, 55 }
-			},
-			chatmenu = {
-				padding = 0,
-				position = {
-					point = "BOTTOMLEFT",
-					anchor = "UICenter", 
-					anchor_point = "BOTTOMLEFT",
-					xoffset = 0,
-					yoffset = 0
-				},
-				size = { 0, 0 }
 			}
 	
 			
@@ -850,48 +839,6 @@ Engine:NewStaticConfig("ActionBars", {
 					onesidebar = { 160/255, 199/255, 160/255, 199/255 },
 					twosidebars = { 200/255, 39/255, 160/255, 199/255 }
 				}
-			},
-			chat = {
-				input = {
-					button = {
-						size = { 1, 1 }, 
-						anchor = "TOPLEFT", -- where buttons are anchored
-						growthX = "RIGHT", -- horizontal layout direction
-						growthY = "DOWN", -- vertical layout direction
-						justify = "RIGHT", -- which side the last row of buttons should be on
-						padding = 1, spacing = 6, -- horizontal and vertical padding
-						texture_size = { 1, 1 },
-						texture_position = { "TOPLEFT", -34, 37 },
-						textures = {
-							normal = path .. [[textures\DiabolicUI_UIButton_61x55_Normal.tga]],
-							pushed = path .. [[textures\DiabolicUI_UIButton_61x55_Pushed.tga]]
-						}
-					},
-					people = {
-						normalFont = DiabolicFont_SansBold10Gray,
-						position = { "BOTTOMLEFT", 6, -20  } -- relative to the chatmenu's menubutton
-					}
-				},
-				menu = {
-					button = {
-						size = { 61, 55 }, 
-						anchor = "TOPLEFT", -- where buttons are anchored
-						growthX = "RIGHT", -- horizontal layout direction
-						growthY = "DOWN", -- vertical layout direction
-						justify = "RIGHT", -- which side the last row of buttons should be on
-						padding = 3, spacing = 6, -- horizontal and vertical padding
-						texture_size = { 128, 128 },
-						texture_position = { "TOPLEFT", -34, 37 },
-						textures = {
-							normal = path .. [[textures\DiabolicUI_UIButton_61x55_Normal.tga]],
-							pushed = path .. [[textures\DiabolicUI_UIButton_61x55_Pushed.tga]]
-						}
-					},
-					people = {
-						normalFont = DiabolicFont_SansBold14Title,
-						position = { "BOTTOMRIGHT", -12, 12  } -- relative to the socialmenu's menubutton
-					}
-				},
 			},
 			main = {
 				-- Top level objects are menubuttons onscreen

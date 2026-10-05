@@ -69,10 +69,6 @@ L["Bags"] = true
 L["<Left-click> to toggle bags."] = true
 L["<Right-click> to toggle bag bar."] = true
 L["Chat"] = true
-L["<Left-click> or <Enter> to chat."] = true
-L["Friends & Guild"] = true
-L["<Left-click> to toggle social frames."] = true
-L["<Right-click> to toggle Guild frame."] = true
 L["Guild Members Online:"] = true 
 L["Friends Online:"] = true
 
@@ -263,7 +259,8 @@ L["How many seconds chat text stays fully visible before it starts fading."] = t
 L["Background Opacity"] = true
 L["How opaque the chat window's background is while you're typing."] = true
 L["Copy Web Links"] = true
-L["Left-click a web link (http:// or https://) in the chat to open a popup with it, selected and ready to copy."] = true
+L["Left-click a web link (like https://..., www.... or name@mail.com) in the chat to open a popup with it, selected and ready to copy."] = true
+L["Click to copy the link."] = true
 
 
 -- worldmap module
