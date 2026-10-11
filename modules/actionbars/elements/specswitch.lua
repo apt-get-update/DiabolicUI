@@ -44,8 +44,10 @@ local GetNumTalentGroups = _G.GetNumTalentGroups
 local GetNumTalentTabs = _G.GetNumTalentTabs
 local GetTalentTabInfo = _G.GetTalentTabInfo
 local InCombatLockdown = _G.InCombatLockdown
+local RegisterStateDriver = _G.RegisterStateDriver
 local SetActiveTalentGroup = _G.SetActiveTalentGroup
 local UnitClass = _G.UnitClass
+local UnregisterStateDriver = _G.UnregisterStateDriver
 
 -- WoW Frames & Objects
 local GameTooltip = _G.GameTooltip
@@ -402,16 +404,19 @@ ButtonWidget.Update = function(self)
 		self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnCombatEnded")
 		return
 	end
-	-- hidden until Dual Talent Specialization is learned: nothing to switch
+	-- hidden until Dual Talent Specialization is learned: nothing to switch.
+	-- Shown through a state driver, which hides it in a vehicle or while
+	-- possessing (the bars are the vehicle's then), like the stance toggle.
+	UnregisterStateDriver(button, "visibility")
 	if (not Module.db.showSpecSwitch) or (GetNumTalentGroups() < 2) then
 		if button.macro then
 			ClearMacro(button)
 		end
-		button:Hide()
+		RegisterStateDriver(button, "visibility", "hide")
 		return
 	end
 	UpdateTexture(button)
-	button:Show()
+	RegisterStateDriver(button, "visibility", "[vehicleui][bonusbar:5]hide;show")
 	if button.hovered then
 		OnEnter(button) -- the tooltip follows a switch
 	end
