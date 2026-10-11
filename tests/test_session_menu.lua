@@ -630,6 +630,59 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 	lu.assertAlmostEquals(frame:GetScale(), before * 1.2, 1e-6)
 	client:LeaveCombat()
 	lu.assertAlmostEquals(frame:GetScale(), before, 1e-6)
+
+	-- the minimap, Questie's tracker and TrinketMenu's windows scale with it
+	local minimap = _G.DiabolicUIMinimapNS:GetModule("Minimap")
+	local mapBefore = minimap:GetBaseScale()
+	local questie = CreateFrame("Frame", "Questie_BaseFrame", _G.UIParent)
+	local trinkets = CreateFrame("Frame", "TrinketMenu_MainFrame", _G.UIParent)
+	trinkets:SetScale(1.5) -- TrinketMenu's own scale
+	widget("UIScale"):SetValue(80)
+	lu.assertAlmostEquals(minimap:GetBaseScale(), mapBefore * .8, 1e-6)
+	lu.assertAlmostEquals(questie:GetScale(), .8, 1e-6)
+	-- TrinketMenu's still reads and sets its own scale, ours on top
+	lu.assertEquals(trinkets:GetScale(), 1.5)
+	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), 1.5 * .8 * _G.UIParent:GetEffectiveScale(), 1e-6)
+	trinkets:SetScale(1)
+	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), .8 * _G.UIParent:GetEffectiveScale(), 1e-6)
+	-- in combat, it waits for its end
+	client:EnterCombat()
+	widget("UIScale"):SetValue(100)
+	lu.assertAlmostEquals(questie:GetScale(), .8, 1e-6)
+	client:LeaveCombat()
+	lu.assertAlmostEquals(questie:GetScale(), 1, 1e-6)
+
+	-- Questie building its tracker later: scaled on its next update
+	local updated
+	local trackerModule = { Update = function() updated = true end }
+	_G.QuestieLoader = { ImportModule = function() return trackerModule end }
+	widget("UIScale"):SetValue(90)
+	client:FireEvent("PLAYER_ENTERING_WORLD")
+	questie:SetScale(1) -- Questie remade it
+	trackerModule.Update()
+	lu.assertTrue(updated)
+	lu.assertAlmostEquals(questie:GetScale(), .9, 1e-6)
+	client:EnterCombat()
+	questie:SetScale(1)
+	trackerModule.Update() -- in combat: left alone
+	lu.assertEquals(questie:GetScale(), 1)
+	client:LeaveCombat()
+	_G.QuestieLoader, _G.Questie_BaseFrame, _G.TrinketMenu_MainFrame = nil, nil, nil
+	assertClean(client)
+end
+
+function TestOptionsMenu:test_scales_chosen_before_keep_their_size()
+	-- 110% of the UI Scale is the new 100%, 80% of the minimap's size too
+	client = nil
+	boot({ savedVariables = {
+		DiabolicUI_DB = { ScreenScaling = { profiles = { global = { scale = 1.21 } } } },
+		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.6 } } },
+	} })
+	lu.assertEquals(db("ScreenScaling").scale, 1.1)
+	-- (2.0 in the new sizes, beyond the slider's 150%)
+	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1.5)
+	-- only once
+	lu.assertTrue(db("ScreenScaling").rebased)
 	assertClean(client)
 end
 

@@ -34,9 +34,10 @@ local GetFont = ns.API.GetFont
 Config.Minimap = {
 	Position = { "TOPRIGHT", UIParent, "TOPRIGHT", -30, -30 },
 
-	-- Limits for the user-adjustable size set in edit mode.
-	MinUserScale = .6,
-	MaxUserScale = 1.8,
+	-- Limits for the user-adjustable size set in edit mode, around its
+	-- 100% (what used to be 80%), like DiabolicUI's UI Scale.
+	MinUserScale = .5,
+	MaxUserScale = 1.5,
 
 	CompassInset = 10,
 	CompassFont = GetFont(16, true),

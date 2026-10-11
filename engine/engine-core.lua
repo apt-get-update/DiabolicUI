@@ -1138,6 +1138,9 @@ end
 -------------------------------------------------------------
 -- Resolution and scale handling
 -------------------------------------------------------------
+-- The UI Scale (ScreenScaling.scale) multiplies this base size.
+local BASE_UI_SCALE = 1.1
+
 local SetDisplaySize
 do
 
@@ -1163,7 +1166,8 @@ do
 		width = round(width)
 		height = round(height)
 	
-		local scale = height/1080 * (tonumber(scale) or 1)
+		-- 100% of the UI Scale is what 110% used to be
+		local scale = height/1080 * BASE_UI_SCALE * (tonumber(scale) or 1)
 	
 		local displayWidth = (((width/height) >= (16/10)*3) and width/3 or width)/scale
 		local displayHeight = height/scale
@@ -1304,6 +1308,16 @@ Engine.Init = function(self, event, ...)
 
 	-- update stored settings (needs to happen before init)
 	self:ParseSavedVariables()
+
+	-- 100% used to be smaller (110% was the size to play with): a scale
+	-- chosen before keeps its size on screen, in the new percentages
+	local scaling = self:GetConfig("ScreenScaling")
+	if (not scaling.rebased) then
+		if (scaling.scale ~= 1) then
+			scaling.scale = math.floor(scaling.scale / BASE_UI_SCALE * 100 + .5) / 100
+		end
+		scaling.rebased = true
+	end
 
 	SetDisplaySize(self:GetConfig("ScreenScaling").scale)
 

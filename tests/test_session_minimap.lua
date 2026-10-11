@@ -55,7 +55,7 @@ function TestMinimap:test_the_diabolic_look_replaces_blizzards_pieces()
 	lu.assertEquals(select(1, _G.MiniMapBattlefieldFrame:GetPoint()), "BOTTOMLEFT")
 	lu.assertNil(_G.MiniMapBattlefieldIcon:IsShown())
 	-- scaled from the saved size
-	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale() * 0.8, 0.0001)
+	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale(), 0.0001)
 	-- the stopwatch's saved settings exist
 	lu.assertNotNil(_G.BlizzardStopwatchOptions)
 	assertClean(client)
@@ -198,13 +198,13 @@ function TestMinimap:test_edit_mode_moves_and_resizes_the_minimap()
 	client:RunScript(overlay(), "OnDragStart", "RightButton")
 	client.world.cursor = { 600, 400 }
 	client:Tick(0.1)
-	lu.assertTrue(module:GetUserScale() > 0.8)
+	lu.assertTrue(module:GetUserScale() > 1)
 	client.world.cursor = { 5000, -5000 }
 	client:Tick(0.1)
-	lu.assertEquals(module:GetUserScale(), 1.8)
+	lu.assertEquals(module:GetUserScale(), 1.5)
 	client.world.cursor = { -5000, 5000 }
 	client:Tick(0.1)
-	lu.assertEquals(module:GetUserScale(), 0.6)
+	lu.assertEquals(module:GetUserScale(), 0.5)
 	client:RunScript(overlay(), "OnDragStop")
 
 	-- left (DiabolicUI's Lock Frames does it, see test_session_menu.lua)
@@ -276,7 +276,7 @@ end
 function TestMinimap:test_setscale_and_resetscale()
 	slash("setscale", "1.2")
 	lu.assertEquals(ns.db.global.core.relativeScale, 1.2)
-	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale() * 0.8, 0.0001)
+	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale(), 0.0001)
 	local bigger = _G.Minimap:GetScale()
 	slash("setscale", "9") -- kept within bounds
 	lu.assertEquals(ns.db.global.core.relativeScale, 1.5)
@@ -385,7 +385,7 @@ function TestMinimap:test_the_options_page_is_a_diabolicui_subcategory()
 	end
 	lu.assertTrue(found)
 	page:Show()
-	lu.assertEquals(page.sizeInput:GetText(), "80")
+	lu.assertEquals(page.sizeInput:GetText(), "100")
 	lu.assertEquals(page.anchorRadios.TOPRIGHT:GetChecked(), 1)
 	client:Tick(0.3) -- kept live while open
 	assertClean(client)
@@ -408,7 +408,7 @@ function TestMinimap:test_the_size_slider_and_its_box()
 	lu.assertEquals(page.sizeInput:GetText(), "120")
 
 	-- typed values, clamped to the limits
-	for _, case in ipairs({ { "150", 1.5 }, { "999", 1.8 }, { "1", 0.6 } }) do
+	for _, case in ipairs({ { "120", 1.2 }, { "999", 1.5 }, { "1", 0.5 } }) do
 		page.sizeInput:SetFocus()
 		page.sizeInput:SetText(case[1])
 		client:RunScript(page.sizeInput, "OnEnterPressed")

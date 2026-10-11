@@ -24,6 +24,7 @@
 
 --]]
 local _, ns = ..., DiabolicUIMinimapNS
+local Engine = select(2, ...) -- DiabolicUI's, for its UI Scale
 local MinimapMod = ns:NewModule("Minimap", "AceTimer-3.0")
 
 -- Lua API
@@ -77,13 +78,20 @@ local Time_OnClick = function(self, mouseButton)
 	end
 end
 
--- The map's size in the Diabolic look (198 / 140 would be Blizzard's).
-local mapScale = 1.614
+-- The map's size in the Diabolic look (198 / 140 would be Blizzard's), at
+-- the 100% of edit mode's resizing.
+local mapScale = 1.614 * .8
+
+-- DiabolicUI's UI Scale (its options' main page, /dui setscale).
+local GetUIScale = function()
+    local scaling = Engine and Engine.GetConfig and Engine:GetConfig("ScreenScaling", nil, nil, true)
+    return scaling and scaling.scale or 1
+end
 
 -- Returns the base scale of the minimap widget,
 -- before the user's own edit mode resizing is factored in.
 MinimapMod.GetBaseScale = function(self)
-    return mapScale * ns.API.GetEffectiveScale()
+    return mapScale * ns.API.GetEffectiveScale() * GetUIScale()
 end
 
 -- Returns the user's chosen size multiplier, as set in edit mode.

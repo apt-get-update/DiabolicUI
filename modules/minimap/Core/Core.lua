@@ -36,7 +36,7 @@ local defaults = {
 		},
 		minimap = {
 			useServerTime = false,
-			userScale = .8,
+			userScale = 1, -- of the size below (what 80% used to be)
 			zoneFadeEnabled = true,
 			zoneFadeDuration = .25 -- seconds each half (out, then in) of the zone label's crossfade takes
 		}
@@ -142,6 +142,20 @@ end
 
 ns.OnInitialize = function(self)
 	self.db = SanitizeSettings(LibStub("AceDB-3.0"):New("DiabolicUI_Minimap_DB", defaults, true))
+
+	-- 100% used to be bigger (80% was the default): a size chosen before
+	-- keeps its size on screen, in the new percentages. (AceDB fills in the
+	-- defaults, and the old default was never saved: 1 is the new one.)
+	local minimap = self.db.global.minimap
+	if (not minimap.sizeRebased) then
+		if (minimap.userScale ~= 1) then
+			minimap.userScale = math.floor(minimap.userScale / .8 * 100 + .5) / 100
+		end
+		minimap.sizeRebased = true
+	end
+	-- within the slider's range
+	local config = ns.Config.Minimap
+	minimap.userScale = math_min(config.MaxUserScale, math_max(config.MinUserScale, minimap.userScale))
 
 	-- Apply user scale to all elements
 	SetRelativeScale(self.db.global.core.relativeScale)
