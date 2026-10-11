@@ -485,7 +485,7 @@ Module.CreateOptionsPanel = function(self)
 	commands:SetText(L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker reset - puts the quest tracker back"])
 	layout:Place(commands, EDGE, layout:Row(LABEL_HEIGHT * 5, HEADER_GAP))
 
-	local unlockFrames = CreateButton(panel, "UnlockFrames", L["Unlock Frames"], L["Highlights the frames you can move - the minimap, the chat, the menu buttons and the quest tracker (Blizzard's or Questie's) - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"], function(button)
+	local unlockFrames = CreateButton(panel, "UnlockFrames", L["Unlock Frames"], L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"], function(button)
 		self:SetFramesUnlocked(not self:AreFramesUnlocked())
 	end)
 	layout:Place(unlockFrames, EDGE, layout:Row(BUTTON_HEIGHT, SECTION_GAP))
@@ -1198,6 +1198,7 @@ local CreateMover = function(name, target, text, onDragStart, onDragStop, extra,
 			onDragStop()
 		end
 	end)
+	mover.target = target
 	mover:Hide()
 	return mover
 end
@@ -1222,6 +1223,14 @@ Module.GetMovers = function(self)
 			menu:SavePosition()
 		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true)
 	}
+	-- TrinketMenu's worn trinkets, saved where TrinketMenu keeps them
+	local trinkets = _G.TrinketMenu_MainFrame
+	if trinkets and _G.TrinketMenuPerOptions then
+		table.insert(self.Movers, CreateMover("DiabolicUITrinketMenuMover", trinkets, "TrinketMenu", nil, function()
+			_G.TrinketMenuPerOptions.XPos = trinkets:GetLeft()
+			_G.TrinketMenuPerOptions.YPos = trinkets:GetTop()
+		end))
+	end
 	return self.Movers
 end
 
@@ -1257,7 +1266,7 @@ Module.SetFramesUnlocked = function(self, unlocked)
 	local questie, questieTracker = GetQuestieTracker()
 	Engine:GetModule("ObjectiveTracker"):SetTrackerUnlocked(unlocked and not questie)
 	for _, mover in ipairs(self:GetMovers()) do
-		if unlocked then
+		if unlocked and mover.target:IsShown() then
 			mover:Show()
 		else
 			mover:Hide()

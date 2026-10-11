@@ -336,7 +336,7 @@ L["A Diablo III style interface. Its settings are on the pages below this one."]
 L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker reset - puts the quest tracker back"] = true
 L["Unlock Frames"] = true
 L["Lock Frames"] = true
-L["Highlights the frames you can move - the minimap, the chat, the menu buttons and the quest tracker (Blizzard's or Questie's) - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] = true
+L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] = true
 L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."] = true
 L["You can't move frames in combat."] = true
 L["Puts the menu buttons, with the gold and the fps texts, back in the bottom right corner."] = true

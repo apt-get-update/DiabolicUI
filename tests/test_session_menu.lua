@@ -479,6 +479,27 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	lu.assertNil(questieBox:IsShown())
 	_G.Questie, _G.QuestieLoader, _G.Questie_BaseFrame = nil, nil, nil
 
+	-- TrinketMenu's worn trinkets, while its window is shown; saved where it keeps them
+	local trinkets = CreateFrame("Frame", "TrinketMenu_MainFrame", _G.UIParent)
+	trinkets:SetPoint("TOPLEFT", _G.UIParent, "BOTTOMLEFT", 400, 300)
+	trinkets:SetSize(92, 52)
+	_G.TrinketMenuPerOptions = {}
+	menu.Movers = nil -- built again, now with it
+	client:Click(unlock)
+	local trinketMover = _G.DiabolicUITrinketMenuMover
+	lu.assertEquals(trinketMover:IsShown(), 1)
+	client:RunScript(trinketMover, "OnDragStart", "LeftButton")
+	trinkets:ClearAllPoints()
+	trinkets:SetPoint("TOPLEFT", _G.UIParent, "BOTTOMLEFT", 500, 350)
+	client:RunScript(trinketMover, "OnDragStop", "LeftButton")
+	lu.assertEquals({ _G.TrinketMenuPerOptions.XPos, _G.TrinketMenuPerOptions.YPos }, { 500, 350 })
+	client:Click(unlock)
+	trinkets:Hide() -- its window hidden: no box
+	client:Click(unlock)
+	lu.assertNil(trinketMover:IsShown())
+	client:Click(unlock)
+	_G.TrinketMenuPerOptions, _G.TrinketMenu_MainFrame = nil, nil
+
 	-- /dui move; combat locks them, and they don't unlock in it
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("move")
 	lu.assertTrue(menu:AreFramesUnlocked())
