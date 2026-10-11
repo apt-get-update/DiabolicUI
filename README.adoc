@@ -6,41 +6,41 @@ Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it fo
 
 image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 
-== Recommended Addons
+== 🧩 Recommended Addons
 
 [cols="1,3",options="header"]
 |===
 |Addon |What for
-|https://github.com/sloan-008/Questie-335[Questie] |quests, quest log and tracker
-|https://github.com/paokkerkir/Mapster[Mapster] |world map
-|https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] |nameplates
-|https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver] |action bar profiles, one per specialization
-|https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu] |trinket switching, styled by DiabolicUI
-|https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] |minimap buttons in one bag
-|https://github.com/bkader/Masque-WoTLK[Masque] + https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] |Diablo buttons for other addons (Bagnon...)
-|https://github.com/bkader/SharedMedia[SharedMedia] + https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] |the Diablo font in other addons
-|https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara] |sharper fonts
+|https://github.com/sloan-008/Questie-335[Questie] |📜 quests, quest log and tracker
+|https://github.com/paokkerkir/Mapster[Mapster] |🗺️ world map
+|https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] |🏷️ nameplates
+|https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver] |💾 action bar profiles, one per specialization
+|https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu] |💍 trinket switching, styled by DiabolicUI
+|https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] |🎒 minimap buttons in one bag
+|https://github.com/bkader/Masque-WoTLK[Masque] + https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] |🔘 Diablo buttons for other addons (Bagnon...)
+|https://github.com/bkader/SharedMedia[SharedMedia] + https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] |🔤 the Diablo font in other addons
+|https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara] |🔍 sharper fonts
 |===
 
-== Getting Started
+== 🚀 Getting Started
 
 Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui config`.
 
 * `/dui num_bars 1-3` and `/dui num_side_bars 0-2`: how many action bars.
 * `/dui tracker`: move Blizzard's quest tracker (`/dui tracker reset` to put it back).
 
-== Features
+== ✨ Features
 
-* *Action bars* between Diablo III health and mana orbs, one to three rows plus side bars.
-* *Specialization button* on the skull: switches spec, and each spec can bring its gear set, Action Bar Saver profile, bar count and macros.
-* *Stance button* on the angel: shows your current form and switches it.
-* *Unit frames* for you, your target, focus, party and raid (grouped, with role icons); class colors and 3D portraits as options.
-* *Chat* that fades, with clickable web links, shorter system messages and Diablo chat bubbles.
-* *Diablo III item tooltips* that follow your cursor.
-* *Minimap* with zone text, mail and Dungeon Finder buttons built in.
-* *Quest tracker* that fades and moves; Blizzard's in Exocet.
-* *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
-* *TrinketMenu* restyled to match.
+* ⚔️ *Action bars* between Diablo III health and mana orbs, one to three rows plus side bars.
+* 💀 *Specialization button* on the skull: switches spec, and each spec can bring its gear set, Action Bar Saver profile, bar count and macros.
+* 👼 *Stance button* on the angel: shows your current form and switches it.
+* 🛡️ *Unit frames* for you, your target, focus, party and raid (grouped, with role icons); class colors and 3D portraits as options.
+* 💬 *Chat* that fades, with clickable web links, shorter system messages and Diablo chat bubbles.
+* 🗡️ *Diablo III item tooltips* that follow your cursor.
+* 🧭 *Minimap* with zone text, mail and Dungeon Finder buttons built in.
+* 📜 *Quest tracker* that fades and moves; Blizzard's in Exocet.
+* 🎨 *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
+* 💍 *TrinketMenu* restyled to match.
 
 [cols="3*a",frame=none,grid=none]
 |===
