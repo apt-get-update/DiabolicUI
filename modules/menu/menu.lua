@@ -1122,8 +1122,8 @@ local GetQuestieTracker = function()
 end
 
 -- The box covers `target` and the `extra` frames attached to it (the
--- chat's buttons): their outer edges, measured each time it's shown, kept
--- as offsets from `target` so it follows the drag.
+-- chat's buttons and edit box): their outer edges, measured each time
+-- it's shown, kept as offsets from `target` so it follows the drag.
 local FitMover = function(mover, target, extra)
 	local left, right, top, bottom = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
 	mover:ClearAllPoints()
@@ -1192,7 +1192,7 @@ Module.GetMovers = function(self)
 			chat.db.autoposition = false
 		end, function()
 			chat:SaveChatFrameLayout()
-		end, { _G.ChatFrame1ButtonFrame, _G.ChatFrameMenuButton }),
+		end, { _G.ChatFrame1ButtonFrame, _G.ChatFrameMenuButton, _G.ChatFrame1EditBox }),
 		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
 			menu:SavePosition()
 		end)

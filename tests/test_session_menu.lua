@@ -520,13 +520,20 @@ function TestOptionsMenu:test_the_chat_box_covers_its_buttons()
 	menuButton:ClearAllPoints()
 	menuButton:SetPoint("BOTTOM", buttons, "TOP", 0, 0)
 	menuButton:SetSize(30, 30)
+	-- the edit box under it (hidden while not typing: still counted)
+	local editBox = _G.ChatFrame1EditBox
+	editBox:ClearAllPoints()
+	editBox:SetPoint("TOPLEFT", chat, "BOTTOMLEFT", 0, -4)
+	editBox:SetPoint("TOPRIGHT", chat, "BOTTOMRIGHT", 0, -4)
+	editBox:SetHeight(26)
+	editBox:Hide()
 	client:GetModule("Menu"):SetFramesUnlocked(true)
 	local mover = _G.DiabolicUIChatMover
-	lu.assertEquals({ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) }, { 68, 500, 330, 100 })
+	lu.assertEquals({ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) }, { 68, 500, 330, 70 })
 	-- and follows the chat
 	chat:ClearAllPoints()
 	chat:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 200, 150)
-	lu.assertEquals({ mover:GetLeft(), (mover:GetBottom()) }, { 168, 150 })
+	lu.assertEquals({ mover:GetLeft(), (mover:GetBottom()) }, { 168, 120 })
 	client:GetModule("Menu"):SetFramesUnlocked(false)
 	assertClean(client)
 end
