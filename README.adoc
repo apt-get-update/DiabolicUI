@@ -4,97 +4,41 @@ Forked from https://github.com/Hrishi29x/DiabolicUI
 
 Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it for 3.3.5, and mended what small things I could along my travels through Northrend. Nothing grand, just a few fixes and features gathered on the road and shared freely, should they serve you as well as they have served me. The full list lies below.
 
+== Recommended Addons
+
+[cols="1,3",options="header"]
+|===
+|Addon |What for
+|https://github.com/sloan-008/Questie-335[Questie] |quests, quest log and tracker
+|https://github.com/paokkerkir/Mapster[Mapster] |world map
+|https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] |nameplates
+|https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver] |action bar profiles, one per specialization
+|https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu] |trinket switching, styled by DiabolicUI
+|https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] |minimap buttons in one bag
+|https://github.com/bkader/Masque-WoTLK[Masque] + https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] |Diablo buttons for other addons (Bagnon...)
+|https://github.com/bkader/SharedMedia[SharedMedia] + https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] |the Diablo font in other addons
+|https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara] |sharper fonts
+|===
+
 == Getting Started
 
-. Put the `DiabolicUI` folder in `Interface/AddOns/` and log in.
-. Open the options with `/dui config` (or Interface Options -> AddOns -> DiabolicUI). Every setting is there, on these pages: *DiabolicUI* (menu, objectives, loot), *Tooltips*, *Units*, *Chat*, *Messages*, *Specializations* and *AddOns*.
+Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui config`.
 
-[cols="2,3",options="header"]
-|===
-|Command |Does
-|`/dui config` |opens the options
-|`/dui num_bars 1-3`, `/dui num_side_bars 0-2` |number of bottom bars and side bars
-|`/dui tracker`, `/dui tracker reset` |unlocks/locks Blizzard's objectives tracker to move it, or puts it back
-|`/dui autoposition` |turns the automatic chat window position on or off
-|`/dui setscale <number>` |UI scale
-|`/dui resetsetup` |puts the chat window back in its default place
-|===
-
-`/diabolic` and `/diabolicui` work too.
+* `/dui num_bars 1-3` and `/dui num_side_bars 0-2`: how many action bars.
+* `/dui tracker`: move Blizzard's quest tracker (`/dui tracker reset` to put it back).
 
 == Features
 
-=== Action Bars
-
-* One to three bottom bars and up to two side bars, between the Diablo III health and mana orbs.
-* *Talent specialization button* on the skull, once you've learned Dual Talent Specialization: one click switches spec (`Show Specialization Switch`).
-* *Specializations* page: for each spec, what happens when you switch to it - an equipment set, an Action Bar Saver profile, the number of bars and side bars, and two of your macros: one run by the click that switches ("before"), one run once the switch is done (the skull glows, click it). Macros can do anything, `/use` and `/cast` included.
-* *Stance button* on the angel: shows your active form, presence, aura or stance, and opens the stance bar. With a single form (Shadowform, Stealth) it is that form's button.
-* Micro menu with the Help Request menu, and gold, FPS and latency next to it (`Show Gold`, `Show FPS & Latency`, coin icons for gold). The Social button's tooltip lists your online guild members and friends.
-* Experience bar, replaced by the reputation bar while you watch a faction.
-
-=== Unit Frames
-
-* Player, target, focus, pet, target of target, party and raid frames. Raid frames are grouped by party, with a "Group N" title over each group.
-* Role icons (tank, healer, damage) on party and raid frames.
-* Class colors on health bars (`Show class colors`) and animated 3D portraits on party and focus frames (`Show Portrait`).
-* Weapon enchants (poisons, oils, stones) shown as auras on the player frame.
-* Death knight runes as glyphs above the action bars, colored by type and filling up while they recharge.
-* `Toggle Fake Party` / `Toggle Fake Raid` preview the party and raid frames without a group.
-
-=== Chat
-
-* Styled chat windows that fade out after a while (`Fade Chat`, `Time Fading`, `Time Visible`), with a background while typing (`Background Opacity`).
-* Web links (http, www, e-mail) become clickable: a click opens them selected in a box, ready to copy (`Copy Web Links`).
-* *Messages* page: shorter system lines - loot, money, experience, reputation, honor, quests, away/busy, friends online, auctions, achievements - and hidden channel join/leave notices, each on its own switch.
-* New lines can slide in instead of jumping (`Slide New Messages`, off by default).
-* Chat bubbles in a bigger font on a dark backdrop. Chat bubble and damage fonts in Exocet - best paired with https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara].
-
-=== Tooltips
-
-* Tooltips follow the cursor, with a configurable anchor point and offsets.
-* Diablo III style item tooltips (`Reskin Tooltip`): the name on a banner in its quality color, the icon beside the text, damage per second or armor as a big number, sell price and durability at the bottom. Room is made for the transmog lines of the ChromieCraft client patch.
-
-=== Minimap
-
-* Built in: no separate `DiabolicUI-Minimap` download needed.
-* Styled border, clock, zone text, mail and Dungeon Finder buttons, movable with draggable buttons.
-* The zone text follows the side of the screen the minimap is on, and cross-fades on zone change (`Animate Zone Text`).
-
-=== Quests & Objectives
-
-* `Fade Quest Tracker`: fades the tracker (Questie's, or Blizzard's) after you stop hovering it (`Time Fading`, `Opacity`).
-* Blizzard's objectives tracker in Exocet and DiabolicUI's colors (`Style Objectives Tracker`), and movable (`Unlock Tracker` on the main page).
-* Error and quest progress messages on DiabolicUI's own display, with repeated ones dropped.
-* Battleground and world PvP scores and capture bars in DiabolicUI's style.
-
-NOTE: DiabolicUI doesn't hide Blizzard's tracker: Questie does that when it's installed, and Questie's tracker has its own font settings (DiabolicUI's fonts are available there).
-
-=== Blizzard Frames
-
-* Popups and the Dungeon Finder (queue tooltip, role check, ready check) in DiabolicUI's frames; the Escape menu with big Diablo buttons.
-* Bag and bank slots with quality-colored borders, item levels on gear and greyed out junk.
-* Character, spellbook, merchant, world map and Dungeon Finder windows tinted in DiabolicUI's colors.
-* Optional custom loot window (`Reskin Loot Window`).
-* World map zone names in Exocet (`Style World Map`), working alongside Mapster.
-* Nameplates in DiabolicUI's style, unless a nameplate addon such as Kui Nameplates is installed.
-
-=== Other Addons (*AddOns* page)
-
-* `Style TrinketMenu`: TrinketMenu's buttons look like the action bars' buttons, without backgrounds.
-
-== Recommended Addons
-
-* https://github.com/bkader/Masque-WoTLK[Masque] and https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] - Diablo-style buttons for other addons, such as Bagnon
-* https://github.com/bkader/SharedMedia[SharedMedia] and https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] - the Diablo font in other addons
-* https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] - nameplates
-* https://github.com/paokkerkir/Mapster[Mapster] - world map
-* https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] - minimap button bag collector
-* https://github.com/sloan-008/Questie-335[Questie] - quests and quest log
-* Action Bar Saver - action bar profiles for the Specializations page
-* TrinketMenu - trinket switching, styled by DiabolicUI
-
-This fork targets WotLK 3.3.5 only: code for other WoW versions was dropped to keep it small and simple.
+* *Action bars* between Diablo III health and mana orbs, one to three rows plus side bars.
+* *Specialization button* on the skull: switches spec, and each spec can bring its gear set, Action Bar Saver profile, bar count and macros.
+* *Stance button* on the angel: shows your current form and switches it.
+* *Unit frames* for you, your target, focus, party and raid (grouped, with role icons); class colors and 3D portraits as options.
+* *Chat* that fades, with clickable web links, shorter system messages and Diablo chat bubbles.
+* *Diablo III item tooltips* that follow your cursor.
+* *Minimap* with zone text, mail and Dungeon Finder buttons built in.
+* *Quest tracker* that fades and moves; Blizzard's in Exocet.
+* *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
+* *TrinketMenu* restyled to match.
 
 == Development
 
