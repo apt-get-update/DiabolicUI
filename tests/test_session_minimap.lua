@@ -221,6 +221,8 @@ function TestMinimap:test_its_art_keeps_its_proportions_at_any_size()
 		ns.db.global.minimap.userScale = size
 		module:UpdateSize()
 		lu.assertAlmostEquals(module.widgetFrame:GetScale(), 1 / 1.614, 1e-6)
+		-- the frame its border buttons sit on too: laid out for the Diabolic size
+		lu.assertAlmostEquals(_G.Minimap:GetWidth(), 280 / 1.614, 1e-6)
 	end
 	assertClean(client)
 end

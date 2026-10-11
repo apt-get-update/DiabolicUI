@@ -78,8 +78,9 @@ local Time_OnClick = function(self, mouseButton)
 	end
 end
 
--- The map's size in the Diabolic look (198 / 140 would be Blizzard's), at
--- the 100% of edit mode's resizing: SIZE_BASE (Core.lua) of the original.
+-- The map's size in the Diabolic look (198 / 140 would be Blizzard's): its
+-- art and frame are laid out for it. At the 100% of edit mode's resizing,
+-- the whole minimap is SIZE_BASE (Core.lua) of that.
 local DIABOLIC_MAP_SCALE = 1.614
 local mapScale = DIABOLIC_MAP_SCALE * ns.SIZE_BASE
 
@@ -397,7 +398,7 @@ MinimapMod.ApplyTheme = function(self)
 
     for _, texture in next, MAP_TEXTURES do
         local object = Minimap:CreateTexture()
-        object:SetSize(texture.size / mapScale, texture.size / mapScale)
+        object:SetSize(texture.size / DIABOLIC_MAP_SCALE, texture.size / DIABOLIC_MAP_SCALE)
         object:SetPoint(unpack(texture.point))
         object:SetTexture(GetMedia(texture.path))
         object:SetDrawLayer(texture.layer, texture.level)
@@ -873,7 +874,7 @@ MinimapMod.OnEnable = function(self)
         end
     end)
     self.frame = Minimap
-    self.frame:SetSize(280 / mapScale, 280 / mapScale)
+    self.frame:SetSize(280 / DIABOLIC_MAP_SCALE, 280 / DIABOLIC_MAP_SCALE)
     self.frame:SetMovable(true)
     self.frame:EnableMouseWheel(true)
     self.frame:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
