@@ -341,3 +341,5 @@ L["Drag the highlighted frames to move them. Right-drag the minimap to resize it
 L["You can't move frames in combat."] = true
 L["Puts the menu buttons, with the gold and the fps texts, back in the bottom right corner."] = true
 L["Puts the chat window back in the bottom left corner, sized like Diablo III's."] = true
+L["UI Scale"] = true
+L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = true

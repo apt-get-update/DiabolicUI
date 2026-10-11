@@ -491,6 +491,18 @@ Module.CreateOptionsPanel = function(self)
 	layout:Place(unlockFrames, EDGE, layout:Row(BUTTON_HEIGHT, SECTION_GAP))
 	self.UnlockFramesButton = unlockFrames
 
+	-- the size of DiabolicUI's own frame ("ScreenScaling", also /dui setscale);
+	-- applied out of combat (the frame is secure)
+	local scaling = Engine:GetConfig("ScreenScaling")
+	local uiScale = CreateValueSlider(panel, "UIScale", L["UI Scale"], L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"],
+		50, 150,
+		function() return math_floor(scaling.scale * 100 + .5) end,
+		function(value)
+			scaling.scale = value / 100
+			Engine:OnDisplaySizeEvent()
+		end)
+	layout:PlaceSlider(uiScale, EDGE, layout:Row(SLIDER_BLOCK_HEIGHT, SECTION_GAP))
+
 	local version = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
 	version:SetPoint("BOTTOMRIGHT", -EDGE, EDGE)
 	version:SetText(L["Version %s"]:format(GetAddOnMetadata(Addon, "Version") or "?"))
@@ -498,6 +510,7 @@ Module.CreateOptionsPanel = function(self)
 	panel.okay = function() end
 	panel.cancel = function()
 		unlockFrames:SetText(self:AreFramesUnlocked() and L["Lock Frames"] or L["Unlock Frames"])
+		uiScale:SetValueSilently(math_floor(scaling.scale * 100 + .5))
 	end
 	panel.refresh = panel.cancel
 

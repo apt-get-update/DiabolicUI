@@ -613,6 +613,26 @@ function TestOptionsMenu:test_the_chat_box_covers_its_buttons()
 	assertClean(client)
 end
 
+function TestOptionsMenu:test_the_ui_scale_slider()
+	local scaling = db("ScreenScaling")
+	local frame = client.Engine:GetFrame()
+	local before = frame:GetScale()
+	widget("UIScale"):SetValue(80)
+	lu.assertEquals(scaling.scale, .8)
+	lu.assertAlmostEquals(frame:GetScale(), before * .8, 1e-6)
+	-- the page shows the saved value, /dui setscale included
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("setscale 1.2")
+	_G.DiabolicUIOptionsPanel.refresh()
+	lu.assertEquals(widget("UIScale"):GetValue(), 120)
+	-- in combat, it waits for its end
+	client:EnterCombat()
+	widget("UIScale"):SetValue(100)
+	lu.assertAlmostEquals(frame:GetScale(), before * 1.2, 1e-6)
+	client:LeaveCombat()
+	lu.assertAlmostEquals(frame:GetScale(), before, 1e-6)
+	assertClean(client)
+end
+
 function TestOptionsMenu:test_every_page_fits_in_the_window()
 	local container = _G.InterfaceOptionsFramePanelContainer
 	for _, panel in ipairs(client.optionsPanels) do

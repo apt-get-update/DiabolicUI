@@ -200,3 +200,5 @@ L["Drag the highlighted frames to move them. Right-drag the minimap to resize it
 L["You can't move frames in combat."] = "Impossible de déplacer les cadres en combat."
 L["Puts the menu buttons, with the gold and the fps texts, back in the bottom right corner."] = "Remet les boutons du menu, avec l'or et les fps, dans le coin en bas à droite."
 L["Puts the chat window back in the bottom left corner, sized like Diablo III's."] = "Remet la fenêtre de chat dans le coin en bas à gauche, à la taille de celle de Diablo III."
+L["UI Scale"] = "Échelle de l'interface"
+L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = "La taille des barres, orbes, cadres de DiabolicUI et de tout ce qu'ils portent, en pourcentage de la taille prévue pour votre écran. L'échelle de l'interface de WoW et les autres addons ne changent pas.|n|nAussi : /dui setscale 0.9"
