@@ -679,18 +679,25 @@ function TestOptionsMenu:test_scales_chosen_before_keep_their_size()
 		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.6 } } },
 	} })
 	lu.assertEquals(db("ScreenScaling").scale, 1.1)
-	-- (2.5 in the new sizes, beyond the slider's 150%)
+	-- (2.0 in the new sizes, beyond the slider's 150%)
 	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1.5)
 	-- only once
 	lu.assertTrue(db("ScreenScaling").rebased)
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.sizeBase, .64)
+	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.sizeBase, .8)
 	client = nil
 
-	-- set to 80% after the first change: that's the new 100%
+	-- saved against the 100% it briefly had (.64 of the original): back
+	boot({ savedVariables = {
+		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.25, sizeBase = .64 } } },
+	} })
+	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1)
+	client = nil
+
+	-- already against this 100%: left as it is
 	boot({ savedVariables = {
 		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = .8, sizeRebased = true } } },
 	} })
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1)
+	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, .8)
 	assertClean(client)
 end
 
