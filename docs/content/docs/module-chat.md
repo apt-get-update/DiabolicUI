@@ -38,7 +38,7 @@ Message filters registered via overriding `frame.AddMessage`
 (`Module.SetUpFrame`, applied to every `CHAT_FRAMES` entry plus any later
 temporary window via a `FCF_OpenTemporaryWindow` hook) — normalizing player-
 name/channel-name link formatting, coloring AFK/DND tags and raid warnings,
-and (optionally, `Module.db.copyWebLinks`) the **copy web links** feature:
+and the **copy web links** feature:
 
 Web addresses found in a message become light blue
 `|Hurl:<address>|h<address>|h` links, through `WrapWebLinks` (the same rules

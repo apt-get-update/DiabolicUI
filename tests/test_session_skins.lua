@@ -132,12 +132,6 @@ function TestWorldMap:test_zone_names_in_exocet()
 	assertClean(client)
 end
 
-function TestWorldMap:test_the_option_off()
-	boot({ savedVariables = skins({ styleWorldMap = false }) })
-	lu.assertStrContains(_G.WorldMapFrameAreaLabel:GetFont(), "FRIZQT")
-	assertClean(client)
-end
-
 -- Blizzard's objectives tracker ---------------------------------------------------
 
 TestWatchFrame = {}
@@ -169,14 +163,6 @@ function TestWatchFrame:test_titles_in_exocet_objectives_in_the_body_font()
 	-- lines get reused: a title line later used for an objective
 	_G.WatchFrame_SetLine(title, nil, 0, false, "- Loot it")
 	lu.assertEquals(title.text:GetFontObject(), _G.DiabolicFont_SansRegular12)
-	assertClean(client)
-end
-
-function TestWatchFrame:test_the_option_off()
-	boot({ savedVariables = skins({ styleTracker = false }) })
-	local line = watchLine()
-	_G.WatchFrame_SetLine(line, nil, 0, true, "A quest")
-	lu.assertEquals(line.text:GetFontObject(), _G.GameFontHighlight)
 	assertClean(client)
 end
 

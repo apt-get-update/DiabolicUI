@@ -178,9 +178,7 @@ local AddMessage = function(frame, msg, ...)
 	-- raid warnings
 	msg = msg:gsub("^%["..RAID_WARNING.."%]", "|cffff0000!|r")
 
-	if Module.db and Module.db.copyWebLinks then
-		msg = WrapWebLinks(msg)
-	end
+	msg = WrapWebLinks(msg)
 
 	return frame.old.message(frame, msg, ...)
 end

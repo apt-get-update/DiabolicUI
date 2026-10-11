@@ -21,7 +21,6 @@ Engine:NewConfig("ChatWindows", {
 
 -- chat filters and emoticons
 Engine:NewConfig("ChatFilters", {
-	copyWebLinks = true, -- left-click a web link in chat to copy it
 
 	-- shorter system lines (modules/chat/cleaner.lua)
 	cleanLoot = true, -- loot, money, quest rewards: "+ [Item] (3)"

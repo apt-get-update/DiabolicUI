@@ -1,5 +1,5 @@
 -- Blizzard's objectives tracker (the WatchFrame) in DiabolicUI's fonts and
--- colors (the "styleTracker" option): its "Objectives" title and quest
+-- colors: its "Objectives" title and quest
 -- titles in Exocet, in the title color, the objectives in the body font.
 -- Fonts and colors only: the lines keep Blizzard's sizes and layout.
 local _, Engine = ...
@@ -29,9 +29,6 @@ local StyleLine = function(line, anchor, verticalOffset, isHeader)
 end
 
 Module.OnEnable = function(self)
-	if (not self:GetConfig("AddOnSkins").styleTracker) or (not _G.WatchFrame_SetLine) then
-		return
-	end
 	local title = _G.WatchFrameTitle
 	title:SetFontObject(TITLE_FONT)
 	title:SetTextColor(unpack(C.General.Title))

@@ -258,8 +258,6 @@ L["Time Visible"] = true
 L["How many seconds chat text stays fully visible before it starts fading."] = true
 L["Background Opacity"] = true
 L["How opaque the chat window's background is while you're typing."] = true
-L["Copy Web Links"] = true
-L["Left-click a web link (like https://..., www.... or name@mail.com) in the chat to open a popup with it, selected and ready to copy."] = true
 L["Click to copy the link."] = true
 
 -- Talent specialization switch
@@ -325,10 +323,6 @@ L["s"] = true -- abbreviation for "seconds" when showing time
 L["AddOns"] = true
 L["Style TrinketMenu"] = true
 L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = true
-L["Style World Map"] = true
-L["Shows the world map's zone names in the UI's Exocet font. Works with map addons like Mapster.|n|nRequires a UI reload to apply."] = true
-L["Style Objectives Tracker"] = true
-L["Shows Blizzard's objectives tracker in the UI's fonts and colors: the quest titles in Exocet. Questie's own tracker has its own font settings.|n|nRequires a UI reload to apply."] = true
 L["Drag to move the tracker"] = true
 L["Unlock Tracker"] = true
 L["Lock Tracker"] = true

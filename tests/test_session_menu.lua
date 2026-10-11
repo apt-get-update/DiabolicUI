@@ -247,10 +247,6 @@ function TestOptionsMenu:test_the_chat_page()
 	widget("ChatTimeVisible"):SetValue(30)
 	lu.assertEquals(_G.ChatFrame1:GetTimeVisible(), 30)
 
-	local copy = filters.copyWebLinks
-	click("ChatCopyWebLinks")
-	lu.assertEquals(filters.copyWebLinks, not copy)
-
 	-- the shorter messages, on their own page, one checkbox each
 	for i, setting in ipairs({ "cleanProgress", "cleanQuests", "cleanStatus", "cleanOnline",
 		"cleanLoot", "cleanAuctions", "cleanAchievements", "hideChatNoise" }) do
@@ -383,7 +379,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	local L = client.Engine:GetLocale()
 	local skins = db("AddOnSkins")
 	-- each styling asks for a reload when it changes
-	for _, case in ipairs({ { "StyleTrinketMenu", "styleTrinketMenu" }, { "StyleWorldMap", "styleWorldMap" }, { "StyleTracker", "styleTracker" } }) do
+	for _, case in ipairs({ { "StyleTrinketMenu", "styleTrinketMenu" } }) do
 		click(case[1])
 		lu.assertFalse(skins[case[2]])
 		local popup = popupFrame("ENGINE_GENERAL_RELOADUI")

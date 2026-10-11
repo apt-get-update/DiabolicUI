@@ -58,9 +58,6 @@ local function loadFiltersModule()
 	local chunk = assert(loadfile("modules/chat/filters.lua"))
 	chunk("DiabolicUI", Engine)
 	local Module = Engine:GetModule("ChatFilters")
-	-- Explicit, not left to the mock's permissive fallback (which would
-	-- make Module.db.copyWebLinks truthy regardless, masking a broken gate).
-	Module.db = { copyWebLinks = true }
 	return Module
 end
 
@@ -179,15 +176,6 @@ function TestCopyWebLinks:test_hovering_a_link_says_a_click_copies_it()
 	enter(self.frame, "item:12345")
 	leave(self.frame)
 	lu.assertEquals({ GameTooltip.owner, GameTooltip.shown }, { "someone else", true })
-end
-
-function TestCopyWebLinks:test_does_nothing_when_the_option_is_disabled()
-	self.Module.db.copyWebLinks = false
-
-	local original = "check https://example.com out"
-	self.frame:AddMessage(original)
-
-	lu.assertEquals(self.frame.captured, original)
 end
 
 function TestCopyWebLinks:test_forwards_an_unrelated_hyperlink_click_to_the_real_SetItemRef()

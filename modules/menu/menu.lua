@@ -885,15 +885,10 @@ Module.CreateOptionsPanel = function(self)
 	-- Miscellaneous
 	CreateHeader(chatPanel, layout, L["Miscellaneous"])
 
-	local copyWebLinks = CreateCheckbox(chatPanel, "ChatCopyWebLinks", L["Copy Web Links"], L["Left-click a web link (like https://..., www.... or name@mail.com) in the chat to open a popup with it, selected and ready to copy."], function(button)
-		chatFiltersDB.copyWebLinks = button:GetChecked() and true or false
-	end)
-	layout:Place(copyWebLinks, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
-
 	local slideMessages = CreateCheckbox(chatPanel, "ChatSlideMessages", L["Slide New Messages"], L["New chat lines slide up into place instead of jumping. Not while you're typing in the chat, hovering it or scrolled up in it."], function(button)
 		chatDB.slideMessages = button:GetChecked() and true or false
 	end)
-	layout:Place(slideMessages, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+	layout:Place(slideMessages, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
 	chatPanel.okay = function() end
 	chatPanel.cancel = function()
@@ -902,7 +897,6 @@ Module.CreateOptionsPanel = function(self)
 		timeVisible:SetValueSilently(chatDB.timeVisible)
 		updateFadeSlidersEnabled()
 		backgroundOpacity:SetValueSilently(chatDB.backgroundOpacity)
-		copyWebLinks:SetChecked(chatFiltersDB.copyWebLinks)
 		slideMessages:SetChecked(chatDB.slideMessages)
 	end
 	chatPanel.refresh = chatPanel.cancel
@@ -1032,9 +1026,6 @@ Module.CreateOptionsPanel = function(self)
 		trackerOpacity:SetEnabled(objectivesDB.fadeTracker)
 	end
 
-	local styleTracker = CreateCheckbox(questsPanel, "StyleTracker", L["Style Objectives Tracker"], L["Shows Blizzard's objectives tracker in the UI's fonts and colors: the quest titles in Exocet. Questie's own tracker has its own font settings.|n|nRequires a UI reload to apply."], reloadOption(skinsDB, "styleTracker"))
-	layout:Place(styleTracker, CHECK_X, layout:Row(CHECK_HEIGHT, SECTION_GAP))
-
 	questsPanel.okay = function() end
 	questsPanel.cancel = function()
 		fadeTracker:SetChecked(objectivesDB.fadeTracker)
@@ -1042,15 +1033,14 @@ Module.CreateOptionsPanel = function(self)
 		trackerOpacity:SetValueSilently(objectivesDB.fadeOpacity)
 		updateTrackerSlidersEnabled()
 		unlockTracker:SetText(tracker:IsTrackerUnlocked() and L["Lock Tracker"] or L["Unlock Tracker"])
-		styleTracker:SetChecked(skinsDB.styleTracker)
 	end
 	questsPanel.refresh = questsPanel.cancel
 	questsPanel.cancel()
 
 	InterfaceOptions_AddCategory(questsPanel)
 
-	-- Frames & AddOns page: Blizzard's windows and other addons styled like
-	-- the UI (modules/blizzard/lootframe.lua, worldmap.lua, trinketmenu.lua)
+	-- Frames & AddOns page: Blizzard's loot window replaced, other addons
+	-- styled like the UI (modules/blizzard/lootframe.lua, trinketmenu.lua)
 	-------------------------------------------------------
 	local addonsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelAddOns", InterfaceOptionsFramePanelContainer)
 	addonsPanel.name = L["Frames & AddOns"]
@@ -1072,10 +1062,6 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(reskinLoot, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
-
-	local styleWorldMap = CreateCheckbox(addonsPanel, "StyleWorldMap", L["Style World Map"], L["Shows the world map's zone names in the UI's Exocet font. Works with map addons like Mapster.|n|nRequires a UI reload to apply."], reloadOption(skinsDB, "styleWorldMap"))
-	layout:Place(styleWorldMap, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
-
 	CreateHeader(addonsPanel, layout, L["AddOns"])
 
 	local styleTrinketMenu = CreateCheckbox(addonsPanel, "StyleTrinketMenu", L["Style TrinketMenu"], L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."], reloadOption(skinsDB, "styleTrinketMenu"))
@@ -1084,7 +1070,6 @@ Module.CreateOptionsPanel = function(self)
 	addonsPanel.okay = function() end
 	addonsPanel.cancel = function()
 		reskinLoot:SetChecked(lootDB.enableSkin)
-		styleWorldMap:SetChecked(skinsDB.styleWorldMap)
 		styleTrinketMenu:SetChecked(skinsDB.styleTrinketMenu)
 	end
 	addonsPanel.refresh = addonsPanel.cancel
