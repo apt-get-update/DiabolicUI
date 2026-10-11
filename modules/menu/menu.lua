@@ -1247,6 +1247,7 @@ Module.GetMovers = function(self)
 		table.insert(self.Movers, CreateMover("DiabolicUITrinketMenuMover", trinkets, "TrinketMenu", nil, function()
 			_G.TrinketMenuPerOptions.XPos = trinkets:GetLeft()
 			_G.TrinketMenuPerOptions.YPos = trinkets:GetTop()
+			self:PinTrinketMenu()
 		end))
 	end
 	return self.Movers
@@ -1356,6 +1357,20 @@ local ScaleWithUI = function(frame)
 	end
 end
 
+-- TrinketMenu places its window from its saved spot (TOPLEFT, in its own
+-- scale), and the game's layout cache can add another anchor for it once
+-- it's been dragged: with two, the window stretches between them. One
+-- anchor only, the saved one, and no layout cache.
+Module.PinTrinketMenu = function(self)
+	local frame, saved = _G.TrinketMenu_MainFrame, _G.TrinketMenuPerOptions
+	if not (frame and saved and saved.XPos and saved.YPos) or InCombatLockdown() then
+		return
+	end
+	frame:SetUserPlaced(false)
+	frame:ClearAllPoints()
+	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", saved.XPos, saved.YPos)
+end
+
 Module.ApplyUIScale = function(self)
 	if InCombatLockdown() then
 		self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnScaleCombatEnded")
@@ -1376,6 +1391,7 @@ Module.ApplyUIScale = function(self)
 			frame:SetScale(frame.DiabolicOwnScale)
 		end
 	end
+	self:PinTrinketMenu()
 end
 
 Module.OnScaleCombatEnded = function(self)

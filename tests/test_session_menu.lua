@@ -701,6 +701,30 @@ function TestOptionsMenu:test_scales_chosen_before_keep_their_size()
 	assertClean(client)
 end
 
+function TestOptionsMenu:test_trinketmenu_keeps_one_anchor()
+	-- dragged once, the game's layout cache added an anchor to TrinketMenu's
+	-- own: the window would stretch between them
+	local trinkets = CreateFrame("Frame", "TrinketMenu_MainFrame", _G.UIParent)
+	trinkets:SetSize(92, 52)
+	trinkets:SetPoint("TOPLEFT", _G.UIParent, "BOTTOMLEFT", 400, 300)
+	trinkets:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -20, 20)
+	trinkets:SetUserPlaced(true)
+	_G.TrinketMenuPerOptions = { XPos = 400, YPos = 300 }
+	local menu = client:GetModule("Menu")
+	menu:ApplyUIScale()
+	lu.assertEquals(trinkets:GetNumPoints(), 1)
+	lu.assertEquals({ trinkets:GetPoint() }, { "TOPLEFT", _G.UIParent, "BOTTOMLEFT", 400, 300 })
+	lu.assertFalse(trinkets:IsUserPlaced() and true or false)
+	-- in combat: left for later
+	client:EnterCombat()
+	trinkets:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -20, 20)
+	menu:PinTrinketMenu()
+	lu.assertEquals(trinkets:GetNumPoints(), 2)
+	client:LeaveCombat()
+	_G.TrinketMenuPerOptions, _G.TrinketMenu_MainFrame = nil, nil
+	assertClean(client)
+end
+
 function TestOptionsMenu:test_every_page_fits_in_the_window()
 	local container = _G.InterfaceOptionsFramePanelContainer
 	for _, panel in ipairs(client.optionsPanels) do
