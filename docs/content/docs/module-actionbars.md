@@ -17,7 +17,7 @@ modules/actionbars/
 └── elements/
     ├── bar1.lua .. bar5.lua  # the five main action bars, one widget each
     ├── artwork.lua            # bar background art + range/mana desaturation
-    ├── specswitch.lua         # talent specialization switch on top of the skull
+    ├── specswitch.lua         # talent specialization switch on top of the skull, and each spec's commands
     ├── floaters.lua           # stance bar toggle, vehicle/taxi exit buttons
     ├── keybinds.lua           # keybind text overlay on buttons
     ├── menu.lua               # the Micro Menu (main menu button row), online friends and guild on its social button

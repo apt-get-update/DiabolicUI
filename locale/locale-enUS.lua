@@ -268,6 +268,9 @@ L["Learn Dual Talent Specialization from your class trainer to switch between tw
 L["<Left-click> to switch"] = true
 L["Show Specialization Switch"] = true
 L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization. It's greyed out until you learn Dual Talent Specialization."] = true
+L["Specializations"] = true
+L["Slash commands to run once you switch to this specialization, one per line. Like '/equipset Shadow'."] = true
+L["Unknown command: %s"] = true
 
 -- Shorter Messages (chat cleaner)
 L["Messages"] = true

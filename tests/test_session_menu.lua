@@ -60,14 +60,14 @@ function TestOptionsMenu:tearDown()
 	client = nil
 end
 
-function TestOptionsMenu:test_five_pages_under_diabolicui()
+function TestOptionsMenu:test_six_pages_under_diabolicui()
 	local names = {}
 	for _, panel in ipairs(client.optionsPanels) do
 		if panel:GetName() and panel:GetName():find("^DiabolicUIOptionsPanel") then
 			names[#names + 1] = (panel.parent and (panel.parent .. "/") or "") .. panel.name
 		end
 	end
-	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Tooltips", "DiabolicUI/Units", "DiabolicUI/Chat", "DiabolicUI/Messages" })
+	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Tooltips", "DiabolicUI/Units", "DiabolicUI/Chat", "DiabolicUI/Messages", "DiabolicUI/Specializations" })
 	assertClean(client)
 end
 
@@ -267,6 +267,77 @@ end
 
 -- Every page fits in Blizzard's options window (648x520, its pages
 -- 424 high): the lowest widget of each stays above the page's bottom.
+function TestOptionsMenu:test_the_specialization_commands()
+	local L = client.Engine:GetLocale()
+	local bars = db("ActionBars", "character")
+	client.world.talents = { { "Discipline", "Interface\\Icons\\Disc", 13 }, { "Holy", "Interface\\Icons\\Holy", 58 }, { "Shadow", "", 0 } }
+	client.world.secondaryTalents = { { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "Interface\\Icons\\Shadow", 57 } }
+	bars.specMacro2 = "/abs restore shadow"
+	_G.DiabolicUIOptionsPanelSpecs.refresh()
+
+	-- one column per specialization: its icon and name over its commands
+	local primary, secondary = widget("SpecMacro1"), widget("SpecMacro2")
+	local primaryEdit, secondaryEdit = primary.EditBox, secondary.EditBox
+	lu.assertEquals(secondaryEdit:GetText(), "/abs restore shadow")
+	lu.assertEquals(primaryEdit:GetText(), "")
+	lu.assertEquals(secondaryEdit:IsMultiLine(), 1)
+	local texts, icons = {}, {}
+	for _, region in ipairs({ _G.DiabolicUIOptionsPanelSpecs:GetRegions() }) do
+		if region:GetObjectType() == "FontString" then
+			texts[region:GetText()] = true
+		elseif region:GetObjectType() == "Texture" then
+			icons[region:GetTexture()] = true
+		end
+	end
+	lu.assertTrue(texts.Holy and texts.Shadow)
+	lu.assertTrue(icons["Interface\\Icons\\Holy"] and icons["Interface\\Icons\\Shadow"])
+
+	-- no points spent yet: the group's name and a question mark
+	client.world.secondaryTalents = { { "Discipline", "", 0 }, { "Holy", "", 0 }, { "Shadow", "", 0 } }
+	_G.DiabolicUIOptionsPanelSpecs.refresh()
+	texts, icons = {}, {}
+	for _, region in ipairs({ _G.DiabolicUIOptionsPanelSpecs:GetRegions() }) do
+		if region:GetObjectType() == "FontString" then
+			texts[region:GetText()] = true
+		elseif region:GetObjectType() == "Texture" then
+			icons[region:GetTexture()] = true
+		end
+	end
+	lu.assertTrue(texts[_G.SECONDARY])
+	lu.assertTrue(icons["Interface\\Icons\\INV_Misc_QuestionMark"])
+
+	-- typing saves, filling it from the settings doesn't
+	client:RunScript(primary, "OnMouseDown", "LeftButton")
+	lu.assertEquals(primaryEdit:HasFocus(), 1)
+	primaryEdit:Insert("/abs restore holy\n/gear holy")
+	lu.assertEquals(bars.specMacro1, "/abs restore holy\n/gear holy")
+	bars.specMacro1 = "/gear holy"
+	_G.DiabolicUIOptionsPanelSpecs.cancel()
+	lu.assertEquals(primaryEdit:GetText(), "/gear holy")
+	client:RunScript(primaryEdit, "OnEscapePressed")
+	lu.assertNil(primaryEdit:HasFocus())
+
+	-- the cursor's line stays in view, the wheel scrolls
+	_G.DiabolicUIOptionsPanelSpecs:SetAllPoints(_G.InterfaceOptionsFramePanelContainer)
+	local scroll = primaryEdit:GetParent()
+	local visible = scroll:GetHeight()
+	lu.assertEquals(visible, 240 - 16)
+	client:RunScript(primaryEdit, "OnCursorChanged", 0, -(visible + 10), 2, 14)
+	lu.assertEquals(scroll:GetVerticalScroll(), 24)
+	client:RunScript(primaryEdit, "OnCursorChanged", 0, -30, 2, 14)
+	lu.assertEquals(scroll:GetVerticalScroll(), 24)
+	client:RunScript(primaryEdit, "OnCursorChanged", 0, -4, 2, 14)
+	lu.assertEquals(scroll:GetVerticalScroll(), 4)
+	primaryEdit:SetHeight(visible + 100)
+	client:RunScript(primary, "OnMouseWheel", -1)
+	lu.assertEquals(scroll:GetVerticalScroll(), 24)
+	client:RunScript(primary, "OnMouseWheel", -10)
+	lu.assertEquals(scroll:GetVerticalScroll(), 100)
+	client:RunScript(primary, "OnMouseWheel", 10)
+	lu.assertEquals(scroll:GetVerticalScroll(), 0)
+	assertClean(client)
+end
+
 function TestOptionsMenu:test_every_page_fits_in_the_window()
 	local container = _G.InterfaceOptionsFramePanelContainer
 	for _, panel in ipairs(client.optionsPanels) do

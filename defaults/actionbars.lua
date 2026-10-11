@@ -7,5 +7,7 @@ Engine:NewConfig("ActionBars", {
 	cast_on_down = 0, -- this setting is only used for WotLK
 	showGold = true,
 	showPerformance = false,
-	showSpecSwitch = true -- the talent specialization switch on top of the skull
+	showSpecSwitch = true, -- the talent specialization switch on top of the skull
+	specMacro1 = "", -- slash commands run after switching to the primary specialization
+	specMacro2 = "" -- ...and to the secondary one
 })

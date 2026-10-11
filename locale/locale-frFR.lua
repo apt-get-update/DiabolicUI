@@ -156,3 +156,6 @@ L["Learn Dual Talent Specialization from your class trainer to switch between tw
 L["<Left-click> to switch"] = "<Clic gauche> pour changer"
 L["Show Specialization Switch"] = "Afficher le changement de spécialisation"
 L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization. It's greyed out until you learn Dual Talent Specialization."] = "Affiche un bouton au-dessus du crâne, au milieu des barres d'action, qui passe à votre autre spécialisation. Il reste grisé tant que vous n'avez pas appris la double spécialisation."
+L["Specializations"] = "Spécialisations"
+L["Slash commands to run once you switch to this specialization, one per line. Like '/equipset Shadow'."] = "Commandes slash lancées quand vous passez à cette spécialisation, une par ligne. Comme « /equipset Ombre »."
+L["Unknown command: %s"] = "Commande inconnue : %s"

@@ -328,6 +328,57 @@ function TestMenus:test_the_spec_switch_on_the_skull()
 	assertClean(client)
 end
 
+function TestMenus:test_the_commands_of_a_specialization_run_once_switched_to_it()
+	boot()
+	local L = client.Engine:GetLocale()
+	local bars = client.Engine:GetConfig("ActionBars", "character")
+	local switch = widget("Button: Spec Switch")
+	local calls = {}
+	_G.SLASH_ABS1, _G.SLASH_ABS2 = "/actionbarsaver", "/abs"
+	_G.SlashCmdList.ABS = function(arguments) calls[#calls + 1] = "abs " .. arguments end
+	_G.SLASH_EQUIP_SET1 = "/equipset"
+	_G.SecureCmdList.EQUIP_SET = function(arguments) calls[#calls + 1] = "equipset " .. arguments end
+	bars.specMacro1 = "/equipset Holy"
+	bars.specMacro2 = "/abs restore shadow\r\nnot a command\n\n  /ABS   count  \n/equipset Shadow\n/nope at all"
+
+	-- the switch completes: the new specialization's commands, a moment later
+	_G.SetActiveTalentGroup(2)
+	client:Tick(.5)
+	lu.assertEquals(calls, {})
+	client:Tick(.6)
+	lu.assertEquals(calls, { "abs restore shadow", "abs count", "equipset Shadow" })
+	local messages = client.widgetState[_G.ChatFrame1].messages
+	lu.assertEquals(messages[#messages].text, L["Unknown command: %s"]:format("/nope"))
+	client:Tick(2)
+	lu.assertEquals(#calls, 3) -- once
+
+	-- and back
+	_G.SetActiveTalentGroup(1)
+	client:Tick(1.1)
+	lu.assertEquals(calls[4], "equipset Holy")
+
+	-- no switch: the event repeating the current group, or before the first
+	-- loading screen (the group at login)
+	client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", 1, 1)
+	switch.talentGroup = nil
+	client.world.talentGroup = 2
+	client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", 2, 1)
+	client:FireEvent("PLAYER_ENTERING_WORLD")
+	client:Tick(1.1)
+	lu.assertEquals(#calls, 4)
+	lu.assertEquals(switch.talentGroup, 2)
+
+	-- nothing saved for it: nothing to run
+	bars.specMacro1 = nil
+	_G.SetActiveTalentGroup(1)
+	client:Tick(1.1)
+	lu.assertEquals(#calls, 4)
+
+	_G.SlashCmdList.ABS, _G.SecureCmdList.EQUIP_SET = nil, nil
+	_G.SLASH_ABS1, _G.SLASH_ABS2, _G.SLASH_EQUIP_SET1 = nil, nil, nil
+	assertClean(client)
+end
+
 function TestMenus:test_the_bar_layout_menu()
 	boot()
 	local Main = widget("Controller: Main"):GetFrame()

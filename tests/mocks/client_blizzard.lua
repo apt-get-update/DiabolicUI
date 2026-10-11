@@ -92,6 +92,7 @@ local function constants()
 		UnitPopupButtons = {},
 		SlashCmdList = {},
 		hash_SlashCmdList = {},
+		SecureCmdList = {},
 		UISpecialFrames = {},
 		UIPanelWindows = {},
 		COMBAT_TEXT_LOCATIONS = {
@@ -1467,14 +1468,15 @@ function Blizzard.install(owner)
 	_G.LoadAddOn = client.api.LoadAddOn
 
 	-- whatever else is read: ALL CAPS strings read as their own name,
-	-- anything else nil
+	-- anything else nil. Slash command names (SLASH_<KEY><n>) are nil
+	-- unless registered: lookups walk them until the first missing one.
 	setmetatable(_G, {
 		__index = function(_, key)
 			if type(key) ~= "string" then
 				return nil
 			end
 			client.missing[key] = (client.missing[key] or 0) + 1
-			if key:match("^[%u%d_]+$") and key:match("%u") and not NIL_CAPS[key] then
+			if key:match("^[%u%d_]+$") and key:match("%u") and not NIL_CAPS[key] and not key:match("^SLASH_") then
 				return key
 			end
 			return nil

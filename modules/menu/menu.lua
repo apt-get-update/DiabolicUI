@@ -5,12 +5,15 @@ local Module = Engine:NewModule("Menu")
 -- Lua API
 local ipairs = ipairs
 local math_floor = math.floor
+local math_max = math.max
+local math_min = math.min
 local pairs = pairs
 local setmetatable = setmetatable
 local unpack = unpack
 
 -- WoW API
 local CreateFrame = CreateFrame
+local ChatFontNormal = ChatFontNormal
 local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
 
@@ -36,6 +39,11 @@ local BUTTON_HEIGHT = 24
 local SLIDER_LABEL_HEIGHT = 16   -- the template's label sits above the bar
 local SLIDER_BLOCK_HEIGHT = SLIDER_LABEL_HEIGHT + 15 + 22 -- label, bar, low/high + input
 local PICKER_HEIGHT = 80 + RADIO_OVERHANG * 2
+local SPEC_COLUMN = 210          -- distance between the two specialization columns
+local SPEC_WIDTH = 194           -- a specialization's command box
+local SPEC_ICON_SIZE = 32
+local SPEC_BOX_HEIGHT = 240
+local MACRO_INSET = 8            -- text padding inside a command box
 
 local SECTION_GAP = 24           -- above a section header
 local HEADER_GAP = 8             -- between a header and its first row
@@ -379,6 +387,59 @@ local CreateAnchorPointPicker = function(page, layout, top, getValue, setValue)
 	refresh()
 
 	return preview, refresh
+end
+
+-- A bordered multi-line text box, scrolling once its text gets taller than
+-- the box. `onChange(text)` follows every edit; SetMacroText fills it.
+local CreateMacroBox = function(parent, name, onChange)
+	local box = CreateFrame("Frame", "DiabolicUIOptionsPanel"..name, parent)
+	box:SetBackdrop(GROUP_BACKDROP)
+	box:SetBackdropColor(0, 0, 0, .5)
+	box:SetBackdropBorderColor(.6, .6, .6, 1)
+
+	local scroll = CreateFrame("ScrollFrame", nil, box)
+	scroll:SetPoint("TOPLEFT", MACRO_INSET, -MACRO_INSET)
+	scroll:SetPoint("BOTTOMRIGHT", -MACRO_INSET, MACRO_INSET)
+
+	local editBox = CreateFrame("EditBox", box:GetName().."EditBox", scroll)
+	editBox:SetMultiLine(true)
+	editBox:SetAutoFocus(false)
+	editBox:SetFontObject(ChatFontNormal)
+	editBox:SetWidth(SPEC_WIDTH - MACRO_INSET * 2)
+	editBox:SetHeight(SPEC_BOX_HEIGHT - MACRO_INSET * 2)
+	scroll:SetScrollChild(editBox)
+	box.EditBox = editBox
+
+	-- keeps the cursor's line in view
+	editBox:SetScript("OnCursorChanged", function(self, x, y, width, height)
+		local top, offset, visible = -y, scroll:GetVerticalScroll(), scroll:GetHeight()
+		if (top < offset) then
+			scroll:SetVerticalScroll(top)
+		elseif (top + height > offset + visible) then
+			scroll:SetVerticalScroll(top + height - visible)
+		end
+	end)
+	editBox:SetScript("OnTextChanged", function(self, userInput)
+		scroll:UpdateScrollChildRect()
+		if userInput then
+			onChange(self:GetText())
+		end
+	end)
+	editBox:SetScript("OnEscapePressed", editBox.ClearFocus)
+
+	-- a click anywhere in the box starts typing, the wheel scrolls it
+	box:EnableMouse(true)
+	box:SetScript("OnMouseDown", function() editBox:SetFocus() end)
+	box:EnableMouseWheel(true)
+	box:SetScript("OnMouseWheel", function(self, delta)
+		local value = scroll:GetVerticalScroll() - delta * 20
+		scroll:SetVerticalScroll(math_max(0, math_min(value, scroll:GetVerticalScrollRange())))
+	end)
+
+	box.SetMacroText = function(self, text)
+		editBox:SetText(text or "")
+	end
+	return box
 end
 
 -- Pages
@@ -732,6 +793,64 @@ Module.CreateOptionsPanel = function(self)
 	messagesPanel.cancel()
 
 	InterfaceOptions_AddCategory(messagesPanel)
+
+	-- Specializations page: the slash commands each talent specialization
+	-- runs once you switch to it (modules/actionbars/elements/specswitch.lua)
+	-------------------------------------------------------
+	local specSwitch = Engine:GetModule("ActionBars"):GetWidget("Button: Spec Switch")
+
+	local specsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelSpecs", InterfaceOptionsFramePanelContainer)
+	specsPanel.name = L["Specializations"]
+	specsPanel.parent = panel.name
+	specsPanel:Hide()
+
+	layout = NewLayout(specsPanel)
+	CreateTitle(specsPanel, layout, L["Specializations"])
+	CreateSubmenuLogo(specsPanel)
+
+	local specsHint = specsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	specsHint:SetJustifyH("LEFT")
+	specsHint:SetWidth(SPEC_COLUMN + SPEC_WIDTH)
+	specsHint:SetText(L["Slash commands to run once you switch to this specialization, one per line. Like '/equipset Shadow'."])
+	layout:Place(specsHint, EDGE, layout:Row(LABEL_HEIGHT * 2, HEADER_GAP))
+
+	local specHeaderRow = layout:Row(SPEC_ICON_SIZE, SECTION_GAP)
+	local specBoxRow = layout:Row(SPEC_BOX_HEIGHT, HEADER_GAP)
+	local specColumns = {}
+	for group = 1, 2 do
+		local x = EDGE + (group - 1) * SPEC_COLUMN
+		local column = {}
+
+		column.icon = specsPanel:CreateTexture(nil, "ARTWORK")
+		column.icon:SetSize(SPEC_ICON_SIZE, SPEC_ICON_SIZE)
+		layout:Place(column.icon, x, specHeaderRow)
+
+		column.name = specsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		column.name:SetJustifyH("LEFT")
+		column.name:SetPoint("LEFT", column.icon, "RIGHT", 8, 0)
+
+		column.box = CreateMacroBox(specsPanel, "SpecMacro" .. group, function(text)
+			actionbarsDB["specMacro" .. group] = text
+		end)
+		column.box:SetSize(SPEC_WIDTH, SPEC_BOX_HEIGHT)
+		layout:Place(column.box, x, specBoxRow)
+
+		specColumns[group] = column
+	end
+
+	specsPanel.okay = function() end
+	specsPanel.cancel = function()
+		for group, column in ipairs(specColumns) do
+			local name, _, icon = specSwitch:GetSpec(group)
+			column.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
+			column.name:SetText(name or (group == 1 and _G.PRIMARY or _G.SECONDARY))
+			column.box:SetMacroText(actionbarsDB["specMacro" .. group])
+		end
+	end
+	specsPanel.refresh = specsPanel.cancel
+	specsPanel.cancel()
+
+	InterfaceOptions_AddCategory(specsPanel)
 
 	self.OptionsPanel = panel
 
