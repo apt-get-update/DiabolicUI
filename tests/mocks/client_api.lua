@@ -735,7 +735,39 @@ function Api.install(client)
 	api.PlaceAction = function(slot) world().cursorAction = nil end
 	api.GetMacroSpell = function(id) return nil end
 	api.GetMacroItem = function(id) return nil end
-	api.GetMacroInfo = function(id) return "Macro", "Interface\\Icons\\Macro", "/cast Spell" end
+	-- world.macros = { [index] = { name, icon, body } }: account macros at
+	-- 1-36, character ones from 37. Without it, every macro is the same one.
+	api.GetMacroInfo = function(id)
+		local macros = world().macros
+		if not macros then
+			return "Macro", "Interface\\Icons\\Macro", "/cast Spell"
+		end
+		if type(id) == "string" then
+			id = api.GetMacroIndexByName(id)
+		end
+		local macro = macros[id]
+		if macro then
+			return macro[1], macro[2], macro[3], id > 36 and 1 or nil
+		end
+	end
+	api.GetMacroIndexByName = function(name)
+		for index, macro in pairs(world().macros or {}) do
+			if macro[1] == name then
+				return index
+			end
+		end
+		return 0
+	end
+	api.CreateMacro = function(name, iconIndex, body, perCharacter)
+		local macros = world().macros or {}
+		world().macros = macros
+		local index = perCharacter and 37 or 1
+		while macros[index] do
+			index = index + 1
+		end
+		macros[index] = { name, "Interface\\Icons\\INV_Misc_QuestionMark", body }
+		return index
+	end
 	api.GetPossessInfo = function(i) return "Interface\\Icons\\Possess", "Possess", 1 end
 	api.IsPossessBarVisible = function() return nil end
 	api.GetPetActionInfo = function(slot)
@@ -1183,6 +1215,22 @@ function Api.install(client)
 		client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", group, 3 - group)
 	end
 	api.GetNumTalentTabs = function() return #world().talents end
+
+	-- equipment manager sets: world.equipmentSets = { { name, icon }, ... }
+	api.GetNumEquipmentSets = function() return #(world().equipmentSets or {}) end
+	api.GetEquipmentSetInfo = function(index)
+		local set = (world().equipmentSets or {})[index]
+		if set then
+			return set[1], set[2], index
+		end
+	end
+	api.GetEquipmentSetInfoByName = function(name)
+		for index, set in ipairs(world().equipmentSets or {}) do
+			if set[1] == name then
+				return set[2], index
+			end
+		end
+	end
 	api.GetTalentTabInfo = function(tab, inspect, pet, group)
 		local t = (inspect and world().inspectTalents
 			or (group == 2) and world().secondaryTalents or world().talents)[tab]
@@ -1403,7 +1451,13 @@ function Api.install(client)
 	api.LeaveParty = function() end
 	api.PromoteToLeader = function() end
 	api.RequestTimePlayed = function() end
-	api.GetNumMacros = function() return 0, 0 end
+	api.GetNumMacros = function()
+		local account, character = 0, 0
+		for index in pairs(world().macros or {}) do
+			if index > 36 then character = character + 1 else account = account + 1 end
+		end
+		return account, character
+	end
 	api.GetGMTicket = function() end
 	api.IsTrialAccount = nil
 	api.GetGuildBankMoney = function() return 0 end

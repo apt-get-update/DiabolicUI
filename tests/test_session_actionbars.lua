@@ -293,8 +293,11 @@ function TestMenus:test_the_spec_switch_on_the_skull()
 	switch.Button = nil
 	switch:Update()
 	switch.Button = button
-	local _, skull = button:GetPoint()
-	lu.assertEquals(skull, _G.DiabolicUISkullTexture)
+	-- on the skull: anchored where the skull is (a secure button can't
+	-- anchor to a texture), its offset above it
+	local position = config.position
+	lu.assertEquals(button:GetBottom(), _G.DiabolicUISkullTexture:GetBottom() + position[3])
+	lu.assertEquals(button:GetCenter(), (_G.DiabolicUISkullTexture:GetCenter()))
 	lu.assertEquals(button.Art:GetTexture(), config.textures.normal)
 
 	-- hovering: both specializations, the active one first in white
@@ -308,74 +311,314 @@ function TestMenus:test_the_spec_switch_on_the_skull()
 	client:RunScript(button, "OnMouseUp", "LeftButton")
 
 	-- a click switches to the other one, the tooltip follows
-	client:RunScript(button, "OnClick", "LeftButton")
+	client:Click(button)
 	lu.assertEquals(client.world.talentGroup, 2)
-	client:RunScript(button, "OnClick", "LeftButton")
+	client:Click(button)
 	lu.assertEquals(client.world.talentGroup, 1)
 	client:Leave()
 	lu.assertEquals(button.Art:GetTexture(), config.textures.normal)
 
-	-- without Dual Talent Specialization: greyed out, and says how to get it
+	-- without Dual Talent Specialization: hidden until it's learned
 	client.world.numTalentGroups = 1
 	client:FireEvent("PLAYER_TALENT_UPDATE")
-	lu.assertNil(button:IsEnabled())
-	lu.assertEquals(button.Art:GetTexture(), config.textures.disabled)
-	client:Hover(button)
-	lu.assertStrContains(table.concat(tooltip(), "\n"), L["Learn Dual Talent Specialization from your class trainer to switch between two specializations here."])
-	client:RunScript(button, "OnClick", "LeftButton")
-	lu.assertEquals(client.world.talentGroup, 1)
-	client:Leave()
+	lu.assertNil(button:IsShown())
+	client.world.numTalentGroups = 2
+	client:FireEvent("PLAYER_TALENT_UPDATE")
+	lu.assertEquals(button:IsShown(), 1)
 	assertClean(client)
 end
 
-function TestMenus:test_the_commands_of_a_specialization_run_once_switched_to_it()
-	boot()
+function TestMenus:test_what_a_specialization_sets_up_once_switched_to_it()
+	boot({ world = function(world)
+		world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" }, { "Shadow", "Interface\\Icons\\Shadow" } }
+	end })
 	local L = client.Engine:GetLocale()
 	local bars = client.Engine:GetConfig("ActionBars", "character")
 	local switch = widget("Button: Spec Switch")
 	local calls = {}
-	_G.SLASH_ABS1, _G.SLASH_ABS2 = "/actionbarsaver", "/abs"
+	_G.SLASH_ABS1, _G.SLASH_ABS2 = "/abs", "/actionbarsaver"
 	_G.SlashCmdList.ABS = function(arguments) calls[#calls + 1] = "abs " .. arguments end
-	_G.SLASH_EQUIP_SET1 = "/equipset"
-	_G.SecureCmdList.EQUIP_SET = function(arguments) calls[#calls + 1] = "equipset " .. arguments end
-	bars.specMacro1 = "/equipset Holy"
-	bars.specMacro2 = "/abs restore shadow\r\nnot a command\n\n  /ABS   count  \n/equipset Shadow\n/nope at all"
+	local messages = client.widgetState[_G.ChatFrame1].messages
+	local lastMessage = function() return messages[#messages].text end
 
-	-- the switch completes: the new specialization's commands, a moment later
+	bars.specEquipSet2, bars.specProfile2, bars.specBars2, bars.specSideBars2 = "Shadow", "shadow", 3, 2
+	bars.num_bars, bars.num_side_bars = 1, 0
+
+	-- the switch completes: a moment later, the set, the profile, the bars
 	_G.SetActiveTalentGroup(2)
 	client:Tick(.5)
 	lu.assertEquals(calls, {})
 	client:Tick(.6)
-	lu.assertEquals(calls, { "abs restore shadow", "abs count", "equipset Shadow" })
-	local messages = client.widgetState[_G.ChatFrame1].messages
-	lu.assertEquals(messages[#messages].text, L["Unknown command: %s"]:format("/nope"))
+	lu.assertEquals(client.world.equippedSet, "Shadow")
+	lu.assertEquals(calls, { "abs restore shadow" })
+	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 2 })
 	client:Tick(2)
-	lu.assertEquals(#calls, 3) -- once
+	lu.assertEquals(#calls, 1) -- once
 
-	-- and back
+	-- and back: left as it is, but a gone set and a missing addon say so
+	bars.specEquipSet1, bars.specProfile1 = "Deleted", "holy"
+	_G.SlashCmdList.ABS = nil
 	_G.SetActiveTalentGroup(1)
 	client:Tick(1.1)
-	lu.assertEquals(calls[4], "equipset Holy")
+	lu.assertEquals(client.world.equippedSet, "Shadow")
+	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 2 })
+	lu.assertEquals(messages[#messages - 1].text, L["Equipment set '%s' not found."]:format("Deleted"))
+	lu.assertEquals(lastMessage(), L["Action Bar Saver isn't loaded, can't restore '%s'."]:format("holy"))
+
+	-- only one of the bar counts set
+	bars.specBars2, bars.specSideBars2 = false, 1
+	_G.SetActiveTalentGroup(2)
+	client:Tick(1.1)
+	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 1 })
 
 	-- no switch: the event repeating the current group, or before the first
 	-- loading screen (the group at login)
-	client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", 1, 1)
+	local count = #calls
+	client.world.equippedSet = nil
+	client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", 2, 2)
 	switch.talentGroup = nil
-	client.world.talentGroup = 2
-	client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", 2, 1)
+	client.world.talentGroup = 1
+	client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", 1, 2)
 	client:FireEvent("PLAYER_ENTERING_WORLD")
 	client:Tick(1.1)
-	lu.assertEquals(#calls, 4)
-	lu.assertEquals(switch.talentGroup, 2)
+	lu.assertEquals(#calls, count)
+	lu.assertNil(client.world.equippedSet)
+	lu.assertEquals(switch.talentGroup, 1)
 
-	-- nothing saved for it: nothing to run
-	bars.specMacro1 = nil
+	_G.SLASH_ABS1, _G.SLASH_ABS2 = nil, nil
+	assertClean(client)
+end
+
+function TestMenus:test_a_specialization_macro_runs_on_the_next_click()
+	boot({ world = function(world)
+		world.macros = { [1] = { "Holy Toy", "Interface\\Icons\\Toy", "/use item:44430" } }
+	end })
+	local L = client.Engine:GetLocale()
+	local bars = client.Engine:GetConfig("ActionBars", "character")
+	local button = widget("Button: Spec Switch"):GetFrame()
+	local messages = client.widgetState[_G.ChatFrame1].messages
+	bars.specMacroName2 = "Holy Toy"
+
+	-- the default: no macro, the button only switches
+	lu.assertNil(button:GetAttribute("type"))
+	client:Click(button)
+	lu.assertEquals(client.world.talentGroup, 2)
+	lu.assertNil(button:GetAttribute("type"))
+
+	-- the switch completes: the button glows, and says what its click does
+	client:Tick(1.1)
+	lu.assertEquals(button:GetAttribute("type"), "macro")
+	lu.assertEquals(button:GetAttribute("macro"), "Holy Toy")
+	lu.assertEquals(button.Glow:IsShown(), 1)
+	client:Hover(button)
+	lu.assertStrContains(table.concat(tooltip(), "\n"), L["<Left-click> to run your '%s' macro"]:format("Holy Toy"))
+
+	-- its click runs the macro (the template's OnClick), not a switch
+	client:Click(button)
+	lu.assertEquals(client.world.talentGroup, 2)
+	lu.assertNil(button:GetAttribute("type"))
+	lu.assertNil(button.Glow:IsShown())
+	lu.assertStrContains(table.concat(tooltip(), "\n"), L["<Left-click> to switch"])
+	client:Leave()
+
+	-- clicked in combat: the attributes wait for its end
+	client:Click(button)
+	client:Tick(1.1)
+	client:Click(button)
+	client:Tick(1.1)
+	lu.assertEquals(button:GetAttribute("type"), "macro")
+	client.world.inCombat = true
+	client:FireEvent("PLAYER_REGEN_DISABLED")
+	client:Click(button)
+	lu.assertNil(button.Glow:IsShown())
+	lu.assertEquals(button:GetAttribute("type"), "macro")
+	client.world.inCombat = false
+	client:FireEvent("PLAYER_REGEN_ENABLED")
+	lu.assertNil(button:GetAttribute("type"))
+
+	-- switching away without clicking: the macro's no longer waiting
+	client:Click(button)
+	client:Tick(1.1)
+	lu.assertEquals(client.world.talentGroup, 1)
+	client:Click(button)
+	client:Tick(1.1)
+	lu.assertEquals(button:GetAttribute("type"), "macro")
 	_G.SetActiveTalentGroup(1)
 	client:Tick(1.1)
-	lu.assertEquals(#calls, 4)
+	lu.assertNil(button:GetAttribute("type"))
+	lu.assertNil(button.Glow:IsShown())
 
-	_G.SlashCmdList.ABS, _G.SecureCmdList.EQUIP_SET = nil, nil
-	_G.SLASH_ABS1, _G.SLASH_ABS2, _G.SLASH_EQUIP_SET1 = nil, nil, nil
+	-- a deleted macro, or the button turned off: said in the chat
+	bars.specMacroName2 = "Gone"
+	_G.SetActiveTalentGroup(2)
+	client:Tick(1.1)
+	lu.assertNil(button:GetAttribute("type"))
+	lu.assertEquals(messages[#messages].text, L["Macro '%s' not found."]:format("Gone"))
+	bars.specMacroName1, bars.showSpecSwitch = "Holy Toy", false
+	_G.SetActiveTalentGroup(1)
+	client:Tick(1.1)
+	lu.assertNil(button:GetAttribute("type"))
+	lu.assertEquals(messages[#messages].text, L["Turn on the specialization switch button to run your '%s' macro."]:format("Holy Toy"))
+
+	-- turned off while one waits: cleared
+	bars.showSpecSwitch = true
+	widget("Button: Spec Switch"):Update()
+	_G.SetActiveTalentGroup(2)
+	_G.SetActiveTalentGroup(1)
+	client:Tick(1.1)
+	lu.assertEquals(button:GetAttribute("type"), "macro")
+	bars.showSpecSwitch = false
+	widget("Button: Spec Switch"):Update()
+	lu.assertNil(button:GetAttribute("type"))
+	lu.assertNil(button:IsShown())
+
+	-- updates in combat wait for its end (a secure button)
+	bars.showSpecSwitch = true
+	client.world.inCombat = true
+	widget("Button: Spec Switch"):Update()
+	lu.assertNil(button:IsShown())
+	client.world.inCombat = false
+	client:FireEvent("PLAYER_REGEN_ENABLED")
+	lu.assertEquals(button:IsShown(), 1)
+	assertClean(client)
+end
+
+function TestMenus:test_a_specialization_macro_before_the_switch()
+	boot({ world = function(world)
+		world.macros = { [1] = { "Corruption", "Interface\\Icons\\Toy", "/say Hoo the corruption" } }
+	end })
+	local L = client.Engine:GetLocale()
+	local bars = client.Engine:GetConfig("ActionBars", "character")
+	local switch = widget("Button: Spec Switch")
+	local button = switch:GetFrame()
+	local messages = client.widgetState[_G.ChatFrame1].messages
+	bars.specMacroBefore2 = "Corruption"
+
+	-- the tooltip says it runs first
+	client:Hover(button)
+	lu.assertStrContains(table.concat(tooltip(), "\n"), L["Runs your '%s' macro first"]:format("Corruption"))
+	client:Leave()
+
+	-- the click that switches runs it: the macro set up for the template's
+	-- OnClick, then taken off again, and the switch
+	local typeOnClick
+	button:HookScript("OnClick", function(self) typeOnClick = self:GetAttribute("macro") end)
+	client:Click(button)
+	lu.assertEquals(typeOnClick, "Corruption")
+	lu.assertNil(button:GetAttribute("type"))
+	lu.assertEquals(client.world.talentGroup, 2)
+
+	-- a deleted one: said, and it still switches
+	bars.specMacroBefore1 = "Gone"
+	client:Click(button)
+	lu.assertEquals(messages[#messages].text, L["Macro '%s' not found."]:format("Gone"))
+	lu.assertEquals(client.world.talentGroup, 1)
+
+	-- a waiting "after" macro shown on the tooltip of a hovered button
+	client.world.macros[2] = { "Power", "Interface\\Icons\\Toy", "/say So much power" }
+	client:Tick(1.1)
+	client:Hover(button)
+	switch:SetMacro("Power")
+	lu.assertStrContains(table.concat(tooltip(), "\n"), L["<Left-click> to run your '%s' macro"]:format("Power"))
+	client:Leave()
+
+	-- what a specialization sets up, run directly
+	bars.specBars1 = 2
+	switch:RunSpec(1)
+	lu.assertEquals(bars.num_bars, 2)
+
+	-- no button yet (the artwork not loaded): nothing to set up on it
+	switch.Button = nil
+	switch:SetMacro(nil)
+	switch:PlaceButton()
+	switch.Button = button
+	assertClean(client)
+end
+
+function TestMenus:test_artwork_loaded_in_combat_places_the_button_after_it()
+	boot()
+	local switch = widget("Button: Spec Switch")
+	switch.Button = nil
+	client.world.inCombat = true
+	switch:CreateButton()
+	lu.assertNil(switch:GetFrame())
+	client.world.inCombat = false
+	client:FireEvent("PLAYER_REGEN_ENABLED")
+	lu.assertEquals(switch:GetFrame():IsShown(), 1)
+	assertClean(client)
+end
+
+function TestMenus:test_the_old_commands_become_a_macro()
+	boot({ world = function(world)
+		world.talents = { { "Discipline", "", 13 }, { "Holy", "", 58 }, { "Shadow", "", 0 } }
+		world.secondaryTalents = { { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "", 57 } }
+		world.macros = { [37] = { "DUI Shadow", "", "/say hi" } }
+	end })
+	local L = client.Engine:GetLocale()
+	local bars = client.Engine:GetConfig("ActionBars", "character")
+	local switch = widget("Button: Spec Switch")
+	local messages = client.widgetState[_G.ChatFrame1].messages
+
+	bars.specMacro1, bars.specMacro2 = "/use item:44430\n/gear holy", "/use item:1"
+	switch:MoveCommandsToMacros()
+	lu.assertEquals({ _G.GetMacroInfo("DUI Holy") }, { "DUI Holy", "Interface\\Icons\\INV_Misc_QuestionMark", "/use item:44430\n/gear holy", 1 })
+	lu.assertEquals({ bars.specMacroName1, bars.specMacro1 }, { "DUI Holy", nil })
+	lu.assertEquals(messages[#messages].text, L["Your other commands are now the character macro '%s', run by a click on the skull after switching."]:format("DUI Holy"))
+	-- one by that name already: picked as it is
+	lu.assertEquals({ bars.specMacroName2, bars.specMacro2 }, { "DUI Shadow", nil })
+	lu.assertEquals(select(3, _G.GetMacroInfo("DUI Shadow")), "/say hi")
+
+	-- blank: dropped; a macro already picked: left alone
+	bars.specMacroName1, bars.specMacro1, bars.specMacro2 = false, "  \n ", "/x"
+	switch:MoveCommandsToMacros()
+	lu.assertEquals({ bars.specMacroName1, bars.specMacro1 }, { false, nil })
+	lu.assertEquals({ bars.specMacroName2, bars.specMacro2 }, { "DUI Shadow", "/x" })
+
+	-- no free slot: kept, and said
+	for index = 37, 54 do
+		client.world.macros[index] = client.world.macros[index] or { "M" .. index, "", "" }
+	end
+	bars.specMacroName2, bars.specMacro2 = false, "/use item:1"
+	client.world.macros[37] = { "Other", "", "" }
+	switch:MoveCommandsToMacros()
+	lu.assertEquals({ bars.specMacroName2, bars.specMacro2 }, { false, "/use item:1" })
+	lu.assertEquals(messages[#messages].text, L["No free character macro slot for your %s commands, they're kept until there's one."]:format("DUI Shadow"))
+
+	-- too long for a macro: printed for you to make it
+	bars.specMacro2 = string.rep("x", 256)
+	switch:MoveCommandsToMacros()
+	lu.assertNil(bars.specMacro2)
+	lu.assertStrContains(messages[#messages].text, string.rep("x", 256))
+
+	-- done at the loading screen, out of combat
+	bars.specMacro1 = "/use item:2"
+	client.world.inCombat = true
+	client:FireEvent("PLAYER_ENTERING_WORLD")
+	lu.assertEquals(bars.specMacro1, "/use item:2")
+	assertClean(client)
+end
+
+function TestMenus:test_the_dropdown_choices()
+	boot({ world = function(world)
+		world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" } }
+	end })
+	local switch = widget("Button: Spec Switch")
+	lu.assertEquals(switch:GetEquipmentSets(), { { text = "Holy", value = "Holy", icon = "Interface\\Icons\\Holy" } })
+	lu.assertNil(switch:GetActionBarProfiles()) -- not loaded
+	_G.SlashCmdList.ABS = function() end
+	_G.ActionBarSaverDB = { sets = { WARRIOR = { tank = {}, arms = {} }, PRIEST = { holy = {} } } }
+	lu.assertEquals(switch:GetActionBarProfiles(), { { text = "arms", value = "arms" }, { text = "tank", value = "tank" } })
+	_G.ActionBarSaverDB.sets.WARRIOR = nil
+	lu.assertEquals(switch:GetActionBarProfiles(), {})
+	_G.SlashCmdList.ABS, _G.ActionBarSaverDB = nil, nil
+
+	-- the macros: the account ones, then the character ones
+	client.world.macros = { [2] = { "Mount", "Interface\\Icons\\Mount", "" }, [1] = { "Toy", "Interface\\Icons\\Toy", "" }, [37] = { "DUI Holy", "Interface\\Icons\\Q", "" } }
+	lu.assertEquals(switch:GetMacros(), {
+		{ text = "Toy", value = "Toy", icon = "Interface\\Icons\\Toy" },
+		{ text = "Mount", value = "Mount", icon = "Interface\\Icons\\Mount" },
+		{ text = "DUI Holy", value = "DUI Holy", icon = "Interface\\Icons\\Q" },
+	})
 	assertClean(client)
 end
 
@@ -618,6 +861,66 @@ function TestPetAndStance:test_the_stance_bar_and_its_toggle()
 	client:FireEvent("UPDATE_SHAPESHIFT_FORMS")
 	lu.assertFalse(shown(toggle))
 	lu.assertFalse(visible(bar))
+	assertClean(client)
+end
+
+-- The forms' spells, with their icons: the toggle shows a form's spell icon
+-- (some forms report another texture while active).
+local function formSpells(world, count)
+	for i = 1, count do
+		world.spells["Form " .. i] = { name = "Form " .. i, icon = "Interface\\Icons\\SpellForm" .. i }
+	end
+end
+
+function TestPetAndStance:test_the_toggle_shows_the_active_form()
+	boot({ class = "WARRIOR", world = function(world)
+		world.forms = forms(3, 1)
+		formSpells(world, 3)
+	end })
+	local icon = _G.EngineStanceBarButton.Icon
+	local default = module.config.visuals.floaters.stance.icon.texture
+	lu.assertEquals(icon:GetTexture(), "Interface\\Icons\\SpellForm1")
+	client.world.forms[1].active, client.world.forms[3].active = false, true
+	client:FireEvent("UPDATE_SHAPESHIFT_FORM")
+	lu.assertEquals(icon:GetTexture(), "Interface\\Icons\\SpellForm3")
+	-- no form on: its own icon
+	client.world.forms[3].active = false
+	client:FireEvent("UPDATE_SHAPESHIFT_FORM")
+	lu.assertEquals(icon:GetTexture(), default)
+	lu.assertEquals({ icon:GetVertexColor() }, { 1, 1, 1, 1 })
+	assertClean(client)
+end
+
+function TestPetAndStance:test_a_single_form_is_its_own_button()
+	boot({ class = "PRIEST", world = function(world)
+		world.forms = forms(1)
+		formSpells(world, 1)
+	end })
+	local L = client.Engine:GetLocale()
+	local floaters = widget("Bar: Floaters")
+	local toggle, proxy = _G.EngineStanceBarButton, floaters.StanceProxyButton
+	local bar = widget("Bar: Stance"):GetFrame()
+	-- a click is the form's own button's
+	lu.assertEquals(proxy:GetAttribute("clickbutton1"), bar.buttons[1])
+	lu.assertFalse(visible(bar))
+	-- its icon, dimmed while the form is off
+	lu.assertEquals(toggle.Icon:GetTexture(), "Interface\\Icons\\SpellForm1")
+	lu.assertEquals({ toggle.Icon:GetVertexColor() }, { .5, .5, .5, 1 })
+	client.world.forms[1].active = true
+	client:FireEvent("UPDATE_SHAPESHIFT_FORM")
+	lu.assertEquals({ toggle.Icon:GetVertexColor() }, { 1, 1, 1, 1 })
+	client:Hover(proxy)
+	lu.assertEquals(tooltip()[1], "Form 1")
+	lu.assertEquals(tooltip()[2], L["<Left-click> to use %s."]:format("Form 1"))
+	client:Leave()
+
+	-- more forms learned: it opens the bar again
+	client.world.forms = forms(2, 1)
+	client:FireEvent("UPDATE_SHAPESHIFT_FORMS")
+	lu.assertEquals(proxy:GetAttribute("clickbutton1"), toggle)
+	client:Hover(proxy)
+	lu.assertEquals(tooltip()[1], L["Stances"])
+	client:Leave()
 	assertClean(client)
 end
 

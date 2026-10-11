@@ -92,7 +92,6 @@ local function constants()
 		UnitPopupButtons = {},
 		SlashCmdList = {},
 		hash_SlashCmdList = {},
-		SecureCmdList = {},
 		UISpecialFrames = {},
 		UIPanelWindows = {},
 		COMBAT_TEXT_LOCATIONS = {
@@ -603,8 +602,9 @@ local function buildFrames()
 	options:SetSize(648, 520) -- InterfaceOptionsFrame.xml
 	options:SetPoint("CENTER")
 	local container = new("Frame", "InterfaceOptionsFramePanelContainer", options)
-	container:SetPoint("TOPLEFT", options, "TOPLEFT", 190, -45)
-	container:SetPoint("BOTTOMRIGHT", options, "BOTTOMRIGHT", -22, 51)
+	-- right of the 175x429 category list at (22, -40), 16 apart: 413x428
+	container:SetPoint("TOPLEFT", options, "TOPLEFT", 22 + 175 + 16, -40)
+	container:SetPoint("BOTTOMRIGHT", options, "BOTTOMRIGHT", -22, 520 - 40 - 428)
 	new("Frame", "InterfaceOptionsFrameCategories", options)
 	for i = 1, 31 do
 		button("Button", "InterfaceOptionsFrameCategoriesButton" .. i, _G.InterfaceOptionsFrameCategories)
@@ -710,6 +710,9 @@ local function buildFrames()
 		button("Button", name, merchant)
 	end
 	local worldMap = hidden(new("Frame", "WorldMapFrame", UIParent))
+	-- the zone you hover and its description (WorldMapFrame.xml)
+	new("FontString", "WorldMapFrameAreaLabel", worldMap):SetFont([[Fonts\FRIZQT__.TTF]], 22, "OUTLINE")
+	new("FontString", "WorldMapFrameAreaDescription", worldMap):SetFont([[Fonts\FRIZQT__.TTF]], 16, "OUTLINE")
 	-- the framerate texts (Ctrl+R): WorldFrame.xml and WorldMapFrame.xml
 	hidden(new("FontString", "FramerateLabel", _G.WorldFrame))
 	hidden(new("FontString", "FramerateText", _G.WorldFrame))
@@ -928,6 +931,7 @@ local function frameXML(client)
 	f.ChatEdit_FocusActiveWindow = noop
 	f.ChatEdit_InsertLink = function(link) return nil end
 	f.ChatEdit_SendText = noop
+	f.EquipmentManager_EquipSet = function(name) client.world.equippedSet = name end
 	f.ChatEdit_OnEscapePressed = function(editBox) editBox:Hide() end
 	f.ChatTypeInfo = nil
 
@@ -1201,6 +1205,15 @@ local function frameXML(client)
 	f.PlaySound = api.PlaySound
 	f.QuestLog_Update = noop
 	f.WatchFrame_Update = noop
+	f.WorldMapFrame_Update = noop
+	-- a tracker line's text (WatchFrame.lua): titles in gold
+	f.WatchFrame_SetLine = function(line, anchor, verticalOffset, isHeader, text)
+		line.text:SetText(text)
+		if isHeader then
+			line.text:SetTextColor(.75, .61, 0)
+		end
+	end
+	f.MouseIsOver = function(frame) return frame:IsMouseOver() end
 	f.WatchFrame_Expand = noop
 	f.WatchFrame_Collapse = noop
 	f.WorldStateAlwaysUpFrame_Update = noop

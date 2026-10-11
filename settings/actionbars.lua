@@ -208,7 +208,7 @@ Engine:NewStaticConfig("ActionBars", {
 				bar_size = { BUTTON_SIZE_VEHICLE*NUM_VEHICLE_SLOTS + padding*(NUM_VEHICLE_SLOTS-1), BUTTON_SIZE_VEHICLE }
 			},
 			stance = {
-				position = { "BOTTOMRIGHT", "Main", "BOTTOMRIGHT", 200, 203 }, 
+				position = { "BOTTOMRIGHT", "Main", "BOTTOMRIGHT", 207, 174 }, -- right above its toggle
 				growth = "UP", 
 				padding = padding_small,
 				buttonsize = BUTTON_SIZE_TRIPLE,
@@ -247,17 +247,17 @@ Engine:NewStaticConfig("ActionBars", {
 	},
 	visuals = {
 		-- the talent specialization switch on top of the skull artwork: the
-		-- 51x51 button of 128x128 textures at 80%, its bottom on the skull's
-		-- top (98px above the bottom of the 512x128 skull texture)
+		-- 51x51 button of 128x128 textures at 80%, its art touching the
+		-- skull's top (the thin center point, 97px above the bottom of the
+		-- 512x128 skull texture)
 		specswitch = {
 			size = { 51 * .8, 51 * .8 },
 			texture_size = { 128 * .8, 128 * .8 },
-			position = { "BOTTOM", 0, 98 + 6 * .8 }, -- relative to the skull texture; the art reaches 6px below the button
+			position = { "BOTTOM", 0, 97 + 5.5 * .8 }, -- relative to the skull texture; the art reaches 5.5px below the button
 			textures = {
 				normal = path .. [[textures\DiabolicUI_Button_51x51_Normal.tga]],
 				highlight = path .. [[textures\DiabolicUI_Button_51x51_Highlight.tga]],
-				pushed = path .. [[textures\DiabolicUI_Button_51x51_Pushed.tga]],
-				disabled = path .. [[textures\DiabolicUI_Button_51x51_Disabled.tga]]
+				pushed = path .. [[textures\DiabolicUI_Button_51x51_Pushed.tga]]
 			}
 		},
 		artwork = {
@@ -753,10 +753,13 @@ Engine:NewStaticConfig("ActionBars", {
 			style = {
 
 			},
-			-- Stance bar toggle button
+			-- Stance bar toggle button, 12px above the angel's head: 8px left of
+			-- the center of the 256x256 angel texture (196px right of the bars), whose wings
+			-- reach 141px above its bottom, 20px under the screen's edge, so
+			-- 121px up; its border reaches 3px below the button
 			stance = {
 				size = { 38, 38 },
-				position = { "BOTTOMRIGHT", 0, 0 },
+				position = { "BOTTOMRIGHT", 7, -29 }, -- from the floaters' corner (200, 155 off the bars')
 				icon = {
 					texture = [[Interface\Icons\Spell_Nature_WispSplode]], 
 					texcoords = { 5/64, 59/64, 5/64, 59/64 },

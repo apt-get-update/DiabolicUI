@@ -100,6 +100,7 @@ L["You should rest at an Inn."] = true
 -- floating buttons
 L["Stances"] = true
 L["<Left-click> to toggle stance bar."] = true
+L["<Left-click> to use %s."] = true
 L["<Right-click> to cancel current form."] = true
 L["<Left-click> to leave the vehicle."] = true
 L["Request Stop"] = true
@@ -264,13 +265,31 @@ L["Click to copy the link."] = true
 
 -- Talent specialization switch
 L["Talent Specialization"] = true
-L["Learn Dual Talent Specialization from your class trainer to switch between two specializations here."] = true
 L["<Left-click> to switch"] = true
 L["Show Specialization Switch"] = true
-L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization. It's greyed out until you learn Dual Talent Specialization."] = true
+L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization, once you learn Dual Talent Specialization."] = true
 L["Specializations"] = true
-L["Slash commands to run once you switch to this specialization, one per line. Like '/equipset Shadow'."] = true
-L["Unknown command: %s"] = true
+L["Equipment set '%s' not found."] = true
+L["Action Bar Saver isn't loaded, can't restore '%s'."] = true
+L["Action Bar Saver isn't loaded"] = true
+L["Equipment Set"] = true
+L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."] = true
+L["Action Bar Saver Profile"] = true
+L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."] = true
+L["None"] = true
+L["Unchanged"] = true
+L["Macro Before"] = true
+L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."] = true
+L["Macro After"] = true
+L["Runs your '%s' macro first"] = true
+L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."] = true
+L["Needs Show Specialization Switch"] = true
+L["<Left-click> to run your '%s' macro"] = true
+L["Macro '%s' not found."] = true
+L["Turn on the specialization switch button to run your '%s' macro."] = true
+L["Your %s commands are too long for a macro, make one yourself: %s"] = true
+L["Your other commands are now the character macro '%s', run by a click on the skull after switching."] = true
+L["No free character macro slot for your %s commands, they're kept until there's one."] = true
 
 -- Shorter Messages (chat cleaner)
 L["Messages"] = true
@@ -302,3 +321,21 @@ L["d"] = true -- abbreviation for "days" when showing time
 L["h"] = true -- abbreviation for "hours" when showing time
 L["m"] = true -- abbreviation for "minutes" when showing time
 L["s"] = true -- abbreviation for "seconds" when showing time
+
+-- AddOns page (other addons styled)
+L["AddOns"] = true
+L["Styling"] = true
+L["Style TrinketMenu"] = true
+L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = true
+L["Style World Map"] = true
+L["Shows the world map's zone names in the UI's Exocet font. Works with map addons like Mapster.|n|nRequires a UI reload to apply."] = true
+L["Style Objectives Tracker"] = true
+L["Shows Blizzard's objectives tracker in the UI's fonts and colors: the quest titles in Exocet. Questie's own tracker has its own font settings.|n|nRequires a UI reload to apply."] = true
+L["Drag to move the tracker"] = true
+L["Unlock Tracker"] = true
+L["Lock Tracker"] = true
+L["Reset Position"] = true
+L["Shows a box on Blizzard's objectives tracker to drag it anywhere. Click again to lock it. Questie's tracker moves from its own options.|n|nAlso: /dui tracker"] = true
+L["Puts Blizzard's objectives tracker back under the minimap.|n|nAlso: /dui tracker reset"] = true
+L["Slide New Messages"] = true
+L["New chat lines slide up into place instead of jumping. Not while you're typing in the chat, hovering it or scrolled up in it."] = true

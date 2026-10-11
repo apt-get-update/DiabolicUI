@@ -5,15 +5,20 @@ local Module = Engine:NewModule("Menu")
 -- Lua API
 local ipairs = ipairs
 local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
 local pairs = pairs
 local setmetatable = setmetatable
 local unpack = unpack
 
 -- WoW API
 local CreateFrame = CreateFrame
-local ChatFontNormal = ChatFontNormal
+local UIDropDownMenu_AddButton = UIDropDownMenu_AddButton
+local UIDropDownMenu_CreateInfo = UIDropDownMenu_CreateInfo
+local UIDropDownMenu_DisableDropDown = UIDropDownMenu_DisableDropDown
+local UIDropDownMenu_EnableDropDown = UIDropDownMenu_EnableDropDown
+local UIDropDownMenu_Initialize = UIDropDownMenu_Initialize
+local UIDropDownMenu_JustifyText = UIDropDownMenu_JustifyText
+local UIDropDownMenu_SetText = UIDropDownMenu_SetText
+local UIDropDownMenu_SetWidth = UIDropDownMenu_SetWidth
 local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
 
@@ -39,11 +44,14 @@ local BUTTON_HEIGHT = 24
 local SLIDER_LABEL_HEIGHT = 16   -- the template's label sits above the bar
 local SLIDER_BLOCK_HEIGHT = SLIDER_LABEL_HEIGHT + 15 + 22 -- label, bar, low/high + input
 local PICKER_HEIGHT = 80 + RADIO_OVERHANG * 2
-local SPEC_COLUMN = 210          -- distance between the two specialization columns
-local SPEC_WIDTH = 194           -- a specialization's command box
+local SPEC_COLUMN = 199          -- distance between the two specialization columns
+local SPEC_WIDTH = 182           -- a specialization's column: two fit the 413 wide page
 local SPEC_ICON_SIZE = 32
-local SPEC_BOX_HEIGHT = 240
-local MACRO_INSET = 8            -- text padding inside a command box
+local SPEC_LABEL_WIDTH = 84      -- "Action Bars" left of its small dropdown
+local DROPDOWN_HEIGHT = 32
+local DROPDOWN_OVERHANG = 16     -- the template's art starts this far right of its frame
+local DROPDOWN_WIDTH = SPEC_WIDTH - 44
+local SMALL_DROPDOWN_WIDTH = 70
 
 local SECTION_GAP = 24           -- above a section header
 local HEADER_GAP = 8             -- between a header and its first row
@@ -389,57 +397,50 @@ local CreateAnchorPointPicker = function(page, layout, top, getValue, setValue)
 	return preview, refresh
 end
 
--- A bordered multi-line text box, scrolling once its text gets taller than
--- the box. `onChange(text)` follows every edit; SetMacroText fills it.
-local CreateMacroBox = function(parent, name, onChange)
-	local box = CreateFrame("Frame", "DiabolicUIOptionsPanel"..name, parent)
-	box:SetBackdrop(GROUP_BACKDROP)
-	box:SetBackdropColor(0, 0, 0, .5)
-	box:SetBackdropBorderColor(.6, .6, .6, 1)
+-- A Blizzard dropdown. `getItems()` lists the choices, each { text, value,
+-- icon }, fresh every time it opens; `getValue()` and `setValue(value)` read
+-- and save the chosen one. Placed by the caller, its art DROPDOWN_OVERHANG
+-- to the right of where it's anchored.
+local CreateDropDown = function(parent, name, width, getItems, getValue, setValue)
+	local dropDown = CreateFrame("Frame", "DiabolicUIOptionsPanel"..name, parent, "UIDropDownMenuTemplate")
+	UIDropDownMenu_SetWidth(dropDown, width)
+	UIDropDownMenu_JustifyText(dropDown, "LEFT")
 
-	local scroll = CreateFrame("ScrollFrame", nil, box)
-	scroll:SetPoint("TOPLEFT", MACRO_INSET, -MACRO_INSET)
-	scroll:SetPoint("BOTTOMRIGHT", -MACRO_INSET, MACRO_INSET)
-
-	local editBox = CreateFrame("EditBox", box:GetName().."EditBox", scroll)
-	editBox:SetMultiLine(true)
-	editBox:SetAutoFocus(false)
-	editBox:SetFontObject(ChatFontNormal)
-	editBox:SetWidth(SPEC_WIDTH - MACRO_INSET * 2)
-	editBox:SetHeight(SPEC_BOX_HEIGHT - MACRO_INSET * 2)
-	scroll:SetScrollChild(editBox)
-	box.EditBox = editBox
-
-	-- keeps the cursor's line in view
-	editBox:SetScript("OnCursorChanged", function(self, x, y, width, height)
-		local top, offset, visible = -y, scroll:GetVerticalScroll(), scroll:GetHeight()
-		if (top < offset) then
-			scroll:SetVerticalScroll(top)
-		elseif (top + height > offset + visible) then
-			scroll:SetVerticalScroll(top + height - visible)
-		end
-	end)
-	editBox:SetScript("OnTextChanged", function(self, userInput)
-		scroll:UpdateScrollChildRect()
-		if userInput then
-			onChange(self:GetText())
-		end
-	end)
-	editBox:SetScript("OnEscapePressed", editBox.ClearFocus)
-
-	-- a click anywhere in the box starts typing, the wheel scrolls it
-	box:EnableMouse(true)
-	box:SetScript("OnMouseDown", function() editBox:SetFocus() end)
-	box:EnableMouseWheel(true)
-	box:SetScript("OnMouseWheel", function(self, delta)
-		local value = scroll:GetVerticalScroll() - delta * 20
-		scroll:SetVerticalScroll(math_max(0, math_min(value, scroll:GetVerticalScrollRange())))
-	end)
-
-	box.SetMacroText = function(self, text)
-		editBox:SetText(text or "")
+	local label = function(item)
+		return item.icon and ("|T" .. item.icon .. ":16:16:0:0|t " .. item.text) or item.text
 	end
-	return box
+
+	-- the closed dropdown shows the saved choice, or the saved name greyed
+	-- out when it's gone (a deleted equipment set)
+	dropDown.Refresh = function(self)
+		local current = getValue()
+		for _, item in ipairs(getItems()) do
+			if (item.value == current) then
+				UIDropDownMenu_SetText(self, label(item))
+				return
+			end
+		end
+		UIDropDownMenu_SetText(self, "|cff808080" .. tostring(current) .. "|r")
+	end
+
+	local choose = function(button, value)
+		setValue(value)
+		dropDown:Refresh()
+	end
+
+	UIDropDownMenu_Initialize(dropDown, function(self, level)
+		local current = getValue()
+		for _, item in ipairs(getItems()) do
+			local info = UIDropDownMenu_CreateInfo()
+			info.text = label(item)
+			info.arg1 = item.value
+			info.checked = (item.value == current)
+			info.func = choose
+			UIDropDownMenu_AddButton(info, level)
+		end
+	end)
+
+	return dropDown
 end
 
 -- Pages
@@ -481,9 +482,12 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(showPerformance, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
-	local showSpecSwitch = CreateCheckbox(panel, "ShowSpecSwitch", L["Show Specialization Switch"], L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization. It's greyed out until you learn Dual Talent Specialization."], function(button)
+	local showSpecSwitch = CreateCheckbox(panel, "ShowSpecSwitch", L["Show Specialization Switch"], L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization, once you learn Dual Talent Specialization."], function(button)
 		actionbarsDB.showSpecSwitch = button:GetChecked() and true or false
 		Engine:GetModule("ActionBars"):GetWidget("Button: Spec Switch"):Update()
+		if _G.DiabolicUIOptionsPanelSpecs then
+			_G.DiabolicUIOptionsPanelSpecs.refresh()
+		end
 	end)
 	layout:Place(showSpecSwitch, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
@@ -517,6 +521,21 @@ Module.CreateOptionsPanel = function(self)
 
 	layout:EndGroup(trackerGroup)
 
+	-- moving Blizzard's tracker (Questie's moves from its own options)
+	local tracker = Engine:GetModule("ObjectiveTracker")
+	local unlockTracker
+	unlockTracker = CreateButton(panel, "UnlockTracker", L["Unlock Tracker"], L["Shows a box on Blizzard's objectives tracker to drag it anywhere. Click again to lock it. Questie's tracker moves from its own options.|n|nAlso: /dui tracker"], function(button)
+		tracker:SetTrackerUnlocked(not tracker:IsTrackerUnlocked())
+		button:SetText(tracker:IsTrackerUnlocked() and L["Lock Tracker"] or L["Unlock Tracker"])
+	end)
+	local resetTracker = CreateButton(panel, "ResetTracker", L["Reset Position"], L["Puts Blizzard's objectives tracker back under the minimap.|n|nAlso: /dui tracker reset"], function(button)
+		tracker:ResetTrackerPosition()
+		unlockTracker:SetText(L["Unlock Tracker"])
+	end)
+	local trackerButtons = layout:Row(BUTTON_HEIGHT, ROW_GAP * 2)
+	layout:Place(unlockTracker, EDGE, trackerButtons)
+	layout:Place(resetTracker, EDGE + SLIDER_COLUMN, trackerButtons)
+
 	-- Time Fading / Opacity only matter while the tracker fade is
 	-- actually enabled, so grey them out and block input otherwise.
 	updateTrackerSlidersEnabled = function()
@@ -545,6 +564,7 @@ Module.CreateOptionsPanel = function(self)
 		trackerTimeFading:SetValueSilently(objectivesDB.fadeDelay)
 		trackerOpacity:SetValueSilently(objectivesDB.fadeOpacity)
 		updateTrackerSlidersEnabled()
+		unlockTracker:SetText(tracker:IsTrackerUnlocked() and L["Lock Tracker"] or L["Unlock Tracker"])
 		reskinLoot:SetChecked(lootDB.enableSkin)
 	end
 	panel.refresh = panel.cancel
@@ -733,6 +753,11 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(copyWebLinks, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
+	local slideMessages = CreateCheckbox(chatPanel, "ChatSlideMessages", L["Slide New Messages"], L["New chat lines slide up into place instead of jumping. Not while you're typing in the chat, hovering it or scrolled up in it."], function(button)
+		chatDB.slideMessages = button:GetChecked() and true or false
+	end)
+	layout:Place(slideMessages, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
 	chatPanel.okay = function() end
 	chatPanel.cancel = function()
 		fadeChat:SetChecked(chatDB.fadeChat)
@@ -741,6 +766,7 @@ Module.CreateOptionsPanel = function(self)
 		updateFadeSlidersEnabled()
 		backgroundOpacity:SetValueSilently(chatDB.backgroundOpacity)
 		copyWebLinks:SetChecked(chatFiltersDB.copyWebLinks)
+		slideMessages:SetChecked(chatDB.slideMessages)
 	end
 	chatPanel.refresh = chatPanel.cancel
 	chatPanel.cancel()
@@ -794,8 +820,8 @@ Module.CreateOptionsPanel = function(self)
 
 	InterfaceOptions_AddCategory(messagesPanel)
 
-	-- Specializations page: the slash commands each talent specialization
-	-- runs once you switch to it (modules/actionbars/elements/specswitch.lua)
+	-- Specializations page: what each talent specialization sets up once
+	-- you switch to it (modules/actionbars/elements/specswitch.lua)
 	-------------------------------------------------------
 	local specSwitch = Engine:GetModule("ActionBars"):GetWidget("Button: Spec Switch")
 
@@ -808,14 +834,58 @@ Module.CreateOptionsPanel = function(self)
 	CreateTitle(specsPanel, layout, L["Specializations"])
 	CreateSubmenuLogo(specsPanel)
 
-	local specsHint = specsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	specsHint:SetJustifyH("LEFT")
-	specsHint:SetWidth(SPEC_COLUMN + SPEC_WIDTH)
-	specsHint:SetText(L["Slash commands to run once you switch to this specialization, one per line. Like '/equipset Shadow'."])
-	layout:Place(specsHint, EDGE, layout:Row(LABEL_HEIGHT * 2, HEADER_GAP))
+	-- the same rows in both columns
+	local rows = {
+		header = layout:Row(SPEC_ICON_SIZE, HEADER_GAP),
+		equipSetLabel = layout:Row(LABEL_HEIGHT, 12),
+		equipSet = layout:Row(DROPDOWN_HEIGHT, 2),
+		profileLabel = layout:Row(LABEL_HEIGHT, 6),
+		profile = layout:Row(DROPDOWN_HEIGHT, 2),
+		bars = layout:Row(DROPDOWN_HEIGHT, 6),
+		sideBars = layout:Row(DROPDOWN_HEIGHT, 2),
+		macroBeforeLabel = layout:Row(LABEL_HEIGHT, 6),
+		macroBefore = layout:Row(DROPDOWN_HEIGHT, 2),
+		macroLabel = layout:Row(LABEL_HEIGHT, 6),
+		macro = layout:Row(DROPDOWN_HEIGHT, 2),
+	}
 
-	local specHeaderRow = layout:Row(SPEC_ICON_SIZE, SECTION_GAP)
-	local specBoxRow = layout:Row(SPEC_BOX_HEIGHT, HEADER_GAP)
+	local specLabel = function(text, tooltipText)
+		local label = specsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+		label:SetJustifyH("LEFT")
+		label:SetText(text)
+		if tooltipText then
+			local hitbox = CreateFrame("Frame", nil, specsPanel)
+			hitbox:SetAllPoints(label)
+			hitbox:EnableMouse(true)
+			hitbox:SetScript("OnEnter", function(self)
+				GameTooltip_SetDefaultAnchor(GameTooltip, self)
+				GameTooltip:AddLine(text)
+				GameTooltip:AddLine(tooltipText, 1, 1, 1, true)
+				GameTooltip:Show()
+			end)
+			hitbox:SetScript("OnLeave", function(self)
+				GameTooltip:Hide()
+			end)
+		end
+		return label
+	end
+
+	-- a saved choice, false when it's left as it is
+	local specSetting = function(key)
+		return function() return actionbarsDB[key] or false end,
+			function(value) actionbarsDB[key] = value end
+	end
+
+	local barChoices = function(counts)
+		return function()
+			local items = { { text = L["Unchanged"], value = false } }
+			for _, count in ipairs(counts) do
+				items[#items + 1] = { text = tostring(count), value = count }
+			end
+			return items
+		end
+	end
+
 	local specColumns = {}
 	for group = 1, 2 do
 		local x = EDGE + (group - 1) * SPEC_COLUMN
@@ -823,34 +893,154 @@ Module.CreateOptionsPanel = function(self)
 
 		column.icon = specsPanel:CreateTexture(nil, "ARTWORK")
 		column.icon:SetSize(SPEC_ICON_SIZE, SPEC_ICON_SIZE)
-		layout:Place(column.icon, x, specHeaderRow)
+		layout:Place(column.icon, x, rows.header)
 
 		column.name = specsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		column.name:SetJustifyH("LEFT")
 		column.name:SetPoint("LEFT", column.icon, "RIGHT", 8, 0)
 
-		column.box = CreateMacroBox(specsPanel, "SpecMacro" .. group, function(text)
-			actionbarsDB["specMacro" .. group] = text
-		end)
-		column.box:SetSize(SPEC_WIDTH, SPEC_BOX_HEIGHT)
-		layout:Place(column.box, x, specBoxRow)
+		-- equipment set
+		layout:Place(specLabel(L["Equipment Set"], L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."]), x, rows.equipSetLabel)
+		local getSet, setSet = specSetting("specEquipSet" .. group)
+		column.equipSet = CreateDropDown(specsPanel, "Spec" .. group .. "EquipSet", DROPDOWN_WIDTH, function()
+			local items = { { text = L["None"], value = false } }
+			for _, item in ipairs(specSwitch:GetEquipmentSets()) do
+				items[#items + 1] = item
+			end
+			return items
+		end, getSet, setSet)
+		layout:Place(column.equipSet, x - DROPDOWN_OVERHANG, rows.equipSet)
+
+		-- Action Bar Saver profile
+		layout:Place(specLabel(L["Action Bar Saver Profile"], L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."]), x, rows.profileLabel)
+		local getProfile, setProfile = specSetting("specProfile" .. group)
+		column.profile = CreateDropDown(specsPanel, "Spec" .. group .. "Profile", DROPDOWN_WIDTH, function()
+			local items = { { text = L["None"], value = false } }
+			for _, item in ipairs(specSwitch:GetActionBarProfiles() or {}) do
+				items[#items + 1] = item
+			end
+			return items
+		end, getProfile, setProfile)
+		layout:Place(column.profile, x - DROPDOWN_OVERHANG, rows.profile)
+
+		-- number of action bars and side bars
+		local getBars, setBars = specSetting("specBars" .. group)
+		column.bars = CreateDropDown(specsPanel, "Spec" .. group .. "Bars", SMALL_DROPDOWN_WIDTH, barChoices({ 1, 2, 3 }), getBars, setBars)
+		layout:Place(column.bars, x + SPEC_LABEL_WIDTH - DROPDOWN_OVERHANG, rows.bars)
+		specLabel(L["Action Bars"]):SetPoint("LEFT", specsPanel, "TOPLEFT", x, rows.bars - DROPDOWN_HEIGHT / 2)
+
+		local getSideBars, setSideBars = specSetting("specSideBars" .. group)
+		column.sideBars = CreateDropDown(specsPanel, "Spec" .. group .. "SideBars", SMALL_DROPDOWN_WIDTH, barChoices({ 0, 1, 2 }), getSideBars, setSideBars)
+		layout:Place(column.sideBars, x + SPEC_LABEL_WIDTH - DROPDOWN_OVERHANG, rows.sideBars)
+		specLabel(L["Side Bars"]):SetPoint("LEFT", specsPanel, "TOPLEFT", x, rows.sideBars - DROPDOWN_HEIGHT / 2)
+
+		-- anything else: macros, run by clicks on the skull's button
+		local macroChoices = function()
+			local items = { { text = L["None"], value = false } }
+			for _, item in ipairs(specSwitch:GetMacros()) do
+				items[#items + 1] = item
+			end
+			return items
+		end
+
+		layout:Place(specLabel(L["Macro Before"], L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."]), x, rows.macroBeforeLabel)
+		local getBefore, setBefore = specSetting("specMacroBefore" .. group)
+		column.macroBefore = CreateDropDown(specsPanel, "Spec" .. group .. "MacroBefore", DROPDOWN_WIDTH, macroChoices, getBefore, setBefore)
+		layout:Place(column.macroBefore, x - DROPDOWN_OVERHANG, rows.macroBefore)
+
+		layout:Place(specLabel(L["Macro After"], L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."]), x, rows.macroLabel)
+		local getMacro, setMacro = specSetting("specMacroName" .. group)
+		column.macro = CreateDropDown(specsPanel, "Spec" .. group .. "Macro", DROPDOWN_WIDTH, macroChoices, getMacro, setMacro)
+		layout:Place(column.macro, x - DROPDOWN_OVERHANG, rows.macro)
 
 		specColumns[group] = column
 	end
 
 	specsPanel.okay = function() end
 	specsPanel.cancel = function()
+		local profilesLoaded = specSwitch:GetActionBarProfiles() and true
 		for group, column in ipairs(specColumns) do
 			local name, _, icon = specSwitch:GetSpec(group)
 			column.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
 			column.name:SetText(name or (group == 1 and _G.PRIMARY or _G.SECONDARY))
-			column.box:SetMacroText(actionbarsDB["specMacro" .. group])
+			column.equipSet:Refresh()
+			column.bars:Refresh()
+			column.sideBars:Refresh()
+			if profilesLoaded then
+				UIDropDownMenu_EnableDropDown(column.profile)
+				column.profile:Refresh()
+			else
+				UIDropDownMenu_DisableDropDown(column.profile)
+				UIDropDownMenu_SetText(column.profile, "|cff808080" .. L["Action Bar Saver isn't loaded"] .. "|r")
+			end
+			-- the macros run on clicks of the skull's button
+			for _, dropDown in ipairs({ column.macroBefore, column.macro }) do
+				if actionbarsDB.showSpecSwitch then
+					UIDropDownMenu_EnableDropDown(dropDown)
+					dropDown:Refresh()
+				else
+					UIDropDownMenu_DisableDropDown(dropDown)
+					UIDropDownMenu_SetText(dropDown, "|cff808080" .. L["Needs Show Specialization Switch"] .. "|r")
+				end
+			end
 		end
 	end
 	specsPanel.refresh = specsPanel.cancel
 	specsPanel.cancel()
 
 	InterfaceOptions_AddCategory(specsPanel)
+
+	-- AddOns page: other addons styled like the UI (modules/blizzard/trinketmenu.lua)
+	-------------------------------------------------------
+	local skinsDB = Engine:GetConfig("AddOnSkins")
+
+	local addonsPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelAddOns", InterfaceOptionsFramePanelContainer)
+	addonsPanel.name = L["AddOns"]
+	addonsPanel.parent = panel.name
+	addonsPanel:Hide()
+
+	layout = NewLayout(addonsPanel)
+	CreateTitle(addonsPanel, layout, L["AddOns"])
+	CreateSubmenuLogo(addonsPanel)
+
+	CreateHeader(addonsPanel, layout, L["Styling"])
+
+	local styleTrinketMenu = CreateCheckbox(addonsPanel, "StyleTrinketMenu", L["Style TrinketMenu"], L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."], function(button)
+		local checked = button:GetChecked() and true or false
+		if (checked ~= skinsDB.styleTrinketMenu) then
+			skinsDB.styleTrinketMenu = checked
+			Engine:ReloadUI()
+		end
+	end)
+	layout:Place(styleTrinketMenu, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
+
+	-- on/off with a reload, like the TrinketMenu one
+	local reloadOption = function(setting)
+		return function(button)
+			local checked = button:GetChecked() and true or false
+			if (checked ~= skinsDB[setting]) then
+				skinsDB[setting] = checked
+				Engine:ReloadUI()
+			end
+		end
+	end
+
+	local styleWorldMap = CreateCheckbox(addonsPanel, "StyleWorldMap", L["Style World Map"], L["Shows the world map's zone names in the UI's Exocet font. Works with map addons like Mapster.|n|nRequires a UI reload to apply."], reloadOption("styleWorldMap"))
+	layout:Place(styleWorldMap, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
+	local styleTracker = CreateCheckbox(addonsPanel, "StyleTracker", L["Style Objectives Tracker"], L["Shows Blizzard's objectives tracker in the UI's fonts and colors: the quest titles in Exocet. Questie's own tracker has its own font settings.|n|nRequires a UI reload to apply."], reloadOption("styleTracker"))
+	layout:Place(styleTracker, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
+	addonsPanel.okay = function() end
+	addonsPanel.cancel = function()
+		styleTrinketMenu:SetChecked(skinsDB.styleTrinketMenu)
+		styleWorldMap:SetChecked(skinsDB.styleWorldMap)
+		styleTracker:SetChecked(skinsDB.styleTracker)
+	end
+	addonsPanel.refresh = addonsPanel.cancel
+	addonsPanel.cancel()
+
+	InterfaceOptions_AddCategory(addonsPanel)
 
 	self.OptionsPanel = panel
 

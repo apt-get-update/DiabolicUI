@@ -547,6 +547,7 @@ Widget.UpdateArtwork = function(self, event, ...)
 			end
 		end
 	end
+	Module:SendMessage("ENGINE_ACTIONBAR_ARTWORK_PLACED") -- what sits on it follows
 
 end
 

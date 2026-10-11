@@ -194,6 +194,32 @@ local POINT_OFFSETS = {
 	BOTTOMLEFT = { 0, 0 }, BOTTOM = { 0.5, 0 }, BOTTOMRIGHT = { 1, 0 },
 }
 
+
+-- Whether `widget` is a texture or font string, or anchored (through any
+-- chain of anchors) to one.
+local function anchoredToRegion(widget, seen)
+	local s = state[widget]
+	if not s then
+		return false
+	end
+	if s.class.isA.LayeredRegion then
+		return true
+	end
+	seen = seen or {}
+	if seen[widget] then
+		return false
+	end
+	seen[widget] = true
+	if s.allPoints and anchoredToRegion(s.allPoints, seen) then
+		return true
+	end
+	for _, p in ipairs(s.points or {}) do
+		if p[2] and anchoredToRegion(p[2], seen) then
+			return true
+		end
+	end
+	return false
+end
 local function normalizePoint(self, point, relativeTo, relativePoint, x, y)
 	assert(type(point) == "string" and POINT_OFFSETS[point:upper()], "SetPoint: bad point " .. tostring(point))
 	point = point:upper()
@@ -323,6 +349,11 @@ define(Region, {
 	SetPoint = function(self, ...)
 		local point, relativeTo, relativePoint, x, y = normalizePoint(self, ...)
 		local s = state[self]
+		-- the 3.3.5 client silently drops a protected frame's anchor to a
+		-- texture or font string, or to anything anchored to one
+		if s.protected and relativeTo and anchoredToRegion(relativeTo) then
+			return
+		end
 		s.allPoints = nil
 		for i, existing in ipairs(s.points) do
 			if existing[1] == point then
@@ -338,6 +369,9 @@ define(Region, {
 		end
 		relativeTo = resolve(relativeTo)
 		local s = state[self]
+		if s.protected and relativeTo and anchoredToRegion(relativeTo) then
+			return
+		end
 		s.points = {}
 		s.allPoints = relativeTo or s.parent
 	end,

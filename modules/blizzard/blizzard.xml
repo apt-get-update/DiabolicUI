@@ -10,6 +10,9 @@
 <Script file='tooltips.lua'/>
 <Script file='itemtooltips.lua'/>
 <Script file='totembar.lua'/>
+<Script file='trinketmenu.lua'/>
+<Script file='watchframe.lua'/>
+<Script file='worldmap.lua'/>
 
 <!-- Styling of the frames -->
 <Script file='styling.lua'/>

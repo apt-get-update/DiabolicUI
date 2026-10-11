@@ -11,6 +11,9 @@ local unpack = unpack
 
 -- WoW API
 local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
+local GetShapeshiftForm = _G.GetShapeshiftForm
+local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
+local GetSpellTexture = _G.GetSpellTexture
 local InCombatLockdown = _G.InCombatLockdown
 local RegisterStateDriver = _G.RegisterStateDriver
 local TaxiRequestEarlyLanding = _G.TaxiRequestEarlyLanding
@@ -41,12 +44,57 @@ BarWidget.UpdateTaxiExitButtonVisibility = Engine:Wrap(function(self, event, ...
 	end
 end)
 
+-- The icon of shapeshift form `index`: its spell's, as some forms report
+-- another texture while they're active.
+local GetFormIcon = function(index)
+	local texture, name = GetShapeshiftFormInfo(index)
+	return name and GetSpellTexture(name) or texture
+end
+
+-- The stance bar toggle shows the active form, or its own icon without
+-- one. With a single form (Shadowform, Stealth) it's that form's button
+-- instead: its icon, dimmed while the form is off.
+BarWidget.UpdateStanceButtonIcon = function(self)
+	local button = self.StanceBarButton
+	local icon = button.Icon
+	local numForms = GetNumShapeshiftForms()
+	local form = GetShapeshiftForm()
+	local r = 1
+	if (numForms == 1) then
+		icon:SetTexture(GetFormIcon(1))
+		if (form ~= 1) then
+			r = .5
+		end
+	elseif form and (form > 0) and (form <= numForms) then
+		icon:SetTexture(GetFormIcon(form))
+	else
+		icon:SetTexture(Module.config.visuals.floaters.stance.icon.texture)
+	end
+	icon:SetVertexColor(r, r, r)
+end
+
+-- A left-click opens the stance bar, or with a single form clicks that
+-- form's own button (so it acts exactly like it). Secure attributes, so
+-- out of combat; the number of forms only changes out of it anyway.
+BarWidget.UpdateStanceButtonMode = function(self, numForms)
+	local stanceBar = Module:GetWidget("Bar: Stance"):GetFrame()
+	local proxy = self.StanceProxyButton
+	if (numForms == 1) then
+		proxy:SetAttribute("clickbutton1", stanceBar.buttons[1])
+		stanceBar:GetParent():Hide() -- nothing to pick from
+	else
+		proxy:SetAttribute("clickbutton1", self.StanceBarButton)
+	end
+	self.singleForm = (numForms == 1)
+end
+
 -- The stance bar toggle: shown while the player has forms, outside
 -- vehicles and possession.
 BarWidget.UpdateStanceButtonVisibility = function(self, event)
 	if (event == "PLAYER_REGEN_ENABLED") then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButtonVisibility")
 	end
+	self:UpdateStanceButtonIcon()
 	local numForms = GetNumShapeshiftForms()
 	if (numForms == NUM_FORMS) then
 		return
@@ -60,6 +108,7 @@ BarWidget.UpdateStanceButtonVisibility = function(self, event)
 	else
 		RegisterStateDriver(self.StanceBarButton, "visibility", "[bonusbar:5][vehicleui]hide;show")
 	end
+	self:UpdateStanceButtonMode(numForms)
 	NUM_FORMS = numForms
 end
 
@@ -114,10 +163,17 @@ BarWidget.SpawnStanceBarButton = function(self)
 	StanceBarButton.Pushed:SetPoint(unpack(visualConfig.border.position))
 	StanceBarButton.Pushed:SetTexture(visualConfig.border.textures.highlight)
 
+	local widget = self
 	StanceBarButton.PostEnter = function(self)
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
-		GameTooltip:SetText(L["Stances"], 1, 1, 1)
-		GameTooltip:AddLine(L["<Left-click> to toggle stance bar."], unpack(C.General.OffGreen))
+		if widget.singleForm then
+			local _, name = GetShapeshiftFormInfo(1)
+			GameTooltip:SetText(name or L["Stances"], 1, 1, 1)
+			GameTooltip:AddLine(L["<Left-click> to use %s."]:format(name or ""), unpack(C.General.OffGreen))
+		else
+			GameTooltip:SetText(L["Stances"], 1, 1, 1)
+			GameTooltip:AddLine(L["<Left-click> to toggle stance bar."], unpack(C.General.OffGreen))
+		end
 
 		local form = GetShapeshiftForm(true)
 		if (form and (form ~= 0)) then 
@@ -144,10 +200,12 @@ BarWidget.SpawnStanceBarButton = function(self)
 	ProxyButton:SetScript("OnLeave", function() StanceBarButton:GetScript("OnLeave")(StanceBarButton) end)
 
 	ProxyButton:SetScript("OnEvent", function(self)
+		widget:UpdateStanceButtonIcon()
 		if (GameTooltip:GetOwner() == StanceBarButton) then
 			self:GetScript("OnEnter")()
 		end
 	end)
+	self.StanceProxyButton = ProxyButton
 	ProxyButton:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	ProxyButton:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 	ProxyButton:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
