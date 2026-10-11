@@ -526,7 +526,7 @@ Module.CreateOptionsPanel = function(self)
 			_G.DiabolicUIOptionsPanelSpecs.refresh()
 		end
 	end)
-	layout:Place(showSpecSwitch, CHECK_X, layout:Row(CHECK_HEIGHT, SECTION_GAP))
+	layout:Place(showSpecSwitch, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
 	actionBarsPanel.okay = function() end
 	actionBarsPanel.cancel = function()
