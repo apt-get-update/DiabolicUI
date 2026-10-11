@@ -60,14 +60,17 @@ function TestOptionsMenu:tearDown()
 	client = nil
 end
 
-function TestOptionsMenu:test_seven_pages_under_diabolicui()
+function TestOptionsMenu:test_the_pages_under_diabolicui()
 	local names = {}
 	for _, panel in ipairs(client.optionsPanels) do
 		if panel:GetName() and panel:GetName():find("^DiabolicUIOptionsPanel") then
 			names[#names + 1] = (panel.parent and (panel.parent .. "/") or "") .. panel.name
 		end
 	end
-	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Tooltips", "DiabolicUI/Units", "DiabolicUI/Chat", "DiabolicUI/Messages", "DiabolicUI/Specializations", "DiabolicUI/AddOns" })
+	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Action Bars", "DiabolicUI/Specializations", "DiabolicUI/Tooltips", "DiabolicUI/Units",
+		"DiabolicUI/Chat", "DiabolicUI/Messages", "DiabolicUI/Quests", "DiabolicUI/Frames & AddOns" })
+	-- the main page: what's where, the commands and the version
+	_G.DiabolicUIOptionsPanel.refresh()
 	assertClean(client)
 end
 
@@ -400,7 +403,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	client:Click(unlock)
 	lu.assertTrue(tracker:IsTrackerUnlocked())
 	lu.assertEquals(unlock:GetText(), L["Lock Tracker"])
-	_G.DiabolicUIOptionsPanel.refresh()
+	_G.DiabolicUIOptionsPanelQuests.refresh()
 	lu.assertEquals(unlock:GetText(), L["Lock Tracker"])
 	client:Click(unlock)
 	lu.assertFalse(tracker:IsTrackerUnlocked())
@@ -411,6 +414,8 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 
 	-- the chat slide
 	local chat = db("ChatWindows")
+	click("ChatSlideMessages")
+	lu.assertFalse(chat.slideMessages) -- on by default
 	click("ChatSlideMessages")
 	lu.assertTrue(chat.slideMessages)
 
@@ -449,11 +454,11 @@ function TestOptionsMenu:test_every_page_fits_in_the_window()
 	assertClean(client)
 end
 
-function TestOptionsMenu:test_cancel_on_the_main_and_units_pages()
+function TestOptionsMenu:test_cancel_on_the_action_bars_and_units_pages()
 	local bars = db("ActionBars", "character")
 	bars.showGold = true
 	widget("ShowGold"):SetChecked(false)
-	_G.DiabolicUIOptionsPanel.cancel()
+	_G.DiabolicUIOptionsPanelActionBars.cancel()
 	lu.assertEquals(widget("ShowGold"):GetChecked(), 1)
 	local units = db("UnitFrames")
 	units.showPortrait = true

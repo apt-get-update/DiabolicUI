@@ -223,7 +223,6 @@ L["Fades the quest tracker out after it hasn't been moused over for a while, and
 L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = true
 L["Opacity"] = true
 L["How visible the tracker stays once it has fully faded, as a percentage."] = true
-L["Loot"] = true
 L["Items"] = true -- loot window title
 L["Reskin Loot Window"] = true
 L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = true
@@ -324,7 +323,6 @@ L["s"] = true -- abbreviation for "seconds" when showing time
 
 -- AddOns page (other addons styled)
 L["AddOns"] = true
-L["Styling"] = true
 L["Style TrinketMenu"] = true
 L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = true
 L["Style World Map"] = true
@@ -339,3 +337,9 @@ L["Shows a box on Blizzard's objectives tracker to drag it anywhere. Click again
 L["Puts Blizzard's objectives tracker back under the minimap.|n|nAlso: /dui tracker reset"] = true
 L["Slide New Messages"] = true
 L["New chat lines slide up into place instead of jumping. Not while you're typing in the chat, hovering it or scrolled up in it."] = true
+L["Frames & AddOns"] = true
+L["Blizzard Frames"] = true
+L["Chat Commands"] = true
+L["Version %s"] = true
+L["A Diablo III style interface. Its settings are on the pages below this one."] = true
+L["/dui config - these options|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker - unlocks the quest tracker to move it|n/dui tracker reset - puts it back"] = true

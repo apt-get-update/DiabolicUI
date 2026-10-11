@@ -96,7 +96,6 @@ L["Fades the quest tracker out after it hasn't been moused over for a while, and
 L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = "Nombre de secondes pendant lesquelles le suivi reste pleinement visible avant de commencer à s'estomper, une fois que vous cessez de le survoler."
 L["Opacity"] = "Opacité"
 L["How visible the tracker stays once it has fully faded, as a percentage."] = "À quel point le suivi reste visible une fois entièrement estompé, en pourcentage."
-L["Loot"] = "Butin"
 L["Items"] = "Objets" -- loot window title
 L["Reskin Loot Window"] = "Relooker la fenêtre de butin"
 L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = "Relooke la fenêtre de butin pour correspondre au reste de l'interface. Si désactivé, la fenêtre de butin par défaut de Blizzard est utilisée à la place.|n|nNécessite un rechargement de l'interface pour s'appliquer."
@@ -183,7 +182,6 @@ L["No free character macro slot for your %s commands, they're kept until there's
 
 -- AddOns page (other addons styled)
 L["AddOns"] = "Addons"
-L["Styling"] = "Apparence"
 L["Style TrinketMenu"] = "Styliser TrinketMenu"
 L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = "Affiche les boutons de bijoux de TrinketMenu comme ceux des barres d'action, sans ses fonds.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Style World Map"] = "Styliser la carte du monde"
@@ -198,3 +196,9 @@ L["Shows a box on Blizzard's objectives tracker to drag it anywhere. Click again
 L["Puts Blizzard's objectives tracker back under the minimap.|n|nAlso: /dui tracker reset"] = "Remet le suivi des objectifs de Blizzard sous la minicarte.|n|nAussi : /dui tracker reset"
 L["Slide New Messages"] = "Faire glisser les nouveaux messages"
 L["New chat lines slide up into place instead of jumping. Not while you're typing in the chat, hovering it or scrolled up in it."] = "Les nouvelles lignes du chat glissent vers le haut au lieu de sauter. Pas pendant que vous écrivez, survolez le chat ou y avez remonté."
+L["Frames & AddOns"] = "Fenêtres et addons"
+L["Blizzard Frames"] = "Fenêtres de Blizzard"
+L["Chat Commands"] = "Commandes"
+L["Version %s"] = "Version %s"
+L["A Diablo III style interface. Its settings are on the pages below this one."] = "Une interface dans le style de Diablo III. Ses réglages sont sur les pages en dessous de celle-ci."
+L["/dui config - these options|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker - unlocks the quest tracker to move it|n/dui tracker reset - puts it back"] = "/dui config - ces options|n/dui num_bars 1-3 - le nombre de barres d'action|n/dui num_side_bars 0-2 - le nombre de barres latérales|n/dui tracker - déverrouille le suivi des quêtes pour le déplacer|n/dui tracker reset - le remet en place"
