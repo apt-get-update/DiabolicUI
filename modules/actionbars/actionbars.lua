@@ -140,6 +140,7 @@ Module.OnInit = function(self, event, ...)
 
   -- Fire up the artwork
   self:GetWidget("Artwork"):Enable()
+  self:GetWidget("Button: Spec Switch"):Enable() -- sits on the artwork's skull
 
   -- WotLK didn't have an option to cast on key down, though the code and addons support it.
   -- To better mimic future functionality, we splice the option into the blizzard interface menu,

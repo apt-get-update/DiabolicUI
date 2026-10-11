@@ -60,14 +60,14 @@ function TestOptionsMenu:tearDown()
 	client = nil
 end
 
-function TestOptionsMenu:test_four_pages_under_diabolicui()
+function TestOptionsMenu:test_five_pages_under_diabolicui()
 	local names = {}
 	for _, panel in ipairs(client.optionsPanels) do
 		if panel:GetName() and panel:GetName():find("^DiabolicUIOptionsPanel") then
 			names[#names + 1] = (panel.parent and (panel.parent .. "/") or "") .. panel.name
 		end
 	end
-	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Tooltips", "DiabolicUI/Units", "DiabolicUI/Chat" })
+	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Tooltips", "DiabolicUI/Units", "DiabolicUI/Chat", "DiabolicUI/Messages" })
 	assertClean(client)
 end
 
@@ -83,6 +83,12 @@ function TestOptionsMenu:test_the_menu_checkboxes()
 	click("ShowPerformance")
 	lu.assertEquals(bars.showPerformance, not performance)
 	lu.assertEquals(menu.MasterMenuButton.Performance:IsShown() == 1, not performance)
+	local spec = client:GetModule("ActionBars"):GetWidget("Button: Spec Switch"):GetFrame()
+	click("ShowSpecSwitch")
+	lu.assertFalse(bars.showSpecSwitch)
+	lu.assertNil(spec:IsShown())
+	click("ShowSpecSwitch")
+	lu.assertEquals(spec:IsShown(), 1)
 	assertClean(client)
 end
 
@@ -242,9 +248,38 @@ function TestOptionsMenu:test_the_chat_page()
 	click("ChatCopyWebLinks")
 	lu.assertEquals(filters.copyWebLinks, not copy)
 
+	-- the shorter messages, on their own page, one checkbox each
+	for i, setting in ipairs({ "cleanProgress", "cleanQuests", "cleanStatus", "cleanOnline",
+		"cleanLoot", "cleanAuctions", "cleanAchievements", "hideChatNoise" }) do
+		local before = filters[setting]
+		click("MessagesCleaner" .. i)
+		lu.assertEquals(filters[setting], not before, setting)
+		filters[setting] = before
+	end
+	_G.DiabolicUIOptionsPanelMessages.refresh()
+	lu.assertEquals(widget("MessagesCleaner1"):GetChecked() and true or false, filters.cleanProgress)
+
 	chat.timeVisible = 90
 	_G.DiabolicUIOptionsPanelChat.refresh()
 	lu.assertEquals(widget("ChatTimeVisibleInput"):GetText(), "90")
+	assertClean(client)
+end
+
+-- Every page fits in Blizzard's options window (648x520, its pages
+-- 424 high): the lowest widget of each stays above the page's bottom.
+function TestOptionsMenu:test_every_page_fits_in_the_window()
+	local container = _G.InterfaceOptionsFramePanelContainer
+	for _, panel in ipairs(client.optionsPanels) do
+		if panel:GetName() and panel:GetName():find("^DiabolicUIOptionsPanel") then
+			panel:SetAllPoints(container)
+			for _, child in ipairs({ panel:GetChildren() }) do
+				local bottom = child:GetBottom()
+				if bottom and child:IsShown() then
+					lu.assertTrue(bottom >= container:GetBottom(), panel:GetName() .. ": " .. tostring(child:GetName()))
+				end
+			end
+		end
+	end
 	assertClean(client)
 end
 

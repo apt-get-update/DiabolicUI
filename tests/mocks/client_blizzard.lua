@@ -599,7 +599,11 @@ local function buildFrames()
 	_G.GameMenuButtonRatings:Hide() -- shown in Korea only
 	local options = hidden(new("Frame", "InterfaceOptionsFrame", UIParent))
 	options.lastFrame = nil
-	new("Frame", "InterfaceOptionsFramePanelContainer", options)
+	options:SetSize(648, 520) -- InterfaceOptionsFrame.xml
+	options:SetPoint("CENTER")
+	local container = new("Frame", "InterfaceOptionsFramePanelContainer", options)
+	container:SetPoint("TOPLEFT", options, "TOPLEFT", 190, -45)
+	container:SetPoint("BOTTOMRIGHT", options, "BOTTOMRIGHT", -22, 51)
 	new("Frame", "InterfaceOptionsFrameCategories", options)
 	for i = 1, 31 do
 		button("Button", "InterfaceOptionsFrameCategoriesButton" .. i, _G.InterfaceOptionsFrameCategories)

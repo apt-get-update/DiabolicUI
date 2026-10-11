@@ -1177,10 +1177,15 @@ function Api.install(client)
 	-- Talents, runes, totems, timers ---------------------------------------------
 
 	api.GetActiveTalentGroup = function() return world().talentGroup end
-	api.GetNumTalentGroups = function() return 2 end
+	api.GetNumTalentGroups = function() return world().numTalentGroups or 2 end
+	api.SetActiveTalentGroup = function(group)
+		world().talentGroup = group
+		client:FireEvent("ACTIVE_TALENT_GROUP_CHANGED", group, 3 - group)
+	end
 	api.GetNumTalentTabs = function() return #world().talents end
 	api.GetTalentTabInfo = function(tab, inspect, pet, group)
-		local t = (inspect and world().inspectTalents or world().talents)[tab]
+		local t = (inspect and world().inspectTalents
+			or (group == 2) and world().secondaryTalents or world().talents)[tab]
 		if t then
 			return t[1], t[2], t[3], t[4]
 		end

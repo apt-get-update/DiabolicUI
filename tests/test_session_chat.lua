@@ -329,6 +329,26 @@ function TestChatWindows:test_the_autoposition_command()
 	assertClean(client)
 end
 
+-- Shorter messages --------------------------------------------------------------------------
+
+TestChatCleaner = {}
+
+function TestChatCleaner:tearDown()
+	client = nil
+end
+
+-- (the rules themselves: tests/test_chat_cleaner.lua)
+function TestChatCleaner:test_the_filters_are_in_place_after_login()
+	boot()
+	-- (this client's global strings read as their own names)
+	local filter = client.chatFilters.CHAT_MSG_SYSTEM[1]
+	local _, cleaned = filter(_G.ChatFrame1, "CHAT_MSG_SYSTEM", _G.ERR_AUCTION_STARTED)
+	lu.assertEquals(cleaned, "|cff33cc33+|r " .. _G.ERR_AUCTION_STARTED)
+	lu.assertNotNil(client.chatFilters.CHAT_MSG_CHANNEL_NOTICE)
+	lu.assertNotNil(client.chatFilters.CHAT_MSG_SAY)
+	assertClean(client)
+end
+
 -- Copying web links -----------------------------------------------------------------------
 
 TestCopyLinks = {}

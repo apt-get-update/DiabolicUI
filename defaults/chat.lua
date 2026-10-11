@@ -20,6 +20,16 @@ Engine:NewConfig("ChatWindows", {
 
 -- chat filters and emoticons
 Engine:NewConfig("ChatFilters", {
-	copyWebLinks = true -- left-click a web link in chat to copy it
+	copyWebLinks = true, -- left-click a web link in chat to copy it
+
+	-- shorter system lines (modules/chat/cleaner.lua)
+	cleanLoot = true, -- loot, money, quest rewards: "+ [Item] (3)"
+	cleanProgress = true, -- experience, reputation, honor, skills, level ups
+	cleanQuests = true, -- quests accepted and completed
+	cleanStatus = true, -- away, busy, rested
+	cleanOnline = true, -- friends and guild members coming online / going offline
+	cleanAuctions = true, -- auctions created, sold, won, outbid, expired
+	cleanAchievements = true, -- "Name: [Achievement]"
+	hideChatNoise = true -- channel join/leave/change notices, empty lines
 })
 

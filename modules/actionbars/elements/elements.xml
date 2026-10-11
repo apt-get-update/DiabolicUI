@@ -17,6 +17,7 @@
 
 <!-- Artwork overlays and backdrops -->
 <Script file='artwork.lua'/>
+<Script file='specswitch.lua'/>
 
 <!-- Keybind handling -->
 <Script file='keybinds.lua'/>

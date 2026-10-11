@@ -521,7 +521,10 @@ Widget.UpdateArtwork = function(self, event, ...)
 
 	-- we do a load on demand system here
 	-- that creates the artwork upon the first bar update
-	self.artworkCache = self.artworkCache or self:LoadArtwork()
+	if (not self.artworkCache) then
+		self.artworkCache = self:LoadArtwork()
+		Module:SendMessage("ENGINE_ACTIONBAR_ARTWORK_LOADED") -- what sits on it can be placed now
+	end
 
 	for artwork, artworkDB in pairs(self.artworkCache) do
 

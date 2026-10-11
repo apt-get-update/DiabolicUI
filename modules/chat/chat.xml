@@ -3,6 +3,7 @@
 
 <Script file='windows.lua'/>
 <Script file='filters.lua'/>
+<Script file='cleaner.lua'/>
 <Script file='bubbles.lua'/>
 
 </Ui>

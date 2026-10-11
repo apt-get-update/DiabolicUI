@@ -3,7 +3,9 @@ local L = Engine:GetLocale()
 local Module = Engine:NewModule("Menu")
 
 -- Lua API
+local ipairs = ipairs
 local math_floor = math.floor
+local pairs = pairs
 local setmetatable = setmetatable
 local unpack = unpack
 
@@ -23,6 +25,7 @@ local CHECK_X = EDGE - 2         -- checkbox art has a 2px transparent margin
 local INDENT = EDGE + 24         -- settings that belong to the checkbox above
 local SLIDER_WIDTH = 160
 local SLIDER_COLUMN = 200        -- distance between two sliders on one row
+local CHECK_COLUMN = 230         -- distance between two checkboxes on one row
 local RADIO_OVERHANG = 8         -- picker radios stick out past the box
 
 local TITLE_HEIGHT = 16
@@ -417,6 +420,12 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(showPerformance, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
+	local showSpecSwitch = CreateCheckbox(panel, "ShowSpecSwitch", L["Show Specialization Switch"], L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization. It's greyed out until you learn Dual Talent Specialization."], function(button)
+		actionbarsDB.showSpecSwitch = button:GetChecked() and true or false
+		Engine:GetModule("ActionBars"):GetWidget("Button: Spec Switch"):Update()
+	end)
+	layout:Place(showSpecSwitch, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
 	-- Objectives
 	CreateHeader(panel, layout, L["Objectives"])
 
@@ -470,6 +479,7 @@ Module.CreateOptionsPanel = function(self)
 	panel.cancel = function()
 		showGold:SetChecked(actionbarsDB.showGold)
 		showPerformance:SetChecked(actionbarsDB.showPerformance)
+		showSpecSwitch:SetChecked(actionbarsDB.showSpecSwitch)
 		fadeTracker:SetChecked(objectivesDB.fadeTracker)
 		trackerTimeFading:SetValueSilently(objectivesDB.fadeDelay)
 		trackerOpacity:SetValueSilently(objectivesDB.fadeOpacity)
@@ -675,6 +685,53 @@ Module.CreateOptionsPanel = function(self)
 	chatPanel.cancel()
 
 	InterfaceOptions_AddCategory(chatPanel)
+
+	-- Messages page: shorter system lines in the chat (modules/chat/cleaner.lua)
+	-------------------------------------------------------
+	local messagesPanel = CreateFrame("Frame", "DiabolicUIOptionsPanelMessages", InterfaceOptionsFramePanelContainer)
+	messagesPanel.name = L["Messages"]
+	messagesPanel.parent = panel.name
+	messagesPanel:Hide()
+
+	layout = NewLayout(messagesPanel)
+	CreateTitle(messagesPanel, layout, L["Messages"])
+	CreateSubmenuLogo(messagesPanel)
+
+	CreateHeader(messagesPanel, layout, L["Shorter Messages"])
+
+	local cleanerChecks, cleanerRow = {}
+	-- two per row, the longer labels on the left
+	for i, option in ipairs({
+		{ "cleanProgress", L["Experience, Reputation & Honor"], L["Shorter experience, reputation, honor, skill and level up lines, like '+ 75 Reputation: Argent Crusade'."] },
+		{ "cleanQuests", L["Quests"], L["Shorter lines for quests accepted and completed."] },
+		{ "cleanStatus", L["Away, Busy & Rested"], L["'You are now Away.' becomes '+ Away', and the same for busy and rested."] },
+		{ "cleanOnline", L["Online & Offline"], L["Marks friends and guild members coming online with a green +, and dims them going offline."] },
+		{ "cleanLoot", L["Loot & Money"], L["'You receive loot: [Item]x3.' becomes '+ [Item] (3)', and looted money shows as coins."] },
+		{ "cleanAuctions", L["Auctions"], L["Marks auctions created, sold and won with a green +, and cancelled, outbid and expired ones with a red -."] },
+		{ "cleanAchievements", L["Achievements"], L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] },
+		{ "hideChatNoise", L["Hide Channel Notices"], L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] },
+	}) do
+		local setting = option[1]
+		local check = CreateCheckbox(messagesPanel, "MessagesCleaner" .. i, option[2], option[3], function(button)
+			chatFiltersDB[setting] = button:GetChecked() and true or false
+		end)
+		if (i % 2 == 1) then
+			cleanerRow = layout:Row(CHECK_HEIGHT, (i == 1) and HEADER_GAP or ROW_GAP)
+		end
+		layout:Place(check, (i % 2 == 1) and CHECK_X or (CHECK_X + CHECK_COLUMN), cleanerRow)
+		cleanerChecks[setting] = check
+	end
+
+	messagesPanel.okay = function() end
+	messagesPanel.cancel = function()
+		for setting, check in pairs(cleanerChecks) do
+			check:SetChecked(chatFiltersDB[setting])
+		end
+	end
+	messagesPanel.refresh = messagesPanel.cancel
+	messagesPanel.cancel()
+
+	InterfaceOptions_AddCategory(messagesPanel)
 
 	self.OptionsPanel = panel
 

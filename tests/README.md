@@ -150,6 +150,12 @@ git-ignored.
   and `ApplyBackgroundOpacity`, which pushes the Background Opacity slider
   (25% by default) onto the chat window's background texture - only while
   its editbox is shown, fully transparent otherwise.
+- `test_chat_cleaner.lua` - `modules/chat/cleaner.lua`'s shorter system
+  lines, with the WotLK enUS global strings: loot, money, experience,
+  reputation, honor, skills, level ups, quests, away/busy/rested,
+  online/offline, auctions and achievements, each group's option, channel
+  notices (with the bookkeeping of a channel left) and empty lines hidden,
+  and patterns for translations that reorder their arguments.
 - `test_chat_copy_weblinks.lua` - `modules/chat/filters.lua`'s "Copy Web
   Links" feature (toggled by its own option, on by default): what counts
   as a web address (schemes, www., e-mails, IPv4, domains with a path or a
@@ -221,7 +227,8 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   from inspected talents), raid, boss and arena frames, the pet, the test
   mode previews.
 - `test_session_actionbars.lua` - the menus (main, micro buttons, bar
-  layout, bags, gold and fps), the online count on the social button, the XP and
+  layout, bags, gold and fps), the online count on the social button, the
+  talent specialization switch on the skull, the XP and
   reputation bars, the pet and stance bars, the vehicle and taxi buttons,
   the bar count commands and the cast-on-key-down option (after a reload
   too).

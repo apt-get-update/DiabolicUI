@@ -246,6 +246,20 @@ Engine:NewStaticConfig("ActionBars", {
 		}
 	},
 	visuals = {
+		-- the talent specialization switch on top of the skull artwork: the
+		-- 51x51 button of 128x128 textures at 80%, its bottom on the skull's
+		-- top (98px above the bottom of the 512x128 skull texture)
+		specswitch = {
+			size = { 51 * .8, 51 * .8 },
+			texture_size = { 128 * .8, 128 * .8 },
+			position = { "BOTTOM", 0, 98 + 6 * .8 }, -- relative to the skull texture; the art reaches 6px below the button
+			textures = {
+				normal = path .. [[textures\DiabolicUI_Button_51x51_Normal.tga]],
+				highlight = path .. [[textures\DiabolicUI_Button_51x51_Highlight.tga]],
+				pushed = path .. [[textures\DiabolicUI_Button_51x51_Pushed.tga]],
+				disabled = path .. [[textures\DiabolicUI_Button_51x51_Disabled.tga]]
+			}
+		},
 		artwork = {
 			pet = {
 				disableAutomation = true, 

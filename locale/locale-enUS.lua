@@ -262,6 +262,33 @@ L["Copy Web Links"] = true
 L["Left-click a web link (like https://..., www.... or name@mail.com) in the chat to open a popup with it, selected and ready to copy."] = true
 L["Click to copy the link."] = true
 
+-- Talent specialization switch
+L["Talent Specialization"] = true
+L["Learn Dual Talent Specialization from your class trainer to switch between two specializations here."] = true
+L["<Left-click> to switch"] = true
+L["Show Specialization Switch"] = true
+L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization. It's greyed out until you learn Dual Talent Specialization."] = true
+
+-- Shorter Messages (chat cleaner)
+L["Messages"] = true
+L["Shorter Messages"] = true
+L["Loot & Money"] = true
+L["'You receive loot: [Item]x3.' becomes '+ [Item] (3)', and looted money shows as coins."] = true
+L["Experience, Reputation & Honor"] = true
+L["Shorter experience, reputation, honor, skill and level up lines, like '+ 75 Reputation: Argent Crusade'."] = true
+L["Quests"] = true
+L["Shorter lines for quests accepted and completed."] = true
+L["Away, Busy & Rested"] = true
+L["'You are now Away.' becomes '+ Away', and the same for busy and rested."] = true
+L["Online & Offline"] = true
+L["Marks friends and guild members coming online with a green +, and dims them going offline."] = true
+L["Auctions"] = true
+L["Marks auctions created, sold and won with a green +, and cancelled, outbid and expired ones with a red -."] = true
+L["Achievements"] = true
+L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] = true
+L["Hide Channel Notices"] = true
+L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] = true
+
 
 -- worldmap module
 ---------------------------------------------------------------------

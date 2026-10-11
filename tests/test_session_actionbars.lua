@@ -279,6 +279,55 @@ function TestMenus:test_the_social_button_counts_friends_and_guild_members_onlin
 	assertClean(client)
 end
 
+function TestMenus:test_the_spec_switch_on_the_skull()
+	boot({ world = function(world)
+		world.talents = { { "Holy", "", 51 }, { "Protection", "", 20 }, { "Retribution", "", 0 } }
+		world.secondaryTalents = { { "Holy", "", 0 }, { "Protection", "", 5 }, { "Retribution", "", 66 } }
+	end })
+	local L = client.Engine:GetLocale()
+	local config = client:GetModule("ActionBars"):GetDB("ActionBars").visuals.specswitch
+	local switch = widget("Button: Spec Switch")
+	local button = switch:GetFrame()
+	lu.assertEquals(button:IsShown(), 1)
+	-- talent events before the artwork exists: nothing to update yet
+	switch.Button = nil
+	switch:Update()
+	switch.Button = button
+	local _, skull = button:GetPoint()
+	lu.assertEquals(skull, _G.DiabolicUISkullTexture)
+	lu.assertEquals(button.Art:GetTexture(), config.textures.normal)
+
+	-- hovering: both specializations, the active one first in white
+	client:Hover(button)
+	lu.assertEquals(button.Art:GetTexture(), config.textures.highlight)
+	local text = table.concat(tooltip(), "\n")
+	lu.assertStrContains(text, _G.PRIMARY .. "|Holy (51/20/0)")
+	lu.assertStrContains(text, _G.SECONDARY .. "|Retribution (0/5/66)")
+	client:RunScript(button, "OnMouseDown", "LeftButton")
+	lu.assertEquals(button.Art:GetTexture(), config.textures.pushed)
+	client:RunScript(button, "OnMouseUp", "LeftButton")
+
+	-- a click switches to the other one, the tooltip follows
+	client:RunScript(button, "OnClick", "LeftButton")
+	lu.assertEquals(client.world.talentGroup, 2)
+	client:RunScript(button, "OnClick", "LeftButton")
+	lu.assertEquals(client.world.talentGroup, 1)
+	client:Leave()
+	lu.assertEquals(button.Art:GetTexture(), config.textures.normal)
+
+	-- without Dual Talent Specialization: greyed out, and says how to get it
+	client.world.numTalentGroups = 1
+	client:FireEvent("PLAYER_TALENT_UPDATE")
+	lu.assertNil(button:IsEnabled())
+	lu.assertEquals(button.Art:GetTexture(), config.textures.disabled)
+	client:Hover(button)
+	lu.assertStrContains(table.concat(tooltip(), "\n"), L["Learn Dual Talent Specialization from your class trainer to switch between two specializations here."])
+	client:RunScript(button, "OnClick", "LeftButton")
+	lu.assertEquals(client.world.talentGroup, 1)
+	client:Leave()
+	assertClean(client)
+end
+
 function TestMenus:test_the_bar_layout_menu()
 	boot()
 	local Main = widget("Controller: Main"):GetFrame()
