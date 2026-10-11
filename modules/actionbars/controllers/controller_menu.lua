@@ -56,6 +56,8 @@ ControllerWidget.PlaceController = function(self)
 	else
 		controller:SetPoint(unpack(self.defaultPosition))
 	end
+	-- its buttons mirror on the left half of the screen
+	Module:GetWidget("Menu: Main"):ApplySide()
 end
 
 -- After a drag: its new place, from the UI's bottom right.

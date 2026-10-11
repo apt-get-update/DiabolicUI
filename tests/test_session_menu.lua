@@ -442,9 +442,30 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	client:Click(_G.DiabolicUILockFramesButton)
 	lu.assertEquals({ chatMover:IsShown(), menuMover:IsShown() }, { nil, nil })
 
+	-- on the left half of the screen, the buttons mirror: main menu, then bags
+	local menuWidget = client:GetModule("ActionBars"):GetWidget("Menu: Main")
+	local ui = client.Engine:GetFrame()
+	bars.menuPosition = { -(ui:GetWidth() - 300), 100 }
+	menuController:PlaceController()
+	lu.assertEquals(menuWidget:GetSide(), "LEFT")
+	lu.assertEquals(select(1, master:GetPoint()), "BOTTOMLEFT")
+	lu.assertTrue(menuWidget.BagBarMenuButton:GetLeft() > master:GetRight())
+	lu.assertEquals(select(1, master.Gold:GetPoint()), "BOTTOMLEFT")
+	lu.assertEquals(select(1, master.Performance:GetPoint()), "LEFT") -- after the gold
+	lu.assertEquals(select(1, menuWidget.MasterMenuWindow:GetPoint()), "BOTTOMLEFT")
+	lu.assertEquals(select(1, menuWidget.BagBarMenuWindow:GetPoint()), "TOPLEFT")
+	bars.showGold = false
+	menuWidget:UpdatePerformanceAnchor()
+	lu.assertEquals(select(1, master.Performance:GetPoint()), "BOTTOMLEFT") -- in its place
+	bars.showGold = true
+	menuWidget:UpdatePerformanceAnchor()
+
 	-- their resets, on the Action Bars and Chat pages
 	client:Click(widget("ResetMenu"))
 	lu.assertNil(bars.menuPosition)
+	lu.assertEquals(menuWidget:GetSide(), "RIGHT") -- back: bags, then main menu
+	lu.assertEquals(select(1, master:GetPoint()), "BOTTOMRIGHT")
+	lu.assertTrue(menuWidget.BagBarMenuButton:GetRight() < master:GetLeft())
 	client:Click(widget("ResetChat"))
 	lu.assertTrue(chat.db.autoposition)
 	bars.menuPosition = { -10, 10 }

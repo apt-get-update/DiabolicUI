@@ -949,6 +949,8 @@ MenuWidget.OnEnable = function(self)
 
 	self.MasterMenuButton = MasterMenuButton
 	self.BagBarMenuButton = BagBarMenuButton
+	self.BagBarMenuWindow = BagBarMenuWindow
+	self:ApplySide()
 	self:UpdateGoldVisibility()
 	self:UpdatePerformanceVisibility()
 
@@ -974,16 +976,74 @@ MenuWidget.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")	
 end
 
--- The performance text (fps/latency) sits to the left of the gold text
--- when both are shown, but falls back to the gold text's own base
--- position (taking its place) whenever gold is disabled.
+-- A config position { point, x, y } as seen in a mirror: left for right.
+local Mirror = function(position)
+	local point, x, y = unpack(position)
+	return point:gsub("RIGHT", "\0"):gsub("LEFT", "RIGHT"):gsub("%z", "LEFT"), -x, y
+end
+
+-- Which side of the screen the menu buttons are on (moved with Unlock
+-- Frames): on the right, the bags then the main menu, everything opening
+-- leftwards; on the left, mirrored - the main menu then the bags.
+MenuWidget.GetSide = function(self)
+	local controller = Module:GetWidget("Controller: Menu"):GetFrame()
+	local x = controller:GetCenter()
+	local center = Engine:GetFrame():GetCenter()
+	return (x and center and x < center) and "LEFT" or "RIGHT"
+end
+
+-- Places the buttons, their texts and windows for that side. Secure
+-- buttons: out of combat, when the menu is created or moved.
+MenuWidget.ApplySide = function(self)
+	local master, bags = self.MasterMenuButton, self.BagBarMenuButton
+	if not (master and bags) then
+		return
+	end
+	local config = Module.config
+	local padding = config.structure.controllers.mainmenu.padding
+	local micro = config.visuals.menus.main.micromenu
+	local bagmenu = config.visuals.menus.main.bagmenu
+	local side = self:GetSide()
+	self.side = side
+	master:ClearAllPoints()
+	bags:ClearAllPoints()
+	self.MasterMenuWindow:ClearAllPoints()
+	self.BagBarMenuWindow:ClearAllPoints()
+	master.Gold:ClearAllPoints()
+	if (side == "LEFT") then
+		master:SetPoint("BOTTOMLEFT")
+		bags:SetPoint("BOTTOMLEFT", master, "BOTTOMRIGHT", padding, 0)
+		self.MasterMenuWindow:SetPoint(Mirror(micro.position))
+		self.BagBarMenuWindow:SetPoint(Mirror(bagmenu.position))
+		master.Gold:SetPoint(Mirror(micro.performance.position))
+	else
+		master:SetPoint("BOTTOMRIGHT")
+		bags:SetPoint("BOTTOMRIGHT", master, "BOTTOMLEFT", -padding, 0)
+		self.MasterMenuWindow:SetPoint(unpack(micro.position))
+		self.BagBarMenuWindow:SetPoint(unpack(bagmenu.position))
+		master.Gold:SetPoint(unpack(micro.performance.position))
+	end
+	self:UpdatePerformanceAnchor()
+end
+
+-- The performance text (fps/latency) sits before the gold text when both
+-- are shown (to its left on the right side, to its right on the left side),
+-- but falls back to the gold text's own base position (taking its place)
+-- whenever gold is disabled.
 MenuWidget.UpdatePerformanceAnchor = function(self)
 	local button = self.MasterMenuButton
+	local position = Module.config.visuals.menus.main.micromenu.performance.position
 	button.Performance:ClearAllPoints()
-	if Module.db.showGold then
+	if (self.side == "LEFT") then
+		if Module.db.showGold then
+			button.Performance:SetPoint("LEFT", button.Gold, "RIGHT", 8, 0)
+		else
+			button.Performance:SetPoint(Mirror(position))
+		end
+	elseif Module.db.showGold then
 		button.Performance:SetPoint("RIGHT", button.Gold, "LEFT", -8, 0)
 	else
-		button.Performance:SetPoint(unpack(Module.config.visuals.menus.main.micromenu.performance.position))
+		button.Performance:SetPoint(unpack(position))
 	end
 end
 
