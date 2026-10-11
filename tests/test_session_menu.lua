@@ -424,8 +424,8 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	lu.assertEquals({ chatMover:IsShown(), menuMover:IsShown() }, { 1, 1 })
 	-- the menu's box: over its buttons (on top: they can't be clicked meanwhile)
 	local master = client:GetModule("ActionBars"):GetWidget("Menu: Main").MasterMenuButton
-	lu.assertEquals({ menuMover:GetRight(), (menuMover:GetBottom()) <= (master:GetBottom()) }, { master:GetRight(), true })
-	lu.assertEquals(menuMover:GetFrameStrata(), "DIALOG")
+	lu.assertEquals({ menuMover:GetRight(), (menuMover:GetBottom()) <= (master:GetBottom()) }, { master:GetRight() + 6, true })
+	lu.assertEquals(menuMover:GetFrameStrata(), "FULLSCREEN_DIALOG") -- above the buttons' DIALOG
 	chat.db.autoposition = true
 	client:RunScript(chatMover, "OnDragStart", "LeftButton")
 	_G.ChatFrame1:ClearAllPoints()

@@ -1127,7 +1127,7 @@ end
 -- it's shown, kept as offsets from `target` so it follows the drag. An
 -- extra given as { frame, "lr" } only counts for those edges (left, right,
 -- top, bottom): the chat's button column reaches below its last button.
-local FitMover = function(mover, target, extra, extraOnly)
+local FitMover = function(mover, target, extra, extraOnly, padding)
 	local left, right, top, bottom = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
 	mover:ClearAllPoints()
 	if not (left and right and top and bottom) then
@@ -1158,19 +1158,23 @@ local FitMover = function(mover, target, extra, extraOnly)
 		mover:SetAllPoints(target)
 		return
 	end
+	padding = padding or 0
+	l, r, t, b = l - padding, r + padding, t + padding, b - padding
 	mover:SetPoint("TOPLEFT", target, "TOPLEFT", l - left, t - top)
 	mover:SetPoint("BOTTOMRIGHT", target, "BOTTOMRIGHT", r - right, b - bottom)
 end
 
 -- A box over a frame that drags it: `onDragStart` and `onDragStop` run
 -- around the move.
--- On top of what it covers, so its buttons can't be clicked meanwhile.
-local CreateMover = function(name, target, text, onDragStart, onDragStop, extra, extraOnly)
+-- On top of what it covers, so its buttons can't be clicked meanwhile
+-- (the menu buttons are DIALOG themselves). `padding` makes it that much
+-- bigger than what it fits around.
+local CreateMover = function(name, target, text, onDragStart, onDragStop, extra, extraOnly, padding)
 	local mover = CreateFrame("Frame", name, UIParent)
-	mover:SetFrameStrata("DIALOG")
+	mover:SetFrameStrata("FULLSCREEN_DIALOG")
 	mover:SetAllPoints(target)
 	if extra then
-		mover:SetScript("OnShow", function(self) FitMover(self, target, extra, extraOnly) end)
+		mover:SetScript("OnShow", function(self) FitMover(self, target, extra, extraOnly, padding) end)
 	end
 	mover:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
@@ -1221,7 +1225,7 @@ Module.GetMovers = function(self)
 		end, { { _G.ChatFrame1ButtonFrame, "lr" }, { _G.ChatFrameMenuButton, "lrt" }, _G.ChatFrame1EditBox }),
 		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
 			menu:SavePosition()
-		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true)
+		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true, 6)
 	}
 	-- TrinketMenu's worn trinkets, saved where TrinketMenu keeps them
 	local trinkets = _G.TrinketMenu_MainFrame
@@ -1243,7 +1247,7 @@ Module.GetLockButton = function(self)
 		return self.LockButton
 	end
 	local button = CreateFrame("Button", "DiabolicUILockFramesButton", UIParent, "UIPanelButtonTemplate")
-	button:SetFrameStrata("DIALOG")
+	button:SetFrameStrata("TOOLTIP") -- above the boxes
 	button:SetSize(160, BUTTON_HEIGHT)
 	button:SetPoint("TOP", UIParent, "TOP", 0, -120)
 	button:SetText(L["Lock Frames"])
