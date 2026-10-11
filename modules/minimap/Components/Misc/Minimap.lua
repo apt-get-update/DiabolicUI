@@ -664,6 +664,8 @@ end
 -- Turned on and off by DiabolicUI's Unlock Frames (modules/menu/menu.lua),
 -- along with the other frames that can be moved.
 --------------------------------------------
+local L_MINIMAP = MINIMAP_LABEL or "Minimap"
+
 local editModeActive = false
 
 -- Applies a live cursor-drag delta to the user scale.
@@ -725,8 +727,19 @@ MinimapMod.CreateEditModeWidgets = function(self)
     highlight:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -19, 19)
     highlight:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 19, -19)
     highlight:SetFrameLevel(Minimap:GetFrameLevel() + 20)
-    highlight:SetBackdrop({ edgeFile = GetMedia("border-tooltip"), edgeSize = 16 })
-    highlight:SetBackdropBorderColor(Colors.normal[1], Colors.normal[2], Colors.normal[3])
+    -- the same box as DiabolicUI's other frames while unlocked
+    -- (modules/menu/menu.lua, CreateMover)
+    highlight:SetBackdrop({
+        bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+        edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+    })
+    highlight:SetBackdropColor(.6, .1, .1, .5)
+    highlight:SetBackdropBorderColor(1, .82, 0, 1)
+    highlight.Text = highlight:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    highlight.Text:SetPoint("CENTER")
+    highlight.Text:SetText(L_MINIMAP)
     highlight:EnableMouse(true)
     highlight:RegisterForDrag("LeftButton", "RightButton")
     highlight:SetScript("OnDragStart", EditOverlay_OnDragStart)
