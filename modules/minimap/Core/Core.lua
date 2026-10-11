@@ -28,6 +28,9 @@ ns = LibStub("AceAddon-3.0"):NewAddon(ns, Addon, "AceConsole-3.0")
 ns.Hider = CreateFrame("Frame"); ns.Hider:Hide()
 ns.Noop = function() end
 
+-- The minimap's 100% size, from the original Diabolic one.
+ns.SIZE_BASE = .64
+
 -- Default settings
 local defaults = {
 	global = {
@@ -143,15 +146,18 @@ end
 ns.OnInitialize = function(self)
 	self.db = SanitizeSettings(LibStub("AceDB-3.0"):New("DiabolicUI_Minimap_DB", defaults, true))
 
-	-- 100% used to be bigger (80% was the default): a size chosen before
-	-- keeps its size on screen, in the new percentages. (AceDB fills in the
-	-- defaults, and the old default was never saved: 1 is the new one.)
+	-- The size's 100% has shrunk twice (to 80%, then to 80% of that): a
+	-- size chosen before keeps its size on screen, in the new percentages.
+	-- "sizeBase" is the 100% a saved size counts from. (AceDB fills in the
+	-- defaults, and old defaults were never saved: 1 is always the new one.)
 	local minimap = self.db.global.minimap
-	if (not minimap.sizeRebased) then
+	local base = minimap.sizeBase or (minimap.sizeRebased and .8) or 1
+	if (base ~= ns.SIZE_BASE) then
 		if (minimap.userScale ~= 1) then
-			minimap.userScale = math.floor(minimap.userScale / .8 * 100 + .5) / 100
+			minimap.userScale = math.floor(minimap.userScale * base / ns.SIZE_BASE * 100 + .5) / 100
 		end
-		minimap.sizeRebased = true
+		minimap.sizeBase = ns.SIZE_BASE
+		minimap.sizeRebased = nil
 	end
 	-- within the slider's range
 	local config = ns.Config.Minimap

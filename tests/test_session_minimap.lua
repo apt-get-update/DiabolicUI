@@ -252,6 +252,9 @@ function TestMinimap:test_positions_are_saved_relative_to_the_nearest_edge()
 		{ "TOP", 0, -30, "TOP" }, { "RIGHT", -30, 0, "RIGHT" }, { "CENTER", 0, 0, "CENTER" },
 		{ "BOTTOM", 0, 30, "BOTTOM" }, { "BOTTOMRIGHT", -30, 30, "BOTTOMRIGHT" }, { "TOPLEFT", 30, -30, "TOPLEFT" },
 	}
+	-- (the fake client lays frames out without their scales: at scale 1,
+	-- what it computes is what the game would)
+	_G.Minimap:SetScale(1)
 	for _, case in ipairs(cases) do
 		_G.Minimap:ClearAllPoints()
 		_G.Minimap:SetPoint(case[1], _G.UIParent, case[1], case[2], case[3])
@@ -384,6 +387,7 @@ function TestMinimap:test_the_options_page_is_a_diabolicui_subcategory()
 		if registered == page then found = true end
 	end
 	lu.assertTrue(found)
+	_G.Minimap:SetScale(1) -- (the fake client lays frames out without their scales)
 	page:Show()
 	lu.assertEquals(page.sizeInput:GetText(), "100")
 	lu.assertEquals(page.anchorRadios.TOPRIGHT:GetChecked(), 1)

@@ -79,8 +79,8 @@ local Time_OnClick = function(self, mouseButton)
 end
 
 -- The map's size in the Diabolic look (198 / 140 would be Blizzard's), at
--- the 100% of edit mode's resizing.
-local mapScale = 1.614 * .8
+-- the 100% of edit mode's resizing: SIZE_BASE (Core.lua) of the original.
+local mapScale = 1.614 * ns.SIZE_BASE
 
 -- DiabolicUI's UI Scale (its options' main page, /dui setscale).
 local GetUIScale = function()
