@@ -215,6 +215,16 @@ function TestMinimap:test_edit_mode_moves_and_resizes_the_minimap()
 	assertClean(client)
 end
 
+function TestMinimap:test_its_art_keeps_its_proportions_at_any_size()
+	-- the border, clock and zone text grow and shrink with the map
+	for _, size in ipairs({ .5, 1, 1.5 }) do
+		ns.db.global.minimap.userScale = size
+		module:UpdateSize()
+		lu.assertAlmostEquals(module.widgetFrame:GetScale(), 1 / 1.614, 1e-6)
+	end
+	assertClean(client)
+end
+
 function TestMinimap:test_no_edit_mode_in_combat_and_resizes_wait_for_its_end()
 	client:EnterCombat()
 	module:EnterEditMode()

@@ -80,7 +80,8 @@ end
 
 -- The map's size in the Diabolic look (198 / 140 would be Blizzard's), at
 -- the 100% of edit mode's resizing: SIZE_BASE (Core.lua) of the original.
-local mapScale = 1.614 * ns.SIZE_BASE
+local DIABOLIC_MAP_SCALE = 1.614
+local mapScale = DIABOLIC_MAP_SCALE * ns.SIZE_BASE
 
 -- DiabolicUI's UI Scale (its options' main page, /dui setscale).
 local GetUIScale = function()
@@ -515,8 +516,11 @@ MinimapMod.CreateCustomElements = function(self)
     self:UpdateMailButtonPosition()
 end
 
+-- The border art, clock, zone text and compass sit in a frame scaled down
+-- by the map's own enlargement only: they grow and shrink with the map
+-- (its 100%, the UI Scale and edit mode's size), keeping its proportions.
 MinimapMod.PostUpdatePositionAndScale = function(self)
-    local scale = ns.API.GetEffectiveScale() / self:GetBaseScale()
+    local scale = 1 / DIABOLIC_MAP_SCALE
     self.widgetFrame:SetScale(scale)
     MiniMapBattlefieldFrame:SetScale(scale)
     -- The eye is a border button like the mail button,
