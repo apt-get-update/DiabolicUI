@@ -529,7 +529,7 @@ function TestOptionsMenu:test_the_chat_box_covers_its_buttons()
 	-- the buttons on its left, the menu button above them
 	buttons:ClearAllPoints()
 	buttons:SetPoint("TOPRIGHT", chat, "TOPLEFT", -2, 0)
-	buttons:SetSize(30, 200)
+	buttons:SetSize(30, 260) -- reaching below its last button: only its sides count
 	menuButton:ClearAllPoints()
 	menuButton:SetPoint("BOTTOM", buttons, "TOP", 0, 0)
 	menuButton:SetSize(30, 30)

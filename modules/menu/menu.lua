@@ -1124,7 +1124,9 @@ end
 -- The box covers `target` and the `extra` frames attached to it (the
 -- chat's buttons and edit box), or only those (the menu buttons and their
 -- texts, inside a wider holder): their outer edges, measured each time
--- it's shown, kept as offsets from `target` so it follows the drag.
+-- it's shown, kept as offsets from `target` so it follows the drag. An
+-- extra given as { frame, "lr" } only counts for those edges (left, right,
+-- top, bottom): the chat's button column reaches below its last button.
 local FitMover = function(mover, target, extra, extraOnly)
 	local left, right, top, bottom = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
 	mover:ClearAllPoints()
@@ -1136,13 +1138,20 @@ local FitMover = function(mover, target, extra, extraOnly)
 	if extraOnly then
 		l, r, t, b = math.huge, -math.huge, -math.huge, math.huge
 	end
-	for _, frame in ipairs(extra) do
+	for _, entry in ipairs(extra) do
+		local frame, edges = entry, "lrtb"
+		if (type(entry) == "table") and (not entry.GetLeft) then
+			frame, edges = entry[1], entry[2]
+		end
 		local fl, fr, ft, fb = frame:GetLeft(), frame:GetRight(), frame:GetTop(), frame:GetBottom()
 		if fl and fr and ft and fb then
 			-- in the target's own scale
 			local scale = frame:GetEffectiveScale() / target:GetEffectiveScale()
 			fl, fr, ft, fb = fl * scale, fr * scale, ft * scale, fb * scale
-			l, r, t, b = math.min(l, fl), math.max(r, fr), math.max(t, ft), math.min(b, fb)
+			if edges:find("l") then l = math.min(l, fl) end
+			if edges:find("r") then r = math.max(r, fr) end
+			if edges:find("t") then t = math.max(t, ft) end
+			if edges:find("b") then b = math.min(b, fb) end
 		end
 	end
 	if (l > r) then -- none of them placed
@@ -1208,7 +1217,7 @@ Module.GetMovers = function(self)
 			chat.db.autoposition = false
 		end, function()
 			chat:SaveChatFrameLayout()
-		end, { _G.ChatFrame1ButtonFrame, _G.ChatFrameMenuButton, _G.ChatFrame1EditBox }),
+		end, { { _G.ChatFrame1ButtonFrame, "lr" }, { _G.ChatFrameMenuButton, "lrt" }, _G.ChatFrame1EditBox }),
 		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
 			menu:SavePosition()
 		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true)
