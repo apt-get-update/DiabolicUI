@@ -766,7 +766,32 @@ MinimapMod.EnterEditMode = function(self)
     -- never sees them, and doesn't need to be touched.
     Minimap:SetMovable(true)
 
+    self:FitEditHighlight()
     self.editHighlight:Show()
+end
+
+-- The overlay covers the minimap's border ring, and MBB's button when it
+-- sits next to it: its edges are measured each time edit mode starts,
+-- kept as offsets from the minimap so it follows the drag.
+local RING = 19
+MinimapMod.FitEditHighlight = function(self)
+    local highlight = self.editHighlight
+    local left, right, top, bottom = Minimap:GetLeft(), Minimap:GetRight(), Minimap:GetTop(), Minimap:GetBottom()
+    local l, r, t, b = -RING, RING, RING, -RING
+    local mbb = _G.MBB_MinimapButtonFrame
+    if (left and right and top and bottom) and (mbb and mbb:IsShown()) then
+        local fl, fr, ft, fb = mbb:GetLeft(), mbb:GetRight(), mbb:GetTop(), mbb:GetBottom()
+        if (fl and fr and ft and fb) then
+            -- in the minimap's own scale (it's resizable, the button isn't)
+            local scale = mbb:GetEffectiveScale() / Minimap:GetEffectiveScale()
+            fl, fr, ft, fb = fl * scale, fr * scale, ft * scale, fb * scale
+            l, r = math.min(l, fl - left), math.max(r, fr - right)
+            t, b = math.max(t, ft - top), math.min(b, fb - bottom)
+        end
+    end
+    highlight:ClearAllPoints()
+    highlight:SetPoint("TOPLEFT", Minimap, "TOPLEFT", l, t)
+    highlight:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", r, b)
 end
 
 MinimapMod.ExitEditMode = function(self)

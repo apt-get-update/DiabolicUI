@@ -343,6 +343,13 @@ function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
 	lu.assertEquals(icon:GetAlpha(), 1)
 	client:RunScript(frame, "OnMouseUp")
 	client:Leave()
+
+	-- edit mode's overlay covers it too (it sits in its "+" on the border)
+	module:EnterEditMode()
+	local box, plus = module.editHighlight, module.mbbButton
+	lu.assertTrue(box:GetLeft() <= plus:GetLeft() and box:GetRight() >= plus:GetRight())
+	lu.assertTrue(box:GetTop() >= plus:GetTop() and box:GetBottom() <= plus:GetBottom())
+	module:ExitEditMode()
 	lu.assertEquals(icon:GetAlpha(), 0.85)
 	client:RunScript(frame, "OnMouseDown")
 	lu.assertEquals(icon:GetAlpha(), 0.95)

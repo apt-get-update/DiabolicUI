@@ -948,6 +948,7 @@ MenuWidget.OnEnable = function(self)
 	end)
 
 	self.MasterMenuButton = MasterMenuButton
+	self.BagBarMenuButton = BagBarMenuButton
 	self:UpdateGoldVisibility()
 	self:UpdatePerformanceVisibility()
 

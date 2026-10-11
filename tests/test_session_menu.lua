@@ -422,6 +422,10 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	client:Click(unlock)
 	local chatMover, menuMover = _G.DiabolicUIChatMover, _G.DiabolicUIMenuMover
 	lu.assertEquals({ chatMover:IsShown(), menuMover:IsShown() }, { 1, 1 })
+	-- the menu's box: over its buttons (on top: they can't be clicked meanwhile)
+	local master = client:GetModule("ActionBars"):GetWidget("Menu: Main").MasterMenuButton
+	lu.assertEquals({ menuMover:GetRight(), (menuMover:GetBottom()) <= (master:GetBottom()) }, { master:GetRight(), true })
+	lu.assertEquals(menuMover:GetFrameStrata(), "DIALOG")
 	chat.db.autoposition = true
 	client:RunScript(chatMover, "OnDragStart", "LeftButton")
 	_G.ChatFrame1:ClearAllPoints()
@@ -452,19 +456,28 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	-- Questie's tracker: unlocked, then locked back as it was
 	local updates = 0
 	_G.Questie = { db = { profile = { trackerEnabled = true, trackerLocked = true } } }
+	local questieFrame = CreateFrame("Frame", "Questie_BaseFrame", _G.UIParent)
 	_G.QuestieLoader = { ImportModule = function() return { Update = function() updates = updates + 1 end } end }
 	client:Click(unlock)
 	lu.assertFalse(_G.Questie.db.profile.trackerLocked)
 	lu.assertFalse(tracker:IsTrackerUnlocked()) -- Questie's instead of Blizzard's
+	-- a box over it, clicks going through to Questie, which drags and saves it
+	local questieBox = _G.DiabolicUIQuestieMover
+	lu.assertEquals(questieBox:IsShown(), 1)
+	lu.assertNil(questieBox:IsMouseEnabled())
+	client:RunScript(questieBox, "OnDragStop") -- nothing to save
+	client:Click(unlock)
+	client:Click(unlock)
 	client:Click(unlock)
 	lu.assertTrue(_G.Questie.db.profile.trackerLocked)
-	lu.assertEquals(updates, 2)
+	lu.assertEquals(updates, 4)
 	_G.Questie.db.profile.trackerEnabled = false -- not in use: Blizzard's
 	client:Click(unlock)
 	lu.assertTrue(tracker:IsTrackerUnlocked())
 	client:Click(unlock)
-	lu.assertEquals(updates, 2)
-	_G.Questie, _G.QuestieLoader = nil, nil
+	lu.assertEquals(updates, 4)
+	lu.assertNil(questieBox:IsShown())
+	_G.Questie, _G.QuestieLoader, _G.Questie_BaseFrame = nil, nil, nil
 
 	-- /dui move; combat locks them, and they don't unlock in it
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("move")

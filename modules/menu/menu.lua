@@ -1122,9 +1122,10 @@ local GetQuestieTracker = function()
 end
 
 -- The box covers `target` and the `extra` frames attached to it (the
--- chat's buttons and edit box): their outer edges, measured each time
+-- chat's buttons and edit box), or only those (the menu buttons and their
+-- texts, inside a wider holder): their outer edges, measured each time
 -- it's shown, kept as offsets from `target` so it follows the drag.
-local FitMover = function(mover, target, extra)
+local FitMover = function(mover, target, extra, extraOnly)
 	local left, right, top, bottom = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
 	mover:ClearAllPoints()
 	if not (left and right and top and bottom) then
@@ -1132,11 +1133,21 @@ local FitMover = function(mover, target, extra)
 		return
 	end
 	local l, r, t, b = left, right, top, bottom
+	if extraOnly then
+		l, r, t, b = math.huge, -math.huge, -math.huge, math.huge
+	end
 	for _, frame in ipairs(extra) do
 		local fl, fr, ft, fb = frame:GetLeft(), frame:GetRight(), frame:GetTop(), frame:GetBottom()
 		if fl and fr and ft and fb then
+			-- in the target's own scale
+			local scale = frame:GetEffectiveScale() / target:GetEffectiveScale()
+			fl, fr, ft, fb = fl * scale, fr * scale, ft * scale, fb * scale
 			l, r, t, b = math.min(l, fl), math.max(r, fr), math.max(t, ft), math.min(b, fb)
 		end
+	end
+	if (l > r) then -- none of them placed
+		mover:SetAllPoints(target)
+		return
 	end
 	mover:SetPoint("TOPLEFT", target, "TOPLEFT", l - left, t - top)
 	mover:SetPoint("BOTTOMRIGHT", target, "BOTTOMRIGHT", r - right, b - bottom)
@@ -1144,12 +1155,13 @@ end
 
 -- A box over a frame that drags it: `onDragStart` and `onDragStop` run
 -- around the move.
-local CreateMover = function(name, target, text, onDragStart, onDragStop, extra)
+-- On top of what it covers, so its buttons can't be clicked meanwhile.
+local CreateMover = function(name, target, text, onDragStart, onDragStop, extra, extraOnly)
 	local mover = CreateFrame("Frame", name, UIParent)
 	mover:SetFrameStrata("DIALOG")
 	mover:SetAllPoints(target)
 	if extra then
-		mover:SetScript("OnShow", function(self) FitMover(self, target, extra) end)
+		mover:SetScript("OnShow", function(self) FitMover(self, target, extra, extraOnly) end)
 	end
 	mover:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
@@ -1173,7 +1185,9 @@ local CreateMover = function(name, target, text, onDragStart, onDragStop, extra)
 	end)
 	mover:SetScript("OnDragStop", function()
 		target:StopMovingOrSizing()
-		onDragStop()
+		if onDragStop then
+			onDragStop()
+		end
 	end)
 	mover:Hide()
 	return mover
@@ -1185,6 +1199,8 @@ Module.GetMovers = function(self)
 	end
 	local chat = Engine:GetModule("ChatWindows")
 	local menu = Engine:GetModule("ActionBars"):GetWidget("Controller: Menu")
+	local menuButtons = Engine:GetModule("ActionBars"):GetWidget("Menu: Main")
+	local master = menuButtons.MasterMenuButton
 	self.Movers = {
 		-- dropped by hand: no longer placed automatically, and kept there
 		-- (modules/chat/windows.lua saves it)
@@ -1195,7 +1211,7 @@ Module.GetMovers = function(self)
 		end, { _G.ChatFrame1ButtonFrame, _G.ChatFrameMenuButton, _G.ChatFrame1EditBox }),
 		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
 			menu:SavePosition()
-		end)
+		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true)
 	}
 	return self.Movers
 end
@@ -1238,7 +1254,8 @@ Module.SetFramesUnlocked = function(self, unlocked)
 			mover:Hide()
 		end
 	end
-	-- Questie's tracker: unlocked, then back to the way it was
+	-- Questie's tracker: unlocked, then back to the way it was. It drags
+	-- and saves itself, so its box only shows it: clicks go through.
 	if questie then
 		if unlocked then
 			self.questieWasLocked = questie.trackerLocked
@@ -1248,6 +1265,16 @@ Module.SetFramesUnlocked = function(self, unlocked)
 			self.questieWasLocked = nil
 		end
 		questieTracker:Update()
+	end
+	local questieFrame = _G.Questie_BaseFrame
+	if unlocked and questie and questieFrame then
+		if (not self.QuestieBox) then
+			self.QuestieBox = CreateMover("DiabolicUIQuestieMover", questieFrame, "Questie", nil, nil)
+			self.QuestieBox:EnableMouse(false)
+		end
+		self.QuestieBox:Show()
+	elseif self.QuestieBox then
+		self.QuestieBox:Hide()
 	end
 	local minimap = GetMinimap()
 	if minimap then
