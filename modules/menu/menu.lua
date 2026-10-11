@@ -1204,7 +1204,9 @@ Module.SetFramesUnlocked = function(self, unlocked)
 		return
 	end
 	self.framesUnlocked = unlocked
-	Engine:GetModule("ObjectiveTracker"):SetTrackerUnlocked(unlocked)
+	-- the quest tracker in use: Questie's when it's on, Blizzard's otherwise
+	local questie, questieTracker = GetQuestieTracker()
+	Engine:GetModule("ObjectiveTracker"):SetTrackerUnlocked(unlocked and not questie)
 	for _, mover in ipairs(self:GetMovers()) do
 		if unlocked then
 			mover:Show()
@@ -1213,7 +1215,6 @@ Module.SetFramesUnlocked = function(self, unlocked)
 		end
 	end
 	-- Questie's tracker: unlocked, then back to the way it was
-	local questie, questieTracker = GetQuestieTracker()
 	if questie then
 		if unlocked then
 			self.questieWasLocked = questie.trackerLocked

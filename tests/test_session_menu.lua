@@ -455,11 +455,13 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	_G.QuestieLoader = { ImportModule = function() return { Update = function() updates = updates + 1 end } end }
 	client:Click(unlock)
 	lu.assertFalse(_G.Questie.db.profile.trackerLocked)
+	lu.assertFalse(tracker:IsTrackerUnlocked()) -- Questie's instead of Blizzard's
 	client:Click(unlock)
 	lu.assertTrue(_G.Questie.db.profile.trackerLocked)
 	lu.assertEquals(updates, 2)
-	_G.Questie.db.profile.trackerEnabled = false -- not in use: left alone
+	_G.Questie.db.profile.trackerEnabled = false -- not in use: Blizzard's
 	client:Click(unlock)
+	lu.assertTrue(tracker:IsTrackerUnlocked())
 	client:Click(unlock)
 	lu.assertEquals(updates, 2)
 	_G.Questie, _G.QuestieLoader = nil, nil
