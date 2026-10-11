@@ -42,9 +42,18 @@ Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui 
 * 🎨 *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
 * 💍 *TrinketMenu* restyled to match.
 
-[cols="3*a",frame=none,grid=none]
+[cols="2*a",frame=none,grid=none]
+|===
+|image::docs/screenshots/specialization.webp[Specializations page]
+|image::docs/screenshots/talent-skull.webp[Specialization button]
+|image::docs/screenshots/raid.webp[Raid frames by group]
+|image::docs/screenshots/party.webp[Party frames]
+|===
+
+[cols="4*a",frame=none,grid=none]
 |===
 |image::docs/screenshots/tooltip.webp[Item tooltip]
+|image::docs/screenshots/reputation-hover.webp[Reputation bar tooltip]
 |image::docs/screenshots/loot.webp[Loot window]
 |image::docs/screenshots/chat-loot.webp[Shorter loot messages]
 |===
