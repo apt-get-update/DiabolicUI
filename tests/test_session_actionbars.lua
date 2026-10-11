@@ -318,6 +318,18 @@ function TestMenus:test_the_spec_switch_on_the_skull()
 	client:Leave()
 	lu.assertEquals(button.Art:GetTexture(), config.textures.normal)
 
+	-- hidden in a vehicle or while possessing: the bars are the vehicle's
+	client.world.units.player.hasVehicleUI = true
+	client:UpdateStateDrivers()
+	lu.assertNil(button:IsShown())
+	client.world.units.player.hasVehicleUI = false
+	client.world.bonusBarOffset = 5
+	client:UpdateStateDrivers()
+	lu.assertNil(button:IsShown())
+	client.world.bonusBarOffset = 0
+	client:UpdateStateDrivers()
+	lu.assertEquals(button:IsShown(), 1)
+
 	-- without Dual Talent Specialization: hidden until it's learned
 	client.world.numTalentGroups = 1
 	client:FireEvent("PLAYER_TALENT_UPDATE")

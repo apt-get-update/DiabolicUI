@@ -482,10 +482,10 @@ Module.CreateOptionsPanel = function(self)
 	local commands = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	commands:SetJustifyH("LEFT")
 	commands:SetWidth(INTRO_WIDTH)
-	commands:SetText(L["/dui config - these options|n/dui move - unlocks the minimap and the quest tracker to move them|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker reset - puts the quest tracker back"])
+	commands:SetText(L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker reset - puts the quest tracker back"])
 	layout:Place(commands, EDGE, layout:Row(LABEL_HEIGHT * 5, HEADER_GAP))
 
-	local unlockFrames = CreateButton(panel, "UnlockFrames", L["Unlock Frames"], L["Highlights the frames you can move - the minimap and Blizzard's quest tracker - to drag them around. Right-drag the minimap to resize it. A Lock Frames button puts everything back in place.|n|nAlso: /dui move"], function(button)
+	local unlockFrames = CreateButton(panel, "UnlockFrames", L["Unlock Frames"], L["Highlights the frames you can move - the minimap, the chat, the menu buttons and the quest tracker (Blizzard's or Questie's) - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"], function(button)
 		self:SetFramesUnlocked(not self:AreFramesUnlocked())
 	end)
 	layout:Place(unlockFrames, EDGE, layout:Row(BUTTON_HEIGHT, SECTION_GAP))
@@ -536,6 +536,12 @@ Module.CreateOptionsPanel = function(self)
 		end
 	end)
 	layout:Place(showSpecSwitch, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
+	-- the menu buttons move with Unlock Frames on the main page; this puts them back
+	local resetMenu = CreateButton(actionBarsPanel, "ResetMenu", L["Reset Position"], L["Puts the menu buttons, with the gold and the fps texts, back in the bottom right corner."], function(button)
+		Engine:GetModule("ActionBars"):GetWidget("Controller: Menu"):ResetPosition()
+	end)
+	layout:Place(resetMenu, EDGE, layout:Row(BUTTON_HEIGHT, SECTION_GAP))
 
 	actionBarsPanel.okay = function() end
 	actionBarsPanel.cancel = function()
@@ -899,6 +905,14 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(slideMessages, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
+	-- the chat moves with Unlock Frames on the main page; this puts it back
+	local resetChat = CreateButton(chatPanel, "ResetChat", L["Reset Position"], L["Puts the chat window back in the bottom left corner, sized like Diablo III's."], function(button)
+		local chat = Engine:GetModule("ChatWindows")
+		chat.db.autoposition = true
+		chat:PositionChatFrames()
+	end)
+	layout:Place(resetChat, EDGE, layout:Row(BUTTON_HEIGHT, SECTION_GAP))
+
 	chatPanel.okay = function() end
 	chatPanel.cancel = function()
 		fadeChat:SetChecked(chatDB.fadeChat)
@@ -1087,14 +1101,79 @@ Module.CreateOptionsPanel = function(self)
 end
 
 -- Unlock Frames: every frame that can be moved at once - the minimap
--- (modules/minimap, its edit mode) and Blizzard's quest tracker
--- (modules/objectives/tracker.lua) - with one Lock Frames button to put
--- them back. Not in combat: the minimap's edit mode refuses it, and
--- entering combat locks them.
+-- (modules/minimap, its edit mode), Blizzard's quest tracker
+-- (modules/objectives/tracker.lua), Questie's tracker (its own lock), the
+-- main chat window and the menu buttons with the gold and fps texts - with
+-- one Lock Frames button to put them back. Not in combat: the minimap and
+-- the menu buttons are secure, and entering combat locks them.
 -------------------------------------------------------
 local GetMinimap = function()
 	local minimap = _G.DiabolicUIMinimapNS
 	return minimap and minimap:GetModule("Minimap", true)
+end
+
+-- Questie's tracker, while it's in use: it moves once Questie's own
+-- "trackerLocked" is off.
+local GetQuestieTracker = function()
+	local questie, loader = _G.Questie, _G.QuestieLoader
+	if questie and questie.db and questie.db.profile and questie.db.profile.trackerEnabled and loader then
+		return questie.db.profile, loader:ImportModule("TrackerBaseFrame")
+	end
+end
+
+-- A box over a frame that drags it: `onDragStart` and `onDragStop` run
+-- around the move.
+local CreateMover = function(name, target, text, onDragStart, onDragStop)
+	local mover = CreateFrame("Frame", name, UIParent)
+	mover:SetFrameStrata("DIALOG")
+	mover:SetAllPoints(target)
+	mover:SetBackdrop({
+		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
+		edgeSize = 12,
+		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+	})
+	mover:SetBackdropColor(.6, .1, .1, .5)
+	mover:SetBackdropBorderColor(1, .82, 0, 1)
+	mover:EnableMouse(true)
+	mover:RegisterForDrag("LeftButton")
+	mover.Text = mover:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	mover.Text:SetPoint("CENTER")
+	mover.Text:SetText(text)
+	mover:SetScript("OnDragStart", function()
+		if onDragStart then
+			onDragStart()
+		end
+		target:SetMovable(true)
+		target:StartMoving()
+	end)
+	mover:SetScript("OnDragStop", function()
+		target:StopMovingOrSizing()
+		onDragStop()
+	end)
+	mover:Hide()
+	return mover
+end
+
+Module.GetMovers = function(self)
+	if self.Movers then
+		return self.Movers
+	end
+	local chat = Engine:GetModule("ChatWindows")
+	local menu = Engine:GetModule("ActionBars"):GetWidget("Controller: Menu")
+	self.Movers = {
+		-- dropped by hand: no longer placed automatically, and kept there
+		-- (modules/chat/windows.lua saves it)
+		CreateMover("DiabolicUIChatMover", _G.ChatFrame1, L["Chat"], function()
+			chat.db.autoposition = false
+		end, function()
+			chat:SaveChatFrameLayout()
+		end),
+		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
+			menu:SavePosition()
+		end)
+	}
+	return self.Movers
 end
 
 Module.AreFramesUnlocked = function(self)
@@ -1126,6 +1205,25 @@ Module.SetFramesUnlocked = function(self, unlocked)
 	end
 	self.framesUnlocked = unlocked
 	Engine:GetModule("ObjectiveTracker"):SetTrackerUnlocked(unlocked)
+	for _, mover in ipairs(self:GetMovers()) do
+		if unlocked then
+			mover:Show()
+		else
+			mover:Hide()
+		end
+	end
+	-- Questie's tracker: unlocked, then back to the way it was
+	local questie, questieTracker = GetQuestieTracker()
+	if questie then
+		if unlocked then
+			self.questieWasLocked = questie.trackerLocked
+			questie.trackerLocked = false
+		elseif (self.questieWasLocked ~= nil) then
+			questie.trackerLocked = self.questieWasLocked
+			self.questieWasLocked = nil
+		end
+		questieTracker:Update()
+	end
 	local minimap = GetMinimap()
 	if minimap then
 		if unlocked then

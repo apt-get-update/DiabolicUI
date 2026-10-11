@@ -415,6 +415,55 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	lu.assertNil(lock:IsShown())
 	lu.assertEquals(unlock:GetText(), L["Unlock Frames"])
 
+	-- the chat and the menu buttons, by their own boxes
+	local chat = client:GetModule("ChatWindows")
+	local menuController = client:GetModule("ActionBars"):GetWidget("Controller: Menu")
+	local bars = db("ActionBars", "character")
+	client:Click(unlock)
+	local chatMover, menuMover = _G.DiabolicUIChatMover, _G.DiabolicUIMenuMover
+	lu.assertEquals({ chatMover:IsShown(), menuMover:IsShown() }, { 1, 1 })
+	chat.db.autoposition = true
+	client:RunScript(chatMover, "OnDragStart", "LeftButton")
+	_G.ChatFrame1:ClearAllPoints()
+	_G.ChatFrame1:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 300, 200)
+	client:RunScript(chatMover, "OnDragStop", "LeftButton")
+	lu.assertFalse(chat.db.autoposition) -- placed by hand now
+	lu.assertEquals({ chat.db.positionX, chat.db.positionY }, { 300, 200 })
+	local controller = menuController:GetFrame()
+	client:RunScript(menuMover, "OnDragStart", "LeftButton")
+	controller:ClearAllPoints()
+	controller:SetPoint("BOTTOMRIGHT", client.Engine:GetFrame(), "BOTTOMRIGHT", -300, 100)
+	client:RunScript(menuMover, "OnDragStop", "LeftButton")
+	lu.assertEquals(bars.menuPosition, { -300, 100 })
+	client:Click(_G.DiabolicUILockFramesButton)
+	lu.assertEquals({ chatMover:IsShown(), menuMover:IsShown() }, { nil, nil })
+
+	-- their resets, on the Action Bars and Chat pages
+	client:Click(widget("ResetMenu"))
+	lu.assertNil(bars.menuPosition)
+	client:Click(widget("ResetChat"))
+	lu.assertTrue(chat.db.autoposition)
+	bars.menuPosition = { -10, 10 }
+	client:EnterCombat()
+	client:Click(widget("ResetMenu")) -- forgotten now, placed after a reload
+	lu.assertNil(bars.menuPosition)
+	client:LeaveCombat()
+
+	-- Questie's tracker: unlocked, then locked back as it was
+	local updates = 0
+	_G.Questie = { db = { profile = { trackerEnabled = true, trackerLocked = true } } }
+	_G.QuestieLoader = { ImportModule = function() return { Update = function() updates = updates + 1 end } end }
+	client:Click(unlock)
+	lu.assertFalse(_G.Questie.db.profile.trackerLocked)
+	client:Click(unlock)
+	lu.assertTrue(_G.Questie.db.profile.trackerLocked)
+	lu.assertEquals(updates, 2)
+	_G.Questie.db.profile.trackerEnabled = false -- not in use: left alone
+	client:Click(unlock)
+	client:Click(unlock)
+	lu.assertEquals(updates, 2)
+	_G.Questie, _G.QuestieLoader = nil, nil
+
 	-- /dui move; combat locks them, and they don't unlock in it
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("move")
 	lu.assertTrue(menu:AreFramesUnlocked())
