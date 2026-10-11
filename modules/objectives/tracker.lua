@@ -194,16 +194,14 @@ Module.SetTrackerUnlocked = function(self, unlocked)
 	end
 end
 
--- Back under the minimap, where Blizzard puts it.
+-- Back under the minimap, where Blizzard puts it. While unlocked, its box
+-- follows it there.
 Module.ResetTrackerPosition = function(self)
 	self.db.trackerPosition = nil
-	if self.Mover then
-		self.Mover:Hide()
-	end
-	local watchFrame = _G.WatchFrame
-	if watchFrame then
-		watchFrame:SetUserPlaced(false)
-		_G.UIParent_ManageFramePositions()
+	_G.WatchFrame:SetUserPlaced(false)
+	_G.UIParent_ManageFramePositions()
+	if self:IsTrackerUnlocked() then
+		self:SetTrackerUnlocked(true)
 	end
 end
 
@@ -213,11 +211,13 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "PlaceTracker")
 	self:PlaceTracker()
 
+	-- /dui tracker reset; moving it is /dui move (modules/menu/menu.lua)
 	self:GetHandler("ChatCommand"):Register("tracker", function(arg)
 		if (arg == "reset") then
 			self:ResetTrackerPosition()
 		else
-			self:SetTrackerUnlocked(not self:IsTrackerUnlocked())
+			local menu = Engine:GetModule("Menu")
+			menu:SetFramesUnlocked(not menu:AreFramesUnlocked())
 		end
 	end)
 end

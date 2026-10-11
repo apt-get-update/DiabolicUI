@@ -393,20 +393,47 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	_G.DiabolicUIOptionsPanelAddOns.refresh()
 	lu.assertNil(widget("StyleTrinketMenu"):GetChecked())
 
-	-- unlocking and resetting Blizzard's tracker
+	-- Unlock Frames: the minimap and the tracker at once, one button to lock
+	local menu = client:GetModule("Menu")
 	local tracker = client:GetModule("ObjectiveTracker")
-	local unlock = widget("UnlockTracker")
+	local minimap = _G.DiabolicUIMinimapNS:GetModule("Minimap")
+	local unlock = widget("UnlockFrames")
 	client:Click(unlock)
+	lu.assertTrue(menu:AreFramesUnlocked())
 	lu.assertTrue(tracker:IsTrackerUnlocked())
-	lu.assertEquals(unlock:GetText(), L["Lock Tracker"])
-	_G.DiabolicUIOptionsPanelQuests.refresh()
-	lu.assertEquals(unlock:GetText(), L["Lock Tracker"])
-	client:Click(unlock)
+	lu.assertTrue(minimap:IsEditModeActive())
+	lu.assertEquals(unlock:GetText(), L["Lock Frames"])
+	local lock = _G.DiabolicUILockFramesButton
+	lu.assertEquals(lock:IsShown(), 1)
+	lu.assertEquals(lock.Hint:GetText(), L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."])
+	_G.DiabolicUIOptionsPanel.refresh()
+	lu.assertEquals(unlock:GetText(), L["Lock Frames"])
+	client:Click(lock)
+	lu.assertFalse(menu:AreFramesUnlocked())
 	lu.assertFalse(tracker:IsTrackerUnlocked())
-	client:Click(unlock)
+	lu.assertFalse(minimap:IsEditModeActive())
+	lu.assertNil(lock:IsShown())
+	lu.assertEquals(unlock:GetText(), L["Unlock Frames"])
+
+	-- /dui move; combat locks them, and they don't unlock in it
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("move")
+	lu.assertTrue(menu:AreFramesUnlocked())
+	client:EnterCombat()
+	lu.assertFalse(menu:AreFramesUnlocked())
+	local printed, print = {}, _G.print
+	_G.print = function(text) printed[#printed + 1] = text end
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("move")
+	_G.print = print
+	lu.assertFalse(menu:AreFramesUnlocked())
+	lu.assertEquals(printed, { L["You can't move frames in combat."] })
+	client:LeaveCombat()
+	client:FireEvent("PLAYER_REGEN_DISABLED") -- locked already: nothing to do
+	client.world.inCombat = false
+
+	-- the tracker's own reset, on the Quests page
+	tracker.db.trackerPosition = { 1, 2 }
 	client:Click(widget("ResetTracker"))
-	lu.assertFalse(tracker:IsTrackerUnlocked())
-	lu.assertEquals(unlock:GetText(), L["Unlock Tracker"])
+	lu.assertNil(tracker.db.trackerPosition)
 
 	-- the chat slide
 	local chat = db("ChatWindows")

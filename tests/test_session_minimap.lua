@@ -207,8 +207,8 @@ function TestMinimap:test_edit_mode_moves_and_resizes_the_minimap()
 	lu.assertEquals(module:GetUserScale(), 0.6)
 	client:RunScript(overlay(), "OnDragStop")
 
-	-- the exit button
-	client:Click(module.exitEditModeButton)
+	-- left (DiabolicUI's Lock Frames does it, see test_session_menu.lua)
+	module:ExitEditMode()
 	lu.assertFalse(module:IsEditModeActive())
 	lu.assertNil(overlay():IsShown())
 	module:ExitEditMode() -- already off
@@ -460,13 +460,9 @@ function TestMinimap:test_the_zone_fade_options()
 	assertClean(client)
 end
 
-function TestMinimap:test_the_edit_button_and_the_tooltips()
+function TestMinimap:test_the_tooltips()
 	local page = panel()
 	page:Show()
-	client:Click(page.editButton)
-	lu.assertTrue(module:IsEditModeActive())
-	client:Click(page.editButton)
-	lu.assertFalse(module:IsEditModeActive())
 	for _, widget in ipairs(client:WidgetsWithScript("OnEnter")) do
 		local s = Client.Widgets.state[widget]
 		local parent = s.parent

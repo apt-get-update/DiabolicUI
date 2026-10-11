@@ -198,14 +198,20 @@ function TestWatchFrame:test_moving_it()
 	tracker:SetTrackerUnlocked(true)
 	lu.assertEquals({ mover:GetRight(), mover:GetTop() }, { 600, 500 })
 
-	-- reset: back to Blizzard's spot
+	-- reset while unlocked: back to Blizzard's spot, its box with it
+	watch:SetSize(204, 400)
+	watch:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -10, -200)
 	tracker:ResetTrackerPosition()
 	lu.assertNil(tracker.db.trackerPosition)
-	lu.assertFalse(tracker:IsTrackerUnlocked())
+	lu.assertTrue(tracker:IsTrackerUnlocked())
+	lu.assertEquals(mover:GetTop(), watch:GetTop())
 	lu.assertFalse(watch:IsUserPlaced() and true or false)
 	tracker:PlaceTracker() -- nothing saved: nothing to do
+	tracker:SetTrackerUnlocked(false)
+	tracker:ResetTrackerPosition() -- locked: stays locked
+	lu.assertFalse(tracker:IsTrackerUnlocked())
 
-	-- /dui tracker, /dui tracker reset
+	-- /dui tracker is /dui move now; /dui tracker reset
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("tracker")
 	lu.assertTrue(tracker:IsTrackerUnlocked())
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("tracker")

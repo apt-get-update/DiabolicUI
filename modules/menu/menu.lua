@@ -11,6 +11,7 @@ local unpack = unpack
 
 -- WoW API
 local CreateFrame = CreateFrame
+local InCombatLockdown = InCombatLockdown
 local UIDropDownMenu_AddButton = UIDropDownMenu_AddButton
 local UIDropDownMenu_CreateInfo = UIDropDownMenu_CreateInfo
 local UIDropDownMenu_DisableDropDown = UIDropDownMenu_DisableDropDown
@@ -481,15 +482,23 @@ Module.CreateOptionsPanel = function(self)
 	local commands = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	commands:SetJustifyH("LEFT")
 	commands:SetWidth(INTRO_WIDTH)
-	commands:SetText(L["/dui config - these options|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker - unlocks the quest tracker to move it|n/dui tracker reset - puts it back"])
+	commands:SetText(L["/dui config - these options|n/dui move - unlocks the minimap and the quest tracker to move them|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker reset - puts the quest tracker back"])
 	layout:Place(commands, EDGE, layout:Row(LABEL_HEIGHT * 5, HEADER_GAP))
+
+	local unlockFrames = CreateButton(panel, "UnlockFrames", L["Unlock Frames"], L["Highlights the frames you can move - the minimap and Blizzard's quest tracker - to drag them around. Right-drag the minimap to resize it. A Lock Frames button puts everything back in place.|n|nAlso: /dui move"], function(button)
+		self:SetFramesUnlocked(not self:AreFramesUnlocked())
+	end)
+	layout:Place(unlockFrames, EDGE, layout:Row(BUTTON_HEIGHT, SECTION_GAP))
+	self.UnlockFramesButton = unlockFrames
 
 	local version = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
 	version:SetPoint("BOTTOMRIGHT", -EDGE, EDGE)
 	version:SetText(L["Version %s"]:format(GetAddOnMetadata(Addon, "Version") or "?"))
 
 	panel.okay = function() end
-	panel.cancel = function() end
+	panel.cancel = function()
+		unlockFrames:SetText(self:AreFramesUnlocked() and L["Lock Frames"] or L["Unlock Frames"])
+	end
 	panel.refresh = panel.cancel
 
 	InterfaceOptions_AddCategory(panel)
@@ -1004,20 +1013,13 @@ Module.CreateOptionsPanel = function(self)
 
 	layout:EndGroup(trackerGroup)
 
-	-- moving Blizzard's tracker (Questie's moves from its own options)
+	-- Blizzard's tracker moves with Unlock Frames on the main page; this
+	-- puts it back (Questie's moves from its own options)
 	local tracker = Engine:GetModule("ObjectiveTracker")
-	local unlockTracker
-	unlockTracker = CreateButton(questsPanel, "UnlockTracker", L["Unlock Tracker"], L["Shows a box on Blizzard's objectives tracker to drag it anywhere. Click again to lock it. Questie's tracker moves from its own options.|n|nAlso: /dui tracker"], function(button)
-		tracker:SetTrackerUnlocked(not tracker:IsTrackerUnlocked())
-		button:SetText(tracker:IsTrackerUnlocked() and L["Lock Tracker"] or L["Unlock Tracker"])
-	end)
 	local resetTracker = CreateButton(questsPanel, "ResetTracker", L["Reset Position"], L["Puts Blizzard's objectives tracker back under the minimap.|n|nAlso: /dui tracker reset"], function(button)
 		tracker:ResetTrackerPosition()
-		unlockTracker:SetText(L["Unlock Tracker"])
 	end)
-	local trackerButtons = layout:Row(BUTTON_HEIGHT, ROW_GAP * 2)
-	layout:Place(unlockTracker, EDGE, trackerButtons)
-	layout:Place(resetTracker, EDGE + SLIDER_COLUMN, trackerButtons)
+	layout:Place(resetTracker, EDGE, layout:Row(BUTTON_HEIGHT, ROW_GAP * 2))
 
 	-- Time Fading / Opacity only matter while the tracker fade is
 	-- actually enabled, so grey them out and block input otherwise.
@@ -1032,7 +1034,6 @@ Module.CreateOptionsPanel = function(self)
 		trackerTimeFading:SetValueSilently(objectivesDB.fadeDelay)
 		trackerOpacity:SetValueSilently(objectivesDB.fadeOpacity)
 		updateTrackerSlidersEnabled()
-		unlockTracker:SetText(tracker:IsTrackerUnlocked() and L["Lock Tracker"] or L["Unlock Tracker"])
 	end
 	questsPanel.refresh = questsPanel.cancel
 	questsPanel.cancel()
@@ -1085,6 +1086,76 @@ Module.CreateOptionsPanel = function(self)
 	end)
 end
 
+-- Unlock Frames: every frame that can be moved at once - the minimap
+-- (modules/minimap, its edit mode) and Blizzard's quest tracker
+-- (modules/objectives/tracker.lua) - with one Lock Frames button to put
+-- them back. Not in combat: the minimap's edit mode refuses it, and
+-- entering combat locks them.
+-------------------------------------------------------
+local GetMinimap = function()
+	local minimap = _G.DiabolicUIMinimapNS
+	return minimap and minimap:GetModule("Minimap", true)
+end
+
+Module.AreFramesUnlocked = function(self)
+	return self.framesUnlocked and true or false
+end
+
+Module.GetLockButton = function(self)
+	if self.LockButton then
+		return self.LockButton
+	end
+	local button = CreateFrame("Button", "DiabolicUILockFramesButton", UIParent, "UIPanelButtonTemplate")
+	button:SetFrameStrata("DIALOG")
+	button:SetSize(160, BUTTON_HEIGHT)
+	button:SetPoint("TOP", UIParent, "TOP", 0, -120)
+	button:SetText(L["Lock Frames"])
+	button:SetScript("OnClick", function() self:SetFramesUnlocked(false) end)
+	button.Hint = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	button.Hint:SetPoint("TOP", button, "BOTTOM", 0, -6)
+	button.Hint:SetText(L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."])
+	button:Hide()
+	self.LockButton = button
+	return button
+end
+
+Module.SetFramesUnlocked = function(self, unlocked)
+	if unlocked and InCombatLockdown() then
+		print(L["You can't move frames in combat."])
+		return
+	end
+	self.framesUnlocked = unlocked
+	Engine:GetModule("ObjectiveTracker"):SetTrackerUnlocked(unlocked)
+	local minimap = GetMinimap()
+	if minimap then
+		if unlocked then
+			minimap:EnterEditMode()
+		else
+			minimap:ExitEditMode()
+		end
+	end
+	local lockButton = self:GetLockButton()
+	if unlocked then
+		lockButton:Show()
+	else
+		lockButton:Hide()
+	end
+	if self.UnlockFramesButton then
+		self.UnlockFramesButton:SetText(unlocked and L["Lock Frames"] or L["Unlock Frames"])
+	end
+end
+
+-- combat starting while unlocked: everything goes back
+Module.OnCombatStart = function(self)
+	if self.framesUnlocked then
+		self:SetFramesUnlocked(false)
+	end
+end
+
 Module.OnEnable = function(self)
 	self:CreateOptionsPanel()
+	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnCombatStart")
+	self:GetHandler("ChatCommand"):Register("move", function()
+		self:SetFramesUnlocked(not self:AreFramesUnlocked())
+	end)
 end

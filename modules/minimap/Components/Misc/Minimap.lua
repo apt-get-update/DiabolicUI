@@ -661,14 +661,10 @@ end
 -- Edit Mode
 -- Lets the user freely move and resize the minimap.
 -- The result is saved and restored on future logins.
+-- Turned on and off by DiabolicUI's Unlock Frames (modules/menu/menu.lua),
+-- along with the other frames that can be moved.
 --------------------------------------------
-local L_EXIT_EDIT_MODE = "Exit Edit Mode"
-
 local editModeActive = false
-
-local ExitEditModeButton_OnClick = function()
-    MinimapMod:ExitEditMode()
-end
 
 -- Applies a live cursor-drag delta to the user scale.
 local ApplyResizeDelta = function(self)
@@ -738,17 +734,6 @@ MinimapMod.CreateEditModeWidgets = function(self)
     highlight:SetScript("OnUpdate", EditOverlay_OnUpdate)
     highlight:Hide()
     self.editHighlight = highlight
-
-    -- Standalone button to leave edit mode, since the menu
-    -- itself is closed while the user is editing.
-    local exitButton = CreateFrame("Button", "DiabolicMinimapExitEditModeButton", UIParent, "UIPanelButtonTemplate")
-    exitButton:SetFrameStrata("HIGH")
-    exitButton:SetSize(160, 24)
-    exitButton:SetPoint("TOP", Minimap, "BOTTOM", 0, -16)
-    exitButton:SetText(L_EXIT_EDIT_MODE)
-    exitButton:SetScript("OnClick", ExitEditModeButton_OnClick)
-    exitButton:Hide()
-    self.exitEditModeButton = exitButton
 end
 
 MinimapMod.IsEditModeActive = function(self)
@@ -769,7 +754,6 @@ MinimapMod.EnterEditMode = function(self)
     Minimap:SetMovable(true)
 
     self.editHighlight:Show()
-    self.exitEditModeButton:Show()
 end
 
 MinimapMod.ExitEditMode = function(self)
@@ -784,9 +768,6 @@ MinimapMod.ExitEditMode = function(self)
         self.editHighlight.moving = false
         self.editHighlight.resizing = false
         self.editHighlight:Hide()
-    end
-    if (self.exitEditModeButton) then
-        self.exitEditModeButton:Hide()
     end
 
     self:SavePosition()

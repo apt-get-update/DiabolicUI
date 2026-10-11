@@ -54,9 +54,7 @@ local ANCHOR_OFFSETS = {
 -- Strings
 local L_PARENT_CATEGORY = "DiabolicUI"
 local L_MINIMAP_CATEGORY = "Minimap"
-local L_TOGGLE_EDIT_MODE = "Toggle Edit Mode"
 local L_SIZE_SLIDER_TOOLTIP = "Resizes the minimap."
-local L_EDIT_MODE_TOOLTIP = "Left-click and drag the minimap to move it. Right-click and drag to resize it instead. An |cffffffffExit Edit Mode|r button will appear once you're done."
 local L_ZONE_FADE_CHECKBOX = "Animate Zone Text"
 local L_ZONE_FADE_TOOLTIP = "Fades the zone label out and back in whenever you change zones, instead of swapping it instantly."
 local L_ZONE_FADE_DURATION_SLIDER = "Fade Duration"
@@ -99,7 +97,6 @@ local TITLE_HEIGHT = 16
 local HEADER_HEIGHT = 16
 local LABEL_HEIGHT = 14
 local CHECK_HEIGHT = 26
-local BUTTON_HEIGHT = 24
 local SLIDER_LABEL_HEIGHT = 16
 local SLIDER_BLOCK_HEIGHT = SLIDER_LABEL_HEIGHT + 15 + 22
 local PICKER_HEIGHT = 80 + RADIO_OVERHANG * 2
@@ -141,15 +138,6 @@ end
 -- Forward-declared so AnchorRadio_OnClick can trigger an
 -- immediate refresh instead of waiting on the next OnUpdate tick.
 local UpdateInfo
-
-local EditButton_OnClick = function(self)
-	local MinimapMod = ns:GetModule("Minimap")
-	if (MinimapMod:IsEditModeActive()) then
-		MinimapMod:ExitEditMode()
-	else
-		MinimapMod:EnterEditMode()
-	end
-end
 
 -- Snaps the minimap to the clicked anchor point, using a
 -- default screen inset for that point.
@@ -383,22 +371,6 @@ MenuMod.CreatePanel = function(self)
 	icon:SetTexture(([[Interface\AddOns\%s\media\textures\diabolic-lettermark.tga]]):format(Addon))
 	icon:SetTexCoord(90 / 512, 422 / 512, 90 / 512, 422 / 512)
 	panel.icon = icon
-
-	local editButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	editButton:SetSize(190, BUTTON_HEIGHT)
-	editButton:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE, Row(BUTTON_HEIGHT, SECTION_GAP))
-	editButton:SetText(L_TOGGLE_EDIT_MODE)
-	editButton:SetScript("OnClick", EditButton_OnClick)
-	editButton:SetScript("OnEnter", function(self)
-		GameTooltip_SetDefaultAnchor(GameTooltip, self)
-		GameTooltip:SetText(L_TOGGLE_EDIT_MODE)
-		GameTooltip:AddLine(L_EDIT_MODE_TOOLTIP, 1, 1, 1, true)
-		GameTooltip:Show()
-	end)
-	editButton:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	panel.editButton = editButton
 
 	local anchorLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	anchorLabel:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE, Row(LABEL_HEIGHT, SECTION_GAP))

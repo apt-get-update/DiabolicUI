@@ -27,7 +27,7 @@ image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui config`.
 
 * `/dui num_bars 1-3` and `/dui num_side_bars 0-2`: how many action bars.
-* `/dui tracker`: move Blizzard's quest tracker (`/dui tracker reset` to put it back).
+* `/dui move`: move the minimap and Blizzard's quest tracker (`/dui tracker reset` puts the tracker back).
 
 == ✨ Features
 
