@@ -1121,12 +1121,36 @@ local GetQuestieTracker = function()
 	end
 end
 
+-- The box covers `target` and the `extra` frames attached to it (the
+-- chat's buttons): their outer edges, measured each time it's shown, kept
+-- as offsets from `target` so it follows the drag.
+local FitMover = function(mover, target, extra)
+	local left, right, top, bottom = target:GetLeft(), target:GetRight(), target:GetTop(), target:GetBottom()
+	mover:ClearAllPoints()
+	if not (left and right and top and bottom) then
+		mover:SetAllPoints(target)
+		return
+	end
+	local l, r, t, b = left, right, top, bottom
+	for _, frame in ipairs(extra) do
+		local fl, fr, ft, fb = frame:GetLeft(), frame:GetRight(), frame:GetTop(), frame:GetBottom()
+		if fl and fr and ft and fb then
+			l, r, t, b = math.min(l, fl), math.max(r, fr), math.max(t, ft), math.min(b, fb)
+		end
+	end
+	mover:SetPoint("TOPLEFT", target, "TOPLEFT", l - left, t - top)
+	mover:SetPoint("BOTTOMRIGHT", target, "BOTTOMRIGHT", r - right, b - bottom)
+end
+
 -- A box over a frame that drags it: `onDragStart` and `onDragStop` run
 -- around the move.
-local CreateMover = function(name, target, text, onDragStart, onDragStop)
+local CreateMover = function(name, target, text, onDragStart, onDragStop, extra)
 	local mover = CreateFrame("Frame", name, UIParent)
 	mover:SetFrameStrata("DIALOG")
 	mover:SetAllPoints(target)
+	if extra then
+		mover:SetScript("OnShow", function(self) FitMover(self, target, extra) end)
+	end
 	mover:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
@@ -1168,7 +1192,7 @@ Module.GetMovers = function(self)
 			chat.db.autoposition = false
 		end, function()
 			chat:SaveChatFrameLayout()
-		end),
+		end, { _G.ChatFrame1ButtonFrame, _G.ChatFrameMenuButton }),
 		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
 			menu:SavePosition()
 		end)

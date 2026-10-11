@@ -508,6 +508,29 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	assertClean(client)
 end
 
+function TestOptionsMenu:test_the_chat_box_covers_its_buttons()
+	local chat, buttons, menuButton = _G.ChatFrame1, _G.ChatFrame1ButtonFrame, _G.ChatFrameMenuButton
+	chat:ClearAllPoints()
+	chat:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 100, 100)
+	chat:SetSize(400, 200)
+	-- the buttons on its left, the menu button above them
+	buttons:ClearAllPoints()
+	buttons:SetPoint("TOPRIGHT", chat, "TOPLEFT", -2, 0)
+	buttons:SetSize(30, 200)
+	menuButton:ClearAllPoints()
+	menuButton:SetPoint("BOTTOM", buttons, "TOP", 0, 0)
+	menuButton:SetSize(30, 30)
+	client:GetModule("Menu"):SetFramesUnlocked(true)
+	local mover = _G.DiabolicUIChatMover
+	lu.assertEquals({ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) }, { 68, 500, 330, 100 })
+	-- and follows the chat
+	chat:ClearAllPoints()
+	chat:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 200, 150)
+	lu.assertEquals({ mover:GetLeft(), (mover:GetBottom()) }, { 168, 150 })
+	client:GetModule("Menu"):SetFramesUnlocked(false)
+	assertClean(client)
+end
+
 function TestOptionsMenu:test_every_page_fits_in_the_window()
 	local container = _G.InterfaceOptionsFramePanelContainer
 	for _, panel in ipairs(client.optionsPanels) do
