@@ -258,8 +258,15 @@ local function chatSlide(on)
 	return { DiabolicUI_DB = { ChatWindows = { profiles = { global = { slideMessages = on } } } } }
 end
 
-function TestChatSlide:test_off_by_default()
+function TestChatSlide:test_on_by_default_and_off()
 	boot()
+	_G.ChatFrame1:Show()
+	_G.ChatFrame1:AddMessage("hello")
+	lu.assertEquals(_G.ChatFrame1.DiabolicSlide:IsPlaying(), 1)
+	client = nil
+
+	boot({ savedVariables = chatSlide(false) })
+	_G.ChatFrame1:Show()
 	_G.ChatFrame1:AddMessage("hello")
 	lu.assertNil(_G.ChatFrame1.DiabolicSlide)
 	assertClean(client)

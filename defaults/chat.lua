@@ -8,7 +8,7 @@ Engine:NewConfig("ChatWindows", {
 	timeFading = 3, -- seconds it takes for chat text to fade out, 1-5
 	timeVisible = 20, -- seconds chat text stays fully visible before it starts fading, 5-120
 	backgroundOpacity = 25, -- opacity (%) of the chat window background while typing, 0-100.
-	slideMessages = false, -- new chat lines slide in instead of jumping (modules/chat/slide.lua)
+	slideMessages = true, -- new chat lines slide in instead of jumping (modules/chat/slide.lua)
 
 	-- the user's own manually dragged/resized main chat window layout,
 	-- applied instead of the styled default position/size while
