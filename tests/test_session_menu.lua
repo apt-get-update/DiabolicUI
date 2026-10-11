@@ -447,12 +447,30 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	local ui = client.Engine:GetFrame()
 	bars.menuPosition = { -(ui:GetWidth() - 300), 100 }
 	menuController:PlaceController()
-	lu.assertEquals(menuWidget:GetSide(), "LEFT")
+	lu.assertEquals((menuWidget:GetSide()), "LEFT")
 	lu.assertEquals(select(1, master:GetPoint()), "BOTTOMLEFT")
 	lu.assertTrue(menuWidget.BagBarMenuButton:GetLeft() > master:GetRight())
 	lu.assertEquals(select(1, master.Gold:GetPoint()), "BOTTOMLEFT")
 	lu.assertEquals(select(1, master.Performance:GetPoint()), "LEFT") -- after the gold
 	lu.assertEquals(select(1, menuWidget.MasterMenuWindow:GetPoint()), "BOTTOMLEFT")
+	-- its windows open rightwards, their tooltips on that side
+	local point, _, relativePoint = menuWidget.MicroMenuWindow:GetPoint()
+	lu.assertEquals({ point, relativePoint }, { "BOTTOMLEFT", "BOTTOMRIGHT" })
+	lu.assertEquals(menuWidget.MicroMenuWindow:GetButtonGrowthX(), "RIGHT")
+	lu.assertEquals(select(1, menuWidget.ActionBarMenuWindow:GetPoint()), "BOTTOMLEFT")
+	menuWidget:AnchorMicroTooltip()
+	lu.assertEquals(select(1, _G.GameTooltip:GetPoint()), "BOTTOMLEFT")
+
+	-- on the top half, they open downwards
+	bars.menuPosition = { -(ui:GetWidth() - 300), ui:GetHeight() - 150 }
+	menuController:PlaceController()
+	lu.assertEquals({ menuWidget:GetSide() }, { "LEFT", "TOP" })
+	point, _, relativePoint = menuWidget.MicroMenuWindow:GetPoint()
+	lu.assertEquals({ point, relativePoint }, { "TOPLEFT", "TOPRIGHT" })
+	lu.assertEquals(menuWidget.MasterMenuWindow:GetButtonGrowthY(), "DOWN")
+	lu.assertEquals(select(1, menuWidget.MasterMenuWindow:GetPoint()), "TOPLEFT")
+	menuWidget:AnchorMicroTooltip()
+	lu.assertEquals(select(1, _G.GameTooltip:GetPoint()), "TOPLEFT")
 	lu.assertEquals(select(1, menuWidget.BagBarMenuWindow:GetPoint()), "TOPLEFT")
 	bars.showGold = false
 	menuWidget:UpdatePerformanceAnchor()
@@ -463,7 +481,9 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	-- their resets, on the Action Bars and Chat pages
 	client:Click(widget("ResetMenu"))
 	lu.assertNil(bars.menuPosition)
-	lu.assertEquals(menuWidget:GetSide(), "RIGHT") -- back: bags, then main menu
+	lu.assertEquals({ menuWidget:GetSide() }, { "RIGHT", "BOTTOM" }) -- back: bags, then main menu
+	local point, _, relativePoint = menuWidget.MicroMenuWindow:GetPoint()
+	lu.assertEquals({ point, relativePoint }, { "BOTTOMRIGHT", "BOTTOMLEFT" })
 	lu.assertEquals(select(1, master:GetPoint()), "BOTTOMRIGHT")
 	lu.assertTrue(menuWidget.BagBarMenuButton:GetRight() < master:GetLeft())
 	client:Click(widget("ResetChat"))

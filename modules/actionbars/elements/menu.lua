@@ -327,6 +327,7 @@ MenuWidget.HookLiteBag = function(self, menuButton, menuWindow)
 end
 
 MenuWidget.OnEnable = function(self)
+	local widget = self
 	local config = Module.config
 	local db = Module.db
 
@@ -355,6 +356,7 @@ MenuWidget.OnEnable = function(self)
 	self:Skin(BagBarMenuButton, micro_menu_config, "bag")
 
 	local MicroMenuButton = MenuButton:New(Menu)
+	self.MicroMenuButton = MicroMenuButton
 	MicroMenuButton:SetSize(unpack(micro_menu_config.button.size))
 	self:Skin(MicroMenuButton, micro_menu_config, "mainmenu")
 
@@ -451,8 +453,7 @@ MenuWidget.OnEnable = function(self)
 					AddPeopleLines(GameTooltip)
 					GameTooltip:Show() -- resize to the new lines
 				end
-				GameTooltip:ClearAllPoints()
-				GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
+				widget:AnchorMicroTooltip()
 			end
 		end)
 		
@@ -475,8 +476,7 @@ MenuWidget.OnEnable = function(self)
 	-- wild hacks to control the tooltip position
 	hooksecurefunc("MainMenuBarPerformanceBarFrame_OnEnter", function()
 		if GameTooltip:IsShown() and GameTooltip:GetOwner() == MainMenuMicroButton then
-			GameTooltip:ClearAllPoints()
-			GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
+			self:AnchorMicroTooltip()
 		end
 	end)
 
@@ -500,6 +500,7 @@ MenuWidget.OnEnable = function(self)
 	ActionBarMenuWindow:AttachToButton(ActionBarMenuButton)
 	ActionBarMenuWindow:SetSize(unpack(actionbar_menu_config.size))
 	ActionBarMenuWindow:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "BOTTOMRIGHT", 15, -17)
+	self.ActionBarMenuWindow = ActionBarMenuWindow
 	ActionBarMenuWindow:SetBackdrop(actionbar_menu_config.backdrop)
 	ActionBarMenuWindow:SetBackdropColor(unpack(actionbar_menu_config.backdrop_color))
 	ActionBarMenuWindow:SetBackdropBorderColor(unpack(actionbar_menu_config.backdrop_border_color))
@@ -984,12 +985,64 @@ end
 
 -- Which side of the screen the menu buttons are on (moved with Unlock
 -- Frames): on the right, the bags then the main menu, everything opening
--- leftwards; on the left, mirrored - the main menu then the bags.
+-- leftwards; on the left, mirrored - the main menu then the bags. And on
+-- the top half, the windows open downwards instead of upwards.
 MenuWidget.GetSide = function(self)
 	local controller = Module:GetWidget("Controller: Menu"):GetFrame()
-	local x = controller:GetCenter()
-	local center = Engine:GetFrame():GetCenter()
-	return (x and center and x < center) and "LEFT" or "RIGHT"
+	local x, y = controller:GetCenter()
+	local centerX, centerY = Engine:GetFrame():GetCenter()
+	local side = (x and centerX and x < centerX) and "LEFT" or "RIGHT"
+	local edge = (y and centerY and y > centerY) and "TOP" or "BOTTOM"
+	return side, edge
+end
+
+-- A point ("BOTTOMRIGHT") turned to that side and edge.
+local Turn = function(point, side, edge)
+	if (side == "LEFT") then
+		point = point:gsub("RIGHT", "\0"):gsub("LEFT", "RIGHT"):gsub("%z", "LEFT")
+	end
+	if (edge == "TOP") then
+		point = point:gsub("BOTTOM", "\0"):gsub("TOP", "BOTTOM"):gsub("%z", "TOP")
+	end
+	return point
+end
+
+-- The micro buttons' tooltips: beside their window, on its open side.
+MenuWidget.AnchorMicroTooltip = function(self)
+	local side, edge = self.side or "RIGHT", self.edge or "BOTTOM"
+	local x, y = (side == "LEFT") and 10 or -10, (edge == "TOP") and -10 or 10
+	GameTooltip:ClearAllPoints()
+	GameTooltip:SetPoint(Turn("BOTTOMRIGHT", side, edge), self.MicroMenuWindow, Turn("TOPRIGHT", side, edge), x, y)
+end
+
+-- The main menu's windows, opening away from the screen's edges.
+MenuWidget.ApplyWindowSides = function(self, side, edge)
+	local config = Module.config.visuals.menus.main.micromenu
+	local padding = config.button.padding
+	local h, v = (side == "LEFT") and -1 or 1, (edge == "TOP") and -1 or 1
+
+	local master = self.MasterMenuWindow
+	local point, x, y = unpack(config.position)
+	master:ClearAllPoints()
+	master:SetPoint(Turn(point, side, edge), x * h, y * v)
+	master:SetButtonAnchor(Turn("BOTTOMRIGHT", side, edge))
+	master:SetButtonGrowthX((side == "LEFT") and "RIGHT" or "LEFT")
+	master:SetButtonGrowthY((edge == "TOP") and "DOWN" or "UP")
+	master:SetJustify((side == "LEFT") and "LEFT" or "RIGHT")
+	master:Arrange()
+
+	local micro = self.MicroMenuWindow
+	micro:ClearAllPoints()
+	micro:SetPoint(Turn("BOTTOMRIGHT", side, edge), self.MicroMenuButton, Turn("BOTTOMLEFT", side, edge), -padding * h, 0)
+	micro:SetButtonAnchor(Turn("BOTTOMRIGHT", side, edge))
+	micro:SetButtonGrowthX((side == "LEFT") and "RIGHT" or "LEFT")
+	micro:SetButtonGrowthY((edge == "TOP") and "DOWN" or "UP")
+	micro:SetJustify((side == "LEFT") and "RIGHT" or "LEFT")
+	micro:Arrange()
+
+	local bars = self.ActionBarMenuWindow
+	bars:ClearAllPoints()
+	bars:SetPoint(Turn("BOTTOMRIGHT", side, edge), micro, Turn("BOTTOMRIGHT", side, edge), 15 * h, -17 * v)
 end
 
 -- Places the buttons, their texts and windows for that side. Secure
@@ -1003,26 +1056,24 @@ MenuWidget.ApplySide = function(self)
 	local padding = config.structure.controllers.mainmenu.padding
 	local micro = config.visuals.menus.main.micromenu
 	local bagmenu = config.visuals.menus.main.bagmenu
-	local side = self:GetSide()
-	self.side = side
+	local side, edge = self:GetSide()
+	self.side, self.edge = side, edge
 	master:ClearAllPoints()
 	bags:ClearAllPoints()
-	self.MasterMenuWindow:ClearAllPoints()
 	self.BagBarMenuWindow:ClearAllPoints()
 	master.Gold:ClearAllPoints()
 	if (side == "LEFT") then
 		master:SetPoint("BOTTOMLEFT")
 		bags:SetPoint("BOTTOMLEFT", master, "BOTTOMRIGHT", padding, 0)
-		self.MasterMenuWindow:SetPoint(Mirror(micro.position))
 		self.BagBarMenuWindow:SetPoint(Mirror(bagmenu.position))
 		master.Gold:SetPoint(Mirror(micro.performance.position))
 	else
 		master:SetPoint("BOTTOMRIGHT")
 		bags:SetPoint("BOTTOMRIGHT", master, "BOTTOMLEFT", -padding, 0)
-		self.MasterMenuWindow:SetPoint(unpack(micro.position))
 		self.BagBarMenuWindow:SetPoint(unpack(bagmenu.position))
 		master.Gold:SetPoint(unpack(micro.performance.position))
 	end
+	self:ApplyWindowSides(side, edge)
 	self:UpdatePerformanceAnchor()
 end
 
