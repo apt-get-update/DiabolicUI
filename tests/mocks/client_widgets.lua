@@ -551,8 +551,9 @@ local fontMethods = {
 		end
 		font = resolve(font)
 		assert(font == nil or state[font], "SetFontObject: not a font")
-		local s = state[self]
-		s.fontObject, s.font = font, nil
+		-- a font set with SetFont stays: it wins over the font object's
+		-- (as on 3.3.5, where SetFontObject after SetFont changes nothing)
+		state[self].fontObject = font
 	end,
 	GetFontObject = function(self) return state[self].fontObject end,
 	SetTextColor = function(self, r, g, b, a) checkColor("SetTextColor", r, g, b) state[self].textColor = { r, g, b, a or 1 } end,

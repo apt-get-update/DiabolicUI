@@ -118,9 +118,14 @@ end
 -- Questie's own font when a line changes kind.
 local function questie(world, loadedBeforeUs, lineInUse)
 	local addon = { name = "Questie-335", enabled = true, onLoad = function()
-		local lines = {}
+		local lines, current = {}, 0
 		local pool = {
 			GetLine = function(i) return lines[i] end,
+			GetNextLine = function()
+				current = current + 1
+				return lines[current]
+			end,
+			GetCurrentLine = function() return lines[current] end,
 			SetMode = function(self, mode)
 				if mode ~= self.mode then
 					self.mode = mode
@@ -138,12 +143,17 @@ local function questie(world, loadedBeforeUs, lineInUse)
 				line.label.SetText = function(self, text) self:_SetText(text) end
 				line.SetMode = pool.SetMode
 				lines[i] = line
+				-- a few at a time, in a coroutine
+				if coroutine.running() then
+					coroutine.yield()
+				end
 			end
 		end
 		local modules = { TrackerLinePool = pool, TrackerBaseFrame = { Update = function() end } }
 		_G.QuestieLoader = { ImportModule = function(_, name) return modules[name] end }
 		if lineInUse then
 			pool.Initialize(1)
+			pool.GetNextLine()
 			lines[1]:SetMode("quest")
 			lines[1].label:SetText("|cFFFF8040A Quest|r")
 		end
@@ -163,7 +173,8 @@ function TestQuestieTracker:tearDown()
 end
 
 local function assertLine(line, font, color, text)
-	lu.assertEquals(line.label:GetFontObject(), _G[font])
+	lu.assertEquals({ line.label:GetFont() }, { _G[font]:GetFont() })
+	lu.assertEquals({ line.label:GetShadowOffset() }, { -1, -1 })
 	local r, g, b = line.label:GetTextColor()
 	lu.assertEquals({ r, g, b }, color)
 	lu.assertEquals(line.label:GetText(), text)
@@ -172,10 +183,14 @@ end
 function TestQuestieTracker:test_lines_in_our_fonts_and_titles_in_gold()
 	boot({ world = function(world) questie(world, true) end })
 	local title, questieColor = { unpack(client.Engine:GetDB("Data: Colors").General.Title) }, { 1, .82, 0 }
-	-- its tracker starts some time after login
+	-- its tracker starts some time after login, in a coroutine
 	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
-	pool.Initialize(3)
-	local zone, quest, objective = pool.GetLine(1), pool.GetLine(2), pool.GetLine(3)
+	local start = coroutine.create(pool.Initialize)
+	repeat
+		local ok, err = coroutine.resume(start, 3)
+		lu.assertTrue(ok, err)
+	until coroutine.status(start) == "dead"
+	local zone, quest, objective = pool.GetNextLine(), pool.GetNextLine(), pool.GetNextLine()
 	zone:SetMode("zone")
 	zone.label:SetText("|cFFC0C0C0Dragonblight|r")
 	quest:SetMode("quest")

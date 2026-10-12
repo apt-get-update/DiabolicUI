@@ -27,10 +27,14 @@ local IsTitle = function(mode)
 end
 
 -- The font of each kind of line, every time Questie sets one (it sets its
--- own font when a line changes kind).
+-- own font when a line changes kind). With SetFont, like Questie: a font
+-- set that way wins over any font object.
 local SetMode = function(line, mode)
 	local label = line.label
-	label:SetFontObject(((mode == "objective") or (mode == nil)) and LINE_FONT or TITLE_FONT)
+	local font = _G[((mode == "objective") or (mode == nil)) and LINE_FONT or TITLE_FONT]
+	label:SetFont(font:GetFont())
+	label:SetShadowOffset(font:GetShadowOffset())
+	label:SetShadowColor(font:GetShadowColor())
 	label:SetTextColor(unpack(IsTitle(mode) and C.General.Title or QUESTIE_COLOR))
 	label:SetHeight(FONT_SIZE)
 end
@@ -60,8 +64,7 @@ local StyleLine = function(line)
 	end
 end
 
--- Questie makes its lines once, when its tracker starts (some time after
--- login, a few at a time).
+-- The lines Questie has made by now.
 Module.StyleLines = function(self)
 	local pool = self.LinePool
 	local i = 1
@@ -71,10 +74,20 @@ Module.StyleLines = function(self)
 	end
 end
 
+-- Questie makes its lines when its tracker starts, some time after login,
+-- in a coroutine that yields between them: hooking that would fail (a hook
+-- is C code, nothing can yield inside it). Each line is styled when Questie
+-- takes it to use instead, before it sets its kind and text.
 Module.StyleQuestie = function(self)
-	self.LinePool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	self.LinePool = pool
 	self:StyleLines()
-	hooksecurefunc(self.LinePool, "Initialize", function() self:StyleLines() end)
+	hooksecurefunc(pool, "GetNextLine", function()
+		local line = pool.GetCurrentLine()
+		if line then
+			StyleLine(line)
+		end
+	end)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
