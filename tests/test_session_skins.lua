@@ -153,6 +153,7 @@ local function questie(world, loadedBeforeUs, lineInUse)
 				local expandZone = CreateFrame("Button", nil, line)
 				expandZone.SetMode = function(self, mode) self.mode = mode end
 				expandZone:SetMode(1)
+				expandZone.mode = nil -- cleared before every update (ResetLinesForChange)
 				expandZone:SetScript("OnMouseUp", function(self, button)
 					if button == "LeftButton" and not IsShiftKeyDown() then
 						self:SetMode((self.mode == 1) and 0 or 1)
@@ -303,6 +304,7 @@ function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
 	pool.Initialize(2)
 	local zone = pool.GetNextLine()
 	zone:SetMode("zone")
+	zone.expandZone:SetMode(1)
 	zone.label:SetText("|cFFC0C0C0Quests (By Proximity)|r")
 	-- Blizzard's title, and its button just after it, arrow up
 	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL)

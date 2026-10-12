@@ -75,8 +75,8 @@ local MissingFromLine = function(line)
 		return "line.label.frame"
 	elseif type(label._SetText) ~= "function" then
 		return "line.label._SetText"
-	elseif type(expandZone) ~= "table" or (type(expandZone.mode) ~= "number") then
-		return "line.expandZone.mode"
+	elseif type(expandZone) ~= "table" or (type(expandZone.SetMode) ~= "function") then
+		return "line.expandZone.SetMode" -- (its mode is cleared before every update)
 	elseif not expandZone:GetScript("OnMouseUp") then
 		return "line.expandZone OnMouseUp"
 	end
