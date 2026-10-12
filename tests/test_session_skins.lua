@@ -318,6 +318,56 @@ function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
 	assertClean(client)
 end
 
+-- Questie changed: its tracker left alone, with one message.
+local function bootChangedQuestie(change)
+	local printed = {}
+	boot({ world = function(world)
+		_G.print = function(text) printed[#printed + 1] = text end -- (booting resets the globals)
+		questie(world, true)
+		change(_G.QuestieLoader:ImportModule("TrackerLinePool"))
+	end })
+	return printed
+end
+
+function TestQuestieTracker:test_a_changed_line_pool_is_left_alone()
+	local printed = bootChangedQuestie(function(pool) pool.GetNextLine = nil end)
+	_G.print = print
+	local L = client.Engine:GetLocale()
+	lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] })
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	pool.Initialize(1)
+	pool.GetLine(1):SetMode("quest")
+	lu.assertNil(pool.GetLine(1).DiabolicStyled)
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_changed_lines_are_left_alone()
+	local printed = bootChangedQuestie(function(pool)
+		local initialize = pool.Initialize
+		pool.Initialize = function(count)
+			initialize(count)
+			for i = 1, count do
+				pool.GetLine(i).label.frame = nil -- built some other way
+			end
+		end
+	end)
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	local tracker = _G.QuestieLoader:ImportModule("QuestieTracker")
+	pool.Initialize(2)
+	local line = pool.GetNextLine()
+	line:SetMode("quest")
+	line.label:SetText("|cFFFF8040A Quest|r")
+	pool.GetNextLine():SetMode("objective")
+	tracker:Update()
+	_G.print = print
+	-- once only, nothing styled, nothing spaced
+	lu.assertEquals(#printed, 1)
+	lu.assertNil(line.DiabolicStyled)
+	lu.assertEquals(line.label:GetText(), "|cFFFF8040A Quest|r")
+	lu.assertNil(tracker.heightUpdated)
+	assertClean(client)
+end
+
 function TestQuestieTracker:test_the_option_off()
 	boot({ world = function(world) questie(world, true) end, savedVariables = skins({ styleQuestieTracker = false }) })
 	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")

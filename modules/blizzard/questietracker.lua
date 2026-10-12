@@ -7,11 +7,14 @@
 -- Questie's settings, and the colors of its objectives, are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: QuestieTracker", "LOW")
+local L = Engine:GetLocale()
 local C = Engine:GetDB("Data: Colors")
 
 -- Lua API
 local _G = _G
+local ipairs = ipairs
 local math_max = math.max
+local type = type
 local unpack = unpack
 
 -- WoW API
@@ -32,6 +35,40 @@ local FONT_SIZE = 12
 -- come in the text
 local QUESTIE_COLOR = { 1, .82, 0 }
 
+-- What the skin relies on in Questie's code, none of it an API Questie
+-- promises: one missing, and Questie has changed. Its tracker is then left
+-- as it is from there on, rather than risk errors in it.
+local POOL_FUNCTIONS = { "GetLine", "GetNextLine", "GetCurrentLine", "GetHighestIndex" }
+local TRACKER_FUNCTIONS = { "Update", "UpdateHeight" }
+local broken
+
+local Break = function()
+	if not broken then
+		broken = true
+		_G.print(L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."])
+	end
+end
+
+local HasFunctions = function(module, names)
+	if type(module) ~= "table" then
+		return false
+	end
+	for _, name in ipairs(names) do
+		if type(module[name]) ~= "function" then
+			return false
+		end
+	end
+	return true
+end
+
+-- a line as Questie's TrackerLinePool makes it
+local IsQuestieLine = function(line)
+	local label, expandZone = line.label, line.expandZone
+	return (type(line.SetMode) == "function") and label and (label.frame == line)
+		and (type(label._SetText) == "function") and expandZone and (type(expandZone.mode) == "number")
+		and expandZone:GetScript("OnMouseUp") and true or false
+end
+
 -- zones, quests and achievements: titles over the objectives
 local IsTitle = function(mode)
 	return (mode == "zone") or (mode == "quest") or (mode == "achieve")
@@ -41,6 +78,9 @@ end
 -- own font when a line changes kind). With SetFont, like Questie: a font
 -- set that way wins over any font object.
 local SetMode = function(line, mode)
+	if broken then
+		return
+	end
 	local label = line.label
 	if line.CollapseButton and (mode ~= "zone") then
 		line.CollapseButton:Hide()
@@ -95,7 +135,7 @@ end
 -- Questie's "Quests (By ...)", and its button instead of Questie's " +".
 local SetText = function(label, text)
 	local line = label.frame
-	if IsTitle(line.mode) and text then
+	if (not broken) and IsTitle(line.mode) and text then
 		local plain = (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""))
 		if (line.mode == "zone") then
 			plain = plain:gsub(" %+$", "")
@@ -116,8 +156,11 @@ local SetText = function(label, text)
 end
 
 local StyleLine = function(line)
-	if line.DiabolicStyled then
+	if broken or line.DiabolicStyled then
 		return
+	end
+	if not IsQuestieLine(line) then
+		return Break()
 	end
 	hooksecurefunc(line, "SetMode", SetMode)
 	hooksecurefunc(line.label, "SetText", SetText)
@@ -137,7 +180,7 @@ end
 -- a title, the padding below a quest's last line.
 Module.UpdateSpacing = function(self)
 	local tracker, questie = self.Tracker, _G.Questie
-	if InCombatLockdown() or not (tracker and tracker.started and questie and questie.db) then
+	if broken or InCombatLockdown() or not (tracker.started and questie and questie.db and questie.db.profile) then
 		return
 	end
 	local pool = self.LinePool
@@ -183,13 +226,19 @@ end
 -- is C code, nothing can yield inside it). Each line is styled when Questie
 -- takes it to use instead, before it sets its kind and text.
 Module.StyleQuestie = function(self)
-	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
-	self.LinePool = pool
-	self.Tracker = _G.QuestieLoader:ImportModule("QuestieTracker")
+	local loader = _G.QuestieLoader
+	if type(loader.ImportModule) ~= "function" then
+		return Break()
+	end
+	local pool, tracker = loader:ImportModule("TrackerLinePool"), loader:ImportModule("QuestieTracker")
+	if not (HasFunctions(pool, POOL_FUNCTIONS) and HasFunctions(tracker, TRACKER_FUNCTIONS)) then
+		return Break()
+	end
+	self.LinePool, self.Tracker = pool, tracker
 	self:StyleLines()
 	hooksecurefunc(self.Tracker, "Update", function() self:UpdateSpacing() end)
 	hooksecurefunc(pool, "GetNextLine", function()
-		local line = pool.GetCurrentLine()
+		local line = (not broken) and pool.GetCurrentLine()
 		if line then
 			StyleLine(line)
 		end
