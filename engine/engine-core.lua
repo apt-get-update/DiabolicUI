@@ -1361,6 +1361,8 @@ Engine.Init = function(self, event, ...)
 		end
 		self:GetConfig("ScreenScaling").scale = scale
 		self:OnDisplaySizeEvent()
+		-- what's scaled along with it (modules/menu/menu.lua)
+		self:Fire("ENGINE_UI_SCALE_CHANGED")
 	end)
 
 	-- initialize all modules

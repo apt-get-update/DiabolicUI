@@ -680,6 +680,11 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 	lu.assertAlmostEquals(questie:GetScale(), .8, 1e-6)
 	client:LeaveCombat()
 	lu.assertAlmostEquals(questie:GetScale(), 1, 1e-6)
+	-- /dui setscale too
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("setscale 0.7")
+	lu.assertAlmostEquals(minimap:GetBaseScale(), mapBefore * .7, 1e-6)
+	lu.assertAlmostEquals(questie:GetScale(), .7, 1e-6)
+	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), .7 * _G.UIParent:GetEffectiveScale(), 1e-6)
 
 	-- Questie building its tracker later: scaled on its next update
 	local updated

@@ -1440,6 +1440,7 @@ Module.OnEnable = function(self)
 	self:CreateOptionsPanel()
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnCombatStart")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEnteringWorld")
+	self:RegisterMessage("ENGINE_UI_SCALE_CHANGED", "ApplyUIScale") -- /dui setscale
 	self:GetHandler("ChatCommand"):Register("move", function()
 		self:SetFramesUnlocked(not self:AreFramesUnlocked())
 	end)
