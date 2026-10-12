@@ -739,9 +739,10 @@ MinimapMod.CreateEditModeWidgets = function(self)
     local highlight = CreateFrame("Frame", nil, Minimap)
     highlight:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -19, 19)
     highlight:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 19, -19)
-    highlight:SetFrameLevel(Minimap:GetFrameLevel() + 20)
     -- the same box as DiabolicUI's other frames while unlocked
-    -- (modules/menu/menu.lua, CreateMover)
+    -- (modules/menu/menu.lua, CreateMover), on top of what it covers:
+    -- MBB's "+" and the mail and eye buttons too
+    highlight:SetFrameStrata("FULLSCREEN_DIALOG")
     highlight:SetBackdrop({
         bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
         edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],

@@ -364,6 +364,8 @@ function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
 	local box, plus = module.editHighlight, module.mbbButton
 	lu.assertTrue(box:GetLeft() <= plus:GetLeft() and box:GetRight() >= plus:GetRight())
 	lu.assertTrue(box:GetTop() >= plus:GetTop() and box:GetBottom() <= plus:GetBottom())
+	-- and is drawn over it, like the other frames' boxes
+	lu.assertEquals({ box:GetFrameStrata(), frame:GetFrameStrata() }, { "FULLSCREEN_DIALOG", "LOW" })
 	module:ExitEditMode()
 	lu.assertEquals(icon:GetAlpha(), 0.85)
 	client:RunScript(frame, "OnMouseDown")
