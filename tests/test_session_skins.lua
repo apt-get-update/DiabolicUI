@@ -126,6 +126,7 @@ local function questie(world, loadedBeforeUs, lineInUse)
 				return lines[current]
 			end,
 			GetCurrentLine = function() return lines[current] end,
+			GetHighestIndex = function() return current end,
 			SetMode = function(self, mode)
 				if mode ~= self.mode then
 					self.mode = mode
@@ -149,7 +150,13 @@ local function questie(world, loadedBeforeUs, lineInUse)
 				end
 			end
 		end
-		local modules = { TrackerLinePool = pool, TrackerBaseFrame = { Update = function() end } }
+		local tracker = {
+			started = true,
+			Update = function() end,
+			UpdateHeight = function(self) self.heightUpdated = true end,
+		}
+		local modules = { TrackerLinePool = pool, TrackerBaseFrame = { Update = function() end }, QuestieTracker = tracker }
+		_G.Questie = { db = { profile = { trackerQuestPadding = 10 } } }
 		_G.QuestieLoader = { ImportModule = function(_, name) return modules[name] end }
 		if lineInUse then
 			pool.Initialize(1)
@@ -168,7 +175,7 @@ end
 TestQuestieTracker = {}
 
 function TestQuestieTracker:tearDown()
-	_G.QuestieLoader = nil
+	_G.QuestieLoader, _G.Questie = nil, nil
 	client = nil
 end
 
@@ -197,7 +204,7 @@ function TestQuestieTracker:test_lines_in_our_fonts_and_titles_in_gold()
 	quest.label:SetText("|cFFFF8040[72] The Might of the Horde|r |cFF00FF00(50%)|r")
 	objective:SetMode("objective")
 	objective.label:SetText("|cFFEEEEEE- Wolves slain: 2/5|r")
-	assertLine(zone, "DiabolicFont_HeaderRegular12", questieColor, "|cFFC0C0C0Dragonblight|r")
+	assertLine(zone, "DiabolicFont_HeaderRegular12", title, "Dragonblight")
 	assertLine(quest, "DiabolicFont_HeaderRegular12", title, "[72] The Might of the Horde (50%)")
 	assertLine(objective, "DiabolicFont_SansRegular12", questieColor, "|cFFEEEEEE- Wolves slain: 2/5|r")
 	lu.assertEquals(quest.label:GetHeight(), 12)
@@ -220,6 +227,42 @@ function TestQuestieTracker:test_questie_loaded_after_us_with_a_line_in_use()
 	assertLine(line, "DiabolicFont_HeaderRegular12", { unpack(client.Engine:GetDB("Data: Colors").General.Title) }, "A Quest")
 	-- once is enough
 	client:FireEvent("ADDON_LOADED", "SomethingElse")
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_the_same_space_after_every_quest()
+	boot({ world = function(world) questie(world, true) end })
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	local tracker = _G.QuestieLoader:ImportModule("QuestieTracker")
+	-- nothing tracked yet: nothing to space
+	tracker:Update()
+	lu.assertNil(tracker.heightUpdated)
+	pool.Initialize(5)
+	local lines = {}
+	for i, mode in ipairs({ "zone", "quest", "objective", "quest", "objective" }) do
+		lines[i] = pool.GetNextLine()
+		lines[i]:SetMode(mode)
+		lines[i].label:SetText("Text")
+	end
+	-- the first quest ends on an objective wrapped on two lines, which
+	-- Questie sized again without the padding below it
+	lines[3].label.GetNumLines = function() return 2 end
+	lines[3]:SetHeight(28)
+	-- in combat: left for later
+	client:EnterCombat()
+	tracker:Update()
+	lu.assertEquals(lines[3]:GetHeight(), 28)
+	client:LeaveCombat()
+	tracker:Update()
+	local heights = {}
+	for i = 1, 5 do
+		heights[i] = lines[i]:GetHeight()
+	end
+	-- zone and titles 12 + 4, the wrapped line (12 + 1) * 2 + 1, each quest
+	-- then padded by 10 + 2
+	lu.assertEquals(heights, { 16, 16, 27 + 12, 16, 12 + 12 })
+	lu.assertEquals(lines[3].label:GetHeight(), 27)
+	lu.assertTrue(tracker.heightUpdated)
 	assertClean(client)
 end
 
