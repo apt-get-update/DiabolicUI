@@ -737,6 +737,11 @@ Engine:NewStaticConfig("UnitFrames", {
 				size = { 90, 24 },
 				position = { "TOPLEFT", "UICenter", "TOPLEFT", 35, -35 },
 				offset = 25,
+				groups = {
+					font_object = DiabolicFont_HeaderRegular12,
+					label_height = 40, -- above a group's first frame: its label, and that frame's name
+					spacing = 10 -- between two groups
+				},
 				shade = {
 					size = { 234, 78 }, -- scaled from 384×128
 					position = { "CENTER", 0, 0 },

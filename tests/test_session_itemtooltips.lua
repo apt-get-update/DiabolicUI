@@ -181,6 +181,53 @@ function TestItemTooltipLayout:test_the_layout_comes_back_after_blizzard_redoes_
 	assertClean(client)
 end
 
+-- ChromieCraft's client patch: two more texts under the name, with the
+-- line after the name moved under them (and put back there every 0.2
+-- seconds by the tooltip's OnUpdate).
+function TestItemTooltipLayout:test_the_client_patch_transmog_texts_go_beside_the_icon()
+	local tooltip = _G.GameTooltip
+	local first = tooltip:CreateFontString(nil, "ARTWORK")
+	first:SetPoint("TOPLEFT", line(tooltip, 1), "BOTTOMLEFT", 0, -2)
+	local second = tooltip:CreateFontString(nil, "ARTWORK")
+	second:SetPoint("TOPLEFT", first, "BOTTOMLEFT", 0, -2)
+	first:Hide()
+	second:Hide()
+	tooltip.TransmogText1, tooltip.TransmogText2 = first, second
+
+	-- not transmogrified: as always
+	show(tooltip, 49623, WEAPON)
+	local _, relativeTo, _, x = line(tooltip, 2):GetPoint()
+	lu.assertEquals({ relativeTo, x }, { line(tooltip, 1), SHIFT })
+
+	-- transmogrified: the texts beside the icon, the next line under them
+	tooltip:Hide()
+	show(tooltip, 49623, WEAPON)
+	first:SetText("Transmogrified to:")
+	second:SetText("Sword Breaker's Bulwark")
+	first:Show()
+	second:Show()
+	tooltip:Show()
+	_, relativeTo, _, x = first:GetPoint()
+	lu.assertEquals({ relativeTo, x }, { line(tooltip, 1), SHIFT })
+	_, relativeTo, _, x = line(tooltip, 2):GetPoint()
+	lu.assertEquals({ relativeTo, x }, { second, 0 })
+
+	-- the patch putting the line back under them is fine as it is
+	line(tooltip, 2):ClearAllPoints()
+	line(tooltip, 2):SetPoint("TOPLEFT", second, "BOTTOMLEFT", 0, -2)
+	local width = tooltip:GetWidth()
+	client:Tick(0.05)
+	_, relativeTo = first:GetPoint()
+	lu.assertEquals(relativeTo, line(tooltip, 1))
+	lu.assertEquals(tooltip:GetWidth(), width)
+
+	-- hidden: back where the patch had them
+	tooltip:Hide()
+	local _, _, _, x2 = first:GetPoint()
+	lu.assertEquals(x2, 0)
+	assertClean(client)
+end
+
 function TestItemTooltipLayout:test_lines_other_addons_change()
 	local tooltip = _G.GameTooltip
 	show(tooltip, 49623, WEAPON)

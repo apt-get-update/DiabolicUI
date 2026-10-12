@@ -4,69 +4,61 @@ Forked from https://github.com/Hrishi29x/DiabolicUI
 
 Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it for 3.3.5, and mended what small things I could along my travels through Northrend. Nothing grand, just a few fixes and features gathered on the road and shared freely, should they serve you as well as they have served me. The full list lies below.
 
-== Recommended Addons
+image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 
-* https://github.com/bkader/Masque-WoTLK[Masque] - to skin the buttons of addons
-* https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] - a Diablo skin for Masque, for Bagnon for example
-* https://github.com/bkader/SharedMedia[SharedMedia] - to have more fonts available in other addons
-* https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] - the Diablo font
-* https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] - nameplates
-* https://github.com/paokkerkir/Mapster[Mapster] - map
-* https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] - minimap button bag collector
-* https://github.com/sloan-008/Questie-335[Questie] - quests and quest log
+== 🧩 Recommended Addons
 
-== Features
+[cols="1,3",options="header"]
+|===
+|Addon |What for
+|https://github.com/sloan-008/Questie-335[Questie] |📜 quests, quest log and tracker
+|https://github.com/paokkerkir/Mapster[Mapster] |🗺️ world map
+|https://github.com/bkader/KuiNameplates-WoTLK[Kui_Nameplates] |🏷️ nameplates
+|https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver] |💾 action bar profiles, one per specialization
+|https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu] |💍 trinket switching, styled by DiabolicUI
+|https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] |🎒 minimap buttons in one bag
+|https://github.com/bkader/Masque-WoTLK[Masque] + https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] |🔘 Diablo buttons for other addons (Bagnon...)
+|https://github.com/bkader/SharedMedia[SharedMedia] + https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] |🔤 the Diablo font in other addons
+|https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara] |🔍 sharper fonts
+|===
 
-=== Unit Frames
+== 🚀 Getting Started
 
-* Reputation bar takes the place of the experience bar when a reputation is tracked.
-* Role icons (tank / healer / damage) next to party and raid frames.
-* Optional animated 3D model portrait on party and focus frames, sitting above the health bar with matching border/backdrop/hover-glow chrome (`Show Portrait`).
-* Class-color option for player, target, party, raid and tab-target-of-target health bars (`Show class colors`).
-* Weapon enchants (temporary buffs from poisons, oils, stones, etc.) shown as auras on the player frame.
-* Mind-controlled enemies and vehicles correctly display their orb/frame.
-* Death knight runes as a row of rune glyphs above the action bars, filling up while they recharge and colored by rune type (blood, frost, unholy, death), as in DiabolicUI2: dimmed while recharging, hidden out of combat once all six are ready.
-* `Toggle Fake Party` / `Toggle Fake Raid` buttons preview the party/raid frame styling without needing a real group.
+Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui config`.
 
-=== Action Bars & Micro Menu
+* `/dui num_bars 1-3` and `/dui num_side_bars 0-2`: how many action bars.
+* `/dui move`: move the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu; right-drag the minimap to resize it. Also the *Unlock Frames* button in `/dui config`.
 
-* Number of action bars and side bars configurable with `/diabolic num_bars [1,2,3]` and `/diabolic num_side_bars [0,1,2]`.
-* Gold, FPS and latency shown next to the micro-menu button, each independently toggleable (`Show Gold`, `Show FPS & Latency`); gold uses proper coin icons instead of colored letters.
-* Help Request menu reintroduced.
+image::docs/screenshots/move-mode.webp[Unlock Frames: every movable frame highlighted]
 
-=== Chat
+== ✨ Features
 
-* Updated layout, with options grouped into "Appearance" (background opacity, fade chat, time fading, time visible) and "Miscellaneous".
-* `Copy Web Links`: left-click a web link (http:// or https://) in chat to open a popup with it selected and ready to copy.
-* Chat bubble and damage fonts set to Exocet - best results paired with https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5.
+* ⚔️ *Action bars* between Diablo III health and mana orbs, one to three rows plus side bars.
+* 💀 *Specialization button* on the skull: switches spec, and each spec can bring its gear set, Action Bar Saver profile, bar count and macros.
+* 👼 *Stance button* on the angel: shows your current form and switches it.
+* 🛡️ *Unit frames* for you, your target, focus, party and raid (grouped, with role icons); class colors and 3D portraits as options.
+* 💬 *Chat* that fades, with clickable web links, shorter system messages and Diablo chat bubbles.
+* 🗡️ *Diablo III item tooltips* that follow your cursor.
+* 🧭 *Minimap* with zone text, mail and Dungeon Finder buttons built in.
+* 📜 *Quest tracker* that fades and moves; Blizzard's in Exocet, Questie's styled to match.
+* 🎨 *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
+* 💍 *TrinketMenu* restyled to match.
 
-=== Tooltips
+[cols="2*a",frame=none,grid=none]
+|===
+|image::docs/screenshots/specialization.webp[Specializations page]
+|image::docs/screenshots/talent-skull.webp[Specialization button]
+|image::docs/screenshots/raid.webp[Raid frames by group]
+|image::docs/screenshots/party.webp[Party frames]
+|===
 
-* Tooltip follows the cursor.
-* Configurable anchor point, horizontal and vertical offset.
-* Diablo III style item tooltips (`Reskin Tooltip`, on by default): the item name in Exocet on a title banner tinted by quality, the item's icon in a quality-colored box with the text beside it, weapon DPS or armor as a big number, and a bottom bar with the sell value and durability.
-
-=== Minimap
-
-* Built in as a module - no separate `DiabolicUI-Minimap` download needed.
-* Reskinned border, clock, zone text and mail icon, edit mode, and draggable buttons.
-* Zone text hugs whichever screen edge the minimap is currently on, and cross-fades on zone change (`Animate Zone Text`, with configurable fade-out/fade-in durations).
-* The dungeon finder eye (orange, with a white hover glow) is a button on the minimap border, like the mail and `+` buttons: top right by default, top left when the minimap is moved to the left half of the screen.
-
-=== Objectives
-
-* `Fade Quest Tracker`: fades Questie's tracker out after it hasn't been moused over for a while, with configurable delay (`Time Fading`) and faded `Opacity`.
-
-NOTE: DiabolicUI does not disable Blizzard's own objective tracker - that's `Questie`'s job, and it already takes care of it when installed.
-
-=== Options
-
-Everything above lives under a single "DiabolicUI" category in Interface Options, with dedicated *Units*, *Tooltips*, *Chat* and *Minimap* submenus for the settings that belong to each.
-
-=== Misc
-
-* WorldMap disabled in favor of the bundled minimap module.
-* Dropped compatibility code for other WoW versions - this fork targets WotLK 3.3.5 only, keeping the codebase smaller and simpler.
+[cols="4*a",frame=none,grid=none]
+|===
+|image::docs/screenshots/tooltip.webp[Item tooltip]
+|image::docs/screenshots/reputation-hover.webp[Reputation bar tooltip]
+|image::docs/screenshots/loot.webp[Loot window]
+|image::docs/screenshots/chat-loot.webp[Shorter loot messages]
+|===
 
 == Development
 
@@ -85,26 +77,26 @@ tests/coverage/run.sh --readme   # ...and refresh the table below
 // Generated by tests/coverage/run.sh --readme. Don't edit by hand.
 image:https://img.shields.io/badge/coverage-100.0%25-brightgreen[Line coverage 100.0%]
 
-Line coverage of the offline test suite: *100.0%* (18830 of 18830 executable lines, 124 files, 2026-10-03).
+Line coverage of the offline test suite: *100.0%* (20436 of 20436 executable lines, 130 files, 2026-10-12).
 
 [cols="3,1,1,1",options="header"]
 |===
 |Area |Files |Lines |Covered
 |`data` |5 |442 |100.0%
-|`defaults` |6 |51 |100.0%
-|`engine` |3 |743 |100.0%
+|`defaults` |7 |77 |100.0%
+|`engine` |3 |750 |100.0%
 |`handlers` |8 |2220 |100.0%
-|`locale` |10 |955 |100.0%
-|`modules/actionbars` |23 |2636 |100.0%
-|`modules/blizzard` |11 |1982 |100.0%
-|`modules/chat` |3 |653 |100.0%
-|`modules/menu` |1 |464 |100.0%
-|`modules/minimap` |13 |1135 |100.0%
+|`locale` |10 |1081 |100.0%
+|`modules/actionbars` |22 |2920 |100.0%
+|`modules/blizzard` |15 |2313 |100.0%
+|`modules/chat` |5 |985 |100.0%
+|`modules/menu` |1 |984 |100.0%
+|`modules/minimap` |13 |1139 |100.0%
 |`modules/nameplates` |1 |867 |100.0%
-|`modules/objectives` |6 |698 |100.0%
-|`modules/unitframes` |24 |2906 |100.0%
-|`settings` |10 |3078 |100.0%
-|*Total* |*124* |*18830* |*100.0%*
+|`modules/objectives` |6 |772 |100.0%
+|`modules/unitframes` |24 |2917 |100.0%
+|`settings` |10 |2969 |100.0%
+|*Total* |*130* |*20436* |*100.0%*
 |===
 // coverage:end
 

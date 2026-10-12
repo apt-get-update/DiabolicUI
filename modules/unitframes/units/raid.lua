@@ -7,11 +7,13 @@ local Library = Engine:GetDB("Library: UnitFrames")
 
 -- Lua API
 local _G = _G
+local math_floor = math.floor
 local string_match = string.match
 local unpack = unpack
 
 -- WoW API
 local GetNumRaidMembers = _G.GetNumRaidMembers
+local GetRaidRosterInfo = _G.GetRaidRosterInfo
 local GetSpellInfo = _G.GetSpellInfo
 local UnitClass = _G.UnitClass
 
@@ -216,76 +218,106 @@ UnitFrameWidget.Style = Style
 -- Exposed for tests/test_unitframes_raid.lua.
 UnitFrameWidget.DebuffFilter = debuffFilter
 
+-- The raid's 8 groups of 5 go 2 to a column: groups 1 and 2 in the first,
+-- 3 and 4 in the next, and so on. Each group has its "Group N" label on
+-- top, and some room before the next.
+local MEMBERS_PER_GROUP, GROUPS_PER_COLUMN = 5, 2
+
+-- Where group `subgroup` (1-8) starts, from the top left of the raid frames.
+local GetGroupPosition = function(config, subgroup)
+	local column = math_floor((subgroup - 1) / GROUPS_PER_COLUMN)
+	local width = config.size[1] + config.offset + config.auras.button.size[1] + 3 -- the frame and its auras
+	local height = config.groups.label_height + MEMBERS_PER_GROUP * (config.size[2] + config.offset) + config.groups.spacing
+	return column * width, -((subgroup - 1) % GROUPS_PER_COLUMN) * height
+end
+
+-- Where the `row`th (0-4) member of group `subgroup` goes.
+local GetMemberPosition = function(config, subgroup, row)
+	local x, y = GetGroupPosition(config, subgroup)
+	return x, y - config.groups.label_height - row * (config.size[2] + config.offset)
+end
+
+-- The 8 group labels on `parent` (the frame the raid frames are placed
+-- in), placed and hidden.
+local CreateGroupLabels = function(config, parent)
+	local labels = {}
+	for subgroup = 1, 8 do
+		local label = parent:CreateFontString(nil, "OVERLAY")
+		label:SetFontObject(config.groups.font_object)
+		label:SetPoint("TOPLEFT", parent, "TOPLEFT", GetGroupPosition(config, subgroup))
+		label:SetWidth(config.size[1]) -- centered over the group, like the names
+		label:SetJustifyH("CENTER")
+		label:SetText(GROUP .. " " .. subgroup)
+		label:Hide()
+		labels[subgroup] = label
+	end
+	return labels
+end
+
+-- Exposed for units/testmode.lua's fake raid, laid out the same way.
+UnitFrameWidget.GetMemberPosition = GetMemberPosition
+UnitFrameWidget.CreateGroupLabels = CreateGroupLabels
+
 UnitFrameWidget.OnEnable = function(self)
-    local config = self:GetDB("UnitFrames").visuals.units.raid
-    local UnitFrame = Engine:GetHandler("UnitFrame")
+	local config = self:GetDB("UnitFrames").visuals.units.raid
+	local UnitFrame = Engine:GetHandler("UnitFrame")
 
-    -- Spawn a holder for all raid frames
-    self.UnitFrame = Engine:CreateFrame("Frame", nil, "UICenter", "SecureHandlerAttributeTemplate")
-    self.UnitFrame:Place(unpack(config.position))
-    RegisterStateDriver(self.UnitFrame, "visibility", "[@raid1,exists]show;hide")
+	-- Spawn a holder for all raid frames
+	self.UnitFrame = Engine:CreateFrame("Frame", nil, "UICenter", "SecureHandlerAttributeTemplate")
+	self.UnitFrame:Place(unpack(config.position))
+	RegisterStateDriver(self.UnitFrame, "visibility", "[@raid1,exists]show;hide")
 
-    -- Create 40 frames
-    self.UnitFrames = {}
-    for i = 1, 40 do
-        local unitFrame = UnitFrame:New("raid"..i, self.UnitFrame, Style)
-        self.UnitFrames[i] = unitFrame
-    end
+	-- Create 40 frames
+	self.UnitFrames = {}
+	for i = 1, 40 do
+		self.UnitFrames[i] = UnitFrame:New("raid"..i, self.UnitFrame, Style)
+	end
+	self.GroupLabels = CreateGroupLabels(config, self.UnitFrame)
 
-    -- The frames are secure, so they can't be moved in combat: a roster
-    -- change in combat is laid out as soon as it ends.
-    local function LayoutRaidFrames(_, event)
-        if InCombatLockdown() then
-            self.UnitFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-            return
-        end
-        if (event == "PLAYER_REGEN_ENABLED") then
-            self.UnitFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-        end
+	-- The frames are secure, so they can't be moved in combat: a roster
+	-- change in combat is laid out as soon as it ends.
+	local function LayoutRaidFrames(_, event)
+		if InCombatLockdown() then
+			self.UnitFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+			return
+		end
+		if (event == "PLAYER_REGEN_ENABLED") then
+			self.UnitFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+		end
 
-        local membersPerGroup = 5
-        local groupsPerColumn = 2
-        local xOffset = config.size[1] + (config.offset or 5) + (config.auras.button.size[1] or 0) + 3 --aura size and a little extra padding
-        local yOffset = -(config.size[2] + (config.offset or 5))
+		for i = 1, 40 do
+			self.UnitFrames[i]:ClearAllPoints()
+			self.UnitFrames[i]:Hide()
+		end
 
-        -- Clear all points
-        for i = 1, 40 do
-            self.UnitFrames[i]:ClearAllPoints()
-            self.UnitFrames[i]:Hide()
-        end
+		-- members placed in each group so far
+		local rows = { 0, 0, 0, 0, 0, 0, 0, 0 }
+		for i = 1, GetNumRaidMembers() do
+			local name, _, subgroup = GetRaidRosterInfo(i)
+			if name then
+				local frame = self.UnitFrames[i]
+				frame:SetPoint("TOPLEFT", self.UnitFrame, "TOPLEFT", GetMemberPosition(config, subgroup, rows[subgroup]))
+				frame:Show()
+				rows[subgroup] = rows[subgroup] + 1
+			end
+		end
 
-        -- Track rows within each group
-        local groupRows = {}
-        for g = 1, 8 do groupRows[g] = 0 end
+		-- labels on the groups with someone in them
+		for subgroup = 1, 8 do
+			if (rows[subgroup] > 0) then
+				self.GroupLabels[subgroup]:Show()
+			else
+				self.GroupLabels[subgroup]:Hide()
+			end
+		end
+	end
 
-        for i = 1, GetNumRaidMembers() do
-            local name, _, subgroup = GetRaidRosterInfo(i)
-            if name and subgroup >= 1 and subgroup <= 8 then
-                local frame = self.UnitFrames[i]
+	-- Update when raid changes
+	self.UnitFrame:RegisterEvent("RAID_ROSTER_UPDATE")
+	self.UnitFrame:SetScript("OnEvent", LayoutRaidFrames)
 
-                -- Which column this group belongs to
-                local col = math.floor((subgroup - 1) / groupsPerColumn)
-                -- Vertical offset within the column
-                local groupInColumn = (subgroup - 1) % groupsPerColumn
-                local row = groupRows[subgroup]
-
-                local anchorX = col * xOffset
-                local anchorY = (groupInColumn * membersPerGroup + row) * yOffset
-
-                frame:SetPoint("TOPLEFT", self.UnitFrame, "TOPLEFT", anchorX, anchorY)
-                frame:Show()
-
-                groupRows[subgroup] = groupRows[subgroup] + 1
-            end
-        end
-    end
-
-    -- Update when raid changes
-    self.UnitFrame:RegisterEvent("RAID_ROSTER_UPDATE")
-    self.UnitFrame:SetScript("OnEvent", LayoutRaidFrames)
-
-    -- Initial layout
-    LayoutRaidFrames()
+	-- Initial layout
+	LayoutRaidFrames()
 end
 
 -- The frame of raid member `raidIndex`, or the holder of them all.

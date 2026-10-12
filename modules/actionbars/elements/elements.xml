@@ -17,12 +17,12 @@
 
 <!-- Artwork overlays and backdrops -->
 <Script file='artwork.lua'/>
+<Script file='specswitch.lua'/>
 
 <!-- Keybind handling -->
 <Script file='keybinds.lua'/>
 
 <!-- Corner menus -->
-<Script file='social.lua'/>
 <Script file='menu.lua'/>
 
 </Ui>

@@ -2,6 +2,7 @@ local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 
 -- Lua API
+local ipairs = ipairs
 local math_floor = math.floor
 local unpack = unpack
 
@@ -154,22 +155,14 @@ Module.SetRaidMockShown = function(self, shown)
 		local config = self:GetDB("UnitFrames").visuals.units.raid
 		local db = self:GetConfig("UnitFrames")
 
-		-- Mirrors modules/unitframes/units/raid.lua's own LayoutRaidFrames
-		-- grid math (8 groups of 5, 2 groups per column), just fed a fake
-		-- 40-member roster (all 8 subgroups full) instead of real roster data.
-		local membersPerGroup = 5
-		local groupsPerColumn = 2
-		local numColumns = math_floor(8 / groupsPerColumn)
-		local xOffset = config.size[1] + (config.offset or 5) + (config.auras.button.size[1] or 0) + 3
-		local yOffset = -(config.size[2] + (config.offset or 5))
-
+		-- Laid out like the real raid frames, with all 8 groups full.
 		local container = Engine:CreateFrame("Frame", nil, "UICenter")
 		container:Place(unpack(config.position))
 		-- A frame needs both a resolved anchor *and* a defined size for
 		-- its geometry (GetCenter/GetLeft/etc.) to resolve at all - without
 		-- this, nothing anchored to it renders, despite reporting IsShown/
 		-- IsVisible as true.
-		container:SetSize(numColumns * xOffset, groupsPerColumn * membersPerGroup * -yOffset)
+		container:SetSize(1, 1)
 
 		self.raidContainer = container
 		self.raidFrames = {}
@@ -179,18 +172,14 @@ Module.SetRaidMockShown = function(self, shown)
 			RaidWidget.Style(frame, "raid" .. i)
 			ApplyFakeData(frame, GetFakeUnitData(i), db.showClassColors)
 
-			local subgroup = math_floor((i - 1) / membersPerGroup) -- 0..7
-			local indexInGroup = (i - 1) % membersPerGroup
-			local col = math_floor(subgroup / groupsPerColumn)
-			local groupInColumn = subgroup % groupsPerColumn
-			local anchorX = col * xOffset
-			local anchorY = (groupInColumn * membersPerGroup + indexInGroup) * yOffset
-
 			frame:ClearAllPoints()
-			frame:SetPoint("TOPLEFT", container, "TOPLEFT", anchorX, anchorY)
+			frame:SetPoint("TOPLEFT", container, "TOPLEFT", RaidWidget.GetMemberPosition(config, math_floor((i - 1) / 5) + 1, (i - 1) % 5))
 			frame:Show()
 
 			self.raidFrames[i] = frame
+		end
+		for _, label in ipairs(RaidWidget.CreateGroupLabels(config, container)) do
+			label:Show()
 		end
 	end
 

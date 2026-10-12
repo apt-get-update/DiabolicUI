@@ -29,9 +29,6 @@ L["Bags"] = "背包"
 L["<Left-click> to toggle bags."] = "<單擊左鍵>打開背包"
 L["<Right-click> to toggle bag bar."] = "<單擊右鍵>打開背包欄"
 L["Chat"] = "聊天"
-L["<Left-click> or <Enter> to chat."] = "<單擊左鍵>或<Enter>打開聊天框"
-L["Friends & Guild"] = "社交"
-L["<Left-click> to toggle social frames."] = "<單擊左鍵>打開社交框"
 
 -- actionbar menu
 L["Side Bars"] = "側邊欄"

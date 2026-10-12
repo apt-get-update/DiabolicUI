@@ -466,7 +466,14 @@ local function installLua(client)
 		assert(type(original) == "function", "hooksecurefunc(): " .. tostring(name) .. " is not a function")
 		assert(type(hook) == "function", "hooksecurefunc(): hook is not a function")
 		local wrapped = function(...)
-			local results = { original(...) }
+			-- the game's hook is C code: a coroutine can't yield inside what
+			-- it wraps ("attempt to yield across metamethod/C-call
+			-- boundary"), pcall is a C call too
+			local results = { pcall(original, ...) }
+			if not results[1] then
+				error(results[2], 0)
+			end
+			table.remove(results, 1)
 			local n = select("#", ...)
 			local args = { ... }
 			client:Call(function() hook(unpack(args, 1, n)) end)

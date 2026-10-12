@@ -15,6 +15,12 @@ package.path = "./tests/?.lua;" .. package.path
 
 local lu = require("luaunit")
 
+-- A temporary file name in $TMPDIR (os.tmpname() always uses /tmp, which a
+-- sandbox may not let us write to).
+local function tempName()
+	return (os.getenv("TMPDIR") or "/tmp") .. "/diabolicui_test_" .. os.time() .. "_" .. math.random(1e9)
+end
+
 local LUAC = os.getenv("LUAC") or "luac5.1"
 local KNOWN_FILE = "tests/data/wotlk-globals.txt"
 
@@ -57,7 +63,7 @@ local scanFile = function(path)
 	local source = readFile(path):gsub("^\239\187\191", "") -- UTF-8 BOM
 	local reads, writes = {}, {}
 
-	local tmp = os.tmpname()
+	local tmp = tempName()
 	local file = assert(io.open(tmp, "wb"))
 	file:write(source)
 	file:close()
@@ -124,7 +130,7 @@ function TestWotlkGlobals:test_only_reads_globals_that_exist_in_wotlk()
 end
 
 function TestWotlkGlobals:test_detector_catches_a_missing_global()
-	local tmp = os.tmpname()
+	local tmp = tempName()
 	local file = io.open(tmp, "w")
 	file:write('local x = TAXI_CANCEL\nlocal y = _G.PANDAREN_THING\n_G.OWN_VALUE = 1\nlocal z = _G.UIParent\n')
 	file:close()

@@ -4,15 +4,20 @@ local MenuWidget = Module:SetWidget("Menu: Main")
 local L = Engine:GetLocale()
 
 -- Lua API
-local ipairs, unpack = ipairs, unpack
+local ipairs, select, unpack = ipairs, select, unpack
 local floor = math.floor
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetFramerate = _G.GetFramerate
+local GetGuildRosterInfo = _G.GetGuildRosterInfo
 local GetNetStats = _G.GetNetStats
+local GetNumFriends = _G.GetNumFriends
+local GetNumGuildMembers = _G.GetNumGuildMembers
+local GuildRoster = _G.GuildRoster
 local hooksecurefunc = _G.hooksecurefunc
 local InCombatLockdown = _G.InCombatLockdown
+local IsInGuild = _G.IsInGuild
 local PlaySound = _G.PlaySound
 local UnitFactionGroup = _G.UnitFactionGroup
 
@@ -22,6 +27,34 @@ local GameTooltip = _G.GameTooltip
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
+
+-- Adds the other guild members and the friends online to `tooltip` (the
+-- social button's), after a blank line, when there are any. 3.3.5's
+-- GetNumGuildMembers only gives one count: the roster, offline members
+-- included, says who's online. A fresh roster is asked for the next time.
+local AddPeopleLines = function(tooltip)
+	local guildies = 0
+	if IsInGuild() then
+		GuildRoster()
+		for i = 1, GetNumGuildMembers(true) do
+			if select(9, GetGuildRosterInfo(i)) then
+				guildies = guildies + 1
+			end
+		end
+		guildies = guildies - 1 -- not you
+	end
+	local _, friends = GetNumFriends()
+
+	if (guildies > 0) or (friends > 0) then
+		tooltip:AddLine(" ")
+		if (guildies > 0) then
+			tooltip:AddDoubleLine(L["Guild Members Online:"], guildies, 1,1,1,1,.82,0)
+		end
+		if (friends > 0) then
+			tooltip:AddDoubleLine(L["Friends Online:"], friends, 1,1,1,1,.82,0)
+		end
+	end
+end
 
 MenuWidget.UpdateMicroButtons = function(self, event, ...)
 	self.MicroMenuWindow:Arrange()
@@ -294,6 +327,7 @@ MenuWidget.HookLiteBag = function(self, menuButton, menuWindow)
 end
 
 MenuWidget.OnEnable = function(self)
+	local widget = self
 	local config = Module.config
 	local db = Module.db
 
@@ -322,6 +356,7 @@ MenuWidget.OnEnable = function(self)
 	self:Skin(BagBarMenuButton, micro_menu_config, "bag")
 
 	local MicroMenuButton = MenuButton:New(Menu)
+	self.MicroMenuButton = MicroMenuButton
 	MicroMenuButton:SetSize(unpack(micro_menu_config.button.size))
 	self:Skin(MicroMenuButton, micro_menu_config, "mainmenu")
 
@@ -414,8 +449,11 @@ MenuWidget.OnEnable = function(self)
 		button:SetScript("OnEnter", function(self) 
 			self:OnEnter()
 			if GameTooltip:IsShown() and GameTooltip:GetOwner() == self then
-				GameTooltip:ClearAllPoints()
-				GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
+				if (self == SocialsMicroButton) then
+					AddPeopleLines(GameTooltip)
+					GameTooltip:Show() -- resize to the new lines
+				end
+				widget:AnchorMicroTooltip()
 			end
 		end)
 		
@@ -438,8 +476,7 @@ MenuWidget.OnEnable = function(self)
 	-- wild hacks to control the tooltip position
 	hooksecurefunc("MainMenuBarPerformanceBarFrame_OnEnter", function()
 		if GameTooltip:IsShown() and GameTooltip:GetOwner() == MainMenuMicroButton then
-			GameTooltip:ClearAllPoints()
-			GameTooltip:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "TOPRIGHT", -10, 10)
+			self:AnchorMicroTooltip()
 		end
 	end)
 
@@ -463,6 +500,7 @@ MenuWidget.OnEnable = function(self)
 	ActionBarMenuWindow:AttachToButton(ActionBarMenuButton)
 	ActionBarMenuWindow:SetSize(unpack(actionbar_menu_config.size))
 	ActionBarMenuWindow:SetPoint("BOTTOMRIGHT", MicroMenuWindow, "BOTTOMRIGHT", 15, -17)
+	self.ActionBarMenuWindow = ActionBarMenuWindow
 	ActionBarMenuWindow:SetBackdrop(actionbar_menu_config.backdrop)
 	ActionBarMenuWindow:SetBackdropColor(unpack(actionbar_menu_config.backdrop_color))
 	ActionBarMenuWindow:SetBackdropBorderColor(unpack(actionbar_menu_config.backdrop_border_color))
@@ -911,6 +949,9 @@ MenuWidget.OnEnable = function(self)
 	end)
 
 	self.MasterMenuButton = MasterMenuButton
+	self.BagBarMenuButton = BagBarMenuButton
+	self.BagBarMenuWindow = BagBarMenuWindow
+	self:ApplySide()
 	self:UpdateGoldVisibility()
 	self:UpdatePerformanceVisibility()
 
@@ -936,16 +977,124 @@ MenuWidget.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")	
 end
 
--- The performance text (fps/latency) sits to the left of the gold text
--- when both are shown, but falls back to the gold text's own base
--- position (taking its place) whenever gold is disabled.
+-- A config position { point, x, y } as seen in a mirror: left for right.
+local Mirror = function(position)
+	local point, x, y = unpack(position)
+	return point:gsub("RIGHT", "\0"):gsub("LEFT", "RIGHT"):gsub("%z", "LEFT"), -x, y
+end
+
+-- Which side of the screen the menu buttons are on (moved with Unlock
+-- Frames): on the right, the bags then the main menu, everything opening
+-- leftwards; on the left, mirrored - the main menu then the bags. And on
+-- the top half, the windows open downwards instead of upwards.
+MenuWidget.GetSide = function(self)
+	local controller = Module:GetWidget("Controller: Menu"):GetFrame()
+	local x, y = controller:GetCenter()
+	local centerX, centerY = Engine:GetFrame():GetCenter()
+	local side = (x and centerX and x < centerX) and "LEFT" or "RIGHT"
+	local edge = (y and centerY and y > centerY) and "TOP" or "BOTTOM"
+	return side, edge
+end
+
+-- A point ("BOTTOMRIGHT") turned to that side and edge.
+local Turn = function(point, side, edge)
+	if (side == "LEFT") then
+		point = point:gsub("RIGHT", "\0"):gsub("LEFT", "RIGHT"):gsub("%z", "LEFT")
+	end
+	if (edge == "TOP") then
+		point = point:gsub("BOTTOM", "\0"):gsub("TOP", "BOTTOM"):gsub("%z", "TOP")
+	end
+	return point
+end
+
+-- The micro buttons' tooltips: beside their window, on its open side.
+MenuWidget.AnchorMicroTooltip = function(self)
+	local side, edge = self.side or "RIGHT", self.edge or "BOTTOM"
+	local x, y = (side == "LEFT") and 10 or -10, (edge == "TOP") and -10 or 10
+	GameTooltip:ClearAllPoints()
+	GameTooltip:SetPoint(Turn("BOTTOMRIGHT", side, edge), self.MicroMenuWindow, Turn("TOPRIGHT", side, edge), x, y)
+end
+
+-- The main menu's windows, opening away from the screen's edges.
+MenuWidget.ApplyWindowSides = function(self, side, edge)
+	local config = Module.config.visuals.menus.main.micromenu
+	local padding = config.button.padding
+	local h, v = (side == "LEFT") and -1 or 1, (edge == "TOP") and -1 or 1
+
+	local master = self.MasterMenuWindow
+	local point, x, y = unpack(config.position)
+	master:ClearAllPoints()
+	master:SetPoint(Turn(point, side, edge), x * h, y * v)
+	master:SetButtonAnchor(Turn("BOTTOMRIGHT", side, edge))
+	master:SetButtonGrowthX((side == "LEFT") and "RIGHT" or "LEFT")
+	master:SetButtonGrowthY((edge == "TOP") and "DOWN" or "UP")
+	master:SetJustify((side == "LEFT") and "LEFT" or "RIGHT")
+	master:Arrange()
+
+	local micro = self.MicroMenuWindow
+	micro:ClearAllPoints()
+	micro:SetPoint(Turn("BOTTOMRIGHT", side, edge), self.MicroMenuButton, Turn("BOTTOMLEFT", side, edge), -padding * h, 0)
+	micro:SetButtonAnchor(Turn("BOTTOMRIGHT", side, edge))
+	micro:SetButtonGrowthX((side == "LEFT") and "RIGHT" or "LEFT")
+	micro:SetButtonGrowthY((edge == "TOP") and "DOWN" or "UP")
+	micro:SetJustify((side == "LEFT") and "RIGHT" or "LEFT")
+	micro:Arrange()
+
+	local bars = self.ActionBarMenuWindow
+	bars:ClearAllPoints()
+	bars:SetPoint(Turn("BOTTOMRIGHT", side, edge), micro, Turn("BOTTOMRIGHT", side, edge), 15 * h, -17 * v)
+end
+
+-- Places the buttons, their texts and windows for that side. Secure
+-- buttons: out of combat, when the menu is created or moved.
+MenuWidget.ApplySide = function(self)
+	local master, bags = self.MasterMenuButton, self.BagBarMenuButton
+	if not (master and bags) then
+		return
+	end
+	local config = Module.config
+	local padding = config.structure.controllers.mainmenu.padding
+	local micro = config.visuals.menus.main.micromenu
+	local bagmenu = config.visuals.menus.main.bagmenu
+	local side, edge = self:GetSide()
+	self.side, self.edge = side, edge
+	master:ClearAllPoints()
+	bags:ClearAllPoints()
+	self.BagBarMenuWindow:ClearAllPoints()
+	master.Gold:ClearAllPoints()
+	if (side == "LEFT") then
+		master:SetPoint("BOTTOMLEFT")
+		bags:SetPoint("BOTTOMLEFT", master, "BOTTOMRIGHT", padding, 0)
+		self.BagBarMenuWindow:SetPoint(Mirror(bagmenu.position))
+		master.Gold:SetPoint(Mirror(micro.performance.position))
+	else
+		master:SetPoint("BOTTOMRIGHT")
+		bags:SetPoint("BOTTOMRIGHT", master, "BOTTOMLEFT", -padding, 0)
+		self.BagBarMenuWindow:SetPoint(unpack(bagmenu.position))
+		master.Gold:SetPoint(unpack(micro.performance.position))
+	end
+	self:ApplyWindowSides(side, edge)
+	self:UpdatePerformanceAnchor()
+end
+
+-- The performance text (fps/latency) sits before the gold text when both
+-- are shown (to its left on the right side, to its right on the left side),
+-- but falls back to the gold text's own base position (taking its place)
+-- whenever gold is disabled.
 MenuWidget.UpdatePerformanceAnchor = function(self)
 	local button = self.MasterMenuButton
+	local position = Module.config.visuals.menus.main.micromenu.performance.position
 	button.Performance:ClearAllPoints()
-	if Module.db.showGold then
+	if (self.side == "LEFT") then
+		if Module.db.showGold then
+			button.Performance:SetPoint("LEFT", button.Gold, "RIGHT", 8, 0)
+		else
+			button.Performance:SetPoint(Mirror(position))
+		end
+	elseif Module.db.showGold then
 		button.Performance:SetPoint("RIGHT", button.Gold, "LEFT", -8, 0)
 	else
-		button.Performance:SetPoint(unpack(Module.config.visuals.menus.main.micromenu.performance.position))
+		button.Performance:SetPoint(unpack(position))
 	end
 end
 

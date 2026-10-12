@@ -109,7 +109,8 @@ local tooltips = {
 	"DatatextTooltip",
 	"hbGameTooltip",
 	"EventTraceTooltip",
-	"FrameStackTooltip"
+	"FrameStackTooltip",
+	"LFDSearchStatus" -- the Dungeon Finder queue, on the minimap's eye
 }
 
 local GearDB, SpecDB = {}, {}
@@ -750,7 +751,6 @@ end
 ------------------------------------------------------------
 Module.CreateBackdrop = function(self, object)
 	local config = self.config
-	local backdrops = self.backdrops or {}
 
 	local backdrop = CreateFrame("Frame", nil, object)
 	backdrop:SetFrameStrata(object:GetFrameStrata())
@@ -766,8 +766,6 @@ Module.CreateBackdrop = function(self, object)
 	hooksecurefunc(object, "SetFrameStrata", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
 	hooksecurefunc(object, "SetFrameLevel", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
 	hooksecurefunc(object, "SetParent", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
-
-	backdrops[object] = backdrop
 
 	object:SetBackdrop(nil) -- a reset is needed first, or we'll get weird bugs
 	object.SetBackdrop = function() end -- kill off the original backdrop function

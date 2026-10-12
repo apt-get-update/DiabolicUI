@@ -24,6 +24,7 @@
 
 --]]
 local _, ns = ..., DiabolicUIMinimapNS
+local Engine = select(2, ...) -- DiabolicUI's, for its UI Scale
 local MinimapMod = ns:NewModule("Minimap", "AceTimer-3.0")
 
 -- Lua API
@@ -77,13 +78,22 @@ local Time_OnClick = function(self, mouseButton)
 	end
 end
 
--- The map's size in the Diabolic look (198 / 140 would be Blizzard's).
-local mapScale = 1.614
+-- The map's size in the Diabolic look (198 / 140 would be Blizzard's): its
+-- art and frame are laid out for it. At the 100% of edit mode's resizing,
+-- the whole minimap is SIZE_BASE (Core.lua) of that.
+local DIABOLIC_MAP_SCALE = 1.614
+local mapScale = DIABOLIC_MAP_SCALE * ns.SIZE_BASE
+
+-- DiabolicUI's UI Scale (its options' main page, /dui setscale).
+local GetUIScale = function()
+    local scaling = Engine and Engine.GetConfig and Engine:GetConfig("ScreenScaling", nil, nil, true)
+    return scaling and scaling.scale or 1
+end
 
 -- Returns the base scale of the minimap widget,
 -- before the user's own edit mode resizing is factored in.
 MinimapMod.GetBaseScale = function(self)
-    return mapScale * ns.API.GetEffectiveScale()
+    return mapScale * ns.API.GetEffectiveScale() * GetUIScale()
 end
 
 -- Returns the user's chosen size multiplier, as set in edit mode.
@@ -388,7 +398,7 @@ MinimapMod.ApplyTheme = function(self)
 
     for _, texture in next, MAP_TEXTURES do
         local object = Minimap:CreateTexture()
-        object:SetSize(texture.size / mapScale, texture.size / mapScale)
+        object:SetSize(texture.size / DIABOLIC_MAP_SCALE, texture.size / DIABOLIC_MAP_SCALE)
         object:SetPoint(unpack(texture.point))
         object:SetTexture(GetMedia(texture.path))
         object:SetDrawLayer(texture.layer, texture.level)
@@ -507,8 +517,11 @@ MinimapMod.CreateCustomElements = function(self)
     self:UpdateMailButtonPosition()
 end
 
+-- The border art, clock, zone text and compass sit in a frame scaled down
+-- by the map's own enlargement only: they grow and shrink with the map
+-- (its 100%, the UI Scale and edit mode's size), keeping its proportions.
 MinimapMod.PostUpdatePositionAndScale = function(self)
-    local scale = ns.API.GetEffectiveScale() / self:GetBaseScale()
+    local scale = 1 / DIABOLIC_MAP_SCALE
     self.widgetFrame:SetScale(scale)
     MiniMapBattlefieldFrame:SetScale(scale)
     -- The eye is a border button like the mail button,
@@ -661,14 +674,12 @@ end
 -- Edit Mode
 -- Lets the user freely move and resize the minimap.
 -- The result is saved and restored on future logins.
+-- Turned on and off by DiabolicUI's Unlock Frames (modules/menu/menu.lua),
+-- along with the other frames that can be moved.
 --------------------------------------------
-local L_EXIT_EDIT_MODE = "Exit Edit Mode"
+local L_MINIMAP = MINIMAP_LABEL or "Minimap"
 
 local editModeActive = false
-
-local ExitEditModeButton_OnClick = function()
-    MinimapMod:ExitEditMode()
-end
 
 -- Applies a live cursor-drag delta to the user scale.
 local ApplyResizeDelta = function(self)
@@ -728,9 +739,21 @@ MinimapMod.CreateEditModeWidgets = function(self)
     local highlight = CreateFrame("Frame", nil, Minimap)
     highlight:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -19, 19)
     highlight:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 19, -19)
-    highlight:SetFrameLevel(Minimap:GetFrameLevel() + 20)
-    highlight:SetBackdrop({ edgeFile = GetMedia("border-tooltip"), edgeSize = 16 })
-    highlight:SetBackdropBorderColor(Colors.normal[1], Colors.normal[2], Colors.normal[3])
+    -- the same box as DiabolicUI's other frames while unlocked
+    -- (modules/menu/menu.lua, CreateMover), on top of what it covers:
+    -- MBB's "+" and the mail and eye buttons too
+    highlight:SetFrameStrata("FULLSCREEN_DIALOG")
+    highlight:SetBackdrop({
+        bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+        edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+    })
+    highlight:SetBackdropColor(.6, .1, .1, .5)
+    highlight:SetBackdropBorderColor(1, .82, 0, 1)
+    highlight.Text = highlight:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    highlight.Text:SetPoint("CENTER")
+    highlight.Text:SetText(L_MINIMAP)
     highlight:EnableMouse(true)
     highlight:RegisterForDrag("LeftButton", "RightButton")
     highlight:SetScript("OnDragStart", EditOverlay_OnDragStart)
@@ -738,17 +761,6 @@ MinimapMod.CreateEditModeWidgets = function(self)
     highlight:SetScript("OnUpdate", EditOverlay_OnUpdate)
     highlight:Hide()
     self.editHighlight = highlight
-
-    -- Standalone button to leave edit mode, since the menu
-    -- itself is closed while the user is editing.
-    local exitButton = CreateFrame("Button", "DiabolicMinimapExitEditModeButton", UIParent, "UIPanelButtonTemplate")
-    exitButton:SetFrameStrata("HIGH")
-    exitButton:SetSize(160, 24)
-    exitButton:SetPoint("TOP", Minimap, "BOTTOM", 0, -16)
-    exitButton:SetText(L_EXIT_EDIT_MODE)
-    exitButton:SetScript("OnClick", ExitEditModeButton_OnClick)
-    exitButton:Hide()
-    self.exitEditModeButton = exitButton
 end
 
 MinimapMod.IsEditModeActive = function(self)
@@ -768,8 +780,32 @@ MinimapMod.EnterEditMode = function(self)
     -- never sees them, and doesn't need to be touched.
     Minimap:SetMovable(true)
 
+    self:FitEditHighlight()
     self.editHighlight:Show()
-    self.exitEditModeButton:Show()
+end
+
+-- The overlay covers the minimap's border ring, and MBB's button when it
+-- sits next to it: its edges are measured each time edit mode starts,
+-- kept as offsets from the minimap so it follows the drag.
+local RING = 19
+MinimapMod.FitEditHighlight = function(self)
+    local highlight = self.editHighlight
+    local left, right, top, bottom = Minimap:GetLeft(), Minimap:GetRight(), Minimap:GetTop(), Minimap:GetBottom()
+    local l, r, t, b = -RING, RING, RING, -RING
+    local mbb = _G.MBB_MinimapButtonFrame
+    if (left and right and top and bottom) and (mbb and mbb:IsShown()) then
+        local fl, fr, ft, fb = mbb:GetLeft(), mbb:GetRight(), mbb:GetTop(), mbb:GetBottom()
+        if (fl and fr and ft and fb) then
+            -- in the minimap's own scale (it's resizable, the button isn't)
+            local scale = mbb:GetEffectiveScale() / Minimap:GetEffectiveScale()
+            fl, fr, ft, fb = fl * scale, fr * scale, ft * scale, fb * scale
+            l, r = math.min(l, fl - left), math.max(r, fr - right)
+            t, b = math.max(t, ft - top), math.min(b, fb - bottom)
+        end
+    end
+    highlight:ClearAllPoints()
+    highlight:SetPoint("TOPLEFT", Minimap, "TOPLEFT", l, t)
+    highlight:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", r, b)
 end
 
 MinimapMod.ExitEditMode = function(self)
@@ -784,9 +820,6 @@ MinimapMod.ExitEditMode = function(self)
         self.editHighlight.moving = false
         self.editHighlight.resizing = false
         self.editHighlight:Hide()
-    end
-    if (self.exitEditModeButton) then
-        self.exitEditModeButton:Hide()
     end
 
     self:SavePosition()
@@ -842,7 +875,7 @@ MinimapMod.OnEnable = function(self)
         end
     end)
     self.frame = Minimap
-    self.frame:SetSize(280 / mapScale, 280 / mapScale)
+    self.frame:SetSize(280 / DIABOLIC_MAP_SCALE, 280 / DIABOLIC_MAP_SCALE)
     self.frame:SetMovable(true)
     self.frame:EnableMouseWheel(true)
     self.frame:SetScript("OnMouseWheel", Minimap_OnMouseWheel)

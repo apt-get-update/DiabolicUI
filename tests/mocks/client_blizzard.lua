@@ -129,7 +129,7 @@ local function constants()
 		ITEM_LEVEL = "Item Level %d", TALENTS = "Talents", LEVEL = "Level", DEAD = "Dead",
 		PLAYER_OFFLINE = "Offline", AFK = "AFK", DND = "DND", ELITE = "Elite", NONE = "None",
 		HAVE_MAIL = "You have unread mail", HAVE_MAIL_FROM = "Unread mail from:",
-		FPS_ABBR = "fps", MILLISECONDS_ABBR = "ms", YOU = "You", CLOSE = "Close", CONTINUED = "...",
+		FPS_ABBR = "fps", MILLISECONDS_ABBR = "ms", YOU = "You", CLOSE = "Close", CONTINUED = "...", GROUP = "Group",
 		FACTION_ALLIANCE = "Alliance", FACTION_HORDE = "Horde", PVP_ENABLED = "PvP",
 		SPELL_TIME_REMAINING_DAYS = "%d |4day:days; remaining", SPELL_TIME_REMAINING_HOURS = "%d |4hour:hours; remaining",
 		SPELL_TIME_REMAINING_MIN = "%d |4minute:minutes; remaining", SPELL_TIME_REMAINING_SEC = "%d |4second:seconds; remaining",
@@ -355,6 +355,8 @@ local function staticPopup(index)
 	-- its chat input border: nameless left and right textures
 	new("Texture", nil, popup.editBox):SetTexture([[Interface\ChatFrame\UI-ChatInputBorder-Left]])
 	new("Texture", nil, popup.editBox):SetTexture([[Interface\ChatFrame\UI-ChatInputBorder-Right]])
+	-- and a texture of its own (as the client's text selection is)
+	new("Texture", nil, popup.editBox):SetTexture([[Interface\Buttons\WHITE8X8]])
 	popup.wideEditBox = hidden(new("EditBox", name .. "WideEditBox", popup))
 	popup.moneyFrame = hidden(new("Frame", name .. "MoneyFrame", popup))
 	popup.moneyInputFrame = hidden(new("Frame", name .. "MoneyInputFrame", popup))
@@ -597,7 +599,12 @@ local function buildFrames()
 	_G.GameMenuButtonRatings:Hide() -- shown in Korea only
 	local options = hidden(new("Frame", "InterfaceOptionsFrame", UIParent))
 	options.lastFrame = nil
-	new("Frame", "InterfaceOptionsFramePanelContainer", options)
+	options:SetSize(648, 520) -- InterfaceOptionsFrame.xml
+	options:SetPoint("CENTER")
+	local container = new("Frame", "InterfaceOptionsFramePanelContainer", options)
+	-- right of the 175x429 category list at (22, -40), 16 apart: 413x428
+	container:SetPoint("TOPLEFT", options, "TOPLEFT", 22 + 175 + 16, -40)
+	container:SetPoint("BOTTOMRIGHT", options, "BOTTOMRIGHT", -22, 520 - 40 - 428)
 	new("Frame", "InterfaceOptionsFrameCategories", options)
 	for i = 1, 31 do
 		button("Button", "InterfaceOptionsFrameCategoriesButton" .. i, _G.InterfaceOptionsFrameCategories)
@@ -668,6 +675,27 @@ local function buildFrames()
 	local scrollBar = new("Slider", "LFDQueueFrameSpecificListScrollFrameScrollBar", scroll)
 	button("Button", "LFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton", scrollBar)
 	button("Button", "LFDQueueFrameSpecificListScrollFrameScrollBarScrollDownButton", scrollBar)
+	-- the Dungeon Finder's dialogs (LFDFrame.xml), with UIPanelButtonTemplate2
+	-- buttons: no button textures, but three of their own
+	local function button2(name, parent)
+		local b = new("Button", name, parent, "UIPanelButtonTemplate2")
+		state[b].highlightTexture = new("Texture", nil, b)
+		for _, side in ipairs({ "Left", "Middle", "Right" }) do
+			new("Texture", name .. side, b)
+		end
+		return b
+	end
+	local roleCheck = hidden(new("Frame", "LFDRoleCheckPopup", UIParent))
+	button2("LFDRoleCheckPopupAcceptButton", roleCheck)
+	button2("LFDRoleCheckPopupDeclineButton", roleCheck)
+	local readyPopup = hidden(new("Frame", "LFDDungeonReadyPopup", UIParent))
+	new("Frame", "LFDDungeonReadyStatus", readyPopup)
+	local readyDialog = new("Frame", "LFDDungeonReadyDialog", readyPopup)
+	new("Texture", "LFDDungeonReadyDialogBackground", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-BACKGROUND-RANDOMDUNGEON]])
+	new("Texture", "LFDDungeonReadyDialogFiligree", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-FILIGREE]])
+	new("Texture", "LFDDungeonReadyDialogBottomArt", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-FILIGREE]])
+	button2("LFDDungeonReadyDialogEnterDungeonButton", readyDialog)
+	button2("LFDDungeonReadyDialogLeaveQueueButton", readyDialog)
 	local merchant = hidden(new("Frame", "MerchantFrame", UIParent))
 	for i = 1, 2 do
 		button("Button", "MerchantFrameTab" .. i, merchant)
@@ -682,6 +710,9 @@ local function buildFrames()
 		button("Button", name, merchant)
 	end
 	local worldMap = hidden(new("Frame", "WorldMapFrame", UIParent))
+	-- the zone you hover and its description (WorldMapFrame.xml)
+	new("FontString", "WorldMapFrameAreaLabel", worldMap):SetFont([[Fonts\FRIZQT__.TTF]], 22, "OUTLINE")
+	new("FontString", "WorldMapFrameAreaDescription", worldMap):SetFont([[Fonts\FRIZQT__.TTF]], 16, "OUTLINE")
 	-- the framerate texts (Ctrl+R): WorldFrame.xml and WorldMapFrame.xml
 	hidden(new("FontString", "FramerateLabel", _G.WorldFrame))
 	hidden(new("FontString", "FramerateText", _G.WorldFrame))
@@ -730,6 +761,7 @@ local function buildFrames()
 	lfg.eye = eye
 	eye.texture = new("Texture", "MiniMapLFGFrameIconTexture", eye)
 	new("Frame", "MiniMapLFGFrameDropDown", lfg, "UIDropDownMenuTemplate")
+	hidden(new("Frame", "LFDSearchStatus", lfg)):SetBackdrop({})
 	local difficulty = hidden(new("Frame", "MiniMapInstanceDifficulty", minimap))
 	new("Texture", "MiniMapInstanceDifficultyTexture", difficulty)
 	new("FontString", "MiniMapInstanceDifficultyText", difficulty)
@@ -899,6 +931,7 @@ local function frameXML(client)
 	f.ChatEdit_FocusActiveWindow = noop
 	f.ChatEdit_InsertLink = function(link) return nil end
 	f.ChatEdit_SendText = noop
+	f.EquipmentManager_EquipSet = function(name) client.world.equippedSet = name end
 	f.ChatEdit_OnEscapePressed = function(editBox) editBox:Hide() end
 	f.ChatTypeInfo = nil
 
@@ -990,6 +1023,7 @@ local function frameXML(client)
 		local popup = _G.StaticPopup1
 		popup.which, popup.data = which, data
 		popup.text:SetText(string.format(info.text or "", text1 or "", text2 or ""))
+		if info.hasEditBox then popup.editBox:Show() else popup.editBox:Hide() end
 		popup:Show()
 		if info.OnShow then client:Call(info.OnShow, popup, data) end
 		return popup
@@ -1171,6 +1205,15 @@ local function frameXML(client)
 	f.PlaySound = api.PlaySound
 	f.QuestLog_Update = noop
 	f.WatchFrame_Update = noop
+	f.WorldMapFrame_Update = noop
+	-- a tracker line's text (WatchFrame.lua): titles in gold
+	f.WatchFrame_SetLine = function(line, anchor, verticalOffset, isHeader, text)
+		line.text:SetText(text)
+		if isHeader then
+			line.text:SetTextColor(.75, .61, 0)
+		end
+	end
+	f.MouseIsOver = function(frame) return frame:IsMouseOver() end
 	f.WatchFrame_Expand = noop
 	f.WatchFrame_Collapse = noop
 	f.WorldStateAlwaysUpFrame_Update = noop
@@ -1438,14 +1481,15 @@ function Blizzard.install(owner)
 	_G.LoadAddOn = client.api.LoadAddOn
 
 	-- whatever else is read: ALL CAPS strings read as their own name,
-	-- anything else nil
+	-- anything else nil. Slash command names (SLASH_<KEY><n>) are nil
+	-- unless registered: lookups walk them until the first missing one.
 	setmetatable(_G, {
 		__index = function(_, key)
 			if type(key) ~= "string" then
 				return nil
 			end
 			client.missing[key] = (client.missing[key] or 0) + 1
-			if key:match("^[%u%d_]+$") and key:match("%u") and not NIL_CAPS[key] then
+			if key:match("^[%u%d_]+$") and key:match("%u") and not NIL_CAPS[key] and not key:match("^SLASH_") then
 				return key
 			end
 			return nil

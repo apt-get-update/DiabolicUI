@@ -394,6 +394,10 @@ local Reset = function(tooltip)
 			nextLine:ClearAllPoints()
 			nextLine:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -2)
 		end
+		if tooltip.TransmogText1 then
+			tooltip.TransmogText1:ClearAllPoints()
+			tooltip.TransmogText1:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -2)
+		end
 		if (info.titleIndex == 2) then
 			local tagLine = _G[name .. "TextLeft1"]
 			tagLine:SetAlpha(1)
@@ -417,6 +421,24 @@ local OffsetFromTop = function(tooltip, region, edge)
 	if top and y then
 		return y - top
 	end
+end
+
+-- ChromieCraft's client patch gives item tooltips (GameTooltipTemplate's,
+-- not the comparison ones) two more texts under the name: "Transmogrified
+-- to:" and the appearance's name. When they're shown, the line after the
+-- name goes under them, and the tooltip's OnUpdate puts it back there every
+-- 0.2 seconds. Returns them when shown.
+local GetTransmogTexts = function(tooltip)
+	local first, second = tooltip.TransmogText1, tooltip.TransmogText2
+	if first and second and first:IsShown() and second:IsShown() then
+		return first, second
+	end
+end
+
+-- The first text of the body, next to the icon: the transmog texts, or
+-- else the line after the name.
+local GetBodyTop = function(tooltip, info)
+	return (GetTransmogTexts(tooltip)) or _G[tooltip:GetName() .. "TextLeft" .. (info.titleIndex + 1)]
 end
 
 -- Runs after Blizzard has sized the tooltip: arranges our parts around
@@ -450,10 +472,16 @@ local Layout = function(tooltip)
 
 	-- Body text moves right, next to the icon.
 	titleLine:SetAlpha(0)
-	if nextLine then
-		nextLine:ClearAllPoints()
+	local bodyTop = GetBodyTop(tooltip, info)
+	if bodyTop then
+		bodyTop:ClearAllPoints()
 		-- below the banner (which reaches BANNER_PAD under the name), level with the icon
-		nextLine:SetPoint("TOPLEFT", titleLine, "BOTTOMLEFT", SHIFT, -(BANNER_PAD + TITLE_GAP))
+		bodyTop:SetPoint("TOPLEFT", titleLine, "BOTTOMLEFT", SHIFT, -(BANNER_PAD + TITLE_GAP))
+	end
+	local _, transmogBottom = GetTransmogTexts(tooltip)
+	if transmogBottom and nextLine then
+		nextLine:ClearAllPoints()
+		nextLine:SetPoint("TOPLEFT", transmogBottom, "BOTTOMLEFT", 0, -2) -- where the patch puts it too
 	end
 
 	local titleTop = OffsetFromTop(tooltip, titleLine, "TOP")
@@ -596,9 +624,9 @@ local CheckLayout = function(tooltip)
 		return Layout(tooltip)
 	end
 	local name = tooltip:GetName()
-	local nextLine = _G[name .. "TextLeft" .. (info.titleIndex + 1)]
-	if nextLine then
-		local _, relativeTo, _, x = nextLine:GetPoint()
+	local bodyTop = GetBodyTop(tooltip, info)
+	if bodyTop then
+		local _, relativeTo, _, x = bodyTop:GetPoint()
 		if (relativeTo ~= _G[name .. "TextLeft" .. info.titleIndex]) or (not x) or (math_abs(x - SHIFT) > .5) then
 			return Layout(tooltip)
 		end

@@ -8,6 +8,7 @@ Engine:NewConfig("ChatWindows", {
 	timeFading = 3, -- seconds it takes for chat text to fade out, 1-5
 	timeVisible = 20, -- seconds chat text stays fully visible before it starts fading, 5-120
 	backgroundOpacity = 25, -- opacity (%) of the chat window background while typing, 0-100.
+	slideMessages = true, -- new chat lines slide in instead of jumping (modules/chat/slide.lua)
 
 	-- the user's own manually dragged/resized main chat window layout,
 	-- applied instead of the styled default position/size while
@@ -20,6 +21,15 @@ Engine:NewConfig("ChatWindows", {
 
 -- chat filters and emoticons
 Engine:NewConfig("ChatFilters", {
-	copyWebLinks = true -- left-click a http(s) web link in chat to copy it
+
+	-- shorter system lines (modules/chat/cleaner.lua)
+	cleanLoot = true, -- loot, money, quest rewards: "+ [Item] (3)"
+	cleanProgress = true, -- experience, reputation, honor, skills, level ups
+	cleanQuests = true, -- quests accepted and completed
+	cleanStatus = true, -- away, busy, rested
+	cleanOnline = true, -- friends and guild members coming online / going offline
+	cleanAuctions = true, -- auctions created, sold, won, outbid, expired
+	cleanAchievements = true, -- "Name: [Achievement]"
+	hideChatNoise = true -- channel join/leave/change notices, empty lines
 })
 

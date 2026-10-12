@@ -8,6 +8,5 @@
 
 <!-- Controller Menu controllers -->
 <Script file='controller_menu.lua'/>
-<Script file='controller_chat.lua'/>
 
 </Ui>

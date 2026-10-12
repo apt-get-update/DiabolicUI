@@ -55,7 +55,7 @@ function TestMinimap:test_the_diabolic_look_replaces_blizzards_pieces()
 	lu.assertEquals(select(1, _G.MiniMapBattlefieldFrame:GetPoint()), "BOTTOMLEFT")
 	lu.assertNil(_G.MiniMapBattlefieldIcon:IsShown())
 	-- scaled from the saved size
-	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale() * 0.8, 0.0001)
+	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale(), 0.0001)
 	-- the stopwatch's saved settings exist
 	lu.assertNotNil(_G.BlizzardStopwatchOptions)
 	assertClean(client)
@@ -198,20 +198,32 @@ function TestMinimap:test_edit_mode_moves_and_resizes_the_minimap()
 	client:RunScript(overlay(), "OnDragStart", "RightButton")
 	client.world.cursor = { 600, 400 }
 	client:Tick(0.1)
-	lu.assertTrue(module:GetUserScale() > 0.8)
+	lu.assertTrue(module:GetUserScale() > 1)
 	client.world.cursor = { 5000, -5000 }
 	client:Tick(0.1)
-	lu.assertEquals(module:GetUserScale(), 1.8)
+	lu.assertEquals(module:GetUserScale(), 1.5)
 	client.world.cursor = { -5000, 5000 }
 	client:Tick(0.1)
-	lu.assertEquals(module:GetUserScale(), 0.6)
+	lu.assertEquals(module:GetUserScale(), 0.5)
 	client:RunScript(overlay(), "OnDragStop")
 
-	-- the exit button
-	client:Click(module.exitEditModeButton)
+	-- left (DiabolicUI's Lock Frames does it, see test_session_menu.lua)
+	module:ExitEditMode()
 	lu.assertFalse(module:IsEditModeActive())
 	lu.assertNil(overlay():IsShown())
 	module:ExitEditMode() -- already off
+	assertClean(client)
+end
+
+function TestMinimap:test_its_art_keeps_its_proportions_at_any_size()
+	-- the border, clock and zone text grow and shrink with the map
+	for _, size in ipairs({ .5, 1, 1.5 }) do
+		ns.db.global.minimap.userScale = size
+		module:UpdateSize()
+		lu.assertAlmostEquals(module.widgetFrame:GetScale(), 1 / 1.614, 1e-6)
+		-- the frame its border buttons sit on too: laid out for the Diabolic size
+		lu.assertAlmostEquals(_G.Minimap:GetWidth(), 280 / 1.614, 1e-6)
+	end
 	assertClean(client)
 end
 
@@ -252,6 +264,9 @@ function TestMinimap:test_positions_are_saved_relative_to_the_nearest_edge()
 		{ "TOP", 0, -30, "TOP" }, { "RIGHT", -30, 0, "RIGHT" }, { "CENTER", 0, 0, "CENTER" },
 		{ "BOTTOM", 0, 30, "BOTTOM" }, { "BOTTOMRIGHT", -30, 30, "BOTTOMRIGHT" }, { "TOPLEFT", 30, -30, "TOPLEFT" },
 	}
+	-- (the fake client lays frames out without their scales: at scale 1,
+	-- what it computes is what the game would)
+	_G.Minimap:SetScale(1)
 	for _, case in ipairs(cases) do
 		_G.Minimap:ClearAllPoints()
 		_G.Minimap:SetPoint(case[1], _G.UIParent, case[1], case[2], case[3])
@@ -276,7 +291,7 @@ end
 function TestMinimap:test_setscale_and_resetscale()
 	slash("setscale", "1.2")
 	lu.assertEquals(ns.db.global.core.relativeScale, 1.2)
-	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale() * 0.8, 0.0001)
+	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale(), 0.0001)
 	local bigger = _G.Minimap:GetScale()
 	slash("setscale", "9") -- kept within bounds
 	lu.assertEquals(ns.db.global.core.relativeScale, 1.5)
@@ -343,6 +358,15 @@ function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
 	lu.assertEquals(icon:GetAlpha(), 1)
 	client:RunScript(frame, "OnMouseUp")
 	client:Leave()
+
+	-- edit mode's overlay covers it too (it sits in its "+" on the border)
+	module:EnterEditMode()
+	local box, plus = module.editHighlight, module.mbbButton
+	lu.assertTrue(box:GetLeft() <= plus:GetLeft() and box:GetRight() >= plus:GetRight())
+	lu.assertTrue(box:GetTop() >= plus:GetTop() and box:GetBottom() <= plus:GetBottom())
+	-- and is drawn over it, like the other frames' boxes
+	lu.assertEquals({ box:GetFrameStrata(), frame:GetFrameStrata() }, { "FULLSCREEN_DIALOG", "LOW" })
+	module:ExitEditMode()
 	lu.assertEquals(icon:GetAlpha(), 0.85)
 	client:RunScript(frame, "OnMouseDown")
 	lu.assertEquals(icon:GetAlpha(), 0.95)
@@ -377,8 +401,9 @@ function TestMinimap:test_the_options_page_is_a_diabolicui_subcategory()
 		if registered == page then found = true end
 	end
 	lu.assertTrue(found)
+	_G.Minimap:SetScale(1) -- (the fake client lays frames out without their scales)
 	page:Show()
-	lu.assertEquals(page.sizeInput:GetText(), "80")
+	lu.assertEquals(page.sizeInput:GetText(), "100")
 	lu.assertEquals(page.anchorRadios.TOPRIGHT:GetChecked(), 1)
 	client:Tick(0.3) -- kept live while open
 	assertClean(client)
@@ -401,7 +426,7 @@ function TestMinimap:test_the_size_slider_and_its_box()
 	lu.assertEquals(page.sizeInput:GetText(), "120")
 
 	-- typed values, clamped to the limits
-	for _, case in ipairs({ { "150", 1.5 }, { "999", 1.8 }, { "1", 0.6 } }) do
+	for _, case in ipairs({ { "120", 1.2 }, { "999", 1.5 }, { "1", 0.5 } }) do
 		page.sizeInput:SetFocus()
 		page.sizeInput:SetText(case[1])
 		client:RunScript(page.sizeInput, "OnEnterPressed")
@@ -460,13 +485,9 @@ function TestMinimap:test_the_zone_fade_options()
 	assertClean(client)
 end
 
-function TestMinimap:test_the_edit_button_and_the_tooltips()
+function TestMinimap:test_the_tooltips()
 	local page = panel()
 	page:Show()
-	client:Click(page.editButton)
-	lu.assertTrue(module:IsEditModeActive())
-	client:Click(page.editButton)
-	lu.assertFalse(module:IsEditModeActive())
 	for _, widget in ipairs(client:WidgetsWithScript("OnEnter")) do
 		local s = Client.Widgets.state[widget]
 		local parent = s.parent
