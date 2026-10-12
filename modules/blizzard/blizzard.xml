@@ -7,6 +7,7 @@
 <Script file='lootframe.lua'/>
 <Script file='mirrortimers.lua'/>
 <Script file='popups.lua'/>
+<Script file='questietracker.lua'/>
 <Script file='tooltips.lua'/>
 <Script file='itemtooltips.lua'/>
 <Script file='totembar.lua'/>

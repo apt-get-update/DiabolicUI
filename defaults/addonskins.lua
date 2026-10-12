@@ -2,5 +2,6 @@
 local _, Engine = ...
 
 Engine:NewConfig("AddOnSkins", {
-	styleTrinketMenu = true -- TrinketMenu's buttons in the action bars' style, without its backgrounds
+	styleTrinketMenu = true, -- TrinketMenu's buttons in the action bars' style, without its backgrounds
+	styleQuestieTracker = true -- Questie's tracker in the fonts and colors of Blizzard's
 })

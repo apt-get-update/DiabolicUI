@@ -1,8 +1,8 @@
 -- Run from the addon root: lua5.1 tests/test_session_skins.lua
 --
 -- Other addons and Blizzard frames styled in the fake client: TrinketMenu's
--- buttons, the world map's zone names, Blizzard's objectives tracker (its
--- fonts, and moving it), and new chat lines sliding in.
+-- buttons, Questie's tracker, the world map's zone names, Blizzard's
+-- objectives tracker (its fonts, and moving it), and new chat lines sliding in.
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -108,6 +108,112 @@ function TestTrinketMenu:test_the_option_off()
 	client.api.LoadAddOn("TrinketMenu")
 	lu.assertNotNil(_G.TrinketMenu_MainFrame:GetBackdrop())
 	lu.assertNil(_G.TrinketMenu_Trinket0.DiabolicStyled)
+	assertClean(client)
+end
+
+-- Questie's tracker ---------------------------------------------------------------
+
+-- Questie's tracker lines, made the way its TrackerLinePool makes them: a
+-- label whose SetText keeps the original as _SetText, and SetMode setting
+-- Questie's own font when a line changes kind.
+local function questie(world, loadedBeforeUs, lineInUse)
+	local addon = { name = "Questie-335", enabled = true, onLoad = function()
+		local lines = {}
+		local pool = {
+			GetLine = function(i) return lines[i] end,
+			SetMode = function(self, mode)
+				if mode ~= self.mode then
+					self.mode = mode
+					self.label:SetFont([[Fonts\FRIZQT__.TTF]], 11, "OUTLINE")
+					self.label:SetHeight(11)
+				end
+			end,
+		}
+		pool.Initialize = function(count)
+			for i = 1, count do
+				local line = CreateFrame("Button", "linePool" .. i, _G.UIParent)
+				line.label = line:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+				line.label._SetText = line.label.SetText
+				line.label.frame = line
+				line.label.SetText = function(self, text) self:_SetText(text) end
+				line.SetMode = pool.SetMode
+				lines[i] = line
+			end
+		end
+		local modules = { TrackerLinePool = pool, TrackerBaseFrame = { Update = function() end } }
+		_G.QuestieLoader = { ImportModule = function(_, name) return modules[name] end }
+		if lineInUse then
+			pool.Initialize(1)
+			lines[1]:SetMode("quest")
+			lines[1].label:SetText("|cFFFF8040A Quest|r")
+		end
+	end }
+	if loadedBeforeUs then
+		addon.loaded = true
+		addon.onLoad()
+	end
+	table.insert(world.addons, addon)
+end
+
+TestQuestieTracker = {}
+
+function TestQuestieTracker:tearDown()
+	_G.QuestieLoader = nil
+	client = nil
+end
+
+local function assertLine(line, font, color, text)
+	lu.assertEquals(line.label:GetFontObject(), _G[font])
+	local r, g, b = line.label:GetTextColor()
+	lu.assertEquals({ r, g, b }, color)
+	lu.assertEquals(line.label:GetText(), text)
+end
+
+function TestQuestieTracker:test_lines_in_our_fonts_and_titles_in_gold()
+	boot({ world = function(world) questie(world, true) end })
+	local title, questieColor = { unpack(client.Engine:GetDB("Data: Colors").General.Title) }, { 1, .82, 0 }
+	-- its tracker starts some time after login
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	pool.Initialize(3)
+	local zone, quest, objective = pool.GetLine(1), pool.GetLine(2), pool.GetLine(3)
+	zone:SetMode("zone")
+	zone.label:SetText("|cFFC0C0C0Dragonblight|r")
+	quest:SetMode("quest")
+	quest.label:SetText("|cFFFF8040[72] The Might of the Horde|r |cFF00FF00(50%)|r")
+	objective:SetMode("objective")
+	objective.label:SetText("|cFFEEEEEE- Wolves slain: 2/5|r")
+	assertLine(zone, "DiabolicFont_HeaderRegular12", questieColor, "|cFFC0C0C0Dragonblight|r")
+	assertLine(quest, "DiabolicFont_HeaderRegular12", title, "[72] The Might of the Horde (50%)")
+	assertLine(objective, "DiabolicFont_SansRegular12", questieColor, "|cFFEEEEEE- Wolves slain: 2/5|r")
+	lu.assertEquals(quest.label:GetHeight(), 12)
+	-- a line used for something else
+	quest:SetMode("objective")
+	quest.label:SetText("|cFFEEEEEE- Quest Complete!|r")
+	assertLine(quest, "DiabolicFont_SansRegular12", questieColor, "|cFFEEEEEE- Quest Complete!|r")
+	quest:SetMode("achieve")
+	quest.label:SetText("|cFFFFFF00Northrend Dungeonmaster|r")
+	assertLine(quest, "DiabolicFont_HeaderRegular12", title, "Northrend Dungeonmaster")
+	quest.label:SetText(nil)
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_questie_loaded_after_us_with_a_line_in_use()
+	boot({ world = function(world) questie(world, false, true) end })
+	client.api.LoadAddOn("Questie-335")
+	client:FireEvent("ADDON_LOADED", "Questie-335")
+	local line = _G.QuestieLoader:ImportModule("TrackerLinePool").GetLine(1)
+	assertLine(line, "DiabolicFont_HeaderRegular12", { unpack(client.Engine:GetDB("Data: Colors").General.Title) }, "A Quest")
+	-- once is enough
+	client:FireEvent("ADDON_LOADED", "SomethingElse")
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_the_option_off()
+	boot({ world = function(world) questie(world, true) end, savedVariables = skins({ styleQuestieTracker = false }) })
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	pool.Initialize(1)
+	pool.GetLine(1):SetMode("quest")
+	lu.assertNil(pool.GetLine(1).DiabolicStyled)
 	assertClean(client)
 end
 

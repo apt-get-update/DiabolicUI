@@ -322,6 +322,8 @@ L["s"] = true -- abbreviation for "seconds" when showing time
 -- AddOns page (other addons styled)
 L["AddOns"] = true
 L["Style TrinketMenu"] = true
+L["Style Questie's Tracker"] = true
+L["Shows Questie's quest tracker in the fonts and colors of Blizzard's: quest titles in gold.|n|nRequires a UI reload to apply."] = true
 L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = true
 L["Drag to move the tracker"] = true
 L["Reset Position"] = true

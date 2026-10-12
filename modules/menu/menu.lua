@@ -1096,10 +1096,14 @@ Module.CreateOptionsPanel = function(self)
 	local styleTrinketMenu = CreateCheckbox(addonsPanel, "StyleTrinketMenu", L["Style TrinketMenu"], L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."], reloadOption(skinsDB, "styleTrinketMenu"))
 	layout:Place(styleTrinketMenu, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
+	local styleQuestieTracker = CreateCheckbox(addonsPanel, "StyleQuestieTracker", L["Style Questie's Tracker"], L["Shows Questie's quest tracker in the fonts and colors of Blizzard's: quest titles in gold.|n|nRequires a UI reload to apply."], reloadOption(skinsDB, "styleQuestieTracker"))
+	layout:Place(styleQuestieTracker, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
 	addonsPanel.okay = function() end
 	addonsPanel.cancel = function()
 		reskinLoot:SetChecked(lootDB.enableSkin)
 		styleTrinketMenu:SetChecked(skinsDB.styleTrinketMenu)
+		styleQuestieTracker:SetChecked(skinsDB.styleQuestieTracker)
 	end
 	addonsPanel.refresh = addonsPanel.cancel
 	addonsPanel.cancel()

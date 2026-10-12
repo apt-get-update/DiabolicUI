@@ -181,6 +181,8 @@ L["No free character macro slot for your %s commands, they're kept until there's
 -- AddOns page (other addons styled)
 L["AddOns"] = "Addons"
 L["Style TrinketMenu"] = "Styliser TrinketMenu"
+L["Style Questie's Tracker"] = "Styliser le suivi de Questie"
+L["Shows Questie's quest tracker in the fonts and colors of Blizzard's: quest titles in gold.|n|nRequires a UI reload to apply."] = "Affiche le suivi de quêtes de Questie dans les polices et couleurs de celui de Blizzard : titres des quêtes en or.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = "Affiche les boutons de bijoux de TrinketMenu comme ceux des barres d'action, sans ses fonds.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Drag to move the tracker"] = "Glissez pour déplacer le suivi"
 L["Reset Position"] = "Position par défaut"
