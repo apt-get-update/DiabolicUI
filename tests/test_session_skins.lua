@@ -119,7 +119,13 @@ end
 local function questie(world, loadedBeforeUs, lineInUse)
 	local addon = { name = "Questie-335", enabled = true, onLoad = function()
 		local lines, current = {}, 0
+		local buttons, currentButton = {}, 0
 		local pool = {
+			GetNextItemButton = function()
+				currentButton = currentButton + 1
+				return buttons[currentButton]
+			end,
+			GetCurrentButton = function() return buttons[currentButton] end,
 			GetLine = function(i) return lines[i] end,
 			GetNextLine = function()
 				current = current + 1
@@ -154,6 +160,21 @@ local function questie(world, loadedBeforeUs, lineInUse)
 				end)
 				line.expandZone = expandZone
 				lines[i] = line
+				-- a quest item's button, as Questie makes them
+				local button = CreateFrame("Button", "Questie_ItemButton" .. i, _G.UIParent, "SecureActionButtonTemplate")
+				CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+				button.count = button:CreateFontString(nil, "ARTWORK", "SystemFont_Outline_Small")
+				button.SetItem = function(self, itemId, questId, size)
+					self.itemId = itemId
+					self:SetNormalTexture([[Interface\Icons\INV_Misc_Bomb_01]])
+					self:SetPushedTexture([[Interface\Icons\INV_Misc_Bomb_01]])
+					self:SetHighlightTexture([[Interface\Buttons\ButtonHilight-Square]])
+					self:SetSize(size, size)
+					self.count:SetFont([[Fonts\FRIZQT__.TTF]], 11, "OUTLINE")
+					self:Show()
+					return true
+				end
+				buttons[i] = button
 				-- a few at a time, in a coroutine
 				if coroutine.running() then
 					coroutine.yield()
@@ -315,6 +336,39 @@ function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
 	-- the line used for a quest: no button
 	zone:SetMode("quest")
 	lu.assertNil(button:IsShown())
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_quest_items_like_the_action_bars_buttons()
+	boot({ world = function(world) questie(world, true) end })
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	pool.Initialize(1)
+	local button = pool.GetNextItemButton()
+	button:SetItem(12345, 678, 18) -- 18: half the bars' 36
+	local style = client.Engine:GetDB("ActionBars").visuals.buttons[36]
+	local icon = button:GetNormalTexture()
+	lu.assertEquals({ icon:GetSize() }, { 14, 14 })
+	lu.assertEquals({ icon:GetPoint() }, { "TOPLEFT", button, "TOPLEFT", 2, -2 })
+	lu.assertEquals({ icon:GetTexCoord() }, { 5/64, 5/64, 5/64, 59/64, 59/64, 5/64, 59/64, 59/64 })
+	lu.assertEquals({ button:GetPushedTexture():GetSize() }, { 14, 14 })
+	lu.assertEquals(button.DiabolicBorder:GetTexture(), style.border_normal.texture)
+	lu.assertEquals({ button.DiabolicBorder:GetSize() }, { 32, 32 })
+	lu.assertEquals({ button.DiabolicBorder:GetPoint() }, { "TOPLEFT", button, "TOPLEFT", -7, 7 })
+	lu.assertEquals(button.DiabolicSlot:GetTexture(), style.slot.texture)
+	lu.assertEquals(button:GetHighlightTexture():GetTexture(), style.border_normal_highlight.texture)
+	lu.assertEquals({ button:GetHighlightTexture():GetSize() }, { 32, 32 })
+	local cooldown = button:GetChildren()
+	lu.assertEquals({ cooldown:GetPoint() }, { "TOPLEFT", icon, "TOPLEFT", 0, 0 })
+	lu.assertEquals({ button.count:GetFont() }, { _G.DiabolicFont_SansBold10:GetFont() })
+	-- given another item later: styled again, its border made once
+	local border = button.DiabolicBorder
+	button:SetItem(12346, 679, 36)
+	lu.assertEquals({ icon:GetSize() }, { 28, 28 })
+	lu.assertEquals(button.DiabolicBorder, border)
+	-- no item: left alone
+	button.itemId = nil
+	button:Hide()
+	button:SetItem(nil, 680, 36)
 	assertClean(client)
 end
 

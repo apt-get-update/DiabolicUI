@@ -3,7 +3,8 @@
 -- quest titles in Exocet and the title color, the objectives in the body
 -- font, and the same space after every quest. Its "Quests (By ...)" line,
 -- when it doesn't sort by zone, reads "Objectives" like Blizzard's title;
--- each zone line gets Blizzard's collapse button, and its sounds.
+-- each zone line gets Blizzard's collapse button, and its sounds; the quest
+-- items' buttons look like the action bars' (like TrinketMenu's, trinketmenu.lua).
 -- Questie's settings, and the colors of its objectives, are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: QuestieTracker", "LOW")
@@ -29,6 +30,9 @@ local OBJECTIVES = _G.OBJECTIVES_TRACKER_LABEL
 
 local TITLE_FONT = "DiabolicFont_HeaderRegular12"
 local LINE_FONT = "DiabolicFont_SansRegular12"
+-- the action bars' stack size font (settings/actionbars.lua; the copy kept
+-- there has no methods of its own)
+local COUNT_FONT = "DiabolicFont_SansBold10"
 local FONT_SIZE = 12
 
 -- the color Questie's lines start with (GameFontNormal's): its own colors
@@ -211,6 +215,56 @@ Module.UpdateSpacing = function(self)
 	tracker:UpdateHeight()
 end
 
+-- A quest item's button like the action bars' 36px ones, at Questie's size:
+-- the icon inset in the border, the slot behind it. Every time Questie
+-- gives it an item, as it sets its textures and sizes again then.
+local Place = function(texture, element, scale)
+	texture:ClearAllPoints()
+	texture:SetSize(element.size[1] * scale, element.size[2] * scale)
+	for _, point in ipairs(element.points) do
+		texture:SetPoint(point[1], point[2] * scale, point[3] * scale)
+	end
+end
+
+local SetItem = function(button)
+	if broken or not (button.itemId and button:IsShown()) then
+		return
+	end
+	local style = Module:GetDB("ActionBars").visuals.buttons[36]
+	local scale = button:GetWidth() / 36
+	for _, icon in ipairs({ button:GetNormalTexture(), button:GetPushedTexture() }) do
+		Place(icon, style.icon, scale)
+		icon:SetTexCoord(unpack(style.icon.texcoords))
+	end
+	if not button.DiabolicBorder then
+		button.DiabolicSlot = button:CreateTexture(nil, "BACKGROUND")
+		button.DiabolicSlot:SetTexture(style.slot.texture)
+		button.DiabolicBorder = button:CreateTexture(nil, "OVERLAY")
+		button.DiabolicBorder:SetTexture(style.border_normal.texture)
+	end
+	Place(button.DiabolicSlot, style.slot, scale)
+	Place(button.DiabolicBorder, style.border_normal, scale)
+	button:SetHighlightTexture(style.border_normal_highlight.texture)
+	Place(button:GetHighlightTexture(), style.border_normal_highlight, scale)
+	-- the cooldown over the icon, the charges in the bars' font
+	for _, child in ipairs({ button:GetChildren() }) do
+		if (child:GetObjectType() == "Cooldown") then
+			child:ClearAllPoints()
+			child:SetAllPoints(button:GetNormalTexture())
+		end
+	end
+	if button.count then
+		button.count:SetFont(_G[COUNT_FONT]:GetFont())
+	end
+end
+
+local StyleItemButton = function(button)
+	if button and (not button.DiabolicStyled) and (type(button.SetItem) == "function") then
+		hooksecurefunc(button, "SetItem", SetItem)
+		button.DiabolicStyled = true
+	end
+end
+
 -- The lines Questie has made by now.
 Module.StyleLines = function(self)
 	local pool = self.LinePool
@@ -243,6 +297,14 @@ Module.StyleQuestie = function(self)
 			StyleLine(line)
 		end
 	end)
+	-- its quest items' buttons, the same way (left as they are without these)
+	if HasFunctions(pool, { "GetNextItemButton", "GetCurrentButton" }) then
+		hooksecurefunc(pool, "GetNextItemButton", function()
+			if not broken then
+				StyleItemButton(pool.GetCurrentButton())
+			end
+		end)
+	end
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
