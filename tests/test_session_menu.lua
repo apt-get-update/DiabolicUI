@@ -613,6 +613,35 @@ function TestOptionsMenu:test_the_chat_box_covers_its_buttons()
 	assertClean(client)
 end
 
+function TestOptionsMenu:test_a_box_over_unplaced_frames_covers_its_frame()
+	local menu = client:GetModule("Menu")
+	-- the chat not placed yet: its box takes its points, and follows once it is
+	local chat = _G.ChatFrame1
+	chat:ClearAllPoints()
+	menu:SetFramesUnlocked(true)
+	local mover = _G.DiabolicUIChatMover
+	lu.assertNil(mover:GetLeft())
+	chat:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 100, 100)
+	chat:SetSize(400, 200)
+	lu.assertEquals({ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) }, { 100, 500, 300, 100 })
+	menu:SetFramesUnlocked(false)
+
+	-- the menu's box covers only its buttons and texts: none of them placed,
+	-- it covers the menu's frame instead
+	local buttons = client:GetModule("ActionBars"):GetWidget("Menu: Main")
+	local master = buttons.MasterMenuButton
+	for _, frame in ipairs({ master, buttons.BagBarMenuButton, master.Gold, master.Performance }) do
+		frame:ClearAllPoints()
+	end
+	menu:SetFramesUnlocked(true)
+	local frame = client:GetModule("ActionBars"):GetWidget("Controller: Menu"):GetFrame()
+	mover = _G.DiabolicUIMenuMover
+	lu.assertEquals({ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) },
+		{ frame:GetLeft(), frame:GetRight(), frame:GetTop(), (frame:GetBottom()) })
+	menu:SetFramesUnlocked(false)
+	assertClean(client)
+end
+
 function TestOptionsMenu:test_the_ui_scale_slider()
 	local scaling = db("ScreenScaling")
 	local frame = client.Engine:GetFrame()
