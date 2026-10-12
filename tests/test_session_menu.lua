@@ -754,6 +754,36 @@ function TestOptionsMenu:test_trinketmenu_keeps_one_anchor()
 	assertClean(client)
 end
 
+function TestOptionsMenu:test_trinketmenu_stays_on_screen_when_the_ui_scale_changes()
+	local trinkets = CreateFrame("Frame", "TrinketMenu_MainFrame", _G.UIParent)
+	trinkets:SetSize(92, 52)
+	_G.TrinketMenuPerOptions = { XPos = 400, YPos = 300 }
+	local menu = client:GetModule("Menu")
+	menu:ApplyUIScale()
+	local left, top = trinkets:GetLeft() * trinkets:GetEffectiveScale(), trinkets:GetTop() * trinkets:GetEffectiveScale()
+	-- its saved spot converts to the new scale: same place on screen
+	widget("UIScale"):SetValue(80)
+	lu.assertAlmostEquals(_G.TrinketMenuPerOptions.XPos, 500, 1e-6)
+	lu.assertAlmostEquals(_G.TrinketMenuPerOptions.YPos, 375, 1e-6)
+	lu.assertAlmostEquals(trinkets:GetLeft() * trinkets:GetEffectiveScale(), left, 1e-6)
+	lu.assertAlmostEquals(trinkets:GetTop() * trinkets:GetEffectiveScale(), top, 1e-6)
+	widget("UIScale"):SetValue(100)
+	lu.assertAlmostEquals(_G.TrinketMenuPerOptions.XPos, 400, 1e-6)
+
+	-- a spot off the screen (saved at another scale) comes back to its edge
+	local width, height = _G.UIParent:GetWidth(), _G.UIParent:GetHeight()
+	_G.TrinketMenuPerOptions.XPos, _G.TrinketMenuPerOptions.YPos = width + 200, height + 100
+	menu:PinTrinketMenu()
+	lu.assertEquals({ _G.TrinketMenuPerOptions.XPos, _G.TrinketMenuPerOptions.YPos }, { width - 92, height })
+	lu.assertEquals({ trinkets:GetRight(), trinkets:GetTop() }, { width, height })
+	_G.TrinketMenuPerOptions.XPos, _G.TrinketMenuPerOptions.YPos = -50, 10
+	menu:PinTrinketMenu()
+	lu.assertEquals({ trinkets:GetLeft(), (trinkets:GetBottom()) }, { 0, 0 })
+	_G.TrinketMenuPerOptions, _G.TrinketMenu_MainFrame = nil, nil
+	widget("UIScale"):SetValue(100)
+	assertClean(client)
+end
+
 function TestOptionsMenu:test_every_page_fits_in_the_window()
 	local container = _G.InterfaceOptionsFramePanelContainer
 	for _, panel in ipairs(client.optionsPanels) do

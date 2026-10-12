@@ -1360,12 +1360,18 @@ end
 -- TrinketMenu places its window from its saved spot (TOPLEFT, in its own
 -- scale), and the game's layout cache can add another anchor for it once
 -- it's been dragged: with two, the window stretches between them. One
--- anchor only, the saved one, and no layout cache.
+-- anchor only, the saved one, and no layout cache. A spot off the screen
+-- (saved at another scale) is brought back to its edge, and saved there.
 Module.PinTrinketMenu = function(self)
 	local frame, saved = _G.TrinketMenu_MainFrame, _G.TrinketMenuPerOptions
 	if not (frame and saved and saved.XPos and saved.YPos) or InCombatLockdown() then
 		return
 	end
+	-- the screen, in the window's own scale
+	local ratio = UIParent:GetEffectiveScale() / frame:GetEffectiveScale()
+	local width, height = frame:GetWidth(), frame:GetHeight()
+	saved.XPos = math.max(0, math.min(saved.XPos, UIParent:GetWidth() * ratio - width))
+	saved.YPos = math.max(height, math.min(saved.YPos, UIParent:GetHeight() * ratio))
 	frame:SetUserPlaced(false)
 	frame:ClearAllPoints()
 	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", saved.XPos, saved.YPos)
@@ -1391,6 +1397,15 @@ Module.ApplyUIScale = function(self)
 			frame:SetScale(frame.DiabolicOwnScale)
 		end
 	end
+	-- its saved spot is in its own scale: a new UI Scale converts it, so the
+	-- window stays where it is on screen (from login on, where it was saved
+	-- at the UI Scale it's loaded with)
+	local saved, scale = _G.TrinketMenuPerOptions, GetUIScale()
+	if saved and saved.XPos and saved.YPos and self.trinketMenuUIScale and (self.trinketMenuUIScale ~= scale) then
+		saved.XPos = saved.XPos * self.trinketMenuUIScale / scale
+		saved.YPos = saved.YPos * self.trinketMenuUIScale / scale
+	end
+	self.trinketMenuUIScale = scale
 	self:PinTrinketMenu()
 end
 
