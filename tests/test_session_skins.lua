@@ -143,6 +143,16 @@ local function questie(world, loadedBeforeUs, lineInUse)
 				line.label.frame = line
 				line.label.SetText = function(self, text) self:_SetText(text) end
 				line.SetMode = pool.SetMode
+				-- the zone line's click area: collapses or expands the zone
+				local expandZone = CreateFrame("Button", nil, line)
+				expandZone.SetMode = function(self, mode) self.mode = mode end
+				expandZone:SetMode(1)
+				expandZone:SetScript("OnMouseUp", function(self, button)
+					if button == "LeftButton" and not IsShiftKeyDown() then
+						self:SetMode((self.mode == 1) and 0 or 1)
+					end
+				end)
+				line.expandZone = expandZone
 				lines[i] = line
 				-- a few at a time, in a coroutine
 				if coroutine.running() then
@@ -263,6 +273,48 @@ function TestQuestieTracker:test_the_same_space_after_every_quest()
 	lu.assertEquals(heights, { 16, 16, 27 + 12, 16, 12 + 12 })
 	lu.assertEquals(lines[3].label:GetHeight(), 27)
 	lu.assertTrue(tracker.heightUpdated)
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
+	boot({ world = function(world) questie(world, true) end })
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	pool.Initialize(2)
+	local zone = pool.GetNextLine()
+	zone:SetMode("zone")
+	zone.label:SetText("|cFFC0C0C0Quests (By Proximity)|r")
+	-- Blizzard's title, and its button just after it, arrow up
+	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL)
+	local button = zone.CollapseButton
+	lu.assertEquals(button:IsShown(), 1)
+	lu.assertEquals(button:GetNormalTexture():GetTexture(), [[Interface\Buttons\UI-Panel-QuestHideButton]])
+	lu.assertEquals({ button:GetNormalTexture():GetTexCoord() }, { 0, .5, 0, 1, .5, .5, .5, 1 }) -- (0, .5, .5, 1)
+	lu.assertEquals(select(4, button:GetPoint()), zone.label:GetStringWidth() + 4)
+	-- a click on the line collapses it, with Blizzard's sound, arrow down
+	client.sounds = {}
+	client:RunScript(zone.expandZone, "OnMouseUp", "LeftButton")
+	lu.assertEquals(zone.expandZone.mode, 0)
+	lu.assertEquals(client.sounds, { "igMiniMapClose" })
+	lu.assertEquals({ button:GetNormalTexture():GetTexCoord() }, { 0, 0, 0, .5, .5, 0, .5, .5 }) -- (0, .5, 0, .5)
+	-- Questie redraws it collapsed: no " +", the button says so
+	zone.expandZone:SetMode(0)
+	zone.label:SetText("|cFFC0C0C0Quests (By Proximity) +|r")
+	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL)
+	-- the button expands it again
+	client:Click(button)
+	lu.assertEquals(zone.expandZone.mode, 1)
+	lu.assertEquals(client.sounds, { "igMiniMapClose", "igMiniMapOpen" })
+	-- Shift-click is Questie's (all its quests): no sound
+	client.world.modifiers.shift = true
+	client:RunScript(zone.expandZone, "OnMouseUp", "LeftButton")
+	client.world.modifiers.shift = false
+	lu.assertEquals(#client.sounds, 2)
+	-- a real zone keeps its name
+	zone.label:SetText("|cFFC0C0C0Dragonblight +|r")
+	lu.assertEquals(zone.label:GetText(), "Dragonblight")
+	-- the line used for a quest: no button
+	zone:SetMode("quest")
+	lu.assertNil(button:IsShown())
 	assertClean(client)
 end
 
