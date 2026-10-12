@@ -425,6 +425,72 @@ function TestQuestieTracker:test_changed_lines_are_left_alone()
 	assertClean(client)
 end
 
+function TestQuestieTracker:test_each_change_is_named()
+	local L
+	local cases = {
+		{ "line.SetMode", function(line) line.SetMode = nil end },
+		{ "line.label._SetText", function(line) line.label._SetText = nil end },
+		{ "line.expandZone.SetMode", function(line) line.expandZone.SetMode = nil end },
+		{ "line.expandZone OnMouseUp", function(line) line.expandZone:SetScript("OnMouseUp", nil) end },
+	}
+	for _, case in ipairs(cases) do
+		local printed = bootChangedQuestie(function(pool)
+			pool.Initialize(1)
+			case[2](pool.GetLine(1))
+		end)
+		_G.print = print
+		L = client.Engine:GetLocale()
+		lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] .. " (" .. case[1] .. ")" }, case[1])
+		assertClean(client)
+	end
+end
+
+function TestQuestieTracker:test_a_missing_module_or_loader_is_named()
+	-- no QuestieTracker module
+	local printed = {}
+	boot({ world = function(world)
+		_G.print = function(text) printed[#printed + 1] = text end
+		questie(world, true)
+		local import = _G.QuestieLoader.ImportModule
+		_G.QuestieLoader.ImportModule = function(loader, name)
+			if name ~= "QuestieTracker" then
+				return import(loader, name)
+			end
+		end
+	end })
+	_G.print = print
+	lu.assertStrContains(printed[1], "(QuestieTracker)")
+	assertClean(client)
+	-- a loader without ImportModule as a function (still callable)
+	printed = {}
+	boot({ world = function(world)
+		_G.print = function(text) printed[#printed + 1] = text end
+		questie(world, true)
+		local import = _G.QuestieLoader.ImportModule
+		_G.QuestieLoader.ImportModule = setmetatable({}, { __call = function(_, loader, name) return import(loader, name) end })
+	end })
+	_G.print = print
+	lu.assertStrContains(printed[1], "(QuestieLoader.ImportModule)")
+	assertClean(client)
+end
+
+function TestQuestieTracker:test_lines_styled_before_a_change_are_left_alone_after()
+	-- the second of three lines already made is different: the first was
+	-- styled, the third isn't, and none is touched from then on
+	local printed = bootChangedQuestie(function(pool)
+		pool.Initialize(3)
+		pool.GetLine(2).label.frame = nil
+	end)
+	_G.print = print
+	lu.assertEquals(#printed, 1)
+	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
+	lu.assertTrue(pool.GetLine(1).DiabolicStyled)
+	lu.assertNil(pool.GetLine(3).DiabolicStyled)
+	pool.GetLine(1):SetMode("quest")
+	lu.assertEquals({ pool.GetLine(1).label:GetFont() }, { [[Fonts\FRIZQT__.TTF]], 11, "OUTLINE" })
+	assertClean(client)
+end
+
 function TestQuestieTracker:test_the_option_off()
 	boot({ world = function(world) questie(world, true) end, savedVariables = skins({ styleQuestieTracker = false }) })
 	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
