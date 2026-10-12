@@ -27,7 +27,9 @@ image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui config`.
 
 * `/dui num_bars 1-3` and `/dui num_side_bars 0-2`: how many action bars.
-* `/dui move`: move the minimap, the chat, the menu buttons and the quest tracker.
+* `/dui move`: move the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu; right-drag the minimap to resize it. Also the *Unlock Frames* button in `/dui config`.
+
+image::docs/screenshots/move-mode.webp[Unlock Frames: every movable frame highlighted]
 
 == ✨ Features
 
@@ -38,7 +40,7 @@ Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui 
 * 💬 *Chat* that fades, with clickable web links, shorter system messages and Diablo chat bubbles.
 * 🗡️ *Diablo III item tooltips* that follow your cursor.
 * 🧭 *Minimap* with zone text, mail and Dungeon Finder buttons built in.
-* 📜 *Quest tracker* that fades and moves; Blizzard's in Exocet.
+* 📜 *Quest tracker* that fades and moves; Blizzard's in Exocet, Questie's styled to match.
 * 🎨 *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
 * 💍 *TrinketMenu* restyled to match.
 
