@@ -387,7 +387,7 @@ function TestQuestieTracker:test_a_changed_line_pool_is_left_alone()
 	local printed = bootChangedQuestie(function(pool) pool.GetNextLine = nil end)
 	_G.print = print
 	local L = client.Engine:GetLocale()
-	lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] })
+	lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] .. " (TrackerLinePool.GetNextLine)" })
 	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
 	pool.Initialize(1)
 	pool.GetLine(1):SetMode("quest")
@@ -416,6 +416,7 @@ function TestQuestieTracker:test_changed_lines_are_left_alone()
 	_G.print = print
 	-- once only, nothing styled, nothing spaced
 	lu.assertEquals(#printed, 1)
+	lu.assertStrContains(printed[1], "(line.label.frame)")
 	lu.assertNil(line.DiabolicStyled)
 	lu.assertEquals(line.label:GetText(), "|cFFFF8040A Quest|r")
 	lu.assertNil(tracker.heightUpdated)

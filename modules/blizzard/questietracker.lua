@@ -46,31 +46,40 @@ local POOL_FUNCTIONS = { "GetLine", "GetNextLine", "GetCurrentLine", "GetHighest
 local TRACKER_FUNCTIONS = { "Update", "UpdateHeight" }
 local broken
 
-local Break = function()
+-- `missing`: what wasn't there, named in the message
+local Break = function(missing)
 	if not broken then
 		broken = true
-		_G.print(L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."])
+		_G.print(L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] .. " (" .. missing .. ")")
 	end
 end
 
-local HasFunctions = function(module, names)
+-- the first of `names` that isn't a function of `module`, if any
+local MissingFunction = function(module, moduleName, names)
 	if type(module) ~= "table" then
-		return false
+		return moduleName
 	end
 	for _, name in ipairs(names) do
 		if type(module[name]) ~= "function" then
-			return false
+			return moduleName .. "." .. name
 		end
 	end
-	return true
 end
 
--- a line as Questie's TrackerLinePool makes it
-local IsQuestieLine = function(line)
+-- what a line lacks of those Questie's TrackerLinePool makes, if anything
+local MissingFromLine = function(line)
 	local label, expandZone = line.label, line.expandZone
-	return (type(line.SetMode) == "function") and label and (label.frame == line)
-		and (type(label._SetText) == "function") and expandZone and (type(expandZone.mode) == "number")
-		and expandZone:GetScript("OnMouseUp") and true or false
+	if type(line.SetMode) ~= "function" then
+		return "line.SetMode"
+	elseif type(label) ~= "table" or (label.frame ~= line) then
+		return "line.label.frame"
+	elseif type(label._SetText) ~= "function" then
+		return "line.label._SetText"
+	elseif type(expandZone) ~= "table" or (type(expandZone.mode) ~= "number") then
+		return "line.expandZone.mode"
+	elseif not expandZone:GetScript("OnMouseUp") then
+		return "line.expandZone OnMouseUp"
+	end
 end
 
 -- zones, quests and achievements: titles over the objectives
@@ -163,8 +172,9 @@ local StyleLine = function(line)
 	if broken or line.DiabolicStyled then
 		return
 	end
-	if not IsQuestieLine(line) then
-		return Break()
+	local missing = MissingFromLine(line)
+	if missing then
+		return Break(missing)
 	end
 	hooksecurefunc(line, "SetMode", SetMode)
 	hooksecurefunc(line.label, "SetText", SetText)
@@ -282,11 +292,12 @@ end
 Module.StyleQuestie = function(self)
 	local loader = _G.QuestieLoader
 	if type(loader.ImportModule) ~= "function" then
-		return Break()
+		return Break("QuestieLoader.ImportModule")
 	end
 	local pool, tracker = loader:ImportModule("TrackerLinePool"), loader:ImportModule("QuestieTracker")
-	if not (HasFunctions(pool, POOL_FUNCTIONS) and HasFunctions(tracker, TRACKER_FUNCTIONS)) then
-		return Break()
+	local missing = MissingFunction(pool, "TrackerLinePool", POOL_FUNCTIONS) or MissingFunction(tracker, "QuestieTracker", TRACKER_FUNCTIONS)
+	if missing then
+		return Break(missing)
 	end
 	self.LinePool, self.Tracker = pool, tracker
 	self:StyleLines()
@@ -298,7 +309,7 @@ Module.StyleQuestie = function(self)
 		end
 	end)
 	-- its quest items' buttons, the same way (left as they are without these)
-	if HasFunctions(pool, { "GetNextItemButton", "GetCurrentButton" }) then
+	if not MissingFunction(pool, "TrackerLinePool", { "GetNextItemButton", "GetCurrentButton" }) then
 		hooksecurefunc(pool, "GetNextItemButton", function()
 			if not broken then
 				StyleItemButton(pool.GetCurrentButton())
