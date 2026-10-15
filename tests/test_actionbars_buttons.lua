@@ -194,6 +194,17 @@ function TestButtonCooldown:test_hours()
 	lu.assertEquals(self.text.text, "2h")
 end
 
+function TestButtonCooldown:test_written_ten_times_a_second()
+	self.cooldownTimes = { 100, 150, 1 }
+	self.button:UpdateCooldown()
+	self:tick(0)
+	self.text.text = nil
+	self:tick(0.05)
+	lu.assertNil(self.text.text)
+	self:tick(0.05)
+	lu.assertEquals(self.text.text, "3m")
+end
+
 function TestButtonCooldown:test_none_for_the_global_cooldown_or_with_omnicc()
 	self.cooldownTimes = { 100, 1.5, 1 }
 	self.button:UpdateCooldown()
