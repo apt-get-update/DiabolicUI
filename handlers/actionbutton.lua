@@ -1,13 +1,15 @@
 -- "ActionButton" handler: DiabolicUI's own action button implementation.
 -- Handler:New(buttonType, id, header, template) builds a secure button for an
 -- action, pet, stance, spell, item or macro slot, and this file keeps them all
--- updated: icons, cooldowns, counts, range and usability coloring, keybind
--- text, grid visibility while dragging, and tooltips.
+-- updated: icons, cooldowns and their time left (as OmniCC shows it, unless
+-- OmniCC is on), counts, range and usability coloring, keybind text, grid
+-- visibility while dragging, and tooltips.
 local _, Engine = ...
 local Handler = Engine:NewHandler("ActionButton")
 
 -- Lua API
 local _G = _G
+local math_ceil = math.ceil
 local pairs = pairs
 local select = select
 local setmetatable = setmetatable
@@ -27,8 +29,10 @@ local GetPetActionInfo = _G.GetPetActionInfo
 local GetPetActionsUsable = _G.GetPetActionsUsable
 local GetShapeshiftFormCooldown = _G.GetShapeshiftFormCooldown
 local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
+local GetTime = _G.GetTime
 local HasAction = _G.HasAction
 local InCombatLockdown = _G.InCombatLockdown
+local IsAddOnLoaded = _G.IsAddOnLoaded
 local IsActionInRange = _G.IsActionInRange
 local IsAttackAction = _G.IsAttackAction
 local IsAutoRepeatAction = _G.IsAutoRepeatAction
@@ -473,14 +477,60 @@ Button.UpdateUsable = function(self, updateType)
 	end	
 end
 
+-- The time left of a cooldown, longer than the global one: hours, then
+-- minutes, then seconds, rounded up.
+local MIN_COUNT_DURATION = 2
+local COUNT_HZ = .1
+
+local FormatCooldown = function(timeLeft)
+	local seconds = math_ceil(timeLeft)
+	if (seconds < 60) then
+		return seconds
+	end
+	local minutes = math_ceil(timeLeft / 60)
+	if (minutes < 60) then
+		return minutes .. "m"
+	end
+	return math_ceil(timeLeft / 3600) .. "h"
+end
+
+-- the cooldown frame's: it runs while the cooldown shows
+local UpdateCooldownCount = function(cooldown, elapsed)
+	cooldown.elapsed = (cooldown.elapsed or 0) + elapsed
+	if (cooldown.elapsed < COUNT_HZ) then
+		return
+	end
+	cooldown.elapsed = 0
+	local timeLeft = cooldown.endTime - GetTime()
+	if (timeLeft > 0) then
+		cooldown.count:SetText(FormatCooldown(timeLeft))
+	else
+		cooldown.count:SetText("")
+		cooldown:SetScript("OnUpdate", nil)
+	end
+end
+
+local ClearCooldownCount = function(cooldown)
+	cooldown.count:SetText("")
+	cooldown:SetScript("OnUpdate", nil)
+end
+
 -- Updates the cooldown of a button
 Button.UpdateCooldown = function(self)
 	local start, duration, enable = self:GetCooldown()
+	local cooldown = self.cooldown
 	if (enable ~= 0) and (duration > .5) then
-		self.cooldown:SetCooldown(start, duration)
-		self.cooldown:Show()
+		cooldown:SetCooldown(start, duration)
+		cooldown:Show()
+		if (duration > MIN_COUNT_DURATION) and not IsAddOnLoaded("OmniCC") then
+			cooldown.endTime = start + duration
+			cooldown.elapsed = COUNT_HZ -- written straight away
+			cooldown:SetScript("OnUpdate", UpdateCooldownCount)
+		else
+			ClearCooldownCount(cooldown)
+		end
 	else
-		self.cooldown:Hide()
+		cooldown:Hide()
 	end
 end
 
@@ -1013,10 +1063,12 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- to it randomly being drawn behind the icon texture. 
 	button:GetPushedTexture():SetDrawLayer("OVERLAY") 
 		
-	-- cooldown numbers
+	-- cooldown numbers, written by the cooldown frame (UpdateCooldown)
 	button.cooldowncount = button:CreateFontString(nil, "OVERLAY")
 	button.cooldowncount:SetFontObject(GameFontNormal)
 	button.cooldowncount:SetPoint("CENTER")
+	button.cooldown.count = button.cooldowncount
+	button.cooldown:HookScript("OnHide", ClearCooldownCount)
 
 	-- autocast texture
 	-- exists on pet button templates

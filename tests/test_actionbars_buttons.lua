@@ -8,6 +8,8 @@
 --    may have failed to desaturate icons
 --  - the artwork's PostUpdate: which border layers show for an empty,
 --    normal or checked (active) button, hovered or not
+--  - UpdateCooldown: the time left on the button, in minutes then seconds,
+--    none for the global cooldown or with OmniCC on
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -136,6 +138,78 @@ function TestButtonArtwork:test_border_layers()
 		button:PostUpdate()
 		lu.assertEquals(shown(button), case[2])
 	end
+end
+
+-- The cooldown's time left -------------------------------------------------
+
+TestButtonCooldown = {}
+
+function TestButtonCooldown:setUp()
+	self.now, self.omniCC = 100, false
+	_G.GetTime = function() return self.now end
+	_G.IsAddOnLoaded = function(name) return (name == "OmniCC") and self.omniCC end
+	local Button = loadButtonPrototype()
+	local button = setmetatable({}, { __index = Button })
+	local text = { SetText = function(t, value) t.text = value end }
+	local cooldown = {
+		count = text,
+		SetCooldown = function() end,
+		Show = function(c) c.shown = true end,
+		Hide = function(c) c.shown = false; c.count:SetText(""); c.OnUpdate = nil end, -- (its OnHide)
+		SetScript = function(c, _, func) c.OnUpdate = func end,
+	}
+	button.cooldown, self.text, self.cooldown = cooldown, text, cooldown
+	self.button = button
+	self.cooldownTimes = { 0, 0, 1 }
+	button.GetCooldown = function() return unpack(self.cooldownTimes) end
+end
+
+function TestButtonCooldown:tick(seconds)
+	self.now = self.now + seconds
+	if self.cooldown.OnUpdate then
+		self.cooldown:OnUpdate(seconds)
+	end
+end
+
+function TestButtonCooldown:test_minutes_then_seconds()
+	self.cooldownTimes = { 100, 150, 1 }
+	self.button:UpdateCooldown()
+	self:tick(0)
+	lu.assertEquals(self.text.text, "3m")
+	self:tick(30) -- 120 left
+	lu.assertEquals(self.text.text, "2m")
+	self:tick(61) -- 59 left
+	lu.assertEquals(self.text.text, 59)
+	self:tick(58.5)
+	lu.assertEquals(self.text.text, 1)
+	self:tick(1) -- done
+	lu.assertEquals(self.text.text, "")
+	lu.assertNil(self.cooldown.OnUpdate)
+end
+
+function TestButtonCooldown:test_hours()
+	self.cooldownTimes = { 100, 2 * 3600, 1 }
+	self.button:UpdateCooldown()
+	self:tick(0)
+	lu.assertEquals(self.text.text, "2h")
+end
+
+function TestButtonCooldown:test_none_for_the_global_cooldown_or_with_omnicc()
+	self.cooldownTimes = { 100, 1.5, 1 }
+	self.button:UpdateCooldown()
+	lu.assertTrue(self.cooldown.shown)
+	lu.assertNil(self.cooldown.OnUpdate)
+	self.omniCC = true
+	self.cooldownTimes = { 100, 30, 1 }
+	self.button:UpdateCooldown()
+	lu.assertNil(self.cooldown.OnUpdate)
+	-- and none once it's over
+	self.omniCC = false
+	self.button:UpdateCooldown()
+	self.cooldownTimes = { 0, 0, 1 }
+	self.button:UpdateCooldown()
+	lu.assertFalse(self.cooldown.shown)
+	lu.assertEquals(self.text.text, "")
 end
 
 os.exit(lu.LuaUnit.run())
