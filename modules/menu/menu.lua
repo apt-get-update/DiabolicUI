@@ -1091,6 +1091,9 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(reskinLoot, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
+	local rollWindow = CreateCheckbox(addonsPanel, "RollWindow", L["Roll Window"], L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99).|n|nRequires a UI reload to apply."], reloadOption(lootDB, "rollWindow"))
+	layout:Place(rollWindow, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
 	CreateHeader(addonsPanel, layout, L["AddOns"])
 
 	local styleTrinketMenu = CreateCheckbox(addonsPanel, "StyleTrinketMenu", L["Style TrinketMenu"], L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."], reloadOption(skinsDB, "styleTrinketMenu"))
@@ -1102,6 +1105,7 @@ Module.CreateOptionsPanel = function(self)
 	addonsPanel.okay = function() end
 	addonsPanel.cancel = function()
 		reskinLoot:SetChecked(lootDB.enableSkin)
+		rollWindow:SetChecked(lootDB.rollWindow)
 		styleTrinketMenu:SetChecked(skinsDB.styleTrinketMenu)
 		styleQuestieTracker:SetChecked(skinsDB.styleQuestieTracker)
 	end

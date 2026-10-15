@@ -226,6 +226,12 @@ L["How visible the tracker stays once it has fully faded, as a percentage."] = t
 L["Items"] = true -- loot window title
 L["Reskin Loot Window"] = true
 L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = true
+L["Roll Window"] = true
+L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99).|n|nRequires a UI reload to apply."] = true
+L["Rolls"] = true -- roll window title
+L["Main Spec"] = true
+L["Off Spec"] = true
+L["You rolled %d (%s)"] = true -- your roll, and Main Spec or Off Spec
 
 -- tooltip module
 ---------------------------------------------------------------------

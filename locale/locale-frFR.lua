@@ -99,6 +99,12 @@ L["How visible the tracker stays once it has fully faded, as a percentage."] = "
 L["Items"] = "Objets" -- loot window title
 L["Reskin Loot Window"] = "Relooker la fenêtre de butin"
 L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = "Relooke la fenêtre de butin pour correspondre au reste de l'interface. Si désactivé, la fenêtre de butin par défaut de Blizzard est utilisée à la place.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Roll Window"] = "Fenêtre de jets"
+L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99).|n|nRequires a UI reload to apply."] = "Affiche une fenêtre quand le maître du butin, le chef ou un avertissement de raid met un objet en jeu, avec le temps restant et des boutons pour le tirer : Spé principale (/roll 100) ou Spé secondaire (/roll 99).|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Rolls"] = "Jets" -- roll window title
+L["Main Spec"] = "Spé principale"
+L["Off Spec"] = "Spé secondaire"
+L["You rolled %d (%s)"] = "Vous avez fait %d (%s)"
 
 -- tooltip module
 L["Tooltips"] = "Infobulles"

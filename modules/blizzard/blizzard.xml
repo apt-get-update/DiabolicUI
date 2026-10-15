@@ -5,6 +5,7 @@
 <Script file='fonts.lua'/>
 <Script file='gamemenu.lua'/>
 <Script file='lootframe.lua'/>
+<Script file='rollwindow.lua'/>
 <Script file='mirrortimers.lua'/>
 <Script file='popups.lua'/>
 <Script file='questietracker.lua'/>

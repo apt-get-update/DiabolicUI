@@ -75,6 +75,41 @@ Engine:NewStaticConfig("Blizzard", {
 			}
 		}
 	},
+	-- the master looter's rolls (modules/blizzard/rollwindow.lua), in the
+	-- loot window's look: its backdrop, title and icon border
+	rolls = {
+		position = { "TOP", 0, -160 }, -- relative to UIParent, as the loot window's
+		width = 44 + 8 + 2 * 110 + 8, -- the icon, then the two buttons
+		side_padding = 15,
+		top_padding = 44, -- room for the title
+		bottom_padding = 14,
+		row_height = 14 + 4 + 8 + 6 + 22, -- the name, the bar, the buttons
+		row_gap = 10,
+		gap = 8,
+		seconds = 15, -- when the message doesn't say
+		main_spec = 100, -- /roll 100
+		off_spec = 99, -- /roll 99
+		name_font = DiabolicFont_SansBold12,
+		time_font = DiabolicFont_SansBold10,
+		result_font = DiabolicFont_HeaderRegular12,
+		bar = {
+			height = 8,
+			color = { 1, .82, 0 },
+			texture = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
+		},
+		-- the loot window's row buttons, scaled as a whole to this width
+		button = {
+			size = { 110, 22 },
+			art_size = { 300, 51 },
+			texture_size = { 512, 128 },
+			font = DiabolicFont_HeaderRegular12,
+			texture = {
+				normal = path .. [[textures\DiabolicUI_UIButton_300x51_Normal.tga]],
+				highlight = path .. [[textures\DiabolicUI_UIButton_300x51_Highlight.tga]],
+				pushed = path .. [[textures\DiabolicUI_UIButton_300x51_Pushed.tga]]
+			}
+		}
+	},
 	mirrortimers = {
 		position = { "TOP", "UIParent", "TOP", 0, -300 }, -- default anchor -180
 		positionOffsetByOne = { "TOP", "UIParent", "TOP", 0, -(300 + 50) }, -- notch it 1 bar down (give room for the capture bar)

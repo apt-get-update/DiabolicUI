@@ -129,6 +129,7 @@ local function constants()
 		ITEM_LEVEL = "Item Level %d", TALENTS = "Talents", LEVEL = "Level", DEAD = "Dead",
 		PLAYER_OFFLINE = "Offline", AFK = "AFK", DND = "DND", ELITE = "Elite", NONE = "None",
 		HAVE_MAIL = "You have unread mail", HAVE_MAIL_FROM = "Unread mail from:",
+		RANDOM_ROLL_RESULT = "%s rolls %d (%d-%d)",
 		FPS_ABBR = "fps", MILLISECONDS_ABBR = "ms", YOU = "You", CLOSE = "Close", CONTINUED = "...", GROUP = "Group",
 		FACTION_ALLIANCE = "Alliance", FACTION_HORDE = "Horde", PVP_ENABLED = "PvP",
 		SPELL_TIME_REMAINING_DAYS = "%d |4day:days; remaining", SPELL_TIME_REMAINING_HOURS = "%d |4hour:hours; remaining",

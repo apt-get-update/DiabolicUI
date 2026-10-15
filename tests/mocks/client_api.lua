@@ -510,6 +510,14 @@ function Api.install(client)
 		end
 		return count
 	end
+	-- world.lootMethod = { method, partyID, raidID } (partyID 0: the player)
+	api.GetLootMethod = function()
+		local loot = world().lootMethod
+		if loot then
+			return loot[1], loot[2], loot[3]
+		end
+		return "group"
+	end
 	api.GetRaidRosterInfo = function(index)
 		local u = world().units["raid" .. index]
 		if u then
@@ -1429,7 +1437,12 @@ function Api.install(client)
 	api.SendChatMessage = function(msg, chatType, language, channel)
 		client.chat[#client.chat + 1] = { msg, chatType, language, channel }
 	end
-	api.RandomRoll = function() end
+	-- the server answers with a CHAT_MSG_SYSTEM ("Name rolls 87 (1-100)"),
+	-- the tests fire it themselves
+	api.RandomRoll = function(low, high)
+		client.rolls = client.rolls or {}
+		client.rolls[#client.rolls + 1] = { tonumber(low), tonumber(high) }
+	end
 	api.AcceptResurrect = function() end
 	api.RepopMe = function() end
 	api.UseAction = function(slot) world().usedAction = slot end
