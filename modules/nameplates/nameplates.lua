@@ -1,3 +1,5 @@
+-- 3.3.5's nameplates in the Diabolic look: health, level, name, raid and boss
+-- icons, the target's and focus' casts, and your auras (auras.lua).
 local _, Engine = ...
 local Module = Engine:NewModule("NamePlates")
 local C = Engine:GetDB("Data: Colors")
@@ -213,7 +215,19 @@ NamePlate_WotLK.UpdateUnitData = function(self)
 end
 
 NamePlate_WotLK.UpdateTargetData = function(self)
-	self.info.isTarget = TARGET and (self.baseFrame:GetAlpha() == 1)
+	local isTarget = TARGET and (self.baseFrame:GetAlpha() == 1)
+	self.info.isTarget = isTarget
+
+	-- the border highlighted for the target and the mouseover (Blizzard's
+	-- highlight shows on it)
+	local health = self.Health
+	if isTarget or self.old.regions.highlight:IsShown() then
+		health.BorderHighlight:Show()
+		health.BorderNormal:Hide()
+	else
+		health.BorderHighlight:Hide()
+		health.BorderNormal:Show()
+	end
 end
 
 NamePlate_WotLK.UpdateCombatData = function(self)
@@ -316,25 +330,15 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 		end
 	end
 
-	-- apply health and threat coloring
+	-- apply health and threat coloring: the bar in the unit's reaction color,
+	-- like the unit frames', the name in its threat color when it has threat
 	if not info.healthColor then
 		info.healthColor = {}
 	end
-	if info.unitThreatSituation and info.unitThreatSituation > 0 then
-		local color = C.Threat[info.unitThreatSituation]
-		r, g, b = color[1], color[2], color[3]
-		if not info.threatColor then
-			info.threatColor = {}
-		end
-
-		info.threatColor[1] = r
-		info.threatColor[2] = g
-		info.threatColor[3] = b
-
-		info.healthColor[1] = r
-		info.healthColor[2] = g
-		info.healthColor[3] = b
-	else
+	if not info.reactionColor then
+		info.reactionColor = {}
+	end
+	do
 		if info.isClass then
 			-- an enemy player (only players have class colored health bars)
 			local color = C.Reaction[1]
@@ -358,10 +362,24 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 			r, g, b = color[1], color[2], color[3]
 		end
 
-		info.healthColor[1] = r
-		info.healthColor[2] = g
-		info.healthColor[3] = b
+		info.reactionColor[1] = r
+		info.reactionColor[2] = g
+		info.reactionColor[3] = b
 	end
+	if info.unitThreatSituation and info.unitThreatSituation > 0 then
+		local color = C.Threat[info.unitThreatSituation]
+		r, g, b = color[1], color[2], color[3]
+		if not info.threatColor then
+			info.threatColor = {}
+		end
+
+		info.threatColor[1] = r
+		info.threatColor[2] = g
+		info.threatColor[3] = b
+	end
+	info.healthColor[1] = r
+	info.healthColor[2] = g
+	info.healthColor[3] = b
 
 end
 
@@ -427,17 +445,16 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 	local info = self.info
 	local health = self.Health
 
-	if info.healthColor then
-		health:SetStatusBarColor(unpack(C.Orb.HEALTH[1]))
+	if info.reactionColor then
+		health:SetStatusBarColor(unpack(info.reactionColor))
 	end
 
 	if info.unitThreatSituation and info.unitThreatSituation > 0 then
 		local r, g, b = info.threatColor[1], info.threatColor[2], info.threatColor[3]
 		health.Glow:SetVertexColor(r, g, b, 1)
-		health.Shadow:SetVertexColor(r, g, b)
+		health.Glow:Show()
 	else
-		health.Glow:SetVertexColor(0, 0, 0, .25)
-		health.Shadow:SetVertexColor(0, 0, 0, 1)
+		health.Glow:Hide()
 	end
 
 	health:SetMinMaxValues(0, info.healthMax)
@@ -559,7 +576,6 @@ NamePlate_WotLK.OnShow = function(self)
 
 	self.Health:Show()
 	self.Cast:Hide()
-	self.Cast.Shadow:Hide()
 
 	self.visiblePlates[self] = self.baseFrame -- this will trigger the fadein
 
@@ -580,9 +596,8 @@ NamePlate_WotLK.OnShow = function(self)
 	-- Force an update to catch alpha changes when our target moves back into sight
 	FORCEUPDATE = true
 
-	-- setup player classbars
-	-- setup auras
-	-- setup raid targets
+	-- a plate shown for another unit, maybe: its auras wait until it's known
+	Module:ClearPlateAuras(self)
 end
 
 NamePlate_WotLK.OnHide = function(self)
@@ -603,7 +618,8 @@ NamePlate_WotLK.OnHide = function(self)
 	info.health = 0
 
 	self.Cast:Hide()
-	self.Cast.Shadow:Hide()
+
+	Module:ClearPlateAuras(self)
 
 	self.visiblePlates[self] = false -- this will trigger the fadeout and hiding
 
@@ -682,37 +698,50 @@ NamePlate.CreateRegions = function(self)
 	Health:SetStatusBarTexture(textureConfig.bar_texture.path)
 	Health:Hide()
 
-	local HealthShadow = Health:CreateTexture()
-	HealthShadow:SetDrawLayer("BACKGROUND")
-	HealthShadow:SetSize(unpack(textureConfig.bar_glow.size))
-	HealthShadow:SetPoint(unpack(textureConfig.bar_glow.position))
-	HealthShadow:SetTexture(textureConfig.bar_glow.path)
-	HealthShadow:SetVertexColor(0, 0, 0, 1)
-	Health.Shadow = HealthShadow
+	-- the focus frame's border around it (units/focus.lua): its backdrop
+	-- behind the bar, its glow behind that for the threat (both on the
+	-- plate, under the bar, as the focus frame has them), its border over
+	-- the bar, highlighted for the target and the mouseover
+	local border = textureConfig.border
+	local point, x, y = unpack(border.position)
 
-	local HealthBackdrop = Health:CreateTexture()
-	HealthBackdrop:SetDrawLayer("BACKGROUND")
-	HealthBackdrop:SetSize(unpack(textureConfig.bar_backdrop.size))
-	HealthBackdrop:SetPoint(unpack(textureConfig.bar_backdrop.position))
-	HealthBackdrop:SetTexture(textureConfig.bar_backdrop.path)
-	HealthBackdrop:SetVertexColor(.15, .15, .15, .85)
-	Health.Backdrop = HealthBackdrop
-
-	local HealthGlow = Health:CreateTexture()
-	HealthGlow:SetDrawLayer("OVERLAY")
-	HealthGlow:SetSize(unpack(textureConfig.bar_glow.size))
-	HealthGlow:SetPoint(unpack(textureConfig.bar_glow.position))
-	HealthGlow:SetTexture(textureConfig.bar_glow.path)
-	HealthGlow:SetVertexColor(0, 0, 0, .75)
+	local HealthGlow = self:CreateTexture()
+	HealthGlow:SetDrawLayer("BACKGROUND")
+	HealthGlow:SetSize(unpack(border.size))
+	HealthGlow:SetPoint(point, self, point, x, y)
+	HealthGlow:SetTexture(border.glow)
+	HealthGlow:Hide()
 	Health.Glow = HealthGlow
+
+	local HealthBackdrop = self:CreateTexture()
+	HealthBackdrop:SetDrawLayer("BORDER")
+	HealthBackdrop:SetSize(unpack(border.size))
+	HealthBackdrop:SetPoint(point, self, point, x, y)
+	HealthBackdrop:SetTexture(border.backdrop)
+	Health.Backdrop = HealthBackdrop
 
 	local HealthOverlay = Health:CreateTexture()
 	HealthOverlay:SetDrawLayer("ARTWORK")
-	HealthOverlay:SetSize(unpack(textureConfig.bar_overlay.size))
-	HealthOverlay:SetPoint(unpack(textureConfig.bar_overlay.position))
+	HealthOverlay:SetAllPoints()
 	HealthOverlay:SetTexture(textureConfig.bar_overlay.path)
 	HealthOverlay:SetAlpha(.5)
 	Health.Overlay = HealthOverlay
+
+	local Border = Health:CreateFrame("Frame") -- over the bar
+	Border:SetAllPoints()
+
+	local BorderNormal = Border:CreateTexture(nil, "BORDER")
+	BorderNormal:SetSize(unpack(border.size))
+	BorderNormal:SetPoint(point, self, point, x, y)
+	BorderNormal:SetTexture(border.normal)
+	Health.BorderNormal = BorderNormal
+
+	local BorderHighlight = Border:CreateTexture(nil, "BORDER")
+	BorderHighlight:SetSize(unpack(border.size))
+	BorderHighlight:SetPoint(point, self, point, x, y)
+	BorderHighlight:SetTexture(border.highlight)
+	BorderHighlight:Hide()
+	Health.BorderHighlight = BorderHighlight
 
 	local HealthValue = Health:CreateFontString()
 	HealthValue:SetDrawLayer("OVERLAY")
@@ -722,87 +751,76 @@ NamePlate.CreateRegions = function(self)
 	Health.Value = HealthValue
 
 
-	-- Cast bar
+	-- Cast bar, in the same border as the health bar, under it
+	local castConfig = widgetConfig.cast
 	local CastHolder = self:CreateFrame("Frame")
-	CastHolder:SetSize(unpack(widgetConfig.cast.size))
-	CastHolder:SetPoint(unpack(widgetConfig.cast.place))
+	CastHolder:SetSize(unpack(castConfig.size))
+	CastHolder:SetPoint(unpack(castConfig.place))
 
 	local Cast = CastHolder:CreateStatusBar()
 	Cast:Hide()
-	Cast:SetAllPoints()
+	Cast:SetSize(unpack(castConfig.bar.size))
+	Cast:SetPoint(unpack(castConfig.bar.place))
 	Cast:SetStatusBarTexture(textureConfig.bar_texture.path)
-	Cast:SetStatusBarColor(unpack(widgetConfig.cast.color))
+	Cast:SetStatusBarColor(unpack(castConfig.color))
 
-	local CastShadow = Cast:CreateTexture()
-	CastShadow:Hide()
-	CastShadow:SetDrawLayer("BACKGROUND")
-	CastShadow:SetSize(unpack(textureConfig.bar_glow.size))
-	CastShadow:SetPoint(unpack(textureConfig.bar_glow.position))
-	CastShadow:SetTexture(textureConfig.bar_glow.path)
-	CastShadow:SetVertexColor(0, 0, 0, 1)
-	Cast.Shadow = CastShadow
-
-	local CastBackdrop = Cast:CreateTexture()
-	CastBackdrop:SetDrawLayer("BACKGROUND")
-	CastBackdrop:SetSize(unpack(textureConfig.bar_backdrop.size))
-	CastBackdrop:SetPoint(unpack(textureConfig.bar_backdrop.position))
-	CastBackdrop:SetTexture(textureConfig.bar_backdrop.path)
-	CastBackdrop:SetVertexColor(0, 0, 0, 1)
+	-- the border's backdrop, under the bar, shown with it
+	local CastBackdrop = CastHolder:CreateTexture()
+	CastBackdrop:SetDrawLayer("BORDER")
+	CastBackdrop:SetSize(unpack(border.size))
+	CastBackdrop:SetPoint(point, CastHolder, point, x, y)
+	CastBackdrop:SetTexture(border.backdrop)
+	CastBackdrop:Hide()
 	Cast.Backdrop = CastBackdrop
-
-	local CastGlow = Cast:CreateTexture()
-	CastGlow:SetDrawLayer("OVERLAY")
-	CastGlow:SetSize(unpack(textureConfig.bar_glow.size))
-	CastGlow:SetPoint(unpack(textureConfig.bar_glow.position))
-	CastGlow:SetTexture(textureConfig.bar_glow.path)
-	CastGlow:SetVertexColor(0, 0, 0, .75)
-	Cast.Glow = CastGlow
 
 	local CastOverlay = Cast:CreateTexture()
 	CastOverlay:SetDrawLayer("ARTWORK")
-	CastOverlay:SetSize(unpack(textureConfig.bar_overlay.size))
-	CastOverlay:SetPoint(unpack(textureConfig.bar_overlay.position))
+	CastOverlay:SetAllPoints()
 	CastOverlay:SetTexture(textureConfig.bar_overlay.path)
 	CastOverlay:SetAlpha(.5)
 	Cast.Overlay = CastOverlay
 
-	local CastValue = Cast:CreateFontString()
+	local CastBorderFrame = Cast:CreateFrame("Frame") -- over the bar
+	CastBorderFrame:SetAllPoints()
+	local CastBorder = CastBorderFrame:CreateTexture(nil, "BORDER")
+	CastBorder:SetSize(unpack(border.size))
+	CastBorder:SetPoint(point, CastHolder, point, x, y)
+	CastBorder:SetTexture(border.normal)
+	Cast.Border = CastBorder
+
+	-- the time left, after the border's art on the right
+	local CastValue = CastBorderFrame:CreateFontString()
 	CastValue:SetDrawLayer("OVERLAY")
-	CastValue:SetJustifyV("TOP")
-	CastValue:SetHeight(10)
-	CastValue:SetPoint("TOPLEFT", Cast, "TOPRIGHT", 4, -(Cast:GetHeight() - Cast:GetHeight())/2)
-	CastValue:SetFontObject(DiabolicFont_SansBold10)
+	local valuePoint, valueRelative, valueX, valueY = unpack(castConfig.value.place)
+	CastValue:SetPoint(valuePoint, CastHolder, valueRelative, valueX, valueY)
+	CastValue:SetFontObject(castConfig.value.fontObject)
 	CastValue:SetTextColor(C.General.Prefix[1], C.General.Prefix[2], C.General.Prefix[3])
-	CastValue:Hide()
 	Cast.Value = CastValue
 
-	-- Cast icon (Wrath)
-	local CastIcon = CastHolder:CreateTexture(nil, "ARTWORK")
-	CastIcon:SetSize(18, 18)                         -- small, tidy icon
-	CastIcon:SetPoint("RIGHT", Cast, "LEFT", -6, 0)  -- to the left of the bar
+	-- the spell's icon, before the border's art on the left
+	local CastIcon = CastBorderFrame:CreateTexture(nil, "ARTWORK")
+	CastIcon:SetSize(unpack(castConfig.icon.size))
+	local iconPoint, iconRelative, iconX, iconY = unpack(castConfig.icon.place)
+	CastIcon:SetPoint(iconPoint, CastHolder, iconRelative, iconX, iconY)
 	CastIcon:SetTexCoord(5/64, 59/64, 5/64, 59/64)   -- trim the default icon edges
 	Cast.Icon = CastIcon
 
-
-	-- Cast Name
-	local CastName = Cast:CreateFontString()
+	-- the spell's name, under the border's art
+	local CastName = CastBorderFrame:CreateFontString()
 	CastName:SetDrawLayer("OVERLAY")
-	CastName:SetPoint(unpack(widgetConfig.cast.name.place))
-	CastName:SetFontObject(widgetConfig.cast.name.fontObject)
-	CastName:SetTextColor(unpack(widgetConfig.cast.name.color))
+	CastName:SetPoint(unpack(castConfig.name.place))
+	CastName:SetFontObject(castConfig.name.fontObject)
+	CastName:SetTextColor(unpack(castConfig.name.color))
 	Cast.Name = CastName
 
-	-- This is a total copout, but it does what we want,
-	-- which is to replace the health value text with spell name.
 	Cast:HookScript("OnShow", function()
-		CastShadow:Show()
-		CastGlow:Show()
-		if Cast.Icon then Cast.Icon:Show() end
+		CastBackdrop:Show()
+		Cast.Icon:Show()
 	end)
 	Cast:HookScript("OnHide", function()
-		CastShadow:Hide()
-		CastGlow:Hide()
-		if Cast.Icon then Cast.Icon:SetTexture(nil); Cast.Icon:Hide() end
+		CastBackdrop:Hide()
+		Cast.Icon:SetTexture(nil)
+		Cast.Icon:Hide()
 	end)
 
 
@@ -812,9 +830,7 @@ NamePlate.CreateRegions = function(self)
 	Level:SetDrawLayer("OVERLAY")
 	Level:SetFontObject(DiabolicFont_SansBold10)
 	Level:SetTextColor(C.General.OffWhite[1], C.General.OffWhite[2], C.General.OffWhite[3])
-	Level:SetJustifyV("TOP")
-	Level:SetHeight(10)
-	Level:SetPoint("TOPLEFT", Health, "TOPRIGHT", 4, -(Health:GetHeight() - Level:GetHeight())/2)
+	Level:SetPoint("LEFT", Health.Value, "RIGHT", 4, 0) -- by the name, clear of the border's art
 
 
 	-- Icons
@@ -824,7 +840,7 @@ NamePlate.CreateRegions = function(self)
 	local BossIcon = Health:CreateTexture()
 	BossIcon:SetSize(18, 18)
 	BossIcon:SetTexture(BOSS_TEXTURE)
-	BossIcon:SetPoint("TOPLEFT", self.Health, "TOPRIGHT", 2, 2)
+	BossIcon:SetPoint("LEFT", Health.Value, "RIGHT", 2, 0)
 	BossIcon:Hide()
 
 	self.Health = Health
@@ -882,6 +898,7 @@ Module.CreateNamePlate = function(self, baseFrame, name)
 	plate:SetSize(unpack(config.size))
 	plate:HandleBaseFrame(baseFrame) -- hide and reference the baseFrame and original blizzard objects
 	plate:CreateRegions() -- create our custom regions and objects
+	self:CreateAuras(plate)
 
 	plate:CreateSizer(baseFrame, worldFrame) -- create the sizer that positions the nameplate
 	plate:HookScripts(baseFrame, worldFrame)
@@ -1212,6 +1229,7 @@ Module.OnUpdate = function(self, elapsed)
 				plate:UpdateAlpha()
 				plate:UpdateHealth()
 			end
+			self:UpdatePlateUnit(plate) -- the target's or mouseover's: whose auras
 		else
 			plate.targetAlpha = 0
 		end
@@ -1310,4 +1328,6 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "OnSpellCast")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnSpellCast")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnSpellCast")
+
+	self:EnableAuras()
 end

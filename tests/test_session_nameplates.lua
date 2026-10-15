@@ -4,8 +4,8 @@
 -- own nameplates (WorldFrame children, see Client:AddNamePlate): finding
 -- them, reading the unit from their regions (name, level, elite/boss/raid
 -- icons, the health bar's reaction or class color, the threat glow), the
--- target's plate standing out, fading in and out, and the target's or
--- focus' castbar on its plate.
+-- target's plate standing out, fading in and out, the target's or focus'
+-- castbar on its plate, and your auras on the plates (auras.lua).
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -131,6 +131,11 @@ function TestNamePlates:test_the_target_stands_out_and_others_dim()
 	client:Tick(3)
 	lu.assertEquals(ours(client, target):GetAlpha(), 1)
 	lu.assertEquals(ours(client, target):GetFrameLevel(), 126)
+	-- its border highlighted, the others' not
+	lu.assertEquals(ours(client, target).Health.BorderHighlight:IsShown(), 1)
+	lu.assertNil(ours(client, target).Health.BorderNormal:IsShown())
+	lu.assertNil(ours(client, other).Health.BorderHighlight:IsShown())
+	lu.assertEquals(ours(client, other).Health.BorderNormal:IsShown(), 1)
 	lu.assertAlmostEquals(ours(client, other):GetAlpha(), 0.7, 0.01)
 	lu.assertAlmostEquals(ours(client, player):GetAlpha(), 0.35, 0.01)
 	lu.assertAlmostEquals(ours(client, friend):GetAlpha(), 0.01, 0.01)
@@ -157,8 +162,9 @@ function TestNamePlates:test_threat_glow_and_raid_icons()
 		local r, g, b = ours(client, plates[status]).Health.Glow:GetVertexColor()
 		lu.assertAlmostEquals(r, C.Threat[status][1], 0.01)
 		lu.assertAlmostEquals(g, C.Threat[status][2], 0.01)
+		lu.assertEquals(ours(client, plates[status]).Health.Glow:IsShown(), 1)
 	end
-	lu.assertEquals(select(4, ours(client, plates[0]).Health.Glow:GetVertexColor()), 0.25)
+	lu.assertNil(ours(client, plates[0]).Health.Glow:IsShown()) -- no threat, no glow
 
 	plates[1]:Update({ raidIcon = { 0, 0.25, 0, 0.25 } })
 	client:FireEvent("RAID_TARGET_UPDATE")
@@ -437,6 +443,103 @@ function TestNamePlates:test_casts_of_units_without_a_plate_are_ignored()
 	client:FireEvent("UNIT_SPELLCAST_START", "focus")
 	client:FireEvent("UNIT_SPELLCAST_START", "party1") -- not a unit plates show casts for
 	client:FireEvent("UNIT_SPELLCAST_START", "mouseover") -- nobody there
+	assertClean(client)
+end
+
+-- Your auras ----------------------------------------------------------------------
+
+local function hostile(name, auras)
+	return Client.newUnit({ name = name, isPlayer = false, isFriend = false, isEnemy = true, canAttack = true, auras = auras or {} })
+end
+
+-- one of yours (or someone else's: caster) for `seconds`
+local function debuff(client, spellId, seconds, caster)
+	return { name = "Spell" .. spellId, spellId = spellId, icon = "Interface\\Icons\\Spell" .. spellId, harmful = true,
+		caster = caster or "player", duration = seconds, expires = seconds and (client.world.time + seconds) or 0 }
+end
+
+-- the icons shown on a plate, in order
+local function shownAuras(plate)
+	local icons = {}
+	for _, button in ipairs(plate.Auras) do
+		if button:IsShown() then
+			icons[#icons + 1] = button.Icon:GetTexture()
+		end
+	end
+	return icons
+end
+
+function TestNamePlates:test_your_debuffs_on_the_targets_plate()
+	local client = self.client
+	local blizzard = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE, target = true })
+	local other = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE })
+	local unit = hostile("Wolf", { debuff(client, 2, 30), debuff(client, 1, 12), debuff(client, 3, 30, "party1") })
+	client:SetUnit("target", unit)
+	client:Tick(0.5)
+	local plate = ours(client, blizzard)
+	-- yours only, the shortest first, with the time left
+	lu.assertEquals(shownAuras(plate), { "Interface\\Icons\\Spell1", "Interface\\Icons\\Spell2" })
+	lu.assertEquals(plate.Auras[1].Time:GetText(), "11")
+	lu.assertEquals(shownAuras(ours(client, other)), {})
+	-- one more
+	table.insert(unit.auras, debuff(client, 4, 5))
+	client:FireEvent("UNIT_AURA", "target")
+	lu.assertEquals(shownAuras(plate)[1], "Interface\\Icons\\Spell4")
+	-- run out: gone
+	client:Tick(5)
+	lu.assertEquals(#shownAuras(plate), 2)
+	assertClean(client)
+end
+
+function TestNamePlates:test_the_plate_keeps_them_once_the_unit_isnt_the_target()
+	local client = self.client
+	local blizzard = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE, target = true })
+	client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE })
+	local unit = hostile("Wolf", { debuff(client, 1, 30) })
+	client:SetUnit("target", unit)
+	client:Tick(0.5)
+	local plate = ours(client, blizzard)
+	blizzard:Update({ target = false })
+	client:SetUnit("target", nil)
+	client:Tick(0.5)
+	lu.assertEquals(#shownAuras(plate), 1)
+	-- the combat log: yours added and removed on it
+	local log = function(event, spellId)
+		client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, event, client.world.units.player.guid, "Me", 0, unit.guid, "Wolf", 0, spellId, "Spell" .. spellId, 1)
+	end
+	log("SPELL_AURA_APPLIED", 7)
+	lu.assertEquals(shownAuras(plate), { "Interface\\Icons\\Spell1", "Interface\\Icons\\Spell7" })
+	log("SPELL_AURA_REMOVED", 1)
+	lu.assertEquals(shownAuras(plate), { "Interface\\Icons\\Spell7" })
+	-- someone else's: nothing
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_AURA_APPLIED", "0xOTHER", "Other", 0, unit.guid, "Wolf", 0, 8, "Spell8", 1)
+	lu.assertEquals(#shownAuras(plate), 1)
+	-- it dies
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "UNIT_DIED", nil, nil, 0, unit.guid, "Wolf", 0)
+	lu.assertEquals(shownAuras(plate), {})
+	assertClean(client)
+end
+
+function TestNamePlates:test_the_mouseovers_plate_and_a_unique_name()
+	local client = self.client
+	local wolf = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE })
+	local other = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE })
+	local bear = client:AddNamePlate({ name = "Bear", level = 80, color = HOSTILE })
+	client:Tick(0.5)
+	-- the mouseover: Blizzard's highlight tells its plate
+	wolf:Update({ mouseover = true })
+	client:SetUnit("mouseover", hostile("Wolf", { debuff(client, 1, 30) }))
+	client:FireEvent("UPDATE_MOUSEOVER_UNIT")
+	lu.assertEquals(#shownAuras(ours(client, wolf)), 1)
+	lu.assertEquals(#shownAuras(ours(client, other)), 0)
+	-- the focus: the only plate with its name
+	client:SetUnit("focus", hostile("Bear", { debuff(client, 2, 30) }))
+	lu.assertEquals(#shownAuras(ours(client, bear)), 1)
+	-- a plate hidden, then shown for another unit: none of the old ones
+	bear:Update({ hidden = true })
+	bear:Update({ hidden = false })
+	client:Tick(0.5)
+	lu.assertEquals(#shownAuras(ours(client, bear)), 0)
 	assertClean(client)
 end
 
