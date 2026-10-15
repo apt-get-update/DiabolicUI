@@ -4,7 +4,8 @@
 -- looter, leader or raid warning puts items up for a roll in the chat, the
 -- window shows each with its time left and the Main Spec (/roll 100) and
 -- Off Spec (/roll 99) buttons, then your roll, and lets the item go once
--- it's won or the time is up. Others' messages, and the option off, show nothing.
+-- it's won or the time is up. Others' messages, and the option off (its
+-- default, until tried in a raid), show nothing.
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -14,9 +15,12 @@ local Session = require("mocks.session")
 
 local client, module
 
--- a raid: you, its leader, and Loot, the master looter
+local ON = { DiabolicUI_DB = { LootFrame = { profiles = { global = { rollWindow = true } } } } }
+
+-- a raid: you, its leader, and Loot, the master looter; the option on
+-- unless `savedVariables` say otherwise
 local function boot(savedVariables)
-	client = Client.boot({ savedVariables = savedVariables })
+	client = Client.boot({ savedVariables = savedVariables or ON })
 	client.world.units.raid1 = Client.newUnit({ name = client.world.units.player.name, rank = 0 })
 	client.world.units.raid2 = Client.newUnit({ name = "Boss", rank = 2 })
 	client.world.units.raid3 = Client.newUnit({ name = "Loot", rank = 0 })
@@ -110,10 +114,43 @@ function TestRollWindow:test_others_and_the_option_off_show_nothing()
 	say("CHAT_MSG_RAID", "Nice " .. sword, "Loot")
 	lu.assertEquals(#rows(), 0)
 
-	boot({ DiabolicUI_DB = { LootFrame = { profiles = { global = { rollWindow = false } } } } })
+	-- off by default
+	boot({})
 	say("CHAT_MSG_RAID", "Roll for " .. Session.item(client, 100, { name = "Sword" }), "Loot")
 	lu.assertEquals(#rows(), 0)
 	lu.assertNil(_G.DiabolicRollFrame)
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_in_a_party_the_master_looter_is_you_or_a_member()
+	client = Client.boot({ savedVariables = ON })
+	client.world.units.party1 = Client.newUnit({ name = "Loot" })
+	module = client:GetModule("Blizzard: RollWindow")
+	client:Tick(0.2)
+	-- a member
+	client.world.lootMethod = { "master", 1 }
+	say("CHAT_MSG_PARTY", "roll " .. Session.item(client, 100, { name = "Sword" }), "Loot")
+	lu.assertEquals(#rows(), 1)
+	-- you
+	client.world.lootMethod = { "master", 0 }
+	say("CHAT_MSG_PARTY", "roll " .. Session.item(client, 101, { name = "Ring" }), client.world.units.player.name)
+	lu.assertEquals(#rows(), 2)
+	-- no master looter: a member's message is just chat
+	client.world.lootMethod = { "group" }
+	say("CHAT_MSG_PARTY", "roll " .. Session.item(client, 102, { name = "Cloak" }), "Loot")
+	lu.assertEquals(#rows(), 2)
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_hovering_the_item_shows_its_tooltip()
+	boot()
+	local sword = Session.item(client, 100, { name = "Sword" })
+	say("CHAT_MSG_RAID", "Roll for " .. sword, "Loot")
+	client:Hover(rows()[1].Icon:GetParent())
+	lu.assertEquals(_G.GameTooltip:IsShown(), 1)
+	lu.assertEquals(select(2, _G.GameTooltip:GetItem()), sword)
+	client:Leave()
+	lu.assertNil(_G.GameTooltip:IsShown())
 	Session.assertClean(client)
 end
 
