@@ -31,6 +31,8 @@ Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui 
 
 image::docs/screenshots/move-mode.webp[Unlock Frames: every movable frame highlighted]
 
+🎨 For a darker Diablo look with GShade (colour grading, distance blur, the UI left sharp), see link:extras/gshade/README.adoc[extras/gshade].
+
 == ✨ Features
 
 * ⚔️ *Action bars* between Diablo III health and mana orbs, one to three rows plus side bars.
