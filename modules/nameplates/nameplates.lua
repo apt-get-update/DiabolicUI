@@ -73,6 +73,9 @@ local ALPHA_FULL = .7 -- For players when not having a target, also for World Bo
 local ALPHA_LOW = .35 -- For non-targeted players when having a target
 local ALPHA_MINIMAL = .01 -- For non-targeted NPCs
 
+-- How far toward white the name is drawn, from its bar's color
+local NAME_LIGHTEN = .35
+
 -- Update and fading frequencies
 local HZ = 1/30
 local FADE_IN = 3/4 -- time in seconds to fade in
@@ -465,7 +468,9 @@ NamePlate_WotLK.ApplyHealthData = function(self)
 		health.Value:SetFont(font, size, "OUTLINE")
 	end
 
-	health.Value:SetTextColor(unpack(info.healthColor))
+	-- the name lighter than the bar, to read on dark ground
+	local r, g, b = unpack(info.healthColor)
+	health.Value:SetTextColor(r + (1 - r) * NAME_LIGHTEN, g + (1 - g) * NAME_LIGHTEN, b + (1 - b) * NAME_LIGHTEN)
 end
 
 NamePlate_WotLK.UpdateAlpha = function(self)

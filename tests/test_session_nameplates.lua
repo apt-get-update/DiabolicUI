@@ -543,4 +543,66 @@ function TestNamePlates:test_the_mouseovers_plate_and_a_unique_name()
 	assertClean(client)
 end
 
+function TestNamePlates:test_long_auras_read_in_days_hours_minutes_and_a_refresh_restarts_one()
+	local client = self.client
+	local blizzard = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE, target = true })
+	local unit = hostile("Wolf", { debuff(client, 1, 2 * 86400), debuff(client, 2, 3 * 3600), debuff(client, 3, 5 * 60), debuff(client, 4, 30) })
+	client:SetUnit("target", unit)
+	client:Tick(0.5)
+	local plate = ours(client, blizzard)
+	local times = {}
+	for i = 1, 4 do
+		times[i] = plate.Auras[i].Time:GetText()
+	end
+	lu.assertEquals(times, { "29", "4m", "2h", "1d" })
+	-- cast again (the combat log only): its time starts over
+	client:Tick(20)
+	lu.assertStrMatches(plate.Auras[1].Time:GetText(), "9%.%d") -- tenths under 10 seconds
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_AURA_REFRESH", client.world.units.player.guid, "Me", 0, unit.guid, "Wolf", 0, 4, "Spell4", 1)
+	client:Tick(0.5)
+	lu.assertEquals(plate.Auras[1].Time:GetText(), "29")
+	assertClean(client)
+end
+
+function TestNamePlates:test_what_ran_out_while_the_plate_was_hidden_is_gone_when_it_shows()
+	local client = self.client
+	local blizzard = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE, target = true })
+	local unit = hostile("Wolf", { debuff(client, 1, 5), debuff(client, 2, 60) })
+	client:SetUnit("target", unit)
+	client:Tick(0.5)
+	local plate = ours(client, blizzard)
+	lu.assertEquals(#shownAuras(plate), 2)
+	blizzard:Update({ hidden = true })
+	client:Tick(10)
+	table.remove(unit.auras, 1) -- run out on the unit too
+	blizzard:Update({ hidden = false })
+	client:Tick(0.5)
+	lu.assertEquals(shownAuras(plate), { "Interface\\Icons\\Spell2" })
+	assertClean(client)
+end
+
+function TestNamePlates:test_a_name_shared_by_two_plates_tells_neither_and_a_wrong_guess_is_undone()
+	local client = self.client
+	local first = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE })
+	local second = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE })
+	client:Tick(0.5)
+	-- two Wolves: the focus' auras go on neither
+	local wolf = hostile("Wolf", { debuff(client, 1, 30) })
+	client:SetUnit("focus", wolf)
+	lu.assertEquals(#shownAuras(ours(client, first)), 0)
+	lu.assertEquals(#shownAuras(ours(client, second)), 0)
+	-- one Wolf left: taken for the focus by its name
+	second:Update({ hidden = true })
+	client:Tick(0.5)
+	client:FireEvent("PLAYER_FOCUS_CHANGED")
+	lu.assertEquals(#shownAuras(ours(client, first)), 1)
+	-- the focus was the other Wolf: targeted, its plate takes the auras back
+	second:Update({ hidden = false, target = true })
+	client:SetUnit("target", wolf)
+	client:Tick(0.5)
+	lu.assertEquals(#shownAuras(ours(client, first)), 0)
+	lu.assertEquals(#shownAuras(ours(client, second)), 1)
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

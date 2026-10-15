@@ -53,10 +53,8 @@ local formatTime = function(time)
 		return ("%d%s"):format(math_floor(time / MINUTE), L["m"])
 	elseif time >= 10 then
 		return ("%d"):format(time)
-	elseif time > 0 then
-		return ("%.1f"):format(time)
 	end
-	return ""
+	return ("%.1f"):format(time)
 end
 
 -- The aura buttons --------------------------------------------------------
@@ -223,11 +221,9 @@ local PlateByName = function(name)
 	return found
 end
 
--- The plate learns its unit: the auras kept for it show.
+-- The plate learns its unit (a new one: callers check), and the auras kept
+-- for it show.
 Module.SetPlateGUID = function(self, plate, guid)
-	if (plate.guid == guid) then
-		return
-	end
 	local other = guid and PlateByGUID(guid)
 	if other then
 		other.guid = nil
