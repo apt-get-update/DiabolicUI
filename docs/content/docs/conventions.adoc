@@ -1,0 +1,82 @@
+---
+title: "Rules"
+weight: 7
+---
+
+= Rules
+
+Most of them are checked by a test, so you'll hear about it.
+
+|===
+| Rule | Checked by
+
+| 3.3.5 API only, no version checks | `test_api_usage.lua`, `test_wotlk_globals.lua`
+| Never add a missing API to `_G` or the frame metatable | Review
+| Everything `local` | `test_no_global_leaks.lua`
+| Every `.lua` is listed in an `.xml`, every entry exists | `test_addon_loads.lua`
+| Every locale key exists and is used | `test_locales.lua`
+| One anchor point, on one frame | Review
+| A header comment on every new file | Review
+|===
+
+== 3.3.5 only
+
+|===
+| Later clients | 3.3.5
+
+| `+PlaySoundKitID(SOUNDKIT.X)+` | `PlaySound("igMainMenuOpen")`
+| `texture:SetColorTexture(r, g, b, a)` | `texture:SetTexture(r, g, b, a)`
+| `frame:SetShown(flag)` | `if flag then frame:Show() else frame:Hide() end`
+| `IsInGroup()` | `+GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0+`
+| `GetNumGroupMembers()` | `GetNumRaidMembers()`
+| `+GROUP_ROSTER_UPDATE+` | `+PARTY_MEMBERS_CHANGED+`, `+RAID_ROSTER_UPDATE+`
+| `+PLAYER_ENTERED_VEHICLE+` | `+UNIT_ENTERED_VEHICLE+` with `unit == "player"`
+| `UnitIsTapDenied(unit)` | `Engine.UnitIsTapDenied(unit)`
+| `GameTooltip:IsForbidden()` | Nothing: never forbidden on 3.3.5
+| `FriendsMicroButton`, `GuildMicroButton` | `SocialsMicroButton`
+|===
+
+* *Don't backfill.* Other addons check names like `GetNumGroupMembers` to
+  guess the client. Put shared helpers on `Engine` in `engine/wotlk-helpers.lua`.
+* *A missing event fails silently.* Registering it works, it just never fires.
+* *A missing UI string is `nil`.* Add it as a locale key instead.
+* *Beware hidden backfills.* A later function may only "work" because another
+  addon defines it.
+
+== Everything local
+
+A forgotten `local` is a global shared with Blizzard and every addon, and can
+taint. A global on purpose is written `+_G.NAME = value+`. A local function
+must be defined above its first call.
+
+== Anchoring
+
+[source,lua]
+----
+-- ❌ two points on two frames: breaks when either one resizes
+frame:SetPoint("TOPLEFT", A, "TOPLEFT")
+frame:SetPoint("BOTTOMRIGHT", B, "BOTTOMRIGHT")
+
+-- ✅ one point, one frame, an offset
+frame:SetPoint("TOPLEFT", A, "BOTTOMLEFT", 0, -gap)
+----
+
+== Texture canvas
+
+Our decorative textures have a canvas (`+texture_size+`, say 512×128) larger
+than their art (`size`, say 300×51). To size the art, scale the whole canvas:
+
+[source,lua]
+----
+local scale = wantedWidth / config.size[1]
+texture:SetSize(config.texture_size[1] * scale, config.texture_size[2] * scale)
+----
+
+== Own the frame
+
+To replace a Blizzard frame, build your own rather than reskinning the live
+one (link:{{< relref "case-study-loot-window" >}}[case study]).
+
+== Be honest about what you checked
+
+"Syntax- and test-checked" isn't "works in game". Say which one it is.

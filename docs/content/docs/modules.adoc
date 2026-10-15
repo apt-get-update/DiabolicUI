@@ -1,0 +1,152 @@
+---
+title: "Modules Map"
+weight: 6
+---
+
+= Modules Map
+
+What each folder under `modules/` does, and the one or two things worth
+knowing before you touch it.
+
+++++
+{{< mermaid >}}
+flowchart LR
+    m["🧩 modules/"] --> ab["⚔️ actionbars"]
+    m --> uf["❤️ unitframes"]
+    m --> np["🏷️ nameplates"]
+    m --> bz["🪟 blizzard"]
+    m --> ch["💬 chat"]
+    m --> ob["📜 objectives"]
+    m --> mm["🧭 minimap"]
+    m --> mn["⚙️ menu"]
+{{< /mermaid >}}
+++++
+
+== ⚔️ Action bars
+
+One module, `ActionBars`, with one widget per file. Buttons come from the
+`ActionButton` handler.
+
+|===
+| File | Widget
+
+| `elements/bar1.lua` … `bar5.lua` | The main bar, two more bottom bars, two side bars
+| `elements/pet.lua`, `stance.lua`, `vehicle.lua` | Pet, stance and vehicle bars
+| `elements/floaters.lua` | Stance toggle, vehicle and taxi exit buttons
+| `elements/specswitch.lua` | The spec switch on the skull, and each spec's commands
+| `elements/menu.lua` | The micro menu, friends and guild on the social button
+| `elements/xp.lua`, `reputation.lua` | Experience and reputation bars
+| `elements/artwork.lua` | The bars' art
+| `elements/keybinds.lua` | Key bindings copied from Blizzard's bars
+| `controllers/`, `templates/` | Secure anchor frames, shared button and flyout templates
+|===
+
+A button's icon color follows its state, checked in this order:
+
+|===
+| State | When | Icon
+
+| `taxi` | Dead or a ghost | Grey
+| `mana` | Not enough mana | Blue
+| `unusable` | Can't be used | Dark
+| `range` | Target out of range | Red
+| `usable` | Anything else | Normal
+|===
+
+== ❤️ Unit frames
+
+The `UnitFrame` handler builds them,
+link:{{< relref "unitframe-elements" >}}[elements] fill them.
+
+|===
+| File (`units/`) | Frame
+
+| `player.lua` | The health and power orbs
+| `target.lua`, `tot.lua`, `focus.lua`, `pet.lua` | Target, its target, focus, pet
+| `party.lua`, `raid.lua` | Group frames
+| `enemies.lua` | Boss and arena frames
+| `shared.lua` | What the small frames share
+| `testmode.lua` | A fake roster to preview party and raid layouts
+|===
+
+== 🏷️ Nameplates
+
+`nameplates.lua` rebuilds 3.3.5's plates (health, level, name, icons, casts);
+`auras.lua` adds your auras over them. Each plate is a frame with a shared
+metatable (`+NamePlate_WotLK_MT+`). 3.3.5 plates have no unit: a plate learns
+its unit's GUID while it's the target or mouseover.
+
+== 🪟 Blizzard
+
+Small independent modules, each restyling or replacing one Blizzard piece.
+
+|===
+| File | Does
+
+| `lootframe.lua` | Our own loot window (link:{{< relref "case-study-loot-window" >}}[case study])
+| `rollwindow.lua` | The master looter's rolls, with Main Spec / Off Spec buttons
+| `tooltips.lua`, `itemtooltips.lua` | Tooltip backdrops, Diablo III style item tooltips
+| `containers.lua` | Bag and bank borders by quality, item levels
+| `popups.lua` | Popups and the Dungeon Finder's
+| `gamemenu.lua` | The Escape menu
+| `styling.lua` | Tints the character, spell book, map, merchant frames
+| `fonts.lua`, `worldmap.lua` | Fonts, map zone names
+| `watchframe.lua`, `questietracker.lua` | Blizzard's and Questie's quest trackers
+| `trinketmenu.lua` | The TrinketMenu addon's buttons
+| `anchors.lua`, `mirrortimers.lua`, `totembar.lua` | Durability, vehicle seats, breath timers, totem bar
+|===
+
+Moving Blizzard's secure frames in combat causes taint: wrap that code with
+`Module:Wrap` (link:{{< relref "engine-architecture#events" >}}[Engine]).
+
+== 💬 Chat
+
+|===
+| File | Module | Does
+
+| `windows.lua` | `ChatWindows` | Window style, tab fading
+| `bubbles.lua` | `ChatBubbles` | Speech bubbles over heads
+| `filters.lua` | `ChatFilters` | Name and channel links, clickable web links
+| `cleaner.lua` | `ChatCleaner` | Shorter loot, money, experience... lines
+| `slide.lua` | `ChatSlide` | New lines slide in
+|===
+
+Web links use our own `url` link type, so `filters.lua` overrides
+`SetItemRef`: Blizzard's would error on it.
+
+== 📜 Objectives
+
+|===
+| File | Module | Does
+
+| `tracker.lua` | `ObjectiveTracker` | Fades the quest tracker (Questie's or Blizzard's) until hovered
+| `capturebars.lua` | `CaptureBars` | PvP capture bars
+| `worldstate.lua` | `WorldState` | Battleground scores, zone objectives
+| `warnings.lua` | `Warnings` | Error and info messages
+| `zone.lua` | `ZoneText` | Turns off Blizzard's zone text
+| `pvpemotes.lua` | `PvPEmotes` | An emote on a killing blow
+|===
+
+The tracker only changes alpha (allowed in combat): its quest item buttons are
+secure.
+
+== 🧭 Minimap
+
+An Ace3 addon kept as it is, inside our folder. It doesn't use the Engine and
+nothing calls into it.
+
+|===
+| | Engine modules | Minimap
+
+| Framework | Engine | Ace3 (`Libs/`)
+| Namespace | `+local ADDON, Engine = ...+` | `+local Addon, ns = ..., DiabolicUIMinimapNS+`
+| Saved in | `+DiabolicUI_DB+` | `+DiabolicUI_Minimap_DB+`
+|===
+
+Keep the two saved variables apart: the Engine rewrites its keys at every
+login and could wipe AceDB's.
+
+== ⚙️ Menu
+
+`menu.lua` is the `/dui config` panel and `/dui move`. See
+link:{{< relref "settings-and-locale" >}}[adding an option].

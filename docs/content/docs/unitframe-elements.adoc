@@ -1,0 +1,89 @@
+---
+title: "Unit Frame Elements"
+weight: 4
+---
+
+= Unit Frame Elements
+
+Every unit frame (player, target, party, raid...) is built by the
+`UnitFrame` handler (`handlers/unitframe.lua`). What it shows comes from
+*elements*: one file each in `modules/unitframes/elements/`.
+
+== How a frame gets its elements
+
+++++
+{{< mermaid >}}
+flowchart LR
+    sty["🎨 Style function<br/>units/party.lua<br/>creates self.Health"] --> new["🧰 Handler:New"]
+    new --> enable["▶️ Enable(self, unit)<br/>for every element"]
+    enable -- "returns true" --> kept["✅ kept, updated on events"]
+    enable -- "nothing to show" --> skip["⏭️ skipped"]
+{{< /mermaid >}}
+++++
+
+A frame opts in just by creating the child the element looks for
+(`self.Health`, `self.Power`...).
+
+== The elements
+
+|===
+| Element | File | Frame child
+
+| Health | `health.lua` | `self.Health` (polled)
+| Power | `power.lua` | `self.Power` (polled)
+| Name | `name.lua` | `self.Name`
+| Classification | `classification.lua` | `self.Classification`: level, class, creature type
+| CastBar | `cast.lua` | `self.CastBar`
+| Auras | `aura.lua` | `self.Auras`, `self.Buffs`, `self.Debuffs`
+| Portrait | `portraits.lua` | `self.Portrait` (3D), `self.Portrait2D`
+| Threat | `threat.lua` | `self.Threat`: threat glow
+| Role | `role.lua` | `self.Role`: tank, healer, damage icon
+| Runes | `runes.lua` | `self.Runes`: death knight runes
+| WeaponEnchants | `weaponenchants.lua` | refreshes weapon buffs in `self.Buffs`
+|===
+
+== Writing one
+
+[source,lua]
+----
+-- modules/unitframes/elements/power.lua
+local _, Engine = ...
+local Handler = Engine:GetHandler("UnitFrame")
+
+local Update = function(self, event, ...)
+	-- draw it
+end
+
+local Enable = function(self, unit)
+	local Power = self.Power
+	if Power then
+		self:RegisterEvent("UNIT_MANA", Update)
+		return true
+	end
+end
+
+Handler:RegisterElement("Power", Enable, Update)
+----
+
+|===
+| Function | Called | Job
+
+| `Enable(self, unit)` | Once per frame | Register events, return `true` if this frame uses it
+| `+Update(self, event, ...)+` | On each event, on show, when the unit changes | Draw
+|===
+
+== Two things to watch
+
+*Unit events fire for every unit.* Ignore the others at the top of `Update`:
+
+[source,lua]
+----
+if unit_events[event] and (... ~= self.unit) then
+	return
+end
+----
+
+*Polled elements get `event == "FREQUENT"`.* Health and power poll
+(`Health.frequent = 1/120`) for smooth bars, so don't filter that event out.
+Hidden frames aren't polled, and a poll that finds nothing changed returns
+early.

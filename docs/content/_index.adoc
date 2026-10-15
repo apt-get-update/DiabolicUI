@@ -1,0 +1,24 @@
+---
+title: "DiabolicUI"
+type: docs
+bookToC: false
+---
+
+= DiabolicUI Developer Docs
+
+A Diablo III style UI for the *WotLK 3.3.5a* client, built on its own small
+framework (the Engine), without Ace3 or oUF.
+
+|===
+| Read | To learn
+
+| link:{{< relref "docs/getting-started" >}}[Getting Started] | The folders, the load order, your first change
+| link:{{< relref "docs/engine-architecture" >}}[Engine] | Modules, handlers, the lifecycle, events, saved settings
+| link:{{< relref "docs/modules-and-widgets" >}}[Modules & Widgets] | How a feature file is laid out
+| link:{{< relref "docs/unitframe-elements" >}}[Unit Frame Elements] | Health, power, auras... as reusable pieces
+| link:{{< relref "docs/settings-and-locale" >}}[Settings & Locale] | Adding an option and its text
+| link:{{< relref "docs/modules" >}}[Modules Map] | What each folder under `modules/` does
+| link:{{< relref "docs/conventions" >}}[Rules] | The house rules, most of them checked by tests
+| link:{{< relref "docs/testing" >}}[Testing] | Running and writing tests
+| link:{{< relref "docs/case-study-loot-window" >}}[Case Study: Loot Window] | Why we build our own frames
+|===

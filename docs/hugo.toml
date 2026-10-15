@@ -12,6 +12,20 @@ disableKinds = ['RSS']
   [markup.highlight]
     style = 'gruvbox'
     noClasses = false
+  [markup.asciidocExt]
+    [markup.asciidocExt.attributes]
+      showtitle = true
+      toc = true
+      toclevels = 2
+      idprefix = ''
+      idseparator = '-'
+      source-highlighter = 'rouge'
+      rouge-style = 'gruvbox'
+      rouge-css = 'style'
+
+# Pages are AsciiDoc, rendered by the asciidoctor command.
+[security.exec]
+  allow = ['^(dart-)?sass(-embedded)?$', '^go$', '^git$', '^node$', '^postcss$', '^asciidoctor$']
 
 [params]
   BookTheme = 'dark'

@@ -1,0 +1,57 @@
+---
+title: "Settings & Locale"
+weight: 5
+---
+
+= Settings & Locale
+
+== Adding an option
+
+++++
+{{< mermaid >}}
+flowchart LR
+    d["💾 defaults/x.lua<br/>the key + default"] --> l["🌐 locale-enUS.lua<br/>label, tooltip"]
+    l --> m["🖱️ modules/menu/menu.lua<br/>the checkbox"]
+    m --> f["🧩 your module<br/>reads it in OnInit"]
+{{< /mermaid >}}
+++++
+
+|===
+| Step | File | Add
+
+| 1 | `defaults/lootframe.lua` | `Engine:NewConfig("LootFrame", { enableSkin = false })`
+| 2 | `locale/locale-enUS.lua` | `L["Reskin Loot Window"] = true` (+ `locale-frFR.lua`)
+| 3 | `modules/menu/menu.lua` | A checkbox on the right page, bound to `GetConfig("LootFrame").enableSkin`
+| 4 | Your module | `self.db = self:GetConfig("LootFrame")` in `OnInit`, check it in `OnEnable`
+|===
+
+Per-character option? Pass `"character"` to `GetConfig` everywhere it's read,
+the menu included.
+
+The options panel pages: DiabolicUI, Action Bars, Specializations, Tooltips,
+Unit Frames, Chat, Messages, Quests, AddOns.
+
+== Locale
+
+[source,lua]
+----
+-- locale-enUS.lua: the key is its own English text
+L["Reskin Loot Window"] = true
+
+-- locale-frFR.lua: translations only, a missing one falls back to English
+L["Reskin Loot Window"] = "Relooker la fenêtre de butin"
+----
+
+[source,lua]
+----
+local L = Engine:GetLocale()
+button:SetText(L["Reskin Loot Window"])
+----
+
+|===
+| Rule | Checked by
+
+| Every `+L["..."]+` used exists in enUS | `test_locales.lua`
+| Every enUS key is used somewhere | `test_locales.lua`
+| A text 3.3.5 doesn't have becomes a locale key | `test_wotlk_globals.lua`
+|===

@@ -1,0 +1,75 @@
+---
+title: "Testing"
+weight: 8
+---
+
+= Testing
+
+The tests run in plain Lua 5.1 against a fake 3.3.5 client, no game needed.
+
+[source,bash]
+----
+luac5.1 -p path/to/file.lua                                # syntax only
+lua5.1 tests/test_chat_cleaner.lua                         # one file
+lua5.1 tests/test_chat_cleaner.lua TestChatCleaner.test_x  # one test
+tests/run_all.sh                                           # all of them
+----
+
+The `+test_session_*.lua+` files are slow: run the ones you touched, one at a
+time, and the whole suite before a commit.
+
+== The layers
+
+++++
+{{< mermaid >}}
+flowchart BT
+    whole["📜 Whole addon<br/>loads like the client does"] --> files["📄 Every file<br/>globals, locales, 3.3.5 API"]
+    files --> unit["🔬 Behaviour<br/>one function, fake frames"]
+    unit --> session["🎮 Sessions<br/>the fake client, played"]
+{{< /mermaid >}}
+++++
+
+|===
+| Layer | Files | Catches
+
+| Whole addon | `test_addon_loads.lua` | Load order, missing or unlisted files
+| Every file | `test_all_modules_load.lua`, `test_no_global_leaks.lua`, `test_locales.lua`, `test_wotlk_globals.lua`, `test_api_usage.lua` | Leaked globals, locale keys, typos, later-client API
+| Behaviour | `test_engine_core.lua`, `+test_unitframes_*.lua+`, `+test_chat_*.lua+`... | One function with a scripted game state
+| Sessions | `+test_session_*.lua+` | Log in, click, hover, fight, reload, as a player would
+|===
+
+== Writing a session test
+
+[source,lua]
+----
+local client = Client.boot({ world = {...}, savedVariables = {...} })
+client:FireEvent("PLAYER_TARGET_CHANGED")
+client:Tick(1)
+-- check frames, texts, settings
+Session.assertClean(client)  -- fails on any Lua error or blocked action
+----
+
+|===
+| Helper | Does
+
+| `Client.boot` | Starts the addon in the fake client
+| `FireEvent`, `Tick` | Events, time passing
+| `Hover`, `Click`, `EnterCombat`, `SetUnit` | What the player does
+| `Session.assertClean` | No errors were recorded
+|===
+
+When the fake client (`+tests/mocks/client*.lua+`) lacks something, add it the
+way 3.3.5's FrameXML has it. Details in `tests/README.md`.
+
+== What tests can't tell you
+
+* If it looks right.
+* If Blizzard's real frames behave like the fake ones.
+* Timing: data the client hasn't sent yet.
+
+That needs a `/reload` in game.
+
+== Coverage
+
+`tests/coverage/run.sh` (`+--readme+` updates the README table). Run it before
+a release, not per change.
