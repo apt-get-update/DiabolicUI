@@ -49,10 +49,9 @@ Anything it replaces is kept in `GShade-backups/`. It can run again safely: file
 |*Kino* (startup) |a filmic grade, brighter, with Nuke LWP's warm and purple tones, its glow, a light blur and grain
 |*Sanctuary Lightroom* |warm highlights, cool shadows, less colour, contrast and grain, over a soft Lightroom grade and glow
 |*Sanctuary* |the same grading without Lightroom, the glow and Cross Process: plainer and lighter on performance
-|*Nuke LWP SMAA* |NukeGP's colourful _Nuke LWP_ look, with SMAA and the distance blur added
 |===
 
-All four run Marty's SMAA, LumaSharpen, then LightDoF (autofocus on the middle of the screen, blur on the distance), then the colour effects, grain last. The blur strength is *fLightDoF_Amount* in *LightDoF_Far*'s settings.
+All three run Marty's SMAA, LumaSharpen, then LightDoF (autofocus on the middle of the screen, blur on the distance), then the colour effects, grain last. The blur strength is *fLightDoF_Amount* in *LightDoF_Far*'s settings.
 
 == 🔧 Troubleshooting
 
@@ -80,4 +79,4 @@ These are the traps we fell in while setting it up.
 * https://github.com/Mortalitas/GShade[GShade] by Marot Satil, downloaded from its releases.
 * ReShade Effect Shader Toggler (MIT, `ReshadeEffectShaderToggler-LICENSE.txt`): Frans Bouma's ShaderToggler, alex's REST, facboy's fork for 32-bit D3D9 games. This build comes from https://github.com/apt-get-update/ReshadeEffectShaderToggler[our fork] of it, which falls back to the back buffer in D3D9 and logs why a target is skipped.
 * https://github.com/martymcmodding/iMMERSE[iMMERSE SMAA] and https://github.com/martymcmodding/qUINT[qUINT Lightroom] by Pascal Gilcher (Marty McFly), downloaded from their repositories during install, not included here.
-* The Lightroom, Ambient Light and Cross Process values in *Kino*, *Sanctuary Lightroom* and *Nuke LWP SMAA* come from NukeGP's _Nuke LWP (HGP4)_ preset; Kino's Curves, Technicolor2, Levels and DPX values from GShade's _Ruri-Gameplay_ preset.
+* The Lightroom, Ambient Light and Cross Process values in *Kino* and *Sanctuary Lightroom* come from NukeGP's _Nuke LWP (HGP4)_ preset; Kino's Curves, Technicolor2, Levels and DPX values from GShade's _Ruri-Gameplay_ preset.
