@@ -1091,8 +1091,13 @@ Module.CreateOptionsPanel = function(self)
 	end)
 	layout:Place(reskinLoot, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
-	local rollWindow = CreateCheckbox(addonsPanel, "RollWindow", L["Roll Window"], L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99).|n|nRequires a UI reload to apply."], reloadOption(lootDB, "rollWindow"))
+	local rollWindow = CreateCheckbox(addonsPanel, "RollWindow", L["Roll Window"], L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."], reloadOption(lootDB, "rollWindow"))
 	layout:Place(rollWindow, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
+
+	local fakeLootRoll = CreateButton(addonsPanel, "FakeLootRoll", L["Fake Loot Roll"], L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."], function()
+		Engine:GetModule("Blizzard: LootPreview"):ShowFakeRoll()
+	end)
+	layout:Place(fakeLootRoll, EDGE, layout:Row(BUTTON_HEIGHT, ROW_GAP))
 
 	CreateHeader(addonsPanel, layout, L["AddOns"])
 

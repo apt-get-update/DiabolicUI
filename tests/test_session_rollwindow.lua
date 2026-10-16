@@ -42,6 +42,7 @@ TestRollWindow = {}
 
 function TestRollWindow:tearDown()
 	client, module = nil, nil
+	_G.BisTooltipAddon, _G.BisTooltip_PhaseData = nil, nil
 end
 
 function TestRollWindow:test_the_master_looters_roll_and_yours()
@@ -151,6 +152,189 @@ function TestRollWindow:test_hovering_the_item_shows_its_tooltip()
 	lu.assertEquals(select(2, _G.GameTooltip:GetItem()), sword)
 	client:Leave()
 	lu.assertNil(_G.GameTooltip:IsShown())
+	Session.assertClean(client)
+end
+
+-- BiS-Tooltip Renewed's lookup, as its BuildReverseLookup makes it
+local function bisTooltip(phaseIndex)
+	_G.BisTooltip_PhaseData = { "PR", "T7", "T8", "T9", "T10", "RS" }
+	_G.BisTooltipAddon = { db = { char = { phase_index = phaseIndex } }, ReverseLookup = {
+		[100] = {
+			{ class = "Mage", spec = "Fire", rightText = "T9 BIS" },
+			{ class = "Priest", spec = "Holy", rightText = "T8 alt 1 / T9 BIS" },
+			{ class = "Priest", spec = "Shadow", rightText = "T9 alt 2" },
+		},
+		[101] = { { class = "Priest", spec = "Holy", rightText = "T7 BIS" } },
+	} }
+end
+
+function TestRollWindow:test_bis_tooltips_ranks_for_your_specs_in_its_phase()
+	client = Client.boot({ class = "PRIEST", savedVariables = ON })
+	bisTooltip(4) -- T9
+	client.world.units.raid1 = Client.newUnit({ name = "Loot", rank = 2 })
+	module = client:GetModule("Blizzard: RollWindow")
+	client:Tick(0.2)
+	say("CHAT_MSG_RAID", "Roll " .. Session.item(client, 100, { name = "Sword" }) .. " " .. Session.item(client, 101, { name = "Ring" }), "Loot")
+	lu.assertEquals(rows()[1].Bis:GetText(), "T9: Holy BIS, Shadow alt 2")
+	-- not in this phase: no line
+	lu.assertEquals(rows()[2].Bis:GetText(), "")
+	-- a taller window for the line
+	local tall = _G.DiabolicRollFrame:GetHeight()
+	_G.BisTooltipAddon, _G.BisTooltip_PhaseData = nil, nil
+	module:Layout()
+	lu.assertTrue(_G.DiabolicRollFrame:GetHeight() < tall)
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_no_line_without_bis_tooltip()
+	boot()
+	say("CHAT_MSG_RAID", "Roll for " .. Session.item(client, 100, { name = "Sword" }), "Loot")
+	lu.assertEquals(rows()[1].Bis:GetText(), "")
+	Session.assertClean(client)
+end
+
+-- The loot coming up (lootpreview.lua) -------------------------------------
+
+local function preview()
+	return client:GetModule("Blizzard: LootPreview")
+end
+
+-- the list's item names, the rolled one marked with a *
+local function listed()
+	local names = {}
+	for i, item in ipairs(preview().items) do
+		local row = preview().rows[i]
+		names[i] = row.Name:GetText():match("%[(.-)%]") .. (row.Rolling:IsShown() and "*" or "")
+	end
+	return names
+end
+
+function TestRollWindow:test_raid_loot_suites_list_and_the_rolls_going_through_it()
+	boot()
+	local sword = Session.item(client, 100, { name = "Sword", texture = "Interface\\Icons\\Sword" })
+	local ring = Session.item(client, 101, { name = "Ring" })
+	say("CHAT_MSG_RAID", "Loot from Marrowgar: " .. sword .. " " .. ring .. " ", "Loot")
+	-- the long ones go on in a second line
+	say("CHAT_MSG_RAID", "Loot from Marrowgar: " .. Session.item(client, 102, { name = "Cloak" }), "Loot")
+	lu.assertEquals(listed(), { "Sword", "Ring", "Cloak" })
+	lu.assertEquals(_G.DiabolicLootPreviewFrame:IsShown(), 1)
+	lu.assertEquals(preview().title:GetText(), "Marrowgar")
+	lu.assertEquals(preview().rows[1].Icon:GetTexture(), "Interface\\Icons\\Sword")
+	-- rolled: marked, then gone once won
+	say("CHAT_MSG_RAID_WARNING", "Roll for " .. ring, "Boss")
+	lu.assertEquals(listed(), { "Sword", "Ring*", "Cloak" })
+	say("CHAT_MSG_RAID", "Someone wins " .. ring, "Loot")
+	lu.assertEquals(listed(), { "Sword", "Cloak" })
+	-- hovering shows the item
+	client:Hover(preview().rows[1])
+	lu.assertEquals(select(2, _G.GameTooltip:GetItem()), sword)
+	client:Leave()
+	-- the next boss: a new list
+	client:Tick(20)
+	say("CHAT_MSG_RAID", "Loot from Deathwhisper: " .. ring, "Loot")
+	lu.assertEquals(listed(), { "Ring" })
+	-- closed: emptied
+	client:Click(preview().close)
+	lu.assertEquals(#preview().items, 0)
+	lu.assertNil(_G.DiabolicLootPreviewFrame:IsShown())
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_an_item_not_seen_yet_gets_its_icon_later_in_the_list()
+	boot()
+	local link = "|cffa335ee|Hitem:200:0:0:0:0:0:0:0:80|h[Unknown Helm]|h|r"
+	say("CHAT_MSG_RAID", "Loot from Marrowgar: " .. link, "Loot")
+	local row = preview().rows[1]
+	lu.assertEquals(row.Icon:GetTexture(), "Interface\\Icons\\INV_Misc_QuestionMark")
+	client.world.itemInfo[200] = { name = "Unknown Helm", texture = "Interface\\Icons\\Helm" }
+	client:Tick(0.6)
+	lu.assertEquals(row.Icon:GetTexture(), "Interface\\Icons\\Helm")
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_the_fake_loot_roll()
+	boot()
+	client.world.lootMethod = nil -- solo: no master looter
+	preview():ShowFakeRoll()
+	lu.assertEquals(preview().title:GetText(), "Fake Boss")
+	lu.assertEquals(listed(), { "Thunderfury, Blessed Blade of the Windseeker*", "Wirt's Third Leg" })
+	lu.assertEquals(#rows(), 1)
+	rows()[1].MainSpec:Click()
+	lu.assertEquals(client.rolls, { { 1, 100 } })
+	client:Tick(21)
+	lu.assertEquals(#rows(), 0)
+	lu.assertEquals(listed(), { "Wirt's Third Leg" })
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_rollfors_numbered_list()
+	boot()
+	local sword = Session.item(client, 100, { name = "Sword" })
+	say("CHAT_MSG_RAID_WARNING", "Marrowgar dropped 3 items:", "Boss")
+	say("CHAT_MSG_RAID_WARNING", "1. " .. sword .. " (SR by Someone)", "Boss")
+	say("CHAT_MSG_RAID_WARNING", "2. 2x" .. Session.item(client, 101, { name = "Ring" }), "Boss")
+	lu.assertEquals(listed(), { "Sword", "Ring", "Ring" })
+	lu.assertEquals(preview().title:GetText(), "Marrowgar")
+	-- a chest: no name
+	client:Tick(20)
+	say("CHAT_MSG_RAID_WARNING", "1 item dropped:", "Boss")
+	say("CHAT_MSG_RAID_WARNING", "1. " .. sword, "Boss")
+	lu.assertEquals(listed(), { "Sword" })
+	lu.assertEquals(preview().title:GetText(), "Coming Up")
+	-- a numbered line long after: just chat
+	client:Tick(20)
+	say("CHAT_MSG_RAID_WARNING", "2. " .. sword, "Boss")
+	lu.assertEquals(#listed(), 1)
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_others_lists_and_the_option_off_show_nothing()
+	boot()
+	say("CHAT_MSG_RAID", "Loot from Marrowgar: " .. Session.item(client, 100, { name = "Sword" }), "Someone")
+	lu.assertEquals(#preview().items, 0)
+	lu.assertNil(_G.DiabolicLootPreviewFrame:IsShown())
+	boot({})
+	say("CHAT_MSG_RAID", "Loot from Marrowgar: " .. Session.item(client, 100, { name = "Sword" }), "Loot")
+	lu.assertNil(_G.DiabolicLootPreviewFrame)
+	Session.assertClean(client)
+end
+
+function TestRollWindow:test_what_you_see_opening_the_boss_goes_to_the_raid()
+	boot()
+	local sword = Session.item(client, 100, { name = "Sword", quality = 4 })
+	local ring = Session.item(client, 101, { name = "Ring", quality = 4 })
+	client.world.loot = {
+		{ name = "Sword", quality = 4, link = sword },
+		{ name = "Gold", quality = 0, isCoin = true },
+		{ name = "Bone", quality = 1, link = Session.item(client, 102, { name = "Bone", quality = 1 }) },
+		{ name = "Ring", quality = 4, link = ring },
+	}
+	client:SetUnit("target", Client.newUnit({ name = "Marrowgar", guid = "0xF130009069000001", dead = true, isPlayer = false }))
+	client:FireEvent("LOOT_OPENED")
+	-- what the master looter can give, one message each
+	lu.assertEquals(client.addonMessages, {
+		{ "DiabolicUI", "0xF130009069000001~Marrowgar~1~" .. sword, "RAID" },
+		{ "DiabolicUI", "0xF130009069000001~Marrowgar~4~" .. ring, "RAID" },
+	})
+	-- back from the server: listed, once even if someone else opens it too
+	for _ = 1, 2 do
+		for _, sent in ipairs(client.addonMessages) do
+			client:FireEvent("CHAT_MSG_ADDON", sent[1], sent[2], "RAID", "Someone")
+		end
+	end
+	lu.assertEquals(listed(), { "Sword", "Ring" })
+	lu.assertEquals(preview().title:GetText(), "Marrowgar")
+	-- Raid Loot Suite's line for it adds nothing
+	say("CHAT_MSG_RAID", "Loot from Marrowgar: " .. sword .. " " .. ring, "Loot")
+	lu.assertEquals(listed(), { "Sword", "Ring" })
+	-- others' messages, and not under master loot: nothing
+	client:FireEvent("CHAT_MSG_ADDON", "Other", "x", "RAID", "Someone")
+	client:FireEvent("CHAT_MSG_ADDON", "DiabolicUI", "garbage", "RAID", "Someone")
+	lu.assertEquals(#listed(), 2)
+	client.addonMessages = nil
+	client.world.lootMethod = { "group" }
+	client:FireEvent("LOOT_OPENED")
+	lu.assertNil(client.addonMessages)
 	Session.assertClean(client)
 end
 

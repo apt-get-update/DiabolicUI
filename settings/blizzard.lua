@@ -92,6 +92,9 @@ Engine:NewStaticConfig("Blizzard", {
 		name_font = DiabolicFont_SansBold12,
 		time_font = DiabolicFont_SansBold10,
 		result_font = DiabolicFont_HeaderRegular12,
+		bis_font = DiabolicFont_SansRegular10, -- BiS-Tooltip's ranks, under the buttons
+		bis_color = { .1, 1, .1 },
+		bis_height = 4 + 10,
 		bar = {
 			height = 8,
 			color = { 1, .82, 0 },
@@ -109,6 +112,21 @@ Engine:NewStaticConfig("Blizzard", {
 				pushed = path .. [[textures\DiabolicUI_UIButton_300x51_Pushed.tga]]
 			}
 		}
+	},
+	-- the boss's loot coming up, posted by the master looter (lootpreview.lua)
+	preview = {
+		position = { "RIGHT", -110, 60 }, -- relative to UIParent, left of the side bars
+		width = 220,
+		side_padding = 12,
+		top_padding = 40, -- room for the title
+		bottom_padding = 12,
+		row_height = 22,
+		icon_size = 20,
+		gap = 6,
+		title_font = DiabolicFont_HeaderRegular12,
+		name_font = DiabolicFont_SansBold12,
+		waiting_alpha = .6, -- the items not rolled yet, dimmer than the one being rolled
+		rolling_color = { 1, .82, 0, .15 } -- behind the one being rolled
 	},
 	mirrortimers = {
 		position = { "TOP", "UIParent", "TOP", 0, -300 }, -- default anchor -180

@@ -983,7 +983,7 @@ function Api.install(client)
 	api.LootSlot = function(slot) world().looted = slot end
 	api.CloseLoot = function() world().lootClosed = true end
 	api.IsFishingLoot = function() return nil end
-	api.GetLootThreshold = function() return 2 end
+	api.GetLootThreshold = function() return world().lootThreshold or 2 end
 	api.ConfirmLootSlot = function() end
 
 	-- Places --------------------------------------------------------------------
@@ -1442,6 +1442,12 @@ function Api.install(client)
 	api.RandomRoll = function(low, high)
 		client.rolls = client.rolls or {}
 		client.rolls[#client.rolls + 1] = { tonumber(low), tonumber(high) }
+	end
+	-- the server sends it back as CHAT_MSG_ADDON to everyone in the group,
+	-- you included: the tests fire it themselves
+	api.SendAddonMessage = function(prefix, msg, chatType, target)
+		client.addonMessages = client.addonMessages or {}
+		client.addonMessages[#client.addonMessages + 1] = { prefix, msg, chatType, target }
 	end
 	api.AcceptResurrect = function() end
 	api.RepopMe = function() end

@@ -3,7 +3,8 @@
 -- puts an item up for a roll in the group's chat, it shows the item, the
 -- time left, and buttons to roll for it: main spec (/roll 100) or off spec
 -- (/roll 99). Your roll shows on it, and it goes once the item is won or
--- the time is up. In the loot window's look (lootframe.lua).
+-- the time is up. In the loot window's look (lootframe.lua). With the
+-- BiS-Tooltip Renewed addon, a line says if it's BiS for your specs.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: RollWindow", "LOW")
 local L = Engine:GetLocale()
@@ -16,6 +17,7 @@ local math_max = math.max
 local pairs = pairs
 local string_gmatch = string.gmatch
 local string_lower = string.lower
+local table_concat = table.concat
 local table_remove = table.remove
 local tonumber = tonumber
 local unpack = unpack
@@ -28,6 +30,7 @@ local GetNumRaidMembers = _G.GetNumRaidMembers
 local GetRaidRosterInfo = _G.GetRaidRosterInfo
 local GetTime = _G.GetTime
 local RandomRoll = _G.RandomRoll
+local UnitClass = _G.UnitClass
 local UnitName = _G.UnitName
 
 -- Words that end a roll, in the message naming its winner
@@ -76,6 +79,36 @@ local CanPutUpRolls = function(event, sender)
 		return true
 	end
 	return (sender == MasterLooter()) or IsRaidOfficer(sender)
+end
+Module.CanPutUpRolls = CanPutUpRolls -- for the loot preview (lootpreview.lua)
+
+-- BiS-Tooltip Renewed's ranks for your class's specs, in the phase picked
+-- in its window: "T9: Holy BIS, Shadow alt 2". Nothing without it.
+local BisText = function(link)
+	local bis = _G.BisTooltipAddon
+	local entries = bis and bis.ReverseLookup and bis.ReverseLookup[tonumber(link:match("item:(%d+)"))]
+	local phases, db = _G.BisTooltip_PhaseData, bis and bis.db and bis.db.char
+	local phase = entries and phases and db and phases[db.phase_index]
+	if not phase then
+		return
+	end
+	local _, token = UnitClass("player")
+	local class = (token == "DEATHKNIGHT") and "Death Knight" or (token:sub(1, 1) .. token:sub(2):lower())
+	local specs = {}
+	for _, entry in ipairs(entries) do
+		if (entry.class == class) then
+			-- its labels: "T8 BIS / T9 alt 2"
+			for label in (entry.rightText .. " / "):gmatch("(.-) / ") do
+				local rank = label:match("^" .. phase .. " (.+)$")
+				if rank then
+					specs[#specs + 1] = entry.spec .. " " .. rank
+				end
+			end
+		end
+	end
+	if (#specs > 0) then
+		return phase .. ": " .. table_concat(specs, ", ")
+	end
 end
 
 -- The rows -----------------------------------------------------------------
@@ -188,7 +221,15 @@ Module.CreateRow = function(self)
 	result:SetFontObject(config.result_font)
 	result:SetPoint("LEFT", mainSpec, "LEFT", 0, 0)
 
-	row.Icon, row.Name, row.Bar, row.Time, row.Result = icon, name, bar, time, result
+	-- BiS-Tooltip's ranks, under the buttons
+	local bis = row:CreateFontString(nil, "OVERLAY")
+	bis:SetFontObject(config.bis_font)
+	bis:SetTextColor(unpack(config.bis_color))
+	bis:SetJustifyH("LEFT")
+	bis:SetSize(2 * config.button.size[1] + config.gap, config.bis_height - 4)
+	bis:SetPoint("TOPLEFT", mainSpec, "BOTTOMLEFT", 0, -4)
+
+	row.Icon, row.Name, row.Bar, row.Time, row.Result, row.Bis = icon, name, bar, time, result, bis
 	row.MainSpec, row.OffSpec = mainSpec, offSpec
 	row:SetScript("OnUpdate", OnRowUpdate)
 	return row
@@ -200,21 +241,25 @@ Module.UpdateItem = function(self, row)
 	row.hasInfo = name and true
 	row.Icon:SetTexture(texture or [[Interface\Icons\INV_Misc_QuestionMark]])
 	row.Name:SetText(row.link)
+	row.Bis:SetText(BisText(row.link) or "")
 end
 
--- The window's size and its rows, one under the other
+-- The window's size and its rows, one under the other, taller with
+-- BiS-Tooltip for its line
 Module.Layout = function(self)
 	local config, frame = self.config, self.frame
 	local rows = self.rows
+	local rowHeight = config.row_height + (_G.BisTooltipAddon and config.bis_height or 0)
 	for i, row in ipairs(rows) do
+		row:SetHeight(rowHeight)
 		row:ClearAllPoints()
-		row:SetPoint("TOP", frame, "TOP", 0, -(config.top_padding + (i - 1) * (config.row_height + config.row_gap)))
+		row:SetPoint("TOP", frame, "TOP", 0, -(config.top_padding + (i - 1) * (rowHeight + config.row_gap)))
 	end
 	if (#rows == 0) then
 		frame:Hide()
 		return
 	end
-	frame:SetHeight(config.top_padding + #rows * config.row_height + (#rows - 1) * config.row_gap + config.bottom_padding)
+	frame:SetHeight(config.top_padding + #rows * rowHeight + (#rows - 1) * config.row_gap + config.bottom_padding)
 	frame:Show()
 end
 
@@ -237,6 +282,7 @@ Module.AddRoll = function(self, link, seconds)
 		row.OffSpec:Show()
 		self.rows[#self.rows + 1] = row
 		self:UpdateItem(row)
+		self:SendMessage("ENGINE_ROLL_STARTED", link)
 	end
 	row.endTime = GetTime() + seconds
 	row.Bar:SetMinMaxValues(0, seconds)
@@ -253,6 +299,7 @@ Module.RemoveRow = function(self, row)
 		end
 	end
 	row:Hide()
+	self:SendMessage("ENGINE_ROLL_ENDED", row.link)
 	row.link = nil
 	self.unused[#self.unused + 1] = row
 	self:Layout()

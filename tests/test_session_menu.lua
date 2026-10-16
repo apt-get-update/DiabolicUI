@@ -392,6 +392,9 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	end
 	_G.DiabolicUIOptionsPanelAddOns.refresh()
 	lu.assertNil(widget("StyleTrinketMenu"):GetChecked())
+	-- Fake Loot Roll with the roll window off (its default): nothing
+	client:Click(widget("FakeLootRoll"))
+	lu.assertNil(_G.DiabolicLootPreviewFrame)
 
 	-- Unlock Frames: the minimap and the tracker at once, one button to lock
 	local menu = client:GetModule("Menu")
