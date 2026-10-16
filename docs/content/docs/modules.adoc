@@ -84,7 +84,7 @@ Small independent modules, each restyling or replacing one Blizzard piece.
 | File | Does
 
 | `lootframe.lua` | Our own loot window (link:{{< relref "case-study-loot-window" >}}[case study])
-| `rollwindow.lua` | The master looter's rolls, with Main Spec / Off Spec buttons
+| `rollwindow.lua`, `lootpreview.lua` | The master looter's rolls and the boss's loot (link:{{< relref "raid-rolls" >}}[Raid Rolls])
 | `tooltips.lua`, `itemtooltips.lua` | Tooltip backdrops, Diablo III style item tooltips
 | `containers.lua` | Bag and bank borders by quality, item levels
 | `popups.lua` | Popups and the Dungeon Finder's

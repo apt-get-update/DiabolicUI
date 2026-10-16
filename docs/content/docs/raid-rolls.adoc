@@ -1,0 +1,86 @@
+---
+title: "Raid Rolls"
+weight: 10
+---
+
+= Raid Rolls
+
+Two windows, both off unless `rollWindow` is on (`defaults/lootframe.lua`,
+`/dui config` → AddOns). Raiders need nothing else: they read the master
+looter's chat, whatever addon wrote it.
+
+|===
+| File | Shows
+
+| `rollwindow.lua` | The item up for a roll, its time left, Main Spec (`/roll 100`) and Off Spec (`/roll 99`) buttons, then your roll
+| `lootpreview.lua` | The boss's loot still to roll, on the right; the item being rolled in gold
+|===
+
+== How
+
+++++
+{{< mermaid >}}
+flowchart LR
+    ml["👑 master looter"] -- "chat" --> chk{"🔒 CanPutUpRolls"}
+    ml -- "addon message" --> pv
+    chk -- "Loot from…<br/>…dropped N items" --> pv["📋 loot preview"]
+    chk -- "Roll for [item] 20s" --> rw["🎲 roll window"]
+    rw -- "ENGINE_ROLL_STARTED / ENDED" --> pv
+    sys["📨 CHAT_MSG_SYSTEM<br/>You rolls 87 (1-100)"] --> rw
+{{< /mermaid >}}
+++++
+
+== Who is listened to
+
+`CanPutUpRolls(event, sender)` in `rollwindow.lua`, shared with the preview.
+
+|===
+| Chat | Trusted
+
+| Raid warning, raid or party leader | Always
+| Raid, party | The master looter or a raid assistant
+|===
+
+== The roll window
+
+|===
+| Message | Does
+
+| An item link and "roll" | Adds a row; "20s", "20 sec" set its time, else `seconds`
+| The same link again | Its time starts over
+| A link and "wins", "awarded", "cancel"… (`ENDINGS`) | Removes its row
+| "roll" and a number, no link | The last row's time ("Stopping rolls in 3")
+| Your `RANDOM_ROLL_RESULT` | Your roll replaces the buttons
+|===
+
+With the BiS-Tooltip Renewed addon, `BisText` adds a line under the buttons:
+your class's specs for the phase picked in it, like "T9: Holy BIS".
+
+== The loot preview
+
+|===
+| Source | Example
+
+| Raid Loot Suite | `Loot from Boss: [a] [b]`
+| RollFor | `Boss dropped 2 items:`, then `1. [a]`, `2. 2x[b]` within 10 s
+| DiabolicUI | Addon messages, prefix `DiabolicUI`, `corpse~boss~slot~link`
+|===
+
+Anyone with DiabolicUI who opens a corpse under master loot sends one addon
+message per item at or above `GetLootThreshold()`. Each slot is listed once;
+a chat line for the same boss only adds what's missing.
+
+== Testing
+
+`tests/test_session_rollwindow.lua`. The fake client records
+`SendAddonMessage` in `client.addonMessages`.
+
+In game, solo: `/dui config` → AddOns → *Fake Loot Roll* (`ShowFakeRoll` in
+`lootpreview.lua`). Or fake any raid warning:
+
+[source,lua]
+----
+/run local l=select(2,GetItemInfo(6948))for _,f in ipairs({WorldFrame:GetChildren()})do if f:IsEventRegistered("CHAT_MSG_RAID_WARNING")then f:GetScript("OnEvent")(f,"CHAT_MSG_RAID_WARNING","Roll for "..l.." 20s","Me")end end
+----
+
+Replace `"Roll for "..l.." 20s"` with `"Loot from Test: "..l` for the preview.
