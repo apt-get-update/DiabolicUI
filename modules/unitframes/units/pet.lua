@@ -63,7 +63,7 @@ local Style = function(self, unit)
 
 	Health.useClassColor = db.showClassColors
 	Health.useClassColorPet = db.showClassColors
-	Health.frequent = 1/120
+	Health.frequent = 1/30
 
 	Health.PostUpdate = postUpdateHealth
 

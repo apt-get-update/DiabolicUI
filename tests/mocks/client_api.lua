@@ -109,7 +109,8 @@ function Api.newWorld(class)
 		instance = { inInstance = nil, type = "none", name = "", difficulty = 1, maxPlayers = 0 },
 		worldStates = {}, -- { uiType, state, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extended1, extended2, extended3 }
 		cvars = {
-			lockActionBars = "1", alwaysShowActionBars = "0",
+			lockActionBars = "1", alwaysShowActionBars = "0", equipmentManager = "1",
+			playerStatLeftDropdown = "PLAYERSTAT_BASE_STATS", playerStatRightDropdown = "PLAYERSTAT_MELEE_COMBAT",
 			uiScale = "1", useUiScale = "0", gxResolution = "1920x1080", gxWindow = "0", gxMaximize = "1",
 			chatBubbles = "1", chatBubblesParty = "1", chatStyle = "classic", conversationMode = "inline",
 			chatMouseScroll = "1", showTimestamps = "none", cameraDistanceMax = "15",
@@ -954,6 +955,17 @@ function Api.install(client)
 		end
 	end
 	api.GetContainerItemCooldown = function() return 0, 0, 1 end
+	-- at a merchant (its window open) using an item sells it: it leaves the
+	-- bag, and world.sold lists it
+	api.UseContainerItem = function(bag, slot)
+		local c = world().containers[bag]
+		local item = c and c.items[slot]
+		if item and _G.MerchantFrame and _G.MerchantFrame:IsShown() then
+			c.items[slot] = nil
+			world().sold = world().sold or {}
+			table.insert(world().sold, item)
+		end
+	end
 	api.GetBagName = function(bag) return world().containers[bag] and ("Bag " .. bag) end
 	api.ContainerIDToInventoryID = function(bag) return 19 + bag end
 	api.GetKeyRingSize = function() return 32 end
@@ -1168,6 +1180,29 @@ function Api.install(client)
 	end
 	api.UpdateAddOnCPUUsage = function() end
 	api.GetAddOnCPUUsage = function() return 0 end
+	-- Script profiling: the fake client times nothing; a test can set the
+	-- milliseconds a function used in world.functionCPU.
+	api.GetFunctionCPUUsage = function(func)
+		-- the real client crashes on its own C functions
+		assert(pcall(coroutine.create, func), "GetFunctionCPUUsage: given a C function, the client crashes")
+		local used = world().functionCPU and world().functionCPU[func] or 0
+		return used, 0
+	end
+	-- Every frame, oldest first; nil past the last one.
+	local enumerated
+	api.EnumerateFrames = function(previous)
+		if previous == nil then
+			enumerated = {}
+			for _, widget in ipairs(client.widgets) do
+				if widget:IsObjectType("Frame") then
+					enumerated[#enumerated + 1] = widget
+					enumerated[widget] = #enumerated
+				end
+			end
+			return enumerated[1]
+		end
+		return enumerated and enumerated[(enumerated[previous] or #enumerated) + 1]
+	end
 
 	-- Social ----------------------------------------------------------------------
 
@@ -1224,6 +1259,14 @@ function Api.install(client)
 	end
 	api.GetNumTalentTabs = function() return #world().talents end
 
+	-- a round copy of `path` in `texture` (a texture or its name)
+	api.SetPortraitToTexture = function(texture, path)
+		if type(texture) == "string" then
+			texture = _G[texture]
+		end
+		texture:SetTexture(path)
+	end
+
 	-- equipment manager sets: world.equipmentSets = { { name, icon }, ... }
 	api.GetNumEquipmentSets = function() return #(world().equipmentSets or {}) end
 	api.GetEquipmentSetInfo = function(index)
@@ -1237,6 +1280,24 @@ function Api.install(client)
 			if set[1] == name then
 				return set[2], index
 			end
+		end
+	end
+	-- the spellbook's schools: name, icon, first spell's offset, count
+	api.GetSpellTabInfo = function(tab)
+		if tab == 1 then
+			return "General", [[Interface\Icons\INV_Misc_Book_09]], 0, 6
+		end
+	end
+	api.SortWho = function() end
+	-- the companions and mounts (world.companions.CRITTER / .MOUNT: { creatureID, name, spellID, icon, active })
+	local function companions(kind)
+		return (world().companions or {})[kind] or {}
+	end
+	api.GetNumCompanions = function(kind) return #companions(kind) end
+	api.GetCompanionInfo = function(kind, index)
+		local c = companions(kind)[index]
+		if c then
+			return unpack(c, 1, 5)
 		end
 	end
 	api.GetTalentTabInfo = function(tab, inspect, pet, group)

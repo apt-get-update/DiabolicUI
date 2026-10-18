@@ -3,5 +3,6 @@
 <Script file="wotlk-helpers.lua"/>
 <Script file="blizzard-taint.lua"/>
 <Script file="engine-core.lua"/>
+<Script file="profiler.lua"/>
 
 </Ui>

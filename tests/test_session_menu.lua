@@ -67,8 +67,8 @@ function TestOptionsMenu:test_the_pages_under_diabolicui()
 			names[#names + 1] = (panel.parent and (panel.parent .. "/") or "") .. panel.name
 		end
 	end
-	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Action Bars", "DiabolicUI/Specializations", "DiabolicUI/Tooltips", "DiabolicUI/Units",
-		"DiabolicUI/Chat", "DiabolicUI/Messages", "DiabolicUI/Quests", "DiabolicUI/Frames & AddOns" })
+	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Action Bars", "DiabolicUI/Specializations", "DiabolicUI/Units",
+		"DiabolicUI/Chat", "DiabolicUI/Messages", "DiabolicUI/Quests", "DiabolicUI/Tooltips", "DiabolicUI/Frames & AddOns" })
 	-- the main page: what's where, the commands and the version
 	_G.DiabolicUIOptionsPanel.refresh()
 	assertClean(client)
@@ -86,12 +86,6 @@ function TestOptionsMenu:test_the_menu_checkboxes()
 	click("ShowPerformance")
 	lu.assertEquals(bars.showPerformance, not performance)
 	lu.assertEquals(menu.MasterMenuButton.Performance:IsShown() == 1, not performance)
-	local spec = client:GetModule("ActionBars"):GetWidget("Button: Spec Switch"):GetFrame()
-	click("ShowSpecSwitch")
-	lu.assertFalse(bars.showSpecSwitch)
-	lu.assertNil(spec:IsShown())
-	click("ShowSpecSwitch")
-	lu.assertEquals(spec:IsShown(), 1)
 	assertClean(client)
 end
 
@@ -156,6 +150,12 @@ function TestOptionsMenu:test_settings_needing_a_reload_ask_for_it()
 	lu.assertNotNil(popupFrame("ENGINE_GENERAL_RELOADUI"))
 	lu.assertEquals(client.reloaded, 1)
 
+	popupFrame("ENGINE_GENERAL_RELOADUI"):Hide()
+	local warning = units.lowHealthWarning
+	click("LowHealthWarning")
+	lu.assertEquals(units.lowHealthWarning, not warning)
+	lu.assertNotNil(popupFrame("ENGINE_GENERAL_RELOADUI"))
+
 	-- clicked back without a change: no question
 	popupFrame("ENGINE_GENERAL_RELOADUI"):Hide()
 	widget("ShowPortrait"):SetChecked(units.showPortrait)
@@ -215,6 +215,16 @@ function TestOptionsMenu:test_descriptions_on_hover()
 	client:Leave()
 	lu.assertNil(_G.GameTooltip:IsShown())
 	assertClean(client)
+end
+
+function TestOptionsMenu:test_the_pages_go_from_the_main_frames_to_the_extras()
+	local names = {}
+	for _, category in ipairs(_G.INTERFACEOPTIONS_ADDONCATEGORIES) do
+		if (category.parent == "DiabolicUI") then
+			names[#names + 1] = category.name
+		end
+	end
+	lu.assertEquals(names, { "Action Bars", "Specializations", "Units", "Chat", "Messages", "Minimap", "Quests", "Tooltips", "Frames & AddOns" })
 end
 
 function TestOptionsMenu:test_the_fake_group_buttons()
@@ -365,33 +375,25 @@ function TestOptionsMenu:test_the_specialization_macros()
 	lu.assertEquals(bars.specMacroName1, "DUI Holy")
 	openDropDown("Spec2Macro", L["None"])
 	lu.assertFalse(bars.specMacroName2)
-
-	-- they run on a click of the skull's button: greyed out without it
-	click("ShowSpecSwitch")
-	lu.assertFalse(bars.showSpecSwitch)
-	lu.assertEquals(widget("Spec1Macro").text, "|cff808080" .. L["Needs Show Specialization Switch"] .. "|r")
-	click("ShowSpecSwitch")
-	lu.assertEquals(widget("Spec1Macro").text, "|TInterface\\Icons\\Q:16:16:0:0|t DUI Holy")
 	assertClean(client)
 end
 
 function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	local L = client.Engine:GetLocale()
-	local skins = db("AddOnSkins")
-	-- each styling asks for a reload when it changes
-	for _, case in ipairs({ { "StyleTrinketMenu", "styleTrinketMenu" } }) do
-		click(case[1])
-		lu.assertFalse(skins[case[2]])
-		local popup = popupFrame("ENGINE_GENERAL_RELOADUI")
-		lu.assertNotNil(popup, case[1])
-		popup:Hide()
-		-- clicked back without a change: no question
-		widget(case[1]):SetChecked(skins[case[2]])
-		client:RunScript(widget(case[1]), "OnClick", "LeftButton")
-		lu.assertNil(popupFrame("ENGINE_GENERAL_RELOADUI"), case[1])
-	end
+	local loot = db("LootFrame")
+	-- the roll window asks for a reload when it changes
+	click("RollWindow")
+	lu.assertTrue(loot.rollWindow)
+	local popup = popupFrame("ENGINE_GENERAL_RELOADUI")
+	lu.assertNotNil(popup)
+	popup:Hide()
+	-- clicked back without a change: no question
+	widget("RollWindow"):SetChecked(loot.rollWindow)
+	client:RunScript(widget("RollWindow"), "OnClick", "LeftButton")
+	lu.assertNil(popupFrame("ENGINE_GENERAL_RELOADUI"))
+	loot.rollWindow = false
 	_G.DiabolicUIOptionsPanelAddOns.refresh()
-	lu.assertNil(widget("StyleTrinketMenu"):GetChecked())
+	lu.assertNil(widget("RollWindow"):GetChecked())
 	-- Fake Loot Roll with the roll window off (its default): nothing
 	client:Click(widget("FakeLootRoll"))
 	lu.assertNil(_G.DiabolicLootPreviewFrame)
@@ -481,19 +483,19 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	bars.showGold = true
 	menuWidget:UpdatePerformanceAnchor()
 
-	-- their resets, on the Action Bars and Chat pages
-	client:Click(widget("ResetMenu"))
+	-- Reset Positions, on the main page
+	client:Click(widget("ResetPositions"))
 	lu.assertNil(bars.menuPosition)
 	lu.assertEquals({ menuWidget:GetSide() }, { "RIGHT", "BOTTOM" }) -- back: bags, then main menu
 	local point, _, relativePoint = menuWidget.MicroMenuWindow:GetPoint()
 	lu.assertEquals({ point, relativePoint }, { "BOTTOMRIGHT", "BOTTOMLEFT" })
 	lu.assertEquals(select(1, master:GetPoint()), "BOTTOMRIGHT")
 	lu.assertTrue(menuWidget.BagBarMenuButton:GetRight() < master:GetLeft())
-	client:Click(widget("ResetChat"))
+	client:Click(widget("ResetPositions"))
 	lu.assertTrue(chat.db.autoposition)
 	bars.menuPosition = { -10, 10 }
 	client:EnterCombat()
-	client:Click(widget("ResetMenu")) -- forgotten now, placed after a reload
+	client:Click(widget("ResetPositions")) -- forgotten now, placed after a reload
 	lu.assertNil(bars.menuPosition)
 	client:LeaveCombat()
 
@@ -559,17 +561,10 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	client:FireEvent("PLAYER_REGEN_DISABLED") -- locked already: nothing to do
 	client.world.inCombat = false
 
-	-- the tracker's own reset, on the Quests page
+	-- Reset Positions puts the tracker back too
 	tracker.db.trackerPosition = { 1, 2 }
-	client:Click(widget("ResetTracker"))
+	client:Click(widget("ResetPositions"))
 	lu.assertNil(tracker.db.trackerPosition)
-
-	-- the chat slide
-	local chat = db("ChatWindows")
-	click("ChatSlideMessages")
-	lu.assertFalse(chat.slideMessages) -- on by default
-	click("ChatSlideMessages")
-	lu.assertTrue(chat.slideMessages)
 
 	-- a specialization label's description on hover
 	local label

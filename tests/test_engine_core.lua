@@ -48,6 +48,7 @@ local function loadEngine()
 		lockdown = false,
 		loggedIn = false,
 		addons = {},
+		errors = {}, -- what reached the client's error handler
 	}
 	frames = FrameMock.new()
 
@@ -66,6 +67,9 @@ local function loadEngine()
 	_G.IsLoggedIn = function() return state.loggedIn end
 	_G.GetCVarBool = function() return false end
 	_G.debugstack = function() return ": in function `Test'" end
+	_G.geterrorhandler = function()
+		return function(err) table.insert(state.errors, err) end
+	end
 	_G.GetNumAddOns = function() return #state.addons end
 	_G.GetAddOnInfo = function(index)
 		local addon = state.addons[index]
@@ -287,6 +291,19 @@ function TestEngineStartup:test_incompatibility_condition_function_decides()
 	module:SetIncompatible("Questie", function() return false end)
 	startUp()
 	lu.assertEquals(log, { "A:init", "A:enable" })
+end
+
+function TestEngineStartup:test_a_failing_module_does_not_stop_the_others()
+	local log = {}
+	trackedModule(log, "A")
+	local broken = trackedModule(log, "B")
+	broken.OnInit = function() error("B is broken") end
+	trackedModule(log, "C")
+	startUp()
+	table.sort(log)
+	lu.assertEquals(log, { "A:enable", "A:init", "C:enable", "C:init" }) -- no B:enable
+	lu.assertEquals(#state.errors, 1)
+	lu.assertStrContains(state.errors[1], "B is broken")
 end
 
 function TestEngineStartup:test_for_all_calls_a_method_by_priority()

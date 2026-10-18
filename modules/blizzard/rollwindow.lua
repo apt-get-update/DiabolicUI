@@ -131,6 +131,25 @@ local Roll = function(button)
 	row.rolling = true
 end
 
+-- The buttons, in place of the roll: shown again when it's put up again
+local ShowButtons = function(row, shown)
+	for _, button in ipairs(row.Buttons) do
+		if shown then
+			button:Show()
+		else
+			button:Hide()
+		end
+	end
+end
+
+-- Not rolling is passing: nothing to send
+local Pass = function(button)
+	local row = button.row
+	row.rolled = true
+	ShowButtons(row, false)
+	row.Result:SetText(L["You passed"])
+end
+
 local CreateRollButton = function(row, text, max)
 	local config = Module.config.button
 	local button = CreateFrame("Button", nil, row)
@@ -215,6 +234,9 @@ Module.CreateRow = function(self)
 	mainSpec:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, -6)
 	local offSpec = CreateRollButton(row, L["Off Spec"], config.off_spec)
 	offSpec:SetPoint("LEFT", mainSpec, "RIGHT", config.gap, 0)
+	local pass = CreateRollButton(row, L["Pass"])
+	pass:SetPoint("LEFT", offSpec, "RIGHT", config.gap, 0)
+	pass:SetScript("OnClick", Pass)
 
 	-- your roll, in the buttons' place once rolled
 	local result = row:CreateFontString(nil, "OVERLAY")
@@ -226,11 +248,12 @@ Module.CreateRow = function(self)
 	bis:SetFontObject(config.bis_font)
 	bis:SetTextColor(unpack(config.bis_color))
 	bis:SetJustifyH("LEFT")
-	bis:SetSize(2 * config.button.size[1] + config.gap, config.bis_height - 4)
+	bis:SetSize(3 * config.button.size[1] + 2 * config.gap, config.bis_height - 4)
 	bis:SetPoint("TOPLEFT", mainSpec, "BOTTOMLEFT", 0, -4)
 
 	row.Icon, row.Name, row.Bar, row.Time, row.Result, row.Bis = icon, name, bar, time, result, bis
-	row.MainSpec, row.OffSpec = mainSpec, offSpec
+	row.MainSpec, row.OffSpec, row.Pass = mainSpec, offSpec, pass
+	row.Buttons = { mainSpec, offSpec, pass }
 	row:SetScript("OnUpdate", OnRowUpdate)
 	return row
 end
@@ -278,8 +301,7 @@ Module.AddRoll = function(self, link, seconds)
 		row = table_remove(self.unused) or self:CreateRow()
 		row.link, row.rolling, row.rolled = link, nil, nil
 		row.Result:SetText("")
-		row.MainSpec:Show()
-		row.OffSpec:Show()
+		ShowButtons(row, true)
 		self.rows[#self.rows + 1] = row
 		self:UpdateItem(row)
 		self:SendMessage("ENGINE_ROLL_STARTED", link)
@@ -357,8 +379,7 @@ Module.OnSystemMessage = function(self, event, message)
 	for _, row in ipairs(self.rows) do
 		if row.rolling and (not row.rolled) then
 			row.rolled = true
-			row.MainSpec:Hide()
-			row.OffSpec:Hide()
+			ShowButtons(row, false)
 			row.Result:SetFormattedText(L["You rolled %d (%s)"], roll, (high == self.config.main_spec) and L["Main Spec"] or L["Off Spec"])
 			return
 		end

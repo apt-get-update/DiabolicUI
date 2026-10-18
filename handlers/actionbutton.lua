@@ -10,6 +10,7 @@ local Handler = Engine:NewHandler("ActionButton")
 -- Lua API
 local _G = _G
 local math_ceil = math.ceil
+local next = next
 local pairs = pairs
 local select = select
 local setmetatable = setmetatable
@@ -103,8 +104,27 @@ local colors = {
 	keyTextDisabled 	= { .3 + .5*73/255, .3 + .5*25/255, .3 + .5*9/255 } -- C.Status.Dead
 }
 
+-- In combat the client often fires these several times in one frame:
+-- the buttons update once, on the next frame.
+local pendingUsable, pendingCooldown
+local RunPending = function()
+	if pendingCooldown then
+		pendingCooldown = nil
+		for button in next, ActionButtons do
+			button:UpdateCooldown()
+		end
+	end
+	if pendingUsable then
+		pendingUsable = nil
+		for button in next, ActionButtons do
+			button:UpdateUsable()
+		end
+	end
+end
+
 -- Button frequent update handler (range, flash)
 local OnUpdate = function(self, elapsed)
+	RunPending()
 	FLASH_TIMER = FLASH_TIMER - elapsed
 	RANGE_TIMER = RANGE_TIMER - elapsed
 	
@@ -152,6 +172,7 @@ end
 -- However, a simply 1 sec postponing of the update process along with 
 -- a forced button usable update seems to handle the problem. 
 local WaitForUpdates = function(self, elapsed)
+	RunPending()
 	self.scheduleUpdate = (self.scheduleUpdate or 1) - elapsed
 	if self.scheduleUpdate <= 0 then
 		for button in next, ActiveButtons do
@@ -722,15 +743,11 @@ Handler.OnEvent = function(self, event, ...)
 		end
 
 	elseif (event == "ACTIONBAR_UPDATE_USABLE") then
-		for button in next, ActionButtons do
-			button:UpdateUsable()
-		end
-		
+		pendingUsable = true -- (see RunPending)
+
 	elseif (event == "UPDATE_SHAPESHIFT_COOLDOWN")
 	or (event == "ACTIONBAR_UPDATE_COOLDOWN") then
-		for button in next, ActionButtons do
-			button:UpdateCooldown()
-		end
+		pendingCooldown = true
 
 	elseif (event == "TRADE_SKILL_SHOW") or (event == "TRADE_SKILL_CLOSE") then
 		for button in next, ActiveButtons do
@@ -881,7 +898,8 @@ Handler.Start = function(self, event)
 	self:LoadEvents()
 
 	-- Start the range and flash updates
-	Engine:CreateFrame("Frame", nil, "UICenter"):SetScript("OnUpdate", WaitForUpdates)
+	self.RangeUpdater = Engine:CreateFrame("Frame", nil, "UICenter")
+	self.RangeUpdater:SetScript("OnUpdate", WaitForUpdates)
 
 	-- Fire the original event in the new event handler
 	self:OnEvent(event)

@@ -9,7 +9,7 @@
 --    druid's extra mana bar, and Enable reporting success (without it the
 --    frame never refreshes the element when its unit changes, like when
 --    entering a vehicle), including on a frame with only a mana bar
---  - both: an every-frame poll ("FREQUENT") that finds nothing changed skips
+--  - both: a poll ("FREQUENT", 30 times a second) that finds nothing changed skips
 --    the work, but still refreshes fully twice a second
 -- Same RegisterElement capture as test_unitframes_elements.lua.
 

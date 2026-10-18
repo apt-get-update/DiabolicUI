@@ -545,6 +545,11 @@ function TestCastBars:test_the_players_cast_and_its_latency()
 	lu.assertAlmostEquals(bar.SafeZone:GetWidth(), bar:GetWidth() / 20, 1e-6)
 	client:Tick(0.5)
 	lu.assertEquals(bar.Value:GetText(), "1.5")
+	-- the text only ten times a second, however fast the frames
+	client:Tick(0.05, 0.05)
+	lu.assertEquals(bar.Value:GetText(), "1.5")
+	client:Tick(0.05, 0.05)
+	lu.assertEquals(bar.Value:GetText(), "1.4")
 
 	-- pushed back
 	me.casting.startTime = me.casting.startTime + 300
@@ -920,6 +925,49 @@ function TestOtherFrames:test_test_mode_previews()
 	client.world.mounted = true -- the portraits keep their whole-model camera
 	module:SetPartyMockShown(true)
 	module:SetRaidMockShown(true)
+	assertClean(client)
+end
+
+-- The low health warning -------------------------------------------------------------
+
+TestLowHealthWarning = {}
+
+function TestLowHealthWarning:tearDown()
+	client, module = nil, nil
+end
+
+function TestLowHealthWarning:test_the_edges_pulse_red_under_35_percent()
+	boot()
+	local frame = _G.DiabolicLowHealthFrame
+	local player = client.world.units.player
+	lu.assertFalse(shown(frame))
+
+	player.health = 3000
+	client:FireEvent("UNIT_HEALTH", "player")
+	lu.assertTrue(shown(frame))
+	-- it pulses
+	client:Tick(0.35)
+	local alpha = frame:GetAlpha()
+	client:Tick(0.35)
+	lu.assertNotEquals(frame:GetAlpha(), alpha)
+
+	-- someone else's health changes nothing
+	player.health = 9000
+	client:FireEvent("UNIT_HEALTH", "party1")
+	lu.assertTrue(shown(frame))
+	client:FireEvent("UNIT_HEALTH", "player")
+	lu.assertFalse(shown(frame))
+
+	-- not while dead
+	player.health, player.dead = 0, true
+	client:FireEvent("PLAYER_DEAD")
+	lu.assertFalse(shown(frame))
+	assertClean(client)
+end
+
+function TestLowHealthWarning:test_can_be_turned_off()
+	boot({ savedVariables = { DiabolicUI_DB = { UnitFrames = { profiles = { global = { lowHealthWarning = false } } } } } })
+	lu.assertNil(_G.DiabolicLowHealthFrame)
 	assertClean(client)
 end
 

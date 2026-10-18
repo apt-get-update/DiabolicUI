@@ -77,7 +77,11 @@ local ALPHA_MINIMAL = .01 -- For non-targeted NPCs
 local NAME_LIGHTEN = .35
 
 -- Update and fading frequencies
-local HZ = 1/30
+local HZ = 1/30 -- plates fade this often
+-- and read Blizzard's plates this often for threat and colors (health
+-- comes at once, from their health bars' OnValueChanged), as Kui does
+local DATA_HZ = 1/10
+local CAST_TEXT_INTERVAL = .1
 local FADE_IN = 3/4 -- time in seconds to fade in
 local FADE_OUT = 1/20 -- time in seconds to fade out
 
@@ -1039,6 +1043,8 @@ Module.OnSpellCast = function(self, event, unit)
 		CastBarPool[plate] = castBar
 	end
 
+	castData.sinceText = nil -- the time text follows any change on the next frame
+
 	if event == "UNIT_SPELLCAST_START" then
 		local spellName, _, text, texture, startTime, endTime = UnitCastingInfo(unit)
 		if not spellName then
@@ -1159,10 +1165,17 @@ Module.UpdateCastBar = function(self, castBar, castData, elapsed)
 			castBar:Hide()
 		end
 	end
-	if (castData.delay ~= 0) then
-		castBar.Value:SetFormattedText("%s|cffff0000 -%s|r", formatTime(remaining), formatTime(castData.delay))
+	-- The bar moves every frame, its time text (tenths at most) 10 times a second.
+	local since = castData.sinceText
+	if since and (since + elapsed < CAST_TEXT_INTERVAL - 1e-6) then
+		castData.sinceText = since + elapsed
 	else
-		castBar.Value:SetText(formatTime(remaining))
+		castData.sinceText = 0
+		if (castData.delay ~= 0) then
+			castBar.Value:SetFormattedText("%s|cffff0000 -%s|r", formatTime(remaining), formatTime(castData.delay))
+		else
+			castBar.Value:SetText(formatTime(remaining))
+		end
 	end
 	castData.duration = duration
 	castBar:SetValue(duration)
@@ -1170,9 +1183,7 @@ end
 
 Module.OnUpdate = function(self, elapsed)
 
-	-- If the number of children in the WorldFrame
-	--  is different from the number we have stored,
-	-- we parse the children to check for new NamePlates.
+	-- cast bars move every frame
 	for _, castBar in pairs(CastBarPool) do
 		local castData = CastData[castBar]
 		if castData.casting or castData.channeling then
@@ -1180,6 +1191,15 @@ Module.OnUpdate = function(self, elapsed)
 		end
 	end
 
+	self.elapsed = (self.elapsed or 0) + elapsed
+	if (self.elapsed < HZ) then
+		return
+	end
+	elapsed = self.elapsed -- the time since the last update, not the last frame
+
+	-- If the number of children in the WorldFrame
+	--  is different from the number we have stored,
+	-- we parse the children to check for new NamePlates.
 	local numChildren = self.worldFrame:GetNumChildren()
 	if (WORLDFRAME_CHILDREN ~= numChildren) then
 		-- Localizing even more to reduce the load when entering large scale raids
@@ -1214,30 +1234,30 @@ Module.OnUpdate = function(self, elapsed)
 		WORLDFRAME_CHILDREN = numChildren
 	end
 
-	self.elapsed = (self.elapsed or 0) + elapsed
-	if (self.elapsed < HZ) then
-		return
-	end
-	elapsed = self.elapsed -- the time since the last update, not the last frame
-
-	-- Update visibility, health values and target alpha
-	for plate, baseFrame in pairs(self.visiblePlates) do
-		if baseFrame then
-			if FORCEUPDATE == "TARGET" then
-				plate:UpdateTargetData()
-				plate:UpdateAlpha()
-				plate:UpdateFrameLevel()
-			elseif FORCEUPDATE then
-				plate:UpdateAll()
+	-- Update visibility, health values and target alpha (at once after a
+	-- target change)
+	self.sinceData = (self.sinceData or DATA_HZ) + elapsed
+	if FORCEUPDATE or (self.sinceData >= DATA_HZ - 1e-6) then
+		self.sinceData = 0
+		for plate, baseFrame in pairs(self.visiblePlates) do
+			if baseFrame then
+				if FORCEUPDATE == "TARGET" then
+					plate:UpdateTargetData()
+					plate:UpdateAlpha()
+					plate:UpdateFrameLevel()
+				elseif FORCEUPDATE then
+					plate:UpdateAll()
+				else
+					plate:UpdateTargetData()
+					plate:UpdateAlpha()
+					plate:UpdateHealth()
+				end
+				self:UpdatePlateUnit(plate) -- the target's or mouseover's: whose auras
 			else
-				plate:UpdateTargetData()
-				plate:UpdateAlpha()
-				plate:UpdateHealth()
+				plate.targetAlpha = 0
 			end
-			self:UpdatePlateUnit(plate) -- the target's or mouseover's: whose auras
-		else
-			plate.targetAlpha = 0
 		end
+		FORCEUPDATE = false
 	end
 
 	-- Fade each plate toward its target alpha (a full fade takes FADE_IN or
@@ -1259,8 +1279,6 @@ Module.OnUpdate = function(self, elapsed)
 			plate:Hide()
 		end
 	end
-	FORCEUPDATE = false
-
 	self.elapsed = 0
 end
 

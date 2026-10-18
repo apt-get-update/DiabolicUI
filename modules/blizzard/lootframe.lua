@@ -74,6 +74,7 @@ Module.CreateWindow = function(self)
 	title:SetText(L["Items"])
 
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+	Engine:GetModule("Blizzard: Windows"):SkinClose(close)
 	close:SetPoint("TOPRIGHT", config.close_button_offset[1], config.close_button_offset[2])
 	close:SetScript("OnClick", function() CloseLoot() end)
 

@@ -85,14 +85,18 @@ Small independent modules, each restyling or replacing one Blizzard piece.
 
 | `lootframe.lua` | Our own loot window (link:{{< relref "case-study-loot-window" >}}[case study])
 | `rollwindow.lua`, `lootpreview.lua` | The master looter's rolls and the boss's loot (link:{{< relref "raid-rolls" >}}[Raid Rolls])
-| `tooltips.lua`, `itemtooltips.lua` | Tooltip backdrops, Diablo III style item tooltips
-| `containers.lua` | Bag and bank borders by quality, item levels
+| `tooltips.lua`, `itemtooltips.lua` | Tooltip and menu backdrops, red menu highlight, Diablo III style item tooltips
+| `gearscore.lua` | GearScore (GearScoreLite's formula): items, players' tooltips, the character and inspect windows
+| `containers.lua` | Bag, bank and character slots: quality border and glow
 | `popups.lua` | Popups and the Dungeon Finder's
 | `gamemenu.lua` | The Escape menu
-| `styling.lua` | Tints the character, spell book, map, merchant frames
+| `styling.lua` | Tints the character, spell book, map, merchant, talent and profession frames
+| `windows.lua` | Diablo III's window in parts: stone window, title bar, panels, red and dark buttons cut in three, tabs, spiked bars
+| `achievements.lua`, `character.lua` | The achievement and character windows built from `windows.lua`
 | `fonts.lua`, `worldmap.lua` | Fonts, map zone names
-| `watchframe.lua`, `questietracker.lua` | Blizzard's and Questie's quest trackers
+| `watchframe.lua`, `questietracker.lua` | Blizzard's and Questie's quest trackers, Diablo III style
 | `trinketmenu.lua` | The TrinketMenu addon's buttons
+| `immersion.lua` | The Immersion addon's dialogue box, Diablo III style
 | `anchors.lua`, `mirrortimers.lua`, `totembar.lua` | Durability, vehicle seats, breath timers, totem bar
 |===
 
@@ -148,5 +152,13 @@ login and could wipe AceDB's.
 
 == ⚙️ Menu
 
-`menu.lua` is the `/dui config` panel and `/dui move`. See
-link:{{< relref "settings-and-locale" >}}[adding an option].
+|===
+| File | Does
+
+| `menu.lua` | The module: adds the pages, the UI scale
+| `controls.lua` | The layout grid and the checkboxes, sliders, dropdowns
+| `page-*.lua` | One options page each (`page-units.lua`, `page-chat.lua`...)
+| `movers.lua` | Unlock Frames, `/dui move`
+|===
+
+See link:{{< relref "settings-and-locale" >}}[adding an option].

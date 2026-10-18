@@ -97,13 +97,23 @@ end
 -- Hidden frames (empty raid and party slots, boss and arena frames outside
 -- those fights, everything while the UI is hidden) are skipped: they're
 -- brought up to date by the first update after they show again.
+-- The loop itself asks every polled frame (hidden raid frames too) whether
+-- it's shown, so it runs no more often than the fastest poll needs.
+local LOOP_INTERVAL = 1/30
+local sinceLoop = 0
 local OnUpdate = function(self, elapsed)
+	sinceLoop = sinceLoop + elapsed
+	if sinceLoop < LOOP_INTERVAL then
+		return
+	end
+	elapsed, sinceLoop = sinceLoop, 0
 	for object, elements in pairs(FrequentUpdates) do
 		if object:IsVisible() then
 			for element, frequency in pairs(elements) do
 				frequency.elapsed = frequency.elapsed + elapsed
 				if frequency.elapsed >= frequency.hz then
-					Elements[element].Update(object, "FREQUENT", elapsed)
+					-- (passes the time since its last poll, not the last frame)
+					Elements[element].Update(object, "FREQUENT", frequency.elapsed)
 					frequency.elapsed = 0
 				end
 			end
@@ -188,6 +198,7 @@ UnitFrame.EnableFrequentUpdates = function(self, element, frequency)
 	if not updater then
 		updater = CreateFrame("Frame", nil, Engine:GetFrame())
 		updater:SetScript("OnUpdate", OnUpdate)
+		Handler.FrequentUpdater = updater -- (named in /dui cpu)
 	end
 end
 

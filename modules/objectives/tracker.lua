@@ -12,6 +12,10 @@ local hooksecurefunc = hooksecurefunc
 -- starts (Time Fading) and how far it fades (Opacity) are user settings.
 local FADE_DURATION = .3
 
+-- The cursor and the tracker are checked this often; only a fade itself
+-- runs every frame.
+local CHECK_INTERVAL = 1/20
+
 local trackerFrame
 local state -- nil (idle, fully visible) | "waiting" | "fading"
 local stateStart
@@ -55,10 +59,16 @@ local CancelFade = function()
 end
 
 local ticker = CreateFrame("Frame")
+Module.FadeTicker = ticker -- (named in /dui cpu)
 ticker:SetScript("OnUpdate", function(self, elapsed)
 	if not (Module.db and Module.db.fadeTracker) then
 		return
 	end
+	self.elapsed = (self.elapsed or 0) + elapsed
+	if (state ~= "fading") and (self.elapsed < CHECK_INTERVAL) then
+		return
+	end
+	self.elapsed = 0
 
 	-- Switching trackers mid-fade (Questie's toggled on or off) would
 	-- otherwise leave the old one stuck at whatever alpha it had reached.
@@ -210,14 +220,4 @@ Module.OnEnable = function(self)
 	hooksecurefunc("UIParent_ManageFramePositions", function() self:PlaceTracker() end)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "PlaceTracker")
 	self:PlaceTracker()
-
-	-- /dui tracker reset; moving it is /dui move (modules/menu/menu.lua)
-	self:GetHandler("ChatCommand"):Register("tracker", function(arg)
-		if (arg == "reset") then
-			self:ResetTrackerPosition()
-		else
-			local menu = Engine:GetModule("Menu")
-			menu:SetFramesUnlocked(not menu:AreFramesUnlocked())
-		end
-	end)
 end

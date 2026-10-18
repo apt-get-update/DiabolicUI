@@ -1,15 +1,32 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
 <Script file='anchors.lua'/>
+<Script file='windows.lua'/>
+<Script file='achievements.lua'/>
+<Script file='bulletinboard.lua'/>
+<Script file='character.lua'/>
+<Script file='spellbook.lua'/>
 <Script file='containers.lua'/>
+<Script file='adibags.lua'/>
 <Script file='fonts.lua'/>
+<Script file='gearscore.lua'/>
 <Script file='gamemenu.lua'/>
+<Script file='immersion.lua'/>
+<Script file='lfg.lua'/>
 <Script file='lootframe.lua'/>
 <Script file='rollwindow.lua'/>
+<Script file='selljunk.lua'/>
+<Script file='social.lua'/>
+<Script file='talents.lua'/>
 <Script file='lootpreview.lua'/>
+<Script file='mail.lua'/>
+<Script file='merchant.lua'/>
+<Script file='panels.lua'/>
 <Script file='mirrortimers.lua'/>
 <Script file='popups.lua'/>
+<Script file='questlog.lua'/>
 <Script file='questietracker.lua'/>
+<Script file='stacksplit.lua'/>
 <Script file='tooltips.lua'/>
 <Script file='itemtooltips.lua'/>
 <Script file='totembar.lua'/>

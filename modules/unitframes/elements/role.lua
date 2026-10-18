@@ -64,6 +64,7 @@ local INSPECT_INTERVAL = 1.2 -- seconds between inspect requests
 local Update
 
 local scanner = CreateFrame("Frame")
+Handler.RoleScanner = scanner -- (named in /dui cpu)
 scanner:Hide()
 scanner:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
@@ -192,6 +193,7 @@ end
 -- right time - Update itself is cheap and idempotent when the role is
 -- already known or an inspect is already queued.
 local refresher = CreateFrame("Frame")
+Handler.RoleRefresher = refresher -- (named in /dui cpu)
 refresher:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed < 3 then

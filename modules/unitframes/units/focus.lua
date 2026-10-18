@@ -55,7 +55,7 @@ local Style = function(self, unit)
 	Health:SetSize(unpack(config.health.size))
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
-	Health.frequent = 1/120
+	Health.frequent = 1/30
 	Health.PostUpdate = Library.PostUpdateHealth
 	Health.useClassColor = true
 
@@ -66,7 +66,7 @@ local Style = function(self, unit)
 	Power:SetSize(unpack(config.power.size))
 	Power:SetPoint(unpack(config.power.position))
 	Power:SetStatusBarTexture(config.power.texture)
-	Power.frequent = 1/120
+	Power.frequent = 1/30
 	
 
 	-- CastBar

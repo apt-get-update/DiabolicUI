@@ -175,7 +175,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
 
 	Health.useClassColor = db.showClassColors
-	Health.frequent = 1/120
+	Health.frequent = 1/30
 
 	Health.Value = Health:GetOverlay():CreateFontString(nil, "OVERLAY")
 	Health.Value:SetFontObject(configHealthTexts.font_object)
@@ -432,7 +432,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Power.Label:SetPoint("BOTTOM", Power.Value, "TOP", 0, 2)
 	Power.Label:SetText("")
 
-	Power.frequent = 1/120
+	Power.frequent = 1/30
 	Power.PostUpdate = postUpdatePower
 
 	-- Adding a mana only power resource for classes or specs with mana as the secondary resource.
@@ -455,7 +455,7 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Mana:SetSparkFlashSize(unpack(configPowerSpark.flash_size))
 	Mana:SetSparkFlashTexture(configPowerSpark.flash_texture)
 
-	Mana.frequent = 1/120
+	Mana.frequent = 1/30
 
 	-- We need a holder frame to get the orb split above the globe artwork
 	local SeparatorHolder = Mana:CreateFrame()
@@ -574,6 +574,7 @@ UnitFrameWidget.OnEnable = function(self)
 	-- No event fires when the minimap itself is moved (e.g. dragged in
 	-- the minimap module's own edit mode), so this polls for it instead.
 	local auraSideTicker = CreateFrame("Frame")
+	self.AuraSideTicker = auraSideTicker -- (named in /dui cpu)
 	auraSideTicker:SetScript("OnUpdate", function(ticker, elapsed)
 		ticker.elapsed = (ticker.elapsed or 0) + elapsed
 		if (ticker.elapsed < 1) then

@@ -10,6 +10,7 @@
 --  - after the cursor leaves: full alpha for Time Fading seconds, then a
 --    0.3s fade down to the Opacity setting; hovering again restores it
 --  - unticking the option restores full alpha straight away
+--  - the cursor is checked 20 times a second; only a fade runs every frame
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -34,9 +35,11 @@ local function newTracker()
 	}
 end
 
+-- One frame, by default as long as the time between two cursor checks.
 local function tick(seconds)
-	clock.now = clock.now + (seconds or 0)
-	ticker:Fire("OnUpdate", seconds or 0)
+	seconds = seconds or 1/20
+	clock.now = clock.now + seconds
+	ticker:Fire("OnUpdate", seconds)
 end
 
 local function hover(over)
@@ -87,6 +90,18 @@ function TestTrackerFade:test_fades_to_the_opacity_setting()
 	lu.assertAlmostEquals(_G.WatchFrame.alpha, 0.6, 1e-9)
 	tick(0.15)
 	lu.assertAlmostEquals(_G.WatchFrame.alpha, 0.2, 1e-9)
+end
+
+function TestTrackerFade:test_the_cursor_is_checked_twenty_times_a_second()
+	leaveAfterHover()
+	tick(5)
+	tick(0.3)
+	tick() -- the fade is over (a fade checks every frame)
+	hover(true)
+	tick(0.01) -- a frame too soon: not checked yet
+	lu.assertAlmostEquals(_G.WatchFrame.alpha, 0.2, 1e-9)
+	tick(0.045)
+	lu.assertEquals(_G.WatchFrame.alpha, 1)
 end
 
 function TestTrackerFade:test_hovering_restores_full_alpha()

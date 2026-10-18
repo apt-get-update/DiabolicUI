@@ -67,7 +67,7 @@ local Style = function(self, unit, kind)
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
 	Health:SetOrientation("LEFT")
-	Health.frequent = 1/120
+	Health.frequent = 1/30
 
 	local HealthValueHolder = Health:CreateFrame("Frame")
 	HealthValueHolder:SetAllPoints()

@@ -84,6 +84,7 @@ local Stop = function(CastBar, castdata)
 	castdata.castID = nil
 	castdata.channeling = nil
 	castdata.tradeskill = nil
+	castdata.sinceText = nil
 	CastBar:Clear()
 	CastBar:Hide()
 end
@@ -109,6 +110,22 @@ local UpdateSafeZone = function(CastBar, unit, castdata)
 	SafeZone:Show()
 end
 
+-- The bar moves every frame; its time text (tenths of a second at most)
+-- and the latency's safe zone only this often. A new, delayed or changed
+-- cast writes them on its next frame.
+local TEXT_INTERVAL = .1
+
+-- Whether the text is due, counting this frame.
+local TextDue = function(castdata, elapsed)
+	local since = castdata.sinceText
+	if since and (since + elapsed < TEXT_INTERVAL - 1e-6) then -- (frame times add up a hair short)
+		castdata.sinceText = since + elapsed
+		return false
+	end
+	castdata.sinceText = 0
+	return true
+end
+
 -- Proxy function to allow us to exit the update by returning,
 -- but still continue looping through the remaining castbars, if any!
 local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
@@ -120,8 +137,11 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 		if duration >= castdata.max then
 			Stop(CastBar, castdata)
 		end
-		UpdateSafeZone(CastBar, unit, castdata)
-		if CastBar.Value then
+		local textDue = TextDue(castdata, elapsed)
+		if textDue then
+			UpdateSafeZone(CastBar, unit, castdata)
+		end
+		if CastBar.Value and textDue then
 			if castdata.tradeskill then
 				CastBar.Value:SetText(formatTime(castdata.max - duration))
 			elseif castdata.delay and castdata.delay ~= 0 then
@@ -138,7 +158,7 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 		if duration <= 0 then
 			Stop(CastBar, castdata)
 		end
-		if CastBar.Value then
+		if CastBar.Value and TextDue(castdata, elapsed) then
 			if castdata.delay and castdata.delay ~= 0 then
 				CastBar.Value:SetFormattedText("%.1f|cffff0000-%.1f|r", duration, castdata.delay)
 			else
@@ -161,6 +181,7 @@ local OnUpdate = function(self, elapsed)
 	end
 end
 CastTimer:SetScript("OnUpdate", OnUpdate)
+Handler.CastTimer = CastTimer -- (named in /dui cpu)
 
 local Update -- so we can call it from within itself
 Update = function(self, event, ...)
@@ -188,6 +209,7 @@ Update = function(self, event, ...)
 		castdata.duration = GetTime() - startTime
 		castdata.max = endTime - startTime
 		castdata.delay = 0
+		castdata.sinceText = nil
 		castdata.casting = true
 		castdata.channeling = nil
 		castdata.tradeskill = isTradeSkill
@@ -214,6 +236,7 @@ Update = function(self, event, ...)
 		local duration = GetTime() - (startTime / 1000)
 		if duration < 0 then duration = 0 end
 		castdata.delay = (castdata.delay or 0) + castdata.duration - duration
+		castdata.sinceText = nil
 		castdata.duration = duration
 		CastBar:SetValue(duration)
 
@@ -232,6 +255,7 @@ Update = function(self, event, ...)
 		castdata.duration = endTime - GetTime()
 		castdata.max = endTime - startTime
 		castdata.delay = 0
+		castdata.sinceText = nil
 		castdata.channeling = true
 		castdata.casting = nil
 		castdata.castID = nil
@@ -252,6 +276,7 @@ Update = function(self, event, ...)
 		if not name or not castdata.duration then return end
 		local duration = (endTime / 1000) - GetTime()
 		castdata.delay = (castdata.delay or 0) + castdata.duration - duration
+		castdata.sinceText = nil
 		castdata.duration = duration
 		castdata.max = (endTime - startTime) / 1000
 		CastBar:SetMinMaxValues(0, castdata.max)

@@ -67,6 +67,35 @@ function TestItemTooltipLayout:tearDown()
 	client = nil
 end
 
+-- GearScore (gearscore.lua): Shadowmourne, a legendary two-hander of 284,
+-- scores (284 - 91.45) / .65 * 2 * 1.8618 * 1.3
+function TestItemTooltipLayout:test_gear_shows_its_gearscore()
+	local tooltip = _G.GameTooltip
+	local item = {}
+	for key, value in pairs(WEAPON) do
+		item[key] = value
+	end
+	item.iLevel, item.equipSlot = 284, "INVTYPE_2HWEAPON"
+	show(tooltip, 49624, item)
+	local found
+	for i = 1, tooltip:NumLines() do
+		if line(tooltip, i):GetText() == "GearScore 1433" then
+			found = i
+		end
+	end
+	lu.assertNotNil(found, "the GearScore line")
+	lu.assertEquals(_G[tooltip:GetName() .. "TextRight" .. found]:GetText(), "Item Level 284")
+	local r, g, b = line(tooltip, found):GetTextColor()
+	local er, eg, eb = client.Engine:GetModule("Blizzard: GearScore"):GetColor(1433)
+	lu.assertAlmostEquals({ r, g, b }, { er, eg, eb }, 1e-6)
+	-- not gear: none
+	show(tooltip, 49625, ARMOR)
+	for i = 1, tooltip:NumLines() do
+		lu.assertNotStrContains(line(tooltip, i):GetText() or "", "GearScore")
+	end
+	assertClean(client)
+end
+
 function TestItemTooltipLayout:test_a_weapon_in_the_diablo_style()
 	local tooltip = _G.GameTooltip
 	show(tooltip, 49623, WEAPON)

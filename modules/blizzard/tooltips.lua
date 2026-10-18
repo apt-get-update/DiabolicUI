@@ -286,11 +286,15 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	tooltip:Show()
 end
 
--- Set Unit Info
+-- Set Unit Info: the gear (item level and GearScore) always, the talents
+-- with Shift held.
 Module.SetUnitInfo = function(self, gear, spec)
 
-	if not(gear and spec) or not(IsShiftKeyDown()) then
+	if not (gear and spec) then
 		return
+	end
+	if not IsShiftKeyDown() then
+		spec = nil
 	end
 
 	local unit = self:GetTooltipUnit(GameTooltip)
@@ -307,6 +311,13 @@ Module.SetUnitInfo = function(self, gear, spec)
 				specLine = _G["GameTooltipTextRight" .. i]
 			end
 		end
+	end
+
+	if (gear == CONTINUED) and (not gearLine) and (not IsShiftKeyDown()) then
+		gear = nil -- nothing known yet, and not asked for: no line yet
+	end
+	if not (gear or spec) then
+		return
 	end
 
 	if not (gearLine or specLine) then
@@ -400,6 +411,10 @@ Module.GetUnitGear = function(self, unit)
 
 	local ilvl = string_format("%.1f", total / count)
 	local extras = {}
+	local score = Engine:GetModule("Blizzard: GearScore"):GetUnitScore(unit)
+	if score and (score > 0) then
+		table_insert(extras, F.Colorize("GS " .. score, Engine:GetModule("Blizzard: GearScore"):GetColor(score)))
+	end
 	if boa > 0 then
 		table_insert(extras, F.Colorize(boa, unpack(C.General.BoA)) .. " " .. F.Colorize(L["BoA"], unpack(C.General.BoA)))
 	end
@@ -475,7 +490,10 @@ Module.ScanUnit = function(self, unit, forced)
 		cachedSpec = SpecDB[currentGUID]
 
 		if not (IsShiftKeyDown() or forced) then
-			if cachedGear and cachedSpec then return end
+			if cachedGear and cachedSpec then
+				self:SetUnitInfo(cachedGear, cachedSpec)
+				return
+			end
 		end
 
 		--if cachedGear then
@@ -749,19 +767,50 @@ end
 
 -- Styling
 ------------------------------------------------------------
-Module.CreateBackdrop = function(self, object)
+-- A part of the menu atlas: its box ({ x, y, width, height }) as texcoords.
+local MenuCoords = function(spec, box)
+	local size = spec.atlas_size
+	return box[1] / size, (box[1] + box[3]) / size, box[2] / size, (box[2] + box[4]) / size
+end
+
+-- Diablo III's menu panel over `frame`: its iron corners and edges
+-- `spec.edge` wide, its stone stretched between them.
+local AddMenuPanel = function(frame, spec)
+	local w, h, c, e = spec.art[1], spec.art[2], spec.corner, spec.edge
+	-- each column's and row's art, and its sides on the frame
+	local columns = { { 0, c, "LEFT", 0, "LEFT", e }, { c, w - c, "LEFT", e, "RIGHT", -e }, { w - c, w, "RIGHT", -e, "RIGHT", 0 } }
+	local rows = { { 0, c, "TOP", 0, "TOP", -e }, { c, h - c, "TOP", -e, "BOTTOM", e }, { h - c, h, "BOTTOM", e, "BOTTOM", 0 } }
+	for _, row in ipairs(rows) do
+		for _, column in ipairs(columns) do
+			local piece = frame:CreateTexture(nil, "BACKGROUND")
+			piece:SetTexture(spec.texture)
+			piece:SetTexCoord(MenuCoords(spec, { column[1], row[1], column[2] - column[1], row[2] - row[1] }))
+			piece:SetPoint("TOPLEFT", frame, row[3] .. column[3], column[4], row[4])
+			piece:SetPoint("BOTTOMRIGHT", frame, row[5] .. column[5], column[6], row[6])
+		end
+	end
+end
+
+-- Our backdrop behind `object`, Blizzard's out of sight; a `menu`'s
+-- Diablo III's menu panel.
+Module.CreateBackdrop = function(self, object, menu)
 	local config = self.config
+	local offsets = menu and config.menu.offsets or config.offsets
 
 	local backdrop = CreateFrame("Frame", nil, object)
 	backdrop:SetFrameStrata(object:GetFrameStrata())
 	backdrop:SetFrameLevel(object:GetFrameLevel())
-	backdrop:SetPoint("LEFT", -config.offsets[1], 0)
-	backdrop:SetPoint("RIGHT", config.offsets[2], 0)
-	backdrop:SetPoint("TOP", 0, config.offsets[3])
-	backdrop:SetPoint("BOTTOM", 0, -config.offsets[4])
-	backdrop:SetBackdrop(config.backdrop)
-	backdrop:SetBackdropColor(unpack(config.backdrop_color))
-	backdrop:SetBackdropBorderColor(unpack(config.backdrop_border_color))
+	backdrop:SetPoint("LEFT", -offsets[1], 0)
+	backdrop:SetPoint("RIGHT", offsets[2], 0)
+	backdrop:SetPoint("TOP", 0, offsets[3])
+	backdrop:SetPoint("BOTTOM", 0, -offsets[4])
+	if menu then
+		AddMenuPanel(backdrop, config.menu)
+	else
+		backdrop:SetBackdrop(config.backdrop)
+		backdrop:SetBackdropColor(unpack(config.backdrop_color))
+		backdrop:SetBackdropBorderColor(unpack(config.backdrop_border_color))
+	end
 
 	hooksecurefunc(object, "SetFrameStrata", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
 	hooksecurefunc(object, "SetFrameLevel", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
@@ -776,15 +825,45 @@ Module.CreateBackdrop = function(self, object)
 end
 
 Module.StyleMenu = function(self, object)
-	self:CreateBackdrop(object)
+	self:CreateBackdrop(object, true)
 
 	-- initial scaling
 	-- note: We're only scaling the backdrop/artwork here,
 	-- not the potentially secure dropdown frame itself.
 	self:Tooltip_UpdateScale(object)
 
+	-- under the lines, at the list's own level: at theirs (the backdrop's),
+	-- the panel's stone can end up over their grooves and hover box once
+	-- the list is raised (it's a toplevel frame)
+	local list = object:GetParent()
+	local backdrop = select(1, object:GetChildren())
+	local name = list and list:GetName()
+	if not (name and name:find("^DropDownList")) then
+		-- a menu of its own (the friends' tooltip): the backdrop under its
+		-- text
+		local Lower = function()
+			if (object:GetFrameLevel() < 1) then
+				object:SetFrameLevel(1)
+			end
+			backdrop:SetFrameLevel(object:GetFrameLevel() - 1)
+		end
+		hooksecurefunc(object, "SetFrameLevel", Lower)
+		object:HookScript("OnShow", function()
+			Lower()
+			self:Tooltip_UpdateScale(object)
+		end)
+		Lower()
+		return
+	end
+	local Lower = function()
+		backdrop:SetFrameLevel(list:GetFrameLevel())
+	end
+	hooksecurefunc(object, "SetFrameLevel", Lower)
+	Lower()
+
 	-- hook our scaling to the display of the actual dropdown
-	object:GetParent():HookScript("OnShow", function()
+	list:HookScript("OnShow", function()
+		Lower()
 		self:Tooltip_UpdateScale(object)
 	end)
 end
@@ -832,28 +911,56 @@ Module.GetStyledCache = function(self)
 	return self.styled
 end
 
+-- A dropdown's line as Diablo III's: a groove over it (but the first's),
+-- a red box around it under the mouse, its submenu's arrow theirs.
+local StyleMenuLine = function(spec, button, first)
+	local name = button:GetName()
+	if not first then
+		local groove = button:CreateTexture(nil, "BACKGROUND")
+		groove:SetTexture(spec.texture)
+		groove:SetTexCoord(MenuCoords(spec, spec.groove))
+		groove:SetHeight(spec.groove_height)
+		groove:SetPoint("LEFT", button, "TOPLEFT")
+		groove:SetPoint("RIGHT", button, "TOPRIGHT")
+	end
+	local highlight = _G[name .. "Highlight"]
+	highlight:SetTexture(spec.texture)
+	highlight:SetTexCoord(MenuCoords(spec, spec.highlight))
+	highlight:SetBlendMode("BLEND")
+	local arrow = _G[name .. "ExpandArrow"]:GetNormalTexture()
+	arrow:SetTexture(spec.texture)
+	arrow:SetTexCoord(MenuCoords(spec, spec.arrow))
+	arrow:ClearAllPoints()
+	arrow:SetSize(unpack(spec.arrow_size))
+	arrow:SetPoint("CENTER")
+end
+
+-- Every dropdown level's backdrops, and its lines as Diablo III's. Run
+-- again whenever Blizzard adds levels or lines.
 Module.StyleDropDowns = function(self)
 	local styled = self:GetStyledCache()
 
-	local num = UIDROPDOWNMENU_MAXLEVELS
-	local num_styled = self.num_menus or 0
+	for i = 1, UIDROPDOWNMENU_MAXLEVELS do
+		local menu =  _G["DropDownList"..i.."MenuBackdrop"]
+		local dropdown = _G["DropDownList"..i.."Backdrop"]
 
-	if num > num_styled then
-		for i = num_styled+1, num do
-			local menu =  _G["DropDownList"..i.."MenuBackdrop"]
-			local dropdown = _G["DropDownList"..i.."Backdrop"]
+		if menu and not styled[menu] then
+			self:StyleMenu(menu)
+			styled[menu] = true
+		end
 
-			if menu and not styled[menu] then
-				self:StyleMenu(menu)
-				styled[menu] = true
-			end
+		if dropdown and not styled[dropdown] then
+			self:StyleMenu(dropdown)
+			styled[dropdown] = true
+		end
 
-			if dropdown and not styled[dropdown] then
-				self:StyleMenu(dropdown)
-				styled[dropdown] = true
+		for j = 1, UIDROPDOWNMENU_MAXBUTTONS do
+			local button = _G["DropDownList"..i.."Button"..j]
+			if button and not styled[button] then
+				StyleMenuLine(self.config.menu, button, j == 1)
+				styled[button] = true
 			end
 		end
-		self.num_menus = num
 	end
 end
 

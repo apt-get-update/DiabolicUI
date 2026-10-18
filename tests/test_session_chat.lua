@@ -385,4 +385,44 @@ function TestCopyLinks:test_clicking_a_link_opens_the_copy_box()
 	assertClean(client)
 end
 
+-- Copy chat --------------------------------------------------------------------------
+
+TestChatCopy = {}
+
+function TestChatCopy:tearDown()
+	client = nil
+end
+
+function TestChatCopy:test_double_clicking_a_tab_shows_its_lines_as_plain_text()
+	boot({ savedVariables = chatWindows({}) })
+	_G.ChatFrame1:AddMessage("|cffffd000Hello|r there")
+	_G.ChatFrame1:AddMessage("Look: |cffa335ee|Hitem:100:0:0:0:0:0:0:0:80|h[Big Sword]|h|r |TInterface\\Icons\\Coin:0|t")
+	_G.ChatFrame3:AddMessage("elsewhere")
+	client:RunScript(_G.ChatFrame1Tab, "OnDoubleClick", "LeftButton")
+	local frame = _G.DiabolicChatCopyFrame
+	lu.assertTrue(shown(frame))
+	lu.assertEquals(client:GetModule("ChatCopy").editBox:GetText(), "Hello there\nLook: [Big Sword] ")
+
+	-- Escape closes it
+	lu.assertEquals(_G.UISpecialFrames[#_G.UISpecialFrames], "DiabolicChatCopyFrame")
+	frame:Hide()
+	-- a right double-click is the tab's menu, not ours
+	client:RunScript(_G.ChatFrame1Tab, "OnDoubleClick", "RightButton")
+	lu.assertFalse(shown(frame))
+	assertClean(client)
+end
+
+function TestChatCopy:test_keeps_the_last_200_lines()
+	boot({ savedVariables = chatWindows({}) })
+	for i = 1, 205 do
+		_G.ChatFrame1:AddMessage("line " .. i)
+	end
+	local text = client:GetModule("ChatCopy"):GetText(_G.ChatFrame1)
+	lu.assertEquals(text:match("^[^\n]+"), "line 6")
+	lu.assertEquals(text:match("[^\n]+$"), "line 205")
+	-- a frame never watched has nothing
+	lu.assertEquals(client:GetModule("ChatCopy"):GetText(_G.CreateFrame("ScrollingMessageFrame")), "")
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

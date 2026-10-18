@@ -164,6 +164,8 @@ function TestTooltips:test_shift_inspects_a_players_gear_and_talents()
 	local text = linesText()
 	lu.assertStrContains(text, "232.0")
 	lu.assertStrContains(text, "5/53/13 (Protection)")
+	-- GearScore by the item level: 17 epics of 232, (232 - 91.45) / .65 * 1.8618 each
+	lu.assertStrContains(stripColors(text), "232.0  GS 6834")
 
 	-- a second hover uses what's cached, updating the lines in place
 	hover(unit)
@@ -198,6 +200,16 @@ function TestTooltips:test_heirlooms_pvp_gear_and_weapons_count_right()
 		client:FireEvent("INSPECT_TALENT_READY")
 		lu.assertStrContains(stripColors(linesText()), "BoA")
 	end
+	assertClean(client)
+end
+
+function TestTooltips:test_own_gear_not_known_yet()
+	local player = client.world.units.player
+	player.inventoryTextures = { [5] = "Interface\\Icons\\Chest" }
+	-- not asked for (no Shift): no gear line until it's known
+	hover(player)
+	lu.assertNotStrContains(linesText(), "GS")
+	lu.assertNotStrContains(linesText(), _G.CONTINUED)
 	assertClean(client)
 end
 
@@ -257,16 +269,22 @@ function TestTooltips:test_no_inspecting_in_combat_or_while_dead()
 	assertClean(client)
 end
 
-function TestTooltips:test_pressing_shift_refreshes_the_tooltip()
+function TestTooltips:test_pressing_shift_adds_the_talents()
 	local unit = Client.newUnit({ name = "Later", class = "WARLOCK" })
 	standardGear(unit, 219)
+	client.world.inspectTalents = { { "Affliction", "", 0 }, { "Demonology", "", 0 }, { "Destruction", "", 57 } }
 	hover(unit)
 	client:Tick(2)
 	client:FireEvent("INSPECT_TALENT_READY")
-	lu.assertNotStrContains(linesText(), "219.0", "no Shift, no gear line")
+	-- the gear (item level, GearScore) without Shift, not the talents
+	lu.assertStrContains(linesText(), "219.0")
+	lu.assertNotStrContains(linesText(), "Destruction", "no Shift, no talents")
+	-- hovered again: the gear known already
+	hover(unit)
+	lu.assertStrContains(linesText(), "219.0")
 	client.world.modifiers.shift = true
 	client:FireEvent("MODIFIER_STATE_CHANGED", "LSHIFT", 1)
-	lu.assertStrContains(linesText(), "219.0")
+	lu.assertStrContains(linesText(), "Destruction")
 	assertClean(client)
 end
 
@@ -376,6 +394,19 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	_G.CreateFrame("Frame", "DropDownList3MenuBackdrop", list)
 	_G.UIDropDownMenu_CreateFrames(3, 1)
 	lu.assertTrue(module.styled[_G.DropDownList3Backdrop])
+	-- the lines' hover Diablo III's red box, those added later too
+	local menu = module.config.menu
+	lu.assertEquals(_G.DropDownList1Button1Highlight:GetTexture(), menu.texture)
+	lu.assertEquals(_G.DropDownList2Button32Highlight:GetTexture(), menu.texture)
+	_G.UIDROPDOWNMENU_MAXBUTTONS = 33
+	local line = _G.CreateFrame("Button", "DropDownList3Button33", list)
+	-- (UIDropDownMenuButtonTemplate's: its hover and its submenu's arrow)
+	line:CreateTexture("DropDownList3Button33Highlight")
+	local arrow = _G.CreateFrame("Button", "DropDownList3Button33ExpandArrow", line)
+	arrow:SetNormalTexture([[Interface\ChatFrame\ChatFrameExpandArrow]])
+	_G.UIDropDownMenu_CreateFrames(3, 33)
+	lu.assertTrue(module.styled[line])
+	lu.assertEquals(_G.DropDownList3Button33Highlight:GetTexture(), menu.texture)
 	list:Show()
 	_G.DropDownList1:Show()
 

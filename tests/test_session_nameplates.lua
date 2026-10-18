@@ -206,9 +206,16 @@ function TestNamePlates:test_plates_fade_out_gradually()
 	client:Tick(2)
 	local plate = ours(client, blizzard)
 	blizzard:Update({ health = 0 })
-	client:Tick(0.034, 0.034) -- one update: 0.034s of a 0.05s fade
-	local alpha = plate:GetAlpha()
-	lu.assertAlmostEquals(alpha, 0.7 - 0.034 / 0.05, 0.001)
+	-- noticed on the next read of Blizzard's plate (10 times a second),
+	-- which fades it by one update's 1/30s of the 0.05s fade
+	for _ = 1, 200 do
+		if (plate.targetAlpha == 0) then
+			break
+		end
+		client:Tick(0.001, 0.001)
+	end
+	lu.assertEquals(plate.targetAlpha, 0)
+	lu.assertAlmostEquals(plate:GetAlpha(), 0.7 - (1/30) / 0.05, 0.03)
 	client:Tick(0.034, 0.034)
 	lu.assertEquals(plate:GetAlpha(), 0)
 	lu.assertNil(plate:IsShown())
@@ -369,6 +376,12 @@ function TestNamePlates:test_channels_count_down()
 	lu.assertEquals(cast:IsShown(), 1)
 	client:Tick(1)
 	lu.assertAlmostEquals(cast:GetValue(), 4, 0.15)
+	-- the bar every frame, its text ten times a second
+	local text = cast.Value:GetText()
+	client:Tick(0.05, 0.05)
+	lu.assertEquals(cast.Value:GetText(), text)
+	client:Tick(0.05, 0.05)
+	lu.assertNotEquals(cast.Value:GetText(), text)
 	unit.channeling.endTime = unit.channeling.endTime - 1000
 	client:FireEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "target")
 	client:Tick(0.5)

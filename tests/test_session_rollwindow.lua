@@ -95,6 +95,25 @@ function TestRollWindow:test_several_items_and_the_time_running_out()
 	Session.assertClean(client)
 end
 
+function TestRollWindow:test_passing_rolls_nothing()
+	boot()
+	local sword = Session.item(client, 100, { name = "Sword" })
+	say("CHAT_MSG_RAID", "Roll for " .. sword, "Loot")
+	local row = rows()[1]
+	row.Pass:Click()
+	lu.assertNil(client.rolls)
+	lu.assertNil(row.MainSpec:IsShown())
+	lu.assertEquals(row.Result:GetText(), "You passed")
+	-- a roll of yours for something else doesn't land on it
+	say("CHAT_MSG_SYSTEM", client.world.units.player.name .. " rolls 87 (1-100)")
+	lu.assertEquals(row.Result:GetText(), "You passed")
+	-- put up again: the buttons are back
+	say("CHAT_MSG_RAID", "Someone wins " .. sword, "Loot")
+	say("CHAT_MSG_RAID", "Roll for " .. sword, "Loot")
+	lu.assertEquals(rows()[1].Pass:IsShown(), 1)
+	Session.assertClean(client)
+end
+
 function TestRollWindow:test_an_item_not_seen_yet_gets_its_icon_later()
 	boot()
 	local link = "|cffa335ee|Hitem:200:0:0:0:0:0:0:0:80|h[Unknown Helm]|h|r"

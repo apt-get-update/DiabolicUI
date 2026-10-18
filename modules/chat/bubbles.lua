@@ -61,6 +61,7 @@ end
 ------------------------------------------------------------------------------
 -- this needs to run even when the UI is hidden
 local Updater = Engine:CreateFrame("Frame", nil, WorldFrame)
+Module.Updater = Updater -- (named in /dui cpu)
 Updater:SetFrameStrata("TOOLTIP")
 
 -- check whether the given frame is a bubble or not

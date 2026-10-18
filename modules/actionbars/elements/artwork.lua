@@ -3,6 +3,9 @@ local Module = Engine:GetModule("ActionBars")
 local Widget = Module:SetWidget("Artwork")
 local L = Engine:GetLocale()
 
+-- Lua API
+local unpack = unpack
+
 -- Media
 local path = ([[Interface\AddOns\%s\media\]]):format(ADDON) 
 local auraShade = path .. [[textures\DiabolicUI_Shade_64x64.tga]]

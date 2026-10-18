@@ -12,7 +12,7 @@ looter's chat, whatever addon wrote it.
 |===
 | File | Shows
 
-| `rollwindow.lua` | The item up for a roll, its time left, Main Spec (`/roll 100`) and Off Spec (`/roll 99`) buttons, then your roll
+| `rollwindow.lua` | The item up for a roll, its time left, Main Spec (`/roll 100`), Off Spec (`/roll 99`) and Pass buttons, then your roll
 | `lootpreview.lua` | The boss's loot still to roll, on the right; the item being rolled in gold
 |===
 
@@ -75,7 +75,7 @@ a chat line for the same boss only adds what's missing.
 `tests/test_session_rollwindow.lua`. The fake client records
 `SendAddonMessage` in `client.addonMessages`.
 
-In game, solo: `/dui config` → AddOns → *Fake Loot Roll* (`ShowFakeRoll` in
+In game, solo: `/dui config` → Units → *Fake Loot Roll* (`ShowFakeRoll` in
 `lootpreview.lua`). Or fake any raid warning:
 
 [source,lua]

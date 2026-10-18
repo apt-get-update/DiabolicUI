@@ -6,4 +6,6 @@
 <Include file='elements\elements.xml'/>
 <Include file='units\units.xml'/>
 
+<Script file='lowhealth.lua'/>
+
 </Ui>

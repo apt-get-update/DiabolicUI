@@ -139,7 +139,7 @@ Aura.SetCooldownTimer = function(self, start, duration)
 	end
 end
 
-local HZ = 1/30
+local HZ = 1/10 -- the text shows tenths of a second at most
 Aura.UpdateTimer = function(self, elapsed)
 	if self.timeLeft then
 		self.elapsed = (self.elapsed or 0) + elapsed
@@ -351,30 +351,33 @@ end
 -- through UnitAura, so they're added here, ahead of the real auras, so they
 -- always get a slot instead of being the first thing dropped when the bar
 -- is full.
-local AddWeaponEnchants = function(owner, unit, filter)
-	local visible = 0
-	local hasMainHand, mainExpiration, mainCharges, hasOffHand, offExpiration, offCharges = GetWeaponEnchantInfo()
-	for _, enchant in ipairs({ { hasMainHand, mainExpiration, mainCharges, MAINHAND_SLOT }, { hasOffHand, offExpiration, offCharges, OFFHAND_SLOT } }) do
-		local has, expiration, charges, slotID = enchant[1], enchant[2], enchant[3], enchant[4]
-		if has then
-			visible = visible + 1
-			local button = GetButton(owner, visible)
-			local duration = expiration / 1000
-			local expirationTime = GetTime() + duration
-			button:SetID(0)
-			button.isBuff = true
-			button.isWeaponEnchant = true
-			button.weaponSlot = slotID
-			button.unit = unit
-			button.filter = filter
-			button.name = nil
-			button.count = charges
-			button.duration = duration
-			button.expirationTime = expirationTime
-			ShowButton(owner, button, GetInventoryItemTexture("player", slotID), charges, duration, expirationTime)
-		end
+-- One weapon's enchant, in the next button
+local AddWeaponEnchant = function(owner, unit, filter, visible, has, expiration, charges, slotID)
+	if (not has) then
+		return visible
 	end
+	visible = visible + 1
+	local button = GetButton(owner, visible)
+	local duration = expiration / 1000
+	local expirationTime = GetTime() + duration
+	button:SetID(0)
+	button.isBuff = true
+	button.isWeaponEnchant = true
+	button.weaponSlot = slotID
+	button.unit = unit
+	button.filter = filter
+	button.name = nil
+	button.count = charges
+	button.duration = duration
+	button.expirationTime = expirationTime
+	ShowButton(owner, button, GetInventoryItemTexture("player", slotID), charges, duration, expirationTime)
 	return visible
+end
+
+local AddWeaponEnchants = function(owner, unit, filter)
+	local hasMainHand, mainExpiration, mainCharges, hasOffHand, offExpiration, offCharges = GetWeaponEnchantInfo()
+	local visible = AddWeaponEnchant(owner, unit, filter, 0, hasMainHand, mainExpiration, mainCharges, MAINHAND_SLOT)
+	return AddWeaponEnchant(owner, unit, filter, visible, hasOffHand, offExpiration, offCharges, OFFHAND_SLOT)
 end
 
 -- Hides the buttons after the visible ones, lays the rest out, and shows

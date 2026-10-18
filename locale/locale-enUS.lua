@@ -47,6 +47,11 @@ L["Reload Needed"] = true
 L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = true
 L["The Engine can't be tampered with!"] = true
 
+-- /dui cpu (engine/profiler.lua)
+L["Turn on the CPU profiling first: /console scriptProfile 1, then /reload. Turn it off the same way afterwards (0), it slows the game down."] = true
+L["Measuring DiabolicUI's CPU use for %d seconds..."] = true
+L["DiabolicUI used %.2f ms per second. The busiest functions, with what they call (ms per second):"] = true
+
 -- Blizzard Handler
 
 
@@ -180,11 +185,7 @@ L["Manual"] = true
 L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] = true
 L["Auto positioning of chat windows has been enabled."] = true
 L["Auto positioning of chat windows has been disabled."] = true
-L["Side Bars set to %d."] = true
-L["Action Bars set to %d."] = true
 L["Reputation: "] = true
-L["Failed to update side bars, must be %d or %d or %d"] = true
-L["Failed to update action bars, must be %d or %d or %d"] = true
 
 
 -- minimap module
@@ -207,7 +208,6 @@ L["Show class colors"] = true
 L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = true
 L["Show Portrait"] = true
 L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] = true
-L["Advanced"] = true
 L["Toggle Fake Party"] = true
 L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] = true
 L["Toggle Fake Raid"] = true
@@ -235,6 +235,8 @@ L["Shows a window when the master looter, the leader or a raid warning puts an i
 L["Rolls"] = true -- roll window title
 L["Main Spec"] = true
 L["Off Spec"] = true
+L["Pass"] = true
+L["You passed"] = true
 L["You rolled %d (%s)"] = true -- your roll, and Main Spec or Off Spec
 
 -- tooltip module
@@ -259,7 +261,6 @@ L["Bottom Right"] = true
 -- chat module
 ---------------------------------------------------------------------
 L["Appearance"] = true
-L["Miscellaneous"] = true
 L["Fade Chat"] = true
 L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] = true
 L["Time Fading"] = true
@@ -273,13 +274,15 @@ L["Click to copy the link."] = true
 -- Talent specialization switch
 L["Talent Specialization"] = true
 L["<Left-click> to switch"] = true
-L["Show Specialization Switch"] = true
-L["Shows a button on top of the skull in the middle of the action bars that switches to your other talent specialization, once you learn Dual Talent Specialization."] = true
 L["Specializations"] = true
 L["Equipment set '%s' not found."] = true
 L["Action Bar Saver isn't loaded, can't restore '%s'."] = true
 L["Action Bar Saver isn't loaded"] = true
 L["Equipment Set"] = true
+L["New Equipment Set"] = true
+L["Stats"] = true
+L["Titles"] = true
+L["Sets"] = true
 L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."] = true
 L["Action Bar Saver Profile"] = true
 L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."] = true
@@ -290,10 +293,8 @@ L["A macro of yours to run as you switch to this specialization: the click on th
 L["Macro After"] = true
 L["Runs your '%s' macro first"] = true
 L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."] = true
-L["Needs Show Specialization Switch"] = true
 L["<Left-click> to run your '%s' macro"] = true
 L["Macro '%s' not found."] = true
-L["Turn on the specialization switch button to run your '%s' macro."] = true
 L["Your %s commands are too long for a macro, make one yourself: %s"] = true
 L["Your other commands are now the character macro '%s', run by a click on the skull after switching."] = true
 L["No free character macro slot for your %s commands, they're kept until there's one."] = true
@@ -330,29 +331,28 @@ L["m"] = true -- abbreviation for "minutes" when showing time
 L["s"] = true -- abbreviation for "seconds" when showing time
 
 -- AddOns page (other addons styled)
-L["AddOns"] = true
-L["Style TrinketMenu"] = true
-L["Style Questie's Tracker"] = true
-L["Shows Questie's quest tracker in the fonts and colors of Blizzard's: quest titles in gold.|n|nRequires a UI reload to apply."] = true
-L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] = true
-L["Shows TrinketMenu's trinket buttons like the action bars' buttons, without its backgrounds.|n|nRequires a UI reload to apply."] = true
+L["DiabolicUI: Questie has changed, its tracker is left as it is."] = true
 L["Drag to move the tracker"] = true
-L["Reset Position"] = true
-L["Puts Blizzard's objectives tracker back under the minimap.|n|nAlso: /dui tracker reset"] = true
-L["Slide New Messages"] = true
-L["New chat lines slide up into place instead of jumping. Not while you're typing in the chat, hovering it or scrolled up in it."] = true
+L["Reset Positions"] = true
+L["Preview"] = true
+L["Puts the menu buttons, the chat and Blizzard's quest tracker back in their places."] = true
+L["Sell Junk"] = true
+L["Sold %d junk items for %s."] = true
+L["%d grey items, for %s."] = true
+L["No grey items in your bags."] = true
+L["Copy Chat"] = true
+L["Low Health Warning"] = true
+L["The edges of the screen pulse red while your health is under 35%, like in Diablo III.|n|nRequires a UI reload to apply."] = true
 L["Frames & AddOns"] = true
 L["Blizzard Frames"] = true
 L["Chat Commands"] = true
 L["Version %s"] = true
 L["A Diablo III style interface. Its settings are on the pages below this one."] = true
-L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them|n/dui num_bars 1-3 - the number of action bars|n/dui num_side_bars 0-2 - the number of side bars|n/dui tracker reset - puts the quest tracker back"] = true
+L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them"] = true
 L["Unlock Frames"] = true
 L["Lock Frames"] = true
 L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] = true
 L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."] = true
 L["You can't move frames in combat."] = true
-L["Puts the menu buttons, with the gold and the fps texts, back in the bottom right corner."] = true
-L["Puts the chat window back in the bottom left corner, sized like Diablo III's."] = true
 L["UI Scale"] = true
 L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = true

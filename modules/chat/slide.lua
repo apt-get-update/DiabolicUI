@@ -1,4 +1,4 @@
--- New chat lines slide in (the "slideMessages" option): when a line is
+-- New chat lines slide in: when a line is
 -- added, the window's text starts one line lower and eases up into place,
 -- instead of jumping up a line.
 --
@@ -45,7 +45,7 @@ local IsBusy = function(frame)
 end
 
 local OnAddMessage = function(frame)
-	if not (Module.db.slideMessages and frame:IsVisible()) then
+	if (not frame:IsVisible()) then
 		return
 	end
 	if (not frame:AtBottom()) or IsBusy(frame) then

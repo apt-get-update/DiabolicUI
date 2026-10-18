@@ -640,12 +640,25 @@ local CheckLayout = function(tooltip)
 	end
 end
 
+-- Gear's GearScore and item level, in the score's color (gearscore.lua).
+-- Returns whether it added the line.
+local AddGearScore = function(tooltip, link)
+	local gearScore = Engine:GetModule("Blizzard: GearScore")
+	local score, level = gearScore:GetItemScore(link)
+	if score and (score > 0) then
+		local r, g, b = gearScore:GetColor(score)
+		tooltip:AddDoubleLine("GearScore " .. score, _G.ITEM_LEVEL:format(level), r, g, b, r, g, b)
+		return true
+	end
+end
+
 -- Reads the item from the tooltip Blizzard just filled, and replaces the
 -- lines that move into the big number and the footer.
 Module.OnTooltipSetItem = function(self, tooltip)
 	Reset(tooltip)
 
 	local _, link = tooltip:GetItem()
+	local scored = link and AddGearScore(tooltip, link)
 	local itemName, quality, icon, sellPrice
 	if link and self.db.reskinTooltip and (not self.failed[link]) then
 		itemName, _, quality, _, _, _, _, _, _, icon, sellPrice = GetItemInfo(link)
@@ -654,7 +667,7 @@ Module.OnTooltipSetItem = function(self, tooltip)
 		-- Reskin turned off, not an item, not cached yet, or its layout failed
 		-- before: Blizzard's plain tooltip.
 		tooltip.DiabolicItemState = "plain"
-		if self:ReleasePrice(tooltip) then
+		if self:ReleasePrice(tooltip) or scored then
 			tooltip:Show()
 		end
 		return

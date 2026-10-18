@@ -93,6 +93,19 @@ local function constants()
 		SlashCmdList = {},
 		hash_SlashCmdList = {},
 		UISpecialFrames = {},
+		UIChildWindows = { "GearManagerDialog" },
+		NUM_GEARSETS_PER_ROW = 5,
+		PLAYERSTAT_DROPDOWN_OPTIONS = { "PLAYERSTAT_BASE_STATS", "PLAYERSTAT_MELEE_COMBAT", "PLAYERSTAT_RANGED_COMBAT",
+			"PLAYERSTAT_SPELL_COMBAT", "PLAYERSTAT_DEFENSES" },
+		-- the windows' (FriendsFrame.lua, SpellBookFrame.lua, QuestInfo.lua)
+		WHOS_TO_DISPLAY = 17, FRIENDS_FRAME_WHO_HEIGHT = 16, MAX_OBJECTIVES = 10,
+		WHOFRAME_DROPDOWN_LIST = { { name = "Zone", sortType = "zone" }, { name = "Guild", sortType = "guild" },
+			{ name = "Race", sortType = "race" } },
+		BOOKTYPE_SPELL = "spell", BOOKTYPE_PET = "pet",
+		PLAYERSTAT_BASE_STATS = "Base Stats", PLAYERSTAT_MELEE_COMBAT = "Melee", PLAYERSTAT_RANGED_COMBAT = "Ranged",
+		PLAYERSTAT_SPELL_COMBAT = "Spell", PLAYERSTAT_DEFENSES = "Defenses",
+		EQUIPMENT_MANAGER = "Equipment Manager", ACHIEVEMENTS = "Achievements", OBJECTIVES_TRACKER_LABEL = "Objectives",
+		DELETE = "Delete", EQUIPSET_EQUIP = "Equip", SAVE = "Save",
 		UIPanelWindows = {},
 		COMBAT_TEXT_LOCATIONS = {
 			startX = 0, startY = 384, endX = 0, endY = 609,
@@ -249,6 +262,19 @@ local function button(widgetType, name, parent, templates)
 	return b
 end
 
+-- A panel's tab (CharacterFrameTabButtonTemplate, AchievementFrameTabButtonTemplate):
+-- its art in three, again for when it's chosen, and its text.
+local function tab(name, parent, text)
+	local t = button("Button", name, parent)
+	t:SetSize(115, 32)
+	for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled" }) do
+		new("Texture", name .. part, t)
+	end
+	t:SetText(text)
+	t.text = t:GetFontString()
+	return t
+end
+
 local function tooltip(name, parent)
 	local t = hidden(new("GameTooltip", name, parent or UIParent))
 	for i = 1, 8 do
@@ -380,8 +406,16 @@ local function dropDownList(index)
 		new("Texture", name .. "Button" .. i .. "Icon", b)
 		new("Texture", name .. "Button" .. i .. "Check", b)
 		new("Texture", name .. "Button" .. i .. "Highlight", b)
+		hidden(button("Button", name .. "Button" .. i .. "ExpandArrow", b))
 	end
 	return list
+end
+
+-- A character window tab's panel art: its unnamed corner textures.
+local function panelArt(frame, prefix, parts)
+	for _, part in ipairs(parts) do
+		new("Texture", nil, frame):SetTexture([[Interface\]] .. prefix .. part)
+	end
 end
 
 local function itemButton(name, parent, templates)
@@ -389,6 +423,70 @@ local function itemButton(name, parent, templates)
 	new("Texture", name .. "IconQuestTexture", b)
 	new("Cooldown", name .. "Cooldown", b)
 	return b
+end
+
+-- The windows' frames as Blizzard's FrameXML makes them
+-- (tests/data/framexml.lua, generated from it by tests/tools/framexml.py):
+-- what's not made by hand above is made from it, under the frames made by
+-- hand when there are some. `addon`: a load-on-demand addon's, or nil.
+local FRAMEXML
+local BUTTON_ROLES = {
+	normal = "normalTexture", pushed = "pushedTexture", disabled = "disabledTexture", highlight = "highlightTexture",
+	checked = "checkedTexture", disabledChecked = "disabledCheckedTexture", thumb = "thumb", bar = "barTexture",
+	text = "fontString",
+}
+local function fromFrameXML(addon)
+	FRAMEXML = FRAMEXML or dofile("tests/data/framexml.lua")
+	local entries = FRAMEXML[addon or ""]
+	if not entries then
+		return
+	end
+	local made, fresh = {}, {}
+	for _, entry in ipairs(entries) do
+		local id, kind, name, parent, size, anchor, file, text, hide, layer, role = unpack(entry, 1, 11)
+		local owner = (type(parent) == "number") and made[parent] or rawget(_G, parent)
+		local object = name and rawget(_G, name)
+		local key = role and BUTTON_ROLES[role]
+		if (not object) and owner and key and state[owner][key] then
+			object = state[owner][key] -- the art the hand-made button has
+		end
+		if (not object) and owner then
+			object = new(Widgets.isType(kind) and kind or "Frame", name, owner)
+			fresh[#fresh + 1] = { object, owner, size, anchor }
+			if key then
+				state[owner][key] = object
+			end
+			if file and object.SetTexture then
+				object:SetTexture(file)
+			end
+			if layer and object.SetDrawLayer then
+				object:SetDrawLayer(layer)
+			end
+			if text and object.SetText then
+				local value = rawget(_G, text)
+				object:SetText((type(value) == "string") and value or text)
+			end
+			if hide then
+				hidden(object)
+			end
+		end
+		made[id] = object
+	end
+	for _, each in ipairs(fresh) do
+		local object, owner, size, anchor = unpack(each, 1, 4)
+		if size then
+			if size[1] and size[1] > 0 then
+				object:SetWidth(size[1])
+			end
+			if size[2] and size[2] > 0 then
+				object:SetHeight(size[2])
+			end
+		end
+		if anchor then
+			local relative = anchor[2] and rawget(_G, anchor[2]) or owner
+			object:SetPoint(anchor[1], relative, anchor[3], anchor[4], anchor[5])
+		end
+	end
 end
 
 local function buildFrames()
@@ -640,26 +738,107 @@ local function buildFrames()
 
 	-- panels
 	local character = hidden(new("Frame", "CharacterFrame", UIParent))
+	character:SetSize(384, 512)
+	character:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, -104)
 	new("Texture", "CharacterFramePortrait", character)
+	button("Button", "CharacterFrameCloseButton", character, "UIPanelCloseButton")
 	new("FontString", "CharacterNameText", character)
-	for i = 1, 5 do
-		button("Button", "CharacterFrameTab" .. i, character)
+	new("FontString", "CharacterLevelText", character)
+	new("FontString", "CharacterGuildText", character)
+	for i, text in ipairs({ "Character", "Pet", "Reputation", "Skills", "Currency" }) do
+		tab("CharacterFrameTab" .. i, character, text)
 	end
-	new("PlayerModel", "CharacterModelFrame", character)
+	character.numTabs = 5
+	local model = new("PlayerModel", "CharacterModelFrame", character)
+	button("Button", "CharacterModelFrameRotateLeftButton", model)
+	button("Button", "CharacterModelFrameRotateRightButton", model)
 	local paperDoll = new("Frame", "PaperDollFrame", character)
+	panelArt(paperDoll, "PaperDollInfoFrame\\UI-Character-CharacterTab-", { "L1", "R1", "BottomLeft", "BottomRight" })
+	-- the stats' boxes, two columns
+	local attributes = new("Frame", "CharacterAttributesFrame", paperDoll)
+	for _, side in ipairs({ "Left", "Right" }) do
+		for _, part in ipairs({ "Top", "Middle", "Bottom" }) do
+			new("Texture", "PlayerStat" .. side .. part, attributes):SetTexture([[Interface\PaperDollInfoFrame\UI-Character-StatBackground]])
+		end
+	end
 	for _, slot in ipairs({ "Head", "Neck", "Shoulder", "Back", "Chest", "Shirt", "Tabard", "Wrist", "Hands",
 		"Waist", "Legs", "Feet", "Finger0", "Finger1", "Trinket0", "Trinket1", "MainHand", "SecondaryHand",
 		"Ranged", "Ammo" }) do
 		itemButton("Character" .. slot .. "Slot", paperDoll)
 	end
+	-- the ammo slot's frame art (PaperDollFrame.xml)
+	new("Texture", nil, _G.CharacterAmmoSlot):SetTexture("Interface\\PaperdollInfoFrame\\UI-Character-AmmoSlot")
 	local titles = new("Frame", "PlayerTitleFrame", paperDoll)
 	button("Button", "PlayerTitleFrameButton", titles)
 	for _, side in ipairs({ "Left", "Right" }) do
 		local dd = new("Frame", "PlayerStatFrame" .. side .. "DropDown", paperDoll, "UIDropDownMenuTemplate")
 		button("Button", "PlayerStatFrame" .. side .. "DropDownButton", dd)
 	end
+	-- their art in three
+	for _, name in ipairs({ "PlayerTitleFrame", "PlayerStatFrameLeftDropDown", "PlayerStatFrameRightDropDown" }) do
+		for _, part in ipairs({ "Left", "Middle", "Right" }) do
+			if not _G[name .. part] then
+				new("Texture", name .. part, _G[name])
+			end
+		end
+	end
+	new("Frame", "CharacterResistanceFrame", paperDoll)
+	-- the title picker (PlayerTitlePickerFrame, a HybridScrollFrame's buttons)
+	local picker = hidden(new("Frame", "PlayerTitlePickerFrame", titles))
+	local pickerScroll = new("ScrollFrame", "PlayerTitlePickerScrollFrame", picker)
+	pickerScroll.buttons = { button("Button", "PlayerTitlePickerScrollFrameButton1", pickerScroll) }
+	-- the equipment manager (GearManagerDialog, UIPanelDialogTemplate) and its button
+	button("Button", "GearManagerToggleButton", paperDoll)
+	local gear = hidden(new("Frame", "GearManagerDialog", paperDoll))
+	for _, part in ipairs({ "TopLeft", "TopRight", "Top", "BottomLeft", "BottomRight", "Bottom", "Left", "Right",
+		"TitleBG", "DialogBG" }) do
+		new("Texture", "GearManagerDialog" .. part, gear)
+	end
+	gear.title = new("FontString", nil, gear)
+	gear.title:SetText("Equipment Manager")
+	button("Button", "GearManagerDialogClose", gear, "UIPanelCloseButton")
+	for _, part in ipairs({ { "DeleteSet", "Delete" }, { "EquipSet", "Equip" }, { "SaveSet", "Save" } }) do
+		local b = button("Button", "GearManagerDialog" .. part[1], gear, "UIPanelButtonTemplate")
+		b:SetSize(78, 22)
+		b:SetText(part[2])
+	end
+	gear.buttons = {}
+	for i = 1, 10 do
+		-- GearSetButtonTemplate: its icon the normal texture
+		local set = button("CheckButton", "GearSetButton" .. i, gear)
+		set:SetSize(36, 36)
+		set.icon = set:GetNormalTexture()
+		set.text = new("FontString", "GearSetButton" .. i .. "Name", set)
+		set:SetScript("OnClick", function(self) _G.GearSetButton_OnClick(self) end)
+		gear.buttons[i] = set
+	end
+	local popup = hidden(new("Frame", "GearManagerDialogPopup", gear))
+	for _, part in ipairs({ "TopLeft", "TopRight", "BotLeft", "BotRight" }) do
+		new("Texture", nil, popup):SetTexture("Interface\\MacroFrame\\MacroPopup-" .. part)
+	end
+	new("EditBox", "GearManagerDialogPopupEditBox", popup)
+	button("Button", "GearManagerDialogPopupOkay", popup, "UIPanelButtonTemplate")
+	button("Button", "GearManagerDialogPopupCancel", popup, "UIPanelButtonTemplate")
+	gear:SetScript("OnShow", function() _G.GearManagerDialog_Update() end)
+	paperDoll:SetScript("OnShow", function() _G.PaperDollFrame_UpdateStats() end)
+	paperDoll:SetScript("OnHide", function() gear:Hide() end)
 	local rep = hidden(new("Frame", "ReputationFrame", character))
 	rep.name = "ReputationFrame"
+	panelArt(rep, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight", "BottomLeft", "BottomRight" })
+	local pet = hidden(new("Frame", "PetPaperDollFrame", character))
+	new("FontString", "PetNameText", pet)
+	new("Frame", "PetPaperDollFrameCompanionFrame", pet)
+	for i, text in ipairs({ "Pet", "Companions", "Mounts" }) do
+		tab("PetPaperDollFrameTab" .. i, pet, text)
+	end
+	button("Button", "PetPaperDollCloseButton", pet, "UIPanelButtonTemplate")
+	panelArt(pet, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight" })
+	panelArt(pet, "PetPaperDollFrame\\UI-PetPaperDollFrame-", { "BotLeft", "BotRight" })
+	local skills = hidden(new("Frame", "SkillFrame", character))
+	panelArt(skills, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight" })
+	panelArt(skills, "PaperDollInfoFrame\\SkillFrame-", { "BotLeft", "BotRight" })
+	new("ScrollFrame", "SkillDetailScrollFrame", skills)
+	button("Button", "SkillFrameCancelButton", skills, "UIPanelButtonTemplate")
 	local spellbook = hidden(new("Frame", "SpellBookFrame", UIParent))
 	for i = 1, 8 do
 		button("CheckButton", "SpellBookSkillLineTab" .. i, spellbook)
@@ -768,6 +947,8 @@ local function buildFrames()
 	new("FontString", "MiniMapInstanceDifficultyText", difficulty)
 	hidden(button("Button", "MiniMapVoiceChatFrame", minimap))
 	button("CheckButton", "GameTimeFrame", minimap)
+
+	fromFrameXML(nil)
 end
 
 -- Frames of Blizzard's load-on-demand addons, made by LoadAddOn.
@@ -784,9 +965,37 @@ local ON_DEMAND = {
 	Blizzard_TalentUI = function()
 		local talents = hidden(new("Frame", "PlayerTalentFrame", _G.UIParent))
 		talents:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		new("Texture", "PlayerTalentFramePortrait", talents)
+		new("Texture", "PlayerTalentFrameTopLeft", talents)
+		new("FontString", "PlayerTalentFrameTitleText", talents)
+		-- the talent tree's background, set per tree
+		local scroll = new("ScrollFrame", "PlayerTalentFrameScrollFrame", talents)
+		new("Texture", "PlayerTalentFrameBackgroundTopLeft", scroll)
+		for i = 1, 4 do
+			button("Button", "PlayerTalentFrameTab" .. i, talents)
+		end
+		local talent = button("Button", "PlayerTalentFrameTalent1", talents)
+		new("Texture", "PlayerTalentFrameTalent1IconTexture", talent)
+		-- Blizzard_TalentUI.lua
+		_G.PlayerTalentFrame_UpdateSpecs = function() end
+		_G.PlayerTalentFrame_UpdateControls = function() end
+	end,
+	Blizzard_TradeSkillUI = function()
+		local trade = hidden(new("Frame", "TradeSkillFrame", _G.UIParent))
+		new("Texture", "TradeSkillFramePortrait", trade)
+		new("Texture", "TradeSkillFrameBottomLeftTexture", trade)
+		new("FontString", "TradeSkillFrameTitleText", trade)
+		new("Frame", "TradeSkillExpandButtonFrame", trade)
+		new("ScrollFrame", "TradeSkillListScrollFrame", trade)
+		new("ScrollFrame", "TradeSkillDetailScrollFrame", trade)
+		local icon = button("Button", "TradeSkillSkillIcon", trade)
+		new("Texture", "TradeSkillSkillIconIconTexture", icon)
 	end,
 	Blizzard_InspectUI = function()
-		hidden(new("Frame", "InspectFrame", _G.UIParent))
+		local frame = hidden(new("Frame", "InspectFrame", _G.UIParent))
+		new("PlayerModel", "InspectModelFrame", new("Frame", "InspectPaperDollFrame", frame))
+		-- Blizzard_InspectUI.lua
+		_G.InspectFrame_UnitChanged = function() end
 	end,
 	Blizzard_CombatText = function()
 		new("Frame", "CombatText", _G.UIParent)
@@ -812,8 +1021,126 @@ local ON_DEMAND = {
 	Blizzard_Calendar = function()
 		hidden(new("Frame", "CalendarFrame", _G.UIParent))
 	end,
+	Blizzard_TokenUI = function()
+		local token = hidden(new("Frame", "TokenFrame", _G.CharacterFrame))
+		panelArt(token, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight" })
+		panelArt(token, "TalentFrame\\UI-TalentFrame-", { "BotLeft", "BotRight" })
+		button("Button", "TokenFrameCancelButton", token, "UIPanelButtonTemplate")
+		button("Button", nil, token, "UIPanelCloseButton") -- its unnamed X
+	end,
 	Blizzard_AchievementUI = function()
-		hidden(new("Frame", "AchievementFrame", _G.UIParent))
+		local frame = hidden(new("Frame", "AchievementFrame", _G.UIParent))
+		frame:SetSize(768, 500)
+		frame:SetBackdrop({ edgeFile = [[Interface\AchievementFrame\UI-Achievement-WoodBorder]] })
+		for _, part in ipairs({ "Background", "MetalBorderLeft", "CategoriesBG", "WaterMark", "WoodBorderTopLeft" }) do
+			new("Texture", "AchievementFrame" .. part, frame)
+		end
+		local header = new("Frame", "AchievementFrameHeader", frame)
+		for _, part in ipairs({ "Left", "Right", "PointBorder", "RightDDLInset", "Shield" }) do
+			new("Texture", "AchievementFrameHeader" .. part, header)
+		end
+		new("FontString", "AchievementFrameHeaderTitle", header)
+		new("FontString", "AchievementFrameHeaderPoints", header)
+		-- a panel in the tooltip's border, gold (AchievementFrameAchievementsBackdrop_OnLoad)
+		local function panel(f)
+			f:SetBackdrop({ edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], edgeSize = 16 })
+			f:SetBackdropBorderColor(1, .675, .125, 1)
+			return f
+		end
+		local categories = panel(new("Frame", "AchievementFrameCategories", frame))
+		-- the categories' buttons (AchievementCategoryTemplate)
+		for i = 1, 3 do
+			local b = new("Button", "AchievementFrameCategoriesContainerButton" .. i, categories)
+			b:SetSize(158, 24)
+			b.background = new("Texture", "AchievementFrameCategoriesContainerButton" .. i .. "Background", b)
+			b.label = new("FontString", "AchievementFrameCategoriesContainerButton" .. i .. "Label", b)
+			b:SetHighlightTexture([[Interface\AchievementFrame\UI-Achievement-Category-Highlight]])
+		end
+		local achievements = new("Frame", "AchievementFrameAchievements", frame)
+		new("Texture", "AchievementFrameAchievementsBackground", achievements)
+		panel(new("Frame", nil, achievements))
+		-- an achievement (AchievementTemplate), in its list's buttons
+		local container = new("ScrollFrame", "AchievementFrameAchievementsContainer", achievements)
+		local row = new("Button", "AchievementFrameAchievementsContainerButton1", container)
+		new("Texture", "AchievementFrameAchievementsContainerButton1Background", row)
+		new("Texture", "AchievementFrameAchievementsContainerButton1TitleBackground", row)
+		row.description = new("FontString", "AchievementFrameAchievementsContainerButton1Description", row)
+		container.buttons = { row }
+		local stats = hidden(new("Frame", "AchievementFrameStats", frame))
+		local statsBG = new("Frame", "AchievementFrameStatsBG", stats)
+		new("Texture", "AchievementFrameStatsBGTexture", statsBG)
+		panel(new("Frame", nil, statsBG))
+		local summary = hidden(new("Frame", "AchievementFrameSummary", frame))
+		new("Texture", "AchievementFrameSummaryBackground", summary)
+		panel(new("Frame", nil, summary))
+		new("Frame", "AchievementFrameSummaryAchievements", summary).buttons = {}
+		for _, name in ipairs({ "AchievementFrameSummaryCategoriesHeader", "AchievementFrameSummaryAchievementsHeader" }) do
+			local h = new("Frame", name, summary)
+			new("Texture", name .. (name:find("Categories") and "Texture" or "Header"), h)
+			new("FontString", name .. "Title", h)
+		end
+		-- the summary's bars (AchievementFrameSummaryCategoryTemplate), two
+		-- columns under the big one
+		local function bar(name, label)
+			local b = new("StatusBar", name, summary)
+			b:SetSize(234, 21)
+			for _, part in ipairs({ "Left", "Right", "Middle" }) do
+				new("Texture", name .. part, b)
+			end
+			local glow = new("Button", name .. "Button", b)
+			for _, part in ipairs({ "Left", "Right", "Middle" }) do
+				new("Texture", name .. "Button" .. part, glow)
+			end
+			new("FontString", name .. label, b)
+			new("FontString", name .. "Text", b)
+			return b
+		end
+		bar("AchievementFrameSummaryCategoriesStatusBar", "Title"):SetSize(488, 21)
+		for i = 1, 8 do
+			local b = bar("AchievementFrameSummaryCategoriesCategory" .. i, "Label")
+			if (i % 2 == 0) then
+				b:SetPoint("TOPLEFT", _G["AchievementFrameSummaryCategoriesCategory" .. (i - 1)], "TOPRIGHT", 20, 0)
+			end
+		end
+		local comparison = hidden(new("Frame", "AchievementFrameComparison", frame))
+		for _, part in ipairs({ "Background", "Dark", "Watermark" }) do
+			new("Texture", "AchievementFrameComparison" .. part, comparison)
+		end
+		button("Button", "AchievementFrameCloseButton", frame)
+		new("Frame", "AchievementFrameFilterDropDown", frame, "UIDropDownMenuTemplate")
+		for i, text in ipairs({ "Achievements", "Statistics" }) do
+			tab("AchievementFrameTab" .. i, frame, text):SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 11, -30)
+		end
+		frame.numTabs = 2
+		_G.PanelTemplates_SetTab(frame, 1)
+
+		-- Blizzard_AchievementUI.lua
+		_G.AchievementFrameSummary_UpdateAchievements = function() end
+		_G.AchievementFrameCategories_DisplayButton = function(b, element)
+			if type(element.parent) == "number" then
+				b.label:SetFontObject(_G.GameFontHighlight)
+				b.parentID = element.parent
+				b.background:SetVertexColor(0.6, 0.6, 0.6)
+			else
+				b.label:SetFontObject(_G.GameFontNormal)
+				b.parentID = element.parent
+				b.background:SetVertexColor(1, 1, 1)
+			end
+			b.label:SetText(element.name)
+		end
+		_G.AchievementButton_Saturate = function(self)
+			self.saturated = true
+			_G[self:GetName() .. "Background"]:SetTexture([[Interface\AchievementFrame\UI-Achievement-Parchment-Horizontal]])
+			self.description:SetTextColor(0, 0, 0, 1)
+		end
+		_G.AchievementButton_Desaturate = function(self)
+			self.saturated = nil
+			_G[self:GetName() .. "Background"]:SetTexture([[Interface\AchievementFrame\UI-Achievement-Parchment-Horizontal-Desaturated]])
+			self.description:SetTextColor(1, 1, 1, 1)
+		end
+		-- AchievementButton_OnLoad: its own copies
+		row.Saturate, row.Desaturate = _G.AchievementButton_Saturate, _G.AchievementButton_Desaturate
+		row:Saturate()
 	end,
 }
 Blizzard.ON_DEMAND = ON_DEMAND
@@ -1045,8 +1372,23 @@ local function frameXML(client)
 	f.StaticPopup_EscapePressed = noop
 
 	-- interface options
+	-- the AddOns tab's list, as InterfaceOptionsFrame.lua keeps it: a child
+	-- after its parent's other children, a parent at the end
+	f.INTERFACEOPTIONS_ADDONCATEGORIES = {}
 	f.InterfaceOptions_AddCategory = function(panel)
 		client.optionsPanels[#client.optionsPanels + 1] = panel
+		local categories = f.INTERFACEOPTIONS_ADDONCATEGORIES
+		local position = #categories + 1
+		for i, category in ipairs(categories) do
+			if panel.parent and (category.name == panel.parent) then
+				position = i + 1
+				while categories[position] and (categories[position].parent == panel.parent) do
+					position = position + 1
+				end
+				break
+			end
+		end
+		table.insert(categories, position, panel)
 	end
 	f.InterfaceOptionsFrame_OpenToCategory = function(panel)
 		client.openedOptions = panel
@@ -1070,6 +1412,135 @@ local function frameXML(client)
 				if frame:IsShown() then frame:Hide() else frame:Show() end
 			end
 		end
+	end
+	-- tabs (UIPanelTemplates.lua)
+	f.PanelTemplates_DeselectTab = function(tab)
+		local name = tab:GetName()
+		_G[name .. "Left"]:Show(); _G[name .. "Middle"]:Show(); _G[name .. "Right"]:Show()
+		tab:Enable()
+		_G[name .. "LeftDisabled"]:Hide(); _G[name .. "MiddleDisabled"]:Hide(); _G[name .. "RightDisabled"]:Hide()
+	end
+	f.PanelTemplates_SelectTab = function(tab)
+		local name = tab:GetName()
+		_G[name .. "Left"]:Hide(); _G[name .. "Middle"]:Hide(); _G[name .. "Right"]:Hide()
+		tab:Disable()
+		tab:SetDisabledFontObject(_G.GameFontHighlightSmall)
+		_G[name .. "LeftDisabled"]:Show(); _G[name .. "MiddleDisabled"]:Show(); _G[name .. "RightDisabled"]:Show()
+	end
+	f.PanelTemplates_SetNumTabs = function(frame, numTabs) frame.numTabs = numTabs end
+	-- sized to its text, plus `padding` (24 without)
+	f.PanelTemplates_TabResize = function(tab, padding)
+		tab:SetWidth(tab:GetFontString():GetStringWidth() + (padding or 24) + 2 * _G[tab:GetName() .. "Left"]:GetWidth())
+	end
+	f.PanelTemplates_UpdateTabs = function(frame)
+		if frame.selectedTab then
+			for i = 1, frame.numTabs do
+				local tab = _G[frame:GetName() .. "Tab" .. i]
+				if (i == frame.selectedTab) then
+					_G.PanelTemplates_SelectTab(tab)
+				else
+					_G.PanelTemplates_DeselectTab(tab)
+				end
+			end
+		end
+	end
+	f.PanelTemplates_SetTab = function(frame, id)
+		frame.selectedTab = id
+		_G.PanelTemplates_UpdateTabs(frame)
+	end
+	-- the panels' places (UIParent.lua), and the windows closed with them
+	f.UpdateUIPanelPositions = function(frame) client.panelUpdates = (client.panelUpdates or 0) + 1 end
+	f.CloseChildWindows = function()
+		for _, name in ipairs(_G.UIChildWindows) do
+			if _G[name] then
+				_G[name]:Hide()
+			end
+		end
+	end
+	-- the character window's (PaperDollFrame.lua, PetPaperDollFrame.lua)
+	f.UpdatePaperdollStats = function(prefix, index)
+		for i = 1, 6 do
+			local label = _G[prefix .. i .. "Label"]
+			if label then
+				label:SetText(index .. " " .. i)
+				_G[prefix .. i .. "StatText"]:SetText(i)
+			end
+		end
+	end
+	f.PaperDollFrame_UpdateStats = function()
+		_G.UpdatePaperdollStats("PlayerStatFrameLeft", _G.GetCVar("playerStatLeftDropdown"))
+		_G.UpdatePaperdollStats("PlayerStatFrameRight", _G.GetCVar("playerStatRightDropdown"))
+	end
+	f.PetPaperDollFrame_UpdateTabs = function() end
+	f.PetPaperDollFrame_SetTab = noop
+	f.PetPaperDollFrame_UpdateCompanions = noop
+	f.PetPaperDollFrame_UpdateIsAvailable = noop
+	f.ReputationFrame_Update = noop
+	-- the spellbook (SpellBookFrame.lua): each spell button updated
+	f.SpellButton_UpdateButton = noop
+	f.SpellBookFrame_Update = function()
+		for i = 1, 12 do
+			if _G["SpellButton" .. i] then
+				_G.SpellButton_UpdateButton(_G["SpellButton" .. i])
+			end
+		end
+	end
+	-- the who list (FriendsFrame.lua)
+	f.WhoList_Update = noop
+	f.WhoFrameDropDownButton_OnClick = function(self)
+		_G.UIDropDownMenu_SetSelectedID(_G.WhoFrameDropDown, self:GetID())
+		_G.WhoList_Update()
+	end
+	f.MerchantFrame_UpdateRepairButtons = noop
+	-- the quest log (QuestLogFrame.lua, QuestInfo.lua)
+	f.QuestInfo_Display = noop
+	f.QuestLogControlPanel_UpdatePosition = noop
+	f.QuestLogDetailFrame_AttachToQuestLog = noop
+	f.QuestLogShowMapPOI_UpdatePosition = noop
+	f.QuestLog_UpdateQuestCount = noop
+	f.GetMaterialTextColors = function()
+		return { 0, 0, 0 }, { 0, 0, 0 }
+	end
+	f.GearManagerDialog_Update = function()
+		local dialog = _G.GearManagerDialog
+		dialog.selectedSet = nil
+		for i, set in ipairs(dialog.buttons) do
+			local name, icon = _G.GetEquipmentSetInfo(i)
+			if name then
+				set:Enable()
+				set.name = name
+				set.text:SetText(name)
+				set.icon:SetTexture(icon)
+				set:SetChecked(dialog.selectedSetName == name)
+				if (dialog.selectedSetName == name) then
+					dialog.selectedSet = set
+				end
+			else
+				set:Disable()
+				set:SetChecked(false)
+				set.name = nil
+				set.text:SetText("")
+				set.icon:SetTexture("")
+			end
+		end
+		for _, name in ipairs({ "GearManagerDialogDeleteSet", "GearManagerDialogEquipSet" }) do
+			if dialog.selectedSet then
+				_G[name]:Enable()
+			else
+				_G[name]:Disable()
+			end
+		end
+	end
+	f.GearSetButton_OnClick = function(self)
+		if self.name and (self.name ~= "") then
+			_G.GearManagerDialog.selectedSetName = self.name
+			_G.GearManagerDialog_Update()
+		else
+			self:SetChecked(false)
+		end
+	end
+	f.GearManagerDialogSaveSet_OnClick = function(self)
+		_G.GearManagerDialogPopup:Show()
 	end
 	f.ShowUIPanel = function(frame) if frame then frame:Show() end end
 	f.HideUIPanel = function(frame) if frame then frame:Hide() end end
@@ -1152,6 +1623,16 @@ local function frameXML(client)
 	f.BankFrameItemButton_Update = noop
 	f.PaperDollFrame_SetArmor = noop
 	f.PaperDollItemSlotButton_Update = noop
+	-- MerchantFrame.lua: the merchant's tab or the buyback one, by selectedTab
+	f.MerchantFrame_UpdateMerchantInfo = noop
+	f.MerchantFrame_UpdateBuybackInfo = noop
+	f.MerchantFrame_Update = function()
+		if (_G.MerchantFrame.selectedTab == 1) then
+			_G.MerchantFrame_UpdateMerchantInfo()
+		else
+			_G.MerchantFrame_UpdateBuybackInfo()
+		end
+	end
 	f.CharacterFrame_ShowSubFrame = noop
 	f.ActionButton_UpdateHotkeys = noop
 	f.ActionButton_Update = noop
@@ -1207,11 +1688,18 @@ local function frameXML(client)
 	f.QuestLog_Update = noop
 	f.WatchFrame_Update = noop
 	f.WorldMapFrame_Update = noop
-	-- a tracker line's text (WatchFrame.lua): titles in gold
-	f.WatchFrame_SetLine = function(line, anchor, verticalOffset, isHeader, text)
+	-- a tracker line's text (WatchFrame.lua): titles in gold, the dash
+	-- before an objective (1: shown, 2: hidden but its room kept)
+	f.WatchFrame_SetLine = function(line, anchor, verticalOffset, isHeader, text, dash, hasItem, isComplete)
 		line.text:SetText(text)
 		if isHeader then
 			line.text:SetTextColor(.75, .61, 0)
+		end
+		if (dash == 1) then
+			line.dash:SetText("- ")
+		elseif (dash == 2) then
+			line.dash:SetText("- ")
+			line.dash:Hide()
 		end
 	end
 	f.MouseIsOver = function(frame) return frame:IsMouseOver() end
@@ -1466,7 +1954,7 @@ function Blizzard.install(owner)
 	-- Blizzard's load-on-demand addons: in the addon list, loaded on request
 	for _, name in ipairs({ "Blizzard_TimeManager", "Blizzard_TalentUI", "Blizzard_InspectUI",
 		"Blizzard_CombatText", "Blizzard_DebugTools", "Blizzard_ArenaUI", "Blizzard_Calendar",
-		"Blizzard_AchievementUI" }) do
+		"Blizzard_AchievementUI", "Blizzard_TradeSkillUI", "Blizzard_TokenUI" }) do
 		table.insert(client.world.addons, { name = name, title = name, enabled = true, loadOnDemand = true, blizzard = true })
 	end
 	local loadAddOn = client.api.LoadAddOn
@@ -1475,6 +1963,7 @@ function Blizzard.install(owner)
 		if build and not client.loadedOnDemand[name] then
 			client.loadedOnDemand[name] = true
 			build()
+			fromFrameXML(name)
 		end
 		return loadAddOn(name)
 	end

@@ -2,8 +2,8 @@
 --
 -- Loads the *real* handlers/statusbar.lua and handlers/orb.lua (every
 -- health, power and cast bar, and the big globes) on fake frames that count
--- the calls made on them. Both animate a pulsing spark every frame; the
--- bar itself must only be laid out again when something it shows changed
+-- the calls made on them. The bar itself must only be laid out again when
+-- something it shows changed
 -- (the value, the range, the size, the texture or the crop), since laying
 -- out textures every frame on dozens of bars costs framerate.
 
@@ -95,14 +95,12 @@ function TestStatusBarLayout:setUp()
 	self.laidOut = count(bar.bar, "SetTexCoord")
 end
 
-function TestStatusBarLayout:test_spark_pulses_without_laying_out_again()
+function TestStatusBarLayout:test_updating_again_is_not_laid_out()
 	local bar = self.bar
-	local alpha = bar.spark.alpha
 	for _ = 1, 10 do
-		bar:Update(1/60)
+		bar:Update()
 	end
 	lu.assertEquals(count(bar.bar, "SetTexCoord"), self.laidOut)
-	lu.assertNotEquals(bar.spark.alpha, alpha)
 end
 
 function TestStatusBarLayout:test_same_value_again_is_not_laid_out()
@@ -147,15 +145,13 @@ function TestOrbLayout:setUp()
 	self.sparkPlaced = count(orb.overlay.spark, "SetTexCoord")
 end
 
-function TestOrbLayout:test_spark_pulses_without_placing_the_fluid_again()
+function TestOrbLayout:test_updating_again_is_not_placed()
 	local orb = self.orb
-	local alpha = orb.overlay.spark.alpha
 	for _ = 1, 10 do
-		orb:Update(1/60)
+		orb:Update()
 	end
 	lu.assertEquals(count(orb.scrollframe, "SetVerticalScroll"), self.laidOut)
 	lu.assertEquals(count(orb.overlay.spark, "SetTexCoord"), self.sparkPlaced)
-	lu.assertNotEquals(orb.overlay.spark.alpha, alpha)
 end
 
 function TestOrbLayout:test_changes_are_placed()

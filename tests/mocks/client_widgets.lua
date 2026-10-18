@@ -17,6 +17,20 @@ Widgets.state = state
 
 local client -- set by Widgets.attach
 
+-- `frame`'s own children of a kind (Frame, LayeredRegion), in the order
+-- they were made, as the game lists them.
+local bySerial = function(a, b) return state[a].serial < state[b].serial end
+local function childrenOf(frame, kind)
+	local list = {}
+	for widget in pairs(state[frame].children) do
+		if state[widget].class.isA[kind] then
+			list[#list + 1] = widget
+		end
+	end
+	table.sort(list, bySerial)
+	return list
+end
+
 -- Like in game, every widget table holds a userdata at [0], and that is
 -- what the client goes by: a plain copy of a frame table (the engine
 -- deep-copies static configs holding UIParent) still works as an anchor
@@ -449,14 +463,6 @@ define(Region, {
 		end
 		return nil
 	end,
-	GetEffectiveScale = function(self)
-		local scale, s = 1, state[self]
-		while s do
-			scale = scale * (s.scale or 1)
-			s = s.parent and state[s.parent]
-		end
-		return scale
-	end,
 })
 
 local LayeredRegion = newClass("LayeredRegion", "Region")
@@ -518,7 +524,7 @@ define(Texture, {
 	SetBlendMode = function(self, mode) state[self].blendMode = mode end,
 	GetBlendMode = function(self) return state[self].blendMode or "BLEND" end,
 	SetGradient = function() end,
-	SetGradientAlpha = function() end,
+	SetGradientAlpha = function(self, ...) state[self].gradient = { ... } end,
 	SetRotation = function(self, radians) state[self].rotation = radians end,
 	SetNonBlocking = function() end,
 	GetNonBlocking = function() return nil end,
@@ -723,11 +729,18 @@ define(AnimationGroup, {
 	GetDuration = function(self) return Widgets.animationDuration(self) end,
 })
 
+-- The orders play one after the other; animations sharing an order play
+-- together, so each order lasts as long as its longest animation.
 function Widgets.animationDuration(group)
-	local total = 0
+	local longest = {}
 	for _, anim in ipairs(state[group].animations) do
 		local a = state[anim]
-		total = math.max(total, (a.startDelay or 0) + (a.duration or 0) + (a.endDelay or 0))
+		local order = a.order or 1
+		longest[order] = math.max(longest[order] or 0, (a.startDelay or 0) + (a.duration or 0) + (a.endDelay or 0))
+	end
+	local total = 0
+	for _, duration in pairs(longest) do
+		total = total + duration
 	end
 	return total
 end
@@ -781,7 +794,10 @@ define(Animation, {
 })
 
 newClass("Alpha", "Animation")
-define(classes.Alpha.methods, { SetChange = function(self, change) state[self].change = change end })
+define(classes.Alpha.methods, {
+	SetChange = function(self, change) state[self].change = change end,
+	GetChange = function(self) return state[self].change or 0 end,
+})
 classes.Alpha.validScripts = ANIMATION_SCRIPTS
 newClass("Scale", "Animation")
 define(classes.Scale.methods, {
@@ -807,6 +823,17 @@ classes.Translation.validScripts = ANIMATION_SCRIPTS
 
 local Frame = newClass("Frame", "Region")
 define(Frame, scriptMethods)
+-- frames only: 3.3.5's textures and font strings have no scale of their own
+define(Frame, {
+	GetEffectiveScale = function(self)
+		local scale, s = 1, state[self]
+		while s do
+			scale = scale * (s.scale or 1)
+			s = s.parent and state[s.parent]
+		end
+		return scale
+	end,
+})
 
 local FRAME_SCRIPTS = {
 	OnAttributeChanged = true, OnChar = true, OnDisable = true, OnDragStart = true, OnDragStop = true,
@@ -950,23 +977,11 @@ define(Frame, {
 	end,
 	GetID = function(self) return state[self].id or 0 end,
 	GetChildren = function(self)
-		local list = {}
-		for _, widget in ipairs(client.widgets) do
-			if state[self].children[widget] and state[widget].class.isA.Frame then
-				list[#list + 1] = widget
-			end
-		end
-		return unpack(list)
+		return unpack(childrenOf(self, "Frame"))
 	end,
 	GetNumChildren = function(self) return select("#", self:GetChildren()) end,
 	GetRegions = function(self)
-		local list = {}
-		for _, widget in ipairs(client.widgets) do
-			if state[self].children[widget] and state[widget].class.isA.LayeredRegion then
-				list[#list + 1] = widget
-			end
-		end
-		return unpack(list)
+		return unpack(childrenOf(self, "LayeredRegion"))
 	end,
 	GetNumRegions = function(self) return select("#", self:GetRegions()) end,
 	SetAttribute = function(self, name, value)
@@ -1092,7 +1107,8 @@ define(Button, {
 			client:RunScript(self, "OnDisable")
 		end
 	end,
-	IsEnabled = function(self) return (not state[self].disabled) and 1 or nil end,
+	-- 1 or 0, as 3.3.5's FrameXML compares it ("IsEnabled() == 0")
+	IsEnabled = function(self) return (not state[self].disabled) and 1 or 0 end,
 	SetButtonState = function(self, buttonState, locked)
 		assert(buttonState == "NORMAL" or buttonState == "PUSHED" or buttonState == "DISABLED",
 			"SetButtonState: bad state " .. tostring(buttonState))
@@ -1758,6 +1774,7 @@ local TEMPLATE_CHILDREN = {
 	UIPanelButtonTemplate2 = {
 		{ "Texture", "Left" }, { "Texture", "Middle" }, { "Texture", "Right" }, { "FontString", "Text", "text" },
 	},
+	StatFrameTemplate = { { "FontString", "Label" }, { "FontString", "StatText" } },
 	InterfaceOptionsCheckButtonTemplate = { { "FontString", "Text" } },
 	OptionsCheckButtonTemplate = { { "FontString", "Text" } },
 	UICheckButtonTemplate = { { "FontString", "Text" } },
@@ -1846,6 +1863,11 @@ end
 local nextWidgetId = 0
 
 -- Creates a widget of `widgetType`. `parent` may be a widget, a name, or nil.
+-- Whether the game has frames of `widgetType`.
+function Widgets.isType(widgetType)
+	return classes[widgetType] ~= nil
+end
+
 function Widgets.new(widgetType, name, parent, templates)
 	local class = classes[widgetType]
 	assert(class, "CreateFrame: unknown frame type " .. tostring(widgetType))

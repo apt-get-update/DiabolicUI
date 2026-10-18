@@ -390,6 +390,12 @@ Session.assertClean(client)
 - `client_blizzard.lua` - Blizzard's frames and FrameXML functions the
   addon touches, built after the 3.3.5 FrameXML (names, parents, templates,
   which ones start hidden). Load-on-demand addons are built when loaded.
+  The windows DiabolicUI restyles (mail, merchant, social, spellbook,
+  talents, inspect, auction house...) come from `tests/data/framexml.lua`,
+  generated from Blizzard's own FrameXML by `tests/tools/framexml.py`
+  (their names, types, parents, sizes, first anchor, art, templates
+  expanded); whatever's made by hand above is kept, and what it lacks is
+  added under it. Run the script again after adding a window to its list.
 - `client_secure.lua` - the secure handler templates: snippets run in a
   restricted environment against frame handles, state drivers, unit
   watches, `WrapScript`, `RunFor`, `ChildUpdate`, auto hide.

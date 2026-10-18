@@ -68,6 +68,7 @@ local function loadModule(strings)
 	_G.ITEM_REQ_ARENA_RATING = "Requires personal and team arena rating of %d"
 	_G.ITEM_MOD_DAMAGE_PER_SECOND_SHORT = "Damage Per Second"
 	_G.ARMOR = "Armor"
+	_G.ITEM_LEVEL = "Item Level %d"
 	_G.GetItemInfo = function(link)
 		local item = items[link]
 		if item then
@@ -97,6 +98,8 @@ local function loadModule(strings)
 
 	local Engine = EngineMock.new()
 	Engine:NewStaticConfig("Library: Format", { Money = function(money) return money .. "c" end })
+	-- no GearScore line here (test_session_itemtooltips.lua has it)
+	Engine:NewModule("Blizzard: GearScore").GetItemScore = function() return 0 end
 	assert(loadfile("modules/blizzard/itemtooltips.lua"))("DiabolicUI", Engine)
 	local Module = Engine:GetModule("Blizzard: ItemTooltips")
 	Module.db = { reskinTooltip = true } -- the "Reskin Tooltip" option

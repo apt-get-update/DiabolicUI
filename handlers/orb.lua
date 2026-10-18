@@ -28,15 +28,37 @@ local Orb_MT = { __index = Orb }
 local SHADES = { bar = 1/4, moon = 1/2, smoke = 1, shade = 1/10 }
 
 
-Orb.Update = function(self, elapsed)
+-- The spark and its glow pulse in a looping alpha animation the client
+-- plays by itself, so an orb that holds still runs no Lua at all.
+local SetPulse = function(spark)
+	local range = spark.maxAlpha - spark.minAlpha
+	for _, texture in pairs({ spark, spark.glow }) do
+		texture:SetAlpha(spark.minAlpha)
+		texture.pulseIn:SetDuration(spark.durationIn)
+		texture.pulseIn:SetChange(range)
+		texture.pulseOut:SetDuration(spark.durationOut)
+		texture.pulseOut:SetChange(-range)
+	end
+end
+
+local CreatePulse = function(texture)
+	texture.pulse = texture:CreateAnimationGroup()
+	texture.pulse:SetLooping("REPEAT")
+	texture.pulseIn = texture.pulse:CreateAnimation("Alpha")
+	texture.pulseIn:SetOrder(1)
+	texture.pulseOut = texture.pulse:CreateAnimation("Alpha")
+	texture.pulseOut:SetOrder(2)
+end
+
+Orb.Update = function(self)
 	local value = self._ignoresmoothing and self.value or self.smoothing and self.displayValue or self.value
 	local min, max = self.minValue, self.maxValue
 	local width, height = self.scaffold:GetSize()
 	local spark = self.overlay.spark
 	-- (SetValue and SetMinMaxValues keep both values in range)
 
-	-- The spark and its glow pulse every frame, but the fluid and the spark
-	-- only need placing again when the value or the shape changed.
+	-- The fluid and the spark only need placing again when the value or the
+	-- shape changed.
 	local laid = self._laid
 	local glow = spark.glow
 	local changed = (value ~= laid.value) or (min ~= laid.min) or (max ~= laid.max) or (width ~= laid.width) or (height ~= laid.height)
@@ -64,10 +86,9 @@ Orb.Update = function(self, elapsed)
 	if value == max or value == min then
 		if spark:IsShown() then
 			spark:Hide()
-			spark:SetAlpha(spark.minAlpha)
-			spark.flashDirection = "IN"
-			spark.glow:Hide()
-			spark.glow:SetAlpha(spark.minAlpha)
+			spark.pulse:Stop()
+			glow:Hide()
+			glow.pulse:Stop()
 		end
 	else
 		if changed then
@@ -119,33 +140,15 @@ Orb.Update = function(self, elapsed)
 			glow:SetSize(sparkWidth, sparkHeight/spark._height * spark.glow._height)
 		end
 
-		if elapsed then
-			local currentAlpha = spark.glow:GetAlpha()
-			local targetAlpha = spark.flashDirection == "IN" and spark.maxAlpha or spark.minAlpha
-			local range = spark.maxAlpha - spark.minAlpha
-			local alphaChange = elapsed/(spark.flashDirection == "IN" and spark.durationIn or spark.durationOut) * range
-		
-			if spark.flashDirection == "IN" then
-				if currentAlpha + alphaChange < targetAlpha then
-					currentAlpha = currentAlpha + alphaChange
-				else
-					currentAlpha = targetAlpha
-					spark.flashDirection = "OUT"
-				end
-			elseif spark.flashDirection == "OUT" then
-				if currentAlpha - alphaChange > targetAlpha then
-					currentAlpha = currentAlpha - alphaChange
-				else
-					currentAlpha = targetAlpha
-					spark.flashDirection = "IN"
-				end
-			end
-			spark:SetAlpha(currentAlpha)
-			glow:SetAlpha(currentAlpha)
-		end
 		if not spark:IsShown() then
 			spark:Show()
 			glow:Show()
+		end
+		if not spark.pulse:IsPlaying() then
+			-- together, so the spark and its glow stay in step
+			spark.pulse:Play()
+			glow.pulse:Stop()
+			glow.pulse:Play()
 		end
 	end
 end
@@ -154,6 +157,7 @@ local smoothMinValue = 1 -- if a value is lower than this, we won't smoothe
 local smoothHZ = .2 -- each frame closes elapsed/smoothHZ of the gap
 local smoothLimit = 1/120 -- max updates per second
 local smoothFinish = 1/1000 -- the last bit of the gap (a share of the range) is jumped
+-- Runs only while the shown value slides towards the real one.
 Orb.OnUpdate = function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed < smoothLimit then
@@ -161,7 +165,7 @@ Orb.OnUpdate = function(self, elapsed)
 	else
 		self.elapsed = 0
 	end
-	if self.smoothing then
+	if self.smoothing and not self._ignoresmoothing then
 		local goal = self.value
 		local display = self.displayValue
 		-- Closing a share of the gap every frame never quite gets there,
@@ -174,12 +178,13 @@ Orb.OnUpdate = function(self, elapsed)
 			self.displayValue = nextDisplay
 		end
 	else
-		if self.displayValue <= self.minValue or self.displayValue >= self.maxValue then
-			self.scaffold:SetScript("OnUpdate", nil)
-			self.smoothing = nil
-		end
+		self.displayValue = self.value
+		self.smoothing = nil
 	end
-	self:Update(elapsed)
+	if not self.smoothing then
+		self.scaffold:SetScript("OnUpdate", nil)
+	end
+	self:Update()
 end
 
 Orb.DisableSmoothing = function(self, disable)
@@ -198,7 +203,10 @@ Orb.SetValue = function(self, value)
 	if value ~= self.displayValue then
 		self.smoothing = true
 	end
-	if self.smoothing or self.displayValue > min or self.displayValue < max then
+	if self._ignoresmoothing then
+		self.displayValue = value
+		self.smoothing = nil
+	elseif self.smoothing then
 		if not self.scaffold:GetScript("OnUpdate") then
 			self.scaffold:SetScript("OnUpdate", function(_, ...) self:OnUpdate(...) end)
 		end
@@ -334,9 +342,13 @@ Orb.SetSparkFlash = function(self, durationIn, durationOut, minAlpha, maxAlpha)
 	spark.durationOut = durationOut
 	spark.minAlpha = minAlpha
 	spark.maxAlpha = maxAlpha
-	spark.flashDirection = "IN"
-	spark:SetAlpha(minAlpha)
-	spark.glow:SetAlpha(minAlpha)
+	SetPulse(spark)
+	if spark.pulse:IsPlaying() then
+		spark.pulse:Stop()
+		spark.glow.pulse:Stop()
+		spark.pulse:Play()
+		spark.glow.pulse:Play()
+	end
 end
 
 -- Only the height counts, as for the spark.
@@ -508,9 +520,7 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	local spark = scrollchild:CreateTexture(nil, "OVERLAY")
 	spark:SetPoint("CENTER", scrollframe, "TOP", 0, -1)
 	spark:SetSize(1,1)
-	spark:SetAlpha(.35)
 	spark._height = 1
-	spark.flashDirection = "IN"
 	spark.durationIn = .75
 	spark.durationOut = .55
 	spark.minAlpha = .35
@@ -521,6 +531,10 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	glow:SetSize(1, 1)
 	glow._height = 1
 	spark.glow = glow
+
+	CreatePulse(spark)
+	CreatePulse(glow)
+	SetPulse(spark)
 
 	overlay.spark = spark
 

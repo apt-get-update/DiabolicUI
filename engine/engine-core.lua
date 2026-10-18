@@ -64,6 +64,7 @@ local tonumber = tonumber
 local tostring = tostring
 local type = type
 local unpack = unpack
+local xpcall = xpcall
 
 
 -------------------------------------------------------------
@@ -73,6 +74,7 @@ local CreateFrame = _G.CreateFrame
 local GetAddOnInfo = _G.GetAddOnInfo
 local GetNumAddOns = _G.GetNumAddOns
 local GetRealmName = _G.GetRealmName
+local geterrorhandler = _G.geterrorhandler
 local InCombatLockdown = _G.InCombatLockdown
 local IsLoggedIn = _G.IsLoggedIn
 local UnitAffectingCombat = _G.UnitAffectingCombat
@@ -1121,16 +1123,30 @@ Engine.NewModule = function(self, name, loadPriority)
 	return module
 end
 
--- Calls the method `method` of every module of load priority `priority` that has it.
+-- Hands an error to the client's error handler (BugSack and the like) where
+-- it happened, so the stack shown is the faulty module's.
+local reportError = function(err)
+	return geterrorhandler()(err)
+end
+
+local failedModules = {} -- [module] = true once one of its ForAll calls errored
+
+-- Calls the method `method` of every module of load priority `priority` that
+-- has it. A module that errors is reported and left out from then on (no
+-- OnEnable on a half-built module); the others still run.
 Engine.ForAll = function(self, method, priority, ...)
 	self:Check(method, 1, "string")
 	self:Check(priority, 2, "string")
 	if (not PRIORITY_HASH[priority]) then
 		return error(L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"]:format(2, "ForAll", priority, table_concat(PRIORITY_INDEX, ", ")))
 	end
+	local numArgs, args = select("#", ...), { ... }
 	for name, module in pairs(moduleLoadPriority[priority]) do
-		if module[method] then
-			module[method](module, ...)
+		if module[method] and (not failedModules[module]) then
+			-- Lua 5.1's xpcall passes no arguments, hence the closure
+			if (not xpcall(function() return module[method](module, unpack(args, 1, numArgs)) end, reportError)) then
+				failedModules[module] = true
+			end
 		end
 	end
 end
@@ -1424,6 +1440,12 @@ Engine.NewConfig = NewConfig
 Engine.GetConfig = GetConfig
 Engine.NewStaticConfig = NewStaticConfig
 Engine.GetDB = GetDB
+
+-- For /dui cpu (engine/profiler.lua): every object's name, and who's
+-- registered for which event. Read only.
+Engine.GetRegistries = function(self)
+	return objectName, events
+end
 
 
 

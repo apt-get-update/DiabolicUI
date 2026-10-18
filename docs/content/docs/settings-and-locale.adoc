@@ -11,7 +11,7 @@ weight: 5
 {{< mermaid >}}
 flowchart LR
     d["💾 defaults/x.lua<br/>the key + default"] --> l["🌐 locale-enUS.lua<br/>label, tooltip"]
-    l --> m["🖱️ modules/menu/menu.lua<br/>the checkbox"]
+    l --> m["🖱️ modules/menu/page-addons.lua<br/>the checkbox"]
     m --> f["🧩 your module<br/>reads it in OnInit"]
 {{< /mermaid >}}
 ++++
@@ -21,7 +21,7 @@ flowchart LR
 
 | 1 | `defaults/lootframe.lua` | `Engine:NewConfig("LootFrame", { enableSkin = false })`
 | 2 | `locale/locale-enUS.lua` | `L["Reskin Loot Window"] = true` (+ `locale-frFR.lua`)
-| 3 | `modules/menu/menu.lua` | A checkbox on the right page, bound to `GetConfig("LootFrame").enableSkin`
+| 3 | `modules/menu/page-addons.lua` | A checkbox on the right page, bound to `GetConfig("LootFrame").enableSkin`
 | 4 | Your module | `self.db = self:GetConfig("LootFrame")` in `OnInit`, check it in `OnEnable`
 |===
 
