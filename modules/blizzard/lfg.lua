@@ -14,6 +14,7 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
+local pairs = pairs
 local select = select
 local unpack = unpack
 
@@ -23,11 +24,9 @@ local ART = {
 	"ui%-lfg%-background%-questpaper"
 }
 
--- the lists, each in a darker panel
-local LISTS = {
-	"LFDQueueFrameSpecificListScrollFrame", "LFDQueueFrameRandomScrollFrame", "LFRQueueFrameSpecificListScrollFrame",
-	"LFRBrowseFrameListScrollFrame"
-}
+-- the lists, each on slate
+local LISTS = { "LFDQueueFrameSpecificListScrollFrame", "LFDQueueFrameRandomScrollFrame" }
+local RAID_LISTS = { "LFRQueueFrameSpecificListScrollFrame", "LFRBrowseFrameListScrollFrame" }
 
 -- the random dungeon's text, drawn for the parchment: pale on our panel
 local RANDOM = "LFDQueueFrameRandomScrollFrameChildFrame"
@@ -103,7 +102,7 @@ Module.StyleLFG = function(self)
 			text:SetPoint("CENTER", dropdown, "CENTER", -(spec.arrow_size + spec.arrow_gap) / 2, 0)
 			text:SetJustifyH("CENTER")
 		end
-		self:CenterRoles(window)
+		self:CenterRoles(window, "LFDQueueFrameRoleButton", { "Tank", "Healer", "DPS", "Leader" }, config.roles_top)
 		-- the random dungeon and the list up into the dropdown's room
 		for _, name in ipairs({ "LFDQueueFrameRandom", "LFDQueueFrameSpecific" }) do
 			local page = _G[name]
@@ -116,6 +115,47 @@ Module.StyleLFG = function(self)
 	end
 	if _G.LFRParentFrame then
 		local header = self:StyleFrame(_G.LFRParentFrame, config.raids, _G.LFRQueueFrameTitleText)
+		-- the rough stone foot up to the tab's buttons
+		local foot = kit:AddFooter(header:GetParent())
+		for name, top in pairs(config.footers) do
+			if _G[name] then
+				_G[name]:HookScript("OnShow", function() kit:SetFooter(foot, top) end)
+				if _G[name]:IsShown() then
+					kit:SetFooter(foot, top)
+				end
+			end
+		end
+		-- its lists' zones across the window, their rows further left
+		-- (Blizzard's lists reach under its right side)
+		local window, insets, margins = header:GetParent(), config.list_panel_insets, config.raid_list_margins
+		for _, name in ipairs({ "LFRQueueFrameSpecificListButton1", "LFRBrowseFrameListButton1" }) do
+			local row = _G[name]
+			if row then
+				local point, relative, relativePoint, x, y = row:GetPoint()
+				row:SetPoint(point, relative, relativePoint, x - config.raid_rows_left, y)
+			end
+		end
+		local Across = function(zone, frame, top, bottom)
+			zone:ClearAllPoints()
+			zone:SetPoint("TOP", frame, "TOP", 0, top)
+			zone:SetPoint("BOTTOM", frame, "BOTTOM", 0, -bottom)
+			zone:SetPoint("LEFT", window, "LEFT", margins[1], 0)
+			zone:SetPoint("RIGHT", window, "RIGHT", -margins[2], 0)
+		end
+		for _, name in ipairs(RAID_LISTS) do
+			local list = _G[name]
+			if list then
+				Across(kit:AddZone(list, "slate", insets), list, insets[2], insets[4])
+			end
+		end
+		-- the comment as wide, in a dark panel, its hint pale
+		local comment = _G.LFRQueueFrameComment
+		if comment then
+			local spec = config.comment_insets
+			Across(kit:AddPanel(comment, { 0, 0, 0, 0 }), comment, spec[1], spec[2])
+			_G.LFRQueueFrameCommentExplanation:SetTextColor(unpack(config.comment_hint_color))
+		end
+		self:CenterRoles(window, "LFRQueueFrameRoleButton", { "Tank", "Healer", "DPS" }, config.raid_roles_top)
 		-- the same title on both tabs: one in the plate
 		if _G.LFRBrowseFrameTitleText then
 			_G.LFRBrowseFrameTitleText:SetAlpha(0)
@@ -137,26 +177,26 @@ Module.StyleLFG = function(self)
 	end
 	for _, name in ipairs(LISTS) do
 		if _G[name] then
-			kit:AddPanel(_G[name], config.list_panel_insets)
+			kit:AddZone(_G[name], "slate", config.list_panel_insets)
 		end
 	end
 end
 
--- The roles' row (tank, healer, damage, leader: Blizzard's in a row from
--- the tank, each from the one before) in the middle of the window, under
--- the band: its width from their sizes and Blizzard's gaps.
-Module.CenterRoles = function(self, window)
+-- A row of roles (`prefix` and each of `roles`: Blizzard's in a row from
+-- the first, each from the one before) in the middle of the window, `top`
+-- from its top: its width from their sizes and Blizzard's gaps.
+Module.CenterRoles = function(self, window, prefix, roles, top)
 	local width = 0
-	for i, role in ipairs({ "Tank", "Healer", "DPS", "Leader" }) do
-		local button = _G["LFDQueueFrameRoleButton" .. role]
+	for i, role in ipairs(roles) do
+		local button = _G[prefix .. role]
 		width = width + button:GetWidth()
 		if (i > 1) then
 			width = width + select(4, button:GetPoint())
 		end
 	end
-	local first = _G.LFDQueueFrameRoleButtonTank
+	local first = _G[prefix .. roles[1]]
 	first:ClearAllPoints()
-	first:SetPoint("TOPLEFT", window, "TOP", -width / 2, self.config.roles_top)
+	first:SetPoint("TOPLEFT", window, "TOP", -width / 2, top)
 end
 
 Module.OnInit = function(self)

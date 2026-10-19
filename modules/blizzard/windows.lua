@@ -451,6 +451,32 @@ Module.StylePanel = function(self, frame)
 	frame:SetBackdropBorderColor(unpack(config.panel.backdrop_border_color))
 end
 
+-- Diablo III's stone pane (window.materials') on `frame`, for a model or
+-- a grid of slots, in place of a panel; `open`: its frame alone, over
+-- what `frame` draws behind it (a scene, a picture) up to its line. Its
+-- slices returned.
+Module.StylePane = function(self, frame, open)
+	local slices = self:CreateNine(frame, open and "BORDER" or "BACKGROUND", open and "pane_open" or "pane")
+	if open then
+		slices[5]:Hide()
+	end
+	return slices
+end
+
+-- A pane around `first` (to `last`'s bottom right, when given),
+-- window.pane_outset past it, on a frame of its own over `first`'s
+-- parent (`open`: around its picture) or under its parts. The frame returned.
+Module.AddPane = function(self, first, last, open)
+	local parent = first:GetParent()
+	local outset = config.pane_outset
+	local pane = CreateFrame("Frame", nil, parent)
+	pane:SetFrameLevel(parent:GetFrameLevel() + (open and 1 or 0))
+	pane:SetPoint("TOPLEFT", first, "TOPLEFT", -outset, outset)
+	pane:SetPoint("BOTTOMRIGHT", last or first, "BOTTOMRIGHT", outset, -outset)
+	self:StylePane(pane, open)
+	return pane
+end
+
 -- A status bar in Diablo III's orange, in the spiked frame; its own
 -- `regions` (Blizzard's frame) out of sight.
 Module.StyleBar = function(self, bar, regions)
@@ -625,11 +651,11 @@ Module.StyleClose = function(self, button, window, header)
 	window:HookScript("OnShow", Raise)
 end
 
--- The close button's socket, over the window's iron: the frame's edge
--- (its file's eighths: left, right, top, bottom, then the corners; the
--- top and bottom ones lying on their side) on its left and bottom only,
--- black inside the window's iron, its top and right ends cut at the
--- middle of that iron.
+-- The close button's socket, over the window's iron: the window's left
+-- edge (its file's first eighth) on its left, and again on its side along
+-- its bottom, outside down, so both bars are lit as the window's sides,
+-- the two mitred in its corner; black inside the window's iron, its top and right ends cut at the middle
+-- of that iron.
 Module.CreateSocket = function(self, window)
 	local spec, edge = config.close, config.backdrop.edgeSize
 	local file = config.backdrop.edgeFile
@@ -649,15 +675,14 @@ Module.CreateSocket = function(self, window)
 	left:SetTexCoord(0, 1/8, 0, 1)
 	left:SetPoint("TOPLEFT", socket, "TOPLEFT")
 	left:SetSize(edge, size - edge)
+	-- up to the window's iron, not over it
 	local bottom = socket:CreateTexture(nil, "BORDER")
 	bottom:SetTexture(file)
-	bottom:SetTexCoord(3/8, 0, 4/8, 0, 3/8, 1, 4/8, 1)
-	-- up to the window's iron, not over it
+	bottom:SetTexCoord(1/8, 0, 0, 0, 1/8, 1, 0, 1)
 	bottom:SetPoint("BOTTOMRIGHT", socket, "BOTTOMRIGHT", -inner, 0)
 	bottom:SetSize(size - edge - inner, edge)
 	local corner = socket:CreateTexture(nil, "BORDER")
-	corner:SetTexture(file)
-	corner:SetTexCoord(6/8, 7/8, 0, 1)
+	corner:SetTexture(spec.socket_corner)
 	corner:SetPoint("BOTTOMLEFT", socket, "BOTTOMLEFT")
 	corner:SetSize(edge, edge)
 	for _, texture in ipairs({ left, bottom, corner }) do
@@ -735,6 +760,25 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 			text:SetJustifyH("LEFT")
 		end
 	end
+end
+
+-- An edit box (InputBoxTemplate's, or drawn like it: a search) on the
+-- dropdowns' plate of Diablo III's, its own art out of sight; the plate
+-- `edit_padding` past its sides, around its text.
+Module.StyleEditBox = function(self, box)
+	local name = box:GetName()
+	for _, part in ipairs({ "Left", "Middle", "Right" }) do
+		local region = name and _G[name .. part]
+		if region then
+			region:SetAlpha(0)
+		end
+	end
+	local spec = config.dropdown
+	local plate = CreateFrame("Frame", nil, box)
+	plate:SetPoint("LEFT", -config.edit_padding, 0)
+	plate:SetPoint("RIGHT", config.edit_padding, 0)
+	plate:SetHeight(spec.height)
+	return self:CreateSlices(plate, "BACKGROUND", spec.plate, spec.plate.texture, spec.height, 0, box)
 end
 
 -- The dark strip under `header`'s band the tabs sit on, once: its middle
@@ -1004,20 +1048,139 @@ Module.AddPanel = function(self, frame, insets, parent)
 	return panel
 end
 
--- A page of Diablo III's parchment under `frame` (a scroll frame of text
--- drawn for parchment), `insets` (left, top, right, bottom) around it, on
--- a frame of its own at its level (over a panel around it, under its text),
--- carried with it (Blizzard moves the quest log's details between windows).
-Module.AddParchment = function(self, frame, insets)
+-- A material's slices' texture coordinates for `frame`'s size: its
+-- middle at one scale both ways, as much of it as covers the frame, cut
+-- evenly off the long way (its emboss in the middle, unstretched); its
+-- edges cut to match.
+local FitNine = function(frame, slices, spec)
+	local width, height = unpack(spec.size)
+	local edge = spec.border * (spec.scale or config.material_scale)
+	local shownWidth, shownHeight = frame:GetWidth() - 2 * edge, frame:GetHeight() - 2 * edge
+	if (shownWidth <= 0) or (shownHeight <= 0) then
+		return
+	end
+	local artWidth, artHeight = width - 2 * spec.border, height - 2 * spec.border
+	local scale = math_max(shownWidth / artWidth, shownHeight / artHeight)
+	local u, v = spec.border / width, spec.border / height
+	-- the middle's span: what's shown of it, centred
+	local cutU = (1 - 2 * u) * (1 - shownWidth / scale / artWidth) / 2
+	local cutV = (1 - 2 * v) * (1 - shownHeight / scale / artHeight) / 2
+	local columns = { { 0, u }, { u + cutU, 1 - u - cutU }, { 1 - u, 1 } }
+	local rows = { { 0, v }, { v + cutV, 1 - v - cutV }, { 1 - v, 1 } }
+	for i, slice in ipairs(slices) do
+		local column, row = columns[(i - 1) % 3 + 1], rows[math_floor((i - 1) / 3) + 1]
+		slice:SetTexCoord(column[1], column[2], row[1], row[2])
+	end
+end
+
+-- One of Diablo III's materials (window.materials') over all of `frame`
+-- in nine slices of its file: its corners and edges at their own size
+-- (`border` of its art's pixels, at its own scale or the materials'), its middle
+-- fit to the frame (FitNine); drawn by `owner` when it's another frame
+-- than `frame`. Its slices returned.
+Module.CreateNine = function(self, frame, layer, material, owner)
+	local spec = config.materials[material]
+	local edge = spec.border * (spec.scale or config.material_scale)
+	-- each column: its left and right sides as the frame's side and an
+	-- offset; each row the same, top and bottom
+	local columns = {
+		{ "LEFT", 0, "LEFT", edge },
+		{ "LEFT", edge, "RIGHT", -edge },
+		{ "RIGHT", -edge, "RIGHT", 0 }
+	}
+	local rows = {
+		{ "TOP", 0, "TOP", -edge },
+		{ "TOP", -edge, "BOTTOM", edge },
+		{ "BOTTOM", edge, "BOTTOM", 0 }
+	}
+	local slices = setmetatable({}, Slices)
+	for _, row in ipairs(rows) do
+		for _, column in ipairs(columns) do
+			local slice = (owner or frame):CreateTexture(nil, layer)
+			slice:SetPoint("TOPLEFT", frame, row[1] .. column[1], column[2], row[2])
+			slice:SetPoint("BOTTOMRIGHT", frame, row[3] .. column[3], column[4], row[4])
+			slices[#slices + 1] = slice
+		end
+	end
+	slices:SetTexture(spec.texture)
+	local fit = function() FitNine(frame, slices, spec) end
+	frame:HookScript("OnSizeChanged", fit)
+	fit()
+	return slices
+end
+
+-- A zone of one of Diablo III's materials (window.materials': parchment
+-- to read, slate or leather for lists...) behind `frame`, `insets` (left,
+-- top, right, bottom) past it, under what its parent (`parent`, its own by
+-- default) shows.
+Module.AddZone = function(self, frame, material, insets, parent)
+	parent = parent or frame:GetParent()
+	local zone = CreateFrame("Frame", nil, parent)
+	zone:SetFrameLevel(parent:GetFrameLevel())
+	zone:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
+	zone:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
+	zone.Material = self:CreateNine(zone, "BACKGROUND", material)
+	return zone
+end
+
+-- The window's foot in Diablo III's rough stone, inside its iron frame,
+-- up to `top` (see SetFooter), under the buttons and the money Blizzard
+-- keeps there: drawn by the window over its painting.
+Module.AddFooter = function(self, window, top)
+	local foot = CreateFrame("Frame", nil, window)
+	foot.Window = window
+	foot.Material = self:CreateNine(foot, "ARTWORK", "footer", window)
+	self:SetFooter(foot, top)
+	return foot
+end
+
+-- A footer up to the page shown's buttons: `top`, the name of the highest
+-- (window.footer_margin over its top); none on a page left without one.
+Module.SetFooter = function(self, foot, top)
+	local part = top and _G[top]
+	if (not part) then
+		foot.Material:Hide()
+		return
+	end
+	local insets = config.backdrop.insets
+	foot:ClearAllPoints()
+	foot:SetPoint("BOTTOMLEFT", foot.Window, "BOTTOMLEFT", insets.left, insets.bottom)
+	foot:SetPoint("BOTTOMRIGHT", foot.Window, "BOTTOMRIGHT", -insets.right, insets.bottom)
+	-- (its top only: its sides are the window's)
+	foot:SetPoint("TOP", part, "TOP", 0, config.footer_margin)
+	foot.Material:Show()
+end
+
+-- `texture` (a list's highlight on its chosen row) as Diablo III's copper
+-- bar, in its own colours: Blizzard tints it by the row's kind. Its blend
+-- kept: an added one (the quest log's) lies over the row's text.
+Module.LightRow = function(self, texture)
+	texture:SetTexture(config.row_bars.lit)
+	texture:SetTexCoord(0, 1, 0, 1)
+	texture:SetVertexColor(1, 1, 1)
+	local busy
+	hooksecurefunc(texture, "SetVertexColor", function()
+		if (not busy) then
+			busy = true
+			texture:SetVertexColor(1, 1, 1)
+			busy = nil
+		end
+	end)
+end
+
+-- A page of Diablo III's parchment (`material`, its tall page if left out)
+-- under `frame` (a scroll frame of text drawn for parchment), `insets`
+-- (left, top, right, bottom) around it, on a frame of its own at its level
+-- (over a panel around it, under its text), carried with it (Blizzard
+-- moves the quest log's details between windows), or by `parent` (a
+-- list's scroll frame, which Blizzard hides when it all fits).
+Module.AddParchment = function(self, frame, insets, material, parent)
 	insets = insets or config.parchment_insets
-	local holder = CreateFrame("Frame", nil, frame)
+	local holder = CreateFrame("Frame", nil, parent or frame)
 	holder:SetFrameLevel(frame:GetFrameLevel())
 	holder:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	holder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
-	local page = holder:CreateTexture(nil, "BACKGROUND")
-	page:SetTexture(config.parchment)
-	page:SetAllPoints()
-	return page
+	return self:CreateNine(holder, "BACKGROUND", material or "page")
 end
 
 -- A parchment's scroll bar (UIPanelScrollFrameTemplate's) out past its

@@ -116,6 +116,7 @@ Module.StyleQuestLog = function(self)
 
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "cliffs")
+	kit:AddFooter(window, config.footer)
 	self.Window = window
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
@@ -136,11 +137,11 @@ Module.StyleQuestLog = function(self)
 	self:PlaceMapButton()
 	hooksecurefunc("QuestLogShowMapPOI_UpdatePosition", function() self:PlaceMapButton() end)
 
-	-- the quests on the left, the details on the right, in panels
+	-- the quests on the left on slate, the details on the right on parchment
 	local list = _G.QuestLogScrollFrame
 	list:ClearAllPoints()
 	list:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.list))
-	kit:AddPanel(list, config.list_panel_insets)
+	kit:AddZone(list, "slate", config.list_panel_insets, list) -- (in the list: over the painting, under its rows)
 	local empty = _G.EmptyQuestLogFrame
 	kit:HideTextures(empty)
 	empty:ClearAllPoints()
@@ -152,6 +153,13 @@ Module.StyleQuestLog = function(self)
 	kit:AddParchment(_G.QuestLogDetailScrollFrame) -- the scroll bar beside it
 	Hide("QuestLogDetailScrollFrameScrollBackgroundTopLeft", "QuestLogDetailScrollFrameScrollBackgroundBottomRight")
 	hooksecurefunc("QuestInfo_Display", function(_, parent, _, _, material) self:ColorDetails(parent, material) end)
+	-- the chosen quest on the copper bar, from inside the slate's edge out
+	-- to the scroll bar (Blizzard's row starts on the edge, stops short of it)
+	local highlight = _G.QuestLogSkillHighlight
+	kit:LightRow(highlight)
+	highlight:ClearAllPoints()
+	highlight:SetPoint("TOPLEFT", _G.QuestLogHighlightFrame, "TOPLEFT", config.highlight_left, 0)
+	highlight:SetPoint("BOTTOMRIGHT", _G.QuestLogHighlightFrame, "BOTTOMRIGHT", config.highlight_reach, 0)
 
 	-- Abandon, Share and Track under the quests
 	for _, button in ipairs({ _G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton }) do

@@ -269,6 +269,36 @@ Module.StyleSlot = function(self, button, bagID)
 	end
 end
 
+-- The bags' frame around another window's item icon (`icon`, a texture
+-- of `owner`'s: the reagents'), the icon cut inside it; its border, in a
+-- quality's color by SetIconQuality, returned.
+Module.FrameIcon = function(self, owner, icon)
+	local size = icon:GetWidth() / ICON_FILL * ICON_ART_SCALE
+	icon:SetTexCoord(5/64, 59/64, 5/64, 59/64)
+	local iconFrame = owner:CreateTexture(nil, "ARTWORK")
+	iconFrame:SetTexture(ICON_FRAME)
+	iconFrame:SetPoint("CENTER", icon, "CENTER", 0, 0)
+	iconFrame:SetSize(size, size)
+	local iconBorder = owner:CreateTexture(nil, "OVERLAY")
+	iconBorder:SetTexture(ICON_QUALITY_BORDER)
+	iconBorder:SetPoint("CENTER", icon, "CENTER", 0, 0)
+	iconBorder:SetSize(size, size)
+	iconBorder:Hide()
+	hooksecurefunc(iconBorder, "Show", function() iconFrame:Hide() end)
+	hooksecurefunc(iconBorder, "Hide", function() iconFrame:Show() end)
+	return iconBorder
+end
+
+-- A FrameIcon border in `quality`'s color, the plain frame up to common.
+Module.SetIconQuality = function(self, iconBorder, quality)
+	if (quality and (quality > QUALITY_COMMON) and C.Quality[quality]) then
+		iconBorder:SetVertexColor(unpack(C.Quality[quality]))
+		iconBorder:Show()
+	else
+		iconBorder:Hide()
+	end
+end
+
 -- What's usable changes with the player's level, skills and recipes.
 Module.ForgetUnusable = function(self)
 	for itemLink in pairs(unusableCache) do

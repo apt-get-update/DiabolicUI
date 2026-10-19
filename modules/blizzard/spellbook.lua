@@ -31,10 +31,11 @@ local CreateFrame = _G.CreateFrame
 local GetActionInfo = _G.GetActionInfo
 local GetCompanionInfo = _G.GetCompanionInfo
 local GetMacroSpell = _G.GetMacroSpell
-local GetSpellInfo = _G.GetSpellInfo
 local GetNumSpellTabs = _G.GetNumSpellTabs
+local GetSpellInfo = _G.GetSpellInfo
 local GetSpellName = _G.GetSpellName
 local GetSpellTabInfo = _G.GetSpellTabInfo
+local GetSpellTexture = _G.GetSpellTexture
 local GetNumCompanions = _G.GetNumCompanions
 local HasPetUI = _G.HasPetUI
 local hooksecurefunc = _G.hooksecurefunc
@@ -271,10 +272,16 @@ Module.UpdateUnassigned = function(self, button)
 	local bookType = _G.SpellBookFrame.bookType
 	local show = false
 	if self.db.showUnassigned and (bookType == _G.BOOKTYPE_SPELL) and _G[button:GetName() .. "IconTexture"]:IsShown() then
-		-- (a slot past the book's end while the ranks shown change)
-		local id = _G.SpellBook_GetSpellID(button:GetID())
-		local _, _, offset, count = GetSpellTabInfo(GetNumSpellTabs())
-		local name = id and (id <= (offset or 0) + (count or 0)) and GetSpellName(id, bookType)
+		-- (Blizzard's own checks: a slot past the tab's end, or empty, while
+		-- the tab or the ranks shown change, isn't a spell; nor one past the
+		-- book's end, while a spell is learned or unlearned)
+		local id, displayID = _G.SpellBook_GetSpellID(button:GetID())
+		local _, _, offset, count = GetSpellTabInfo(_G.SpellBookFrame.selectedSkillLine or 1)
+		local _, _, lastOffset, lastCount = GetSpellTabInfo(GetNumSpellTabs())
+		local total = (lastOffset or 0) + (lastCount or 0)
+		local texture = id and displayID and (id > 0) and (id <= total)
+			and (displayID <= (offset or 0) + (count or 0)) and GetSpellTexture(id, bookType)
+		local name = texture and (texture ~= "") and GetSpellName(id, bookType)
 		show = name and (not IsPassiveSpell(id, bookType)) and (not self:GetAssigned()[name]) and true or false
 	end
 	if show then
@@ -439,7 +446,7 @@ Module.UpdateTabs = function(self)
 	end
 end
 
--- Blizzard's companions frame on the cover: the model in a panel, its
+-- Blizzard's companions frame on the cover: the model in a stone pane, its
 -- buttons in three columns with their names, the pages at the bottom.
 Module.LayoutCompanions = function(self, cover)
 	local config = self.config
@@ -452,9 +459,9 @@ Module.LayoutCompanions = function(self, cover)
 	local box = config.model_panel
 	local panel = CreateFrame("Frame", nil, frame)
 	local slots = { panel }
-	panel:SetPoint("TOPLEFT", frame, "TOPLEFT", box[1], box[2])
+	panel:SetPoint("TOP", frame, "TOP", box[1], box[2])
 	panel:SetSize(box[3], box[4])
-	kit:StylePanel(panel)
+	kit:StylePane(panel) -- (Diablo III's stone behind the companion)
 	local model = _G.CompanionModelFrame
 	model:ClearAllPoints()
 	model:SetPoint("TOPLEFT", panel, "TOPLEFT", config.model_inset, -config.model_inset)

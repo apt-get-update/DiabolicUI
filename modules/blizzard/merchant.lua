@@ -102,6 +102,7 @@ Module.StyleMerchant = function(self)
 
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, config.background)
+	kit:AddFooter(window, config.footer)
 	self.Window = window
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
@@ -124,6 +125,12 @@ Module.StyleMerchant = function(self)
 		self:StyleItem(_G["MerchantItem" .. i], config.slot_size, config.price_offset)
 	end
 	self:LayoutItems()
+	-- the wares on Diablo III's merchant's counter, under their slots
+	local counter = CreateFrame("Frame", nil, frame)
+	counter:SetFrameLevel(frame:GetFrameLevel())
+	counter:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.counter))
+	counter:SetSize(unpack(config.counter_size))
+	kit:CreateNine(counter, "BACKGROUND", "studded")
 	hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function() self:LayoutItems() end)
 	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function() self:LayoutItems() end)
 

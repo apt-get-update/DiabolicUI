@@ -2,8 +2,8 @@
 -- on its cover (spellbook.lua): the primary professions, then the
 -- secondary ones, a panel each with its icon (a click opens it), its name,
 -- its rank's title, its rank in a bar, its other spell (Disenchant,
--- Prospecting, Smelting's Find Minerals...) on the right, and Unlearn for
--- the primary ones; one not learned yet says where to learn it. Read from
+-- Prospecting, Smelting's Find Minerals...) on the right (no Unlearn: one
+-- click from losing a long grind); one not learned yet says where to learn it. Read from
 -- the skill lines: 3.3.5 has no list of professions of its own.
 local _, Engine = ...
 local Module = Engine:GetModule("Blizzard: Spellbook")
@@ -124,8 +124,7 @@ local SetSpell = function(button, id)
 	end
 end
 
--- A profession's panel: its icon, name, rank and bar, its other spell,
--- Unlearn for a primary one.
+-- A profession's panel: its icon, name, rank and bar, its other spell.
 Module.CreateProfession = function(self, parent, primary)
 	local config = self.config
 	local height = config.profession_heights[primary and 1 or 2]
@@ -173,21 +172,6 @@ Module.CreateProfession = function(self, parent, primary)
 
 	row.Extra = CreateSpellButton(row, config.profession_extra)
 	row.Extra:SetPoint("RIGHT", row, "RIGHT", -config.profession_inset, 0)
-
-	if primary then
-		local unlearn = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
-		unlearn:SetSize(unpack(config.unlearn_size))
-		unlearn:SetText(_G.UNLEARN)
-		kit:StyleButton(unlearn, config.unlearn_size[2])
-		unlearn:SetPoint("RIGHT", row.Extra, "LEFT", -config.profession_inset, 0)
-		unlearn:SetScript("OnClick", function()
-			local dialog = _G.StaticPopup_Show("UNLEARN_SKILL", row.skillName)
-			if dialog then
-				dialog.data = row.skillIndex
-			end
-		end)
-		row.Unlearn = unlearn
-	end
 	return row
 end
 
@@ -264,10 +248,6 @@ Module.FillProfession = function(self, row, skill)
 	row.Bar:Show()
 	row.Help:Hide()
 	SetSpell(row.Extra, data.extra)
-	if row.Unlearn then
-		row.Unlearn:Show()
-	end
-	row.skillIndex, row.skillName = skill.index, skill.name
 end
 
 -- `row` for a profession not learned yet: its name and icon (greyed),
@@ -282,10 +262,6 @@ Module.ShowMissing = function(self, row, name, icon, help)
 	row.Bar:Hide()
 	row.Help:SetText(help)
 	row.Help:Show()
-	if row.Unlearn then
-		row.Unlearn:Hide()
-	end
-	row.skillIndex, row.skillName = nil, nil
 end
 
 -- The panels filled: the primary ones the player has, then "missing" in

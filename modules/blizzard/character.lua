@@ -3,7 +3,7 @@
 -- (character, pet, reputation, skills, currency), the name in a plate on
 -- the window's edge over the red band, the level in the band, the tabs as
 -- buttons in a row under it. The character tab in two columns, the window
--- wider for it: the gear around a tall model in a darker panel, the
+-- wider for it: the gear around a tall model in a stone pane, the
 -- character's home city behind it (its race's capital); on the
 -- right, in pages under their own tabs, the GearScore and two groups of
 -- stats, the titles, and the equipment manager (its buttons as icons
@@ -213,7 +213,7 @@ local DROPDOWNS = { "PlayerTitleFrame" }
 
 -- The character tab in two columns, with room around everything: the
 -- gear on the left, the slots along its sides, a tall model between them in
--- a darker panel, the weapons in a row at the bottom; the right one is
+-- a stone pane, the weapons in a row at the bottom; the right one is
 -- CreateColumn's.
 Module.LayoutPaperDoll = function(self, window)
 	local layout = self.config.paperdoll
@@ -245,7 +245,7 @@ Module.LayoutPaperDoll = function(self, window)
 	panel:SetFrameLevel(_G.PaperDollFrame:GetFrameLevel())
 	panel:SetPoint("TOP", pane, "TOP", 0, layout.model_top + inset)
 	panel:SetSize(width + inset * 2, height + inset * 2)
-	kit:StylePanel(panel)
+	kit:StylePane(panel, true) -- (Diablo III's stone around your home city)
 	self:AddScene(panel)
 	-- the model's frame past the panel's top and bottom, as the dressing
 	-- room's is past its picture: the client frames the character larger
@@ -425,15 +425,21 @@ Module.CreateColumn = function(self, window)
 	art:SetPoint("BOTTOMRIGHT", -layout.stats_panel_inset, layout.stats_panel_inset)
 	local pages = self:CreatePages(column)
 
-	-- the level, big
-	local stats = pages[1]
+	-- the level, big; the rest under it in a page of its own, up in its
+	-- place at the top level (UpdateScore)
+	local page = pages[1]
 	local y = -spec.score_top
-	local header = CreateSection(stats, spec, y, _G.LEVEL)
-	self.Level = stats:CreateFontString(nil, "OVERLAY")
+	local header = CreateSection(page, spec, y, _G.LEVEL)
+	self.Level = page:CreateFontString(nil, "OVERLAY")
 	self.Level:SetFont(unpack(layout.score_font))
 	self.Level:SetTextColor(unpack(self.config.level_color))
 	self.Level:SetPoint("TOP", header, "BOTTOM", 0, -spec.score_gap)
-	y = y - spec.header_height - spec.level_height
+	self.LevelHeader = header
+	self.LevelHeight = spec.header_height + spec.level_height
+	local stats = CreateFrame("Frame", nil, page)
+	stats:SetPoint("TOPLEFT", page, "TOPLEFT", 0, -self.LevelHeight)
+	stats:SetPoint("BOTTOMRIGHT", page, "BOTTOMRIGHT", 0, 0)
+	self.Stats = stats
 
 	-- the GearScore, big in its color, the average item level under it
 	header = CreateSection(stats, spec, y, "GearScore")
@@ -571,6 +577,8 @@ Module.CreateTitles = function(self, page)
 	local scroll = CreateFrame("ScrollFrame", "DiabolicUICharacterTitles", page, "UIPanelScrollFrameTemplate")
 	scroll:SetPoint("TOPLEFT", side, -spec.top)
 	scroll:SetPoint("BOTTOMRIGHT", -side - spec.bar_room, spec.bottom)
+	-- on a parchment, in ink (the one worn in red ink)
+	kit:AddParchment(scroll, spec.parchment_insets, "page", page)
 	local list = CreateFrame("Frame", nil, scroll)
 	list:SetSize(1, 1)
 	scroll:SetScrollChild(list)
@@ -656,7 +664,18 @@ Module.UpdateScore = function(self)
 	if not _G.PaperDollFrame:IsVisible() then
 		return
 	end
-	self.Level:SetText(UnitLevel("player"))
+	-- the level, unless it's the top one
+	local playerLevel, top = UnitLevel("player"), _G.MAX_PLAYER_LEVEL or 0
+	self.Level:SetText(playerLevel)
+	if (top > 0) and (playerLevel >= top) then
+		self.Level:Hide()
+		self.LevelHeader:Hide()
+		self.Stats:SetPoint("TOPLEFT", self.Stats:GetParent(), "TOPLEFT", 0, 0)
+	else
+		self.Level:Show()
+		self.LevelHeader:Show()
+		self.Stats:SetPoint("TOPLEFT", self.Stats:GetParent(), "TOPLEFT", 0, -self.LevelHeight)
+	end
 	local gearScore = Engine:GetModule("Blizzard: GearScore")
 	local score, level = gearScore:GetUnitScore("player")
 	if score then
@@ -994,7 +1013,7 @@ Module.AddScene = function(self, panel, path)
 	return scene
 end
 
--- The inspected's model in a panel with their home city behind it, as
+-- The inspected's model in a pane with their home city behind it, as
 -- yours (each time the window shows someone).
 Module.StyleInspect = function(self)
 	local model = _G.InspectModelFrame
@@ -1007,7 +1026,7 @@ Module.StyleInspect = function(self)
 	panel:SetFrameLevel(frame:GetFrameLevel())
 	panel:SetPoint("TOPLEFT", model, "TOPLEFT", -inset, inset)
 	panel:SetPoint("BOTTOMRIGHT", model, "BOTTOMRIGHT", inset, -inset)
-	kit:StylePanel(panel)
+	kit:StylePane(panel, true)
 	local scene = self:AddScene(panel, HomePath("player"))
 	self.InspectScene = scene
 	local Update = function()

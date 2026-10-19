@@ -485,6 +485,39 @@ function TestWindowKit:test_money_frames_coins_ours()
 	assertClean(client)
 end
 
+function TestWindowKit:test_a_zone_of_a_material_in_nine_slices()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	local window = client.Engine:GetDB("Blizzard").window
+	local list = _G.CreateFrame("Frame", nil, _G.UIParent)
+	local zone = kit:AddZone(list, "slate", { 6, 6, 28, 6 })
+	lu.assertEquals({ zone:GetPoint(1) }, { "TOPLEFT", list, "TOPLEFT", -6, 6 })
+	lu.assertEquals(#zone.Material, 9)
+	local spec = window.materials.slate
+	local edge = spec.border * window.material_scale
+	-- its corner at its own size, its middle from the edges in
+	local corner, middle = zone.Material[1], zone.Material[5]
+	lu.assertEquals(corner:GetTexture(), spec.texture)
+	lu.assertEquals({ corner:GetPoint(1) }, { "TOPLEFT", zone, "TOPLEFT", 0, 0 })
+	lu.assertEquals({ corner:GetPoint(2) }, { "BOTTOMRIGHT", zone, "TOPLEFT", edge, -edge })
+	lu.assertEquals({ middle:GetPoint(1) }, { "TOPLEFT", zone, "TOPLEFT", edge, -edge })
+	lu.assertEquals({ middle:GetPoint(2) }, { "BOTTOMRIGHT", zone, "BOTTOMRIGHT", -edge, edge })
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_chosen_row_on_the_copper_bar()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	local window = client.Engine:GetDB("Blizzard").window
+	local highlight = _G.UIParent:CreateTexture(nil, "ARTWORK")
+	kit:LightRow(highlight)
+	lu.assertEquals(highlight:GetTexture(), window.row_bars.lit)
+	-- Blizzard's tint by the row's kind: its own colours kept
+	highlight:SetVertexColor(1, .5, .25)
+	near({ highlight:GetVertexColor() }, { 1, 1, 1 })
+	assertClean(client)
+end
+
 -- AdiBags ----------------------------------------------------------------------------
 
 TestAdiBags = {}

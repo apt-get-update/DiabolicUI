@@ -87,8 +87,9 @@ PaleText = function(frame, color)
 	end
 end
 
--- The tabs in a row under the band, each once (addons add theirs later).
-Module.StyleTabs = function(self, prefix, header)
+-- The tabs in a row under the band, each once (addons add theirs later),
+-- sized to their text when `padding` (the room around it) is given.
+Module.StyleTabs = function(self, prefix, header, padding)
 	local config = self.config
 	local first = _G[prefix .. 1]
 	first:ClearAllPoints()
@@ -98,7 +99,7 @@ Module.StyleTabs = function(self, prefix, header)
 	while _G[prefix .. i] do
 		local tab = _G[prefix .. i]
 		if not tab.DiabolicArt then
-			kit:StyleTab(tab, { inset = config.tab_inset, font = config.tab_font })
+			kit:StyleTab(tab, { inset = config.tab_inset, font = config.tab_font, padding = padding })
 			kit:UpdateTab(tab)
 		end
 		i = i + 1
@@ -185,6 +186,19 @@ Module.StylePanel = function(self, spec)
 
 	local window = kit:CreateWindow(frame, spec.insets)
 	kit:SetBackground(window, spec.background or config.background)
+	if (type(spec.footer) == "table") then
+		-- one page's: there while it shows
+		local foot = kit:AddFooter(window)
+		for page, top in pairs(spec.footer) do
+			if _G[page] then
+				_G[page]:HookScript("OnShow", function() kit:SetFooter(foot, top) end)
+				_G[page]:HookScript("OnHide", function() kit:SetFooter(foot, nil) end)
+				kit:SetFooter(foot, _G[page]:IsShown() and top or nil)
+			end
+		end
+	elseif spec.footer then
+		kit:AddFooter(window, spec.footer)
+	end
 	kit:AddDrag(window, frame)
 	if (spec.panel ~= false) then
 		kit:SetPanelLayout(frame, spec.insets, spec.insets[1], spec.offset_y)
@@ -242,7 +256,7 @@ Module.StylePanel = function(self, spec)
 	end
 
 	if spec.tabs then
-		self:StyleTabs(spec.tabs, header)
+		self:StyleTabs(spec.tabs, header, spec.tab_padding)
 	end
 	-- a page's own tabs right under the window's (Blizzard's start 70 in,
 	-- the last past the window's side)
@@ -256,22 +270,57 @@ Module.StylePanel = function(self, spec)
 		kit:StyleTab(_G[spec.own_tabs .. i], { inset = config.own_tab_inset, font = config.tab_font })
 		i = i + 1
 	end
+	for _, pane in ipairs(spec.panes or {}) do
+		-- { the first part, the last one or false, open }
+		local first, last = _G[pane[1]], pane[2] and _G[pane[2]]
+		if first then
+			kit:AddPane(first, last, pane[3])
+		end
+	end
+	local zones = {}
 	for _, list in ipairs(spec.lists or {}) do
-		-- a name, or { name, how much further left its rows start }
-		local name, wider = list, 0
+		-- a name, or { name, how much further left its rows start, an
+		-- earlier one whose sides its zone takes, its own material }
+		local name, wider, under, material = list, 0, nil, nil
 		if type(list) == "table" then
-			name, wider = list[1], list[2]
+			name, wider, under, material = list[1], list[2] or 0, list[3], list[4]
 		end
 		if _G[name] then
 			local insets = config.list_panel_insets
-			kit:AddPanel(_G[name], { insets[1] + wider, insets[2], insets[3], insets[4] })
+			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] })
+			zones[name] = zone
+			if under and zones[under] then
+				zone:ClearAllPoints()
+				zone:SetPoint("TOP", _G[name], "TOP", 0, insets[2])
+				zone:SetPoint("BOTTOM", _G[name], "BOTTOM", 0, -insets[4])
+				zone:SetPoint("LEFT", zones[under], "LEFT")
+				zone:SetPoint("RIGHT", zones[under], "RIGHT")
+			end
 		end
 	end
-	for _, name in ipairs(spec.parchments or {}) do
-		if _G[name] then
-			kit:AddPanel(_G[name], kit.config.parchment_panel_insets)
-			kit:AddParchment(_G[name])
-			kit:PlaceParchmentBar(_G[name])
+	local pages = {}
+	for _, parchment in ipairs(spec.parchments or {}) do
+		-- a name, or { name, its material, the page whose sides it takes,
+		-- how far its top reaches over its text's }
+		local name, material, under, raise = parchment, nil, nil, nil
+		if type(parchment) == "table" then
+			name, material, under, raise = parchment[1], parchment[2], parchment[3], parchment[4]
+		end
+		local scroll = _G[name]
+		if scroll then
+			kit:AddPanel(scroll, kit.config.parchment_panel_insets)
+			-- (its window's: Blizzard hides a list's scroll frame when it all fits)
+			local page = kit:AddParchment(scroll, nil, material, scroll:GetParent())[1]:GetParent()
+			pages[name] = page
+			if under and pages[under] then
+				local insets = kit.config.parchment_insets
+				page:ClearAllPoints()
+				page:SetPoint("TOP", scroll, "TOP", 0, insets[2] + (raise or 0))
+				page:SetPoint("BOTTOM", scroll, "BOTTOM", 0, -insets[4])
+				page:SetPoint("LEFT", pages[under], "LEFT", 0, 0)
+				page:SetPoint("RIGHT", pages[under], "RIGHT", 0, 0)
+			end
+			kit:PlaceParchmentBar(scroll)
 		end
 	end
 	-- text Blizzard colors for its page's material, dark on ours (after it
@@ -281,6 +330,7 @@ Module.StylePanel = function(self, spec)
 			for _, name in ipairs(spec.ink) do
 				if _G[name] then
 					_G[name]:SetTextColor(unpack(kit.config.ink))
+					_G[name]:SetShadowColor(0, 0, 0, 0) -- (a black one blurs it on parchment)
 				end
 			end
 		end
@@ -299,7 +349,7 @@ Module.StylePanel = function(self, spec)
 		kit:StyleCoins(frame)
 		kit:StyleButtons(frame)
 		if spec.tabs then
-			self:StyleTabs(spec.tabs, header)
+			self:StyleTabs(spec.tabs, header, spec.tab_padding)
 		end
 		if spec.pale then
 			PaleText(frame, config.text_color)

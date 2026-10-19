@@ -1297,6 +1297,7 @@ function Api.install(client)
 			return "General", [[Interface\Icons\INV_Misc_Book_09]], 0, 6
 		end
 	end
+	api.GetNumSpellTabs = function() return 1 end
 	api.SortWho = function() end
 	-- the companions and mounts (world.companions.CRITTER / .MOUNT: { creatureID, name, spellID, icon, active })
 	local function companions(kind)

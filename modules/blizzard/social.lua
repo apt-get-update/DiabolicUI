@@ -44,6 +44,14 @@ Module.StyleSocial = function(self)
 
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "cracked")
+	-- the rough stone foot up to the page shown's buttons
+	local foot = kit:AddFooter(window)
+	for _, name in ipairs(TABS) do
+		local page = _G[name]
+		if page then
+			page:HookScript("OnShow", function() kit:SetFooter(foot, config.footers[name]) end)
+		end
+	end
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
 	kit:SetPanelLayout(frame, config.insets, config.insets[1], config.offset_y)
@@ -80,11 +88,49 @@ Module.StyleSocial = function(self)
 	self:StyleGuild(window)
 
 	for _, name in ipairs(LISTS) do
-		if _G[name] then
-			kit:AddPanel(_G[name], config.list_panel_overrides[name] or config.list_panel_insets)
+		local list = _G[name]
+		if list then
+			local insets = config.list_panel_overrides[name] or config.list_panel_insets
+			local zone = kit:AddZone(list, "leather", insets)
+			local button = _G[config.list_bottoms[name] or ""]
+			if button then
+				self:SetZoneBottom(zone, list, insets, button, kit.config.footer_margin + config.list_gap)
+			elseif (name == "GuildListScrollFrame") and self.MOTD then
+				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
+			end
+			if config.header_bars[name] then
+				self:AddHeaderBar(zone)
+			end
 		end
 	end
 	kit:StyleButtons(frame)
+end
+
+-- A list's panel down to `gap` over `under`'s top, its sides and top
+-- still its list's.
+Module.SetZoneBottom = function(self, zone, list, insets, under, gap)
+	zone:ClearAllPoints()
+	zone:SetPoint("TOPLEFT", list, "TOPLEFT", -insets[1], insets[2])
+	zone:SetPoint("TOPRIGHT", list, "TOPRIGHT", insets[3], insets[2])
+	zone:SetPoint("BOTTOM", under, "TOP", 0, gap)
+end
+
+-- A table's column names on a dark bar, over its panel's top.
+Module.AddHeaderBar = function(self, zone)
+	local section = kit.config.section
+	local bar = CreateFrame("Frame", nil, zone)
+	bar:SetFrameLevel(zone:GetFrameLevel())
+	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
+	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
+	bar:SetHeight(section.height)
+	kit:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
+end
+
+-- A part moved `by` up from where Blizzard put it.
+local Raise = function(part, by)
+	local point, relative, relativePoint, x, y = part:GetPoint()
+	part:ClearAllPoints()
+	part:SetPoint(point, relative, relativePoint, x, y + by)
 end
 
 -- The friends' tab with more room: your status (its dropdown) at the
@@ -186,10 +232,11 @@ Module.LayoutWho = function(self, window)
 	point, relative, relativePoint, x, y = list:GetPoint()
 	list:ClearAllPoints()
 	list:SetPoint(point, relative, relativePoint, x, y + raise)
-	list:SetHeight(list:GetHeight() + extra * height)
+	list:SetHeight(list:GetHeight() + extra * height - config.who_list_trim)
 end
 
--- The guild's: its message of the day in a darker panel, a member's card
+-- The guild's: its message of the day on parchment between the list and
+-- the foot (the totals up under the rows for it), a member's card
 -- a dark panel right of the window (the equipment manager's icon
 -- picker's), its notes in darker ones, its X and buttons ours.
 Module.StyleGuild = function(self, window)
@@ -197,11 +244,32 @@ Module.StyleGuild = function(self, window)
 	local label, text = _G.GuildFrameNotesLabel, _G.GuildFrameNotesText
 	if label and text then
 		local insets = config.motd_panel_insets
+		text:SetHeight(config.motd_text_height)
+		for _, part in ipairs({ _G.GuildFrameTotals, _G.GuildFrameGuildListToggleButton }) do
+			Raise(part, config.guild_totals_raise)
+		end
+		_G.GuildListScrollFrame:SetHeight(config.guild_list_height)
+		-- the message of the day on parchment, in ink
 		local panel = CreateFrame("Frame", nil, _G.GuildFrame)
+		self.MOTD = panel
 		panel:SetFrameLevel(_G.GuildFrame:GetFrameLevel())
 		panel:SetPoint("TOPLEFT", label, "TOPLEFT", -insets[1], insets[2])
 		panel:SetPoint("BOTTOMRIGHT", text, "BOTTOMRIGHT", insets[3], -insets[4])
-		kit:StylePanel(panel)
+		kit:CreateNine(panel, "BACKGROUND", "parchment")
+		label:SetTextColor(unpack(config.motd_title_color))
+		label:SetShadowOffset(0, 0)
+		text:SetShadowOffset(0, 0)
+		-- (Blizzard colours it on each update: white, grey if you can't edit it)
+		local ink, busy = kit.config.ink
+		local Ink = function()
+			if (not busy) then
+				busy = true
+				text:SetTextColor(unpack(ink))
+				busy = nil
+			end
+		end
+		hooksecurefunc(text, "SetTextColor", Ink)
+		Ink()
 	end
 	local card = _G.GuildMemberDetailFrame
 	kit:HideTextures(card)
