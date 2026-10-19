@@ -1045,9 +1045,6 @@ end
 Module.StyleReputationDetail = function(self)
 	local config = self.config
 	local detail = _G.ReputationDetailFrame
-	if not detail then
-		return
-	end
 	kit:HideTextures(detail)
 	kit:StylePanel(detail)
 	-- Diablo III's parchment inside its bronze line, its text in ink
@@ -1089,7 +1086,6 @@ Module.StyleReputationDetail = function(self)
 	-- pointed ends (+1): its left tail reaches over them; their X over it
 	local holder = CreateFrame("Frame", nil, detail)
 	holder:SetAllPoints(detail)
-	holder:SetFrameLevel(self.Backdrop.Border:GetFrameLevel() + 2)
 	name:SetParent(holder)
 	local ribbon = holder:CreateTexture(nil, "BORDER")
 	ribbon:SetTexture(spec.texture)
@@ -1100,7 +1096,14 @@ Module.StyleReputationDetail = function(self)
 	kit:SkinClose(close)
 	close:ClearAllPoints()
 	close:SetPoint("RIGHT", ribbon, "RIGHT", -(spec.overhang + config.reputation_detail_close), 0)
-	close:SetFrameLevel(holder:GetFrameLevel() + 1)
+	-- again as they show: the window's levels shift when it's raised,
+	-- the ribbon left under their parchment
+	local Raise = function()
+		holder:SetFrameLevel(math_max(self.Backdrop.Border:GetFrameLevel(), detail:GetFrameLevel()) + 2)
+		close:SetFrameLevel(holder:GetFrameLevel() + 1)
+	end
+	Raise()
+	detail:HookScript("OnShow", Raise)
 	-- the boxes' labels: Blizzard colors them on each update (red, its
 	-- font's yellow or grey), drawn for its dark frame
 	-- as tall as its text needs over the boxes (Blizzard's are anchored to
@@ -1123,10 +1126,10 @@ Module.StyleReputationDetail = function(self)
 			+ description:GetHeight() + config.reputation_detail_boxes
 		detail:SetHeight(math_max(height, text))
 		local war = _G.ReputationDetailAtWarCheckBox
-		_G.ReputationDetailAtWarCheckBoxText:SetTextColor(unpack(war:IsEnabled() and ink.war or ink.off))
+		_G.ReputationDetailAtWarCheckBoxText:SetTextColor(unpack((war:IsEnabled() == 1) and ink.war or ink.off))
 		for _, name in ipairs({ "ReputationDetailInactiveCheckBox", "ReputationDetailMainScreenCheckBox" }) do
 			local box = _G[name]
-			_G[name .. "Text"]:SetTextColor(unpack(box:IsEnabled() and ink.text or ink.off))
+			_G[name .. "Text"]:SetTextColor(unpack((box:IsEnabled() == 1) and ink.text or ink.off))
 		end
 	end
 	Ink()
@@ -1236,6 +1239,9 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	self:StyleCharacter()
 	if IsAddOnLoaded("Blizzard_TokenUI") then
 		self:StyleTokens()

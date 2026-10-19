@@ -96,7 +96,7 @@ Small independent modules, each restyling or replacing one Blizzard piece.
 | `fonts.lua`, `worldmap.lua` | Fonts, map zone names
 | `watchframe.lua`, `questietracker.lua` | Blizzard's and Questie's quest trackers, Diablo III style
 | `trinketmenu.lua` | The TrinketMenu addon's buttons
-| `immersion.lua` | The Immersion addon's dialogue box, Diablo III style
+| `immersion.lua` | The Immersion addon's dialogue box: our close button, Exocet titles and coins
 | `anchors.lua`, `mirrortimers.lua`, `totembar.lua` | Durability, vehicle seats, breath timers, totem bar
 |===
 

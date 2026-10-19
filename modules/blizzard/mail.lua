@@ -1,8 +1,9 @@
 -- Gives Blizzard's mailbox Diablo III's windows (windows.lua): the inbox
 -- and send tabs in one, the opened letter in another beside it, each the
 -- stone window in its iron frame instead of the parchment, its title in
--- the plate over the red band, the tabs in a row under it, the mail and
--- the letters on Diablo III's parchment in darker panels, the buttons
+-- the plate over the red band, the tabs in a row under it, the mail on
+-- its crafting window's ruled paper (a row between two lines), the
+-- letters on its parchment, in darker panels, the buttons
 -- ours (Postal's too, as they come). Blizzard places their parts against
 -- the whole frame, so the windows grow around them instead of moving them.
 -- Art, fonts and places only: Blizzard's code is left as it is.
@@ -14,10 +15,12 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
+local pairs = pairs
 local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
+local hooksecurefunc = _G.hooksecurefunc
 
 -- the frames' art, by its file (lowercase, as patterns)
 local ART = {
@@ -37,7 +40,7 @@ local NUM_ITEMS = 7 -- INBOXITEMS_TO_DISPLAY
 Module.StyleFrame = function(self, frame, insets)
 	local config = self.config
 	local window = kit:CreateWindow(frame, insets)
-	kit:SetBackground(window, "leather")
+	kit:SetBackground(window, "slabs")
 	kit:AddDrag(window, frame)
 	kit:HideArt(frame, ART)
 	return window, kit:CreateHeader(window, config.header_height, config.header_insets)
@@ -75,6 +78,7 @@ Module.StyleMail = function(self)
 	panel:SetPoint("TOPLEFT", _G.MailItem1, "TOPLEFT", -insets[1], insets[2])
 	panel:SetPoint("BOTTOMRIGHT", _G["MailItem" .. NUM_ITEMS], "BOTTOMRIGHT", insets[3], -insets[4])
 	kit:StylePanel(panel)
+	self:AddPaper(panel)
 	kit:AddPanel(_G.SendMailScrollFrame, config.text_panel_insets)
 	kit:AddParchment(_G.SendMailScrollFrame, config.parchment_insets)
 	_G.SendMailBodyEditBox:SetTextColor(unpack(config.text_color))
@@ -98,8 +102,62 @@ Module.StyleMail = function(self)
 	-- Blizzard's buttons, and those addons add as the mailbox opens
 	kit:StyleButtons(frame)
 	kit:StyleButtons(open)
-	frame:HookScript("OnShow", function() kit:StyleButtons(frame) end)
+	frame:HookScript("OnShow", function()
+		kit:StyleButtons(frame)
+		self:PlacePostal()
+	end)
 	open:HookScript("OnShow", function() kit:StyleButtons(open) end)
+end
+
+-- Postal's parts on the paper, each moved once (they come as it enables;
+-- its Open All's arrow follows its button).
+Module.PlacePostal = function(self)
+	self.PostalPlaced = self.PostalPlaced or {}
+	for name, offset in pairs(self.config.postal_offsets) do
+		for _, suffix in ipairs({ "", 1, 2, 3, 4, 5, 6, 7 }) do -- the button, the rows' boxes
+			local part = _G[name .. suffix]
+			if part and (not self.PostalPlaced[part]) then
+				self.PostalPlaced[part] = true
+				local point, relative, relativePoint, x, y = part:GetPoint()
+				part:SetPoint(point, relative, relativePoint, x + offset[1], y + offset[2])
+			end
+		end
+	end
+end
+
+-- The mail on ruled paper (`panel`'s), in ink, the page buttons under it.
+Module.AddPaper = function(self, panel)
+	local config = self.config
+	local insets = config.list_paper_insets
+	local paper = panel:CreateTexture(nil, "BORDER")
+	paper:SetTexture(config.list_paper)
+	paper:SetPoint("TOPLEFT", _G.MailItem1, "TOPLEFT", -insets[1], insets[2])
+	paper:SetPoint("BOTTOMRIGHT", _G["MailItem" .. NUM_ITEMS], "BOTTOMRIGHT", insets[3], -insets[4])
+	for _, name in ipairs({ "InboxPrevPageButton", "InboxNextPageButton", "InboxCurrentPage" }) do
+		local region = _G[name]
+		local point, relative, relativePoint, x, y = region:GetPoint()
+		region:SetPoint(point, relative, relativePoint, x, y + config.page_offset)
+	end
+	-- Blizzard colors them on each update (the days left by a code)
+	local ink = config.list_ink
+	hooksecurefunc("InboxFrame_Update", function()
+		for i = 1, NUM_ITEMS do
+			local sender, subject = _G["MailItem" .. i .. "Sender"], _G["MailItem" .. i .. "Subject"]
+			local read = (sender:GetTextColor() < .8) -- Blizzard's grey (.75) for read mail
+			sender:SetTextColor(unpack(read and ink.read or ink.sender))
+			subject:SetTextColor(unpack(read and ink.read or ink.subject))
+			sender:SetShadowColor(0, 0, 0, 0)
+			subject:SetShadowColor(0, 0, 0, 0)
+			local expire = _G["MailItem" .. i .. "ExpireTime"]
+			local text, days = expire:GetText(), expire:GetFontString()
+			if text and days then
+				local expiring = text:find(_G.RED_FONT_COLOR_CODE, 1, true)
+				expire:SetText((text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")))
+				days:SetTextColor(unpack(expiring and ink.expiring or ink.days))
+				days:SetShadowColor(0, 0, 0, 0)
+			end
+		end
+	end)
 end
 
 Module.OnInit = function(self)
@@ -108,5 +166,8 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	self:StyleMail()
 end

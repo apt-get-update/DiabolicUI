@@ -98,7 +98,7 @@ local function constants()
 		PLAYERSTAT_DROPDOWN_OPTIONS = { "PLAYERSTAT_BASE_STATS", "PLAYERSTAT_MELEE_COMBAT", "PLAYERSTAT_RANGED_COMBAT",
 			"PLAYERSTAT_SPELL_COMBAT", "PLAYERSTAT_DEFENSES" },
 		-- the windows' (FriendsFrame.lua, SpellBookFrame.lua, QuestInfo.lua)
-		WHOS_TO_DISPLAY = 17, FRIENDS_FRAME_WHO_HEIGHT = 16, MAX_OBJECTIVES = 10,
+		WHOS_TO_DISPLAY = 17, FRIENDS_FRAME_WHO_HEIGHT = 16, MAX_OBJECTIVES = 10, NUM_FACTIONS_DISPLAYED = 15,
 		WHOFRAME_DROPDOWN_LIST = { { name = "Zone", sortType = "zone" }, { name = "Guild", sortType = "guild" },
 			{ name = "Race", sortType = "race" } },
 		BOOKTYPE_SPELL = "spell", BOOKTYPE_PET = "pet",
@@ -745,8 +745,14 @@ local function buildFrames()
 	new("FontString", "CharacterNameText", character)
 	new("FontString", "CharacterLevelText", character)
 	new("FontString", "CharacterGuildText", character)
+	-- each from the one before (CharacterFrame.xml)
 	for i, text in ipairs({ "Character", "Pet", "Reputation", "Skills", "Currency" }) do
-		tab("CharacterFrameTab" .. i, character, text)
+		local t = tab("CharacterFrameTab" .. i, character, text)
+		if (i == 1) then
+			t:SetPoint("BOTTOMLEFT", character, "BOTTOMLEFT", 11, 46)
+		else
+			t:SetPoint("LEFT", _G["CharacterFrameTab" .. (i - 1)], "RIGHT", -15, 0)
+		end
 	end
 	character.numTabs = 5
 	local model = new("PlayerModel", "CharacterModelFrame", character)
@@ -823,8 +829,7 @@ local function buildFrames()
 	paperDoll:SetScript("OnShow", function() _G.PaperDollFrame_UpdateStats() end)
 	paperDoll:SetScript("OnHide", function() gear:Hide() end)
 	local rep = hidden(new("Frame", "ReputationFrame", character))
-	rep.name = "ReputationFrame"
-	panelArt(rep, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight", "BottomLeft", "BottomRight" })
+	rep.name = "ReputationFrame" -- its art and parts from FrameXML
 	local pet = hidden(new("Frame", "PetPaperDollFrame", character))
 	new("FontString", "PetNameText", pet)
 	new("Frame", "PetPaperDollFrameCompanionFrame", pet)
@@ -1474,6 +1479,16 @@ local function frameXML(client)
 	f.PetPaperDollFrame_UpdateTabs = function() end
 	f.PetPaperDollFrame_SetTab = noop
 	f.PetPaperDollFrame_UpdateCompanions = noop
+	f.PetPaperDollFrame_UpdateCompanionPreview = noop
+	f.PetPaperDollFrame_SetCompanionPage = function(num)
+		local frame = _G.PetPaperDollFrameCompanionFrame
+		if frame.mode == "CRITTER" then
+			frame.pageCritter = num
+		else
+			frame.pageMount = num
+		end
+		_G.PetPaperDollFrame_UpdateCompanions()
+	end
 	f.PetPaperDollFrame_UpdateIsAvailable = noop
 	f.ReputationFrame_Update = noop
 	-- the spellbook (SpellBookFrame.lua): each spell button updated
@@ -1954,15 +1969,18 @@ function Blizzard.install(owner)
 	-- Blizzard's load-on-demand addons: in the addon list, loaded on request
 	for _, name in ipairs({ "Blizzard_TimeManager", "Blizzard_TalentUI", "Blizzard_InspectUI",
 		"Blizzard_CombatText", "Blizzard_DebugTools", "Blizzard_ArenaUI", "Blizzard_Calendar",
-		"Blizzard_AchievementUI", "Blizzard_TradeSkillUI", "Blizzard_TokenUI" }) do
+		"Blizzard_AchievementUI", "Blizzard_TradeSkillUI", "Blizzard_TokenUI", "Blizzard_GlyphUI", "Blizzard_AuctionUI",
+		"Blizzard_MacroUI", "Blizzard_TrainerUI", "Blizzard_GuildBankUI", "Blizzard_ItemSocketingUI", "Blizzard_BindingUI" }) do
 		table.insert(client.world.addons, { name = name, title = name, enabled = true, loadOnDemand = true, blizzard = true })
 	end
 	local loadAddOn = client.api.LoadAddOn
 	client.api.LoadAddOn = function(name)
 		local build = ON_DEMAND[name]
-		if build and not client.loadedOnDemand[name] then
+		if name and (name:find("^Blizzard_")) and not client.loadedOnDemand[name] then
 			client.loadedOnDemand[name] = true
-			build()
+			if build then
+				build()
+			end
 			fromFrameXML(name)
 		end
 		return loadAddOn(name)

@@ -51,7 +51,7 @@ end
 Module.StyleFrame = function(self, frame, spec, title)
 	local config = self.config
 	local window = kit:CreateWindow(frame, spec.insets)
-	kit:SetBackground(window, "smoke")
+	kit:SetBackground(window, "saron")
 	kit:AddDrag(window, frame)
 	kit:SetPanelLayout(frame, spec.insets, spec.insets[1], spec.offset_y)
 	kit:HideArt(frame, ART)
@@ -165,5 +165,8 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	self:StyleLFG()
 end

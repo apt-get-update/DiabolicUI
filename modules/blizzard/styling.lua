@@ -65,12 +65,8 @@ end
 Module.OnEnable = function(self)
 	for frameName in pairs(elements) do
 		local object = _G[frameName]
-		if (not object) then
-			-- replaced by an addon
-		elseif (object:IsObjectType("Frame")) then
+		if object then -- (not replaced by an addon)
 			self:StyleFrame(object)
-		else
-			self:StyleRegion(object)
 		end
 	end
 end

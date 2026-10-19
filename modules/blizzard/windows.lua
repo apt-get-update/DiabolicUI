@@ -91,10 +91,15 @@ end
 -- side, the last ones cut: the client stretches a backdrop's tiled
 -- background into streaks past its first tile. Drawn on `frame` from its
 -- corner (`left`, `top` in) over `width` by `height`, which start `x`, `y`
--- into the window's stone: a cover's stone carries on its window's.
+-- into the window's stone: a cover's stone carries on its window's. Its
+-- tiles the window's own stone (DiabolicTile: a backdrop of tiles) if it
+-- has one, our stone otherwise.
 local TileStone = function(frame, left, top, x, y, width, height)
 	local backdrop = config.backdrop
-	local size = backdrop.tileSize
+	local stone = frame.DiabolicTile
+	local size = stone and stone.tile or backdrop.tileSize
+	local file = stone and stone.texture or backdrop.bgFile
+	local color = stone and stone.color or config.backdrop_color
 	local tiles = frame.DiabolicStone
 	for _, tile in pairs(tiles) do
 		tile:Hide()
@@ -111,10 +116,10 @@ local TileStone = function(frame, left, top, x, y, width, height)
 			local tile = tiles[n]
 			if not tile then
 				tile = frame:CreateTexture(nil, "BACKGROUND")
-				tile:SetTexture(backdrop.bgFile)
-				tile:SetVertexColor(unpack(config.backdrop_color))
 				tiles[n] = tile
 			end
+			tile:SetTexture(file)
+			tile:SetVertexColor(unpack(color))
 			tile:ClearAllPoints()
 			tile:SetPoint("TOPLEFT", frame, "TOPLEFT", left + x0 - x, -top - (y0 - y))
 			tile:SetSize(x1 - x0, y1 - y0)
@@ -151,13 +156,20 @@ local LayoutStone = function(window)
 end
 
 -- `window`'s painted background (config.backgrounds' `name`) over its
--- stone, inside the iron, under all it shows.
+-- stone, inside the iron, under all it shows; or, one in tiles (`tile`,
+-- their size), its stone instead.
 Module.SetBackground = function(self, window, name)
 	local spec = config.backgrounds[name]
-	if not spec then
+	local insets = config.backdrop.insets
+	if spec.tile then
+		window.DiabolicTile = spec
+		if window.DiabolicBackground then
+			window.DiabolicBackground:Hide()
+		end
+		LayoutStone(window)
 		return
 	end
-	local insets = config.backdrop.insets
+	window.DiabolicTile = nil
 	local background = window.DiabolicBackground
 	if not background then
 		background = window:CreateTexture(nil, "BORDER")
@@ -166,6 +178,7 @@ Module.SetBackground = function(self, window, name)
 		window.DiabolicBackground = background
 	end
 	background:SetTexture(spec.texture)
+	background:Show()
 	window.DiabolicBackgroundAspect = spec.aspect
 	LayoutStone(window)
 end
@@ -213,6 +226,7 @@ Module.CreateCover = function(self, window, insets, level)
 	cover:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -insets[3], insets[4])
 	cover:EnableMouse(true)
 	cover.DiabolicX, cover.DiabolicY = insets[1], insets[2]
+	cover.DiabolicTile = window.DiabolicTile
 	cover.DiabolicStone = {}
 	cover:SetScript("OnSizeChanged", LayoutCover)
 	LayoutCover(cover)
@@ -446,6 +460,19 @@ Module.StyleBar = function(self, bar, regions)
 	local spec = config.bar
 	bar:SetStatusBarTexture(spec.statusbar)
 	bar:SetStatusBarColor(unpack(spec.color))
+	-- kept orange: Blizzard colors some on each update (the professions' blue)
+	local r, g, b = unpack(spec.color)
+	hooksecurefunc(bar, "SetStatusBarColor", function(_, red, green, blue)
+		if (red ~= r) or (green ~= g) or (blue ~= b) then
+			bar:SetStatusBarColor(r, g, b)
+		end
+	end)
+	if (not bar.DiabolicTrack) then
+		local track = bar:CreateTexture(nil, "BACKGROUND")
+		track:SetTexture(spec.track)
+		track:SetAllPoints()
+		bar.DiabolicTrack = track
+	end
 	bar.DiabolicBorder = self:CreateSlices(bar, "OVERLAY", spec, spec.texture, bar:GetHeight())
 end
 
@@ -589,7 +616,13 @@ Module.StyleClose = function(self, button, window, header)
 	end
 	button:ClearAllPoints()
 	button:SetPoint("CENTER", window, "TOPRIGHT", -spec.socket_size / 2, -spec.socket_size / 2)
-	button:SetFrameLevel(window.Border:GetFrameLevel() + 2)
+	-- over its socket, again as the window shows: a toplevel one (the
+	-- achievements') is raised then, its X put back under the socket
+	local Raise = function()
+		button:SetFrameLevel(window.Border:GetFrameLevel() + 2)
+	end
+	Raise()
+	window:HookScript("OnShow", Raise)
 end
 
 -- The close button's socket, over the window's iron: the frame's edge
@@ -656,6 +689,12 @@ end
 -- the plate's art is drawn (the template's own by default).
 Module.StyleDropDown = function(self, frame, offset, inset)
 	local name = frame:GetName()
+	-- as wide as its art first: one never sized (Auctionator's,
+	-- Overachiever's) is narrower, its art reaching past it
+	local middle = name and _G[name .. "Middle"]
+	if middle and (frame:GetWidth() < middle:GetWidth()) then
+		_G.UIDropDownMenu_SetWidth(frame, middle:GetWidth())
+	end
 	for _, part in ipairs({ "Left", "Middle", "Right" }) do
 		local region = name and _G[name .. part]
 		if region then
@@ -1021,9 +1060,20 @@ Module.StyleCoins = function(self, frame)
 	end
 end
 
+-- Whether Blizzard's windows get Diablo III's look (the options' Reskin
+-- Windows): the skins check it before styling anything.
+Module.IsSkinning = function(self)
+	return self.db.enableSkin
+end
+
 Module.OnInit = function(self)
 	config = self:GetDB("Blizzard").window
 	self.config = config
+	self.db = self:GetConfig("Windows")
+	-- Blizzard's own windows (and their tabs and coins) when it's off
+	if (not self.db.enableSkin) then
+		return
+	end
 	hooksecurefunc("PanelTemplates_SelectTab", UpdateTab)
 	hooksecurefunc("PanelTemplates_DeselectTab", UpdateTab)
 	hooksecurefunc("PanelTemplates_TabResize", FitTab)

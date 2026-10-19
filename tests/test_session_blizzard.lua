@@ -156,14 +156,22 @@ function TestBags:tearDown()
 	client, C = nil, nil
 end
 
--- Our border on an item slot: the ARTWORK quick slot texture.
-local function borderOf(button)
+-- A texture of `button` drawn from `file` (one of our textures), if any.
+local function textureOf(button, file)
 	for _, region in ipairs({ button:GetRegions() }) do
-		if region:GetObjectType() == "Texture" and region:GetDrawLayer() == "ARTWORK"
-			and region:GetTexture() == [[Interface\Buttons\UI-Quickslot2]] then
+		if region:GetObjectType() == "Texture" and (region:GetTexture() or ""):find(file, 1, true) then
 			return region
 		end
 	end
+end
+
+-- Our quality edge on an item slot (the item tooltips' icon frame's), and
+-- that frame.
+local function borderOf(button)
+	return textureOf(button, "DiabolicUI_Button_64x64_BorderHighlight")
+end
+local function frameOf(button)
+	return textureOf(button, "DiabolicUI_Button_64x64_Border.tga")
 end
 
 -- The quality glow on an item button: its color at the bottom, or nil
@@ -184,6 +192,7 @@ function TestBags:test_every_bag_and_the_bank_get_our_slots()
 		"ContainerFrame13Item7", "BankFrameItem1", "BankFrameItem28" }) do
 		lu.assertEquals(_G[name .. "NormalTexture"]:GetAlpha(), 0, name)
 		lu.assertNotNil(borderOf(_G[name]), name)
+		lu.assertEquals({ frameOf(_G[name]):GetSize() }, { _G[name]:GetWidth() * 2, _G[name]:GetHeight() * 2 }, name)
 	end
 	-- the bank's bag slots aren't item slots
 	lu.assertNil(borderOf(_G.BankFrameBag1))
@@ -208,11 +217,13 @@ function TestBags:test_slots_show_quality_quests_junk_and_item_levels()
 
 	local function slot(i) return _G["ContainerFrame1Item" .. i] end
 	near(color(borderOf(slot(1)):GetVertexColor()), C.Quality[4], "epic")
-	near(color(borderOf(slot(2)):GetVertexColor()), C.General.UIBorder, "junk")
+	lu.assertFalse(shown(borderOf(slot(2))), "junk")
 	near(color(borderOf(slot(3)):GetVertexColor()), C.General.Gold, "quest starter")
 	near(color(borderOf(slot(4)):GetVertexColor()), C.General.Gold, "quest item")
-	near(color(borderOf(slot(6)):GetVertexColor()), C.General.UIBorder, "empty")
-	lu.assertTrue(shown(borderOf(slot(6))))
+	lu.assertFalse(shown(borderOf(slot(6))), "empty")
+	lu.assertFalse(shown(borderOf(slot(5))), "common")
+	lu.assertTrue(shown(frameOf(slot(6))), "the empty slot's frame")
+	lu.assertFalse(shown(frameOf(slot(1))), "the epic's frame: its border instead")
 
 	-- the quality glow: on the epic, not on junk, quest items or empty slots
 	near(glowOf(slot(1)), C.Quality[4], "epic glow")
@@ -396,13 +407,24 @@ function TestCharacter:test_our_window_on_every_tab()
 	lu.assertFalse(shown(first.DiabolicArt.red[2]))
 	lu.assertTrue(shown(second.DiabolicArt.red[2]))
 
-	-- another tab: the window narrow again, Blizzard told
+	-- another tab: the window narrow again, as far past the last tab shown
+	-- as the first is in from its left (from the tabs' anchors), Blizzard told
 	frame:Show()
 	local updates = client.panelUpdates or 0
 	_G.PaperDollFrame:Hide()
-	lu.assertEquals({ backdrop:GetPoint(2) }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4] })
-	lu.assertEquals(frame:GetAttribute("UIPanelLayout-width"), frame:GetWidth() + insets[3])
+	-- (Blizzard's 115 wide tabs overlap by 15, the pet's hidden without a
+	-- pet: the currency tab ends 415 in, the window 28 past it)
+	local pad = config.header_insets[1] + config.tab_offset[1]
+	local right = pad + 415 + pad - insets[1] - frame:GetWidth()
+	lu.assertEquals({ backdrop:GetPoint(2) }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", right, -insets[4] })
+	lu.assertEquals(frame:GetAttribute("UIPanelLayout-width"), frame:GetWidth() + right)
 	lu.assertEquals(client.panelUpdates, updates + 1)
+	-- tabs placed by something else (an addon): the window's own width
+	_G.CharacterFrameTab4:SetPoint("LEFT", _G.UIParent, "LEFT", 0, 0)
+	_G.PaperDollFrame:Show()
+	_G.PaperDollFrame:Hide()
+	lu.assertEquals({ backdrop:GetPoint(2) }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4] })
+	_G.CharacterFrameTab4:SetPoint("LEFT", _G.CharacterFrameTab3, "RIGHT", -15, 0)
 
 	-- the pet tab: its name in the band, its own tabs in a row in its middle
 	_G.PetPaperDollFrame:Show()
@@ -725,6 +747,102 @@ function TestCharacter:test_the_talent_spec_in_the_band()
 	assertClean(client)
 end
 
+function TestCharacter:test_the_titles_page()
+	boot({ world = function(world)
+		world.titles = { { name = "Private %s" }, false, { name = " Champion of the Naaru" } }
+		world.currentTitle = 3
+	end })
+	local config = client.Engine:GetDB("Blizzard").character.paperdoll.titles
+	_G.CharacterFrame:Show()
+	-- the side tabs named under the mouse
+	client:Hover(_G.DiabolicUICharacterSideTab2)
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "Titles")
+	client:Leave()
+	-- "None" first, the known ones by name, the worn one checked
+	client:Click(_G.DiabolicUICharacterSideTab2)
+	local rows = { _G.DiabolicUICharacterTitles:GetScrollChild():GetChildren() }
+	lu.assertEquals(#rows, 3)
+	lu.assertEquals(rows[1].text:GetText(), _G.NONE)
+	lu.assertEquals(rows[2].text:GetText(), "Champion of the Naaru")
+	lu.assertEquals(rows[3].text:GetText(), "Private %s")
+	lu.assertTrue(shown(rows[2].check))
+	lu.assertFalse(shown(rows[1].check))
+	near(color(rows[2].text:GetTextColor()), config.worn_color)
+	-- a click wears it
+	client:Click(rows[1])
+	lu.assertEquals(client.world.currentTitle, -1)
+	lu.assertTrue(shown(rows[1].check))
+	lu.assertFalse(shown(rows[2].check))
+	-- fewer titles: the rows left over hidden
+	client.world.titles = { { name = "Private %s" } }
+	client:Click(_G.DiabolicUICharacterSideTab1)
+	client:Click(_G.DiabolicUICharacterSideTab2)
+	lu.assertTrue(shown(rows[2]))
+	lu.assertFalse(shown(rows[3]))
+	assertClean(client)
+end
+
+function TestCharacter:test_the_inspected_home_behind_them()
+	boot()
+	client.api.LoadAddOn("Blizzard_InspectUI")
+	local module = client:GetModule("Blizzard: Character")
+	local scene = module.InspectScene
+	local path = "Interface\\DressUpFrame\\DressUpBackground-"
+	-- Gnomes get Ironforge, Trolls Orgrimmar (Blizzard's dressing room's)
+	_G.InspectFrame.unit = "target"
+	client.world.units.target = Client.newUnit({ name = "Gnome", race = "Gnome", raceFile = "Gnome" })
+	_G.InspectFrame_UnitChanged()
+	lu.assertEquals(scene.Top:GetTexture(), path .. "Dwarf1")
+	client.world.units.target = Client.newUnit({ name = "Troll", race = "Troll", raceFile = "Troll" })
+	_G.InspectFrame_UnitChanged()
+	lu.assertEquals(scene.Bottom:GetTexture(), path .. "Orc3")
+	-- styled once
+	module:StyleInspect()
+	lu.assertEquals(module.InspectScene, scene)
+	-- wide: its top cut, the floor kept
+	scene:SetSize(256, 200)
+	lu.assertTrue(shown(scene.Top))
+	lu.assertEquals(scene.Top:GetHeight(), 126)
+	lu.assertEquals(scene.Bottom:GetHeight(), 74)
+	-- wider: the floor only
+	scene:SetSize(512, 100)
+	lu.assertFalse(shown(scene.Top))
+	lu.assertEquals(scene.Bottom:GetHeight(), 100)
+	-- tall: its sides cut
+	scene:SetSize(128, 329)
+	lu.assertEquals({ scene.Top:GetTexCoord() }, { .25, 0, .25, 1, .75, 0, .75, 1 })
+	assertClean(client)
+end
+
+function TestCharacter:test_a_factions_details()
+	boot({ world = function(world)
+		world.factions = { { "Stormwind", "The city.", 6, 0, 1000, 500, nil, 1 }, { "Bloodsail", "Pirates.", 4, 0, 100, 0, 1, 1 } }
+		world.selectedFaction = 1
+	end })
+	local config = client.Engine:GetDB("Blizzard").character
+	local C = client.Engine:GetDB("Data: Colors")
+	local module = client:GetModule("Blizzard: Character")
+	-- a dark panel right of the window, its name in its standing's color
+	local detail = _G.ReputationDetailFrame
+	lu.assertEquals({ detail:GetPoint() }, { "TOPLEFT", module.Backdrop, "TOPRIGHT", unpack(config.reputation_detail_offset) })
+	_G.ReputationFrame_Update()
+	near(color(_G.ReputationDetailFactionName:GetTextColor()), C.Reaction[6])
+	-- at war, a box that can't be changed faded
+	client.world.selectedFaction = 2
+	_G.ReputationDetailAtWarCheckBox:Disable()
+	_G.ReputationFrame_Update()
+	near(color(_G.ReputationDetailAtWarCheckBoxText:GetTextColor()), config.reputation_detail_ink.off)
+	-- the bars in our standings' colors
+	_G.ReputationBar1.index = 1
+	_G.ReputationBar1:Show()
+	_G.ReputationBar2.index = 2
+	_G.ReputationBar2:Show()
+	client.world.factions[2][3] = 9 -- (none of ours)
+	_G.ReputationFrame_Update()
+	near(color(_G.ReputationBar1ReputationBar:GetStatusBarColor()), C.Reaction[6])
+	assertClean(client)
+end
+
 -- The achievement window -------------------------------------------------------------
 
 TestAchievements = {}
@@ -846,6 +964,40 @@ function TestAchievements:test_our_window_once_it_loads()
 	local added = _G.CreateFrame("Button", "AchievementFrameTab3", frame)
 	_G.PanelTemplates_SetNumTabs(frame, 3)
 	lu.assertNotNil(added.DiabolicArt)
+	assertClean(client)
+end
+
+function TestAchievements:test_overachievers_pages()
+	boot()
+	client.api.LoadAddOn("Blizzard_AchievementUI")
+	local frame = _G.AchievementFrame
+	local config = client.Engine:GetDB("Blizzard").achievements
+	-- its tab's page: the list on a panel of its own, the controls left of it
+	local tab = _G.CreateFrame("Button", "AchievementFrameTab3", frame)
+	local page = _G.CreateFrame("Frame", "Overachiever_SuggestionsFrame", frame)
+	tab.frame = page
+	local list = _G.CreateFrame("Frame", nil, page)
+	list:SetBackdrop({ bgFile = "Interface\\AchievementFrame\\UI-Achievement-Parchment" })
+	local panel = _G.CreateFrame("Frame", nil, page)
+	page.panel = panel
+	local label = panel:CreateFontString(nil, "ARTWORK")
+	local button = _G.CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	button:SetNormalTexture("Interface\\Buttons\\UI-Panel-Button-Up")
+	local dropdown = _G.CreateFrame("Frame", "Overachiever_Filter", panel)
+	_G.CreateFrame("Button", "Overachiever_FilterButton", dropdown)
+	dropdown:CreateTexture("Overachiever_FilterMiddle")
+	_G.CreateFrame("Frame", nil, panel) -- (anything else left alone)
+	local left = _G.CreateFrame("Frame", "Overachiever_LeftFrame", frame)
+	left.label = left:CreateFontString(nil, "ARTWORK")
+	frame:Show()
+	lu.assertEquals(list:GetBackdrop(), client.Engine:GetDB("Blizzard").window.panel.backdrop)
+	near(color(label:GetTextColor()), config.category_color)
+	lu.assertTrue(button.DiabolicStyled)
+	lu.assertTrue(dropdown.DiabolicStyled)
+	near(color(left.label:GetTextColor()), client.Engine:GetDB("Blizzard").window.section.color)
+	-- once
+	frame:Hide()
+	frame:Show()
 	assertClean(client)
 end
 
@@ -1203,19 +1355,19 @@ function TestItemSlots:test_character_slots_get_a_quality_border_and_glow_only()
 	_G.PaperDollItemSlotButton_Update(shirt)
 	near(color(borderOf(head):GetVertexColor()), C.Quality[4], "epic border")
 	lu.assertNil(itemLevelOf(head), "no item level")
-	near(color(borderOf(shirt):GetVertexColor()), C.General.UIBorder, "a common shirt")
+	lu.assertFalse(shown(borderOf(shirt)), "a common shirt")
 	near(glowOf(head), C.Quality[4], "epic glow")
 	lu.assertNil(glowOf(shirt), "no glow on the shirt")
 
 	-- the item gone: nothing left behind
 	client.world.inventory[1] = nil
 	_G.PaperDollItemSlotButton_Update(head)
-	near(color(borderOf(head):GetVertexColor()), C.General.UIBorder)
+	lu.assertFalse(shown(borderOf(head)))
 	lu.assertNil(glowOf(head))
 	assertClean(client)
 end
 
-function TestItemSlots:test_slots_with_their_own_border_keep_it()
+function TestItemSlots:test_slots_with_their_own_border_get_ours()
 	boot()
 	-- a client patch's item buttons, with a quality border of their own
 	local head = _G.CharacterHeadSlot
@@ -1224,8 +1376,8 @@ function TestItemSlots:test_slots_with_their_own_border_keep_it()
 	client.world.inventory[1] = Session.item(client, 300, { quality = 4, iLevel = 245, equipSlot = "INVTYPE_HEAD" })
 	_G.PaperDollItemSlotButton_Update(head)
 	lu.assertNil(itemLevelOf(head))
-	lu.assertNil(borderOf(head))
-	lu.assertEquals(_G.CharacterHeadSlotNormalTexture:GetAlpha(), 1)
+	lu.assertEquals(head.IconBorder:GetAlpha(), 0)
+	near(color(borderOf(head):GetVertexColor()), C.Quality[4])
 	assertClean(client)
 end
 

@@ -511,39 +511,34 @@ local function part(parent, key, kind)
 	return frame
 end
 
--- Immersion's dialogue box: the parts the skin uses, and its option buttons
--- made as they're needed, like its Titles mixin's GetButton.
+-- A money frame's gold coin, as MoneyFrameTemplate draws it.
+local function coin(frame)
+	local texture = frame:CreateTexture()
+	texture:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+	texture:SetTexCoord(0, .25, 0, 1)
+	return texture
+end
+
+-- Immersion's dialogue box: the parts the skin uses.
 local function immersion(world)
 	table.insert(world.addons, { name = "Immersion", enabled = true, onLoad = function()
 		local frame = CreateFrame("Frame", "ImmersionFrame", _G.UIParent)
 		local talkBox = part(frame, "TalkBox", "Button")
-		part(talkBox, "Elements"):SetBackdrop({ bgFile = "Backdrop_Talkbox" })
-		local background = part(talkBox, "BackgroundFrame")
-		background.TextBackground = background:CreateTexture()
-		background.SolidBackground = background:CreateTexture()
-		local portraitFrame = part(talkBox, "PortraitFrame")
-		portraitFrame.Portrait = portraitFrame:CreateTexture()
 		local main = part(talkBox, "MainFrame")
-		part(main, "Model", "PlayerModel").PortraitBG = main.Model:CreateTexture()
-		part(main, "Overlay")
 		part(main, "CloseButton", "Button")
 		part(talkBox, "NameFrame").Name = talkBox.NameFrame:CreateFontString(nil, "ARTWORK")
-		part(talkBox, "TextFrame").Text = talkBox.TextFrame:CreateFontString(nil, "ARTWORK")
-		local titles = part(frame, "TitleButtons")
-		titles.Buttons = {}
-		titles.GetButton = function(self, index)
-			local button = self.Buttons[index]
-			if not button then
-				button = CreateFrame("Button", nil, self)
-				button:SetBackdrop({ bgFile = "Backdrop_Gossip" })
-				part(button, "Overlay"):SetBackdrop({ edgeFile = "Edge_Gossip_Normal" })
-				part(button, "Hilite"):SetBackdrop({ edgeFile = "Edge_Gossip_Hilite" })
-				button:SetHighlightTexture("PvPMegaQueue")
-				self.Buttons[index] = button
-			end
-			return button
-		end
-		titles:GetButton(1)
+		talkBox.NameFrame.Name:SetFont([[Fonts\MORPHEUS.TTF]], 22, "")
+		talkBox.NameFrame.Name:SetTextColor(1, .82, 0)
+		local elements = part(talkBox, "Elements")
+		local content = part(elements, "Content")
+		content.ObjectivesHeader = content:CreateFontString(nil, "BACKGROUND")
+		local rewards = part(content, "RewardsFrame")
+		rewards.Header = rewards:CreateFontString(nil, "BACKGROUND")
+		coin(part(rewards, "MoneyFrame"))
+		part(rewards, "MoneyIcon").MoneyIcon = rewards.MoneyIcon:CreateTexture(nil, "ARTWORK")
+		local progress = part(elements, "Progress")
+		progress.ReqText = progress:CreateFontString(nil, "BACKGROUND")
+		coin(part(progress, "MoneyFrame"))
 	end })
 end
 
@@ -553,69 +548,37 @@ function TestImmersion:tearDown()
 	client = nil
 end
 
-local function assertColor(actual, expected, message)
-	for i = 1, 3 do
-		lu.assertAlmostEquals(actual[i], expected[i], 1e-6, message)
-	end
-end
-
-local function assertStyledOption(button, config, C)
-	lu.assertEquals(button:GetBackdrop(), client.Engine:GetDB("Blizzard").window.panel.backdrop)
-	lu.assertNil(button.Overlay:GetBackdrop())
-	lu.assertEquals(button.Hilite:GetBackdrop(), config.option_focus_backdrop)
-	assertColor({ button.Hilite:GetBackdropBorderColor() }, C.General.DimRed, "focus edge")
-	assertColor({ button:GetHighlightTexture():GetVertexColor() }, C.General.DimRed, "hover")
-end
-
 function TestImmersion:test_loaded_after_us_it_gets_styled()
 	boot({ world = immersion })
 	-- another addon first: nothing to style yet
 	client:FireEvent("ADDON_LOADED", "SomethingElse")
 	client.api.LoadAddOn("Immersion")
 	local config = client.Engine:GetDB("Blizzard").immersion
-	local C = client.Engine:GetDB("Data: Colors")
+	local window = client.Engine:GetDB("Blizzard").window
 	local talkBox = _G.ImmersionFrame.TalkBox
+	local elements = talkBox.Elements
+	local rewards = elements.Content.RewardsFrame
 
-	-- our stone panel from under the model, none on the box itself, and
-	-- Immersion's art out of sight
-	local panel = client.Engine:GetModule("Blizzard: Immersion").Panel
-	lu.assertNil(talkBox:GetBackdrop())
-	lu.assertEquals(panel:GetBackdrop(), config.backdrop)
-	lu.assertEquals({ panel:GetBackdropColor() }, config.backdrop_color)
-	lu.assertEquals({ panel:GetPoint(1) }, { "TOPLEFT", talkBox, "TOPLEFT", config.panel_insets[1], config.panel_insets[2] })
-	lu.assertTrue(panel:GetFrameLevel() < talkBox:GetFrameLevel() or talkBox:GetFrameLevel() == 0)
-	lu.assertEquals({ talkBox.MainFrame.CloseButton:GetPoint() }, { "TOPRIGHT", panel, "TOPRIGHT", unpack(config.close_offset) })
-	-- the quest's text and rewards in the same, on a frame of their own
-	lu.assertNil(talkBox.Elements:GetBackdrop())
-	lu.assertEquals((talkBox.Elements:GetChildren()):GetBackdrop(), config.backdrop)
-	lu.assertEquals(talkBox.BackgroundFrame.TextBackground:GetAlpha(), 0)
-	lu.assertEquals(talkBox.BackgroundFrame.SolidBackground:GetAlpha(), 0)
-	lu.assertEquals(talkBox.MainFrame.Model.PortraitBG:GetAlpha(), 0)
-	lu.assertEquals(talkBox.MainFrame.Overlay:GetAlpha(), 0)
-	-- its "solid background" option sets its own again: ours comes back
-	talkBox.Elements:SetBackdrop({ bgFile = "Backdrop_Talkbox_Solid" })
-	lu.assertNil(talkBox.Elements:GetBackdrop())
-	talkBox:SetBackdrop({ bgFile = "Backdrop_Talkbox_Solid" })
-	lu.assertNil(talkBox:GetBackdrop())
+	-- the windows' close button, where Immersion put it
+	local close = talkBox.MainFrame.CloseButton
+	lu.assertEquals(close:GetNormalTexture():GetTexture(), window.close.texture.normal)
 
-	-- the model on black in bronze lines, not in Immersion's round frame
-	lu.assertEquals(talkBox.PortraitFrame.Portrait:GetAlpha(), 0)
+	-- the titles in Exocet, in Immersion's colors
+	local name = talkBox.NameFrame.Name
+	lu.assertEquals({ name:GetFont() }, { config.title_font, config.name_size, "" })
+	lu.assertEquals({ name:GetTextColor() }, { 1, .82, 0, 1 })
+	for _, header in ipairs({ elements.Content.ObjectivesHeader, rewards.Header, elements.Progress.ReqText }) do
+		lu.assertEquals({ header:GetFont() }, { config.title_font, config.header_size, "" })
+	end
 
-	-- the name in gold serif by the model, and the text, which keeps its
-	-- color through a font change
-	local name, text = talkBox.NameFrame.Name, talkBox.TextFrame.Text
-	lu.assertEquals(name:GetFontObject(), config.name_font)
-	assertColor({ name:GetTextColor() }, config.name_color, "name")
-	lu.assertEquals({ name:GetPoint() }, { "TOPLEFT", panel, "TOPLEFT", unpack(config.name_offset) })
-	assertColor({ text:GetTextColor() }, config.text_color, "text")
-	text:SetFontObject(_G.GameFontHighlight)
-	assertColor({ text:GetTextColor() }, config.text_color, "text after a font change")
-
-	-- the options: the one made already, and one made later
-	local titles = _G.ImmersionFrame.TitleButtons
-	assertStyledOption(titles.Buttons[1], config, C)
-	assertStyledOption(titles:GetButton(2), config, C)
-	titles:GetButton(2) -- styled once only
+	-- our coins: in the money it gives or asks for once it's shown, and on
+	-- the reward worth the most
+	local ui = client.Engine:GetDB("UI").coin
+	for _, frame in ipairs({ rewards.MoneyFrame, elements.Progress.MoneyFrame }) do
+		_G.MoneyFrame_Update(frame, 2)
+		lu.assertEquals(frame:GetRegions():GetTexture(), ui.gold_texture)
+	end
+	lu.assertEquals(rewards.MoneyIcon.MoneyIcon:GetTexture(), ui.gold_texture)
 	assertClean(client)
 end
 
@@ -627,7 +590,7 @@ function TestImmersion:test_loaded_before_us_too()
 		addon.onLoad()
 	end })
 	local config = client.Engine:GetDB("Blizzard").immersion
-	lu.assertEquals(client.Engine:GetModule("Blizzard: Immersion").Panel:GetBackdrop(), config.backdrop)
+	lu.assertEquals(select(2, _G.ImmersionFrame.TalkBox.NameFrame.Name:GetFont()), config.name_size)
 	assertClean(client)
 end
 

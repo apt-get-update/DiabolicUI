@@ -159,6 +159,8 @@ function Api.newWorld(class)
 		trackingTypes = {},
 		lfgStatus = nil,
 		battlefields = {},
+		factions = {}, -- { name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild }
+		selectedFaction = 0,
 	}
 	local player = Api.newUnit({ class = class, name = "Tester", isPlayer = true, faction = "Alliance" })
 	player.combat = false
@@ -1282,6 +1284,13 @@ function Api.install(client)
 			end
 		end
 	end
+	api.GetFactionInfo = function(index)
+		local f = world().factions[index]
+		if f then
+			return unpack(f, 1, 13)
+		end
+	end
+	api.GetSelectedFaction = function() return world().selectedFaction end
 	-- the spellbook's schools: name, icon, first spell's offset, count
 	api.GetSpellTabInfo = function(tab)
 		if tab == 1 then
@@ -1425,12 +1434,13 @@ function Api.install(client)
 	end
 	api.GetTotalAchievementPoints = function() return 1000 end
 	api.GetCurrentTitle = function() return world().currentTitle or 0 end
+	api.SetCurrentTitle = function(id) world().currentTitle = id end
 	api.GetTitleName = function(id)
 		local t = world().titles[id]
 		return t and t.name, t and t.playerTitle
 	end
 	api.GetNumTitles = function() return #world().titles end
-	api.IsTitleKnown = function(id) return flag(world().titles[id]) end
+	api.IsTitleKnown = function(id) return world().titles[id] and 1 or 0 end -- 1 or 0, not nil
 
 	-- The client itself ---------------------------------------------------------
 

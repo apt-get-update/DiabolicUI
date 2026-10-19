@@ -22,7 +22,7 @@ Module.StyleBoard = function(self)
 	local frame = _G.GroupBulletinBoardFrame
 	kit:HideTextures(frame) -- its dark square and its icon
 	local window = kit:CreateWindow(frame, config.insets)
-	kit:SetBackground(window, "smoke")
+	kit:SetBackground(window, "cracked")
 	local header = kit:CreateHeader(window, config.header_height, config.header_insets)
 	kit:SetTitle(header, _G.GroupBulletinBoardFrameTitle)
 	local close = _G.GroupBulletinBoardFrameCloseButton
@@ -50,6 +50,9 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	if IsAddOnLoaded(ADDON) and _G.GroupBulletinBoardFrame then
 		self:StyleBoard()
 	else

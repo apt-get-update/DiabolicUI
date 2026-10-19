@@ -43,7 +43,7 @@ Module.StyleSocial = function(self)
 	local frame = _G.FriendsFrame
 
 	local window = kit:CreateWindow(frame, config.insets)
-	kit:SetBackground(window, "smoke")
+	kit:SetBackground(window, "cracked")
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
 	kit:SetPanelLayout(frame, config.insets, config.insets[1], config.offset_y)
@@ -204,9 +204,6 @@ Module.StyleGuild = function(self, window)
 		kit:StylePanel(panel)
 	end
 	local card = _G.GuildMemberDetailFrame
-	if not card then
-		return
-	end
 	kit:HideTextures(card)
 	kit:StylePanel(card)
 	card:SetBackdropColor(unpack(self:GetDB("Blizzard").character.popup_color))
@@ -227,5 +224,8 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	self:StyleSocial()
 end

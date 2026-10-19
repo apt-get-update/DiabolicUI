@@ -26,7 +26,7 @@ Module.StyleContainer = function(self, frame)
 	end
 	frame:SetBackdrop(nil)
 	local window = kit:CreateWindow(frame, config.insets)
-	kit:SetBackground(window, frame.isBank and "leather" or "smoke")
+	kit:SetBackground(window, "smoke")
 	frame.DiabolicWindow = window
 	kit:StyleClose(frame.CloseButton, window)
 	frame.Title:SetFontObject(config.title_font)
@@ -85,6 +85,9 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	if IsAddOnLoaded("AdiBags") then
 		self:StyleAdiBags()
 	else

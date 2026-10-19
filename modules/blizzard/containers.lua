@@ -1,9 +1,9 @@
--- Bag and bank slots: a border in the item's quality color (gold for quest
--- items), a faint glow of that color up from the slot's bottom (Diablo
+-- Bag and bank slots: the item tooltips' icon frame, its edge in the
+-- item's quality color (gold for quest items), a faint glow of that color up from the slot's bottom (Diablo
 -- III's quality-colored slots), greyed out junk, items you can't use in
 -- red, and a smaller quest starter "!". The character window's slots get
 -- the quality border and glow too.
-local _, Engine = ...
+local ADDON, Engine = ...
 local Module = Engine:NewModule("Blizzard: Containers")
 local C = Engine:GetDB("Data: Colors")
 
@@ -40,33 +40,70 @@ local UNUSABLE_COLOR = { 1, .3, .3 }
 -- at the top), kept faint so the icon stays readable
 local QUALITY_GLOW_ALPHA = .35
 
+-- Masque_Diabolic's "DiabolicUI BagButton" (as the item tooltips' icon):
+-- its frame, its quality-colored border and its backdrop have their 64px
+-- art in 128px files, drawn at twice the slot; the icon fills 54/64 of it
+local ICON_TEXTURES = [[Interface\AddOns\]] .. ADDON .. [[\media\textures\]]
+local ICON_FRAME = ICON_TEXTURES .. "DiabolicUI_Button_64x64_Border.tga"
+local ICON_QUALITY_BORDER = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BorderHighlight.tga"
+local ICON_BACKDROP = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BackdropBag.tga"
+local ICON_ART_SCALE = 128/64
+local ICON_FILL = 54/64
+
 local borderCache = {} -- item button -> our border
 local glowCache = {} -- item button -> its quality glow
 local unusableCache = {} -- item link -> whether its tooltip has red lines
 local scanner -- hidden tooltip read for those red lines
 
--- Replaces the slot's square normal texture with our border, doubled up
--- with an additive copy to make the quality colors stand out.
-local styleItem = function(self)
+-- Replaces the slot's square normal texture with Masque_Diabolic's bag
+-- button: its backdrop, the icon inside its frame, the frame swapped for
+-- its border in a quality's color (each shades the icon: one at a time).
+-- A slot Masque skins (AdiBags') keeps its backdrop and icon: 3.3.5 has no
+-- sublevels to put ours under its icon, in the same layer.
+local styleItem = function(self, masqued)
 	local normalTexture = _G[self:GetName().."NormalTexture"]
 	normalTexture:Hide()
 	normalTexture:SetAlpha(0)
 
+	local width, height = self:GetWidth() * ICON_ART_SCALE, self:GetHeight() * ICON_ART_SCALE
+	if (not masqued) then
+		local backdrop = self:CreateTexture()
+		backdrop:SetDrawLayer("BACKGROUND")
+		backdrop:SetTexture(ICON_BACKDROP)
+		backdrop:SetPoint("CENTER", self, "CENTER", 0, 0)
+		backdrop:SetSize(width, height)
+
+		local icon = _G[self:GetName().."IconTexture"]
+		icon:ClearAllPoints()
+		icon:SetPoint("CENTER", self, "CENTER", 0, 0)
+		icon:SetSize(self:GetWidth() * ICON_FILL, self:GetHeight() * ICON_FILL)
+		icon:SetTexCoord(5/64, 59/64, 5/64, 59/64)
+
+		-- hovered: its border lit faintly (Masque's), not Blizzard's blue square
+		local highlight = self:GetHighlightTexture()
+		if highlight then
+			highlight:SetTexture(ICON_QUALITY_BORDER)
+			highlight:ClearAllPoints()
+			highlight:SetPoint("CENTER", self, "CENTER", 0, 0)
+			highlight:SetSize(width, height)
+			highlight:SetBlendMode("ADD")
+			highlight:SetVertexColor(1, 1, 1, .25)
+		end
+	end
+	local iconFrame = self:CreateTexture()
+	iconFrame:SetDrawLayer("ARTWORK")
+	iconFrame:SetTexture(ICON_FRAME)
+	iconFrame:SetPoint("CENTER", self, "CENTER", 0, 0)
+	iconFrame:SetSize(width, height)
+
 	local iconBorder = self:CreateTexture()
-	iconBorder:SetDrawLayer("ARTWORK")
-	iconBorder:SetTexture([[Interface\Buttons\UI-Quickslot2]])
-	iconBorder:SetAllPoints(normalTexture)
+	iconBorder:SetDrawLayer("OVERLAY")
+	iconBorder:SetTexture(ICON_QUALITY_BORDER)
+	iconBorder:SetPoint("CENTER", self, "CENTER", 0, 0)
+	iconBorder:SetSize(width, height)
 	iconBorder:Hide()
-
-	local iconBorderDoubler = self:CreateTexture()
-	iconBorderDoubler:SetDrawLayer("OVERLAY")
-	iconBorderDoubler:SetAllPoints(iconBorder)
-	iconBorderDoubler:SetTexture(iconBorder:GetTexture())
-	iconBorderDoubler:SetBlendMode("ADD")
-	iconBorderDoubler:Hide()
-
-	hooksecurefunc(iconBorder, "SetVertexColor", function(_, ...) iconBorderDoubler:SetVertexColor(...) end)
-	hooksecurefunc(iconBorder, "Show", function() iconBorderDoubler:Show() end)
+	hooksecurefunc(iconBorder, "Show", function() iconFrame:Hide() end)
+	hooksecurefunc(iconBorder, "Hide", function() iconFrame:Show() end)
 
 	local qualityGlow = self:CreateTexture()
 	qualityGlow:SetDrawLayer("ARTWORK")
@@ -142,12 +179,13 @@ local updateItem = function(self, bagID)
 
 	if (questId or isQuestItem) then
 		iconBorder:SetVertexColor(unpack(C.General.Gold))
+		iconBorder:Show()
 	elseif (quality and (quality > QUALITY_COMMON) and C.Quality[quality]) then
 		iconBorder:SetVertexColor(unpack(C.Quality[quality]))
+		iconBorder:Show()
 	else
-		iconBorder:SetVertexColor(unpack(C.General.UIBorder))
+		iconBorder:Hide()
 	end
-	iconBorder:Show()
 	updateQualityGlow(self, (not (questId or isQuestItem)) and quality)
 
 	local itemLink = GetContainerItemLink(bagID, slotID)
@@ -181,12 +219,14 @@ local updateItem = function(self, bagID)
 end
 
 -- A character window slot, after Blizzard updated it: our quality border,
--- unless the slot already has one of its own (some client patches give the
--- item buttons one).
+-- instead of the one some client patches give the item buttons.
 local updateCharacterSlot = function(self)
 	local slotID = self:GetID()
-	if self.IconBorder or (slotID < FIRST_GEAR_SLOT) or (slotID > LAST_GEAR_SLOT) then
+	if (slotID < FIRST_GEAR_SLOT) or (slotID > LAST_GEAR_SLOT) then
 		return
+	end
+	if self.IconBorder then
+		self.IconBorder:SetAlpha(0)
 	end
 	local itemLink = GetInventoryItemLink("player", slotID)
 	if (not borderCache[self]) then
@@ -196,10 +236,10 @@ local updateCharacterSlot = function(self)
 	local quality = itemLink and select(3, GetItemInfo(itemLink))
 	if (quality and (quality > QUALITY_COMMON) and C.Quality[quality]) then
 		iconBorder:SetVertexColor(unpack(C.Quality[quality]))
+		iconBorder:Show()
 	else
-		iconBorder:SetVertexColor(unpack(C.General.UIBorder))
+		iconBorder:Hide()
 	end
-	iconBorder:Show()
 	updateQualityGlow(self, quality)
 end
 
@@ -214,12 +254,19 @@ local updateBankItem = function(self)
 	updateItem(self, BANK_CONTAINER)
 end
 
--- Another addon's bag slot (AdiBags'), after it updated it: as ours.
+-- Another addon's bag slot (AdiBags'), after it updated it: as ours, its
+-- item's icon cut inside the frame again (AdiBags shows it whole on each
+-- update) unless Masque skins it.
 Module.StyleSlot = function(self, button, bagID)
+	local group = button.masqueGroup
+	local masqued = group and not (group.db and group.db.Disabled)
 	if (not borderCache[button]) then
-		styleItem(button)
+		styleItem(button, masqued)
 	end
 	updateItem(button, bagID)
+	if button.texture and (not masqued) then
+		_G[button:GetName().."IconTexture"]:SetTexCoord(5/64, 59/64, 5/64, 59/64)
+	end
 end
 
 -- What's usable changes with the player's level, skills and recipes.

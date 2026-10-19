@@ -69,7 +69,7 @@ Module.CreateWindow = function(self)
 	-- the windows' (windows.lua): stone in its iron frame, the title in the
 	-- red band, the X in its socket, the text in a darker panel
 	local window = kit:CreateWindow(frame, { 0, 0, 0, 0 })
-	kit:SetBackground(window, "smoke")
+	kit:SetBackground(window, "dome")
 	local header = kit:CreateHeader(window, look.header_height, look.header_insets)
 	local title = frame:CreateFontString(nil, "OVERLAY")
 	kit:SetTitle(header, title)

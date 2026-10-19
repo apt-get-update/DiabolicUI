@@ -7,5 +7,6 @@
 <Script file="tooltips.lua"/>
 <Script file="tracker.lua"/>
 <Script file="unitframes.lua"/>
+<Script file="windows.lua"/>
 
 </Ui>

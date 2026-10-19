@@ -115,7 +115,7 @@ Module.StyleQuestLog = function(self)
 	local frame = _G.QuestLogFrame
 
 	local window = kit:CreateWindow(frame, config.insets)
-	kit:SetBackground(window, "emblem")
+	kit:SetBackground(window, "cliffs")
 	self.Window = window
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
@@ -168,5 +168,8 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	self:StyleQuestLog()
 end

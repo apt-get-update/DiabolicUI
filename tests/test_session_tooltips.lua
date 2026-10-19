@@ -410,6 +410,16 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	list:Show()
 	_G.DropDownList1:Show()
 
+	-- a menu of its own (the friends' tooltip): its backdrop under its text,
+	-- however low it's put
+	local friends = _G.FriendsTooltip
+	local backdrop = friends:GetChildren()
+	friends:SetFrameLevel(0)
+	lu.assertEquals(friends:GetFrameLevel(), 1)
+	lu.assertEquals(backdrop:GetFrameLevel(), 0)
+	friends:Show()
+	lu.assertEquals(backdrop:GetFrameLevel(), friends:GetFrameLevel() - 1)
+
 	-- Blizzard_DebugTools loads
 	_G.LoadAddOn("Blizzard_DebugTools")
 	lu.assertTrue(module.styled[_G.FrameStackTooltip])

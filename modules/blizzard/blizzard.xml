@@ -6,6 +6,8 @@
 <Script file='bulletinboard.lua'/>
 <Script file='character.lua'/>
 <Script file='spellbook.lua'/>
+<Script file='spellbook-professions.lua'/>
+<Script file='spellbook-search.lua'/>
 <Script file='containers.lua'/>
 <Script file='adibags.lua'/>
 <Script file='fonts.lua'/>
@@ -30,6 +32,7 @@
 <Script file='tooltips.lua'/>
 <Script file='itemtooltips.lua'/>
 <Script file='totembar.lua'/>
+<Script file='tradeskill.lua'/>
 <Script file='trinketmenu.lua'/>
 <Script file='watchframe.lua'/>
 <Script file='worldmap.lua'/>

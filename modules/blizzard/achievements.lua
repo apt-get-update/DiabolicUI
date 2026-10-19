@@ -247,7 +247,7 @@ Module.StyleAchievements = function(self)
 		kit:HideTextures(_G.AchievementFrameStatsBG)
 	end
 	local window = kit:CreateWindow(frame, config.insets)
-	kit:SetBackground(window, "smoke")
+	kit:SetBackground(window, "zoltun")
 	self.Window = window
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
 
@@ -361,6 +361,9 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	if IsAddOnLoaded("Blizzard_AchievementUI") then
 		self:StyleAchievements()
 	else

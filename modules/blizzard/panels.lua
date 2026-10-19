@@ -87,25 +87,10 @@ PaleText = function(frame, color)
 	end
 end
 
--- The window's own close button (an unnamed child).
-local FindClose = function(frame)
-	for i = 1, select("#", frame:GetChildren()) do
-		local child = select(i, frame:GetChildren())
-		local texture = child:IsObjectType("Button") and child:GetNormalTexture()
-		local file = texture and texture:GetTexture()
-		if file and file:lower():find("ui%-panel%-minimizebutton") then
-			return child
-		end
-	end
-end
-
 -- The tabs in a row under the band, each once (addons add theirs later).
 Module.StyleTabs = function(self, prefix, header)
 	local config = self.config
 	local first = _G[prefix .. 1]
-	if not first then
-		return
-	end
 	first:ClearAllPoints()
 	first:SetPoint("TOPLEFT", header, "BOTTOMLEFT", unpack(config.tab_offset))
 	kit:AddTabStrip(header)
@@ -144,12 +129,10 @@ Module.StyleLate = function(self, late)
 			_G[name]:SetAlpha(0)
 		end
 	end
-	for name, place in pairs(late.places or {}) do
-		local part = _G[name]
-		if part then
-			local point, relative, relativePoint, x, y = unpack(place)
-			part:ClearAllPoints()
-			part:SetPoint(point, _G[relative], relativePoint, x, y)
+	for _, entry in ipairs(late.beside or {}) do
+		local part, other = _G[entry[1]], _G[entry[2]]
+		if part and other then
+			part:SetWidth(entry[3])
 		end
 	end
 	for _, name in ipairs(late.lower_in or {}) do
@@ -178,12 +161,6 @@ Module.StyleLate = function(self, late)
 		local dropdown = _G[name]
 		if dropdown and not dropdown.DiabolicPlate then
 			dropdown.DiabolicPlate = true
-			-- as wide as its art (one never sized is narrower: the art
-			-- reaches past it)
-			local middle = _G[name .. "Middle"]
-			if middle and (dropdown:GetWidth() < middle:GetWidth()) then
-				_G.UIDropDownMenu_SetWidth(dropdown, middle:GetWidth())
-			end
 			kit:StyleDropDown(dropdown)
 		end
 	end
@@ -236,6 +213,9 @@ Module.StylePanel = function(self, spec)
 			part:SetPoint(point, _G[relative], relativePoint, x, y)
 		end
 	end
+	for _, name in ipairs(spec.bars or {}) do
+		kit:StyleBar(_G[name], { _G[name .. "Border"], _G[name .. "Background"] })
+	end
 	kit:HideArt(frame, ART)
 	if spec.art then
 		kit:HideArt(frame, spec.art)
@@ -256,7 +236,7 @@ Module.StylePanel = function(self, spec)
 	if title then
 		kit:SetTitle(header, title)
 	end
-	local close = (spec.close and _G[spec.close]) or FindClose(frame)
+	local close = spec.close and _G[spec.close]
 	if close then
 		kit:StyleClose(close, window, header)
 	end
@@ -349,6 +329,9 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
+	if (not kit:IsSkinning()) then
+		return
+	end
 	self:StyleAddon(nil)
 	self.Waiting = {}
 	for _, spec in ipairs(self.config.frames) do

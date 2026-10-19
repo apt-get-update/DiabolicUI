@@ -24,6 +24,7 @@ ROOTS = {
 		"BankFrame", "TradeFrame", "TaxiFrame", "ItemTextFrame", "QuestFrame", "GossipFrame", "TabardFrame",
 		"PetitionFrame", "GuildRegistrarFrame", "ArenaRegistrarFrame", "PetStableFrame", "DressUpFrame",
 		"PVPParentFrame", "BattlefieldFrame", "PetPaperDollFrame", "DropDownList1", "DropDownList2",
+		"ReputationFrame", "QuestInfoFrame", "QuestInfoObjectivesFrame", "QuestInfoRewardsFrame",
 	],
 	"Blizzard_TalentUI": ["PlayerTalentFrame"],
 	"Blizzard_GlyphUI": ["GlyphFrame"],

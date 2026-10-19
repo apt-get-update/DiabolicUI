@@ -250,7 +250,14 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   bars, error and quest messages, PvP emotes.
 - `test_session_blizzard.lua` - the loot window, bag and bank slots, tinted
   panels, the Escape menu, mirror timers, durability and vehicle seat
-  anchors, fonts and combat text, popups and the Dungeon Finder's dialogs.
+  anchors, fonts and combat text, popups and the Dungeon Finder's dialogs;
+  the character window (its tabs, Titles and Sets pages, your home behind
+  you, a faction's details) and the achievements (Overachiever's pages).
+- `test_session_windows.lua` - Blizzard's windows in Diablo III's look: the
+  spellbook as a book and its companions' pages (Sholazar's map), the who
+  list, the quest log, the talents and glyphs, the other windows
+  (Auctionator's pages too), the windows' kit (drag, titles, buttons,
+  coins), and AdiBags' and Group Bulletin Board's windows.
 - `test_session_chat.lua` - chat bubbles, the chat windows (input box,
   buttons, IM style, whisper windows, the stuck key guard, the layout
   question, a hand-placed window kept) and copying web links.
@@ -389,7 +396,8 @@ Session.assertClean(client)
   `options.world` before login, or in `client.world` during a test.
 - `client_blizzard.lua` - Blizzard's frames and FrameXML functions the
   addon touches, built after the 3.3.5 FrameXML (names, parents, templates,
-  which ones start hidden). Load-on-demand addons are built when loaded.
+  which ones start hidden). Blizzard's load-on-demand addons are built
+  when loaded.
   The windows DiabolicUI restyles (mail, merchant, social, spellbook,
   talents, inspect, auction house...) come from `tests/data/framexml.lua`,
   generated from Blizzard's own FrameXML by `tests/tools/framexml.py`
