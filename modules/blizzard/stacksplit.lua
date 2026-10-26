@@ -1,5 +1,6 @@
--- Gives Blizzard's stack split box (shift-click a stack) Diablo III's: its
--- stone with the count in the black field between its two arrow boxes,
+-- Gives Blizzard's stack split box (shift-click a stack) and its coins'
+-- (a click on your money) Diablo III's: its stone with the count in the
+-- black field between its two arrow boxes (the coins' sum with our coin),
 -- Okay and Cancel in its red buttons, in our windows' iron frame. Art,
 -- fonts and places only: Blizzard's code is left as it is.
 local _, Engine = ...
@@ -35,9 +36,10 @@ local SetStates = function(spec, button, states, width, height)
 	end
 end
 
-Module.StyleStackSplit = function(self)
+-- The box `prefix` .. "Frame" and its parts (Blizzard names them alike).
+Module.StyleSplit = function(self, prefix)
 	local spec = self.config
-	local frame = _G.StackSplitFrame
+	local frame = _G[prefix .. "Frame"]
 	local scale = spec.scale
 
 	-- Blizzard's money frame art out of sight, Diablo III's stone (inside
@@ -65,13 +67,13 @@ Module.StyleStackSplit = function(self)
 		return border + place[1] * scale, -border + place[2] * scale
 	end
 
-	local text = _G.StackSplitText
+	local text = _G[prefix .. "Text"]
 	text:ClearAllPoints()
 	text:SetPoint("CENTER", frame, "TOPLEFT", Place(spec.text))
 
 	local arrow = spec.arrow_size * scale
-	for side, name in pairs({ left = "StackSplitLeftButton", right = "StackSplitRightButton" }) do
-		local button, states = _G[name], {}
+	for side, name in pairs({ left = "LeftButton", right = "RightButton" }) do
+		local button, states = _G[prefix .. name], {}
 		for state, at in pairs(spec.arrows[side]) do
 			states[state] = { at, spec.arrows_y }
 		end
@@ -84,8 +86,8 @@ Module.StyleStackSplit = function(self)
 	-- Okay and Cancel: normal and lit drawn under their text (their own
 	-- normal art over the lit one, the highlight layer over the text)
 	local states = spec.button_states
-	for place, name in pairs({ okay = "StackSplitOkayButton", cancel = "StackSplitCancelButton" }) do
-		local button = _G[name]
+	for place, name in pairs({ okay = "OkayButton", cancel = "CancelButton" }) do
+		local button = _G[prefix .. name]
 		SetStates(spec, button, { normal = states.normal, lit = states.lit, pushed = states.dark, disabled = states.dark },
 			spec.button[1], spec.button[2])
 		button:GetNormalTexture():SetAlpha(0)
@@ -107,11 +109,32 @@ Module.StyleStackSplit = function(self)
 	end
 end
 
+-- The coins' box as the stack's, the sum and its coin (ours, the one
+-- shown) together in the middle of the black field.
+Module.StyleCoinPickup = function(self)
+	local frame = _G.CoinPickupFrame
+	if (not frame) then
+		return
+	end
+	self:StyleSplit("CoinPickup")
+	kit:StyleCoins(frame)
+	local spec, text = self.config, _G.CoinPickupText
+	local x, y = spec.border + spec.text[1] * spec.scale, -spec.border + spec.text[2] * spec.scale
+	text:SetPoint("CENTER", frame, "TOPLEFT", x - (spec.coin_size + spec.coin_gap) / 2, y)
+	for _, kind in pairs({ "Gold", "Silver", "Copper" }) do
+		local coin = _G["CoinPickup" .. kind .. "Icon"]
+		coin:SetSize(spec.coin_size, spec.coin_size)
+		coin:ClearAllPoints()
+		coin:SetPoint("LEFT", text, "RIGHT", spec.coin_gap, 0)
+	end
+end
+
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").stacksplit
 	kit = Engine:GetModule("Blizzard: Windows")
 end
 
 Module.OnEnable = function(self)
-	self:StyleStackSplit()
+	self:StyleSplit("StackSplit")
+	self:StyleCoinPickup()
 end

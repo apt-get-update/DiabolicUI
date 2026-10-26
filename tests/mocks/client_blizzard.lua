@@ -984,6 +984,7 @@ local ON_DEMAND = {
 		-- Blizzard_TalentUI.lua
 		_G.PlayerTalentFrame_UpdateSpecs = function() end
 		_G.PlayerTalentFrame_UpdateControls = function() end
+		_G.PlayerTalentFrame_UpdateTabs = function() end -- (names the tabs after the trees)
 	end,
 	Blizzard_TradeSkillUI = function()
 		local trade = hidden(new("Frame", "TradeSkillFrame", _G.UIParent))
@@ -1491,6 +1492,7 @@ local function frameXML(client)
 	end
 	f.PetPaperDollFrame_UpdateIsAvailable = noop
 	f.ReputationFrame_Update = noop
+	f.InboxFrame_Update = noop -- MailFrame.lua: the inbox's page of letters
 	-- the spellbook (SpellBookFrame.lua): each spell button updated
 	f.SpellButton_UpdateButton = noop
 	f.SpellBookFrame_Update = function()

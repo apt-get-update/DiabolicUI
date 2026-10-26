@@ -3,7 +3,7 @@
 -- books and letters, quest givers, gossip, tabard, charters, stable,
 -- dressing room, trainer, professions, macros, inspect, socketing, auction
 -- house, guild bank, key bindings. Each gets the stone window in its iron frame instead of its
--- art, its title in the plate over the red band, its X in the band, its
+-- art, its title on a plate on its top edge, its X in the band, its
 -- tabs in a row under it, its lists in darker panels, its buttons ours and
 -- its dark text (drawn for parchment) pale, or its text on Diablo III's
 -- parchment (quests, gossip, books). Blizzard places their parts
@@ -14,6 +14,7 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Panels", "LOW")
 
 local kit
+local Placed = {} -- the bands' parts placed (PlaceBand), by their settings
 
 -- Lua API
 local _G = _G
@@ -21,9 +22,14 @@ local ipairs = ipairs
 local pairs = pairs
 local type = type
 local select = select
+local string_format = string.format
+local math_max = math.max
+local math_min = math.min
+local tonumber = tonumber
 local unpack = unpack
 
 -- WoW API
+local CreateFrame = _G.CreateFrame
 local IsAddOnLoaded = _G.IsAddOnLoaded
 
 -- their scroll bars' tracks, by file (lowercase, as patterns)
@@ -70,6 +76,27 @@ HideText = function(frame, text)
 	end
 end
 
+-- `color`'s code for a text's colors.
+local ColorCode = function(color)
+	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
+end
+
+-- A text's other colors as dark inks on parchment: white `ink` (its
+-- code), the others (item qualities, Blizzard's red) darkened to `bright`
+-- at most.
+local DarkenCodes = function(text, ink, bright)
+	return (text:gsub("|c%x%x(%x%x)(%x%x)(%x%x)", function(r, g, b)
+		r, g, b = tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255
+		local top = math_max(r, g, b)
+		if (top <= bright) then
+			return nil
+		elseif (math_min(r, g, b) > .8) then
+			return ink
+		end
+		return ColorCode({ r * bright / top, g * bright / top, b * bright / top })
+	end))
+end
+
 -- The dark text in `frame` and all it holds (drawn for parchment) pale.
 local PaleText
 PaleText = function(frame, color)
@@ -87,23 +114,16 @@ PaleText = function(frame, color)
 	end
 end
 
--- The tabs in a row under the band, each once (addons add theirs later),
--- sized to their text when `padding` (the room around it) is given.
-Module.StyleTabs = function(self, prefix, header, padding)
-	local config = self.config
-	local first = _G[prefix .. 1]
-	first:ClearAllPoints()
-	first:SetPoint("TOPLEFT", header, "BOTTOMLEFT", unpack(config.tab_offset))
-	kit:AddTabStrip(header)
+-- The tabs as banners hanging from the window's foot, `sigils` their
+-- emblems; again as it shows (addons add theirs later).
+Module.HangTabs = function(self, window, prefix, sigils)
+	local tabs = {}
 	local i = 1
 	while _G[prefix .. i] do
-		local tab = _G[prefix .. i]
-		if not tab.DiabolicArt then
-			kit:StyleTab(tab, { inset = config.tab_inset, font = config.tab_font, padding = padding })
-			kit:UpdateTab(tab)
-		end
+		tabs[i] = _G[prefix .. i]
 		i = i + 1
 	end
+	kit:HangTabs(window, tabs, sigils)
 end
 
 -- What's placed from `holder`'s bottom (by one point) `by` lower, each
@@ -123,7 +143,74 @@ end
 
 -- The parts an addon adds to a window once it's shown (`late`, its
 -- spec's), each once.
-Module.StyleLate = function(self, late)
+-- Controls moved into `header`'s band (the band's rule: LineBand), once:
+-- `left`, from its left end (a table in it: controls one under the
+-- other); `right`, from its right end; `hints`, edit boxes' labels (their
+-- global strings' names) pale in them while they're empty. Its texts in
+-- its labels' font, its boxes on Diablo III's plates, its checkboxes
+-- Diablo III's, all over the band.
+Module.PlaceBand = function(self, header, band)
+	if Placed[band] then
+		return
+	end
+	local level = header:GetFrameLevel() + 1
+	local Prepare = function(name, stacked)
+		local part = _G[name]
+		if not part then
+			return
+		end
+		if part:IsObjectType("FontString") then
+			part:SetFontObject(kit.config.check_box.font)
+			part:SetTextColor(unpack(kit.config.title_plate.color))
+			return part
+		end
+		if part:IsObjectType("EditBox") then
+			kit:StyleEditBox(part)
+		elseif part:IsObjectType("CheckButton") then
+			kit:StyleCheckBox(part, stacked and kit.config.check_box.stacked)
+		end
+		if (part:GetFrameLevel() < level) then
+			part:SetFrameLevel(level)
+		end
+		return part
+	end
+	for name, text in pairs(band.hints or {}) do
+		if _G[name] then
+			kit:AddHint(_G[name], _G[text])
+		end
+	end
+	local left, right = {}, {}
+	for _, entry in ipairs(band.left or {}) do
+		if (type(entry) == "table") then
+			-- one under the other, in a holder as wide as the widest
+			local holder = CreateFrame("Frame", nil, header)
+			local width, height = 0, 0
+			for _, name in ipairs(entry) do
+				local part = Prepare(name, true)
+				if part then
+					local inLeft, inRight = kit.ArtInsets(part)
+					part:ClearAllPoints()
+					part:SetPoint("TOPLEFT", holder, "TOPLEFT", -inLeft, -height)
+					width = math_max(width, part:GetWidth() - inLeft - inRight)
+					height = height + part:GetHeight()
+				end
+			end
+			holder:SetSize(width, height)
+			left[#left + 1] = holder
+		else
+			left[#left + 1] = Prepare(entry)
+		end
+	end
+	for _, name in ipairs(band.right or {}) do
+		right[#right + 1] = Prepare(name)
+	end
+	kit:LineBand(header, left)
+	kit:LineBand(header, right, true)
+	-- (an addon's, once they're there)
+	Placed[band] = (#left + #right > 0)
+end
+
+Module.StyleLate = function(self, late, header)
 	local config = self.config
 	for _, name in ipairs(late.hide or {}) do
 		if _G[name] then
@@ -174,6 +261,9 @@ Module.StyleLate = function(self, late)
 		end
 		i = i + 1
 	end
+	if late.band then
+		self:PlaceBand(header, late.band)
+	end
 end
 
 Module.StylePanel = function(self, spec)
@@ -219,12 +309,23 @@ Module.StylePanel = function(self, spec)
 			end
 		end
 	end
+	-- every part let go first: Blizzard's own anchors may chain them the
+	-- other way round (the PvP Join button hangs off Cancel)
+	for name in pairs(spec.places or {}) do
+		if _G[name] then
+			_G[name]:ClearAllPoints()
+		end
+	end
 	for name, place in pairs(spec.places or {}) do
 		local part = _G[name]
 		if part then
 			local point, relative, relativePoint, x, y = unpack(place)
-			part:ClearAllPoints()
 			part:SetPoint(point, _G[relative], relativePoint, x, y)
+		end
+	end
+	for name, size in pairs(spec.sizes or {}) do
+		if _G[name] then
+			_G[name]:SetSize(unpack(size))
 		end
 	end
 	for _, name in ipairs(spec.bars or {}) do
@@ -250,20 +351,54 @@ Module.StylePanel = function(self, spec)
 	if title then
 		kit:SetTitle(header, title)
 	end
-	local close = spec.close and _G[spec.close]
+	-- a line of its own in the band's left (the guild bank tab's name and
+	-- rights), its frame (Blizzard's) out of sight
+	local text = spec.band_text and _G[spec.band_text]
+	if text then
+		text:SetParent(header)
+		text:SetDrawLayer("OVERLAY")
+		text:SetFontObject(kit.config.check_box.font)
+		text:SetTextColor(unpack(kit.config.title_plate.color))
+		text:SetJustifyH("LEFT")
+		kit:LineBand(header, { text })
+	end
+	for _, name in ipairs(spec.dropdowns or {}) do
+		local dropdown = _G[name]
+		if dropdown and not dropdown.DiabolicPlate then
+			dropdown.DiabolicPlate = true
+			kit:StyleDropDown(dropdown)
+		end
+	end
+	if spec.band then
+		self:PlaceBand(header, spec.band)
+	end
+	-- (true: its unnamed one)
+	local close = spec.close and ((spec.close == true) and kit:FindClose(frame) or _G[spec.close])
 	if close then
 		kit:StyleClose(close, window, header)
 	end
+	-- its crest (the guild bank's tabard) over the iron, the title's plate
+	-- over it
+	local crest = spec.crest and _G[spec.crest]
+	if crest then
+		local level = window.Border:GetFrameLevel()
+		crest:SetFrameLevel(level + 1)
+		if window.DiabolicPlate then
+			window.DiabolicPlate:SetFrameLevel(level + 2)
+		end
+	end
 
 	if spec.tabs then
-		self:StyleTabs(spec.tabs, header, spec.tab_padding)
+		self:HangTabs(window, spec.tabs, spec.sigils)
+		kit:DropTop(window)
 	end
-	-- a page's own tabs right under the window's (Blizzard's start 70 in,
-	-- the last past the window's side)
+	-- a page's own tabs in the row the window's left, under the band
+	-- (Blizzard's start 70 in, the last past the window's side)
 	local own = spec.own_tabs and _G[spec.own_tabs .. 1]
 	if own and spec.tabs then
+		local x, y = unpack(config.tab_offset)
 		own:ClearAllPoints()
-		own:SetPoint("TOPLEFT", _G[spec.tabs .. 1], "BOTTOMLEFT", 0, -config.own_tab_gap)
+		own:SetPoint("TOPLEFT", header, "BOTTOMLEFT", x, y - config.own_tab_gap)
 	end
 	local i = 1
 	while spec.own_tabs and _G[spec.own_tabs .. i] do
@@ -286,7 +421,7 @@ Module.StylePanel = function(self, spec)
 			name, wider, under, material = list[1], list[2] or 0, list[3], list[4]
 		end
 		if _G[name] then
-			local insets = config.list_panel_insets
+			local insets = spec.list_insets or config.list_panel_insets
 			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] })
 			zones[name] = zone
 			if under and zones[under] then
@@ -308,7 +443,7 @@ Module.StylePanel = function(self, spec)
 		end
 		local scroll = _G[name]
 		if scroll then
-			kit:AddPanel(scroll, kit.config.parchment_panel_insets)
+			kit:AddPanel(scroll, spec.parchment_panel or kit.config.parchment_panel_insets)
 			-- (its window's: Blizzard hides a list's scroll frame when it all fits)
 			local page = kit:AddParchment(scroll, nil, material, scroll:GetParent())[1]:GetParent()
 			pages[name] = page
@@ -320,7 +455,7 @@ Module.StylePanel = function(self, spec)
 				page:SetPoint("LEFT", pages[under], "LEFT", 0, 0)
 				page:SetPoint("RIGHT", pages[under], "RIGHT", 0, 0)
 			end
-			kit:PlaceParchmentBar(scroll)
+			kit:PlaceParchmentBar(scroll, spec.parchment_bar_x)
 		end
 	end
 	-- text Blizzard colors for its page's material, dark on ours (after it
@@ -337,6 +472,27 @@ Module.StylePanel = function(self, spec)
 		frame:HookScript("OnEvent", Ink)
 		frame:HookScript("OnShow", Ink)
 	end
+	-- the lines Blizzard adds to a log (white, the names gold, the times
+	-- teal): in ink on its parchment, in bold, the names and times in
+	-- darker ones, the items' and Blizzard's other colors darkened
+	for _, name in ipairs(spec.ink_messages or {}) do
+		local log = _G[name]
+		if log then
+			local add, ink, inks = log.AddMessage, kit.config.ink, config.log_inks
+			local nameCode, timeCode, inkCode = ColorCode(inks.name), ColorCode(inks.time), ColorCode(ink)
+			local time = _G.GUILD_BANK_LOG_TIME_PREPEND and _G.GUILD_BANK_LOG_TIME_PREPEND:match("|c%x+")
+			log.AddMessage = function(owner, text, ...)
+				text = text:gsub(_G.NORMAL_FONT_COLOR_CODE, nameCode)
+				if time then
+					text = text:gsub(time, timeCode)
+				end
+				text = DarkenCodes(text, inkCode, inks.bright)
+				return add(owner, text, ink[1], ink[2], ink[3])
+			end
+			log:SetFontObject(inks.font)
+			log:SetShadowColor(0, 0, 0, 0)
+		end
+	end
 	kit:StyleButtons(frame)
 	if spec.pale then
 		PaleText(frame, config.text_color)
@@ -344,12 +500,12 @@ Module.StylePanel = function(self, spec)
 	-- what Blizzard and addons add or set as it shows: buttons, tabs, text
 	frame:HookScript("OnShow", function()
 		if spec.late then
-			self:StyleLate(spec.late)
+			self:StyleLate(spec.late, header)
 		end
 		kit:StyleCoins(frame)
 		kit:StyleButtons(frame)
 		if spec.tabs then
-			self:StyleTabs(spec.tabs, header, spec.tab_padding)
+			self:HangTabs(window, spec.tabs, spec.sigils)
 		end
 		if spec.pale then
 			PaleText(frame, config.text_color)

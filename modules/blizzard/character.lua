@@ -26,7 +26,6 @@ local ipairs = ipairs
 local math_ceil = math.ceil
 local math_floor = math.floor
 local math_max = math.max
-local math_min = math.min
 local select = select
 local string_format = string.format
 local table_insert = table.insert
@@ -187,8 +186,7 @@ Module.CreateSpec = function(self)
 	button:SetFrameLevel(self.Header:GetFrameLevel() + 2)
 	button:SetSize(size, size)
 	button:SetPoint("CENTER", medallion, "CENTER", unpack(config.glass_offset))
-	button.icon = button:CreateTexture(nil, "ARTWORK")
-	button.icon:SetAllPoints()
+	button.icon = kit:AddMedallionIcon(medallion, button)
 	button:SetScript("OnEnter", Spec_OnEnter)
 	button:SetScript("OnLeave", Spec_OnLeave)
 	button:SetScript("OnClick", function() _G.ToggleTalentFrame() end)
@@ -318,43 +316,13 @@ Module.LayoutPaperDoll = function(self, window)
 	_G.CharacterFrame:HookScript("OnShow", function() self:SetWide(_G.PaperDollFrame:IsShown()) end)
 end
 
--- How far the narrow window reaches past Blizzard's frame: as far past the
--- last tab as the first tab is from its left. From the tabs' sizes and
--- anchors (each from the one before, Blizzard's), not their places on
--- screen: those are stale while the window is reopened and moved.
-Module.GetTabsRight = function(self)
-	local config = self.config
-	local lefts, last = {}, nil
-	local i, tab = 1, _G.CharacterFrameTab1
-	while tab do
-		if (i == 1) then
-			lefts[tab] = 0
-		else
-			local _, relative, relativePoint, x = tab:GetPoint()
-			if not (relative and lefts[relative]) then
-				return
-			end
-			lefts[tab] = lefts[relative] + ((relativePoint == "RIGHT") and relative:GetWidth() or 0) + x
-		end
-		if tab:IsShown() then
-			last = tab
-		end
-		i = i + 1
-		tab = _G["CharacterFrameTab" .. i]
-	end
-	if last then
-		local pad = config.header_insets[1] + config.tab_offset[1]
-		return pad + lefts[last] + last:GetWidth() + pad - config.insets[1] - _G.CharacterFrame:GetWidth()
-	end
-end
-
 -- The window's size: wide for the character tab's two columns. Blizzard
 -- opens the next window (talents, spellbook) right of it by the width it's
 -- told.
 Module.SetWide = function(self, wide)
 	local insets = wide and self.config.paperdoll.wide_insets or self.config.insets
 	local frame = _G.CharacterFrame
-	local right = (not wide) and self:GetTabsRight() or insets[3]
+	local right = insets[3]
 	self.Backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", right, -insets[4])
 	frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + right)
 	if frame:IsShown() then
@@ -749,13 +717,14 @@ Module.EmbedGearManager = function(self, header, column)
 	dialog:SetPoint("TOPRIGHT", header, "BOTTOMRIGHT")
 	dialog:SetHeight(spec.height)
 
-	-- the sets in rows, equip, save and delete as icons in a column beside
-	-- them, its first free set a "+" for a new one
+	-- the sets in rows, equip (larger: the one used most), save and delete
+	-- (red) as icons in a column beside them, its first free set a "+" for
+	-- a new one
 	local equip, save, delete = _G.GearManagerDialogEquipSet, _G.GearManagerDialogSaveSet, _G.GearManagerDialogDeleteSet
 	-- (placed with the sets, LayoutSets)
-	self:IconButton(equip, 1)
-	self:IconButton(save, 3)
-	self:IconButton(delete, 2)
+	self:IconButton(equip, 1, spec.equip)
+	self:IconButton(save, 3, spec.save)
+	self:IconButton(delete, 2, spec.delete)
 	self.GearHeader, self.GearActions = header, { equip, save, delete }
 	self:AddNewSet(dialog)
 
@@ -798,7 +767,7 @@ end
 
 -- The equipment manager's sets in rows under its title bar (`rows`: how
 -- many in each, the last as wide as the bar), the icons in a column in the
--- rows' room right of the shorter ones, all scaled down to fit. Sized and
+-- rows' room right of the shorter ones, the sets scaled to fill its width. Sized and
 -- placed against the title bar, whatever scale the dialog gets (the
 -- client's patch gives it its own); a scaled frame's offsets are in its own
 -- scale. Nothing until they have a size (the frame after it shows): true
@@ -818,7 +787,7 @@ Module.LayoutSets = function(self)
 		return
 	end
 	local ratio = header:GetEffectiveScale() / dialog:GetEffectiveScale()
-	local fit = math_min(1, room / row)
+	local fit = room / row
 	local left = (room - row * fit) / 2
 	-- each row under the one above's first; past `rows`, as many as its last
 	local r, first, count = 1, 1, rows[1]
@@ -840,7 +809,10 @@ Module.LayoutSets = function(self)
 	while rows[short + 1] and (rows[short + 1] < perRow) do
 		short = short + 1
 	end
-	local icons = #self.GearActions * spec.action_size + (#self.GearActions - 1) * spec.action_gap
+	local icons = (#self.GearActions - 1) * spec.action_gap
+	for _, button in ipairs(self.GearActions) do
+		icons = icons + button:GetHeight()
+	end
 	local span = (math_max(short, 1) * size + (math_max(short, 1) - 1) * spec.row_gap) * fit
 	local x = left + ((perRow - 1) * (size + spec.set_gap) + size / 2) * fit
 	for i, button in ipairs(self.GearActions) do
@@ -870,19 +842,22 @@ Module.SetGearIcon = function(self, texture, index)
 	texture:SetTexCoord(index / spec.icon_count, (index + 1) / spec.icon_count, 0, 1)
 end
 
--- One of the equipment manager's buttons as a small square with an icon,
--- its text in a tooltip, the icon faded while it's disabled.
-Module.IconButton = function(self, button, index)
-	local spec = self.config.paperdoll.gear_manager
+-- One of the equipment manager's buttons as a square with an icon (`look`:
+-- its size, its icon's, the icon's color), its text in a tooltip, the icon
+-- faded while it's disabled.
+Module.IconButton = function(self, button, index, look)
 	local text = button:GetText()
 	button:SetText("")
-	button:SetSize(spec.action_size, spec.action_size)
+	button:SetSize(look.size, look.size)
 	button:ClearAllPoints()
-	kit:StyleButton(button, spec.action_size)
+	kit:StyleButton(button, look.size)
 	local icon = button:CreateTexture(nil, "OVERLAY")
-	icon:SetSize(spec.action_icon_size, spec.action_icon_size)
+	icon:SetSize(look.icon_size, look.icon_size)
 	icon:SetPoint("CENTER")
 	self:SetGearIcon(icon, index)
+	if look.color then
+		icon:SetVertexColor(unpack(look.color))
+	end
 	local update = function()
 		icon:SetDesaturated(button:IsEnabled() == 0)
 		icon:SetAlpha((button:IsEnabled() == 0) and .4 or 1)
@@ -1222,16 +1197,14 @@ Module.StyleCharacter = function(self)
 		end
 	end
 
-	-- the tabs in a row under the band (Blizzard sizes them)
-	local i, tab = 1, _G.CharacterFrameTab1
-	tab:ClearAllPoints()
-	tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-	kit:AddTabStrip(self.Header)
-	while tab do
-		kit:StyleTab(tab, { inset = config.tab_inset, font = config.tab_font })
-		i = i + 1
-		tab = _G["CharacterFrameTab" .. i]
+	-- the tabs as banners hanging from the window's foot (the pet's shown
+	-- with a pet)
+	local tabs = {}
+	while _G["CharacterFrameTab" .. (#tabs + 1)] do
+		tabs[#tabs + 1] = _G["CharacterFrameTab" .. (#tabs + 1)]
 	end
+	kit:HangTabs(window, tabs, config.tab_sigils)
+	kit:DropTop(window)
 
 	self:LayoutPaperDoll(window)
 	self:StyleCompanions()

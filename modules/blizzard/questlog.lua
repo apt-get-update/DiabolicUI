@@ -106,6 +106,7 @@ Module.PlaceDetails = function(self)
 	if (scroll:GetParent() == _G.QuestLogFrame) then
 		scroll:ClearAllPoints()
 		scroll:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", unpack(self.config.details))
+		scroll:SetHeight(self.config.details_height)
 		kit:PlaceParchmentBar(scroll)
 	end
 end

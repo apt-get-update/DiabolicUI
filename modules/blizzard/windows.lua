@@ -3,7 +3,8 @@
 -- stone window in its iron frame, a red stained-glass band along its top
 -- with the title in a plate on its top edge, a stone cartouche for a key
 -- number, darker panels, section title bars, flat red buttons and tabs,
--- and spiked bars; a cover of the same stone for another page over one.
+-- the windows' own tabs as banners hanging from their foot, and spiked
+-- bars; a cover of the same stone for another page over one.
 -- Buttons and bars are cut in three so their ends keep their shape at any
 -- width.
 -- Settings in settings/blizzard.lua (window).
@@ -14,6 +15,8 @@ local Module = Engine:NewModule("Blizzard: Windows")
 local _G = _G
 local ipairs = ipairs
 local table_insert = table.insert
+local table_sort = table.sort
+local math_abs = math.abs
 local math_ceil = math.ceil
 local math_floor = math.floor
 local math_max = math.max
@@ -21,6 +24,7 @@ local math_min = math.min
 local pairs = pairs
 local select = select
 local setmetatable = setmetatable
+local string_find = string.find
 local string_upper = string.upper
 local type = type
 local unpack = unpack
@@ -28,9 +32,19 @@ local unpack = unpack
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local hooksecurefunc = _G.hooksecurefunc
+local InCombatLockdown = _G.InCombatLockdown
 
 local config
-local PlaceTitle -- the title in the band (defined with the header)
+local BannerIndex -- an emblem's place in the banners' atlas, by name (OnInit)
+local Windows = {} -- every window made, its Blizzard frame its .Frame (/dui layout checks them)
+Module.Windows = Windows
+local LitRows = {} -- every chosen row's copper bar (LightRow; /dui layout reads text on it)
+Module.LitRows = LitRows
+
+-- How far `window`'s top is lowered (DropTop): the tab row it no longer needs.
+local Drop = function(window)
+	return window.DiabolicDrop or 0
+end
 
 -- Three textures that draw `spec`'s art across `frame` at `height`, their
 -- ends at its sides (`inset` in from them), centred on it; drawn by `owner`
@@ -149,10 +163,22 @@ end
 
 local LayoutStone = function(window)
 	local insets = config.backdrop.insets
+	local top = insets.top + Drop(window)
 	local width = window:GetWidth() - insets.left - insets.right
-	local height = window:GetHeight() - insets.top - insets.bottom
-	TileStone(window, insets.left, insets.top, 0, 0, width, height)
+	local height = window:GetHeight() - top - insets.bottom
+	TileStone(window, insets.left, top, 0, 0, width, height)
 	FitBackground(window, width, height)
+end
+
+-- The painted background inside the iron.
+local PlaceBackground = function(window)
+	local background = window.DiabolicBackground
+	if background then
+		local insets = config.backdrop.insets
+		background:ClearAllPoints()
+		background:SetPoint("TOPLEFT", insets.left, -insets.top - Drop(window))
+		background:SetPoint("BOTTOMRIGHT", -insets.right, insets.bottom)
+	end
 end
 
 -- `window`'s painted background (config.backgrounds' `name`) over its
@@ -173,9 +199,8 @@ Module.SetBackground = function(self, window, name)
 	local background = window.DiabolicBackground
 	if not background then
 		background = window:CreateTexture(nil, "BORDER")
-		background:SetPoint("TOPLEFT", insets.left, -insets.top)
-		background:SetPoint("BOTTOMRIGHT", -insets.right, insets.bottom)
 		window.DiabolicBackground = background
+		PlaceBackground(window)
 	end
 	background:SetTexture(spec.texture)
 	background:Show()
@@ -185,7 +210,16 @@ end
 
 local LayoutCover = function(cover)
 	local insets = config.backdrop.insets
-	TileStone(cover, 0, 0, cover.DiabolicX - insets.left, cover.DiabolicY - insets.top, cover:GetWidth(), cover:GetHeight())
+	local y = cover.DiabolicY - insets.top - Drop(cover.DiabolicWindow)
+	TileStone(cover, 0, 0, cover.DiabolicX - insets.left, y, cover:GetWidth(), cover:GetHeight())
+end
+
+-- The window's iron, from its (lowered) top.
+local PlaceBorder = function(window)
+	local border = window.Border
+	border:ClearAllPoints()
+	border:SetPoint("TOPLEFT", window, "TOPLEFT", 0, -Drop(window))
+	border:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT")
 end
 
 -- The window behind `frame`, from its corners by `insets` (left, top,
@@ -200,7 +234,6 @@ Module.CreateWindow = function(self, frame, insets)
 	-- over the band (+1), under the close button's socket (+4)
 	local border = CreateFrame("Frame", nil, window)
 	border:SetFrameLevel(window:GetFrameLevel() + 3)
-	border:SetAllPoints()
 	border:SetBackdrop({
 		edgeFile = config.backdrop.edgeFile,
 		edgeSize = config.backdrop.edgeSize,
@@ -208,9 +241,13 @@ Module.CreateWindow = function(self, frame, insets)
 	})
 	border:SetBackdropBorderColor(unpack(config.backdrop_border_color))
 	window.Border = border
+	PlaceBorder(window)
 	window.DiabolicStone = {}
+	window.DiabolicHeaders, window.DiabolicCovers = {}, {}
 	window:SetScript("OnSizeChanged", LayoutStone)
 	LayoutStone(window)
+	window.Frame = frame
+	Windows[#Windows + 1] = window
 	return window
 end
 
@@ -226,6 +263,8 @@ Module.CreateCover = function(self, window, insets, level)
 	cover:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -insets[3], insets[4])
 	cover:EnableMouse(true)
 	cover.DiabolicX, cover.DiabolicY = insets[1], insets[2]
+	cover.DiabolicWindow = window
+	table_insert(window.DiabolicCovers, cover)
 	cover.DiabolicTile = window.DiabolicTile
 	cover.DiabolicStone = {}
 	cover:SetScript("OnSizeChanged", LayoutCover)
@@ -245,40 +284,6 @@ Module.AddDrag = function(self, window, frame)
 				handler(frame)
 			end
 		end)
-	end
-end
-
--- The title in `header`'s band (Diablo III's): left of what's in the band's
--- middle (`header.DiabolicCenter`: the medallion, a cartouche, a status),
--- in the middle if nothing is; one line, cut short past the band's end.
--- `title` if given, else each of its titles (a window can have two: the
--- character's and its pet's).
-PlaceTitle = function(header, title)
-	if not title then
-		for _, each in ipairs(header.DiabolicTitles or {}) do
-			PlaceTitle(header, each)
-		end
-		return
-	end
-	local spec = config.band_title
-	local center = header.DiabolicCenter
-	-- (gone while hidden or empty: the talents' status without a second spec)
-	if center and ((not center:IsVisible()) or (center.GetText and ((center:GetText() or "") == ""))) then
-		center = nil
-	end
-	local most
-	title:ClearAllPoints()
-	if center then
-		title:SetPoint("RIGHT", center, "LEFT", -spec.gap, 0)
-		most = header:GetWidth() / 2 - center:GetWidth() / 2 - spec.gap - spec.margin
-	else
-		-- centred, clear of a medallion at the band's left end on both sides
-		title:SetPoint("CENTER", header, "CENTER", 0, 0)
-		most = header:GetWidth() - (header.DiabolicLeftRoom or spec.margin) * 2
-	end
-	title:SetSize(0, 0)
-	if (most > 0) and (title:GetStringWidth() > most) then
-		title:SetSize(most, select(2, title:GetFont()) + 2)
 	end
 end
 
@@ -310,21 +315,30 @@ local LayoutBand = function(header)
 		tile:SetTexCoord(0, w / size, 0, 1)
 		tile:Show()
 	end
-	PlaceTitle(header)
 end
 
 -- The title bar along the top of `window`, `height` tall, `insets` (x, y)
--- in from its edges: the red band (the title goes in it, SetTitle). Returns
+-- in from its edges: the red band (the window's controls go in it). Returns
 -- the band's place.
+local PlaceHeader = function(header)
+	local window, insets = header:GetParent(), header.DiabolicInsets
+	header:ClearAllPoints()
+	header:SetPoint("TOPLEFT", insets[1], -insets[2] - Drop(window))
+	header:SetPoint("TOPRIGHT", -insets[1], -insets[2] - Drop(window))
+end
+
 Module.CreateHeader = function(self, window, height, insets)
 	local header = CreateFrame("Frame", nil, window)
-	header:SetPoint("TOPLEFT", insets[1], -insets[2])
-	header:SetPoint("TOPRIGHT", -insets[1], -insets[2])
+	header.DiabolicInsets = insets
+	PlaceHeader(header)
+	if window.DiabolicHeaders then
+		table_insert(window.DiabolicHeaders, header)
+	end
 	header:SetHeight(height)
 	header.DiabolicBand = {}
 	header:SetScript("OnSizeChanged", LayoutBand)
 	LayoutBand(header)
-	-- the band glowing in its middle, under the title
+	-- the band glowing in its middle
 	local glow = header:CreateTexture(nil, "ARTWORK")
 	glow:SetTexture(config.band.glow)
 	glow:SetBlendMode("ADD")
@@ -335,7 +349,7 @@ Module.CreateHeader = function(self, window, height, insets)
 end
 
 -- `name`'s emblem (config.medallion's) at the left end of `header`'s
--- band, the title centred clear of it.
+-- band.
 Module.AddMedallion = function(self, header, name)
 	local spec = config.medallion
 	local medallion = header:CreateTexture(nil, "OVERLAY")
@@ -343,56 +357,78 @@ Module.AddMedallion = function(self, header, name)
 	local size = header:GetHeight() + spec.grow
 	medallion:SetSize(size, size)
 	medallion:SetPoint("LEFT", header, "LEFT", spec.offset, 0)
-	header.DiabolicLeftRoom = spec.offset + size + config.band_title.gap
-	PlaceTitle(header)
+	header.DiabolicMedallion = medallion -- (the band's controls start right of it)
+	-- Diablo III's amber ring over its glass, over an icon a window shows
+	-- there too (AddMedallionIcon)
+	local ring = CreateFrame("Frame", nil, header)
+	ring:SetFrameLevel(header:GetFrameLevel() + 3)
+	ring:SetSize(size * spec.ring_scale, size * spec.ring_scale)
+	ring:SetPoint("CENTER", medallion, "CENTER", unpack(spec.ring_offset))
+	local art = ring:CreateTexture(nil, "OVERLAY")
+	art:SetTexture(spec.ring)
+	art:SetAllPoints()
+	medallion.DiabolicRing = ring
 	return medallion
 end
 
--- What's in the middle of `header`'s band, the title left of it.
-Module.SetBandCenter = function(self, header, region)
-	header.DiabolicCenter = region
-	-- the titles placed again as it shows, hides or changes, and as the
-	-- window shows
-	local Replace = function()
-		PlaceTitle(header)
+-- An icon on `medallion`'s glass, under its ring (drawn by the ring's
+-- frame), filling `holder` (a window's frame there, a button for its
+-- tooltip) and shown while it is.
+Module.AddMedallionIcon = function(self, medallion, holder)
+	local icon = medallion.DiabolicRing:CreateTexture(nil, "ARTWORK")
+	icon:SetAllPoints(holder)
+	holder:HookScript("OnShow", function() icon:Show() end)
+	holder:HookScript("OnHide", function() icon:Hide() end)
+	if not holder:IsVisible() then
+		icon:Hide()
 	end
-	for _, part in ipairs({ region, region:GetParent() }) do
-		hooksecurefunc(part, "Show", Replace)
-		hooksecurefunc(part, "Hide", Replace)
-	end
-	if region.SetText then
-		hooksecurefunc(region, "SetText", Replace)
-	end
-	header:HookScript("OnShow", Replace)
-	PlaceTitle(header)
+	return icon
 end
 
--- `title` (a font string) in the header's band, placed again each time its
--- text changes (a guild's rank and name can be long).
-local Refit = function(title)
-	if title:IsShown() then
-		PlaceTitle(title.DiabolicHeader, title)
+-- The title on its plate, cut short past its inlay (one line).
+local FitTitle = function(title)
+	local most = config.title_plate.text_width
+	title:SetSize(0, 0)
+	if title:GetStringWidth() > most then
+		title:SetSize(most, select(2, title:GetFont()) + 2)
 	end
 end
 
+-- `title` (a font string) on Diablo III's plate on the top edge of
+-- `header`'s window (one plate for its titles: the character's and its
+-- pet's), fitted again each time its text changes (a guild's rank and name
+-- can be long). The band left to the window's own controls.
 Module.SetTitle = function(self, header, title)
-	local spec = config.band_title
-	title:SetParent(header)
+	local spec = config.title_plate
+	local window = header:GetParent()
+	local plate = window.DiabolicPlate
+	if not plate then
+		plate = CreateFrame("Frame", nil, window)
+		plate:SetFrameLevel(window.Border:GetFrameLevel()) -- (its art over the iron's)
+		plate:SetSize(spec.width, spec.height)
+		-- (on the iron's top, lowered with it: DropTop)
+		plate:SetPoint("CENTER", window.Border, "TOP", 0, spec.y)
+		local art = plate:CreateTexture(nil, "ARTWORK")
+		art:SetTexture(spec.texture)
+		art:SetTexCoord(0, 1, 0, spec.rows)
+		art:SetAllPoints()
+		window.DiabolicPlate = plate
+	end
+	title:SetParent(plate)
 	title:SetDrawLayer("OVERLAY")
 	title:SetFontObject(spec.font)
-	title:SetTextColor(unpack(spec.color))
+	title:SetTextColor(unpack(config.title_plate.color))
 	title:SetShadowOffset(1, -1)
-	title:SetJustifyH("RIGHT")
+	title:SetJustifyH("CENTER")
+	title:ClearAllPoints()
+	title:SetPoint("CENTER", plate, "CENTER", 0, spec.text_offset)
 	title.DiabolicHeader = header
 	if not title.DiabolicFitted then
 		title.DiabolicFitted = true
-		header.DiabolicTitles = header.DiabolicTitles or {}
-		table_insert(header.DiabolicTitles, title)
-		hooksecurefunc(title, "SetText", Refit)
-		hooksecurefunc(title, "SetFormattedText", Refit)
-		hooksecurefunc(title, "Show", Refit)
+		hooksecurefunc(title, "SetText", FitTitle)
+		hooksecurefunc(title, "SetFormattedText", FitTitle)
 	end
-	PlaceTitle(header, title)
+	FitTitle(title)
 end
 
 -- A stone cartouche in the middle of the header's band, for a key number:
@@ -423,7 +459,6 @@ Module.CreateCartouche = function(self, header, text, icon)
 	text.DiabolicCartouche = cartouche
 	hooksecurefunc(text, "SetText", FitCartouche)
 	FitCartouche(text)
-	self:SetBandCenter(header, cartouche)
 	return cartouche
 end
 
@@ -543,7 +578,48 @@ local PlaceTabText = function(tab)
 	end
 end
 
+-- A banner tab (StyleBanner): red and longer while chosen, dark otherwise;
+-- its emblem brighter while chosen. Its text in the invisible font again
+-- (Blizzard gives the chosen tab its own) and hidden: the client ignores
+-- a font's alpha.
+local UpdateBanner = function(tab)
+	local art, spec = tab.DiabolicBanner, config.banner
+	local chosen = IsSelected(tab)
+	art.cloth:SetVertexColor(unpack(chosen and spec.chosen_color or spec.cloth_color))
+	if art.gold then
+		art.sigil:SetVertexColor(unpack(chosen and spec.chosen_sigil_color or spec.sigil_color))
+	end
+	-- its top (under the rail) not drawn: a banner over the rail (Blizzard's
+	-- tabs aren't all at one level) can't show it
+	local height = chosen and (spec.height + spec.drop) or spec.height
+	art.cloth:SetHeight(height - spec.tuck)
+	for _, texture in ipairs({ art.cloth, art.trim, art.lit }) do
+		texture:SetTexCoord(0, 1, spec.tuck / height, 1)
+	end
+	-- the rail's shadow: the same rows of the cloth and trim, however long
+	for _, shadow in ipairs(art.shadows) do
+		shadow:SetTexCoord(0, 1, spec.tuck / height, (spec.tuck + spec.shadow) / height)
+	end
+	local font = spec.name_font
+	tab:SetNormalFontObject(font)
+	tab:SetHighlightFontObject(font)
+	tab:SetDisabledFontObject(font)
+	local text = tab:GetFontString()
+	if text then
+		text:SetFontObject(font)
+		text:Hide()
+		if not text.DiabolicHidden then
+			text.DiabolicHidden = true
+			hooksecurefunc(text, "Show", text.Hide)
+		end
+	end
+	UpdateLit(tab)
+end
+
 local UpdateTab = function(tab)
+	if tab.DiabolicBanner then
+		return UpdateBanner(tab)
+	end
 	local art = tab.DiabolicArt
 	if not art then
 		return
@@ -569,6 +645,10 @@ end
 -- A tab sized to its text, again each time Blizzard sizes it (its tabs do
 -- when they show).
 local FitTab = function(tab)
+	if tab.DiabolicBanner then
+		tab:SetWidth(config.banner.width)
+		return
+	end
 	local text = tab:GetFontString()
 	if tab.DiabolicWidth and text then
 		tab:SetWidth(text:GetStringWidth() + tab.DiabolicWidth)
@@ -631,6 +711,260 @@ Module.StyleTab = function(self, tab, options)
 	end
 end
 
+-- Tabs as Diablo III's banners (its heroes'), hanging side by side from a
+-- window's foot, their tops under its iron: dark cloth in gold trim with
+-- an emblem, the chosen one red and hanging lower; the name on hover only.
+
+-- The tab's name under it, unless the tab shows a tooltip of its own (the
+-- character's, with its key).
+local ShowBannerName = function(tab)
+	local tooltip = _G.GameTooltip
+	if tooltip:IsOwned(tab) then
+		return
+	end
+	local text = tab:GetText()
+	if text and (text ~= "") then
+		tooltip:SetOwner(tab, "ANCHOR_BOTTOM")
+		tooltip:SetText(text, 1, 1, 1)
+	end
+end
+
+local HideBannerName = function(tab)
+	if _G.GameTooltip:IsOwned(tab) then
+		_G.GameTooltip:Hide()
+	end
+end
+
+-- For a button over a banner (the spellbook's back to its spells).
+Module.ShowBannerName = function(self, tab)
+	ShowBannerName(tab)
+end
+
+-- `tab`'s emblem: one of Diablo III's by name (config.banner.sigil_names),
+-- dyed gold; or a WoW icon's file, round, in its own colors (a talent
+-- tree's). Anything else gets the default emblem.
+Module.SetBannerIcon = function(self, tab, icon)
+	local art, spec = tab.DiabolicBanner, config.banner
+	local sigil = art.sigil
+	local index = icon and BannerIndex[icon]
+	if (not index) and not (icon and string_find(icon, "\\", 1, true)) then
+		index = BannerIndex[spec.fallback]
+	end
+	if index then
+		local columns, rows = spec.sigil_columns, spec.sigil_rows
+		local column, row = (index - 1) % columns, math_floor((index - 1) / columns)
+		sigil:SetTexture(spec.sigils)
+		sigil:SetTexCoord(column / columns, (column + 1) / columns, row / rows, (row + 1) / rows)
+		sigil:SetSize(spec.sigil_size, spec.sigil_size)
+		art.gold = true
+	else
+		_G.SetPortraitToTexture(sigil, icon)
+		sigil:SetTexCoord(0, 1, 0, 1)
+		sigil:SetSize(spec.icon_size, spec.icon_size)
+		sigil:SetVertexColor(1, 1, 1)
+		art.gold = nil
+	end
+	UpdateBanner(tab)
+end
+
+-- `tab` (PanelTemplates' or one of ours) as a banner, `icon` its emblem
+-- (SetBannerIcon). Blizzard's art out of sight, its text in the invisible
+-- font (UpdateBanner); its own width and height kept (FitTab).
+Module.StyleBanner = function(self, tab, icon)
+	local spec = config.banner
+	local name = tab:GetName()
+	for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled",
+		"LeftHighlight", "MiddleHighlight", "RightHighlight" }) do
+		local region = name and _G[name .. part]
+		if region then
+			region:SetAlpha(0)
+		end
+	end
+	for _, texture in ipairs({ tab:GetNormalTexture() or false, tab:GetPushedTexture() or false,
+		tab:GetDisabledTexture() or false, tab:GetHighlightTexture() or false }) do
+		if texture then
+			texture:SetAlpha(0)
+		end
+	end
+	local art = {}
+	art.cloth = tab:CreateTexture(nil, "BACKGROUND")
+	art.cloth:SetTexture(spec.cloth)
+	art.cloth:SetPoint("TOP", tab, "TOP", 0, -spec.tuck)
+	art.cloth:SetWidth(spec.width)
+	art.trim = tab:CreateTexture(nil, "BORDER")
+	art.trim:SetTexture(spec.trim)
+	art.trim:SetAllPoints(art.cloth)
+	art.sigil = tab:CreateTexture(nil, "ARTWORK")
+	art.sigil:SetPoint("CENTER", art.cloth, "TOP", 0, spec.sigil_y + spec.tuck)
+	-- under the mouse: the cloth lit
+	local lit = tab:CreateTexture(nil, "ARTWORK")
+	lit:SetTexture(spec.cloth)
+	lit:SetBlendMode("ADD")
+	lit:SetAlpha(spec.lit_alpha)
+	lit:SetVertexColor(unpack(spec.lit_color))
+	lit:SetAllPoints(art.cloth)
+	art.lit = lit
+	-- the rail's shadow down its top, in its own shape (UpdateBanner)
+	art.shadows = {}
+	for _, file in ipairs({ spec.cloth, spec.trim }) do
+		local shadow = tab:CreateTexture(nil, "OVERLAY")
+		shadow:SetTexture(file)
+		shadow:SetPoint("TOP", art.cloth, "TOP", 0, 0)
+		shadow:SetSize(spec.width, spec.shadow)
+		shadow:SetGradientAlpha("VERTICAL", 0, 0, 0, 0, 0, 0, 0, spec.shadow_alpha)
+		table_insert(art.shadows, shadow)
+	end
+	tab.DiabolicBanner = art
+	tab.DiabolicNotLit = IsSelected
+	self:AddLit(tab, setmetatable({ lit }, Slices))
+	-- room for the chosen one, longer; not clicked under the iron
+	tab:SetSize(spec.width, spec.height + spec.drop)
+	tab:SetHitRectInsets(0, 0, spec.tuck, 0)
+	tab:HookScript("OnEnter", ShowBannerName)
+	tab:HookScript("OnLeave", HideBannerName)
+	-- (a text given later, its font string made then: ours too)
+	hooksecurefunc(tab, "SetText", UpdateBanner)
+	self:SetBannerIcon(tab, icon)
+end
+
+-- The iron rail `window`'s banners hang from, in three slices: its ends
+-- kept, its middle stretched.
+local CreateRail = function(window)
+	local spec = config.banner.rail
+	local rail = CreateFrame("Frame", nil, window)
+	rail:SetHeight(spec.height)
+	local left = rail:CreateTexture(nil, "ARTWORK")
+	left:SetTexture(spec.texture)
+	left:SetTexCoord(0, spec.cap, 0, spec.rows)
+	left:SetPoint("TOPLEFT", rail, "TOPLEFT", 0, 0)
+	left:SetSize(spec.cap_width, spec.height)
+	local right = rail:CreateTexture(nil, "ARTWORK")
+	right:SetTexture(spec.texture)
+	right:SetTexCoord(1 - spec.cap, 1, 0, spec.rows)
+	right:SetPoint("TOPRIGHT", rail, "TOPRIGHT", 0, 0)
+	right:SetSize(spec.cap_width, spec.height)
+	local middle = rail:CreateTexture(nil, "ARTWORK")
+	middle:SetTexture(spec.texture)
+	middle:SetTexCoord(spec.cap, 1 - spec.cap, 0, spec.rows)
+	middle:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
+	middle:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
+	rail.Clasps = {}
+	return rail
+end
+
+-- `window`'s banners (those shown) side by side from the left of its
+-- foot, hanging from the rail (over them, under the window's iron).
+local HangBanners = function(window)
+	local spec = config.banner
+	local shown = {}
+	for _, tab in ipairs(window.DiabolicBanners) do
+		if tab:IsShown() then
+			shown[#shown + 1] = tab
+		end
+	end
+	local rail = window.DiabolicRail
+	if (#shown == 0) then
+		if rail then
+			rail:Hide()
+		end
+		return
+	end
+	if (not rail) then
+		rail = CreateRail(window)
+		window.DiabolicRail = rail
+	end
+	local below = spec.rail.height - spec.rail.up -- the rail's height under the foot
+	-- over every banner (Blizzard's tabs aren't all at one level)
+	local level = 0
+	for _, tab in ipairs(shown) do
+		level = math_max(level, tab:GetFrameLevel())
+	end
+	rail:SetFrameLevel(level + 1)
+	rail:SetWidth(#shown * spec.width + (#shown - 1) * spec.gap + 2 * spec.rail.overhang)
+	rail:ClearAllPoints()
+	rail:SetPoint("TOPLEFT", window, "BOTTOMLEFT", spec.left - spec.rail.overhang, spec.rail.up)
+	rail:Show()
+	window.DiabolicHanging = true
+	for i, tab in ipairs(shown) do
+		local x = spec.left + (i - 1) * (spec.width + spec.gap)
+		tab:ClearAllPoints()
+		tab:SetPoint("TOPLEFT", window, "BOTTOMLEFT", x, spec.tuck - below)
+		-- its clasps, on the rail (over it and the banner's top)
+		for j, middle in ipairs(spec.clasp.x) do
+			local index = (i - 1) * #spec.clasp.x + j
+			local clasp = rail.Clasps[index]
+			if (not clasp) then
+				clasp = rail:CreateTexture(nil, "OVERLAY")
+				clasp:SetTexture(spec.clasp.texture)
+				clasp:SetVertexColor(unpack(spec.clasp.color))
+				clasp:SetSize(spec.clasp.width, spec.clasp.height)
+				rail.Clasps[index] = clasp
+			end
+			clasp:ClearAllPoints()
+			clasp:SetPoint("CENTER", rail, "BOTTOMLEFT", x - (spec.left - spec.rail.overhang) + middle, spec.clasp.y)
+			clasp:Show()
+		end
+	end
+	for index = #shown * #spec.clasp.x + 1, #rail.Clasps do
+		rail.Clasps[index]:Hide()
+	end
+	window.DiabolicHanging = nil
+end
+
+-- Again when one shows, hides or is moved (Blizzard places its own as it
+-- shows them: the pet's tab).
+local Rehang = function(tab)
+	local window = tab.DiabolicWindow
+	if window and (not window.DiabolicHanging) then
+		HangBanners(window)
+	end
+end
+
+-- `tabs` (in their order) as banners hanging from `window`'s foot, `icons`
+-- their emblems (by the same index). Tabs given again are kept as they
+-- are; new ones join the row.
+Module.HangTabs = function(self, window, tabs, icons)
+	window.DiabolicBanners = window.DiabolicBanners or {}
+	for i, tab in ipairs(tabs) do
+		if not tab.DiabolicBanner then
+			self:StyleBanner(tab, icons and icons[i])
+			tab.DiabolicWindow = window
+			table_insert(window.DiabolicBanners, tab)
+			hooksecurefunc(tab, "SetPoint", Rehang)
+			tab:HookScript("OnShow", Rehang)
+			tab:HookScript("OnHide", Rehang)
+		end
+	end
+	HangBanners(window)
+end
+
+-- `window`'s top lowered by the tab row under its band it no longer needs
+-- (its tabs hang, HangTabs): its stone, iron, band and close button. The
+-- frame itself stays where it is, so what's laid out from it doesn't move;
+-- its part above the iron takes no clicks.
+Module.DropTop = function(self, window)
+	window.DiabolicDrop = config.tab_row
+	window:SetHitRectInsets(0, 0, config.tab_row, 0)
+	PlaceBorder(window)
+	PlaceBackground(window)
+	LayoutStone(window)
+	for _, header in ipairs(window.DiabolicHeaders) do
+		PlaceHeader(header)
+	end
+	for _, cover in ipairs(window.DiabolicCovers) do
+		LayoutCover(cover)
+	end
+	local socket, close = window.DiabolicSocket, window.DiabolicClose
+	if socket then
+		local spec = config.close
+		socket:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.socket_inset, -spec.socket_inset - config.tab_row)
+	end
+	if close then
+		local spec = config.close
+		close:SetPoint("CENTER", window, "TOPRIGHT", -spec.socket_size / 2, -spec.socket_size / 2 - config.tab_row)
+	end
+end
+
 -- A close button (UIPanelCloseButton's) as Diablo III's, in a socket of
 -- `window`'s iron frame at its top right corner: lit under the mouse,
 -- darker pressed. (`header` is the band's, kept for its callers.)
@@ -640,8 +974,9 @@ Module.StyleClose = function(self, button, window, header)
 	if not window.DiabolicSocket then
 		window.DiabolicSocket = self:CreateSocket(window)
 	end
+	window.DiabolicClose = button
 	button:ClearAllPoints()
-	button:SetPoint("CENTER", window, "TOPRIGHT", -spec.socket_size / 2, -spec.socket_size / 2)
+	button:SetPoint("CENTER", window, "TOPRIGHT", -spec.socket_size / 2, -spec.socket_size / 2 - Drop(window))
 	-- over its socket, again as the window shows: a toplevel one (the
 	-- achievements') is raised then, its X put back under the socket
 	local Raise = function()
@@ -663,7 +998,7 @@ Module.CreateSocket = function(self, window)
 	local socket = CreateFrame("Frame", nil, window)
 	socket:SetFrameLevel(window.Border:GetFrameLevel() + 1)
 	socket:SetSize(size, size)
-	socket:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.socket_inset, -spec.socket_inset)
+	socket:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.socket_inset, -spec.socket_inset - Drop(window))
 	local fill = socket:CreateTexture(nil, "BACKGROUND")
 	fill:SetTexture(unpack(spec.socket_color))
 	-- the black from the window's iron's inner edge: its iron over it shows
@@ -727,6 +1062,8 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 		end
 	end
 	local spec = config.dropdown
+	frame.DiabolicInset = inset
+	frame.DiabolicDropDown = true
 	local plate = CreateFrame("Frame", nil, frame)
 	plate:SetPoint("LEFT", 0, offset or 0)
 	plate:SetPoint("RIGHT", 0, offset or 0)
@@ -774,11 +1111,47 @@ Module.StyleEditBox = function(self, box)
 		end
 	end
 	local spec = config.dropdown
+	box.DiabolicOutset = config.edit_padding
 	local plate = CreateFrame("Frame", nil, box)
 	plate:SetPoint("LEFT", -config.edit_padding, 0)
 	plate:SetPoint("RIGHT", config.edit_padding, 0)
 	plate:SetHeight(spec.height)
 	return self:CreateSlices(plate, "BACKGROUND", spec.plate, spec.plate.texture, spec.height, 0, box)
+end
+
+-- A checkbox (OptionsCheckButtonTemplate's) as Diablo III's: its dark box
+-- in a bronze frame, the frame lit under the mouse, its orange X checked;
+-- its label (Blizzard's "Text") right of it in the title's gold; its size
+-- and its label's font `look`'s (check_box.stacked) if not check_box's.
+Module.StyleCheckBox = function(self, button, look)
+	local spec = config.check_box
+	look = look or spec
+	button:SetSize(look.size, look.size)
+	button:SetNormalTexture(spec.texture)
+	button:SetPushedTexture(spec.texture)
+	button:SetHighlightTexture(spec.texture)
+	button:SetCheckedTexture(spec.texture)
+	button:SetDisabledCheckedTexture(spec.texture)
+	button:GetNormalTexture():SetTexCoord(unpack(spec.box))
+	local pushed = button:GetPushedTexture()
+	pushed:SetTexCoord(unpack(spec.box))
+	pushed:SetVertexColor(unpack(spec.pushed_color))
+	local lit = button:GetHighlightTexture()
+	lit:SetTexCoord(unpack(spec.lit))
+	lit:SetBlendMode("ADD")
+	button:GetCheckedTexture():SetTexCoord(unpack(spec.checked))
+	local disabled = button:GetDisabledCheckedTexture()
+	disabled:SetTexCoord(unpack(spec.checked))
+	disabled:SetDesaturated(true)
+	local label = _G[button:GetName() .. "Text"]
+	button.DiabolicLabel = label
+	if label then
+		label:SetFontObject(look.font)
+		label:SetTextColor(unpack(config.title_plate.color))
+		label:SetShadowOffset(1, -1)
+		label:ClearAllPoints()
+		label:SetPoint("LEFT", button, "RIGHT", spec.label_gap, 0)
+	end
 end
 
 -- The dark strip under `header`'s band the tabs sit on, once: its middle
@@ -807,17 +1180,59 @@ Module.AddTabStrip = function(self, header)
 	header.DiabolicStrip = strip
 end
 
--- A dropdown in `header`'s band at `point` (of both), `x` from it, over
--- `window`'s frame.
-Module.PlaceInBand = function(self, window, header, dropdown, point, x)
-	local name = dropdown:GetName()
-	dropdown:ClearAllPoints()
-	dropdown:SetPoint(point, header, point, x, 0)
-	local level = window:GetFrameLevel() + 4
-	for _, part in ipairs({ dropdown, _G[name .. "Button"], _G[name .. "MouseOver"] }) do
-		if part then
-			part:SetFrameLevel(level)
-			level = level + 1
+-- How far in from a band control's sides its art is drawn (a dropdown's
+-- plate), negative out past them (an edit box's plate, a checkbox's
+-- label): left, right.
+local ArtInsets = function(part)
+	local name = part:GetName()
+	if name and _G[name .. "Button"] and _G[name .. "Middle"] then
+		local inset = part.DiabolicInset or config.dropdown.inset
+		return inset, inset
+	elseif part.DiabolicOutset then
+		return -part.DiabolicOutset, -part.DiabolicOutset
+	elseif part.DiabolicLabel then
+		return 0, -(config.check_box.label_gap + part.DiabolicLabel:GetStringWidth())
+	end
+	return 0, 0
+end
+Module.ArtInsets = ArtInsets
+
+-- `parts` (controls, texts) in a row along `header`'s band from its left:
+-- the first from its end (or its medallion's right), their art
+-- window.layout.band_gap apart, each placed on the one before it (moved
+-- as it's resized); `fromRight`: from its right end instead (short of the
+-- X's socket), the last part rightmost. Dropdowns over the window's frame.
+Module.LineBand = function(self, header, parts, fromRight)
+	local layout = config.layout
+	local level = header:GetParent():GetFrameLevel() + 4
+	local previous, previousInset
+	for i = fromRight and #parts or 1, fromRight and 1 or #parts, fromRight and -1 or 1 do
+		local part = parts[i]
+		if part:IsObjectType("FontString") then
+			part:SetWidth(0) -- (as wide as its text)
+		end
+		local left, right = ArtInsets(part)
+		part:ClearAllPoints()
+		if fromRight and previous then
+			part:SetPoint("RIGHT", previous, "LEFT", previousInset - layout.band_gap + right, 0)
+		elseif fromRight then
+			part:SetPoint("RIGHT", header, "RIGHT", right - layout.band_right_edge, 0)
+		elseif previous then
+			part:SetPoint("LEFT", previous, "RIGHT", layout.band_gap - previousInset - left, 0)
+		elseif header.DiabolicMedallion then
+			part:SetPoint("LEFT", header.DiabolicMedallion, "RIGHT", layout.band_medallion_gap - left, 0)
+		else
+			part:SetPoint("LEFT", header, "LEFT", layout.band_edge - left, 0)
+		end
+		previous, previousInset = part, fromRight and left or right
+		local name = part:GetName()
+		if name and _G[name .. "Button"] and _G[name .. "Middle"] then
+			for _, piece in ipairs({ part, _G[name .. "Button"], _G[name .. "MouseOver"] or false }) do
+				if piece then
+					piece:SetFrameLevel(level)
+					level = level + 1
+				end
+			end
 		end
 	end
 end
@@ -856,6 +1271,39 @@ Module.StyleButton = function(self, button, height)
 	hooksecurefunc(button, "Disable", update)
 	self:SetButtonFont(button, config.button_font)
 	update()
+end
+
+-- `frame`'s own close button, an unnamed child (Blizzard's panel close).
+Module.FindClose = function(self, frame)
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		local texture = child:IsObjectType("Button") and child:GetNormalTexture()
+		local file = texture and texture:GetTexture()
+		if file and file:lower():find("ui%-panel%-minimizebutton") then
+			return child
+		end
+	end
+end
+
+-- Page buttons (back, on) as the scroll bars' arrows, turned to point
+-- left and right.
+Module.StylePager = function(self, prev, nextPage)
+	local spec = config.scrollbar
+	local left, right, top, bottom = unpack(spec.arrow_texcoords)
+	for button, art in pairs({ [prev] = spec.up, [nextPage] = spec.down }) do
+		button:SetSize(config.pager_size, config.pager_size)
+		button:SetNormalTexture(art.normal)
+		button:SetPushedTexture(art.lit)
+		button:SetDisabledTexture(art.disabled)
+		button:SetHighlightTexture(art.lit)
+		button:GetHighlightTexture():SetBlendMode("BLEND")
+		for _, texture in ipairs({ button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture(), button:GetHighlightTexture() }) do
+			-- (a quarter turn: the art's top on the left)
+			texture:SetTexCoord(right, top, left, top, right, bottom, left, bottom)
+			texture:ClearAllPoints()
+			texture:SetAllPoints()
+		end
+	end
 end
 
 -- `font` in all of a button's states.
@@ -935,6 +1383,29 @@ CollectButtons = function(frame, found)
 	return found
 end
 
+-- An edit box's label (`text`) pale in it while it's empty and not typed
+-- in (window.hint's look).
+Module.AddHint = function(self, box, text)
+	local spec = config.hint
+	local hint = box:CreateFontString(nil, "OVERLAY")
+	hint:SetFontObject(spec.font)
+	hint:SetTextColor(unpack(spec.color))
+	hint:SetPoint("LEFT", box, "LEFT", spec.inset, 0)
+	hint:SetText(text)
+	local Update = function()
+		if (box:GetText() == "") and (not box.DiabolicFocused) then
+			hint:Show()
+		else
+			hint:Hide()
+		end
+	end
+	box:HookScript("OnEditFocusGained", function() box.DiabolicFocused = true Update() end)
+	box:HookScript("OnEditFocusLost", function() box.DiabolicFocused = nil Update() end)
+	box:HookScript("OnTextChanged", Update)
+	Update()
+	return hint
+end
+
 -- Whether every button's text fits in it (Blizzard sized them for its own
 -- font).
 local AllFit = function(buttons)
@@ -1007,13 +1478,145 @@ Module.StyleScrollBars = function(self, frame)
 	end
 end
 
+-- A part's scale on screen (a texture's or a text's: its frame's, as
+-- 3.3.5's regions have none of their own).
+local ScaleOf = function(part)
+	return (part.GetEffectiveScale and part or part:GetParent()):GetEffectiveScale()
+end
+Module.ScaleOf = ScaleOf
+
+-- A part's sides on screen (in the screen's units, whatever its scale):
+-- left, bottom, right, top.
+local Edges = function(part)
+	local left, bottom, width, height = part:GetRect()
+	if not left then
+		return
+	end
+	local scale = ScaleOf(part)
+	return left * scale, bottom * scale, (left + width) * scale, (bottom + height) * scale
+end
+Module.Edges = Edges
+
+-- Our buttons shown in `frame` and all it holds (not those out of sight,
+-- nor our other parts: dropdowns, edit boxes).
+local CollectShown
+CollectShown = function(frame, found)
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		if child:IsVisible() then
+			if child.DiabolicStyled and child:IsObjectType("Button") and (child:GetAlpha() > 0) and child:GetLeft() then
+				found[#found + 1] = child
+			end
+			CollectShown(child, found)
+		end
+	end
+	return found
+end
+Module.CollectShown = CollectShown
+
+local ByLeft = function(a, b)
+	return (Edges(a)) < (Edges(b))
+end
+
+-- `buttons` (a row's, left to right) too close: as wide in all, each as
+-- much narrower, window.layout.button_gap apart, each placed on its own
+-- from `frame`'s nearer corner (Blizzard chains them either way round).
+local Spread = function(frame, buttons)
+	for _, button in ipairs(buttons) do
+		if button:IsProtected() and InCombatLockdown() then
+			return
+		end
+	end
+	local scale = buttons[1]:GetEffectiveScale()
+	local gap = config.layout.button_gap * scale
+	local left = Edges(buttons[1])
+	local _, _, right = Edges(buttons[#buttons])
+	local widths = 0
+	for _, button in ipairs(buttons) do
+		widths = widths + button:GetWidth() * scale
+	end
+	local fit = (right - left - gap * (#buttons - 1)) / widths
+	if (fit <= 0) then
+		return
+	end
+	local frameLeft, frameBottom, frameRight, frameTop = Edges(frame)
+	local _, bottom, _, top = Edges(buttons[1])
+	local side = ((left + right) / 2 < (frameLeft + frameRight) / 2) and "LEFT" or "RIGHT"
+	local edge = ((bottom + top) / 2 < (frameBottom + frameTop) / 2) and "BOTTOM" or "TOP"
+	local x = left
+	for _, button in ipairs(buttons) do
+		local width = button:GetWidth() * scale * fit
+		local _, buttonBottom, _, buttonTop = Edges(button)
+		local dx = (side == "LEFT") and (x - frameLeft) or (x + width - frameRight)
+		local dy = (edge == "BOTTOM") and (buttonBottom - frameBottom) or (buttonTop - frameTop)
+		button:SetWidth(width / scale)
+		button:ClearAllPoints()
+		button:SetPoint(edge .. side, frame, edge .. side, dx / scale, dy / scale)
+		x = x + width + gap
+	end
+end
+
+-- The rule for buttons on a row: our buttons shown in `frame` whose
+-- middles are level and that touch or nearly (closer than
+-- window.layout.button_gap, but not one over another) spread apart.
+local LineRows = function(frame)
+	local wanted = config.layout.button_gap
+	local buttons = CollectShown(frame, {})
+	table_sort(buttons, ByLeft)
+	local taken = {}
+	for i, first in ipairs(buttons) do
+		if not taken[first] then
+			local _, bottom, _, top = Edges(first)
+			local row = { first }
+			for j = i + 1, #buttons do
+				local other = buttons[j]
+				local _, otherBottom, _, otherTop = Edges(other)
+				if (not taken[other]) and (math_abs((otherBottom + otherTop - bottom - top) / 2) <= 2) then
+					row[#row + 1] = other
+					taken[other] = true
+				end
+			end
+			local close = { first }
+			for k = 2, #row + 1 do
+				local before, button = row[k - 1], row[k]
+				local apart
+				if button then
+					local _, _, beforeRight = Edges(before)
+					apart = ((Edges(button)) - beforeRight) / button:GetEffectiveScale()
+				end
+				if apart and (apart < wanted - .5) and (apart > -math_min(before:GetWidth(), button:GetWidth()) / 2) then
+					close[#close + 1] = button
+				else
+					if (#close > 1) then
+						Spread(frame, close)
+					end
+					close = { button }
+				end
+			end
+		end
+	end
+end
+
+-- Frames whose rows are lined up on the next frame drawn (once Blizzard
+-- has placed what it shows).
+local Queued = {}
+local Liner -- (OnInit)
+local QueueRows = function(frame)
+	Queued[frame] = true
+	if Liner then
+		Liner:Show()
+	end
+end
+
 -- The buttons (and the scroll bars, theirs too) of `frame` and all it
--- holds.
+-- holds; their rows lined up (LineRows) as they show.
 Module.StyleButtons = function(self, frame)
 	self:StyleScrollBars(frame)
 	local buttons = CollectButtons(frame, {})
+	QueueRows(frame)
 	for _, button in ipairs(buttons) do
 		button.DiabolicStyled = true
+		button:HookScript("OnShow", function() QueueRows(frame) end)
 		local name = button:GetName()
 		for _, part in ipairs({ "Left", "Middle", "Right" }) do
 			local region = name and _G[name .. part]
@@ -1045,6 +1648,7 @@ Module.AddPanel = function(self, frame, insets, parent)
 	panel:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	panel:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
 	self:StylePanel(panel)
+	panel.DiabolicContent = true
 	return panel
 end
 
@@ -1120,6 +1724,8 @@ Module.AddZone = function(self, frame, material, insets, parent)
 	zone:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	zone:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
 	zone.Material = self:CreateNine(zone, "BACKGROUND", material)
+	zone.DiabolicContent = true
+	zone.DiabolicMaterial = material
 	return zone
 end
 
@@ -1130,14 +1736,21 @@ Module.AddFooter = function(self, window, top)
 	local foot = CreateFrame("Frame", nil, window)
 	foot.Window = window
 	foot.Material = self:CreateNine(foot, "ARTWORK", "footer", window)
+	window.DiabolicFoot = foot
 	self:SetFooter(foot, top)
 	return foot
 end
 
 -- A footer up to the page shown's buttons: `top`, the name of the highest
--- (window.footer_margin over its top); none on a page left without one.
+-- (window.footer_margin over its top), or { that name, how much higher };
+-- none on a page left without one.
 Module.SetFooter = function(self, foot, top)
+	local raise = 0
+	if type(top) == "table" then
+		top, raise = top[1], top[2]
+	end
 	local part = top and _G[top]
+	foot.DiabolicShown = part and true -- (the slices can't say)
 	if (not part) then
 		foot.Material:Hide()
 		return
@@ -1147,7 +1760,7 @@ Module.SetFooter = function(self, foot, top)
 	foot:SetPoint("BOTTOMLEFT", foot.Window, "BOTTOMLEFT", insets.left, insets.bottom)
 	foot:SetPoint("BOTTOMRIGHT", foot.Window, "BOTTOMRIGHT", -insets.right, insets.bottom)
 	-- (its top only: its sides are the window's)
-	foot:SetPoint("TOP", part, "TOP", 0, config.footer_margin)
+	foot:SetPoint("TOP", part, "TOP", 0, config.footer_margin + raise)
 	foot.Material:Show()
 end
 
@@ -1155,6 +1768,7 @@ end
 -- bar, in its own colours: Blizzard tints it by the row's kind. Its blend
 -- kept: an added one (the quest log's) lies over the row's text.
 Module.LightRow = function(self, texture)
+	LitRows[#LitRows + 1] = texture
 	texture:SetTexture(config.row_bars.lit)
 	texture:SetTexCoord(0, 1, 0, 1)
 	texture:SetVertexColor(1, 1, 1)
@@ -1180,17 +1794,20 @@ Module.AddParchment = function(self, frame, insets, material, parent)
 	holder:SetFrameLevel(frame:GetFrameLevel())
 	holder:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	holder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
+	holder.DiabolicContent = true
+	holder.DiabolicMaterial = material or "page"
 	return self:CreateNine(holder, "BACKGROUND", material or "page")
 end
 
 -- A parchment's scroll bar (UIPanelScrollFrameTemplate's) out past its
--- pages' edges.
-Module.PlaceParchmentBar = function(self, frame)
+-- pages' edges, or `x` from its text's right.
+Module.PlaceParchmentBar = function(self, frame, x)
 	local bar = _G[frame:GetName() .. "ScrollBar"]
 	if bar then
+		x = x or config.parchment_bar_x
 		bar:ClearAllPoints()
-		bar:SetPoint("TOPLEFT", frame, "TOPRIGHT", config.parchment_bar_x, -16)
-		bar:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", config.parchment_bar_x, 16)
+		bar:SetPoint("TOPLEFT", frame, "TOPRIGHT", x, -16)
+		bar:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", x, 16)
 	end
 end
 
@@ -1232,11 +1849,26 @@ end
 Module.OnInit = function(self)
 	config = self:GetDB("Blizzard").window
 	self.config = config
+	BannerIndex = {}
+	for i, name in ipairs(config.banner.sigil_names) do
+		BannerIndex[name] = i
+	end
 	self.db = self:GetConfig("Windows")
 	-- Blizzard's own windows (and their tabs and coins) when it's off
 	if (not self.db.enableSkin) then
 		return
 	end
+	Liner = CreateFrame("Frame")
+	Liner:Hide()
+	Liner:SetScript("OnUpdate", function()
+		Liner:Hide()
+		for frame in pairs(Queued) do
+			Queued[frame] = nil
+			if frame:IsVisible() then
+				LineRows(frame)
+			end
+		end
+	end)
 	hooksecurefunc("PanelTemplates_SelectTab", UpdateTab)
 	hooksecurefunc("PanelTemplates_DeselectTab", UpdateTab)
 	hooksecurefunc("PanelTemplates_TabResize", FitTab)

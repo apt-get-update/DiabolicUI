@@ -1,7 +1,7 @@
 -- Gives Blizzard's Dungeon Finder and Raid Browser Diablo III's window
 -- (windows.lua): the stone window in its iron frame instead of their frame
--- art, the title in the plate over the red band (the Raid Browser's tabs in
--- a row under it), the lists in darker panels (the random dungeon's text
+-- art, the title in a plate on its top edge (the Raid Browser's tabs in
+-- a row under it, the Dungeon Finder's choice in its band), the lists in darker panels (the random dungeon's text
 -- pale on its), the buttons ours. Blizzard
 -- places their parts against the whole frame, so the window grows around
 -- it instead of moving them.
@@ -18,6 +18,9 @@ local pairs = pairs
 local select = select
 local unpack = unpack
 
+-- WoW API
+local CreateFrame = _G.CreateFrame
+
 -- their frame art, by its file (lowercase, as patterns)
 local ART = {
 	"ui%-lfg%-frame", "ui%-lfr%-frame", "ui%-lfg%-portrait", "ui%-lfr%-portrait", "ui%-character%-scrollbar", "ui%-lfg%-filigree",
@@ -33,30 +36,18 @@ local RANDOM = "LFDQueueFrameRandomScrollFrameChildFrame"
 local RANDOM_HEADERS = { "Title", "RewardsLabel" }
 local RANDOM_TEXTS = { "Description", "RewardsDescription", "PUGDescription", "MoneyLabel", "XPLabel" }
 
--- The window's own close button (an unnamed child).
-local FindClose = function(frame)
-	for i = 1, select("#", frame:GetChildren()) do
-		local child = select(i, frame:GetChildren())
-		local texture = child:IsObjectType("Button") and child:GetNormalTexture()
-		local file = texture and texture:GetTexture()
-		if file and file:lower():find("ui%-panel%-minimizebutton") then
-			return child
-		end
-	end
-end
-
 -- `frame` in our window, `spec` its settings, `title` its title's font
 -- string; its header returned.
 Module.StyleFrame = function(self, frame, spec, title)
 	local config = self.config
 	local window = kit:CreateWindow(frame, spec.insets)
-	kit:SetBackground(window, "saron")
+	kit:SetBackground(window, spec.background or "saron")
 	kit:AddDrag(window, frame)
 	kit:SetPanelLayout(frame, spec.insets, spec.insets[1], spec.offset_y)
 	kit:HideArt(frame, ART)
 	local header = kit:CreateHeader(window, config.header_height, config.header_insets)
 	kit:SetTitle(header, title)
-	local close = FindClose(frame)
+	local close = kit:FindClose(frame)
 	if close then
 		kit:StyleClose(close, window, header)
 	end
@@ -71,27 +62,27 @@ Module.StyleLFG = function(self)
 		local window = header:GetParent()
 		-- the eye in the corner (Blizzard's portrait, animated while queued)
 		_G.LFDParentFramePortrait:SetAlpha(0)
-		-- Find Group and Close in the window's bottom corners, clear of the
-		-- iron frame (Blizzard's sit on its edge)
+		-- Find Group and Close in the window's bottom corners on its rough
+		-- stone foot, clear of the iron frame (Blizzard's sit on its edge)
 		local find, cancel = _G.LFDQueueFrameFindGroupButton, _G.LFDQueueFrameCancelButton
 		find:ClearAllPoints()
 		find:SetPoint("BOTTOMLEFT", window, "BOTTOMLEFT", config.button_margin, config.button_bottom)
 		cancel:ClearAllPoints()
 		cancel:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -config.button_margin, config.button_bottom)
+		kit:AddFooter(window, "LFDQueueFrameFindGroupButton")
 		for _, name in ipairs(RANDOM_HEADERS) do
 			_G[RANDOM .. name]:SetTextColor(unpack(config.header_color))
 		end
 		for _, name in ipairs(RANDOM_TEXTS) do
 			_G[RANDOM .. name]:SetTextColor(unpack(config.text_color))
 		end
-		-- the dungeon's choice under the band (the title's in it), Diablo
-		-- III's, its label gone, wide enough for the longest choice
-		-- (Blizzard sets its width each time it's shown)
+		-- the dungeon's choice at the band's left end, Diablo III's, its
+		-- label gone, wide enough for the longest choice (Blizzard sets
+		-- its width each time it's shown)
 		local dropdown = _G.LFDQueueFrameTypeDropDown
 		if dropdown then
 			kit:StyleDropDown(dropdown)
-			dropdown:ClearAllPoints()
-			dropdown:SetPoint("CENTER", window, "TOP", 0, config.type_y)
+			kit:LineBand(header, { dropdown })
 			_G.UIDropDownMenu_SetWidth(dropdown, config.type_width)
 			dropdown:HookScript("OnShow", function() _G.UIDropDownMenu_SetWidth(dropdown, config.type_width) end)
 			_G.LFDQueueFrameTypeDropDownName:SetAlpha(0)
@@ -103,14 +94,22 @@ Module.StyleLFG = function(self)
 			text:SetJustifyH("CENTER")
 		end
 		self:CenterRoles(window, "LFDQueueFrameRoleButton", { "Tank", "Healer", "DPS", "Leader" }, config.roles_top)
-		-- the random dungeon and the list up into the dropdown's room
+		-- the random dungeon and the list up into the dropdown's room, and
+		-- longer: the list's rows more (its update shows as many as
+		-- NUM_LFD_CHOICE_BUTTONS), the random dungeon's text as much taller
+		-- (its bottom with its page's)
+		local grow = self:AddDungeonRows(config.extra_rows)
 		for _, name in ipairs({ "LFDQueueFrameRandom", "LFDQueueFrameSpecific" }) do
 			local page = _G[name]
 			if page then
 				page:ClearAllPoints()
 				page:SetPoint("TOPLEFT", _G.LFDQueueFrame, "TOPLEFT", 0, config.lists_raise)
-				page:SetPoint("BOTTOMRIGHT", _G.LFDQueueFrame, "BOTTOMRIGHT", 0, config.lists_raise)
+				page:SetPoint("BOTTOMRIGHT", _G.LFDQueueFrame, "BOTTOMRIGHT", 0, config.lists_raise - grow)
 			end
+		end
+		local random = _G.LFDQueueFrameRandomScrollFrame
+		if random then
+			random:SetHeight(random:GetHeight() + grow)
 		end
 	end
 	if _G.LFRParentFrame then
@@ -145,15 +144,43 @@ Module.StyleLFG = function(self)
 		for _, name in ipairs(RAID_LISTS) do
 			local list = _G[name]
 			if list then
-				Across(kit:AddZone(list, "slate", insets), list, insets[2], insets[4])
+				local zone = kit:AddZone(list, "slate", insets)
+				Across(zone, list, (name == "LFRBrowseFrameListScrollFrame") and config.raid_browse_top or insets[2], insets[4])
+				-- the queue's down to over its foot: its room under it as over it
+				if (name == "LFRQueueFrameSpecificListScrollFrame") then
+					zone:SetPoint("BOTTOM", _G.LFRQueueFrameFindGroupButton, "TOP", 0, kit.config.footer_margin + config.raid_queue_gap)
+				end
 			end
 		end
-		-- the comment as wide, in a dark panel, its hint pale
+		-- the comment in the band, one line on Diablo III's plate, its hint
+		-- (its first sentence) pale in it while it's empty; the button
+		-- that focuses it over it
 		local comment = _G.LFRQueueFrameComment
 		if comment then
-			local spec = config.comment_insets
-			Across(kit:AddPanel(comment, { 0, 0, 0, 0 }), comment, spec[1], spec[2])
-			_G.LFRQueueFrameCommentExplanation:SetTextColor(unpack(config.comment_hint_color))
+			local width, height = unpack(config.comment_size)
+			comment:SetMultiLine(false)
+			comment:SetSize(width, height)
+			comment:SetFrameLevel(header:GetFrameLevel() + 1)
+			kit:StyleEditBox(comment)
+			kit:LineBand(header, { comment })
+			local hint, text = _G.LFRQueueFrameCommentExplanation, _G.TYPE_LFR_COMMENT_HERE
+			hint:SetText(text:match("^[^%.]+%.") or text)
+			hint:SetFontObject(config.comment_hint_font)
+			hint:SetTextColor(unpack(config.comment_hint_color))
+			hint:SetSize(width, height)
+			hint:SetJustifyV("MIDDLE")
+			local button = _G.LFRQueueFrameCommentTextButton
+			button:SetSize(width, height)
+			button:SetFrameLevel(header:GetFrameLevel() + 2)
+		end
+		-- the browse tab's raid choice in the band, "Browsing:" left of it
+		local browse = _G.LFRBrowseFrameRaidDropDown
+		if browse then
+			kit:StyleDropDown(browse)
+			local label = _G.LFRBrowseFrameRaidDropDownName
+			label:SetFontObject(kit.config.check_box.font)
+			label:SetTextColor(unpack(kit.config.title_plate.color))
+			kit:LineBand(header, { label, browse })
 		end
 		self:CenterRoles(window, "LFRQueueFrameRoleButton", { "Tank", "Healer", "DPS" }, config.raid_roles_top)
 		-- the same title on both tabs: one in the plate
@@ -167,19 +194,53 @@ Module.StyleLFG = function(self)
 			local point, relative, relativePoint, _, y = comment:GetPoint()
 			comment:SetPoint(point, relative, relativePoint, -config.comment_right, y)
 		end
-		local tab = _G.LFRParentFrameTab1
-		tab:ClearAllPoints()
-		tab:SetPoint("TOPLEFT", header, "BOTTOMLEFT", unpack(config.tab_offset))
-		kit:AddTabStrip(header)
-		for i = 1, 2 do
-			kit:StyleTab(_G["LFRParentFrameTab" .. i], { inset = config.tab_inset, font = config.tab_font })
+		-- the pages' buttons as low as the Dungeon Finder's: the browse
+		-- list's rows clear of their foot
+		for _, name in ipairs({ "LFRQueueFrameFindGroupButton", "LFRQueueFrameAcceptCommentButton", "LFRBrowseFrameSendMessageButton" }) do
+			local button = _G[name]
+			if button then
+				local point, relative, relativePoint, x = button:GetPoint()
+				button:SetPoint(point, relative, relativePoint, x, config.button_bottom - config.raids.insets[4])
+			end
 		end
+		-- the tabs as banners hanging from the window's foot
+		kit:HangTabs(window, { _G.LFRParentFrameTab1, _G.LFRParentFrameTab2 }, config.tab_sigils)
+		kit:DropTop(window)
 	end
 	for _, name in ipairs(LISTS) do
 		if _G[name] then
 			kit:AddZone(_G[name], "slate", config.list_panel_insets)
 		end
 	end
+	-- Find Group and Close over the lists' slate, which reaches down to
+	-- them (at their level, it would hide their art)
+	for _, name in ipairs({ "LFDQueueFrameFindGroupButton", "LFDQueueFrameCancelButton" }) do
+		local button = _G[name]
+		if button then
+			button:SetFrameLevel(button:GetFrameLevel() + 2)
+		end
+	end
+end
+
+-- `count` more rows in the Dungeon Finder's list, under Blizzard's, its
+-- scroll frame down to the last. How much longer it is returned.
+Module.AddDungeonRows = function(self, count)
+	local first = _G.NUM_LFD_CHOICE_BUTTONS
+	local list = _G.LFDQueueFrameSpecificListScrollFrame
+	if (not first) or (not list) or (count < 1) then
+		return 0
+	end
+	local last = _G["LFDQueueFrameSpecificListButton" .. first]
+	local point, _, relativePoint, x, y = list:GetPoint(2) -- (its bottom right, on the last row's)
+	for i = first + 1, first + count do
+		local row = CreateFrame("Frame", "LFDQueueFrameSpecificListButton" .. i, _G.LFDQueueFrameSpecific, "LFDFrameDungeonChoiceTemplate")
+		row:SetID(i)
+		row:SetPoint("TOPLEFT", last, "BOTTOMLEFT")
+		last = row
+	end
+	list:SetPoint(point, last, relativePoint, x, y)
+	_G.NUM_LFD_CHOICE_BUTTONS = first + count
+	return count * last:GetHeight()
 end
 
 -- A row of roles (`prefix` and each of `roles`: Blizzard's in a row from

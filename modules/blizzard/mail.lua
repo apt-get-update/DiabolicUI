@@ -1,10 +1,10 @@
 -- Gives Blizzard's mailbox Diablo III's windows (windows.lua): the inbox
 -- and send tabs in one, the opened letter in another beside it, each the
 -- stone window in its iron frame instead of the parchment, its title in
--- the plate over the red band, the tabs in a row under it, the mail on
--- its crafting window's ruled paper (a row between two lines), the
--- letters on its parchment, in darker panels, the attachments in its stone
--- pane, the buttons
+-- a plate on its top edge, the tabs hanging under it, the mail on
+-- parchment up to the band (Postal's Open and Return in it), the letter's
+-- To, Subject and postage in the band, the letters on its parchment, in
+-- darker panels, the attachments in its stone pane, the buttons
 -- ours (Postal's too, as they come). Blizzard places their parts against
 -- the whole frame, so the windows grow around them instead of moving them.
 -- Art, fonts and places only: Blizzard's code is left as it is.
@@ -17,6 +17,7 @@ local kit
 local _G = _G
 local ipairs = ipairs
 local pairs = pairs
+local select = select
 local unpack = unpack
 
 -- WoW API
@@ -37,6 +38,16 @@ local STATIONERY = {
 
 local NUM_ITEMS = 7 -- INBOXITEMS_TO_DISPLAY
 
+-- `frame`'s font string showing `text` (Blizzard's labels have no name).
+local FindText = function(frame, text)
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		if region:IsObjectType("FontString") and (region:GetText() == text) then
+			return region
+		end
+	end
+end
+
 -- `frame` in our window, its header returned.
 Module.StyleFrame = function(self, frame, insets)
 	local config = self.config
@@ -52,6 +63,7 @@ Module.StyleMail = function(self)
 	local frame = _G.MailFrame
 
 	local window, header = self:StyleFrame(frame, config.insets)
+	self.Header = header
 	kit:SetPanelLayout(frame, config.insets, config.insets[1], config.offset_y)
 	kit:StyleClose(_G.InboxCloseButton, window, header)
 	-- one title for both tabs, theirs out of sight
@@ -71,23 +83,21 @@ Module.StyleMail = function(self)
 		kit:SetFooter(foot, config.footers.send)
 	end)
 
-	-- the tabs in a row under the band (Blizzard sizes them)
-	local tab = _G.MailFrameTab1
-	tab:ClearAllPoints()
-	tab:SetPoint("TOPLEFT", header, "BOTTOMLEFT", unpack(config.tab_offset))
-	kit:AddTabStrip(header)
-	for i = 1, 2 do
-		kit:StyleTab(_G["MailFrameTab" .. i], { inset = config.tab_inset, font = config.tab_font })
-	end
+	-- the tabs as banners hanging from the window's foot
+	kit:HangTabs(window, { _G.MailFrameTab1, _G.MailFrameTab2 }, config.tab_sigils)
+	kit:DropTop(window)
 
-	-- the mail as entries on planks, the letter being written on lined
-	-- parchment, its text dark
-	local insets = config.list_panel_insets
-	local panel = CreateFrame("Frame", nil, _G.InboxFrame)
-	panel:SetFrameLevel(_G.InboxFrame:GetFrameLevel())
-	panel:SetPoint("TOPLEFT", _G.MailItem1, "TOPLEFT", -insets[1], insets[2])
-	panel:SetPoint("BOTTOMRIGHT", _G["MailItem" .. NUM_ITEMS], "BOTTOMRIGHT", insets[3], -insets[4])
-	self:AddPaper(panel)
+	-- the mail on parchment, the letter being written on lined parchment,
+	-- its text dark; the name, the subject and the money a little higher,
+	-- the coins ours
+	self:StyleRows()
+	for name, offset in pairs(config.send_offsets) do
+		local part = _G[name]
+		local point, relative, relativePoint, x, y = part:GetPoint()
+		part:SetPoint(point, relative, relativePoint, x + offset[1], y + offset[2])
+	end
+	self:PlaceSendBand(header)
+	kit:StyleCoins(_G.SendMailMoney)
 	kit:AddPanel(_G.SendMailScrollFrame, config.text_panel_insets)
 	kit:AddParchment(_G.SendMailScrollFrame, config.parchment_insets, "lined")
 	_G.SendMailBodyEditBox:SetTextColor(unpack(config.text_color))
@@ -118,13 +128,137 @@ Module.StyleMail = function(self)
 	frame:HookScript("OnShow", function()
 		kit:StyleButtons(frame)
 		self:PlacePostal()
+		self:PlaceRows()
 	end)
 	open:HookScript("OnShow", function() kit:StyleButtons(open) end)
 end
 
+-- The letter's To and Subject (their labels pale in them while empty) and
+-- its postage's sum (its label out of sight) in `header`'s band, over it; its
+-- text up under the band, taller (Blizzard sets its height as the
+-- attachments' rows change).
+Module.PlaceSendBand = function(self, header)
+	local spec = self.config.send_band
+	local level = header:GetFrameLevel() + 1
+	-- (x: where each part's plate starts, the plates past the boxes' sides)
+	local pad = kit.config.edit_padding
+	local x = spec.x
+	local name, subject = _G.SendMailNameEditBox, _G.SendMailSubjectEditBox
+	for _, part in ipairs({ { name, _G.MAIL_TO_LABEL, spec.name_width, spec.arrow_gap + spec.arrow_width + spec.gap },
+		{ subject, _G.MAIL_SUBJECT_LABEL, 0, spec.gap } }) do
+		local box, width = part[1], part[3]
+		local label = FindText(box, part[2])
+		if label then
+			label:SetAlpha(0)
+		end
+		-- its label (without its colon) pale in it while it's empty and
+		-- not typed in
+		local hint = box:CreateFontString(nil, "OVERLAY")
+		hint:SetFontObject(spec.hint_font)
+		hint:SetTextColor(unpack(spec.hint_color))
+		hint:SetPoint("LEFT", box, "LEFT", spec.hint_inset, 0)
+		hint:SetText((part[2]:gsub("%s*:%s*$", "")))
+		local Hint = function()
+			if (box:GetText() == "") and (not box.DiabolicFocused) then
+				hint:Show()
+			else
+				hint:Hide()
+			end
+		end
+		box:HookScript("OnEditFocusGained", function() box.DiabolicFocused = true Hint() end)
+		box:HookScript("OnEditFocusLost", function() box.DiabolicFocused = nil Hint() end)
+		box:HookScript("OnTextChanged", Hint)
+		Hint()
+		kit:StyleEditBox(box)
+		box:ClearAllPoints()
+		box:SetPoint("LEFT", header, "LEFT", x + pad, 0)
+		box:SetWidth(width)
+		box:SetFrameLevel(level)
+		x = x + pad + width + pad + part[4]
+	end
+	local cost = _G.SendMailCostMoneyFrame
+	local label = FindText(cost, _G.SEND_MAIL_COST)
+	if label then
+		label:SetAlpha(0)
+	end
+	cost:ClearAllPoints()
+	cost:SetPoint("RIGHT", header, "RIGHT", -spec.postage_right, 0)
+	cost:SetFrameLevel(level)
+	-- the subject stretched up to the postage (its width set as it changes)
+	local subjectLeft = x - spec.gap - pad
+	local Stretch = function()
+		local right = header:GetWidth() - spec.postage_right - cost:GetWidth() - spec.gap - pad
+		if (right > subjectLeft) then
+			subject:SetWidth(right - subjectLeft)
+		end
+	end
+	hooksecurefunc(cost, "SetWidth", Stretch)
+	_G.SendMailFrame:HookScript("OnShow", function()
+		self:PlaceAddressBook()
+		Stretch()
+	end)
+	self:PlaceAddressBook()
+
+	local rise = self.config.text_rise
+	local scroll, child = _G.SendMailScrollFrame, _G.SendMailScrollChildFrame
+	local point, relative, relativePoint, left, top = scroll:GetPoint()
+	scroll:SetPoint(point, relative, relativePoint, left, top + rise)
+	local Grow = function()
+		scroll:SetHeight(scroll:GetHeight() + rise)
+		child:SetHeight(child:GetHeight() + rise)
+	end
+	hooksecurefunc("SendMailFrame_Update", Grow)
+	Grow()
+end
+
+-- Postal's address book's arrow right of the To box, past its plate (it
+-- comes as Postal enables).
+Module.PlaceAddressBook = function(self)
+	local arrow = _G.Postal_BlackBookButton
+	if arrow then
+		local spec = self.config.send_band
+		arrow:ClearAllPoints()
+		arrow:SetPoint("LEFT", _G.SendMailNameEditBox, "RIGHT", kit.config.edit_padding + spec.arrow_gap, 0)
+		arrow:SetFrameLevel(self.Header:GetFrameLevel() + 1)
+	end
+end
+
+-- The mail's rows up under the band, apart down to their old foot (Postal
+-- places the first again as its boxes come and go: each time the mailbox
+-- opens).
+Module.PlaceRows = function(self)
+	local config = self.config
+	local first = _G.MailItem1
+	local point, relative, relativePoint, x = first:GetPoint()
+	first:SetPoint(point, relative, relativePoint, x, config.rows_top)
+	if not self.RowsApart then
+		self.RowsApart = true
+		for i = 2, NUM_ITEMS do
+			local row = _G["MailItem" .. i]
+			local rowPoint, previous, previousPoint, rowX, rowY = row:GetPoint()
+			row:SetPoint(rowPoint, previous, previousPoint, rowX, rowY - config.rows_gap)
+		end
+	end
+end
+
 -- Postal's parts on the paper, each moved once (they come as it enables;
--- its Open All's arrow follows its button).
+-- its Open All's arrow follows its button); its Open and Return in the
+-- band, side by side in its middle, over it.
 Module.PlacePostal = function(self)
+	local spec = self.config.select_buttons
+	local open, back = _G.PostalSelectOpenButton, _G.PostalSelectReturnButton
+	if open and back and (not self.SelectPlaced) then
+		self.SelectPlaced = true
+		local header = self.Header
+		open:ClearAllPoints()
+		open:SetPoint("RIGHT", header, "CENTER", -spec.gap / 2, 0)
+		back:ClearAllPoints()
+		back:SetPoint("LEFT", header, "CENTER", spec.gap / 2, 0)
+		for _, button in ipairs({ open, back }) do
+			button:SetWidth(spec.width)
+			button:SetFrameLevel(header:GetFrameLevel() + 1)
+		end
+	end
 	self.PostalPlaced = self.PostalPlaced or {}
 	for name, offset in pairs(self.config.postal_offsets) do
 		for _, suffix in ipairs({ "", 1, 2, 3, 4, 5, 6, 7 }) do -- the button, the rows' boxes
@@ -138,16 +272,24 @@ Module.PlacePostal = function(self)
 	end
 end
 
--- The mail on planks (`panel`'s), the page buttons under it.
-Module.AddPaper = function(self, panel)
+-- The mail on Diablo III's parchment, in dark ink, each icon in the
+-- action buttons' border; the page buttons ours, under the rows.
+Module.StyleRows = function(self)
 	local config = self.config
-	local insets = config.list_paper_insets
-	local planks = CreateFrame("Frame", nil, panel)
-	planks:SetPoint("TOPLEFT", _G.MailItem1, "TOPLEFT", -insets[1], insets[2])
-	planks:SetPoint("BOTTOMRIGHT", _G["MailItem" .. NUM_ITEMS], "BOTTOMRIGHT", insets[3], -insets[4])
-	kit:CreateNine(planks, "BORDER", "planks")
-	for _, name in ipairs({ "InboxPrevPageButton", "InboxNextPageButton", "InboxCurrentPage" }) do
-		local region = _G[name]
+	local left, top, width, height = unpack(config.list_box)
+	local paper = CreateFrame("Frame", nil, _G.InboxFrame)
+	paper:SetFrameLevel(_G.InboxFrame:GetFrameLevel())
+	paper:SetPoint("TOPLEFT", _G.InboxFrame, "TOPLEFT", left, top)
+	paper:SetSize(width, height)
+	kit:CreateNine(paper, "BACKGROUND", "parchment")
+	for i = 1, NUM_ITEMS do
+		local button = _G["MailItem" .. i .. "Button"]
+		_G["MailItem" .. i .. "ButtonSlot"]:SetAlpha(0)
+		kit:AddBorder(button, button:GetWidth())
+	end
+	local prev, nextPage = _G.InboxPrevPageButton, _G.InboxNextPageButton
+	kit:StylePager(prev, nextPage)
+	for _, region in ipairs({ prev, nextPage, _G.InboxCurrentPage }) do
 		local point, relative, relativePoint, x, y = region:GetPoint()
 		region:SetPoint(point, relative, relativePoint, x, y + config.page_offset)
 	end

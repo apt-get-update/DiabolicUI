@@ -1629,6 +1629,10 @@ define(GameTooltip, {
 	SetSpell = function(self, id)
 		showTooltipContent(self, "spell", id, "OnTooltipSetSpell", { { "Spell" } })
 	end,
+	-- (tabIndex, talentIndex, inspect, pet, talentGroup); no talents in the fake world
+	SetTalent = function(self, tab, index)
+		showTooltipContent(self, nil, nil, nil, { { "Talent " .. tab .. "-" .. index } })
+	end,
 	SetTotem = function(self, slot)
 		showTooltipContent(self, nil, nil, nil, { { "Totem " .. slot } })
 	end,

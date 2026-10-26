@@ -1,5 +1,5 @@
--- The spellbook's search box (Pretty GUI's, in Diablo III's look), at
--- the top of its book's left page (spellbook.lua): the spells whose names hold
+-- The spellbook's search box (Pretty GUI's, in Diablo III's look), in
+-- its band (spellbook.lua): the spells whose names hold
 -- what's typed, on a book of their own on the cover over Blizzard's, in
 -- the spells' own places, twelve a page. Ours are secure buttons casting
 -- them (and dragged to the bars): Blizzard's can't be told which spells to
@@ -93,7 +93,6 @@ Module.CreateSearch = function(self, window, cover)
 	local box = CreateFrame("EditBox", "DiabolicUISpellBookSearchBox", frame)
 	box:SetFrameLevel(cover:GetFrameLevel() + 2) -- over the spells found
 	box:SetSize(unpack(config.search_size))
-	box:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.search_box))
 	box:SetAutoFocus(false)
 	box:SetFontObject(config.search_font)
 	box:SetTextInsets(config.search_inset, config.search_inset, 0, 0)
@@ -138,28 +137,17 @@ Module.CreateSearch = function(self, window, cover)
 	none:SetText(L["No spell found"])
 	found.None = none
 
-	-- its pages, as the spells': the next page's arrow, the page, the previous
+	-- its pages, as the spells' (PlacePages, StylePager)
 	local nextPage = CreateFrame("Button", nil, found)
-	nextPage:SetSize(32, 32)
-	nextPage:SetPoint("TOPRIGHT", window, "TOPRIGHT", unpack(config.pages))
-	nextPage:SetNormalTexture([[Interface\Buttons\UI-SpellbookIcon-NextPage-Up]])
-	nextPage:SetPushedTexture([[Interface\Buttons\UI-SpellbookIcon-NextPage-Down]])
-	nextPage:SetDisabledTexture([[Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled]])
-	nextPage:SetHighlightTexture([[Interface\Buttons\UI-Common-MouseHilight]], "ADD")
 	nextPage:SetScript("OnClick", function() self:TurnFound(1) end)
 	local text = found:CreateFontString(nil, "OVERLAY")
 	text:SetFontObject(_G.SpellBookPageText:GetFontObject())
 	text:SetTextColor(unpack(kit.config.ink))
 	text:SetShadowColor(0, 0, 0, 0)
-	text:SetPoint("RIGHT", nextPage, "LEFT", -config.page_gap, 0)
 	local prev = CreateFrame("Button", nil, found)
-	prev:SetSize(32, 32)
-	prev:SetPoint("RIGHT", text, "LEFT", -config.page_gap, 0)
-	prev:SetNormalTexture([[Interface\Buttons\UI-SpellbookIcon-PrevPage-Up]])
-	prev:SetPushedTexture([[Interface\Buttons\UI-SpellbookIcon-PrevPage-Down]])
-	prev:SetDisabledTexture([[Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled]])
-	prev:SetHighlightTexture([[Interface\Buttons\UI-Common-MouseHilight]], "ADD")
 	prev:SetScript("OnClick", function() self:TurnFound(-1) end)
+	self:PlacePages(window, prev, nextPage, text)
+	kit:StylePager(prev, nextPage)
 	found.Next, found.Prev, found.Page = nextPage, prev, text
 	self.Found = found
 
@@ -168,21 +156,25 @@ Module.CreateSearch = function(self, window, cover)
 		if (frame.bookType ~= _G.BOOKTYPE_SPELL) and (self.page == "SEARCH") and (not InCombatLockdown()) then
 			self:ShowPage(nil)
 		end
-		self:UpdateSearchBox()
+		self:UpdateBand()
 	end)
 end
 
--- The box on the player's spells and the spells found only, not over the
--- pet's book or the other pages.
-Module.UpdateSearchBox = function(self)
+-- The band's search and boxes on the player's spells and the spells found
+-- only, not over the pet's book or the other pages (after Blizzard shows
+-- its "all ranks" box on the player's).
+Module.UpdateBand = function(self)
 	local box = self.SearchBox
 	if (not box) then
 		return
 	end
-	if (_G.SpellBookFrame.bookType == _G.BOOKTYPE_SPELL) and ((self.page == nil) or (self.page == "SEARCH")) then
-		box:Show()
-	else
-		box:Hide()
+	local shown = (_G.SpellBookFrame.bookType == _G.BOOKTYPE_SPELL) and ((self.page == nil) or (self.page == "SEARCH"))
+	for _, part in ipairs({ box, _G.ShowAllSpellRanksCheckBox, self.UnassignedBox }) do
+		if shown then
+			part:Show()
+		else
+			part:Hide()
+		end
 	end
 end
 

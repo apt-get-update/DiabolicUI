@@ -79,10 +79,10 @@ function TestSpellbook:test_the_spells_on_the_book()
 	assertClean(client)
 end
 
-function TestSpellbook:test_the_tabs_in_a_row()
+function TestSpellbook:test_the_tabs_hang_under_the_window()
 	boot({ world = companions })
 	local module = client:GetModule("Blizzard: Spellbook")
-	local config = client.Engine:GetDB("Blizzard").spellbook
+	local banner = client.Engine:GetDB("Blizzard").window.banner
 	local frame = _G.SpellBookFrame
 	frame.bookType = _G.BOOKTYPE_SPELL
 	local spells, pet = _G.SpellBookFrameTabButton1, _G.SpellBookFrameTabButton2
@@ -91,21 +91,40 @@ function TestSpellbook:test_the_tabs_in_a_row()
 	pet:Show()
 	_G.SpellBookFrameTabButton3:Hide()
 	frame:Show()
-	-- Blizzard's shown ones under the band, the chosen one off; ours after
-	lu.assertEquals({ spells:GetPoint() }, { "TOPLEFT", module.Header, "BOTTOMLEFT", unpack(config.tab_offset) })
-	lu.assertEquals({ pet:GetPoint() }, { "LEFT", spells, "RIGHT", config.tab_gap, 0 })
-	lu.assertEquals(spells:IsEnabled(), 0)
+	-- Blizzard's shown ones, then ours, side by side under the window's
+	-- foot, centred; the chosen one off
+	local window = spells.DiabolicWindow
 	local critters, mounts = module.Tabs[1], module.Tabs[2]
 	lu.assertTrue(shown(critters))
-	lu.assertEquals({ critters:GetPoint() }, { "LEFT", pet, "RIGHT", config.tab_gap, 0 })
-	lu.assertEquals({ mounts:GetPoint() }, { "LEFT", critters, "RIGHT", config.tab_gap, 0 })
+	local function row(...)
+		local tabs = { ... }
+		local left = -(#tabs * banner.width + (#tabs - 1) * banner.gap) / 2
+		for i, tab in ipairs(tabs) do
+			lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", window, "BOTTOM", left + (i - 1) * (banner.width + banner.gap), banner.tuck })
+		end
+	end
+	local shownOwn = {}
+	for _, tab in ipairs(module.Tabs) do
+		if tab:IsShown() then
+			shownOwn[#shownOwn + 1] = tab
+		end
+	end
+	row(spells, pet, unpack(shownOwn))
+	lu.assertEquals(spells:IsEnabled(), 0)
 	-- no companions: their tab gone, and without Blizzard's the first
 	client.world.companions.CRITTER = {}
 	spells:Hide()
 	pet:Hide()
 	client:FireEvent("COMPANION_UNLEARNED")
 	lu.assertFalse(shown(critters))
-	lu.assertEquals({ mounts:GetPoint() }, { "TOPLEFT", module.Header, "BOTTOMLEFT", unpack(config.tab_offset) })
+	local left = {}
+	for _, tab in ipairs(module.Tabs) do
+		if tab:IsShown() then
+			left[#left + 1] = tab
+		end
+	end
+	lu.assertEquals(left[1], mounts)
+	row(unpack(left))
 	assertClean(client)
 end
 

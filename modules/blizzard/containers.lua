@@ -2,7 +2,7 @@
 -- item's quality color (gold for quest items), a faint glow of that color up from the slot's bottom (Diablo
 -- III's quality-colored slots), greyed out junk, items you can't use in
 -- red, and a smaller quest starter "!". The character window's slots get
--- the quality border and glow too.
+-- the quality border and glow too, and so do the inspected player's.
 local ADDON, Engine = ...
 local Module = Engine:NewModule("Blizzard: Containers")
 local C = Engine:GetDB("Data: Colors")
@@ -24,6 +24,7 @@ local GetContainerItemQuestInfo = _G.GetContainerItemQuestInfo
 local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetItemInfo = _G.GetItemInfo
 local hooksecurefunc = _G.hooksecurefunc
+local IsAddOnLoaded = _G.IsAddOnLoaded
 local BANK_CONTAINER = _G.BANK_CONTAINER
 
 -- Item qualities
@@ -61,9 +62,12 @@ local scanner -- hidden tooltip read for those red lines
 -- A slot Masque skins (AdiBags') keeps its backdrop and icon: 3.3.5 has no
 -- sublevels to put ours under its icon, in the same layer.
 local styleItem = function(self, masqued)
-	local normalTexture = _G[self:GetName().."NormalTexture"]
-	normalTexture:Hide()
-	normalTexture:SetAlpha(0)
+	-- (the inspect window's slots have theirs unnamed)
+	local normalTexture = _G[self:GetName().."NormalTexture"] or self:GetNormalTexture()
+	if normalTexture then
+		normalTexture:Hide()
+		normalTexture:SetAlpha(0)
+	end
 
 	local width, height = self:GetWidth() * ICON_ART_SCALE, self:GetHeight() * ICON_ART_SCALE
 	if (not masqued) then
@@ -218,9 +222,9 @@ local updateItem = function(self, bagID)
 
 end
 
--- A character window slot, after Blizzard updated it: our quality border,
--- instead of the one some client patches give the item buttons.
-local updateCharacterSlot = function(self)
+-- A character window slot (`unit`'s gear), after Blizzard updated it: our
+-- quality border, instead of the one some client patches give the item buttons.
+local updateGearSlot = function(self, unit)
 	local slotID = self:GetID()
 	if (slotID < FIRST_GEAR_SLOT) or (slotID > LAST_GEAR_SLOT) then
 		return
@@ -228,7 +232,7 @@ local updateCharacterSlot = function(self)
 	if self.IconBorder then
 		self.IconBorder:SetAlpha(0)
 	end
-	local itemLink = GetInventoryItemLink("player", slotID)
+	local itemLink = GetInventoryItemLink(unit, slotID)
 	if (not borderCache[self]) then
 		styleItem(self)
 	end
@@ -241,6 +245,17 @@ local updateCharacterSlot = function(self)
 		iconBorder:Hide()
 	end
 	updateQualityGlow(self, quality)
+end
+
+local updateCharacterSlot = function(self)
+	updateGearSlot(self, "player")
+end
+
+local updateInspectSlot = function(self)
+	local unit = _G.InspectFrame.unit
+	if unit then
+		updateGearSlot(self, unit)
+	end
 end
 
 local updateContainer = function(self)
@@ -329,4 +344,17 @@ Module.OnInit = function(self)
 	self:RegisterEvent("SKILL_LINES_CHANGED", "ForgetUnusable")
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "ForgetUnusable")
 	hooksecurefunc("PaperDollItemSlotButton_Update", updateCharacterSlot)
+	if IsAddOnLoaded("Blizzard_InspectUI") then
+		hooksecurefunc("InspectPaperDollItemSlotButton_Update", updateInspectSlot)
+	else
+		self:RegisterEvent("ADDON_LOADED", "ADDON_LOADED")
+	end
+end
+
+-- The inspect window loads on demand.
+Module.ADDON_LOADED = function(self, event, addon)
+	if (addon == "Blizzard_InspectUI") then
+		hooksecurefunc("InspectPaperDollItemSlotButton_Update", updateInspectSlot)
+		self:UnregisterEvent("ADDON_LOADED", "ADDON_LOADED")
+	end
 end

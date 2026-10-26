@@ -289,6 +289,11 @@ end
 -- a channel it left only while showing that notice, so a hidden one is
 -- forgotten here.
 local HideChannelNotice = function(frame, event, notice, ...)
+	-- The server sends notices 3.3.5 has no string for (NOT_IN_LFG from the
+	-- LookingForGroup channel); Blizzard's handler would format(nil) and error.
+	if (not _G["CHAT_"..notice.."_NOTICE"]) and (not _G["CHAT_"..notice.."_NOTICE_BN"]) then
+		return true
+	end
 	if (not Module.db.hideChatNoise) then
 		return false
 	end

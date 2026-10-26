@@ -2,10 +2,10 @@
 -- Pretty GUI's: wide, the title in the plate over the red band, the tabs
 -- in a row under it, an open book on its smoke: the spells in ink on
 -- its two pages (six each, their names and ranks), the schools its red
--- ribbon bookmarks out past the window, the pages, the "all ranks" box
--- and ours for the spells on no action bar (their icons ringed) at its
--- bottom (the boxes' choices saved: the game's own setting doesn't keep
--- it), a search box over its corner. The companions and mounts move here
+-- ribbon bookmarks out past the window, the pages at its bottom; in the
+-- band, a search box, the "all ranks" box and ours for the spells on no
+-- action bar (their icons ringed) (the boxes' choices saved: the game's
+-- own setting doesn't keep it). The companions and mounts move here
 -- from the character window's pet tab, in two more tabs: the model in a
 -- panel, the companions in three columns of four with their names,
 -- Sholazar Basin painted behind them; a third for the professions
@@ -160,9 +160,9 @@ Module.LayoutSpells = function(self, window)
 		self:UpdateUnassigned(button)
 	end)
 
-	-- the schools as the book's bookmarks: Diablo III's red ribbon's
-	-- notched end out past its right edge, each school's icon on it over
-	-- the pages' edge
+	-- the schools as the book's bookmarks: Diablo III's pennants pointing
+	-- out past its right edge, red for the chosen one, each school's icon
+	-- on its own over the pages' edge
 	x, y = unpack(config.schools)
 	local size, ribbon = config.school_size, config.school_ribbon
 	for i = 1, NUM_SCHOOLS do
@@ -174,35 +174,29 @@ Module.LayoutSpells = function(self, window)
 		kit:AddBorder(tab, size)
 		local cloth = tab:CreateTexture(nil, "BACKGROUND")
 		cloth:SetTexture(ribbon.texture)
-		cloth:SetTexCoord(unpack(ribbon.coords))
 		cloth:SetPoint("TOPLEFT", -ribbon.left, ribbon.pad)
 		cloth:SetPoint("BOTTOMRIGHT", ribbon.right, -ribbon.pad)
+		local update = function()
+			cloth:SetTexCoord(unpack(tab:GetChecked() and ribbon.chosen or ribbon.idle))
+		end
+		hooksecurefunc(tab, "SetChecked", update)
+		update()
+		local checked = tab:GetCheckedTexture()
+		if checked then
+			checked:SetAlpha(0) -- (the pennant says it)
+		end
 		-- over the window's iron, as a bookmark out of the book
 		tab:SetFrameLevel(window.Border:GetFrameLevel() + 1)
 	end
 
-	-- the bottom row
-	local ranks = _G.ShowAllSpellRanksCheckBox
-	ranks:ClearAllPoints()
-	ranks:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.ranks_box))
-	ranks:HookScript("OnClick", function() self.db.showAllRanks = ranks:GetChecked() and true or false end)
-	self:CreateUnassignedBox(window)
+	-- the pages at the right of the book's foot
 	local prev, nextPage, text = _G.SpellBookPrevPageButton, _G.SpellBookNextPageButton, _G.SpellBookPageText
-	nextPage:ClearAllPoints()
-	nextPage:SetPoint("TOPRIGHT", window, "TOPRIGHT", unpack(config.pages))
-	text:ClearAllPoints()
+	self:PlacePages(window, prev, nextPage, text)
 	text:SetWidth(0)
-	text:SetPoint("RIGHT", nextPage, "LEFT", -config.page_gap, 0)
 	text:SetTextColor(unpack(kit.config.ink))
 	text:SetShadowColor(0, 0, 0, 0)
-	local label = _G.ShowAllSpellRanksCheckBoxText
-	if label then
-		label:SetTextColor(unpack(kit.config.ink))
-		label:SetShadowColor(0, 0, 0, 0)
-	end
-	prev:ClearAllPoints()
-	prev:SetPoint("RIGHT", text, "LEFT", -config.page_gap, 0)
-	-- their "Prev" and "Next" out of sight: the page is between them
+	kit:StylePager(prev, nextPage)
+	-- their "Prev" and "Next" out of sight
 	for _, button in ipairs({ prev, nextPage }) do
 		for i = 1, select("#", button:GetRegions()) do
 			local region = select(i, button:GetRegions())
@@ -213,15 +207,45 @@ Module.LayoutSpells = function(self, window)
 	end
 end
 
--- Our box for the spells on no action bar, beside Blizzard's, in ink.
-Module.CreateUnassignedBox = function(self, window)
+-- A book's page buttons (`prev`, `nextPage`) at the right page's foot,
+-- the page (`text`) between them, as the companions'.
+Module.PlacePages = function(self, window, prev, nextPage, text)
+	local config = self.config
+	nextPage:ClearAllPoints()
+	nextPage:SetPoint("RIGHT", window, "TOPRIGHT", config.next_x, config.pages_y)
+	text:ClearAllPoints()
+	text:SetPoint("RIGHT", nextPage, "LEFT", -config.page_gap, 0)
+	prev:ClearAllPoints()
+	prev:SetPoint("RIGHT", text, "LEFT", -config.page_gap, 0)
+end
+
+-- In the band right of the search (spellbook-search.lua): Blizzard's "all
+-- ranks" box, then ours for the spells on no action bar (their labels
+-- short, their tooltips say it all), over the band.
+Module.PlaceBoxes = function(self)
+	local config = self.config
+	local ranks, label = _G.ShowAllSpellRanksCheckBox, _G.ShowAllSpellRanksCheckBoxText
+	kit:StyleCheckBox(ranks)
+	label:SetText(L["All ranks"])
+	ranks:HookScript("OnClick", function() self.db.showAllRanks = ranks:GetChecked() and true or false end)
+	ranks:HookScript("OnEnter", function()
+		_G.GameTooltip:SetOwner(ranks, "ANCHOR_RIGHT")
+		_G.GameTooltip:SetText(_G.SHOW_ALL_SPELL_RANKS)
+	end)
+	ranks:HookScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	local unassigned = self:CreateUnassignedBox()
+	kit:LineBand(self.Header, { self.SearchBox, ranks, unassigned })
+	for _, box in ipairs({ ranks, unassigned }) do
+		box:SetFrameLevel(self.Header:GetFrameLevel() + 1)
+	end
+end
+
+-- Our box for the spells on no action bar, as Blizzard's "all ranks" one.
+-- The box returned.
+Module.CreateUnassignedBox = function(self)
 	local box = CreateFrame("CheckButton", "DiabolicUISpellBookUnassignedBox", _G.SpellBookFrame, "OptionsCheckButtonTemplate")
-	box:SetSize(_G.ShowAllSpellRanksCheckBox:GetSize()) -- the ranks' box, over it
-	box:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(self.config.unassigned_box))
-	local label = _G[box:GetName() .. "Text"]
-	label:SetText(L["Show unassigned spells"])
-	label:SetTextColor(unpack(kit.config.ink))
-	label:SetShadowColor(0, 0, 0, 0)
+	kit:StyleCheckBox(box)
+	_G[box:GetName() .. "Text"]:SetText(L["Unassigned"])
 	box:SetChecked(self.db.showUnassigned)
 	box:SetScript("OnClick", function()
 		self.db.showUnassigned = box:GetChecked() and true or false
@@ -229,11 +253,14 @@ Module.CreateUnassignedBox = function(self, window)
 	end)
 	box:SetScript("OnEnter", function()
 		_G.GameTooltip:SetOwner(box, "ANCHOR_RIGHT")
-		_G.GameTooltip:SetText(L["Rings the spells you can cast that are on none of your action bars."], nil, nil, nil, nil, true)
+		_G.GameTooltip:SetText(L["Show unassigned spells"])
+		_G.GameTooltip:AddLine(L["Rings the spells you can cast that are on none of your action bars."], 1, 1, 1, true)
+		_G.GameTooltip:Show()
 	end)
 	box:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
 	self.UnassignedBox = box
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "ForgetAssigned")
+	return box
 end
 
 -- The spells on the action bars, by name (their own or their macros'),
@@ -295,16 +322,10 @@ Module.UpdateAllUnassigned = function(self)
 	for i = 1, NUM_SPELLS do
 		self:UpdateUnassigned(_G["SpellButton" .. i])
 	end
-	local box = self.UnassignedBox
-	if (_G.SpellBookFrame.bookType == _G.BOOKTYPE_SPELL) then
-		box:Show()
-	else
-		box:Hide()
-	end
 end
 
 -- The band's medallion (the character window's), the school shown
--- round over its glass (its swords on the companions' pages and the pet's
+-- round on its glass (its swords on the companions' pages and the pet's
 -- book).
 Module.AddMedallion = function(self)
 	local medallion = kit:AddMedallion(self.Header, "swords")
@@ -314,8 +335,7 @@ Module.AddMedallion = function(self)
 	holder:SetFrameLevel(self.Header:GetFrameLevel() + 2)
 	holder:SetSize(size, size)
 	holder:SetPoint("CENTER", medallion, "CENTER", unpack(glass.glass_offset))
-	local icon = holder:CreateTexture(nil, "ARTWORK")
-	icon:SetAllPoints()
+	local icon = kit:AddMedallionIcon(medallion, holder)
 	local Update = function()
 		local frame = _G.SpellBookFrame
 		local _, texture = _G.GetSpellTabInfo(frame.selectedSkillLine or 1)
@@ -331,20 +351,9 @@ Module.AddMedallion = function(self)
 	Update()
 end
 
--- A tab as ours, `config.tab_height` high and sized to its text.
-Module.StyleTab = function(self, tab)
-	local config = self.config
-	tab:SetHeight(config.tab_height)
-	tab:SetHitRectInsets(0, 0, 0, 0)
-	-- Blizzard's art (the chosen tab's is its disabled texture)
-	for _, art in ipairs({ tab:GetNormalTexture(), tab:GetDisabledTexture(), tab:GetPushedTexture() }) do
-		art:SetAlpha(0)
-	end
-	kit:StyleTab(tab, { inset = config.tab_inset, padding = config.tab_padding })
-end
-
--- The companions' and mounts' tabs after Blizzard's, the one shown chosen.
-Module.CreateTabs = function(self)
+-- The companions', mounts' and professions' tabs after Blizzard's, all as
+-- banners hanging from the window's foot, the one shown chosen.
+Module.CreateTabs = function(self, window)
 	local frame = _G.SpellBookFrame
 	self.Tabs = {}
 	for i, page in ipairs(PAGES) do
@@ -354,17 +363,36 @@ Module.CreateTabs = function(self)
 		tab:SetText(_G[page[2]])
 		tab:SetScript("OnClick", function() self:ShowPage(page[1]) end)
 		tab.mode = page[1]
-		self:StyleTab(tab)
 		self.Tabs[i] = tab
 	end
+	local tabs = {}
+	for i = 1, 3 do
+		tabs[#tabs + 1] = _G["SpellBookFrameTabButton" .. i]
+	end
+	for _, tab in ipairs(self.Tabs) do
+		tabs[#tabs + 1] = tab
+	end
+	kit:HangTabs(window, tabs, self.config.tab_sigils)
+	kit:DropTop(window)
 	-- over Blizzard's chosen tab while a page shows: a click goes back to
 	-- the spells (Blizzard's own would close the spellbook)
 	local back = CreateFrame("Button", nil, frame)
 	back:SetFrameLevel(frame:GetFrameLevel() + 5)
 	back:Hide()
 	back:SetScript("OnClick", function() self:ShowPage(nil) end)
-	back:SetScript("OnEnter", function() if back.tab then back.tab:LockHighlight() end end)
-	back:SetScript("OnLeave", function() if back.tab then back.tab:UnlockHighlight() end end)
+	back:SetScript("OnEnter", function()
+		if back.tab then
+			back.tab:LockHighlight()
+			kit:ShowBannerName(back.tab)
+		end
+	end)
+	back:SetScript("OnLeave", function()
+		if back.tab then
+			back.tab:UnlockHighlight()
+		end
+		_G.GameTooltip:Hide()
+	end)
+	back:SetHitRectInsets(0, 0, kit.config.banner.tuck, 0) -- as the banner under it
 	self.Back = back
 end
 
@@ -376,23 +404,15 @@ Module.HasPage = function(self, mode)
 	return GetNumCompanions(mode) > 0
 end
 
--- The tabs in a row under the band (Blizzard's shown ones, then ours),
+-- The tabs (Blizzard's shown ones, then ours: they hang in that order),
 -- the chosen one lit (the spells' while spells found show).
 Module.UpdateTabs = function(self)
 	local frame = _G.SpellBookFrame
-	local config = self.config
 	local page = (self.page ~= "SEARCH") and self.page
-	local previous, active
+	local active
 	for i = 1, 3 do
 		local tab = _G["SpellBookFrameTabButton" .. i]
 		if tab and tab:IsShown() then
-			tab:ClearAllPoints()
-			if previous then
-				tab:SetPoint("LEFT", previous, "RIGHT", config.tab_gap, 0)
-			else
-				tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-				kit:AddTabStrip(self.Header)
-			end
 			if (tab.bookType == frame.bookType) then
 				active = tab
 				-- unchosen while a page shows; Blizzard disables the chosen one
@@ -403,20 +423,11 @@ Module.UpdateTabs = function(self)
 				end
 			end
 			kit:UpdateTab(tab)
-			previous = tab
 		end
 	end
 	for _, tab in ipairs(self.Tabs) do
 		if self:HasPage(tab.mode) then
 			tab:Show()
-			tab:ClearAllPoints()
-			if previous then
-				tab:SetPoint("LEFT", previous, "RIGHT", config.tab_gap, 0)
-			else
-				tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-				kit:AddTabStrip(self.Header)
-			end
-			previous = tab
 		else
 			tab:Hide()
 		end
@@ -469,12 +480,18 @@ Module.LayoutCompanions = function(self, cover)
 	local left = _G.CompanionModelFrameRotateLeftButton
 	left:ClearAllPoints()
 	left:SetPoint("TOPLEFT", model, "TOPLEFT", 0, 0)
+	-- the chosen one's name in Exocet, in the title's gold
 	local name = _G.CompanionSelectedName
+	name:SetFontObject(config.selected_name_font)
+	name:SetTextColor(unpack(kit.config.title_plate.color))
+	name:SetJustifyH("CENTER")
 	name:ClearAllPoints()
 	name:SetPoint("TOP", panel, "TOP", 0, config.name_top)
+	-- Summon (Mount on the mounts' page) in the band's middle (on the
+	-- cover: shown with the companions' pages)
 	local summon = _G.CompanionSummonButton
 	summon:ClearAllPoints()
-	summon:SetPoint("BOTTOM", panel, "BOTTOM", 0, config.summon_offset)
+	summon:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
 	summon:SetSize(unpack(config.summon_size))
 	kit:StyleButton(summon, config.summon_size[2])
 
@@ -512,6 +529,7 @@ Module.LayoutCompanions = function(self, cover)
 	text:SetTextColor(unpack(config.page_color))
 	prev:ClearAllPoints()
 	prev:SetPoint("RIGHT", text, "LEFT", -config.page_gap, 0)
+	kit:StylePager(prev, nextPage)
 
 	-- above the cover, all of it (a frame keeps its level when it moves)
 	local raise
@@ -565,7 +583,7 @@ Module.ShowPage = function(self, mode)
 	end
 	self:UpdateTabs()
 	self:UpdateMedallion()
-	self:UpdateSearchBox()
+	self:UpdateBand()
 end
 
 -- The page's frame on the cover, the others hidden: Blizzard's
@@ -640,13 +658,7 @@ Module.StyleSpellbook = function(self)
 	self:AddMedallion()
 
 	self:LayoutSpells(window)
-	for i = 1, 3 do
-		local tab = _G["SpellBookFrameTabButton" .. i]
-		if tab then
-			self:StyleTab(tab)
-		end
-	end
-	self:CreateTabs()
+	self:CreateTabs(window)
 
 	-- the companions' cover
 	self.Cover = kit:CreateCover(window, config.cover_insets, config.cover_level)
@@ -659,6 +671,7 @@ Module.StyleSpellbook = function(self)
 	self:LayoutCompanions(self.Cover)
 	self:CreateProfessions(self.Cover)
 	self:CreateSearch(window, self.Cover)
+	self:PlaceBoxes()
 	-- the book closed under it (its pages show through the stone)
 	-- and its bookmarks (over the iron, so over the cover too) out of sight
 	local Bookmarks = function(shown)

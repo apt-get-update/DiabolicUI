@@ -19,6 +19,7 @@ local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
+local GetTalentTabInfo = _G.GetTalentTabInfo
 local hooksecurefunc = _G.hooksecurefunc
 local IsAddOnLoaded = _G.IsAddOnLoaded
 
@@ -158,7 +159,6 @@ Module.StyleTalents = function(self)
 	Hide("PlayerTalentFramePointsLeft", "PlayerTalentFramePointsMiddle", "PlayerTalentFramePointsRight")
 	status:ClearAllPoints()
 	status:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
-	kit:SetBandCenter(self.Header, _G.PlayerTalentFrameStatusText)
 	_G.PlayerTalentFrameStatusText:SetTextColor(unpack(config.status_color))
 	local activate = _G.PlayerTalentFrameActivateButton
 	activate:ClearAllPoints()
@@ -173,14 +173,17 @@ Module.StyleTalents = function(self)
 	fit()
 	activate:HookScript("OnShow", fit)
 
-	-- the tabs in a row under the band (Blizzard sizes them)
-	local tab = _G.PlayerTalentFrameTab1
-	tab:ClearAllPoints()
-	tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-	kit:AddTabStrip(self.Header)
+	-- the tabs as banners hanging from the window's foot: each tree's own
+	-- icon (the player's or the pet's, as Blizzard names them), the glyphs'
+	-- emblem
+	local tabs = {}
 	for i = 1, NUM_TABS do
-		kit:StyleTab(_G["PlayerTalentFrameTab" .. i], { inset = config.tab_inset, font = config.tab_font })
+		tabs[i] = _G["PlayerTalentFrameTab" .. i]
 	end
+	kit:HangTabs(window, tabs, { nil, nil, nil, config.glyph_sigil })
+	kit:DropTop(window)
+	hooksecurefunc("PlayerTalentFrame_UpdateTabs", function() self:UpdateTreeIcons() end)
+	self:UpdateTreeIcons()
 
 	-- the tree in a darker panel, its scroll bar inside it
 	local scroll = _G.PlayerTalentFrameScrollFrame
@@ -232,6 +235,19 @@ end
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").talents
 	kit = Engine:GetModule("Blizzard: Windows")
+end
+
+-- Each tree's banner with its icon: the player's trees or the pet's, as
+-- Blizzard shows them.
+Module.UpdateTreeIcons = function(self)
+	local frame = _G.PlayerTalentFrame
+	for i = 1, NUM_TABS - 1 do
+		local tab = _G["PlayerTalentFrameTab" .. i]
+		local _, icon = GetTalentTabInfo(i, frame.inspect, frame.pet, frame.talentGroup)
+		if tab and icon then
+			kit:SetBannerIcon(tab, icon)
+		end
+	end
 end
 
 Module.OnEnable = function(self)

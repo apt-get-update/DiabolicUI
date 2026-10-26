@@ -118,10 +118,10 @@ local Lower = function(part, down)
 	part:SetPoint(point, relative, relativePoint, x, y - down)
 end
 
--- The search in a row of its own under the rank, Have Materials right of
--- it; the filters, the recipes and the chosen one lower for it, the
--- buttons lower in the taller window; the dropdowns and the reagents'
--- names on the parchment, without Blizzard's plates.
+-- The search in the band (the title on the window's top edge), Have
+-- Materials right of it; the filters, the recipes and the chosen one up
+-- into the search's old row, the buttons lower; the dropdowns and the reagents' names on
+-- the parchment, without Blizzard's plates.
 Module.Layout = function(self)
 	local config = self.config
 	local frame = _G.TradeSkillFrame
@@ -144,14 +144,21 @@ Module.Layout = function(self)
 	end
 	search:HookScript("OnTextChanged", Hint)
 	Hint()
+	kit:StyleCheckBox(filter)
 	filter:ClearAllPoints()
 	filter:SetPoint("LEFT", search, "RIGHT", config.filter_gap, 0)
+	-- over the band (the window's level + 1), under the iron's (+ 3)
+	for _, part in ipairs({ search, filter }) do
+		part:SetFrameLevel(frame:GetFrameLevel() + 2)
+	end
 	for _, name in ipairs({ "TradeSkillExpandButtonFrame", "TradeSkillInvSlotDropDown" }) do
 		Lower(_G[name], config.filters_lower)
 	end
 	for _, name in ipairs({ "TradeSkillSkill1", "TradeSkillListScrollFrame" }) do
 		Lower(_G[name], config.list_lower)
 	end
+	local list = _G.TradeSkillListScrollFrame
+	list:SetHeight(list:GetHeight() - config.list_trim)
 	local detail = _G.TradeSkillDetailScrollFrame
 	detail:ClearAllPoints()
 	detail:SetPoint("TOPLEFT", frame, "TOPLEFT", unpack(config.detail))
@@ -206,8 +213,7 @@ Module.UpdateMedallion = function(self)
 		holder:SetFrameLevel(header:GetFrameLevel() + 2)
 		holder:SetSize(size, size)
 		holder:SetPoint("CENTER", medallion, "CENTER", unpack(glass.glass_offset))
-		holder.icon = holder:CreateTexture(nil, "ARTWORK")
-		holder.icon:SetAllPoints()
+		holder.icon = kit:AddMedallionIcon(medallion, holder)
 		self.Medallion = holder
 	end
 	-- the profession's spell, by its name (Mining's its own)

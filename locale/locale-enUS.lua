@@ -113,7 +113,7 @@ L["Request Stop"] = true
 -- item tooltips
 L["Equipped"] = true
 L["Reskin Tooltip"] = true
-L["Shows item tooltips in the Diablo III style: the item's name on a title banner in its quality color, its icon on the left, damage per second or armor as a big number, and the sell price and durability at the bottom.|n|nWhen disabled, Blizzard's own item tooltips are used."] = true
+L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."] = true
 L["<Left-click> to land at the next flight point."] = true
 
 -- added to the interface options menu in WotLK
@@ -227,6 +227,8 @@ L["Items"] = true -- loot window title
 L["Reskin Windows"] = true
 L["Show unassigned spells"] = true
 L["Rings the spells you can cast that are on none of your action bars."] = true
+L["Unassigned"] = true
+L["All ranks"] = true
 L["No spell found"] = true
 L["Apprentice"] = true -- a profession's ranks, by its highest skill
 L["Journeyman"] = true
@@ -369,4 +371,26 @@ L["Highlights the frames you can move - the minimap, the chat, the menu buttons,
 L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."] = true
 L["You can't move frames in combat."] = true
 L["UI Scale"] = true
+L["Layout check on: each window is checked as it shows. /dui layout again to stop."] = true
+L["Layout check off."] = true
+L["Layout"] = true
+L["%s's text is wider than it."] = true
+L["%s and %s are %d apart on their row (the rule: %d)."] = true
+L["%s and %s overlap in the band."] = true
+L["%s is out of the window."] = true
+L["%s is %d under %s (the rule: at least %d)."] = true
+L["%s is %d over the foot (the rule: at least %d)."] = true
+L["the band"] = true
+L["%d of room over the content, %d under it: uneven."] = true
+L["nothing breaks the rules."] = true
+L["%d of room left of the content, %d right of it: uneven."] = true
+L["%s and %s are %d apart (the rule: at least %d)."] = true
+L["%s and %s overlap by %d."] = true
+L["%s isn't Diablo III's."] = true
+L["%s is light on parchment: hard to read."] = true
+L["%s and %d more are light on parchment: hard to read."] = true
+L["the medallion"] = true
+L["a part"] = true
+L["a window"] = true
+L["%s couldn't be checked: %s"] = true
 L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = true

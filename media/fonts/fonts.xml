@@ -256,6 +256,18 @@
 
 
 
+ 	<!-- Invisible: the hanging tab banners' names, shown on hover instead (a
+	button puts its font's color and alpha back on its text each time it's
+	chosen or hovered, so its text can't simply be faded out) -->
+	<Font name="DiabolicFont_Hidden" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardLight.ttf" justifyH="CENTER" virtual="true">
+		<Shadow>
+			<Offset><AbsDimension x="0" y="0"/></Offset>
+			<Color r="0" g="0" b="0" a="0"/>
+		</Shadow>
+		<FontHeight><AbsValue val="10"/></FontHeight>
+		<Color r="1" g="1" b="1" a="0"/>
+	</Font>
+
  	<!-- Header Regular (10, 12, 14, 16, 18) -->
 	<Font name="DiabolicFont_HeaderRegular10" font="Interface\AddOns\DiabolicUI\media\fonts\ExocetBlizzardLight.ttf" justifyH="LEFT" virtual="true">
 		<Shadow>

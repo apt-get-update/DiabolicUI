@@ -2,6 +2,7 @@
 
 <Script file='anchors.lua'/>
 <Script file='windows.lua'/>
+<Script file='layout-audit.lua'/>
 <Script file='achievements.lua'/>
 <Script file='bulletinboard.lua'/>
 <Script file='character.lua'/>
@@ -31,8 +32,10 @@
 <Script file='stacksplit.lua'/>
 <Script file='tooltips.lua'/>
 <Script file='itemtooltips.lua'/>
+<Script file='spelltooltips.lua'/>
 <Script file='totembar.lua'/>
 <Script file='tradeskill.lua'/>
+<Script file='trainer.lua'/>
 <Script file='trinketmenu.lua'/>
 <Script file='watchframe.lua'/>
 <Script file='worldmap.lua'/>

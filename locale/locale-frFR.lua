@@ -70,7 +70,7 @@ L["<Left-click> to land at the next flight point."] = "<Clic gauche> pour atterr
 -- item tooltips
 L["Equipped"] = "Équipé"
 L["Reskin Tooltip"] = "Relooker les infobulles"
-L["Shows item tooltips in the Diablo III style: the item's name on a title banner in its quality color, its icon on the left, damage per second or armor as a big number, and the sell price and durability at the bottom.|n|nWhen disabled, Blizzard's own item tooltips are used."] = "Affiche les infobulles d'objets dans le style de Diablo III : le nom de l'objet sur un bandeau de la couleur de sa qualité, son icône à gauche, les dégâts par seconde ou l'armure en gros chiffre, et le prix de vente et la durabilité en bas.|n|nDésactivé, les infobulles d'objets de Blizzard sont utilisées."
+L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."] = "Affiche les infobulles d'objets et de techniques dans le style de Diablo III : le nom sur un bandeau et l'icône à gauche. Les objets ont la couleur de leur qualité, les dégâts par seconde ou l'armure en gros chiffre, et le prix de vente et la durabilité en bas ; les techniques ont leurs chiffres en vert.|n|nDésactivé, les infobulles de Blizzard sont utilisées."
 
 -- minimap
 
@@ -100,6 +100,8 @@ L["Reskin Loot Window"] = "Relooker la fenêtre de butin"
 L["Reskin Windows"] = "Relooker les fenêtres"
 L["Show unassigned spells"] = "Sorts non assignés"
 L["Rings the spells you can cast that are on none of your action bars."] = "Entoure les sorts lançables qui ne sont sur aucune de vos barres d'action."
+L["Unassigned"] = "Non assignés"
+L["All ranks"] = "Tous les rangs"
 L["No spell found"] = "Aucun sort trouvé"
 L["Apprentice"] = "Apprenti"
 L["Journeyman"] = "Compagnon"

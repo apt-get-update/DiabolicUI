@@ -49,6 +49,10 @@ local STRINGS = {
 	ACHIEVEMENT_BROADCAST = "%s has earned the achievement %s!",
 	FRIENDS_LIST_AWAY = "Away", FRIENDS_LIST_BUSY = "Busy", TUTORIAL_TITLE26 = "Rested",
 	DEFAULT_AFK_MESSAGE = "Away", DEFAULT_DND_MESSAGE = "Busy",
+	CHAT_YOU_JOINED_NOTICE = "Joined Channel: |Hchannel:%d|h[%s]|h",
+	CHAT_YOU_CHANGED_NOTICE = "Changed Channel: |Hchannel:%d|h[%s]|h",
+	CHAT_YOU_LEFT_NOTICE = "Left Channel: |Hchannel:%d|h[%s]|h",
+	CHAT_SUSPENDED_NOTICE = "Left Channel: |Hchannel:%d|h[%s]|h ",
 	XP = "XP", REPUTATION = "Reputation", HONOR = "Honor", LEVEL = "Level", HEALTH = "Health", MANA = "Mana",
 }
 
@@ -200,6 +204,10 @@ function TestChatCleaner:test_channel_notices_and_empty_lines_are_hidden()
 	lu.assertNil(notice("YOU_JOINED", "1. General - Dalaran", 1, "General"))
 	lu.assertNil(notice("YOU_CHANGED", "1. General - Dalaran", 1, "General"))
 	lu.assertEquals(notice("SUSPENDED", "1. General - Dalaran", 1, "General"), "SUSPENDED")
+	-- a notice 3.3.5 has no text for would make Blizzard's handler format(nil)
+	db.hideChatNoise = false
+	lu.assertNil(notice("NOT_IN_LFG", "4. LookingForGroup", 26, "LookingForGroup"))
+	db.hideChatNoise = true
 
 	-- leaving: Blizzard's bookkeeping, done for it
 	frame.channelList = { "General", "Trade", "MyChannel" }

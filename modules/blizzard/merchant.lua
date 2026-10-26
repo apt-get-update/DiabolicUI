@@ -112,25 +112,14 @@ Module.StyleMerchant = function(self)
 	kit:SetTitle(self.Header, _G.MerchantNameText)
 	kit:StyleClose(_G.MerchantFrameCloseButton, window, self.Header)
 
-	-- the tabs in a row under the band (Blizzard sizes them)
-	local tab = _G.MerchantFrameTab1
-	tab:ClearAllPoints()
-	tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-	kit:AddTabStrip(self.Header)
-	for i = 1, 2 do
-		kit:StyleTab(_G["MerchantFrameTab" .. i], { inset = config.tab_inset, font = config.tab_font })
-	end
+	-- the tabs as banners hanging from the window's foot
+	kit:HangTabs(window, { _G.MerchantFrameTab1, _G.MerchantFrameTab2 }, config.tab_sigils)
+	kit:DropTop(window)
 
 	for i = 1, NUM_ITEMS do
 		self:StyleItem(_G["MerchantItem" .. i], config.slot_size, config.price_offset)
 	end
 	self:LayoutItems()
-	-- the wares on Diablo III's merchant's counter, under their slots
-	local counter = CreateFrame("Frame", nil, frame)
-	counter:SetFrameLevel(frame:GetFrameLevel())
-	counter:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.counter))
-	counter:SetSize(unpack(config.counter_size))
-	kit:CreateNine(counter, "BACKGROUND", "studded")
 	hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function() self:LayoutItems() end)
 	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function() self:LayoutItems() end)
 
@@ -143,6 +132,7 @@ Module.StyleMerchant = function(self)
 	page:ClearAllPoints()
 	page:SetPoint("CENTER", window, "TOP", 0, config.pages_y)
 	page:SetTextColor(unpack(config.page_color))
+	kit:StylePager(prev, nextPage)
 
 	-- the bottom row
 	local buyback = _G.MerchantBuyBackItem

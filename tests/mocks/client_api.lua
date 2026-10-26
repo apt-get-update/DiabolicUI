@@ -1298,6 +1298,20 @@ function Api.install(client)
 		end
 	end
 	api.GetNumSpellTabs = function() return 1 end
+	-- the skills (world.skillLines: { name, header, expanded, rank, temp, modifier, max, ... })
+	api.GetNumSkillLines = function() return #(world().skillLines or {}) end
+	api.GetSkillLineInfo = function(index)
+		local line = (world().skillLines or {})[index]
+		if line then
+			return unpack(line, 1, 12)
+		end
+	end
+	api.ExpandSkillHeader = function(index)
+		local line = (world().skillLines or {})[index]
+		if line and line[2] then
+			line[3] = 1
+		end
+	end
 	api.SortWho = function() end
 	-- the companions and mounts (world.companions.CRITTER / .MOUNT: { creatureID, name, spellID, icon, active })
 	local function companions(kind)

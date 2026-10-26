@@ -15,11 +15,18 @@ local kit
 local _G = _G
 local ipairs = ipairs
 local math_floor = math.floor
+local select = select
+local string_format = string.format
 local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local hooksecurefunc = _G.hooksecurefunc
+
+-- A color as a text's code.
+local ColorCode = function(color)
+	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
+end
 
 -- the tabs' art, by its file (lowercase, as patterns): the frames, their
 -- scroll bar tracks, the column headers' backgrounds
@@ -65,16 +72,13 @@ Module.StyleSocial = function(self)
 	kit:SetTitle(self.Header, _G.FriendsFrameTitleText)
 	kit:StyleClose(_G.FriendsFrameCloseButton, window, self.Header)
 
-	-- the tabs in a row under the band (Blizzard sizes them)
-	local tab = _G.FriendsFrameTab1
-	tab:ClearAllPoints()
-	tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-	kit:AddTabStrip(self.Header)
-	local i = 1
-	while _G["FriendsFrameTab" .. i] do
-		kit:StyleTab(_G["FriendsFrameTab" .. i], { inset = config.tab_inset, font = config.tab_font })
-		i = i + 1
+	-- the tabs as banners hanging from the window's foot
+	local tabs = {}
+	while _G["FriendsFrameTab" .. (#tabs + 1)] do
+		tabs[#tabs + 1] = _G["FriendsFrameTab" .. (#tabs + 1)]
 	end
+	kit:HangTabs(window, tabs, config.tab_sigils)
+	kit:DropTop(window)
 	-- the friends' own tabs (friends, ignored, pending)
 	for i = 1, 3 do
 		local own = _G["FriendsTabHeaderTab" .. i]
@@ -86,6 +90,8 @@ Module.StyleSocial = function(self)
 	self:LayoutFriends(window)
 	self:LayoutWho(window)
 	self:StyleGuild(window)
+	self:StyleChannelPopup()
+	self:StyleRaid()
 
 	for _, name in ipairs(LISTS) do
 		local list = _G[name]
@@ -94,7 +100,7 @@ Module.StyleSocial = function(self)
 			local zone = kit:AddZone(list, "leather", insets)
 			local button = _G[config.list_bottoms[name] or ""]
 			if button then
-				self:SetZoneBottom(zone, list, insets, button, kit.config.footer_margin + config.list_gap)
+				self:SetZoneBottom(zone, list, insets, button, kit.config.footer_margin + (config.list_gaps[name] or config.list_gap))
 			elseif (name == "GuildListScrollFrame") and self.MOTD then
 				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
 			end
@@ -124,6 +130,7 @@ Module.AddHeaderBar = function(self, zone)
 	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
 	bar:SetHeight(section.height)
 	kit:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
+	bar.DiabolicContent = true -- (the list's top: its names on it)
 end
 
 -- A part moved `by` up from where Blizzard put it.
@@ -134,38 +141,43 @@ local Raise = function(part, by)
 end
 
 -- The friends' tab with more room: your status (its dropdown) at the
--- band's left end, the friends' own tabs right under the window's, the
--- list from under them down to its buttons (Blizzard made enough rows for
+-- band's left end, the friends' own tabs after it, the list from under
+-- the band down to its buttons (Blizzard made enough rows for
 -- more height).
--- A dropdown at the band's left end, over the window's frame.
-Module.PlaceInBand = function(self, window, dropdown)
-	kit:PlaceInBand(window, self.Header, dropdown, "LEFT", self.config.status_offset)
-end
-
 Module.LayoutFriends = function(self, window)
 	local config = self.config
-	local status = _G.FriendsFrameStatusDropDown
+	-- their own tabs (friends, ignored) in the band after it, over it
+	local status, own = _G.FriendsFrameStatusDropDown, _G.FriendsTabHeaderTab1
 	if status then
-		self:PlaceInBand(window, status)
+		kit:StyleDropDown(status)
 	end
-	local own = _G.FriendsTabHeaderTab1
-	own:ClearAllPoints()
-	own:SetPoint("TOPLEFT", _G.FriendsFrameTab1, "BOTTOMLEFT", 0, -config.own_tab_gap)
+	kit:LineBand(self.Header, status and { status, own } or { own })
+	for i = 1, 3 do
+		local tab = _G["FriendsTabHeaderTab" .. i]
+		if tab then
+			tab:SetFrameLevel(self.Header:GetFrameLevel() + 1)
+		end
+	end
 	local list = _G.FriendsFrameFriendsScrollFrame
-	local _, _, _, x, y = list:GetPoint()
+	local _, _, _, x = list:GetPoint()
 	list:ClearAllPoints()
 	list:SetPoint("TOPLEFT", _G.FriendsFrame, "TOPLEFT", x, config.friends_top)
 	list:SetHeight(config.friends_bottom + config.friends_top)
 	list.scrollHeight = list:GetHeight()
+	-- its scroll bar up with it (Blizzard's top hangs off the frame's)
+	local bar = _G.FriendsFrameFriendsScrollFrameScrollBar
+	bar:ClearAllPoints()
+	bar:SetPoint("TOPLEFT", list, "TOPRIGHT", 6, -15)
+	bar:SetPoint("BOTTOMLEFT", list, "BOTTOMRIGHT", 6, 15)
 	-- the ignored as high, under their tabs too, down to the same bottom
-	local raise = config.friends_top - y
-	for _, part in ipairs({ _G.FriendsFrameIgnoreScrollFrame, _G.FriendsFrameIgnoreButton1 }) do
+	local ignored = _G.FriendsFrameIgnoreScrollFrame
+	local raise = config.friends_top - select(5, ignored:GetPoint())
+	for _, part in ipairs({ ignored, _G.FriendsFrameIgnoreButton1 }) do
 		local point, relative, relativePoint, px, py = part:GetPoint()
 		part:ClearAllPoints()
 		part:SetPoint(point, relative, relativePoint, px, py + raise)
 	end
-	local ignored = _G.FriendsFrameIgnoreScrollFrame
-	ignored:SetHeight(ignored:GetHeight() + raise)
+	ignored:SetHeight(config.friends_bottom + config.friends_top)
 end
 
 -- The who list with more room: the column's dropdown (zone, guild or
@@ -175,7 +187,6 @@ Module.LayoutWho = function(self, window)
 	local config = self.config
 	local dropdown, column = _G.WhoFrameDropDown, _G.WhoFrameColumnHeader2
 	kit:StyleDropDown(dropdown)
-	self:PlaceInBand(window, dropdown)
 	-- its text in the middle of the plate's room left of the arrow
 	local text, spec = _G.WhoFrameDropDownText, kit.config.dropdown
 	text:ClearAllPoints()
@@ -204,11 +215,21 @@ Module.LayoutWho = function(self, window)
 	NameColumn()
 	hooksecurefunc("WhoList_Update", NameColumn)
 
-	-- "1612 People Found" lower, closer to the buttons under it
+	-- "1612 People Found" in the band right of the dropdown, in its labels'
+	-- font
 	local totals = _G.WhoFrameTotals
-	local point, relative, relativePoint, tx, ty = totals:GetPoint()
-	totals:SetPoint(point, relative, relativePoint, tx, ty - config.who_totals_drop)
-
+	totals:SetParent(self.Header)
+	totals:SetDrawLayer("OVERLAY")
+	totals:SetFontObject(kit.config.check_box.font)
+	totals:SetTextColor(unpack(kit.config.title_plate.color))
+	totals:SetJustifyH("LEFT")
+	kit:LineBand(self.Header, { dropdown, totals })
+	-- (the band's on every tab: there while the who list is)
+	_G.WhoFrame:HookScript("OnShow", function() totals:Show() end)
+	_G.WhoFrame:HookScript("OnHide", function() totals:Hide() end)
+	if not _G.WhoFrame:IsShown() then
+		totals:Hide()
+	end
 	local header = _G.WhoFrameColumnHeader1
 	local _, _, _, x, y = header:GetPoint()
 	header:ClearAllPoints()
@@ -245,9 +266,7 @@ Module.StyleGuild = function(self, window)
 	if label and text then
 		local insets = config.motd_panel_insets
 		text:SetHeight(config.motd_text_height)
-		for _, part in ipairs({ _G.GuildFrameTotals, _G.GuildFrameGuildListToggleButton }) do
-			Raise(part, config.guild_totals_raise)
-		end
+		Raise(_G.GuildFrameTotals, config.guild_totals_raise)
 		_G.GuildListScrollFrame:SetHeight(config.guild_list_height)
 		-- the message of the day on parchment, in ink
 		local panel = CreateFrame("Frame", nil, _G.GuildFrame)
@@ -256,6 +275,8 @@ Module.StyleGuild = function(self, window)
 		panel:SetPoint("TOPLEFT", label, "TOPLEFT", -insets[1], insets[2])
 		panel:SetPoint("BOTTOMRIGHT", text, "BOTTOMRIGHT", insets[3], -insets[4])
 		kit:CreateNine(panel, "BACKGROUND", "parchment")
+		panel.DiabolicContent = true
+		panel.DiabolicMaterial = "parchment"
 		label:SetTextColor(unpack(config.motd_title_color))
 		label:SetShadowOffset(0, 0)
 		text:SetShadowOffset(0, 0)
@@ -271,6 +292,51 @@ Module.StyleGuild = function(self, window)
 		hooksecurefunc(text, "SetTextColor", Ink)
 		Ink()
 	end
+	-- the list and the message of the day higher (what's placed from the
+	-- frame's top or sides, not its foot's buttons): as far from the band
+	-- as from the foot. Blizzard places the list's toggle again on each
+	-- update.
+	local guild = _G.GuildFrame
+	local toggle = _G.GuildFrameGuildListToggleButton
+	local parts = { guild:GetChildren() }
+	for _, holder in ipairs({ _G.GuildPlayerStatusFrame, _G.GuildStatusFrame }) do
+		for _, part in ipairs({ holder:GetChildren() }) do
+			parts[#parts + 1] = part
+		end
+	end
+	for _, part in ipairs({ guild:GetRegions() }) do
+		parts[#parts + 1] = part
+	end
+	for _, part in ipairs(parts) do
+		if (part ~= toggle) and (part:GetNumPoints() == 1) then
+			local _, relative, relativePoint = part:GetPoint()
+			if (relative == guild) and (not relativePoint:find("^BOTTOM")) then
+				Raise(part, config.guild_raise)
+			end
+		end
+	end
+	if toggle then
+		local Place = function()
+			local point, relative, relativePoint, x = toggle:GetPoint()
+			toggle:SetPoint(point, relative, relativePoint, x, config.guild_toggle_y + config.guild_totals_raise + config.guild_raise)
+		end
+		hooksecurefunc("GuildStatus_Update", Place)
+		Place()
+	end
+	-- Show Offline Members at the band's left end, its box ours, left of
+	-- its label (Blizzard's frame round it out of sight)
+	local offline = _G.GuildFrameLFGButton
+	if offline then
+		for _, part in ipairs({ "Left", "Middle", "Right" }) do
+			local region = _G["GuildFrameLFGFrame" .. part]
+			if region then
+				region:SetAlpha(0)
+			end
+		end
+		kit:StyleCheckBox(offline)
+		kit:LineBand(self.Header, { offline })
+		offline:SetFrameLevel(self.Header:GetFrameLevel() + 1)
+	end
 	local card = _G.GuildMemberDetailFrame
 	kit:HideTextures(card)
 	kit:StylePanel(card)
@@ -284,6 +350,105 @@ Module.StyleGuild = function(self, window)
 	end
 	kit:SkinClose(_G.GuildMemberDetailCloseButton)
 	kit:StyleButtons(card)
+	-- the guild's information and its log the same, their text on
+	-- parchment in ink (the message of the day's)
+	if _G.GuildInfoFrame then
+		self:StylePopup(_G.GuildInfoFrame, _G.GuildInfoTitle, _G.GuildInfoCloseButton)
+		self:AddPage(_G.GuildInfoTextBackground, _G.GuildInfoEditBox, config.raid_description_font)
+		kit:StyleScrollBar(_G.GuildInfoFrameScrollFrameScrollBar)
+	end
+	if _G.GuildEventLogFrame then
+		local inks = self:GetDB("Blizzard").panels.log_inks
+		self:StylePopup(_G.GuildEventLogFrame, _G.GuildEventLogTitle, _G.GuildEventLogCloseButton)
+		local text = _G.GuildEventMessage
+		self:AddPage(_G.GuildEventFrame, text, inks.font)
+		kit:StyleScrollBar(_G.GuildEventLogScrollFrameScrollBar)
+		-- the times in their darker ink, not Blizzard's teal
+		local time = ColorCode(inks.time)
+		hooksecurefunc("GuildEventLog_Update", function()
+			text:SetText((text:GetText() or ""):gsub("|cff009999", time))
+		end)
+	end
+end
+
+-- A popup by the window (the guild's information, its log, a new
+-- channel) as a member's card: a dark panel, its title pale, its X and
+-- buttons ours.
+Module.StylePopup = function(self, frame, title, close)
+	kit:HideTextures(frame)
+	kit:StylePanel(frame)
+	frame:SetBackdropColor(unpack(self:GetDB("Blizzard").character.popup_color))
+	if title then
+		title:SetTextColor(unpack(kit.config.title_plate.color))
+	end
+	if close then
+		kit:SkinClose(close)
+	end
+	kit:StyleButtons(frame)
+end
+
+-- `frame` (a popup's text's backdrop) a page of parchment, `text` on it
+-- in ink, in `font`.
+Module.AddPage = function(self, frame, text, font)
+	frame:SetBackdrop(nil)
+	kit:CreateNine(frame, "BACKGROUND", "parchment")
+	text:SetFontObject(font)
+	text:SetTextColor(unpack(kit.config.ink))
+	text:SetShadowColor(0, 0, 0, 0)
+end
+
+-- The chat tab's new channel popup: its fields on Diablo III's plates,
+-- their labels as the band's.
+Module.StyleChannelPopup = function(self)
+	local frame = _G.ChannelFrameDaughterFrame
+	if (not frame) then
+		return
+	end
+	self:StylePopup(frame, _G.ChannelFrameDaughterFrameName, _G.ChannelFrameDaughterFrameDetailCloseButton)
+	for _, name in ipairs({ "ChannelFrameDaughterFrameChannelName", "ChannelFrameDaughterFrameChannelPassword" }) do
+		local box = _G[name]
+		kit:StyleEditBox(box)
+		local label = _G[name .. "Label"]
+		label:SetFontObject(kit.config.check_box.font)
+		label:SetTextColor(unpack(kit.config.title_plate.color))
+	end
+	if _G.ChannelFrameDaughterFrameVoiceChat then
+		kit:StyleCheckBox(_G.ChannelFrameDaughterFrameVoiceChat)
+	end
+end
+
+-- The raid tab's: Convert to Raid and Raid Info in the band's middle,
+-- what raids are on parchment, in ink (its first lines dark red, as the
+-- message of the day's title). In a raid, Blizzard puts Raid Info back
+-- by its ready check.
+Module.StyleRaid = function(self)
+	local config = self.config
+	local convert, info = _G.RaidFrameConvertToRaidButton, _G.RaidFrameRaidInfoButton
+	if convert and info then
+		local level = self.Header:GetFrameLevel() + 1
+		convert:ClearAllPoints()
+		convert:SetPoint("RIGHT", self.Header, "CENTER", -config.raid_band_gap / 2, 0)
+		info:ClearAllPoints()
+		info:SetPoint("LEFT", self.Header, "CENTER", config.raid_band_gap / 2, 0)
+		convert:SetFrameLevel(level)
+		info:SetFrameLevel(level)
+	end
+	local text = _G.RaidFrameRaidDescription
+	if text then
+		local ink, insets = kit.config.ink, config.raid_description_insets
+		local panel = CreateFrame("Frame", nil, _G.RaidFrameNotInRaid)
+		panel:SetFrameLevel(_G.RaidFrameNotInRaid:GetFrameLevel())
+		panel:SetPoint("TOPLEFT", text, "TOPLEFT", -insets[1], insets[2])
+		panel:SetPoint("BOTTOMRIGHT", text, "BOTTOMRIGHT", insets[3], -insets[4])
+		kit:CreateNine(panel, "BACKGROUND", "parchment")
+		panel.DiabolicContent = true
+		panel.DiabolicMaterial = "parchment"
+		local code = string_format("|cff%02x%02x%02x", ink[1] * 255, ink[2] * 255, ink[3] * 255)
+		text:SetFontObject(config.raid_description_font)
+		text:SetText((_G.RAID_DESCRIPTION:gsub("|c%x%x%x%x%x%x%x%x", code)))
+		text:SetTextColor(unpack(config.motd_title_color))
+		text:SetShadowOffset(0, 0)
+	end
 end
 
 Module.OnInit = function(self)

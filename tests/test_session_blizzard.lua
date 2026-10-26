@@ -273,7 +273,7 @@ function TestStyling:test_panels_get_our_colors()
 	boot()
 	near(color(_G.CharacterFramePortrait:GetVertexColor()), C.General.UIBackdrop)
 	-- (the character's name is the window's: in the band's pale gold)
-	near(color(_G.CharacterNameText:GetTextColor()), client.Engine:GetDB("Blizzard").window.band_title.color)
+	near(color(_G.CharacterNameText:GetTextColor()), client.Engine:GetDB("Blizzard").window.title_plate.color)
 	-- the find group button keeps its text color
 	local r, g, b = _G.LFDQueueFrameFindGroupButtonText:GetTextColor()
 	lu.assertNotEquals({ r, g, b }, C.General.Title)
@@ -375,11 +375,13 @@ function TestCharacter:test_our_window_on_every_tab()
 	-- window's corner
 	lu.assertEquals(_G.CharacterFramePortrait:GetAlpha(), 0)
 	lu.assertEquals(_G.CharacterNameText:GetParent(), module.Header)
-	near(color(_G.CharacterNameText:GetTextColor()), window.band_title.color)
+	near(color(_G.CharacterNameText:GetTextColor()), window.title_plate.color)
 	lu.assertEquals({ _G.CharacterNameText:GetPoint() }, { "CENTER", module.Header, "CENTER", 0, 0 })
 	lu.assertEquals({ module.Medallion:GetPoint() }, { "LEFT", module.Header, "LEFT", window.medallion.offset, 0 })
 	local socket = window.close.socket_size
-	lu.assertEquals({ _G.CharacterFrameCloseButton:GetPoint() }, { "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 })
+	-- (the window's top lowered by the tab row: its tabs hang under it)
+	lu.assertEquals({ _G.CharacterFrameCloseButton:GetPoint() }, { "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 - window.tab_row })
+	lu.assertEquals({ module.Header:GetPoint() }, { "TOPLEFT", backdrop, "TOPLEFT", config.header_insets[1], -config.header_insets[2] - window.tab_row })
 	lu.assertEquals(_G.CharacterFrameCloseButton:GetNormalTexture():GetTexture(), window.close.texture.normal)
 	-- the band's glass and the stone in tiles, laid again at a new size
 	frame:Show()
@@ -394,37 +396,47 @@ function TestCharacter:test_our_window_on_every_tab()
 	-- the ammo slot in the action buttons' border instead of its frame art
 	lu.assertEquals(alphasOf(_G.CharacterAmmoSlot, "UI-Character-AmmoSlot"), { 0 })
 
-	-- the tabs: the chosen one red, the others dark, in a row under the band
+	-- the tabs: banners hanging side by side, centred under the window's
+	-- foot, Blizzard's art out of sight, their text in the invisible font;
+	-- the chosen one red and longer, its emblem brighter
+	local banner = window.banner
 	local first, second = _G.CharacterFrameTab1, _G.CharacterFrameTab2
-	lu.assertEquals({ first:GetPoint() }, { "TOPLEFT", module.Header, "BOTTOMLEFT", unpack(config.tab_offset) })
+	local hanging = {}
+	for i = 1, 5 do
+		local tab = _G["CharacterFrameTab" .. i]
+		if tab:IsShown() then
+			hanging[#hanging + 1] = tab
+		end
+	end
+	local left = -(#hanging * banner.width + (#hanging - 1) * banner.gap) / 2
+	for i, tab in ipairs(hanging) do
+		lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", backdrop, "BOTTOM", left + (i - 1) * (banner.width + banner.gap), banner.tuck })
+	end
 	lu.assertEquals(_G.CharacterFrameTab1Left:GetAlpha(), 0)
+	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
+	lu.assertEquals(first:GetWidth(), banner.width)
 	_G.PanelTemplates_SetTab(frame, 1)
-	lu.assertTrue(shown(first.DiabolicArt.red[2]))
-	lu.assertFalse(shown(first.DiabolicArt.dark[2]))
-	lu.assertTrue(shown(second.DiabolicArt.dark[2]))
-	lu.assertEquals(first.DiabolicArt.red[2]:GetTexture(), window.rect_button.texture.lit)
+	near({ first.DiabolicBanner.cloth:GetVertexColor() }, banner.chosen_color)
+	near({ second.DiabolicBanner.cloth:GetVertexColor() }, banner.cloth_color)
+	lu.assertEquals(first.DiabolicBanner.cloth:GetHeight(), banner.height + banner.drop)
+	lu.assertEquals(second.DiabolicBanner.cloth:GetHeight(), banner.height)
+	-- (Blizzard gives the chosen tab its own font: ours again)
+	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
 	_G.PanelTemplates_SetTab(frame, 2)
-	lu.assertFalse(shown(first.DiabolicArt.red[2]))
-	lu.assertTrue(shown(second.DiabolicArt.red[2]))
+	near({ first.DiabolicBanner.cloth:GetVertexColor() }, banner.cloth_color)
+	near({ second.DiabolicBanner.cloth:GetVertexColor() }, banner.chosen_color)
+	-- Blizzard placing one again (the pet's tab as a pet comes and goes):
+	-- back in the row
+	_G.CharacterFrameTab4:SetPoint("LEFT", _G.CharacterFrameTab3, "RIGHT", -15, 0)
+	lu.assertEquals(select(2, _G.CharacterFrameTab4:GetPoint()), backdrop)
 
-	-- another tab: the window narrow again, as far past the last tab shown
-	-- as the first is in from its left (from the tabs' anchors), Blizzard told
+	-- another tab: the window narrow again, Blizzard told
 	frame:Show()
 	local updates = client.panelUpdates or 0
 	_G.PaperDollFrame:Hide()
-	-- (Blizzard's 115 wide tabs overlap by 15, the pet's hidden without a
-	-- pet: the currency tab ends 415 in, the window 28 past it)
-	local pad = config.header_insets[1] + config.tab_offset[1]
-	local right = pad + 415 + pad - insets[1] - frame:GetWidth()
-	lu.assertEquals({ backdrop:GetPoint(2) }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", right, -insets[4] })
-	lu.assertEquals(frame:GetAttribute("UIPanelLayout-width"), frame:GetWidth() + right)
-	lu.assertEquals(client.panelUpdates, updates + 1)
-	-- tabs placed by something else (an addon): the window's own width
-	_G.CharacterFrameTab4:SetPoint("LEFT", _G.UIParent, "LEFT", 0, 0)
-	_G.PaperDollFrame:Show()
-	_G.PaperDollFrame:Hide()
 	lu.assertEquals({ backdrop:GetPoint(2) }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4] })
-	_G.CharacterFrameTab4:SetPoint("LEFT", _G.CharacterFrameTab3, "RIGHT", -15, 0)
+	lu.assertEquals(frame:GetAttribute("UIPanelLayout-width"), frame:GetWidth() + insets[3])
+	lu.assertEquals(client.panelUpdates, updates + 1)
 
 	-- the pet tab: its name in the band, its own tabs in a row in its middle
 	_G.PetPaperDollFrame:Show()
@@ -880,7 +892,7 @@ function TestAchievements:test_our_window_once_it_loads()
 	-- cartouche in the band after the shield, the close button in the band
 	local title = _G.AchievementFrameHeaderTitle
 	lu.assertEquals(title:GetText(), "Achievements")
-	lu.assertEquals(title:GetFontObject(), window.band_title.font)
+	lu.assertEquals(title:GetFontObject(), window.title_plate.font)
 	lu.assertEquals(title:GetParent(), module.Header)
 	local points, shield = _G.AchievementFrameHeaderPoints, _G.AchievementFrameHeaderShield
 	local cartouche = points:GetParent()
@@ -893,7 +905,7 @@ function TestAchievements:test_our_window_once_it_loads()
 	lu.assertEquals({ _G.AchievementFrameCloseButton:GetPoint() }, { "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 })
 	-- Blizzard's header over the band only, the list's filter under it
 	lu.assertEquals({ _G.AchievementFrameHeader:GetPoint(1) }, { "TOPLEFT", module.Header, "TOPLEFT", 0, 0 })
-	lu.assertEquals({ _G.AchievementFrameFilterDropDown:GetPoint() }, { "TOPRIGHT", module.Header, "BOTTOMRIGHT", unpack(config.filter_position) })
+	lu.assertEquals((select(2, _G.AchievementFrameFilterDropDown:GetPoint())), module.Header)
 
 	-- the lists in our panels
 	lu.assertEquals(_G.AchievementFrameCategories:GetBackdrop(), window.panel.backdrop)
@@ -951,19 +963,18 @@ function TestAchievements:test_our_window_once_it_loads()
 	category:UnlockHighlight()
 	lu.assertFalse(shown(category.DiabolicLit[1]))
 
-	-- the tabs in a row under the band, and one an addon adds, once the window shows
-	lu.assertEquals({ _G.AchievementFrameTab1:GetPoint() }, { "TOPLEFT", module.Header, "BOTTOMLEFT", unpack(config.tab_offset) })
-	-- their text kept in their middle (Overachiever moves it)
-	local text = _G.AchievementFrameTab1:GetFontString()
-	text:SetPoint("CENTER", _G.AchievementFrameTab1, "CENTER", 0, -5)
-	lu.assertEquals({ text:GetPoint() }, { "CENTER", _G.AchievementFrameTab1, "CENTER", 0, window.tab.text_offset })
-	lu.assertTrue(shown(_G.AchievementFrameTab1.DiabolicArt.red[2]))
-	lu.assertTrue(shown(_G.AchievementFrameTab2.DiabolicArt.dark[2]))
-	-- Overachiever's, added once the window shows
+	-- the tabs hanging from the window's foot, and one an addon adds, once
+	-- the window shows
+	lu.assertEquals(select(2, _G.AchievementFrameTab1:GetPoint()), module.Window)
+	lu.assertEquals(select(3, _G.AchievementFrameTab1:GetPoint()), "BOTTOM")
+	near({ _G.AchievementFrameTab1.DiabolicBanner.cloth:GetVertexColor() }, window.banner.chosen_color)
+	near({ _G.AchievementFrameTab2.DiabolicBanner.cloth:GetVertexColor() }, window.banner.cloth_color)
+	-- Overachiever's, added once the window shows: in the row, the default emblem
 	frame:Show()
 	local added = _G.CreateFrame("Button", "AchievementFrameTab3", frame)
 	_G.PanelTemplates_SetNumTabs(frame, 3)
-	lu.assertNotNil(added.DiabolicArt)
+	lu.assertNotNil(added.DiabolicBanner)
+	lu.assertEquals(select(2, added:GetPoint()), module.Window)
 	assertClean(client)
 end
 

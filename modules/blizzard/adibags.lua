@@ -30,7 +30,7 @@ Module.StyleContainer = function(self, frame)
 	frame.DiabolicWindow = window
 	kit:StyleClose(frame.CloseButton, window)
 	frame.Title:SetFontObject(config.title_font)
-	frame.Title:SetTextColor(unpack(kit.config.band_title.color))
+	frame.Title:SetTextColor(unpack(kit.config.title_plate.color))
 	-- over the window's iron, not on it
 	local panel = frame.BagSlotPanel
 	if panel then
@@ -38,7 +38,7 @@ Module.StyleContainer = function(self, frame)
 		panel:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -config.insets[1], config.insets[2] + config.panel_gap)
 		kit:StylePanel(panel)
 		panel.Title:SetFontObject(config.title_font)
-		panel.Title:SetTextColor(unpack(kit.config.band_title.color))
+		panel.Title:SetTextColor(unpack(kit.config.title_plate.color))
 		panel:HookScript("OnShow", function() kit:StylePanel(panel) end)
 	end
 	-- its push buttons ours, each once (its modules add theirs as it

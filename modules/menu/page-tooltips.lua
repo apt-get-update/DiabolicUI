@@ -17,7 +17,7 @@ Module.CreateTooltipsPage = function(self)
 	local tooltipsDB = Engine:GetConfig("Tooltips")
 	local tooltipsPanel, layout = NewPage("DiabolicUIOptionsPanelTooltips", L["Tooltips"])
 
-	local reskinTooltip = CreateCheckbox(tooltipsPanel, "ReskinTooltip", L["Reskin Tooltip"], L["Shows item tooltips in the Diablo III style: the item's name on a title banner in its quality color, its icon on the left, damage per second or armor as a big number, and the sell price and durability at the bottom.|n|nWhen disabled, Blizzard's own item tooltips are used."], function(button)
+	local reskinTooltip = CreateCheckbox(tooltipsPanel, "ReskinTooltip", L["Reskin Tooltip"], L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."], function(button)
 		tooltipsDB.reskinTooltip = button:GetChecked() and true or false
 	end)
 	layout:Place(reskinTooltip, CHECK_X, layout:Row(CHECK_HEIGHT, SECTION_GAP))

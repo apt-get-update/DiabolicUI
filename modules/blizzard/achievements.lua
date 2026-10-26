@@ -156,16 +156,14 @@ Module.StyleRows = function(self)
 	end
 end
 
--- Blizzard's tabs and any an addon has added (Overachiever does), each once.
+-- Blizzard's tabs and any an addon has added (Overachiever does) as
+-- banners hanging from the window's foot, each once.
 Module.StyleTabs = function(self)
-	local i, tab = 1, _G.AchievementFrameTab1
-	while tab do
-		if not tab.DiabolicArt then
-			kit:StyleTab(tab, { inset = self.config.tab_inset, padding = self.config.tab_padding })
-		end
-		i = i + 1
-		tab = _G["AchievementFrameTab" .. i]
+	local tabs = {}
+	while _G["AchievementFrameTab" .. (#tabs + 1)] do
+		tabs[#tabs + 1] = _G["AchievementFrameTab" .. (#tabs + 1)]
 	end
+	kit:HangTabs(self.Window, tabs, self.config.tab_sigils)
 end
 
 -- Whether `child` is one of UIPanelButtonTemplate's buttons.
@@ -259,13 +257,12 @@ Module.StyleAchievements = function(self)
 	kit:CreateCartouche(self.Header, _G.AchievementFrameHeaderPoints, _G.AchievementFrameHeaderShield)
 
 	-- the close button in the band's right end, the list's filter in a
-	-- dark plate
+	-- dark plate at its left end
 	kit:StyleClose(_G.AchievementFrameCloseButton, window, self.Header)
 	local filter = _G.AchievementFrameFilterDropDown
 	if filter then
 		kit:StyleDropDown(filter, config.filter_offset, config.filter_inset)
-		filter:ClearAllPoints()
-		filter:SetPoint("TOPRIGHT", self.Header, "BOTTOMRIGHT", unpack(config.filter_position))
+		kit:LineBand(self.Header, { filter })
 	end
 
 	StylePanels()
@@ -328,13 +325,9 @@ Module.StyleAchievements = function(self)
 	header:ClearAllPoints()
 	header:SetAllPoints(self.Header)
 
-	-- the tabs in a row under the band, and any added later, once it shows
-	local tab = _G.AchievementFrameTab1
-	if tab then
-		tab:ClearAllPoints()
-		tab:SetPoint("TOPLEFT", self.Header, "BOTTOMLEFT", unpack(config.tab_offset))
-		kit:AddTabStrip(self.Header)
-	end
+	-- the tabs as banners hanging from the window's foot, and any added
+	-- later, once it shows; the row under the band left to the list's filter
+	kit:AddTabStrip(self.Header)
 	self:StyleTabs()
 	frame:HookScript("OnShow", function()
 		self:StyleTabs()
