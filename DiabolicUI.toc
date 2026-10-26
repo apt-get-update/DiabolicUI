@@ -5,7 +5,7 @@
 ## Author: Lars "Goldpaw" Norberg, modified by apt-get-update
 ## Version: 1.6.5-Release
 ## DefaultState: Enabled
-## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB
+## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB, DiabolicUI_Layout
 ## X-Category: Interface Enhancements
 
 ### localization

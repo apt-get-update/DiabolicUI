@@ -11,6 +11,7 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
+local pairs = pairs
 local unpack = unpack
 
 -- WoW API
@@ -32,6 +33,15 @@ Module.StyleImmersion = function(self)
 			fontString:SetFont(config.title_font, size, "")
 		end
 	end
+	-- the choices, each as Immersion makes it
+	local titles = _G.ImmersionFrame.TitleButtons
+	for _, button in pairs(titles.Buttons) do
+		self:StyleChoice(button)
+	end
+	hooksecurefunc(titles, "GetButton", function(_, index)
+		self:StyleChoice(titles.Buttons[index])
+	end)
+
 	local elements = talkBox.Elements
 	local content = elements.Content
 	local rewards = content.RewardsFrame
@@ -70,24 +80,7 @@ Module.StyleBox = function(self, talkBox)
 		end
 	end
 
-	local insets = config.bar_insets
-	local width, height = unpack(config.bar_size)
-	local cap = config.bar_cap * (talkBox:GetHeight() - insets[2] - insets[4]) / height
-	local Part = function(left, right)
-		local part = background:CreateTexture(nil, "BACKGROUND")
-		part:SetTexture(config.bar)
-		part:SetTexCoord(left / 1024, right / 1024, 0, height / 256)
-		return part
-	end
-	local left, middle, right = Part(0, config.bar_cap), Part(config.bar_cap, width - config.bar_cap), Part(width - config.bar_cap, width)
-	left:SetWidth(cap)
-	left:SetPoint("TOPLEFT", talkBox, "TOPLEFT", insets[1], -insets[2])
-	left:SetPoint("BOTTOMLEFT", talkBox, "BOTTOMLEFT", insets[1], insets[4])
-	right:SetWidth(cap)
-	right:SetPoint("TOPRIGHT", talkBox, "TOPRIGHT", -insets[3], -insets[2])
-	right:SetPoint("BOTTOMRIGHT", talkBox, "BOTTOMRIGHT", -insets[3], insets[4])
-	middle:SetPoint("TOPLEFT", left, "TOPRIGHT")
-	middle:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT")
+	self:AddGlass(background, talkBox, config.bar_insets)
 
 	local scale = model:GetWidth() / config.glass[1]
 	local glass = background:CreateTexture(nil, "BORDER")
@@ -105,6 +98,64 @@ Module.StyleBox = function(self, talkBox)
 	if (not portrait:IsShown()) then
 		glass:Hide()
 	end
+end
+
+-- Diablo III's dark glass over `frame`, `insets` (left, top, right,
+-- bottom) in, drawn by `owner`: in three parts, its clean end at both
+-- sides (the right one mirrored, without the left's bronze rim: the art's
+-- own right end is torn), its ends as wide as its height keeps them, the
+-- middle stretched.
+Module.AddGlass = function(self, owner, frame, insets)
+	local config = self.config
+	local width, height = unpack(config.bar_size)
+	local Part = function(left, right)
+		local part = owner:CreateTexture(nil, "BACKGROUND")
+		part:SetTexture(config.bar)
+		part:SetTexCoord(left / 1024, right / 1024, 0, height / 256)
+		return part
+	end
+	local left, middle, right = Part(0, config.bar_cap), Part(config.bar_cap, width - config.bar_cap), Part(config.bar_cap, config.bar_rim)
+	left:SetPoint("TOPLEFT", frame, "TOPLEFT", insets[1], -insets[2])
+	left:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", insets[1], insets[4])
+	right:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -insets[3], -insets[2])
+	right:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets[3], insets[4])
+	middle:SetPoint("TOPLEFT", left, "TOPRIGHT")
+	middle:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT")
+	local Fit = function()
+		local scale = (frame:GetHeight() - insets[2] - insets[4]) / height
+		if (scale > 0) then
+			left:SetWidth(config.bar_cap * scale)
+			right:SetWidth((config.bar_cap - config.bar_rim) * scale)
+		end
+	end
+	frame:HookScript("OnSizeChanged", Fit)
+	Fit()
+end
+
+-- A choice (gossip option, quest) on the same glass, its text in Diablo
+-- III's pale gold, the copper bar under the mouse and on the one the keys
+-- have chosen (Immersion's blue frames gone).
+Module.StyleChoice = function(self, button)
+	local config = self.config
+	if button.DiabolicGlass then
+		return
+	end
+	button.DiabolicGlass = true
+	for _, frame in ipairs({ button, button.Overlay, button.Hilite }) do
+		frame:SetBackdrop(nil)
+	end
+	self:AddGlass(button, button, config.choice_insets)
+	button.Label:SetTextColor(unpack(kit.config.title_plate.color))
+	local lit = kit.config.row_bars.lit
+	local highlight = button:GetHighlightTexture()
+	highlight:SetTexture(lit)
+	highlight:SetTexCoord(0, 1, 0, 1)
+	highlight:SetAlpha(config.choice_lit_alpha)
+	local chosen = button.Hilite:CreateTexture(nil, "BACKGROUND")
+	chosen:SetTexture(lit)
+	chosen:SetBlendMode("ADD")
+	chosen:SetPoint("TOPLEFT", button, "TOPLEFT", config.choice_insets[1], -config.choice_insets[2])
+	chosen:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -config.choice_insets[3], config.choice_insets[4])
 end
 
 -- the dialogue Immersion, once it has made its frame

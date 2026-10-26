@@ -161,11 +161,25 @@ local FitBackground = function(window, width, height)
 	end
 end
 
-local LayoutStone = function(window)
+-- `frame` laid out by `layout` on the next frame drawn, and each one after
+-- while it has no size yet (built before the client placed it: the first
+-- time a window opens after logging in, no size change follows).
+local Later = function(frame, layout)
+	frame:SetScript("OnUpdate", function()
+		frame:SetScript("OnUpdate", nil)
+		layout(frame)
+	end)
+end
+
+local LayoutStone
+LayoutStone = function(window)
 	local insets = config.backdrop.insets
 	local top = insets.top + Drop(window)
 	local width = window:GetWidth() - insets.left - insets.right
 	local height = window:GetHeight() - top - insets.bottom
+	if (width <= 0) or (height <= 0) then
+		Later(window, LayoutStone)
+	end
 	TileStone(window, insets.left, top, 0, 0, width, height)
 	FitBackground(window, width, height)
 end
@@ -208,7 +222,11 @@ Module.SetBackground = function(self, window, name)
 	LayoutStone(window)
 end
 
-local LayoutCover = function(cover)
+local LayoutCover
+LayoutCover = function(cover)
+	if (cover:GetWidth() <= 0) or (cover:GetHeight() <= 0) then
+		Later(cover, LayoutCover)
+	end
 	local insets = config.backdrop.insets
 	local y = cover.DiabolicY - insets.top - Drop(cover.DiabolicWindow)
 	TileStone(cover, 0, 0, cover.DiabolicX - insets.left, y, cover:GetWidth(), cover:GetHeight())
@@ -245,6 +263,7 @@ Module.CreateWindow = function(self, frame, insets)
 	window.DiabolicStone = {}
 	window.DiabolicHeaders, window.DiabolicCovers = {}, {}
 	window:SetScript("OnSizeChanged", LayoutStone)
+	window:HookScript("OnShow", LayoutStone) -- (its size may have come with no change told)
 	LayoutStone(window)
 	window.Frame = frame
 	Windows[#Windows + 1] = window
@@ -268,6 +287,7 @@ Module.CreateCover = function(self, window, insets, level)
 	cover.DiabolicTile = window.DiabolicTile
 	cover.DiabolicStone = {}
 	cover:SetScript("OnSizeChanged", LayoutCover)
+	cover:SetScript("OnShow", LayoutCover)
 	LayoutCover(cover)
 	return cover
 end
@@ -288,8 +308,9 @@ Module.AddDrag = function(self, window, frame)
 end
 
 -- The band's tiles across the header, each at the band's height and its
--- art's shape, the last one cut.
-local LayoutBand = function(header)
+-- art's shape, the last one cut (later if it has no size yet).
+local LayoutBand
+LayoutBand = function(header)
 	local band = config.band
 	local height = header:GetHeight()
 	local width = header:GetWidth()
@@ -299,6 +320,7 @@ local LayoutBand = function(header)
 		tile:Hide()
 	end
 	if (width <= 0) or (height <= 0) then
+		Later(header, LayoutBand)
 		return
 	end
 	for i = 1, math_ceil(width / size) do
@@ -337,6 +359,7 @@ Module.CreateHeader = function(self, window, height, insets)
 	header:SetHeight(height)
 	header.DiabolicBand = {}
 	header:SetScript("OnSizeChanged", LayoutBand)
+	header:SetScript("OnShow", LayoutBand)
 	LayoutBand(header)
 	-- the band glowing in its middle
 	local glow = header:CreateTexture(nil, "ARTWORK")
@@ -1731,11 +1754,23 @@ end
 
 -- The window's foot in Diablo III's rough stone, inside its iron frame,
 -- up to `top` (see SetFooter), under the buttons and the money Blizzard
--- keeps there: drawn by the window over its painting.
+-- keeps there: drawn by the window over its painting, set apart from the
+-- content by a bar of the frame's iron along its top (the frame's left
+-- edge turned), its ends under the frame's sides.
 Module.AddFooter = function(self, window, top)
 	local foot = CreateFrame("Frame", nil, window)
 	foot.Window = window
 	foot.Material = self:CreateNine(foot, "ARTWORK", "footer", window)
+	local spec, size = config.footer_rail, config.backdrop.edgeSize
+	local outer, inner = spec.cut[1] / size / 8, spec.cut[2] / size / 8
+	local rail = foot:CreateTexture(nil, "OVERLAY")
+	rail:SetTexture(config.backdrop.edgeFile)
+	rail:SetTexCoord(outer, 0, inner, 0, outer, 1, inner, 1)
+	rail:SetHeight(spec.cut[2] - spec.cut[1])
+	local x, y = spec.bar[1] - config.backdrop.insets.left, spec.cut[2] - spec.bar[2]
+	rail:SetPoint("BOTTOMLEFT", foot, "TOPLEFT", x, -y)
+	rail:SetPoint("BOTTOMRIGHT", foot, "TOPRIGHT", -x, -y)
+	foot.Rail = rail
 	window.DiabolicFoot = foot
 	self:SetFooter(foot, top)
 	return foot
@@ -1753,6 +1788,7 @@ Module.SetFooter = function(self, foot, top)
 	foot.DiabolicShown = part and true -- (the slices can't say)
 	if (not part) then
 		foot.Material:Hide()
+		foot.Rail:Hide()
 		return
 	end
 	local insets = config.backdrop.insets
@@ -1762,6 +1798,7 @@ Module.SetFooter = function(self, foot, top)
 	-- (its top only: its sides are the window's)
 	foot:SetPoint("TOP", part, "TOP", 0, config.footer_margin + raise)
 	foot.Material:Show()
+	foot.Rail:Show()
 end
 
 -- `texture` (a list's highlight on its chosen row) as Diablo III's copper

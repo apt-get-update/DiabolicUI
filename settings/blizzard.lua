@@ -77,7 +77,8 @@ Engine:NewStaticConfig("Blizzard", {
 			fortress = { texture = path .. [[textures\DiabolicUI_D3_BackgroundFortress.tga]], aspect = .821 }, -- a fortress in flames, The Art of Wrath of the Lich King's (unused: PvP's is the lava)
 			saron = { texture = path .. [[textures\DiabolicUI_D3_BackgroundSaron.tga]], aspect = 1.643 }, -- the Pit of Saron, The Art of Wrath of the Lich King's (raid browser)
 			street = { texture = path .. [[textures\DiabolicUI_D3_BackgroundStreet.tga]], aspect = 2.129 }, -- Dalaran's streets (auction house)
-			dome = { texture = path .. [[textures\DiabolicUI_D3_BackgroundDome.tga]], aspect = 1.043 } -- the Violet Hold (copy chat)
+			dome = { texture = path .. [[textures\DiabolicUI_D3_BackgroundDome.tga]], aspect = 1.043 }, -- the Violet Hold (copy chat)
+			waypoint = { texture = path .. [[textures\DiabolicUI_D3_BackgroundWaypoint.tga]], aspect = .628 } -- Diablo III's waypoint window's, red-veined (flight master)
 		},
 		-- a window's emblem at its band's left end: Diablo III's round
 		-- stained glass under a gargoyle, one per kind of window
@@ -161,6 +162,10 @@ Engine:NewStaticConfig("Blizzard", {
 		material_scale = .4, -- their edges' size on screen, of their art's (a material's `scale` instead)
 		pane_outset = 6, -- a pane (a model's, slots') past what it holds
 		footer_margin = 6, -- a window's foot (its rough stone, inside its iron frame): over its buttons' top
+		-- the iron bar along the foot's top: the frame's left edge (its file's
+		-- first 32px), turned; `cut`, the part of it drawn (the bar and its
+		-- shadows), `bar`, the bar itself (from the window's edge, as drawn)
+		footer_rail = { cut = { 12, 28 }, bar = { 15, 24 } },
 		hint = { font = DiabolicFont_SansRegular12, color = { .5, .45, .4 }, inset = 2 }, -- an edit box's label pale in it while it's empty: its look, from its left
 		-- the rules every window's layout follows (windows.lua), and that
 		-- /dui layout checks: buttons on a row (LineRows), the band's
@@ -755,9 +760,10 @@ Engine:NewStaticConfig("Blizzard", {
 		title_font = DiabolicFont_HeaderRegular12
 	},
 	social = {
-		-- the rough stone foot up to each page's highest button (none on the others)
+		-- the rough stone foot up to each page's highest button (none on the
+		-- others); the who list's to its search's plate (26 high in its 32)
 		footers = { FriendsListFrame = "FriendsFrameAddFriendButton", IgnoreListFrame = "FriendsFrameIgnorePlayerButton",
-			WhoFrame = "WhoFrameEditBox", GuildFrame = "GuildFrameGuildInformationButton" },
+			WhoFrame = { "WhoFrameEditBox", -3 }, GuildFrame = "GuildFrameGuildInformationButton" },
 		insets = { 20, 68, -4, -40 }, -- (its right: the lists' scroll bars as far in as their left)
 		offset_y = -32, -- Blizzard's frame that much lower: the window's top with the others'
 		header_height = 40,
@@ -785,6 +791,8 @@ Engine:NewStaticConfig("Blizzard", {
 		list_gaps = { WhoListScrollFrame = 12 }, -- lists further from it
 		motd_title_color = { .42, .08, .02 }, -- its title, dark red on it (as the quest log's)
 		guild_detail_offset = { 6, -96 }, -- a member's card, right of the window, under its tabs
+		guild_page_lower = 10, -- the guild information's and log's parchment (and text), from Blizzard's: under their X
+		guild_log_width = 325, -- the guild log's text (Blizzard's 340, its scroll bar 28 in from the page's right): 22 in from its left, off the parchment's edge
 		list_panel_insets = { 6, 6, 28, 6 }, -- the scroll bar inside on the right
 		-- lists with less room: the friends' between their tabs and their
 		-- buttons, the guild's with its scroll bar's lower arrow below it
@@ -893,8 +901,12 @@ Engine:NewStaticConfig("Blizzard", {
 				-- the names over their columns, out from under the band (Blizzard's beside portraits)
 				places = { TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 },
 					TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 } } },
-			{ frame = "TaxiFrame", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "TaxiMerchant", close = "TaxiCloseButton", medallion = "map", background = "slabs",
-				keep = { "^TaxiMap$" } },
+			-- the flight master's: the window around its map (Blizzard's 316 x 352,
+			-- 21 in from the frame's left, 75 from its top, 47 from its right, 85
+			-- from its foot), in the stone pane, 10 in from the iron's solid
+			-- part (24) and the band's foot (64); as high as the others
+			{ frame = "TaxiFrame", insets = { 19, 5, -7, -45 }, offset_y = 31, title = "TaxiMerchant", close = "TaxiCloseButton", medallion = "map", background = "waypoint",
+				keep = { "^TaxiMap$" }, panes = { { "TaxiMap", false, true } } },
 			{ frame = "ItemTextFrame", insets = { 24, 40, 14, -34 }, offset_y = -4, title = "ItemTextTitleText", close = "ItemTextCloseButton",
 				parchments = { "ItemTextScrollFrame" }, ink = { "ItemTextPageText" }, background = "slabs" }, -- stone and marble plaques too
 			{ frame = "QuestFrame", insets = { 24, 40, 14, -34 }, offset_y = -4, title = "QuestFrameNpcNameText", close = "QuestFrameCloseButton", medallion = "grail", background = "cliffs",
@@ -1224,13 +1236,16 @@ Engine:NewStaticConfig("Blizzard", {
 		bar = path .. [[textures\DiabolicUI_D3_ConversationBar.tga]],
 		bar_size = { 616, 134 },
 		bar_cap = 64,
+		bar_rim = 6, -- its left end's bronze rim (and its corners a few pixels higher): not on the mirrored right end
 		bar_insets = { 70, 6, 0, 2 }, -- in Immersion's box (left, top, right, bottom): its left end under the portrait's frame
 		-- the NPC's frame, its art 160x168 in its 256x256, its glass (the
 		-- model's place, black) 122x132, the art's middle from the glass's
 		portrait = path .. [[textures\DiabolicUI_D3_ConversationPortrait.tga]],
 		portrait_size = { 160, 168 },
 		glass = { 122, 132 },
-		portrait_offset = { -1.5, -3.5 }
+		portrait_offset = { -1.5, -3.5 },
+		choice_insets = { 4, 6, 4, 6 }, -- a choice's glass in its button (Immersion's rows overlap by their frames')
+		choice_lit_alpha = .6 -- the copper bar under the mouse
 	},
 	loot = {
 		-- This builds its own standalone loot window (see

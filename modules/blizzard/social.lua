@@ -28,6 +28,20 @@ local ColorCode = function(color)
 	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
 end
 
+-- `text` kept in `color` (Blizzard colours some on each update).
+local KeepColor = function(text, color)
+	local busy
+	local Paint = function()
+		if (not busy) then
+			busy = true
+			text:SetTextColor(unpack(color))
+			busy = nil
+		end
+	end
+	hooksecurefunc(text, "SetTextColor", Paint)
+	Paint()
+end
+
 -- the tabs' art, by its file (lowercase, as patterns): the frames, their
 -- scroll bar tracks, the column headers' backgrounds
 local ART = {
@@ -224,6 +238,9 @@ Module.LayoutWho = function(self, window)
 	totals:SetTextColor(unpack(kit.config.title_plate.color))
 	totals:SetJustifyH("LEFT")
 	kit:LineBand(self.Header, { dropdown, totals })
+	-- the search (/who's) on the foot over the buttons, on our plate
+	-- (Blizzard draws its box in the frame's art, out of sight)
+	kit:StyleEditBox(_G.WhoFrameEditBox)
 	-- (the band's on every tab: there while the who list is)
 	_G.WhoFrame:HookScript("OnShow", function() totals:Show() end)
 	_G.WhoFrame:HookScript("OnHide", function() totals:Hide() end)
@@ -281,16 +298,7 @@ Module.StyleGuild = function(self, window)
 		label:SetShadowOffset(0, 0)
 		text:SetShadowOffset(0, 0)
 		-- (Blizzard colours it on each update: white, grey if you can't edit it)
-		local ink, busy = kit.config.ink
-		local Ink = function()
-			if (not busy) then
-				busy = true
-				text:SetTextColor(unpack(ink))
-				busy = nil
-			end
-		end
-		hooksecurefunc(text, "SetTextColor", Ink)
-		Ink()
+		KeepColor(text, kit.config.ink)
 	end
 	-- the list and the message of the day higher (what's placed from the
 	-- frame's top or sides, not its foot's buttons): as far from the band
@@ -351,17 +359,34 @@ Module.StyleGuild = function(self, window)
 	kit:SkinClose(_G.GuildMemberDetailCloseButton)
 	kit:StyleButtons(card)
 	-- the guild's information and its log the same, their text on
-	-- parchment in ink (the message of the day's)
+	-- parchment in ink (the message of the day's), where the card is (not
+	-- over the window's frame), their page lower: clear of their X
+	local Place = function(popup, page, scroll)
+		popup:ClearAllPoints()
+		popup:SetPoint("TOPLEFT", window, "TOPRIGHT", unpack(config.guild_detail_offset))
+		local lower = config.guild_page_lower
+		local point, relative, relativePoint, x, y = page:GetPoint()
+		page:SetPoint(point, relative, relativePoint, x, y - lower)
+		page:SetHeight(page:GetHeight() - lower)
+		scroll:SetHeight(scroll:GetHeight() - lower)
+	end
 	if _G.GuildInfoFrame then
 		self:StylePopup(_G.GuildInfoFrame, _G.GuildInfoTitle, _G.GuildInfoCloseButton)
+		Place(_G.GuildInfoFrame, _G.GuildInfoTextBackground, _G.GuildInfoFrameScrollFrame)
 		self:AddPage(_G.GuildInfoTextBackground, _G.GuildInfoEditBox, config.raid_description_font)
 		kit:StyleScrollBar(_G.GuildInfoFrameScrollFrameScrollBar)
 	end
 	if _G.GuildEventLogFrame then
 		local inks = self:GetDB("Blizzard").panels.log_inks
 		self:StylePopup(_G.GuildEventLogFrame, _G.GuildEventLogTitle, _G.GuildEventLogCloseButton)
+		Place(_G.GuildEventLogFrame, _G.GuildEventFrame, _G.GuildEventLogScrollFrame)
 		local text = _G.GuildEventMessage
 		self:AddPage(_G.GuildEventFrame, text, inks.font)
+		-- in from the page's left as the guild information's
+		local scroll, width = _G.GuildEventLogScrollFrame, config.guild_log_width
+		scroll:SetWidth(width)
+		_G.GuildEventLogScrollChildFrame:SetWidth(width)
+		text:SetWidth(width)
 		kit:StyleScrollBar(_G.GuildEventLogScrollFrameScrollBar)
 		-- the times in their darker ink, not Blizzard's teal
 		local time = ColorCode(inks.time)
@@ -388,12 +413,13 @@ Module.StylePopup = function(self, frame, title, close)
 end
 
 -- `frame` (a popup's text's backdrop) a page of parchment, `text` on it
--- in ink, in `font`.
+-- in ink (Blizzard's guild information greys or whitens it on each show),
+-- in `font`.
 Module.AddPage = function(self, frame, text, font)
 	frame:SetBackdrop(nil)
 	kit:CreateNine(frame, "BACKGROUND", "parchment")
 	text:SetFontObject(font)
-	text:SetTextColor(unpack(kit.config.ink))
+	KeepColor(text, kit.config.ink)
 	text:SetShadowColor(0, 0, 0, 0)
 end
 

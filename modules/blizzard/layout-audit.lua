@@ -5,8 +5,13 @@
 -- the title, the X), parts out of the window, the content too close to
 -- the band (or the tabs under it) or the foot, or its room over and under
 -- it uneven, or left and right of it; its zones too close; a dropdown
--- not Diablo III's; light text on parchment. While it's on, each window is checked as it shows and each
--- second (for its pages), each problem said once; typed again, it stops.
+-- not Diablo III's; light text on parchment; parts that almost line up
+-- (zones' edges, a row's buttons 1 to 3 off); edges between screen pixels
+-- (at a pixel-perfect UI scale). While it's on (kept on after a reload),
+-- each window is checked as it shows and each second (for its pages), each
+-- problem said once and saved (DiabolicUI_Layout, by window: its last
+-- session's). /dui layout all opens each window that needs no NPC, page by
+-- page, to check them all at once.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Audit", "LOW")
 local L = Engine:GetLocale()
@@ -17,21 +22,29 @@ local ipairs = ipairs
 local math_abs = math.abs
 local math_floor = math.floor
 local math_huge = math.huge
+local pairs = pairs
 local pcall = pcall
 local math_max = math.max
 local math_min = math.min
 local select = select
 local string_find = string.find
 local string_format = string.format
+local string_match = string.match
 local tonumber = tonumber
 local table_sort = table.sort
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetChatWindowInfo = _G.GetChatWindowInfo
+local GetCurrentResolution = _G.GetCurrentResolution
+local GetScreenResolutions = _G.GetScreenResolutions
+local InCombatLockdown = _G.InCombatLockdown
+local date = _G.date
 
 local kit, layout
 local Said, Fine -- problems already said (by text), windows found right (by frame)
+local Saved -- DiabolicUI_Layout: { on, resolution, unit, windows = { [name] = { checked, problems } } }
+local Seen = {} -- the windows saved this session (their last session's problems replaced)
 
 -- In a chat window named Layout if there's one (its own tab), else the main one.
 local Print = function(text)
@@ -155,7 +168,11 @@ Checks.Rows = function(window, say, scale)
 		for j = i + 1, #buttons do
 			local other = buttons[j]
 			local left, otherBottom, _, otherTop = kit.Edges(other)
-			if (math_abs((otherBottom + otherTop - bottom - top) / 2) <= 2) then
+			if (math_abs((otherBottom + otherTop - bottom - top) / 2) <= 4 * scale) then
+				local off = math_floor(math_abs(otherTop - top) / scale + .5)
+				if (off >= 1) then
+					say(L["%s and %s are %d off their row."], Named(button), Named(other), off)
+				end
 				local apart = (left - right) / scale
 				if (apart < layout.button_gap - .5) then
 					say(L["%s and %s are %d apart on their row (the rule: %d)."], Named(button), Named(other), math_floor(apart + .5), layout.button_gap)
@@ -304,7 +321,7 @@ Checks.Room = function(window, say, scale, controls, texts)
 	local under
 	if foot and foot.DiabolicShown then
 		-- (or the highest part between: the letter's attachments, money)
-		local _, _, _, below = kit.Edges(foot)
+		local _, _, _, below = kit.Edges(foot.Rail) -- (its iron bar over it)
 		for _, list in ipairs({ controls, texts }) do
 			for _, part in ipairs(list) do
 				local _, partBottom, _, partTop = Box(part)
@@ -525,6 +542,104 @@ Checks.Ink = function(window, say, scale, controls, texts)
 	end
 end
 
+-- Zones whose edges almost line up: 1 to 3 apart, as if one were meant
+-- to be where the other is.
+local SIDES = { L["left edges"], L["bottoms"], L["right edges"], L["tops"] }
+Checks.Align = function(window, say, scale)
+	local zones = Innermost(CollectContent(window.Frame, {}))
+	for i, a in ipairs(zones) do
+		local edgesA = { kit.Edges(a) }
+		for j = i + 1, #zones do
+			local b = zones[j]
+			local edgesB = { kit.Edges(b) }
+			if edgesA[1] and edgesB[1] and (ZoneName(a) ~= ZoneName(b)) then
+				for side = 1, 4 do
+					local off = math_abs(edgesA[side] - edgesB[side]) / scale
+					if (off > .5) and (off <= 3) then
+						say(L["%s and %s are %d off lining up (their %s)."], ZoneName(a), ZoneName(b), math_floor(off + .5), SIDES[side])
+						break
+					end
+				end
+			end
+		end
+	end
+end
+
+-- The resolution chosen ("1920x1080"), if known.
+local Resolution = function()
+	local index = GetCurrentResolution()
+	return index and (index > 0) and (select(index, GetScreenResolutions()))
+end
+
+-- How many screen pixels a unit of the screen is (768 of them high), or
+-- nothing if the resolution isn't known.
+local ScreenPixels = function()
+	local resolution = Resolution()
+	local height = resolution and tonumber(string_match(resolution, "x(%d+)"))
+	return height and height / 768
+end
+
+-- Edges between screen pixels (blurry, or a pixel off), when the UI's
+-- scale puts its units on whole pixels (else all are: said once, saved).
+Checks.Pixels = function(window, say, scale, controls)
+	local pixels = ScreenPixels()
+	if (not pixels) then
+		return
+	end
+	local unit = scale * pixels -- (the window's units)
+	if (math_abs(unit - math_floor(unit + .5)) > .02) then
+		return
+	end
+	local parts = { window, window.DiabolicHeaders[1], window.DiabolicFoot and window.DiabolicFoot.DiabolicShown and window.DiabolicFoot }
+	for _, zone in ipairs(CollectContent(window.Frame, {})) do
+		parts[#parts + 1] = zone
+	end
+	for _, control in ipairs(controls) do
+		parts[#parts + 1] = control
+	end
+	local count, total, worst, worstPart = 0, 0, 0
+	for _, part in pairs(parts) do
+		local left, bottom, right, top = kit.Edges(part)
+		if left then
+			total = total + 1
+			local most = 0
+			for _, edge in ipairs({ left, bottom, right, top }) do
+				local at = edge * pixels
+				most = math_max(most, math_abs(at - math_floor(at + .5)))
+			end
+			if (most > .1) then
+				count = count + 1
+				if (most > worst) then
+					worst, worstPart = most, part
+				end
+			end
+		end
+	end
+	if (count > 0) then
+		say(L["%d of %d parts are between screen pixels (%s by %.1f): blurry edges."], count, total, worstPart == window and L["the window"] or ZoneName(worstPart), worst)
+	end
+end
+
+-- `line` saved as one of `name`'s problems (its last session's dropped
+-- the first time it's checked in this one).
+local Save = function(name, line)
+	local windows = Saved.windows
+	if (not Seen[name]) then
+		Seen[name] = true
+		windows[name] = { problems = {} }
+	end
+	local entry = windows[name]
+	entry.checked = date("%Y-%m-%d %H:%M")
+	if line then
+		for _, saved in ipairs(entry.problems) do
+			if (saved == line) then
+				return
+			end
+		end
+		entry.problems[#entry.problems + 1] = line
+	end
+end
+
 -- `window` checked: what breaks the rules said once each, or that
 -- nothing does (once).
 local Check = function(window)
@@ -533,15 +648,19 @@ local Check = function(window)
 	local controls, texts = {}, {}
 	Collect(frame, window, controls, texts)
 	local found
+	local title = frame:GetName() or L["a window"]
+	Save(title)
 	local say = function(text, ...)
 		found = true
-		local line = (frame:GetName() or L["a window"]) .. ": " .. string_format(text, ...)
+		local problem = string_format(text, ...)
+		local line = title .. ": " .. problem
+		Save(title, problem)
 		if not Said[line] then
 			Said[line] = true
 			Print(line)
 		end
 	end
-	for _, name in ipairs({ "Rows", "Band", "Inside", "Room", "Sides", "Gaps", "DropDowns", "Ink" }) do
+	for _, name in ipairs({ "Rows", "Band", "Inside", "Room", "Sides", "Gaps", "Align", "DropDowns", "Ink", "Pixels" }) do
 		if (name ~= "Band") or window.DiabolicHeaders[1] then
 			Checks[name](window, say, scale, controls, texts)
 		end
@@ -565,16 +684,115 @@ local CheckShown = function()
 	end
 end
 
+-- The screen, as the checks saw it (for whoever reads the saved problems).
+local SaveScreen = function()
+	local pixels = ScreenPixels()
+	Saved.resolution = Resolution()
+	Saved.unit = pixels and string_format("%.3f", _G.UIParent:GetEffectiveScale() * pixels) -- screen pixels per UI unit (whole: pixel perfect)
+end
+
+Module.Start = function(self)
+	Said, Fine = {}, {}
+	Saved.on = true
+	SaveScreen()
+	CheckShown()
+	self.Ticker:Show()
+end
+
 Module.Toggle = function(self)
 	if self.Ticker:IsShown() then
 		self.Ticker:Hide()
+		Saved.on = nil
 		Print(L["Layout check off."])
 		return
 	end
-	Said, Fine = {}, {}
-	Print(L["Layout check on: each window is checked as it shows. /dui layout again to stop."])
-	CheckShown()
-	self.Ticker:Show()
+	Print(L["Layout check on: each window is checked as it shows, its problems saved. /dui layout again to stop."])
+	self:Start()
+end
+
+-- The sweep's steps: each shows a window or one of its pages (the window
+-- before closed), the checks made after it (once its layout is done).
+local Open = function(open)
+	return function()
+		_G.CloseAllWindows()
+		open()
+	end
+end
+local Tab = function(name)
+	return function()
+		local tab = _G[name]
+		if tab and tab:IsVisible() then
+			tab:Click()
+		end
+	end
+end
+local STEPS = {
+	Open(function() _G.ToggleCharacter("PaperDollFrame") end),
+	function() _G.ToggleCharacter("ReputationFrame") end,
+	function() _G.ToggleCharacter("SkillFrame") end,
+	function() _G.ToggleCharacter("TokenFrame") end,
+	function() if _G.HasPetUI() then _G.ToggleCharacter("PetPaperDollFrame") end end,
+	Open(function() _G.ToggleSpellBook(_G.BOOKTYPE_SPELL) end),
+	Tab("SpellBookSkillLineTab2"), Tab("SpellBookSkillLineTab3"), Tab("SpellBookSkillLineTab4"),
+	Open(function() _G.ToggleTalentFrame() end),
+	Tab("PlayerTalentFrameTab2"), Tab("PlayerTalentFrameTab3"), Tab("PlayerTalentFrameTab4"),
+	Open(function() _G.ToggleFriendsFrame(1) end),
+	function() _G.ToggleFriendsFrame(2) end,
+	function() _G.ToggleFriendsFrame(3) end,
+	function() _G.ToggleFriendsFrame(4) end,
+	function() _G.ToggleFriendsFrame(5) end,
+	Open(function() _G.ToggleFrame(_G.QuestLogFrame) end),
+	Open(function() _G.ToggleAchievementFrame() end),
+	Tab("AchievementFrameTab2"), Tab("AchievementFrameTab3"),
+	Open(function() _G.ToggleLFDParentFrame() end),
+	Open(function() _G.ToggleLFRParentFrame() end),
+	Tab("LFRParentFrameTab2"),
+	Open(function() _G.TogglePVPFrame() end),
+	Tab("PVPParentFrameTab2"),
+	Open(function() _G.ShowMacroFrame() end),
+	Tab("MacroFrameTab2"),
+	Open(function()
+		_G.KeyBindingFrame_LoadUI()
+		_G.ShowUIPanel(_G.KeyBindingFrame)
+	end),
+	Open(function() _G.ShowUIPanel(_G.DressUpFrame) end),
+	function() _G.CloseAllWindows() end
+}
+local STEP_TIME = .6 -- each step's wait before its checks (the layout done on the next frame)
+
+-- Each window that needs no NPC opened in turn, page by page, and checked.
+Module.Sweep = function(self)
+	if InCombatLockdown() then
+		Print(L["Not in combat."])
+		return
+	end
+	Print(L["Layout sweep: each window opened in turn."])
+	if (not self.Ticker:IsShown()) then
+		self:Start()
+	end
+	local step, elapsed = 0, STEP_TIME
+	self.Sweeper:SetScript("OnUpdate", function(sweeper, delta)
+		elapsed = elapsed + delta
+		if (elapsed < STEP_TIME) then
+			return
+		end
+		elapsed = 0
+		CheckShown()
+		step = step + 1
+		if InCombatLockdown() or (not STEPS[step]) then
+			sweeper:SetScript("OnUpdate", nil)
+			local windows, problems = 0, 0
+			for _, entry in pairs(Saved.windows) do
+				windows, problems = windows + 1, problems + #entry.problems
+			end
+			Print(string_format(L["Layout sweep done: %d windows, %d problems saved (/reload to write them)."], windows, problems))
+			return
+		end
+		local ok, err = pcall(STEPS[step])
+		if (not ok) then
+			Print(string_format(L["%s couldn't be checked: %s"], L["a window"], err))
+		end
+	end)
 end
 
 Module.OnEnable = function(self)
@@ -590,5 +808,18 @@ Module.OnEnable = function(self)
 		end
 	end)
 	self.Ticker = ticker
-	self:GetHandler("ChatCommand"):Register("layout", function() self:Toggle() end)
+	self.Sweeper = CreateFrame("Frame")
+	Saved = _G.DiabolicUI_Layout or {}
+	Saved.windows = Saved.windows or {}
+	_G.DiabolicUI_Layout = Saved
+	if Saved.on then
+		self:Start()
+	end
+	self:GetHandler("ChatCommand"):Register("layout", function(what)
+		if (what == "all") then
+			self:Sweep()
+		else
+			self:Toggle()
+		end
+	end)
 end
