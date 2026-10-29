@@ -108,9 +108,9 @@ Module.StyleMerchant = function(self)
 	kit:HideTextures(frame)
 	frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + config.insets[3])
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
-	kit:AddMedallion(self.Header, "coinbag")
 	kit:SetTitle(self.Header, _G.MerchantNameText)
 	kit:StyleClose(_G.MerchantFrameCloseButton, window, self.Header)
+	kit:DropBand(self.Header) -- (nothing in it: the wares up in its place)
 
 	-- the tabs as banners hanging from the window's foot
 	kit:HangTabs(window, { _G.MerchantFrameTab1, _G.MerchantFrameTab2 }, config.tab_sigils)
@@ -123,15 +123,25 @@ Module.StyleMerchant = function(self)
 	hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function() self:LayoutItems() end)
 	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function() self:LayoutItems() end)
 
-	-- the pages: back on the left, on on the right, the page between
+	-- the pages: the page centred under the wares, its arrows beside it
+	-- (their "Prev" and "Next" out of sight)
 	local prev, nextPage, page = _G.MerchantPrevPageButton, _G.MerchantNextPageButton, _G.MerchantPageText
-	prev:ClearAllPoints()
-	prev:SetPoint("LEFT", window, "TOPLEFT", config.items[1], config.pages_y)
-	nextPage:ClearAllPoints()
-	nextPage:SetPoint("RIGHT", window, "TOPRIGHT", -config.items[1], config.pages_y)
 	page:ClearAllPoints()
 	page:SetPoint("CENTER", window, "TOP", 0, config.pages_y)
 	page:SetTextColor(unpack(config.page_color))
+	page:SetWidth(0) -- (as wide as its text: the arrows beside it)
+	prev:ClearAllPoints()
+	prev:SetPoint("RIGHT", page, "LEFT", -config.page_gap, 0)
+	nextPage:ClearAllPoints()
+	nextPage:SetPoint("LEFT", page, "RIGHT", config.page_gap, 0)
+	for _, button in ipairs({ prev, nextPage }) do
+		for i = 1, select("#", button:GetRegions()) do
+			local region = select(i, button:GetRegions())
+			if region:IsObjectType("FontString") then
+				region:SetAlpha(0)
+			end
+		end
+	end
 	kit:StylePager(prev, nextPage)
 
 	-- the bottom row

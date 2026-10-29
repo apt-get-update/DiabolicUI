@@ -72,7 +72,7 @@ function TestSpellbook:test_the_spells_on_the_book()
 	_G.SpellButton1IconTexture:Hide()
 	_G.SpellButton_UpdateButton(button)
 	lu.assertFalse(shown(button.DiabolicBorder))
-	-- the school's icon in the medallion
+	-- the book again
 	_G.SpellBookFrame.bookType = _G.BOOKTYPE_SPELL
 	_G.SpellBookFrame_Update()
 	lu.assertTrue(module.Book[1]:IsShown() == 1)
@@ -91,16 +91,15 @@ function TestSpellbook:test_the_tabs_hang_under_the_window()
 	pet:Show()
 	_G.SpellBookFrameTabButton3:Hide()
 	frame:Show()
-	-- Blizzard's shown ones, then ours, side by side under the window's
-	-- foot, centred; the chosen one off
+	-- Blizzard's shown ones, then ours, side by side from the left of the
+	-- window's foot (from its rail); the chosen one off
 	local window = spells.DiabolicWindow
 	local critters, mounts = module.Tabs[1], module.Tabs[2]
 	lu.assertTrue(shown(critters))
 	local function row(...)
-		local tabs = { ... }
-		local left = -(#tabs * banner.width + (#tabs - 1) * banner.gap) / 2
-		for i, tab in ipairs(tabs) do
-			lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", window, "BOTTOM", left + (i - 1) * (banner.width + banner.gap), banner.tuck })
+		local below = banner.rail.height - banner.rail.up
+		for i, tab in ipairs({ ... }) do
+			lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", window, "BOTTOMLEFT", banner.left + (i - 1) * (banner.width + banner.gap), banner.tuck - below })
 		end
 	end
 	local shownOwn = {}
@@ -244,6 +243,241 @@ function TestSpellbook:test_the_pet_tab_for_the_pet_only()
 	assertClean(client)
 end
 
+-- A mage's book: Fireball in two ranks, thirteen more fire spells (two
+-- pages found), a passive one, Frostbolt.
+local function mageBook(world)
+	local book = {
+		{ name = "Fireball", rank = "Rank 1", texture = [[Interface\Icons\Spell_Fire_FlameBolt]] },
+		{ name = "Fireball", rank = "Rank 2", texture = [[Interface\Icons\Spell_Fire_FlameBolt]] },
+		{ name = "Frostbolt", rank = "Rank 1" },
+		{ name = "Fire Mastery", rank = "", passive = true },
+	}
+	for i = 1, 13 do
+		book[#book + 1] = { name = "Fire Spell " .. i, rank = "" }
+	end
+	world.spellBook = book
+	-- on the bars: Fireball's best rank, a macro casting Frostbolt
+	world.actions[1] = { type = "spell", id = 2, spellID = 143, name = "Fireball", texture = "x", count = 0, cooldown = { 0, 0, 1 } }
+	world.spells[143] = { name = "Fireball" }
+end
+
+TestSpellbookPages = {}
+
+function TestSpellbookPages:tearDown()
+	client = nil
+end
+
+function TestSpellbookPages:test_the_search()
+	boot({ class = "MAGE", world = mageBook })
+	local module = client:GetModule("Blizzard: Spellbook")
+	local frame = _G.SpellBookFrame
+	frame.bookType = _G.BOOKTYPE_SPELL
+	frame:Show()
+	local box, hint = module.SearchBox, module.SearchHint
+	-- "Search" pale in it until it's typed in
+	lu.assertTrue(shown(hint))
+	client:RunScript(box, "OnEditFocusGained")
+	lu.assertFalse(shown(hint))
+	client:RunScript(box, "OnEditFocusLost")
+	lu.assertTrue(shown(hint))
+	-- the spells found on a book of their own, the best rank of each
+	box:SetText("FIRE")
+	lu.assertEquals(module.page, "SEARCH")
+	lu.assertTrue(shown(module.Found))
+	local first = module.FoundButtons[1]
+	lu.assertEquals(first.Name:GetText(), "Fireball")
+	lu.assertEquals(first.Rank:GetText(), "Rank 2")
+	lu.assertEquals(first:GetAttribute("spell"), "Fireball(Rank 2)")
+	lu.assertEquals(first:GetAttribute("type"), "spell")
+	-- the passive one not cast, greyed
+	local passive = module.FoundButtons[2]
+	lu.assertEquals(passive.Name:GetText(), "Fire Mastery")
+	lu.assertNil(passive:GetAttribute("type"))
+	lu.assertTrue(passive.Icon:IsDesaturated() == 1)
+	-- two pages of them
+	local found = module.Found
+	lu.assertEquals(found.Prev:IsEnabled(), 0)
+	lu.assertEquals(found.Next:IsEnabled(), 1)
+	client:Click(found.Next)
+	lu.assertEquals(module.FoundPage, 2)
+	lu.assertEquals(found.Next:IsEnabled(), 0)
+	lu.assertFalse(shown(module.FoundButtons[12]))
+	client:Click(found.Prev)
+	lu.assertEquals(module.FoundPage, 1)
+	-- a found spell's tooltip, dragged to the bars
+	client:Hover(first)
+	lu.assertTrue(shown(_G.GameTooltip))
+	client:Leave()
+	client:RunScript(first, "OnDragStart")
+	lu.assertEquals(client.cursor, { "spell", 2, _G.BOOKTYPE_SPELL })
+	-- every rank while all ranks show
+	client.world.cvars.ShowAllSpellRanks = "1"
+	box:SetText("fireball")
+	lu.assertEquals(module.FoundButtons[2].Rank:GetText(), "Rank 2")
+	client.world.cvars.ShowAllSpellRanks = "0"
+	-- none
+	box:SetText("arcane")
+	lu.assertTrue(shown(found.None))
+	-- Enter keeps it, Escape empties it: the spells again
+	client:RunScript(box, "OnEnterPressed")
+	lu.assertEquals(module.page, "SEARCH")
+	client:RunScript(box, "OnEscapePressed")
+	lu.assertNil(module.page)
+	lu.assertFalse(shown(module.Cover))
+	-- (emptied on another page: nothing to leave)
+	box:SetText("")
+	assertClean(client)
+end
+
+function TestSpellbookPages:test_the_search_left_for_other_pages_and_fights()
+	boot({ class = "MAGE", world = mageBook })
+	local module = client:GetModule("Blizzard: Spellbook")
+	local frame = _G.SpellBookFrame
+	frame.bookType = _G.BOOKTYPE_SPELL
+	frame:Show()
+	local box = module.SearchBox
+	box:SetText("fire")
+	-- another page: the box emptied
+	module:ShowPage("MOUNT")
+	lu.assertEquals(box:GetText(), "")
+	lu.assertFalse(shown(box)) -- (the band's search on the spells only)
+	module:ShowPage(nil)
+	lu.assertTrue(shown(box))
+	-- the pet's book: back to the spells, the search out of sight
+	box:SetText("fire")
+	frame.bookType = _G.BOOKTYPE_PET
+	_G.SpellBookFrame_Update()
+	lu.assertNil(module.page)
+	lu.assertFalse(shown(box))
+	frame.bookType = _G.BOOKTYPE_SPELL
+	_G.SpellBookFrame_Update()
+	-- in a fight: nothing searched, no page turned
+	box:SetText("fire")
+	client:EnterCombat()
+	module.Clearing = nil
+	box:SetText("frost")
+	lu.assertEquals(module.FoundButtons[1].Name:GetText(), "Fireball")
+	client:Click(module.Found.Next)
+	lu.assertEquals(module.FoundPage, 1)
+	module:UpdateFound()
+	client:RunScript(module.FoundButtons[1], "OnDragStart")
+	lu.assertNil(client.cursor)
+	-- (the pet's book in a fight: the page kept)
+	frame.bookType = _G.BOOKTYPE_PET
+	_G.SpellBookFrame_Update()
+	lu.assertEquals(module.page, "SEARCH")
+	frame.bookType = _G.BOOKTYPE_SPELL
+	client:LeaveCombat()
+	assertClean(client)
+end
+
+function TestSpellbookPages:test_the_spells_on_no_action_bar_ringed()
+	boot({ class = "MAGE", world = mageBook })
+	local module = client:GetModule("Blizzard: Spellbook")
+	local frame = _G.SpellBookFrame
+	frame.bookType = _G.BOOKTYPE_SPELL
+	frame.selectedSkillLine, frame.selectedSkillLineOffset = 1, 0
+	frame:Show()
+	local box = module.UnassignedBox
+	-- its tooltip, and the "all ranks" box's
+	client:Hover(box)
+	lu.assertTrue(shown(_G.GameTooltip))
+	client:Hover(_G.ShowAllSpellRanksCheckBox)
+	lu.assertTrue(shown(_G.GameTooltip))
+	client:Leave()
+	-- (the left page's buttons: the book's spells 1 to 6)
+	local fireball, frostbolt, passive = _G.SpellButton3, _G.SpellButton5, _G.SpellButton7
+	for _, button in ipairs({ fireball, frostbolt, passive }) do
+		_G[button:GetName() .. "IconTexture"]:Show()
+	end
+	-- off: none ringed
+	client:Click(box)
+	lu.assertFalse(module.db.showUnassigned)
+	lu.assertFalse(shown(frostbolt.DiabolicUnassigned))
+	-- on: Frostbolt (on no bar) ringed, Fireball (on one) and the passive one not
+	client:Click(box)
+	lu.assertTrue(module.db.showUnassigned)
+	lu.assertFalse(shown(fireball.DiabolicUnassigned))
+	lu.assertTrue(shown(frostbolt.DiabolicUnassigned))
+	lu.assertFalse(shown(passive.DiabolicUnassigned))
+	-- Frostbolt on a bar (in a macro): ringed no more
+	client.world.actions[2] = { type = "macro", id = 1, name = "Frost", texture = "x", count = 0, cooldown = { 0, 0, 1 } }
+	client.world.macroSpells = { [1] = "Frostbolt" }
+	client:FireEvent("ACTIONBAR_SLOT_CHANGED", 2)
+	lu.assertFalse(shown(frostbolt.DiabolicUnassigned))
+	-- (the book closed: read again next time)
+	frame:Hide()
+	client:FireEvent("ACTIONBAR_SLOT_CHANGED", 2)
+	lu.assertNil(module.Assigned)
+	assertClean(client)
+end
+
+function TestSpellbookPages:test_the_professions_page()
+	boot({ class = "MAGE", world = function(world)
+		mageBook(world)
+		for id, name in pairs({ [3908] = "Tailoring", [2575] = "Mining", [2656] = "Smelting", [2580] = "Find Minerals",
+			[2550] = "Cooking", [818] = "Basic Campfire", [7620] = "Fishing", [3273] = "First Aid" }) do
+			world.spells[id] = { name = name, icon = [[Interface\Icons\]] .. name }
+		end
+		world.unknownSpells = { ["Basic Campfire"] = true }
+		-- { name, header, expanded, rank, temp, modifier, max }
+		world.skillLines = {
+			{ "TRADE_SKILLS", true, nil }, -- (collapsed: opened to read it)
+			{ "Tailoring", nil, nil, 290, 0, 10, 450 },
+			{ "SECONDARY_SKILLS", true, 1 },
+			{ "Cooking", nil, nil, 75, 0, 0, 75 },
+			{ "Riding", nil, nil, 150, 0, 0, 150 },
+		}
+	end })
+	local module = client:GetModule("Blizzard: Spellbook")
+	local frame = _G.SpellBookFrame
+	frame.bookType = _G.BOOKTYPE_SPELL
+	frame:Show()
+	module:ShowPage("PROFESSIONS")
+	lu.assertTrue(shown(module.Professions))
+	lu.assertEquals(client.world.skillLines[1][3], 1)
+	-- Tailoring: its rank's title, its bar, the button opening it
+	local tailoring = module.ProfessionRows.primary[1]
+	lu.assertEquals(tailoring.Name:GetText(), "Tailoring")
+	lu.assertEquals(tailoring.Bar.Text:GetText(), "300 / 450")
+	lu.assertTrue(shown(tailoring.Open))
+	lu.assertEquals(tailoring.Open:GetAttribute("spell"), "Tailoring")
+	lu.assertFalse(shown(tailoring.Extra))
+	client:Hover(tailoring.Open)
+	lu.assertTrue(shown(_G.GameTooltip))
+	client:Leave()
+	-- the second one missing: where to learn one, greyed
+	local missing = module.ProfessionRows.primary[2]
+	lu.assertFalse(shown(missing.Bar))
+	lu.assertTrue(shown(missing.Help))
+	lu.assertFalse(shown(missing.Open))
+	client:Hover(missing.Open)
+	client:Leave()
+	-- the secondary ones each in their place: Cooking learned (its
+	-- campfire not known), Fishing and First Aid not
+	local cooking, fishing = module.ProfessionRows.secondary[1], module.ProfessionRows.secondary[2]
+	lu.assertEquals(cooking.Name:GetText(), "Cooking")
+	lu.assertFalse(shown(cooking.Extra))
+	lu.assertEquals(fishing.Name:GetText(), "Fishing")
+	lu.assertTrue(shown(fishing.Help))
+	-- Mining learned: Smelting opens it, Find Minerals beside it
+	client.world.skillLines[2] = { "Mining", nil, nil, 75, 0, 0, 150 }
+	client:FireEvent("SKILL_LINES_CHANGED")
+	lu.assertEquals(tailoring.Open:GetAttribute("spell"), "Smelting")
+	lu.assertTrue(shown(tailoring.Extra))
+	-- in a fight: once it's over
+	client.world.skillLines[2] = { "Tailoring", nil, nil, 300, 0, 0, 450 }
+	client:EnterCombat()
+	client:FireEvent("SKILL_LINES_CHANGED")
+	lu.assertEquals(tailoring.Name:GetText(), "Mining")
+	client:LeaveCombat()
+	lu.assertEquals(tailoring.Name:GetText(), "Tailoring")
+	-- (another page: not filled again)
+	module:ShowPage(nil)
+	client:FireEvent("SKILL_LINES_CHANGED")
+	assertClean(client)
+end
+
 -- The social window ------------------------------------------------------------------
 
 TestSocial = {}
@@ -260,6 +494,20 @@ function TestSocial:test_the_who_list_sorted_by_the_column_chosen()
 	option:SetID(2)
 	_G.WhoFrameDropDownButton_OnClick(option)
 	lu.assertEquals(sorted, _G.WHOFRAME_DROPDOWN_LIST[2].sortType)
+	assertClean(client)
+end
+
+function TestSocial:test_the_guild_logs_times_in_their_ink()
+	boot()
+	local inks = client.Engine:GetDB("Blizzard").panels.log_inks
+	local text = _G.GuildEventMessage
+	text:SetText("|cff009999[2 days ago]|r Tester joined the guild.")
+	_G.GuildEventLog_Update()
+	local code = string.format("|cff%02x%02x%02x", inks.time[1] * 255, inks.time[2] * 255, inks.time[3] * 255)
+	lu.assertEquals(text:GetText(), code .. "[2 days ago]|r Tester joined the guild.")
+	-- (an empty log)
+	text:SetText(nil)
+	_G.GuildEventLog_Update()
 	assertClean(client)
 end
 
@@ -402,6 +650,11 @@ local function auctionator(world)
 		_G.CreateFrame("Button", "Atr_DurationButton", dropdown)
 		dropdown:CreateTexture("Atr_DurationMiddle"):SetWidth(100)
 		_G.CreateFrame("Button", "Atr_ListTabsTab1", main)
+		-- its search and Full Scan, for the band
+		local search = _G.CreateFrame("EditBox", "Atr_Search_Box", main)
+		search:SetSize(120, 20)
+		local scan = _G.CreateFrame("Button", "Atr_FullScanButton", main)
+		scan:SetSize(80, 22)
 	end })
 end
 
@@ -418,6 +671,9 @@ function TestPanels:test_the_auction_house_with_auctionator()
 	lu.assertNil(_G.Atr_Hlist:GetBackdrop())
 	lu.assertTrue(_G.Atr_Duration.DiabolicPlate)
 	lu.assertNotNil(_G.Atr_ListTabsTab1.DiabolicArt)
+	-- its search in the band, its Full Scan at its right end, once
+	lu.assertEquals((_G.Atr_FullScanButton:GetPoint()), "RIGHT")
+	lu.assertNotNil(_G.Atr_Search_Box.DiabolicOutset)
 	-- the bottom rows lower, once
 	lu.assertEquals({ _G.Atr_Buy1_Button:GetPoint() }, { "BOTTOMLEFT", _G.Atr_Main_Panel, "BOTTOMLEFT", 10, 6 })
 	frame:Hide()
@@ -426,6 +682,32 @@ function TestPanels:test_the_auction_house_with_auctionator()
 	-- its sell column's panel with it
 	_G.Atr_SellControls:Show()
 	_G.Atr_SellControls:Hide()
+	assertClean(client)
+end
+
+function TestPanels:test_the_guild_banks_log_in_ink()
+	boot({ world = function()
+		-- (its time's code, as the client's global string has it)
+		rawset(_G, "GUILD_BANK_LOG_TIME_PREPEND", "|cff009999   (%s)|r")
+	end })
+	client.api.LoadAddOn("Blizzard_GuildBankUI")
+	local inks = client.Engine:GetDB("Blizzard").panels.log_inks
+	local ink = client.Engine:GetDB("Blizzard").window.ink
+	local function code(c)
+		return string.format("|cff%02x%02x%02x", c[1] * 255, c[2] * 255, c[3] * 255)
+	end
+	local log = _G.GuildBankMessageFrame
+	log:AddMessage(_G.NORMAL_FONT_COLOR_CODE .. "Thrall|r deposited |cffa335ee[Frostmourne]|r, |cffffffffLinen|r, |cff1d1d1dgrey|r|cff009999   (2 hours ago)|r")
+	local messages = client.widgetState[log].messages
+	local message = messages[#messages]
+	-- the name and time in their inks, the epic darkened, white as ink,
+	-- the dark one kept; the line in ink
+	lu.assertStrContains(message.text, code(inks.name) .. "Thrall|r")
+	lu.assertStrContains(message.text, code(inks.time) .. "   (2 hours ago)|r")
+	lu.assertStrContains(message.text, code(ink) .. "Linen|r")
+	lu.assertStrContains(message.text, "|cff1d1d1dgrey|r")
+	lu.assertNil(message.text:find("|cffa335ee", 1, true))
+	lu.assertEquals({ message.r, message.g, message.b }, ink)
 	assertClean(client)
 end
 
@@ -449,12 +731,517 @@ function TestPanels:test_the_other_load_on_demand_windows()
 	assertClean(client)
 end
 
+-- The mailbox ---------------------------------------------------------------------------
+
+TestMail = {}
+
+function TestMail:tearDown()
+	client = nil
+end
+
+-- Postal's parts, made as it enables: its Open and Return, its address
+-- book's arrow, its checkboxes on the rows, its Open All and menu.
+local function postal()
+	local inbox = _G.InboxFrame
+	for _, name in ipairs({ "PostalSelectOpenButton", "PostalSelectReturnButton", "PostalOpenAllButton" }) do
+		local b = _G.CreateFrame("Button", name, inbox, "UIPanelButtonTemplate")
+		b:SetSize(80, 22)
+		b:SetPoint("TOPLEFT", inbox, "TOPLEFT", 10, -10)
+	end
+	for i = 1, 7 do
+		_G.CreateFrame("CheckButton", "PostalInboxCB" .. i, _G["MailItem" .. i]):SetPoint("RIGHT", _G["MailItem" .. i], "LEFT", 0, 0)
+	end
+	_G.CreateFrame("Button", "Postal_ModuleMenuButton", _G.MailFrame):SetPoint("TOPRIGHT", _G.MailFrame, "TOPRIGHT", -40, -10)
+	_G.CreateFrame("Button", "Postal_BlackBookButton", _G.SendMailFrame):SetPoint("LEFT", _G.SendMailNameEditBox, "RIGHT", 0, 0)
+end
+
+function TestMail:test_the_inbox_and_the_letter_being_written()
+	boot()
+	local module = client:GetModule("Blizzard: Mail")
+	local config = client.Engine:GetDB("Blizzard").mail
+	local frame = _G.MailFrame
+	frame:Show()
+	-- one title for both tabs: the tab's
+	local title = module.Header:GetParent().DiabolicPlate
+	local function titleText()
+		for _, region in ipairs({ title:GetRegions() }) do
+			if region:IsObjectType("FontString") then
+				return region:GetText()
+			end
+		end
+	end
+	_G.SendMailFrame:Show()
+	lu.assertEquals(titleText(), _G.SENDMAIL)
+	_G.SendMailFrame:Hide()
+	_G.InboxFrame:Hide()
+	_G.InboxFrame:Show()
+	lu.assertEquals(titleText(), _G.INBOX)
+
+	-- To and Subject in the band, their labels pale in them while empty
+	-- and not typed in
+	local name = _G.SendMailNameEditBox
+	local hint
+	for _, region in ipairs({ name:GetRegions() }) do
+		if region:IsObjectType("FontString") and (region:GetText() == (_G.MAIL_TO_LABEL:gsub("%s*:%s*$", ""))) then
+			hint = region
+		end
+	end
+	lu.assertTrue(shown(hint))
+	client:RunScript(name, "OnEditFocusGained")
+	lu.assertFalse(shown(hint))
+	client:RunScript(name, "OnEditFocusLost")
+	lu.assertTrue(shown(hint))
+	name:SetText("Thrall")
+	lu.assertFalse(shown(hint))
+	-- the subject up to the postage, as its sum grows (not narrower than nothing)
+	local cost, subject = _G.SendMailCostMoneyFrame, _G.SendMailSubjectEditBox
+	cost:SetWidth(60)
+	local wide = subject:GetWidth()
+	cost:SetWidth(90)
+	lu.assertEquals(subject:GetWidth(), wide - 30)
+	cost:SetWidth(1000)
+	lu.assertEquals(subject:GetWidth(), wide - 30)
+
+	-- the letters in ink: unread and read, the days left (red: running out)
+	local ink = config.list_ink
+	_G.MailItem1Sender:SetTextColor(1, .82, 0)
+	_G.MailItem2Sender:SetTextColor(.75, .75, .75)
+	_G.MailItem1ExpireTime:SetText("|cff20ff2029 Days|r")
+	_G.MailItem2ExpireTime:SetText(_G.RED_FONT_COLOR_CODE .. "2 Days|r")
+	_G.InboxFrame_Update()
+	near(color(_G.MailItem1Sender:GetTextColor()), ink.sender)
+	near(color(_G.MailItem1Subject:GetTextColor()), ink.subject)
+	near(color(_G.MailItem2Sender:GetTextColor()), ink.read)
+	lu.assertEquals(_G.MailItem1ExpireTime:GetText(), "29 Days")
+	near(color(_G.MailItem1ExpireTime:GetFontString():GetTextColor()), ink.days)
+	near(color(_G.MailItem2ExpireTime:GetFontString():GetTextColor()), ink.expiring)
+	-- the rows up under the band, apart, each time it opens (once apart)
+	lu.assertEquals(select(5, _G.MailItem1:GetPoint()), config.rows_top)
+	local _, _, _, _, y = _G.MailItem2:GetPoint()
+	frame:Hide()
+	frame:Show()
+	lu.assertEquals(select(5, _G.MailItem2:GetPoint()), y)
+	assertClean(client)
+end
+
+function TestMail:test_postals_parts_in_place()
+	boot()
+	local module = client:GetModule("Blizzard: Mail")
+	local config = client.Engine:GetDB("Blizzard").mail
+	postal()
+	local frame = _G.MailFrame
+	frame:Show()
+	-- Open and Return side by side in the band's middle
+	local spec = config.select_buttons
+	lu.assertEquals({ _G.PostalSelectOpenButton:GetPoint() }, { "RIGHT", module.Header, "CENTER", -spec.gap / 2, 0 })
+	lu.assertEquals({ _G.PostalSelectReturnButton:GetPoint() }, { "LEFT", module.Header, "CENTER", spec.gap / 2, 0 })
+	lu.assertEquals(_G.PostalSelectOpenButton:GetWidth(), spec.width)
+	-- its other parts moved once
+	local offset = config.postal_offsets.PostalOpenAllButton
+	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), -10 + offset[2])
+	frame:Hide()
+	frame:Show()
+	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), -10 + offset[2])
+	lu.assertEquals(select(4, _G.PostalInboxCB3:GetPoint()), config.postal_offsets.PostalInboxCB[1])
+	-- the address book's arrow right of the To box's plate, as the letter shows
+	_G.SendMailFrame:Show()
+	local band = config.send_band
+	lu.assertEquals({ _G.Postal_BlackBookButton:GetPoint() },
+		{ "LEFT", _G.SendMailNameEditBox, "RIGHT", client.Engine:GetDB("Blizzard").window.edit_padding + band.arrow_gap, 0 })
+	assertClean(client)
+end
+
+-- The trade skills and the class trainer ------------------------------------------------
+
+TestTradeSkill = {}
+
+function TestTradeSkill:tearDown()
+	client = nil
+end
+
+-- A tailor's recipes: a header, one of each difficulty, the first with
+-- two reagents (one short, one an uncommon item).
+local function recipes(world)
+	world.spells.Tailoring = { name = "Tailoring", icon = [[Interface\Icons\Trade_Tailoring]] }
+	local cloth = "|cff1eff00|Hitem:200:0:0:0|h[Frostweave]|h|r"
+	world.itemInfo[200] = { name = "Frostweave", quality = 2, iLevel = 70 }
+	world.tradeSkill.recipes = {
+		{ name = "Cloth", kind = "header", expanded = true },
+		{ name = "Frostwoven Belt", kind = "optimal", available = 2, reagents = {
+			{ name = "Thread", need = 2, have = 0 }, { name = "Frostweave", link = cloth, need = 1, have = 5 } } },
+		{ name = "Frostwoven Boots", kind = "medium" },
+		{ name = "Frostwoven Cowl", kind = "easy" },
+		{ name = "Linen Bandage", kind = "trivial" },
+	}
+end
+
+function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
+	boot({ world = recipes })
+	client.api.LoadAddOn("Blizzard_TradeSkillUI")
+	local module = client:GetModule("Blizzard: Trade Skill")
+	local config = client.Engine:GetDB("Blizzard").tradeskill
+	local ink = client.Engine:GetDB("Blizzard").window.ink
+	local frame = _G.TradeSkillFrame
+	frame:Show()
+	-- the search in the band, Have Materials right of it, both over the band
+	local search, filter = _G.TradeSkillFrameEditBox, _G.TradeSkillFrameAvailableFilterCheckButton
+	lu.assertEquals({ search:GetPoint() }, { "TOPLEFT", frame, "TOPLEFT", config.search[1], config.search[2] })
+	lu.assertEquals(search:GetWidth(), config.search_width)
+	lu.assertEquals({ filter:GetPoint() }, { "LEFT", search, "RIGHT", config.filter_gap, 0 })
+	lu.assertEquals(search:GetFrameLevel(), frame:GetFrameLevel() + 2)
+	-- Blizzard's "Search" pale until something's typed
+	local book = client.Engine:GetDB("Blizzard").spellbook
+	search:SetText(_G.SEARCH)
+	near(color(search:GetTextColor()), book.search_hint_color)
+	search:SetText("belt")
+	lu.assertNotEquals(color(search:GetTextColor())[1], book.search_hint_color[1])
+	-- the reagents' plates gone, the chosen one's detail lower
+	lu.assertEquals(_G.TradeSkillReagent1NameFrame:GetAlpha(), 0)
+	lu.assertEquals({ _G.TradeSkillDetailScrollFrame:GetPoint() }, { "TOPLEFT", frame, "TOPLEFT", config.detail[1], config.detail[2] })
+	lu.assertEquals(_G.TradeSkillDetailScrollFrame:GetHeight(), config.detail_height)
+
+	-- the recipes in their difficulty's ink, no shadows; the chosen one white
+	client.world.tradeSkill.selected = 3
+	_G.TradeSkillFrame_Update()
+	near(color(_G.TradeSkillSkill1:GetFontString():GetTextColor()), config.inks.header)
+	near(color(_G.TradeSkillSkill2:GetFontString():GetTextColor()), config.inks.optimal)
+	near(color(_G.TradeSkillSkill2Count:GetVertexColor()), config.inks.optimal)
+	near(color(_G.TradeSkillSkill3:GetFontString():GetTextColor()), { 1, 1, 1 })
+	near(color(_G.TradeSkillSkill5:GetFontString():GetTextColor()), config.inks.trivial)
+	lu.assertEquals(select(4, _G.TradeSkillSkill2:GetFontString():GetShadowColor()), 0)
+	-- (an empty row left alone)
+	lu.assertFalse(shown(_G.TradeSkillSkill6))
+	-- the profession's icon in the band's medallion
+	lu.assertTrue(shown(module.Medallion))
+	lu.assertEquals(module.Medallion.icon:GetTexture(), [[Interface\Icons\Trade_Tailoring]])
+	-- (one with no spell of its name: none)
+	client.world.tradeSkill.name = "Mystery"
+	client.world.unknownSpells = { Mystery = true }
+	_G.TradeSkillFrame_Update()
+	lu.assertFalse(shown(module.Medallion))
+
+	-- a recipe chosen: its reagents in ink, red ink for those short, the
+	-- uncommon one framed in its color; "Reagents:" closer to the description
+	_G.TradeSkillFrame_SetSelection(2)
+	near(color(_G.TradeSkillReagentLabel:GetTextColor()), ink)
+	near(color(_G.TradeSkillReagent1Name:GetTextColor()), config.missing_color)
+	near(color(_G.TradeSkillReagent2Name:GetTextColor()), ink)
+	local icon = _G.TradeSkillReagent2IconTexture
+	lu.assertTrue(shown(icon.DiabolicBorder))
+	near(color(icon.DiabolicBorder:GetVertexColor()), client.Engine:GetDB("Data: Colors").Quality[2])
+	lu.assertFalse(shown(_G.TradeSkillReagent1IconTexture.DiabolicBorder))
+	lu.assertEquals(select(5, _G.TradeSkillReagentLabel:GetPoint()), -config.reagents_label_gap)
+	-- (none chosen: the frames kept)
+	_G.TradeSkillFrame_SetSelection(nil)
+	assertClean(client)
+end
+
+function TestTradeSkill:test_the_requirement_short_of_auctionators_scan()
+	boot({ world = recipes })
+	client.api.LoadAddOn("Blizzard_TradeSkillUI")
+	local config = client.Engine:GetDB("Blizzard").tradeskill
+	local frame = _G.TradeSkillFrame
+	frame:Show()
+	-- no Scan AH: left as it is
+	local text, description = _G.TradeSkillRequirementText, _G.TradeSkillDescription
+	local width = text:GetWidth()
+	_G.TradeSkillFrame_SetSelection(2)
+	lu.assertEquals(text:GetWidth(), width)
+	-- Auctionator's, right of the requirement: the requirement short of it,
+	-- the description under both
+	local scan = _G.CreateFrame("Button", "Auctionator_Search", _G.TradeSkillDetailScrollChildFrame)
+	scan:SetSize(80, 60)
+	scan:SetPoint("TOPRIGHT", _G.TradeSkillDetailScrollChildFrame, "TOPRIGHT", 0, 0)
+	_G.TradeSkillFrame_SetSelection(2)
+	lu.assertEquals(text:GetWidth(), math.max(1, scan:GetLeft() - text:GetLeft() - config.scan_gap))
+	-- the recipe's name short of it, once the window shows again
+	frame:Hide()
+	frame:Show()
+	lu.assertEquals(_G.TradeSkillSkillName:GetWidth(), 146)
+	local point, relative, _, x = description:GetPoint()
+	lu.assertEquals({ point, relative, x }, { "TOPLEFT", _G.TradeSkillDetailScrollChildFrame, config.description_left })
+	lu.assertTrue(-select(5, description:GetPoint()) >= config.description_top)
+	assertClean(client)
+end
+
+function TestTradeSkill:test_loaded_before_us_and_not_without_the_skin()
+	boot({ world = function(world, c)
+		recipes(world)
+		c.api.LoadAddOn("Blizzard_TradeSkillUI")
+	end })
+	lu.assertEquals(_G.TradeSkillFrameEditBox:GetWidth(), client.Engine:GetDB("Blizzard").tradeskill.search_width)
+	assertClean(client)
+	-- Blizzard's own windows: left alone
+	boot({ savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } } })
+	client.api.LoadAddOn("Blizzard_TradeSkillUI")
+	lu.assertEquals(_G.TradeSkillFrameEditBox:GetWidth(), 128)
+	lu.assertNil(client:GetModule("Blizzard: Trade Skill").Medallion)
+	assertClean(client)
+end
+
+function TestTradeSkill:test_the_medallion_waits_for_the_band()
+	boot({ world = recipes })
+	client.api.LoadAddOn("Blizzard_TradeSkillUI")
+	local module = client:GetModule("Blizzard: Trade Skill")
+	local header = _G.TradeSkillFrameTitleText.DiabolicHeader
+	_G.TradeSkillFrameTitleText.DiabolicHeader = nil
+	module:UpdateMedallion()
+	lu.assertNil(module.Medallion)
+	_G.TradeSkillFrameTitleText.DiabolicHeader = header
+	module:UpdateMedallion()
+	lu.assertNotNil(module.Medallion)
+	assertClean(client)
+end
+
+TestTrainer = {}
+
+function TestTrainer:tearDown()
+	client = nil
+end
+
+local function services(world)
+	world.trainer.services = {
+		{ name = "Fire", kind = "header", expanded = true },
+		{ name = "Fireball", subText = "Rank 2", kind = "available",
+			requirements = "Requires: |cffffffffLevel 6|r, |cffff2020Fireball (Rank 1)|r" },
+		{ name = "Pyroblast", subText = "Rank 1", kind = "unavailable", requirements = "Requires: |cffff2020Level 20|r" },
+		{ name = "Scorch", subText = "Rank 1", kind = "used" },
+	}
+end
+
+function TestTrainer:test_the_trainings_in_ink()
+	boot({ world = services })
+	client.api.LoadAddOn("Blizzard_TrainerUI")
+	local config = client.Engine:GetDB("Blizzard").trainer
+	local ink = client.Engine:GetDB("Blizzard").window.ink
+	local frame = _G.ClassTrainerFrame
+	frame:Show()
+	-- the trainer's words in the middle of a dark panel
+	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyH(), "CENTER")
+	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyV(), "MIDDLE")
+	-- the trainings in their kind's ink, the chosen one white (and what
+	-- Blizzard sets back as the mouse leaves), the header too when chosen
+	client.world.trainer.selected = 2
+	_G.ClassTrainerFrame_Update()
+	near(color(_G.ClassTrainerSkill1:GetFontString():GetTextColor()), config.inks.header)
+	near(color(_G.ClassTrainerSkill2:GetFontString():GetTextColor()), { 1, 1, 1 })
+	near(color(_G.ClassTrainerSkill2SubText:GetTextColor()), { 1, 1, 1 })
+	near(color(_G.ClassTrainerSkill3:GetFontString():GetTextColor()), config.inks.unavailable)
+	near({ _G.ClassTrainerSkill3.r, _G.ClassTrainerSkill3.g, _G.ClassTrainerSkill3.b }, config.inks.unavailable)
+	near(color(_G.ClassTrainerSkill4SubText:GetTextColor()), config.inks.used)
+	client.world.trainer.selected = 1
+	_G.ClassTrainerFrame_Update()
+	near(color(_G.ClassTrainerSkill1:GetFontString():GetTextColor()), config.inks.header)
+	-- under the mouse in black ink
+	client:Hover(_G.ClassTrainerSkill3)
+	near(color(_G.ClassTrainerSkill3SubText:GetTextColor()), config.hover_color)
+	client:Leave()
+	-- the chosen one's requirements in ink, those not met in red ink; its cost in ink
+	_G.ClassTrainer_SetSelection(2)
+	local function code(c)
+		return string.format("|cff%02x%02x%02x", c[1] * 255, c[2] * 255, c[3] * 255)
+	end
+	lu.assertEquals(_G.ClassTrainerSkillRequirements:GetText(),
+		"Requires: " .. code(ink) .. "Level 6|r, " .. code(config.missing_color) .. "Fireball (Rank 1)|r")
+	near(color(_G.ClassTrainerDetailMoneyFrameGoldButton:GetFontString():GetTextColor()), ink)
+	-- (none: nothing to ink)
+	_G.ClassTrainerSkillRequirements:SetText(nil)
+	client:GetModule("Blizzard: Trainer"):InkDetails()
+	-- the chosen one's page shorter than Blizzard's, for a profession's trainer too
+	lu.assertEquals(_G.ClassTrainerDetailScrollFrame:GetHeight(), 119 - config.detail_trim)
+	client.world.trainer.tradeskill = true
+	_G.ClassTrainerFrame_Update()
+	lu.assertEquals(_G.ClassTrainerDetailScrollFrame:GetHeight(), 135 - config.detail_trim)
+	assertClean(client)
+end
+
+function TestTrainer:test_loaded_before_us_and_not_without_the_skin()
+	boot({ world = function(world, c)
+		services(world)
+		c.api.LoadAddOn("Blizzard_TrainerUI")
+	end })
+	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyV(), "MIDDLE")
+	assertClean(client)
+	boot({ savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } } })
+	client.api.LoadAddOn("Blizzard_TrainerUI")
+	lu.assertNil(_G.DiabolicUITrainerHover)
+	assertClean(client)
+end
+
 -- The windows' kit ------------------------------------------------------------------
 
 TestWindowKit = {}
 
 function TestWindowKit:tearDown()
 	client = nil
+end
+
+function TestWindowKit:test_blizzards_own_windows_when_its_off()
+	boot({ savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } } })
+	for _, addon in ipairs({ "Blizzard_TalentUI", "Blizzard_GlyphUI", "Blizzard_AchievementUI", "Blizzard_MacroUI" }) do
+		client.api.LoadAddOn(addon)
+	end
+	for _, name in ipairs({ "QuestLogFrame", "MerchantFrame", "FriendsFrame", "SpellBookFrame", "LFDParentFrame",
+		"PlayerTalentFrame", "MacroFrame", "AchievementFrame", "CharacterFrame" }) do
+		lu.assertNil(_G[name].DiabolicPanel, name)
+	end
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_stack_split_and_coins_boxes()
+	boot()
+	local spec = client.Engine:GetDB("Blizzard").stacksplit
+	-- both on Diablo III's stone in our iron
+	for _, frame in ipairs({ _G.StackSplitFrame, _G.CoinPickupFrame }) do
+		lu.assertEquals(frame:GetWidth(), spec.panel[3] * spec.scale + spec.border * 2)
+	end
+	-- the coins' sum left of its coin, the pair in the middle of the black field
+	local text = _G.CoinPickupText
+	local x = spec.border + spec.text[1] * spec.scale - (spec.coin_size + spec.coin_gap) / 2
+	lu.assertEquals({ text:GetPoint() }, { "CENTER", _G.CoinPickupFrame, "TOPLEFT", x, -spec.border + spec.text[2] * spec.scale })
+	for _, kind in ipairs({ "Gold", "Silver", "Copper" }) do
+		local coin = _G["CoinPickup" .. kind .. "Icon"]
+		lu.assertEquals(coin:GetWidth(), spec.coin_size)
+		lu.assertEquals({ coin:GetPoint() }, { "LEFT", text, "RIGHT", spec.coin_gap, 0 })
+	end
+	assertClean(client)
+end
+
+-- A frame of `name` at a whole place, its window, band and buttons
+-- (UIPanelButtonTemplate's) at `places` ({ x, y, width } from its bottom left).
+local function kitFrame(name, places)
+	local kit = client:GetModule("Blizzard: Windows")
+	local frame = _G.CreateFrame("Frame", name, _G.UIParent)
+	frame:SetSize(400, 300)
+	frame:SetPoint("TOPLEFT", _G.UIParent, "TOPLEFT", 100, -100)
+	local window = kit:CreateWindow(frame, { 0, 0, 0, 0 })
+	local buttons = {}
+	for i, place in ipairs(places or {}) do
+		local b = _G.CreateFrame("Button", name .. "Button" .. i, frame, place[5] or "UIPanelButtonTemplate")
+		b:SetNormalTexture([[Interface\Buttons\UI-Panel-Button-Up]])
+		b:SetSize(place[3], 22)
+		b:SetPoint(place[4] or "BOTTOMLEFT", frame, place[4] or "BOTTOMLEFT", place[1], place[2])
+		buttons[i] = b
+	end
+	frame:Hide()
+	return frame, window, buttons
+end
+
+function TestWindowKit:test_buttons_on_a_row_spread_apart()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	local gap = kit.config.layout.button_gap
+	-- three touching at the bottom left, two 2 apart at the top right, two
+	-- one over the other, one apart enough
+	local frame, _, buttons = kitFrame("RowFrame", {
+		{ 20, 20, 80 }, { 100, 20, 80 }, { 180, 20, 80 },
+		{ -102, -50, 80, "TOPRIGHT" }, { -20, -50, 80, "TOPRIGHT" },
+		{ 20, 120, 80 }, { 30, 121, 80 },
+		{ 300, 20, 60 },
+	})
+	kit:StyleButtons(frame)
+	frame:Show()
+	client:Tick(0.05)
+	-- as wide in all, gap apart, each from the frame's nearer corner
+	local a, b, c = buttons[1], buttons[2], buttons[3]
+	lu.assertAlmostEquals(b:GetLeft() - a:GetRight(), gap, 1e-6)
+	lu.assertAlmostEquals(c:GetLeft() - b:GetRight(), gap, 1e-6)
+	lu.assertAlmostEquals(c:GetRight() - a:GetLeft(), 240, 1e-6)
+	lu.assertEquals((a:GetPoint()), "BOTTOMLEFT")
+	lu.assertAlmostEquals(buttons[5]:GetLeft() - buttons[4]:GetRight(), gap, 1e-6)
+	lu.assertEquals((buttons[5]:GetPoint()), "TOPRIGHT")
+	-- one over another, and one apart enough: left alone
+	lu.assertEquals(buttons[6]:GetWidth(), 80)
+	lu.assertEquals(buttons[8]:GetWidth(), 60)
+	assertClean(client)
+end
+
+function TestWindowKit:test_rows_left_alone_in_a_fight_or_too_narrow()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	-- secure ones in a fight
+	local frame, _, buttons = kitFrame("SecureRows", { { 20, 20, 80, nil, "UIPanelButtonTemplate,SecureActionButtonTemplate" }, { 100, 20, 80 } })
+	kit:StyleButtons(frame)
+	client:EnterCombat()
+	frame:Show()
+	client:Tick(0.05)
+	lu.assertEquals(buttons[1]:GetWidth(), 80)
+	client:LeaveCombat()
+	-- too narrow to fit their gap
+	frame, _, buttons = kitFrame("NarrowRows", { { 20, 20, 2 }, { 22, 20, 2 } })
+	kit:StyleButtons(frame)
+	frame:Show()
+	client:Tick(0.05)
+	lu.assertEquals(buttons[1]:GetWidth(), 2)
+	-- (hidden again before the next frame: not lined up)
+	frame:Hide()
+	kit:StyleButtons(frame)
+	client:Tick(0.05)
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_kits_other_parts()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	local frame, window = kitFrame("KitFrame")
+	-- a painted background, then tiles instead
+	kit:SetBackground(window, "zoltun")
+	kit:SetBackground(window, "smoke")
+	lu.assertTrue(shown(window.DiabolicBackground))
+	kit:SetBackground(window, "slabs")
+	lu.assertFalse(shown(window.DiabolicBackground))
+	-- a bar kept orange
+	local bar = _G.CreateFrame("StatusBar", nil, frame)
+	kit:StyleBar(bar)
+	bar:SetStatusBarColor(0, 0, 1)
+	near(color(bar:GetStatusBarColor()), kit.config.bar.color)
+	-- a tab sized to its text, its text kept in place
+	local tab = _G.CreateFrame("Button", "KitFrameTab1", frame)
+	tab:SetText("Things")
+	kit:StyleTab(tab, { padding = 10, inset = 2 })
+	lu.assertEquals(tab:GetWidth(), tab:GetFontString():GetStringWidth() + 14)
+	tab:GetFontString():SetPoint("LEFT", tab, "LEFT", 50, 0)
+	lu.assertNotEquals(select(4, tab:GetFontString():GetPoint()), 50)
+	-- banners: a WoW icon's, round; the name under it on hover (not over a
+	-- tooltip of its own); none shown, no rail
+	local header = kit:CreateHeader(window, 40, { 24, 24 })
+	local banner = _G.CreateFrame("Button", "KitFrameTab2", frame)
+	banner:SetText("Fire")
+	kit:HangTabs(window, { banner }, { [[Interface\Icons\Spell_Fire_FlameBolt]] })
+	lu.assertEquals(banner.DiabolicBanner.sigil:GetTexture(), [[Interface\Icons\Spell_Fire_FlameBolt]])
+	lu.assertNil(banner.DiabolicBanner.gold)
+	client:Hover(banner)
+	lu.assertTrue(_G.GameTooltip:IsOwned(banner) == 1)
+	kit:ShowBannerName(banner)
+	client:Leave()
+	lu.assertFalse(shown(_G.GameTooltip))
+	frame:Show()
+	banner:Hide()
+	lu.assertFalse(shown(window.DiabolicRail))
+	-- the window's top lowered with its cover
+	local cover = kit:CreateCover(window, { 10, 10, 10, 10 }, 2)
+	kit:DropTop(window)
+	lu.assertEquals(select(5, cover:GetPoint()), -10)
+	-- the strip under the band once
+	kit:AddTabStrip(header)
+	local strip = header.DiabolicStrip
+	kit:AddTabStrip(header)
+	lu.assertEquals(header.DiabolicStrip, strip)
+	-- a band's parts from its right end
+	local first, second = frame:CreateFontString(), frame:CreateFontString()
+	first:SetText("One")
+	second:SetText("Two")
+	kit:LineBand(header, { first, second }, true)
+	lu.assertEquals({ second:GetPoint() }, { "RIGHT", header, "RIGHT", -kit.config.layout.band_right_edge, 0 })
+	lu.assertEquals((select(2, first:GetPoint())), second)
+	-- an edit box's hint gone as it's typed in
+	local box = _G.CreateFrame("EditBox", nil, frame)
+	kit:AddHint(box, "Name")
+	local hint = select(1, box:GetRegions())
+	lu.assertTrue(shown(hint))
+	client:RunScript(box, "OnEditFocusGained")
+	lu.assertFalse(shown(hint))
+	assertClean(client)
 end
 
 function TestWindowKit:test_dragged_as_blizzards_frame_is()
@@ -625,6 +1412,12 @@ function TestAdiBags:test_its_bags_in_our_windows()
 	local item = AdiBags.MakeButton("AdiBagsItemButton1", 0, 1)
 	lu.assertEquals(_G.AdiBagsItemButton1NormalTexture:GetAlpha(), 0)
 	AdiBags:GetClass("ItemButton").prototype.UpdateBorder(item)
+	-- an item in it: its icon cut inside the frame again (AdiBags shows it whole)
+	local icon = _G.AdiBagsItemButton1IconTexture
+	icon:SetTexCoord(0, 1, 0, 1)
+	item.texture = [[Interface\Icons\INV_Sword_04]]
+	AdiBags:GetClass("ItemButton").prototype.UpdateBorder(item)
+	lu.assertAlmostEquals(({ icon:GetTexCoord() })[1], 5 / 64, 1e-6)
 	assertClean(client)
 end
 

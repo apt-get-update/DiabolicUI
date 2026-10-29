@@ -243,7 +243,7 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   plate, fading, castbars.
 - `test_session_tooltips.lua` / `test_session_itemtooltips.lua` - unit and
   aura tooltips, inspecting with Shift, following the cursor, the skins;
-  the Diablo III item tooltip layout.
+  the Diablo III item and ability tooltip layouts.
 - `test_session_minimap.lua` - the embedded minimap module: its look, zone
   text, clock, mail, compass, edit mode, options page and slash commands.
 - `test_session_objectives.lua` - world state scores and timers, capture
@@ -254,10 +254,17 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   the character window (its tabs, Titles and Sets pages, your home behind
   you, a faction's details) and the achievements (Overachiever's pages).
 - `test_session_windows.lua` - Blizzard's windows in Diablo III's look: the
-  spellbook as a book and its companions' pages (Sholazar's map), the who
-  list, the quest log, the talents and glyphs, the other windows
-  (Auctionator's pages too), the windows' kit (drag, titles, buttons,
-  coins), and AdiBags' and Group Bulletin Board's windows.
+  spellbook as a book and its companions', professions' and search pages
+  (Sholazar's map), the who list and the guild's log, the quest log, the
+  talents and glyphs, the mailbox (Postal's parts too), the trade skills
+  and the class trainer, the other windows (Auctionator's pages, the guild
+  bank's log), the windows' kit (drag, titles, buttons and their rows,
+  banners, coins, the stack split box), and AdiBags' and Group Bulletin
+  Board's windows.
+- `test_session_layout.lua` - `/dui layout`: a window built to break each
+  of the layout's rules, the problems said once and saved by window, the
+  check kept on after a reload, edges between screen pixels, and
+  `/dui layout all` opening each window in turn.
 - `test_session_chat.lua` - chat bubbles, the chat windows (input box,
   buttons, IM style, whisper windows, the stuck key guard, the layout
   question, a hand-placed window kept) and copying web links.

@@ -224,12 +224,9 @@ end
 
 -- A line added on its own re-measures the tooltip (dropping the extra room
 -- made above): lay out again then, or for the first time if the tooltip
--- wasn't on screen yet when it was shown.
+-- wasn't on screen yet when it was shown. (Only for an ability's tooltip.)
 local CheckLayout = function(tooltip)
 	local info = tooltip.DiabolicSpellInfo
-	if (not info) then
-		return
-	end
 	if (not info.width) or (math_abs(tooltip:GetWidth() - info.width) > .5) or (math_abs(tooltip:GetHeight() - info.height) > .5) then
 		return Layout(tooltip)
 	end

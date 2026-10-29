@@ -1,7 +1,7 @@
 -- /dui layout: checks the windows shown against the layout's rules
 -- (windows.lua, settings/blizzard.lua window.layout) and says in the chat
 -- what breaks them: buttons on a row too close, a button's text wider
--- than it, the band's controls over each other (or over its medallion,
+-- than it, the band's controls over each other (or over
 -- the title, the X), parts out of the window, the content too close to
 -- the band (or the tabs under it) or the foot, or its room over and under
 -- it uneven, or left and right of it; its zones too close; a dropdown
@@ -38,13 +38,16 @@ local CreateFrame = _G.CreateFrame
 local GetChatWindowInfo = _G.GetChatWindowInfo
 local GetCurrentResolution = _G.GetCurrentResolution
 local GetScreenResolutions = _G.GetScreenResolutions
+local GetTime = _G.GetTime
 local InCombatLockdown = _G.InCombatLockdown
 local date = _G.date
 
 local kit, layout
 local Said, Fine -- problems already said (by text), windows found right (by frame)
-local Saved -- DiabolicUI_Layout: { on, resolution, unit, windows = { [name] = { checked, problems } } }
+local Saved -- DiabolicUI_Layout: { resolution, unit, windows = { [name] = { checked, problems } } }
 local Seen = {} -- the windows saved this session (their last session's problems replaced)
+local Shown = {} -- when each window shown was first seen so (by window)
+local SETTLE_TIME = .5 -- a window checked once shown that long (an addon's lays itself out over a few frames)
 
 -- In a chat window named Layout if there's one (its own tab), else the main one.
 local Print = function(text)
@@ -183,8 +186,7 @@ Checks.Rows = function(window, say, scale)
 	end
 end
 
--- The band's controls and texts over each other, its medallion, the
--- title, the X.
+-- The band's controls and texts over each other, the title, the X.
 Checks.Band = function(window, say, scale, controls, texts)
 	local header = window.DiabolicHeaders[1]
 	local _, bandBottom, _, bandTop = kit.Edges(header)
@@ -206,9 +208,6 @@ Checks.Band = function(window, say, scale, controls, texts)
 			Add(region)
 		end
 	end
-	if header.DiabolicMedallion then
-		Add(header.DiabolicMedallion, L["the medallion"])
-	end
 	if window.DiabolicClose and window.DiabolicClose:IsVisible() then
 		Add(window.DiabolicClose)
 	end
@@ -222,13 +221,16 @@ Checks.Band = function(window, say, scale, controls, texts)
 	end
 end
 
--- `part` on a tab hanging from the foot (a banner), in a scroll frame
--- (clipped: what's past it isn't seen), a tooltip or a frame mostly
--- beside the window (a popup by it: the guild's info, a member's card).
+-- `part` on a tab hanging from the foot (a banner), out past the window
+-- on purpose (the guild bank's tabs), in a scroll frame (clipped: what's
+-- past it isn't seen), a tooltip or a frame mostly beside the window (a
+-- popup by it: the guild's info, a member's card).
 local IsHung = function(part, holder, left, bottom, right, top)
 	local frame = part
 	while frame and (frame ~= holder) do
-		if frame.DiabolicBanner or frame:IsObjectType("ScrollFrame") or (frame:GetFrameStrata() == "TOOLTIP") then
+		-- (a text has no strata of its own: its frame's is checked next)
+		if frame.DiabolicBanner or frame.DiabolicOutside or frame:IsObjectType("ScrollFrame")
+			or (frame:IsObjectType("Frame") and (frame:GetFrameStrata() == "TOOLTIP")) then
 			return true
 		end
 		if (frame ~= part) and frame:IsObjectType("Frame") then
@@ -306,8 +308,16 @@ Checks.Room = function(window, say, scale, controls, texts)
 			bottom, bottomZone = zoneBottom, zone
 		end
 	end
-	local _, above = kit.Edges(window.DiabolicHeaders[1])
-	local aboveName = L["the band"]
+	-- (from the band, or the iron's inside on a window without one)
+	local header = window.DiabolicHeaders[1]
+	local above, aboveName
+	if header then
+		above, aboveName = select(2, kit.Edges(header)), L["the band"]
+	else
+		local _, _, _, windowTop = kit.Edges(window)
+		above = windowTop - (kit.config.backdrop.insets.top + (window.DiabolicDrop or 0)) * kit.ScaleOf(window)
+		aboveName = L["the iron"]
+	end
 	for _, list in ipairs({ controls, texts }) do
 		for _, part in ipairs(list) do
 			local _, partBottom, _, partTop = Box(part)
@@ -590,7 +600,13 @@ Checks.Pixels = function(window, say, scale, controls)
 	if (math_abs(unit - math_floor(unit + .5)) > .02) then
 		return
 	end
-	local parts = { window, window.DiabolicHeaders[1], window.DiabolicFoot and window.DiabolicFoot.DiabolicShown and window.DiabolicFoot }
+	local parts = { window }
+	if window.DiabolicHeaders[1] then
+		parts[#parts + 1] = window.DiabolicHeaders[1]
+	end
+	if window.DiabolicFoot and window.DiabolicFoot.DiabolicShown then
+		parts[#parts + 1] = window.DiabolicFoot
+	end
 	for _, zone in ipairs(CollectContent(window.Frame, {})) do
 		parts[#parts + 1] = zone
 	end
@@ -671,9 +687,21 @@ local Check = function(window)
 	end
 end
 
-local CheckShown = function()
+-- Each window's time shown (each frame, while the checks are on).
+local Watch = function()
 	for _, window in ipairs(kit.Windows) do
-		if window.Frame:IsVisible() and window:GetLeft() then
+		if window.Frame:IsVisible() then
+			Shown[window] = Shown[window] or GetTime()
+		else
+			Shown[window] = nil
+		end
+	end
+end
+
+local CheckShown = function()
+	Watch()
+	for _, window in ipairs(kit.Windows) do
+		if window.Frame:IsVisible() and window:GetLeft() and (GetTime() - Shown[window] >= SETTLE_TIME) then
 			-- (a check that breaks said once, the others still made)
 			local ok, err = pcall(Check, window)
 			if (not ok) and (not Said[err]) then
@@ -693,8 +721,13 @@ end
 
 Module.Start = function(self)
 	Said, Fine = {}, {}
-	Saved.on = true
 	SaveScreen()
+	-- (those already shown: settled)
+	for _, window in ipairs(kit.Windows) do
+		if window.Frame:IsVisible() then
+			Shown[window] = GetTime() - SETTLE_TIME
+		end
+	end
 	CheckShown()
 	self.Ticker:Show()
 end
@@ -702,7 +735,6 @@ end
 Module.Toggle = function(self)
 	if self.Ticker:IsShown() then
 		self.Ticker:Hide()
-		Saved.on = nil
 		Print(L["Layout check off."])
 		return
 	end
@@ -726,24 +758,48 @@ local Tab = function(name)
 		end
 	end
 end
+-- One of the spellbook's own pages (companions, mounts, professions),
+-- when the character has it.
+local Page = function(mode)
+	return function()
+		local book = Engine:GetModule("Blizzard: Spellbook")
+		if _G.SpellBookFrame:IsShown() and book.HasPage and ((not mode) or book:HasPage(mode)) then
+			book:ShowPage(mode)
+		end
+	end
+end
 local STEPS = {
 	Open(function() _G.ToggleCharacter("PaperDollFrame") end),
+	Tab("DiabolicUICharacterSideTab2"), Tab("DiabolicUICharacterSideTab3"), Tab("DiabolicUICharacterSideTab1"), -- titles, sets, stats
 	function() _G.ToggleCharacter("ReputationFrame") end,
 	function() _G.ToggleCharacter("SkillFrame") end,
 	function() _G.ToggleCharacter("TokenFrame") end,
-	function() if _G.HasPetUI() then _G.ToggleCharacter("PetPaperDollFrame") end end,
+	function()
+		if _G.TokenFramePopup then
+			_G.TokenFramePopup:Show()
+		end
+	end,
+	function() _G.ToggleCharacter("PetPaperDollFrame") end, -- (the pet's, or the companions')
+	Tab("PetPaperDollFrameTab2"), Tab("PetPaperDollFrameTab3"),
 	Open(function() _G.ToggleSpellBook(_G.BOOKTYPE_SPELL) end),
 	Tab("SpellBookSkillLineTab2"), Tab("SpellBookSkillLineTab3"), Tab("SpellBookSkillLineTab4"),
+	Page("CRITTER"), Page("MOUNT"), Page("PROFESSIONS"), Page(nil),
+	Tab("SpellBookFrameTabButton2"), -- the pet's book
 	Open(function() _G.ToggleTalentFrame() end),
 	Tab("PlayerTalentFrameTab2"), Tab("PlayerTalentFrameTab3"), Tab("PlayerTalentFrameTab4"),
+	Tab("PlayerSpecTab2"), -- the second spec
 	Open(function() _G.ToggleFriendsFrame(1) end),
+	Tab("FriendsTabHeaderTab2"), Tab("FriendsTabHeaderTab3"), -- ignored, pending
 	function() _G.ToggleFriendsFrame(2) end,
 	function() _G.ToggleFriendsFrame(3) end,
+	Tab("GuildFrameGuildInformationButton"),
 	function() _G.ToggleFriendsFrame(4) end,
 	function() _G.ToggleFriendsFrame(5) end,
+	Tab("RaidFrameRaidInfoButton"),
 	Open(function() _G.ToggleFrame(_G.QuestLogFrame) end),
 	Open(function() _G.ToggleAchievementFrame() end),
-	Tab("AchievementFrameTab2"), Tab("AchievementFrameTab3"),
+	Tab("AchievementFrameTab2"), Tab("AchievementFrameTab3"), -- and Overachiever's
+	Tab("AchievementFrameTab4"), Tab("AchievementFrameTab5"), Tab("AchievementFrameTab6"),
 	Open(function() _G.ToggleLFDParentFrame() end),
 	Open(function() _G.ToggleLFRParentFrame() end),
 	Tab("LFRParentFrameTab2"),
@@ -756,7 +812,19 @@ local STEPS = {
 		_G.ShowUIPanel(_G.KeyBindingFrame)
 	end),
 	Open(function() _G.ShowUIPanel(_G.DressUpFrame) end),
-	function() _G.CloseAllWindows() end
+	-- the one targeted, when a player in reach
+	Open(function()
+		if _G.UnitIsPlayer("target") and _G.CanInspect("target") and _G.CheckInteractDistance("target", 1) then
+			_G.InspectUnit("target")
+		end
+	end),
+	Tab("InspectFrameTab2"), Tab("InspectFrameTab3"),
+	Open(function() Engine:GetModule("ChatCopy"):Show(_G.ChatFrame1) end),
+	Open(function() _G.OpenAllBags() end),
+	function()
+		_G.CloseAllBags()
+		_G.CloseAllWindows()
+	end
 }
 local STEP_TIME = .6 -- each step's wait before its checks (the layout done on the next frame)
 
@@ -801,6 +869,7 @@ Module.OnEnable = function(self)
 	local ticker, elapsed = CreateFrame("Frame"), 0
 	ticker:Hide()
 	ticker:SetScript("OnUpdate", function(_, delta)
+		Watch()
 		elapsed = elapsed + delta
 		if (elapsed >= 1) then
 			elapsed = 0
@@ -811,10 +880,8 @@ Module.OnEnable = function(self)
 	self.Sweeper = CreateFrame("Frame")
 	Saved = _G.DiabolicUI_Layout or {}
 	Saved.windows = Saved.windows or {}
+	Saved.on = nil -- (an older version's: the check is on for a session only)
 	_G.DiabolicUI_Layout = Saved
-	if Saved.on then
-		self:Start()
-	end
 	self:GetHandler("ChatCommand"):Register("layout", function(what)
 		if (what == "all") then
 			self:Sweep()

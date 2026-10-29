@@ -113,9 +113,6 @@ end
 -- shown) together in the middle of the black field.
 Module.StyleCoinPickup = function(self)
 	local frame = _G.CoinPickupFrame
-	if (not frame) then
-		return
-	end
 	self:StyleSplit("CoinPickup")
 	kit:StyleCoins(frame)
 	local spec, text = self.config, _G.CoinPickupText

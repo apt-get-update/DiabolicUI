@@ -17,7 +17,11 @@ local select = select
 local unpack = unpack
 
 -- WoW API
+local CreateFrame = _G.CreateFrame
+local GetDailyQuestsCompleted = _G.GetDailyQuestsCompleted
+local GetMaxDailyQuests = _G.GetMaxDailyQuests
 local GetQuestLogLeaderBoard = _G.GetQuestLogLeaderBoard
+local GetQuestResetTime = _G.GetQuestResetTime
 local hooksecurefunc = _G.hooksecurefunc
 
 -- the details' text, by its color: Blizzard's titles and the rest
@@ -71,21 +75,43 @@ Module.ColorDetails = function(self, parent, material)
 	self.Colored = true
 end
 
--- The count at the row's left (Blizzard moves it as the dailies show).
-Module.PlaceCount = function(self)
+-- The quests' count in the title ("Quest Log 15/25"), Blizzard's box for
+-- it out of sight in the log (shown in the details' own window, where
+-- Blizzard moves it).
+Module.UpdateCount = function(self, numQuests)
 	local count = _G.QuestLogCount
-	if (count:GetParent() == _G.QuestLogFrame) then
-		count:ClearAllPoints()
-		count:SetPoint("LEFT", self.Window, "TOPLEFT", self.config.row_inset, self.config.row_y)
+	local inLog = (count:GetParent() == _G.QuestLogFrame)
+	count:SetAlpha(inLog and 0 or 1)
+	_G.QuestLogDailyQuestCountMouseOverFrame:EnableMouse(not inLog)
+	if numQuests then
+		_G.QuestLogTitleText:SetText(_G.QUEST_LOG .. "  " .. numQuests .. "/" .. _G.MAX_QUESTLOG_QUESTS)
 	end
 end
 
--- The map's button at the row's right (Blizzard puts it back each time).
+-- The title's tooltip: the dailies done today, when they reset.
+Module.AddCountTooltip = function(self)
+	local title = _G.QuestLogTitleText
+	local hover = CreateFrame("Frame", nil, title:GetParent())
+	hover:SetAllPoints(title)
+	hover:EnableMouse(true)
+	hover:SetScript("OnEnter", function()
+		local tooltip = _G.GameTooltip
+		tooltip:SetOwner(hover, "ANCHOR_BOTTOM")
+		tooltip:SetText(_G.QUEST_LOG_DAILY_COUNT_TEMPLATE:format(GetDailyQuestsCompleted(), GetMaxDailyQuests()))
+		tooltip:AddLine(_G.QUEST_LOG_DAILY_TOOLTIP:format(GetMaxDailyQuests(), _G.SecondsToTime(GetQuestResetTime(), nil, 1)), 1, 1, 1, true)
+		tooltip:Show()
+	end)
+	hover:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+end
+
+-- The map's button in the foot, at its right (Blizzard puts it back each
+-- time), over the foot's stone as the buttons left of it.
 Module.PlaceMapButton = function(self)
 	local button = _G.QuestLogFrameShowMapButton
 	if (button:GetParent() == _G.QuestLogFrame) then
 		button:ClearAllPoints()
-		button:SetPoint("RIGHT", self.Window, "TOPRIGHT", -self.config.row_inset, self.config.row_y)
+		button:SetPoint("RIGHT", self.Window, "BOTTOMRIGHT", unpack(self.config.map_button))
+		button:SetFrameLevel(_G.QuestLogFrameAbandonButton:GetFrameLevel())
 	end
 end
 
@@ -123,18 +149,17 @@ Module.StyleQuestLog = function(self)
 	kit:HideTextures(frame)
 	frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + config.insets[3])
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
-	kit:AddMedallion(self.Header, "grail")
 	kit:SetTitle(self.Header, _G.QuestLogTitleText)
 	kit:StyleClose(_G.QuestLogFrameCloseButton, window, self.Header)
+	kit:DropBand(self.Header) -- (nothing in it: the quests up in its place)
 	_G.QuestLogFrameCancelButton:SetAlpha(0) -- the window's X closes it
 	_G.QuestLogFrameCancelButton:EnableMouse(false)
 
-	-- the count and the map's button in a row under the band
-	Hide("QuestLogCountTopRight", "QuestLogCountBottomRight", "QuestLogCountRight", "QuestLogCountTopLeft",
-		"QuestLogCountBottomLeft", "QuestLogCountLeft", "QuestLogCountTopMiddle", "QuestLogCountMiddleMiddle",
-		"QuestLogCountBottomMiddle")
-	self:PlaceCount()
-	hooksecurefunc("QuestLog_UpdateQuestCount", function() self:PlaceCount() end)
+	-- the quests' count in the title, the dailies' in its tooltip; the
+	-- map's button in the foot
+	self:AddCountTooltip()
+	hooksecurefunc("QuestLog_UpdateQuestCount", function(numQuests) self:UpdateCount(numQuests) end)
+	self:UpdateCount()
 	self:PlaceMapButton()
 	hooksecurefunc("QuestLogShowMapPOI_UpdatePosition", function() self:PlaceMapButton() end)
 
@@ -142,6 +167,7 @@ Module.StyleQuestLog = function(self)
 	local list = _G.QuestLogScrollFrame
 	list:ClearAllPoints()
 	list:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.list))
+	list:SetHeight(config.list_height)
 	kit:AddZone(list, "slate", config.list_panel_insets, list) -- (in the list: over the painting, under its rows)
 	local empty = _G.EmptyQuestLogFrame
 	kit:HideTextures(empty)
@@ -163,9 +189,15 @@ Module.StyleQuestLog = function(self)
 	highlight:SetPoint("BOTTOMRIGHT", _G.QuestLogHighlightFrame, "BOTTOMRIGHT", config.highlight_reach, 0)
 
 	-- Abandon, Share and Track under the quests
-	for _, button in ipairs({ _G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton }) do
+	local abandon, share, track = _G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton
+	for _, button in ipairs({ abandon, share, track }) do
 		kit:StyleButton(button, config.button_height)
 	end
+	-- apart (Blizzard's touch: Share stretched between the other two)
+	local gap = kit.config.layout.button_gap
+	share:ClearAllPoints()
+	share:SetPoint("LEFT", abandon, "RIGHT", gap, 0)
+	share:SetPoint("RIGHT", track, "LEFT", -gap, 0)
 	self:PlaceControls()
 	hooksecurefunc("QuestLogControlPanel_UpdatePosition", function() self:PlaceControls() end)
 	kit:StyleScrollBars(frame)

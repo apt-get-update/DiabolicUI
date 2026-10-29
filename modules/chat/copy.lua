@@ -55,7 +55,7 @@ Module.CreateWindow = function(self)
 	local look = self:GetDB("Blizzard").panels
 	local frame = CreateFrame("Frame", "DiabolicChatCopyFrame", _G.UIParent)
 	frame:Hide()
-	frame:SetSize(WIDTH, HEIGHT)
+	frame:SetSize(WIDTH, HEIGHT - look.header_height) -- (no band: its room given back)
 	frame:SetPoint("CENTER")
 	frame:SetFrameStrata("DIALOG")
 	frame:SetClampedToScreen(true)
@@ -66,8 +66,9 @@ Module.CreateWindow = function(self)
 	frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 	_G.tinsert(_G.UISpecialFrames, "DiabolicChatCopyFrame") -- Escape closes it
 
-	-- the windows' (windows.lua): stone in its iron frame, the title in the
-	-- red band, the X in its socket, the text in a darker panel
+	-- the windows' (windows.lua): stone in its iron frame, the title on
+	-- its plate, the X in its socket, the text in a darker panel (no red
+	-- band: nothing in it)
 	local window = kit:CreateWindow(frame, { 0, 0, 0, 0 })
 	kit:SetBackground(window, "dome")
 	local header = kit:CreateHeader(window, look.header_height, look.header_insets)
@@ -76,8 +77,9 @@ Module.CreateWindow = function(self)
 	title:SetText(L["Copy Chat"])
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	kit:StyleClose(close, window, header)
+	kit:DropBand(header)
 
-	local top = look.header_insets[2] + look.header_height + PADDING
+	local top = look.header_insets[2] + PADDING
 	local scroll = CreateFrame("ScrollFrame", "DiabolicChatCopyScroll", frame, "UIPanelScrollFrameTemplate")
 	scroll:SetPoint("TOPLEFT", SIDE, -top)
 	scroll:SetPoint("BOTTOMRIGHT", -SIDE - BAR, SIDE)

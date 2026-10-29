@@ -114,7 +114,7 @@ Module.StyleSocial = function(self)
 			local zone = kit:AddZone(list, "leather", insets)
 			local button = _G[config.list_bottoms[name] or ""]
 			if button then
-				self:SetZoneBottom(zone, list, insets, button, kit.config.footer_margin + (config.list_gaps[name] or config.list_gap))
+				self:SetZoneBottom(zone, list, insets, button, kit:FootReach() + (config.list_gaps[name] or config.list_gap))
 			elseif (name == "GuildListScrollFrame") and self.MOTD then
 				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
 			end
@@ -323,6 +323,18 @@ Module.StyleGuild = function(self, window)
 			end
 		end
 	end
+	-- the foot's buttons the rows' gap apart (Blizzard's 2), from Guild
+	-- Control's left
+	local gap = kit.config.layout.button_gap
+	local previous = _G.GuildFrameControlButton
+	for _, name in ipairs({ "GuildFrameAddMemberButton", "GuildFrameGuildInformationButton" }) do
+		local button = _G[name]
+		if button and previous then
+			button:ClearAllPoints()
+			button:SetPoint("RIGHT", previous, "LEFT", -gap, 0)
+			previous = button
+		end
+	end
 	if toggle then
 		local Place = function()
 			local point, relative, relativePoint, x = toggle:GetPoint()
@@ -427,9 +439,6 @@ end
 -- their labels as the band's.
 Module.StyleChannelPopup = function(self)
 	local frame = _G.ChannelFrameDaughterFrame
-	if (not frame) then
-		return
-	end
 	self:StylePopup(frame, _G.ChannelFrameDaughterFrameName, _G.ChannelFrameDaughterFrameDetailCloseButton)
 	for _, name in ipairs({ "ChannelFrameDaughterFrameChannelName", "ChannelFrameDaughterFrameChannelPassword" }) do
 		local box = _G[name]
@@ -437,9 +446,6 @@ Module.StyleChannelPopup = function(self)
 		local label = _G[name .. "Label"]
 		label:SetFontObject(kit.config.check_box.font)
 		label:SetTextColor(unpack(kit.config.title_plate.color))
-	end
-	if _G.ChannelFrameDaughterFrameVoiceChat then
-		kit:StyleCheckBox(_G.ChannelFrameDaughterFrameVoiceChat)
 	end
 end
 

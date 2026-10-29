@@ -126,6 +126,73 @@ Module.HangTabs = function(self, window, prefix, sigils)
 	kit:HangTabs(window, tabs, sigils)
 end
 
+-- A rod in Blizzard's art (`rail`: its halves, each { name, tip, from, to }
+-- in its file's pixels, the left one `left`) run on as far as the content
+-- under it (`rail.reach` in from the window's sides, inside its iron): each
+-- half cut at its plain stretch (`from` to `to`), its tapered tip (`tip` to
+-- the stretch) moved out to the content's edge, the stretch drawn out
+-- between them.
+local ExtendRail = function(window, rail)
+	local fits = {}
+	for _, side in ipairs(rail) do
+		local art = _G[side[1]]
+		local file = art:GetWidth() -- (drawn at its file's size)
+		local tip, from, to = side[2], side[3], side[4]
+		local _, top, _, bottom = art:GetTexCoord()
+		local Piece = function(left, right)
+			local piece = window:CreateTexture(nil, "ARTWORK")
+			piece:SetTexture(art:GetTexture())
+			piece:SetTexCoord(left / file, right / file, top, bottom)
+			piece:SetSize(right - left, art:GetHeight())
+			return piece
+		end
+		local stretch = Piece(from, to)
+		if side.left then
+			local tipPiece = Piece(tip, from)
+			tipPiece:SetPoint("TOPRIGHT", stretch, "TOPLEFT")
+			local point, relative, relativePoint, x, y = art:GetPoint()
+			art:SetPoint(point, relative, relativePoint, x + to, y)
+			art:SetWidth(file - to)
+			art:SetTexCoord(to / file, 1, top, bottom)
+			stretch:SetPoint("TOPRIGHT", art, "TOPLEFT")
+			fits[#fits + 1] = { stretch, function() return art:GetLeft() - (from - tip) - window:GetLeft() - rail.reach end }
+		else
+			local tipPiece = Piece(to, tip)
+			tipPiece:SetPoint("TOPLEFT", stretch, "TOPRIGHT")
+			art:SetWidth(from)
+			art:SetTexCoord(0, from / file, top, bottom)
+			stretch:SetPoint("TOPLEFT", art, "TOPRIGHT")
+			fits[#fits + 1] = { stretch, function() return window:GetRight() - rail.reach - (tip - to) - art:GetRight() end }
+		end
+	end
+	-- (as wide as the room left, once the window is placed)
+	local Fit = function()
+		if (not window:GetLeft()) then
+			return
+		end
+		for _, fit in ipairs(fits) do
+			fit[1]:SetWidth(math_max(1, fit[2]()))
+		end
+	end
+	window:HookScript("OnShow", Fit)
+	window:HookScript("OnSizeChanged", Fit)
+	Fit()
+end
+
+-- What's placed from `holder`'s top (by one point) `by` higher, each once.
+local Raise = function(holder, by, ...)
+	for i = 1, select("#", ...) do
+		local part = select(i, ...)
+		if (not part.DiabolicRaised) and (part:GetNumPoints() == 1) then
+			local point, relative, relativePoint, x, y = part:GetPoint()
+			if (relative == holder or relative == nil) and relativePoint:find("^TOP") then
+				part:SetPoint(point, relative, relativePoint, x, y + by)
+				part.DiabolicRaised = true
+			end
+		end
+	end
+end
+
 -- What's placed from `holder`'s bottom (by one point) `by` lower, each
 -- once.
 local Lower = function(holder, by, ...)
@@ -223,11 +290,33 @@ Module.StyleLate = function(self, late, header)
 			part:SetWidth(entry[3])
 		end
 	end
+	for _, entry in ipairs(late.hide_texts or {}) do
+		-- { a frame, its text (any, if left out) }: its labels out of sight
+		local frame = _G[entry[1]]
+		for i = 1, frame and select("#", frame:GetRegions()) or 0 do
+			local region = select(i, frame:GetRegions())
+			if region:IsObjectType("FontString") and ((not entry[2]) or (region:GetText() == entry[2])) then
+				region:SetAlpha(0)
+			end
+		end
+	end
+	for _, name in ipairs(late.lower_skip or {}) do
+		if _G[name] then
+			_G[name].DiabolicLowered = true -- (kept where Blizzard put it)
+		end
+	end
 	for _, name in ipairs(late.lower_in or {}) do
 		local holder = _G[name]
 		if holder then
 			Lower(holder, late.lower, holder:GetChildren())
 			Lower(holder, late.lower, holder:GetRegions())
+		end
+	end
+	for name, by in pairs(late.raise_in or {}) do
+		local holder = _G[name]
+		if holder then
+			Raise(holder, by, holder:GetChildren())
+			Raise(holder, by, holder:GetRegions())
 		end
 	end
 	for _, entry in ipairs(late.panels or {}) do
@@ -274,7 +363,14 @@ Module.StylePanel = function(self, spec)
 	end
 	frame.DiabolicPanel = true
 
-	local window = kit:CreateWindow(frame, spec.insets)
+	-- no band (nothing in it): its room given back, the frame and all it
+	-- holds up into it, the window's top where it was, its foot higher
+	local insets, offsetY = spec.insets, spec.offset_y
+	if (spec.band == false) then
+		insets = { insets[1], insets[2] - config.header_height, insets[3], insets[4] }
+		offsetY = (offsetY or 0) + config.header_height
+	end
+	local window = kit:CreateWindow(frame, insets)
 	kit:SetBackground(window, spec.background or config.background)
 	if (type(spec.footer) == "table") then
 		-- one page's: there while it shows
@@ -291,7 +387,7 @@ Module.StylePanel = function(self, spec)
 	end
 	kit:AddDrag(window, frame)
 	if (spec.panel ~= false) then
-		kit:SetPanelLayout(frame, spec.insets, spec.insets[1], spec.offset_y)
+		kit:SetPanelLayout(frame, insets, insets[1], offsetY)
 	end
 	HideOwnArt(frame, spec.keep)
 	for _, name in ipairs(spec.subframes or {}) do
@@ -323,6 +419,14 @@ Module.StylePanel = function(self, spec)
 			part:SetPoint(point, _G[relative], relativePoint, x, y)
 		end
 	end
+	for _, y in ipairs(spec.iron_bars or {}) do
+		kit:AddIronBar(window, y)
+	end
+	for _, name in ipairs(spec.outside or {}) do
+		if _G[name] then
+			_G[name].DiabolicOutside = true -- (/dui layout: not out of the window by mistake)
+		end
+	end
 	for name, size in pairs(spec.sizes or {}) do
 		if _G[name] then
 			_G[name]:SetSize(unpack(size))
@@ -337,9 +441,6 @@ Module.StylePanel = function(self, spec)
 	end
 
 	local header = kit:CreateHeader(window, config.header_height, config.header_insets)
-	if spec.medallion then
-		kit:AddMedallion(header, spec.medallion)
-	end
 	local title = spec.title and _G[spec.title]
 	if (not title) and spec.text then
 		-- a title of our own, Blizzard's (no name to it) out of sight
@@ -369,7 +470,9 @@ Module.StylePanel = function(self, spec)
 			kit:StyleDropDown(dropdown)
 		end
 	end
-	if spec.band then
+	if (spec.band == false) then
+		kit:DropBand(header)
+	elseif spec.band then
 		self:PlaceBand(header, spec.band)
 	end
 	-- (true: its unnamed one)
@@ -377,15 +480,24 @@ Module.StylePanel = function(self, spec)
 	if close then
 		kit:StyleClose(close, window, header)
 	end
-	-- its crest (the guild bank's tabard) over the iron, the title's plate
-	-- over it
+	-- its crest (the guild bank's tabard) over the iron, its foot (the
+	-- rod's) `crest_y` over the iron's top edge (as far left as Blizzard
+	-- has it), the title's plate over it
 	local crest = spec.crest and _G[spec.crest]
 	if crest then
 		local level = window.Border:GetFrameLevel()
 		crest:SetFrameLevel(level + 1)
+		if spec.crest_y then
+			local _, _, _, x = crest:GetPoint()
+			crest:ClearAllPoints()
+			crest:SetPoint("BOTTOM", window.Border, "TOP", x, spec.crest_y)
+		end
 		if window.DiabolicPlate then
 			window.DiabolicPlate:SetFrameLevel(level + 2)
 		end
+	end
+	if spec.rail then
+		ExtendRail(window, spec.rail)
 	end
 
 	if spec.tabs then
@@ -415,14 +527,17 @@ Module.StylePanel = function(self, spec)
 	local zones = {}
 	for _, list in ipairs(spec.lists or {}) do
 		-- a name, or { name, how much further left its rows start, an
-		-- earlier one whose sides its zone takes, its own material }
-		local name, wider, under, material = list, 0, nil, nil
+		-- earlier one whose sides its zone takes, its own material, its
+		-- zone in it (over the window's painting, under its text: a scroll
+		-- frame that never hides) }
+		local name, wider, under, material, inside = list, 0, nil, nil, nil
 		if type(list) == "table" then
-			name, wider, under, material = list[1], list[2] or 0, list[3], list[4]
+			name, wider, under, material, inside = list[1], list[2] or 0, list[3], list[4], list[5]
 		end
 		if _G[name] then
 			local insets = spec.list_insets or config.list_panel_insets
-			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] })
+			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] },
+				inside and _G[name] or nil)
 			zones[name] = zone
 			if under and zones[under] then
 				zone:ClearAllPoints()

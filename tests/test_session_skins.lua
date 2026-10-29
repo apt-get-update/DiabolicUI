@@ -19,6 +19,21 @@ local function boot(options)
 	client:Tick(0.2)
 end
 
+local function shown(widget)
+	return widget:IsShown() == 1
+end
+
+local function color(...)
+	local r, g, b = ...
+	return { r, g, b }
+end
+
+local function near(actual, expected)
+	for i = 1, 3 do
+		lu.assertAlmostEquals(actual[i], expected[i], 1e-6)
+	end
+end
+
 -- TrinketMenu ---------------------------------------------------------------------
 
 -- TrinketMenu's frames, as its XML makes them.
@@ -549,6 +564,27 @@ local function immersion(world)
 		local progress = part(elements, "Progress")
 		progress.ReqText = progress:CreateFontString(nil, "BACKGROUND")
 		coin(part(progress, "MoneyFrame"))
+		-- the choices (gossip options, quests): one made, the others as
+		-- they're asked for
+		local titles = part(frame, "TitleButtons")
+		titles.Buttons = {}
+		function titles:GetButton(index)
+			local button = self.Buttons[index]
+			if not button then
+				button = CreateFrame("Button", nil, self)
+				button:SetSize(300, 40)
+				button:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
+				button:SetHighlightTexture([[Interface\AddOns\Immersion\Textures\Hilite]])
+				button.Overlay = CreateFrame("Frame", nil, button)
+				button.Overlay:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
+				button.Hilite = CreateFrame("Frame", nil, button)
+				button.Hilite:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
+				button.Label = button:CreateFontString(nil, "ARTWORK")
+				self.Buttons[index] = button
+			end
+			return button
+		end
+		titles:GetButton(1)
 	end })
 end
 
@@ -589,6 +625,47 @@ function TestImmersion:test_loaded_after_us_it_gets_styled()
 		lu.assertEquals(frame:GetRegions():GetTexture(), ui.gold_texture)
 	end
 	lu.assertEquals(rewards.MoneyIcon.MoneyIcon:GetTexture(), ui.gold_texture)
+
+	-- the choices on our glass, in Diablo III's pale gold, without
+	-- Immersion's blue frames: the one there and those made later (once)
+	local titles = _G.ImmersionFrame.TitleButtons
+	local first = titles.Buttons[1]
+	lu.assertNil(first:GetBackdrop())
+	lu.assertNil(first.Overlay:GetBackdrop())
+	lu.assertNil(first.Hilite:GetBackdrop())
+	near(color(first.Label:GetTextColor()), window.title_plate.color)
+	-- the copper bar with Immersion's glow (its own gone), not grown
+	lu.assertEquals(first:GetHighlightTexture():GetAlpha(), 0)
+	lu.assertEquals(first.enterScale, config.choice_scale)
+	local lit
+	for _, region in ipairs({ first:GetRegions() }) do
+		if region:IsObjectType("Texture") and (region:GetTexture() == window.row_bars.lit) then
+			lit = region
+		end
+	end
+	first.Hilite:SetAlpha(1)
+	lu.assertEquals(lit:GetAlpha(), config.choice_lit_alpha)
+	first.Hilite:SetAlpha(0)
+	lu.assertEquals(lit:GetAlpha(), 0)
+	local second = titles:GetButton(2)
+	lu.assertTrue(second.DiabolicGlass)
+	local regions = select("#", second:GetRegions())
+	titles:GetButton(2)
+	lu.assertEquals(select("#", second:GetRegions()), regions)
+
+	-- the black behind the portrait's frame only with the portrait
+	local portrait = talkBox.PortraitFrame
+	local black
+	for _, region in ipairs({ talkBox.BackgroundFrame:GetRegions() }) do
+		if region:GetDrawLayer() == "BORDER" then
+			black = region
+		end
+	end
+	lu.assertTrue(shown(black))
+	portrait:Hide()
+	lu.assertFalse(shown(black))
+	portrait:Show()
+	lu.assertTrue(shown(black))
 	assertClean(client)
 end
 
@@ -598,9 +675,17 @@ function TestImmersion:test_loaded_before_us_too()
 		local addon = world.addons[#world.addons]
 		addon.loaded = true
 		addon.onLoad()
+		-- its portrait turned off
+		_G.ImmersionFrame.TalkBox.PortraitFrame:Hide()
 	end })
 	local config = client.Engine:GetDB("Blizzard").immersion
 	lu.assertEquals(select(2, _G.ImmersionFrame.TalkBox.NameFrame.Name:GetFont()), config.name_size)
+	-- no black behind the portrait's frame
+	for _, region in ipairs({ _G.ImmersionFrame.TalkBox.BackgroundFrame:GetRegions() }) do
+		if region:GetDrawLayer() == "BORDER" then
+			lu.assertFalse(shown(region))
+		end
+	end
 	assertClean(client)
 end
 

@@ -42,9 +42,27 @@ Engine:NewStaticConfig("Blizzard", {
 			height = 41,
 			y = -13, -- its middle, from the window's top: on the iron
 			text_width = 200, -- its inlay (between its crosses)
+			-- longer titles: the plate wider (its plain stretches between its
+			-- ends and its middle drawn out), up to `max_width`
+			file_width = 512,
+			cuts = { 96, 140, 376, 420 }, -- its pieces, in its file's pixels: the 2nd and 4th stretched
+			max_width = 440,
+			side_room = 62, -- and short of the window's sides by this much (the X's socket)
 			text_offset = 1, -- from its middle; Exocet's capitals sit low
 			font = DiabolicFont_HeaderRegular14,
-			color = { .86, .76, .6 } -- Diablo III's pale gold
+			color = { .86, .76, .6 }, -- Diablo III's pale gold
+			-- a window's icon (the spec, the profession) socketed in its
+			-- left cross: round in the minimap's spiked bronze ring (cut to
+			-- its spikes, 64 square: a TGA drawn far smaller than its file
+			-- looks jagged)
+			gem = {
+				ring = path .. [[textures\DiabolicUI_D3_GemRing.tga]],
+				size = 40,
+				x = 35, -- its middle from the plate's left end: on the cross
+				y = 0,
+				glass = .66, -- the icon, of its size: its edge under the ring
+				glass_offset = { 0, 0 } -- the icon's middle from the ring's
+			}
 		},
 		-- a checkbox (StyleCheckBox): Diablo III's options' box, 42 x 43 at
 		-- the top left of each 64 x 64 slot of its file: empty, its frame
@@ -79,24 +97,6 @@ Engine:NewStaticConfig("Blizzard", {
 			street = { texture = path .. [[textures\DiabolicUI_D3_BackgroundStreet.tga]], aspect = 2.129 }, -- Dalaran's streets (auction house)
 			dome = { texture = path .. [[textures\DiabolicUI_D3_BackgroundDome.tga]], aspect = 1.043 }, -- the Violet Hold (copy chat)
 			waypoint = { texture = path .. [[textures\DiabolicUI_D3_BackgroundWaypoint.tga]], aspect = .628 } -- Diablo III's waypoint window's, red-veined (flight master)
-		},
-		-- a window's emblem at its band's left end: Diablo III's round
-		-- stained glass under a gargoyle, one per kind of window
-		medallion = {
-			grow = 6, -- past the band's height
-			offset = 4, -- from the band's left end
-			-- over it (and an icon over its glass): Diablo III's amber ring
-			-- (its campaign search's), clear inside (about half its size)
-			ring = path .. [[textures\DiabolicUI_D3_MedallionRing.tga]],
-			ring_scale = 1.3, -- of the medallion's size: its inside about its glass
-			ring_offset = { 1, 1 }, -- its middle from the medallion's (the glass's)
-			textures = {
-				chest = path .. [[textures\DiabolicUI_D3_MedallionChest.tga]], -- bank, guild bank
-				coinbag = path .. [[textures\DiabolicUI_D3_MedallionCoinBag.tga]], -- merchant
-				grail = path .. [[textures\DiabolicUI_D3_MedallionGrail.tga]], -- quest log, quest giver
-				map = path .. [[textures\DiabolicUI_D3_MedallionMap.tga]], -- flight master
-				swords = path .. [[textures\DiabolicUI_D3_MedallionSwords.tga]] -- character
-			}
 		},
 		-- a key number (achievement points) in a stone cartouche in the band
 		cartouche = {
@@ -173,7 +173,6 @@ Engine:NewStaticConfig("Blizzard", {
 		layout = {
 			button_gap = 6, -- between buttons on a row: those closer narrowed, as wide in all
 			band_edge = 10, -- the band's first control (its art), from its left end
-			band_medallion_gap = 0, -- or from its medallion's right
 			band_gap = 12, -- between the band's controls (their art)
 			band_right_edge = 48, -- the band's last control on its right, from its right end (short of the X's socket)
 			content_gap = 6, -- the least room over the content (its zones and parchments) and under it
@@ -229,18 +228,6 @@ Engine:NewStaticConfig("Blizzard", {
 			track = path .. [[textures\DiabolicUI_D3_BreathMeterTrack.tga]],
 			color = { 1, 1, 1 }, -- the fill's own red
 			spike = 8 -- how far its caps reach past the bar
-		},
-		-- the dark strip the tabs sit on, under the band, in an iron edge
-		-- whose pointed ends reach out over the window's frame (Diablo III's
-		-- hero creation's)
-		tab_strip = {
-			texture = path .. [[textures\DiabolicUI_D3_TabStrip.tga]],
-			canvas = { 512, 64 },
-			art = { 0, 4, 398, 60 },
-			left = { 0, 32 }, middle = { 32, 366 }, right = { 366, 398 },
-			height = 34,
-			offset = 2, -- its top over the band's bottom
-			extend = 13 -- past the band's ends: its points out over the iron (15 to 24 in)
 		},
 		-- the windows' tabs as Diablo III's hero banners hanging from the
 		-- window's foot (windows.lua, HangTabs): dark cloth in gold trim with
@@ -319,8 +306,10 @@ Engine:NewStaticConfig("Blizzard", {
 			-- in a socket of the window's own iron at its top right corner, as
 			-- Diablo III's: the frame's edge (its iron 15 to 24 in) drawn on
 			-- its left and bottom only, over the window's, its top and right
-			-- ends at the middle of the window's iron, the X inside
-			socket_size = 70, -- from the window's corner to its bars' outside
+			-- ends at the middle of the window's iron, the X inside: its top
+			-- and right on the middle of the window's iron, its left and
+			-- bottom on the middle of the socket's (one frame round it)
+			socket_size = 62, -- from the window's corner to its bars' outside: the X (22) and the two irons' halves (20 each)
 			socket_inset = 20, -- the middle of the window's iron
 			socket_corner = path .. [[textures\DiabolicUI_D3_SocketCorner.tga]], -- the left edge's art mitred with itself
 			socket_color = { 0, 0, 0, 1 }
@@ -405,7 +394,8 @@ Engine:NewStaticConfig("Blizzard", {
 	},
 	-- the achievement window in Diablo III's (modules/blizzard/achievements.lua)
 	achievements = {
-		insets = { 0, 96, 0, 18 }, -- the window past Blizzard's frame: up over the band and the tabs, down past the lists' panels
+		insets = { 0, 64, 0, 18 }, -- the window past Blizzard's frame: up over the band, down past the lists' panels
+		offset_y = 32, -- Blizzard's frame up into its tabs' old row (the tabs hang from the foot): the lists 6 under the band
 		header_height = 48, -- the red band
 		header_insets = { 24, 24 }, -- inside the iron frame, its solid part
 		tab_sigils = { "star", "sun" }, -- the tabs' emblems (window.banner's): achievements, statistics; an addon's get the default
@@ -422,6 +412,7 @@ Engine:NewStaticConfig("Blizzard", {
 		bullet_color = { .85, .35, .15 },
 		filter_offset = 4, -- the list's filter: its text sits that far above its middle
 		filter_inset = -10, -- its plate reaches past its text's left
+		filter_padding = 8, -- and padded in from the band's left end
 		control_button_height = 22, -- Overachiever's pages' buttons
 		-- the summary's bars, in Blizzard's 488 wide
 		summary_width = 488,
@@ -445,7 +436,9 @@ Engine:NewStaticConfig("Blizzard", {
 		-- positive outward. Wider and taller than Blizzard's panel art, for
 		-- room around the slots; the other tabs are moved by `content_offset`
 		-- into the middle of it.
-		insets = { 0, 36, 18, -18 }, -- up over the band and the tabs
+		-- No band (nothing in it): Blizzard's frame up by its height
+		-- (UIPanelLayout's), the window's top where it was, its foot higher.
+		insets = { 0, -4, 18, -18 }, -- up over the tabs
 		content_offset = { 19, -20 },
 		-- the character tab in two columns, laid out from the window's edges:
 		-- the gear around a tall model on the left (as wide as the window on
@@ -453,28 +446,27 @@ Engine:NewStaticConfig("Blizzard", {
 		-- equipment sets in pages on the right, the window wider for it
 		-- (`wide_insets`, as `insets`)
 		paperdoll = {
-			wide_insets = { 0, 36, 266, -14 },
+			wide_insets = { 0, 36, 266, -30 }, -- (its foot 6 under the weapons' row, past the iron)
 			pane_width = 418, -- the gear's column
 			slot_margin = 38, -- the slot columns from its sides
-			slot_top = -104, -- from its top, under the band and the tabs (8 clear of them)
+			slot_top = -66, -- from its top, under the iron (the model's panel 6 under it, as the stats')
 			slot_gap = 4,
-			title_top = -100, -- the title's dropdown, from its top (out of sight: the titles' page has them)
-			model_top = -104, -- the model's top, from its top: with the slots'
+			title_top = -60, -- the title's dropdown, from its top (out of sight: the titles' page has them)
+			model_top = -66, -- the model's top, from its top: with the slots'
 			model_size = { 240, 314 }, -- between the slot columns, 14 from each; as tall as them (its bottom where it was)
 			model_panel_inset = 4, -- the panel around it
 			-- its frame past the panel, up and down: the character larger and
 			-- lower in it, on the scene's floor (the dressing room's is so)
 			model_reach = { 26, 32 },
-			resistance_offset = { -8, -8 }, -- the resistances, in its top right corner
 			weapon_top = -10, -- the weapons' row, under the model's panel
 			weapon_gap = 6,
 			ammo_size = 27, -- Blizzard's ammo slot, in the action buttons' border
-			-- the right column: the level, the GearScore, two groups of stats (Blizzard's
+			-- the right column: the level, two groups of stats (Blizzard's
 			-- choice, a click on their title bar shows the next)
 			stats = {
 				left = -14, -- from the gear's column's right
-				top = -96,
-				right = 28, -- from the window's right (inside its iron frame)
+				top = -62, -- (6 under the iron)
+				right = 38, -- from the window's right (inside its iron frame): as far as the gear's from its left
 				bottom = 28,
 				padding = 6, -- top and bottom
 				side_padding = 24, -- inside the stats panel's light line (~19 in)
@@ -483,6 +475,10 @@ Engine:NewStaticConfig("Blizzard", {
 				line_height = 12,
 				line_inset = 8, -- each line from the panel's sides
 				group_gap = 14,
+				resistance_gap = 6, -- between the resistances, in a row over the stats
+				resistance_size = 26,
+				resistance_top = 4, -- the row, under its title bar
+				resistance_crop = 3, -- Blizzard's bevel round each icon (of its 32 x 29), cut off
 				level_height = 34, -- the level's room under its title bar
 				score_height = 58, -- the GearScore's room under its title bar
 				score_gap = 6,
@@ -506,7 +502,7 @@ Engine:NewStaticConfig("Blizzard", {
 			-- the titles' page: the known ones in a list
 			titles = {
 				top = 6,
-				bottom = 6,
+				bottom = 24, -- (its parchment as far in from the column's foot as from its sides)
 				bar_room = 22, -- its scroll bar, right of it
 				row_height = 16,
 				font = { path .. [[fonts\NotoSans-Bold.ttf]], 11 }, -- bold, to read on the parchment
@@ -543,6 +539,11 @@ Engine:NewStaticConfig("Blizzard", {
 		scene_inset = 3, -- your home city behind the model, inside its panel's bronze line
 		scene_color = { .75, .75, .75 }, -- dimmed a little under the model
 		reputation_detail_offset = { -8, -96 }, -- a faction's details, right of the window, under its tabs (its iron starts ~9px in)
+		inspect_trees = { size = 28, gap = 6, offset = { -6, 12 } }, -- the inspected one's talent trees as icons: over the tree's panel (its inset 6, then a gap of 6)
+		level_font = DiabolicFont_HeaderRegular14, -- the inspected one's "Level 80 Dwarf Priest", over the model
+		token_popup_offset = { -8, -96 }, -- a currency's options, there too
+		token_popup_close = 1, -- their X, in from their top right corner: its frame's top and right on their border line (both about 1-4 in), one border
+		token_popup_box_gap = 6, -- between their two boxes
 		reputation_detail_close = 8, -- their X on their ribbon, this far in from their right side
 		reputation_detail_inset = 3, -- their parchment, inside their panel's bronze line
 		reputation_detail_name_top = 2, -- their name's top: its ribbon across their top edge (Blizzard's 21)
@@ -596,13 +597,6 @@ Engine:NewStaticConfig("Blizzard", {
 		-- the title's dropdown draws its text above its frame's middle
 		dropdown_offsets = { PlayerTitleFrame = 9 },
 		tab_sigils = { "hoodedface", "WolfHead", "shield", "sword", "leoric_crown" }, -- the tabs' emblems (window.banner's): character, pet, reputation, skills, currency
-		-- the talent spec's icon in the title bar's left end, round, in the
-		-- globes' bronze ring and glass (its 136 wide inside in 256)
-		-- the spec's icon in the band's medallion, over its glass
-		spec = {
-			glass = .72, -- of the medallion's size: up to its ring, the swords under it
-			glass_offset = { 1, 1 } -- the glass's middle from the medallion's
-		}
 	},
 	-- the mailbox in Diablo III's (modules/blizzard/mail.lua): the windows
 	-- grow around Blizzard's 384x512 frames, whose parts are placed against
@@ -642,6 +636,11 @@ Engine:NewStaticConfig("Blizzard", {
 			hint_inset = 2 -- from the box's left, with its text
 		},
 		text_rise = 55, -- the letter's text up, and that much taller
+		send_text_lower = -13, -- its foot that much higher (6 over the attachments' pane)
+		open_text_rise = 84, -- the letter opened's (its From and Subject in the band)
+		open_text_lower = -4, -- its foot that much lower (6 over the attachments)
+		open_attachments_raise = 10, -- the attachments that much higher: 6 over the foot's iron
+		open_band = { x = 10, label_gap = 5 }, -- the letter opened's From and Subject in the band: their labels' left, from its left
 		-- moved once, up: the money
 		send_offsets = { SendMailMoneyButton = { 0, 10 } },
 		page_offset = -24, -- Blizzard's page buttons, down from over its bottom
@@ -659,7 +658,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- and the window's bottom (how far over it), its sides in from the
 		-- window's (Blizzard's margins)
 		attachment_panes = {
-			SendMailFrame = { "SendMailHorizontalBarLeft2", 8, 150, 25, 40 },
+			SendMailFrame = { "SendMailHorizontalBarLeft2", 1, 157, 25, 40 }, -- (6 over the money to send)
 			OpenMailFrame = { "OpenMailHorizontalBarLeft", 6, 98, 23, 43 }
 		}
 	},
@@ -667,7 +666,7 @@ Engine:NewStaticConfig("Blizzard", {
 	-- Offsets from the window's top left.
 	merchant = {
 		footer = { "MerchantBuyBackItem", 8 }, -- the rough stone foot (up to it and 8 higher: they sit on it): buyback, repairs, Sell Junk, the money
-		insets = { 0, 36, 116, 0 }, -- the window over Blizzard's 384x512 frame: 500 wide
+		insets = { 0, 36, 116, -40 }, -- the window over Blizzard's 384x512 frame: 500 wide, its foot 40 higher (no band)
 		header_height = 40,
 		header_insets = { 24, 24 },
 		tab_sigils = { "stein", "time" }, -- the tabs' emblems (window.banner's): merchant, buyback
@@ -677,7 +676,7 @@ Engine:NewStaticConfig("Blizzard", {
 		border_highlight = path .. [[textures\DiabolicUI_Button_44x44_BorderHighlight.tga]], -- its icon's border, hovered
 		-- the wares in two columns of dark slots, the icon in each one's
 		-- top left, its name right of it and its price under that
-		items = { 32, -108 }, -- the first slot
+		items = { 32, -68 }, -- the first slot (6 under the iron: no band)
 		slot_size = { 208, 46 },
 		slot_pitch = { 218, 52 },
 		slot_canvas = { 256, 128 }, -- the slot's art, stretched to each slot
@@ -686,14 +685,15 @@ Engine:NewStaticConfig("Blizzard", {
 		name_width = 150,
 		name_height = 26, -- two lines
 		price_offset = 31, -- the price at the icon's bottom (Blizzard hangs it 31 over its name art)
-		pages_y = -428, -- the pages' row, under the slots
+		page_gap = 8, -- the page's arrows, from its text
+		pages_y = -384, -- the pages' row, under the slots
 		page_color = { .86, .76, .6 },
 		-- the bottom row: the last item sold, the repairs, Sell Junk and the money
-		buyback = { 32, -470 },
+		buyback = { 32, -430 },
 		buyback_size = { 204, 44 },
 		buyback_price_offset = 25,
-		repair = { 288, -474 }, -- repair all's top left; repair one left of it, the guild's right
-		sell_junk = { -32, -474 }, -- its top right, from the window's top right
+		repair = { 288, -434 }, -- repair all's top left; repair one left of it, the guild's right
+		sell_junk = { -32, -434 }, -- its top right, from the window's top right
 		button_height = 22,
 		money = { -24, 30 } -- its bottom right, from the window's bottom right
 	},
@@ -731,17 +731,17 @@ Engine:NewStaticConfig("Blizzard", {
 	-- from the window's top left.
 	questlog = {
 		footer = "QuestLogFrameAbandonButton", -- the rough stone foot under Abandon, Share and Track
-		insets = { 0, 36, 70, 20 }, -- the window over Blizzard's 682x447 frame: wider, for room around its panes
+		insets = { 0, 36, 70, -20 }, -- the window over Blizzard's 682x447 frame: wider, for room around its panes; its foot 40 higher (no band)
 		header_height = 40,
 		header_insets = { 24, 24 },
-		row_y = -80, -- the count (left) and the map's button (right), under the band
-		row_inset = 32,
-		list = { 30, -100 }, -- the quests' top left (Blizzard's 305 wide, its bar right of it)
+		map_button = { -32, 41 }, -- the map's button: its right, in the foot (level with Abandon's middle)
+		list = { 30, -40 }, -- the quests' top left (Blizzard's 305 wide, its bar right of it): under the iron (no band, the count in the title)
+		list_height = 340, -- (Blizzard's 335): its panel 6 over the foot's iron bar
 		list_panel_insets = { 6, 6, 22, 4 }, -- (its bottom 4: clear of the foot)
 		highlight_left = 4, -- the chosen quest's bar, in from its row's left: off the slate's edge
 		highlight_reach = 14, -- the chosen quest's bar, past its row's right: to the scroll bar
-		details = { -74, -104 }, -- the details' top right (Blizzard's 298 wide, its bar right of it): clear of the dailies' count
-		details_height = 329, -- down to where Blizzard's 333 reached from 4 higher
+		details = { -74, -44 }, -- the details' top right (Blizzard's 298 wide, its bar right of it): clear of the dailies' count
+		details_height = 336, -- down to the quests' bottom
 		controls = { 30, 28 }, -- Abandon, Share and Track: their bottom left, from the window's
 		controls_width = 321, -- the quests' and their bar's
 		button_height = 22,
@@ -774,21 +774,21 @@ Engine:NewStaticConfig("Blizzard", {
 		tab_font = DiabolicFont_HeaderRegular10,
 		own_tab_inset = 2, -- the friends' own tabs
 		friends_top = -36, -- the friends' list, from the frame's top: under the band (its panel window.layout.content_gap under it)
-		friends_bottom = 396, -- its bottom, its panel's clear of the foot
+		friends_bottom = 384, -- its bottom, its panel's clear of the foot's iron bar
 		who_dropdown_width = 64, -- its middle: room for Zone, Guild or Race
-		who_top = -41, -- the who list's column headers, from the frame's top: 18 under the band (Blizzard's 70 down)
-		motd_panel_insets = { 10, 6, 10, 4 }, -- the guild's message of the day, its parchment around its title and text
+		who_top = -36, -- the who list's column headers, from the frame's top: under the band (Blizzard's 70 down), as far as its panel over the foot's bar
+		motd_panel_insets = { 8, 6, 7, 4 }, -- the guild's message of the day, its parchment around its title and text (its sides the list's panel's)
 		motd_text_height = 36, -- its three lines (Blizzard's 45 reach into the foot)
 		guild_totals_raise = 8, -- "Guild Members" and Player Status, up under the list's rows
 		guild_toggle_y = -67, -- Player Status's, from the frame's left (Blizzard's, set on each update)
-		guild_raise = 16, -- the guild's list and message of the day, up: as far from the band as from the foot
+		guild_raise = 25, -- the guild's list and message of the day, up: as far from the band as from the foot
 		raid_band_gap = 8, -- the raid tab's Convert to Raid and Raid Info, apart in the band
 		raid_description_insets = { 10, 8, 10, 8 }, -- what raids are, its parchment around it
 		raid_description_font = DiabolicFont_SansBold12, -- bold, to read on the parchment
 		guild_list_height = 228, -- its scroll bar's (Blizzard's 237), above the totals' panel's bottom
-		who_list_trim = 12, -- the who list's scroll bar shorter, inside its panel
-		list_gap = 6, -- a list's panel, short of what's under it (the foot, the message of the day)
-		list_gaps = { WhoListScrollFrame = 12 }, -- lists further from it
+		who_list_trim = 21, -- the who list's scroll bar shorter, inside its panel
+		list_gap = 6, -- a list's panel, short of what's under it (the foot's iron bar, the message of the day)
+		list_gaps = { WhoListScrollFrame = 3 }, -- (the who list's foot 3 lower: footers)
 		motd_title_color = { .42, .08, .02 }, -- its title, dark red on it (as the quest log's)
 		guild_detail_offset = { 6, -96 }, -- a member's card, right of the window, under its tabs
 		guild_page_lower = 10, -- the guild information's and log's parchment (and text), from Blizzard's: under their X
@@ -838,9 +838,8 @@ Engine:NewStaticConfig("Blizzard", {
 		-- more by name; `places`, parts moved ({ point, relative's name,
 		-- relativePoint, x, y } by name); `list_insets`, its lists' panels'
 		-- insets if not the windows'; `sizes`, parts resized ({ width,
-		-- height } by name); `art`, by file; `pale`, its dark text pale; `medallion`,
-		-- its emblem in the band (window.medallion's); `band_text`, a font
-		-- string (its name) moved to the band's left;
+		-- height } by name); `art`, by file; `pale`, its dark text pale;
+		-- `band_text`, a font string (its name) moved to the band's left;
 		-- `ink_messages`, logs (scrolling message frames) whose lines are
 		-- written in ink;
 		-- `parchments`, text on Diablo III's parchment in a panel (a name, or
@@ -867,12 +866,16 @@ Engine:NewStaticConfig("Blizzard", {
 		-- band shown over the iron, the title over it. `dropdowns` (in
 		-- `late` too), Diablo III's (before the band's). `band` (in `late`
 		-- too), controls moved into the band: `left` from its left end (a
-		-- table in it: one under the other), `right` from its right end,
+		-- table in it: one under the other), `right` from its right end;
+		-- false: no band (nothing in it), its room given back (the frame
+		-- up into it, the window's top where it was, its foot higher);
 		-- `hints` edit boxes' labels in them ({ [box] = a global string's
-		-- name }).
+		-- name }). `outside`, parts out past the window on purpose (the
+		-- guild bank's tabs). `iron_bars`, bars of the window's iron across
+		-- it between its zones: their middles, from its top.
 		background = "smoke",
 		frames = {
-			{ frame = "PVPParentFrame", insets = { 24, 68, -6, -39 }, offset_y = -32, background = "lava", text = "PLAYER_V_PLAYER",
+			{ frame = "PVPParentFrame", band = false, insets = { 24, 68, -6, -39 }, offset_y = -32, background = "lava", text = "PLAYER_V_PLAYER",
 				close = "PVPParentFrameCloseButton", tabs = "PVPParentFrameTab", sigils = { "sword", "flames" }, subframes = { "PVPFrame", "PVPBattlegroundFrame" },
 				hide = { "PVPBattlegroundFrameFrameLabel" }, pale = true, -- the battlegrounds' own title, under the tabs
 				-- the battlegrounds, the chosen one's text as wide (Blizzard's
@@ -888,16 +891,15 @@ Engine:NewStaticConfig("Blizzard", {
 					PVPBattlegroundFrameNameHeader = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 65, -53 },
 					WintergraspTimer = { "RIGHT", "PVPBattlegroundFrame", "TOPRIGHT", -45, -53 },
 					BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 },
-					PVPBattlegroundFrameInfoScrollFrame = { "BOTTOMLEFT", "PVPBattlegroundFrame", "BOTTOMLEFT", 15, 110 },
+					PVPBattlegroundFrameInfoScrollFrame = { "BOTTOMLEFT", "PVPBattlegroundFrame", "BOTTOMLEFT", 15, 122 },
 					PVPBattlegroundFrameJoinButton = { "BOTTOM", "PVPParentFrame", "BOTTOM", 12, 69 },
 					PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 },
 					PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0 } },
-				sizes = { PVPBattlegroundFrameInfoScrollFrame = { 298, 220 } } }, -- (Blizzard's 232: clear of the foot, 6 under the list)
-			{ frame = "BattlefieldFrame", insets = { 24, 40, -10, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel",
+				sizes = { PVPBattlegroundFrameInfoScrollFrame = { 298, 208 } } }, -- (Blizzard's 232: 6 over the foot's iron bar, 6 under the list)
+			{ frame = "BattlefieldFrame", band = false, insets = { 24, 40, -10, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel",
 				close = "BattlefieldFrameCloseButton", lists = { "BattlefieldListScrollFrame" }, pale = true },
-			{ frame = "BankFrame", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "BankFrameTitleText", close = "BankCloseButton",
-				medallion = "chest" },
-			{ frame = "TradeFrame", background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton",
+			{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4, title = "BankFrameTitleText", close = "BankCloseButton" },
+			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton",
 				-- the names over their columns, out from under the band (Blizzard's beside portraits)
 				places = { TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 },
 					TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 } } },
@@ -905,26 +907,26 @@ Engine:NewStaticConfig("Blizzard", {
 			-- 21 in from the frame's left, 75 from its top, 47 from its right, 85
 			-- from its foot), in the stone pane, 10 in from the iron's solid
 			-- part (24) and the band's foot (64); as high as the others
-			{ frame = "TaxiFrame", insets = { 19, 5, -7, -45 }, offset_y = 31, title = "TaxiMerchant", close = "TaxiCloseButton", medallion = "map", background = "waypoint",
+			{ frame = "TaxiFrame", band = false, insets = { 19, 5, -7, -45 }, offset_y = 31, title = "TaxiMerchant", close = "TaxiCloseButton", background = "waypoint",
 				keep = { "^TaxiMap$" }, panes = { { "TaxiMap", false, true } } },
-			{ frame = "ItemTextFrame", insets = { 24, 40, 14, -34 }, offset_y = -4, title = "ItemTextTitleText", close = "ItemTextCloseButton",
+			{ frame = "ItemTextFrame", band = false, insets = { 24, 40, 14, -34 }, offset_y = -4, title = "ItemTextTitleText", close = "ItemTextCloseButton",
 				parchments = { "ItemTextScrollFrame" }, ink = { "ItemTextPageText" }, background = "slabs" }, -- stone and marble plaques too
-			{ frame = "QuestFrame", insets = { 24, 40, 14, -34 }, offset_y = -4, title = "QuestFrameNpcNameText", close = "QuestFrameCloseButton", medallion = "grail", background = "cliffs",
+			{ frame = "QuestFrame", band = false, insets = { 24, 40, 14, -34 }, offset_y = -4, title = "QuestFrameNpcNameText", close = "QuestFrameCloseButton", background = "cliffs",
 				subframes = { "QuestFrameGreetingPanel", "QuestFrameDetailPanel", "QuestFrameProgressPanel", "QuestFrameRewardPanel" },
 				parchments = { "QuestGreetingScrollFrame", "QuestDetailScrollFrame", "QuestProgressScrollFrame", "QuestRewardScrollFrame" } },
-			{ frame = "GossipFrame", insets = { 24, 40, 14, -34 }, offset_y = -4, title = "GossipFrameNpcNameText", close = "GossipFrameCloseButton", background = "zoltun",
+			{ frame = "GossipFrame", band = false, insets = { 24, 40, 14, -34 }, offset_y = -4, title = "GossipFrameNpcNameText", close = "GossipFrameCloseButton", background = "zoltun",
 				subframes = { "GossipFrameGreetingPanel" }, parchments = { "GossipGreetingScrollFrame" } },
-			{ frame = "TabardFrame", background = "slabs", insets = { 24, 40, -6, -9 }, offset_y = -4, title = "TabardFrameNameText", close = "TabardFrameCloseButton",
+			{ frame = "TabardFrame", band = false, background = "slabs", insets = { 24, 40, -6, -9 }, offset_y = -4, title = "TabardFrameNameText", close = "TabardFrameCloseButton",
 				keep = { "^TabardFrameBackground$" }, pale = true, panes = { { "TabardFrameBackground", false, true } } },
-			{ frame = "PetitionFrame", background = "slabs", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "PetitionFrameNpcNameText",
+			{ frame = "PetitionFrame", band = false, background = "slabs", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "PetitionFrameNpcNameText",
 				close = "PetitionFrameCloseButton", pale = true },
-			{ frame = "GuildRegistrarFrame", background = "slabs", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "GuildRegistrarFrameNpcNameText",
+			{ frame = "GuildRegistrarFrame", band = false, background = "slabs", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "GuildRegistrarFrameNpcNameText",
 				close = "GuildRegistrarFrameCloseButton", pale = true },
-			{ frame = "ArenaRegistrarFrame", background = "cracked", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "ArenaRegistrarFrameNpcNameText",
+			{ frame = "ArenaRegistrarFrame", band = false, background = "cracked", insets = { 24, 40, -6, -34 }, offset_y = -4, title = "ArenaRegistrarFrameNpcNameText",
 				close = "ArenaRegistrarFrameCloseButton", pale = true },
-			{ frame = "PetStableFrame", background = "slabs", insets = { 24, 40, -10, -39 }, offset_y = -4, title = "PetStableTitleLabel",
+			{ frame = "PetStableFrame", band = false, background = "slabs", insets = { 24, 40, -10, -39 }, offset_y = -4, title = "PetStableTitleLabel",
 				close = "PetStableFrameCloseButton", pale = true, panes = { { "PetStableModel" } } },
-			{ frame = "DressUpFrame", insets = { 24, 40, -6, -9 }, offset_y = -4, title = "DressUpFrameTitleText",
+			{ frame = "DressUpFrame", band = false, insets = { 24, 40, -6, -9 }, offset_y = -4, title = "DressUpFrameTitleText",
 				close = "DressUpFrameCloseButton", keep = { "^DressUpBackground" }, -- the race's backdrop behind the model, in a pane
 				panes = { { "DressUpBackgroundTopLeft", "DressUpBackgroundBotRight", true } },
 				-- its "CTRL-Left Click..." under the band, over the picture (Blizzard's hangs from the title)
@@ -959,25 +961,36 @@ Engine:NewStaticConfig("Blizzard", {
 				places = { TradeSkillRankFrame = { "TOP", "TradeSkillFrame", "TOPLEFT", 187, -32 },
 					TradeSkillRankFrameSkillRank = { "CENTER", "TradeSkillRankFrame", "CENTER", 0, 0 } },
 				hide = { "TradeSkillExpandTabLeft", "TradeSkillExpandTabMiddle", "TradeSkillExpandTabRight" }, -- "All"'s tab
+				-- the window's iron across between the recipes and the chosen one
+				iron_bars = { 275 },
 				-- the recipe's name wrapped short of Auctionator's Scan AH, over it
 				late = { beside = { { "TradeSkillSkillName", "Auctionator_Search", 146 } } } },
-			{ frame = "MacroFrame", background = "zoltun", addon = "Blizzard_MacroUI", insets = { 24, 68, -10, -39 }, offset_y = -32, text = "CREATE_MACROS", footer = "MacroExitButton",
+			{ frame = "MacroFrame", band = false, background = "zoltun", addon = "Blizzard_MacroUI", insets = { 24, 68, -10, -39 }, offset_y = -32, text = "CREATE_MACROS", footer = "MacroExitButton",
 				close = "MacroFrameCloseButton", tabs = "MacroFrameTab", sigils = { "openbook", "hoodedface" },
-				lists = { { "MacroButtonScrollFrame", 0, false, "pane" }, "MacroFrameScrollFrame" }, -- the icons in the stone pane
+				lists = { { "MacroButtonScrollFrame", 0, false, "pane" }, { "MacroFrameScrollFrame", 0, false, nil, true } }, -- the icons in the stone pane, the text on slate over the painting
 				keep = { "^MacroFrameSelectedMacroBackground$" },
-				hide = { "MacroFrameTextBackground" } }, -- the text's tooltip backdrop (blue), on our slate instead
-			{ frame = "InspectFrame", addon = "Blizzard_InspectUI", insets = { 24, 68, -6, -9 }, offset_y = -32, title = "InspectNameText",
+				hide = { "MacroFrameTextBackground" }, -- the text's tooltip backdrop (blue), on our slate instead
+				-- the icons and the macro 20 up and 6 left (as far from the band
+				-- as from the foot's bar, from the sides), the buttons 10 down
+				-- (30 over the window's bottom); the count of characters right of
+				-- "Enter Macro Commands:" (Blizzard's under the text, over the foot)
+				places = { MacroButtonScrollFrame = { "TOPLEFT", "MacroFrame", "TOPLEFT", 17, -56 },
+					MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
+					MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 },
+					MacroDeleteButton = { "BOTTOMLEFT", "MacroFrame", "BOTTOMLEFT", 17, 69 },
+					MacroNewButton = { "CENTER", "MacroFrame", "TOPLEFT", 222, -432 },
+					MacroExitButton = { "CENTER", "MacroFrame", "TOPLEFT", 303, -432 } } },
+			{ frame = "InspectFrame", band = false, addon = "Blizzard_InspectUI", insets = { 24, 68, -6, -9 }, offset_y = -32, title = "InspectNameText",
 				close = "InspectFrameCloseButton", tabs = "InspectFrameTab", sigils = { "hoodedface", "tree", "sword" },
 				subframes = { "InspectPaperDollFrame", "InspectPVPFrame", "InspectTalentFrame" },
-				own_tabs = "InspectTalentFrameTab", -- the talent trees'
 				keep = { "^InspectTalentFrameBackground" }, -- the tree's art (its spec's)
 				hide = { "InspectTalentFrameCloseButton" }, -- the talent page's own X, under the window's
 				-- the level line (the guild's under it) out of the band, over the model
 				places = { InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 } },
 				lists = { "InspectTalentFrameScrollFrame" } },
-			{ frame = "ItemSocketingFrame", background = "zoltun", addon = "Blizzard_ItemSocketingUI", insets = { 24, 40, 24, 36 }, offset_y = -4,
+			{ frame = "ItemSocketingFrame", band = false, background = "zoltun", addon = "Blizzard_ItemSocketingUI", insets = { 24, 40, 24, 36 }, offset_y = -4,
 				text = "ITEM_SOCKETING", close = "ItemSocketingCloseButton", lists = { "ItemSocketingScrollFrame" } },
-			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 68, 24, 36 }, offset_y = -32, text = "AUCTIONS", background = "street", footer = "BrowseCloseButton",
+			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 56, 24, 48 }, offset_y = -20, text = "AUCTIONS", background = "street", footer = "BrowseCloseButton",
 				close = "AuctionFrameCloseButton", tabs = "AuctionFrameTab", sigils = { "AllSeeing", "scarab", "stein" }, art = { "ui%-auctionframe%-" },
 				hide = { "BrowseTitle", "BidTitle", "AuctionsTitle", -- the pages' own titles, under the tabs
 					"BrowseNameText", "BrowseDropDownName" }, -- the search's labels (Name in its box)
@@ -987,36 +1000,64 @@ Engine:NewStaticConfig("Blizzard", {
 				-- the results' rows start at their headers, left of their scroll frames;
 				-- their zones close round them: 6 under their headers, over the foot
 				list_insets = { 6, 1, 28, 2 },
-				lists = { "BrowseFilterScrollFrame", { "BrowseScrollFrame", 146 }, { "BidScrollFrame", 146 },
+				lists = { "BrowseFilterScrollFrame", { "BrowseScrollFrame", 134 }, { "BidScrollFrame", 166 },
 					{ "AuctionsScrollFrame", 144 } },
+				-- (the frame 12 up into the window: its pages' tops 6 under the
+				-- band, the window 12 shorter) the column names 3 and 4 up (6
+				-- over the results' zones), the categories' list as tall as the
+				-- results' (their bottoms lined up), the results' zone 6 right of
+				-- it; Reset level with the pages' arrows, these side by side at
+				-- the right (their words out of sight); the lists taller by what
+				-- their pages are raised (late's raise_in), their feet where
+				-- they were. The bids' zone as far from the window's left as
+				-- from its right.
+				places = { BrowseQualitySort = { "TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 186, -79 },
+					BidQualitySort = { "TOPLEFT", "AuctionFrameBid", "TOPLEFT", 65, -48 },
+					BrowseResetButton = { "TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 78, -55 },
+					BrowsePrevPageButton = { "RIGHT", "BrowseNextPageButton", "LEFT", -4, 0 } },
+				sizes = { BrowseFilterScrollFrame = { 160, 322 }, BrowseScrollFrame = { 465, 322 }, AuctionsScrollFrame = { 435, 346 } },
 				-- Auctionator's pages too: its title gone (the tabs say it), its
 				-- lists and the sell column on their black, Blizzard's tabs over
-				-- its results; the pages' bottom rows lower, nearer the frame
-				late = { hide = { "AuctionatorTitle" },
+				-- its results; the pages' bottom rows lower, nearer the frame (the
+				-- window 12 taller: the lists 6 over the foot's iron bar)
+				late = { hide = { "AuctionatorTitle", "Atr_ActiveItems_Text" }, -- (the tabs say them)
+					hide_texts = { { "Atr_SellControls", "Sell" }, { "BrowsePrevPageButton" }, { "BrowseNextPageButton" } },
+					-- the pages' tops up: 6 under the band (Auctionator's under
+					-- its band); the selling column's foot where Blizzard put it,
+					-- over the foot's iron bar
+					raise_in = { AuctionFrameBrowse = 16, AuctionFrameAuctions = 7, Atr_Main_Panel = 22 },
+					lower_skip = { "StartPrice", "BuyoutPrice", "DurationDropDown", "AuctionsDepositText", "AuctionsCreateAuctionButton" },
 					-- its search and its Full Scan and Options in the band
 					band = { left = { "Atr_DropDownSL", "Atr_Search_Box", "Atr_Search_Button", "Atr_Adv_Search_Button" },
 						right = { "Atr_FullScanButton", "Auctionator1Button" } },
 					panels = { { "Atr_Hlist", { 6, 2, 30, 3 } }, { "Atr_SellControls", { 0, 0, 0, 0 } } },
 					dropdowns = { "BrowseDropDown", "PriceDropDown", "DurationDropDown", "Atr_DropDownSL", "Atr_Duration" },
-					tabs = "Atr_ListTabsTab", lower = 14,
+					tabs = "Atr_ListTabsTab", lower = 26,
 					lower_in = { "AuctionFrame", "AuctionFrameBrowse", "AuctionFrameBid", "AuctionFrameAuctions", "Atr_Main_Panel" } } },
-			{ frame = "GuildBankFrame", addon = "Blizzard_GuildBankUI", insets = { 24, 68, 24, 36 }, offset_y = -32, text = "GUILD_BANK", medallion = "chest", background = "slabs",
-				close = true, crest = "GuildBankEmblemFrame", tabs = "GuildBankFrameTab", sigils = { "lion", "openbook", "time", "fleur" }, art = { "ui%-guildbankframe%-left", "ui%-guildbankframe%-right" },
+			{ frame = "GuildBankFrame", addon = "Blizzard_GuildBankUI", band = false, insets = { 24, 68, 24, 36 }, offset_y = -32, text = "GUILD_BANK", background = "slabs",
+				close = true, crest = "GuildBankEmblemFrame", crest_y = -15, -- its rod on the iron's visible top (its art starts under its frame's edge), its foot behind the title's plate
+				-- its crest's gold rod run on as far as the slots and the logs'
+				-- parchment, its tips at their edges (in its file's pixels: the
+				-- tip's end, then the plain stretch drawn out)
+				rail = { { "GuildBankEmblemFrameLeft", 96, 144, 160, left = true }, { "GuildBankEmblemFrameRight", 244, 168, 184 }, reach = 48 },
+				tabs = "GuildBankFrameTab", sigils = { "lion", "openbook", "time", "fleur" }, art = { "ui%-guildbankframe%-left", "ui%-guildbankframe%-right" },
 				-- the logs and the tab's info on parchment, in ink; Deposit,
 				-- Withdraw and the money on the stone foot on each tab
 				-- (the recipe's parchment: the lore journal's tall page blurs stretched this wide)
 				parchments = { { "GuildBankMessageFrame", "parchment" }, { "GuildBankInfoScrollFrame", "parchment" } },
 				ink_messages = { "GuildBankMessageFrame" },
 				ink = { "GuildBankTabInfoEditBox" }, footer = "GuildBankFrameDepositButton",
-				-- the tab's name and your rights in it in the band, right of the
-				-- medallion's ring, its frame gone
+				-- the tab's name and your rights in it in the band, at its left,
+				-- its frame gone
 				band_text = "GuildBankTabTitle",
-				-- the slots, logs and info 16 higher than Blizzard's: as far
-				-- from the band as from the footer
-				places = { GuildBankColumn1 = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 30, -54 },
-					GuildBankFrameLog = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 0, 16 },
-					GuildBankTransactionsScrollFrame = { "TOPRIGHT", "GuildBankFrame", "TOPRIGHT", -50, -59 },
-					GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -57 } },
+				-- the slots, logs and info 27 higher than Blizzard's: as far
+				-- from the band as from the foot's iron bar
+				places = { GuildBankColumn1 = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 30, -43 },
+					GuildBankFrameLog = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 0, 27 },
+					GuildBankTransactionsScrollFrame = { "TOPRIGHT", "GuildBankFrame", "TOPRIGHT", -50, -48 },
+					GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 } },
+				-- its tabs out on the window's right, as Blizzard's
+				outside = { "GuildBankTab1", "GuildBankTab2", "GuildBankTab3", "GuildBankTab4", "GuildBankTab5", "GuildBankTab6" },
 				-- the info's page the logs' size, in the same place
 				sizes = { GuildBankInfoScrollFrame = { 688, 304 }, GuildBankTabInfoEditBox = { 688, 218 } },
 				-- the pages' panel only round them: their scroll bars on the stone
@@ -1025,8 +1066,19 @@ Engine:NewStaticConfig("Blizzard", {
 				-- logs' is (Blizzard's, 4 right of their text)
 				parchment_bar_x = 4,
 				hide = { "GuildBankTabTitleBackground", "GuildBankTabTitleBackgroundLeft", "GuildBankTabTitleBackgroundRight" } },
-			{ frame = "KeyBindingFrame", background = "zoltun", addon = "Blizzard_BindingUI", insets = { 24, 40, 24, 36 }, panel = false,
-				title = "KeyBindingFrameHeaderText", lists = { "KeyBindingFrameScrollFrame" } }
+			-- (its right: as far from the list's scroll bar as the window's
+			-- left from the list)
+			{ frame = "KeyBindingFrame", background = "zoltun", addon = "Blizzard_BindingUI", insets = { 24, 40, -30, 46 }, panel = false,
+				title = "KeyBindingFrameHeaderText", lists = { "KeyBindingFrameScrollFrame" }, footer = "KeyBindingFrameDefaultButton",
+				band = { right = { "KeyBindingFrameCharacterButton" } }, -- "Character Specific Key Bindings"
+				-- the list (its rows too) 6 under the column names; what a
+				-- key was bound to between it and the foot; the buttons 16
+				-- lower, on the foot, as far in from both sides
+				places = { KeyBindingFrameScrollFrame = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 2, -72 },
+					KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 },
+					KeyBindingFrameOutputText = { "TOP", "KeyBindingFrame", "TOPLEFT", 293, -465 },
+					KeyBindingFrameDefaultButton = { "BOTTOMLEFT", "KeyBindingFrame", "BOTTOMLEFT", 10, -16 },
+					KeyBindingFrameCancelButton = { "BOTTOMRIGHT", "KeyBindingFrame", "BOTTOMRIGHT", -64, -16 } } }
 		}
 	},
 	-- the Group Bulletin Board addon's window in Diablo III's
@@ -1061,7 +1113,9 @@ Engine:NewStaticConfig("Blizzard", {
 		raid_list_margins = { 18, 22 }, -- the Raid Browser's lists' zones, from the window's left and right (inside its iron frame)
 		raid_rows_left = 8, -- its lists' rows, left of Blizzard's
 		raid_browse_top = 4, -- the browse list's zone over its rows (the others' 6): clear of its column names
-		raid_queue_gap = 16, -- the queue's list's zone over its foot (as far as under the roles)
+		raid_queue_gap = 12, -- the queue's list's zone over its foot's iron bar (about as far as under the roles)
+		raid_browse_raise = 12, -- the browse list's rows up: its zone 6 over the foot's iron bar
+		raid_headers_raise = 19, -- its column names up: 6 over its zone
 		raid_roles_top = -128, -- its roles' row, from the window's top (Blizzard's)
 		comment_size = { 250, 20 },
 		comment_hint_font = DiabolicFont_SansRegular12,
@@ -1074,7 +1128,8 @@ Engine:NewStaticConfig("Blizzard", {
 		type_width = 230, -- its middle: room for the longest choice
 		roles_top = -72, -- the roles' row, from the window's top (Blizzard's 100 down), under the band
 		lists_raise = 62, -- the random dungeon and the list, up into the dropdown's old room
-		extra_rows = 1 -- the dungeons' list's rows past Blizzard's 15, down to over the foot
+		extra_rows = 1, -- the dungeons' list's rows past Blizzard's 15, down to over the foot
+		random_raise = 4 -- the random dungeon's bottom up: its zone 6 over the foot's iron bar
 	},
 	-- the spellbook in Diablo III's (modules/blizzard/spellbook.lua), laid
 	-- out as Pretty GUI's: wide, the spells in two columns of six with
@@ -1090,6 +1145,7 @@ Engine:NewStaticConfig("Blizzard", {
 		schools = { 486, -116 }, -- the first's icon
 		school_size = 36,
 		school_gap = 12,
+		school_idle_alpha = .6, -- the schools not shown: grey and dimmed
 		-- the pennant under each (Diablo III's achievements list's, turned
 		-- to point right): dark, red while chosen; its point out past the
 		-- window's iron
@@ -1137,6 +1193,8 @@ Engine:NewStaticConfig("Blizzard", {
 		-- iron frame, under the tabs), the model in a panel on top, the
 		-- companions in three columns of four under it
 		cover_insets = { 23, 97, 23, 23 }, -- up to the iron frame and the tabs' strip: nothing of the book shows past it
+		bare_pages = { PROFESSIONS = true }, -- no band on those (nothing in it): the cover up to the iron
+		bare_cover_top = 23, -- from the iron's top (the window's, lowered by its hanging tabs' room)
 		cover_level = 6, -- over the spells' buttons and their cooldowns
 		-- paintings, cut to the cover's shape), darkened under the panels
 		cover_art = {
@@ -1149,7 +1207,7 @@ Engine:NewStaticConfig("Blizzard", {
 		model_panel = { 0, -15, 490, 154 }, -- in the cover, centred (x from its middle; its pane's bottom clear of the slots)
 		model_inset = 4,
 		summon_size = { 140, 24 },
-		name_top = -10, -- the chosen one's name, from the panel's top
+		summon_bottom = 6, -- Summon and the turning arrows, in from the model's foot (the arrows from its corners)
 		selected_name_font = DiabolicFont_HeaderRegular14,
 		companions = { 12, -185 }, -- the first slot, in the cover
 		companion_slot_size = { 156, 45 },
@@ -1159,7 +1217,9 @@ Engine:NewStaticConfig("Blizzard", {
 		-- the professions page, in the cover: the primary ones, then the
 		-- secondary ones, a panel each (its icon opens it, its rank in a
 		-- bar, its other spell on the right)
-		professions = { 12, -30 }, -- the first panel
+		professions = { 12, -40 }, -- the first panel (its section's title clear of the leather's top bolts)
+		professions_inset = 24, -- the page inside the leather's stitched border
+		professions_scale = .9, -- and scaled down to fit in it
 		profession_width = 480,
 		profession_heights = { 70, 52 }, -- a primary one's, a secondary one's
 		profession_gap = 8,
@@ -1190,19 +1250,21 @@ Engine:NewStaticConfig("Blizzard", {
 		},
 		missing_color = { .5, .1, .04 }, -- a reagent short of what's needed: red ink
 		-- Offsets in Blizzard's frame (384x512): the search in the band (the
-		-- title on the window's top edge), right of the medallion; the rest
-		-- up into the search's old row, the buttons lower for their frames
-		search = { 70, 5 }, -- its top left: the band's middle 4 under the frame's top
+		-- title on the window's top edge); the rest up into the search's
+		-- old row, the buttons lower for their frames
 		search_width = 128,
 		filter_gap = 12, -- Have Materials, right of the search's plate
-		filters_lower = -14, -- "All" and the dropdowns, up under the skill bar
+		filters_lower = -18, -- "All" and the dropdowns, up under the skill bar
 		dropdowns_gap = 8, -- between the two dropdowns
-		list_lower = -19, -- the recipes (Blizzard's 96 down), clear of "All" and the slot's dropdown
+		list_lower = -7, -- the recipes, up (Blizzard's 96 down): 6 under "All" and the dropdowns, down to the iron bar over the chosen one
 		list_trim = 5, -- and that much shorter (Blizzard's 130), over the chosen one's
-		detail = { 20, -248 }, -- the chosen recipe's top left (Blizzard's 234 down)
-		detail_height = 151, -- down to over the buttons' foot (Blizzard's 176)
+		detail = { 20, -255 }, -- the chosen recipe's top left (Blizzard's 234 down)
+		detail_height = 132, -- down to 6 over the foot's iron bar (Blizzard's 176)
 		buttons_lower = 6, -- the buttons
-		reagents_top = 6, reagents_gap = 8, -- the reagents' rows, lower than Blizzard's: room for their icons' frames
+		count = { arrow_size = 20, box_width = 26, gap = 2 }, -- how many to make: its arrows, its box (its plate past it), from Create All (86 to Create)
+		reagents_top = 4, reagents_gap = 4, -- the reagents' rows, lower than Blizzard's: room for their icons' frames
+		reagent_font = DiabolicFont_SansBold10, reagent_name_width = 100, -- their names (Blizzard's 12, 90 wide): most on one line
+		highlight_inset = 6, -- the chosen recipe's copper bar, in from the parchment's sides
 		scan_gap = 6, -- the requirement short of Auctionator's Scan AH, the description under them
 		description_left = 5, description_top = 50, -- the description's place (Blizzard's), at the least that low
 		reagents_label_gap = 4, -- "Reagents:" under the description (Blizzard's 10)
@@ -1230,22 +1292,34 @@ Engine:NewStaticConfig("Blizzard", {
 		title_font = path .. [[fonts\ExocetBlizzardLight.ttf]],
 		name_size = 18, -- the NPC's name (Immersion's is Morpheus 22)
 		header_size = 15, -- Quest Objectives, Rewards, the items to hand in
-		-- Diablo III's conversation box (its 2DUIConversation, cut in two):
-		-- the dark glass behind the text, its art 616x134 in its 1024x256,
-		-- each end 64 wide (the middle stretches)
-		bar = path .. [[textures\DiabolicUI_D3_ConversationBar.tga]],
-		bar_size = { 616, 134 },
-		bar_cap = 64,
-		bar_rim = 6, -- its left end's bronze rim (and its corners a few pixels higher): not on the mirrored right end
-		bar_insets = { 70, 6, 0, 2 }, -- in Immersion's box (left, top, right, bottom): its left end under the portrait's frame
-		-- the NPC's frame, its art 160x168 in its 256x256, its glass (the
-		-- model's place, black) 122x132, the art's middle from the glass's
+		-- the box and the choices on the tooltips' frame (their backdrop's
+		-- edge, 32 a corner) around warm dark glass, the world seen
+		-- through it: what Immersion is for
+		plate = {
+			edge = path .. [[textures\DiabolicUI_Tooltip_Small.tga]],
+			edge_size = 32,
+			choice_edge_size = 16, -- a choice's (a line's height: two corners fit it)
+			inset = 6, -- the glass, in from the frame's outside (at 32)
+			color = { .06, .045, .03, .72 }
+		},
+		-- the NPC's frame (Diablo III's 2DUIConversation's), its art
+		-- 146x168 in its 256x256 (its shadow on the right cut off: it fell
+		-- on D3's bar, here on the box as a dark strip), its glass (the
+		-- model's place, black) 122x132, the art's middle from the
+		-- glass's; the box from under its middle to Immersion's right,
+		-- as high as it
 		portrait = path .. [[textures\DiabolicUI_D3_ConversationPortrait.tga]],
-		portrait_size = { 160, 168 },
+		portrait_size = { 146, 168 },
 		glass = { 122, 132 },
-		portrait_offset = { -1.5, -3.5 },
-		choice_insets = { 4, 6, 4, 6 }, -- a choice's glass in its button (Immersion's rows overlap by their frames')
-		choice_lit_alpha = .6 -- the copper bar under the mouse
+		portrait_offset = { -8.5, -3.5 },
+		box_right = 0, -- the box's right, in from Immersion's
+		close_inset = 10, -- the X, in from the box's top right corner
+		indicator_gap = 6, -- the NPC's kind (its speech bubble), left of the X
+		text_color = { .9, .86, .8 }, -- what's said: warm white
+		icon_color = { .86, .76, .6 }, -- the speech bubbles (Blizzard's white), in the titles' pale gold
+		choice_insets = { 4, 6, 4, 6 }, -- a choice's plate in its button (Immersion's rows overlap by their frames')
+		choice_lit_alpha = .7, -- the copper bar on the one under the mouse or the keys' (as a list's chosen row)
+		choice_scale = 1 -- the one under the mouse kept its size (Immersion's grows it 1.1, out of the column)
 	},
 	loot = {
 		-- This builds its own standalone loot window (see

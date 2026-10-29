@@ -165,9 +165,6 @@ end
 -- its "all ranks" box on the player's).
 Module.UpdateBand = function(self)
 	local box = self.SearchBox
-	if (not box) then
-		return
-	end
 	local shown = (_G.SpellBookFrame.bookType == _G.BOOKTYPE_SPELL) and ((self.page == nil) or (self.page == "SEARCH"))
 	for _, part in ipairs({ box, _G.ShowAllSpellRanksCheckBox, self.UnassignedBox }) do
 		if shown then

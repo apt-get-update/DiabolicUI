@@ -16,6 +16,7 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
+local math_max = math.max
 local pairs = pairs
 local select = select
 local unpack = unpack
@@ -110,6 +111,7 @@ Module.StyleMail = function(self)
 	kit:AddFooter(openWindow, config.footers.open)
 	open:ClearAllPoints()
 	open:SetPoint("TOPLEFT", frame, "TOPRIGHT", config.insets[3] + config.open_insets[1] + config.open_gap, 0)
+	self:PlaceOpenBand(openHeader)
 	kit:AddPanel(_G.OpenMailScrollFrame, config.text_panel_insets)
 	kit:AddParchment(_G.OpenMailScrollFrame, config.parchment_insets, "parchment")
 	for _, name in ipairs(STATIONERY) do
@@ -203,12 +205,96 @@ Module.PlaceSendBand = function(self, header)
 	local scroll, child = _G.SendMailScrollFrame, _G.SendMailScrollChildFrame
 	local point, relative, relativePoint, left, top = scroll:GetPoint()
 	scroll:SetPoint(point, relative, relativePoint, left, top + rise)
+	local lower = self.config.send_text_lower
 	local Grow = function()
-		scroll:SetHeight(scroll:GetHeight() + rise)
-		child:SetHeight(child:GetHeight() + rise)
+		scroll:SetHeight(scroll:GetHeight() + rise + lower)
+		child:SetHeight(child:GetHeight() + rise + lower)
 	end
 	hooksecurefunc("SendMailFrame_Update", Grow)
 	Grow()
+end
+
+-- The letter opened's From and Subject in `header`'s band, one over the
+-- other from its left (their labels as wide), Report Spam at its right
+-- end; its text up under the band, taller, as the letter being written's.
+Module.PlaceOpenBand = function(self, header)
+	local spec = self.config.open_band
+	local labels = { _G.OpenMailSenderLabel, _G.OpenMailSubjectLabel }
+	local texts = { _G.OpenMailSender, _G.OpenMailSubject }
+	local width = 0
+	for i, label in ipairs(labels) do
+		local text = texts[i]
+		for _, part in ipairs({ label, text }) do
+			part:SetParent(header)
+			part:SetDrawLayer("OVERLAY")
+			part:ClearAllPoints()
+		end
+		label:SetFontObject(kit.config.check_box.font)
+		label:SetTextColor(unpack(kit.config.title_plate.color))
+		text:SetPoint("LEFT", label, "RIGHT", spec.label_gap, 0)
+		text:SetJustifyH("LEFT")
+		width = math_max(width, label:GetStringWidth())
+	end
+	labels[1]:SetPoint("BOTTOMRIGHT", header, "LEFT", spec.x + width, 0)
+	labels[2]:SetPoint("TOPRIGHT", header, "LEFT", spec.x + width, 0)
+	local spam = _G.OpenMailReportSpamButton
+	spam:SetFrameLevel(header:GetFrameLevel() + 1)
+	kit:LineBand(header, { spam }, true)
+	-- the sender and subject as wide as the band left of Report Spam (or
+	-- of the X's socket while it's hidden)
+	local layout = kit.config.layout
+	local Stretch = function()
+		local right = header:GetWidth() - layout.band_right_edge
+		if spam:IsShown() then
+			right = right - spam:GetWidth() - layout.band_gap
+		end
+		for _, text in ipairs(texts) do
+			text:SetWidth(math_max(1, right - spec.x - width - spec.label_gap))
+		end
+	end
+	spam:HookScript("OnShow", Stretch)
+	spam:HookScript("OnHide", Stretch)
+	_G.OpenMailFrame:HookScript("OnShow", Stretch)
+	Stretch()
+
+	local rise = self.config.open_text_rise
+	local scroll, child = _G.OpenMailScrollFrame, _G.OpenMailScrollChildFrame
+	local point, relative, relativePoint, left, top = scroll:GetPoint()
+	scroll:SetPoint(point, relative, relativePoint, left, top + rise)
+	-- (only once Blizzard has set its height again: its update may stop
+	-- before it does)
+	local Grow = function()
+		local height = scroll:GetHeight()
+		if (height ~= scroll.DiabolicHeight) then
+			local grown = height + rise + self.config.open_text_lower
+			scroll.DiabolicHeight = grown
+			scroll:SetHeight(grown)
+			child:SetHeight(grown)
+		end
+	end
+	hooksecurefunc("OpenMail_Update", Grow)
+	Grow()
+
+	-- the attachments (Blizzard places those shown on each update, from
+	-- the window's foot) higher: clear of the foot's iron
+	local raise = self.config.open_attachments_raise
+	-- (once per place Blizzard gives it: its update may stop before it does)
+	local Raise = function(part)
+		local point, relative, relativePoint, x, y = part:GetPoint()
+		if (y ~= part.DiabolicRaised) then
+			part.DiabolicRaised = y + raise
+			part:SetPoint(point, relative, relativePoint, x, y + raise)
+		end
+	end
+	hooksecurefunc("OpenMail_Update", function()
+		Raise(_G.OpenMailAttachmentText)
+		for i = 1, _G.ATTACHMENTS_MAX_RECEIVE do
+			local button = _G["OpenMailAttachmentButton" .. i]
+			if button and button:IsShown() then
+				Raise(button)
+			end
+		end
+	end)
 end
 
 -- Postal's address book's arrow right of the To box, past its plate (it
@@ -319,9 +405,6 @@ end
 -- `bar`'s top (Blizzard moves it as their rows change) to `over` over the
 -- window's bottom, `left` and `right` in from its sides.
 Module.AddAttachmentPane = function(self, frame, bar, under, over, left, right)
-	if (not frame) or (not bar) then
-		return
-	end
 	local pane = CreateFrame("Frame", nil, frame)
 	pane:SetFrameLevel(frame:GetFrameLevel())
 	pane:SetPoint("TOP", bar, "TOP", 0, -under)
@@ -329,6 +412,7 @@ Module.AddAttachmentPane = function(self, frame, bar, under, over, left, right)
 	pane:SetPoint("RIGHT", frame, "RIGHT", -right, 0)
 	pane:SetPoint("BOTTOM", frame, "BOTTOM", 0, over)
 	kit:StylePane(pane)
+	pane.DiabolicContent = true
 end
 
 Module.OnInit = function(self)

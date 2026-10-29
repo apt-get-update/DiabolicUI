@@ -15,6 +15,7 @@ local Module = Engine:NewModule("Blizzard: Windows")
 local _G = _G
 local ipairs = ipairs
 local table_insert = table.insert
+local table_remove = table.remove
 local table_sort = table.sort
 local math_abs = math.abs
 local math_ceil = math.ceil
@@ -371,50 +372,48 @@ Module.CreateHeader = function(self, window, height, insets)
 	return header
 end
 
--- `name`'s emblem (config.medallion's) at the left end of `header`'s
--- band.
-Module.AddMedallion = function(self, header, name)
-	local spec = config.medallion
-	local medallion = header:CreateTexture(nil, "OVERLAY")
-	medallion:SetTexture(spec.textures[name])
-	local size = header:GetHeight() + spec.grow
-	medallion:SetSize(size, size)
-	medallion:SetPoint("LEFT", header, "LEFT", spec.offset, 0)
-	header.DiabolicMedallion = medallion -- (the band's controls start right of it)
-	-- Diablo III's amber ring over its glass, over an icon a window shows
-	-- there too (AddMedallionIcon)
-	local ring = CreateFrame("Frame", nil, header)
-	ring:SetFrameLevel(header:GetFrameLevel() + 3)
-	ring:SetSize(size * spec.ring_scale, size * spec.ring_scale)
-	ring:SetPoint("CENTER", medallion, "CENTER", unpack(spec.ring_offset))
-	local art = ring:CreateTexture(nil, "OVERLAY")
-	art:SetTexture(spec.ring)
-	art:SetAllPoints()
-	medallion.DiabolicRing = ring
-	return medallion
-end
-
--- An icon on `medallion`'s glass, under its ring (drawn by the ring's
--- frame), filling `holder` (a window's frame there, a button for its
--- tooltip) and shown while it is.
-Module.AddMedallionIcon = function(self, medallion, holder)
-	local icon = medallion.DiabolicRing:CreateTexture(nil, "ARTWORK")
-	icon:SetAllPoints(holder)
-	holder:HookScript("OnShow", function() icon:Show() end)
-	holder:HookScript("OnHide", function() icon:Hide() end)
-	if not holder:IsVisible() then
-		icon:Hide()
+-- `header`'s band dropped (a window with nothing in it): out of sight,
+-- no longer its window's (its title still on the window's plate).
+Module.DropBand = function(self, header)
+	header:Hide()
+	local headers = header:GetParent().DiabolicHeaders
+	for i = #headers, 1, -1 do
+		if (headers[i] == header) then
+			table_remove(headers, i)
+		end
 	end
-	return icon
 end
 
--- The title on its plate, cut short past its inlay (one line).
+-- `plate` `width` wide: its plain stretches (between its ends and its
+-- middle) drawn out, the rest as drawn.
+local SizePlate = function(plate, width)
+	plate:SetWidth(width)
+	local stretch = (width - plate.DiabolicFixed) / 2
+	for _, piece in ipairs(plate.DiabolicStretches) do
+		piece:SetWidth(stretch)
+	end
+end
+
+-- The title on its plate, the plate as wide as its widest title shown (up
+-- to `max_width`, and clear of the window's corners: `side_room` from each
+-- side), cut short past that (one line).
 local FitTitle = function(title)
-	local most = config.title_plate.text_width
+	local spec = config.title_plate
+	local plate = title:GetParent()
+	local margin = spec.width - spec.text_width
+	local room = plate:GetParent():GetWidth() - 2 * spec.side_room
+	local most = math_max(spec.text_width, math_min(spec.max_width, room) - margin)
 	title:SetSize(0, 0)
 	if title:GetStringWidth() > most then
 		title:SetSize(most, select(2, title:GetFont()) + 2)
 	end
+	local width = spec.width
+	for _, shown in ipairs(plate.DiabolicTitles) do
+		if shown:IsShown() and ((shown:GetText() or "") ~= "") then
+			width = math_max(width, math_min(shown:GetStringWidth(), most) + margin)
+		end
+	end
+	SizePlate(plate, width)
 end
 
 -- `title` (a font string) on Diablo III's plate on the top edge of
@@ -431,12 +430,39 @@ Module.SetTitle = function(self, header, title)
 		plate:SetSize(spec.width, spec.height)
 		-- (on the iron's top, lowered with it: DropTop)
 		plate:SetPoint("CENTER", window.Border, "TOP", 0, spec.y)
-		local art = plate:CreateTexture(nil, "ARTWORK")
-		art:SetTexture(spec.texture)
-		art:SetTexCoord(0, 1, 0, spec.rows)
-		art:SetAllPoints()
+		-- its art in pieces at its cuts (in its file's pixels), every
+		-- other one a plain stretch drawn out as it grows
+		local scale = spec.width / spec.file_width
+		local cuts = { 0, unpack(spec.cuts) }
+		cuts[#cuts + 1] = spec.file_width
+		plate.DiabolicFixed, plate.DiabolicStretches, plate.DiabolicTitles = 0, {}, {}
+		local previous
+		for i = 1, #cuts - 1 do
+			local piece = plate:CreateTexture(nil, "ARTWORK")
+			piece:SetTexture(spec.texture)
+			piece:SetTexCoord(cuts[i] / spec.file_width, cuts[i + 1] / spec.file_width, 0, spec.rows)
+			piece:SetSize((cuts[i + 1] - cuts[i]) * scale, spec.height)
+			if previous then
+				piece:SetPoint("LEFT", previous, "RIGHT")
+			else
+				piece:SetPoint("LEFT", plate, "LEFT")
+			end
+			if (i % 2 == 0) then
+				plate.DiabolicStretches[#plate.DiabolicStretches + 1] = piece
+			else
+				plate.DiabolicFixed = plate.DiabolicFixed + piece:GetWidth()
+			end
+			previous = piece
+		end
 		window.DiabolicPlate = plate
+		-- (fitted again as the window's width changes: the character's tabs)
+		window:HookScript("OnSizeChanged", function()
+			for _, shown in ipairs(plate.DiabolicTitles) do
+				FitTitle(shown)
+			end
+		end)
 	end
+	plate.DiabolicTitles[#plate.DiabolicTitles + 1] = title
 	title:SetParent(plate)
 	title:SetDrawLayer("OVERLAY")
 	title:SetFontObject(spec.font)
@@ -452,6 +478,26 @@ Module.SetTitle = function(self, header, title)
 		hooksecurefunc(title, "SetFormattedText", FitTitle)
 	end
 	FitTitle(title)
+end
+
+-- A gem socketed in the left cross of `header`'s title plate (SetTitle's,
+-- first): a round icon (gem.icon, SetPortraitToTexture's) in Diablo III's
+-- amber ring, a button for the window's tooltip and click.
+Module.AddTitleGem = function(self, header)
+	local spec = config.title_plate.gem
+	local plate = header:GetParent().DiabolicPlate
+	local gem = CreateFrame("Button", nil, plate)
+	gem:SetFrameLevel(plate:GetFrameLevel() + 2)
+	gem:SetSize(spec.size, spec.size)
+	gem:SetPoint("CENTER", plate, "LEFT", spec.x, spec.y)
+	local glass = spec.size * spec.glass
+	gem.icon = gem:CreateTexture(nil, "ARTWORK")
+	gem.icon:SetSize(glass, glass)
+	gem.icon:SetPoint("CENTER", gem, "CENTER", unpack(spec.glass_offset))
+	local ring = gem:CreateTexture(nil, "OVERLAY")
+	ring:SetTexture(spec.ring)
+	ring:SetAllPoints()
+	return gem
 end
 
 -- A stone cartouche in the middle of the header's band, for a key number:
@@ -1092,6 +1138,7 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 	plate:SetPoint("RIGHT", 0, offset or 0)
 	plate:SetHeight(spec.height)
 	self:CreateSlices(plate, "BACKGROUND", spec.plate, spec.plate.texture, spec.height, inset or spec.inset, frame)
+	frame.DiabolicPlate = plate -- (raised with it: LineBand)
 	-- its button Diablo III's, in the plate's right end, in its middle
 	local button = name and _G[name .. "Button"]
 	if button then
@@ -1177,32 +1224,6 @@ Module.StyleCheckBox = function(self, button, look)
 	end
 end
 
--- The dark strip under `header`'s band the tabs sit on, once: its middle
--- under them, its pointed ends over the window's iron frame.
-Module.AddTabStrip = function(self, header)
-	if header.DiabolicStrip then
-		return
-	end
-	local spec = config.tab_strip
-	local window = header:GetParent()
-	local strip = CreateFrame("Frame", nil, header)
-	strip:SetFrameLevel(window:GetFrameLevel())
-	strip:SetPoint("TOPLEFT", header, "BOTTOMLEFT", -spec.extend, spec.offset)
-	strip:SetPoint("TOPRIGHT", header, "BOTTOMRIGHT", spec.extend, spec.offset)
-	strip:SetHeight(spec.height)
-	-- the middle drawn by the window itself, over its background: a frame
-	-- of the window's level may be drawn under it
-	local under = self:CreateSlices(strip, "ARTWORK", spec, spec.texture, spec.height, nil, window)
-	under[1]:SetAlpha(0)
-	under[3]:SetAlpha(0)
-	local ends = CreateFrame("Frame", nil, strip)
-	ends:SetFrameLevel(window.Border:GetFrameLevel() + 1)
-	ends:SetAllPoints()
-	local over = self:CreateSlices(ends, "ARTWORK", spec, spec.texture, spec.height)
-	over[2]:SetAlpha(0)
-	header.DiabolicStrip = strip
-end
-
 -- How far in from a band control's sides its art is drawn (a dropdown's
 -- plate), negative out past them (an edit box's plate, a checkbox's
 -- label): left, right.
@@ -1221,7 +1242,7 @@ end
 Module.ArtInsets = ArtInsets
 
 -- `parts` (controls, texts) in a row along `header`'s band from its left:
--- the first from its end (or its medallion's right), their art
+-- the first from its end, their art
 -- window.layout.band_gap apart, each placed on the one before it (moved
 -- as it's resized); `fromRight`: from its right end instead (short of the
 -- X's socket), the last part rightmost. Dropdowns over the window's frame.
@@ -1242,15 +1263,14 @@ Module.LineBand = function(self, header, parts, fromRight)
 			part:SetPoint("RIGHT", header, "RIGHT", right - layout.band_right_edge, 0)
 		elseif previous then
 			part:SetPoint("LEFT", previous, "RIGHT", layout.band_gap - previousInset - left, 0)
-		elseif header.DiabolicMedallion then
-			part:SetPoint("LEFT", header.DiabolicMedallion, "RIGHT", layout.band_medallion_gap - left, 0)
 		else
 			part:SetPoint("LEFT", header, "LEFT", layout.band_edge - left, 0)
 		end
 		previous, previousInset = part, fromRight and left or right
 		local name = part:GetName()
 		if name and _G[name .. "Button"] and _G[name .. "Middle"] then
-			for _, piece in ipairs({ part, _G[name .. "Button"], _G[name .. "MouseOver"] or false }) do
+			-- (its plate first, under it: a child keeps its own level)
+			for _, piece in ipairs({ part.DiabolicPlate or false, part, _G[name .. "Button"], _G[name .. "MouseOver"] or false }) do
 				if piece then
 					piece:SetFrameLevel(level)
 					level = level + 1
@@ -1752,6 +1772,33 @@ Module.AddZone = function(self, frame, material, insets, parent)
 	return zone
 end
 
+-- A bar of the window's iron (its frame's left edge, turned: the part
+-- footer_rail cuts, the bar and its shadows), drawn by `owner`.
+local IronBar = function(owner)
+	local spec, size = config.footer_rail, config.backdrop.edgeSize
+	local outer, inner = spec.cut[1] / size / 8, spec.cut[2] / size / 8
+	local bar = owner:CreateTexture(nil, "OVERLAY")
+	bar:SetTexture(config.backdrop.edgeFile)
+	bar:SetTexCoord(outer, 0, inner, 0, outer, 1, inner, 1)
+	bar:SetHeight(spec.cut[2] - spec.cut[1])
+	return bar
+end
+
+-- A bar of the window's iron across `window` between two of its zones,
+-- its middle `y` under the window's top, its ends under the frame's
+-- sides (as the foot's): over what the window shows, under its frame.
+Module.AddIronBar = function(self, window, y)
+	local spec = config.footer_rail
+	local holder = CreateFrame("Frame", nil, window)
+	holder:SetFrameLevel(window:GetFrameLevel() + 2)
+	holder:SetAllPoints()
+	local bar = IronBar(holder)
+	local top = y - ((spec.bar[1] + spec.bar[2]) / 2 - spec.cut[1]) -- (the bar's middle in its cut)
+	bar:SetPoint("TOPLEFT", window, "TOPLEFT", spec.bar[1], -top)
+	bar:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.bar[1], -top)
+	return bar
+end
+
 -- The window's foot in Diablo III's rough stone, inside its iron frame,
 -- up to `top` (see SetFooter), under the buttons and the money Blizzard
 -- keeps there: drawn by the window over its painting, set apart from the
@@ -1761,12 +1808,8 @@ Module.AddFooter = function(self, window, top)
 	local foot = CreateFrame("Frame", nil, window)
 	foot.Window = window
 	foot.Material = self:CreateNine(foot, "ARTWORK", "footer", window)
-	local spec, size = config.footer_rail, config.backdrop.edgeSize
-	local outer, inner = spec.cut[1] / size / 8, spec.cut[2] / size / 8
-	local rail = foot:CreateTexture(nil, "OVERLAY")
-	rail:SetTexture(config.backdrop.edgeFile)
-	rail:SetTexCoord(outer, 0, inner, 0, outer, 1, inner, 1)
-	rail:SetHeight(spec.cut[2] - spec.cut[1])
+	local spec = config.footer_rail
+	local rail = IronBar(foot)
 	local x, y = spec.bar[1] - config.backdrop.insets.left, spec.cut[2] - spec.bar[2]
 	rail:SetPoint("BOTTOMLEFT", foot, "TOPLEFT", x, -y)
 	rail:SetPoint("BOTTOMRIGHT", foot, "TOPRIGHT", -x, -y)
@@ -1774,6 +1817,13 @@ Module.AddFooter = function(self, window, top)
 	window.DiabolicFoot = foot
 	self:SetFooter(foot, top)
 	return foot
+end
+
+-- How far over the top of a foot's highest button its iron bar reaches
+-- (window.footer_margin, then the bar over the foot's top): what's over
+-- the foot is placed from there.
+Module.FootReach = function(self)
+	return config.footer_margin + config.footer_rail.bar[2] - config.footer_rail.cut[1]
 end
 
 -- A footer up to the page shown's buttons: `top`, the name of the highest
@@ -1912,7 +1962,11 @@ Module.OnInit = function(self)
 	-- every money frame's coins ours (Blizzard makes them on its first update)
 	local coin = Engine:GetDB("UI").coin
 	hooksecurefunc("MoneyFrame_Update", function(frame)
-		local name = (type(frame) == "table") and frame:GetName() or frame
+		-- (an unnamed one, Immersion's: no coins of its name)
+		local name = frame
+		if (type(frame) == "table") then
+			name = frame:GetName()
+		end
 		for _, kind in ipairs({ "gold", "silver", "copper" }) do
 			local button = name and _G[name .. kind:gsub("^%l", string_upper) .. "Button"]
 			local texture = button and button:GetNormalTexture()

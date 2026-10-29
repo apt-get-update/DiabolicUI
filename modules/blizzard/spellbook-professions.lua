@@ -179,8 +179,12 @@ end
 Module.CreateProfessions = function(self, cover)
 	kit = Engine:GetModule("Blizzard: Windows")
 	local config = self.config
+	-- inside the leather's stitched border, the page scaled down to fit
 	local page = CreateFrame("Frame", nil, cover)
-	page:SetAllPoints(cover)
+	local inset, scale = config.professions_inset, config.professions_scale
+	page:SetScale(scale)
+	page:SetPoint("TOPLEFT", cover, "TOPLEFT", inset / scale, -inset / scale)
+	page:SetPoint("BOTTOMRIGHT", cover, "BOTTOMRIGHT", -inset / scale, inset / scale)
 	page:SetFrameLevel(cover:GetFrameLevel() + 1)
 	page:Hide()
 	local x, y = unpack(config.professions)

@@ -1,6 +1,7 @@
--- Gives the Immersion addon's dialogue box Diablo III's conversation look
--- (its 2DUIConversation: the text on torn dark glass, the NPC in a
--- bronze-edged frame), the windows' close button, the titles (the NPC's
+-- Gives the Immersion addon's dialogue box DiabolicUI's look: the text and
+-- the choices on warm dark glass in the tooltips' frame (see-through: the
+-- world behind it), the NPC in Diablo III's bronze-edged frame (its
+-- 2DUIConversation's), the windows' close button, the titles (the NPC's
 -- name, the quest's headers) in Exocet, and our coins.
 -- Only the dialogue Immersion (ImmersionFrame), not the addon of the same
 -- name that hides the UI.
@@ -15,6 +16,7 @@ local pairs = pairs
 local unpack = unpack
 
 -- WoW API
+local CreateFrame = _G.CreateFrame
 local hooksecurefunc = _G.hooksecurefunc
 
 Module.StyleImmersion = function(self)
@@ -66,21 +68,25 @@ Module.StyleImmersion = function(self)
 	icon.MoneyIcon:SetTexCoord(unpack(coin.gold_texcoord))
 end
 
--- Diablo III's conversation box in place of Immersion's art: the glass
--- in three parts (its ends as they are, the middle stretched), its left
--- end under the portrait's frame; the frame over the model's edges, black
--- behind it (shown with the portrait: Immersion can turn it off).
+-- The tooltips' frame around warm dark glass in place of Immersion's art,
+-- from under the portrait's frame (Diablo III's) to its right, as high as
+-- that frame; black behind the model (shown with the portrait: Immersion
+-- can turn it off); the X and the NPC's kind in the box's top right; what's
+-- said in warm white, its pages' count in the titles' font.
 Module.StyleBox = function(self, talkBox)
 	local config = self.config
 	local background, portrait = talkBox.BackgroundFrame, talkBox.PortraitFrame
-	local model = talkBox.MainFrame.Model
-	for _, art in ipairs({ background.TextBackground, background.SolidBackground, portrait.Portrait, model.PortraitBG }) do
+	local main = talkBox.MainFrame
+	local model = main.Model
+	-- its art, and its glows and sheens on it (flashed as a box shows,
+	-- some left lit beside the portrait)
+	local overlay = main.Overlay or model.Overlay or {}
+	for _, art in pairs({ background.TextBackground, background.SolidBackground, portrait.Portrait, model.PortraitBG,
+		main.Sheen, main.TextSheen, overlay.Glow_TopBar, overlay.Glow_LeftBar, overlay.Glow_RightBar }) do
 		if art then
 			art:SetTexture(nil)
 		end
 	end
-
-	self:AddGlass(background, talkBox, config.bar_insets)
 
 	local scale = model:GetWidth() / config.glass[1]
 	local glass = background:CreateTexture(nil, "BORDER")
@@ -98,43 +104,84 @@ Module.StyleBox = function(self, talkBox)
 	if (not portrait:IsShown()) then
 		glass:Hide()
 	end
-end
 
--- Diablo III's dark glass over `frame`, `insets` (left, top, right,
--- bottom) in, drawn by `owner`: in three parts, its clean end at both
--- sides (the right one mirrored, without the left's bronze rim: the art's
--- own right end is torn), its ends as wide as its height keeps them, the
--- middle stretched.
-Module.AddGlass = function(self, owner, frame, insets)
-	local config = self.config
-	local width, height = unpack(config.bar_size)
-	local Part = function(left, right)
-		local part = owner:CreateTexture(nil, "BACKGROUND")
-		part:SetTexture(config.bar)
-		part:SetTexCoord(left / 1024, right / 1024, 0, height / 256)
-		return part
-	end
-	local left, middle, right = Part(0, config.bar_cap), Part(config.bar_cap, width - config.bar_cap), Part(config.bar_cap, config.bar_rim)
-	left:SetPoint("TOPLEFT", frame, "TOPLEFT", insets[1], -insets[2])
-	left:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", insets[1], insets[4])
-	right:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -insets[3], -insets[2])
-	right:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -insets[3], insets[4])
-	middle:SetPoint("TOPLEFT", left, "TOPRIGHT")
-	middle:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT")
-	local Fit = function()
-		local scale = (frame:GetHeight() - insets[2] - insets[4]) / height
-		if (scale > 0) then
-			left:SetWidth(config.bar_cap * scale)
-			right:SetWidth((config.bar_cap - config.bar_rim) * scale)
+	-- the box: from the portrait frame's middle (its left end under it),
+	-- its top and bottom with the frame's (Immersion's model is placed
+	-- from the box's top left)
+	local _, _, _, x, y = model:GetPoint()
+	local middleX = x + model:GetWidth() / 2 + config.portrait_offset[1] * scale
+	local middleY = y - model:GetHeight() / 2 + config.portrait_offset[2] * scale
+	local box = CreateFrame("Frame", nil, talkBox)
+	box:SetPoint("TOPLEFT", talkBox, "TOPLEFT", middleX, middleY + frameHeight * scale / 2)
+	box:SetPoint("BOTTOMRIGHT", talkBox, "TOPRIGHT", -config.box_right, middleY - frameHeight * scale / 2)
+	self:AddPlate(background, box, config.plate.edge_size)
+
+	local close = main.CloseButton
+	if close then
+		close:ClearAllPoints()
+		close:SetPoint("TOPRIGHT", box, "TOPRIGHT", -config.close_inset, -config.close_inset)
+		local indicator = main.Indicator
+		if indicator then
+			indicator:ClearAllPoints()
+			indicator:SetPoint("RIGHT", close, "LEFT", -config.indicator_gap, 0)
+			indicator:SetDesaturated(true) -- (kept as Immersion sets its file)
+			indicator:SetVertexColor(unpack(config.icon_color))
 		end
 	end
-	frame:HookScript("OnSizeChanged", Fit)
-	Fit()
+	local text = talkBox.TextFrame
+	if text then
+		text.Text:SetTextColor(unpack(config.text_color))
+		local pages = text.SpeechProgress
+		pages:SetFont(config.title_font, config.header_size, "")
+		pages:SetTextColor(unpack(kit.config.title_plate.color))
+		pages:SetShadowOffset(1, -1)
+	end
 end
 
--- A choice (gossip option, quest) on the same glass, its text in Diablo
--- III's pale gold, the copper bar under the mouse and on the one the keys
--- have chosen (Immersion's blue frames gone).
+-- The tooltips' frame (their backdrop's edge, piece by piece) around warm
+-- dark glass over `box`, drawn by `owner`, its corners `size` (the
+-- tooltips' 32 halved on a choice: two must fit its height): Immersion
+-- draws its text over its own frames, not over frames we'd add. The
+-- frame's sides from its left edge, turned (its file's top and bottom
+-- pieces are drawn turned).
+Module.AddPlate = function(self, owner, box, size)
+	local spec = self.config.plate
+	local e = 1/8
+	local inset = spec.inset * size / spec.edge_size
+	local fill = owner:CreateTexture(nil, "BACKGROUND")
+	fill:SetTexture(unpack(spec.color))
+	fill:SetPoint("TOPLEFT", box, "TOPLEFT", inset, -inset)
+	fill:SetPoint("BOTTOMRIGHT", box, "BOTTOMRIGHT", -inset, inset)
+	local Piece = function(...)
+		local piece = owner:CreateTexture(nil, "ARTWORK")
+		piece:SetTexture(spec.edge)
+		piece:SetTexCoord(...)
+		return piece
+	end
+	local corners = {}
+	for i, point in ipairs({ "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT" }) do
+		local corner = Piece((3 + i) * e, (4 + i) * e, 0, 1)
+		corner:SetSize(size, size)
+		corner:SetPoint(point, box, point)
+		corners[point] = corner
+	end
+	local left, right = Piece(0, e, 0, 1), Piece(e, 2 * e, 0, 1)
+	local top, bottom = Piece(0, 0, e, 0, 0, 1, e, 1), Piece(e, 0, 0, 0, e, 1, 0, 1)
+	left:SetPoint("TOPLEFT", corners.TOPLEFT, "BOTTOMLEFT")
+	left:SetPoint("BOTTOMRIGHT", corners.BOTTOMLEFT, "TOPRIGHT")
+	right:SetPoint("TOPLEFT", corners.TOPRIGHT, "BOTTOMLEFT")
+	right:SetPoint("BOTTOMRIGHT", corners.BOTTOMRIGHT, "TOPRIGHT")
+	top:SetPoint("TOPLEFT", corners.TOPLEFT, "TOPRIGHT")
+	top:SetPoint("BOTTOMRIGHT", corners.TOPRIGHT, "BOTTOMLEFT")
+	bottom:SetPoint("TOPLEFT", corners.BOTTOMLEFT, "TOPRIGHT")
+	bottom:SetPoint("BOTTOMRIGHT", corners.BOTTOMRIGHT, "BOTTOMLEFT")
+	return fill
+end
+
+-- A choice (gossip option, quest) on the same plate, its text in Diablo
+-- III's pale gold, its speech bubble too; the copper bar under its text on
+-- the one under the mouse or the keys' (Immersion's blue frames gone, its
+-- glow and growth too).
 Module.StyleChoice = function(self, button)
 	local config = self.config
 	if button.DiabolicGlass then
@@ -144,18 +191,36 @@ Module.StyleChoice = function(self, button)
 	for _, frame in ipairs({ button, button.Overlay, button.Hilite }) do
 		frame:SetBackdrop(nil)
 	end
-	self:AddGlass(button, button, config.choice_insets)
+	local insets = config.choice_insets
+	local box = CreateFrame("Frame", nil, button)
+	box:SetPoint("TOPLEFT", button, "TOPLEFT", insets[1], -insets[2])
+	box:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -insets[3], insets[4])
+	local fill = self:AddPlate(button, box, config.plate.choice_edge_size)
 	button.Label:SetTextColor(unpack(kit.config.title_plate.color))
-	local lit = kit.config.row_bars.lit
-	local highlight = button:GetHighlightTexture()
-	highlight:SetTexture(lit)
-	highlight:SetTexCoord(0, 1, 0, 1)
-	highlight:SetAlpha(config.choice_lit_alpha)
-	local chosen = button.Hilite:CreateTexture(nil, "BACKGROUND")
-	chosen:SetTexture(lit)
-	chosen:SetBlendMode("ADD")
-	chosen:SetPoint("TOPLEFT", button, "TOPLEFT", config.choice_insets[1], -config.choice_insets[2])
-	chosen:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -config.choice_insets[3], config.choice_insets[4])
+	button:GetHighlightTexture():SetAlpha(0)
+	button.enterScale = config.choice_scale
+	-- (Immersion fades its Hilite frame in and out: the bar with it)
+	local lit = button:CreateTexture(nil, "BORDER")
+	lit:SetTexture(kit.config.row_bars.lit)
+	lit:SetAllPoints(fill)
+	lit:SetAlpha(0)
+	hooksecurefunc(button.Hilite, "SetAlpha", function(_, alpha)
+		lit:SetAlpha(alpha * config.choice_lit_alpha)
+	end)
+	-- Blizzard's white speech bubbles in pale gold (the quests' marks as
+	-- they are), as Immersion sets them
+	local icon = button.Icon
+	if icon and button.SetGossipIcon then
+		local Tint = function(gossip)
+			icon:SetDesaturated(gossip)
+			if gossip then
+				icon:SetVertexColor(unpack(config.icon_color))
+			end
+		end
+		hooksecurefunc(button, "SetGossipIcon", function() Tint(true) end)
+		hooksecurefunc(button, "SetGossipQuestIcon", function() Tint(false) end)
+		hooksecurefunc(button, "SetIcon", function() Tint(false) end)
+	end
 end
 
 -- the dialogue Immersion, once it has made its frame

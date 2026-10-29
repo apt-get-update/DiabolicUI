@@ -23,6 +23,7 @@ local L = Engine:GetLocale()
 local _G = _G
 local ipairs = ipairs
 local math_floor = math.floor
+local pairs = pairs
 local select = select
 local unpack = unpack
 
@@ -42,7 +43,6 @@ local hooksecurefunc = _G.hooksecurefunc
 local InCombatLockdown = _G.InCombatLockdown
 local IsPassiveSpell = _G.IsPassiveSpell
 local SetCVar = _G.SetCVar
-local SetPortraitToTexture = _G.SetPortraitToTexture
 
 local NUM_SPELLS = 12 -- SPELLS_PER_PAGE
 local NUM_SCHOOLS = 8 -- MAX_SKILLLINE_TABS
@@ -162,7 +162,7 @@ Module.LayoutSpells = function(self, window)
 
 	-- the schools as the book's bookmarks: Diablo III's pennants pointing
 	-- out past its right edge, red for the chosen one, each school's icon
-	-- on its own over the pages' edge
+	-- on its own over the pages' edge, in colour on the chosen one only
 	x, y = unpack(config.schools)
 	local size, ribbon = config.school_size, config.school_ribbon
 	for i = 1, NUM_SCHOOLS do
@@ -176,8 +176,15 @@ Module.LayoutSpells = function(self, window)
 		cloth:SetTexture(ribbon.texture)
 		cloth:SetPoint("TOPLEFT", -ribbon.left, ribbon.pad)
 		cloth:SetPoint("BOTTOMRIGHT", ribbon.right, -ribbon.pad)
+		-- the others' icons grey and dimmed (after Blizzard sets them)
 		local update = function()
-			cloth:SetTexCoord(unpack(tab:GetChecked() and ribbon.chosen or ribbon.idle))
+			local chosen = tab:GetChecked() and true or false
+			cloth:SetTexCoord(unpack(chosen and ribbon.chosen or ribbon.idle))
+			local icon = tab:GetNormalTexture()
+			if icon then
+				icon:SetDesaturated(not chosen)
+				icon:SetAlpha(chosen and 1 or config.school_idle_alpha)
+			end
 		end
 		hooksecurefunc(tab, "SetChecked", update)
 		update()
@@ -324,33 +331,6 @@ Module.UpdateAllUnassigned = function(self)
 	end
 end
 
--- The band's medallion (the character window's), the school shown
--- round on its glass (its swords on the companions' pages and the pet's
--- book).
-Module.AddMedallion = function(self)
-	local medallion = kit:AddMedallion(self.Header, "swords")
-	local glass = self:GetDB("Blizzard").character.spec
-	local size = medallion:GetWidth() * glass.glass
-	local holder = CreateFrame("Frame", nil, _G.SpellBookFrame)
-	holder:SetFrameLevel(self.Header:GetFrameLevel() + 2)
-	holder:SetSize(size, size)
-	holder:SetPoint("CENTER", medallion, "CENTER", unpack(glass.glass_offset))
-	local icon = kit:AddMedallionIcon(medallion, holder)
-	local Update = function()
-		local frame = _G.SpellBookFrame
-		local _, texture = _G.GetSpellTabInfo(frame.selectedSkillLine or 1)
-		if texture and (not self.page) and (frame.bookType == _G.BOOKTYPE_SPELL) then
-			SetPortraitToTexture(icon, texture)
-			holder:Show()
-		else
-			holder:Hide()
-		end
-	end
-	hooksecurefunc("SpellBookFrame_Update", Update)
-	self.UpdateMedallion = Update
-	Update()
-end
-
 -- The companions', mounts' and professions' tabs after Blizzard's, all as
 -- banners hanging from the window's foot, the one shown chosen.
 Module.CreateTabs = function(self, window)
@@ -477,23 +457,32 @@ Module.LayoutCompanions = function(self, cover)
 	model:ClearAllPoints()
 	model:SetPoint("TOPLEFT", panel, "TOPLEFT", config.model_inset, -config.model_inset)
 	model:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -config.model_inset, config.model_inset)
-	local left = _G.CompanionModelFrameRotateLeftButton
-	left:ClearAllPoints()
-	left:SetPoint("TOPLEFT", model, "TOPLEFT", 0, 0)
-	-- the chosen one's name in Exocet, in the title's gold
+	-- the chosen one's name in Exocet, in the title's gold, in the band's
+	-- middle (on the cover: shown with the companions' pages)
 	local name = _G.CompanionSelectedName
 	name:SetFontObject(config.selected_name_font)
 	name:SetTextColor(unpack(kit.config.title_plate.color))
 	name:SetJustifyH("CENTER")
 	name:ClearAllPoints()
-	name:SetPoint("TOP", panel, "TOP", 0, config.name_top)
-	-- Summon (Mount on the mounts' page) in the band's middle (on the
-	-- cover: shown with the companions' pages)
+	name:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
+	-- under it, at the model's foot: Summon (Mount on the mounts' page)
+	-- in the middle, the turning arrows in the corners on either side
+	local gap = config.summon_bottom
+	local left, right = _G.CompanionModelFrameRotateLeftButton, _G.CompanionModelFrameRotateRightButton
+	left:ClearAllPoints()
+	left:SetPoint("BOTTOMLEFT", model, "BOTTOMLEFT", gap, gap)
+	right:ClearAllPoints()
+	right:SetPoint("BOTTOMRIGHT", model, "BOTTOMRIGHT", -gap, gap)
 	local summon = _G.CompanionSummonButton
-	summon:ClearAllPoints()
-	summon:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
 	summon:SetSize(unpack(config.summon_size))
 	kit:StyleButton(summon, config.summon_size[2])
+	summon:ClearAllPoints()
+	summon:SetPoint("BOTTOM", model, "BOTTOM", 0, gap + (left:GetHeight() - config.summon_size[2]) / 2)
+	-- over the model: a model draws over every frame of its strata,
+	-- whatever their levels (a drake's wings over them)
+	for _, button in ipairs({ summon, left, right }) do
+		button:SetFrameStrata("HIGH")
+	end
 
 	local x, y = unpack(config.companions)
 	self.CompanionNames, self.CompanionSlots = {}, {}
@@ -582,8 +571,36 @@ Module.ShowPage = function(self, mode)
 		_G.SpellBookTitleText:SetText((frame.bookType == _G.BOOKTYPE_PET) and frame.petTitle or _G.SPELLBOOK)
 	end
 	self:UpdateTabs()
-	self:UpdateMedallion()
 	self:UpdateBand()
+	self:FitCover()
+end
+
+-- The band dropped on the pages with nothing in it (`bare_pages`), the
+-- cover up into its room; back on the others.
+Module.FitCover = function(self)
+	local config = self.config
+	local cover = self.Cover
+	local bare = self.page and config.bare_pages[self.page]
+	if bare then
+		self.Header:Hide()
+	else
+		self.Header:Show()
+	end
+	-- the iron, the title's plate and the X over the cover reaching under
+	-- them (the bookmarks, over the iron, are hidden there)
+	local window = cover.DiabolicWindow
+	local level = bare and (cover:GetFrameLevel() + 1) or (window:GetFrameLevel() + 3)
+	window.Border:SetFrameLevel(level)
+	for part, above in pairs({ DiabolicPlate = 0, DiabolicSocket = 1, DiabolicClose = 2 }) do
+		if window[part] then
+			window[part]:SetFrameLevel(level + above)
+		end
+	end
+	local left, top = config.cover_insets[1], bare and (config.bare_cover_top + (window.DiabolicDrop or 0)) or config.cover_insets[2]
+	if (cover.DiabolicY ~= top) then
+		cover.DiabolicY = top -- (its stone tiled from there: LayoutCover)
+		cover:SetPoint("TOPLEFT", cover.DiabolicWindow, "TOPLEFT", left, -top)
+	end
 end
 
 -- The page's frame on the cover, the others hidden: Blizzard's
@@ -655,7 +672,6 @@ Module.StyleSpellbook = function(self)
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
 	kit:SetTitle(self.Header, _G.SpellBookTitleText)
 	kit:StyleClose(_G.SpellBookCloseButton, window, self.Header)
-	self:AddMedallion()
 
 	self:LayoutSpells(window)
 	self:CreateTabs(window)

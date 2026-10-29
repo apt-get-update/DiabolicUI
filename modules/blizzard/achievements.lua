@@ -189,6 +189,12 @@ Module.StyleControls = function(self, panel)
 		elseif IsPanelButton(child) then
 			child.DiabolicStyled = true
 			kit:StyleButton(child, config.control_button_height)
+			-- (one right of another: the rule's gap apart, Search's Reset)
+			local gap = kit.config.layout.button_gap
+			local point, relative, relativePoint, x, y = child:GetPoint()
+			if (point == "LEFT") and (relativePoint == "RIGHT") and relative and IsPanelButton(relative) and (x < gap) then
+				child:SetPoint(point, relative, relativePoint, gap, y)
+			end
 		elseif name and _G[name .. "Button"] and _G[name .. "Middle"] then
 			child.DiabolicStyled = true
 			kit:StyleDropDown(child, config.filter_offset)
@@ -213,6 +219,11 @@ Module.StyleOverachiever = function(self)
 				end
 			end
 			ROW_LISTS[#ROW_LISTS + 1] = frame:GetName()
+			-- (its controls, made after it: as it shows)
+			local panel = frame.panel
+			if panel then
+				panel:HookScript("OnShow", function() self:StyleControls(panel) end)
+			end
 		end
 		if frame and frame.panel then
 			self:StyleControls(frame.panel)
@@ -244,6 +255,9 @@ Module.StyleAchievements = function(self)
 	if _G.AchievementFrameStatsBG then
 		kit:HideTextures(_G.AchievementFrameStatsBG)
 	end
+	-- (Blizzard's frame up by `offset_y`, the window's top where it was:
+	-- its lists close under the band)
+	frame:SetAttribute("UIPanelLayout-yoffset", config.offset_y)
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "zoltun")
 	self.Window = window
@@ -263,6 +277,9 @@ Module.StyleAchievements = function(self)
 	if filter then
 		kit:StyleDropDown(filter, config.filter_offset, config.filter_inset)
 		kit:LineBand(self.Header, { filter })
+		-- (further in: clear of the iron's side)
+		local point, relative, relativePoint, x, y = filter:GetPoint()
+		filter:SetPoint(point, relative, relativePoint, x + config.filter_padding, y)
 	end
 
 	StylePanels()
@@ -326,13 +343,14 @@ Module.StyleAchievements = function(self)
 	header:SetAllPoints(self.Header)
 
 	-- the tabs as banners hanging from the window's foot, and any added
-	-- later, once it shows; the row under the band left to the list's filter
-	kit:AddTabStrip(self.Header)
+	-- later, once it shows
 	self:StyleTabs()
 	frame:HookScript("OnShow", function()
 		self:StyleTabs()
 		self:StyleOverachiever()
+		kit:StyleScrollBars(frame) -- (Diablo III's, an addon's pages' too)
 	end)
+	kit:StyleScrollBars(frame)
 	-- Overachiever's, as it adds them (it may do so once the window shows)
 	hooksecurefunc("PanelTemplates_SetNumTabs", function(panel)
 		if (panel == frame) then
@@ -341,10 +359,16 @@ Module.StyleAchievements = function(self)
 	end)
 end
 
+-- Blizzard's window, then Overachiever's tabs (loaded as it first shows:
+-- their controls, made after their pages, styled once they're all made).
 Module.ADDON_LOADED = function(self, event, addon)
 	if (addon == "Blizzard_AchievementUI") then
-		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleAchievements()
+	elseif (addon == "Overachiever_Tabs") and IsAddOnLoaded("Blizzard_AchievementUI") then
+		self:StyleOverachiever()
+	end
+	if IsAddOnLoaded("Blizzard_AchievementUI") and IsAddOnLoaded("Overachiever_Tabs") then
+		self:UnregisterEvent("ADDON_LOADED")
 	end
 end
 
@@ -359,7 +383,8 @@ Module.OnEnable = function(self)
 	end
 	if IsAddOnLoaded("Blizzard_AchievementUI") then
 		self:StyleAchievements()
-	else
+	end
+	if (not IsAddOnLoaded("Blizzard_AchievementUI")) or (not IsAddOnLoaded("Overachiever_Tabs")) then
 		self:RegisterEvent("ADDON_LOADED")
 	end
 end

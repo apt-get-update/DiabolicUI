@@ -299,6 +299,11 @@ function rectOf(widget)
 		return l, b, rw, rh
 	end
 	local anchor = s.points[1]
+	-- a scroll frame's child, not placed: at its top left (scrolled)
+	local scroller = s.parent and state[s.parent]
+	if (not anchor) and (not s.allPoints) and scroller and (scroller.scrollChild == widget) then
+		anchor = { "TOPLEFT", s.parent, "TOPLEFT", -(scroller.hScroll or 0), scroller.vScroll or 0 }
+	end
 	if anchor then
 		local point, relativeTo, relativePoint, x, y = unpack(anchor)
 		local rl, rb, rw, rh = 0, 0, 0, 0
@@ -1440,8 +1445,10 @@ local function showTooltipContent(self, kind, value, script, lines)
 	clearTooltip(self)
 	local s = state[self]
 	s[kind] = value
+	-- each line: { left, right, { r, g, b } of the left (gold by default), of the right }
 	for _, line in ipairs(lines or {}) do
-		addTooltipLine(self, line[1], line[2])
+		local l, r = line[3] or {}, line[4] or {}
+		addTooltipLine(self, line[1], line[2], l[1], l[2], l[3], r[1], r[2], r[3])
 	end
 	self:Show()
 	if script then
@@ -1626,8 +1633,10 @@ define(GameTooltip, {
 		local _, name = client.api.GetShapeshiftFormInfo(index)
 		if name then showTooltipContent(self, nil, nil, nil, { { name } }) end
 	end,
+	-- (world.spells[id].lines: its lines, as showTooltipContent takes them)
 	SetSpell = function(self, id)
-		showTooltipContent(self, "spell", id, "OnTooltipSetSpell", { { "Spell" } })
+		local spell = client.world.spells[id]
+		showTooltipContent(self, "spell", id, "OnTooltipSetSpell", spell and spell.lines or { { "Spell" } })
 	end,
 	-- (tabIndex, talentIndex, inspect, pet, talentGroup); no talents in the fake world
 	SetTalent = function(self, tab, index)

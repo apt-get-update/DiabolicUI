@@ -10,7 +10,6 @@ local kit
 
 -- Lua API
 local _G = _G
-local CreateFrame = _G.CreateFrame
 local ipairs = ipairs
 local math_max = math.max
 local math_min = math.min
@@ -38,9 +37,10 @@ Module.ShadeList = function(self)
 		local text, count = button and button:GetFontString(), _G["TradeSkillSkill" .. i .. "Count"]
 		local _, kind = GetTradeSkillInfo(button:GetID())
 		if text and button:IsShown() and inks[kind] then
-			-- the chosen one white on its copper bar
+			-- the chosen one white on its copper bar (a header never is:
+			-- Blizzard leaves the mark of the recipe the row showed before)
 			local r, g, b = 1, 1, 1
-			if (not button.isHighlighted) then
+			if (not button.isHighlighted) or (kind == "header") then
 				r, g, b = unpack(inks[kind])
 			end
 			text:SetTextColor(r, g, b)
@@ -105,10 +105,11 @@ Module.SpanHighlight = function(self)
 	local _, _, _, rowLeft = _G.TradeSkillSkill1:GetPoint()
 	local left = frame:GetWidth() + listRight - list:GetWidth() - insets[1] - rowLeft
 	local bar, holder = _G.TradeSkillHighlight, _G.TradeSkillHighlightFrame
+	local inset = self.config.highlight_inset -- (inside the parchment's torn edges)
 	bar:ClearAllPoints()
-	bar:SetPoint("TOPLEFT", holder, "TOPLEFT", left, 0)
-	bar:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", left, 0)
-	bar:SetWidth(list:GetWidth() + insets[1] + insets[3])
+	bar:SetPoint("TOPLEFT", holder, "TOPLEFT", left + inset, 0)
+	bar:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", left + inset, 0)
+	bar:SetWidth(list:GetWidth() + insets[1] + insets[3] - inset * 2)
 end
 
 -- A part moved `down` from where Blizzard put it.
@@ -126,8 +127,6 @@ Module.Layout = function(self)
 	local config = self.config
 	local frame = _G.TradeSkillFrame
 	local search, filter = _G.TradeSkillFrameEditBox, _G.TradeSkillFrameAvailableFilterCheckButton
-	search:ClearAllPoints()
-	search:SetPoint("TOPLEFT", frame, "TOPLEFT", unpack(config.search))
 	search:SetWidth(config.search_width)
 	kit:StyleEditBox(search)
 	-- the spellbook's search's look: its font, Blizzard's "Search" pale
@@ -166,6 +165,22 @@ Module.Layout = function(self)
 	for _, name in ipairs({ "TradeSkillCreateButton", "TradeSkillCancelButton" }) do
 		Lower(_G[name], config.buttons_lower)
 	end
+	-- how many to make: our box between our arrows (the pages'), in the
+	-- room between Create All and Create
+	local count = config.count
+	local less, box, more = _G.TradeSkillDecrementButton, _G.TradeSkillInputBox, _G.TradeSkillIncrementButton
+	kit:StylePager(less, more)
+	kit:StyleEditBox(box)
+	less:SetSize(count.arrow_size, count.arrow_size)
+	more:SetSize(count.arrow_size, count.arrow_size)
+	box:SetWidth(count.box_width)
+	box:SetJustifyH("CENTER")
+	less:ClearAllPoints()
+	less:SetPoint("LEFT", _G.TradeSkillCreateAllButton, "RIGHT", count.gap, 0)
+	box:ClearAllPoints()
+	box:SetPoint("LEFT", less, "RIGHT", kit.config.edit_padding, 0)
+	more:ClearAllPoints()
+	more:SetPoint("LEFT", box, "RIGHT", kit.config.edit_padding, 0)
 	_G.TradeSkillDescription:SetFontObject(config.description_font)
 	-- the reagents' rows apart for their icons' frames (InkReagents)
 	Lower(_G.TradeSkillReagent1, config.reagents_top)
@@ -188,33 +203,34 @@ Module.Layout = function(self)
 	kit:HideArt(_G.TradeSkillDetailScrollChildFrame, { "ui%-classtrainer%-detailheader" })
 	local icon = _G.TradeSkillSkillIcon
 	kit:AddBorder(icon, icon:GetWidth())
+	-- the reagents' names smaller, wider: most on one line
 	for i = 1, _G.MAX_TRADE_SKILL_REAGENTS do
 		local plate = _G["TradeSkillReagent" .. i .. "NameFrame"]
 		if plate then
 			plate:SetAlpha(0)
 		end
+		local name = _G["TradeSkillReagent" .. i .. "Name"]
+		if name then
+			name:SetFontObject(config.reagent_font)
+			name:SetWidth(config.reagent_name_width)
+		end
 	end
 end
 
--- The band's medallion (the spellbook's), the profession's icon round
--- over its glass: made as the window first updates (its band is the
--- panel's, made as Blizzard's addon loads).
-Module.UpdateMedallion = function(self)
-	local holder = self.Medallion
+-- The profession's icon socketed in the title plate, the search at the
+-- band's left end: as the window first updates (its band and plate are
+-- the panel's, made as Blizzard's addon loads).
+Module.UpdateGem = function(self)
+	local holder = self.Gem
 	if (not holder) then
 		local header = _G.TradeSkillFrameTitleText.DiabolicHeader
 		if (not header) then
 			return
 		end
-		local medallion = kit:AddMedallion(header, "swords")
-		local glass = self:GetDB("Blizzard").character.spec
-		local size = medallion:GetWidth() * glass.glass
-		holder = CreateFrame("Frame", nil, _G.TradeSkillFrame)
-		holder:SetFrameLevel(header:GetFrameLevel() + 2)
-		holder:SetSize(size, size)
-		holder:SetPoint("CENTER", medallion, "CENTER", unpack(glass.glass_offset))
-		holder.icon = kit:AddMedallionIcon(medallion, holder)
-		self.Medallion = holder
+		holder = kit:AddTitleGem(header)
+		holder:EnableMouse(false)
+		kit:LineBand(header, { _G.TradeSkillFrameEditBox })
+		self.Gem = holder
 	end
 	-- the profession's spell, by its name (Mining's its own)
 	local texture = select(3, GetSpellInfo((GetTradeSkillLine())))
@@ -232,7 +248,7 @@ Module.StyleTradeSkill = function(self)
 	self:SpanHighlight()
 	hooksecurefunc("TradeSkillFrame_Update", function()
 		self:ShadeList()
-		self:UpdateMedallion()
+		self:UpdateGem()
 	end)
 	hooksecurefunc("TradeSkillFrame_SetSelection", function(id)
 		self:InkReagents(id)

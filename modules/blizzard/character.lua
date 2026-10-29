@@ -4,9 +4,9 @@
 -- the window's edge over the red band, the level in the band, the tabs as
 -- buttons in a row under it. The character tab in two columns, the window
 -- wider for it: the gear around a tall model in a stone pane, the
--- character's home city behind it (its race's capital); on the
--- right, in pages under their own tabs, the GearScore and two groups of
--- stats, the titles, and the equipment manager (its buttons as icons
+-- character's home city behind it (its race's capital), the GearScore
+-- in its bottom; on the right, in pages under their own tabs, the level
+-- (under the top one) and two groups of stats, the titles, and the equipment manager (its buttons as icons
 -- beside its sets, a "+" for a new set). No round portrait in its corner but
 -- the talent spec's icon in the band instead (its points on hover, the
 -- talents on a click); the companions in panels, a faction's details in
@@ -176,17 +176,11 @@ local Spec_OnLeave = function(self)
 	_G.GameTooltip:Hide()
 end
 
--- The spec's icon in the band's medallion, round, over its glass (its
--- swords show until there's a spec).
+-- The spec's icon socketed in the title plate, on every tab (only the
+-- plate's cross until there's a spec): its points in its tooltip, a click
+-- for the talents.
 Module.CreateSpec = function(self)
-	local config = self.config.spec
-	local medallion = self.Medallion
-	local size = medallion:GetWidth() * config.glass
-	local button = CreateFrame("Button", nil, _G.PaperDollFrame)
-	button:SetFrameLevel(self.Header:GetFrameLevel() + 2)
-	button:SetSize(size, size)
-	button:SetPoint("CENTER", medallion, "CENTER", unpack(config.glass_offset))
-	button.icon = kit:AddMedallionIcon(medallion, button)
+	local button = kit:AddTitleGem(self.Header)
 	button:SetScript("OnEnter", Spec_OnEnter)
 	button:SetScript("OnLeave", Spec_OnLeave)
 	button:SetScript("OnClick", function() _G.ToggleTalentFrame() end)
@@ -244,7 +238,14 @@ Module.LayoutPaperDoll = function(self, window)
 	panel:SetPoint("TOP", pane, "TOP", 0, layout.model_top + inset)
 	panel:SetSize(width + inset * 2, height + inset * 2)
 	kit:StylePane(panel, true) -- (Diablo III's stone around your home city)
+	panel.DiabolicContent = true
 	self:AddScene(panel)
+	-- the GearScore and average item level in its bottom, as the
+	-- inspected one's (gearscore.lua)
+	local score = _G.CharacterModelFrame:CreateFontString(nil, "OVERLAY")
+	score:SetFontObject(self:GetDB("Blizzard").gearscore.font)
+	score:SetPoint("BOTTOM", panel, "BOTTOM", 0, self:GetDB("Blizzard").gearscore.inspect_offset)
+	self.Score = score
 	-- the model's frame past the panel's top and bottom, as the dressing
 	-- room's is past its picture: the client frames the character larger
 	-- and lower in it, its feet on the scene's floor. Its mouse (turning it,
@@ -259,10 +260,8 @@ Module.LayoutPaperDoll = function(self, window)
 	turn:ClearAllPoints()
 	turn:SetPoint("TOPLEFT", panel, "TOPLEFT", inset, -inset)
 
-	-- the resistances in the panel's corner, the title's dropdown over it
-	local resistances = _G.CharacterResistanceFrame
-	resistances:ClearAllPoints()
-	resistances:SetPoint("TOPRIGHT", panel, "TOPRIGHT", unpack(layout.resistance_offset))
+	-- (the resistances: the right column's, CreateColumn), the title's
+	-- dropdown
 	local titles = _G.PlayerTitleFrame
 	titles:ClearAllPoints()
 	titles:SetPoint("TOP", pane, "TOP", 0, layout.title_top)
@@ -358,7 +357,7 @@ local HideClose = function(button)
 end
 
 -- The right column in pages under its own tabs (Pretty GUI's sidebar):
--- the GearScore and two groups of stats (the ones Blizzard's dropdowns
+-- the level (under the top one) and two groups of stats (the ones Blizzard's dropdowns
 -- chose; a click on their title bar shows the next), the titles, the
 -- equipment manager.
 local STAT_PREFIX = "DiabolicUICharacterStats"
@@ -386,6 +385,7 @@ Module.CreateColumn = function(self, window)
 	column:SetPoint("TOPLEFT", window, "TOPLEFT", layout.pane_width + spec.left, spec.top)
 	column:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -spec.right, spec.bottom)
 	kit:StylePanel(column)
+	column.DiabolicContent = true
 	-- Diablo III's stats panel in it, inside its bronze line
 	local art = column:CreateTexture(nil, "BACKGROUND")
 	art:SetTexture(layout.stats_panel)
@@ -409,17 +409,45 @@ Module.CreateColumn = function(self, window)
 	stats:SetPoint("BOTTOMRIGHT", page, "BOTTOMRIGHT", 0, 0)
 	self.Stats = stats
 
-	-- the GearScore, big in its color, the average item level under it
-	header = CreateSection(stats, spec, y, "GearScore")
-	local score = stats:CreateFontString(nil, "OVERLAY")
-	score:SetFont(unpack(layout.score_font))
-	score:SetPoint("TOP", header, "BOTTOM", 0, -spec.score_gap)
-	local level = stats:CreateFontString(nil, "OVERLAY")
-	level:SetFont(unpack(layout.stat_label_font))
-	level:SetTextColor(unpack(layout.stat_label_color))
-	level:SetPoint("TOP", score, "BOTTOM", 0, -2)
-	self.Score, self.ItemLevel = score, level
-	y = y - spec.header_height - spec.score_height
+	-- the resistances in a section of their own at the top of the stats,
+	-- in a row, centred: square, in the action buttons' border, their
+	-- value in its corner; the groups under them
+	CreateSection(stats, spec, y, L["Resistances"])
+	y = y - spec.header_height - spec.header_gap - spec.resistance_top
+	local size, gap, crop = spec.resistance_size, spec.resistance_gap, spec.resistance_crop
+	for i = 1, 5 do
+		local resistance = _G["MagicResFrame" .. i]
+		resistance:SetParent(stats)
+		resistance:SetFrameLevel(stats:GetFrameLevel() + 1)
+		resistance:SetSize(size, size)
+		resistance:ClearAllPoints()
+		if (i == 1) then
+			resistance:SetPoint("TOPLEFT", stats, "TOP", -(5 * size + 4 * gap) / 2, y)
+		else
+			resistance:SetPoint("LEFT", _G["MagicResFrame" .. (i - 1)], "RIGHT", gap, 0)
+		end
+		-- its school's icon without Blizzard's bevel
+		for _, region in ipairs({ resistance:GetRegions() }) do
+			if region:IsObjectType("Texture") then
+				local left, top, _, bottom, right = region:GetTexCoord()
+				local x, v = crop / 32 * (right - left), crop / 29 * (bottom - top)
+				region:SetTexCoord(left + x, right - x, top + v, bottom - v)
+				region:ClearAllPoints()
+				region:SetAllPoints()
+			end
+		end
+		kit:AddBorder(resistance, size)
+		-- (over the border: on a frame of its own above it)
+		local over = CreateFrame("Frame", nil, resistance)
+		over:SetAllPoints()
+		over:SetFrameLevel(resistance:GetFrameLevel() + 1)
+		local value = _G["MagicResText" .. i]
+		value:SetParent(over)
+		value:SetFont(layout.stat_value_font[1], layout.stat_value_font[2], "OUTLINE")
+		value:ClearAllPoints()
+		value:SetPoint("BOTTOMRIGHT", resistance, "BOTTOMRIGHT", -2, 2)
+	end
+	y = y - size - spec.group_gap
 
 	-- the stats, Blizzard's lines (StatFrameTemplate) filled by its own
 	-- UpdatePaperdollStats each time it updates its two columns
@@ -484,9 +512,10 @@ Module.CreatePages = function(self, column)
 				tabs[i]:Enable()
 			end
 			kit:UpdateTab(tabs[i])
-			-- (the others' icons dimmed, as the tabs' text)
+			-- (the others' icons grey and dimmed, the chosen one in colour)
 			local shade = (i == chosen) and 1 or spec.icon_dim
 			tabs[i].Icon:SetVertexColor(shade, shade, shade)
+			tabs[i].Icon:SetDesaturated(i ~= chosen)
 		end
 	end
 	for i, name in ipairs(PAGES) do
@@ -647,9 +676,7 @@ Module.UpdateScore = function(self)
 	local gearScore = Engine:GetModule("Blizzard: GearScore")
 	local score, level = gearScore:GetUnitScore("player")
 	if score then
-		self.Score:SetText(score)
-		self.Score:SetTextColor(gearScore:GetColor(score))
-		self.ItemLevel:SetText(_G.ITEM_LEVEL:format(math_floor(level)))
+		self.Score:SetText(gearScore:FormatUnit(score, math_floor(level)))
 	end
 end
 
@@ -945,6 +972,35 @@ Module.StyleTokens = function(self)
 		end
 	end
 	kit:StyleScrollBars(frame)
+	self:StyleTokenPopup()
+end
+
+-- A currency's options (their popup) as the equipment manager's: a dark
+-- panel right of the window, under its tabs, the windows' X, our boxes.
+Module.StyleTokenPopup = function(self)
+	local config = self.config
+	local popup = _G.TokenFramePopup
+	if (not popup) or popup.DiabolicStyled then
+		return
+	end
+	popup.DiabolicStyled = true
+	kit:HideTextures(popup)
+	kit:StylePanel(popup)
+	popup:SetBackdropColor(unpack(config.popup_color))
+	popup:ClearAllPoints()
+	popup:SetPoint("TOPLEFT", self.Backdrop, "TOPRIGHT", unpack(config.token_popup_offset))
+	_G.TokenFramePopupTitle:SetTextColor(unpack(kit.config.title_plate.color))
+	local close = _G.TokenFramePopupCloseButton
+	kit:SkinClose(close)
+	close:ClearAllPoints()
+	close:SetPoint("TOPRIGHT", popup, "TOPRIGHT", -config.token_popup_close, -config.token_popup_close)
+	local unused, backpack = _G.TokenFramePopupInactiveCheckBox, _G.TokenFramePopupBackpackCheckBox
+	for _, box in ipairs({ unused, backpack }) do
+		kit:StyleCheckBox(box)
+	end
+	-- apart (Blizzard's overlap their art's empty edges, ours have none)
+	backpack:ClearAllPoints()
+	backpack:SetPoint("TOPLEFT", unused, "BOTTOMLEFT", 0, -config.token_popup_box_gap)
 end
 
 -- `unit`'s home city's art (DressUpTexturePath's, for any unit).
@@ -1031,6 +1087,68 @@ Module.StyleInspect = function(self)
 	if _G.InspectTalentFramePointsBar then
 		kit:HideTextures(_G.InspectTalentFramePointsBar)
 	end
+	-- the level line in Diablo III's capitals
+	_G.InspectLevelText:SetFontObject(self.config.level_font)
+	self:StyleInspectTrees()
+end
+
+-- The inspected one's talent trees (Blizzard's tabs) as their icons in the
+-- action buttons' border, in a row over the tree's panel: the one shown
+-- in color, the others grey, each one's name and points in its tooltip.
+Module.StyleInspectTrees = function(self)
+	local config = self.config.inspect_trees
+	local talents = _G.InspectTalentFrame
+	local tabs = {}
+	for i = 1, 3 do
+		local tab = _G["InspectTalentFrameTab" .. i]
+		if tab then
+			local name = tab:GetName()
+			for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled" }) do
+				if _G[name .. part] then
+					_G[name .. part]:SetAlpha(0)
+				end
+			end
+			if tab:GetHighlightTexture() then
+				tab:GetHighlightTexture():SetAlpha(0)
+			end
+			tab.DiabolicIcon = tab:CreateTexture(nil, "ARTWORK")
+			tab.DiabolicIcon:SetAllPoints()
+			tab.DiabolicIcon:SetTexCoord(.08, .92, .08, .92)
+			kit:AddBorder(tab, config.size)
+			tab:ClearAllPoints()
+			if (i == 1) then
+				tab:SetPoint("BOTTOMLEFT", _G.InspectTalentFrameScrollFrame, "TOPLEFT", unpack(config.offset))
+			else
+				tab:SetPoint("LEFT", tabs[i - 1], "RIGHT", config.gap, 0)
+			end
+			tab:HookScript("OnEnter", function()
+				local tree, _, points = GetTalentTabInfo(i, talents.inspect, talents.pet, talents.talentGroup)
+				if tree then
+					_G.GameTooltip:SetOwner(tab, "ANCHOR_RIGHT")
+					_G.GameTooltip:SetText(_G.MASTERY_POINTS_SPENT:format(tree, points))
+				end
+			end)
+			tab:HookScript("OnLeave", function() _G.GameTooltip:Hide() end)
+			tabs[i] = tab
+		end
+	end
+	-- (Blizzard names and sizes them on each update: the names out of
+	-- sight again, in the tooltips only)
+	local Update = function()
+		local shown = _G.PanelTemplates_GetSelectedTab(talents)
+		for i, tab in ipairs(tabs) do
+			local text = tab:GetFontString() or _G[tab:GetName() .. "Text"]
+			if text then
+				text:Hide()
+			end
+			tab:SetSize(config.size, config.size)
+			local _, icon = GetTalentTabInfo(i, talents.inspect, talents.pet, talents.talentGroup)
+			tab.DiabolicIcon:SetTexture(icon)
+			tab.DiabolicIcon:SetDesaturated(i ~= shown)
+		end
+	end
+	hooksecurefunc("InspectTalentFrame_UpdateTabs", Update)
+	Update()
 end
 
 -- A faction's details (their popup) as the equipment manager's: a dark
@@ -1173,22 +1291,25 @@ Module.StyleCharacter = function(self)
 	-- the red band on top, the name (the pet's or the companions' on the
 	-- pet tab) in the plate on the window's edge, no round portrait
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
-	self.Medallion = kit:AddMedallion(self.Header, "swords")
 	_G.CharacterFramePortrait:SetAlpha(0)
 	kit:SetTitle(self.Header, _G.CharacterNameText)
 	if _G.PetNameText then
 		kit:SetTitle(self.Header, _G.PetNameText)
 	end
-	-- the level line out of sight: the stats' page has the level
+	-- no level line ("Level 80 Dwarf Priest") nor guild: the level's in
+	-- the stats column under the top level
 	_G.CharacterLevelText:SetAlpha(0)
 	if _G.CharacterGuildText then
 		_G.CharacterGuildText:SetAlpha(0)
 	end
 
-	-- the close button in the band's right end
+	-- the close button on the iron's corner, the band dropped (nothing in
+	-- it) and Blizzard's frame up into its room (config.insets)
 	if _G.CharacterFrameCloseButton then
 		kit:StyleClose(_G.CharacterFrameCloseButton, window, self.Header)
 	end
+	kit:DropBand(self.Header)
+	frame:SetAttribute("UIPanelLayout-yoffset", config.header_height)
 
 	-- dark dropdowns
 	for _, dropdown in ipairs(DROPDOWNS) do

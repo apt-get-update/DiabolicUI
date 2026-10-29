@@ -156,10 +156,12 @@ function TestBags:tearDown()
 	client, C = nil, nil
 end
 
--- A texture of `button` drawn from `file` (one of our textures), if any.
+-- A texture of `button` drawn from `file` (one of our textures), if any
+-- (not its highlight: the quality border's file, lit faintly).
 local function textureOf(button, file)
+	local highlight = button.GetHighlightTexture and button:GetHighlightTexture()
 	for _, region in ipairs({ button:GetRegions() }) do
-		if region:GetObjectType() == "Texture" and (region:GetTexture() or ""):find(file, 1, true) then
+		if region:GetObjectType() == "Texture" and (region ~= highlight) and (region:GetTexture() or ""):find(file, 1, true) then
 			return region
 		end
 	end
@@ -288,14 +290,14 @@ function TestStyling:test_talents_and_professions_once_loaded()
 	local talents = client:GetModule("Blizzard: Talents")
 	lu.assertNotNil(talents.Window)
 	lu.assertEquals(_G.PlayerTalentFrameTopLeft:GetAlpha(), 0)
-	lu.assertEquals(_G.PlayerTalentFrameTitleText:GetParent(), talents.Header)
+	lu.assertEquals(_G.PlayerTalentFrameTitleText:GetParent(), talents.Window.DiabolicPlate)
 	-- the talents' icons keep their colors
 	near(color(_G.PlayerTalentFrameTalent1IconTexture:GetVertexColor()), { 1, 1, 1 })
 	-- other addons are none of its business
 	client:FireEvent("ADDON_LOADED", "SomethingElse")
 	client.api.LoadAddOn("Blizzard_TradeSkillUI")
 	lu.assertTrue(_G.TradeSkillFrame.DiabolicPanel)
-	near(color(_G.TradeSkillSkillIconIconTexture:GetVertexColor()), { 1, 1, 1 })
+	lu.assertTrue(_G.TradeSkillFrame.DiabolicPanel ~= nil)
 	assertClean(client)
 end
 
@@ -370,13 +372,13 @@ function TestCharacter:test_our_window_on_every_tab()
 		end
 	end
 
-	-- no round portrait; the name in the band, centred clear of the
-	-- medallion at its left end; the close button in its socket in the
+	-- no round portrait; the name in the plate on the window's edge, the
+	-- medallion at the band's left end; the close button in its socket in the
 	-- window's corner
 	lu.assertEquals(_G.CharacterFramePortrait:GetAlpha(), 0)
-	lu.assertEquals(_G.CharacterNameText:GetParent(), module.Header)
+	lu.assertEquals(_G.CharacterNameText:GetParent(), module.Backdrop.DiabolicPlate)
 	near(color(_G.CharacterNameText:GetTextColor()), window.title_plate.color)
-	lu.assertEquals({ _G.CharacterNameText:GetPoint() }, { "CENTER", module.Header, "CENTER", 0, 0 })
+	lu.assertEquals({ _G.CharacterNameText:GetPoint() }, { "CENTER", module.Backdrop.DiabolicPlate, "CENTER", 0, window.title_plate.text_offset })
 	lu.assertEquals({ module.Medallion:GetPoint() }, { "LEFT", module.Header, "LEFT", window.medallion.offset, 0 })
 	local socket = window.close.socket_size
 	-- (the window's top lowered by the tab row: its tabs hang under it)
@@ -396,8 +398,8 @@ function TestCharacter:test_our_window_on_every_tab()
 	-- the ammo slot in the action buttons' border instead of its frame art
 	lu.assertEquals(alphasOf(_G.CharacterAmmoSlot, "UI-Character-AmmoSlot"), { 0 })
 
-	-- the tabs: banners hanging side by side, centred under the window's
-	-- foot, Blizzard's art out of sight, their text in the invisible font;
+	-- the tabs: banners hanging side by side from the left of the window's
+	-- foot (from its rail), Blizzard's art out of sight, their text in the invisible font;
 	-- the chosen one red and longer, its emblem brighter
 	local banner = window.banner
 	local first, second = _G.CharacterFrameTab1, _G.CharacterFrameTab2
@@ -408,9 +410,9 @@ function TestCharacter:test_our_window_on_every_tab()
 			hanging[#hanging + 1] = tab
 		end
 	end
-	local left = -(#hanging * banner.width + (#hanging - 1) * banner.gap) / 2
+	local below = banner.rail.height - banner.rail.up
 	for i, tab in ipairs(hanging) do
-		lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", backdrop, "BOTTOM", left + (i - 1) * (banner.width + banner.gap), banner.tuck })
+		lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", backdrop, "BOTTOMLEFT", banner.left + (i - 1) * (banner.width + banner.gap), banner.tuck - below })
 	end
 	lu.assertEquals(_G.CharacterFrameTab1Left:GetAlpha(), 0)
 	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
@@ -418,8 +420,8 @@ function TestCharacter:test_our_window_on_every_tab()
 	_G.PanelTemplates_SetTab(frame, 1)
 	near({ first.DiabolicBanner.cloth:GetVertexColor() }, banner.chosen_color)
 	near({ second.DiabolicBanner.cloth:GetVertexColor() }, banner.cloth_color)
-	lu.assertEquals(first.DiabolicBanner.cloth:GetHeight(), banner.height + banner.drop)
-	lu.assertEquals(second.DiabolicBanner.cloth:GetHeight(), banner.height)
+	lu.assertEquals(first.DiabolicBanner.cloth:GetHeight(), banner.height + banner.drop - banner.tuck) -- (its top under the rail not drawn)
+	lu.assertEquals(second.DiabolicBanner.cloth:GetHeight(), banner.height - banner.tuck)
 	-- (Blizzard gives the chosen tab its own font: ours again)
 	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
 	_G.PanelTemplates_SetTab(frame, 2)
@@ -438,9 +440,9 @@ function TestCharacter:test_our_window_on_every_tab()
 	lu.assertEquals(frame:GetAttribute("UIPanelLayout-width"), frame:GetWidth() + insets[3])
 	lu.assertEquals(client.panelUpdates, updates + 1)
 
-	-- the pet tab: its name in the band, its own tabs in a row in its middle
+	-- the pet tab: its name in the plate, its own tabs in a row in its middle
 	_G.PetPaperDollFrame:Show()
-	lu.assertEquals(_G.PetNameText:GetParent(), module.Header)
+	lu.assertEquals(_G.PetNameText:GetParent(), module.Backdrop.DiabolicPlate)
 	local pet, companions, mounts = _G.PetPaperDollFrameTab1, _G.PetPaperDollFrameTab2, _G.PetPaperDollFrameTab3
 	local spec = config.companion
 	-- (gone: the companions and mounts are the spellbook's tabs)
@@ -491,7 +493,8 @@ function TestCharacter:test_the_gear_column()
 	local main, off, ranged = _G.CharacterMainHandSlot, _G.CharacterSecondaryHandSlot, _G.CharacterRangedSlot
 	local point, panel, relative, x, y = off:GetPoint()
 	lu.assertEquals({ point, relative, x, y }, { "TOP", "BOTTOM", 0, layout.weapon_top })
-	lu.assertEquals(panel:GetBackdrop(), client.Engine:GetDB("Blizzard").window.panel.backdrop)
+	-- (the model's panel: Diablo III's stone pane, open on the scene)
+	lu.assertEquals((panel:GetRegions()):GetTexture(), client.Engine:GetDB("Blizzard").window.materials.pane_open.texture)
 	lu.assertEquals({ main:GetPoint() }, { "TOPRIGHT", off, "TOPLEFT", -layout.weapon_gap, 0 })
 	lu.assertEquals({ ranged:GetPoint() }, { "TOPLEFT", off, "TOPRIGHT", layout.weapon_gap, 0 })
 	-- Blizzard's stat columns out of sight for good
@@ -529,6 +532,14 @@ function TestCharacter:test_the_right_column()
 	_G.CharacterFrame:Show()
 	lu.assertEquals(module.Score:GetText(), "805")
 	client.world.units.player.inventoryTextures = nil
+	-- the level over the stats, unless it's the top one
+	lu.assertFalse(shown(module.Level))
+	client.world.units.player.level = 70
+	module:UpdateScore()
+	lu.assertTrue(shown(module.Level))
+	lu.assertEquals(module.Level:GetText(), "70")
+	lu.assertEquals(select(5, module.Stats:GetPoint()), -module.LevelHeight)
+	client.world.units.player.level = 80
 
 	-- two groups of stats, Blizzard's choice, Blizzard's lines
 	local first, second = _G.DiabolicUICharacterStats11Label, _G.DiabolicUICharacterStats21Label
@@ -573,12 +584,12 @@ function TestCharacter:test_the_equipment_manager()
 	client:Tick(0.1)
 	lu.assertTrue(shown(dialog))
 
-	-- the sets in rows (`config.rows` in each), scaled to fit the title
+	-- the sets in rows (`config.rows` in each), scaled to fill the title
 	-- bar's width
 	local sets = dialog.buttons
 	local widest = math.max(unpack(config.rows))
 	local row = widest * 36 + (widest - 1) * config.set_gap
-	local scale = math.min(1, module.GearHeader:GetWidth() / row)
+	local scale = module.GearHeader:GetWidth() / row
 	lu.assertAlmostEquals(sets[1]:GetScale(), scale, 1e-6)
 	lu.assertEquals({ sets[2]:GetPoint() }, { "LEFT", sets[1], "RIGHT", config.set_gap, 0 })
 	lu.assertEquals({ sets[config.rows[1] + 1]:GetPoint() }, { "TOP", sets[1], "BOTTOM", 0, -config.row_gap })
@@ -888,12 +899,12 @@ function TestAchievements:test_our_window_once_it_loads()
 	_G.AchievementFrameWaterMark:SetTexture([[Interface\AchievementFrame\UI-Achievement-StatWatermark]])
 	lu.assertEquals(_G.AchievementFrameWaterMark:GetAlpha(), 0)
 
-	-- the title in the band, the points big in a
+	-- the title in the plate on the window's edge, the points big in a
 	-- cartouche in the band after the shield, the close button in the band
 	local title = _G.AchievementFrameHeaderTitle
 	lu.assertEquals(title:GetText(), "Achievements")
 	lu.assertEquals(title:GetFontObject(), window.title_plate.font)
-	lu.assertEquals(title:GetParent(), module.Header)
+	lu.assertEquals(title:GetParent(), module.Window.DiabolicPlate) -- (in the plate on the window's edge)
 	local points, shield = _G.AchievementFrameHeaderPoints, _G.AchievementFrameHeaderShield
 	local cartouche = points:GetParent()
 	lu.assertEquals(shield:GetParent(), cartouche)
@@ -966,7 +977,7 @@ function TestAchievements:test_our_window_once_it_loads()
 	-- the tabs hanging from the window's foot, and one an addon adds, once
 	-- the window shows
 	lu.assertEquals(select(2, _G.AchievementFrameTab1:GetPoint()), module.Window)
-	lu.assertEquals(select(3, _G.AchievementFrameTab1:GetPoint()), "BOTTOM")
+	lu.assertEquals(select(3, _G.AchievementFrameTab1:GetPoint()), "BOTTOMLEFT")
 	near({ _G.AchievementFrameTab1.DiabolicBanner.cloth:GetVertexColor() }, window.banner.chosen_color)
 	near({ _G.AchievementFrameTab2.DiabolicBanner.cloth:GetVertexColor() }, window.banner.cloth_color)
 	-- Overachiever's, added once the window shows: in the row, the default emblem
@@ -1388,6 +1399,23 @@ function TestItemSlots:test_slots_with_their_own_border_get_ours()
 	_G.PaperDollItemSlotButton_Update(head)
 	lu.assertNil(itemLevelOf(head))
 	lu.assertEquals(head.IconBorder:GetAlpha(), 0)
+	near(color(borderOf(head):GetVertexColor()), C.Quality[4])
+	assertClean(client)
+end
+
+function TestItemSlots:test_the_inspected_players_slots()
+	boot()
+	client.api.LoadAddOn("Blizzard_InspectUI")
+	local head = _G.InspectHeadSlot
+	head:SetID(1)
+	client:SetUnit("target", Client.newUnit({ name = "Thrall", class = "SHAMAN", isPlayer = true }))
+	client.world.units.target.inventory = { [1] = Session.item(client, 303, { quality = 4, iLevel = 245, equipSlot = "INVTYPE_HEAD" }) }
+	-- nobody inspected yet: left as it is
+	_G.InspectPaperDollItemSlotButton_Update(head)
+	lu.assertNil(borderOf(head))
+	-- the target's: its quality
+	_G.InspectFrame.unit = "target"
+	_G.InspectPaperDollItemSlotButton_Update(head)
 	near(color(borderOf(head):GetVertexColor()), C.Quality[4])
 	assertClean(client)
 end

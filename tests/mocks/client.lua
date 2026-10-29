@@ -532,7 +532,7 @@ function Client.new(options)
 end
 
 -- Loads the addon from the .toc and runs the login sequence.
--- options: class, world = function(world, client), savedVariables = { DiabolicUI_DB = ... },
+-- options: class, world = function(world, client), savedVariables = { DiabolicUI_DB = ..., DiabolicUI_Layout = ... },
 -- login = false to stop after loading the files.
 function Client.boot(options)
 	options = options or {}
@@ -546,7 +546,7 @@ function Client.boot(options)
 	end
 	-- like in game: the saved variables replace whatever the files set,
 	-- after they ran and before ADDON_LOADED
-	for _, name in ipairs({ "DiabolicUI_DB", "DiabolicUI_Minimap_DB" }) do
+	for _, name in ipairs({ "DiabolicUI_DB", "DiabolicUI_Minimap_DB", "DiabolicUI_Layout" }) do
 		local saved = options.savedVariables and options.savedVariables[name]
 		if saved ~= nil then
 			rawset(_G, name, saved)

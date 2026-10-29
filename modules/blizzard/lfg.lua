@@ -109,7 +109,9 @@ Module.StyleLFG = function(self)
 		end
 		local random = _G.LFDQueueFrameRandomScrollFrame
 		if random then
-			random:SetHeight(random:GetHeight() + grow)
+			local point, relative, relativePoint, x, y = random:GetPoint()
+			random:SetPoint(point, relative, relativePoint, x, y + config.random_raise)
+			random:SetHeight(random:GetHeight() + grow - config.random_raise)
 		end
 	end
 	if _G.LFRParentFrame then
@@ -127,12 +129,19 @@ Module.StyleLFG = function(self)
 		-- its lists' zones across the window, their rows further left
 		-- (Blizzard's lists reach under its right side)
 		local window, insets, margins = header:GetParent(), config.list_panel_insets, config.raid_list_margins
+		-- (the browse list's up, clear of its foot, its column names too)
 		for _, name in ipairs({ "LFRQueueFrameSpecificListButton1", "LFRBrowseFrameListButton1" }) do
 			local row = _G[name]
 			if row then
 				local point, relative, relativePoint, x, y = row:GetPoint()
-				row:SetPoint(point, relative, relativePoint, x - config.raid_rows_left, y)
+				local raise = (name == "LFRBrowseFrameListButton1") and config.raid_browse_raise or 0
+				row:SetPoint(point, relative, relativePoint, x - config.raid_rows_left, y + raise)
 			end
+		end
+		local names = _G.LFRBrowseFrameColumnHeader1
+		if names then
+			local point, relative, relativePoint, x, y = names:GetPoint()
+			names:SetPoint(point, relative, relativePoint, x, y + config.raid_headers_raise)
 		end
 		local Across = function(zone, frame, top, bottom)
 			zone:ClearAllPoints()
@@ -148,7 +157,7 @@ Module.StyleLFG = function(self)
 				Across(zone, list, (name == "LFRBrowseFrameListScrollFrame") and config.raid_browse_top or insets[2], insets[4])
 				-- the queue's down to over its foot: its room under it as over it
 				if (name == "LFRQueueFrameSpecificListScrollFrame") then
-					zone:SetPoint("BOTTOM", _G.LFRQueueFrameFindGroupButton, "TOP", 0, kit.config.footer_margin + config.raid_queue_gap)
+					zone:SetPoint("BOTTOM", _G.LFRQueueFrameFindGroupButton, "TOP", 0, kit:FootReach() + config.raid_queue_gap)
 				end
 			end
 		end
@@ -227,9 +236,6 @@ end
 Module.AddDungeonRows = function(self, count)
 	local first = _G.NUM_LFD_CHOICE_BUTTONS
 	local list = _G.LFDQueueFrameSpecificListScrollFrame
-	if (not first) or (not list) or (count < 1) then
-		return 0
-	end
 	local last = _G["LFDQueueFrameSpecificListButton" .. first]
 	local point, _, relativePoint, x, y = list:GetPoint(2) -- (its bottom right, on the last row's)
 	for i = first + 1, first + count do

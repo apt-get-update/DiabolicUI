@@ -98,6 +98,7 @@ local function constants()
 		PLAYERSTAT_DROPDOWN_OPTIONS = { "PLAYERSTAT_BASE_STATS", "PLAYERSTAT_MELEE_COMBAT", "PLAYERSTAT_RANGED_COMBAT",
 			"PLAYERSTAT_SPELL_COMBAT", "PLAYERSTAT_DEFENSES" },
 		-- the windows' (FriendsFrame.lua, SpellBookFrame.lua, QuestInfo.lua)
+		NUM_LFD_CHOICE_BUTTONS = 15, -- LFDFrame.lua
 		WHOS_TO_DISPLAY = 17, FRIENDS_FRAME_WHO_HEIGHT = 16, MAX_OBJECTIVES = 10, NUM_FACTIONS_DISPLAYED = 15,
 		WHOFRAME_DROPDOWN_LIST = { { name = "Zone", sortType = "zone" }, { name = "Guild", sortType = "guild" },
 			{ name = "Race", sortType = "race" } },
@@ -443,7 +444,7 @@ local function fromFrameXML(addon)
 	end
 	local made, fresh = {}, {}
 	for _, entry in ipairs(entries) do
-		local id, kind, name, parent, size, anchor, file, text, hide, layer, role = unpack(entry, 1, 11)
+		local id, kind, name, parent, size, anchor, file, text, hide, layer, role, number = unpack(entry, 1, 12)
 		local owner = (type(parent) == "number") and made[parent] or rawget(_G, parent)
 		local object = name and rawget(_G, name)
 		local key = role and BUTTON_ROLES[role]
@@ -455,6 +456,8 @@ local function fromFrameXML(addon)
 			fresh[#fresh + 1] = { object, owner, size, anchor }
 			if key then
 				state[owner][key] = object
+			elseif (role == "scrollChild") then
+				owner:SetScrollChild(object)
 			end
 			if file and object.SetTexture then
 				object:SetTexture(file)
@@ -468,6 +471,9 @@ local function fromFrameXML(addon)
 			end
 			if hide then
 				hidden(object)
+			end
+			if number and object.SetID then
+				object:SetID(number)
 			end
 		end
 		made[id] = object
@@ -954,6 +960,9 @@ local function buildFrames()
 	button("CheckButton", "GameTimeFrame", minimap)
 
 	fromFrameXML(nil)
+	-- the Dungeon Finder's list over its rows, made by hand before them
+	scroll:SetPoint("TOPLEFT", _G.LFDQueueFrameSpecificListButton1, "TOPLEFT", 0, 7)
+	scroll:SetPoint("BOTTOMRIGHT", _G.LFDQueueFrameSpecificListButton15, "BOTTOMRIGHT", 1, -7)
 end
 
 -- Frames of Blizzard's load-on-demand addons, made by LoadAddOn.
@@ -986,22 +995,103 @@ local ON_DEMAND = {
 		_G.PlayerTalentFrame_UpdateControls = function() end
 		_G.PlayerTalentFrame_UpdateTabs = function() end -- (names the tabs after the trees)
 	end,
-	Blizzard_TradeSkillUI = function()
-		local trade = hidden(new("Frame", "TradeSkillFrame", _G.UIParent))
-		new("Texture", "TradeSkillFramePortrait", trade)
-		new("Texture", "TradeSkillFrameBottomLeftTexture", trade)
-		new("FontString", "TradeSkillFrameTitleText", trade)
-		new("Frame", "TradeSkillExpandButtonFrame", trade)
-		new("ScrollFrame", "TradeSkillListScrollFrame", trade)
-		new("ScrollFrame", "TradeSkillDetailScrollFrame", trade)
-		local icon = button("Button", "TradeSkillSkillIcon", trade)
-		new("Texture", "TradeSkillSkillIconIconTexture", icon)
-	end,
 	Blizzard_InspectUI = function()
 		local frame = hidden(new("Frame", "InspectFrame", _G.UIParent))
 		new("PlayerModel", "InspectModelFrame", new("Frame", "InspectPaperDollFrame", frame))
 		-- Blizzard_InspectUI.lua
 		_G.InspectFrame_UnitChanged = function() end
+		_G.InspectPaperDollItemSlotButton_Update = function() end
+	end,
+	Blizzard_TrainerUI = function()
+		-- Blizzard_TrainerUI.lua: the list and the chosen service's details,
+		-- without the scrolling
+		_G.CLASS_TRAINER_SKILLS_DISPLAYED = 11
+		_G.ClassTrainer_SetToTradeSkillTrainer = function()
+			_G.CLASS_TRAINER_SKILLS_DISPLAYED = 10
+			_G.ClassTrainerSkill11:Hide()
+			_G.ClassTrainerDetailScrollFrame:SetHeight(135)
+		end
+		_G.ClassTrainer_SetToClassTrainer = function()
+			_G.CLASS_TRAINER_SKILLS_DISPLAYED = 11
+			_G.ClassTrainerDetailScrollFrame:SetHeight(119)
+		end
+		_G.ClassTrainerFrame_Update = function()
+			if _G.IsTradeskillTrainer() then
+				_G.ClassTrainer_SetToTradeSkillTrainer()
+			else
+				_G.ClassTrainer_SetToClassTrainer()
+			end
+			for i = 1, _G.CLASS_TRAINER_SKILLS_DISPLAYED do
+				local button = _G["ClassTrainerSkill" .. i]
+				local name, subText = _G.GetTrainerServiceInfo(i)
+				button:SetID(i)
+				if name then
+					button:SetText(name)
+					_G["ClassTrainerSkill" .. i .. "SubText"]:SetText(subText or "")
+					button:Show()
+				else
+					button:Hide()
+				end
+			end
+		end
+		_G.ClassTrainer_SetSelection = function(id)
+			local service = id and client.world.trainer.services[id]
+			if (not service) or (service.kind == "header") then
+				return
+			end
+			_G.SelectTrainerService(id)
+			_G.ClassTrainerSkillRequirements:SetText(service.requirements)
+		end
+	end,
+	Blizzard_TradeSkillUI = function()
+		-- Blizzard_TradeSkillUI.lua: the list and the chosen recipe's
+		-- reagents, without the scrolling and filters
+		_G.TRADE_SKILLS_DISPLAYED, _G.MAX_TRADE_SKILL_REAGENTS = 8, 8
+		_G.TradeSkillFrame_Update = function()
+			local selected = _G.GetTradeSkillSelectionIndex()
+			for i = 1, _G.TRADE_SKILLS_DISPLAYED do
+				local button = _G["TradeSkillSkill" .. i]
+				local name, kind, available = _G.GetTradeSkillInfo(i)
+				button:SetID(i)
+				button.isHighlighted = (i == selected) or nil
+				if name then
+					button:SetText(name)
+					_G["TradeSkillSkill" .. i .. "Count"]:SetText((available > 0) and ("[" .. available .. "]") or "")
+					local color = (kind ~= "header") and _G.TradeSkillTypeColor[kind]
+					if color then
+						button:GetFontString():SetTextColor(color.r, color.g, color.b)
+					end
+					button:Show()
+				else
+					button:Hide()
+				end
+			end
+		end
+		-- (its own, as Blizzard_TradeSkillUI.lua names them)
+		_G.TradeSkillTypeColor = {
+			optimal = { r = 1, g = .5, b = .25 }, medium = { r = 1, g = 1, b = 0 },
+			easy = { r = .25, g = .75, b = .25 }, trivial = { r = .5, g = .5, b = .5 },
+			header = { r = 1, g = .82, b = 0 },
+		}
+		_G.TradeSkillFrame_SetSelection = function(id)
+			client.world.tradeSkill.selected = id
+			for i = 1, _G.MAX_TRADE_SKILL_REAGENTS do
+				local name, _, need, have = _G.GetTradeSkillReagentInfo(id, i)
+				local text = _G["TradeSkillReagent" .. i .. "Name"]
+				if name then
+					text:SetText(name)
+					-- (grey when short, white when not)
+					if (have < need) then
+						text:SetTextColor(.5, .5, .5)
+					else
+						text:SetTextColor(1, 1, 1)
+					end
+					_G["TradeSkillReagent" .. i]:Show()
+				else
+					_G["TradeSkillReagent" .. i]:Hide()
+				end
+			end
+		end
 	end,
 	Blizzard_CombatText = function()
 		new("Frame", "CombatText", _G.UIParent)
@@ -1493,8 +1583,15 @@ local function frameXML(client)
 	f.PetPaperDollFrame_UpdateIsAvailable = noop
 	f.ReputationFrame_Update = noop
 	f.InboxFrame_Update = noop -- MailFrame.lua: the inbox's page of letters
+	f.SendMailFrame_Update = noop -- MailFrame.lua: the letter being written
+	f.OpenMail_Update = noop -- MailFrame.lua: the letter opened
 	-- the spellbook (SpellBookFrame.lua): each spell button updated
 	f.SpellButton_UpdateButton = noop
+	-- a spell button's spell in the book (every rank shown: its own slot)
+	f.SpellBook_GetSpellID = function(id)
+		local slot = id + (_G.SpellBookFrame.selectedSkillLineOffset or 0)
+		return slot, slot
+	end
 	f.SpellBookFrame_Update = function()
 		for i = 1, 12 do
 			if _G["SpellButton" .. i] then
@@ -1572,6 +1669,28 @@ local function frameXML(client)
 	f.ToggleHelpFrame = function() client.toggled = "HelpFrame" end
 	f.ToggleLFDParentFrame = function() client.toggled = "LFDParentFrame" toggle("LFDParentFrame")() end
 	f.TogglePVPFrame = function() client.toggled = "PVPFrame" end
+	f.ToggleLFRParentFrame = function() client.toggled = "LFRParentFrame" toggle("LFRParentFrame")() end
+	-- UIParent.lua: the load-on-demand windows' loaders, and every window
+	-- closed (the panels Blizzard places, the special frames, the bags)
+	f.MacroFrame_LoadUI = function() api.LoadAddOn("Blizzard_MacroUI") end
+	f.KeyBindingFrame_LoadUI = function() api.LoadAddOn("Blizzard_BindingUI") end
+	f.ShowMacroFrame = function()
+		_G.MacroFrame_LoadUI()
+		_G.ShowUIPanel(_G.MacroFrame)
+	end
+	f.CloseAllWindows = function()
+		local closed
+		for _, name in ipairs({ "CharacterFrame", "SpellBookFrame", "PlayerTalentFrame", "FriendsFrame", "QuestLogFrame",
+			"AchievementFrame", "LFDParentFrame", "LFRParentFrame", "PVPParentFrame", "MacroFrame", "KeyBindingFrame",
+			"DressUpFrame", "MerchantFrame", "TradeSkillFrame", "ClassTrainerFrame" }) do
+			local frame = rawget(_G, name)
+			if frame and frame:IsShown() then
+				frame:Hide()
+				closed = 1
+			end
+		end
+		return closed
+	end
 	f.ToggleQuestLog = function() client.toggled = "QuestLogFrame" end
 	f.ToggleWorldMap = function() client.toggled = "WorldMapFrame" end
 	f.ToggleKeyRing = function() client.toggled = "KeyRing" end
@@ -1663,6 +1782,8 @@ local function frameXML(client)
 	f.ShowFriends = noop
 	f.FriendsFrame_ShowDropdown = noop
 	f.GuildFrame_Toggle = noop
+	f.GuildStatus_Update = noop -- FriendsFrame.lua: the guild's roster
+	f.GuildEventLog_Update = noop -- and its log
 
 	-- time and number formatting
 	f.SecondsToTime = function(seconds)

@@ -161,6 +161,12 @@ function Api.newWorld(class)
 		battlefields = {},
 		factions = {}, -- { name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild }
 		selectedFaction = 0,
+		-- the class trainer's services: { name, subText, kind ("available", "unavailable", "used", "header"),
+		-- expanded, requirements (the text Blizzard builds, colored) }
+		trainer = { services = {}, selected = nil },
+		-- the open profession's recipes: { name, kind ("optimal", "medium", "easy", "trivial", "header"),
+		-- reagents = { { name, link, have, need } } }
+		tradeSkill = { name = "Tailoring", rank = 300, maxRank = 450, recipes = {} },
 	}
 	local player = Api.newUnit({ class = class, name = "Tester", isPlayer = true, faction = "Alliance" })
 	player.combat = false
@@ -682,7 +688,7 @@ function Api.install(client)
 	api.GetActionInfo = function(slot)
 		local a = action(slot)
 		if a then
-			return a.type, a.id, a.subType
+			return a.type, a.id, a.subType, a.spellID
 		end
 	end
 	api.GetActionCount = function(slot)
@@ -744,7 +750,8 @@ function Api.install(client)
 	api.SetActionBarToggles = function(...) world().barToggles = { ... } end
 	api.PickupAction = function(slot) world().cursorAction = slot end
 	api.PlaceAction = function(slot) world().cursorAction = nil end
-	api.GetMacroSpell = function(id) return nil end
+	-- (world.macroSpells: the spell a macro casts, by its id)
+	api.GetMacroSpell = function(id) return world().macroSpells and world().macroSpells[id] end
 	api.GetMacroItem = function(id) return nil end
 	-- world.macros = { [index] = { name, icon, body } }: account macros at
 	-- 1-36, character ones from 37. Without it, every macro is the same one.
@@ -835,9 +842,63 @@ function Api.install(client)
 		if type(spell) == "number" then
 			return "Spell" .. spell, "", "Interface\\Icons\\Spell" .. spell, 0, nil, 0, 1500, 0, 40
 		end
+		-- by name: only the spells the player knows (world.unknownSpells: not those)
+		if world().unknownSpells and world().unknownSpells[spell] then
+			return nil
+		end
 		return spell, "", "Interface\\Icons\\Spell", 0, nil, 0, 1500, 0, 40
 	end
-	api.GetSpellTexture = function(spell) return select(3, api.GetSpellInfo(spell)) end
+	api.GetSpellTexture = function(spell, bookType)
+		local book = (bookType == "spell") and world().spellBook
+		if book then
+			return book[spell] and (book[spell].texture or "Interface\\Icons\\Spell")
+		end
+		return select(3, api.GetSpellInfo(spell))
+	end
+
+	-- Trainers and professions ------------------------------------------------
+
+	api.GetNumTrainerServices = function() return #world().trainer.services end
+	api.GetTrainerServiceInfo = function(index)
+		local service = world().trainer.services[index]
+		if service then
+			return service.name, service.subText, service.kind, service.expanded and 1 or nil
+		end
+	end
+	api.GetTrainerSelectionIndex = function() return world().trainer.selected end
+	api.SelectTrainerService = function(index) world().trainer.selected = index end
+	api.IsTradeskillTrainer = function() return world().trainer.tradeskill and 1 or nil end
+	api.GetTradeSkillLine = function()
+		local trade = world().tradeSkill
+		if trade.name then
+			return trade.name, trade.rank, trade.maxRank
+		end
+		return "UNKNOWN", 0, 0
+	end
+	api.GetNumTradeSkills = function() return #world().tradeSkill.recipes end
+	api.GetTradeSkillInfo = function(index)
+		local recipe = world().tradeSkill.recipes[index]
+		if recipe then
+			return recipe.name, recipe.kind, recipe.available or 0, recipe.expanded and 1 or nil
+		end
+	end
+	api.GetTradeSkillSelectionIndex = function() return world().tradeSkill.selected or 0 end
+	api.GetTradeSkillNumReagents = function(index)
+		local recipe = world().tradeSkill.recipes[index]
+		return recipe and recipe.reagents and #recipe.reagents or 0
+	end
+	api.GetTradeSkillReagentInfo = function(index, reagent)
+		local recipe = world().tradeSkill.recipes[index]
+		local info = recipe and recipe.reagents and recipe.reagents[reagent]
+		if info then
+			return info.name, "Interface\\Icons\\" .. info.name, info.need, info.have
+		end
+	end
+	api.GetTradeSkillReagentItemLink = function(index, reagent)
+		local recipe = world().tradeSkill.recipes[index]
+		local info = recipe and recipe.reagents and recipe.reagents[reagent]
+		return info and info.link
+	end
 	api.GetSpellCooldown = function() return 0, 0, 1 end
 	api.IsSpellKnown = function(id) return world().spells[id] ~= nil end
 	api.IsUsableSpell = function() return 1, nil end
@@ -1292,12 +1353,27 @@ function Api.install(client)
 	end
 	api.GetSelectedFaction = function() return world().selectedFaction end
 	-- the spellbook's schools: name, icon, first spell's offset, count
+	-- (world.spellBook: the spells in it, by index: { name, rank, passive, texture })
 	api.GetSpellTabInfo = function(tab)
 		if tab == 1 then
-			return "General", [[Interface\Icons\INV_Misc_Book_09]], 0, 6
+			return "General", [[Interface\Icons\INV_Misc_Book_09]], 0, world().spellBook and #world().spellBook or 6
 		end
 	end
 	api.GetNumSpellTabs = function() return 1 end
+	local function inBook(index, bookType)
+		return (bookType == "spell") and world().spellBook and world().spellBook[index]
+	end
+	api.GetSpellName = function(index, bookType)
+		local spell = inBook(index, bookType)
+		if spell then
+			return spell.name, spell.rank or ""
+		end
+	end
+	api.IsPassiveSpell = function(index, bookType)
+		local spell = inBook(index, bookType)
+		return spell and spell.passive and 1 or nil
+	end
+	api.PickupSpell = function(index, bookType) client.cursor = { "spell", index, bookType } end
 	-- the skills (world.skillLines: { name, header, expanded, rank, temp, modifier, max, ... })
 	api.GetNumSkillLines = function() return #(world().skillLines or {}) end
 	api.GetSkillLineInfo = function(index)
@@ -1498,7 +1574,8 @@ function Api.install(client)
 	api.GetScreenWidth = function() return world().screen[1] end
 	api.GetScreenHeight = function() return world().screen[2] end
 	api.GetScreenResolutions = function() return "800x600", "1024x768", "1920x1080" end
-	api.GetCurrentResolution = function() return 3 end
+	-- (world.resolution: the index chosen, 0 for none known)
+	api.GetCurrentResolution = function() return world().resolution or 3 end
 	api.IsMounted = function() return flag(world().mounted) end
 	api.IsFlying = function() return flag(world().flying) end
 	api.IsSwimming = function() return flag(world().swimming) end

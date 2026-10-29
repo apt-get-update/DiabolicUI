@@ -440,4 +440,75 @@ function TestTooltips:test_tooltip_scale_follows_the_ui()
 	assertClean(client)
 end
 
+-- Ability tooltips (modules/blizzard/spelltooltips.lua) --------------------------------
+
+TestSpellTooltips = {}
+
+function TestSpellTooltips:setUp()
+	client = Client.boot({ class = "MAGE", world = function(world)
+		-- the client's own lines: the name and rank, the cost and range, the
+		-- cast time, its description in gold
+		local white = { 1, 1, 1 }
+		world.spells[133] = { name = "Fireball", icon = [[Interface\Icons\Spell_Fire_FlameBolt]], lines = {
+			{ "Fireball", "Rank 14", white, { .5, .5, .5 } },
+			{ "400 Mana", "35 yd range", white, white },
+			{ "3.5 sec cast", nil, white },
+			{ "Hurls a fiery ball that causes 888 to 1132 Fire damage.", nil, { 1, .82, 0 } },
+		} }
+	end })
+end
+
+function TestSpellTooltips:tearDown()
+	client = nil
+end
+
+function TestSpellTooltips:test_an_ability_with_its_description()
+	local tooltip = _G.GameTooltip
+	tooltip:SetOwner(_G.UIParent, "ANCHOR_NONE")
+	tooltip:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -100, 100)
+	tooltip:SetSpell(133, "spell")
+	local info = tooltip.DiabolicSpellInfo
+	lu.assertEquals(info.rank, "Rank 14")
+	lu.assertEquals(info.descLine, 4)
+	-- the stat lines' numbers in green, under the icon's row; the
+	-- description further down
+	lu.assertStrContains(_G.GameTooltipTextLeft2:GetText(), "|cff3fc83f400|r")
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetAlpha(), 0)
+	lu.assertEquals(select(2, _G.GameTooltipTextLeft2:GetPoint()), _G.GameTooltipTextLeft1)
+	lu.assertEquals(select(2, _G.GameTooltipTextLeft4:GetPoint()), _G.GameTooltipTextLeft3)
+	local width, height = tooltip:GetWidth(), tooltip:GetHeight()
+	lu.assertEquals(info.width, width)
+	-- laid out again at the size set here: measured from Blizzard's, not grown again
+	client:GetModule("Blizzard: SpellTooltips").Layout(tooltip)
+	lu.assertEquals(tooltip:GetWidth(), width)
+	lu.assertEquals(tooltip:GetHeight(), height)
+	-- a line added re-measures it: laid out again on the next frame
+	tooltip:AddLine("Another addon's line")
+	lu.assertNotEquals(tooltip:GetHeight(), height)
+	client:Tick(0.05)
+	lu.assertEquals(tooltip:GetHeight(), info.height)
+	client:Tick(0.05)
+	-- something else put in the tooltip: Blizzard's again
+	_G.GameTooltipTextLeft1:SetText("Something else")
+	tooltip:Show()
+	lu.assertNil(tooltip.DiabolicSpellInfo)
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetAlpha(), 1)
+	lu.assertEquals({ _G.GameTooltipTextLeft4:GetPoint() }, { "TOPLEFT", _G.GameTooltipTextLeft3, "BOTTOMLEFT", 0, -2 })
+	assertClean(client)
+end
+
+function TestSpellTooltips:test_laid_out_once_its_on_screen()
+	local tooltip = _G.GameTooltip
+	-- not placed yet: no layout
+	tooltip:SetOwner(_G.UIParent, "ANCHOR_NONE")
+	tooltip:ClearAllPoints()
+	tooltip:SetSpell(133, "spell")
+	lu.assertNil(tooltip.DiabolicSpellInfo.width)
+	-- placed: laid out on the next frame
+	tooltip:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -100, 100)
+	client:Tick(0.05)
+	lu.assertNotNil(tooltip.DiabolicSpellInfo.width)
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

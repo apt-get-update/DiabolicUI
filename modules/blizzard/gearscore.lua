@@ -1,8 +1,8 @@
 -- GearScore, as GearScoreLite counts it (the score most 3.3.5 players and
 -- raid leaders read), with its colors: on equippable items' tooltips
 -- (tooltips.lua and itemtooltips.lua ask here), with the average item
--- level under the model in the inspect window, in the character window's
--- right column (character.lua asks here), and by players' names
+-- level under the model in the inspect and character windows
+-- (character.lua asks here for yours), and by players' names
 -- (tooltips.lua).
 -- Our own code from GearScoreLite's formula: each item scores from its item
 -- level, quality and slot; a player's score adds up their gear but the
