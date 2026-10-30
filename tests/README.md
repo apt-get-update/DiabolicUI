@@ -257,10 +257,14 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   spellbook as a book and its companions', professions' and search pages
   (Sholazar's map), the who list and the guild's log, the quest log, the
   talents and glyphs, the mailbox (Postal's parts too), the trade skills
-  and the class trainer, the other windows (Auctionator's pages, the guild
-  bank's log), the windows' kit (drag, titles, buttons and their rows,
+  and the class trainer, the other windows (the guild bank's log), the
+  windows' kit (drag, titles, buttons and their rows,
   banners, coins, the stack split box), and AdiBags' and Group Bulletin
   Board's windows.
+- `test_session_auction.lua` - the auction house on its grid: each page,
+  Blizzard's and Auctionator's, kept to the layout's rules (`/dui layout`
+  finds nothing), its zones and toolbar where the grid puts them, the
+  categories as our buttons, Auctionator's band and foot.
 - `test_session_layout.lua` - `/dui layout`: a window built to break each
   of the layout's rules, the problems said once and saved by window, the
   check kept on after a reload, edges between screen pixels, and
@@ -411,6 +415,9 @@ Session.assertClean(client)
   (their names, types, parents, sizes, first anchor, art, templates
   expanded); whatever's made by hand above is kept, and what it lacks is
   added under it. Run the script again after adding a window to its list.
+  Auctionator's page comes from its own XML the same way (the script's
+  `OTHERS`, read from its folder beside ours), and `Blizzard.Auctionator`
+  fakes what its code does: its tabs, and the parts it shows on each.
 - `client_secure.lua` - the secure handler templates: snippets run in a
   restricted environment against frame handles, state drivers, unit
   watches, `WrapScript`, `RunFor`, `ChildUpdate`, auto hide.

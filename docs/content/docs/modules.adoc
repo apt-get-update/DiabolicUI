@@ -100,6 +100,7 @@ flowchart LR
 | `character.lua`, `spellbook.lua`, `talents.lua`, `achievements.lua`, `questlog.lua`, `social.lua`, `mail.lua`, `merchant.lua`, `lfg.lua` | One Blizzard window each, built from `windows.lua`. Art, fonts and places only: Blizzard's code is left as it is
 | `spellbook-professions.lua`, `spellbook-search.lua` | The spellbook's professions page and search box (Pretty GUI's, in Diablo III's look)
 | `panels.lua` | Every other window (bank, trade, flight map, gossip, quest givers, professions...), from the `panels` table in the settings
+| `auction.lua` | The auction house's pages on one grid (the `auction` table in the settings): Browse's toolbar, then each page's columns on slate. Blizzard's Browse, Bids and Auctions pages and Auctionator's; the window itself is `panels.lua`'s
 | `tradeskill.lua`, `trainer.lua` | The professions' and class trainer's lists on parchment
 | `stacksplit.lua` | The stack split and coin boxes
 | `layout-audit.lua` | `/dui layout`: checks the open windows against the layout's rules and says in the chat what breaks them

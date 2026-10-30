@@ -424,9 +424,9 @@ Engine:NewStaticConfig("Blizzard", {
 		bar_text_font = DiabolicFont_SansBold10,
 		bar_text_color = { 1, .62, .2 },
 		-- the achievements (Blizzard's parchment, darkened)
-		row_color = { .3, .17, .12 },
-		row_color_unearned = { .22, .19, .17 },
-		row_text_color = { .8, .75, .68 },
+		row_color = { .5, .3, .2 },
+		row_color_unearned = { .36, .32, .29 },
+		row_text_color = { .95, .9, .82 },
 		row_title_color = { .8, .45, .35 },
 		row_title_color_unearned = { .5, .45, .42 }
 	},
@@ -489,13 +489,11 @@ Engine:NewStaticConfig("Blizzard", {
 					angles = { 198, 54, 126, -18, -90 },
 					level_y = 2, -- the level, from its middle
 					-- its glow: itself again, added, a little larger, its light
-					-- beating like a heart (two beats, then a rest)
+					-- slowly coming and going
 					glow_color = { .6, 0, .05 },
 					glow_scale = 1.04,
-					glow_alpha = { .05, .2 },
-					glow_period = 1.6, -- seconds, a heartbeat
-					glow_beats = { { 0, 1 }, { .28, .7 } }, -- each beat's start (seconds) and strength
-					glow_beat_width = .22, -- seconds, a beat's rise and fall
+					glow_alpha = { .05, .3 },
+					glow_period = 3, -- seconds, a pulse
 					below = 12 -- the stats under it (the bottom point's resistance past it)
 				},
 				resistance_size = 26,
@@ -621,6 +619,40 @@ Engine:NewStaticConfig("Blizzard", {
 	-- the mailbox in Diablo III's (modules/blizzard/mail.lua): the windows
 	-- grow around Blizzard's 384x512 frames, whose parts are placed against
 	-- them (the letter's fields start 46 down)
+	-- the auction house's pages on one grid (modules/blizzard/auction.lua),
+	-- in its frame's units from its top left (y down); its window, band,
+	-- tabs and foot are panels'
+	auction = {
+		-- the content's room: 16 in from the window's sides, 6 under the
+		-- band, 6 over the foot's iron bar
+		content = { left = -8, right = 840, top = 46, bottom = 413 },
+		gap = 8, -- between two zones, and under the toolbar
+		pad = 4, -- a zone's parts in from its edges
+		toolbar = 24, -- Browse's row under the band: Reset, the results' count, the page arrows
+		arrow_gap = 4,
+		row_gap = 2, -- the first row under its column names
+		header_height = 19,
+		-- each page's results: their rows and scroll bar `width` wide in all
+		-- (their rows' widest, without the bar: Blizzard's), in the middle of
+		-- their zone; their rows that far right of their column names (Bids':
+		-- left, their icon), their scroll frame's right that far right of
+		-- the rows' left (Blizzard's)
+		-- Browse: the categories' column too (their buttons and a scroll bar
+		-- beside them, `inset` in from its sides), "no results" that far under
+		-- the results' top; its categories' buttons red by their kind (a
+		-- category, a subcategory, an item type)
+		browse = { column = 178, inset = 10, filter_width = 136, width = 625, row_from = 9, reach = 602, no_results_y = 40,
+			filter_alpha = { class = 1, subclass = .45, invtype = 0 } },
+		bids = { width = 793, row_from = -38, reach = 771 },
+		-- Auctions: the selling column too (Blizzard's parts, moved as one:
+		-- right, up; its item's slot dark, framed)
+		auctions = { column = 210, width = 601, row_from = 0, reach = 579, move = { -16, 2 },
+			slot_texture = path .. [[textures\DiabolicUI_Button_64x64_Backdrop.tga]], slot_scale = 2 },
+		-- Auctionator's page: its left column (its history, shopping lists
+		-- or selling column) and the rest (the recommended price, its
+		-- results), each moved as one (right, up)
+		auctionator = { column = 212, left_move = { -15, 25 }, right_move = { 10, 25 } },
+	},
 	mail = {
 		-- the rough stone foot up to each tab's highest button: the inbox's
 		-- pages, the letter's buttons and money, the open one's
@@ -658,8 +690,8 @@ Engine:NewStaticConfig("Blizzard", {
 		text_rise = 55, -- the letter's text up, and that much taller
 		send_text_lower = -13, -- its foot that much higher (6 over the attachments' pane)
 		open_text_rise = 84, -- the letter opened's (its From and Subject in the band)
-		open_text_lower = -4, -- its foot that much lower (6 over the attachments)
-		open_attachments_raise = 10, -- the attachments that much higher: 6 over the foot's iron
+		open_text_lower = -16, -- its foot that much higher
+		open_attachments_floor = 112, -- the attachments between the letter's panel and this, over the window's bottom (14 over the foot's iron)
 		open_band = { x = 10, label_gap = 5 }, -- the letter opened's From and Subject in the band: their labels' left, from its left
 		-- moved once, up: the money
 		send_offsets = { SendMailMoneyButton = { 0, 10 } },
@@ -678,8 +710,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- and the window's bottom (how far over it), its sides in from the
 		-- window's (Blizzard's margins)
 		attachment_panes = {
-			SendMailFrame = { "SendMailHorizontalBarLeft2", 1, 157, 25, 40 }, -- (6 over the money to send)
-			OpenMailFrame = { "OpenMailHorizontalBarLeft", 6, 98, 23, 43 }
+			SendMailFrame = { "SendMailHorizontalBarLeft2", 1, 157, 25, 40 } -- (6 over the money to send)
 		}
 	},
 	-- the merchant window in Diablo III's (modules/blizzard/merchant.lua).
@@ -915,8 +946,14 @@ Engine:NewStaticConfig("Blizzard", {
 					PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 },
 					PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0 } },
 				sizes = { PVPBattlegroundFrameInfoScrollFrame = { 298, 208 } } }, -- (Blizzard's 232: 6 over the foot's iron bar, 6 under the list)
-			{ frame = "BattlefieldFrame", band = false, insets = { 24, 40, -10, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel",
-				close = "BattlefieldFrameCloseButton", lists = { "BattlefieldListScrollFrame" }, pale = true },
+			{ frame = "BattlefieldFrame", band = false, insets = { 19, 40, -5, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel",
+				close = "BattlefieldFrameCloseButton", lists = { "BattlefieldListScrollFrame", { "BattlefieldFrameInfoScrollFrame", 0, "BattlefieldListScrollFrame" } }, pale = true,
+				-- the rewards on slate too, under the instances: 16 higher (its
+				-- panel clear of the buttons), its top 7 lower (apart from theirs);
+				-- "Battlefield Instance:" 5 higher, apart from its list
+				places = { BattlefieldFrameInfoScrollFrame = { "BOTTOMLEFT", "BattlefieldFrame", "BOTTOMLEFT", 19, 116 },
+					BattlefieldFrameNameHeader = { "TOPLEFT", "BattlefieldFrame", "TOPLEFT", 75, -50 } },
+				sizes = { BattlefieldFrameInfoScrollFrame = { 298, 209 } } }, -- (Blizzard's 232)
 			{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4, title = "BankFrameTitleText", close = "BankCloseButton" },
 			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton",
 				-- the names over their columns, out from under the band (Blizzard's beside portraits)
@@ -999,7 +1036,7 @@ Engine:NewStaticConfig("Blizzard", {
 					MacroDeleteButton = { "BOTTOMLEFT", "MacroFrame", "BOTTOMLEFT", 17, 69 },
 					MacroNewButton = { "CENTER", "MacroFrame", "TOPLEFT", 222, -432 },
 					MacroExitButton = { "CENTER", "MacroFrame", "TOPLEFT", 303, -432 } } },
-			{ frame = "InspectFrame", band = false, addon = "Blizzard_InspectUI", insets = { 24, 68, -6, -9 }, offset_y = -32, title = "InspectNameText",
+			{ frame = "InspectFrame", band = false, addon = "Blizzard_InspectUI", insets = { 19, 68, -1, -9 }, offset_y = -32, title = "InspectNameText",
 				close = "InspectFrameCloseButton", tabs = "InspectFrameTab", sigils = { "hoodedface", "tree", "sword" },
 				subframes = { "InspectPaperDollFrame", "InspectPVPFrame", "InspectTalentFrame" },
 				keep = { "^InspectTalentFrameBackground" }, -- the tree's art (its spec's)
@@ -1016,40 +1053,16 @@ Engine:NewStaticConfig("Blizzard", {
 				-- the search in the band, its two checkboxes one under the other
 				band = { left = { "BrowseName", "BrowseLevelText", "BrowseMinLevel", "BrowseLevelHyphen", "BrowseMaxLevel", "BrowseDropDown",
 					{ "IsUsableCheckButton", "ShowOnPlayerCheckButton" }, "BrowseSearchButton" }, hints = { BrowseName = "NAME" } },
-				-- the results' rows start at their headers, left of their scroll frames;
-				-- their zones close round them: 6 under their headers, over the foot
-				list_insets = { 6, 1, 28, 2 },
-				lists = { "BrowseFilterScrollFrame", { "BrowseScrollFrame", 134 }, { "BidScrollFrame", 166 },
-					{ "AuctionsScrollFrame", 144 } },
-				-- (the frame 12 up into the window: its pages' tops 6 under the
-				-- band, the window 12 shorter) the column names 3 and 4 up (6
-				-- over the results' zones), the categories' list as tall as the
-				-- results' (their bottoms lined up), the results' zone 6 right of
-				-- it; Reset level with the pages' arrows, these side by side at
-				-- the right (their words out of sight); the lists taller by what
-				-- their pages are raised (late's raise_in), their feet where
-				-- they were. The bids' zone as far from the window's left as
-				-- from its right.
-				places = { BrowseQualitySort = { "TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 186, -79 },
-					BidQualitySort = { "TOPLEFT", "AuctionFrameBid", "TOPLEFT", 65, -48 },
-					BrowseResetButton = { "TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 78, -55 },
-					BrowsePrevPageButton = { "RIGHT", "BrowseNextPageButton", "LEFT", -4, 0 } },
-				sizes = { BrowseFilterScrollFrame = { 160, 322 }, BrowseScrollFrame = { 465, 322 }, AuctionsScrollFrame = { 435, 346 } },
+				-- (its pages' content: modules/blizzard/auction.lua)
 				-- Auctionator's pages too: its title gone (the tabs say it), its
 				-- lists and the sell column on their black, Blizzard's tabs over
 				-- its results; the pages' bottom rows lower, nearer the frame (the
 				-- window 12 taller: the lists 6 over the foot's iron bar)
 				late = { hide = { "AuctionatorTitle", "Atr_ActiveItems_Text" }, -- (the tabs say them)
 					hide_texts = { { "Atr_SellControls", "Sell" }, { "BrowsePrevPageButton" }, { "BrowseNextPageButton" } },
-					-- the pages' tops up: 6 under the band (Auctionator's under
-					-- its band); the selling column's foot where Blizzard put it,
-					-- over the foot's iron bar
-					raise_in = { AuctionFrameBrowse = 16, AuctionFrameAuctions = 7, Atr_Main_Panel = 22 },
-					lower_skip = { "StartPrice", "BuyoutPrice", "DurationDropDown", "AuctionsDepositText", "AuctionsCreateAuctionButton" },
 					-- its search and its Full Scan and Options in the band
 					band = { left = { "Atr_DropDownSL", "Atr_Search_Box", "Atr_Search_Button", "Atr_Adv_Search_Button" },
 						right = { "Atr_FullScanButton", "Auctionator1Button" } },
-					panels = { { "Atr_Hlist", { 6, 2, 30, 3 } }, { "Atr_SellControls", { 0, 0, 0, 0 } } },
 					dropdowns = { "BrowseDropDown", "PriceDropDown", "DurationDropDown", "Atr_DropDownSL", "Atr_Duration" },
 					tabs = "Atr_ListTabsTab", lower = 26,
 					lower_in = { "AuctionFrame", "AuctionFrameBrowse", "AuctionFrameBid", "AuctionFrameAuctions", "Atr_Main_Panel" } } },
@@ -1319,18 +1332,33 @@ Engine:NewStaticConfig("Blizzard", {
 			edge_size = 32,
 			choice_edge_size = 16, -- a choice's (a line's height: two corners fit it)
 			inset = 6, -- the glass, in from the frame's outside (at 32)
-			color = { .06, .045, .03, .72 }
+			color = { .07, .045, .03, .88 } -- (the world dimly through it, its colors not tinting it)
 		},
+		-- Diablo III's dialogue on the box's glass: dark smoke (a cloud of
+		-- the globes', its round edge left out), a red glow up from its foot
+		smoke = {
+			texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]],
+			texcoord = { .2, .8, .38, .62 },
+			color = { .3, .18, .12, .35 },
+			glow_color = { .55, .08, .04 },
+			glow_alpha = .35,
+			glow_height = 48
+		},
+		rule = { color = { .85, .65, .3, .8 }, height = 1, width = 360, gap = 3 }, -- the gold under the NPC's name
+		-- behind the NPC: a dark red glow in the middle of the black
+		vignette = { color = { .28, .04, .03 }, shade = path .. [[textures\DiabolicUI_Shade_64x64.tga]] },
 		-- the NPC's frame (Diablo III's 2DUIConversation's), its art
 		-- 146x168 in its 256x256 (its shadow on the right cut off: it fell
 		-- on D3's bar, here on the box as a dark strip), its glass (the
 		-- model's place, black) 122x132, the art's middle from the
 		-- glass's; the box from under its middle to Immersion's right,
-		-- as high as it
+		-- as high as its art
 		portrait = path .. [[textures\DiabolicUI_D3_ConversationPortrait.tga]],
 		portrait_size = { 146, 168 },
-		glass = { 122, 132 },
+		portrait_art = { 3, 159, 144 }, -- its art's top, bottom (its edge's middle, as it fades) and right side (past its window), in its file: the box's top, bottom and left
+		glass = { 124, 134 },
 		portrait_offset = { -8.5, -3.5 },
+		kid_camera = { .6, 0, -1, -.28 }, -- a child NPC (Immersion's camera for them): nearer (x), aside (y), down (z), its turn
 		box_right = 0, -- the box's right, in from Immersion's
 		close_inset = 10, -- the X, in from the box's top right corner
 		indicator_gap = 6, -- the NPC's kind (its speech bubble), left of the X

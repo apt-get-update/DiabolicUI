@@ -495,6 +495,66 @@ local function fromFrameXML(addon)
 	end
 end
 
+-- Auctionator in the auction house (its own code isn't run): its page from
+-- its XML (Atr_AddMainPanel's), its three tabs after Blizzard's
+-- (Atr_AddSellTab's), and its tabs' click (Atr_AuctionFrameTab_OnClick, in
+-- place of Blizzard's) showing its page with the parts it shows on each:
+-- Buy, its search and the shopping lists; Sell, an item picked (its selling
+-- column, the recommended price, its results); More, the history and Check
+-- for Undercuts. Made as the auction house loads (an addon's onLoad).
+local AUCTIONATOR_PARTS = {
+	{ "Atr_Hlist", "Atr_Hlist_ScrollFrame", "Atr_Search_Box", "Atr_Search_Button", "Atr_Adv_Search_Button",
+		"Atr_AddToSListButton", "Atr_RemFromSListButton", "Atr_NewSListButton", "Atr_MngSListsButton",
+		"Atr_SrchSListButton", "Atr_DropDownSL", "Atr_HeadingsBar", "Atr_ListTabs" },
+	{ "Atr_SellControls", "Atr_HeadingsBar", "Atr_ListTabs", "Atr_Recommend_Text", "Atr_Recommend_Basis_Text",
+		"Atr_RecommendPerStack_Text", "Atr_RecommendPerItem_Text", "Atr_RecommendItem_Tex" },
+	{ "Atr_Hlist", "Atr_Hlist_ScrollFrame", "Atr_ActiveItems_Text", "Atr_CheckActiveButton", "Atr_HeadingsBar",
+		"Atr_ListTabs" },
+}
+function Blizzard.Auctionator()
+	fromFrameXML("Auctionator")
+	local frame = _G.AuctionFrame
+	for i, text in ipairs({ "Buy", "Sell", "More..." }) do
+		local n = 3 + i
+		-- (AuctionTabTemplate's: its art, its text)
+		local tab = new("Button", "AuctionFrameTab" .. n, frame)
+		for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled" }) do
+			new("Texture", "AuctionFrameTab" .. n .. part, tab)
+		end
+		tab:SetFontString(new("FontString", "AuctionFrameTab" .. n .. "Text", tab))
+		tab:SetID(n)
+		tab:SetText(text)
+		tab:SetSize(10, 32)
+		tab:SetPoint("LEFT", _G["AuctionFrameTab" .. (n - 1)], "RIGHT", -8, 0)
+	end
+	frame.numTabs = 6
+	local all = {}
+	for _, names in ipairs(AUCTIONATOR_PARTS) do
+		for _, name in ipairs(names) do
+			all[name] = true
+		end
+	end
+	local blizzard = _G.AuctionFrameTab_OnClick
+	_G.AuctionFrameTab_OnClick = function(self)
+		local index = self:GetID()
+		_G.Atr_Main_Panel:Hide()
+		blizzard(self)
+		if (index > 3) then
+			for name in pairs(all) do
+				_G[name]:Hide()
+			end
+			for _, name in ipairs(AUCTIONATOR_PARTS[index - 3]) do
+				_G[name]:Show()
+			end
+			-- (the history shorter over the shopping lists' buttons)
+			local height = (index == 4) and 252 or 335
+			_G.Atr_Hlist:SetHeight(height)
+			_G.Atr_Hlist_ScrollFrame:SetHeight(height)
+			_G.Atr_Main_Panel:Show()
+		end
+	end
+end
+
 local function buildFrames()
 	local UIParent = _G.UIParent
 
@@ -1152,6 +1212,54 @@ local ON_DEMAND = {
 		button("Button", "TokenFrameCancelButton", token, "UIPanelButtonTemplate")
 		button("Button", nil, token, "UIPanelCloseButton") -- its unnamed X
 	end,
+	-- Blizzard_AuctionUI.lua: its tabs (AuctionFrameTab_OnClick: one page
+	-- shown) and the categories' list (AuctionFrameFilters_Update: a
+	-- button per class shown, the rest hidden); its frames from FrameXML
+	Blizzard_AuctionUI = function()
+		local classes = { "Weapon", "Armor", "Container", "Consumable", "Glyph", "Trade Goods", "Projectile", "Quiver",
+			"Recipe", "Gem", "Miscellaneous", "Quest" }
+		-- (a button's kind: its art's alpha, its text's indent)
+		_G.FilterButton_SetType = function(button, kind, text)
+			local name = button:GetName()
+			button:SetText(text)
+			local alpha, indent = 1, 4
+			if (kind == "subclass") then
+				alpha, indent = .4, 12
+			elseif (kind == "invtype") then
+				alpha, indent = 0, 20
+			end
+			_G[name .. "NormalTexture"]:SetAlpha(alpha)
+			_G[name .. "NormalText"]:SetPoint("LEFT", button, "LEFT", indent, 0)
+			button.type = kind
+		end
+		_G.AuctionFrameFilters_Update = function()
+			for i = 1, 15 do
+				local filter = _G["AuctionFilterButton" .. i]
+				if classes[i] then
+					_G.FilterButton_SetType(filter, "class", classes[i])
+					filter:Show()
+				else
+					filter:Hide()
+				end
+			end
+		end
+		_G.AuctionFrameTab_OnClick = function(self)
+			local frame, index = _G.AuctionFrame, self:GetID()
+			frame.numTabs = math.max(frame.numTabs or 0, 3)
+			_G.PanelTemplates_SetTab(frame, index)
+			_G.AuctionFrameAuctions:Hide()
+			_G.AuctionFrameBrowse:Hide()
+			_G.AuctionFrameBid:Hide()
+			if (index == 1) then
+				_G.AuctionFrameBrowse:Show()
+				_G.AuctionFrameFilters_Update()
+			elseif (index == 2) then
+				_G.AuctionFrameBid:Show()
+			elseif (index == 3) then
+				_G.AuctionFrameAuctions:Show()
+			end
+		end
+	end,
 	Blizzard_AchievementUI = function()
 		local frame = hidden(new("Frame", "AchievementFrame", _G.UIParent))
 		frame:SetSize(768, 500)
@@ -1438,7 +1546,20 @@ local function frameXML(client)
 	f.UIDropDownMenu_AddButton = function(info, level)
 		client.dropDownButtons[#client.dropDownButtons + 1] = info
 	end
-	f.UIDropDownMenu_SetWidth = function(frame, width) frame.width = width end
+	-- (UIDropDownMenu.lua's: its middle that wide, the frame its ends wider)
+	f.UIDropDownMenu_SetWidth = function(frame, width, padding)
+		frame.width = width
+		local name = frame:GetName()
+		local middle, text = name and rawget(_G, name .. "Middle"), name and rawget(_G, name .. "Text")
+		if middle then
+			middle:SetWidth(width)
+		end
+		frame:SetWidth(width + (padding or 50))
+		if text then
+			text:SetWidth(width - (padding or 25))
+		end
+		frame.noResize = 1
+	end
 	f.UIDropDownMenu_SetButtonWidth = noop
 	f.UIDropDownMenu_SetText = function(frame, text) frame.text = text end
 	f.UIDropDownMenu_GetText = function(frame) return frame.text end
@@ -1614,15 +1735,20 @@ local function frameXML(client)
 	f.InboxFrame_Update = noop -- MailFrame.lua: the inbox's page of letters
 	f.SendMailFrame_Update = noop -- MailFrame.lua: the letter being written
 	-- MailFrame.lua: the letter opened, its attachments placed from its
-	-- foot on each update (the label, then the first one's button)
-	f.ATTACHMENTS_MAX_RECEIVE = 16
+	-- foot on each update (the label, then the money's and the first
+	-- item's buttons, listed as placed)
 	f.OpenMail_Update = function()
 		local open = _G.OpenMailFrame
+		_G.OpenMailAttachmentText:SetText(_G.TAKE_ATTACHMENTS)
+		_G.OpenMailAttachmentText:SetTextColor(1, 1, 1)
 		_G.OpenMailAttachmentText:ClearAllPoints()
 		_G.OpenMailAttachmentText:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 23, 150)
-		_G.OpenMailAttachmentButton1:ClearAllPoints()
-		_G.OpenMailAttachmentButton1:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 23, 130)
-		_G.OpenMailAttachmentButton1:Show()
+		open.activeAttachmentButtons = { _G.OpenMailMoneyButton, _G.OpenMailAttachmentButton1 }
+		for i, button in ipairs(open.activeAttachmentButtons) do
+			button:ClearAllPoints()
+			button:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 23 + 50 * (i - 1), 130)
+			button:Show()
+		end
 	end
 	-- the spellbook (SpellBookFrame.lua): each spell button updated
 	f.SpellButton_UpdateButton = noop

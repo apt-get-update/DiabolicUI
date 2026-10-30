@@ -22,6 +22,7 @@ local GetContainerItemInfo = _G.GetContainerItemInfo
 local GetContainerItemLink = _G.GetContainerItemLink
 local GetContainerItemQuestInfo = _G.GetContainerItemQuestInfo
 local GetInventoryItemLink = _G.GetInventoryItemLink
+local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetItemInfo = _G.GetItemInfo
 local hooksecurefunc = _G.hooksecurefunc
 local IsAddOnLoaded = _G.IsAddOnLoaded
@@ -48,9 +49,10 @@ local ICON_TEXTURES = [[Interface\AddOns\]] .. ADDON .. [[\media\textures\]]
 local ICON_FRAME = ICON_TEXTURES .. "DiabolicUI_Button_64x64_Border.tga"
 local ICON_QUALITY_BORDER = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BorderHighlight.tga"
 local ICON_BACKDROP = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BackdropBag.tga"
+local GEAR_BACKDROP = ICON_TEXTURES .. "DiabolicUI_Button_64x64_Backdrop.tga" -- (plain: the slot's own silhouette over it)
+local EMPTY_SLOT_ALPHA = .6 -- an empty gear slot's silhouette, added over the dark slot
 local ICON_ART_SCALE = 128/64
 local ICON_FILL = 54/64
-local EMPTY_SLOT_ALPHA = .6 -- an empty gear slot's silhouette, added over the dark slot
 
 local borderCache = {} -- item button -> our border
 local glowCache = {} -- item button -> its quality glow
@@ -62,7 +64,7 @@ local scanner -- hidden tooltip read for those red lines
 -- its border in a quality's color (each shades the icon: one at a time).
 -- A slot Masque skins (AdiBags') keeps its backdrop and icon: 3.3.5 has no
 -- sublevels to put ours under its icon, in the same layer.
-local styleItem = function(self, masqued)
+local styleItem = function(self, masqued, gear)
 	-- (the inspect window's slots have theirs unnamed)
 	local normalTexture = _G[self:GetName().."NormalTexture"] or self:GetNormalTexture()
 	if normalTexture then
@@ -74,7 +76,7 @@ local styleItem = function(self, masqued)
 	if (not masqued) then
 		local backdrop = self:CreateTexture()
 		backdrop:SetDrawLayer("BACKGROUND")
-		backdrop:SetTexture(ICON_BACKDROP)
+		backdrop:SetTexture(gear and GEAR_BACKDROP or ICON_BACKDROP)
 		backdrop:SetPoint("CENTER", self, "CENTER", 0, 0)
 		backdrop:SetSize(width, height)
 
@@ -235,13 +237,16 @@ local updateGearSlot = function(self, unit)
 	end
 	local itemLink = GetInventoryItemLink(unit, slotID)
 	if (not borderCache[self]) then
-		styleItem(self)
+		styleItem(self, false, true)
 	end
 	-- an empty one's silhouette (Blizzard's, near black) lit, as a ghost
+	-- (empty by its icon, as Blizzard tells: an inspected unit's link may
+	-- not have come yet)
 	local icon = _G[self:GetName() .. "IconTexture"]
 	if icon then
-		icon:SetBlendMode(itemLink and "BLEND" or "ADD")
-		icon:SetAlpha(itemLink and 1 or EMPTY_SLOT_ALPHA)
+		local worn = GetInventoryItemTexture(unit, slotID)
+		icon:SetBlendMode(worn and "BLEND" or "ADD")
+		icon:SetAlpha(worn and 1 or EMPTY_SLOT_ALPHA)
 	end
 	local iconBorder = borderCache[self]
 	local quality = itemLink and select(3, GetItemInfo(itemLink))

@@ -4,6 +4,7 @@
 <Script file='windows.lua'/>
 <Script file='layout-audit.lua'/>
 <Script file='achievements.lua'/>
+<Script file='auction.lua'/>
 <Script file='bulletinboard.lua'/>
 <Script file='character.lua'/>
 <Script file='spellbook.lua'/>

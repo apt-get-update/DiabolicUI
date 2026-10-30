@@ -122,6 +122,11 @@ function TestLayoutAudit:test_a_window_breaking_the_rules()
 	zone(frame, "AuditUnder", 30, -118, 100, 50)
 	zone(frame, "AuditOverlap", 120, -150, 100, 50)
 	zone(frame, "AuditAlmost", 250, -68, 100, 50)
+	-- a list's column name over the painting, off its zone
+	local sort = CreateFrame("Button", "AuditNameSort", frame)
+	sort:SetText("Name")
+	sort:SetSize(80, 19)
+	sort:SetPoint("TOPLEFT", frame, "TOPLEFT", 250, -230)
 	-- light text on the parchment: its color, or a color in it
 	text(frame, "AuditLight", 40, -80, "Pale"):SetTextColor(1, 1, 1)
 	text(frame, "AuditCoded", 40, -95, "|cffffffffWhite|r"):SetTextColor(0, 0, 0)
@@ -141,10 +146,11 @@ function TestLayoutAudit:test_a_window_breaking_the_rules()
 		"AuditDropDown and \"Over the dropdown\" overlap in the band.",
 		"\"Out\" is out of the window.",
 		"AuditTop is 2 under the band (the rule: at least 6).",
-		"2 of room over the content, 65 under it: uneven.",
-		"30 of room left of the content, -40 right of it: uneven.",
+		"2 of room over the content, 30 under it: uneven.",
+		"30 of room left of the content, 50 right of it: uneven.", -- (its zones': not "Out")
 		"AuditTop and AuditBeside are 2 apart (the rule: at least 6).",
 		"AuditUnder and AuditOverlap overlap by 10.",
+		"\"Name\" is off its list's panel.",
 		"AuditTop and AuditAlmost are 2 off lining up (their bottoms).",
 		"AuditDropDown isn't Diablo III's.",
 		"\"Pale\" and 1 more are light on parchment: hard to read.",
@@ -306,7 +312,7 @@ function TestLayoutAudit:test_the_foot_and_one_light_text()
 	boot()
 	local frame, win = window("AuditFoot")
 	-- a page down to 2 over the foot's rail
-	zone(frame, "AuditPage", 30, -80, 340, 183, "parchment")
+	zone(frame, "AuditPage", 30, -80, 340, 158, "parchment")
 	button(frame, "AuditOkay", 30, 20, 60, "Okay")
 	kit:AddFooter(win, "AuditOkay")
 	text(frame, "AuditLight", 40, -90, "Pale"):SetTextColor(1, 1, 1)

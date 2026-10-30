@@ -317,9 +317,13 @@ function rectOf(widget)
 		local ro, po = POINT_OFFSETS[relativePoint], POINT_OFFSETS[point]
 		local ax, ay = rl + rw * ro[1] + x, rb + rh * ro[2] + y
 		left, bottom = ax - w * po[1], ay - h * po[2]
-		-- a second point on the other side stretches the frame
-		local other = s.points[2]
-		if other and (w == 0 or h == 0) then
+		-- a point on the other side stretches the frame (each one: a
+		-- frame's sides and its top from three, the client's way)
+		for index = 2, #s.points do
+			local other = s.points[index]
+			if (w ~= 0) and (h ~= 0) then
+				break
+			end
 			local p2, rel2, rp2, x2, y2 = unpack(other)
 			local l2, b2, w2, h2 = 0, 0, 0, 0
 			if rel2 and state[rel2] then

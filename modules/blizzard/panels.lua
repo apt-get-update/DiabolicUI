@@ -526,6 +526,11 @@ Module.StylePanel = function(self, spec)
 			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] },
 				inside and _G[name] or nil)
 			zones[name] = zone
+			-- (a zone on the frame itself: the window under it, not drawn
+			-- level with it in an order of the client's choosing)
+			if (zone:GetFrameLevel() <= window:GetFrameLevel()) and (zone:GetFrameLevel() > 0) then
+				window:SetFrameLevel(zone:GetFrameLevel() - 1)
+			end
 			if under and zones[under] then
 				zone:ClearAllPoints()
 				zone:SetPoint("TOP", _G[name], "TOP", 0, insets[2])

@@ -201,6 +201,7 @@ Module.StyleQuestLog = function(self)
 	self:PlaceControls()
 	hooksecurefunc("QuestLogControlPanel_UpdatePosition", function() self:PlaceControls() end)
 	kit:StyleScrollBars(frame)
+	kit:StyleScrollBar(_G.QuestLogDetailScrollFrameScrollBar) -- (the details' window's until it shows)
 end
 
 Module.OnInit = function(self)

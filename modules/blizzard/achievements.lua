@@ -60,6 +60,8 @@ local StylePanels = function()
 				local child = select(i, frame:GetChildren())
 				if (not child:GetName()) and child:GetBackdrop() then
 					kit:StylePanel(child)
+					-- (Blizzard's edge, raised over the rows: our panel under them)
+					child:SetFrameLevel(frame:GetFrameLevel())
 				end
 			end
 		end
@@ -216,6 +218,7 @@ Module.StyleOverachiever = function(self)
 			for _, child in ipairs({ frame:GetChildren() }) do
 				if (not child:GetName()) and child:GetBackdrop() then
 					kit:StylePanel(child)
+					child:SetFrameLevel(frame:GetFrameLevel()) -- (under its rows)
 				end
 			end
 			ROW_LISTS[#ROW_LISTS + 1] = frame:GetName()

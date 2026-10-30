@@ -550,6 +550,8 @@ local function immersion(world)
 		model:SetSize(115, 115)
 		model:SetPoint("TOPLEFT", talkBox, "TOPLEFT", 21, -21)
 		model.PortraitBG = model:CreateTexture(nil, "BACKGROUND")
+		model.ModelShadow = model:CreateTexture(nil, "ARTWORK")
+		model.ModelShadow:SetTexture([[Interface\AddOns\Immersion\Textures\artifactuishadow]])
 		local background = part(talkBox, "BackgroundFrame")
 		background.TextBackground = background:CreateTexture(nil, "BACKGROUND")
 		background.TextBackground:SetTexture([[Interface\AddOns\Immersion\Textures\TalkingHeads.blp]])
@@ -558,7 +560,9 @@ local function immersion(world)
 		part(talkBox, "NameFrame").Name = talkBox.NameFrame:CreateFontString(nil, "ARTWORK")
 		talkBox.NameFrame.Name:SetFont([[Fonts\MORPHEUS.TTF]], 22, "")
 		talkBox.NameFrame.Name:SetTextColor(1, .82, 0)
+		part(talkBox, "Hilite"):SetBackdrop({ edgeFile = [[Interface\AddOns\Immersion\Textures\Edge_Gossip_Hilite.blp]] })
 		local elements = part(talkBox, "Elements")
+		elements:SetBackdrop({ bgFile = [[Interface\AddOns\Immersion\Textures\Backdrop_Talkbox.blp]] })
 		local content = part(elements, "Content")
 		content.ObjectivesHeader = content:CreateFontString(nil, "BACKGROUND")
 		local rewards = part(content, "RewardsFrame")
@@ -624,6 +628,13 @@ function TestImmersion:test_loaded_after_us_it_gets_styled()
 	near(color(talkBox.TextFrame.Text:GetTextColor()), config.text_color)
 	lu.assertEquals({ talkBox.TextFrame.SpeechProgress:GetFont() }, { config.title_font, config.header_size, "" })
 
+	-- the quest's objectives and rewards on our plate, not Immersion's
+	-- backdrop (even set again)
+	lu.assertNil(elements:GetBackdrop())
+	lu.assertNil(talkBox.Hilite:GetBackdrop()) -- (nor its blue edge under the mouse)
+	elements:SetBackdrop({})
+	lu.assertNil(elements:GetBackdrop())
+
 	-- the titles in Exocet, in Immersion's colors
 	local name = talkBox.NameFrame.Name
 	lu.assertEquals({ name:GetFont() }, { config.title_font, config.name_size, "" })
@@ -675,6 +686,9 @@ function TestImmersion:test_loaded_after_us_it_gets_styled()
 	local regions = select("#", second:GetRegions())
 	titles:GetButton(2)
 	lu.assertEquals(select("#", second:GetRegions()), regions)
+
+	-- no shadow over the model
+	lu.assertNil(talkBox.MainFrame.Model.ModelShadow:GetTexture())
 
 	-- the black behind the portrait's frame only with the portrait
 	local portrait = talkBox.PortraitFrame

@@ -4,7 +4,8 @@
 -- than it, the band's controls over each other (or over
 -- the title, the X), parts out of the window, the content too close to
 -- the band (or the tabs under it) or the foot, or its room over and under
--- it uneven, or left and right of it; its zones too close; a dropdown
+-- it uneven, or left and right of it; its zones too close; a list's column
+-- names off its zone; a dropdown
 -- not Diablo III's; light text on parchment; parts that almost line up
 -- (zones' edges, a row's buttons 1 to 3 off); edges between screen pixels
 -- (at a pixel-perfect UI scale). While it's on (kept on after a reload),
@@ -391,14 +392,15 @@ CollectBars = function(frame, found)
 	return found
 end
 
--- As much room left of the content (its zones, scroll bars, and the
--- controls and texts beside them) as right of it.
-Checks.Sides = function(window, say, scale, controls, texts)
+-- As much room left of the content (its zones and their scroll bars:
+-- not a text or control beside them, which may stand out on purpose) as
+-- right of it.
+Checks.Sides = function(window, say, scale)
 	local content = CollectContent(window.Frame, {})
 	if (#content == 0) then
 		return
 	end
-	local left, right, top, bottom = math_huge, -math_huge, -math_huge, math_huge
+	local left, right = math_huge, -math_huge
 	local Reach = function(part)
 		local partLeft, _, partRight = kit.Edges(part)
 		if partLeft then
@@ -407,22 +409,8 @@ Checks.Sides = function(window, say, scale, controls, texts)
 	end
 	for _, zone in ipairs(content) do
 		Reach(zone)
-		local _, zoneBottom, _, zoneTop = kit.Edges(zone)
-		if zoneBottom then
-			top, bottom = math_max(top, zoneTop), math_min(bottom, zoneBottom)
-		end
 	end
 	local windowLeft, windowBottom, windowRight, windowTop = kit.Edges(window)
-	-- (those level with the zones: not the band's, nor the foot's)
-	for _, list in ipairs({ controls, texts }) do
-		for _, part in ipairs(list) do
-			local partLeft, partBottom, partRight, partTop = Box(part)
-			if partLeft and ((partBottom + partTop) / 2 < top) and ((partBottom + partTop) / 2 > bottom)
-				and (not IsHung(part, window.Frame, windowLeft, windowBottom, windowRight, windowTop)) then
-				left, right = math_min(left, partLeft), math_max(right, partRight)
-			end
-		end
-	end
 	for _, bar in ipairs(CollectBars(window.Frame, {})) do
 		if (not IsHung(bar, window.Frame, windowLeft, windowBottom, windowRight, windowTop)) then
 			Reach(bar)
@@ -459,6 +447,32 @@ Checks.Gaps = function(window, say, scale)
 						say(L["%s and %s are %d apart (the rule: at least %d)."], ZoneName(a), ZoneName(b), math_floor(apart + .5), layout.content_gap)
 					end
 				end
+			end
+		end
+	end
+end
+
+-- A list's column names (by their names: Blizzard's sort buttons and
+-- column headers, Auctionator's headings) on its zone: one floating over
+-- the window's painting, apart from the list it names, is said.
+local HEADERS = { "Sort$", "ColumnHeader%d+$", "_Heading_Button$" }
+Checks.Headers = function(window, say, scale, controls)
+	local zones = CollectContent(window.Frame, {})
+	for _, control in ipairs(controls) do
+		local name = control:GetName()
+		local header = false
+		for _, pattern in ipairs(HEADERS) do
+			header = header or (name and string_find(name, pattern) and true)
+		end
+		if header then
+			local left, bottom, right, top = kit.Edges(control)
+			local on = false
+			for _, zone in ipairs(zones) do
+				local zoneLeft, zoneBottom, zoneRight, zoneTop = kit.Edges(zone)
+				on = on or ((left >= zoneLeft - 1) and (right <= zoneRight + 1) and (bottom >= zoneBottom - 1) and (top <= zoneTop + 1))
+			end
+			if left and not on then
+				say(L["%s is off its list's panel."], Named(control))
 			end
 		end
 	end
@@ -676,7 +690,7 @@ local Check = function(window)
 			Print(line)
 		end
 	end
-	for _, name in ipairs({ "Rows", "Band", "Inside", "Room", "Sides", "Gaps", "Align", "DropDowns", "Ink", "Pixels" }) do
+	for _, name in ipairs({ "Rows", "Band", "Inside", "Room", "Sides", "Gaps", "Headers", "Align", "DropDowns", "Ink", "Pixels" }) do
 		if (name ~= "Band") or window.DiabolicHeaders[1] then
 			Checks[name](window, say, scale, controls, texts)
 		end

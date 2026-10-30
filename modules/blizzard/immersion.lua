@@ -28,6 +28,10 @@ Module.StyleImmersion = function(self)
 		kit:SkinClose(close)
 	end
 	self:StyleBox(talkBox)
+	self:FixKidCamera()
+	if talkBox.Hilite then
+		talkBox.Hilite:SetBackdrop(nil) -- (its blue edge, lit under the mouse)
+	end
 
 	-- in Exocet at their own color: Immersion sets that, never the font
 	local Exocet = function(fontString, size)
@@ -45,6 +49,7 @@ Module.StyleImmersion = function(self)
 	end)
 
 	local elements = talkBox.Elements
+	self:StyleElements(elements)
 	local content = elements.Content
 	local rewards = content.RewardsFrame
 	Exocet(talkBox.NameFrame.Name, config.name_size)
@@ -68,6 +73,31 @@ Module.StyleImmersion = function(self)
 	icon.MoneyIcon:SetTexCoord(unpack(coin.gold_texcoord))
 end
 
+-- A child NPC in the portrait: Immersion's camera for children (one,
+-- shared by them all) looks past them, the frame left empty; framed as
+-- its grown-ups and gnomes are instead (its numbers ours).
+Module.FixKidCamera = function(self)
+	local cameras = _G.EnumConst and _G.EnumConst.UiModelPositionCamera
+	local camera = cameras and cameras.Original and cameras.Original["humanmalekid/humanmalekid"]
+	if camera then
+		local x, y, z, yaw = unpack(self.config.kid_camera)
+		camera[1], camera[2], camera[3], camera[4], camera[5] = x, y, z, yaw, true
+	end
+end
+
+-- The quest's objectives and rewards under the box on the same plate and
+-- smoke, in place of Immersion's backdrop (set again as its solid
+-- background option changes).
+Module.StyleElements = function(self, elements)
+	elements:SetBackdrop(nil)
+	hooksecurefunc(elements, "SetBackdrop", function(frame, backdrop)
+		if backdrop then
+			frame:SetBackdrop(nil)
+		end
+	end)
+	self:AddSmoke(elements, self:AddPlate(elements, elements, self.config.plate.edge_size))
+end
+
 -- The tooltips' frame around warm dark glass in place of Immersion's art,
 -- from under the portrait's frame (Diablo III's) to its right, as high as
 -- that frame; black behind the model (shown with the portrait: Immersion
@@ -78,43 +108,62 @@ Module.StyleBox = function(self, talkBox)
 	local background, portrait = talkBox.BackgroundFrame, talkBox.PortraitFrame
 	local main = talkBox.MainFrame
 	local model = main.Model
-	-- its art, and its glows and sheens on it (flashed as a box shows,
-	-- some left lit beside the portrait)
+	-- its art, the shadow over the model, and its glows and sheens on it
+	-- (flashed as a box shows, some left lit beside the portrait)
 	local overlay = main.Overlay or model.Overlay or {}
 	for _, art in pairs({ background.TextBackground, background.SolidBackground, portrait.Portrait, model.PortraitBG,
-		main.Sheen, main.TextSheen, overlay.Glow_TopBar, overlay.Glow_LeftBar, overlay.Glow_RightBar }) do
+		model.ModelShadow, main.Sheen, main.TextSheen, overlay.Glow_TopBar, overlay.Glow_LeftBar, overlay.Glow_RightBar }) do
 		if art then
 			art:SetTexture(nil)
 		end
 	end
 
 	local scale = model:GetWidth() / config.glass[1]
+	-- dark red glass, fading to black at its sides (a shade, black at its
+	-- edges, a layer over it: textures sharing one aren't drawn in a set
+	-- order)
 	local glass = background:CreateTexture(nil, "BORDER")
-	glass:SetTexture(0, 0, 0, 1)
+	glass:SetTexture(unpack(config.vignette.color))
 	glass:SetSize(config.glass[1] * scale, config.glass[2] * scale)
 	glass:SetPoint("CENTER", model, "CENTER")
+	local shade = background:CreateTexture(nil, "ARTWORK")
+	shade:SetTexture(config.vignette.shade)
+	shade:SetVertexColor(0, 0, 0)
+	shade:SetAllPoints(glass)
 	local frameWidth, frameHeight = unpack(config.portrait_size)
 	local frame = portrait:CreateTexture(nil, "OVERLAY")
 	frame:SetTexture(config.portrait)
 	frame:SetTexCoord(0, frameWidth / 256, 0, frameHeight / 256)
 	frame:SetSize(frameWidth * scale, frameHeight * scale)
 	frame:SetPoint("CENTER", model, "CENTER", config.portrait_offset[1] * scale, config.portrait_offset[2] * scale)
-	portrait:HookScript("OnShow", function() glass:Show() end)
-	portrait:HookScript("OnHide", function() glass:Hide() end)
-	if (not portrait:IsShown()) then
-		glass:Hide()
+	local back = { glass, shade }
+	local Show = function(shown)
+		for _, part in ipairs(back) do
+			if shown then
+				part:Show()
+			else
+				part:Hide()
+			end
+		end
 	end
+	portrait:HookScript("OnShow", function() Show(true) end)
+	portrait:HookScript("OnHide", function() Show(false) end)
+	Show(portrait:IsShown())
 
-	-- the box: from the portrait frame's middle (its left end under it),
-	-- its top and bottom with the frame's (Immersion's model is placed
-	-- from the box's top left)
+	-- the box: from under the portrait frame's right side (no left edge:
+	-- the frame's), its top and bottom with the frame's art, not its
+	-- shadow under it (Immersion's model is placed from the box's top left)
 	local _, _, _, x, y = model:GetPoint()
 	local middleX = x + model:GetWidth() / 2 + config.portrait_offset[1] * scale
 	local middleY = y - model:GetHeight() / 2 + config.portrait_offset[2] * scale
+	local canvasLeft, canvasTop = middleX - frameWidth * scale / 2, middleY + frameHeight * scale / 2
+	local artTop, artBottom, artRight = unpack(config.portrait_art)
 	local box = CreateFrame("Frame", nil, talkBox)
-	box:SetPoint("TOPLEFT", talkBox, "TOPLEFT", middleX, middleY + frameHeight * scale / 2)
-	box:SetPoint("BOTTOMRIGHT", talkBox, "TOPRIGHT", -config.box_right, middleY - frameHeight * scale / 2)
-	self:AddPlate(background, box, config.plate.edge_size)
+	box:SetPoint("TOPLEFT", talkBox, "TOPLEFT", canvasLeft + artRight * scale, canvasTop - artTop * scale)
+	box:SetPoint("BOTTOMRIGHT", talkBox, "TOPRIGHT", -config.box_right, canvasTop - artBottom * scale)
+	local fill = self:AddPlate(background, box, config.plate.edge_size, true)
+	self:AddSmoke(background, fill)
+	self:AddRule(background, talkBox.NameFrame.Name)
 
 	local close = main.CloseButton
 	if close then
@@ -144,13 +193,13 @@ end
 -- draws its text over its own frames, not over frames we'd add. The
 -- frame's sides from its left edge, turned (its file's top and bottom
 -- pieces are drawn turned).
-Module.AddPlate = function(self, owner, box, size)
+Module.AddPlate = function(self, owner, box, size, openLeft)
 	local spec = self.config.plate
 	local e = 1/8
 	local inset = spec.inset * size / spec.edge_size
 	local fill = owner:CreateTexture(nil, "BACKGROUND")
 	fill:SetTexture(unpack(spec.color))
-	fill:SetPoint("TOPLEFT", box, "TOPLEFT", inset, -inset)
+	fill:SetPoint("TOPLEFT", box, "TOPLEFT", openLeft and 0 or inset, -inset)
 	fill:SetPoint("BOTTOMRIGHT", box, "BOTTOMRIGHT", -inset, inset)
 	local Piece = function(...)
 		local piece = owner:CreateTexture(nil, "ARTWORK")
@@ -175,7 +224,54 @@ Module.AddPlate = function(self, owner, box, size)
 	top:SetPoint("BOTTOMRIGHT", corners.TOPRIGHT, "BOTTOMLEFT")
 	bottom:SetPoint("TOPLEFT", corners.BOTTOMLEFT, "TOPRIGHT")
 	bottom:SetPoint("BOTTOMRIGHT", corners.BOTTOMRIGHT, "BOTTOMLEFT")
+	-- `openLeft`: no left edge, the top and bottom ones from its left end
+	if openLeft then
+		for _, piece in ipairs({ left, corners.TOPLEFT, corners.BOTTOMLEFT }) do
+			piece:Hide()
+		end
+		top:SetPoint("TOPLEFT", box, "TOPLEFT")
+		bottom:SetPoint("TOPLEFT", box, "BOTTOMLEFT", 0, size)
+	end
 	return fill
+end
+
+-- Diablo III's dialogue on `fill`: dark smoke drifting over it (a cloud
+-- of the globes', its round edge left out), a red glow up from its foot.
+Module.AddSmoke = function(self, owner, fill)
+	local spec = self.config.smoke
+	local smoke = owner:CreateTexture(nil, "BACKGROUND")
+	smoke:SetDrawLayer("BACKGROUND", 1)
+	smoke:SetTexture(spec.texture)
+	smoke:SetTexCoord(unpack(spec.texcoord))
+	smoke:SetVertexColor(unpack(spec.color))
+	smoke:SetAllPoints(fill)
+	local glow = owner:CreateTexture(nil, "BACKGROUND")
+	glow:SetDrawLayer("BACKGROUND", 2)
+	glow:SetTexture(1, 1, 1, 1)
+	local r, g, b = unpack(spec.glow_color)
+	glow:SetGradientAlpha("VERTICAL", r, g, b, spec.glow_alpha, r, g, b, 0)
+	glow:SetPoint("BOTTOMLEFT", fill, "BOTTOMLEFT")
+	glow:SetPoint("BOTTOMRIGHT", fill, "BOTTOMRIGHT")
+	glow:SetHeight(spec.glow_height)
+end
+
+-- A thin gold rule under the NPC's name, its ends faded (Diablo III's
+-- under a speaker's).
+Module.AddRule = function(self, owner, name)
+	local spec = self.config.rule
+	local r, g, b, a = unpack(spec.color)
+	local left = owner:CreateTexture(nil, "ARTWORK")
+	left:SetTexture(1, 1, 1, 1)
+	left:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, a)
+	left:SetHeight(spec.height)
+	left:SetWidth(spec.width / 2)
+	left:SetPoint("TOPLEFT", name, "BOTTOMLEFT", 0, -spec.gap)
+	local right = owner:CreateTexture(nil, "ARTWORK")
+	right:SetTexture(1, 1, 1, 1)
+	right:SetGradientAlpha("HORIZONTAL", r, g, b, a, r, g, b, 0)
+	right:SetHeight(spec.height)
+	right:SetWidth(spec.width / 2)
+	right:SetPoint("LEFT", left, "RIGHT")
 end
 
 -- A choice (gossip option, quest) on the same plate, its text in Diablo

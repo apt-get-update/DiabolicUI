@@ -398,6 +398,7 @@ L["nothing breaks the rules."] = true
 L["%d of room left of the content, %d right of it: uneven."] = true
 L["%s and %s are %d apart (the rule: at least %d)."] = true
 L["%s and %s overlap by %d."] = true
+L["%s is off its list's panel."] = true
 L["%s isn't Diablo III's."] = true
 L["%s is light on parchment: hard to read."] = true
 L["%s and %d more are light on parchment: hard to read."] = true

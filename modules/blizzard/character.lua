@@ -428,7 +428,7 @@ Module.CreateColumn = function(self, window)
 	shadow:SetVertexColor(unpack(penta.shadow_color))
 	shadow:SetSize(penta.size, penta.size)
 	shadow:SetPoint("CENTER", unpack(penta.shadow_offset))
-	-- its red glow over it, beating like a heart
+	-- its red glow over it, slowly pulsing
 	local glow = star:CreateTexture(nil, "OVERLAY")
 	glow:SetTexture(penta.texture)
 	glow:SetVertexColor(unpack(penta.glow_color))
@@ -436,19 +436,10 @@ Module.CreateColumn = function(self, window)
 	glow:SetPoint("CENTER")
 	glow:SetSize(penta.size * penta.glow_scale, penta.size * penta.glow_scale)
 	local low, high = unpack(penta.glow_alpha)
-	local width = penta.glow_beat_width
 	local elapsed = 0
 	star:SetScript("OnUpdate", function(_, delta)
 		elapsed = (elapsed + delta) % penta.glow_period
-		-- the strongest beat under way, each a cosine's rise and fall
-		local beat = 0
-		for _, b in ipairs(penta.glow_beats) do
-			local t = elapsed - b[1]
-			if t >= 0 and t < width then
-				beat = math_max(beat, b[2] * (1 - math_cos(t / width * 2 * math_pi)) / 2)
-			end
-		end
-		glow:SetAlpha(low + (high - low) * beat)
+		glow:SetAlpha(low + (high - low) * (1 - math_cos(elapsed / penta.glow_period * 2 * math_pi)) / 2)
 	end)
 	self.Level = star:CreateFontString(nil, "OVERLAY")
 	self.Level:SetFont(unpack(layout.score_font))

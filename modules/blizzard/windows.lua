@@ -1268,7 +1268,8 @@ Module.LineBand = function(self, header, parts, fromRight)
 		end
 		previous, previousInset = part, fromRight and left or right
 		local name = part:GetName()
-		if name and _G[name .. "Button"] and _G[name .. "Middle"] then
+		-- (a dropdown: ours, or Blizzard's with its art, some without)
+		if name and _G[name .. "Button"] and (part.DiabolicDropDown or _G[name .. "Middle"]) then
 			-- (its plate first, under it: a child keeps its own level)
 			for _, piece in ipairs({ part.DiabolicPlate or false, part, _G[name .. "Button"], _G[name .. "MouseOver"] or false }) do
 				if piece then

@@ -3,7 +3,7 @@
 -- Blizzard's windows in Diablo III's look (modules/blizzard/windows.lua and
 -- the windows built on it) in the fake client: the spellbook and its
 -- companions' pages, the social window, the quest log, the talents and
--- glyphs, the other panels (Auctionator's pages too), and the bag and
+-- glyphs, the other panels, and the bag and
 -- group addons' windows (AdiBags, Group Bulletin Board).
 
 package.path = "./tests/?.lua;" .. package.path
@@ -655,55 +655,6 @@ function TestPanels:test_books_in_ink()
 	assertClean(client)
 end
 
--- Auctionator's parts of the auction house, made as it shows.
-local function auctionator(world)
-	table.insert(world.addons, { name = "Auctionator", enabled = true, onLoad = function()
-		local main = _G.CreateFrame("Frame", "Atr_Main_Panel", _G.AuctionFrame)
-		local row = _G.CreateFrame("Button", "Atr_Buy1_Button", main)
-		row:SetPoint("BOTTOMLEFT", main, "BOTTOMLEFT", 10, 20)
-		_G.CreateFrame("Frame", "Atr_Hlist", main):SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background" })
-		_G.CreateFrame("Frame", "Atr_SellControls", main):Hide()
-		main:CreateFontString("AuctionatorTitle", "ARTWORK")
-		local dropdown = _G.CreateFrame("Frame", "Atr_Duration", main)
-		dropdown:SetWidth(40)
-		_G.CreateFrame("Button", "Atr_DurationButton", dropdown)
-		dropdown:CreateTexture("Atr_DurationMiddle"):SetWidth(100)
-		_G.CreateFrame("Button", "Atr_ListTabsTab1", main)
-		-- its search and Full Scan, for the band
-		local search = _G.CreateFrame("EditBox", "Atr_Search_Box", main)
-		search:SetSize(120, 20)
-		local scan = _G.CreateFrame("Button", "Atr_FullScanButton", main)
-		scan:SetSize(80, 22)
-	end })
-end
-
-function TestPanels:test_the_auction_house_with_auctionator()
-	boot({ world = auctionator })
-	client.api.LoadAddOn("Blizzard_AuctionUI")
-	client.api.LoadAddOn("Auctionator")
-	local frame = _G.AuctionFrame
-	lu.assertTrue(frame.DiabolicPanel)
-	-- its pages' rows from their headers, left of their lists
-	frame:Show()
-	lu.assertEquals(_G.AuctionatorTitle:GetAlpha(), 0)
-	lu.assertNotNil(_G.Atr_Hlist.DiabolicPanel)
-	lu.assertNil(_G.Atr_Hlist:GetBackdrop())
-	lu.assertNotNil(_G.Atr_Duration.DiabolicPlate)
-	lu.assertNotNil(_G.Atr_ListTabsTab1.DiabolicArt)
-	-- its search in the band, its Full Scan at its right end, once
-	lu.assertEquals((_G.Atr_FullScanButton:GetPoint()), "RIGHT")
-	lu.assertNotNil(_G.Atr_Search_Box.DiabolicOutset)
-	-- the bottom rows lower (26: their page's raised), once
-	lu.assertEquals({ _G.Atr_Buy1_Button:GetPoint() }, { "BOTTOMLEFT", _G.Atr_Main_Panel, "BOTTOMLEFT", 10, 20 - 26 })
-	frame:Hide()
-	frame:Show()
-	lu.assertEquals(select(5, _G.Atr_Buy1_Button:GetPoint()), 20 - 26)
-	-- its sell column's panel with it
-	_G.Atr_SellControls:Show()
-	_G.Atr_SellControls:Hide()
-	assertClean(client)
-end
-
 function TestPanels:test_the_guild_banks_log_in_ink()
 	boot({ world = function()
 		-- (its time's code, as the client's global string has it)
@@ -859,16 +810,27 @@ function TestMail:test_the_inbox_and_the_letter_being_written()
 	assertClean(client)
 end
 
-function TestMail:test_the_letters_attachments_clear_of_the_foot()
+function TestMail:test_the_letters_attachments_alone()
 	boot()
-	local raise = client.Engine:GetDB("Blizzard").mail.open_attachments_raise
+	local config = client.Engine:GetDB("Blizzard").mail
+	local frame, scroll = _G.OpenMailFrame, _G.OpenMailScrollFrame
+	frame:Show()
 	_G.OpenMail_Update()
-	lu.assertEquals(select(5, _G.OpenMailAttachmentText:GetPoint()), 150 + raise)
-	lu.assertEquals(select(5, _G.OpenMailAttachmentButton1:GetPoint()), 130 + raise)
-	-- once per place Blizzard gives them
-	_G.OpenMailAttachmentText:SetPoint("TOPLEFT", _G.OpenMailFrame, "BOTTOMLEFT", 23, 150 + raise)
+	-- without Blizzard's label
+	lu.assertNil(_G.OpenMailAttachmentText:IsShown())
+	-- the buttons in the middle of the space under the letter's panel
+	local money, item = _G.OpenMailMoneyButton, _G.OpenMailAttachmentButton1
+	local insets = config.text_panel_insets
+	local left, right = select(4, money:GetPoint()), select(4, item:GetPoint()) + item:GetWidth()
+	lu.assertAlmostEquals((left + right) / 2, (scroll:GetLeft() - frame:GetLeft() - insets[1]
+		+ scroll:GetRight() - frame:GetLeft() + insets[3]) / 2, 1e-6)
+	local y = select(5, money:GetPoint())
+	lu.assertEquals(select(5, item:GetPoint()), y)
+	lu.assertAlmostEquals(y - money:GetHeight() / 2, (scroll:GetBottom() - frame:GetBottom() - insets[4]
+		+ config.open_attachments_floor) / 2, 1e-6)
+	-- (again on the next update, from where Blizzard puts them again)
 	_G.OpenMail_Update()
-	lu.assertEquals(select(5, _G.OpenMailAttachmentText:GetPoint()), 150 + raise)
+	lu.assertEquals(select(5, money:GetPoint()), y)
 	assertClean(client)
 end
 

@@ -2,7 +2,8 @@
 # Writes tests/data/framexml.lua: the frames, textures and font strings of
 # Blizzard's 3.3.5 windows DiabolicUI restyles, read from Blizzard's own
 # FrameXML (their names, types, parents, sizes, first anchor, art and
-# text), templates expanded. The fake client (tests/mocks/client_blizzard.lua)
+# text), templates expanded; and those of the addons in OTHERS whose
+# parts we place (Auctionator's, from its folder beside ours). The fake client (tests/mocks/client_blizzard.lua)
 # builds from it whatever it hasn't made by hand.
 #
 #   tests/tools/framexml.py [path to the 3.3.5 interface files]
@@ -38,6 +39,17 @@ ROOTS = {
 	"Blizzard_BindingUI": ["KeyBindingFrame"],
 	"Blizzard_TokenUI": ["TokenFrame"],
 }
+
+# addons not Blizzard's whose windows' parts we place too: their folder
+# (beside ours), their toc, and the frames they make in Lua from their
+# templates ({ name, template, parent }), and those of their own top
+# frames we place (its dialogs, its shade)
+OTHERS = {
+	"Auctionator": ("Auctionator", "Auctionator.toc", [("Atr_Main_Panel", "Atr_Sell_Template", "AuctionFrame")],
+		["Atr_Mask", "Atr_CheckActives_Frame", "Atr_Buy_Confirm_Frame", "Atr_Confirm_Frame", "Atr_Error_Frame",
+			"Atr_FullScanFrame"]),
+}
+ADDONS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..")
 
 FRAMES = {
 	"Frame", "Button", "CheckButton", "ScrollFrame", "EditBox", "Slider", "StatusBar", "Model", "PlayerModel",
@@ -243,6 +255,29 @@ def main():
 					wanted.add(top.get("name"))
 				builder.frame(top, top.get("parent") or "UIParent", None)
 		out.append("\t[%s] = {" % lua(addon or ""))
+		for e in builder.entries:
+			out.append("\t\t{ %s },"
+				% ", ".join(lua(v) for v in (e["id"], e["kind"], e["name"], e["parent"], e["size"], e["anchor"],
+					e.get("file"), e.get("text"), e["hidden"], e.get("layer"), e.get("role"), e.get("number"))))
+		out.append("\t},")
+	# (their templates over Blizzard's and the auction house's, which they use)
+	auction_templates, _ = load(xml_files(os.path.join(SOURCE, "Blizzard_AuctionUI"), "Blizzard_AuctionUI.toc"))
+	for addon, (folder, toc, made, placed) in OTHERS.items():
+		path = os.path.join(ADDONS, folder)
+		if not os.path.exists(os.path.join(path, toc)):
+			print("not found:", path, file=sys.stderr)
+			continue
+		templates = dict(base_templates)
+		templates.update(auction_templates)
+		extra_templates, extra_tops = load(xml_files(path, toc))
+		templates.update(extra_templates)
+		builder = Builder(templates)
+		for name, template, parent in made:
+			builder.frame(ET.Element("Frame", {"name": name, "inherits": template}), parent, None)
+		for top in extra_tops:
+			if top.get("name") in placed:
+				builder.frame(top, top.get("parent") or "UIParent", None)
+		out.append("\t[%s] = {" % lua(addon))
 		for e in builder.entries:
 			out.append("\t\t{ %s },"
 				% ", ".join(lua(v) for v in (e["id"], e["kind"], e["name"], e["parent"], e["size"], e["anchor"],

@@ -16,7 +16,9 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
+local math_huge = math.huge
 local math_max = math.max
+local math_min = math.min
 local pairs = pairs
 local select = select
 local unpack = unpack
@@ -123,6 +125,7 @@ Module.StyleMail = function(self)
 	for name, spec in pairs(config.attachment_panes) do
 		self:AddAttachmentPane(_G[name], _G[spec[1]], unpack(spec, 2))
 	end
+	self:PlaceOpenAttachments()
 
 	-- Blizzard's buttons, and those addons add as the mailbox opens
 	kit:StyleButtons(frame)
@@ -274,25 +277,43 @@ Module.PlaceOpenBand = function(self, header)
 	end
 	hooksecurefunc("OpenMail_Update", Grow)
 	Grow()
+end
 
-	-- the attachments (Blizzard places those shown on each update, from
-	-- the window's foot) higher: clear of the foot's iron
-	local raise = self.config.open_attachments_raise
-	-- (once per place Blizzard gives it: its update may stop before it does)
-	local Raise = function(part)
-		local point, relative, relativePoint, x, y = part:GetPoint()
-		if (y ~= part.DiabolicRaised) then
-			part.DiabolicRaised = y + raise
-			part:SetPoint(point, relative, relativePoint, x, y + raise)
-		end
-	end
+-- The letter's attachments alone, without Blizzard's label (their
+-- tooltips say what they hold): the buttons (Blizzard places those shown
+-- on each update, from the window's foot) in the middle of the space
+-- between the letter's panel and the foot's iron.
+Module.PlaceOpenAttachments = function(self)
+	local config = self.config
+	local frame, scroll = _G.OpenMailFrame, _G.OpenMailScrollFrame
+	_G.OpenMailAttachmentText:Hide() -- (its color sets its alpha again)
+	local insets = config.text_panel_insets
 	hooksecurefunc("OpenMail_Update", function()
-		Raise(_G.OpenMailAttachmentText)
-		for i = 1, _G.ATTACHMENTS_MAX_RECEIVE do
-			local button = _G["OpenMailAttachmentButton" .. i]
-			if button and button:IsShown() then
-				Raise(button)
+		-- (those placed: the letter's, the money's, the items'; once per
+		-- place Blizzard gives them: its update may stop before it does)
+		local placed, left, right, top, bottom = {}, math_huge, -math_huge, -math_huge, math_huge
+		for _, button in ipairs(frame.activeAttachmentButtons or {}) do
+			local _, _, _, x, y = button:GetPoint()
+			if y and (y ~= button.DiabolicPlaced) then
+				placed[#placed + 1] = button
+				left, right = math_min(left, x), math_max(right, x + button:GetWidth())
+				top, bottom = math_max(top, y), math_min(bottom, y - button:GetHeight())
 			end
+		end
+		local frameLeft, frameBottom = frame:GetLeft(), frame:GetBottom()
+		local panelBottom = scroll:GetBottom()
+		if (#placed == 0) or (not frameLeft) or (not frameBottom) or (not panelBottom) then
+			return
+		end
+		local panelLeft = scroll:GetLeft() - frameLeft - insets[1]
+		local panelRight = scroll:GetRight() - frameLeft + insets[3]
+		panelBottom = panelBottom - frameBottom - insets[4]
+		local shiftX = (panelLeft + panelRight) / 2 - (left + right) / 2
+		local shiftY = (panelBottom + config.open_attachments_floor) / 2 - (top + bottom) / 2
+		for _, button in ipairs(placed) do
+			local point, relative, relativePoint, x, y = button:GetPoint()
+			button.DiabolicPlaced = y + shiftY
+			button:SetPoint(point, relative, relativePoint, x + shiftX, y + shiftY)
 		end
 	end)
 end
