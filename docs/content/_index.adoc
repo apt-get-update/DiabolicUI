@@ -20,5 +20,6 @@ framework (the Engine), without Ace3 or oUF.
 | link:{{< relref "docs/modules" >}}[Modules Map] | What each folder under `modules/` does
 | link:{{< relref "docs/conventions" >}}[Rules] | The house rules, most of them checked by tests
 | link:{{< relref "docs/testing" >}}[Testing] | Running and writing tests
+| link:{{< relref "docs/raid-rolls" >}}[Raid Rolls] | The roll window and the boss's loot list
 | link:{{< relref "docs/case-study-loot-window" >}}[Case Study: Loot Window] | Why we build our own frames
 |===

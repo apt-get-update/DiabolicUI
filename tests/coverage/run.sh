@@ -3,7 +3,7 @@
 # per-area coverage summary (full per-file table in tests/coverage/report.txt).
 #
 #   tests/coverage/run.sh            # report only
-#   tests/coverage/run.sh --readme   # also refresh the table in README.adoc
+#   tests/coverage/run.sh --readme   # also refresh the badge in README.adoc
 #
 # Run from anywhere. Tests run in parallel (one job per CPU; set JOBS to
 # change that), each job recording into its own file, merged at the end:

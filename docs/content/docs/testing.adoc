@@ -71,5 +71,5 @@ That needs a `/reload` in game.
 
 == Coverage
 
-`tests/coverage/run.sh` (`+--readme+` updates the README table). Run it before
+`tests/coverage/run.sh` (`+--readme+` updates the README badge). Run it before
 a release, not per change.

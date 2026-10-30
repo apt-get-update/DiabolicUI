@@ -24,7 +24,7 @@ Each `tests/test_*.lua` file is self-contained and runnable on its own.
 
 ```bash
 tests/coverage/run.sh            # summary per area; per-file table in tests/coverage/report.txt
-tests/coverage/run.sh --readme   # also refresh the table in README.adoc
+tests/coverage/run.sh --readme   # also refresh the badge in README.adoc
 ```
 
 `coverage/hook.lua` is loaded in front of each test file and records every
