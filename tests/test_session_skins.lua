@@ -598,6 +598,8 @@ local function immersion(world)
 			return button
 		end
 		titles:GetButton(1)
+		-- (Methods/Constants.lua's: the children's camera, a global)
+		_G.EnumConst = { UiModelPositionCamera = { Original = { ["humanmalekid/humanmalekid"] = { 7.8, 0, 1, -.28 } } } }
 	end })
 end
 
@@ -617,6 +619,10 @@ function TestImmersion:test_loaded_after_us_it_gets_styled()
 	local talkBox = _G.ImmersionFrame.TalkBox
 	local elements = talkBox.Elements
 	local rewards = elements.Content.RewardsFrame
+
+	-- a child in the portrait framed as the grown-ups are (our numbers)
+	local kid = config.kid_camera
+	lu.assertEquals(_G.EnumConst.UiModelPositionCamera.Original["humanmalekid/humanmalekid"], { kid[1], kid[2], kid[3], kid[4], true })
 
 	-- the windows' close button, where Immersion put it
 	local close = talkBox.MainFrame.CloseButton

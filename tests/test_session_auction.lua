@@ -179,6 +179,21 @@ function TestAuctionHouse:test_browse_pages_numbered_between_its_arrows()
 	assertClean(client)
 end
 
+function TestAuctionHouse:test_styled_once_without_auctionators_dialogs()
+	open()
+	local module = client:GetModule("Blizzard: Auction House")
+	local spec = client.Engine:GetDB("Blizzard").auction.pages
+	-- loaded before us: styled at once, only once (its page numbers too)
+	local count = #module.Pages
+	module:OnEnable()
+	lu.assertEquals(#module.Pages, count)
+	lu.assertEquals(count, spec.shown)
+	-- no Auctionator: no dialogs of its to place
+	module:PlaceAuctionatorDialogs()
+	lu.assertNil(_G.Atr_Mask)
+	assertClean(client)
+end
+
 function TestAuctionHouse:test_auctionators_page_on_the_grid()
 	open(true)
 	page(5)

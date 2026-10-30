@@ -179,20 +179,6 @@ local ExtendRail = function(window, rail)
 	Fit()
 end
 
--- What's placed from `holder`'s top (by one point) `by` higher, each once.
-local Raise = function(holder, by, ...)
-	for i = 1, select("#", ...) do
-		local part = select(i, ...)
-		if (not part.DiabolicRaised) and (part:GetNumPoints() == 1) then
-			local point, relative, relativePoint, x, y = part:GetPoint()
-			if (relative == holder or relative == nil) and relativePoint:find("^TOP") then
-				part:SetPoint(point, relative, relativePoint, x, y + by)
-				part.DiabolicRaised = true
-			end
-		end
-	end
-end
-
 -- What's placed from `holder`'s bottom (by one point) `by` lower, each
 -- once.
 local Lower = function(holder, by, ...)
@@ -298,38 +284,11 @@ Module.StyleLate = function(self, late, header)
 			end
 		end
 	end
-	for _, name in ipairs(late.lower_skip or {}) do
-		if _G[name] then
-			_G[name].DiabolicLowered = true -- (kept where Blizzard put it)
-		end
-	end
 	for _, name in ipairs(late.lower_in or {}) do
 		local holder = _G[name]
 		if holder then
 			Lower(holder, late.lower, holder:GetChildren())
 			Lower(holder, late.lower, holder:GetRegions())
-		end
-	end
-	for name, by in pairs(late.raise_in or {}) do
-		local holder = _G[name]
-		if holder then
-			Raise(holder, by, holder:GetChildren())
-			Raise(holder, by, holder:GetRegions())
-		end
-	end
-	for _, entry in ipairs(late.panels or {}) do
-		local frame = _G[entry[1]]
-		if frame and not frame.DiabolicPanel then
-			frame.DiabolicPanel = true
-			frame:SetBackdrop(nil)
-			HideOwnArt(frame)
-			-- (under it, shown with it: Auctionator's pages share them)
-			local panel = kit:AddPanel(frame, entry[2])
-			if not frame:IsShown() then
-				panel:Hide()
-			end
-			frame:HookScript("OnShow", function() panel:Show() end)
-			frame:HookScript("OnHide", function() panel:Hide() end)
 		end
 	end
 	for _, name in ipairs(late.dropdowns or {}) do

@@ -402,6 +402,17 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	lu.assertEquals({ title:GetFontString():GetTextColor() }, { menu.title_color[1], menu.title_color[2], menu.title_color[3], 1 })
 	lu.assertEquals(_G.DropDownList1.maxWidth, inset + text:GetStringWidth() + menu.text_pad + menu.edge - 10)
 	lu.assertEquals({ _G.DropDownList1Button2Highlight:GetPoint(1) }, { "TOPLEFT", choice, "TOPLEFT", menu.edge - 15, 0 })
+	-- a line it can't pick grey; a unit's menu titled in its name's colour
+	-- (as its tooltip); nothing added to a level not there
+	_G.UIDropDownMenu_AddButton({ text = "Master Looter", disabled = 1 })
+	lu.assertEquals({ _G.DropDownList1Button3:GetFontString():GetTextColor() }, { menu.disabled_color[1], menu.disabled_color[2], menu.disabled_color[3], 1 })
+	_G.UIDROPDOWNMENU_INIT_MENU = { unit = "player" }
+	_G.UIDropDownMenu_InitializeHelper()
+	_G.UIDropDownMenu_AddButton({ text = "Me", isTitle = 1 })
+	local class = client.Engine:GetDB("Data: Colors").Class[select(2, _G.UnitClass("player"))]
+	lu.assertEquals({ title:GetFontString():GetTextColor() }, { class[1], class[2], class[3], 1 })
+	_G.UIDROPDOWNMENU_INIT_MENU = nil
+	_G.UIDropDownMenu_AddButton({ text = "Nowhere" }, 5)
 
 	-- a third dropdown level
 	_G.UIDROPDOWNMENU_MAXLEVELS = 3

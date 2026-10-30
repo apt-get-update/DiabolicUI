@@ -920,8 +920,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- Blizzard colors for its page's material, dark on ours; `background`,
 		-- its painted one (window.backgrounds'), `background` below if left out;
 		-- `late`, parts an addon adds once it's shown (Auctionator's pages):
-		-- `hide` as above; `panels`, their own backdrop gone,
-		-- in ours ({ name, insets }); `dropdowns`, Diablo III's; `tabs`, their
+		-- `hide` as above; `dropdowns`, Diablo III's; `tabs`, their
 		-- prefix; `lower`, how much lower what's placed from the bottom of
 		-- one of `lower_in` goes; `beside`, { part, an addon's part over it,
 		-- the first's width once the second is there }. `bars`, status bars
