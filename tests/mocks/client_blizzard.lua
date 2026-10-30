@@ -794,7 +794,17 @@ local function buildFrames()
 			end
 		end
 	end
-	new("Frame", "CharacterResistanceFrame", paperDoll)
+	local resistances = new("Frame", "CharacterResistanceFrame", paperDoll)
+	-- its five schools (MagicResistanceFrameTemplate): the icon, the value
+	for i, coords in ipairs({ { .2265625, .33984375 }, { 0, .11328125 }, { .11328125, .2265625 },
+		{ .33984375, .453125 }, { .453125, .56640625 } }) do
+		local resistance = new("Frame", "MagicResFrame" .. i, resistances)
+		resistance:SetSize(32, 29)
+		local icon = new("Texture", nil, resistance)
+		icon:SetTexture([[Interface\PaperDollInfoFrame\UI-Character-ResistanceIcons]])
+		icon:SetTexCoord(0, 1, coords[1], coords[2])
+		new("FontString", "MagicResText" .. i, resistance)
+	end
 	-- the title picker (PlayerTitlePickerFrame, a HybridScrollFrame's buttons)
 	local picker = hidden(new("Frame", "PlayerTitlePickerFrame", titles))
 	local pickerScroll = new("ScrollFrame", "PlayerTitlePickerScrollFrame", picker)
@@ -1000,7 +1010,25 @@ local ON_DEMAND = {
 		new("PlayerModel", "InspectModelFrame", new("Frame", "InspectPaperDollFrame", frame))
 		-- Blizzard_InspectUI.lua
 		_G.InspectFrame_UnitChanged = function() end
+		-- InspectFrame.lua
+		_G.InspectFrame_Show = function(unit)
+			_G.InspectFrame.unit = unit
+			_G.ShowUIPanel(_G.InspectFrame)
+		end
 		_G.InspectPaperDollItemSlotButton_Update = function() end
+		-- InspectTalentFrame.lua: each tab named after its tree, sized to it
+		_G.InspectTalentFrame_UpdateTabs = function()
+			local talents = _G.InspectTalentFrame
+			for i = 1, 3 do
+				local tab = _G["InspectTalentFrameTab" .. i]
+				local name = _G.GetTalentTabInfo(i, talents.inspect, talents.pet, talents.talentGroup)
+				if tab and name then
+					tab:SetText(name)
+					_G.PanelTemplates_TabResize(tab, -10)
+					tab:Show()
+				end
+			end
+		end
 	end,
 	Blizzard_TrainerUI = function()
 		-- Blizzard_TrainerUI.lua: the list and the chosen service's details,
@@ -1524,6 +1552,7 @@ local function frameXML(client)
 		_G[name .. "LeftDisabled"]:Show(); _G[name .. "MiddleDisabled"]:Show(); _G[name .. "RightDisabled"]:Show()
 	end
 	f.PanelTemplates_SetNumTabs = function(frame, numTabs) frame.numTabs = numTabs end
+	f.PanelTemplates_GetSelectedTab = function(frame) return frame.selectedTab end
 	-- sized to its text, plus `padding` (24 without)
 	f.PanelTemplates_TabResize = function(tab, padding)
 		tab:SetWidth(tab:GetFontString():GetStringWidth() + (padding or 24) + 2 * _G[tab:GetName() .. "Left"]:GetWidth())
@@ -1584,7 +1613,17 @@ local function frameXML(client)
 	f.ReputationFrame_Update = noop
 	f.InboxFrame_Update = noop -- MailFrame.lua: the inbox's page of letters
 	f.SendMailFrame_Update = noop -- MailFrame.lua: the letter being written
-	f.OpenMail_Update = noop -- MailFrame.lua: the letter opened
+	-- MailFrame.lua: the letter opened, its attachments placed from its
+	-- foot on each update (the label, then the first one's button)
+	f.ATTACHMENTS_MAX_RECEIVE = 16
+	f.OpenMail_Update = function()
+		local open = _G.OpenMailFrame
+		_G.OpenMailAttachmentText:ClearAllPoints()
+		_G.OpenMailAttachmentText:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 23, 150)
+		_G.OpenMailAttachmentButton1:ClearAllPoints()
+		_G.OpenMailAttachmentButton1:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 23, 130)
+		_G.OpenMailAttachmentButton1:Show()
+	end
 	-- the spellbook (SpellBookFrame.lua): each spell button updated
 	f.SpellButton_UpdateButton = noop
 	-- a spell button's spell in the book (every rank shown: its own slot)
@@ -1611,6 +1650,7 @@ local function frameXML(client)
 	f.QuestLogControlPanel_UpdatePosition = noop
 	f.QuestLogDetailFrame_AttachToQuestLog = noop
 	f.QuestLogShowMapPOI_UpdatePosition = noop
+	f.MAX_QUESTLOG_QUESTS = 25 -- QuestLogFrame.lua
 	f.QuestLog_UpdateQuestCount = noop
 	f.GetMaterialTextColors = function()
 		return { 0, 0, 0 }, { 0, 0, 0 }
@@ -1709,6 +1749,13 @@ local function frameXML(client)
 	end
 	f.TalentFrame_LoadUI = function() api.LoadAddOn("Blizzard_TalentUI") end
 	f.InspectFrame_LoadUI = function() api.LoadAddOn("Blizzard_InspectUI") end
+	-- UIParent.lua
+	f.InspectUnit = function(unit)
+		_G.InspectFrame_LoadUI()
+		if _G.InspectFrame_Show then
+			_G.InspectFrame_Show(unit)
+		end
+	end
 	f.TimeManager_LoadUI = function() api.LoadAddOn("Blizzard_TimeManager") end
 	f.Calendar_LoadUI = function() api.LoadAddOn("Blizzard_Calendar") end
 	f.Arena_LoadUI = function() api.LoadAddOn("Blizzard_ArenaUI") end

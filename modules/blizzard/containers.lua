@@ -50,6 +50,7 @@ local ICON_QUALITY_BORDER = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BorderHigh
 local ICON_BACKDROP = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BackdropBag.tga"
 local ICON_ART_SCALE = 128/64
 local ICON_FILL = 54/64
+local EMPTY_SLOT_ALPHA = .6 -- an empty gear slot's silhouette, added over the dark slot
 
 local borderCache = {} -- item button -> our border
 local glowCache = {} -- item button -> its quality glow
@@ -235,6 +236,12 @@ local updateGearSlot = function(self, unit)
 	local itemLink = GetInventoryItemLink(unit, slotID)
 	if (not borderCache[self]) then
 		styleItem(self)
+	end
+	-- an empty one's silhouette (Blizzard's, near black) lit, as a ghost
+	local icon = _G[self:GetName() .. "IconTexture"]
+	if icon then
+		icon:SetBlendMode(itemLink and "BLEND" or "ADD")
+		icon:SetAlpha(itemLink and 1 or EMPTY_SLOT_ALPHA)
 	end
 	local iconBorder = borderCache[self]
 	local quality = itemLink and select(3, GetItemInfo(itemLink))

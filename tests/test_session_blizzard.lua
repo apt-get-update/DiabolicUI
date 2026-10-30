@@ -373,26 +373,25 @@ function TestCharacter:test_our_window_on_every_tab()
 	end
 
 	-- no round portrait; the name in the plate on the window's edge, the
-	-- medallion at the band's left end; the close button in its socket in the
-	-- window's corner
+	-- spec in its ring on the plate's left end; the close button in its
+	-- socket in the window's corner
 	lu.assertEquals(_G.CharacterFramePortrait:GetAlpha(), 0)
 	lu.assertEquals(_G.CharacterNameText:GetParent(), module.Backdrop.DiabolicPlate)
 	near(color(_G.CharacterNameText:GetTextColor()), window.title_plate.color)
 	lu.assertEquals({ _G.CharacterNameText:GetPoint() }, { "CENTER", module.Backdrop.DiabolicPlate, "CENTER", 0, window.title_plate.text_offset })
-	lu.assertEquals({ module.Medallion:GetPoint() }, { "LEFT", module.Header, "LEFT", window.medallion.offset, 0 })
+	local gem = window.title_plate.gem
+	lu.assertEquals({ module.Spec:GetPoint() }, { "CENTER", module.Backdrop.DiabolicPlate, "LEFT", gem.x, gem.y })
 	local socket = window.close.socket_size
 	-- (the window's top lowered by the tab row: its tabs hang under it)
 	lu.assertEquals({ _G.CharacterFrameCloseButton:GetPoint() }, { "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 - window.tab_row })
-	lu.assertEquals({ module.Header:GetPoint() }, { "TOPLEFT", backdrop, "TOPLEFT", config.header_insets[1], -config.header_insets[2] - window.tab_row })
+	-- no red band: nothing in it
+	lu.assertFalse(shown(module.Header))
 	lu.assertEquals(_G.CharacterFrameCloseButton:GetNormalTexture():GetTexture(), window.close.texture.normal)
-	-- the band's glass and the stone in tiles, laid again at a new size
+	-- the stone in tiles, laid again at a new size
 	frame:Show()
-	local band, stone = module.Header.DiabolicBand, backdrop.DiabolicStone
-	lu.assertTrue(#band > 0)
+	local stone = backdrop.DiabolicStone
 	lu.assertTrue(#stone > 0)
-	client:RunScript(module.Header, "OnSizeChanged")
 	client:RunScript(backdrop, "OnSizeChanged")
-	lu.assertTrue(shown(band[1]))
 	lu.assertTrue(shown(stone[1]))
 	frame:Hide()
 	-- the ammo slot in the action buttons' border instead of its frame art
@@ -511,34 +510,36 @@ function TestCharacter:test_the_right_column()
 	boot()
 	local module = client:GetModule("Blizzard: Character")
 	local gearScore = client:GetModule("Blizzard: GearScore")
-	-- the GearScore, big in its color, the item level under it: a
-	-- two-hander of 232 alone is 2 slots' worth, the average over 16 slots
+	-- the GearScore in its color and the average item level, under the
+	-- model as the inspected one's: a two-hander of 232 alone is 2 slots' worth, the average over 16 slots
 	client.world.inventory[16] = Session.item(client, 3016, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_2HWEAPON" })
 	client.world.inventory[1] = Session.item(client, 3001, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_HEAD" })
+	local score = function()
+		return Session.stripColors(module.Score:GetText()):match("^GS (%d+)")
+	end
 	_G.CharacterFrame:Show()
-	lu.assertEquals(module.Score:GetText(), "1207")
-	near(color(module.Score:GetTextColor()), color(gearScore:GetColor(1207)))
-	lu.assertEquals(module.ItemLevel:GetText(), "Item Level 29")
+	lu.assertEquals(module.Score:GetText(), gearScore:FormatUnit(1207, 29))
 	-- a change of gear
 	client.world.inventory[1] = nil
 	client:FireEvent("PLAYER_EQUIPMENT_CHANGED", 1)
-	lu.assertEquals(module.Score:GetText(), "805")
+	lu.assertEquals(score(), "805")
 	-- not while the tab is hidden, nor for gear not known yet
 	_G.CharacterFrame:Hide()
 	client.world.inventory[1] = Session.item(client, 3001, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_HEAD" })
 	client:FireEvent("PLAYER_EQUIPMENT_CHANGED", 1)
-	lu.assertEquals(module.Score:GetText(), "805")
+	lu.assertEquals(score(), "805")
 	client.world.units.player.inventoryTextures = { [5] = "Interface\\Icons\\Chest" }
 	_G.CharacterFrame:Show()
-	lu.assertEquals(module.Score:GetText(), "805")
+	lu.assertEquals(score(), "805")
 	client.world.units.player.inventoryTextures = nil
-	-- the level over the stats, unless it's the top one
-	lu.assertFalse(shown(module.Level))
+	-- the level in the pentagram's middle, a resistance on each point
 	client.world.units.player.level = 70
 	module:UpdateScore()
-	lu.assertTrue(shown(module.Level))
 	lu.assertEquals(module.Level:GetText(), "70")
-	lu.assertEquals(select(5, module.Stats:GetPoint()), -module.LevelHeight)
+	local star = module.Level:GetParent()
+	for i = 1, 5 do
+		lu.assertEquals(_G["MagicResFrame" .. i]:GetParent(), star)
+	end
 	client.world.units.player.level = 80
 
 	-- two groups of stats, Blizzard's choice, Blizzard's lines
@@ -719,6 +720,37 @@ function TestCharacter:test_gearscore_counts_like_gearscorelite()
 	assertClean(client)
 end
 
+function TestCharacter:test_the_inspected_trees_on_hover()
+	boot({ world = function(world)
+		world.inspectTalents = { { "Arms", "Interface\\Icons\\Arms", 51 }, { "Fury", "Interface\\Icons\\Fury", 20 } }
+	end })
+	client.api.LoadAddOn("Blizzard_InspectUI")
+	_G.InspectTalentFrame.inspect = true
+	-- a tree's name and points in its tab's tooltip (the format the client's)
+	client:Hover(_G.InspectTalentFrameTab1)
+	lu.assertTrue(shown(_G.GameTooltip))
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "MASTERY_POINTS_SPENT")
+	client:Leave()
+	lu.assertFalse(shown(_G.GameTooltip))
+	-- no tree, no tooltip
+	client:Hover(_G.InspectTalentFrameTab3)
+	lu.assertFalse(shown(_G.GameTooltip))
+	client:Leave()
+	assertClean(client)
+end
+
+function TestCharacter:test_the_currency_popup_styled_once()
+	boot()
+	client.api.LoadAddOn("Blizzard_TokenUI")
+	local module = client:GetModule("Blizzard: Character")
+	local popup = _G.TokenFramePopup
+	lu.assertTrue(popup.DiabolicStyled)
+	local regions = select("#", popup:GetRegions())
+	module:StyleTokenPopup()
+	lu.assertEquals(select("#", popup:GetRegions()), regions)
+	assertClean(client)
+end
+
 function TestCharacter:test_the_inspect_window_loaded_before_us()
 	local friend = Client.newUnit({ name = "Friend", class = "WARRIOR" })
 	boot({ world = function(world, c)
@@ -744,10 +776,10 @@ function TestCharacter:test_the_talent_spec_in_the_band()
 	end })
 	local module = client:GetModule("Blizzard: Character")
 	local spec = module.Spec
-	-- the tree with the most points, its icon round over the medallion's glass
+	-- the tree with the most points, its icon round in the title plate's ring
 	lu.assertTrue(shown(spec))
-	local glass = client.Engine:GetDB("Blizzard").character.spec.glass_offset
-	lu.assertEquals({ spec:GetPoint() }, { "CENTER", module.Medallion, "CENTER", glass[1], glass[2] })
+	local glass = client.Engine:GetDB("Blizzard").window.title_plate.gem.glass_offset
+	lu.assertEquals({ spec.icon:GetPoint() }, { "CENTER", spec, "CENTER", glass[1], glass[2] })
 	lu.assertEquals(spec.icon:GetTexture(), "Interface\\Icons\\Holy")
 	lu.assertEquals({ spec.name, spec.points }, { "Holy", "13/58/0" })
 	-- its points on hover
@@ -1005,6 +1037,10 @@ function TestAchievements:test_overachievers_pages()
 	local label = panel:CreateFontString(nil, "ARTWORK")
 	local button = _G.CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
 	button:SetNormalTexture("Interface\\Buttons\\UI-Panel-Button-Up")
+	-- (Reset right of Search: the rule's gap apart)
+	local reset = _G.CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	reset:SetNormalTexture("Interface\\Buttons\\UI-Panel-Button-Up")
+	reset:SetPoint("LEFT", button, "RIGHT", 0, 0)
 	local dropdown = _G.CreateFrame("Frame", "Overachiever_Filter", panel)
 	_G.CreateFrame("Button", "Overachiever_FilterButton", dropdown)
 	dropdown:CreateTexture("Overachiever_FilterMiddle")
@@ -1016,10 +1052,25 @@ function TestAchievements:test_overachievers_pages()
 	near(color(label:GetTextColor()), config.category_color)
 	lu.assertTrue(button.DiabolicStyled)
 	lu.assertTrue(dropdown.DiabolicStyled)
+	lu.assertEquals(select(4, reset:GetPoint()), client.Engine:GetDB("Blizzard").window.layout.button_gap)
 	near(color(left.label:GetTextColor()), client.Engine:GetDB("Blizzard").window.section.color)
 	-- once
 	frame:Hide()
 	frame:Show()
+	assertClean(client)
+end
+
+function TestAchievements:test_overachiever_loaded_after_the_window()
+	boot({ world = function(world)
+		table.insert(world.addons, { name = "Overachiever_Tabs", enabled = true, loadOnDemand = true })
+	end })
+	client.api.LoadAddOn("Blizzard_AchievementUI")
+	local frame = _G.AchievementFrame
+	local tab = _G.CreateFrame("Button", "AchievementFrameTab3", frame)
+	tab.frame = _G.CreateFrame("Frame", "Overachiever_SuggestionsFrame", frame)
+	-- its pages styled as it loads
+	client.api.LoadAddOn("Overachiever_Tabs")
+	lu.assertTrue(tab.frame.DiabolicStyled)
 	assertClean(client)
 end
 

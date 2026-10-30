@@ -296,7 +296,6 @@ L["Action Bar Saver isn't loaded, can't restore '%s'."] = true
 L["Action Bar Saver isn't loaded"] = true
 L["Equipment Set"] = true
 L["New Equipment Set"] = true
-L["Resistances"] = true
 L["Stats"] = true
 L["Titles"] = true
 L["Sets"] = true

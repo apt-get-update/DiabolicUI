@@ -504,19 +504,6 @@ Module.StylePanel = function(self, spec)
 		self:HangTabs(window, spec.tabs, spec.sigils)
 		kit:DropTop(window)
 	end
-	-- a page's own tabs in the row the window's left, under the band
-	-- (Blizzard's start 70 in, the last past the window's side)
-	local own = spec.own_tabs and _G[spec.own_tabs .. 1]
-	if own and spec.tabs then
-		local x, y = unpack(config.tab_offset)
-		own:ClearAllPoints()
-		own:SetPoint("TOPLEFT", header, "BOTTOMLEFT", x, y - config.own_tab_gap)
-	end
-	local i = 1
-	while spec.own_tabs and _G[spec.own_tabs .. i] do
-		kit:StyleTab(_G[spec.own_tabs .. i], { inset = config.own_tab_inset, font = config.tab_font })
-		i = i + 1
-	end
 	for _, pane in ipairs(spec.panes or {}) do
 		-- { the first part, the last one or false, open }
 		local first, last = _G[pane[1]], pane[2] and _G[pane[2]]

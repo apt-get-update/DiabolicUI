@@ -474,12 +474,32 @@ Engine:NewStaticConfig("Blizzard", {
 				header_gap = 2, -- under each title bar
 				line_height = 12,
 				line_inset = 8, -- each line from the panel's sides
-				group_gap = 14,
-				resistance_gap = 6, -- between the resistances, in a row over the stats
+				group_gap = 10,
+				-- the level in a pentagram's middle, the resistances on its points
+				pentagram = {
+					texture = path .. [[textures\DiabolicUI_D3_Pentagram.tga]], -- Diablo III's banner sigil (white: dyed), its middle in its file's
+					size = 120,
+					color = { .4, .02, .04, .95 }, -- dark blood
+					shadow_color = { 0, 0, 0, .85 }, -- itself again under it, soaked into the stone
+					shadow_offset = { 2, -2 },
+					tip = .9, -- its points, of its half size from its middle
+					-- each resistance's point (Blizzard's order: arcane, fire, nature,
+					-- frost, shadow), as the elements' on an inverted pentagram: air
+					-- left, fire up right, earth up left, water right, spirit down
+					angles = { 198, 54, 126, -18, -90 },
+					level_y = 2, -- the level, from its middle
+					-- its glow: itself again, added, a little larger, its light
+					-- beating like a heart (two beats, then a rest)
+					glow_color = { .6, 0, .05 },
+					glow_scale = 1.04,
+					glow_alpha = { .05, .2 },
+					glow_period = 1.6, -- seconds, a heartbeat
+					glow_beats = { { 0, 1 }, { .28, .7 } }, -- each beat's start (seconds) and strength
+					glow_beat_width = .22, -- seconds, a beat's rise and fall
+					below = 12 -- the stats under it (the bottom point's resistance past it)
+				},
 				resistance_size = 26,
-				resistance_top = 4, -- the row, under its title bar
 				resistance_crop = 3, -- Blizzard's bevel round each icon (of its 32 x 29), cut off
-				level_height = 34, -- the level's room under its title bar
 				score_height = 58, -- the GearScore's room under its title bar
 				score_gap = 6,
 				score_top = 6 -- its title bar, lower than the top padding
@@ -510,7 +530,7 @@ Engine:NewStaticConfig("Blizzard", {
 				color = { .18, .12, .06 }, -- ink (the windows')
 				worn_color = { .5, .1, 0 } -- red ink
 			},
-			score_font = { path .. [[fonts\NotoSerif-Bold.ttf]], 24 },
+			score_font = { path .. [[fonts\ExocetBlizzardMedium.ttf]], 28 }, -- the level, in the pentagram: Diablo III's capitals
 			stats_panel = path .. [[textures\DiabolicUI_D3_StatsPanel.tga]], -- Diablo III's (dark red, in its own line)
 			stats_panel_inset = 3,
 			-- the equipment manager (Blizzard's dialog, its frame hidden) on its page
@@ -818,8 +838,7 @@ Engine:NewStaticConfig("Blizzard", {
 		header_insets = { 24, 24 },
 		tab_offset = { 4, 1 },
 		tab_inset = 8, -- Blizzard overlaps them by 15
-		own_tab_inset = 2, -- a page's own tabs (the inspected's talent trees)
-		own_tab_gap = 6, -- theirs in the row the window's tabs left, under the band
+		own_tab_inset = 2, -- a page's own tabs
 		tab_font = DiabolicFont_HeaderRegular10,
 		list_panel_insets = { 6, 6, 28, 6 }, -- the scroll bar inside on the right
 		text_color = { .9, .86, .8 }, -- their dark text (drawn for parchment), pale

@@ -542,6 +542,10 @@ local function immersion(world)
 		talkBox:SetSize(570, 155)
 		local main = part(talkBox, "MainFrame")
 		part(main, "CloseButton", "Button")
+		main.Indicator = main:CreateTexture(nil, "OVERLAY")
+		local text = part(talkBox, "TextFrame")
+		text.Text = text:CreateFontString(nil, "ARTWORK")
+		text.SpeechProgress = text:CreateFontString(nil, "ARTWORK")
 		local model = part(main, "Model", "PlayerModel")
 		model:SetSize(115, 115)
 		model:SetPoint("TOPLEFT", talkBox, "TOPLEFT", 21, -21)
@@ -580,6 +584,11 @@ local function immersion(world)
 				button.Hilite = CreateFrame("Frame", nil, button)
 				button.Hilite:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
 				button.Label = button:CreateFontString(nil, "ARTWORK")
+				-- its icon: a speech bubble, a quest's mark, a spell's
+				button.Icon = button:CreateTexture(nil, "ARTWORK")
+				function button:SetGossipIcon() self.Icon:SetTexture([[Interface\GossipFrame\GossipGossipIcon]]) end
+				function button:SetGossipQuestIcon() self.Icon:SetTexture([[Interface\GossipFrame\AvailableQuestIcon]]) end
+				function button:SetIcon(texture) self.Icon:SetTexture(texture) end
 				self.Buttons[index] = button
 			end
 			return button
@@ -608,6 +617,12 @@ function TestImmersion:test_loaded_after_us_it_gets_styled()
 	-- the windows' close button, where Immersion put it
 	local close = talkBox.MainFrame.CloseButton
 	lu.assertEquals(close:GetNormalTexture():GetTexture(), window.close.texture.normal)
+	-- its indicator left of it, pale gold; the text and its pages' count
+	local indicator = talkBox.MainFrame.Indicator
+	lu.assertEquals({ indicator:GetPoint() }, { "RIGHT", close, "LEFT", -config.indicator_gap, 0 })
+	near(color(indicator:GetVertexColor()), config.icon_color)
+	near(color(talkBox.TextFrame.Text:GetTextColor()), config.text_color)
+	lu.assertEquals({ talkBox.TextFrame.SpeechProgress:GetFont() }, { config.title_font, config.header_size, "" })
 
 	-- the titles in Exocet, in Immersion's colors
 	local name = talkBox.NameFrame.Name
@@ -647,6 +662,14 @@ function TestImmersion:test_loaded_after_us_it_gets_styled()
 	lu.assertEquals(lit:GetAlpha(), config.choice_lit_alpha)
 	first.Hilite:SetAlpha(0)
 	lu.assertEquals(lit:GetAlpha(), 0)
+	-- the speech bubbles pale gold, the quests' marks and spells as they are
+	first:SetGossipIcon()
+	lu.assertEquals(first.Icon:IsDesaturated(), 1)
+	near(color(first.Icon:GetVertexColor()), config.icon_color)
+	first:SetGossipQuestIcon()
+	lu.assertNil(first.Icon:IsDesaturated())
+	first:SetIcon([[Interface\Icons\Spell]])
+	lu.assertNil(first.Icon:IsDesaturated())
 	local second = titles:GetButton(2)
 	lu.assertTrue(second.DiabolicGlass)
 	local regions = select("#", second:GetRegions())

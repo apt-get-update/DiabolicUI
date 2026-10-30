@@ -24,8 +24,12 @@ local kit
 local _G = _G
 local ipairs = ipairs
 local math_ceil = math.ceil
+local math_cos = math.cos
 local math_floor = math.floor
 local math_max = math.max
+local math_pi = math.pi
+local math_rad = math.rad
+local math_sin = math.sin
 local select = select
 local string_format = string.format
 local table_insert = table.insert
@@ -41,6 +45,7 @@ local GetCurrentTitle = _G.GetCurrentTitle
 local GetNumTitles = _G.GetNumTitles
 local GetTitleName = _G.GetTitleName
 local IsTitleKnown = _G.IsTitleKnown
+local MouseIsOver = _G.MouseIsOver
 local PlaySound = _G.PlaySound
 local SetCurrentTitle = _G.SetCurrentTitle
 local GetFactionInfo = _G.GetFactionInfo
@@ -259,6 +264,18 @@ Module.LayoutPaperDoll = function(self, window)
 	local turn = _G.CharacterModelFrameRotateLeftButton
 	turn:ClearAllPoints()
 	turn:SetPoint("TOPLEFT", panel, "TOPLEFT", inset, -inset)
+	-- the turning arrows only while the mouse is over the model
+	local arrows = { turn, _G.CharacterModelFrameRotateRightButton }
+	local shown
+	panel:SetScript("OnUpdate", function()
+		local over = MouseIsOver(panel) and true or false
+		if (over ~= shown) then
+			shown = over
+			for _, arrow in ipairs(arrows) do
+				arrow:SetAlpha(over and 1 or 0)
+			end
+		end
+	end)
 
 	-- (the resistances: the right column's, CreateColumn), the title's
 	-- dropdown
@@ -393,39 +410,64 @@ Module.CreateColumn = function(self, window)
 	art:SetPoint("BOTTOMRIGHT", -layout.stats_panel_inset, layout.stats_panel_inset)
 	local pages = self:CreatePages(column)
 
-	-- the level, big; the rest under it in a page of its own, up in its
-	-- place at the top level (UpdateScore)
+	-- the level in a pentagram's middle (Diablo III's banner sigil), the
+	-- resistances on its five points (square, in the action buttons'
+	-- border, their value in its corner); the stats under it
 	local page = pages[1]
-	local y = -spec.score_top
-	local header = CreateSection(page, spec, y, _G.LEVEL)
-	self.Level = page:CreateFontString(nil, "OVERLAY")
+	local penta = spec.pentagram
+	local star = CreateFrame("Frame", nil, page)
+	star:SetSize(penta.size, penta.size)
+	star:SetPoint("TOP", page, "TOP", 0, -spec.score_top)
+	local sigil = star:CreateTexture(nil, "ARTWORK")
+	sigil:SetTexture(penta.texture)
+	sigil:SetVertexColor(unpack(penta.color))
+	sigil:SetAllPoints()
+	-- its shadow under it
+	local shadow = star:CreateTexture(nil, "BORDER")
+	shadow:SetTexture(penta.texture)
+	shadow:SetVertexColor(unpack(penta.shadow_color))
+	shadow:SetSize(penta.size, penta.size)
+	shadow:SetPoint("CENTER", unpack(penta.shadow_offset))
+	-- its red glow over it, beating like a heart
+	local glow = star:CreateTexture(nil, "OVERLAY")
+	glow:SetTexture(penta.texture)
+	glow:SetVertexColor(unpack(penta.glow_color))
+	glow:SetBlendMode("ADD")
+	glow:SetPoint("CENTER")
+	glow:SetSize(penta.size * penta.glow_scale, penta.size * penta.glow_scale)
+	local low, high = unpack(penta.glow_alpha)
+	local width = penta.glow_beat_width
+	local elapsed = 0
+	star:SetScript("OnUpdate", function(_, delta)
+		elapsed = (elapsed + delta) % penta.glow_period
+		-- the strongest beat under way, each a cosine's rise and fall
+		local beat = 0
+		for _, b in ipairs(penta.glow_beats) do
+			local t = elapsed - b[1]
+			if t >= 0 and t < width then
+				beat = math_max(beat, b[2] * (1 - math_cos(t / width * 2 * math_pi)) / 2)
+			end
+		end
+		glow:SetAlpha(low + (high - low) * beat)
+	end)
+	self.Level = star:CreateFontString(nil, "OVERLAY")
 	self.Level:SetFont(unpack(layout.score_font))
 	self.Level:SetTextColor(unpack(self.config.level_color))
-	self.Level:SetPoint("TOP", header, "BOTTOM", 0, -spec.score_gap)
-	self.LevelHeader = header
-	self.LevelHeight = spec.header_height + spec.level_height
+	self.Level:SetShadowOffset(1, -1)
+	self.Level:SetPoint("CENTER", star, "CENTER", 0, penta.level_y)
 	local stats = CreateFrame("Frame", nil, page)
-	stats:SetPoint("TOPLEFT", page, "TOPLEFT", 0, -self.LevelHeight)
+	stats:SetPoint("TOPLEFT", page, "TOPLEFT", 0, -spec.score_top - penta.size - penta.below)
 	stats:SetPoint("BOTTOMRIGHT", page, "BOTTOMRIGHT", 0, 0)
 	self.Stats = stats
-
-	-- the resistances in a section of their own at the top of the stats,
-	-- in a row, centred: square, in the action buttons' border, their
-	-- value in its corner; the groups under them
-	CreateSection(stats, spec, y, L["Resistances"])
-	y = y - spec.header_height - spec.header_gap - spec.resistance_top
-	local size, gap, crop = spec.resistance_size, spec.resistance_gap, spec.resistance_crop
-	for i = 1, 5 do
+	local size, crop = spec.resistance_size, spec.resistance_crop
+	local reach = penta.size / 2 * penta.tip
+	for i, angle in ipairs(penta.angles) do
 		local resistance = _G["MagicResFrame" .. i]
-		resistance:SetParent(stats)
-		resistance:SetFrameLevel(stats:GetFrameLevel() + 1)
+		resistance:SetParent(star)
+		resistance:SetFrameLevel(star:GetFrameLevel() + 1)
 		resistance:SetSize(size, size)
 		resistance:ClearAllPoints()
-		if (i == 1) then
-			resistance:SetPoint("TOPLEFT", stats, "TOP", -(5 * size + 4 * gap) / 2, y)
-		else
-			resistance:SetPoint("LEFT", _G["MagicResFrame" .. (i - 1)], "RIGHT", gap, 0)
-		end
+		resistance:SetPoint("CENTER", star, "CENTER", reach * math_cos(math_rad(angle)), reach * math_sin(math_rad(angle)))
 		-- its school's icon without Blizzard's bevel
 		for _, region in ipairs({ resistance:GetRegions() }) do
 			if region:IsObjectType("Texture") then
@@ -447,7 +489,7 @@ Module.CreateColumn = function(self, window)
 		value:ClearAllPoints()
 		value:SetPoint("BOTTOMRIGHT", resistance, "BOTTOMRIGHT", -2, 2)
 	end
-	y = y - size - spec.group_gap
+	local y = 0
 
 	-- the stats, Blizzard's lines (StatFrameTemplate) filled by its own
 	-- UpdatePaperdollStats each time it updates its two columns
@@ -484,7 +526,7 @@ Module.CreateColumn = function(self, window)
 	if _G.GearManagerDialog then
 		-- "Equipment Sets", the client's words (its tooltips' "...: %s")
 		local title = _G.EQUIPMENT_SETS:match("^(.-)%s*:") or _G.EQUIPMENT_MANAGER
-		header = CreateSection(pages[3], spec, -spec.score_top, title)
+		local header = CreateSection(pages[3], spec, -spec.score_top, title)
 		self:EmbedGearManager(header, pages[3])
 	end
 
@@ -661,18 +703,8 @@ Module.UpdateScore = function(self)
 	if not _G.PaperDollFrame:IsVisible() then
 		return
 	end
-	-- the level, unless it's the top one
-	local playerLevel, top = UnitLevel("player"), _G.MAX_PLAYER_LEVEL or 0
-	self.Level:SetText(playerLevel)
-	if (top > 0) and (playerLevel >= top) then
-		self.Level:Hide()
-		self.LevelHeader:Hide()
-		self.Stats:SetPoint("TOPLEFT", self.Stats:GetParent(), "TOPLEFT", 0, 0)
-	else
-		self.Level:Show()
-		self.LevelHeader:Show()
-		self.Stats:SetPoint("TOPLEFT", self.Stats:GetParent(), "TOPLEFT", 0, -self.LevelHeight)
-	end
+	-- the level, in the pentagram's middle
+	self.Level:SetText(UnitLevel("player"))
 	local gearScore = Engine:GetModule("Blizzard: GearScore")
 	local score, level = gearScore:GetUnitScore("player")
 	if score then

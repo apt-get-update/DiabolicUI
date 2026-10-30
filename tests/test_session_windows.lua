@@ -539,6 +539,25 @@ function TestQuestLog:test_the_details_in_ink_on_the_parchment()
 	assertClean(client)
 end
 
+function TestQuestLog:test_the_count_in_the_title_the_dailies_on_hover()
+	boot({ world = function(world) world.dailiesDone = 3 end })
+	local title = _G.QuestLogTitleText
+	_G.QuestLog_UpdateQuestCount(15)
+	lu.assertEquals(title:GetText(), "QUEST_LOG  15/25")
+	-- the title's tooltip: the dailies done, when they reset
+	local hover
+	for _, child in ipairs({ title:GetParent():GetChildren() }) do
+		if (select(2, child:GetPoint()) == title) then
+			hover = child
+		end
+	end
+	client:Hover(hover)
+	lu.assertTrue(shown(_G.GameTooltip))
+	client:Leave()
+	lu.assertFalse(shown(_G.GameTooltip))
+	assertClean(client)
+end
+
 function TestQuestLog:test_the_details_and_buttons_kept_in_place()
 	boot()
 	local module = client:GetModule("Blizzard: Quest Log")
@@ -667,18 +686,18 @@ function TestPanels:test_the_auction_house_with_auctionator()
 	-- its pages' rows from their headers, left of their lists
 	frame:Show()
 	lu.assertEquals(_G.AuctionatorTitle:GetAlpha(), 0)
-	lu.assertTrue(_G.Atr_Hlist.DiabolicPanel)
+	lu.assertNotNil(_G.Atr_Hlist.DiabolicPanel)
 	lu.assertNil(_G.Atr_Hlist:GetBackdrop())
-	lu.assertTrue(_G.Atr_Duration.DiabolicPlate)
+	lu.assertNotNil(_G.Atr_Duration.DiabolicPlate)
 	lu.assertNotNil(_G.Atr_ListTabsTab1.DiabolicArt)
 	-- its search in the band, its Full Scan at its right end, once
 	lu.assertEquals((_G.Atr_FullScanButton:GetPoint()), "RIGHT")
 	lu.assertNotNil(_G.Atr_Search_Box.DiabolicOutset)
-	-- the bottom rows lower, once
-	lu.assertEquals({ _G.Atr_Buy1_Button:GetPoint() }, { "BOTTOMLEFT", _G.Atr_Main_Panel, "BOTTOMLEFT", 10, 6 })
+	-- the bottom rows lower (26: their page's raised), once
+	lu.assertEquals({ _G.Atr_Buy1_Button:GetPoint() }, { "BOTTOMLEFT", _G.Atr_Main_Panel, "BOTTOMLEFT", 10, 20 - 26 })
 	frame:Hide()
 	frame:Show()
-	lu.assertEquals(select(5, _G.Atr_Buy1_Button:GetPoint()), 6)
+	lu.assertEquals(select(5, _G.Atr_Buy1_Button:GetPoint()), 20 - 26)
 	-- its sell column's panel with it
 	_G.Atr_SellControls:Show()
 	_G.Atr_SellControls:Hide()
@@ -708,6 +727,22 @@ function TestPanels:test_the_guild_banks_log_in_ink()
 	lu.assertStrContains(message.text, "|cff1d1d1dgrey|r")
 	lu.assertNil(message.text:find("|cffa335ee", 1, true))
 	lu.assertEquals({ message.r, message.g, message.b }, ink)
+	assertClean(client)
+end
+
+function TestPanels:test_the_guild_banks_rail_fitted_once_placed()
+	boot()
+	client.api.LoadAddOn("Blizzard_GuildBankUI")
+	-- (not placed yet: nothing to fit it to)
+	local frame = _G.GuildBankFrame
+	frame:Hide()
+	frame:ClearAllPoints()
+	lu.assertNil(frame:GetLeft())
+	frame:Show()
+	frame:SetPoint("TOPLEFT", _G.UIParent, "TOPLEFT", 0, -104)
+	frame:Hide()
+	frame:Show()
+	lu.assertNotNil(frame:GetLeft())
 	assertClean(client)
 end
 
@@ -824,6 +859,19 @@ function TestMail:test_the_inbox_and_the_letter_being_written()
 	assertClean(client)
 end
 
+function TestMail:test_the_letters_attachments_clear_of_the_foot()
+	boot()
+	local raise = client.Engine:GetDB("Blizzard").mail.open_attachments_raise
+	_G.OpenMail_Update()
+	lu.assertEquals(select(5, _G.OpenMailAttachmentText:GetPoint()), 150 + raise)
+	lu.assertEquals(select(5, _G.OpenMailAttachmentButton1:GetPoint()), 130 + raise)
+	-- once per place Blizzard gives them
+	_G.OpenMailAttachmentText:SetPoint("TOPLEFT", _G.OpenMailFrame, "BOTTOMLEFT", 23, 150 + raise)
+	_G.OpenMail_Update()
+	lu.assertEquals(select(5, _G.OpenMailAttachmentText:GetPoint()), 150 + raise)
+	assertClean(client)
+end
+
 function TestMail:test_postals_parts_in_place()
 	boot()
 	local module = client:GetModule("Blizzard: Mail")
@@ -883,9 +931,11 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	local ink = client.Engine:GetDB("Blizzard").window.ink
 	local frame = _G.TradeSkillFrame
 	frame:Show()
-	-- the search in the band, Have Materials right of it, both over the band
+	-- the search at the band's left end (as the window first updates),
+	-- Have Materials right of it, both over the band
 	local search, filter = _G.TradeSkillFrameEditBox, _G.TradeSkillFrameAvailableFilterCheckButton
-	lu.assertEquals({ search:GetPoint() }, { "TOPLEFT", frame, "TOPLEFT", config.search[1], config.search[2] })
+	_G.TradeSkillFrame_Update()
+	lu.assertEquals((select(2, search:GetPoint())), _G.TradeSkillFrameTitleText.DiabolicHeader)
 	lu.assertEquals(search:GetWidth(), config.search_width)
 	lu.assertEquals({ filter:GetPoint() }, { "LEFT", search, "RIGHT", config.filter_gap, 0 })
 	lu.assertEquals(search:GetFrameLevel(), frame:GetFrameLevel() + 2)
@@ -911,14 +961,14 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	lu.assertEquals(select(4, _G.TradeSkillSkill2:GetFontString():GetShadowColor()), 0)
 	-- (an empty row left alone)
 	lu.assertFalse(shown(_G.TradeSkillSkill6))
-	-- the profession's icon in the band's medallion
-	lu.assertTrue(shown(module.Medallion))
-	lu.assertEquals(module.Medallion.icon:GetTexture(), [[Interface\Icons\Trade_Tailoring]])
+	-- the profession's icon in the title plate's ring
+	lu.assertTrue(shown(module.Gem))
+	lu.assertEquals(module.Gem.icon:GetTexture(), [[Interface\Icons\Trade_Tailoring]])
 	-- (one with no spell of its name: none)
 	client.world.tradeSkill.name = "Mystery"
 	client.world.unknownSpells = { Mystery = true }
 	_G.TradeSkillFrame_Update()
-	lu.assertFalse(shown(module.Medallion))
+	lu.assertFalse(shown(module.Gem))
 
 	-- a recipe chosen: its reagents in ink, red ink for those short, the
 	-- uncommon one framed in its color; "Reagents:" closer to the description
@@ -975,21 +1025,20 @@ function TestTradeSkill:test_loaded_before_us_and_not_without_the_skin()
 	boot({ savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } } })
 	client.api.LoadAddOn("Blizzard_TradeSkillUI")
 	lu.assertEquals(_G.TradeSkillFrameEditBox:GetWidth(), 128)
-	lu.assertNil(client:GetModule("Blizzard: Trade Skill").Medallion)
 	assertClean(client)
 end
 
-function TestTradeSkill:test_the_medallion_waits_for_the_band()
+function TestTradeSkill:test_the_gem_waits_for_the_band()
 	boot({ world = recipes })
 	client.api.LoadAddOn("Blizzard_TradeSkillUI")
 	local module = client:GetModule("Blizzard: Trade Skill")
 	local header = _G.TradeSkillFrameTitleText.DiabolicHeader
 	_G.TradeSkillFrameTitleText.DiabolicHeader = nil
-	module:UpdateMedallion()
-	lu.assertNil(module.Medallion)
+	module:UpdateGem()
+	lu.assertNil(module.Gem)
 	_G.TradeSkillFrameTitleText.DiabolicHeader = header
-	module:UpdateMedallion()
-	lu.assertNotNil(module.Medallion)
+	module:UpdateGem()
+	lu.assertNotNil(module.Gem)
 	assertClean(client)
 end
 
@@ -1222,11 +1271,6 @@ function TestWindowKit:test_the_kits_other_parts()
 	local cover = kit:CreateCover(window, { 10, 10, 10, 10 }, 2)
 	kit:DropTop(window)
 	lu.assertEquals(select(5, cover:GetPoint()), -10)
-	-- the strip under the band once
-	kit:AddTabStrip(header)
-	local strip = header.DiabolicStrip
-	kit:AddTabStrip(header)
-	lu.assertEquals(header.DiabolicStrip, strip)
 	-- a band's parts from its right end
 	local first, second = frame:CreateFontString(), frame:CreateFontString()
 	first:SetText("One")

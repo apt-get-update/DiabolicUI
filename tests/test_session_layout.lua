@@ -22,6 +22,11 @@ local function boot(options)
 	kit = client:GetModule("Blizzard: Windows")
 end
 
+-- Whether the layout check is on (for this session only).
+local function checking()
+	return client:GetModule("Blizzard: Layout Audit").Ticker:IsShown() and true or false
+end
+
 local function slash(text)
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER(text)
 end
@@ -123,7 +128,7 @@ function TestLayoutAudit:test_a_window_breaking_the_rules()
 	kit:AddFooter(win, "AuditOkay")
 
 	slash("layout")
-	lu.assertTrue(_G.DiabolicUI_Layout.on)
+	lu.assertTrue(checking())
 	-- (nothing shown: nothing checked)
 	lu.assertNil(_G.DiabolicUI_Layout.windows.AuditFrame)
 	frame:Show()
@@ -169,18 +174,22 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- off again
 	slash("layout")
 	lu.assertEquals(said()[3], "Layout check off.")
-	lu.assertNil(_G.DiabolicUI_Layout.on)
+	lu.assertFalse(checking())
 	assertClean(client)
 end
 
-function TestLayoutAudit:test_kept_on_after_a_reload_its_last_sessions_problems_replaced()
+function TestLayoutAudit:test_off_after_a_reload_its_last_sessions_problems_replaced()
 	boot({ savedVariables = { DiabolicUI_Layout = { on = true, windows = {
 		AuditFine = { checked = "2026-10-27 20:00", problems = { "an old one" } },
 		Elsewhere = { checked = "2026-10-27 20:00", problems = { "kept" } },
 	} } } })
+	-- (an older version's "on" forgotten: the check is on for a session only)
+	lu.assertNil(_G.DiabolicUI_Layout.on)
+	lu.assertFalse(checking())
 	local frame = window("AuditFine")
 	zone(frame, "AuditPage", 30, -80, 340, 150, "parchment")
 	frame:Show()
+	slash("layout")
 	client:Tick(1.1)
 	lu.assertNil(problems("AuditFine")["an old one"])
 	lu.assertTrue(problems("Elsewhere").kept)
@@ -309,14 +318,33 @@ function TestLayoutAudit:test_the_foot_and_one_light_text()
 	assertClean(client)
 end
 
+function TestLayoutAudit:test_a_part_between_the_page_and_the_foot()
+	boot()
+	local frame, win = window("AuditBetween")
+	-- the page's foot 100 over the window's, a text 4 under it (the
+	-- letter's money, its attachments), the foot's rail lower
+	zone(frame, "AuditPage", 30, -80, 340, 120, "parchment")
+	text(frame, "AuditMoney", 40, -204, "12g")
+	button(frame, "AuditOkay", 30, 20, 60, "Okay")
+	kit:AddFooter(win, "AuditOkay")
+	frame:Show()
+	slash("layout")
+	-- the room under the page measured to the text, not the rail
+	lu.assertTrue(problems("AuditBetween")["AuditPage is 4 over the foot (the rule: at least 6)."])
+	assertClean(client)
+end
+
 function TestLayoutAudit:test_edges_between_screen_pixels_at_a_pixel_perfect_scale()
 	-- 1024x768: one UI unit a screen pixel
 	boot({ world = function(world) world.resolution = 2 end })
-	local frame = window("AuditPixels")
+	local frame, win = window("AuditPixels")
 	zone(frame, "AuditPage", 30.5, -80, 340, 150, "parchment")
+	button(frame, "AuditOkay", 30, 20, 60, "Okay")
+	kit:AddFooter(win, "AuditOkay")
 	frame:Show()
 	slash("layout")
-	lu.assertTrue(problems("AuditPixels")["1 of 4 parts are between screen pixels (AuditPage by 0.5): blurry edges."])
+	-- (the foot and its button among them)
+	lu.assertTrue(problems("AuditPixels")["1 of 6 parts are between screen pixels (AuditPage by 0.5): blurry edges."])
 	lu.assertEquals(_G.DiabolicUI_Layout.unit, "1.000")
 	assertClean(client)
 	-- the window itself
@@ -354,7 +382,7 @@ function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	boot()
 	local frame, win = window("AuditBroken")
 	zone(frame, "AuditPage", 30, -80, 340, 150, "parchment")
-	win.DiabolicHeaders = {} -- (no band: the checks reading it break)
+	win.DiabolicHeaders = nil -- (no list of bands: the checks reading it break)
 	frame:Show()
 	slash("layout")
 	client:Tick(2)
@@ -369,7 +397,12 @@ function TestLayoutAudit:test_a_check_that_breaks_said_once()
 end
 
 function TestLayoutAudit:test_the_sweep_opens_each_window()
-	boot()
+	-- (the currencies' popup there, a player targeted in reach)
+	boot({ world = function(world, c)
+		c.api.LoadAddOn("Blizzard_TokenUI")
+		world.units.target = Client.newUnit({ name = "Friend", class = "WARRIOR", isPlayer = true, inRange = true })
+		world.inspectReady = true
+	end })
 	-- not in a fight
 	client:EnterCombat()
 	slash("layout all")
@@ -386,9 +419,10 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 		return toggle(tab)
 	end
 	slash("layout all")
-	lu.assertTrue(_G.DiabolicUI_Layout.on)
-	client:Tick(30, 0.1)
+	lu.assertTrue(checking())
+	client:Tick(60, 0.1)
 	lu.assertEquals(opened, { 1, 2, 4, 5 })
+	lu.assertEquals(_G.InspectFrame.unit, "target")
 	local lines = said()
 	lu.assertEquals(lines[#lines]:match("^Layout sweep done"), "Layout sweep done")
 	lu.assertFalse(_G.CharacterFrame:IsShown() == 1)

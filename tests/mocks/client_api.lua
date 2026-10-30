@@ -1456,6 +1456,11 @@ function Api.install(client)
 
 	-- Quests ------------------------------------------------------------------------
 
+	-- the dailies done today (25 at most), the seconds until they reset
+	api.GetDailyQuestsCompleted = function() return world().dailiesDone or 0 end
+	api.GetMaxDailyQuests = function() return 25 end
+	api.GetQuestResetTime = function() return world().questReset or 3600 end
+
 	api.GetNumQuestLogEntries = function()
 		local quests = 0
 		for _, q in ipairs(world().quests) do
