@@ -28,6 +28,8 @@ local MenuMod = ns:NewModule("Menu")
 
 -- Lua API
 local ipairs = ipairs
+local table_insert = table.insert
+local table_remove = table.remove
 local string_format = string.format
 local tonumber = tonumber
 
@@ -85,7 +87,7 @@ local LABEL_COLOR = { 1, .82, 0 }
 local LABEL_COLOR_DISABLED = { .5, .5, .5 }
 
 -- Layout grid, identical to DiabolicUI's own option pages in
--- modules/menu/menu.lua, so this page lines up with its siblings.
+-- modules/menu/controls.lua, so this page lines up with its siblings.
 -- Everything is positioned from the panel's top left corner.
 local EDGE = 16
 local CHECK_X = EDGE - 2
@@ -500,6 +502,25 @@ MenuMod.CreatePanel = function(self)
 	zoneFadeDurationSlider:SetEnabled(ns.db.global.minimap.zoneFadeEnabled)
 
 	InterfaceOptions_AddCategory(panel)
+
+	-- with the main frames, before DiabolicUI's Quests page
+	local categories = _G.INTERFACEOPTIONS_ADDONCATEGORIES
+	local quests = _G.DiabolicUIOptionsPanelQuests
+	local position -- where it was, without a Quests page
+	for i, category in ipairs(categories) do
+		if (category == panel) then
+			position = i
+			table_remove(categories, i)
+			break
+		end
+	end
+	for i, category in ipairs(categories) do
+		if (category == quests) then
+			position = i
+			break
+		end
+	end
+	table_insert(categories, position, panel)
 
 	self.panel = panel
 

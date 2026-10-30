@@ -6,28 +6,28 @@
 
 @font-face {
   font-family: "Exocet";
-  src: url("/fonts/ExocetBlizzardMedium.ttf") format("truetype");
+  src: url("fonts/ExocetBlizzardMedium.ttf") format("truetype");
   font-weight: 600;
 }
 @font-face {
   font-family: "Exocet";
-  src: url("/fonts/ExocetBlizzardLight.ttf") format("truetype");
+  src: url("fonts/ExocetBlizzardLight.ttf") format("truetype");
   font-weight: 400;
 }
 @font-face {
   font-family: "Diabolic Serif";
-  src: url("/fonts/NotoSerif-Regular.ttf") format("truetype");
+  src: url("fonts/NotoSerif-Regular.ttf") format("truetype");
   font-weight: 400;
 }
 @font-face {
   font-family: "Diabolic Serif";
-  src: url("/fonts/NotoSerif-Italic.ttf") format("truetype");
+  src: url("fonts/NotoSerif-Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
 }
 @font-face {
   font-family: "Diabolic Serif";
-  src: url("/fonts/NotoSerif-Bold.ttf") format("truetype");
+  src: url("fonts/NotoSerif-Bold.ttf") format("truetype");
   font-weight: 700;
 }
 

@@ -152,7 +152,7 @@ MenuWidget.Skin = function(self, button, config, icon)
 
 	button:SetAlpha(1)
 
-	if button:IsEnabled() then
+	if (button:IsEnabled() == 1) then
 		button.Icon:SetVertexColor(1,1,1)
 		button.Normal:SetVertexColor(1,1,1)
 	else

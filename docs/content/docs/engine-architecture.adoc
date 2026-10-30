@@ -1,0 +1,130 @@
+---
+title: "Engine"
+weight: 2
+---
+
+= Engine
+
+`engine/engine-core.lua` is our own small framework. Every file gets it the
+same way:
+
+[source,lua]
+----
+local ADDON, Engine = ...
+----
+
+== The pieces
+
+++++
+{{< mermaid >}}
+flowchart TD
+    engine["⚙️ Engine"] --> module["🧩 Module<br/>one per feature"]
+    engine --> handler["🧰 Handler<br/>shared building block"]
+    module --> widget["🔹 Widget<br/>a part of a module"]
+    handler --> element["🔸 Element<br/>health, power, auras..."]
+    module -. "uses" .-> handler
+{{< /mermaid >}}
+++++
+
+|===
+| Piece | Create | Fetch | Example
+
+| Module | `Engine:NewModule(name, priority)` | `Engine:GetModule(name)` | `"ActionBars"`, `"Blizzard: LootFrame"`
+| Widget | `Module:SetWidget(name)` | `Module:GetWidget(name)` | `"Bar: 1"`, `"Unit: Target"`
+| Handler | `Engine:NewHandler(name)` | `Engine:GetHandler(name)` | `"UnitFrame"`, `"ActionButton"`, `"Orb"`
+| Element | `+Handler:RegisterElement(name, ...)+` | `Handler:GetElement(name)` | `"Health"`, `"Auras"`
+|===
+
+`priority` is `"HIGH"`, `"NORMAL"` (default) or `"LOW"`.
+
+== Lifecycle
+
+++++
+{{< mermaid >}}
+sequenceDiagram
+    participant G as 🎮 Game
+    participant E as ⚙️ Engine
+    participant M as 🧩 Modules
+    G->>E: ADDON_LOADED + VARIABLES_LOADED
+    E->>E: ParseSavedVariables()
+    E->>M: OnInit (all modules)
+    E->>M: OnEnable (HIGH, NORMAL)
+    G->>E: PLAYER_LOGIN
+    E->>M: OnEnable (LOW)
+{{< /mermaid >}}
+++++
+
+|===
+| Hook | Do | Don't
+
+| `OnInit` | Fetch config: `+self.db = self:GetConfig(...)+` | Create frames, call other modules
+| `OnEnable` | Create frames, register events, call other modules |
+|===
+
+Every `OnInit` runs before any `OnEnable`, so a module can safely call another
+one from `OnEnable`. The order between modules of the same priority isn't
+fixed: don't rely on it.
+
+== Events
+
+[source,lua]
+----
+self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateTarget")  -- a method name or a function
+self:RegisterMessage("DUI_SOMETHING", func)                   -- our own messages
+self:SendMessage("DUI_SOMETHING", ...)
+----
+
+The function gets `+(self, event, ...)+`. To wait for combat to end:
+
+[source,lua]
+----
+if InCombatLockdown() then
+	return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateLayout")
+end
+self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateLayout")
+----
+
+Or wrap it, to queue it until combat ends (`modules/blizzard/gamemenu.lua`):
+
+[source,lua]
+----
+Module.UpdateButtonLayout = Module:Wrap(function(self) ... end)
+----
+
+== Two kinds of config
+
+|===
+| | Options (saved) | Static data (read-only)
+
+| Folder | `defaults/` | `settings/`, `data/`
+| Declare | `Engine:NewConfig(name, defaults)` | `Engine:NewStaticConfig(name, table)`
+| Read | `self:GetConfig(name[, profile])` | `self:GetDB(name)`
+| Holds | What the player toggles | Sizes, textures, positions, colors
+|===
+
+=== Profiles
+
+`GetConfig(name)` returns the `global` profile. Pass `"realm"`, `"faction"` or
+`"character"` for another one. `ActionBars` is per character.
+
+=== How saving works
+
+++++
+{{< mermaid >}}
+flowchart LR
+    disk["💾 DiabolicUI_DB<br/>from disk"] --> merge["🔀 merged over<br/>the defaults"] --> live["📋 live tables"]
+    live --> mod["🧩 self.db"]
+    live -- "at logout" --> disk
+{{< /mermaid >}}
+++++
+
+* `ParseSavedVariables` swaps in new tables *before* `OnInit`: read config in
+  `OnInit`, never at file scope.
+* A new key gets its default for everyone. A removed config just stays in the
+  file, unused.
+* No save call: changing `self.db.x` is enough.
+
+== engine/wotlk-helpers.lua
+
+Helpers shared by modules, kept on `Engine` (never as globals), such as
+`Engine.UnitIsTapDenied(unit)`. Also the `/rl` command.

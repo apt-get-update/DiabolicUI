@@ -334,39 +334,59 @@ function TestStatusBars:test_smoothing_moves_towards_the_value()
 	-- a smaller range pulls the shown value in too
 	bar:SetMinMaxValues(0, 50)
 	lu.assertEquals(bar._displayvalue, 50)
+
+	-- smoothing turned off mid-slide: straight there
+	bar:SetValue(10)
+	bar:DisableSmoothing(true)
+	client:Tick(0.02)
+	lu.assertEquals(bar._displayvalue, 10)
+	lu.assertNil(bar.smoothing)
 	assertClean(client)
 end
 
-function TestStatusBars:test_without_smoothing_updates_stop_when_full()
+function TestStatusBars:test_without_smoothing_nothing_runs_every_frame()
 	local bar = self.bar
 	bar:DisableSmoothing(true)
+	bar:SetValue(50)
+	lu.assertNil(bar:GetScript("OnUpdate"))
 	bar:SetValue(100)
-	lu.assertNotNil(bar:GetScript("OnUpdate"))
-	client:Tick(0.1)
 	lu.assertNil(bar:GetScript("OnUpdate"))
 	assertClean(client)
 end
 
+-- The pulse is a looping alpha animation: the client plays it, no Lua runs.
 function TestStatusBars:test_the_spark_pulses()
 	local bar = self.bar
+	local spark = bar.spark
 	bar:DisableSmoothing(true)
-	bar:SetSparkFlash(0.1, 0.1, 0.2, 0.8)
+	bar:SetSparkFlash(0.1, 0.2, 0.2, 0.8)
 	bar:SetValue(50)
-	lu.assertAlmostEquals(bar.spark:GetAlpha(), 0.2, 1e-9)
-	client:Tick(0.1)
-	lu.assertAlmostEquals(bar.spark:GetAlpha(), 0.8, 1e-9)
-	client:Tick(0.1)
-	lu.assertAlmostEquals(bar.spark:GetAlpha(), 0.2, 1e-9)
-	client:Tick(0.05)
-	lu.assertAlmostEquals(bar.spark:GetAlpha(), 0.5, 1e-9)
-	client:Tick(0.1)
-	lu.assertAlmostEquals(bar.spark:GetAlpha(), 0.8, 1e-9)
-	client:Tick(0.05)
-	lu.assertAlmostEquals(bar.spark:GetAlpha(), 0.5, 1e-9)
+	lu.assertAlmostEquals(spark:GetAlpha(), 0.2, 1e-9)
+	lu.assertNotNil(spark._pulse:IsPlaying())
+	lu.assertEquals(spark._pulse:GetLooping(), "REPEAT")
+	lu.assertAlmostEquals(spark._pulse_in:GetChange(), 0.6, 1e-9)
+	-- a new flash while it pulses: started again with it
+	bar:SetSparkFlash(0.2, 0.2, 0.1, 0.9)
+	lu.assertNotNil(spark._pulse:IsPlaying())
+	lu.assertAlmostEquals(spark._pulse_in:GetChange(), 0.8, 1e-9)
+	bar:SetSparkFlash(0.1, 0.2, 0.2, 0.8)
+	lu.assertAlmostEquals(spark._pulse_out:GetChange(), -0.6, 1e-9)
+	lu.assertAlmostEquals(spark._pulse:GetDuration(), 0.3, 1e-9)
+	lu.assertNil(bar:GetScript("OnUpdate"))
 
 	bar:SetSparkSize(4, 30)
 	bar:Update()
-	lu.assertEquals({ bar.spark:GetSize() }, { 4, 20 })
+	lu.assertEquals({ spark:GetSize() }, { 4, 20 })
+
+	-- full: the spark stays, still
+	bar:SetValue(100)
+	lu.assertTrue(shown(spark))
+	lu.assertNil(spark._pulse:IsPlaying())
+	lu.assertAlmostEquals(spark:GetAlpha(), 0.2, 1e-9)
+
+	-- empty: no spark
+	bar:SetValue(0)
+	lu.assertFalse(shown(spark))
 	assertClean(client)
 end
 
@@ -564,13 +584,23 @@ function TestOrbs:test_the_spark_pulses_with_its_glow()
 	local spark = orb.overlay.spark
 	lu.assertEquals(spark.glow:GetTexture(), "glow.tga")
 	lu.assertEquals(spark:GetTexture(), "spark.tga")
-	client:Tick(0.1)
-	lu.assertAlmostEquals(spark.glow:GetAlpha(), 0.8, 1e-9)
-	lu.assertAlmostEquals(spark:GetAlpha(), 0.8, 1e-9)
-	client:Tick(0.1)
-	lu.assertAlmostEquals(spark.glow:GetAlpha(), 0.2, 1e-9)
-	client:Tick(0.05)
-	lu.assertAlmostEquals(spark.glow:GetAlpha(), 0.5, 1e-9)
+	for _, texture in ipairs({ spark, spark.glow }) do
+		lu.assertAlmostEquals(texture:GetAlpha(), 0.2, 1e-9)
+		lu.assertNotNil(texture.pulse:IsPlaying())
+		lu.assertAlmostEquals(texture.pulseIn:GetChange(), 0.6, 1e-9)
+		lu.assertAlmostEquals(texture.pulseOut:GetChange(), -0.6, 1e-9)
+		lu.assertAlmostEquals(texture.pulse:GetDuration(), 0.2, 1e-9)
+	end
+	lu.assertNil(orb:GetScript("OnUpdate"))
+	-- a new flash while it pulses: started again with it
+	orb:SetSparkFlash(0.2, 0.2, 0.1, 0.9)
+	lu.assertNotNil(spark.pulse:IsPlaying())
+	lu.assertAlmostEquals(spark.pulseIn:GetChange(), 0.8, 1e-9)
+
+	-- full: no spark, no pulse
+	orb:SetValue(100)
+	lu.assertNil(spark.pulse:IsPlaying())
+	lu.assertNil(spark.glow.pulse:IsPlaying())
 	assertClean(client)
 end
 
@@ -619,6 +649,13 @@ function TestOrbs:test_smoothing_moves_towards_the_value()
 	orb:SetValue(100)
 	orb:Clear()
 	lu.assertEquals(orb.displayValue, 60)
+
+	-- smoothing turned off mid-slide: straight there
+	orb:SetValue(150)
+	orb:DisableSmoothing(true)
+	client:Tick(0.02)
+	lu.assertEquals(orb.displayValue, 150)
+	lu.assertNil(orb.smoothing)
 	assertClean(client)
 end
 
@@ -700,6 +737,9 @@ function TestActionButtons:test_usable_out_of_mana_unusable_out_of_range_and_dea
 	local button, action = self.button, self.action
 	action.noMana = true
 	client:FireEvent("ACTIONBAR_UPDATE_USABLE")
+	client:FireEvent("ACTIONBAR_UPDATE_USABLE")
+	lu.assertNotEquals(button.usableState, "mana") -- once, on the next frame
+	client:Tick(0.02)
 	lu.assertEquals(button.usableState, "mana")
 	action.noMana, action.usable = false, false
 	client:FireEvent("ACTIONBAR_UPDATE_STATE")
@@ -731,9 +771,11 @@ function TestActionButtons:test_cooldowns_and_stacks()
 	local button, action = self.button, self.action
 	action.cooldown = { client.world.time, 30, 1 }
 	client:FireEvent("ACTIONBAR_UPDATE_COOLDOWN")
+	client:Tick(0.02) -- (on the next frame)
 	lu.assertTrue(shown(button.cooldown))
 	action.cooldown = { 0, 0, 1 }
 	client:FireEvent("UPDATE_SHAPESHIFT_COOLDOWN")
+	client:Tick(0.02)
 	lu.assertFalse(shown(button.cooldown))
 
 	action.consumable, action.count = true, 5
@@ -980,6 +1022,50 @@ function TestEngineCommands:test_resetsetup_puts_the_chat_back()
 	lu.assertFalse(db.hasbeenqueried)
 	lu.assertTrue(db.autoposition)
 	lu.assertNotNil(_G.ChatFrame1:GetPoint())
+	assertClean(client)
+end
+
+function TestEngineCommands:test_cpu_measures_for_the_seconds_asked()
+	local lines = {}
+	_G.hooksecurefunc(_G.DEFAULT_CHAT_FRAME, "AddMessage", function(_, text)
+		lines[#lines + 1] = text
+	end)
+
+	-- without the client's script profiling, it only says how to turn it on
+	_G.SetCVar("scriptProfile", "0")
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("cpu")
+	lu.assertEquals(#lines, 1)
+	lu.assertStrContains(lines[1], "/console scriptProfile 1")
+
+	-- (frames' scripts are listed when it starts)
+	local ticker = _G.CreateFrame("Frame", "TestTicker")
+	ticker:SetScript("OnUpdate", function() end)
+	-- (one named after its nearest named parent)
+	local inner = _G.CreateFrame("Frame", nil, _G.CreateFrame("Frame", nil, _G.CreateFrame("Frame", "TestOuter")))
+	inner:SetScript("OnUpdate", function() end)
+	_G.SetCVar("scriptProfile", "1")
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("cpu 5")
+	lu.assertStrContains(lines[2], "5 seconds")
+	-- asked again while measuring: one at a time
+	_G.SlashCmdList.DIABOLICUISLASHHANDLER("cpu 5")
+	lu.assertEquals(#lines, 2)
+	client:Tick(4)
+	lu.assertEquals(#lines, 2)
+
+	-- what the objects keep is named after where they keep it
+	local UnitFrames = client.Engine:GetModule("UnitFrames")
+	UnitFrames.ApiFunction = _G.UnitHealth -- kept by a table: not timed
+	client.world.functionCPU = {
+		[UnitFrames.LoadArtWork] = 25,
+		[ticker:GetScript("OnUpdate")] = 10,
+		[inner:GetScript("OnUpdate")] = 5,
+	}
+	client:Tick(1.5)
+	lu.assertStrContains(lines[3], "ms per second")
+	lu.assertStrContains(lines[4], "5.00  UnitFrames.LoadArtWork")
+	lu.assertStrContains(lines[5], "2.00  TestTicker OnUpdate")
+	lu.assertStrContains(lines[6], "1.00  (Frame in TestOuter) OnUpdate")
+	lu.assertEquals(#lines, 6)
 	assertClean(client)
 end
 

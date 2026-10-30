@@ -70,7 +70,7 @@ API.GetFont = function(size, outline, type)
 	return fontObject
 end
 
--- Retrieve an asset from the media asset folder.
+-- Retrieve an asset from the addon's media/textures folder.
 API.GetMedia = function(name, type)
-	return string_format([[Interface\AddOns\%s\Assets\%s.%s]], Addon, name, type or "tga")
+	return string_format([[Interface\AddOns\%s\media\textures\%s.%s]], Addon, name, type or "tga")
 end

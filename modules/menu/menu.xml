@@ -1,5 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
 <Script file='menu.lua'/>
+<Script file='controls.lua'/>
+<Script file='movers.lua'/>
+<Script file='page-main.lua'/>
+<Script file='page-actionbars.lua'/>
+<Script file='page-specs.lua'/>
+<Script file='page-units.lua'/>
+<Script file='page-chat.lua'/>
+<Script file='page-quests.lua'/>
+<Script file='page-tooltips.lua'/>
+<Script file='page-addons.lua'/>
 
 </Ui>

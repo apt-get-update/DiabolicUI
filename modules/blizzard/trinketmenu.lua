@@ -100,9 +100,6 @@ Module.ADDON_LOADED = function(self, event, addon)
 end
 
 Module.OnEnable = function(self)
-	if (not self:GetConfig("AddOnSkins").styleTrinketMenu) then
-		return
-	end
 	if IsAddOnLoaded("TrinketMenu") then
 		self:StyleTrinketMenu()
 	else

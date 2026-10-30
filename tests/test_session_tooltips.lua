@@ -164,6 +164,8 @@ function TestTooltips:test_shift_inspects_a_players_gear_and_talents()
 	local text = linesText()
 	lu.assertStrContains(text, "232.0")
 	lu.assertStrContains(text, "5/53/13 (Protection)")
+	-- GearScore by the item level: 17 epics of 232, (232 - 91.45) / .65 * 1.8618 each
+	lu.assertStrContains(stripColors(text), "232.0  GS 6834")
 
 	-- a second hover uses what's cached, updating the lines in place
 	hover(unit)
@@ -198,6 +200,16 @@ function TestTooltips:test_heirlooms_pvp_gear_and_weapons_count_right()
 		client:FireEvent("INSPECT_TALENT_READY")
 		lu.assertStrContains(stripColors(linesText()), "BoA")
 	end
+	assertClean(client)
+end
+
+function TestTooltips:test_own_gear_not_known_yet()
+	local player = client.world.units.player
+	player.inventoryTextures = { [5] = "Interface\\Icons\\Chest" }
+	-- not asked for (no Shift): no gear line until it's known
+	hover(player)
+	lu.assertNotStrContains(linesText(), "GS")
+	lu.assertNotStrContains(linesText(), _G.CONTINUED)
 	assertClean(client)
 end
 
@@ -257,16 +269,22 @@ function TestTooltips:test_no_inspecting_in_combat_or_while_dead()
 	assertClean(client)
 end
 
-function TestTooltips:test_pressing_shift_refreshes_the_tooltip()
+function TestTooltips:test_pressing_shift_adds_the_talents()
 	local unit = Client.newUnit({ name = "Later", class = "WARLOCK" })
 	standardGear(unit, 219)
+	client.world.inspectTalents = { { "Affliction", "", 0 }, { "Demonology", "", 0 }, { "Destruction", "", 57 } }
 	hover(unit)
 	client:Tick(2)
 	client:FireEvent("INSPECT_TALENT_READY")
-	lu.assertNotStrContains(linesText(), "219.0", "no Shift, no gear line")
+	-- the gear (item level, GearScore) without Shift, not the talents
+	lu.assertStrContains(linesText(), "219.0")
+	lu.assertNotStrContains(linesText(), "Destruction", "no Shift, no talents")
+	-- hovered again: the gear known already
+	hover(unit)
+	lu.assertStrContains(linesText(), "219.0")
 	client.world.modifiers.shift = true
 	client:FireEvent("MODIFIER_STATE_CHANGED", "LSHIFT", 1)
-	lu.assertStrContains(linesText(), "219.0")
+	lu.assertStrContains(linesText(), "Destruction")
 	assertClean(client)
 end
 
@@ -369,6 +387,33 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	lu.assertNotNil(_G.GameTooltip:GetBackdrop())
 	_G.GameTooltip:SetFrameLevel(10)
 
+	local menu = module.config.menu
+	-- the lines added: their text `text_pad` in from the iron, white (a
+	-- title in gold), the menu as wide as they need, `text_pad` from the
+	-- iron on the right too; the red bar from iron to iron
+	_G.UIDropDownMenu_InitializeHelper()
+	_G.UIDropDownMenu_AddButton({ text = "Loot", isTitle = 1 })
+	_G.UIDropDownMenu_AddButton({ text = "Free for All, Group Loot or Master Looter" })
+	local title, choice = _G.DropDownList1Button1, _G.DropDownList1Button2
+	local text = choice:GetFontString()
+	local inset = menu.text_pad - (15 - menu.edge)
+	lu.assertEquals({ text:GetPoint() }, { "LEFT", choice, "LEFT", inset, 0 })
+	lu.assertEquals({ text:GetTextColor() }, { 1, 1, 1, 1 })
+	lu.assertEquals({ title:GetFontString():GetTextColor() }, { menu.title_color[1], menu.title_color[2], menu.title_color[3], 1 })
+	lu.assertEquals(_G.DropDownList1.maxWidth, inset + text:GetStringWidth() + menu.text_pad + menu.edge - 10)
+	lu.assertEquals({ _G.DropDownList1Button2Highlight:GetPoint(1) }, { "TOPLEFT", choice, "TOPLEFT", menu.edge - 15, 0 })
+	-- a line it can't pick grey; a unit's menu titled in its name's colour
+	-- (as its tooltip); nothing added to a level not there
+	_G.UIDropDownMenu_AddButton({ text = "Master Looter", disabled = 1 })
+	lu.assertEquals({ _G.DropDownList1Button3:GetFontString():GetTextColor() }, { menu.disabled_color[1], menu.disabled_color[2], menu.disabled_color[3], 1 })
+	_G.UIDROPDOWNMENU_INIT_MENU = { unit = "player" }
+	_G.UIDropDownMenu_InitializeHelper()
+	_G.UIDropDownMenu_AddButton({ text = "Me", isTitle = 1 })
+	local class = client.Engine:GetDB("Data: Colors").Class[select(2, _G.UnitClass("player"))]
+	lu.assertEquals({ title:GetFontString():GetTextColor() }, { class[1], class[2], class[3], 1 })
+	_G.UIDROPDOWNMENU_INIT_MENU = nil
+	_G.UIDropDownMenu_AddButton({ text = "Nowhere" }, 5)
+
 	-- a third dropdown level
 	_G.UIDROPDOWNMENU_MAXLEVELS = 3
 	local list = _G.CreateFrame("Button", "DropDownList3", _G.UIParent)
@@ -376,8 +421,41 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	_G.CreateFrame("Frame", "DropDownList3MenuBackdrop", list)
 	_G.UIDropDownMenu_CreateFrames(3, 1)
 	lu.assertTrue(module.styled[_G.DropDownList3Backdrop])
+	-- the lines' hover Diablo III's red bar (Blizzard's art gone), those
+	-- added later too
+	lu.assertNil(_G.DropDownList1Button1Highlight:GetTexture())
+	lu.assertNil(_G.DropDownList2Button32Highlight:GetTexture())
+	_G.UIDROPDOWNMENU_MAXBUTTONS = 33
+	local line = _G.CreateFrame("Button", "DropDownList3Button33", list)
+	-- (UIDropDownMenuButtonTemplate's: its hover, its check and its
+	-- submenu's arrow)
+	line:CreateTexture("DropDownList3Button33Highlight")
+	line:CreateTexture("DropDownList3Button33Check"):Hide()
+	local arrow = _G.CreateFrame("Button", "DropDownList3Button33ExpandArrow", line)
+	arrow:SetNormalTexture([[Interface\ChatFrame\ChatFrameExpandArrow]])
+	_G.UIDropDownMenu_CreateFrames(3, 33)
+	lu.assertTrue(module.styled[line])
+	lu.assertNil(_G.DropDownList3Button33Highlight:GetTexture())
+	-- the chosen line on Diablo III's red bar, its check out of sight
+	local check = _G.DropDownList3Button33Check
+	lu.assertEquals(check:GetAlpha(), 0)
+	lu.assertNotEquals(line.DiabolicChosen:IsShown(), 1)
+	check:Show()
+	lu.assertEquals(line.DiabolicChosen:IsShown(), 1)
+	check:Hide()
+	lu.assertNotEquals(line.DiabolicChosen:IsShown(), 1)
 	list:Show()
 	_G.DropDownList1:Show()
+
+	-- a menu of its own (the friends' tooltip): its backdrop under its text,
+	-- however low it's put
+	local friends = _G.FriendsTooltip
+	local backdrop = friends:GetChildren()
+	friends:SetFrameLevel(0)
+	lu.assertEquals(friends:GetFrameLevel(), 1)
+	lu.assertEquals(backdrop:GetFrameLevel(), 0)
+	friends:Show()
+	lu.assertEquals(backdrop:GetFrameLevel(), friends:GetFrameLevel() - 1)
 
 	-- Blizzard_DebugTools loads
 	_G.LoadAddOn("Blizzard_DebugTools")
@@ -396,6 +474,77 @@ function TestTooltips:test_tooltip_scale_follows_the_ui()
 	local child = _G.CreateFrame("GameTooltip", "ChildTooltip", UICenter)
 	module:Tooltip_UpdateScale(child)
 	lu.assertEquals(child:GetScale(), 1, "already inside the scaled UI")
+	assertClean(client)
+end
+
+-- Ability tooltips (modules/blizzard/spelltooltips.lua) --------------------------------
+
+TestSpellTooltips = {}
+
+function TestSpellTooltips:setUp()
+	client = Client.boot({ class = "MAGE", world = function(world)
+		-- the client's own lines: the name and rank, the cost and range, the
+		-- cast time, its description in gold
+		local white = { 1, 1, 1 }
+		world.spells[133] = { name = "Fireball", icon = [[Interface\Icons\Spell_Fire_FlameBolt]], lines = {
+			{ "Fireball", "Rank 14", white, { .5, .5, .5 } },
+			{ "400 Mana", "35 yd range", white, white },
+			{ "3.5 sec cast", nil, white },
+			{ "Hurls a fiery ball that causes 888 to 1132 Fire damage.", nil, { 1, .82, 0 } },
+		} }
+	end })
+end
+
+function TestSpellTooltips:tearDown()
+	client = nil
+end
+
+function TestSpellTooltips:test_an_ability_with_its_description()
+	local tooltip = _G.GameTooltip
+	tooltip:SetOwner(_G.UIParent, "ANCHOR_NONE")
+	tooltip:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -100, 100)
+	tooltip:SetSpell(133, "spell")
+	local info = tooltip.DiabolicSpellInfo
+	lu.assertEquals(info.rank, "Rank 14")
+	lu.assertEquals(info.descLine, 4)
+	-- the stat lines' numbers in green, under the icon's row; the
+	-- description further down
+	lu.assertStrContains(_G.GameTooltipTextLeft2:GetText(), "|cff3fc83f400|r")
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetAlpha(), 0)
+	lu.assertEquals(select(2, _G.GameTooltipTextLeft2:GetPoint()), _G.GameTooltipTextLeft1)
+	lu.assertEquals(select(2, _G.GameTooltipTextLeft4:GetPoint()), _G.GameTooltipTextLeft3)
+	local width, height = tooltip:GetWidth(), tooltip:GetHeight()
+	lu.assertEquals(info.width, width)
+	-- laid out again at the size set here: measured from Blizzard's, not grown again
+	client:GetModule("Blizzard: SpellTooltips").Layout(tooltip)
+	lu.assertEquals(tooltip:GetWidth(), width)
+	lu.assertEquals(tooltip:GetHeight(), height)
+	-- a line added re-measures it: laid out again on the next frame
+	tooltip:AddLine("Another addon's line")
+	lu.assertNotEquals(tooltip:GetHeight(), height)
+	client:Tick(0.05)
+	lu.assertEquals(tooltip:GetHeight(), info.height)
+	client:Tick(0.05)
+	-- something else put in the tooltip: Blizzard's again
+	_G.GameTooltipTextLeft1:SetText("Something else")
+	tooltip:Show()
+	lu.assertNil(tooltip.DiabolicSpellInfo)
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetAlpha(), 1)
+	lu.assertEquals({ _G.GameTooltipTextLeft4:GetPoint() }, { "TOPLEFT", _G.GameTooltipTextLeft3, "BOTTOMLEFT", 0, -2 })
+	assertClean(client)
+end
+
+function TestSpellTooltips:test_laid_out_once_its_on_screen()
+	local tooltip = _G.GameTooltip
+	-- not placed yet: no layout
+	tooltip:SetOwner(_G.UIParent, "ANCHOR_NONE")
+	tooltip:ClearAllPoints()
+	tooltip:SetSpell(133, "spell")
+	lu.assertNil(tooltip.DiabolicSpellInfo.width)
+	-- placed: laid out on the next frame
+	tooltip:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -100, 100)
+	client:Tick(0.05)
+	lu.assertNotNil(tooltip.DiabolicSpellInfo.width)
 	assertClean(client)
 end
 

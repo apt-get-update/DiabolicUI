@@ -1,13 +1,16 @@
 -- "ActionButton" handler: DiabolicUI's own action button implementation.
 -- Handler:New(buttonType, id, header, template) builds a secure button for an
 -- action, pet, stance, spell, item or macro slot, and this file keeps them all
--- updated: icons, cooldowns, counts, range and usability coloring, keybind
--- text, grid visibility while dragging, and tooltips.
+-- updated: icons, cooldowns and their time left (as OmniCC shows it, unless
+-- OmniCC is on), counts, range and usability coloring, keybind text, grid
+-- visibility while dragging, and tooltips.
 local _, Engine = ...
 local Handler = Engine:NewHandler("ActionButton")
 
 -- Lua API
 local _G = _G
+local math_ceil = math.ceil
+local next = next
 local pairs = pairs
 local select = select
 local setmetatable = setmetatable
@@ -27,8 +30,10 @@ local GetPetActionInfo = _G.GetPetActionInfo
 local GetPetActionsUsable = _G.GetPetActionsUsable
 local GetShapeshiftFormCooldown = _G.GetShapeshiftFormCooldown
 local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
+local GetTime = _G.GetTime
 local HasAction = _G.HasAction
 local InCombatLockdown = _G.InCombatLockdown
+local IsAddOnLoaded = _G.IsAddOnLoaded
 local IsActionInRange = _G.IsActionInRange
 local IsAttackAction = _G.IsAttackAction
 local IsAutoRepeatAction = _G.IsAutoRepeatAction
@@ -99,8 +104,27 @@ local colors = {
 	keyTextDisabled 	= { .3 + .5*73/255, .3 + .5*25/255, .3 + .5*9/255 } -- C.Status.Dead
 }
 
+-- In combat the client often fires these several times in one frame:
+-- the buttons update once, on the next frame.
+local pendingUsable, pendingCooldown
+local RunPending = function()
+	if pendingCooldown then
+		pendingCooldown = nil
+		for button in next, ActionButtons do
+			button:UpdateCooldown()
+		end
+	end
+	if pendingUsable then
+		pendingUsable = nil
+		for button in next, ActionButtons do
+			button:UpdateUsable()
+		end
+	end
+end
+
 -- Button frequent update handler (range, flash)
 local OnUpdate = function(self, elapsed)
+	RunPending()
 	FLASH_TIMER = FLASH_TIMER - elapsed
 	RANGE_TIMER = RANGE_TIMER - elapsed
 	
@@ -148,6 +172,7 @@ end
 -- However, a simply 1 sec postponing of the update process along with 
 -- a forced button usable update seems to handle the problem. 
 local WaitForUpdates = function(self, elapsed)
+	RunPending()
 	self.scheduleUpdate = (self.scheduleUpdate or 1) - elapsed
 	if self.scheduleUpdate <= 0 then
 		for button in next, ActiveButtons do
@@ -473,14 +498,60 @@ Button.UpdateUsable = function(self, updateType)
 	end	
 end
 
+-- The time left of a cooldown, longer than the global one: hours, then
+-- minutes, then seconds, rounded up.
+local MIN_COUNT_DURATION = 2
+local COUNT_HZ = .1
+
+local FormatCooldown = function(timeLeft)
+	local seconds = math_ceil(timeLeft)
+	if (seconds < 60) then
+		return seconds
+	end
+	local minutes = math_ceil(timeLeft / 60)
+	if (minutes < 60) then
+		return minutes .. "m"
+	end
+	return math_ceil(timeLeft / 3600) .. "h"
+end
+
+-- the cooldown frame's: it runs while the cooldown shows
+local UpdateCooldownCount = function(cooldown, elapsed)
+	cooldown.elapsed = (cooldown.elapsed or 0) + elapsed
+	if (cooldown.elapsed < COUNT_HZ) then
+		return
+	end
+	cooldown.elapsed = 0
+	local timeLeft = cooldown.endTime - GetTime()
+	if (timeLeft > 0) then
+		cooldown.count:SetText(FormatCooldown(timeLeft))
+	else
+		cooldown.count:SetText("")
+		cooldown:SetScript("OnUpdate", nil)
+	end
+end
+
+local ClearCooldownCount = function(cooldown)
+	cooldown.count:SetText("")
+	cooldown:SetScript("OnUpdate", nil)
+end
+
 -- Updates the cooldown of a button
 Button.UpdateCooldown = function(self)
 	local start, duration, enable = self:GetCooldown()
+	local cooldown = self.cooldown
 	if (enable ~= 0) and (duration > .5) then
-		self.cooldown:SetCooldown(start, duration)
-		self.cooldown:Show()
+		cooldown:SetCooldown(start, duration)
+		cooldown:Show()
+		if (duration > MIN_COUNT_DURATION) and not IsAddOnLoaded("OmniCC") then
+			cooldown.endTime = start + duration
+			cooldown.elapsed = COUNT_HZ -- written straight away
+			cooldown:SetScript("OnUpdate", UpdateCooldownCount)
+		else
+			ClearCooldownCount(cooldown)
+		end
 	else
-		self.cooldown:Hide()
+		cooldown:Hide()
 	end
 end
 
@@ -672,15 +743,11 @@ Handler.OnEvent = function(self, event, ...)
 		end
 
 	elseif (event == "ACTIONBAR_UPDATE_USABLE") then
-		for button in next, ActionButtons do
-			button:UpdateUsable()
-		end
-		
+		pendingUsable = true -- (see RunPending)
+
 	elseif (event == "UPDATE_SHAPESHIFT_COOLDOWN")
 	or (event == "ACTIONBAR_UPDATE_COOLDOWN") then
-		for button in next, ActionButtons do
-			button:UpdateCooldown()
-		end
+		pendingCooldown = true
 
 	elseif (event == "TRADE_SKILL_SHOW") or (event == "TRADE_SKILL_CLOSE") then
 		for button in next, ActiveButtons do
@@ -831,7 +898,8 @@ Handler.Start = function(self, event)
 	self:LoadEvents()
 
 	-- Start the range and flash updates
-	Engine:CreateFrame("Frame", nil, "UICenter"):SetScript("OnUpdate", WaitForUpdates)
+	self.RangeUpdater = Engine:CreateFrame("Frame", nil, "UICenter")
+	self.RangeUpdater:SetScript("OnUpdate", WaitForUpdates)
 
 	-- Fire the original event in the new event handler
 	self:OnEvent(event)
@@ -1013,10 +1081,12 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- to it randomly being drawn behind the icon texture. 
 	button:GetPushedTexture():SetDrawLayer("OVERLAY") 
 		
-	-- cooldown numbers
+	-- cooldown numbers, written by the cooldown frame (UpdateCooldown)
 	button.cooldowncount = button:CreateFontString(nil, "OVERLAY")
 	button.cooldowncount:SetFontObject(GameFontNormal)
 	button.cooldowncount:SetPoint("CENTER")
+	button.cooldown.count = button.cooldowncount
+	button.cooldown:HookScript("OnHide", ClearCooldownCount)
 
 	-- autocast texture
 	-- exists on pet button templates

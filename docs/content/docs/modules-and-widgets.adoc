@@ -1,0 +1,87 @@
+---
+title: "Modules & Widgets"
+weight: 3
+---
+
+= Modules & Widgets
+
+== A module file
+
+[source,lua]
+----
+-- What this file is for, in one or two lines.
+local ADDON, Engine = ...
+local Module = Engine:NewModule("Blizzard: LootFrame")
+local L = Engine:GetLocale()
+
+Module.OnInit = function(self)
+	self.config = self:GetDB("Blizzard").loot   -- static: sizes, textures
+	self.db = self:GetConfig("LootFrame")       -- saved: the player's options
+end
+
+Module.OnEnable = function(self)
+	if (not self.db.enableSkin) then
+		return
+	end
+	self:CreateWindow()
+end
+----
+
+Then list the file in its folder's `.xml`.
+
+== Widgets: one module, many files
+
+A big module creates itself once; the other files add widgets to it.
+
+++++
+{{< mermaid >}}
+flowchart LR
+    ab["🧩 ActionBars<br/>actionbars.lua"] --> b1["🔹 Bar: 1<br/>bar1.lua"]
+    ab --> b2["🔹 Bar: 2<br/>bar2.lua"]
+    ab --> fl["🔹 Bar: Floaters<br/>floaters.lua"]
+    ab --> xp["🔹 Bar: XP<br/>xp.lua"]
+{{< /mermaid >}}
+++++
+
+[source,lua]
+----
+local Module = Engine:GetModule("ActionBars")
+local Widget = Module:SetWidget("Bar: Floaters")
+
+Widget.OnEnable = function(self)
+	-- ...
+end
+----
+
+== Stepping aside for another addon
+
+[source,lua]
+----
+local Module = Engine:NewModule("ChatBubbles")
+Module:SetIncompatible("NiceBubbles")
+----
+
+When that addon is loaded, the module's `OnInit` and `OnEnable` never run.
+
+|===
+| Module | Steps aside for
+
+| `ChatWindows` | Prat-3.0
+| `ChatBubbles` | NiceBubbles
+| `ChatFilters` | gUI4_Chat
+| `ChatCleaner` | ChatCleaner, CleanerChat
+| `NamePlates` | Kui_Nameplates, TidyPlates (and its forks), NeatPlates, SimplePlates, gUI4_NamePlates
+| `Blizzard: Containers` | Backpacker, BlizzardBagsPlus
+| `Blizzard: Tooltips`, `Blizzard: ItemTooltips` | TipTac, TinyTip, TinyTooltip
+| Boss and arena frames | Gladius, GladiusEx
+|===
+
+== Module or element?
+
+|===
+| You're adding | Make a
+
+| A feature | Module (or a widget of an existing one)
+| Something several unit frames show | link:{{< relref "unitframe-elements" >}}[Unit frame element]
+| A helper several modules use | Function on `Engine` in `engine/wotlk-helpers.lua`
+|===

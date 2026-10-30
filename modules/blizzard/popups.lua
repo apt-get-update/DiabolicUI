@@ -87,6 +87,12 @@ Module.StylePopUp = function(self, popup)
 	editbox:SetBackdropColor(unpack(config.body.input.backdropColor))
 	editbox:SetBackdropBorderColor(unpack(config.body.input.backdropBorderColor))
 	editbox:SetTextInsets(6,6,0,0)
+
+	-- the money's coins ours (the guild bank's deposit and withdrawal)
+	local money = _G[popup:GetName() .. "MoneyInputFrame"]
+	if money then
+		Engine:GetModule("Blizzard: Windows"):StyleCoins(money)
+	end
 end
 
 -- The Dungeon Finder's dialogs: the role check, the "group has been formed"

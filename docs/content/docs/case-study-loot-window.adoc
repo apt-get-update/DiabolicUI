@@ -1,0 +1,47 @@
+---
+title: "Case Study: Loot Window"
+weight: 9
+---
+
+= Case Study: Loot Window
+
+`modules/blizzard/lootframe.lua` replaces Blizzard's loot window. A first
+version reskinned Blizzard's `LootFrame`, and kept breaking.
+
+|===
+| Reskinning Blizzard's | Building our own
+
+| Guessing frame levels around its clipping | Our frame, our levels
+| Reading its widgets to know if a row is used: racy | `GetLootSlotInfo(slot)` is the only truth
+| Its scripts crash on our buttons (`LootFrame.page` is nil) | No inherited scripts
+| Its layout to measure | A plain list we lay out
+|===
+
+== How
+
+++++
+{{< mermaid >}}
+flowchart LR
+    ev["📨 LOOT_OPENED<br/>LOOT_SLOT_CLEARED<br/>LOOT_CLOSED"] -- "unregistered" --> bz["🚫 Blizzard's LootFrame<br/>never opens"]
+    ev -- "registered" --> mod["🧩 our module"]
+    mod --> api["🔎 GetLootSlotInfo"] --> rows["🪟 our rows"]
+{{< /mermaid >}}
+++++
+
+. Take Blizzard's loot events from `LootFrame`, register them on the module.
+. Make buttons from `LootButtonTemplate`, parented to our frame.
+. Fill each row from `GetLootSlotInfo`, every update.
+. Stack the rows ourselves.
+
+== Template gotchas
+
+|===
+| Problem | Fix
+
+| Its normal, highlight and pushed textures show on hover | `button:SetNormalTexture("")` etc., hide other regions
+| Its `OnUpdate` calls `+LootItem_OnEnter+`, which needs `LootFrame.page` | `button:SetScript("OnUpdate", nil)`
+| The icon and text aren't fields | `+_G[name .. "IconTexture"]+`, `+_G[name .. "Text"]+`
+|===
+
+The row backgrounds stretch with the item name: scale the whole
+link:{{< relref "conventions#texture-canvas" >}}[texture canvas], not just its art.

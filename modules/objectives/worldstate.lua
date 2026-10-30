@@ -62,6 +62,7 @@ end
 -- UI Template
 ------------------------------------------------------------------------
 local WorldStateUI = Engine:CreateFrame("Frame", nil, WorldFrame)
+Module.TimerFrame = WorldStateUI -- (named in /dui cpu)
 local WorldStateUI_MT = { __index = WorldStateUI }
 
 -- Using the template frame to handle all timers, as its always visible

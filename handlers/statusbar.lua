@@ -22,7 +22,18 @@ local CreateFrame = _G.CreateFrame
 local StatusBar = Engine:CreateFrame("Frame")
 local StatusBar_MT = { __index = StatusBar }
 
-StatusBar.Update = function(self, elapsed)
+-- The spark's pulse is a looping alpha animation the client plays by
+-- itself, so a bar that holds still runs no Lua at all.
+local SetPulse = function(spark)
+	local range = spark._max_alpha - spark._min_alpha
+	spark:SetAlpha(spark._min_alpha)
+	spark._pulse_in:SetDuration(spark._duration_in)
+	spark._pulse_in:SetChange(range)
+	spark._pulse_out:SetDuration(spark._duration_out)
+	spark._pulse_out:SetChange(-range)
+end
+
+StatusBar.Update = function(self)
 	local value = self._ignoresmoothing and self._value or self._displayvalue
 	local min, max = self._min, self._max
 	local orientation = self._orientation
@@ -36,12 +47,10 @@ StatusBar.Update = function(self, elapsed)
 		bar:Hide()
 		if spark:IsShown() then
 			spark:Hide()
-			spark:SetAlpha(spark._min_alpha)
-			spark._direction = "IN"
+			spark._pulse:Stop()
 		end
 	else
-		-- The spark pulses every frame, but the bar only needs laying out again
-		-- when its value or shape changed.
+		-- The bar only needs laying out again when its value or shape changed.
 		local laid = self._laid
 		if (value ~= laid.value) or (min ~= laid.min) or (max ~= laid.max) or (width ~= laid.width) or (height ~= laid.height)
 		or (orientation ~= laid.orientation) or (spark._width ~= laid.sparkWidth) or (spark._height ~= laid.sparkHeight) then
@@ -101,31 +110,14 @@ StatusBar.Update = function(self, elapsed)
 			end
 		end
 
-		if elapsed then
-			local current_alpha = spark:GetAlpha()
-			local target_alpha = spark._direction == "IN" and spark._max_alpha or spark._min_alpha
-			local range = spark._max_alpha - spark._min_alpha
-			local alpha_change = elapsed/(spark._direction == "IN" and spark._duration_in or spark._duration_out) * range
-		
-			if spark._direction == "IN" then
-				if current_alpha + alpha_change < target_alpha then
-					current_alpha = current_alpha + alpha_change
-				else
-					current_alpha = target_alpha
-					spark._direction = "OUT"
-				end
-			elseif spark._direction == "OUT" then
-				if current_alpha - alpha_change > target_alpha then
-					current_alpha = current_alpha - alpha_change
-				else
-					current_alpha = target_alpha
-					spark._direction = "IN"
-				end
-			end
-			spark:SetAlpha(current_alpha)
-		end
 		if not spark:IsShown() then
 			spark:Show()
+		end
+		-- A full bar keeps its spark, still, like it always had.
+		if value >= max then
+			spark._pulse:Stop()
+		elseif not spark._pulse:IsPlaying() then
+			spark._pulse:Play()
 		end
 		if not bar:IsShown() then
 			bar:Show()
@@ -139,6 +131,7 @@ local smooth_HZ = .2 -- each frame closes elapsed/smooth_HZ of the gap
 local smooth_limit = 1/120 -- max updates per second
 local smooth_finish = 1/1000 -- the last bit of the gap (a share of the range) is jumped
 
+-- Runs only while the shown value slides towards the real one.
 StatusBar.OnUpdate = function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed < smooth_limit then
@@ -146,31 +139,26 @@ StatusBar.OnUpdate = function(self, elapsed)
 	else
 		self.elapsed = 0
 	end
-	if self._ignoresmoothing then
-		if self._value <= self._min or self._value >= self._max then
-			self.scaffold:SetScript("OnUpdate", nil)
+	if self.smoothing and not self._ignoresmoothing then
+		local goal = self._value
+		local display = self._displayvalue
+		-- Closing a share of the gap every frame never quite gets there,
+		-- so the last bit is jumped (and so is all of it from nothing).
+		local next_display = display + (goal - display) * math_min(elapsed/smooth_HZ, 1)
+		if (display < smooth_minimum_value) or (math_abs(goal - next_display) <= (self._max - self._min) * smooth_finish) then
+			self._displayvalue = goal
+			self.smoothing = nil
+		else
+			self._displayvalue = next_display
 		end
 	else
-		if self.smoothing then
-			local goal = self._value
-			local display = self._displayvalue
-			-- Closing a share of the gap every frame never quite gets there,
-			-- so the last bit is jumped (and so is all of it from nothing).
-			local next_display = display + (goal - display) * math_min(elapsed/smooth_HZ, 1)
-			if (display < smooth_minimum_value) or (math_abs(goal - next_display) <= (self._max - self._min) * smooth_finish) then
-				self._displayvalue = goal
-				self.smoothing = nil
-			else
-				self._displayvalue = next_display
-			end
-		else
-			if self._displayvalue <= self._min or self._displayvalue >= self._max then
-				self.scaffold:SetScript("OnUpdate", nil)
-				self.smoothing = nil
-			end
-		end
+		self._displayvalue = self._value
+		self.smoothing = nil
 	end
-	self:Update(elapsed)
+	if not self.smoothing then
+		self.scaffold:SetScript("OnUpdate", nil)
+	end
+	self:Update()
 end
 
 StatusBar.DisableSmoothing = function(self, disable)
@@ -188,7 +176,10 @@ StatusBar.SetValue = function(self, value)
 	if value ~= self._displayvalue then
 		self.smoothing = true
 	end
-	if self.smoothing or self._displayvalue > min or self._displayvalue < max then
+	if self._ignoresmoothing then
+		self._displayvalue = value
+		self.smoothing = nil
+	elseif self.smoothing then
 		if not self.scaffold:GetScript("OnUpdate") then
 			self.scaffold:SetScript("OnUpdate", function(_, ...) self:OnUpdate(...) end)
 		end
@@ -244,8 +235,11 @@ StatusBar.SetSparkFlash = function(self, duration_in, duration_out, min, max)
 	spark._duration_out = duration_out
 	spark._min_alpha = min
 	spark._max_alpha = max
-	spark._direction = "IN"
-	spark:SetAlpha(min)
+	SetPulse(spark)
+	if spark._pulse:IsPlaying() then
+		spark._pulse:Stop()
+		spark._pulse:Play()
+	end
 end
 
 StatusBar.SetOrientation = function(self, orientation)
@@ -411,14 +405,19 @@ Handler.New = function(self, parent)
 	local spark = scaffold:CreateTexture(nil, "OVERLAY")
 	spark:SetPoint("CENTER", bar, "RIGHT", 0, 0)
 	spark:SetSize(1,1)
-	spark:SetAlpha(.35)
 	spark._width = 1
 	spark._height = 1
-	spark._direction = "IN"
 	spark._duration_in = 2.75
 	spark._duration_out = 1.25
 	spark._min_alpha = .35
 	spark._max_alpha = .85
+	spark._pulse = spark:CreateAnimationGroup()
+	spark._pulse:SetLooping("REPEAT")
+	spark._pulse_in = spark._pulse:CreateAnimation("Alpha")
+	spark._pulse_in:SetOrder(1)
+	spark._pulse_out = spark._pulse:CreateAnimation("Alpha")
+	spark._pulse_out:SetOrder(2)
+	SetPulse(spark)
 
 	-- The statusbar is the virtual object that we return to the user.
 	-- This contains all the methods.

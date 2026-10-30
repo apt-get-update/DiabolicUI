@@ -109,7 +109,8 @@ function Api.newWorld(class)
 		instance = { inInstance = nil, type = "none", name = "", difficulty = 1, maxPlayers = 0 },
 		worldStates = {}, -- { uiType, state, text, icon, dynamicIcon, tooltip, dynamicTooltip, extendedUI, extended1, extended2, extended3 }
 		cvars = {
-			lockActionBars = "1", alwaysShowActionBars = "0",
+			lockActionBars = "1", alwaysShowActionBars = "0", equipmentManager = "1",
+			playerStatLeftDropdown = "PLAYERSTAT_BASE_STATS", playerStatRightDropdown = "PLAYERSTAT_MELEE_COMBAT",
 			uiScale = "1", useUiScale = "0", gxResolution = "1920x1080", gxWindow = "0", gxMaximize = "1",
 			chatBubbles = "1", chatBubblesParty = "1", chatStyle = "classic", conversationMode = "inline",
 			chatMouseScroll = "1", showTimestamps = "none", cameraDistanceMax = "15",
@@ -158,6 +159,14 @@ function Api.newWorld(class)
 		trackingTypes = {},
 		lfgStatus = nil,
 		battlefields = {},
+		factions = {}, -- { name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild }
+		selectedFaction = 0,
+		-- the class trainer's services: { name, subText, kind ("available", "unavailable", "used", "header"),
+		-- expanded, requirements (the text Blizzard builds, colored) }
+		trainer = { services = {}, selected = nil },
+		-- the open profession's recipes: { name, kind ("optimal", "medium", "easy", "trivial", "header"),
+		-- reagents = { { name, link, have, need } } }
+		tradeSkill = { name = "Tailoring", rank = 300, maxRank = 450, recipes = {} },
 	}
 	local player = Api.newUnit({ class = class, name = "Tester", isPlayer = true, faction = "Alliance" })
 	player.combat = false
@@ -510,6 +519,14 @@ function Api.install(client)
 		end
 		return count
 	end
+	-- world.lootMethod = { method, partyID, raidID } (partyID 0: the player)
+	api.GetLootMethod = function()
+		local loot = world().lootMethod
+		if loot then
+			return loot[1], loot[2], loot[3]
+		end
+		return "group"
+	end
 	api.GetRaidRosterInfo = function(index)
 		local u = world().units["raid" .. index]
 		if u then
@@ -580,6 +597,13 @@ function Api.install(client)
 		end
 	end
 	api.GetMoney = function() return world().money end
+	-- the auction house's list: world.auctions = { batch, total } (as
+	-- many shown on this page, as many found in all)
+	api.GetNumAuctionItems = function(kind)
+		local auctions = (kind == "list") and world().auctions or { 0, 0 }
+		return auctions[1], auctions[2]
+	end
+	api.CanSendAuctionQuery = function() return 1, 1 end
 
 	-- Auras -----------------------------------------------------------------
 
@@ -671,7 +695,7 @@ function Api.install(client)
 	api.GetActionInfo = function(slot)
 		local a = action(slot)
 		if a then
-			return a.type, a.id, a.subType
+			return a.type, a.id, a.subType, a.spellID
 		end
 	end
 	api.GetActionCount = function(slot)
@@ -733,7 +757,8 @@ function Api.install(client)
 	api.SetActionBarToggles = function(...) world().barToggles = { ... } end
 	api.PickupAction = function(slot) world().cursorAction = slot end
 	api.PlaceAction = function(slot) world().cursorAction = nil end
-	api.GetMacroSpell = function(id) return nil end
+	-- (world.macroSpells: the spell a macro casts, by its id)
+	api.GetMacroSpell = function(id) return world().macroSpells and world().macroSpells[id] end
 	api.GetMacroItem = function(id) return nil end
 	-- world.macros = { [index] = { name, icon, body } }: account macros at
 	-- 1-36, character ones from 37. Without it, every macro is the same one.
@@ -824,9 +849,63 @@ function Api.install(client)
 		if type(spell) == "number" then
 			return "Spell" .. spell, "", "Interface\\Icons\\Spell" .. spell, 0, nil, 0, 1500, 0, 40
 		end
+		-- by name: only the spells the player knows (world.unknownSpells: not those)
+		if world().unknownSpells and world().unknownSpells[spell] then
+			return nil
+		end
 		return spell, "", "Interface\\Icons\\Spell", 0, nil, 0, 1500, 0, 40
 	end
-	api.GetSpellTexture = function(spell) return select(3, api.GetSpellInfo(spell)) end
+	api.GetSpellTexture = function(spell, bookType)
+		local book = (bookType == "spell") and world().spellBook
+		if book then
+			return book[spell] and (book[spell].texture or "Interface\\Icons\\Spell")
+		end
+		return select(3, api.GetSpellInfo(spell))
+	end
+
+	-- Trainers and professions ------------------------------------------------
+
+	api.GetNumTrainerServices = function() return #world().trainer.services end
+	api.GetTrainerServiceInfo = function(index)
+		local service = world().trainer.services[index]
+		if service then
+			return service.name, service.subText, service.kind, service.expanded and 1 or nil
+		end
+	end
+	api.GetTrainerSelectionIndex = function() return world().trainer.selected end
+	api.SelectTrainerService = function(index) world().trainer.selected = index end
+	api.IsTradeskillTrainer = function() return world().trainer.tradeskill and 1 or nil end
+	api.GetTradeSkillLine = function()
+		local trade = world().tradeSkill
+		if trade.name then
+			return trade.name, trade.rank, trade.maxRank
+		end
+		return "UNKNOWN", 0, 0
+	end
+	api.GetNumTradeSkills = function() return #world().tradeSkill.recipes end
+	api.GetTradeSkillInfo = function(index)
+		local recipe = world().tradeSkill.recipes[index]
+		if recipe then
+			return recipe.name, recipe.kind, recipe.available or 0, recipe.expanded and 1 or nil
+		end
+	end
+	api.GetTradeSkillSelectionIndex = function() return world().tradeSkill.selected or 0 end
+	api.GetTradeSkillNumReagents = function(index)
+		local recipe = world().tradeSkill.recipes[index]
+		return recipe and recipe.reagents and #recipe.reagents or 0
+	end
+	api.GetTradeSkillReagentInfo = function(index, reagent)
+		local recipe = world().tradeSkill.recipes[index]
+		local info = recipe and recipe.reagents and recipe.reagents[reagent]
+		if info then
+			return info.name, "Interface\\Icons\\" .. info.name, info.need, info.have
+		end
+	end
+	api.GetTradeSkillReagentItemLink = function(index, reagent)
+		local recipe = world().tradeSkill.recipes[index]
+		local info = recipe and recipe.reagents and recipe.reagents[reagent]
+		return info and info.link
+	end
 	api.GetSpellCooldown = function() return 0, 0, 1 end
 	api.IsSpellKnown = function(id) return world().spells[id] ~= nil end
 	api.IsUsableSpell = function() return 1, nil end
@@ -946,6 +1025,17 @@ function Api.install(client)
 		end
 	end
 	api.GetContainerItemCooldown = function() return 0, 0, 1 end
+	-- at a merchant (its window open) using an item sells it: it leaves the
+	-- bag, and world.sold lists it
+	api.UseContainerItem = function(bag, slot)
+		local c = world().containers[bag]
+		local item = c and c.items[slot]
+		if item and _G.MerchantFrame and _G.MerchantFrame:IsShown() then
+			c.items[slot] = nil
+			world().sold = world().sold or {}
+			table.insert(world().sold, item)
+		end
+	end
 	api.GetBagName = function(bag) return world().containers[bag] and ("Bag " .. bag) end
 	api.ContainerIDToInventoryID = function(bag) return 19 + bag end
 	api.GetKeyRingSize = function() return 32 end
@@ -975,7 +1065,7 @@ function Api.install(client)
 	api.LootSlot = function(slot) world().looted = slot end
 	api.CloseLoot = function() world().lootClosed = true end
 	api.IsFishingLoot = function() return nil end
-	api.GetLootThreshold = function() return 2 end
+	api.GetLootThreshold = function() return world().lootThreshold or 2 end
 	api.ConfirmLootSlot = function() end
 
 	-- Places --------------------------------------------------------------------
@@ -1160,6 +1250,29 @@ function Api.install(client)
 	end
 	api.UpdateAddOnCPUUsage = function() end
 	api.GetAddOnCPUUsage = function() return 0 end
+	-- Script profiling: the fake client times nothing; a test can set the
+	-- milliseconds a function used in world.functionCPU.
+	api.GetFunctionCPUUsage = function(func)
+		-- the real client crashes on its own C functions
+		assert(pcall(coroutine.create, func), "GetFunctionCPUUsage: given a C function, the client crashes")
+		local used = world().functionCPU and world().functionCPU[func] or 0
+		return used, 0
+	end
+	-- Every frame, oldest first; nil past the last one.
+	local enumerated
+	api.EnumerateFrames = function(previous)
+		if previous == nil then
+			enumerated = {}
+			for _, widget in ipairs(client.widgets) do
+				if widget:IsObjectType("Frame") then
+					enumerated[#enumerated + 1] = widget
+					enumerated[widget] = #enumerated
+				end
+			end
+			return enumerated[1]
+		end
+		return enumerated and enumerated[(enumerated[previous] or #enumerated) + 1]
+	end
 
 	-- Social ----------------------------------------------------------------------
 
@@ -1216,6 +1329,14 @@ function Api.install(client)
 	end
 	api.GetNumTalentTabs = function() return #world().talents end
 
+	-- a round copy of `path` in `texture` (a texture or its name)
+	api.SetPortraitToTexture = function(texture, path)
+		if type(texture) == "string" then
+			texture = _G[texture]
+		end
+		texture:SetTexture(path)
+	end
+
 	-- equipment manager sets: world.equipmentSets = { { name, icon }, ... }
 	api.GetNumEquipmentSets = function() return #(world().equipmentSets or {}) end
 	api.GetEquipmentSetInfo = function(index)
@@ -1229,6 +1350,61 @@ function Api.install(client)
 			if set[1] == name then
 				return set[2], index
 			end
+		end
+	end
+	api.GetFactionInfo = function(index)
+		local f = world().factions[index]
+		if f then
+			return unpack(f, 1, 13)
+		end
+	end
+	api.GetSelectedFaction = function() return world().selectedFaction end
+	-- the spellbook's schools: name, icon, first spell's offset, count
+	-- (world.spellBook: the spells in it, by index: { name, rank, passive, texture })
+	api.GetSpellTabInfo = function(tab)
+		if tab == 1 then
+			return "General", [[Interface\Icons\INV_Misc_Book_09]], 0, world().spellBook and #world().spellBook or 6
+		end
+	end
+	api.GetNumSpellTabs = function() return 1 end
+	local function inBook(index, bookType)
+		return (bookType == "spell") and world().spellBook and world().spellBook[index]
+	end
+	api.GetSpellName = function(index, bookType)
+		local spell = inBook(index, bookType)
+		if spell then
+			return spell.name, spell.rank or ""
+		end
+	end
+	api.IsPassiveSpell = function(index, bookType)
+		local spell = inBook(index, bookType)
+		return spell and spell.passive and 1 or nil
+	end
+	api.PickupSpell = function(index, bookType) client.cursor = { "spell", index, bookType } end
+	-- the skills (world.skillLines: { name, header, expanded, rank, temp, modifier, max, ... })
+	api.GetNumSkillLines = function() return #(world().skillLines or {}) end
+	api.GetSkillLineInfo = function(index)
+		local line = (world().skillLines or {})[index]
+		if line then
+			return unpack(line, 1, 12)
+		end
+	end
+	api.ExpandSkillHeader = function(index)
+		local line = (world().skillLines or {})[index]
+		if line and line[2] then
+			line[3] = 1
+		end
+	end
+	api.SortWho = function() end
+	-- the companions and mounts (world.companions.CRITTER / .MOUNT: { creatureID, name, spellID, icon, active })
+	local function companions(kind)
+		return (world().companions or {})[kind] or {}
+	end
+	api.GetNumCompanions = function(kind) return #companions(kind) end
+	api.GetCompanionInfo = function(kind, index)
+		local c = companions(kind)[index]
+		if c then
+			return unpack(c, 1, 5)
 		end
 	end
 	api.GetTalentTabInfo = function(tab, inspect, pet, group)
@@ -1286,6 +1462,11 @@ function Api.install(client)
 	end
 
 	-- Quests ------------------------------------------------------------------------
+
+	-- the dailies done today (25 at most), the seconds until they reset
+	api.GetDailyQuestsCompleted = function() return world().dailiesDone or 0 end
+	api.GetMaxDailyQuests = function() return 25 end
+	api.GetQuestResetTime = function() return world().questReset or 3600 end
 
 	api.GetNumQuestLogEntries = function()
 		local quests = 0
@@ -1356,12 +1537,13 @@ function Api.install(client)
 	end
 	api.GetTotalAchievementPoints = function() return 1000 end
 	api.GetCurrentTitle = function() return world().currentTitle or 0 end
+	api.SetCurrentTitle = function(id) world().currentTitle = id end
 	api.GetTitleName = function(id)
 		local t = world().titles[id]
 		return t and t.name, t and t.playerTitle
 	end
 	api.GetNumTitles = function() return #world().titles end
-	api.IsTitleKnown = function(id) return flag(world().titles[id]) end
+	api.IsTitleKnown = function(id) return world().titles[id] and 1 or 0 end -- 1 or 0, not nil
 
 	-- The client itself ---------------------------------------------------------
 
@@ -1404,7 +1586,8 @@ function Api.install(client)
 	api.GetScreenWidth = function() return world().screen[1] end
 	api.GetScreenHeight = function() return world().screen[2] end
 	api.GetScreenResolutions = function() return "800x600", "1024x768", "1920x1080" end
-	api.GetCurrentResolution = function() return 3 end
+	-- (world.resolution: the index chosen, 0 for none known)
+	api.GetCurrentResolution = function() return world().resolution or 3 end
 	api.IsMounted = function() return flag(world().mounted) end
 	api.IsFlying = function() return flag(world().flying) end
 	api.IsSwimming = function() return flag(world().swimming) end
@@ -1429,7 +1612,18 @@ function Api.install(client)
 	api.SendChatMessage = function(msg, chatType, language, channel)
 		client.chat[#client.chat + 1] = { msg, chatType, language, channel }
 	end
-	api.RandomRoll = function() end
+	-- the server answers with a CHAT_MSG_SYSTEM ("Name rolls 87 (1-100)"),
+	-- the tests fire it themselves
+	api.RandomRoll = function(low, high)
+		client.rolls = client.rolls or {}
+		client.rolls[#client.rolls + 1] = { tonumber(low), tonumber(high) }
+	end
+	-- the server sends it back as CHAT_MSG_ADDON to everyone in the group,
+	-- you included: the tests fire it themselves
+	api.SendAddonMessage = function(prefix, msg, chatType, target)
+		client.addonMessages = client.addonMessages or {}
+		client.addonMessages[#client.addonMessages + 1] = { prefix, msg, chatType, target }
+	end
 	api.AcceptResurrect = function() end
 	api.RepopMe = function() end
 	api.UseAction = function(slot) world().usedAction = slot end

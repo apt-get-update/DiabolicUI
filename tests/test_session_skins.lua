@@ -19,9 +19,19 @@ local function boot(options)
 	client:Tick(0.2)
 end
 
--- Saved settings for the "AddOnSkins" config.
-local function skins(settings)
-	return { DiabolicUI_DB = { AddOnSkins = { profiles = { global = settings } } } }
+local function shown(widget)
+	return widget:IsShown() == 1
+end
+
+local function color(...)
+	local r, g, b = ...
+	return { r, g, b }
+end
+
+local function near(actual, expected)
+	for i = 1, 3 do
+		lu.assertAlmostEquals(actual[i], expected[i], 1e-6)
+	end
 end
 
 -- TrinketMenu ---------------------------------------------------------------------
@@ -103,14 +113,6 @@ function TestTrinketMenu:test_loaded_before_us_too()
 	assertClean(client)
 end
 
-function TestTrinketMenu:test_the_option_off()
-	boot({ world = trinketMenu, savedVariables = skins({ styleTrinketMenu = false }) })
-	client.api.LoadAddOn("TrinketMenu")
-	lu.assertNotNil(_G.TrinketMenu_MainFrame:GetBackdrop())
-	lu.assertNil(_G.TrinketMenu_Trinket0.DiabolicStyled)
-	assertClean(client)
-end
-
 -- Questie's tracker ---------------------------------------------------------------
 
 -- Questie's tracker lines, made the way its TrackerLinePool makes them: a
@@ -187,7 +189,13 @@ local function questie(world, loadedBeforeUs, lineInUse)
 			Update = function() end,
 			UpdateHeight = function(self) self.heightUpdated = true end,
 		}
-		local modules = { TrackerLinePool = pool, TrackerBaseFrame = { Update = function() end }, QuestieTracker = tracker }
+		-- its header, hidden by default, and its "?" (shown again on each update)
+		local headerFrame = CreateFrame("Button", "Questie_HeaderFrame", _G.UIParent)
+		headerFrame:Hide()
+		headerFrame.questieIcon = CreateFrame("Button", nil, _G.UIParent)
+		headerFrame.questieIcon:SetScript("OnClick", function(_, button) client.questieOptions = button end)
+		local header = { headerFrame = headerFrame, Update = function() headerFrame.questieIcon:Show() end }
+		local modules = { TrackerLinePool = pool, TrackerBaseFrame = { Update = function() end }, QuestieTracker = tracker, TrackerHeaderFrame = header }
 		_G.Questie = { db = { profile = { trackerQuestPadding = 10 } } }
 		_G.QuestieLoader = { ImportModule = function(_, name) return modules[name] end }
 		if lineInUse then
@@ -221,7 +229,8 @@ end
 
 function TestQuestieTracker:test_lines_in_our_fonts_and_titles_in_gold()
 	boot({ world = function(world) questie(world, true) end })
-	local title, questieColor = { unpack(client.Engine:GetDB("Data: Colors").General.Title) }, { 1, .82, 0 }
+	local style = client.Engine:GetDB("Objectives").style
+	local header, title, questieColor = { unpack(style.header_color) }, { unpack(style.title_color) }, { 1, .82, 0 }
 	-- its tracker starts some time after login, in a coroutine
 	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
 	local start = coroutine.create(pool.Initialize)
@@ -236,7 +245,8 @@ function TestQuestieTracker:test_lines_in_our_fonts_and_titles_in_gold()
 	quest.label:SetText("|cFFFF8040[72] The Might of the Horde|r |cFF00FF00(50%)|r")
 	objective:SetMode("objective")
 	objective.label:SetText("|cFFEEEEEE- Wolves slain: 2/5|r")
-	assertLine(zone, "DiabolicFont_HeaderRegular12", title, "Dragonblight")
+	-- the zone in Exocet capitals, the quest in Exocet and gold
+	assertLine(zone, "DiabolicFont_HeaderRegular12", header, "DRAGONBLIGHT")
 	assertLine(quest, "DiabolicFont_HeaderRegular12", title, "[72] The Might of the Horde (50%)")
 	assertLine(objective, "DiabolicFont_SansRegular12", questieColor, "|cFFEEEEEE- Wolves slain: 2/5|r")
 	lu.assertEquals(quest.label:GetHeight(), 12)
@@ -256,7 +266,7 @@ function TestQuestieTracker:test_questie_loaded_after_us_with_a_line_in_use()
 	client.api.LoadAddOn("Questie-335")
 	client:FireEvent("ADDON_LOADED", "Questie-335")
 	local line = _G.QuestieLoader:ImportModule("TrackerLinePool").GetLine(1)
-	assertLine(line, "DiabolicFont_HeaderRegular12", { unpack(client.Engine:GetDB("Data: Colors").General.Title) }, "A Quest")
+	assertLine(line, "DiabolicFont_HeaderRegular12", { unpack(client.Engine:GetDB("Objectives").style.title_color) }, "A Quest")
 	-- once is enough
 	client:FireEvent("ADDON_LOADED", "SomethingElse")
 	assertClean(client)
@@ -306,14 +316,16 @@ function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
 	zone:SetMode("zone")
 	zone.expandZone:SetMode(1)
 	zone.label:SetText("|cFFC0C0C0Quests (By Proximity)|r")
-	-- Blizzard's title, and its button just after it, arrow up
-	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL)
+	-- Blizzard's title in capitals, and our red square at the tracker's
+	-- right edge, its bar
+	local style = client.Engine:GetDB("Objectives").style
+	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL:upper())
+	lu.assertEquals({ zone.CollapseButton:GetPoint() }, { "TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, (style.collapse.size - zone.label:GetHeight()) / 2 })
 	local button = zone.CollapseButton
 	lu.assertEquals(button:IsShown(), 1)
-	lu.assertEquals(button:GetNormalTexture():GetTexture(), [[Interface\Buttons\UI-Panel-QuestHideButton]])
+	lu.assertEquals(button:GetNormalTexture():GetTexture(), client.Engine:GetDB("Objectives").style.collapse.texture)
 	lu.assertEquals({ button:GetNormalTexture():GetTexCoord() }, { 0, .5, 0, 1, .5, .5, .5, 1 }) -- (0, .5, .5, 1)
-	lu.assertEquals(select(4, button:GetPoint()), zone.label:GetStringWidth() + 4)
-	-- a click on the line collapses it, with Blizzard's sound, arrow down
+	-- a click on the line collapses it, with Blizzard's sound, its cross
 	client.sounds = {}
 	client:RunScript(zone.expandZone, "OnMouseUp", "LeftButton")
 	lu.assertEquals(zone.expandZone.mode, 0)
@@ -322,7 +334,7 @@ function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
 	-- Questie redraws it collapsed: no " +", the button says so
 	zone.expandZone:SetMode(0)
 	zone.label:SetText("|cFFC0C0C0Quests (By Proximity) +|r")
-	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL)
+	lu.assertEquals(zone.label:GetText(), _G.OBJECTIVES_TRACKER_LABEL:upper())
 	-- the button expands it again
 	client:Click(button)
 	lu.assertEquals(zone.expandZone.mode, 1)
@@ -332,9 +344,22 @@ function TestQuestieTracker:test_the_objectives_line_and_its_collapse_button()
 	client:RunScript(zone.expandZone, "OnMouseUp", "LeftButton")
 	client.world.modifiers.shift = false
 	lu.assertEquals(#client.sounds, 2)
+	-- a right-click: Questie's options, as its "?" opens them
+	client:RunScript(zone.expandZone, "OnMouseUp", "RightButton")
+	lu.assertEquals(client.questieOptions, "LeftButton")
+	lu.assertEquals(#client.sounds, 2)
+	-- its "?" out of sight, again after each update; by its own header, kept
+	local header = _G.QuestieLoader:ImportModule("TrackerHeaderFrame")
+	lu.assertNil(header.headerFrame.questieIcon:IsShown())
+	header:Update()
+	lu.assertNil(header.headerFrame.questieIcon:IsShown())
+	header.headerFrame:Show()
+	header:Update()
+	lu.assertEquals(header.headerFrame.questieIcon:IsShown(), 1)
 	-- a real zone keeps its name
 	zone.label:SetText("|cFFC0C0C0Dragonblight +|r")
-	lu.assertEquals(zone.label:GetText(), "Dragonblight")
+	lu.assertEquals(zone.label:GetText(), "DRAGONBLIGHT")
+	lu.assertEquals(select(4, button:GetPoint()), zone.label:GetStringWidth() + 4)
 	-- the line used for a quest: no button
 	zone:SetMode("quest")
 	lu.assertNil(button:IsShown())
@@ -389,7 +414,7 @@ function TestQuestieTracker:test_a_changed_line_pool_is_left_alone()
 	local printed = bootChangedQuestie(function(pool) pool.GetNextLine = nil end)
 	_G.print = print
 	local L = client.Engine:GetLocale()
-	lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] .. " (TrackerLinePool.GetNextLine)" })
+	lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is."] .. " (TrackerLinePool.GetNextLine)" })
 	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
 	pool.Initialize(1)
 	pool.GetLine(1):SetMode("quest")
@@ -440,7 +465,7 @@ function TestQuestieTracker:test_each_change_is_named()
 		end)
 		_G.print = print
 		L = client.Engine:GetLocale()
-		lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] .. " (" .. case[1] .. ")" }, case[1])
+		lu.assertEquals(printed, { L["DiabolicUI: Questie has changed, its tracker is left as it is."] .. " (" .. case[1] .. ")" }, case[1])
 		assertClean(client)
 	end
 end
@@ -491,12 +516,229 @@ function TestQuestieTracker:test_lines_styled_before_a_change_are_left_alone_aft
 	assertClean(client)
 end
 
-function TestQuestieTracker:test_the_option_off()
-	boot({ world = function(world) questie(world, true) end, savedVariables = skins({ styleQuestieTracker = false }) })
-	local pool = _G.QuestieLoader:ImportModule("TrackerLinePool")
-	pool.Initialize(1)
-	pool.GetLine(1):SetMode("quest")
-	lu.assertNil(pool.GetLine(1).DiabolicStyled)
+-- Immersion -----------------------------------------------------------------------
+
+-- A frame of Immersion's, under `key` of its parent, as its Frame.xml's
+-- parentKeys make them.
+local function part(parent, key, kind)
+	local frame = CreateFrame(kind or "Frame", nil, parent)
+	parent[key] = frame
+	return frame
+end
+
+-- A money frame's gold coin, as MoneyFrameTemplate draws it.
+local function coin(frame)
+	local texture = frame:CreateTexture()
+	texture:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+	texture:SetTexCoord(0, .25, 0, 1)
+	return texture
+end
+
+-- Immersion's dialogue box: the parts the skin uses.
+local function immersion(world)
+	table.insert(world.addons, { name = "Immersion", enabled = true, onLoad = function()
+		local frame = CreateFrame("Frame", "ImmersionFrame", _G.UIParent)
+		local talkBox = part(frame, "TalkBox", "Button")
+		talkBox:SetSize(570, 155)
+		local main = part(talkBox, "MainFrame")
+		part(main, "CloseButton", "Button")
+		main.Indicator = main:CreateTexture(nil, "OVERLAY")
+		local text = part(talkBox, "TextFrame")
+		text.Text = text:CreateFontString(nil, "ARTWORK")
+		text.SpeechProgress = text:CreateFontString(nil, "ARTWORK")
+		local model = part(main, "Model", "PlayerModel")
+		model:SetSize(115, 115)
+		model:SetPoint("TOPLEFT", talkBox, "TOPLEFT", 21, -21)
+		model.PortraitBG = model:CreateTexture(nil, "BACKGROUND")
+		model.ModelShadow = model:CreateTexture(nil, "ARTWORK")
+		model.ModelShadow:SetTexture([[Interface\AddOns\Immersion\Textures\artifactuishadow]])
+		local background = part(talkBox, "BackgroundFrame")
+		background.TextBackground = background:CreateTexture(nil, "BACKGROUND")
+		background.TextBackground:SetTexture([[Interface\AddOns\Immersion\Textures\TalkingHeads.blp]])
+		background.SolidBackground = background:CreateTexture(nil, "BACKGROUND")
+		part(talkBox, "PortraitFrame").Portrait = talkBox.PortraitFrame:CreateTexture(nil, "OVERLAY")
+		part(talkBox, "NameFrame").Name = talkBox.NameFrame:CreateFontString(nil, "ARTWORK")
+		talkBox.NameFrame.Name:SetFont([[Fonts\MORPHEUS.TTF]], 22, "")
+		talkBox.NameFrame.Name:SetTextColor(1, .82, 0)
+		part(talkBox, "Hilite"):SetBackdrop({ edgeFile = [[Interface\AddOns\Immersion\Textures\Edge_Gossip_Hilite.blp]] })
+		local elements = part(talkBox, "Elements")
+		elements:SetBackdrop({ bgFile = [[Interface\AddOns\Immersion\Textures\Backdrop_Talkbox.blp]] })
+		local content = part(elements, "Content")
+		content.ObjectivesHeader = content:CreateFontString(nil, "BACKGROUND")
+		local rewards = part(content, "RewardsFrame")
+		rewards.Header = rewards:CreateFontString(nil, "BACKGROUND")
+		coin(part(rewards, "MoneyFrame"))
+		part(rewards, "MoneyIcon").MoneyIcon = rewards.MoneyIcon:CreateTexture(nil, "ARTWORK")
+		local progress = part(elements, "Progress")
+		progress.ReqText = progress:CreateFontString(nil, "BACKGROUND")
+		coin(part(progress, "MoneyFrame"))
+		-- the choices (gossip options, quests): one made, the others as
+		-- they're asked for
+		local titles = part(frame, "TitleButtons")
+		titles.Buttons = {}
+		function titles:GetButton(index)
+			local button = self.Buttons[index]
+			if not button then
+				button = CreateFrame("Button", nil, self)
+				button:SetSize(300, 40)
+				button:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
+				button:SetHighlightTexture([[Interface\AddOns\Immersion\Textures\Hilite]])
+				button.Overlay = CreateFrame("Frame", nil, button)
+				button.Overlay:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
+				button.Hilite = CreateFrame("Frame", nil, button)
+				button.Hilite:SetBackdrop({ bgFile = [[Interface\Buttons\WHITE8X8]] })
+				button.Label = button:CreateFontString(nil, "ARTWORK")
+				-- its icon: a speech bubble, a quest's mark, a spell's
+				button.Icon = button:CreateTexture(nil, "ARTWORK")
+				function button:SetGossipIcon() self.Icon:SetTexture([[Interface\GossipFrame\GossipGossipIcon]]) end
+				function button:SetGossipQuestIcon() self.Icon:SetTexture([[Interface\GossipFrame\AvailableQuestIcon]]) end
+				function button:SetIcon(texture) self.Icon:SetTexture(texture) end
+				self.Buttons[index] = button
+			end
+			return button
+		end
+		titles:GetButton(1)
+		-- (Methods/Constants.lua's: the children's camera, a global)
+		_G.EnumConst = { UiModelPositionCamera = { Original = { ["humanmalekid/humanmalekid"] = { 7.8, 0, 1, -.28 } } } }
+	end })
+end
+
+TestImmersion = {}
+
+function TestImmersion:tearDown()
+	client = nil
+end
+
+function TestImmersion:test_loaded_after_us_it_gets_styled()
+	boot({ world = immersion })
+	-- another addon first: nothing to style yet
+	client:FireEvent("ADDON_LOADED", "SomethingElse")
+	client.api.LoadAddOn("Immersion")
+	local config = client.Engine:GetDB("Blizzard").immersion
+	local window = client.Engine:GetDB("Blizzard").window
+	local talkBox = _G.ImmersionFrame.TalkBox
+	local elements = talkBox.Elements
+	local rewards = elements.Content.RewardsFrame
+
+	-- a child in the portrait framed as the grown-ups are (our numbers)
+	local kid = config.kid_camera
+	lu.assertEquals(_G.EnumConst.UiModelPositionCamera.Original["humanmalekid/humanmalekid"], { kid[1], kid[2], kid[3], kid[4], true })
+
+	-- the windows' close button, where Immersion put it
+	local close = talkBox.MainFrame.CloseButton
+	lu.assertEquals(close:GetNormalTexture():GetTexture(), window.close.texture.normal)
+	-- its indicator left of it, pale gold; the text and its pages' count
+	local indicator = talkBox.MainFrame.Indicator
+	lu.assertEquals({ indicator:GetPoint() }, { "RIGHT", close, "LEFT", -config.indicator_gap, 0 })
+	near(color(indicator:GetVertexColor()), config.icon_color)
+	near(color(talkBox.TextFrame.Text:GetTextColor()), config.text_color)
+	lu.assertEquals({ talkBox.TextFrame.SpeechProgress:GetFont() }, { config.title_font, config.header_size, "" })
+
+	-- the quest's objectives and rewards on our plate, not Immersion's
+	-- backdrop (even set again)
+	lu.assertNil(elements:GetBackdrop())
+	lu.assertNil(talkBox.Hilite:GetBackdrop()) -- (nor its blue edge under the mouse)
+	elements:SetBackdrop({})
+	lu.assertNil(elements:GetBackdrop())
+
+	-- the titles in Exocet, in Immersion's colors
+	local name = talkBox.NameFrame.Name
+	lu.assertEquals({ name:GetFont() }, { config.title_font, config.name_size, "" })
+	lu.assertEquals({ name:GetTextColor() }, { 1, .82, 0, 1 })
+	for _, header in ipairs({ elements.Content.ObjectivesHeader, rewards.Header, elements.Progress.ReqText }) do
+		lu.assertEquals({ header:GetFont() }, { config.title_font, config.header_size, "" })
+	end
+
+	-- our coins: in the money it gives or asks for once it's shown, and on
+	-- the reward worth the most
+	local ui = client.Engine:GetDB("UI").coin
+	for _, frame in ipairs({ rewards.MoneyFrame, elements.Progress.MoneyFrame }) do
+		_G.MoneyFrame_Update(frame, 2)
+		lu.assertEquals(frame:GetRegions():GetTexture(), ui.gold_texture)
+	end
+	lu.assertEquals(rewards.MoneyIcon.MoneyIcon:GetTexture(), ui.gold_texture)
+
+	-- the choices on our glass, in Diablo III's pale gold, without
+	-- Immersion's blue frames: the one there and those made later (once)
+	local titles = _G.ImmersionFrame.TitleButtons
+	local first = titles.Buttons[1]
+	lu.assertNil(first:GetBackdrop())
+	lu.assertNil(first.Overlay:GetBackdrop())
+	lu.assertNil(first.Hilite:GetBackdrop())
+	near(color(first.Label:GetTextColor()), window.title_plate.color)
+	-- the copper bar with Immersion's glow (its own gone), not grown
+	lu.assertEquals(first:GetHighlightTexture():GetAlpha(), 0)
+	lu.assertEquals(first.enterScale, config.choice_scale)
+	local lit
+	for _, region in ipairs({ first:GetRegions() }) do
+		if region:IsObjectType("Texture") and (region:GetTexture() == window.row_bars.lit) then
+			lit = region
+		end
+	end
+	first.Hilite:SetAlpha(1)
+	lu.assertEquals(lit:GetAlpha(), config.choice_lit_alpha)
+	first.Hilite:SetAlpha(0)
+	lu.assertEquals(lit:GetAlpha(), 0)
+	-- the speech bubbles pale gold, the quests' marks and spells as they are
+	first:SetGossipIcon()
+	lu.assertEquals(first.Icon:IsDesaturated(), 1)
+	near(color(first.Icon:GetVertexColor()), config.icon_color)
+	first:SetGossipQuestIcon()
+	lu.assertNil(first.Icon:IsDesaturated())
+	first:SetIcon([[Interface\Icons\Spell]])
+	lu.assertNil(first.Icon:IsDesaturated())
+	local second = titles:GetButton(2)
+	lu.assertTrue(second.DiabolicGlass)
+	local regions = select("#", second:GetRegions())
+	titles:GetButton(2)
+	lu.assertEquals(select("#", second:GetRegions()), regions)
+
+	-- no shadow over the model
+	lu.assertNil(talkBox.MainFrame.Model.ModelShadow:GetTexture())
+
+	-- the black behind the portrait's frame only with the portrait
+	local portrait = talkBox.PortraitFrame
+	local black
+	for _, region in ipairs({ talkBox.BackgroundFrame:GetRegions() }) do
+		if region:GetDrawLayer() == "BORDER" then
+			black = region
+		end
+	end
+	lu.assertTrue(shown(black))
+	portrait:Hide()
+	lu.assertFalse(shown(black))
+	portrait:Show()
+	lu.assertTrue(shown(black))
+	assertClean(client)
+end
+
+function TestImmersion:test_loaded_before_us_too()
+	boot({ world = function(world)
+		immersion(world)
+		local addon = world.addons[#world.addons]
+		addon.loaded = true
+		addon.onLoad()
+		-- its portrait turned off
+		_G.ImmersionFrame.TalkBox.PortraitFrame:Hide()
+	end })
+	local config = client.Engine:GetDB("Blizzard").immersion
+	lu.assertEquals(select(2, _G.ImmersionFrame.TalkBox.NameFrame.Name:GetFont()), config.name_size)
+	-- no black behind the portrait's frame
+	for _, region in ipairs({ _G.ImmersionFrame.TalkBox.BackgroundFrame:GetRegions() }) do
+		if region:GetDrawLayer() == "BORDER" then
+			lu.assertFalse(shown(region))
+		end
+	end
+	assertClean(client)
+end
+
+function TestImmersion:test_the_ui_hiding_immersion_is_left_alone()
+	-- Immersion-WOTLK: the same name, no dialogue box
+	boot({ world = function(world)
+		table.insert(world.addons, { name = "Immersion", enabled = true, onLoad = function() end })
+	end })
+	client.api.LoadAddOn("Immersion")
+	lu.assertNil(_G.ImmersionFrame)
 	assertClean(client)
 end
 
@@ -537,21 +779,30 @@ local function watchLine()
 	return line
 end
 
-function TestWatchFrame:test_titles_in_exocet_objectives_in_the_body_font()
+function TestWatchFrame:test_diablo_iii_objectives()
 	boot()
-	local C = client.Engine:GetDB("Data: Colors")
-	lu.assertEquals(_G.WatchFrameTitle:GetFontObject(), _G.DiabolicFont_HeaderRegular12)
+	local style = client.Engine:GetDB("Objectives").style
+	-- the title in Exocet capitals, off-white, every time Blizzard sets it
+	local header = _G.WatchFrameTitle
+	lu.assertEquals(header:GetFontObject(), _G.DiabolicFont_HeaderRegular12)
+	lu.assertEquals({ header:GetTextColor() }, { style.header_color[1], style.header_color[2], style.header_color[3], 1 })
+	header:SetText(_G.OBJECTIVES_TRACKER_LABEL .. " (3)")
+	lu.assertEquals(header:GetText(), _G.OBJECTIVES_TRACKER_LABEL:upper() .. " (3)")
+	-- our red square to collapse it, without Blizzard's round glow
+	local button = _G.WatchFrameCollapseExpandButton
+	lu.assertEquals(button:GetNormalTexture():GetTexture(), style.collapse.texture)
+	lu.assertEquals(button:GetPushedTexture():GetTexture(), style.collapse.texture)
+	lu.assertEquals({ button:GetSize() }, { style.collapse.size, style.collapse.size })
+
+	-- a quest title in Exocet and gold, its objectives in the body font
 	local title, objective = watchLine(), watchLine()
 	_G.WatchFrame_SetLine(title, nil, 0, true, "The Lich King")
-	_G.WatchFrame_SetLine(objective, nil, 0, false, "- Defeat him: 0/1")
+	_G.WatchFrame_SetLine(objective, nil, 0, false, "Defeat him: 0/1", 1)
 	lu.assertEquals(title.text:GetFontObject(), _G.DiabolicFont_HeaderRegular12)
-	local r, g, b = title.text:GetTextColor()
-	lu.assertAlmostEquals({ r, g, b }, { C.General.Title[1], C.General.Title[2], C.General.Title[3] }, 1e-6)
+	lu.assertEquals({ title.text:GetTextColor() }, { style.title_color[1], style.title_color[2], style.title_color[3], 1 })
 	lu.assertEquals(objective.text:GetFontObject(), _G.DiabolicFont_SansRegular12)
 	lu.assertEquals(objective.dash:GetFontObject(), _G.DiabolicFont_SansRegular12)
-	-- lines get reused: a title line later used for an objective
-	_G.WatchFrame_SetLine(title, nil, 0, false, "- Loot it")
-	lu.assertEquals(title.text:GetFontObject(), _G.DiabolicFont_SansRegular12)
+	lu.assertEquals(objective.dash:GetAlpha(), 1)
 	assertClean(client)
 end
 
@@ -600,14 +851,6 @@ function TestWatchFrame:test_moving_it()
 	tracker:ResetTrackerPosition() -- locked: stays locked
 	lu.assertFalse(tracker:IsTrackerUnlocked())
 
-	-- /dui tracker is /dui move now; /dui tracker reset
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("tracker")
-	lu.assertTrue(tracker:IsTrackerUnlocked())
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("tracker")
-	lu.assertFalse(tracker:IsTrackerUnlocked())
-	tracker.db.trackerPosition = { 1, 2 }
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("tracker reset")
-	lu.assertNil(tracker.db.trackerPosition)
 	assertClean(client)
 end
 
@@ -635,26 +878,8 @@ function TestChatSlide:tearDown()
 	client = nil
 end
 
-local function chatSlide(on)
-	return { DiabolicUI_DB = { ChatWindows = { profiles = { global = { slideMessages = on } } } } }
-end
-
-function TestChatSlide:test_on_by_default_and_off()
-	boot()
-	_G.ChatFrame1:Show()
-	_G.ChatFrame1:AddMessage("hello")
-	lu.assertEquals(_G.ChatFrame1.DiabolicSlide:IsPlaying(), 1)
-	client = nil
-
-	boot({ savedVariables = chatSlide(false) })
-	_G.ChatFrame1:Show()
-	_G.ChatFrame1:AddMessage("hello")
-	lu.assertNil(_G.ChatFrame1.DiabolicSlide)
-	assertClean(client)
-end
-
 function TestChatSlide:test_new_lines_slide_in()
-	boot({ savedVariables = chatSlide(true) })
+	boot()
 	local frame = _G.ChatFrame1
 	frame:Show()
 	frame:AddMessage("hello")

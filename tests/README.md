@@ -24,7 +24,7 @@ Each `tests/test_*.lua` file is self-contained and runnable on its own.
 
 ```bash
 tests/coverage/run.sh            # summary per area; per-file table in tests/coverage/report.txt
-tests/coverage/run.sh --readme   # also refresh the table in README.adoc
+tests/coverage/run.sh --readme   # also refresh the badge in README.adoc
 ```
 
 `coverage/hook.lua` is loaded in front of each test file and records every
@@ -243,14 +243,32 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   plate, fading, castbars.
 - `test_session_tooltips.lua` / `test_session_itemtooltips.lua` - unit and
   aura tooltips, inspecting with Shift, following the cursor, the skins;
-  the Diablo III item tooltip layout.
+  the Diablo III item and ability tooltip layouts.
 - `test_session_minimap.lua` - the embedded minimap module: its look, zone
   text, clock, mail, compass, edit mode, options page and slash commands.
 - `test_session_objectives.lua` - world state scores and timers, capture
   bars, error and quest messages, PvP emotes.
 - `test_session_blizzard.lua` - the loot window, bag and bank slots, tinted
   panels, the Escape menu, mirror timers, durability and vehicle seat
-  anchors, fonts and combat text, popups and the Dungeon Finder's dialogs.
+  anchors, fonts and combat text, popups and the Dungeon Finder's dialogs;
+  the character window (its tabs, Titles and Sets pages, your home behind
+  you, a faction's details) and the achievements (Overachiever's pages).
+- `test_session_windows.lua` - Blizzard's windows in Diablo III's look: the
+  spellbook as a book and its companions', professions' and search pages
+  (Sholazar's map), the who list and the guild's log, the quest log, the
+  talents and glyphs, the mailbox (Postal's parts too), the trade skills
+  and the class trainer, the other windows (the guild bank's log), the
+  windows' kit (drag, titles, buttons and their rows,
+  banners, coins, the stack split box), and AdiBags' and Group Bulletin
+  Board's windows.
+- `test_session_auction.lua` - the auction house on its grid: each page,
+  Blizzard's and Auctionator's, kept to the layout's rules (`/dui layout`
+  finds nothing), its zones and toolbar where the grid puts them, the
+  categories as our buttons, Auctionator's band and foot.
+- `test_session_layout.lua` - `/dui layout`: a window built to break each
+  of the layout's rules, the problems said once and saved by window, the
+  check kept on after a reload, edges between screen pixels, and
+  `/dui layout all` opening each window in turn.
 - `test_session_chat.lua` - chat bubbles, the chat windows (input box,
   buttons, IM style, whisper windows, the stuck key guard, the layout
   question, a hand-placed window kept) and copying web links.
@@ -389,7 +407,17 @@ Session.assertClean(client)
   `options.world` before login, or in `client.world` during a test.
 - `client_blizzard.lua` - Blizzard's frames and FrameXML functions the
   addon touches, built after the 3.3.5 FrameXML (names, parents, templates,
-  which ones start hidden). Load-on-demand addons are built when loaded.
+  which ones start hidden). Blizzard's load-on-demand addons are built
+  when loaded.
+  The windows DiabolicUI restyles (mail, merchant, social, spellbook,
+  talents, inspect, auction house...) come from `tests/data/framexml.lua`,
+  generated from Blizzard's own FrameXML by `tests/tools/framexml.py`
+  (their names, types, parents, sizes, first anchor, art, templates
+  expanded); whatever's made by hand above is kept, and what it lacks is
+  added under it. Run the script again after adding a window to its list.
+  Auctionator's page comes from its own XML the same way (the script's
+  `OTHERS`, read from its folder beside ours), and `Blizzard.Auctionator`
+  fakes what its code does: its tabs, and the parts it shows on each.
 - `client_secure.lua` - the secure handler templates: snippets run in a
   restricted environment against frame handles, state drivers, unit
   watches, `WrapScript`, `RunFor`, `ChildUpdate`, auto hide.

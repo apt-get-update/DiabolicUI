@@ -21,6 +21,22 @@ Engine:NewStaticConfig("Objectives", {
 
 	},
 
+	-- Diablo III's objectives, for Blizzard's and Questie's trackers
+	-- (modules/blizzard/watchframe.lua, questietracker.lua)
+	style = {
+		header_font = "DiabolicFont_HeaderRegular12", -- "OBJECTIVES", Questie's zones, in capitals
+		header_color = { .85, .85, .85 },
+		title_font = "DiabolicFont_HeaderRegular12", -- the quests and achievements
+		title_color = { .92, .78, .35 },
+		line_font = "DiabolicFont_SansRegular12", -- their objectives
+		-- the red square that collapses the tracker: the same 2x2 layout as
+		-- Blizzard's button (collapsed on top, normal on the left)
+		collapse = {
+			size = 20,
+			texture = path .. [[textures\DiabolicUI_ExpandCollapseButton_22x21.tga]]
+		}
+	},
+
 	-- Our own custom quest and objectives tracker. 
 	-- As most other things this is a work in progress, 
 	-- and elements will be added as they are created. 

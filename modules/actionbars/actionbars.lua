@@ -8,7 +8,6 @@ local Module = Engine:NewModule("ActionBars", "HIGH")
 
 -- Lua API
 local _G = _G
-local tonumber = tonumber
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
@@ -205,37 +204,6 @@ Module.OnEnable = function(self, event, ...)
   -- that tell the UI that the player has an active pet out.
   -- In other words: without it both the pet bar and pet unitframe will fail after a /reload
   SetActionBarToggles(nil, nil, nil, nil, nil)
-
-  -- Register the chat command
-  self:GetHandler("ChatCommand"):Register(
-    "num_bars",
-    function(arg)
-      local bars = tonumber(arg)
-
-      if bars == 1 or bars == 2 or bars == 3 then
-        self.db.num_bars = bars
-        print(L["Action Bars set to %d."]:format(bars))
-        self:ApplySettings()
-      else
-        print(L["Failed to update action bars, must be %d or %d or %d"]:format(1,2,3))
-      end
-    end
-  )
-
-  self:GetHandler("ChatCommand"):Register(
-    "num_side_bars",
-    function(arg)
-      local bars = tonumber(arg)
-
-      if bars == 0 or bars == 1 or bars == 2 then
-        self.db.num_side_bars = bars
-        print(L["Side Bars set to %d."]:format(bars))
-        self:ApplySettings()
-      else
-        print(L["Failed to update side bars, must be %d or %d or %d"]:format(0,1,2))
-      end
-    end
-  )
 
   -- apply all module settings
   -- this also fires off the enabling and positioning of the actionbars

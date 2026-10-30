@@ -68,6 +68,12 @@ local function resetGlobals()
 		end
 	end
 	package.loaded["mocks.client"] = Client
+	-- the last boot's widgets let go: Lua 5.1's weak keys aren't
+	-- ephemerons, so a state holding its widget (its parent, its
+	-- children, its scripts) kept every boot's whole UI alive
+	for widget in pairs(state) do
+		state[widget] = nil
+	end
 end
 
 ------------------------------------------------------------------------
@@ -532,7 +538,7 @@ function Client.new(options)
 end
 
 -- Loads the addon from the .toc and runs the login sequence.
--- options: class, world = function(world, client), savedVariables = { DiabolicUI_DB = ... },
+-- options: class, world = function(world, client), savedVariables = { DiabolicUI_DB = ..., DiabolicUI_Layout = ... },
 -- login = false to stop after loading the files.
 function Client.boot(options)
 	options = options or {}
@@ -546,7 +552,7 @@ function Client.boot(options)
 	end
 	-- like in game: the saved variables replace whatever the files set,
 	-- after they ran and before ADDON_LOADED
-	for _, name in ipairs({ "DiabolicUI_DB", "DiabolicUI_Minimap_DB" }) do
+	for _, name in ipairs({ "DiabolicUI_DB", "DiabolicUI_Minimap_DB", "DiabolicUI_Layout" }) do
 		local saved = options.savedVariables and options.savedVariables[name]
 		if saved ~= nil then
 			rawset(_G, name, saved)

@@ -5,6 +5,7 @@
 <Script file='filters.lua'/>
 <Script file='cleaner.lua'/>
 <Script file='slide.lua'/>
+<Script file='copy.lua'/>
 <Script file='bubbles.lua'/>
 
 </Ui>

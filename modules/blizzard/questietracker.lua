@@ -1,15 +1,15 @@
--- Styles Questie's quest tracker like Blizzard's in DiabolicUI
--- (watchframe.lua; the "styleQuestieTracker" option): the zones and the
--- quest titles in Exocet and the title color, the objectives in the body
--- font, and the same space after every quest. Its "Quests (By ...)" line,
--- when it doesn't sort by zone, reads "Objectives" like Blizzard's title;
--- each zone line gets Blizzard's collapse button, and its sounds; the quest
--- items' buttons look like the action bars' (like TrinketMenu's, trinketmenu.lua).
+-- Styles Questie's quest tracker like Blizzard's in DiabolicUI, in Diablo
+-- III's look (watchframe.lua): the zones in Exocet capitals, off-white, the
+-- quest titles in Exocet and gold, the objectives in the body font, and the
+-- same space after every quest. Its "Quests (By ...)" line, when it doesn't sort by zone, reads
+-- "OBJECTIVES" like Blizzard's title, its button at the right edge; each zone line gets our red square to
+-- collapse it, and Blizzard's sounds, a right-click opening Questie's
+-- options instead of its yellow "?" by the title; the quest items' buttons look like
+-- the action bars' (like TrinketMenu's, trinketmenu.lua).
 -- Questie's settings, and the colors of its objectives, are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: QuestieTracker", "LOW")
 local L = Engine:GetLocale()
-local C = Engine:GetDB("Data: Colors")
 
 -- Lua API
 local _G = _G
@@ -28,8 +28,7 @@ local PlaySound = _G.PlaySound
 -- Blizzard's tracker title (WatchFrameTitle)
 local OBJECTIVES = _G.OBJECTIVES_TRACKER_LABEL
 
-local TITLE_FONT = "DiabolicFont_HeaderRegular12"
-local LINE_FONT = "DiabolicFont_SansRegular12"
+local style = Engine:GetDB("Objectives").style
 -- the action bars' stack size font (settings/actionbars.lua; the copy kept
 -- there has no methods of its own)
 local COUNT_FONT = "DiabolicFont_SansBold10"
@@ -50,7 +49,7 @@ local broken
 local Break = function(missing)
 	if not broken then
 		broken = true
-		_G.print(L["DiabolicUI: Questie has changed, its tracker is left as it is. Turn off Style Questie's Tracker in /dui config if it misbehaves."] .. " (" .. missing .. ")")
+		_G.print(L["DiabolicUI: Questie has changed, its tracker is left as it is."] .. " (" .. missing .. ")")
 	end
 end
 
@@ -98,32 +97,74 @@ local SetMode = function(line, mode)
 	if line.CollapseButton and (mode ~= "zone") then
 		line.CollapseButton:Hide()
 	end
-	local font = _G[((mode == "objective") or (mode == nil)) and LINE_FONT or TITLE_FONT]
+	line.DiabolicTitle = nil
+	local font, color
+	if (mode == "zone") then
+		font, color = style.header_font, style.header_color
+	elseif IsTitle(mode) then
+		font, color = style.title_font, style.title_color
+	else
+		font, color = style.line_font, QUESTIE_COLOR
+	end
+	font = _G[font]
 	label:SetFont(font:GetFont())
 	label:SetShadowOffset(font:GetShadowOffset())
 	label:SetShadowColor(font:GetShadowColor())
-	label:SetTextColor(unpack(IsTitle(mode) and C.General.Title or QUESTIE_COLOR))
+	label:SetTextColor(unpack(color))
 	label:SetHeight(FONT_SIZE)
 end
 
--- Blizzard's collapse button (WatchFrame.xml): its arrow points up while
--- the zone shows its quests (expandZone's mode 1), down once collapsed.
+-- The collapse button, in the layout of Blizzard's (WatchFrame.xml): its
+-- bar while the zone shows its quests (expandZone's mode 1), its cross
+-- once collapsed.
 local UpdateCollapseButton = function(line)
 	local button, expanded = line.CollapseButton, (line.expandZone.mode == 1)
 	local top = expanded and .5 or 0
 	button:GetNormalTexture():SetTexCoord(0, .5, top, top + .5)
 	button:GetPushedTexture():SetTexCoord(.5, 1, top, top + .5)
-	-- just after the text
+	-- at the tracker's right edge on the "OBJECTIVES" line (the first), as
+	-- in Diablo III; just after the text on a zone's
 	button:ClearAllPoints()
-	button:SetPoint("LEFT", line.label, "LEFT", line.label:GetStringWidth() + 4, 0)
+	if line.DiabolicTitle then
+		button:SetPoint("TOPRIGHT", line:GetParent(), "TOPRIGHT", -4, (button:GetHeight() - line.label:GetHeight()) / 2)
+	else
+		button:SetPoint("LEFT", line.label, "LEFT", line.label:GetStringWidth() + 4, 0)
+	end
 	button:Show()
 end
 
+-- Questie's "?" by its title, which opens its options on a left-click
+-- (TrackerHeaderFrame), if it has one.
+local QuestieIcon = function()
+	local header = _G.QuestieLoader:ImportModule("TrackerHeaderFrame")
+	return (type(header) == "table") and header.headerFrame and header.headerFrame.questieIcon, header
+end
+
+-- The "?" out of sight when it's by our title (without Questie's own
+-- header), every time Questie shows it again.
+local HideQuestieIcon = function()
+	local icon, header = QuestieIcon()
+	if icon and not header.headerFrame:IsShown() then
+		icon:Hide()
+	end
+end
+
+-- Questie's options, as its "?" opens them.
+local OpenOptions = function()
+	local icon = QuestieIcon()
+	local click = icon and icon:GetScript("OnClick")
+	if click then
+		click(icon, "LeftButton")
+	end
+end
+
 -- A zone collapsed or expanded, by its line or its button: Questie's own
--- click, and Blizzard's sounds.
+-- click, and Blizzard's sounds. A right-click: Questie's options.
 local ToggleZone = function(expandZone, original, mouseButton)
 	original(expandZone, mouseButton)
-	if (mouseButton == "LeftButton") and not IsShiftKeyDown() then
+	if (mouseButton == "RightButton") then
+		OpenOptions()
+	elseif (mouseButton == "LeftButton") and not IsShiftKeyDown() then
 		PlaySound((expandZone.mode == 1) and "igMiniMapOpen" or "igMiniMapClose")
 		UpdateCollapseButton(expandZone:GetParent())
 	end
@@ -135,26 +176,28 @@ local CreateCollapseButton = function(line)
 	expandZone:SetScript("OnMouseUp", function(self, mouseButton) ToggleZone(self, original, mouseButton) end)
 	local button = CreateFrame("Button", nil, line)
 	button:SetFrameLevel(expandZone:GetFrameLevel() + 1) -- over the line's click area
-	button:SetSize(16, 16)
-	button:SetNormalTexture([[Interface\Buttons\UI-Panel-QuestHideButton]])
-	button:SetPushedTexture([[Interface\Buttons\UI-Panel-QuestHideButton]])
-	button:SetHighlightTexture([[Interface\Buttons\UI-Panel-MinimizeButton-Highlight]], "ADD")
+	Engine:GetModule("Blizzard: WatchFrame"):StyleCollapseButton(button)
 	button:SetScript("OnClick", function() ToggleZone(expandZone, original, "LeftButton") end)
 	line.CollapseButton = button
 end
 
--- A title's own colors (its level's, an achievement's yellow, a zone's gray)
--- taken out, so it shows in the title color. A zone line: "Objectives" for
--- Questie's "Quests (By ...)", and its button instead of Questie's " +".
+-- A title's own colors (its level's, an achievement's yellow, a zone's
+-- gray) taken out, so it shows in ours. A zone line: in capitals, "OBJECTIVES" for Questie's
+-- "Quests (By ...)", and its button instead of Questie's " +".
 local SetText = function(label, text)
 	local line = label.frame
-	if (not broken) and IsTitle(line.mode) and text then
+	if broken or (not text) then
+		return
+	end
+	if IsTitle(line.mode) then
 		local plain = (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""))
 		if (line.mode == "zone") then
 			plain = plain:gsub(" %+$", "")
-			if plain:find("^Quests %(By .*%)$") then
+			line.DiabolicTitle = (plain:find("^Quests %(By .*%)$") ~= nil) or nil
+			if line.DiabolicTitle then
 				plain = OBJECTIVES
 			end
+			plain = plain:upper()
 		end
 		if (plain ~= text) then
 			label:_SetText(plain) -- Questie's label keeps the original as _SetText
@@ -301,6 +344,11 @@ Module.StyleQuestie = function(self)
 	end
 	self.LinePool, self.Tracker = pool, tracker
 	self:StyleLines()
+	local _, header = QuestieIcon()
+	if (type(header) == "table") and (type(header.Update) == "function") then
+		hooksecurefunc(header, "Update", HideQuestieIcon)
+		HideQuestieIcon()
+	end
 	hooksecurefunc(self.Tracker, "Update", function() self:UpdateSpacing() end)
 	hooksecurefunc(pool, "GetNextLine", function()
 		local line = (not broken) and pool.GetCurrentLine()
@@ -326,9 +374,6 @@ Module.ADDON_LOADED = function(self, event, addon)
 end
 
 Module.OnEnable = function(self)
-	if (not self:GetConfig("AddOnSkins").styleQuestieTracker) then
-		return
-	end
 	if _G.QuestieLoader then
 		self:StyleQuestie()
 	else

@@ -460,38 +460,31 @@ function TestMenus:test_a_specialization_macro_runs_on_the_next_click()
 	lu.assertNil(button:GetAttribute("type"))
 	lu.assertNil(button.Glow:IsShown())
 
-	-- a deleted macro, or the button turned off: said in the chat
+	-- a deleted macro: said in the chat
 	bars.specMacroName2 = "Gone"
 	_G.SetActiveTalentGroup(2)
 	client:Tick(1.1)
 	lu.assertNil(button:GetAttribute("type"))
 	lu.assertEquals(messages[#messages].text, L["Macro '%s' not found."]:format("Gone"))
-	bars.specMacroName1, bars.showSpecSwitch = "Holy Toy", false
-	_G.SetActiveTalentGroup(1)
-	client:Tick(1.1)
-	lu.assertNil(button:GetAttribute("type"))
-	lu.assertEquals(messages[#messages].text, L["Turn on the specialization switch button to run your '%s' macro."]:format("Holy Toy"))
+	-- updates in combat wait for its end (a secure button)
+	local switch = widget("Button: Spec Switch")
+	client.world.inCombat = true
+	switch:Update()
+	lu.assertTrue(switch.updateAfterCombat)
+	client.world.inCombat = false
+	client:FireEvent("PLAYER_REGEN_ENABLED")
+	lu.assertNil(switch.updateAfterCombat)
+	lu.assertEquals(button:IsShown(), 1)
 
-	-- turned off while one waits: cleared
-	bars.showSpecSwitch = true
-	widget("Button: Spec Switch"):Update()
-	_G.SetActiveTalentGroup(2)
+	-- the second spec unlearned while a macro waits: no macro, no button
+	bars.specMacroName1 = "Holy Toy"
 	_G.SetActiveTalentGroup(1)
 	client:Tick(1.1)
 	lu.assertEquals(button:GetAttribute("type"), "macro")
-	bars.showSpecSwitch = false
-	widget("Button: Spec Switch"):Update()
+	client.world.numTalentGroups = 1
+	switch:Update()
 	lu.assertNil(button:GetAttribute("type"))
 	lu.assertNil(button:IsShown())
-
-	-- updates in combat wait for its end (a secure button)
-	bars.showSpecSwitch = true
-	client.world.inCombat = true
-	widget("Button: Spec Switch"):Update()
-	lu.assertNil(button:IsShown())
-	client.world.inCombat = false
-	client:FireEvent("PLAYER_REGEN_ENABLED")
-	lu.assertEquals(button:IsShown(), 1)
 	assertClean(client)
 end
 
@@ -1010,23 +1003,6 @@ TestBarSettings = {}
 
 function TestBarSettings:tearDown()
 	client, module = nil, nil
-end
-
-function TestBarSettings:test_the_bar_count_commands()
-	boot()
-	local printed = {}
-	_G.print = function(text) printed[#printed + 1] = text end
-	local Main = widget("Controller: Main"):GetFrame()
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("num_bars 2")
-	lu.assertEquals(module.db.num_bars, 2)
-	lu.assertEquals(Main:GetAttribute("numbars"), 2)
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("num_bars 7")
-	lu.assertEquals(module.db.num_bars, 2)
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("num_side_bars 0")
-	lu.assertEquals(Main:GetAttribute("numsidebars"), 0)
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("num_side_bars x")
-	lu.assertEquals(#printed, 4)
-	assertClean(client)
 end
 
 function TestBarSettings:test_cast_on_key_down()

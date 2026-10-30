@@ -370,7 +370,7 @@ Engine:NewStaticConfig("ActionBars", {
 					texture = nil
 				},
 				cooldown_numbers = {
-					normalFont = DiabolicFont_SansBold16,
+					normalFont = DiabolicFont_HeaderRegular16,
 					points = { { "CENTER", 0, 0 } }
 				},
 				
@@ -474,7 +474,7 @@ Engine:NewStaticConfig("ActionBars", {
 					texture = nil
 				},
 				cooldown_numbers = {
-					normalFont = DiabolicFont_SansBold16,
+					normalFont = DiabolicFont_HeaderRegular16,
 					points = { { "CENTER", 0, 0 } }
 				},
 				
@@ -577,7 +577,7 @@ Engine:NewStaticConfig("ActionBars", {
 					texture = nil
 				},
 				cooldown_numbers = {
-					normalFont = DiabolicFont_SansBold10,
+					normalFont = DiabolicFont_HeaderRegular10,
 					points = { { "CENTER", 0, 0 } }
 				},
 				
@@ -680,7 +680,7 @@ Engine:NewStaticConfig("ActionBars", {
 					texture = nil
 				},
 				cooldown_numbers = {
-					normalFont = DiabolicFont_SansBold16,
+					normalFont = DiabolicFont_HeaderRegular16,
 					points = { { "CENTER", 0, 0 } }
 				},
 				

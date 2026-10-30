@@ -1,7 +1,6 @@
 -- "Button: Spec Switch" widget: a button on top of the skull in the middle
 -- of the action bar artwork that switches to your other talent
--- specialization. Shown while the "showSpecSwitch" option is on, once you
--- have learned Dual Talent Specialization.
+-- specialization. Shown once you have learned Dual Talent Specialization.
 --
 -- Whichever way the specialization gets switched, once the switch completes
 -- what's saved for the new one (set on the options' Specializations page)
@@ -296,10 +295,6 @@ ButtonWidget.SetMacro = function(self, macro)
 		Print(L["Macro '%s' not found."]:format(macro))
 		macro = nil
 	end
-	if macro and not (button and Module.db.showSpecSwitch) then
-		Print(L["Turn on the specialization switch button to run your '%s' macro."]:format(macro))
-		macro = nil
-	end
 	if (not button) then
 		return
 	end
@@ -408,7 +403,7 @@ ButtonWidget.Update = function(self)
 	-- Shown through a state driver, which hides it in a vehicle or while
 	-- possessing (the bars are the vehicle's then), like the stance toggle.
 	UnregisterStateDriver(button, "visibility")
-	if (not Module.db.showSpecSwitch) or (GetNumTalentGroups() < 2) then
+	if (GetNumTalentGroups() < 2) then
 		if button.macro then
 			ClearMacro(button)
 		end

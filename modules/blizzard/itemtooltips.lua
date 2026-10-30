@@ -640,12 +640,25 @@ local CheckLayout = function(tooltip)
 	end
 end
 
+-- Gear's GearScore and item level, in the score's color (gearscore.lua).
+-- Returns whether it added the line.
+local AddGearScore = function(tooltip, link)
+	local gearScore = Engine:GetModule("Blizzard: GearScore")
+	local score, level = gearScore:GetItemScore(link)
+	if score and (score > 0) then
+		local r, g, b = gearScore:GetColor(score)
+		tooltip:AddDoubleLine("GearScore " .. score, _G.ITEM_LEVEL:format(level), r, g, b, r, g, b)
+		return true
+	end
+end
+
 -- Reads the item from the tooltip Blizzard just filled, and replaces the
 -- lines that move into the big number and the footer.
 Module.OnTooltipSetItem = function(self, tooltip)
 	Reset(tooltip)
 
 	local _, link = tooltip:GetItem()
+	local scored = link and AddGearScore(tooltip, link)
 	local itemName, quality, icon, sellPrice
 	if link and self.db.reskinTooltip and (not self.failed[link]) then
 		itemName, _, quality, _, _, _, _, _, _, icon, sellPrice = GetItemInfo(link)
@@ -654,7 +667,10 @@ Module.OnTooltipSetItem = function(self, tooltip)
 		-- Reskin turned off, not an item, not cached yet, or its layout failed
 		-- before: Blizzard's plain tooltip.
 		tooltip.DiabolicItemState = "plain"
-		if self:ReleasePrice(tooltip) then
+		if link and self.db.reskinTooltip and (not self.failed[link]) then
+			tooltip.DiabolicPending = link -- not cached yet: shown again once it is
+		end
+		if self:ReleasePrice(tooltip) or scored then
 			tooltip:Show()
 		end
 		return
@@ -730,6 +746,7 @@ end
 -- A new tooltip starts over.
 local OnTooltipCleared = function(tooltip)
 	tooltip.DiabolicItemState = nil
+	tooltip.DiabolicPending = nil
 	tooltip.DiabolicSellPrice = nil
 	Reset(tooltip)
 end
@@ -803,6 +820,20 @@ Module.SpaceComparisons = function(self, tooltip)
 	end
 end
 
+-- An item the client hasn't cached yet (another player's, inspected) has
+-- no info for its first tooltip: once it has, its owner shows it again,
+-- in our style, if the mouse is still over it.
+local Retry = function(tooltip)
+	if GetItemInfo(tooltip.DiabolicPending) then
+		tooltip.DiabolicPending = nil
+		local owner = tooltip:GetOwner()
+		local onEnter = owner and owner:IsMouseOver() and owner:GetScript("OnEnter")
+		if onEnter then
+			onEnter(owner)
+		end
+	end
+end
+
 Module.OnEnable = function(self)
 	self.db = self:GetConfig("Tooltips") -- reskinTooltip, read on every tooltip so the option applies at once
 	local offsets = self:GetDB("Tooltips").border.offsets
@@ -821,6 +852,8 @@ Module.OnEnable = function(self)
 	local onUpdate = function(tooltip)
 		if tooltip.DiabolicItemInfo then
 			self:Guard(tooltip, CheckLayout)
+		elseif tooltip.DiabolicPending then
+			Retry(tooltip)
 		end
 	end
 
@@ -845,6 +878,17 @@ Module.OnEnable = function(self)
 		end
 	end
 end
+
+-- The look shared with spelltooltips.lua (ability tooltips).
+Module.Shared = {
+	CreateBox = CreateBox, PlaceBox = PlaceBox,
+	CreateHeader = CreateHeader, PlaceHeader = PlaceHeader,
+	OffsetFromTop = OffsetFromTop, IsDefaultColor = IsDefaultColor,
+	PADDING = PADDING, ICON_BOX = ICON_BOX, ICON_SIZE = ICON_SIZE,
+	ICON_FRAME = ICON_FRAME, ICON_ART_SCALE = ICON_ART_SCALE,
+	SHIFT = SHIFT, TITLE_GAP = TITLE_GAP, BANNER_PAD = BANNER_PAD,
+	CONTENT_TOP_GAP = CONTENT_TOP_GAP, BOTTOM_Y = BOTTOM_Y
+}
 
 -- Exposed for tests/test_blizzard_itemtooltips.lua.
 Module.ToPattern = ToPattern

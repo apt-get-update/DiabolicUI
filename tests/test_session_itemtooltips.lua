@@ -67,6 +67,35 @@ function TestItemTooltipLayout:tearDown()
 	client = nil
 end
 
+-- GearScore (gearscore.lua): Shadowmourne, a legendary two-hander of 284,
+-- scores (284 - 91.45) / .65 * 2 * 1.8618 * 1.3
+function TestItemTooltipLayout:test_gear_shows_its_gearscore()
+	local tooltip = _G.GameTooltip
+	local item = {}
+	for key, value in pairs(WEAPON) do
+		item[key] = value
+	end
+	item.iLevel, item.equipSlot = 284, "INVTYPE_2HWEAPON"
+	show(tooltip, 49624, item)
+	local found
+	for i = 1, tooltip:NumLines() do
+		if line(tooltip, i):GetText() == "GearScore 1433" then
+			found = i
+		end
+	end
+	lu.assertNotNil(found, "the GearScore line")
+	lu.assertEquals(_G[tooltip:GetName() .. "TextRight" .. found]:GetText(), "Item Level 284")
+	local r, g, b = line(tooltip, found):GetTextColor()
+	local er, eg, eb = client.Engine:GetModule("Blizzard: GearScore"):GetColor(1433)
+	lu.assertAlmostEquals({ r, g, b }, { er, eg, eb }, 1e-6)
+	-- not gear: none
+	show(tooltip, 49625, ARMOR)
+	for i = 1, tooltip:NumLines() do
+		lu.assertNotStrContains(line(tooltip, i):GetText() or "", "GearScore")
+	end
+	assertClean(client)
+end
+
 function TestItemTooltipLayout:test_a_weapon_in_the_diablo_style()
 	local tooltip = _G.GameTooltip
 	show(tooltip, 49623, WEAPON)
@@ -304,6 +333,41 @@ function TestItemTooltipLayout:test_uncached_items_and_the_option_off_stay_plain
 	end
 	lu.assertTrue(found, "Blizzard's sell price line")
 	client.Engine:GetConfig("Tooltips").reskinTooltip = true
+	assertClean(client)
+end
+
+function TestItemTooltipLayout:test_an_uncached_item_shown_again_once_it_is()
+	local tooltip = _G.GameTooltip
+	local link = "|cffa335ee|Hitem:77777:0:0:0:0:0:0:0:80|h[Unknown]|h|r"
+	-- an inspected player's slot, its tooltip on its OnEnter
+	local slot = _G.CreateFrame("Button", nil, _G.UIParent)
+	slot:SetSize(40, 40)
+	slot:SetPoint("CENTER")
+	local entered = 0
+	slot:SetScript("OnEnter", function(self)
+		entered = entered + 1
+		tooltip:SetOwner(self, "ANCHOR_RIGHT")
+		tooltip:SetHyperlink(link)
+	end)
+	client:Hover(slot)
+	lu.assertEquals(tooltip.DiabolicPending, link)
+	-- not cached yet: waits
+	client:Tick(0.1)
+	lu.assertEquals(entered, 1)
+	-- cached: shown again, in our style
+	Session.item(client, 77777, WEAPON)
+	client:Tick(0.1)
+	lu.assertEquals(entered, 2)
+	lu.assertNil(tooltip.DiabolicPending)
+	lu.assertNotNil(tooltip.DiabolicItemInfo)
+	-- (the mouse gone by then: not shown again)
+	client:Leave()
+	tooltip:SetOwner(slot, "ANCHOR_RIGHT")
+	tooltip:SetHyperlink("|cffa335ee|Hitem:77778:0:0:0:0:0:0:0:80|h[Unknown]|h|r")
+	Session.item(client, 77778, WEAPON)
+	client:Tick(0.1)
+	lu.assertEquals(entered, 2)
+	lu.assertNil(tooltip.DiabolicPending)
 	assertClean(client)
 end
 

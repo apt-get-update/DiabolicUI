@@ -14,7 +14,7 @@ local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 local UnitIsPlayer = _G.UnitIsPlayer
 
--- Most frames poll their health every frame ("FREQUENT"). A poll that finds
+-- Most frames poll their health 30 times a second ("FREQUENT"). A poll that finds
 -- nothing changed skips the work, but a full refresh still happens this
 -- often, for colors that change on their own (a mob getting tapped).
 local IDLE_REFRESH = .5

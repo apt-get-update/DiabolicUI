@@ -10,6 +10,7 @@ local UnitFrameWidget = Module:SetWidget("Unit: Target")
 
 -- Lua API
 local _G = _G
+local pairs = pairs
 local unpack = unpack
 
 -- WoW API
@@ -272,7 +273,7 @@ local Style = function(self, unit)
 	health:SetSize(unpack(config.health.size))
 	health:SetPoint(unpack(config.health.position))
 	health:SetStatusBarTexture(config.health.texture)
-	health.frequent = 1/120
+	health.frequent = 1/30
 	
 	local healthValueHolder = health:CreateFrame()
 	healthValueHolder:SetAllPoints()
@@ -296,7 +297,7 @@ local Style = function(self, unit)
 	power:SetSize(unpack(config.power.size))
 	power:SetPoint(unpack(config.power.position))
 	power:SetStatusBarTexture(config.power.texture)
-	power.frequent = 1/120
+	power.frequent = 1/30
 
 	-- Add a postupdate to dynamically toggle powerbar artwork when needed
 	power.PostUpdate = function(power, min, max)

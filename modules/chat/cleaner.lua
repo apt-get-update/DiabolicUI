@@ -71,10 +71,19 @@ local Match = function(rule, msg)
 end
 
 -- Copper in a money text like "1 Gold, 20 Silver, 5 Copper", or nil.
+-- each coin's pattern, from its global string ("%d Gold"), and its copper;
+-- made on first use
+local coins
+
 local ParseMoney = function(text)
+	coins = coins or {
+		{ (string_gsub(_G.GOLD_AMOUNT, "%%d", "(%%d+)")), 10000 },
+		{ (string_gsub(_G.SILVER_AMOUNT, "%%d", "(%%d+)")), 100 },
+		{ (string_gsub(_G.COPPER_AMOUNT, "%%d", "(%%d+)")), 1 }
+	}
 	local copper, found = 0, false
-	for _, coin in ipairs({ { "GOLD_AMOUNT", 10000 }, { "SILVER_AMOUNT", 100 }, { "COPPER_AMOUNT", 1 } }) do
-		local amount = string_match(text, (string_gsub(_G[coin[1]], "%%d", "(%%d+)")))
+	for _, coin in ipairs(coins) do
+		local amount = string_match(text, coin[1])
 		if amount then
 			copper = copper + tonumber(amount) * coin[2]
 			found = true
@@ -280,6 +289,11 @@ end
 -- a channel it left only while showing that notice, so a hidden one is
 -- forgotten here.
 local HideChannelNotice = function(frame, event, notice, ...)
+	-- The server sends notices 3.3.5 has no string for (NOT_IN_LFG from the
+	-- LookingForGroup channel); Blizzard's handler would format(nil) and error.
+	if (not _G["CHAT_"..notice.."_NOTICE"]) and (not _G["CHAT_"..notice.."_NOTICE_BN"]) then
+		return true
+	end
 	if (not Module.db.hideChatNoise) then
 		return false
 	end
