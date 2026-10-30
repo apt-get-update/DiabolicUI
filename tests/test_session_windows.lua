@@ -801,6 +801,10 @@ function TestMail:test_the_inbox_and_the_letter_being_written()
 	lu.assertEquals(_G.MailItem1ExpireTime:GetText(), "29 Days")
 	near(color(_G.MailItem1ExpireTime:GetFontString():GetTextColor()), ink.days)
 	near(color(_G.MailItem2ExpireTime:GetFontString():GetTextColor()), ink.expiring)
+	-- the icons in color, read or not
+	_G.MailItem2ButtonIcon:SetDesaturated(1)
+	_G.InboxFrame_Update()
+	lu.assertNil(_G.MailItem2ButtonIcon:IsDesaturated())
 	-- the rows up under the band, apart, each time it opens (once apart)
 	lu.assertEquals(select(5, _G.MailItem1:GetPoint()), config.rows_top)
 	local _, _, _, _, y = _G.MailItem2:GetPoint()
@@ -912,13 +916,13 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	lu.assertEquals({ _G.TradeSkillDetailScrollFrame:GetPoint() }, { "TOPLEFT", frame, "TOPLEFT", config.detail[1], config.detail[2] })
 	lu.assertEquals(_G.TradeSkillDetailScrollFrame:GetHeight(), config.detail_height)
 
-	-- the recipes in their difficulty's ink, no shadows; the chosen one white
+	-- the recipes in their difficulty's ink, the chosen one too, no shadows
 	client.world.tradeSkill.selected = 3
 	_G.TradeSkillFrame_Update()
 	near(color(_G.TradeSkillSkill1:GetFontString():GetTextColor()), config.inks.header)
 	near(color(_G.TradeSkillSkill2:GetFontString():GetTextColor()), config.inks.optimal)
 	near(color(_G.TradeSkillSkill2Count:GetVertexColor()), config.inks.optimal)
-	near(color(_G.TradeSkillSkill3:GetFontString():GetTextColor()), { 1, 1, 1 })
+	near(color(_G.TradeSkillSkill3:GetFontString():GetTextColor()), config.inks.medium)
 	near(color(_G.TradeSkillSkill5:GetFontString():GetTextColor()), config.inks.trivial)
 	lu.assertEquals(select(4, _G.TradeSkillSkill2:GetFontString():GetShadowColor()), 0)
 	-- (an empty row left alone)
@@ -1030,13 +1034,13 @@ function TestTrainer:test_the_trainings_in_ink()
 	-- the trainer's words in the middle of a dark panel
 	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyH(), "CENTER")
 	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyV(), "MIDDLE")
-	-- the trainings in their kind's ink, the chosen one white (and what
+	-- the trainings in their kind's ink, the chosen one too (and what
 	-- Blizzard sets back as the mouse leaves), the header too when chosen
 	client.world.trainer.selected = 2
 	_G.ClassTrainerFrame_Update()
 	near(color(_G.ClassTrainerSkill1:GetFontString():GetTextColor()), config.inks.header)
-	near(color(_G.ClassTrainerSkill2:GetFontString():GetTextColor()), { 1, 1, 1 })
-	near(color(_G.ClassTrainerSkill2SubText:GetTextColor()), { 1, 1, 1 })
+	near(color(_G.ClassTrainerSkill2:GetFontString():GetTextColor()), config.inks.available)
+	near(color(_G.ClassTrainerSkill2SubText:GetTextColor()), config.inks.available)
 	near(color(_G.ClassTrainerSkill3:GetFontString():GetTextColor()), config.inks.unavailable)
 	near({ _G.ClassTrainerSkill3.r, _G.ClassTrainerSkill3.g, _G.ClassTrainerSkill3.b }, config.inks.unavailable)
 	near(color(_G.ClassTrainerSkill4SubText:GetTextColor()), config.inks.used)
@@ -1317,13 +1321,24 @@ function TestWindowKit:test_a_zone_of_a_material_in_nine_slices()
 	assertClean(client)
 end
 
-function TestWindowKit:test_the_chosen_row_on_the_copper_bar()
+function TestWindowKit:test_the_chosen_row_in_an_orange_box()
 	boot()
 	local kit = client:GetModule("Blizzard: Windows")
-	local window = client.Engine:GetDB("Blizzard").window
 	local highlight = _G.UIParent:CreateTexture(nil, "ARTWORK")
+	highlight:SetSize(200, 16)
+	highlight:SetPoint("TOPLEFT", _G.UIParent, "TOPLEFT", 10, -10)
 	kit:LightRow(highlight)
-	lu.assertEquals(highlight:GetTexture(), window.row_bars.lit)
+	-- a line along each of its edges, shown with it
+	local box = highlight.DiabolicBox
+	lu.assertEquals(#box, 4)
+	lu.assertEquals(box[1]:GetWidth(), 200)
+	lu.assertEquals(box[3]:GetHeight(), 16)
+	highlight:Hide()
+	for _, line in ipairs(box) do
+		lu.assertNotEquals(line:IsShown(), 1)
+	end
+	highlight:Show()
+	lu.assertEquals(box[2]:IsShown(), 1)
 	-- Blizzard's tint by the row's kind: its own colours kept
 	highlight:SetVertexColor(1, .5, .25)
 	near({ highlight:GetVertexColor() }, { 1, 1, 1 })

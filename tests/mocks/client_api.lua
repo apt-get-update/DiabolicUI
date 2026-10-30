@@ -597,6 +597,13 @@ function Api.install(client)
 		end
 	end
 	api.GetMoney = function() return world().money end
+	-- the auction house's list: world.auctions = { batch, total } (as
+	-- many shown on this page, as many found in all)
+	api.GetNumAuctionItems = function(kind)
+		local auctions = (kind == "list") and world().auctions or { 0, 0 }
+		return auctions[1], auctions[2]
+	end
+	api.CanSendAuctionQuery = function() return 1, 1 end
 
 	-- Auras -----------------------------------------------------------------
 

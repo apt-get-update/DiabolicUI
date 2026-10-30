@@ -33,7 +33,7 @@ local function constants()
 		MAX_RAID_MEMBERS = 40, MAX_BOSS_FRAMES = 4, MAX_ARENA_ENEMIES = 5, MAX_PLAYER_LEVEL = 80,
 		NUM_BAG_SLOTS = 4, NUM_BANKBAGSLOTS = 7, NUM_BANKGENERIC_SLOTS = 28, NUM_CONTAINER_FRAMES = 13, BANK_CONTAINER = -1, KEYRING_CONTAINER = -2,
 		MAX_CONTAINER_ITEMS = 36, MAX_TOTEMS = 4, MIRRORTIMER_NUMTIMERS = 3, STATICPOPUP_NUMDIALOGS = 4,
-		UIDROPDOWNMENU_MAXBUTTONS = 32, UIDROPDOWNMENU_MAXLEVELS = 2, UIDROPDOWNMENU_VALUE_PATCH_VERSION = nil,
+		UIDROPDOWNMENU_MAXBUTTONS = 32, UIDROPDOWNMENU_MAXLEVELS = 2, UIDROPDOWNMENU_BORDER_HEIGHT = 15, UIDROPDOWNMENU_VALUE_PATCH_VERSION = nil,
 		LEFT_ACTIONBAR_PAGE = 4, RIGHT_ACTIONBAR_PAGE = 3, BOTTOMLEFT_ACTIONBAR_PAGE = 6,
 		BOTTOMRIGHT_ACTIONBAR_PAGE = 5, NUM_ACTIONBAR_PAGES = 6, MAX_WATCHABLE_QUESTS = 25,
 		MAX_QUESTLOG_QUESTS = 25, LOOTFRAME_NUMBUTTONS = 4, NUM_GROUP_LOOT_FRAMES = 4,
@@ -215,7 +215,7 @@ Blizzard.NIL_CAPS = NIL_CAPS
 ------------------------------------------------------------------------
 
 local FONTS = {
-	"GameFontNormal", "GameFontHighlight", "GameFontNormalSmall", "GameFontHighlightSmall",
+	"GameFontNormal", "GameFontHighlight", "GameFontNormalSmall", "GameFontHighlightSmall", "GameFontHighlightSmallLeft",
 	"GameFontNormalLarge", "GameFontHighlightLarge", "GameFontDisable", "GameFontDisableSmall",
 	"GameFontGreen", "GameFontRed", "GameFontWhite", "GameFontBlack", "GameFontNormalHuge",
 	"GameTooltipText", "GameTooltipTextSmall", "GameTooltipHeaderText", "NumberFontNormal",
@@ -915,6 +915,7 @@ local function buildFrames()
 	button("Button", "PetPaperDollCloseButton", pet, "UIPanelButtonTemplate")
 	panelArt(pet, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight" })
 	panelArt(pet, "PetPaperDollFrame\\UI-PetPaperDollFrame-", { "BotLeft", "BotRight" })
+	_G.SKILLS_TO_DISPLAY = 12 -- (SkillFrame.lua)
 	local skills = hidden(new("Frame", "SkillFrame", character))
 	panelArt(skills, "PaperDollInfoFrame\\UI-Character-General-", { "TopLeft", "TopRight" })
 	panelArt(skills, "PaperDollInfoFrame\\SkillFrame-", { "BotLeft", "BotRight" })
@@ -1213,9 +1214,17 @@ local ON_DEMAND = {
 		button("Button", nil, token, "UIPanelCloseButton") -- its unnamed X
 	end,
 	-- Blizzard_AuctionUI.lua: its tabs (AuctionFrameTab_OnClick: one page
-	-- shown) and the categories' list (AuctionFrameFilters_Update: a
-	-- button per class shown, the rest hidden); its frames from FrameXML
+	-- shown), the categories' list (AuctionFrameFilters_Update: a
+	-- button per class shown, the rest hidden) and Browse's pages (its
+	-- search asks for AuctionFrameBrowse.page: client.auctionQuery); its
+	-- frames from FrameXML
 	Blizzard_AuctionUI = function()
+		_G.NUM_AUCTION_ITEMS_PER_PAGE = 50
+		_G.AuctionFrameBrowse_Update = function() end
+		_G.AuctionFrameBrowse_Search = function()
+			client.auctionQuery = _G.AuctionFrameBrowse.page
+			_G.AuctionFrameBrowse_Update()
+		end
 		local classes = { "Weapon", "Armor", "Container", "Consumable", "Glyph", "Trade Goods", "Projectile", "Quiver",
 			"Recipe", "Gem", "Miscellaneous", "Quest" }
 		-- (a button's kind: its art's alpha, its text's indent)
@@ -1543,8 +1552,33 @@ local function frameXML(client)
 		end
 	end
 	f.UIDropDownMenu_CreateInfo = function() return {} end
+	-- (UIDropDownMenu.lua's: the list's next line, its text in Blizzard's
+	-- small font, a title or a disabled one disabled, the list as wide as
+	-- its widest, measured before the font is set)
 	f.UIDropDownMenu_AddButton = function(info, level)
 		client.dropDownButtons[#client.dropDownButtons + 1] = info
+		local list = rawget(_G, "DropDownList" .. (level or 1))
+		if not list then
+			return
+		end
+		-- (past UIDROPDOWNMENU_MAXBUTTONS Blizzard warns and adds nothing)
+		local index = (list.numButtons or 0) + 1
+		local button = rawget(_G, list:GetName() .. "Button" .. index)
+		if not button then
+			return
+		end
+		list.numButtons = index
+		button:SetText(info.text)
+		local width = button:GetFontString():GetStringWidth() + (info.notCheckable and 10 or 40)
+		list.maxWidth = math.max(list.maxWidth or 0, width)
+		button:SetNormalFontObject(info.fontObject or _G.GameFontHighlightSmallLeft)
+		button:SetHighlightFontObject(info.fontObject or _G.GameFontHighlightSmallLeft)
+		if info.isTitle or info.disabled then
+			button:Disable()
+		else
+			button:Enable()
+		end
+		button:Show()
 	end
 	-- (UIDropDownMenu.lua's: its middle that wide, the frame its ends wider)
 	f.UIDropDownMenu_SetWidth = function(frame, width, padding)
@@ -1572,7 +1606,15 @@ local function frameXML(client)
 	f.UIDropDownMenu_EnableDropDown = noop
 	f.UIDropDownMenu_DisableDropDown = noop
 	f.UIDropDownMenu_Refresh = noop
-	f.UIDropDownMenu_InitializeHelper = function(frame) client.dropDownButtons = {} end
+	f.UIDropDownMenu_InitializeHelper = function(frame)
+		client.dropDownButtons = {}
+		for level = 1, _G.UIDROPDOWNMENU_MAXLEVELS or 2 do
+			local list = rawget(_G, "DropDownList" .. level)
+			if list then
+				list.numButtons, list.maxWidth = 0, 0
+			end
+		end
+	end
 	f.UIDropDownMenu_CreateFrames = noop
 	f.ToggleDropDownMenu = function(level, value, dropDownFrame, anchorName, xOffset, yOffset, menuList)
 		client.openDropDown = dropDownFrame

@@ -146,6 +146,39 @@ function TestAuctionHouse:test_the_categories_red_by_kind()
 	assertClean(client)
 end
 
+function TestAuctionHouse:test_browse_pages_numbered_between_its_arrows()
+	open()
+	page(1)
+	local spec = client.Engine:GetDB("Blizzard").auction.pages
+	local pages = client:GetModule("Blizzard: Auction House").Pages
+	local previous, nextPage = _G.BrowsePrevPageButton, _G.BrowseNextPageButton
+	-- all on one page: no numbers, the arrows side by side
+	client.world.auctions = { 30, 30 }
+	_G.AuctionFrameBrowse_Update()
+	for _, button in ipairs(pages) do
+		lu.assertNotEquals(button:IsShown(), 1)
+	end
+	lu.assertEquals(select(2, previous:GetPoint()), nextPage)
+	-- 8 pages, the 4th shown: 2 to 6 between the arrows, the 4th boxed
+	client.world.auctions = { 50, 380 }
+	_G.AuctionFrameBrowse.page = 3
+	_G.AuctionFrameBrowse_Update()
+	local numbers = {}
+	for i = #pages, 1, -1 do
+		numbers[#numbers + 1] = tostring(pages[i]:GetText())
+	end
+	lu.assertEquals(numbers, { "2", "3", "4", "5", "6" })
+	lu.assertEquals(select(2, pages[1]:GetPoint()), nextPage)
+	lu.assertEquals(select(2, previous:GetPoint()), pages[5])
+	lu.assertEquals({ pages[3]:GetBackdropBorderColor() }, spec.shown_border)
+	lu.assertEquals({ pages[2]:GetBackdropBorderColor() }, spec.border)
+	-- a click asks for its page
+	pages[1]:Click()
+	lu.assertEquals(client.auctionQuery, 5)
+	lu.assertEquals(tostring(pages[1]:GetText()), "8")
+	assertClean(client)
+end
+
 function TestAuctionHouse:test_auctionators_page_on_the_grid()
 	open(true)
 	page(5)

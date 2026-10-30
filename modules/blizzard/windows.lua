@@ -39,7 +39,7 @@ local config
 local BannerIndex -- an emblem's place in the banners' atlas, by name (OnInit)
 local Windows = {} -- every window made, its Blizzard frame its .Frame (/dui layout checks them)
 Module.Windows = Windows
-local LitRows = {} -- every chosen row's copper bar (LightRow; /dui layout reads text on it)
+local LitRows = {} -- every chosen row's light (LightRow; /dui layout reads text on it)
 Module.LitRows = LitRows
 
 -- How far `window`'s top is lowered (DropTop): the tab row it no longer needs.
@@ -362,13 +362,6 @@ Module.CreateHeader = function(self, window, height, insets)
 	header:SetScript("OnSizeChanged", LayoutBand)
 	header:SetScript("OnShow", LayoutBand)
 	LayoutBand(header)
-	-- the band glowing in its middle
-	local glow = header:CreateTexture(nil, "ARTWORK")
-	glow:SetTexture(config.band.glow)
-	glow:SetBlendMode("ADD")
-	glow:SetAlpha(config.band.glow_alpha)
-	glow:SetSize(height * config.band.glow_width, height)
-	glow:SetPoint("CENTER")
 	return header
 end
 
@@ -1216,9 +1209,8 @@ Module.StyleCheckBox = function(self, button, look)
 	local label = _G[button:GetName() .. "Text"]
 	button.DiabolicLabel = label
 	if label then
+		self:StyleBandText(label)
 		label:SetFontObject(look.font)
-		label:SetTextColor(unpack(config.title_plate.color))
-		label:SetShadowOffset(1, -1)
 		label:ClearAllPoints()
 		label:SetPoint("LEFT", button, "RIGHT", spec.label_gap, 0)
 	end
@@ -1241,11 +1233,31 @@ local ArtInsets = function(part)
 end
 Module.ArtInsets = ArtInsets
 
+-- `text` (a font string, an edit box's) in the band's look: a label in
+-- the title's gold, `value` (what's typed or chosen) in white.
+Module.StyleBandText = function(self, text, value)
+	local spec = config.band_text
+	text:SetFontObject(value and spec.value_font or spec.label_font)
+	text:SetTextColor(unpack(value and spec.value or spec.label))
+	text:SetShadowColor(0, 0, 0, 1)
+	text:SetShadowOffset(1, -1)
+end
+
+-- A button's text (a list's All) as a band's label: the bands' font, in
+-- the title's gold, hovered or not.
+Module.StyleLabelButton = function(self, button)
+	if button then
+		button:SetNormalFontObject(config.band_text.label_button_font)
+		button:SetHighlightFontObject(config.band_text.label_button_font)
+	end
+end
+
 -- `parts` (controls, texts) in a row along `header`'s band from its left:
 -- the first from its end, their art
 -- window.layout.band_gap apart, each placed on the one before it (moved
 -- as it's resized); `fromRight`: from its right end instead (short of the
--- X's socket), the last part rightmost. Dropdowns over the window's frame.
+-- X's socket), the last part rightmost. Dropdowns over the window's frame;
+-- their texts, the boxes' and the labels in the band's (StyleBandText).
 Module.LineBand = function(self, header, parts, fromRight)
 	local layout = config.layout
 	local level = header:GetParent():GetFrameLevel() + 4
@@ -1254,6 +1266,9 @@ Module.LineBand = function(self, header, parts, fromRight)
 		local part = parts[i]
 		if part:IsObjectType("FontString") then
 			part:SetWidth(0) -- (as wide as its text)
+			self:StyleBandText(part)
+		elseif part:IsObjectType("EditBox") then
+			self:StyleBandText(part, true)
 		end
 		local left, right = ArtInsets(part)
 		part:ClearAllPoints()
@@ -1270,6 +1285,9 @@ Module.LineBand = function(self, header, parts, fromRight)
 		local name = part:GetName()
 		-- (a dropdown: ours, or Blizzard's with its art, some without)
 		if name and _G[name .. "Button"] and (part.DiabolicDropDown or _G[name .. "Middle"]) then
+			if _G[name .. "Text"] then
+				self:StyleBandText(_G[name .. "Text"], true)
+			end
 			-- (its plate first, under it: a child keeps its own level)
 			for _, piece in ipairs({ part.DiabolicPlate or false, part, _G[name .. "Button"], _G[name .. "MouseOver"] or false }) do
 				if piece then
@@ -1423,6 +1441,20 @@ CollectButtons = function(frame, found)
 			found[#found + 1] = child
 		end
 		CollectButtons(child, found)
+	end
+	return found
+end
+
+-- Every button StyleButtons styled in `frame` (an addon's, added later,
+-- too).
+local CollectStyled
+CollectStyled = function(frame, found)
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		if child.DiabolicPanelButton then
+			found[#found + 1] = child
+		end
+		CollectStyled(child, found)
 	end
 	return found
 end
@@ -1660,6 +1692,7 @@ Module.StyleButtons = function(self, frame)
 	QueueRows(frame)
 	for _, button in ipairs(buttons) do
 		button.DiabolicStyled = true
+		button.DiabolicPanelButton = true
 		button:HookScript("OnShow", function() QueueRows(frame) end)
 		local name = button:GetName()
 		for _, part in ipairs({ "Left", "Middle", "Right" }) do
@@ -1670,14 +1703,17 @@ Module.StyleButtons = function(self, frame)
 		end
 		self:StyleButton(button, button:GetHeight())
 	end
-	-- one font for them all, the first in which every text fits: a row of
-	-- them reads as one
-	for _, font in ipairs({ config.button_font_small, config.button_font_narrow }) do
-		if AllFit(buttons) then
-			break
-		end
-		for _, button in ipairs(buttons) do
+	-- one font for all the window's buttons (those styled before too: an
+	-- addon's, added later), the first in which every text fits: they read
+	-- as one
+	local all = CollectStyled(frame, {})
+	local fonts = { config.button_font, config.button_font_small, config.button_font_narrow }
+	for i, font in ipairs(fonts) do
+		for _, button in ipairs(all) do
 			self:SetButtonFont(button, font)
+		end
+		if AllFit(all) then
+			break
 		end
 	end
 end
@@ -1852,14 +1888,81 @@ Module.SetFooter = function(self, foot, top)
 	foot.Rail:Show()
 end
 
--- `texture` (a list's highlight on its chosen row) as Diablo III's copper
--- bar, in its own colours: Blizzard tints it by the row's kind. Its blend
--- kept: an added one (the quest log's) lies over the row's text.
+-- A list's + or - (a header's, its collapse-all) as Diablo III's red
+-- square, each time Blizzard sets it (by the art it asks for); its round
+-- glow out of sight.
+local Expander = function(button)
+	local texture = button:GetNormalTexture()
+	local file = texture and texture:GetTexture()
+	file = file and file:lower() or ""
+	local spec = config.expander
+	local coords = (file:find("minusbutton") and spec.minus) or (file:find("plusbutton") and spec.plus)
+	if coords then
+		texture:SetTexture(spec.texture)
+		texture:SetTexCoord(unpack(coords))
+	end
+end
+
+Module.StyleExpanders = function(self, ...)
+	for i = 1, select("#", ...) do
+		local button = select(i, ...)
+		if button and not button.DiabolicExpander then
+			button.DiabolicExpander = true
+			local glow = button:GetHighlightTexture()
+			local file = glow and glow:GetTexture()
+			if file and file:lower():find("plusbutton") then
+				glow:SetAlpha(0)
+			end
+			hooksecurefunc(button, "SetNormalTexture", Expander)
+			Expander(button)
+		end
+	end
+end
+
+-- The buttons named `prefix` 1 to `count` (those there) as StyleExpanders'.
+Module.StyleExpanderRows = function(self, prefix, count)
+	for i = 1, count do
+		self:StyleExpanders(_G[prefix .. i])
+	end
+end
+
+-- `texture` (a list's highlight on its chosen row) as Diablo III's chosen
+-- row: faintly lit, in a thin orange box shown with it; in its own colours
+-- (Blizzard tints it by the row's kind). Its blend kept: an added one (the
+-- quest log's) lies over the row's text.
+local BOX_SIDES = { { "TOPLEFT", "TOPRIGHT" }, { "BOTTOMLEFT", "BOTTOMRIGHT" }, { "TOPLEFT", "BOTTOMLEFT" }, { "TOPRIGHT", "BOTTOMRIGHT" } }
+
 Module.LightRow = function(self, texture)
+	local spec = config.chosen_row
 	LitRows[#LitRows + 1] = texture
-	texture:SetTexture(config.row_bars.lit)
-	texture:SetTexCoord(0, 1, 0, 1)
+	texture:SetTexture(unpack(spec.fill))
 	texture:SetVertexColor(1, 1, 1)
+	local box = {}
+	for i, side in ipairs(BOX_SIDES) do
+		local line = texture:GetParent():CreateTexture(nil, "OVERLAY")
+		line:SetTexture(unpack(spec.line))
+		line:SetPoint(side[1], texture, side[1])
+		line:SetPoint(side[2], texture, side[2])
+		if (i <= 2) then
+			line:SetHeight(spec.width)
+		else
+			line:SetWidth(spec.width)
+		end
+		box[i] = line
+	end
+	texture.DiabolicBox = box
+	local Follow = function()
+		for _, line in ipairs(box) do
+			if (texture:IsShown() == 1) then
+				line:Show()
+			else
+				line:Hide()
+			end
+		end
+	end
+	hooksecurefunc(texture, "Show", Follow)
+	hooksecurefunc(texture, "Hide", Follow)
+	Follow()
 	local busy
 	hooksecurefunc(texture, "SetVertexColor", function()
 		if (not busy) then

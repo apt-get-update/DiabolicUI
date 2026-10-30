@@ -187,8 +187,6 @@ Module.StyleLFG = function(self)
 		if browse then
 			kit:StyleDropDown(browse)
 			local label = _G.LFRBrowseFrameRaidDropDownName
-			label:SetFontObject(kit.config.check_box.font)
-			label:SetTextColor(unpack(kit.config.title_plate.color))
 			kit:LineBand(header, { label, browse })
 		end
 		self:CenterRoles(window, "LFRQueueFrameRoleButton", { "Tank", "Healer", "DPS" }, config.raid_roles_top)

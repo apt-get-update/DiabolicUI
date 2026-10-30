@@ -1,6 +1,6 @@
 -- The trade skills' window on parchment (panels.lua puts its recipes and
 -- the chosen one's details on it): the recipes in inks of their
--- difficulty, the chosen one on the copper bar, the reagents' names in
+-- difficulty, the chosen one in an orange box, the reagents' names in
 -- ink (Blizzard sets both again as it updates, so after it does); the
 -- search on our plate in a row of its own under the rank, Have Materials
 -- right of it, the dropdowns on our plate.
@@ -37,12 +37,8 @@ Module.ShadeList = function(self)
 		local text, count = button and button:GetFontString(), _G["TradeSkillSkill" .. i .. "Count"]
 		local _, kind = GetTradeSkillInfo(button:GetID())
 		if text and button:IsShown() and inks[kind] then
-			-- the chosen one white on its copper bar (a header never is:
-			-- Blizzard leaves the mark of the recipe the row showed before)
-			local r, g, b = 1, 1, 1
-			if (not button.isHighlighted) or (kind == "header") then
-				r, g, b = unpack(inks[kind])
-			end
+			-- (the chosen one too: its box is see-through)
+			local r, g, b = unpack(inks[kind])
 			text:SetTextColor(r, g, b)
 			text:SetShadowColor(0, 0, 0, 0)
 			if count then
@@ -95,7 +91,7 @@ Module.ClearScan = function(self)
 	description:SetPoint("TOPLEFT", child, "TOPLEFT", config.description_left, -top)
 end
 
--- The copper bar across the recipes' parchment, from its left edge to
+-- The chosen recipe's box across the parchment, from its left edge to
 -- the scroll bar (Blizzard's from the rows' left, short of it): its place
 -- from Blizzard's offsets, the page's frame not laid out yet.
 Module.SpanHighlight = function(self)
@@ -130,10 +126,10 @@ Module.Layout = function(self)
 	search:SetWidth(config.search_width)
 	kit:StyleEditBox(search)
 	-- the spellbook's search's look: its font, Blizzard's "Search" pale
-	-- (the box's text until typed in)
+	-- (the box's text until typed in), what's typed white (the bands')
 	local book = self:GetDB("Blizzard").spellbook
 	search:SetFontObject(book.search_font)
-	local r, g, b = search:GetTextColor()
+	local r, g, b = unpack(kit.config.band_text.value)
 	local Hint = function()
 		if (search:GetText() == _G.SEARCH) then
 			search:SetTextColor(unpack(book.search_hint_color))
@@ -244,7 +240,10 @@ end
 
 Module.StyleTradeSkill = function(self)
 	self:Layout()
-	kit:LightRow(_G.TradeSkillHighlight) -- the chosen recipe on the copper bar
+	kit:LightRow(_G.TradeSkillHighlight) -- the chosen recipe in an orange box
+	kit:StyleExpanderRows("TradeSkillSkill", _G.TRADE_SKILLS_DISPLAYED)
+	kit:StyleExpanders(_G.TradeSkillCollapseAllButton)
+	kit:StyleLabelButton(_G.TradeSkillCollapseAllButton) -- (its All)
 	self:SpanHighlight()
 	hooksecurefunc("TradeSkillFrame_Update", function()
 		self:ShadeList()

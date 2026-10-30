@@ -5,7 +5,8 @@
 -- selling column, the results with their column names on top. Blizzard's
 -- Browse, Bids and Auctions pages, and Auctionator's (its own page, under
 -- its tabs). The window itself (its band, tabs and foot) is panels.lua's.
--- Places only: Blizzard's and Auctionator's code are left as they are.
+-- Places only (and Browse's page numbers, Diablo III's, between its
+-- arrows): Blizzard's and Auctionator's code are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Auction House", "LOW")
 
@@ -15,12 +16,18 @@ local kit
 local _G = _G
 local ipairs = ipairs
 local pairs = pairs
+local math_ceil = math.ceil
 local math_floor = math.floor
+local math_max = math.max
+local math_min = math.min
 local select = select
 local type = type
+local unpack = unpack
 
 -- WoW API
+local CanSendAuctionQuery = _G.CanSendAuctionQuery
 local CreateFrame = _G.CreateFrame
+local GetNumAuctionItems = _G.GetNumAuctionItems
 local hooksecurefunc = _G.hooksecurefunc
 local IsAddOnLoaded = _G.IsAddOnLoaded
 
@@ -126,6 +133,64 @@ Module.PlaceBrowse = function(self)
 	local left = split + config.gap
 	self:PlaceResults(page, left, zoneTop, content.right, "BrowseQualitySort", "BrowseButton1", "BrowseScrollFrame", spec)
 	Place("BrowseNoResultsText", (left + content.right) / 2, zoneTop + spec.no_results_y, "TOP")
+end
+
+-- Browse's pages as Diablo III's: up to `pages.shown` numbers between its
+-- arrows, around the one shown (boxed in orange); a click asks for that
+-- page, as the arrows do. None while it all fits on one.
+Module.CreatePages = function(self)
+	local spec, gap = self.config.pages, self.config.arrow_gap
+	local browse, previous, nextPage = _G.AuctionFrameBrowse, _G.BrowsePrevPageButton, _G.BrowseNextPageButton
+	local Ask = function(button)
+		if CanSendAuctionQuery() and (browse.page ~= button.page) then
+			browse.page = button.page
+			_G.BrowseScrollFrameScrollBar:SetValue(0)
+			_G.AuctionFrameBrowse_Search()
+		end
+	end
+	local buttons = {}
+	for i = 1, spec.shown do
+		local button = CreateFrame("Button", nil, browse)
+		button:SetSize(spec.size, spec.size)
+		button:SetBackdrop(spec.backdrop)
+		button:SetBackdropColor(unpack(spec.color))
+		button:SetFontString(button:CreateFontString(nil, "OVERLAY"))
+		button:SetNormalFontObject(spec.font)
+		button:SetScript("OnClick", Ask)
+		buttons[i] = button
+	end
+	self.Pages = buttons -- (the rightmost first)
+	local Update = function()
+		local total = select(2, GetNumAuctionItems("list")) or 0
+		local pages = math_ceil(total / _G.NUM_AUCTION_ITEMS_PER_PAGE)
+		local current = browse.page or 0
+		local count = (pages > 1) and math_min(pages, spec.shown) or 0
+		local first = math_max(0, math_min(current - math_floor(spec.shown / 2), pages - count))
+		-- from the right, the last one by the next arrow
+		local anchor = nextPage
+		for i = 1, spec.shown do
+			local button = buttons[i]
+			if (i <= count) then
+				button.page = first + count - i
+				button:SetText(button.page + 1)
+				local shown = (button.page == current)
+				button:SetBackdropBorderColor(unpack(shown and spec.shown_border or spec.border))
+				button:GetFontString():SetTextColor(unpack(shown and spec.shown_color or spec.text_color))
+				button:ClearAllPoints()
+				button:SetPoint("RIGHT", anchor, "LEFT", -gap, 0)
+				button:Show()
+				anchor = button
+			else
+				button:Hide()
+			end
+		end
+		previous:ClearAllPoints()
+		previous:SetPoint("RIGHT", anchor, "LEFT", -gap, 0)
+	end
+	if _G.AuctionFrameBrowse_Update then
+		hooksecurefunc("AuctionFrameBrowse_Update", Update)
+	end
+	Update()
 end
 
 -- Bids: its results across the page.
@@ -285,6 +350,7 @@ Module.StyleAuctionHouse = function(self)
 	end
 	self.Styled = true
 	self:PlaceBrowse()
+	self:CreatePages()
 	self:PlaceBids()
 	self:PlaceAuctions()
 	self:PlaceAuctionator()

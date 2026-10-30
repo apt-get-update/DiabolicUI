@@ -18,6 +18,9 @@ local _G = _G
 local ipairs = ipairs
 local pairs= pairs
 local select = select
+local math_floor = math.floor
+local math_max = math.max
+local math_min = math.min
 local string_find = string.find
 local string_format = string.format
 local string_match = string.match
@@ -164,6 +167,27 @@ Module.GetTooltipUnit = function(self, tooltip)
 	return UnitExists(unit) and unit
 end
 
+-- A unit's name colour: grey dead, its class's for a player (grey offline),
+-- its reaction's otherwise (grey tapped).
+local GetNameColor = function(unit)
+	if UnitIsDead(unit) or UnitIsGhost(unit) then
+		return C.Status.Dead
+	elseif UnitIsPlayer(unit) then
+		if not UnitIsConnected(unit) then
+			return C.Status.Disconnected
+		end
+		return C.Class[select(2, UnitClass(unit))]
+	end
+	local reaction = UnitReaction(unit, "player")
+	if reaction then
+		if UnitIsTapDenied(unit) then
+			return C.Status.Tapped
+		end
+		return C.Reaction[reaction]
+	end
+	return C.General.Normal
+end
+
 Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	local unit = self:GetTooltipUnit(tooltip)
 	if not unit then
@@ -180,47 +204,22 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	local level = UnitLevel(unit)
 	local name = UnitName(unit)
 	local faction = UnitFactionGroup(unit)
-	local isdead = UnitIsDead(unit) or UnitIsGhost(unit)
 
-	local disconnected, pvp, ffa, class, caninspect
-	local isboss, reaction, istapped
-	local color
+	local pvp, ffa, caninspect, isboss
+	local color = GetNameColor(unit)
 
 	if isplayer then
-		disconnected = not UnitIsConnected(unit)
 		pvp = UnitIsPVP(unit)
 		ffa = UnitIsPVPFreeForAll(unit)
-		class = select(2, UnitClass(unit))
 		caninspect = CanInspect(unit) and (level and level > 10)
 	else
 		isboss = (UnitClassification(unit) == "worldboss") or (level == -1)
-		reaction = UnitReaction(unit, "player")
-		istapped = UnitIsTapDenied(unit)
 	end
 
 	-- inspect the target if possible
 	if caninspect then
 		currentUNIT, currentGUID = unit, UnitGUID(unit)
 		self:ScanUnit(unit)
-	end
-
-	-- figure out name coloring based on collected data
-	if isdead then
-		color = C.Status.Dead
-	elseif isplayer then
-		if disconnected then
-			color = C.Status.Disconnected
-		else
-			color = C.Class[class]
-		end
-	elseif reaction then
-		if istapped then
-			color = C.Status.Tapped
-		else
-			color = C.Reaction[reaction]
-		end
-	else
-		color = C.General.Normal
 	end
 
 	-- clean up the tip
@@ -773,26 +772,8 @@ local MenuCoords = function(spec, box)
 	return box[1] / size, (box[1] + box[3]) / size, box[2] / size, (box[2] + box[4]) / size
 end
 
--- Diablo III's menu panel over `frame`: its iron corners and edges
--- `spec.edge` wide, its stone stretched between them.
-local AddMenuPanel = function(frame, spec)
-	local w, h, c, e = spec.art[1], spec.art[2], spec.corner, spec.edge
-	-- each column's and row's art, and its sides on the frame
-	local columns = { { 0, c, "LEFT", 0, "LEFT", e }, { c, w - c, "LEFT", e, "RIGHT", -e }, { w - c, w, "RIGHT", -e, "RIGHT", 0 } }
-	local rows = { { 0, c, "TOP", 0, "TOP", -e }, { c, h - c, "TOP", -e, "BOTTOM", e }, { h - c, h, "BOTTOM", e, "BOTTOM", 0 } }
-	for _, row in ipairs(rows) do
-		for _, column in ipairs(columns) do
-			local piece = frame:CreateTexture(nil, "BACKGROUND")
-			piece:SetTexture(spec.texture)
-			piece:SetTexCoord(MenuCoords(spec, { column[1], row[1], column[2] - column[1], row[2] - row[1] }))
-			piece:SetPoint("TOPLEFT", frame, row[3] .. column[3], column[4], row[4])
-			piece:SetPoint("BOTTOMRIGHT", frame, row[5] .. column[5], column[6], row[6])
-		end
-	end
-end
-
--- Our backdrop behind `object`, Blizzard's out of sight; a `menu`'s
--- Diablo III's menu panel.
+-- Our backdrop behind `object` (a `menu`'s too, by its own offsets),
+-- Blizzard's out of sight.
 Module.CreateBackdrop = function(self, object, menu)
 	local config = self.config
 	local offsets = menu and config.menu.offsets or config.offsets
@@ -804,13 +785,9 @@ Module.CreateBackdrop = function(self, object, menu)
 	backdrop:SetPoint("RIGHT", offsets[2], 0)
 	backdrop:SetPoint("TOP", 0, offsets[3])
 	backdrop:SetPoint("BOTTOM", 0, -offsets[4])
-	if menu then
-		AddMenuPanel(backdrop, config.menu)
-	else
-		backdrop:SetBackdrop(config.backdrop)
-		backdrop:SetBackdropColor(unpack(config.backdrop_color))
-		backdrop:SetBackdropBorderColor(unpack(config.backdrop_border_color))
-	end
+	backdrop:SetBackdrop(config.backdrop)
+	backdrop:SetBackdropColor(unpack(config.backdrop_color))
+	backdrop:SetBackdropBorderColor(unpack(config.backdrop_border_color))
 
 	hooksecurefunc(object, "SetFrameStrata", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
 	hooksecurefunc(object, "SetFrameLevel", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
@@ -833,8 +810,8 @@ Module.StyleMenu = function(self, object)
 	self:Tooltip_UpdateScale(object)
 
 	-- under the lines, at the list's own level: at theirs (the backdrop's),
-	-- the panel's stone can end up over their grooves and hover box once
-	-- the list is raised (it's a toplevel frame)
+	-- the box can end up over their red bars once the list is raised (it's
+	-- a toplevel frame)
 	local list = object:GetParent()
 	local backdrop = select(1, object:GetChildren())
 	local name = list and list:GetName()
@@ -913,20 +890,35 @@ end
 
 -- A dropdown's line as Diablo III's: a groove over it (but the first's),
 -- a red box around it under the mouse, its submenu's arrow theirs.
-local StyleMenuLine = function(spec, button, first)
+-- A line's red bar across the menu, from border to border (Blizzard's
+-- lines are BORDER_HEIGHT in from its left, the rest of 25 from its right).
+local SpanBar = function(spec, bar, button)
+	local border = _G.UIDROPDOWNMENU_BORDER_HEIGHT
+	bar:ClearAllPoints()
+	bar:SetPoint("TOPLEFT", button, "TOPLEFT", spec.edge - border, 0)
+	bar:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 25 - border - spec.edge, 0)
+end
+
+local StyleMenuLine = function(spec, button)
 	local name = button:GetName()
-	if not first then
-		local groove = button:CreateTexture(nil, "BACKGROUND")
-		groove:SetTexture(spec.texture)
-		groove:SetTexCoord(MenuCoords(spec, spec.groove))
-		groove:SetHeight(spec.groove_height)
-		groove:SetPoint("LEFT", button, "TOPLEFT")
-		groove:SetPoint("RIGHT", button, "TOPRIGHT")
-	end
+	-- hovered: Diablo III's red bar
 	local highlight = _G[name .. "Highlight"]
-	highlight:SetTexture(spec.texture)
-	highlight:SetTexCoord(MenuCoords(spec, spec.highlight))
+	highlight:SetTexture(unpack(spec.chosen_color))
 	highlight:SetBlendMode("BLEND")
+	SpanBar(spec, highlight, button)
+	-- the chosen one on Diablo III's red bar instead of a check (it follows
+	-- the check Blizzard shows and hides)
+	local check = _G[name .. "Check"]
+	local chosen = button:CreateTexture(nil, "BACKGROUND")
+	chosen:SetTexture(unpack(spec.chosen_color))
+	SpanBar(spec, chosen, button)
+	button.DiabolicChosen = chosen
+	check:SetAlpha(0)
+	hooksecurefunc(check, "Show", function() chosen:Show() end)
+	hooksecurefunc(check, "Hide", function() chosen:Hide() end)
+	if (check:IsShown() ~= 1) then
+		chosen:Hide()
+	end
 	local arrow = _G[name .. "ExpandArrow"]:GetNormalTexture()
 	arrow:SetTexture(spec.texture)
 	arrow:SetTexCoord(MenuCoords(spec, spec.arrow))
@@ -957,11 +949,66 @@ Module.StyleDropDowns = function(self)
 		for j = 1, UIDROPDOWNMENU_MAXBUTTONS do
 			local button = _G["DropDownList"..i.."Button"..j]
 			if button and not styled[button] then
-				StyleMenuLine(self.config.menu, button, j == 1)
+				StyleMenuLine(self.config.menu, button)
 				styled[button] = true
 			end
 		end
 	end
+end
+
+-- The menus' font `font_size` big as the tooltips show it: the tooltips
+-- are in our UI's scale, the menus in Blizzard's (their frames left as
+-- they are). The nearest of our sizes: 3.3.5 can't resize a Font.
+Module.GetMenuFont = function(self)
+	local spec = self.config.menu
+	local size = spec.font_size * Engine:GetFrame():GetEffectiveScale() / _G.UIParent:GetEffectiveScale()
+	size = math_max(9, math_min(14, math_floor(size + .5)))
+	return spec.fonts[size]
+end
+
+-- A line Blizzard just added (UIDropDownMenu_AddButton): its text
+-- `text_pad` in from the border (no room for the check, out of sight), white
+-- (one disabled grey; an addon's own font kept), a unit's name as its
+-- tooltip colours it (other titles gold);
+-- the menu as wide as its lines need, `text_pad` from the border on the
+-- right too (Blizzard's measure keeps room for the check).
+Module.StyleMenuText = function(self, info, level)
+	local spec = self.config.menu
+	local list = _G["DropDownList" .. (level or 1)]
+	local button = list and list.numButtons and _G[list:GetName() .. "Button" .. list.numButtons]
+	local text = button and button:GetFontString()
+	if not text then
+		return
+	end
+	if (list.numButtons == 1) then
+		self.menu_font = self:GetMenuFont() -- (a menu opening: our UI's scale may have changed)
+	end
+	if not info.fontObject then
+		local font, color = self.menu_font, spec.text_color
+		if info.isTitle then
+			local menu = _G.UIDROPDOWNMENU_INIT_MENU
+			local unit = (level or 1) == 1 and menu and menu.unit
+			color = (unit and UnitExists(unit)) and GetNameColor(unit) or spec.title_color
+		elseif info.disabled and not info.notClickable then
+			color = spec.disabled_color
+		end
+		button:SetNormalFontObject(font)
+		button:SetHighlightFontObject(font)
+		button:SetDisabledFontObject(font)
+		text:SetTextColor(unpack(color))
+	end
+	local border = _G.UIDROPDOWNMENU_BORDER_HEIGHT
+	local inset = spec.text_pad - (border - spec.edge)
+	if not (info.notCheckable and info.justifyH == "CENTER") then
+		text:ClearAllPoints()
+		text:SetPoint("LEFT", button, "LEFT", inset, 0)
+	end
+	local width = inset + text:GetStringWidth() + spec.text_pad + spec.edge - (25 - border)
+		+ ((info.hasArrow and spec.arrow_room) or 0) + (((info.icon or info.hasColorSwatch) and spec.icon_room) or 0) + (info.padding or 0)
+	if (list.numButtons == 1) or (width > (list.DiabolicWidth or 0)) then
+		list.DiabolicWidth = width
+	end
+	list.maxWidth = list.DiabolicWidth
 end
 
 Module.StyleMenus = function(self)
@@ -1012,6 +1059,7 @@ Module.UpdateStyles = function(self)
 	-- hook the creation of further dropdown levels
 	if not self.dropdowns_hooked then
 		hooksecurefunc("UIDropDownMenu_CreateFrames", function(...) self:StyleDropDowns(...) end)
+		hooksecurefunc("UIDropDownMenu_AddButton", function(info, level) self:StyleMenuText(info, level) end)
 		self.dropdowns_hooked = true
 	end
 end

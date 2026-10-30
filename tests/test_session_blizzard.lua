@@ -880,6 +880,8 @@ function TestCharacter:test_a_factions_details()
 	-- a dark panel right of the window, its name in its standing's color
 	local detail = _G.ReputationDetailFrame
 	lu.assertEquals({ detail:GetPoint() }, { "TOPLEFT", module.Backdrop, "TOPRIGHT", unpack(config.reputation_detail_offset) })
+	-- the parchment unshaded: the panel's own shade clear
+	lu.assertEquals(select(4, detail:GetBackdropColor()), 0)
 	_G.ReputationFrame_Update()
 	near(color(_G.ReputationDetailFactionName:GetTextColor()), C.Reaction[6])
 	-- at war, a box that can't be changed faded

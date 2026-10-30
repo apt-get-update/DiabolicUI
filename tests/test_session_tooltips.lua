@@ -387,6 +387,22 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	lu.assertNotNil(_G.GameTooltip:GetBackdrop())
 	_G.GameTooltip:SetFrameLevel(10)
 
+	local menu = module.config.menu
+	-- the lines added: their text `text_pad` in from the iron, white (a
+	-- title in gold), the menu as wide as they need, `text_pad` from the
+	-- iron on the right too; the red bar from iron to iron
+	_G.UIDropDownMenu_InitializeHelper()
+	_G.UIDropDownMenu_AddButton({ text = "Loot", isTitle = 1 })
+	_G.UIDropDownMenu_AddButton({ text = "Free for All, Group Loot or Master Looter" })
+	local title, choice = _G.DropDownList1Button1, _G.DropDownList1Button2
+	local text = choice:GetFontString()
+	local inset = menu.text_pad - (15 - menu.edge)
+	lu.assertEquals({ text:GetPoint() }, { "LEFT", choice, "LEFT", inset, 0 })
+	lu.assertEquals({ text:GetTextColor() }, { 1, 1, 1, 1 })
+	lu.assertEquals({ title:GetFontString():GetTextColor() }, { menu.title_color[1], menu.title_color[2], menu.title_color[3], 1 })
+	lu.assertEquals(_G.DropDownList1.maxWidth, inset + text:GetStringWidth() + menu.text_pad + menu.edge - 10)
+	lu.assertEquals({ _G.DropDownList1Button2Highlight:GetPoint(1) }, { "TOPLEFT", choice, "TOPLEFT", menu.edge - 15, 0 })
+
 	-- a third dropdown level
 	_G.UIDROPDOWNMENU_MAXLEVELS = 3
 	local list = _G.CreateFrame("Button", "DropDownList3", _G.UIParent)
@@ -394,19 +410,29 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	_G.CreateFrame("Frame", "DropDownList3MenuBackdrop", list)
 	_G.UIDropDownMenu_CreateFrames(3, 1)
 	lu.assertTrue(module.styled[_G.DropDownList3Backdrop])
-	-- the lines' hover Diablo III's red box, those added later too
-	local menu = module.config.menu
-	lu.assertEquals(_G.DropDownList1Button1Highlight:GetTexture(), menu.texture)
-	lu.assertEquals(_G.DropDownList2Button32Highlight:GetTexture(), menu.texture)
+	-- the lines' hover Diablo III's red bar (Blizzard's art gone), those
+	-- added later too
+	lu.assertNil(_G.DropDownList1Button1Highlight:GetTexture())
+	lu.assertNil(_G.DropDownList2Button32Highlight:GetTexture())
 	_G.UIDROPDOWNMENU_MAXBUTTONS = 33
 	local line = _G.CreateFrame("Button", "DropDownList3Button33", list)
-	-- (UIDropDownMenuButtonTemplate's: its hover and its submenu's arrow)
+	-- (UIDropDownMenuButtonTemplate's: its hover, its check and its
+	-- submenu's arrow)
 	line:CreateTexture("DropDownList3Button33Highlight")
+	line:CreateTexture("DropDownList3Button33Check"):Hide()
 	local arrow = _G.CreateFrame("Button", "DropDownList3Button33ExpandArrow", line)
 	arrow:SetNormalTexture([[Interface\ChatFrame\ChatFrameExpandArrow]])
 	_G.UIDropDownMenu_CreateFrames(3, 33)
 	lu.assertTrue(module.styled[line])
-	lu.assertEquals(_G.DropDownList3Button33Highlight:GetTexture(), menu.texture)
+	lu.assertNil(_G.DropDownList3Button33Highlight:GetTexture())
+	-- the chosen line on Diablo III's red bar, its check out of sight
+	local check = _G.DropDownList3Button33Check
+	lu.assertEquals(check:GetAlpha(), 0)
+	lu.assertNotEquals(line.DiabolicChosen:IsShown(), 1)
+	check:Show()
+	lu.assertEquals(line.DiabolicChosen:IsShown(), 1)
+	check:Hide()
+	lu.assertNotEquals(line.DiabolicChosen:IsShown(), 1)
 	list:Show()
 	_G.DropDownList1:Show()
 

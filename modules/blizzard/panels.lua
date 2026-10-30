@@ -227,9 +227,7 @@ Module.PlaceBand = function(self, header, band)
 			return
 		end
 		if part:IsObjectType("FontString") then
-			part:SetFontObject(kit.config.check_box.font)
-			part:SetTextColor(unpack(kit.config.title_plate.color))
-			return part
+			return part -- (in the band's font: LineBand)
 		end
 		if part:IsObjectType("EditBox") then
 			kit:StyleEditBox(part)
@@ -458,8 +456,6 @@ Module.StylePanel = function(self, spec)
 	if text then
 		text:SetParent(header)
 		text:SetDrawLayer("OVERLAY")
-		text:SetFontObject(kit.config.check_box.font)
-		text:SetTextColor(unpack(kit.config.title_plate.color))
 		text:SetJustifyH("LEFT")
 		kit:LineBand(header, { text })
 	end

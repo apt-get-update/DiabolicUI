@@ -23,6 +23,7 @@ local L = Engine:GetLocale()
 local _G = _G
 local ipairs = ipairs
 local math_floor = math.floor
+local math_max = math.max
 local pairs = pairs
 local select = select
 local unpack = unpack
@@ -457,14 +458,13 @@ Module.LayoutCompanions = function(self, cover)
 	model:ClearAllPoints()
 	model:SetPoint("TOPLEFT", panel, "TOPLEFT", config.model_inset, -config.model_inset)
 	model:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -config.model_inset, config.model_inset)
-	-- the chosen one's name in Exocet, in the title's gold, in the band's
-	-- middle (on the cover: shown with the companions' pages)
+	-- the chosen one's name over its pane, in Exocet, in the title's gold
 	local name = _G.CompanionSelectedName
 	name:SetFontObject(config.selected_name_font)
 	name:SetTextColor(unpack(kit.config.title_plate.color))
 	name:SetJustifyH("CENTER")
 	name:ClearAllPoints()
-	name:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
+	name:SetPoint("BOTTOM", panel, "TOP", 0, config.selected_name_gap)
 	-- under it, at the model's foot: Summon (Mount on the mounts' page)
 	-- in the middle, the turning arrows in the corners on either side
 	local gap = config.summon_bottom
@@ -600,6 +600,12 @@ Module.FitCover = function(self)
 	if (cover.DiabolicY ~= top) then
 		cover.DiabolicY = top -- (its stone tiled from there: LayoutCover)
 		cover:SetPoint("TOPLEFT", cover.DiabolicWindow, "TOPLEFT", left, -top)
+	end
+	-- the companions' page where it was under the band, a little higher
+	-- (its name over the model in the band's room)
+	local companions = _G.PetPaperDollFrameCompanionFrame
+	if (companions:GetParent() == cover) then
+		companions:SetPoint("TOPLEFT", cover, "TOPLEFT", 0, -math_max(0, config.cover_insets[2] - top - config.companions_rise))
 	end
 end
 

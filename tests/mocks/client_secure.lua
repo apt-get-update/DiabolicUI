@@ -361,6 +361,14 @@ end
 
 function Secure.attach(owner)
 	client = owner
+	-- the last boot's handles let go (each table's value keeps the other's
+	-- key alive: Lua 5.1's weak keys aren't ephemerons)
+	for frame in pairs(handles) do
+		handles[frame] = nil
+	end
+	for handle in pairs(frames) do
+		frames[handle] = nil
+	end
 end
 
 return Secure

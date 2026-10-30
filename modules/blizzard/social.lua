@@ -229,13 +229,10 @@ Module.LayoutWho = function(self, window)
 	NameColumn()
 	hooksecurefunc("WhoList_Update", NameColumn)
 
-	-- "1612 People Found" in the band right of the dropdown, in its labels'
-	-- font
+	-- "1612 People Found" in the band right of the dropdown
 	local totals = _G.WhoFrameTotals
 	totals:SetParent(self.Header)
 	totals:SetDrawLayer("OVERLAY")
-	totals:SetFontObject(kit.config.check_box.font)
-	totals:SetTextColor(unpack(kit.config.title_plate.color))
 	totals:SetJustifyH("LEFT")
 	kit:LineBand(self.Header, { dropdown, totals })
 	-- the search (/who's) on the foot over the buttons, on our plate

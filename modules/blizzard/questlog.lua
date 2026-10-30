@@ -180,10 +180,11 @@ Module.StyleQuestLog = function(self)
 	kit:AddParchment(_G.QuestLogDetailScrollFrame) -- the scroll bar beside it
 	Hide("QuestLogDetailScrollFrameScrollBackgroundTopLeft", "QuestLogDetailScrollFrameScrollBackgroundBottomRight")
 	hooksecurefunc("QuestInfo_Display", function(_, parent, _, _, material) self:ColorDetails(parent, material) end)
-	-- the chosen quest on the copper bar, from inside the slate's edge out
+	-- the chosen quest in an orange box, from inside the slate's edge out
 	-- to the scroll bar (Blizzard's row starts on the edge, stops short of it)
 	local highlight = _G.QuestLogSkillHighlight
 	kit:LightRow(highlight)
+	kit:StyleExpanders(unpack(_G.QuestLogScrollFrame.buttons or {}))
 	highlight:ClearAllPoints()
 	highlight:SetPoint("TOPLEFT", _G.QuestLogHighlightFrame, "TOPLEFT", config.highlight_left, 0)
 	highlight:SetPoint("BOTTOMRIGHT", _G.QuestLogHighlightFrame, "BOTTOMRIGHT", config.highlight_reach, 0)

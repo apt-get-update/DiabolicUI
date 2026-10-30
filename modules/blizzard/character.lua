@@ -962,6 +962,8 @@ end
 -- The selected skill's details in a panel, so the place reads as theirs
 -- while none is chosen.
 Module.StyleSkills = function(self)
+	kit:StyleExpanderRows("SkillTypeLabel", _G.SKILLS_TO_DISPLAY or 0)
+	kit:StyleExpanders(_G.SkillFrameCollapseAllButton)
 	local details = _G.SkillDetailScrollFrame
 	if details then
 		local insets = self.config.skill_detail_insets
@@ -1182,6 +1184,7 @@ Module.StyleReputationDetail = function(self)
 	local detail = _G.ReputationDetailFrame
 	kit:HideTextures(detail)
 	kit:StylePanel(detail)
+	detail:SetBackdropColor(0, 0, 0, 0) -- (its shade would be over the parchment)
 	-- Diablo III's parchment inside its bronze line, its text in ink
 	local page = detail:CreateTexture(nil, "BACKGROUND")
 	page:SetTexture(kit.config.parchment)
@@ -1270,6 +1273,9 @@ Module.StyleReputationDetail = function(self)
 	Ink()
 	hooksecurefunc("ReputationFrame_Update", Ink)
 	hooksecurefunc("ReputationFrame_Update", function() self:ColorReputation() end)
+	for i = 1, _G.NUM_FACTIONS_DISPLAYED do
+		kit:StyleExpanders(_G["ReputationBar" .. i .. "ExpandOrCollapseButton"])
+	end
 end
 
 -- The reputation bars in our standings' colors (Blizzard's on each update).

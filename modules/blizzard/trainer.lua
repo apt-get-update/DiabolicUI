@@ -1,6 +1,6 @@
 -- The class trainer's window (panels.lua puts its list and the chosen
 -- training on parchment, its filter in the band): the trainings in inks
--- of their kind, the chosen one on the copper bar, its requirements and
+-- of their kind, the chosen one in an orange box, its requirements and
 -- cost in ink (Blizzard sets them again as it updates, so after it does);
 -- the trainer's words on a dark panel, as said to you.
 local _, Engine = ...
@@ -15,7 +15,6 @@ local unpack = unpack
 
 -- WoW API
 local CreateFont = _G.CreateFont
-local GetTrainerSelectionIndex = _G.GetTrainerSelectionIndex
 local GetTrainerServiceInfo = _G.GetTrainerServiceInfo
 local hooksecurefunc = _G.hooksecurefunc
 local IsAddOnLoaded = _G.IsAddOnLoaded
@@ -23,20 +22,17 @@ local IsAddOnLoaded = _G.IsAddOnLoaded
 local ADDON = "Blizzard_TrainerUI"
 
 -- The trainings' text in their kind's ink (Blizzard's colors are for a
--- dark background), the chosen one white on its copper bar; no shadows
--- (they blur it on parchment).
+-- dark background), the chosen one too (its box is see-through); no
+-- shadows (they blur it on parchment).
 Module.ShadeList = function(self)
-	local inks, selected = self.config.inks, GetTrainerSelectionIndex()
+	local inks = self.config.inks
 	for i = 1, _G.CLASS_TRAINER_SKILLS_DISPLAYED do
 		local button = _G["ClassTrainerSkill" .. i]
 		local text = button and button:GetFontString()
 		if text and button:IsShown() then
 			local _, _, kind = GetTrainerServiceInfo(button:GetID())
 			if inks[kind] then
-				local r, g, b = 1, 1, 1
-				if (kind == "header") or (button:GetID() ~= selected) then
-					r, g, b = unpack(inks[kind])
-				end
+				local r, g, b = unpack(inks[kind])
 				text:SetTextColor(r, g, b)
 				text:SetShadowColor(0, 0, 0, 0)
 				local sub = _G["ClassTrainerSkill" .. i .. "SubText"]
@@ -77,7 +73,10 @@ end
 
 Module.StyleTrainer = function(self)
 	local config = self.config
-	kit:LightRow(_G.ClassTrainerSkillHighlight) -- the chosen one on the copper bar
+	kit:LightRow(_G.ClassTrainerSkillHighlight) -- the chosen one in an orange box
+	kit:StyleExpanderRows("ClassTrainerSkill", 11) -- (Blizzard shows 10 or 11)
+	kit:StyleExpanders(_G.ClassTrainerCollapseAllButton)
+	kit:StyleLabelButton(_G.ClassTrainerCollapseAllButton) -- (its All)
 	-- the trainer's words in the middle of their panel
 	local greeting = _G.ClassTrainerGreetingText
 	greeting:SetJustifyH("CENTER")

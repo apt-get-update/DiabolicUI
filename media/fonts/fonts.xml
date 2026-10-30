@@ -527,4 +527,40 @@
 	</Font>
 	-->
 	
+	<!-- the chat's Arial Narrow (Blizzard's), for the windows' red bands -->
+	<Font name="DiabolicFont_Narrow14" font="Fonts\ARIALN.TTF" justifyH="LEFT" virtual="true">
+		<Shadow>
+			<Offset><AbsDimension x="1.0" y="-1.0"/></Offset>
+			<Color r="0" g="0" b="0" a="1"/>
+		</Shadow>
+		<FontHeight><AbsValue val="14"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Narrow12" inherits="DiabolicFont_Narrow14" virtual="true">
+		<FontHeight><AbsValue val="12"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Narrow14Gold" inherits="DiabolicFont_Narrow14" virtual="true">
+		<Color r="0.86" g="0.76" b="0.6"/>
+	</Font>
+	<!-- the menus' lines: the tooltips' Friz Quadrata (Blizzard's), without a
+	     shadow as theirs; in every size the tooltips' scale may ask for
+	     (modules/blizzard/tooltips.lua GetMenuFont: a Font can't be resized) -->
+	<Font name="DiabolicFont_Menu" font="Fonts\FRIZQT__.TTF" justifyH="LEFT" virtual="true">
+		<FontHeight><AbsValue val="12"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Menu9" inherits="DiabolicFont_Menu" virtual="true">
+		<FontHeight><AbsValue val="9"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Menu10" inherits="DiabolicFont_Menu" virtual="true">
+		<FontHeight><AbsValue val="10"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Menu11" inherits="DiabolicFont_Menu" virtual="true">
+		<FontHeight><AbsValue val="11"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Menu13" inherits="DiabolicFont_Menu" virtual="true">
+		<FontHeight><AbsValue val="13"/></FontHeight>
+	</Font>
+	<Font name="DiabolicFont_Menu14" inherits="DiabolicFont_Menu" virtual="true">
+		<FontHeight><AbsValue val="14"/></FontHeight>
+	</Font>
+
 </Ui>

@@ -159,7 +159,7 @@ Module.StyleTalents = function(self)
 	Hide("PlayerTalentFramePointsLeft", "PlayerTalentFramePointsMiddle", "PlayerTalentFramePointsRight")
 	status:ClearAllPoints()
 	status:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
-	_G.PlayerTalentFrameStatusText:SetTextColor(unpack(config.status_color))
+	kit:StyleBandText(_G.PlayerTalentFrameStatusText)
 	local activate = _G.PlayerTalentFrameActivateButton
 	activate:ClearAllPoints()
 	activate:SetPoint("CENTER", self.Header, "CENTER", 0, 0)

@@ -68,6 +68,12 @@ local function resetGlobals()
 		end
 	end
 	package.loaded["mocks.client"] = Client
+	-- the last boot's widgets let go: Lua 5.1's weak keys aren't
+	-- ephemerons, so a state holding its widget (its parent, its
+	-- children, its scripts) kept every boot's whole UI alive
+	for widget in pairs(state) do
+		state[widget] = nil
+	end
 end
 
 ------------------------------------------------------------------------

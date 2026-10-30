@@ -27,11 +27,15 @@ Engine:NewStaticConfig("Blizzard", {
 		-- title in a dark plate on the window's top edge
 		band = {
 			texture = path .. [[textures\DiabolicUI_D3_Band.tga]],
-			canvas = { 364, 104 }, -- its art's shape (squeezed into the file)
-			glow = path .. [[textures\DiabolicUI_Window_BandGlow.tga]], -- in its middle, added
-			glow_width = 6, -- in band heights
-			glow_alpha = .45
+			canvas = { 364, 104 } -- its art's shape (squeezed into the file)
 		},
+		-- every text in a band (StyleBandText): the chat's Arial Narrow (Exocet
+		-- left to the titles and the buttons), a label in the title's gold,
+		-- what's typed or chosen (a box's, a dropdown's, the letter's sender)
+		-- in white
+		band_text = { label_font = DiabolicFont_Narrow14, label = { .86, .76, .6 },
+			value_font = DiabolicFont_Narrow14, value = { 1, 1, 1 },
+			label_button_font = DiabolicFont_Narrow14Gold }, -- a button's text as a label (a list's All)
 		-- the title on the window's top edge (the band left to its own
 		-- controls): Diablo III's skills pane's plate, its art 512 x 70 in
 		-- its 512 x 128 file, its name in its inlay
@@ -40,7 +44,7 @@ Engine:NewStaticConfig("Blizzard", {
 			rows = 70/128,
 			width = 300,
 			height = 41,
-			y = -13, -- its middle, from the window's top: on the iron
+			y = -15, -- its middle, from the window's top: on the iron (its spikes on the frame's edge)
 			text_width = 200, -- its inlay (between its crosses)
 			-- longer titles: the plate wider (its plain stretches between its
 			-- ends and its middle drawn out), up to `max_width`
@@ -75,8 +79,8 @@ Engine:NewStaticConfig("Blizzard", {
 			size = 20,
 			pushed_color = { .7, .7, .7 },
 			label_gap = 4, -- its label from it
-			font = DiabolicFont_SansBold12, -- its label, in the title's gold
-			stacked = { size = 16, font = DiabolicFont_SansBold10 } -- two one under the other in a band: within its height
+			font = DiabolicFont_Narrow14, -- its label (the band's)
+			stacked = { size = 16, font = DiabolicFont_Narrow12 } -- two one under the other in a band: within its height
 		},
 		-- a window's painted background over its stone, inside the iron, as
 		-- big as the window without stretching (cut to its shape): Diablo
@@ -166,7 +170,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- first 32px), turned; `cut`, the part of it drawn (the bar and its
 		-- shadows), `bar`, the bar itself (from the window's edge, as drawn)
 		footer_rail = { cut = { 12, 28 }, bar = { 15, 24 } },
-		hint = { font = DiabolicFont_SansRegular12, color = { .5, .45, .4 }, inset = 2 }, -- an edit box's label pale in it while it's empty: its look, from its left
+		hint = { font = DiabolicFont_Narrow14, color = { .5, .45, .4 }, inset = 2 }, -- an edit box's label pale in it while it's empty: its look, from its left
 		-- the rules every window's layout follows (windows.lua), and that
 		-- /dui layout checks: buttons on a row (LineRows), the band's
 		-- controls (LineBand), the content's room
@@ -185,6 +189,12 @@ Engine:NewStaticConfig("Blizzard", {
 			dark = path .. [[textures\DiabolicUI_D3_Material_BarDark.tga]],
 			header = path .. [[textures\DiabolicUI_D3_Material_Header.tga]] -- a zone's title with its seal
 		},
+		-- a list's chosen row, as Diablo III's blacksmith's: faintly lit, in
+		-- a thin orange box
+		chosen_row = { fill = { 1, .55, .15, .12 }, line = { 1, .6, .15, .9 }, width = 1 },
+		-- a list's + and - (its headers', its collapse-all): Diablo III's red
+		-- squares (the tracker's), the plus on top, the minus under it
+		expander = { texture = path .. [[textures\DiabolicUI_ExpandCollapseButton_22x21.tga]], plus = { 0, .5, 0, .5 }, minus = { 0, .5, .5, 1 } },
 		-- what the window shows, a little darker
 		panel = {
 			backdrop = {
@@ -630,6 +640,16 @@ Engine:NewStaticConfig("Blizzard", {
 		pad = 4, -- a zone's parts in from its edges
 		toolbar = 24, -- Browse's row under the band: Reset, the results' count, the page arrows
 		arrow_gap = 4,
+		-- Browse's page numbers between its arrows, as Diablo III's: small
+		-- dark squares in a thin bronze line, the page shown boxed in orange
+		pages = {
+			shown = 5, size = 18, font = DiabolicFont_Narrow12,
+			backdrop = { bgFile = [[Interface\ChatFrame\ChatFrameBackground]], edgeFile = [[Interface\ChatFrame\ChatFrameBackground]],
+				edgeSize = 1, insets = { left = 1, right = 1, top = 1, bottom = 1 } },
+			color = { 0, 0, 0, .7 },
+			border = { .45, .36, .22, 1 }, text_color = { .72, .68, .62 },
+			shown_border = { 1, .6, .15, 1 }, shown_color = { 1, 1, 1 }
+		},
 		row_gap = 2, -- the first row under its column names
 		header_height = 19,
 		-- each page's results: their rows and scroll bar `width` wide in all
@@ -683,7 +703,7 @@ Engine:NewStaticConfig("Blizzard", {
 			arrow_width = 20, -- the arrow's room (its art: about 20 of its 25)
 			gap = 10, -- between the parts (from a box's plate); the subject stretches up to the postage
 			postage_right = 48, -- the sum's right, from the band's (left of Postal's menu)
-			hint_font = DiabolicFont_SansRegular12,
+			hint_font = DiabolicFont_Narrow14,
 			hint_color = { .5, .45, .4 }, -- as the spellbook's search's
 			hint_inset = 2 -- from the box's left, with its text
 		},
@@ -758,7 +778,6 @@ Engine:NewStaticConfig("Blizzard", {
 		spec_size = 28,
 		spec_offset = 12, -- from the band's left
 		spec_gap = 6,
-		status_color = { .86, .76, .6 }, -- the spec's state, in the band's middle
 		button_height = 22,
 		activate_padding = 12, -- the Activate button's text from its ends
 		glyph_sigil = "summoningrune", -- the glyphs' tab's emblem (window.banner's; the trees' show their icons)
@@ -1150,7 +1169,7 @@ Engine:NewStaticConfig("Blizzard", {
 		raid_headers_raise = 19, -- its column names up: 6 over its zone
 		raid_roles_top = -128, -- its roles' row, from the window's top (Blizzard's)
 		comment_size = { 250, 20 },
-		comment_hint_font = DiabolicFont_SansRegular12,
+		comment_hint_font = DiabolicFont_Narrow14,
 		comment_hint_color = { .5, .45, .4 }, -- "Type your comment here.", pale in it (the mail's hints')
 		comment_right = 21, -- the Raid Browser's comment button, from its right (List Me is 21 from its left)
 		button_margin = 34, -- the Dungeon Finder's buttons, from the window's sides, on its stone foot
@@ -1213,7 +1232,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- the search box (in the band), the spells found on the book's pages
 		search_size = { 160, 20 },
 		search_inset = 0, -- its text from its edges (its plate reaches past them)
-		search_font = DiabolicFont_SansRegular12,
+		search_font = DiabolicFont_Narrow14, -- (the bands' and their hints')
 		search_hint_color = { .5, .45, .4 },
 		-- the pages at the right of the book's foot (from the window's top),
 		-- as the companions': back, the page, on
@@ -1225,7 +1244,10 @@ Engine:NewStaticConfig("Blizzard", {
 		-- iron frame, under the tabs), the model in a panel on top, the
 		-- companions in three columns of four under it
 		cover_insets = { 23, 97, 23, 23 }, -- up to the iron frame and the tabs' strip: nothing of the book shows past it
-		bare_pages = { PROFESSIONS = true }, -- no band on those (nothing in it): the cover up to the iron
+		bare_pages = { PROFESSIONS = true, CRITTER = true, MOUNT = true }, -- no band on those: the cover up to the iron
+		companions_rise = 24, -- the companions' page that much higher there (it was laid out under the band)
+		selected_name_font = DiabolicFont_HeaderRegular16, -- the chosen one's name over its pane, in the title's gold
+		selected_name_gap = 6,
 		bare_cover_top = 23, -- from the iron's top (the window's, lowered by its hanging tabs' room)
 		cover_level = 6, -- over the spells' buttons and their cooldowns
 		-- paintings, cut to the cover's shape), darkened under the panels
@@ -1240,7 +1262,6 @@ Engine:NewStaticConfig("Blizzard", {
 		model_inset = 4,
 		summon_size = { 140, 24 },
 		summon_bottom = 6, -- Summon and the turning arrows, in from the model's foot (the arrows from its corners)
-		selected_name_font = DiabolicFont_HeaderRegular14,
 		companions = { 12, -185 }, -- the first slot, in the cover
 		companion_slot_size = { 156, 45 },
 		companion_pitch = { 162, 48 },
@@ -1552,21 +1573,24 @@ Engine:NewStaticConfig("Blizzard", {
 				bottom = 4
 			}
 		},
-		-- the menus (dropdowns, right-click) as Diablo III's: its stone in
-		-- its iron, a groove between lines, the hovered one in a red box;
-		-- parts of one atlas ({ x, y, width, height })
+		-- the menus (dropdowns, right-click) in the tooltips' box, the lines
+		-- tight, the hovered and the chosen one on Diablo III's red bar; the
+		-- submenus' arrow from the menu atlas ({ x, y, width, height })
 		menu = {
 			texture = path .. [[textures\DiabolicUI_D3_Menu.tga]],
 			atlas_size = 512,
-			art = { 264, 382 }, -- the panel, at the atlas's top left
-			corner = 16, -- its iron, in the art
-			edge = 12, -- its iron on screen
+			edge = 6, -- the box's border (the tooltips' backdrop's insets)
 			offsets = { 0, 0, 0, 0 }, -- past the menu's sides (Blizzard's lines are 15 in)
-			groove = { 0, 400, 244, 8 },
-			groove_height = 4,
-			highlight = { 0, 416, 244, 31 },
 			arrow = { 256, 400, 16, 19 },
-			arrow_size = { 9, 11 }
+			arrow_size = { 9, 11 },
+			chosen_color = { .56, .1, .04, .9 }, -- the hovered and the chosen line's bar (Diablo III's red), the check out of sight
+			-- a line's text (an addon's own font kept): the tooltips' Friz
+			-- Quadrata, white (one disabled grey), a title in Exocet, gold;
+			-- `font_size` as the tooltips show it (they're in our UI's scale);
+			-- `text_pad` from the border on both sides, more room right of it for
+			-- a submenu's arrow, an icon or a color swatch
+			fonts = { [9] = DiabolicFont_Menu9, [10] = DiabolicFont_Menu10, [11] = DiabolicFont_Menu11, [12] = DiabolicFont_Menu, [13] = DiabolicFont_Menu13, [14] = DiabolicFont_Menu14 }, font_size = 12, text_pad = 8, arrow_room = 16, icon_room = 20,
+			text_color = { 1, 1, 1 }, title_color = { .86, .76, .6 }, disabled_color = { .5, .47, .44 }
 		},
 		dummy_backdrop_color = { 0, 0, 0, .95 },
 		dummy_backdrop_border_color = { .3, .3, .3, 1 },
