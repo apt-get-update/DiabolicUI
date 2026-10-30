@@ -20,6 +20,8 @@ image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 * 🎲 *Roll window* for master loot, off by default.
 * 🎨 *GShade kit*: a darker Diablo look in one script (see below).
 
+image::docs/screenshots/character.webp[The character window: gear around the model, resistances on the pentagram]
+
 == 🧩 Recommended Addons
 
 [cols="1,3",options="header"]
