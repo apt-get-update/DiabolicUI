@@ -77,17 +77,16 @@ than a line have their own file in `modules/blizzard/` (code).
 
 == Fix a visual bug
 
-A button in the wrong place, a part too big or too small, in any window.
+A button in the wrong place, in any window.
 
-. In game: `/dui layout`, open the window (and each of its tabs), `/reload`.
-  The game writes `WTF/Account/<you>/SavedVariables/DiabolicUI.lua`: under
-  `DiabolicUI_Layout`, each window's `parts` list every named part, with
-  its place and size, and what `/dui layout` found wrong:
-+
-----
-["SendMailMailButton"] = "Button at 266,412 size 80x22 \"Send\"; BOTTOMRIGHT on SendMailFrame BOTTOMRIGHT -86,93",
-----
-. Add a line to `adjust` at the top of `settings/blizzard.lua`, with that name:
+. In game: `/dui adjust`. Hover the part: an orange box shows it, with its name.
+. Drag it, or nudge it with the arrow keys (1 px, 10 with Shift).
+  Right-click puts it back. Escape stops.
+. `/reload`: the game writes what you moved to
+  `WTF/Account/<you>/SavedVariables/DiabolicUI.lua`, under
+  `DiabolicUI_Layout` → `adjust`.
+. Copy those lines into `adjust` at the top of `settings/blizzard.lua`, so
+  every player gets them:
 +
 [source,lua]
 ----
@@ -95,9 +94,14 @@ places = { SendMailMailButton = { "BOTTOMRIGHT", "SendMailFrame", "BOTTOMRIGHT",
 sizes = { SendMailMailButton = { 90, 22 } },
 ----
 +
-A place is `{ point, the frame it's placed on, that frame's point, x, y }`:
-higher `x` goes right, higher `y` goes up. A size is `{ width, height }`.
-. `/reload` and check again. It stays put even when Blizzard's code moves it.
+A place is `{ point, the frame it's placed on, that frame's point, x, y }`
+(higher `x` goes right, higher `y` goes up); a size is `{ width, height }`.
+Sizes are only changed there, not in game.
+
+A part stays where you put it, even when Blizzard's code moves it again.
+To find a part's name without moving it: `/dui layout`, open the window,
+`/reload`: each window's `parts` in the same file list them all, with
+their place and size.
 
 == Put a part in a window's red band
 

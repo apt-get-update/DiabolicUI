@@ -206,7 +206,7 @@ function TestLayoutAudit:test_parts_moved_and_resized_by_name()
 	places.AdjustLater = { "TOP", "AdjustFrame", "TOP", 0, -50 }
 	places.AdjustSecure = { "TOPLEFT", "AdjustFrame", "TOPLEFT", 5, -5 }
 	client:EnterCombat()
-	adjust:OnEnable()
+	adjust:Apply()
 	lu.assertEquals({ part:GetPoint() }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 12 })
 	lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { 90, 24 })
 	lu.assertEquals((secure:GetPoint()), "CENTER")
@@ -224,6 +224,69 @@ function TestLayoutAudit:test_parts_moved_and_resized_by_name()
 	later:SetPoint("CENTER")
 	client:FireEvent("ADDON_LOADED", "Something")
 	lu.assertEquals({ later:GetPoint() }, { "TOP", frame, "TOP", 0, -50 })
+	assertClean(client)
+end
+
+-- /dui adjust: the part hovered boxed with its name, dragged or nudged with
+-- the arrow keys, saved to copy into the settings; right-click puts it
+-- back, Escape stops; never in combat.
+function TestLayoutAudit:test_parts_moved_in_game()
+	boot()
+	local adjust = client:GetModule("Blizzard: Adjust")
+	local frame = window("MoveFrame")
+	frame:Show()
+	local part = button(frame, "MoveButton", 10, 10, 80, "Okay")
+	local saved = _G.DiabolicUI_Layout.adjust.places
+	slash("adjust")
+	client:Hover(part)
+	client:Tick(0.1)
+	local box = adjust.Box
+	lu.assertEquals(box:IsShown(), 1)
+	lu.assertEquals(box.Name:GetText(), "MoveButton")
+	-- dragged 30 right, 20 up
+	local scale = part:GetEffectiveScale()
+	client.world.cursor = { 100, 100 }
+	client:RunScript(box, "OnMouseDown", "LeftButton")
+	client.world.cursor = { 100 + 30 * scale, 100 + 20 * scale }
+	client:Tick(0.1)
+	client:RunScript(box, "OnMouseUp", "LeftButton")
+	lu.assertEquals({ part:GetPoint() }, { "BOTTOMLEFT", frame, "BOTTOMLEFT", 40, 30 })
+	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 40, 30 })
+	lu.assertEquals(said()[#said()], "MoveButton: BOTTOMLEFT on MoveFrame BOTTOMLEFT 40, 30")
+	-- nudged: 1, or 10 with Shift
+	client:RunScript(box, "OnKeyDown", "LEFT")
+	client.world.modifiers.shift = true
+	client:RunScript(box, "OnKeyDown", "UP")
+	client.world.modifiers.shift = false
+	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 40 })
+	-- right-click: back to the settings' (none: left until a reload)
+	client:RunScript(box, "OnMouseDown", "RightButton")
+	lu.assertNil(saved.MoveButton)
+	-- one placed by two points on an unnamed frame: from its named
+	-- parent's top left, its size kept
+	local holder = CreateFrame("Frame", nil, frame)
+	holder:SetAllPoints(frame)
+	local wide = CreateFrame("Button", "MoveWide", frame)
+	wide:SetPoint("TOPLEFT", holder, "TOPLEFT", 20, -50)
+	wide:SetPoint("BOTTOMRIGHT", holder, "TOPRIGHT", -20, -70)
+	client:RunScript(box, "OnLeave")
+	client:Hover(wide)
+	client:Tick(0.1)
+	client:RunScript(box, "OnKeyDown", "RIGHT")
+	lu.assertEquals(saved.MoveWide, { "TOPLEFT", "MoveFrame", "TOPLEFT", 21, -50 })
+	lu.assertEquals(_G.DiabolicUI_Layout.adjust.sizes.MoveWide, { 360, 20 })
+	lu.assertEquals({ wide:GetWidth(), wide:GetHeight() }, { 360, 20 })
+	-- Escape stops
+	client:RunScript(box, "OnKeyDown", "ESCAPE")
+	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
+	-- not in combat; stopped as it starts
+	client:EnterCombat()
+	slash("adjust")
+	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
+	client:LeaveCombat()
+	slash("adjust")
+	client:EnterCombat()
+	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
 	assertClean(client)
 end
 
