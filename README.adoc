@@ -20,8 +20,7 @@ What's new in each version: https://github.com/apt-get-update/DiabolicUI/release
 == ✨ Features
 
 * Action bars between Diablo III's health and mana orbs, with cooldown times.
-* Unit frames, nameplates, chat, minimap, tooltips and quest tracker in Diablo III's look.
-* Blizzard's windows (character, spellbook, professions, mail, auction house...) restyled in the spirit of Diablo III.
+* Unit frames, nameplates, chat, minimap, tooltips, quest tracker and Blizzard's windows (character, spellbook, auction house...) restyled in the spirit of Diablo III.
 * A specialization button that also swaps gear set, action bars and macros.
 * An optional roll window for master loot.
 
