@@ -27,6 +27,23 @@ What's new in each version: https://github.com/apt-get-update/DiabolicUI/release
 
 image::docs/screenshots/character.webp[The character window]
 
+[cols="2*a",frame=none,grid=none]
+|===
+|image::docs/screenshots/specialization.webp[Specializations page]
+|image::docs/screenshots/talent-skull.webp[Specialization button]
+|image::docs/screenshots/raid.webp[Raid frames by group]
+|image::docs/screenshots/party.webp[Party frames]
+|image::docs/screenshots/move-mode.webp[Unlock Frames (/dui move)]
+|image::docs/screenshots/loot.webp[Loot window]
+|===
+
+[cols="3*a",frame=none,grid=none]
+|===
+|image::docs/screenshots/tooltip.webp[Item tooltip]
+|image::docs/screenshots/reputation-hover.webp[Reputation bar tooltip]
+|image::docs/screenshots/chat-loot.webp[Shorter loot messages]
+|===
+
 == Recommended addons
 
 https://github.com/sloan-008/Questie-335[Questie],
