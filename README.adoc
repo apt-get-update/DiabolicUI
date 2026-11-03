@@ -23,6 +23,7 @@ What's new in each version: https://github.com/apt-get-update/DiabolicUI/release
 * Unit frames, nameplates, chat, minimap, tooltips, quest tracker and Blizzard's windows (character, spellbook, auction house...) restyled in the spirit of Diablo III.
 * A specialization button that also swaps gear set, action bars and macros.
 * An optional roll window for master loot.
+* Quality of life: GearScore on gear and players, a stance button, clickable web links, shorter chat messages, frames you can move and a UI scale.
 
 image::docs/screenshots/character.webp[The character window]
 
