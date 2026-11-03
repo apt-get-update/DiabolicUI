@@ -5,6 +5,17 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 -- Blizzard elements we can't replace, like the gamemenu,
 -- ...or Blizzard elements we can't be arsed to replace, like the rest. 
 Engine:NewStaticConfig("Blizzard", {
+	-- Any part moved or resized by its name, last, whatever placed it
+	-- (modules/blizzard/adjust.lua). `places`: { point, the frame it's
+	-- placed on, that frame's point, x, y } (x right, y up); `sizes`:
+	-- { width, height }. The names: /dui layout saves each window's parts,
+	-- with where they are, in DiabolicUI_Layout (WTF, after a /reload).
+	--   places = { SendMailMailButton = { "BOTTOMRIGHT", "SendMailFrame", "BOTTOMRIGHT", -10, 12 } },
+	--   sizes = { SendMailMailButton = { 90, 22 } },
+	adjust = {
+		places = {},
+		sizes = {}
+	},
 	-- Diablo III's window, for the Blizzard windows given its look
 	-- (modules/blizzard/windows.lua): a stone window in an iron frame, a title
 	-- bar, darker panels in bronze lines, red and dark buttons and tabs, and

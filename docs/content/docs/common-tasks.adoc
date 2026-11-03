@@ -77,28 +77,27 @@ than a line have their own file in `modules/blizzard/` (code).
 
 == Fix a visual bug
 
-A button in the wrong place, a part too big, Blizzard's old art showing
-through, text too dark to read.
+A button in the wrong place, a part too big or too small, in any window.
 
-. Open the window, `/dui layout`: it names what's off in the chat
-  (overlaps, text outside its panel, buttons out of line).
-. `/fstack` on the faulty part: its name.
-. In the window's `panels` line, the key that fixes it:
+. In game: `/dui layout`, open the window (and each of its tabs), `/reload`.
+  The game writes `WTF/Account/<you>/SavedVariables/DiabolicUI.lua`: under
+  `DiabolicUI_Layout`, each window's `parts` list every named part, with
+  its place and size, and what `/dui layout` found wrong:
 +
-|===
-| Bug | Key | Example
-
-| Misplaced | `places` | `places = { ItsButton = { "BOTTOMLEFT", "BankFrame", "BOTTOMLEFT", 19, 116 } }`
-| Wrong size | `sizes` | `sizes = { ItsList = { 298, 208 } }` (width, height)
-| Old art left | `hide` | `hide = { "ItsOldBorder" }`
-| Dark text on our dark stone | `pale` | `pale = true`
-| Whole window off | `insets`, `offset_y` | see above
-|===
-. `/reload` and check again.
-
-A window with its own file in `modules/blizzard/` takes its numbers from its
-own table in `settings/blizzard.lua` instead (`mail`, `auction`...): find
-the value as in <<change-a-size-a-gap-or-a-place,Change a size>> above.
+----
+["SendMailMailButton"] = "Button at 266,412 size 80x22 \"Send\"; BOTTOMRIGHT on SendMailFrame BOTTOMRIGHT -86,93",
+----
+. Add a line to `adjust` at the top of `settings/blizzard.lua`, with that name:
++
+[source,lua]
+----
+places = { SendMailMailButton = { "BOTTOMRIGHT", "SendMailFrame", "BOTTOMRIGHT", -10, 12 } },
+sizes = { SendMailMailButton = { 90, 22 } },
+----
++
+A place is `{ point, the frame it's placed on, that frame's point, x, y }`:
+higher `x` goes right, higher `y` goes up. A size is `{ width, height }`.
+. `/reload` and check again. It stays put even when Blizzard's code moves it.
 
 == Put a part in a window's red band
 

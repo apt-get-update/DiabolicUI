@@ -11,7 +11,8 @@
 -- (at a pixel-perfect UI scale). While it's on (kept on after a reload),
 -- each window is checked as it shows and each second (for its pages), each
 -- problem said once and saved (DiabolicUI_Layout, by window: its last
--- session's). /dui layout all opens each window that needs no NPC, page by
+-- session's), with each named part and where it is (to move it by name:
+-- settings/blizzard.lua adjust). /dui layout all opens each window that needs no NPC, page by
 -- page, to check them all at once.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Audit", "LOW")
@@ -45,7 +46,7 @@ local date = _G.date
 
 local kit, layout
 local Said, Fine -- problems already said (by text), windows found right (by frame)
-local Saved -- DiabolicUI_Layout: { resolution, unit, windows = { [name] = { checked, problems } } }
+local Saved -- DiabolicUI_Layout: { resolution, unit, windows = { [name] = { checked, problems, parts } } }
 local Seen = {} -- the windows saved this session (their last session's problems replaced)
 local Shown = {} -- when each window shown was first seen so (by window)
 local SETTLE_TIME = .5 -- a window checked once shown that long (an addon's lays itself out over a few frames)
@@ -656,7 +657,7 @@ local Save = function(name, line)
 	local windows = Saved.windows
 	if (not Seen[name]) then
 		Seen[name] = true
-		windows[name] = { problems = {} }
+		windows[name] = { problems = {}, parts = {} }
 	end
 	local entry = windows[name]
 	entry.checked = date("%Y-%m-%d %H:%M")
@@ -670,8 +671,55 @@ local Save = function(name, line)
 	end
 end
 
+-- The named parts shown in `frame` and all it holds (frames and texts), not
+-- in `skip` (the window), by name.
+local CollectNamed
+CollectNamed = function(frame, skip, found)
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		local name = region:GetName()
+		if name and region:IsObjectType("FontString") and region:IsVisible() then
+			found[name] = region
+		end
+	end
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		if (child ~= skip) and child:IsVisible() then
+			local name = child:GetName()
+			if name then
+				found[name] = child
+			end
+			CollectNamed(child, skip, found)
+		end
+	end
+end
+
+-- Where a part is, for whoever moves it (settings/blizzard.lua adjust): its
+-- kind and text, its box from `frame`'s top left (x right, y down) and its
+-- first anchor, in `frame`'s units.
+local Describe = function(part, frame)
+	local left, bottom, right, top = kit.Edges(part)
+	local frameLeft, _, _, frameTop = kit.Edges(frame)
+	if not (left and frameLeft) then
+		return
+	end
+	local scale = frame:GetEffectiveScale()
+	local line = string_format("%s at %.0f,%.0f size %.0fx%.0f", part:GetObjectType(),
+		(left - frameLeft) / scale, (frameTop - top) / scale, (right - left) / scale, (top - bottom) / scale)
+	local text = part.GetText and part:GetText()
+	if text and (text ~= "") and (not string_find(text, "|")) then
+		line = line .. " \"" .. text .. "\""
+	end
+	local point, relative, relativePoint, x, y = part:GetPoint()
+	if point then
+		line = line .. string_format("; %s on %s %s %.0f,%.0f", point, (relative and relative:GetName()) or "UIParent",
+			relativePoint, x or 0, y or 0)
+	end
+	return line
+end
+
 -- `window` checked: what breaks the rules said once each, or that
--- nothing does (once).
+-- nothing does (once). Its parts saved with where they are.
 local Check = function(window)
 	local frame = window.Frame
 	local scale = window:GetEffectiveScale()
@@ -680,6 +728,11 @@ local Check = function(window)
 	local found
 	local title = frame:GetName() or L["a window"]
 	Save(title)
+	local named, parts = {}, Saved.windows[title].parts
+	CollectNamed(frame, window, named)
+	for name, part in pairs(named) do
+		parts[name] = Describe(part, frame)
+	end
 	local say = function(text, ...)
 		found = true
 		local problem = string_format(text, ...)

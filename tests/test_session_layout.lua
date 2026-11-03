@@ -174,6 +174,12 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	slash("layout")
 	lu.assertEquals(said()[2], "AuditFine: nothing breaks the rules.")
 	lu.assertNotNil(_G.DiabolicUI_Layout.windows.AuditFine.checked)
+	-- its named parts saved, where they are (from its top left, y down)
+	-- and how they're placed, to move them by name
+	local parts = _G.DiabolicUI_Layout.windows.AuditFine.parts
+	lu.assertEquals(parts.AuditPage, "Frame at 30,80 size 340x150; TOPLEFT on AuditFine TOPLEFT 30,-80")
+	lu.assertStrContains(parts.AuditInk, "FontString at 40,90 size ")
+	lu.assertStrContains(parts.AuditInk, " \"In ink\"; TOPLEFT on AuditFine TOPLEFT 40,-90")
 	-- said once
 	client:Tick(1.1)
 	lu.assertEquals(#said(), 2)
@@ -181,6 +187,43 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	slash("layout")
 	lu.assertEquals(said()[3], "Layout check off.")
 	lu.assertFalse(checking())
+	assertClean(client)
+end
+
+-- settings/blizzard.lua adjust (modules/blizzard/adjust.lua): a part moved
+-- and resized by its name, kept so whatever moves it again; one made later
+-- once an addon loads; a protected one after combat.
+function TestLayoutAudit:test_parts_moved_and_resized_by_name()
+	boot()
+	local adjust = client:GetModule("Blizzard: Adjust")
+	local frame = window("AdjustFrame")
+	local part = button(frame, "AdjustButton", 10, 10, 80, "Okay")
+	local secure = CreateFrame("Button", "AdjustSecure", frame, "SecureActionButtonTemplate")
+	secure:SetPoint("CENTER")
+	local places, sizes = adjust.config.places, adjust.config.sizes
+	places.AdjustButton = { "BOTTOMRIGHT", "AdjustFrame", "BOTTOMRIGHT", -10, 12 }
+	sizes.AdjustButton = { 90, 24 }
+	places.AdjustLater = { "TOP", "AdjustFrame", "TOP", 0, -50 }
+	places.AdjustSecure = { "TOPLEFT", "AdjustFrame", "TOPLEFT", 5, -5 }
+	client:EnterCombat()
+	adjust:OnEnable()
+	lu.assertEquals({ part:GetPoint() }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 12 })
+	lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { 90, 24 })
+	lu.assertEquals((secure:GetPoint()), "CENTER")
+	-- moved or resized again by its own code: put back
+	part:ClearAllPoints()
+	part:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10, 10)
+	lu.assertEquals({ part:GetPoint() }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 12 })
+	part:SetSize(80, 22)
+	lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { 90, 24 })
+	-- the protected one once combat ends
+	client:LeaveCombat()
+	lu.assertEquals({ secure:GetPoint() }, { "TOPLEFT", frame, "TOPLEFT", 5, -5 })
+	-- one made later (an addon's) once an addon loads
+	local later = CreateFrame("Frame", "AdjustLater", frame)
+	later:SetPoint("CENTER")
+	client:FireEvent("ADDON_LOADED", "Something")
+	lu.assertEquals({ later:GetPoint() }, { "TOP", frame, "TOP", 0, -50 })
 	assertClean(client)
 end
 

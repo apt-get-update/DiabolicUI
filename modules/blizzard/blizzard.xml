@@ -2,6 +2,7 @@
 
 <Script file='anchors.lua'/>
 <Script file='windows.lua'/>
+<Script file='adjust.lua'/>
 <Script file='layout-audit.lua'/>
 <Script file='achievements.lua'/>
 <Script file='auction.lua'/>
