@@ -1,6 +1,6 @@
 ---
 title: "Modules & Widgets"
-weight: 3
+weight: 7
 ---
 
 = Modules & Widgets

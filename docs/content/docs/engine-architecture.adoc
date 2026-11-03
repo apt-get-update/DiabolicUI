@@ -1,6 +1,6 @@
 ---
 title: "Engine"
-weight: 2
+weight: 6
 ---
 
 = Engine
@@ -12,6 +12,20 @@ same way:
 ----
 local ADDON, Engine = ...
 ----
+
+== Load order
+
+`DiabolicUI.toc` loads one XML file per folder, and each XML lists its
+`.lua` files in order.
+
+++++
+{{< mermaid >}}
+flowchart TD
+    toc["📜 DiabolicUI.toc"] --> locale["🌐 locale"] --> engine["⚙️ engine"]
+    engine --> data["📦 data"] --> handlers["🧰 handlers"] --> media["🎨 media"]
+    media --> settings["📐 settings"] --> defaults["💾 defaults"] --> modules["🧩 modules"]
+{{< /mermaid >}}
+++++
 
 == The pieces
 

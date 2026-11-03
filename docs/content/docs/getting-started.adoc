@@ -18,19 +18,7 @@ Lua 5.1). There's no build step: the game reads the files as they are.
 | `hugo`, `asciidoctor` (optional) | This site: `hugo server` from `docs/`
 |===
 
-== Load order
-
-`DiabolicUI.toc` loads one XML file per folder, and each XML lists its
-`.lua` files in order.
-
-++++
-{{< mermaid >}}
-flowchart TD
-    toc["📜 DiabolicUI.toc"] --> locale["🌐 locale"] --> engine["⚙️ engine"]
-    engine --> data["📦 data"] --> handlers["🧰 handlers"] --> media["🎨 media"]
-    media --> settings["📐 settings"] --> defaults["💾 defaults"] --> modules["🧩 modules"]
-{{< /mermaid >}}
-++++
+== Folders
 
 |===
 | Folder | Holds
@@ -79,6 +67,7 @@ changed texture needs a full client restart.
 
 == Next
 
-link:{{< relref "common-tasks" >}}[Common Tasks] for the usual changes; the
-link:{{< relref "engine-architecture" >}}[Engine] page, then the
-link:{{< relref "conventions" >}}[Rules].
+To maintain the addon: link:{{< relref "common-tasks" >}}[Common Tasks],
+link:{{< relref "testing" >}}[Testing], link:{{< relref "release" >}}[Release].
+To write code: the link:{{< relref "engine-architecture" >}}[Engine] page,
+then the link:{{< relref "conventions" >}}[Rules].

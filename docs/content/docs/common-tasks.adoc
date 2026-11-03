@@ -46,34 +46,78 @@ TrinketMenu line in `GetMovers` (`modules/menu/movers.lua`).
 
 == Restyle a Blizzard window
 
-. Add a line to `panels` in `settings/blizzard.lua`: `{ frame = "BankFrame", ... }`.
-  The keys are listed in the comment above the table; copy a window close to yours.
-. `/reload`, open the window, run `/dui layout`.
-. Write its own file in `modules/blizzard/` only when the table can't do it.
+Most Blizzard windows are restyled from one line each in the `panels` table of
+`settings/blizzard.lua`. The bank's:
+
+[source,lua]
+----
+{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4,
+  title = "BankFrameTitleText", close = "BankCloseButton" },
+----
+
+|===
+| Key | Means
+
+| `frame` | The window's name (`/fstack` shows it)
+| `addon` | The addon it comes with, if it loads later (`Blizzard_TrainerUI`)
+| `insets` | How far our window reaches past it: left, top, right, bottom
+| `offset_y` | Moves it down (negative) to line up with the other windows
+| `title` or `text` | Its title: its own text's name, or a Blizzard string (`"TRADE"`)
+| `close` | Its close button's name
+| `band` | `false`: no red band under the title
+| `background` | The painted picture behind it: `slabs`, `lava`, `zoltun`, `artisan`...
+| `tabs` | Its tabs' names without the number (`"MacroFrameTab"`)
+| `footer` | The highest button of its foot (`"MacroExitButton"`)
+|===
+
+More keys are explained in the comment above the table. To restyle a new
+window, copy the line of one that looks like it, change the names, then
+`/reload`, open it, and `/dui layout` to see what's off. Windows that need more
+than a line have their own file in `modules/blizzard/` (code).
+
+== Fix a visual bug
+
+A button in the wrong place, a part too big, Blizzard's old art showing
+through, text too dark to read.
+
+. Open the window, `/dui layout`: it names what's off in the chat
+  (overlaps, text outside its panel, buttons out of line).
+. `/fstack` on the faulty part: its name.
+. In the window's `panels` line, the key that fixes it:
++
+|===
+| Bug | Key | Example
+
+| Misplaced | `places` | `places = { ItsButton = { "BOTTOMLEFT", "BankFrame", "BOTTOMLEFT", 19, 116 } }`
+| Wrong size | `sizes` | `sizes = { ItsList = { 298, 208 } }` (width, height)
+| Old art left | `hide` | `hide = { "ItsOldBorder" }`
+| Dark text on our dark stone | `pale` | `pale = true`
+| Whole window off | `insets`, `offset_y` | see above
+|===
+. `/reload` and check again.
+
+A window with its own file in `modules/blizzard/` takes its numbers from its
+own table in `settings/blizzard.lua` instead (`mail`, `auction`...): find
+the value as in <<change-a-size-a-gap-or-a-place,Change a size>> above.
 
 == Put a part in a window's red band
 
 In its `panels` line: `band = { left = { "ItsSearchBox" }, right = { "ItsButton" } }`.
-The band lines them up and gives them its fonts. From code:
-`kit:LineBand(header, parts, fromRight)`.
+The band lines them up and gives them its fonts.
 
-== The window kit
+== Style another addon
 
-`modules/blizzard/windows.lua` (the module `Blizzard: Windows`, called `kit` in
-the window files). The calls you'll use most:
+. `/fstack` on its window: the frame's name (`GroupBulletinBoardFrame`...).
+. Add a `panels` line in `settings/blizzard.lua` with its addon's folder name:
+  `{ frame = "ItsFrame", addon = "ItsAddon", panel = false, insets = { 24, 40, 24, 36 } }`.
+  It's styled as soon as that addon loads. `panel = false` when the addon
+  places its window itself (most do).
+. `/reload`, open it, `/dui layout`, then adjust `insets` (left, top, right,
+  bottom: how far our window reaches past its frame).
 
-|===
-| Call | Does
-
-| `CreateWindow(frame, insets)` | The stone window in its iron frame, around a Blizzard frame
-| `SetTitle(header, text)` | The title on its plate
-| `StyleTab`, `HangTabs` | Tabs as hanging banners
-| `StyleButtons(frame)` | Every button in it red, with one font that fits them all
-| `StyleDropDown`, `StyleEditBox`, `StyleCheckBox`, `StyleScrollBars` | Each control in our look
-| `AddPanel`, `AddZone`, `AddParchment` | Slate, leather or parchment behind a part
-| `LineBand(header, parts)` | Parts in the red band
-| `StyleExpanders`, `LightRow` | A list's +/− buttons and its chosen row
-|===
+Parts it adds only once shown go under `late` (Auctionator's line is the
+example). When the table isn't enough, it gets its own file like
+`modules/blizzard/bulletinboard.lua`: that's code.
 
 == Add an option
 

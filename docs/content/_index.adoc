@@ -9,18 +9,28 @@ bookToC: false
 A Diablo III style UI for the *WotLK 3.3.5a* client, built on its own small
 framework (the Engine), without Ace3 or oUF.
 
+== Maintain the addon (no Lua needed)
+
 |===
 | Read | To learn
 
-| link:{{< relref "docs/getting-started" >}}[Getting Started] | The folders, the load order, your first change
-| link:{{< relref "docs/common-tasks" >}}[Common Tasks] | Change a size, a gap or a place; restyle a window
-| link:{{< relref "docs/engine-architecture" >}}[Engine] | Modules, handlers, the lifecycle, events, saved settings
+| link:{{< relref "docs/getting-started" >}}[Getting Started] | The folders, the tools, the work loop
+| link:{{< relref "docs/common-tasks" >}}[Common Tasks] | Change a size, a gap or a place; restyle a window or another addon
+| link:{{< relref "docs/testing" >}}[Testing] | Run the tests, read a failure
+| link:{{< relref "docs/release" >}}[Release] | Publish a new version
+|===
+
+== Write code
+
+|===
+| Read | To learn
+
+| link:{{< relref "docs/settings-and-locale" >}}[Settings & Locale] | Adding an option and its text
+| link:{{< relref "docs/engine-architecture" >}}[Engine] | Load order, modules, handlers, the lifecycle, events, saved settings
 | link:{{< relref "docs/modules-and-widgets" >}}[Modules & Widgets] | How a feature file is laid out
 | link:{{< relref "docs/unitframe-elements" >}}[Unit Frame Elements] | Health, power, auras... as reusable pieces
-| link:{{< relref "docs/settings-and-locale" >}}[Settings & Locale] | Adding an option and its text
-| link:{{< relref "docs/modules" >}}[Modules Map] | What each folder under `modules/` does
+| link:{{< relref "docs/modules" >}}[Modules Map] | What each folder under `modules/` does, the window kit
 | link:{{< relref "docs/conventions" >}}[Rules] | The house rules, most of them checked by tests
-| link:{{< relref "docs/testing" >}}[Testing] | Running and writing tests
 | link:{{< relref "docs/raid-rolls" >}}[Raid Rolls] | The roll window and the boss's loot list
 | link:{{< relref "docs/case-study-loot-window" >}}[Case Study: Loot Window] | Why we build our own frames
 |===

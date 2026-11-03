@@ -1,6 +1,6 @@
 ---
 title: "Modules Map"
-weight: 6
+weight: 9
 ---
 
 = Modules Map
@@ -96,7 +96,7 @@ flowchart LR
 |===
 | File | Does
 
-| `windows.lua` | The window kit: stone, iron, red band, title plate, tabs, buttons, panels (link:{{< relref "common-tasks#the-window-kit" >}}[its calls])
+| `windows.lua` | The window kit: stone, iron, red band, title plate, tabs, buttons, panels (below)
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
 | `character.lua`, `spellbook.lua`, `mail.lua`, `auction.lua`... | One file per window that needs more than that table
 | `layout-audit.lua` | `/dui layout`: what's off in the open windows
@@ -108,6 +108,24 @@ flowchart LR
 The rest are small, one Blizzard piece each, named after it (`gamemenu.lua`,
 `popups.lua`, `worldmap.lua`...). To restyle a window, see
 link:{{< relref "common-tasks#restyle-a-blizzard-window" >}}[Common Tasks].
+
+=== The window kit
+
+`modules/blizzard/windows.lua` (the module `Blizzard: Windows`, called `kit` in
+the window files). The calls you'll use most:
+
+|===
+| Call | Does
+
+| `CreateWindow(frame, insets)` | The stone window in its iron frame, around a Blizzard frame
+| `SetTitle(header, text)` | The title on its plate
+| `StyleTab`, `HangTabs` | Tabs as hanging banners
+| `StyleButtons(frame)` | Every button in it red, with one font that fits them all
+| `StyleDropDown`, `StyleEditBox`, `StyleCheckBox`, `StyleScrollBars` | Each control in our look
+| `AddPanel`, `AddZone`, `AddParchment` | Slate, leather or parchment behind a part
+| `LineBand(header, parts)` | Parts in the red band
+| `StyleExpanders`, `LightRow` | A list's +/− buttons and its chosen row
+|===
 
 Moving Blizzard's secure frames in combat causes taint: wrap that code with
 `Module:Wrap` (link:{{< relref "engine-architecture#events" >}}[Engine]).

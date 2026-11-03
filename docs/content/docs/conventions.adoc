@@ -1,6 +1,6 @@
 ---
 title: "Rules"
-weight: 7
+weight: 10
 ---
 
 = Rules

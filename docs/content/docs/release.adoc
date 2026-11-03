@@ -1,0 +1,41 @@
+---
+title: "Release"
+weight: 4
+---
+
+= Release
+
+Publishing a new version, say 1.6.7. The game closed: the tests use a lot of
+memory.
+
+. *Version*: in `DiabolicUI.toc`, `## Version: 1.6.7-Release`.
+. *Tests*: `tests/run_all.sh`. All must pass.
+. *Coverage*: `tests/coverage/run.sh --readme` (about 5 minutes). It updates
+  the badge in `README.adoc`. Below 100%, the lines it lists need a test.
+. *Commit and tag*:
++
+[source,bash]
+----
+git commit -am "Release 1.6.7: what changed, in a few words."
+git tag v1.6.7
+git push github master v1.6.7
+----
+. *Zip*: only what the game needs, in a `DiabolicUI/` folder:
++
+[source,bash]
+----
+git archive --format=zip --prefix=DiabolicUI/ -o DiabolicUI-1.6.7.zip v1.6.7 \
+  data defaults DiabolicUI.toc engine handlers LICENSE.txt locale media modules README.adoc settings
+----
+. *Notes*: a short `notes.md`: what's new for players, then how to install.
+  Look at the last release for the shape.
+. *GitHub*:
++
+[source,bash]
+----
+gh release create v1.6.7 DiabolicUI-1.6.7.zip --title "DiabolicUI 1.6.7" --notes-file notes.md --verify-tag
+----
+. *Warperia*: upload the same zip on
+  https://warperia.com/addon-wotlk/diabolicui-2/[its page], version
+  `1.6.7-Release`, the notes as the changelog.
+. *Discord*: a short post with both links.

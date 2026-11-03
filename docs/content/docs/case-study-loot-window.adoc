@@ -1,6 +1,6 @@
 ---
 title: "Case Study: Loot Window"
-weight: 9
+weight: 12
 ---
 
 = Case Study: Loot Window

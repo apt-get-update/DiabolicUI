@@ -1,6 +1,6 @@
 ---
 title: "Testing"
-weight: 8
+weight: 3
 ---
 
 = Testing
@@ -16,7 +16,25 @@ tests/run_all.sh                                           # all of them
 ----
 
 The `+test_session_*.lua+` files are slow: run the ones you touched, one at a
-time, and the whole suite before a commit.
+time, and the whole suite before a commit. Not while you're playing: they
+use a lot of memory.
+
+== When a test fails
+
+It prints the test's name, the file and line, and what it expected against
+what it got:
+
+----
+1) TestMail.test_the_letters_attachments_alone
+tests/test_session_windows.lua:834: expected: 12, actual: 14
+----
+
+* *You changed a value in `settings/` on purpose* and the test checked the
+  old one: update the number in the test at that line.
+* *You didn't expect it to change:* your edit broke something. Undo it, or
+  look at that test to see what it checks (its comments say).
+* *An `ERROR:` with a Lua file and line:* the code crashed; the same would
+  happen in game.
 
 == The layers
 
