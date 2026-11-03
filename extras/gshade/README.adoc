@@ -4,7 +4,7 @@ A darker Diablo look for WoW 3.3.5a: colour grading and a blur on the distance, 
 
 image::screenshot.webp[Everlook with the Sanctuary Lightroom preset: the distance blurred, the UI untouched]
 
-== Install
+== 🚀 Install
 
 . Close the game.
 . From this folder: `python3 install.py` (Windows: `py install.py`). If DiabolicUI isn't in your WoW's `Interface/AddOns`, give the WoW folder: `python3 install.py /path/to/wow`.
@@ -13,7 +13,7 @@ image::screenshot.webp[Everlook with the Sanctuary Lightroom preset: the distanc
 
 The script installs GShade, the shaders it lacks, REST (keeps the effects off the UI) and our presets, and sets WoW's multisampling to 1x. What it replaces goes to `GShade-backups/`. Options: `--force`, `--skip-gshade` (already have GShade), `--dry-run`.
 
-== Presets
+== 🎨 Presets
 
 * *Kino* (at startup): filmic, brighter, warm and purple tones, light grain.
 * *Sanctuary Lightroom*: warm highlights, cool shadows, less colour.
@@ -21,7 +21,7 @@ The script installs GShade, the shaders it lacks, REST (keeps the effects off th
 
 The blur's strength is *fLightDoF_Amount* in *LightDoF_Far*. Once happy, tick *Performance Mode* (Home tab) for speed.
 
-== Troubleshooting
+== 🔧 Troubleshooting
 
 *UI blurry or tinted.* In *Add-ons → Reshade Effect Shader Toggler*, the group *World before the UI* must be *Active*. Missing? Run the script again with `--force`.
 
@@ -31,7 +31,7 @@ The blur's strength is *fLightDoF_Amount* in *LightDoF_Far*. Once happy, tick *P
 
 *Don't use UIMask*: it leaves the UI's silhouette when the UI hides. REST replaces it.
 
-== Credits
+== 📜 Credits
 
 * https://github.com/Mortalitas/GShade[GShade] by Marot Satil, downloaded from its releases.
 * ReShade Effect Shader Toggler (MIT, `ReshadeEffectShaderToggler-LICENSE.txt`): Frans Bouma, alex and facboy; built from https://github.com/apt-get-update/ReshadeEffectShaderToggler[our fork].

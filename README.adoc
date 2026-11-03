@@ -9,7 +9,7 @@ A full Diablo III-style UI for the WoW 3.3.5a client: Goldpaw's DiabolicUI, fork
 
 image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 
-== Install
+== 🚀 Install
 
 . Download the zip from https://github.com/apt-get-update/DiabolicUI/releases/latest[the latest release].
 . Unzip it into `Interface/AddOns/`.
@@ -17,7 +17,7 @@ image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 
 What's new in each version: https://github.com/apt-get-update/DiabolicUI/releases[releases].
 
-== Features
+== ✨ Features
 
 * Action bars between Diablo III's health and mana orbs, with cooldown times.
 * Unit frames, nameplates, chat, minimap, tooltips and quest tracker in Diablo III's look.
@@ -44,7 +44,7 @@ image::docs/screenshots/character.webp[The character window]
 |image::docs/screenshots/chat-loot.webp[Shorter loot messages]
 |===
 
-== Recommended addons
+== 🧩 Recommended addons
 
 https://github.com/sloan-008/Questie-335[Questie],
 https://github.com/paokkerkir/Mapster[Mapster],
@@ -54,14 +54,14 @@ https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3
 https://github.com/bkader/Masque-WoTLK[Masque] with https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic],
 https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara].
 
-== Optional: GShade
+== 🎨 Optional: GShade
 
 A darker Diablo look, the UI left sharp. See link:extras/gshade/README.adoc[extras/gshade].
 
-== Development
+== 🛠️ Development
 
 Developer docs: https://apt-get-update.github.io/DiabolicUI/[apt-get-update.github.io/DiabolicUI]. Tests run offline (`tests/run_all.sh`), see `tests/README.md`.
 
-== Credits
+== 📜 Credits
 
 Lars "Goldpaw" Norberg (DiabolicUI, DiabolicUI2, the minimap, ChatCleaner), https://github.com/Hrishi29x/DiabolicUI[Hrishi29x] (the first 3.3.5 fork), GearScoreLite, Kui_Nameplates, Masque_Diabolic, and Blizzard Entertainment (Diablo III's art and the Exocet font). Questie, TrinketMenu, Immersion, AdiBags and BiS-Tooltip Renewed are restyled or read from; their code stays theirs. GShade credits: link:extras/gshade/README.adoc[its README].
