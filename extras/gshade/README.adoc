@@ -1,14 +1,14 @@
 = GShade for DiabolicUI
 
-A darker Diablo look for WoW 3.3.5a: colour grading and a blur on the distance, the UI left sharp. Tested on ChromieCraft under Linux (Proton); not yet tried on Windows.
+A darker Diablo look for WoW 3.3.5a: colour grading and a blur on the distance, the UI left sharp. For Linux (Wine, Proton), tested on ChromieCraft.
 
 image::screenshot.webp[Everlook with the Sanctuary Lightroom preset: the distance blurred, the UI untouched]
 
 == 🚀 Install
 
 . Close the game.
-. From this folder: `python3 install.py` (Windows: `py install.py`). If DiabolicUI isn't in your WoW's `Interface/AddOns`, give the WoW folder: `python3 install.py /path/to/wow`.
-. *Linux only*: in winecfg → Libraries, set `d3d9` to *Native then Builtin* (or `WINEDLLOVERRIDES=d3d9=n,b`), and run `winetricks d3dcompiler_47` in the game's prefix.
+. From this folder: `python3 install.py`. If DiabolicUI isn't in your WoW's `Interface/AddOns`, give the WoW folder: `python3 install.py /path/to/wow`.
+. In winecfg → Libraries, set `d3d9` to *Native then Builtin* (or `WINEDLLOVERRIDES=d3d9=n,b`), and run `winetricks d3dcompiler_47` in the game's prefix.
 . Start the game. The first start is slow while the effects compile.
 
 The script installs GShade, the shaders it lacks, REST (keeps the effects off the UI) and our presets, and sets WoW's multisampling to 1x. What it replaces goes to `GShade-backups/`. Options: `--force`, `--skip-gshade` (already have GShade), `--dry-run`.
