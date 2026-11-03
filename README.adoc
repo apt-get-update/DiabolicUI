@@ -5,115 +5,46 @@
 image:https://img.shields.io/badge/coverage-100.0%25-brightgreen["Line coverage 100.0% on 2026-10-31",height=20]
 // coverage:end
 
-Well met, traveler. I am but a humble tinkerer who took DiabolicUI, forked it for 3.3.5, and mended what small things I could along my travels through Northrend. Nothing grand, just a few fixes and features gathered on the road and shared freely, should they serve you as well as they have served me. The full list lies below.
+A full Diablo III-style UI for the WoW 3.3.5a client: Goldpaw's DiabolicUI, forked and extended for 3.3.5.
 
 image::docs/screenshots/main.webp[DiabolicUI in Winterspring]
 
-== 🆕 New in 1.6.6
+== Install
 
-* 🪟 *Blizzard's windows in Diablo III's look*: stone in an iron frame, tabs as hanging banners, parchment, slate and leather behind each part. The spellbook is an open book, Immersion is Diablo III's conversation box, and the character window shows your resistances on a blood-red pentagram.
-* 💰 *Auction house* on one grid with numbered pages, Auctionator's tabs included.
-* 🏆 *Battleground rewards* on their own panel.
-* 📜 *Menus* in the tooltip's box: a red bar on the hovered and chosen line, the unit's name in its colour.
-* 🏷️ *Nameplates* with casts and your auras (no need for Kui_Nameplates).
-* ⏱️ *Cooldown times* on the action buttons (no need for OmniCC).
-* 🎲 *Roll window* for master loot, off by default.
-* 🎨 *GShade kit*: a darker Diablo look in one script (see below).
+. Download the zip from https://github.com/apt-get-update/DiabolicUI/releases/latest[the latest release].
+. Unzip it into `Interface/AddOns/`.
+. In game: `/dui config` for the options, `/dui move` to move frames.
 
-image::docs/screenshots/character.webp[The character window: gear around the model, resistances on the pentagram]
+What's new in each version: https://github.com/apt-get-update/DiabolicUI/releases[releases].
 
-== 🧩 Recommended Addons
+== Features
 
-[cols="1,3",options="header"]
-|===
-|Addon |What for
-|https://github.com/sloan-008/Questie-335[Questie] |📜 quests, quest log and tracker
-|https://github.com/paokkerkir/Mapster[Mapster] |🗺️ world map
-|https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver] |💾 action bar profiles, one per specialization
-|https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu] |💍 trinket switching, styled by DiabolicUI
-|https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB] |🎒 minimap buttons in one bag
-|https://github.com/bkader/Masque-WoTLK[Masque] + https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic] |🔘 Diablo buttons for other addons (Bagnon...)
-|https://github.com/bkader/SharedMedia[SharedMedia] + https://github.com/GoldpawsStuff/SharedMedia_ExocetBlizzard[SharedMedia_ExocetBlizzard] |🔤 the Diablo font in other addons
-|https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara] |🔍 sharper fonts
-|===
+* Action bars between Diablo III's health and mana orbs, with cooldown times.
+* Unit frames, nameplates, chat, minimap, tooltips and quest tracker in Diablo III's look.
+* Blizzard's windows (character, spellbook, professions, mail, auction house...) in stone and iron.
+* A specialization button that also swaps gear set, action bars and macros.
+* An optional roll window for master loot.
 
-== 🚀 Getting Started
+image::docs/screenshots/character.webp[The character window]
 
-Drop the `DiabolicUI` folder in `Interface/AddOns/`. Everything is set in `/dui config`.
+== Recommended addons
 
-* `/dui move`: move the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu; right-drag the minimap to resize it. Also the *Unlock Frames* button in `/dui config`.
+https://github.com/sloan-008/Questie-335[Questie],
+https://github.com/paokkerkir/Mapster[Mapster],
+https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver],
+https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu],
+https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB],
+https://github.com/bkader/Masque-WoTLK[Masque] with https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic],
+https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara].
 
-image::docs/screenshots/move-mode.webp[Unlock Frames: every movable frame highlighted]
+== Optional: GShade
 
-=== 🎨 Optional: GShade
-
-A darker Diablo look: colour grading, a blur on the distance, the UI left sharp.
-
-. Close the game, then run `python3 extras/gshade/install.py` from the `DiabolicUI` folder (Windows: `py extras\gshade\install.py`).
-. *Linux only*: set `d3d9` to *Native then Builtin* in winecfg, and run `winetricks d3dcompiler_47` in the game's prefix.
-. Start the game. The first start is slow while the effects compile.
-
-Presets, in-game checks and troubleshooting: link:extras/gshade/README.adoc[extras/gshade].
-
-== ✨ Features
-
-* ⚔️ *Action bars* between Diablo III health and mana orbs, one to three rows plus side bars, with the cooldown's time left on each button (no need for OmniCC).
-* 💀 *Specialization button* on the skull: switches spec, and each spec can bring its gear set, Action Bar Saver profile, bar count and macros.
-* 👼 *Stance button* on the angel: shows your current form and switches it.
-* 🛡️ *Unit frames* for you, your target, focus, party and raid (grouped, with role icons); class colors and 3D portraits as options.
-* 🏷️ *Nameplates* with the Diablo border, in the unit's reaction colour, with casts and your auras and their time left (no need for Kui_Nameplates).
-* 💬 *Chat* that fades and slides in, with clickable web links, shorter system messages and Diablo chat bubbles.
-* 🗡️ *Diablo III item tooltips* that follow your cursor.
-* 📊 *GearScore* (GearScoreLite's count and colors) on gear, on players' tooltips, in the character window and under the inspect window's model.
-* 🧭 *Minimap* with zone text, mail and Dungeon Finder buttons built in.
-* 📜 *Quest tracker* that fades and moves; Blizzard's in Exocet, Questie's styled to match.
-* 🪟 *Diablo III windows*: Blizzard's windows (character, spellbook, professions, guild, mail, merchant, achievements and more) in stone and iron, with banner tabs and red buttons. The character tab in two columns: your gear around a tall model, and the GearScore, your stats and the equipment manager beside it.
-* 🎨 *Restyled Blizzard frames*: popups, Dungeon Finder, Escape menu, bags, loot window, world map, battleground scores.
-* 💍 *TrinketMenu* restyled to match.
-* 🎲 *Roll window* (optional, off by default): the master looter's rolls with their time left and Main Spec / Off Spec / Pass buttons, the boss's loot in a list, and a BiS line with BiS-Tooltip Renewed. Turn it on in `/dui config` → AddOns, and try it solo with *Fake Loot Roll* (Units page).
-
-[cols="2*a",frame=none,grid=none]
-|===
-|image::docs/screenshots/specialization.webp[Specializations page]
-|image::docs/screenshots/talent-skull.webp[Specialization button]
-|image::docs/screenshots/raid.webp[Raid frames by group]
-|image::docs/screenshots/party.webp[Party frames]
-|===
-
-[cols="4*a",frame=none,grid=none]
-|===
-|image::docs/screenshots/tooltip.webp[Item tooltip]
-|image::docs/screenshots/reputation-hover.webp[Reputation bar tooltip]
-|image::docs/screenshots/loot.webp[Loot window]
-|image::docs/screenshots/chat-loot.webp[Shorter loot messages]
-|===
+A darker Diablo look, the UI left sharp. See link:extras/gshade/README.adoc[extras/gshade].
 
 == Development
 
-📖 *Developer documentation*: https://apt-get-update.github.io/DiabolicUI/[apt-get-update.github.io/DiabolicUI]: how the addon is built, the house rules and how to test, with diagrams. Its source is in `docs/`.
+Developer docs: https://apt-get-update.github.io/DiabolicUI/[apt-get-update.github.io/DiabolicUI]. Tests run offline (`tests/run_all.sh`), see `tests/README.md`.
 
-The Lua code is covered by an offline test suite (LuaUnit, plain Lua 5.1 with fake WoW APIs, no game client needed) - see `tests/README.md` for how it works.
+== Credits
 
-[source,bash]
-----
-tests/run_all.sh                 # run every test
-tests/coverage/run.sh            # run them with line coverage
-tests/coverage/run.sh --readme   # ...and refresh the badge above
-----
-
-== 📜 Credits
-
-This addon stands on other people's work. Thank you all:
-
-[cols="1,3",options="header"]
-|===
-|Who |For
-|Lars "Goldpaw" Norberg |DiabolicUI itself, DiabolicUI2 (its art and layouts), the minimap (MIT) and ChatCleaner, which inspired our chat cleaner
-|https://github.com/Hrishi29x/DiabolicUI[Hrishi29x] |the 3.3.5 fork this one started from
-|GearScoreLite |the GearScore formula and its colors
-|Kui_Nameplates |how our nameplates read the game's plates, and the look of their auras
-|Masque_Diabolic |the icon border in the item tooltips
-|Questie, TrinketMenu, Immersion, AdiBags, BiS-Tooltip Renewed |the addons we restyle or read from; their code stays theirs
-|Blizzard Entertainment |Diablo III's art and the Exocet font
-|GShade kit |credits in link:extras/gshade/README.adoc[its README]
-|===
+Lars "Goldpaw" Norberg (DiabolicUI, DiabolicUI2, the minimap, ChatCleaner), https://github.com/Hrishi29x/DiabolicUI[Hrishi29x] (the first 3.3.5 fork), GearScoreLite, Kui_Nameplates, Masque_Diabolic, and Blizzard Entertainment (Diablo III's art and the Exocet font). Questie, TrinketMenu, Immersion, AdiBags and BiS-Tooltip Renewed are restyled or read from; their code stays theirs. GShade credits: link:extras/gshade/README.adoc[its README].
