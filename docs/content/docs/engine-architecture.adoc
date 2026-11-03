@@ -109,15 +109,6 @@ Module.UpdateButtonLayout = Module:Wrap(function(self) ... end)
 
 === How saving works
 
-++++
-{{< mermaid >}}
-flowchart LR
-    disk["💾 DiabolicUI_DB<br/>from disk"] --> merge["🔀 merged over<br/>the defaults"] --> live["📋 live tables"]
-    live --> mod["🧩 self.db"]
-    live -- "at logout" --> disk
-{{< /mermaid >}}
-++++
-
 * `ParseSavedVariables` swaps in new tables *before* `OnInit`: read config in
   `OnInit`, never at file scope.
 * A new key gets its default for everyone. A removed config just stays in the

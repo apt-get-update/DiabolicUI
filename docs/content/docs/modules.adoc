@@ -96,32 +96,18 @@ flowchart LR
 |===
 | File | Does
 
-| `windows.lua` | Diablo III's window in parts: stone window in its iron frame, red stained-glass band, title plate, banner tabs, red and dark buttons, slate, parchment, leather and iron panels
-| `character.lua`, `spellbook.lua`, `talents.lua`, `achievements.lua`, `questlog.lua`, `social.lua`, `mail.lua`, `merchant.lua`, `lfg.lua` | One Blizzard window each, built from `windows.lua`. Art, fonts and places only: Blizzard's code is left as it is
-| `spellbook-professions.lua`, `spellbook-search.lua` | The spellbook's professions page and search box (Pretty GUI's, in Diablo III's look)
-| `panels.lua` | Every other window (bank, trade, flight map, gossip, quest givers, professions...), from the `panels` table in the settings
-| `auction.lua` | The auction house's pages on one grid (the `auction` table in the settings): Browse's toolbar, then each page's columns on slate. Blizzard's Browse, Bids and Auctions pages and Auctionator's; the window itself is `panels.lua`'s
-| `tradeskill.lua`, `trainer.lua` | The professions' and class trainer's lists on parchment
-| `stacksplit.lua` | The stack split and coin boxes
-| `layout-audit.lua` | `/dui layout`: checks the open windows against the layout's rules and says in the chat what breaks them
-| `adibags.lua`, `bulletinboard.lua`, `immersion.lua`, `trinketmenu.lua` | Other addons' windows in our look: AdiBags, Group Bulletin Board, Immersion's dialogue box, TrinketMenu's buttons
-| `lootframe.lua` | Our own loot window (link:{{< relref "case-study-loot-window" >}}[case study])
-| `rollwindow.lua`, `lootpreview.lua` | The master looter's rolls and the boss's loot (link:{{< relref "raid-rolls" >}}[Raid Rolls])
-| `tooltips.lua`, `itemtooltips.lua`, `spelltooltips.lua` | Tooltip and menu backdrops, Diablo III style item and ability tooltips
-| `gearscore.lua` | GearScore (GearScoreLite's formula): items, players' tooltips, the character and inspect windows
-| `containers.lua` | Bag, bank and character slots: quality border and glow
-| `selljunk.lua` | The merchant's Sell Junk button
-| `popups.lua` | Popups and the Dungeon Finder's
-| `gamemenu.lua` | The Escape menu
-| `styling.lua` | Tints the character frame, the world map and the bags (unless a bag addon replaces them)
-| `fonts.lua`, `worldmap.lua` | Fonts, map zone names
-| `watchframe.lua`, `questietracker.lua` | Blizzard's and Questie's quest trackers, Diablo III style
-| `anchors.lua`, `mirrortimers.lua`, `totembar.lua` | Durability, vehicle seats, breath timers, totem bar
+| `windows.lua` | The window kit: stone, iron, red band, title plate, tabs, buttons, panels (link:{{< relref "common-tasks#the-window-kit" >}}[its calls])
+| `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
+| `character.lua`, `spellbook.lua`, `mail.lua`, `auction.lua`... | One file per window that needs more than that table
+| `layout-audit.lua` | `/dui layout`: what's off in the open windows
+| `tooltips.lua`, `itemtooltips.lua`, `spelltooltips.lua` | Tooltips and menus
+| `lootframe.lua`, `rollwindow.lua`, `lootpreview.lua` | Loot (link:{{< relref "case-study-loot-window" >}}[case study], link:{{< relref "raid-rolls" >}}[Raid Rolls])
+| `adibags.lua`, `immersion.lua`, `trinketmenu.lua`... | Other addons in our look
 |===
 
-To give a window our look, add it to `panels` in `settings/blizzard.lua`
-first; write its own file only when it needs more than a frame and panels.
-Then open it in game and run `/dui layout`.
+The rest are small, one Blizzard piece each, named after it (`gamemenu.lua`,
+`popups.lua`, `worldmap.lua`...). To restyle a window, see
+link:{{< relref "common-tasks#restyle-a-blizzard-window" >}}[Common Tasks].
 
 Moving Blizzard's secure frames in combat causes taint: wrap that code with
 `Module:Wrap` (link:{{< relref "engine-architecture#events" >}}[Engine]).
