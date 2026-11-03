@@ -13,6 +13,7 @@ framework (the Engine), without Ace3 or oUF.
 | Read | To learn
 
 | link:{{< relref "docs/getting-started" >}}[Getting Started] | The folders, the load order, your first change
+| link:{{< relref "docs/common-tasks" >}}[Common Tasks] | Change a size, a gap or a place; restyle a window
 | link:{{< relref "docs/engine-architecture" >}}[Engine] | Modules, handlers, the lifecycle, events, saved settings
 | link:{{< relref "docs/modules-and-widgets" >}}[Modules & Widgets] | How a feature file is laid out
 | link:{{< relref "docs/unitframe-elements" >}}[Unit Frame Elements] | Health, power, auras... as reusable pieces

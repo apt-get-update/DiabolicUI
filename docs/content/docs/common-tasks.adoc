@@ -1,0 +1,89 @@
+---
+title: "Common Tasks"
+weight: 2
+---
+
+= Common Tasks
+
+The changes asked for most, step by step.
+
+== Change a size, a gap or a place
+
+Paddings, gaps, sizes, positions, fonts and colours are values in
+`settings/`, one file per area: `blizzard.lua` (the windows), `unitframes.lua`,
+`actionbars.lua`, `chat.lua`, `tooltips.lua`... Change the value, `/reload`.
+
+To find the right value:
+
+. In game, `/fstack` and hover the thing: it shows the frame's name
+  (`MailFrame`, `BrowseNextPageButton`...).
+. Search the code for that name (`modules/`): next to it, the code reads
+  `config.something` or `spec.something`.
+. Search `settings/` for `something`. A comment beside it says what it does.
+
+In `settings/blizzard.lua`, the `window` table is shared by every window, and
+each window has its own table (`mail`, `auction`, `spellbook`...) for what's
+only its own. For example:
+
+|===
+| To change | Value
+
+| The space kept at each end of a button's text | `window.button_text_margin`
+| The foot's gap over its buttons | `window.footer_margin`
+| The gap between the Escape menu's buttons | `gamemenu.button_spacing`
+| Where the durability figure sits | `durability.position`
+|===
+
+A `position` reads `{ point, frame, its point, x, y }`; `UICenter` is our frame
+in the middle of the screen. Higher `x` goes right, higher `y` goes up.
+
+After a window change, open it and run `/dui layout`: it lists in the chat
+what's now off (overlaps, text outside its panel, buttons out of line).
+
+*Moving a frame just for you, in game:* `/dui move` (the minimap, the chat,
+the menu buttons, the quest tracker, TrinketMenu). To add one there, copy the
+TrinketMenu line in `GetMovers` (`modules/menu/movers.lua`).
+
+== Restyle a Blizzard window
+
+. Add a line to `panels` in `settings/blizzard.lua`: `{ frame = "BankFrame", ... }`.
+  The keys are listed in the comment above the table; copy a window close to yours.
+. `/reload`, open the window, run `/dui layout`.
+. Write its own file in `modules/blizzard/` only when the table can't do it.
+
+== Put a part in a window's red band
+
+In its `panels` line: `band = { left = { "ItsSearchBox" }, right = { "ItsButton" } }`.
+The band lines them up and gives them its fonts. From code:
+`kit:LineBand(header, parts, fromRight)`.
+
+== The window kit
+
+`modules/blizzard/windows.lua` (the module `Blizzard: Windows`, called `kit` in
+the window files). The calls you'll use most:
+
+|===
+| Call | Does
+
+| `CreateWindow(frame, insets)` | The stone window in its iron frame, around a Blizzard frame
+| `SetTitle(header, text)` | The title on its plate
+| `StyleTab`, `HangTabs` | Tabs as hanging banners
+| `StyleButtons(frame)` | Every button in it red, with one font that fits them all
+| `StyleDropDown`, `StyleEditBox`, `StyleCheckBox`, `StyleScrollBars` | Each control in our look
+| `AddPanel`, `AddZone`, `AddParchment` | Slate, leather or parchment behind a part
+| `LineBand(header, parts)` | Parts in the red band
+| `StyleExpanders`, `LightRow` | A list's +/− buttons and its chosen row
+|===
+
+== Add an option
+
+See link:{{< relref "settings-and-locale" >}}[Settings & Locale].
+
+== Reload or restart?
+
+|===
+| You changed | Then
+
+| A `.lua` or `.xml` file that was already there | `/reload`
+| A texture, or added a new file | Restart the game
+|===

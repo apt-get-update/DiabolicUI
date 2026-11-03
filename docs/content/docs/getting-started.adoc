@@ -63,7 +63,8 @@ lua5.1 tests/test_chat_cleaner.lua      # the tests for what you touched
 tests/run_all.sh                        # everything, before a commit
 ----
 
-Texture changes need a full client restart, not just `/reload`.
+`/reload` picks up edits to existing `.lua` and `.xml` files. A new file or a
+changed texture needs a full client restart.
 
 == Useful commands in game
 
@@ -78,5 +79,6 @@ Texture changes need a full client restart, not just `/reload`.
 
 == Next
 
-Read the link:{{< relref "engine-architecture" >}}[Engine] page, then the
+link:{{< relref "common-tasks" >}}[Common Tasks] for the usual changes; the
+link:{{< relref "engine-architecture" >}}[Engine] page, then the
 link:{{< relref "conventions" >}}[Rules].

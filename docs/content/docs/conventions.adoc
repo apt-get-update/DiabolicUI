@@ -34,12 +34,16 @@ Most of them are checked by a test, so you'll hear about it.
 | `UnitIsTapDenied(unit)` | `Engine.UnitIsTapDenied(unit)`
 | `GameTooltip:IsForbidden()` | Nothing: never forbidden on 3.3.5
 | `FriendsMicroButton`, `GuildMicroButton` | `SocialsMicroButton`
+| `font:GetFont()`, `font:CopyFontObject(other)` on a `Font` | Nothing: one XML `<Font>` per size you need
 |===
 
 * *Don't backfill.* Other addons check names like `GetNumGroupMembers` to
   guess the client. Put shared helpers on `Engine` in `engine/wotlk-helpers.lua`.
 * *A missing event fails silently.* Registering it works, it just never fires.
 * *A missing UI string is `nil`.* Add it as a locale key instead.
+* *The fake client is kinder than 3.3.5.* Its `Font` objects have `GetFont`
+  and `CopyFontObject`; the real ones don't, so a passing test can still
+  crash in game.
 * *Beware hidden backfills.* A later function may only "work" because another
   addon defines it.
 
