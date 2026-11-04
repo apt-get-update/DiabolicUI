@@ -12,7 +12,7 @@
 -- each window is checked as it shows and each second (for its pages), each
 -- problem said once and saved (DiabolicUI_Layout, by window: its last
 -- session's), with each named part and where it is (to move it by name:
--- settings/positions.lua). /dui layout all opens each window that needs no NPC, page by
+-- settings/positions.lua; how many, and how many new, said). /dui layout all opens each window that needs no NPC, page by
 -- page, to check them all at once.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Audit", "LOW")
@@ -46,6 +46,7 @@ local date = _G.date
 
 local kit, layout
 local Said, Fine -- problems already said (by text), windows found right (by frame)
+local Counted -- the windows whose parts were counted (by name)
 local Saved -- DiabolicUI_Layout: { resolution, unit, windows = { [name] = { checked, problems, parts } } }
 local Seen = {} -- the windows saved this session (their last session's problems replaced)
 local Shown = {} -- when each window shown was first seen so (by window)
@@ -661,7 +662,8 @@ local Save = function(name, line)
 	local windows = Saved.windows
 	if (not Seen[name]) then
 		Seen[name] = true
-		windows[name] = { problems = {}, parts = {} }
+		-- (its parts kept: a page seen in another session still listed)
+		windows[name] = { problems = {}, parts = (windows[name] and windows[name].parts) or {} }
 	end
 	local entry = windows[name]
 	entry.checked = date("%Y-%m-%d %H:%M")
@@ -734,8 +736,13 @@ local Check = function(window)
 	Save(title)
 	local named, parts = {}, Saved.windows[title].parts
 	CollectNamed(frame, window, named)
+	local new = 0
 	for name, part in pairs(named) do
-		parts[name] = Entry(part)
+		local entry = Entry(part)
+		if entry then
+			new = new + ((type(parts[name]) == "table") and 0 or 1)
+			parts[name] = entry
+		end
 	end
 	local say = function(text, ...)
 		found = true
@@ -755,6 +762,16 @@ local Check = function(window)
 	if (not found) and (not Fine[frame]) then
 		Fine[frame] = true
 		Print((frame:GetName() or L["a window"]) .. ": " .. L["nothing breaks the rules."])
+	end
+	-- its parts counted once, and again when new ones show (a page, a tab):
+	-- none new, it's all been seen
+	if (new > 0) or (not Counted[title]) then
+		Counted[title] = true
+		local total = 0
+		for _, entry in pairs(parts) do
+			total = total + ((type(entry) == "table") and 1 or 0)
+		end
+		Print(title .. ": " .. string_format(L["%d parts saved (%d new)."], total, new))
 	end
 end
 
@@ -791,7 +808,7 @@ local SaveScreen = function()
 end
 
 Module.Start = function(self)
-	Said, Fine = {}, {}
+	Said, Fine, Counted = {}, {}, {}
 	SaveScreen()
 	-- (those already shown: settled)
 	for _, window in ipairs(kit.Windows) do

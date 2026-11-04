@@ -180,12 +180,19 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- (as settings/positions.lua takes them; a text keeps its own size)
 	lu.assertEquals(parts.AuditPage, { "TOPLEFT", "AuditFine", "TOPLEFT", 30, -80, 340, 150, kind = "Frame" })
 	lu.assertEquals(parts.AuditInk, { "TOPLEFT", "AuditFine", "TOPLEFT", 40, -90, kind = "FontString", text = "In ink" })
-	-- said once
+	-- its parts counted, once
+	lu.assertEquals(said()[3], "AuditFine: 3 parts saved (3 new).")
 	client:Tick(1.1)
-	lu.assertEquals(#said(), 2)
+	lu.assertEquals(#said(), 3)
+	-- again when new ones show (a page, a tab)
+	text(frame, "AuditMore", 40, -120, "More"):SetTextColor(0, 0, 0)
+	client:Tick(1.1)
+	lu.assertEquals(said()[4], "AuditFine: 4 parts saved (1 new).")
+	client:Tick(1.1)
+	lu.assertEquals(#said(), 4)
 	-- off again
 	slash("layout")
-	lu.assertEquals(said()[3], "Layout check off.")
+	lu.assertEquals(said()[5], "Layout check off.")
 	lu.assertFalse(checking())
 	assertClean(client)
 end
