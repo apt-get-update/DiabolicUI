@@ -88,22 +88,25 @@ is listed in `settings/positions.lua`, one line each, commented out:
 That's `{ point, the frame it's placed on, that frame's point, x, y, width,
 height }` (higher `x` goes right, higher `y` goes up). To move or resize a
 part: remove its `--`, change the numbers, `/reload`. Without the width and
-height it keeps its size. A line without `--` keeps its part there for good,
-whatever else moves it, so uncomment only what you fix.
+height it keeps its size; `{ width, height }` alone resizes it where it is.
+A line without `--` keeps its part there for good, whatever else moves it,
+so uncomment only what you fix. Say why in a `--` line over it: the notes
+are kept.
 
 *Or move it in game:*
 
 . `/dui adjust`. Hover the part: an orange box shows it, with its name.
+  Tab picks the next part under the cursor (bigger; Shift+Tab: smaller).
 . Drag it, or nudge it with the arrow keys (1 px, 10 with Shift).
   Ctrl + arrows resize it (right and up: wider, taller).
-  Right-click puts it back. Escape stops.
+  Right-click puts it back (`/dui adjust reset`: all of them). Escape stops.
 . `/reload`, then from the addon's folder: `lua5.1 tools/positions.lua`.
   It writes what you moved into `settings/positions.lua`, without `--`.
 
 *Filling the list:* `/dui layout all` opens every window that needs no NPC
 (open the others yourself while it's on: mail, auction house, bank, vendor,
 trainer...), `/reload`, then `lua5.1 tools/positions.lua`. It rewrites the
-file from what was seen, keeping the lines without `--`.
+file from what was seen, keeping the lines without `--` and their notes.
 
 == Put a part in a window's red band
 

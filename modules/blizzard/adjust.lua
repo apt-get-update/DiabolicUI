@@ -15,10 +15,12 @@ local kit
 local _G = _G
 local math_huge = math.huge
 local math_max = math.max
+local ipairs = ipairs
 local pairs = pairs
 local select = select
 local string_find = string.find
 local string_format = string.format
+local table_sort = table.sort
 local unpack = unpack
 
 -- WoW API
@@ -37,9 +39,21 @@ local Applying -- (our own moves, not to be undone)
 local NUDGE, BIG_NUDGE = 1, 10 -- an arrow key's move, with Shift
 
 -- A part's place and size, { point, relative frame's name, its point, x,
--- y, width, height } (the size if given): moved in game, else the settings'.
+-- y, width, height } (the size if given; { width, height }: a size only):
+-- moved in game, else the settings'.
 Module.GetEntry = function(self, name)
 	return Saved[name] or self.config[name]
+end
+
+local IsPlace = function(entry)
+	return entry and (type(entry[1]) == "string")
+end
+
+local SizeOf = function(entry)
+	if IsPlace(entry) then
+		return entry[6], entry[7]
+	end
+	return entry[1], entry[2]
 end
 
 -- (not in combat if it's protected: tried again after)
@@ -49,7 +63,7 @@ end
 
 local Place = function(part)
 	local entry = Module:GetEntry(Placed[part])
-	if (not entry) or (not CanMove(part)) then
+	if (not IsPlace(entry)) or (not CanMove(part)) then
 		return
 	end
 	Applying = true
@@ -60,13 +74,13 @@ local Place = function(part)
 end
 
 local Size = function(part)
-	local entry = Module:GetEntry(Sized[part])
-	if (not entry) or (not entry[6]) or (not CanMove(part)) then
+	local width, height = SizeOf(Module:GetEntry(Sized[part]) or {})
+	if (not width) or (not CanMove(part)) then
 		return
 	end
 	Applying = true
-	part:SetWidth(entry[6])
-	part:SetHeight(entry[7])
+	part:SetWidth(width)
+	part:SetHeight(height)
 	Applying = nil
 end
 
@@ -84,7 +98,7 @@ local Follow = function(name)
 		hooksecurefunc(part, "SetAllPoints", Again)
 	end
 	Place(part)
-	if entry[6] and (not Sized[part]) then
+	if SizeOf(entry) and (not Sized[part]) then
 		Sized[part] = name
 		local Again = function() Size(part) end
 		hooksecurefunc(part, "SetWidth", Again)
@@ -97,6 +111,16 @@ local Follow = function(name)
 end
 
 Module.Apply = function(self)
+	-- every part let go first: Blizzard's own anchors may chain them the
+	-- other way round (the PvP Join button hangs off Cancel)
+	for _, list in pairs({ self.config, Saved }) do
+		for name in pairs(list) do
+			local part = _G[name]
+			if part and part.ClearAllPoints and IsPlace(self:GetEntry(name)) and CanMove(part) then
+				part:ClearAllPoints()
+			end
+		end
+	end
 	for _, list in pairs({ self.config, Saved }) do
 		for name in pairs(list) do
 			Follow(name)
@@ -144,31 +168,64 @@ local PlaceOf = function(part)
 end
 Module.PlaceOf = PlaceOf
 
--- The smallest named part shown in `frame` (itself included) under the
--- cursor: what's inside a bigger part (the window the box first covers)
--- can be picked too.
-local Smallest
-Smallest = function(frame, x, y, best, area)
+-- How much of the screen `frame` covers, if the cursor (`x`, `y`) is on it.
+local Covers = function(frame, x, y)
+	local left, bottom, width, height = frame:GetRect()
+	local scale = frame:GetEffectiveScale()
+	if left and (width * height > 0) and (x >= left * scale) and (x <= (left + width) * scale)
+		and (y >= bottom * scale) and (y <= (bottom + height) * scale) then
+		return width * height * scale * scale
+	end
+end
+
+-- The named parts shown in `frame` under the cursor, with their areas.
+local Under
+Under = function(frame, x, y, found)
 	for i = 1, select("#", frame:GetChildren()) do
 		local child = select(i, frame:GetChildren())
 		if child:IsVisible() and (child ~= Module.Box) then
-			local left, bottom, width, height = child:GetRect()
-			local scale = child:GetEffectiveScale()
-			if left and (x >= left * scale) and (x <= (left + width) * scale)
-				and (y >= bottom * scale) and (y <= (bottom + height) * scale) then
-				local size = width * height * scale * scale
-				if child:GetName() and (size > 0) and (size < area) then
-					best, area = child, size
-				end
+			local area = child:GetName() and Covers(child, x, y)
+			if area then
+				found[#found + 1] = { child, area }
 			end
 			-- (a child may reach out of its parent: looked into either way;
 			-- not a control's pieces: a scroll bar's arrows, a dropdown's)
 			if (not IsControl(child)) then
-				best, area = Smallest(child, x, y, best, area)
+				Under(child, x, y, found)
 			end
 		end
 	end
-	return best, area
+	return found
+end
+
+-- Every named part under the cursor in the window holding `root` (the one
+-- the mouse found), from the smallest to the biggest: what's inside or
+-- under a bigger part can be picked too (Tab).
+local Layers = function(root, x, y)
+	local top = root
+	while top:GetParent() and (top:GetParent() ~= _G.UIParent) do
+		top = top:GetParent()
+	end
+	local found = Under(top, x, y, {})
+	for _, part in ipairs({ root, top }) do
+		local listed = false
+		for _, entry in ipairs(found) do
+			listed = listed or (entry[1] == part)
+		end
+		if part:GetName() and (not listed) then
+			found[#found + 1] = { part, Covers(part, x, y) or math_huge }
+		end
+	end
+	-- (as big: the one found first, the part the mouse found before its window)
+	for i, entry in ipairs(found) do
+		entry[3] = i
+	end
+	table_sort(found, function(a, b) return (a[2] < b[2]) or ((a[2] == b[2]) and (a[3] < b[3])) end)
+	local layers = {}
+	for i, entry in ipairs(found) do
+		layers[i] = entry[1]
+	end
+	return layers
 end
 
 local Describe = function(name)
@@ -180,8 +237,7 @@ end
 -- saved; one placed by two points keeps its size.
 local Move = function(part, from, dx, dy)
 	local name = part:GetName()
-	local entry = Module:GetEntry(name) or {}
-	local width, height = entry[6], entry[7]
+	local width, height = SizeOf(Module:GetEntry(name) or {})
 	if (not width) and (part:GetNumPoints() > 1) then
 		width, height = part:GetWidth(), part:GetHeight()
 	end
@@ -193,7 +249,8 @@ end
 -- point: two would keep its size).
 local Resize = function(part, dw, dh)
 	local name = part:GetName()
-	local place = Module:GetEntry(name) or PlaceOf(part)
+	local place = Module:GetEntry(name)
+	place = IsPlace(place) and place or PlaceOf(part)
 	local width, height = math_max(1, part:GetWidth() + dw), math_max(1, part:GetHeight() + dh)
 	Saved[name] = { place[1], place[2], place[3], place[4], place[5], width, height }
 	Follow(name)
@@ -211,6 +268,7 @@ local CreateBox = function(self)
 	box:EnableKeyboard(true)
 	box.Name = box:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	box.Name:SetPoint("BOTTOMLEFT", box, "TOPLEFT", 0, 2)
+	box.Layers, box.Pick = {}, 1
 	box:Hide()
 	box:SetScript("OnLeave", function()
 		if not box.Drag then
@@ -250,6 +308,10 @@ local CreateBox = function(self)
 		local dy = (key == "DOWN" and -step) or (key == "UP" and step) or 0
 		if (key == "ESCAPE") then
 			self:Toggle()
+		elseif (key == "TAB") then
+			-- the next part under the cursor, bigger (Shift: smaller)
+			local count = #box.Layers
+			box.Pick = (box.Pick - 1 + (IsShiftKeyDown() and -1 or 1)) % count + 1
 		elseif ((dx ~= 0) or (dy ~= 0)) and CanMove(box.Part) and IsControlKeyDown() then
 			self:Print(Resize(box.Part, dx, dy)) -- (right and up: wider, taller)
 		elseif ((dx ~= 0) or (dy ~= 0)) and CanMove(box.Part) then
@@ -261,8 +323,8 @@ local CreateBox = function(self)
 end
 
 -- The box over what's hovered, each frame: the smallest named part under
--- the cursor, in the one the mouse first found (the box takes the mouse
--- after).
+-- the cursor, in the window the mouse first found (the box takes the mouse
+-- after), or the one Tab picked under it.
 local Watch = function()
 	local box = Module.Box
 	if box.Drag then
@@ -274,12 +336,17 @@ local Watch = function()
 	end
 	box.Root = root
 	local x, y = GetCursorPosition()
-	local part = IsControl(root) and root or Smallest(root, x, y, root, math_huge)
+	local layers = Layers(root, x, y)
+	if (layers[1] ~= box.Layers[1]) then
+		box.Pick = 1 -- (another part under the cursor: the smallest again)
+	end
+	box.Layers = layers
+	local part = layers[box.Pick] or layers[1]
 	if (part ~= box.Part) or (not box:IsShown()) then
 		box.Part = part
 		box:ClearAllPoints()
 		box:SetAllPoints(part)
-		box.Name:SetText(part:GetName())
+		box.Name:SetText(string_format("%s  (%d/%d)", part:GetName(), box.Pick, #layers))
 		box:Show()
 	end
 end
@@ -297,8 +364,17 @@ Module.Toggle = function(self)
 		self:Print(L["Not in combat."])
 	else
 		self.Watcher:Show()
-		self:Print(L["Adjust on: hover a part, drag it or nudge it with the arrow keys (Shift: 10), Ctrl + arrows to resize it, right-click to put it back. Escape to stop."])
+		self:Print(L["Adjust on: hover a part (Tab: the one under it), drag it or nudge it with the arrow keys (Shift: 10), Ctrl + arrows to resize it, right-click to put it back. Escape to stop."])
 	end
+end
+
+-- Every move made in game erased (/dui adjust reset): the parts back at
+-- the next reload.
+Module.Reset = function(self)
+	for name in pairs(Saved) do
+		Saved[name] = nil
+	end
+	self:Print(L["Every part moved in game put back: /reload."])
 end
 
 Module.ADDON_LOADED = function(self)
@@ -337,5 +413,11 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("ADDON_LOADED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
-	self:GetHandler("ChatCommand"):Register("adjust", function() self:Toggle() end)
+	self:GetHandler("ChatCommand"):Register("adjust", function(what)
+		if (what == "reset") then
+			self:Reset()
+		else
+			self:Toggle()
+		end
+	end)
 end

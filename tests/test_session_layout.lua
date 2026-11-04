@@ -233,6 +233,48 @@ function TestLayoutAudit:test_parts_moved_and_resized_by_name()
 	assertClean(client)
 end
 
+-- settings/positions.lua: { width, height } alone resizes a part where it
+-- is; two parts chained the other way round by Blizzard swapped (each let
+-- go first: no loop).
+function TestLayoutAudit:test_parts_sized_only_and_chains_swapped()
+	boot()
+	local adjust = client:GetModule("Blizzard: Adjust")
+	local frame = window("ChainFrame")
+	local first = button(frame, "ChainFirst", 10, 10, 80, "Join")
+	local second = CreateFrame("Button", "ChainSecond", frame)
+	second:SetSize(80, 22)
+	second:SetPoint("LEFT", first, "RIGHT", 8, 0)
+	first:ClearAllPoints()
+	first:SetPoint("RIGHT", second, "LEFT", -8, 0) -- (Blizzard's: the first hangs off the second)
+	second:ClearAllPoints()
+	second:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 10)
+	local positions = adjust.config
+	positions.ChainSecond = { "LEFT", "ChainFirst", "RIGHT", 8, 0 }
+	positions.ChainFirst = { "BOTTOM", "ChainFrame", "BOTTOM", 0, 10, 100, 24 }
+	positions.ChainSized = { 120, 30 }
+	local sized = CreateFrame("Frame", "ChainSized", frame)
+	sized:SetPoint("TOP", frame, "TOP", 0, -40)
+	sized:SetSize(10, 10)
+	adjust:Apply()
+	lu.assertEquals({ first:GetPoint() }, { "BOTTOM", frame, "BOTTOM", 0, 10 })
+	lu.assertEquals({ second:GetPoint() }, { "LEFT", first, "RIGHT", 8, 0 })
+	lu.assertEquals({ sized:GetPoint() }, { "TOP", frame, "TOP", 0, -40 })
+	lu.assertEquals({ sized:GetWidth(), sized:GetHeight() }, { 120, 30 })
+	sized:SetWidth(10)
+	lu.assertEquals(sized:GetWidth(), 120)
+	-- resized in game: placed where it is
+	frame:Show()
+	slash("adjust")
+	client:Hover(sized)
+	client:Tick(0.1)
+	client.world.modifiers.ctrl = true
+	client:RunScript(adjust.Box, "OnKeyDown", "RIGHT")
+	client.world.modifiers.ctrl = false
+	lu.assertEquals(_G.DiabolicUI_Layout.moved.ChainSized, { "TOP", "ChainFrame", "TOP", 0, -40, 121, 30 })
+	slash("adjust")
+	assertClean(client)
+end
+
 -- /dui adjust: the part hovered boxed with its name, dragged or nudged with
 -- the arrow keys, saved to copy into the settings; right-click puts it
 -- back, Escape stops; never in combat.
@@ -248,7 +290,7 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	client:Tick(0.1)
 	local box = adjust.Box
 	lu.assertEquals(box:IsShown(), 1)
-	lu.assertEquals(box.Name:GetText(), "MoveButton")
+	lu.assertEquals(box.Part:GetName(), "MoveButton")
 	-- dragged 30 right, 20 up
 	local scale = part:GetEffectiveScale()
 	client.world.cursor = { 100, 100 }
@@ -303,7 +345,7 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	client:RunScript(box, "OnLeave")
 	client:Hover(unnamed)
 	client:Tick(0.1)
-	lu.assertEquals(box.Name:GetText(), "MoveInner")
+	lu.assertEquals(box.Part:GetName(), "MoveInner")
 	client:RunScript(box, "OnKeyDown", "DOWN")
 	lu.assertEquals(saved.MoveInner, { "TOPLEFT", "MoveFrame", "TOPLEFT", 10, -101 })
 	-- one resized not moved (put back, left where it was): placed there
@@ -331,14 +373,34 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	client:Hover(frame)
 	At(part)
 	client:Tick(0.1)
-	lu.assertEquals(box.Name:GetText(), "MoveButton")
+	lu.assertEquals(box.Part:GetName(), "MoveButton")
+	-- Tab: the next part under the cursor, bigger (Shift: back); its
+	-- place among them by its name
+	local count = #box.Layers
+	lu.assertEquals(box.Name:GetText(), "MoveButton  (1/" .. count .. ")")
+	lu.assertEquals(box.Layers[count], frame)
+	client:RunScript(box, "OnKeyDown", "TAB")
+	client:Tick(0.1)
+	lu.assertEquals(box.Part, box.Layers[2])
+	lu.assertEquals(box.Name:GetText(), box.Layers[2]:GetName() .. "  (2/" .. count .. ")")
+	client.world.modifiers.shift = true
+	client:RunScript(box, "OnKeyDown", "TAB")
+	client:RunScript(box, "OnKeyDown", "TAB")
+	client.world.modifiers.shift = false
+	client:Tick(0.1)
+	lu.assertEquals(box.Part, frame) -- (round to the biggest)
 	At(arrow)
 	client:Tick(0.1)
-	lu.assertEquals(box.Name:GetText(), "MoveBar")
+	lu.assertEquals(box.Part:GetName(), "MoveBar")
 	client:RunScript(box, "OnLeave")
 	client:Hover(arrow)
 	client:Tick(0.1)
-	lu.assertEquals(box.Name:GetText(), "MoveBar")
+	lu.assertEquals(box.Part:GetName(), "MoveBar")
+	-- every move erased at once
+	lu.assertNotNil(next(saved))
+	slash("adjust reset")
+	lu.assertNil(next(saved))
+	lu.assertEquals(said()[#said()], "Every part moved in game put back: /reload.")
 	-- Escape stops
 	client:RunScript(box, "OnKeyDown", "ESCAPE")
 	lu.assertFalse(adjust.Watcher:IsShown() and true or false)

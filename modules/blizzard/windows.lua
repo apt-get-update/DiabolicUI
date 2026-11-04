@@ -1105,10 +1105,80 @@ Module.SkinClose = function(self, button)
 	end
 end
 
+-- The dropdowns' and edit boxes' field (dropdown.field): dark stone in a
+-- bronze border two lines thick, bevelled (lit from the top left) and
+-- brightest in each side's middle, `inset` in from `plate`'s ends; drawn by
+-- `owner` (under its text: a child frame would cover it).
+local FIELD_SEGMENTS = {
+	-- each side in two halves (fading to its ends): its light, how it
+	-- fades, its two points (on the stone's), inwards, the end on its
+	-- gradient's low side
+	{ "light", "HORIZONTAL", "TOPLEFT", "TOPLEFT", "TOPRIGHT", "TOP", 0, -1, true },
+	{ "light", "HORIZONTAL", "TOPLEFT", "TOP", "TOPRIGHT", "TOPRIGHT", 0, -1, false },
+	{ "dark", "HORIZONTAL", "BOTTOMLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "BOTTOM", 0, 1, true },
+	{ "dark", "HORIZONTAL", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 1, false },
+	{ "light", "VERTICAL", "TOPLEFT", "TOPLEFT", "BOTTOMLEFT", "LEFT", 1, 0, false },
+	{ "light", "VERTICAL", "TOPLEFT", "LEFT", "BOTTOMLEFT", "BOTTOMLEFT", 1, 0, true },
+	{ "dark", "VERTICAL", "TOPRIGHT", "TOPRIGHT", "BOTTOMRIGHT", "RIGHT", -1, 0, false },
+	{ "dark", "VERTICAL", "TOPRIGHT", "RIGHT", "BOTTOMRIGHT", "BOTTOMRIGHT", -1, 0, true }
+}
+local Field = function(plate, inset, owner)
+	local spec = config.dropdown.field
+	local fill = owner:CreateTexture(nil, "BACKGROUND")
+	fill:SetTexture(spec.stone)
+	fill:SetTexCoord(unpack(spec.stone_coords))
+	fill:SetPoint("TOPLEFT", plate, "TOPLEFT", inset, 0)
+	fill:SetPoint("BOTTOMRIGHT", plate, "BOTTOMRIGHT", -inset, 0)
+	local lines = { fill }
+	-- (the outer line over the inner at the corners)
+	for depth, look in ipairs({ { spec.line_color, "ARTWORK" }, { spec.line_dark, "BORDER" } }) do
+		for _, segment in ipairs(FIELD_SEGMENTS) do
+			local light = spec.bevel[segment[1]]
+			local r, g, b = math_min(1, look[1][1] * light), math_min(1, look[1][2] * light), math_min(1, look[1][3] * light)
+			local ends = spec.sheen_ends
+			local line = owner:CreateTexture(nil, look[2])
+			line:SetTexture(spec.texture)
+			local x, y = segment[7] * (depth - 1), segment[8] * (depth - 1)
+			line:SetPoint(segment[3], fill, segment[4], x, y)
+			line:SetPoint(segment[5], fill, segment[6], x, y)
+			if (segment[2] == "HORIZONTAL") then
+				line:SetHeight(1)
+			else
+				line:SetWidth(1)
+			end
+			if segment[9] then
+				line:SetGradient(segment[2], r * ends, g * ends, b * ends, r, g, b)
+			else
+				line:SetGradient(segment[2], r, g, b, r * ends, g * ends, b * ends)
+			end
+			lines[#lines + 1] = line
+		end
+	end
+	return lines
+end
+
+-- A dropdown's menu (its first level) as wide as its field at least, its
+-- lines too (Blizzard's as wide as the widest of them).
+local FitMenu = function(level, _, dropdown)
+	local list, plate = _G.DropDownList1, dropdown and dropdown.DiabolicPlate
+	if ((level or 1) ~= 1) or (type(plate) ~= "table") or (not list:IsShown()) then
+		return
+	end
+	local inset = dropdown.DiabolicInset or config.dropdown.inset
+	local width = (plate:GetWidth() - inset * 2) * plate:GetEffectiveScale() / list:GetEffectiveScale()
+	if (list:GetWidth() < width) then
+		list:SetWidth(width)
+		for i = 1, list.numButtons or 0 do
+			_G["DropDownList1Button" .. i]:SetWidth(width - 25) -- (Blizzard's: the list 25 wider)
+		end
+	end
+end
+local MenusFitted
+
 -- A dropdown (UIDropDownMenuTemplate's, or one drawn like it) in Diablo III's
--- dropdown plate, its own art out of sight; `offset` moves the plate up where its
+-- field, its own art out of sight; `offset` moves the plate up where its
 -- text sits above its frame's middle, `inset` is how far in from its sides
--- the plate's art is drawn (the template's own by default).
+-- the field is drawn (the template's own by default).
 Module.StyleDropDown = function(self, frame, offset, inset)
 	local name = frame:GetName()
 	-- as wide as its art first: one never sized (Auctionator's,
@@ -1130,15 +1200,19 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 	plate:SetPoint("LEFT", 0, offset or 0)
 	plate:SetPoint("RIGHT", 0, offset or 0)
 	plate:SetHeight(spec.height)
-	self:CreateSlices(plate, "BACKGROUND", spec.plate, spec.plate.texture, spec.height, inset or spec.inset, frame)
+	Field(plate, inset or spec.inset, frame)
 	frame.DiabolicPlate = plate -- (raised with it: LineBand)
-	-- its button Diablo III's, in the plate's right end, in its middle
+	if not MenusFitted then
+		MenusFitted = true
+		hooksecurefunc("ToggleDropDownMenu", FitMenu)
+	end
+	-- its button Diablo III's, inside the field's right end, top and bottom
 	local button = name and _G[name .. "Button"]
 	if button then
 		local arrow = spec.arrow
 		button:SetSize(spec.arrow_size, spec.arrow_size)
 		button:ClearAllPoints()
-		button:SetPoint("RIGHT", plate, "RIGHT", -(inset or spec.inset) - spec.arrow_gap, 0)
+		button:SetPoint("RIGHT", plate, "RIGHT", -(inset or spec.inset) - spec.arrow_inset, 0)
 		button:SetNormalTexture(arrow.normal)
 		button:SetPushedTexture(arrow.pushed)
 		button:SetDisabledTexture(arrow.normal)
@@ -1162,9 +1236,9 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 	end
 end
 
--- An edit box (InputBoxTemplate's, or drawn like it: a search) on the
--- dropdowns' plate of Diablo III's, its own art out of sight; the plate
--- `edit_padding` past its sides, around its text.
+-- An edit box (InputBoxTemplate's, or drawn like it: a search) in the
+-- dropdowns' field, its own art out of sight; the field `edit_padding`
+-- past its sides, around its text.
 Module.StyleEditBox = function(self, box)
 	local name = box:GetName()
 	for _, part in ipairs({ "Left", "Middle", "Right" }) do
@@ -1179,7 +1253,7 @@ Module.StyleEditBox = function(self, box)
 	plate:SetPoint("LEFT", -config.edit_padding, 0)
 	plate:SetPoint("RIGHT", config.edit_padding, 0)
 	plate:SetHeight(spec.height)
-	return self:CreateSlices(plate, "BACKGROUND", spec.plate, spec.plate.texture, spec.height, 0, box)
+	return Field(plate, 0, box)
 end
 
 -- A checkbox (OptionsCheckButtonTemplate's) as Diablo III's: its dark box
@@ -1817,9 +1891,42 @@ Module.AddHeaderBar = function(self, zone)
 	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
 	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
 	bar:SetHeight(section.height)
-	self:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
+	local slices = self:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
+	-- (its ends plain, the middle's: their diamonds would sit under the
+	-- first and last columns)
+	local width = section.canvas[1]
+	for i, cap in pairs({ [1] = section.left, [3] = section.right }) do
+		slices[i]:SetTexCoord(section.middle[1] / width, (section.middle[1] + cap[2] - cap[1]) / width, 0, 1)
+	end
 	bar.DiabolicContent = true -- (the list's top: its names on it)
 	return bar
+end
+
+-- A table's column names (Blizzard's buttons `prefix`1 to `count`): as
+-- tall as their dark bar, Diablo III's red under the one hovered, a thin
+-- bronze line between each and the next (window.columns).
+Module.StyleColumnHeaders = function(self, prefix, count)
+	local spec = config.columns
+	for i = 1, count do
+		local header = _G[prefix .. i]
+		if header then
+			header:SetHeight(config.section.height)
+			local highlight = header:GetHighlightTexture()
+			if highlight then
+				highlight:SetTexture(unpack(spec.hover_color))
+				highlight:SetBlendMode("BLEND")
+				highlight:ClearAllPoints()
+				highlight:SetAllPoints(header)
+			end
+			if (i < count) then
+				local line = header:CreateTexture(nil, "OVERLAY")
+				line:SetTexture(unpack(spec.line_color))
+				line:SetWidth(1)
+				line:SetPoint("TOPRIGHT", header, "TOPRIGHT", -1, -spec.line_inset) -- (the next one starts 2 left of its right)
+				line:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, spec.line_inset)
+			end
+		end
+	end
 end
 
 -- A bar of the window's iron (its frame's left edge, turned: the part

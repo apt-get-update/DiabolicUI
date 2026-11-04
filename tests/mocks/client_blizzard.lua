@@ -99,6 +99,7 @@ local function constants()
 			"PLAYERSTAT_SPELL_COMBAT", "PLAYERSTAT_DEFENSES" },
 		-- the windows' (FriendsFrame.lua, SpellBookFrame.lua, QuestInfo.lua)
 		NUM_LFD_CHOICE_BUTTONS = 15, -- LFDFrame.lua
+		NUM_LFR_LIST_BUTTONS = 19, -- LFRFrame.lua
 		WHOS_TO_DISPLAY = 17, FRIENDS_FRAME_WHO_HEIGHT = 16, MAX_OBJECTIVES = 10, NUM_FACTIONS_DISPLAYED = 15,
 		WHOFRAME_DROPDOWN_LIST = { { name = "Zone", sortType = "zone" }, { name = "Guild", sortType = "guild" },
 			{ name = "Race", sortType = "race" } },
@@ -1812,6 +1813,7 @@ local function frameXML(client)
 	end
 	-- the who list (FriendsFrame.lua)
 	f.WhoList_Update = noop
+	f.FriendsFrame_Update = noop
 	f.WhoFrameDropDownButton_OnClick = function(self)
 		_G.UIDropDownMenu_SetSelectedID(_G.WhoFrameDropDown, self:GetID())
 		_G.WhoList_Update()

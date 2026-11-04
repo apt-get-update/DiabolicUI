@@ -8,6 +8,7 @@
 -- Art, fonts and places only: Blizzard's code is left as it is.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Social", "LOW")
+local L = Engine:GetLocale()
 
 local kit
 
@@ -217,26 +218,29 @@ Module.LayoutWho = function(self, window)
 	NameColumn()
 	hooksecurefunc("WhoList_Update", NameColumn)
 
-	-- "1612 People Found" in the band right of the dropdown
-	local totals = _G.WhoFrameTotals
-	totals:SetParent(self.Header)
-	totals:SetDrawLayer("OVERLAY")
-	totals:SetJustifyH("LEFT")
-	kit:LineBand(self.Header, { dropdown, totals })
-	-- the search (/who's) on the foot over the buttons, on our plate
-	-- (Blizzard draws its box in the frame's art, out of sight)
-	kit:StyleEditBox(_G.WhoFrameEditBox)
-	kit:AddHint(_G.WhoFrameEditBox, _G.SEARCH) -- (empty, it's a bar that says nothing)
-	-- (the band's on every tab: there while the who list is)
-	_G.WhoFrame:HookScript("OnShow", function() totals:Show() end)
-	_G.WhoFrame:HookScript("OnHide", function() totals:Hide() end)
-	if not _G.WhoFrame:IsShown() then
-		totals:Hide()
+	-- the search (/who's) in the band right of the dropdown, in our field;
+	-- how many were found in the title ("Who List (809 found)"), Blizzard's
+	-- line under the list hidden (no room left for it in the band)
+	local search = _G.WhoFrameEditBox
+	search:SetSize(unpack(config.who_search_size))
+	kit:StyleEditBox(search)
+	kit:AddHint(search, _G.SEARCH)
+	search:SetFrameLevel(self.Header:GetFrameLevel() + 1)
+	_G.WhoFrameTotals:SetAlpha(0)
+	local Count = function()
+		local _, total = _G.GetNumWhoResults()
+		if _G.WhoFrame:IsShown() and (total > 0) then
+			_G.FriendsFrameTitleText:SetText(string_format(L["%s (%d found)"], _G.WHO_LIST, total))
+		end
 	end
+	hooksecurefunc("WhoList_Update", Count)
+	hooksecurefunc("FriendsFrame_Update", Count) -- (Blizzard's title set as the tab shows)
+	kit:LineBand(self.Header, { dropdown, search })
 	local header = _G.WhoFrameColumnHeader1
 	local _, _, _, x, y = header:GetPoint()
 	header:ClearAllPoints()
 	header:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, config.who_top + config.who_headers_raise)
+	kit:StyleColumnHeaders("WhoFrameColumnHeader", 4)
 	local raise = config.who_top - y
 	local first = _G.WhoFrameButton1
 	_, _, _, x, y = first:GetPoint()
@@ -244,7 +248,8 @@ Module.LayoutWho = function(self, window)
 	first:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, y + raise)
 	-- rows of Blizzard's template in the room gained, the list told of them
 	local count, height = _G.WHOS_TO_DISPLAY, _G.FRIENDS_FRAME_WHO_HEIGHT
-	local extra = math_floor(raise / height)
+	-- (and in the room the search left over the foot)
+	local extra = math_floor(raise / height) + config.who_search_rows
 	for i = count + 1, count + extra do
 		local row = CreateFrame("Button", "WhoFrameButton" .. i, _G.WhoFrame, "FriendsFrameWhoButtonTemplate")
 		row:SetID(i)
@@ -265,6 +270,9 @@ end
 -- picker's), its notes in darker ones, its X and buttons ours.
 Module.StyleGuild = function(self, window)
 	local config = self.config
+	-- its column names (by player, by guild status) as the who list's
+	kit:StyleColumnHeaders("GuildFrameColumnHeader", 4)
+	kit:StyleColumnHeaders("GuildFrameGuildStatusColumnHeader", 4)
 	local label, text = _G.GuildFrameNotesLabel, _G.GuildFrameNotesText
 	if label and text then
 		local insets = config.motd_panel_insets

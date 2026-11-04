@@ -362,31 +362,12 @@ Module.StylePanel = function(self, spec)
 			end
 		end
 	end
-	-- every part let go first: Blizzard's own anchors may chain them the
-	-- other way round (the PvP Join button hangs off Cancel)
-	for name in pairs(spec.places or {}) do
-		if _G[name] then
-			_G[name]:ClearAllPoints()
-		end
-	end
-	for name, place in pairs(spec.places or {}) do
-		local part = _G[name]
-		if part then
-			local point, relative, relativePoint, x, y = unpack(place)
-			part:SetPoint(point, _G[relative], relativePoint, x, y)
-		end
-	end
 	for _, y in ipairs(spec.iron_bars or {}) do
 		kit:AddIronBar(window, y)
 	end
 	for _, name in ipairs(spec.outside or {}) do
 		if _G[name] then
 			_G[name].DiabolicOutside = true -- (/dui layout: not out of the window by mistake)
-		end
-	end
-	for name, size in pairs(spec.sizes or {}) do
-		if _G[name] then
-			_G[name]:SetSize(unpack(size))
 		end
 	end
 	for _, name in ipairs(spec.bars or {}) do

@@ -142,6 +142,18 @@ Module.StyleLFG = function(self)
 		if names then
 			local point, relative, relativePoint, x, y = names:GetPoint()
 			names:SetPoint(point, relative, relativePoint, x, y + config.raid_headers_raise)
+			kit:StyleColumnHeaders("LFRBrowseFrameColumnHeader", 7)
+		end
+		-- a row more in the browse list's room gained (Blizzard's 19)
+		local count = _G.NUM_LFR_LIST_BUTTONS
+		local last = count and _G["LFRBrowseFrameListButton" .. count]
+		if last then
+			local row = CreateFrame("Button", "LFRBrowseFrameListButton" .. (count + 1), last:GetParent(), "LFRBrowseButtonTemplate")
+			row:SetID(count + 1)
+			row:SetPoint("TOPLEFT", last, "BOTTOMLEFT")
+			-- (its scroll frame's bottom right on the last row's, as Blizzard's)
+			_G.LFRBrowseFrameListScrollFrame:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT", 5, -2)
+			_G.NUM_LFR_LIST_BUTTONS = count + 1
 		end
 		local Across = function(zone, frame, top, bottom)
 			zone:ClearAllPoints()
