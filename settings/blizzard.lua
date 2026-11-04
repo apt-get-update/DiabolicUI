@@ -5,17 +5,6 @@ local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 -- Blizzard elements we can't replace, like the gamemenu,
 -- ...or Blizzard elements we can't be arsed to replace, like the rest. 
 Engine:NewStaticConfig("Blizzard", {
-	-- Any part moved or resized by its name, last, whatever placed it
-	-- (modules/blizzard/adjust.lua). `places`: { point, the frame it's
-	-- placed on, that frame's point, x, y } (x right, y up); `sizes`:
-	-- { width, height }. The names: /dui layout saves each window's parts,
-	-- with where they are, in DiabolicUI_Layout (WTF, after a /reload).
-	--   places = { SendMailMailButton = { "BOTTOMRIGHT", "SendMailFrame", "BOTTOMRIGHT", -10, 12 } },
-	--   sizes = { SendMailMailButton = { 90, 22 } },
-	adjust = {
-		places = {},
-		sizes = {}
-	},
 	-- Diablo III's window, for the Blizzard windows given its look
 	-- (modules/blizzard/windows.lua): a stone window in an iron frame, a title
 	-- bar, darker panels in bronze lines, red and dark buttons and tabs, and
@@ -858,6 +847,7 @@ Engine:NewStaticConfig("Blizzard", {
 		friends_bottom = 384, -- its bottom, its panel's clear of the foot's iron bar
 		who_dropdown_width = 64, -- its middle: room for Zone, Guild or Race
 		who_top = -36, -- the who list's column headers, from the frame's top: under the band (Blizzard's 70 down), as far as its panel over the foot's bar
+		who_headers_raise = 3, -- the headers alone, centred on their dark bar (24 high on its 22)
 		motd_panel_insets = { 8, 6, 7, 4 }, -- the guild's message of the day, its parchment around its title and text (its sides the list's panel's)
 		motd_text_height = 36, -- its three lines (Blizzard's 45 reach into the foot)
 		guild_totals_raise = 8, -- "Guild Members" and Player Status, up under the list's rows
@@ -1176,7 +1166,7 @@ Engine:NewStaticConfig("Blizzard", {
 		raid_browse_top = 4, -- the browse list's zone over its rows (the others' 6): clear of its column names
 		raid_queue_gap = 12, -- the queue's list's zone over its foot's iron bar (about as far as under the roles)
 		raid_browse_raise = 12, -- the browse list's rows up: its zone 6 over the foot's iron bar
-		raid_headers_raise = 19, -- its column names up: 6 over its zone
+		raid_headers_raise = 12, -- its column names up: centred on their dark bar over its zone
 		raid_roles_top = -128, -- its roles' row, from the window's top (Blizzard's)
 		comment_size = { 250, 20 },
 		comment_hint_font = DiabolicFont_Narrow14,

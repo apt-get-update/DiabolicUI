@@ -6,6 +6,7 @@
 <Script file="fonts.lua"/>
 <Script file="nameplates.lua"/>
 <Script file="objectives.lua"/>
+<Script file="positions.lua"/>
 <Script file="tooltips.lua"/>
 <Script file="ui.lua"/>
 <Script file="unitframes.lua"/>

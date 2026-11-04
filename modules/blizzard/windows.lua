@@ -1809,6 +1809,19 @@ Module.AddZone = function(self, frame, material, insets, parent)
 	return zone
 end
 
+-- A table's column names on a dark bar, over its zone's top.
+Module.AddHeaderBar = function(self, zone)
+	local section = config.section
+	local bar = CreateFrame("Frame", nil, zone)
+	bar:SetFrameLevel(zone:GetFrameLevel())
+	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
+	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
+	bar:SetHeight(section.height)
+	self:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
+	bar.DiabolicContent = true -- (the list's top: its names on it)
+	return bar
+end
+
 -- A bar of the window's iron (its frame's left edge, turned: the part
 -- footer_rail cuts, the bar and its shadows), drawn by `owner`.
 local IronBar = function(owner)

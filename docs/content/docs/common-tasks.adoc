@@ -77,31 +77,33 @@ than a line have their own file in `modules/blizzard/` (code).
 
 == Fix a visual bug
 
-A button in the wrong place, in any window.
+A button in the wrong place, in any window. Every named part of the windows
+is listed in `settings/positions.lua`, one line each, commented out:
 
-. In game: `/dui adjust`. Hover the part: an orange box shows it, with its name.
-. Drag it, or nudge it with the arrow keys (1 px, 10 with Shift).
-  Right-click puts it back. Escape stops.
-. `/reload`: the game writes what you moved to
-  `WTF/Account/<you>/SavedVariables/DiabolicUI.lua`, under
-  `DiabolicUI_Layout` → `adjust`.
-. Copy those lines into `adjust` at the top of `settings/blizzard.lua`, so
-  every player gets them:
-+
 [source,lua]
 ----
-places = { SendMailMailButton = { "BOTTOMRIGHT", "SendMailFrame", "BOTTOMRIGHT", -10, 12 } },
-sizes = { SendMailMailButton = { 90, 22 } },
+-- WhoFrameEditBox = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100, 296, 32 }, -- EditBox
 ----
-+
-A place is `{ point, the frame it's placed on, that frame's point, x, y }`
-(higher `x` goes right, higher `y` goes up); a size is `{ width, height }`.
-Sizes are only changed there, not in game.
 
-A part stays where you put it, even when Blizzard's code moves it again.
-To find a part's name without moving it: `/dui layout`, open the window,
-`/reload`: each window's `parts` in the same file list them all, with
-their place and size.
+That's `{ point, the frame it's placed on, that frame's point, x, y, width,
+height }` (higher `x` goes right, higher `y` goes up). To move or resize a
+part: remove its `--`, change the numbers, `/reload`. Without the width and
+height it keeps its size. A line without `--` keeps its part there for good,
+whatever else moves it, so uncomment only what you fix.
+
+*Or move it in game:*
+
+. `/dui adjust`. Hover the part: an orange box shows it, with its name.
+. Drag it, or nudge it with the arrow keys (1 px, 10 with Shift).
+  Ctrl + arrows resize it (right and up: wider, taller).
+  Right-click puts it back. Escape stops.
+. `/reload`, then from the addon's folder: `lua5.1 tools/positions.lua`.
+  It writes what you moved into `settings/positions.lua`, without `--`.
+
+*Filling the list:* `/dui layout all` opens every window that needs no NPC
+(open the others yourself while it's on: mail, auction house, bank, vendor,
+trainer...), `/reload`, then `lua5.1 tools/positions.lua`. It rewrites the
+file from what was seen, keeping the lines without `--`.
 
 == Put a part in a window's red band
 

@@ -12,7 +12,7 @@
 -- each window is checked as it shows and each second (for its pages), each
 -- problem said once and saved (DiabolicUI_Layout, by window: its last
 -- session's), with each named part and where it is (to move it by name:
--- settings/blizzard.lua adjust). /dui layout all opens each window that needs no NPC, page by
+-- settings/positions.lua). /dui layout all opens each window that needs no NPC, page by
 -- page, to check them all at once.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Audit", "LOW")
@@ -264,14 +264,15 @@ end
 
 -- The content's zones and parchments shown in `frame` and all it holds.
 local CollectContent
-CollectContent = function(frame, found)
+CollectContent = function(frame, found, key)
+	key = key or "DiabolicContent"
 	for i = 1, select("#", frame:GetChildren()) do
 		local child = select(i, frame:GetChildren())
 		if child:IsVisible() then
-			if child.DiabolicContent then
+			if child[key] then
 				found[#found + 1] = child
 			end
-			CollectContent(child, found)
+			CollectContent(child, found, key)
 		end
 	end
 	return found
@@ -393,9 +394,9 @@ CollectBars = function(frame, found)
 	return found
 end
 
--- As much room left of the content (its zones and their scroll bars:
--- not a text or control beside them, which may stand out on purpose) as
--- right of it.
+-- As much room left of the content (its zones and their scroll bars, and
+-- what's marked DiabolicEdge: the character's gear slots; not a text or
+-- control beside them, which may stand out on purpose) as right of it.
 Checks.Sides = function(window, say, scale)
 	local content = CollectContent(window.Frame, {})
 	if (#content == 0) then
@@ -410,6 +411,9 @@ Checks.Sides = function(window, say, scale)
 	end
 	for _, zone in ipairs(content) do
 		Reach(zone)
+	end
+	for _, part in ipairs(CollectContent(window.Frame, {}, "DiabolicEdge")) do
+		Reach(part)
 	end
 	local windowLeft, windowBottom, windowRight, windowTop = kit.Edges(window)
 	for _, bar in ipairs(CollectBars(window.Frame, {})) do
@@ -694,28 +698,28 @@ CollectNamed = function(frame, skip, found)
 	end
 end
 
--- Where a part is, for whoever moves it (settings/blizzard.lua adjust): its
--- kind and text, its box from `frame`'s top left (x right, y down) and its
--- first anchor, in `frame`'s units.
-local Describe = function(part, frame)
-	local left, bottom, right, top = kit.Edges(part)
-	local frameLeft, _, _, frameTop = kit.Edges(frame)
-	if not (left and frameLeft) then
+-- Where a part is, as settings/positions.lua takes it (tools/positions.lua
+-- writes them there): { point, the frame it's placed on, its point, x, y,
+-- width, height } (a text's size its own), with its kind and text.
+local Round = function(value)
+	return math_floor(value * 10 + .5) / 10
+end
+
+local Entry = function(part)
+	if not part:GetLeft() then
 		return
 	end
-	local scale = frame:GetEffectiveScale()
-	local line = string_format("%s at %.0f,%.0f size %.0fx%.0f", part:GetObjectType(),
-		(left - frameLeft) / scale, (frameTop - top) / scale, (right - left) / scale, (top - bottom) / scale)
+	local entry = Engine:GetModule("Blizzard: Adjust").PlaceOf(part)
+	entry[4], entry[5] = Round(entry[4]), Round(entry[5])
+	if (not part:IsObjectType("FontString")) then
+		entry[6], entry[7] = Round(part:GetWidth()), Round(part:GetHeight())
+	end
+	entry.kind = part:GetObjectType()
 	local text = part.GetText and part:GetText()
-	if text and (text ~= "") and (not string_find(text, "|")) then
-		line = line .. " \"" .. text .. "\""
+	if text and (text ~= "") and (not string_find(text, "[|\n]")) then
+		entry.text = text
 	end
-	local point, relative, relativePoint, x, y = part:GetPoint()
-	if point then
-		line = line .. string_format("; %s on %s %s %.0f,%.0f", point, (relative and relative:GetName()) or "UIParent",
-			relativePoint, x or 0, y or 0)
-	end
-	return line
+	return entry
 end
 
 -- `window` checked: what breaks the rules said once each, or that
@@ -731,7 +735,7 @@ local Check = function(window)
 	local named, parts = {}, Saved.windows[title].parts
 	CollectNamed(frame, window, named)
 	for name, part in pairs(named) do
-		parts[name] = Describe(part, frame)
+		parts[name] = Entry(part)
 	end
 	local say = function(text, ...)
 		found = true

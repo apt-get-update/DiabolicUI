@@ -119,7 +119,7 @@ Module.StyleSocial = function(self)
 				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
 			end
 			if config.header_bars[name] then
-				self:AddHeaderBar(zone)
+				kit:AddHeaderBar(zone)
 			end
 		end
 	end
@@ -133,18 +133,6 @@ Module.SetZoneBottom = function(self, zone, list, insets, under, gap)
 	zone:SetPoint("TOPLEFT", list, "TOPLEFT", -insets[1], insets[2])
 	zone:SetPoint("TOPRIGHT", list, "TOPRIGHT", insets[3], insets[2])
 	zone:SetPoint("BOTTOM", under, "TOP", 0, gap)
-end
-
--- A table's column names on a dark bar, over its panel's top.
-Module.AddHeaderBar = function(self, zone)
-	local section = kit.config.section
-	local bar = CreateFrame("Frame", nil, zone)
-	bar:SetFrameLevel(zone:GetFrameLevel())
-	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
-	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
-	bar:SetHeight(section.height)
-	kit:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
-	bar.DiabolicContent = true -- (the list's top: its names on it)
 end
 
 -- A part moved `by` up from where Blizzard put it.
@@ -238,6 +226,7 @@ Module.LayoutWho = function(self, window)
 	-- the search (/who's) on the foot over the buttons, on our plate
 	-- (Blizzard draws its box in the frame's art, out of sight)
 	kit:StyleEditBox(_G.WhoFrameEditBox)
+	kit:AddHint(_G.WhoFrameEditBox, _G.SEARCH) -- (empty, it's a bar that says nothing)
 	-- (the band's on every tab: there while the who list is)
 	_G.WhoFrame:HookScript("OnShow", function() totals:Show() end)
 	_G.WhoFrame:HookScript("OnHide", function() totals:Hide() end)
@@ -247,7 +236,7 @@ Module.LayoutWho = function(self, window)
 	local header = _G.WhoFrameColumnHeader1
 	local _, _, _, x, y = header:GetPoint()
 	header:ClearAllPoints()
-	header:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, config.who_top)
+	header:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, config.who_top + config.who_headers_raise)
 	local raise = config.who_top - y
 	local first = _G.WhoFrameButton1
 	_, _, _, x, y = first:GetPoint()

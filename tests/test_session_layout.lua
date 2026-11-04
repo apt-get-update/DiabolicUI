@@ -177,9 +177,9 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- its named parts saved, where they are (from its top left, y down)
 	-- and how they're placed, to move them by name
 	local parts = _G.DiabolicUI_Layout.windows.AuditFine.parts
-	lu.assertEquals(parts.AuditPage, "Frame at 30,80 size 340x150; TOPLEFT on AuditFine TOPLEFT 30,-80")
-	lu.assertStrContains(parts.AuditInk, "FontString at 40,90 size ")
-	lu.assertStrContains(parts.AuditInk, " \"In ink\"; TOPLEFT on AuditFine TOPLEFT 40,-90")
+	-- (as settings/positions.lua takes them; a text keeps its own size)
+	lu.assertEquals(parts.AuditPage, { "TOPLEFT", "AuditFine", "TOPLEFT", 30, -80, 340, 150, kind = "Frame" })
+	lu.assertEquals(parts.AuditInk, { "TOPLEFT", "AuditFine", "TOPLEFT", 40, -90, kind = "FontString", text = "In ink" })
 	-- said once
 	client:Tick(1.1)
 	lu.assertEquals(#said(), 2)
@@ -190,7 +190,7 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	assertClean(client)
 end
 
--- settings/blizzard.lua adjust (modules/blizzard/adjust.lua): a part moved
+-- settings/positions.lua (modules/blizzard/adjust.lua): a part moved
 -- and resized by its name, kept so whatever moves it again; one made later
 -- once an addon loads; a protected one after combat.
 function TestLayoutAudit:test_parts_moved_and_resized_by_name()
@@ -200,11 +200,10 @@ function TestLayoutAudit:test_parts_moved_and_resized_by_name()
 	local part = button(frame, "AdjustButton", 10, 10, 80, "Okay")
 	local secure = CreateFrame("Button", "AdjustSecure", frame, "SecureActionButtonTemplate")
 	secure:SetPoint("CENTER")
-	local places, sizes = adjust.config.places, adjust.config.sizes
-	places.AdjustButton = { "BOTTOMRIGHT", "AdjustFrame", "BOTTOMRIGHT", -10, 12 }
-	sizes.AdjustButton = { 90, 24 }
-	places.AdjustLater = { "TOP", "AdjustFrame", "TOP", 0, -50 }
-	places.AdjustSecure = { "TOPLEFT", "AdjustFrame", "TOPLEFT", 5, -5 }
+	local positions = adjust.config
+	positions.AdjustButton = { "BOTTOMRIGHT", "AdjustFrame", "BOTTOMRIGHT", -10, 12, 90, 24 }
+	positions.AdjustLater = { "TOP", "AdjustFrame", "TOP", 0, -50 }
+	positions.AdjustSecure = { "TOPLEFT", "AdjustFrame", "TOPLEFT", 5, -5 }
 	client:EnterCombat()
 	adjust:Apply()
 	lu.assertEquals({ part:GetPoint() }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 12 })
@@ -236,7 +235,7 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	local frame = window("MoveFrame")
 	frame:Show()
 	local part = button(frame, "MoveButton", 10, 10, 80, "Okay")
-	local saved = _G.DiabolicUI_Layout.adjust.places
+	local saved = _G.DiabolicUI_Layout.moved
 	slash("adjust")
 	client:Hover(part)
 	client:Tick(0.1)
@@ -259,6 +258,18 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	client:RunScript(box, "OnKeyDown", "UP")
 	client.world.modifiers.shift = false
 	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 40 })
+	-- resized with Ctrl: right and up, wider and taller (10 with Shift)
+	client.world.modifiers.ctrl = true
+	client:RunScript(box, "OnKeyDown", "RIGHT")
+	client.world.modifiers.shift = true
+	client:RunScript(box, "OnKeyDown", "DOWN")
+	client.world.modifiers.ctrl, client.world.modifiers.shift = false, false
+	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 40, 81, 12 })
+	lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { 81, 12 })
+	lu.assertEquals(said()[#said()], "MoveButton: 81 x 12")
+	-- moved again: its size kept
+	client:RunScript(box, "OnKeyDown", "UP")
+	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 41, 81, 12 })
 	-- right-click: back to the settings' (none: left until a reload)
 	client:RunScript(box, "OnMouseDown", "RightButton")
 	lu.assertNil(saved.MoveButton)
@@ -273,8 +284,7 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	client:Hover(wide)
 	client:Tick(0.1)
 	client:RunScript(box, "OnKeyDown", "RIGHT")
-	lu.assertEquals(saved.MoveWide, { "TOPLEFT", "MoveFrame", "TOPLEFT", 21, -50 })
-	lu.assertEquals(_G.DiabolicUI_Layout.adjust.sizes.MoveWide, { 360, 20 })
+	lu.assertEquals(saved.MoveWide, { "TOPLEFT", "MoveFrame", "TOPLEFT", 21, -50, 360, 20 })
 	lu.assertEquals({ wide:GetWidth(), wide:GetHeight() }, { 360, 20 })
 	-- an unnamed part hovered: its first named holder boxed; one in an
 	-- unnamed frame placed from the first named one holding it
@@ -289,6 +299,39 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	lu.assertEquals(box.Name:GetText(), "MoveInner")
 	client:RunScript(box, "OnKeyDown", "DOWN")
 	lu.assertEquals(saved.MoveInner, { "TOPLEFT", "MoveFrame", "TOPLEFT", 10, -101 })
+	-- one resized not moved (put back, left where it was): placed there
+	client:RunScript(box, "OnLeave")
+	client:Hover(part)
+	client:Tick(0.1)
+	client.world.modifiers.ctrl = true
+	client:RunScript(box, "OnKeyDown", "LEFT")
+	client.world.modifiers.ctrl = false
+	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 41, 80, 12 })
+	-- the window hovered: the smallest named part in it under the cursor;
+	-- a scroll bar whole, not its arrows (hovered or looked into)
+	local bar = CreateFrame("Slider", "MoveBar", frame)
+	bar:SetSize(16, 100)
+	bar:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -60)
+	local arrow = CreateFrame("Button", "MoveBarUp", bar)
+	arrow:SetSize(16, 16)
+	arrow:SetPoint("TOP", bar, "TOP")
+	local At = function(target)
+		local left, bottom, width, height = target:GetRect()
+		local scale = target:GetEffectiveScale()
+		client.world.cursor = { (left + width / 2) * scale, (bottom + height / 2) * scale }
+	end
+	client:RunScript(box, "OnLeave")
+	client:Hover(frame)
+	At(part)
+	client:Tick(0.1)
+	lu.assertEquals(box.Name:GetText(), "MoveButton")
+	At(arrow)
+	client:Tick(0.1)
+	lu.assertEquals(box.Name:GetText(), "MoveBar")
+	client:RunScript(box, "OnLeave")
+	client:Hover(arrow)
+	client:Tick(0.1)
+	lu.assertEquals(box.Name:GetText(), "MoveBar")
 	-- Escape stops
 	client:RunScript(box, "OnKeyDown", "ESCAPE")
 	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
