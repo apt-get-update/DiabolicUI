@@ -497,6 +497,36 @@ function TestSocial:test_the_who_list_sorted_by_the_column_chosen()
 	assertClean(client)
 end
 
+-- How many were found, in the title (Blizzard's line under the list hidden);
+-- the sort's menu as wide as its field.
+function TestSocial:test_the_who_count_in_the_title_and_its_menu_as_wide()
+	boot()
+	_G.FriendsFrame:Show()
+	_G.WhoFrame:Show()
+	_G.GetNumWhoResults = function() return 49, 809 end
+	_G.WhoList_Update()
+	lu.assertEquals(_G.FriendsFrameTitleText:GetText(), _G.WHO_LIST .. " (809 found)")
+	lu.assertEquals(_G.WhoFrameTotals:GetAlpha(), 0)
+	-- none found: Blizzard's title left
+	_G.FriendsFrameTitleText:SetText("Who")
+	_G.GetNumWhoResults = function() return 0, 0 end
+	_G.FriendsFrame_Update()
+	lu.assertEquals(_G.FriendsFrameTitleText:GetText(), "Who")
+	-- the menu narrower than the field: widened, its lines 25 narrower
+	local dropdown = _G.WhoFrameDropDown
+	dropdown.initialize = function()
+		_G.UIDropDownMenu_AddButton({ text = "Zone" })
+		_G.UIDropDownMenu_AddButton({ text = "Guild" })
+	end
+	dropdown.DiabolicPlate:SetWidth(114) -- (the fake client's frames don't measure their two points)
+	_G.DropDownList1:SetWidth(10)
+	_G.ToggleDropDownMenu(1, nil, dropdown)
+	local width = _G.DropDownList1:GetWidth()
+	lu.assertTrue(width > 10)
+	lu.assertEquals(_G.DropDownList1Button2:GetWidth(), width - 25)
+	assertClean(client)
+end
+
 function TestSocial:test_the_guild_logs_times_in_their_ink()
 	boot()
 	local inks = client.Engine:GetDB("Blizzard").panels.log_inks

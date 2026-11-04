@@ -286,6 +286,8 @@ function TestLayoutAudit:test_parts_moved_in_game()
 	local part = button(frame, "MoveButton", 10, 10, 80, "Okay")
 	local saved = _G.DiabolicUI_Layout.moved
 	slash("adjust")
+	client:Tick(0.1) -- (nothing hovered: no box)
+	lu.assertFalse(adjust.Box:IsShown() == 1)
 	client:Hover(part)
 	client:Tick(0.1)
 	local box = adjust.Box
@@ -459,7 +461,14 @@ function TestLayoutAudit:test_what_is_left_out_and_what_counts()
 	-- count), a label between the band and them
 	local panel = zone(frame, "AuditPanel", 30, -80, 340, 150)
 	local page = zone(frame, "AuditPartsPage", 40, -90, 300, 130, "parchment")
-	text(frame, "AuditPartsLabel", 40, -68, "Label"):SetTextColor(0, 0, 0)
+	local label = text(frame, "AuditPartsLabel", 40, -68, "Label")
+	label:SetTextColor(0, 0, 0)
+	label:SetJustifyH("LEFT")
+	-- a part counted in the sides though not content (a slot column's)
+	local edge = CreateFrame("Frame", "AuditPartsEdge", frame)
+	edge:SetSize(20, 20)
+	edge:SetPoint("TOPLEFT", frame, "TOPLEFT", 40, -200)
+	edge.DiabolicEdge = true
 	-- on the page: a lit row (white on it is fine), an icon's count (on its
 	-- art), a button's text (ours)
 	local row = frame:CreateTexture()
