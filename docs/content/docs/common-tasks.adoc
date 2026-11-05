@@ -121,8 +121,9 @@ its corner, or use the arrows (Ctrl: size). The frame it's placed on shows
 dashed, what's placed on it follows. Our own art (borders, bands, gems,
 lines) is drawn under the boxes, from the pictures the tool makes in
 `tools/art/` (not in git; Blizzard's art isn't). A screenshot of the whole screen
-(`Screenshots/`) lines up under the boxes. Copy the lines it writes over
-theirs in `settings/positions.lua`, then `/reload`.
+(`Screenshots/`) lines up under the boxes. *Save to positions.lua* writes
+the changed lines into `settings/positions.lua` (pick it the first time;
+Chrome, Edge, Vivaldi: other browsers Copy them over theirs), then `/reload`.
 
 == Put a part in a window's red band
 

@@ -106,12 +106,14 @@ textarea { width: 100%; height: 180px; font: 11px/1.4 ui-monospace, monospace; r
 	<h2>Lines for settings/positions.lua</h2>
 	<textarea id="out" readonly></textarea>
 	<div class="row">
+		<button id="save">Save to positions.lua</button>
 		<button id="copy">Copy</button>
 		<button id="resetPart">Reset part</button>
 		<button id="resetAll">Reset all</button>
 		<button id="fit">Fit</button>
 	</div>
-	<div class="help">Each line goes over its part's line in <b>settings/positions.lua</b> (the one with "--" in front, under its window), then <b>/reload</b>.</div>
+	<div id="saved" class="help"></div>
+	<div class="help"><b>Save</b> writes them into <b>settings/positions.lua</b> (picked the first time), each over its part's line; then <b>/reload</b> the game.</div>
 </aside>
 <script>
 "use strict";
@@ -229,13 +231,48 @@ function Lines(data, edits) {
 	for (const w of Object.keys(byWindow).sort()) {
 		const seen = data.windows[w];
 		if (!seen) continue;
-		out.push("\t-- " + w + " " + "-".repeat(Math.max(4, 66 - w.length)));
+		out.push(Header(w));
 		for (const n of byWindow[w].sort()) if (seen.parts[n]) out.push(Line(n, edits[n], seen.parts[n]));
 	}
 	return out.join("\n");
 }
 
-if (typeof module !== "undefined") module.exports = { Layout, Line, Lines, At, Rgb };
+const Header = w => "\t-- " + w + " " + "-".repeat(Math.max(4, 70 - w.length));
+
+// settings/positions.lua with the changed parts' lines in: each over its
+// line (with "--" or not; the note at the end of one in use kept), else at
+// the end of its window's section (a new one at the end if none).
+function Merge(text, data, edits) {
+	const lines = text.split("\n");
+	const Escape = t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	let done = 0;
+	for (const [n, e] of Object.entries(edits)) {
+		const seen = data.windows[e.window], p = seen && seen.parts[n];
+		if (!p) continue;
+		const line = Line(n, e, p), key = line.trim().split(" = ")[0];
+		const match = new RegExp("^\\s*(--\\s*)?" + Escape(key) + " = \\{.*\\},?\\s*(.*)$");
+		const at = lines.findIndex(l => match.test(l));
+		if (at >= 0) {
+			const [, off, tail] = lines[at].match(match);
+			lines[at] = (!off && tail) ? line.replace(/ -- .*$/, " " + tail) : line;
+		} else {
+			const section = new RegExp("^\\s*-- " + Escape(e.window) + " -{4,}\\s*$");
+			let head = lines.findIndex(l => section.test(l));
+			if (head < 0) {
+				const end = lines.lastIndexOf("})");
+				lines.splice(end, 0, "", Header(e.window));
+				head = end + 1;
+			}
+			let end = head + 1;
+			while (end < lines.length && lines[end].trim() !== "" && !/^\s*-- .* -{4,}$/.test(lines[end]) && lines[end] !== "})") end++;
+			lines.splice(end, 0, line);
+		}
+		done++;
+	}
+	return { text: lines.join("\n"), done };
+}
+
+if (typeof module !== "undefined") module.exports = { Layout, Line, Lines, Merge, At, Rgb };
 
 // ---- the page --------------------------------------------------------------
 if (typeof document !== "undefined") {
@@ -713,6 +750,43 @@ if (typeof document !== "undefined") {
 		L = Layout(data, L.title, edits);
 		Changed(names.filter(n => L.parts[n]), true);
 		DrawAll();
+	};
+	// ---- saving into settings/positions.lua (the file picked once, kept)
+	const Kept = (mode, value) => new Promise(done => {
+		try {
+			const open = indexedDB.open("dui-editor", 1);
+			open.onupgradeneeded = () => open.result.createObjectStore("files");
+			open.onerror = () => done(null);
+			open.onsuccess = () => {
+				const store = open.result.transaction("files", mode).objectStore("files");
+				const req = mode === "readonly" ? store.get("positions") : store.put(value, "positions");
+				req.onsuccess = () => done(req.result);
+				req.onerror = () => done(null);
+			};
+		} catch (e) { done(null); }
+	});
+	const Say = text => { $("#saved").textContent = text; };
+	$("#save").onclick = async () => {
+		if (!window.showOpenFilePicker) { Say("This browser can't write files: use Copy."); return; }
+		if (!Object.keys(edits).length) { Say("Nothing changed yet."); return; }
+		try {
+			let file = await Kept("readonly");
+			if (file && (await file.requestPermission({ mode: "readwrite" })) !== "granted") file = null;
+			if (!file) {
+				[file] = await window.showOpenFilePicker({ id: "positions", types: [{ description: "positions.lua", accept: { "text/plain": [".lua"] } }] });
+				if ((await file.requestPermission({ mode: "readwrite" })) !== "granted") return;
+			}
+			const text = await (await file.getFile()).text();
+			if (!text.includes('NewStaticConfig("Positions"')) { await Kept("readwrite", null); Say(file.name + " isn't settings/positions.lua: Save again and pick it."); return; }
+			const merged = Merge(text, data, edits);
+			const out = await file.createWritable();
+			await out.write(merged.text);
+			await out.close();
+			await Kept("readwrite", file);
+			Say(`Saved ${merged.done} line${merged.done === 1 ? "" : "s"} into ${file.name} (${new Date().toLocaleTimeString()}): /reload the game.`);
+		} catch (e) {
+			if (e.name !== "AbortError") Say("Not saved: " + e.message);
+		}
 	};
 	$("#copy").onclick = async () => {
 		const out = $("#out");
