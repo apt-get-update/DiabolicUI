@@ -181,7 +181,9 @@ Encode = function(value, out)
 		end)
 		out[#out + 1] = '"' .. escaped .. '"'
 	elseif (kind == "number") then
-		out[#out + 1] = Number(value)
+		out[#out + 1] = (string.format("%.4f", value):gsub("%.?0+$", ""))
+	elseif (kind == "boolean") then
+		out[#out + 1] = tostring(value)
 	elseif (kind == "table") and (next(value) ~= nil) and (#Sorted(value) == #value) then
 		out[#out + 1] = "["
 		for i, item in ipairs(value) do
@@ -210,6 +212,125 @@ local Place = function(entry)
 	return { place = { entry[1], entry[2], entry[3], entry[4], entry[5] }, size = entry[6] and { entry[6], entry[7] } }
 end
 
+-- Our art's pictures (tools/art/, not in git): each file of media/ the
+-- windows show, as a .bmp (a browser reads it, not a .tga), named after
+-- it; a white file (a line, a fill: colored in game) just said white.
+local ART = (JSON:match("^(.*)/[^/]*$") or ".") .. "/art"
+
+local LittleEndian = function(value, bytes)
+	value = (value < 0) and (value + 256 ^ bytes) or value
+	local out = {}
+	for i = 1, bytes do
+		out[i] = string.char(value % 256)
+		value = math.floor(value / 256)
+	end
+	return table.concat(out)
+end
+
+-- a .tga (raw or packed, 24 or 32 bits) as a 32-bit .bmp with its alpha
+local Bitmap = function(data)
+	local idLength, mapType, kind = data:byte(1, 3)
+	local width, height = data:byte(13) + 256 * data:byte(14), data:byte(15) + 256 * data:byte(16)
+	local bits, flags = data:byte(17, 18)
+	if (mapType ~= 0) or ((kind ~= 2) and (kind ~= 10)) or ((bits ~= 24) and (bits ~= 32)) then
+		return
+	end
+	local size, at, count = bits / 8, 19 + idLength, width * height
+	local Pixel = function()
+		local pixel = data:sub(at, at + size - 1) .. ((size == 3) and "\255" or "")
+		at = at + size
+		return pixel
+	end
+	local pixels = {}
+	if (kind == 2) and (size == 4) then
+		pixels[1] = data:sub(at, at + count * 4 - 1)
+	else
+		local done = 0
+		while (done < count) do
+			local run, same = 1, false
+			if (kind == 10) then
+				local head = data:byte(at)
+				at, run, same = at + 1, head % 128 + 1, head >= 128
+			end
+			if same then
+				pixels[#pixels + 1] = Pixel():rep(run)
+			else
+				for _ = 1, run do
+					pixels[#pixels + 1] = Pixel()
+				end
+			end
+			done = done + run
+		end
+	end
+	local body = table.concat(pixels)
+	local top = (math.floor(flags / 32) % 2 == 1) -- (its first row the top one: a .bmp's height negative)
+	return table.concat({ "BM", LittleEndian(122 + #body, 4), LittleEndian(0, 4), LittleEndian(122, 4),
+		LittleEndian(108, 4), LittleEndian(width, 4), LittleEndian(top and -height or height, 4), LittleEndian(1, 2),
+		LittleEndian(32, 2), LittleEndian(3, 4), LittleEndian(#body, 4), LittleEndian(2835, 4), LittleEndian(2835, 4),
+		LittleEndian(0, 4), LittleEndian(0, 4), LittleEndian(0x00FF0000, 4), LittleEndian(0x0000FF00, 4),
+		LittleEndian(0x000000FF, 4), LittleEndian(0xFF000000, 4), "BGRs", string.rep("\0", 48), body })
+end
+
+-- the media files by their names in lower case (the game's aren't fussy)
+local media = {}
+local pipe = io.popen("find media -type f -iname '*.tga' 2>/dev/null")
+for path in pipe:lines() do
+	media[path:lower()] = path
+end
+pipe:close()
+
+-- a texture's file: its picture's path (made once), true if white, or nil
+local made = {}
+local Picture = function(file)
+	if (not file) then
+		return
+	end
+	local rest = file:gsub("\\", "/"):match("[Dd]iabolic[Uu][Ii]/(.*)$")
+	if (not rest) then
+		return true
+	end
+	local path = media[rest:lower()] or media[rest:lower() .. ".tga"]
+	if path and (made[path] == nil) then
+		local tga = io.open(path, "rb")
+		local data = Bitmap(tga:read("*a"))
+		tga:close()
+		made[path] = data and ("art/" .. path:gsub("^media/", ""):gsub("/", "-"):gsub("%.[Tt][Gg][Aa]$", ".bmp")) or false
+		if data then
+			os.execute("mkdir -p '" .. ART .. "'")
+			local bmp = assert(io.open(ART .. "/" .. made[path]:sub(5), "wb"))
+			bmp:write(data)
+			bmp:close()
+		end
+	end
+	return path and made[path] or nil
+end
+
+-- a window's art as the editor draws it: its files as their pictures
+-- (the ones not found or read left out; none: nil)
+local Pictures = function(art)
+	local out = {}
+	for _, item in ipairs(art or {}) do
+		local copy = {}
+		for key, value in pairs(item) do
+			copy[key] = value
+		end
+		copy.file, copy.image = nil, Picture(item.file)
+		if item.backdrop then
+			local backdrop = {}
+			for key, value in pairs(item.backdrop) do
+				backdrop[key] = value
+			end
+			backdrop.bgFile, backdrop.edgeFile = nil, nil
+			backdrop.bg, backdrop.edge = Picture(item.backdrop.bgFile), Picture(item.backdrop.edgeFile)
+			copy.backdrop = backdrop
+		end
+		if copy.image or (copy.backdrop and (copy.backdrop.bg or copy.backdrop.edge)) then
+			out[#out + 1] = copy
+		end
+	end
+	return out[1] and out or nil
+end
+
 local export = { resolution = layout.resolution, unit = layout.unit, windows = {}, unseen = {} }
 local exported = {}
 for window, seen in pairs(layout.windows or {}) do
@@ -224,7 +345,7 @@ for window, seen in pairs(layout.windows or {}) do
 			parts[name], exported[name] = part, true
 		end
 	end
-	export.windows[window] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts }
+	export.windows[window] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts, art = Pictures(seen.art) }
 end
 for name, entry in pairs(active) do
 	if not exported[name] then

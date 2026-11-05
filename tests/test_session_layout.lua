@@ -170,6 +170,18 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	local frame = window("AuditFine")
 	zone(frame, "AuditPage", 30, -80, 340, 150, "parchment")
 	text(frame, "AuditInk", 40, -90, "In ink"):SetTextColor(0, 0, 0)
+	-- (art: a white line colored, a glow under the cursor only, Blizzard's)
+	local line = frame:CreateTexture(nil, "BACKGROUND")
+	line:SetTexture([[Interface\Buttons\WHITE8X8]])
+	line:SetVertexColor(1, .5, 0)
+	line:SetPoint("TOPLEFT", 10, -10)
+	line:SetSize(100, 1)
+	local glow = frame:CreateTexture("AuditGlow", "HIGHLIGHT")
+	glow:SetTexture([[Interface\AddOns\DiabolicUI\media\textures\DiabolicUI_D3_GemRing]])
+	glow:SetAllPoints()
+	local blizzard = frame:CreateTexture(nil, "ARTWORK")
+	blizzard:SetTexture([[Interface\DialogFrame\UI-DialogBox-Background]])
+	blizzard:SetAllPoints()
 	frame:Show()
 	slash("layout")
 	lu.assertEquals(said()[2], "AuditFine: nothing breaks the rules.")
@@ -190,6 +202,27 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	lu.assertEquals({ page.strata, page.level }, { frame:GetFrameStrata(), _G.AuditPage:GetFrameLevel() })
 	lu.assertEquals({ ink.layer, ink.level }, { "ARTWORK", frame:GetFrameLevel() })
 	lu.assertEquals(_G.DiabolicUI_Layout.windows.AuditFine.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
+	-- our own art (for the editor to draw it): the textures from our media
+	-- or white, our backdrops (its border), in the order they're drawn
+	local art, lines, backdrops = _G.DiabolicUI_Layout.windows.AuditFine.art, {}, {}
+	for _, item in ipairs(art) do
+		lu.assertNil(item.order)
+		lu.assertNotEquals(item.owner, "AuditGlow")
+		local file = item.file or item.backdrop.edgeFile or item.backdrop.bgFile
+		lu.assertTrue((file:find("[Dd]iabolic[Uu][Ii]") ~= nil) or (file == [[Interface\Buttons\WHITE8X8]]), file)
+		if (item.file == [[Interface\Buttons\WHITE8X8]]) then
+			lines[#lines + 1] = item
+		elseif item.backdrop then
+			backdrops[#backdrops + 1] = item
+		end
+	end
+	lu.assertEquals(#lines, 1)
+	lu.assertEquals(lines[1].color, { 1, .5, 0, 1 })
+	lu.assertEquals(lines[1].coords, { 0, 0, 0, 1, 1, 0, 1, 1 })
+	lu.assertEquals(lines[1].rect, { frame:GetLeft() + 10, frame:GetTop() - 11, 100, 1 })
+	lu.assertEquals({ lines[1].owner, lines[1].alpha, lines[1].blend }, { "AuditFine", 1, "BLEND" })
+	lu.assertTrue(#backdrops > 0)
+	lu.assertEquals(#backdrops[1].backdrop.insets, 4)
 	-- our own parts named after it, listed too (its window, its band, the
 	-- page's zone), placed on unnamed ones "?"
 	local zone = parts.AuditPageDiabolicZone

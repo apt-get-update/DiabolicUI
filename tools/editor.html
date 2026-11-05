@@ -48,6 +48,7 @@ main { position: relative; overflow: hidden; background: #0a0909; cursor: crossh
 .box.kid { background: rgba(224, 192, 64, .10); }
 .box.relto { border-color: var(--rel); border-style: dashed; border-width: calc(var(--px) * 2px); }
 .box.sel { border-color: var(--gold); border-width: calc(var(--px) * 2px); background: rgba(224, 166, 64, .18); z-index: 2; }
+#art canvas { position: absolute; pointer-events: none; }
 .window { position: absolute; pointer-events: none; outline: calc(var(--px) * 2px) solid #7a2a20; }
 #grip { position: absolute; width: calc(var(--px) * 10px); height: calc(var(--px) * 10px); background: var(--gold); cursor: nwse-resize; z-index: 3; display: none; }
 #links { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
@@ -77,6 +78,7 @@ textarea { width: 100%; height: 180px; font: 11px/1.4 ui-monospace, monospace; r
 		<label><input type="checkbox" data-kind="Frame" checked> frames</label>
 		<label><input type="checkbox" data-kind="FontString" checked> texts</label>
 		<label><input type="checkbox" data-kind="Texture" checked> textures</label>
+		<label><input type="checkbox" id="showArt" checked> our art</label>
 	</div>
 	<input id="search" placeholder="Find a part…">
 	<div id="list"></div>
@@ -90,6 +92,7 @@ textarea { width: 100%; height: 180px; font: 11px/1.4 ui-monospace, monospace; r
 	<div id="stage">
 		<img id="shot" alt="">
 		<div id="screen"></div>
+		<div id="art"></div>
 		<div id="boxes"></div>
 		<div id="grip"></div>
 		<svg id="links" width="1" height="1"></svg>
@@ -121,6 +124,7 @@ const At = (r, p) => [r[0] + fx(p) * r[2], r[1] + fy(p) * r[3]];
 const Num = v => { v = Math.round(v * 10) / 10; return Number.isInteger(v) ? String(v) : v.toFixed(1); };
 const Round = v => Math.round(v * 10) / 10;
 const Same = (a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
+const Rgb = c => `rgb(${Math.round(c[0] * 255)}, ${Math.round(c[1] * 255)}, ${Math.round(c[2] * 255)})`;
 const Category = kind => (kind === "Texture" || kind === "FontString") ? kind : "Frame";
 
 // One window of layout.json: where each part is on screen (the scan's,
@@ -231,7 +235,7 @@ function Lines(data, edits) {
 	return out.join("\n");
 }
 
-if (typeof module !== "undefined") module.exports = { Layout, Line, Lines, At };
+if (typeof module !== "undefined") module.exports = { Layout, Line, Lines, At, Rgb };
 
 // ---- the page --------------------------------------------------------------
 if (typeof document !== "undefined") {
@@ -269,6 +273,130 @@ if (typeof document !== "undefined") {
 		Open(data.windows[last] ? last : pick.value);
 	}
 
+	// ---- our art (tools/art/: the pictures tools/positions.lua made)
+	const images = {}, QUALITY = 2;
+	const Image_ = path => images[path] = images[path] || new Promise(done => {
+		const img = new Image();
+		img.onload = () => done(img);
+		img.onerror = () => done(null);
+		img.src = path;
+	});
+	const Canvas = (w, h) => {
+		const c = document.createElement("canvas");
+		c.width = Math.max(1, Math.min(4096, Math.ceil(w)));
+		c.height = Math.max(1, Math.min(4096, Math.ceil(h)));
+		return c;
+	};
+	// a texture's corners (ULx, ULy, LLx, LLy, URx, URy, LRx, LRy; past 1:
+	// repeated) drawn in the rect x, y, w, h
+	function Quad(ctx, img, c, x, y, w, h) {
+		const iw = img.width, ih = img.height;
+		const u0 = c[0] * iw, v0 = c[1] * ih, ux = (c[4] - c[0]) * iw, vx = (c[5] - c[1]) * ih, uy = (c[2] - c[0]) * iw, vy = (c[3] - c[1]) * ih;
+		const det = ux * vy - uy * vx;
+		if (!det) return;
+		const a = w * vy / det, cc = -w * uy / det, b = -h * vx / det, d = h * ux / det;
+		ctx.save();
+		ctx.setTransform(a, b, cc, d, x - (a * u0 + cc * v0), y - (b * u0 + d * v0));
+		ctx.fillStyle = ctx.createPattern(img, "repeat");
+		ctx.beginPath();
+		ctx.moveTo(u0, v0); ctx.lineTo(u0 + ux, v0 + vx); ctx.lineTo(u0 + ux + uy, v0 + vx + vy); ctx.lineTo(u0 + uy, v0 + vy);
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+	// what `paint` draws, colored as the game colors it (its alpha kept)
+	function Tinted(w, h, color, paint) {
+		const src = Canvas(w, h);
+		paint(src.getContext("2d"));
+		if (!color || (color[0] >= 1 && color[1] >= 1 && color[2] >= 1)) return src;
+		const out = Canvas(w, h), c = out.getContext("2d");
+		c.drawImage(src, 0, 0);
+		c.globalCompositeOperation = "multiply";
+		c.fillStyle = Rgb(color);
+		c.fillRect(0, 0, w, h);
+		c.globalCompositeOperation = "destination-in";
+		c.drawImage(src, 0, 0);
+		return out;
+	}
+	async function Paint(item, canvas) {
+		const W = canvas.width, H = canvas.height, ctx = canvas.getContext("2d");
+		if (!item.backdrop) {
+			const img = item.image === true ? null : await Image_(item.image);
+			if (item.image !== true && !img) return;
+			ctx.drawImage(Tinted(W, H, item.color, c => {
+				if (img) Quad(c, img, item.coords, 0, 0, W, H);
+				else { c.fillStyle = "#fff"; c.fillRect(0, 0, W, H); }
+			}), 0, 0);
+			return;
+		}
+		// a backdrop: its middle inside the insets (tiled or stretched), its
+		// edge's 8 pieces (left, right, top, bottom, the 4 corners) around
+		const b = item.backdrop, k = (item.scale || 1) * QUALITY, [il, ir, it, ib] = (b.insets || [0, 0, 0, 0]).map(v => v * k);
+		if (b.bg) {
+			const img = b.bg === true ? null : await Image_(b.bg);
+			const layer = Tinted(W, H, item.color, c => {
+				if (!img) { c.fillStyle = "#fff"; c.fillRect(il, it, W - il - ir, H - it - ib); return; }
+				if (b.tile && b.tileSize) {
+					const s = b.tileSize * k;
+					c.save();
+					c.translate(il, it);
+					c.scale(s / img.width, s / img.height);
+					c.fillStyle = c.createPattern(img, "repeat");
+					c.fillRect(0, 0, (W - il - ir) * img.width / s, (H - it - ib) * img.height / s);
+					c.restore();
+				} else c.drawImage(img, il, it, W - il - ir, H - it - ib);
+			});
+			ctx.globalAlpha = item.color ? item.color[3] : 1;
+			ctx.drawImage(layer, 0, 0);
+		}
+		const edge = b.edge && b.edge !== true && await Image_(b.edge);
+		if (edge) {
+			const e = Math.min((b.edgeSize || 16) * k, W / 2, H / 2), nx = (W - 2 * e) / e, ny = (H - 2 * e) / e, p = i => i / 8;
+			const layer = Tinted(W, H, item.border, c => {
+				Quad(c, edge, [p(0), 0, p(0), ny, p(1), 0, p(1), ny], 0, e, e, H - 2 * e);
+				Quad(c, edge, [p(1), 0, p(1), ny, p(2), 0, p(2), ny], W - e, e, e, H - 2 * e);
+				Quad(c, edge, [p(2), nx, p(3), nx, p(2), 0, p(3), 0], e, 0, W - 2 * e, e);
+				Quad(c, edge, [p(3), nx, p(4), nx, p(3), 0, p(4), 0], e, H - e, W - 2 * e, e);
+				for (const [i, x, y] of [[4, 0, 0], [5, W - e, 0], [6, 0, H - e], [7, W - e, H - e]]) Quad(c, edge, [p(i), 0, p(i), 1, p(i + 1), 0, p(i + 1), 1], x, y, e, e);
+			});
+			ctx.globalAlpha = item.border ? item.border[3] : 1;
+			ctx.drawImage(layer, 0, 0);
+		}
+	}
+	let art = [];
+	// where an art piece is: as the scan saw it, moved and sized with its owner
+	function ArtRect(item) {
+		const o = item.owner && L.parts[item.owner], r = item.rect;
+		const was = o && o.rect, now = o && L.cur[item.owner];
+		if (!was || !now || Same(was, now)) return r;
+		const sx = was[2] ? now[2] / was[2] : 1, sy = was[3] ? now[3] / was[3] : 1;
+		return [now[0] + (r[0] - was[0]) * sx, now[1] + (r[1] - was[1]) * sy, r[2] * sx, r[3] * sy];
+	}
+	function PlaceArt() {
+		const on = $("#showArt").checked;
+		$("#art").style.display = on ? "" : "none";
+		if (!on) return;
+		for (const { item, canvas } of art) {
+			const r = ArtRect(item);
+			Object.assign(canvas.style, { left: r[0] + "px", top: Top(r) + "px", width: r[2] + "px", height: r[3] + "px" });
+		}
+	}
+	function BuildArt() {
+		const holder = $("#art");
+		holder.innerHTML = "";
+		art = [];
+		for (const item of L.seen.art || []) {
+			const canvas = Canvas(item.rect[2] * QUALITY, item.rect[3] * QUALITY);
+			canvas.style.opacity = item.alpha === undefined ? 1 : item.alpha * (item.backdrop || !item.color ? 1 : item.color[3]);
+			if (item.blend === "ADD") canvas.style.mixBlendMode = "plus-lighter";
+			else if (item.blend === "MOD") canvas.style.mixBlendMode = "multiply";
+			holder.appendChild(canvas);
+			art.push({ item, canvas });
+			Paint(item, canvas);
+		}
+		PlaceArt();
+	}
+
 	function Open(title) {
 		$("#window").value = title;
 		Store.set("dui-window", title);
@@ -298,6 +426,7 @@ if (typeof document !== "undefined") {
 		Object.assign(s.style, { width: L.screen[2] + "px", height: L.screen[3] + "px" });
 		const shot = $("#shot");
 		Object.assign(shot.style, { width: L.screen[2] + "px", height: L.screen[3] + "px" });
+		BuildArt();
 		DrawAll();
 		Fit();
 		List();
@@ -315,7 +444,7 @@ if (typeof document !== "undefined") {
 		d.classList.toggle("edited", !!edits[n]);
 	}
 
-	function DrawAll() { for (const n in boxes) Draw(n); Marks(); }
+	function DrawAll() { for (const n in boxes) Draw(n); Marks(); PlaceArt(); }
 
 	// the one picked, the frame it's placed on, what's placed on it
 	function Marks() {
@@ -443,6 +572,7 @@ if (typeof document !== "undefined") {
 		L.relink();
 		for (const n of names) for (const m of L.update(n)) Draw(m);
 		Marks();
+		PlaceArt();
 		Store.set("dui-edits", edits);
 		Output();
 		if (full) { Inspect(); List(); }
@@ -571,6 +701,7 @@ if (typeof document !== "undefined") {
 	// ---- the buttons
 	$("#window").onchange = ev => Open(ev.target.value);
 	$("#search").oninput = List;
+	$("#showArt").onchange = PlaceArt;
 	for (const c of document.querySelectorAll(".kinds input")) c.onchange = () => { shown[c.dataset.kind] = c.checked; DrawAll(); List(); };
 	$("#fit").onclick = () => L && Fit();
 	$("#resetPart").onclick = () => { if (sel && edits[sel]) { Remember(); delete edits[sel]; Changed([sel], true); } };

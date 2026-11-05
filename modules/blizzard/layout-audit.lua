@@ -751,6 +751,79 @@ local Entry = function(part)
 	return entry
 end
 
+-- Our own art in a window, for the editor out of the game to draw
+-- (tools/positions.lua makes pictures of the files): each texture shown
+-- from our media folder (or white, colored: lines, fills) with where it is,
+-- its file, the part of it shown (its 8 corners), its color, alpha and
+-- blend; each backdrop of ours with its files, sizes and colors. In the
+-- order the game draws them, with the nearest named frame (`owner`) they
+-- follow when it moves.
+local WHITE = { ["interface\\chatframe\\chatframebackground"] = true, ["interface\\buttons\\white8x8"] = true }
+local Ours = function(file)
+	return (type(file) == "string") and (string_find(file, "[Dd]iabolic[Uu][Ii][\\/]") or WHITE[file:lower()]) and true
+end
+
+local Round3 = function(...)
+	local values = { ... }
+	for i, value in ipairs(values) do
+		values[i] = math_floor(value * 1000 + .5) / 1000
+	end
+	return values
+end
+
+local STRATA = { BACKGROUND = 1, LOW = 2, MEDIUM = 3, HIGH = 4, DIALOG = 5, FULLSCREEN = 6, FULLSCREEN_DIALOG = 7, TOOLTIP = 8 }
+local LAYERS = { BACKGROUND = 1, BORDER = 2, ARTWORK = 3, OVERLAY = 4 } -- (HIGHLIGHT: only under the cursor)
+
+local CollectArt
+CollectArt = function(frame, owner, alpha, art)
+	owner, alpha = frame:GetName() or owner, alpha * frame:GetAlpha()
+	local order = { STRATA[frame:GetFrameStrata()] or 3, frame:GetFrameLevel() }
+	local backdrop = frame:GetBackdrop()
+	if backdrop and (Ours(backdrop.bgFile) or Ours(backdrop.edgeFile)) and frame:GetLeft() then
+		local insets = backdrop.insets or {}
+		art[#art + 1] = { order = { order[1], order[2], 0, #art }, owner = owner, alpha = alpha, rect = Rect(frame),
+			scale = kit.ScaleOf(frame) / _G.UIParent:GetEffectiveScale(),
+			backdrop = { bgFile = Ours(backdrop.bgFile) and backdrop.bgFile, edgeFile = Ours(backdrop.edgeFile) and backdrop.edgeFile,
+				edgeSize = backdrop.edgeSize, tile = backdrop.tile and true, tileSize = backdrop.tileSize,
+				insets = { insets.left or 0, insets.right or 0, insets.top or 0, insets.bottom or 0 } },
+			color = Round3(frame:GetBackdropColor()), border = Round3(frame:GetBackdropBorderColor()) }
+	end
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		if region:IsObjectType("Texture") and region:IsShown() and Ours(region:GetTexture())
+			and LAYERS[region:GetDrawLayer()] and region:GetLeft() then
+			art[#art + 1] = { order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
+				owner = region:GetName() or owner, alpha = alpha * region:GetAlpha(), rect = Rect(region),
+				file = region:GetTexture(), coords = Round3(region:GetTexCoord()), color = Round3(region:GetVertexColor()),
+				blend = region:GetBlendMode() }
+		end
+	end
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		if child:IsVisible() then
+			CollectArt(child, owner, alpha, art)
+		end
+	end
+	return art
+end
+
+local DrawnFirst = function(a, b)
+	for i = 1, 4 do
+		if (a.order[i] ~= b.order[i]) then
+			return a.order[i] < b.order[i]
+		end
+	end
+end
+
+local Art = function(frame)
+	local art = CollectArt(frame, nil, 1, {})
+	table_sort(art, DrawnFirst)
+	for _, item in ipairs(art) do
+		item.order = nil
+	end
+	return art
+end
+
 -- `window` checked: what breaks the rules said once each, or that
 -- nothing does (once). Its parts saved with where they are.
 local Check = function(window)
@@ -766,6 +839,7 @@ local Check = function(window)
 	CollectNamed(frame, nil, named)
 	Saved.windows[title].rect = Rect(frame)
 	Saved.windows[title].window = Rect(window)
+	Saved.windows[title].art = Art(frame)
 	local new = 0
 	for name, part in pairs(named) do
 		local entry = Entry(part)

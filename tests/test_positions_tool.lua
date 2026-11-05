@@ -124,7 +124,7 @@ Engine:NewStaticConfig("Positions", {
 	lu.assertStrContains(exported, '"rect":[10,20,384,512]')
 	lu.assertStrContains(exported, '"WhoFrameEditBox":{"kind":"EditBox","level":3,"parent":"WhoFrame",'
 		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
-		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","use":{"place":["BOTTOM","WhoFrame","BOTTOM",-20,103]}}')
+		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","use":{"place":["BOTTOM","WhoFrame","BOTTOM",-20.04,103]}}')
 	lu.assertStrContains(exported, '"text":"738 \\"People\\""')
 	lu.assertStrContains(exported, '"unseen":{"GoneFrame":{"place":["TOP","UIParent","TOP",0,-10],"size":[50,20]},'
 		.. '"SizedFrame":{"size":[10,20]}}')
@@ -148,6 +148,56 @@ DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	lu.assertStrContains(Read(addon .. "/tools/layout.json"), '"BankCloseButton":{"kind":"Button"')
 	os.execute("rm -rf '" .. base .. "'")
 	lu.assertStrContains(text, '\t-- BankCloseButton = { "TOPRIGHT", "BankFrame", "TOPRIGHT", -46, -8, 32, 32 }, -- Button')
+end
+
+-- A .tga `width` wide, one high: its header (raw or packed, its bits, its
+-- first row the top one or not), then its pixels.
+local Tga = function(kind, bits, top, width, pixels)
+	return string.char(0, 0, kind, 0, 0, 0, 0, 0, 0, 0, 0, 0, width, 0, 1, 0, bits, top and 32 or 0) .. pixels
+end
+
+-- Our art for the editor: its files as .bmp pictures (in tools/art/, each
+-- made once), white ones said white, the ones not found or not read left out.
+function TestPositionsTool:test_our_art_as_pictures_a_browser_reads()
+	local addon = TempName()
+	os.execute("mkdir -p '" .. addon .. "/media/textures' '" .. addon .. "/tools'")
+	Write(addon .. "/media/textures/Raw32.tga", Tga(2, 32, false, 2, "\1\2\3\4\5\6\7\8"))
+	Write(addon .. "/media/textures/Raw24.tga", Tga(2, 24, true, 2, "\1\2\3\4\5\6"))
+	Write(addon .. "/media/textures/Packed.tga", Tga(10, 32, false, 3, "\128\9\9\9\9" .. "\1\1\2\3\4\5\6\7\8"))
+	Write(addon .. "/media/textures/Mapped.tga", Tga(1, 8, false, 1, "\0"))
+	local ours = [[Interface\\AddOns\\DiabolicUI\\media\\textures\\]]
+	local item = function(file) return string.format('{ file = "%s", rect = { 0, 0, 2, 1 }, coords = { 0, 0, 0, 1, .125, 0, .125, 1 }, color = { 1, 1, 1, 1 }, alpha = 1, owner = "W" },', file) end
+	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = {}, art = {\n"
+		.. item(ours .. "Raw32") .. item(ours .. "raw24.TGA") .. item(ours .. "Packed") .. item(ours .. "Raw32")
+		.. item(ours .. "Mapped") .. item(ours .. "Missing") .. item([[Interface\\Buttons\\WHITE8X8]])
+		.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "' .. ours .. 'Packed", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
+		.. '{ backdrop = { edgeFile = "' .. ours .. 'Missing" }, rect = { 0, 0, 9, 9 } },'
+		.. "} } } }")
+	Run({ addon .. "/saved.lua", addon .. "/positions.lua", addon .. "/tools/layout.json" }, addon)
+	local json = Read(addon .. "/tools/layout.json")
+	local bmp = {}
+	for _, name in ipairs({ "Raw32", "Raw24", "Packed" }) do
+		bmp[name] = Read(addon .. "/tools/art/textures-" .. name .. ".bmp")
+	end
+	local made = io.open(addon .. "/tools/art/textures-Mapped.bmp")
+	os.execute("rm -rf '" .. addon .. "'")
+	lu.assertNil(made)
+	-- (a 32-bit .bmp: its header 122 long, its height negative when its
+	-- first row is the top one, its pixels as they were, an alpha added)
+	lu.assertEquals(bmp.Raw32:sub(1, 2), "BM")
+	lu.assertEquals(bmp.Raw32:sub(19, 26), "\2\0\0\0\1\0\0\0")
+	lu.assertEquals(bmp.Raw32:sub(123), "\1\2\3\4\5\6\7\8")
+	lu.assertEquals(bmp.Raw24:sub(23, 26), "\255\255\255\255")
+	lu.assertEquals(bmp.Raw24:sub(123), "\1\2\3\255\4\5\6\255")
+	lu.assertEquals(bmp.Packed:sub(123), "\9\9\9\9\1\2\3\4\5\6\7\8")
+	lu.assertStrContains(json, '"art":[{"alpha":1,"color":[1,1,1,1],"coords":[0,0,0,1,0.125,0,0.125,1],"image":"art/textures-Raw32.bmp"')
+	lu.assertStrContains(json, '"image":"art/textures-Raw24.bmp"')
+	lu.assertStrContains(json, '"image":true')
+	lu.assertStrContains(json, '"backdrop":{"bg":true,"edge":"art/textures-Packed.bmp","edgeSize":32,"insets":[1,2,3,4],"tile":true}')
+	lu.assertNotStrContains(json, "Mapped")
+	lu.assertNotStrContains(json, "Missing")
+	local _, count = json:gsub('"owner"', "")
+	lu.assertEquals(count, 5)
 end
 
 os.exit(lu.LuaUnit.run())
