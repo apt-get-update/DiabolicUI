@@ -113,6 +113,15 @@ layers, for an editor out of the game. Our own parts are named after their
 window (`ClassTrainerFrameDiabolicBand`, `...DiabolicFoot`), so they're
 listed and can be placed too.
 
+*Or move it out of the game:* open `tools/editor.html` in a browser, then
+`tools/layout.json` (it's remembered next time). Pick a window: each part is
+a box (blue frames, green texts, purple textures; doubled: already in
+`settings/positions.lua`). Click one (again: the one under it), drag it or
+its corner, or use the arrows (Ctrl: size). The frame it's placed on shows
+dashed, what's placed on it follows. A screenshot of the whole screen
+(`Screenshots/`) lines up under the boxes. Copy the lines it writes over
+theirs in `settings/positions.lua`, then `/reload`.
+
 == Put a part in a window's red band
 
 In its `panels` line: `band = { left = { "ItsSearchBox" }, right = { "ItsButton" } }`.
