@@ -704,7 +704,7 @@ end
 -- writes them there): { point, the frame it's placed on, its point, x, y,
 -- width, height } (a text's size its own), with its kind and text; for an
 -- editor out of the game (tools/layout.json) too: all its points (the
--- frame they're on "?" if it has no name, none for its parent), its parent,
+-- frame they're on "?" if it has no name, its parent if none), its parent,
 -- where it is on screen ({ left, bottom, width, height } in UIParent's
 -- units), its strata and level (a text: its layer and its frame's level).
 local Round = function(value)
@@ -739,7 +739,7 @@ local Entry = function(part)
 	entry.points = {}
 	for i = 1, part:GetNumPoints() do
 		local point, relative, relativePoint, x, y = part:GetPoint(i)
-		entry.points[i] = { point, NameOf(relative), relativePoint, Round(x), Round(y) }
+		entry.points[i] = { point, NameOf(relative or part:GetParent()), relativePoint, Round(x), Round(y) }
 	end
 	entry.parent = NameOf(part:GetParent())
 	entry.rect = Rect(part)
@@ -754,10 +754,10 @@ end
 -- Our own art in a window, for the editor out of the game to draw
 -- (tools/positions.lua makes pictures of the files): each texture shown
 -- from our media folder (or white, colored: lines, fills) with where it is,
--- its file, the part of it shown (its 8 corners), its color, alpha and
--- blend; each backdrop of ours with its files, sizes and colors. In the
--- order the game draws them, with the nearest named frame (`owner`) they
--- follow when it moves.
+-- its file, the part of it shown (its 8 corners), its color, alpha,
+-- blend and gradient (ours: kit.Gradient); each backdrop of ours with its
+-- files, sizes and colors. In the order the game draws them, with the
+-- nearest named frame (`owner`) they follow when it moves.
 local WHITE = { ["interface\\chatframe\\chatframebackground"] = true, ["interface\\buttons\\white8x8"] = true }
 local Ours = function(file)
 	return (type(file) == "string") and (string_find(file, "[Dd]iabolic[Uu][Ii][\\/]") or WHITE[file:lower()]) and true
@@ -795,7 +795,7 @@ CollectArt = function(frame, owner, alpha, art)
 			art[#art + 1] = { order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
 				owner = region:GetName() or owner, alpha = alpha * region:GetAlpha(), rect = Rect(region),
 				file = region:GetTexture(), coords = Round3(region:GetTexCoord()), color = Round3(region:GetVertexColor()),
-				blend = region:GetBlendMode() }
+				blend = region:GetBlendMode(), gradient = region.DiabolicGradient }
 		end
 	end
 	for i = 1, select("#", frame:GetChildren()) do

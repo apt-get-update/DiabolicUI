@@ -100,10 +100,10 @@ Module.CreateBook = function(self, window, owner)
 		local dark = config.fold_alpha
 		if (side == 0) then
 			fold:SetPoint("TOPRIGHT", window, "TOPLEFT", x + half, y)
-			fold:SetGradientAlpha("HORIZONTAL", 0, 0, 0, 0, 0, 0, 0, dark)
+			kit.Gradient(fold, "HORIZONTAL", 0, 0, 0, 0, 0, 0, 0, dark)
 		else
 			fold:SetPoint("TOPLEFT", window, "TOPLEFT", x + half, y)
-			fold:SetGradientAlpha("HORIZONTAL", 0, 0, 0, dark, 0, 0, 0, 0)
+			kit.Gradient(fold, "HORIZONTAL", 0, 0, 0, dark, 0, 0, 0, 0)
 		end
 		book[#book + 1] = page
 		book[#book + 1] = fold

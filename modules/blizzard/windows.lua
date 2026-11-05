@@ -43,6 +43,15 @@ Module.Windows = Windows
 local LitRows = {} -- every chosen row's light (LightRow; /dui layout reads text on it)
 Module.LitRows = LitRows
 
+-- A texture's colors from one end to the other (SetGradientAlpha's), kept
+-- on it: the game can't say them back, /dui layout saves them for the
+-- editor out of the game to draw.
+local Gradient = function(texture, orientation, ...)
+	texture:SetGradientAlpha(orientation, ...)
+	texture.DiabolicGradient = { orientation, ... }
+end
+Module.Gradient = Gradient
+
 -- A name for a part we make for `owner`: its name and `suffix` (a number
 -- after them if that's taken), so /dui layout lists it and
 -- settings/positions.lua can place it. None if `owner` has none.
@@ -891,7 +900,7 @@ Module.StyleBanner = function(self, tab, icon)
 		shadow:SetTexture(file)
 		shadow:SetPoint("TOP", art.cloth, "TOP", 0, 0)
 		shadow:SetSize(spec.width, spec.shadow)
-		shadow:SetGradientAlpha("VERTICAL", 0, 0, 0, 0, 0, 0, 0, spec.shadow_alpha)
+		Gradient(shadow, "VERTICAL", 0, 0, 0, 0, 0, 0, 0, spec.shadow_alpha)
 		table_insert(art.shadows, shadow)
 	end
 	tab.DiabolicBanner = art
@@ -1165,9 +1174,9 @@ local Field = function(plate, inset, owner)
 				line:SetWidth(1)
 			end
 			if segment[9] then
-				line:SetGradient(segment[2], r * ends, g * ends, b * ends, r, g, b)
+				Gradient(line, segment[2], r * ends, g * ends, b * ends, 1, r, g, b, 1)
 			else
-				line:SetGradient(segment[2], r, g, b, r * ends, g * ends, b * ends)
+				Gradient(line, segment[2], r, g, b, 1, r * ends, g * ends, b * ends, 1)
 			end
 			lines[#lines + 1] = line
 		end

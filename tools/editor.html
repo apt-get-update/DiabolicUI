@@ -341,18 +341,31 @@ if (typeof document !== "undefined") {
 		ctx.fill();
 		ctx.restore();
 	}
-	// what `paint` draws, colored as the game colors it (its alpha kept)
-	function Tinted(w, h, color, paint) {
+	// what `paint` draws, colored as the game colors it: its color, or
+	// its gradient (from one end to the other: left to right, bottom to top)
+	function Tinted(w, h, color, paint, gradient) {
 		const src = Canvas(w, h);
 		paint(src.getContext("2d"));
-		if (!color || (color[0] >= 1 && color[1] >= 1 && color[2] >= 1)) return src;
+		if (!gradient && (!color || (color[0] >= 1 && color[1] >= 1 && color[2] >= 1))) return src;
 		const out = Canvas(w, h), c = out.getContext("2d");
 		c.drawImage(src, 0, 0);
 		c.globalCompositeOperation = "multiply";
-		c.fillStyle = Rgb(color);
+		let alpha = null;
+		if (gradient) {
+			const [o, r1, g1, b1, a1, r2, g2, b2, a2] = gradient;
+			const Ramp = () => o === "HORIZONTAL" ? c.createLinearGradient(0, 0, w, 0) : c.createLinearGradient(0, h, 0, 0);
+			const rgb = Ramp();
+			rgb.addColorStop(0, Rgb([r1, g1, b1]));
+			rgb.addColorStop(1, Rgb([r2, g2, b2]));
+			c.fillStyle = rgb;
+			alpha = Ramp();
+			alpha.addColorStop(0, `rgba(0, 0, 0, ${a1})`);
+			alpha.addColorStop(1, `rgba(0, 0, 0, ${a2})`);
+		} else c.fillStyle = Rgb(color);
 		c.fillRect(0, 0, w, h);
 		c.globalCompositeOperation = "destination-in";
 		c.drawImage(src, 0, 0);
+		if (alpha) { c.fillStyle = alpha; c.fillRect(0, 0, w, h); }
 		return out;
 	}
 	async function Paint(item, canvas) {
@@ -363,7 +376,7 @@ if (typeof document !== "undefined") {
 			ctx.drawImage(Tinted(W, H, item.color, c => {
 				if (img) Quad(c, img, item.coords, 0, 0, W, H);
 				else { c.fillStyle = "#fff"; c.fillRect(0, 0, W, H); }
-			}), 0, 0);
+			}, item.gradient), 0, 0);
 			return;
 		}
 		// a backdrop: its middle inside the insets (tiled or stretched), its

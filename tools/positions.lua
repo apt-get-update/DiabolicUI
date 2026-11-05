@@ -195,7 +195,7 @@ Encode = function(value, out)
 		out[#out + 1] = "{"
 		for i, key in ipairs(Sorted(value)) do
 			out[#out + 1] = (i > 1) and "," or ""
-			Encode(key, out)
+			Encode(tostring(key), out)
 			out[#out + 1] = ":"
 			Encode(value[key], out)
 		end
@@ -338,8 +338,13 @@ for window, seen in pairs(layout.windows or {}) do
 	for name, entry in pairs(seen.parts or {}) do
 		if (type(entry) == "table") then
 			local part = Place(entry)
-			for _, key in ipairs({ "kind", "text", "points", "parent", "rect", "strata", "level", "layer" }) do
+			for _, key in ipairs({ "kind", "text", "parent", "rect", "strata", "level", "layer" }) do
 				part[key] = entry[key]
+			end
+			-- (a point placed on nothing: on its parent, as the game has it)
+			for i, point in ipairs(entry.points or {}) do
+				part.points = part.points or {}
+				part.points[i] = { point[1], point[2] or entry.parent or "UIParent", point[3], point[4], point[5] }
 			end
 			part.use = active[name] and Place(active[name])
 			parts[name], exported[name] = part, true

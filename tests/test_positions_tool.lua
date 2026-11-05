@@ -167,7 +167,9 @@ function TestPositionsTool:test_our_art_as_pictures_a_browser_reads()
 	Write(addon .. "/media/textures/Mapped.tga", Tga(1, 8, false, 1, "\0"))
 	local ours = [[Interface\\AddOns\\DiabolicUI\\media\\textures\\]]
 	local item = function(file) return string.format('{ file = "%s", rect = { 0, 0, 2, 1 }, coords = { 0, 0, 0, 1, .125, 0, .125, 1 }, color = { 1, 1, 1, 1 }, alpha = 1, owner = "W" },', file) end
-	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = {}, art = {\n"
+	-- (a part's second point on nothing: on its parent)
+	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = { P = { 'TOP', 'W', 'TOP', 0, 0, 1, 1, kind = 'Frame', parent = 'W',"
+		.. " points = { { 'TOP', 'W', 'TOP', 0, 0 }, { 'CENTER', nil, 'CENTER', 0, 0 } } } }, art = {\n"
 		.. item(ours .. "Raw32") .. item(ours .. "raw24.TGA") .. item(ours .. "Packed") .. item(ours .. "Raw32")
 		.. item(ours .. "Mapped") .. item(ours .. "Missing") .. item([[Interface\\Buttons\\WHITE8X8]])
 		.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "' .. ours .. 'Packed", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
@@ -194,6 +196,7 @@ function TestPositionsTool:test_our_art_as_pictures_a_browser_reads()
 	lu.assertStrContains(json, '"image":"art/textures-Raw24.bmp"')
 	lu.assertStrContains(json, '"image":true')
 	lu.assertStrContains(json, '"backdrop":{"bg":true,"edge":"art/textures-Packed.bmp","edgeSize":32,"insets":[1,2,3,4],"tile":true}')
+	lu.assertStrContains(json, '"points":[["TOP","W","TOP",0,0],["CENTER","W","CENTER",0,0]]')
 	lu.assertNotStrContains(json, "Mapped")
 	lu.assertNotStrContains(json, "Missing")
 	local _, count = json:gsub('"owner"', "")
