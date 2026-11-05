@@ -178,22 +178,60 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- and how they're placed, to move them by name
 	local parts = _G.DiabolicUI_Layout.windows.AuditFine.parts
 	-- (as settings/positions.lua takes them; a text keeps its own size)
-	lu.assertEquals(parts.AuditPage, { "TOPLEFT", "AuditFine", "TOPLEFT", 30, -80, 340, 150, kind = "Frame" })
-	lu.assertEquals(parts.AuditInk, { "TOPLEFT", "AuditFine", "TOPLEFT", 40, -90, kind = "FontString", text = "In ink" })
+	local page, ink = parts.AuditPage, parts.AuditInk
+	lu.assertEquals({ unpack(page, 1, 7) }, { "TOPLEFT", "AuditFine", "TOPLEFT", 30, -80, 340, 150 })
+	lu.assertEquals(page.kind, "Frame")
+	lu.assertEquals({ unpack(ink) }, { "TOPLEFT", "AuditFine", "TOPLEFT", 40, -90 })
+	lu.assertEquals(ink.text, "In ink")
+	-- (for an editor: all its points, its parent, where it is on screen, its layer)
+	lu.assertEquals(page.points, { { "TOPLEFT", "AuditFine", "TOPLEFT", 30, -80 } })
+	lu.assertEquals(page.parent, "AuditFine")
+	lu.assertEquals(page.rect, { frame:GetLeft() + 30, frame:GetTop() - 230, 340, 150 })
+	lu.assertEquals({ page.strata, page.level }, { frame:GetFrameStrata(), _G.AuditPage:GetFrameLevel() })
+	lu.assertEquals({ ink.layer, ink.level }, { "ARTWORK", frame:GetFrameLevel() })
+	lu.assertEquals(_G.DiabolicUI_Layout.windows.AuditFine.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
+	-- our own parts named after it, listed too (its window, its band, the
+	-- page's zone), placed on unnamed ones "?"
+	local zone = parts.AuditPageDiabolicZone
+	lu.assertEquals(zone.points[2], { "BOTTOMRIGHT", "AuditPage", "BOTTOMRIGHT", 0, 0 })
+	lu.assertNotNil(parts.AuditFineDiabolic)
+	lu.assertEquals(parts.AuditFineDiabolicBand.parent, "AuditFineDiabolic")
 	-- its parts counted, once
-	lu.assertEquals(said()[3], "AuditFine: 3 parts saved (3 new).")
+	local total = tonumber(said()[3]:match("^AuditFine: (%d+) parts saved %(%1 new%)%.$"))
+	lu.assertTrue(total > 3)
 	client:Tick(1.1)
 	lu.assertEquals(#said(), 3)
 	-- again when new ones show (a page, a tab)
 	text(frame, "AuditMore", 40, -120, "More"):SetTextColor(0, 0, 0)
+	local nameless = CreateFrame("Frame", nil, frame)
+	nameless:SetSize(10, 10)
+	nameless:SetPoint("TOPLEFT")
+	local hanging = CreateFrame("Frame", "AuditHanging", frame)
+	hanging:SetSize(10, 10)
+	hanging:SetPoint("TOP", nameless, "BOTTOM")
 	client:Tick(1.1)
-	lu.assertEquals(said()[4], "AuditFine: 4 parts saved (1 new).")
+	lu.assertEquals(said()[4], string.format("AuditFine: %d parts saved (2 new).", total + 2))
+	lu.assertEquals(parts.AuditHanging.points, { { "TOP", "?", "BOTTOM", 0, 0 } })
 	client:Tick(1.1)
 	lu.assertEquals(#said(), 4)
 	-- off again
 	slash("layout")
 	lu.assertEquals(said()[5], "Layout check off.")
 	lu.assertFalse(checking())
+	assertClean(client)
+end
+
+-- Our own parts named after what they're for (/dui layout lists them,
+-- settings/positions.lua places them), a number after a name taken; none
+-- for a part with no name.
+function TestLayoutAudit:test_our_parts_named_after_their_owner()
+	boot()
+	local frame = window("AuditNames")
+	lu.assertEquals(_G.AuditNamesDiabolic:GetParent(), frame)
+	local list = CreateFrame("Frame", "AuditNamesList", frame)
+	lu.assertEquals(kit:AddZone(list, "slate", { 0, 0, 0, 0 }):GetName(), "AuditNamesListDiabolicZone")
+	lu.assertEquals(kit:AddZone(list, "slate", { 0, 0, 0, 0 }):GetName(), "AuditNamesListDiabolicZone2")
+	lu.assertNil(kit:AddZone(CreateFrame("Frame", nil, frame), "slate", { 0, 0, 0, 0 }):GetName())
 	assertClean(client)
 end
 

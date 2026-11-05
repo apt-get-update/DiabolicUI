@@ -2,10 +2,14 @@
 -- window's, in DiabolicUI_Layout), where it was, each line commented out;
 -- the lines already without "--" kept (with the notes over them and at
 -- their ends, in their window), and what /dui adjust moved in game added
--- without "--". Run from the addon's folder, the game's saved
--- variables written (a /reload or a logout):
---   lua5.1 tools/positions.lua [path/to/WTF/Account/<you>/SavedVariables/DiabolicUI.lua [out]]
+-- without "--". With them, tools/layout.json: every window and its parts
+-- as the scan saw them (all their points, parents, places on screen,
+-- layers), the lines in use beside them, for an editor out of the game.
+-- Run from the addon's folder, the game's saved variables written (a
+-- /reload or a logout):
+--   lua5.1 tools/positions.lua [path/to/WTF/Account/<you>/SavedVariables/DiabolicUI.lua [out [json]]]
 local OUT = arg[2] or "settings/positions.lua"
+local JSON = arg[3] or "tools/layout.json"
 
 local Newest = function()
 	local pipe = io.popen("ls -t ../../../WTF/Account/*/SavedVariables/DiabolicUI.lua 2>/dev/null")
@@ -163,3 +167,72 @@ file = assert(io.open(OUT, "w"))
 file:write(table.concat(out, "\n"))
 file:close()
 print(string.format("%s: %d parts, %d in use.", OUT, count, #Sorted(active)))
+
+-- tools/layout.json ----------------------------------------------------------
+
+-- `value` (a string, a number or a table) in JSON: a table with 1..n only
+-- an array, else an object (its keys sorted).
+local Encode
+Encode = function(value, out)
+	local kind = type(value)
+	if (kind == "string") then
+		local escaped = value:gsub('[%c"\\]', function(c)
+			return (c == '"' and '\\"') or (c == "\\" and "\\\\") or string.format("\\u%04x", c:byte())
+		end)
+		out[#out + 1] = '"' .. escaped .. '"'
+	elseif (kind == "number") then
+		out[#out + 1] = Number(value)
+	elseif (kind == "table") and (next(value) ~= nil) and (#Sorted(value) == #value) then
+		out[#out + 1] = "["
+		for i, item in ipairs(value) do
+			out[#out + 1] = (i > 1) and "," or ""
+			Encode(item, out)
+		end
+		out[#out + 1] = "]"
+	else
+		out[#out + 1] = "{"
+		for i, key in ipairs(Sorted(value)) do
+			out[#out + 1] = (i > 1) and "," or ""
+			Encode(key, out)
+			out[#out + 1] = ":"
+			Encode(value[key], out)
+		end
+		out[#out + 1] = "}"
+	end
+end
+
+-- A place as settings/positions.lua takes it: { point, relative,
+-- relativePoint, x, y } and its size ({ width, height }), apart.
+local Place = function(entry)
+	if (type(entry[1]) == "number") then
+		return { size = { entry[1], entry[2] } }
+	end
+	return { place = { entry[1], entry[2], entry[3], entry[4], entry[5] }, size = entry[6] and { entry[6], entry[7] } }
+end
+
+local export = { resolution = layout.resolution, unit = layout.unit, windows = {}, unseen = {} }
+local exported = {}
+for window, seen in pairs(layout.windows or {}) do
+	local parts = {}
+	for name, entry in pairs(seen.parts or {}) do
+		if (type(entry) == "table") then
+			local part = Place(entry)
+			for _, key in ipairs({ "kind", "text", "points", "parent", "rect", "strata", "level", "layer" }) do
+				part[key] = entry[key]
+			end
+			part.use = active[name] and Place(active[name])
+			parts[name], exported[name] = part, true
+		end
+	end
+	export.windows[window] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts }
+end
+for name, entry in pairs(active) do
+	if not exported[name] then
+		export.unseen[name] = Place(entry)
+	end
+end
+local json = {}
+Encode(export, json)
+file = assert(io.open(JSON, "w"))
+file:write(table.concat(json), "\n")
+file:close()

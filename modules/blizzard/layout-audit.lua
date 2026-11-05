@@ -702,9 +702,24 @@ end
 
 -- Where a part is, as settings/positions.lua takes it (tools/positions.lua
 -- writes them there): { point, the frame it's placed on, its point, x, y,
--- width, height } (a text's size its own), with its kind and text.
+-- width, height } (a text's size its own), with its kind and text; for an
+-- editor out of the game (tools/layout.json) too: all its points (the
+-- frame they're on "?" if it has no name, none for its parent), its parent,
+-- where it is on screen ({ left, bottom, width, height } in UIParent's
+-- units), its strata and level (a text: its layer and its frame's level).
 local Round = function(value)
 	return math_floor(value * 10 + .5) / 10
+end
+
+local NameOf = function(frame)
+	return frame and (frame:GetName() or "?")
+end
+
+-- (`part` placed: Entry's, a window shown)
+local Rect = function(part)
+	local left, bottom, width, height = part:GetRect()
+	local scale = kit.ScaleOf(part) / _G.UIParent:GetEffectiveScale()
+	return { Round(left * scale), Round(bottom * scale), Round(width * scale), Round(height * scale) }
 end
 
 local Entry = function(part)
@@ -721,6 +736,18 @@ local Entry = function(part)
 	if text and (text ~= "") and (not string_find(text, "[|\n]")) then
 		entry.text = text
 	end
+	entry.points = {}
+	for i = 1, part:GetNumPoints() do
+		local point, relative, relativePoint, x, y = part:GetPoint(i)
+		entry.points[i] = { point, NameOf(relative), relativePoint, Round(x), Round(y) }
+	end
+	entry.parent = NameOf(part:GetParent())
+	entry.rect = Rect(part)
+	if part.GetFrameLevel then
+		entry.strata, entry.level = part:GetFrameStrata(), part:GetFrameLevel()
+	else
+		entry.layer, entry.level = part:GetDrawLayer(), part:GetParent():GetFrameLevel()
+	end
 	return entry
 end
 
@@ -735,7 +762,10 @@ local Check = function(window)
 	local title = frame:GetName() or L["a window"]
 	Save(title)
 	local named, parts = {}, Saved.windows[title].parts
-	CollectNamed(frame, window, named)
+	-- (our window's parts too: its band, its foot...)
+	CollectNamed(frame, nil, named)
+	Saved.windows[title].rect = Rect(frame)
+	Saved.windows[title].window = Rect(window)
 	local new = 0
 	for name, part in pairs(named) do
 		local entry = Entry(part)

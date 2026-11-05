@@ -23,6 +23,7 @@ local math_floor = math.floor
 local math_max = math.max
 local math_min = math.min
 local pairs = pairs
+local rawget = rawget
 local select = select
 local setmetatable = setmetatable
 local string_find = string.find
@@ -41,6 +42,23 @@ local Windows = {} -- every window made, its Blizzard frame its .Frame (/dui lay
 Module.Windows = Windows
 local LitRows = {} -- every chosen row's light (LightRow; /dui layout reads text on it)
 Module.LitRows = LitRows
+
+-- A name for a part we make for `owner`: its name and `suffix` (a number
+-- after them if that's taken), so /dui layout lists it and
+-- settings/positions.lua can place it. None if `owner` has none.
+local NameFor = function(owner, suffix)
+	local base = owner and owner:GetName()
+	if not base then
+		return nil
+	end
+	local name, count = base .. suffix, 1
+	while rawget(_G, name) do
+		count = count + 1
+		name = base .. suffix .. count
+	end
+	return name
+end
+Module.NameFor = NameFor
 
 -- How far `window`'s top is lowered (DropTop): the tab row it no longer needs.
 local Drop = function(window)
@@ -246,12 +264,12 @@ end
 -- tiles, its iron frame a backdrop over the title bar's band, so the band
 -- sits inside it (Diablo III's).
 Module.CreateWindow = function(self, frame, insets)
-	local window = CreateFrame("Frame", nil, frame)
+	local window = CreateFrame("Frame", NameFor(frame, "Diabolic"), frame)
 	window:SetFrameLevel(frame:GetFrameLevel())
 	window:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	window:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
 	-- over the band (+1), under the close button's socket (+4)
-	local border = CreateFrame("Frame", nil, window)
+	local border = CreateFrame("Frame", NameFor(window, "Border"), window)
 	border:SetFrameLevel(window:GetFrameLevel() + 3)
 	border:SetBackdrop({
 		edgeFile = config.backdrop.edgeFile,
@@ -277,7 +295,7 @@ end
 -- secure buttons can't be hidden by us without tainting them). It takes
 -- the mouse, so nothing under it is clicked.
 Module.CreateCover = function(self, window, insets, level)
-	local cover = CreateFrame("Frame", nil, window:GetParent())
+	local cover = CreateFrame("Frame", NameFor(window, "Cover"), window:GetParent())
 	cover:SetFrameLevel(window:GetFrameLevel() + level)
 	cover:SetPoint("TOPLEFT", window, "TOPLEFT", insets[1], -insets[2])
 	cover:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -insets[3], insets[4])
@@ -351,7 +369,7 @@ local PlaceHeader = function(header)
 end
 
 Module.CreateHeader = function(self, window, height, insets)
-	local header = CreateFrame("Frame", nil, window)
+	local header = CreateFrame("Frame", NameFor(window, "Band"), window)
 	header.DiabolicInsets = insets
 	PlaceHeader(header)
 	if window.DiabolicHeaders then
@@ -418,7 +436,7 @@ Module.SetTitle = function(self, header, title)
 	local window = header:GetParent()
 	local plate = window.DiabolicPlate
 	if not plate then
-		plate = CreateFrame("Frame", nil, window)
+		plate = CreateFrame("Frame", NameFor(window, "TitlePlate"), window)
 		plate:SetFrameLevel(window.Border:GetFrameLevel()) -- (its art over the iron's)
 		plate:SetSize(spec.width, spec.height)
 		-- (on the iron's top, lowered with it: DropTop)
@@ -479,7 +497,7 @@ end
 Module.AddTitleGem = function(self, header)
 	local spec = config.title_plate.gem
 	local plate = header:GetParent().DiabolicPlate
-	local gem = CreateFrame("Button", nil, plate)
+	local gem = CreateFrame("Button", NameFor(plate, "Gem"), plate)
 	gem:SetFrameLevel(plate:GetFrameLevel() + 2)
 	gem:SetSize(spec.size, spec.size)
 	gem:SetPoint("CENTER", plate, "LEFT", spec.x, spec.y)
@@ -502,7 +520,7 @@ end
 
 Module.CreateCartouche = function(self, header, text, icon)
 	local spec = config.cartouche
-	local cartouche = CreateFrame("Frame", nil, header)
+	local cartouche = CreateFrame("Frame", NameFor(text, "DiabolicCartouche"), header)
 	cartouche:SetPoint("CENTER", header, "CENTER")
 	cartouche:SetHeight(spec.height)
 	self:CreateSlices(cartouche, "BACKGROUND", spec, spec.texture, spec.height)
@@ -566,7 +584,7 @@ end
 Module.AddPane = function(self, first, last, open)
 	local parent = first:GetParent()
 	local outset = config.pane_outset
-	local pane = CreateFrame("Frame", nil, parent)
+	local pane = CreateFrame("Frame", NameFor(first, "DiabolicPane"), parent)
 	pane:SetFrameLevel(parent:GetFrameLevel() + (open and 1 or 0))
 	pane:SetPoint("TOPLEFT", first, "TOPLEFT", -outset, outset)
 	pane:SetPoint("BOTTOMRIGHT", last or first, "BOTTOMRIGHT", outset, -outset)
@@ -893,7 +911,7 @@ end
 -- kept, its middle stretched.
 local CreateRail = function(window)
 	local spec = config.banner.rail
-	local rail = CreateFrame("Frame", nil, window)
+	local rail = CreateFrame("Frame", NameFor(window, "Rail"), window)
 	rail:SetHeight(spec.height)
 	local left = rail:CreateTexture(nil, "ARTWORK")
 	left:SetTexture(spec.texture)
@@ -1057,7 +1075,7 @@ Module.CreateSocket = function(self, window)
 	local spec, edge = config.close, config.backdrop.edgeSize
 	local file = config.backdrop.edgeFile
 	local size = spec.socket_size - spec.socket_inset
-	local socket = CreateFrame("Frame", nil, window)
+	local socket = CreateFrame("Frame", NameFor(window, "Socket"), window)
 	socket:SetFrameLevel(window.Border:GetFrameLevel() + 1)
 	socket:SetSize(size, size)
 	socket:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.socket_inset, -spec.socket_inset - Drop(window))
@@ -1196,7 +1214,7 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 	local spec = config.dropdown
 	frame.DiabolicInset = inset
 	frame.DiabolicDropDown = true
-	local plate = CreateFrame("Frame", nil, frame)
+	local plate = CreateFrame("Frame", NameFor(frame, "DiabolicField"), frame)
 	plate:SetPoint("LEFT", 0, offset or 0)
 	plate:SetPoint("RIGHT", 0, offset or 0)
 	plate:SetHeight(spec.height)
@@ -1249,7 +1267,7 @@ Module.StyleEditBox = function(self, box)
 	end
 	local spec = config.dropdown
 	box.DiabolicOutset = config.edit_padding
-	local plate = CreateFrame("Frame", nil, box)
+	local plate = CreateFrame("Frame", NameFor(box, "DiabolicField"), box)
 	plate:SetPoint("LEFT", -config.edit_padding, 0)
 	plate:SetPoint("RIGHT", config.edit_padding, 0)
 	plate:SetHeight(spec.height)
@@ -1607,7 +1625,7 @@ Module.StyleScrollBar = function(self, bar)
 	thumb:SetSize(spec.width, spec.thumb_height)
 	-- the track from the up arrow's top to the down arrow's bottom, the
 	-- line just outside it
-	local track = CreateFrame("Frame", nil, bar)
+	local track = CreateFrame("Frame", NameFor(bar, "DiabolicTrack"), bar)
 	track:SetFrameLevel(math_max(bar:GetFrameLevel() - 1, 0))
 	track:SetPoint("TOP", up, "TOP", 0, spec.line)
 	track:SetPoint("BOTTOM", down, "BOTTOM", 0, -spec.line)
@@ -1797,7 +1815,7 @@ end
 -- by default) shows.
 Module.AddPanel = function(self, frame, insets, parent)
 	parent = parent or frame:GetParent()
-	local panel = CreateFrame("Frame", nil, parent)
+	local panel = CreateFrame("Frame", NameFor(frame, "DiabolicPanel"), parent)
 	panel:SetFrameLevel(parent:GetFrameLevel())
 	panel:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	panel:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
@@ -1873,7 +1891,7 @@ end
 -- default) shows.
 Module.AddZone = function(self, frame, material, insets, parent)
 	parent = parent or frame:GetParent()
-	local zone = CreateFrame("Frame", nil, parent)
+	local zone = CreateFrame("Frame", NameFor(frame, "DiabolicZone"), parent)
 	zone:SetFrameLevel(parent:GetFrameLevel())
 	zone:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	zone:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])
@@ -1886,7 +1904,7 @@ end
 -- A table's column names on a dark bar, over its zone's top.
 Module.AddHeaderBar = function(self, zone)
 	local section = config.section
-	local bar = CreateFrame("Frame", nil, zone)
+	local bar = CreateFrame("Frame", NameFor(zone, "ColumnBar"), zone)
 	bar:SetFrameLevel(zone:GetFrameLevel())
 	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
 	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
@@ -1946,7 +1964,7 @@ end
 -- sides (as the foot's): over what the window shows, under its frame.
 Module.AddIronBar = function(self, window, y)
 	local spec = config.footer_rail
-	local holder = CreateFrame("Frame", nil, window)
+	local holder = CreateFrame("Frame", NameFor(window, "IronBar"), window)
 	holder:SetFrameLevel(window:GetFrameLevel() + 2)
 	holder:SetAllPoints()
 	local bar = IronBar(holder)
@@ -1962,7 +1980,7 @@ end
 -- content by a bar of the frame's iron along its top (the frame's left
 -- edge turned), its ends under the frame's sides.
 Module.AddFooter = function(self, window, top)
-	local foot = CreateFrame("Frame", nil, window)
+	local foot = CreateFrame("Frame", NameFor(window, "Foot"), window)
 	foot.Window = window
 	foot.Material = self:CreateNine(foot, "ARTWORK", "footer", window)
 	local spec = config.footer_rail
@@ -2101,7 +2119,7 @@ end
 -- list's scroll frame, which Blizzard hides when it all fits).
 Module.AddParchment = function(self, frame, insets, material, parent)
 	insets = insets or config.parchment_insets
-	local holder = CreateFrame("Frame", nil, parent or frame)
+	local holder = CreateFrame("Frame", NameFor(frame, "DiabolicParchment"), parent or frame)
 	holder:SetFrameLevel(frame:GetFrameLevel())
 	holder:SetPoint("TOPLEFT", frame, "TOPLEFT", -insets[1], insets[2])
 	holder:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", insets[3], -insets[4])

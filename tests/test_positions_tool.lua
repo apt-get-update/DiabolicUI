@@ -56,17 +56,19 @@ end
 TestPositionsTool = {}
 
 function TestPositionsTool:test_written_kept_and_moved()
-	local saved, out = TempName(), TempName()
+	local saved, out, json = TempName(), TempName(), TempName()
 	Write(saved, [[
 DiabolicUI_Layout = {
 	["moved"] = { ["WhoFrameEditBox"] = { "BOTTOM", "WhoFrame", "BOTTOM", -20.04, 103 } },
 	["windows"] = {
 		["FriendsFrame"] = { ["parts"] = {
-			["WhoFrameEditBox"] = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100, 296, 32, kind = "EditBox" },
+			["WhoFrameEditBox"] = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100, 296, 32, kind = "EditBox",
+				points = { { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100 } }, parent = "WhoFrame", rect = { 50, 100, 296, 32 },
+				strata = "MEDIUM", level = 3 },
 			["WhoFrameTotals"] = { "LEFT", "WhoFrame", "LEFT", 4.5, 0, kind = "FontString", text = "738 \"People\"" },
 			["Odd-Name"] = { "TOP", "WhoFrame", "TOP", 0, 0, 10, 10, kind = "Frame" },
 			["WhoFrameOld"] = "an older scan's line",
-		} },
+		}, ["rect"] = { 10, 20, 384, 512 } },
 		["AuctionFrame"] = { ["parts"] = {
 			["WhoFrameTotals"] = { "TOP", "AuctionFrame", "TOP", 0, 0, kind = "FontString", text = "Seen \"first\"" },
 		} },
@@ -87,11 +89,13 @@ Engine:NewStaticConfig("Positions", {
 	SizedFrame = { 10, 20 },
 })
 ]])
-	local said = Run({ saved, out })
+	local said = Run({ saved, out, json })
 	lu.assertStrContains(said, "3 parts, 4 in use.")
 	local text = Read(out)
+	local exported = Read(json)
 	os.remove(saved)
 	os.remove(out)
+	os.remove(json)
 	-- each window's parts, sorted; one seen twice under its first window
 	lu.assertStrContains(text, "\t-- AuctionFrame ---")
 	lu.assertStrContains(text, "\t-- why it's there,\n\t-- on two lines\n"
@@ -114,6 +118,17 @@ Engine:NewStaticConfig("Positions", {
 	assert(loadstring(text))("DiabolicUI", { NewStaticConfig = function(_, name, t) positions = t end })
 	lu.assertEquals(positions.WhoFrameEditBox, { "BOTTOM", "WhoFrame", "BOTTOM", -20, 103 })
 	lu.assertNil(positions["Odd-Name"])
+	-- for an editor: each window's parts as the scan saw them (their place
+	-- and size apart), the lines in use beside them, those of no window
+	lu.assertStrContains(exported, '"FriendsFrame":{"parts":{')
+	lu.assertStrContains(exported, '"rect":[10,20,384,512]')
+	lu.assertStrContains(exported, '"WhoFrameEditBox":{"kind":"EditBox","level":3,"parent":"WhoFrame",'
+		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
+		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","use":{"place":["BOTTOM","WhoFrame","BOTTOM",-20,103]}}')
+	lu.assertStrContains(exported, '"text":"738 \\"People\\""')
+	lu.assertStrContains(exported, '"unseen":{"GoneFrame":{"place":["TOP","UIParent","TOP",0,-10],"size":[50,20]},'
+		.. '"SizedFrame":{"size":[10,20]}}')
+	lu.assertNil(exported:find('"WhoFrameOld"', 1, true))
 end
 
 -- Without paths: the newest saved variables, three folders up (the game's
@@ -121,7 +136,7 @@ end
 function TestPositionsTool:test_the_newest_saved_variables_by_default()
 	local base = TempName()
 	local addon = base .. "/Interface/AddOns/DiabolicUI"
-	os.execute("mkdir -p '" .. addon .. "/settings' '" .. base .. "/WTF/Account/ME/SavedVariables'")
+	os.execute("mkdir -p '" .. addon .. "/settings' '" .. addon .. "/tools' '" .. base .. "/WTF/Account/ME/SavedVariables'")
 	Write(base .. "/WTF/Account/ME/SavedVariables/DiabolicUI.lua", [[
 DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	["BankCloseButton"] = { "TOPRIGHT", "BankFrame", "TOPRIGHT", -46, -8, 32, 32, kind = "Button" },
@@ -130,6 +145,7 @@ DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	local said = Run({}, addon)
 	lu.assertStrContains(said, "settings/positions.lua: 1 parts, 0 in use.")
 	local text = Read(addon .. "/settings/positions.lua")
+	lu.assertStrContains(Read(addon .. "/tools/layout.json"), '"BankCloseButton":{"kind":"Button"')
 	os.execute("rm -rf '" .. base .. "'")
 	lu.assertStrContains(text, '\t-- BankCloseButton = { "TOPRIGHT", "BankFrame", "TOPRIGHT", -46, -8, 32, 32 }, -- Button')
 end

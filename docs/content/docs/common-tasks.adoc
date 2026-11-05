@@ -107,6 +107,11 @@ are kept.
 (open the others yourself while it's on: mail, auction house, bank, vendor,
 trainer...), `/reload`, then `lua5.1 tools/positions.lua`. It rewrites the
 file from what was seen, keeping the lines without `--` and their notes.
+It also writes `tools/layout.json` (not in git): every window and part as
+the scan saw them, with all their anchors, parents, places on screen and
+layers, for an editor out of the game. Our own parts are named after their
+window (`ClassTrainerFrameDiabolicBand`, `...DiabolicFoot`), so they're
+listed and can be placed too.
 
 == Put a part in a window's red band
 

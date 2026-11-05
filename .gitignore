@@ -34,3 +34,6 @@ tests/coverage/report.txt
 
 # Python bytecode
 __pycache__/
+
+# tools/positions.lua writes it from your own scans
+tools/layout.json
