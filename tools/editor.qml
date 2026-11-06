@@ -317,6 +317,7 @@ ApplicationWindow {
     }
 
     // ---- the view
+    property bool fitLater: false
     function fit(animated) {
         let r = [0, 0, root ? root.width : 400, root ? root.height : 400]
         const w = (view_ && view_.window) || (data && data.window), f = viewRect
@@ -324,6 +325,8 @@ ApplicationWindow {
             r = [w[0] - f[0], (f[1] + f[3]) - (w[1] + w[3]), w[2], w[3]]
         }
         const margin = 40
+        fitLater = view.width <= 2 * margin || view.height <= 2 * margin // (opened before the view has its size)
+        if (fitLater) return
         const z = Math.min((view.width - 2 * margin) / Math.max(r[2], 1), (view.height - 2 * margin) / Math.max(r[3], 1))
         const x = (view.width - r[2] * z) / 2 - r[0] * z, y = (view.height - r[3] * z) / 2 - r[1] * z
         if (animated) {
@@ -553,6 +556,8 @@ ApplicationWindow {
             objectName: "view"
             SplitView.fillWidth: true
             clip: true
+            onWidthChanged: if (app.fitLater) app.fit(false)
+            onHeightChanged: if (app.fitLater) app.fit(false)
             focus: true
             Keys.onPressed: event => {
                 if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
