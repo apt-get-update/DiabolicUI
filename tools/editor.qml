@@ -210,8 +210,7 @@ ApplicationWindow {
     }
 
     function remember() {
-        undoList.push(JSON.stringify(edits))
-        if (undoList.length > 300) undoList.shift()
+        undoList = undoList.concat(JSON.stringify(edits)).slice(-300)
         redoList = []
     }
 
@@ -250,13 +249,17 @@ ApplicationWindow {
     }
     function undo() {
         if (!undoList.length) return
-        redoList.push(JSON.stringify(edits))
-        restore(undoList.pop())
+        redoList = redoList.concat(JSON.stringify(edits))
+        const last = undoList[undoList.length - 1]
+        undoList = undoList.slice(0, -1)
+        restore(last)
     }
     function redo() {
         if (!redoList.length) return
-        undoList.push(JSON.stringify(edits))
-        restore(redoList.pop())
+        undoList = undoList.concat(JSON.stringify(edits))
+        const last = redoList[redoList.length - 1]
+        redoList = redoList.slice(0, -1)
+        restore(last)
     }
 
     function resetPart(name) {
@@ -524,8 +527,8 @@ ApplicationWindow {
                     }
                 }
                 Item { Layout.fillWidth: true }
-                Action { text: "Undo"; tip: "Ctrl+Z"; onClicked: app.undo() }
-                Action { text: "Redo"; tip: "Ctrl+Shift+Z"; onClicked: app.redo() }
+                Action { objectName: "undoButton"; text: "Undo"; tip: "Ctrl+Z"; enabled: app.undoList.length > 0; onClicked: app.undo() }
+                Action { objectName: "redoButton"; text: "Redo"; tip: "Ctrl+Shift+Z"; enabled: app.redoList.length > 0; onClicked: app.redo() }
                 Action { text: "Fit"; tip: "See the whole window (F)"; onClicked: app.fit(true) }
                 Action {
                     objectName: "saveButton"
