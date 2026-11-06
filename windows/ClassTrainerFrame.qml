@@ -126,6 +126,71 @@ WowWindow {
         }
 
         Frame {
+            name: "ClassTrainerFrameDiabolicFoot"
+            wowParent: "ClassTrainerFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 372
+            height: 47
+
+            WowRow {
+                name: "TrainerButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 185
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "ClassTrainerTrainButton"
+                    text: "Train"
+                    wowParent: "ClassTrainerFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 83.5
+                    height: 22
+
+                    FontString {
+                        name: "ClassTrainerTrainButtonText"
+                        text: "Train"
+                        wowParent: "ClassTrainerTrainButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "ClassTrainerCancelButton"
+                    text: "Exit"
+                    wowParent: "ClassTrainerFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 83.5
+                    height: 22
+
+                    FontString {
+                        name: "ClassTrainerCancelButtonText"
+                        text: "Exit"
+                        wowParent: "ClassTrainerCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 32.4
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "ClassTrainerFrameDiabolicSocket"
             wowParent: "ClassTrainerFrameDiabolic"
             anchors.right: parent.right
@@ -134,68 +199,6 @@ WowWindow {
             anchors.topMargin: 20
             width: 42
             height: 42
-        }
-
-        WowRow {
-            name: "TrainerButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 208
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "ClassTrainerTrainButton"
-                text: "Train"
-                wowParent: "ClassTrainerFrame"
-                style: "Button"
-                pin: "all"
-                width: 83.5
-                height: 22
-
-                Frame {
-                    name: "ClassTrainerFrameDiabolicFoot"
-                    wowParent: "ClassTrainerFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -37.7
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 372
-                    height: 47
-                }
-
-                FontString {
-                    name: "ClassTrainerTrainButtonText"
-                    text: "Train"
-                    wowParent: "ClassTrainerTrainButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "ClassTrainerCancelButton"
-                text: "Exit"
-                wowParent: "ClassTrainerFrame"
-                style: "Button"
-                pin: "all"
-                width: 83.5
-                height: 22
-
-                FontString {
-                    name: "ClassTrainerCancelButtonText"
-                    text: "Exit"
-                    wowParent: "ClassTrainerCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32.4
-                    height: 11.9
-                }
-            }
         }
     }
 

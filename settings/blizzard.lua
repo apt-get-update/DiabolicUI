@@ -368,7 +368,6 @@ Engine:NewStaticConfig("Blizzard", {
 	mail = {
 		-- the rough stone foot up to each tab's highest button: the inbox's
 		-- pages, the letter's buttons and money, the open one's
-		footers = { inbox = "InboxPrevPageButton", send = "SendMailMailButton", open = "OpenMailCancelButton" },
 		insets = { 16, 68, 0, -50 }, -- up over the band and the tabs
 		offset_y = -32, -- the window's top with the others'
 		open_insets = { 16, 68, 0, -50 }, -- the letter opened, its top with the inbox's
@@ -426,7 +425,7 @@ Engine:NewStaticConfig("Blizzard", {
 	-- the merchant window in Diablo III's (modules/blizzard/merchant.lua).
 	-- Offsets from the window's top left.
 	merchant = {
-		footer = { "MerchantBuyBackItem", 8 }, -- the rough stone foot (up to it and 8 higher: they sit on it): buyback, repairs, Sell Junk, the money
+		footer = 65, -- the rough stone foot, how high: buyback, repairs, Sell Junk, the money sit on it
 		insets = { 0, 36, 116, -40 }, -- the window over Blizzard's 384x512 frame: 500 wide, its foot 40 higher (no band)
 		header_height = 40,
 		header_insets = { 24, 24 },
@@ -482,7 +481,7 @@ Engine:NewStaticConfig("Blizzard", {
 	-- the quest log in Diablo III's (modules/blizzard/questlog.lua). Offsets
 	-- from the window's top left.
 	questlog = {
-		footer = { "QuestLogFrameAbandonButton", -0.5 }, -- the rough stone foot under Abandon, Share and Track (they're half a unit high in their panel: the foot's 35 as the others')
+		footer = true, -- the rough stone foot under Abandon, Share and Track
 		insets = { 0, 36, 70, -20 }, -- the window over Blizzard's 682x447 frame: wider, for room around its panes; its foot 40 higher (no band)
 		header_height = 40,
 		header_insets = { 24, 24 },
@@ -512,8 +511,7 @@ Engine:NewStaticConfig("Blizzard", {
 	social = {
 		-- the rough stone foot up to each page's highest button (none on the
 		-- others)
-		footers = { FriendsListFrame = "FriendsFrameAddFriendButton", IgnoreListFrame = "FriendsFrameIgnorePlayerButton",
-			WhoFrame = "WhoFrameWhoButton", GuildFrame = "GuildFrameGuildInformationButton" },
+		footers = { FriendsListFrame = true, IgnoreListFrame = true, WhoFrame = true, GuildFrame = true }, -- the pages with a foot
 		insets = { 20, 68, -4, -50 }, -- (its right: the lists' scroll bars as far in as their left)
 		offset_y = -32, -- Blizzard's frame that much lower: the window's top with the others'
 		header_height = 40,
@@ -608,8 +606,8 @@ Engine:NewStaticConfig("Blizzard", {
 		-- out of sight). `sigils`, its tabs' emblems (window.banner's
 		-- names), in their order. `panes`, Diablo III's stone pane around a model
 		-- ({ a part, the last one it reaches or false, open: its middle out,
-		-- around a picture }). `footer`, its rough stone foot: the name of the highest of its buttons
-		-- (or { [a page] = that name }: on that page only). `close`, its close
+		-- around a picture }). `footer`, its rough stone foot: true, or how high if not a row of buttons
+		-- (or { [a page] = that }: on that page only). `close`, its close
 		-- button's name (true: an unnamed one); `crest`, a frame over the
 		-- band shown over the iron, the title over it. `dropdowns` (in
 		-- `late` too), Diablo III's (before the band's). `band` (in `late`
@@ -629,11 +627,11 @@ Engine:NewStaticConfig("Blizzard", {
 				-- the battlegrounds, the chosen one's text as wide (Blizzard's
 				-- reaches out of the window), the foot on their page only
 				lists = { "PVPBattlegroundFrameTypeScrollFrame", { "PVPBattlegroundFrameInfoScrollFrame", 0, "PVPBattlegroundFrameTypeScrollFrame" } },
-				footer = { PVPBattlegroundFrame = "PVPBattlegroundFrameJoinButton" } },
-			{ frame = "BattlefieldFrame", band = false, insets = { 19, 40, -5, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel", footer = "BattlefieldFrameCancelButton",
+				footer = { PVPBattlegroundFrame = true } },
+			{ frame = "BattlefieldFrame", band = false, insets = { 19, 40, -5, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel", footer = true,
 				close = "BattlefieldFrameCloseButton", lists = { "BattlefieldListScrollFrame", { "BattlefieldFrameInfoScrollFrame", 0, "BattlefieldListScrollFrame" } }, pale = true },
 			{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4, title = "BankFrameTitleText", close = "BankCloseButton" },
-			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton", footer = "TradeFrameTradeButton" },
+			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton", footer = true },
 			-- the flight master's: the window around its map (Blizzard's 316 x 352,
 			-- 21 in from the frame's left, 75 from its top, 47 from its right, 85
 			-- from its foot), in the stone pane, 10 in from the iron's solid
@@ -661,7 +659,7 @@ Engine:NewStaticConfig("Blizzard", {
 				close = "DressUpFrameCloseButton", keep = { "^DressUpBackground" }, -- the race's backdrop behind the model, in a pane
 				panes = { { "DressUpBackgroundTopLeft", "DressUpBackgroundBotRight", true } } },
 			{ frame = "ClassTrainerFrame", background = "zoltun", addon = "Blizzard_TrainerUI", insets = { 24, 40, 10, -51 }, offset_y = -4, -- (its right: the scroll bars' panel as far in as the left)
-				title = "ClassTrainerNameText", close = "ClassTrainerFrameCloseButton", footer = "ClassTrainerTrainButton",
+				title = "ClassTrainerNameText", close = "ClassTrainerFrameCloseButton", footer = true,
 				dropdowns = { "ClassTrainerFrameFilterDropDown" },
 				band = { left = { "ClassTrainerFrameFilterDropDown" } }, -- the filter in the band (modules/blizzard/trainer.lua)
 				-- the trainings, and the chosen one, on parchment, as the recipes
@@ -669,7 +667,7 @@ Engine:NewStaticConfig("Blizzard", {
 				ink = { "ClassTrainerSkillName", "ClassTrainerSubSkillName", "ClassTrainerSkillRequirements", "ClassTrainerCostLabel",
 					"ClassTrainerSkillDescription" },
 				hide = { "ClassTrainerExpandTabLeft", "ClassTrainerExpandTabMiddle", "ClassTrainerExpandTabRight" } }, -- "All"'s tab
-			{ frame = "TradeSkillFrame", addon = "Blizzard_TradeSkillUI", insets = { 24, 40, 14, -43 }, offset_y = -4, background = "artisan", footer = "TradeSkillCreateAllButton",
+			{ frame = "TradeSkillFrame", addon = "Blizzard_TradeSkillUI", insets = { 24, 40, 14, -43 }, offset_y = -4, background = "artisan", footer = true,
 				-- the search in the band (modules/blizzard/tradeskill.lua)
 				title = "TradeSkillFrameTitleText", close = "TradeSkillFrameCloseButton",
 				-- the recipes, and the chosen one with its reagents, on parchment
@@ -683,7 +681,7 @@ Engine:NewStaticConfig("Blizzard", {
 				iron_bars = { 275 },
 				-- the recipe's name wrapped short of Auctionator's Scan AH, over it
 				late = { beside = { { "TradeSkillSkillName", "Auctionator_Search", 146 } } } },
-			{ frame = "MacroFrame", band = false, background = "zoltun", addon = "Blizzard_MacroUI", insets = { 24, 68, -10, -39 }, offset_y = -32, text = "CREATE_MACROS", footer = "MacroExitButton",
+			{ frame = "MacroFrame", band = false, background = "zoltun", addon = "Blizzard_MacroUI", insets = { 24, 68, -10, -39 }, offset_y = -32, text = "CREATE_MACROS", footer = true,
 				close = "MacroFrameCloseButton", tabs = "MacroFrameTab", sigils = { "openbook", "hoodedface" },
 				lists = { { "MacroButtonScrollFrame", 0, false, "pane" }, { "MacroFrameScrollFrame", 0, false, nil, true } }, -- the icons in the stone pane, the text on slate over the painting
 				keep = { "^MacroFrameSelectedMacroBackground$" },
@@ -696,7 +694,7 @@ Engine:NewStaticConfig("Blizzard", {
 				lists = { "InspectTalentFrameScrollFrame" } },
 			{ frame = "ItemSocketingFrame", band = false, background = "zoltun", addon = "Blizzard_ItemSocketingUI", insets = { 24, 40, 24, 36 }, offset_y = -4,
 				text = "ITEM_SOCKETING", close = "ItemSocketingCloseButton", lists = { "ItemSocketingScrollFrame" } },
-			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 56, 24, 42 }, offset_y = -20, text = "AUCTIONS", background = "street", footer = "BrowseCloseButton",
+			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 56, 24, 42 }, offset_y = -20, text = "AUCTIONS", background = "street", footer = true,
 				close = "AuctionFrameCloseButton", tabs = "AuctionFrameTab", sigils = { "AllSeeing", "scarab", "stein", "fleur", "gryphon", "orbLight" }, art = { "ui%-auctionframe%-" }, -- browse, bids, auctions, Auctionator's buy, sell, more
 				hide = { "BrowseTitle", "BidTitle", "AuctionsTitle", -- the pages' own titles, under the tabs
 					"BrowseNameText", "BrowseDropDownName" }, -- the search's labels (Name in its box)
@@ -728,7 +726,7 @@ Engine:NewStaticConfig("Blizzard", {
 				-- (the recipe's parchment: the lore journal's tall page blurs stretched this wide)
 				parchments = { { "GuildBankMessageFrame", "parchment" }, { "GuildBankInfoScrollFrame", "parchment" } },
 				ink_messages = { "GuildBankMessageFrame" },
-				ink = { "GuildBankTabInfoEditBox" }, footer = "GuildBankFrameDepositButton",
+				ink = { "GuildBankTabInfoEditBox" }, footer = 77,
 				-- the tab's name and your rights in it in the band, at its left,
 				-- its frame gone
 				band_text = "GuildBankTabTitle",
@@ -743,7 +741,7 @@ Engine:NewStaticConfig("Blizzard", {
 			-- (its right: as far from the list's scroll bar as the window's
 			-- left from the list)
 			{ frame = "KeyBindingFrame", background = "zoltun", addon = "Blizzard_BindingUI", insets = { 24, 40, -30, 46 }, panel = false,
-				title = "KeyBindingFrameHeaderText", lists = { "KeyBindingFrameScrollFrame" }, footer = "KeyBindingFrameDefaultButton",
+				title = "KeyBindingFrameHeaderText", lists = { "KeyBindingFrameScrollFrame" }, footer = true,
 				band = { right = { "KeyBindingFrameCharacterButton" } } } -- "Character Specific Key Bindings"
 		}
 	},
@@ -762,7 +760,6 @@ Engine:NewStaticConfig("Blizzard", {
 	-- 355x440 frames, whose parts are placed against them
 	lfg = {
 		-- the raid browser's rough stone foot up to each page's buttons
-		footers = { LFRQueueFrame = "LFRQueueFrameFindGroupButton", LFRBrowseFrame = "LFRBrowseFrameSendMessageButton" },
 		header_height = 40,
 		header_insets = { 24, 24 },
 		dungeons = {

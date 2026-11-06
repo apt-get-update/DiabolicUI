@@ -1996,12 +1996,13 @@ Module.AddIronBar = function(self, window, y)
 	return bar
 end
 
--- The window's foot in Diablo III's rough stone, inside its iron frame,
--- up to `top` (see SetFooter), under the buttons and the money Blizzard
--- keeps there: drawn by the window over its painting, set apart from the
--- content by a bar of the frame's iron along its top (the frame's left
--- edge turned), its ends under the frame's sides.
-Module.AddFooter = function(self, window, top)
+-- The window's foot in Diablo III's rough stone, inside its iron frame, along
+-- its bottom, `height` high (see SetFooter), with the buttons and the money
+-- Blizzard keeps there: drawn by the window over its painting, set apart from
+-- the content by a bar of the frame's iron along its top (the frame's left edge
+-- turned), its ends under the frame's sides. Always placed, shown or not: its
+-- buttons are placed on it (settings/positions.lua).
+Module.AddFooter = function(self, window, height)
 	local foot = CreateFrame("Frame", NameFor(window, "Foot"), window)
 	foot.Window = window
 	foot.Material = self:CreateNine(foot, "ARTWORK", "footer", window)
@@ -2011,39 +2012,33 @@ Module.AddFooter = function(self, window, top)
 	rail:SetPoint("BOTTOMLEFT", foot, "TOPLEFT", x, -y)
 	rail:SetPoint("BOTTOMRIGHT", foot, "TOPRIGHT", -x, -y)
 	foot.Rail = rail
+	local insets = config.backdrop.insets
+	foot:SetPoint("BOTTOMLEFT", window, "BOTTOMLEFT", insets.left, insets.bottom)
+	foot:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -insets.right, insets.bottom)
+	foot:SetHeight(config.footer_height)
 	window.DiabolicFoot = foot
-	self:SetFooter(foot, top)
+	self:SetFooter(foot, height)
+	Engine:GetModule("Blizzard: Adjust"):PlaceWaiting()
 	return foot
 end
 
--- How far over the top of a foot's highest button its iron bar reaches
+-- How far over the top of a foot's buttons its iron bar reaches
 -- (window.footer_margin, then the bar over the foot's top): what's over
 -- the foot is placed from there.
 Module.FootReach = function(self)
 	return config.footer_margin + config.footer_rail.bar[2] - config.footer_rail.cut[1]
 end
 
--- A footer up to the page shown's buttons: `top`, the name of the highest
--- (window.footer_margin over its top), or { that name, how much higher };
--- none on a page left without one.
-Module.SetFooter = function(self, foot, top)
-	local raise = 0
-	if type(top) == "table" then
-		top, raise = top[1], top[2]
-	end
-	local part = top and _G[top]
-	foot.DiabolicShown = part and true -- (the slices can't say)
-	if (not part) then
+-- A foot `height` high (true: window.footer_height, a row of buttons); none
+-- on a page left without one.
+Module.SetFooter = function(self, foot, height)
+	foot.DiabolicShown = height and true -- (the slices can't say)
+	if (not height) then
 		foot.Material:Hide()
 		foot.Rail:Hide()
 		return
 	end
-	local insets = config.backdrop.insets
-	foot:ClearAllPoints()
-	foot:SetPoint("BOTTOMLEFT", foot.Window, "BOTTOMLEFT", insets.left, insets.bottom)
-	foot:SetPoint("BOTTOMRIGHT", foot.Window, "BOTTOMRIGHT", -insets.right, insets.bottom)
-	-- (its top only: its sides are the window's)
-	foot:SetPoint("TOP", part, "TOP", 0, config.footer_margin + raise)
+	foot:SetHeight((height == true) and config.footer_height or height)
 	foot.Material:Show()
 	foot.Rail:Show()
 end

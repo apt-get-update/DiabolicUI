@@ -332,11 +332,11 @@ Module.StylePanel = function(self, spec)
 	if (type(spec.footer) == "table") then
 		-- one page's: there while it shows
 		local foot = kit:AddFooter(window)
-		for page, top in pairs(spec.footer) do
+		for page, height in pairs(spec.footer) do
 			if _G[page] then
-				_G[page]:HookScript("OnShow", function() kit:SetFooter(foot, top) end)
+				_G[page]:HookScript("OnShow", function() kit:SetFooter(foot, height) end)
 				_G[page]:HookScript("OnHide", function() kit:SetFooter(foot, nil) end)
-				kit:SetFooter(foot, _G[page]:IsShown() and top or nil)
+				kit:SetFooter(foot, _G[page]:IsShown() and height or nil)
 			end
 		end
 	elseif spec.footer then

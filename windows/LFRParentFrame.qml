@@ -261,6 +261,143 @@ WowWindow {
         }
 
         Frame {
+            name: "LFRParentFrameDiabolicFoot"
+            wowParent: "LFRParentFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 324
+            height: 35
+
+            // the browse page's buttons across the foot, clear of the iron
+            WowRow {
+                name: "LFRBrowseButtons"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "LFRBrowseFrameSendMessageButton"
+                    text: "Send Message"
+                    wowParent: "LFRBrowseFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 126.3
+                    height: 22
+
+                    FontString {
+                        name: "LFRBrowseFrameSendMessageButtonText"
+                        text: "Send Message"
+                        wowParent: "LFRBrowseFrameSendMessageButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 98
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "LFRBrowseFrameInviteButton"
+                    text: "Invite"
+                    wowParent: "LFRBrowseFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 74.1
+                    height: 22
+
+                    FontString {
+                        name: "LFRBrowseFrameInviteButtonText"
+                        text: "Invite"
+                        wowParent: "LFRBrowseFrameInviteButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 45.8
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "LFRBrowseFrameRefreshButton"
+                    text: "Refresh"
+                    wowParent: "LFRBrowseFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 83.6
+                    height: 22
+
+                    FontString {
+                        name: "LFRBrowseFrameRefreshButtonText"
+                        text: "Refresh"
+                        wowParent: "LFRBrowseFrameRefreshButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 55.3
+                        height: 11.9
+                    }
+                }
+            }
+
+            // the raid page's two at the foot's ends, as far in
+            WowRow {
+                name: "LFRQueueButtons"
+                fit: "ends"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "LFRQueueFrameFindGroupButton"
+                    text: "List My Name"
+                    wowParent: "LFRQueueFrame"
+                    style: "Button"
+                    pin: "place"
+                    width: 125
+                    height: 22
+
+                    FontString {
+                        name: "LFRQueueFrameFindGroupButtonText"
+                        text: "List My Name"
+                        wowParent: "LFRQueueFrameFindGroupButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 97.2
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "LFRQueueFrameAcceptCommentButton"
+                    text: "Set Comment"
+                    wowParent: "LFRQueueFrame"
+                    style: "Button"
+                    pin: "place"
+                    width: 115
+                    height: 22
+
+                    FontString {
+                        name: "LFRQueueFrameAcceptCommentButtonText"
+                        text: "Set Comment"
+                        wowParent: "LFRQueueFrameAcceptCommentButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 96.4
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "LFRParentFrameDiabolicRail"
             wowParent: "LFRParentFrameDiabolic"
             anchors.left: parent.left
@@ -335,140 +472,6 @@ WowWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 48
                     height: 48
-                }
-            }
-        }
-
-        // the browse page's buttons across the foot, clear of the iron
-        WowRow {
-            name: "LFRBrowseButtons"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "LFRBrowseFrameSendMessageButton"
-                text: "Send Message"
-                wowParent: "LFRBrowseFrame"
-                style: "Button"
-                pin: "all"
-                width: 126.3
-                height: 22
-
-                FontString {
-                    name: "LFRBrowseFrameSendMessageButtonText"
-                    text: "Send Message"
-                    wowParent: "LFRBrowseFrameSendMessageButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 98
-                    height: 11.9
-                }
-
-                Frame {
-                    name: "LFRParentFrameDiabolicFoot"
-                    wowParent: "LFRParentFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: 84.9
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 324
-                    height: 35
-                }
-            }
-
-            Button {
-                name: "LFRBrowseFrameInviteButton"
-                text: "Invite"
-                wowParent: "LFRBrowseFrame"
-                style: "Button"
-                pin: "all"
-                width: 74.1
-                height: 22
-
-                FontString {
-                    name: "LFRBrowseFrameInviteButtonText"
-                    text: "Invite"
-                    wowParent: "LFRBrowseFrameInviteButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 45.8
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "LFRBrowseFrameRefreshButton"
-                text: "Refresh"
-                wowParent: "LFRBrowseFrame"
-                style: "Button"
-                pin: "all"
-                width: 83.6
-                height: 22
-
-                FontString {
-                    name: "LFRBrowseFrameRefreshButtonText"
-                    text: "Refresh"
-                    wowParent: "LFRBrowseFrameRefreshButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 55.3
-                    height: 11.9
-                }
-            }
-        }
-
-        // the raid page's two at the foot's ends, as far in
-        WowRow {
-            name: "LFRQueueButtons"
-            fit: "ends"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "LFRQueueFrameFindGroupButton"
-                text: "List My Name"
-                wowParent: "LFRQueueFrame"
-                style: "Button"
-                pin: "place"
-                width: 125
-                height: 22
-
-                FontString {
-                    name: "LFRQueueFrameFindGroupButtonText"
-                    text: "List My Name"
-                    wowParent: "LFRQueueFrameFindGroupButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 97.2
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "LFRQueueFrameAcceptCommentButton"
-                text: "Set Comment"
-                wowParent: "LFRQueueFrame"
-                style: "Button"
-                pin: "place"
-                width: 115
-                height: 22
-
-                FontString {
-                    name: "LFRQueueFrameAcceptCommentButtonText"
-                    text: "Set Comment"
-                    wowParent: "LFRQueueFrameAcceptCommentButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 96.4
-                    height: 11.9
                 }
             }
         }

@@ -66,7 +66,7 @@ Module.StyleSocial = function(self)
 
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "cracked")
-	-- the rough stone foot up to the page shown's buttons
+	-- the rough stone foot, on the pages with buttons
 	local foot = kit:AddFooter(window)
 	for _, name in ipairs(TABS) do
 		local page = _G[name]

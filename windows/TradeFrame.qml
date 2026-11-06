@@ -49,6 +49,51 @@ WowWindow {
         }
 
         Frame {
+            name: "TradeFrameDiabolicFoot"
+            wowParent: "TradeFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 376
+            height: 35
+
+            WowRow {
+                name: "TradeButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 196
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "TradeFrameTradeButton"
+                    text: "Trade"
+                    wowParent: "TradeFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 80
+                    height: 22
+                }
+
+                Button {
+                    name: "TradeFrameCancelButton"
+                    text: "Cancel"
+                    wowParent: "TradeFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 80
+                    height: 22
+                }
+            }
+        }
+
+        Frame {
             name: "TradeFrameDiabolicSocket"
             wowParent: "TradeFrameDiabolic"
             anchors.right: parent.right
@@ -57,37 +102,6 @@ WowWindow {
             anchors.topMargin: 20
             width: 42
             height: 42
-        }
-
-        WowRow {
-            name: "TradeButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 219
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "TradeFrameTradeButton"
-                text: "Trade"
-                wowParent: "TradeFrame"
-                style: "Button"
-                pin: "all"
-                width: 80
-                height: 22
-            }
-
-            Button {
-                name: "TradeFrameCancelButton"
-                text: "Cancel"
-                wowParent: "TradeFrame"
-                style: "Button"
-                pin: "all"
-                width: 80
-                height: 22
-            }
         }
     }
 

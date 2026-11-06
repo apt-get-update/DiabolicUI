@@ -50,17 +50,6 @@ WowWindow {
             anchors.verticalCenterOffset: -89
             width: 26
             height: 26
-
-            Frame {
-                name: "MailFrameDiabolicFoot"
-                wowParent: "MailFrameDiabolic"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 134
-                anchors.top: parent.top
-                anchors.topMargin: -6
-                width: 354
-                height: 36
-            }
         }
 
         FontString {
@@ -1021,6 +1010,71 @@ WowWindow {
         }
 
         Frame {
+            name: "MailFrameDiabolicFoot"
+            wowParent: "MailFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 354
+            height: 36
+
+            WowRow {
+                name: "SendMailButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 178
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "SendMailMailButton"
+                    text: "Send"
+                    wowParent: "SendMailFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 78
+                    height: 22
+
+                    FontString {
+                        name: "SendMailMailButtonText"
+                        text: "Send"
+                        wowParent: "SendMailMailButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 33.2
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "SendMailCancelButton"
+                    text: "Cancel"
+                    wowParent: "SendMailFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 78
+                    height: 22
+
+                    FontString {
+                        name: "SendMailCancelButtonText"
+                        text: "Cancel"
+                        wowParent: "SendMailCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 51.4
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "MailFrameDiabolicRail"
             wowParent: "MailFrameDiabolic"
             anchors.left: parent.left
@@ -1066,57 +1120,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-
-        WowRow {
-            name: "SendMailButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 201
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "SendMailMailButton"
-                text: "Send"
-                wowParent: "SendMailFrame"
-                style: "Button"
-                pin: "all"
-                width: 78
-                height: 22
-
-                FontString {
-                    name: "SendMailMailButtonText"
-                    text: "Send"
-                    wowParent: "SendMailMailButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 33.2
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "SendMailCancelButton"
-                text: "Cancel"
-                wowParent: "SendMailFrame"
-                style: "Button"
-                pin: "all"
-                width: 78
-                height: 22
-
-                FontString {
-                    name: "SendMailCancelButtonText"
-                    text: "Cancel"
-                    wowParent: "SendMailCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 51.4
-                    height: 11.9
-                }
-            }
         }
     }
 

@@ -112,6 +112,72 @@ WowWindow {
         }
 
         Frame {
+            name: "LFDParentFrameDiabolicFoot"
+            wowParent: "LFDParentFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 367
+            height: 35
+
+            // kept as they are, at the foot's ends
+            WowRow {
+                name: "LFDButtons"
+                fit: "ends"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "LFDQueueFrameFindGroupButton"
+                    text: "Find Group"
+                    wowParent: "LFDQueueFrame"
+                    style: "Button"
+                    pin: "place"
+                    width: 135
+                    height: 22
+
+                    FontString {
+                        name: "LFDQueueFrameFindGroupButtonText"
+                        text: "Find Group"
+                        wowParent: "LFDQueueFrameFindGroupButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 82.2
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "LFDQueueFrameCancelButton"
+                    text: "Close"
+                    wowParent: "LFDQueueFrame"
+                    style: "Button"
+                    pin: "place"
+                    width: 112
+                    height: 22
+
+                    FontString {
+                        name: "LFDQueueFrameCancelButtonText"
+                        text: "Close"
+                        wowParent: "LFDQueueFrameCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 40.3
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "LFDParentFrameDiabolicSocket"
             wowParent: "LFDParentFrameDiabolic"
             anchors.right: parent.right
@@ -159,69 +225,6 @@ WowWindow {
                         width: 48
                         height: 48
                     }
-                }
-            }
-        }
-
-        // kept as they are, at the foot's ends
-        WowRow {
-            name: "LFDButtons"
-            fit: "ends"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "LFDQueueFrameFindGroupButton"
-                text: "Find Group"
-                wowParent: "LFDQueueFrame"
-                style: "Button"
-                pin: "place"
-                width: 135
-                height: 22
-
-                Frame {
-                    name: "LFDParentFrameDiabolicFoot"
-                    wowParent: "LFDParentFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: 102
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 367
-                    height: 35
-                }
-
-                FontString {
-                    name: "LFDQueueFrameFindGroupButtonText"
-                    text: "Find Group"
-                    wowParent: "LFDQueueFrameFindGroupButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 82.2
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "LFDQueueFrameCancelButton"
-                text: "Close"
-                wowParent: "LFDQueueFrame"
-                style: "Button"
-                pin: "place"
-                width: 112
-                height: 22
-
-                FontString {
-                    name: "LFDQueueFrameCancelButtonText"
-                    text: "Close"
-                    wowParent: "LFDQueueFrameCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 40.3
-                    height: 11.9
                 }
             }
         }

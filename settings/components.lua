@@ -213,6 +213,7 @@ Merge(window, {
 	band_text = { label = { 0.86, 0.76, 0.6 }, label_button_font = DiabolicFont_Narrow14Gold, label_font = DiabolicFont_Narrow14, value = { 1, 1, 1 }, value_font = DiabolicFont_Narrow14 },
 	title_plate = { color = { 0.86, 0.76, 0.6 }, cuts = { 96, 140, 376, 420 }, file_width = 512, font = DiabolicFont_HeaderRegular14, gem = { glass = 0.66, glass_offset = { 0, 0 }, ring = path .. [[textures\DiabolicUI_D3_GemRing.tga]], size = 40, x = 35, y = 0 }, height = 41, max_width = 440, rows = 0.546875, side_room = 62, text_offset = 1, text_width = 200, texture = path .. [[textures\DiabolicUI_D3_TitlePlate.tga]], width = 300, y = -15 },
 	title_font = DiabolicFont_HeaderRegular18Title,
+	footer_height = 35,
 	footer_margin = 6,
 	footer_rail = { bar = { 15, 24 }, cut = { 12, 28 } },
 	layout = { band_edge = 10, band_gap = 12, band_right_edge = 48, button_gap = 6, content_gap = 6, uneven = 8 },

@@ -105,32 +105,6 @@ WowWindow {
         width: 634
         height: 598
 
-        // the buttons 16 lower, on the foot, as far in from both sides
-        Button {
-            name: "KeyBindingFrameDefaultButton"
-            text: "Reset To Default"
-            wowParent: "KeyBindingFrame"
-            style: "Button"
-            pin: "place"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            width: 130
-            height: 22
-
-            Frame {
-                name: "KeyBindingFrameDiabolicFoot"
-                wowParent: "KeyBindingFrameDiabolic"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 215
-                anchors.top: parent.top
-                anchors.topMargin: -6
-                width: 588
-                height: 35
-            }
-        }
-
         Frame {
             name: "KeyBindingFrameDiabolicBand"
             wowParent: "KeyBindingFrameDiabolic"
@@ -193,73 +167,102 @@ WowWindow {
             }
         }
 
-        WowRow {
-            name: "KeyBindingButtons"
-            fit: "equal"
+        Frame {
+            name: "KeyBindingFrameDiabolicFoot"
+            wowParent: "KeyBindingFrameDiabolic"
+            pin: "place"
             anchors.left: parent.left
-            anchors.leftMargin: 210
-            anchors.right: parent.right
-            anchors.rightMargin: 37
+            anchors.leftMargin: 23
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 588
+            height: 35
 
+            // the buttons 16 lower, on the foot, as far in from both sides
             Button {
-                name: "KeyBindingFrameUnbindButton"
-                text: "Unbind Key"
+                name: "KeyBindingFrameDefaultButton"
+                text: "Reset To Default"
                 wowParent: "KeyBindingFrame"
                 style: "Button"
-                pin: "all"
-                width: 125
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+                width: 130
                 height: 22
+            }
 
-                FontString {
-                    name: "KeyBindingFrameUnbindButtonText"
+            WowRow {
+                name: "KeyBindingButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 187
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "KeyBindingFrameUnbindButton"
                     text: "Unbind Key"
-                    wowParent: "KeyBindingFrameUnbindButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 73.5
-                    height: 10.3
+                    wowParent: "KeyBindingFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 125
+                    height: 22
+
+                    FontString {
+                        name: "KeyBindingFrameUnbindButtonText"
+                        text: "Unbind Key"
+                        wowParent: "KeyBindingFrameUnbindButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 73.5
+                        height: 10.3
+                    }
                 }
-            }
 
-            Button {
-                name: "KeyBindingFrameOkayButton"
-                text: "Okay"
-                wowParent: "KeyBindingFrame"
-                style: "Button"
-                pin: "all"
-                width: 125
-                height: 22
-
-                FontString {
-                    name: "KeyBindingFrameOkayButtonText"
+                Button {
+                    name: "KeyBindingFrameOkayButton"
                     text: "Okay"
-                    wowParent: "KeyBindingFrameOkayButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32.4
-                    height: 10.3
+                    wowParent: "KeyBindingFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 125
+                    height: 22
+
+                    FontString {
+                        name: "KeyBindingFrameOkayButtonText"
+                        text: "Okay"
+                        wowParent: "KeyBindingFrameOkayButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 32.4
+                        height: 10.3
+                    }
                 }
-            }
 
-            Button {
-                name: "KeyBindingFrameCancelButton"
-                text: "Cancel"
-                wowParent: "KeyBindingFrame"
-                style: "Button"
-                pin: "all"
-                width: 125
-                height: 22
-
-                FontString {
-                    name: "KeyBindingFrameCancelButtonText"
+                Button {
+                    name: "KeyBindingFrameCancelButton"
                     text: "Cancel"
-                    wowParent: "KeyBindingFrameCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 45.8
-                    height: 10.3
+                    wowParent: "KeyBindingFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 125
+                    height: 22
+
+                    FontString {
+                        name: "KeyBindingFrameCancelButtonText"
+                        text: "Cancel"
+                        wowParent: "KeyBindingFrameCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 45.8
+                        height: 10.3
+                    }
                 }
             }
         }

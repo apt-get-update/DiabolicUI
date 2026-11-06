@@ -414,6 +414,138 @@ WowWindow {
         }
 
         Frame {
+            name: "TradeSkillFrameDiabolicFoot"
+            wowParent: "TradeSkillFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 376
+            height: 35
+
+            WowRow {
+                name: "TradeSkillButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 185
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "TradeSkillCreateButton"
+                    text: "Create"
+                    wowParent: "TradeSkillFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 85.5
+                    height: 22
+
+                    Button {
+                        name: "TradeSkillCreateAllButton"
+                        text: "Create All"
+                        wowParent: "TradeSkillFrame"
+                        style: "Button"
+                        anchors.right: parent.left
+                        anchors.rightMargin: 86
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 80
+                        height: 22
+
+                        FontString {
+                            name: "TradeSkillCreateAllButtonText"
+                            text: "Create All"
+                            wowParent: "TradeSkillCreateAllButton"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 52.1
+                            height: 10.3
+                        }
+
+                        Button {
+                            name: "TradeSkillDecrementButton"
+                            wowParent: "TradeSkillFrame"
+                            pin: "place"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 2
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 20
+                            height: 20
+
+                            EditBox {
+                                name: "TradeSkillInputBox"
+                                text: "1"
+                                wowParent: "TradeSkillFrame"
+                                style: "EditBox"
+                                pin: "place"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 8
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 26
+                                height: 20
+
+                                Button {
+                                    name: "TradeSkillIncrementButton"
+                                    wowParent: "TradeSkillFrame"
+                                    pin: "place"
+                                    anchors.left: parent.right
+                                    anchors.leftMargin: 8
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 20
+                                    height: 20
+                                }
+
+                                Frame {
+                                    name: "TradeSkillInputBoxDiabolicField"
+                                    wowParent: "TradeSkillInputBox"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: -8
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 42
+                                    height: 22
+                                }
+                            }
+                        }
+                    }
+
+                    FontString {
+                        name: "TradeSkillCreateButtonText"
+                        text: "Create"
+                        wowParent: "TradeSkillCreateButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 36.3
+                        height: 10.3
+                    }
+                }
+
+                Button {
+                    name: "TradeSkillCancelButton"
+                    text: "Exit"
+                    wowParent: "TradeSkillFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 85.5
+                    height: 22
+
+                    FontString {
+                        name: "TradeSkillCancelButtonText"
+                        text: "Exit"
+                        wowParent: "TradeSkillCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 21.3
+                        height: 10.3
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "TradeSkillFrameDiabolicIronBar"
             wowParent: "TradeSkillFrameDiabolic"
             anchors.left: parent.left
@@ -431,135 +563,6 @@ WowWindow {
             anchors.topMargin: 20
             width: 42
             height: 42
-        }
-
-        WowRow {
-            name: "TradeSkillButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 208
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "TradeSkillCreateButton"
-                text: "Create"
-                wowParent: "TradeSkillFrame"
-                style: "Button"
-                pin: "all"
-                width: 85.5
-                height: 22
-
-                Button {
-                    name: "TradeSkillCreateAllButton"
-                    text: "Create All"
-                    wowParent: "TradeSkillFrame"
-                    style: "Button"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 86
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 80
-                    height: 22
-
-                    FontString {
-                        name: "TradeSkillCreateAllButtonText"
-                        text: "Create All"
-                        wowParent: "TradeSkillCreateAllButton"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 52.1
-                        height: 10.3
-                    }
-
-                    Button {
-                        name: "TradeSkillDecrementButton"
-                        wowParent: "TradeSkillFrame"
-                        pin: "place"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 2
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 20
-                        height: 20
-
-                        EditBox {
-                            name: "TradeSkillInputBox"
-                            text: "1"
-                            wowParent: "TradeSkillFrame"
-                            style: "EditBox"
-                            pin: "place"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 8
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 26
-                            height: 20
-
-                            Button {
-                                name: "TradeSkillIncrementButton"
-                                wowParent: "TradeSkillFrame"
-                                pin: "place"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 8
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 20
-                                height: 20
-                            }
-
-                            Frame {
-                                name: "TradeSkillInputBoxDiabolicField"
-                                wowParent: "TradeSkillInputBox"
-                                anchors.left: parent.left
-                                anchors.leftMargin: -8
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 42
-                                height: 22
-                            }
-                        }
-                    }
-
-                    Frame {
-                        name: "TradeSkillFrameDiabolicFoot"
-                        wowParent: "TradeSkillFrameDiabolic"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: 129
-                        anchors.top: parent.top
-                        anchors.topMargin: -6
-                        width: 376
-                        height: 35
-                    }
-                }
-
-                FontString {
-                    name: "TradeSkillCreateButtonText"
-                    text: "Create"
-                    wowParent: "TradeSkillCreateButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 36.3
-                    height: 10.3
-                }
-            }
-
-            Button {
-                name: "TradeSkillCancelButton"
-                text: "Exit"
-                wowParent: "TradeSkillFrame"
-                style: "Button"
-                pin: "all"
-                width: 85.5
-                height: 22
-
-                FontString {
-                    name: "TradeSkillCancelButtonText"
-                    text: "Exit"
-                    wowParent: "TradeSkillCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 21.3
-                    height: 10.3
-                }
-            }
         }
     }
 

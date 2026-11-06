@@ -147,6 +147,71 @@ WowWindow {
         }
 
         Frame {
+            name: "GuildBankFrameDiabolicFoot"
+            wowParent: "GuildBankFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 771
+            height: 77
+
+            WowRow {
+                name: "GuildBankButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 562
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 50
+
+                Button {
+                    name: "GuildBankFrameWithdrawButton"
+                    text: "Withdraw"
+                    wowParent: "GuildBankFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 94.5
+                    height: 21
+
+                    FontString {
+                        name: "GuildBankFrameWithdrawButtonText"
+                        text: "Withdraw"
+                        wowParent: "GuildBankFrameWithdrawButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 76.6
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "GuildBankFrameDepositButton"
+                    text: "Deposit"
+                    wowParent: "GuildBankFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 94.5
+                    height: 21
+
+                    FontString {
+                        name: "GuildBankFrameDepositButtonText"
+                        text: "Deposit"
+                        wowParent: "GuildBankFrameDepositButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 56.1
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "GuildBankFrameDiabolicRail"
             wowParent: "GuildBankFrameDiabolic"
             anchors.left: parent.left
@@ -218,68 +283,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-
-        WowRow {
-            name: "GuildBankButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 585
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 73
-
-            Button {
-                name: "GuildBankFrameWithdrawButton"
-                text: "Withdraw"
-                wowParent: "GuildBankFrame"
-                style: "Button"
-                pin: "all"
-                width: 94.5
-                height: 21
-
-                FontString {
-                    name: "GuildBankFrameWithdrawButtonText"
-                    text: "Withdraw"
-                    wowParent: "GuildBankFrameWithdrawButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 76.6
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "GuildBankFrameDepositButton"
-                text: "Deposit"
-                wowParent: "GuildBankFrame"
-                style: "Button"
-                pin: "all"
-                width: 94.5
-                height: 21
-
-                FontString {
-                    name: "GuildBankFrameDepositButtonText"
-                    text: "Deposit"
-                    wowParent: "GuildBankFrameDepositButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 56.1
-                    height: 11.9
-                }
-
-                Frame {
-                    name: "GuildBankFrameDiabolicFoot"
-                    wowParent: "GuildBankFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -325.7
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 771
-                    height: 77
-                }
-            }
         }
     }
 

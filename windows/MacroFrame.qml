@@ -116,21 +116,6 @@ WowWindow {
         width: 398
         height: 501
 
-        // the buttons 10 down (30 over the window's bottom)
-        Button {
-            name: "MacroDeleteButton"
-            text: "Delete"
-            wowParent: "MacroFrame"
-            style: "Button"
-            pin: "place"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            width: 80
-            height: 22
-        }
-
         Button {
             name: "MacroFrameCloseButton"
             wowParent: "MacroFrame"
@@ -160,6 +145,86 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+            }
+        }
+
+        Frame {
+            name: "MacroFrameDiabolicFoot"
+            wowParent: "MacroFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 352
+            height: 35
+
+            // the buttons 10 down (30 over the window's bottom)
+            Button {
+                name: "MacroDeleteButton"
+                text: "Delete"
+                wowParent: "MacroFrame"
+                style: "Button"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+                width: 80
+                height: 22
+            }
+
+            WowRow {
+                name: "MacroButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 172
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "MacroNewButton"
+                    text: "New"
+                    wowParent: "MacroFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 80
+                    height: 22
+
+                    FontString {
+                        name: "MacroNewButtonText"
+                        text: "New"
+                        wowParent: "MacroNewButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 30.8
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "MacroExitButton"
+                    text: "Exit"
+                    wowParent: "MacroFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 80
+                    height: 22
+
+                    FontString {
+                        name: "MacroExitButtonText"
+                        text: "Exit"
+                        wowParent: "MacroExitButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 32.4
+                        height: 11.9
+                    }
+                }
             }
         }
 
@@ -209,68 +274,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-
-        WowRow {
-            name: "MacroButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 195
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "MacroNewButton"
-                text: "New"
-                wowParent: "MacroFrame"
-                style: "Button"
-                pin: "all"
-                width: 80
-                height: 22
-
-                FontString {
-                    name: "MacroNewButtonText"
-                    text: "New"
-                    wowParent: "MacroNewButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30.8
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "MacroExitButton"
-                text: "Exit"
-                wowParent: "MacroFrame"
-                style: "Button"
-                pin: "all"
-                width: 80
-                height: 22
-
-                FontString {
-                    name: "MacroExitButtonText"
-                    text: "Exit"
-                    wowParent: "MacroExitButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32.4
-                    height: 11.9
-                }
-
-                Frame {
-                    name: "MacroFrameDiabolicFoot"
-                    wowParent: "MacroFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -122
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 352
-                    height: 35
-                }
-            }
         }
     }
 

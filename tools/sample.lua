@@ -336,12 +336,12 @@ Build[#Build + 1] = function()
 		local button = CreateFrame("Button", "SampleFootButton" .. i, frame, "UIPanelButtonTemplate")
 		button:SetNormalTexture([[Interface\Buttons\UI-Panel-Button-Up]])
 		button:SetSize(120, 22)
-		button:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -28 - (2 - i) * 120, 26)
+		button:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -28 - (2 - i) * 120, 30)
 		button:SetText(name)
 		Mark("Button", button)
 	end
 	kit:StyleButtons(frame)
-	kit:AddFooter(window, "SampleFootButton1")
+	kit:AddFooter(window, true)
 end
 
 local problems = {}

@@ -62,7 +62,7 @@ Module.StyleLFG = function(self)
 		local window = header:GetParent()
 		-- the eye in the corner (Blizzard's portrait, animated while queued)
 		_G.LFDParentFramePortrait:SetAlpha(0)
-		kit:AddFooter(window, "LFDQueueFrameFindGroupButton")
+		kit:AddFooter(window, true)
 		for _, name in ipairs(RANDOM_HEADERS) do
 			_G[RANDOM .. name]:SetTextColor(unpack(config.header_color))
 		end
@@ -93,16 +93,8 @@ Module.StyleLFG = function(self)
 	end
 	if _G.LFRParentFrame then
 		local header = self:StyleFrame(_G.LFRParentFrame, config.raids, _G.LFRQueueFrameTitleText)
-		-- the rough stone foot up to the tab's buttons
-		local foot = kit:AddFooter(header:GetParent())
-		for name, top in pairs(config.footers) do
-			if _G[name] then
-				_G[name]:HookScript("OnShow", function() kit:SetFooter(foot, top) end)
-				if _G[name]:IsShown() then
-					kit:SetFooter(foot, top)
-				end
-			end
-		end
+		-- the rough stone foot
+		kit:AddFooter(header:GetParent(), true)
 		-- its lists' zones across the window, their rows further left
 		-- (Blizzard's lists reach under its right side)
 		local window, insets, margins = header:GetParent(), config.list_panel_insets, config.raid_list_margins

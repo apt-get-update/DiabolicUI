@@ -116,6 +116,91 @@ WowWindow {
         }
 
         Frame {
+            name: "OpenMailFrameDiabolicFoot"
+            wowParent: "OpenMailFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 354
+            height: 45
+
+            WowRow {
+                name: "OpenMailButtons"
+                fit: "equal"
+                anchors.left: parent.left
+                anchors.leftMargin: 94
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "OpenMailReplyButton"
+                    text: "Reply"
+                    wowParent: "OpenMailFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 78
+                    height: 22
+
+                    FontString {
+                        name: "OpenMailReplyButtonText"
+                        text: "Reply"
+                        wowParent: "OpenMailReplyButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 40.3
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "OpenMailDeleteButton"
+                    text: "Delete"
+                    wowParent: "OpenMailFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 78
+                    height: 22
+
+                    FontString {
+                        name: "OpenMailDeleteButtonText"
+                        text: "Delete"
+                        wowParent: "OpenMailDeleteButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 48.2
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "OpenMailCancelButton"
+                    text: "Close"
+                    wowParent: "OpenMailFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 78
+                    height: 22
+
+                    FontString {
+                        name: "OpenMailCancelButtonText"
+                        text: "Close"
+                        wowParent: "OpenMailCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 40.3
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "OpenMailFrameDiabolicSocket"
             wowParent: "OpenMailFrameDiabolic"
             anchors.right: parent.right
@@ -124,88 +209,6 @@ WowWindow {
             anchors.topMargin: 20
             width: 42
             height: 42
-        }
-
-        WowRow {
-            name: "OpenMailButtons"
-            fit: "equal"
-            anchors.left: parent.left
-            anchors.leftMargin: 117
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "OpenMailReplyButton"
-                text: "Reply"
-                wowParent: "OpenMailFrame"
-                style: "Button"
-                pin: "all"
-                width: 78
-                height: 22
-
-                FontString {
-                    name: "OpenMailReplyButtonText"
-                    text: "Reply"
-                    wowParent: "OpenMailReplyButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 40.3
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "OpenMailDeleteButton"
-                text: "Delete"
-                wowParent: "OpenMailFrame"
-                style: "Button"
-                pin: "all"
-                width: 78
-                height: 22
-
-                FontString {
-                    name: "OpenMailDeleteButtonText"
-                    text: "Delete"
-                    wowParent: "OpenMailDeleteButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 48.2
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "OpenMailCancelButton"
-                text: "Close"
-                wowParent: "OpenMailFrame"
-                style: "Button"
-                pin: "all"
-                width: 78
-                height: 22
-
-                FontString {
-                    name: "OpenMailCancelButtonText"
-                    text: "Close"
-                    wowParent: "OpenMailCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 40.3
-                    height: 11.9
-                }
-
-                Frame {
-                    name: "OpenMailFrameDiabolicFoot"
-                    wowParent: "OpenMailFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -122.9
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 354
-                    height: 45
-                }
-            }
         }
     }
 

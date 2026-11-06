@@ -2010,6 +2010,20 @@ WowWindow {
         }
 
         Frame {
+            name: "AuctionFrameDiabolicFoot"
+            wowParent: "AuctionFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 834
+            height: 41
+        }
+
+        Frame {
             name: "AuctionFrameDiabolicRail"
             wowParent: "AuctionFrameDiabolic"
             anchors.left: parent.left
@@ -3166,17 +3180,6 @@ WowWindow {
         anchors.bottomMargin: -12
         width: 76
         height: 22
-
-        Frame {
-            name: "AuctionFrameDiabolicFoot"
-            wowParent: "AuctionFrameDiabolic"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -370
-            anchors.top: parent.top
-            anchors.topMargin: -6
-            width: 834
-            height: 41
-        }
 
         FontString {
             name: "BrowseCloseButtonText"

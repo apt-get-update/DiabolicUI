@@ -2,8 +2,7 @@
 // right (its anchors). `fit`: "fill" (as wide as their texts, the room left shared),
 // "equal" (all as wide, filling the room), "center" (as they are, together in the
 // middle), "ends" (as they are, the first and last at the ends). `spacing`: apart.
-// Not on what hangs from its parts (a window's foot follows its buttons). Worked out
-// here for the editor, by ResolveRow in tools/positions.lua for the game: change one,
+// Worked out here for the editor, by ResolveRow in tools/positions.lua for the game: change one,
 // change the other.
 import QtQuick
 

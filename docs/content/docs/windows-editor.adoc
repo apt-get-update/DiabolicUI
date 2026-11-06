@@ -80,8 +80,7 @@ EditBox {
   `"size"`. Without one the part follows the next scan.
 * *Don't pin* what the game moves on its own: parts Blizzard reparents (the quest
   log's details), what an addon may add later (Postal), buttons `LineRows` spreads unless
-  a row holds them. Don't put anything that decides a foot's height inside that foot: it
-  hangs from its buttons, for now.
+  a row holds them.
 
 Our own parts are named after their window: `ClassTrainerFrameDiabolicBand`.
 
@@ -93,14 +92,14 @@ WowRow {
     name: "LFRBrowseButtons"
     fit: "fill"
     anchors.left: parent.left
-    anchors.leftMargin: 37
+    anchors.leftMargin: 14
     anchors.right: parent.right
-    anchors.rightMargin: 37
+    anchors.rightMargin: 14
     anchors.bottom: parent.bottom
+    anchors.bottomMargin: 7
     Button { name: "LFRBrowseFrameSendMessageButton"; width: 90; height: 22 }
     Button { name: "LFRBrowseFrameInviteButton"; width: 90; height: 22 }
     Button { name: "LFRBrowseFrameRefreshButton"; width: 90; height: 22 }
-    anchors.bottomMargin: 30
 }
 ----
 
@@ -118,8 +117,16 @@ sizes and writes them as any other pinned part's, so the game knows nothing abou
 That means widths are fixed when the tool runs, and a button that hides in game leaves its
 gap. A row in too little room still fits (`fill`, `equal`); a printed message says so.
 
-A row goes from what it's in's left to its right. Put it in the window, not its foot. Its
-parts are in it, in their order, with no anchors. A one-row foot is 35 high: its 22-high buttons 30 over the window's bottom, 37 from its side.
+A row goes from what it's in's left to its right, its parts in it, in their order, with no
+anchors.
+
+== A window's foot
+
+A foot is a part like the others: `<Window>DiabolicFoot`, stretched along the window's bottom,
+its place pinned. Its buttons go in it. Its height doesn't follow them: it's
+`footer_height` in `windows/components/Window.qml` (35) unless its window says otherwise
+(`footer` in `settings/blizzard.lua`: the merchant's 65, the guild bank's 77), and a page can go
+without one (`footers`). A row of 22-high buttons goes 7 over its bottom, 14 from its sides.
 
 == Stretching
 

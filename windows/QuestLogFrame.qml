@@ -81,17 +81,6 @@ WowWindow {
                     height: 11.9
                 }
 
-                Frame {
-                    name: "QuestLogFrameDiabolicFoot"
-                    wowParent: "QuestLogFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: 291
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 706
-                    height: 35.5
-                }
-
                 Button {
                     name: "QuestLogFramePushQuestButton"
                     text: "Share"
@@ -409,6 +398,20 @@ WowWindow {
                     height: 14.2
                 }
             }
+        }
+
+        Frame {
+            name: "QuestLogFrameDiabolicFoot"
+            wowParent: "QuestLogFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 706
+            height: 35.5
         }
 
         Frame {

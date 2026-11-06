@@ -60,6 +60,90 @@ WowWindow {
         }
 
         Frame {
+            name: "BattlefieldFrameDiabolicFoot"
+            wowParent: "BattlefieldFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 352
+            height: 35
+
+            WowRow {
+                name: "BattlefieldButtons"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "BattlefieldFrameGroupJoinButton"
+                    text: "Join as Group"
+                    wowParent: "BattlefieldFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 127.7
+                    height: 22
+
+                    FontString {
+                        name: "BattlefieldFrameGroupJoinButtonText"
+                        text: "Join as Group"
+                        wowParent: "BattlefieldFrameGroupJoinButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 103.5
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "BattlefieldFrameJoinButton"
+                    text: "Join Battle"
+                    wowParent: "BattlefieldFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 108.7
+                    height: 22
+
+                    FontString {
+                        name: "BattlefieldFrameJoinButtonText"
+                        text: "Join Battle"
+                        wowParent: "BattlefieldFrameJoinButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 84.5
+                        height: 11.9
+                    }
+                }
+
+                Button {
+                    name: "BattlefieldFrameCancelButton"
+                    text: "Cancel"
+                    wowParent: "BattlefieldFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 75.6
+                    height: 22
+
+                    FontString {
+                        name: "BattlefieldFrameCancelButtonText"
+                        text: "Cancel"
+                        wowParent: "BattlefieldFrameCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 51.4
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "BattlefieldFrameDiabolicSocket"
             wowParent: "BattlefieldFrameDiabolic"
             anchors.right: parent.right
@@ -68,76 +152,6 @@ WowWindow {
             anchors.topMargin: 20
             width: 42
             height: 42
-        }
-
-        WowRow {
-            name: "BattlefieldButtons"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "BattlefieldFrameGroupJoinButton"
-                text: "Join as Group"
-                wowParent: "BattlefieldFrame"
-                style: "Button"
-                pin: "all"
-                width: 127.7
-                height: 22
-
-                FontString {
-                    name: "BattlefieldFrameGroupJoinButtonText"
-                    text: "Join as Group"
-                    wowParent: "BattlefieldFrameGroupJoinButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 103.5
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "BattlefieldFrameJoinButton"
-                text: "Join Battle"
-                wowParent: "BattlefieldFrame"
-                style: "Button"
-                pin: "all"
-                width: 108.7
-                height: 22
-
-                FontString {
-                    name: "BattlefieldFrameJoinButtonText"
-                    text: "Join Battle"
-                    wowParent: "BattlefieldFrameJoinButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 84.5
-                    height: 11.9
-                }
-            }
-
-            Button {
-                name: "BattlefieldFrameCancelButton"
-                text: "Cancel"
-                wowParent: "BattlefieldFrame"
-                style: "Button"
-                pin: "all"
-                width: 75.6
-                height: 22
-
-                FontString {
-                    name: "BattlefieldFrameCancelButtonText"
-                    text: "Cancel"
-                    wowParent: "BattlefieldFrameCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 51.4
-                    height: 11.9
-                }
-            }
         }
     }
 

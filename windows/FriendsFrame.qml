@@ -482,6 +482,260 @@ WowWindow {
         }
 
         Frame {
+            name: "FriendsFrameDiabolicFoot"
+            wowParent: "FriendsFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 354
+            height: 47
+
+            Button {
+                name: "FriendsFrameIgnorePlayerButton"
+                text: "Ignore Player"
+                wowParent: "IgnoreListFrame"
+                style: "Button"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+                width: 131
+                height: 21
+
+                FontString {
+                    name: "FriendsFrameIgnorePlayerButtonText"
+                    text: "Ignore Player"
+                    wowParent: "FriendsFrameIgnorePlayerButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 75.1
+                    height: 10.3
+                }
+            }
+
+            Button {
+                name: "FriendsFrameUnsquelchButton"
+                text: "Remove Player"
+                wowParent: "IgnoreListFrame"
+                style: "Button"
+                pin: "place"
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+                width: 134
+                height: 21
+
+                FontString {
+                    name: "FriendsFrameUnsquelchButtonText"
+                    text: "Remove Player"
+                    wowParent: "FriendsFrameUnsquelchButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 81.4
+                    height: 10.3
+                }
+            }
+
+            // kept as they are, at the foot's ends
+            WowRow {
+                name: "FriendsButtons"
+                fit: "ends"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+
+                Button {
+                    name: "FriendsFrameAddFriendButton"
+                    text: "Add Friend"
+                    wowParent: "FriendsListFrame"
+                    style: "Button"
+                    pin: "place"
+                    width: 131
+                    height: 21
+
+                    FontString {
+                        name: "FriendsFrameAddFriendButtonText"
+                        text: "Add Friend"
+                        wowParent: "FriendsFrameAddFriendButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 59.3
+                        height: 10.3
+                    }
+                }
+
+                Button {
+                    name: "FriendsFrameSendMessageButton"
+                    text: "Send Message"
+                    wowParent: "FriendsListFrame"
+                    style: "Button"
+                    pin: "place"
+                    width: 131
+                    height: 21
+
+                    FontString {
+                        name: "FriendsFrameSendMessageButtonText"
+                        text: "Send Message"
+                        wowParent: "FriendsFrameSendMessageButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 78.2
+                        height: 10.3
+                    }
+                }
+            }
+
+            WowRow {
+                name: "WhoButtons"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "WhoFrameWhoButton"
+                    text: "Refresh"
+                    wowParent: "WhoFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 89.4
+                    height: 22
+
+                    FontString {
+                        name: "WhoFrameWhoButtonText"
+                        text: "Refresh"
+                        wowParent: "WhoFrameWhoButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 10.3
+                    }
+                }
+
+                Button {
+                    name: "WhoFrameAddFriendButton"
+                    text: "Add Friend"
+                    wowParent: "WhoFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 106.8
+                    height: 22
+
+                    FontString {
+                        name: "WhoFrameAddFriendButtonText"
+                        text: "Add Friend"
+                        wowParent: "WhoFrameAddFriendButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 59.3
+                        height: 10.3
+                    }
+                }
+
+                Button {
+                    name: "WhoFrameGroupInviteButton"
+                    text: "Group Invite"
+                    wowParent: "WhoFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 117.8
+                    height: 22
+
+                    FontString {
+                        name: "WhoFrameGroupInviteButtonText"
+                        text: "Group Invite"
+                        wowParent: "WhoFrameGroupInviteButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 70.3
+                        height: 10.3
+                    }
+                }
+            }
+
+            WowRow {
+                name: "GuildButtons"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                Button {
+                    name: "GuildFrameGuildInformationButton"
+                    text: "Guild Information"
+                    wowParent: "GuildFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 122.9
+                    height: 22
+
+                    FontString {
+                        name: "GuildFrameGuildInformationButtonText"
+                        text: "Guild Information"
+                        wowParent: "GuildFrameGuildInformationButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 98.8
+                        height: 10.3
+                    }
+                }
+
+                Button {
+                    name: "GuildFrameAddMemberButton"
+                    text: "Add Member"
+                    wowParent: "GuildFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 94.4
+                    height: 22
+
+                    FontString {
+                        name: "GuildFrameAddMemberButtonText"
+                        text: "Add Member"
+                        wowParent: "GuildFrameAddMemberButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 70.3
+                        height: 10.3
+                    }
+                }
+
+                Button {
+                    name: "GuildFrameControlButton"
+                    text: "Guild Control"
+                    wowParent: "GuildFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 96.7
+                    height: 22
+
+                    FontString {
+                        name: "GuildFrameControlButtonText"
+                        text: "Guild Control"
+                        wowParent: "GuildFrameControlButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 72.7
+                        height: 10.3
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "FriendsFrameDiabolicRail"
             wowParent: "FriendsFrameDiabolic"
             anchors.left: parent.left
@@ -501,30 +755,6 @@ WowWindow {
             anchors.topMargin: 52
             width: 42
             height: 42
-        }
-
-        Button {
-            name: "FriendsFrameIgnorePlayerButton"
-            text: "Ignore Player"
-            wowParent: "IgnoreListFrame"
-            style: "Button"
-            pin: "place"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 31
-            width: 131
-            height: 21
-
-            FontString {
-                name: "FriendsFrameIgnorePlayerButtonText"
-                text: "Ignore Player"
-                wowParent: "FriendsFrameIgnorePlayerButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 75.1
-                height: 10.3
-            }
         }
 
         Button {
@@ -590,30 +820,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-
-        Button {
-            name: "FriendsFrameUnsquelchButton"
-            text: "Remove Player"
-            wowParent: "IgnoreListFrame"
-            style: "Button"
-            pin: "place"
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 31
-            width: 134
-            height: 21
-
-            FontString {
-                name: "FriendsFrameUnsquelchButtonText"
-                text: "Remove Player"
-                wowParent: "FriendsFrameUnsquelchButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 81.4
-                height: 10.3
-            }
         }
 
         Frame {
@@ -943,209 +1149,6 @@ WowWindow {
             anchors.topMargin: 96
             width: 212
             height: 270
-        }
-
-        // kept as they are, at the foot's ends
-        WowRow {
-            name: "FriendsButtons"
-            fit: "ends"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 31
-
-            Button {
-                name: "FriendsFrameAddFriendButton"
-                text: "Add Friend"
-                wowParent: "FriendsListFrame"
-                style: "Button"
-                pin: "place"
-                width: 131
-                height: 21
-
-                FontString {
-                    name: "FriendsFrameAddFriendButtonText"
-                    text: "Add Friend"
-                    wowParent: "FriendsFrameAddFriendButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 59.3
-                    height: 10.3
-                }
-            }
-
-            Button {
-                name: "FriendsFrameSendMessageButton"
-                text: "Send Message"
-                wowParent: "FriendsListFrame"
-                style: "Button"
-                pin: "place"
-                width: 131
-                height: 21
-
-                FontString {
-                    name: "FriendsFrameSendMessageButtonText"
-                    text: "Send Message"
-                    wowParent: "FriendsFrameSendMessageButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 78.2
-                    height: 10.3
-                }
-            }
-        }
-
-        WowRow {
-            name: "WhoButtons"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "WhoFrameWhoButton"
-                text: "Refresh"
-                wowParent: "WhoFrame"
-                style: "Button"
-                pin: "all"
-                width: 89.4
-                height: 22
-
-                FontString {
-                    name: "WhoFrameWhoButtonText"
-                    text: "Refresh"
-                    wowParent: "WhoFrameWhoButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 10.3
-                }
-            }
-
-            Button {
-                name: "WhoFrameAddFriendButton"
-                text: "Add Friend"
-                wowParent: "WhoFrame"
-                style: "Button"
-                pin: "all"
-                width: 106.8
-                height: 22
-
-                FontString {
-                    name: "WhoFrameAddFriendButtonText"
-                    text: "Add Friend"
-                    wowParent: "WhoFrameAddFriendButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 59.3
-                    height: 10.3
-                }
-            }
-
-            Button {
-                name: "WhoFrameGroupInviteButton"
-                text: "Group Invite"
-                wowParent: "WhoFrame"
-                style: "Button"
-                pin: "all"
-                width: 117.8
-                height: 22
-
-                FontString {
-                    name: "WhoFrameGroupInviteButtonText"
-                    text: "Group Invite"
-                    wowParent: "WhoFrameGroupInviteButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 70.3
-                    height: 10.3
-                }
-            }
-        }
-
-        WowRow {
-            name: "GuildButtons"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            Button {
-                name: "GuildFrameGuildInformationButton"
-                text: "Guild Information"
-                wowParent: "GuildFrame"
-                style: "Button"
-                pin: "all"
-                width: 122.9
-                height: 22
-
-                Frame {
-                    name: "FriendsFrameDiabolicFoot"
-                    wowParent: "FriendsFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: 101.6
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 354
-                    height: 47
-                }
-
-                FontString {
-                    name: "GuildFrameGuildInformationButtonText"
-                    text: "Guild Information"
-                    wowParent: "GuildFrameGuildInformationButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 98.8
-                    height: 10.3
-                }
-            }
-
-            Button {
-                name: "GuildFrameAddMemberButton"
-                text: "Add Member"
-                wowParent: "GuildFrame"
-                style: "Button"
-                pin: "all"
-                width: 94.4
-                height: 22
-
-                FontString {
-                    name: "GuildFrameAddMemberButtonText"
-                    text: "Add Member"
-                    wowParent: "GuildFrameAddMemberButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 70.3
-                    height: 10.3
-                }
-            }
-
-            Button {
-                name: "GuildFrameControlButton"
-                text: "Guild Control"
-                wowParent: "GuildFrame"
-                style: "Button"
-                pin: "all"
-                width: 96.7
-                height: 22
-
-                FontString {
-                    name: "GuildFrameControlButtonText"
-                    text: "Guild Control"
-                    wowParent: "GuildFrameControlButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 72.7
-                    height: 10.3
-                }
-            }
         }
     }
 

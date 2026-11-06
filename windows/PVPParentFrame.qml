@@ -457,6 +457,95 @@ WowWindow {
         }
 
         Frame {
+            name: "PVPParentFrameDiabolicFoot"
+            wowParent: "PVPParentFrameDiabolic"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 23
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 23
+            anchors.right: parent.right
+            anchors.rightMargin: 23
+            width: 356
+            height: 35
+
+            WowRow {
+                name: "PVPButtons"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+
+                // 8 apart
+                Button {
+                    name: "PVPBattlegroundFrameGroupJoinButton"
+                    text: "Join as Party"
+                    wowParent: "PVPBattlegroundFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 128
+                    height: 22
+
+                    FontString {
+                        name: "PVPBattlegroundFrameGroupJoinButtonText"
+                        text: "Join as Party"
+                        wowParent: "PVPBattlegroundFrameGroupJoinButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 101.9
+                        height: 11.9
+                    }
+                }
+
+                // the buttons in the middle of the window's foot (its middle 15 left of the
+                // frame's; Join as Party wider than Cancel, so Join Battle 27 right of it),
+                // room between the rewards and the foot
+                Button {
+                    name: "PVPBattlegroundFrameJoinButton"
+                    text: "Join Battle"
+                    wowParent: "PVPBattlegroundFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 110.6
+                    height: 22
+
+                    FontString {
+                        name: "PVPBattlegroundFrameJoinButtonText"
+                        text: "Join Battle"
+                        wowParent: "PVPBattlegroundFrameJoinButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 84.5
+                        height: 11.9
+                    }
+                }
+
+                // 8 apart
+                Button {
+                    name: "PVPBattlegroundFrameCancelButton"
+                    text: "Cancel"
+                    wowParent: "PVPBattlegroundFrame"
+                    style: "Button"
+                    pin: "all"
+                    width: 77.4
+                    height: 22
+
+                    FontString {
+                        name: "PVPBattlegroundFrameCancelButtonText"
+                        text: "Cancel"
+                        wowParent: "PVPBattlegroundFrameCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 51.4
+                        height: 11.9
+                    }
+                }
+            }
+        }
+
+        Frame {
             name: "PVPParentFrameDiabolicRail"
             wowParent: "PVPParentFrameDiabolic"
             anchors.left: parent.left
@@ -502,92 +591,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-
-        WowRow {
-            name: "PVPButtons"
-            anchors.left: parent.left
-            anchors.leftMargin: 37
-            anchors.right: parent.right
-            anchors.rightMargin: 37
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-
-            // 8 apart
-            Button {
-                name: "PVPBattlegroundFrameGroupJoinButton"
-                text: "Join as Party"
-                wowParent: "PVPBattlegroundFrame"
-                style: "Button"
-                pin: "all"
-                width: 128
-                height: 22
-
-                FontString {
-                    name: "PVPBattlegroundFrameGroupJoinButtonText"
-                    text: "Join as Party"
-                    wowParent: "PVPBattlegroundFrameGroupJoinButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 101.9
-                    height: 11.9
-                }
-            }
-
-            // the buttons in the middle of the window's foot (its middle 15 left of the
-            // frame's; Join as Party wider than Cancel, so Join Battle 27 right of it),
-            // room between the rewards and the foot
-            Button {
-                name: "PVPBattlegroundFrameJoinButton"
-                text: "Join Battle"
-                wowParent: "PVPBattlegroundFrame"
-                style: "Button"
-                pin: "all"
-                width: 110.6
-                height: 22
-
-                FontString {
-                    name: "PVPBattlegroundFrameJoinButtonText"
-                    text: "Join Battle"
-                    wowParent: "PVPBattlegroundFrameJoinButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 84.5
-                    height: 11.9
-                }
-
-                Frame {
-                    name: "PVPParentFrameDiabolicFoot"
-                    wowParent: "PVPParentFrameDiabolic"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -25.3
-                    anchors.top: parent.top
-                    anchors.topMargin: -6
-                    width: 356
-                    height: 35
-                }
-            }
-
-            // 8 apart
-            Button {
-                name: "PVPBattlegroundFrameCancelButton"
-                text: "Cancel"
-                wowParent: "PVPBattlegroundFrame"
-                style: "Button"
-                pin: "all"
-                width: 77.4
-                height: 22
-
-                FontString {
-                    name: "PVPBattlegroundFrameCancelButtonText"
-                    text: "Cancel"
-                    wowParent: "PVPBattlegroundFrameCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 51.4
-                    height: 11.9
-                }
-            }
         }
     }
 

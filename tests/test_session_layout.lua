@@ -529,6 +529,37 @@ function TestLayoutAudit:test_what_is_left_to_scan()
 	assertClean(client)
 end
 
+-- A foot's height is its own, what's on it follows it and not the other way
+-- round: a button placed on it, a page without one, a taller one.
+function TestLayoutAudit:test_a_foot_holds_its_buttons()
+	boot()
+	local frame, win = window("AuditFoot")
+	local foot = kit:AddFooter(win, true)
+	lu.assertEquals(foot:GetName(), "AuditFootDiabolicFoot")
+	lu.assertEquals(foot:GetHeight(), 35)
+	lu.assertEquals(foot:GetNumPoints(), 2)
+	local go = button(frame, "AuditFootGo", 0, 0, 80, "Go")
+	go:ClearAllPoints()
+	go:SetPoint("BOTTOMLEFT", foot, "BOTTOMLEFT", 14, 7)
+	frame:Show()
+	lu.assertEquals(foot:GetHeight(), 35)
+	lu.assertEquals(go:GetBottom(), foot:GetBottom() + 7)
+	lu.assertEquals(foot:GetBottom(), win:GetBottom() + 23)
+	-- a page without one: nothing drawn, still there to be placed on
+	kit:SetFooter(foot, nil)
+	lu.assertNil(foot.DiabolicShown)
+	lu.assertFalse(foot.Rail:IsShown() and true or false)
+	lu.assertEquals(go:GetBottom(), foot:GetBottom() + 7)
+	-- taller, its buttons where they are
+	local at = go:GetBottom()
+	kit:SetFooter(foot, 65)
+	lu.assertTrue(foot.DiabolicShown)
+	lu.assertTrue(foot.Rail:IsShown() and true or false)
+	lu.assertEquals(foot:GetHeight(), 65)
+	lu.assertEquals(go:GetBottom(), at)
+	assertClean(client)
+end
+
 function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	boot()
 	local frame = window("AuditBroken")
