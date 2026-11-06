@@ -283,6 +283,7 @@ def start(arguments):
     app.setOrganizationName("DiabolicUI")
     app.setApplicationName("Windows editor")
     app.setWindowIcon(QIcon(os.path.join(ROOT, "tools", "editor-icon.svg")))
+    app.setDesktopFileName("diabolicui-editor")  # (tools/install-editor.sh: the panel's icon on Wayland)
     engine = QQmlApplicationEngine()
     backend = Backend()
     backend.engine = engine
