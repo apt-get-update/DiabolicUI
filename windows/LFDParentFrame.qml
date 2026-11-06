@@ -169,9 +169,13 @@ WowWindow {
         name: "LFDQueueFrameRandom"
         kind: "Frame"
         wowParent: "LFDQueueFrame"
+        pin: "place"
         anchors.left: lFDQueueFrame.left
         anchors.top: lFDQueueFrame.top
         anchors.topMargin: -62
+        anchors.right: lFDQueueFrame.right
+        anchors.bottom: lFDQueueFrame.bottom
+        anchors.bottomMargin: 46
         width: 355
         height: 456
     }
@@ -475,9 +479,13 @@ WowWindow {
         name: "LFDQueueFrameSpecific"
         kind: "Frame"
         wowParent: "LFDQueueFrame"
+        pin: "place"
         anchors.left: lFDQueueFrame.left
         anchors.top: lFDQueueFrame.top
         anchors.topMargin: -62
+        anchors.right: lFDQueueFrame.right
+        anchors.bottom: lFDQueueFrame.bottom
+        anchors.bottomMargin: 46
         width: 355
         height: 456
     }

@@ -120,7 +120,7 @@ WowWindow {
         anchors.left: lFRBrowseFrameSendMessageButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: lFRBrowseFrameSendMessageButton.verticalCenter
-        width: 84
+        width: 74.1
         height: 22
     }
 
@@ -246,7 +246,7 @@ WowWindow {
         anchors.left: lFRBrowseFrameInviteButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: lFRBrowseFrameInviteButton.verticalCenter
-        width: 90
+        width: 83.6
         height: 22
     }
 
@@ -270,11 +270,11 @@ WowWindow {
         wowParent: "LFRBrowseFrame"
         style: "Button"
         pin: "all"
-        anchors.left: lFRBrowseFrame.left
-        anchors.leftMargin: 21
-        anchors.bottom: lFRBrowseFrame.bottom
-        anchors.bottomMargin: -6
-        width: 110
+        anchors.left: lFRParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: lFRParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
+        width: 126.3
         height: 22
     }
 
@@ -442,10 +442,9 @@ WowWindow {
         wowParent: "LFRQueueFrame"
         style: "Button"
         pin: "place"
-        anchors.right: lFRQueueFrame.right
-        anchors.rightMargin: 38
-        anchors.bottom: lFRQueueFrame.bottom
-        anchors.bottomMargin: -6
+        anchors.left: lFRQueueFrameFindGroupButton.right
+        anchors.leftMargin: 56
+        anchors.verticalCenter: lFRQueueFrameFindGroupButton.verticalCenter
         width: 115
         height: 22
     }
@@ -518,10 +517,10 @@ WowWindow {
         wowParent: "LFRQueueFrame"
         style: "Button"
         pin: "place"
-        anchors.left: lFRQueueFrame.left
-        anchors.leftMargin: 21
-        anchors.bottom: lFRQueueFrame.bottom
-        anchors.bottomMargin: -6
+        anchors.left: lFRParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: lFRParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
         width: 125
         height: 22
     }
@@ -1369,6 +1368,31 @@ WowWindow {
         anchors.verticalCenterOffset: -1
         width: 120.9
         height: 14.2
+    }
+
+    // the browse page's buttons across the foot, clear of the iron
+    WowRow {
+        name: "LFRBrowseButtons"
+        parts: ["LFRBrowseFrameSendMessageButton", "LFRBrowseFrameInviteButton", "LFRBrowseFrameRefreshButton"]
+        anchors.left: lFRParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: lFRParentFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: lFRParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
+    }
+
+    // the raid page's two at the foot's ends, as far in
+    WowRow {
+        name: "LFRQueueButtons"
+        parts: ["LFRQueueFrameFindGroupButton", "LFRQueueFrameAcceptCommentButton"]
+        fit: "ends"
+        anchors.left: lFRParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: lFRParentFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: lFRParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: lFRBrowseFrameListScrollFrame; name: "LFRBrowseFrameListScrollFrame"; x: 167; y: 66; width: 0; height: 0 }

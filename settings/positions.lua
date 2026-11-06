@@ -1,7 +1,8 @@
 -- The parts placed for good: { point, the frame it's placed on, that frame's
 -- point, x, y, width, height } (x right, y up), without a width and height it
 -- keeps its size, { width, height } alone sizes it where it is, whatever else
--- moves it (modules/blizzard/adjust.lua).
+-- moves it; second = { point, that frame's point, x, y } stretches it to there
+-- too (modules/blizzard/adjust.lua).
 -- Written from windows/*.qml by tools/positions.lua: change those (docs:
 -- Common Tasks), this file is overwritten.
 local _, Engine = ...
@@ -38,6 +39,7 @@ Engine:NewStaticConfig("Positions", {
 	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 },
 
 	-- FriendsFrame ----------------------------------------------------------
+	FriendsFrameFriendsScrollFrameScrollBar = { "TOPLEFT", "FriendsFrameFriendsScrollFrame", "TOPRIGHT", 6, -15, second = { "BOTTOMLEFT", "BOTTOMRIGHT", 6, 15 } }, -- Slider
 	FriendsFrameIgnoreButton1 = { "TOPLEFT", "FriendsFrame", "TOPLEFT", 21, -39 }, -- Button
 	FriendsFrameIgnoreScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -65, -36, 298, 340 }, -- ScrollFrame
 	GuildEventLogFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
@@ -75,16 +77,18 @@ Engine:NewStaticConfig("Positions", {
 	-- LFDParentFrame --------------------------------------------------------
 	LFDQueueFrameCancelButton = { "BOTTOMRIGHT", "LFDParentFrameDiabolic", "BOTTOMRIGHT", -34, 30 }, -- Button "Close"
 	LFDQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFDParentFrameDiabolic", "BOTTOMLEFT", 34, 30 }, -- Button "Find Group"
+	LFDQueueFrameRandom = { "TOPLEFT", "LFDQueueFrame", "TOPLEFT", 0, 62, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 46 } }, -- Frame
 	LFDQueueFrameRandomScrollFrame = { "BOTTOMRIGHT", "LFDQueueFrameRandom", "BOTTOMRIGHT", -34, 34, 298, 265 }, -- ScrollFrame
+	LFDQueueFrameSpecific = { "TOPLEFT", "LFDQueueFrame", "TOPLEFT", 0, 62, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 46 } }, -- Frame
 
 	-- LFRParentFrame --------------------------------------------------------
 	LFRBrowseFrameColumnHeader1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 26, -40 }, -- Button "Name"
-	LFRBrowseFrameInviteButton = { "LEFT", "LFRBrowseFrameSendMessageButton", "RIGHT", 6, 0, 84, 22 }, -- Button "Invite"
+	LFRBrowseFrameInviteButton = { "LEFT", "LFRBrowseFrameSendMessageButton", "RIGHT", 6, 0, 74.1, 22 }, -- Button "Invite"
 	LFRBrowseFrameListButton1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 12, -66 }, -- Button
-	LFRBrowseFrameRefreshButton = { "LEFT", "LFRBrowseFrameInviteButton", "RIGHT", 6, 0, 90, 22 }, -- Button "Refresh"
-	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRBrowseFrame", "BOTTOMLEFT", 21, -6, 110, 22 }, -- Button "Send Message"
-	LFRQueueFrameAcceptCommentButton = { "BOTTOMRIGHT", "LFRQueueFrame", "BOTTOMRIGHT", -38, -6 }, -- Button "Set Comment"
-	LFRQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFRQueueFrame", "BOTTOMLEFT", 21, -6 }, -- Button "List My Name"
+	LFRBrowseFrameRefreshButton = { "LEFT", "LFRBrowseFrameInviteButton", "RIGHT", 6, 0, 83.6, 22 }, -- Button "Refresh"
+	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRParentFrameDiabolic", "BOTTOMLEFT", 37, 30, 126.3, 22 }, -- Button "Send Message"
+	LFRQueueFrameAcceptCommentButton = { "LEFT", "LFRQueueFrameFindGroupButton", "RIGHT", 56, 0 }, -- Button "Set Comment"
+	LFRQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFRParentFrameDiabolic", "BOTTOMLEFT", 37, 30 }, -- Button "List My Name"
 	LFRQueueFrameSpecificListButton1 = { "TOPLEFT", "LFRQueueFrameSpecific", "TOPLEFT", 17, -132 }, -- Frame
 
 	-- MacroFrame ------------------------------------------------------------

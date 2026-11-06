@@ -87,19 +87,9 @@ Module.StyleLFG = function(self)
 			text:SetJustifyH("CENTER")
 		end
 		self:CenterRoles(window, "LFDQueueFrameRoleButton", { "Tank", "Healer", "DPS", "Leader" }, config.roles_top)
-		-- the random dungeon and the list up into the dropdown's room, and
-		-- longer: the list's rows more (its update shows as many as
-		-- NUM_LFD_CHOICE_BUTTONS), the random dungeon's text as much taller
-		-- (its bottom with its page's)
-		local grow = self:AddDungeonRows(config.extra_rows, config.list_bottom_raise)
-		for _, name in ipairs({ "LFDQueueFrameRandom", "LFDQueueFrameSpecific" }) do
-			local page = _G[name]
-			if page then
-				page:ClearAllPoints()
-				page:SetPoint("TOPLEFT", _G.LFDQueueFrame, "TOPLEFT", 0, config.lists_raise)
-				page:SetPoint("BOTTOMRIGHT", _G.LFDQueueFrame, "BOTTOMRIGHT", 0, config.lists_raise - grow)
-			end
-		end
+		-- the list longer: its rows more (its update shows as many as
+		-- NUM_LFD_CHOICE_BUTTONS)
+		self:AddDungeonRows(config.extra_rows, config.list_bottom_raise)
 	end
 	if _G.LFRParentFrame then
 		local header = self:StyleFrame(_G.LFRParentFrame, config.raids, _G.LFRQueueFrameTitleText)
@@ -205,8 +195,7 @@ Module.StyleLFG = function(self)
 end
 
 -- `count` more rows in the Dungeon Finder's list, under Blizzard's, its
--- scroll frame down to the last, its bottom `raise` higher. How much longer
--- it is returned.
+-- scroll frame down to the last, its bottom `raise` higher.
 Module.AddDungeonRows = function(self, count, raise)
 	local first = _G.NUM_LFD_CHOICE_BUTTONS
 	local list = _G.LFDQueueFrameSpecificListScrollFrame
@@ -220,7 +209,6 @@ Module.AddDungeonRows = function(self, count, raise)
 	end
 	list:SetPoint(point, last, relativePoint, x, y + raise)
 	_G.NUM_LFD_CHOICE_BUTTONS = first + count
-	return count * last:GetHeight()
 end
 
 -- A row of roles (`prefix` and each of `roles`: Blizzard's in a row from

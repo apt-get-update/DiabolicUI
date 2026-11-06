@@ -792,7 +792,6 @@ Engine:NewStaticConfig("Blizzard", {
 		text_color = { .9, .86, .8 },
 		type_width = 230, -- its middle: room for the longest choice
 		roles_top = -72, -- the roles' row, from the window's top (Blizzard's 100 down), under the band
-		lists_raise = 62, -- the random dungeon and the list, up into the dropdown's old room
 		extra_rows = 1 -- the dungeons' list's rows past Blizzard's 15, down to over the foot
 	},
 	-- the spellbook in Diablo III's (modules/blizzard/spellbook.lua), laid

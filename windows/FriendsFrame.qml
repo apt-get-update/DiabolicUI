@@ -1764,10 +1764,13 @@ WowWindow {
         kind: "Slider"
         wowParent: "FriendsFrameFriendsScrollFrame"
         style: "ScrollBar"
+        pin: "place"
         anchors.left: friendsFrameFriendsScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: friendsFrameFriendsScrollFrame.top
         anchors.topMargin: 15
+        anchors.bottom: friendsFrameFriendsScrollFrame.bottom
+        anchors.bottomMargin: 15
         width: 16
         height: 310
     }

@@ -167,11 +167,6 @@ Module.LayoutFriends = function(self, window)
 	list:SetPoint("TOPLEFT", _G.FriendsFrame, "TOPLEFT", x, config.friends_top)
 	list:SetHeight(config.friends_bottom + config.friends_top)
 	list.scrollHeight = list:GetHeight()
-	-- its scroll bar up with it (Blizzard's top hangs off the frame's)
-	local bar = _G.FriendsFrameFriendsScrollFrameScrollBar
-	bar:ClearAllPoints()
-	bar:SetPoint("TOPLEFT", list, "TOPRIGHT", 6, -15)
-	bar:SetPoint("BOTTOMLEFT", list, "BOTTOMRIGHT", 6, 15)
 end
 
 -- The who list with more room: the column's dropdown (zone, guild or
