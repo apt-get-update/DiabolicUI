@@ -28,6 +28,38 @@ ApplicationWindow {
     readonly property var pointNames: ["TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT"]
     readonly property color gold: "#e0a640"
     readonly property color dim: "#978b78"
+    readonly property string plain: "sans-serif" // (the names and numbers: as they're written, whatever the desktop's font)
+
+    // A button for the top bar: says what it does and its key when hovered,
+    // leaves the keyboard on the part picked.
+    component Action: Button {
+        property string tip
+        focusPolicy: Qt.NoFocus
+        ToolTip.visible: hovered && tip !== ""
+        ToolTip.text: tip
+        ToolTip.delay: 400
+    }
+
+    // A section of the right panel, closed until asked for.
+    component Fold: ColumnLayout {
+        id: fold
+        property string title
+        property bool open: false
+        default property alias body: inner.data
+        spacing: 4
+        ItemDelegate {
+            Layout.fillWidth: true
+            padding: 4; leftPadding: 10
+            text: (fold.open ? "▾  " : "▸  ") + fold.title
+            onClicked: fold.open = !fold.open
+        }
+        ColumnLayout {
+            id: inner
+            visible: fold.open
+            Layout.fillWidth: true
+            Layout.leftMargin: 10; Layout.rightMargin: 10
+        }
+    }
 
     // ---- the window opened
     property var data: null          // its part of layout.json
@@ -436,43 +468,148 @@ ApplicationWindow {
         return true
     }
 
-    // ---- the window's tabs, over everything (they wrap, none out of sight)
+    // ---- on top: the window, what's shown, the actions, the window's tabs (they wrap, none out of sight)
     header: Rectangle {
-        visible: app.views.length > 1
         color: app.palette.dark
-        implicitHeight: tabs.implicitHeight + 12
-        Flow {
-            id: tabs
-            objectName: "tabs"
+        implicitHeight: bar.implicitHeight + 14
+        Column {
+            id: bar
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.margins: 6
-            spacing: 4
-            Repeater {
-                model: app.views
-                AbstractButton {
-                    id: tab
-                    required property var modelData
-                    required property int index
-                    readonly property bool current: index === app.viewIndex
-                    text: modelData.label || "(no tab)"
-                    focusPolicy: Qt.NoFocus // (the arrows stay on the part picked)
-                    padding: 8; leftPadding: 16; rightPadding: 16
-                    contentItem: Text {
-                        text: tab.text
-                        font.pixelSize: 15
-                        font.bold: true
-                        color: tab.current ? "#1c1917" : app.palette.text
+            spacing: 6
+            RowLayout {
+                width: parent.width
+                ComboBox {
+                    id: windowPick
+                    objectName: "windowPick"
+                    Layout.preferredWidth: 300
+                    focusPolicy: Qt.NoFocus
+                    font.family: app.plain
+                    model: JSON.parse(backend.windows())
+                    onActivated: app.openWindow(currentText)
+                }
+                Action {
+                    id: showButton
+                    objectName: "showButton"
+                    text: "Show ▾"
+                    tip: showPopup.opened ? "" : "What's drawn, and a screenshot under it"
+                    onClicked: showPopup.open()
+                    Popup {
+                        id: showPopup
+                        objectName: "showPopup"
+                        y: showButton.height + 4
+                        ColumnLayout {
+                            spacing: 2
+                            Repeater {
+                                model: [["Frame", "Frames"], ["FontString", "Texts"], ["Texture", "Textures"]]
+                                CheckBox {
+                                    required property var modelData
+                                    text: modelData[1]
+                                    checked: true
+                                    onToggled: {
+                                        app.shown[modelData[0]] = checked
+                                        app.applyShown()
+                                        app.listModelUpdate()
+                                    }
+                                }
+                            }
+                            CheckBox { id: showArt; text: "Art"; checked: true }
+                            CheckBox { id: showOutlines; text: "Outlines"; checked: true }
+                            RowLayout {
+                                Layout.topMargin: 6
+                                Button { text: "Screenshot…"; onClicked: { showPopup.close(); shotDialog.open() } }
+                                Slider { id: shotAlpha; Layout.preferredWidth: 120; from: 0; to: 1; value: .6 }
+                            }
+                        }
                     }
-                    background: Rectangle {
-                        radius: 3
-                        color: tab.current ? app.gold : tab.hovered ? "#4a3d30" : app.palette.button
-                        border.color: tab.current ? app.gold : app.dim
+                }
+                Item { Layout.fillWidth: true }
+                Action { text: "Undo"; tip: "Ctrl+Z"; onClicked: app.undo() }
+                Action { text: "Redo"; tip: "Ctrl+Shift+Z"; onClicked: app.redo() }
+                Action { text: "Fit"; tip: "See the whole window (F)"; onClicked: app.fit(true) }
+                Action {
+                    objectName: "saveButton"
+                    text: app.changeCount ? "Save (" + app.changeCount + ")" : "Save"
+                    tip: "Write the files, then /reload in game (Ctrl+S)"
+                    highlighted: app.changeCount > 0
+                    enabled: app.changeCount > 0
+                    onClicked: app.save()
+                }
+            }
+            Flow {
+                id: tabs
+                objectName: "tabs"
+                width: parent.width
+                visible: app.views.length > 1
+                spacing: 4
+                Repeater {
+                    model: app.views
+                    AbstractButton {
+                        id: tab
+                        required property var modelData
+                        required property int index
+                        readonly property bool current: index === app.viewIndex
+                        text: modelData.label || "(no tab)"
+                        focusPolicy: Qt.NoFocus // (the arrows stay on the part picked)
+                        padding: 8; leftPadding: 16; rightPadding: 16
+                        contentItem: Text {
+                            text: tab.text
+                            font.pixelSize: 15
+                            font.bold: true
+                            color: tab.current ? "#1c1917" : app.palette.text
+                        }
+                        background: Rectangle {
+                            radius: 3
+                            color: tab.current ? app.gold : tab.hovered ? "#4a3d30" : app.palette.button
+                            border.color: tab.current ? app.gold : app.dim
+                        }
+                        onClicked: app.showView(index)
                     }
-                    onClicked: app.showView(index)
                 }
             }
         }
         Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 2; color: app.gold }
+    }
+
+    // ---- at the bottom: what can be done now, and what the last action said
+    footer: Rectangle {
+        color: app.palette.dark
+        implicitHeight: bottomRow.implicitHeight + 8
+        RowLayout {
+            id: bottomRow
+            anchors.left: parent.left; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 8; anchors.rightMargin: 8
+            spacing: 16
+            Label {
+                objectName: "hint"
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                color: app.dim
+                font.family: app.plain
+                text: app.picked
+                    ? "Drag to move  ·  gold handles to size  ·  drag a dot onto another part to place it there  ·  arrows: 1, Shift: 10  ·  Alt: no snapping"
+                    : "Press a part to pick it, again for the one under it  ·  wheel to zoom  ·  drag the empty space to pan  ·  right-click: all that's there"
+            }
+            Label {
+                id: statusLine
+                objectName: "status"
+                Layout.maximumWidth: app.width / 2
+                elide: Text.ElideRight
+                font.family: app.plain
+                color: app.status.indexOf("Not saved") === 0 ? "#e8703a" : app.palette.text
+                text: app.status.replace(/\n/g, "  ")
+                HoverHandler { id: statusHover }
+                ToolTip.visible: statusHover.hovered && statusLine.truncated
+                ToolTip.text: app.status
+            }
+        }
+    }
+
+    FileDialog {
+        id: shotDialog
+        nameFilters: ["Images (*.jpg *.png *.tga)"]
+        currentFolder: Qt.resolvedUrl("../../../../Screenshots")
+        onAccepted: shot.source = selectedFile
     }
 
     SplitView {
@@ -486,38 +623,11 @@ ApplicationWindow {
             SplitView.preferredWidth: width_
             SplitView.minimumWidth: 200
             spacing: 6
-            ComboBox {
-                id: windowPick
-                objectName: "windowPick"
-                Layout.fillWidth: true; Layout.margins: 8; Layout.bottomMargin: 0
-                model: JSON.parse(backend.windows())
-                onActivated: app.openWindow(currentText)
-            }
-            RowLayout {
-                Layout.leftMargin: 8; Layout.rightMargin: 8
-                Repeater {
-                    model: [["Frame", "frames"], ["FontString", "texts"], ["Texture", "textures"]]
-                    CheckBox {
-                        required property var modelData
-                        text: modelData[1]
-                        checked: true
-                        onToggled: {
-                            app.shown[modelData[0]] = checked
-                            app.applyShown()
-                            app.listModelUpdate()
-                        }
-                    }
-                }
-            }
-            RowLayout {
-                Layout.leftMargin: 8; Layout.rightMargin: 8
-                CheckBox { id: showArt; text: "art"; checked: true }
-                CheckBox { id: showOutlines; text: "outlines"; checked: true }
-            }
             TextField {
                 id: find
-                Layout.fillWidth: true; Layout.leftMargin: 8; Layout.rightMargin: 8
-                placeholderText: "Find a part…"
+                Layout.fillWidth: true; Layout.margins: 8; Layout.bottomMargin: 0
+                placeholderText: "Find a part…  (Ctrl+F)"
+                font.family: app.plain
                 onTextChanged: app.listModelUpdate()
             }
             ListView {
@@ -542,9 +652,11 @@ ApplicationWindow {
                         color: modelData === app.picked ? app.gold : app.palette.text
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
+                        font.family: app.plain
                     }
-                    ToolTip.visible: hovered && (app.parts[modelData] || {}).text !== undefined
-                    ToolTip.text: (app.parts[modelData] || {}).text || ""
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 400
+                    ToolTip.text: modelData + ((app.parts[modelData] || {}).text ? "\n“" + app.parts[modelData].text + "”" : "")
                     onClicked: app.pick(modelData)
                 }
             }
@@ -942,10 +1054,10 @@ ApplicationWindow {
                 Label { text: "PART"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 8; Layout.leftMargin: 10 }
                 Label {
                     Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
-                    text: app.picked || "None picked: press one."
+                    text: app.picked || "None picked: press one in the window or the list."
                     color: app.picked ? app.gold : app.dim
-                    wrapMode: Text.WrapAnywhere
-                    font.family: "monospace"
+                    wrapMode: app.picked ? Text.WrapAnywhere : Text.Wrap
+                    font.family: app.plain
                 }
                 Label {
                     Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
@@ -955,9 +1067,10 @@ ApplicationWindow {
                     text: {
                         const p = app.parts[app.picked]
                         if (!p) return ""
-                        return (p.kind || "?") + (p.text ? " · “" + p.text + "”" : "") + "\nin " + (p.parent || "?")
-                            + (p.strata ? " · " + p.strata + " " + p.level : "") + (p.layer ? " · " + p.layer : "")
-                            + (app.pickedEntry && app.pickedEntry.pin ? "\n◆ pinned: " + app.pickedEntry.pin : "\nfollows the scan")
+                        const pin = app.pickedEntry && app.pickedEntry.pin
+                        return (p.kind || "?") + (p.text ? " · “" + p.text + "”" : "") + (p.parent && p.parent !== "?" ? "\nin " + p.parent : "")
+                            + "\n" + (pin === "place" ? "◆ Its place is pinned" : pin === "size" ? "◆ Its size is pinned"
+                                : pin ? "◆ Pinned: stays as set" : "Not pinned: follows the game's scan")
                     }
                 }
                 GridLayout {
@@ -980,36 +1093,37 @@ ApplicationWindow {
                         app.change(app.picked, place, e.size ? [fw.value / 10, fh.value / 10] : e.size)
                     }
 
-                    Label { text: "point"; color: app.dim }
+                    Label { text: "Point"; color: app.dim }
                     ComboBox {
                         Layout.fillWidth: true
                         model: app.pointNames
                         currentIndex: fields.place ? model.indexOf(fields.place[0]) : -1
                         onActivated: fields.anchor(currentText, fields.place ? fields.place[1] : app.title_, fields.place ? fields.place[2] : "TOPLEFT")
                     }
-                    Label { text: "on"; color: app.dim }
+                    Label { text: "On"; color: app.dim }
                     ComboBox {
                         Layout.fillWidth: true
                         editable: true
+                        font.family: app.plain
                         model: app.names
                         currentIndex: fields.place ? model.indexOf(fields.place[1]) : -1
                         onActivated: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", currentText, fields.place ? fields.place[2] : "TOPLEFT")
                         onAccepted: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", editText, fields.place ? fields.place[2] : "TOPLEFT")
                     }
-                    Label { text: "its point"; color: app.dim }
+                    Label { text: "At"; color: app.dim }
                     ComboBox {
                         Layout.fillWidth: true
                         model: app.pointNames
                         currentIndex: fields.place ? model.indexOf(fields.place[2]) : -1
                         onActivated: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", fields.place ? fields.place[1] : app.title_, currentText)
                     }
-                    Label { text: "x"; color: app.dim }
+                    Label { text: "X"; color: app.dim }
                     NumberBox { id: fx; number: fields.place ? fields.place[3] : 0; onEdited: fields.numbers() }
-                    Label { text: "y"; color: app.dim }
+                    Label { text: "Y"; color: app.dim }
                     NumberBox { id: fy; number: fields.place ? fields.place[4] : 0; onEdited: fields.numbers() }
-                    Label { text: "width"; color: app.dim; visible: !!fields.size }
+                    Label { text: "Width"; color: app.dim; visible: !!fields.size }
                     NumberBox { id: fw; visible: !!fields.size; number: fields.size ? fields.size[0] : 0; onEdited: fields.numbers() }
-                    Label { text: "height"; color: app.dim; visible: !!fields.size }
+                    Label { text: "Height"; color: app.dim; visible: !!fields.size }
                     NumberBox { id: fh; visible: !!fields.size; number: fields.size ? fields.size[1] : 0; onEdited: fields.numbers() }
                 }
                 Button {
@@ -1043,63 +1157,41 @@ ApplicationWindow {
                             color: "#e8c0a0"
                             wrapMode: Text.Wrap
                             font.pixelSize: 12
+                            font.family: app.plain
                         }
                         onClicked: if (modelData.parts.length && app.items[modelData.parts[0]]) app.pick(modelData.parts[0])
                     }
                 }
 
-                Label {
-                    text: "STILL TO SCAN"
+                Fold {
+                    objectName: "stillToScanFold"
+                    title: "Still to scan"
                     visible: app.leftText !== ""
-                    color: app.dim
-                    font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10
-                }
-                Label {
-                    objectName: "stillToScan"
-                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
-                    visible: app.leftText !== ""
-                    text: app.leftText
-                    color: app.dim
-                    wrapMode: Text.Wrap
-                    font.pixelSize: 12
+                    Layout.fillWidth: true; Layout.topMargin: 6
+                    Label {
+                        objectName: "stillToScan"
+                        Layout.fillWidth: true
+                        text: app.leftText
+                        color: app.dim
+                        wrapMode: Text.Wrap
+                        font.pixelSize: 12
+                        font.family: app.plain
+                    }
                 }
 
-                Label { text: "SCREENSHOT"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10 }
-                RowLayout {
-                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
-                    Button { text: "Open…"; onClicked: shotDialog.open() }
-                    Slider { id: shotAlpha; Layout.fillWidth: true; from: 0; to: 1; value: .6 }
-                }
-                FileDialog {
-                    id: shotDialog
-                    nameFilters: ["Images (*.jpg *.png *.tga)"]
-                    currentFolder: Qt.resolvedUrl("../../../../Screenshots")
-                    onAccepted: shot.source = selectedFile
-                }
-
-                Label { text: "TO SAVE (" + app.changeCount + ")"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10 }
-                TextArea {
-                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
-                    Layout.preferredHeight: 170
-                    readOnly: true
-                    wrapMode: TextEdit.WrapAnywhere
-                    font.family: "monospace"; font.pixelSize: 11
-                    text: app.changesText
-                }
-                RowLayout {
-                    // (sharing the panel's width: their own would push it all past the edge)
-                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
-                    Button { Layout.fillWidth: true; objectName: "saveButton"; text: "Save"; highlighted: app.changeCount > 0; enabled: app.changeCount > 0; onClicked: app.save() }
-                    Button { Layout.fillWidth: true; text: "Undo"; onClicked: app.undo() }
-                    Button { Layout.fillWidth: true; text: "Redo"; onClicked: app.redo() }
-                    Button { Layout.fillWidth: true; text: "Fit"; onClicked: app.fit(true) }
-                }
-                Label {
-                    objectName: "status"
-                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10; Layout.bottomMargin: 10
-                    text: app.status
-                    color: app.dim
-                    wrapMode: Text.Wrap
+                Fold {
+                    objectName: "toSaveFold"
+                    title: "To save (" + app.changeCount + ")"
+                    visible: app.changeCount > 0
+                    Layout.fillWidth: true; Layout.bottomMargin: 10
+                    TextArea {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 170
+                        readOnly: true
+                        wrapMode: TextEdit.WrapAnywhere
+                        font.family: "monospace"; font.pixelSize: 11
+                        text: app.changesText
+                    }
                 }
             }
         }

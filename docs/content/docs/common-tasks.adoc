@@ -109,8 +109,9 @@ tabs has them on top, each showing only its own parts.
   onto another part's point to place it there: it stays where it is.
 * Arrows move it 1 (Shift 10), Ctrl + arrows size it. Ctrl+Z, Ctrl+Shift+Z,
   wheel to zoom, the middle button or the empty space to pan, F to fit.
-* *Save* (Ctrl+S) writes the files, then `/reload`. A full screenshot from
-  `Screenshots/` lines up under the boxes.
+* *Save* (Ctrl+S) writes the files, then `/reload`.
+* *Show* hides the frames, texts, art or outlines, and lines up a full screenshot
+  from `Screenshots/` under the boxes.
 * *Rules* lists what breaks the windows' rules in the tab shown (`tools/rules.js`,
   the numbers in `settings/blizzard.lua` `layout`), as you drag. Click one to
   pick its part.
