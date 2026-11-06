@@ -433,6 +433,45 @@ ApplicationWindow {
         return true
     }
 
+    // ---- the window's tabs, over everything (they wrap, none out of sight)
+    header: Rectangle {
+        visible: app.views.length > 1
+        color: app.palette.dark
+        implicitHeight: tabs.implicitHeight + 12
+        Flow {
+            id: tabs
+            objectName: "tabs"
+            anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
+            anchors.margins: 6
+            spacing: 4
+            Repeater {
+                model: app.views
+                AbstractButton {
+                    id: tab
+                    required property var modelData
+                    required property int index
+                    readonly property bool current: index === app.viewIndex
+                    text: modelData.label || "(no tab)"
+                    focusPolicy: Qt.NoFocus // (the arrows stay on the part picked)
+                    padding: 8; leftPadding: 16; rightPadding: 16
+                    contentItem: Text {
+                        text: tab.text
+                        font.pixelSize: 15
+                        font.bold: true
+                        color: tab.current ? "#1c1917" : app.palette.text
+                    }
+                    background: Rectangle {
+                        radius: 3
+                        color: tab.current ? app.gold : tab.hovered ? "#4a3d30" : app.palette.button
+                        border.color: tab.current ? app.gold : app.dim
+                    }
+                    onClicked: app.showView(index)
+                }
+            }
+        }
+        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 2; color: app.gold }
+    }
+
     SplitView {
         anchors.fill: parent
         orientation: Qt.Horizontal
@@ -508,32 +547,11 @@ ApplicationWindow {
             }
         }
 
-        // ---- the window, and its tabs
-        ColumnLayout {
-            SplitView.fillWidth: true
-            spacing: 0
-        TabBar {
-            id: tabBar
-            objectName: "tabBar"
-            Layout.fillWidth: true
-            visible: app.views.length > 1
-            currentIndex: app.viewIndex
-            Repeater {
-                model: app.views
-                TabButton {
-                    required property var modelData
-                    required property int index
-                    text: modelData.label || "(no tab)"
-                    width: implicitWidth
-                    onClicked: app.showView(index)
-                }
-            }
-        }
+        // ---- the window
         Item {
             id: view
             objectName: "view"
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            SplitView.fillWidth: true
             clip: true
             focus: true
             Keys.onPressed: event => {
@@ -905,8 +923,6 @@ ApplicationWindow {
                 anchors.fill: parent
                 onDropped: drop => { if (drop.hasUrls) shot.source = drop.urls[0] }
             }
-        }
-
         }
 
         // ---- the part, and what's to save
