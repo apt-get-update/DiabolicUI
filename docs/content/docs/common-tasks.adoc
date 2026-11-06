@@ -162,7 +162,7 @@ WowRow {
 ----
 
 `fit` is `"fill"` (the default: each as wide as its text, the room left shared),
-`"center"` or `"ends"`; `spacing` defaults to the windows' `button_gap`. The tool
+`"equal"` (all as wide, filling the room), `"center"` or `"ends"`; `spacing` defaults to the windows' `button_gap`. The tool
 writes its parts' places and sizes when it runs, so a button that hides in game
 leaves its gap, and the editor won't drag them: change the row. Anchor it on the
 window, not its foot, which hangs from these buttons.

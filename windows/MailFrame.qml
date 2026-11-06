@@ -1424,7 +1424,7 @@ WowWindow {
         anchors.left: sendMailMailButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: sendMailMailButton.verticalCenter
-        width: 87.1
+        width: 78
         height: 22
     }
 
@@ -1513,7 +1513,7 @@ WowWindow {
         anchors.leftMargin: 201
         anchors.bottom: mailFrameDiabolic.bottom
         anchors.bottomMargin: 40
-        width: 68.9
+        width: 78
         height: 22
     }
 
@@ -1887,6 +1887,7 @@ WowWindow {
     WowRow {
         name: "SendMailButtons"
         parts: ["SendMailMailButton", "SendMailCancelButton"]
+        fit: "equal"
         anchors.left: mailFrameDiabolic.left
         anchors.leftMargin: 201
         anchors.right: mailFrameDiabolic.right

@@ -2662,7 +2662,7 @@ WowWindow {
         anchors.left: guildBankFrameWithdrawButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: guildBankFrameWithdrawButton.verticalCenter
-        width: 84.2
+        width: 94.5
         height: 21
     }
 
@@ -2839,7 +2839,7 @@ WowWindow {
         anchors.leftMargin: 585
         anchors.bottom: guildBankFrameDiabolic.bottom
         anchors.bottomMargin: 73
-        width: 104.8
+        width: 94.5
         height: 21
     }
 
@@ -3388,6 +3388,7 @@ WowWindow {
     WowRow {
         name: "GuildBankButtons"
         parts: ["GuildBankFrameWithdrawButton", "GuildBankFrameDepositButton"]
+        fit: "equal"
         anchors.left: guildBankFrameDiabolic.left
         anchors.leftMargin: 585
         anchors.right: guildBankFrameDiabolic.right

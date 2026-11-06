@@ -47,7 +47,7 @@ WowWindow {
         anchors.left: tradeSkillCreateButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: tradeSkillCreateButton.verticalCenter
-        width: 78
+        width: 85.5
         height: 22
     }
 
@@ -139,7 +139,7 @@ WowWindow {
         anchors.leftMargin: 208
         anchors.bottom: tradeSkillFrameDiabolic.bottom
         anchors.bottomMargin: 30
-        width: 93
+        width: 85.5
         height: 22
     }
 
@@ -1450,6 +1450,7 @@ WowWindow {
     WowRow {
         name: "TradeSkillButtons"
         parts: ["TradeSkillCreateButton", "TradeSkillCancelButton"]
+        fit: "equal"
         anchors.left: tradeSkillFrameDiabolic.left
         anchors.leftMargin: 208
         anchors.right: tradeSkillFrameDiabolic.right

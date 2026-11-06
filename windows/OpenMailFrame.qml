@@ -33,7 +33,7 @@ WowWindow {
         anchors.left: openMailDeleteButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: openMailDeleteButton.verticalCenter
-        width: 75.3
+        width: 78
         height: 22
     }
 
@@ -74,7 +74,7 @@ WowWindow {
         anchors.left: openMailReplyButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: openMailReplyButton.verticalCenter
-        width: 83.3
+        width: 78
         height: 22
     }
 
@@ -435,7 +435,7 @@ WowWindow {
         anchors.leftMargin: 117
         anchors.bottom: openMailFrameDiabolic.bottom
         anchors.bottomMargin: 40
-        width: 75.4
+        width: 78
         height: 22
     }
 
@@ -799,6 +799,7 @@ WowWindow {
     WowRow {
         name: "OpenMailButtons"
         parts: ["OpenMailReplyButton", "OpenMailDeleteButton", "OpenMailCancelButton"]
+        fit: "equal"
         anchors.left: openMailFrameDiabolic.left
         anchors.leftMargin: 117
         anchors.right: openMailFrameDiabolic.right

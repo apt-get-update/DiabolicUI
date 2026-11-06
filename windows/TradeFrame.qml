@@ -20,7 +20,7 @@ WowWindow {
         anchors.left: tradeFrameTradeButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: tradeFrameTradeButton.verticalCenter
-        width: 83.4
+        width: 79.5
         height: 22
     }
 
@@ -154,7 +154,7 @@ WowWindow {
         anchors.leftMargin: 210
         anchors.bottom: tradeFrameDiabolic.bottom
         anchors.bottomMargin: 39
-        width: 75.6
+        width: 79.5
         height: 22
     }
 
@@ -714,6 +714,7 @@ WowWindow {
     WowRow {
         name: "TradeButtons"
         parts: ["TradeFrameTradeButton", "TradeFrameCancelButton"]
+        fit: "equal"
         anchors.left: tradeFrameDiabolic.left
         anchors.leftMargin: 210
         anchors.right: tradeFrameDiabolic.right

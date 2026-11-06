@@ -269,8 +269,8 @@ local ReadWindow = function(path)
 			Problem(row.name, "a row goes from a part's left to its right, with one anchor down on it")
 		elseif (not row.members) or (not row.members[1]) then
 			Problem(row.name, "a row needs its parts")
-		elseif row.fit and (row.fit ~= "fill") and (row.fit ~= "center") and (row.fit ~= "ends") then
-			Problem(row.name, 'its fit is "fill", "center" or "ends"')
+		elseif row.fit and (row.fit ~= "fill") and (row.fit ~= "equal") and (row.fit ~= "center") and (row.fit ~= "ends") then
+			Problem(row.name, 'its fit is "fill", "equal", "center" or "ends"')
 		end
 		row.on, row.line, row.to = names[left.id], down.line, down.to
 		row.left, row.right, row.y = row.margins.left or 0, row.margins.right or 0, Offset(row.margins, down.line)
@@ -674,6 +674,15 @@ local ResolveRow = function(window, row)
 			sum = sum + widths[i]
 		end
 		widths[last] = Round(widths[last] + room - gap * (count - 1) - sum)
+	elseif (fit == "equal") then
+		-- all as wide, whatever their texts (the last takes what rounding left)
+		local shared = room - gap * (count - 1)
+		sum = 0
+		for i = 1, count do
+			widths[i] = Round(shared / count)
+			sum = sum + widths[i]
+		end
+		widths[count] = Round(widths[count] + shared - sum)
 	elseif (fit == "center") then
 		first = row.left + (room - sum - gap * (count - 1)) / 2
 	elseif (count > 1) then
@@ -681,7 +690,7 @@ local ResolveRow = function(window, row)
 	else
 		first = row.left + (room - sum) / 2
 	end
-	if (fit ~= "fill") and (sum + ((fit == "center") and (gap * (count - 1)) or 0) > room) then
+	if (fit ~= "fill") and (fit ~= "equal") and (sum + ((fit == "center") and (gap * (count - 1)) or 0) > room) then
 		print(string.format("%s: %s is wider than its room (%s).", window.name, row.name, Number(room)))
 	end
 	for i, part in ipairs(parts) do
@@ -691,7 +700,7 @@ local ResolveRow = function(window, row)
 			part.place = { "LEFT", parts[i - 1].name, "RIGHT", Round(gap), 0 }
 		end
 		part.second = nil
-		if (fit == "fill") then
+		if (fit == "fill") or (fit == "equal") then
 			part.size, part.pin = { widths[i], PartSize(part)[2] }, "all"
 		else
 			part.pin = "place"

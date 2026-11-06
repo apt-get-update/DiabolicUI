@@ -1023,7 +1023,7 @@ WowWindow {
         anchors.left: macroNewButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: macroNewButton.verticalCenter
-        width: 80.8
+        width: 80
         height: 22
     }
 
@@ -1362,7 +1362,7 @@ WowWindow {
         anchors.leftMargin: 195
         anchors.bottom: macroFrameDiabolic.bottom
         anchors.bottomMargin: 30
-        width: 79.2
+        width: 80
         height: 22
     }
 
@@ -1381,6 +1381,7 @@ WowWindow {
     WowRow {
         name: "MacroButtons"
         parts: ["MacroNewButton", "MacroExitButton"]
+        fit: "equal"
         anchors.left: macroFrameDiabolic.left
         anchors.leftMargin: 195
         anchors.right: macroFrameDiabolic.right

@@ -534,6 +534,45 @@ end
 
 -- A row: its parts placed and sized to fit the room, kept as a row in its file; a
 -- part stretched on two sides, in the file and for the game.
+function TestPositionsTool:test_a_row_of_equal_widths()
+	local dir = Folder()
+	Write(dir .. "/windows/W.qml", [=[
+import QtQuick
+WowWindow {
+    id: w
+    name: "W"
+    width: 400
+    height: 200
+    Part { id: a; name: "A"; kind: "Button"; text: "A long text"; width: 50; height: 20 }
+    Part { id: b; name: "B"; kind: "Button"; text: "B"; width: 90; height: 20 }
+    Part { id: c; name: "C"; kind: "Button"; width: 40; height: 20 }
+    WowRow {
+        name: "Same"
+        parts: ["A", "B", "C"]
+        fit: "equal"
+        spacing: 5
+        anchors.left: w.left
+        anchors.leftMargin: 10
+        anchors.right: w.right
+        anchors.rightMargin: 10
+        anchors.bottom: w.bottom
+        anchors.bottomMargin: 8
+    }
+}
+]=])
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { parts = {
+		A = { "CENTER", "W", "CENTER", 0, 0, 50, 20, kind = "Button", text = "A long text", textWidth = 70, rect = { 0, 0, 50, 20 } },
+		B = { "CENTER", "W", "CENTER", 0, 0, 90, 20, kind = "Button", text = "B", textWidth = 8, rect = { 0, 0, 90, 20 } },
+	} } } }]=])
+	Runs(dir)
+	local text = Read(dir .. "/positions.lua")
+	-- 380 of room, 10 of gaps: 370 in three, the last taking what rounding left
+	lu.assertStrContains(text, 'A = { "BOTTOMLEFT", "W", "BOTTOMLEFT", 10, 8, 123.3, 20 }')
+	lu.assertStrContains(text, 'B = { "LEFT", "A", "RIGHT", 5, 0, 123.3, 20 }')
+	lu.assertStrContains(text, 'C = { "LEFT", "B", "RIGHT", 5, 0, 123.4, 20 }')
+	lu.assertStrContains(Read(dir .. "/windows/W.qml"), 'fit: "equal"')
+end
+
 function TestPositionsTool:test_rows_and_what_stretches()
 	local dir = Folder()
 	Write(dir .. "/windows/W.qml", [=[

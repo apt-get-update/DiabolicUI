@@ -28,7 +28,7 @@ Engine:NewStaticConfig("Positions", {
 	TokenFramePopupCloseButton = { "TOPRIGHT", "TokenFramePopup", "TOPRIGHT", -1, -1 }, -- Button
 
 	-- ClassTrainerFrame -----------------------------------------------------
-	ClassTrainerCancelButton = { "LEFT", "ClassTrainerTrainButton", "RIGHT", 6, 0, 78.7, 22 }, -- Button "Exit"
+	ClassTrainerCancelButton = { "LEFT", "ClassTrainerTrainButton", "RIGHT", 6, 0, 83.5, 22 }, -- Button "Exit"
 	-- the chosen one's page 6 under the list's (Blizzard's 8 under its text)
 	ClassTrainerDetailScrollFrame = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", 0, -14 }, -- ScrollFrame
 	-- "All" and the list under the greeting (the chosen one's height: trainer.lua)
@@ -37,7 +37,7 @@ Engine:NewStaticConfig("Positions", {
 	-- the parchments', its right on their panels'
 	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -102 }, -- ScrollFrame
-	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolic", "BOTTOMLEFT", 208, 42, 88.3, 22 }, -- Button "Train"
+	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolic", "BOTTOMLEFT", 208, 42, 83.5, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
 	-- its "CTRL-Left Click..." under the band, over the picture (Blizzard's hangs from the title)
@@ -68,9 +68,9 @@ Engine:NewStaticConfig("Positions", {
 	-- the slots, logs and info 27 higher than Blizzard's: as far from the band
 	-- as from the foot's iron bar
 	GuildBankColumn1 = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 30, -43 }, -- Frame
-	GuildBankFrameDepositButton = { "LEFT", "GuildBankFrameWithdrawButton", "RIGHT", 6, 0, 84.2, 21 }, -- Button "Deposit"
+	GuildBankFrameDepositButton = { "LEFT", "GuildBankFrameWithdrawButton", "RIGHT", 6, 0, 94.5, 21 }, -- Button "Deposit"
 	GuildBankFrameLog = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 0, 27 }, -- Frame
-	GuildBankFrameWithdrawButton = { "BOTTOMLEFT", "GuildBankFrameDiabolic", "BOTTOMLEFT", 585, 73, 104.8, 21 }, -- Button "Withdraw"
+	GuildBankFrameWithdrawButton = { "BOTTOMLEFT", "GuildBankFrameDiabolic", "BOTTOMLEFT", 585, 73, 94.5, 21 }, -- Button "Withdraw"
 	GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 }, -- Frame
 	-- the info's page the logs' size, in the same place
 	GuildBankInfoScrollFrame = { 688, 304 }, -- ScrollFrame
@@ -83,15 +83,15 @@ Engine:NewStaticConfig("Positions", {
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
-	KeyBindingFrameCancelButton = { "LEFT", "KeyBindingFrameOkayButton", "RIGHT", 6, 0, 120.3, 22 }, -- Button "Cancel"
+	KeyBindingFrameCancelButton = { "LEFT", "KeyBindingFrameOkayButton", "RIGHT", 6, 0, 125, 22 }, -- Button "Cancel"
 	-- the buttons 16 lower, on the foot, as far in from both sides
 	KeyBindingFrameDefaultButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolic", "BOTTOMLEFT", 37, 30 }, -- Button "Reset To Default"
-	KeyBindingFrameOkayButton = { "LEFT", "KeyBindingFrameUnbindButton", "RIGHT", 6, 0, 106.8, 22 }, -- Button "Okay"
+	KeyBindingFrameOkayButton = { "LEFT", "KeyBindingFrameUnbindButton", "RIGHT", 6, 0, 125, 22 }, -- Button "Okay"
 	-- what a key was bound to between the list and the foot
 	KeyBindingFrameOutputText = { "TOP", "KeyBindingFrame", "TOPLEFT", 293, -465 }, -- FontString
 	-- the list (its rows too) 6 under the column names
 	KeyBindingFrameScrollFrame = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 2, -72 }, -- ScrollFrame
-	KeyBindingFrameUnbindButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolic", "BOTTOMLEFT", 210, 30, 147.9, 22 }, -- Button "Unbind Key"
+	KeyBindingFrameUnbindButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolic", "BOTTOMLEFT", 210, 30, 125, 22 }, -- Button "Unbind Key"
 
 	-- LFDParentFrame --------------------------------------------------------
 	LFDQueueFrameCancelButton = { "LEFT", "LFDQueueFrameFindGroupButton", "RIGHT", 92, 0 }, -- Button "Close"
@@ -116,19 +116,19 @@ Engine:NewStaticConfig("Positions", {
 	MacroButtonScrollFrame = { "TOPLEFT", "MacroFrame", "TOPLEFT", 17, -56 }, -- ScrollFrame
 	-- the buttons 10 down (30 over the window's bottom)
 	MacroDeleteButton = { "BOTTOMLEFT", "MacroFrameDiabolic", "BOTTOMLEFT", 37, 30 }, -- Button "Delete"
-	MacroExitButton = { "LEFT", "MacroNewButton", "RIGHT", 6, 0, 80.8, 22 }, -- Button "Exit"
+	MacroExitButton = { "LEFT", "MacroNewButton", "RIGHT", 6, 0, 80, 22 }, -- Button "Exit"
 	-- the count of characters right of "Enter Macro Commands:" (Blizzard's
 	-- under the text, over the foot)
 	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "80/255 Characters Used"
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
-	MacroNewButton = { "BOTTOMLEFT", "MacroFrameDiabolic", "BOTTOMLEFT", 195, 30, 79.2, 22 }, -- Button "New"
+	MacroNewButton = { "BOTTOMLEFT", "MacroFrameDiabolic", "BOTTOMLEFT", 195, 30, 80, 22 }, -- Button "New"
 
 	-- MailFrame -------------------------------------------------------------
 	InboxCurrentPage = { "BOTTOM", "InboxFrame", "BOTTOM", -14, 72 }, -- FontString
 	InboxNextPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 314, 80 }, -- Button
 	InboxPrevPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 50, 80 }, -- Button
-	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 6, 0, 87.1, 22 }, -- Button "Cancel"
-	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolic", "BOTTOMLEFT", 201, 40, 68.9, 22 }, -- Button "Send"
+	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Cancel"
+	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolic", "BOTTOMLEFT", 201, 40, 78, 22 }, -- Button "Send"
 	SendMailMoneyButton = { "BOTTOMLEFT", "SendMailFrame", "BOTTOMLEFT", 30, 120 }, -- Frame
 
 	-- MerchantFrame ---------------------------------------------------------
@@ -153,9 +153,9 @@ Engine:NewStaticConfig("Positions", {
 	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 288, -434 }, -- Button
 
 	-- OpenMailFrame ---------------------------------------------------------
-	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 75.3, 22 }, -- Button "Close"
-	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 83.3, 22 }, -- Button "Delete"
-	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolic", "BOTTOMLEFT", 117, 40, 75.4, 22 }, -- Button "Reply"
+	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Close"
+	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Delete"
+	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolic", "BOTTOMLEFT", 117, 40, 78, 22 }, -- Button "Reply"
 
 	-- PVPParentFrame --------------------------------------------------------
 	-- the battlegrounds' block (title row, list, rewards) 5 left: in the middle
@@ -209,15 +209,15 @@ Engine:NewStaticConfig("Positions", {
 	SpellBookSkillLineTab8 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -452 }, -- CheckButton
 
 	-- TradeFrame ------------------------------------------------------------
-	TradeFrameCancelButton = { "LEFT", "TradeFrameTradeButton", "RIGHT", 6, 0, 83.4, 22 }, -- Button "Cancel"
+	TradeFrameCancelButton = { "LEFT", "TradeFrameTradeButton", "RIGHT", 6, 0, 79.5, 22 }, -- Button "Cancel"
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
 	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Velkara"
-	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolic", "BOTTOMLEFT", 210, 39, 75.6, 22 }, -- Button "Trade"
+	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolic", "BOTTOMLEFT", 210, 39, 79.5, 22 }, -- Button "Trade"
 
 	-- TradeSkillFrame -------------------------------------------------------
-	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Exit"
-	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolic", "BOTTOMLEFT", 208, 30, 93, 22 }, -- Button "Create"
+	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 85.5, 22 }, -- Button "Exit"
+	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolic", "BOTTOMLEFT", 208, 30, 85.5, 22 }, -- Button "Create"
 	TradeSkillDecrementButton = { "LEFT", "TradeSkillCreateAllButton", "RIGHT", 2, 0 }, -- Button
 	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 20, -255, 297, 132 }, -- ScrollFrame
 	TradeSkillExpandButtonFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 15, -53 }, -- Frame

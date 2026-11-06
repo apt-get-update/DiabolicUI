@@ -20,7 +20,7 @@ WowWindow {
         anchors.left: classTrainerTrainButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: classTrainerTrainButton.verticalCenter
-        width: 78.7
+        width: 83.5
         height: 22
     }
 
@@ -1185,7 +1185,7 @@ WowWindow {
         anchors.leftMargin: 208
         anchors.bottom: classTrainerFrameDiabolic.bottom
         anchors.bottomMargin: 42
-        width: 88.3
+        width: 83.5
         height: 22
     }
 
@@ -1204,6 +1204,7 @@ WowWindow {
     WowRow {
         name: "TrainerButtons"
         parts: ["ClassTrainerTrainButton", "ClassTrainerCancelButton"]
+        fit: "equal"
         anchors.left: classTrainerFrameDiabolic.left
         anchors.leftMargin: 208
         anchors.right: classTrainerFrameDiabolic.right
