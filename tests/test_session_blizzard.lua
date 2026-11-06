@@ -329,6 +329,32 @@ local function alphasOf(frame, file)
 	return alphas
 end
 
+function TestCharacter:test_the_stats_come_back_over_the_window()
+	boot()
+	local module = client:GetModule("Blizzard: Character")
+	local paperdoll, line = _G.PaperDollFrame, _G.DiabolicUICharacterStats11
+	local window = module.Backdrop:GetFrameLevel()
+	-- as seen in game: all of the column at the window's own level
+	local chain, part = {}, line
+	while (part ~= paperdoll) do
+		chain[#chain + 1] = part
+		part:SetFrameLevel(window)
+		part = part:GetParent()
+	end
+	local column = chain[#chain]
+	_G.CharacterFrame:Show()
+	paperdoll:Hide()
+	paperdoll:Show()
+	lu.assertEquals(column:GetFrameLevel(), paperdoll:GetFrameLevel() + 1)
+	lu.assertEquals(line:GetFrameLevel(), column:GetFrameLevel() + #chain - 1)
+	-- a column already over it stays as it is
+	column:SetFrameLevel(column:GetFrameLevel() + 10)
+	local level = line:GetFrameLevel()
+	paperdoll:Hide()
+	paperdoll:Show()
+	lu.assertEquals(line:GetFrameLevel(), level)
+end
+
 function TestCharacter:test_our_window_on_every_tab()
 	boot()
 	local config = client.Engine:GetDB("Blizzard").character

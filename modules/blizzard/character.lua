@@ -382,6 +382,15 @@ end
 local STAT_PREFIX = "DiabolicUICharacterStats"
 local STAT_CVARS = { "playerStatLeftDropdown", "playerStatRightDropdown" }
 
+-- `frame` at `level`, all it holds a level over what holds it.
+local Stack
+Stack = function(frame, level)
+	frame:SetFrameLevel(level)
+	for i = 1, select("#", frame:GetChildren()) do
+		Stack(select(i, frame:GetChildren()), level + 1)
+	end
+end
+
 -- A section's title bar across `column`, `y` from its top.
 local CreateSection = function(column, spec, y, text, kind)
 	local header = CreateFrame(kind or "Frame", nil, column)
@@ -524,7 +533,15 @@ Module.CreateColumn = function(self, window)
 	end
 
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "UpdateScore")
-	_G.PaperDollFrame:HookScript("OnShow", function() self:UpdateScore() end)
+	_G.PaperDollFrame:HookScript("OnShow", function()
+		-- (seen in game: the column and all it holds at the window's own level,
+		-- its painted background hiding all but their top layers)
+		local level = _G.PaperDollFrame:GetFrameLevel()
+		if (column:GetFrameLevel() <= level) then
+			Stack(column, level + 1)
+		end
+		self:UpdateScore()
+	end)
 end
 
 -- The column's tabs (stats, titles, sets) in a row at its top, WoW's art
