@@ -6,7 +6,8 @@
 -- Run from the addon's folder, the game's saved variables written (a
 -- /reload or a logout), any number of times:
 --   lua5.1 tools/positions.lua [saved variables, "" newest, "-" none [out [json [windows [edits]]]]]
--- (edits: a Lua file returning { [name] = { place, size, pin } }, the editor's.)
+-- (edits: a Lua file returning { [name] = { place, size, pin, second } } and
+-- ["@rows"] = { [window] = { [row] = { fit, spacing, left, right, y } } }, the editor's.)
 -- It also writes settings/components.lua from windows/components/*.qml.
 local SAVED = arg[1] or ""
 local OUT = arg[2] or "settings/positions.lua"
@@ -123,6 +124,11 @@ local Quote = function(value)
 	return '"' .. value:gsub('[\\"]', "\\%0") .. '"'
 end
 
+-- The kinds of part with a type of their own (windows/<kind>.qml): `FontString { }`.
+-- Any other kind the scan finds is written `Part { kind: "..." }`.
+local KINDS = { Button = true, CheckButton = true, DressUpModel = true, EditBox = true, FontString = true, Frame = true,
+	PlayerModel = true, ScrollFrame = true, ScrollingMessageFrame = true, Slider = true, StatusBar = true, Texture = true }
+
 -- A window's file: its name, its size, its parts (each with its notes, the
 -- note at its end, its place, its size, its pin).
 local ReadWindow = function(path)
@@ -139,13 +145,14 @@ local ReadWindow = function(path)
 		local kind, value = statement[1], statement[2]
 		if (kind == "open") then
 			depth = depth + 1
-			if ((depth == 1) and (value ~= "WowWindow")) or ((depth == 2) and (value ~= "Part") and (value ~= "Ghost") and (value ~= "WowRow")) or (depth > 2) then
-				Problem(value, "only a WowWindow of Parts, WowRows and Ghosts can be read")
+			if ((depth == 1) and (value ~= "WowWindow")) or ((depth == 2) and (value ~= "Part") and (value ~= "Ghost") and (value ~= "WowRow") and (not KINDS[value])) or (depth > 2) then
+				Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
 			end
 			if (depth == 1) then
 				notes = {}
 			elseif (depth == 2) then
-				block, kindOf = { notes = (#notes > 0) and notes or nil, anchors = {}, margins = {} }, value
+				block, kindOf = { notes = (#notes > 0) and notes or nil, anchors = {}, margins = {} }, KINDS[value] and "Part" or value
+				block.kind = KINDS[value] and value or nil
 				notes = {}
 			end
 		elseif (kind == "close") then
@@ -284,7 +291,7 @@ local windows, owner, inFile = {}, {}, {}
 os.execute("mkdir -p '" .. DIR .. "'")
 for _, path in ipairs(Lines("ls '" .. DIR .. "'/*.qml 2>/dev/null")) do
 	local base = path:match("([^/]+)%.qml$")
-	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "WowWindow") and (base ~= "WowRow") then
+	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "WowWindow") and (base ~= "WowRow") and (not KINDS[base]) then
 		local window = ReadWindow(path)
 		windows[window.name] = window
 		for name in pairs(window.parts) do
@@ -466,10 +473,23 @@ end
 local edits = EDITS and assert(loadfile(EDITS))() or {}
 for name, edit in pairs(edits) do
 	local part = owner[name] and windows[owner[name]].parts[name]
-	if part and (not part.second) then
+	if part then
 		part.pin = (edit.pin ~= "") and edit.pin or nil
 		part.place, part.size = edit.place or part.place, edit.size or part.size
+		part.second = edit.second
+		if part.second and (part.pin ~= "place") and (part.pin ~= "all") then
+			error(name .. ': stretched, it needs a pin of "place" or "all"', 0)
+		end
 		Follow(part)
+	end
+end
+for title, rows in pairs(edits["@rows"] or {}) do
+	for _, row in ipairs(windows[title] and windows[title].rows or {}) do
+		local edit = rows[row.name]
+		if edit then
+			row.fit = (edit.fit ~= "fill") and edit.fit or nil
+			row.spacing, row.left, row.right, row.y = edit.spacing, edit.left, edit.right, edit.y
+		end
 	end
 end
 
@@ -703,7 +723,8 @@ local ResolveRow = function(window, row)
 		if (fit == "fill") or (fit == "equal") then
 			part.size, part.pin = { widths[i], PartSize(part)[2] }, "all"
 		else
-			part.pin = "place"
+			-- (as they are: pinned at their size, it stays what the editor shows)
+			part.pin = (part.pin == "all") and "all" or "place"
 		end
 	end
 end
@@ -718,13 +739,14 @@ local WritePart = function(out, part, ids)
 	for _, note in ipairs(part.notes or {}) do
 		out[#out + 1] = "    " .. note
 	end
-	out[#out + 1] = "    Part {"
+	local typed = part.kind and KINDS[part.kind]
+	out[#out + 1] = "    " .. (typed and part.kind or "Part") .. " {"
 	local Set = function(key, value)
 		out[#out + 1] = "        " .. key .. ": " .. value
 	end
 	Set("id", ids[part.name])
 	Set("name", Quote(part.name))
-	if part.kind then
+	if part.kind and (not typed) then
 		Set("kind", Quote(part.kind))
 	end
 	if part.text then
@@ -962,6 +984,8 @@ for title, window in pairs(windows) do
 		end
 		-- (not to be dragged: it follows from its row, or its two sides)
 		copy.heldBy = part.heldBy or (part.second and "its two sides") or nil
+		copy.inRow = part.heldBy and part.heldBy:match("^row (.+)$") -- (its WowRow; `row` is the scan's: a button on a row)
+		copy.second = part.second
 		copy.use = part.pin and { place = (part.pin ~= "size") and part.place or nil, size = (part.pin ~= "place") and part.size or nil } or nil
 		-- (a point placed on nothing: on its parent, as the game has it)
 		for i, point in ipairs(seen.points or {}) do
@@ -979,8 +1003,14 @@ for title, window in pairs(windows) do
 		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, footRect = view.footRect, scale = view.scale, art = Pictures(view.art),
 			frame = view.frame, band = view.band, foot = view.foot, railOver = view.railOver, close = view.close, iron = view.iron }
 	end
+	-- its rows, as the editor works them out too (its rowLayout, ResolveRow's)
+	local rows = {}
+	for i, row in ipairs(window.rows or {}) do
+		rows[i] = { name = row.name, parts = row.members, fit = row.fit or "fill", spacing = row.spacing, gap = RowGap(), on = row.on,
+			left = row.left, right = row.right, y = row.y, point = PointOf("left", row.line), relPoint = PointOf("left", row.to) }
+	end
 	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,
-		art = Pictures(first), file = window.file, views = views[1] and views or nil }
+		art = Pictures(first), file = window.file, views = views[1] and views or nil, rows = rows[1] and rows or nil }
 end
 
 -- the components for the editor, each property on its own: a table of names by

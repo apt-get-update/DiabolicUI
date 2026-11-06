@@ -99,14 +99,15 @@ than a line have their own file in `modules/blizzard/` (code).
 == Fix a visual bug
 
 A button in the wrong place, in any window. Every named part of the windows
-is in `windows/<its window>.qml`, a part being a QML block with its anchors:
+is in `windows/<its window>.qml`, a part being a QML block named after its kind
+(`Frame`, `Button`, `FontString`..., a kind with no file of its own in `windows/` is
+`Part { kind: "..." }`), with its anchors:
 
 [source,qml]
 ----
-Part {
+EditBox {
     id: whoFrameEditBox
     name: "WhoFrameEditBox"
-    kind: "EditBox"
     pin: "all"
     anchors.bottom: whoFrame.bottom
     anchors.bottomMargin: 103
@@ -119,8 +120,9 @@ Part {
 
 *With the editor:* `tools/editor.py` (needs PySide6, Pillow and `lua5.1`;
 `tools/install-editor.sh` puts it in your desktop's menu). Each
-window opens as it is in its file, with our art under its boxes; a window with
-tabs has them on top, each showing only its own parts.
+window opens as it is in its file, with our art and its texts (*Show*: its parts'
+boxes too); a window with tabs has them on top, each showing only its own parts. The
+list on the left is the game's parents, folded: picking a part opens the way to it.
 
 * Press a part to pick it (again: the one under it; right-click lists all that's
   there, Tab goes through them). Drag it: it snaps to the others' edges (Alt: it
@@ -164,8 +166,16 @@ WowRow {
 `fit` is `"fill"` (the default: each as wide as its text, the room left shared),
 `"equal"` (all as wide, filling the room), `"center"` or `"ends"`; `spacing` defaults to the windows' `button_gap`. The tool
 writes its parts' places and sizes when it runs, so a button that hides in game
-leaves its gap, and the editor won't drag them: change the row. Anchor it on the
-window, not its foot, which hangs from these buttons.
+leaves its gap. Anchor it on the window, not its foot, which hangs from these
+buttons. In the editor, pick one of its buttons: its panel has the row's fit, spacing
+and margins, dragging a button moves the whole row up or down, and the handles at
+its ends change its room.
+
+*Stretching:* a pinned part with anchors on both sides of one frame follows them. In
+the editor, tick *Stretch left to right* or *Stretch top to bottom* on a part: it stays
+where it is and keeps those sides on what it's placed on (pick that first), and its
+panel sets how far each side is from that frame's.
+
 A `Ghost` stands for a frame with parts on it that isn't in that window's file.
 
 *Filling the files:* `/dui layout all` opens every window that needs no NPC

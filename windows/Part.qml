@@ -15,18 +15,22 @@ Rectangle {
     property bool placedOn
     property bool follower
     property bool changed
+    property string justify // (a text's, from the scan)
 
     readonly property real line: parent ? parent.px : 1
-    opacity: picked || placedOn || !parent || parent.outlines ? 1 : 0
+    // (outlines off: only what's picked has its box; a text still shows, it's what the window says)
+    readonly property bool boxed: picked || placedOn || !parent || parent.outlines
+    opacity: boxed || kind === "FontString" ? 1 : 0
     color: picked ? "#2ee0a640" : follower ? "#1ae0c040" : kind === "Texture" || kind === "FontString" ? "transparent" : "#0a6fa8dc"
-    border.width: (picked || placedOn ? 2 : pin !== "" ? 3 : 1) * line
+    border.width: boxed ? (picked || placedOn ? 2 : pin !== "" ? 3 : 1) * line : 0
     border.color: picked ? "#e0a640" : placedOn ? "#e0c040" : changed ? "#e8703a" : kind === "FontString" ? "#8fce7a" : kind === "Texture" ? "#b48ead" : "#6fa8dc"
 
     Text {
         visible: parent.kind === "FontString"
         anchors.fill: parent
+        horizontalAlignment: parent.justify === "CENTER" ? Text.AlignHCenter : parent.justify === "RIGHT" ? Text.AlignRight : Text.AlignLeft
         text: parent.text
-        color: "#8fce7a"
+        color: parent.boxed ? "#8fce7a" : "#e8dcc0"
         font.pixelSize: 9
         clip: true
     }

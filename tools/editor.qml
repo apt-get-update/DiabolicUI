@@ -68,13 +68,15 @@ ApplicationWindow {
     property var items: ({})         // the QML items, by name (the window's and the Ghosts' too)
     property var names: []           // every name a part can be placed on
     property Item root: null
-    property var edits: JSON.parse(backend.kept()) // what's not saved, by name: { window, place, size, pin }
+    property var edits: JSON.parse(backend.kept()) // what's not saved, by name: { window, place, size, pin, second }; "@rows": by window, by row
     property var undoList: []
     property var redoList: []
     property int changeCount: {
         const shared = edits["@components"] || {}
-        let count = Object.keys(edits).length - (edits["@components"] ? 1 : 0)
+        const rows = edits["@rows"] || {}
+        let count = Object.keys(edits).length - (edits["@components"] ? 1 : 0) - (edits["@rows"] ? 1 : 0)
         for (const name in shared) count += Object.keys(shared[name]).length
+        for (const title in rows) count += Object.keys(rows[title]).length
         return count
     }
     property string picked: ""
@@ -95,6 +97,8 @@ ApplicationWindow {
         id: settings
         property string lastWindow
         property alias listWidth: left.width_
+        property alias outlines: showOutlines.checked
+        property alias anchorsOpen: fields.open
     }
 
     function kindOf(kind) { return kind === "Texture" || kind === "FontString" ? kind : "Frame" }
@@ -106,9 +110,9 @@ ApplicationWindow {
     function same(a, b) { return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b) }
     function fileEntry(name) {
         const p = parts[name]
-        return { place: p.place, size: p.size, pin: p.pin || "" }
+        return { place: p.place, size: p.size, pin: p.pin || "", second: p.second }
     }
-    function entry(name) { return edits[name] || fileEntry(name) }
+    function entry(name) { return rowPlaced[name] || edits[name] || fileEntry(name) }
 
     function itemFor(name) { return items[name] }
     function editsText() { return JSON.stringify(edits) }
@@ -135,6 +139,8 @@ ApplicationWindow {
         if (root) root.destroy()
         root = null
         pick(""); hovered = ""; artModel = []
+        rowPlaced = {}
+        unfolded = {}
         data = JSON.parse(backend.window(name))
         title_ = name
         settings.lastWindow = name
@@ -155,8 +161,13 @@ ApplicationWindow {
         const children = root.children
         for (let i = 0; i < children.length; i++) map[children[i].name] = children[i]
         items = map
-        names = Object.keys(map).sort()
+        const rowNames = (data.rows || []).map(r => r.name)
+        names = Object.keys(map).filter(n => rowNames.indexOf(n) < 0).sort()
         for (const n in edits) if (edits[n].window === name && items[n] && parts[n]) applyItem(n)
+        rowsUpdate()
+        // (drawn smaller than in the game: a box as wide as its text, the text in its middle)
+        for (const n in parts) if (items[n] && parts[n].justify)
+            items[n].justify = Math.abs(items[n].width - (parts[n].textWidth || 0)) < 1 ? "CENTER" : parts[n].justify
         applyShown()
         // the art follows its part from where the part is now
         const base = {}
@@ -199,20 +210,23 @@ ApplicationWindow {
 
     function applyItem(name) {
         const item = items[name], e = entry(name)
-        if (!item || (parts[name] && parts[name].heldBy)) return // (its anchors are its file's)
+        if (!item) return
         const anchors = item.anchors, target = e.place && items[e.place[1]]
         if (target) {
             const x = lineX(e.place[0]), y = lineY(e.place[0])
+            const x2 = e.second ? lineX(e.second[0]) : x, y2 = e.second ? lineY(e.second[0]) : y // (stretched: its other side)
             for (const line of ["left", "right", "horizontalCenter", "top", "bottom", "verticalCenter"])
-                if (line !== x && line !== y) { anchors[line] = undefined; anchors[marginOf[line][0]] = 0 }
+                if (line !== x && line !== y && line !== x2 && line !== y2) { anchors[line] = undefined; anchors[marginOf[line][0]] = 0 }
             anchors[x] = target[lineX(e.place[2])]
             anchors[y] = target[lineY(e.place[2])]
             anchors[marginOf[x][0]] = e.place[3] * marginOf[x][1]
             anchors[marginOf[y][0]] = e.place[4] * marginOf[y][1]
+            if (x2 !== x) { anchors[x2] = target[lineX(e.second[1])]; anchors[marginOf[x2][0]] = e.second[2] * marginOf[x2][1] }
+            if (y2 !== y) { anchors[y2] = target[lineY(e.second[1])]; anchors[marginOf[y2][0]] = e.second[3] * marginOf[y2][1] }
         }
         if (e.size) { item.width = e.size[0]; item.height = e.size[1] }
         item.pin = e.pin
-        item.changed = !!edits[name]
+        item.changed = !!edits[name] || !!rowPlaced[name]
     }
 
     function remember() {
@@ -220,24 +234,33 @@ ApplicationWindow {
         redoList = []
     }
 
-    // a part's new place and size: what it's pinned by grows with what changed
-    function change(name, place, size, quiet) {
-        if (parts[name] && parts[name].heldBy) {
-            status = name + " is placed by " + parts[name].heldBy + ": change that in its file."
+    // a part's new place and size: what it's pinned by grows with what changed.
+    // `second`: its other side, stretched (null: no more; left out: as it was).
+    function change(name, place, size, quiet, second) {
+        if (rowOf(name)) {
+            status = name + " is in the row " + parts[name].inRow + ": change the row, or drag it."
             return
         }
         if (!quiet) remember()
         const was = entry(name), file = fileEntry(name)
-        const placed = !same(place, was.place), sized = !same(size, was.size)
+        const other = second === undefined ? was.second : second
+        const placed = !same(place, was.place) || !same(other, was.second), sized = !same(size, was.size)
         const p = placed || was.pin === "all" || was.pin === "place"
-        const s = sized || was.pin === "all" || was.pin === "size"
+        const s = sized || was.pin === "all" || was.pin === "size" || (was.second && !other) // (no sides to size it any more)
         const pin = p && s ? "all" : p ? "place" : s ? "size" : ""
         const next = { window: title_, place: place, size: size, pin: pin }
+        if (other) next.second = other
         const copy = Object.assign({}, edits)
-        if (same(place, file.place) && same(size, file.size) && pin === file.pin) delete copy[name]
-        else copy[name] = next
+        const kept = !(same(place, file.place) && same(size, file.size) && pin === file.pin && same(other, file.second))
+        if (kept) copy[name] = next
+        else delete copy[name]
         edits = copy
         applyItem(name)
+        if (kept && other) { // (its sides size it: what it comes to, for the fields)
+            const item = items[name], sized_ = Object.assign({}, edits)
+            sized_[name] = Object.assign({}, next, { size: [roundTenth(item.width), roundTenth(item.height)] })
+            edits = sized_
+        }
         if (name === picked) pickedEntry = entry(name)
         ruleTimer.restart()
         if (!quiet) changed()
@@ -253,6 +276,7 @@ ApplicationWindow {
         const before = edits
         edits = JSON.parse(text)
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
+        rowsUpdate()
         applyComponents()
         if (picked) pickedEntry = entry(picked)
         ruleTimer.restart()
@@ -271,6 +295,125 @@ ApplicationWindow {
         const last = redoList[redoList.length - 1]
         redoList = redoList.slice(0, -1)
         restore(last)
+    }
+
+    // ---- the rows: as told here, worked out as tools/positions.lua does when saved
+    property var rowPlaced: ({})     // their parts, by name, while a row's changed: { place, size, pin }
+    readonly property var pickedRow: {
+        const row = picked && parts[picked] ? rowOf(picked) : null
+        return row ? rowNow(row) : null
+    }
+    readonly property bool pickedHeld: !!pickedRow || !!(pickedEntry && pickedEntry.second) // (not dragged, no handles: its row or its sides place it)
+    function rowOf(name) {
+        const row = parts[name] && parts[name].inRow
+        return row ? (data.rows || []).filter(r => r.name === row)[0] || null : null
+    }
+    function rowEdit(row) {
+        const rows = edits["@rows"], mine = rows && rows[title_]
+        return (mine && mine[row.name]) || null
+    }
+    function rowNow(row) {
+        const edit = rowEdit(row)
+        return edit ? Object.assign({}, row, edit, { spacing: edit.spacing }) : row
+    }
+    // { [part]: { place, size, pin } } for a row (ResolveRow's, tools/positions.lua)
+    function rowLayout(row) {
+        const on = items[row.on], out = {}
+        if (!on) return out
+        const names = row.parts, count = names.length, room = on.width - row.left - row.right
+        const has = row.spacing !== undefined && row.spacing !== null
+        let gap = has ? row.spacing : row.gap, first = row.left
+        const sizeOf = n => parts[n].size || (parts[n].rect ? [parts[n].rect[2], parts[n].rect[3]] : [items[n].width, items[n].height])
+        const widths = names.map(n => sizeOf(n)[0])
+        const shared = room - gap * (count - 1)
+        let sum = widths.reduce((a, b) => a + b, 0)
+        if (row.fit === "fill") {
+            const texted = n => parts[n].textWidth !== undefined && parts[n].textWidth !== null
+            let sharing = names.filter(texted).length
+            const all = !sharing
+            if (all) sharing = count
+            names.forEach((n, i) => { if (texted(n)) widths[i] = parts[n].textWidth })
+            sum = widths.reduce((a, b) => a + b, 0)
+            const extra = (shared - sum) / sharing
+            let last = count - 1
+            names.forEach((n, i) => {
+                if (all || texted(n)) { widths[i] = roundTenth(widths[i] + extra); last = i }
+                else widths[i] = roundTenth(widths[i])
+            })
+            sum = widths.reduce((a, b) => a + b, 0)
+            widths[last] = roundTenth(widths[last] + shared - sum)
+        } else if (row.fit === "equal") {
+            names.forEach((n, i) => { widths[i] = roundTenth(shared / count) })
+            sum = widths.reduce((a, b) => a + b, 0)
+            widths[count - 1] = roundTenth(widths[count - 1] + shared - sum)
+        } else if (row.fit === "center") {
+            first = row.left + (room - sum - gap * (count - 1)) / 2
+        } else if (count > 1) {
+            gap = (room - sum) / (count - 1)
+        } else {
+            first = row.left + (room - sum) / 2
+        }
+        const sized = row.fit === "fill" || row.fit === "equal"
+        names.forEach((n, i) => {
+            const place = i === 0 ? [row.point, row.on, row.relPoint, roundTenth(first), row.y] : ["LEFT", names[i - 1], "RIGHT", roundTenth(gap), 0]
+            out[n] = { place: place, size: [widths[i], sizeOf(n)[1]], pin: sized || parts[n].pin === "all" ? "all" : "place" }
+        })
+        return out
+    }
+    // the parts of the rows changed where they're told, those of the others back
+    function rowsUpdate() {
+        const placed = {}
+        for (const row of (data && data.rows) || []) if (rowEdit(row)) Object.assign(placed, rowLayout(rowNow(row)))
+        const before = rowPlaced
+        rowPlaced = placed
+        for (const n in Object.assign({}, before, placed)) if (items[n]) applyItem(n)
+    }
+    // `changes` (fit, spacing, left, right, y) to a row. Quiet: while dragged.
+    function setRow(row, changes, quiet) {
+        if (!quiet) remember()
+        const file = (data.rows || []).filter(r => r.name === row.name)[0]
+        const next = Object.assign({}, rowNow(row), changes)
+        const edit = { fit: next.fit, left: next.left, right: next.right, y: next.y }
+        const spacing = next.spacing === undefined || next.spacing === null ? file.spacing : next.spacing
+        if (spacing !== undefined && spacing !== null && !(spacing === file.gap && (file.spacing === undefined || file.spacing === null))) edit.spacing = spacing
+        const copy = JSON.parse(JSON.stringify(edits))
+        const rows = copy["@rows"] || {}, mine = rows[title_] || {}
+        if (edit.fit === file.fit && edit.left === file.left && edit.right === file.right && edit.y === file.y && same(edit.spacing, file.spacing)) delete mine[row.name]
+        else mine[row.name] = edit
+        if (Object.keys(mine).length) rows[title_] = mine
+        else delete rows[title_]
+        if (Object.keys(rows).length) copy["@rows"] = rows
+        else delete copy["@rows"]
+        edits = copy
+        rowsUpdate()
+        if (picked) pickedEntry = entry(picked)
+        linkUpdate()
+        ruleTimer.restart()
+        if (!quiet) changed()
+    }
+    function resetRow(row) {
+        const file = (data.rows || []).filter(r => r.name === row.name)[0]
+        setRow(row, { fit: file.fit, spacing: file.spacing === undefined ? null : file.spacing, left: file.left, right: file.right, y: file.y })
+    }
+
+    // ---- stretching: `across` left to right, `down` top to bottom, of what it's placed on
+    function pointName(x, y) { return (y + x) || "CENTER" }
+    function sideX(p) { return p.indexOf("LEFT") >= 0 ? "LEFT" : p.indexOf("RIGHT") >= 0 ? "RIGHT" : "" }
+    function sideY(p) { return p.indexOf("TOP") >= 0 ? "TOP" : p.indexOf("BOTTOM") >= 0 ? "BOTTOM" : "" }
+    function setStretch(name, across, down) {
+        const was = placeOf(name), rel = was[1], item = items[name]
+        // (an axis not stretched keeps its line; one no longer stretched, from its first side)
+        const px = across ? "LEFT" : sideX(was[0]), py = down ? "TOP" : sideY(was[0])
+        const tx = across ? "LEFT" : sideX(was[2]), ty = down ? "TOP" : sideY(was[2])
+        const place = anchored(name, pointName(px, py), rel, pointName(tx, ty))
+        let second = null
+        if (across || down) {
+            const point = pointName(across ? "RIGHT" : px, down ? "BOTTOM" : py), relPoint = pointName(across ? "RIGHT" : tx, down ? "BOTTOM" : ty)
+            const other = anchored(name, point, rel, relPoint)
+            second = [point, relPoint, other[3], other[4]]
+        }
+        change(name, place, [roundTenth(item.width), roundTenth(item.height)], false, second)
+        pick(name)
     }
 
     // ---- the components (windows/components/): what every window inherits
@@ -421,6 +564,7 @@ ApplicationWindow {
         picked = name
         pickedEntry = name ? entry(name) : null
         linkUpdate()
+        if (name) unfoldTo(name)
         const at = listModel.indexOf(name)
         if (at >= 0) list.positionViewAtIndex(at, ListView.Contain)
         const on = pickedEntry && pickedEntry.place && pickedEntry.place[1]
@@ -442,7 +586,11 @@ ApplicationWindow {
                 hits.push(n)
         }
         hits.sort((a, b) => items[a].width * items[a].height - items[b].width * items[b].height)
-        return hits
+        // a button before its own text, what's pressed is the button (press again for the text)
+        const isText = n => parts[n].kind === "FontString" && hits.indexOf(parts[n].parent) >= 0
+            && (parts[parts[n].parent].kind === "Button" || parts[parts[n].parent].kind === "CheckButton")
+        const texts = hits.filter(isText)
+        return hits.filter(n => !isText(n)).concat(texts)
     }
 
     // the place keeping a part where it is, on another point or frame
@@ -458,6 +606,12 @@ ApplicationWindow {
     function overControls(p) {
         if (!pickedItem || componentsMode) return false
         const at = toRoot(p), item = pickedItem, near = 8 / content.scale, gap = handleGap / content.scale
+        if (pickedRow) { // (only its ends' handles)
+            const on = items[pickedRow.on], left = on.x + pickedRow.left, right = on.x + on.width - pickedRow.right
+            const y = item.y + item.height / 2
+            return Math.hypot(at.x - left + gap / 2, at.y - y) < near || Math.hypot(at.x - right - gap / 2, at.y - y) < near
+        }
+        if (pickedHeld) return false
         for (const fx of [0, .5, 1]) {
             for (const fy of [0, .5, 1]) {
                 const x = item.x + fx * item.width, y = item.y + fy * item.height
@@ -513,10 +667,11 @@ ApplicationWindow {
         guideX = null; guideY = null
         const item = items[name]
         if (alone) return [x, y]
-        const reach = 5 / content.scale
-        let bestX = reach, bestY = reach, dx = 0, dy = 0
+        const reach = 5 / content.scale, row = rowOf(name)
+        let bestX = row ? -1 : reach, bestY = reach, dx = 0, dy = 0 // (a row goes up and down only)
         const follows = {}
         for (const n in parts) { const e = entry(n); if (e.place && e.place[1] === name) follows[n] = true }
+        if (row) for (const n of row.parts) follows[n] = true // (they go with it)
         const candidates = Object.keys(parts).filter(n => n !== name && !follows[n] && items[n] && items[n].visible)
         candidates.push(title_)
         for (const n of candidates) {
@@ -548,15 +703,67 @@ ApplicationWindow {
     }
 
     // ---- the list
-    property var listModel: []
+    // (a tree by the game's parents: each part under the nearest that shows, folded
+    // but for what's been opened; a search shows what's found, under its parents)
+    property var listModel: []       // the rows shown, their names
+    property var listInfo: ({})      // by name: { depth, kids, open }
+    property var unfolded: ({})
     property var artModel: []
     function listModelUpdate() {
-        const q = find.text.toLowerCase(), out = []
-        for (const n of Object.keys(parts).sort()) {
-            const text = parts[n].text || ""
-            if (shown[kindOf(parts[n].kind)] && inView(n) && (!q || n.toLowerCase().indexOf(q) >= 0 || text.toLowerCase().indexOf(q) >= 0)) out.push(n)
+        const q = find.text.toLowerCase(), seen = n => shown[kindOf(parts[n].kind)] && inView(n)
+        const names_ = Object.keys(parts).sort().filter(seen), kids = {}, roots = [], over = {}
+        const nearest = n => {
+            let up = parts[n].parent
+            for (let i = 0; up && parts[up] && !seen(up) && i < 50; i++) up = parts[up].parent
+            return up && parts[up] && seen(up) && up !== n ? up : null
         }
+        for (const n of names_) over[n] = nearest(n)
+        for (const n of names_) {
+            // (one held by what it holds, should a scan say so: on top)
+            let up = over[n], loop = false
+            for (let i = 0; up && i < 50; i++) { if (up === n) { loop = true; break } up = over[up] }
+            if (over[n] && !loop) (kids[over[n]] = kids[over[n]] || []).push(n)
+            else roots.push(n)
+        }
+        const wanted = {}
+        if (q) for (const n of names_) {
+            if (n.toLowerCase().indexOf(q) >= 0 || (parts[n].text || "").toLowerCase().indexOf(q) >= 0)
+                for (let up = n, i = 0; up && i < 50; i++) { wanted[up] = true; up = over[up] }
+        }
+        const out = [], info = {}
+        const add = (n, depth) => {
+            if (q && !wanted[n]) return
+            const under = kids[n] || [], open = !!q || !!unfolded[n]
+            out.push(n)
+            info[n] = { depth: depth, kids: under.length, open: open }
+            if (open) for (const c of under) add(c, depth + 1)
+        }
+        for (const n of roots) add(n, 0)
+        listInfo = info
         listModel = out
+    }
+    function unfoldTo(name) {
+        let any = false, up = parts[name] && parts[name].parent
+        for (let i = 0; up && parts[up] && i < 50; i++) {
+            if (!unfolded[up]) { unfolded[up] = true; any = true }
+            up = parts[up].parent
+        }
+        if (any) listModelUpdate()
+    }
+    function toggleFold(name) {
+        if (unfolded[name]) delete unfolded[name]
+        else unfolded[name] = true
+        listModelUpdate()
+    }
+    function foldAll() {
+        unfolded = {}
+        if (picked) unfoldTo(picked)
+        listModelUpdate()
+    }
+    // its name without its parent's, which is just above it; its text
+    function listText(name) {
+        const p = parts[name] || {}, under = p.parent && parts[p.parent] && name.indexOf(p.parent) === 0 && name.length > p.parent.length
+        return (under ? name.slice(p.parent.length) : name) + (p.text ? "  “" + p.text + "”" : "")
     }
 
     function lineFor(name, e) {
@@ -564,6 +771,12 @@ ApplicationWindow {
             const lines = []
             for (const c of Object.keys(e).sort())
                 for (const key of Object.keys(e[c]).sort()) lines.push(c + "." + key + " = " + JSON.stringify(e[c][key]))
+            return lines.join("\n")
+        }
+        if (name === "@rows") {
+            const lines = []
+            for (const w of Object.keys(e).sort())
+                for (const row of Object.keys(e[w]).sort()) lines.push(row + " = " + JSON.stringify(e[w][row]))
             return lines.join("\n")
         }
         const parts_ = []
@@ -591,6 +804,17 @@ ApplicationWindow {
         const up = key === Qt.Key_Up ? 1 : key === Qt.Key_Down ? -1 : 0
         if (componentsMode || !picked || (!across && !up)) return false
         const step = modifiers & Qt.ShiftModifier ? 10 : 1, e = entry(picked)
+        if (pickedRow) { // (the whole row, up and down)
+            if (up) setRow(pickedRow, { y: roundTenth(pickedRow.y + up * step) })
+            return true
+        }
+        if (e.second) { // (both its sides)
+            const place = e.place.slice(), other = e.second.slice()
+            place[3] = roundTenth(place[3] + across * step); other[2] = roundTenth(other[2] + across * step)
+            place[4] = roundTenth(place[4] + up * step); other[3] = roundTenth(other[3] + up * step)
+            change(picked, place, e.size, false, other)
+            return true
+        }
         if (modifiers & Qt.ControlModifier) {
             if (e.size) change(picked, e.place, [Math.max(1, e.size[0] + across * step), Math.max(1, e.size[1] + up * step)])
         } else {
@@ -651,7 +875,7 @@ ApplicationWindow {
                                 }
                             }
                             CheckBox { id: showArt; text: "Art"; checked: true }
-                            CheckBox { id: showOutlines; text: "Outlines"; checked: true }
+                            CheckBox { id: showOutlines; objectName: "showOutlines"; text: "Outlines"; checked: false }
                         }
                     }
                 }
@@ -727,6 +951,10 @@ ApplicationWindow {
                 font.family: app.plain
                 text: app.componentsMode
                     ? "Press a control to open it  ·  what you change shows here at once  ·  the windows inherit it once saved, then /reload and /dui layout"
+                    : app.pickedRow
+                    ? "Drag a button: the whole row up or down  ·  its gold ends: its room  ·  arrows: up and down, Shift: 10"
+                    : app.pickedHeld
+                    ? "Its sides hold it: set them on the right  ·  arrows move both, Shift: 10"
                     : app.picked
                     ? "Drag to move  ·  gold handles to size  ·  drag a dot onto another part to place it there  ·  arrows: 1, Shift: 10  ·  Alt: no snapping"
                     : "Press a part to pick it, again for the one under it  ·  wheel to zoom  ·  drag the empty space to pan  ·  right-click: all that's there"
@@ -778,13 +1006,24 @@ ApplicationWindow {
                     onClicked: app.componentName = modelData.name
                 }
             }
-            TextField {
-                id: find
+            RowLayout {
                 visible: !app.componentsMode
                 Layout.fillWidth: true; Layout.margins: 8; Layout.bottomMargin: 0
-                placeholderText: "Find a part…  (Ctrl+F)"
-                font.family: app.plain
-                onTextChanged: app.listModelUpdate()
+                TextField {
+                    id: find
+                    Layout.fillWidth: true
+                    placeholderText: "Find a part…  (Ctrl+F)"
+                    font.family: app.plain
+                    onTextChanged: app.listModelUpdate()
+                }
+                Button {
+                    objectName: "foldAll"
+                    text: "Fold"
+                    onClicked: app.foldAll()
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 400
+                    ToolTip.text: "Fold the whole list"
+                }
             }
             ListView {
                 id: list
@@ -799,22 +1038,44 @@ ApplicationWindow {
                 ScrollBar.vertical: ScrollBar {}
                 delegate: ItemDelegate {
                     required property string modelData
+                    readonly property var info: app.listInfo[modelData] || ({ depth: 0, kids: 0, open: false })
                     width: ListView.view.width
                     height: 24
                     padding: 2
-                    leftPadding: 6
+                    leftPadding: 2 + info.depth * 14
                     highlighted: false
-                    contentItem: Text {
-                        text: (app.edits[modelData] ? "● " : "") + (app.parts[modelData] && app.parts[modelData].pin ? "◆ " : "") + modelData
-                        color: modelData === app.picked ? app.gold : app.palette.text
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: app.plain
+                    contentItem: RowLayout {
+                        spacing: 2
+                        Text {
+                            objectName: "fold"
+                            Layout.preferredWidth: 16
+                            Layout.fillHeight: true
+                            text: info.kids ? (info.open ? "▾" : "▸") : ""
+                            font.pixelSize: 18
+                            color: app.dim
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: info.kids > 0
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: app.toggleFold(modelData)
+                            }
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: (app.edits[modelData] || app.rowPlaced[modelData] ? "● " : "") + (app.parts[modelData] && app.parts[modelData].pin ? "◆ " : "") + app.listText(modelData)
+                            color: modelData === app.picked ? app.gold : (app.parts[modelData] || {}).kind === "FontString" ? "#8fce7a" : app.palette.text
+                            elide: Text.ElideRight
+                            verticalAlignment: Text.AlignVCenter
+                            font.family: app.plain
+                        }
                     }
                     ToolTip.visible: hovered
                     ToolTip.delay: 400
-                    ToolTip.text: modelData + ((app.parts[modelData] || {}).text ? "\n“" + app.parts[modelData].text + "”" : "")
+                    ToolTip.text: modelData + " (" + ((app.parts[modelData] || {}).kind || "?") + ")" + ((app.parts[modelData] || {}).text ? "\n“" + app.parts[modelData].text + "”" : "")
                     onClicked: app.pick(modelData)
+                    onDoubleClicked: if (info.kids) app.toggleFold(modelData)
                 }
             }
         }
@@ -982,7 +1243,7 @@ ApplicationWindow {
                             Rectangle {
                                 required property var modelData
                                 objectName: "handle" + modelData[0] + "_" + modelData[1]
-                                visible: !!(app.pickedEntry && app.pickedEntry.size)
+                                visible: !!(app.pickedEntry && app.pickedEntry.size) && !app.pickedHeld
                                 width: 9 / content.scale; height: width
                                 // (outside the part: its dots are on it)
                                 x: selection.width * modelData[0] + (modelData[0] - .5) * app.handleGap / content.scale - width / 2
@@ -1029,6 +1290,7 @@ ApplicationWindow {
                                 required property string modelData
                                 objectName: "dot" + modelData
                                 readonly property bool own: !!(app.pickedEntry && app.pickedEntry.place && app.pickedEntry.place[0] === modelData)
+                                visible: !app.pickedHeld
                                 width: (own ? 11 : 7) / content.scale; height: width; radius: width / 2
                                 x: selection.width * app.fractionX(modelData) - width / 2
                                 y: selection.height * app.fractionY(modelData) - height / 2
@@ -1045,6 +1307,57 @@ ApplicationWindow {
                                         else drop.end()
                                     }
                                     onCentroidChanged: if (active) drop.moved(centroid.scenePosition)
+                                }
+                            }
+                        }
+                    }
+
+                    // the picked part's row: the room it shares, a handle at each end
+                    Item {
+                        id: rowBox
+                        objectName: "rowBox"
+                        readonly property var row: app.pickedRow
+                        readonly property Item on: row ? app.items[row.on] || null : null
+                        visible: !!on && !!app.pickedItem
+                        x: on ? on.x + row.left : 0
+                        width: on ? on.width - row.left - row.right : 0
+                        y: app.pickedItem ? app.pickedItem.y : 0
+                        height: app.pickedItem ? app.pickedItem.height : 0
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "transparent"
+                            border.color: app.gold; border.width: 1 / content.scale
+                        }
+                        Repeater {
+                            model: [0, 1]
+                            Rectangle {
+                                required property int modelData
+                                objectName: "rowHandle" + modelData
+                                width: 9 / content.scale; height: 14 / content.scale
+                                x: rowBox.width * modelData + (modelData - .5) * app.handleGap / content.scale - width / 2
+                                y: (rowBox.height - height) / 2
+                                color: rowEnd.active ? "#fff2d8" : app.gold
+                                border.color: "#000"; border.width: 1 / content.scale
+                                property var start: null
+                                HoverHandler { cursorShape: Qt.SizeHorCursor }
+                                DragHandler {
+                                    id: rowEnd
+                                    target: null
+                                    grabPermissions: PointerHandler.CanTakeOverFromAnything
+                                    onActiveChanged: {
+                                        if (active) {
+                                            app.remember()
+                                            parent.start = { x0: centroid.scenePosition.x, left: rowBox.row.left, right: rowBox.row.right, width: rowBox.width }
+                                        } else app.changed()
+                                    }
+                                    onCentroidChanged: {
+                                        if (!active || !parent.start) return
+                                        const s = parent.start
+                                        // (the room can't close up)
+                                        const dx = Math.round((centroid.scenePosition.x - s.x0) / content.scale)
+                                        if (parent.modelData === 0) app.setRow(rowBox.row, { left: s.left + Math.min(dx, s.width - 1) }, true)
+                                        else app.setRow(rowBox.row, { right: s.right - Math.max(dx, 1 - s.width) }, true)
+                                    }
                                 }
                             }
                         }
@@ -1187,7 +1500,7 @@ ApplicationWindow {
                 property var start: null
                 onActiveChanged: {
                     if (!active) {
-                        if (start && start.move) app.changed()
+                        if (start && (start.move || start.row)) app.changed()
                         app.guideX = null; app.guideY = null
                         start = null
                         return
@@ -1197,8 +1510,17 @@ ApplicationWindow {
                     let name = hits.indexOf(app.picked) >= 0 ? app.picked : hits[0]
                     if (!name) { start = { pan: true, x: content.x - press.x, y: content.y - press.y }; return }
                     if (name !== app.picked) app.pick(name)
+                    const item = app.items[name], e = app.entry(name), row = app.rowOf(name)
+                    if (e.second && !row) {
+                        app.status = name + " is stretched: its sides are in its panel."
+                        start = null
+                        return
+                    }
                     app.remember()
-                    const item = app.items[name], e = app.entry(name)
+                    if (row) { // (the whole row, up and down)
+                        start = { row: row.name, rowY: app.rowNow(row).y, name: name, press: press, x: item.x, y: item.y }
+                        return
+                    }
                     start = { move: true, name: name, press: press, place: app.placeOf(name).slice(), size: e.size,
                         x: item.x, y: item.y }
                 }
@@ -1207,6 +1529,11 @@ ApplicationWindow {
                     const p = centroid.position
                     if (start.pan) { content.x = start.x + p.x; content.y = start.y + p.y; return }
                     const dx = (p.x - start.press.x) / content.scale, dy = (p.y - start.press.y) / content.scale
+                    if (start.row) {
+                        const moved = app.snapped(start.name, start.x, Math.round(start.y + dy), centroid.modifiers & Qt.AltModifier)
+                        app.setRow(app.rowOf(start.name), { y: app.roundTenth(start.rowY - (moved[1] - start.y)) }, true)
+                        return
+                    }
                     const to = app.snapped(start.name, Math.round(start.x + dx), Math.round(start.y + dy), centroid.modifiers & Qt.AltModifier)
                     const place = start.place.slice()
                     place[3] = app.roundTenth(start.place[3] + to[0] - start.x)
@@ -1403,19 +1730,24 @@ ApplicationWindow {
                         if (!p) return ""
                         const pin = app.pickedEntry && app.pickedEntry.pin
                         return (p.kind || "?") + (p.text ? " · “" + p.text + "”" : "") + (p.parent && p.parent !== "?" ? "\nin " + p.parent : "")
-                            + "\n" + (p.heldBy ? "◆ Placed by " + p.heldBy + ": change that in its file" : pin === "place" ? "◆ Its place is pinned" : pin === "size" ? "◆ Its size is pinned"
+                            + "\n" + (p.inRow ? "◆ In a row: drag it, or change the row below" : app.pickedHeld ? "◆ Stretched: its sides place it"
+                                : pin === "place" ? "◆ Its place is pinned" : pin === "size" ? "◆ Its size is pinned"
                                 : pin ? "◆ Pinned: stays as set" : "Not pinned: follows the game's scan")
                     }
                 }
                 GridLayout {
                     id: fields
                     objectName: "fields"
-                    visible: !!(app.picked && app.pickedEntry)
-                    enabled: !(app.parts[app.picked] || {}).heldBy
+                    // (a row's part: its row's panel says it all)
+                    visible: !!(app.picked && app.pickedEntry && !app.pickedRow)
                     columns: 2
+                    property bool open: false // (what it's placed on: to change, otherwise said in a line)
                     Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
                     readonly property var place: app.pickedEntry ? app.pickedEntry.place : null
                     readonly property var size: app.pickedEntry ? app.pickedEntry.size : null
+                    readonly property var second: app.pickedEntry ? app.pickedEntry.second || null : null
+                    readonly property bool across: !!(second && place && app.lineX(second[0]) !== app.lineX(place[0]))
+                    readonly property bool down: !!(second && place && app.lineY(second[0]) !== app.lineY(place[0]))
                     function anchor(point, rel, relPoint) {
                         if (app.items[rel]) {
                             app.change(app.picked, app.anchored(app.picked, point, rel, relPoint), app.entry(app.picked).size)
@@ -1424,20 +1756,46 @@ ApplicationWindow {
                     }
                     function numbers() {
                         const e = app.entry(app.picked), place = app.placeOf(app.picked).slice()
-                        place[3] = fx.value / 10; place[4] = fy.value / 10
-                        app.change(app.picked, place, e.size ? [fw.value / 10, fh.value / 10] : e.size)
+                        place[3] = fx.value / 10; place[4] = (down ? -fy.value : fy.value) / 10
+                        let other = undefined
+                        if (second) {
+                            // (the side not stretched: the same line as its first)
+                            other = second.slice()
+                            other[2] = across ? -fx2.value / 10 : place[3]
+                            other[3] = down ? fy2.value / 10 : place[4]
+                        }
+                        app.change(app.picked, place, e.size ? [fw.value / 10, fh.value / 10] : e.size, false, other)
                     }
 
-                    Label { text: "Point"; color: app.dim }
+                    Label {
+                        objectName: "placedOn"
+                        Layout.columnSpan: 2; Layout.fillWidth: true
+                        visible: !fields.open
+                        color: app.dim
+                        wrapMode: Text.WrapAnywhere
+                        font.family: app.plain
+                        text: fields.place ? "On " + fields.place[1] + (fields.place[0] === fields.place[2] ? "" : "  (" + fields.place[0] + " to " + fields.place[2] + ")") : "Not placed"
+                    }
+                    Button {
+                        objectName: "anchorsToggle"
+                        Layout.columnSpan: 2
+                        visible: !fields.second
+                        text: fields.open ? "Hide where it's placed" : "Change where it's placed"
+                        flat: true
+                        onClicked: fields.open = !fields.open
+                    }
+                    Label { text: "Point"; color: app.dim; visible: fields.open && !fields.second }
                     ComboBox {
                         Layout.fillWidth: true
+                        visible: fields.open && !fields.second
                         model: app.pointNames
                         currentIndex: fields.place ? model.indexOf(fields.place[0]) : -1
                         onActivated: fields.anchor(currentText, fields.place ? fields.place[1] : app.title_, fields.place ? fields.place[2] : "TOPLEFT")
                     }
-                    Label { text: "On"; color: app.dim }
+                    Label { text: "On"; color: app.dim; visible: fields.open && !fields.second }
                     ComboBox {
                         Layout.fillWidth: true
+                        visible: fields.open && !fields.second
                         editable: true
                         font.family: app.plain
                         model: app.names
@@ -1445,21 +1803,101 @@ ApplicationWindow {
                         onActivated: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", currentText, fields.place ? fields.place[2] : "TOPLEFT")
                         onAccepted: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", editText, fields.place ? fields.place[2] : "TOPLEFT")
                     }
-                    Label { text: "At"; color: app.dim }
+                    Label { text: "At"; color: app.dim; visible: fields.open && !fields.second }
                     ComboBox {
                         Layout.fillWidth: true
+                        visible: fields.open && !fields.second
                         model: app.pointNames
                         currentIndex: fields.place ? model.indexOf(fields.place[2]) : -1
                         onActivated: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", fields.place ? fields.place[1] : app.title_, currentText)
                     }
-                    Label { text: "X"; color: app.dim }
+                    Label { text: fields.across ? "From left" : "X"; color: app.dim }
                     NumberBox { id: fx; number: fields.place ? fields.place[3] : 0; onEdited: fields.numbers() }
+                    Label { text: "From right"; color: app.dim; visible: fields.across }
+                    NumberBox { id: fx2; objectName: "fromRight"; visible: fields.across; number: fields.second ? -fields.second[2] : 0; onEdited: fields.numbers() }
+                    Label { text: fields.down ? "From top" : "Y"; color: app.dim }
+                    NumberBox { id: fy; number: fields.place ? (fields.down ? -fields.place[4] : fields.place[4]) : 0; onEdited: fields.numbers() }
+                    Label { text: "From bottom"; color: app.dim; visible: fields.down }
+                    NumberBox { id: fy2; objectName: "fromBottom"; visible: fields.down; number: fields.second ? fields.second[3] : 0; onEdited: fields.numbers() }
+                    Label { text: "Width"; color: app.dim; visible: !!fields.size && !fields.across }
+                    NumberBox { id: fw; visible: !!fields.size && !fields.across; number: fields.size ? fields.size[0] : 0; onEdited: fields.numbers() }
+                    Label { text: "Height"; color: app.dim; visible: !!fields.size && !fields.down }
+                    NumberBox { id: fh; visible: !!fields.size && !fields.down; number: fields.size ? fields.size[1] : 0; onEdited: fields.numbers() }
+                }
+                // stretched between what it's placed on's sides
+                ColumnLayout {
+                    objectName: "stretch"
+                    Layout.leftMargin: 10
+                    spacing: 0
+                    visible: !!(app.picked && app.pickedEntry && !app.pickedRow && (app.parts[app.picked] || {}).kind !== "FontString")
+                    CheckBox {
+                        objectName: "stretchAcross"
+                        text: "Stretch left to right"
+                        checked: fields.across
+                        onToggled: app.setStretch(app.picked, checked, fields.down)
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Its sides stay on the left and right of what it's placed on, as it is now"
+                    }
+                    CheckBox {
+                        objectName: "stretchDown"
+                        text: "Stretch top to bottom"
+                        checked: fields.down
+                        onToggled: app.setStretch(app.picked, fields.across, checked)
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Its sides stay on the top and bottom of what it's placed on, as it is now"
+                    }
+                }
+                // the row it's in
+                GridLayout {
+                    objectName: "rowFields"
+                    visible: !!app.pickedRow
+                    columns: 2
+                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
+                    readonly property var row: app.pickedRow
+                    Label { Layout.columnSpan: 2; text: "ROW"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 4 }
+                    Label {
+                        Layout.columnSpan: 2; Layout.fillWidth: true
+                        text: parent.row ? parent.row.name : ""
+                        color: app.gold
+                        font.family: app.plain
+                        wrapMode: Text.WrapAnywhere
+                    }
+                    Label { text: "Fit"; color: app.dim }
+                    ComboBox {
+                        objectName: "rowFit"
+                        Layout.fillWidth: true
+                        model: ["fill", "equal", "center", "ends"]
+                        currentIndex: parent.row ? model.indexOf(parent.row.fit) : -1
+                        onActivated: app.setRow(parent.row, { fit: currentText })
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "fill: as wide as their texts, the room left shared\nequal: all as wide, filling the room\ncenter: as they are, in the middle\nends: as they are, first and last at the ends"
+                    }
+                    Label { text: "Spacing"; color: app.dim }
+                    NumberBox {
+                        objectName: "rowSpacing"
+                        enabled: !!(parent.row && parent.row.fit !== "ends")
+                        number: parent.row ? (parent.row.spacing === undefined || parent.row.spacing === null ? parent.row.gap : parent.row.spacing) : 0
+                        onEdited: (value) => app.setRow(parent.row, { spacing: value })
+                    }
+                    Label { text: "From left"; color: app.dim }
+                    NumberBox { objectName: "rowLeft"; number: parent.row ? parent.row.left : 0; onEdited: (value) => app.setRow(parent.row, { left: value }) }
+                    Label { text: "From right"; color: app.dim }
+                    NumberBox { objectName: "rowRight"; number: parent.row ? parent.row.right : 0; onEdited: (value) => app.setRow(parent.row, { right: value }) }
                     Label { text: "Y"; color: app.dim }
-                    NumberBox { id: fy; number: fields.place ? fields.place[4] : 0; onEdited: fields.numbers() }
-                    Label { text: "Width"; color: app.dim; visible: !!fields.size }
-                    NumberBox { id: fw; visible: !!fields.size; number: fields.size ? fields.size[0] : 0; onEdited: fields.numbers() }
-                    Label { text: "Height"; color: app.dim; visible: !!fields.size }
-                    NumberBox { id: fh; visible: !!fields.size; number: fields.size ? fields.size[1] : 0; onEdited: fields.numbers() }
+                    NumberBox { objectName: "rowY"; number: parent.row ? parent.row.y : 0; onEdited: (value) => app.setRow(parent.row, { y: value }) }
+                    Button {
+                        objectName: "resetRow"
+                        Layout.columnSpan: 2
+                        text: "Reset row"
+                        enabled: !!(parent.row && app.rowEdit(parent.row))
+                        onClicked: app.resetRow(parent.row)
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Forget what's not saved of this row"
+                    }
                 }
                 RowLayout {
                     Layout.leftMargin: 10
@@ -1467,6 +1905,7 @@ ApplicationWindow {
                     Button {
                         objectName: "resetButton"
                         text: "Reset"
+                        visible: !app.pickedRow
                         enabled: !!app.edits[app.picked]
                         onClicked: app.resetPart(app.picked)
                         ToolTip.visible: hovered
@@ -1476,7 +1915,7 @@ ApplicationWindow {
                     Button {
                         objectName: "unpinButton"
                         text: "Unpin"
-                        visible: !!(app.pickedEntry && app.pickedEntry.pin && !(app.parts[app.picked] || {}).heldBy)
+                        visible: !!(app.pickedEntry && app.pickedEntry.pin && !app.pickedHeld)
                         onClicked: app.unpinPart(app.picked)
                         ToolTip.visible: hovered
                         ToolTip.delay: 400
