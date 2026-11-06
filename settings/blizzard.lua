@@ -377,7 +377,8 @@ Engine:NewStaticConfig("Blizzard", {
 		-- middle (its stone 8 to 360), up to under the band (its foot 28
 		-- under the inbox's top), past the rows (28 or Postal's 48 to 333)
 		-- and Postal's boxes on their left
-		list_box = { 16, -36, 336, 360 }, -- left, top, width, height
+		list_box = { 16, -36, 336 }, -- left, top, width
+		list_over_foot = -4, -- its bottom, from the foot's iron bar's top (its edge under the bar)
 		rows_top = -44, -- the first row's (Blizzard's and Postal's -80)
 		rows_gap = 6, -- between the rows (Blizzard's 0): down to its old foot
 		-- Postal's Open and Return in the band, side by side in its middle
@@ -401,10 +402,11 @@ Engine:NewStaticConfig("Blizzard", {
 		open_text_rise = 84, -- the letter opened's (its From and Subject in the band)
 		open_text_lower = -16, -- its foot that much higher
 		open_text_alone = 38, -- and this much lower with no attachments under it (as far over the foot's iron as under the band)
-		open_attachments_floor = 112, -- the attachments between the letter's panel and this, over the window's bottom (14 over the foot's iron)
+		open_attachments_over = 4, -- the attachments between the letter's panel and this, over the foot's top
 		open_band = { x = 10, label_gap = 5 }, -- the letter opened's From and Subject in the band: their labels' left, from its left
-		postal_offsets = { -- Postal's: its checkboxes right, its Open All (and its menu's arrow) down between the pages, its menu onto the band
-			PostalInboxCB = { 4, 0 }, PostalOpenAllButton = { 0, -13 }, Postal_ModuleMenuButton = { 0, 16 } },
+		postal_open_all = { -14, 16 }, -- Postal's Open All (and its menu's arrow): its middle, from the foot's bottom, between the pages
+		postal_offsets = { -- Postal's others: its checkboxes right, its menu onto the band
+			PostalInboxCB = { 4, 0 }, Postal_ModuleMenuButton = { 0, 16 } },
 		-- the rows' ink on the parchment: unread, read (grey in Blizzard's),
 		-- the days left (its green or red)
 		list_ink = { sender = { .4, .12, .04 }, subject = { .18, .12, .06 }, read = { .3, .24, .17 },
@@ -414,10 +416,10 @@ Engine:NewStaticConfig("Blizzard", {
 		parchment_insets = { 4, 4, 4, 4 }, -- its text narrower than its scroll frame
 		-- the attachments in a stone pane, between Blizzard's bar over them
 		-- (it moves it with their rows: its name, how far under its top)
-		-- and the window's bottom (how far over it), its sides in from the
+		-- and the foot (how far over its top), its sides in from the
 		-- window's (Blizzard's margins)
 		attachment_panes = {
-			SendMailFrame = { "SendMailHorizontalBarLeft2", 1, 157, 25, 40 } -- (6 over the money to send)
+			SendMailFrame = { "SendMailHorizontalBarLeft2", 1, 49, 25, 40 } -- (6 over the money to send)
 		}
 	},
 	-- the merchant window in Diablo III's (modules/blizzard/merchant.lua).

@@ -76,7 +76,7 @@ Module.StyleMail = function(self)
 	_G.InboxTitleText:SetAlpha(0)
 	_G.SendMailTitleText:SetAlpha(0)
 	-- the rough stone foot
-	kit:AddFooter(window, true)
+	self.Foot = kit:AddFooter(window, true)
 	_G.InboxFrame:HookScript("OnShow", function() title:SetText(_G.INBOX) end)
 	_G.SendMailFrame:HookScript("OnShow", function() title:SetText(_G.SENDMAIL) end)
 
@@ -98,7 +98,7 @@ Module.StyleMail = function(self)
 	local openWindow, openHeader = self:StyleFrame(open, config.open_insets)
 	kit:SetTitle(openHeader, _G.OpenMailTitleText)
 	kit:StyleClose(_G.OpenMailCloseButton, openWindow, openHeader)
-	kit:AddFooter(openWindow, true)
+	self.OpenFoot = kit:AddFooter(openWindow, true)
 	open:ClearAllPoints()
 	open:SetPoint("TOPLEFT", frame, "TOPRIGHT", config.insets[3] + config.open_insets[1] + config.open_gap, 0)
 	self:PlaceOpenBand(openHeader)
@@ -112,7 +112,7 @@ Module.StyleMail = function(self)
 	_G.OpenMailBodyText:SetTextColor(unpack(config.text_color))
 	self:InkInvoice()
 	for name, spec in pairs(config.attachment_panes) do
-		self:AddAttachmentPane(_G[name], _G[spec[1]], unpack(spec, 2))
+		self:AddAttachmentPane(_G[name], _G[spec[1]], spec[2], spec[3], spec[4], spec[5], self.Foot)
 	end
 	self:PlaceOpenAttachments()
 
@@ -309,14 +309,15 @@ Module.PlaceOpenAttachments = function(self)
 		end
 		local frameLeft, frameBottom = frame:GetLeft(), frame:GetBottom()
 		local panelBottom = scroll:GetBottom()
-		if (#placed == 0) or (not frameLeft) or (not frameBottom) or (not panelBottom) then
+		if (#placed == 0) or (not frameLeft) or (not frameBottom) or (not panelBottom) or (not self.OpenFoot:GetTop()) then
 			return
 		end
 		local panelLeft = scroll:GetLeft() - frameLeft - insets[1]
 		local panelRight = scroll:GetRight() - frameLeft + insets[3]
 		panelBottom = panelBottom - frameBottom - insets[4]
 		local shiftX = (panelLeft + panelRight) / 2 - (left + right) / 2
-		local shiftY = (panelBottom + config.open_attachments_floor) / 2 - (top + bottom) / 2
+		local floor = self.OpenFoot:GetTop() - frameBottom + config.open_attachments_over
+		local shiftY = (panelBottom + floor) / 2 - (top + bottom) / 2
 		for _, button in ipairs(placed) do
 			local point, relative, relativePoint, x, y = button:GetPoint()
 			button.DiabolicPlaced = y + shiftY
@@ -373,6 +374,13 @@ Module.PlacePostal = function(self)
 			button:SetFrameLevel(header:GetFrameLevel() + 1)
 		end
 	end
+	-- its Open All on the foot, between the pages (its menu's arrow follows)
+	local openAll = _G.PostalOpenAllButton
+	if openAll and (not self.OpenAllPlaced) then
+		self.OpenAllPlaced = true
+		openAll:ClearAllPoints()
+		openAll:SetPoint("CENTER", self.Foot, "BOTTOM", unpack(self.config.postal_open_all))
+	end
 	self.PostalPlaced = self.PostalPlaced or {}
 	for name, offset in pairs(self.config.postal_offsets) do
 		for _, suffix in ipairs({ "", 1, 2, 3, 4, 5, 6, 7 }) do -- the button, the rows' boxes
@@ -390,11 +398,12 @@ end
 -- action buttons' border; the page buttons ours, under the rows.
 Module.StyleRows = function(self)
 	local config = self.config
-	local left, top, width, height = unpack(config.list_box)
+	local left, top, width = unpack(config.list_box)
 	local paper = CreateFrame("Frame", nil, _G.InboxFrame)
 	paper:SetFrameLevel(_G.InboxFrame:GetFrameLevel())
 	paper:SetPoint("TOPLEFT", _G.InboxFrame, "TOPLEFT", left, top)
-	paper:SetSize(width, height)
+	paper:SetWidth(width)
+	paper:SetPoint("BOTTOM", self.Foot, "TOP", 0, kit:FootBar() + config.list_over_foot)
 	kit:CreateNine(paper, "BACKGROUND", "parchment")
 	for i = 1, NUM_ITEMS do
 		local button = _G["MailItem" .. i .. "Button"]
@@ -430,13 +439,13 @@ end
 -- `frame`'s attachments in Diablo III's stone pane: from `under` under
 -- `bar`'s top (Blizzard moves it as their rows change) to `over` over the
 -- window's bottom, `left` and `right` in from its sides.
-Module.AddAttachmentPane = function(self, frame, bar, under, over, left, right)
+Module.AddAttachmentPane = function(self, frame, bar, under, over, left, right, foot)
 	local pane = CreateFrame("Frame", kit.NameFor(frame, "DiabolicAttachments"), frame)
 	pane:SetFrameLevel(frame:GetFrameLevel())
 	pane:SetPoint("TOP", bar, "TOP", 0, -under)
 	pane:SetPoint("LEFT", frame, "LEFT", left, 0)
 	pane:SetPoint("RIGHT", frame, "RIGHT", -right, 0)
-	pane:SetPoint("BOTTOM", frame, "BOTTOM", 0, over)
+	pane:SetPoint("BOTTOM", foot, "TOP", 0, over)
 	kit:StylePane(pane)
 	pane.DiabolicContent = true
 end

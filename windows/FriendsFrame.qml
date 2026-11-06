@@ -16,29 +16,6 @@ WowWindow {
         width: 355
         height: 512
 
-        Button {
-            name: "ChannelFrameNewButton"
-            text: "Add"
-            wowParent: "ChannelFrame"
-            style: "Button"
-            anchors.right: parent.right
-            anchors.rightMargin: 12
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 82
-            width: 80
-            height: 22
-
-            FontString {
-                name: "ChannelFrameNewButtonText"
-                text: "Add"
-                wowParent: "ChannelFrameNewButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 21.3
-                height: 10.3
-            }
-        }
-
         Frame {
             name: "ChannelFrameVerticalBar"
             wowParent: "ChannelFrame"
@@ -493,6 +470,30 @@ WowWindow {
             anchors.rightMargin: 23
             width: 354
             height: 47
+
+            Button {
+                name: "ChannelFrameNewButton"
+                text: "Add"
+                wowParent: "ChannelFrame"
+                style: "Button"
+                pin: "place"
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 9
+                width: 80
+                height: 22
+
+                FontString {
+                    name: "ChannelFrameNewButtonText"
+                    text: "Add"
+                    wowParent: "ChannelFrameNewButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 21.3
+                    height: 10.3
+                }
+            }
 
             Button {
                 name: "FriendsFrameIgnorePlayerButton"

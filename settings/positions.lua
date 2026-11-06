@@ -65,6 +65,7 @@ Engine:NewStaticConfig("Positions", {
 	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 },
 
 	-- FriendsFrame ----------------------------------------------------------
+	ChannelFrameNewButton = { "BOTTOMRIGHT", "FriendsFrameDiabolicFoot", "BOTTOMRIGHT", -14, 9 }, -- Button "Add"
 	FriendsFrameAddFriendButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 8 }, -- Button "Add Friend"
 	FriendsFrameDiabolicFoot = { "BOTTOMLEFT", "FriendsFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	FriendsFrameFriendsScrollFrameScrollBar = { "TOPLEFT", "FriendsFrameFriendsScrollFrame", "TOPRIGHT", 6, -15, second = { "BOTTOMLEFT", "BOTTOMRIGHT", 6, 15 } }, -- Slider
@@ -159,7 +160,7 @@ Engine:NewStaticConfig("Positions", {
 	MailFrameDiabolicFoot = { "BOTTOMLEFT", "MailFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Cancel"
 	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 178, 7, 78, 22 }, -- Button "Send"
-	SendMailMoneyButton = { "BOTTOMLEFT", "SendMailFrame", "BOTTOMLEFT", 30, 120 }, -- Frame
+	SendMailMoneyButton = { "BOTTOMLEFT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 23, 47 }, -- Frame
 	SendMailMoneyFrame = { "BOTTOMRIGHT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 176, 11 }, -- Frame
 
 	-- MerchantFrame ---------------------------------------------------------

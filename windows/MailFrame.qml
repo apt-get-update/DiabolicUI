@@ -1023,6 +1023,111 @@ WowWindow {
             }
 
             Frame {
+                name: "SendMailMoneyButton"
+                wowParent: "SendMailFrame"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 23
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 47
+                width: 37
+                height: 37
+
+                FontString {
+                    name: "SendMailMoneyText"
+                    text: "Amount to send:"
+                    wowParent: "SendMailMoneyButton"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.topMargin: 5
+                    width: 88.5
+                    height: 10.3
+
+                    Frame {
+                        name: "SendMailMoney"
+                        wowParent: "SendMailMoneyButton"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 3
+                        width: 176
+                        height: 18
+
+                        EditBox {
+                            name: "SendMailMoneyGold"
+                            wowParent: "SendMailMoney"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 58
+                            height: 20
+
+                            EditBox {
+                                name: "SendMailMoneySilver"
+                                wowParent: "SendMailMoney"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 26
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 30
+                                height: 20
+
+                                EditBox {
+                                    name: "SendMailMoneyCopper"
+                                    wowParent: "SendMailMoney"
+                                    anchors.left: parent.right
+                                    anchors.leftMargin: 16
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 30
+                                    height: 20
+                                }
+                            }
+                        }
+
+                        CheckButton {
+                            name: "SendMailSendMoneyButton"
+                            wowParent: "SendMailMoneyButton"
+                            anchors.left: parent.right
+                            anchors.top: parent.top
+                            anchors.topMargin: -12
+                            width: 16
+                            height: 16
+
+                            CheckButton {
+                                name: "SendMailCODButton"
+                                wowParent: "SendMailMoneyButton"
+                                anchors.left: parent.left
+                                anchors.top: parent.bottom
+                                anchors.topMargin: -1
+                                width: 16
+                                height: 16
+
+                                FontString {
+                                    name: "SendMailCODButtonText"
+                                    text: "C.O.D."
+                                    wowParent: "SendMailCODButton"
+                                    anchors.left: parent.right
+                                    anchors.leftMargin: 5
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 34.8
+                                    height: 10.3
+                                }
+                            }
+
+                            FontString {
+                                name: "SendMailSendMoneyButtonText"
+                                text: "Send Money"
+                                wowParent: "SendMailSendMoneyButton"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 5
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 68
+                                height: 10.3
+                            }
+                        }
+                    }
+                }
+            }
+
+            Frame {
                 name: "SendMailMoneyFrame"
                 wowParent: "SendMailFrame"
                 pin: "place"
@@ -1371,111 +1476,6 @@ WowWindow {
                 anchors.bottomMargin: 2
                 width: 1
                 height: 1
-            }
-        }
-
-        Frame {
-            name: "SendMailMoneyButton"
-            wowParent: "SendMailFrame"
-            pin: "place"
-            anchors.left: parent.left
-            anchors.leftMargin: 30
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 120
-            width: 37
-            height: 37
-
-            FontString {
-                name: "SendMailMoneyText"
-                text: "Amount to send:"
-                wowParent: "SendMailMoneyButton"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.topMargin: 5
-                width: 88.5
-                height: 10.3
-
-                Frame {
-                    name: "SendMailMoney"
-                    wowParent: "SendMailMoneyButton"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 5
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 3
-                    width: 176
-                    height: 18
-
-                    EditBox {
-                        name: "SendMailMoneyGold"
-                        wowParent: "SendMailMoney"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        width: 58
-                        height: 20
-
-                        EditBox {
-                            name: "SendMailMoneySilver"
-                            wowParent: "SendMailMoney"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 26
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 30
-                            height: 20
-
-                            EditBox {
-                                name: "SendMailMoneyCopper"
-                                wowParent: "SendMailMoney"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 16
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 30
-                                height: 20
-                            }
-                        }
-                    }
-
-                    CheckButton {
-                        name: "SendMailSendMoneyButton"
-                        wowParent: "SendMailMoneyButton"
-                        anchors.left: parent.right
-                        anchors.top: parent.top
-                        anchors.topMargin: -12
-                        width: 16
-                        height: 16
-
-                        CheckButton {
-                            name: "SendMailCODButton"
-                            wowParent: "SendMailMoneyButton"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            anchors.topMargin: -1
-                            width: 16
-                            height: 16
-
-                            FontString {
-                                name: "SendMailCODButtonText"
-                                text: "C.O.D."
-                                wowParent: "SendMailCODButton"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 5
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 34.8
-                                height: 10.3
-                            }
-                        }
-
-                        FontString {
-                            name: "SendMailSendMoneyButtonText"
-                            text: "Send Money"
-                            wowParent: "SendMailSendMoneyButton"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 5
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 68
-                            height: 10.3
-                        }
-                    }
-                }
             }
         }
 

@@ -861,7 +861,7 @@ function TestMail:test_the_letters_attachments_alone()
 	local y = select(5, money:GetPoint())
 	lu.assertEquals(select(5, item:GetPoint()), y)
 	lu.assertAlmostEquals(y - money:GetHeight() / 2, (scroll:GetBottom() - frame:GetBottom() - insets[4]
-		+ config.open_attachments_floor) / 2, 1e-6)
+		+ _G.OpenMailFrameDiabolicFoot:GetTop() - frame:GetBottom() + config.open_attachments_over) / 2, 1e-6)
 	-- (again on the next update, from where Blizzard puts them again)
 	_G.OpenMail_Update()
 	lu.assertEquals(select(5, money:GetPoint()), y)
@@ -888,11 +888,10 @@ function TestMail:test_postals_parts_in_place()
 	lu.assertEquals({ _G.PostalSelectReturnButton:GetPoint() }, { "LEFT", module.Header, "CENTER", spec.gap / 2, 0 })
 	lu.assertEquals(_G.PostalSelectOpenButton:GetWidth(), spec.width)
 	-- its other parts moved once
-	local offset = config.postal_offsets.PostalOpenAllButton
-	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), -10 + offset[2])
+	lu.assertEquals({ _G.PostalOpenAllButton:GetPoint() }, { "CENTER", _G.MailFrameDiabolicFoot, "BOTTOM", unpack(config.postal_open_all) })
 	frame:Hide()
 	frame:Show()
-	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), -10 + offset[2])
+	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), config.postal_open_all[2])
 	lu.assertEquals(select(4, _G.PostalInboxCB3:GetPoint()), config.postal_offsets.PostalInboxCB[1])
 	-- the address book's arrow right of the To box's plate, as the letter shows
 	_G.SendMailFrame:Show()
