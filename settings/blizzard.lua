@@ -937,16 +937,8 @@ Engine:NewStaticConfig("Blizzard", {
 		-- title on the window's top edge); the rest up into the search's
 		-- old row, the buttons lower for their frames
 		search_width = 128,
-		filter_gap = 12, -- Have Materials, right of the search's plate
-		filters_lower = -18, -- "All" and the dropdowns, up under the skill bar
-		dropdowns_gap = 8, -- between the two dropdowns
-		list_lower = -7, -- the recipes, up (Blizzard's 96 down): 6 under "All" and the dropdowns, down to the iron bar over the chosen one
-		list_trim = 5, -- and that much shorter (Blizzard's 130), over the chosen one's
-		detail = { 20, -255 }, -- the chosen recipe's top left (Blizzard's 234 down)
-		detail_height = 132, -- down to 6 over the foot's iron bar (Blizzard's 176)
 		buttons_lower = 6, -- the buttons
-		count = { arrow_size = 20, box_width = 26, gap = 2 }, -- how many to make: its arrows, its box (its plate past it), from Create All (86 to Create)
-		reagents_top = 4, reagents_gap = 4, -- the reagents' rows, lower than Blizzard's: room for their icons' frames
+		count = { arrow_size = 20, box_width = 26 }, -- how many to make: its arrows, its box (its plate past it), from Create All (86 to Create)
 		reagent_font = DiabolicFont_SansBold10, reagent_name_width = 100, -- their names (Blizzard's 12, 90 wide): most on one line
 		highlight_inset = 6, -- the chosen recipe's copper bar, in from the parchment's sides
 		scan_gap = 6, -- the requirement short of Auctionator's Scan AH, the description under them

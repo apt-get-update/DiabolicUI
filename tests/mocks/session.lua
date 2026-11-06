@@ -16,6 +16,18 @@ end
 
 -- Adds an item to the fake item cache and returns its link.
 -- fields: name, quality, iLevel, equipSlot, class, subclass, stats = { ITEM_MOD_... = n }, ...
+-- `name`'s part where settings/positions.lua says, its size if it says one.
+function Session.assertPlaced(client, name)
+	local entry = client.Engine:GetDB("Positions")[name]
+	lu.assertNotNil(entry, name)
+	local part = _G[name]
+	local point, relative, relativePoint, x, y = part:GetPoint()
+	lu.assertEquals({ point, relative:GetName(), relativePoint, x, y }, { entry[1], entry[2], entry[3], entry[4], entry[5] }, name)
+	if entry[6] then
+		lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { entry[6], entry[7] }, name)
+	end
+end
+
 function Session.item(client, id, fields)
 	fields = fields or {}
 	fields.name = fields.name or ("Item " .. id)

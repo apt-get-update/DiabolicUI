@@ -940,7 +940,7 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	_G.TradeSkillFrame_Update()
 	lu.assertEquals((select(2, search:GetPoint())), _G.TradeSkillFrameTitleText.DiabolicHeader)
 	lu.assertEquals(search:GetWidth(), config.search_width)
-	lu.assertEquals({ filter:GetPoint() }, { "LEFT", search, "RIGHT", config.filter_gap, 0 })
+	Session.assertPlaced(client, filter:GetName())
 	lu.assertEquals(search:GetFrameLevel(), frame:GetFrameLevel() + 2)
 	-- Blizzard's "Search" pale until something's typed
 	local book = client.Engine:GetDB("Blizzard").spellbook
@@ -950,8 +950,7 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	lu.assertNotEquals(color(search:GetTextColor())[1], book.search_hint_color[1])
 	-- the reagents' plates gone, the chosen one's detail lower
 	lu.assertEquals(_G.TradeSkillReagent1NameFrame:GetAlpha(), 0)
-	lu.assertEquals({ _G.TradeSkillDetailScrollFrame:GetPoint() }, { "TOPLEFT", frame, "TOPLEFT", config.detail[1], config.detail[2] })
-	lu.assertEquals(_G.TradeSkillDetailScrollFrame:GetHeight(), config.detail_height)
+	Session.assertPlaced(client, "TradeSkillDetailScrollFrame")
 
 	-- the recipes in their difficulty's ink, the chosen one too, no shadows
 	client.world.tradeSkill.selected = 3

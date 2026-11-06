@@ -158,6 +158,7 @@ WowWindow {
         name: "TradeSkillDecrementButton"
         kind: "Button"
         wowParent: "TradeSkillFrame"
+        pin: "place"
         anchors.left: tradeSkillCreateAllButton.right
         anchors.leftMargin: 2
         anchors.verticalCenter: tradeSkillCreateAllButton.verticalCenter
@@ -195,6 +196,7 @@ WowWindow {
         name: "TradeSkillDetailScrollFrame"
         kind: "ScrollFrame"
         wowParent: "TradeSkillFrame"
+        pin: "all"
         anchors.left: tradeSkillFrame.left
         anchors.leftMargin: 20
         anchors.top: tradeSkillFrame.top
@@ -284,6 +286,7 @@ WowWindow {
         name: "TradeSkillExpandButtonFrame"
         kind: "Frame"
         wowParent: "TradeSkillFrame"
+        pin: "place"
         anchors.left: tradeSkillFrame.left
         anchors.leftMargin: 15
         anchors.top: tradeSkillFrame.top
@@ -298,6 +301,7 @@ WowWindow {
         kind: "CheckButton"
         wowParent: "TradeSkillFrame"
         style: "CheckBox"
+        pin: "place"
         anchors.left: tradeSkillFrameEditBox.right
         anchors.leftMargin: 12
         anchors.verticalCenter: tradeSkillFrameEditBox.verticalCenter
@@ -485,6 +489,7 @@ WowWindow {
         name: "TradeSkillIncrementButton"
         kind: "Button"
         wowParent: "TradeSkillFrame"
+        pin: "place"
         anchors.left: tradeSkillInputBox.right
         anchors.leftMargin: 8
         anchors.verticalCenter: tradeSkillInputBox.verticalCenter
@@ -499,6 +504,7 @@ WowWindow {
         text: "1"
         wowParent: "TradeSkillFrame"
         style: "EditBox"
+        pin: "place"
         anchors.left: tradeSkillDecrementButton.right
         anchors.leftMargin: 8
         anchors.verticalCenter: tradeSkillDecrementButton.verticalCenter
@@ -524,6 +530,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "TradeSkillFrame"
         style: "DropDown"
+        pin: "place"
         anchors.right: tradeSkillFrame.right
         anchors.rightMargin: 21
         anchors.top: tradeSkillFrame.top
@@ -585,6 +592,7 @@ WowWindow {
         name: "TradeSkillListScrollFrame"
         kind: "ScrollFrame"
         wowParent: "TradeSkillFrame"
+        pin: "all"
         anchors.right: tradeSkillFrame.right
         anchors.rightMargin: 67
         anchors.top: tradeSkillFrame.top
@@ -715,6 +723,7 @@ WowWindow {
         name: "TradeSkillReagent1"
         kind: "Button"
         wowParent: "TradeSkillDetailScrollChildFrame"
+        pin: "place"
         anchors.left: tradeSkillReagentLabel.left
         anchors.leftMargin: -2
         anchors.top: tradeSkillReagentLabel.bottom
@@ -793,6 +802,7 @@ WowWindow {
         name: "TradeSkillReagent3"
         kind: "Button"
         wowParent: "TradeSkillDetailScrollChildFrame"
+        pin: "place"
         anchors.left: tradeSkillReagent1.left
         anchors.top: tradeSkillReagent1.bottom
         anchors.topMargin: 6
@@ -866,6 +876,44 @@ WowWindow {
     }
 
     Part {
+        id: tradeSkillReagent5
+        name: "TradeSkillReagent5"
+        kind: "Button"
+        wowParent: "TradeSkillDetailScrollChildFrame"
+        pin: "place"
+        anchors.left: tradeSkillReagent3.left
+        anchors.top: tradeSkillReagent3.bottom
+        anchors.topMargin: 6
+        width: 147
+        height: 41
+    }
+
+    Part {
+        id: tradeSkillReagent6
+        name: "TradeSkillReagent6"
+        kind: "Button"
+        wowParent: "TradeSkillDetailScrollChildFrame"
+        pin: "place"
+        anchors.left: tradeSkillReagent5.right
+        anchors.verticalCenter: tradeSkillReagent5.verticalCenter
+        width: 147
+        height: 41
+    }
+
+    Part {
+        id: tradeSkillReagent7
+        name: "TradeSkillReagent7"
+        kind: "Button"
+        wowParent: "TradeSkillDetailScrollChildFrame"
+        pin: "place"
+        anchors.left: tradeSkillReagent6.left
+        anchors.top: tradeSkillReagent6.bottom
+        anchors.topMargin: 6
+        width: 147
+        height: 41
+    }
+
+    Part {
         id: tradeSkillReagentLabel
         name: "TradeSkillReagentLabel"
         kind: "FontString"
@@ -906,6 +954,7 @@ WowWindow {
         kind: "Button"
         text: "Bandage"
         wowParent: "TradeSkillFrame"
+        pin: "place"
         anchors.left: tradeSkillFrame.left
         anchors.leftMargin: 22
         anchors.top: tradeSkillFrame.top
@@ -1351,6 +1400,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "TradeSkillFrame"
         style: "DropDown"
+        pin: "place"
         anchors.right: tradeSkillInvSlotDropDown.left
         anchors.rightMargin: -27
         anchors.verticalCenter: tradeSkillInvSlotDropDown.verticalCenter

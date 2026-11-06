@@ -140,24 +140,10 @@ Module.Layout = function(self)
 	search:HookScript("OnTextChanged", Hint)
 	Hint()
 	kit:StyleCheckBox(filter)
-	filter:ClearAllPoints()
-	filter:SetPoint("LEFT", search, "RIGHT", config.filter_gap, 0)
 	-- over the band (the window's level + 1), under the iron's (+ 3)
 	for _, part in ipairs({ search, filter }) do
 		part:SetFrameLevel(frame:GetFrameLevel() + 2)
 	end
-	for _, name in ipairs({ "TradeSkillExpandButtonFrame", "TradeSkillInvSlotDropDown" }) do
-		Lower(_G[name], config.filters_lower)
-	end
-	for _, name in ipairs({ "TradeSkillSkill1", "TradeSkillListScrollFrame" }) do
-		Lower(_G[name], config.list_lower)
-	end
-	local list = _G.TradeSkillListScrollFrame
-	list:SetHeight(list:GetHeight() - config.list_trim)
-	local detail = _G.TradeSkillDetailScrollFrame
-	detail:ClearAllPoints()
-	detail:SetPoint("TOPLEFT", frame, "TOPLEFT", unpack(config.detail))
-	detail:SetHeight(config.detail_height)
 	for _, name in ipairs({ "TradeSkillCreateButton", "TradeSkillCancelButton" }) do
 		Lower(_G[name], config.buttons_lower)
 	end
@@ -171,29 +157,10 @@ Module.Layout = function(self)
 	more:SetSize(count.arrow_size, count.arrow_size)
 	box:SetWidth(count.box_width)
 	box:SetJustifyH("CENTER")
-	less:ClearAllPoints()
-	less:SetPoint("LEFT", _G.TradeSkillCreateAllButton, "RIGHT", count.gap, 0)
-	box:ClearAllPoints()
-	box:SetPoint("LEFT", less, "RIGHT", kit.config.edit_padding, 0)
-	more:ClearAllPoints()
-	more:SetPoint("LEFT", box, "RIGHT", kit.config.edit_padding, 0)
 	_G.TradeSkillDescription:SetFontObject(config.description_font)
-	-- the reagents' rows apart for their icons' frames (InkReagents)
-	Lower(_G.TradeSkillReagent1, config.reagents_top)
-	for _, i in ipairs({ 3, 5, 7 }) do
-		Lower(_G["TradeSkillReagent" .. i], config.reagents_gap)
-	end
 	for _, name in ipairs({ "TradeSkillSubClassDropDown", "TradeSkillInvSlotDropDown" }) do
 		kit:StyleDropDown(_G[name])
 	end
-	-- a gap between the dropdowns (Blizzard's overlap their empty sides,
-	-- ours have none): half each way
-	local half = config.dropdowns_gap / 2
-	local slot, subclass = _G.TradeSkillInvSlotDropDown, _G.TradeSkillSubClassDropDown
-	local point, relative, relativePoint, x, y = slot:GetPoint()
-	slot:SetPoint(point, relative, relativePoint, x + half, y)
-	point, relative, relativePoint, x, y = subclass:GetPoint()
-	subclass:SetPoint(point, relative, relativePoint, x - config.dropdowns_gap, y)
 	-- the chosen recipe's name in ink on the parchment, out of its box,
 	-- its icon in the action buttons' border
 	kit:HideArt(_G.TradeSkillDetailScrollChildFrame, { "ui%-classtrainer%-detailheader" })
