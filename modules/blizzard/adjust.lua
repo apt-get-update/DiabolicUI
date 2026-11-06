@@ -18,6 +18,7 @@ local InCombatLockdown = _G.InCombatLockdown
 
 local Placed, Sized = {}, {} -- the parts followed: their names (by part)
 local Applying -- (our own moves, not to be undone)
+local Waiting = {} -- the parts whose frame to be placed on isn't made yet (a window styled later)
 
 -- A part's place and size: { point, relative frame's name, its point, x,
 -- y, width, height } (the size if given; { width, height }: a size only).
@@ -46,10 +47,16 @@ local Place = function(part)
 	if (not IsPlace(entry)) or (not CanMove(part)) then
 		return
 	end
-	Applying = true
 	local point, relative, relativePoint, x, y = unpack(entry)
+	local target = _G[relative]
+	if (not target) then
+		Waiting[part] = true
+		return
+	end
+	Waiting[part] = nil
+	Applying = true
 	part:ClearAllPoints()
-	part:SetPoint(point, _G[relative] or relative, relativePoint, x, y)
+	part:SetPoint(point, target, relativePoint, x, y)
 	Applying = nil
 end
 
@@ -94,13 +101,20 @@ Module.Apply = function(self)
 	-- every part let go first: Blizzard's own anchors may chain them the
 	-- other way round (the PvP Join button hangs off Cancel)
 	for name in pairs(self.config) do
-		local part = _G[name]
-		if part and part.ClearAllPoints and IsPlace(self:GetEntry(name)) and CanMove(part) then
+		local part, entry = _G[name], self:GetEntry(name)
+		if part and part.ClearAllPoints and IsPlace(entry) and _G[entry[2]] and CanMove(part) then
 			part:ClearAllPoints()
 		end
 	end
 	for name in pairs(self.config) do
 		Follow(name)
+	end
+end
+
+-- Those waiting for a frame to be placed on, now one's been made.
+Module.PlaceWaiting = function(self)
+	for part in pairs(Waiting) do
+		Place(part)
 	end
 end
 

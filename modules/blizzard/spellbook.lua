@@ -164,14 +164,11 @@ Module.LayoutSpells = function(self, window)
 	-- the schools as the book's bookmarks: Diablo III's pennants pointing
 	-- out past its right edge, red for the chosen one, each school's icon
 	-- on its own over the pages' edge, in colour on the chosen one only
-	x, y = unpack(config.schools)
 	local size, ribbon = config.school_size, config.school_ribbon
 	for i = 1, NUM_SCHOOLS do
 		local tab = _G["SpellBookSkillLineTab" .. i]
 		HideArt(tab, "spellbook%-skilllinetab")
 		tab:SetSize(size, size)
-		tab:ClearAllPoints()
-		tab:SetPoint("TOPLEFT", window, "TOPLEFT", x, y - (i - 1) * (size + config.school_gap))
 		kit:AddBorder(tab, size)
 		local cloth = tab:CreateTexture(nil, "BACKGROUND")
 		cloth:SetTexture(ribbon.texture)
@@ -484,15 +481,9 @@ Module.LayoutCompanions = function(self, cover)
 		button:SetFrameStrata("HIGH")
 	end
 
-	local x, y = unpack(config.companions)
 	self.CompanionNames, self.CompanionSlots = {}, {}
 	for i = 1, NUM_COMPANIONS do
 		local button = _G["CompanionButton" .. i]
-		local row, column = math_floor((i - 1) / 3), (i - 1) % 3
-		button:ClearAllPoints()
-		button:SetPoint("TOPLEFT", frame, "TOPLEFT",
-			x + column * config.companion_pitch[1] + config.icon_inset,
-			y - row * config.companion_pitch[2] - (config.companion_slot_size[2] - button:GetHeight()) / 2)
 		local slot = CreateSlot(frame, button, config.companion_slot_size, config.icon_inset)
 		slots[#slots + 1] = slot
 		local empty = button:GetDisabledTexture()
@@ -511,13 +502,7 @@ Module.LayoutCompanions = function(self, cover)
 	hooksecurefunc("PetPaperDollFrame_UpdateCompanions", function() self:UpdateNames() end)
 
 	local prev, nextPage, text = _G.CompanionPrevPageButton, _G.CompanionNextPageButton, _G.CompanionPageNumber
-	nextPage:ClearAllPoints()
-	nextPage:SetPoint("TOPRIGHT", frame, "TOPRIGHT", unpack(config.companion_pages))
-	text:ClearAllPoints()
-	text:SetPoint("RIGHT", nextPage, "LEFT", -config.page_gap, 0)
 	text:SetTextColor(unpack(config.page_color))
-	prev:ClearAllPoints()
-	prev:SetPoint("RIGHT", text, "LEFT", -config.page_gap, 0)
 	kit:StylePager(prev, nextPage)
 
 	-- above the cover, all of it (a frame keeps its level when it moves)

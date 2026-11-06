@@ -295,6 +295,7 @@ Module.CreateWindow = function(self, frame, insets)
 	LayoutStone(window)
 	window.Frame = frame
 	Windows[#Windows + 1] = window
+	Engine:GetModule("Blizzard: Adjust"):PlaceWaiting()
 	return window
 end
 
@@ -389,6 +390,7 @@ Module.CreateHeader = function(self, window, height, insets)
 	header:SetScript("OnSizeChanged", LayoutBand)
 	header:SetScript("OnShow", LayoutBand)
 	LayoutBand(header)
+	Engine:GetModule("Blizzard: Adjust"):PlaceWaiting()
 	return header
 end
 

@@ -14,6 +14,7 @@ WowWindow {
         name: "CompanionButton1"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 16
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -27,6 +28,7 @@ WowWindow {
         name: "CompanionButton10"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 16
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -40,6 +42,7 @@ WowWindow {
         name: "CompanionButton11"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 178
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -53,6 +56,7 @@ WowWindow {
         name: "CompanionButton12"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 340
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -66,6 +70,7 @@ WowWindow {
         name: "CompanionButton2"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 178
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -79,6 +84,7 @@ WowWindow {
         name: "CompanionButton3"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 340
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -92,6 +98,7 @@ WowWindow {
         name: "CompanionButton4"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 16
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -105,6 +112,7 @@ WowWindow {
         name: "CompanionButton5"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 178
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -118,6 +126,7 @@ WowWindow {
         name: "CompanionButton6"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 340
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -131,6 +140,7 @@ WowWindow {
         name: "CompanionButton7"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 16
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -144,6 +154,7 @@ WowWindow {
         name: "CompanionButton8"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 178
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -157,6 +168,7 @@ WowWindow {
         name: "CompanionButton9"
         kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 340
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -209,6 +221,7 @@ WowWindow {
         name: "CompanionNextPageButton"
         kind: "Button"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.right: petPaperDollFrameCompanionFrame.right
         anchors.rightMargin: 12
         anchors.top: petPaperDollFrameCompanionFrame.top
@@ -223,6 +236,7 @@ WowWindow {
         kind: "FontString"
         text: "Page 1 of 1"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.right: companionNextPageButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: companionNextPageButton.verticalCenter
@@ -235,6 +249,7 @@ WowWindow {
         name: "CompanionPrevPageButton"
         kind: "Button"
         wowParent: "PetPaperDollFrameCompanionFrame"
+        pin: "place"
         anchors.right: companionPageNumber.left
         anchors.rightMargin: 4
         anchors.verticalCenter: companionPageNumber.verticalCenter
@@ -576,6 +591,7 @@ WowWindow {
         name: "SpellBookSkillLineTab1"
         kind: "CheckButton"
         wowParent: "SpellBookFrame"
+        pin: "place"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 486
         anchors.top: spellBookFrameDiabolic.top
@@ -589,6 +605,7 @@ WowWindow {
         name: "SpellBookSkillLineTab2"
         kind: "CheckButton"
         wowParent: "SpellBookFrame"
+        pin: "place"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 486
         anchors.top: spellBookFrameDiabolic.top
@@ -602,6 +619,7 @@ WowWindow {
         name: "SpellBookSkillLineTab3"
         kind: "CheckButton"
         wowParent: "SpellBookFrame"
+        pin: "place"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 486
         anchors.top: spellBookFrameDiabolic.top
@@ -615,10 +633,67 @@ WowWindow {
         name: "SpellBookSkillLineTab4"
         kind: "CheckButton"
         wowParent: "SpellBookFrame"
+        pin: "place"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 486
         anchors.top: spellBookFrameDiabolic.top
         anchors.topMargin: 260
+        width: 36
+        height: 36
+    }
+
+    Part {
+        id: spellBookSkillLineTab5
+        name: "SpellBookSkillLineTab5"
+        kind: "CheckButton"
+        wowParent: "SpellBookFrame"
+        pin: "place"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 486
+        anchors.top: spellBookFrameDiabolic.top
+        anchors.topMargin: 308
+        width: 36
+        height: 36
+    }
+
+    Part {
+        id: spellBookSkillLineTab6
+        name: "SpellBookSkillLineTab6"
+        kind: "CheckButton"
+        wowParent: "SpellBookFrame"
+        pin: "place"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 486
+        anchors.top: spellBookFrameDiabolic.top
+        anchors.topMargin: 356
+        width: 36
+        height: 36
+    }
+
+    Part {
+        id: spellBookSkillLineTab7
+        name: "SpellBookSkillLineTab7"
+        kind: "CheckButton"
+        wowParent: "SpellBookFrame"
+        pin: "place"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 486
+        anchors.top: spellBookFrameDiabolic.top
+        anchors.topMargin: 404
+        width: 36
+        height: 36
+    }
+
+    Part {
+        id: spellBookSkillLineTab8
+        name: "SpellBookSkillLineTab8"
+        kind: "CheckButton"
+        wowParent: "SpellBookFrame"
+        pin: "place"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 486
+        anchors.top: spellBookFrameDiabolic.top
+        anchors.topMargin: 452
         width: 36
         height: 36
     }

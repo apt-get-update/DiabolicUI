@@ -143,6 +143,31 @@ Engine:NewStaticConfig("Positions", {
 	-- QuestLogFrame ---------------------------------------------------------
 	QuestLogScrollFrame = { "TOPLEFT", "QuestLogFrameDiabolic", "TOPLEFT", 30, -40, 305, 340 }, -- ScrollFrame
 
+	-- SpellBookFrame --------------------------------------------------------
+	CompanionButton1 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 16, -189 }, -- CheckButton
+	CompanionButton10 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 16, -333 }, -- CheckButton
+	CompanionButton11 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 178, -333 }, -- CheckButton
+	CompanionButton12 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 340, -333 }, -- CheckButton
+	CompanionButton2 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 178, -189 }, -- CheckButton
+	CompanionButton3 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 340, -189 }, -- CheckButton
+	CompanionButton4 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 16, -237 }, -- CheckButton
+	CompanionButton5 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 178, -237 }, -- CheckButton
+	CompanionButton6 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 340, -237 }, -- CheckButton
+	CompanionButton7 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 16, -285 }, -- CheckButton
+	CompanionButton8 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 178, -285 }, -- CheckButton
+	CompanionButton9 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 340, -285 }, -- CheckButton
+	CompanionNextPageButton = { "TOPRIGHT", "PetPaperDollFrameCompanionFrame", "TOPRIGHT", -12, -387 }, -- Button
+	CompanionPageNumber = { "RIGHT", "CompanionNextPageButton", "LEFT", -4, 0 }, -- FontString "Page 1 of 1"
+	CompanionPrevPageButton = { "RIGHT", "CompanionPageNumber", "LEFT", -4, 0 }, -- Button
+	SpellBookSkillLineTab1 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -116 }, -- CheckButton
+	SpellBookSkillLineTab2 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -164 }, -- CheckButton
+	SpellBookSkillLineTab3 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -212 }, -- CheckButton
+	SpellBookSkillLineTab4 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -260 }, -- CheckButton
+	SpellBookSkillLineTab5 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -308 }, -- CheckButton
+	SpellBookSkillLineTab6 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -356 }, -- CheckButton
+	SpellBookSkillLineTab7 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -404 }, -- CheckButton
+	SpellBookSkillLineTab8 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -452 }, -- CheckButton
+
 	-- TradeFrame ------------------------------------------------------------
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"

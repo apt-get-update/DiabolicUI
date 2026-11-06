@@ -335,6 +335,21 @@ function TestLayoutAudit:test_our_parts_named_after_their_owner()
 	assertClean(client)
 end
 
+-- One placed on a window not made yet: where it was until it is, then placed.
+function TestLayoutAudit:test_a_part_waits_for_the_window_its_placed_on()
+	boot()
+	local adjust = client:GetModule("Blizzard: Adjust")
+	local frame = CreateFrame("Frame", "WaitFrame", _G.UIParent)
+	local part = CreateFrame("Frame", "WaitPart", frame)
+	part:SetPoint("CENTER")
+	adjust.config.WaitPart = { "TOPLEFT", "WaitFrameDiabolic", "TOPLEFT", 5, -5 }
+	adjust:Apply()
+	lu.assertEquals((part:GetPoint()), "CENTER")
+	local win = kit:CreateWindow(frame, { 0, 0, 0, 0 })
+	lu.assertEquals({ part:GetPoint() }, { "TOPLEFT", win, "TOPLEFT", 5, -5 })
+	assertClean(client)
+end
+
 -- settings/positions.lua (modules/blizzard/adjust.lua): a part moved
 -- and resized by its name, kept so whatever moves it again; one made later
 -- once an addon loads; a protected one after combat.

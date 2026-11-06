@@ -812,9 +812,7 @@ Engine:NewStaticConfig("Blizzard", {
 		tab_sigils = { "openbook", "WolfHead", "star", "owl", "horse", "hellforge" }, -- the tabs' emblems (window.banner's): spells, pet, (Blizzard's third), companions, mounts, professions
 		-- the schools (Blizzard's side tabs): the book's bookmarks, their
 		-- icons over its right edge
-		schools = { 486, -116 }, -- the first's icon
 		school_size = 36,
-		school_gap = 12,
 		school_idle_alpha = .6, -- the schools not shown: grey and dimmed
 		-- the pennant under each (Diablo III's achievements list's, turned
 		-- to point right): dark, red while chosen; its point out past the
@@ -881,11 +879,8 @@ Engine:NewStaticConfig("Blizzard", {
 		model_inset = 4,
 		summon_size = { 140, 24 },
 		summon_bottom = 6, -- Summon and the turning arrows, in from the model's foot (the arrows from its corners)
-		companions = { 12, -185 }, -- the first slot, in the cover
 		companion_slot_size = { 156, 45 },
-		companion_pitch = { 162, 48 },
 		companion_name_width = 98,
-		companion_pages = { -12, -387 }, -- the next page's top right, in the cover
 		-- the professions page, in the cover: the primary ones, then the
 		-- secondary ones, a panel each (its icon opens it, its rank in a
 		-- bar, its other spell on the right)
