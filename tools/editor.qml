@@ -129,6 +129,10 @@ ApplicationWindow {
         for (const n in parts) {
             const item = items[n]
             if (item && inView(n) && (!parts[n].current || parts[n].current[view_.key])) model[n] = Object.assign({}, parts[n], { left: item.x, top: item.y, right: item.x + item.width, bottom: item.y + item.height })
+            else if (parts[n].preview && parts[n].rect && inView(n) && (!parts[n].current || parts[n].current[view_.key])) { // (where the scan saw it)
+                const r = previewBox(parts[n].rect)
+                model[n] = Object.assign({}, parts[n], { left: r[0], top: r[1], right: r[0] + r[2], bottom: r[1] + r[3] })
+            }
         }
         const f = viewRect
         problems = Rules.check({ parts: model, view: view_, rules: data.rules, unit: data.unit, origin: f ? [f[0], f[1] + f[3]] : null })
@@ -178,11 +182,36 @@ ApplicationWindow {
         fit(false)
     }
 
+    // a rect the scan saw (from the bottom left) as drawn: x, y from the top left, width, height
+    function previewBox(r) {
+        const f = viewRect || [0, 0, 0, 0]
+        return [r[0] - f[0], f[1] + f[3] - r[1] - r[3], r[2], r[3]]
+    }
+    // the texts of what's only to be seen (a bag's counts, a list's rows)
+    property var previewTexts: []
+    property int previewCount: 0
+    function previewUpdate() {
+        const texts = []
+        let count = 0
+        for (const n in parts) {
+            const p = parts[n]
+            if (!p.preview || !inView(n) || (view_ && p.current && !p.current[view_.key])) continue
+            count++
+            if (p.kind === "FontString" && p.text && p.rect) {
+                const r = previewBox(p.rect)
+                texts.push({ text: p.text, x: r[0], y: r[1], width: r[2], height: r[3], justify: p.justify })
+            }
+        }
+        previewTexts = texts
+        previewCount = count
+    }
+
     // one of its tabs: only what shows in it (a part seen in no tab, in all)
     function showView(index) {
         artModel = []
         viewIndex = index
         artModel = (view_ ? view_.art : data.art) || []
+        previewUpdate()
         applyShown()
         if (picked && !(items[picked] && items[picked].visible)) pick("")
         listModelUpdate()
@@ -560,6 +589,7 @@ ApplicationWindow {
 
     // ---- picking
     function pick(name) {
+        if (name && parts[name] && parts[name].preview) return // (only to be seen)
         if (name) componentsMode = false // (a part picked: its own panel)
         picked = name
         pickedEntry = name ? entry(name) : null
@@ -710,7 +740,7 @@ ApplicationWindow {
     property var unfolded: ({})
     property var artModel: []
     function listModelUpdate() {
-        const q = find.text.toLowerCase(), seen = n => shown[kindOf(parts[n].kind)] && inView(n)
+        const q = find.text.toLowerCase(), seen = n => !parts[n].preview && shown[kindOf(parts[n].kind)] && inView(n)
         const names_ = Object.keys(parts).sort().filter(seen), kids = {}, roots = [], over = {}
         const nearest = n => {
             let up = parts[n].parent
@@ -1078,6 +1108,15 @@ ApplicationWindow {
                     onDoubleClicked: if (info.kids) app.toggleFold(modelData)
                 }
             }
+            Label {
+                objectName: "previewNote"
+                visible: !app.componentsMode && app.previewCount > 0
+                Layout.fillWidth: true; Layout.margins: 8; Layout.topMargin: 0
+                wrapMode: Text.Wrap
+                color: app.dim
+                font.pixelSize: 11
+                text: app.previewCount + " more only to be seen: what's in a bag, the other rows of a list."
+            }
         }
 
         // ---- the window
@@ -1188,6 +1227,21 @@ ApplicationWindow {
                             source: "image://art/" + app.data.generation + "/" + app.title_ + "/" + app.viewIndex + "/" + index
                             cache: false
                             smooth: true
+                        }
+                    }
+                    // what's only to be seen: its texts
+                    Repeater {
+                        model: app.previewTexts
+                        Text {
+                            required property var modelData
+                            visible: !!app.shown.FontString
+                            x: modelData.x; y: modelData.y
+                            width: modelData.width; height: modelData.height
+                            text: modelData.text
+                            color: "#e8dcc0"
+                            font.pixelSize: 9
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
                         }
                     }
                     Item { id: holder }

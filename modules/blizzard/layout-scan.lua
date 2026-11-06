@@ -327,6 +327,42 @@ local Art = function(frame)
 end
 Module.ArtOf = Art -- (tools/sample.lua's)
 
+-- A value as Lua's text, for the saved variables: a window's art takes a third of
+-- the room in one string an item (tools/positions.lua reads them back).
+local Packed
+Packed = function(value)
+	local kind = type(value)
+	if (kind == "string") then
+		return string_format("%q", value)
+	elseif (kind ~= "table") then
+		return tostring(value)
+	end
+	local out = {}
+	for i, item in ipairs(value) do
+		out[i] = Packed(item)
+	end
+	for key, item in pairs(value) do
+		if (type(key) == "string") then
+			out[#out + 1] = key .. "=" .. Packed(item)
+		end
+	end
+	return "{" .. table_concat(out, ",") .. "}"
+end
+
+local PackedArt = function(frame)
+	local art = Art(frame)
+	for i, item in ipairs(art) do
+		art[i] = Packed(item)
+	end
+	return art
+end
+
+-- What's in a bag changes all the time and AdiBags places it: only what the
+-- last look saw is kept, for the editor's preview.
+local IsBagItem = function(name)
+	return string_find(name, "^AdiBagsItemButton%d") or string_find(name, "^AdiBagsBankItemButton%d")
+end
+
 -- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
 -- what the window shows now, by their names and as they read.
 local IsTab = function(name, part)
@@ -365,7 +401,7 @@ local Scan = function(window)
 	local windows = Saved.windows
 	windows[title] = windows[title] or {}
 	local seen = windows[title]
-	seen.problems = nil -- (an older version's)
+	seen.problems, seen.art = nil, nil -- (an older version's)
 	seen.checked = date("%Y-%m-%d %H:%M")
 	seen.parts = seen.parts or {}
 	seen.views = seen.views or {}
@@ -388,7 +424,7 @@ local Scan = function(window)
 	local close = window.DiabolicClose
 	-- (this look at it: what's not in it now, a state ago, isn't checked with what is)
 	Saved.stamp = (Saved.stamp or 0) + 1
-	seen.views[view] = { label = label, art = Art(frame), rect = seen.rect, window = seen.window, stamp = Saved.stamp,
+	seen.views[view] = { label = label, art = PackedArt(frame), rect = seen.rect, window = seen.window, stamp = Saved.stamp,
 		frame = window:GetName(), band = window.DiabolicHeaders[1] and NameOf(window.DiabolicHeaders[1]),
 		foot = foot and foot.DiabolicShown and NameOf(foot),
 		railOver = foot and foot.DiabolicShown and Round(foot.Rail:GetTop() - foot:GetTop()), -- (the iron bar along its top)
@@ -408,6 +444,11 @@ local Scan = function(window)
 			entry.last = (type(old) == "table") and old.last or {}
 			entry.last[view] = Saved.stamp
 			parts[name] = entry
+		end
+	end
+	for name in pairs(parts) do
+		if IsBagItem(name) and (not named[name]) then
+			parts[name] = nil
 		end
 	end
 	-- its parts counted once, and again when new ones show (a page, a tab):

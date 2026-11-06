@@ -179,6 +179,29 @@ function TestLayoutAudit:test_only_whats_there_at_the_last_look()
 	assertClean(client)
 end
 
+function TestLayoutAudit:test_a_bag_keeps_only_what_it_shows()
+	boot()
+	local frame = window("AuditBag")
+	local one, two = button(frame, "AdiBagsItemButton1", 40, 100, 30, "1"), button(frame, "AdiBagsItemButton2", 80, 100, 30, "2")
+	local other = button(frame, "AuditBagOther", 120, 100, 30, "3")
+	slash("layout")
+	frame:Show()
+	client:Tick(1.1)
+	local seen = _G.DiabolicUI_Layout.windows.AuditBag
+	lu.assertNotNil(seen.parts.AdiBagsItemButton1)
+	lu.assertNotNil(seen.parts.AdiBagsItemButton2)
+	-- (an older version's art: gone with the next look)
+	seen.art = {}
+	one:Hide()
+	other:Hide()
+	client:Tick(1.1)
+	lu.assertNil(seen.parts.AdiBagsItemButton1)
+	lu.assertNotNil(seen.parts.AdiBagsItemButton2)
+	lu.assertNotNil(seen.parts.AuditBagOther) -- (not a bag's: kept as ever)
+	lu.assertNil(seen.art)
+	assertClean(client)
+end
+
 function TestLayoutAudit:test_a_window_keeping_them()
 	boot()
 	local frame = window("AuditFine")
@@ -223,7 +246,9 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- the art (for the editor to draw it): the textures, the backdrops (its
 	-- border), in the order they're drawn
 	local art, lines, backdrops = _G.DiabolicUI_Layout.windows.AuditFine.views[""].art, {}, {}
-	for _, item in ipairs(art) do
+	for _, packed in ipairs(art) do
+		lu.assertEquals(type(packed), "string")
+		local item = assert(loadstring("return " .. packed))()
 		lu.assertNil(item.order)
 		lu.assertNotEquals(item.owner, "AuditGlow")
 		if (item.file == [[Interface\Buttons\WHITE8X8]]) then
@@ -296,7 +321,8 @@ function TestLayoutAudit:test_a_window_by_its_tabs()
 	lu.assertEquals(seen.views.AuditTabbedTab1.label, "First")
 	-- (the game's art too)
 	local files = {}
-	for _, item in ipairs(seen.views.AuditTabbedTab1.art) do
+	for _, packed in ipairs(seen.views.AuditTabbedTab1.art) do
+		local item = assert(loadstring("return " .. packed))()
 		files[item.file or ""] = item.owner
 	end
 	lu.assertEquals(files[ [[Interface\Icons\INV_Misc_QuestionMark]] ], "AuditTabbedIcon")

@@ -533,6 +533,67 @@ end
 
 -- A row: its parts placed and sized to fit the room, kept as a row in its file; a
 -- part stretched on two sides, in the file and for the game.
+function TestPositionsTool:test_what_only_shows_in_the_preview()
+	local dir = Folder()
+	local lines = { "DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {" }
+	local Add = function(name, kind, text)
+		lines[#lines + 1] = string.format('[%q] = { "TOPLEFT", "W", "TOPLEFT", 1, -1, 30, 40, kind = %q, text = %s, rect = { 10, 20, 30, 40 } },', name, kind, text and string.format("%q", text) or "nil")
+	end
+	for i = 1, 9 do
+		Add("ListRow" .. i, "Button")
+		Add("ListRow" .. i .. "Name", "FontString", "Row " .. i)
+	end
+	for i = 1, 7 do
+		Add("Short" .. i, "Button")
+	end
+	for i = 1, 8 do
+		Add("WinTab" .. i, "Button")
+	end
+	Add("AdiBagsItemButton5", "Button")
+	Add("AdiBagsItemButton5Count", "FontString", "20")
+	Add("Other", "Frame")
+	lines[#lines + 1] = "} } } }"
+	Write(dir .. "/saved.lua", table.concat(lines, "\n"))
+	-- pinned, one of them stays, and what's placed on one of the others has it as a Ghost
+	Write(dir .. "/windows/W.qml", [=[
+import QtQuick
+WowWindow {
+    id: w
+    name: "W"
+    width: 400
+    height: 200
+    Button { id: listRow5; name: "ListRow5"; pin: "all"; anchors.left: w.left; anchors.top: w.top; width: 5; height: 5 }
+    Frame { id: on; name: "On"; pin: "place"; anchors.left: ghost.left; anchors.top: ghost.top; width: 5; height: 5 }
+    Ghost { id: ghost; name: "ListRow7"; x: 0; y: 0; width: 0; height: 0 }
+}
+]=])
+	Runs(dir)
+	local file, json = Read(dir .. "/windows/W.qml"), Read(dir .. "/layout.json")
+	for _, name in ipairs({ "ListRow1", "ListRow1Name", "ListRow5", "Short7", "WinTab8", "Other", "On" }) do
+		lu.assertStrContains(file, 'name: "' .. name .. '"\n')
+	end
+	for _, name in ipairs({ "ListRow2", "ListRow9", "ListRow2Name", "AdiBagsItemButton5", "AdiBagsItemButton5Count" }) do
+		lu.assertNil(file:find('name: "' .. name .. '"\n', 1, true), name)
+	end
+	lu.assertStrContains(file, 'Ghost { id: listRow7; name: "ListRow7"; x: 10;')
+	-- the editor still has them all, to draw and for the rules
+	lu.assertStrContains(json, '"ListRow2":{')
+	lu.assertStrContains(json, '"AdiBagsItemButton5Count":{')
+	lu.assertStrContains(json, '"preview":true')
+	-- it settles
+	Runs(dir)
+	lu.assertEquals(Read(dir .. "/windows/W.qml"), file)
+end
+
+function TestPositionsTool:test_the_art_as_the_scan_packs_it()
+	local dir = Folder()
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, window = { 0, 0, 400, 200 }, views = { [""] = { label = "", rect = { 0, 0, 400, 200 }, art = {
+		'{owner="W",alpha=1,rect={1,2,3,4},file="Interface\\\\Icons\\\\INV_Thing",coords={0,0,0,1,1,0,1,1},color={1,1,1,1},blend="BLEND"}',
+	} } }, parts = { A = { "TOP", "W", "TOP", 0, 0, 3, 4, kind = "Frame", rect = { 1, 2, 3, 4 } } } } } }]=])
+	Runs(dir)
+	lu.assertStrContains(Read(dir .. "/layout.json"), '"image":"game/interface/icons/inv_thing","owner":"W","rect":[1,2,3,4]')
+end
+
 function TestPositionsTool:test_a_part_written_as_its_kind()
 	local dir = Folder()
 	-- (a kind's own file there isn't a window)

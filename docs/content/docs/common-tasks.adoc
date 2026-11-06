@@ -123,6 +123,8 @@ EditBox {
 window opens as it is in its file, with our art and its texts (*Show*: its parts'
 boxes too); a window with tabs has them on top, each showing only its own parts. The
 list on the left is the game's parents, folded: picking a part opens the way to it.
+What's in a bag and the rows of a long list after the first are only drawn, not in the
+list or the files: a part of those that's pinned stays.
 
 * Press a part to pick it (again: the one under it; right-click lists all that's
   there, Tab goes through them). Drag it: it snaps to the others' edges (Alt: it

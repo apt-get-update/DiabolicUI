@@ -45,6 +45,17 @@ if saved and (saved ~= "-") then
 	layout = env.DiabolicUI_Layout or {}
 end
 
+-- A window's art, as the scan packs it (Packed, modules/blizzard/layout-scan.lua).
+for _, seen in pairs(layout.windows or {}) do
+	for _, view in pairs(type(seen) == "table" and seen.views or {}) do
+		for i, item in ipairs(view.art or {}) do
+			if (type(item) == "string") then
+				view.art[i] = assert(loadstring("return " .. item))()
+			end
+		end
+	end
+end
+
 -- reading windows/*.qml ------------------------------------------------------
 
 -- The statements of a .qml file: blocks opened and closed, properties set,
@@ -493,6 +504,47 @@ for title, rows in pairs(edits["@rows"] or {}) do
 	end
 end
 
+-- What only shows in the editor, to be seen and not changed: what's in a bag (AdiBags
+-- places it), and the rows of a long list, all like the first. In its file only
+-- if it's pinned; the rules and the preview have it from the scan.
+local PREVIEW_FROM = 8 -- (how many of a name, but for their numbers, make a list)
+local NumbersOf = function(name)
+	local numbers = {}
+	for number in name:gmatch("%d+") do
+		numbers[#numbers + 1] = tonumber(number)
+	end
+	return numbers
+end
+local ByNumbers = function(a, b)
+	local x, y = NumbersOf(a), NumbersOf(b)
+	for i = 1, math.min(#x, #y) do
+		if (x[i] ~= y[i]) then
+			return x[i] < y[i]
+		end
+	end
+	return a < b
+end
+for _, window in pairs(windows) do
+	local families = {}
+	for name, part in pairs(window.parts) do
+		local family, numbers = name:gsub("%d+", "#")
+		if (numbers > 0) and part.seen then
+			families[family] = families[family] or {}
+			table.insert(families[family], name)
+		end
+	end
+	for family, names in pairs(families) do
+		local items = family:find("^AdiBagsItemButton#") or family:find("^AdiBagsBankItemButton#")
+		if items or ((#names >= PREVIEW_FROM) and (not family:find("Tab#$"))) then
+			table.sort(names, ByNumbers)
+			for i, name in ipairs(names) do
+				local part = window.parts[name]
+				part.preview = (not part.pin) and (items or (i > 1)) and true or nil
+			end
+		end
+	end
+end
+
 -- windows/components/*.qml ---------------------------------------------------
 
 -- What every window shares (the generic window, its controls): a file's
@@ -557,6 +609,12 @@ end
 -- for it in the file (a "Ghost").
 local GhostRect = function(window, name)
 	local root = window.seen and window.seen.rect
+	-- (a part only for the preview: where it was seen)
+	local seenPart = window.parts[name]
+	local seenRect = seenPart and seenPart.preview and seenPart.seen.rect
+	if root and seenRect then
+		return seenRect[1] - root[1], (root[2] + root[4]) - (seenRect[2] + seenRect[4]), seenRect[3], seenRect[4]
+	end
 	local spots = { left = {}, horizontalCenter = {}, right = {}, top = {}, verticalCenter = {}, bottom = {} }
 	for _, partName in ipairs(Sorted(window.parts)) do
 		local part = window.parts[partName]
@@ -835,7 +893,7 @@ end
 local WriteWindow = function(window)
 	local names, ghosts = { [window.name] = true }, {}
 	for name, part in pairs(window.parts) do
-		names[name] = true
+		names[name] = (not part.preview) or nil
 	end
 	for _, row in ipairs(window.rows or {}) do
 		if (not names[row.on]) then
@@ -843,7 +901,7 @@ local WriteWindow = function(window)
 		end
 	end
 	for _, part in pairs(window.parts) do
-		local rel = part.place and part.place[2]
+		local rel = (not part.preview) and part.place and part.place[2]
 		if rel and (not names[rel]) then
 			ghosts[rel] = true
 		end
@@ -860,7 +918,9 @@ local WriteWindow = function(window)
 		"    id: " .. ids[window.name], "    name: " .. Quote(window.name),
 		"    width: " .. Number(width), "    height: " .. Number(height), "" }
 	for _, name in ipairs(Sorted(window.parts)) do
-		WritePart(out, window.parts[name], ids)
+		if (not window.parts[name].preview) then
+			WritePart(out, window.parts[name], ids)
+		end
 	end
 	for _, row in ipairs(window.rows or {}) do
 		WriteRow(out, row, ids)
@@ -986,6 +1046,7 @@ for title, window in pairs(windows) do
 		copy.heldBy = part.heldBy or (part.second and "its two sides") or nil
 		copy.inRow = part.heldBy and part.heldBy:match("^row (.+)$") -- (its WowRow; `row` is the scan's: a button on a row)
 		copy.second = part.second
+		copy.preview = part.preview
 		copy.use = part.pin and { place = (part.pin ~= "size") and part.place or nil, size = (part.pin ~= "place") and part.size or nil } or nil
 		-- (a point placed on nothing: on its parent, as the game has it)
 		for i, point in ipairs(seen.points or {}) do
