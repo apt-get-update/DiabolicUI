@@ -167,9 +167,9 @@ WowWindow {
         kind: "FontString"
         wowParent: "ChannelButton6"
         anchors.left: channelButton6.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: channelButton6.verticalCenter
-        width: 119
+        width: 151
         height: 8
     }
 
@@ -203,9 +203,9 @@ WowWindow {
         kind: "FontString"
         wowParent: "ChannelButton7"
         anchors.left: channelButton7.left
-        anchors.leftMargin: 5
+        anchors.leftMargin: 10
         anchors.verticalCenter: channelButton7.verticalCenter
-        width: 135
+        width: 119
         height: 8
     }
 
@@ -470,7 +470,7 @@ WowWindow {
         anchors.left: channelListScrollFrame.left
         anchors.top: channelListScrollFrame.top
         width: 145
-        height: -1240
+        height: -1780
     }
 
     Part {
@@ -1230,12 +1230,12 @@ WowWindow {
         name: "FriendsFrameDiabolicFoot"
         kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
-        anchors.horizontalCenter: guildFrameGuildInformationButton.horizontalCenter
-        anchors.horizontalCenterOffset: 110.5
-        anchors.top: guildFrameGuildInformationButton.top
+        anchors.horizontalCenter: friendsFrameAddFriendButton.horizontalCenter
+        anchors.horizontalCenterOffset: 99.5
+        anchors.top: friendsFrameAddFriendButton.top
         anchors.topMargin: -6
         width: 354
-        height: 47
+        height: 45
     }
 
     Part {
@@ -1391,6 +1391,7 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton12Info
         name: "FriendsFrameFriendsScrollFrameButton12Info"
         kind: "FontString"
+        text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12Name.left
         anchors.top: friendsFrameFriendsScrollFrameButton12Name.bottom
@@ -1403,6 +1404,7 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton12Name
         name: "FriendsFrameFriendsScrollFrameButton12Name"
         kind: "FontString"
+        text: "Fatleia"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12.left
         anchors.leftMargin: 20
@@ -1429,7 +1431,7 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton1Name
         name: "FriendsFrameFriendsScrollFrameButton1Name"
         kind: "FontString"
-        text: "Kaldon"
+        text: "Annah"
         wowParent: "FriendsFrameFriendsScrollFrameButton1"
         anchors.left: friendsFrameFriendsScrollFrameButton1.left
         anchors.leftMargin: 20
@@ -1467,7 +1469,7 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton2Name
         name: "FriendsFrameFriendsScrollFrameButton2Name"
         kind: "FontString"
-        text: "Padirac"
+        text: "Apoyagtten"
         wowParent: "FriendsFrameFriendsScrollFrameButton2"
         anchors.left: friendsFrameFriendsScrollFrameButton2.left
         anchors.leftMargin: 20
@@ -2353,12 +2355,12 @@ WowWindow {
         id: friendsFrameTitleText
         name: "FriendsFrameTitleText"
         kind: "FontString"
-        text: "Raid"
+        text: "Friends List"
         wowParent: "FriendsFrameDiabolicTitlePlate"
         anchors.horizontalCenter: friendsFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: friendsFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 38.7
+        width: 107.5
         height: 14.2
     }
 
@@ -2469,10 +2471,10 @@ WowWindow {
         name: "FriendsTooltip"
         kind: "Frame"
         wowParent: "FriendsFrame"
-        anchors.left: friendsFrameFriendsScrollFrameButton10.right
+        anchors.left: friendsFrameFriendsScrollFrameButton6.right
         anchors.leftMargin: 36
-        anchors.top: friendsFrameFriendsScrollFrameButton10.top
-        width: 67.7
+        anchors.top: friendsFrameFriendsScrollFrameButton6.top
+        width: 73.1
         height: 35.8
     }
 
@@ -2480,7 +2482,7 @@ WowWindow {
         id: friendsTooltipHeader
         name: "FriendsTooltipHeader"
         kind: "FontString"
-        text: "Droxus"
+        text: "Spaenei"
         wowParent: "FriendsTooltip"
         anchors.left: friendsTooltip.left
         anchors.leftMargin: 12
@@ -2509,6 +2511,7 @@ WowWindow {
         kind: "Button"
         text: "Close"
         wowParent: "GuildEventLogFrame"
+        style: "Button"
         anchors.right: guildEventLogFrame.right
         anchors.rightMargin: 9
         anchors.bottom: guildEventLogFrame.bottom
@@ -2563,6 +2566,7 @@ WowWindow {
         wowParent: "GuildEventLogScrollFrame"
         anchors.left: guildEventLogScrollFrame.left
         anchors.top: guildEventLogScrollFrame.top
+        anchors.topMargin: -1109.5
         width: 325
         height: 359
     }
@@ -2585,6 +2589,7 @@ WowWindow {
         name: "GuildEventLogScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "GuildEventLogScrollFrame"
+        style: "ScrollBar"
         anchors.left: guildEventLogScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: guildEventLogScrollFrame.top
@@ -2610,6 +2615,7 @@ WowWindow {
         name: "GuildEventLogScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "GuildEventLogScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: guildEventLogScrollFrameScrollBar.horizontalCenter
         anchors.top: guildEventLogScrollFrameScrollBar.bottom
         width: 16
@@ -2621,6 +2627,7 @@ WowWindow {
         name: "GuildEventLogScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "GuildEventLogScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: guildEventLogScrollFrameScrollBar.horizontalCenter
         anchors.bottom: guildEventLogScrollFrameScrollBar.top
         width: 16
@@ -2649,7 +2656,7 @@ WowWindow {
         anchors.left: guildEventLogScrollChildFrame.left
         anchors.top: guildEventLogScrollChildFrame.top
         width: 325
-        height: 1623.7
+        height: 1635.6
     }
 
     Part {
@@ -2706,7 +2713,7 @@ WowWindow {
         id: guildFrameButton1Class
         name: "GuildFrameButton1Class"
         kind: "FontString"
-        text: "Death Knight"
+        text: "Druid"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Level.right
         anchors.leftMargin: 12
@@ -2730,7 +2737,7 @@ WowWindow {
         id: guildFrameButton1Level
         name: "GuildFrameButton1Level"
         kind: "FontString"
-        text: "62"
+        text: "69"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Zone.right
         anchors.leftMargin: 4
@@ -2743,7 +2750,7 @@ WowWindow {
         id: guildFrameButton1Name
         name: "GuildFrameButton1Name"
         kind: "FontString"
-        text: "Padizwerch"
+        text: "Anthrolas"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1.left
         anchors.leftMargin: 14
@@ -2757,7 +2764,7 @@ WowWindow {
         id: guildFrameButton1Zone
         name: "GuildFrameButton1Zone"
         kind: "FontString"
-        text: "Winterspring"
+        text: "Shadowmoon Valley"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Name.right
         anchors.leftMargin: 3
@@ -2856,7 +2863,7 @@ WowWindow {
         id: guildFrameButton3Class
         name: "GuildFrameButton3Class"
         kind: "FontString"
-        text: "Shaman"
+        text: "Paladin"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Level.right
         anchors.leftMargin: 12
@@ -2880,7 +2887,7 @@ WowWindow {
         id: guildFrameButton3Level
         name: "GuildFrameButton3Level"
         kind: "FontString"
-        text: "80"
+        text: "1"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Zone.right
         anchors.leftMargin: 4
@@ -2893,7 +2900,7 @@ WowWindow {
         id: guildFrameButton3Name
         name: "GuildFrameButton3Name"
         kind: "FontString"
-        text: "Fancipants"
+        text: "Discordignis"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3.left
         anchors.leftMargin: 14
@@ -2907,7 +2914,7 @@ WowWindow {
         id: guildFrameButton3Zone
         name: "GuildFrameButton3Zone"
         kind: "FontString"
-        text: "The Storm Peaks"
+        text: "Azuremyst Isle"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Name.right
         anchors.leftMargin: 3
@@ -3468,7 +3475,7 @@ WowWindow {
         id: guildFrameNotesText
         name: "GuildFrameNotesText"
         kind: "FontString"
-        text: "Naxx25man on Saturday 4pm ish ST - Discord https://discord.gg/xYy82MWUx2"
+        text: "https://discord.gg/Xkh2Q6kW4m - WE NEED MORE PET PICTURES "
         wowParent: "GuildFrame"
         anchors.left: guildFrameNotesLabel.left
         anchors.top: guildFrameNotesLabel.bottom
@@ -3498,7 +3505,7 @@ WowWindow {
         anchors.horizontalCenterOffset: 75
         anchors.bottom: guildFrame.verticalCenter
         anchors.bottomMargin: -42
-        width: 87.7
+        width: 92.4
         height: 16
     }
 
@@ -3550,7 +3557,7 @@ WowWindow {
         anchors.left: guildInfoFrameScrollFrame.left
         anchors.top: guildInfoFrameScrollFrame.top
         width: 240
-        height: 106.7
+        height: 118.5
     }
 
     Part {
@@ -3975,7 +3982,7 @@ WowWindow {
         id: whoFrameButton10Class
         name: "WhoFrameButton10Class"
         kind: "FontString"
-        text: "Shaman"
+        text: "Druid"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10Level.right
         anchors.leftMargin: 12
@@ -3988,7 +3995,7 @@ WowWindow {
         id: whoFrameButton10Level
         name: "WhoFrameButton10Level"
         kind: "FontString"
-        text: "80"
+        text: "73"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10Variable.right
         anchors.leftMargin: 2
@@ -4001,7 +4008,7 @@ WowWindow {
         id: whoFrameButton10Name
         name: "WhoFrameButton10Name"
         kind: "FontString"
-        text: "Cattiviy"
+        text: "Hindel"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10.left
         anchors.leftMargin: 10
@@ -4015,7 +4022,7 @@ WowWindow {
         id: whoFrameButton10Variable
         name: "WhoFrameButton10Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Stormwind City"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10Name.right
         anchors.verticalCenter: whoFrameButton10Name.verticalCenter
@@ -4038,7 +4045,7 @@ WowWindow {
         id: whoFrameButton11Class
         name: "WhoFrameButton11Class"
         kind: "FontString"
-        text: "Shaman"
+        text: "Priest"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11Level.right
         anchors.leftMargin: 12
@@ -4051,7 +4058,7 @@ WowWindow {
         id: whoFrameButton11Level
         name: "WhoFrameButton11Level"
         kind: "FontString"
-        text: "80"
+        text: "33"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11Variable.right
         anchors.leftMargin: 2
@@ -4064,7 +4071,7 @@ WowWindow {
         id: whoFrameButton11Name
         name: "WhoFrameButton11Name"
         kind: "FontString"
-        text: "Naturalfocus"
+        text: "Kassara"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11.left
         anchors.leftMargin: 10
@@ -4078,7 +4085,7 @@ WowWindow {
         id: whoFrameButton11Variable
         name: "WhoFrameButton11Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Stranglethorn Vale"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11Name.right
         anchors.verticalCenter: whoFrameButton11Name.verticalCenter
@@ -4101,7 +4108,7 @@ WowWindow {
         id: whoFrameButton12Class
         name: "WhoFrameButton12Class"
         kind: "FontString"
-        text: "Shaman"
+        text: "Paladin"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12Level.right
         anchors.leftMargin: 12
@@ -4114,7 +4121,7 @@ WowWindow {
         id: whoFrameButton12Level
         name: "WhoFrameButton12Level"
         kind: "FontString"
-        text: "80"
+        text: "40"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12Variable.right
         anchors.leftMargin: 2
@@ -4127,7 +4134,7 @@ WowWindow {
         id: whoFrameButton12Name
         name: "WhoFrameButton12Name"
         kind: "FontString"
-        text: "Prentiss"
+        text: "Diestero"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12.left
         anchors.leftMargin: 10
@@ -4141,7 +4148,7 @@ WowWindow {
         id: whoFrameButton12Variable
         name: "WhoFrameButton12Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Stranglethorn Vale"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12Name.right
         anchors.verticalCenter: whoFrameButton12Name.verticalCenter
@@ -4164,7 +4171,7 @@ WowWindow {
         id: whoFrameButton13Class
         name: "WhoFrameButton13Class"
         kind: "FontString"
-        text: "Warrior"
+        text: "Mage"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13Level.right
         anchors.leftMargin: 12
@@ -4190,7 +4197,7 @@ WowWindow {
         id: whoFrameButton13Name
         name: "WhoFrameButton13Name"
         kind: "FontString"
-        text: "Isabaa"
+        text: "Iguanna"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13.left
         anchors.leftMargin: 10
@@ -4204,7 +4211,7 @@ WowWindow {
         id: whoFrameButton13Variable
         name: "WhoFrameButton13Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "The Culling of Stratholme"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13Name.right
         anchors.verticalCenter: whoFrameButton13Name.verticalCenter
@@ -4227,7 +4234,7 @@ WowWindow {
         id: whoFrameButton14Class
         name: "WhoFrameButton14Class"
         kind: "FontString"
-        text: "Warrior"
+        text: "Warlock"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14Level.right
         anchors.leftMargin: 12
@@ -4240,7 +4247,7 @@ WowWindow {
         id: whoFrameButton14Level
         name: "WhoFrameButton14Level"
         kind: "FontString"
-        text: "80"
+        text: "68"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14Variable.right
         anchors.leftMargin: 2
@@ -4253,7 +4260,7 @@ WowWindow {
         id: whoFrameButton14Name
         name: "WhoFrameButton14Name"
         kind: "FontString"
-        text: "Pissgrave"
+        text: "Pikica"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14.left
         anchors.leftMargin: 10
@@ -4267,7 +4274,7 @@ WowWindow {
         id: whoFrameButton14Variable
         name: "WhoFrameButton14Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "The Exodar"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14Name.right
         anchors.verticalCenter: whoFrameButton14Name.verticalCenter
@@ -4290,7 +4297,7 @@ WowWindow {
         id: whoFrameButton15Class
         name: "WhoFrameButton15Class"
         kind: "FontString"
-        text: "Mage"
+        text: "Druid"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15Level.right
         anchors.leftMargin: 12
@@ -4303,7 +4310,7 @@ WowWindow {
         id: whoFrameButton15Level
         name: "WhoFrameButton15Level"
         kind: "FontString"
-        text: "71"
+        text: "80"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15Variable.right
         anchors.leftMargin: 2
@@ -4316,7 +4323,7 @@ WowWindow {
         id: whoFrameButton15Name
         name: "WhoFrameButton15Name"
         kind: "FontString"
-        text: "Washuwan"
+        text: "Moohahaha"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15.left
         anchors.leftMargin: 10
@@ -4330,7 +4337,7 @@ WowWindow {
         id: whoFrameButton15Variable
         name: "WhoFrameButton15Variable"
         kind: "FontString"
-        text: "Dragonblight"
+        text: "The Slave Pens"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15Name.right
         anchors.verticalCenter: whoFrameButton15Name.verticalCenter
@@ -4353,7 +4360,7 @@ WowWindow {
         id: whoFrameButton16Class
         name: "WhoFrameButton16Class"
         kind: "FontString"
-        text: "Druid"
+        text: "Paladin"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16Level.right
         anchors.leftMargin: 12
@@ -4379,7 +4386,7 @@ WowWindow {
         id: whoFrameButton16Name
         name: "WhoFrameButton16Name"
         kind: "FontString"
-        text: "Eneldo"
+        text: "Paroxysm"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16.left
         anchors.leftMargin: 10
@@ -4393,7 +4400,7 @@ WowWindow {
         id: whoFrameButton16Variable
         name: "WhoFrameButton16Variable"
         kind: "FontString"
-        text: "Dragonblight"
+        text: "The Storm Peaks"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16Name.right
         anchors.verticalCenter: whoFrameButton16Name.verticalCenter
@@ -4416,7 +4423,7 @@ WowWindow {
         id: whoFrameButton17Class
         name: "WhoFrameButton17Class"
         kind: "FontString"
-        text: "Mage"
+        text: "Warrior"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17Level.right
         anchors.leftMargin: 12
@@ -4429,7 +4436,7 @@ WowWindow {
         id: whoFrameButton17Level
         name: "WhoFrameButton17Level"
         kind: "FontString"
-        text: "6"
+        text: "2"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17Variable.right
         anchors.leftMargin: 2
@@ -4442,7 +4449,7 @@ WowWindow {
         id: whoFrameButton17Name
         name: "WhoFrameButton17Name"
         kind: "FontString"
-        text: "Fistndntilus"
+        text: "Keeroq"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17.left
         anchors.leftMargin: 10
@@ -4456,7 +4463,7 @@ WowWindow {
         id: whoFrameButton17Variable
         name: "WhoFrameButton17Variable"
         kind: "FontString"
-        text: "Dun Morogh"
+        text: "Undercity"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17Name.right
         anchors.verticalCenter: whoFrameButton17Name.verticalCenter
@@ -4479,7 +4486,7 @@ WowWindow {
         id: whoFrameButton18Class
         name: "WhoFrameButton18Class"
         kind: "FontString"
-        text: "Shaman"
+        text: "Druid"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18Level.right
         anchors.leftMargin: 12
@@ -4492,7 +4499,7 @@ WowWindow {
         id: whoFrameButton18Level
         name: "WhoFrameButton18Level"
         kind: "FontString"
-        text: "9"
+        text: "79"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18Variable.right
         anchors.leftMargin: 2
@@ -4505,7 +4512,7 @@ WowWindow {
         id: whoFrameButton18Name
         name: "WhoFrameButton18Name"
         kind: "FontString"
-        text: "Krazmor"
+        text: "Saltypanther"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18.left
         anchors.leftMargin: 10
@@ -4519,7 +4526,7 @@ WowWindow {
         id: whoFrameButton18Variable
         name: "WhoFrameButton18Variable"
         kind: "FontString"
-        text: "Durotar"
+        text: "Zangarmarsh"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18Name.right
         anchors.verticalCenter: whoFrameButton18Name.verticalCenter
@@ -4542,7 +4549,7 @@ WowWindow {
         id: whoFrameButton19Class
         name: "WhoFrameButton19Class"
         kind: "FontString"
-        text: "Death Knight"
+        text: "Mage"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19Level.right
         anchors.leftMargin: 12
@@ -4555,7 +4562,7 @@ WowWindow {
         id: whoFrameButton19Level
         name: "WhoFrameButton19Level"
         kind: "FontString"
-        text: "73"
+        text: "80"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19Variable.right
         anchors.leftMargin: 2
@@ -4568,7 +4575,7 @@ WowWindow {
         id: whoFrameButton19Name
         name: "WhoFrameButton19Name"
         kind: "FontString"
-        text: "Littlebottom"
+        text: "Honeycandy"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19.left
         anchors.leftMargin: 10
@@ -4582,7 +4589,7 @@ WowWindow {
         id: whoFrameButton19Variable
         name: "WhoFrameButton19Variable"
         kind: "FontString"
-        text: "Eastern Plaguelands"
+        text: "Zul'Drak"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19Name.right
         anchors.verticalCenter: whoFrameButton19Name.verticalCenter
@@ -4594,7 +4601,7 @@ WowWindow {
         id: whoFrameButton1Class
         name: "WhoFrameButton1Class"
         kind: "FontString"
-        text: "Death Knight"
+        text: "Paladin"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1Level.right
         anchors.leftMargin: 12
@@ -4607,7 +4614,7 @@ WowWindow {
         id: whoFrameButton1Level
         name: "WhoFrameButton1Level"
         kind: "FontString"
-        text: "80"
+        text: "30"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1Variable.right
         anchors.leftMargin: 2
@@ -4620,7 +4627,7 @@ WowWindow {
         id: whoFrameButton1Name
         name: "WhoFrameButton1Name"
         kind: "FontString"
-        text: "Deathrain"
+        text: "Avitar"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1.left
         anchors.leftMargin: 10
@@ -4634,7 +4641,7 @@ WowWindow {
         id: whoFrameButton1Variable
         name: "WhoFrameButton1Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Hillsbrad Foothills"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1Name.right
         anchors.verticalCenter: whoFrameButton1Name.verticalCenter
@@ -4657,7 +4664,7 @@ WowWindow {
         id: whoFrameButton2Class
         name: "WhoFrameButton2Class"
         kind: "FontString"
-        text: "Death Knight"
+        text: "Shaman"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2Level.right
         anchors.leftMargin: 12
@@ -4670,7 +4677,7 @@ WowWindow {
         id: whoFrameButton2Level
         name: "WhoFrameButton2Level"
         kind: "FontString"
-        text: "80"
+        text: "73"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2Variable.right
         anchors.leftMargin: 2
@@ -4683,7 +4690,7 @@ WowWindow {
         id: whoFrameButton2Name
         name: "WhoFrameButton2Name"
         kind: "FontString"
-        text: "Naterisdk"
+        text: "Ginst"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2.left
         anchors.leftMargin: 10
@@ -4697,7 +4704,7 @@ WowWindow {
         id: whoFrameButton2Variable
         name: "WhoFrameButton2Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Howling Fjord"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2Name.right
         anchors.verticalCenter: whoFrameButton2Name.verticalCenter
@@ -4720,7 +4727,7 @@ WowWindow {
         id: whoFrameButton3Class
         name: "WhoFrameButton3Class"
         kind: "FontString"
-        text: "Death Knight"
+        text: "Druid"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3Level.right
         anchors.leftMargin: 12
@@ -4746,7 +4753,7 @@ WowWindow {
         id: whoFrameButton3Name
         name: "WhoFrameButton3Name"
         kind: "FontString"
-        text: "Ripcord"
+        text: "Ursalles"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3.left
         anchors.leftMargin: 10
@@ -4760,7 +4767,7 @@ WowWindow {
         id: whoFrameButton3Variable
         name: "WhoFrameButton3Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Icecrown"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3Name.right
         anchors.verticalCenter: whoFrameButton3Name.verticalCenter
@@ -4783,7 +4790,7 @@ WowWindow {
         id: whoFrameButton4Class
         name: "WhoFrameButton4Class"
         kind: "FontString"
-        text: "Druid"
+        text: "Hunter"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4Level.right
         anchors.leftMargin: 12
@@ -4809,7 +4816,7 @@ WowWindow {
         id: whoFrameButton4Name
         name: "WhoFrameButton4Name"
         kind: "FontString"
-        text: "Faenielle"
+        text: "Grassmangler"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4.left
         anchors.leftMargin: 10
@@ -4823,7 +4830,7 @@ WowWindow {
         id: whoFrameButton4Variable
         name: "WhoFrameButton4Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Icecrown"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4Name.right
         anchors.verticalCenter: whoFrameButton4Name.verticalCenter
@@ -4846,7 +4853,7 @@ WowWindow {
         id: whoFrameButton5Class
         name: "WhoFrameButton5Class"
         kind: "FontString"
-        text: "Hunter"
+        text: "Warrior"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5Level.right
         anchors.leftMargin: 12
@@ -4859,7 +4866,7 @@ WowWindow {
         id: whoFrameButton5Level
         name: "WhoFrameButton5Level"
         kind: "FontString"
-        text: "80"
+        text: "10"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5Variable.right
         anchors.leftMargin: 2
@@ -4872,7 +4879,7 @@ WowWindow {
         id: whoFrameButton5Name
         name: "WhoFrameButton5Name"
         kind: "FontString"
-        text: "Lezbow"
+        text: "Donutreset"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5.left
         anchors.leftMargin: 10
@@ -4886,7 +4893,7 @@ WowWindow {
         id: whoFrameButton5Variable
         name: "WhoFrameButton5Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Ironforge"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5Name.right
         anchors.verticalCenter: whoFrameButton5Name.verticalCenter
@@ -4909,7 +4916,7 @@ WowWindow {
         id: whoFrameButton6Class
         name: "WhoFrameButton6Class"
         kind: "FontString"
-        text: "Mage"
+        text: "Druid"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6Level.right
         anchors.leftMargin: 12
@@ -4922,7 +4929,7 @@ WowWindow {
         id: whoFrameButton6Level
         name: "WhoFrameButton6Level"
         kind: "FontString"
-        text: "80"
+        text: "71"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6Variable.right
         anchors.leftMargin: 2
@@ -4935,7 +4942,7 @@ WowWindow {
         id: whoFrameButton6Name
         name: "WhoFrameButton6Name"
         kind: "FontString"
-        text: "Siwiel"
+        text: "Foxifoxi"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6.left
         anchors.leftMargin: 10
@@ -4949,7 +4956,7 @@ WowWindow {
         id: whoFrameButton6Variable
         name: "WhoFrameButton6Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Nagrand"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6Name.right
         anchors.verticalCenter: whoFrameButton6Name.verticalCenter
@@ -4972,7 +4979,7 @@ WowWindow {
         id: whoFrameButton7Class
         name: "WhoFrameButton7Class"
         kind: "FontString"
-        text: "Paladin"
+        text: "Priest"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7Level.right
         anchors.leftMargin: 12
@@ -4985,7 +4992,7 @@ WowWindow {
         id: whoFrameButton7Level
         name: "WhoFrameButton7Level"
         kind: "FontString"
-        text: "80"
+        text: "1"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7Variable.right
         anchors.leftMargin: 2
@@ -4998,7 +5005,7 @@ WowWindow {
         id: whoFrameButton7Name
         name: "WhoFrameButton7Name"
         kind: "FontString"
-        text: "Dornoxia"
+        text: "Fortknoxx"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7.left
         anchors.leftMargin: 10
@@ -5012,7 +5019,7 @@ WowWindow {
         id: whoFrameButton7Variable
         name: "WhoFrameButton7Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Stormwind City"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7Name.right
         anchors.verticalCenter: whoFrameButton7Name.verticalCenter
@@ -5035,7 +5042,7 @@ WowWindow {
         id: whoFrameButton8Class
         name: "WhoFrameButton8Class"
         kind: "FontString"
-        text: "Paladin"
+        text: "Warlock"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8Level.right
         anchors.leftMargin: 12
@@ -5048,7 +5055,7 @@ WowWindow {
         id: whoFrameButton8Level
         name: "WhoFrameButton8Level"
         kind: "FontString"
-        text: "80"
+        text: "15"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8Variable.right
         anchors.leftMargin: 2
@@ -5061,7 +5068,7 @@ WowWindow {
         id: whoFrameButton8Name
         name: "WhoFrameButton8Name"
         kind: "FontString"
-        text: "Fercho"
+        text: "Lodix"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8.left
         anchors.leftMargin: 10
@@ -5075,7 +5082,7 @@ WowWindow {
         id: whoFrameButton8Variable
         name: "WhoFrameButton8Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Stormwind City"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8Name.right
         anchors.verticalCenter: whoFrameButton8Name.verticalCenter
@@ -5098,7 +5105,7 @@ WowWindow {
         id: whoFrameButton9Class
         name: "WhoFrameButton9Class"
         kind: "FontString"
-        text: "Paladin"
+        text: "Warlock"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9Level.right
         anchors.leftMargin: 12
@@ -5111,7 +5118,7 @@ WowWindow {
         id: whoFrameButton9Level
         name: "WhoFrameButton9Level"
         kind: "FontString"
-        text: "80"
+        text: "36"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9Variable.right
         anchors.leftMargin: 2
@@ -5124,7 +5131,7 @@ WowWindow {
         id: whoFrameButton9Name
         name: "WhoFrameButton9Name"
         kind: "FontString"
-        text: "Mayl"
+        text: "Voidmaster"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9.left
         anchors.leftMargin: 10
@@ -5138,7 +5145,7 @@ WowWindow {
         id: whoFrameButton9Variable
         name: "WhoFrameButton9Variable"
         kind: "FontString"
-        text: "Dalaran"
+        text: "Stormwind City"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9Name.right
         anchors.verticalCenter: whoFrameButton9Name.verticalCenter
@@ -5170,7 +5177,7 @@ WowWindow {
         anchors.left: whoFrameColumnHeader1.right
         anchors.leftMargin: -2
         anchors.verticalCenter: whoFrameColumnHeader1.verticalCenter
-        width: 120
+        width: 105
         height: 22
     }
 
@@ -5305,7 +5312,7 @@ WowWindow {
         id: whoFrameTotals
         name: "WhoFrameTotals"
         kind: "FontString"
-        text: "0 People Found  "
+        text: "559 People Found  (50 displayed)"
         wowParent: "WhoFrame"
         anchors.horizontalCenter: whoFrame.horizontalCenter
         anchors.horizontalCenterOffset: -10
@@ -5385,6 +5392,7 @@ WowWindow {
         name: "WhoListScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "WhoListScrollFrame"
+        style: "ScrollBar"
         anchors.left: whoListScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: whoListScrollFrame.top
@@ -5410,6 +5418,7 @@ WowWindow {
         name: "WhoListScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "WhoListScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: whoListScrollFrameScrollBar.horizontalCenter
         anchors.top: whoListScrollFrameScrollBar.bottom
         width: 16
@@ -5421,6 +5430,7 @@ WowWindow {
         name: "WhoListScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "WhoListScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: whoListScrollFrameScrollBar.horizontalCenter
         anchors.bottom: whoListScrollFrameScrollBar.top
         width: 16
@@ -5434,6 +5444,7 @@ WowWindow {
         wowParent: "WhoListScrollFrame"
         anchors.left: whoListScrollFrame.left
         anchors.top: whoListScrollFrame.top
+        anchors.topMargin: -480
         width: 300
         height: 784
     }

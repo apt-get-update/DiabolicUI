@@ -261,7 +261,7 @@ WowWindow {
         id: companionSelectedName
         name: "CompanionSelectedName"
         kind: "FontString"
-        text: "Acherus Deathcharger"
+        text: "Bronze Drake Mount"
         wowParent: "PetPaperDollFrameCompanionFrame"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 107
@@ -702,12 +702,12 @@ WowWindow {
         id: spellBookTitleText
         name: "SpellBookTitleText"
         kind: "FontString"
-        text: "Spellbook"
+        text: "Professions"
         wowParent: "SpellBookFrameDiabolicTitlePlate"
         anchors.horizontalCenter: spellBookFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: spellBookFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 88.5
+        width: 106.7
         height: 14.2
     }
 
@@ -741,7 +741,7 @@ WowWindow {
         id: spellButton10SpellName
         name: "SpellButton10SpellName"
         kind: "FontString"
-        text: "Stoneform"
+        text: "Psychic Scream"
         wowParent: "SpellButton10"
         anchors.left: spellButton10.right
         anchors.leftMargin: 12
@@ -755,7 +755,7 @@ WowWindow {
         id: spellButton10SubSpellName
         name: "SpellButton10SubSpellName"
         kind: "FontString"
-        text: "Racial"
+        text: "Rank 4"
         wowParent: "SpellButton10"
         anchors.left: spellButton10SpellName.left
         anchors.top: spellButton10SpellName.bottom
@@ -781,7 +781,7 @@ WowWindow {
         id: spellButton11SpellName
         name: "SpellButton11SpellName"
         kind: "FontString"
-        text: "Plague Strike"
+        text: "Mind Flay"
         wowParent: "SpellButton11"
         anchors.left: spellButton11.right
         anchors.leftMargin: 12
@@ -795,7 +795,7 @@ WowWindow {
         id: spellButton11SubSpellName
         name: "SpellButton11SubSpellName"
         kind: "FontString"
-        text: "Rank 1"
+        text: "Rank 9"
         wowParent: "SpellButton11"
         anchors.left: spellButton11SpellName.left
         anchors.top: spellButton11SpellName.bottom
@@ -848,7 +848,7 @@ WowWindow {
         id: spellButton1SpellName
         name: "SpellButton1SpellName"
         kind: "FontString"
-        text: "Blood Plague"
+        text: "Devouring Plague"
         wowParent: "SpellButton1"
         anchors.left: spellButton1.right
         anchors.leftMargin: 12
@@ -862,7 +862,7 @@ WowWindow {
         id: spellButton1SubSpellName
         name: "SpellButton1SubSpellName"
         kind: "FontString"
-        text: "Passive"
+        text: "Rank 9"
         wowParent: "SpellButton1"
         anchors.left: spellButton1SpellName.left
         anchors.top: spellButton1SpellName.bottom
@@ -888,12 +888,12 @@ WowWindow {
         id: spellButton2SpellName
         name: "SpellButton2SpellName"
         kind: "FontString"
-        text: "Raise Dead"
+        text: "Mind Sear"
         wowParent: "SpellButton2"
         anchors.left: spellButton2.right
         anchors.leftMargin: 12
         anchors.verticalCenter: spellButton2.verticalCenter
-        anchors.verticalCenterOffset: -2
+        anchors.verticalCenterOffset: -4
         width: 145
         height: 11.9
     }
@@ -902,6 +902,7 @@ WowWindow {
         id: spellButton2SubSpellName
         name: "SpellButton2SubSpellName"
         kind: "FontString"
+        text: "Rank 2"
         wowParent: "SpellButton2"
         anchors.left: spellButton2SpellName.left
         anchors.top: spellButton2SpellName.bottom
@@ -927,12 +928,12 @@ WowWindow {
         id: spellButton3SpellName
         name: "SpellButton3SpellName"
         kind: "FontString"
-        text: "Death Coil"
+        text: "Dispersion"
         wowParent: "SpellButton3"
         anchors.left: spellButton3.right
         anchors.leftMargin: 12
         anchors.verticalCenter: spellButton3.verticalCenter
-        anchors.verticalCenterOffset: -4
+        anchors.verticalCenterOffset: -2
         width: 145
         height: 11.9
     }
@@ -941,7 +942,6 @@ WowWindow {
         id: spellButton3SubSpellName
         name: "SpellButton3SubSpellName"
         kind: "FontString"
-        text: "Rank 1"
         wowParent: "SpellButton3"
         anchors.left: spellButton3SpellName.left
         anchors.top: spellButton3SpellName.bottom
@@ -967,12 +967,12 @@ WowWindow {
         id: spellButton4SpellName
         name: "SpellButton4SpellName"
         kind: "FontString"
-        text: "Mace Specialization"
+        text: "Mind Soothe"
         wowParent: "SpellButton4"
         anchors.left: spellButton4.right
         anchors.leftMargin: 12
         anchors.verticalCenter: spellButton4.verticalCenter
-        anchors.verticalCenterOffset: -4
+        anchors.verticalCenterOffset: -2
         width: 145
         height: 11.9
     }
@@ -981,7 +981,6 @@ WowWindow {
         id: spellButton4SubSpellName
         name: "SpellButton4SubSpellName"
         kind: "FontString"
-        text: "Racial Passive"
         wowParent: "SpellButton4"
         anchors.left: spellButton4SpellName.left
         anchors.top: spellButton4SpellName.bottom
@@ -1007,7 +1006,7 @@ WowWindow {
         id: spellButton5SpellName
         name: "SpellButton5SpellName"
         kind: "FontString"
-        text: "Death Gate"
+        text: "Fade"
         wowParent: "SpellButton5"
         anchors.left: spellButton5.right
         anchors.leftMargin: 12
@@ -1046,7 +1045,7 @@ WowWindow {
         id: spellButton6SpellName
         name: "SpellButton6SpellName"
         kind: "FontString"
-        text: "Parry"
+        text: "Mind Vision"
         wowParent: "SpellButton6"
         anchors.left: spellButton6.right
         anchors.leftMargin: 12
@@ -1060,7 +1059,7 @@ WowWindow {
         id: spellButton6SubSpellName
         name: "SpellButton6SubSpellName"
         kind: "FontString"
-        text: "Passive"
+        text: "Rank 2"
         wowParent: "SpellButton6"
         anchors.left: spellButton6SpellName.left
         anchors.top: spellButton6SpellName.bottom
@@ -1086,12 +1085,12 @@ WowWindow {
         id: spellButton7SpellName
         name: "SpellButton7SpellName"
         kind: "FontString"
-        text: "Death Grip"
+        text: "Mind Blast"
         wowParent: "SpellButton7"
         anchors.left: spellButton7.right
         anchors.leftMargin: 12
         anchors.verticalCenter: spellButton7.verticalCenter
-        anchors.verticalCenterOffset: -2
+        anchors.verticalCenterOffset: -4
         width: 145
         height: 11.9
     }
@@ -1100,6 +1099,7 @@ WowWindow {
         id: spellButton7SubSpellName
         name: "SpellButton7SubSpellName"
         kind: "FontString"
+        text: "Rank 13"
         wowParent: "SpellButton7"
         anchors.left: spellButton7SpellName.left
         anchors.top: spellButton7SpellName.bottom
@@ -1125,20 +1125,21 @@ WowWindow {
         id: spellButton8SpellName
         name: "SpellButton8SpellName"
         kind: "FontString"
-        text: "Runeforging"
+        text: "Prayer of Shadow Protection"
         wowParent: "SpellButton8"
         anchors.left: spellButton8.right
         anchors.leftMargin: 12
         anchors.verticalCenter: spellButton8.verticalCenter
-        anchors.verticalCenterOffset: -2
+        anchors.verticalCenterOffset: -4
         width: 145
-        height: 11.9
+        height: 23.7
     }
 
     Part {
         id: spellButton8SubSpellName
         name: "SpellButton8SubSpellName"
         kind: "FontString"
+        text: "Rank 3"
         wowParent: "SpellButton8"
         anchors.left: spellButton8SpellName.left
         anchors.top: spellButton8SpellName.bottom
@@ -1164,12 +1165,12 @@ WowWindow {
         id: spellButton9SpellName
         name: "SpellButton9SpellName"
         kind: "FontString"
-        text: "Death Strike"
+        text: "Mind Control"
         wowParent: "SpellButton9"
         anchors.left: spellButton9.right
         anchors.leftMargin: 12
         anchors.verticalCenter: spellButton9.verticalCenter
-        anchors.verticalCenterOffset: -4
+        anchors.verticalCenterOffset: -2
         width: 145
         height: 11.9
     }
@@ -1178,7 +1179,6 @@ WowWindow {
         id: spellButton9SubSpellName
         name: "SpellButton9SubSpellName"
         kind: "FontString"
-        text: "Rank 1"
         wowParent: "SpellButton9"
         anchors.left: spellButton9SpellName.left
         anchors.top: spellButton9SpellName.bottom

@@ -244,7 +244,7 @@ WowWindow {
         id: lFDQueueFrameRandomScrollFrameChildFrameItem1Name
         name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Name"
         kind: "FontString"
-        text: "Satchel of Helpful Goods"
+        text: "Emblem of Conquest"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameItem1NameFrame.left
         anchors.leftMargin: 15
@@ -261,7 +261,7 @@ WowWindow {
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.right
         anchors.leftMargin: 10
         anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.verticalCenter
-        width: 73
+        width: 80.9
         height: 28
     }
 
@@ -269,12 +269,12 @@ WowWindow {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
         kind: "Button"
-        text: "6"
+        text: "22"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.verticalCenter
-        width: 24.1
+        width: 32
         height: 19
     }
 
@@ -282,12 +282,12 @@ WowWindow {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "6"
+        text: "22"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton.verticalCenter
-        width: 11.1
+        width: 19
         height: 15.8
     }
 
@@ -361,8 +361,8 @@ WowWindow {
         name: "LFDQueueFrameRandomScrollFrameChildFrameSpacer"
         kind: "Frame"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameXPLabel.left
-        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameXPLabel.bottom
+        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.left
+        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.bottom
         anchors.topMargin: 10
         width: 2
         height: 2
@@ -1390,7 +1390,7 @@ WowWindow {
         id: lFDQueueFrameTypeDropDownText
         name: "LFDQueueFrameTypeDropDownText"
         kind: "FontString"
-        text: "Random Burning Crusade Dungeon"
+        text: "Random Lich King Heroic"
         wowParent: "LFDQueueFrameTypeDropDown"
         anchors.horizontalCenter: lFDQueueFrameTypeDropDown.horizontalCenter
         anchors.horizontalCenterOffset: -11
@@ -1401,7 +1401,7 @@ WowWindow {
 
     Ghost { id: lFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture; name: "LFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture"; x: 72; y: 261.1; width: 0; height: 0 }
     Ghost { id: lFDQueueFrameRandomScrollFrameChildFrameItem1NameFrame; name: "LFDQueueFrameRandomScrollFrameChildFrameItem1NameFrame"; x: 62; y: 241.6; width: 0; height: 0 }
-    Ghost { id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton; name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton"; x: 172; y: 279.5; width: 0; height: 0 }
+    Ghost { id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton; name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton"; x: 180; y: 279.5; width: 0; height: 0 }
     Ghost { id: lFDQueueFrameSpecificListButton10LockedIndicator; name: "LFDQueueFrameSpecificListButton10LockedIndicator"; x: 56; y: 255; width: 0; height: 0 }
     Ghost { id: lFDQueueFrameSpecificListButton11LockedIndicator; name: "LFDQueueFrameSpecificListButton11LockedIndicator"; x: 56; y: 271; width: 0; height: 0 }
     Ghost { id: lFDQueueFrameSpecificListButton12LockedIndicator; name: "LFDQueueFrameSpecificListButton12LockedIndicator"; x: 56; y: 287; width: 0; height: 0 }

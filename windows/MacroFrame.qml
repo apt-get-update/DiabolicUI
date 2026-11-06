@@ -266,6 +266,7 @@ WowWindow {
         id: macroButton1Name
         name: "MacroButton1Name"
         kind: "FontString"
+        text: "DUI Holy End"
         wowParent: "MacroButton1"
         anchors.horizontalCenter: macroButton1.horizontalCenter
         anchors.bottom: macroButton1.bottom
@@ -530,6 +531,7 @@ WowWindow {
         id: macroButton2Name
         name: "MacroButton2Name"
         kind: "FontString"
+        text: "DUI Holy Start"
         wowParent: "MacroButton2"
         anchors.horizontalCenter: macroButton2.horizontalCenter
         anchors.bottom: macroButton2.bottom
@@ -722,6 +724,7 @@ WowWindow {
         id: macroButton3Name
         name: "MacroButton3Name"
         kind: "FontString"
+        text: "DUI Shadow End"
         wowParent: "MacroButton3"
         anchors.horizontalCenter: macroButton3.horizontalCenter
         anchors.bottom: macroButton3.bottom
@@ -746,6 +749,7 @@ WowWindow {
         id: macroButton4Name
         name: "MacroButton4Name"
         kind: "FontString"
+        text: "DUI Shadow Start"
         wowParent: "MacroButton4"
         anchors.horizontalCenter: macroButton4.horizontalCenter
         anchors.bottom: macroButton4.bottom
@@ -1020,7 +1024,7 @@ WowWindow {
         anchors.horizontalCenterOffset: 303
         anchors.verticalCenter: macroFrame.top
         anchors.verticalCenterOffset: 432
-        width: 78.8
+        width: 80
         height: 22
     }
 
@@ -1042,13 +1046,13 @@ WowWindow {
         id: macroFrameCharLimitText
         name: "MacroFrameCharLimitText"
         kind: "FontString"
-        text: "41/255 Characters Used"
+        text: "80/255 Characters Used"
         wowParent: "MacroFrame"
         pin: "place"
         anchors.right: macroFrameScrollFrame.right
         anchors.bottom: macroFrameScrollFrame.top
         anchors.bottomMargin: 8
-        width: 128.8
+        width: 129.6
         height: 10
     }
 
@@ -1272,7 +1276,7 @@ WowWindow {
         id: macroFrameSelectedMacroName
         name: "MacroFrameSelectedMacroName"
         kind: "FontString"
-        text: "Decursive"
+        text: "DUI Holy End"
         wowParent: "MacroFrame"
         anchors.left: macroFrameSelectedMacroBackground.right
         anchors.leftMargin: -4
@@ -1301,7 +1305,7 @@ WowWindow {
         id: macroFrameTab2
         name: "MacroFrameTab2"
         kind: "Button"
-        text: "Padizwerch Specific Macros"
+        text: "Padirac Specific Macros"
         wowParent: "MacroFrame"
         style: "Banner"
         anchors.left: macroFrameDiabolic.left
@@ -1316,12 +1320,11 @@ WowWindow {
         id: macroFrameText
         name: "MacroFrameText"
         kind: "EditBox"
-        text: "/script Dcr:Println('No spell available')"
         wowParent: "MacroFrameScrollFrame"
         anchors.left: macroFrameScrollFrame.left
         anchors.top: macroFrameScrollFrame.top
         width: 286
-        height: 10.3
+        height: 30.8
     }
 
     Part {
@@ -1359,7 +1362,7 @@ WowWindow {
         anchors.right: macroExitButton.left
         anchors.rightMargin: 6
         anchors.verticalCenter: macroExitButton.verticalCenter
-        width: 78.8
+        width: 80
         height: 22
     }
 

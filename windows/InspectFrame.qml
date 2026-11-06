@@ -234,13 +234,13 @@ WowWindow {
         id: inspectLevelText
         name: "InspectLevelText"
         kind: "FontString"
-        text: "Level 80 Human Warlock"
+        text: "Level 11 Human Warlock"
         wowParent: "InspectPaperDollFrame"
         pin: "place"
         anchors.horizontalCenter: inspectModelFrame.horizontalCenter
         anchors.bottom: inspectModelFrame.top
         anchors.bottomMargin: 22
-        width: 226
+        width: 218.1
         height: 14.2
     }
 
@@ -309,12 +309,12 @@ WowWindow {
         id: inspectNameText
         name: "InspectNameText"
         kind: "FontString"
-        text: "Velkara"
+        text: "Borlock"
         wowParent: "InspectFrameDiabolicTitlePlate"
         anchors.horizontalCenter: inspectFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: inspectFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 72.7
+        width: 73.5
         height: 14.2
     }
 
@@ -448,12 +448,12 @@ WowWindow {
         id: inspectPVPHonorLifetimeKills
         name: "InspectPVPHonorLifetimeKills"
         kind: "FontString"
-        text: "1"
+        text: "0"
         wowParent: "InspectPVPHonor"
         anchors.horizontalCenter: inspectPVPHonorLifetimeLabel.horizontalCenter
         anchors.top: inspectPVPHonorLifetimeLabel.bottom
         anchors.topMargin: 10
-        width: 6.3
+        width: 7.9
         height: 10.3
     }
 
@@ -788,7 +788,6 @@ WowWindow {
         wowParent: "InspectTalentFrameScrollFrame"
         anchors.left: inspectTalentFrameScrollFrame.left
         anchors.top: inspectTalentFrameScrollFrame.top
-        anchors.topMargin: -373.5
         width: 320
         height: 50
     }
@@ -878,7 +877,7 @@ WowWindow {
         anchors.leftMargin: 12
         anchors.verticalCenter: inspectTalentFramePointsBar.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 103.5
+        width: 115.4
         height: 15
     }
 
@@ -928,7 +927,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 20
         width: 37
@@ -941,9 +940,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 146
+        anchors.topMargin: 209
         width: 37
         height: 37
     }
@@ -966,7 +965,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 224
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 209
         width: 37
@@ -991,9 +990,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 35
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 209
+        anchors.topMargin: 272
         width: 37
         height: 37
     }
@@ -1016,9 +1015,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 224
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 209
+        anchors.topMargin: 272
         width: 37
         height: 37
     }
@@ -1041,7 +1040,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 272
         width: 37
@@ -1066,9 +1065,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 35
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 272
+        anchors.topMargin: 335
         width: 37
         height: 37
     }
@@ -1093,7 +1092,7 @@ WowWindow {
         anchors.left: inspectTalentFrameScrollChildFrame.left
         anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 272
+        anchors.topMargin: 335
         width: 37
         height: 37
     }
@@ -1116,9 +1115,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 335
+        anchors.topMargin: 398
         width: 37
         height: 37
     }
@@ -1141,9 +1140,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 335
+        anchors.topMargin: 398
         width: 37
         height: 37
     }
@@ -1166,7 +1165,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 224
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 398
         width: 37
@@ -1203,7 +1202,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 20
         width: 37
@@ -1218,7 +1217,7 @@ WowWindow {
         anchors.left: inspectTalentFrameScrollChildFrame.left
         anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 398
+        anchors.topMargin: 461
         width: 37
         height: 37
     }
@@ -1243,7 +1242,7 @@ WowWindow {
         anchors.left: inspectTalentFrameScrollChildFrame.left
         anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 398
+        anchors.topMargin: 461
         width: 37
         height: 37
     }
@@ -1268,7 +1267,7 @@ WowWindow {
         anchors.left: inspectTalentFrameScrollChildFrame.left
         anchors.leftMargin: 35
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 461
+        anchors.topMargin: 524
         width: 37
         height: 37
     }
@@ -1291,9 +1290,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 461
+        anchors.topMargin: 524
         width: 37
         height: 37
     }
@@ -1316,7 +1315,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 524
         width: 37
@@ -1343,7 +1342,7 @@ WowWindow {
         anchors.left: inspectTalentFrameScrollChildFrame.left
         anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 524
+        anchors.topMargin: 587
         width: 37
         height: 37
     }
@@ -1366,9 +1365,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 524
+        anchors.topMargin: 650
         width: 37
         height: 37
     }
@@ -1466,9 +1465,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 35
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 20
+        anchors.topMargin: 83
         width: 37
         height: 37
     }
@@ -1491,7 +1490,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 83
         width: 37
@@ -1516,7 +1515,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 83
         width: 37
@@ -1541,9 +1540,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 35
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 83
+        anchors.topMargin: 146
         width: 37
         height: 37
     }
@@ -1566,9 +1565,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 224
+        anchors.leftMargin: 98
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 83
+        anchors.topMargin: 146
         width: 37
         height: 37
     }
@@ -1591,7 +1590,7 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 161
         anchors.top: inspectTalentFrameScrollChildFrame.top
         anchors.topMargin: 146
         width: 37
@@ -1616,9 +1615,9 @@ WowWindow {
         kind: "Button"
         wowParent: "InspectTalentFrameScrollChildFrame"
         anchors.left: inspectTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 35
         anchors.top: inspectTalentFrameScrollChildFrame.top
-        anchors.topMargin: 146
+        anchors.topMargin: 209
         width: 37
         height: 37
     }

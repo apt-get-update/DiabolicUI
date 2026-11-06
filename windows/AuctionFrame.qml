@@ -174,7 +174,7 @@ WowWindow {
         id: atr_CancelSelectionButton
         name: "Atr_CancelSelectionButton"
         kind: "Button"
-        text: "Cancel Auction"
+        text: "Cancel Auctions"
         wowParent: "Atr_Main_Panel"
         style: "Button"
         anchors.right: auctionFrame.right
@@ -189,11 +189,11 @@ WowWindow {
         id: atr_CancelSelectionButtonText
         name: "Atr_CancelSelectionButtonText"
         kind: "FontString"
-        text: "Cancel Auction"
+        text: "Cancel Auctions"
         wowParent: "Atr_CancelSelectionButton"
         anchors.horizontalCenter: atr_CancelSelectionButton.horizontalCenter
         anchors.verticalCenter: atr_CancelSelectionButton.verticalCenter
-        width: 81.2
+        width: 86.9
         height: 10.1
     }
 
@@ -465,8 +465,8 @@ WowWindow {
         wowParent: "Atr_Main_Panel"
         anchors.right: atr_Hilite1.right
         anchors.top: atr_Hilite1.top
-        width: 610
-        height: 116
+        width: 805
+        height: 341
     }
 
     Part {
@@ -969,14 +969,13 @@ WowWindow {
         id: atr_Recommend_Text
         name: "Atr_Recommend_Text"
         kind: "FontString"
-        text: "Auction created for Formidable Shoulder Pads of the Boar"
         wowParent: "Atr_Main_Panel"
         anchors.left: atr_Main_Panel.left
         anchors.leftMargin: 87
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 73
-        width: 346.9
-        height: 12.2
+        width: 1
+        height: 1
     }
 
     Part {
@@ -1210,7 +1209,7 @@ WowWindow {
         anchors.leftMargin: 2
         anchors.top: auctionFrame.top
         anchors.topMargin: 82
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1218,10 +1217,11 @@ WowWindow {
         id: auctionFilterButton10
         name: "AuctionFilterButton10"
         kind: "Button"
+        text: "Gem"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton9.left
         anchors.top: auctionFilterButton9.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1229,9 +1229,10 @@ WowWindow {
         id: auctionFilterButton10NormalText
         name: "AuctionFilterButton10NormalText"
         kind: "FontString"
+        text: "Gem"
         wowParent: "AuctionFilterButton10"
         anchors.left: auctionFilterButton10.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton10.verticalCenter
         width: 115
         height: 8
@@ -1241,10 +1242,11 @@ WowWindow {
         id: auctionFilterButton11
         name: "AuctionFilterButton11"
         kind: "Button"
+        text: "Miscellaneous"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton10.left
         anchors.top: auctionFilterButton10.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1252,9 +1254,10 @@ WowWindow {
         id: auctionFilterButton11NormalText
         name: "AuctionFilterButton11NormalText"
         kind: "FontString"
+        text: "Miscellaneous"
         wowParent: "AuctionFilterButton11"
         anchors.left: auctionFilterButton11.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton11.verticalCenter
         width: 115
         height: 8
@@ -1264,10 +1267,11 @@ WowWindow {
         id: auctionFilterButton12
         name: "AuctionFilterButton12"
         kind: "Button"
+        text: "Quest"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton11.left
         anchors.top: auctionFilterButton11.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1275,9 +1279,10 @@ WowWindow {
         id: auctionFilterButton12NormalText
         name: "AuctionFilterButton12NormalText"
         kind: "FontString"
+        text: "Quest"
         wowParent: "AuctionFilterButton12"
         anchors.left: auctionFilterButton12.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton12.verticalCenter
         width: 115
         height: 8
@@ -1379,7 +1384,7 @@ WowWindow {
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton1.left
         anchors.top: auctionFilterButton1.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1404,7 +1409,7 @@ WowWindow {
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton2.left
         anchors.top: auctionFilterButton2.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1425,10 +1430,11 @@ WowWindow {
         id: auctionFilterButton4
         name: "AuctionFilterButton4"
         kind: "Button"
+        text: "Consumable"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton3.left
         anchors.top: auctionFilterButton3.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1436,9 +1442,10 @@ WowWindow {
         id: auctionFilterButton4NormalText
         name: "AuctionFilterButton4NormalText"
         kind: "FontString"
+        text: "Consumable"
         wowParent: "AuctionFilterButton4"
         anchors.left: auctionFilterButton4.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton4.verticalCenter
         width: 115
         height: 8
@@ -1448,10 +1455,11 @@ WowWindow {
         id: auctionFilterButton5
         name: "AuctionFilterButton5"
         kind: "Button"
+        text: "Glyph"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton4.left
         anchors.top: auctionFilterButton4.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1459,9 +1467,10 @@ WowWindow {
         id: auctionFilterButton5NormalText
         name: "AuctionFilterButton5NormalText"
         kind: "FontString"
+        text: "Glyph"
         wowParent: "AuctionFilterButton5"
         anchors.left: auctionFilterButton5.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton5.verticalCenter
         width: 115
         height: 8
@@ -1471,10 +1480,11 @@ WowWindow {
         id: auctionFilterButton6
         name: "AuctionFilterButton6"
         kind: "Button"
+        text: "Trade Goods"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton5.left
         anchors.top: auctionFilterButton5.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1482,9 +1492,10 @@ WowWindow {
         id: auctionFilterButton6NormalText
         name: "AuctionFilterButton6NormalText"
         kind: "FontString"
+        text: "Trade Goods"
         wowParent: "AuctionFilterButton6"
         anchors.left: auctionFilterButton6.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton6.verticalCenter
         width: 115
         height: 8
@@ -1494,10 +1505,11 @@ WowWindow {
         id: auctionFilterButton7
         name: "AuctionFilterButton7"
         kind: "Button"
+        text: "Projectile"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton6.left
         anchors.top: auctionFilterButton6.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1505,9 +1517,10 @@ WowWindow {
         id: auctionFilterButton7NormalText
         name: "AuctionFilterButton7NormalText"
         kind: "FontString"
+        text: "Projectile"
         wowParent: "AuctionFilterButton7"
         anchors.left: auctionFilterButton7.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton7.verticalCenter
         width: 115
         height: 8
@@ -1517,10 +1530,11 @@ WowWindow {
         id: auctionFilterButton8
         name: "AuctionFilterButton8"
         kind: "Button"
+        text: "Quiver"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton7.left
         anchors.top: auctionFilterButton7.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1528,9 +1542,10 @@ WowWindow {
         id: auctionFilterButton8NormalText
         name: "AuctionFilterButton8NormalText"
         kind: "FontString"
+        text: "Quiver"
         wowParent: "AuctionFilterButton8"
         anchors.left: auctionFilterButton8.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton8.verticalCenter
         width: 115
         height: 8
@@ -1540,10 +1555,11 @@ WowWindow {
         id: auctionFilterButton9
         name: "AuctionFilterButton9"
         kind: "Button"
+        text: "Recipe"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton8.left
         anchors.top: auctionFilterButton8.bottom
-        width: 136
+        width: 156
         height: 20
     }
 
@@ -1551,9 +1567,10 @@ WowWindow {
         id: auctionFilterButton9NormalText
         name: "AuctionFilterButton9NormalText"
         kind: "FontString"
+        text: "Recipe"
         wowParent: "AuctionFilterButton9"
         anchors.left: auctionFilterButton9.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton9.verticalCenter
         width: 115
         height: 8
@@ -1712,7 +1729,7 @@ WowWindow {
         id: auctionFrameMoneyFrameCopperButton
         name: "AuctionFrameMoneyFrameCopperButton"
         kind: "Button"
-        text: "79"
+        text: "13"
         wowParent: "AuctionFrameMoneyFrame"
         anchors.right: auctionFrameMoneyFrame.right
         anchors.rightMargin: 13
@@ -1725,7 +1742,7 @@ WowWindow {
         id: auctionFrameMoneyFrameCopperButtonText
         name: "AuctionFrameMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "79"
+        text: "13"
         wowParent: "AuctionFrameMoneyFrameCopperButton"
         anchors.right: auctionFrameMoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -1738,7 +1755,7 @@ WowWindow {
         id: auctionFrameMoneyFrameGoldButton
         name: "AuctionFrameMoneyFrameGoldButton"
         kind: "Button"
-        text: "8146"
+        text: "3654"
         wowParent: "AuctionFrameMoneyFrame"
         anchors.right: auctionFrameMoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -1751,7 +1768,7 @@ WowWindow {
         id: auctionFrameMoneyFrameGoldButtonText
         name: "AuctionFrameMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "8146"
+        text: "3654"
         wowParent: "AuctionFrameMoneyFrameGoldButton"
         anchors.right: auctionFrameMoneyFrameGoldButton.right
         anchors.rightMargin: 13
@@ -1764,7 +1781,7 @@ WowWindow {
         id: auctionFrameMoneyFrameSilverButton
         name: "AuctionFrameMoneyFrameSilverButton"
         kind: "Button"
-        text: "83"
+        text: "16"
         wowParent: "AuctionFrameMoneyFrame"
         anchors.right: auctionFrameMoneyFrameCopperButton.left
         anchors.rightMargin: 4
@@ -1777,7 +1794,7 @@ WowWindow {
         id: auctionFrameMoneyFrameSilverButtonText
         name: "AuctionFrameMoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "83"
+        text: "16"
         wowParent: "AuctionFrameMoneyFrameSilverButton"
         anchors.right: auctionFrameMoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -3772,13 +3789,12 @@ WowWindow {
         id: auctionatorMessage2Frame
         name: "AuctionatorMessage2Frame"
         kind: "FontString"
-        text: "Drag an item you want to sell to this area."
         wowParent: "Atr_Main_Panel"
         anchors.horizontalCenter: atr_Main_Panel.horizontalCenter
         anchors.horizontalCenterOffset: 18
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 65
-        width: 252.1
+        width: 265.7
         height: 100
     }
 
@@ -3857,13 +3873,13 @@ WowWindow {
         id: auctionatorTitle
         name: "AuctionatorTitle"
         kind: "FontString"
-        text: "Auctionator+ - Sell"
+        text: "Auctionator+ - Buy"
         wowParent: "Atr_Main_Panel"
         anchors.horizontalCenter: atr_Main_Panel.horizontalCenter
         anchors.horizontalCenterOffset: -90
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: -7
-        width: 114.2
+        width: 116.4
         height: 12.2
     }
 
@@ -6259,7 +6275,7 @@ WowWindow {
         wowParent: "AuctionsCancelAuctionButton"
         anchors.horizontalCenter: auctionsCancelAuctionButton.horizontalCenter
         anchors.verticalCenter: auctionsCancelAuctionButton.verticalCenter
-        width: 101.3
+        width: 81.2
         height: 10.1
     }
 
@@ -6286,7 +6302,7 @@ WowWindow {
         wowParent: "AuctionsCloseButton"
         anchors.horizontalCenter: auctionsCloseButton.horizontalCenter
         anchors.verticalCenter: auctionsCloseButton.verticalCenter
-        width: 35.2
+        width: 28
         height: 10.1
     }
 
@@ -6313,7 +6329,7 @@ WowWindow {
         wowParent: "AuctionsCreateAuctionButton"
         anchors.horizontalCenter: auctionsCreateAuctionButton.horizontalCenter
         anchors.verticalCenter: auctionsCreateAuctionButton.verticalCenter
-        width: 102
+        width: 81.2
         height: 10.1
     }
 
@@ -7043,7 +7059,7 @@ WowWindow {
         wowParent: "BrowseBidButton"
         anchors.horizontalCenter: browseBidButton.horizontalCenter
         anchors.verticalCenter: browseBidButton.verticalCenter
-        width: 18
+        width: 17.3
         height: 10.1
     }
 
@@ -9535,7 +9551,7 @@ WowWindow {
         wowParent: "BrowseBuyoutButton"
         anchors.horizontalCenter: browseBuyoutButton.horizontalCenter
         anchors.verticalCenter: browseBuyoutButton.verticalCenter
-        width: 48.8
+        width: 38.8
         height: 10.1
     }
 
@@ -9562,7 +9578,7 @@ WowWindow {
         wowParent: "BrowseCloseButton"
         anchors.horizontalCenter: browseCloseButton.horizontalCenter
         anchors.verticalCenter: browseCloseButton.verticalCenter
-        width: 35.2
+        width: 28
         height: 10.1
     }
 
@@ -10010,7 +10026,7 @@ WowWindow {
         wowParent: "BrowseResetButton"
         anchors.horizontalCenter: browseResetButton.horizontalCenter
         anchors.verticalCenter: browseResetButton.verticalCenter
-        width: 35.2
+        width: 30.2
         height: 10.1
     }
 
@@ -10111,7 +10127,7 @@ WowWindow {
         wowParent: "BrowseSearchButton"
         anchors.horizontalCenter: browseSearchButton.horizontalCenter
         anchors.verticalCenter: browseSearchButton.verticalCenter
-        width: 43.1
+        width: 36.6
         height: 10.1
     }
 

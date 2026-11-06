@@ -13,14 +13,13 @@ WowWindow {
         id: openMailBodyText
         name: "OpenMailBodyText"
         kind: "FontString"
-        text: "These items were recovered after the server issue on October 14. Sorry for the trouble."
         wowParent: "OpenMailScrollChildFrame"
         anchors.left: openMailScrollChildFrame.left
         anchors.leftMargin: 10
         anchors.top: openMailScrollChildFrame.top
         anchors.topMargin: 10
         width: 276
-        height: 60
+        height: 240.2
     }
 
     Part {
@@ -549,7 +548,7 @@ WowWindow {
         anchors.left: openMailScrollFrame.left
         anchors.top: openMailScrollFrame.top
         width: 296
-        height: 324
+        height: 314.7
     }
 
     Part {
@@ -562,7 +561,7 @@ WowWindow {
         anchors.top: openMailFrame.top
         anchors.topMargin: 13
         width: 296
-        height: 324
+        height: 314.7
     }
 
     Part {
@@ -575,7 +574,7 @@ WowWindow {
         anchors.top: openMailScrollFrame.top
         anchors.topMargin: -6
         width: 330
-        height: 336
+        height: 326.7
     }
 
     Part {
@@ -588,7 +587,7 @@ WowWindow {
         anchors.top: openMailScrollFrame.top
         anchors.topMargin: -4
         width: 304
-        height: 332
+        height: 322.7
     }
 
     Part {
@@ -602,7 +601,7 @@ WowWindow {
         anchors.top: openMailScrollFrame.top
         anchors.topMargin: 16
         width: 16
-        height: 292
+        height: 282.7
     }
 
     Part {
@@ -614,7 +613,7 @@ WowWindow {
         anchors.top: openMailScrollFrameScrollBarScrollUpButton.top
         anchors.topMargin: -1
         width: 18
-        height: 326
+        height: 316.7
     }
 
     Part {
@@ -645,7 +644,7 @@ WowWindow {
         id: openMailSender
         name: "OpenMailSender"
         kind: "FontString"
-        text: "Customer Support"
+        text: "Brew of the Month Club"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.left: openMailSenderLabel.right
         anchors.leftMargin: 5
@@ -671,7 +670,7 @@ WowWindow {
         id: openMailSubject
         name: "OpenMailSubject"
         kind: "FontString"
-        text: "Recovered items"
+        text: "Fun For You And Your Friends"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.left: openMailSubjectLabel.right
         anchors.leftMargin: 5

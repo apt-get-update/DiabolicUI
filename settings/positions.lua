@@ -30,7 +30,7 @@ Engine:NewStaticConfig("Positions", {
 	ClassTrainerExpandButtonFrame = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 15, -66 }, -- Frame
 	-- the greeting across the list's width under the band, its panel's left on
 	-- the parchments', its right on their panels'
-	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Hello, priest!  Ready for some training?"
+	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -102 }, -- ScrollFrame
 
 	-- DressUpFrame ----------------------------------------------------------
@@ -60,7 +60,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
-	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 80 Human Warlock"
+	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 11 Human Warlock"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
@@ -79,9 +79,11 @@ Engine:NewStaticConfig("Positions", {
 
 	-- LFRParentFrame --------------------------------------------------------
 	LFRBrowseFrameColumnHeader1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 26, -40 }, -- Button "Name"
+	LFRBrowseFrameInviteButton = { "LEFT", "LFRBrowseFrameSendMessageButton", "RIGHT", 6, 0, 84, 22 }, -- Button "Invite"
 	LFRBrowseFrameListButton1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 12, -66 }, -- Button
-	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRBrowseFrame", "BOTTOMLEFT", 25, -6 }, -- Button "Send Message"
-	LFRQueueFrameAcceptCommentButton = { "BOTTOMRIGHT", "LFRQueueFrame", "BOTTOMRIGHT", -21, -6 }, -- Button "Set Comment"
+	LFRBrowseFrameRefreshButton = { "LEFT", "LFRBrowseFrameInviteButton", "RIGHT", 6, 0, 90, 22 }, -- Button "Refresh"
+	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRBrowseFrame", "BOTTOMLEFT", 21, -6, 110, 22 }, -- Button "Send Message"
+	LFRQueueFrameAcceptCommentButton = { "BOTTOMRIGHT", "LFRQueueFrame", "BOTTOMRIGHT", -38, -6 }, -- Button "Set Comment"
 	LFRQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFRQueueFrame", "BOTTOMLEFT", 21, -6 }, -- Button "List My Name"
 	LFRQueueFrameSpecificListButton1 = { "TOPLEFT", "LFRQueueFrameSpecific", "TOPLEFT", 17, -132 }, -- Frame
 
@@ -94,7 +96,7 @@ Engine:NewStaticConfig("Positions", {
 	MacroExitButton = { "CENTER", "MacroFrame", "TOPLEFT", 303, -432 }, -- Button "Exit"
 	-- the count of characters right of "Enter Macro Commands:" (Blizzard's
 	-- under the text, over the foot)
-	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "41/255 Characters Used"
+	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "80/255 Characters Used"
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
 	MacroNewButton = { "RIGHT", "MacroExitButton", "LEFT", -6, 0 }, -- Button "New"
 
@@ -121,17 +123,17 @@ Engine:NewStaticConfig("Positions", {
 	MerchantItem9 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -280 }, -- Frame
 	MerchantMoneyFrame = { "BOTTOMRIGHT", "MerchantFrameDiabolic", "BOTTOMRIGHT", -24, 30 }, -- Frame
 	MerchantNextPageButton = { "LEFT", "MerchantPageText", "RIGHT", 8, 0 }, -- Button
-	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 3"
+	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 4"
 	MerchantPrevPageButton = { "RIGHT", "MerchantPageText", "LEFT", -8, 0 }, -- Button
 	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 288, -434 }, -- Button
 
 	-- PVPParentFrame --------------------------------------------------------
 	-- the battlegrounds' block (title row, list, rewards) 5 left: in the middle
-	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Arathi Basin (Call to Arms)"
+	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Random Battleground"
 	-- 8 apart
 	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0 }, -- Button "Cancel"
 	-- 8 apart
-	PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 }, -- Button "Join as Group"
+	PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 }, -- Button "Join as Party"
 	-- the rewards 208 high (Blizzard's 232): 6 over the foot's iron bar, 6 under the list
 	PVPBattlegroundFrameInfoScrollFrame = { "BOTTOMLEFT", "PVPBattlegroundFrame", "BOTTOMLEFT", 15, 122, 298, 208 }, -- ScrollFrame
 	-- the buttons in the middle of the window's foot (its middle 15 left of the
@@ -199,6 +201,6 @@ Engine:NewStaticConfig("Positions", {
 	TradeSkillReagent5 = { "TOPLEFT", "TradeSkillReagent3", "BOTTOMLEFT", 0, -6 }, -- Button
 	TradeSkillReagent6 = { "LEFT", "TradeSkillReagent5", "RIGHT", 0, 0 }, -- Button
 	TradeSkillReagent7 = { "TOPLEFT", "TradeSkillReagent6", "BOTTOMLEFT", 0, -6 }, -- Button
-	TradeSkillSkill1 = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 22, -89 }, -- Button "Bandage"
+	TradeSkillSkill1 = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 22, -89 }, -- Button " Heavy Silk Bandage"
 	TradeSkillSubClassDropDown = { "RIGHT", "TradeSkillInvSlotDropDown", "LEFT", 27, 0 }, -- Frame
 })

@@ -151,6 +151,14 @@ function check(model) {
             say(named(p) + " is out of the window.", [p.name])
     })
 
+    // The foot: what's on it past its sides (the window's iron is there).
+    if (foot) controls.forEach(function (p) {
+        if (p === close || isHung(p)) return
+        var b = box(p), x = (b.left + b.right) / 2, y = (b.top + b.bottom) / 2
+        if (y > foot.top && y < foot.bottom && x > win.left && x < win.right && (b.left < foot.left - 1 || b.right > foot.right + 1))
+            say(named(p) + " is past the foot's side.", [p.name])
+    })
+
     if (zones.length) {
         // Room: over the content (under the band, or the tabs under it) and
         // under it (over the foot): at least the rule's, and even.

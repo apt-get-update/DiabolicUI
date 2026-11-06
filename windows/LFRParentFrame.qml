@@ -116,11 +116,11 @@ WowWindow {
         text: "Invite"
         wowParent: "LFRBrowseFrame"
         style: "Button"
-        anchors.right: lFRParentFrame.right
-        anchors.rightMargin: 115
-        anchors.bottom: lFRParentFrame.bottom
-        anchors.bottomMargin: -6
-        width: 98.1
+        pin: "all"
+        anchors.left: lFRBrowseFrameSendMessageButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: lFRBrowseFrameSendMessageButton.verticalCenter
+        width: 84
         height: 22
     }
 
@@ -242,11 +242,11 @@ WowWindow {
         text: "Refresh"
         wowParent: "LFRBrowseFrame"
         style: "Button"
-        anchors.right: lFRParentFrame.right
-        anchors.rightMargin: 7
-        anchors.bottom: lFRParentFrame.bottom
-        anchors.bottomMargin: -6
-        width: 102
+        pin: "all"
+        anchors.left: lFRBrowseFrameInviteButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: lFRBrowseFrameInviteButton.verticalCenter
+        width: 90
         height: 22
     }
 
@@ -269,12 +269,12 @@ WowWindow {
         text: "Send Message"
         wowParent: "LFRBrowseFrame"
         style: "Button"
-        pin: "place"
+        pin: "all"
         anchors.left: lFRBrowseFrame.left
-        anchors.leftMargin: 25
+        anchors.leftMargin: 21
         anchors.bottom: lFRBrowseFrame.bottom
         anchors.bottomMargin: -6
-        width: 110.9
+        width: 110
         height: 22
     }
 
@@ -443,7 +443,7 @@ WowWindow {
         style: "Button"
         pin: "place"
         anchors.right: lFRQueueFrame.right
-        anchors.rightMargin: 21
+        anchors.rightMargin: 38
         anchors.bottom: lFRQueueFrame.bottom
         anchors.bottomMargin: -6
         width: 115
@@ -596,7 +596,7 @@ WowWindow {
         anchors.leftMargin: 17
         anchors.top: lFRQueueFrameSpecific.top
         anchors.topMargin: 132
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -729,6 +729,18 @@ WowWindow {
     }
 
     Part {
+        id: lFRQueueFrameSpecificListButton12InstanceLevel
+        name: "LFRQueueFrameSpecificListButton12InstanceLevel"
+        kind: "FontString"
+        text: "(80 - 83)"
+        wowParent: "LFRQueueFrameSpecificListButton12"
+        anchors.right: lFRQueueFrameSpecificListButton12.right
+        anchors.verticalCenter: lFRQueueFrameSpecificListButton12.verticalCenter
+        width: 60
+        height: 16
+    }
+
+    Part {
         id: lFRQueueFrameSpecificListButton12InstanceName
         name: "LFRQueueFrameSpecificListButton12InstanceName"
         kind: "FontString"
@@ -848,15 +860,27 @@ WowWindow {
     }
 
     Part {
+        id: lFRQueueFrameSpecificListButton1InstanceLevel
+        name: "LFRQueueFrameSpecificListButton1InstanceLevel"
+        kind: "FontString"
+        text: "(80 - 83)"
+        wowParent: "LFRQueueFrameSpecificListButton1"
+        anchors.right: lFRQueueFrameSpecificListButton1.right
+        anchors.verticalCenter: lFRQueueFrameSpecificListButton1.verticalCenter
+        width: 60
+        height: 16
+    }
+
+    Part {
         id: lFRQueueFrameSpecificListButton1InstanceName
         name: "LFRQueueFrameSpecificListButton1InstanceName"
         kind: "FontString"
-        text: "Classic Raid"
+        text: "Wrath of the Lich King Raid (25)"
         wowParent: "LFRQueueFrameSpecificListButton1"
         anchors.left: lFRQueueFrameSpecificListButton1.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton1.verticalCenter
-        width: 275
+        width: 255
         height: 16
     }
 
@@ -867,7 +891,7 @@ WowWindow {
         wowParent: "LFRQueueFrameSpecific"
         anchors.left: lFRQueueFrameSpecificListButton1.left
         anchors.top: lFRQueueFrameSpecificListButton1.bottom
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -886,7 +910,7 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton2InstanceLevel
         name: "LFRQueueFrameSpecificListButton2InstanceLevel"
         kind: "FontString"
-        text: "(56 - 83)"
+        text: "(80 - 83)"
         wowParent: "LFRQueueFrameSpecificListButton2"
         anchors.right: lFRQueueFrameSpecificListButton2.right
         anchors.verticalCenter: lFRQueueFrameSpecificListButton2.verticalCenter
@@ -898,12 +922,12 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton2InstanceName
         name: "LFRQueueFrameSpecificListButton2InstanceName"
         kind: "FontString"
-        text: "Upper Blackrock Spire"
+        text: "Icecrown Citadel"
         wowParent: "LFRQueueFrameSpecificListButton2"
         anchors.left: lFRQueueFrameSpecificListButton2.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton2.verticalCenter
-        width: 205
+        width: 185
         height: 16
     }
 
@@ -914,7 +938,7 @@ WowWindow {
         wowParent: "LFRQueueFrameSpecific"
         anchors.left: lFRQueueFrameSpecificListButton2.left
         anchors.top: lFRQueueFrameSpecificListButton2.bottom
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -933,7 +957,7 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton3InstanceLevel
         name: "LFRQueueFrameSpecificListButton3InstanceLevel"
         kind: "FontString"
-        text: "(56 - 83)"
+        text: "(80 - 83)"
         wowParent: "LFRQueueFrameSpecificListButton3"
         anchors.right: lFRQueueFrameSpecificListButton3.right
         anchors.verticalCenter: lFRQueueFrameSpecificListButton3.verticalCenter
@@ -945,12 +969,12 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton3InstanceName
         name: "LFRQueueFrameSpecificListButton3InstanceName"
         kind: "FontString"
-        text: "Zul'Gurub"
+        text: "Naxxramas"
         wowParent: "LFRQueueFrameSpecificListButton3"
         anchors.left: lFRQueueFrameSpecificListButton3.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton3.verticalCenter
-        width: 205
+        width: 185
         height: 16
     }
 
@@ -961,7 +985,7 @@ WowWindow {
         wowParent: "LFRQueueFrameSpecific"
         anchors.left: lFRQueueFrameSpecificListButton3.left
         anchors.top: lFRQueueFrameSpecificListButton3.bottom
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -980,7 +1004,7 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton4InstanceLevel
         name: "LFRQueueFrameSpecificListButton4InstanceLevel"
         kind: "FontString"
-        text: "(60 - 83)"
+        text: "(80 - 83)"
         wowParent: "LFRQueueFrameSpecificListButton4"
         anchors.right: lFRQueueFrameSpecificListButton4.right
         anchors.verticalCenter: lFRQueueFrameSpecificListButton4.verticalCenter
@@ -992,12 +1016,12 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton4InstanceName
         name: "LFRQueueFrameSpecificListButton4InstanceName"
         kind: "FontString"
-        text: "Ahn'Qiraj Ruins"
+        text: "Onyxia's Lair"
         wowParent: "LFRQueueFrameSpecificListButton4"
         anchors.left: lFRQueueFrameSpecificListButton4.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton4.verticalCenter
-        width: 205
+        width: 185
         height: 16
     }
 
@@ -1008,7 +1032,7 @@ WowWindow {
         wowParent: "LFRQueueFrameSpecific"
         anchors.left: lFRQueueFrameSpecificListButton4.left
         anchors.top: lFRQueueFrameSpecificListButton4.bottom
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -1027,7 +1051,7 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton5InstanceLevel
         name: "LFRQueueFrameSpecificListButton5InstanceLevel"
         kind: "FontString"
-        text: "(60 - 83)"
+        text: "(80 - 83)"
         wowParent: "LFRQueueFrameSpecificListButton5"
         anchors.right: lFRQueueFrameSpecificListButton5.right
         anchors.verticalCenter: lFRQueueFrameSpecificListButton5.verticalCenter
@@ -1039,12 +1063,12 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton5InstanceName
         name: "LFRQueueFrameSpecificListButton5InstanceName"
         kind: "FontString"
-        text: "Ahn'Qiraj Temple"
+        text: "Ruby Sanctum"
         wowParent: "LFRQueueFrameSpecificListButton5"
         anchors.left: lFRQueueFrameSpecificListButton5.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton5.verticalCenter
-        width: 205
+        width: 185
         height: 16
     }
 
@@ -1055,7 +1079,7 @@ WowWindow {
         wowParent: "LFRQueueFrameSpecific"
         anchors.left: lFRQueueFrameSpecificListButton5.left
         anchors.top: lFRQueueFrameSpecificListButton5.bottom
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -1071,10 +1095,22 @@ WowWindow {
     }
 
     Part {
+        id: lFRQueueFrameSpecificListButton6ExpandOrCollapseButton
+        name: "LFRQueueFrameSpecificListButton6ExpandOrCollapseButton"
+        kind: "Button"
+        wowParent: "LFRQueueFrameSpecificListButton6"
+        anchors.left: lFRQueueFrameSpecificListButton6.left
+        anchors.leftMargin: 3
+        anchors.verticalCenter: lFRQueueFrameSpecificListButton6.verticalCenter
+        width: 13
+        height: 13
+    }
+
+    Part {
         id: lFRQueueFrameSpecificListButton6InstanceLevel
         name: "LFRQueueFrameSpecificListButton6InstanceLevel"
         kind: "FontString"
-        text: "(60 - 83)"
+        text: "(80 - 83)"
         wowParent: "LFRQueueFrameSpecificListButton6"
         anchors.right: lFRQueueFrameSpecificListButton6.right
         anchors.verticalCenter: lFRQueueFrameSpecificListButton6.verticalCenter
@@ -1086,12 +1122,12 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton6InstanceName
         name: "LFRQueueFrameSpecificListButton6InstanceName"
         kind: "FontString"
-        text: "Blackwing Lair"
+        text: "The Eye of Eternity"
         wowParent: "LFRQueueFrameSpecificListButton6"
         anchors.left: lFRQueueFrameSpecificListButton6.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton6.verticalCenter
-        width: 205
+        width: 185
         height: 16
     }
 
@@ -1102,7 +1138,7 @@ WowWindow {
         wowParent: "LFRQueueFrameSpecific"
         anchors.left: lFRQueueFrameSpecificListButton6.left
         anchors.top: lFRQueueFrameSpecificListButton6.bottom
-        width: 315
+        width: 295
         height: 16
     }
 
@@ -1121,7 +1157,7 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton7InstanceLevel
         name: "LFRQueueFrameSpecificListButton7InstanceLevel"
         kind: "FontString"
-        text: "(60 - 83)"
+        text: "(80 - 83)"
         wowParent: "LFRQueueFrameSpecificListButton7"
         anchors.right: lFRQueueFrameSpecificListButton7.right
         anchors.verticalCenter: lFRQueueFrameSpecificListButton7.verticalCenter
@@ -1133,12 +1169,12 @@ WowWindow {
         id: lFRQueueFrameSpecificListButton7InstanceName
         name: "LFRQueueFrameSpecificListButton7InstanceName"
         kind: "FontString"
-        text: "Molten Core"
+        text: "The Obsidian Sanctum"
         wowParent: "LFRQueueFrameSpecificListButton7"
         anchors.left: lFRQueueFrameSpecificListButton7.left
         anchors.leftMargin: 40
         anchors.verticalCenter: lFRQueueFrameSpecificListButton7.verticalCenter
-        width: 205
+        width: 185
         height: 16
     }
 
@@ -1151,6 +1187,17 @@ WowWindow {
         anchors.top: lFRQueueFrameSpecificListButton7.bottom
         width: 295
         height: 16
+    }
+
+    Part {
+        id: lFRQueueFrameSpecificListButton8EnableButton
+        name: "LFRQueueFrameSpecificListButton8EnableButton"
+        kind: "CheckButton"
+        wowParent: "LFRQueueFrameSpecificListButton8"
+        anchors.horizontalCenter: lFRQueueFrameSpecificListButton8LockedIndicator.horizontalCenter
+        anchors.verticalCenter: lFRQueueFrameSpecificListButton8LockedIndicator.verticalCenter
+        width: 20
+        height: 20
     }
 
     Part {
@@ -1187,6 +1234,17 @@ WowWindow {
         anchors.top: lFRQueueFrameSpecificListButton8.bottom
         width: 295
         height: 16
+    }
+
+    Part {
+        id: lFRQueueFrameSpecificListButton9EnableButton
+        name: "LFRQueueFrameSpecificListButton9EnableButton"
+        kind: "CheckButton"
+        wowParent: "LFRQueueFrameSpecificListButton9"
+        anchors.horizontalCenter: lFRQueueFrameSpecificListButton9LockedIndicator.horizontalCenter
+        anchors.verticalCenter: lFRQueueFrameSpecificListButton9LockedIndicator.verticalCenter
+        width: 20
+        height: 20
     }
 
     Part {
@@ -1319,10 +1377,12 @@ WowWindow {
     Ghost { id: lFRQueueFrameSpecificListButton12LockedIndicator; name: "LFRQueueFrameSpecificListButton12LockedIndicator"; x: 48; y: 316; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton14LockedIndicator; name: "LFRQueueFrameSpecificListButton14LockedIndicator"; x: 48; y: 348; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton1LockedIndicator; name: "LFRQueueFrameSpecificListButton1LockedIndicator"; x: 48; y: 140; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton2LockedIndicator; name: "LFRQueueFrameSpecificListButton2LockedIndicator"; x: 48; y: 156; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton2LockedIndicator; name: "LFRQueueFrameSpecificListButton2LockedIndicator"; x: -464.2; y: 163.1; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton3LockedIndicator; name: "LFRQueueFrameSpecificListButton3LockedIndicator"; x: 48; y: 172; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton4LockedIndicator; name: "LFRQueueFrameSpecificListButton4LockedIndicator"; x: 48; y: 188; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton5LockedIndicator; name: "LFRQueueFrameSpecificListButton5LockedIndicator"; x: 48; y: 204; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton6LockedIndicator; name: "LFRQueueFrameSpecificListButton6LockedIndicator"; x: 48; y: 220; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton7LockedIndicator; name: "LFRQueueFrameSpecificListButton7LockedIndicator"; x: 48; y: 236; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton8LockedIndicator; name: "LFRQueueFrameSpecificListButton8LockedIndicator"; x: 48; y: 252; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton9LockedIndicator; name: "LFRQueueFrameSpecificListButton9LockedIndicator"; x: 48; y: 268; width: 0; height: 0 }
 }

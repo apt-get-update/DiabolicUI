@@ -289,12 +289,12 @@ WowWindow {
         name: "MailFrameDiabolicFoot"
         kind: "Frame"
         wowParent: "MailFrameDiabolic"
-        anchors.horizontalCenter: sendMailMailButton.horizontalCenter
-        anchors.horizontalCenterOffset: -39.5
-        anchors.top: sendMailMailButton.top
+        anchors.horizontalCenter: inboxPrevPageButton.horizontalCenter
+        anchors.horizontalCenterOffset: 134
+        anchors.top: inboxPrevPageButton.top
         anchors.topMargin: -6
         width: 354
-        height: 45
+        height: 36
     }
 
     Part {
@@ -395,7 +395,7 @@ WowWindow {
         id: mailItem1ExpireTime
         name: "MailItem1ExpireTime"
         kind: "Button"
-        text: "3627 Days "
+        text: "28 Days "
         wowParent: "MailItem1"
         anchors.right: mailItem1.right
         anchors.rightMargin: -10
@@ -409,7 +409,7 @@ WowWindow {
         id: mailItem1Sender
         name: "MailItem1Sender"
         kind: "FontString"
-        text: "Customer Support"
+        text: "Brew of the Month Club"
         wowParent: "MailItem1"
         anchors.left: mailItem1.left
         anchors.leftMargin: 47
@@ -423,7 +423,7 @@ WowWindow {
         id: mailItem1Subject
         name: "MailItem1Subject"
         kind: "FontString"
-        text: "Auction deposits refunded"
+        text: "Fun For You And Your Friends"
         wowParent: "MailItem1"
         anchors.left: mailItem1Sender.left
         anchors.top: mailItem1Sender.bottom
@@ -539,7 +539,6 @@ WowWindow {
         id: mailItem3Sender
         name: "MailItem3Sender"
         kind: "FontString"
-        text: "Customer Support"
         wowParent: "MailItem3"
         anchors.left: mailItem3.left
         anchors.leftMargin: 47
@@ -553,7 +552,6 @@ WowWindow {
         id: mailItem3Subject
         name: "MailItem3Subject"
         kind: "FontString"
-        text: "Recovered items"
         wowParent: "MailItem3"
         anchors.left: mailItem3Sender.left
         anchors.top: mailItem3Sender.bottom
@@ -604,7 +602,6 @@ WowWindow {
         id: mailItem4Sender
         name: "MailItem4Sender"
         kind: "FontString"
-        text: "Customer Support"
         wowParent: "MailItem4"
         anchors.left: mailItem4.left
         anchors.leftMargin: 47
@@ -618,7 +615,6 @@ WowWindow {
         id: mailItem4Subject
         name: "MailItem4Subject"
         kind: "FontString"
-        text: "Recovered items"
         wowParent: "MailItem4"
         anchors.left: mailItem4Sender.left
         anchors.top: mailItem4Sender.bottom

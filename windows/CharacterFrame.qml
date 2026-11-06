@@ -379,12 +379,12 @@ WowWindow {
         id: characterLevelText
         name: "CharacterLevelText"
         kind: "FontString"
-        text: "Level 62 Dwarf Death Knight"
+        text: "Level 80 Dwarf Priest"
         wowParent: "PaperDollFrame"
         anchors.horizontalCenter: characterNameText.horizontalCenter
         anchors.top: characterNameText.bottom
         anchors.topMargin: 6
-        width: 152.5
+        width: 113.8
         height: 10.3
     }
 
@@ -465,12 +465,12 @@ WowWindow {
         id: characterNameText
         name: "CharacterNameText"
         kind: "FontString"
-        text: "Padizwerch"
+        text: "Crusader Padirac"
         wowParent: "CharacterFrameDiabolicTitlePlate"
         anchors.horizontalCenter: characterFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: characterFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 102.7
+        width: 158.8
         height: 14.2
     }
 
@@ -811,7 +811,7 @@ WowWindow {
         wowParent: "DiabolicUICharacterStats11Stat"
         anchors.right: diabolicUICharacterStats11Stat.right
         anchors.verticalCenter: diabolicUICharacterStats11Stat.verticalCenter
-        width: 20.5
+        width: 13.4
         height: 10.3
     }
 
@@ -858,7 +858,7 @@ WowWindow {
         wowParent: "DiabolicUICharacterStats12Stat"
         anchors.right: diabolicUICharacterStats12Stat.right
         anchors.verticalCenter: diabolicUICharacterStats12Stat.verticalCenter
-        width: 19.8
+        width: 14.2
         height: 10.3
     }
 
@@ -949,11 +949,10 @@ WowWindow {
         id: diabolicUICharacterStats14StatText
         name: "DiabolicUICharacterStats14StatText"
         kind: "FontString"
-        text: "29"
         wowParent: "DiabolicUICharacterStats14Stat"
         anchors.right: diabolicUICharacterStats14Stat.right
         anchors.verticalCenter: diabolicUICharacterStats14Stat.verticalCenter
-        width: 13.4
+        width: 20.5
         height: 10.3
     }
 
@@ -997,11 +996,10 @@ WowWindow {
         id: diabolicUICharacterStats15StatText
         name: "DiabolicUICharacterStats15StatText"
         kind: "FontString"
-        text: "45"
         wowParent: "DiabolicUICharacterStats15Stat"
         anchors.right: diabolicUICharacterStats15Stat.right
         anchors.verticalCenter: diabolicUICharacterStats15Stat.verticalCenter
-        width: 13.4
+        width: 19.8
         height: 10.3
     }
 
@@ -1045,11 +1043,11 @@ WowWindow {
         id: diabolicUICharacterStats16StatText
         name: "DiabolicUICharacterStats16StatText"
         kind: "FontString"
-        text: "4000"
+        text: "2027"
         wowParent: "DiabolicUICharacterStats16Stat"
         anchors.right: diabolicUICharacterStats16Stat.right
         anchors.verticalCenter: diabolicUICharacterStats16Stat.verticalCenter
-        width: 26.1
+        width: 26.9
         height: 10.3
     }
 
@@ -1070,11 +1068,11 @@ WowWindow {
         id: diabolicUICharacterStats21Label
         name: "DiabolicUICharacterStats21Label"
         kind: "FontString"
-        text: "Damage:"
+        text: "Bonus Damage:"
         wowParent: "DiabolicUICharacterStats21"
         anchors.left: diabolicUICharacterStats21.left
         anchors.verticalCenter: diabolicUICharacterStats21.verticalCenter
-        width: 48.2
+        width: 84.5
         height: 10.3
     }
 
@@ -1093,11 +1091,11 @@ WowWindow {
         id: diabolicUICharacterStats21StatText
         name: "DiabolicUICharacterStats21StatText"
         kind: "FontString"
-        text: "383-478"
+        text: "1780"
         wowParent: "DiabolicUICharacterStats21Stat"
         anchors.right: diabolicUICharacterStats21Stat.right
         anchors.verticalCenter: diabolicUICharacterStats21Stat.verticalCenter
-        width: 42.7
+        width: 26.1
         height: 10.3
     }
 
@@ -1118,11 +1116,11 @@ WowWindow {
         id: diabolicUICharacterStats22Label
         name: "DiabolicUICharacterStats22Label"
         kind: "FontString"
-        text: "Speed:"
+        text: "Bonus Healing:"
         wowParent: "DiabolicUICharacterStats22"
         anchors.left: diabolicUICharacterStats22.left
         anchors.verticalCenter: diabolicUICharacterStats22.verticalCenter
-        width: 37.1
+        width: 81.4
         height: 10.3
     }
 
@@ -1141,11 +1139,11 @@ WowWindow {
         id: diabolicUICharacterStats22StatText
         name: "DiabolicUICharacterStats22StatText"
         kind: "FontString"
-        text: "3.40"
+        text: "1780"
         wowParent: "DiabolicUICharacterStats22Stat"
         anchors.right: diabolicUICharacterStats22Stat.right
         anchors.verticalCenter: diabolicUICharacterStats22Stat.verticalCenter
-        width: 22.9
+        width: 26.1
         height: 10.3
     }
 
@@ -1166,11 +1164,11 @@ WowWindow {
         id: diabolicUICharacterStats23Label
         name: "DiabolicUICharacterStats23Label"
         kind: "FontString"
-        text: "Power:"
+        text: "Hit Rating:"
         wowParent: "DiabolicUICharacterStats23"
         anchors.left: diabolicUICharacterStats23.left
         anchors.verticalCenter: diabolicUICharacterStats23.verticalCenter
-        width: 36.3
+        width: 56.9
         height: 10.3
     }
 
@@ -1189,7 +1187,7 @@ WowWindow {
         id: diabolicUICharacterStats23StatText
         name: "DiabolicUICharacterStats23StatText"
         kind: "FontString"
-        text: "810"
+        text: "263"
         wowParent: "DiabolicUICharacterStats23Stat"
         anchors.right: diabolicUICharacterStats23Stat.right
         anchors.verticalCenter: diabolicUICharacterStats23Stat.verticalCenter
@@ -1214,11 +1212,11 @@ WowWindow {
         id: diabolicUICharacterStats24Label
         name: "DiabolicUICharacterStats24Label"
         kind: "FontString"
-        text: "Hit Rating:"
+        text: "Crit Chance:"
         wowParent: "DiabolicUICharacterStats24"
         anchors.left: diabolicUICharacterStats24.left
         anchors.verticalCenter: diabolicUICharacterStats24.verticalCenter
-        width: 56.9
+        width: 65.6
         height: 10.3
     }
 
@@ -1237,11 +1235,11 @@ WowWindow {
         id: diabolicUICharacterStats24StatText
         name: "DiabolicUICharacterStats24StatText"
         kind: "FontString"
-        text: "22"
+        text: "14.24%"
         wowParent: "DiabolicUICharacterStats24Stat"
         anchors.right: diabolicUICharacterStats24Stat.right
         anchors.verticalCenter: diabolicUICharacterStats24Stat.verticalCenter
-        width: 14.2
+        width: 39.5
         height: 10.3
     }
 
@@ -1262,11 +1260,11 @@ WowWindow {
         id: diabolicUICharacterStats25Label
         name: "DiabolicUICharacterStats25Label"
         kind: "FontString"
-        text: "Crit Chance:"
+        text: "Haste Rating:"
         wowParent: "DiabolicUICharacterStats25"
         anchors.left: diabolicUICharacterStats25.left
         anchors.verticalCenter: diabolicUICharacterStats25.verticalCenter
-        width: 65.6
+        width: 71.9
         height: 10.3
     }
 
@@ -1285,11 +1283,11 @@ WowWindow {
         id: diabolicUICharacterStats25StatText
         name: "DiabolicUICharacterStats25StatText"
         kind: "FontString"
-        text: "15.78%"
+        text: "413"
         wowParent: "DiabolicUICharacterStats25Stat"
         anchors.right: diabolicUICharacterStats25Stat.right
         anchors.verticalCenter: diabolicUICharacterStats25Stat.verticalCenter
-        width: 39.5
+        width: 19.8
         height: 10.3
     }
 
@@ -1310,11 +1308,11 @@ WowWindow {
         id: diabolicUICharacterStats26Label
         name: "DiabolicUICharacterStats26Label"
         kind: "FontString"
-        text: "Expertise:"
+        text: "Mana Regen:"
         wowParent: "DiabolicUICharacterStats26"
         anchors.left: diabolicUICharacterStats26.left
         anchors.verticalCenter: diabolicUICharacterStats26.verticalCenter
-        width: 52.9
+        width: 70.3
         height: 10.3
     }
 
@@ -1333,11 +1331,11 @@ WowWindow {
         id: diabolicUICharacterStats26StatText
         name: "DiabolicUICharacterStats26StatText"
         kind: "FontString"
-        text: "0"
+        text: "345"
         wowParent: "DiabolicUICharacterStats26Stat"
         anchors.right: diabolicUICharacterStats26Stat.right
         anchors.verticalCenter: diabolicUICharacterStats26Stat.verticalCenter
-        width: 7.1
+        width: 19.8
         height: 10.3
     }
 
@@ -1567,6 +1565,7 @@ WowWindow {
         id: gearSetButton1Name
         name: "GearSetButton1Name"
         kind: "FontString"
+        text: "holy"
         wowParent: "GearSetButton1"
         anchors.horizontalCenter: gearSetButton1.horizontalCenter
         anchors.bottom: gearSetButton1.bottom
@@ -1591,6 +1590,7 @@ WowWindow {
         id: gearSetButton2Name
         name: "GearSetButton2Name"
         kind: "FontString"
+        text: "shadow"
         wowParent: "GearSetButton2"
         anchors.horizontalCenter: gearSetButton2.horizontalCenter
         anchors.bottom: gearSetButton2.bottom
@@ -1878,7 +1878,7 @@ WowWindow {
         id: magicResText4
         name: "MagicResText4"
         kind: "FontString"
-        text: "5"
+        text: "0"
         wowParent: "?"
         anchors.right: magicResFrame4.right
         anchors.rightMargin: 2
@@ -1934,7 +1934,7 @@ WowWindow {
         anchors.right: reputationBar9.right
         anchors.top: reputationBar9.bottom
         anchors.topMargin: 3
-        width: 275
+        width: 270
         height: 20
     }
 
@@ -1954,12 +1954,12 @@ WowWindow {
         id: reputationBar10FactionName
         name: "ReputationBar10FactionName"
         kind: "FontString"
-        text: "Alliance Forces"
+        text: "Zandalar Tribe"
         wowParent: "ReputationBar10"
-        anchors.left: reputationBar10ExpandOrCollapseButton.right
+        anchors.left: reputationBar10.left
         anchors.leftMargin: 10
-        anchors.verticalCenter: reputationBar10ExpandOrCollapseButton.verticalCenter
-        width: 135
+        anchors.verticalCenter: reputationBar10.verticalCenter
+        width: 160
         height: 10
     }
 
@@ -1994,7 +1994,7 @@ WowWindow {
         anchors.right: reputationBar10.right
         anchors.top: reputationBar10.bottom
         anchors.topMargin: 3
-        width: 252
+        width: 275
         height: 20
     }
 
@@ -2014,12 +2014,12 @@ WowWindow {
         id: reputationBar11FactionName
         name: "ReputationBar11FactionName"
         kind: "FontString"
-        text: "Silverwing Sentinels"
+        text: "Alliance"
         wowParent: "ReputationBar11"
-        anchors.left: reputationBar11.left
+        anchors.left: reputationBar11ExpandOrCollapseButton.right
         anchors.leftMargin: 10
-        anchors.verticalCenter: reputationBar11.verticalCenter
-        width: 150
+        anchors.verticalCenter: reputationBar11ExpandOrCollapseButton.verticalCenter
+        width: 135
         height: 10
     }
 
@@ -2038,11 +2038,11 @@ WowWindow {
         id: reputationBar11ReputationBarFactionStanding
         name: "ReputationBar11ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Neutral"
+        text: "Hated"
         wowParent: "ReputationBar11ReputationBar"
         anchors.horizontalCenter: reputationBar11ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar11ReputationBar.verticalCenter
-        width: 39.5
+        width: 33.2
         height: 10.3
     }
 
@@ -2054,7 +2054,7 @@ WowWindow {
         anchors.right: reputationBar11.right
         anchors.top: reputationBar11.bottom
         anchors.topMargin: 3
-        width: 275
+        width: 252
         height: 20
     }
 
@@ -2074,12 +2074,12 @@ WowWindow {
         id: reputationBar12FactionName
         name: "ReputationBar12FactionName"
         kind: "FontString"
-        text: "Steamwheedle Cartel"
+        text: "Darnassus"
         wowParent: "ReputationBar12"
-        anchors.left: reputationBar12ExpandOrCollapseButton.right
+        anchors.left: reputationBar12.left
         anchors.leftMargin: 10
-        anchors.verticalCenter: reputationBar12ExpandOrCollapseButton.verticalCenter
-        width: 135
+        anchors.verticalCenter: reputationBar12.verticalCenter
+        width: 150
         height: 10
     }
 
@@ -2119,10 +2119,22 @@ WowWindow {
     }
 
     Part {
+        id: reputationBar13ExpandOrCollapseButton
+        name: "ReputationBar13ExpandOrCollapseButton"
+        kind: "Button"
+        wowParent: "ReputationBar13"
+        anchors.left: reputationBar13.left
+        anchors.leftMargin: 3
+        anchors.verticalCenter: reputationBar13.verticalCenter
+        width: 13
+        height: 13
+    }
+
+    Part {
         id: reputationBar13FactionName
         name: "ReputationBar13FactionName"
         kind: "FontString"
-        text: "Everlook"
+        text: "Exodar"
         wowParent: "ReputationBar13"
         anchors.left: reputationBar13.left
         anchors.leftMargin: 10
@@ -2146,11 +2158,11 @@ WowWindow {
         id: reputationBar13ReputationBarFactionStanding
         name: "ReputationBar13ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Neutral"
+        text: "Exalted"
         wowParent: "ReputationBar13ReputationBar"
         anchors.horizontalCenter: reputationBar13ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar13ReputationBar.verticalCenter
-        width: 39.5
+        width: 40.3
         height: 10.3
     }
 
@@ -2170,7 +2182,7 @@ WowWindow {
         id: reputationBar14FactionName
         name: "ReputationBar14FactionName"
         kind: "FontString"
-        text: "Gadgetzan"
+        text: "Gnomeregan Exiles"
         wowParent: "ReputationBar14"
         anchors.left: reputationBar14.left
         anchors.leftMargin: 10
@@ -2194,11 +2206,11 @@ WowWindow {
         id: reputationBar14ReputationBarFactionStanding
         name: "ReputationBar14ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Neutral"
+        text: "Exalted"
         wowParent: "ReputationBar14ReputationBar"
         anchors.horizontalCenter: reputationBar14ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar14ReputationBar.verticalCenter
-        width: 39.5
+        width: 40.3
         height: 10.3
     }
 
@@ -2210,7 +2222,7 @@ WowWindow {
         anchors.right: reputationBar14.right
         anchors.top: reputationBar14.bottom
         anchors.topMargin: 3
-        width: 294
+        width: 252
         height: 20
     }
 
@@ -2230,12 +2242,12 @@ WowWindow {
         id: reputationBar15FactionName
         name: "ReputationBar15FactionName"
         kind: "FontString"
-        text: "The Burning Crusade"
+        text: "Ironforge"
         wowParent: "ReputationBar15"
-        anchors.left: reputationBar15ExpandOrCollapseButton.right
+        anchors.left: reputationBar15.left
         anchors.leftMargin: 10
-        anchors.verticalCenter: reputationBar15ExpandOrCollapseButton.verticalCenter
-        width: 145
+        anchors.verticalCenter: reputationBar15.verticalCenter
+        width: 150
         height: 10
     }
 
@@ -2288,6 +2300,29 @@ WowWindow {
     }
 
     Part {
+        id: reputationBar1ReputationBar
+        name: "ReputationBar1ReputationBar"
+        kind: "StatusBar"
+        wowParent: "ReputationBar1"
+        anchors.right: reputationBar1.right
+        anchors.verticalCenter: reputationBar1.verticalCenter
+        width: 101
+        height: 13
+    }
+
+    Part {
+        id: reputationBar1ReputationBarFactionStanding
+        name: "ReputationBar1ReputationBarFactionStanding"
+        kind: "FontString"
+        text: "Exalted"
+        wowParent: "ReputationBar1ReputationBar"
+        anchors.horizontalCenter: reputationBar1ReputationBar.horizontalCenter
+        anchors.verticalCenter: reputationBar1ReputationBar.verticalCenter
+        width: 40.3
+        height: 10.3
+    }
+
+    Part {
         id: reputationBar2
         name: "ReputationBar2"
         kind: "Button"
@@ -2327,11 +2362,11 @@ WowWindow {
         id: reputationBar2ReputationBarFactionStanding
         name: "ReputationBar2ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Neutral"
+        text: "Revered"
         wowParent: "ReputationBar2ReputationBar"
         anchors.horizontalCenter: reputationBar2ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar2ReputationBar.verticalCenter
-        width: 39.5
+        width: 44.2
         height: 10.3
     }
 
@@ -2348,10 +2383,22 @@ WowWindow {
     }
 
     Part {
+        id: reputationBar3ExpandOrCollapseButton
+        name: "ReputationBar3ExpandOrCollapseButton"
+        kind: "Button"
+        wowParent: "ReputationBar3"
+        anchors.left: reputationBar3.left
+        anchors.leftMargin: 3
+        anchors.verticalCenter: reputationBar3.verticalCenter
+        width: 13
+        height: 13
+    }
+
+    Part {
         id: reputationBar3FactionName
         name: "ReputationBar3FactionName"
         kind: "FontString"
-        text: "Thorium Brotherhood"
+        text: "Bloodsail Buccaneers"
         wowParent: "ReputationBar3"
         anchors.left: reputationBar3.left
         anchors.leftMargin: 10
@@ -2375,11 +2422,11 @@ WowWindow {
         id: reputationBar3ReputationBarFactionStanding
         name: "ReputationBar3ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Neutral"
+        text: "Honored"
         wowParent: "ReputationBar3ReputationBar"
         anchors.horizontalCenter: reputationBar3ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar3ReputationBar.verticalCenter
-        width: 39.5
+        width: 47.4
         height: 10.3
     }
 
@@ -2391,7 +2438,7 @@ WowWindow {
         anchors.right: reputationBar3.right
         anchors.top: reputationBar3.bottom
         anchors.topMargin: 3
-        width: 275
+        width: 270
         height: 20
     }
 
@@ -2411,12 +2458,12 @@ WowWindow {
         id: reputationBar4FactionName
         name: "ReputationBar4FactionName"
         kind: "FontString"
-        text: "Alliance"
+        text: "Cenarion Circle"
         wowParent: "ReputationBar4"
-        anchors.left: reputationBar4ExpandOrCollapseButton.right
+        anchors.left: reputationBar4.left
         anchors.leftMargin: 10
-        anchors.verticalCenter: reputationBar4ExpandOrCollapseButton.verticalCenter
-        width: 135
+        anchors.verticalCenter: reputationBar4.verticalCenter
+        width: 160
         height: 10
     }
 
@@ -2451,20 +2498,32 @@ WowWindow {
         anchors.right: reputationBar4.right
         anchors.top: reputationBar4.bottom
         anchors.topMargin: 3
-        width: 252
+        width: 270
         height: 20
+    }
+
+    Part {
+        id: reputationBar5ExpandOrCollapseButton
+        name: "ReputationBar5ExpandOrCollapseButton"
+        kind: "Button"
+        wowParent: "ReputationBar5"
+        anchors.left: reputationBar5.left
+        anchors.leftMargin: 3
+        anchors.verticalCenter: reputationBar5.verticalCenter
+        width: 13
+        height: 13
     }
 
     Part {
         id: reputationBar5FactionName
         name: "ReputationBar5FactionName"
         kind: "FontString"
-        text: "Darnassus"
+        text: "Darkmoon Faire"
         wowParent: "ReputationBar5"
         anchors.left: reputationBar5.left
         anchors.leftMargin: 10
         anchors.verticalCenter: reputationBar5.verticalCenter
-        width: 150
+        width: 160
         height: 10
     }
 
@@ -2483,11 +2542,11 @@ WowWindow {
         id: reputationBar5ReputationBarFactionStanding
         name: "ReputationBar5ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Friendly"
+        text: "Neutral"
         wowParent: "ReputationBar5ReputationBar"
         anchors.horizontalCenter: reputationBar5ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar5ReputationBar.verticalCenter
-        width: 43.5
+        width: 39.5
         height: 10.3
     }
 
@@ -2499,7 +2558,7 @@ WowWindow {
         anchors.right: reputationBar5.right
         anchors.top: reputationBar5.bottom
         anchors.topMargin: 3
-        width: 252
+        width: 270
         height: 20
     }
 
@@ -2507,12 +2566,12 @@ WowWindow {
         id: reputationBar6FactionName
         name: "ReputationBar6FactionName"
         kind: "FontString"
-        text: "Exodar"
+        text: "Hydraxian Waterlords"
         wowParent: "ReputationBar6"
         anchors.left: reputationBar6.left
         anchors.leftMargin: 10
         anchors.verticalCenter: reputationBar6.verticalCenter
-        width: 150
+        width: 160
         height: 10
     }
 
@@ -2547,7 +2606,7 @@ WowWindow {
         anchors.right: reputationBar6.right
         anchors.top: reputationBar6.bottom
         anchors.topMargin: 3
-        width: 252
+        width: 270
         height: 20
     }
 
@@ -2555,12 +2614,12 @@ WowWindow {
         id: reputationBar7FactionName
         name: "ReputationBar7FactionName"
         kind: "FontString"
-        text: "Gnomeregan Exiles"
+        text: "Ravenholdt"
         wowParent: "ReputationBar7"
         anchors.left: reputationBar7.left
         anchors.leftMargin: 10
         anchors.verticalCenter: reputationBar7.verticalCenter
-        width: 150
+        width: 160
         height: 10
     }
 
@@ -2579,11 +2638,11 @@ WowWindow {
         id: reputationBar7ReputationBarFactionStanding
         name: "ReputationBar7ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Friendly"
+        text: "Neutral"
         wowParent: "ReputationBar7ReputationBar"
         anchors.horizontalCenter: reputationBar7ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar7ReputationBar.verticalCenter
-        width: 43.5
+        width: 39.5
         height: 10.3
     }
 
@@ -2595,20 +2654,32 @@ WowWindow {
         anchors.right: reputationBar7.right
         anchors.top: reputationBar7.bottom
         anchors.topMargin: 3
-        width: 252
+        width: 270
         height: 20
+    }
+
+    Part {
+        id: reputationBar8ExpandOrCollapseButton
+        name: "ReputationBar8ExpandOrCollapseButton"
+        kind: "Button"
+        wowParent: "ReputationBar8"
+        anchors.left: reputationBar8.left
+        anchors.leftMargin: 3
+        anchors.verticalCenter: reputationBar8.verticalCenter
+        width: 13
+        height: 13
     }
 
     Part {
         id: reputationBar8FactionName
         name: "ReputationBar8FactionName"
         kind: "FontString"
-        text: "Ironforge"
+        text: "Thorium Brotherhood"
         wowParent: "ReputationBar8"
         anchors.left: reputationBar8.left
         anchors.leftMargin: 10
         anchors.verticalCenter: reputationBar8.verticalCenter
-        width: 150
+        width: 160
         height: 10
     }
 
@@ -2627,11 +2698,11 @@ WowWindow {
         id: reputationBar8ReputationBarFactionStanding
         name: "ReputationBar8ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Friendly"
+        text: "Revered"
         wowParent: "ReputationBar8ReputationBar"
         anchors.horizontalCenter: reputationBar8ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar8ReputationBar.verticalCenter
-        width: 43.5
+        width: 44.2
         height: 10.3
     }
 
@@ -2643,7 +2714,7 @@ WowWindow {
         anchors.right: reputationBar8.right
         anchors.top: reputationBar8.bottom
         anchors.topMargin: 3
-        width: 252
+        width: 270
         height: 20
     }
 
@@ -2651,12 +2722,12 @@ WowWindow {
         id: reputationBar9FactionName
         name: "ReputationBar9FactionName"
         kind: "FontString"
-        text: "Stormwind"
+        text: "Timbermaw Hold"
         wowParent: "ReputationBar9"
         anchors.left: reputationBar9.left
         anchors.leftMargin: 10
         anchors.verticalCenter: reputationBar9.verticalCenter
-        width: 150
+        width: 160
         height: 10
     }
 
@@ -2675,12 +2746,77 @@ WowWindow {
         id: reputationBar9ReputationBarFactionStanding
         name: "ReputationBar9ReputationBarFactionStanding"
         kind: "FontString"
-        text: "Honored"
+        text: "Exalted"
         wowParent: "ReputationBar9ReputationBar"
         anchors.horizontalCenter: reputationBar9ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar9ReputationBar.verticalCenter
-        width: 47.4
+        width: 40.3
         height: 10.3
+    }
+
+    Part {
+        id: reputationDetailAtWarCheckBox
+        name: "ReputationDetailAtWarCheckBox"
+        kind: "CheckButton"
+        wowParent: "ReputationDetailFrame"
+        anchors.left: reputationDetailFrame.left
+        anchors.leftMargin: 14
+        anchors.bottom: reputationDetailFrame.bottom
+        anchors.bottomMargin: 34
+        width: 26
+        height: 26
+    }
+
+    Part {
+        id: reputationDetailAtWarCheckBoxText
+        name: "ReputationDetailAtWarCheckBoxText"
+        kind: "FontString"
+        text: "At War"
+        wowParent: "ReputationDetailAtWarCheckBox"
+        anchors.left: reputationDetailAtWarCheckBox.right
+        anchors.leftMargin: -2
+        anchors.verticalCenter: reputationDetailAtWarCheckBox.verticalCenter
+        width: 37.9
+        height: 10.3
+    }
+
+    Part {
+        id: reputationDetailCloseButton
+        name: "ReputationDetailCloseButton"
+        kind: "Button"
+        wowParent: "ReputationDetailFrame"
+        anchors.left: reputationDetailFrame.left
+        anchors.leftMargin: 230
+        anchors.top: reputationDetailFrame.top
+        anchors.topMargin: -2.7
+        width: 22
+        height: 22
+    }
+
+    Part {
+        id: reputationDetailFactionDescription
+        name: "ReputationDetailFactionDescription"
+        kind: "FontString"
+        text: "This small group of reclusive night elves raises and trains wintersabers in the Winterspring area."
+        wowParent: "ReputationDetailFrame"
+        anchors.horizontalCenter: reputationDetailFactionName.horizontalCenter
+        anchors.top: reputationDetailFactionName.bottom
+        anchors.topMargin: 20
+        width: 218
+        height: 50.6
+    }
+
+    Part {
+        id: reputationDetailFactionName
+        name: "ReputationDetailFactionName"
+        kind: "FontString"
+        text: "Wintersaber Trainers"
+        wowParent: "?"
+        anchors.horizontalCenter: reputationDetailFrame.horizontalCenter
+        anchors.top: reputationDetailFrame.top
+        anchors.topMargin: 2
+        width: 188
+        height: 12.6
     }
 
     Part {
@@ -2695,6 +2831,56 @@ WowWindow {
         anchors.topMargin: 96
         width: 260
         height: 203
+    }
+
+    Part {
+        id: reputationDetailInactiveCheckBox
+        name: "ReputationDetailInactiveCheckBox"
+        kind: "CheckButton"
+        wowParent: "ReputationDetailFrame"
+        anchors.left: reputationDetailAtWarCheckBoxText.right
+        anchors.leftMargin: 3
+        anchors.verticalCenter: reputationDetailAtWarCheckBoxText.verticalCenter
+        width: 26
+        height: 26
+    }
+
+    Part {
+        id: reputationDetailInactiveCheckBoxText
+        name: "ReputationDetailInactiveCheckBoxText"
+        kind: "FontString"
+        text: "Move to Inactive"
+        wowParent: "ReputationDetailInactiveCheckBox"
+        anchors.left: reputationDetailInactiveCheckBox.right
+        anchors.verticalCenter: reputationDetailInactiveCheckBox.verticalCenter
+        anchors.verticalCenterOffset: -1
+        width: 90.9
+        height: 10.3
+    }
+
+    Part {
+        id: reputationDetailMainScreenCheckBox
+        name: "ReputationDetailMainScreenCheckBox"
+        kind: "CheckButton"
+        wowParent: "ReputationDetailFrame"
+        anchors.left: reputationDetailAtWarCheckBox.left
+        anchors.top: reputationDetailAtWarCheckBox.bottom
+        anchors.topMargin: -3
+        width: 26
+        height: 26
+    }
+
+    Part {
+        id: reputationDetailMainScreenCheckBoxText
+        name: "ReputationDetailMainScreenCheckBoxText"
+        kind: "FontString"
+        text: "Show as Experience Bar"
+        wowParent: "ReputationDetailMainScreenCheckBox"
+        anchors.left: reputationDetailMainScreenCheckBox.right
+        anchors.verticalCenter: reputationDetailMainScreenCheckBox.verticalCenter
+        anchors.verticalCenterOffset: -1
+        width: 126.4
+        height: 10.3
     }
 
     Part {
@@ -2809,7 +2995,18 @@ WowWindow {
         anchors.left: reputationListScrollFrame.left
         anchors.top: reputationListScrollFrame.top
         width: 300
-        height: 468
+        height: 1586
+    }
+
+    Part {
+        id: skillDetailDescriptionText
+        name: "SkillDetailDescriptionText"
+        kind: "FontString"
+        wowParent: "SkillDetailScrollChildFrame"
+        anchors.horizontalCenter: skillDetailCostText.horizontalCenter
+        anchors.top: skillDetailCostText.top
+        width: 275
+        height: 41.1
     }
 
     Part {
@@ -2833,6 +3030,46 @@ WowWindow {
         anchors.topMargin: 8
         width: 296
         height: 107
+    }
+
+    Part {
+        id: skillDetailStatusBar
+        name: "SkillDetailStatusBar"
+        kind: "StatusBar"
+        wowParent: "SkillDetailScrollChildFrame"
+        anchors.horizontalCenter: skillDetailScrollChildFrame.horizontalCenter
+        anchors.horizontalCenterOffset: -10
+        anchors.verticalCenter: skillDetailScrollChildFrame.top
+        anchors.verticalCenterOffset: 20
+        width: 211
+        height: 15
+    }
+
+    Part {
+        id: skillDetailStatusBarSkillName
+        name: "SkillDetailStatusBarSkillName"
+        kind: "FontString"
+        text: "First Aid"
+        wowParent: "SkillDetailStatusBar"
+        anchors.left: skillDetailStatusBar.left
+        anchors.leftMargin: 6
+        anchors.verticalCenter: skillDetailStatusBar.verticalCenter
+        anchors.verticalCenterOffset: -1
+        width: 44.2
+        height: 10.3
+    }
+
+    Part {
+        id: skillDetailStatusBarSkillRank
+        name: "SkillDetailStatusBarSkillRank"
+        kind: "FontString"
+        text: "450/450"
+        wowParent: "SkillDetailStatusBar"
+        anchors.left: skillDetailStatusBarSkillName.right
+        anchors.leftMargin: 13
+        anchors.verticalCenter: skillDetailStatusBarSkillName.verticalCenter
+        width: 128
+        height: 10.3
     }
 
     Part {
@@ -2977,13 +3214,13 @@ WowWindow {
         id: skillRankFrame10SkillName
         name: "SkillRankFrame10SkillName"
         kind: "FontString"
-        text: "Axes"
+        text: "First Aid"
         wowParent: "SkillRankFrame10"
         anchors.left: skillRankFrame10.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame10.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 26.9
+        width: 44.2
         height: 10.3
     }
 
@@ -2991,7 +3228,7 @@ WowWindow {
         id: skillRankFrame10SkillRank
         name: "SkillRankFrame10SkillRank"
         kind: "FontString"
-        text: "270/310"
+        text: "450/450"
         wowParent: "SkillRankFrame10"
         anchors.left: skillRankFrame10SkillName.right
         anchors.leftMargin: 13
@@ -3028,13 +3265,13 @@ WowWindow {
         id: skillRankFrame11SkillName
         name: "SkillRankFrame11SkillName"
         kind: "FontString"
-        text: "Defense"
+        text: "Fishing"
         wowParent: "SkillRankFrame11"
         anchors.left: skillRankFrame11.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame11.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 44.2
+        width: 38.7
         height: 10.3
     }
 
@@ -3042,7 +3279,7 @@ WowWindow {
         id: skillRankFrame11SkillRank
         name: "SkillRankFrame11SkillRank"
         kind: "FontString"
-        text: "309/310"
+        text: "450/450"
         wowParent: "SkillRankFrame11"
         anchors.left: skillRankFrame11SkillName.right
         anchors.leftMargin: 13
@@ -3079,13 +3316,13 @@ WowWindow {
         id: skillRankFrame12SkillName
         name: "SkillRankFrame12SkillName"
         kind: "FontString"
-        text: "Polearms"
+        text: "Riding"
         wowParent: "SkillRankFrame12"
         anchors.left: skillRankFrame12.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame12.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 49.8
+        width: 35.6
         height: 10.3
     }
 
@@ -3093,7 +3330,7 @@ WowWindow {
         id: skillRankFrame12SkillRank
         name: "SkillRankFrame12SkillRank"
         kind: "FontString"
-        text: "270/310"
+        text: "300/300"
         wowParent: "SkillRankFrame12"
         anchors.left: skillRankFrame12SkillName.right
         anchors.leftMargin: 13
@@ -3130,13 +3367,13 @@ WowWindow {
         id: skillRankFrame2SkillName
         name: "SkillRankFrame2SkillName"
         kind: "FontString"
-        text: "Blood"
+        text: "Discipline"
         wowParent: "SkillRankFrame2"
         anchors.left: skillRankFrame2.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame2.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 32.4
+        width: 52.9
         height: 10.3
     }
 
@@ -3180,13 +3417,13 @@ WowWindow {
         id: skillRankFrame3SkillName
         name: "SkillRankFrame3SkillName"
         kind: "FontString"
-        text: "Frost"
+        text: "Holy"
         wowParent: "SkillRankFrame3"
         anchors.left: skillRankFrame3.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame3.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 27.7
+        width: 26.9
         height: 10.3
     }
 
@@ -3230,13 +3467,13 @@ WowWindow {
         id: skillRankFrame4SkillName
         name: "SkillRankFrame4SkillName"
         kind: "FontString"
-        text: "Runeforging"
+        text: "Shadow Magic"
         wowParent: "SkillRankFrame4"
         anchors.left: skillRankFrame4.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame4.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 66.4
+        width: 79.8
         height: 10.3
     }
 
@@ -3381,13 +3618,13 @@ WowWindow {
         id: skillRankFrame7SkillName
         name: "SkillRankFrame7SkillName"
         kind: "FontString"
-        text: "First Aid"
+        text: "Tailoring"
         wowParent: "SkillRankFrame7"
         anchors.left: skillRankFrame7.left
         anchors.leftMargin: 6
         anchors.verticalCenter: skillRankFrame7.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 44.2
+        width: 48.2
         height: 10.3
     }
 
@@ -3395,7 +3632,7 @@ WowWindow {
         id: skillRankFrame7SkillRank
         name: "SkillRankFrame7SkillRank"
         kind: "FontString"
-        text: "270/300"
+        text: "450/450"
         wowParent: "SkillRankFrame7"
         anchors.left: skillRankFrame7SkillName.right
         anchors.leftMargin: 13
@@ -3613,7 +3850,7 @@ WowWindow {
         id: tokenFrameContainerButton1
         name: "TokenFrameContainerButton1"
         kind: "Button"
-        text: "Player vs. Player"
+        text: "Dungeon and Raid"
         wowParent: "TokenFrameContainerScrollChild"
         anchors.left: tokenFrameContainerScrollChild.left
         anchors.top: tokenFrameContainerScrollChild.top
@@ -3852,12 +4089,12 @@ WowWindow {
         id: tokenFrameContainerButton2Count
         name: "TokenFrameContainerButton2Count"
         kind: "FontString"
-        text: "3794"
+        text: "30"
         wowParent: "TokenFrameContainerButton2"
         anchors.right: tokenFrameContainerButton2Icon.left
         anchors.rightMargin: 5
         anchors.verticalCenter: tokenFrameContainerButton2Icon.verticalCenter
-        width: 32.4
+        width: 16.6
         height: 11.9
     }
 
@@ -3865,7 +4102,7 @@ WowWindow {
         id: tokenFrameContainerButton2Name
         name: "TokenFrameContainerButton2Name"
         kind: "FontString"
-        text: "Honor Points"
+        text: "Emblem of Conquest"
         wowParent: "TokenFrameContainerButton2"
         anchors.left: tokenFrameContainerButton2.left
         anchors.leftMargin: 11
@@ -4167,7 +4404,7 @@ WowWindow {
         id: tokenFrameMoneyFrameCopperButton
         name: "TokenFrameMoneyFrameCopperButton"
         kind: "Button"
-        text: "79"
+        text: "13"
         wowParent: "TokenFrameMoneyFrame"
         anchors.right: tokenFrameMoneyFrame.right
         anchors.rightMargin: 13
@@ -4180,7 +4417,7 @@ WowWindow {
         id: tokenFrameMoneyFrameCopperButtonText
         name: "TokenFrameMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "79"
+        text: "13"
         wowParent: "TokenFrameMoneyFrameCopperButton"
         anchors.right: tokenFrameMoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -4193,7 +4430,7 @@ WowWindow {
         id: tokenFrameMoneyFrameGoldButton
         name: "TokenFrameMoneyFrameGoldButton"
         kind: "Button"
-        text: "8146"
+        text: "3654"
         wowParent: "TokenFrameMoneyFrame"
         anchors.right: tokenFrameMoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -4206,7 +4443,7 @@ WowWindow {
         id: tokenFrameMoneyFrameGoldButtonText
         name: "TokenFrameMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "8146"
+        text: "3654"
         wowParent: "TokenFrameMoneyFrameGoldButton"
         anchors.right: tokenFrameMoneyFrameGoldButton.right
         anchors.rightMargin: 13
@@ -4219,7 +4456,7 @@ WowWindow {
         id: tokenFrameMoneyFrameSilverButton
         name: "TokenFrameMoneyFrameSilverButton"
         kind: "Button"
-        text: "83"
+        text: "16"
         wowParent: "TokenFrameMoneyFrame"
         anchors.right: tokenFrameMoneyFrameCopperButton.left
         anchors.rightMargin: 4
@@ -4232,7 +4469,7 @@ WowWindow {
         id: tokenFrameMoneyFrameSilverButtonText
         name: "TokenFrameMoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "83"
+        text: "16"
         wowParent: "TokenFrameMoneyFrameSilverButton"
         anchors.right: tokenFrameMoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -4337,6 +4574,7 @@ WowWindow {
         height: 11.9
     }
 
+    Ghost { id: skillDetailCostText; name: "SkillDetailCostText"; x: 190; y: 362.5; width: 0; height: 0 }
     Ghost { id: skillFrameExpandTabLeft; name: "SkillFrameExpandTabLeft"; x: 97; y: 79; width: 0; height: 0 }
     Ghost { id: skillRankFrame1; name: "SkillRankFrame1"; x: 57; y: 114; width: 0; height: 0 }
     Ghost { id: skillTypeLabel4; name: "SkillTypeLabel4"; x: 41; y: 160; width: 0; height: 0 }

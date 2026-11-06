@@ -477,6 +477,8 @@ function TestPositionsTool:test_the_rules_by_what_a_view_has()
 			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Zone": { "zone": "Z", "aside": true, "rect": [150, 26, 30, 64] } } },
 		"Sides": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
 			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Zone": { "zone": "Z", "rect": [150, 26, 30, 64] } } },
+		"Past": { "views": [ { "key": "a", "frame": "Win", "foot": "Foot", "railOver": 0, "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100], "footRect": [20, 0, 160, 24] } ],
+			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Foot": { "rect": [20, 0, 160, 24] }, "Past": { "control": true, "rect": [150, 2, 40, 20] }, "On": { "control": true, "rect": [30, 2, 40, 20] } } },
 		"Bags": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
 			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "AdiBagsItemButton1": { "control": true, "rect": [500, 0, 37, 37] },
 				"AdiBagsBankItemButton1": { "control": true, "rect": [500, 0, 37, 37] }, "OtherButton": { "control": true, "rect": [500, 0, 37, 37] } } }
@@ -487,13 +489,15 @@ function TestPositionsTool:test_the_rules_by_what_a_view_has()
 		run:close()
 		return text
 	end
-	local stale, aside, sides, bags = Said("Stale"), Said("Aside"), Said("Sides"), Said("Bags")
+	local stale, aside, sides, bags, past = Said("Stale"), Said("Aside"), Said("Sides"), Said("Bags"), Said("Past")
 	os.execute("rm -rf '" .. dir .. "'")
 	lu.assertEquals(stale, "")
 	lu.assertNotStrContains(aside, "of room left of the content")
 	lu.assertStrContains(sides, "of room left of the content")
 	lu.assertStrContains(bags, "OtherButton is out of the window")
 	lu.assertNotStrContains(bags, "AdiBags")
+	lu.assertStrContains(past, "Past is past the foot's side")
+	lu.assertNotStrContains(past, "On is past")
 end
 
 -- A part seen only with no tab chosen shows only then; which views' last look saw a

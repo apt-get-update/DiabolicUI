@@ -15,6 +15,7 @@ WowWindow {
         kind: "Button"
         text: "Scan AH"
         wowParent: "TradeSkillDetailScrollChildFrame"
+        style: "Button"
         anchors.right: tradeSkillDetailScrollChildFrame.right
         anchors.rightMargin: 4
         anchors.top: tradeSkillDetailScrollChildFrame.top
@@ -684,6 +685,7 @@ WowWindow {
         wowParent: "TradeSkillListScrollFrame"
         anchors.left: tradeSkillListScrollFrame.left
         anchors.top: tradeSkillListScrollFrame.top
+        anchors.topMargin: -144
         width: 300
         height: 272
     }
@@ -774,7 +776,7 @@ WowWindow {
         id: tradeSkillReagent2Count
         name: "TradeSkillReagent2Count"
         kind: "FontString"
-        text: "0 /2"
+        text: "0 /6"
         wowParent: "TradeSkillReagent2"
         anchors.right: tradeSkillReagent2IconTexture.right
         anchors.rightMargin: 1
@@ -788,7 +790,7 @@ WowWindow {
         id: tradeSkillReagent2Name
         name: "TradeSkillReagent2Name"
         kind: "FontString"
-        text: "Glacial Salmon"
+        text: "Dream Shard"
         wowParent: "TradeSkillReagent2"
         anchors.left: tradeSkillReagent2NameFrame.left
         anchors.leftMargin: 15
@@ -814,7 +816,7 @@ WowWindow {
         id: tradeSkillReagent3Count
         name: "TradeSkillReagent3Count"
         kind: "FontString"
-        text: "0 /2"
+        text: "0 /6"
         wowParent: "TradeSkillReagent3"
         anchors.right: tradeSkillReagent3IconTexture.right
         anchors.rightMargin: 1
@@ -828,7 +830,7 @@ WowWindow {
         id: tradeSkillReagent3Name
         name: "TradeSkillReagent3Name"
         kind: "FontString"
-        text: "Nettlefish"
+        text: "Abyss Crystal"
         wowParent: "TradeSkillReagent3"
         anchors.left: tradeSkillReagent3NameFrame.left
         anchors.leftMargin: 15
@@ -944,7 +946,7 @@ WowWindow {
         anchors.left: tradeSkillRequirementLabel.right
         anchors.leftMargin: 4
         anchors.top: tradeSkillRequirementLabel.top
-        width: 180
+        width: 87.2
         height: 1
     }
 
@@ -952,7 +954,7 @@ WowWindow {
         id: tradeSkillSkill1
         name: "TradeSkillSkill1"
         kind: "Button"
-        text: "Bandage"
+        text: " Heavy Silk Bandage"
         wowParent: "TradeSkillFrame"
         pin: "place"
         anchors.left: tradeSkillFrame.left
@@ -990,7 +992,7 @@ WowWindow {
         id: tradeSkillSkill1Text
         name: "TradeSkillSkill1Text"
         kind: "FontString"
-        text: "Bandage"
+        text: " Heavy Silk Bandage"
         wowParent: "TradeSkillSkill1"
         anchors.left: tradeSkillSkill1Highlight.right
         anchors.leftMargin: 2
@@ -1004,7 +1006,7 @@ WowWindow {
         id: tradeSkillSkill2
         name: "TradeSkillSkill2"
         kind: "Button"
-        text: " Heavy Frostweave Bandage"
+        text: " Silk Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill1.left
         anchors.top: tradeSkillSkill1.bottom
@@ -1039,7 +1041,7 @@ WowWindow {
         id: tradeSkillSkill2Text
         name: "TradeSkillSkill2Text"
         kind: "FontString"
-        text: " Heavy Frostweave Bandage"
+        text: " Silk Bandage"
         wowParent: "TradeSkillSkill2"
         anchors.left: tradeSkillSkill2Highlight.right
         anchors.leftMargin: 2
@@ -1053,7 +1055,7 @@ WowWindow {
         id: tradeSkillSkill3
         name: "TradeSkillSkill3"
         kind: "Button"
-        text: " Frostweave Bandage"
+        text: " Heavy Wool Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill2.left
         anchors.top: tradeSkillSkill2.bottom
@@ -1088,7 +1090,7 @@ WowWindow {
         id: tradeSkillSkill3Text
         name: "TradeSkillSkill3Text"
         kind: "FontString"
-        text: " Frostweave Bandage"
+        text: " Heavy Wool Bandage"
         wowParent: "TradeSkillSkill3"
         anchors.left: tradeSkillSkill3Highlight.right
         anchors.leftMargin: 2
@@ -1102,7 +1104,7 @@ WowWindow {
         id: tradeSkillSkill4
         name: "TradeSkillSkill4"
         kind: "Button"
-        text: " Heavy Netherweave Bandage"
+        text: " Wool Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill3.left
         anchors.top: tradeSkillSkill3.bottom
@@ -1137,7 +1139,7 @@ WowWindow {
         id: tradeSkillSkill4Text
         name: "TradeSkillSkill4Text"
         kind: "FontString"
-        text: " Heavy Netherweave Bandage"
+        text: " Wool Bandage"
         wowParent: "TradeSkillSkill4"
         anchors.left: tradeSkillSkill4Highlight.right
         anchors.leftMargin: 2
@@ -1151,7 +1153,7 @@ WowWindow {
         id: tradeSkillSkill5
         name: "TradeSkillSkill5"
         kind: "Button"
-        text: " Netherweave Bandage"
+        text: " Heavy Linen Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill4.left
         anchors.top: tradeSkillSkill4.bottom
@@ -1186,7 +1188,7 @@ WowWindow {
         id: tradeSkillSkill5Text
         name: "TradeSkillSkill5Text"
         kind: "FontString"
-        text: " Netherweave Bandage"
+        text: " Heavy Linen Bandage"
         wowParent: "TradeSkillSkill5"
         anchors.left: tradeSkillSkill5Highlight.right
         anchors.leftMargin: 2
@@ -1200,7 +1202,7 @@ WowWindow {
         id: tradeSkillSkill6
         name: "TradeSkillSkill6"
         kind: "Button"
-        text: " Heavy Runecloth Bandage"
+        text: " Linen Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill5.left
         anchors.top: tradeSkillSkill5.bottom
@@ -1235,7 +1237,7 @@ WowWindow {
         id: tradeSkillSkill6Text
         name: "TradeSkillSkill6Text"
         kind: "FontString"
-        text: " Heavy Runecloth Bandage"
+        text: " Linen Bandage"
         wowParent: "TradeSkillSkill6"
         anchors.left: tradeSkillSkill6Highlight.right
         anchors.leftMargin: 2
@@ -1249,7 +1251,7 @@ WowWindow {
         id: tradeSkillSkill7
         name: "TradeSkillSkill7"
         kind: "Button"
-        text: " Runecloth Bandage"
+        text: "Other"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill6.left
         anchors.top: tradeSkillSkill6.bottom
@@ -1284,7 +1286,7 @@ WowWindow {
         id: tradeSkillSkill7Text
         name: "TradeSkillSkill7Text"
         kind: "FontString"
-        text: " Runecloth Bandage"
+        text: "Other"
         wowParent: "TradeSkillSkill7"
         anchors.left: tradeSkillSkill7Highlight.right
         anchors.leftMargin: 2
@@ -1298,7 +1300,7 @@ WowWindow {
         id: tradeSkillSkill8
         name: "TradeSkillSkill8"
         kind: "Button"
-        text: " Heavy Mageweave Bandage"
+        text: " Anti-Venom"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill7.left
         anchors.top: tradeSkillSkill7.bottom
@@ -1333,7 +1335,7 @@ WowWindow {
         id: tradeSkillSkill8Text
         name: "TradeSkillSkill8Text"
         kind: "FontString"
-        text: " Heavy Mageweave Bandage"
+        text: " Anti-Venom"
         wowParent: "TradeSkillSkill8"
         anchors.left: tradeSkillSkill8Highlight.right
         anchors.leftMargin: 2
@@ -1390,8 +1392,8 @@ WowWindow {
         anchors.leftMargin: 50
         anchors.top: tradeSkillDetailScrollChildFrame.top
         anchors.topMargin: 5
-        width: 244
-        height: 11.9
+        width: 146
+        height: 23.7
     }
 
     Part {
@@ -1448,10 +1450,10 @@ WowWindow {
     Ghost { id: tradeSkillExpandTabLeft; name: "TradeSkillExpandTabLeft"; x: 23; y: 69; width: 0; height: 0 }
     Ghost { id: tradeSkillReagent1IconTexture; name: "TradeSkillReagent1IconTexture"; x: 62; y: 361.2; width: 0; height: 0 }
     Ghost { id: tradeSkillReagent1NameFrame; name: "TradeSkillReagent1NameFrame"; x: 52; y: 341.7; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent2IconTexture; name: "TradeSkillReagent2IconTexture"; x: 209; y: 307.8; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent2NameFrame; name: "TradeSkillReagent2NameFrame"; x: 199; y: 288.3; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent3IconTexture; name: "TradeSkillReagent3IconTexture"; x: 62; y: 354.8; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent3NameFrame; name: "TradeSkillReagent3NameFrame"; x: 52; y: 335.3; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent2IconTexture; name: "TradeSkillReagent2IconTexture"; x: 209; y: 385.8; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent2NameFrame; name: "TradeSkillReagent2NameFrame"; x: 199; y: 366.3; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent3IconTexture; name: "TradeSkillReagent3IconTexture"; x: 62; y: 432.8; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent3NameFrame; name: "TradeSkillReagent3NameFrame"; x: 52; y: 413.3; width: 0; height: 0 }
     Ghost { id: tradeSkillReagent4IconTexture; name: "TradeSkillReagent4IconTexture"; x: 209; y: 354.8; width: 0; height: 0 }
     Ghost { id: tradeSkillReagent4NameFrame; name: "TradeSkillReagent4NameFrame"; x: 199; y: 335.3; width: 0; height: 0 }
     Ghost { id: tradeSkillSkill1Highlight; name: "TradeSkillSkill1Highlight"; x: 41; y: 97; width: 0; height: 0 }

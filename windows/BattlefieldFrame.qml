@@ -15,6 +15,7 @@ WowWindow {
         kind: "Button"
         text: "Cancel"
         wowParent: "BattlefieldFrame"
+        style: "Button"
         anchors.left: battlefieldFrame.left
         anchors.leftMargin: 266
         anchors.bottom: battlefieldFrame.bottom
@@ -40,6 +41,7 @@ WowWindow {
         name: "BattlefieldFrameCloseButton"
         kind: "Button"
         wowParent: "BattlefieldFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: battlefieldFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: battlefieldFrameDiabolic.top
@@ -100,12 +102,12 @@ WowWindow {
         id: battlefieldFrameFrameLabel
         name: "BattlefieldFrameFrameLabel"
         kind: "FontString"
-        text: "Eye of the Storm"
+        text: "Arathi Basin"
         wowParent: "BattlefieldFrameDiabolicTitlePlate"
         anchors.horizontalCenter: battlefieldFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: battlefieldFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 158
+        width: 113
         height: 14.2
     }
 
@@ -115,6 +117,7 @@ WowWindow {
         kind: "Button"
         text: "Join as Group"
         wowParent: "BattlefieldFrame"
+        style: "Button"
         anchors.left: battlefieldFrame.left
         anchors.leftMargin: 16.5
         anchors.bottom: battlefieldFrame.bottom
@@ -321,6 +324,7 @@ WowWindow {
         name: "BattlefieldFrameInfoScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "BattlefieldFrameInfoScrollFrame"
+        style: "ScrollBar"
         anchors.left: battlefieldFrameInfoScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: battlefieldFrameInfoScrollFrame.top
@@ -346,6 +350,7 @@ WowWindow {
         name: "BattlefieldFrameInfoScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "BattlefieldFrameInfoScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBar.horizontalCenter
         anchors.top: battlefieldFrameInfoScrollFrameScrollBar.bottom
         width: 16
@@ -357,6 +362,7 @@ WowWindow {
         name: "BattlefieldFrameInfoScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "BattlefieldFrameInfoScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBar.horizontalCenter
         anchors.bottom: battlefieldFrameInfoScrollFrameScrollBar.top
         width: 16
@@ -369,6 +375,7 @@ WowWindow {
         kind: "Button"
         text: "Join Battle"
         wowParent: "BattlefieldFrame"
+        style: "Button"
         anchors.left: battlefieldFrame.left
         anchors.leftMargin: 154.4
         anchors.bottom: battlefieldFrame.bottom
