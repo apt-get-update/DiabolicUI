@@ -793,25 +793,18 @@ Engine:NewStaticConfig("Blizzard", {
 		},
 		list_bottom_raise = 2, -- its scroll frame's bottom up (its scroll bar's track stays in that panel)
 		raid_list_margins = { 18, 22 }, -- the Raid Browser's lists' zones, from the window's left and right (inside its iron frame)
-		raid_rows_left = 8, -- its lists' rows, left of Blizzard's
 		raid_browse_top = 4, -- the browse list's zone over its rows (the others' 6): clear of its column names
 		raid_queue_gap = 12, -- the queue's list's zone over its foot's iron bar (about as far as under the roles)
-		raid_browse_raise = 34, -- the browse list's rows up, a row more in the room gained: as far under the tabs as over the foot's iron bar
-		raid_headers_raise = 33, -- its column names up, on their dark bar over its zone (as tall as it)
 		raid_roles_top = -128, -- its roles' row, from the window's top (Blizzard's)
 		comment_size = { 250, 20 },
 		comment_hint_font = DiabolicFont_Narrow14,
 		comment_hint_color = { .5, .45, .4 }, -- "Type your comment here.", pale in it (the mail's hints')
-		comment_right = 21, -- the Raid Browser's comment button, from its right (List Me is 21 from its left)
-		button_margin = 34, -- the Dungeon Finder's buttons, from the window's sides, on its stone foot
-		button_bottom = 30, -- and from its bottom (the iron's 23, the foot's margin)
 		header_color = { 1, .6, .2 }, -- the random dungeon's titles, as the quest log's
 		text_color = { .9, .86, .8 },
 		type_width = 230, -- its middle: room for the longest choice
 		roles_top = -72, -- the roles' row, from the window's top (Blizzard's 100 down), under the band
 		lists_raise = 62, -- the random dungeon and the list, up into the dropdown's old room
-		extra_rows = 1, -- the dungeons' list's rows past Blizzard's 15, down to over the foot
-		random_raise = 4 -- the random dungeon's bottom up: its zone 6 over the foot's iron bar
+		extra_rows = 1 -- the dungeons' list's rows past Blizzard's 15, down to over the foot
 	},
 	-- the spellbook in Diablo III's (modules/blizzard/spellbook.lua), laid
 	-- out as Pretty GUI's: wide, the spells in two columns of six with

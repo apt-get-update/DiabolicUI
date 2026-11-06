@@ -54,6 +54,19 @@ Engine:NewStaticConfig("Positions", {
 	-- the list (its rows too) 6 under the column names
 	KeyBindingFrameScrollFrame = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 2, -72 }, -- ScrollFrame
 
+	-- LFDParentFrame --------------------------------------------------------
+	LFDQueueFrameCancelButton = { "BOTTOMRIGHT", "LFDParentFrameDiabolic", "BOTTOMRIGHT", -34, 30 }, -- Button "Close"
+	LFDQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFDParentFrameDiabolic", "BOTTOMLEFT", 34, 30 }, -- Button "Find Group"
+	LFDQueueFrameRandomScrollFrame = { "BOTTOMRIGHT", "LFDQueueFrameRandom", "BOTTOMRIGHT", -34, 34, 298, 265 }, -- ScrollFrame
+
+	-- LFRParentFrame --------------------------------------------------------
+	LFRBrowseFrameColumnHeader1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 26, -40 }, -- Button "Name"
+	LFRBrowseFrameListButton1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 12, -66 }, -- Button
+	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRBrowseFrame", "BOTTOMLEFT", 25, -6 }, -- Button "Send Message"
+	LFRQueueFrameAcceptCommentButton = { "BOTTOMRIGHT", "LFRQueueFrame", "BOTTOMRIGHT", -21, -6 }, -- Button "Set Comment"
+	LFRQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFRQueueFrame", "BOTTOMLEFT", 21, -6 }, -- Button "List My Name"
+	LFRQueueFrameSpecificListButton1 = { "TOPLEFT", "LFRQueueFrameSpecific", "TOPLEFT", 17, -132 }, -- Frame
+
 	-- MacroFrame ------------------------------------------------------------
 	-- the icons and the macro 20 up and 6 left (as far from the band as from the
 	-- foot's bar, from the sides)

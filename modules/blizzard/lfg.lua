@@ -62,13 +62,6 @@ Module.StyleLFG = function(self)
 		local window = header:GetParent()
 		-- the eye in the corner (Blizzard's portrait, animated while queued)
 		_G.LFDParentFramePortrait:SetAlpha(0)
-		-- Find Group and Close in the window's bottom corners on its rough
-		-- stone foot, clear of the iron frame (Blizzard's sit on its edge)
-		local find, cancel = _G.LFDQueueFrameFindGroupButton, _G.LFDQueueFrameCancelButton
-		find:ClearAllPoints()
-		find:SetPoint("BOTTOMLEFT", window, "BOTTOMLEFT", config.button_margin, config.button_bottom)
-		cancel:ClearAllPoints()
-		cancel:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", -config.button_margin, config.button_bottom)
 		kit:AddFooter(window, "LFDQueueFrameFindGroupButton")
 		for _, name in ipairs(RANDOM_HEADERS) do
 			_G[RANDOM .. name]:SetTextColor(unpack(config.header_color))
@@ -107,12 +100,6 @@ Module.StyleLFG = function(self)
 				page:SetPoint("BOTTOMRIGHT", _G.LFDQueueFrame, "BOTTOMRIGHT", 0, config.lists_raise - grow)
 			end
 		end
-		local random = _G.LFDQueueFrameRandomScrollFrame
-		if random then
-			local point, relative, relativePoint, x, y = random:GetPoint()
-			random:SetPoint(point, relative, relativePoint, x, y + config.random_raise)
-			random:SetHeight(random:GetHeight() + grow - config.random_raise)
-		end
 	end
 	if _G.LFRParentFrame then
 		local header = self:StyleFrame(_G.LFRParentFrame, config.raids, _G.LFRQueueFrameTitleText)
@@ -129,19 +116,7 @@ Module.StyleLFG = function(self)
 		-- its lists' zones across the window, their rows further left
 		-- (Blizzard's lists reach under its right side)
 		local window, insets, margins = header:GetParent(), config.list_panel_insets, config.raid_list_margins
-		-- (the browse list's up, clear of its foot, its column names too)
-		for _, name in ipairs({ "LFRQueueFrameSpecificListButton1", "LFRBrowseFrameListButton1" }) do
-			local row = _G[name]
-			if row then
-				local point, relative, relativePoint, x, y = row:GetPoint()
-				local raise = (name == "LFRBrowseFrameListButton1") and config.raid_browse_raise or 0
-				row:SetPoint(point, relative, relativePoint, x - config.raid_rows_left, y + raise)
-			end
-		end
-		local names = _G.LFRBrowseFrameColumnHeader1
-		if names then
-			local point, relative, relativePoint, x, y = names:GetPoint()
-			names:SetPoint(point, relative, relativePoint, x, y + config.raid_headers_raise)
+		if _G.LFRBrowseFrameColumnHeader1 then
 			kit:StyleColumnHeaders("LFRBrowseFrameColumnHeader", 7)
 		end
 		-- a row more in the browse list's room gained (Blizzard's 19)
@@ -209,22 +184,6 @@ Module.StyleLFG = function(self)
 		-- the same title on both tabs: one in the plate
 		if _G.LFRBrowseFrameTitleText then
 			_G.LFRBrowseFrameTitleText:SetAlpha(0)
-		end
-		-- the comment's button as far in from the right as List Me is from
-		-- the left (Blizzard's sits under the window's frame)
-		local comment = _G.LFRQueueFrameAcceptCommentButton
-		if comment then
-			local point, relative, relativePoint, _, y = comment:GetPoint()
-			comment:SetPoint(point, relative, relativePoint, -config.comment_right, y)
-		end
-		-- the pages' buttons as low as the Dungeon Finder's: the browse
-		-- list's rows clear of their foot
-		for _, name in ipairs({ "LFRQueueFrameFindGroupButton", "LFRQueueFrameAcceptCommentButton", "LFRBrowseFrameSendMessageButton" }) do
-			local button = _G[name]
-			if button then
-				local point, relative, relativePoint, x = button:GetPoint()
-				button:SetPoint(point, relative, relativePoint, x, config.button_bottom - config.raids.insets[4])
-			end
 		end
 		-- the tabs as banners hanging from the window's foot
 		kit:HangTabs(window, { _G.LFRParentFrameTab1, _G.LFRParentFrameTab2 }, config.tab_sigils)

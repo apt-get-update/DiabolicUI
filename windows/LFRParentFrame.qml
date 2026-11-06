@@ -26,6 +26,7 @@ WowWindow {
         kind: "Button"
         text: "Name"
         wowParent: "LFRBrowseFrame"
+        pin: "place"
         anchors.left: lFRBrowseFrame.left
         anchors.leftMargin: 26
         anchors.top: lFRBrowseFrame.top
@@ -133,6 +134,20 @@ WowWindow {
         anchors.verticalCenter: lFRBrowseFrameInviteButton.verticalCenter
         width: 45.8
         height: 11.9
+    }
+
+    Part {
+        id: lFRBrowseFrameListButton1
+        name: "LFRBrowseFrameListButton1"
+        kind: "Button"
+        wowParent: "LFRBrowseFrame"
+        pin: "place"
+        anchors.left: lFRBrowseFrame.left
+        anchors.leftMargin: 12
+        anchors.top: lFRBrowseFrame.top
+        anchors.topMargin: 66
+        width: 298
+        height: 16
     }
 
     Part {
@@ -254,9 +269,10 @@ WowWindow {
         text: "Send Message"
         wowParent: "LFRBrowseFrame"
         style: "Button"
-        anchors.right: lFRParentFrame.right
-        anchors.rightMargin: 219.1
-        anchors.bottom: lFRParentFrame.bottom
+        pin: "place"
+        anchors.left: lFRBrowseFrame.left
+        anchors.leftMargin: 25
+        anchors.bottom: lFRBrowseFrame.bottom
         anchors.bottomMargin: -6
         width: 110.9
         height: 22
@@ -425,6 +441,7 @@ WowWindow {
         text: "Set Comment"
         wowParent: "LFRQueueFrame"
         style: "Button"
+        pin: "place"
         anchors.right: lFRQueueFrame.right
         anchors.rightMargin: 21
         anchors.bottom: lFRQueueFrame.bottom
@@ -500,6 +517,7 @@ WowWindow {
         text: "List My Name"
         wowParent: "LFRQueueFrame"
         style: "Button"
+        pin: "place"
         anchors.left: lFRQueueFrame.left
         anchors.leftMargin: 21
         anchors.bottom: lFRQueueFrame.bottom
@@ -573,6 +591,7 @@ WowWindow {
         name: "LFRQueueFrameSpecificListButton1"
         kind: "Frame"
         wowParent: "LFRQueueFrameSpecific"
+        pin: "place"
         anchors.left: lFRQueueFrameSpecific.left
         anchors.leftMargin: 17
         anchors.top: lFRQueueFrameSpecific.top

@@ -115,6 +115,7 @@ WowWindow {
         text: "Close"
         wowParent: "LFDQueueFrame"
         style: "Button"
+        pin: "place"
         anchors.right: lFDParentFrameDiabolic.right
         anchors.rightMargin: 34
         anchors.bottom: lFDParentFrameDiabolic.bottom
@@ -142,6 +143,7 @@ WowWindow {
         text: "Find Group"
         wowParent: "LFDQueueFrame"
         style: "Button"
+        pin: "place"
         anchors.left: lFDParentFrameDiabolic.left
         anchors.leftMargin: 34
         anchors.bottom: lFDParentFrameDiabolic.bottom
@@ -179,6 +181,7 @@ WowWindow {
         name: "LFDQueueFrameRandomScrollFrame"
         kind: "ScrollFrame"
         wowParent: "LFDQueueFrameRandom"
+        pin: "all"
         anchors.right: lFDQueueFrameRandom.right
         anchors.rightMargin: 34
         anchors.bottom: lFDQueueFrameRandom.bottom
