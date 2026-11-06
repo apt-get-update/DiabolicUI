@@ -327,9 +327,9 @@ WowWindow {
         name: "LFRParentFrameDiabolicFoot"
         kind: "Frame"
         wowParent: "LFRParentFrameDiabolic"
-        anchors.horizontalCenter: lFRBrowseFrameSendMessageButton.horizontalCenter
-        anchors.horizontalCenterOffset: 88.6
-        anchors.top: lFRBrowseFrameSendMessageButton.top
+        anchors.horizontalCenter: lFRQueueFrameFindGroupButton.horizontalCenter
+        anchors.horizontalCenterOffset: 85.5
+        anchors.top: lFRQueueFrameFindGroupButton.top
         anchors.topMargin: -6
         width: 324
         height: 35

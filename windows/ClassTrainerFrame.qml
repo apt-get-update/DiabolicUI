@@ -521,7 +521,6 @@ WowWindow {
         wowParent: "ClassTrainerListScrollFrame"
         anchors.left: classTrainerListScrollFrame.left
         anchors.top: classTrainerListScrollFrame.top
-        anchors.topMargin: -208
         width: 300
         height: 384
     }
@@ -634,7 +633,7 @@ WowWindow {
         id: classTrainerSkill1
         name: "ClassTrainerSkill1"
         kind: "Button"
-        text: "  Lightwell"
+        text: "Discipline"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerFrame.left
         anchors.leftMargin: 22
@@ -648,7 +647,7 @@ WowWindow {
         id: classTrainerSkill10
         name: "ClassTrainerSkill10"
         kind: "Button"
-        text: "  Desperate Prayer"
+        text: "  Lightwell"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill9.left
         anchors.top: classTrainerSkill9.bottom
@@ -660,7 +659,7 @@ WowWindow {
         id: classTrainerSkill10SubText
         name: "ClassTrainerSkill10SubText"
         kind: "FontString"
-        text: "(Rank 9)"
+        text: "(Rank 2)"
         wowParent: "ClassTrainerSkill10"
         anchors.right: classTrainerSkill10.right
         anchors.rightMargin: 2
@@ -673,7 +672,7 @@ WowWindow {
         id: classTrainerSkill10Text
         name: "ClassTrainerSkill10Text"
         kind: "FontString"
-        text: "  Desperate Prayer"
+        text: "  Lightwell"
         wowParent: "ClassTrainerSkill10"
         anchors.left: classTrainerSkill10Highlight.right
         anchors.leftMargin: 2
@@ -687,7 +686,7 @@ WowWindow {
         id: classTrainerSkill11
         name: "ClassTrainerSkill11"
         kind: "Button"
-        text: "  Lightwell"
+        text: "  Circle of Healing"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill10.left
         anchors.top: classTrainerSkill10.bottom
@@ -699,7 +698,7 @@ WowWindow {
         id: classTrainerSkill11SubText
         name: "ClassTrainerSkill11SubText"
         kind: "FontString"
-        text: "(Rank 6)"
+        text: "(Rank 2)"
         wowParent: "ClassTrainerSkill11"
         anchors.right: classTrainerSkill11.right
         anchors.rightMargin: 2
@@ -712,7 +711,7 @@ WowWindow {
         id: classTrainerSkill11Text
         name: "ClassTrainerSkill11Text"
         kind: "FontString"
-        text: "  Lightwell"
+        text: "  Circle of Healing"
         wowParent: "ClassTrainerSkill11"
         anchors.left: classTrainerSkill11Highlight.right
         anchors.leftMargin: 2
@@ -739,13 +738,13 @@ WowWindow {
         id: classTrainerSkill1Text
         name: "ClassTrainerSkill1Text"
         kind: "FontString"
-        text: "  Lightwell"
+        text: "Discipline"
         wowParent: "ClassTrainerSkill1"
         anchors.left: classTrainerSkill1Highlight.right
         anchors.leftMargin: 2
         anchors.verticalCenter: classTrainerSkill1Highlight.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 210
+        width: 270
         height: 13
     }
 
@@ -753,7 +752,7 @@ WowWindow {
         id: classTrainerSkill2
         name: "ClassTrainerSkill2"
         kind: "Button"
-        text: "  Circle of Healing"
+        text: "  Penance"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill1.left
         anchors.top: classTrainerSkill1.bottom
@@ -765,7 +764,7 @@ WowWindow {
         id: classTrainerSkill2SubText
         name: "ClassTrainerSkill2SubText"
         kind: "FontString"
-        text: "(Rank 4)"
+        text: "(Rank 2)"
         wowParent: "ClassTrainerSkill2"
         anchors.right: classTrainerSkill2.right
         anchors.rightMargin: 2
@@ -778,7 +777,7 @@ WowWindow {
         id: classTrainerSkill2Text
         name: "ClassTrainerSkill2Text"
         kind: "FontString"
-        text: "  Circle of Healing"
+        text: "  Penance"
         wowParent: "ClassTrainerSkill2"
         anchors.left: classTrainerSkill2Highlight.right
         anchors.leftMargin: 2
@@ -792,7 +791,7 @@ WowWindow {
         id: classTrainerSkill3
         name: "ClassTrainerSkill3"
         kind: "Button"
-        text: "  Desperate Prayer"
+        text: "  Penance"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill2.left
         anchors.top: classTrainerSkill2.bottom
@@ -804,7 +803,7 @@ WowWindow {
         id: classTrainerSkill3SubText
         name: "ClassTrainerSkill3SubText"
         kind: "FontString"
-        text: "(Rank 7)"
+        text: "(Rank 3)"
         wowParent: "ClassTrainerSkill3"
         anchors.right: classTrainerSkill3.right
         anchors.rightMargin: 2
@@ -817,7 +816,7 @@ WowWindow {
         id: classTrainerSkill3Text
         name: "ClassTrainerSkill3Text"
         kind: "FontString"
-        text: "  Desperate Prayer"
+        text: "  Penance"
         wowParent: "ClassTrainerSkill3"
         anchors.left: classTrainerSkill3Highlight.right
         anchors.leftMargin: 2
@@ -831,7 +830,7 @@ WowWindow {
         id: classTrainerSkill4
         name: "ClassTrainerSkill4"
         kind: "Button"
-        text: "  Circle of Healing"
+        text: "  Penance"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill3.left
         anchors.top: classTrainerSkill3.bottom
@@ -843,7 +842,7 @@ WowWindow {
         id: classTrainerSkill4SubText
         name: "ClassTrainerSkill4SubText"
         kind: "FontString"
-        text: "(Rank 5)"
+        text: "(Rank 4)"
         wowParent: "ClassTrainerSkill4"
         anchors.right: classTrainerSkill4.right
         anchors.rightMargin: 2
@@ -856,7 +855,7 @@ WowWindow {
         id: classTrainerSkill4Text
         name: "ClassTrainerSkill4Text"
         kind: "FontString"
-        text: "  Circle of Healing"
+        text: "  Penance"
         wowParent: "ClassTrainerSkill4"
         anchors.left: classTrainerSkill4Highlight.right
         anchors.leftMargin: 2
@@ -870,7 +869,7 @@ WowWindow {
         id: classTrainerSkill5
         name: "ClassTrainerSkill5"
         kind: "Button"
-        text: "  Lightwell"
+        text: "Holy"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill4.left
         anchors.top: classTrainerSkill4.bottom
@@ -895,13 +894,13 @@ WowWindow {
         id: classTrainerSkill5Text
         name: "ClassTrainerSkill5Text"
         kind: "FontString"
-        text: "  Lightwell"
+        text: "Holy"
         wowParent: "ClassTrainerSkill5"
         anchors.left: classTrainerSkill5Highlight.right
         anchors.leftMargin: 2
         anchors.verticalCenter: classTrainerSkill5Highlight.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 210
+        width: 270
         height: 13
     }
 
@@ -921,7 +920,7 @@ WowWindow {
         id: classTrainerSkill6SubText
         name: "ClassTrainerSkill6SubText"
         kind: "FontString"
-        text: "(Rank 8)"
+        text: "(Rank 2)"
         wowParent: "ClassTrainerSkill6"
         anchors.right: classTrainerSkill6.right
         anchors.rightMargin: 2
@@ -948,7 +947,7 @@ WowWindow {
         id: classTrainerSkill7
         name: "ClassTrainerSkill7"
         kind: "Button"
-        text: "  Circle of Healing"
+        text: "  Desperate Prayer"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill6.left
         anchors.top: classTrainerSkill6.bottom
@@ -960,7 +959,7 @@ WowWindow {
         id: classTrainerSkill7SubText
         name: "ClassTrainerSkill7SubText"
         kind: "FontString"
-        text: "(Rank 6)"
+        text: "(Rank 3)"
         wowParent: "ClassTrainerSkill7"
         anchors.right: classTrainerSkill7.right
         anchors.rightMargin: 2
@@ -973,7 +972,7 @@ WowWindow {
         id: classTrainerSkill7Text
         name: "ClassTrainerSkill7Text"
         kind: "FontString"
-        text: "  Circle of Healing"
+        text: "  Desperate Prayer"
         wowParent: "ClassTrainerSkill7"
         anchors.left: classTrainerSkill7Highlight.right
         anchors.leftMargin: 2
@@ -987,7 +986,7 @@ WowWindow {
         id: classTrainerSkill8
         name: "ClassTrainerSkill8"
         kind: "Button"
-        text: "  Lightwell"
+        text: "  Desperate Prayer"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill7.left
         anchors.top: classTrainerSkill7.bottom
@@ -999,7 +998,7 @@ WowWindow {
         id: classTrainerSkill8SubText
         name: "ClassTrainerSkill8SubText"
         kind: "FontString"
-        text: "(Rank 5)"
+        text: "(Rank 4)"
         wowParent: "ClassTrainerSkill8"
         anchors.right: classTrainerSkill8.right
         anchors.rightMargin: 2
@@ -1012,7 +1011,7 @@ WowWindow {
         id: classTrainerSkill8Text
         name: "ClassTrainerSkill8Text"
         kind: "FontString"
-        text: "  Lightwell"
+        text: "  Desperate Prayer"
         wowParent: "ClassTrainerSkill8"
         anchors.left: classTrainerSkill8Highlight.right
         anchors.leftMargin: 2
@@ -1026,7 +1025,7 @@ WowWindow {
         id: classTrainerSkill9
         name: "ClassTrainerSkill9"
         kind: "Button"
-        text: "  Circle of Healing"
+        text: "  Desperate Prayer"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill8.left
         anchors.top: classTrainerSkill8.bottom
@@ -1038,7 +1037,7 @@ WowWindow {
         id: classTrainerSkill9SubText
         name: "ClassTrainerSkill9SubText"
         kind: "FontString"
-        text: "(Rank 7)"
+        text: "(Rank 5)"
         wowParent: "ClassTrainerSkill9"
         anchors.right: classTrainerSkill9.right
         anchors.rightMargin: 2
@@ -1051,7 +1050,7 @@ WowWindow {
         id: classTrainerSkill9Text
         name: "ClassTrainerSkill9Text"
         kind: "FontString"
-        text: "  Circle of Healing"
+        text: "  Desperate Prayer"
         wowParent: "ClassTrainerSkill9"
         anchors.left: classTrainerSkill9Highlight.right
         anchors.leftMargin: 2
@@ -1078,8 +1077,9 @@ WowWindow {
         id: classTrainerSkillHighlightFrame
         name: "ClassTrainerSkillHighlightFrame"
         kind: "Frame"
-        anchors.left: classTrainerSkill1.left
-        anchors.top: classTrainerSkill1.top
+        wowParent: "ClassTrainerFrame"
+        anchors.left: classTrainerSkill2.left
+        anchors.top: classTrainerSkill2.top
         width: 293
         height: 16
     }

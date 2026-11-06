@@ -34,15 +34,15 @@ Engine:NewStaticConfig("Positions", {
 	-- as from the foot's iron bar
 	GuildBankColumn1 = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 30, -43 }, -- Frame
 	GuildBankFrameLog = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 0, 27 }, -- Frame
-	GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 },
+	GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 }, -- Frame
 	-- the info's page the logs' size, in the same place
-	GuildBankInfoScrollFrame = { 688, 304 },
-	GuildBankTabInfoEditBox = { 688, 218 },
+	GuildBankInfoScrollFrame = { 688, 304 }, -- ScrollFrame
+	GuildBankTabInfoEditBox = { 688, 218 }, -- EditBox
 	GuildBankTransactionsScrollFrame = { "TOPRIGHT", "GuildBankFrame", "TOPRIGHT", -50, -48 }, -- ScrollFrame
 
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
-	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 12 Human Paladin"
+	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 58 Draenei Shaman"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
@@ -73,7 +73,7 @@ Engine:NewStaticConfig("Positions", {
 	-- 8 apart
 	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0 }, -- Button "Cancel"
 	-- 8 apart
-	PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 }, -- Button "Join as Party"
+	PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 }, -- Button "Join as Group"
 	-- the rewards 208 high (Blizzard's 232): 6 over the foot's iron bar, 6 under the list
 	PVPBattlegroundFrameInfoScrollFrame = { "BOTTOMLEFT", "PVPBattlegroundFrame", "BOTTOMLEFT", 15, 122, 298, 208 }, -- ScrollFrame
 	-- the buttons in the middle of the window's foot (its middle 15 left of the
@@ -86,7 +86,7 @@ Engine:NewStaticConfig("Positions", {
 	-- TradeFrame ------------------------------------------------------------
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
-	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Joytoy"
+	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Unluckylock"
 
 	-- TradeSkillFrame -------------------------------------------------------
 	-- the skill's bar centred on our window (24 left of the frame, 14 right of it:

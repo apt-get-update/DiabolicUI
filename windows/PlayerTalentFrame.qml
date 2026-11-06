@@ -115,12 +115,12 @@ WowWindow {
         id: glyphFrameTitleText
         name: "GlyphFrameTitleText"
         kind: "FontString"
-        text: "Secondary Glyphs"
+        text: "Primary Glyphs"
         wowParent: "GlyphFrame"
         anchors.horizontalCenter: glyphFrame.horizontalCenter
         anchors.top: glyphFrame.top
         anchors.topMargin: 18
-        width: 96.4
+        width: 81.4
         height: 10.3
     }
 
@@ -146,6 +146,30 @@ WowWindow {
         anchors.verticalCenter: playerSpecTab1.verticalCenter
         width: 28
         height: 28
+    }
+
+    Part {
+        id: playerTalentFrameActivateButton
+        name: "PlayerTalentFrameActivateButton"
+        kind: "Button"
+        text: "Activate These Talents"
+        wowParent: "PlayerTalentFrame"
+        anchors.horizontalCenter: playerTalentFrameDiabolicBand.horizontalCenter
+        anchors.verticalCenter: playerTalentFrameDiabolicBand.verticalCenter
+        width: 201.8
+        height: 22
+    }
+
+    Part {
+        id: playerTalentFrameActivateButtonText
+        name: "PlayerTalentFrameActivateButtonText"
+        kind: "FontString"
+        text: "Activate These Talents"
+        wowParent: "PlayerTalentFrameActivateButton"
+        anchors.horizontalCenter: playerTalentFrameActivateButton.horizontalCenter
+        anchors.verticalCenter: playerTalentFrameActivateButton.verticalCenter
+        width: 177.8
+        height: 11.9
     }
 
     Part {
@@ -353,7 +377,7 @@ WowWindow {
         anchors.leftMargin: 12
         anchors.verticalCenter: playerTalentFramePointsBar.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 104.3
+        width: 97.2
         height: 15
     }
 
@@ -889,10 +913,23 @@ WowWindow {
     }
 
     Part {
+        id: playerTalentFrameTalent28
+        name: "PlayerTalentFrameTalent28"
+        kind: "Button"
+        wowParent: "PlayerTalentFrameScrollChildFrame"
+        anchors.left: playerTalentFrameScrollChildFrame.left
+        anchors.leftMargin: 98
+        anchors.top: playerTalentFrameScrollChildFrame.top
+        anchors.topMargin: 650
+        width: 37
+        height: 37
+    }
+
+    Part {
         id: playerTalentFrameTalent2Rank
         name: "PlayerTalentFrameTalent2Rank"
         kind: "FontString"
-        text: "2"
+        text: "5"
         wowParent: "PlayerTalentFrameTalent2"
         anchors.horizontalCenter: playerTalentFrameTalent2RankBorder.horizontalCenter
         anchors.verticalCenter: playerTalentFrameTalent2RankBorder.verticalCenter
@@ -936,6 +973,18 @@ WowWindow {
         anchors.topMargin: 83
         width: 37
         height: 37
+    }
+
+    Part {
+        id: playerTalentFrameTalent4Rank
+        name: "PlayerTalentFrameTalent4Rank"
+        kind: "FontString"
+        text: "3"
+        wowParent: "PlayerTalentFrameTalent4"
+        anchors.horizontalCenter: playerTalentFrameTalent4RankBorder.horizontalCenter
+        anchors.verticalCenter: playerTalentFrameTalent4RankBorder.verticalCenter
+        width: 7.9
+        height: 10.3
     }
 
     Part {
@@ -1002,6 +1051,18 @@ WowWindow {
     }
 
     Part {
+        id: playerTalentFrameTalent7Rank
+        name: "PlayerTalentFrameTalent7Rank"
+        kind: "FontString"
+        text: "3"
+        wowParent: "PlayerTalentFrameTalent7"
+        anchors.horizontalCenter: playerTalentFrameTalent7RankBorder.horizontalCenter
+        anchors.verticalCenter: playerTalentFrameTalent7RankBorder.verticalCenter
+        width: 7.9
+        height: 10.3
+    }
+
+    Part {
         id: playerTalentFrameTalent8
         name: "PlayerTalentFrameTalent8"
         kind: "Button"
@@ -1018,11 +1079,11 @@ WowWindow {
         id: playerTalentFrameTalent8Rank
         name: "PlayerTalentFrameTalent8Rank"
         kind: "FontString"
-        text: "5"
+        text: "1"
         wowParent: "PlayerTalentFrameTalent8"
         anchors.horizontalCenter: playerTalentFrameTalent8RankBorder.horizontalCenter
         anchors.verticalCenter: playerTalentFrameTalent8RankBorder.verticalCenter
-        width: 7.9
+        width: 6.3
         height: 10.3
     }
 
@@ -1068,12 +1129,12 @@ WowWindow {
         id: playerTalentFrameTitleText
         name: "PlayerTalentFrameTitleText"
         kind: "FontString"
-        text: "Secondary Talents"
+        text: "Primary Talents"
         wowParent: "PlayerTalentFrameDiabolicTitlePlate"
         anchors.horizontalCenter: playerTalentFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: playerTalentFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 175.4
+        width: 150.1
         height: 14.2
     }
 
@@ -1093,10 +1154,12 @@ WowWindow {
     Ghost { id: playerTalentFrameTalent25RankBorder; name: "PlayerTalentFrameTalent25RankBorder"; x: 240; y: 634.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent26RankBorder; name: "PlayerTalentFrameTalent26RankBorder"; x: 240; y: 697.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent27RankBorder; name: "PlayerTalentFrameTalent27RankBorder"; x: 177; y: 760.9; width: 0; height: 0 }
-    Ghost { id: playerTalentFrameTalent2RankBorder; name: "PlayerTalentFrameTalent2RankBorder"; x: 177; y: 130.9; width: 0; height: 0 }
+    Ghost { id: playerTalentFrameTalent2RankBorder; name: "PlayerTalentFrameTalent2RankBorder"; x: 240; y: 130.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent3RankBorder; name: "PlayerTalentFrameTalent3RankBorder"; x: 240; y: 130.9; width: 0; height: 0 }
-    Ghost { id: playerTalentFrameTalent5RankBorder; name: "PlayerTalentFrameTalent5RankBorder"; x: 177; y: 193.9; width: 0; height: 0 }
+    Ghost { id: playerTalentFrameTalent4RankBorder; name: "PlayerTalentFrameTalent4RankBorder"; x: 177; y: 193.9; width: 0; height: 0 }
+    Ghost { id: playerTalentFrameTalent5RankBorder; name: "PlayerTalentFrameTalent5RankBorder"; x: 240; y: 193.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent6RankBorder; name: "PlayerTalentFrameTalent6RankBorder"; x: 240; y: 193.9; width: 0; height: 0 }
+    Ghost { id: playerTalentFrameTalent7RankBorder; name: "PlayerTalentFrameTalent7RankBorder"; x: 114; y: 257; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent8RankBorder; name: "PlayerTalentFrameTalent8RankBorder"; x: 177; y: 257; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent9RankBorder; name: "PlayerTalentFrameTalent9RankBorder"; x: 240; y: 257; width: 0; height: 0 }
 }

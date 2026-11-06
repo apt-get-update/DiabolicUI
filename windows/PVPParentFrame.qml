@@ -69,7 +69,7 @@ WowWindow {
         id: battlegroundType3
         name: "BattlegroundType3"
         kind: "Button"
-        text: "Warsong Gulch"
+        text: "Arathi Basin (Call to Arms)"
         wowParent: "PVPBattlegroundFrame"
         anchors.left: battlegroundType2.left
         anchors.top: battlegroundType2.bottom
@@ -81,13 +81,13 @@ WowWindow {
         id: battlegroundType3Text
         name: "BattlegroundType3Text"
         kind: "FontString"
-        text: "Warsong Gulch"
+        text: "Arathi Basin (Call to Arms)"
         wowParent: "BattlegroundType3"
         anchors.left: battlegroundType3.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType3.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 91.7
+        width: 155.7
         height: 11.9
     }
 
@@ -95,7 +95,7 @@ WowWindow {
         id: battlegroundType4
         name: "BattlegroundType4"
         kind: "Button"
-        text: "Arathi Basin"
+        text: "Warsong Gulch"
         wowParent: "PVPBattlegroundFrame"
         anchors.left: battlegroundType3.left
         anchors.top: battlegroundType3.bottom
@@ -107,13 +107,13 @@ WowWindow {
         id: battlegroundType4Text
         name: "BattlegroundType4Text"
         kind: "FontString"
-        text: "Arathi Basin"
+        text: "Warsong Gulch"
         wowParent: "BattlegroundType4"
         anchors.left: battlegroundType4.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType4.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 72.7
+        width: 91.7
         height: 11.9
     }
 
@@ -201,7 +201,7 @@ WowWindow {
         id: pVPBattlegroundFrameGroupJoinButton
         name: "PVPBattlegroundFrameGroupJoinButton"
         kind: "Button"
-        text: "Join as Party"
+        text: "Join as Group"
         wowParent: "PVPBattlegroundFrame"
         pin: "place"
         anchors.right: pVPBattlegroundFrameJoinButton.left
@@ -215,11 +215,11 @@ WowWindow {
         id: pVPBattlegroundFrameGroupJoinButtonText
         name: "PVPBattlegroundFrameGroupJoinButtonText"
         kind: "FontString"
-        text: "Join as Party"
+        text: "Join as Group"
         wowParent: "PVPBattlegroundFrameGroupJoinButton"
         anchors.horizontalCenter: pVPBattlegroundFrameGroupJoinButton.horizontalCenter
         anchors.verticalCenter: pVPBattlegroundFrameGroupJoinButton.verticalCenter
-        width: 101.9
+        width: 103.5
         height: 11.9
     }
 
@@ -264,13 +264,13 @@ WowWindow {
         id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoDescription
         name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoDescription"
         kind: "FontString"
-        text: "Completing Random Battlegrounds will earn you extra rewards."
+        text: "Your urgent assistance is needed to combat our foes! Completing this Battleground will earn you extra rewards."
         wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoTitle.left
         anchors.top: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoTitle.bottom
         anchors.topMargin: 5
         width: 280
-        height: 25.3
+        height: 37.9
     }
 
     Part {
@@ -328,13 +328,13 @@ WowWindow {
         id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoTitle
         name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoTitle"
         kind: "FontString"
-        text: "Random Battleground"
+        text: "Call to Arms"
         wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfo.left
         anchors.leftMargin: 20
         anchors.top: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfo.top
         anchors.topMargin: 15
-        width: 225.2
+        width: 130.4
         height: 15.8
     }
 
@@ -1069,8 +1069,8 @@ WowWindow {
         height: 32
     }
 
-    Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"; x: 150; y: 346.9; width: 0; height: 0 }
-    Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol"; x: 255; y: 304.9; width: 0; height: 0 }
-    Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol"; x: 150; y: 304.9; width: 0; height: 0 }
+    Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"; x: 150; y: 359.5; width: 0; height: 0 }
+    Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol"; x: 255; y: 317.5; width: 0; height: 0 }
+    Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol"; x: 150; y: 317.5; width: 0; height: 0 }
     Ghost { id: pVPFrameBackground; name: "PVPFrameBackground"; x: 14; y: 36; width: 0; height: 512 }
 }

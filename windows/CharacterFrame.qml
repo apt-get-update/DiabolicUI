@@ -2120,10 +2120,11 @@ WowWindow {
         id: reputationBar14ReputationBarFactionStanding
         name: "ReputationBar14ReputationBarFactionStanding"
         kind: "FontString"
+        text: "Exalted"
         wowParent: "ReputationBar14ReputationBar"
         anchors.horizontalCenter: reputationBar14ReputationBar.horizontalCenter
         anchors.verticalCenter: reputationBar14ReputationBar.verticalCenter
-        width: 64
+        width: 40.3
         height: 10.3
     }
 

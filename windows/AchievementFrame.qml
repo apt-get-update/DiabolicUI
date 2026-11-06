@@ -13,16 +13,19 @@ WowWindow {
         id: achievementFrameAchievements
         name: "AchievementFrameAchievements"
         kind: "Frame"
+        wowParent: "AchievementFrame"
         anchors.left: achievementFrameCategories.right
+        anchors.leftMargin: 22
         anchors.top: achievementFrameCategories.top
         width: 504
-        height: 440
+        height: 461
     }
 
     Part {
         id: achievementFrameAchievementsContainer
         name: "AchievementFrameAchievementsContainer"
         kind: "ScrollFrame"
+        wowParent: "AchievementFrameAchievements"
         anchors.left: achievementFrameAchievements.left
         anchors.leftMargin: 4
         anchors.top: achievementFrameAchievements.top
@@ -35,42 +38,70 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton1
         name: "AchievementFrameAchievementsContainerButton1"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerScrollChild.left
         anchors.top: achievementFrameAchievementsContainerScrollChild.top
         anchors.topMargin: 2
         width: 496
-        height: 84
+        height: 89.3
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton1DateCompleted
         name: "AchievementFrameAchievementsContainerButton1DateCompleted"
         kind: "FontString"
-        text: "9/28/26"
+        text: "10/22/26"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton1Shield.horizontalCenter
         anchors.horizontalCenterOffset: -3
         anchors.top: achievementFrameAchievementsContainerButton1Shield.bottom
         anchors.topMargin: -6
-        width: 42
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton1Description
         name: "AchievementFrameAchievementsContainerButton1Description"
         kind: "FontString"
-        text: "Obtain 10 mounts."
+        text: "Show off your sparkling smile by using a Tooth Pick."
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton1.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton1.top
         anchors.topMargin: 30
-        width: 102
-        height: 12
+        width: 330
+        height: 30
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton1HiddenDescription
+        name: "AchievementFrameAchievementsContainerButton1HiddenDescription"
+        kind: "FontString"
+        text: "Obtain a Sinister Squashling pet and Hallowed Helm."
+        wowParent: "AchievementFrameAchievementsContainerButton1"
+        anchors.horizontalCenter: achievementFrameAchievementsContainerButton1.horizontalCenter
+        anchors.top: achievementFrameAchievementsContainerButton1.top
+        anchors.topMargin: 30
+        width: 330
+        height: 10.3
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton1Highlight
+        name: "AchievementFrameAchievementsContainerButton1Highlight"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
+        anchors.left: achievementFrameAchievementsContainerButton1.left
+        anchors.top: achievementFrameAchievementsContainerButton1.top
+        width: 496
+        height: 89.3
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton1Icon
         name: "AchievementFrameAchievementsContainerButton1Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.left: achievementFrameAchievementsContainerButton1.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton1.top
@@ -83,40 +114,45 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton1Label
         name: "AchievementFrameAchievementsContainerButton1Label"
         kind: "FontString"
-        text: "Stable Keeper"
+        text: "Sinister Calling"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton1TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton1TitleBackground.top
-        width: 78
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton1Objectives
         name: "AchievementFrameAchievementsContainerButton1Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton1Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton1Description.bottom
-        anchors.topMargin: 8
+        anchors.topMargin: -76.1
         width: 340
-        height: -6
+        height: -0.7
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton1Reward
         name: "AchievementFrameAchievementsContainerButton1Reward"
         kind: "FontString"
-        text: "Title Reward: Ambassador"
+        text: "Title Reward: Brewmaster"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton1RewardBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton1RewardBackground.top
         anchors.topMargin: -1
-        width: 144
-        height: 12
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton1Shield
         name: "AchievementFrameAchievementsContainerButton1Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
         anchors.right: achievementFrameAchievementsContainerButton1.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton1.top
@@ -129,18 +165,20 @@ WowWindow {
         name: "AchievementFrameAchievementsContainerButton1ShieldPoints"
         kind: "FontString"
         text: "10"
+        wowParent: "AchievementFrameAchievementsContainerButton1Shield"
         anchors.right: achievementFrameAchievementsContainerButton1Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton1Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton2
         name: "AchievementFrameAchievementsContainerButton2"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerButton1.left
         anchors.top: achievementFrameAchievementsContainerButton1.bottom
         width: 496
@@ -151,31 +189,59 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton2DateCompleted
         name: "AchievementFrameAchievementsContainerButton2DateCompleted"
         kind: "FontString"
-        text: "8/14/26"
+        text: "10/21/26"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton2Shield.horizontalCenter
         anchors.horizontalCenterOffset: -3
         anchors.top: achievementFrameAchievementsContainerButton2Shield.bottom
         anchors.topMargin: -6
-        width: 42
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton2Description
         name: "AchievementFrameAchievementsContainerButton2Description"
         kind: "FontString"
-        text: "Equip 10 unique tabards."
+        text: "Eat so many Tricky Treats that you get an upset tummy."
+        wowParent: "AchievementFrameAchievementsContainerButton2"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton2.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton2.top
         anchors.topMargin: 30
-        width: 144
-        height: 12
+        width: 330
+        height: 30
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton2HiddenDescription
+        name: "AchievementFrameAchievementsContainerButton2HiddenDescription"
+        kind: "FontString"
+        text: "Obtain a Sinister Squashling pet and Hallowed Helm."
+        wowParent: "AchievementFrameAchievementsContainerButton2"
+        anchors.horizontalCenter: achievementFrameAchievementsContainerButton2.horizontalCenter
+        anchors.top: achievementFrameAchievementsContainerButton2.top
+        anchors.topMargin: 30
+        width: 330
+        height: 10.3
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton2Highlight
+        name: "AchievementFrameAchievementsContainerButton2Highlight"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
+        anchors.left: achievementFrameAchievementsContainerButton2.left
+        anchors.top: achievementFrameAchievementsContainerButton2.top
+        anchors.topMargin: 78.7
+        width: 496
+        height: 89.3
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton2Icon
         name: "AchievementFrameAchievementsContainerButton2Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
         anchors.left: achievementFrameAchievementsContainerButton2.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton2.top
@@ -188,28 +254,45 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton2Label
         name: "AchievementFrameAchievementsContainerButton2Label"
         kind: "FontString"
-        text: "Ten Tabards"
+        text: "Out With It"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton2TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton2TitleBackground.top
-        width: 66
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton2Objectives
         name: "AchievementFrameAchievementsContainerButton2Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton2Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton2Description.bottom
         anchors.topMargin: 8
         width: 340
-        height: -8.4
+        height: -6
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton2Reward
+        name: "AchievementFrameAchievementsContainerButton2Reward"
+        kind: "FontString"
+        text: "Reward: Tabard of the Explorer"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
+        anchors.horizontalCenter: achievementFrameAchievementsContainerButton2RewardBackground.horizontalCenter
+        anchors.top: achievementFrameAchievementsContainerButton2RewardBackground.top
+        anchors.topMargin: -1
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton2Shield
         name: "AchievementFrameAchievementsContainerButton2Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton2"
         anchors.right: achievementFrameAchievementsContainerButton2.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton2.top
@@ -221,19 +304,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton2ShieldPoints
         name: "AchievementFrameAchievementsContainerButton2ShieldPoints"
         kind: "FontString"
-        text: "20"
+        text: "10"
+        wowParent: "AchievementFrameAchievementsContainerButton2Shield"
         anchors.right: achievementFrameAchievementsContainerButton2Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton2Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton3
         name: "AchievementFrameAchievementsContainerButton3"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerButton2.left
         anchors.top: achievementFrameAchievementsContainerButton2.bottom
         width: 496
@@ -244,31 +329,45 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton3DateCompleted
         name: "AchievementFrameAchievementsContainerButton3DateCompleted"
         kind: "FontString"
-        text: "6/24/26"
+        text: "10/21/26"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton3Shield.horizontalCenter
         anchors.horizontalCenterOffset: -3
         anchors.top: achievementFrameAchievementsContainerButton3Shield.bottom
         anchors.topMargin: -6
-        width: 42
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton3Description
         name: "AchievementFrameAchievementsContainerButton3Description"
         kind: "FontString"
-        text: "Collect 15 unique companion pets."
+        text: "Receive a handful of a candy from one of the Candy Buckets located in an inn."
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton3.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton3.top
         anchors.topMargin: 30
-        width: 198
-        height: 12
+        width: 330
+        height: 30
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton3Highlight
+        name: "AchievementFrameAchievementsContainerButton3Highlight"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
+        anchors.left: achievementFrameAchievementsContainerButton3.left
+        anchors.top: achievementFrameAchievementsContainerButton3.top
+        width: 496
+        height: 84
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton3Icon
         name: "AchievementFrameAchievementsContainerButton3Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.left: achievementFrameAchievementsContainerButton3.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton3.top
@@ -281,18 +380,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton3Label
         name: "AchievementFrameAchievementsContainerButton3Label"
         kind: "FontString"
-        text: "Plenty of Pets"
+        text: "Trick or Treat!"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton3TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton3TitleBackground.top
-        width: 84
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton3Objectives
         name: "AchievementFrameAchievementsContainerButton3Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton3Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton3Description.bottom
         anchors.topMargin: 8
         width: 340
@@ -304,17 +406,19 @@ WowWindow {
         name: "AchievementFrameAchievementsContainerButton3Reward"
         kind: "FontString"
         text: "Title Reward: Flame Warden"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton3RewardBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton3RewardBackground.top
         anchors.topMargin: -1
-        width: 156
-        height: 12
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton3Shield
         name: "AchievementFrameAchievementsContainerButton3Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton3"
         anchors.right: achievementFrameAchievementsContainerButton3.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton3.top
@@ -326,19 +430,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton3ShieldPoints
         name: "AchievementFrameAchievementsContainerButton3ShieldPoints"
         kind: "FontString"
-        text: "20"
+        text: "10"
+        wowParent: "AchievementFrameAchievementsContainerButton3Shield"
         anchors.right: achievementFrameAchievementsContainerButton3Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton3Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton4
         name: "AchievementFrameAchievementsContainerButton4"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerButton3.left
         anchors.top: achievementFrameAchievementsContainerButton3.bottom
         width: 496
@@ -349,31 +455,46 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton4DateCompleted
         name: "AchievementFrameAchievementsContainerButton4DateCompleted"
         kind: "FontString"
-        text: "5/30/26"
+        text: "10/18/26"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton4Shield.horizontalCenter
         anchors.horizontalCenterOffset: -3
         anchors.top: achievementFrameAchievementsContainerButton4Shield.bottom
         anchors.topMargin: -6
-        width: 42
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton4Description
         name: "AchievementFrameAchievementsContainerButton4Description"
         kind: "FontString"
-        text: "Loot 1,000 gold."
+        text: "Obtain a Flimsy Mask during Hallow's End."
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton4.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton4.top
         anchors.topMargin: 30
-        width: 96
-        height: 12
+        width: 330
+        height: 30
+    }
+
+    Part {
+        id: achievementFrameAchievementsContainerButton4Highlight
+        name: "AchievementFrameAchievementsContainerButton4Highlight"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
+        anchors.left: achievementFrameAchievementsContainerButton4.left
+        anchors.top: achievementFrameAchievementsContainerButton4.top
+        anchors.topMargin: 80.8
+        width: 496
+        height: 84
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton4Icon
         name: "AchievementFrameAchievementsContainerButton4Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.left: achievementFrameAchievementsContainerButton4.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton4.top
@@ -386,18 +507,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton4Label
         name: "AchievementFrameAchievementsContainerButton4Label"
         kind: "FontString"
-        text: "Got My Mind On My Money"
+        text: "The Mask Task"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton4TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton4TitleBackground.top
-        width: 138
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton4Objectives
         name: "AchievementFrameAchievementsContainerButton4Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton4Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton4Description.bottom
         anchors.topMargin: 8
         width: 340
@@ -408,18 +532,20 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton4Reward
         name: "AchievementFrameAchievementsContainerButton4Reward"
         kind: "FontString"
-        text: "Title Reward: The Diplomat"
+        text: "Title: Bloodsail Admiral"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton4RewardBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton4RewardBackground.top
         anchors.topMargin: -1
-        width: 156
-        height: 12
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton4Shield
         name: "AchievementFrameAchievementsContainerButton4Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton4"
         anchors.right: achievementFrameAchievementsContainerButton4.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton4.top
@@ -431,19 +557,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton4ShieldPoints
         name: "AchievementFrameAchievementsContainerButton4ShieldPoints"
         kind: "FontString"
-        text: "20"
+        text: "10"
+        wowParent: "AchievementFrameAchievementsContainerButton4Shield"
         anchors.right: achievementFrameAchievementsContainerButton4Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton4Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton5
         name: "AchievementFrameAchievementsContainerButton5"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerButton4.left
         anchors.top: achievementFrameAchievementsContainerButton4.bottom
         width: 496
@@ -454,31 +582,34 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton5DateCompleted
         name: "AchievementFrameAchievementsContainerButton5DateCompleted"
         kind: "FontString"
-        text: "5/29/26"
+        text: "10/18/26"
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton5Shield.horizontalCenter
         anchors.horizontalCenterOffset: -3
         anchors.top: achievementFrameAchievementsContainerButton5Shield.bottom
         anchors.topMargin: -6
-        width: 42
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton5Description
         name: "AchievementFrameAchievementsContainerButton5Description"
         kind: "FontString"
-        text: "Win a greed roll on a superior or better item above level 185 by rolling 100."
+        text: "Kill the Headless Horseman."
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton5.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton5.top
         anchors.topMargin: 30
-        width: 462
-        height: 12
+        width: 330
+        height: 30
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton5Icon
         name: "AchievementFrameAchievementsContainerButton5Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.left: achievementFrameAchievementsContainerButton5.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton5.top
@@ -491,18 +622,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton5Label
         name: "AchievementFrameAchievementsContainerButton5Label"
         kind: "FontString"
-        text: "Greedy"
+        text: "Bring Me The Head of... Oh Wait"
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton5TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton5TitleBackground.top
-        width: 36
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton5Objectives
         name: "AchievementFrameAchievementsContainerButton5Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton5Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton5Description.bottom
         anchors.topMargin: 8
         width: 340
@@ -513,18 +647,20 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton5Reward
         name: "AchievementFrameAchievementsContainerButton5Reward"
         kind: "FontString"
-        text: "Title Reward: The Argent Champion"
+        text: "Title Reward: The Love Fool"
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton5RewardBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton5RewardBackground.top
         anchors.topMargin: -1
-        width: 198
-        height: 12
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton5Shield
         name: "AchievementFrameAchievementsContainerButton5Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton5"
         anchors.right: achievementFrameAchievementsContainerButton5.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton5.top
@@ -537,18 +673,20 @@ WowWindow {
         name: "AchievementFrameAchievementsContainerButton5ShieldPoints"
         kind: "FontString"
         text: "10"
+        wowParent: "AchievementFrameAchievementsContainerButton5Shield"
         anchors.right: achievementFrameAchievementsContainerButton5Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton5Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton6
         name: "AchievementFrameAchievementsContainerButton6"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerButton5.left
         anchors.top: achievementFrameAchievementsContainerButton5.bottom
         width: 496
@@ -559,31 +697,34 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton6DateCompleted
         name: "AchievementFrameAchievementsContainerButton6DateCompleted"
         kind: "FontString"
-        text: "5/26/26"
+        text: "10/18/26"
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton6Shield.horizontalCenter
         anchors.horizontalCenterOffset: -3
         anchors.top: achievementFrameAchievementsContainerButton6Shield.bottom
         anchors.topMargin: -6
-        width: 42
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton6Description
         name: "AchievementFrameAchievementsContainerButton6Description"
         kind: "FontString"
-        text: "Learn the artisan riding skill."
+        text: "Complete one of the quests to save a village from the Headless Horseman."
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton6.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton6.top
         anchors.topMargin: 30
-        width: 186
-        height: 12
+        width: 330
+        height: 30
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton6Icon
         name: "AchievementFrameAchievementsContainerButton6Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.left: achievementFrameAchievementsContainerButton6.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton6.top
@@ -596,18 +737,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton6Label
         name: "AchievementFrameAchievementsContainerButton6Label"
         kind: "FontString"
-        text: "The Right Stuff"
+        text: "The Savior of Hallow's End"
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton6TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton6TitleBackground.top
-        width: 90
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton6Objectives
         name: "AchievementFrameAchievementsContainerButton6Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton6Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton6Description.bottom
         anchors.topMargin: 8
         width: 340
@@ -618,18 +762,20 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton6Reward
         name: "AchievementFrameAchievementsContainerButton6Reward"
         kind: "FontString"
-        text: "Title Reward: Guardian of Cenarius"
+        text: "Title Reward: the Noble"
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton6RewardBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton6RewardBackground.top
         anchors.topMargin: -1
-        width: 204
-        height: 12
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton6Shield
         name: "AchievementFrameAchievementsContainerButton6Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton6"
         anchors.right: achievementFrameAchievementsContainerButton6.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton6.top
@@ -641,19 +787,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton6ShieldPoints
         name: "AchievementFrameAchievementsContainerButton6ShieldPoints"
         kind: "FontString"
-        text: "40"
+        text: "10"
+        wowParent: "AchievementFrameAchievementsContainerButton6Shield"
         anchors.right: achievementFrameAchievementsContainerButton6Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton6Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton7
         name: "AchievementFrameAchievementsContainerButton7"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollChild"
         anchors.left: achievementFrameAchievementsContainerButton6.left
         anchors.top: achievementFrameAchievementsContainerButton6.bottom
         width: 496
@@ -677,18 +825,20 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton7Description
         name: "AchievementFrameAchievementsContainerButton7Description"
         kind: "FontString"
-        text: "Read the volumes of \"The Schools of Arcane Magic\" found in Dalaran listed below."
+        text: "Collect the 20 unique Flimsy Masks listed below."
+        wowParent: "AchievementFrameAchievementsContainerButton7"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton7.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton7.top
         anchors.topMargin: 30
-        width: 480
-        height: 12
+        width: 330
+        height: 30
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton7Icon
         name: "AchievementFrameAchievementsContainerButton7Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton7"
         anchors.left: achievementFrameAchievementsContainerButton7.left
         anchors.leftMargin: 8
         anchors.top: achievementFrameAchievementsContainerButton7.top
@@ -701,18 +851,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton7Label
         name: "AchievementFrameAchievementsContainerButton7Label"
         kind: "FontString"
-        text: "Higher Learning"
+        text: "A Mask for All Occasions"
+        wowParent: "AchievementFrameAchievementsContainerButton7"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton7TitleBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton7TitleBackground.top
-        width: 90
-        height: 12
+        width: 320
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton7Objectives
         name: "AchievementFrameAchievementsContainerButton7Objectives"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton7"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton7Description.horizontalCenter
+        anchors.horizontalCenterOffset: -2
         anchors.top: achievementFrameAchievementsContainerButton7Description.bottom
         anchors.topMargin: 8
         width: 340
@@ -723,18 +876,20 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton7Reward
         name: "AchievementFrameAchievementsContainerButton7Reward"
         kind: "FontString"
-        text: "Reward: The Schools of Arcane Magic - Mastery"
+        text: "Title Reward: Matron/Patron"
+        wowParent: "AchievementFrameAchievementsContainerButton7"
         anchors.horizontalCenter: achievementFrameAchievementsContainerButton7RewardBackground.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerButton7RewardBackground.top
         anchors.topMargin: -1
-        width: 270
-        height: 12
+        width: 400
+        height: 20
     }
 
     Part {
         id: achievementFrameAchievementsContainerButton7Shield
         name: "AchievementFrameAchievementsContainerButton7Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton7"
         anchors.right: achievementFrameAchievementsContainerButton7.right
         anchors.rightMargin: 6
         anchors.top: achievementFrameAchievementsContainerButton7.top
@@ -746,19 +901,21 @@ WowWindow {
         id: achievementFrameAchievementsContainerButton7ShieldPoints
         name: "AchievementFrameAchievementsContainerButton7ShieldPoints"
         kind: "FontString"
-        text: "10"
+        text: "20"
+        wowParent: "AchievementFrameAchievementsContainerButton7Shield"
         anchors.right: achievementFrameAchievementsContainerButton7Shield.right
         anchors.rightMargin: 18
         anchors.top: achievementFrameAchievementsContainerButton7Shield.top
         anchors.topMargin: 26
-        width: 12
-        height: 12
+        width: 32
+        height: 16
     }
 
     Part {
         id: achievementFrameAchievementsContainerScrollBar
         name: "AchievementFrameAchievementsContainerScrollBar"
         kind: "Slider"
+        wowParent: "AchievementFrameAchievementsContainer"
         anchors.left: achievementFrameAchievementsContainer.right
         anchors.leftMargin: 1
         anchors.top: achievementFrameAchievementsContainer.top
@@ -768,9 +925,22 @@ WowWindow {
     }
 
     Part {
+        id: achievementFrameAchievementsContainerScrollBarDiabolicTrack
+        name: "AchievementFrameAchievementsContainerScrollBarDiabolicTrack"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerScrollBar"
+        anchors.horizontalCenter: achievementFrameAchievementsContainerScrollBarScrollUpButton.horizontalCenter
+        anchors.top: achievementFrameAchievementsContainerScrollBarScrollUpButton.top
+        anchors.topMargin: -1
+        width: 18
+        height: 455
+    }
+
+    Part {
         id: achievementFrameAchievementsContainerScrollBarScrollDownButton
         name: "AchievementFrameAchievementsContainerScrollBarScrollDownButton"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollBar"
         anchors.horizontalCenter: achievementFrameAchievementsContainerScrollBar.horizontalCenter
         anchors.top: achievementFrameAchievementsContainerScrollBar.bottom
         anchors.topMargin: -2
@@ -782,6 +952,7 @@ WowWindow {
         id: achievementFrameAchievementsContainerScrollBarScrollUpButton
         name: "AchievementFrameAchievementsContainerScrollBarScrollUpButton"
         kind: "Button"
+        wowParent: "AchievementFrameAchievementsContainerScrollBar"
         anchors.horizontalCenter: achievementFrameAchievementsContainerScrollBar.horizontalCenter
         anchors.bottom: achievementFrameAchievementsContainerScrollBar.top
         anchors.bottomMargin: -2
@@ -793,10 +964,25 @@ WowWindow {
         id: achievementFrameAchievementsContainerScrollChild
         name: "AchievementFrameAchievementsContainerScrollChild"
         kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainer"
         anchors.left: achievementFrameAchievementsContainer.left
         anchors.top: achievementFrameAchievementsContainer.top
+        anchors.topMargin: -86
         width: 500
-        height: 588
+        height: 593.3
+    }
+
+    Part {
+        id: achievementFrameAchievementsObjectives
+        name: "AchievementFrameAchievementsObjectives"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsContainerButton1"
+        anchors.horizontalCenter: achievementFrameAchievementsContainerButton1HiddenDescription.horizontalCenter
+        anchors.horizontalCenterOffset: -8.5
+        anchors.top: achievementFrameAchievementsContainerButton1HiddenDescription.bottom
+        anchors.topMargin: 8
+        width: 353
+        height: 15
     }
 
     Part {
@@ -808,7 +994,7 @@ WowWindow {
         anchors.leftMargin: 21
         anchors.top: achievementFrame.top
         anchors.topMargin: 19
-        width: 197
+        width: 175
         height: 461
     }
 
@@ -820,7 +1006,7 @@ WowWindow {
         anchors.left: achievementFrameCategories.left
         anchors.top: achievementFrameCategories.top
         anchors.topMargin: 5
-        width: 197
+        width: 175
         height: 451
     }
 
@@ -831,7 +1017,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerScrollChild.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerScrollChild.top
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -842,7 +1028,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton9.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton9.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -850,13 +1036,13 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton10Label
         name: "AchievementFrameCategoriesContainerButton10Label"
         kind: "FontString"
-        text: "Social"
+        text: "Lunar Festival"
         wowParent: "AchievementFrameCategoriesContainerButton10"
         anchors.left: achievementFrameCategoriesContainerButton10.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton10.verticalCenter
-        width: 159
-        height: 11.9
+        width: 114
+        height: 10.3
     }
 
     Part {
@@ -866,7 +1052,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton10.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton10.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -874,22 +1060,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton11Label
         name: "AchievementFrameCategoriesContainerButton11Label"
         kind: "FontString"
-        text: "Player vs. Player"
+        text: "Love is in the Air"
         wowParent: "AchievementFrameCategoriesContainerButton11"
         anchors.left: achievementFrameCategoriesContainerButton11.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton11.verticalCenter
-        width: 159
-        height: 11.9
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton12
         name: "AchievementFrameCategoriesContainerButton12"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton11.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton11.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -897,21 +1084,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton12Label
         name: "AchievementFrameCategoriesContainerButton12Label"
         kind: "FontString"
-        text: "Skills"
+        text: "Noblegarden"
+        wowParent: "AchievementFrameCategoriesContainerButton12"
         anchors.left: achievementFrameCategoriesContainerButton12.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton12.verticalCenter
-        width: 36
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton13
         name: "AchievementFrameCategoriesContainerButton13"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton12.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton12.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -919,21 +1108,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton13Label
         name: "AchievementFrameCategoriesContainerButton13Label"
         kind: "FontString"
-        text: "Travel"
+        text: "Children's Week"
+        wowParent: "AchievementFrameCategoriesContainerButton13"
         anchors.left: achievementFrameCategoriesContainerButton13.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton13.verticalCenter
-        width: 36
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton14
         name: "AchievementFrameCategoriesContainerButton14"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton13.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton13.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -941,21 +1132,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton14Label
         name: "AchievementFrameCategoriesContainerButton14Label"
         kind: "FontString"
-        text: "Social"
+        text: "Midsummer"
+        wowParent: "AchievementFrameCategoriesContainerButton14"
         anchors.left: achievementFrameCategoriesContainerButton14.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton14.verticalCenter
-        width: 36
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton15
         name: "AchievementFrameCategoriesContainerButton15"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton14.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton14.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -963,21 +1156,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton15Label
         name: "AchievementFrameCategoriesContainerButton15Label"
         kind: "FontString"
-        text: "Player vs. Player"
+        text: "Brewfest"
+        wowParent: "AchievementFrameCategoriesContainerButton15"
         anchors.left: achievementFrameCategoriesContainerButton15.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton15.verticalCenter
-        width: 102
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton16
         name: "AchievementFrameCategoriesContainerButton16"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton15.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton15.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -985,21 +1180,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton16Label
         name: "AchievementFrameCategoriesContainerButton16Label"
         kind: "FontString"
-        text: "Reputation"
+        text: "Hallow's End"
+        wowParent: "AchievementFrameCategoriesContainerButton16"
         anchors.left: achievementFrameCategoriesContainerButton16.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton16.verticalCenter
-        width: 60
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton17
         name: "AchievementFrameCategoriesContainerButton17"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton16.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton16.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -1007,21 +1204,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton17Label
         name: "AchievementFrameCategoriesContainerButton17Label"
         kind: "FontString"
-        text: "World Events"
+        text: "Pilgrim's Bounty"
+        wowParent: "AchievementFrameCategoriesContainerButton17"
         anchors.left: achievementFrameCategoriesContainerButton17.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton17.verticalCenter
-        width: 72
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton18
         name: "AchievementFrameCategoriesContainerButton18"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton17.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton17.bottom
-        width: 187
+        width: 150
         height: 24
     }
 
@@ -1029,21 +1228,23 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton18Label
         name: "AchievementFrameCategoriesContainerButton18Label"
         kind: "FontString"
-        text: "Feats of Strength"
+        text: "Winter Veil"
+        wowParent: "AchievementFrameCategoriesContainerButton18"
         anchors.left: achievementFrameCategoriesContainerButton18.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton18.verticalCenter
-        width: 102
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton19
         name: "AchievementFrameCategoriesContainerButton19"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton18.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton18.bottom
-        width: 165
+        width: 150
         height: 24
     }
 
@@ -1051,12 +1252,13 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton19Label
         name: "AchievementFrameCategoriesContainerButton19Label"
         kind: "FontString"
-        text: "Feats of Strength"
+        text: "Argent Tournament"
+        wowParent: "AchievementFrameCategoriesContainerButton19"
         anchors.left: achievementFrameCategoriesContainerButton19.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: 22
         anchors.verticalCenter: achievementFrameCategoriesContainerButton19.verticalCenter
-        width: 102
-        height: 12
+        width: 114
+        height: 10.3
     }
 
     Part {
@@ -1068,7 +1270,7 @@ WowWindow {
         anchors.left: achievementFrameCategoriesContainerButton1.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton1.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1079,7 +1281,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton1.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton1.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1087,6 +1289,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton20
         name: "AchievementFrameCategoriesContainerButton20"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton19.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton19.bottom
         width: 165
@@ -1098,23 +1301,24 @@ WowWindow {
         name: "AchievementFrameCategoriesContainerButton20Label"
         kind: "FontString"
         text: "Feats of Strength"
+        wowParent: "AchievementFrameCategoriesContainerButton20"
         anchors.left: achievementFrameCategoriesContainerButton20.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton20.verticalCenter
-        width: 102
-        height: 12
+        width: 137
+        height: 11.9
     }
 
     Part {
         id: achievementFrameCategoriesContainerButton2Label
         name: "AchievementFrameCategoriesContainerButton2Label"
         kind: "FontString"
-        text: "Character"
+        text: "General"
         wowParent: "AchievementFrameCategoriesContainerButton2"
         anchors.left: achievementFrameCategoriesContainerButton2.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton2.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1125,7 +1329,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton2.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton2.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1133,12 +1337,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton3Label
         name: "AchievementFrameCategoriesContainerButton3Label"
         kind: "FontString"
-        text: "Combat"
+        text: "Quests"
         wowParent: "AchievementFrameCategoriesContainerButton3"
         anchors.left: achievementFrameCategoriesContainerButton3.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton3.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1149,7 +1353,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton3.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton3.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1157,12 +1361,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton4Label
         name: "AchievementFrameCategoriesContainerButton4Label"
         kind: "FontString"
-        text: "Kills"
+        text: "Exploration"
         wowParent: "AchievementFrameCategoriesContainerButton4"
         anchors.left: achievementFrameCategoriesContainerButton4.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton4.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1173,7 +1377,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton4.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton4.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1181,12 +1385,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton5Label
         name: "AchievementFrameCategoriesContainerButton5Label"
         kind: "FontString"
-        text: "Deaths"
+        text: "Player vs. Player"
         wowParent: "AchievementFrameCategoriesContainerButton5"
         anchors.left: achievementFrameCategoriesContainerButton5.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton5.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1197,7 +1401,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton5.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton5.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1205,12 +1409,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton6Label
         name: "AchievementFrameCategoriesContainerButton6Label"
         kind: "FontString"
-        text: "Quests"
+        text: "Dungeons & Raids"
         wowParent: "AchievementFrameCategoriesContainerButton6"
         anchors.left: achievementFrameCategoriesContainerButton6.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton6.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1221,7 +1425,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton6.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton6.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1229,12 +1433,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton7Label
         name: "AchievementFrameCategoriesContainerButton7Label"
         kind: "FontString"
-        text: "Dungeons & Raids"
+        text: "Professions"
         wowParent: "AchievementFrameCategoriesContainerButton7"
         anchors.left: achievementFrameCategoriesContainerButton7.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton7.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1245,7 +1449,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton7.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton7.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1253,12 +1457,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton8Label
         name: "AchievementFrameCategoriesContainerButton8Label"
         kind: "FontString"
-        text: "Skills"
+        text: "Reputation"
         wowParent: "AchievementFrameCategoriesContainerButton8"
         anchors.left: achievementFrameCategoriesContainerButton8.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton8.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1269,7 +1473,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainerScrollChild"
         anchors.horizontalCenter: achievementFrameCategoriesContainerButton8.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerButton8.bottom
-        width: 187
+        width: 165
         height: 24
     }
 
@@ -1277,12 +1481,12 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton9Label
         name: "AchievementFrameCategoriesContainerButton9Label"
         kind: "FontString"
-        text: "Travel"
+        text: "World Events"
         wowParent: "AchievementFrameCategoriesContainerButton9"
         anchors.left: achievementFrameCategoriesContainerButton9.left
         anchors.leftMargin: 14
         anchors.verticalCenter: achievementFrameCategoriesContainerButton9.verticalCenter
-        width: 159
+        width: 137
         height: 11.9
     }
 
@@ -1290,6 +1494,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerScrollBar
         name: "AchievementFrameCategoriesContainerScrollBar"
         kind: "Slider"
+        wowParent: "AchievementFrameCategoriesContainer"
         anchors.left: achievementFrameCategoriesContainer.right
         anchors.leftMargin: 1
         anchors.top: achievementFrameCategoriesContainer.top
@@ -1299,9 +1504,22 @@ WowWindow {
     }
 
     Part {
+        id: achievementFrameCategoriesContainerScrollBarDiabolicTrack
+        name: "AchievementFrameCategoriesContainerScrollBarDiabolicTrack"
+        kind: "Frame"
+        wowParent: "AchievementFrameCategoriesContainerScrollBar"
+        anchors.horizontalCenter: achievementFrameCategoriesContainerScrollBarScrollUpButton.horizontalCenter
+        anchors.top: achievementFrameCategoriesContainerScrollBarScrollUpButton.top
+        anchors.topMargin: -1
+        width: 18
+        height: 455
+    }
+
+    Part {
         id: achievementFrameCategoriesContainerScrollBarScrollDownButton
         name: "AchievementFrameCategoriesContainerScrollBarScrollDownButton"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollBar"
         anchors.horizontalCenter: achievementFrameCategoriesContainerScrollBar.horizontalCenter
         anchors.top: achievementFrameCategoriesContainerScrollBar.bottom
         anchors.topMargin: -2
@@ -1313,6 +1531,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerScrollBarScrollUpButton
         name: "AchievementFrameCategoriesContainerScrollBarScrollUpButton"
         kind: "Button"
+        wowParent: "AchievementFrameCategoriesContainerScrollBar"
         anchors.horizontalCenter: achievementFrameCategoriesContainerScrollBar.horizontalCenter
         anchors.bottom: achievementFrameCategoriesContainerScrollBar.top
         anchors.bottomMargin: -2
@@ -1327,7 +1546,7 @@ WowWindow {
         wowParent: "AchievementFrameCategoriesContainer"
         anchors.left: achievementFrameCategoriesContainer.left
         anchors.top: achievementFrameCategoriesContainer.top
-        width: 197
+        width: 175
         height: 480
     }
 
@@ -1342,6 +1561,55 @@ WowWindow {
         anchors.verticalCenterOffset: 31
         width: 22
         height: 22
+    }
+
+    Part {
+        id: achievementFrameCriteria1
+        name: "AchievementFrameCriteria1"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsObjectives"
+        anchors.left: achievementFrameAchievementsObjectives.left
+        anchors.top: achievementFrameAchievementsObjectives.top
+        width: 120.3
+        height: 15
+    }
+
+    Part {
+        id: achievementFrameCriteria1Name
+        name: "AchievementFrameCriteria1Name"
+        kind: "FontString"
+        text: "Sinister Squashling"
+        wowParent: "AchievementFrameCriteria1"
+        anchors.left: achievementFrameCriteria1Check.right
+        anchors.verticalCenter: achievementFrameCriteria1Check.verticalCenter
+        anchors.verticalCenterOffset: -2
+        width: 100.3
+        height: 10.3
+    }
+
+    Part {
+        id: achievementFrameCriteria2
+        name: "AchievementFrameCriteria2"
+        kind: "Frame"
+        wowParent: "AchievementFrameAchievementsObjectives"
+        anchors.left: achievementFrameAchievementsObjectives.left
+        anchors.leftMargin: 165
+        anchors.top: achievementFrameAchievementsObjectives.top
+        width: 102.2
+        height: 15
+    }
+
+    Part {
+        id: achievementFrameCriteria2Name
+        name: "AchievementFrameCriteria2Name"
+        kind: "FontString"
+        text: "Hallowed Helm"
+        wowParent: "AchievementFrameCriteria2"
+        anchors.left: achievementFrameCriteria2Check.right
+        anchors.verticalCenter: achievementFrameCriteria2Check.verticalCenter
+        anchors.verticalCenterOffset: -2
+        width: 82.2
+        height: 10.3
     }
 
     Part {
@@ -1521,8 +1789,9 @@ WowWindow {
         kind: "Frame"
         wowParent: "AchievementFrame"
         anchors.left: achievementFrameCategories.right
+        anchors.leftMargin: 22
         anchors.top: achievementFrameCategories.top
-        width: 504
+        width: 530
         height: 461
     }
 
@@ -1547,7 +1816,7 @@ WowWindow {
         anchors.leftMargin: 3
         anchors.top: achievementFrameStats.top
         anchors.topMargin: 3
-        width: 501
+        width: 527
         height: 453
     }
 
@@ -1558,7 +1827,7 @@ WowWindow {
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerScrollChild.left
         anchors.top: achievementFrameStatsContainerScrollChild.top
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -1566,7 +1835,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton10
         name: "AchievementFrameStatsContainerButton10"
         kind: "Button"
-        text: "Total gold acquired"
+        text: "Dalaran Cooking Awards gained"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton9.left
         anchors.top: achievementFrameStatsContainerButton9.bottom
@@ -1578,11 +1847,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton10Value
         name: "AchievementFrameStatsContainerButton10Value"
         kind: "FontString"
+        text: "49"
         wowParent: "AchievementFrameStatsContainerButton10"
         anchors.right: achievementFrameStatsContainerButton10.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton10.verticalCenter
-        width: 110.2
+        width: 16.6
         height: 11.9
     }
 
@@ -1590,7 +1860,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton11
         name: "AchievementFrameStatsContainerButton11"
         kind: "Button"
-        text: "Bandages used"
+        text: "First Aid skill"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton10.left
         anchors.top: achievementFrameStatsContainerButton10.bottom
@@ -1602,12 +1872,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton11Value
         name: "AchievementFrameStatsContainerButton11Value"
         kind: "FontString"
-        text: "49"
+        text: "450 / 450"
         wowParent: "AchievementFrameStatsContainerButton11"
         anchors.right: achievementFrameStatsContainerButton11.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton11.verticalCenter
-        width: 16.6
+        width: 60
         height: 11.9
     }
 
@@ -1615,7 +1885,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton12
         name: "AchievementFrameStatsContainerButton12"
         kind: "Button"
-        text: "Flight paths taken"
+        text: "First Aid Manuals learned"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton11.left
         anchors.top: achievementFrameStatsContainerButton11.bottom
@@ -1627,12 +1897,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton12Value
         name: "AchievementFrameStatsContainerButton12Value"
         kind: "FontString"
-        text: "278"
+        text: "21"
         wowParent: "AchievementFrameStatsContainerButton12"
         anchors.right: achievementFrameStatsContainerButton12.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton12.verticalCenter
-        width: 24.5
+        width: 14.2
         height: 11.9
     }
 
@@ -1640,7 +1910,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton13
         name: "AchievementFrameStatsContainerButton13"
         kind: "Button"
-        text: "Most factions at Exalted"
+        text: "Fishing skill"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton12.left
         anchors.top: achievementFrameStatsContainerButton12.bottom
@@ -1652,12 +1922,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton13Value
         name: "AchievementFrameStatsContainerButton13Value"
         kind: "FontString"
-        text: "18"
+        text: "450 / 450"
         wowParent: "AchievementFrameStatsContainerButton13"
         anchors.right: achievementFrameStatsContainerButton13.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton13.verticalCenter
-        width: 16.6
+        width: 60
         height: 11.9
     }
 
@@ -1665,7 +1935,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton14
         name: "AchievementFrameStatsContainerButton14"
         kind: "Button"
-        text: "Total Honorable Kills"
+        text: "Fish caught"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton13.left
         anchors.top: achievementFrameStatsContainerButton13.bottom
@@ -1677,12 +1947,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton14Value
         name: "AchievementFrameStatsContainerButton14Value"
         kind: "FontString"
-        text: "66"
+        text: "4066"
         wowParent: "AchievementFrameStatsContainerButton14"
         anchors.right: achievementFrameStatsContainerButton14.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton14.verticalCenter
-        width: 16.6
+        width: 32.4
         height: 11.9
     }
 
@@ -1690,7 +1960,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton15
         name: "AchievementFrameStatsContainerButton15"
         kind: "Button"
-        text: "Resurrected by priests"
+        text: "Fish and other things caught"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton14.left
         anchors.top: achievementFrameStatsContainerButton14.bottom
@@ -1702,12 +1972,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton15Value
         name: "AchievementFrameStatsContainerButton15Value"
         kind: "FontString"
-        text: "8"
+        text: "4066"
         wowParent: "AchievementFrameStatsContainerButton15"
         anchors.right: achievementFrameStatsContainerButton15.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton15.verticalCenter
-        width: 9.5
+        width: 32.4
         height: 11.9
     }
 
@@ -1715,7 +1985,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton16
         name: "AchievementFrameStatsContainerButton16"
         kind: "Button"
-        text: "Arenas won"
+        text: "Fishing daily quests completed"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton15.left
         anchors.top: achievementFrameStatsContainerButton15.bottom
@@ -1727,12 +1997,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton16Value
         name: "AchievementFrameStatsContainerButton16Value"
         kind: "FontString"
-        text: "--"
+        text: "10"
         wowParent: "AchievementFrameStatsContainerButton16"
         anchors.right: achievementFrameStatsContainerButton16.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton16.verticalCenter
-        width: 11.1
+        width: 15.8
         height: 11.9
     }
 
@@ -1740,7 +2010,6 @@ WowWindow {
         id: achievementFrameStatsContainerButton17
         name: "AchievementFrameStatsContainerButton17"
         kind: "Button"
-        text: "Battlegrounds played"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton16.left
         anchors.top: achievementFrameStatsContainerButton16.bottom
@@ -1753,30 +2022,30 @@ WowWindow {
         name: "AchievementFrameStatsContainerButton17Title"
         kind: "FontString"
         text: "Professions"
+        wowParent: "AchievementFrameStatsContainerButton17"
         anchors.horizontalCenter: achievementFrameStatsContainerButton17.horizontalCenter
         anchors.verticalCenter: achievementFrameStatsContainerButton17.verticalCenter
-        width: 66
-        height: 12
+        width: 89.3
+        height: 15.8
     }
 
     Part {
         id: achievementFrameStatsContainerButton17Value
         name: "AchievementFrameStatsContainerButton17Value"
         kind: "FontString"
-        text: "6"
         wowParent: "AchievementFrameStatsContainerButton17"
         anchors.right: achievementFrameStatsContainerButton17.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton17.verticalCenter
-        width: 8.7
-        height: 11.9
+        width: 1
+        height: 1
     }
 
     Part {
         id: achievementFrameStatsContainerButton18
         name: "AchievementFrameStatsContainerButton18"
         kind: "Button"
-        text: "Equipped epic items in item slots"
+        text: "Highest Alchemy skill"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton17.left
         anchors.top: achievementFrameStatsContainerButton17.bottom
@@ -1801,7 +2070,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton19
         name: "AchievementFrameStatsContainerButton19"
         kind: "Button"
-        text: "Total 5-player dungeons entered"
+        text: "Alchemy Recipes learned"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton18.left
         anchors.top: achievementFrameStatsContainerButton18.bottom
@@ -1810,15 +2079,27 @@ WowWindow {
     }
 
     Part {
+        id: achievementFrameStatsContainerButton19Title
+        name: "AchievementFrameStatsContainerButton19Title"
+        kind: "FontString"
+        text: "Classic"
+        wowParent: "AchievementFrameStatsContainerButton19"
+        anchors.horizontalCenter: achievementFrameStatsContainerButton19.horizontalCenter
+        anchors.verticalCenter: achievementFrameStatsContainerButton19.verticalCenter
+        width: 55.3
+        height: 15.8
+    }
+
+    Part {
         id: achievementFrameStatsContainerButton19Value
         name: "AchievementFrameStatsContainerButton19Value"
         kind: "FontString"
-        text: "462"
+        text: "--"
         wowParent: "AchievementFrameStatsContainerButton19"
         anchors.right: achievementFrameStatsContainerButton19.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton19.verticalCenter
-        width: 24.5
+        width: 11.1
         height: 11.9
     }
 
@@ -1826,11 +2107,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton1Title
         name: "AchievementFrameStatsContainerButton1Title"
         kind: "FontString"
-        text: "Summary"
+        text: "Social"
         wowParent: "AchievementFrameStatsContainerButton1"
         anchors.horizontalCenter: achievementFrameStatsContainerButton1.horizontalCenter
         anchors.verticalCenter: achievementFrameStatsContainerButton1.verticalCenter
-        width: 74.3
+        width: 47.4
         height: 15.8
     }
 
@@ -1850,11 +2131,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton2
         name: "AchievementFrameStatsContainerButton2"
         kind: "Button"
-        text: "Deaths in Alterac Valley"
+        text: "Number of hugs"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton1.left
         anchors.top: achievementFrameStatsContainerButton1.bottom
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -1862,7 +2143,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton20
         name: "AchievementFrameStatsContainerButton20"
         kind: "Button"
-        text: "Number of hugs"
+        text: "Highest Blacksmithing skill"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton19.left
         anchors.top: achievementFrameStatsContainerButton19.bottom
@@ -1900,11 +2181,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton3
         name: "AchievementFrameStatsContainerButton3"
         kind: "Button"
-        text: "Total deaths"
+        text: "Total facepalms"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton2.left
         anchors.top: achievementFrameStatsContainerButton2.bottom
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -1912,12 +2193,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton3Value
         name: "AchievementFrameStatsContainerButton3Value"
         kind: "FontString"
-        text: "371"
+        text: "--"
         wowParent: "AchievementFrameStatsContainerButton3"
         anchors.right: achievementFrameStatsContainerButton3.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton3.verticalCenter
-        width: 21.3
+        width: 11.1
         height: 11.9
     }
 
@@ -1925,11 +2206,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton4
         name: "AchievementFrameStatsContainerButton4"
         kind: "Button"
-        text: "Quests completed"
+        text: "Total times playing world's smallest violin"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton3.left
         anchors.top: achievementFrameStatsContainerButton3.bottom
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -1937,23 +2218,24 @@ WowWindow {
         id: achievementFrameStatsContainerButton4Title
         name: "AchievementFrameStatsContainerButton4Title"
         kind: "FontString"
-        text: "Rated Arenas"
+        text: "Creatures"
+        wowParent: "AchievementFrameStatsContainerButton4"
         anchors.horizontalCenter: achievementFrameStatsContainerButton4.horizontalCenter
         anchors.verticalCenter: achievementFrameStatsContainerButton4.verticalCenter
-        width: 72
-        height: 12
+        width: 73.5
+        height: 15.8
     }
 
     Part {
         id: achievementFrameStatsContainerButton4Value
         name: "AchievementFrameStatsContainerButton4Value"
         kind: "FontString"
-        text: "2384"
+        text: "--"
         wowParent: "AchievementFrameStatsContainerButton4"
         anchors.right: achievementFrameStatsContainerButton4.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton4.verticalCenter
-        width: 33.2
+        width: 11.1
         height: 11.9
     }
 
@@ -1961,11 +2243,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton5
         name: "AchievementFrameStatsContainerButton5"
         kind: "Button"
-        text: "Creatures killed"
+        text: "Total times LOL'd"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton4.left
         anchors.top: achievementFrameStatsContainerButton4.bottom
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -1973,12 +2255,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton5Value
         name: "AchievementFrameStatsContainerButton5Value"
         kind: "FontString"
-        text: "42931"
+        text: "60"
         wowParent: "AchievementFrameStatsContainerButton5"
         anchors.right: achievementFrameStatsContainerButton5.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton5.verticalCenter
-        width: 37.9
+        width: 16.6
         height: 11.9
     }
 
@@ -1986,11 +2268,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton6
         name: "AchievementFrameStatsContainerButton6"
         kind: "Button"
-        text: "Deaths from drowning"
+        text: "Total cheers"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton5.left
         anchors.top: achievementFrameStatsContainerButton5.bottom
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -1999,22 +2281,23 @@ WowWindow {
         name: "AchievementFrameStatsContainerButton6Title"
         kind: "FontString"
         text: "Secondary Skills"
+        wowParent: "AchievementFrameStatsContainerButton6"
         anchors.horizontalCenter: achievementFrameStatsContainerButton6.horizontalCenter
         anchors.verticalCenter: achievementFrameStatsContainerButton6.verticalCenter
-        width: 96
-        height: 12
+        width: 127.2
+        height: 15.8
     }
 
     Part {
         id: achievementFrameStatsContainerButton6Value
         name: "AchievementFrameStatsContainerButton6Value"
         kind: "FontString"
-        text: "1"
+        text: "11"
         wowParent: "AchievementFrameStatsContainerButton6"
         anchors.right: achievementFrameStatsContainerButton6.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton6.verticalCenter
-        width: 7.1
+        width: 13.4
         height: 11.9
     }
 
@@ -2022,11 +2305,11 @@ WowWindow {
         id: achievementFrameStatsContainerButton7
         name: "AchievementFrameStatsContainerButton7"
         kind: "Button"
-        text: "Largest hit dealt"
+        text: "Total waves"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton6.left
         anchors.top: achievementFrameStatsContainerButton6.bottom
-        width: 496
+        width: 522
         height: 24
     }
 
@@ -2034,12 +2317,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton7Value
         name: "AchievementFrameStatsContainerButton7Value"
         kind: "FontString"
-        text: "--"
+        text: "66"
         wowParent: "AchievementFrameStatsContainerButton7"
         anchors.right: achievementFrameStatsContainerButton7.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton7.verticalCenter
-        width: 11.1
+        width: 16.6
         height: 11.9
     }
 
@@ -2047,7 +2330,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton8
         name: "AchievementFrameStatsContainerButton8"
         kind: "Button"
-        text: "Duels won"
+        text: "Cooking daily quests completed"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton7.left
         anchors.top: achievementFrameStatsContainerButton7.bottom
@@ -2059,12 +2342,12 @@ WowWindow {
         id: achievementFrameStatsContainerButton8Value
         name: "AchievementFrameStatsContainerButton8Value"
         kind: "FontString"
-        text: "3"
+        text: "8"
         wowParent: "AchievementFrameStatsContainerButton8"
         anchors.right: achievementFrameStatsContainerButton8.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton8.verticalCenter
-        width: 8.7
+        width: 9.5
         height: 11.9
     }
 
@@ -2072,7 +2355,7 @@ WowWindow {
         id: achievementFrameStatsContainerButton9
         name: "AchievementFrameStatsContainerButton9"
         kind: "Button"
-        text: "Total raid and dungeon deaths"
+        text: "Cooking Recipes known"
         wowParent: "AchievementFrameStatsContainerScrollChild"
         anchors.left: achievementFrameStatsContainerButton8.left
         anchors.top: achievementFrameStatsContainerButton8.bottom
@@ -2084,23 +2367,24 @@ WowWindow {
         id: achievementFrameStatsContainerButton9Title
         name: "AchievementFrameStatsContainerButton9Title"
         kind: "FontString"
-        text: "Wealth"
+        text: "Honorable Kills"
+        wowParent: "AchievementFrameStatsContainerButton9"
         anchors.horizontalCenter: achievementFrameStatsContainerButton9.horizontalCenter
         anchors.verticalCenter: achievementFrameStatsContainerButton9.verticalCenter
-        width: 36
-        height: 12
+        width: 119.3
+        height: 15.8
     }
 
     Part {
         id: achievementFrameStatsContainerButton9Value
         name: "AchievementFrameStatsContainerButton9Value"
         kind: "FontString"
-        text: "169"
+        text: "92"
         wowParent: "AchievementFrameStatsContainerButton9"
         anchors.right: achievementFrameStatsContainerButton9.right
         anchors.rightMargin: 5
         anchors.verticalCenter: achievementFrameStatsContainerButton9.verticalCenter
-        width: 23.7
+        width: 16.6
         height: 11.9
     }
 
@@ -2110,7 +2394,7 @@ WowWindow {
         kind: "Slider"
         wowParent: "AchievementFrameStatsContainer"
         anchors.left: achievementFrameStatsContainer.right
-        anchors.leftMargin: 1
+        anchors.leftMargin: -25
         anchors.top: achievementFrameStatsContainer.top
         anchors.topMargin: 16
         width: 20
@@ -2168,7 +2452,9 @@ WowWindow {
         id: achievementFrameSummary
         name: "AchievementFrameSummary"
         kind: "Frame"
+        wowParent: "AchievementFrame"
         anchors.left: achievementFrameCategories.right
+        anchors.leftMargin: 22
         anchors.top: achievementFrameCategories.top
         width: 530
         height: 461
@@ -2178,11 +2464,12 @@ WowWindow {
         id: achievementFrameSummaryAchievement1
         name: "AchievementFrameSummaryAchievement1"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryAchievements"
         anchors.left: achievementFrameSummaryAchievementsHeader.left
         anchors.leftMargin: 18
         anchors.top: achievementFrameSummaryAchievementsHeader.bottom
         anchors.topMargin: -2
-        width: 100
+        width: 484
         height: 48
     }
 
@@ -2191,12 +2478,13 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement1DateCompleted"
         kind: "FontString"
         text: "10/30/26"
+        wowParent: "AchievementFrameSummaryAchievement1"
         anchors.right: achievementFrameSummaryAchievement1.right
         anchors.rightMargin: 63
         anchors.top: achievementFrameSummaryAchievement1.top
         anchors.topMargin: 8
-        width: 48
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
@@ -2204,17 +2492,30 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement1Description"
         kind: "FontString"
         text: "Show off your sparkling smile by using a Tooth Pick."
+        wowParent: "AchievementFrameSummaryAchievement1"
         anchors.horizontalCenter: achievementFrameSummaryAchievement1.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement1.top
         anchors.topMargin: 30
-        width: 312
-        height: 12
+        width: 380
+        height: 13
+    }
+
+    Part {
+        id: achievementFrameSummaryAchievement1Highlight
+        name: "AchievementFrameSummaryAchievement1Highlight"
+        kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement1"
+        anchors.left: achievementFrameSummaryAchievement1.left
+        anchors.top: achievementFrameSummaryAchievement1.top
+        width: 484
+        height: 48
     }
 
     Part {
         id: achievementFrameSummaryAchievement1Icon
         name: "AchievementFrameSummaryAchievement1Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement1"
         anchors.left: achievementFrameSummaryAchievement1.left
         anchors.leftMargin: 3
         anchors.top: achievementFrameSummaryAchievement1.top
@@ -2228,16 +2529,18 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement1Label"
         kind: "FontString"
         text: "That Sparkling Smile"
+        wowParent: "AchievementFrameSummaryAchievement1"
         anchors.horizontalCenter: achievementFrameSummaryAchievement1TitleBackground.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement1TitleBackground.top
-        width: 120
-        height: 12
+        width: 260
+        height: 20
     }
 
     Part {
         id: achievementFrameSummaryAchievement1Shield
         name: "AchievementFrameSummaryAchievement1Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement1"
         anchors.right: achievementFrameSummaryAchievement1.right
         anchors.rightMargin: 10
         anchors.top: achievementFrameSummaryAchievement1.top
@@ -2251,22 +2554,24 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement1ShieldPoints"
         kind: "FontString"
         text: "10"
+        wowParent: "AchievementFrameSummaryAchievement1Shield"
         anchors.horizontalCenter: achievementFrameSummaryAchievement1Shield.horizontalCenter
         anchors.horizontalCenterOffset: -1
         anchors.verticalCenter: achievementFrameSummaryAchievement1Shield.verticalCenter
         anchors.verticalCenterOffset: -3
-        width: 12
-        height: 12
+        width: 40
+        height: 26
     }
 
     Part {
         id: achievementFrameSummaryAchievement2
         name: "AchievementFrameSummaryAchievement2"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryAchievements"
         anchors.left: achievementFrameSummaryAchievement1.left
         anchors.top: achievementFrameSummaryAchievement1.bottom
         anchors.topMargin: -3
-        width: 100
+        width: 484
         height: 48
     }
 
@@ -2275,12 +2580,13 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement2DateCompleted"
         kind: "FontString"
         text: "10/30/26"
+        wowParent: "AchievementFrameSummaryAchievement2"
         anchors.right: achievementFrameSummaryAchievement2.right
         anchors.rightMargin: 63
         anchors.top: achievementFrameSummaryAchievement2.top
         anchors.topMargin: 8
-        width: 48
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
@@ -2288,17 +2594,19 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement2Description"
         kind: "FontString"
         text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
+        wowParent: "AchievementFrameSummaryAchievement2"
         anchors.horizontalCenter: achievementFrameSummaryAchievement2.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement2.top
         anchors.topMargin: 30
-        width: 642
-        height: 12
+        width: 380
+        height: 13
     }
 
     Part {
         id: achievementFrameSummaryAchievement2Icon
         name: "AchievementFrameSummaryAchievement2Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement2"
         anchors.left: achievementFrameSummaryAchievement2.left
         anchors.leftMargin: 3
         anchors.top: achievementFrameSummaryAchievement2.top
@@ -2312,16 +2620,18 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement2Label"
         kind: "FontString"
         text: "Exalted Argent Champion of the Alliance"
+        wowParent: "AchievementFrameSummaryAchievement2"
         anchors.horizontalCenter: achievementFrameSummaryAchievement2TitleBackground.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement2TitleBackground.top
-        width: 234
-        height: 12
+        width: 260
+        height: 20
     }
 
     Part {
         id: achievementFrameSummaryAchievement2Shield
         name: "AchievementFrameSummaryAchievement2Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement2"
         anchors.right: achievementFrameSummaryAchievement2.right
         anchors.rightMargin: 10
         anchors.top: achievementFrameSummaryAchievement2.top
@@ -2335,22 +2645,24 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement2ShieldPoints"
         kind: "FontString"
         text: "10"
+        wowParent: "AchievementFrameSummaryAchievement2Shield"
         anchors.horizontalCenter: achievementFrameSummaryAchievement2Shield.horizontalCenter
         anchors.horizontalCenterOffset: -1
         anchors.verticalCenter: achievementFrameSummaryAchievement2Shield.verticalCenter
         anchors.verticalCenterOffset: -3
-        width: 12
-        height: 12
+        width: 40
+        height: 26
     }
 
     Part {
         id: achievementFrameSummaryAchievement3
         name: "AchievementFrameSummaryAchievement3"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryAchievements"
         anchors.left: achievementFrameSummaryAchievement2.left
         anchors.top: achievementFrameSummaryAchievement2.bottom
         anchors.topMargin: -3
-        width: 100
+        width: 484
         height: 48
     }
 
@@ -2359,12 +2671,13 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement3DateCompleted"
         kind: "FontString"
         text: "10/30/26"
+        wowParent: "AchievementFrameSummaryAchievement3"
         anchors.right: achievementFrameSummaryAchievement3.right
         anchors.rightMargin: 63
         anchors.top: achievementFrameSummaryAchievement3.top
         anchors.topMargin: 8
-        width: 48
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
@@ -2372,11 +2685,12 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement3Description"
         kind: "FontString"
         text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
+        wowParent: "AchievementFrameSummaryAchievement3"
         anchors.horizontalCenter: achievementFrameSummaryAchievement3.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement3.top
         anchors.topMargin: 30
-        width: 642
-        height: 12
+        width: 380
+        height: 13
     }
 
     Part {
@@ -2393,6 +2707,7 @@ WowWindow {
         id: achievementFrameSummaryAchievement3Icon
         name: "AchievementFrameSummaryAchievement3Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement3"
         anchors.left: achievementFrameSummaryAchievement3.left
         anchors.leftMargin: 3
         anchors.top: achievementFrameSummaryAchievement3.top
@@ -2406,16 +2721,18 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement3Label"
         kind: "FontString"
         text: "Exalted Champion of the Alliance"
+        wowParent: "AchievementFrameSummaryAchievement3"
         anchors.horizontalCenter: achievementFrameSummaryAchievement3TitleBackground.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement3TitleBackground.top
-        width: 192
-        height: 12
+        width: 260
+        height: 20
     }
 
     Part {
         id: achievementFrameSummaryAchievement3Shield
         name: "AchievementFrameSummaryAchievement3Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement3"
         anchors.right: achievementFrameSummaryAchievement3.right
         anchors.rightMargin: 10
         anchors.top: achievementFrameSummaryAchievement3.top
@@ -2429,22 +2746,24 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement3ShieldPoints"
         kind: "FontString"
         text: "10"
+        wowParent: "AchievementFrameSummaryAchievement3Shield"
         anchors.horizontalCenter: achievementFrameSummaryAchievement3Shield.horizontalCenter
         anchors.horizontalCenterOffset: -1
         anchors.verticalCenter: achievementFrameSummaryAchievement3Shield.verticalCenter
         anchors.verticalCenterOffset: -3
-        width: 12
-        height: 12
+        width: 40
+        height: 26
     }
 
     Part {
         id: achievementFrameSummaryAchievement4
         name: "AchievementFrameSummaryAchievement4"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryAchievements"
         anchors.left: achievementFrameSummaryAchievement3.left
         anchors.top: achievementFrameSummaryAchievement3.bottom
         anchors.topMargin: -3
-        width: 100
+        width: 484
         height: 48
     }
 
@@ -2453,12 +2772,13 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement4DateCompleted"
         kind: "FontString"
         text: "10/30/26"
+        wowParent: "AchievementFrameSummaryAchievement4"
         anchors.right: achievementFrameSummaryAchievement4.right
         anchors.rightMargin: 63
         anchors.top: achievementFrameSummaryAchievement4.top
         anchors.topMargin: 8
-        width: 48
-        height: 12
+        width: 100
+        height: 14
     }
 
     Part {
@@ -2466,17 +2786,30 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement4Description"
         kind: "FontString"
         text: "Earn exalted reputation with 5 home cities."
+        wowParent: "AchievementFrameSummaryAchievement4"
         anchors.horizontalCenter: achievementFrameSummaryAchievement4.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement4.top
         anchors.topMargin: 30
-        width: 258
-        height: 12
+        width: 380
+        height: 13
+    }
+
+    Part {
+        id: achievementFrameSummaryAchievement4Highlight
+        name: "AchievementFrameSummaryAchievement4Highlight"
+        kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement4"
+        anchors.left: achievementFrameSummaryAchievement4.left
+        anchors.top: achievementFrameSummaryAchievement4.top
+        width: 484
+        height: 48
     }
 
     Part {
         id: achievementFrameSummaryAchievement4Icon
         name: "AchievementFrameSummaryAchievement4Icon"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement4"
         anchors.left: achievementFrameSummaryAchievement4.left
         anchors.leftMargin: 3
         anchors.top: achievementFrameSummaryAchievement4.top
@@ -2490,16 +2823,18 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement4Label"
         kind: "FontString"
         text: "Ambassador of the Alliance"
+        wowParent: "AchievementFrameSummaryAchievement4"
         anchors.horizontalCenter: achievementFrameSummaryAchievement4TitleBackground.horizontalCenter
         anchors.top: achievementFrameSummaryAchievement4TitleBackground.top
-        width: 156
-        height: 12
+        width: 260
+        height: 20
     }
 
     Part {
         id: achievementFrameSummaryAchievement4Shield
         name: "AchievementFrameSummaryAchievement4Shield"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievement4"
         anchors.right: achievementFrameSummaryAchievement4.right
         anchors.rightMargin: 10
         anchors.top: achievementFrameSummaryAchievement4.top
@@ -2513,18 +2848,20 @@ WowWindow {
         name: "AchievementFrameSummaryAchievement4ShieldPoints"
         kind: "FontString"
         text: "10"
+        wowParent: "AchievementFrameSummaryAchievement4Shield"
         anchors.horizontalCenter: achievementFrameSummaryAchievement4Shield.horizontalCenter
         anchors.horizontalCenterOffset: -1
         anchors.verticalCenter: achievementFrameSummaryAchievement4Shield.verticalCenter
         anchors.verticalCenterOffset: -3
-        width: 12
-        height: 12
+        width: 40
+        height: 26
     }
 
     Part {
         id: achievementFrameSummaryAchievements
         name: "AchievementFrameSummaryAchievements"
         kind: "Frame"
+        wowParent: "AchievementFrameSummary"
         anchors.left: achievementFrameSummary.left
         anchors.leftMargin: 5
         anchors.top: achievementFrameSummary.top
@@ -2537,6 +2874,7 @@ WowWindow {
         id: achievementFrameSummaryAchievementsHeader
         name: "AchievementFrameSummaryAchievementsHeader"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryAchievements"
         anchors.left: achievementFrameSummaryAchievements.left
         anchors.top: achievementFrameSummaryAchievements.top
         width: 520
@@ -2548,18 +2886,20 @@ WowWindow {
         name: "AchievementFrameSummaryAchievementsHeaderTitle"
         kind: "FontString"
         text: "Recent Achievements"
+        wowParent: "AchievementFrameSummaryAchievementsHeader"
         anchors.left: achievementFrameSummaryAchievementsHeader.left
         anchors.leftMargin: 28
         anchors.verticalCenter: achievementFrameSummaryAchievementsHeader.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 114
-        height: 12
+        width: 158.8
+        height: 20
     }
 
     Part {
         id: achievementFrameSummaryCategories
         name: "AchievementFrameSummaryCategories"
         kind: "Frame"
+        wowParent: "AchievementFrameSummary"
         anchors.left: achievementFrameSummaryAchievements.left
         anchors.top: achievementFrameSummaryAchievements.bottom
         anchors.topMargin: 8
@@ -2571,6 +2911,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory1
         name: "AchievementFrameSummaryCategoriesCategory1"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesStatusBar.left
         anchors.top: achievementFrameSummaryCategoriesStatusBar.bottom
         anchors.topMargin: 24
@@ -2582,6 +2923,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory1Button
         name: "AchievementFrameSummaryCategoriesCategory1Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory1"
         anchors.left: achievementFrameSummaryCategoriesCategory1.left
         anchors.top: achievementFrameSummaryCategoriesCategory1.top
         width: 224
@@ -2593,12 +2935,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory1Label"
         kind: "FontString"
         text: "General"
+        wowParent: "AchievementFrameSummaryCategoriesCategory1"
         anchors.left: achievementFrameSummaryCategoriesCategory1.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory1.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 42
-        height: 12
+        width: 52.1
+        height: 10.3
     }
 
     Part {
@@ -2606,17 +2949,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory1Text"
         kind: "FontString"
         text: "29/54"
+        wowParent: "AchievementFrameSummaryCategoriesCategory1"
         anchors.right: achievementFrameSummaryCategoriesCategory1.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory1.verticalCenter
-        width: 30
-        height: 12
+        width: 30.8
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory2
         name: "AchievementFrameSummaryCategoriesCategory2"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory1.right
         anchors.leftMargin: 24
         anchors.top: achievementFrameSummaryCategoriesCategory1.top
@@ -2628,6 +2973,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory2Button
         name: "AchievementFrameSummaryCategoriesCategory2Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory2"
         anchors.left: achievementFrameSummaryCategoriesCategory2.left
         anchors.top: achievementFrameSummaryCategoriesCategory2.top
         width: 224
@@ -2639,12 +2985,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory2Label"
         kind: "FontString"
         text: "Quests"
+        wowParent: "AchievementFrameSummaryCategoriesCategory2"
         anchors.left: achievementFrameSummaryCategoriesCategory2.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory2.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 36
-        height: 12
+        width: 45.8
+        height: 10.3
     }
 
     Part {
@@ -2652,17 +2999,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory2Text"
         kind: "FontString"
         text: "28/49"
+        wowParent: "AchievementFrameSummaryCategoriesCategory2"
         anchors.right: achievementFrameSummaryCategoriesCategory2.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory2.verticalCenter
         width: 30
-        height: 12
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory3
         name: "AchievementFrameSummaryCategoriesCategory3"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory1.left
         anchors.top: achievementFrameSummaryCategoriesCategory1.bottom
         anchors.topMargin: 14
@@ -2674,6 +3023,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory3Button
         name: "AchievementFrameSummaryCategoriesCategory3Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory3"
         anchors.left: achievementFrameSummaryCategoriesCategory3.left
         anchors.top: achievementFrameSummaryCategoriesCategory3.top
         width: 224
@@ -2685,12 +3035,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory3Label"
         kind: "FontString"
         text: "Exploration"
+        wowParent: "AchievementFrameSummaryCategoriesCategory3"
         anchors.left: achievementFrameSummaryCategoriesCategory3.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory3.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 66
-        height: 12
+        width: 81.4
+        height: 10.3
     }
 
     Part {
@@ -2698,17 +3049,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory3Text"
         kind: "FontString"
         text: "22/70"
+        wowParent: "AchievementFrameSummaryCategoriesCategory3"
         anchors.right: achievementFrameSummaryCategoriesCategory3.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory3.verticalCenter
         width: 30
-        height: 12
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory4
         name: "AchievementFrameSummaryCategoriesCategory4"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory3.right
         anchors.leftMargin: 24
         anchors.top: achievementFrameSummaryCategoriesCategory3.top
@@ -2720,6 +3073,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory4Button
         name: "AchievementFrameSummaryCategoriesCategory4Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory4"
         anchors.left: achievementFrameSummaryCategoriesCategory4.left
         anchors.top: achievementFrameSummaryCategoriesCategory4.top
         width: 224
@@ -2731,12 +3085,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory4Label"
         kind: "FontString"
         text: "Player vs. Player"
+        wowParent: "AchievementFrameSummaryCategoriesCategory4"
         anchors.left: achievementFrameSummaryCategoriesCategory4.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory4.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 102
-        height: 12
+        width: 116.1
+        height: 10.3
     }
 
     Part {
@@ -2744,17 +3099,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory4Text"
         kind: "FontString"
         text: "16/166"
+        wowParent: "AchievementFrameSummaryCategoriesCategory4"
         anchors.right: achievementFrameSummaryCategoriesCategory4.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory4.verticalCenter
-        width: 36
-        height: 12
+        width: 37.1
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory5
         name: "AchievementFrameSummaryCategoriesCategory5"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory3.left
         anchors.top: achievementFrameSummaryCategoriesCategory3.bottom
         anchors.topMargin: 14
@@ -2766,6 +3123,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory5Button
         name: "AchievementFrameSummaryCategoriesCategory5Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory5"
         anchors.left: achievementFrameSummaryCategoriesCategory5.left
         anchors.top: achievementFrameSummaryCategoriesCategory5.top
         width: 224
@@ -2777,12 +3135,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory5Label"
         kind: "FontString"
         text: "Dungeons & Raids"
+        wowParent: "AchievementFrameSummaryCategoriesCategory5"
         anchors.left: achievementFrameSummaryCategoriesCategory5.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory5.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 96
-        height: 12
+        width: 116.1
+        height: 10.3
     }
 
     Part {
@@ -2790,17 +3149,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory5Text"
         kind: "FontString"
         text: "121/458"
+        wowParent: "AchievementFrameSummaryCategoriesCategory5"
         anchors.right: achievementFrameSummaryCategoriesCategory5.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory5.verticalCenter
-        width: 42
-        height: 12
+        width: 42.7
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory6
         name: "AchievementFrameSummaryCategoriesCategory6"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory5.right
         anchors.leftMargin: 24
         anchors.top: achievementFrameSummaryCategoriesCategory5.top
@@ -2812,6 +3173,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory6Button
         name: "AchievementFrameSummaryCategoriesCategory6Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory6"
         anchors.left: achievementFrameSummaryCategoriesCategory6.left
         anchors.top: achievementFrameSummaryCategoriesCategory6.top
         width: 224
@@ -2823,12 +3185,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory6Label"
         kind: "FontString"
         text: "Professions"
+        wowParent: "AchievementFrameSummaryCategoriesCategory6"
         anchors.left: achievementFrameSummaryCategoriesCategory6.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory6.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 66
-        height: 12
+        width: 76.6
+        height: 10.3
     }
 
     Part {
@@ -2836,17 +3199,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory6Text"
         kind: "FontString"
         text: "50/75"
+        wowParent: "AchievementFrameSummaryCategoriesCategory6"
         anchors.right: achievementFrameSummaryCategoriesCategory6.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory6.verticalCenter
         width: 30
-        height: 12
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory7
         name: "AchievementFrameSummaryCategoriesCategory7"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory5.left
         anchors.top: achievementFrameSummaryCategoriesCategory5.bottom
         anchors.topMargin: 14
@@ -2858,6 +3223,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory7Button
         name: "AchievementFrameSummaryCategoriesCategory7Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory7"
         anchors.left: achievementFrameSummaryCategoriesCategory7.left
         anchors.top: achievementFrameSummaryCategoriesCategory7.top
         width: 224
@@ -2869,12 +3235,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory7Label"
         kind: "FontString"
         text: "Reputation"
+        wowParent: "AchievementFrameSummaryCategoriesCategory7"
         anchors.left: achievementFrameSummaryCategoriesCategory7.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory7.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 60
-        height: 12
+        width: 75.1
+        height: 10.3
     }
 
     Part {
@@ -2882,17 +3249,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory7Text"
         kind: "FontString"
         text: "16/45"
+        wowParent: "AchievementFrameSummaryCategoriesCategory7"
         anchors.right: achievementFrameSummaryCategoriesCategory7.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory7.verticalCenter
         width: 30
-        height: 12
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesCategory8
         name: "AchievementFrameSummaryCategoriesCategory8"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategoriesCategory7.right
         anchors.leftMargin: 24
         anchors.top: achievementFrameSummaryCategoriesCategory7.top
@@ -2904,6 +3273,7 @@ WowWindow {
         id: achievementFrameSummaryCategoriesCategory8Button
         name: "AchievementFrameSummaryCategoriesCategory8Button"
         kind: "Button"
+        wowParent: "AchievementFrameSummaryCategoriesCategory8"
         anchors.left: achievementFrameSummaryCategoriesCategory8.left
         anchors.top: achievementFrameSummaryCategoriesCategory8.top
         width: 224
@@ -2915,12 +3285,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory8Label"
         kind: "FontString"
         text: "World Events"
+        wowParent: "AchievementFrameSummaryCategoriesCategory8"
         anchors.left: achievementFrameSummaryCategoriesCategory8.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory8.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 72
-        height: 12
+        width: 91.7
+        height: 10.3
     }
 
     Part {
@@ -2928,17 +3299,19 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesCategory8Text"
         kind: "FontString"
         text: "48/141"
+        wowParent: "AchievementFrameSummaryCategoriesCategory8"
         anchors.right: achievementFrameSummaryCategoriesCategory8.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesCategory8.verticalCenter
-        width: 36
-        height: 12
+        width: 35.6
+        height: 14
     }
 
     Part {
         id: achievementFrameSummaryCategoriesHeader
         name: "AchievementFrameSummaryCategoriesHeader"
         kind: "Frame"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.left: achievementFrameSummaryCategories.left
         anchors.top: achievementFrameSummaryCategories.top
         width: 520
@@ -2950,18 +3323,20 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesHeaderTitle"
         kind: "FontString"
         text: "Progress Overview"
+        wowParent: "AchievementFrameSummaryCategoriesHeader"
         anchors.left: achievementFrameSummaryCategoriesHeader.left
         anchors.leftMargin: 28
         anchors.verticalCenter: achievementFrameSummaryCategoriesHeader.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 102
-        height: 12
+        width: 143.8
+        height: 20
     }
 
     Part {
         id: achievementFrameSummaryCategoriesStatusBar
         name: "AchievementFrameSummaryCategoriesStatusBar"
         kind: "StatusBar"
+        wowParent: "AchievementFrameSummaryCategories"
         anchors.horizontalCenter: achievementFrameSummaryCategoriesHeader.horizontalCenter
         anchors.top: achievementFrameSummaryCategoriesHeader.bottom
         anchors.topMargin: 6
@@ -2974,11 +3349,12 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesStatusBarText"
         kind: "FontString"
         text: "330/1058"
+        wowParent: "AchievementFrameSummaryCategoriesStatusBar"
         anchors.right: achievementFrameSummaryCategoriesStatusBar.right
         anchors.rightMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesStatusBar.verticalCenter
-        width: 48
-        height: 12
+        width: 49
+        height: 14
     }
 
     Part {
@@ -2986,12 +3362,13 @@ WowWindow {
         name: "AchievementFrameSummaryCategoriesStatusBarTitle"
         kind: "FontString"
         text: "Achievements Earned"
+        wowParent: "AchievementFrameSummaryCategoriesStatusBar"
         anchors.left: achievementFrameSummaryCategoriesStatusBar.left
         anchors.leftMargin: 8
         anchors.verticalCenter: achievementFrameSummaryCategoriesStatusBar.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 114
-        height: 12
+        width: 141.4
+        height: 10.3
     }
 
     Part {
@@ -3099,7 +3476,7 @@ WowWindow {
         anchors.left: achievementFrameAchievements.left
         anchors.top: achievementFrameAchievements.top
         width: 530
-        height: 440
+        height: 461
     }
 
     Part {
@@ -3286,7 +3663,7 @@ WowWindow {
         anchors.left: achievementFrameAchievements.left
         anchors.top: achievementFrameAchievements.top
         width: 530
-        height: 440
+        height: 461
     }
 
     Part {
@@ -3553,7 +3930,7 @@ WowWindow {
         anchors.left: achievementFrameAchievements.left
         anchors.top: achievementFrameAchievements.top
         width: 530
-        height: 440
+        height: 461
     }
 
     Part {
@@ -3851,22 +4228,25 @@ WowWindow {
         height: 10
     }
 
-    Ghost { id: achievementFrameAchievementsContainerButton1RewardBackground; name: "AchievementFrameAchievementsContainerButton1RewardBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton1TitleBackground; name: "AchievementFrameAchievementsContainerButton1TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton2TitleBackground; name: "AchievementFrameAchievementsContainerButton2TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton3RewardBackground; name: "AchievementFrameAchievementsContainerButton3RewardBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton3TitleBackground; name: "AchievementFrameAchievementsContainerButton3TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton4RewardBackground; name: "AchievementFrameAchievementsContainerButton4RewardBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton4TitleBackground; name: "AchievementFrameAchievementsContainerButton4TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton5RewardBackground; name: "AchievementFrameAchievementsContainerButton5RewardBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton5TitleBackground; name: "AchievementFrameAchievementsContainerButton5TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton6RewardBackground; name: "AchievementFrameAchievementsContainerButton6RewardBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton6TitleBackground; name: "AchievementFrameAchievementsContainerButton6TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton7RewardBackground; name: "AchievementFrameAchievementsContainerButton7RewardBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameAchievementsContainerButton7TitleBackground; name: "AchievementFrameAchievementsContainerButton7TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameSummaryAchievement1TitleBackground; name: "AchievementFrameSummaryAchievement1TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameSummaryAchievement2TitleBackground; name: "AchievementFrameSummaryAchievement2TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameSummaryAchievement3TitleBackground; name: "AchievementFrameSummaryAchievement3TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
-    Ghost { id: achievementFrameSummaryAchievement4TitleBackground; name: "AchievementFrameSummaryAchievement4TitleBackground"; x: 0; y: 0; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton1RewardBackground; name: "AchievementFrameAchievementsContainerButton1RewardBackground"; x: 470; y: 86; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton1TitleBackground; name: "AchievementFrameAchievementsContainerButton1TitleBackground"; x: 470; y: -57; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton2RewardBackground; name: "AchievementFrameAchievementsContainerButton2RewardBackground"; x: 483; y: 170; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton2TitleBackground; name: "AchievementFrameAchievementsContainerButton2TitleBackground"; x: 470; y: 32.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton3RewardBackground; name: "AchievementFrameAchievementsContainerButton3RewardBackground"; x: 470; y: 254; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton3TitleBackground; name: "AchievementFrameAchievementsContainerButton3TitleBackground"; x: 470; y: 116.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton4RewardBackground; name: "AchievementFrameAchievementsContainerButton4RewardBackground"; x: 483; y: 338; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton4TitleBackground; name: "AchievementFrameAchievementsContainerButton4TitleBackground"; x: 470; y: 200.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton5RewardBackground; name: "AchievementFrameAchievementsContainerButton5RewardBackground"; x: 470; y: 422; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton5TitleBackground; name: "AchievementFrameAchievementsContainerButton5TitleBackground"; x: 470; y: 284.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton6RewardBackground; name: "AchievementFrameAchievementsContainerButton6RewardBackground"; x: 470; y: 506; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton6TitleBackground; name: "AchievementFrameAchievementsContainerButton6TitleBackground"; x: 470; y: 368.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton7RewardBackground; name: "AchievementFrameAchievementsContainerButton7RewardBackground"; x: 470; y: 590; width: 0; height: 0 }
+    Ghost { id: achievementFrameAchievementsContainerButton7TitleBackground; name: "AchievementFrameAchievementsContainerButton7TitleBackground"; x: 470; y: 452.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameCriteria1Check; name: "AchievementFrameCriteria1Check"; x: 323; y: -3.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameCriteria2Check; name: "AchievementFrameCriteria2Check"; x: 488; y: -3.2; width: 0; height: 0 }
+    Ghost { id: achievementFrameSummaryAchievement1TitleBackground; name: "AchievementFrameSummaryAchievement1TitleBackground"; x: 483; y: 62; width: 0; height: 0 }
+    Ghost { id: achievementFrameSummaryAchievement2TitleBackground; name: "AchievementFrameSummaryAchievement2TitleBackground"; x: 483; y: 107; width: 0; height: 0 }
+    Ghost { id: achievementFrameSummaryAchievement3TitleBackground; name: "AchievementFrameSummaryAchievement3TitleBackground"; x: 483; y: 152; width: 0; height: 0 }
+    Ghost { id: achievementFrameSummaryAchievement4TitleBackground; name: "AchievementFrameSummaryAchievement4TitleBackground"; x: 483; y: 197; width: 0; height: 0 }
     Ghost { id: overachiever_SuggestionsFrameContainerButton1TitleBackground; name: "Overachiever_SuggestionsFrameContainerButton1TitleBackground"; x: 483; y: 29; width: 0; height: 0 }
 }
