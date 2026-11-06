@@ -334,6 +334,15 @@ local IsTab = function(name, part)
 	return (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$")) and part:IsObjectType("Button")
 end
 
+-- How a tab reads: its text, or its tooltip's for an icon's (else its name).
+local LabelOf = function(name, part)
+	local text = part:GetText()
+	if (text ~= nil) and (text ~= "") then
+		return text
+	end
+	return part.tooltip or name
+end
+
 local ViewOf = function(named)
 	local names = {}
 	for name, part in pairs(named) do
@@ -344,8 +353,7 @@ local ViewOf = function(named)
 	table_sort(names)
 	local labels = {}
 	for i, name in ipairs(names) do
-		local text = named[name]:GetText()
-		labels[i] = ((text ~= nil) and (text ~= "")) and text or name
+		labels[i] = LabelOf(name, named[name])
 	end
 	return table_concat(names, "+"), table_concat(labels, " / ")
 end
@@ -373,8 +381,7 @@ local Scan = function(window)
 	seen.window = Rect(window)
 	for name, part in pairs(named) do
 		if IsTab(name, part) then
-			local text = part:GetText()
-			seen.tabButtons[name] = ((text ~= nil) and (text ~= "")) and text or name
+			seen.tabButtons[name] = LabelOf(name, part)
 		end
 	end
 	local view, label = ViewOf(named)

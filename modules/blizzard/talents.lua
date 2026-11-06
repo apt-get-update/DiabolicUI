@@ -24,6 +24,7 @@ local hooksecurefunc = _G.hooksecurefunc
 local IsAddOnLoaded = _G.IsAddOnLoaded
 
 local NUM_SPECS = 3 -- the player's two and the pet's
+local SPEC_NAMES = { _G.TALENT_SPEC_PRIMARY, _G.TALENT_SPEC_SECONDARY, _G.TALENT_SPEC_PET_PRIMARY }
 local NUM_TABS = 4 -- three trees and the glyphs
 
 -- Named textures out of sight.
@@ -145,6 +146,7 @@ Module.StyleTalents = function(self)
 	-- the specs in the band, as icons in the action buttons' border
 	for i = 1, NUM_SPECS do
 		local tab = _G["PlayerSpecTab" .. i]
+		tab.tooltip = SPEC_NAMES[i] -- (what it reads as in /dui layout)
 		Hide(tab:GetName() .. "Background")
 		tab:SetFrameLevel(window:GetFrameLevel() + 4)
 		tab:SetSize(config.spec_size, config.spec_size)

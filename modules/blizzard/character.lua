@@ -575,9 +575,10 @@ Module.CreatePages = function(self, column)
 		icon:SetSize(unpack(art.size))
 		icon:SetPoint("CENTER")
 		tab.Icon = icon
+		tab.tooltip = L[name]
 		tab:SetScript("OnEnter", function()
 			GameTooltip:SetOwner(tab, "ANCHOR_TOP")
-			GameTooltip:SetText(L[name])
+			GameTooltip:SetText(tab.tooltip)
 			GameTooltip:Show()
 		end)
 		tab:SetScript("OnLeave", function() GameTooltip:Hide() end)
