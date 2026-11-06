@@ -1491,6 +1491,19 @@ WowWindow {
     }
 
     Part {
+        id: gearManagerDialogPopup
+        name: "GearManagerDialogPopup"
+        kind: "Frame"
+        wowParent: "GearManagerDialog"
+        pin: "place"
+        anchors.left: characterFrameDiabolic.right
+        anchors.leftMargin: 6
+        anchors.top: characterFrameDiabolic.top
+        width: 297
+        height: 298
+    }
+
+    Part {
         id: gearManagerDialogSaveSet
         name: "GearManagerDialogSaveSet"
         kind: "Button"
@@ -2668,6 +2681,20 @@ WowWindow {
         anchors.verticalCenter: reputationBar9ReputationBar.verticalCenter
         width: 47.4
         height: 10.3
+    }
+
+    Part {
+        id: reputationDetailFrame
+        name: "ReputationDetailFrame"
+        kind: "Frame"
+        wowParent: "ReputationFrame"
+        pin: "place"
+        anchors.left: characterFrameDiabolic.right
+        anchors.leftMargin: -8
+        anchors.top: characterFrameDiabolic.top
+        anchors.topMargin: 96
+        width: 260
+        height: 203
     }
 
     Part {
@@ -4127,6 +4154,7 @@ WowWindow {
         name: "TokenFrameMoneyFrame"
         kind: "Frame"
         wowParent: "TokenFrame"
+        pin: "place"
         anchors.right: tokenFrame.right
         anchors.rightMargin: 44
         anchors.bottom: tokenFrame.bottom
@@ -4218,6 +4246,7 @@ WowWindow {
         name: "TokenFramePopup"
         kind: "Frame"
         wowParent: "TokenFrame"
+        pin: "place"
         anchors.left: characterFrameDiabolic.right
         anchors.leftMargin: -8
         anchors.top: characterFrameDiabolic.top
@@ -4232,6 +4261,7 @@ WowWindow {
         kind: "CheckButton"
         wowParent: "TokenFramePopup"
         style: "CheckBox"
+        pin: "place"
         anchors.left: tokenFramePopupInactiveCheckBox.left
         anchors.top: tokenFramePopupInactiveCheckBox.bottom
         anchors.topMargin: 6
@@ -4257,6 +4287,7 @@ WowWindow {
         name: "TokenFramePopupCloseButton"
         kind: "Button"
         wowParent: "TokenFramePopup"
+        pin: "place"
         anchors.right: tokenFramePopup.right
         anchors.rightMargin: 1
         anchors.top: tokenFramePopup.top

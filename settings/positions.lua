@@ -15,6 +15,14 @@ Engine:NewStaticConfig("Positions", {
 	-- "Battlefield Instance:" 5 higher, apart from its list
 	BattlefieldFrameNameHeader = { "TOPLEFT", "BattlefieldFrame", "TOPLEFT", 75, -50 }, -- FontString "Battlefield Instance:"
 
+	-- CharacterFrame --------------------------------------------------------
+	GearManagerDialogPopup = { "TOPLEFT", "CharacterFrameDiabolic", "TOPRIGHT", 6, 0 }, -- Frame
+	ReputationDetailFrame = { "TOPLEFT", "CharacterFrameDiabolic", "TOPRIGHT", -8, -96 }, -- Frame
+	TokenFrameMoneyFrame = { "BOTTOMRIGHT", "TokenFrame", "BOTTOMRIGHT", -44, 84 }, -- Frame
+	TokenFramePopup = { "TOPLEFT", "CharacterFrameDiabolic", "TOPRIGHT", -8, -96 }, -- Frame
+	TokenFramePopupBackpackCheckBox = { "TOPLEFT", "TokenFramePopupInactiveCheckBox", "BOTTOMLEFT", 0, -6 }, -- CheckButton
+	TokenFramePopupCloseButton = { "TOPRIGHT", "TokenFramePopup", "TOPRIGHT", -1, -1 }, -- Button
+
 	-- ClassTrainerFrame -----------------------------------------------------
 	-- the chosen one's page 6 under the list's (Blizzard's 8 under its text)
 	ClassTrainerDetailScrollFrame = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", 0, -14 }, -- ScrollFrame

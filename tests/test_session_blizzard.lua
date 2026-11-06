@@ -879,7 +879,7 @@ function TestCharacter:test_a_factions_details()
 	local module = client:GetModule("Blizzard: Character")
 	-- a dark panel right of the window, its name in its standing's color
 	local detail = _G.ReputationDetailFrame
-	lu.assertEquals({ detail:GetPoint() }, { "TOPLEFT", module.Backdrop, "TOPRIGHT", unpack(config.reputation_detail_offset) })
+	Session.assertPlaced(client, "ReputationDetailFrame")
 	-- the parchment unshaded: the panel's own shade clear
 	lu.assertEquals(select(4, detail:GetBackdropColor()), 0)
 	_G.ReputationFrame_Update()

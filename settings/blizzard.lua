@@ -262,15 +262,10 @@ Engine:NewStaticConfig("Blizzard", {
 			stat_label_color = { .82, .74, .6 }
 		},
 		popup_color = { 0, 0, 0, .92 }, -- the title picker, the equipment manager
-		gear_manager_offset = { 6, 0 }, -- the equipment manager's icon picker, right of the window
 		scene_inset = 3, -- your home city behind the model, inside its panel's bronze line
 		scene_color = { .75, .75, .75 }, -- dimmed a little under the model
-		reputation_detail_offset = { -8, -96 }, -- a faction's details, right of the window, under its tabs (its iron starts ~9px in)
 		inspect_trees = { size = 28, gap = 6, offset = { -6, 12 } }, -- the inspected one's talent trees as icons: over the tree's panel (its inset 6, then a gap of 6)
 		level_font = DiabolicFont_HeaderRegular14, -- the inspected one's "Level 80 Dwarf Priest", over the model
-		token_popup_offset = { -8, -96 }, -- a currency's options, there too
-		token_popup_close = 1, -- their X, in from their top right corner: its frame's top and right on their border line (both about 1-4 in), one border
-		token_popup_box_gap = 6, -- between their two boxes
 		reputation_detail_close = 8, -- their X on their ribbon, this far in from their right side
 		reputation_detail_inset = 3, -- their parchment, inside their panel's bronze line
 		reputation_detail_name_top = 2, -- their name's top: its ribbon across their top edge (Blizzard's 21)
@@ -306,7 +301,6 @@ Engine:NewStaticConfig("Blizzard", {
 			war = { .55, .04, .02 }, -- At War
 			off = { .48, .42, .34 } -- a box that can't be changed, faded
 		},
-		token_money_offset = { -44, 84 }, -- your money, right-aligned with the currency list's scroll bar (Blizzard's -115)
 		-- the selected skill's details, in a panel (its scroll bar inside)
 		skill_detail_insets = { 6, 6, 28, 6 },
 		popup_highlight_color = { 1, .22, .08 }, -- its hover bar, Blizzard's gold in red

@@ -787,8 +787,6 @@ Module.EmbedGearManager = function(self, header, column)
 		kit:HideTextures(popup)
 		kit:StylePanel(popup)
 		popup:SetBackdropColor(unpack(self.config.popup_color))
-		popup:ClearAllPoints()
-		popup:SetPoint("TOPLEFT", self.Backdrop, "TOPRIGHT", unpack(self.config.gear_manager_offset))
 		for _, button in ipairs({ _G.GearManagerDialogPopupOkay, _G.GearManagerDialogPopupCancel }) do
 			kit:StyleButton(button, spec.popup_button_height)
 		end
@@ -988,11 +986,6 @@ Module.StyleTokens = function(self)
 	local frame = _G.TokenFrame
 	self:HidePanelArt(frame)
 	self:CenterTab(frame)
-	local money = _G.TokenFrameMoneyFrame
-	if money then
-		money:ClearAllPoints()
-		money:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", unpack(self.config.token_money_offset))
-	end
 	HideClose(_G.TokenFrameCancelButton)
 	for i = 1, select("#", frame:GetChildren()) do
 		local child = select(i, frame:GetChildren())
@@ -1016,20 +1009,12 @@ Module.StyleTokenPopup = function(self)
 	kit:HideTextures(popup)
 	kit:StylePanel(popup)
 	popup:SetBackdropColor(unpack(config.popup_color))
-	popup:ClearAllPoints()
-	popup:SetPoint("TOPLEFT", self.Backdrop, "TOPRIGHT", unpack(config.token_popup_offset))
 	_G.TokenFramePopupTitle:SetTextColor(unpack(kit.config.title_plate.color))
-	local close = _G.TokenFramePopupCloseButton
-	kit:SkinClose(close)
-	close:ClearAllPoints()
-	close:SetPoint("TOPRIGHT", popup, "TOPRIGHT", -config.token_popup_close, -config.token_popup_close)
+	kit:SkinClose(_G.TokenFramePopupCloseButton)
 	local unused, backpack = _G.TokenFramePopupInactiveCheckBox, _G.TokenFramePopupBackpackCheckBox
 	for _, box in ipairs({ unused, backpack }) do
 		kit:StyleCheckBox(box)
 	end
-	-- apart (Blizzard's overlap their art's empty edges, ours have none)
-	backpack:ClearAllPoints()
-	backpack:SetPoint("TOPLEFT", unused, "BOTTOMLEFT", 0, -config.token_popup_box_gap)
 end
 
 -- `unit`'s home city's art (DressUpTexturePath's, for any unit).
@@ -1194,8 +1179,6 @@ Module.StyleReputationDetail = function(self)
 	page:SetTexture(kit.config.parchment)
 	page:SetPoint("TOPLEFT", config.reputation_detail_inset, -config.reputation_detail_inset)
 	page:SetPoint("BOTTOMRIGHT", -config.reputation_detail_inset, config.reputation_detail_inset)
-	detail:ClearAllPoints()
-	detail:SetPoint("TOPLEFT", self.Backdrop, "TOPRIGHT", unpack(config.reputation_detail_offset))
 	-- no shadows (they blur dark ink), the description in the quests' font
 	local ink = config.reputation_detail_ink
 	local description = _G.ReputationDetailFactionDescription
