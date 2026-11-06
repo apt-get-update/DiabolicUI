@@ -347,6 +347,66 @@ function TestLayoutAudit:test_a_window_by_its_tabs()
 	assertClean(client)
 end
 
+-- What the editor draws a text by: as the game shows it, by the tabs chosen, its
+-- font and colour; and what a scroll frame cuts off isn't told, the scroll bar
+-- beside it still is.
+function TestLayoutAudit:test_what_the_editor_draws()
+	boot()
+	local frame = window("AuditWords")
+	local coded = "|cffff0000Red|r\nline"
+	text(frame, "AuditWordsText", 40, -80, coded):SetTextColor(.5, .25, 0)
+	local Art = function(parent, name, y)
+		local art = parent:CreateTexture(name, "ARTWORK")
+		art:SetTexture([[Interface\Icons\INV_Misc_QuestionMark]])
+		art:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, y)
+		art:SetSize(100, 20)
+	end
+	local scroll = CreateFrame("ScrollFrame", "AuditWordsScroll", frame)
+	scroll:SetPoint("TOPLEFT", frame, "TOPLEFT", 40, -120)
+	scroll:SetSize(100, 40)
+	local child = CreateFrame("Frame", "AuditWordsChild", scroll)
+	child:SetPoint("TOPLEFT", scroll, "TOPLEFT", 0, 0)
+	child:SetSize(100, 200)
+	scroll:SetScrollChild(child)
+	Art(child, "AuditWordsArtIn", 0)
+	Art(child, "AuditWordsArtOut", -100)
+	local Row = function(name, y)
+		local row = child:CreateFontString(name)
+		row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, y)
+		row:SetSize(100, 20)
+		row:SetText(name)
+	end
+	Row("AuditWordsIn", 0)
+	Row("AuditWordsOut", -100)
+	local bar = CreateFrame("Frame", "AuditWordsBar", scroll)
+	bar:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 4, 0)
+	bar:SetSize(16, 40)
+	Art(bar, "AuditWordsArtBar", 0)
+	frame:Show()
+	slash("layout")
+	local seen = _G.DiabolicUI_Layout.windows.AuditWords
+	local parts, view = seen.parts, seen.views[""]
+	lu.assertTrue(view.worded)
+	lu.assertNil(parts.AuditWordsText.text) -- (not a file's text)
+	lu.assertEquals(parts.AuditWordsText.words[""], coded)
+	lu.assertEquals(parts.AuditWordsText.color, { .5, .25, 0, 1 })
+	lu.assertEquals(parts.AuditWordsText.justifyV, "MIDDLE")
+	lu.assertNotNil(parts.AuditWordsText.font)
+	lu.assertNotNil(parts.AuditWordsText.fontSize)
+	lu.assertEquals(parts.AuditWordsIn.words[""], "AuditWordsIn")
+	lu.assertNotNil(parts.AuditWordsOut) -- (still there to pick)
+	lu.assertNil(parts.AuditWordsOut.words[""])
+	local owners = {}
+	for _, packed in ipairs(view.art) do
+		owners[assert(loadstring("return " .. packed))().owner or ""] = true
+	end
+	lu.assertTrue(owners.AuditWordsArtIn)
+	lu.assertTrue(owners.AuditWordsArtBar)
+	lu.assertNil(owners.AuditWordsArtOut)
+	slash("layout")
+	assertClean(client)
+end
+
 -- Our own parts named after what they're for (/dui layout lists them,
 -- settings/positions.lua places them), a number after a name taken; none
 -- for a part with no name.

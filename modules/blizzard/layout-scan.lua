@@ -16,6 +16,8 @@ local L = Engine:GetLocale()
 local _G = _G
 local ipairs = ipairs
 local math_floor = math.floor
+local math_max = math.max
+local math_min = math.min
 local pairs = pairs
 local pcall = pcall
 local select = select
@@ -225,6 +227,59 @@ local Facts = function(part, entry, window, rows)
 	end
 end
 
+local Round3 = function(...)
+	local values = { ... }
+	for i, value in ipairs(values) do
+		values[i] = math_floor(value * 1000 + .5) / 1000
+	end
+	return values
+end
+
+-- Most of `region` past the edges of a scroll frame whose scroll child holds
+-- it: the game cuts it off, so the editor isn't told about its art or words.
+local ScrolledOut = function(region)
+	local left, bottom, right, top = kit.Edges(region)
+	if not left then
+		return
+	end
+	local child, frame = region, region:GetParent()
+	while frame do
+		if frame:IsObjectType("ScrollFrame") and (frame:GetScrollChild() == child) then
+			local outerLeft, outerBottom, outerRight, outerTop = kit.Edges(frame)
+			if outerLeft then
+				local across = math_min(right, outerRight) - math_max(left, outerLeft)
+				local down = math_min(top, outerTop) - math_max(bottom, outerBottom)
+				if (across < math_min(right - left, outerRight - outerLeft) / 2)
+					or (down < math_min(top - bottom, outerTop - outerBottom) / 2) then
+					return true
+				end
+			end
+		end
+		child, frame = frame, frame:GetParent()
+	end
+end
+
+-- How `text` (a font string) is drawn, for the editor.
+local LookOf = function(text, entry)
+	local file, size, flags = text:GetFont()
+	if file then
+		entry.font, entry.fontSize = file, Round(size)
+		entry.outline = (flags and string_find(flags, "OUTLINE")) and true or nil
+	end
+	entry.color = Round3(text:GetTextColor())
+	entry.shadow = (text:GetShadowOffset() ~= 0) or nil
+	entry.justifyV = text:GetJustifyV()
+end
+
+-- What `part` says now as the game shows it (colour codes, lines), for the
+-- editor: nothing if it's scrolled out of sight.
+local WordsOf = function(part)
+	local text = part.GetText and part:GetText()
+	if text and (text ~= "") and (not ScrolledOut(part)) then
+		return text
+	end
+end
+
 local Entry = function(part, window, rows)
 	if not part:GetLeft() then
 		return
@@ -239,6 +294,11 @@ local Entry = function(part, window, rows)
 	local text = part.GetText and part:GetText()
 	if text and (text ~= "") and (not string_find(text, "[|\n]")) then
 		entry.text = text
+	end
+	-- (a button's text is drawn by its font string, named or not)
+	local drawn = part:IsObjectType("FontString") and part or (part.GetFontString and part:GetFontString())
+	if drawn and text and (text ~= "") then
+		LookOf(drawn, entry)
 	end
 	entry.points = {}
 	for i = 1, part:GetNumPoints() do
@@ -265,14 +325,6 @@ local IsFile = function(file)
 	return (type(file) == "string") and (file ~= "")
 end
 
-local Round3 = function(...)
-	local values = { ... }
-	for i, value in ipairs(values) do
-		values[i] = math_floor(value * 1000 + .5) / 1000
-	end
-	return values
-end
-
 local STRATA = { BACKGROUND = 1, LOW = 2, MEDIUM = 3, HIGH = 4, DIALOG = 5, FULLSCREEN = 6, FULLSCREEN_DIALOG = 7, TOOLTIP = 8 }
 local LAYERS = { BACKGROUND = 1, BORDER = 2, ARTWORK = 3, OVERLAY = 4 } -- (HIGHLIGHT: only under the cursor)
 
@@ -281,7 +333,7 @@ CollectArt = function(frame, owner, alpha, art)
 	owner, alpha = frame:GetName() or owner, alpha * frame:GetAlpha()
 	local order = { STRATA[frame:GetFrameStrata()] or 3, frame:GetFrameLevel() }
 	local backdrop = frame:GetBackdrop()
-	if backdrop and (IsFile(backdrop.bgFile) or IsFile(backdrop.edgeFile)) and frame:GetLeft() then
+	if backdrop and (IsFile(backdrop.bgFile) or IsFile(backdrop.edgeFile)) and frame:GetLeft() and (not ScrolledOut(frame)) then
 		local insets = backdrop.insets or {}
 		art[#art + 1] = { order = { order[1], order[2], 0, #art }, owner = owner, alpha = alpha, rect = Rect(frame),
 			scale = kit.ScaleOf(frame) / _G.UIParent:GetEffectiveScale(),
@@ -293,7 +345,7 @@ CollectArt = function(frame, owner, alpha, art)
 	for i = 1, select("#", frame:GetRegions()) do
 		local region = select(i, frame:GetRegions())
 		if region:IsObjectType("Texture") and region:IsShown() and IsFile(region:GetTexture())
-			and LAYERS[region:GetDrawLayer()] and region:GetLeft() then
+			and LAYERS[region:GetDrawLayer()] and region:GetLeft() and (not ScrolledOut(region)) then
 			art[#art + 1] = { order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
 				owner = region:GetName() or owner, alpha = alpha * region:GetAlpha(), rect = Rect(region),
 				file = region:GetTexture(), coords = Round3(region:GetTexCoord()), color = Round3(region:GetVertexColor()),
@@ -425,6 +477,7 @@ local Scan = function(window)
 	-- (this look at it: what's not in it now, a state ago, isn't checked with what is)
 	Saved.stamp = (Saved.stamp or 0) + 1
 	seen.views[view] = { label = label, art = PackedArt(frame), rect = seen.rect, window = seen.window, stamp = Saved.stamp,
+		worded = true, -- (its parts' `words` say what shows in it)
 		frame = window:GetName(), band = window.DiabolicHeaders[1] and NameOf(window.DiabolicHeaders[1]),
 		foot = foot and foot.DiabolicShown and NameOf(foot),
 		railOver = foot and foot.DiabolicShown and Round(foot.Rail:GetTop() - foot:GetTop()), -- (the iron bar along its top)
@@ -443,6 +496,8 @@ local Scan = function(window)
 			end
 			entry.last = (type(old) == "table") and old.last or {}
 			entry.last[view] = Saved.stamp
+			entry.words = (type(old) == "table") and old.words or {}
+			entry.words[view] = WordsOf(part)
 			parts[name] = entry
 		end
 	end

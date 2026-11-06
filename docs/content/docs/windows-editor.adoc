@@ -144,8 +144,10 @@ art and what the rules need. Things to know:
 * A part keeps `last`, the look that last saw it per view. `current` in `tools/layout.json`
   says which views' last look saw it: the rules and the editor's texts go by it.
 * Bag items not seen in a look are dropped; other parts stay until they're seen again.
-* A part has one place, whichever tab was scanned last, so text on a shared plate
-  shows the last tab's words everywhere in the editor.
+* A part has one place, whichever tab was scanned last. Its `words` are per view, as the
+  game shows them with their colour codes, so text on a shared plate reads right in every tab.
+* What a scroll frame's child has mostly past its edges saves no art or words: the game
+  cuts it off. Parts stay, so they can still be picked.
 
 == Inside the editor
 
@@ -179,9 +181,9 @@ by is `inRow`.
 
 The picture is close to the game, not the game. It doesn't:
 
-* clip what's in a scroll frame, so rows and talents can show past their panel;
-* use the game's fonts or colours for texts, or wrap them;
-* show a text with colour codes or several lines (the scan saves only that it's written);
+* cut a row at a scroll frame's edge: it's drawn whole, or not at all when mostly past it;
+* draw a text's icons, or wrap and shorten it exactly where the game does (`windows/GameText.qml`
+  uses the game's font and size, but its own measuring);
 * show the 3D models.
 
 Check looks, readable text and anything near those limits in game.

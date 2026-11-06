@@ -16,7 +16,7 @@ import sys
 import gametextures
 from PIL import Image
 from PySide6.QtCore import QFileSystemWatcher, QObject, QPointF, QProcess, QRectF, Qt, QTimer, QUrl, Signal, Slot
-from PySide6.QtGui import QBrush, QColor, QGuiApplication, QIcon, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
+from PySide6.QtGui import QBrush, QColor, QFontDatabase, QGuiApplication, QIcon, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickImageProvider
 from PySide6.QtQuickControls2 import QQuickStyle
@@ -207,6 +207,18 @@ class Art(QQuickImageProvider):
         return out
 
 
+def font_file(path):
+    """A font's file by the game's path: an addon's whatever its case, else the game's."""
+    path = path.replace("\\", "/")
+    here = os.path.join(ROOT, "..", "..", "..")
+    for name in path.split("/"):
+        names = {entry.lower(): entry for entry in os.listdir(here)} if os.path.isdir(here) else {}
+        if name.lower() not in names:
+            return gametextures.font(path.lower())
+        here = os.path.join(here, names[name.lower()])
+    return os.path.abspath(here)
+
+
 class Backend(QObject):
     """What the page can't do: run tools/positions.lua, read and write files."""
 
@@ -218,6 +230,7 @@ class Backend(QObject):
         super().__init__()
         self.layout = {"windows": {}}
         self.generation = 0
+        self.families = {}
         self.sample = {}
         self.sample_wanted = None
         self.sample_process = None
@@ -261,11 +274,24 @@ class Backend(QObject):
     def window(self, name):
         data = dict(self.layout["windows"][name])
         data["url"] = QUrl.fromLocalFile(os.path.abspath(data["file"])).toString()
+        for part in data["parts"].values():
+            if part.get("font"):
+                part["family"] = self.family(part["font"])
         data["rules"] = self.layout.get("rules")
         data["unit"] = float(self.layout.get("unit") or 0)
         data["generation"] = self.generation
         self.engine.clearComponentCache()
         return json.dumps(data)
+
+    def family(self, path):
+        """The family here of a font the scan saw, by the game's path ("" if not found)."""
+        if path not in self.families:
+            self.families[path] = ""
+            file = font_file(path)
+            found = QFontDatabase.applicationFontFamilies(QFontDatabase.addApplicationFont(file)) if file else []
+            if found:
+                self.families[path] = found[0]
+        return self.families[path]
 
     @Slot(result=str)
     def components(self):

@@ -531,6 +531,26 @@ Engine:NewStaticConfig("Positions", {
 	lu.assertStrContains(file, "height: 74")
 end
 
+-- How the editor draws a text comes through, by the tabs chosen for its words.
+function TestPositionsTool:test_how_the_editor_draws_a_text()
+	local dir = Folder()
+	Write(dir .. "/saved.lua", [=[
+DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, views = { Tab1 = { label = "One", art = {}, stamp = 1, worded = true } }, parts = {
+	Said = { "TOPLEFT", "W", "TOPLEFT", 1, -1, kind = "FontString", rect = { 10, 20, 30, 40 }, tabs = { Tab1 = true }, last = { Tab1 = 1 },
+		words = { Tab1 = "|cffff0000Red|r" }, color = { 1, 0.5, 0, 1 }, font = "Fonts\\A.TTF", fontSize = 12, justifyV = "TOP", outline = true, shadow = true },
+} } } }
+]=])
+	Runs(dir)
+	local json = Read(dir .. "/layout.json")
+	os.execute("rm -rf '" .. dir .. "'")
+	lu.assertStrContains(json, '"words":{"Tab1":"|cffff0000Red|r"}')
+	lu.assertStrContains(json, '"color":[1,0.5,0,1]')
+	lu.assertStrContains(json, '"font":"Fonts\\\\A.TTF","fontSize":12')
+	lu.assertStrContains(json, '"justifyV":"TOP"')
+	lu.assertStrContains(json, '"outline":true')
+	lu.assertStrContains(json, '"worded":true')
+end
+
 -- A row: its parts placed and sized to fit the room, kept as a row in its file; a
 -- part stretched on two sides, in the file and for the game.
 function TestPositionsTool:test_what_only_shows_in_the_preview()

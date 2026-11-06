@@ -10,6 +10,7 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import "rules.js" as Rules
+import "../windows" as Game
 
 ApplicationWindow {
     id: app
@@ -172,8 +173,10 @@ ApplicationWindow {
         for (const n in parts) if (items[n] && !parts[n].preview && parts[n].justify) items[n].justify = justifyOf(parts[n], items[n].width)
         // (a button with a text and no part for it, the game's unnamed: it draws it itself; a tab's is our banner's tooltip)
         const worded = {}
-        for (const n in parts) if (parts[n].kind === "FontString" && parts[n].text) worded[parts[n].parent] = true
-        for (const n in parts) if (items[n] && !parts[n].preview && parts[n].text && parts[n].kind !== "FontString" && !worded[n] && !/Tab\d+$/.test(n)) items[n].labelled = true
+        const says = p => !!p.text || !!(p.words && Object.keys(p.words).length)
+        for (const n in parts) if (parts[n].kind === "FontString" && says(parts[n])) worded[parts[n].parent] = true
+        for (const n in parts) if (items[n] && !parts[n].preview && says(parts[n]) && parts[n].kind !== "FontString" && !worded[n] && !/Tab\d+$/.test(n)) items[n].labelled = true
+        for (const n in parts) if (items[n] && !parts[n].preview) items[n].look = parts[n]
         applyShown()
         // the art follows its part from where the part is now
         const base = {}
@@ -192,6 +195,10 @@ ApplicationWindow {
     // where a text goes in its box. (Drawn smaller than in the game: a box as wide as
     // its text, the text in its middle.)
     function justifyOf(p, width) { return Math.abs(width - (p.textWidth || 0)) < 1 ? "CENTER" : p.justify || "LEFT" }
+    // what a part says in the tab shown (a scan from before these were saved: all it has)
+    function wordsOf(p) {
+        return p.words && view_ && view_.worded ? p.words[view_.key] || "" : p.text || ""
+    }
     // the texts of what's only to be seen (a bag's counts, a list's rows)
     property var previewTexts: []
     property int previewCount: 0
@@ -202,9 +209,10 @@ ApplicationWindow {
             const p = parts[n]
             if (!p.preview || !inView(n) || (view_ && p.current && !p.current[view_.key])) continue
             count++
-            if (p.kind === "FontString" && p.text && p.rect) {
+            const words = wordsOf(p)
+            if (p.kind === "FontString" && words && p.rect) {
                 const r = previewBox(p.rect)
-                if (!p.faded) texts.push({ text: p.text, x: r[0], y: r[1], width: r[2], height: r[3], align: justifyOf(p, r[2]) })
+                if (!p.faded) texts.push({ words: words, look: p, x: r[0], y: r[1], width: r[2], height: r[3], align: justifyOf(p, r[2]) })
             }
         }
         previewTexts = texts
@@ -238,7 +246,10 @@ ApplicationWindow {
         for (const n in parts) if (items[n]) {
             items[n].visible = shown[kindOf(parts[n].kind)] && inView(n)
             // (only what the last look at this tab saw, as the rules: the rest stays to pick)
-            if (!parts[n].preview) items[n].wordless = !!parts[n].faded || !!(view_ && parts[n].current && !parts[n].current[view_.key]) // (a preview's may be a Ghost)
+            if (!parts[n].preview) { // (a preview's may be a Ghost)
+                items[n].wordless = !!parts[n].faded || !!(view_ && parts[n].current && !parts[n].current[view_.key])
+                items[n].text = wordsOf(parts[n])
+            }
         }
     }
 
@@ -1241,17 +1252,14 @@ ApplicationWindow {
                     // what's only to be seen: its texts
                     Repeater {
                         model: app.previewTexts
-                        Text {
+                        Game.GameText {
                             required property var modelData
                             visible: !!app.shown.FontString
                             x: modelData.x; y: modelData.y
                             width: modelData.width; height: modelData.height
-                            text: modelData.text
-                            color: "#e8dcc0"
-                            font.pixelSize: 9
-                            clip: true
+                            words: modelData.words
+                            look: modelData.look
                             horizontalAlignment: modelData.align === "CENTER" ? Text.AlignHCenter : modelData.align === "RIGHT" ? Text.AlignRight : Text.AlignLeft
-                            verticalAlignment: Text.AlignVCenter
                         }
                     }
                     Item { id: holder }

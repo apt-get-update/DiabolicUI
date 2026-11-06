@@ -16,6 +16,7 @@ Rectangle {
     property bool follower
     property bool changed
     property string justify // (a text's, from the scan)
+    property var look: ({}) // (how its text is drawn: GameText.qml)
     property bool wordless // (the editor's: its text not to draw, not there when the scan last looked, or faded)
     property bool labelled // (the editor's: a button whose text has no part of its own)
 
@@ -27,14 +28,12 @@ Rectangle {
     border.width: boxed ? (picked || placedOn ? 2 : pin !== "" ? 3 : 1) * line : 0
     border.color: picked ? "#e0a640" : placedOn ? "#e0c040" : changed ? "#e8703a" : kind === "FontString" ? "#8fce7a" : kind === "Texture" ? "#b48ead" : "#6fa8dc"
 
-    Text {
+    GameText {
         visible: (parent.kind === "FontString" || parent.labelled) && !parent.wordless
         anchors.fill: parent
+        words: parent.text
+        look: parent.look
+        oneLine: parent.labelled
         horizontalAlignment: parent.labelled || parent.justify === "CENTER" ? Text.AlignHCenter : parent.justify === "RIGHT" ? Text.AlignRight : Text.AlignLeft
-        verticalAlignment: parent.labelled ? Text.AlignVCenter : Text.AlignTop
-        text: parent.text
-        color: parent.boxed ? "#8fce7a" : "#e8dcc0"
-        font.pixelSize: 9
-        clip: true
     }
 }

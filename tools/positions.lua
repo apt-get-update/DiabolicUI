@@ -302,7 +302,7 @@ local windows, owner, inFile = {}, {}, {}
 os.execute("mkdir -p '" .. DIR .. "'")
 for _, path in ipairs(Lines("ls '" .. DIR .. "'/*.qml 2>/dev/null")) do
 	local base = path:match("([^/]+)%.qml$")
-	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "WowWindow") and (base ~= "WowRow") and (not KINDS[base]) then
+	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "GameText") and (base ~= "WowWindow") and (base ~= "WowRow") and (not KINDS[base]) then
 		local window = ReadWindow(path)
 		windows[window.name] = window
 		for name in pairs(window.parts) do
@@ -1023,7 +1023,8 @@ for title, window in pairs(windows) do
 			pin = part.pin, rect = seen.rect, strata = seen.strata, level = seen.level, layer = seen.layer }
 		-- (what the rules go by: tools/rules.js)
 		for _, key in ipairs({ "aside", "chain", "control", "diablo", "dropdown", "edge", "faded", "hung", "inset", "justify", "light",
-			"material", "onArt", "onLit", "own", "row", "textWidth", "written", "zone" }) do
+			"material", "onArt", "onLit", "own", "row", "textWidth", "written", "zone",
+			"color", "font", "fontSize", "justifyV", "outline", "shadow", "words" }) do -- (the last line: how the editor draws its text)
 			copy[key] = seen[key]
 		end
 		copy.tabs = (next(seen.tabs or {}) ~= nil) and Sorted(seen.tabs) or nil
@@ -1062,7 +1063,7 @@ for title, window in pairs(windows) do
 		local view = seen.views[key]
 		first = first or view.art
 		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, footRect = view.footRect, scale = view.scale, art = Pictures(view.art),
-			frame = view.frame, band = view.band, foot = view.foot, railOver = view.railOver, close = view.close, iron = view.iron }
+			frame = view.frame, band = view.band, foot = view.foot, railOver = view.railOver, close = view.close, iron = view.iron, worded = view.worded }
 	end
 	-- its rows, as the editor works them out too (its rowLayout, ResolveRow's)
 	local rows = {}
