@@ -11,8 +11,6 @@ QtObject {
     // Diablo III's flat buttons in iron edges (categories, tabs): red, lit (chosen,
     // under the mouse), dark (the tabs not chosen); its gold corners at the ends
     property var rect_button: ({ texture: { normal: "textures/DiabolicUI_D3_Button.tga", lit: "textures/DiabolicUI_D3_ButtonLit.tga", dark: "textures/DiabolicUI_D3_ButtonDark.tga" }, canvas: [512, 64], art: [0, 1, 457, 63], left: [0, 48], middle: [48, 409], right: [409, 457] })
-    property var red_button: ({ texture: { normal: "textures/DiabolicUI_UIButton_193x55_Normal.tga", highlight: "textures/DiabolicUI_UIButton_193x55_Highlight.tga", pushed: "textures/DiabolicUI_UIButton_193x55_Pushed.tga" }, canvas: [256, 128], art: [31, 36, 224, 91], left: [0, 64], middle: [64, 192], right: [192, 256] })
-    property var dark_button: ({ texture: { normal: "textures/DiabolicUI_UIButton_300x51_Normal.tga", highlight: "textures/DiabolicUI_UIButton_300x51_Highlight.tga", pushed: "textures/DiabolicUI_UIButton_300x51_Pushed.tga" }, canvas: [512, 128], art: [106, 38, 406, 89], left: [0, 160], middle: [160, 352], right: [352, 512] })
 
     // the action buttons' border, made for 44 wide ones (the ammo slot's, the spellbook's)
     property var button_border: ({ texture: "textures/DiabolicUI_Button_44x44_Border.tga", size: [64, 64], offset: [-10, 10] })

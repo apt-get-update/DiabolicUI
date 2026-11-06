@@ -70,8 +70,6 @@ Merge(window, {
 -- Button
 Merge(window, {
 	rect_button = { art = { 0, 1, 457, 63 }, canvas = { 512, 64 }, left = { 0, 48 }, middle = { 48, 409 }, right = { 409, 457 }, texture = { dark = path .. [[textures\DiabolicUI_D3_ButtonDark.tga]], lit = path .. [[textures\DiabolicUI_D3_ButtonLit.tga]], normal = path .. [[textures\DiabolicUI_D3_Button.tga]] } },
-	red_button = { art = { 31, 36, 224, 91 }, canvas = { 256, 128 }, left = { 0, 64 }, middle = { 64, 192 }, right = { 192, 256 }, texture = { highlight = path .. [[textures\DiabolicUI_UIButton_193x55_Highlight.tga]], normal = path .. [[textures\DiabolicUI_UIButton_193x55_Normal.tga]], pushed = path .. [[textures\DiabolicUI_UIButton_193x55_Pushed.tga]] } },
-	dark_button = { art = { 106, 38, 406, 89 }, canvas = { 512, 128 }, left = { 0, 160 }, middle = { 160, 352 }, right = { 352, 512 }, texture = { highlight = path .. [[textures\DiabolicUI_UIButton_300x51_Highlight.tga]], normal = path .. [[textures\DiabolicUI_UIButton_300x51_Normal.tga]], pushed = path .. [[textures\DiabolicUI_UIButton_300x51_Pushed.tga]] } },
 	button_border = { offset = { -10, 10 }, size = { 64, 64 }, texture = path .. [[textures\DiabolicUI_Button_44x44_Border.tga]] },
 	button_font = DiabolicFont_HeaderRegular12,
 	button_font_small = DiabolicFont_HeaderRegular10,
