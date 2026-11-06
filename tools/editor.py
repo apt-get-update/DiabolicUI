@@ -13,7 +13,7 @@ import subprocess
 import sys
 
 from PySide6.QtCore import QFileSystemWatcher, QObject, QPointF, QRectF, Qt, QTimer, QUrl, Signal, Slot
-from PySide6.QtGui import QBrush, QColor, QGuiApplication, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
+from PySide6.QtGui import QBrush, QColor, QGuiApplication, QIcon, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickImageProvider
 from PySide6.QtQuickControls2 import QQuickStyle
@@ -282,6 +282,7 @@ def start(arguments):
     app = QGuiApplication(arguments)
     app.setOrganizationName("DiabolicUI")
     app.setApplicationName("Windows editor")
+    app.setWindowIcon(QIcon(os.path.join(ROOT, "tools", "editor-icon.svg")))
     engine = QQmlApplicationEngine()
     backend = Backend()
     backend.engine = engine
