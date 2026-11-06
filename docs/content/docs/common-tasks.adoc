@@ -1,65 +1,26 @@
 ---
 title: "Common Tasks"
-weight: 2
+weight: 3
 ---
 
 = Common Tasks
 
-The changes asked for most, step by step.
+For a window's look, use the link:{{< relref "windows-editor" >}}[Windows Editor]. For the rest:
 
-== Change a size, a gap or a place
+== Change a size, a gap or a colour
 
-Paddings, gaps, sizes, positions, fonts and colours are values in
-`settings/`, one file per area: `blizzard.lua` (the windows), `unitframes.lua`,
-`actionbars.lua`, `chat.lua`, `tooltips.lua`... Change the value, `/reload`.
-What every window shares is in `windows/components/` instead: see below.
+They're values in `settings/`, one file per area: `blizzard.lua` (the windows), `unitframes.lua`,
+`actionbars.lua`, `chat.lua`, `tooltips.lua`... To find one:
 
-To find the right value:
+. In game, `/fstack` and hover the thing: it shows the frame's name.
+. Search `modules/` for that name: next to it, the code reads `config.something`.
+. Search `settings/` for `something`: a comment beside it says what it does.
 
-. In game, `/fstack` and hover the thing: it shows the frame's name
-  (`MailFrame`, `BrowseNextPageButton`...).
-. Search the code for that name (`modules/`): next to it, the code reads
-  `config.something` or `spec.something`.
-. Search `settings/` for `something`. A comment beside it says what it does.
-
-In `settings/blizzard.lua`, each window has its own table (`mail`, `auction`,
-`spellbook`...) for what's only its own. For example:
-
-|===
-| To change | Value
-
-| The gap between the Escape menu's buttons | `gamemenu.button_spacing`
-| Where the durability figure sits | `durability.position`
-|===
-
-A `position` reads `{ point, frame, its point, x, y }`; `UICenter` is our frame
-in the middle of the screen. Higher `x` goes right, higher `y` goes up.
-
-After a window change, open it and run `/dui layout`: it lists in the chat
-what's now off (overlaps, text outside its panel, buttons out of line).
-
-*Moving a frame just for you, in game:* `/dui move` (the minimap, the chat,
-the menu buttons, the quest tracker, TrinketMenu). To add one there, copy the
-TrinketMenu line in `GetMovers` (`modules/menu/movers.lua`).
-
-== Change what every window shares
-
-The generic window and its controls are in `windows/components/`: `Window`,
-`Button`, `ScrollBar`, `DropDown`, `EditBox`, `CheckBox`, `Tab`, `Banner`,
-`CloseButton`, `Section`, `Columns`, `Panel`, `ListRow`, `Bar`, `Pager`, `TabRow`.
-Change one and every window inherits it.
-
-*With the editor:* *Components*, see link:{{< relref "windows-editor" >}}[Windows Editor].
-
-*By hand:* change the property, one a line, then `lua5.1 tools/positions.lua`,
-which writes `settings/components.lua`: don't change that one. What only one
-window needs stays in its table in `settings/blizzard.lua` (a `panels` line, its
-`button` size...).
+Change it, `/reload`.
 
 == Restyle a Blizzard window
 
-Most Blizzard windows are restyled from one line each in the `panels` table of
-`settings/blizzard.lua`. The bank's:
+One line in `panels` in `settings/blizzard.lua`:
 
 [source,lua]
 ----
@@ -67,58 +28,30 @@ Most Blizzard windows are restyled from one line each in the `panels` table of
   title = "BankFrameTitleText", close = "BankCloseButton" },
 ----
 
-|===
-| Key | Means
+Copy the line of a window like it and change the names. `insets` is how far our window reaches
+past the frame: left, top, right, bottom. The comment above the table explains the other keys.
+Then `/reload`, open it, `/dui layout`, and carry on in the editor. A window that needs more has
+its own file in `modules/blizzard/`.
 
-| `frame` | The window's name (`/fstack` shows it)
-| `addon` | The addon it comes with, if it loads later (`Blizzard_TrainerUI`)
-| `insets` | How far our window reaches past it: left, top, right, bottom
-| `offset_y` | Moves it down (negative) to line up with the other windows
-| `title` or `text` | Its title: its own text's name, or a Blizzard string (`"TRADE"`)
-| `close` | Its close button's name
-| `band` | `false`: no red band under the title
-| `background` | The painted picture behind it: `slabs`, `lava`, `zoltun`, `artisan`...
-| `tabs` | Its tabs' names without the number (`"MacroFrameTab"`)
-| `footer` | Its rough stone foot: `true`, or how high if it holds more than a row of buttons
-|===
+== Style another addon
 
-More keys are explained in the comment above the table. To restyle a new
-window, copy the line of one that looks like it, change the names, then
-`/reload`, open it, and `/dui layout` to see what's off. Windows that need more
-than a line have their own file in `modules/blizzard/` (code).
-
-== Fix a visual bug
-
-A button in the wrong place, in any window: link:{{< relref "windows-editor" >}}[Windows Editor].
+The same line, with its folder's name: `{ frame = "ItsFrame", addon = "ItsAddon", panel = false,
+insets = { 24, 40, 24, 36 } }`. `panel = false` when the addon places its window itself (most do).
+Parts it adds once shown go under `late` (see Auctionator's line).
 
 == Put a part in a window's red band
 
 In its `panels` line: `band = { left = { "ItsSearchBox" }, right = { "ItsButton" } }`.
-The band lines them up and gives them its fonts.
 
-== Style another addon
+== Move a frame in game
 
-. `/fstack` on its window: the frame's name (`GroupBulletinBoardFrame`...).
-. Add a `panels` line in `settings/blizzard.lua` with its addon's folder name:
-  `{ frame = "ItsFrame", addon = "ItsAddon", panel = false, insets = { 24, 40, 24, 36 } }`.
-  It's styled as soon as that addon loads. `panel = false` when the addon
-  places its window itself (most do).
-. `/reload`, open it, `/dui layout`, then adjust `insets` (left, top, right,
-  bottom: how far our window reaches past its frame).
-
-Parts it adds only once shown go under `late` (Auctionator's line is the
-example). When the table isn't enough, it gets its own file like
-`modules/blizzard/bulletinboard.lua`: that's code.
+`/dui move`. To add a frame there, copy the TrinketMenu line in `GetMovers`
+(`modules/menu/movers.lua`).
 
 == Add an option
 
-See link:{{< relref "settings-and-locale" >}}[Settings & Locale].
+See link:{{< relref "writing-code#add-an-option" >}}[Writing Code].
 
 == Reload or restart?
 
-|===
-| You changed | Then
-
-| A `.lua` or `.xml` file that was already there | `/reload`
-| A texture, or added a new file | Restart the game
-|===
+`/reload` for a `.lua` or `.xml` that already existed. Restart for a texture or a new file.

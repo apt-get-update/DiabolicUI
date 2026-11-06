@@ -1,191 +1,36 @@
 ---
 title: "Modules Map"
-weight: 9
+weight: 8
 ---
 
 = Modules Map
 
-What each folder under `modules/` does, and the one or two things worth
-knowing before you touch it.
-
-++++
-{{< mermaid >}}
-flowchart LR
-    m["🧩 modules/"] --> ab["⚔️ actionbars"]
-    m --> uf["❤️ unitframes"]
-    m --> np["🏷️ nameplates"]
-    m --> bz["🪟 blizzard"]
-    m --> ch["💬 chat"]
-    m --> ob["📜 objectives"]
-    m --> mm["🧭 minimap"]
-    m --> mn["⚙️ menu"]
-{{< /mermaid >}}
-++++
-
-== ⚔️ Action bars
-
-One module, `ActionBars`, with one widget per file. Buttons come from the
-`ActionButton` handler.
-
 |===
-| File | Widget
+| Folder | What's there | Good to know
 
-| `elements/bar1.lua` … `bar5.lua` | The main bar, two more bottom bars, two side bars
-| `elements/pet.lua`, `stance.lua`, `vehicle.lua` | Pet, stance and vehicle bars
-| `elements/floaters.lua` | Stance toggle, vehicle and taxi exit buttons
-| `elements/specswitch.lua` | The spec switch on the skull, and each spec's commands
-| `elements/menu.lua` | The micro menu, friends and guild on the social button
-| `elements/xp.lua`, `reputation.lua` | Experience and reputation bars
-| `elements/artwork.lua` | The bars' art
-| `elements/keybinds.lua` | Key bindings copied from Blizzard's bars
-| `controllers/`, `templates/` | Secure anchor frames, shared button and flyout templates
+| `actionbars/` | One module, one widget per file (`bar1.lua`, `pet.lua`, `xp.lua`...) | Buttons come from the `ActionButton` handler
+| `unitframes/` | `units/` the frames, `elements/` what they show | Built by the `UnitFrame` handler
+| `nameplates/` | `nameplates.lua`, `auras.lua` | 3.3.5 plates have no unit: one learns its GUID while it's the target or mouseover
+| `blizzard/` | One file per Blizzard piece, named after it | Below
+| `chat/` | `windows`, `bubbles`, `filters`, `cleaner`, `slide`, `copy` | Web links use our own `url` link type, so `filters.lua` overrides `SetItemRef`
+| `objectives/` | Tracker, capture bars, world state, warnings | The tracker only changes alpha: its item buttons are secure
+| `minimap/` | An Ace3 addon kept as it is | Its own namespace and `+DiabolicUI_Minimap_DB+`: don't merge it into `+DiabolicUI_DB+`
+| `menu/` | `/dui config`: one `page-*.lua` per page, `controls.lua`, `movers.lua` |
 |===
 
-A button's icon color follows its state, checked in this order:
-
-|===
-| State | When | Icon
-
-| `taxi` | Dead or a ghost | Grey
-| `mana` | Not enough mana | Blue
-| `unusable` | Can't be used | Dark
-| `range` | Target out of range | Red
-| `usable` | Anything else | Normal
-|===
-
-== ❤️ Unit frames
-
-The `UnitFrame` handler builds them,
-link:{{< relref "unitframe-elements" >}}[elements] fill them.
-
-|===
-| File (`units/`) | Frame
-
-| `player.lua` | The health and power orbs
-| `target.lua`, `tot.lua`, `focus.lua`, `pet.lua` | Target, its target, focus, pet
-| `party.lua`, `raid.lua` | Group frames
-| `enemies.lua` | Boss and arena frames
-| `shared.lua` | What the small frames share
-| `testmode.lua` | A fake roster to preview party and raid layouts
-|===
-
-== 🏷️ Nameplates
-
-`nameplates.lua` rebuilds 3.3.5's plates (health, level, name, icons, casts);
-`auras.lua` adds your auras over them. Each plate is a frame with a shared
-metatable (`+NamePlate_WotLK_MT+`). 3.3.5 plates have no unit: a plate learns
-its unit's GUID while it's the target or mouseover.
-
-== 🪟 Blizzard
-
-Small independent modules, each restyling or replacing one Blizzard piece.
-Most windows are built from the parts in `windows.lua`; their sizes, art and
-places live in `settings/blizzard.lua`.
-
-++++
-{{< mermaid >}}
-flowchart LR
-    st["⚙️ settings/blizzard.lua"] --> w["🪟 windows.lua (stone, iron, red band, plate, tabs, buttons)"]
-    w --> own["📄 one file per window (character, spellbook, mail...)"]
-    w --> pn["📋 panels.lua (every other window, from a table)"]
-    own --> la["🔍 layout-scan.lua (/dui layout)"]
-    pn --> la
-{{< /mermaid >}}
-++++
+== The windows (`blizzard/`)
 
 |===
 | File | Does
 
-| `windows.lua` | The window kit: stone, iron, red band, title plate, tabs, buttons, panels (below)
+| `windows.lua` | The kit: stone, iron, red band, title plate, foot, tabs, buttons
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
-| `character.lua`, `spellbook.lua`, `mail.lua`, `auction.lua`... | One file per window that needs more than that table
-| `layout-scan.lua` | `/dui layout`: saves the open windows' parts and art for the link:{{< relref "windows-editor" >}}[editor]
-| `tooltips.lua`, `itemtooltips.lua`, `spelltooltips.lua` | Tooltips and menus
-| `lootframe.lua`, `rollwindow.lua`, `lootpreview.lua` | Loot (link:{{< relref "case-study-loot-window" >}}[case study], link:{{< relref "raid-rolls" >}}[Raid Rolls])
-| `adibags.lua`, `immersion.lua`, `trinketmenu.lua`... | Other addons in our look
+| `character.lua`, `mail.lua`, `auction.lua`... | A window that needs more than that line
+| `adjust.lua` | Puts parts where `settings/positions.lua` says
+| `layout-scan.lua` | `/dui layout`, for the link:{{< relref "windows-editor" >}}[editor]
+| `lootframe.lua`, `rollwindow.lua`, `lootpreview.lua` | Loot (link:{{< relref "raid-rolls" >}}[Raid Rolls])
 |===
 
-The rest are small, one Blizzard piece each, named after it (`gamemenu.lua`,
-`popups.lua`, `worldmap.lua`...). To restyle a window, see
-link:{{< relref "common-tasks#restyle-a-blizzard-window" >}}[Common Tasks].
-
-=== The window kit
-
-`modules/blizzard/windows.lua` (the module `Blizzard: Windows`, called `kit` in
-the window files). The calls you'll use most:
-
-|===
-| Call | Does
-
-| `CreateWindow(frame, insets)` | The stone window in its iron frame, around a Blizzard frame
-| `SetTitle(header, text)` | The title on its plate
-| `StyleTab`, `HangTabs` | Tabs as hanging banners
-| `StyleButtons(frame)` | Every button in it red, with one font that fits them all
-| `StyleDropDown`, `StyleEditBox`, `StyleCheckBox`, `StyleScrollBars` | Each control in our look
-| `AddPanel`, `AddZone`, `AddParchment` | Slate, leather or parchment behind a part
-| `LineBand(header, parts)` | Parts in the red band
-| `StyleExpanders`, `LightRow` | A list's +/− buttons and its chosen row
-|===
-
-Moving Blizzard's secure frames in combat causes taint: wrap that code with
-`Module:Wrap` (link:{{< relref "engine-architecture#events" >}}[Engine]).
-
-== 💬 Chat
-
-|===
-| File | Module | Does
-
-| `windows.lua` | `ChatWindows` | Window style, tab fading
-| `bubbles.lua` | `ChatBubbles` | Speech bubbles over heads
-| `filters.lua` | `ChatFilters` | Name and channel links, clickable web links
-| `cleaner.lua` | `ChatCleaner` | Shorter loot, money, experience... lines
-| `slide.lua` | `ChatSlide` | New lines slide in
-|===
-
-Web links use our own `url` link type, so `filters.lua` overrides
-`SetItemRef`: Blizzard's would error on it.
-
-== 📜 Objectives
-
-|===
-| File | Module | Does
-
-| `tracker.lua` | `ObjectiveTracker` | Fades the quest tracker (Questie's or Blizzard's) until hovered
-| `capturebars.lua` | `CaptureBars` | PvP capture bars
-| `worldstate.lua` | `WorldState` | Battleground scores, zone objectives
-| `warnings.lua` | `Warnings` | Error and info messages
-| `zone.lua` | `ZoneText` | Turns off Blizzard's zone text
-| `pvpemotes.lua` | `PvPEmotes` | An emote on a killing blow
-|===
-
-The tracker only changes alpha (allowed in combat): its quest item buttons are
-secure.
-
-== 🧭 Minimap
-
-An Ace3 addon kept as it is, inside our folder. It doesn't use the Engine and
-nothing calls into it.
-
-|===
-| | Engine modules | Minimap
-
-| Framework | Engine | Ace3 (`Libs/`)
-| Namespace | `+local ADDON, Engine = ...+` | `+local Addon, ns = ..., DiabolicUIMinimapNS+`
-| Saved in | `+DiabolicUI_DB+` | `+DiabolicUI_Minimap_DB+`
-|===
-
-Keep the two saved variables apart: the Engine rewrites its keys at every
-login and could wipe AceDB's.
-
-== ⚙️ Menu
-
-|===
-| File | Does
-
-| `menu.lua` | The module: adds the pages, the UI scale
-| `controls.lua` | The layout grid and the checkboxes, sliders, dropdowns
-| `page-*.lua` | One options page each (`page-units.lua`, `page-chat.lua`...)
-| `movers.lua` | Unlock Frames, `/dui move`
-|===
-
-See link:{{< relref "settings-and-locale" >}}[adding an option].
+The kit's calls, on `Engine:GetModule("Blizzard: Windows")`: `CreateWindow`, `CreateHeader`, `SetTitle`,
+`AddFooter`, `HangTabs`, `StyleButtons`, `StyleDropDown`, `StyleEditBox`, `StyleCheckBox`,
+`StyleScrollBars`, `AddPanel`, `AddZone`, `AddParchment`, `LineBand`.

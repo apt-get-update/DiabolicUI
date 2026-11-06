@@ -1,25 +1,24 @@
 ---
 title: "Rules"
-weight: 10
+weight: 7
 ---
 
 = Rules
-
-Most of them are checked by a test, so you'll hear about it.
 
 |===
 | Rule | Checked by
 
 | 3.3.5 API only, no version checks | `test_api_usage.lua`, `test_wotlk_globals.lua`
-| Never add a missing API to `_G` or the frame metatable | Review
-| Everything `local` | `test_no_global_leaks.lua`
-| Every `.lua` is listed in an `.xml`, every entry exists | `test_addon_loads.lua`
-| Every locale key exists and is used | `test_locales.lua`
-| One anchor point, on one frame | Review
+| Never add a missing API to `_G` or the frame metatable (other addons sniff those names) | Review
+| Everything `local`; a global on purpose is `+_G.NAME = value+` | `test_no_global_leaks.lua`
+| Every `.lua` is in an `.xml`, every entry exists | `test_addon_loads.lua`
+| Every locale key exists and is used; a text 3.3.5 lacks becomes a key | `test_locales.lua`
+| One anchor point, on one frame, plus an offset | Review
 | A header comment on every new file | Review
+| Say if something's only syntax- and test-checked, not seen in game | You
 |===
 
-== 3.3.5 only
+== Later API, and 3.3.5's
 
 |===
 | Later clients | 3.3.5
@@ -34,41 +33,16 @@ Most of them are checked by a test, so you'll hear about it.
 | `UnitIsTapDenied(unit)` | `Engine.UnitIsTapDenied(unit)`
 | `GameTooltip:IsForbidden()` | Nothing: never forbidden on 3.3.5
 | `FriendsMicroButton`, `GuildMicroButton` | `SocialsMicroButton`
-| `font:GetFont()`, `font:CopyFontObject(other)` on a `Font` | Nothing: one XML `<Font>` per size you need
+| `font:GetFont()`, `font:CopyFontObject(other)` on a `Font` | Nothing: one XML `<Font>` per size
 |===
 
-* *Don't backfill.* Other addons check names like `GetNumGroupMembers` to
-  guess the client. Put shared helpers on `Engine` in `engine/wotlk-helpers.lua`.
-* *A missing event fails silently.* Registering it works, it just never fires.
-* *A missing UI string is `nil`.* Add it as a locale key instead.
-* *The fake client is kinder than 3.3.5.* Its `Font` objects have `GetFont`
-  and `CopyFontObject`; the real ones don't, so a passing test can still
-  crash in game.
-* *Beware hidden backfills.* A later function may only "work" because another
-  addon defines it.
-
-== Everything local
-
-A forgotten `local` is a global shared with Blizzard and every addon, and can
-taint. A global on purpose is written `+_G.NAME = value+`. A local function
-must be defined above its first call.
-
-== Anchoring
-
-[source,lua]
-----
--- ❌ two points on two frames: breaks when either one resizes
-frame:SetPoint("TOPLEFT", A, "TOPLEFT")
-frame:SetPoint("BOTTOMRIGHT", B, "BOTTOMRIGHT")
-
--- ✅ one point, one frame, an offset
-frame:SetPoint("TOPLEFT", A, "BOTTOMLEFT", 0, -gap)
-----
+A missing event fails silently, and the fake client's `Font` objects are kinder than the real ones: a
+passing test can still crash in game.
 
 == Texture canvas
 
-Our decorative textures have a canvas (`+texture_size+`, say 512×128) larger
-than their art (`size`, say 300×51). To size the art, scale the whole canvas:
+Our decorative textures have a canvas (`+texture_size+`) larger than their art (`size`). To size the
+art, scale the whole canvas:
 
 [source,lua]
 ----
@@ -78,9 +52,5 @@ texture:SetSize(config.texture_size[1] * scale, config.texture_size[2] * scale)
 
 == Own the frame
 
-To replace a Blizzard frame, build your own rather than reskinning the live
-one (link:{{< relref "case-study-loot-window" >}}[case study]).
-
-== Be honest about what you checked
-
-"Syntax- and test-checked" isn't "works in game". Say which one it is.
+To replace a Blizzard frame, build your own rather than reskin the live one
+(link:{{< relref "case-study-loot-window" >}}[why]).

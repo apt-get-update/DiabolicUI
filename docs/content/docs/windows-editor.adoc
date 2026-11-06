@@ -1,6 +1,6 @@
 ---
 title: "Windows Editor"
-weight: 3
+weight: 2
 ---
 
 = Windows Editor

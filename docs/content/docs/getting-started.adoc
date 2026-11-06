@@ -5,69 +5,45 @@ weight: 1
 
 = Getting Started
 
-DiabolicUI runs on one client only: *WotLK 3.3.5a* (`Interface: 30300`,
-Lua 5.1). There's no build step: the game reads the files as they are.
+One client only: *WotLK 3.3.5a* (`Interface: 30300`, Lua 5.1). No build step: the game reads the
+files as they are.
 
-== You need
+You need a 3.3.5a client and `lua5.1` with `luac5.1`. For this site, `hugo` and `asciidoctor`
+(`hugo server` from `docs/`).
 
-|===
-| Tool | For
+== The work loop
 
-| A 3.3.5a client | Trying changes in game (`/reload`)
-| `lua5.1`, `luac5.1` | Tests and syntax checks
-| `hugo`, `asciidoctor` (optional) | This site: `hugo server` from `docs/`
-|===
+[source,bash]
+----
+luac5.1 -p modules/chat/cleaner.lua     # syntax, in a second
+lua5.1 tests/test_chat_cleaner.lua      # the tests for what you touched
+----
+
+Then `/reload` in game. A texture or a new file needs a full restart.
 
 == Folders
 
 |===
 | Folder | Holds
 
-| `locale/` | Translations (`+L["..."]+`), English first
-| `engine/` | The framework (`engine-core.lua`) and 3.3.5 helpers
-| `data/` | Colors, constants, shared functions
-| `handlers/` | Shared building blocks: unit frames, buttons, orbs, bars, popups, `/dui`
-| `media/` | Fonts, textures, sounds
-| `settings/` | Fixed sizes, positions, textures (read-only)
-| `defaults/` | The player's options and their defaults (saved)
 | `modules/` | The features, one folder each (link:{{< relref "modules" >}}[map])
-| `tests/` | The test suite, run outside the game
+| `windows/` | Where every window's parts go (link:{{< relref "windows-editor" >}}[editor])
+| `settings/` | Fixed sizes, positions, textures, colours
+| `defaults/` | The player's options
+| `handlers/` | Shared pieces: unit frames, buttons, orbs, bars, popups, `/dui`
+| `engine/`, `data/` | The framework, constants, helpers
+| `locale/` | Translations
+| `media/` | Fonts, textures, sounds
+| `tools/`, `tests/` | The editor and its tool, the tests
 |===
 
-== The work loop
-
-++++
-{{< mermaid >}}
-flowchart LR
-    edit["✏️ Edit"] --> check["🔎 luac5.1 -p file"] --> test["🧪 lua5.1 tests/test_x.lua"] --> game["🎮 /reload in game"]
-    game -- "not right" --> edit
-{{< /mermaid >}}
-++++
-
-[source,bash]
-----
-luac5.1 -p modules/chat/cleaner.lua     # syntax, in a second
-lua5.1 tests/test_chat_cleaner.lua      # the tests for what you touched
-tests/run_all.sh                        # everything, before a commit
-----
-
-`/reload` picks up edits to existing `.lua` and `.xml` files. A new file or a
-changed texture needs a full client restart.
-
-== Useful commands in game
+== In game
 
 |===
 | Command | Does
 
-| `/dui config` | The options panel
+| `/dui config` | The options
 | `/dui move` | Unlock and move frames
-| `/dui setscale <n>` | UI scale
-| `/reload`, `/rl` | Reload the UI
+| `/dui layout` | Save the open windows for the editor
+| `/rl` | Reload
 |===
-
-== Next
-
-To maintain the addon: link:{{< relref "common-tasks" >}}[Common Tasks],
-link:{{< relref "testing" >}}[Testing], link:{{< relref "release" >}}[Release].
-To write code: the link:{{< relref "engine-architecture" >}}[Engine] page,
-then the link:{{< relref "conventions" >}}[Rules].

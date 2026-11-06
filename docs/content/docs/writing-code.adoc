@@ -1,0 +1,114 @@
+---
+title: "Writing Code"
+weight: 6
+---
+
+= Writing Code
+
+`engine/engine-core.lua` is our own small framework. Every file starts with:
+
+[source,lua]
+----
+local ADDON, Engine = ...
+----
+
+`DiabolicUI.toc` loads one XML per folder, in order: `locale`, `engine`, `data`, `handlers`, `media`,
+`settings`, `defaults`, `modules`. A new `.lua` goes in its folder's `.xml`.
+
+== The pieces
+
+|===
+| Piece | Is | Create | Fetch
+
+| Module | A feature | `Engine:NewModule(name, priority)` | `Engine:GetModule(name)`
+| Widget | A part of a module, in its own file | `Module:SetWidget(name)` | `Module:GetWidget(name)`
+| Handler | A shared building block | `Engine:NewHandler(name)` | `Engine:GetHandler(name)`
+| Element | What a unit frame shows | `Handler:RegisterElement(...)` | `Handler:GetElement(name)`
+|===
+
+A helper several modules use goes on `Engine`, in `engine/wotlk-helpers.lua`.
+
+== A module
+
+[source,lua]
+----
+-- What this file is for, in one or two lines.
+local ADDON, Engine = ...
+local Module = Engine:NewModule("Blizzard: LootFrame")
+
+Module.OnInit = function(self)
+	self.config = self:GetDB("Blizzard").loot   -- static: sizes, textures
+	self.db = self:GetConfig("LootFrame")       -- saved: the player's options
+end
+
+Module.OnEnable = function(self)
+	if self.db.enableSkin then
+		self:CreateWindow()
+	end
+end
+----
+
+* Every `OnInit` runs before any `OnEnable`: fetch config in the first, make frames and call other
+  modules in the second. Never read config at file scope: it's replaced before `OnInit`.
+* `LOW` modules enable after `PLAYER_LOGIN`.
+* `Module:SetIncompatible("OtherAddon")` steps aside when that addon is loaded.
+
+== Events
+
+[source,lua]
+----
+self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateTarget")  -- a method's name, or a function
+self:RegisterMessage("DUI_SOMETHING", func)                  -- our own
+self:SendMessage("DUI_SOMETHING", ...)
+----
+
+To wait out combat, register `PLAYER_REGEN_ENABLED` and unregister it on arrival, or wrap the
+function: `Module.Update = Module:Wrap(function(self) ... end)`. Moving Blizzard's secure frames in
+combat causes taint.
+
+== Two kinds of config
+
+|===
+| | Options (saved) | Static (read-only)
+
+| Folder | `defaults/` | `settings/`, `data/`
+| Declare | `Engine:NewConfig(name, defaults)` | `Engine:NewStaticConfig(name, table)`
+| Read | `self:GetConfig(name[, profile])` | `self:GetDB(name)`
+|===
+
+`profile` is `"realm"`, `"faction"` or `"character"`. Changing `self.db.x` saves it, and a new key
+gets its default for everyone.
+
+== Add an option
+
+. `defaults/lootframe.lua`: the key and its default.
+. `locale/locale-enUS.lua`: `L["Reskin Loot Window"] = true`. The key is its own English text; other
+  locales only translate.
+. `modules/menu/page-*.lua`: a checkbox on the right page, bound to the key.
+. Your module: read it in `OnInit`, use it in `OnEnable`.
+
+== A unit frame element
+
+One file in `modules/unitframes/elements/`. A frame opts in by creating the child it looks for.
+
+[source,lua]
+----
+local _, Engine = ...
+local Handler = Engine:GetHandler("UnitFrame")
+
+local Update = function(self, event, ...)
+	-- draw it
+end
+
+local Enable = function(self, unit)
+	if self.Power then
+		self:RegisterEvent("UNIT_MANA", Update)
+		return true
+	end
+end
+
+Handler:RegisterElement("Power", Enable, Update)
+----
+
+Unit events fire for every unit, so ignore the others at the top of `Update`. Health and power poll
+for smooth bars, with `event == "FREQUENT"`: don't filter that out.
