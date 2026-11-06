@@ -269,6 +269,9 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   (`tools/rules.js`, with node) on a window built to break each of them, parts
   placed by `settings/positions.lua`, and `/dui layout all` opening each window
   in turn.
+- `test_sample_tool.lua` - `tools/sample.lua`, Components' sample window in the
+  editor: every component drawn, the states of a control, what's not saved
+  shown, nothing written.
 - `test_session_chat.lua` - chat bubbles, the chat windows (input box,
   buttons, IM style, whisper windows, the stuck key guard, the layout
   question, a hand-placed window kept) and copying web links.

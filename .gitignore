@@ -40,4 +40,5 @@ tools/layout.json
 tools/art/
 tools/editor-unsaved.json
 tools/edits.lua
+tools/edits-sample.lua
 __pycache__/

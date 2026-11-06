@@ -279,6 +279,42 @@ ApplicationWindow {
         componentName = name
         componentsMode = true
     }
+
+    // ---- the sample window it shows (tools/sample.lua): every control drawn by
+    // the game's own styling, with what's not saved
+    property var sample: null
+    property string sampleAsked: ""
+    property bool fitSample: false
+    property var hoveredControl: null
+    onComponentsModeChanged: {
+        hoveredControl = null
+        fitSample = componentsMode
+        if (componentsMode) drawSample()
+        fit(false)
+    }
+    function drawSample() {
+        if (!componentsMode) return
+        const asked = JSON.stringify({ "@components": edits["@components"] || {} })
+        if (asked === sampleAsked) return
+        sampleAsked = asked
+        backend.drawSample(asked)
+    }
+    // the control at a place: the smallest there
+    function controlAt(at) {
+        if (!sample) return null
+        let best = null
+        for (const c of sample.controls) {
+            const r = sampleBox(c.rect)
+            if (at.x >= r[0] && at.x <= r[0] + r[2] && at.y >= r[1] && at.y <= r[1] + r[3]
+                && (!best || r[2] * r[3] < best.rect[2] * best.rect[3])) best = c
+        }
+        return best
+    }
+    // a rect of the game's (from its bottom left) as drawn: x, y from the top left, width, height
+    function sampleBox(r) {
+        const all = sample ? sample.rect : [0, 0, 0, 0]
+        return [r[0] - all[0], all[1] + all[3] - r[1] - r[3], r[2], r[3]]
+    }
     function componentValue(name, field) {
         const shared = edits["@components"], changed_ = shared && shared[name]
         return changed_ && changed_[field.key] !== undefined ? changed_[field.key] : field.value
@@ -311,8 +347,9 @@ ApplicationWindow {
         ruleTimer.restart()
         changed()
     }
-    // What a part of a component takes from a change not saved yet, seen in the
-    // window open (the rest shows once saved, /reload and /dui layout).
+    // What a part of a component takes from a change not saved yet, in the window
+    // open too (its rules go by it; the rest of its art shows once saved, /reload
+    // and /dui layout).
     function componentSize(item) {
         const shared = edits["@components"], changes = shared && shared[item.style]
         if (!changes) return null
@@ -321,6 +358,7 @@ ApplicationWindow {
         return key && changes[key] !== undefined ? [changes[key], changes[key]] : null
     }
     function applyComponents() {
+        drawSample()
         for (const name in items) {
             const item = items[name]
             if (!item.style || !parts[name]) continue
@@ -362,6 +400,7 @@ ApplicationWindow {
         if (status.indexOf("Not saved") === 0) return
         leftText = backend.leftText()
         components = JSON.parse(backend.components())
+        sampleAsked = ""
         edits = {}
         undoList = []; redoList = []
         backend.keep("{}")
@@ -413,7 +452,7 @@ ApplicationWindow {
     // is `p` (in the view) on the picked part's handles or dots?
     readonly property real handleGap: 24
     function overControls(p) {
-        if (!pickedItem) return false
+        if (!pickedItem || componentsMode) return false
         const at = toRoot(p), item = pickedItem, near = 8 / content.scale, gap = handleGap / content.scale
         for (const fx of [0, .5, 1]) {
             for (const fy of [0, .5, 1]) {
@@ -435,7 +474,10 @@ ApplicationWindow {
     function fit(animated) {
         let r = [0, 0, root ? root.width : 400, root ? root.height : 400]
         const w = (view_ && view_.window) || (data && data.window), f = viewRect
-        if (w && f) {
+        if (componentsMode) {
+            if (!sample) return // (once it's drawn)
+            r = [0, 0, sample.rect[2], sample.rect[3]]
+        } else if (w && f) {
             r = [w[0] - f[0], (f[1] + f[3]) - (w[1] + w[3]), w[2], w[3]]
         }
         const margin = 40
@@ -543,7 +585,7 @@ ApplicationWindow {
     function nudge(key, modifiers) {
         const across = key === Qt.Key_Left ? -1 : key === Qt.Key_Right ? 1 : 0
         const up = key === Qt.Key_Up ? 1 : key === Qt.Key_Down ? -1 : 0
-        if (!picked || (!across && !up)) return false
+        if (componentsMode || !picked || (!across && !up)) return false
         const step = modifiers & Qt.ShiftModifier ? 10 : 1, e = entry(picked)
         if (modifiers & Qt.ControlModifier) {
             if (e.size) change(picked, e.place, [Math.max(1, e.size[0] + across * step), Math.max(1, e.size[1] + up * step)])
@@ -574,7 +616,10 @@ ApplicationWindow {
                     focusPolicy: Qt.NoFocus
                     font.family: app.plain
                     model: JSON.parse(backend.windows())
-                    onActivated: app.openWindow(currentText)
+                    onActivated: {
+                        app.componentsMode = false
+                        app.openWindow(currentText)
+                    }
                 }
                 Action {
                     id: showButton
@@ -630,7 +675,7 @@ ApplicationWindow {
                 id: tabs
                 objectName: "tabs"
                 width: parent.width
-                visible: app.views.length > 1
+                visible: app.views.length > 1 && !app.componentsMode
                 spacing: 4
                 Repeater {
                     model: app.views
@@ -677,7 +722,7 @@ ApplicationWindow {
                 color: app.dim
                 font.family: app.plain
                 text: app.componentsMode
-                    ? "Every window inherits these once saved, then /reload  ·  sizes of arrows, close and checkboxes show here at once, the rest after /dui layout"
+                    ? "Press a control to open it  ·  what you change shows here at once  ·  the windows inherit it once saved, then /reload and /dui layout"
                     : app.picked
                     ? "Drag to move  ·  gold handles to size  ·  drag a dot onto another part to place it there  ·  arrows: 1, Shift: 10  ·  Alt: no snapping"
                     : "Press a part to pick it, again for the one under it  ·  wheel to zoom  ·  drag the empty space to pan  ·  right-click: all that's there"
@@ -793,213 +838,274 @@ ApplicationWindow {
                 id: content
                 objectName: "content"
                 transformOrigin: Item.TopLeft
-                Repeater {
-                    visible: showArt.checked
-                    model: app.artModel
-                    Image {
-                        required property var modelData
-                        required property int index
-                        readonly property var f: app.viewRect || [modelData.rect[0], modelData.rect[1] + modelData.rect[3], 0, 0]
-                        readonly property Item owner: modelData.owner && app.parts[modelData.owner] ? app.items[modelData.owner] || null : null
-                        readonly property var base: owner ? app.artBase[modelData.owner] : null
-                        readonly property real ax: modelData.rect[0] - f[0]
-                        readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
-                        // (sized with its part if it's on it: a tab can draw it elsewhere)
-                        readonly property bool onOwner: !!(owner && base) && ax + modelData.rect[2] / 2 >= base[0] && ax + modelData.rect[2] / 2 <= base[0] + base[2]
-                            && ay + modelData.rect[3] / 2 >= base[1] && ay + modelData.rect[3] / 2 <= base[1] + base[3]
-                        readonly property real sx: onOwner && base[2] ? owner.width / base[2] : 1
-                        readonly property real sy: onOwner && base[3] ? owner.height / base[3] : 1
-                        visible: showArt.checked
-                        x: owner && base ? owner.x + (ax - base[0]) * sx : ax
-                        y: owner && base ? owner.y + (ay - base[1]) * sy : ay
-                        width: modelData.rect[2] * sx
-                        height: modelData.rect[3] * sy
-                        opacity: (modelData.alpha === undefined ? 1 : modelData.alpha) * (modelData.backdrop || !modelData.color ? 1 : modelData.color[3])
-                        source: "image://art/" + app.data.generation + "/" + app.title_ + "/" + app.viewIndex + "/" + index
-                        cache: false
-                        smooth: true
-                    }
-                }
-                Item { id: holder }
-
-                // the hovered part
-                Rectangle {
-                    visible: !!app.hoveredItem
-                    x: app.hoveredItem ? app.hoveredItem.x : 0; y: app.hoveredItem ? app.hoveredItem.y : 0
-                    width: app.hoveredItem ? app.hoveredItem.width : 0; height: app.hoveredItem ? app.hoveredItem.height : 0
-                    color: "#18ffffff"
-                    border.color: "#ffffff"; border.width: 1 / content.scale
-                }
-
-                // the line to what it's placed on
-                Rectangle {
-                    visible: !!app.linkA && !drop.active
-                    readonly property real dx: app.linkA && app.linkB ? app.linkB.x - app.linkA.x : 0
-                    readonly property real dy: app.linkA && app.linkB ? app.linkB.y - app.linkA.y : 0
-                    x: app.linkA ? app.linkA.x : 0; y: app.linkA ? app.linkA.y : 0
-                    width: Math.sqrt(dx * dx + dy * dy); height: 2 / content.scale
-                    transformOrigin: Item.TopLeft
-                    rotation: Math.atan2(dy, dx) * 180 / Math.PI
-                    color: "#e0c040"
-                }
-                Rectangle {
-                    visible: !!app.linkB
-                    width: 9 / content.scale; height: width; radius: width / 2
-                    x: app.linkB ? app.linkB.x - width / 2 : 0; y: app.linkB ? app.linkB.y - width / 2 : 0
-                    color: "transparent"; border.color: "#e0c040"; border.width: 2 / content.scale
-                }
-
-                // the guides it snaps to
-                Rectangle {
-                    visible: app.guideX !== null
-                    x: app.guideX === null ? 0 : app.guideX; y: -5000
-                    width: 1 / content.scale; height: 10000; color: "#40e0d0"
-                }
-                Rectangle {
-                    visible: app.guideY !== null
-                    y: app.guideY === null ? 0 : app.guideY; x: -5000
-                    height: 1 / content.scale; width: 10000; color: "#40e0d0"
-                }
-
-                // the picked part: its handles, its dots
+                // ---- Components: the sample window
                 Item {
-                    id: selection
-                    visible: !!app.pickedItem
-                    x: app.pickedItem ? app.pickedItem.x : 0; y: app.pickedItem ? app.pickedItem.y : 0
-                    width: app.pickedItem ? app.pickedItem.width : 0; height: app.pickedItem ? app.pickedItem.height : 0
-
+                    objectName: "sampleLayer"
+                    visible: app.componentsMode
                     Repeater {
-                        model: [[0, 0], [.5, 0], [1, 0], [0, .5], [1, .5], [0, 1], [.5, 1], [1, 1]]
+                        model: app.sample ? app.sample.art : []
+                        Image {
+                            required property var modelData
+                            required property int index
+                            readonly property var box: app.sampleBox(modelData.rect)
+                            x: box[0]; y: box[1]; width: box[2]; height: box[3]
+                            opacity: (modelData.alpha === undefined ? 1 : modelData.alpha) * (modelData.backdrop || !modelData.color ? 1 : modelData.color[3])
+                            source: "image://art/" + app.sample.generation + "/@sample/0/" + index
+                            cache: false
+                            smooth: true
+                        }
+                    }
+                    Repeater {
+                        model: app.sample ? app.sample.texts : []
+                        Text {
+                            required property var modelData
+                            readonly property var box: app.sampleBox(modelData.rect)
+                            FontLoader { id: fontFile; source: modelData.font }
+                            x: box[0]; y: box[1]; width: box[2]; height: box[3]
+                            text: modelData.text
+                            textFormat: Text.PlainText
+                            color: Qt.rgba(Math.min(1, modelData.color[0]), Math.min(1, modelData.color[1]), Math.min(1, modelData.color[2]), 1)
+                            opacity: modelData.alpha
+                            font.family: modelData.font ? fontFile.name : app.plain
+                            font.pixelSize: modelData.size
+                            horizontalAlignment: modelData.align === "left" ? Text.AlignLeft : modelData.align === "right" ? Text.AlignRight : Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            style: modelData.outline ? Text.Outline : Text.Raised
+                            styleColor: "#000000"
+                        }
+                    }
+                    // the component open's controls, and the one under the mouse
+                    Repeater {
+                        model: app.sample ? app.sample.controls.filter(c => c.component === app.componentName && c.component !== "Window") : []
                         Rectangle {
                             required property var modelData
-                            objectName: "handle" + modelData[0] + "_" + modelData[1]
-                            visible: !!(app.pickedEntry && app.pickedEntry.size)
-                            width: 9 / content.scale; height: width
-                            // (outside the part: its dots are on it)
-                            x: selection.width * modelData[0] + (modelData[0] - .5) * app.handleGap / content.scale - width / 2
-                            y: selection.height * modelData[1] + (modelData[1] - .5) * app.handleGap / content.scale - height / 2
-                            color: resize.active ? "#fff2d8" : app.gold
-                            border.color: "#000"; border.width: 1 / content.scale
-                            property var start: null
-                            HoverHandler {
-                                cursorShape: modelData[0] === .5 ? Qt.SizeVerCursor : modelData[1] === .5 ? Qt.SizeHorCursor
-                                    : modelData[0] === modelData[1] ? Qt.SizeFDiagCursor : Qt.SizeBDiagCursor
-                            }
-                            DragHandler {
-                                id: resize
-                                target: null
-                                grabPermissions: PointerHandler.CanTakeOverFromAnything // (not to be taken from)
-                                onActiveChanged: {
-                                    if (active) {
-                                        app.remember()
-                                        const e = app.entry(app.picked), item = app.items[app.picked]
-                                        parent.start = { e: JSON.parse(JSON.stringify(e)), place: app.placeOf(app.picked).slice(),
-                                            x0: centroid.scenePosition.x, y0: centroid.scenePosition.y, w: e.size[0], h: e.size[1] }
-                                    } else app.changed()
-                                }
-                                onCentroidChanged: {
-                                    if (!active || !parent.start) return
-                                    const s = parent.start, fx = parent.modelData[0], fy = parent.modelData[1]
-                                    const dx = (centroid.scenePosition.x - s.x0) / content.scale, dy = (centroid.scenePosition.y - s.y0) / content.scale
-                                    const w = Math.max(1, Math.round(s.w + (fx === 1 ? dx : fx === 0 ? -dx : 0)))
-                                    const h = Math.max(1, Math.round(s.h + (fy === 1 ? dy : fy === 0 ? -dy : 0)))
-                                    // the side across from the handle stays: its point goes with what's between
-                                    const px = app.fractionX(s.place[0]), py = app.fractionY(s.place[0])
-                                    const place = s.place.slice()
-                                    place[3] = app.roundTenth(s.place[3] + (fx === 0 ? (s.w - w) + px * (w - s.w) : fx === 1 ? px * (w - s.w) : 0))
-                                    place[4] = app.roundTenth(s.place[4] - (fy === 0 ? (s.h - h) + py * (h - s.h) : fy === 1 ? py * (h - s.h) : 0))
-                                    app.change(app.picked, place, [w, h], true)
-                                    app.linkUpdate()
-                                }
-                            }
-                        }
-                    }
-                    Repeater {
-                        model: app.pointNames
-                        Rectangle {
-                            required property string modelData
-                            objectName: "dot" + modelData
-                            readonly property bool own: !!(app.pickedEntry && app.pickedEntry.place && app.pickedEntry.place[0] === modelData)
-                            width: (own ? 11 : 7) / content.scale; height: width; radius: width / 2
-                            x: selection.width * app.fractionX(modelData) - width / 2
-                            y: selection.height * app.fractionY(modelData) - height / 2
-                            color: own ? "#e0c040" : "#40e0d0"
-                            border.color: "#000"; border.width: 1 / content.scale
-                            ToolTip.visible: dotHover.hovered && !drop.active
-                            ToolTip.text: modelData + ": drag it onto a part to place it there"
-                            HoverHandler { id: dotHover; cursorShape: Qt.CrossCursor }
-                            DragHandler {
-                                target: null
-                                grabPermissions: PointerHandler.CanTakeOverFromAnything
-                                onActiveChanged: {
-                                    if (active) drop.begin(parent.modelData)
-                                    else drop.end()
-                                }
-                                onCentroidChanged: if (active) drop.moved(centroid.scenePosition)
-                            }
-                        }
-                    }
-                }
-
-                // a dot dragged: the other parts' points to drop it on
-                Item {
-                    id: drop
-                    objectName: "drop"
-                    property bool active: false
-                    property string point: ""
-                    property var from: Qt.point(0, 0)
-                    property var to: Qt.point(0, 0)
-                    property string target: ""
-                    property string targetPoint: ""
-                    function begin(p) {
-                        const item = app.items[app.picked]
-                        point = p
-                        from = Qt.point(item.x + app.fractionX(p) * item.width, item.y + app.fractionY(p) * item.height)
-                        to = from
-                        target = ""
-                        active = true
-                    }
-                    function moved(scene) {
-                        const local = content.mapFromItem(null, scene.x, scene.y)
-                        to = local
-                        let best = 14 / content.scale, name = "", at = ""
-                        for (const n of app.names) {
-                            const o = app.items[n]
-                            if (n === app.picked || !o.visible) continue
-                            for (const q of app.pointNames) {
-                                const d = Math.hypot(o.x + app.fractionX(q) * o.width - local.x, o.y + app.fractionY(q) * o.height - local.y)
-                                if (d < best) { best = d; name = n; at = q }
-                            }
-                        }
-                        target = name; targetPoint = at
-                    }
-                    function end() {
-                        active = false
-                        const e = app.entry(app.picked)
-                        const rel = target || (e.place ? e.place[1] : app.title_)
-                        const relPoint = target ? targetPoint : (e.place ? e.place[2] : "TOPLEFT")
-                        if (target || !e.place || point !== e.place[0]) {
-                            app.change(app.picked, app.anchored(app.picked, point, rel, relPoint), e.size)
-                            app.pick(app.picked)
+                            readonly property var box: app.sampleBox(modelData.rect)
+                            x: box[0]; y: box[1]; width: box[2]; height: box[3]
+                            color: "transparent"
+                            border.color: app.gold; border.width: 2 / content.scale
                         }
                     }
                     Rectangle {
-                        visible: drop.active
-                        readonly property real dx: drop.to.x - drop.from.x
-                        readonly property real dy: drop.to.y - drop.from.y
-                        x: drop.from.x; y: drop.from.y
+                        readonly property var box: app.hoveredControl ? app.sampleBox(app.hoveredControl.rect) : [0, 0, 0, 0]
+                        visible: !!app.hoveredControl && app.hoveredControl.component !== "Window"
+                        x: box[0]; y: box[1]; width: box[2]; height: box[3]
+                        color: "#18ffffff"
+                        border.color: "#ffffff"; border.width: 1 / content.scale
+                    }
+                }
+
+                // ---- the window open
+                Item {
+                    id: windowLayer
+                    visible: !app.componentsMode
+                    Repeater {
+                        visible: showArt.checked
+                        model: app.artModel
+                        Image {
+                            required property var modelData
+                            required property int index
+                            readonly property var f: app.viewRect || [modelData.rect[0], modelData.rect[1] + modelData.rect[3], 0, 0]
+                            readonly property Item owner: modelData.owner && app.parts[modelData.owner] ? app.items[modelData.owner] || null : null
+                            readonly property var base: owner ? app.artBase[modelData.owner] : null
+                            readonly property real ax: modelData.rect[0] - f[0]
+                            readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
+                            // (sized with its part if it's on it: a tab can draw it elsewhere)
+                            readonly property bool onOwner: !!(owner && base) && ax + modelData.rect[2] / 2 >= base[0] && ax + modelData.rect[2] / 2 <= base[0] + base[2]
+                                && ay + modelData.rect[3] / 2 >= base[1] && ay + modelData.rect[3] / 2 <= base[1] + base[3]
+                            readonly property real sx: onOwner && base[2] ? owner.width / base[2] : 1
+                            readonly property real sy: onOwner && base[3] ? owner.height / base[3] : 1
+                            visible: showArt.checked
+                            x: owner && base ? owner.x + (ax - base[0]) * sx : ax
+                            y: owner && base ? owner.y + (ay - base[1]) * sy : ay
+                            width: modelData.rect[2] * sx
+                            height: modelData.rect[3] * sy
+                            opacity: (modelData.alpha === undefined ? 1 : modelData.alpha) * (modelData.backdrop || !modelData.color ? 1 : modelData.color[3])
+                            source: "image://art/" + app.data.generation + "/" + app.title_ + "/" + app.viewIndex + "/" + index
+                            cache: false
+                            smooth: true
+                        }
+                    }
+                    Item { id: holder }
+
+                    // the hovered part
+                    Rectangle {
+                        visible: !!app.hoveredItem
+                        x: app.hoveredItem ? app.hoveredItem.x : 0; y: app.hoveredItem ? app.hoveredItem.y : 0
+                        width: app.hoveredItem ? app.hoveredItem.width : 0; height: app.hoveredItem ? app.hoveredItem.height : 0
+                        color: "#18ffffff"
+                        border.color: "#ffffff"; border.width: 1 / content.scale
+                    }
+
+                    // the line to what it's placed on
+                    Rectangle {
+                        visible: !!app.linkA && !drop.active
+                        readonly property real dx: app.linkA && app.linkB ? app.linkB.x - app.linkA.x : 0
+                        readonly property real dy: app.linkA && app.linkB ? app.linkB.y - app.linkA.y : 0
+                        x: app.linkA ? app.linkA.x : 0; y: app.linkA ? app.linkA.y : 0
                         width: Math.sqrt(dx * dx + dy * dy); height: 2 / content.scale
                         transformOrigin: Item.TopLeft
                         rotation: Math.atan2(dy, dx) * 180 / Math.PI
-                        color: "#40e0d0"
+                        color: "#e0c040"
                     }
                     Rectangle {
-                        visible: drop.active && drop.target !== ""
-                        readonly property Item o: drop.target ? app.items[drop.target] || null : null
-                        width: 13 / content.scale; height: width; radius: width / 2
-                        x: o ? o.x + app.fractionX(drop.targetPoint) * o.width - width / 2 : 0
-                        y: o ? o.y + app.fractionY(drop.targetPoint) * o.height - height / 2 : 0
-                        color: "#40e0d0"
+                        visible: !!app.linkB
+                        width: 9 / content.scale; height: width; radius: width / 2
+                        x: app.linkB ? app.linkB.x - width / 2 : 0; y: app.linkB ? app.linkB.y - width / 2 : 0
+                        color: "transparent"; border.color: "#e0c040"; border.width: 2 / content.scale
+                    }
+
+                    // the guides it snaps to
+                    Rectangle {
+                        visible: app.guideX !== null
+                        x: app.guideX === null ? 0 : app.guideX; y: -5000
+                        width: 1 / content.scale; height: 10000; color: "#40e0d0"
+                    }
+                    Rectangle {
+                        visible: app.guideY !== null
+                        y: app.guideY === null ? 0 : app.guideY; x: -5000
+                        height: 1 / content.scale; width: 10000; color: "#40e0d0"
+                    }
+
+                    // the picked part: its handles, its dots
+                    Item {
+                        id: selection
+                        visible: !!app.pickedItem
+                        x: app.pickedItem ? app.pickedItem.x : 0; y: app.pickedItem ? app.pickedItem.y : 0
+                        width: app.pickedItem ? app.pickedItem.width : 0; height: app.pickedItem ? app.pickedItem.height : 0
+
+                        Repeater {
+                            model: [[0, 0], [.5, 0], [1, 0], [0, .5], [1, .5], [0, 1], [.5, 1], [1, 1]]
+                            Rectangle {
+                                required property var modelData
+                                objectName: "handle" + modelData[0] + "_" + modelData[1]
+                                visible: !!(app.pickedEntry && app.pickedEntry.size)
+                                width: 9 / content.scale; height: width
+                                // (outside the part: its dots are on it)
+                                x: selection.width * modelData[0] + (modelData[0] - .5) * app.handleGap / content.scale - width / 2
+                                y: selection.height * modelData[1] + (modelData[1] - .5) * app.handleGap / content.scale - height / 2
+                                color: resize.active ? "#fff2d8" : app.gold
+                                border.color: "#000"; border.width: 1 / content.scale
+                                property var start: null
+                                HoverHandler {
+                                    cursorShape: modelData[0] === .5 ? Qt.SizeVerCursor : modelData[1] === .5 ? Qt.SizeHorCursor
+                                        : modelData[0] === modelData[1] ? Qt.SizeFDiagCursor : Qt.SizeBDiagCursor
+                                }
+                                DragHandler {
+                                    id: resize
+                                    target: null
+                                    grabPermissions: PointerHandler.CanTakeOverFromAnything // (not to be taken from)
+                                    onActiveChanged: {
+                                        if (active) {
+                                            app.remember()
+                                            const e = app.entry(app.picked), item = app.items[app.picked]
+                                            parent.start = { e: JSON.parse(JSON.stringify(e)), place: app.placeOf(app.picked).slice(),
+                                                x0: centroid.scenePosition.x, y0: centroid.scenePosition.y, w: e.size[0], h: e.size[1] }
+                                        } else app.changed()
+                                    }
+                                    onCentroidChanged: {
+                                        if (!active || !parent.start) return
+                                        const s = parent.start, fx = parent.modelData[0], fy = parent.modelData[1]
+                                        const dx = (centroid.scenePosition.x - s.x0) / content.scale, dy = (centroid.scenePosition.y - s.y0) / content.scale
+                                        const w = Math.max(1, Math.round(s.w + (fx === 1 ? dx : fx === 0 ? -dx : 0)))
+                                        const h = Math.max(1, Math.round(s.h + (fy === 1 ? dy : fy === 0 ? -dy : 0)))
+                                        // the side across from the handle stays: its point goes with what's between
+                                        const px = app.fractionX(s.place[0]), py = app.fractionY(s.place[0])
+                                        const place = s.place.slice()
+                                        place[3] = app.roundTenth(s.place[3] + (fx === 0 ? (s.w - w) + px * (w - s.w) : fx === 1 ? px * (w - s.w) : 0))
+                                        place[4] = app.roundTenth(s.place[4] - (fy === 0 ? (s.h - h) + py * (h - s.h) : fy === 1 ? py * (h - s.h) : 0))
+                                        app.change(app.picked, place, [w, h], true)
+                                        app.linkUpdate()
+                                    }
+                                }
+                            }
+                        }
+                        Repeater {
+                            model: app.pointNames
+                            Rectangle {
+                                required property string modelData
+                                objectName: "dot" + modelData
+                                readonly property bool own: !!(app.pickedEntry && app.pickedEntry.place && app.pickedEntry.place[0] === modelData)
+                                width: (own ? 11 : 7) / content.scale; height: width; radius: width / 2
+                                x: selection.width * app.fractionX(modelData) - width / 2
+                                y: selection.height * app.fractionY(modelData) - height / 2
+                                color: own ? "#e0c040" : "#40e0d0"
+                                border.color: "#000"; border.width: 1 / content.scale
+                                ToolTip.visible: dotHover.hovered && !drop.active
+                                ToolTip.text: modelData + ": drag it onto a part to place it there"
+                                HoverHandler { id: dotHover; cursorShape: Qt.CrossCursor }
+                                DragHandler {
+                                    target: null
+                                    grabPermissions: PointerHandler.CanTakeOverFromAnything
+                                    onActiveChanged: {
+                                        if (active) drop.begin(parent.modelData)
+                                        else drop.end()
+                                    }
+                                    onCentroidChanged: if (active) drop.moved(centroid.scenePosition)
+                                }
+                            }
+                        }
+                    }
+
+                    // a dot dragged: the other parts' points to drop it on
+                    Item {
+                        id: drop
+                        objectName: "drop"
+                        property bool active: false
+                        property string point: ""
+                        property var from: Qt.point(0, 0)
+                        property var to: Qt.point(0, 0)
+                        property string target: ""
+                        property string targetPoint: ""
+                        function begin(p) {
+                            const item = app.items[app.picked]
+                            point = p
+                            from = Qt.point(item.x + app.fractionX(p) * item.width, item.y + app.fractionY(p) * item.height)
+                            to = from
+                            target = ""
+                            active = true
+                        }
+                        function moved(scene) {
+                            const local = content.mapFromItem(null, scene.x, scene.y)
+                            to = local
+                            let best = 14 / content.scale, name = "", at = ""
+                            for (const n of app.names) {
+                                const o = app.items[n]
+                                if (n === app.picked || !o.visible) continue
+                                for (const q of app.pointNames) {
+                                    const d = Math.hypot(o.x + app.fractionX(q) * o.width - local.x, o.y + app.fractionY(q) * o.height - local.y)
+                                    if (d < best) { best = d; name = n; at = q }
+                                }
+                            }
+                            target = name; targetPoint = at
+                        }
+                        function end() {
+                            active = false
+                            const e = app.entry(app.picked)
+                            const rel = target || (e.place ? e.place[1] : app.title_)
+                            const relPoint = target ? targetPoint : (e.place ? e.place[2] : "TOPLEFT")
+                            if (target || !e.place || point !== e.place[0]) {
+                                app.change(app.picked, app.anchored(app.picked, point, rel, relPoint), e.size)
+                                app.pick(app.picked)
+                            }
+                        }
+                        Rectangle {
+                            visible: drop.active
+                            readonly property real dx: drop.to.x - drop.from.x
+                            readonly property real dy: drop.to.y - drop.from.y
+                            x: drop.from.x; y: drop.from.y
+                            width: Math.sqrt(dx * dx + dy * dy); height: 2 / content.scale
+                            transformOrigin: Item.TopLeft
+                            rotation: Math.atan2(dy, dx) * 180 / Math.PI
+                            color: "#40e0d0"
+                        }
+                        Rectangle {
+                            visible: drop.active && drop.target !== ""
+                            readonly property Item o: drop.target ? app.items[drop.target] || null : null
+                            width: 13 / content.scale; height: width; radius: width / 2
+                            x: o ? o.x + app.fractionX(drop.targetPoint) * o.width - width / 2 : 0
+                            y: o ? o.y + app.fractionY(drop.targetPoint) * o.height - height / 2 : 0
+                            color: "#40e0d0"
+                        }
                     }
                 }
             }
@@ -1015,6 +1121,12 @@ ApplicationWindow {
             HoverHandler {
                 id: hover
                 onPointChanged: {
+                    if (app.componentsMode) {
+                        const control = app.controlAt(app.toRoot(point.position))
+                        app.hoveredControl = control
+                        readout.text = control ? control.component : ""
+                        return
+                    }
                     if (!app.root) return
                     const at = app.toRoot(point.position), hits = app.partsAt(at.x, at.y)
                     app.hovered = hits.length ? hits[0] : ""
@@ -1050,6 +1162,11 @@ ApplicationWindow {
                 property var lastAt: null
                 onPressedChanged: if (pressed) view.forceActiveFocus()
                 onTapped: (point) => {
+                    if (app.componentsMode) {
+                        const control = app.controlAt(app.toRoot(point.position))
+                        if (control) app.componentName = control.component
+                        return
+                    }
                     if (app.overControls(point.position)) return
                     const at = app.toRoot(point.position), hits = app.partsAt(at.x, at.y)
                     const again = lastAt && Math.hypot(lastAt.x - point.position.x, lastAt.y - point.position.y) <= 3
@@ -1097,6 +1214,7 @@ ApplicationWindow {
             TapHandler {
                 acceptedButtons: Qt.RightButton
                 onTapped: (point) => {
+                    if (app.componentsMode) return
                     const at = app.toRoot(point.position)
                     menu.hits = app.partsAt(at.x, at.y).slice(0, 15)
                     menu.popup()
@@ -1459,6 +1577,14 @@ ApplicationWindow {
 
     Connections {
         target: backend
+        function onSampled(text) {
+            app.sample = JSON.parse(text)
+            if (app.fitSample) {
+                app.fitSample = false
+                app.fit(false)
+            }
+        }
+        function onSampleFailed(problem) { app.status = "Sample window: " + problem }
         function onScanned() {
             if (app.changeCount) { app.status = "A new scan: Save, and it's read."; return }
             app.reload()

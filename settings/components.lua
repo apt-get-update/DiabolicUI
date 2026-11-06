@@ -9,7 +9,8 @@ local window = Engine:GetDB("Blizzard").window
 local Merge
 Merge = function(into, values)
 	for key, value in pairs(values) do
-		if (type(value) == "table") and (type(into[key]) == "table") then
+		-- (a font is a table too, with a metatable: replaced, not mixed)
+		if (type(value) == "table") and (type(into[key]) == "table") and (not getmetatable(value)) then
 			Merge(into[key], value)
 		else
 			into[key] = value

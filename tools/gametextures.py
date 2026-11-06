@@ -177,6 +177,19 @@ def read(path):
     return None
 
 
+def font(path):
+    """A font of the game's as a file, or None."""
+    out = os.path.join(CACHE, path)
+    if not os.path.exists(out):
+        data = read(path)
+        if not data:
+            return None
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, "wb") as file:
+            file.write(data)
+    return out
+
+
 def png(path):
     """The PNG made of a texture, or None when the game can't give us one
     (a portrait, a character's model...)."""

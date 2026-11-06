@@ -325,6 +325,7 @@ local Art = function(frame)
 	end
 	return art
 end
+Module.ArtOf = Art -- (tools/sample.lua's)
 
 -- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
 -- what the window shows now, by their names and as they read.

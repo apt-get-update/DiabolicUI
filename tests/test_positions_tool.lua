@@ -37,9 +37,9 @@ local Run = function(args, dir)
 	for i, path in ipairs(args) do
 		quoted[i] = string.format("%q", path)
 	end
-	local code = string.format('arg = { [0] = "tools/positions.lua", %s }; '
+	local code = string.format('arg = { [0] = %q, %s }; '
 		.. 'local file = assert(io.open(%q)); local chunk = assert(loadstring(file:read("*a"), "@tools/positions.lua")); '
-		.. 'file:close(); chunk()', table.concat(quoted, ", "), ROOT .. "/tools/positions.lua")
+		.. 'file:close(); chunk()', ROOT .. "/tools/positions.lua", table.concat(quoted, ", "), ROOT .. "/tools/positions.lua")
 	local env = ""
 	local stats = os.getenv("DIABOLICUI_COVERAGE_STATS")
 	if stats then

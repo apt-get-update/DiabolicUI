@@ -246,6 +246,8 @@ end
 -- Files deliberately left out of the load order, and why.
 local NOT_LOADED = {
 	["tools/positions.lua"] = "run outside the game: writes settings/positions.lua",
+	["tools/shared.lua"] = "run outside the game: what tools/positions.lua and tools/sample.lua share",
+	["tools/sample.lua"] = "run outside the game: the editor's sample window",
 }
 
 function TestAddonLoads:test_every_lua_file_is_in_the_load_order()

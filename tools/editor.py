@@ -4,7 +4,8 @@
 Run from anywhere: python3 tools/editor.py (needs PySide6, Pillow and lua5.1). It reads
 the newest /dui layout scan by itself, again each time the game writes one;
 Save writes the changes into windows/*.qml and settings/positions.lua through
-tools/positions.lua. This file: that, and our art drawn as the game draws it.
+tools/positions.lua; tools/sample.lua draws Components' sample window. This
+file: that, and our art drawn as the game draws it.
 """
 import glob
 import json
@@ -14,7 +15,7 @@ import sys
 
 import gametextures
 from PIL import Image
-from PySide6.QtCore import QFileSystemWatcher, QObject, QPointF, QRectF, Qt, QTimer, QUrl, Signal, Slot
+from PySide6.QtCore import QFileSystemWatcher, QObject, QPointF, QProcess, QRectF, Qt, QTimer, QUrl, Signal, Slot
 from PySide6.QtGui import QBrush, QColor, QGuiApplication, QIcon, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickImageProvider
@@ -23,6 +24,7 @@ from PySide6.QtQuickControls2 import QQuickStyle
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LAYOUT = "tools/layout.json"
 EDITS = "tools/edits.lua"
+SAMPLE_EDITS = "tools/edits-sample.lua"
 UNSAVED = "tools/editor-unsaved.json"
 SAVED = "../../../WTF/Account/*/SavedVariables/DiabolicUI.lua"
 QUALITY = 2  # the art's pixels per unit
@@ -191,8 +193,11 @@ class Art(QQuickImageProvider):
             size.setHeight(out.height())
             return out
         _, window, view, index = key.split("/")
-        data = self.backend.layout["windows"][window]
-        art = (data["views"][int(view)].get("art") if data.get("views") else data.get("art")) or []
+        if window == "@sample":
+            art = self.backend.sample.get("art") or []
+        else:
+            data = self.backend.layout["windows"][window]
+            art = (data["views"][int(view)].get("art") if data.get("views") else data.get("art")) or []
         if int(index) >= len(art):  # (asked for just as the window changed)
             return blank(1, 1)
         item = art[int(index)]
@@ -206,11 +211,16 @@ class Backend(QObject):
     """What the page can't do: run tools/positions.lua, read and write files."""
 
     scanned = Signal()
+    sampled = Signal(str)
+    sampleFailed = Signal(str)
 
     def __init__(self):
         super().__init__()
         self.layout = {"windows": {}}
         self.generation = 0
+        self.sample = {}
+        self.sample_wanted = None
+        self.sample_process = None
         self.engine = None
         self.message = self.run()
         self.watcher = QFileSystemWatcher(self)
@@ -260,6 +270,45 @@ class Backend(QObject):
     @Slot(result=str)
     def components(self):
         return json.dumps(self.layout.get("components") or [])
+
+    @Slot(str)
+    def drawSample(self, edits):
+        """Components' sample window for these changes; the latest asked only."""
+        self.sample_wanted = edits
+        if not self.sample_process:
+            self.startSample()
+
+    def startSample(self):
+        with open(SAMPLE_EDITS, "w", encoding="utf-8") as file:
+            file.write("return " + to_lua(json.loads(self.sample_wanted)))
+        self.sample_wanted = None
+        self.sample_process = QProcess(self)
+        self.sample_process.finished.connect(self.sampleDone)
+        self.sample_process.start("lua5.1", ["tools/sample.lua", SAMPLE_EDITS])
+
+    def sampleDone(self):
+        process, self.sample_process = self.sample_process, None
+        output = bytes(process.readAllStandardOutput()).decode("utf-8", "replace")
+        problem = bytes(process.readAllStandardError()).decode("utf-8", "replace").strip()
+        process.deleteLater()
+        if self.sample_wanted:  # (changed again: this one's already old)
+            self.startSample()
+            return
+        os.remove(SAMPLE_EDITS)
+        try:
+            sample = json.loads(output)
+        except ValueError:
+            self.sampleFailed.emit(problem.splitlines()[0] if problem else "The sample window wasn't drawn.")
+            return
+        for text in sample["texts"]:
+            font = gametextures.font(text["font"][5:]) if text["font"].startswith("game/") else text["font"]
+            text["font"] = QUrl.fromLocalFile(os.path.abspath(font)).toString() if font else ""
+        self.generation += 1
+        sample["generation"] = self.generation
+        self.sample = sample
+        self.sampled.emit(json.dumps(sample))
+        if sample["problems"]:
+            self.sampleFailed.emit(sample["problems"][0].splitlines()[0])
 
     @Slot(result=str)
     def leftText(self):
