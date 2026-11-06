@@ -13,7 +13,6 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
-local math_floor = math.floor
 local unpack = unpack
 
 -- WoW API
@@ -75,27 +74,6 @@ Module.StyleItem = function(self, item, size, priceOffset)
 end
 
 -- The wares in two columns (Blizzard moves the rows on each update).
-Module.LayoutItems = function(self)
-	local config = self.config
-	local x, y = unpack(config.items)
-	local left, top = IconBox(config, config.slot_size)
-	for i = 1, NUM_ITEMS do
-		local item = _G["MerchantItem" .. i]
-		local row, column = math_floor((i - 1) / 2), (i - 1) % 2
-		item:ClearAllPoints()
-		item:SetPoint("TOPLEFT", self.Window, "TOPLEFT",
-			x + column * config.slot_pitch[1] + left, y - row * config.slot_pitch[2] - top)
-	end
-end
-
--- The repairs right of the last item sold (Blizzard moves them each time
--- it shows them): repair one, repair all, the guild's.
-Module.LayoutRepairs = function(self)
-	local all = _G.MerchantRepairAllButton
-	all:ClearAllPoints()
-	all:SetPoint("TOPLEFT", self.Window, "TOPLEFT", unpack(self.config.repair))
-end
-
 Module.StyleMerchant = function(self)
 	local config = self.config
 	local frame = _G.MerchantFrame
@@ -119,21 +97,12 @@ Module.StyleMerchant = function(self)
 	for i = 1, NUM_ITEMS do
 		self:StyleItem(_G["MerchantItem" .. i], config.slot_size, config.price_offset)
 	end
-	self:LayoutItems()
-	hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function() self:LayoutItems() end)
-	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function() self:LayoutItems() end)
 
 	-- the pages: the page centred under the wares, its arrows beside it
 	-- (their "Prev" and "Next" out of sight)
 	local prev, nextPage, page = _G.MerchantPrevPageButton, _G.MerchantNextPageButton, _G.MerchantPageText
-	page:ClearAllPoints()
-	page:SetPoint("CENTER", window, "TOP", 0, config.pages_y)
 	page:SetTextColor(unpack(config.page_color))
 	page:SetWidth(0) -- (as wide as its text: the arrows beside it)
-	prev:ClearAllPoints()
-	prev:SetPoint("RIGHT", page, "LEFT", -config.page_gap, 0)
-	nextPage:ClearAllPoints()
-	nextPage:SetPoint("LEFT", page, "RIGHT", config.page_gap, 0)
 	for _, button in ipairs({ prev, nextPage }) do
 		for i = 1, select("#", button:GetRegions()) do
 			local region = select(i, button:GetRegions())
@@ -147,25 +116,15 @@ Module.StyleMerchant = function(self)
 	-- the bottom row
 	local buyback = _G.MerchantBuyBackItem
 	self:StyleItem(buyback, config.buyback_size, config.buyback_price_offset)
-	buyback:ClearAllPoints()
-	local left, top = IconBox(config, config.buyback_size)
-	buyback:SetPoint("TOPLEFT", window, "TOPLEFT", config.buyback[1] + left, config.buyback[2] - top)
 	for _, name in ipairs({ "MerchantRepairItemButton", "MerchantRepairAllButton", "MerchantGuildBankRepairButton" }) do
 		local button = _G[name]
 		kit:AddBorder(button, button:GetWidth())
 	end
 	_G.MerchantRepairText:SetAlpha(0) -- their tooltips say it
-	self:LayoutRepairs()
-	hooksecurefunc("MerchantFrame_UpdateRepairButtons", function() self:LayoutRepairs() end)
 	local junk = _G.DiabolicSellJunkButton
 	if junk then
-		junk:ClearAllPoints()
-		junk:SetPoint("TOPRIGHT", window, "TOPRIGHT", unpack(config.sell_junk))
 		kit:StyleButton(junk, config.button_height)
 	end
-	local money = _G.MerchantMoneyFrame
-	money:ClearAllPoints()
-	money:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT", unpack(config.money))
 end
 
 Module.OnInit = function(self)

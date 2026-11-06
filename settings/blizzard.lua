@@ -447,26 +447,18 @@ Engine:NewStaticConfig("Blizzard", {
 		border_highlight = path .. [[textures\DiabolicUI_Button_44x44_BorderHighlight.tga]], -- its icon's border, hovered
 		-- the wares in two columns of dark slots, the icon in each one's
 		-- top left, its name right of it and its price under that
-		items = { 32, -68 }, -- the first slot (6 under the iron: no band)
 		slot_size = { 208, 46 },
-		slot_pitch = { 218, 52 },
 		slot_canvas = { 256, 128 }, -- the slot's art, stretched to each slot
 		slot_box = { 9, 11, 56, 117 }, -- its icon box's inside, the icon filling it: left, top, right, bottom
 		name_offset = 16, -- from the icon, into the name's box
 		name_width = 150,
 		name_height = 26, -- two lines
 		price_offset = 31, -- the price at the icon's bottom (Blizzard hangs it 31 over its name art)
-		page_gap = 8, -- the page's arrows, from its text
-		pages_y = -384, -- the pages' row, under the slots
 		page_color = { .86, .76, .6 },
 		-- the bottom row: the last item sold, the repairs, Sell Junk and the money
-		buyback = { 32, -430 },
 		buyback_size = { 204, 44 },
 		buyback_price_offset = 25,
-		repair = { 288, -434 }, -- repair all's top left; repair one left of it, the guild's right
-		sell_junk = { -32, -434 }, -- its top right, from the window's top right
-		button_height = 22,
-		money = { -24, 30 } -- its bottom right, from the window's bottom right
+		button_height = 22
 	},
 	-- the talent window in Diablo III's (modules/blizzard/talents.lua).
 	-- Offsets from the window's top left.

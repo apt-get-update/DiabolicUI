@@ -16,6 +16,7 @@ WowWindow {
         text: "Sell Junk"
         wowParent: "MerchantFrame"
         style: "Button"
+        pin: "place"
         anchors.right: merchantFrameDiabolic.right
         anchors.rightMargin: 32
         anchors.top: merchantFrameDiabolic.top
@@ -41,6 +42,7 @@ WowWindow {
         name: "MerchantBuyBackItem"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.2
         anchors.top: merchantFrameDiabolic.top
@@ -275,6 +277,7 @@ WowWindow {
         name: "MerchantItem1"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.3
         anchors.top: merchantFrameDiabolic.top
@@ -288,6 +291,7 @@ WowWindow {
         name: "MerchantItem10"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 257.3
         anchors.top: merchantFrameDiabolic.top
@@ -402,6 +406,7 @@ WowWindow {
         name: "MerchantItem11"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.3
         anchors.top: merchantFrameDiabolic.top
@@ -428,6 +433,7 @@ WowWindow {
         name: "MerchantItem12"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 257.3
         anchors.top: merchantFrameDiabolic.top
@@ -556,6 +562,7 @@ WowWindow {
         name: "MerchantItem2"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 257.3
         anchors.top: merchantFrameDiabolic.top
@@ -669,6 +676,7 @@ WowWindow {
         name: "MerchantItem3"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.3
         anchors.top: merchantFrameDiabolic.top
@@ -784,6 +792,7 @@ WowWindow {
         name: "MerchantItem4"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 257.3
         anchors.top: merchantFrameDiabolic.top
@@ -925,6 +934,7 @@ WowWindow {
         name: "MerchantItem5"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.3
         anchors.top: merchantFrameDiabolic.top
@@ -1064,6 +1074,7 @@ WowWindow {
         name: "MerchantItem6"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 257.3
         anchors.top: merchantFrameDiabolic.top
@@ -1206,6 +1217,7 @@ WowWindow {
         name: "MerchantItem7"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.3
         anchors.top: merchantFrameDiabolic.top
@@ -1343,6 +1355,7 @@ WowWindow {
         name: "MerchantItem8"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 257.3
         anchors.top: merchantFrameDiabolic.top
@@ -1480,6 +1493,7 @@ WowWindow {
         name: "MerchantItem9"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 39.3
         anchors.top: merchantFrameDiabolic.top
@@ -1593,6 +1607,7 @@ WowWindow {
         name: "MerchantMoneyFrame"
         kind: "Frame"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.right: merchantFrameDiabolic.right
         anchors.rightMargin: 24
         anchors.bottom: merchantFrameDiabolic.bottom
@@ -1697,6 +1712,7 @@ WowWindow {
         name: "MerchantNextPageButton"
         kind: "Button"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantPageText.right
         anchors.leftMargin: 8
         anchors.verticalCenter: merchantPageText.verticalCenter
@@ -1710,6 +1726,7 @@ WowWindow {
         kind: "FontString"
         text: "Page 1 of 3"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.horizontalCenter: merchantFrameDiabolic.horizontalCenter
         anchors.verticalCenter: merchantFrameDiabolic.top
         anchors.verticalCenterOffset: 384
@@ -1722,6 +1739,7 @@ WowWindow {
         name: "MerchantPrevPageButton"
         kind: "Button"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.right: merchantPageText.left
         anchors.rightMargin: 8
         anchors.verticalCenter: merchantPageText.verticalCenter
@@ -1734,6 +1752,7 @@ WowWindow {
         name: "MerchantRepairAllButton"
         kind: "Button"
         wowParent: "MerchantFrame"
+        pin: "place"
         anchors.left: merchantFrameDiabolic.left
         anchors.leftMargin: 288
         anchors.top: merchantFrameDiabolic.top

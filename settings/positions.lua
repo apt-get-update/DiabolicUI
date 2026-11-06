@@ -67,6 +67,27 @@ Engine:NewStaticConfig("Positions", {
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
 	MacroNewButton = { "RIGHT", "MacroExitButton", "LEFT", -6, 0 }, -- Button "New"
 
+	-- MerchantFrame ---------------------------------------------------------
+	DiabolicSellJunkButton = { "TOPRIGHT", "MerchantFrameDiabolic", "TOPRIGHT", -32, -434 }, -- Button "Sell Junk"
+	MerchantBuyBackItem = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.2, -433.8 }, -- Frame
+	MerchantItem1 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -72 }, -- Frame
+	MerchantItem10 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -280 }, -- Frame
+	MerchantItem11 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -332 }, -- Frame
+	MerchantItem12 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -332 }, -- Frame
+	MerchantItem2 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -72 }, -- Frame
+	MerchantItem3 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -124 }, -- Frame
+	MerchantItem4 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -124 }, -- Frame
+	MerchantItem5 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -176 }, -- Frame
+	MerchantItem6 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -176 }, -- Frame
+	MerchantItem7 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -228 }, -- Frame
+	MerchantItem8 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -228 }, -- Frame
+	MerchantItem9 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -280 }, -- Frame
+	MerchantMoneyFrame = { "BOTTOMRIGHT", "MerchantFrameDiabolic", "BOTTOMRIGHT", -24, 30 }, -- Frame
+	MerchantNextPageButton = { "LEFT", "MerchantPageText", "RIGHT", 8, 0 }, -- Button
+	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 3"
+	MerchantPrevPageButton = { "RIGHT", "MerchantPageText", "LEFT", -8, 0 }, -- Button
+	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 288, -434 }, -- Button
+
 	-- PVPParentFrame --------------------------------------------------------
 	-- the battlegrounds' block (title row, list, rewards) 5 left: in the middle
 	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Arathi Basin (Call to Arms)"
