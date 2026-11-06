@@ -96,7 +96,7 @@ Part {
 }
 ----
 
-*With the editor:* `python3 tools/editor.py` (needs PySide6 and `lua5.1`). Each
+*With the editor:* `tools/editor.py` (needs PySide6 and `lua5.1`). Each
 window opens as it is in its file, with our art under its boxes; a window with
 tabs has them on top, each showing only its own parts.
 
