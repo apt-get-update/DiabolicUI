@@ -383,7 +383,7 @@ Module.StylePanel = function(self, spec)
 	if (not title) and spec.text then
 		-- a title of our own, Blizzard's (no name to it) out of sight
 		HideText(frame, _G[spec.text])
-		title = frame:CreateFontString(nil, "OVERLAY")
+		title = frame:CreateFontString(kit.NameFor(frame, "DiabolicTitle"), "OVERLAY")
 		title:SetFontObject(_G.GameFontNormal)
 		title:SetText(_G[spec.text])
 	end

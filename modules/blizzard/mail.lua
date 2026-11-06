@@ -70,7 +70,7 @@ Module.StyleMail = function(self)
 	kit:SetPanelLayout(frame, config.insets, config.insets[1], config.offset_y)
 	kit:StyleClose(_G.InboxCloseButton, window, header)
 	-- one title for both tabs, theirs out of sight
-	local title = frame:CreateFontString(nil, "OVERLAY")
+	local title = frame:CreateFontString(kit.NameFor(frame, "DiabolicTitle"), "OVERLAY")
 	kit:SetTitle(header, title)
 	title:SetText(_G.INBOX)
 	_G.InboxTitleText:SetAlpha(0)
