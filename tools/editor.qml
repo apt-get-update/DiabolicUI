@@ -260,22 +260,30 @@ ApplicationWindow {
         restore(last)
     }
 
+    // Reset: what's not saved of it gone, as in its file.
     function resetPart(name) {
-        if (edits[name]) {
-            remember()
-            const copy = Object.assign({}, edits)
-            delete copy[name]
-            edits = copy
-            applyItem(name)
-        } else if (parts[name].pin) { // (pinned in its file: let go when saved)
-            remember()
-            const copy = Object.assign({}, edits)
-            copy[name] = { window: title_, place: parts[name].place, size: parts[name].size, pin: "" }
-            edits = copy
-            applyItem(name)
-            status = name + " follows the scan once saved."
-        }
+        if (!edits[name]) return
+        remember()
+        const copy = Object.assign({}, edits)
+        delete copy[name]
+        edits = copy
+        applyItem(name)
         if (name === picked) pickedEntry = entry(name)
+        ruleTimer.restart()
+        changed()
+    }
+
+    // Unpin: back as in its file, following the scan once saved.
+    function unpinPart(name) {
+        remember()
+        const copy = Object.assign({}, edits)
+        if (parts[name].pin) copy[name] = { window: title_, place: parts[name].place, size: parts[name].size, pin: "" }
+        else delete copy[name]
+        edits = copy
+        applyItem(name)
+        if (name === picked) pickedEntry = entry(name)
+        status = name + " follows the scan once saved."
+        ruleTimer.restart()
         changed()
     }
 
@@ -1002,7 +1010,7 @@ ApplicationWindow {
                     enabled: !!(app.pickedEntry && app.pickedEntry.place && app.parts[app.pickedEntry.place[1]])
                     onTriggered: app.pick(app.pickedEntry.place[1])
                 }
-                MenuItem { text: "Reset this part"; enabled: !!app.picked; onTriggered: app.resetPart(app.picked) }
+                MenuItem { text: "Reset this part"; enabled: !!app.edits[app.picked]; onTriggered: app.resetPart(app.picked) }
                 MenuItem { text: "Fit the window"; onTriggered: app.fit(true) }
             }
 
@@ -1100,11 +1108,27 @@ ApplicationWindow {
                     Label { text: "Height"; color: app.dim; visible: !!fields.size }
                     NumberBox { id: fh; visible: !!fields.size; number: fields.size ? fields.size[1] : 0; onEdited: fields.numbers() }
                 }
-                Button {
+                RowLayout {
                     Layout.leftMargin: 10
-                    text: "Reset this part"
                     visible: !!app.picked
-                    onClicked: app.resetPart(app.picked)
+                    Button {
+                        objectName: "resetButton"
+                        text: "Reset"
+                        enabled: !!app.edits[app.picked]
+                        onClicked: app.resetPart(app.picked)
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Forget what's not saved of this part"
+                    }
+                    Button {
+                        objectName: "unpinButton"
+                        text: "Unpin"
+                        visible: !!(app.pickedEntry && app.pickedEntry.pin)
+                        onClicked: app.unpinPart(app.picked)
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Let it follow the game's scan again, once saved"
+                    }
                 }
 
                 Label {
