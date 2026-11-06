@@ -172,15 +172,6 @@ Module.LayoutFriends = function(self, window)
 	bar:ClearAllPoints()
 	bar:SetPoint("TOPLEFT", list, "TOPRIGHT", 6, -15)
 	bar:SetPoint("BOTTOMLEFT", list, "BOTTOMRIGHT", 6, 15)
-	-- the ignored as high, under their tabs too, down to the same bottom
-	local ignored = _G.FriendsFrameIgnoreScrollFrame
-	local raise = config.friends_top - select(5, ignored:GetPoint())
-	for _, part in ipairs({ ignored, _G.FriendsFrameIgnoreButton1 }) do
-		local point, relative, relativePoint, px, py = part:GetPoint()
-		part:ClearAllPoints()
-		part:SetPoint(point, relative, relativePoint, px, py + raise)
-	end
-	ignored:SetHeight(config.friends_bottom + config.friends_top)
 end
 
 -- The who list with more room: the column's dropdown (zone, guild or
@@ -237,15 +228,9 @@ Module.LayoutWho = function(self, window)
 	hooksecurefunc("FriendsFrame_Update", Count) -- (Blizzard's title set as the tab shows)
 	kit:LineBand(self.Header, { dropdown, search })
 	local header = _G.WhoFrameColumnHeader1
-	local _, _, _, x, y = header:GetPoint()
-	header:ClearAllPoints()
-	header:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, config.who_top + config.who_headers_raise)
+	local y = select(5, header:GetPoint())
 	kit:StyleColumnHeaders("WhoFrameColumnHeader", 4)
 	local raise = config.who_top - y
-	local first = _G.WhoFrameButton1
-	_, _, _, x, y = first:GetPoint()
-	first:ClearAllPoints()
-	first:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, y + raise)
 	-- rows of Blizzard's template in the room gained, the list told of them
 	local count, height = _G.WHOS_TO_DISPLAY, _G.FRIENDS_FRAME_WHO_HEIGHT
 	-- (and in the room the search left over the foot)
@@ -257,10 +242,6 @@ Module.LayoutWho = function(self, window)
 	end
 	_G.WHOS_TO_DISPLAY = count + extra
 	local list = _G.WhoListScrollFrame
-	local point, relative, relativePoint
-	point, relative, relativePoint, x, y = list:GetPoint()
-	list:ClearAllPoints()
-	list:SetPoint(point, relative, relativePoint, x, y + raise)
 	list:SetHeight(list:GetHeight() + extra * height - config.who_list_trim)
 end
 
@@ -355,8 +336,6 @@ Module.StyleGuild = function(self, window)
 	kit:HideTextures(card)
 	kit:StylePanel(card)
 	card:SetBackdropColor(unpack(self:GetDB("Blizzard").character.popup_color))
-	card:ClearAllPoints()
-	card:SetPoint("TOPLEFT", window, "TOPRIGHT", unpack(config.guild_detail_offset))
 	for _, name in ipairs({ "GuildMemberNoteBackground", "GuildMemberOfficerNoteBackground" }) do
 		if _G[name] then
 			kit:StylePanel(_G[name])
@@ -365,11 +344,9 @@ Module.StyleGuild = function(self, window)
 	kit:SkinClose(_G.GuildMemberDetailCloseButton)
 	kit:StyleButtons(card)
 	-- the guild's information and its log the same, their text on
-	-- parchment in ink (the message of the day's), where the card is (not
-	-- over the window's frame), their page lower: clear of their X
-	local Place = function(popup, page, scroll)
-		popup:ClearAllPoints()
-		popup:SetPoint("TOPLEFT", window, "TOPRIGHT", unpack(config.guild_detail_offset))
+	-- parchment in ink (the message of the day's), their page lower: clear
+	-- of their X
+	local Place = function(page, scroll)
 		local lower = config.guild_page_lower
 		local point, relative, relativePoint, x, y = page:GetPoint()
 		page:SetPoint(point, relative, relativePoint, x, y - lower)
@@ -378,14 +355,14 @@ Module.StyleGuild = function(self, window)
 	end
 	if _G.GuildInfoFrame then
 		self:StylePopup(_G.GuildInfoFrame, _G.GuildInfoTitle, _G.GuildInfoCloseButton)
-		Place(_G.GuildInfoFrame, _G.GuildInfoTextBackground, _G.GuildInfoFrameScrollFrame)
+		Place(_G.GuildInfoTextBackground, _G.GuildInfoFrameScrollFrame)
 		self:AddPage(_G.GuildInfoTextBackground, _G.GuildInfoEditBox, config.raid_description_font)
 		kit:StyleScrollBar(_G.GuildInfoFrameScrollFrameScrollBar)
 	end
 	if _G.GuildEventLogFrame then
 		local inks = self:GetDB("Blizzard").panels.log_inks
 		self:StylePopup(_G.GuildEventLogFrame, _G.GuildEventLogTitle, _G.GuildEventLogCloseButton)
-		Place(_G.GuildEventLogFrame, _G.GuildEventFrame, _G.GuildEventLogScrollFrame)
+		Place(_G.GuildEventFrame, _G.GuildEventLogScrollFrame)
 		local text = _G.GuildEventMessage
 		self:AddPage(_G.GuildEventFrame, text, inks.font)
 		-- in from the page's left as the guild information's

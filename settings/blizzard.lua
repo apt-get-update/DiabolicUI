@@ -413,9 +413,6 @@ Engine:NewStaticConfig("Blizzard", {
 		open_text_alone = 38, -- and this much lower with no attachments under it (as far over the foot's iron as under the band)
 		open_attachments_floor = 112, -- the attachments between the letter's panel and this, over the window's bottom (14 over the foot's iron)
 		open_band = { x = 10, label_gap = 5 }, -- the letter opened's From and Subject in the band: their labels' left, from its left
-		-- moved once, up: the money
-		send_offsets = { SendMailMoneyButton = { 0, 10 } },
-		page_offset = -24, -- Blizzard's page buttons, down from over its bottom
 		postal_offsets = { -- Postal's: its checkboxes right, its Open All (and its menu's arrow) down between the pages, its menu onto the band
 			PostalInboxCB = { 4, 0 }, PostalOpenAllButton = { 0, -22 }, Postal_ModuleMenuButton = { 0, 16 } },
 		-- the rows' ink on the parchment: unread, read (grey in Blizzard's),
@@ -537,7 +534,6 @@ Engine:NewStaticConfig("Blizzard", {
 		friends_bottom = 376, -- its bottom: 10 rows of 34 (no 11th peeking out), its panel to the foot's iron bar
 		who_dropdown_width = 64, -- its middle: room for Zone, Guild or Race
 		who_top = -36, -- the who list's column headers, from the frame's top: under the band (Blizzard's 70 down), as far as its panel over the foot's bar
-		who_headers_raise = 2, -- the headers alone, on their dark bar (as tall as it)
 		who_search_size = { 200, 20 }, -- the search, in the band right of the dropdown
 		who_search_rows = 0, -- rows more in the room it left over the foot (none: 19, the list shorter)
 		motd_panel_insets = { 8, 6, 7, 4 }, -- the guild's message of the day, its parchment around its title and text (its sides the list's panel's)
@@ -553,7 +549,6 @@ Engine:NewStaticConfig("Blizzard", {
 		list_gap = 6, -- a list's panel, short of what's under it (the foot's iron bar, the message of the day)
 		list_gaps = {}, -- (by list, else list_gap)
 		motd_title_color = { .42, .08, .02 }, -- its title, dark red on it (as the quest log's)
-		guild_detail_offset = { 6, -96 }, -- a member's card, right of the window, under its tabs
 		guild_page_lower = 10, -- the guild information's and log's parchment (and text), from Blizzard's: under their X
 		guild_log_width = 325, -- the guild log's text (Blizzard's 340, its scroll bar 28 in from the page's right): 22 in from its left, off the parchment's edge
 		list_panel_insets = { 6, 6, 28, 6 }, -- the scroll bar inside on the right

@@ -1822,6 +1822,7 @@ WowWindow {
         name: "FriendsFrameIgnoreButton1"
         kind: "Button"
         wowParent: "IgnoreListFrame"
+        pin: "place"
         anchors.left: friendsFrame.left
         anchors.leftMargin: 21
         anchors.top: friendsFrame.top
@@ -2143,6 +2144,20 @@ WowWindow {
         anchors.verticalCenter: friendsFrameIgnorePlayerButton.verticalCenter
         width: 75.1
         height: 10.3
+    }
+
+    Part {
+        id: friendsFrameIgnoreScrollFrame
+        name: "FriendsFrameIgnoreScrollFrame"
+        kind: "ScrollFrame"
+        wowParent: "IgnoreListFrame"
+        pin: "all"
+        anchors.right: friendsFrame.right
+        anchors.rightMargin: 65
+        anchors.top: friendsFrame.top
+        anchors.topMargin: 36
+        width: 298
+        height: 340
     }
 
     Part {
@@ -2532,6 +2547,7 @@ WowWindow {
         name: "GuildEventLogFrame"
         kind: "Frame"
         wowParent: "FriendsFrame"
+        pin: "place"
         anchors.left: friendsFrameDiabolic.right
         anchors.leftMargin: 6
         anchors.top: friendsFrameDiabolic.top
@@ -3542,6 +3558,7 @@ WowWindow {
         name: "GuildInfoFrame"
         kind: "Frame"
         wowParent: "FriendsFrame"
+        pin: "place"
         anchors.left: friendsFrameDiabolic.right
         anchors.leftMargin: 6
         anchors.top: friendsFrameDiabolic.top
@@ -3726,6 +3743,20 @@ WowWindow {
         anchors.top: guildFrameNotesText.top
         width: 315
         height: 36
+    }
+
+    Part {
+        id: guildMemberDetailFrame
+        name: "GuildMemberDetailFrame"
+        kind: "Frame"
+        wowParent: "GuildFrame"
+        pin: "place"
+        anchors.left: friendsFrameDiabolic.right
+        anchors.leftMargin: 6
+        anchors.top: friendsFrameDiabolic.top
+        anchors.topMargin: 96
+        width: 212
+        height: 270
     }
 
     Part {
@@ -3920,6 +3951,7 @@ WowWindow {
         name: "WhoFrameButton1"
         kind: "Button"
         wowParent: "WhoFrame"
+        pin: "place"
         anchors.left: whoFrame.left
         anchors.leftMargin: 15
         anchors.top: whoFrame.top
@@ -5120,6 +5152,7 @@ WowWindow {
         kind: "Button"
         text: "Name"
         wowParent: "WhoFrame"
+        pin: "place"
         anchors.left: whoFrame.left
         anchors.leftMargin: 20
         anchors.top: whoFrame.top
@@ -5314,6 +5347,7 @@ WowWindow {
         name: "WhoListScrollFrame"
         kind: "ScrollFrame"
         wowParent: "WhoFrame"
+        pin: "place"
         anchors.right: friendsFrame.right
         anchors.rightMargin: 67
         anchors.top: friendsFrame.top
@@ -5404,7 +5438,6 @@ WowWindow {
         height: 784
     }
 
-    Ghost { id: friendsFrameIgnoreScrollFrame; name: "FriendsFrameIgnoreScrollFrame"; x: 21; y: 36; width: 0; height: 0 }
     Ghost { id: guildListScrollFrame; name: "GuildListScrollFrame"; x: 21; y: 73; width: 0; height: 0 }
     Ghost { id: uIParent; name: "UIParent"; x: 738.5; y: 290.6; width: 0; height: 0 }
 }

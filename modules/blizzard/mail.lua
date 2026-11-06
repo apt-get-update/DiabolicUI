@@ -91,14 +91,8 @@ Module.StyleMail = function(self)
 	kit:DropTop(window)
 
 	-- the mail on parchment, the letter being written on lined parchment,
-	-- its text dark; the name, the subject and the money a little higher,
-	-- the coins ours
+	-- its text dark, the coins ours
 	self:StyleRows()
-	for name, offset in pairs(config.send_offsets) do
-		local part = _G[name]
-		local point, relative, relativePoint, x, y = part:GetPoint()
-		part:SetPoint(point, relative, relativePoint, x + offset[1], y + offset[2])
-	end
 	self:PlaceSendBand(header)
 	kit:StyleCoins(_G.SendMailMoney)
 	kit:AddPanel(_G.SendMailScrollFrame, config.text_panel_insets)
@@ -413,12 +407,7 @@ Module.StyleRows = function(self)
 		_G["MailItem" .. i .. "ButtonSlot"]:SetAlpha(0)
 		kit:AddBorder(button, button:GetWidth())
 	end
-	local prev, nextPage = _G.InboxPrevPageButton, _G.InboxNextPageButton
-	kit:StylePager(prev, nextPage)
-	for _, region in ipairs({ prev, nextPage, _G.InboxCurrentPage }) do
-		local point, relative, relativePoint, x, y = region:GetPoint()
-		region:SetPoint(point, relative, relativePoint, x, y + config.page_offset)
-	end
+	kit:StylePager(_G.InboxPrevPageButton, _G.InboxNextPageButton)
 	-- Blizzard colors them on each update (the days left by a code)
 	local ink = config.list_ink
 	hooksecurefunc("InboxFrame_Update", function()

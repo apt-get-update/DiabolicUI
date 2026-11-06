@@ -29,6 +29,16 @@ Engine:NewStaticConfig("Positions", {
 	-- its "CTRL-Left Click..." under the band, over the picture (Blizzard's hangs from the title)
 	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 },
 
+	-- FriendsFrame ----------------------------------------------------------
+	FriendsFrameIgnoreButton1 = { "TOPLEFT", "FriendsFrame", "TOPLEFT", 21, -39 }, -- Button
+	FriendsFrameIgnoreScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -65, -36, 298, 340 }, -- ScrollFrame
+	GuildEventLogFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
+	GuildInfoFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
+	GuildMemberDetailFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
+	WhoFrameButton1 = { "TOPLEFT", "WhoFrame", "TOPLEFT", 15, -61 }, -- Button
+	WhoFrameColumnHeader1 = { "TOPLEFT", "WhoFrame", "TOPLEFT", 20, -34 }, -- Button "Name"
+	WhoListScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -67, -62 }, -- ScrollFrame
+
 	-- GuildBankFrame --------------------------------------------------------
 	-- the slots, logs and info 27 higher than Blizzard's: as far from the band
 	-- as from the foot's iron bar
@@ -79,6 +89,12 @@ Engine:NewStaticConfig("Positions", {
 	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "41/255 Characters Used"
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
 	MacroNewButton = { "RIGHT", "MacroExitButton", "LEFT", -6, 0 }, -- Button "New"
+
+	-- MailFrame -------------------------------------------------------------
+	InboxCurrentPage = { "BOTTOM", "InboxFrame", "BOTTOM", -14, 72 }, -- FontString
+	InboxNextPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 314, 80 }, -- Button
+	InboxPrevPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 50, 80 }, -- Button
+	SendMailMoneyButton = { "BOTTOMLEFT", "SendMailFrame", "BOTTOMLEFT", 30, 120 }, -- Frame
 
 	-- MerchantFrame ---------------------------------------------------------
 	DiabolicSellJunkButton = { "TOPRIGHT", "MerchantFrameDiabolic", "TOPRIGHT", -32, -434 }, -- Button "Sell Junk"

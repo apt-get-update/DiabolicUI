@@ -184,6 +184,7 @@ WowWindow {
         name: "InboxCurrentPage"
         kind: "FontString"
         wowParent: "InboxFrame"
+        pin: "place"
         anchors.horizontalCenter: inboxFrame.horizontalCenter
         anchors.horizontalCenterOffset: -14
         anchors.bottom: inboxFrame.bottom
@@ -208,6 +209,7 @@ WowWindow {
         name: "InboxNextPageButton"
         kind: "Button"
         wowParent: "InboxFrame"
+        pin: "place"
         anchors.horizontalCenter: inboxFrame.left
         anchors.horizontalCenterOffset: 314
         anchors.verticalCenter: inboxFrame.bottom
@@ -221,6 +223,7 @@ WowWindow {
         name: "InboxPrevPageButton"
         kind: "Button"
         wowParent: "InboxFrame"
+        pin: "place"
         anchors.horizontalCenter: inboxFrame.left
         anchors.horizontalCenterOffset: 50
         anchors.verticalCenter: inboxFrame.bottom
@@ -1547,6 +1550,7 @@ WowWindow {
         name: "SendMailMoneyButton"
         kind: "Frame"
         wowParent: "SendMailFrame"
+        pin: "place"
         anchors.left: sendMailFrame.left
         anchors.leftMargin: 30
         anchors.bottom: sendMailFrame.bottom
