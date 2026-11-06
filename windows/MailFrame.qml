@@ -174,7 +174,7 @@ WowWindow {
         anchors.horizontalCenter: inboxFrame.horizontalCenter
         anchors.horizontalCenterOffset: -14
         anchors.bottom: inboxFrame.bottom
-        anchors.bottomMargin: 72
+        anchors.bottomMargin: 81
         width: 192
         height: 1
     }
@@ -197,7 +197,7 @@ WowWindow {
         anchors.horizontalCenter: inboxFrame.left
         anchors.horizontalCenterOffset: 314
         anchors.verticalCenter: inboxFrame.bottom
-        anchors.verticalCenterOffset: -80
+        anchors.verticalCenterOffset: -89
         width: 26
         height: 26
     }
@@ -210,7 +210,7 @@ WowWindow {
         anchors.horizontalCenter: inboxFrame.left
         anchors.horizontalCenterOffset: 50
         anchors.verticalCenter: inboxFrame.bottom
-        anchors.verticalCenterOffset: -80
+        anchors.verticalCenterOffset: -89
         width: 26
         height: 26
     }
@@ -1394,7 +1394,7 @@ WowWindow {
         anchors.left: mailFrameDiabolic.left
         anchors.leftMargin: 201
         anchors.bottom: mailFrameDiabolic.bottom
-        anchors.bottomMargin: 40
+        anchors.bottomMargin: 30
         width: 78
         height: 22
     }
@@ -1746,7 +1746,7 @@ WowWindow {
         anchors.right: mailFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: mailFrameDiabolic.bottom
-        anchors.bottomMargin: 40
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: sendMailHorizontalBarLeft2; name: "SendMailHorizontalBarLeft2"; x: 184.5; y: 291; width: 0; height: 0 }

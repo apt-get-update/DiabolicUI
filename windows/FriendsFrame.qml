@@ -434,7 +434,7 @@ WowWindow {
         anchors.left: friendsFrameDiabolic.left
         anchors.leftMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 41
+        anchors.bottomMargin: 31
         width: 131
         height: 21
     }
@@ -698,7 +698,7 @@ WowWindow {
         anchors.left: friendsFrameDiabolic.left
         anchors.leftMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 41
+        anchors.bottomMargin: 31
         width: 131
         height: 21
     }
@@ -924,7 +924,7 @@ WowWindow {
         anchors.right: friendsFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 41
+        anchors.bottomMargin: 31
         width: 134
         height: 21
     }
@@ -1390,7 +1390,7 @@ WowWindow {
         anchors.left: friendsFrameDiabolic.left
         anchors.leftMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 42
+        anchors.bottomMargin: 30
         width: 122.9
         height: 22
     }
@@ -2139,7 +2139,7 @@ WowWindow {
         anchors.left: friendsFrameDiabolic.left
         anchors.leftMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 42
+        anchors.bottomMargin: 30
         width: 89.4
         height: 22
     }
@@ -2257,7 +2257,7 @@ WowWindow {
         anchors.right: friendsFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 41
+        anchors.bottomMargin: 31
     }
 
     WowRow {
@@ -2268,7 +2268,7 @@ WowWindow {
         anchors.right: friendsFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 42
+        anchors.bottomMargin: 30
     }
 
     WowRow {
@@ -2279,7 +2279,7 @@ WowWindow {
         anchors.right: friendsFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: friendsFrameDiabolic.bottom
-        anchors.bottomMargin: 42
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: channelButton2; name: "ChannelButton2"; x: 20; y: 96; width: 155; height: 20 }

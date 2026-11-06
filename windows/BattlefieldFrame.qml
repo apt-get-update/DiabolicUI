@@ -113,7 +113,7 @@ WowWindow {
         anchors.left: battlefieldFrameDiabolic.left
         anchors.leftMargin: 37
         anchors.bottom: battlefieldFrameDiabolic.bottom
-        anchors.bottomMargin: 39
+        anchors.bottomMargin: 30
         width: 127.7
         height: 22
     }
@@ -428,7 +428,7 @@ WowWindow {
         anchors.right: battlefieldFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: battlefieldFrameDiabolic.bottom
-        anchors.bottomMargin: 39
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol; name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"; x: 152; y: 363.5; width: 0; height: 0 }

@@ -19,7 +19,7 @@ WowWindow {
         anchors.left: tradeFrameTradeButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: tradeFrameTradeButton.verticalCenter
-        width: 79.5
+        width: 80
         height: 22
     }
 
@@ -140,10 +140,10 @@ WowWindow {
         style: "Button"
         pin: "all"
         anchors.left: tradeFrameDiabolic.left
-        anchors.leftMargin: 210
+        anchors.leftMargin: 219
         anchors.bottom: tradeFrameDiabolic.bottom
-        anchors.bottomMargin: 39
-        width: 79.5
+        anchors.bottomMargin: 30
+        width: 80
         height: 22
     }
 
@@ -658,11 +658,11 @@ WowWindow {
         parts: ["TradeFrameTradeButton", "TradeFrameCancelButton"]
         fit: "equal"
         anchors.left: tradeFrameDiabolic.left
-        anchors.leftMargin: 210
+        anchors.leftMargin: 219
         anchors.right: tradeFrameDiabolic.right
-        anchors.rightMargin: 47
+        anchors.rightMargin: 37
         anchors.bottom: tradeFrameDiabolic.bottom
-        anchors.bottomMargin: 39
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: tradePlayerItem1NameFrame; name: "TradePlayerItem1NameFrame"; x: 57; y: 123; width: 0; height: 0 }

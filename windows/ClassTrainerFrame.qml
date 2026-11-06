@@ -733,7 +733,7 @@ WowWindow {
         anchors.left: classTrainerFrameDiabolic.left
         anchors.leftMargin: 208
         anchors.bottom: classTrainerFrameDiabolic.bottom
-        anchors.bottomMargin: 42
+        anchors.bottomMargin: 30
         width: 83.5
         height: 22
     }
@@ -758,7 +758,7 @@ WowWindow {
         anchors.right: classTrainerFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: classTrainerFrameDiabolic.bottom
-        anchors.bottomMargin: 42
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: classTrainerCollapseAllButtonHighlight; name: "ClassTrainerCollapseAllButtonHighlight"; x: 42; y: 79; width: 0; height: 0 }

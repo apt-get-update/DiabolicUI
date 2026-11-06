@@ -401,7 +401,7 @@ WowWindow {
         anchors.left: openMailFrameDiabolic.left
         anchors.leftMargin: 117
         anchors.bottom: openMailFrameDiabolic.bottom
-        anchors.bottomMargin: 40
+        anchors.bottomMargin: 30
         width: 78
         height: 22
     }
@@ -744,7 +744,7 @@ WowWindow {
         anchors.right: openMailFrameDiabolic.right
         anchors.rightMargin: 37
         anchors.bottom: openMailFrameDiabolic.bottom
-        anchors.bottomMargin: 40
+        anchors.bottomMargin: 30
     }
 
 }

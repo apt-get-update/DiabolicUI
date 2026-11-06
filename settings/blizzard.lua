@@ -370,9 +370,9 @@ Engine:NewStaticConfig("Blizzard", {
 		-- the rough stone foot up to each tab's highest button: the inbox's
 		-- pages, the letter's buttons and money, the open one's
 		footers = { inbox = "InboxPrevPageButton", send = "SendMailMailButton", open = "OpenMailCancelButton" },
-		insets = { 16, 68, 0, -40 }, -- up over the band and the tabs
+		insets = { 16, 68, 0, -50 }, -- up over the band and the tabs
 		offset_y = -32, -- the window's top with the others'
-		open_insets = { 16, 68, 0, -40 }, -- the letter opened, its top with the inbox's
+		open_insets = { 16, 68, 0, -50 }, -- the letter opened, its top with the inbox's
 		open_gap = 8, -- between the two windows
 		header_height = 40,
 		header_insets = { 24, 24 },
@@ -381,7 +381,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- middle (its stone 8 to 360), up to under the band (its foot 28
 		-- under the inbox's top), past the rows (28 or Postal's 48 to 333)
 		-- and Postal's boxes on their left
-		list_box = { 16, -36, 336, 369 }, -- left, top, width, height
+		list_box = { 16, -36, 336, 360 }, -- left, top, width, height
 		rows_top = -44, -- the first row's (Blizzard's and Postal's -80)
 		rows_gap = 6, -- between the rows (Blizzard's 0): down to its old foot
 		-- Postal's Open and Return in the band, side by side in its middle
@@ -408,7 +408,7 @@ Engine:NewStaticConfig("Blizzard", {
 		open_attachments_floor = 112, -- the attachments between the letter's panel and this, over the window's bottom (14 over the foot's iron)
 		open_band = { x = 10, label_gap = 5 }, -- the letter opened's From and Subject in the band: their labels' left, from its left
 		postal_offsets = { -- Postal's: its checkboxes right, its Open All (and its menu's arrow) down between the pages, its menu onto the band
-			PostalInboxCB = { 4, 0 }, PostalOpenAllButton = { 0, -22 }, Postal_ModuleMenuButton = { 0, 16 } },
+			PostalInboxCB = { 4, 0 }, PostalOpenAllButton = { 0, -13 }, Postal_ModuleMenuButton = { 0, 16 } },
 		-- the rows' ink on the parchment: unread, read (grey in Blizzard's),
 		-- the days left (its green or red)
 		list_ink = { sender = { .4, .12, .04 }, subject = { .18, .12, .06 }, read = { .3, .24, .17 },
@@ -483,7 +483,7 @@ Engine:NewStaticConfig("Blizzard", {
 	-- the quest log in Diablo III's (modules/blizzard/questlog.lua). Offsets
 	-- from the window's top left.
 	questlog = {
-		footer = "QuestLogFrameAbandonButton", -- the rough stone foot under Abandon, Share and Track
+		footer = { "QuestLogFrameAbandonButton", -0.5 }, -- the rough stone foot under Abandon, Share and Track (they're half a unit high in their panel: the foot's 35 as the others')
 		insets = { 0, 36, 70, -20 }, -- the window over Blizzard's 682x447 frame: wider, for room around its panes; its foot 40 higher (no band)
 		header_height = 40,
 		header_insets = { 24, 24 },
@@ -515,7 +515,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- others)
 		footers = { FriendsListFrame = "FriendsFrameAddFriendButton", IgnoreListFrame = "FriendsFrameIgnorePlayerButton",
 			WhoFrame = "WhoFrameWhoButton", GuildFrame = "GuildFrameGuildInformationButton" },
-		insets = { 20, 68, -4, -40 }, -- (its right: the lists' scroll bars as far in as their left)
+		insets = { 20, 68, -4, -50 }, -- (its right: the lists' scroll bars as far in as their left)
 		offset_y = -32, -- Blizzard's frame that much lower: the window's top with the others'
 		header_height = 40,
 		header_insets = { 24, 24 },
@@ -631,10 +631,10 @@ Engine:NewStaticConfig("Blizzard", {
 				-- reaches out of the window), the foot on their page only
 				lists = { "PVPBattlegroundFrameTypeScrollFrame", { "PVPBattlegroundFrameInfoScrollFrame", 0, "PVPBattlegroundFrameTypeScrollFrame" } },
 				footer = { PVPBattlegroundFrame = "PVPBattlegroundFrameJoinButton" } },
-			{ frame = "BattlefieldFrame", band = false, insets = { 19, 40, -5, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel",
+			{ frame = "BattlefieldFrame", band = false, insets = { 19, 40, -5, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel", footer = "BattlefieldFrameCancelButton",
 				close = "BattlefieldFrameCloseButton", lists = { "BattlefieldListScrollFrame", { "BattlefieldFrameInfoScrollFrame", 0, "BattlefieldListScrollFrame" } }, pale = true },
 			{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4, title = "BankFrameTitleText", close = "BankCloseButton" },
-			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton" },
+			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton", footer = "TradeFrameTradeButton" },
 			-- the flight master's: the window around its map (Blizzard's 316 x 352,
 			-- 21 in from the frame's left, 75 from its top, 47 from its right, 85
 			-- from its foot), in the stone pane, 10 in from the iron's solid
@@ -661,7 +661,7 @@ Engine:NewStaticConfig("Blizzard", {
 			{ frame = "DressUpFrame", band = false, insets = { 24, 40, -6, -9 }, offset_y = -4, title = "DressUpFrameTitleText",
 				close = "DressUpFrameCloseButton", keep = { "^DressUpBackground" }, -- the race's backdrop behind the model, in a pane
 				panes = { { "DressUpBackgroundTopLeft", "DressUpBackgroundBotRight", true } } },
-			{ frame = "ClassTrainerFrame", background = "zoltun", addon = "Blizzard_TrainerUI", insets = { 24, 40, 10, -39 }, offset_y = -4, -- (its right: the scroll bars' panel as far in as the left)
+			{ frame = "ClassTrainerFrame", background = "zoltun", addon = "Blizzard_TrainerUI", insets = { 24, 40, 10, -51 }, offset_y = -4, -- (its right: the scroll bars' panel as far in as the left)
 				title = "ClassTrainerNameText", close = "ClassTrainerFrameCloseButton", footer = "ClassTrainerTrainButton",
 				dropdowns = { "ClassTrainerFrameFilterDropDown" },
 				band = { left = { "ClassTrainerFrameFilterDropDown" } }, -- the filter in the band (modules/blizzard/trainer.lua)
@@ -697,7 +697,7 @@ Engine:NewStaticConfig("Blizzard", {
 				lists = { "InspectTalentFrameScrollFrame" } },
 			{ frame = "ItemSocketingFrame", band = false, background = "zoltun", addon = "Blizzard_ItemSocketingUI", insets = { 24, 40, 24, 36 }, offset_y = -4,
 				text = "ITEM_SOCKETING", close = "ItemSocketingCloseButton", lists = { "ItemSocketingScrollFrame" } },
-			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 56, 24, 48 }, offset_y = -20, text = "AUCTIONS", background = "street", footer = "BrowseCloseButton",
+			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 56, 24, 42 }, offset_y = -20, text = "AUCTIONS", background = "street", footer = "BrowseCloseButton",
 				close = "AuctionFrameCloseButton", tabs = "AuctionFrameTab", sigils = { "AllSeeing", "scarab", "stein", "fleur", "gryphon", "orbLight" }, art = { "ui%-auctionframe%-" }, -- browse, bids, auctions, Auctionator's buy, sell, more
 				hide = { "BrowseTitle", "BidTitle", "AuctionsTitle", -- the pages' own titles, under the tabs
 					"BrowseNameText", "BrowseDropDownName" }, -- the search's labels (Name in its box)
