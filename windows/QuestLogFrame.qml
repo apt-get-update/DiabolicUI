@@ -15,8 +15,8 @@ WowWindow {
         kind: "FontString"
         text: "Description"
         wowParent: "QuestLogDetailScrollChildFrame"
-        anchors.left: questInfoObjective1.left
-        anchors.top: questInfoObjective1.bottom
+        anchors.left: questInfoObjectivesText.left
+        anchors.top: questInfoObjectivesText.bottom
         anchors.topMargin: 10
         width: 285
         height: 15.8
@@ -31,7 +31,7 @@ WowWindow {
         anchors.top: questInfoDescriptionHeader.bottom
         anchors.topMargin: 5
         width: 285
-        height: 202.3
+        height: 164.3
     }
 
     Part {
@@ -43,7 +43,7 @@ WowWindow {
         anchors.left: questInfoRewardsHeader.left
         anchors.leftMargin: 3
         anchors.top: questInfoRewardsHeader.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: 5.1
         width: 106.7
         height: 12.6
     }
@@ -130,7 +130,7 @@ WowWindow {
         wowParent: "QuestLogDetailScrollChildFrame"
         anchors.left: questInfoObjectivesText.left
         anchors.top: questInfoObjectivesText.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 35.3
         width: 285
         height: 10
     }
@@ -144,7 +144,7 @@ WowWindow {
         anchors.top: questInfoTitleHeader.bottom
         anchors.topMargin: 5
         width: 285
-        height: 88.5
+        height: 63.2
     }
 
     Part {
@@ -176,8 +176,8 @@ WowWindow {
         name: "QuestInfoSpacerFrame"
         kind: "Frame"
         wowParent: "QuestLogDetailScrollChildFrame"
-        anchors.left: questInfoItemReceiveText.left
-        anchors.top: questInfoItemReceiveText.bottom
+        anchors.left: questInfoXPFrame.left
+        anchors.top: questInfoXPFrame.bottom
         anchors.topMargin: 10
         width: 5
         height: 5
@@ -187,7 +187,7 @@ WowWindow {
         id: questInfoTitleHeader
         name: "QuestInfoTitleHeader"
         kind: "FontString"
-        text: "All Things in Good Time"
+        text: "The Sovereign Imperative"
         wowParent: "QuestLogDetailScrollChildFrame"
         anchors.left: questLogDetailScrollChildFrame.left
         anchors.leftMargin: 5
@@ -195,6 +195,43 @@ WowWindow {
         anchors.topMargin: 5
         width: 285
         height: 15.8
+    }
+
+    Part {
+        id: questInfoXPFrame
+        name: "QuestInfoXPFrame"
+        kind: "Frame"
+        wowParent: "QuestInfoRewardsFrame"
+        anchors.left: questInfoItemReceiveText.left
+        anchors.top: questInfoItemReceiveText.bottom
+        anchors.topMargin: 5
+        width: 280
+        height: 20
+    }
+
+    Part {
+        id: questInfoXPFramePoints
+        name: "QuestInfoXPFramePoints"
+        kind: "FontString"
+        text: "10050"
+        wowParent: "QuestInfoXPFrame"
+        anchors.left: questInfoXPFrameReceiveText.right
+        anchors.leftMargin: 15
+        anchors.verticalCenter: questInfoXPFrameReceiveText.verticalCenter
+        width: 42.7
+        height: 15.8
+    }
+
+    Part {
+        id: questInfoXPFrameReceiveText
+        name: "QuestInfoXPFrameReceiveText"
+        kind: "FontString"
+        text: "Experience:"
+        wowParent: "QuestInfoXPFrame"
+        anchors.left: questInfoXPFrame.left
+        anchors.verticalCenter: questInfoXPFrame.verticalCenter
+        width: 74.3
+        height: 12.6
     }
 
     Part {
@@ -219,7 +256,7 @@ WowWindow {
         anchors.leftMargin: 80
         anchors.top: questLogFrame.top
         anchors.topMargin: 41
-        width: 92.4
+        width: 85.3
         height: 20
     }
 
@@ -278,6 +315,7 @@ WowWindow {
         name: "QuestLogDetailScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "QuestLogDetailScrollFrame"
+        style: "ScrollBar"
         anchors.left: questLogDetailScrollFrame.right
         anchors.leftMargin: 26
         anchors.top: questLogDetailScrollFrame.top
@@ -303,6 +341,7 @@ WowWindow {
         name: "QuestLogDetailScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "QuestLogDetailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: questLogDetailScrollFrameScrollBar.horizontalCenter
         anchors.top: questLogDetailScrollFrameScrollBar.bottom
         width: 16
@@ -314,6 +353,7 @@ WowWindow {
         name: "QuestLogDetailScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "QuestLogDetailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: questLogDetailScrollFrameScrollBar.horizontalCenter
         anchors.bottom: questLogDetailScrollFrameScrollBar.top
         width: 16
@@ -326,6 +366,7 @@ WowWindow {
         kind: "Button"
         text: "Abandon"
         wowParent: "QuestLogControlPanel"
+        style: "Button"
         anchors.left: questLogControlPanel.left
         anchors.verticalCenter: questLogControlPanel.verticalCenter
         anchors.verticalCenterOffset: -1
@@ -376,6 +417,7 @@ WowWindow {
         name: "QuestLogFrameCloseButton"
         kind: "Button"
         wowParent: "QuestLogFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: questLogFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: questLogFrameDiabolic.top
@@ -451,6 +493,7 @@ WowWindow {
         kind: "Button"
         text: "Share"
         wowParent: "QuestLogControlPanel"
+        style: "Button"
         anchors.left: questLogFrameAbandonButton.right
         anchors.leftMargin: 6
         anchors.verticalCenter: questLogFrameAbandonButton.verticalCenter
@@ -476,6 +519,7 @@ WowWindow {
         kind: "Button"
         text: "Track"
         wowParent: "QuestLogControlPanel"
+        style: "Button"
         anchors.right: questLogControlPanel.right
         anchors.rightMargin: 3
         anchors.verticalCenter: questLogControlPanel.verticalCenter
@@ -516,7 +560,7 @@ WowWindow {
         anchors.rightMargin: -1
         anchors.top: questLogCountTopRight.bottom
         anchors.topMargin: -3
-        width: 77.4
+        width: 70.3
         height: 10.3
     }
 
@@ -537,7 +581,7 @@ WowWindow {
         id: questLogScrollFrameButton1
         name: "QuestLogScrollFrameButton1"
         kind: "Button"
-        text: "Ahn'kahet: The Old Kingdom"
+        text: "Alterac Valley"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameScrollChild.left
         anchors.top: questLogScrollFrameScrollChild.top
@@ -864,12 +908,12 @@ WowWindow {
         id: questLogScrollFrameButton1NormalText
         name: "QuestLogScrollFrameButton1NormalText"
         kind: "FontString"
-        text: "Ahn'kahet: The Old Kingdom"
+        text: "Alterac Valley"
         wowParent: "QuestLogScrollFrameButton1"
         anchors.left: questLogScrollFrameButton1.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton1.verticalCenter
-        width: 171.5
+        width: 83
         height: 10
     }
 
@@ -877,7 +921,7 @@ WowWindow {
         id: questLogScrollFrameButton2
         name: "QuestLogScrollFrameButton2"
         kind: "Button"
-        text: "        All Things in Good Time"
+        text: "        The Sovereign Imperative"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton1.left
         anchors.top: questLogScrollFrameButton1.bottom
@@ -990,12 +1034,12 @@ WowWindow {
         id: questLogScrollFrameButton2NormalText
         name: "QuestLogScrollFrameButton2NormalText"
         kind: "FontString"
-        text: "        All Things in Good Time"
+        text: "        The Sovereign Imperative"
         wowParent: "QuestLogScrollFrameButton2"
         anchors.left: questLogScrollFrameButton2.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton2.verticalCenter
-        width: 165.9
+        width: 177.8
         height: 10
     }
 
@@ -1003,12 +1047,12 @@ WowWindow {
         id: questLogScrollFrameButton2Tag
         name: "QuestLogScrollFrameButton2Tag"
         kind: "FontString"
-        text: "(Daily Heroic)"
+        text: "(PvP)"
         wowParent: "QuestLogScrollFrameButton2"
         anchors.right: questLogScrollFrameButton2.right
         anchors.rightMargin: 2
         anchors.verticalCenter: questLogScrollFrameButton2.verticalCenter
-        width: 80.6
+        width: 30
         height: 16
     }
 
@@ -1016,7 +1060,7 @@ WowWindow {
         id: questLogScrollFrameButton3
         name: "QuestLogScrollFrameButton3"
         kind: "Button"
-        text: "Alterac Valley"
+        text: "Midsummer"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton2.left
         anchors.top: questLogScrollFrameButton2.bottom
@@ -1028,12 +1072,12 @@ WowWindow {
         id: questLogScrollFrameButton3NormalText
         name: "QuestLogScrollFrameButton3NormalText"
         kind: "FontString"
-        text: "Alterac Valley"
+        text: "Midsummer"
         wowParent: "QuestLogScrollFrameButton3"
         anchors.left: questLogScrollFrameButton3.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton3.verticalCenter
-        width: 83
+        width: 72.7
         height: 10
     }
 
@@ -1041,7 +1085,7 @@ WowWindow {
         id: questLogScrollFrameButton4
         name: "QuestLogScrollFrameButton4"
         kind: "Button"
-        text: "        The Sovereign Imperative"
+        text: "        Unusual Activity"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton3.left
         anchors.top: questLogScrollFrameButton3.bottom
@@ -1053,12 +1097,12 @@ WowWindow {
         id: questLogScrollFrameButton4NormalText
         name: "QuestLogScrollFrameButton4NormalText"
         kind: "FontString"
-        text: "        The Sovereign Imperative"
+        text: "        Unusual Activity"
         wowParent: "QuestLogScrollFrameButton4"
         anchors.left: questLogScrollFrameButton4.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton4.verticalCenter
-        width: 177.8
+        width: 123.3
         height: 10
     }
 
@@ -1079,7 +1123,7 @@ WowWindow {
         id: questLogScrollFrameButton5
         name: "QuestLogScrollFrameButton5"
         kind: "Button"
-        text: "Badlands"
+        text: "Stormwind City"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton4.left
         anchors.top: questLogScrollFrameButton4.bottom
@@ -1091,12 +1135,12 @@ WowWindow {
         id: questLogScrollFrameButton5NormalText
         name: "QuestLogScrollFrameButton5NormalText"
         kind: "FontString"
-        text: "Badlands"
+        text: "Stormwind City"
         wowParent: "QuestLogScrollFrameButton5"
         anchors.left: questLogScrollFrameButton5.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton5.verticalCenter
-        width: 55.3
+        width: 92.4
         height: 10
     }
 
@@ -1104,7 +1148,7 @@ WowWindow {
         id: questLogScrollFrameButton6
         name: "QuestLogScrollFrameButton6"
         kind: "Button"
-        text: "        Prospect of Faith"
+        text: "        The First and the Last"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton5.left
         anchors.top: questLogScrollFrameButton5.bottom
@@ -1116,12 +1160,12 @@ WowWindow {
         id: questLogScrollFrameButton6NormalText
         name: "QuestLogScrollFrameButton6NormalText"
         kind: "FontString"
-        text: "        Prospect of Faith"
+        text: "        The First and the Last"
         wowParent: "QuestLogScrollFrameButton6"
         anchors.left: questLogScrollFrameButton6.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton6.verticalCenter
-        width: 126.4
+        width: 152.5
         height: 10
     }
 
@@ -1129,12 +1173,12 @@ WowWindow {
         id: questLogScrollFrameButton6Tag
         name: "QuestLogScrollFrameButton6Tag"
         kind: "FontString"
-        text: "(Complete)"
+        text: "(Group)"
         wowParent: "QuestLogScrollFrameButton6"
         anchors.right: questLogScrollFrameButton6.right
         anchors.rightMargin: 2
         anchors.verticalCenter: questLogScrollFrameButton6.verticalCenter
-        width: 66.4
+        width: 45.8
         height: 16
     }
 
@@ -1142,7 +1186,7 @@ WowWindow {
         id: questLogScrollFrameButton7
         name: "QuestLogScrollFrameButton7"
         kind: "Button"
-        text: "Blackrock Depths"
+        text: "Tanaris"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton6.left
         anchors.top: questLogScrollFrameButton6.bottom
@@ -1154,12 +1198,12 @@ WowWindow {
         id: questLogScrollFrameButton7NormalText
         name: "QuestLogScrollFrameButton7NormalText"
         kind: "FontString"
-        text: "Blackrock Depths"
+        text: "Tanaris"
         wowParent: "QuestLogScrollFrameButton7"
         anchors.left: questLogScrollFrameButton7.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton7.verticalCenter
-        width: 102.7
+        width: 42.7
         height: 10
     }
 
@@ -1167,7 +1211,7 @@ WowWindow {
         id: questLogScrollFrameButton8
         name: "QuestLogScrollFrameButton8"
         kind: "Button"
-        text: "        The Love Potion"
+        text: "        Find OOX-17/TN!"
         wowParent: "QuestLogScrollFrameScrollChild"
         anchors.left: questLogScrollFrameButton7.left
         anchors.top: questLogScrollFrameButton7.bottom
@@ -1179,12 +1223,12 @@ WowWindow {
         id: questLogScrollFrameButton8NormalText
         name: "QuestLogScrollFrameButton8NormalText"
         kind: "FontString"
-        text: "        The Love Potion"
+        text: "        Find OOX-17/TN!"
         wowParent: "QuestLogScrollFrameButton8"
         anchors.left: questLogScrollFrameButton8.left
         anchors.leftMargin: 20
         anchors.verticalCenter: questLogScrollFrameButton8.verticalCenter
-        width: 121.7
+        width: 129.6
         height: 10
     }
 
@@ -1192,12 +1236,12 @@ WowWindow {
         id: questLogScrollFrameButton8Tag
         name: "QuestLogScrollFrameButton8Tag"
         kind: "FontString"
-        text: "(Dungeon)"
+        text: "(Complete)"
         wowParent: "QuestLogScrollFrameButton8"
         anchors.right: questLogScrollFrameButton8.right
         anchors.rightMargin: 2
         anchors.verticalCenter: questLogScrollFrameButton8.verticalCenter
-        width: 62.4
+        width: 66.4
         height: 16
     }
 
@@ -1244,6 +1288,7 @@ WowWindow {
         name: "QuestLogScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "QuestLogScrollFrame"
+        style: "ScrollBar"
         anchors.left: questLogScrollFrame.right
         anchors.top: questLogScrollFrame.top
         anchors.topMargin: 13
@@ -1268,6 +1313,7 @@ WowWindow {
         name: "QuestLogScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "QuestLogScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: questLogScrollFrameScrollBar.horizontalCenter
         anchors.top: questLogScrollFrameScrollBar.bottom
         anchors.topMargin: -2
@@ -1280,6 +1326,7 @@ WowWindow {
         name: "QuestLogScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "QuestLogScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: questLogScrollFrameScrollBar.horizontalCenter
         anchors.bottom: questLogScrollFrameScrollBar.top
         anchors.bottomMargin: -2
@@ -1302,15 +1349,15 @@ WowWindow {
         id: questLogTitleText
         name: "QuestLogTitleText"
         kind: "FontString"
-        text: "Quest Log  23/25"
+        text: "Quest Log  4/25"
         wowParent: "QuestLogFrameDiabolicTitlePlate"
         anchors.horizontalCenter: questLogFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: questLogFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 145.4
+        width: 136.7
         height: 14.2
     }
 
     Ghost { id: questInfoMoneyFrameCopperButton; name: "QuestInfoMoneyFrameCopperButton"; x: 587.7; y: 414.3; width: 0; height: 0 }
-    Ghost { id: questLogCountTopRight; name: "QuestLogCountTopRight"; x: 164.4; y: 48.9; width: 0; height: 0 }
+    Ghost { id: questLogCountTopRight; name: "QuestLogCountTopRight"; x: 157.3; y: 48.9; width: 0; height: 0 }
 }

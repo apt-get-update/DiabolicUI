@@ -14,14 +14,14 @@ WowWindow {
         id: battlegroundType1
         name: "BattlegroundType1"
         kind: "Button"
-        text: "Random Battleground"
+        text: "Arathi Basin (Call to Arms)"
         wowParent: "PVPBattlegroundFrame"
         pin: "place"
         anchors.left: pVPBattlegroundFrame.left
         anchors.leftMargin: 18
         anchors.top: pVPBattlegroundFrame.top
         anchors.topMargin: 79
-        width: 295
+        width: 315
         height: 16
     }
 
@@ -29,13 +29,13 @@ WowWindow {
         id: battlegroundType1Text
         name: "BattlegroundType1Text"
         kind: "FontString"
-        text: "Random Battleground"
+        text: "Arathi Basin (Call to Arms)"
         wowParent: "BattlegroundType1"
         anchors.left: battlegroundType1.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType1.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 130.4
+        width: 155.7
         height: 11.9
     }
 
@@ -43,11 +43,11 @@ WowWindow {
         id: battlegroundType2
         name: "BattlegroundType2"
         kind: "Button"
-        text: "Eye of the Storm (Call to Arms)"
+        text: "Warsong Gulch"
         wowParent: "PVPBattlegroundFrame"
         anchors.left: battlegroundType1.left
         anchors.top: battlegroundType1.bottom
-        width: 295
+        width: 315
         height: 16
     }
 
@@ -55,13 +55,13 @@ WowWindow {
         id: battlegroundType2Text
         name: "BattlegroundType2Text"
         kind: "FontString"
-        text: "Eye of the Storm (Call to Arms)"
+        text: "Warsong Gulch"
         wowParent: "BattlegroundType2"
         anchors.left: battlegroundType2.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType2.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 182.5
+        width: 91.7
         height: 11.9
     }
 
@@ -69,11 +69,11 @@ WowWindow {
         id: battlegroundType3
         name: "BattlegroundType3"
         kind: "Button"
-        text: "Arathi Basin (Call to Arms)"
+        text: "Alterac Valley"
         wowParent: "PVPBattlegroundFrame"
         anchors.left: battlegroundType2.left
         anchors.top: battlegroundType2.bottom
-        width: 295
+        width: 315
         height: 16
     }
 
@@ -81,13 +81,13 @@ WowWindow {
         id: battlegroundType3Text
         name: "BattlegroundType3Text"
         kind: "FontString"
-        text: "Arathi Basin (Call to Arms)"
+        text: "Alterac Valley"
         wowParent: "BattlegroundType3"
         anchors.left: battlegroundType3.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType3.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 155.7
+        width: 83
         height: 11.9
     }
 
@@ -95,11 +95,11 @@ WowWindow {
         id: battlegroundType4
         name: "BattlegroundType4"
         kind: "Button"
-        text: "Warsong Gulch"
+        text: "Eye of the Storm"
         wowParent: "PVPBattlegroundFrame"
         anchors.left: battlegroundType3.left
         anchors.top: battlegroundType3.bottom
-        width: 295
+        width: 315
         height: 16
     }
 
@@ -107,13 +107,13 @@ WowWindow {
         id: battlegroundType4Text
         name: "BattlegroundType4Text"
         kind: "FontString"
-        text: "Warsong Gulch"
+        text: "Eye of the Storm"
         wowParent: "BattlegroundType4"
         anchors.left: battlegroundType4.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType4.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 91.7
+        width: 99.6
         height: 11.9
     }
 
@@ -121,7 +121,7 @@ WowWindow {
         id: battlegroundType5
         name: "BattlegroundType5"
         kind: "Button"
-        text: "Alterac Valley"
+        text: "Eye of the Storm"
         wowParent: "PVPBattlegroundFrame"
         anchors.left: battlegroundType4.left
         anchors.top: battlegroundType4.bottom
@@ -133,13 +133,13 @@ WowWindow {
         id: battlegroundType5Text
         name: "BattlegroundType5Text"
         kind: "FontString"
-        text: "Alterac Valley"
+        text: "Eye of the Storm"
         wowParent: "BattlegroundType5"
         anchors.left: battlegroundType5.left
         anchors.leftMargin: 20
         anchors.verticalCenter: battlegroundType5.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 83
+        width: 99.6
         height: 11.9
     }
 
@@ -163,6 +163,7 @@ WowWindow {
         kind: "Button"
         text: "Cancel"
         wowParent: "PVPBattlegroundFrame"
+        style: "Button"
         pin: "place"
         anchors.left: pVPBattlegroundFrameJoinButton.right
         anchors.leftMargin: 8
@@ -203,6 +204,7 @@ WowWindow {
         kind: "Button"
         text: "Join as Group"
         wowParent: "PVPBattlegroundFrame"
+        style: "Button"
         pin: "place"
         anchors.right: pVPBattlegroundFrameJoinButton.left
         anchors.rightMargin: 8
@@ -289,7 +291,7 @@ WowWindow {
         id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount
         name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount"
         kind: "FontString"
-        text: "620"
+        text: "481"
         wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
         anchors.left: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol.right
         anchors.leftMargin: 3
@@ -368,7 +370,7 @@ WowWindow {
         id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount
         name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount"
         kind: "FontString"
-        text: "3720"
+        text: "2883"
         wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
         anchors.left: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol.right
         anchors.leftMargin: 3
@@ -396,10 +398,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "PVPBattlegroundFrame"
         anchors.horizontalCenter: pVPBattlegroundFrameInfoScrollFrame.horizontalCenter
-        anchors.horizontalCenterOffset: 12.5
+        anchors.horizontalCenterOffset: 22.5
         anchors.top: pVPBattlegroundFrameInfoScrollFrame.top
         anchors.topMargin: -6
-        width: 329
+        width: 349
         height: 220
     }
 
@@ -408,6 +410,7 @@ WowWindow {
         name: "PVPBattlegroundFrameInfoScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "PVPBattlegroundFrameInfoScrollFrame"
+        style: "ScrollBar"
         anchors.left: pVPBattlegroundFrameInfoScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: pVPBattlegroundFrameInfoScrollFrame.top
@@ -433,6 +436,7 @@ WowWindow {
         name: "PVPBattlegroundFrameInfoScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "PVPBattlegroundFrameInfoScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: pVPBattlegroundFrameInfoScrollFrameScrollBar.horizontalCenter
         anchors.top: pVPBattlegroundFrameInfoScrollFrameScrollBar.bottom
         width: 16
@@ -444,6 +448,7 @@ WowWindow {
         name: "PVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "PVPBattlegroundFrameInfoScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: pVPBattlegroundFrameInfoScrollFrameScrollBar.horizontalCenter
         anchors.bottom: pVPBattlegroundFrameInfoScrollFrameScrollBar.top
         width: 16
@@ -459,6 +464,7 @@ WowWindow {
         kind: "Button"
         text: "Join Battle"
         wowParent: "PVPBattlegroundFrame"
+        style: "Button"
         pin: "place"
         anchors.horizontalCenter: pVPParentFrame.horizontalCenter
         anchors.horizontalCenterOffset: 12
@@ -495,11 +501,14 @@ WowWindow {
         height: 11.9
     }
 
+    // as wide with no scroll bar: Blizzard widens the rows it hangs from when
+    // the list doesn't scroll, and the panels would follow
     Part {
         id: pVPBattlegroundFrameTypeScrollFrame
         name: "PVPBattlegroundFrameTypeScrollFrame"
         kind: "ScrollFrame"
         wowParent: "PVPBattlegroundFrame"
+        pin: "all"
         anchors.left: battlegroundType1.left
         anchors.top: battlegroundType1.top
         anchors.topMargin: -2
@@ -516,7 +525,7 @@ WowWindow {
         anchors.leftMargin: -6
         anchors.top: pVPBattlegroundFrameTypeScrollFrame.top
         anchors.topMargin: -6
-        width: 329
+        width: 349
         height: 99
     }
 
@@ -525,6 +534,7 @@ WowWindow {
         name: "PVPBattlegroundFrameTypeScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "PVPBattlegroundFrameTypeScrollFrame"
+        style: "ScrollBar"
         anchors.left: pVPBattlegroundFrameTypeScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: pVPBattlegroundFrameTypeScrollFrame.top
@@ -550,6 +560,7 @@ WowWindow {
         name: "PVPBattlegroundFrameTypeScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "PVPBattlegroundFrameTypeScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: pVPBattlegroundFrameTypeScrollFrameScrollBar.horizontalCenter
         anchors.top: pVPBattlegroundFrameTypeScrollFrameScrollBar.bottom
         width: 16
@@ -561,6 +572,7 @@ WowWindow {
         name: "PVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "PVPBattlegroundFrameTypeScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: pVPBattlegroundFrameTypeScrollFrameScrollBar.horizontalCenter
         anchors.bottom: pVPBattlegroundFrameTypeScrollFrameScrollBar.top
         width: 16
@@ -656,12 +668,12 @@ WowWindow {
         id: pVPFrameHonorPoints
         name: "PVPFrameHonorPoints"
         kind: "FontString"
-        text: "50130"
+        text: "3794"
         wowParent: "PVPFrameHonor"
         anchors.left: pVPFrameHonorLabel.right
         anchors.leftMargin: 15
         anchors.verticalCenter: pVPFrameHonorLabel.verticalCenter
-        width: 38.7
+        width: 32.4
         height: 11.9
     }
 
@@ -722,7 +734,7 @@ WowWindow {
         id: pVPHonorLifetimeKills
         name: "PVPHonorLifetimeKills"
         kind: "FontString"
-        text: "66"
+        text: "3"
         wowParent: "PVPHonor"
         anchors.horizontalCenter: pVPHonorLifetimeLabel.horizontalCenter
         anchors.top: pVPHonorLifetimeLabel.bottom
@@ -830,6 +842,7 @@ WowWindow {
         name: "PVPParentFrameCloseButton"
         kind: "Button"
         wowParent: "PVPParentFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: pVPParentFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: pVPParentFrameDiabolic.top
@@ -920,6 +933,7 @@ WowWindow {
         kind: "Button"
         text: "PvP"
         wowParent: "PVPParentFrame"
+        style: "Banner"
         anchors.left: pVPParentFrameDiabolic.left
         anchors.leftMargin: 28
         anchors.top: pVPParentFrameDiabolic.bottom
@@ -934,6 +948,7 @@ WowWindow {
         kind: "Button"
         text: "Battlegrounds"
         wowParent: "PVPParentFrame"
+        style: "Banner"
         anchors.left: pVPParentFrameDiabolic.left
         anchors.leftMargin: 86
         anchors.top: pVPParentFrameDiabolic.bottom

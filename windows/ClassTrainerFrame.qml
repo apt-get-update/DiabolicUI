@@ -15,6 +15,7 @@ WowWindow {
         kind: "Button"
         text: "Exit"
         wowParent: "ClassTrainerFrame"
+        style: "Button"
         anchors.right: classTrainerFrame.right
         anchors.rightMargin: 39
         anchors.bottom: classTrainerFrame.bottom
@@ -95,7 +96,7 @@ WowWindow {
         anchors.left: classTrainerCostLabel.right
         anchors.leftMargin: 5
         anchors.verticalCenter: classTrainerCostLabel.verticalCenter
-        width: 43.4
+        width: 36.3
         height: 13
     }
 
@@ -103,11 +104,12 @@ WowWindow {
         id: classTrainerDetailMoneyFrameCopperButton
         name: "ClassTrainerDetailMoneyFrameCopperButton"
         kind: "Button"
-        text: "80"
+        text: "8"
+        wowParent: "ClassTrainerDetailMoneyFrame"
         anchors.right: classTrainerDetailMoneyFrame.right
         anchors.rightMargin: 13
         anchors.verticalCenter: classTrainerDetailMoneyFrame.verticalCenter
-        width: 30.4
+        width: 23.3
         height: 13
     }
 
@@ -115,12 +117,13 @@ WowWindow {
         id: classTrainerDetailMoneyFrameCopperButtonText
         name: "ClassTrainerDetailMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "80"
+        text: "8"
+        wowParent: "ClassTrainerDetailMoneyFrameCopperButton"
         anchors.right: classTrainerDetailMoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: classTrainerDetailMoneyFrameCopperButton.verticalCenter
-        width: 12
-        height: 12
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -204,6 +207,7 @@ WowWindow {
         name: "ClassTrainerDetailScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "ClassTrainerDetailScrollFrame"
+        style: "ScrollBar"
         anchors.left: classTrainerDetailScrollFrame.right
         anchors.leftMargin: 26
         anchors.top: classTrainerDetailScrollFrame.top
@@ -229,6 +233,7 @@ WowWindow {
         name: "ClassTrainerDetailScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "ClassTrainerDetailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: classTrainerDetailScrollFrameScrollBar.horizontalCenter
         anchors.top: classTrainerDetailScrollFrameScrollBar.bottom
         width: 16
@@ -240,6 +245,7 @@ WowWindow {
         name: "ClassTrainerDetailScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "ClassTrainerDetailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: classTrainerDetailScrollFrameScrollBar.horizontalCenter
         anchors.bottom: classTrainerDetailScrollFrameScrollBar.top
         width: 16
@@ -266,6 +272,7 @@ WowWindow {
         name: "ClassTrainerFrameCloseButton"
         kind: "Button"
         wowParent: "ClassTrainerFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: classTrainerFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: classTrainerFrameDiabolic.top
@@ -354,6 +361,7 @@ WowWindow {
         name: "ClassTrainerFrameFilterDropDown"
         kind: "Frame"
         wowParent: "ClassTrainerFrame"
+        style: "DropDown"
         anchors.left: classTrainerFrameDiabolicBand.left
         anchors.leftMargin: -6
         anchors.verticalCenter: classTrainerFrameDiabolicBand.verticalCenter
@@ -472,6 +480,7 @@ WowWindow {
         name: "ClassTrainerListScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "ClassTrainerListScrollFrame"
+        style: "ScrollBar"
         anchors.left: classTrainerListScrollFrame.right
         anchors.leftMargin: 26
         anchors.top: classTrainerListScrollFrame.top
@@ -497,6 +506,7 @@ WowWindow {
         name: "ClassTrainerListScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "ClassTrainerListScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: classTrainerListScrollFrameScrollBar.horizontalCenter
         anchors.top: classTrainerListScrollFrameScrollBar.bottom
         width: 16
@@ -508,6 +518,7 @@ WowWindow {
         name: "ClassTrainerListScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "ClassTrainerListScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: classTrainerListScrollFrameScrollBar.horizontalCenter
         anchors.bottom: classTrainerListScrollFrameScrollBar.top
         width: 16
@@ -521,8 +532,9 @@ WowWindow {
         wowParent: "ClassTrainerListScrollFrame"
         anchors.left: classTrainerListScrollFrame.left
         anchors.top: classTrainerListScrollFrame.top
+        anchors.topMargin: -2976
         width: 300
-        height: 384
+        height: 3536
     }
 
     Part {
@@ -542,7 +554,7 @@ WowWindow {
         id: classTrainerMoneyFrameCopperButton
         name: "ClassTrainerMoneyFrameCopperButton"
         kind: "Button"
-        text: "53"
+        text: "13"
         wowParent: "ClassTrainerMoneyFrame"
         anchors.right: classTrainerMoneyFrame.right
         anchors.rightMargin: 13
@@ -555,7 +567,7 @@ WowWindow {
         id: classTrainerMoneyFrameCopperButtonText
         name: "ClassTrainerMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "53"
+        text: "13"
         wowParent: "ClassTrainerMoneyFrameCopperButton"
         anchors.right: classTrainerMoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -568,7 +580,7 @@ WowWindow {
         id: classTrainerMoneyFrameGoldButton
         name: "ClassTrainerMoneyFrameGoldButton"
         kind: "Button"
-        text: "3632"
+        text: "3654"
         wowParent: "ClassTrainerMoneyFrame"
         anchors.right: classTrainerMoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -581,7 +593,7 @@ WowWindow {
         id: classTrainerMoneyFrameGoldButtonText
         name: "ClassTrainerMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "3632"
+        text: "3654"
         wowParent: "ClassTrainerMoneyFrameGoldButton"
         anchors.right: classTrainerMoneyFrameGoldButton.right
         anchors.rightMargin: 13
@@ -594,7 +606,7 @@ WowWindow {
         id: classTrainerMoneyFrameSilverButton
         name: "ClassTrainerMoneyFrameSilverButton"
         kind: "Button"
-        text: "10"
+        text: "16"
         wowParent: "ClassTrainerMoneyFrame"
         anchors.right: classTrainerMoneyFrameCopperButton.left
         anchors.rightMargin: 4
@@ -607,7 +619,7 @@ WowWindow {
         id: classTrainerMoneyFrameSilverButtonText
         name: "ClassTrainerMoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "10"
+        text: "16"
         wowParent: "ClassTrainerMoneyFrameSilverButton"
         anchors.right: classTrainerMoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -620,20 +632,20 @@ WowWindow {
         id: classTrainerNameText
         name: "ClassTrainerNameText"
         kind: "FontString"
-        text: "High Priestess Laurena"
+        text: "Brother Joshua"
         wowParent: "ClassTrainerFrameDiabolicTitlePlate"
         anchors.horizontalCenter: classTrainerFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: classTrainerFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 200
-        height: 16
+        width: 141.4
+        height: 14.2
     }
 
     Part {
         id: classTrainerSkill1
         name: "ClassTrainerSkill1"
         kind: "Button"
-        text: "Discipline"
+        text: "  Psychic Scream"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerFrame.left
         anchors.leftMargin: 22
@@ -647,7 +659,7 @@ WowWindow {
         id: classTrainerSkill10
         name: "ClassTrainerSkill10"
         kind: "Button"
-        text: "  Lightwell"
+        text: "  Shadow Word: Pain"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill9.left
         anchors.top: classTrainerSkill9.bottom
@@ -659,7 +671,7 @@ WowWindow {
         id: classTrainerSkill10SubText
         name: "ClassTrainerSkill10SubText"
         kind: "FontString"
-        text: "(Rank 2)"
+        text: "(Rank 9)"
         wowParent: "ClassTrainerSkill10"
         anchors.right: classTrainerSkill10.right
         anchors.rightMargin: 2
@@ -672,7 +684,7 @@ WowWindow {
         id: classTrainerSkill10Text
         name: "ClassTrainerSkill10Text"
         kind: "FontString"
-        text: "  Lightwell"
+        text: "  Shadow Word: Pain"
         wowParent: "ClassTrainerSkill10"
         anchors.left: classTrainerSkill10Highlight.right
         anchors.leftMargin: 2
@@ -686,7 +698,7 @@ WowWindow {
         id: classTrainerSkill11
         name: "ClassTrainerSkill11"
         kind: "Button"
-        text: "  Circle of Healing"
+        text: "  Shadowfiend"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill10.left
         anchors.top: classTrainerSkill10.bottom
@@ -698,7 +710,7 @@ WowWindow {
         id: classTrainerSkill11SubText
         name: "ClassTrainerSkill11SubText"
         kind: "FontString"
-        text: "(Rank 2)"
+        text: "(Rank 4)"
         wowParent: "ClassTrainerSkill11"
         anchors.right: classTrainerSkill11.right
         anchors.rightMargin: 2
@@ -711,13 +723,13 @@ WowWindow {
         id: classTrainerSkill11Text
         name: "ClassTrainerSkill11Text"
         kind: "FontString"
-        text: "  Circle of Healing"
+        text: "  Shadowfiend"
         wowParent: "ClassTrainerSkill11"
         anchors.left: classTrainerSkill11Highlight.right
         anchors.leftMargin: 2
         anchors.verticalCenter: classTrainerSkill11Highlight.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 210
+        width: 270
         height: 13
     }
 
@@ -725,7 +737,7 @@ WowWindow {
         id: classTrainerSkill1SubText
         name: "ClassTrainerSkill1SubText"
         kind: "FontString"
-        text: "(Rank 3)"
+        text: "(Rank 4)"
         wowParent: "ClassTrainerSkill1"
         anchors.right: classTrainerSkill1.right
         anchors.rightMargin: 2
@@ -738,13 +750,13 @@ WowWindow {
         id: classTrainerSkill1Text
         name: "ClassTrainerSkill1Text"
         kind: "FontString"
-        text: "Discipline"
+        text: "  Psychic Scream"
         wowParent: "ClassTrainerSkill1"
         anchors.left: classTrainerSkill1Highlight.right
         anchors.leftMargin: 2
         anchors.verticalCenter: classTrainerSkill1Highlight.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 270
+        width: 210
         height: 13
     }
 
@@ -752,7 +764,7 @@ WowWindow {
         id: classTrainerSkill2
         name: "ClassTrainerSkill2"
         kind: "Button"
-        text: "  Penance"
+        text: "  Shadow Protection"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill1.left
         anchors.top: classTrainerSkill1.bottom
@@ -764,7 +776,7 @@ WowWindow {
         id: classTrainerSkill2SubText
         name: "ClassTrainerSkill2SubText"
         kind: "FontString"
-        text: "(Rank 2)"
+        text: "(Rank 3)"
         wowParent: "ClassTrainerSkill2"
         anchors.right: classTrainerSkill2.right
         anchors.rightMargin: 2
@@ -777,7 +789,7 @@ WowWindow {
         id: classTrainerSkill2Text
         name: "ClassTrainerSkill2Text"
         kind: "FontString"
-        text: "  Penance"
+        text: "  Shadow Protection"
         wowParent: "ClassTrainerSkill2"
         anchors.left: classTrainerSkill2Highlight.right
         anchors.leftMargin: 2
@@ -791,7 +803,7 @@ WowWindow {
         id: classTrainerSkill3
         name: "ClassTrainerSkill3"
         kind: "Button"
-        text: "  Penance"
+        text: "  Mind Blast"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill2.left
         anchors.top: classTrainerSkill2.bottom
@@ -803,7 +815,7 @@ WowWindow {
         id: classTrainerSkill3SubText
         name: "ClassTrainerSkill3SubText"
         kind: "FontString"
-        text: "(Rank 3)"
+        text: "(Rank 9)"
         wowParent: "ClassTrainerSkill3"
         anchors.right: classTrainerSkill3.right
         anchors.rightMargin: 2
@@ -816,7 +828,7 @@ WowWindow {
         id: classTrainerSkill3Text
         name: "ClassTrainerSkill3Text"
         kind: "FontString"
-        text: "  Penance"
+        text: "  Mind Blast"
         wowParent: "ClassTrainerSkill3"
         anchors.left: classTrainerSkill3Highlight.right
         anchors.leftMargin: 2
@@ -830,7 +842,7 @@ WowWindow {
         id: classTrainerSkill4
         name: "ClassTrainerSkill4"
         kind: "Button"
-        text: "  Penance"
+        text: "  Shadow Word: Pain"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill3.left
         anchors.top: classTrainerSkill3.bottom
@@ -842,7 +854,7 @@ WowWindow {
         id: classTrainerSkill4SubText
         name: "ClassTrainerSkill4SubText"
         kind: "FontString"
-        text: "(Rank 4)"
+        text: "(Rank 8)"
         wowParent: "ClassTrainerSkill4"
         anchors.right: classTrainerSkill4.right
         anchors.rightMargin: 2
@@ -855,7 +867,7 @@ WowWindow {
         id: classTrainerSkill4Text
         name: "ClassTrainerSkill4Text"
         kind: "FontString"
-        text: "  Penance"
+        text: "  Shadow Word: Pain"
         wowParent: "ClassTrainerSkill4"
         anchors.left: classTrainerSkill4Highlight.right
         anchors.leftMargin: 2
@@ -869,7 +881,7 @@ WowWindow {
         id: classTrainerSkill5
         name: "ClassTrainerSkill5"
         kind: "Button"
-        text: "Holy"
+        text: "  Devouring Plague"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill4.left
         anchors.top: classTrainerSkill4.bottom
@@ -881,7 +893,7 @@ WowWindow {
         id: classTrainerSkill5SubText
         name: "ClassTrainerSkill5SubText"
         kind: "FontString"
-        text: "(Rank 4)"
+        text: "(Rank 6)"
         wowParent: "ClassTrainerSkill5"
         anchors.right: classTrainerSkill5.right
         anchors.rightMargin: 2
@@ -894,13 +906,13 @@ WowWindow {
         id: classTrainerSkill5Text
         name: "ClassTrainerSkill5Text"
         kind: "FontString"
-        text: "Holy"
+        text: "  Devouring Plague"
         wowParent: "ClassTrainerSkill5"
         anchors.left: classTrainerSkill5Highlight.right
         anchors.leftMargin: 2
         anchors.verticalCenter: classTrainerSkill5Highlight.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 270
+        width: 210
         height: 13
     }
 
@@ -908,7 +920,7 @@ WowWindow {
         id: classTrainerSkill6
         name: "ClassTrainerSkill6"
         kind: "Button"
-        text: "  Desperate Prayer"
+        text: "  Mind Flay"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill5.left
         anchors.top: classTrainerSkill5.bottom
@@ -920,7 +932,7 @@ WowWindow {
         id: classTrainerSkill6SubText
         name: "ClassTrainerSkill6SubText"
         kind: "FontString"
-        text: "(Rank 2)"
+        text: "(Rank 6)"
         wowParent: "ClassTrainerSkill6"
         anchors.right: classTrainerSkill6.right
         anchors.rightMargin: 2
@@ -933,7 +945,7 @@ WowWindow {
         id: classTrainerSkill6Text
         name: "ClassTrainerSkill6Text"
         kind: "FontString"
-        text: "  Desperate Prayer"
+        text: "  Mind Flay"
         wowParent: "ClassTrainerSkill6"
         anchors.left: classTrainerSkill6Highlight.right
         anchors.leftMargin: 2
@@ -947,7 +959,7 @@ WowWindow {
         id: classTrainerSkill7
         name: "ClassTrainerSkill7"
         kind: "Button"
-        text: "  Desperate Prayer"
+        text: "  Vampiric Touch"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill6.left
         anchors.top: classTrainerSkill6.bottom
@@ -959,7 +971,7 @@ WowWindow {
         id: classTrainerSkill7SubText
         name: "ClassTrainerSkill7SubText"
         kind: "FontString"
-        text: "(Rank 3)"
+        text: "(Rank 2)"
         wowParent: "ClassTrainerSkill7"
         anchors.right: classTrainerSkill7.right
         anchors.rightMargin: 2
@@ -972,7 +984,7 @@ WowWindow {
         id: classTrainerSkill7Text
         name: "ClassTrainerSkill7Text"
         kind: "FontString"
-        text: "  Desperate Prayer"
+        text: "  Vampiric Touch"
         wowParent: "ClassTrainerSkill7"
         anchors.left: classTrainerSkill7Highlight.right
         anchors.leftMargin: 2
@@ -986,7 +998,7 @@ WowWindow {
         id: classTrainerSkill8
         name: "ClassTrainerSkill8"
         kind: "Button"
-        text: "  Desperate Prayer"
+        text: "  Shadow Word: Death"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill7.left
         anchors.top: classTrainerSkill7.bottom
@@ -998,7 +1010,7 @@ WowWindow {
         id: classTrainerSkill8SubText
         name: "ClassTrainerSkill8SubText"
         kind: "FontString"
-        text: "(Rank 4)"
+        text: "(Rank 1)"
         wowParent: "ClassTrainerSkill8"
         anchors.right: classTrainerSkill8.right
         anchors.rightMargin: 2
@@ -1011,7 +1023,7 @@ WowWindow {
         id: classTrainerSkill8Text
         name: "ClassTrainerSkill8Text"
         kind: "FontString"
-        text: "  Desperate Prayer"
+        text: "  Shadow Word: Death"
         wowParent: "ClassTrainerSkill8"
         anchors.left: classTrainerSkill8Highlight.right
         anchors.leftMargin: 2
@@ -1025,7 +1037,7 @@ WowWindow {
         id: classTrainerSkill9
         name: "ClassTrainerSkill9"
         kind: "Button"
-        text: "  Desperate Prayer"
+        text: "  Mind Blast"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill8.left
         anchors.top: classTrainerSkill8.bottom
@@ -1037,12 +1049,12 @@ WowWindow {
         id: classTrainerSkill9SubText
         name: "ClassTrainerSkill9SubText"
         kind: "FontString"
-        text: "(Rank 5)"
+        text: "(Rank 10)"
         wowParent: "ClassTrainerSkill9"
         anchors.right: classTrainerSkill9.right
         anchors.rightMargin: 2
         anchors.verticalCenter: classTrainerSkill9.verticalCenter
-        width: 44.2
+        width: 50.6
         height: 10.3
     }
 
@@ -1050,7 +1062,7 @@ WowWindow {
         id: classTrainerSkill9Text
         name: "ClassTrainerSkill9Text"
         kind: "FontString"
-        text: "  Desperate Prayer"
+        text: "  Mind Blast"
         wowParent: "ClassTrainerSkill9"
         anchors.left: classTrainerSkill9Highlight.right
         anchors.leftMargin: 2
@@ -1064,13 +1076,13 @@ WowWindow {
         id: classTrainerSkillDescription
         name: "ClassTrainerSkillDescription"
         kind: "FontString"
-        text: "Launches a volley of holy light at the target, causing 306 to 307 Holy damage to an enemy, or 845 to 955 healing to an ally instantly and every 0.89 sec for 1.78 sec."
+        text: "Power infuses the target, increasing their Stamina by 3 for 30 min."
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerCostLabel.left
         anchors.top: classTrainerCostLabel.bottom
         anchors.topMargin: 10
         width: 290
-        height: 41.1
+        height: 20.5
     }
 
     Part {
@@ -1101,7 +1113,7 @@ WowWindow {
         id: classTrainerSkillName
         name: "ClassTrainerSkillName"
         kind: "FontString"
-        text: "Penance"
+        text: "Power Word: Fortitude"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerDetailScrollChildFrame.left
         anchors.leftMargin: 46
@@ -1119,14 +1131,14 @@ WowWindow {
         anchors.left: classTrainerSkillName.left
         anchors.top: classTrainerSkillName.bottom
         width: 244
-        height: 10.3
+        height: 1
     }
 
     Part {
         id: classTrainerSubSkillName
         name: "ClassTrainerSubSkillName"
         kind: "FontString"
-        text: "(Rank 2)"
+        text: "(Rank 1)"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerSkillName.right
         anchors.leftMargin: 5
@@ -1141,6 +1153,7 @@ WowWindow {
         kind: "Button"
         text: "Train"
         wowParent: "ClassTrainerFrame"
+        style: "Button"
         anchors.right: classTrainerFrame.right
         anchors.rightMargin: 122.5
         anchors.bottom: classTrainerFrame.bottom

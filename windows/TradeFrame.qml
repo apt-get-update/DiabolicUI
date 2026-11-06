@@ -15,6 +15,7 @@ WowWindow {
         kind: "Button"
         text: "Cancel"
         wowParent: "TradeFrame"
+        style: "Button"
         anchors.right: tradeFrame.right
         anchors.rightMargin: 33
         anchors.bottom: tradeFrame.bottom
@@ -28,6 +29,7 @@ WowWindow {
         name: "TradeFrameCloseButton"
         kind: "Button"
         wowParent: "TradeFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: tradeFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: tradeFrameDiabolic.top
@@ -130,7 +132,7 @@ WowWindow {
         id: tradeFrameRecipientNameText
         name: "TradeFrameRecipientNameText"
         kind: "FontString"
-        text: "Unluckylock"
+        text: "Velkara"
         wowParent: "TradeFrame"
         pin: "place"
         anchors.horizontalCenter: tradeRecipientItem1.horizontalCenter
@@ -146,6 +148,7 @@ WowWindow {
         kind: "Button"
         text: "Trade"
         wowParent: "TradeFrame"
+        style: "Button"
         anchors.right: tradeFrame.right
         anchors.rightMargin: 114.6
         anchors.bottom: tradeFrame.bottom

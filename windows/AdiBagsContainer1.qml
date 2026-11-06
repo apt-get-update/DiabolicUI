@@ -6,8 +6,8 @@ import QtQuick
 WowWindow {
     id: adiBagsContainer1
     name: "AdiBagsContainer1"
-    width: 828
-    height: 445
+    width: 381
+    height: 558
 
     Part {
         id: adiBagsAnchor2
@@ -16,7 +16,7 @@ WowWindow {
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1Title.left
         anchors.top: adiBagsContainer1Title.top
-        width: 761.9
+        width: 314.9
         height: 18
     }
 
@@ -29,8 +29,8 @@ WowWindow {
         anchors.leftMargin: -18
         anchors.top: adiBagsContainer1.top
         anchors.topMargin: -18
-        width: 864
-        height: 481
+        width: 417
+        height: 594
     }
 
     Part {
@@ -40,8 +40,8 @@ WowWindow {
         wowParent: "AdiBagsContainer1Diabolic"
         anchors.left: adiBagsContainer1Diabolic.left
         anchors.top: adiBagsContainer1Diabolic.top
-        width: 864
-        height: 481
+        width: 417
+        height: 594
     }
 
     Part {
@@ -66,7 +66,7 @@ WowWindow {
         anchors.left: adiBagsSimpleLayeredRegion1.right
         anchors.leftMargin: 4
         anchors.verticalCenter: adiBagsSimpleLayeredRegion1.verticalCenter
-        width: 761.9
+        width: 314.9
         height: 18
     }
 
@@ -74,10 +74,10 @@ WowWindow {
         id: adiBagsItemButton1
         name: "AdiBagsItemButton1"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection6.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection3.top
         anchors.topMargin: 59
         width: 37
         height: 37
@@ -88,9 +88,9 @@ WowWindow {
         name: "AdiBagsItemButton10"
         kind: "Button"
         wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection6.top
+        anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection9.top
         anchors.topMargin: 59
         width: 37
         height: 37
@@ -100,11 +100,11 @@ WowWindow {
         id: adiBagsItemButton100
         name: "AdiBagsItemButton100"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 328
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -128,9 +128,8 @@ WowWindow {
         name: "AdiBagsItemButton11"
         kind: "Button"
         wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection4.top
+        anchors.left: adiBagsSection9.left
+        anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -155,8 +154,8 @@ WowWindow {
         name: "AdiBagsItemButton12"
         kind: "Button"
         wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection4.left
-        anchors.top: adiBagsSection4.top
+        anchors.left: adiBagsSection12.left
+        anchors.top: adiBagsSection12.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -166,13 +165,14 @@ WowWindow {
         id: adiBagsItemButton12Count
         name: "AdiBagsItemButton12Count"
         kind: "FontString"
-        text: "20"
+        text: "4"
+        wowParent: "AdiBagsItemButton12"
         anchors.right: adiBagsItemButton12.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton12.bottom
         anchors.bottomMargin: 2
-        width: 12
-        height: 12
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -191,9 +191,9 @@ WowWindow {
         id: adiBagsItemButton13
         name: "AdiBagsItemButton13"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
+        wowParent: "AdiBagsItemContainer1"
         anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 123
+        anchors.leftMargin: 205
         anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
@@ -231,9 +231,10 @@ WowWindow {
         id: adiBagsItemButton14
         name: "AdiBagsItemButton14"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsStackButton1.left
-        anchors.top: adiBagsStackButton1.top
+        wowParent: "AdiBagsItemContainer4"
+        anchors.left: adiBagsSection2.left
+        anchors.top: adiBagsSection2.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -269,11 +270,11 @@ WowWindow {
         id: adiBagsItemButton15
         name: "AdiBagsItemButton15"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 328
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsStackButton1.left
+        anchors.leftMargin: 705.5
+        anchors.top: adiBagsStackButton1.top
+        anchors.topMargin: -245.6
         width: 37
         height: 37
     }
@@ -282,7 +283,7 @@ WowWindow {
         id: adiBagsItemButton15Count
         name: "AdiBagsItemButton15Count"
         kind: "FontString"
-        text: "15"
+        text: "20"
         wowParent: "AdiBagsItemButton15"
         anchors.right: adiBagsItemButton15.right
         anchors.rightMargin: 5
@@ -309,10 +310,10 @@ WowWindow {
         id: adiBagsItemButton16
         name: "AdiBagsItemButton16"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection1.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection1.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -322,7 +323,7 @@ WowWindow {
         id: adiBagsItemButton16Count
         name: "AdiBagsItemButton16Count"
         kind: "FontString"
-        text: "18"
+        text: "20"
         wowParent: "AdiBagsItemButton16"
         anchors.right: adiBagsItemButton16.right
         anchors.rightMargin: 5
@@ -336,10 +337,10 @@ WowWindow {
         id: adiBagsItemButton17
         name: "AdiBagsItemButton17"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection5.left
+        wowParent: "AdiBagsItemContainer-2"
+        anchors.left: adiBagsSection8.left
         anchors.leftMargin: 164
-        anchors.top: adiBagsSection5.top
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -359,14 +360,26 @@ WowWindow {
     }
 
     Part {
+        id: adiBagsItemButton17Stock
+        name: "AdiBagsItemButton17Stock"
+        kind: "FontString"
+        text: "Ke"
+        wowParent: "AdiBagsItemButton17"
+        anchors.left: adiBagsItemButton17.left
+        anchors.top: adiBagsItemButton17.top
+        anchors.topMargin: 2
+        width: 18.2
+        height: 14.2
+    }
+
+    Part {
         id: adiBagsItemButton18
         name: "AdiBagsItemButton18"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection4.left
+        anchors.top: adiBagsSection4.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -375,7 +388,7 @@ WowWindow {
         id: adiBagsItemButton18Count
         name: "AdiBagsItemButton18Count"
         kind: "FontString"
-        text: "2"
+        text: "8"
         wowParent: "AdiBagsItemButton18"
         anchors.right: adiBagsItemButton18.right
         anchors.rightMargin: 5
@@ -389,10 +402,10 @@ WowWindow {
         id: adiBagsItemButton19
         name: "AdiBagsItemButton19"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection8.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -402,7 +415,7 @@ WowWindow {
         id: adiBagsItemButton19Count
         name: "AdiBagsItemButton19Count"
         kind: "FontString"
-        text: "16"
+        text: "20"
         wowParent: "AdiBagsItemButton19"
         anchors.right: adiBagsItemButton19.right
         anchors.rightMargin: 5
@@ -429,13 +442,13 @@ WowWindow {
         id: adiBagsItemButton1Count
         name: "AdiBagsItemButton1Count"
         kind: "FontString"
-        text: "8"
+        text: "20"
         wowParent: "AdiBagsItemButton1"
         anchors.right: adiBagsItemButton1.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton1.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -456,11 +469,11 @@ WowWindow {
         id: adiBagsItemButton2
         name: "AdiBagsItemButton2"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection8.left
+        anchors.leftMargin: 246
+        anchors.top: adiBagsSection8.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -469,11 +482,11 @@ WowWindow {
         id: adiBagsItemButton20
         name: "AdiBagsItemButton20"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection9.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -507,11 +520,11 @@ WowWindow {
         id: adiBagsItemButton21
         name: "AdiBagsItemButton21"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection7.left
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection6.left
         anchors.leftMargin: 41
-        anchors.top: adiBagsSection7.top
-        anchors.topMargin: 18
+        anchors.top: adiBagsSection6.top
+        anchors.topMargin: 100
         width: 37
         height: 37
     }
@@ -520,7 +533,7 @@ WowWindow {
         id: adiBagsItemButton21Count
         name: "AdiBagsItemButton21Count"
         kind: "FontString"
-        text: "17"
+        text: "20"
         wowParent: "AdiBagsItemButton21"
         anchors.right: adiBagsItemButton21.right
         anchors.rightMargin: 5
@@ -546,11 +559,11 @@ WowWindow {
         id: adiBagsItemButton22
         name: "AdiBagsItemButton22"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection1.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection1.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -587,10 +600,10 @@ WowWindow {
         name: "AdiBagsItemButton23"
         kind: "Button"
         wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 182
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -625,9 +638,10 @@ WowWindow {
         id: adiBagsItemButton24
         name: "AdiBagsItemButton24"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection3.left
-        anchors.top: adiBagsSection3.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection2.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection2.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -651,10 +665,11 @@ WowWindow {
         id: adiBagsItemButton25
         name: "AdiBagsItemButton25"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer4"
+        anchors.left: adiBagsSection7.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection7.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -689,10 +704,10 @@ WowWindow {
         id: adiBagsItemButton26
         name: "AdiBagsItemButton26"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection6.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -754,10 +769,10 @@ WowWindow {
         id: adiBagsItemButton28
         name: "AdiBagsItemButton28"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection8.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -780,10 +795,10 @@ WowWindow {
         id: adiBagsItemButton29
         name: "AdiBagsItemButton29"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection7.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection7.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection4.left
+        anchors.leftMargin: 328
+        anchors.top: adiBagsSection4.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -833,11 +848,11 @@ WowWindow {
         id: adiBagsItemButton3
         name: "AdiBagsItemButton3"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 182
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection9.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -846,10 +861,10 @@ WowWindow {
         id: adiBagsItemButton30
         name: "AdiBagsItemButton30"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection9.left
-        anchors.top: adiBagsSection9.top
-        anchors.topMargin: 18
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection8.left
+        anchors.top: adiBagsSection8.top
+        anchors.topMargin: 59
         width: 37
         height: 37
     }
@@ -869,13 +884,25 @@ WowWindow {
     }
 
     Part {
+        id: adiBagsItemButton30Stock
+        name: "AdiBagsItemButton30Stock"
+        kind: "FontString"
+        text: "Ke"
+        wowParent: "AdiBagsItemButton30"
+        anchors.left: adiBagsItemButton30.left
+        anchors.top: adiBagsItemButton30.top
+        anchors.topMargin: 2
+        width: 18.2
+        height: 14.2
+    }
+
+    Part {
         id: adiBagsItemButton31
         name: "AdiBagsItemButton31"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection8.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.top: adiBagsSection3.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -885,13 +912,13 @@ WowWindow {
         id: adiBagsItemButton31Count
         name: "AdiBagsItemButton31Count"
         kind: "FontString"
-        text: "20"
+        text: "4"
         wowParent: "AdiBagsItemButton31"
         anchors.right: adiBagsItemButton31.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton31.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -912,10 +939,10 @@ WowWindow {
         id: adiBagsItemButton32
         name: "AdiBagsItemButton32"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection6.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 205
+        anchors.top: adiBagsSection3.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -939,9 +966,9 @@ WowWindow {
         id: adiBagsItemButton33
         name: "AdiBagsItemButton33"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
+        wowParent: "AdiBagsItemContainer4"
         anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 123
+        anchors.leftMargin: 246
         anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
@@ -965,10 +992,9 @@ WowWindow {
         id: adiBagsItemButton34
         name: "AdiBagsItemButton34"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection9.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection1.left
+        anchors.top: adiBagsSection1.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1006,10 +1032,10 @@ WowWindow {
         name: "AdiBagsItemButton35"
         kind: "Button"
         wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1032,9 +1058,10 @@ WowWindow {
         id: adiBagsItemButton36
         name: "AdiBagsItemButton36"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.top: adiBagsSection8.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection6.top
         anchors.topMargin: 59
         width: 37
         height: 37
@@ -1044,13 +1071,14 @@ WowWindow {
         id: adiBagsItemButton36Count
         name: "AdiBagsItemButton36Count"
         kind: "FontString"
-        text: "4"
+        text: "6"
+        wowParent: "AdiBagsItemButton36"
         anchors.right: adiBagsItemButton36.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton36.bottom
         anchors.bottomMargin: 2
-        width: 6
-        height: 12
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -1070,10 +1098,11 @@ WowWindow {
         id: adiBagsItemButton37
         name: "AdiBagsItemButton37"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.top: adiBagsSection8.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection4.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection4.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1110,9 +1139,10 @@ WowWindow {
         name: "AdiBagsItemButton38"
         kind: "Button"
         wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        anchors.left: adiBagsSection8.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection8.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1132,14 +1162,27 @@ WowWindow {
     }
 
     Part {
+        id: adiBagsItemButton38Stock
+        name: "AdiBagsItemButton38Stock"
+        kind: "FontString"
+        text: "Ke"
+        wowParent: "AdiBagsItemButton38"
+        anchors.left: adiBagsItemButton38.left
+        anchors.top: adiBagsItemButton38.top
+        anchors.topMargin: 2
+        width: 18.2
+        height: 14.2
+    }
+
+    Part {
         id: adiBagsItemButton39
         name: "AdiBagsItemButton39"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection10.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection10.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1148,13 +1191,13 @@ WowWindow {
         id: adiBagsItemButton39Count
         name: "AdiBagsItemButton39Count"
         kind: "FontString"
-        text: "4"
+        text: "20"
         wowParent: "AdiBagsItemButton39"
         anchors.right: adiBagsItemButton39.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton39.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1176,9 +1219,11 @@ WowWindow {
         id: adiBagsItemButton4
         name: "AdiBagsItemButton4"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsStackButton1.left
-        anchors.top: adiBagsStackButton1.top
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection6.top
+        anchors.topMargin: 59
         width: 37
         height: 37
     }
@@ -1187,10 +1232,10 @@ WowWindow {
         id: adiBagsItemButton40
         name: "AdiBagsItemButton40"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection8.left
         anchors.leftMargin: 41
-        anchors.top: adiBagsSection6.top
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1214,11 +1259,11 @@ WowWindow {
         id: adiBagsItemButton41
         name: "AdiBagsItemButton41"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
+        wowParent: "AdiBagsItemContainer0"
         anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 328
+        anchors.leftMargin: 205
         anchors.top: adiBagsSection6.top
-        anchors.topMargin: 18
+        anchors.topMargin: 100
         width: 37
         height: 37
     }
@@ -1227,7 +1272,7 @@ WowWindow {
         id: adiBagsItemButton41Count
         name: "AdiBagsItemButton41Count"
         kind: "FontString"
-        text: "32"
+        text: "20"
         wowParent: "AdiBagsItemButton41"
         anchors.right: adiBagsItemButton41.right
         anchors.rightMargin: 5
@@ -1241,10 +1286,10 @@ WowWindow {
         id: adiBagsItemButton42
         name: "AdiBagsItemButton42"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection4.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection3.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1254,13 +1299,13 @@ WowWindow {
         id: adiBagsItemButton42Count
         name: "AdiBagsItemButton42Count"
         kind: "FontString"
-        text: "20"
+        text: "3"
         wowParent: "AdiBagsItemButton42"
         anchors.right: adiBagsItemButton42.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton42.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1268,9 +1313,9 @@ WowWindow {
         id: adiBagsItemButton43
         name: "AdiBagsItemButton43"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
+        wowParent: "AdiBagsItemContainer0"
         anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 41
+        anchors.leftMargin: 205
         anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
@@ -1295,10 +1340,9 @@ WowWindow {
         id: adiBagsItemButton44
         name: "AdiBagsItemButton44"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 328
-        anchors.top: adiBagsSection4.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection5.left
+        anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1308,13 +1352,13 @@ WowWindow {
         id: adiBagsItemButton44Count
         name: "AdiBagsItemButton44Count"
         kind: "FontString"
-        text: "20"
+        text: "6"
         wowParent: "AdiBagsItemButton44"
         anchors.right: adiBagsItemButton44.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton44.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1322,11 +1366,9 @@ WowWindow {
         id: adiBagsItemButton45
         name: "AdiBagsItemButton45"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection3.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection3.top
-        anchors.topMargin: 18
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsStackButton1.left
+        anchors.top: adiBagsStackButton1.top
         width: 37
         height: 37
     }
@@ -1335,7 +1377,7 @@ WowWindow {
         id: adiBagsItemButton45Count
         name: "AdiBagsItemButton45Count"
         kind: "FontString"
-        text: "16"
+        text: "33"
         wowParent: "AdiBagsItemButton45"
         anchors.right: adiBagsItemButton45.right
         anchors.rightMargin: 5
@@ -1362,10 +1404,10 @@ WowWindow {
         id: adiBagsItemButton46
         name: "AdiBagsItemButton46"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection6.top
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsSection4.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection4.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1389,10 +1431,9 @@ WowWindow {
         id: adiBagsItemButton47
         name: "AdiBagsItemButton47"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection7.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection7.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection11.left
+        anchors.top: adiBagsSection11.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1428,11 +1469,11 @@ WowWindow {
         id: adiBagsItemButton48
         name: "AdiBagsItemButton48"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
+        wowParent: "AdiBagsItemContainer0"
         anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 328
+        anchors.leftMargin: 205
         anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1441,13 +1482,13 @@ WowWindow {
         id: adiBagsItemButton48Count
         name: "AdiBagsItemButton48Count"
         kind: "FontString"
-        text: "6"
+        text: "23"
         wowParent: "AdiBagsItemButton48"
         anchors.right: adiBagsItemButton48.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton48.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1457,9 +1498,9 @@ WowWindow {
         kind: "Button"
         wowParent: "AdiBagsItemContainer4"
         anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 246
+        anchors.leftMargin: 82
         anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        anchors.topMargin: 59
         width: 37
         height: 37
     }
@@ -1496,10 +1537,10 @@ WowWindow {
         id: adiBagsItemButton5
         name: "AdiBagsItemButton5"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection9.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection6.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1509,9 +1550,9 @@ WowWindow {
         id: adiBagsItemButton50
         name: "AdiBagsItemButton50"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
+        wowParent: "AdiBagsItemContainer1"
         anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 328
+        anchors.leftMargin: 123
         anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
@@ -1535,11 +1576,11 @@ WowWindow {
         id: adiBagsItemButton51
         name: "AdiBagsItemButton51"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 246
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1562,11 +1603,10 @@ WowWindow {
         id: adiBagsItemButton52
         name: "AdiBagsItemButton52"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 182
+        wowParent: "AdiBagsItemContainer4"
+        anchors.left: adiBagsSection7.left
+        anchors.top: adiBagsSection7.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1591,9 +1631,9 @@ WowWindow {
         kind: "Button"
         wowParent: "AdiBagsItemContainer0"
         anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 123
+        anchors.leftMargin: 41
         anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        anchors.topMargin: 182
         width: 37
         height: 37
     }
@@ -1602,13 +1642,13 @@ WowWindow {
         id: adiBagsItemButton53Count
         name: "AdiBagsItemButton53Count"
         kind: "FontString"
-        text: "4"
+        text: "17"
         wowParent: "AdiBagsItemButton53"
         anchors.right: adiBagsItemButton53.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton53.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1616,11 +1656,11 @@ WowWindow {
         id: adiBagsItemButton54
         name: "AdiBagsItemButton54"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
+        wowParent: "AdiBagsItemContainer4"
         anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 82
+        anchors.leftMargin: 246
         anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        anchors.topMargin: 100
         width: 37
         height: 37
     }
@@ -1629,13 +1669,13 @@ WowWindow {
         id: adiBagsItemButton54Count
         name: "AdiBagsItemButton54Count"
         kind: "FontString"
-        text: "2"
+        text: "20"
         wowParent: "AdiBagsItemButton54"
         anchors.right: adiBagsItemButton54.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton54.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1644,10 +1684,10 @@ WowWindow {
         name: "AdiBagsItemButton55"
         kind: "Button"
         wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        anchors.left: adiBagsSection8.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection8.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1656,13 +1696,13 @@ WowWindow {
         id: adiBagsItemButton55Count
         name: "AdiBagsItemButton55Count"
         kind: "FontString"
-        text: "20"
+        text: "4"
         wowParent: "AdiBagsItemButton55"
         anchors.right: adiBagsItemButton55.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton55.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1670,9 +1710,9 @@ WowWindow {
         id: adiBagsItemButton56
         name: "AdiBagsItemButton56"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
+        wowParent: "AdiBagsItemContainer4"
         anchors.left: adiBagsSection3.left
-        anchors.leftMargin: 41
+        anchors.leftMargin: 123
         anchors.top: adiBagsSection3.top
         anchors.topMargin: 18
         width: 37
@@ -1683,10 +1723,9 @@ WowWindow {
         id: adiBagsItemButton57
         name: "AdiBagsItemButton57"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection6.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection10.left
+        anchors.top: adiBagsSection10.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1696,10 +1735,9 @@ WowWindow {
         id: adiBagsItemButton58
         name: "AdiBagsItemButton58"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection9.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.top: adiBagsSection3.top
         anchors.topMargin: 59
         width: 37
         height: 37
@@ -1709,13 +1747,14 @@ WowWindow {
         id: adiBagsItemButton58Count
         name: "AdiBagsItemButton58Count"
         kind: "FontString"
-        text: "17"
+        text: "20"
+        wowParent: "AdiBagsItemButton58"
         anchors.right: adiBagsItemButton58.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton58.bottom
         anchors.bottomMargin: 2
-        width: 12
-        height: 12
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -1735,11 +1774,11 @@ WowWindow {
         id: adiBagsItemButton59
         name: "AdiBagsItemButton59"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
+        wowParent: "AdiBagsItemContainer3"
         anchors.left: adiBagsSection6.left
         anchors.leftMargin: 41
         anchors.top: adiBagsSection6.top
-        anchors.topMargin: 59
+        anchors.topMargin: 141
         width: 37
         height: 37
     }
@@ -1774,13 +1813,14 @@ WowWindow {
         id: adiBagsItemButton5Count
         name: "AdiBagsItemButton5Count"
         kind: "FontString"
-        text: "15"
+        text: "7"
+        wowParent: "AdiBagsItemButton5"
         anchors.right: adiBagsItemButton5.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton5.bottom
         anchors.bottomMargin: 2
-        width: 12
-        height: 12
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -1799,11 +1839,11 @@ WowWindow {
         id: adiBagsItemButton6
         name: "AdiBagsItemButton6"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection5.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1812,11 +1852,11 @@ WowWindow {
         id: adiBagsItemButton60
         name: "AdiBagsItemButton60"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection5.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1839,10 +1879,10 @@ WowWindow {
         id: adiBagsItemButton61
         name: "AdiBagsItemButton61"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection9.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection2.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection2.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1865,9 +1905,9 @@ WowWindow {
         id: adiBagsItemButton62
         name: "AdiBagsItemButton62"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection11.left
-        anchors.top: adiBagsSection11.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection4.left
+        anchors.top: adiBagsSection4.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1892,9 +1932,9 @@ WowWindow {
         name: "AdiBagsItemButton63"
         kind: "Button"
         wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection4.top
+        anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1918,10 +1958,9 @@ WowWindow {
         id: adiBagsItemButton64
         name: "AdiBagsItemButton64"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection4.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection8.left
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1945,10 +1984,10 @@ WowWindow {
         id: adiBagsItemButton65
         name: "AdiBagsItemButton65"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection3.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -1972,11 +2011,11 @@ WowWindow {
         id: adiBagsItemButton66
         name: "AdiBagsItemButton66"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 246
+        anchors.top: adiBagsSection5.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -1999,7 +2038,7 @@ WowWindow {
         id: adiBagsItemButton67
         name: "AdiBagsItemButton67"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
+        wowParent: "AdiBagsItemContainer2"
         anchors.left: adiBagsSection5.left
         anchors.leftMargin: 123
         anchors.top: adiBagsSection5.top
@@ -2012,13 +2051,13 @@ WowWindow {
         id: adiBagsItemButton67Count
         name: "AdiBagsItemButton67Count"
         kind: "FontString"
-        text: "20"
+        text: "3"
         wowParent: "AdiBagsItemButton67"
         anchors.right: adiBagsItemButton67.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton67.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -2026,8 +2065,9 @@ WowWindow {
         id: adiBagsItemButton68
         name: "AdiBagsItemButton68"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
+        wowParent: "AdiBagsItemContainer0"
         anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 164
         anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
@@ -2065,10 +2105,11 @@ WowWindow {
         id: adiBagsItemButton69
         name: "AdiBagsItemButton69"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
+        wowParent: "AdiBagsItemContainer3"
         anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 82
         anchors.top: adiBagsSection9.top
-        anchors.topMargin: 59
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -2091,9 +2132,10 @@ WowWindow {
         id: adiBagsItemButton7
         name: "AdiBagsItemButton7"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection1.left
-        anchors.top: adiBagsSection1.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2103,13 +2145,27 @@ WowWindow {
         id: adiBagsItemButton70
         name: "AdiBagsItemButton70"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection9.top
-        anchors.topMargin: 59
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection1.left
+        anchors.leftMargin: 205
+        anchors.top: adiBagsSection1.top
+        anchors.topMargin: 18
         width: 37
         height: 37
+    }
+
+    Part {
+        id: adiBagsItemButton70Count
+        name: "AdiBagsItemButton70Count"
+        kind: "FontString"
+        text: "11"
+        wowParent: "AdiBagsItemButton70"
+        anchors.right: adiBagsItemButton70.right
+        anchors.rightMargin: 5
+        anchors.bottom: adiBagsItemButton70.bottom
+        anchors.bottomMargin: 2
+        width: 15
+        height: 14.2
     }
 
     Part {
@@ -2129,13 +2185,27 @@ WowWindow {
         id: adiBagsItemButton71
         name: "AdiBagsItemButton71"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection8.top
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsSection7.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection7.top
         anchors.topMargin: 18
         width: 37
         height: 37
+    }
+
+    Part {
+        id: adiBagsItemButton71Count
+        name: "AdiBagsItemButton71Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "AdiBagsItemButton71"
+        anchors.right: adiBagsItemButton71.right
+        anchors.rightMargin: 5
+        anchors.bottom: adiBagsItemButton71.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -2155,9 +2225,10 @@ WowWindow {
         id: adiBagsItemButton72
         name: "AdiBagsItemButton72"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection7.left
-        anchors.top: adiBagsSection7.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2181,11 +2252,11 @@ WowWindow {
         id: adiBagsItemButton73
         name: "AdiBagsItemButton73"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection7.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection7.top
-        anchors.topMargin: 18
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 287
+        anchors.top: adiBagsSection6.top
+        anchors.topMargin: 141
         width: 37
         height: 37
     }
@@ -2194,7 +2265,7 @@ WowWindow {
         id: adiBagsItemButton73Count
         name: "AdiBagsItemButton73Count"
         kind: "FontString"
-        text: "14"
+        text: "20"
         wowParent: "AdiBagsItemButton73"
         anchors.right: adiBagsItemButton73.right
         anchors.rightMargin: 5
@@ -2208,10 +2279,10 @@ WowWindow {
         id: adiBagsItemButton74
         name: "AdiBagsItemButton74"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer3"
+        anchors.left: adiBagsSection7.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection7.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2235,10 +2306,10 @@ WowWindow {
         id: adiBagsItemButton75
         name: "AdiBagsItemButton75"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection3.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection3.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection8.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2262,10 +2333,10 @@ WowWindow {
         name: "AdiBagsItemButton76"
         kind: "Button"
         wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 246
-        anchors.top: adiBagsSection4.top
-        anchors.topMargin: 18
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection6.top
+        anchors.topMargin: 141
         width: 37
         height: 37
     }
@@ -2274,13 +2345,13 @@ WowWindow {
         id: adiBagsItemButton76Count
         name: "AdiBagsItemButton76Count"
         kind: "FontString"
-        text: "14"
+        text: "2"
         wowParent: "AdiBagsItemButton76"
         anchors.right: adiBagsItemButton76.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton76.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -2301,22 +2372,36 @@ WowWindow {
         id: adiBagsItemButton77
         name: "AdiBagsItemButton77"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection4.top
-        anchors.topMargin: 18
+        wowParent: "AdiBagsItemContainer4"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection6.top
+        anchors.topMargin: 182
         width: 37
         height: 37
+    }
+
+    Part {
+        id: adiBagsItemButton77Count
+        name: "AdiBagsItemButton77Count"
+        kind: "FontString"
+        text: "18"
+        wowParent: "AdiBagsItemButton77"
+        anchors.right: adiBagsItemButton77.right
+        anchors.rightMargin: 5
+        anchors.bottom: adiBagsItemButton77.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
         id: adiBagsItemButton78
         name: "AdiBagsItemButton78"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
+        wowParent: "AdiBagsItemContainer1"
         anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 164
+        anchors.leftMargin: 328
         anchors.top: adiBagsSection6.top
         anchors.topMargin: 59
         width: 37
@@ -2327,13 +2412,13 @@ WowWindow {
         id: adiBagsItemButton78Count
         name: "AdiBagsItemButton78Count"
         kind: "FontString"
-        text: "7"
+        text: "15"
         wowParent: "AdiBagsItemButton78"
         anchors.right: adiBagsItemButton78.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton78.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -2354,10 +2439,10 @@ WowWindow {
         id: adiBagsItemButton79
         name: "AdiBagsItemButton79"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer1"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 328
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2407,11 +2492,11 @@ WowWindow {
         id: adiBagsItemButton8
         name: "AdiBagsItemButton8"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -2420,9 +2505,10 @@ WowWindow {
         id: adiBagsItemButton80
         name: "AdiBagsItemButton80"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection6.left
-        anchors.top: adiBagsSection6.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection9.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection9.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2460,7 +2546,6 @@ WowWindow {
         kind: "Button"
         wowParent: "AdiBagsItemContainer-2"
         anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 164
         anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
@@ -2497,11 +2582,11 @@ WowWindow {
         id: adiBagsItemButton82
         name: "AdiBagsItemButton82"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 59
         width: 37
         height: 37
     }
@@ -2510,13 +2595,13 @@ WowWindow {
         id: adiBagsItemButton82Count
         name: "AdiBagsItemButton82Count"
         kind: "FontString"
-        text: "20"
+        text: "11"
         wowParent: "AdiBagsItemButton82"
         anchors.right: adiBagsItemButton82.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton82.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 15
         height: 14.2
     }
 
@@ -2524,10 +2609,10 @@ WowWindow {
         id: adiBagsItemButton83
         name: "AdiBagsItemButton83"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer-2"
-        anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection8.top
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection1.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection1.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2537,7 +2622,7 @@ WowWindow {
         id: adiBagsItemButton83Count
         name: "AdiBagsItemButton83Count"
         kind: "FontString"
-        text: "16"
+        text: "20"
         wowParent: "AdiBagsItemButton83"
         anchors.right: adiBagsItemButton83.right
         anchors.rightMargin: 5
@@ -2564,10 +2649,10 @@ WowWindow {
         id: adiBagsItemButton84
         name: "AdiBagsItemButton84"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection6.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 328
+        anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2605,10 +2690,10 @@ WowWindow {
         name: "AdiBagsItemButton85"
         kind: "Button"
         wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection3.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection3.top
-        anchors.topMargin: 18
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 123
+        anchors.top: adiBagsSection6.top
+        anchors.topMargin: 59
         width: 37
         height: 37
     }
@@ -2619,7 +2704,7 @@ WowWindow {
         kind: "Button"
         wowParent: "AdiBagsItemContainer-2"
         anchors.left: adiBagsSection8.left
-        anchors.leftMargin: 205
+        anchors.leftMargin: 41
         anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
@@ -2630,13 +2715,13 @@ WowWindow {
         id: adiBagsItemButton86Count
         name: "AdiBagsItemButton86Count"
         kind: "FontString"
-        text: "4"
+        text: "16"
         wowParent: "AdiBagsItemButton86"
         anchors.right: adiBagsItemButton86.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton86.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -2657,10 +2742,10 @@ WowWindow {
         id: adiBagsItemButton87
         name: "AdiBagsItemButton87"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection9.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection2.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection2.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2670,13 +2755,13 @@ WowWindow {
         id: adiBagsItemButton87Count
         name: "AdiBagsItemButton87Count"
         kind: "FontString"
-        text: "20"
+        text: "6"
         wowParent: "AdiBagsItemButton87"
         anchors.right: adiBagsItemButton87.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton87.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -2685,9 +2770,8 @@ WowWindow {
         name: "AdiBagsItemButton88"
         kind: "Button"
         wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection6.top
+        anchors.left: adiBagsSection11.left
+        anchors.top: adiBagsSection11.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2711,10 +2795,10 @@ WowWindow {
         id: adiBagsItemButton89
         name: "AdiBagsItemButton89"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 82
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer-2"
+        anchors.left: adiBagsSection8.left
+        anchors.leftMargin: 328
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2731,6 +2815,19 @@ WowWindow {
         anchors.bottom: adiBagsItemButton89.bottom
         anchors.bottomMargin: 2
         width: 10.3
+        height: 14.2
+    }
+
+    Part {
+        id: adiBagsItemButton89Stock
+        name: "AdiBagsItemButton89Stock"
+        kind: "FontString"
+        text: "Ke"
+        wowParent: "AdiBagsItemButton89"
+        anchors.left: adiBagsItemButton89.left
+        anchors.top: adiBagsItemButton89.top
+        anchors.topMargin: 2
+        width: 18.2
         height: 14.2
     }
 
@@ -2763,10 +2860,11 @@ WowWindow {
         id: adiBagsItemButton9
         name: "AdiBagsItemButton9"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 182
+        wowParent: "AdiBagsItemContainer0"
+        anchors.left: adiBagsSection4.left
+        anchors.leftMargin: 41
+        anchors.top: adiBagsSection4.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -2775,9 +2873,9 @@ WowWindow {
         id: adiBagsItemButton90
         name: "AdiBagsItemButton90"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
+        wowParent: "AdiBagsItemContainer1"
         anchors.left: adiBagsSection4.left
-        anchors.leftMargin: 41
+        anchors.leftMargin: 246
         anchors.top: adiBagsSection4.top
         anchors.topMargin: 18
         width: 37
@@ -2826,10 +2924,10 @@ WowWindow {
         id: adiBagsItemButton92
         name: "AdiBagsItemButton92"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection7.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection7.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection6.left
+        anchors.leftMargin: 328
+        anchors.top: adiBagsSection6.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2839,7 +2937,7 @@ WowWindow {
         id: adiBagsItemButton92Count
         name: "AdiBagsItemButton92Count"
         kind: "FontString"
-        text: "20"
+        text: "32"
         wowParent: "AdiBagsItemButton92"
         anchors.right: adiBagsItemButton92.right
         anchors.rightMargin: 5
@@ -2865,11 +2963,11 @@ WowWindow {
         id: adiBagsItemButton93
         name: "AdiBagsItemButton93"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer3"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 41
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 141
+        wowParent: "AdiBagsItemContainer4"
+        anchors.left: adiBagsSection3.left
+        anchors.leftMargin: 328
+        anchors.top: adiBagsSection3.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -2878,13 +2976,14 @@ WowWindow {
         id: adiBagsItemButton93Count
         name: "AdiBagsItemButton93Count"
         kind: "FontString"
-        text: "4"
+        text: "20"
+        wowParent: "AdiBagsItemButton93"
         anchors.right: adiBagsItemButton93.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton93.bottom
         anchors.bottomMargin: 2
-        width: 6
-        height: 12
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -2929,10 +3028,10 @@ WowWindow {
         id: adiBagsItemButton95
         name: "AdiBagsItemButton95"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection6.left
+        wowParent: "AdiBagsItemContainer-2"
+        anchors.left: adiBagsSection8.left
         anchors.leftMargin: 205
-        anchors.top: adiBagsSection6.top
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2953,13 +3052,26 @@ WowWindow {
     }
 
     Part {
+        id: adiBagsItemButton95Stock
+        name: "AdiBagsItemButton95Stock"
+        kind: "FontString"
+        text: "Ke"
+        wowParent: "AdiBagsItemButton95"
+        anchors.left: adiBagsItemButton95.left
+        anchors.top: adiBagsItemButton95.top
+        anchors.topMargin: 2
+        width: 18.2
+        height: 14.2
+    }
+
+    Part {
         id: adiBagsItemButton96
         name: "AdiBagsItemButton96"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer0"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 287
-        anchors.top: adiBagsSection9.top
+        wowParent: "AdiBagsItemContainer2"
+        anchors.left: adiBagsSection1.left
+        anchors.leftMargin: 164
+        anchors.top: adiBagsSection1.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -2996,10 +3108,10 @@ WowWindow {
         name: "AdiBagsItemButton97"
         kind: "Button"
         wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection6.left
-        anchors.leftMargin: 123
-        anchors.top: adiBagsSection6.top
-        anchors.topMargin: 100
+        anchors.left: adiBagsSection10.left
+        anchors.leftMargin: 82
+        anchors.top: adiBagsSection10.top
+        anchors.topMargin: 18
         width: 37
         height: 37
     }
@@ -3008,13 +3120,13 @@ WowWindow {
         id: adiBagsItemButton97Count
         name: "AdiBagsItemButton97Count"
         kind: "FontString"
-        text: "20"
+        text: "5"
         wowParent: "AdiBagsItemButton97"
         anchors.right: adiBagsItemButton97.right
         anchors.rightMargin: 5
         anchors.bottom: adiBagsItemButton97.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -3023,9 +3135,9 @@ WowWindow {
         name: "AdiBagsItemButton98"
         kind: "Button"
         wowParent: "AdiBagsItemContainer2"
-        anchors.left: adiBagsSection9.left
-        anchors.leftMargin: 164
-        anchors.top: adiBagsSection9.top
+        anchors.left: adiBagsSection5.left
+        anchors.leftMargin: 205
+        anchors.top: adiBagsSection5.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -3049,10 +3161,10 @@ WowWindow {
         id: adiBagsItemButton99
         name: "AdiBagsItemButton99"
         kind: "Button"
-        wowParent: "AdiBagsItemContainer4"
-        anchors.left: adiBagsSection5.left
-        anchors.leftMargin: 205
-        anchors.top: adiBagsSection5.top
+        wowParent: "AdiBagsItemContainer1"
+        anchors.left: adiBagsSection8.left
+        anchors.leftMargin: 328
+        anchors.top: adiBagsSection8.top
         anchors.topMargin: 18
         width: 37
         height: 37
@@ -3062,7 +3174,7 @@ WowWindow {
         id: adiBagsItemButton99Count
         name: "AdiBagsItemButton99Count"
         kind: "FontString"
-        text: "18"
+        text: "20"
         wowParent: "AdiBagsItemButton99"
         anchors.right: adiBagsItemButton99.right
         anchors.rightMargin: 5
@@ -3114,7 +3226,7 @@ WowWindow {
         id: adiBagsMoneyFrameCopperButton
         name: "AdiBagsMoneyFrameCopperButton"
         kind: "Button"
-        text: "13"
+        text: "17"
         wowParent: "AdiBagsMoneyFrame"
         anchors.right: adiBagsMoneyFrame.right
         anchors.rightMargin: 13
@@ -3127,7 +3239,7 @@ WowWindow {
         id: adiBagsMoneyFrameCopperButtonText
         name: "AdiBagsMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "13"
+        text: "17"
         wowParent: "AdiBagsMoneyFrameCopperButton"
         anchors.right: adiBagsMoneyFrameCopperButton.right
         anchors.rightMargin: 19
@@ -3140,7 +3252,7 @@ WowWindow {
         id: adiBagsMoneyFrameGoldButton
         name: "AdiBagsMoneyFrameGoldButton"
         kind: "Button"
-        text: "3654"
+        text: "8145"
         wowParent: "AdiBagsMoneyFrame"
         anchors.right: adiBagsMoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -3153,7 +3265,7 @@ WowWindow {
         id: adiBagsMoneyFrameGoldButtonText
         name: "AdiBagsMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "3654"
+        text: "8145"
         wowParent: "AdiBagsMoneyFrameGoldButton"
         anchors.right: adiBagsMoneyFrameGoldButton.right
         anchors.rightMargin: 19
@@ -3166,7 +3278,7 @@ WowWindow {
         id: adiBagsMoneyFrameSilverButton
         name: "AdiBagsMoneyFrameSilverButton"
         kind: "Button"
-        text: "16"
+        text: "63"
         wowParent: "AdiBagsMoneyFrame"
         anchors.right: adiBagsMoneyFrameCopperButton.left
         anchors.rightMargin: 4
@@ -3179,7 +3291,7 @@ WowWindow {
         id: adiBagsMoneyFrameSilverButtonText
         name: "AdiBagsMoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "16"
+        text: "63"
         wowParent: "AdiBagsMoneyFrameSilverButton"
         anchors.right: adiBagsMoneyFrameSilverButton.right
         anchors.rightMargin: 19
@@ -3194,10 +3306,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 225.3
+        anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 250
-        width: 37
+        anchors.topMargin: 309
+        width: 242
         height: 55
     }
 
@@ -3209,8 +3321,8 @@ WowWindow {
         anchors.left: adiBagsContainer1.left
         anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 91
-        width: 37
+        anchors.topMargin: 468
+        width: 119
         height: 55
     }
 
@@ -3220,7 +3332,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 278.7
+        anchors.leftMargin: 184.3
         anchors.top: adiBagsContainer1.top
         anchors.topMargin: 250
         width: 37
@@ -3233,10 +3345,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 783
+        anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 32
-        width: 37
+        anchors.topMargin: 91
+        width: 160
         height: 55
     }
 
@@ -3248,9 +3360,9 @@ WowWindow {
         anchors.left: adiBagsContainer1.left
         anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 250
-        width: 201
-        height: 55
+        anchors.topMargin: 368
+        width: 365
+        height: 96
     }
 
     Part {
@@ -3259,10 +3371,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 8
+        anchors.leftMargin: 266.3
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 191
-        width: 365
+        anchors.topMargin: 32
+        width: 37
         height: 55
     }
 
@@ -3275,7 +3387,7 @@ WowWindow {
         anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
         anchors.topMargin: 32
-        width: 365
+        width: 242
         height: 55
     }
 
@@ -3285,11 +3397,11 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 401.7
+        anchors.leftMargin: 143.3
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 32
-        width: 365
-        height: 219
+        anchors.topMargin: 468
+        width: 37
+        height: 55
     }
 
     Part {
@@ -3298,10 +3410,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 401.7
+        anchors.leftMargin: 319.7
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 255
-        width: 242
+        anchors.topMargin: 32
+        width: 37
         height: 55
     }
 
@@ -3311,9 +3423,9 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 401.7
+        anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 314
+        anchors.topMargin: 150
         width: 365
         height: 96
     }
@@ -3324,11 +3436,11 @@ WowWindow {
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
         anchors.left: adiBagsContainer1.left
-        anchors.leftMargin: 61.3
+        anchors.leftMargin: 8
         anchors.top: adiBagsContainer1.top
-        anchors.topMargin: 91
-        width: 324
-        height: 96
+        anchors.topMargin: 250
+        width: 160
+        height: 55
     }
 
     Part {
@@ -3362,11 +3474,12 @@ WowWindow {
         name: "AdiBagsStackButton1"
         kind: "Frame"
         wowParent: "AdiBagsContainer1"
-        anchors.left: adiBagsSection2.left
-        anchors.top: adiBagsSection2.top
+        anchors.left: adiBagsSection6.left
+        anchors.top: adiBagsSection6.top
         anchors.topMargin: 18
         width: 37
         height: 37
     }
 
+    Ghost { id: adiBagsSection12; name: "AdiBagsSection12"; x: 184.3; y: 91; width: 0; height: 0 }
 }

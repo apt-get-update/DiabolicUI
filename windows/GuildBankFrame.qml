@@ -51,6 +51,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn1Button10Count
+        name: "GuildBankColumn1Button10Count"
+        kind: "FontString"
+        text: "3"
+        wowParent: "GuildBankColumn1Button10"
+        anchors.right: guildBankColumn1Button10.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button10.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn1Button11
         name: "GuildBankColumn1Button11"
         kind: "Button"
@@ -60,6 +74,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn1Button11Count
+        name: "GuildBankColumn1Button11Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn1Button11"
+        anchors.right: guildBankColumn1Button11.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button11.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -75,6 +103,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn1Button12Count
+        name: "GuildBankColumn1Button12Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn1Button12"
+        anchors.right: guildBankColumn1Button12.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button12.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn1Button13
         name: "GuildBankColumn1Button13"
         kind: "Button"
@@ -84,6 +126,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn1Button13Count
+        name: "GuildBankColumn1Button13Count"
+        kind: "FontString"
+        text: "3"
+        wowParent: "GuildBankColumn1Button13"
+        anchors.right: guildBankColumn1Button13.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button13.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -102,11 +158,25 @@ WowWindow {
         id: guildBankColumn1Button14Count
         name: "GuildBankColumn1Button14Count"
         kind: "FontString"
-        text: "7"
+        text: "3"
         wowParent: "GuildBankColumn1Button14"
         anchors.right: guildBankColumn1Button14.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn1Button14.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
+        id: guildBankColumn1Button1Count
+        name: "GuildBankColumn1Button1Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn1Button1"
+        anchors.right: guildBankColumn1Button1.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button1.bottom
         anchors.bottomMargin: 2
         width: 10.3
         height: 14.2
@@ -125,6 +195,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn1Button2Count
+        name: "GuildBankColumn1Button2Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn1Button2"
+        anchors.right: guildBankColumn1Button2.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button2.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn1Button3
         name: "GuildBankColumn1Button3"
         kind: "Button"
@@ -134,6 +218,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn1Button3Count
+        name: "GuildBankColumn1Button3Count"
+        kind: "FontString"
+        text: "7"
+        wowParent: "GuildBankColumn1Button3"
+        anchors.right: guildBankColumn1Button3.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button3.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -149,6 +247,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn1Button4Count
+        name: "GuildBankColumn1Button4Count"
+        kind: "FontString"
+        text: "5"
+        wowParent: "GuildBankColumn1Button4"
+        anchors.right: guildBankColumn1Button4.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button4.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn1Button5
         name: "GuildBankColumn1Button5"
         kind: "Button"
@@ -161,6 +273,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn1Button5Count
+        name: "GuildBankColumn1Button5Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn1Button5"
+        anchors.right: guildBankColumn1Button5.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button5.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn1Button6
         name: "GuildBankColumn1Button6"
         kind: "Button"
@@ -170,6 +296,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn1Button6Count
+        name: "GuildBankColumn1Button6Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn1Button6"
+        anchors.right: guildBankColumn1Button6.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button6.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -188,7 +328,7 @@ WowWindow {
         id: guildBankColumn1Button7Count
         name: "GuildBankColumn1Button7Count"
         kind: "FontString"
-        text: "3"
+        text: "2"
         wowParent: "GuildBankColumn1Button7"
         anchors.right: guildBankColumn1Button7.right
         anchors.rightMargin: 5
@@ -211,6 +351,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn1Button8Count
+        name: "GuildBankColumn1Button8Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn1Button8"
+        anchors.right: guildBankColumn1Button8.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button8.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn1Button9
         name: "GuildBankColumn1Button9"
         kind: "Button"
@@ -220,6 +374,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn1Button9Count
+        name: "GuildBankColumn1Button9Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn1Button9"
+        anchors.right: guildBankColumn1Button9.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn1Button9.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -260,6 +428,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button10Count
+        name: "GuildBankColumn2Button10Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn2Button10"
+        anchors.right: guildBankColumn2Button10.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button10.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button11
         name: "GuildBankColumn2Button11"
         kind: "Button"
@@ -269,6 +451,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn2Button11Count
+        name: "GuildBankColumn2Button11Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn2Button11"
+        anchors.right: guildBankColumn2Button11.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button11.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -284,6 +480,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button12Count
+        name: "GuildBankColumn2Button12Count"
+        kind: "FontString"
+        text: "3"
+        wowParent: "GuildBankColumn2Button12"
+        anchors.right: guildBankColumn2Button12.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button12.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button13
         name: "GuildBankColumn2Button13"
         kind: "Button"
@@ -293,6 +503,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn2Button13Count
+        name: "GuildBankColumn2Button13Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn2Button13"
+        anchors.right: guildBankColumn2Button13.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button13.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -308,6 +532,34 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button14Count
+        name: "GuildBankColumn2Button14Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn2Button14"
+        anchors.right: guildBankColumn2Button14.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button14.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
+        id: guildBankColumn2Button1Count
+        name: "GuildBankColumn2Button1Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn2Button1"
+        anchors.right: guildBankColumn2Button1.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button1.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button2
         name: "GuildBankColumn2Button2"
         kind: "Button"
@@ -317,6 +569,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn2Button2Count
+        name: "GuildBankColumn2Button2Count"
+        kind: "FontString"
+        text: "4"
+        wowParent: "GuildBankColumn2Button2"
+        anchors.right: guildBankColumn2Button2.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button2.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -332,6 +598,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button3Count
+        name: "GuildBankColumn2Button3Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn2Button3"
+        anchors.right: guildBankColumn2Button3.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button3.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button4
         name: "GuildBankColumn2Button4"
         kind: "Button"
@@ -341,6 +621,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn2Button4Count
+        name: "GuildBankColumn2Button4Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn2Button4"
+        anchors.right: guildBankColumn2Button4.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button4.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -356,6 +650,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button5Count
+        name: "GuildBankColumn2Button5Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn2Button5"
+        anchors.right: guildBankColumn2Button5.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button5.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button6
         name: "GuildBankColumn2Button6"
         kind: "Button"
@@ -365,6 +673,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn2Button6Count
+        name: "GuildBankColumn2Button6Count"
+        kind: "FontString"
+        text: "4"
+        wowParent: "GuildBankColumn2Button6"
+        anchors.right: guildBankColumn2Button6.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button6.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -380,6 +702,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button7Count
+        name: "GuildBankColumn2Button7Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn2Button7"
+        anchors.right: guildBankColumn2Button7.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button7.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button8
         name: "GuildBankColumn2Button8"
         kind: "Button"
@@ -392,6 +728,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn2Button8Count
+        name: "GuildBankColumn2Button8Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn2Button8"
+        anchors.right: guildBankColumn2Button8.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button8.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn2Button9
         name: "GuildBankColumn2Button9"
         kind: "Button"
@@ -401,6 +751,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn2Button9Count
+        name: "GuildBankColumn2Button9Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn2Button9"
+        anchors.right: guildBankColumn2Button9.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn2Button9.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -444,7 +808,7 @@ WowWindow {
         id: guildBankColumn3Button10Count
         name: "GuildBankColumn3Button10Count"
         kind: "FontString"
-        text: "20"
+        text: "12"
         wowParent: "GuildBankColumn3Button10"
         anchors.right: guildBankColumn3Button10.right
         anchors.rightMargin: 5
@@ -496,13 +860,13 @@ WowWindow {
         id: guildBankColumn3Button12Count
         name: "GuildBankColumn3Button12Count"
         kind: "FontString"
-        text: "9"
+        text: "20"
         wowParent: "GuildBankColumn3Button12"
         anchors.right: guildBankColumn3Button12.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn3Button12.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -522,13 +886,13 @@ WowWindow {
         id: guildBankColumn3Button13Count
         name: "GuildBankColumn3Button13Count"
         kind: "FontString"
-        text: "3"
+        text: "20"
         wowParent: "GuildBankColumn3Button13"
         anchors.right: guildBankColumn3Button13.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn3Button13.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -548,13 +912,27 @@ WowWindow {
         id: guildBankColumn3Button14Count
         name: "GuildBankColumn3Button14Count"
         kind: "FontString"
-        text: "2"
+        text: "20"
         wowParent: "GuildBankColumn3Button14"
         anchors.right: guildBankColumn3Button14.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn3Button14.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
+        id: guildBankColumn3Button1Count
+        name: "GuildBankColumn3Button1Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button1"
+        anchors.right: guildBankColumn3Button1.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button1.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
         height: 14.2
     }
 
@@ -571,6 +949,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn3Button2Count
+        name: "GuildBankColumn3Button2Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button2"
+        anchors.right: guildBankColumn3Button2.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button2.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn3Button3
         name: "GuildBankColumn3Button3"
         kind: "Button"
@@ -580,6 +972,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn3Button3Count
+        name: "GuildBankColumn3Button3Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button3"
+        anchors.right: guildBankColumn3Button3.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button3.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -595,6 +1001,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn3Button4Count
+        name: "GuildBankColumn3Button4Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button4"
+        anchors.right: guildBankColumn3Button4.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button4.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn3Button5
         name: "GuildBankColumn3Button5"
         kind: "Button"
@@ -604,6 +1024,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn3Button5Count
+        name: "GuildBankColumn3Button5Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button5"
+        anchors.right: guildBankColumn3Button5.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button5.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -619,6 +1053,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn3Button6Count
+        name: "GuildBankColumn3Button6Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button6"
+        anchors.right: guildBankColumn3Button6.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button6.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn3Button7
         name: "GuildBankColumn3Button7"
         kind: "Button"
@@ -628,6 +1076,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn3Button7Count
+        name: "GuildBankColumn3Button7Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn3Button7"
+        anchors.right: guildBankColumn3Button7.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn3Button7.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -672,13 +1134,13 @@ WowWindow {
         id: guildBankColumn3Button9Count
         name: "GuildBankColumn3Button9Count"
         kind: "FontString"
-        text: "20"
+        text: "3"
         wowParent: "GuildBankColumn3Button9"
         anchors.right: guildBankColumn3Button9.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn3Button9.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -723,13 +1185,13 @@ WowWindow {
         id: guildBankColumn4Button10Count
         name: "GuildBankColumn4Button10Count"
         kind: "FontString"
-        text: "20"
+        text: "8"
         wowParent: "GuildBankColumn4Button10"
         anchors.right: guildBankColumn4Button10.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button10.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -775,7 +1237,7 @@ WowWindow {
         id: guildBankColumn4Button12Count
         name: "GuildBankColumn4Button12Count"
         kind: "FontString"
-        text: "20"
+        text: "16"
         wowParent: "GuildBankColumn4Button12"
         anchors.right: guildBankColumn4Button12.right
         anchors.rightMargin: 5
@@ -827,13 +1289,13 @@ WowWindow {
         id: guildBankColumn4Button14Count
         name: "GuildBankColumn4Button14Count"
         kind: "FontString"
-        text: "17"
+        text: "3"
         wowParent: "GuildBankColumn4Button14"
         anchors.right: guildBankColumn4Button14.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button14.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -841,13 +1303,13 @@ WowWindow {
         id: guildBankColumn4Button1Count
         name: "GuildBankColumn4Button1Count"
         kind: "FontString"
-        text: "3"
+        text: "20"
         wowParent: "GuildBankColumn4Button1"
         anchors.right: guildBankColumn4Button1.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button1.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -867,13 +1329,13 @@ WowWindow {
         id: guildBankColumn4Button2Count
         name: "GuildBankColumn4Button2Count"
         kind: "FontString"
-        text: "5"
+        text: "13"
         wowParent: "GuildBankColumn4Button2"
         anchors.right: guildBankColumn4Button2.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button2.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -893,13 +1355,13 @@ WowWindow {
         id: guildBankColumn4Button3Count
         name: "GuildBankColumn4Button3Count"
         kind: "FontString"
-        text: "5"
+        text: "20"
         wowParent: "GuildBankColumn4Button3"
         anchors.right: guildBankColumn4Button3.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button3.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -919,13 +1381,13 @@ WowWindow {
         id: guildBankColumn4Button4Count
         name: "GuildBankColumn4Button4Count"
         kind: "FontString"
-        text: "17"
+        text: "3"
         wowParent: "GuildBankColumn4Button4"
         anchors.right: guildBankColumn4Button4.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button4.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -971,13 +1433,13 @@ WowWindow {
         id: guildBankColumn4Button6Count
         name: "GuildBankColumn4Button6Count"
         kind: "FontString"
-        text: "3"
+        text: "20"
         wowParent: "GuildBankColumn4Button6"
         anchors.right: guildBankColumn4Button6.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button6.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -997,13 +1459,13 @@ WowWindow {
         id: guildBankColumn4Button7Count
         name: "GuildBankColumn4Button7Count"
         kind: "FontString"
-        text: "4"
+        text: "20"
         wowParent: "GuildBankColumn4Button7"
         anchors.right: guildBankColumn4Button7.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button7.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1023,13 +1485,13 @@ WowWindow {
         id: guildBankColumn4Button8Count
         name: "GuildBankColumn4Button8Count"
         kind: "FontString"
-        text: "20"
+        text: "9"
         wowParent: "GuildBankColumn4Button8"
         anchors.right: guildBankColumn4Button8.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn4Button8.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1100,7 +1562,7 @@ WowWindow {
         id: guildBankColumn5Button10Count
         name: "GuildBankColumn5Button10Count"
         kind: "FontString"
-        text: "8"
+        text: "3"
         wowParent: "GuildBankColumn5Button10"
         anchors.right: guildBankColumn5Button10.right
         anchors.rightMargin: 5
@@ -1120,6 +1582,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn5Button11Count
+        name: "GuildBankColumn5Button11Count"
+        kind: "FontString"
+        text: "9"
+        wowParent: "GuildBankColumn5Button11"
+        anchors.right: guildBankColumn5Button11.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn5Button11.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -1176,13 +1652,13 @@ WowWindow {
         id: guildBankColumn5Button14Count
         name: "GuildBankColumn5Button14Count"
         kind: "FontString"
-        text: "5"
+        text: "15"
         wowParent: "GuildBankColumn5Button14"
         anchors.right: guildBankColumn5Button14.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn5Button14.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1216,13 +1692,13 @@ WowWindow {
         id: guildBankColumn5Button2Count
         name: "GuildBankColumn5Button2Count"
         kind: "FontString"
-        text: "19"
+        text: "4"
         wowParent: "GuildBankColumn5Button2"
         anchors.right: guildBankColumn5Button2.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn5Button2.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1294,13 +1770,13 @@ WowWindow {
         id: guildBankColumn5Button5Count
         name: "GuildBankColumn5Button5Count"
         kind: "FontString"
-        text: "12"
+        text: "2"
         wowParent: "GuildBankColumn5Button5"
         anchors.right: guildBankColumn5Button5.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn5Button5.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1320,13 +1796,13 @@ WowWindow {
         id: guildBankColumn5Button6Count
         name: "GuildBankColumn5Button6Count"
         kind: "FontString"
-        text: "20"
+        text: "6"
         wowParent: "GuildBankColumn5Button6"
         anchors.right: guildBankColumn5Button6.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn5Button6.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1346,13 +1822,13 @@ WowWindow {
         id: guildBankColumn5Button7Count
         name: "GuildBankColumn5Button7Count"
         kind: "FontString"
-        text: "20"
+        text: "2"
         wowParent: "GuildBankColumn5Button7"
         anchors.right: guildBankColumn5Button7.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn5Button7.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1372,13 +1848,13 @@ WowWindow {
         id: guildBankColumn5Button8Count
         name: "GuildBankColumn5Button8Count"
         kind: "FontString"
-        text: "4"
+        text: "19"
         wowParent: "GuildBankColumn5Button8"
         anchors.right: guildBankColumn5Button8.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn5Button8.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1449,7 +1925,7 @@ WowWindow {
         id: guildBankColumn6Button10Count
         name: "GuildBankColumn6Button10Count"
         kind: "FontString"
-        text: "6"
+        text: "4"
         wowParent: "GuildBankColumn6Button10"
         anchors.right: guildBankColumn6Button10.right
         anchors.rightMargin: 5
@@ -1475,7 +1951,7 @@ WowWindow {
         id: guildBankColumn6Button11Count
         name: "GuildBankColumn6Button11Count"
         kind: "FontString"
-        text: "5"
+        text: "4"
         wowParent: "GuildBankColumn6Button11"
         anchors.right: guildBankColumn6Button11.right
         anchors.rightMargin: 5
@@ -1501,7 +1977,7 @@ WowWindow {
         id: guildBankColumn6Button12Count
         name: "GuildBankColumn6Button12Count"
         kind: "FontString"
-        text: "17"
+        text: "18"
         wowParent: "GuildBankColumn6Button12"
         anchors.right: guildBankColumn6Button12.right
         anchors.rightMargin: 5
@@ -1527,13 +2003,13 @@ WowWindow {
         id: guildBankColumn6Button13Count
         name: "GuildBankColumn6Button13Count"
         kind: "FontString"
-        text: "20"
+        text: "2"
         wowParent: "GuildBankColumn6Button13"
         anchors.right: guildBankColumn6Button13.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn6Button13.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -1553,7 +2029,7 @@ WowWindow {
         id: guildBankColumn6Button14Count
         name: "GuildBankColumn6Button14Count"
         kind: "FontString"
-        text: "9"
+        text: "8"
         wowParent: "GuildBankColumn6Button14"
         anchors.right: guildBankColumn6Button14.right
         anchors.rightMargin: 5
@@ -1567,7 +2043,7 @@ WowWindow {
         id: guildBankColumn6Button1Count
         name: "GuildBankColumn6Button1Count"
         kind: "FontString"
-        text: "10"
+        text: "20"
         wowParent: "GuildBankColumn6Button1"
         anchors.right: guildBankColumn6Button1.right
         anchors.rightMargin: 5
@@ -1593,7 +2069,7 @@ WowWindow {
         id: guildBankColumn6Button2Count
         name: "GuildBankColumn6Button2Count"
         kind: "FontString"
-        text: "6"
+        text: "5"
         wowParent: "GuildBankColumn6Button2"
         anchors.right: guildBankColumn6Button2.right
         anchors.rightMargin: 5
@@ -1619,13 +2095,13 @@ WowWindow {
         id: guildBankColumn6Button3Count
         name: "GuildBankColumn6Button3Count"
         kind: "FontString"
-        text: "7"
+        text: "20"
         wowParent: "GuildBankColumn6Button3"
         anchors.right: guildBankColumn6Button3.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn6Button3.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1642,6 +2118,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn6Button4Count
+        name: "GuildBankColumn6Button4Count"
+        kind: "FontString"
+        text: "3"
+        wowParent: "GuildBankColumn6Button4"
+        anchors.right: guildBankColumn6Button4.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn6Button4.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn6Button5
         name: "GuildBankColumn6Button5"
         kind: "Button"
@@ -1651,6 +2141,20 @@ WowWindow {
         anchors.topMargin: 7
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn6Button5Count
+        name: "GuildBankColumn6Button5Count"
+        kind: "FontString"
+        text: "20"
+        wowParent: "GuildBankColumn6Button5"
+        anchors.right: guildBankColumn6Button5.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn6Button5.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
     }
 
     Part {
@@ -1669,7 +2173,7 @@ WowWindow {
         id: guildBankColumn6Button6Count
         name: "GuildBankColumn6Button6Count"
         kind: "FontString"
-        text: "3"
+        text: "9"
         wowParent: "GuildBankColumn6Button6"
         anchors.right: guildBankColumn6Button6.right
         anchors.rightMargin: 5
@@ -1692,6 +2196,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn6Button7Count
+        name: "GuildBankColumn6Button7Count"
+        kind: "FontString"
+        text: "2"
+        wowParent: "GuildBankColumn6Button7"
+        anchors.right: guildBankColumn6Button7.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn6Button7.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn6Button8
         name: "GuildBankColumn6Button8"
         kind: "Button"
@@ -1701,6 +2219,20 @@ WowWindow {
         anchors.top: guildBankColumn6Button1.top
         width: 37
         height: 37
+    }
+
+    Part {
+        id: guildBankColumn6Button8Count
+        name: "GuildBankColumn6Button8Count"
+        kind: "FontString"
+        text: "5"
+        wowParent: "GuildBankColumn6Button8"
+        anchors.right: guildBankColumn6Button8.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn6Button8.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
     }
 
     Part {
@@ -1770,7 +2302,7 @@ WowWindow {
         id: guildBankColumn7Button10Count
         name: "GuildBankColumn7Button10Count"
         kind: "FontString"
-        text: "2"
+        text: "8"
         wowParent: "GuildBankColumn7Button10"
         anchors.right: guildBankColumn7Button10.right
         anchors.rightMargin: 5
@@ -1796,7 +2328,7 @@ WowWindow {
         id: guildBankColumn7Button11Count
         name: "GuildBankColumn7Button11Count"
         kind: "FontString"
-        text: "15"
+        text: "20"
         wowParent: "GuildBankColumn7Button11"
         anchors.right: guildBankColumn7Button11.right
         anchors.rightMargin: 5
@@ -1822,13 +2354,13 @@ WowWindow {
         id: guildBankColumn7Button12Count
         name: "GuildBankColumn7Button12Count"
         kind: "FontString"
-        text: "2"
+        text: "10"
         wowParent: "GuildBankColumn7Button12"
         anchors.right: guildBankColumn7Button12.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn7Button12.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1848,13 +2380,13 @@ WowWindow {
         id: guildBankColumn7Button13Count
         name: "GuildBankColumn7Button13Count"
         kind: "FontString"
-        text: "5"
+        text: "11"
         wowParent: "GuildBankColumn7Button13"
         anchors.right: guildBankColumn7Button13.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn7Button13.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 15
         height: 14.2
     }
 
@@ -1874,7 +2406,7 @@ WowWindow {
         id: guildBankColumn7Button14Count
         name: "GuildBankColumn7Button14Count"
         kind: "FontString"
-        text: "5"
+        text: "7"
         wowParent: "GuildBankColumn7Button14"
         anchors.right: guildBankColumn7Button14.right
         anchors.rightMargin: 5
@@ -1911,6 +2443,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn7Button2Count
+        name: "GuildBankColumn7Button2Count"
+        kind: "FontString"
+        text: "7"
+        wowParent: "GuildBankColumn7Button2"
+        anchors.right: guildBankColumn7Button2.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn7Button2.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: guildBankColumn7Button3
         name: "GuildBankColumn7Button3"
         kind: "Button"
@@ -1926,13 +2472,13 @@ WowWindow {
         id: guildBankColumn7Button3Count
         name: "GuildBankColumn7Button3Count"
         kind: "FontString"
-        text: "2"
+        text: "20"
         wowParent: "GuildBankColumn7Button3"
         anchors.right: guildBankColumn7Button3.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn7Button3.bottom
         anchors.bottomMargin: 2
-        width: 10.3
+        width: 17.4
         height: 14.2
     }
 
@@ -1952,7 +2498,7 @@ WowWindow {
         id: guildBankColumn7Button4Count
         name: "GuildBankColumn7Button4Count"
         kind: "FontString"
-        text: "13"
+        text: "20"
         wowParent: "GuildBankColumn7Button4"
         anchors.right: guildBankColumn7Button4.right
         anchors.rightMargin: 5
@@ -1978,13 +2524,13 @@ WowWindow {
         id: guildBankColumn7Button5Count
         name: "GuildBankColumn7Button5Count"
         kind: "FontString"
-        text: "17"
+        text: "9"
         wowParent: "GuildBankColumn7Button5"
         anchors.right: guildBankColumn7Button5.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn7Button5.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -2004,13 +2550,13 @@ WowWindow {
         id: guildBankColumn7Button6Count
         name: "GuildBankColumn7Button6Count"
         kind: "FontString"
-        text: "20"
+        text: "4"
         wowParent: "GuildBankColumn7Button6"
         anchors.right: guildBankColumn7Button6.right
         anchors.rightMargin: 5
         anchors.bottom: guildBankColumn7Button6.bottom
         anchors.bottomMargin: 2
-        width: 17.4
+        width: 10.3
         height: 14.2
     }
 
@@ -2079,6 +2625,20 @@ WowWindow {
     }
 
     Part {
+        id: guildBankColumn7Button9Count
+        name: "GuildBankColumn7Button9Count"
+        kind: "FontString"
+        text: "10"
+        wowParent: "GuildBankColumn7Button9"
+        anchors.right: guildBankColumn7Button9.right
+        anchors.rightMargin: 5
+        anchors.bottom: guildBankColumn7Button9.bottom
+        anchors.bottomMargin: 2
+        width: 17.4
+        height: 14.2
+    }
+
+    Part {
         id: guildBankEmblemFrame
         name: "GuildBankEmblemFrame"
         kind: "Frame"
@@ -2097,6 +2657,7 @@ WowWindow {
         kind: "Button"
         text: "Deposit"
         wowParent: "GuildBankFrame"
+        style: "Button"
         anchors.right: guildBankFrame.right
         anchors.rightMargin: 11
         anchors.bottom: guildBankFrame.bottom
@@ -2212,6 +2773,7 @@ WowWindow {
         kind: "Button"
         text: "Guild Bank"
         wowParent: "GuildBankFrame"
+        style: "Banner"
         anchors.left: guildBankFrameDiabolic.left
         anchors.leftMargin: 28
         anchors.top: guildBankFrameDiabolic.bottom
@@ -2226,6 +2788,7 @@ WowWindow {
         kind: "Button"
         text: "Log"
         wowParent: "GuildBankFrame"
+        style: "Banner"
         anchors.left: guildBankFrameDiabolic.left
         anchors.leftMargin: 86
         anchors.top: guildBankFrameDiabolic.bottom
@@ -2240,6 +2803,7 @@ WowWindow {
         kind: "Button"
         text: "Money Log"
         wowParent: "GuildBankFrame"
+        style: "Banner"
         anchors.left: guildBankFrameDiabolic.left
         anchors.leftMargin: 144
         anchors.top: guildBankFrameDiabolic.bottom
@@ -2254,6 +2818,7 @@ WowWindow {
         kind: "Button"
         text: "Info"
         wowParent: "GuildBankFrame"
+        style: "Banner"
         anchors.left: guildBankFrameDiabolic.left
         anchors.leftMargin: 202
         anchors.top: guildBankFrameDiabolic.bottom
@@ -2268,6 +2833,7 @@ WowWindow {
         kind: "Button"
         text: "Withdraw"
         wowParent: "GuildBankFrame"
+        style: "Button"
         anchors.right: guildBankFrame.right
         anchors.rightMargin: 112.5
         anchors.bottom: guildBankFrame.bottom
@@ -2346,6 +2912,7 @@ WowWindow {
         name: "GuildBankInfoScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "GuildBankInfoScrollFrame"
+        style: "ScrollBar"
         anchors.left: guildBankInfoScrollFrame.right
         anchors.leftMargin: 4
         anchors.top: guildBankInfoScrollFrame.top
@@ -2371,6 +2938,7 @@ WowWindow {
         name: "GuildBankInfoScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "GuildBankInfoScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: guildBankInfoScrollFrameScrollBar.horizontalCenter
         anchors.top: guildBankInfoScrollFrameScrollBar.bottom
         width: 16
@@ -2382,6 +2950,7 @@ WowWindow {
         name: "GuildBankInfoScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "GuildBankInfoScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: guildBankInfoScrollFrameScrollBar.horizontalCenter
         anchors.bottom: guildBankInfoScrollFrameScrollBar.top
         width: 16
@@ -2396,7 +2965,7 @@ WowWindow {
         anchors.horizontalCenter: guildBankTabLimitBackground.horizontalCenter
         anchors.verticalCenter: guildBankTabLimitBackground.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 260.7
+        width: 254.4
         height: 10.3
     }
 
@@ -2721,6 +3290,7 @@ WowWindow {
         name: "GuildBankTransactionsScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "GuildBankTransactionsScrollFrame"
+        style: "ScrollBar"
         anchors.left: guildBankTransactionsScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: guildBankTransactionsScrollFrame.top
@@ -2746,6 +3316,7 @@ WowWindow {
         name: "GuildBankTransactionsScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "GuildBankTransactionsScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: guildBankTransactionsScrollFrameScrollBar.horizontalCenter
         anchors.top: guildBankTransactionsScrollFrameScrollBar.bottom
         width: 16
@@ -2757,6 +3328,7 @@ WowWindow {
         name: "GuildBankTransactionsScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "GuildBankTransactionsScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: guildBankTransactionsScrollFrameScrollBar.horizontalCenter
         anchors.bottom: guildBankTransactionsScrollFrameScrollBar.top
         width: 16
@@ -2812,5 +3384,5 @@ WowWindow {
         height: 14.2
     }
 
-    Ghost { id: guildBankTabLimitBackground; name: "GuildBankTabLimitBackground"; x: 390.6; y: 397; width: 0; height: 0 }
+    Ghost { id: guildBankTabLimitBackground; name: "GuildBankTabLimitBackground"; x: 390.5; y: 397; width: 0; height: 0 }
 }

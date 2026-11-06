@@ -29,6 +29,7 @@ WowWindow {
         kind: "Button"
         text: "Add Item"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: auctionFrame.left
         anchors.bottom: auctionFrame.bottom
         anchors.bottomMargin: 123
@@ -54,6 +55,7 @@ WowWindow {
         kind: "Button"
         text: "+"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: atr_Search_Button.right
         anchors.leftMargin: 12
         anchors.verticalCenter: atr_Search_Button.verticalCenter
@@ -74,11 +76,80 @@ WowWindow {
     }
 
     Part {
+        id: atr_Batch_MaxAuctions_Text
+        name: "Atr_Batch_MaxAuctions_Text"
+        kind: "FontString"
+        text: "max: 0"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_Batch_Stacksize_Text.left
+        anchors.leftMargin: -34
+        anchors.top: atr_Batch_Stacksize_Text.top
+        anchors.topMargin: 21
+        width: 34.5
+        height: 10.1
+    }
+
+    Part {
+        id: atr_Batch_MaxStacksize_Text
+        name: "Atr_Batch_MaxStacksize_Text"
+        kind: "FontString"
+        text: "max: 0"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_Batch_Stacksize_Text.left
+        anchors.leftMargin: 79
+        anchors.top: atr_Batch_Stacksize_Text.top
+        anchors.topMargin: 21
+        width: 34.5
+        height: 10.1
+    }
+
+    Part {
+        id: atr_Batch_NumAuctions
+        name: "Atr_Batch_NumAuctions"
+        kind: "EditBox"
+        text: "0"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_Batch_Stacksize_Text.left
+        anchors.leftMargin: -37
+        anchors.top: atr_Batch_Stacksize_Text.top
+        width: 40
+        height: 20
+    }
+
+    Part {
+        id: atr_Batch_Stacksize
+        name: "Atr_Batch_Stacksize"
+        kind: "EditBox"
+        text: "0"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_Batch_Stacksize_Text.left
+        anchors.leftMargin: 84
+        anchors.top: atr_Batch_Stacksize_Text.top
+        width: 40
+        height: 20
+    }
+
+    Part {
+        id: atr_Batch_Stacksize_Text
+        name: "Atr_Batch_Stacksize_Text"
+        kind: "FontString"
+        text: "stack of"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 55
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 224
+        width: 82
+        height: 22
+    }
+
+    Part {
         id: atr_Buy1_Button
         name: "Atr_Buy1_Button"
         kind: "Button"
         text: "Buy"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 200.7
         anchors.bottom: auctionFrame.bottom
@@ -103,8 +174,9 @@ WowWindow {
         id: atr_CancelSelectionButton
         name: "Atr_CancelSelectionButton"
         kind: "Button"
-        text: "Cancel Auctions"
+        text: "Cancel Auction"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 88.9
         anchors.bottom: auctionFrame.bottom
@@ -117,11 +189,11 @@ WowWindow {
         id: atr_CancelSelectionButtonText
         name: "Atr_CancelSelectionButtonText"
         kind: "FontString"
-        text: "Cancel Auctions"
+        text: "Cancel Auction"
         wowParent: "Atr_CancelSelectionButton"
         anchors.horizontalCenter: atr_CancelSelectionButton.horizontalCenter
         anchors.verticalCenter: atr_CancelSelectionButton.verticalCenter
-        width: 86.9
+        width: 81.2
         height: 10.1
     }
 
@@ -131,6 +203,7 @@ WowWindow {
         kind: "Button"
         text: "Check for Undercuts"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: atr_Main_Panel.left
         anchors.leftMargin: -210
         anchors.top: atr_Main_Panel.top
@@ -183,14 +256,53 @@ WowWindow {
         id: atr_Col4_Heading
         name: "Atr_Col4_Heading"
         kind: "FontString"
-        text: "Stack Price"
         wowParent: "Atr_HeadingsBar"
         anchors.left: atr_HeadingsBarMiddle.left
         anchors.leftMargin: 500
         anchors.verticalCenter: atr_HeadingsBarMiddle.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 56
+        width: 1
+        height: 1
+    }
+
+    Part {
+        id: atr_CreateAuctionButton
+        name: "Atr_CreateAuctionButton"
+        kind: "Button"
+        text: "Create Auction"
+        wowParent: "Atr_SellControls"
+        style: "Button"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 3
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 170
+        width: 185
+        height: 30
+    }
+
+    Part {
+        id: atr_CreateAuctionButtonText
+        name: "Atr_CreateAuctionButtonText"
+        kind: "FontString"
+        text: "Create Auction"
+        wowParent: "Atr_CreateAuctionButton"
+        anchors.horizontalCenter: atr_CreateAuctionButton.horizontalCenter
+        anchors.verticalCenter: atr_CreateAuctionButton.verticalCenter
+        width: 81.2
         height: 10.1
+    }
+
+    Part {
+        id: atr_Deposit_Text
+        name: "Atr_Deposit_Text"
+        kind: "FontString"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 10
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 345
+        width: 1
+        height: 1
     }
 
     Part {
@@ -198,6 +310,7 @@ WowWindow {
         name: "Atr_DropDownSL"
         kind: "Frame"
         wowParent: "Atr_Main_Panel"
+        style: "DropDown"
         anchors.left: auctionFrameDiabolicBand.left
         anchors.leftMargin: -6
         anchors.verticalCenter: auctionFrameDiabolicBand.verticalCenter
@@ -243,11 +356,76 @@ WowWindow {
     }
 
     Part {
+        id: atr_Duration
+        name: "Atr_Duration"
+        kind: "Frame"
+        wowParent: "Atr_SellControls"
+        style: "DropDown"
+        anchors.left: atr_Duration_Text.left
+        anchors.leftMargin: 32
+        anchors.top: atr_Duration_Text.top
+        anchors.topMargin: -7
+        width: 145
+        height: 32
+    }
+
+    Part {
+        id: atr_DurationButton
+        name: "Atr_DurationButton"
+        kind: "Button"
+        wowParent: "Atr_Duration"
+        anchors.right: atr_DurationDiabolicField.right
+        anchors.rightMargin: 18
+        anchors.verticalCenter: atr_DurationDiabolicField.verticalCenter
+        width: 18
+        height: 18
+    }
+
+    Part {
+        id: atr_DurationDiabolicField
+        name: "Atr_DurationDiabolicField"
+        kind: "Frame"
+        wowParent: "Atr_Duration"
+        anchors.left: atr_Duration.left
+        anchors.verticalCenter: atr_Duration.verticalCenter
+        width: 145
+        height: 22
+    }
+
+    Part {
+        id: atr_DurationText
+        name: "Atr_DurationText"
+        kind: "FontString"
+        text: "48 Hours"
+        wowParent: "Atr_Duration"
+        anchors.left: atr_DurationDiabolicField.left
+        anchors.leftMargin: 22
+        anchors.verticalCenter: atr_DurationDiabolicField.verticalCenter
+        width: 83
+        height: 10
+    }
+
+    Part {
+        id: atr_Duration_Text
+        name: "Atr_Duration_Text"
+        kind: "FontString"
+        text: "Duration"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 10
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 304
+        width: 43.8
+        height: 10.1
+    }
+
+    Part {
         id: atr_FullScanButton
         name: "Atr_FullScanButton"
         kind: "Button"
         text: "Full Scan..."
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.right: auctionator1Button.left
         anchors.rightMargin: 12
         anchors.verticalCenter: auctionator1Button.verticalCenter
@@ -287,8 +465,8 @@ WowWindow {
         wowParent: "Atr_Main_Panel"
         anchors.right: atr_Hilite1.right
         anchors.top: atr_Hilite1.top
-        width: 805
-        height: 341
+        width: 610
+        height: 116
     }
 
     Part {
@@ -322,6 +500,7 @@ WowWindow {
         name: "Atr_Hlist_ScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "Atr_Hlist_ScrollFrame"
+        style: "ScrollBar"
         anchors.left: atr_Hlist_ScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: atr_Hlist_ScrollFrame.top
@@ -347,6 +526,7 @@ WowWindow {
         name: "Atr_Hlist_ScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "Atr_Hlist_ScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: atr_Hlist_ScrollFrameScrollBar.horizontalCenter
         anchors.top: atr_Hlist_ScrollFrameScrollBar.bottom
         width: 16
@@ -358,6 +538,7 @@ WowWindow {
         name: "Atr_Hlist_ScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "Atr_Hlist_ScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: atr_Hlist_ScrollFrameScrollBar.horizontalCenter
         anchors.bottom: atr_Hlist_ScrollFrameScrollBar.top
         width: 16
@@ -373,6 +554,19 @@ WowWindow {
         anchors.top: atr_Hlist_ScrollFrame.top
         width: 300
         height: 800
+    }
+
+    Part {
+        id: atr_ItemsOwned_Text
+        name: "Atr_ItemsOwned_Text"
+        kind: "FontString"
+        text: "Items owned: 0"
+        wowParent: "Atr_SellControls"
+        anchors.horizontalCenter: atr_Batch_Stacksize_Text.horizontalCenter
+        anchors.verticalCenter: atr_Batch_Stacksize_Text.verticalCenter
+        anchors.verticalCenterOffset: -22
+        width: 79
+        height: 10.1
     }
 
     Part {
@@ -393,6 +587,7 @@ WowWindow {
         kind: "Button"
         text: "Current"
         wowParent: "Atr_ListTabs"
+        style: "Tab"
         anchors.right: atr_ListTabsTab2.left
         anchors.rightMargin: 2
         anchors.verticalCenter: atr_ListTabsTab2.verticalCenter
@@ -419,6 +614,7 @@ WowWindow {
         kind: "Button"
         text: "History"
         wowParent: "Atr_ListTabs"
+        style: "Tab"
         anchors.right: atr_ListTabsTab3.left
         anchors.rightMargin: 2
         anchors.verticalCenter: atr_ListTabsTab3.verticalCenter
@@ -445,6 +641,7 @@ WowWindow {
         kind: "Button"
         text: "Other"
         wowParent: "Atr_ListTabs"
+        style: "Tab"
         anchors.right: atr_ListTabs.right
         anchors.rightMargin: 8
         anchors.bottom: atr_ListTabs.bottom
@@ -483,6 +680,7 @@ WowWindow {
         kind: "Button"
         text: "Manage Shopping Lists"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: atr_Main_Panel.left
         anchors.leftMargin: -210
         anchors.top: atr_Main_Panel.top
@@ -509,6 +707,7 @@ WowWindow {
         kind: "Button"
         text: "New Shopping List"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: atr_Main_Panel.left
         anchors.leftMargin: -210
         anchors.top: atr_Main_Panel.top
@@ -543,15 +742,240 @@ WowWindow {
     }
 
     Part {
+        id: atr_RecommendPerItem_Price
+        name: "Atr_RecommendPerItem_Price"
+        kind: "Frame"
+        wowParent: "?"
+        anchors.left: atr_Main_Panel.left
+        anchors.leftMargin: 131.7
+        anchors.top: atr_Main_Panel.top
+        anchors.topMargin: 121
+        width: 107.3
+        height: 16
+    }
+
+    Part {
+        id: atr_RecommendPerItem_PriceCopperButton
+        name: "Atr_RecommendPerItem_PriceCopperButton"
+        kind: "Button"
+        text: "0"
+        wowParent: "Atr_RecommendPerItem_Price"
+        anchors.right: atr_RecommendPerItem_Price.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerItem_Price.verticalCenter
+        width: 32
+        height: 13
+    }
+
+    Part {
+        id: atr_RecommendPerItem_PriceCopperButtonText
+        name: "Atr_RecommendPerItem_PriceCopperButtonText"
+        kind: "FontString"
+        text: "0"
+        wowParent: "Atr_RecommendPerItem_PriceCopperButton"
+        anchors.right: atr_RecommendPerItem_PriceCopperButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerItem_PriceCopperButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
+        id: atr_RecommendPerItem_PriceGoldButton
+        name: "Atr_RecommendPerItem_PriceGoldButton"
+        kind: "Button"
+        text: "4"
+        wowParent: "Atr_RecommendPerItem_Price"
+        anchors.right: atr_RecommendPerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: atr_RecommendPerItem_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: atr_RecommendPerItem_PriceGoldButtonText
+        name: "Atr_RecommendPerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "4"
+        wowParent: "Atr_RecommendPerItem_PriceGoldButton"
+        anchors.right: atr_RecommendPerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerItem_PriceGoldButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
+        id: atr_RecommendPerItem_PriceSilverButton
+        name: "Atr_RecommendPerItem_PriceSilverButton"
+        kind: "Button"
+        text: "94"
+        wowParent: "Atr_RecommendPerItem_Price"
+        anchors.right: atr_RecommendPerItem_PriceCopperButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: atr_RecommendPerItem_PriceCopperButton.verticalCenter
+        width: 32
+        height: 13
+    }
+
+    Part {
+        id: atr_RecommendPerItem_PriceSilverButtonText
+        name: "Atr_RecommendPerItem_PriceSilverButtonText"
+        kind: "FontString"
+        text: "94"
+        wowParent: "Atr_RecommendPerItem_PriceSilverButton"
+        anchors.right: atr_RecommendPerItem_PriceSilverButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerItem_PriceSilverButton.verticalCenter
+        width: 15.8
+        height: 13.6
+    }
+
+    Part {
+        id: atr_RecommendPerItem_Text
+        name: "Atr_RecommendPerItem_Text"
+        kind: "FontString"
+        text: "per item"
+        wowParent: "Atr_Main_Panel"
+        anchors.left: atr_Recommend_Text.left
+        anchors.leftMargin: 152
+        anchors.top: atr_Recommend_Text.top
+        anchors.topMargin: 51
+        width: 43.1
+        height: 10.1
+    }
+
+    Part {
+        id: atr_RecommendPerStack_Price
+        name: "Atr_RecommendPerStack_Price"
+        kind: "Frame"
+        wowParent: "?"
+        anchors.left: atr_Main_Panel.left
+        anchors.leftMargin: 131.7
+        anchors.top: atr_Main_Panel.top
+        anchors.topMargin: 99
+        width: 107.3
+        height: 16
+    }
+
+    Part {
+        id: atr_RecommendPerStack_PriceCopperButton
+        name: "Atr_RecommendPerStack_PriceCopperButton"
+        kind: "Button"
+        text: "0"
+        wowParent: "Atr_RecommendPerStack_Price"
+        anchors.right: atr_RecommendPerStack_Price.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerStack_Price.verticalCenter
+        width: 32
+        height: 13
+    }
+
+    Part {
+        id: atr_RecommendPerStack_PriceCopperButtonText
+        name: "Atr_RecommendPerStack_PriceCopperButtonText"
+        kind: "FontString"
+        text: "0"
+        wowParent: "Atr_RecommendPerStack_PriceCopperButton"
+        anchors.right: atr_RecommendPerStack_PriceCopperButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerStack_PriceCopperButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
+        id: atr_RecommendPerStack_PriceGoldButton
+        name: "Atr_RecommendPerStack_PriceGoldButton"
+        kind: "Button"
+        text: "4"
+        wowParent: "Atr_RecommendPerStack_Price"
+        anchors.right: atr_RecommendPerStack_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: atr_RecommendPerStack_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: atr_RecommendPerStack_PriceGoldButtonText
+        name: "Atr_RecommendPerStack_PriceGoldButtonText"
+        kind: "FontString"
+        text: "4"
+        wowParent: "Atr_RecommendPerStack_PriceGoldButton"
+        anchors.right: atr_RecommendPerStack_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerStack_PriceGoldButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
+        id: atr_RecommendPerStack_PriceSilverButton
+        name: "Atr_RecommendPerStack_PriceSilverButton"
+        kind: "Button"
+        text: "94"
+        wowParent: "Atr_RecommendPerStack_Price"
+        anchors.right: atr_RecommendPerStack_PriceCopperButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: atr_RecommendPerStack_PriceCopperButton.verticalCenter
+        width: 32
+        height: 13
+    }
+
+    Part {
+        id: atr_RecommendPerStack_PriceSilverButtonText
+        name: "Atr_RecommendPerStack_PriceSilverButtonText"
+        kind: "FontString"
+        text: "94"
+        wowParent: "Atr_RecommendPerStack_PriceSilverButton"
+        anchors.right: atr_RecommendPerStack_PriceSilverButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: atr_RecommendPerStack_PriceSilverButton.verticalCenter
+        width: 15.8
+        height: 13.6
+    }
+
+    Part {
+        id: atr_RecommendPerStack_Text
+        name: "Atr_RecommendPerStack_Text"
+        kind: "FontString"
+        text: "for your stack of 1"
+        wowParent: "Atr_Main_Panel"
+        anchors.left: atr_Recommend_Text.left
+        anchors.leftMargin: 152
+        anchors.top: atr_Recommend_Text.top
+        anchors.topMargin: 28
+        width: 89.8
+        height: 10.1
+    }
+
+    Part {
+        id: atr_Recommend_Basis_Text
+        name: "Atr_Recommend_Basis_Text"
+        kind: "FontString"
+        text: "(based on selected auction)"
+        wowParent: "Atr_Main_Panel"
+        anchors.left: atr_Recommend_Text.right
+        anchors.leftMargin: 20
+        anchors.verticalCenter: atr_Recommend_Text.verticalCenter
+        anchors.verticalCenterOffset: 2
+        width: 140.1
+        height: 10.1
+    }
+
+    Part {
         id: atr_Recommend_Text
         name: "Atr_Recommend_Text"
         kind: "FontString"
+        text: "Auction created for Formidable Shoulder Pads of the Boar"
         wowParent: "Atr_Main_Panel"
         anchors.left: atr_Main_Panel.left
         anchors.leftMargin: 87
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 73
-        width: 111.4
+        width: 346.9
         height: 12.2
     }
 
@@ -561,6 +985,7 @@ WowWindow {
         kind: "Button"
         text: "Remove Item"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: auctionFrame.left
         anchors.leftMargin: 99.1
         anchors.bottom: auctionFrame.bottom
@@ -585,8 +1010,8 @@ WowWindow {
         id: atr_Search_Box
         name: "Atr_Search_Box"
         kind: "EditBox"
-        text: "Mageweave Cloth"
         wowParent: "Atr_Main_Panel"
+        style: "EditBox"
         anchors.left: atr_DropDownSL.right
         anchors.leftMargin: 4
         anchors.verticalCenter: atr_DropDownSL.verticalCenter
@@ -612,6 +1037,7 @@ WowWindow {
         kind: "Button"
         text: "Search"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: atr_Search_Box.right
         anchors.leftMargin: 20
         anchors.verticalCenter: atr_Search_Box.verticalCenter
@@ -632,11 +1058,50 @@ WowWindow {
     }
 
     Part {
+        id: atr_SellControls
+        name: "Atr_SellControls"
+        kind: "Frame"
+        wowParent: "Atr_Main_Panel"
+        anchors.left: atr_Main_Panel.left
+        anchors.leftMargin: -205
+        anchors.top: atr_Main_Panel.top
+        anchors.topMargin: 47
+        width: 190
+        height: 338
+    }
+
+    Part {
+        id: atr_SellControls_Tex
+        name: "Atr_SellControls_Tex"
+        kind: "Button"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 11
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 23
+        width: 37
+        height: 37
+    }
+
+    Part {
+        id: atr_SellControls_TexName
+        name: "Atr_SellControls_TexName"
+        kind: "FontString"
+        wowParent: "Atr_SellControls_Tex"
+        anchors.left: atr_SellControls_Tex.right
+        anchors.leftMargin: 5
+        anchors.top: atr_SellControls_Tex.top
+        width: 124
+        height: 30
+    }
+
+    Part {
         id: atr_SrchSListButton
         name: "Atr_SrchSListButton"
         kind: "Button"
         text: "Search for All Items"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.left: atr_Main_Panel.left
         anchors.leftMargin: -210
         anchors.top: atr_Main_Panel.top
@@ -658,6 +1123,84 @@ WowWindow {
     }
 
     Part {
+        id: atr_StackPrice
+        name: "Atr_StackPrice"
+        kind: "Frame"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_StackPriceText.left
+        anchors.leftMargin: 8
+        anchors.top: atr_StackPriceText.bottom
+        anchors.topMargin: 2
+        width: 176
+        height: 18
+    }
+
+    Part {
+        id: atr_StackPriceCopper
+        name: "Atr_StackPriceCopper"
+        kind: "EditBox"
+        wowParent: "Atr_StackPrice"
+        anchors.left: atr_StackPriceSilver.right
+        anchors.leftMargin: 16
+        anchors.verticalCenter: atr_StackPriceSilver.verticalCenter
+        width: 30
+        height: 20
+    }
+
+    Part {
+        id: atr_StackPriceGold
+        name: "Atr_StackPriceGold"
+        kind: "EditBox"
+        text: "0"
+        wowParent: "Atr_StackPrice"
+        anchors.left: atr_StackPrice.left
+        anchors.top: atr_StackPrice.top
+        width: 58
+        height: 20
+    }
+
+    Part {
+        id: atr_StackPriceSilver
+        name: "Atr_StackPriceSilver"
+        kind: "EditBox"
+        text: "0"
+        wowParent: "Atr_StackPrice"
+        anchors.left: atr_StackPriceGold.right
+        anchors.leftMargin: 26
+        anchors.verticalCenter: atr_StackPriceGold.verticalCenter
+        width: 30
+        height: 20
+    }
+
+    Part {
+        id: atr_StackPriceText
+        name: "Atr_StackPriceText"
+        kind: "FontString"
+        text: "Buyout Price"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 10
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 82
+        width: 63.9
+        height: 10.1
+    }
+
+    Part {
+        id: atr_StartingPriceDiscountText
+        name: "Atr_StartingPriceDiscountText"
+        kind: "FontString"
+        text: "Starting Price Discount:  5%"
+        wowParent: "Atr_SellControls"
+        anchors.left: atr_SellControls.left
+        anchors.leftMargin: 10
+        anchors.top: atr_SellControls.top
+        anchors.topMargin: 270
+        width: 137.9
+        height: 10.1
+    }
+
+    Part {
         id: auctionFilterButton1
         name: "AuctionFilterButton1"
         kind: "Button"
@@ -667,7 +1210,7 @@ WowWindow {
         anchors.leftMargin: 2
         anchors.top: auctionFrame.top
         anchors.topMargin: 82
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -675,11 +1218,10 @@ WowWindow {
         id: auctionFilterButton10
         name: "AuctionFilterButton10"
         kind: "Button"
-        text: "Gem"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton9.left
         anchors.top: auctionFilterButton9.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -687,10 +1229,9 @@ WowWindow {
         id: auctionFilterButton10NormalText
         name: "AuctionFilterButton10NormalText"
         kind: "FontString"
-        text: "Gem"
         wowParent: "AuctionFilterButton10"
         anchors.left: auctionFilterButton10.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton10.verticalCenter
         width: 115
         height: 8
@@ -700,11 +1241,10 @@ WowWindow {
         id: auctionFilterButton11
         name: "AuctionFilterButton11"
         kind: "Button"
-        text: "Miscellaneous"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton10.left
         anchors.top: auctionFilterButton10.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -712,10 +1252,9 @@ WowWindow {
         id: auctionFilterButton11NormalText
         name: "AuctionFilterButton11NormalText"
         kind: "FontString"
-        text: "Miscellaneous"
         wowParent: "AuctionFilterButton11"
         anchors.left: auctionFilterButton11.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton11.verticalCenter
         width: 115
         height: 8
@@ -725,11 +1264,10 @@ WowWindow {
         id: auctionFilterButton12
         name: "AuctionFilterButton12"
         kind: "Button"
-        text: "Quest"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton11.left
         anchors.top: auctionFilterButton11.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -737,10 +1275,9 @@ WowWindow {
         id: auctionFilterButton12NormalText
         name: "AuctionFilterButton12NormalText"
         kind: "FontString"
-        text: "Quest"
         wowParent: "AuctionFilterButton12"
         anchors.left: auctionFilterButton12.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton12.verticalCenter
         width: 115
         height: 8
@@ -750,6 +1287,7 @@ WowWindow {
         id: auctionFilterButton13
         name: "AuctionFilterButton13"
         kind: "Button"
+        text: "Consumable"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton12.left
         anchors.top: auctionFilterButton12.bottom
@@ -761,9 +1299,10 @@ WowWindow {
         id: auctionFilterButton13NormalText
         name: "AuctionFilterButton13NormalText"
         kind: "FontString"
+        text: "Consumable"
         wowParent: "AuctionFilterButton13"
         anchors.left: auctionFilterButton13.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton13.verticalCenter
         width: 115
         height: 8
@@ -773,6 +1312,7 @@ WowWindow {
         id: auctionFilterButton14
         name: "AuctionFilterButton14"
         kind: "Button"
+        text: "Glyph"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton13.left
         anchors.top: auctionFilterButton13.bottom
@@ -784,9 +1324,10 @@ WowWindow {
         id: auctionFilterButton14NormalText
         name: "AuctionFilterButton14NormalText"
         kind: "FontString"
+        text: "Glyph"
         wowParent: "AuctionFilterButton14"
         anchors.left: auctionFilterButton14.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton14.verticalCenter
         width: 115
         height: 8
@@ -796,6 +1337,7 @@ WowWindow {
         id: auctionFilterButton15
         name: "AuctionFilterButton15"
         kind: "Button"
+        text: "Trade Goods"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton14.left
         anchors.top: auctionFilterButton14.bottom
@@ -807,9 +1349,10 @@ WowWindow {
         id: auctionFilterButton15NormalText
         name: "AuctionFilterButton15NormalText"
         kind: "FontString"
+        text: "Trade Goods"
         wowParent: "AuctionFilterButton15"
         anchors.left: auctionFilterButton15.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton15.verticalCenter
         width: 115
         height: 8
@@ -836,7 +1379,7 @@ WowWindow {
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton1.left
         anchors.top: auctionFilterButton1.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -861,7 +1404,7 @@ WowWindow {
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton2.left
         anchors.top: auctionFilterButton2.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -882,11 +1425,10 @@ WowWindow {
         id: auctionFilterButton4
         name: "AuctionFilterButton4"
         kind: "Button"
-        text: "Consumable"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton3.left
         anchors.top: auctionFilterButton3.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -894,10 +1436,9 @@ WowWindow {
         id: auctionFilterButton4NormalText
         name: "AuctionFilterButton4NormalText"
         kind: "FontString"
-        text: "Consumable"
         wowParent: "AuctionFilterButton4"
         anchors.left: auctionFilterButton4.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton4.verticalCenter
         width: 115
         height: 8
@@ -907,11 +1448,10 @@ WowWindow {
         id: auctionFilterButton5
         name: "AuctionFilterButton5"
         kind: "Button"
-        text: "Glyph"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton4.left
         anchors.top: auctionFilterButton4.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -919,10 +1459,9 @@ WowWindow {
         id: auctionFilterButton5NormalText
         name: "AuctionFilterButton5NormalText"
         kind: "FontString"
-        text: "Glyph"
         wowParent: "AuctionFilterButton5"
         anchors.left: auctionFilterButton5.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton5.verticalCenter
         width: 115
         height: 8
@@ -932,11 +1471,10 @@ WowWindow {
         id: auctionFilterButton6
         name: "AuctionFilterButton6"
         kind: "Button"
-        text: "Trade Goods"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton5.left
         anchors.top: auctionFilterButton5.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -944,10 +1482,9 @@ WowWindow {
         id: auctionFilterButton6NormalText
         name: "AuctionFilterButton6NormalText"
         kind: "FontString"
-        text: "Trade Goods"
         wowParent: "AuctionFilterButton6"
         anchors.left: auctionFilterButton6.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton6.verticalCenter
         width: 115
         height: 8
@@ -957,11 +1494,10 @@ WowWindow {
         id: auctionFilterButton7
         name: "AuctionFilterButton7"
         kind: "Button"
-        text: "Projectile"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton6.left
         anchors.top: auctionFilterButton6.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -969,10 +1505,9 @@ WowWindow {
         id: auctionFilterButton7NormalText
         name: "AuctionFilterButton7NormalText"
         kind: "FontString"
-        text: "Projectile"
         wowParent: "AuctionFilterButton7"
         anchors.left: auctionFilterButton7.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton7.verticalCenter
         width: 115
         height: 8
@@ -982,11 +1517,10 @@ WowWindow {
         id: auctionFilterButton8
         name: "AuctionFilterButton8"
         kind: "Button"
-        text: "Quiver"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton7.left
         anchors.top: auctionFilterButton7.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -994,10 +1528,9 @@ WowWindow {
         id: auctionFilterButton8NormalText
         name: "AuctionFilterButton8NormalText"
         kind: "FontString"
-        text: "Quiver"
         wowParent: "AuctionFilterButton8"
         anchors.left: auctionFilterButton8.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton8.verticalCenter
         width: 115
         height: 8
@@ -1007,11 +1540,10 @@ WowWindow {
         id: auctionFilterButton9
         name: "AuctionFilterButton9"
         kind: "Button"
-        text: "Recipe"
         wowParent: "AuctionFrameBrowse"
         anchors.left: auctionFilterButton8.left
         anchors.top: auctionFilterButton8.bottom
-        width: 156
+        width: 136
         height: 20
     }
 
@@ -1019,10 +1551,9 @@ WowWindow {
         id: auctionFilterButton9NormalText
         name: "AuctionFilterButton9NormalText"
         kind: "FontString"
-        text: "Recipe"
         wowParent: "AuctionFilterButton9"
         anchors.left: auctionFilterButton9.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton9.verticalCenter
         width: 115
         height: 8
@@ -1066,6 +1597,7 @@ WowWindow {
         name: "AuctionFrameCloseButton"
         kind: "Button"
         wowParent: "AuctionFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: auctionFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: auctionFrameDiabolic.top
@@ -1180,7 +1712,7 @@ WowWindow {
         id: auctionFrameMoneyFrameCopperButton
         name: "AuctionFrameMoneyFrameCopperButton"
         kind: "Button"
-        text: "13"
+        text: "79"
         wowParent: "AuctionFrameMoneyFrame"
         anchors.right: auctionFrameMoneyFrame.right
         anchors.rightMargin: 13
@@ -1193,7 +1725,7 @@ WowWindow {
         id: auctionFrameMoneyFrameCopperButtonText
         name: "AuctionFrameMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "13"
+        text: "79"
         wowParent: "AuctionFrameMoneyFrameCopperButton"
         anchors.right: auctionFrameMoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -1206,7 +1738,7 @@ WowWindow {
         id: auctionFrameMoneyFrameGoldButton
         name: "AuctionFrameMoneyFrameGoldButton"
         kind: "Button"
-        text: "3654"
+        text: "8146"
         wowParent: "AuctionFrameMoneyFrame"
         anchors.right: auctionFrameMoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -1219,7 +1751,7 @@ WowWindow {
         id: auctionFrameMoneyFrameGoldButtonText
         name: "AuctionFrameMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "3654"
+        text: "8146"
         wowParent: "AuctionFrameMoneyFrameGoldButton"
         anchors.right: auctionFrameMoneyFrameGoldButton.right
         anchors.rightMargin: 13
@@ -1232,7 +1764,7 @@ WowWindow {
         id: auctionFrameMoneyFrameSilverButton
         name: "AuctionFrameMoneyFrameSilverButton"
         kind: "Button"
-        text: "16"
+        text: "83"
         wowParent: "AuctionFrameMoneyFrame"
         anchors.right: auctionFrameMoneyFrameCopperButton.left
         anchors.rightMargin: 4
@@ -1245,7 +1777,7 @@ WowWindow {
         id: auctionFrameMoneyFrameSilverButtonText
         name: "AuctionFrameMoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "16"
+        text: "83"
         wowParent: "AuctionFrameMoneyFrameSilverButton"
         anchors.right: auctionFrameMoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -1260,6 +1792,7 @@ WowWindow {
         kind: "Button"
         text: "Browse"
         wowParent: "AuctionFrame"
+        style: "Banner"
         anchors.left: auctionFrameDiabolic.left
         anchors.leftMargin: 28
         anchors.top: auctionFrameDiabolic.bottom
@@ -1274,6 +1807,7 @@ WowWindow {
         kind: "Button"
         text: "Bids"
         wowParent: "AuctionFrame"
+        style: "Banner"
         anchors.left: auctionFrameDiabolic.left
         anchors.leftMargin: 86
         anchors.top: auctionFrameDiabolic.bottom
@@ -1288,6 +1822,7 @@ WowWindow {
         kind: "Button"
         text: "Auctions"
         wowParent: "AuctionFrame"
+        style: "Banner"
         anchors.left: auctionFrameDiabolic.left
         anchors.leftMargin: 144
         anchors.top: auctionFrameDiabolic.bottom
@@ -1302,6 +1837,7 @@ WowWindow {
         kind: "Button"
         text: "Buy"
         wowParent: "AuctionFrame"
+        style: "Banner"
         anchors.left: auctionFrameDiabolic.left
         anchors.leftMargin: 202
         anchors.top: auctionFrameDiabolic.bottom
@@ -1316,6 +1852,7 @@ WowWindow {
         kind: "Button"
         text: "Sell"
         wowParent: "AuctionFrame"
+        style: "Banner"
         anchors.left: auctionFrameDiabolic.left
         anchors.leftMargin: 260
         anchors.top: auctionFrameDiabolic.bottom
@@ -1330,6 +1867,7 @@ WowWindow {
         kind: "Button"
         text: "More..."
         wowParent: "AuctionFrame"
+        style: "Banner"
         anchors.left: auctionFrameDiabolic.left
         anchors.leftMargin: 318
         anchors.top: auctionFrameDiabolic.bottom
@@ -1344,6 +1882,7 @@ WowWindow {
         kind: "Button"
         text: "Options"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.right: auctionFrameDiabolicBand.right
         anchors.rightMargin: 48
         anchors.verticalCenter: auctionFrameDiabolicBand.verticalCenter
@@ -1369,6 +1908,7 @@ WowWindow {
         kind: "Button"
         text: "Close"
         wowParent: "Atr_Main_Panel"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 8
         anchors.bottom: auctionFrame.bottom
@@ -1416,13 +1956,13 @@ WowWindow {
         id: auctionatorEntry10_EntryText
         name: "AuctionatorEntry10_EntryText"
         kind: "FontString"
-        text: "1 stack of 20"
+        text: "1 stack of 1"
         wowParent: "?"
         anchors.left: auctionatorEntry10.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry10.top
         anchors.topMargin: 3
-        width: 65.4
+        width: 57.5
         height: 10.1
     }
 
@@ -1432,10 +1972,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "?"
         anchors.left: auctionatorEntry10.left
-        anchors.leftMargin: 63.5
+        anchors.leftMargin: 28.2
         anchors.top: auctionatorEntry10.top
         anchors.topMargin: 1.5
-        width: 78.5
+        width: 113.8
         height: 13
     }
 
@@ -1466,15 +2006,41 @@ WowWindow {
     }
 
     Part {
+        id: auctionatorEntry10_PerItem_PriceGoldButton
+        name: "AuctionatorEntry10_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "22"
+        wowParent: "AuctionatorEntry10_PerItem_Price"
+        anchors.right: auctionatorEntry10_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry10_PerItem_PriceSilverButton.verticalCenter
+        width: 28.8
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry10_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry10_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "22"
+        wowParent: "AuctionatorEntry10_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry10_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry10_PerItem_PriceGoldButton.verticalCenter
+        width: 15.8
+        height: 13.6
+    }
+
+    Part {
         id: auctionatorEntry10_PerItem_PriceSilverButton
         name: "AuctionatorEntry10_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "35"
+        text: "50"
         wowParent: "AuctionatorEntry10_PerItem_Price"
         anchors.right: auctionatorEntry10_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: auctionatorEntry10_PerItem_PriceCopperButton.verticalCenter
-        width: 29.5
+        width: 32
         height: 13
     }
 
@@ -1482,12 +2048,12 @@ WowWindow {
         id: auctionatorEntry10_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry10_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "35"
+        text: "50"
         wowParent: "AuctionatorEntry10_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry10_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry10_PerItem_PriceSilverButton.verticalCenter
-        width: 16.5
+        width: 15.8
         height: 13.6
     }
 
@@ -1495,14 +2061,13 @@ WowWindow {
         id: auctionatorEntry10_StackPrice
         name: "AuctionatorEntry10_StackPrice"
         kind: "FontString"
-        text: "7g 00s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry10.left
-        anchors.leftMargin: 503.3
+        anchors.leftMargin: 559
         anchors.top: auctionatorEntry10.top
-        anchors.topMargin: 3
-        width: 56.7
-        height: 10.1
+        anchors.topMargin: 7.5
+        width: 1
+        height: 1
     }
 
     Part {
@@ -1716,14 +2281,105 @@ WowWindow {
         id: auctionatorEntry1_EntryText
         name: "AuctionatorEntry1_EntryText"
         kind: "FontString"
-        text: "1 stack of 13"
+        text: "1 stack of 1 (yours)"
         wowParent: "?"
         anchors.left: auctionatorEntry1.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry1.top
         anchors.topMargin: 3
-        width: 63.9
+        width: 95.5
         height: 10.1
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_Price
+        name: "AuctionatorEntry1_PerItem_Price"
+        kind: "Frame"
+        wowParent: "?"
+        anchors.left: auctionatorEntry1.left
+        anchors.leftMargin: 34.7
+        anchors.top: auctionatorEntry1.top
+        anchors.topMargin: 1.5
+        width: 107.3
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_PriceCopperButton
+        name: "AuctionatorEntry1_PerItem_PriceCopperButton"
+        kind: "Button"
+        text: "0"
+        wowParent: "AuctionatorEntry1_PerItem_Price"
+        anchors.right: auctionatorEntry1_PerItem_Price.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry1_PerItem_Price.verticalCenter
+        width: 32
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_PriceCopperButtonText
+        name: "AuctionatorEntry1_PerItem_PriceCopperButtonText"
+        kind: "FontString"
+        text: "0"
+        wowParent: "AuctionatorEntry1_PerItem_PriceCopperButton"
+        anchors.right: auctionatorEntry1_PerItem_PriceCopperButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry1_PerItem_PriceCopperButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_PriceGoldButton
+        name: "AuctionatorEntry1_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "4"
+        wowParent: "AuctionatorEntry1_PerItem_Price"
+        anchors.right: auctionatorEntry1_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry1_PerItem_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry1_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "4"
+        wowParent: "AuctionatorEntry1_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry1_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry1_PerItem_PriceGoldButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_PriceSilverButton
+        name: "AuctionatorEntry1_PerItem_PriceSilverButton"
+        kind: "Button"
+        text: "94"
+        wowParent: "AuctionatorEntry1_PerItem_Price"
+        anchors.right: auctionatorEntry1_PerItem_PriceCopperButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry1_PerItem_PriceCopperButton.verticalCenter
+        width: 32
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry1_PerItem_PriceSilverButtonText
+        name: "AuctionatorEntry1_PerItem_PriceSilverButtonText"
+        kind: "FontString"
+        text: "94"
+        wowParent: "AuctionatorEntry1_PerItem_PriceSilverButton"
+        anchors.right: auctionatorEntry1_PerItem_PriceSilverButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry1_PerItem_PriceSilverButton.verticalCenter
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -1768,13 +2424,13 @@ WowWindow {
         id: auctionatorEntry2_EntryText
         name: "AuctionatorEntry2_EntryText"
         kind: "FontString"
-        text: "2 stacks of 20"
+        text: "1 stack of 10"
         wowParent: "?"
         anchors.left: auctionatorEntry2.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry2.top
         anchors.topMargin: 3
-        width: 70.4
+        width: 64.6
         height: 10.1
     }
 
@@ -1784,10 +2440,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "?"
         anchors.left: auctionatorEntry2.left
-        anchors.leftMargin: 63.5
+        anchors.leftMargin: 64.2
         anchors.top: auctionatorEntry2.top
         anchors.topMargin: 1.5
-        width: 78.5
+        width: 77.8
         height: 13
     }
 
@@ -1818,15 +2474,41 @@ WowWindow {
     }
 
     Part {
+        id: auctionatorEntry2_PerItem_PriceGoldButton
+        name: "AuctionatorEntry2_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "9"
+        wowParent: "AuctionatorEntry2_PerItem_Price"
+        anchors.right: auctionatorEntry2_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry2_PerItem_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry2_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry2_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "9"
+        wowParent: "AuctionatorEntry2_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry2_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry2_PerItem_PriceGoldButton.verticalCenter
+        width: 9.4
+        height: 13.6
+    }
+
+    Part {
         id: auctionatorEntry2_PerItem_PriceSilverButton
         name: "AuctionatorEntry2_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "25"
+        text: "24"
         wowParent: "AuctionatorEntry2_PerItem_Price"
         anchors.right: auctionatorEntry2_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: auctionatorEntry2_PerItem_PriceCopperButton.verticalCenter
-        width: 29.5
+        width: 28.8
         height: 13
     }
 
@@ -1834,12 +2516,12 @@ WowWindow {
         id: auctionatorEntry2_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry2_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "25"
+        text: "24"
         wowParent: "AuctionatorEntry2_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry2_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry2_PerItem_PriceSilverButton.verticalCenter
-        width: 16.5
+        width: 15.8
         height: 13.6
     }
 
@@ -1847,7 +2529,7 @@ WowWindow {
         id: auctionatorEntry2_StackPrice
         name: "AuctionatorEntry2_StackPrice"
         kind: "FontString"
-        text: "5g 00s 00c"
+        text: "2g 40s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry2.left
         anchors.leftMargin: 503.3
@@ -1872,13 +2554,13 @@ WowWindow {
         id: auctionatorEntry3_EntryText
         name: "AuctionatorEntry3_EntryText"
         kind: "FontString"
-        text: "1 stack of 3"
+        text: "1 stack of 1"
         wowParent: "?"
         anchors.left: auctionatorEntry3.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry3.top
         anchors.topMargin: 3
-        width: 58.2
+        width: 57.5
         height: 10.1
     }
 
@@ -1888,10 +2570,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "?"
         anchors.left: auctionatorEntry3.left
-        anchors.leftMargin: 63.5
+        anchors.leftMargin: 64.2
         anchors.top: auctionatorEntry3.top
         anchors.topMargin: 1.5
-        width: 78.5
+        width: 77.8
         height: 13
     }
 
@@ -1899,7 +2581,7 @@ WowWindow {
         id: auctionatorEntry3_PerItem_PriceCopperButton
         name: "AuctionatorEntry3_PerItem_PriceCopperButton"
         kind: "Button"
-        text: "0"
+        text: "98"
         wowParent: "AuctionatorEntry3_PerItem_Price"
         anchors.right: auctionatorEntry3_PerItem_Price.right
         anchors.rightMargin: 13
@@ -1912,11 +2594,37 @@ WowWindow {
         id: auctionatorEntry3_PerItem_PriceCopperButtonText
         name: "AuctionatorEntry3_PerItem_PriceCopperButtonText"
         kind: "FontString"
-        text: "0"
+        text: "98"
         wowParent: "AuctionatorEntry3_PerItem_PriceCopperButton"
         anchors.right: auctionatorEntry3_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry3_PerItem_PriceCopperButton.verticalCenter
+        width: 15.8
+        height: 13.6
+    }
+
+    Part {
+        id: auctionatorEntry3_PerItem_PriceGoldButton
+        name: "AuctionatorEntry3_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "2"
+        wowParent: "AuctionatorEntry3_PerItem_Price"
+        anchors.right: auctionatorEntry3_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry3_PerItem_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry3_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry3_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "2"
+        wowParent: "AuctionatorEntry3_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry3_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry3_PerItem_PriceGoldButton.verticalCenter
         width: 9.4
         height: 13.6
     }
@@ -1925,12 +2633,12 @@ WowWindow {
         id: auctionatorEntry3_PerItem_PriceSilverButton
         name: "AuctionatorEntry3_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "25"
+        text: "24"
         wowParent: "AuctionatorEntry3_PerItem_Price"
         anchors.right: auctionatorEntry3_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: auctionatorEntry3_PerItem_PriceCopperButton.verticalCenter
-        width: 29.5
+        width: 28.8
         height: 13
     }
 
@@ -1938,12 +2646,12 @@ WowWindow {
         id: auctionatorEntry3_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry3_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "25"
+        text: "24"
         wowParent: "AuctionatorEntry3_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry3_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry3_PerItem_PriceSilverButton.verticalCenter
-        width: 16.5
+        width: 15.8
         height: 13.6
     }
 
@@ -1951,14 +2659,13 @@ WowWindow {
         id: auctionatorEntry3_StackPrice
         name: "AuctionatorEntry3_StackPrice"
         kind: "FontString"
-        text: "75s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry3.left
-        anchors.leftMargin: 519.1
+        anchors.leftMargin: 559
         anchors.top: auctionatorEntry3.top
-        anchors.topMargin: 3
-        width: 40.9
-        height: 10.1
+        anchors.topMargin: 7.5
+        width: 1
+        height: 1
     }
 
     Part {
@@ -1976,13 +2683,13 @@ WowWindow {
         id: auctionatorEntry4_EntryText
         name: "AuctionatorEntry4_EntryText"
         kind: "FontString"
-        text: "1 stack of 17"
+        text: "1 stack of 8"
         wowParent: "?"
         anchors.left: auctionatorEntry4.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry4.top
         anchors.topMargin: 3
-        width: 64.6
+        width: 58.9
         height: 10.1
     }
 
@@ -2003,7 +2710,7 @@ WowWindow {
         id: auctionatorEntry4_PerItem_PriceCopperButton
         name: "AuctionatorEntry4_PerItem_PriceCopperButton"
         kind: "Button"
-        text: "0"
+        text: "99"
         wowParent: "AuctionatorEntry4_PerItem_Price"
         anchors.right: auctionatorEntry4_PerItem_Price.right
         anchors.rightMargin: 13
@@ -2016,11 +2723,37 @@ WowWindow {
         id: auctionatorEntry4_PerItem_PriceCopperButtonText
         name: "AuctionatorEntry4_PerItem_PriceCopperButtonText"
         kind: "FontString"
-        text: "0"
+        text: "99"
         wowParent: "AuctionatorEntry4_PerItem_PriceCopperButton"
         anchors.right: auctionatorEntry4_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry4_PerItem_PriceCopperButton.verticalCenter
+        width: 15.8
+        height: 13.6
+    }
+
+    Part {
+        id: auctionatorEntry4_PerItem_PriceGoldButton
+        name: "AuctionatorEntry4_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "2"
+        wowParent: "AuctionatorEntry4_PerItem_Price"
+        anchors.right: auctionatorEntry4_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry4_PerItem_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry4_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry4_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "2"
+        wowParent: "AuctionatorEntry4_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry4_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry4_PerItem_PriceGoldButton.verticalCenter
         width: 9.4
         height: 13.6
     }
@@ -2029,7 +2762,7 @@ WowWindow {
         id: auctionatorEntry4_PerItem_PriceSilverButton
         name: "AuctionatorEntry4_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "26"
+        text: "24"
         wowParent: "AuctionatorEntry4_PerItem_Price"
         anchors.right: auctionatorEntry4_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
@@ -2042,7 +2775,7 @@ WowWindow {
         id: auctionatorEntry4_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry4_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "26"
+        text: "24"
         wowParent: "AuctionatorEntry4_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry4_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
@@ -2055,7 +2788,7 @@ WowWindow {
         id: auctionatorEntry4_StackPrice
         name: "AuctionatorEntry4_StackPrice"
         kind: "FontString"
-        text: "4g 42s 00c"
+        text: "1g 99s 92c"
         wowParent: "?"
         anchors.left: auctionatorEntry4.left
         anchors.leftMargin: 503.3
@@ -2080,13 +2813,13 @@ WowWindow {
         id: auctionatorEntry5_EntryText
         name: "AuctionatorEntry5_EntryText"
         kind: "FontString"
-        text: "1 stack of 7"
+        text: "1 stack of 14"
         wowParent: "?"
         anchors.left: auctionatorEntry5.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry5.top
         anchors.topMargin: 3
-        width: 58.9
+        width: 64.6
         height: 10.1
     }
 
@@ -2096,10 +2829,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "?"
         anchors.left: auctionatorEntry5.left
-        anchors.leftMargin: 64.2
+        anchors.leftMargin: 63.5
         anchors.top: auctionatorEntry5.top
         anchors.topMargin: 1.5
-        width: 77.8
+        width: 78.5
         height: 13
     }
 
@@ -2133,12 +2866,12 @@ WowWindow {
         id: auctionatorEntry5_PerItem_PriceSilverButton
         name: "AuctionatorEntry5_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "26"
+        text: "25"
         wowParent: "AuctionatorEntry5_PerItem_Price"
         anchors.right: auctionatorEntry5_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: auctionatorEntry5_PerItem_PriceCopperButton.verticalCenter
-        width: 28.8
+        width: 29.5
         height: 13
     }
 
@@ -2146,12 +2879,12 @@ WowWindow {
         id: auctionatorEntry5_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry5_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "26"
+        text: "25"
         wowParent: "AuctionatorEntry5_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry5_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry5_PerItem_PriceSilverButton.verticalCenter
-        width: 15.8
+        width: 16.5
         height: 13.6
     }
 
@@ -2159,7 +2892,7 @@ WowWindow {
         id: auctionatorEntry5_StackPrice
         name: "AuctionatorEntry5_StackPrice"
         kind: "FontString"
-        text: "1g 82s 00c"
+        text: "3g 50s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry5.left
         anchors.leftMargin: 503.3
@@ -2184,13 +2917,13 @@ WowWindow {
         id: auctionatorEntry6_EntryText
         name: "AuctionatorEntry6_EntryText"
         kind: "FontString"
-        text: "1 stack of 3"
+        text: "1 stack of 14"
         wowParent: "?"
         anchors.left: auctionatorEntry6.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry6.top
         anchors.topMargin: 3
-        width: 58.2
+        width: 64.6
         height: 10.1
     }
 
@@ -2237,7 +2970,7 @@ WowWindow {
         id: auctionatorEntry6_PerItem_PriceSilverButton
         name: "AuctionatorEntry6_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "27"
+        text: "73"
         wowParent: "AuctionatorEntry6_PerItem_Price"
         anchors.right: auctionatorEntry6_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
@@ -2250,7 +2983,7 @@ WowWindow {
         id: auctionatorEntry6_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry6_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "27"
+        text: "73"
         wowParent: "AuctionatorEntry6_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry6_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
@@ -2263,13 +2996,13 @@ WowWindow {
         id: auctionatorEntry6_StackPrice
         name: "AuctionatorEntry6_StackPrice"
         kind: "FontString"
-        text: "81s 00c"
+        text: "10g 22s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry6.left
-        anchors.leftMargin: 519.8
+        anchors.leftMargin: 497.5
         anchors.top: auctionatorEntry6.top
         anchors.topMargin: 3
-        width: 40.2
+        width: 62.5
         height: 10.1
     }
 
@@ -2288,13 +3021,13 @@ WowWindow {
         id: auctionatorEntry7_EntryText
         name: "AuctionatorEntry7_EntryText"
         kind: "FontString"
-        text: "6 stacks of 5"
+        text: "1 stack of 1 (yours)"
         wowParent: "?"
         anchors.left: auctionatorEntry7.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry7.top
         anchors.topMargin: 3
-        width: 62.5
+        width: 95.5
         height: 10.1
     }
 
@@ -2338,10 +3071,36 @@ WowWindow {
     }
 
     Part {
+        id: auctionatorEntry7_PerItem_PriceGoldButton
+        name: "AuctionatorEntry7_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "1"
+        wowParent: "AuctionatorEntry7_PerItem_Price"
+        anchors.right: auctionatorEntry7_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry7_PerItem_PriceSilverButton.verticalCenter
+        width: 20.9
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry7_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry7_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "1"
+        wowParent: "AuctionatorEntry7_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry7_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry7_PerItem_PriceGoldButton.verticalCenter
+        width: 7.9
+        height: 13.6
+    }
+
+    Part {
         id: auctionatorEntry7_PerItem_PriceSilverButton
         name: "AuctionatorEntry7_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "27"
+        text: "74"
         wowParent: "AuctionatorEntry7_PerItem_Price"
         anchors.right: auctionatorEntry7_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
@@ -2354,7 +3113,7 @@ WowWindow {
         id: auctionatorEntry7_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry7_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "27"
+        text: "74"
         wowParent: "AuctionatorEntry7_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry7_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
@@ -2367,14 +3126,13 @@ WowWindow {
         id: auctionatorEntry7_StackPrice
         name: "AuctionatorEntry7_StackPrice"
         kind: "FontString"
-        text: "1g 35s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry7.left
-        anchors.leftMargin: 503.3
+        anchors.leftMargin: 559
         anchors.top: auctionatorEntry7.top
-        anchors.topMargin: 3
-        width: 56.7
-        height: 10.1
+        anchors.topMargin: 7.5
+        width: 1
+        height: 1
     }
 
     Part {
@@ -2392,13 +3150,13 @@ WowWindow {
         id: auctionatorEntry8_EntryText
         name: "AuctionatorEntry8_EntryText"
         kind: "FontString"
-        text: "1 stack of 7"
+        text: "1 stack of 1 (yours)"
         wowParent: "?"
         anchors.left: auctionatorEntry8.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry8.top
         anchors.topMargin: 3
-        width: 58.9
+        width: 95.5
         height: 10.1
     }
 
@@ -2408,10 +3166,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "?"
         anchors.left: auctionatorEntry8.left
-        anchors.leftMargin: 64.2
+        anchors.leftMargin: 36.1
         anchors.top: auctionatorEntry8.top
         anchors.topMargin: 1.5
-        width: 77.8
+        width: 105.9
         height: 13
     }
 
@@ -2442,15 +3200,41 @@ WowWindow {
     }
 
     Part {
+        id: auctionatorEntry8_PerItem_PriceGoldButton
+        name: "AuctionatorEntry8_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "1"
+        wowParent: "AuctionatorEntry8_PerItem_Price"
+        anchors.right: auctionatorEntry8_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry8_PerItem_PriceSilverButton.verticalCenter
+        width: 20.9
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry8_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry8_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "1"
+        wowParent: "AuctionatorEntry8_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry8_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry8_PerItem_PriceGoldButton.verticalCenter
+        width: 7.9
+        height: 13.6
+    }
+
+    Part {
         id: auctionatorEntry8_PerItem_PriceSilverButton
         name: "AuctionatorEntry8_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "28"
+        text: "54"
         wowParent: "AuctionatorEntry8_PerItem_Price"
         anchors.right: auctionatorEntry8_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: auctionatorEntry8_PerItem_PriceCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -2458,7 +3242,7 @@ WowWindow {
         id: auctionatorEntry8_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry8_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "28"
+        text: "54"
         wowParent: "AuctionatorEntry8_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry8_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
@@ -2471,14 +3255,13 @@ WowWindow {
         id: auctionatorEntry8_StackPrice
         name: "AuctionatorEntry8_StackPrice"
         kind: "FontString"
-        text: "1g 95s 99c"
         wowParent: "?"
         anchors.left: auctionatorEntry8.left
-        anchors.leftMargin: 503.3
+        anchors.leftMargin: 559
         anchors.top: auctionatorEntry8.top
-        anchors.topMargin: 3
-        width: 56.7
-        height: 10.1
+        anchors.topMargin: 7.5
+        width: 1
+        height: 1
     }
 
     Part {
@@ -2496,13 +3279,13 @@ WowWindow {
         id: auctionatorEntry9_EntryText
         name: "AuctionatorEntry9_EntryText"
         kind: "FontString"
-        text: "1 stack of 10"
+        text: "3 stacks of 1"
         wowParent: "?"
         anchors.left: auctionatorEntry9.left
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry9.top
         anchors.topMargin: 3
-        width: 64.6
+        width: 62.5
         height: 10.1
     }
 
@@ -2512,10 +3295,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "?"
         anchors.left: auctionatorEntry9.left
-        anchors.leftMargin: 63.5
+        anchors.leftMargin: 34.7
         anchors.top: auctionatorEntry9.top
         anchors.topMargin: 1.5
-        width: 78.5
+        width: 107.3
         height: 13
     }
 
@@ -2523,7 +3306,7 @@ WowWindow {
         id: auctionatorEntry9_PerItem_PriceCopperButton
         name: "AuctionatorEntry9_PerItem_PriceCopperButton"
         kind: "Button"
-        text: "0"
+        text: "1"
         wowParent: "AuctionatorEntry9_PerItem_Price"
         anchors.right: auctionatorEntry9_PerItem_Price.right
         anchors.rightMargin: 13
@@ -2536,11 +3319,37 @@ WowWindow {
         id: auctionatorEntry9_PerItem_PriceCopperButtonText
         name: "AuctionatorEntry9_PerItem_PriceCopperButtonText"
         kind: "FontString"
-        text: "0"
+        text: "1"
         wowParent: "AuctionatorEntry9_PerItem_PriceCopperButton"
         anchors.right: auctionatorEntry9_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry9_PerItem_PriceCopperButton.verticalCenter
+        width: 7.9
+        height: 13.6
+    }
+
+    Part {
+        id: auctionatorEntry9_PerItem_PriceGoldButton
+        name: "AuctionatorEntry9_PerItem_PriceGoldButton"
+        kind: "Button"
+        text: "3"
+        wowParent: "AuctionatorEntry9_PerItem_Price"
+        anchors.right: auctionatorEntry9_PerItem_PriceSilverButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: auctionatorEntry9_PerItem_PriceSilverButton.verticalCenter
+        width: 22.3
+        height: 13
+    }
+
+    Part {
+        id: auctionatorEntry9_PerItem_PriceGoldButtonText
+        name: "AuctionatorEntry9_PerItem_PriceGoldButtonText"
+        kind: "FontString"
+        text: "3"
+        wowParent: "AuctionatorEntry9_PerItem_PriceGoldButton"
+        anchors.right: auctionatorEntry9_PerItem_PriceGoldButton.right
+        anchors.rightMargin: 13
+        anchors.verticalCenter: auctionatorEntry9_PerItem_PriceGoldButton.verticalCenter
         width: 9.4
         height: 13.6
     }
@@ -2549,12 +3358,12 @@ WowWindow {
         id: auctionatorEntry9_PerItem_PriceSilverButton
         name: "AuctionatorEntry9_PerItem_PriceSilverButton"
         kind: "Button"
-        text: "35"
+        text: "0"
         wowParent: "AuctionatorEntry9_PerItem_Price"
         anchors.right: auctionatorEntry9_PerItem_PriceCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: auctionatorEntry9_PerItem_PriceCopperButton.verticalCenter
-        width: 29.5
+        width: 32
         height: 13
     }
 
@@ -2562,12 +3371,12 @@ WowWindow {
         id: auctionatorEntry9_PerItem_PriceSilverButtonText
         name: "AuctionatorEntry9_PerItem_PriceSilverButtonText"
         kind: "FontString"
-        text: "35"
+        text: "0"
         wowParent: "AuctionatorEntry9_PerItem_PriceSilverButton"
         anchors.right: auctionatorEntry9_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry9_PerItem_PriceSilverButton.verticalCenter
-        width: 16.5
+        width: 9.4
         height: 13.6
     }
 
@@ -2575,14 +3384,13 @@ WowWindow {
         id: auctionatorEntry9_StackPrice
         name: "AuctionatorEntry9_StackPrice"
         kind: "FontString"
-        text: "3g 50s 00c"
         wowParent: "?"
         anchors.left: auctionatorEntry9.left
-        anchors.leftMargin: 503.3
+        anchors.leftMargin: 559
         anchors.top: auctionatorEntry9.top
-        anchors.topMargin: 3
-        width: 56.7
-        height: 10.1
+        anchors.topMargin: 7.5
+        width: 1
+        height: 1
     }
 
     Part {
@@ -2964,13 +3772,13 @@ WowWindow {
         id: auctionatorMessage2Frame
         name: "AuctionatorMessage2Frame"
         kind: "FontString"
-        text: "Scanning auctions: page 3 of 3"
+        text: "Drag an item you want to sell to this area."
         wowParent: "Atr_Main_Panel"
         anchors.horizontalCenter: atr_Main_Panel.horizontalCenter
         anchors.horizontalCenterOffset: 18
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 65
-        width: 187.5
+        width: 252.1
         height: 100
     }
 
@@ -3049,13 +3857,13 @@ WowWindow {
         id: auctionatorTitle
         name: "AuctionatorTitle"
         kind: "FontString"
-        text: "Auctionator+ - Buy"
+        text: "Auctionator+ - Sell"
         wowParent: "Atr_Main_Panel"
         anchors.horizontalCenter: atr_Main_Panel.horizontalCenter
         anchors.horizontalCenterOffset: -90
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: -7
-        width: 116.4
+        width: 114.2
         height: 12.2
     }
 
@@ -5434,6 +6242,7 @@ WowWindow {
         kind: "Button"
         text: "Cancel Auction"
         wowParent: "AuctionFrameAuctions"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 90.9
         anchors.bottom: auctionFrame.bottom
@@ -5450,7 +6259,7 @@ WowWindow {
         wowParent: "AuctionsCancelAuctionButton"
         anchors.horizontalCenter: auctionsCancelAuctionButton.horizontalCenter
         anchors.verticalCenter: auctionsCancelAuctionButton.verticalCenter
-        width: 81.2
+        width: 101.3
         height: 10.1
     }
 
@@ -5460,6 +6269,7 @@ WowWindow {
         kind: "Button"
         text: "Close"
         wowParent: "AuctionFrameAuctions"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 8
         anchors.bottom: auctionFrame.bottom
@@ -5476,7 +6286,7 @@ WowWindow {
         wowParent: "AuctionsCloseButton"
         anchors.horizontalCenter: auctionsCloseButton.horizontalCenter
         anchors.verticalCenter: auctionsCloseButton.verticalCenter
-        width: 28
+        width: 35.2
         height: 10.1
     }
 
@@ -5486,6 +6296,7 @@ WowWindow {
         kind: "Button"
         text: "Create Auction"
         wowParent: "AuctionFrameAuctions"
+        style: "Button"
         anchors.left: auctionFrameAuctions.left
         anchors.leftMargin: 2
         anchors.bottom: auctionFrameAuctions.bottom
@@ -5502,7 +6313,7 @@ WowWindow {
         wowParent: "AuctionsCreateAuctionButton"
         anchors.horizontalCenter: auctionsCreateAuctionButton.horizontalCenter
         anchors.verticalCenter: auctionsCreateAuctionButton.verticalCenter
-        width: 81.2
+        width: 102
         height: 10.1
     }
 
@@ -5515,7 +6326,7 @@ WowWindow {
         anchors.leftMargin: 5
         anchors.verticalCenter: auctionsDepositText.verticalCenter
         anchors.verticalCenterOffset: 1
-        width: 67.4
+        width: 13
         height: 13
     }
 
@@ -5667,7 +6478,6 @@ WowWindow {
         id: auctionsItemButtonName
         name: "AuctionsItemButtonName"
         kind: "FontString"
-        text: "Honeymint Tea"
         wowParent: "AuctionsItemButton"
         anchors.left: auctionsItemButton.right
         anchors.leftMargin: 5
@@ -5774,6 +6584,7 @@ WowWindow {
         name: "AuctionsScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "AuctionsScrollFrame"
+        style: "ScrollBar"
         anchors.left: auctionsScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: auctionsScrollFrame.top
@@ -5799,6 +6610,7 @@ WowWindow {
         name: "AuctionsScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "AuctionsScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: auctionsScrollFrameScrollBar.horizontalCenter
         anchors.top: auctionsScrollFrameScrollBar.bottom
         width: 16
@@ -5810,6 +6622,7 @@ WowWindow {
         name: "AuctionsScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "AuctionsScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: auctionsScrollFrameScrollBar.horizontalCenter
         anchors.bottom: auctionsScrollFrameScrollBar.top
         width: 16
@@ -5900,6 +6713,7 @@ WowWindow {
         kind: "Button"
         text: "Bid"
         wowParent: "AuctionFrameBid"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 172
         anchors.bottom: auctionFrame.bottom
@@ -6014,6 +6828,7 @@ WowWindow {
         kind: "Button"
         text: "Buyout"
         wowParent: "AuctionFrameBid"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 90
         anchors.bottom: auctionFrame.bottom
@@ -6066,6 +6881,7 @@ WowWindow {
         kind: "Button"
         text: "Close"
         wowParent: "AuctionFrameBid"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 8
         anchors.bottom: auctionFrame.bottom
@@ -6210,6 +7026,7 @@ WowWindow {
         kind: "Button"
         text: "Bid"
         wowParent: "AuctionFrameBrowse"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 172
         anchors.bottom: auctionFrame.bottom
@@ -6226,7 +7043,7 @@ WowWindow {
         wowParent: "BrowseBidButton"
         anchors.horizontalCenter: browseBidButton.horizontalCenter
         anchors.verticalCenter: browseBidButton.verticalCenter
-        width: 17.3
+        width: 18
         height: 10.1
     }
 
@@ -6323,7 +7140,7 @@ WowWindow {
         wowParent: "BrowseButton1BuyoutFrame"
         anchors.right: browseButton1BuyoutFrame.right
         anchors.verticalCenter: browseButton1BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -6331,7 +7148,7 @@ WowWindow {
         id: browseButton1BuyoutFrameMoneyCopperButton
         name: "BrowseButton1BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton1BuyoutFrameMoney"
         anchors.right: browseButton1BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -6344,12 +7161,12 @@ WowWindow {
         id: browseButton1BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton1BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton1BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton1BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -6357,12 +7174,12 @@ WowWindow {
         id: browseButton1BuyoutFrameMoneyGoldButton
         name: "BrowseButton1BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "12"
+        text: "249"
         wowParent: "BrowseButton1BuyoutFrameMoney"
         anchors.right: browseButton1BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -6370,12 +7187,12 @@ WowWindow {
         id: browseButton1BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton1BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "249"
         wowParent: "BrowseButton1BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton1BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -6383,12 +7200,12 @@ WowWindow {
         id: browseButton1BuyoutFrameMoneySilverButton
         name: "BrowseButton1BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "75"
         wowParent: "BrowseButton1BuyoutFrameMoney"
         anchors.right: browseButton1BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -6396,12 +7213,12 @@ WowWindow {
         id: browseButton1BuyoutFrameMoneySilverButtonText
         name: "BrowseButton1BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "75"
         wowParent: "BrowseButton1BuyoutFrameMoneySilverButton"
         anchors.right: browseButton1BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
-        width: 15.8
+        width: 16.5
         height: 13.6
     }
 
@@ -6412,7 +7229,7 @@ WowWindow {
         wowParent: "BrowseButton1BuyoutFrame"
         anchors.left: browseButton1BuyoutFrame.left
         anchors.top: browseButton1BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -6432,7 +7249,7 @@ WowWindow {
         id: browseButton1ClosingTimeText
         name: "BrowseButton1ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Very Long"
         wowParent: "BrowseButton1ClosingTime"
         anchors.left: browseButton1ClosingTime.left
         anchors.top: browseButton1ClosingTime.top
@@ -6444,7 +7261,7 @@ WowWindow {
         id: browseButton1HighBidder
         name: "BrowseButton1HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Kovasky"
         wowParent: "BrowseButton1"
         anchors.left: browseButton1.left
         anchors.leftMargin: 345
@@ -6482,7 +7299,7 @@ WowWindow {
         id: browseButton1Level
         name: "BrowseButton1Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton1"
         anchors.left: browseButton1.left
         anchors.leftMargin: 205
@@ -6500,7 +7317,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton1.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -6508,7 +7325,7 @@ WowWindow {
         id: browseButton1MoneyFrameCopperButton
         name: "BrowseButton1MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "25"
         wowParent: "BrowseButton1MoneyFrame"
         anchors.right: browseButton1MoneyFrame.right
         anchors.rightMargin: 13
@@ -6521,12 +7338,12 @@ WowWindow {
         id: browseButton1MoneyFrameCopperButtonText
         name: "BrowseButton1MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "25"
         wowParent: "BrowseButton1MoneyFrameCopperButton"
         anchors.right: browseButton1MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1MoneyFrameCopperButton.verticalCenter
-        width: 9.4
+        width: 16.5
         height: 13.6
     }
 
@@ -6534,12 +7351,12 @@ WowWindow {
         id: browseButton1MoneyFrameGoldButton
         name: "BrowseButton1MoneyFrameGoldButton"
         kind: "Button"
-        text: "12"
+        text: "237"
         wowParent: "BrowseButton1MoneyFrame"
         anchors.right: browseButton1MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton1MoneyFrameSilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -6547,12 +7364,12 @@ WowWindow {
         id: browseButton1MoneyFrameGoldButtonText
         name: "BrowseButton1MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "237"
         wowParent: "BrowseButton1MoneyFrameGoldButton"
         anchors.right: browseButton1MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1MoneyFrameGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -6560,12 +7377,12 @@ WowWindow {
         id: browseButton1MoneyFrameSilverButton
         name: "BrowseButton1MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "26"
         wowParent: "BrowseButton1MoneyFrame"
         anchors.right: browseButton1MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton1MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -6573,7 +7390,7 @@ WowWindow {
         id: browseButton1MoneyFrameSilverButtonText
         name: "BrowseButton1MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "26"
         wowParent: "BrowseButton1MoneyFrameSilverButton"
         anchors.right: browseButton1MoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -6586,7 +7403,7 @@ WowWindow {
         id: browseButton1Name
         name: "BrowseButton1Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Durable Nerubhide Cape"
         wowParent: "BrowseButton1"
         anchors.left: browseButton1.left
         anchors.leftMargin: 43
@@ -6625,7 +7442,7 @@ WowWindow {
         wowParent: "BrowseButton2BuyoutFrame"
         anchors.right: browseButton2BuyoutFrame.right
         anchors.verticalCenter: browseButton2BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -6633,7 +7450,7 @@ WowWindow {
         id: browseButton2BuyoutFrameMoneyCopperButton
         name: "BrowseButton2BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton2BuyoutFrameMoney"
         anchors.right: browseButton2BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -6646,12 +7463,12 @@ WowWindow {
         id: browseButton2BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton2BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton2BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton2BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -6659,12 +7476,12 @@ WowWindow {
         id: browseButton2BuyoutFrameMoneyGoldButton
         name: "BrowseButton2BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton2BuyoutFrameMoney"
         anchors.right: browseButton2BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton2BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -6672,12 +7489,12 @@ WowWindow {
         id: browseButton2BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton2BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton2BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton2BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -6685,12 +7502,12 @@ WowWindow {
         id: browseButton2BuyoutFrameMoneySilverButton
         name: "BrowseButton2BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton2BuyoutFrameMoney"
         anchors.right: browseButton2BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton2BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -6698,12 +7515,12 @@ WowWindow {
         id: browseButton2BuyoutFrameMoneySilverButtonText
         name: "BrowseButton2BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton2BuyoutFrameMoneySilverButton"
         anchors.right: browseButton2BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2BuyoutFrameMoneySilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -6714,7 +7531,7 @@ WowWindow {
         wowParent: "BrowseButton2BuyoutFrame"
         anchors.left: browseButton2BuyoutFrame.left
         anchors.top: browseButton2BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -6734,7 +7551,7 @@ WowWindow {
         id: browseButton2ClosingTimeText
         name: "BrowseButton2ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Very Long"
         wowParent: "BrowseButton2ClosingTime"
         anchors.left: browseButton2ClosingTime.left
         anchors.top: browseButton2ClosingTime.top
@@ -6746,7 +7563,7 @@ WowWindow {
         id: browseButton2HighBidder
         name: "BrowseButton2HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Fancyblades"
         wowParent: "BrowseButton2"
         anchors.left: browseButton2.left
         anchors.leftMargin: 345
@@ -6784,7 +7601,7 @@ WowWindow {
         id: browseButton2Level
         name: "BrowseButton2Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton2"
         anchors.left: browseButton2.left
         anchors.leftMargin: 205
@@ -6802,7 +7619,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton2.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -6810,7 +7627,7 @@ WowWindow {
         id: browseButton2MoneyFrameCopperButton
         name: "BrowseButton2MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton2MoneyFrame"
         anchors.right: browseButton2MoneyFrame.right
         anchors.rightMargin: 13
@@ -6823,7 +7640,7 @@ WowWindow {
         id: browseButton2MoneyFrameCopperButtonText
         name: "BrowseButton2MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton2MoneyFrameCopperButton"
         anchors.right: browseButton2MoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -6836,12 +7653,12 @@ WowWindow {
         id: browseButton2MoneyFrameGoldButton
         name: "BrowseButton2MoneyFrameGoldButton"
         kind: "Button"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton2MoneyFrame"
         anchors.right: browseButton2MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton2MoneyFrameSilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -6849,12 +7666,12 @@ WowWindow {
         id: browseButton2MoneyFrameGoldButtonText
         name: "BrowseButton2MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton2MoneyFrameGoldButton"
         anchors.right: browseButton2MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2MoneyFrameGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -6862,12 +7679,12 @@ WowWindow {
         id: browseButton2MoneyFrameSilverButton
         name: "BrowseButton2MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "0"
         wowParent: "BrowseButton2MoneyFrame"
         anchors.right: browseButton2MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton2MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -6875,12 +7692,12 @@ WowWindow {
         id: browseButton2MoneyFrameSilverButtonText
         name: "BrowseButton2MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "0"
         wowParent: "BrowseButton2MoneyFrameSilverButton"
         anchors.right: browseButton2MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2MoneyFrameSilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -6888,7 +7705,7 @@ WowWindow {
         id: browseButton2Name
         name: "BrowseButton2Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Durable Nerubhide Cape"
         wowParent: "BrowseButton2"
         anchors.left: browseButton2.left
         anchors.leftMargin: 43
@@ -6927,7 +7744,7 @@ WowWindow {
         wowParent: "BrowseButton3BuyoutFrame"
         anchors.right: browseButton3BuyoutFrame.right
         anchors.verticalCenter: browseButton3BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -6935,7 +7752,7 @@ WowWindow {
         id: browseButton3BuyoutFrameMoneyCopperButton
         name: "BrowseButton3BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton3BuyoutFrameMoney"
         anchors.right: browseButton3BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -6948,12 +7765,12 @@ WowWindow {
         id: browseButton3BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton3BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton3BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton3BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -6961,12 +7778,12 @@ WowWindow {
         id: browseButton3BuyoutFrameMoneyGoldButton
         name: "BrowseButton3BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton3BuyoutFrameMoney"
         anchors.right: browseButton3BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton3BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -6974,12 +7791,12 @@ WowWindow {
         id: browseButton3BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton3BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton3BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton3BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -6987,12 +7804,12 @@ WowWindow {
         id: browseButton3BuyoutFrameMoneySilverButton
         name: "BrowseButton3BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton3BuyoutFrameMoney"
         anchors.right: browseButton3BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton3BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7000,12 +7817,12 @@ WowWindow {
         id: browseButton3BuyoutFrameMoneySilverButtonText
         name: "BrowseButton3BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton3BuyoutFrameMoneySilverButton"
         anchors.right: browseButton3BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3BuyoutFrameMoneySilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7016,7 +7833,7 @@ WowWindow {
         wowParent: "BrowseButton3BuyoutFrame"
         anchors.left: browseButton3BuyoutFrame.left
         anchors.top: browseButton3BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -7048,7 +7865,7 @@ WowWindow {
         id: browseButton3HighBidder
         name: "BrowseButton3HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Krysimpaler"
         wowParent: "BrowseButton3"
         anchors.left: browseButton3.left
         anchors.leftMargin: 345
@@ -7086,7 +7903,7 @@ WowWindow {
         id: browseButton3Level
         name: "BrowseButton3Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton3"
         anchors.left: browseButton3.left
         anchors.leftMargin: 205
@@ -7104,7 +7921,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton3.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -7112,7 +7929,7 @@ WowWindow {
         id: browseButton3MoneyFrameCopperButton
         name: "BrowseButton3MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton3MoneyFrame"
         anchors.right: browseButton3MoneyFrame.right
         anchors.rightMargin: 13
@@ -7125,7 +7942,7 @@ WowWindow {
         id: browseButton3MoneyFrameCopperButtonText
         name: "BrowseButton3MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton3MoneyFrameCopperButton"
         anchors.right: browseButton3MoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -7138,12 +7955,12 @@ WowWindow {
         id: browseButton3MoneyFrameGoldButton
         name: "BrowseButton3MoneyFrameGoldButton"
         kind: "Button"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton3MoneyFrame"
         anchors.right: browseButton3MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton3MoneyFrameSilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -7151,12 +7968,12 @@ WowWindow {
         id: browseButton3MoneyFrameGoldButtonText
         name: "BrowseButton3MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton3MoneyFrameGoldButton"
         anchors.right: browseButton3MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3MoneyFrameGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -7164,12 +7981,12 @@ WowWindow {
         id: browseButton3MoneyFrameSilverButton
         name: "BrowseButton3MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "0"
         wowParent: "BrowseButton3MoneyFrame"
         anchors.right: browseButton3MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton3MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7177,12 +7994,12 @@ WowWindow {
         id: browseButton3MoneyFrameSilverButtonText
         name: "BrowseButton3MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "0"
         wowParent: "BrowseButton3MoneyFrameSilverButton"
         anchors.right: browseButton3MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3MoneyFrameSilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7190,7 +8007,7 @@ WowWindow {
         id: browseButton3Name
         name: "BrowseButton3Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Earthen Leg Armor"
         wowParent: "BrowseButton3"
         anchors.left: browseButton3.left
         anchors.leftMargin: 43
@@ -7229,7 +8046,7 @@ WowWindow {
         wowParent: "BrowseButton4BuyoutFrame"
         anchors.right: browseButton4BuyoutFrame.right
         anchors.verticalCenter: browseButton4BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -7237,7 +8054,7 @@ WowWindow {
         id: browseButton4BuyoutFrameMoneyCopperButton
         name: "BrowseButton4BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton4BuyoutFrameMoney"
         anchors.right: browseButton4BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -7250,12 +8067,12 @@ WowWindow {
         id: browseButton4BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton4BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton4BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton4BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7263,12 +8080,12 @@ WowWindow {
         id: browseButton4BuyoutFrameMoneyGoldButton
         name: "BrowseButton4BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton4BuyoutFrameMoney"
         anchors.right: browseButton4BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton4BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -7276,12 +8093,12 @@ WowWindow {
         id: browseButton4BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton4BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton4BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton4BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -7289,12 +8106,12 @@ WowWindow {
         id: browseButton4BuyoutFrameMoneySilverButton
         name: "BrowseButton4BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton4BuyoutFrameMoney"
         anchors.right: browseButton4BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton4BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7302,12 +8119,12 @@ WowWindow {
         id: browseButton4BuyoutFrameMoneySilverButtonText
         name: "BrowseButton4BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton4BuyoutFrameMoneySilverButton"
         anchors.right: browseButton4BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4BuyoutFrameMoneySilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7318,7 +8135,7 @@ WowWindow {
         wowParent: "BrowseButton4BuyoutFrame"
         anchors.left: browseButton4BuyoutFrame.left
         anchors.top: browseButton4BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -7350,7 +8167,7 @@ WowWindow {
         id: browseButton4HighBidder
         name: "BrowseButton4HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Krysimpaler"
         wowParent: "BrowseButton4"
         anchors.left: browseButton4.left
         anchors.leftMargin: 345
@@ -7388,7 +8205,7 @@ WowWindow {
         id: browseButton4Level
         name: "BrowseButton4Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton4"
         anchors.left: browseButton4.left
         anchors.leftMargin: 205
@@ -7406,7 +8223,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton4.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -7414,7 +8231,7 @@ WowWindow {
         id: browseButton4MoneyFrameCopperButton
         name: "BrowseButton4MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton4MoneyFrame"
         anchors.right: browseButton4MoneyFrame.right
         anchors.rightMargin: 13
@@ -7427,7 +8244,7 @@ WowWindow {
         id: browseButton4MoneyFrameCopperButtonText
         name: "BrowseButton4MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton4MoneyFrameCopperButton"
         anchors.right: browseButton4MoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -7440,12 +8257,12 @@ WowWindow {
         id: browseButton4MoneyFrameGoldButton
         name: "BrowseButton4MoneyFrameGoldButton"
         kind: "Button"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton4MoneyFrame"
         anchors.right: browseButton4MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton4MoneyFrameSilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -7453,12 +8270,12 @@ WowWindow {
         id: browseButton4MoneyFrameGoldButtonText
         name: "BrowseButton4MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "12"
+        text: "250"
         wowParent: "BrowseButton4MoneyFrameGoldButton"
         anchors.right: browseButton4MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4MoneyFrameGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -7466,12 +8283,12 @@ WowWindow {
         id: browseButton4MoneyFrameSilverButton
         name: "BrowseButton4MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "0"
         wowParent: "BrowseButton4MoneyFrame"
         anchors.right: browseButton4MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton4MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7479,12 +8296,12 @@ WowWindow {
         id: browseButton4MoneyFrameSilverButtonText
         name: "BrowseButton4MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "0"
         wowParent: "BrowseButton4MoneyFrameSilverButton"
         anchors.right: browseButton4MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4MoneyFrameSilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7492,7 +8309,7 @@ WowWindow {
         id: browseButton4Name
         name: "BrowseButton4Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Earthen Leg Armor"
         wowParent: "BrowseButton4"
         anchors.left: browseButton4.left
         anchors.leftMargin: 43
@@ -7531,7 +8348,7 @@ WowWindow {
         wowParent: "BrowseButton5BuyoutFrame"
         anchors.right: browseButton5BuyoutFrame.right
         anchors.verticalCenter: browseButton5BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -7539,7 +8356,7 @@ WowWindow {
         id: browseButton5BuyoutFrameMoneyCopperButton
         name: "BrowseButton5BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton5BuyoutFrameMoney"
         anchors.right: browseButton5BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -7552,12 +8369,12 @@ WowWindow {
         id: browseButton5BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton5BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton5BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton5BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7565,12 +8382,12 @@ WowWindow {
         id: browseButton5BuyoutFrameMoneyGoldButton
         name: "BrowseButton5BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "26"
+        text: "390"
         wowParent: "BrowseButton5BuyoutFrameMoney"
         anchors.right: browseButton5BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton5BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -7578,12 +8395,12 @@ WowWindow {
         id: browseButton5BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton5BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "26"
+        text: "390"
         wowParent: "BrowseButton5BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton5BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -7591,12 +8408,12 @@ WowWindow {
         id: browseButton5BuyoutFrameMoneySilverButton
         name: "BrowseButton5BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "50"
         wowParent: "BrowseButton5BuyoutFrameMoney"
         anchors.right: browseButton5BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton5BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7604,7 +8421,7 @@ WowWindow {
         id: browseButton5BuyoutFrameMoneySilverButtonText
         name: "BrowseButton5BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "50"
         wowParent: "BrowseButton5BuyoutFrameMoneySilverButton"
         anchors.right: browseButton5BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
@@ -7620,7 +8437,7 @@ WowWindow {
         wowParent: "BrowseButton5BuyoutFrame"
         anchors.left: browseButton5BuyoutFrame.left
         anchors.top: browseButton5BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -7640,7 +8457,7 @@ WowWindow {
         id: browseButton5ClosingTimeText
         name: "BrowseButton5ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Very Long"
         wowParent: "BrowseButton5ClosingTime"
         anchors.left: browseButton5ClosingTime.left
         anchors.top: browseButton5ClosingTime.top
@@ -7652,7 +8469,7 @@ WowWindow {
         id: browseButton5HighBidder
         name: "BrowseButton5HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Kovasky"
         wowParent: "BrowseButton5"
         anchors.left: browseButton5.left
         anchors.leftMargin: 345
@@ -7690,7 +8507,7 @@ WowWindow {
         id: browseButton5Level
         name: "BrowseButton5Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton5"
         anchors.left: browseButton5.left
         anchors.leftMargin: 205
@@ -7708,7 +8525,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton5.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -7716,7 +8533,7 @@ WowWindow {
         id: browseButton5MoneyFrameCopperButton
         name: "BrowseButton5MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "50"
         wowParent: "BrowseButton5MoneyFrame"
         anchors.right: browseButton5MoneyFrame.right
         anchors.rightMargin: 13
@@ -7729,12 +8546,12 @@ WowWindow {
         id: browseButton5MoneyFrameCopperButtonText
         name: "BrowseButton5MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "50"
         wowParent: "BrowseButton5MoneyFrameCopperButton"
         anchors.right: browseButton5MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5MoneyFrameCopperButton.verticalCenter
-        width: 9.4
+        width: 15.8
         height: 13.6
     }
 
@@ -7742,12 +8559,12 @@ WowWindow {
         id: browseButton5MoneyFrameGoldButton
         name: "BrowseButton5MoneyFrameGoldButton"
         kind: "Button"
-        text: "25"
+        text: "370"
         wowParent: "BrowseButton5MoneyFrame"
         anchors.right: browseButton5MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton5MoneyFrameSilverButton.verticalCenter
-        width: 29.5
+        width: 35.3
         height: 13
     }
 
@@ -7755,12 +8572,12 @@ WowWindow {
         id: browseButton5MoneyFrameGoldButtonText
         name: "BrowseButton5MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "25"
+        text: "370"
         wowParent: "BrowseButton5MoneyFrameGoldButton"
         anchors.right: browseButton5MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5MoneyFrameGoldButton.verticalCenter
-        width: 16.5
+        width: 22.3
         height: 13.6
     }
 
@@ -7768,12 +8585,12 @@ WowWindow {
         id: browseButton5MoneyFrameSilverButton
         name: "BrowseButton5MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "97"
         wowParent: "BrowseButton5MoneyFrame"
         anchors.right: browseButton5MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton5MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7781,7 +8598,7 @@ WowWindow {
         id: browseButton5MoneyFrameSilverButtonText
         name: "BrowseButton5MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "97"
         wowParent: "BrowseButton5MoneyFrameSilverButton"
         anchors.right: browseButton5MoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -7794,7 +8611,7 @@ WowWindow {
         id: browseButton5Name
         name: "BrowseButton5Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Earthgiving Boots"
         wowParent: "BrowseButton5"
         anchors.left: browseButton5.left
         anchors.leftMargin: 43
@@ -7833,7 +8650,7 @@ WowWindow {
         wowParent: "BrowseButton6BuyoutFrame"
         anchors.right: browseButton6BuyoutFrame.right
         anchors.verticalCenter: browseButton6BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -7841,7 +8658,7 @@ WowWindow {
         id: browseButton6BuyoutFrameMoneyCopperButton
         name: "BrowseButton6BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton6BuyoutFrameMoney"
         anchors.right: browseButton6BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -7854,12 +8671,12 @@ WowWindow {
         id: browseButton6BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton6BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "0"
         wowParent: "BrowseButton6BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton6BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7867,12 +8684,12 @@ WowWindow {
         id: browseButton6BuyoutFrameMoneyGoldButton
         name: "BrowseButton6BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "26"
+        text: "590"
         wowParent: "BrowseButton6BuyoutFrameMoney"
         anchors.right: browseButton6BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton6BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -7880,12 +8697,12 @@ WowWindow {
         id: browseButton6BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton6BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "26"
+        text: "590"
         wowParent: "BrowseButton6BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton6BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -7893,12 +8710,12 @@ WowWindow {
         id: browseButton6BuyoutFrameMoneySilverButton
         name: "BrowseButton6BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton6BuyoutFrameMoney"
         anchors.right: browseButton6BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton6BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -7906,12 +8723,12 @@ WowWindow {
         id: browseButton6BuyoutFrameMoneySilverButtonText
         name: "BrowseButton6BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "0"
         wowParent: "BrowseButton6BuyoutFrameMoneySilverButton"
         anchors.right: browseButton6BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6BuyoutFrameMoneySilverButton.verticalCenter
-        width: 15.8
+        width: 9.4
         height: 13.6
     }
 
@@ -7922,7 +8739,7 @@ WowWindow {
         wowParent: "BrowseButton6BuyoutFrame"
         anchors.left: browseButton6BuyoutFrame.left
         anchors.top: browseButton6BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -7942,7 +8759,7 @@ WowWindow {
         id: browseButton6ClosingTimeText
         name: "BrowseButton6ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Very Long"
         wowParent: "BrowseButton6ClosingTime"
         anchors.left: browseButton6ClosingTime.left
         anchors.top: browseButton6ClosingTime.top
@@ -7954,7 +8771,7 @@ WowWindow {
         id: browseButton6HighBidder
         name: "BrowseButton6HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Kovasky"
         wowParent: "BrowseButton6"
         anchors.left: browseButton6.left
         anchors.leftMargin: 345
@@ -7992,7 +8809,7 @@ WowWindow {
         id: browseButton6Level
         name: "BrowseButton6Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton6"
         anchors.left: browseButton6.left
         anchors.leftMargin: 205
@@ -8010,7 +8827,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton6.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -8018,7 +8835,7 @@ WowWindow {
         id: browseButton6MoneyFrameCopperButton
         name: "BrowseButton6MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton6MoneyFrame"
         anchors.right: browseButton6MoneyFrame.right
         anchors.rightMargin: 13
@@ -8031,7 +8848,7 @@ WowWindow {
         id: browseButton6MoneyFrameCopperButtonText
         name: "BrowseButton6MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "0"
         wowParent: "BrowseButton6MoneyFrameCopperButton"
         anchors.right: browseButton6MoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -8044,12 +8861,12 @@ WowWindow {
         id: browseButton6MoneyFrameGoldButton
         name: "BrowseButton6MoneyFrameGoldButton"
         kind: "Button"
-        text: "25"
+        text: "560"
         wowParent: "BrowseButton6MoneyFrame"
         anchors.right: browseButton6MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton6MoneyFrameSilverButton.verticalCenter
-        width: 29.5
+        width: 35.3
         height: 13
     }
 
@@ -8057,12 +8874,12 @@ WowWindow {
         id: browseButton6MoneyFrameGoldButtonText
         name: "BrowseButton6MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "25"
+        text: "560"
         wowParent: "BrowseButton6MoneyFrameGoldButton"
         anchors.right: browseButton6MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6MoneyFrameGoldButton.verticalCenter
-        width: 16.5
+        width: 22.3
         height: 13.6
     }
 
@@ -8070,12 +8887,12 @@ WowWindow {
         id: browseButton6MoneyFrameSilverButton
         name: "BrowseButton6MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "50"
         wowParent: "BrowseButton6MoneyFrame"
         anchors.right: browseButton6MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton6MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -8083,7 +8900,7 @@ WowWindow {
         id: browseButton6MoneyFrameSilverButtonText
         name: "BrowseButton6MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "50"
         wowParent: "BrowseButton6MoneyFrameSilverButton"
         anchors.right: browseButton6MoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -8096,7 +8913,7 @@ WowWindow {
         id: browseButton6Name
         name: "BrowseButton6Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Earthgiving Legguards"
         wowParent: "BrowseButton6"
         anchors.left: browseButton6.left
         anchors.leftMargin: 43
@@ -8135,7 +8952,7 @@ WowWindow {
         wowParent: "BrowseButton7BuyoutFrame"
         anchors.right: browseButton7BuyoutFrame.right
         anchors.verticalCenter: browseButton7BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -8143,7 +8960,7 @@ WowWindow {
         id: browseButton7BuyoutFrameMoneyCopperButton
         name: "BrowseButton7BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "63"
         wowParent: "BrowseButton7BuyoutFrameMoney"
         anchors.right: browseButton7BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -8156,7 +8973,7 @@ WowWindow {
         id: browseButton7BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton7BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "63"
         wowParent: "BrowseButton7BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton7BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
@@ -8169,12 +8986,12 @@ WowWindow {
         id: browseButton7BuyoutFrameMoneyGoldButton
         name: "BrowseButton7BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "26"
+        text: "187"
         wowParent: "BrowseButton7BuyoutFrameMoney"
         anchors.right: browseButton7BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton7BuyoutFrameMoneySilverButton.verticalCenter
-        width: 28.8
+        width: 35.3
         height: 13
     }
 
@@ -8182,12 +8999,12 @@ WowWindow {
         id: browseButton7BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton7BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "26"
+        text: "187"
         wowParent: "BrowseButton7BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton7BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 15.8
+        width: 22.3
         height: 13.6
     }
 
@@ -8195,12 +9012,12 @@ WowWindow {
         id: browseButton7BuyoutFrameMoneySilverButton
         name: "BrowseButton7BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "72"
         wowParent: "BrowseButton7BuyoutFrameMoney"
         anchors.right: browseButton7BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton7BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -8208,7 +9025,7 @@ WowWindow {
         id: browseButton7BuyoutFrameMoneySilverButtonText
         name: "BrowseButton7BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "72"
         wowParent: "BrowseButton7BuyoutFrameMoneySilverButton"
         anchors.right: browseButton7BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
@@ -8224,7 +9041,7 @@ WowWindow {
         wowParent: "BrowseButton7BuyoutFrame"
         anchors.left: browseButton7BuyoutFrame.left
         anchors.top: browseButton7BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -8244,7 +9061,7 @@ WowWindow {
         id: browseButton7ClosingTimeText
         name: "BrowseButton7ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Very Long"
         wowParent: "BrowseButton7ClosingTime"
         anchors.left: browseButton7ClosingTime.left
         anchors.top: browseButton7ClosingTime.top
@@ -8256,7 +9073,7 @@ WowWindow {
         id: browseButton7HighBidder
         name: "BrowseButton7HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Bankbankstar"
         wowParent: "BrowseButton7"
         anchors.left: browseButton7.left
         anchors.leftMargin: 345
@@ -8294,7 +9111,7 @@ WowWindow {
         id: browseButton7Level
         name: "BrowseButton7Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton7"
         anchors.left: browseButton7.left
         anchors.leftMargin: 205
@@ -8312,7 +9129,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton7.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -8320,7 +9137,7 @@ WowWindow {
         id: browseButton7MoneyFrameCopperButton
         name: "BrowseButton7MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "33"
         wowParent: "BrowseButton7MoneyFrame"
         anchors.right: browseButton7MoneyFrame.right
         anchors.rightMargin: 13
@@ -8333,12 +9150,12 @@ WowWindow {
         id: browseButton7MoneyFrameCopperButtonText
         name: "BrowseButton7MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "33"
         wowParent: "BrowseButton7MoneyFrameCopperButton"
         anchors.right: browseButton7MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7MoneyFrameCopperButton.verticalCenter
-        width: 9.4
+        width: 15.8
         height: 13.6
     }
 
@@ -8346,12 +9163,12 @@ WowWindow {
         id: browseButton7MoneyFrameGoldButton
         name: "BrowseButton7MoneyFrameGoldButton"
         kind: "Button"
-        text: "25"
+        text: "186"
         wowParent: "BrowseButton7MoneyFrame"
         anchors.right: browseButton7MoneyFrameSilverButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton7MoneyFrameSilverButton.verticalCenter
-        width: 29.5
+        width: 35.3
         height: 13
     }
 
@@ -8359,12 +9176,12 @@ WowWindow {
         id: browseButton7MoneyFrameGoldButtonText
         name: "BrowseButton7MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "25"
+        text: "186"
         wowParent: "BrowseButton7MoneyFrameGoldButton"
         anchors.right: browseButton7MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7MoneyFrameGoldButton.verticalCenter
-        width: 16.5
+        width: 22.3
         height: 13.6
     }
 
@@ -8372,12 +9189,12 @@ WowWindow {
         id: browseButton7MoneyFrameSilverButton
         name: "BrowseButton7MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "91"
         wowParent: "BrowseButton7MoneyFrame"
         anchors.right: browseButton7MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton7MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -8385,12 +9202,12 @@ WowWindow {
         id: browseButton7MoneyFrameSilverButtonText
         name: "BrowseButton7MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "91"
         wowParent: "BrowseButton7MoneyFrameSilverButton"
         anchors.right: browseButton7MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7MoneyFrameSilverButton.verticalCenter
-        width: 15.8
+        width: 14.4
         height: 13.6
     }
 
@@ -8398,7 +9215,7 @@ WowWindow {
         id: browseButton7Name
         name: "BrowseButton7Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Ebonweave Gloves"
         wowParent: "BrowseButton7"
         anchors.left: browseButton7.left
         anchors.leftMargin: 43
@@ -8437,7 +9254,7 @@ WowWindow {
         wowParent: "BrowseButton8BuyoutFrame"
         anchors.right: browseButton8BuyoutFrame.right
         anchors.verticalCenter: browseButton8BuyoutFrame.verticalCenter
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -8445,7 +9262,7 @@ WowWindow {
         id: browseButton8BuyoutFrameMoneyCopperButton
         name: "BrowseButton8BuyoutFrameMoneyCopperButton"
         kind: "Button"
-        text: "99"
+        text: "63"
         wowParent: "BrowseButton8BuyoutFrameMoney"
         anchors.right: browseButton8BuyoutFrameMoney.right
         anchors.rightMargin: 13
@@ -8458,7 +9275,7 @@ WowWindow {
         id: browseButton8BuyoutFrameMoneyCopperButtonText
         name: "BrowseButton8BuyoutFrameMoneyCopperButtonText"
         kind: "FontString"
-        text: "99"
+        text: "63"
         wowParent: "BrowseButton8BuyoutFrameMoneyCopperButton"
         anchors.right: browseButton8BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
@@ -8471,7 +9288,7 @@ WowWindow {
         id: browseButton8BuyoutFrameMoneyGoldButton
         name: "BrowseButton8BuyoutFrameMoneyGoldButton"
         kind: "Button"
-        text: "249"
+        text: "187"
         wowParent: "BrowseButton8BuyoutFrameMoney"
         anchors.right: browseButton8BuyoutFrameMoneySilverButton.left
         anchors.rightMargin: 4
@@ -8484,7 +9301,7 @@ WowWindow {
         id: browseButton8BuyoutFrameMoneyGoldButtonText
         name: "BrowseButton8BuyoutFrameMoneyGoldButtonText"
         kind: "FontString"
-        text: "249"
+        text: "187"
         wowParent: "BrowseButton8BuyoutFrameMoneyGoldButton"
         anchors.right: browseButton8BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
@@ -8497,12 +9314,12 @@ WowWindow {
         id: browseButton8BuyoutFrameMoneySilverButton
         name: "BrowseButton8BuyoutFrameMoneySilverButton"
         kind: "Button"
-        text: "38"
+        text: "72"
         wowParent: "BrowseButton8BuyoutFrameMoney"
         anchors.right: browseButton8BuyoutFrameMoneyCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton8BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -8510,7 +9327,7 @@ WowWindow {
         id: browseButton8BuyoutFrameMoneySilverButtonText
         name: "BrowseButton8BuyoutFrameMoneySilverButtonText"
         kind: "FontString"
-        text: "38"
+        text: "72"
         wowParent: "BrowseButton8BuyoutFrameMoneySilverButton"
         anchors.right: browseButton8BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
@@ -8526,7 +9343,7 @@ WowWindow {
         wowParent: "BrowseButton8BuyoutFrame"
         anchors.left: browseButton8BuyoutFrame.left
         anchors.top: browseButton8BuyoutFrame.top
-        width: 105.2
+        width: 62.7
         height: 13
     }
 
@@ -8546,7 +9363,7 @@ WowWindow {
         id: browseButton8ClosingTimeText
         name: "BrowseButton8ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Very Long"
         wowParent: "BrowseButton8ClosingTime"
         anchors.left: browseButton8ClosingTime.left
         anchors.top: browseButton8ClosingTime.top
@@ -8558,7 +9375,7 @@ WowWindow {
         id: browseButton8HighBidder
         name: "BrowseButton8HighBidder"
         kind: "FontString"
-        text: "Palcyy"
+        text: "Bankbankstar"
         wowParent: "BrowseButton8"
         anchors.left: browseButton8.left
         anchors.leftMargin: 345
@@ -8582,7 +9399,7 @@ WowWindow {
         id: browseButton8Level
         name: "BrowseButton8Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "BrowseButton8"
         anchors.left: browseButton8.left
         anchors.leftMargin: 205
@@ -8600,7 +9417,7 @@ WowWindow {
         anchors.rightMargin: -10
         anchors.verticalCenter: browseButton8.verticalCenter
         anchors.verticalCenterOffset: -10
-        width: 77.8
+        width: 120.3
         height: 13
     }
 
@@ -8608,7 +9425,7 @@ WowWindow {
         id: browseButton8MoneyFrameCopperButton
         name: "BrowseButton8MoneyFrameCopperButton"
         kind: "Button"
-        text: "4"
+        text: "33"
         wowParent: "BrowseButton8MoneyFrame"
         anchors.right: browseButton8MoneyFrame.right
         anchors.rightMargin: 13
@@ -8621,12 +9438,12 @@ WowWindow {
         id: browseButton8MoneyFrameCopperButtonText
         name: "BrowseButton8MoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "4"
+        text: "33"
         wowParent: "BrowseButton8MoneyFrameCopperButton"
         anchors.right: browseButton8MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8MoneyFrameCopperButton.verticalCenter
-        width: 9.4
+        width: 15.8
         height: 13.6
     }
 
@@ -8634,7 +9451,7 @@ WowWindow {
         id: browseButton8MoneyFrameGoldButton
         name: "BrowseButton8MoneyFrameGoldButton"
         kind: "Button"
-        text: "249"
+        text: "186"
         wowParent: "BrowseButton8MoneyFrame"
         anchors.right: browseButton8MoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -8647,7 +9464,7 @@ WowWindow {
         id: browseButton8MoneyFrameGoldButtonText
         name: "BrowseButton8MoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "249"
+        text: "186"
         wowParent: "BrowseButton8MoneyFrameGoldButton"
         anchors.right: browseButton8MoneyFrameGoldButton.right
         anchors.rightMargin: 13
@@ -8660,12 +9477,12 @@ WowWindow {
         id: browseButton8MoneyFrameSilverButton
         name: "BrowseButton8MoneyFrameSilverButton"
         kind: "Button"
-        text: "37"
+        text: "91"
         wowParent: "BrowseButton8MoneyFrame"
         anchors.right: browseButton8MoneyFrameCopperButton.left
         anchors.rightMargin: 4
         anchors.verticalCenter: browseButton8MoneyFrameCopperButton.verticalCenter
-        width: 28.8
+        width: 32
         height: 13
     }
 
@@ -8673,12 +9490,12 @@ WowWindow {
         id: browseButton8MoneyFrameSilverButtonText
         name: "BrowseButton8MoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "37"
+        text: "91"
         wowParent: "BrowseButton8MoneyFrameSilverButton"
         anchors.right: browseButton8MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8MoneyFrameSilverButton.verticalCenter
-        width: 15.8
+        width: 14.4
         height: 13.6
     }
 
@@ -8686,7 +9503,7 @@ WowWindow {
         id: browseButton8Name
         name: "BrowseButton8Name"
         kind: "FontString"
-        text: "Mageweave Cloth"
+        text: "Ebonweave Gloves"
         wowParent: "BrowseButton8"
         anchors.left: browseButton8.left
         anchors.leftMargin: 43
@@ -8701,6 +9518,7 @@ WowWindow {
         kind: "Button"
         text: "Buyout"
         wowParent: "AuctionFrameBrowse"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 90
         anchors.bottom: auctionFrame.bottom
@@ -8717,7 +9535,7 @@ WowWindow {
         wowParent: "BrowseBuyoutButton"
         anchors.horizontalCenter: browseBuyoutButton.horizontalCenter
         anchors.verticalCenter: browseBuyoutButton.verticalCenter
-        width: 38.8
+        width: 48.8
         height: 10.1
     }
 
@@ -8727,6 +9545,7 @@ WowWindow {
         kind: "Button"
         text: "Close"
         wowParent: "AuctionFrameBrowse"
+        style: "Button"
         anchors.right: auctionFrame.right
         anchors.rightMargin: 8
         anchors.bottom: auctionFrame.bottom
@@ -8743,7 +9562,7 @@ WowWindow {
         wowParent: "BrowseCloseButton"
         anchors.horizontalCenter: browseCloseButton.horizontalCenter
         anchors.verticalCenter: browseCloseButton.verticalCenter
-        width: 28
+        width: 35.2
         height: 10.1
     }
 
@@ -8756,7 +9575,7 @@ WowWindow {
         anchors.left: browseHighBidderSort.right
         anchors.leftMargin: -2
         anchors.verticalCenter: browseHighBidderSort.verticalCenter
-        width: 184
+        width: 207
         height: 19
     }
 
@@ -8778,6 +9597,7 @@ WowWindow {
         name: "BrowseDropDown"
         kind: "Frame"
         wowParent: "AuctionFrameBrowse"
+        style: "DropDown"
         anchors.left: browseMaxLevel.right
         anchors.leftMargin: 4
         anchors.verticalCenter: browseMaxLevel.verticalCenter
@@ -8878,6 +9698,7 @@ WowWindow {
         name: "BrowseFilterScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "BrowseFilterScrollFrame"
+        style: "ScrollBar"
         anchors.left: browseFilterScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: browseFilterScrollFrame.top
@@ -8903,6 +9724,7 @@ WowWindow {
         name: "BrowseFilterScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "BrowseFilterScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: browseFilterScrollFrameScrollBar.horizontalCenter
         anchors.top: browseFilterScrollFrameScrollBar.bottom
         width: 16
@@ -8914,6 +9736,7 @@ WowWindow {
         name: "BrowseFilterScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "BrowseFilterScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: browseFilterScrollFrameScrollBar.horizontalCenter
         anchors.bottom: browseFilterScrollFrameScrollBar.top
         width: 16
@@ -8928,7 +9751,7 @@ WowWindow {
         anchors.left: browseFilterScrollFrame.left
         anchors.top: browseFilterScrollFrame.top
         width: 300
-        height: 540
+        height: 420
     }
 
     Part {
@@ -9014,6 +9837,7 @@ WowWindow {
         name: "BrowseMaxLevel"
         kind: "EditBox"
         wowParent: "AuctionFrameBrowse"
+        style: "EditBox"
         anchors.left: browseLevelHyphen.right
         anchors.leftMargin: 20
         anchors.verticalCenter: browseLevelHyphen.verticalCenter
@@ -9038,6 +9862,7 @@ WowWindow {
         name: "BrowseMinLevel"
         kind: "EditBox"
         wowParent: "AuctionFrameBrowse"
+        style: "EditBox"
         anchors.left: browseLevelText.right
         anchors.leftMargin: 20
         anchors.verticalCenter: browseLevelText.verticalCenter
@@ -9061,8 +9886,8 @@ WowWindow {
         id: browseName
         name: "BrowseName"
         kind: "EditBox"
-        text: "Mageweave Cloth"
         wowParent: "AuctionFrameBrowse"
+        style: "EditBox"
         anchors.left: auctionFrameDiabolicBand.left
         anchors.leftMargin: 18
         anchors.verticalCenter: auctionFrameDiabolicBand.verticalCenter
@@ -9113,13 +9938,13 @@ WowWindow {
         id: browseNoResultsText
         name: "BrowseNoResultsText"
         kind: "FontString"
-        text: "No items found"
+        text: "Choose search criteria and press \"Search\""
         wowParent: "AuctionFrameBrowse"
         anchors.horizontalCenter: auctionFrame.left
         anchors.horizontalCenterOffset: 509
         anchors.top: auctionFrame.top
         anchors.topMargin: 118
-        width: 94.1
+        width: 252.1
         height: 12.2
     }
 
@@ -9128,10 +9953,9 @@ WowWindow {
         name: "BrowsePrevPageButton"
         kind: "Button"
         wowParent: "AuctionFrameBrowse"
-        anchors.left: auctionFrameBrowse.left
-        anchors.leftMargin: 722
-        anchors.top: auctionFrameBrowse.top
-        anchors.topMargin: 46
+        anchors.right: browseNextPageButton.left
+        anchors.rightMargin: 4
+        anchors.verticalCenter: browseNextPageButton.verticalCenter
         width: 24
         height: 24
     }
@@ -9169,6 +9993,7 @@ WowWindow {
         kind: "Button"
         text: "Reset"
         wowParent: "AuctionFrameBrowse"
+        style: "Button"
         anchors.left: auctionFrame.left
         anchors.leftMargin: -8
         anchors.top: auctionFrame.top
@@ -9185,7 +10010,7 @@ WowWindow {
         wowParent: "BrowseResetButton"
         anchors.horizontalCenter: browseResetButton.horizontalCenter
         anchors.verticalCenter: browseResetButton.verticalCenter
-        width: 30.2
+        width: 35.2
         height: 10.1
     }
 
@@ -9207,6 +10032,7 @@ WowWindow {
         name: "BrowseScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "BrowseScrollFrame"
+        style: "ScrollBar"
         anchors.left: browseScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: browseScrollFrame.top
@@ -9232,6 +10058,7 @@ WowWindow {
         name: "BrowseScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "BrowseScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: browseScrollFrameScrollBar.horizontalCenter
         anchors.top: browseScrollFrameScrollBar.bottom
         width: 16
@@ -9243,6 +10070,7 @@ WowWindow {
         name: "BrowseScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "BrowseScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: browseScrollFrameScrollBar.horizontalCenter
         anchors.bottom: browseScrollFrameScrollBar.top
         width: 16
@@ -9257,7 +10085,7 @@ WowWindow {
         anchors.left: browseScrollFrame.left
         anchors.top: browseScrollFrame.top
         width: 300
-        height: 703
+        height: 1887
     }
 
     Part {
@@ -9266,6 +10094,7 @@ WowWindow {
         kind: "Button"
         text: "Search"
         wowParent: "AuctionFrameBrowse"
+        style: "Button"
         anchors.left: auctionFrameBrowse.left
         anchors.leftMargin: 676.3
         anchors.top: auctionFrameBrowse.top
@@ -9282,7 +10111,7 @@ WowWindow {
         wowParent: "BrowseSearchButton"
         anchors.horizontalCenter: browseSearchButton.horizontalCenter
         anchors.verticalCenter: browseSearchButton.verticalCenter
-        width: 36.6
+        width: 43.1
         height: 10.1
     }
 
@@ -9366,6 +10195,7 @@ WowWindow {
         name: "DurationDropDown"
         kind: "Frame"
         wowParent: "AuctionFrameAuctions"
+        style: "DropDown"
         anchors.right: auctionFrameAuctions.left
         anchors.rightMargin: -201
         anchors.bottom: auctionFrameAuctions.bottom
@@ -9415,6 +10245,7 @@ WowWindow {
         name: "IsUsableCheckButton"
         kind: "CheckButton"
         wowParent: "AuctionFrameBrowse"
+        style: "CheckBox"
         anchors.left: auctionFrameBrowse.left
         anchors.leftMargin: 524.8
         anchors.top: auctionFrameBrowse.top
@@ -9441,6 +10272,7 @@ WowWindow {
         name: "PriceDropDown"
         kind: "Frame"
         wowParent: "AuctionFrameAuctions"
+        style: "DropDown"
         anchors.right: auctionFrameAuctions.left
         anchors.rightMargin: -201
         anchors.top: auctionFrameAuctions.top
@@ -9490,6 +10322,7 @@ WowWindow {
         name: "ShowOnPlayerCheckButton"
         kind: "CheckButton"
         wowParent: "AuctionFrameBrowse"
+        style: "CheckBox"
         anchors.left: auctionFrameBrowse.left
         anchors.leftMargin: 524.8
         anchors.top: auctionFrameBrowse.top
@@ -9540,7 +10373,6 @@ WowWindow {
         id: startPriceGold
         name: "StartPriceGold"
         kind: "EditBox"
-        text: "1"
         wowParent: "StartPrice"
         anchors.left: startPrice.left
         anchors.top: startPrice.top
@@ -9552,7 +10384,6 @@ WowWindow {
         id: startPriceSilver
         name: "StartPriceSilver"
         kind: "EditBox"
-        text: "65"
         wowParent: "StartPrice"
         anchors.left: startPriceGold.right
         anchors.leftMargin: 26
@@ -9564,5 +10395,5 @@ WowWindow {
     Ghost { id: atr_DropDownSLMiddle; name: "Atr_DropDownSLMiddle"; x: 94; y: 19; width: 0; height: 0 }
     Ghost { id: atr_HeadingsBarMiddle; name: "Atr_HeadingsBarMiddle"; x: 226; y: 170; width: 0; height: 0 }
     Ghost { id: atr_Hilite1; name: "Atr_Hilite1"; x: 834; y: 45; width: 0; height: 0 }
-    Ghost { id: auctionsDepositMoneyFrameCopperButton; name: "AuctionsDepositMoneyFrameCopperButton"; x: 118.7; y: 371; width: 0; height: 0 }
+    Ghost { id: auctionsDepositMoneyFrameCopperButton; name: "AuctionsDepositMoneyFrameCopperButton"; x: 119.5; y: 368.1; width: 0; height: 0 }
 }

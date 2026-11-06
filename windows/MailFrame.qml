@@ -10,10 +10,167 @@ WowWindow {
     height: 512
 
     Part {
+        id: autoCompleteBox
+        name: "AutoCompleteBox"
+        kind: "Frame"
+        wowParent: "SendMailNameEditBox"
+        anchors.left: sendMailNameEditBox.left
+        anchors.top: sendMailNameEditBox.bottom
+        anchors.topMargin: -3
+        width: 120
+        height: 105
+    }
+
+    Part {
+        id: autoCompleteButton1
+        name: "AutoCompleteButton1"
+        kind: "Button"
+        text: "Acta"
+        wowParent: "AutoCompleteBox"
+        anchors.left: autoCompleteBox.left
+        anchors.top: autoCompleteBox.top
+        anchors.topMargin: 10
+        width: 120
+        height: 14
+    }
+
+    Part {
+        id: autoCompleteButton1Text
+        name: "AutoCompleteButton1Text"
+        kind: "FontString"
+        text: "Acta"
+        wowParent: "AutoCompleteButton1"
+        anchors.left: autoCompleteButton1.left
+        anchors.leftMargin: 15
+        anchors.verticalCenter: autoCompleteButton1.verticalCenter
+        anchors.verticalCenterOffset: -0.1
+        width: 29.2
+        height: 11.9
+    }
+
+    Part {
+        id: autoCompleteButton2
+        name: "AutoCompleteButton2"
+        kind: "Button"
+        text: "Adoradear"
+        wowParent: "AutoCompleteBox"
+        anchors.left: autoCompleteButton1.left
+        anchors.top: autoCompleteButton1.bottom
+        width: 120
+        height: 14
+    }
+
+    Part {
+        id: autoCompleteButton2Text
+        name: "AutoCompleteButton2Text"
+        kind: "FontString"
+        text: "Adoradear"
+        wowParent: "AutoCompleteButton2"
+        anchors.left: autoCompleteButton2.left
+        anchors.leftMargin: 15
+        anchors.verticalCenter: autoCompleteButton2.verticalCenter
+        anchors.verticalCenterOffset: -0.1
+        width: 65.6
+        height: 11.9
+    }
+
+    Part {
+        id: autoCompleteButton3
+        name: "AutoCompleteButton3"
+        kind: "Button"
+        text: "Aeriana"
+        wowParent: "AutoCompleteBox"
+        anchors.left: autoCompleteButton2.left
+        anchors.top: autoCompleteButton2.bottom
+        width: 120
+        height: 14
+    }
+
+    Part {
+        id: autoCompleteButton3Text
+        name: "AutoCompleteButton3Text"
+        kind: "FontString"
+        text: "Aeriana"
+        wowParent: "AutoCompleteButton3"
+        anchors.left: autoCompleteButton3.left
+        anchors.leftMargin: 15
+        anchors.verticalCenter: autoCompleteButton3.verticalCenter
+        anchors.verticalCenterOffset: -0.1
+        width: 47.4
+        height: 11.9
+    }
+
+    Part {
+        id: autoCompleteButton4
+        name: "AutoCompleteButton4"
+        kind: "Button"
+        text: "Aishidin"
+        wowParent: "AutoCompleteBox"
+        anchors.left: autoCompleteButton3.left
+        anchors.top: autoCompleteButton3.bottom
+        width: 120
+        height: 14
+    }
+
+    Part {
+        id: autoCompleteButton4Text
+        name: "AutoCompleteButton4Text"
+        kind: "FontString"
+        text: "Aishidin"
+        wowParent: "AutoCompleteButton4"
+        anchors.left: autoCompleteButton4.left
+        anchors.leftMargin: 15
+        anchors.verticalCenter: autoCompleteButton4.verticalCenter
+        anchors.verticalCenterOffset: -0.1
+        width: 49
+        height: 11.9
+    }
+
+    Part {
+        id: autoCompleteButton5
+        name: "AutoCompleteButton5"
+        kind: "Button"
+        text: "..."
+        wowParent: "AutoCompleteBox"
+        anchors.left: autoCompleteButton4.left
+        anchors.top: autoCompleteButton4.bottom
+        width: 120
+        height: 14
+    }
+
+    Part {
+        id: autoCompleteButton5Text
+        name: "AutoCompleteButton5Text"
+        kind: "FontString"
+        text: "..."
+        wowParent: "AutoCompleteButton5"
+        anchors.left: autoCompleteButton5.left
+        anchors.leftMargin: 15
+        anchors.verticalCenter: autoCompleteButton5.verticalCenter
+        anchors.verticalCenterOffset: -0.1
+        width: 10.3
+        height: 11.9
+    }
+
+    Part {
+        id: autoCompleteInstructions
+        name: "AutoCompleteInstructions"
+        kind: "FontString"
+        wowParent: "AutoCompleteBox"
+        anchors.left: autoCompleteBox.left
+        anchors.leftMargin: 15
+        anchors.bottom: autoCompleteBox.bottom
+        anchors.bottomMargin: 10
+        width: 51.4
+        height: 10.3
+    }
+
+    Part {
         id: inboxCloseButton
         name: "InboxCloseButton"
         kind: "Button"
         wowParent: "MailFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: mailFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: mailFrameDiabolic.top
@@ -129,12 +286,12 @@ WowWindow {
         name: "MailFrameDiabolicFoot"
         kind: "Frame"
         wowParent: "MailFrameDiabolic"
-        anchors.horizontalCenter: inboxPrevPageButton.horizontalCenter
-        anchors.horizontalCenterOffset: 134
-        anchors.top: inboxPrevPageButton.top
+        anchors.horizontalCenter: sendMailMailButton.horizontalCenter
+        anchors.horizontalCenterOffset: -39.5
+        anchors.top: sendMailMailButton.top
         anchors.topMargin: -6
         width: 354
-        height: 36
+        height: 45
     }
 
     Part {
@@ -181,6 +338,7 @@ WowWindow {
         kind: "Button"
         text: "Inbox"
         wowParent: "MailFrame"
+        style: "Banner"
         anchors.left: mailFrameDiabolic.left
         anchors.leftMargin: 28
         anchors.top: mailFrameDiabolic.bottom
@@ -195,6 +353,7 @@ WowWindow {
         kind: "Button"
         text: "Send Mail"
         wowParent: "MailFrame"
+        style: "Banner"
         anchors.left: mailFrameDiabolic.left
         anchors.leftMargin: 86
         anchors.top: mailFrameDiabolic.bottom
@@ -233,7 +392,7 @@ WowWindow {
         id: mailItem1ExpireTime
         name: "MailItem1ExpireTime"
         kind: "Button"
-        text: "28 Days "
+        text: "3627 Days "
         wowParent: "MailItem1"
         anchors.right: mailItem1.right
         anchors.rightMargin: -10
@@ -247,7 +406,7 @@ WowWindow {
         id: mailItem1Sender
         name: "MailItem1Sender"
         kind: "FontString"
-        text: "Brew of the Month Club"
+        text: "Customer Support"
         wowParent: "MailItem1"
         anchors.left: mailItem1.left
         anchors.leftMargin: 47
@@ -261,7 +420,7 @@ WowWindow {
         id: mailItem1Subject
         name: "MailItem1Subject"
         kind: "FontString"
-        text: "Fun For You And Your Friends"
+        text: "Auction deposits refunded"
         wowParent: "MailItem1"
         anchors.left: mailItem1Sender.left
         anchors.top: mailItem1Sender.bottom
@@ -363,7 +522,7 @@ WowWindow {
         id: mailItem3ExpireTime
         name: "MailItem3ExpireTime"
         kind: "Button"
-        text: "28 Days "
+        text: "3627 Days "
         wowParent: "MailItem3"
         anchors.right: mailItem3.right
         anchors.rightMargin: -10
@@ -377,6 +536,7 @@ WowWindow {
         id: mailItem3Sender
         name: "MailItem3Sender"
         kind: "FontString"
+        text: "Customer Support"
         wowParent: "MailItem3"
         anchors.left: mailItem3.left
         anchors.leftMargin: 47
@@ -390,6 +550,7 @@ WowWindow {
         id: mailItem3Subject
         name: "MailItem3Subject"
         kind: "FontString"
+        text: "Recovered items"
         wowParent: "MailItem3"
         anchors.left: mailItem3Sender.left
         anchors.top: mailItem3Sender.bottom
@@ -426,7 +587,7 @@ WowWindow {
         id: mailItem4ExpireTime
         name: "MailItem4ExpireTime"
         kind: "Button"
-        text: "28 Days "
+        text: "3627 Days "
         wowParent: "MailItem4"
         anchors.right: mailItem4.right
         anchors.rightMargin: -10
@@ -440,6 +601,7 @@ WowWindow {
         id: mailItem4Sender
         name: "MailItem4Sender"
         kind: "FontString"
+        text: "Customer Support"
         wowParent: "MailItem4"
         anchors.left: mailItem4.left
         anchors.leftMargin: 47
@@ -453,6 +615,7 @@ WowWindow {
         id: mailItem4Subject
         name: "MailItem4Subject"
         kind: "FontString"
+        text: "Recovered items"
         wowParent: "MailItem4"
         anchors.left: mailItem4Sender.left
         anchors.top: mailItem4Sender.bottom
@@ -489,7 +652,7 @@ WowWindow {
         id: mailItem5ExpireTime
         name: "MailItem5ExpireTime"
         kind: "Button"
-        text: "3627 Days "
+        text: "24 Days "
         wowParent: "MailItem5"
         anchors.right: mailItem5.right
         anchors.rightMargin: -10
@@ -549,10 +712,24 @@ WowWindow {
     }
 
     Part {
+        id: mailItem6ButtonCount
+        name: "MailItem6ButtonCount"
+        kind: "FontString"
+        text: "3"
+        wowParent: "MailItem6Button"
+        anchors.right: mailItem6Button.right
+        anchors.rightMargin: 5
+        anchors.bottom: mailItem6Button.bottom
+        anchors.bottomMargin: 2
+        width: 10.3
+        height: 14.2
+    }
+
+    Part {
         id: mailItem6ExpireTime
         name: "MailItem6ExpireTime"
         kind: "Button"
-        text: "3627 Days "
+        text: "24 Days "
         wowParent: "MailItem6"
         anchors.right: mailItem6.right
         anchors.rightMargin: -10
@@ -596,6 +773,33 @@ WowWindow {
         anchors.topMargin: 6
         width: 280
         height: 45
+    }
+
+    Part {
+        id: mailItem7Button
+        name: "MailItem7Button"
+        kind: "CheckButton"
+        wowParent: "MailItem7"
+        anchors.left: mailItem7.left
+        anchors.leftMargin: 4
+        anchors.top: mailItem7.top
+        anchors.topMargin: 3
+        width: 37
+        height: 37
+    }
+
+    Part {
+        id: mailItem7ExpireTime
+        name: "MailItem7ExpireTime"
+        kind: "Button"
+        text: "24 Days "
+        wowParent: "MailItem7"
+        anchors.right: mailItem7.right
+        anchors.rightMargin: -10
+        anchors.top: mailItem7.top
+        anchors.topMargin: 4
+        width: 100
+        height: 16
     }
 
     Part {
@@ -773,11 +977,37 @@ WowWindow {
     }
 
     Part {
+        id: postalInboxCB7
+        name: "PostalInboxCB7"
+        kind: "CheckButton"
+        wowParent: "MailItem7"
+        anchors.right: mailItem7.left
+        anchors.rightMargin: -5
+        anchors.verticalCenter: mailItem7.verticalCenter
+        anchors.verticalCenterOffset: 5
+        width: 24
+        height: 24
+    }
+
+    Part {
+        id: postalInboxCB7Text
+        name: "PostalInboxCB7Text"
+        kind: "FontString"
+        text: "7"
+        wowParent: "PostalInboxCB7"
+        anchors.horizontalCenter: postalInboxCB7.horizontalCenter
+        anchors.bottom: postalInboxCB7.top
+        width: 7.9
+        height: 10.3
+    }
+
+    Part {
         id: postalOpenAllButton
         name: "PostalOpenAllButton"
         kind: "Button"
         text: "Open All"
         wowParent: "InboxFrame"
+        style: "Button"
         anchors.horizontalCenter: inboxFrame.horizontalCenter
         anchors.horizontalCenterOffset: -22
         anchors.verticalCenter: inboxFrame.top
@@ -804,6 +1034,7 @@ WowWindow {
         kind: "Button"
         text: "Open"
         wowParent: "InboxFrame"
+        style: "Button"
         anchors.right: mailFrameDiabolicBand.horizontalCenter
         anchors.rightMargin: 4
         anchors.verticalCenter: mailFrameDiabolicBand.verticalCenter
@@ -829,6 +1060,7 @@ WowWindow {
         kind: "Button"
         text: "Return"
         wowParent: "InboxFrame"
+        style: "Button"
         anchors.left: mailFrameDiabolicBand.horizontalCenter
         anchors.leftMargin: 4
         anchors.verticalCenter: mailFrameDiabolicBand.verticalCenter
@@ -1188,6 +1420,7 @@ WowWindow {
         kind: "Button"
         text: "Cancel"
         wowParent: "SendMailFrame"
+        style: "Button"
         anchors.right: mailFrame.right
         anchors.rightMargin: 39
         anchors.bottom: mailFrame.bottom
@@ -1258,11 +1491,24 @@ WowWindow {
     }
 
     Part {
+        id: sendMailFrameDiabolicAttachments
+        name: "SendMailFrameDiabolicAttachments"
+        kind: "Frame"
+        wowParent: "SendMailFrame"
+        anchors.horizontalCenter: sendMailHorizontalBarLeft2.horizontalCenter
+        anchors.top: sendMailHorizontalBarLeft2.top
+        anchors.topMargin: 1
+        width: 319
+        height: 63
+    }
+
+    Part {
         id: sendMailMailButton
         name: "SendMailMailButton"
         kind: "Button"
         text: "Send"
         wowParent: "SendMailFrame"
+        style: "Button"
         anchors.right: mailFrame.right
         anchors.rightMargin: 122
         anchors.bottom: mailFrame.bottom
@@ -1338,7 +1584,7 @@ WowWindow {
         id: sendMailMoneyFrameCopperButton
         name: "SendMailMoneyFrameCopperButton"
         kind: "Button"
-        text: "53"
+        text: "79"
         wowParent: "SendMailMoneyFrame"
         anchors.right: sendMailMoneyFrame.right
         anchors.rightMargin: 13
@@ -1351,7 +1597,7 @@ WowWindow {
         id: sendMailMoneyFrameCopperButtonText
         name: "SendMailMoneyFrameCopperButtonText"
         kind: "FontString"
-        text: "53"
+        text: "79"
         wowParent: "SendMailMoneyFrameCopperButton"
         anchors.right: sendMailMoneyFrameCopperButton.right
         anchors.rightMargin: 13
@@ -1364,7 +1610,7 @@ WowWindow {
         id: sendMailMoneyFrameGoldButton
         name: "SendMailMoneyFrameGoldButton"
         kind: "Button"
-        text: "3632"
+        text: "8146"
         wowParent: "SendMailMoneyFrame"
         anchors.right: sendMailMoneyFrameSilverButton.left
         anchors.rightMargin: 4
@@ -1377,7 +1623,7 @@ WowWindow {
         id: sendMailMoneyFrameGoldButtonText
         name: "SendMailMoneyFrameGoldButtonText"
         kind: "FontString"
-        text: "3632"
+        text: "8146"
         wowParent: "SendMailMoneyFrameGoldButton"
         anchors.right: sendMailMoneyFrameGoldButton.right
         anchors.rightMargin: 13
@@ -1390,7 +1636,7 @@ WowWindow {
         id: sendMailMoneyFrameSilverButton
         name: "SendMailMoneyFrameSilverButton"
         kind: "Button"
-        text: "10"
+        text: "83"
         wowParent: "SendMailMoneyFrame"
         anchors.right: sendMailMoneyFrameCopperButton.left
         anchors.rightMargin: 4
@@ -1403,7 +1649,7 @@ WowWindow {
         id: sendMailMoneyFrameSilverButtonText
         name: "SendMailMoneyFrameSilverButtonText"
         kind: "FontString"
-        text: "10"
+        text: "83"
         wowParent: "SendMailMoneyFrameSilverButton"
         anchors.right: sendMailMoneyFrameSilverButton.right
         anchors.rightMargin: 13
@@ -1452,8 +1698,8 @@ WowWindow {
         id: sendMailNameEditBox
         name: "SendMailNameEditBox"
         kind: "EditBox"
-        text: "Padizwerch"
         wowParent: "SendMailFrame"
+        style: "EditBox"
         anchors.left: mailFrameDiabolicBand.left
         anchors.leftMargin: 18
         anchors.verticalCenter: mailFrameDiabolicBand.verticalCenter
@@ -1528,6 +1774,7 @@ WowWindow {
         name: "SendMailScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "SendMailScrollFrame"
+        style: "ScrollBar"
         anchors.left: sendMailScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: sendMailScrollFrame.top
@@ -1553,6 +1800,7 @@ WowWindow {
         name: "SendMailScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "SendMailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: sendMailScrollFrameScrollBar.horizontalCenter
         anchors.top: sendMailScrollFrameScrollBar.bottom
         width: 16
@@ -1564,6 +1812,7 @@ WowWindow {
         name: "SendMailScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "SendMailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: sendMailScrollFrameScrollBar.horizontalCenter
         anchors.bottom: sendMailScrollFrameScrollBar.top
         width: 16
@@ -1600,6 +1849,7 @@ WowWindow {
         name: "SendMailSubjectEditBox"
         kind: "EditBox"
         wowParent: "SendMailFrame"
+        style: "EditBox"
         anchors.left: mailFrameDiabolicBand.left
         anchors.leftMargin: 154
         anchors.verticalCenter: mailFrameDiabolicBand.verticalCenter
@@ -1633,4 +1883,5 @@ WowWindow {
         height: 14
     }
 
+    Ghost { id: sendMailHorizontalBarLeft2; name: "SendMailHorizontalBarLeft2"; x: 184.5; y: 291; width: 0; height: 0 }
 }

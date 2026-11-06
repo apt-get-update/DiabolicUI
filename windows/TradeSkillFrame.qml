@@ -41,6 +41,7 @@ WowWindow {
         kind: "Button"
         text: "Exit"
         wowParent: "TradeSkillFrame"
+        style: "Button"
         anchors.right: tradeSkillFrame.right
         anchors.rightMargin: 39
         anchors.bottom: tradeSkillFrame.bottom
@@ -105,6 +106,7 @@ WowWindow {
         kind: "Button"
         text: "Create All"
         wowParent: "TradeSkillFrame"
+        style: "Button"
         anchors.right: tradeSkillCreateButton.left
         anchors.rightMargin: 86
         anchors.verticalCenter: tradeSkillCreateButton.verticalCenter
@@ -130,6 +132,7 @@ WowWindow {
         kind: "Button"
         text: "Create"
         wowParent: "TradeSkillFrame"
+        style: "Button"
         anchors.right: tradeSkillFrame.right
         anchors.rightMargin: 122.5
         anchors.bottom: tradeSkillFrame.bottom
@@ -208,9 +211,9 @@ WowWindow {
         anchors.left: tradeSkillDetailScrollFrame.left
         anchors.leftMargin: -16
         anchors.top: tradeSkillDetailScrollFrame.top
-        anchors.topMargin: -6
+        anchors.topMargin: -12
         width: 361
-        height: 144
+        height: 150
     }
 
     Part {
@@ -231,6 +234,7 @@ WowWindow {
         name: "TradeSkillDetailScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "TradeSkillDetailScrollFrame"
+        style: "ScrollBar"
         anchors.left: tradeSkillDetailScrollFrame.right
         anchors.leftMargin: 26
         anchors.top: tradeSkillDetailScrollFrame.top
@@ -256,6 +260,7 @@ WowWindow {
         name: "TradeSkillDetailScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "TradeSkillDetailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: tradeSkillDetailScrollFrameScrollBar.horizontalCenter
         anchors.top: tradeSkillDetailScrollFrameScrollBar.bottom
         width: 16
@@ -267,6 +272,7 @@ WowWindow {
         name: "TradeSkillDetailScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "TradeSkillDetailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: tradeSkillDetailScrollFrameScrollBar.horizontalCenter
         anchors.bottom: tradeSkillDetailScrollFrameScrollBar.top
         width: 16
@@ -291,6 +297,7 @@ WowWindow {
         name: "TradeSkillFrameAvailableFilterCheckButton"
         kind: "CheckButton"
         wowParent: "TradeSkillFrame"
+        style: "CheckBox"
         anchors.left: tradeSkillFrameEditBox.right
         anchors.leftMargin: 12
         anchors.verticalCenter: tradeSkillFrameEditBox.verticalCenter
@@ -316,6 +323,7 @@ WowWindow {
         name: "TradeSkillFrameCloseButton"
         kind: "Button"
         wowParent: "TradeSkillFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: tradeSkillFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: tradeSkillFrameDiabolic.top
@@ -428,6 +436,7 @@ WowWindow {
         kind: "EditBox"
         text: "Search"
         wowParent: "TradeSkillFrame"
+        style: "EditBox"
         anchors.left: tradeSkillFrameDiabolicBand.left
         anchors.leftMargin: 18
         anchors.verticalCenter: tradeSkillFrameDiabolicBand.verticalCenter
@@ -451,12 +460,12 @@ WowWindow {
         id: tradeSkillFrameTitleText
         name: "TradeSkillFrameTitleText"
         kind: "FontString"
-        text: "Cooking"
+        text: "First Aid"
         wowParent: "TradeSkillFrameDiabolicTitlePlate"
         anchors.horizontalCenter: tradeSkillFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: tradeSkillFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 73.5
+        width: 79.8
         height: 14.2
     }
 
@@ -489,6 +498,7 @@ WowWindow {
         kind: "EditBox"
         text: "1"
         wowParent: "TradeSkillFrame"
+        style: "EditBox"
         anchors.left: tradeSkillDecrementButton.right
         anchors.leftMargin: 8
         anchors.verticalCenter: tradeSkillDecrementButton.verticalCenter
@@ -513,6 +523,7 @@ WowWindow {
         name: "TradeSkillInvSlotDropDown"
         kind: "Frame"
         wowParent: "TradeSkillFrame"
+        style: "DropDown"
         anchors.right: tradeSkillFrame.right
         anchors.rightMargin: 21
         anchors.top: tradeSkillFrame.top
@@ -613,6 +624,7 @@ WowWindow {
         name: "TradeSkillListScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "TradeSkillListScrollFrame"
+        style: "ScrollBar"
         anchors.left: tradeSkillListScrollFrame.right
         anchors.leftMargin: 26
         anchors.top: tradeSkillListScrollFrame.top
@@ -638,6 +650,7 @@ WowWindow {
         name: "TradeSkillListScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "TradeSkillListScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: tradeSkillListScrollFrameScrollBar.horizontalCenter
         anchors.top: tradeSkillListScrollFrameScrollBar.bottom
         width: 16
@@ -649,6 +662,7 @@ WowWindow {
         name: "TradeSkillListScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "TradeSkillListScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: tradeSkillListScrollFrameScrollBar.horizontalCenter
         anchors.bottom: tradeSkillListScrollFrameScrollBar.top
         width: 16
@@ -663,7 +677,7 @@ WowWindow {
         anchors.left: tradeSkillListScrollFrame.left
         anchors.top: tradeSkillListScrollFrame.top
         width: 300
-        height: 1376
+        height: 272
     }
 
     // the skill's bar centred on our window (24 left of the frame, 14 right of it:
@@ -673,6 +687,7 @@ WowWindow {
         name: "TradeSkillRankFrame"
         kind: "StatusBar"
         wowParent: "TradeSkillFrame"
+        style: "Bar"
         pin: "place"
         anchors.horizontalCenter: tradeSkillFrame.left
         anchors.horizontalCenterOffset: 187
@@ -726,7 +741,7 @@ WowWindow {
         id: tradeSkillReagent1Name
         name: "TradeSkillReagent1Name"
         kind: "FontString"
-        text: "Musselback Sculpin"
+        text: "Frostweave Cloth"
         wowParent: "TradeSkillReagent1"
         anchors.left: tradeSkillReagent1NameFrame.left
         anchors.leftMargin: 15
@@ -877,20 +892,19 @@ WowWindow {
         id: tradeSkillRequirementText
         name: "TradeSkillRequirementText"
         kind: "FontString"
-        text: "Cooking Fire"
         wowParent: "TradeSkillDetailScrollChildFrame"
         anchors.left: tradeSkillRequirementLabel.right
         anchors.leftMargin: 4
         anchors.top: tradeSkillRequirementLabel.top
-        width: 87.2
-        height: 10.3
+        width: 180
+        height: 1
     }
 
     Part {
         id: tradeSkillSkill1
         name: "TradeSkillSkill1"
         kind: "Button"
-        text: "Food & Drink"
+        text: "Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillFrame.left
         anchors.leftMargin: 22
@@ -927,7 +941,7 @@ WowWindow {
         id: tradeSkillSkill1Text
         name: "TradeSkillSkill1Text"
         kind: "FontString"
-        text: "Food & Drink"
+        text: "Bandage"
         wowParent: "TradeSkillSkill1"
         anchors.left: tradeSkillSkill1Highlight.right
         anchors.leftMargin: 2
@@ -941,7 +955,7 @@ WowWindow {
         id: tradeSkillSkill2
         name: "TradeSkillSkill2"
         kind: "Button"
-        text: " Fish Feast"
+        text: " Heavy Frostweave Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill1.left
         anchors.top: tradeSkillSkill1.bottom
@@ -976,7 +990,7 @@ WowWindow {
         id: tradeSkillSkill2Text
         name: "TradeSkillSkill2Text"
         kind: "FontString"
-        text: " Fish Feast"
+        text: " Heavy Frostweave Bandage"
         wowParent: "TradeSkillSkill2"
         anchors.left: tradeSkillSkill2Highlight.right
         anchors.leftMargin: 2
@@ -990,7 +1004,7 @@ WowWindow {
         id: tradeSkillSkill3
         name: "TradeSkillSkill3"
         kind: "Button"
-        text: " Gigantic Feast"
+        text: " Frostweave Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill2.left
         anchors.top: tradeSkillSkill2.bottom
@@ -1025,7 +1039,7 @@ WowWindow {
         id: tradeSkillSkill3Text
         name: "TradeSkillSkill3Text"
         kind: "FontString"
-        text: " Gigantic Feast"
+        text: " Frostweave Bandage"
         wowParent: "TradeSkillSkill3"
         anchors.left: tradeSkillSkill3Highlight.right
         anchors.leftMargin: 2
@@ -1039,7 +1053,7 @@ WowWindow {
         id: tradeSkillSkill4
         name: "TradeSkillSkill4"
         kind: "Button"
-        text: " Small Feast"
+        text: " Heavy Netherweave Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill3.left
         anchors.top: tradeSkillSkill3.bottom
@@ -1074,7 +1088,7 @@ WowWindow {
         id: tradeSkillSkill4Text
         name: "TradeSkillSkill4Text"
         kind: "FontString"
-        text: " Small Feast"
+        text: " Heavy Netherweave Bandage"
         wowParent: "TradeSkillSkill4"
         anchors.left: tradeSkillSkill4Highlight.right
         anchors.leftMargin: 2
@@ -1088,7 +1102,7 @@ WowWindow {
         id: tradeSkillSkill5
         name: "TradeSkillSkill5"
         kind: "Button"
-        text: " Critter Bites"
+        text: " Netherweave Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill4.left
         anchors.top: tradeSkillSkill4.bottom
@@ -1123,7 +1137,7 @@ WowWindow {
         id: tradeSkillSkill5Text
         name: "TradeSkillSkill5Text"
         kind: "FontString"
-        text: " Critter Bites"
+        text: " Netherweave Bandage"
         wowParent: "TradeSkillSkill5"
         anchors.left: tradeSkillSkill5Highlight.right
         anchors.leftMargin: 2
@@ -1137,7 +1151,7 @@ WowWindow {
         id: tradeSkillSkill6
         name: "TradeSkillSkill6"
         kind: "Button"
-        text: " Cuttlesteak"
+        text: " Heavy Runecloth Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill5.left
         anchors.top: tradeSkillSkill5.bottom
@@ -1172,7 +1186,7 @@ WowWindow {
         id: tradeSkillSkill6Text
         name: "TradeSkillSkill6Text"
         kind: "FontString"
-        text: " Cuttlesteak"
+        text: " Heavy Runecloth Bandage"
         wowParent: "TradeSkillSkill6"
         anchors.left: tradeSkillSkill6Highlight.right
         anchors.leftMargin: 2
@@ -1186,7 +1200,7 @@ WowWindow {
         id: tradeSkillSkill7
         name: "TradeSkillSkill7"
         kind: "Button"
-        text: " Black Jelly"
+        text: " Runecloth Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill6.left
         anchors.top: tradeSkillSkill6.bottom
@@ -1221,7 +1235,7 @@ WowWindow {
         id: tradeSkillSkill7Text
         name: "TradeSkillSkill7Text"
         kind: "FontString"
-        text: " Black Jelly"
+        text: " Runecloth Bandage"
         wowParent: "TradeSkillSkill7"
         anchors.left: tradeSkillSkill7Highlight.right
         anchors.leftMargin: 2
@@ -1235,7 +1249,7 @@ WowWindow {
         id: tradeSkillSkill8
         name: "TradeSkillSkill8"
         kind: "Button"
-        text: " Great Feast"
+        text: " Heavy Mageweave Bandage"
         wowParent: "TradeSkillFrame"
         anchors.left: tradeSkillSkill7.left
         anchors.top: tradeSkillSkill7.bottom
@@ -1270,7 +1284,7 @@ WowWindow {
         id: tradeSkillSkill8Text
         name: "TradeSkillSkill8Text"
         kind: "FontString"
-        text: " Great Feast"
+        text: " Heavy Mageweave Bandage"
         wowParent: "TradeSkillSkill8"
         anchors.left: tradeSkillSkill8Highlight.right
         anchors.leftMargin: 2
@@ -1321,13 +1335,13 @@ WowWindow {
         id: tradeSkillSkillName
         name: "TradeSkillSkillName"
         kind: "FontString"
-        text: "Fish Feast"
+        text: "Heavy Frostweave Bandage"
         wowParent: "TradeSkillDetailScrollChildFrame"
         anchors.left: tradeSkillDetailScrollChildFrame.left
         anchors.leftMargin: 50
         anchors.top: tradeSkillDetailScrollChildFrame.top
         anchors.topMargin: 5
-        width: 146
+        width: 244
         height: 11.9
     }
 
@@ -1336,6 +1350,7 @@ WowWindow {
         name: "TradeSkillSubClassDropDown"
         kind: "Frame"
         wowParent: "TradeSkillFrame"
+        style: "DropDown"
         anchors.right: tradeSkillInvSlotDropDown.left
         anchors.rightMargin: -27
         anchors.verticalCenter: tradeSkillInvSlotDropDown.verticalCenter
@@ -1383,12 +1398,12 @@ WowWindow {
     Ghost { id: tradeSkillExpandTabLeft; name: "TradeSkillExpandTabLeft"; x: 23; y: 69; width: 0; height: 0 }
     Ghost { id: tradeSkillReagent1IconTexture; name: "TradeSkillReagent1IconTexture"; x: 62; y: 361.2; width: 0; height: 0 }
     Ghost { id: tradeSkillReagent1NameFrame; name: "TradeSkillReagent1NameFrame"; x: 52; y: 341.7; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent2IconTexture; name: "TradeSkillReagent2IconTexture"; x: 209; y: 361.2; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent2NameFrame; name: "TradeSkillReagent2NameFrame"; x: 199; y: 341.7; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent3IconTexture; name: "TradeSkillReagent3IconTexture"; x: 62; y: 408.2; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent3NameFrame; name: "TradeSkillReagent3NameFrame"; x: 52; y: 388.7; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent4IconTexture; name: "TradeSkillReagent4IconTexture"; x: 209; y: 408.2; width: 0; height: 0 }
-    Ghost { id: tradeSkillReagent4NameFrame; name: "TradeSkillReagent4NameFrame"; x: 199; y: 388.7; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent2IconTexture; name: "TradeSkillReagent2IconTexture"; x: 209; y: 307.8; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent2NameFrame; name: "TradeSkillReagent2NameFrame"; x: 199; y: 288.3; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent3IconTexture; name: "TradeSkillReagent3IconTexture"; x: 62; y: 354.8; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent3NameFrame; name: "TradeSkillReagent3NameFrame"; x: 52; y: 335.3; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent4IconTexture; name: "TradeSkillReagent4IconTexture"; x: 209; y: 354.8; width: 0; height: 0 }
+    Ghost { id: tradeSkillReagent4NameFrame; name: "TradeSkillReagent4NameFrame"; x: 199; y: 335.3; width: 0; height: 0 }
     Ghost { id: tradeSkillSkill1Highlight; name: "TradeSkillSkill1Highlight"; x: 41; y: 97; width: 0; height: 0 }
     Ghost { id: tradeSkillSkill2Highlight; name: "TradeSkillSkill2Highlight"; x: 41; y: 113; width: 0; height: 0 }
     Ghost { id: tradeSkillSkill3Highlight; name: "TradeSkillSkill3Highlight"; x: 41; y: 129; width: 0; height: 0 }

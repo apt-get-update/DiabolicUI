@@ -115,12 +115,12 @@ WowWindow {
         id: glyphFrameTitleText
         name: "GlyphFrameTitleText"
         kind: "FontString"
-        text: "Primary Glyphs"
+        text: "Glyphs"
         wowParent: "GlyphFrame"
         anchors.horizontalCenter: glyphFrame.horizontalCenter
         anchors.top: glyphFrame.top
         anchors.topMargin: 18
-        width: 81.4
+        width: 37.9
         height: 10.3
     }
 
@@ -188,6 +188,7 @@ WowWindow {
         name: "PlayerTalentFrameCloseButton"
         kind: "Button"
         wowParent: "PlayerTalentFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: playerTalentFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: playerTalentFrameDiabolic.top
@@ -285,8 +286,46 @@ WowWindow {
     }
 
     Part {
+        id: playerTalentFrameLearnButton
+        name: "PlayerTalentFrameLearnButton"
+        kind: "Button"
+        text: "Learn"
+        wowParent: "PlayerTalentFramePreviewBar"
+        style: "Button"
+        anchors.right: playerTalentFrameResetButton.left
+        anchors.verticalCenter: playerTalentFrameResetButton.verticalCenter
+        width: 80
+        height: 22
+    }
+
+    Part {
+        id: playerTalentFrameLearnButtonText
+        name: "PlayerTalentFrameLearnButtonText"
+        kind: "FontString"
+        text: "Learn"
+        wowParent: "PlayerTalentFrameLearnButton"
+        anchors.horizontalCenter: playerTalentFrameLearnButton.horizontalCenter
+        anchors.verticalCenter: playerTalentFrameLearnButton.verticalCenter
+        width: 42.7
+        height: 11.9
+    }
+
+    Part {
         id: playerTalentFramePointsBar
         name: "PlayerTalentFramePointsBar"
+        kind: "Frame"
+        wowParent: "PlayerTalentFrame"
+        anchors.left: playerTalentFrameDiabolic.left
+        anchors.leftMargin: 32
+        anchors.verticalCenter: playerTalentFrameDiabolic.verticalCenter
+        anchors.verticalCenterOffset: 200
+        width: 338
+        height: 26
+    }
+
+    Part {
+        id: playerTalentFramePreviewBar
+        name: "PlayerTalentFramePreviewBar"
         kind: "Frame"
         wowParent: "PlayerTalentFrame"
         anchors.left: playerTalentFrameDiabolic.left
@@ -295,6 +334,43 @@ WowWindow {
         anchors.verticalCenterOffset: 222
         width: 338
         height: 26
+    }
+
+    Part {
+        id: playerTalentFramePreviewBarFiller
+        name: "PlayerTalentFramePreviewBarFiller"
+        kind: "Frame"
+        wowParent: "PlayerTalentFramePreviewBar"
+        anchors.left: playerTalentFramePreviewBar.left
+        anchors.verticalCenter: playerTalentFramePreviewBar.verticalCenter
+        width: 174
+        height: 26
+    }
+
+    Part {
+        id: playerTalentFrameResetButton
+        name: "PlayerTalentFrameResetButton"
+        kind: "Button"
+        text: "Reset"
+        wowParent: "PlayerTalentFramePreviewBar"
+        style: "Button"
+        anchors.right: playerTalentFramePreviewBar.right
+        anchors.rightMargin: 4
+        anchors.verticalCenter: playerTalentFramePreviewBar.verticalCenter
+        width: 80
+        height: 22
+    }
+
+    Part {
+        id: playerTalentFrameResetButtonText
+        name: "PlayerTalentFrameResetButtonText"
+        kind: "FontString"
+        text: "Reset"
+        wowParent: "PlayerTalentFrameResetButton"
+        anchors.horizontalCenter: playerTalentFrameResetButton.horizontalCenter
+        anchors.verticalCenter: playerTalentFrameResetButton.verticalCenter
+        width: 40.3
+        height: 11.9
     }
 
     Part {
@@ -318,7 +394,7 @@ WowWindow {
         anchors.top: playerTalentFrameDiabolic.top
         anchors.topMargin: 110
         width: 296
-        height: 356
+        height: 334
     }
 
     Part {
@@ -326,12 +402,13 @@ WowWindow {
         name: "PlayerTalentFrameScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "PlayerTalentFrameScrollFrame"
+        style: "ScrollBar"
         anchors.left: playerTalentFrameScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: playerTalentFrameScrollFrame.top
         anchors.topMargin: 16
         width: 16
-        height: 324
+        height: 302
     }
 
     Part {
@@ -343,7 +420,7 @@ WowWindow {
         anchors.top: playerTalentFrameScrollFrameScrollBarScrollUpButton.top
         anchors.topMargin: -1
         width: 18
-        height: 358
+        height: 336
     }
 
     Part {
@@ -351,6 +428,7 @@ WowWindow {
         name: "PlayerTalentFrameScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: playerTalentFrameScrollFrameScrollBar.horizontalCenter
         anchors.top: playerTalentFrameScrollFrameScrollBar.bottom
         width: 16
@@ -362,6 +440,7 @@ WowWindow {
         name: "PlayerTalentFrameScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: playerTalentFrameScrollFrameScrollBar.horizontalCenter
         anchors.bottom: playerTalentFrameScrollFrameScrollBar.top
         width: 16
@@ -377,7 +456,7 @@ WowWindow {
         anchors.leftMargin: 12
         anchors.verticalCenter: playerTalentFramePointsBar.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 97.2
+        width: 92.4
         height: 15
     }
 
@@ -408,8 +487,9 @@ WowWindow {
         id: playerTalentFrameTab1
         name: "PlayerTalentFrameTab1"
         kind: "Button"
-        text: "Discipline"
+        text: "Blood"
         wowParent: "PlayerTalentFrame"
+        style: "Banner"
         anchors.left: playerTalentFrameDiabolic.left
         anchors.leftMargin: 28
         anchors.top: playerTalentFrameDiabolic.bottom
@@ -422,8 +502,9 @@ WowWindow {
         id: playerTalentFrameTab2
         name: "PlayerTalentFrameTab2"
         kind: "Button"
-        text: "Holy"
+        text: "Frost"
         wowParent: "PlayerTalentFrame"
+        style: "Banner"
         anchors.left: playerTalentFrameDiabolic.left
         anchors.leftMargin: 86
         anchors.top: playerTalentFrameDiabolic.bottom
@@ -436,8 +517,9 @@ WowWindow {
         id: playerTalentFrameTab3
         name: "PlayerTalentFrameTab3"
         kind: "Button"
-        text: "Shadow"
+        text: "Unholy"
         wowParent: "PlayerTalentFrame"
+        style: "Banner"
         anchors.left: playerTalentFrameDiabolic.left
         anchors.leftMargin: 144
         anchors.top: playerTalentFrameDiabolic.bottom
@@ -452,6 +534,7 @@ WowWindow {
         kind: "Button"
         text: "Glyphs"
         wowParent: "PlayerTalentFrame"
+        style: "Banner"
         anchors.left: playerTalentFrameDiabolic.left
         anchors.leftMargin: 202
         anchors.top: playerTalentFrameDiabolic.bottom
@@ -479,9 +562,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 161
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 209
+        anchors.topMargin: 146
         width: 37
         height: 37
     }
@@ -504,7 +587,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 209
         width: 37
@@ -529,7 +612,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 224
+        anchors.leftMargin: 161
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 209
         width: 37
@@ -554,9 +637,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 224
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 272
+        anchors.topMargin: 209
         width: 37
         height: 37
     }
@@ -567,7 +650,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 35
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 272
         width: 37
@@ -592,7 +675,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 272
         width: 37
@@ -605,7 +688,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 224
+        anchors.leftMargin: 161
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 272
         width: 37
@@ -655,7 +738,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 335
         width: 37
@@ -680,9 +763,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 161
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 398
+        anchors.topMargin: 335
         width: 37
         height: 37
     }
@@ -703,7 +786,7 @@ WowWindow {
         id: playerTalentFrameTalent1Rank
         name: "PlayerTalentFrameTalent1Rank"
         kind: "FontString"
-        text: "3"
+        text: "0"
         wowParent: "PlayerTalentFrameTalent1"
         anchors.horizontalCenter: playerTalentFrameTalent1RankBorder.horizontalCenter
         anchors.verticalCenter: playerTalentFrameTalent1RankBorder.verticalCenter
@@ -730,9 +813,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 224
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 398
+        anchors.topMargin: 335
         width: 37
         height: 37
     }
@@ -757,7 +840,7 @@ WowWindow {
         anchors.left: playerTalentFrameScrollChildFrame.left
         anchors.leftMargin: 35
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 461
+        anchors.topMargin: 398
         width: 37
         height: 37
     }
@@ -780,9 +863,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 461
+        anchors.topMargin: 398
         width: 37
         height: 37
     }
@@ -805,9 +888,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 161
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 524
+        anchors.topMargin: 398
         width: 37
         height: 37
     }
@@ -818,9 +901,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 224
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 524
+        anchors.topMargin: 398
         width: 37
         height: 37
     }
@@ -843,9 +926,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 524
+        anchors.topMargin: 461
         width: 37
         height: 37
     }
@@ -870,7 +953,7 @@ WowWindow {
         anchors.left: playerTalentFrameScrollChildFrame.left
         anchors.leftMargin: 161
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 587
+        anchors.topMargin: 461
         width: 37
         height: 37
     }
@@ -893,9 +976,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 35
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 650
+        anchors.topMargin: 524
         width: 37
         height: 37
     }
@@ -920,7 +1003,20 @@ WowWindow {
         anchors.left: playerTalentFrameScrollChildFrame.left
         anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 650
+        anchors.topMargin: 524
+        width: 37
+        height: 37
+    }
+
+    Part {
+        id: playerTalentFrameTalent29
+        name: "PlayerTalentFrameTalent29"
+        kind: "Button"
+        wowParent: "PlayerTalentFrameScrollChildFrame"
+        anchors.left: playerTalentFrameScrollChildFrame.left
+        anchors.leftMargin: 161
+        anchors.top: playerTalentFrameScrollChildFrame.top
+        anchors.topMargin: 524
         width: 37
         height: 37
     }
@@ -929,7 +1025,7 @@ WowWindow {
         id: playerTalentFrameTalent2Rank
         name: "PlayerTalentFrameTalent2Rank"
         kind: "FontString"
-        text: "5"
+        text: "0"
         wowParent: "PlayerTalentFrameTalent2"
         anchors.horizontalCenter: playerTalentFrameTalent2RankBorder.horizontalCenter
         anchors.verticalCenter: playerTalentFrameTalent2RankBorder.verticalCenter
@@ -951,10 +1047,36 @@ WowWindow {
     }
 
     Part {
+        id: playerTalentFrameTalent30
+        name: "PlayerTalentFrameTalent30"
+        kind: "Button"
+        wowParent: "PlayerTalentFrameScrollChildFrame"
+        anchors.left: playerTalentFrameScrollChildFrame.left
+        anchors.leftMargin: 98
+        anchors.top: playerTalentFrameScrollChildFrame.top
+        anchors.topMargin: 587
+        width: 37
+        height: 37
+    }
+
+    Part {
+        id: playerTalentFrameTalent31
+        name: "PlayerTalentFrameTalent31"
+        kind: "Button"
+        wowParent: "PlayerTalentFrameScrollChildFrame"
+        anchors.left: playerTalentFrameScrollChildFrame.left
+        anchors.leftMargin: 98
+        anchors.top: playerTalentFrameScrollChildFrame.top
+        anchors.topMargin: 650
+        width: 37
+        height: 37
+    }
+
+    Part {
         id: playerTalentFrameTalent3Rank
         name: "PlayerTalentFrameTalent3Rank"
         kind: "FontString"
-        text: "5"
+        text: "0"
         wowParent: "PlayerTalentFrameTalent3"
         anchors.horizontalCenter: playerTalentFrameTalent3RankBorder.horizontalCenter
         anchors.verticalCenter: playerTalentFrameTalent3RankBorder.verticalCenter
@@ -1043,9 +1165,9 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 35
+        anchors.leftMargin: 224
         anchors.top: playerTalentFrameScrollChildFrame.top
-        anchors.topMargin: 146
+        anchors.topMargin: 83
         width: 37
         height: 37
     }
@@ -1068,7 +1190,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 98
+        anchors.leftMargin: 35
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 146
         width: 37
@@ -1079,11 +1201,11 @@ WowWindow {
         id: playerTalentFrameTalent8Rank
         name: "PlayerTalentFrameTalent8Rank"
         kind: "FontString"
-        text: "1"
+        text: "5"
         wowParent: "PlayerTalentFrameTalent8"
         anchors.horizontalCenter: playerTalentFrameTalent8RankBorder.horizontalCenter
         anchors.verticalCenter: playerTalentFrameTalent8RankBorder.verticalCenter
-        width: 6.3
+        width: 7.9
         height: 10.3
     }
 
@@ -1093,7 +1215,7 @@ WowWindow {
         kind: "Button"
         wowParent: "PlayerTalentFrameScrollChildFrame"
         anchors.left: playerTalentFrameScrollChildFrame.left
-        anchors.leftMargin: 161
+        anchors.leftMargin: 98
         anchors.top: playerTalentFrameScrollChildFrame.top
         anchors.topMargin: 146
         width: 37
@@ -1121,7 +1243,7 @@ WowWindow {
         anchors.rightMargin: 12
         anchors.verticalCenter: playerTalentFramePointsBar.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 98.8
+        width: 105.9
         height: 15
     }
 
@@ -1129,12 +1251,12 @@ WowWindow {
         id: playerTalentFrameTitleText
         name: "PlayerTalentFrameTitleText"
         kind: "FontString"
-        text: "Primary Talents"
+        text: "Talents"
         wowParent: "PlayerTalentFrameDiabolicTitlePlate"
         anchors.horizontalCenter: playerTalentFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: playerTalentFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 150.1
+        width: 71.9
         height: 14.2
     }
 
@@ -1154,10 +1276,10 @@ WowWindow {
     Ghost { id: playerTalentFrameTalent25RankBorder; name: "PlayerTalentFrameTalent25RankBorder"; x: 240; y: 634.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent26RankBorder; name: "PlayerTalentFrameTalent26RankBorder"; x: 240; y: 697.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent27RankBorder; name: "PlayerTalentFrameTalent27RankBorder"; x: 177; y: 760.9; width: 0; height: 0 }
-    Ghost { id: playerTalentFrameTalent2RankBorder; name: "PlayerTalentFrameTalent2RankBorder"; x: 240; y: 130.9; width: 0; height: 0 }
+    Ghost { id: playerTalentFrameTalent2RankBorder; name: "PlayerTalentFrameTalent2RankBorder"; x: 177; y: 130.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent3RankBorder; name: "PlayerTalentFrameTalent3RankBorder"; x: 240; y: 130.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent4RankBorder; name: "PlayerTalentFrameTalent4RankBorder"; x: 177; y: 193.9; width: 0; height: 0 }
-    Ghost { id: playerTalentFrameTalent5RankBorder; name: "PlayerTalentFrameTalent5RankBorder"; x: 240; y: 193.9; width: 0; height: 0 }
+    Ghost { id: playerTalentFrameTalent5RankBorder; name: "PlayerTalentFrameTalent5RankBorder"; x: 177; y: 193.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent6RankBorder; name: "PlayerTalentFrameTalent6RankBorder"; x: 240; y: 193.9; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent7RankBorder; name: "PlayerTalentFrameTalent7RankBorder"; x: 114; y: 257; width: 0; height: 0 }
     Ghost { id: playerTalentFrameTalent8RankBorder; name: "PlayerTalentFrameTalent8RankBorder"; x: 177; y: 257; width: 0; height: 0 }

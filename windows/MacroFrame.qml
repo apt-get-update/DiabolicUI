@@ -266,7 +266,6 @@ WowWindow {
         id: macroButton1Name
         name: "MacroButton1Name"
         kind: "FontString"
-        text: "DUI Holy End"
         wowParent: "MacroButton1"
         anchors.horizontalCenter: macroButton1.horizontalCenter
         anchors.bottom: macroButton1.bottom
@@ -531,7 +530,6 @@ WowWindow {
         id: macroButton2Name
         name: "MacroButton2Name"
         kind: "FontString"
-        text: "DUI Holy Start"
         wowParent: "MacroButton2"
         anchors.horizontalCenter: macroButton2.horizontalCenter
         anchors.bottom: macroButton2.bottom
@@ -724,7 +722,6 @@ WowWindow {
         id: macroButton3Name
         name: "MacroButton3Name"
         kind: "FontString"
-        text: "DUI Shadow End"
         wowParent: "MacroButton3"
         anchors.horizontalCenter: macroButton3.horizontalCenter
         anchors.bottom: macroButton3.bottom
@@ -749,7 +746,6 @@ WowWindow {
         id: macroButton4Name
         name: "MacroButton4Name"
         kind: "FontString"
-        text: "DUI Shadow Start"
         wowParent: "MacroButton4"
         anchors.horizontalCenter: macroButton4.horizontalCenter
         anchors.bottom: macroButton4.bottom
@@ -923,6 +919,7 @@ WowWindow {
         name: "MacroButtonScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "MacroButtonScrollFrame"
+        style: "ScrollBar"
         anchors.left: macroButtonScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: macroButtonScrollFrame.top
@@ -948,6 +945,7 @@ WowWindow {
         name: "MacroButtonScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "MacroButtonScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: macroButtonScrollFrameScrollBar.horizontalCenter
         anchors.top: macroButtonScrollFrameScrollBar.bottom
         width: 16
@@ -959,6 +957,7 @@ WowWindow {
         name: "MacroButtonScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "MacroButtonScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: macroButtonScrollFrameScrollBar.horizontalCenter
         anchors.bottom: macroButtonScrollFrameScrollBar.top
         width: 16
@@ -972,6 +971,7 @@ WowWindow {
         kind: "Button"
         text: "Delete"
         wowParent: "MacroFrame"
+        style: "Button"
         pin: "place"
         anchors.left: macroFrame.left
         anchors.leftMargin: 17
@@ -987,6 +987,7 @@ WowWindow {
         kind: "Button"
         text: "Change Name/Icon"
         wowParent: "MacroFrame"
+        style: "Button"
         anchors.left: macroFrameSelectedMacroBackground.left
         anchors.leftMargin: 51
         anchors.top: macroFrameSelectedMacroBackground.top
@@ -1013,12 +1014,13 @@ WowWindow {
         kind: "Button"
         text: "Exit"
         wowParent: "MacroFrame"
+        style: "Button"
         pin: "place"
         anchors.horizontalCenter: macroFrame.left
         anchors.horizontalCenterOffset: 303
         anchors.verticalCenter: macroFrame.top
         anchors.verticalCenterOffset: 432
-        width: 77.5
+        width: 78.8
         height: 22
     }
 
@@ -1040,13 +1042,13 @@ WowWindow {
         id: macroFrameCharLimitText
         name: "MacroFrameCharLimitText"
         kind: "FontString"
-        text: "80/255 Characters Used"
+        text: "41/255 Characters Used"
         wowParent: "MacroFrame"
         pin: "place"
         anchors.right: macroFrameScrollFrame.right
         anchors.bottom: macroFrameScrollFrame.top
         anchors.bottomMargin: 8
-        width: 129.6
+        width: 128.8
         height: 10
     }
 
@@ -1055,6 +1057,7 @@ WowWindow {
         name: "MacroFrameCloseButton"
         kind: "Button"
         wowParent: "MacroFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: macroFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: macroFrameDiabolic.top
@@ -1094,7 +1097,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.horizontalCenter: macroExitButton.horizontalCenter
-        anchors.horizontalCenterOffset: -127.9
+        anchors.horizontalCenterOffset: -128
         anchors.top: macroExitButton.top
         anchors.topMargin: -6
         width: 352
@@ -1183,6 +1186,7 @@ WowWindow {
         name: "MacroFrameScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "MacroFrameScrollFrame"
+        style: "ScrollBar"
         anchors.left: macroFrameScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: macroFrameScrollFrame.top
@@ -1208,6 +1212,7 @@ WowWindow {
         name: "MacroFrameScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "MacroFrameScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: macroFrameScrollFrameScrollBar.horizontalCenter
         anchors.top: macroFrameScrollFrameScrollBar.bottom
         width: 16
@@ -1219,6 +1224,7 @@ WowWindow {
         name: "MacroFrameScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "MacroFrameScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: macroFrameScrollFrameScrollBar.horizontalCenter
         anchors.bottom: macroFrameScrollFrameScrollBar.top
         width: 16
@@ -1233,8 +1239,8 @@ WowWindow {
         anchors.leftMargin: 10
         anchors.top: macroFrame.top
         anchors.topMargin: 208
-        width: 198
-        height: 12
+        width: 64
+        height: 64
     }
 
     Part {
@@ -1266,7 +1272,7 @@ WowWindow {
         id: macroFrameSelectedMacroName
         name: "MacroFrameSelectedMacroName"
         kind: "FontString"
-        text: "DUI Holy End"
+        text: "Decursive"
         wowParent: "MacroFrame"
         anchors.left: macroFrameSelectedMacroBackground.right
         anchors.leftMargin: -4
@@ -1282,6 +1288,7 @@ WowWindow {
         kind: "Button"
         text: "General Macros"
         wowParent: "MacroFrame"
+        style: "Banner"
         anchors.left: macroFrameDiabolic.left
         anchors.leftMargin: 28
         anchors.top: macroFrameDiabolic.bottom
@@ -1294,8 +1301,9 @@ WowWindow {
         id: macroFrameTab2
         name: "MacroFrameTab2"
         kind: "Button"
-        text: "Padirac Specific Macros"
+        text: "Padizwerch Specific Macros"
         wowParent: "MacroFrame"
+        style: "Banner"
         anchors.left: macroFrameDiabolic.left
         anchors.leftMargin: 86
         anchors.top: macroFrameDiabolic.bottom
@@ -1308,11 +1316,12 @@ WowWindow {
         id: macroFrameText
         name: "MacroFrameText"
         kind: "EditBox"
+        text: "/script Dcr:Println('No spell available')"
         wowParent: "MacroFrameScrollFrame"
         anchors.left: macroFrameScrollFrame.left
         anchors.top: macroFrameScrollFrame.top
         width: 286
-        height: 30.8
+        height: 10.3
     }
 
     Part {
@@ -1345,12 +1354,12 @@ WowWindow {
         kind: "Button"
         text: "New"
         wowParent: "MacroFrame"
+        style: "Button"
         pin: "place"
-        anchors.horizontalCenter: macroFrame.left
-        anchors.horizontalCenterOffset: 222
-        anchors.verticalCenter: macroFrame.top
-        anchors.verticalCenterOffset: 432
-        width: 77.5
+        anchors.right: macroExitButton.left
+        anchors.rightMargin: 6
+        anchors.verticalCenter: macroExitButton.verticalCenter
+        width: 78.8
         height: 22
     }
 

@@ -53,6 +53,7 @@ WowWindow {
         kind: "Button"
         text: "X"
         wowParent: "KeyBindingFrameBinding10"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -78,6 +79,7 @@ WowWindow {
         name: "KeyBindingFrameBinding10Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding10"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -127,6 +129,7 @@ WowWindow {
         kind: "Button"
         text: "Z"
         wowParent: "KeyBindingFrameBinding11"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -152,6 +155,7 @@ WowWindow {
         name: "KeyBindingFrameBinding11Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding11"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -201,6 +205,7 @@ WowWindow {
         kind: "Button"
         text: "Mouse Button 4"
         wowParent: "KeyBindingFrameBinding12"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -227,6 +232,7 @@ WowWindow {
         kind: "Button"
         text: "Insert"
         wowParent: "KeyBindingFrameBinding12"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -276,6 +282,7 @@ WowWindow {
         name: "KeyBindingFrameBinding13Key1Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding13"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -300,6 +307,7 @@ WowWindow {
         name: "KeyBindingFrameBinding13Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding13"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -349,6 +357,7 @@ WowWindow {
         kind: "Button"
         text: "Delete"
         wowParent: "KeyBindingFrameBinding14"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -374,6 +383,7 @@ WowWindow {
         name: "KeyBindingFrameBinding14Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding14"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -423,6 +433,7 @@ WowWindow {
         kind: "Button"
         text: "Num Pad /"
         wowParent: "KeyBindingFrameBinding15"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -448,6 +459,7 @@ WowWindow {
         name: "KeyBindingFrameBinding15Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding15"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -496,6 +508,7 @@ WowWindow {
         name: "KeyBindingFrameBinding16Key1Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding16"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -520,6 +533,7 @@ WowWindow {
         name: "KeyBindingFrameBinding16Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding16"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -605,6 +619,7 @@ WowWindow {
         kind: "Button"
         text: "Middle Mouse"
         wowParent: "KeyBindingFrameBinding2"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -630,6 +645,7 @@ WowWindow {
         name: "KeyBindingFrameBinding2Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding2"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -679,6 +695,7 @@ WowWindow {
         kind: "Button"
         text: "Up Arrow"
         wowParent: "KeyBindingFrameBinding3"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -705,6 +722,7 @@ WowWindow {
         kind: "Button"
         text: ","
         wowParent: "KeyBindingFrameBinding3"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -755,6 +773,7 @@ WowWindow {
         kind: "Button"
         text: "Down Arrow"
         wowParent: "KeyBindingFrameBinding4"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -781,6 +800,7 @@ WowWindow {
         kind: "Button"
         text: "O"
         wowParent: "KeyBindingFrameBinding4"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -831,6 +851,7 @@ WowWindow {
         kind: "Button"
         text: "A"
         wowParent: "KeyBindingFrameBinding5"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -857,6 +878,7 @@ WowWindow {
         kind: "Button"
         text: "Left Arrow"
         wowParent: "KeyBindingFrameBinding5"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -907,6 +929,7 @@ WowWindow {
         kind: "Button"
         text: "Right Arrow"
         wowParent: "KeyBindingFrameBinding6"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -933,6 +956,7 @@ WowWindow {
         kind: "Button"
         text: "E"
         wowParent: "KeyBindingFrameBinding6"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -983,6 +1007,7 @@ WowWindow {
         kind: "Button"
         text: "'"
         wowParent: "KeyBindingFrameBinding7"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -1008,6 +1033,7 @@ WowWindow {
         name: "KeyBindingFrameBinding7Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding7"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -1057,6 +1083,7 @@ WowWindow {
         kind: "Button"
         text: "."
         wowParent: "KeyBindingFrameBinding8"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.top: keyBindingFrame.top
@@ -1082,6 +1109,7 @@ WowWindow {
         name: "KeyBindingFrameBinding8Key2Button"
         kind: "Button"
         wowParent: "KeyBindingFrameBinding8"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.top: keyBindingFrame.top
@@ -1131,6 +1159,7 @@ WowWindow {
         kind: "Button"
         text: "Spacebar"
         wowParent: "KeyBindingFrameBinding9"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 261
         anchors.bottom: keyBindingFrame.bottom
@@ -1157,6 +1186,7 @@ WowWindow {
         kind: "Button"
         text: "Num Pad 0"
         wowParent: "KeyBindingFrameBinding9"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 78
         anchors.bottom: keyBindingFrame.bottom
@@ -1183,6 +1213,7 @@ WowWindow {
         kind: "Button"
         text: "Cancel"
         wowParent: "KeyBindingFrame"
+        style: "Button"
         pin: "place"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 64
@@ -1209,6 +1240,7 @@ WowWindow {
         name: "KeyBindingFrameCharacterButton"
         kind: "CheckButton"
         wowParent: "KeyBindingFrame"
+        style: "CheckBox"
         anchors.right: keyBindingFrameDiabolicBand.right
         anchors.rightMargin: 232.6
         anchors.verticalCenter: keyBindingFrameDiabolicBand.verticalCenter
@@ -1249,6 +1281,7 @@ WowWindow {
         kind: "Button"
         text: "Reset To Default"
         wowParent: "KeyBindingFrame"
+        style: "Button"
         pin: "place"
         anchors.left: keyBindingFrame.left
         anchors.leftMargin: 10
@@ -1365,6 +1398,7 @@ WowWindow {
         kind: "Button"
         text: "Okay"
         wowParent: "KeyBindingFrame"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 196
         anchors.bottom: keyBindingFrame.bottom
@@ -1433,6 +1467,7 @@ WowWindow {
         name: "KeyBindingFrameScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "KeyBindingFrameScrollFrame"
+        style: "ScrollBar"
         anchors.left: keyBindingFrameScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: keyBindingFrameScrollFrame.top
@@ -1458,6 +1493,7 @@ WowWindow {
         name: "KeyBindingFrameScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "KeyBindingFrameScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: keyBindingFrameScrollFrameScrollBar.horizontalCenter
         anchors.top: keyBindingFrameScrollFrameScrollBar.bottom
         width: 16
@@ -1469,6 +1505,7 @@ WowWindow {
         name: "KeyBindingFrameScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "KeyBindingFrameScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: keyBindingFrameScrollFrameScrollBar.horizontalCenter
         anchors.bottom: keyBindingFrameScrollFrameScrollBar.top
         width: 16
@@ -1492,6 +1529,7 @@ WowWindow {
         kind: "Button"
         text: "Unbind Key"
         wowParent: "KeyBindingFrame"
+        style: "Button"
         anchors.right: keyBindingFrame.right
         anchors.rightMargin: 328
         anchors.bottom: keyBindingFrame.bottom

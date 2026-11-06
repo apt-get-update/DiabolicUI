@@ -87,6 +87,7 @@ WowWindow {
         name: "DiabolicChatCopyScrollScrollBar"
         kind: "Slider"
         wowParent: "DiabolicChatCopyScroll"
+        style: "ScrollBar"
         anchors.left: diabolicChatCopyScroll.right
         anchors.leftMargin: 6
         anchors.top: diabolicChatCopyScroll.top
@@ -112,6 +113,7 @@ WowWindow {
         name: "DiabolicChatCopyScrollScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "DiabolicChatCopyScrollScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: diabolicChatCopyScrollScrollBar.horizontalCenter
         anchors.top: diabolicChatCopyScrollScrollBar.bottom
         width: 16
@@ -123,6 +125,7 @@ WowWindow {
         name: "DiabolicChatCopyScrollScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "DiabolicChatCopyScrollScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: diabolicChatCopyScrollScrollBar.horizontalCenter
         anchors.bottom: diabolicChatCopyScrollScrollBar.top
         width: 16

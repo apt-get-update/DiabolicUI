@@ -13,13 +13,14 @@ WowWindow {
         id: openMailBodyText
         name: "OpenMailBodyText"
         kind: "FontString"
+        text: "These items were recovered after the server issue on October 14. Sorry for the trouble."
         wowParent: "OpenMailScrollChildFrame"
         anchors.left: openMailScrollChildFrame.left
         anchors.leftMargin: 10
         anchors.top: openMailScrollChildFrame.top
         anchors.topMargin: 10
         width: 276
-        height: 1
+        height: 60
     }
 
     Part {
@@ -28,6 +29,7 @@ WowWindow {
         kind: "Button"
         text: "Close"
         wowParent: "OpenMailFrame"
+        style: "Button"
         anchors.right: openMailFrame.right
         anchors.rightMargin: 39
         anchors.bottom: openMailFrame.bottom
@@ -53,6 +55,7 @@ WowWindow {
         name: "OpenMailCloseButton"
         kind: "Button"
         wowParent: "OpenMailFrame"
+        style: "CloseButton"
         anchors.horizontalCenter: openMailFrameDiabolic.right
         anchors.horizontalCenterOffset: -31
         anchors.verticalCenter: openMailFrameDiabolic.top
@@ -67,6 +70,7 @@ WowWindow {
         kind: "Button"
         text: "Delete"
         wowParent: "OpenMailFrame"
+        style: "Button"
         anchors.right: openMailFrame.right
         anchors.rightMargin: 121.1
         anchors.bottom: openMailFrame.bottom
@@ -398,6 +402,7 @@ WowWindow {
         id: openMailLetterButton
         name: "OpenMailLetterButton"
         kind: "Button"
+        wowParent: "OpenMailFrame"
         anchors.left: openMailFrame.left
         anchors.leftMargin: 161.5
         anchors.top: openMailFrame.bottom
@@ -425,6 +430,7 @@ WowWindow {
         kind: "Button"
         text: "Reply"
         wowParent: "OpenMailFrame"
+        style: "Button"
         anchors.right: openMailFrame.right
         anchors.rightMargin: 205
         anchors.bottom: openMailFrame.bottom
@@ -543,7 +549,7 @@ WowWindow {
         anchors.left: openMailScrollFrame.left
         anchors.top: openMailScrollFrame.top
         width: 296
-        height: 314.7
+        height: 324
     }
 
     Part {
@@ -556,7 +562,7 @@ WowWindow {
         anchors.top: openMailFrame.top
         anchors.topMargin: 13
         width: 296
-        height: 314.7
+        height: 324
     }
 
     Part {
@@ -569,7 +575,7 @@ WowWindow {
         anchors.top: openMailScrollFrame.top
         anchors.topMargin: -6
         width: 330
-        height: 326.7
+        height: 336
     }
 
     Part {
@@ -582,7 +588,7 @@ WowWindow {
         anchors.top: openMailScrollFrame.top
         anchors.topMargin: -4
         width: 304
-        height: 322.7
+        height: 332
     }
 
     Part {
@@ -590,12 +596,13 @@ WowWindow {
         name: "OpenMailScrollFrameScrollBar"
         kind: "Slider"
         wowParent: "OpenMailScrollFrame"
+        style: "ScrollBar"
         anchors.left: openMailScrollFrame.right
         anchors.leftMargin: 6
         anchors.top: openMailScrollFrame.top
         anchors.topMargin: 16
         width: 16
-        height: 282.7
+        height: 292
     }
 
     Part {
@@ -607,7 +614,7 @@ WowWindow {
         anchors.top: openMailScrollFrameScrollBarScrollUpButton.top
         anchors.topMargin: -1
         width: 18
-        height: 316.7
+        height: 326
     }
 
     Part {
@@ -615,6 +622,7 @@ WowWindow {
         name: "OpenMailScrollFrameScrollBarScrollDownButton"
         kind: "Button"
         wowParent: "OpenMailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: openMailScrollFrameScrollBar.horizontalCenter
         anchors.top: openMailScrollFrameScrollBar.bottom
         width: 16
@@ -626,6 +634,7 @@ WowWindow {
         name: "OpenMailScrollFrameScrollBarScrollUpButton"
         kind: "Button"
         wowParent: "OpenMailScrollFrameScrollBar"
+        style: "ScrollBar"
         anchors.horizontalCenter: openMailScrollFrameScrollBar.horizontalCenter
         anchors.bottom: openMailScrollFrameScrollBar.top
         width: 16
@@ -636,7 +645,7 @@ WowWindow {
         id: openMailSender
         name: "OpenMailSender"
         kind: "FontString"
-        text: "Blackwater Auction House"
+        text: "Customer Support"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.left: openMailSenderLabel.right
         anchors.leftMargin: 5
@@ -662,7 +671,7 @@ WowWindow {
         id: openMailSubject
         name: "OpenMailSubject"
         kind: "FontString"
-        text: "Auction successful: Runecloth"
+        text: "Recovered items"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.left: openMailSubjectLabel.right
         anchors.leftMargin: 5

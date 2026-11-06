@@ -42,7 +42,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
-	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 58 Draenei Shaman"
+	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 80 Human Warlock"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
@@ -63,13 +63,13 @@ Engine:NewStaticConfig("Positions", {
 	MacroExitButton = { "CENTER", "MacroFrame", "TOPLEFT", 303, -432 }, -- Button "Exit"
 	-- the count of characters right of "Enter Macro Commands:" (Blizzard's
 	-- under the text, over the foot)
-	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "80/255 Characters Used"
+	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "41/255 Characters Used"
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
-	MacroNewButton = { "CENTER", "MacroFrame", "TOPLEFT", 222, -432 }, -- Button "New"
+	MacroNewButton = { "RIGHT", "MacroExitButton", "LEFT", -6, 0 }, -- Button "New"
 
 	-- PVPParentFrame --------------------------------------------------------
 	-- the battlegrounds' block (title row, list, rewards) 5 left: in the middle
-	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Random Battleground"
+	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Arathi Basin (Call to Arms)"
 	-- 8 apart
 	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0 }, -- Button "Cancel"
 	-- 8 apart
@@ -81,12 +81,15 @@ Engine:NewStaticConfig("Positions", {
 	-- room between the rewards and the foot
 	PVPBattlegroundFrameJoinButton = { "BOTTOM", "PVPParentFrame", "BOTTOM", 12, 69 }, -- Button "Join Battle"
 	PVPBattlegroundFrameNameHeader = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 65, -53 }, -- FontString "Battleground"
+	-- as wide with no scroll bar: Blizzard widens the rows it hangs from when
+	-- the list doesn't scroll, and the panels would follow
+	PVPBattlegroundFrameTypeScrollFrame = { "TOPLEFT", "BattlegroundType1", "TOPLEFT", 0, 2, 295, 87 }, -- ScrollFrame
 	WintergraspTimer = { "RIGHT", "PVPBattlegroundFrame", "TOPRIGHT", -45, -53 }, -- Frame
 
 	-- TradeFrame ------------------------------------------------------------
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
-	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Unluckylock"
+	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Velkara"
 
 	-- TradeSkillFrame -------------------------------------------------------
 	-- the skill's bar centred on our window (24 left of the frame, 14 right of it:
