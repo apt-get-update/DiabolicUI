@@ -169,9 +169,11 @@ ApplicationWindow {
         names = Object.keys(map).filter(n => rowNames.indexOf(n) < 0).sort()
         for (const n in edits) if (edits[n].window === name && items[n] && parts[n]) applyItem(n)
         rowsUpdate()
-        // (drawn smaller than in the game: a box as wide as its text, the text in its middle)
-        for (const n in parts) if (items[n] && parts[n].justify)
-            items[n].justify = Math.abs(items[n].width - (parts[n].textWidth || 0)) < 1 ? "CENTER" : parts[n].justify
+        for (const n in parts) if (items[n] && !parts[n].preview && parts[n].justify) items[n].justify = justifyOf(parts[n], items[n].width)
+        // (a button with a text and no part for it, the game's unnamed: it draws it itself; a tab's is our banner's tooltip)
+        const worded = {}
+        for (const n in parts) if (parts[n].kind === "FontString" && parts[n].text) worded[parts[n].parent] = true
+        for (const n in parts) if (items[n] && !parts[n].preview && parts[n].text && parts[n].kind !== "FontString" && !worded[n] && !/Tab\d+$/.test(n)) items[n].labelled = true
         applyShown()
         // the art follows its part from where the part is now
         const base = {}
@@ -187,6 +189,9 @@ ApplicationWindow {
         const f = viewRect || [0, 0, 0, 0]
         return [r[0] - f[0], f[1] + f[3] - r[1] - r[3], r[2], r[3]]
     }
+    // where a text goes in its box. (Drawn smaller than in the game: a box as wide as
+    // its text, the text in its middle.)
+    function justifyOf(p, width) { return Math.abs(width - (p.textWidth || 0)) < 1 ? "CENTER" : p.justify || "LEFT" }
     // the texts of what's only to be seen (a bag's counts, a list's rows)
     property var previewTexts: []
     property int previewCount: 0
@@ -199,7 +204,7 @@ ApplicationWindow {
             count++
             if (p.kind === "FontString" && p.text && p.rect) {
                 const r = previewBox(p.rect)
-                texts.push({ text: p.text, x: r[0], y: r[1], width: r[2], height: r[3], justify: p.justify })
+                if (!p.faded) texts.push({ text: p.text, x: r[0], y: r[1], width: r[2], height: r[3], align: justifyOf(p, r[2]) })
             }
         }
         previewTexts = texts
@@ -230,7 +235,11 @@ ApplicationWindow {
     }
 
     function applyShown() {
-        for (const n in parts) if (items[n]) items[n].visible = shown[kindOf(parts[n].kind)] && inView(n)
+        for (const n in parts) if (items[n]) {
+            items[n].visible = shown[kindOf(parts[n].kind)] && inView(n)
+            // (only what the last look at this tab saw, as the rules: the rest stays to pick)
+            if (!parts[n].preview) items[n].wordless = !!parts[n].faded || !!(view_ && parts[n].current && !parts[n].current[view_.key]) // (a preview's may be a Ghost)
+        }
     }
 
     // ---- a part's anchors, live
@@ -612,7 +621,7 @@ ApplicationWindow {
         const hits = []
         for (const n in parts) {
             const item = items[n]
-            if (item && item.visible && x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height)
+            if (item && !parts[n].preview && item.visible && x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height)
                 hits.push(n)
         }
         hits.sort((a, b) => items[a].width * items[a].height - items[b].width * items[b].height)
@@ -1240,7 +1249,8 @@ ApplicationWindow {
                             text: modelData.text
                             color: "#e8dcc0"
                             font.pixelSize: 9
-                            horizontalAlignment: Text.AlignHCenter
+                            clip: true
+                            horizontalAlignment: modelData.align === "CENTER" ? Text.AlignHCenter : modelData.align === "RIGHT" ? Text.AlignRight : Text.AlignLeft
                             verticalAlignment: Text.AlignVCenter
                         }
                     }
