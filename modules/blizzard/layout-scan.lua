@@ -4,7 +4,10 @@
 -- and what the rules (tools/rules.js) go by, each window's art by the tabs
 -- chosen. While it's on each window is saved as it shows and each second (for
 -- its pages). /dui layout all opens each window that needs no NPC, page by
--- page, to save them all at once.
+-- page, to save them all at once. It says what's left (/dui layout left, saved
+-- for the editor too): the windows we style not scanned, or before the rules
+-- were, their tabs not visited; and any Blizzard or addon window seen shown
+-- that we don't style.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Scan", "LOW")
 local L = Engine:GetLocale()
@@ -25,6 +28,7 @@ local table_sort = table.sort
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
+local GetAddOnInfo = _G.GetAddOnInfo
 local GetCurrentResolution = _G.GetCurrentResolution
 local GetScreenResolutions = _G.GetScreenResolutions
 local GetTime = _G.GetTime
@@ -34,6 +38,7 @@ local date = _G.date
 local kit
 local Said -- what's been said (by text)
 local Counted -- the windows whose parts were counted (by name)
+local LeftCount -- how many things were left to scan, last said
 local Saved -- DiabolicUI_Layout: { resolution, unit, rules, windows = { [name] = { checked, parts, views } } }
 local Shown = {} -- when each window shown was first seen so (by window)
 local SETTLE_TIME = .5 -- a window saved once shown that long (an addon's lays itself out over a few frames)
@@ -325,10 +330,14 @@ end
 
 -- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
 -- what the window shows now, by their names and as they read.
+local IsTab = function(name, part)
+	return (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$")) and part:IsObjectType("Button")
+end
+
 local ViewOf = function(named)
 	local names = {}
 	for name, part in pairs(named) do
-		if (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$")) and part:IsObjectType("Button") and kit.IsSelected(part) then
+		if IsTab(name, part) and kit.IsSelected(part) then
 			names[#names + 1] = name
 		end
 	end
@@ -353,6 +362,7 @@ local Scan = function(window)
 	seen.checked = date("%Y-%m-%d %H:%M")
 	seen.parts = seen.parts or {}
 	seen.views = seen.views or {}
+	seen.tabButtons = seen.tabButtons or {}
 	local named, parts, rows = {}, seen.parts, {}
 	-- (our window's parts too: its band, its foot...)
 	CollectNamed(frame, nil, named)
@@ -361,6 +371,12 @@ local Scan = function(window)
 	end
 	seen.rect = Rect(frame)
 	seen.window = Rect(window)
+	for name, part in pairs(named) do
+		if IsTab(name, part) then
+			local text = part:GetText()
+			seen.tabButtons[name] = ((text ~= nil) and (text ~= "")) and text or name
+		end
+	end
 	local view, label = ViewOf(named)
 	local foot = window.DiabolicFoot
 	local close = window.DiabolicClose
@@ -395,6 +411,132 @@ local Scan = function(window)
 	end
 end
 
+-- The windows we style: those made, those to come (ours for an addon only if
+-- it's there), by name.
+local Styled = function()
+	local names = {}
+	for _, window in ipairs(kit.Windows) do
+		local name = window.Frame:GetName()
+		if name then
+			names[name] = true
+		end
+	end
+	local Add = function(spec)
+		if (not spec.addon) or select(5, GetAddOnInfo(spec.addon)) then
+			names[spec.frame] = true
+		end
+	end
+	for _, spec in ipairs(Module:GetDB("Blizzard").panels.frames) do
+		Add(spec)
+	end
+	for _, spec in ipairs(kit.config.layout.on_demand) do
+		Add(spec)
+	end
+	return names
+end
+
+-- `frame`, or what it's in, one of our windows.
+local InOurs = function(frame)
+	local ours = {}
+	for _, window in ipairs(kit.Windows) do
+		ours[window.Frame] = true
+	end
+	while frame do
+		if ours[frame] then
+			return true
+		end
+		frame = frame:GetParent()
+	end
+end
+
+-- `name` (in the game's lists of windows) shown and not ours: said once, kept.
+local NoteUnstyled = function(name)
+	local frame = _G[name]
+	if (type(frame) == "table") and frame.IsVisible and frame:IsVisible() and (not kit.config.layout.not_windows[name])
+		and (not InOurs(frame)) and (not Saved.unstyled[name]) then
+		Saved.unstyled[name] = true
+		Print(string_format(L["Not styled: %s."], name))
+	end
+end
+
+local FindUnstyled = function()
+	Saved.unstyled = Saved.unstyled or {}
+	for _, name in ipairs(_G.UISpecialFrames) do
+		NoteUnstyled(name)
+	end
+	for name in pairs(_G.UIPanelWindows) do
+		NoteUnstyled(name)
+	end
+end
+
+-- What's left to scan: { windows, old, tabs (window (its tabs)), unstyled, count }.
+local Left = function()
+	local left = { windows = {}, old = {}, tabs = {}, unstyled = {}, count = 0 }
+	local styled = Styled()
+	for name in pairs(styled) do
+		local seen = Saved.windows[name]
+		if (not seen) or (not seen.parts) then
+			left.windows[#left.windows + 1] = name
+			left.count = left.count + 1
+		elseif (not seen.views) then
+			left.old[#left.old + 1] = name
+			left.count = left.count + 1
+		else
+			local labels = {}
+			for tab, label in pairs(seen.tabButtons or {}) do
+				local visited = false
+				for key in pairs(seen.views) do
+					visited = visited or (("+" .. key .. "+"):find("+" .. tab .. "+", 1, true) ~= nil)
+				end
+				if (not visited) then
+					labels[#labels + 1] = label
+				end
+			end
+			if labels[1] then
+				table_sort(labels)
+				left.tabs[#left.tabs + 1] = name .. " (" .. table_concat(labels, ", ") .. ")"
+				left.count = left.count + #labels
+			end
+		end
+	end
+	Saved.unstyled = Saved.unstyled or {}
+	for name in pairs(Saved.unstyled) do
+		-- (styled since)
+		if styled[name] then
+			Saved.unstyled[name] = nil
+		else
+			left.unstyled[#left.unstyled + 1] = name
+		end
+	end
+	table_sort(left.windows)
+	table_sort(left.old)
+	table_sort(left.tabs)
+	table_sort(left.unstyled)
+	Saved.left = left
+	return left
+end
+
+-- All that's left, said.
+Module.Report = function(self)
+	local left = Left()
+	LeftCount = left.count
+	if left.windows[1] then
+		Print(string_format(L["Still to open: %s."], table_concat(left.windows, ", ")))
+	end
+	if left.old[1] then
+		Print(string_format(L["Scanned by an older version, open again: %s."], table_concat(left.old, ", ")))
+	end
+	if left.tabs[1] then
+		Print(string_format(L["Tabs not visited: %s."], table_concat(left.tabs, ", ")))
+	end
+	if left.unstyled[1] then
+		Print(string_format(L["Not styled: %s."], table_concat(left.unstyled, ", ")))
+	end
+	if (left.count == 0) then
+		Print(L["Every window scanned, every tab visited."])
+	end
+end
+
 -- Each window's time shown (each frame, while it's on).
 local Watch = function()
 	for _, window in ipairs(kit.Windows) do
@@ -418,6 +560,13 @@ local CheckShown = function()
 			end
 		end
 	end
+	FindUnstyled()
+	-- (less left: how much, as it goes)
+	local left = Left()
+	if LeftCount and (left.count < LeftCount) then
+		Print(string_format(L["%d left to scan (/dui layout left)."], left.count))
+	end
+	LeftCount = left.count
 end
 
 -- The screen and the rules' numbers, as they were (tools/rules.js).
@@ -450,6 +599,7 @@ Module.Toggle = function(self)
 	end
 	Print(L["Layout scan on: each window is saved as it shows. /dui layout again to stop."])
 	self:Start()
+	self:Report()
 end
 
 -- The sweep's steps: each shows a window or one of its pages (the window
@@ -564,6 +714,7 @@ Module.Sweep = function(self)
 				windows = windows + 1
 			end
 			Print(string_format(L["Layout scan done: %d windows saved (/reload to write them)."], windows))
+			self:Report()
 			return
 		end
 		local ok, err = pcall(STEPS[step])
@@ -594,6 +745,8 @@ Module.OnEnable = function(self)
 	self:GetHandler("ChatCommand"):Register("layout", function(what)
 		if (what == "all") then
 			self:Sweep()
+		elseif (what == "left") then
+			self:Report()
 		else
 			self:Toggle()
 		end

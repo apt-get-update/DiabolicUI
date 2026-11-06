@@ -188,7 +188,12 @@ Engine:NewStaticConfig("Blizzard", {
 			band_gap = 12, -- between the band's controls (their art)
 			band_right_edge = 48, -- the band's last control on its right, from its right end (short of the X's socket)
 			content_gap = 6, -- the least room over the content (its zones and parchments) and under it
-			uneven = 8 -- the most room over it may differ from the room under it
+			uneven = 8, -- the most room over it may differ from the room under it
+			-- /dui layout's list of what's left: our windows made only once
+			-- their addon loads (the others: settings below, or already made)
+			on_demand = { { frame = "AchievementFrame", addon = "Blizzard_AchievementUI" }, { frame = "PlayerTalentFrame", addon = "Blizzard_TalentUI" } },
+			-- in the game's lists of windows but not one to style
+			not_windows = { GameMenuFrame = true, LootFrame = true, ItemRefTooltip = true, CinematicFrame = true }
 		},
 		-- Diablo III's bars for a row: the chosen one (copper), a section's
 		-- or a column's header (dark)

@@ -242,6 +242,16 @@ class Backend(QObject):
         return json.dumps(data)
 
     @Slot(result=str)
+    def leftText(self):
+        """What /dui layout says is left to scan."""
+        left = self.layout.get("left") or {}
+        lines = []
+        for key, label in (("windows", "To open"), ("old", "Older scan, open again"), ("tabs", "Tabs to visit"), ("unstyled", "Not styled")):
+            if isinstance(left.get(key), list) and left[key]:
+                lines.append(label + ": " + ", ".join(left[key]))
+        return "\n\n".join(lines)
+
+    @Slot(result=str)
     def rescan(self):
         return self.run()
 

@@ -46,6 +46,7 @@ ApplicationWindow {
     property string hovered: ""
     property Item hoveredItem: hovered && hovered !== picked ? items[hovered] || null : null
     property string status: backend.startMessage()
+    property string leftText: backend.leftText()
     property var shown: ({ Frame: true, FontString: true, Texture: true })
     property var artBase: ({})
     property var views: []           // what it shows by its tabs: { key, label, rect, window, art }
@@ -146,6 +147,7 @@ ApplicationWindow {
 
     function reload() {
         status = backend.rescan()
+        leftText = backend.leftText()
         openWindow(title_)
     }
 
@@ -247,6 +249,7 @@ ApplicationWindow {
     function save() {
         status = backend.save(JSON.stringify(edits))
         if (status.indexOf("Not saved") === 0) return
+        leftText = backend.leftText()
         edits = {}
         undoList = []; redoList = []
         backend.keep("{}")
@@ -1022,6 +1025,22 @@ ApplicationWindow {
                         }
                         onClicked: if (modelData.parts.length && app.items[modelData.parts[0]]) app.pick(modelData.parts[0])
                     }
+                }
+
+                Label {
+                    text: "STILL TO SCAN"
+                    visible: app.leftText !== ""
+                    color: app.dim
+                    font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10
+                }
+                Label {
+                    objectName: "stillToScan"
+                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
+                    visible: app.leftText !== ""
+                    text: app.leftText
+                    color: app.dim
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 12
                 }
 
                 Label { text: "SCREENSHOT"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10 }

@@ -127,6 +127,9 @@ and each of its tabs (open the others yourself while it's on: mail, auction
 house, bank, vendor, trainer...), `/reload`. The editor reads it by itself, or
 run `lua5.1 tools/positions.lua`: pinned parts stay, the others follow the scan.
 It also writes `tools/layout.json` and `tools/art/` for the editor (not in git).
+`/dui layout left` (said too when it starts and when `all` ends, shown in the
+editor) lists what's left: the windows we style not scanned, or scanned by an older
+version, the tabs not visited, and any window seen shown that we don't style.
 Our own parts are named after their window (`ClassTrainerFrameDiabolicBand`).
 
 == Put a part in a window's red band

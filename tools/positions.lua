@@ -749,7 +749,7 @@ local Pictures = function(art)
 	return out[1] and out or nil
 end
 
-local export = { resolution = layout.resolution, unit = layout.unit, rules = layout.rules, windows = {} }
+local export = { resolution = layout.resolution, unit = layout.unit, rules = layout.rules, left = layout.left, windows = {} }
 for title, window in pairs(windows) do
 	local parts = {}
 	for name, part in pairs(window.parts) do

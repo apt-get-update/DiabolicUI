@@ -227,8 +227,9 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- its parts counted, once
 	local total = tonumber(said()[2]:match("^AuditFine: (%d+) parts saved %(%1 new%)%.$"))
 	lu.assertTrue(total > 3)
+	local before = #said()
 	client:Tick(1.1)
-	lu.assertEquals(#said(), 2)
+	lu.assertEquals(#said(), before)
 	-- again when new ones show (a page, a tab)
 	text(frame, "AuditMore", 40, -120, "More"):SetTextColor(0, 0, 0)
 	local nameless = CreateFrame("Frame", nil, frame)
@@ -238,13 +239,13 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	hanging:SetSize(10, 10)
 	hanging:SetPoint("TOP", nameless, "BOTTOM")
 	client:Tick(1.1)
-	lu.assertEquals(said()[3], string.format("AuditFine: %d parts saved (2 new).", total + 2))
+	lu.assertEquals(said()[before + 1], string.format("AuditFine: %d parts saved (2 new).", total + 2))
 	lu.assertEquals(parts.AuditHanging.points, { { "TOP", "?", "BOTTOM", 0, 0 } })
 	client:Tick(1.1)
-	lu.assertEquals(#said(), 3)
+	lu.assertEquals(#said(), before + 1)
 	-- off again
 	slash("layout")
-	lu.assertEquals(said()[4], "Layout scan off: /reload to write it.")
+	lu.assertEquals(said()[before + 2], "Layout scan off: /reload to write it.")
 	lu.assertFalse(checking())
 	assertClean(client)
 end
@@ -568,6 +569,83 @@ function TestLayoutAudit:test_edges_between_screen_pixels_at_a_pixel_perfect_sca
 	assertClean(client)
 end
 
+-- What's left to scan: our windows not scanned, by an older version, their
+-- tabs not visited, what we don't style; less of it said as it goes.
+function TestLayoutAudit:test_what_is_left_to_scan()
+	boot({ savedVariables = { DiabolicUI_Layout = { windows = {
+		DressUpFrame = { parts = { Old = { "TOP", "DressUpFrame", "TOP", 0, 0, kind = "Frame" } } },
+	} } } })
+	local function lineWith(start)
+		for _, line in ipairs(said()) do
+			if (line:sub(1, #start) == start) then
+				return line
+			end
+		end
+	end
+	local frame = window("AuditLeft")
+	local Tab = function(name, label)
+		local tab = CreateFrame("Button", name, frame)
+		tab:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 40, 40)
+		tab:SetSize(60, 20)
+		tab:SetText(label)
+		return tab
+	end
+	local first, second, third = Tab("AuditLeftTab1", "First"), Tab("AuditLeftTab2", "Second"), Tab("AuditLeftTab3", "")
+	first:Disable()
+	frame:Show()
+	-- what's not ours: shown, in the game's lists (not what's said not to be
+	-- a window, what's in one of ours, what's hidden, what's not a frame)
+	local Other = function(name, parent)
+		local other = CreateFrame("Frame", name, parent or _G.UIParent)
+		other:SetSize(10, 10)
+		other:SetPoint("CENTER")
+		return other
+	end
+	Other("AuditPlain")
+	Other("GameMenuFrame")
+	Other("AuditInside", frame)
+	Other("AuditHidden"):Hide()
+	_G.AuditString = "not a frame"
+	for _, name in ipairs({ "AuditPlain", "GameMenuFrame", "AuditInside", "AuditHidden", "AuditString", "AuditNothing" }) do
+		table.insert(_G.UISpecialFrames, name)
+	end
+	Other("AuditPanelWindow")
+	_G.UIPanelWindows.AuditPanelWindow = { area = "left" }
+	slash("layout")
+	lu.assertTrue(lineWith("Still to open: "):find("BankFrame", 1, true) ~= nil)
+	-- (a window for an addon: only if it's there)
+	lu.assertNil(lineWith("Still to open: "):find("AtrFake", 1, true))
+	lu.assertEquals(lineWith("Scanned by an older version, open again: "), "Scanned by an older version, open again: DressUpFrame.")
+	lu.assertEquals(lineWith("Tabs not visited: "), "Tabs not visited: AuditLeft (AuditLeftTab3, Second).")
+	lu.assertNotNil(lineWith("Not styled: "))
+	local left = _G.DiabolicUI_Layout.left
+	lu.assertEquals(left.unstyled, { "AuditPanelWindow", "AuditPlain" })
+	lu.assertEquals(left.old, { "DressUpFrame" })
+	-- a tab visited: one less, said
+	local count = left.count
+	first:Enable()
+	second:Disable()
+	client:Tick(1.1)
+	lu.assertEquals(_G.DiabolicUI_Layout.left.count, count - 1)
+	lu.assertEquals(lineWith(string.format("%d left", count - 1)), string.format("%d left to scan (/dui layout left).", count - 1))
+	lu.assertEquals(_G.DiabolicUI_Layout.left.tabs, { "AuditLeft (AuditLeftTab3)" })
+	-- styled since: not said any more
+	_G.DiabolicUI_Layout.unstyled.BankFrame = true
+	slash("layout left")
+	lu.assertNil(_G.DiabolicUI_Layout.unstyled.BankFrame)
+	-- all of it done
+	second:Enable()
+	third:Disable()
+	client:Tick(1.1)
+	wipe(kit.Windows)
+	client:GetModule("Blizzard: Panels").config.frames = {}
+	kit.config.layout.on_demand = {}
+	_G.DiabolicUI_Layout.unstyled = {}
+	slash("layout left")
+	lu.assertEquals(said()[#said()], "Every window scanned, every tab visited.")
+	assertClean(client)
+end
+
 function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	boot()
 	local frame, win = window("AuditBroken")
@@ -613,16 +691,23 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	client:Tick(60, 0.1)
 	lu.assertEquals(opened, { 1, 2, 4, 5 })
 	lu.assertEquals(_G.InspectFrame.unit, "target")
-	local lines = said()
-	lu.assertEquals(lines[#lines]:match("^Layout scan done"), "Layout scan done")
+	-- (how many times it's said it's done, what's left after it)
+	local function done()
+		local count = 0
+		for _, line in ipairs(said()) do
+			count = count + (line:find("^Layout scan done") and 1 or 0)
+		end
+		return count
+	end
+	lu.assertEquals(done(), 1)
+	lu.assertNotNil(_G.DiabolicUI_Layout.left)
 	lu.assertFalse(_G.CharacterFrame:IsShown() == 1)
 	-- stopped by a fight (the check left on: not started again)
 	slash("layout all")
 	client:Tick(1, 0.1)
 	client:EnterCombat()
 	client:Tick(2, 0.1)
-	lines = said()
-	lu.assertEquals(lines[#lines]:match("^Layout scan done"), "Layout scan done")
+	lu.assertEquals(done(), 2)
 	client:LeaveCombat()
 	assertClean(client)
 end
