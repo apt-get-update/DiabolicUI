@@ -702,12 +702,12 @@ WowWindow {
         id: spellBookTitleText
         name: "SpellBookTitleText"
         kind: "FontString"
-        text: "Professions"
+        text: "Spellbook"
         wowParent: "SpellBookFrameDiabolicTitlePlate"
         anchors.horizontalCenter: spellBookFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: spellBookFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 106.7
+        width: 88.5
         height: 14.2
     }
 

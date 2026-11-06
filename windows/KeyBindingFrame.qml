@@ -39,7 +39,7 @@ WowWindow {
         id: keyBindingFrameBinding10Description
         name: "KeyBindingFrameBinding10Description"
         kind: "FontString"
-        text: "Sit/Move Down"
+        text: "Target Nearest Friend"
         wowParent: "KeyBindingFrameBinding10"
         anchors.left: keyBindingFrameBinding10.left
         anchors.verticalCenter: keyBindingFrameBinding10.verticalCenter
@@ -51,7 +51,7 @@ WowWindow {
         id: keyBindingFrameBinding10Key1Button
         name: "KeyBindingFrameBinding10Key1Button"
         kind: "Button"
-        text: "X"
+        text: "CTRL-Tab"
         wowParent: "KeyBindingFrameBinding10"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -66,11 +66,11 @@ WowWindow {
         id: keyBindingFrameBinding10Key1ButtonText
         name: "KeyBindingFrameBinding10Key1ButtonText"
         kind: "FontString"
-        text: "X"
+        text: "CTRL-Tab"
         wowParent: "KeyBindingFrameBinding10Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding10Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding10Key1Button.verticalCenter
-        width: 8.7
+        width: 57.7
         height: 10.3
     }
 
@@ -115,7 +115,7 @@ WowWindow {
         id: keyBindingFrameBinding11Description
         name: "KeyBindingFrameBinding11Description"
         kind: "FontString"
-        text: "Sheath/Unsheath Weapon"
+        text: "Target Previous Friend"
         wowParent: "KeyBindingFrameBinding11"
         anchors.left: keyBindingFrameBinding11.left
         anchors.verticalCenter: keyBindingFrameBinding11.verticalCenter
@@ -127,7 +127,7 @@ WowWindow {
         id: keyBindingFrameBinding11Key1Button
         name: "KeyBindingFrameBinding11Key1Button"
         kind: "Button"
-        text: "Z"
+        text: "CTRL-SHIFT-Tab"
         wowParent: "KeyBindingFrameBinding11"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -142,11 +142,11 @@ WowWindow {
         id: keyBindingFrameBinding11Key1ButtonText
         name: "KeyBindingFrameBinding11Key1ButtonText"
         kind: "FontString"
-        text: "Z"
+        text: "CTRL-SHIFT-Tab"
         wowParent: "KeyBindingFrameBinding11Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding11Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding11Key1Button.verticalCenter
-        width: 7.1
+        width: 97.2
         height: 10.3
     }
 
@@ -191,7 +191,7 @@ WowWindow {
         id: keyBindingFrameBinding12Description
         name: "KeyBindingFrameBinding12Description"
         kind: "FontString"
-        text: "Toggle Autorun"
+        text: "Target Nearest Enemy Player"
         wowParent: "KeyBindingFrameBinding12"
         anchors.left: keyBindingFrameBinding12.left
         anchors.verticalCenter: keyBindingFrameBinding12.verticalCenter
@@ -203,7 +203,6 @@ WowWindow {
         id: keyBindingFrameBinding12Key1Button
         name: "KeyBindingFrameBinding12Key1Button"
         kind: "Button"
-        text: "Mouse Button 4"
         wowParent: "KeyBindingFrameBinding12"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -218,11 +217,10 @@ WowWindow {
         id: keyBindingFrameBinding12Key1ButtonText
         name: "KeyBindingFrameBinding12Key1ButtonText"
         kind: "FontString"
-        text: "Mouse Button 4"
         wowParent: "KeyBindingFrameBinding12Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding12Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding12Key1Button.verticalCenter
-        width: 105.9
+        width: 71.1
         height: 10.3
     }
 
@@ -230,7 +228,6 @@ WowWindow {
         id: keyBindingFrameBinding12Key2Button
         name: "KeyBindingFrameBinding12Key2Button"
         kind: "Button"
-        text: "Insert"
         wowParent: "KeyBindingFrameBinding12"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -245,11 +242,10 @@ WowWindow {
         id: keyBindingFrameBinding12Key2ButtonText
         name: "KeyBindingFrameBinding12Key2ButtonText"
         kind: "FontString"
-        text: "Insert"
         wowParent: "KeyBindingFrameBinding12Key2Button"
         anchors.horizontalCenter: keyBindingFrameBinding12Key2Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding12Key2Button.verticalCenter
-        width: 41.9
+        width: 71.1
         height: 10.3
     }
 
@@ -269,7 +265,7 @@ WowWindow {
         id: keyBindingFrameBinding13Description
         name: "KeyBindingFrameBinding13Description"
         kind: "FontString"
-        text: "Pitch Up"
+        text: "Target Previous Enemy Player"
         wowParent: "KeyBindingFrameBinding13"
         anchors.left: keyBindingFrameBinding13.left
         anchors.verticalCenter: keyBindingFrameBinding13.verticalCenter
@@ -343,7 +339,7 @@ WowWindow {
         id: keyBindingFrameBinding14Description
         name: "KeyBindingFrameBinding14Description"
         kind: "FontString"
-        text: "Pitch Down"
+        text: "Target Nearest Friendly Player"
         wowParent: "KeyBindingFrameBinding14"
         anchors.left: keyBindingFrameBinding14.left
         anchors.verticalCenter: keyBindingFrameBinding14.verticalCenter
@@ -355,7 +351,6 @@ WowWindow {
         id: keyBindingFrameBinding14Key1Button
         name: "KeyBindingFrameBinding14Key1Button"
         kind: "Button"
-        text: "Delete"
         wowParent: "KeyBindingFrameBinding14"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -370,11 +365,10 @@ WowWindow {
         id: keyBindingFrameBinding14Key1ButtonText
         name: "KeyBindingFrameBinding14Key1ButtonText"
         kind: "FontString"
-        text: "Delete"
         wowParent: "KeyBindingFrameBinding14Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding14Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding14Key1Button.verticalCenter
-        width: 42.7
+        width: 71.1
         height: 10.3
     }
 
@@ -419,7 +413,7 @@ WowWindow {
         id: keyBindingFrameBinding15Description
         name: "KeyBindingFrameBinding15Description"
         kind: "FontString"
-        text: "Toggle Run/Walk"
+        text: "Target Previous Friendly Player"
         wowParent: "KeyBindingFrameBinding15"
         anchors.left: keyBindingFrameBinding15.left
         anchors.verticalCenter: keyBindingFrameBinding15.verticalCenter
@@ -431,7 +425,6 @@ WowWindow {
         id: keyBindingFrameBinding15Key1Button
         name: "KeyBindingFrameBinding15Key1Button"
         kind: "Button"
-        text: "Num Pad /"
         wowParent: "KeyBindingFrameBinding15"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -446,11 +439,10 @@ WowWindow {
         id: keyBindingFrameBinding15Key1ButtonText
         name: "KeyBindingFrameBinding15Key1ButtonText"
         kind: "FontString"
-        text: "Num Pad /"
         wowParent: "KeyBindingFrameBinding15Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding15Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding15Key1Button.verticalCenter
-        width: 64.8
+        width: 71.1
         height: 10.3
     }
 
@@ -495,7 +487,7 @@ WowWindow {
         id: keyBindingFrameBinding16Description
         name: "KeyBindingFrameBinding16Description"
         kind: "FontString"
-        text: "Follow Target"
+        text: "Target Self"
         wowParent: "KeyBindingFrameBinding16"
         anchors.left: keyBindingFrameBinding16.left
         anchors.verticalCenter: keyBindingFrameBinding16.verticalCenter
@@ -507,6 +499,7 @@ WowWindow {
         id: keyBindingFrameBinding16Key1Button
         name: "KeyBindingFrameBinding16Key1Button"
         kind: "Button"
+        text: "F1"
         wowParent: "KeyBindingFrameBinding16"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -521,10 +514,11 @@ WowWindow {
         id: keyBindingFrameBinding16Key1ButtonText
         name: "KeyBindingFrameBinding16Key1ButtonText"
         kind: "FontString"
+        text: "F1"
         wowParent: "KeyBindingFrameBinding16Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding16Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding16Key1Button.verticalCenter
-        width: 71.1
+        width: 10.3
         height: 10.3
     }
 
@@ -566,6 +560,18 @@ WowWindow {
     }
 
     Part {
+        id: keyBindingFrameBinding17Description
+        name: "KeyBindingFrameBinding17Description"
+        kind: "FontString"
+        text: "Target Party Member 1"
+        wowParent: "KeyBindingFrameBinding17"
+        anchors.left: keyBindingFrameBinding17.left
+        anchors.verticalCenter: keyBindingFrameBinding17.verticalCenter
+        width: 170
+        height: 24
+    }
+
+    Part {
         id: keyBindingFrameBinding17Header
         name: "KeyBindingFrameBinding17Header"
         kind: "FontString"
@@ -578,6 +584,70 @@ WowWindow {
     }
 
     Part {
+        id: keyBindingFrameBinding17Key1Button
+        name: "KeyBindingFrameBinding17Key1Button"
+        kind: "Button"
+        text: "F2"
+        wowParent: "KeyBindingFrameBinding17"
+        style: "Button"
+        anchors.right: keyBindingFrame.right
+        anchors.rightMargin: 261
+        anchors.bottom: keyBindingFrame.bottom
+        anchors.bottomMargin: 48.5
+        width: 177
+        height: 22
+    }
+
+    Part {
+        id: keyBindingFrameBinding17Key1ButtonText
+        name: "KeyBindingFrameBinding17Key1ButtonText"
+        kind: "FontString"
+        text: "F2"
+        wowParent: "KeyBindingFrameBinding17Key1Button"
+        anchors.horizontalCenter: keyBindingFrameBinding17Key1Button.horizontalCenter
+        anchors.verticalCenter: keyBindingFrameBinding17Key1Button.verticalCenter
+        width: 12.6
+        height: 10.3
+    }
+
+    Part {
+        id: keyBindingFrameBinding17Key2Button
+        name: "KeyBindingFrameBinding17Key2Button"
+        kind: "Button"
+        wowParent: "KeyBindingFrameBinding17"
+        style: "Button"
+        anchors.right: keyBindingFrame.right
+        anchors.rightMargin: 78
+        anchors.bottom: keyBindingFrame.bottom
+        anchors.bottomMargin: 48.5
+        width: 177
+        height: 22
+    }
+
+    Part {
+        id: keyBindingFrameBinding17Key2ButtonText
+        name: "KeyBindingFrameBinding17Key2ButtonText"
+        kind: "FontString"
+        wowParent: "KeyBindingFrameBinding17Key2Button"
+        anchors.horizontalCenter: keyBindingFrameBinding17Key2Button.horizontalCenter
+        anchors.verticalCenter: keyBindingFrameBinding17Key2Button.verticalCenter
+        width: 71.1
+        height: 10.3
+    }
+
+    Part {
+        id: keyBindingFrameBinding1Description
+        name: "KeyBindingFrameBinding1Description"
+        kind: "FontString"
+        text: "Earth Totem"
+        wowParent: "KeyBindingFrameBinding1"
+        anchors.left: keyBindingFrameBinding1.left
+        anchors.verticalCenter: keyBindingFrameBinding1.verticalCenter
+        width: 170
+        height: 24
+    }
+
+    Part {
         id: keyBindingFrameBinding1Header
         name: "KeyBindingFrameBinding1Header"
         kind: "FontString"
@@ -587,6 +657,56 @@ WowWindow {
         anchors.verticalCenter: keyBindingFrameBinding1.verticalCenter
         width: 97.2
         height: 11.9
+    }
+
+    Part {
+        id: keyBindingFrameBinding1Key1Button
+        name: "KeyBindingFrameBinding1Key1Button"
+        kind: "Button"
+        wowParent: "KeyBindingFrameBinding1"
+        style: "Button"
+        anchors.right: keyBindingFrame.right
+        anchors.rightMargin: 261
+        anchors.top: keyBindingFrame.top
+        anchors.topMargin: 73.5
+        width: 177
+        height: 22
+    }
+
+    Part {
+        id: keyBindingFrameBinding1Key1ButtonText
+        name: "KeyBindingFrameBinding1Key1ButtonText"
+        kind: "FontString"
+        wowParent: "KeyBindingFrameBinding1Key1Button"
+        anchors.horizontalCenter: keyBindingFrameBinding1Key1Button.horizontalCenter
+        anchors.verticalCenter: keyBindingFrameBinding1Key1Button.verticalCenter
+        width: 71.1
+        height: 10.3
+    }
+
+    Part {
+        id: keyBindingFrameBinding1Key2Button
+        name: "KeyBindingFrameBinding1Key2Button"
+        kind: "Button"
+        wowParent: "KeyBindingFrameBinding1"
+        style: "Button"
+        anchors.right: keyBindingFrame.right
+        anchors.rightMargin: 78
+        anchors.top: keyBindingFrame.top
+        anchors.topMargin: 73.5
+        width: 177
+        height: 22
+    }
+
+    Part {
+        id: keyBindingFrameBinding1Key2ButtonText
+        name: "KeyBindingFrameBinding1Key2ButtonText"
+        kind: "FontString"
+        wowParent: "KeyBindingFrameBinding1Key2Button"
+        anchors.horizontalCenter: keyBindingFrameBinding1Key2Button.horizontalCenter
+        anchors.verticalCenter: keyBindingFrameBinding1Key2Button.verticalCenter
+        width: 71.1
+        height: 10.3
     }
 
     Part {
@@ -605,7 +725,7 @@ WowWindow {
         id: keyBindingFrameBinding2Description
         name: "KeyBindingFrameBinding2Description"
         kind: "FontString"
-        text: "Move and Steer"
+        text: "Fire Totem"
         wowParent: "KeyBindingFrameBinding2"
         anchors.left: keyBindingFrameBinding2.left
         anchors.verticalCenter: keyBindingFrameBinding2.verticalCenter
@@ -617,7 +737,6 @@ WowWindow {
         id: keyBindingFrameBinding2Key1Button
         name: "KeyBindingFrameBinding2Key1Button"
         kind: "Button"
-        text: "Middle Mouse"
         wowParent: "KeyBindingFrameBinding2"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -632,11 +751,10 @@ WowWindow {
         id: keyBindingFrameBinding2Key1ButtonText
         name: "KeyBindingFrameBinding2Key1ButtonText"
         kind: "FontString"
-        text: "Middle Mouse"
         wowParent: "KeyBindingFrameBinding2Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding2Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding2Key1Button.verticalCenter
-        width: 88.5
+        width: 71.1
         height: 10.3
     }
 
@@ -681,7 +799,7 @@ WowWindow {
         id: keyBindingFrameBinding3Description
         name: "KeyBindingFrameBinding3Description"
         kind: "FontString"
-        text: "Move Forward"
+        text: "Water Totem"
         wowParent: "KeyBindingFrameBinding3"
         anchors.left: keyBindingFrameBinding3.left
         anchors.verticalCenter: keyBindingFrameBinding3.verticalCenter
@@ -693,7 +811,6 @@ WowWindow {
         id: keyBindingFrameBinding3Key1Button
         name: "KeyBindingFrameBinding3Key1Button"
         kind: "Button"
-        text: "Up Arrow"
         wowParent: "KeyBindingFrameBinding3"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -708,11 +825,10 @@ WowWindow {
         id: keyBindingFrameBinding3Key1ButtonText
         name: "KeyBindingFrameBinding3Key1ButtonText"
         kind: "FontString"
-        text: "Up Arrow"
         wowParent: "KeyBindingFrameBinding3Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding3Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding3Key1Button.verticalCenter
-        width: 63.2
+        width: 71.1
         height: 10.3
     }
 
@@ -720,7 +836,6 @@ WowWindow {
         id: keyBindingFrameBinding3Key2Button
         name: "KeyBindingFrameBinding3Key2Button"
         kind: "Button"
-        text: ","
         wowParent: "KeyBindingFrameBinding3"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -735,11 +850,10 @@ WowWindow {
         id: keyBindingFrameBinding3Key2ButtonText
         name: "KeyBindingFrameBinding3Key2ButtonText"
         kind: "FontString"
-        text: ","
         wowParent: "KeyBindingFrameBinding3Key2Button"
         anchors.horizontalCenter: keyBindingFrameBinding3Key2Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding3Key2Button.verticalCenter
-        width: 4
+        width: 71.1
         height: 10.3
     }
 
@@ -759,7 +873,7 @@ WowWindow {
         id: keyBindingFrameBinding4Description
         name: "KeyBindingFrameBinding4Description"
         kind: "FontString"
-        text: "Move Backward"
+        text: "Air Totem"
         wowParent: "KeyBindingFrameBinding4"
         anchors.left: keyBindingFrameBinding4.left
         anchors.verticalCenter: keyBindingFrameBinding4.verticalCenter
@@ -771,7 +885,6 @@ WowWindow {
         id: keyBindingFrameBinding4Key1Button
         name: "KeyBindingFrameBinding4Key1Button"
         kind: "Button"
-        text: "Down Arrow"
         wowParent: "KeyBindingFrameBinding4"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -786,11 +899,10 @@ WowWindow {
         id: keyBindingFrameBinding4Key1ButtonText
         name: "KeyBindingFrameBinding4Key1ButtonText"
         kind: "FontString"
-        text: "Down Arrow"
         wowParent: "KeyBindingFrameBinding4Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding4Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding4Key1Button.verticalCenter
-        width: 83.8
+        width: 71.1
         height: 10.3
     }
 
@@ -798,7 +910,6 @@ WowWindow {
         id: keyBindingFrameBinding4Key2Button
         name: "KeyBindingFrameBinding4Key2Button"
         kind: "Button"
-        text: "O"
         wowParent: "KeyBindingFrameBinding4"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -813,11 +924,10 @@ WowWindow {
         id: keyBindingFrameBinding4Key2ButtonText
         name: "KeyBindingFrameBinding4Key2ButtonText"
         kind: "FontString"
-        text: "O"
         wowParent: "KeyBindingFrameBinding4Key2Button"
         anchors.horizontalCenter: keyBindingFrameBinding4Key2Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding4Key2Button.verticalCenter
-        width: 8.7
+        width: 71.1
         height: 10.3
     }
 
@@ -843,6 +953,17 @@ WowWindow {
         anchors.verticalCenter: keyBindingFrameBinding5.verticalCenter
         width: 170
         height: 24
+    }
+
+    Part {
+        id: keyBindingFrameBinding5Header
+        name: "KeyBindingFrameBinding5Header"
+        kind: "FontString"
+        wowParent: "KeyBindingFrameBinding5"
+        anchors.left: keyBindingFrameBinding5.left
+        anchors.verticalCenter: keyBindingFrameBinding5.verticalCenter
+        width: 1
+        height: 1
     }
 
     Part {
@@ -915,7 +1036,7 @@ WowWindow {
         id: keyBindingFrameBinding6Description
         name: "KeyBindingFrameBinding6Description"
         kind: "FontString"
-        text: "Turn Right"
+        text: "Totemic Recall"
         wowParent: "KeyBindingFrameBinding6"
         anchors.left: keyBindingFrameBinding6.left
         anchors.verticalCenter: keyBindingFrameBinding6.verticalCenter
@@ -927,7 +1048,6 @@ WowWindow {
         id: keyBindingFrameBinding6Key1Button
         name: "KeyBindingFrameBinding6Key1Button"
         kind: "Button"
-        text: "Right Arrow"
         wowParent: "KeyBindingFrameBinding6"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -942,11 +1062,10 @@ WowWindow {
         id: keyBindingFrameBinding6Key1ButtonText
         name: "KeyBindingFrameBinding6Key1ButtonText"
         kind: "FontString"
-        text: "Right Arrow"
         wowParent: "KeyBindingFrameBinding6Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding6Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding6Key1Button.verticalCenter
-        width: 83
+        width: 71.1
         height: 10.3
     }
 
@@ -954,7 +1073,6 @@ WowWindow {
         id: keyBindingFrameBinding6Key2Button
         name: "KeyBindingFrameBinding6Key2Button"
         kind: "Button"
-        text: "E"
         wowParent: "KeyBindingFrameBinding6"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -969,11 +1087,10 @@ WowWindow {
         id: keyBindingFrameBinding6Key2ButtonText
         name: "KeyBindingFrameBinding6Key2ButtonText"
         kind: "FontString"
-        text: "E"
         wowParent: "KeyBindingFrameBinding6Key2Button"
         anchors.horizontalCenter: keyBindingFrameBinding6Key2Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding6Key2Button.verticalCenter
-        width: 6.3
+        width: 71.1
         height: 10.3
     }
 
@@ -999,6 +1116,18 @@ WowWindow {
         anchors.verticalCenter: keyBindingFrameBinding7.verticalCenter
         width: 170
         height: 24
+    }
+
+    Part {
+        id: keyBindingFrameBinding7Header
+        name: "KeyBindingFrameBinding7Header"
+        kind: "FontString"
+        text: "Targeting Functions"
+        wowParent: "KeyBindingFrameBinding7"
+        anchors.left: keyBindingFrameBinding7.left
+        anchors.verticalCenter: keyBindingFrameBinding7.verticalCenter
+        width: 116.1
+        height: 11.9
     }
 
     Part {
@@ -1069,7 +1198,7 @@ WowWindow {
         id: keyBindingFrameBinding8Description
         name: "KeyBindingFrameBinding8Description"
         kind: "FontString"
-        text: "Strafe Right"
+        text: "Target Nearest Enemy"
         wowParent: "KeyBindingFrameBinding8"
         anchors.left: keyBindingFrameBinding8.left
         anchors.verticalCenter: keyBindingFrameBinding8.verticalCenter
@@ -1081,7 +1210,7 @@ WowWindow {
         id: keyBindingFrameBinding8Key1Button
         name: "KeyBindingFrameBinding8Key1Button"
         kind: "Button"
-        text: "."
+        text: "Tab"
         wowParent: "KeyBindingFrameBinding8"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -1096,11 +1225,11 @@ WowWindow {
         id: keyBindingFrameBinding8Key1ButtonText
         name: "KeyBindingFrameBinding8Key1ButtonText"
         kind: "FontString"
-        text: "."
+        text: "Tab"
         wowParent: "KeyBindingFrameBinding8Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding8Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding8Key1Button.verticalCenter
-        width: 4
+        width: 22.1
         height: 10.3
     }
 
@@ -1145,7 +1274,7 @@ WowWindow {
         id: keyBindingFrameBinding9Description
         name: "KeyBindingFrameBinding9Description"
         kind: "FontString"
-        text: "Jump"
+        text: "Target Previous Enemy"
         wowParent: "KeyBindingFrameBinding9"
         anchors.left: keyBindingFrameBinding9.left
         anchors.verticalCenter: keyBindingFrameBinding9.verticalCenter
@@ -1157,7 +1286,7 @@ WowWindow {
         id: keyBindingFrameBinding9Key1Button
         name: "KeyBindingFrameBinding9Key1Button"
         kind: "Button"
-        text: "Spacebar"
+        text: "SHIFT-Tab"
         wowParent: "KeyBindingFrameBinding9"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -1172,11 +1301,11 @@ WowWindow {
         id: keyBindingFrameBinding9Key1ButtonText
         name: "KeyBindingFrameBinding9Key1ButtonText"
         kind: "FontString"
-        text: "Spacebar"
+        text: "SHIFT-Tab"
         wowParent: "KeyBindingFrameBinding9Key1Button"
         anchors.horizontalCenter: keyBindingFrameBinding9Key1Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding9Key1Button.verticalCenter
-        width: 57.7
+        width: 61.6
         height: 10.3
     }
 
@@ -1184,7 +1313,6 @@ WowWindow {
         id: keyBindingFrameBinding9Key2Button
         name: "KeyBindingFrameBinding9Key2Button"
         kind: "Button"
-        text: "Num Pad 0"
         wowParent: "KeyBindingFrameBinding9"
         style: "Button"
         anchors.right: keyBindingFrame.right
@@ -1199,11 +1327,10 @@ WowWindow {
         id: keyBindingFrameBinding9Key2ButtonText
         name: "KeyBindingFrameBinding9Key2ButtonText"
         kind: "FontString"
-        text: "Num Pad 0"
         wowParent: "KeyBindingFrameBinding9Key2Button"
         anchors.horizontalCenter: keyBindingFrameBinding9Key2Button.horizontalCenter
         anchors.verticalCenter: keyBindingFrameBinding9Key2Button.verticalCenter
-        width: 68
+        width: 71.1
         height: 10.3
     }
 
@@ -1333,7 +1460,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "KeyBindingFrameDiabolic"
         anchors.horizontalCenter: keyBindingFrameDefaultButton.horizontalCenter
-        anchors.horizontalCenterOffset: 218
+        anchors.horizontalCenterOffset: 215
         anchors.top: keyBindingFrameDefaultButton.top
         anchors.topMargin: -6
         width: 588
@@ -1518,6 +1645,7 @@ WowWindow {
         wowParent: "KeyBindingFrameScrollFrame"
         anchors.left: keyBindingFrameScrollFrame.left
         anchors.top: keyBindingFrameScrollFrame.top
+        anchors.topMargin: -2100
         width: 300
         height: 7775
     }

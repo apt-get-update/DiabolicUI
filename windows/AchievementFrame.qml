@@ -1035,7 +1035,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton10Label
         name: "AchievementFrameCategoriesContainerButton10Label"
         kind: "FontString"
-        text: "Feats of Strength"
+        text: "Social"
         wowParent: "AchievementFrameCategoriesContainerButton10"
         anchors.left: achievementFrameCategoriesContainerButton10.left
         anchors.leftMargin: 14
@@ -1312,7 +1312,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton2Label
         name: "AchievementFrameCategoriesContainerButton2Label"
         kind: "FontString"
-        text: "General"
+        text: "Character"
         wowParent: "AchievementFrameCategoriesContainerButton2"
         anchors.left: achievementFrameCategoriesContainerButton2.left
         anchors.leftMargin: 14
@@ -1336,7 +1336,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton3Label
         name: "AchievementFrameCategoriesContainerButton3Label"
         kind: "FontString"
-        text: "Quests"
+        text: "Combat"
         wowParent: "AchievementFrameCategoriesContainerButton3"
         anchors.left: achievementFrameCategoriesContainerButton3.left
         anchors.leftMargin: 14
@@ -1360,7 +1360,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton4Label
         name: "AchievementFrameCategoriesContainerButton4Label"
         kind: "FontString"
-        text: "Exploration"
+        text: "Kills"
         wowParent: "AchievementFrameCategoriesContainerButton4"
         anchors.left: achievementFrameCategoriesContainerButton4.left
         anchors.leftMargin: 14
@@ -1384,7 +1384,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton5Label
         name: "AchievementFrameCategoriesContainerButton5Label"
         kind: "FontString"
-        text: "Player vs. Player"
+        text: "Deaths"
         wowParent: "AchievementFrameCategoriesContainerButton5"
         anchors.left: achievementFrameCategoriesContainerButton5.left
         anchors.leftMargin: 14
@@ -1408,7 +1408,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton6Label
         name: "AchievementFrameCategoriesContainerButton6Label"
         kind: "FontString"
-        text: "Dungeons & Raids"
+        text: "Quests"
         wowParent: "AchievementFrameCategoriesContainerButton6"
         anchors.left: achievementFrameCategoriesContainerButton6.left
         anchors.leftMargin: 14
@@ -1432,7 +1432,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton7Label
         name: "AchievementFrameCategoriesContainerButton7Label"
         kind: "FontString"
-        text: "Professions"
+        text: "Dungeons & Raids"
         wowParent: "AchievementFrameCategoriesContainerButton7"
         anchors.left: achievementFrameCategoriesContainerButton7.left
         anchors.leftMargin: 14
@@ -1456,7 +1456,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton8Label
         name: "AchievementFrameCategoriesContainerButton8Label"
         kind: "FontString"
-        text: "Reputation"
+        text: "Skills"
         wowParent: "AchievementFrameCategoriesContainerButton8"
         anchors.left: achievementFrameCategoriesContainerButton8.left
         anchors.leftMargin: 14
@@ -1480,7 +1480,7 @@ WowWindow {
         id: achievementFrameCategoriesContainerButton9Label
         name: "AchievementFrameCategoriesContainerButton9Label"
         kind: "FontString"
-        text: "World Events"
+        text: "Travel"
         wowParent: "AchievementFrameCategoriesContainerButton9"
         anchors.left: achievementFrameCategoriesContainerButton9.left
         anchors.leftMargin: 14

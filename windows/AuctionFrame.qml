@@ -479,7 +479,7 @@ WowWindow {
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 50
         width: 170
-        height: 252
+        height: 335
     }
 
     Part {
@@ -3438,7 +3438,6 @@ WowWindow {
         id: auctionatorHEntry10_EntryText
         name: "AuctionatorHEntry10_EntryText"
         kind: "FontString"
-        text: "runed orb"
         wowParent: "AuctionatorHEntry10"
         anchors.left: auctionatorHEntry10.left
         anchors.leftMargin: 2
@@ -3463,7 +3462,6 @@ WowWindow {
         id: auctionatorHEntry11_EntryText
         name: "AuctionatorHEntry11_EntryText"
         kind: "FontString"
-        text: "runed orbs"
         wowParent: "AuctionatorHEntry11"
         anchors.left: auctionatorHEntry11.left
         anchors.leftMargin: 2
@@ -3488,7 +3486,6 @@ WowWindow {
         id: auctionatorHEntry12_EntryText
         name: "AuctionatorHEntry12_EntryText"
         kind: "FontString"
-        text: "Tankard"
         wowParent: "AuctionatorHEntry12"
         anchors.left: auctionatorHEntry12.left
         anchors.leftMargin: 2
@@ -3513,7 +3510,6 @@ WowWindow {
         id: auctionatorHEntry13_EntryText
         name: "AuctionatorHEntry13_EntryText"
         kind: "FontString"
-        text: "Tankard of terror"
         wowParent: "AuctionatorHEntry13"
         anchors.left: auctionatorHEntry13.left
         anchors.leftMargin: 2
@@ -3576,7 +3572,6 @@ WowWindow {
         id: auctionatorHEntry1_EntryText
         name: "AuctionatorHEntry1_EntryText"
         kind: "FontString"
-        text: "Morrowgrain"
         wowParent: "AuctionatorHEntry1"
         anchors.left: auctionatorHEntry1.left
         anchors.leftMargin: 2
@@ -3601,7 +3596,6 @@ WowWindow {
         id: auctionatorHEntry2_EntryText
         name: "AuctionatorHEntry2_EntryText"
         kind: "FontString"
-        text: "un'goro"
         wowParent: "AuctionatorHEntry2"
         anchors.left: auctionatorHEntry2.left
         anchors.leftMargin: 2
@@ -3626,7 +3620,6 @@ WowWindow {
         id: auctionatorHEntry3_EntryText
         name: "AuctionatorHEntry3_EntryText"
         kind: "FontString"
-        text: "un goro"
         wowParent: "AuctionatorHEntry3"
         anchors.left: auctionatorHEntry3.left
         anchors.leftMargin: 2
@@ -3651,7 +3644,6 @@ WowWindow {
         id: auctionatorHEntry4_EntryText
         name: "AuctionatorHEntry4_EntryText"
         kind: "FontString"
-        text: "runecloth"
         wowParent: "AuctionatorHEntry4"
         anchors.left: auctionatorHEntry4.left
         anchors.leftMargin: 2
@@ -3676,7 +3668,6 @@ WowWindow {
         id: auctionatorHEntry5_EntryText
         name: "AuctionatorHEntry5_EntryText"
         kind: "FontString"
-        text: "Mageweave Cloth"
         wowParent: "AuctionatorHEntry5"
         anchors.left: auctionatorHEntry5.left
         anchors.leftMargin: 2
@@ -3701,7 +3692,6 @@ WowWindow {
         id: auctionatorHEntry6_EntryText
         name: "AuctionatorHEntry6_EntryText"
         kind: "FontString"
-        text: "Silk Cloth"
         wowParent: "AuctionatorHEntry6"
         anchors.left: auctionatorHEntry6.left
         anchors.leftMargin: 2
@@ -3726,7 +3716,6 @@ WowWindow {
         id: auctionatorHEntry7_EntryText
         name: "AuctionatorHEntry7_EntryText"
         kind: "FontString"
-        text: "Wool"
         wowParent: "AuctionatorHEntry7"
         anchors.left: auctionatorHEntry7.left
         anchors.leftMargin: 2
@@ -3751,7 +3740,6 @@ WowWindow {
         id: auctionatorHEntry8_EntryText
         name: "AuctionatorHEntry8_EntryText"
         kind: "FontString"
-        text: "Sash of ancient"
         wowParent: "AuctionatorHEntry8"
         anchors.left: auctionatorHEntry8.left
         anchors.leftMargin: 2
@@ -3776,7 +3764,6 @@ WowWindow {
         id: auctionatorHEntry9_EntryText
         name: "AuctionatorHEntry9_EntryText"
         kind: "FontString"
-        text: "Sash of acient"
         wowParent: "AuctionatorHEntry9"
         anchors.left: auctionatorHEntry9.left
         anchors.leftMargin: 2
@@ -3789,12 +3776,13 @@ WowWindow {
         id: auctionatorMessage2Frame
         name: "AuctionatorMessage2Frame"
         kind: "FontString"
+        text: "Drag an item you want to sell to this area."
         wowParent: "Atr_Main_Panel"
         anchors.horizontalCenter: atr_Main_Panel.horizontalCenter
         anchors.horizontalCenterOffset: 18
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 65
-        width: 265.7
+        width: 252.1
         height: 100
     }
 
@@ -3873,13 +3861,13 @@ WowWindow {
         id: auctionatorTitle
         name: "AuctionatorTitle"
         kind: "FontString"
-        text: "Auctionator+ - Buy"
+        text: "Auctionator+ - More..."
         wowParent: "Atr_Main_Panel"
         anchors.horizontalCenter: atr_Main_Panel.horizontalCenter
         anchors.horizontalCenterOffset: -90
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: -7
-        width: 116.4
+        width: 135.7
         height: 12.2
     }
 
@@ -4050,7 +4038,7 @@ WowWindow {
         id: auctionsButton1ClosingTimeText
         name: "AuctionsButton1ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton1ClosingTime"
         anchors.left: auctionsButton1ClosingTime.left
         anchors.top: auctionsButton1ClosingTime.top
@@ -4338,7 +4326,7 @@ WowWindow {
         id: auctionsButton2ClosingTimeText
         name: "AuctionsButton2ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton2ClosingTime"
         anchors.left: auctionsButton2ClosingTime.left
         anchors.top: auctionsButton2ClosingTime.top
@@ -4626,7 +4614,7 @@ WowWindow {
         id: auctionsButton3ClosingTimeText
         name: "AuctionsButton3ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton3ClosingTime"
         anchors.left: auctionsButton3ClosingTime.left
         anchors.top: auctionsButton3ClosingTime.top
@@ -4888,7 +4876,7 @@ WowWindow {
         id: auctionsButton4ClosingTimeText
         name: "AuctionsButton4ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton4ClosingTime"
         anchors.left: auctionsButton4ClosingTime.left
         anchors.top: auctionsButton4ClosingTime.top
@@ -5110,7 +5098,7 @@ WowWindow {
         id: auctionsButton5ClosingTimeText
         name: "AuctionsButton5ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton5ClosingTime"
         anchors.left: auctionsButton5ClosingTime.left
         anchors.top: auctionsButton5ClosingTime.top
@@ -5332,7 +5320,7 @@ WowWindow {
         id: auctionsButton6ClosingTimeText
         name: "AuctionsButton6ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton6ClosingTime"
         anchors.left: auctionsButton6ClosingTime.left
         anchors.top: auctionsButton6ClosingTime.top
@@ -5580,7 +5568,7 @@ WowWindow {
         id: auctionsButton7ClosingTimeText
         name: "AuctionsButton7ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton7ClosingTime"
         anchors.left: auctionsButton7ClosingTime.left
         anchors.top: auctionsButton7ClosingTime.top
@@ -5868,7 +5856,7 @@ WowWindow {
         id: auctionsButton8ClosingTimeText
         name: "AuctionsButton8ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton8ClosingTime"
         anchors.left: auctionsButton8ClosingTime.left
         anchors.top: auctionsButton8ClosingTime.top
@@ -6130,7 +6118,7 @@ WowWindow {
         id: auctionsButton9ClosingTimeText
         name: "AuctionsButton9ClosingTimeText"
         kind: "FontString"
-        text: "Long"
+        text: "Medium"
         wowParent: "AuctionsButton9ClosingTime"
         anchors.left: auctionsButton9ClosingTime.left
         anchors.top: auctionsButton9ClosingTime.top

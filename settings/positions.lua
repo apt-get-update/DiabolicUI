@@ -79,7 +79,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
-	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 11 Human Warlock"
+	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 25 Gnome Warrior"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame

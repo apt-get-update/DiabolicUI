@@ -1232,7 +1232,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.horizontalCenter: guildFrameGuildInformationButton.horizontalCenter
-        anchors.horizontalCenterOffset: 110.5
+        anchors.horizontalCenterOffset: 101.6
         anchors.top: guildFrameGuildInformationButton.top
         anchors.topMargin: -6
         width: 354
@@ -1392,7 +1392,6 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton12Info
         name: "FriendsFrameFriendsScrollFrameButton12Info"
         kind: "FontString"
-        text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12Name.left
         anchors.top: friendsFrameFriendsScrollFrameButton12Name.bottom
@@ -1405,7 +1404,6 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton12Name
         name: "FriendsFrameFriendsScrollFrameButton12Name"
         kind: "FontString"
-        text: "Isilda"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12.left
         anchors.leftMargin: 20
@@ -2734,7 +2732,7 @@ WowWindow {
         id: guildFrameButton1Class
         name: "GuildFrameButton1Class"
         kind: "FontString"
-        text: "Druid"
+        text: "Warrior"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Level.right
         anchors.leftMargin: 12
@@ -2758,7 +2756,7 @@ WowWindow {
         id: guildFrameButton1Level
         name: "GuildFrameButton1Level"
         kind: "FontString"
-        text: "69"
+        text: "70"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Zone.right
         anchors.leftMargin: 4
@@ -2771,7 +2769,7 @@ WowWindow {
         id: guildFrameButton1Name
         name: "GuildFrameButton1Name"
         kind: "FontString"
-        text: "Anthrolas"
+        text: "Tocha"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1.left
         anchors.leftMargin: 14
@@ -2785,7 +2783,7 @@ WowWindow {
         id: guildFrameButton1Zone
         name: "GuildFrameButton1Zone"
         kind: "FontString"
-        text: "Shadowmoon Valley"
+        text: "Borean Tundra"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Name.right
         anchors.leftMargin: 3
@@ -2809,7 +2807,7 @@ WowWindow {
         id: guildFrameButton2Class
         name: "GuildFrameButton2Class"
         kind: "FontString"
-        text: "Priest"
+        text: "Death Knight"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2Level.right
         anchors.leftMargin: 12
@@ -2846,7 +2844,7 @@ WowWindow {
         id: guildFrameButton2Name
         name: "GuildFrameButton2Name"
         kind: "FontString"
-        text: "Padirac"
+        text: "Chiftea"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2.left
         anchors.leftMargin: 14
@@ -2860,7 +2858,7 @@ WowWindow {
         id: guildFrameButton2Zone
         name: "GuildFrameButton2Zone"
         kind: "FontString"
-        text: "Stormwind City"
+        text: "Dalaran"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2Name.right
         anchors.leftMargin: 3
@@ -2884,7 +2882,7 @@ WowWindow {
         id: guildFrameButton3Class
         name: "GuildFrameButton3Class"
         kind: "FontString"
-        text: "Paladin"
+        text: "Priest"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Level.right
         anchors.leftMargin: 12
@@ -2908,7 +2906,7 @@ WowWindow {
         id: guildFrameButton3Level
         name: "GuildFrameButton3Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Zone.right
         anchors.leftMargin: 4
@@ -2921,7 +2919,7 @@ WowWindow {
         id: guildFrameButton3Name
         name: "GuildFrameButton3Name"
         kind: "FontString"
-        text: "Discordignis"
+        text: "Padirac"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3.left
         anchors.leftMargin: 14
@@ -2935,7 +2933,7 @@ WowWindow {
         id: guildFrameButton3Zone
         name: "GuildFrameButton3Zone"
         kind: "FontString"
-        text: "Azuremyst Isle"
+        text: "Stormwind City"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Name.right
         anchors.leftMargin: 3
@@ -2959,7 +2957,7 @@ WowWindow {
         id: guildFrameButton4Class
         name: "GuildFrameButton4Class"
         kind: "FontString"
-        text: "Paladin"
+        text: "Mage"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Level.right
         anchors.leftMargin: 12
@@ -2983,7 +2981,7 @@ WowWindow {
         id: guildFrameButton4Level
         name: "GuildFrameButton4Level"
         kind: "FontString"
-        text: "1"
+        text: "80"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Zone.right
         anchors.leftMargin: 4
@@ -2996,7 +2994,7 @@ WowWindow {
         id: guildFrameButton4Name
         name: "GuildFrameButton4Name"
         kind: "FontString"
-        text: "Discordignis"
+        text: "Stephanaeon"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4.left
         anchors.leftMargin: 14
@@ -3010,7 +3008,7 @@ WowWindow {
         id: guildFrameButton4Zone
         name: "GuildFrameButton4Zone"
         kind: "FontString"
-        text: "Azuremyst Isle"
+        text: "Halls of Stone"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Name.right
         anchors.leftMargin: 3
@@ -3034,7 +3032,7 @@ WowWindow {
         id: guildFrameButton5Class
         name: "GuildFrameButton5Class"
         kind: "FontString"
-        text: "Priest"
+        text: "Paladin"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Level.right
         anchors.leftMargin: 12
@@ -3058,7 +3056,7 @@ WowWindow {
         id: guildFrameButton5Level
         name: "GuildFrameButton5Level"
         kind: "FontString"
-        text: "80"
+        text: "1"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Zone.right
         anchors.leftMargin: 4
@@ -3071,7 +3069,7 @@ WowWindow {
         id: guildFrameButton5Name
         name: "GuildFrameButton5Name"
         kind: "FontString"
-        text: "Isari"
+        text: "Discordignis"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5.left
         anchors.leftMargin: 14
@@ -3085,7 +3083,7 @@ WowWindow {
         id: guildFrameButton5Zone
         name: "GuildFrameButton5Zone"
         kind: "FontString"
-        text: "Naxxramas"
+        text: "Azuremyst Isle"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Name.right
         anchors.leftMargin: 3

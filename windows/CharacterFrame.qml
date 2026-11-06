@@ -163,8 +163,8 @@ WowWindow {
         anchors.left: characterFrame.left
         anchors.top: characterFrame.top
         anchors.topMargin: 4
-        width: 402
-        height: 490
+        width: 650
+        height: 478
     }
 
     Part {
@@ -175,8 +175,8 @@ WowWindow {
         anchors.left: characterFrameDiabolic.left
         anchors.top: characterFrameDiabolic.top
         anchors.topMargin: 32
-        width: 402
-        height: 458
+        width: 650
+        height: 446
     }
 
     Part {

@@ -1100,7 +1100,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.horizontalCenter: macroExitButton.horizontalCenter
-        anchors.horizontalCenterOffset: -128
+        anchors.horizontalCenterOffset: -122
         anchors.top: macroExitButton.top
         anchors.topMargin: -6
         width: 352

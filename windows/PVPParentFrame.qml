@@ -882,7 +882,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "PVPParentFrameDiabolic"
         anchors.horizontalCenter: pVPBattlegroundFrameJoinButton.horizontalCenter
-        anchors.horizontalCenterOffset: -27
+        anchors.horizontalCenterOffset: -25.3
         anchors.top: pVPBattlegroundFrameJoinButton.top
         anchors.topMargin: -6
         width: 356

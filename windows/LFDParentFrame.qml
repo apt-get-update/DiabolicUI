@@ -52,7 +52,7 @@ WowWindow {
         kind: "Frame"
         wowParent: "LFDParentFrameDiabolic"
         anchors.horizontalCenter: lFDQueueFrameFindGroupButton.horizontalCenter
-        anchors.horizontalCenterOffset: 105
+        anchors.horizontalCenterOffset: 102
         anchors.top: lFDQueueFrameFindGroupButton.top
         anchors.topMargin: -6
         width: 367
