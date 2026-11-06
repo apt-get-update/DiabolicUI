@@ -335,6 +335,26 @@ function TestLayoutAudit:test_our_parts_named_after_their_owner()
 	assertClean(client)
 end
 
+-- One stretched: on both its points, again when something moves it.
+function TestLayoutAudit:test_a_part_stretched_on_two_points()
+	boot()
+	local adjust = client:GetModule("Blizzard: Adjust")
+	local frame = CreateFrame("Frame", "StretchFrame", _G.UIParent)
+	local part = CreateFrame("Frame", "StretchPart", frame)
+	adjust.config.StretchPart = { "TOPLEFT", "StretchFrame", "TOPLEFT", 5, -5, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -6, 7 } }
+	adjust:Apply()
+	local Points = function()
+		lu.assertEquals(part:GetNumPoints(), 2)
+		lu.assertEquals({ part:GetPoint(1) }, { "TOPLEFT", frame, "TOPLEFT", 5, -5 })
+		lu.assertEquals({ part:GetPoint(2) }, { "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -6, 7 })
+	end
+	Points()
+	part:ClearAllPoints()
+	part:SetPoint("CENTER")
+	Points()
+	assertClean(client)
+end
+
 -- One placed on a window not made yet: where it was until it is, then placed.
 function TestLayoutAudit:test_a_part_waits_for_the_window_its_placed_on()
 	boot()

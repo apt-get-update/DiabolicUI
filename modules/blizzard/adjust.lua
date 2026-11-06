@@ -21,7 +21,8 @@ local Applying -- (our own moves, not to be undone)
 local Waiting = {} -- the parts whose frame to be placed on isn't made yet (a window styled later)
 
 -- A part's place and size: { point, relative frame's name, its point, x,
--- y, width, height } (the size if given; { width, height }: a size only).
+-- y, width, height } (the size if given; { width, height }: a size only);
+-- second = { point, the frame's point, x, y }: stretched to that as well.
 Module.GetEntry = function(self, name)
 	return self.config[name]
 end
@@ -57,6 +58,11 @@ local Place = function(part)
 	Applying = true
 	part:ClearAllPoints()
 	part:SetPoint(point, target, relativePoint, x, y)
+	-- (stretched: its other side on the same frame)
+	local second = entry.second
+	if second then
+		part:SetPoint(second[1], target, second[2], second[3], second[4])
+	end
 	Applying = nil
 end
 

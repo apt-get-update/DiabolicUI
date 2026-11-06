@@ -199,7 +199,7 @@ ApplicationWindow {
 
     function applyItem(name) {
         const item = items[name], e = entry(name)
-        if (!item) return
+        if (!item || (parts[name] && parts[name].heldBy)) return // (its anchors are its file's)
         const anchors = item.anchors, target = e.place && items[e.place[1]]
         if (target) {
             const x = lineX(e.place[0]), y = lineY(e.place[0])
@@ -222,6 +222,10 @@ ApplicationWindow {
 
     // a part's new place and size: what it's pinned by grows with what changed
     function change(name, place, size, quiet) {
+        if (parts[name] && parts[name].heldBy) {
+            status = name + " is placed by " + parts[name].heldBy + ": change that in its file."
+            return
+        }
         if (!quiet) remember()
         const was = entry(name), file = fileEntry(name)
         const placed = !same(place, was.place), sized = !same(size, was.size)
@@ -1399,7 +1403,7 @@ ApplicationWindow {
                         if (!p) return ""
                         const pin = app.pickedEntry && app.pickedEntry.pin
                         return (p.kind || "?") + (p.text ? " · “" + p.text + "”" : "") + (p.parent && p.parent !== "?" ? "\nin " + p.parent : "")
-                            + "\n" + (pin === "place" ? "◆ Its place is pinned" : pin === "size" ? "◆ Its size is pinned"
+                            + "\n" + (p.heldBy ? "◆ Placed by " + p.heldBy + ": change that in its file" : pin === "place" ? "◆ Its place is pinned" : pin === "size" ? "◆ Its size is pinned"
                                 : pin ? "◆ Pinned: stays as set" : "Not pinned: follows the game's scan")
                     }
                 }
@@ -1407,6 +1411,7 @@ ApplicationWindow {
                     id: fields
                     objectName: "fields"
                     visible: !!(app.picked && app.pickedEntry)
+                    enabled: !(app.parts[app.picked] || {}).heldBy
                     columns: 2
                     Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
                     readonly property var place: app.pickedEntry ? app.pickedEntry.place : null
@@ -1471,7 +1476,7 @@ ApplicationWindow {
                     Button {
                         objectName: "unpinButton"
                         text: "Unpin"
-                        visible: !!(app.pickedEntry && app.pickedEntry.pin)
+                        visible: !!(app.pickedEntry && app.pickedEntry.pin && !(app.parts[app.picked] || {}).heldBy)
                         onClicked: app.unpinPart(app.picked)
                         ToolTip.visible: hovered
                         ToolTip.delay: 400

@@ -139,10 +139,33 @@ tabs has them on top, each showing only its own parts.
 
 *By hand:* change a part's block, then `lua5.1 tools/positions.lua`. Each part
 needs one anchor across and one down, on one frame of its file, with plain
-numbers (the tool says what it can't read). A `pin` puts it in
+numbers (the tool says what it can't read). Pinned, it can stretch: `left` and
+`right`, or `top` and `bottom`, on that one frame. A `pin` puts it in
 `settings/positions.lua` (`"all"`, or only its `"place"` or `"size"`), which the
 game loads and the tool writes: don't change that one. Without a pin a part
 follows the scan. Say why with `//` lines over its block: they're kept.
+
+*Rows:* buttons that share a width go in a `WowRow`, so nothing's added up by hand:
+
+[source,qml]
+----
+WowRow {
+    name: "LFRBrowseButtons"
+    parts: ["LFRBrowseFrameSendMessageButton", "LFRBrowseFrameInviteButton", "LFRBrowseFrameRefreshButton"]
+    anchors.left: lFRParentFrameDiabolic.left
+    anchors.leftMargin: 37
+    anchors.right: lFRParentFrameDiabolic.right
+    anchors.rightMargin: 37
+    anchors.bottom: lFRParentFrameDiabolic.bottom
+    anchors.bottomMargin: 30
+}
+----
+
+`fit` is `"fill"` (the default: each as wide as its text, the room left shared),
+`"center"` or `"ends"`; `spacing` defaults to the windows' `button_gap`. The tool
+writes its parts' places and sizes when it runs, so a button that hides in game
+leaves its gap, and the editor won't drag them: change the row. Anchor it on the
+window, not its foot, which hangs from these buttons.
 A `Ghost` stands for a frame with parts on it that isn't in that window's file.
 
 *Filling the files:* `/dui layout all` opens every window that needs no NPC

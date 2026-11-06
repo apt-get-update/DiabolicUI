@@ -132,15 +132,15 @@ local ReadWindow = function(path)
 	local Problem = function(name, what)
 		error(path .. ": " .. name .. ": " .. what, 0)
 	end
-	local window, block, kindOf, notes = { parts = {}, ghosts = {} }, nil, nil, {}
+	local window, block, kindOf, notes = { parts = {}, ghosts = {}, rows = {} }, nil, nil, {}
 	local names, raw = {}, {}
 	local depth = 0
 	for _, statement in ipairs(Statements(text)) do
 		local kind, value = statement[1], statement[2]
 		if (kind == "open") then
 			depth = depth + 1
-			if ((depth == 1) and (value ~= "WowWindow")) or ((depth == 2) and (value ~= "Part") and (value ~= "Ghost")) or (depth > 2) then
-				Problem(value, "only a WowWindow of Parts and Ghosts can be read")
+			if ((depth == 1) and (value ~= "WowWindow")) or ((depth == 2) and (value ~= "Part") and (value ~= "Ghost") and (value ~= "WowRow")) or (depth > 2) then
+				Problem(value, "only a WowWindow of Parts, WowRows and Ghosts can be read")
 			end
 			if (depth == 1) then
 				notes = {}
@@ -158,6 +158,8 @@ local ReadWindow = function(path)
 					block.tail = statement.tail
 					window.parts[block.name] = block
 					raw[block.name] = block
+				elseif (kindOf == "WowRow") then
+					window.rows[#window.rows + 1] = block
 				else
 					window.ghosts[block.name] = { block.x, block.y, block.width, block.height }
 				end
@@ -174,10 +176,15 @@ local ReadWindow = function(path)
 			local line = key:match("^anchors%.(.+)$")
 			if (key == "id") then
 				target.id = content
-			elseif (key == "name") or (key == "kind") or (key == "text") or (key == "wowParent") or (key == "pin") or (key == "style") then
+			elseif (key == "name") or (key == "kind") or (key == "text") or (key == "wowParent") or (key == "pin") or (key == "style") or (key == "fit") then
 				target[key] = Unquote(content) or Problem(key, "needs a text, not " .. content)
-			elseif (key == "width") or (key == "height") or (key == "x") or (key == "y") then
+			elseif (key == "width") or (key == "height") or (key == "x") or (key == "y") or (key == "spacing") then
 				target[key] = tonumber(content) or Problem(key, "needs a number, not " .. content)
+			elseif (key == "parts") and (depth == 2) then
+				block.members = {}
+				for name in content:gmatch('"([^"]+)"') do
+					block.members[#block.members + 1] = name
+				end
 			elseif line and (depth == 2) and MARGINS[line] then
 				block.margins[MARGINS[line][1]] = tonumber(content) or Problem(key, "needs a number, not " .. content)
 			elseif line and (depth == 2) and (ACROSS[line] or DOWN[line]) then
@@ -186,8 +193,12 @@ local ReadWindow = function(path)
 					Problem(key, "needs a part and its line, not " .. content)
 				end
 				local axis = ACROSS[line] and "across" or "down"
+				-- (a second one on the same axis: stretched between them)
 				if block.anchors[axis] then
-					Problem(block.name or key, "one anchor across and one down only (a WoW point)")
+					axis = axis .. "2"
+				end
+				if block.anchors[axis] then
+					Problem(block.name or key, "two anchors across and two down at most")
 				end
 				block.anchors[axis] = { line = line, id = id, to = other }
 			else
@@ -200,15 +211,40 @@ local ReadWindow = function(path)
 	end
 	names[window.id or window.name] = window.name
 	-- their anchors as WoW places
+	-- (a stretch's two lines in order: left then right, top then bottom)
+	local InOrder = function(name, first, second, a, b)
+		if not second then
+			return first
+		end
+		if (first.line == b) and (second.line == a) then
+			first, second = second, first
+		end
+		if (first.line ~= a) or (second.line ~= b) then
+			Problem(name, "stretches between " .. a .. " and " .. b .. " only")
+		end
+		return first, second
+	end
+	local Offset = function(margins, line)
+		return (margins[line] or 0) * MARGINS[MARGIN_OF[line]][2]
+	end
 	for name, part in pairs(raw) do
-		local across, down = part.anchors.across, part.anchors.down
+		local across, across2 = InOrder(name, part.anchors.across, part.anchors.across2, "left", "right")
+		local down, down2 = InOrder(name, part.anchors.down, part.anchors.down2, "top", "bottom")
 		if across or down then
 			if (not across) or (not down) or (across.id ~= down.id) or (not names[across.id]) then
 				Problem(name, "needs one anchor across and one down, on one part of this file")
 			end
 			part.place = { PointOf(across.line, down.line), names[across.id], PointOf(across.to, down.to),
-				(part.margins[across.line] or 0) * MARGINS[MARGIN_OF[across.line]][2],
-				(part.margins[down.line] or 0) * MARGINS[MARGIN_OF[down.line]][2] }
+				Offset(part.margins, across.line), Offset(part.margins, down.line) }
+			if across2 or down2 then
+				local x, y = across2 or across, down2 or down
+				if (x.id ~= across.id) or (y.id ~= across.id) then
+					Problem(name, "stretches between the lines of one part only")
+				elseif (part.pin ~= "place") and (part.pin ~= "all") then
+					Problem(name, 'stretched, it needs a pin of "place" or "all"')
+				end
+				part.second = { PointOf(x.line, y.line), PointOf(x.to, y.to), Offset(part.margins, x.line), Offset(part.margins, y.line) }
+			end
 		end
 		part.w, part.h = part.width, part.height
 		if part.width and part.height and ((part.kind ~= "FontString") or (part.pin == "all") or (part.pin == "size")) then
@@ -223,6 +259,22 @@ local ReadWindow = function(path)
 			Problem(name, "its pin needs a width and a height")
 		end
 	end
+	-- the rows: across one part, by its sides, one anchor down on it
+	for _, row in ipairs(window.rows) do
+		local anchors = row.anchors
+		local left, right = InOrder(row.name, anchors.across, anchors.across2, "left", "right")
+		local down = anchors.down
+		if (not right) or (left.to ~= "left") or (right.to ~= "right") or (not down) or anchors.down2
+			or (left.id ~= right.id) or (down.id ~= left.id) or (not names[left.id]) then
+			Problem(row.name, "a row goes from a part's left to its right, with one anchor down on it")
+		elseif (not row.members) or (not row.members[1]) then
+			Problem(row.name, "a row needs its parts")
+		elseif row.fit and (row.fit ~= "fill") and (row.fit ~= "center") and (row.fit ~= "ends") then
+			Problem(row.name, 'its fit is "fill", "center" or "ends"')
+		end
+		row.on, row.line, row.to = names[left.id], down.line, down.to
+		row.left, row.right, row.y = row.margins.left or 0, row.margins.right or 0, Offset(row.margins, down.line)
+	end
 	return window
 end
 
@@ -232,7 +284,7 @@ local windows, owner, inFile = {}, {}, {}
 os.execute("mkdir -p '" .. DIR .. "'")
 for _, path in ipairs(Lines("ls '" .. DIR .. "'/*.qml 2>/dev/null")) do
 	local base = path:match("([^/]+)%.qml$")
-	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "WowWindow") then
+	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "WowWindow") and (base ~= "WowRow") then
 		local window = ReadWindow(path)
 		windows[window.name] = window
 		for name in pairs(window.parts) do
@@ -295,6 +347,7 @@ local Pin = function(part, entry)
 		part.size, part.pin = { Round(entry[1]), Round(entry[2]) }, "size"
 	else
 		part.place = { entry[1], entry[2], entry[3], Round(entry[4]), Round(entry[5]) }
+		part.second = entry.second
 		part.pin = "place"
 		if entry[6] then
 			part.size, part.pin = { Round(entry[6]), Round(entry[7]) }, "all"
@@ -413,7 +466,7 @@ end
 local edits = EDITS and assert(loadfile(EDITS))() or {}
 for name, edit in pairs(edits) do
 	local part = owner[name] and windows[owner[name]].parts[name]
-	if part then
+	if part and (not part.second) then
 		part.pin = (edit.pin ~= "") and edit.pin or nil
 		part.place, part.size = edit.place or part.place, edit.size or part.size
 		Follow(part)
@@ -524,6 +577,134 @@ for _, window in pairs(windows) do
 	end
 end
 
+-- How wide and tall `name` is in `window`: the window's, a part's.
+local BoxOf = function(window, name)
+	if (name == window.name) then
+		return WindowSize(window)
+	end
+	local part = window.parts[name]
+	local rect = part and part.seen and part.seen.rect
+	if rect then
+		return rect[3], rect[4]
+	end
+	local size = part and (part.size or (part.w and { part.w, part.h }))
+	if size then
+		return size[1], size[2]
+	end
+end
+
+-- A stretched part's size, from what it's stretched on.
+for _, window in pairs(windows) do
+	for _, part in pairs(window.parts) do
+		local second = part.second
+		local width, height = BoxOf(window, part.place and part.place[2] or "")
+		if second and width then
+			local place = part.place
+			local box = part.size or { 0, 0 }
+			local w = width * (X_OF[AcrossOf(second[2])] - X_OF[AcrossOf(place[3])]) + second[3] - place[4]
+			local h = height * (Y_OF[DownOf(place[3])] - Y_OF[DownOf(second[2])]) + place[5] - second[4]
+			part.size = { (AcrossOf(second[1]) ~= AcrossOf(place[1])) and Round(w) or box[1],
+				(DownOf(second[1]) ~= DownOf(place[1])) and Round(h) or box[2] }
+		end
+	end
+end
+
+-- The rows: their parts placed and sized so that they fit the room they're told.
+-- (Written as any other part's place: the game has nothing new to do. The room
+-- too small, they're still in it: "its text is wider than it" says so.)
+local RowGap = function()
+	for _, component in ipairs(components) do
+		local rules = (component.name == "Window") and component.values.layout
+		if rules and rules.button_gap then
+			return rules.button_gap
+		end
+	end
+	return (layout.rules and layout.rules.button_gap) or 6
+end
+
+local PartSize = function(part)
+	local rect = part.seen and part.seen.rect
+	return part.size or (rect and { rect[3], rect[4] }) or (part.w and { part.w, part.h }) or { 0, 0 }
+end
+
+local ResolveRow = function(window, row)
+	local width = BoxOf(window, row.on)
+	if not width then
+		error(window.name .. ": " .. row.name .. ": how wide " .. row.on .. " is isn't known", 0)
+	end
+	local room, gap, count = width - row.left - row.right, row.spacing or RowGap(), #row.members
+	local parts, widths, sum = {}, {}, 0
+	for i, name in ipairs(row.members) do
+		local part = window.parts[name]
+		if (not part) then
+			error(window.name .. ": " .. row.name .. ": " .. name .. " isn't a part of this file", 0)
+		elseif part.heldBy then
+			error(window.name .. ": " .. row.name .. ": " .. name .. " is held by " .. part.heldBy, 0)
+		end
+		part.heldBy = "row " .. row.name
+		parts[i], widths[i] = part, PartSize(part)[1]
+		sum = sum + widths[i]
+	end
+	local fit, first = row.fit or "fill", row.left
+	if (fit == "fill") then
+		-- those with a text as wide as it, the room left shared between them; those
+		-- without as they are (no text known: all of them as they are, what's left shared)
+		local sharing, last = 0, nil
+		sum = 0
+		for i, part in ipairs(parts) do
+			local text = part.seen and part.seen.textWidth
+			widths[i] = text or widths[i]
+			sum = sum + widths[i]
+			if text then
+				sharing, last = sharing + 1, i
+				parts[i].sharing = true
+			end
+		end
+		if (sharing == 0) then
+			sharing, last = count, count
+			for _, part in ipairs(parts) do
+				part.sharing = true
+			end
+		end
+		local extra = (room - gap * (count - 1) - sum) / sharing
+		sum = 0
+		for i, part in ipairs(parts) do
+			widths[i] = Round(widths[i] + (part.sharing and extra or 0))
+			part.sharing = nil
+			sum = sum + widths[i]
+		end
+		widths[last] = Round(widths[last] + room - gap * (count - 1) - sum)
+	elseif (fit == "center") then
+		first = row.left + (room - sum - gap * (count - 1)) / 2
+	elseif (count > 1) then
+		gap = (room - sum) / (count - 1)
+	else
+		first = row.left + (room - sum) / 2
+	end
+	if (fit ~= "fill") and (sum + ((fit == "center") and (gap * (count - 1)) or 0) > room) then
+		print(string.format("%s: %s is wider than its room (%s).", window.name, row.name, Number(room)))
+	end
+	for i, part in ipairs(parts) do
+		if (i == 1) then
+			part.place = { PointOf("left", row.line), row.on, PointOf("left", row.to), Round(first), row.y }
+		else
+			part.place = { "LEFT", parts[i - 1].name, "RIGHT", Round(gap), 0 }
+		end
+		part.second = nil
+		if (fit == "fill") then
+			part.size, part.pin = { widths[i], PartSize(part)[2] }, "all"
+		else
+			part.pin = "place"
+		end
+	end
+end
+
+for _, title in ipairs(Sorted(windows)) do
+	for _, row in ipairs(windows[title].rows or {}) do
+		ResolveRow(windows[title], row)
+	end
+end
+
 local WritePart = function(out, part, ids)
 	for _, note in ipairs(part.notes or {}) do
 		out[#out + 1] = "    " .. note
@@ -558,6 +739,19 @@ local WritePart = function(out, part, ids)
 				Set("anchors." .. margin, Number(axis[3] * MARGINS[margin][2]))
 			end
 		end
+		-- (stretched: the other side's line, or lines)
+		local second = part.second
+		if second then
+			for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(second[1]), AcrossOf(second[2]), second[3] },
+				{ DownOf(place[1]), DownOf(second[1]), DownOf(second[2]), second[4] } }) do
+				if (axis[1] ~= axis[2]) then
+					Set("anchors." .. axis[2], ids[place[2]] .. "." .. axis[3])
+					if (axis[4] ~= 0) then
+						Set("anchors." .. MARGIN_OF[axis[2]], Number(axis[4] * MARGINS[MARGIN_OF[axis[2]]][2]))
+					end
+				end
+			end
+		end
 	end
 	local rect = part.seen and part.seen.rect
 	local size = part.size or (rect and { rect[3], rect[4] }) or (part.w and { part.w, part.h })
@@ -568,10 +762,54 @@ local WritePart = function(out, part, ids)
 	out[#out + 1] = ""
 end
 
+-- A row as it's written: what it is, not where its parts ended up (theirs).
+local WriteRow = function(out, row, ids)
+	for _, note in ipairs(row.notes or {}) do
+		out[#out + 1] = "    " .. note
+	end
+	out[#out + 1] = "    WowRow {"
+	local Set = function(key, value)
+		out[#out + 1] = "        " .. key .. ": " .. value
+	end
+	local members = {}
+	for i, name in ipairs(row.members) do
+		members[i] = Quote(name)
+	end
+	Set("name", Quote(row.name))
+	Set("parts", "[" .. table.concat(members, ", ") .. "]")
+	if row.fit then
+		Set("fit", Quote(row.fit))
+	end
+	if row.spacing then
+		Set("spacing", Number(row.spacing))
+	end
+	local on = ids[row.on]
+	Set("anchors.left", on .. ".left")
+	if (row.left ~= 0) then
+		Set("anchors.leftMargin", Number(row.left))
+	end
+	Set("anchors.right", on .. ".right")
+	if (row.right ~= 0) then
+		Set("anchors.rightMargin", Number(row.right))
+	end
+	Set("anchors." .. row.line, on .. "." .. row.to)
+	if (row.y ~= 0) then
+		local margin = MARGIN_OF[row.line]
+		Set("anchors." .. margin, Number(row.y * MARGINS[margin][2]))
+	end
+	out[#out + 1] = "    }"
+	out[#out + 1] = ""
+end
+
 local WriteWindow = function(window)
 	local names, ghosts = { [window.name] = true }, {}
 	for name, part in pairs(window.parts) do
 		names[name] = true
+	end
+	for _, row in ipairs(window.rows or {}) do
+		if (not names[row.on]) then
+			ghosts[row.on] = true
+		end
 	end
 	for _, part in pairs(window.parts) do
 		local rel = part.place and part.place[2]
@@ -592,6 +830,9 @@ local WriteWindow = function(window)
 		"    width: " .. Number(width), "    height: " .. Number(height), "" }
 	for _, name in ipairs(Sorted(window.parts)) do
 		WritePart(out, window.parts[name], ids)
+	end
+	for _, row in ipairs(window.rows or {}) do
+		WriteRow(out, row, ids)
 	end
 	for _, name in ipairs(Sorted(ghosts)) do
 		local x, y, w, h = GhostRect(window, name)
@@ -624,6 +865,10 @@ local Line = function(part)
 		values[#values + 1] = Number(part.size[1])
 		values[#values + 1] = Number(part.size[2])
 	end
+	if part.second then
+		local second = part.second
+		values[#values + 1] = string.format("second = { %q, %q, %s, %s }", second[1], second[2], Number(second[3]), Number(second[4]))
+	end
 	local line = string.format("%s = { %s },", key, table.concat(values, ", "))
 	if part.tail then
 		return line .. " " .. part.tail:gsub("^//", "--")
@@ -635,7 +880,8 @@ local out = { [[
 -- The parts placed for good: { point, the frame it's placed on, that frame's
 -- point, x, y, width, height } (x right, y up), without a width and height it
 -- keeps its size, { width, height } alone sizes it where it is, whatever else
--- moves it (modules/blizzard/adjust.lua).
+-- moves it; second = { point, that frame's point, x, y } stretches it to there
+-- too (modules/blizzard/adjust.lua).
 -- Written from windows/*.qml by tools/positions.lua: change those (docs:
 -- Common Tasks), this file is overwritten.
 local _, Engine = ...
@@ -705,6 +951,8 @@ for title, window in pairs(windows) do
 				end
 			end
 		end
+		-- (not to be dragged: it follows from its row, or its two sides)
+		copy.heldBy = part.heldBy or (part.second and "its two sides") or nil
 		copy.use = part.pin and { place = (part.pin ~= "size") and part.place or nil, size = (part.pin ~= "place") and part.size or nil } or nil
 		-- (a point placed on nothing: on its parent, as the game has it)
 		for i, point in ipairs(seen.points or {}) do

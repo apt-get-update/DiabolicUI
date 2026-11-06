@@ -532,6 +532,124 @@ Engine:NewStaticConfig("Positions", {
 	lu.assertStrContains(file, "height: 74")
 end
 
+-- A row: its parts placed and sized to fit the room, kept as a row in its file; a
+-- part stretched on two sides, in the file and for the game.
+function TestPositionsTool:test_rows_and_what_stretches()
+	local dir = Folder()
+	Write(dir .. "/windows/W.qml", [=[
+import QtQuick
+WowWindow {
+    id: w
+    name: "W"
+    width: 400
+    height: 200
+    Part { id: a; name: "A"; kind: "Button"; text: "Aaa"; width: 50; height: 20 }
+    Part { id: b; name: "B"; kind: "Button"; text: "Bb"; width: 50; height: 20 }
+    Part { id: c; name: "C"; kind: "Button"; width: 40; height: 20 }
+    Part { id: d; name: "D"; kind: "Button"; width: 40; height: 20 }
+    Part { id: e; name: "E"; kind: "Button"; width: 40; height: 20 }
+    Part { id: f; name: "F"; kind: "Button"; width: 30; height: 20 }
+    Part {
+        id: wide
+        name: "Wide"
+        pin: "place"
+        anchors.left: w.left
+        anchors.leftMargin: 10
+        anchors.right: w.right
+        anchors.rightMargin: 20
+        anchors.top: w.top
+        anchors.topMargin: 5
+        anchors.bottom: w.bottom
+        anchors.bottomMargin: 15
+        width: 1
+        height: 1
+    }
+    // the room shared
+    WowRow {
+        name: "Fills"
+        parts: ["A", "B", "C"]
+        spacing: 10
+        anchors.left: w.left
+        anchors.leftMargin: 20
+        anchors.right: w.right
+        anchors.rightMargin: 20
+        anchors.bottom: w.bottom
+        anchors.bottomMargin: 8
+    }
+    WowRow {
+        name: "Middle"
+        parts: ["D", "E"]
+        fit: "center"
+        spacing: 10
+        anchors.left: w.left
+        anchors.right: w.right
+        anchors.top: w.top
+    }
+    WowRow {
+        name: "Ends"
+        parts: ["F"]
+        fit: "ends"
+        anchors.left: w.left
+        anchors.right: w.right
+        anchors.verticalCenter: w.verticalCenter
+    }
+}
+]=])
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { parts = {
+		A = { "CENTER", "W", "CENTER", 0, 0, 50, 20, kind = "Button", text = "Aaa", textWidth = 30, rect = { 0, 0, 50, 20 } },
+		B = { "CENTER", "W", "CENTER", 0, 0, 50, 20, kind = "Button", text = "Bb", textWidth = 20, rect = { 0, 0, 50, 20 } },
+	} } } }]=])
+	local Run = function()
+		Runs(dir)
+		return Read(dir .. "/windows/W.qml"), Read(dir .. "/positions.lua"), Read(dir .. "/layout.json")
+	end
+	local file, text, json = Run()
+	-- 360 of room, 20 of gaps, 40 of the one with no text, 50 of the texts: 250 shared
+	lu.assertStrContains(text, 'A = { "BOTTOMLEFT", "W", "BOTTOMLEFT", 20, 8, 155, 20 }')
+	lu.assertStrContains(text, 'B = { "LEFT", "A", "RIGHT", 10, 0, 145, 20 }')
+	lu.assertStrContains(text, 'C = { "LEFT", "B", "RIGHT", 10, 0, 40, 20 }')
+	-- 90 wide together, in the middle of 400; one at its ends: in the middle
+	lu.assertStrContains(text, 'D = { "TOPLEFT", "W", "TOPLEFT", 155, 0 }')
+	lu.assertStrContains(text, 'E = { "LEFT", "D", "RIGHT", 10, 0 }')
+	lu.assertStrContains(text, 'F = { "LEFT", "W", "LEFT", 185, 0 }')
+	-- stretched: both its points for the game, its size from them
+	lu.assertStrContains(text, 'Wide = { "TOPLEFT", "W", "TOPLEFT", 10, -5, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -20, 15 } }')
+	lu.assertStrContains(file, "anchors.rightMargin: 20")
+	lu.assertStrContains(file, "anchors.bottomMargin: 15")
+	lu.assertStrContains(file, "width: 370")
+	lu.assertStrContains(file, "height: 180")
+	-- the rows kept; what they hold not to be dragged
+	lu.assertStrContains(file, "// the room shared\n    WowRow {")
+	lu.assertStrContains(file, 'parts: ["A", "B", "C"]')
+	lu.assertStrContains(json, '"heldBy":"row Fills"')
+	lu.assertStrContains(json, '"heldBy":"its two sides"')
+	-- again: the same
+	local again, textAgain = Run()
+	lu.assertEquals(again, file)
+	lu.assertEquals(textAgain, text)
+	os.execute("rm -rf '" .. dir .. "'")
+end
+
+function TestPositionsTool:test_what_a_row_or_a_stretch_cant_be()
+	local Says = function(body)
+		local dir = Folder()
+		Write(dir .. "/windows/W.qml", 'WowWindow {\n    id: w\n    name: "W"\n    width: 100\n    height: 100\n' .. body .. "\n}\n")
+		local pipe = io.popen(string.format("cd '%s' && lua5.1 '%s/tools/positions.lua' - '%s/positions.lua' '%s/layout.json' '%s/windows' 2>&1; echo $?",
+			os.getenv("PWD"), os.getenv("PWD"), dir, dir, dir))
+		local said = pipe:read("*a")
+		pipe:close()
+		os.execute("rm -rf '" .. dir .. "'")
+		return said
+	end
+	lu.assertStrContains(Says('    Part { id: a; name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; width: 1; height: 1 }'),
+		"stretched, it needs a pin")
+	lu.assertStrContains(Says('    Part { id: a; name: "A"; pin: "place"; anchors.left: w.left; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top; width: 1; height: 1 }'),
+		"stretches between left and right only")
+	lu.assertStrContains(Says('    WowRow { name: "R"; parts: ["A"]; anchors.left: w.left; anchors.top: w.top }'), "a row goes from")
+	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'), "a row needs its parts")
+	lu.assertStrContains(Says('    WowRow { name: "R"; parts: ["Nope"]; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'), "Nope isn't a part")
+end
+
 -- A window the game scales: its rects on screen in its own units, as its parts'
 -- places and sizes are; a part held by two points sized with them.
 function TestPositionsTool:test_a_scaled_windows_rects_in_its_own_units()
