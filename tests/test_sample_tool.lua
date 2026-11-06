@@ -49,7 +49,14 @@ local Sample = function(edits)
 		file:write("return { [\"@components\"] = " .. edits .. " }")
 		file:close()
 	end
-	local pipe = io.popen("lua5.1 tools/sample.lua " .. (edits and EDITS or "") .. " 2>&1")
+	-- (recorded under the coverage run too: os.exit is what writes it)
+	local stats = os.getenv("DIABOLICUI_COVERAGE_STATS")
+	local command = "lua5.1 tools/sample.lua " .. (edits and EDITS or "")
+	if stats then
+		command = string.format("DIABOLICUI_COVERAGE_STATS=%s lua5.1 -e 'dofile(\"tests/coverage/hook.lua\"); arg = { [0] = \"tools/sample.lua\", %s }; dofile(\"tools/sample.lua\"); os.exit(0)'",
+			stats:gsub("%.out$", "") .. ".sample.out", edits and string.format("%q", EDITS):gsub('"', '\"') or "")
+	end
+	local pipe = io.popen(command .. " 2>&1")
 	local text = pipe:read("*a")
 	pipe:close()
 	return Decode(text)
@@ -89,6 +96,14 @@ function TestSample:test_every_component_is_drawn_and_nothing_fails()
 		end
 	end
 	pipe:close()
+end
+
+-- What breaks is said, as it's built and as it shows: for the editor to show it.
+function TestSample:test_what_breaks_is_said()
+	local sample = Sample('{ Window = { layout = false } }')
+	lu.assertTrue(#sample.problems >= 2)
+	lu.assertStrContains(sample.problems[1], "layout")
+	lu.assertStrContains(sample.problems[#sample.problems], "ERROR:")
 end
 
 function TestSample:test_a_button_shows_only_its_state()

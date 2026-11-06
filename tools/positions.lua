@@ -713,9 +713,7 @@ local ResolveRow = function(window, row)
 	local parts, widths, sum = {}, {}, 0
 	for i, name in ipairs(row.members) do
 		local part = window.parts[name]
-		if (not part) then
-			error(window.name .. ": " .. row.name .. ": " .. name .. " isn't a part of this file", 0)
-		elseif part.heldBy then
+		if part.heldBy then
 			error(window.name .. ": " .. row.name .. ": " .. name .. " is held by " .. part.heldBy, 0)
 		end
 		part.heldBy = "row " .. row.name

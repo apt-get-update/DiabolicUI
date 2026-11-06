@@ -25,6 +25,8 @@ local function trackedPath(source)
 		path = false
 		if source:sub(1, 1) == "@" then
 			local p = source:sub(2):gsub("\\", "/"):gsub("^%./", "")
+			-- (a tool loaded by its whole path, tools/positions.lua's shared.lua)
+			p = p:match("/(tools/[^/]+%.lua)$") or p
 			if p:match("%.lua$")
 				and not p:match("^tests/")
 				and not p:match("^docs/")

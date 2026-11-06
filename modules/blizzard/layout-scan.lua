@@ -115,10 +115,7 @@ end
 -- Most of `region` past the edges of a scroll frame whose scroll child holds
 -- it: the game cuts it off, so the editor isn't told about its art or words.
 local ScrolledOut = function(region)
-	local left, bottom, right, top = kit.Edges(region)
-	if not left then
-		return
-	end
+	local left, bottom, right, top = kit.Edges(region) -- (placed: those asking go by that first)
 	local child, frame = region, region:GetParent()
 	while frame do
 		if frame:IsObjectType("ScrollFrame") and (frame:GetScrollChild() == child) then

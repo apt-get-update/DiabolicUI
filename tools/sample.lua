@@ -61,13 +61,6 @@ local At = function(part, x, y, width, height)
 	return part
 end
 
-local Words = function(text, x, y, font)
-	local words = frame:CreateFontString(nil, "OVERLAY")
-	words:SetFontObject(font or "DiabolicFont_Narrow14")
-	words:SetText(text)
-	return At(words, x, y)
-end
-
 local Button = function(name, x, y, width, text)
 	local button = CreateFrame("Button", name, frame, "UIPanelButtonTemplate")
 	At(button, x, y, width, 22)

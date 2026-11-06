@@ -44,7 +44,9 @@ local Run = function(args, dir)
 	local stats = os.getenv("DIABOLICUI_COVERAGE_STATS")
 	if stats then
 		stats = (stats:sub(1, 1) == "/") and stats or (ROOT .. "/" .. stats)
-		code = string.format("dofile(%q); ", ROOT .. "/tests/coverage/hook.lua") .. code .. "; os.exit(0)"
+		-- (what it can't read ends it with an error: said, and recorded too)
+		code = string.format("dofile(%q); local ok, problem = pcall(function() ", ROOT .. "/tests/coverage/hook.lua") .. code
+			.. " end); if not ok then print(problem) end; os.exit(0)"
 		env = "DIABOLICUI_COVERAGE_STATS=" .. stats:gsub("%.out$", "") .. ".tool.out "
 	end
 	local run = io.popen("cd '" .. (dir or ROOT) .. "' && " .. env .. LUA .. " -e '" .. code .. "' 2>&1")
@@ -352,6 +354,7 @@ function TestPositionsTool:test_the_components()
 		"    property var coords: [14/64, 1]",
 		"    property var line_color: [.5, 1, 0]",
 		'    property var up: ({ normal: "textures/U.tga", deep: { size: 2 } })',
+		"    property bool shown: true",
 		"}",
 		"",
 	}, "\n"))
@@ -367,7 +370,7 @@ function TestPositionsTool:test_the_components()
 	lu.assertStrContains(json, '{"key":"coords","kind":"list","value":[0.2188,1]}')
 	lu.assertStrContains(json, '{"key":"up.deep.size","kind":"number","value":2}')
 	-- the editor's changes
-	Write(dir .. "/edits.lua", 'return { ["@components"] = { Thing = { width = 18, ["up.deep.size"] = 3, line_color = { 1, 1, 1 } }, Gone = { a = 1 } } }')
+	Write(dir .. "/edits.lua", 'return { ["@components"] = { Thing = { width = 18, ["up.deep.size"] = 3, line_color = { 1, 1, 1 }, shown = false }, Gone = { a = 1 } } }')
 	local before = Read(path)
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" })
 	local after = Read(path)
@@ -375,6 +378,7 @@ function TestPositionsTool:test_the_components()
 	lu.assertStrContains(after, "    // how wide\n    property real width: 18 // Blizzard's\n")
 	lu.assertStrContains(after, '    property var up: ({ deep: { size: 3 }, normal: "textures/U.tga" })\n')
 	lu.assertStrContains(after, "    property var line_color: [1, 1, 1]\n")
+	lu.assertStrContains(after, "    property bool shown: false\n")
 	lu.assertStrContains(after, "    property var coords: [14/64, 1]\n") -- (what's not changed, as it was)
 	lu.assertNotEquals(after, before)
 	lu.assertStrContains(lua, "width = 18,")
@@ -840,10 +844,7 @@ function TestPositionsTool:test_what_a_row_or_a_stretch_cant_be()
 	local Says = function(body)
 		local dir = Folder()
 		Write(dir .. "/windows/W.qml", 'WowWindow {\n    id: w\n    name: "W"\n    width: 100\n    height: 100\n' .. body .. "\n}\n")
-		local pipe = io.popen(string.format("cd '%s' && lua5.1 '%s/tools/positions.lua' - '%s/positions.lua' '%s/layout.json' '%s/windows' 2>&1; echo $?",
-			os.getenv("PWD"), os.getenv("PWD"), dir, dir, dir))
-		local said = pipe:read("*a")
-		pipe:close()
+		local said = Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 		os.execute("rm -rf '" .. dir .. "'")
 		return said
 	end
@@ -856,6 +857,20 @@ function TestPositionsTool:test_what_a_row_or_a_stretch_cant_be()
 	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; anchors.left: parent.left; anchors.top: parent.top } }'), "its row places it")
 	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Frame { name: "A"; WowRow { name: "S" } } }'), "a row goes from")
 	lu.assertStrContains(Says('    Part { name: "A"; Ghost { name: "G" } }'), "only a WowWindow")
+	lu.assertStrContains(Says('    Part { name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top }'),
+		"two anchors across and two down at most")
+	lu.assertStrContains(Says('    Part { id: b; name: "B"; width: 1; height: 1 }\n    Part { name: "A"; pin: "place"; anchors.left: w.left; anchors.right: b.right; anchors.top: w.top; width: 1; height: 1 }'),
+		"stretches between the lines of one part only")
+	lu.assertStrContains(Says('    WowRow { name: "R"; fit: "wide"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A" } }'), "its fit is")
+	-- (in a frame of no known width; a part in two rows)
+	lu.assertStrContains(Says('    Ghost { name: "G"; x: 0; y: 0; WowRow { name: "R"; anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; Part { name: "A"; width: 1; height: 1 } } }'),
+		"how wide G is")
+	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; width: 1; height: 1 } }\n'
+		.. '    WowRow { name: "S"; anchors.left: w.left; anchors.right: w.right; anchors.bottom: w.bottom; Part { name: "A"; width: 1; height: 1 } }'), "A is held by row R")
+	-- what's only said: wider than its room, as they are; a stretch's sides either way round
+	lu.assertStrContains(Says('    WowRow { name: "R"; fit: "ends"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; width: 90; height: 1 }; Part { name: "B"; width: 90; height: 1 } }'),
+		"W: R is wider than its room (100).")
+	lu.assertStrContains(Says('    Part { name: "A"; pin: "place"; anchors.right: w.right; anchors.left: w.left; anchors.top: w.top; width: 1; height: 1 }'), "in use.")
 end
 
 -- Each part in what it's placed on: moved there by the editor, or by the scan;

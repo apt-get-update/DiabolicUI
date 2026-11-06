@@ -560,6 +560,13 @@ function TestLayoutAudit:test_a_foot_holds_its_buttons()
 	assertClean(client)
 end
 
+-- A part not placed has no sides yet.
+function TestLayoutAudit:test_a_part_not_placed_has_no_edges()
+	boot()
+	lu.assertNil((kit.Edges(CreateFrame("Frame", nil, _G.UIParent))))
+	assertClean(client)
+end
+
 -- A list over a foot goes by its iron bar, not by its buttons.
 function TestLayoutAudit:test_a_list_goes_by_the_foot()
 	boot()
