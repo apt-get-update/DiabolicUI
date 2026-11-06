@@ -130,7 +130,7 @@ Module.StyleLFG = function(self)
 				end
 				-- the queue's down to over its foot: its room under it as over it
 				if (name == "LFRQueueFrameSpecificListScrollFrame") then
-					zone:SetPoint("BOTTOM", _G.LFRQueueFrameFindGroupButton, "TOP", 0, kit:FootReach() + config.raid_queue_gap)
+					zone:SetPoint("BOTTOM", window.DiabolicFoot, "TOP", 0, kit:FootBar() + config.raid_queue_gap)
 				end
 			end
 		end

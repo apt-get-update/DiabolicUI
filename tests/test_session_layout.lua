@@ -560,6 +560,14 @@ function TestLayoutAudit:test_a_foot_holds_its_buttons()
 	assertClean(client)
 end
 
+-- A list over a foot goes by its iron bar, not by its buttons.
+function TestLayoutAudit:test_a_list_goes_by_the_foot()
+	boot()
+	lu.assertEquals({ _G.FriendsFrameFriendsScrollFrameDiabolicZone:GetPoint(3) },
+		{ "BOTTOM", _G.FriendsFrameDiabolicFoot, "TOP", 0, kit:FootBar() + 6 })
+	assertClean(client)
+end
+
 function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	boot()
 	local frame = window("AuditBroken")

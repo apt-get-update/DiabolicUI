@@ -596,7 +596,7 @@ function TestQuestLog:test_the_details_and_buttons_kept_in_place()
 	local panel, scroll = _G.QuestLogControlPanel, _G.QuestLogDetailScrollFrame
 	panel:SetParent(_G.QuestLogFrame)
 	_G.QuestLogControlPanel_UpdatePosition()
-	lu.assertEquals({ panel:GetPoint() }, { "BOTTOMLEFT", module.Window, "BOTTOMLEFT", unpack(config.controls) })
+	lu.assertEquals({ panel:GetPoint() }, { "BOTTOMLEFT", module.Window.DiabolicFoot, "BOTTOMLEFT", unpack(config.controls) })
 	scroll:SetParent(_G.QuestLogFrame)
 	_G.QuestLogDetailFrame_AttachToQuestLog()
 	lu.assertEquals({ scroll:GetPoint() }, { "TOPRIGHT", module.Window, "TOPRIGHT", unpack(config.details) })

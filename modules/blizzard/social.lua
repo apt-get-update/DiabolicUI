@@ -113,9 +113,8 @@ Module.StyleSocial = function(self)
 		if list then
 			local insets = config.list_panel_overrides[name] or config.list_panel_insets
 			local zone = kit:AddZone(list, "leather", insets)
-			local button = _G[config.list_bottoms[name] or ""]
-			if button then
-				self:SetZoneBottom(zone, list, insets, button, kit:FootReach() + (config.list_gaps[name] or config.list_gap))
+			if config.lists_on_foot[name] then
+				self:SetZoneBottom(zone, list, insets, window.DiabolicFoot, kit:FootBar() + (config.list_gaps[name] or config.list_gap))
 			elseif (name == "GuildListScrollFrame") and self.MOTD then
 				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
 			end

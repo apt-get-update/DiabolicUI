@@ -17,42 +17,6 @@ WowWindow {
         height: 512
 
         FontString {
-            name: "InboxCurrentPage"
-            wowParent: "InboxFrame"
-            pin: "place"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -14
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 81
-            width: 192
-            height: 1
-        }
-
-        Button {
-            name: "InboxNextPageButton"
-            wowParent: "InboxFrame"
-            pin: "place"
-            anchors.horizontalCenter: parent.left
-            anchors.horizontalCenterOffset: 314
-            anchors.verticalCenter: parent.bottom
-            anchors.verticalCenterOffset: -89
-            width: 26
-            height: 26
-        }
-
-        Button {
-            name: "InboxPrevPageButton"
-            wowParent: "InboxFrame"
-            pin: "place"
-            anchors.horizontalCenter: parent.left
-            anchors.horizontalCenterOffset: 50
-            anchors.verticalCenter: parent.bottom
-            anchors.verticalCenterOffset: -89
-            width: 26
-            height: 26
-        }
-
-        FontString {
             name: "InboxTitleText"
             text: "Inbox"
             wowParent: "InboxFrame"
@@ -1022,6 +986,120 @@ WowWindow {
             width: 354
             height: 36
 
+            FontString {
+                name: "InboxCurrentPage"
+                wowParent: "InboxFrame"
+                pin: "place"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: -6
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+                width: 192
+                height: 1
+            }
+
+            Button {
+                name: "InboxNextPageButton"
+                wowParent: "InboxFrame"
+                pin: "place"
+                anchors.horizontalCenter: parent.left
+                anchors.horizontalCenterOffset: 307
+                anchors.verticalCenter: parent.bottom
+                anchors.verticalCenterOffset: -16
+                width: 26
+                height: 26
+            }
+
+            Button {
+                name: "InboxPrevPageButton"
+                wowParent: "InboxFrame"
+                pin: "place"
+                anchors.horizontalCenter: parent.left
+                anchors.horizontalCenterOffset: 43
+                anchors.verticalCenter: parent.bottom
+                anchors.verticalCenterOffset: -16
+                width: 26
+                height: 26
+            }
+
+            Frame {
+                name: "SendMailMoneyFrame"
+                wowParent: "SendMailFrame"
+                pin: "place"
+                anchors.right: parent.left
+                anchors.rightMargin: -176
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 11
+                width: 126.4
+                height: 13
+
+                Button {
+                    name: "SendMailMoneyFrameCopperButton"
+                    text: "79"
+                    wowParent: "SendMailMoneyFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 30.4
+                    height: 13
+
+                    FontString {
+                        name: "SendMailMoneyFrameCopperButtonText"
+                        text: "79"
+                        wowParent: "SendMailMoneyFrameCopperButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 17.4
+                        height: 14.2
+                    }
+
+                    Button {
+                        name: "SendMailMoneyFrameSilverButton"
+                        text: "83"
+                        wowParent: "SendMailMoneyFrame"
+                        anchors.right: parent.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 30.4
+                        height: 13
+
+                        Button {
+                            name: "SendMailMoneyFrameGoldButton"
+                            text: "8146"
+                            wowParent: "SendMailMoneyFrame"
+                            anchors.right: parent.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 44.6
+                            height: 13
+
+                            FontString {
+                                name: "SendMailMoneyFrameGoldButtonText"
+                                text: "8146"
+                                wowParent: "SendMailMoneyFrameGoldButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 31.6
+                                height: 14.2
+                            }
+                        }
+
+                        FontString {
+                            name: "SendMailMoneyFrameSilverButtonText"
+                            text: "83"
+                            wowParent: "SendMailMoneyFrameSilverButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 17.4
+                            height: 14.2
+                        }
+                    }
+                }
+            }
+
             WowRow {
                 name: "SendMailButtons"
                 fit: "equal"
@@ -1396,83 +1474,6 @@ WowWindow {
                             width: 68
                             height: 10.3
                         }
-                    }
-                }
-            }
-        }
-
-        Frame {
-            name: "SendMailMoneyFrame"
-            wowParent: "SendMailFrame"
-            anchors.right: parent.left
-            anchors.rightMargin: -183
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 84
-            width: 126.4
-            height: 13
-
-            Button {
-                name: "SendMailMoneyFrameCopperButton"
-                text: "79"
-                wowParent: "SendMailMoneyFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30.4
-                height: 13
-
-                FontString {
-                    name: "SendMailMoneyFrameCopperButtonText"
-                    text: "79"
-                    wowParent: "SendMailMoneyFrameCopperButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
-                    height: 14.2
-                }
-
-                Button {
-                    name: "SendMailMoneyFrameSilverButton"
-                    text: "83"
-                    wowParent: "SendMailMoneyFrame"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30.4
-                    height: 13
-
-                    Button {
-                        name: "SendMailMoneyFrameGoldButton"
-                        text: "8146"
-                        wowParent: "SendMailMoneyFrame"
-                        anchors.right: parent.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 44.6
-                        height: 13
-
-                        FontString {
-                            name: "SendMailMoneyFrameGoldButtonText"
-                            text: "8146"
-                            wowParent: "SendMailMoneyFrameGoldButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 31.6
-                            height: 14.2
-                        }
-                    }
-
-                    FontString {
-                        name: "SendMailMoneyFrameSilverButtonText"
-                        text: "83"
-                        wowParent: "SendMailMoneyFrameSilverButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 17.4
-                        height: 14.2
                     }
                 }
             }

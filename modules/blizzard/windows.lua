@@ -2022,11 +2022,10 @@ Module.AddFooter = function(self, window, height)
 	return foot
 end
 
--- How far over the top of a foot's buttons its iron bar reaches
--- (window.footer_margin, then the bar over the foot's top): what's over
--- the foot is placed from there.
-Module.FootReach = function(self)
-	return config.footer_margin + config.footer_rail.bar[2] - config.footer_rail.cut[1]
+-- How far over a foot's top its iron bar reaches: what's over the foot is
+-- placed from there.
+Module.FootBar = function(self)
+	return config.footer_rail.bar[2] - config.footer_rail.cut[1]
 end
 
 -- A foot `height` high (true: window.footer_height, a row of buttons); none

@@ -18,74 +18,6 @@ WowWindow {
         height: 508
 
         Button {
-            name: "DiabolicSellJunkButton"
-            text: "Sell Junk"
-            wowParent: "MerchantFrame"
-            style: "Button"
-            pin: "place"
-            anchors.right: parent.right
-            anchors.rightMargin: 32
-            anchors.top: parent.top
-            anchors.topMargin: 434
-            width: 90
-            height: 22
-
-            FontString {
-                name: "DiabolicSellJunkButtonText"
-                text: "Sell Junk"
-                wowParent: "DiabolicSellJunkButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 68
-                height: 11.9
-            }
-        }
-
-        Frame {
-            name: "MerchantBuyBackItem"
-            wowParent: "MerchantFrame"
-            pin: "place"
-            anchors.left: parent.left
-            anchors.leftMargin: 39.2
-            anchors.top: parent.top
-            anchors.topMargin: 433.8
-            width: 153
-            height: 37
-
-            Button {
-                name: "MerchantBuyBackItemItemButton"
-                wowParent: "MerchantBuyBackItem"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 37.5
-                height: 36.4
-
-                FontString {
-                    name: "MerchantBuyBackItemItemButtonCount"
-                    text: "20"
-                    wowParent: "MerchantBuyBackItemItemButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 5
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 2
-                    width: 17.4
-                    height: 14.2
-                }
-
-                FontString {
-                    name: "MerchantBuyBackItemName"
-                    wowParent: "MerchantBuyBackItem"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 16
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 150
-                    height: 26
-                }
-            }
-        }
-
-        Button {
             name: "MerchantFrameCloseButton"
             wowParent: "MerchantFrame"
             style: "CloseButton"
@@ -140,6 +72,74 @@ WowWindow {
             anchors.rightMargin: 23
             width: 454
             height: 65.2
+
+            Button {
+                name: "DiabolicSellJunkButton"
+                text: "Sell Junk"
+                wowParent: "MerchantFrame"
+                style: "Button"
+                pin: "place"
+                anchors.right: parent.right
+                anchors.rightMargin: 9
+                anchors.top: parent.top
+                anchors.topMargin: 14
+                width: 90
+                height: 22
+
+                FontString {
+                    name: "DiabolicSellJunkButtonText"
+                    text: "Sell Junk"
+                    wowParent: "DiabolicSellJunkButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 68
+                    height: 11.9
+                }
+            }
+
+            Frame {
+                name: "MerchantBuyBackItem"
+                wowParent: "MerchantFrame"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 16.2
+                anchors.top: parent.top
+                anchors.topMargin: 13.8
+                width: 153
+                height: 37
+
+                Button {
+                    name: "MerchantBuyBackItemItemButton"
+                    wowParent: "MerchantBuyBackItem"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 37.5
+                    height: 36.4
+
+                    FontString {
+                        name: "MerchantBuyBackItemItemButtonCount"
+                        text: "20"
+                        wowParent: "MerchantBuyBackItemItemButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 2
+                        width: 17.4
+                        height: 14.2
+                    }
+
+                    FontString {
+                        name: "MerchantBuyBackItemName"
+                        wowParent: "MerchantBuyBackItem"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 16
+                        anchors.top: parent.top
+                        anchors.topMargin: -1
+                        width: 150
+                        height: 26
+                    }
+                }
+            }
 
             Frame {
                 name: "MerchantMoneyFrame"
@@ -216,6 +216,28 @@ WowWindow {
                             height: 14.2
                         }
                     }
+                }
+            }
+
+            Button {
+                name: "MerchantRepairAllButton"
+                wowParent: "MerchantFrame"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 265
+                anchors.top: parent.top
+                anchors.topMargin: 14
+                width: 36
+                height: 36
+
+                Button {
+                    name: "MerchantRepairItemButton"
+                    wowParent: "MerchantFrame"
+                    anchors.right: parent.left
+                    anchors.rightMargin: 2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 36
+                    height: 36
                 }
             }
         }
@@ -476,28 +498,6 @@ WowWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 26
                 height: 26
-            }
-        }
-
-        Button {
-            name: "MerchantRepairAllButton"
-            wowParent: "MerchantFrame"
-            pin: "place"
-            anchors.left: parent.left
-            anchors.leftMargin: 288
-            anchors.top: parent.top
-            anchors.topMargin: 434
-            width: 36
-            height: 36
-
-            Button {
-                name: "MerchantRepairItemButton"
-                wowParent: "MerchantFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-                width: 36
-                height: 36
             }
         }
     }

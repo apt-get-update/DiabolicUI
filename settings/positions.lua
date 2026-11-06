@@ -10,7 +10,22 @@ local _, Engine = ...
 Engine:NewStaticConfig("Positions", {
 
 	-- AuctionFrame ----------------------------------------------------------
+	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 548, 7, 84.3, 22 }, -- Button "Buy"
+	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auctions"
 	AuctionFrameDiabolicFoot = { "BOTTOMLEFT", "AuctionFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
+	AuctionFrameMoneyFrame = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 182, 13 }, -- Frame
+	AuctionatorCloseButton = { "LEFT", "Atr_CancelSelectionButton", "RIGHT", 6, 0, 74.9, 22 }, -- Button "Close"
+	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 621, 7, 121.1, 22 }, -- Button "Cancel Auction"
+	AuctionsCloseButton = { "LEFT", "AuctionsCancelAuctionButton", "RIGHT", 6, 0, 76.9, 22 }, -- Button "Close"
+	BidBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
+	BidBidPrice = { "BOTTOM", "AuctionFrameDiabolicFoot", "BOTTOM", -52, 11 }, -- Frame
+	BidBidText = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOM", -151.9, 14 }, -- FontString "Bid"
+	BidBuyoutButton = { "LEFT", "BidBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
+	BidCloseButton = { "LEFT", "BidBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
+	BrowseBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
+	BrowseBidPrice = { "BOTTOM", "AuctionFrameDiabolicFoot", "BOTTOM", -12, 11 }, -- Frame
+	BrowseBuyoutButton = { "LEFT", "BrowseBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
+	BrowseCloseButton = { "LEFT", "BrowseBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
 
 	-- BattlefieldFrame ------------------------------------------------------
 	BattlefieldFrameCancelButton = { "LEFT", "BattlefieldFrameJoinButton", "RIGHT", 6, 0, 75.6, 22 }, -- Button "Cancel"
@@ -42,6 +57,7 @@ Engine:NewStaticConfig("Positions", {
 	-- the parchments', its right on their panels'
 	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -102 }, -- ScrollFrame
+	ClassTrainerMoneyFrame = { "BOTTOMRIGHT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 181, 12 }, -- Frame
 	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 83.5, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
@@ -81,6 +97,8 @@ Engine:NewStaticConfig("Positions", {
 	GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 }, -- Frame
 	-- the info's page the logs' size, in the same place
 	GuildBankInfoScrollFrame = { 688, 304 }, -- ScrollFrame
+	GuildBankMoneyFrame = { "BOTTOMRIGHT", "GuildBankFrameDiabolicFoot", "BOTTOMRIGHT", -5, 29 }, -- Frame
+	GuildBankMoneyLimitLabel = { "BOTTOMLEFT", "GuildBankFrameDiabolicFoot", "BOTTOMLEFT", 27, 29 }, -- FontString "Available Amount:"
 	GuildBankTabInfoEditBox = { 688, 218 }, -- EditBox
 	GuildBankTransactionsScrollFrame = { "TOPRIGHT", "GuildBankFrame", "TOPRIGHT", -50, -48 }, -- ScrollFrame
 
@@ -135,17 +153,18 @@ Engine:NewStaticConfig("Positions", {
 	MacroNewButton = { "BOTTOMLEFT", "MacroFrameDiabolicFoot", "BOTTOMLEFT", 172, 7, 80, 22 }, -- Button "New"
 
 	-- MailFrame -------------------------------------------------------------
-	InboxCurrentPage = { "BOTTOM", "InboxFrame", "BOTTOM", -14, 81 }, -- FontString
-	InboxNextPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 314, 89 }, -- Button
-	InboxPrevPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 50, 89 }, -- Button
+	InboxCurrentPage = { "BOTTOM", "MailFrameDiabolicFoot", "BOTTOM", -6, 8 }, -- FontString
+	InboxNextPageButton = { "CENTER", "MailFrameDiabolicFoot", "BOTTOMLEFT", 307, 16 }, -- Button
+	InboxPrevPageButton = { "CENTER", "MailFrameDiabolicFoot", "BOTTOMLEFT", 43, 16 }, -- Button
 	MailFrameDiabolicFoot = { "BOTTOMLEFT", "MailFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Cancel"
 	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 178, 7, 78, 22 }, -- Button "Send"
 	SendMailMoneyButton = { "BOTTOMLEFT", "SendMailFrame", "BOTTOMLEFT", 30, 120 }, -- Frame
+	SendMailMoneyFrame = { "BOTTOMRIGHT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 176, 11 }, -- Frame
 
 	-- MerchantFrame ---------------------------------------------------------
-	DiabolicSellJunkButton = { "TOPRIGHT", "MerchantFrameDiabolic", "TOPRIGHT", -32, -434 }, -- Button "Sell Junk"
-	MerchantBuyBackItem = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.2, -433.8 }, -- Frame
+	DiabolicSellJunkButton = { "TOPRIGHT", "MerchantFrameDiabolicFoot", "TOPRIGHT", -9, -14 }, -- Button "Sell Junk"
+	MerchantBuyBackItem = { "TOPLEFT", "MerchantFrameDiabolicFoot", "TOPLEFT", 16.2, -13.8 }, -- Frame
 	MerchantFrameDiabolicFoot = { "BOTTOMLEFT", "MerchantFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	MerchantItem1 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -72 }, -- Frame
 	MerchantItem10 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 257.3, -280 }, -- Frame
@@ -163,7 +182,7 @@ Engine:NewStaticConfig("Positions", {
 	MerchantNextPageButton = { "LEFT", "MerchantPageText", "RIGHT", 8, 0 }, -- Button
 	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 4"
 	MerchantPrevPageButton = { "RIGHT", "MerchantPageText", "LEFT", -8, 0 }, -- Button
-	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 288, -434 }, -- Button
+	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolicFoot", "TOPLEFT", 265, -14 }, -- Button
 
 	-- OpenMailFrame ---------------------------------------------------------
 	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Close"

@@ -83,6 +83,25 @@ function TestAuctionHouse:test_each_auctionator_page_shows()
 	assertClean(client)
 end
 
+-- The bottom row in the foot, right up against its side: Blizzard's own spots
+-- no longer count.
+function TestAuctionHouse:test_the_bottom_rows_on_the_foot()
+	open(true)
+	local foot = _G.AuctionFrameDiabolicFoot
+	lu.assertEquals(foot:GetHeight(), 35)
+	for _, row in ipairs({ { "BrowseBidButton", "BrowseCloseButton" }, { "BidBidButton", "BidCloseButton" },
+		{ "AuctionsCancelAuctionButton", "AuctionsCloseButton" }, { "Atr_Buy1_Button", "AuctionatorCloseButton" } }) do
+		local first, last = _G[row[1]], _G[row[2]]
+		local _, on = first:GetPoint()
+		lu.assertEquals(on, foot, row[1])
+		lu.assertEquals(first:GetBottom() - foot:GetBottom(), 7, row[1])
+		lu.assertTrue(math.abs(foot:GetRight() - last:GetRight() - 9) < .2, row[2])
+	end
+	local _, money = _G.AuctionFrameMoneyFrame:GetPoint()
+	lu.assertEquals(money, foot)
+	assertClean(client)
+end
+
 function TestAuctionHouse:test_browse_on_the_grid()
 	open()
 	page(1)
@@ -253,11 +272,11 @@ function TestAuctionHouse:test_auctionators_band_tabs_and_foot()
 	lu.assertNotNil(_G.Atr_Search_Box.DiabolicOutset)
 	lu.assertNotNil(_G.Atr_Duration.DiabolicPlate)
 	lu.assertNotNil(_G.Atr_ListTabsTab1.DiabolicArt)
-	-- its foot's buttons lower (26), once
-	lu.assertEquals(select(5, _G.AuctionatorCloseButton:GetPoint()), 14 - 26)
+	-- its foot's buttons in the foot, as it shows and again
+	lu.assertEquals(select(5, _G.Atr_Buy1_Button:GetPoint()), 7)
 	_G.AuctionFrame:Hide()
 	_G.AuctionFrame:Show()
-	lu.assertEquals(select(5, _G.AuctionatorCloseButton:GetPoint()), 14 - 26)
+	lu.assertEquals(select(5, _G.Atr_Buy1_Button:GetPoint()), 7)
 	assertClean(client)
 end
 

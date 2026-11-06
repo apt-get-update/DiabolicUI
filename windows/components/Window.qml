@@ -29,10 +29,8 @@ QtObject {
     property var title_plate: ({ texture: "textures/DiabolicUI_D3_TitlePlate.tga", rows: 70/128, width: 300, height: 41, y: -15, text_width: 200, file_width: 512, cuts: [96, 140, 376, 420], max_width: 440, side_room: 62, text_offset: 1, font: "DiabolicFont_HeaderRegular14", color: [.86, .76, .6], gem: { ring: "textures/DiabolicUI_D3_GemRing.tga", size: 40, x: 35, y: 0, glass: .66, glass_offset: [0, 0] } })
     property string title_font: "DiabolicFont_HeaderRegular18Title"
 
-    // a window's foot (its rough stone, inside its iron frame): how high for a row of
-    // buttons, its top over theirs (what's over the foot is placed from that)
+    // a window's foot (its rough stone, inside its iron frame): how high for a row of buttons
     property real footer_height: 35
-    property real footer_margin: 6
 
     // the iron bar along the foot's top: the frame's left edge (its file's first 32px)
     // turned; cut, the part of it drawn, bar, the bar itself (from the window's edge)

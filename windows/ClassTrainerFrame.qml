@@ -138,6 +138,84 @@ WowWindow {
             width: 372
             height: 47
 
+            Frame {
+                name: "ClassTrainerMoneyFrame"
+                wowParent: "ClassTrainerFrame"
+                pin: "place"
+                anchors.right: parent.left
+                anchors.rightMargin: -181
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 12
+                width: 126.4
+                height: 13
+
+                Button {
+                    name: "ClassTrainerMoneyFrameCopperButton"
+                    text: "13"
+                    wowParent: "ClassTrainerMoneyFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 30.4
+                    height: 13
+
+                    FontString {
+                        name: "ClassTrainerMoneyFrameCopperButtonText"
+                        text: "13"
+                        wowParent: "ClassTrainerMoneyFrameCopperButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 17.4
+                        height: 14.2
+                    }
+
+                    Button {
+                        name: "ClassTrainerMoneyFrameSilverButton"
+                        text: "16"
+                        wowParent: "ClassTrainerMoneyFrame"
+                        anchors.right: parent.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 30.4
+                        height: 13
+
+                        Button {
+                            name: "ClassTrainerMoneyFrameGoldButton"
+                            text: "3654"
+                            wowParent: "ClassTrainerMoneyFrame"
+                            anchors.right: parent.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 44.6
+                            height: 13
+
+                            FontString {
+                                name: "ClassTrainerMoneyFrameGoldButtonText"
+                                text: "3654"
+                                wowParent: "ClassTrainerMoneyFrameGoldButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 31.6
+                                height: 14.2
+                            }
+                        }
+
+                        FontString {
+                            name: "ClassTrainerMoneyFrameSilverButtonText"
+                            text: "16"
+                            wowParent: "ClassTrainerMoneyFrameSilverButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 17.4
+                            height: 14.2
+                        }
+                    }
+                }
+            }
+
             WowRow {
                 name: "TrainerButtons"
                 fit: "equal"
@@ -537,83 +615,6 @@ WowWindow {
             anchors.topMargin: -16
             width: 300
             height: 1680
-        }
-    }
-
-    Frame {
-        name: "ClassTrainerMoneyFrame"
-        wowParent: "ClassTrainerFrame"
-        anchors.right: parent.left
-        anchors.rightMargin: -180
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 86
-        width: 126.4
-        height: 13
-
-        Button {
-            name: "ClassTrainerMoneyFrameCopperButton"
-            text: "13"
-            wowParent: "ClassTrainerMoneyFrame"
-            anchors.right: parent.right
-            anchors.rightMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30.4
-            height: 13
-
-            FontString {
-                name: "ClassTrainerMoneyFrameCopperButtonText"
-                text: "13"
-                wowParent: "ClassTrainerMoneyFrameCopperButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 17.4
-                height: 14.2
-            }
-
-            Button {
-                name: "ClassTrainerMoneyFrameSilverButton"
-                text: "16"
-                wowParent: "ClassTrainerMoneyFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30.4
-                height: 13
-
-                Button {
-                    name: "ClassTrainerMoneyFrameGoldButton"
-                    text: "3654"
-                    wowParent: "ClassTrainerMoneyFrame"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 44.6
-                    height: 13
-
-                    FontString {
-                        name: "ClassTrainerMoneyFrameGoldButtonText"
-                        text: "3654"
-                        wowParent: "ClassTrainerMoneyFrameGoldButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 31.6
-                        height: 14.2
-                    }
-                }
-
-                FontString {
-                    name: "ClassTrainerMoneyFrameSilverButtonText"
-                    text: "16"
-                    wowParent: "ClassTrainerMoneyFrameSilverButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
-                    height: 14.2
-                }
-            }
         }
     }
 

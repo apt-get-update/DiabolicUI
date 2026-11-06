@@ -127,6 +127,9 @@ its place pinned. Its buttons go in it. Its height doesn't follow them: it's
 `footer_height` in `windows/components/Window.qml` (35) unless its window says otherwise
 (`footer` in `settings/blizzard.lua`: the merchant's 65, the guild bank's 77), and a page can go
 without one (`footers`). A row of 22-high buttons goes 7 over its bottom, 14 from its sides.
+What the game moves back on its own stays out of the files and is placed on the foot in code
+(the quest log's Abandon, Share and Track, its map button), as does what an addon adds later
+(Postal's Open All). Lists over a foot go by its top: `FootBar` says how far its iron reaches.
 
 == Stretching
 

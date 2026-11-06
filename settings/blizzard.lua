@@ -366,8 +366,6 @@ Engine:NewStaticConfig("Blizzard", {
 		auctionator = { column = 212, left_move = { -15, 25 }, right_move = { 10, 25 } },
 	},
 	mail = {
-		-- the rough stone foot up to each tab's highest button: the inbox's
-		-- pages, the letter's buttons and money, the open one's
 		insets = { 16, 68, 0, -50 }, -- up over the band and the tabs
 		offset_y = -32, -- the window's top with the others'
 		open_insets = { 16, 68, 0, -50 }, -- the letter opened, its top with the inbox's
@@ -485,13 +483,13 @@ Engine:NewStaticConfig("Blizzard", {
 		insets = { 0, 36, 70, -20 }, -- the window over Blizzard's 682x447 frame: wider, for room around its panes; its foot 40 higher (no band)
 		header_height = 40,
 		header_insets = { 24, 24 },
-		map_button = { -32, 41 }, -- the map's button: its right, in the foot (level with Abandon's middle)
+		map_button = { -9, 18 }, -- the map's button: its right, in the foot (level with Abandon's middle)
 		list_panel_insets = { 6, 6, 22, 4 }, -- (its bottom 4: clear of the foot)
 		highlight_left = 4, -- the chosen quest's bar, in from its row's left: off the slate's edge
 		highlight_reach = 14, -- the chosen quest's bar, past its row's right: to the scroll bar
 		details = { -74, -44 }, -- the details' top right (Blizzard's 298 wide, its bar right of it): clear of the dailies' count
 		details_height = 336, -- down to the quests' bottom
-		controls = { 30, 28 }, -- Abandon, Share and Track: their bottom left, from the window's
+		controls = { 7, 5 }, -- Abandon, Share and Track: their bottom left, from the foot's
 		controls_width = 321, -- the quests' and their bar's
 		button_height = 22,
 		-- the details on Diablo III's parchment (the windows'), in dark ink
@@ -509,8 +507,7 @@ Engine:NewStaticConfig("Blizzard", {
 		title_font = DiabolicFont_HeaderRegular12
 	},
 	social = {
-		-- the rough stone foot up to each page's highest button (none on the
-		-- others)
+		-- the rough stone foot, on the pages with buttons
 		footers = { FriendsListFrame = true, IgnoreListFrame = true, WhoFrame = true, GuildFrame = true }, -- the pages with a foot
 		insets = { 20, 68, -4, -50 }, -- (its right: the lists' scroll bars as far in as their left)
 		offset_y = -32, -- Blizzard's frame that much lower: the window's top with the others'
@@ -550,9 +547,9 @@ Engine:NewStaticConfig("Blizzard", {
 			FriendsFrameIgnoreScrollFrame = { 6, 2, 28, 2 },
 			FriendsFramePendingScrollFrame = { 6, 2, 28, 2 }
 		},
-		-- a list's panel down to the top of what's under it: the foot (its
-		-- button's) or, the guild's, the message of the day's
-		list_bottoms = { FriendsFrameFriendsScrollFrame = "FriendsFrameAddFriendButton", WhoListScrollFrame = "WhoFrameWhoButton" },
+		-- a list's panel down to the top of what's under it: the foot's iron bar
+		-- or, the guild's, the message of the day
+		lists_on_foot = { FriendsFrameFriendsScrollFrame = true, WhoListScrollFrame = true },
 		header_bars = { WhoListScrollFrame = true, GuildListScrollFrame = true } -- tables: a dark bar under their column names
 	},
 	-- the rest of Blizzard's windows in Diablo III's

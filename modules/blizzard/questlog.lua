@@ -110,7 +110,7 @@ Module.PlaceMapButton = function(self)
 	local button = _G.QuestLogFrameShowMapButton
 	if (button:GetParent() == _G.QuestLogFrame) then
 		button:ClearAllPoints()
-		button:SetPoint("RIGHT", self.Window, "BOTTOMRIGHT", unpack(self.config.map_button))
+		button:SetPoint("RIGHT", self.Window.DiabolicFoot, "BOTTOMRIGHT", unpack(self.config.map_button))
 		button:SetFrameLevel(_G.QuestLogFrameAbandonButton:GetFrameLevel())
 	end
 end
@@ -121,7 +121,7 @@ Module.PlaceControls = function(self)
 	if (panel:GetParent() == _G.QuestLogFrame) then
 		local config = self.config
 		panel:ClearAllPoints()
-		panel:SetPoint("BOTTOMLEFT", self.Window, "BOTTOMLEFT", unpack(config.controls))
+		panel:SetPoint("BOTTOMLEFT", self.Window.DiabolicFoot, "BOTTOMLEFT", unpack(config.controls))
 		panel:SetWidth(config.controls_width)
 	end
 end

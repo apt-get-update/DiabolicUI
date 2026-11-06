@@ -159,6 +159,129 @@ WowWindow {
             width: 771
             height: 77
 
+            Frame {
+                name: "GuildBankMoneyFrame"
+                wowParent: "GuildBankFrame"
+                pin: "place"
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 29
+                width: 126.4
+                height: 13
+
+                Button {
+                    name: "GuildBankMoneyFrameCopperButton"
+                    text: "6"
+                    wowParent: "GuildBankMoneyFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 23.3
+                    height: 13
+
+                    FontString {
+                        name: "GuildBankMoneyFrameCopperButtonText"
+                        text: "6"
+                        wowParent: "GuildBankMoneyFrameCopperButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 10.3
+                        height: 14.2
+                    }
+
+                    Button {
+                        name: "GuildBankMoneyFrameSilverButton"
+                        text: "16"
+                        wowParent: "GuildBankMoneyFrame"
+                        anchors.right: parent.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 30.4
+                        height: 13
+
+                        Button {
+                            name: "GuildBankMoneyFrameGoldButton"
+                            text: "12008"
+                            wowParent: "GuildBankMoneyFrame"
+                            anchors.right: parent.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 51.7
+                            height: 13
+
+                            FontString {
+                                name: "GuildBankMoneyFrameGoldButtonText"
+                                text: "12008"
+                                wowParent: "GuildBankMoneyFrameGoldButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 38.7
+                                height: 14.2
+                            }
+                        }
+
+                        FontString {
+                            name: "GuildBankMoneyFrameSilverButtonText"
+                            text: "16"
+                            wowParent: "GuildBankMoneyFrameSilverButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 17.4
+                            height: 14.2
+                        }
+                    }
+                }
+            }
+
+            FontString {
+                name: "GuildBankMoneyLimitLabel"
+                text: "Available Amount:"
+                wowParent: "GuildBankFrame"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 27
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 29
+                width: 98
+                height: 13
+
+                Frame {
+                    name: "GuildBankWithdrawMoneyFrame"
+                    wowParent: "GuildBankFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 36.3
+                    height: 13
+
+                    Button {
+                        name: "GuildBankWithdrawMoneyFrameCopperButton"
+                        text: "0"
+                        wowParent: "GuildBankWithdrawMoneyFrame"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 23.3
+                        height: 13
+
+                        FontString {
+                            name: "GuildBankWithdrawMoneyFrameCopperButtonText"
+                            text: "0"
+                            wowParent: "GuildBankWithdrawMoneyFrameCopperButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 10.3
+                            height: 14.2
+                        }
+                    }
+                }
+            }
+
             WowRow {
                 name: "GuildBankButtons"
                 fit: "equal"
@@ -423,127 +546,6 @@ WowWindow {
                 anchors.top: parent.top
                 width: 688
                 height: 218
-            }
-        }
-    }
-
-    Frame {
-        name: "GuildBankMoneyFrame"
-        wowParent: "GuildBankFrame"
-        anchors.right: parent.right
-        anchors.rightMargin: 4
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
-        width: 126.4
-        height: 13
-
-        Button {
-            name: "GuildBankMoneyFrameCopperButton"
-            text: "6"
-            wowParent: "GuildBankMoneyFrame"
-            anchors.right: parent.right
-            anchors.rightMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            width: 23.3
-            height: 13
-
-            FontString {
-                name: "GuildBankMoneyFrameCopperButtonText"
-                text: "6"
-                wowParent: "GuildBankMoneyFrameCopperButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 10.3
-                height: 14.2
-            }
-
-            Button {
-                name: "GuildBankMoneyFrameSilverButton"
-                text: "16"
-                wowParent: "GuildBankMoneyFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30.4
-                height: 13
-
-                Button {
-                    name: "GuildBankMoneyFrameGoldButton"
-                    text: "12008"
-                    wowParent: "GuildBankMoneyFrame"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 51.7
-                    height: 13
-
-                    FontString {
-                        name: "GuildBankMoneyFrameGoldButtonText"
-                        text: "12008"
-                        wowParent: "GuildBankMoneyFrameGoldButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 38.7
-                        height: 14.2
-                    }
-                }
-
-                FontString {
-                    name: "GuildBankMoneyFrameSilverButtonText"
-                    text: "16"
-                    wowParent: "GuildBankMoneyFrameSilverButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
-                    height: 14.2
-                }
-            }
-        }
-    }
-
-    FontString {
-        name: "GuildBankMoneyLimitLabel"
-        text: "Available Amount:"
-        wowParent: "GuildBankFrame"
-        anchors.left: parent.left
-        anchors.leftMargin: 26
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
-        width: 98
-        height: 13
-
-        Frame {
-            name: "GuildBankWithdrawMoneyFrame"
-            wowParent: "GuildBankFrame"
-            anchors.left: parent.right
-            anchors.leftMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            width: 36.3
-            height: 13
-
-            Button {
-                name: "GuildBankWithdrawMoneyFrameCopperButton"
-                text: "0"
-                wowParent: "GuildBankWithdrawMoneyFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 23.3
-                height: 13
-
-                FontString {
-                    name: "GuildBankWithdrawMoneyFrameCopperButtonText"
-                    text: "0"
-                    wowParent: "GuildBankWithdrawMoneyFrameCopperButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 10.3
-                    height: 14.2
-                }
             }
         }
     }
