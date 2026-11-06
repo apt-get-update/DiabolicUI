@@ -367,7 +367,7 @@ Module.StylePanel = function(self, spec)
 	end
 	for _, name in ipairs(spec.outside or {}) do
 		if _G[name] then
-			_G[name].DiabolicOutside = true -- (/dui layout: not out of the window by mistake)
+			_G[name].DiabolicOutside = true -- (the rules: not out of the window by mistake)
 		end
 	end
 	for _, name in ipairs(spec.bars or {}) do

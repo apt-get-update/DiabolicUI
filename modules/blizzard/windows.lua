@@ -38,7 +38,7 @@ local InCombatLockdown = _G.InCombatLockdown
 
 local config
 local BannerIndex -- an emblem's place in the banners' atlas, by name (OnInit)
-local Windows = {} -- every window made, its Blizzard frame its .Frame (/dui layout checks them)
+local Windows = {} -- every window made, its Blizzard frame its .Frame (/dui layout saves them)
 Module.Windows = Windows
 local LitRows = {} -- every chosen row's light (LightRow; /dui layout reads text on it)
 Module.LitRows = LitRows

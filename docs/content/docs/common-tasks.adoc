@@ -110,6 +110,9 @@ tabs has them on top, each showing only its own parts.
   wheel to zoom, the middle button or the empty space to pan, F to fit.
 * *Save* (Ctrl+S) writes the files, then `/reload`. A full screenshot from
   `Screenshots/` lines up under the boxes.
+* *Rules* lists what breaks the windows' rules in the tab shown (`tools/rules.js`,
+  the numbers in `settings/blizzard.lua` `layout`), as you drag. Click one to
+  pick its part.
 
 *By hand:* change a part's block, then `lua5.1 tools/positions.lua`. Each part
 needs one anchor across and one down, on one frame of its file, with plain
@@ -118,15 +121,6 @@ numbers (the tool says what it can't read). A `pin` puts it in
 game loads and the tool writes: don't change that one. Without a pin a part
 follows the scan. Say why with `//` lines over its block: they're kept.
 A `Ghost` stands for a frame with parts on it that isn't in that window's file.
-
-*Or move it in game:*
-
-. `/dui adjust`. Hover the part: an orange box shows it, with its name.
-  Tab picks the next part under the cursor (bigger; Shift+Tab: smaller).
-. Drag it, or nudge it with the arrow keys (1 px, 10 with Shift).
-  Ctrl + arrows resize it (right and up: wider, taller).
-  Right-click puts it back (`/dui adjust reset`: all of them). Escape stops.
-. `/reload`, then `lua5.1 tools/positions.lua` gives it a pin.
 
 *Filling the files:* `/dui layout all` opens every window that needs no NPC
 and each of its tabs (open the others yourself while it's on: mail, auction

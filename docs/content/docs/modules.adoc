@@ -88,7 +88,7 @@ flowchart LR
     st["⚙️ settings/blizzard.lua"] --> w["🪟 windows.lua (stone, iron, red band, plate, tabs, buttons)"]
     w --> own["📄 one file per window (character, spellbook, mail...)"]
     w --> pn["📋 panels.lua (every other window, from a table)"]
-    own --> la["🔍 layout-audit.lua (/dui layout)"]
+    own --> la["🔍 layout-scan.lua (/dui layout)"]
     pn --> la
 {{< /mermaid >}}
 ++++
@@ -99,7 +99,7 @@ flowchart LR
 | `windows.lua` | The window kit: stone, iron, red band, title plate, tabs, buttons, panels (below)
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
 | `character.lua`, `spellbook.lua`, `mail.lua`, `auction.lua`... | One file per window that needs more than that table
-| `layout-audit.lua` | `/dui layout`: what's off in the open windows
+| `layout-scan.lua` | `/dui layout`: saves the open windows' parts and art for the editor (`tools/editor.py`)
 | `tooltips.lua`, `itemtooltips.lua`, `spelltooltips.lua` | Tooltips and menus
 | `lootframe.lua`, `rollwindow.lua`, `lootpreview.lua` | Loot (link:{{< relref "case-study-loot-window" >}}[case study], link:{{< relref "raid-rolls" >}}[Raid Rolls])
 | `adibags.lua`, `immersion.lua`, `trinketmenu.lua`... | Other addons in our look

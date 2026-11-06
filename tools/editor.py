@@ -232,6 +232,8 @@ class Backend(QObject):
     def window(self, name):
         data = dict(self.layout["windows"][name])
         data["url"] = QUrl.fromLocalFile(os.path.abspath(data["file"])).toString()
+        data["rules"] = self.layout.get("rules")
+        data["unit"] = float(self.layout.get("unit") or 0)
         data["generation"] = self.generation
         size = str(self.layout.get("resolution") or "").split("x")
         unit = float(self.layout.get("unit") or 0)

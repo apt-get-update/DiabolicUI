@@ -2,7 +2,7 @@
 --
 -- The auction house on its grid (modules/blizzard/auction.lua) in the fake
 -- client: each page, Blizzard's and Auctionator's, kept to the layout's
--- rules (/dui layout finds nothing), its parts where the grid puts them,
+-- rules (tools/rules.js finds nothing), its parts where the grid puts them,
 -- the categories as our buttons, Auctionator's own art gone and its band's
 -- buttons on one row.
 
@@ -12,6 +12,7 @@ local lu = require("luaunit")
 local Client = require("mocks.client")
 local Blizzard = require("mocks.client_blizzard")
 local Session = require("mocks.session")
+local Rules = require("mocks.rules")
 
 local assertClean = Session.assertClean
 
@@ -39,8 +40,13 @@ end
 local function page(i)
 	_G.AuctionFrameTab_OnClick(_G["AuctionFrameTab" .. i])
 	client:Tick(1.2, 0.1)
-	local entry = _G.DiabolicUI_Layout.windows.AuctionFrame
-	return entry and entry.problems or {}
+	local found = {}
+	if Rules.available then
+		for problem in pairs(Rules.Problems("AuctionFrame")) do
+			found[#found + 1] = problem
+		end
+	end
+	return found
 end
 
 -- `part`'s edges in the auction frame's units: left, top, right, bottom

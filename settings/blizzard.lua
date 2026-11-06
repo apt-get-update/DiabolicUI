@@ -180,7 +180,7 @@ Engine:NewStaticConfig("Blizzard", {
 		footer_rail = { cut = { 12, 28 }, bar = { 15, 24 } },
 		hint = { font = DiabolicFont_Narrow14, color = { .5, .45, .4 }, inset = 2 }, -- an edit box's label pale in it while it's empty: its look, from its left
 		-- the rules every window's layout follows (windows.lua), and that
-		-- /dui layout checks: buttons on a row (LineRows), the band's
+		-- tools/rules.js checks: buttons on a row (LineRows), the band's
 		-- controls (LineBand), the content's room
 		layout = {
 			button_gap = 6, -- between buttons on a row: those closer narrowed, as wide in all

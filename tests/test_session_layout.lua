@@ -1,9 +1,8 @@
 -- Run from the addon root: lua5.1 tests/test_session_layout.lua
 --
--- /dui layout (modules/blizzard/layout-audit.lua) in the fake client: a
--- window built to break each of the layout's rules, the problems said
--- once in the chat and saved by window, the check kept on after a reload,
--- the edges between screen pixels at a pixel-perfect scale, and
+-- /dui layout (modules/blizzard/layout-scan.lua) in the fake client: what it
+-- saves, the editor's rules (tools/rules.js) on it for a window built to break
+-- each of them, parts placed by settings/positions.lua (adjust.lua), and
 -- /dui layout all opening each window in turn.
 
 package.path = "./tests/?.lua;" .. package.path
@@ -11,6 +10,7 @@ package.path = "./tests/?.lua;" .. package.path
 local lu = require("luaunit")
 local Client = require("mocks.client")
 local Session = require("mocks.session")
+local Rules = require("mocks.rules")
 
 local assertClean = Session.assertClean
 
@@ -24,7 +24,7 @@ end
 
 -- Whether the layout check is on (for this session only).
 local function checking()
-	return client:GetModule("Blizzard: Layout Audit").Ticker:IsShown() and true or false
+	return client:GetModule("Blizzard: Layout Scan").Ticker:IsShown() and true or false
 end
 
 local function slash(text)
@@ -40,14 +40,12 @@ local function said(frame)
 	return lines
 end
 
--- `frame`'s problems saved, as a set.
+-- `name`'s problems, as a set: the rules run on what's saved.
 local function problems(name)
-	local entry = _G.DiabolicUI_Layout.windows[name]
-	local set = {}
-	for _, problem in ipairs(entry and entry.problems or {}) do
-		set[problem] = true
+	if (not Rules.available) then
+		lu.skip("needs node")
 	end
-	return set
+	return Rules.Problems(name)
 end
 
 -- A window of ours over a frame of `name`, 400x300 at a whole place on
@@ -145,23 +143,18 @@ function TestLayoutAudit:test_a_window_breaking_the_rules()
 		"\"A very long cancel\"'s text is wider than it.",
 		"AuditDropDown and \"Over the dropdown\" overlap in the band.",
 		"\"Out\" is out of the window.",
-		"AuditTop is 2 under the band (the rule: at least 6).",
+		"AuditBeside is 2 under the band (the rule: at least 6).",
 		"2 of room over the content, 30 under it: uneven.",
 		"30 of room left of the content, 50 right of it: uneven.", -- (its zones': not "Out")
-		"AuditTop and AuditBeside are 2 apart (the rule: at least 6).",
-		"AuditUnder and AuditOverlap overlap by 10.",
+		"AuditBeside and AuditTop are 2 apart (the rule: at least 6).",
+		"AuditOverlap and AuditUnder overlap by 10.",
 		"\"Name\" is off its list's panel.",
-		"AuditTop and AuditAlmost are 2 off lining up (their bottoms).",
+		"AuditAlmost and AuditTop are 2 off lining up (their bottoms).",
 		"AuditDropDown isn't Diablo III's.",
-		"\"Pale\" and 1 more are light on parchment: hard to read.",
+		"AuditCoded and 1 more are light on parchment: hard to read.",
 	}) do
-		lu.assertTrue(found[problem], problem .. "\n" .. table.concat(_G.DiabolicUI_Layout.windows.AuditFrame.problems, "\n"))
+		lu.assertTrue(found[problem], problem)
 	end
-	-- said once each, however often it's checked
-	local count = #said()
-	client:Tick(2)
-	lu.assertEquals(#said(), count)
-	lu.assertEquals(said()[2], "AuditFrame: \"Okay\" and \"A very long cancel\" are 1 off their row.")
 	assertClean(client)
 end
 
@@ -185,7 +178,7 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	blizzard:SetAllPoints()
 	frame:Show()
 	slash("layout")
-	lu.assertEquals(said()[2], "AuditFine: nothing breaks the rules.")
+	lu.assertEquals(next(problems("AuditFine")), nil)
 	lu.assertNotNil(_G.DiabolicUI_Layout.windows.AuditFine.checked)
 	-- its named parts saved, where they are (from its top left, y down)
 	-- and how they're placed, to move them by name
@@ -232,10 +225,10 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	lu.assertNotNil(parts.AuditFineDiabolic)
 	lu.assertEquals(parts.AuditFineDiabolicBand.parent, "AuditFineDiabolic")
 	-- its parts counted, once
-	local total = tonumber(said()[3]:match("^AuditFine: (%d+) parts saved %(%1 new%)%.$"))
+	local total = tonumber(said()[2]:match("^AuditFine: (%d+) parts saved %(%1 new%)%.$"))
 	lu.assertTrue(total > 3)
 	client:Tick(1.1)
-	lu.assertEquals(#said(), 3)
+	lu.assertEquals(#said(), 2)
 	-- again when new ones show (a page, a tab)
 	text(frame, "AuditMore", 40, -120, "More"):SetTextColor(0, 0, 0)
 	local nameless = CreateFrame("Frame", nil, frame)
@@ -245,13 +238,13 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	hanging:SetSize(10, 10)
 	hanging:SetPoint("TOP", nameless, "BOTTOM")
 	client:Tick(1.1)
-	lu.assertEquals(said()[4], string.format("AuditFine: %d parts saved (2 new).", total + 2))
+	lu.assertEquals(said()[3], string.format("AuditFine: %d parts saved (2 new).", total + 2))
 	lu.assertEquals(parts.AuditHanging.points, { { "TOP", "?", "BOTTOM", 0, 0 } })
 	client:Tick(1.1)
-	lu.assertEquals(#said(), 4)
+	lu.assertEquals(#said(), 3)
 	-- off again
 	slash("layout")
-	lu.assertEquals(said()[5], "Layout check off.")
+	lu.assertEquals(said()[4], "Layout scan off: /reload to write it.")
 	lu.assertFalse(checking())
 	assertClean(client)
 end
@@ -371,178 +364,29 @@ function TestLayoutAudit:test_parts_sized_only_and_chains_swapped()
 	lu.assertEquals({ sized:GetWidth(), sized:GetHeight() }, { 120, 30 })
 	sized:SetWidth(10)
 	lu.assertEquals(sized:GetWidth(), 120)
-	-- resized in game: placed where it is
-	frame:Show()
-	slash("adjust")
-	client:Hover(sized)
-	client:Tick(0.1)
-	client.world.modifiers.ctrl = true
-	client:RunScript(adjust.Box, "OnKeyDown", "RIGHT")
-	client.world.modifiers.ctrl = false
-	lu.assertEquals(_G.DiabolicUI_Layout.moved.ChainSized, { "TOP", "ChainFrame", "TOP", 0, -40, 121, 30 })
-	slash("adjust")
 	assertClean(client)
 end
 
--- /dui adjust: the part hovered boxed with its name, dragged or nudged with
--- the arrow keys, saved to copy into the settings; right-click puts it
--- back, Escape stops; never in combat.
-function TestLayoutAudit:test_parts_moved_in_game()
-	boot()
-	local adjust = client:GetModule("Blizzard: Adjust")
-	local frame = window("MoveFrame")
-	frame:Show()
-	local part = button(frame, "MoveButton", 10, 10, 80, "Okay")
-	local saved = _G.DiabolicUI_Layout.moved
-	slash("adjust")
-	client:Tick(0.1) -- (nothing hovered: no box)
-	lu.assertFalse(adjust.Box:IsShown() == 1)
-	client:Hover(part)
-	client:Tick(0.1)
-	local box = adjust.Box
-	lu.assertEquals(box:IsShown(), 1)
-	lu.assertEquals(box.Part:GetName(), "MoveButton")
-	-- dragged 30 right, 20 up
-	local scale = part:GetEffectiveScale()
-	client.world.cursor = { 100, 100 }
-	client:RunScript(box, "OnMouseDown", "LeftButton")
-	client.world.cursor = { 100 + 30 * scale, 100 + 20 * scale }
-	client:Tick(0.1)
-	client:RunScript(box, "OnMouseUp", "LeftButton")
-	lu.assertEquals({ part:GetPoint() }, { "BOTTOMLEFT", frame, "BOTTOMLEFT", 40, 30 })
-	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 40, 30 })
-	lu.assertEquals(said()[#said()], "MoveButton: BOTTOMLEFT on MoveFrame BOTTOMLEFT 40, 30")
-	-- nudged: 1, or 10 with Shift
-	client:RunScript(box, "OnKeyDown", "LEFT")
-	client.world.modifiers.shift = true
-	client:RunScript(box, "OnKeyDown", "UP")
-	client.world.modifiers.shift = false
-	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 40 })
-	-- resized with Ctrl: right and up, wider and taller (10 with Shift)
-	client.world.modifiers.ctrl = true
-	client:RunScript(box, "OnKeyDown", "RIGHT")
-	client.world.modifiers.shift = true
-	client:RunScript(box, "OnKeyDown", "DOWN")
-	client.world.modifiers.ctrl, client.world.modifiers.shift = false, false
-	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 40, 81, 12 })
-	lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { 81, 12 })
-	lu.assertEquals(said()[#said()], "MoveButton: 81 x 12")
-	-- moved again: its size kept
-	client:RunScript(box, "OnKeyDown", "UP")
-	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 41, 81, 12 })
-	-- right-click: back to the settings' (none: left until a reload)
-	client:RunScript(box, "OnMouseDown", "RightButton")
-	lu.assertNil(saved.MoveButton)
-	-- one placed by two points on an unnamed frame: from its named
-	-- parent's top left, its size kept
-	local holder = CreateFrame("Frame", nil, frame)
-	holder:SetAllPoints(frame)
-	local wide = CreateFrame("Button", "MoveWide", frame)
-	wide:SetPoint("TOPLEFT", holder, "TOPLEFT", 20, -50)
-	wide:SetPoint("BOTTOMRIGHT", holder, "TOPRIGHT", -20, -70)
-	client:RunScript(box, "OnLeave")
-	client:Hover(wide)
-	client:Tick(0.1)
-	client:RunScript(box, "OnKeyDown", "RIGHT")
-	lu.assertEquals(saved.MoveWide, { "TOPLEFT", "MoveFrame", "TOPLEFT", 21, -50, 360, 20 })
-	lu.assertEquals({ wide:GetWidth(), wide:GetHeight() }, { 360, 20 })
-	-- an unnamed part hovered: its first named holder boxed; one in an
-	-- unnamed frame placed from the first named one holding it
-	local inner = CreateFrame("Button", "MoveInner", holder)
-	inner:SetSize(40, 20)
-	inner:SetPoint("TOPLEFT", holder, "TOPLEFT", 10, -100)
-	local unnamed = CreateFrame("Button", nil, inner)
-	unnamed:SetAllPoints(inner)
-	client:RunScript(box, "OnLeave")
-	client:Hover(unnamed)
-	client:Tick(0.1)
-	lu.assertEquals(box.Part:GetName(), "MoveInner")
-	client:RunScript(box, "OnKeyDown", "DOWN")
-	lu.assertEquals(saved.MoveInner, { "TOPLEFT", "MoveFrame", "TOPLEFT", 10, -101 })
-	-- one resized not moved (put back, left where it was): placed there
-	client:RunScript(box, "OnLeave")
-	client:Hover(part)
-	client:Tick(0.1)
-	client.world.modifiers.ctrl = true
-	client:RunScript(box, "OnKeyDown", "LEFT")
-	client.world.modifiers.ctrl = false
-	lu.assertEquals(saved.MoveButton, { "BOTTOMLEFT", "MoveFrame", "BOTTOMLEFT", 39, 41, 80, 12 })
-	-- the window hovered: the smallest named part in it under the cursor;
-	-- a scroll bar whole, not its arrows (hovered or looked into)
-	local bar = CreateFrame("Slider", "MoveBar", frame)
-	bar:SetSize(16, 100)
-	bar:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -60)
-	local arrow = CreateFrame("Button", "MoveBarUp", bar)
-	arrow:SetSize(16, 16)
-	arrow:SetPoint("TOP", bar, "TOP")
-	local At = function(target)
-		local left, bottom, width, height = target:GetRect()
-		local scale = target:GetEffectiveScale()
-		client.world.cursor = { (left + width / 2) * scale, (bottom + height / 2) * scale }
-	end
-	client:RunScript(box, "OnLeave")
-	client:Hover(frame)
-	At(part)
-	client:Tick(0.1)
-	lu.assertEquals(box.Part:GetName(), "MoveButton")
-	-- Tab: the next part under the cursor, bigger (Shift: back); its
-	-- place among them by its name
-	local count = #box.Layers
-	lu.assertEquals(box.Name:GetText(), "MoveButton  (1/" .. count .. ")")
-	lu.assertEquals(box.Layers[count], frame)
-	client:RunScript(box, "OnKeyDown", "TAB")
-	client:Tick(0.1)
-	lu.assertEquals(box.Part, box.Layers[2])
-	lu.assertEquals(box.Name:GetText(), box.Layers[2]:GetName() .. "  (2/" .. count .. ")")
-	client.world.modifiers.shift = true
-	client:RunScript(box, "OnKeyDown", "TAB")
-	client:RunScript(box, "OnKeyDown", "TAB")
-	client.world.modifiers.shift = false
-	client:Tick(0.1)
-	lu.assertEquals(box.Part, frame) -- (round to the biggest)
-	At(arrow)
-	client:Tick(0.1)
-	lu.assertEquals(box.Part:GetName(), "MoveBar")
-	client:RunScript(box, "OnLeave")
-	client:Hover(arrow)
-	client:Tick(0.1)
-	lu.assertEquals(box.Part:GetName(), "MoveBar")
-	-- every move erased at once
-	lu.assertNotNil(next(saved))
-	slash("adjust reset")
-	lu.assertNil(next(saved))
-	lu.assertEquals(said()[#said()], "Every part moved in game put back: /reload.")
-	-- Escape stops
-	client:RunScript(box, "OnKeyDown", "ESCAPE")
-	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
-	-- not in combat; stopped as it starts
-	client:EnterCombat()
-	slash("adjust")
-	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
-	client:LeaveCombat()
-	slash("adjust")
-	client:EnterCombat()
-	lu.assertFalse(adjust.Watcher:IsShown() and true or false)
-	assertClean(client)
-end
-
-function TestLayoutAudit:test_off_after_a_reload_its_last_sessions_problems_replaced()
-	boot({ savedVariables = { DiabolicUI_Layout = { on = true, windows = {
+function TestLayoutAudit:test_off_after_a_reload_what_is_old_forgotten()
+	boot({ savedVariables = { DiabolicUI_Layout = { on = true, moved = { Old = { 1, 2 } }, adjust = true, windows = {
 		AuditFine = { checked = "2026-10-27 20:00", problems = { "an old one" } },
-		Elsewhere = { checked = "2026-10-27 20:00", problems = { "kept" } },
+		Elsewhere = { checked = "2026-10-27 20:00", parts = { Kept = { "TOP", "Elsewhere", "TOP", 0, 0, kind = "Frame" } } },
 	} } } })
-	-- (an older version's "on" forgotten: the check is on for a session only)
+	-- (an older version's: the scan is on for a session only)
 	lu.assertNil(_G.DiabolicUI_Layout.on)
+	lu.assertNil(_G.DiabolicUI_Layout.moved)
+	lu.assertNil(_G.DiabolicUI_Layout.adjust)
 	lu.assertFalse(checking())
 	local frame = window("AuditFine")
 	zone(frame, "AuditPage", 30, -80, 340, 150, "parchment")
 	frame:Show()
 	slash("layout")
 	client:Tick(1.1)
-	lu.assertNil(problems("AuditFine")["an old one"])
-	lu.assertTrue(problems("Elsewhere").kept)
-	-- the screen as it was checked
+	lu.assertNil(_G.DiabolicUI_Layout.windows.AuditFine.problems)
+	lu.assertNotNil(_G.DiabolicUI_Layout.windows.Elsewhere.parts.Kept)
+	-- the screen as it was, the rules' numbers
 	lu.assertEquals(_G.DiabolicUI_Layout.resolution, "1920x1080")
+	lu.assertEquals(_G.DiabolicUI_Layout.rules, { button_gap = 6, content_gap = 6, uneven = 8 })
 	assertClean(client)
 end
 
@@ -724,15 +568,6 @@ function TestLayoutAudit:test_edges_between_screen_pixels_at_a_pixel_perfect_sca
 	assertClean(client)
 end
 
-function TestLayoutAudit:test_said_in_a_chat_window_of_its_own()
-	boot()
-	client.chatWindows = { [3] = { name = "Layout" } }
-	slash("layout")
-	lu.assertEquals(#said(), 0)
-	lu.assertEquals(said(_G.ChatFrame3)[1], "Layout check on: each window is checked as it shows, its problems saved. /dui layout again to stop.")
-	assertClean(client)
-end
-
 function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	boot()
 	local frame, win = window("AuditBroken")
@@ -743,7 +578,7 @@ function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	client:Tick(2)
 	local broken = 0
 	for _, line in ipairs(said()) do
-		if line:find("^AuditBroken couldn't be checked: ") then
+		if line:find("^AuditBroken couldn't be scanned: ") then
 			broken = broken + 1
 		end
 	end
@@ -763,7 +598,7 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	slash("layout all")
 	lu.assertEquals(said()[1], "Not in combat.")
 	client:LeaveCombat()
-	-- each window in turn, page by page (one that breaks said), then closed
+	-- each window in turn, page by page (one that breaks: the others still), then closed
 	local opened = {}
 	local toggle = _G.ToggleFriendsFrame
 	_G.ToggleFriendsFrame = function(tab)
@@ -779,7 +614,7 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	lu.assertEquals(opened, { 1, 2, 4, 5 })
 	lu.assertEquals(_G.InspectFrame.unit, "target")
 	local lines = said()
-	lu.assertEquals(lines[#lines]:match("^Layout sweep done"), "Layout sweep done")
+	lu.assertEquals(lines[#lines]:match("^Layout scan done"), "Layout scan done")
 	lu.assertFalse(_G.CharacterFrame:IsShown() == 1)
 	-- stopped by a fight (the check left on: not started again)
 	slash("layout all")
@@ -787,7 +622,7 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	client:EnterCombat()
 	client:Tick(2, 0.1)
 	lines = said()
-	lu.assertEquals(lines[#lines]:match("^Layout sweep done"), "Layout sweep done")
+	lu.assertEquals(lines[#lines]:match("^Layout scan done"), "Layout scan done")
 	client:LeaveCombat()
 	assertClean(client)
 end

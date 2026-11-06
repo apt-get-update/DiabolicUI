@@ -233,7 +233,7 @@ Module.LayoutPaperDoll = function(self, window)
 			end
 			previous = slot
 		end
-		-- (the content's edge, for /dui layout: no zone around the slots)
+		-- (the content's edge, for the rules: no zone around the slots)
 		_G[slots[1]].DiabolicEdge = true
 	end
 

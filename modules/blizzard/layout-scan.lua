@@ -1,0 +1,601 @@
+-- /dui layout: saves the windows as they show, for tools/positions.lua and
+-- the editor (tools/editor.py), in DiabolicUI_Layout (WTF, after a /reload):
+-- each named part with where it is and how it's placed, the tabs it shows in
+-- and what the rules (tools/rules.js) go by, each window's art by the tabs
+-- chosen. While it's on each window is saved as it shows and each second (for
+-- its pages). /dui layout all opens each window that needs no NPC, page by
+-- page, to save them all at once.
+local _, Engine = ...
+local Module = Engine:NewModule("Blizzard: Layout Scan", "LOW")
+local L = Engine:GetLocale()
+
+-- Lua API
+local _G = _G
+local ipairs = ipairs
+local math_floor = math.floor
+local pairs = pairs
+local pcall = pcall
+local select = select
+local string_find = string.find
+local string_format = string.format
+local string_match = string.match
+local tonumber = tonumber
+local table_concat = table.concat
+local table_sort = table.sort
+
+-- WoW API
+local CreateFrame = _G.CreateFrame
+local GetCurrentResolution = _G.GetCurrentResolution
+local GetScreenResolutions = _G.GetScreenResolutions
+local GetTime = _G.GetTime
+local InCombatLockdown = _G.InCombatLockdown
+local date = _G.date
+
+local kit
+local Said -- what's been said (by text)
+local Counted -- the windows whose parts were counted (by name)
+local Saved -- DiabolicUI_Layout: { resolution, unit, rules, windows = { [name] = { checked, parts, views } } }
+local Shown = {} -- when each window shown was first seen so (by window)
+local SETTLE_TIME = .5 -- a window saved once shown that long (an addon's lays itself out over a few frames)
+
+local Print = function(text)
+	_G.DEFAULT_CHAT_FRAME:AddMessage("|cffff8000DiabolicUI|r " .. text)
+end
+
+-- A dropdown (UIDropDownMenuTemplate's: a frame with its art and its
+-- button), not a status bar named the same way.
+local IsDropDown = function(frame)
+	local name = frame:GetName()
+	return name and (frame:GetObjectType() == "Frame") and _G[name .. "Button"] and _G[name .. "Middle"] and true
+end
+
+-- A control drawn by us or Blizzard: a button with art or text, an edit
+-- box, a dropdown (not the empty frames laid over them to click).
+local IsControl = function(frame)
+	if IsDropDown(frame) or frame:IsObjectType("EditBox") then
+		return true
+	end
+	if frame:IsObjectType("Button") then
+		return frame.DiabolicStyled or frame:GetNormalTexture() or (((frame:GetText()) or "") ~= "")
+	end
+end
+
+-- A zone named after the frame it's around (or what that's on).
+local ZoneName = function(zone)
+	local frame = zone
+	for _ = 1, 3 do
+		local _, relative = frame:GetPoint()
+		if (not relative) then
+			break
+		end
+		if relative:GetName() then
+			return relative:GetName()
+		end
+		frame = relative
+	end
+	return L["a part"]
+end
+
+-- `text` (its middle at `x`, `y`) on its own frame's art: a button's face
+-- (ours), an icon (its count), not the page under it.
+local OnArt = function(text, x, y)
+	local frame = text:GetParent()
+	if frame.DiabolicStyled then
+		return true
+	end
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		if region:IsObjectType("Texture") and region:IsVisible() and (region:GetAlpha() > 0) and region:GetTexture()
+			and (region:GetDrawLayer() ~= "HIGHLIGHT") then
+			local left, bottom, right, top = kit.Edges(region)
+			if left and (x >= left) and (x <= right) and (y >= bottom) and (y <= top) then
+				return true
+			end
+		end
+	end
+end
+
+-- How light a color is, 0 to 1.
+local Lightness = function(r, g, b)
+	return .299 * r + .587 * g + .114 * b
+end
+
+-- A text's color light, or a color in it.
+local IsLight = function(text)
+	local light = Lightness(text:GetTextColor()) > .5
+	for hex in (text:GetText() or ""):gmatch("|c%x%x(%x%x%x%x%x%x)") do
+		light = light or (Lightness(tonumber(hex:sub(1, 2), 16) / 255, tonumber(hex:sub(3, 4), 16) / 255, tonumber(hex:sub(5, 6), 16) / 255) > .5)
+	end
+	return light
+end
+
+-- The resolution chosen ("1920x1080"), if known.
+local Resolution = function()
+	local index = GetCurrentResolution()
+	return index and (index > 0) and (select(index, GetScreenResolutions()))
+end
+
+-- How many screen pixels a unit of the screen is (768 of them high), or
+-- nothing if the resolution isn't known.
+local ScreenPixels = function()
+	local resolution = Resolution()
+	local height = resolution and tonumber(string_match(resolution, "x(%d+)"))
+	return height and height / 768
+end
+
+-- The named parts shown in `frame` and all it holds (frames and texts), not
+-- in `skip` (the window), by name.
+local CollectNamed
+CollectNamed = function(frame, skip, found)
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		local name = region:GetName()
+		if name and region:IsObjectType("FontString") and region:IsVisible() then
+			found[name] = region
+		end
+	end
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		if (child ~= skip) and child:IsVisible() then
+			local name = child:GetName()
+			if name then
+				found[name] = child
+			end
+			CollectNamed(child, skip, found)
+		end
+	end
+end
+
+-- Where a part is, as settings/positions.lua takes it (tools/positions.lua
+-- writes them there): { point, the frame it's placed on, its point, x, y,
+-- width, height } (a text's size its own), with its kind and text; for an
+-- editor (tools/layout.json) too: all its points (the
+-- frame they're on "?" if it has no name, its parent if none), its parent,
+-- where it is on screen ({ left, bottom, width, height } in UIParent's
+-- units), its strata and level (a text: its layer and its frame's level).
+local Round = function(value)
+	return math_floor(value * 10 + .5) / 10
+end
+
+local NameOf = function(frame)
+	return frame and (frame:GetName() or "?")
+end
+
+-- (`part` placed: Entry's, a window shown)
+local Rect = function(part)
+	local left, bottom, width, height = part:GetRect()
+	local scale = kit.ScaleOf(part) / _G.UIParent:GetEffectiveScale()
+	return { Round(left * scale), Round(bottom * scale), Round(width * scale), Round(height * scale) }
+end
+
+-- What the rules go by that only the game knows: what's above a part (its
+-- named frames; ours, hung out of the window on purpose, faded to nothing), a
+-- text's width, color and what's under it, what a frame is.
+local Facts = function(part, entry, window, rows)
+	local frame, chain = part, {}
+	while frame and (frame ~= window.Frame) do
+		if frame.DiabolicBanner or frame.DiabolicOutside or frame:IsObjectType("ScrollFrame")
+			or (frame:IsObjectType("Frame") and (frame:GetFrameStrata() == "TOOLTIP")) then
+			entry.hung = true
+		end
+		entry.faded = (frame:GetAlpha() <= 0) or entry.faded or nil
+		entry.own = (frame == window) or entry.own or nil
+		if (frame ~= part) and frame:GetName() then
+			chain[#chain + 1] = frame:GetName()
+		end
+		frame = frame:GetParent()
+	end
+	entry.chain = chain[1] and chain or nil
+	local text = part.GetText and part:GetText()
+	entry.written = ((text or "") ~= "") or nil
+	if part:IsObjectType("FontString") then
+		entry.textWidth, entry.justify = Round(part:GetStringWidth()), part:GetJustifyH()
+		local left, bottom, right, top = kit.Edges(part)
+		local x, y = (left + right) / 2, (bottom + top) / 2
+		entry.light = IsLight(part) or nil
+		entry.onArt = OnArt(part, x, y) or nil
+		for _, bar in ipairs(kit.LitRows) do
+			if bar:IsVisible() then
+				local barLeft, barBottom, barRight, barTop = kit.Edges(bar)
+				if barLeft and (x >= barLeft) and (x <= barRight) and (y >= barBottom) and (y <= barTop) then
+					entry.onLit = true
+				end
+			end
+		end
+		return
+	end
+	entry.control = IsControl(part) and true or nil
+	entry.dropdown = IsDropDown(part) or nil
+	entry.diablo = part.DiabolicDropDown and true or nil
+	entry.edge = part.DiabolicEdge and true or nil
+	if part.DiabolicContent then
+		entry.zone, entry.material = ZoneName(part), part.DiabolicMaterial
+	end
+	if rows[part] then
+		entry.row, entry.textWidth = true, Round(part:GetTextWidth())
+	end
+	local inLeft, inRight = kit.ArtInsets(part)
+	if (inLeft ~= 0) or (inRight ~= 0) then
+		entry.inset = { Round(inLeft), Round(inRight) }
+	end
+end
+
+local Entry = function(part, window, rows)
+	if not part:GetLeft() then
+		return
+	end
+	local entry = Engine:GetModule("Blizzard: Adjust").PlaceOf(part)
+	entry[4], entry[5] = Round(entry[4]), Round(entry[5])
+	if (not part:IsObjectType("FontString")) then
+		entry[6], entry[7] = Round(part:GetWidth()), Round(part:GetHeight())
+	end
+	entry.kind = part:GetObjectType()
+	local text = part.GetText and part:GetText()
+	if text and (text ~= "") and (not string_find(text, "[|\n]")) then
+		entry.text = text
+	end
+	entry.points = {}
+	for i = 1, part:GetNumPoints() do
+		local point, relative, relativePoint, x, y = part:GetPoint(i)
+		entry.points[i] = { point, NameOf(relative or part:GetParent()), relativePoint, Round(x), Round(y) }
+	end
+	entry.parent = NameOf(part:GetParent())
+	entry.rect = Rect(part)
+	if part.GetFrameLevel then
+		entry.strata, entry.level = part:GetFrameStrata(), part:GetFrameLevel()
+	else
+		entry.layer, entry.level = part:GetDrawLayer(), part:GetParent():GetFrameLevel()
+	end
+	Facts(part, entry, window, rows)
+	return entry
+end
+
+-- Our own art in a window, for the editor out of the game to draw
+-- (tools/positions.lua makes pictures of the files): each texture shown
+-- from our media folder (or white, colored: lines, fills) with where it is,
+-- its file, the part of it shown (its 8 corners), its color, alpha,
+-- blend and gradient (ours: kit.Gradient); each backdrop of ours with its
+-- files, sizes and colors. In the order the game draws them, with the
+-- nearest named frame (`owner`) they follow when it moves.
+local WHITE = { ["interface\\chatframe\\chatframebackground"] = true, ["interface\\buttons\\white8x8"] = true }
+local Ours = function(file)
+	return (type(file) == "string") and (string_find(file, "[Dd]iabolic[Uu][Ii][\\/]") or WHITE[file:lower()]) and true
+end
+
+local Round3 = function(...)
+	local values = { ... }
+	for i, value in ipairs(values) do
+		values[i] = math_floor(value * 1000 + .5) / 1000
+	end
+	return values
+end
+
+local STRATA = { BACKGROUND = 1, LOW = 2, MEDIUM = 3, HIGH = 4, DIALOG = 5, FULLSCREEN = 6, FULLSCREEN_DIALOG = 7, TOOLTIP = 8 }
+local LAYERS = { BACKGROUND = 1, BORDER = 2, ARTWORK = 3, OVERLAY = 4 } -- (HIGHLIGHT: only under the cursor)
+
+local CollectArt
+CollectArt = function(frame, owner, alpha, art)
+	owner, alpha = frame:GetName() or owner, alpha * frame:GetAlpha()
+	local order = { STRATA[frame:GetFrameStrata()] or 3, frame:GetFrameLevel() }
+	local backdrop = frame:GetBackdrop()
+	if backdrop and (Ours(backdrop.bgFile) or Ours(backdrop.edgeFile)) and frame:GetLeft() then
+		local insets = backdrop.insets or {}
+		art[#art + 1] = { order = { order[1], order[2], 0, #art }, owner = owner, alpha = alpha, rect = Rect(frame),
+			scale = kit.ScaleOf(frame) / _G.UIParent:GetEffectiveScale(),
+			backdrop = { bgFile = Ours(backdrop.bgFile) and backdrop.bgFile, edgeFile = Ours(backdrop.edgeFile) and backdrop.edgeFile,
+				edgeSize = backdrop.edgeSize, tile = backdrop.tile and true, tileSize = backdrop.tileSize,
+				insets = { insets.left or 0, insets.right or 0, insets.top or 0, insets.bottom or 0 } },
+			color = Round3(frame:GetBackdropColor()), border = Round3(frame:GetBackdropBorderColor()) }
+	end
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		if region:IsObjectType("Texture") and region:IsShown() and Ours(region:GetTexture())
+			and LAYERS[region:GetDrawLayer()] and region:GetLeft() then
+			art[#art + 1] = { order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
+				owner = region:GetName() or owner, alpha = alpha * region:GetAlpha(), rect = Rect(region),
+				file = region:GetTexture(), coords = Round3(region:GetTexCoord()), color = Round3(region:GetVertexColor()),
+				blend = region:GetBlendMode(), gradient = region.DiabolicGradient }
+		end
+	end
+	for i = 1, select("#", frame:GetChildren()) do
+		local child = select(i, frame:GetChildren())
+		if child:IsVisible() then
+			CollectArt(child, owner, alpha, art)
+		end
+	end
+	return art
+end
+
+local DrawnFirst = function(a, b)
+	for i = 1, 4 do
+		if (a.order[i] ~= b.order[i]) then
+			return a.order[i] < b.order[i]
+		end
+	end
+end
+
+local Art = function(frame)
+	local art = CollectArt(frame, nil, 1, {})
+	table_sort(art, DrawnFirst)
+	for _, item in ipairs(art) do
+		item.order = nil
+	end
+	return art
+end
+
+-- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
+-- what the window shows now, by their names and as they read.
+local ViewOf = function(named)
+	local names = {}
+	for name, part in pairs(named) do
+		if (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$")) and part:IsObjectType("Button") and kit.IsSelected(part) then
+			names[#names + 1] = name
+		end
+	end
+	table_sort(names)
+	local labels = {}
+	for i, name in ipairs(names) do
+		local text = named[name]:GetText()
+		labels[i] = ((text ~= nil) and (text ~= "")) and text or name
+	end
+	return table_concat(names, "+"), table_concat(labels, " / ")
+end
+
+-- `window` saved: its parts with where they are and the tabs they showed in,
+-- its art and what the rules go by, by the tabs chosen.
+local Scan = function(window)
+	local frame = window.Frame
+	local title = frame:GetName() or L["a window"]
+	local windows = Saved.windows
+	windows[title] = windows[title] or {}
+	local seen = windows[title]
+	seen.problems = nil -- (an older version's)
+	seen.checked = date("%Y-%m-%d %H:%M")
+	seen.parts = seen.parts or {}
+	seen.views = seen.views or {}
+	local named, parts, rows = {}, seen.parts, {}
+	-- (our window's parts too: its band, its foot...)
+	CollectNamed(frame, nil, named)
+	for _, button in ipairs(kit.CollectShown(frame, {})) do
+		rows[button] = true
+	end
+	seen.rect = Rect(frame)
+	seen.window = Rect(window)
+	local view, label = ViewOf(named)
+	local foot = window.DiabolicFoot
+	local close = window.DiabolicClose
+	seen.views[view] = { label = label, art = Art(frame), rect = seen.rect, window = seen.window,
+		frame = window:GetName(), band = window.DiabolicHeaders[1] and NameOf(window.DiabolicHeaders[1]),
+		foot = foot and foot.DiabolicShown and NameOf(foot),
+		railOver = foot and foot.DiabolicShown and Round(foot.Rail:GetTop() - foot:GetTop()), -- (the iron bar along its top)
+		close = close and close:IsVisible() and NameOf(close),
+		iron = kit.config.backdrop.insets.top + (window.DiabolicDrop or 0) }
+	local new = 0
+	for name, part in pairs(named) do
+		local entry = Entry(part, window, rows)
+		if entry then
+			local old = parts[name]
+			new = new + ((type(old) == "table") and 0 or 1)
+			entry.tabs = (type(old) == "table") and old.tabs or {}
+			if (view ~= "") then
+				entry.tabs[view] = true
+			end
+			parts[name] = entry
+		end
+	end
+	-- its parts counted once, and again when new ones show (a page, a tab):
+	-- none new, it's all been seen
+	if (new > 0) or (not Counted[title]) then
+		Counted[title] = true
+		local total = 0
+		for _, entry in pairs(parts) do
+			total = total + ((type(entry) == "table") and 1 or 0)
+		end
+		Print(title .. ": " .. string_format(L["%d parts saved (%d new)."], total, new))
+	end
+end
+
+-- Each window's time shown (each frame, while it's on).
+local Watch = function()
+	for _, window in ipairs(kit.Windows) do
+		if window.Frame:IsVisible() then
+			Shown[window] = Shown[window] or GetTime()
+		else
+			Shown[window] = nil
+		end
+	end
+end
+
+local CheckShown = function()
+	Watch()
+	for _, window in ipairs(kit.Windows) do
+		if window.Frame:IsVisible() and window:GetLeft() and (GetTime() - Shown[window] >= SETTLE_TIME) then
+			-- (one that breaks said once, the others still saved)
+			local ok, err = pcall(Scan, window)
+			if (not ok) and (not Said[err]) then
+				Said[err] = true
+				Print(string_format(L["%s couldn't be scanned: %s"], window.Frame:GetName() or L["a window"], err))
+			end
+		end
+	end
+end
+
+-- The screen and the rules' numbers, as they were (tools/rules.js).
+local SaveScreen = function()
+	local pixels = ScreenPixels()
+	local layout = kit.config.layout
+	Saved.resolution = Resolution()
+	Saved.unit = pixels and string_format("%.3f", _G.UIParent:GetEffectiveScale() * pixels) -- screen pixels per UI unit (whole: pixel perfect)
+	Saved.rules = { button_gap = layout.button_gap, content_gap = layout.content_gap, uneven = layout.uneven }
+end
+
+Module.Start = function(self)
+	Said, Counted = {}, {}
+	SaveScreen()
+	-- (those already shown: settled)
+	for _, window in ipairs(kit.Windows) do
+		if window.Frame:IsVisible() then
+			Shown[window] = GetTime() - SETTLE_TIME
+		end
+	end
+	CheckShown()
+	self.Ticker:Show()
+end
+
+Module.Toggle = function(self)
+	if self.Ticker:IsShown() then
+		self.Ticker:Hide()
+		Print(L["Layout scan off: /reload to write it."])
+		return
+	end
+	Print(L["Layout scan on: each window is saved as it shows. /dui layout again to stop."])
+	self:Start()
+end
+
+-- The sweep's steps: each shows a window or one of its pages (the window
+-- before closed), saved after it (once its layout is done).
+local Open = function(open)
+	return function()
+		_G.CloseAllWindows()
+		open()
+	end
+end
+local Tab = function(name)
+	return function()
+		local tab = _G[name]
+		if tab and tab:IsVisible() then
+			tab:Click()
+		end
+	end
+end
+-- One of the spellbook's own pages (companions, mounts, professions),
+-- when the character has it.
+local Page = function(mode)
+	return function()
+		local book = Engine:GetModule("Blizzard: Spellbook")
+		if _G.SpellBookFrame:IsShown() and book.HasPage and ((not mode) or book:HasPage(mode)) then
+			book:ShowPage(mode)
+		end
+	end
+end
+local STEPS = {
+	Open(function() _G.ToggleCharacter("PaperDollFrame") end),
+	Tab("DiabolicUICharacterSideTab2"), Tab("DiabolicUICharacterSideTab3"), Tab("DiabolicUICharacterSideTab1"), -- titles, sets, stats
+	function() _G.ToggleCharacter("ReputationFrame") end,
+	function() _G.ToggleCharacter("SkillFrame") end,
+	function() _G.ToggleCharacter("TokenFrame") end,
+	function()
+		if _G.TokenFramePopup then
+			_G.TokenFramePopup:Show()
+		end
+	end,
+	function() _G.ToggleCharacter("PetPaperDollFrame") end, -- (the pet's, or the companions')
+	Tab("PetPaperDollFrameTab2"), Tab("PetPaperDollFrameTab3"),
+	Open(function() _G.ToggleSpellBook(_G.BOOKTYPE_SPELL) end),
+	Tab("SpellBookSkillLineTab2"), Tab("SpellBookSkillLineTab3"), Tab("SpellBookSkillLineTab4"),
+	Page("CRITTER"), Page("MOUNT"), Page("PROFESSIONS"), Page(nil),
+	Tab("SpellBookFrameTabButton2"), -- the pet's book
+	Open(function() _G.ToggleTalentFrame() end),
+	Tab("PlayerTalentFrameTab2"), Tab("PlayerTalentFrameTab3"), Tab("PlayerTalentFrameTab4"),
+	Tab("PlayerSpecTab2"), -- the second spec
+	Open(function() _G.ToggleFriendsFrame(1) end),
+	Tab("FriendsTabHeaderTab2"), Tab("FriendsTabHeaderTab3"), -- ignored, pending
+	function() _G.ToggleFriendsFrame(2) end,
+	function() _G.ToggleFriendsFrame(3) end,
+	Tab("GuildFrameGuildInformationButton"),
+	function() _G.ToggleFriendsFrame(4) end,
+	function() _G.ToggleFriendsFrame(5) end,
+	Tab("RaidFrameRaidInfoButton"),
+	Open(function() _G.ToggleFrame(_G.QuestLogFrame) end),
+	Open(function() _G.ToggleAchievementFrame() end),
+	Tab("AchievementFrameTab2"), Tab("AchievementFrameTab3"), -- and Overachiever's
+	Tab("AchievementFrameTab4"), Tab("AchievementFrameTab5"), Tab("AchievementFrameTab6"),
+	Open(function() _G.ToggleLFDParentFrame() end),
+	Open(function() _G.ToggleLFRParentFrame() end),
+	Tab("LFRParentFrameTab2"),
+	Open(function() _G.TogglePVPFrame() end),
+	Tab("PVPParentFrameTab2"),
+	Open(function() _G.ShowMacroFrame() end),
+	Tab("MacroFrameTab2"),
+	Open(function()
+		_G.KeyBindingFrame_LoadUI()
+		_G.ShowUIPanel(_G.KeyBindingFrame)
+	end),
+	Open(function() _G.ShowUIPanel(_G.DressUpFrame) end),
+	-- the one targeted, when a player in reach
+	Open(function()
+		if _G.UnitIsPlayer("target") and _G.CanInspect("target") and _G.CheckInteractDistance("target", 1) then
+			_G.InspectUnit("target")
+		end
+	end),
+	Tab("InspectFrameTab2"), Tab("InspectFrameTab3"),
+	Open(function() Engine:GetModule("ChatCopy"):Show(_G.ChatFrame1) end),
+	Open(function() _G.OpenAllBags() end),
+	function()
+		_G.CloseAllBags()
+		_G.CloseAllWindows()
+	end
+}
+local STEP_TIME = .6 -- each step's wait before it's saved (the layout done on the next frame)
+
+-- Each window that needs no NPC opened in turn, page by page, and saved.
+Module.Sweep = function(self)
+	if InCombatLockdown() then
+		Print(L["Not in combat."])
+		return
+	end
+	Print(L["Layout scan: each window opened in turn."])
+	if (not self.Ticker:IsShown()) then
+		self:Start()
+	end
+	local step, elapsed = 0, STEP_TIME
+	self.Sweeper:SetScript("OnUpdate", function(sweeper, delta)
+		elapsed = elapsed + delta
+		if (elapsed < STEP_TIME) then
+			return
+		end
+		elapsed = 0
+		CheckShown()
+		step = step + 1
+		if InCombatLockdown() or (not STEPS[step]) then
+			sweeper:SetScript("OnUpdate", nil)
+			local windows = 0
+			for _ in pairs(Saved.windows) do
+				windows = windows + 1
+			end
+			Print(string_format(L["Layout scan done: %d windows saved (/reload to write them)."], windows))
+			return
+		end
+		local ok, err = pcall(STEPS[step])
+		if (not ok) then
+			Print(string_format(L["%s couldn't be scanned: %s"], L["a window"], err))
+		end
+	end)
+end
+
+Module.OnEnable = function(self)
+	kit = Engine:GetModule("Blizzard: Windows")
+	local ticker, elapsed = CreateFrame("Frame"), 0
+	ticker:Hide()
+	ticker:SetScript("OnUpdate", function(_, delta)
+		Watch()
+		elapsed = elapsed + delta
+		if (elapsed >= 1) then
+			elapsed = 0
+			CheckShown()
+		end
+	end)
+	self.Ticker = ticker
+	self.Sweeper = CreateFrame("Frame")
+	Saved = _G.DiabolicUI_Layout or {}
+	Saved.windows = Saved.windows or {}
+	Saved.on, Saved.moved, Saved.adjust = nil, nil, nil -- (an older version's)
+	_G.DiabolicUI_Layout = Saved
+	self:GetHandler("ChatCommand"):Register("layout", function(what)
+		if (what == "all") then
+			self:Sweep()
+		else
+			self:Toggle()
+		end
+	end)
+end

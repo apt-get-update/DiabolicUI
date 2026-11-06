@@ -1,6 +1,6 @@
 -- tools/positions.lua: windows/*.qml written from what /dui layout saw and read
 -- back (their pins, notes, anchors), settings/positions.lua and the editor's
--- tools/layout.json written from them, what /dui adjust moved pinned.
+-- tools/layout.json written from them.
 package.path = "tests/?.lua;" .. package.path
 local lu = require("luaunit")
 
@@ -74,13 +74,12 @@ end
 
 local SCAN = [[
 DiabolicUI_Layout = {
-	["moved"] = { ["WhoFrameEditBox"] = { "BOTTOM", "WhoFrame", "BOTTOM", -20.04, 103 } },
 	["windows"] = {
 		["FriendsFrame"] = { ["parts"] = {
 			["WhoFrame"] = { "TOPLEFT", "FriendsFrame", "TOPLEFT", 10, -20, 300, 400, kind = "Frame", rect = { 20, 112, 300, 400 } },
 			["WhoFrameEditBox"] = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100, 296, 32, kind = "EditBox",
 				points = { { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100 } }, parent = "WhoFrame", rect = { 50, 100, 296, 32 },
-				strata = "MEDIUM", level = 3, tabs = { FriendsFrameTab2 = true } },
+				strata = "MEDIUM", level = 3, tabs = { FriendsFrameTab2 = true }, control = true },
 			["WhoFrameTotals"] = { "LEFT", "WhoFrame", "LEFT", 4.5, 0, kind = "FontString", text = "738 \"People\"" },
 			["Odd-Name"] = { "TOP", "WhoFrame", "TOP", 0, 0, 10, 10, kind = "Frame" },
 			["WhoFrameOld"] = "an older scan's line",
@@ -129,13 +128,13 @@ Engine:NewStaticConfig("Positions", {
 ]]
 
 -- The first run: the files written from the scan and settings/positions.lua's
--- lines, with their notes; what /dui adjust moved pinned.
+-- lines, with their notes.
 function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines()
 	local dir = Folder()
 	Write(dir .. "/saved.lua", SCAN)
 	Write(dir .. "/positions.lua", LINES)
 	local said = Runs(dir)
-	lu.assertStrContains(said, "16 parts, 6 in use.")
+	lu.assertStrContains(said, "16 parts, 5 in use.")
 	local friends = Read(dir .. "/windows/FriendsFrame.qml")
 	local notSeen = Read(dir .. "/windows/NotSeen.qml")
 	local dressUp = Read(dir .. "/windows/DressUpFrame.qml")
@@ -150,11 +149,10 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
         name: "WhoFrameEditBox"
         kind: "EditBox"
         wowParent: "WhoFrame"
-        pin: "place"
         anchors.horizontalCenter: whoFrame.horizontalCenter
         anchors.horizontalCenterOffset: -20
         anchors.bottom: whoFrame.bottom
-        anchors.bottomMargin: 103
+        anchors.bottomMargin: 100
         width: 296
         height: 32
     }
@@ -188,16 +186,15 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	lu.assertStrContains(text, "\t-- why it's there,\n\t-- on two lines\n"
 		.. '\tWhoFrameTotals = { "LEFT", "WhoFrame", "LEFT", 8, 0 }, -- (a note at its end)')
 	lu.assertStrContains(text, '\tOnLeft = { "LEFT", "Elsewhere", "LEFT", 1, 2, 10, 10 }, -- Frame')
-	lu.assertStrContains(text, '\tWhoFrameEditBox = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 103 }, -- EditBox')
 	lu.assertStrContains(text, "\t-- a size only\n\tSizedFrame = { 10, 20 },")
 	lu.assertStrContains(text, "-- Not seen by /dui layout")
-	lu.assertEquals(positions.WhoFrameEditBox, { "BOTTOM", "WhoFrame", "BOTTOM", -20, 103 })
+	lu.assertNil(positions.WhoFrameEditBox)
 	lu.assertNil(positions["Odd-Name"])
 	lu.assertNil(positions.WhoFrame)
 	-- for the editor: the parts, their pins, where they were, their tabs, the views
-	lu.assertStrContains(exported, '"WhoFrameEditBox":{"kind":"EditBox","level":3,"moved":true,"parent":"WhoFrame","pin":"place",'
-		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,103],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
-		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","tabs":["FriendsFrameTab2"],"use":{"place":["BOTTOM","WhoFrame","BOTTOM",-20,103]}}')
+	lu.assertStrContains(exported, '"WhoFrameEditBox":{"control":true,"kind":"EditBox","level":3,"parent":"WhoFrame",'
+		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
+		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","tabs":["FriendsFrameTab2"]}')
 	lu.assertStrContains(exported, '"points":[["TOP","WhoFrame","TOP",0,0],["LEFT","WhoFrame","LEFT",0,0]]')
 	lu.assertStrContains(exported, '"views":[{"key":"FriendsFrameTab1","label":"Friends"},{"key":"FriendsFrameTab2","label":"Who","rect":[10,112,384,500],"window":[0,100,400,520]}]')
 	lu.assertStrContains(exported, '"file":"' .. dir .. '/windows/FriendsFrame.qml"')
@@ -208,7 +205,7 @@ end
 -- what's read goes in settings/positions.lua; a pin gone, the scan's back.
 function TestPositionsTool:test_the_windows_read_back()
 	local dir = Folder()
-	Write(dir .. "/saved.lua", SCAN:gsub('%["moved"%].-\n', ""))
+	Write(dir .. "/saved.lua", SCAN)
 	Write(dir .. "/positions.lua", LINES)
 	Runs(dir)
 	local first, lines = Read(dir .. "/windows/FriendsFrame.qml"), Read(dir .. "/positions.lua")

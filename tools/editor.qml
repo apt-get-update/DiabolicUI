@@ -2,12 +2,14 @@
 // as it is, its anchors live, so what's placed on a part follows it. Press a
 // part to pick it (again: the one under it), drag it (it snaps to the others'
 // edges, Alt: not), drag a handle to size it, drag a dot to another part's
-// to place it there. Right-click: all that's under the cursor.
+// to place it there. Right-click: all that's under the cursor. What breaks the
+// windows' rules (rules.js) is listed as it happens.
 import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
+import "rules.js" as Rules
 
 ApplicationWindow {
     id: app
@@ -73,6 +75,22 @@ ApplicationWindow {
     function itemFor(name) { return items[name] }
     function editsText() { return JSON.stringify(edits) }
     function listCount() { return listModel.length }
+    function problemsText() { return JSON.stringify(problems.map(p => p.text)) }
+
+    // ---- the rules, for the tab shown, as parts move
+    property var problems: []
+    readonly property bool canCheck: !!(view_ && view_.frame && data && data.rules)
+    Timer { id: ruleTimer; interval: 120; onTriggered: app.runRules() }
+    function runRules() {
+        if (!canCheck) { problems = []; return }
+        const model = {}
+        for (const n in parts) {
+            const item = items[n]
+            if (item && inView(n)) model[n] = Object.assign({}, parts[n], { left: item.x, top: item.y, right: item.x + item.width, bottom: item.y + item.height })
+        }
+        const f = viewRect
+        problems = Rules.check({ parts: model, view: view_, rules: data.rules, unit: data.unit, origin: f ? [f[0], f[1] + f[3]] : null })
+    }
 
     // ---- opening
     function openWindow(name) {
@@ -119,6 +137,7 @@ ApplicationWindow {
         shot.place()
         if (picked && !(items[picked] && items[picked].visible)) pick("")
         listModelUpdate()
+        ruleTimer.restart()
     }
     function inView(name) {
         const tabs = parts[name].tabs
@@ -177,6 +196,7 @@ ApplicationWindow {
         edits = copy
         applyItem(name)
         if (name === picked) pickedEntry = entry(name)
+        ruleTimer.restart()
         if (!quiet) changed()
     }
 
@@ -191,6 +211,7 @@ ApplicationWindow {
         edits = JSON.parse(text)
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
         if (picked) pickedEntry = entry(picked)
+        ruleTimer.restart()
         changed()
     }
     function undo() {
@@ -913,7 +934,6 @@ ApplicationWindow {
                         return (p.kind || "?") + (p.text ? " · “" + p.text + "”" : "") + "\nin " + (p.parent || "?")
                             + (p.strata ? " · " + p.strata + " " + p.level : "") + (p.layer ? " · " + p.layer : "")
                             + (app.pickedEntry && app.pickedEntry.pin ? "\n◆ pinned: " + app.pickedEntry.pin : "\nfollows the scan")
-                            + (p.moved ? "\nMoved with /dui adjust, which wins in game: /dui adjust reset first." : "")
                     }
                 }
                 GridLayout {
@@ -973,6 +993,35 @@ ApplicationWindow {
                     text: "Reset this part"
                     visible: !!app.picked
                     onClicked: app.resetPart(app.picked)
+                }
+
+                Label {
+                    objectName: "rulesTitle"
+                    text: "RULES" + (app.problems.length ? " (" + app.problems.length + ")" : "")
+                    color: app.problems.length ? "#e8703a" : app.dim
+                    font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10
+                }
+                Label {
+                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
+                    visible: !app.problems.length
+                    color: app.dim
+                    wrapMode: Text.Wrap
+                    text: app.canCheck ? "Nothing breaks them." : "Needs a new scan: /dui layout all, then /reload."
+                }
+                Repeater {
+                    model: app.problems
+                    ItemDelegate {
+                        required property var modelData
+                        Layout.fillWidth: true; Layout.leftMargin: 6; Layout.rightMargin: 6
+                        padding: 3; leftPadding: 4; rightPadding: 4
+                        contentItem: Text {
+                            text: modelData.text
+                            color: "#e8c0a0"
+                            wrapMode: Text.Wrap
+                            font.pixelSize: 12
+                        }
+                        onClicked: if (modelData.parts.length && app.items[modelData.parts[0]]) app.pick(modelData.parts[0])
+                    }
                 }
 
                 Label { text: "SCREENSHOT"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10 }

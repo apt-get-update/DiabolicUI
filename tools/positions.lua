@@ -2,7 +2,7 @@
 -- written from what /dui layout saw: yours to change, by hand or with
 -- tools/editor.py), settings/positions.lua written from them for the game
 -- (the parts with a `pin`), and tools/layout.json for the editor. A part
--- without a pin follows the scan; what /dui adjust moved in game gets a pin.
+-- without a pin follows the scan.
 -- Run from the addon's folder, the game's saved variables written (a
 -- /reload or a logout), any number of times:
 --   lua5.1 tools/positions.lua [saved variables, "" newest, "-" none [out [json [windows [edits]]]]]
@@ -374,11 +374,6 @@ for name, entry in pairs(active) do
 			part.tail = tail:gsub("^%-%-", "//")
 		end
 	end
-end
-for name, entry in pairs(layout.moved or {}) do
-	local part = PartNamed(name, NOT_SEEN)
-	Pin(part, entry)
-	part.moved = true
 end
 if EDITS then
 	for name, edit in pairs(assert(loadfile(EDITS))()) do
@@ -754,13 +749,18 @@ local Pictures = function(art)
 	return out[1] and out or nil
 end
 
-local export = { resolution = layout.resolution, unit = layout.unit, windows = {} }
+local export = { resolution = layout.resolution, unit = layout.unit, rules = layout.rules, windows = {} }
 for title, window in pairs(windows) do
 	local parts = {}
 	for name, part in pairs(window.parts) do
 		local seen = part.seen or {}
 		local copy = { kind = part.kind, text = part.text, parent = part.wowParent, place = part.place, size = part.size,
-			pin = part.pin, moved = part.moved, rect = seen.rect, strata = seen.strata, level = seen.level, layer = seen.layer }
+			pin = part.pin, rect = seen.rect, strata = seen.strata, level = seen.level, layer = seen.layer }
+		-- (what the rules go by: tools/rules.js)
+		for _, key in ipairs({ "chain", "control", "diablo", "dropdown", "edge", "faded", "hung", "inset", "justify", "light",
+			"material", "onArt", "onLit", "own", "row", "textWidth", "written", "zone" }) do
+			copy[key] = seen[key]
+		end
 		copy.tabs = (next(seen.tabs or {}) ~= nil) and Sorted(seen.tabs) or nil
 		copy.use = part.pin and { place = (part.pin ~= "size") and part.place or nil, size = (part.pin ~= "place") and part.size or nil } or nil
 		-- (a point placed on nothing: on its parent, as the game has it)
@@ -776,7 +776,8 @@ for title, window in pairs(windows) do
 	for _, key in ipairs(Sorted(seen.views or {})) do
 		local view = seen.views[key]
 		first = first or view.art
-		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, art = Pictures(view.art) }
+		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, art = Pictures(view.art),
+			frame = view.frame, band = view.band, foot = view.foot, railOver = view.railOver, close = view.close, iron = view.iron }
 	end
 	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,
 		art = Pictures(first), file = window.file, views = views[1] and views or nil }
