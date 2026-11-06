@@ -277,102 +277,6 @@ WowWindow {
         height: 44
     }
 
-    Button {
-        id: merchantItem10ItemButton
-        name: "MerchantItem10ItemButton"
-        wowParent: "MerchantItem10"
-        anchors.left: merchantItem10.left
-        anchors.top: merchantItem10.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem10ItemButtonCount
-        name: "MerchantItem10ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem10ItemButton"
-        anchors.right: merchantItem10ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem10ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem10MoneyFrame
-        name: "MerchantItem10MoneyFrame"
-        wowParent: "MerchantItem10"
-        anchors.left: merchantItem10NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem10NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 77.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem10MoneyFrameCopperButton
-        name: "MerchantItem10MoneyFrameCopperButton"
-        text: "30"
-        wowParent: "MerchantItem10MoneyFrame"
-        anchors.right: merchantItem10MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem10MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem10MoneyFrameCopperButtonText
-        name: "MerchantItem10MoneyFrameCopperButtonText"
-        text: "30"
-        wowParent: "MerchantItem10MoneyFrameCopperButton"
-        anchors.right: merchantItem10MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem10MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    Button {
-        id: merchantItem10MoneyFrameSilverButton
-        name: "MerchantItem10MoneyFrameSilverButton"
-        text: "33"
-        wowParent: "MerchantItem10MoneyFrame"
-        anchors.right: merchantItem10MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem10MoneyFrameCopperButton.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem10MoneyFrameSilverButtonText
-        name: "MerchantItem10MoneyFrameSilverButtonText"
-        text: "33"
-        wowParent: "MerchantItem10MoneyFrameSilverButton"
-        anchors.right: merchantItem10MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem10MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem10Name
-        name: "MerchantItem10Name"
-        text: "Padded Armor"
-        wowParent: "MerchantItem10"
-        anchors.left: merchantItem10ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem10ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem11
         name: "MerchantItem11"
@@ -386,18 +290,6 @@ WowWindow {
         height: 44
     }
 
-    FontString {
-        id: merchantItem11Name
-        name: "MerchantItem11Name"
-        wowParent: "MerchantItem11"
-        anchors.left: merchantItem11ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem11ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem12
         name: "MerchantItem12"
@@ -409,18 +301,6 @@ WowWindow {
         anchors.topMargin: 332
         width: 153
         height: 44
-    }
-
-    FontString {
-        id: merchantItem12Name
-        name: "MerchantItem12Name"
-        wowParent: "MerchantItem12"
-        anchors.left: merchantItem12ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem12ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
     }
 
     Button {
@@ -532,102 +412,6 @@ WowWindow {
         height: 44
     }
 
-    Button {
-        id: merchantItem2ItemButton
-        name: "MerchantItem2ItemButton"
-        wowParent: "MerchantItem2"
-        anchors.left: merchantItem2.left
-        anchors.top: merchantItem2.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem2ItemButtonCount
-        name: "MerchantItem2ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem2ItemButton"
-        anchors.right: merchantItem2ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem2ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem2MoneyFrame
-        name: "MerchantItem2MoneyFrame"
-        wowParent: "MerchantItem2"
-        anchors.left: merchantItem2NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem2NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 77.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem2MoneyFrameCopperButton
-        name: "MerchantItem2MoneyFrameCopperButton"
-        text: "96"
-        wowParent: "MerchantItem2MoneyFrame"
-        anchors.right: merchantItem2MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem2MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem2MoneyFrameCopperButtonText
-        name: "MerchantItem2MoneyFrameCopperButtonText"
-        text: "96"
-        wowParent: "MerchantItem2MoneyFrameCopperButton"
-        anchors.right: merchantItem2MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem2MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    Button {
-        id: merchantItem2MoneyFrameSilverButton
-        name: "MerchantItem2MoneyFrameSilverButton"
-        text: "20"
-        wowParent: "MerchantItem2MoneyFrame"
-        anchors.right: merchantItem2MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem2MoneyFrameCopperButton.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem2MoneyFrameSilverButtonText
-        name: "MerchantItem2MoneyFrameSilverButtonText"
-        text: "20"
-        wowParent: "MerchantItem2MoneyFrameSilverButton"
-        anchors.right: merchantItem2MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem2MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem2Name
-        name: "MerchantItem2Name"
-        text: "Cuirboulli Belt"
-        wowParent: "MerchantItem2"
-        anchors.left: merchantItem2ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem2ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem3
         name: "MerchantItem3"
@@ -639,29 +423,6 @@ WowWindow {
         anchors.topMargin: 124
         width: 153
         height: 44
-    }
-
-    Button {
-        id: merchantItem3ItemButton
-        name: "MerchantItem3ItemButton"
-        wowParent: "MerchantItem3"
-        anchors.left: merchantItem3.left
-        anchors.top: merchantItem3.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem3ItemButtonCount
-        name: "MerchantItem3ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem3ItemButton"
-        anchors.right: merchantItem3ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem3ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
     }
 
     FontString {
@@ -677,79 +438,6 @@ WowWindow {
     }
 
     Frame {
-        id: merchantItem3MoneyFrame
-        name: "MerchantItem3MoneyFrame"
-        wowParent: "MerchantItem3"
-        anchors.left: merchantItem3NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem3NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 76.2
-        height: 13
-    }
-
-    Button {
-        id: merchantItem3MoneyFrameCopperButton
-        name: "MerchantItem3MoneyFrameCopperButton"
-        text: "56"
-        wowParent: "MerchantItem3MoneyFrame"
-        anchors.right: merchantItem3MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem3MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem3MoneyFrameCopperButtonText
-        name: "MerchantItem3MoneyFrameCopperButtonText"
-        text: "56"
-        wowParent: "MerchantItem3MoneyFrameCopperButton"
-        anchors.right: merchantItem3MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem3MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    Button {
-        id: merchantItem3MoneyFrameSilverButton
-        name: "MerchantItem3MoneyFrameSilverButton"
-        text: "31"
-        wowParent: "MerchantItem3MoneyFrame"
-        anchors.right: merchantItem3MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem3MoneyFrameCopperButton.verticalCenter
-        width: 28.8
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem3MoneyFrameSilverButtonText
-        name: "MerchantItem3MoneyFrameSilverButtonText"
-        text: "31"
-        wowParent: "MerchantItem3MoneyFrameSilverButton"
-        anchors.right: merchantItem3MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem3MoneyFrameSilverButton.verticalCenter
-        width: 15.8
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem3Name
-        name: "MerchantItem3Name"
-        text: "Cuirboulli Boots"
-        wowParent: "MerchantItem3"
-        anchors.left: merchantItem3ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem3ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
-    Frame {
         id: merchantItem4
         name: "MerchantItem4"
         wowParent: "MerchantFrame"
@@ -760,65 +448,6 @@ WowWindow {
         anchors.topMargin: 124
         width: 153
         height: 44
-    }
-
-    Button {
-        id: merchantItem4ItemButton
-        name: "MerchantItem4ItemButton"
-        wowParent: "MerchantItem4"
-        anchors.left: merchantItem4.left
-        anchors.top: merchantItem4.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem4ItemButtonCount
-        name: "MerchantItem4ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem4ItemButton"
-        anchors.right: merchantItem4ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem4ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem4MoneyFrame
-        name: "MerchantItem4MoneyFrame"
-        wowParent: "MerchantItem4"
-        anchors.left: merchantItem4NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem4NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 73.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem4MoneyFrameCopperButton
-        name: "MerchantItem4MoneyFrameCopperButton"
-        text: "11"
-        wowParent: "MerchantItem4MoneyFrame"
-        anchors.right: merchantItem4MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem4MoneyFrame.verticalCenter
-        width: 28
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem4MoneyFrameCopperButtonText
-        name: "MerchantItem4MoneyFrameCopperButtonText"
-        text: "11"
-        wowParent: "MerchantItem4MoneyFrameCopperButton"
-        anchors.right: merchantItem4MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem4MoneyFrameCopperButton.verticalCenter
-        width: 15
-        height: 14.2
     }
 
     Button {
@@ -845,43 +474,6 @@ WowWindow {
         height: 14.2
     }
 
-    Button {
-        id: merchantItem4MoneyFrameSilverButton
-        name: "MerchantItem4MoneyFrameSilverButton"
-        text: "21"
-        wowParent: "MerchantItem4MoneyFrame"
-        anchors.right: merchantItem4MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem4MoneyFrameCopperButton.verticalCenter
-        width: 28.8
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem4MoneyFrameSilverButtonText
-        name: "MerchantItem4MoneyFrameSilverButtonText"
-        text: "21"
-        wowParent: "MerchantItem4MoneyFrameSilverButton"
-        anchors.right: merchantItem4MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem4MoneyFrameSilverButton.verticalCenter
-        width: 15.8
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem4Name
-        name: "MerchantItem4Name"
-        text: "Cuirboulli Bracers"
-        wowParent: "MerchantItem4"
-        anchors.left: merchantItem4ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem4ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem5
         name: "MerchantItem5"
@@ -893,65 +485,6 @@ WowWindow {
         anchors.topMargin: 176
         width: 153
         height: 44
-    }
-
-    Button {
-        id: merchantItem5ItemButton
-        name: "MerchantItem5ItemButton"
-        wowParent: "MerchantItem5"
-        anchors.left: merchantItem5.left
-        anchors.top: merchantItem5.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem5ItemButtonCount
-        name: "MerchantItem5ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem5ItemButton"
-        anchors.right: merchantItem5ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem5ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem5MoneyFrame
-        name: "MerchantItem5MoneyFrame"
-        wowParent: "MerchantItem5"
-        anchors.left: merchantItem5NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem5NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 76.2
-        height: 13
-    }
-
-    Button {
-        id: merchantItem5MoneyFrameCopperButton
-        name: "MerchantItem5MoneyFrameCopperButton"
-        text: "19"
-        wowParent: "MerchantItem5MoneyFrame"
-        anchors.right: merchantItem5MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem5MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem5MoneyFrameCopperButtonText
-        name: "MerchantItem5MoneyFrameCopperButtonText"
-        text: "19"
-        wowParent: "MerchantItem5MoneyFrameCopperButton"
-        anchors.right: merchantItem5MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem5MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
     }
 
     Button {
@@ -976,43 +509,6 @@ WowWindow {
         height: 12
     }
 
-    Button {
-        id: merchantItem5MoneyFrameSilverButton
-        name: "MerchantItem5MoneyFrameSilverButton"
-        text: "21"
-        wowParent: "MerchantItem5MoneyFrame"
-        anchors.right: merchantItem5MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem5MoneyFrameCopperButton.verticalCenter
-        width: 28.8
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem5MoneyFrameSilverButtonText
-        name: "MerchantItem5MoneyFrameSilverButtonText"
-        text: "21"
-        wowParent: "MerchantItem5MoneyFrameSilverButton"
-        anchors.right: merchantItem5MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem5MoneyFrameSilverButton.verticalCenter
-        width: 15.8
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem5Name
-        name: "MerchantItem5Name"
-        text: "Cuirboulli Gloves"
-        wowParent: "MerchantItem5"
-        anchors.left: merchantItem5ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem5ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem6
         name: "MerchantItem6"
@@ -1026,29 +522,6 @@ WowWindow {
         height: 44
     }
 
-    Button {
-        id: merchantItem6ItemButton
-        name: "MerchantItem6ItemButton"
-        wowParent: "MerchantItem6"
-        anchors.left: merchantItem6.left
-        anchors.top: merchantItem6.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem6ItemButtonCount
-        name: "MerchantItem6ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem6ItemButton"
-        anchors.right: merchantItem6ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem6ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
     FontString {
         id: merchantItem6ItemButtonStock
         name: "MerchantItem6ItemButtonStock"
@@ -1058,42 +531,6 @@ WowWindow {
         anchors.top: merchantItem6ItemButton.top
         anchors.topMargin: 2
         width: 19
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem6MoneyFrame
-        name: "MerchantItem6MoneyFrame"
-        wowParent: "MerchantItem6"
-        anchors.left: merchantItem6NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem6NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 77.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem6MoneyFrameCopperButton
-        name: "MerchantItem6MoneyFrameCopperButton"
-        text: "47"
-        wowParent: "MerchantItem6MoneyFrame"
-        anchors.right: merchantItem6MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem6MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem6MoneyFrameCopperButtonText
-        name: "MerchantItem6MoneyFrameCopperButtonText"
-        text: "47"
-        wowParent: "MerchantItem6MoneyFrameCopperButton"
-        anchors.right: merchantItem6MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem6MoneyFrameCopperButton.verticalCenter
-        width: 17.4
         height: 14.2
     }
 
@@ -1121,43 +558,6 @@ WowWindow {
         height: 14.2
     }
 
-    Button {
-        id: merchantItem6MoneyFrameSilverButton
-        name: "MerchantItem6MoneyFrameSilverButton"
-        text: "38"
-        wowParent: "MerchantItem6MoneyFrame"
-        anchors.right: merchantItem6MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem6MoneyFrameCopperButton.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem6MoneyFrameSilverButtonText
-        name: "MerchantItem6MoneyFrameSilverButtonText"
-        text: "38"
-        wowParent: "MerchantItem6MoneyFrameSilverButton"
-        anchors.right: merchantItem6MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem6MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem6Name
-        name: "MerchantItem6Name"
-        text: "Cuirboulli Pants"
-        wowParent: "MerchantItem6"
-        anchors.left: merchantItem6ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem6ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem7
         name: "MerchantItem7"
@@ -1169,65 +569,6 @@ WowWindow {
         anchors.topMargin: 228
         width: 153
         height: 44
-    }
-
-    Button {
-        id: merchantItem7ItemButton
-        name: "MerchantItem7ItemButton"
-        wowParent: "MerchantItem7"
-        anchors.left: merchantItem7.left
-        anchors.top: merchantItem7.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem7ItemButtonCount
-        name: "MerchantItem7ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem7ItemButton"
-        anchors.right: merchantItem7ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem7ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem7MoneyFrame
-        name: "MerchantItem7MoneyFrame"
-        wowParent: "MerchantItem7"
-        anchors.left: merchantItem7NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem7NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 77.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem7MoneyFrameCopperButton
-        name: "MerchantItem7MoneyFrameCopperButton"
-        text: "62"
-        wowParent: "MerchantItem7MoneyFrame"
-        anchors.right: merchantItem7MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem7MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem7MoneyFrameCopperButtonText
-        name: "MerchantItem7MoneyFrameCopperButtonText"
-        text: "62"
-        wowParent: "MerchantItem7MoneyFrameCopperButton"
-        anchors.right: merchantItem7MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem7MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
     }
 
     Button {
@@ -1252,43 +593,6 @@ WowWindow {
         height: 12
     }
 
-    Button {
-        id: merchantItem7MoneyFrameSilverButton
-        name: "MerchantItem7MoneyFrameSilverButton"
-        text: "24"
-        wowParent: "MerchantItem7MoneyFrame"
-        anchors.right: merchantItem7MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem7MoneyFrameCopperButton.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem7MoneyFrameSilverButtonText
-        name: "MerchantItem7MoneyFrameSilverButtonText"
-        text: "24"
-        wowParent: "MerchantItem7MoneyFrameSilverButton"
-        anchors.right: merchantItem7MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem7MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem7Name
-        name: "MerchantItem7Name"
-        text: "Padded Boots"
-        wowParent: "MerchantItem7"
-        anchors.left: merchantItem7ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem7ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem8
         name: "MerchantItem8"
@@ -1300,65 +604,6 @@ WowWindow {
         anchors.topMargin: 228
         width: 153
         height: 44
-    }
-
-    Button {
-        id: merchantItem8ItemButton
-        name: "MerchantItem8ItemButton"
-        wowParent: "MerchantItem8"
-        anchors.left: merchantItem8.left
-        anchors.top: merchantItem8.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem8ItemButtonCount
-        name: "MerchantItem8ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem8ItemButton"
-        anchors.right: merchantItem8ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem8ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem8MoneyFrame
-        name: "MerchantItem8MoneyFrame"
-        wowParent: "MerchantItem8"
-        anchors.left: merchantItem8NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem8NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 77.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem8MoneyFrameCopperButton
-        name: "MerchantItem8MoneyFrameCopperButton"
-        text: "52"
-        wowParent: "MerchantItem8MoneyFrame"
-        anchors.right: merchantItem8MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem8MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem8MoneyFrameCopperButtonText
-        name: "MerchantItem8MoneyFrameCopperButtonText"
-        text: "52"
-        wowParent: "MerchantItem8MoneyFrameCopperButton"
-        anchors.right: merchantItem8MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem8MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
     }
 
     Button {
@@ -1385,43 +630,6 @@ WowWindow {
         height: 14.2
     }
 
-    Button {
-        id: merchantItem8MoneyFrameSilverButton
-        name: "MerchantItem8MoneyFrameSilverButton"
-        text: "16"
-        wowParent: "MerchantItem8MoneyFrame"
-        anchors.right: merchantItem8MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem8MoneyFrameCopperButton.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem8MoneyFrameSilverButtonText
-        name: "MerchantItem8MoneyFrameSilverButtonText"
-        text: "16"
-        wowParent: "MerchantItem8MoneyFrameSilverButton"
-        anchors.right: merchantItem8MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem8MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem8Name
-        name: "MerchantItem8Name"
-        text: "Padded Gloves"
-        wowParent: "MerchantItem8"
-        anchors.left: merchantItem8ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem8ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
-    }
-
     Frame {
         id: merchantItem9
         name: "MerchantItem9"
@@ -1433,102 +641,6 @@ WowWindow {
         anchors.topMargin: 280
         width: 153
         height: 44
-    }
-
-    Button {
-        id: merchantItem9ItemButton
-        name: "MerchantItem9ItemButton"
-        wowParent: "MerchantItem9"
-        anchors.left: merchantItem9.left
-        anchors.top: merchantItem9.top
-        width: 38.2
-        height: 38.1
-    }
-
-    FontString {
-        id: merchantItem9ItemButtonCount
-        name: "MerchantItem9ItemButtonCount"
-        text: "5"
-        wowParent: "MerchantItem9ItemButton"
-        anchors.right: merchantItem9ItemButton.right
-        anchors.rightMargin: 5
-        anchors.bottom: merchantItem9ItemButton.bottom
-        anchors.bottomMargin: 2
-        width: 10.3
-        height: 14.2
-    }
-
-    Frame {
-        id: merchantItem9MoneyFrame
-        name: "MerchantItem9MoneyFrame"
-        wowParent: "MerchantItem9"
-        anchors.left: merchantItem9NameFrame.left
-        anchors.leftMargin: 2
-        anchors.bottom: merchantItem9NameFrame.bottom
-        anchors.bottomMargin: 31
-        width: 77.8
-        height: 13
-    }
-
-    Button {
-        id: merchantItem9MoneyFrameCopperButton
-        name: "MerchantItem9MoneyFrameCopperButton"
-        text: "18"
-        wowParent: "MerchantItem9MoneyFrame"
-        anchors.right: merchantItem9MoneyFrame.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem9MoneyFrame.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem9MoneyFrameCopperButtonText
-        name: "MerchantItem9MoneyFrameCopperButtonText"
-        text: "18"
-        wowParent: "MerchantItem9MoneyFrameCopperButton"
-        anchors.right: merchantItem9MoneyFrameCopperButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem9MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    Button {
-        id: merchantItem9MoneyFrameSilverButton
-        name: "MerchantItem9MoneyFrameSilverButton"
-        text: "33"
-        wowParent: "MerchantItem9MoneyFrame"
-        anchors.right: merchantItem9MoneyFrameCopperButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: merchantItem9MoneyFrameCopperButton.verticalCenter
-        width: 30.4
-        height: 13
-    }
-
-    FontString {
-        id: merchantItem9MoneyFrameSilverButtonText
-        name: "MerchantItem9MoneyFrameSilverButtonText"
-        text: "33"
-        wowParent: "MerchantItem9MoneyFrameSilverButton"
-        anchors.right: merchantItem9MoneyFrameSilverButton.right
-        anchors.rightMargin: 13
-        anchors.verticalCenter: merchantItem9MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 14.2
-    }
-
-    FontString {
-        id: merchantItem9Name
-        name: "MerchantItem9Name"
-        text: "Padded Pants"
-        wowParent: "MerchantItem9"
-        anchors.left: merchantItem9ItemButton.right
-        anchors.leftMargin: 16
-        anchors.top: merchantItem9ItemButton.top
-        anchors.topMargin: -1
-        width: 150
-        height: 26
     }
 
     Frame {
@@ -1704,16 +816,12 @@ WowWindow {
 
     Ghost { id: merchantBuyBackItemMoneyFrameCopperButton; name: "MerchantBuyBackItemMoneyFrameCopperButton"; x: 148.7; y: 427.7; width: 0; height: 0 }
     Ghost { id: merchantBuyBackItemNameFrame; name: "MerchantBuyBackItemNameFrame"; x: 92.6; y: 459.2; width: 0; height: 0 }
-    Ghost { id: merchantItem10NameFrame; name: "MerchantItem10NameFrame"; x: 311.4; y: 313.1; width: 0; height: 0 }
-    Ghost { id: merchantItem11ItemButton; name: "MerchantItem11ItemButton"; x: 77.4; y: 296; width: 0; height: 0 }
-    Ghost { id: merchantItem12ItemButton; name: "MerchantItem12ItemButton"; x: 295.4; y: 296; width: 0; height: 0 }
     Ghost { id: merchantItem1NameFrame; name: "MerchantItem1NameFrame"; x: 93.4; y: 105.1; width: 0; height: 0 }
-    Ghost { id: merchantItem2NameFrame; name: "MerchantItem2NameFrame"; x: 311.4; y: 105.1; width: 0; height: 0 }
-    Ghost { id: merchantItem3NameFrame; name: "MerchantItem3NameFrame"; x: 93.4; y: 157.1; width: 0; height: 0 }
-    Ghost { id: merchantItem4NameFrame; name: "MerchantItem4NameFrame"; x: 311.4; y: 157.1; width: 0; height: 0 }
-    Ghost { id: merchantItem5NameFrame; name: "MerchantItem5NameFrame"; x: 93.4; y: 209.1; width: 0; height: 0 }
-    Ghost { id: merchantItem6NameFrame; name: "MerchantItem6NameFrame"; x: 311.4; y: 209.1; width: 0; height: 0 }
-    Ghost { id: merchantItem7NameFrame; name: "MerchantItem7NameFrame"; x: 93.4; y: 261.1; width: 0; height: 0 }
-    Ghost { id: merchantItem8NameFrame; name: "MerchantItem8NameFrame"; x: 311.4; y: 261.1; width: 0; height: 0 }
-    Ghost { id: merchantItem9NameFrame; name: "MerchantItem9NameFrame"; x: 93.4; y: 313.1; width: 0; height: 0 }
+    Ghost { id: merchantItem3ItemButton; name: "MerchantItem3ItemButton"; x: 39.3; y: 88; width: 38.2; height: 38.1 }
+    Ghost { id: merchantItem4MoneyFrameSilverButton; name: "MerchantItem4MoneyFrameSilverButton"; x: 313.4; y: 113.1; width: 28.8; height: 13 }
+    Ghost { id: merchantItem5MoneyFrameSilverButton; name: "MerchantItem5MoneyFrameSilverButton"; x: 95.4; y: 165.1; width: 28.8; height: 13 }
+    Ghost { id: merchantItem6ItemButton; name: "MerchantItem6ItemButton"; x: 257.3; y: 140; width: 38.2; height: 38.1 }
+    Ghost { id: merchantItem6MoneyFrameSilverButton; name: "MerchantItem6MoneyFrameSilverButton"; x: 313.4; y: 165.1; width: 30.4; height: 13 }
+    Ghost { id: merchantItem7MoneyFrameSilverButton; name: "MerchantItem7MoneyFrameSilverButton"; x: 95.4; y: 217.1; width: 30.4; height: 13 }
+    Ghost { id: merchantItem8MoneyFrameSilverButton; name: "MerchantItem8MoneyFrameSilverButton"; x: 313.4; y: 217.1; width: 30.4; height: 13 }
 }
