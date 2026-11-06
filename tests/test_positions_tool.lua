@@ -349,58 +349,35 @@ DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	lu.assertStrContains(window, 'anchors.right: bankFrame.right\n        anchors.rightMargin: 46\n        anchors.top: bankFrame.top\n        anchors.topMargin: 8\n        width: 32')
 end
 
--- A .tga `width` wide, one high: its header (raw or packed, its bits, its
--- first row the top one or not), then its pixels.
-local Tga = function(kind, bits, top, width, pixels)
-	return string.char(0, 0, kind, 0, 0, 0, 0, 0, 0, 0, 0, 0, width, 0, 1, 0, bits, top and 32 or 0) .. pixels
-end
-
--- Our art for the editor: its files as .bmp pictures (in tools/art/, each
--- made once), white ones said white, the ones not found or not read left out.
-function TestPositionsTool:test_our_art_as_pictures_a_browser_reads()
+-- The art for the editor: our files as they are in media/ (whatever their
+-- case), white ones said white, the game's by their paths, the ones not found
+-- left out.
+function TestPositionsTool:test_the_art_by_its_files()
 	local addon = TempName()
 	os.execute("mkdir -p '" .. addon .. "/media/textures' '" .. addon .. "/tools'")
-	Write(addon .. "/media/textures/Raw32.tga", Tga(2, 32, false, 2, "\1\2\3\4\5\6\7\8"))
-	Write(addon .. "/media/textures/Raw24.tga", Tga(2, 24, true, 2, "\1\2\3\4\5\6"))
-	Write(addon .. "/media/textures/Packed.tga", Tga(10, 32, false, 3, "\128\9\9\9\9" .. "\1\1\2\3\4\5\6\7\8"))
-	Write(addon .. "/media/textures/Mapped.tga", Tga(1, 8, false, 1, "\0"))
+	Write(addon .. "/media/textures/Raw32.tga", "")
+	Write(addon .. "/media/textures/Raw24.tga", "")
 	local ours = [[Interface\\AddOns\\DiabolicUI\\media\\textures\\]]
 	local item = function(file) return string.format('{ file = "%s", rect = { 0, 0, 2, 1 }, coords = { 0, 0, 0, 1, .125, 0, .125, 1 }, color = { 1, 1, 1, 1 }, alpha = 1, owner = "W" },', file) end
 	-- (a part's second point on nothing: on its parent)
 	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = { P = { 'TOP', 'W', 'TOP', 0, 0, 1, 1, kind = 'Frame', parent = 'W',"
 		.. " points = { { 'TOP', 'W', 'TOP', 0, 0 }, { 'CENTER', nil, 'CENTER', 0, 0 } } } }, art = {\n"
-		.. item(ours .. "Raw32") .. item(ours .. "raw24.TGA") .. item(ours .. "Packed") .. item(ours .. "Raw32")
-		.. item(ours .. "Mapped") .. item(ours .. "Missing") .. item([[Interface\\Buttons\\WHITE8X8]]) .. item([[Interface\\Icons\\INV_Sword.blp]])
-		.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "' .. ours .. 'Packed", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
+		.. item(ours .. "Raw32") .. item(ours .. "raw24.TGA") .. item(ours .. "Missing") .. item([[Interface\\Buttons\\WHITE8X8]]) .. item([[Interface\\Icons\\INV_Sword.blp]])
+		.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "' .. ours .. 'Raw24", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
 		.. '{ backdrop = { edgeFile = "' .. ours .. 'Missing" }, rect = { 0, 0, 9, 9 } },'
 		.. "} } } }")
 	Run({ addon .. "/saved.lua", addon .. "/positions.lua", addon .. "/tools/layout.json", addon .. "/windows" }, addon)
 	local json = Read(addon .. "/tools/layout.json")
-	local bmp = {}
-	for _, name in ipairs({ "Raw32", "Raw24", "Packed" }) do
-		bmp[name] = Read(addon .. "/tools/art/textures-" .. name .. ".bmp")
-	end
-	local made = io.open(addon .. "/tools/art/textures-Mapped.bmp")
 	os.execute("rm -rf '" .. addon .. "'")
-	lu.assertNil(made)
-	-- (a 32-bit .bmp: its header 122 long, its height negative when its
-	-- first row is the top one, its pixels as they were, an alpha added)
-	lu.assertEquals(bmp.Raw32:sub(1, 2), "BM")
-	lu.assertEquals(bmp.Raw32:sub(19, 26), "\2\0\0\0\1\0\0\0")
-	lu.assertEquals(bmp.Raw32:sub(123), "\1\2\3\4\5\6\7\8")
-	lu.assertEquals(bmp.Raw24:sub(23, 26), "\255\255\255\255")
-	lu.assertEquals(bmp.Raw24:sub(123), "\1\2\3\255\4\5\6\255")
-	lu.assertEquals(bmp.Packed:sub(123), "\9\9\9\9\1\2\3\4\5\6\7\8")
-	lu.assertStrContains(json, '"art":[{"alpha":1,"color":[1,1,1,1],"coords":[0,0,0,1,0.125,0,0.125,1],"image":"art/textures-Raw32.bmp"')
-	lu.assertStrContains(json, '"image":"art/textures-Raw24.bmp"')
+	lu.assertStrContains(json, '"art":[{"alpha":1,"color":[1,1,1,1],"coords":[0,0,0,1,0.125,0,0.125,1],"image":"media/textures/Raw32.tga"')
+	lu.assertStrContains(json, '"image":"media/textures/Raw24.tga"')
 	lu.assertStrContains(json, '"image":true')
 	lu.assertStrContains(json, '"image":"game/interface/icons/inv_sword"')
-	lu.assertStrContains(json, '"backdrop":{"bg":true,"edge":"art/textures-Packed.bmp","edgeSize":32,"insets":[1,2,3,4],"tile":true}')
+	lu.assertStrContains(json, '"backdrop":{"bg":true,"edge":"media/textures/Raw24.tga","edgeSize":32,"insets":[1,2,3,4],"tile":true}')
 	lu.assertStrContains(json, '"points":[["TOP","W","TOP",0,0],["CENTER","W","CENTER",0,0]]')
-	lu.assertNotStrContains(json, "Mapped")
 	lu.assertNotStrContains(json, "Missing")
 	local _, count = json:gsub('"owner"', "")
-	lu.assertEquals(count, 6)
+	lu.assertEquals(count, 4)
 end
 
 os.exit(lu.LuaUnit.run())

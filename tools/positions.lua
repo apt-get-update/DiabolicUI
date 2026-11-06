@@ -630,65 +630,6 @@ Encode = function(value, out)
 	end
 end
 
--- Our art's pictures (tools/art/, not in git): each file of media/ the
--- windows show, as a .bmp (a browser reads it, not a .tga), named after
--- it; a white file (a line, a fill: colored in game) just said white.
-local ART = (JSON:match("^(.*)/[^/]*$") or ".") .. "/art"
-
-local LittleEndian = function(value, bytes)
-	value = (value < 0) and (value + 256 ^ bytes) or value
-	local out = {}
-	for i = 1, bytes do
-		out[i] = string.char(value % 256)
-		value = math.floor(value / 256)
-	end
-	return table.concat(out)
-end
-
--- a .tga (raw or packed, 24 or 32 bits) as a 32-bit .bmp with its alpha
-local Bitmap = function(data)
-	local idLength, mapType, kind = data:byte(1, 3)
-	local width, height = data:byte(13) + 256 * data:byte(14), data:byte(15) + 256 * data:byte(16)
-	local bits, flags = data:byte(17, 18)
-	if (mapType ~= 0) or ((kind ~= 2) and (kind ~= 10)) or ((bits ~= 24) and (bits ~= 32)) then
-		return
-	end
-	local size, at, count = bits / 8, 19 + idLength, width * height
-	local Pixel = function()
-		local pixel = data:sub(at, at + size - 1) .. ((size == 3) and "\255" or "")
-		at = at + size
-		return pixel
-	end
-	local pixels = {}
-	if (kind == 2) and (size == 4) then
-		pixels[1] = data:sub(at, at + count * 4 - 1)
-	else
-		local done = 0
-		while (done < count) do
-			local run, same = 1, false
-			if (kind == 10) then
-				local head = data:byte(at)
-				at, run, same = at + 1, head % 128 + 1, head >= 128
-			end
-			if same then
-				pixels[#pixels + 1] = Pixel():rep(run)
-			else
-				for _ = 1, run do
-					pixels[#pixels + 1] = Pixel()
-				end
-			end
-			done = done + run
-		end
-	end
-	local body = table.concat(pixels)
-	local top = (math.floor(flags / 32) % 2 == 1) -- (its first row the top one: a .bmp's height negative)
-	return table.concat({ "BM", LittleEndian(122 + #body, 4), LittleEndian(0, 4), LittleEndian(122, 4),
-		LittleEndian(108, 4), LittleEndian(width, 4), LittleEndian(top and -height or height, 4), LittleEndian(1, 2),
-		LittleEndian(32, 2), LittleEndian(3, 4), LittleEndian(#body, 4), LittleEndian(2835, 4), LittleEndian(2835, 4),
-		LittleEndian(0, 4), LittleEndian(0, 4), LittleEndian(0x00FF0000, 4), LittleEndian(0x0000FF00, 4),
-		LittleEndian(0x000000FF, 4), LittleEndian(0xFF000000, 4), "BGRs", string.rep("\0", 48), body })
-end
-
 -- the media files by their names in lower case (the game's aren't fussy)
 local media = {}
 local pipe = io.popen("find media -type f -iname '*.tga' 2>/dev/null")
@@ -697,9 +638,8 @@ for path in pipe:lines() do
 end
 pipe:close()
 
--- a texture's file: its picture's path (ours, made once; the game's: read by
--- tools/gametextures.py when drawn), true if white, or nil
-local made = {}
+-- a texture's file as the editor finds it: ours in media/, the game's (read by
+-- tools/gametextures.py), true if white, or nil
 local WHITE = { ["interface/chatframe/chatframebackground"] = true, ["interface/buttons/white8x8"] = true }
 local Picture = function(file)
 	if (not file) then
@@ -710,20 +650,7 @@ local Picture = function(file)
 		local path = file:gsub("\\", "/"):lower():gsub("%.%a+$", "")
 		return WHITE[path] or ("game/" .. path)
 	end
-	local path = media[rest:lower()] or media[rest:lower() .. ".tga"]
-	if path and (made[path] == nil) then
-		local tga = io.open(path, "rb")
-		local data = Bitmap(tga:read("*a"))
-		tga:close()
-		made[path] = data and ("art/" .. path:gsub("^media/", ""):gsub("/", "-"):gsub("%.[Tt][Gg][Aa]$", ".bmp")) or false
-		if data then
-			os.execute("mkdir -p '" .. ART .. "'")
-			local bmp = assert(io.open(ART .. "/" .. made[path]:sub(5), "wb"))
-			bmp:write(data)
-			bmp:close()
-		end
-	end
-	return path and made[path] or nil
+	return media[rest:lower()] or media[rest:lower() .. ".tga"]
 end
 
 -- a window's art as the editor draws it: its files as their pictures

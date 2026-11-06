@@ -13,6 +13,7 @@ import subprocess
 import sys
 
 import gametextures
+from PIL import Image
 from PySide6.QtCore import QFileSystemWatcher, QObject, QPointF, QRectF, Qt, QTimer, QUrl, Signal, Slot
 from PySide6.QtGui import QBrush, QColor, QGuiApplication, QIcon, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
 from PySide6.QtQml import QQmlApplicationEngine
@@ -33,6 +34,16 @@ def to_lua(value):
     if isinstance(value, list):
         return "{" + ",".join(to_lua(v) for v in value) + "}"
     return json.dumps(value)
+
+
+def loaded(file):
+    """A picture file (a .tga, a .png) ready to draw, or None."""
+    try:
+        picture = Image.open(file).convert("RGBA")
+    except OSError:
+        return None
+    image = QImage(picture.tobytes(), picture.width, picture.height, QImage.Format_RGBA8888)
+    return image.convertToFormat(QImage.Format_ARGB32_Premultiplied)
 
 
 def blank(width, height):
@@ -106,9 +117,8 @@ class Art(QQuickImageProvider):
 
     def picture(self, path):
         if path not in self.files:
-            file = gametextures.png(path[5:]) if path.startswith("game/") else os.path.join("tools", path)
-            image = QImage(file) if file else QImage()
-            self.files[path] = None if image.isNull() else image.convertToFormat(QImage.Format_ARGB32_Premultiplied)
+            file = gametextures.png(path[5:]) if path.startswith("game/") else path
+            self.files[path] = loaded(file) if file else None
         return self.files[path]
 
     def texture(self, item):
