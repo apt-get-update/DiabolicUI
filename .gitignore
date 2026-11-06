@@ -38,3 +38,6 @@ __pycache__/
 # tools/positions.lua writes it from your own scans
 tools/layout.json
 tools/art/
+tools/editor-unsaved.json
+tools/edits.lua
+__pycache__/

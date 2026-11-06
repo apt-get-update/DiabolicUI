@@ -655,6 +655,7 @@ end
 local IsSelected = function(tab)
 	return tab:IsEnabled() == 0
 end
+Module.IsSelected = IsSelected
 
 -- A tab's text in its art's middle.
 local PlaceTabText = function(tab)

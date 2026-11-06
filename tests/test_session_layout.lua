@@ -205,7 +205,7 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	lu.assertEquals(_G.DiabolicUI_Layout.windows.AuditFine.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
 	-- our own art (for the editor to draw it): the textures from our media
 	-- or white, our backdrops (its border), in the order they're drawn
-	local art, lines, backdrops = _G.DiabolicUI_Layout.windows.AuditFine.art, {}, {}
+	local art, lines, backdrops = _G.DiabolicUI_Layout.windows.AuditFine.views[""].art, {}, {}
 	for _, item in ipairs(art) do
 		lu.assertNil(item.order)
 		lu.assertNotEquals(item.owner, "AuditGlow")
@@ -253,6 +253,42 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	slash("layout")
 	lu.assertEquals(said()[5], "Layout check off.")
 	lu.assertFalse(checking())
+	assertClean(client)
+end
+
+-- A window's art and where it is by the tabs chosen, each part with the tabs
+-- it showed in (the editor shows one tab at a time).
+function TestLayoutAudit:test_a_window_by_its_tabs()
+	boot()
+	local frame = window("AuditTabbed")
+	local Tab = function(name, label)
+		local tab = CreateFrame("Button", name, frame)
+		tab:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 40, 40)
+		tab:SetSize(60, 20)
+		tab:SetText(label)
+		return tab
+	end
+	local first, second = Tab("AuditTabbedTab1", "First"), Tab("AuditTabbedTab2", "")
+	zone(frame, "AuditPageOne", 30, -80, 340, 150, "parchment")
+	first:Disable()
+	frame:Show()
+	slash("layout")
+	local seen = _G.DiabolicUI_Layout.windows.AuditTabbed
+	lu.assertEquals(seen.views.AuditTabbedTab1.label, "First")
+	lu.assertNotNil(seen.views.AuditTabbedTab1.art)
+	lu.assertEquals(seen.views.AuditTabbedTab1.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
+	lu.assertEquals(seen.parts.AuditPageOne.tabs, { AuditTabbedTab1 = true })
+	-- the other tab (no text: by its name), a part in both, one only there
+	first:Enable()
+	second:Disable()
+	_G.AuditPageOne:Hide()
+	zone(frame, "AuditPageTwo", 30, -80, 340, 150, "parchment")
+	client:Tick(1.1)
+	lu.assertEquals(seen.views.AuditTabbedTab2.label, "AuditTabbedTab2")
+	lu.assertEquals(seen.parts.AuditPageOne.tabs, { AuditTabbedTab1 = true })
+	lu.assertEquals(seen.parts.AuditPageTwo.tabs, { AuditTabbedTab2 = true })
+	lu.assertEquals(seen.parts.AuditTabbedDiabolic.tabs, { AuditTabbedTab1 = true, AuditTabbedTab2 = true })
+	slash("layout")
 	assertClean(client)
 end
 

@@ -78,20 +78,46 @@ than a line have their own file in `modules/blizzard/` (code).
 == Fix a visual bug
 
 A button in the wrong place, in any window. Every named part of the windows
-is listed in `settings/positions.lua`, one line each, commented out:
+is in `windows/<its window>.qml`, a part being a QML block with its anchors:
 
-[source,lua]
+[source,qml]
 ----
--- WhoFrameEditBox = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100, 296, 32 }, -- EditBox
+Part {
+    id: whoFrameEditBox
+    name: "WhoFrameEditBox"
+    kind: "EditBox"
+    pin: "all"
+    anchors.bottom: whoFrame.bottom
+    anchors.bottomMargin: 103
+    anchors.horizontalCenter: whoFrame.horizontalCenter
+    anchors.horizontalCenterOffset: -20
+    width: 296
+    height: 32
+}
 ----
 
-That's `{ point, the frame it's placed on, that frame's point, x, y, width,
-height }` (higher `x` goes right, higher `y` goes up). To move or resize a
-part: remove its `--`, change the numbers, `/reload`. Without the width and
-height it keeps its size; `{ width, height }` alone resizes it where it is.
-A line without `--` keeps its part there for good, whatever else moves it,
-so uncomment only what you fix. Say why in a `--` line over it: the notes
-are kept.
+*With the editor:* `python3 tools/editor.py` (needs PySide6 and `lua5.1`). Each
+window opens as it is in its file, with our art under its boxes; a window with
+tabs has them on top, each showing only its own parts.
+
+* Press a part to pick it (again: the one under it; right-click lists all that's
+  there, Tab goes through them). Drag it: it snaps to the others' edges (Alt: it
+  doesn't), what's placed on it follows.
+* The gold handles size it, on any side (the other side stays).
+* The dots are its 9 points, the yellow one the point it's placed by. Drag a dot
+  onto another part's point to place it there: it stays where it is.
+* Arrows move it 1 (Shift 10), Ctrl + arrows size it. Ctrl+Z, Ctrl+Shift+Z,
+  wheel to zoom, the middle button or the empty space to pan, F to fit.
+* *Save* (Ctrl+S) writes the files, then `/reload`. A full screenshot from
+  `Screenshots/` lines up under the boxes.
+
+*By hand:* change a part's block, then `lua5.1 tools/positions.lua`. Each part
+needs one anchor across and one down, on one frame of its file, with plain
+numbers (the tool says what it can't read). A `pin` puts it in
+`settings/positions.lua` (`"all"`, or only its `"place"` or `"size"`), which the
+game loads and the tool writes: don't change that one. Without a pin a part
+follows the scan. Say why with `//` lines over its block: they're kept.
+A `Ghost` stands for a frame with parts on it that isn't in that window's file.
 
 *Or move it in game:*
 
@@ -100,30 +126,14 @@ are kept.
 . Drag it, or nudge it with the arrow keys (1 px, 10 with Shift).
   Ctrl + arrows resize it (right and up: wider, taller).
   Right-click puts it back (`/dui adjust reset`: all of them). Escape stops.
-. `/reload`, then from the addon's folder: `lua5.1 tools/positions.lua`.
-  It writes what you moved into `settings/positions.lua`, without `--`.
+. `/reload`, then `lua5.1 tools/positions.lua` gives it a pin.
 
-*Filling the list:* `/dui layout all` opens every window that needs no NPC
-(open the others yourself while it's on: mail, auction house, bank, vendor,
-trainer...), `/reload`, then `lua5.1 tools/positions.lua`. It rewrites the
-file from what was seen, keeping the lines without `--` and their notes.
-It also writes `tools/layout.json` (not in git): every window and part as
-the scan saw them, with all their anchors, parents, places on screen and
-layers, for an editor out of the game. Our own parts are named after their
-window (`ClassTrainerFrameDiabolicBand`, `...DiabolicFoot`), so they're
-listed and can be placed too.
-
-*Or move it out of the game:* open `tools/editor.html` in a browser, then
-`tools/layout.json` (it's remembered next time). Pick a window: each part is
-a box (blue frames, green texts, purple textures; doubled: already in
-`settings/positions.lua`). Click one (again: the one under it), drag it or
-its corner, or use the arrows (Ctrl: size). The frame it's placed on shows
-dashed, what's placed on it follows. Our own art (borders, bands, gems,
-lines) is drawn under the boxes, from the pictures the tool makes in
-`tools/art/` (not in git; Blizzard's art isn't). A screenshot of the whole screen
-(`Screenshots/`) lines up under the boxes. *Save to positions.lua* writes
-the changed lines into `settings/positions.lua` (pick it the first time;
-Chrome, Edge, Vivaldi: other browsers Copy them over theirs), then `/reload`.
+*Filling the files:* `/dui layout all` opens every window that needs no NPC
+and each of its tabs (open the others yourself while it's on: mail, auction
+house, bank, vendor, trainer...), `/reload`. The editor reads it by itself, or
+run `lua5.1 tools/positions.lua`: pinned parts stay, the others follow the scan.
+It also writes `tools/layout.json` and `tools/art/` for the editor (not in git).
+Our own parts are named after their window (`ClassTrainerFrameDiabolicBand`).
 
 == Put a part in a window's red band
 

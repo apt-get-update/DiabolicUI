@@ -33,6 +33,7 @@ local string_find = string.find
 local string_format = string.format
 local string_match = string.match
 local tonumber = tonumber
+local table_concat = table.concat
 local table_sort = table.sort
 
 -- WoW API
@@ -824,8 +825,27 @@ local Art = function(frame)
 	return art
 end
 
+-- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
+-- what the window shows now, by their names and as they read.
+local ViewOf = function(named)
+	local names = {}
+	for name, part in pairs(named) do
+		if (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$")) and part:IsObjectType("Button") and kit.IsSelected(part) then
+			names[#names + 1] = name
+		end
+	end
+	table_sort(names)
+	local labels = {}
+	for i, name in ipairs(names) do
+		local text = named[name]:GetText()
+		labels[i] = ((text ~= nil) and (text ~= "")) and text or name
+	end
+	return table_concat(names, "+"), table_concat(labels, " / ")
+end
+
 -- `window` checked: what breaks the rules said once each, or that
--- nothing does (once). Its parts saved with where they are.
+-- nothing does (once). Its parts saved with where they are, with the tabs
+-- they showed in; its art by the tabs chosen when it was seen.
 local Check = function(window)
 	local frame = window.Frame
 	local scale = window:GetEffectiveScale()
@@ -839,12 +859,20 @@ local Check = function(window)
 	CollectNamed(frame, nil, named)
 	Saved.windows[title].rect = Rect(frame)
 	Saved.windows[title].window = Rect(window)
-	Saved.windows[title].art = Art(frame)
+	local view, label = ViewOf(named)
+	local views = Saved.windows[title].views or {}
+	Saved.windows[title].views = views
+	views[view] = { label = label, art = Art(frame), rect = Rect(frame), window = Rect(window) }
 	local new = 0
 	for name, part in pairs(named) do
 		local entry = Entry(part)
 		if entry then
-			new = new + ((type(parts[name]) == "table") and 0 or 1)
+			local old = parts[name]
+			new = new + ((type(old) == "table") and 0 or 1)
+			entry.tabs = (type(old) == "table") and old.tabs or {}
+			if (view ~= "") then
+				entry.tabs[view] = true
+			end
 			parts[name] = entry
 		end
 	end
