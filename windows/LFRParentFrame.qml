@@ -1,742 +1,689 @@
-// Written by tools/positions.lua, yours to change (docs: Common Tasks): a part
-// with a pin is put in settings/positions.lua ("all", or only its "place" or
-// its "size"), the others follow /dui layout's scan.
+// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
+// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
 WowWindow {
-    id: lFRParentFrame
     name: "LFRParentFrame"
     width: 355
     height: 440
 
     Frame {
-        id: lFRBrowseFrame
         name: "LFRBrowseFrame"
         wowParent: "LFRParentFrame"
-        anchors.left: lFRParentFrame.left
-        anchors.top: lFRParentFrame.top
+        anchors.left: parent.left
+        anchors.top: parent.top
         width: 355
         height: 440
-    }
 
-    Button {
-        id: lFRBrowseFrameColumnHeader1
-        name: "LFRBrowseFrameColumnHeader1"
-        text: "Name"
-        wowParent: "LFRBrowseFrame"
-        pin: "place"
-        anchors.left: lFRBrowseFrame.left
-        anchors.leftMargin: 26
-        anchors.top: lFRBrowseFrame.top
-        anchors.topMargin: 40
-        width: 97
-        height: 22
-    }
+        Button {
+            name: "LFRBrowseFrameColumnHeader1"
+            text: "Name"
+            wowParent: "LFRBrowseFrame"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 26
+            anchors.top: parent.top
+            anchors.topMargin: 40
+            width: 97
+            height: 22
 
-    Button {
-        id: lFRBrowseFrameColumnHeader2
-        name: "LFRBrowseFrameColumnHeader2"
-        text: "Lvl"
-        wowParent: "LFRBrowseFrame"
-        anchors.left: lFRBrowseFrameColumnHeader1.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: lFRBrowseFrameColumnHeader1.verticalCenter
-        width: 34
-        height: 22
-    }
+            Button {
+                name: "LFRBrowseFrameColumnHeader2"
+                text: "Lvl"
+                wowParent: "LFRBrowseFrame"
+                anchors.left: parent.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: parent.verticalCenter
+                width: 34
+                height: 22
 
-    Button {
-        id: lFRBrowseFrameColumnHeader3
-        name: "LFRBrowseFrameColumnHeader3"
-        text: "Class"
-        wowParent: "LFRBrowseFrame"
-        anchors.left: lFRBrowseFrameColumnHeader2.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: lFRBrowseFrameColumnHeader2.verticalCenter
-        width: 80
-        height: 22
-    }
+                Button {
+                    name: "LFRBrowseFrameColumnHeader3"
+                    text: "Class"
+                    wowParent: "LFRBrowseFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: -2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 80
+                    height: 22
 
-    Button {
-        id: lFRBrowseFrameColumnHeader4
-        name: "LFRBrowseFrameColumnHeader4"
-        wowParent: "LFRBrowseFrame"
-        anchors.left: lFRBrowseFrameColumnHeader3.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: lFRBrowseFrameColumnHeader3.verticalCenter
-        width: 25
-        height: 22
-    }
+                    Button {
+                        name: "LFRBrowseFrameColumnHeader4"
+                        wowParent: "LFRBrowseFrame"
+                        anchors.left: parent.right
+                        anchors.leftMargin: -2
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 25
+                        height: 22
 
-    Button {
-        id: lFRBrowseFrameColumnHeader5
-        name: "LFRBrowseFrameColumnHeader5"
-        wowParent: "LFRBrowseFrame"
-        anchors.left: lFRBrowseFrameColumnHeader4.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: lFRBrowseFrameColumnHeader4.verticalCenter
-        width: 25
-        height: 22
-    }
+                        Button {
+                            name: "LFRBrowseFrameColumnHeader5"
+                            wowParent: "LFRBrowseFrame"
+                            anchors.left: parent.right
+                            anchors.leftMargin: -2
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 25
+                            height: 22
 
-    Button {
-        id: lFRBrowseFrameColumnHeader6
-        name: "LFRBrowseFrameColumnHeader6"
-        wowParent: "LFRBrowseFrame"
-        anchors.left: lFRBrowseFrameColumnHeader5.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: lFRBrowseFrameColumnHeader5.verticalCenter
-        width: 25
-        height: 22
-    }
+                            Button {
+                                name: "LFRBrowseFrameColumnHeader6"
+                                wowParent: "LFRBrowseFrame"
+                                anchors.left: parent.right
+                                anchors.leftMargin: -2
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 25
+                                height: 22
 
-    Button {
-        id: lFRBrowseFrameColumnHeader7
-        name: "LFRBrowseFrameColumnHeader7"
-        wowParent: "LFRBrowseFrame"
-        anchors.left: lFRBrowseFrameColumnHeader6.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: lFRBrowseFrameColumnHeader6.verticalCenter
-        width: 25
-        height: 22
-    }
+                                Button {
+                                    name: "LFRBrowseFrameColumnHeader7"
+                                    wowParent: "LFRBrowseFrame"
+                                    anchors.left: parent.right
+                                    anchors.leftMargin: -2
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 25
+                                    height: 22
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-    Button {
-        id: lFRBrowseFrameInviteButton
-        name: "LFRBrowseFrameInviteButton"
-        text: "Invite"
-        wowParent: "LFRBrowseFrame"
-        style: "Button"
-        pin: "all"
-        anchors.left: lFRBrowseFrameSendMessageButton.right
-        anchors.leftMargin: 6
-        anchors.verticalCenter: lFRBrowseFrameSendMessageButton.verticalCenter
-        width: 74.1
-        height: 22
-    }
+        Button {
+            name: "LFRBrowseFrameListButton1"
+            wowParent: "LFRBrowseFrame"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            anchors.top: parent.top
+            anchors.topMargin: 66
+            width: 298
+            height: 16
+        }
 
-    FontString {
-        id: lFRBrowseFrameInviteButtonText
-        name: "LFRBrowseFrameInviteButtonText"
-        text: "Invite"
-        wowParent: "LFRBrowseFrameInviteButton"
-        anchors.horizontalCenter: lFRBrowseFrameInviteButton.horizontalCenter
-        anchors.verticalCenter: lFRBrowseFrameInviteButton.verticalCenter
-        width: 45.8
-        height: 11.9
-    }
-
-    Button {
-        id: lFRBrowseFrameListButton1
-        name: "LFRBrowseFrameListButton1"
-        wowParent: "LFRBrowseFrame"
-        pin: "place"
-        anchors.left: lFRBrowseFrame.left
-        anchors.leftMargin: 12
-        anchors.top: lFRBrowseFrame.top
-        anchors.topMargin: 66
-        width: 298
-        height: 16
+        FontString {
+            name: "LFRBrowseFrameTitleText"
+            text: "Raid Browser"
+            wowParent: "LFRBrowseFrame"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: 12
+            anchors.top: parent.top
+            anchors.topMargin: 18
+            width: 79.8
+            height: 11.9
+        }
     }
 
     Frame {
-        id: lFRBrowseFrameListScrollFrameDiabolicZone
-        name: "LFRBrowseFrameListScrollFrameDiabolicZone"
-        wowParent: "LFRBrowseFrame"
-        anchors.horizontalCenter: lFRBrowseFrameListScrollFrame.horizontalCenter
-        anchors.top: lFRBrowseFrameListScrollFrame.top
-        anchors.topMargin: -4
-        width: 330
-        height: 332
-    }
-
-    Frame {
-        id: lFRBrowseFrameListScrollFrameDiabolicZoneColumnBar
-        name: "LFRBrowseFrameListScrollFrameDiabolicZoneColumnBar"
-        wowParent: "LFRBrowseFrameListScrollFrameDiabolicZone"
-        anchors.left: lFRBrowseFrameListScrollFrameDiabolicZone.left
-        anchors.bottom: lFRBrowseFrameListScrollFrameDiabolicZone.top
-        width: 330
-        height: 22
-    }
-
-    Frame {
-        id: lFRBrowseFrameRaidDropDown
-        name: "LFRBrowseFrameRaidDropDown"
-        wowParent: "LFRBrowseFrame"
-        style: "DropDown"
-        anchors.left: lFRBrowseFrameRaidDropDownName.right
-        anchors.leftMargin: -4
-        anchors.verticalCenter: lFRBrowseFrameRaidDropDownName.verticalCenter
-        width: 190
-        height: 32
-    }
-
-    Button {
-        id: lFRBrowseFrameRaidDropDownButton
-        name: "LFRBrowseFrameRaidDropDownButton"
-        wowParent: "LFRBrowseFrameRaidDropDown"
-        anchors.right: lFRBrowseFrameRaidDropDownDiabolicField.right
-        anchors.rightMargin: 18
-        anchors.verticalCenter: lFRBrowseFrameRaidDropDownDiabolicField.verticalCenter
-        width: 18
-        height: 18
-    }
-
-    Frame {
-        id: lFRBrowseFrameRaidDropDownDiabolicField
-        name: "LFRBrowseFrameRaidDropDownDiabolicField"
-        wowParent: "LFRBrowseFrameRaidDropDown"
-        anchors.left: lFRBrowseFrameRaidDropDown.left
-        anchors.verticalCenter: lFRBrowseFrameRaidDropDown.verticalCenter
-        width: 190
-        height: 22
-    }
-
-    FontString {
-        id: lFRBrowseFrameRaidDropDownName
-        name: "LFRBrowseFrameRaidDropDownName"
-        text: "Browsing:"
-        wowParent: "LFRBrowseFrameRaidDropDown"
-        anchors.left: lFRParentFrameDiabolicBand.left
-        anchors.leftMargin: 10
-        anchors.verticalCenter: lFRParentFrameDiabolicBand.verticalCenter
-        width: 55.3
-        height: 12
-    }
-
-    FontString {
-        id: lFRBrowseFrameRaidDropDownText
-        name: "LFRBrowseFrameRaidDropDownText"
-        text: "None"
-        wowParent: "LFRBrowseFrameRaidDropDown"
-        anchors.left: lFRBrowseFrameRaidDropDownDiabolicField.left
-        anchors.leftMargin: 22
-        anchors.verticalCenter: lFRBrowseFrameRaidDropDownDiabolicField.verticalCenter
-        width: 128
-        height: 10
-    }
-
-    Button {
-        id: lFRBrowseFrameRefreshButton
-        name: "LFRBrowseFrameRefreshButton"
-        text: "Refresh"
-        wowParent: "LFRBrowseFrame"
-        style: "Button"
-        pin: "all"
-        anchors.left: lFRBrowseFrameInviteButton.right
-        anchors.leftMargin: 6
-        anchors.verticalCenter: lFRBrowseFrameInviteButton.verticalCenter
-        width: 83.6
-        height: 22
-    }
-
-    FontString {
-        id: lFRBrowseFrameRefreshButtonText
-        name: "LFRBrowseFrameRefreshButtonText"
-        text: "Refresh"
-        wowParent: "LFRBrowseFrameRefreshButton"
-        anchors.horizontalCenter: lFRBrowseFrameRefreshButton.horizontalCenter
-        anchors.verticalCenter: lFRBrowseFrameRefreshButton.verticalCenter
-        width: 55.3
-        height: 11.9
-    }
-
-    Button {
-        id: lFRBrowseFrameSendMessageButton
-        name: "LFRBrowseFrameSendMessageButton"
-        text: "Send Message"
-        wowParent: "LFRBrowseFrame"
-        style: "Button"
-        pin: "all"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 37
-        anchors.bottom: lFRParentFrameDiabolic.bottom
-        anchors.bottomMargin: 30
-        width: 126.3
-        height: 22
-    }
-
-    FontString {
-        id: lFRBrowseFrameSendMessageButtonText
-        name: "LFRBrowseFrameSendMessageButtonText"
-        text: "Send Message"
-        wowParent: "LFRBrowseFrameSendMessageButton"
-        anchors.horizontalCenter: lFRBrowseFrameSendMessageButton.horizontalCenter
-        anchors.verticalCenter: lFRBrowseFrameSendMessageButton.verticalCenter
-        width: 98
-        height: 11.9
-    }
-
-    FontString {
-        id: lFRBrowseFrameTitleText
-        name: "LFRBrowseFrameTitleText"
-        text: "Raid Browser"
-        wowParent: "LFRBrowseFrame"
-        anchors.horizontalCenter: lFRBrowseFrame.horizontalCenter
-        anchors.horizontalCenterOffset: 12
-        anchors.top: lFRBrowseFrame.top
-        anchors.topMargin: 18
-        width: 79.8
-        height: 11.9
-    }
-
-    Frame {
-        id: lFRParentFrameDiabolic
         name: "LFRParentFrameDiabolic"
         wowParent: "LFRParentFrame"
-        anchors.left: lFRParentFrame.left
+        anchors.left: parent.left
         anchors.leftMargin: -16
-        anchors.top: lFRParentFrame.top
+        anchors.top: parent.top
         anchors.topMargin: -68
         width: 370
         height: 544
+
+        Frame {
+            name: "LFRParentFrameDiabolicBand"
+            wowParent: "LFRParentFrameDiabolic"
+            anchors.left: parent.left
+            anchors.leftMargin: 24
+            anchors.top: parent.top
+            anchors.topMargin: 56
+            width: 322
+            height: 40
+
+            FontString {
+                name: "LFRBrowseFrameRaidDropDownName"
+                text: "Browsing:"
+                wowParent: "LFRBrowseFrameRaidDropDown"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                width: 55.3
+                height: 12
+
+                Frame {
+                    name: "LFRBrowseFrameRaidDropDown"
+                    wowParent: "LFRBrowseFrame"
+                    style: "DropDown"
+                    anchors.left: parent.right
+                    anchors.leftMargin: -4
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 190
+                    height: 32
+
+                    Frame {
+                        name: "LFRBrowseFrameRaidDropDownDiabolicField"
+                        wowParent: "LFRBrowseFrameRaidDropDown"
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 190
+                        height: 22
+
+                        Button {
+                            name: "LFRBrowseFrameRaidDropDownButton"
+                            wowParent: "LFRBrowseFrameRaidDropDown"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 18
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 18
+                            height: 18
+                        }
+
+                        FontString {
+                            name: "LFRBrowseFrameRaidDropDownText"
+                            text: "None"
+                            wowParent: "LFRBrowseFrameRaidDropDown"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 22
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 128
+                            height: 10
+                        }
+                    }
+                }
+            }
+
+            EditBox {
+                name: "LFRQueueFrameComment"
+                wowParent: "LFRQueueFrame"
+                style: "EditBox"
+                anchors.left: parent.left
+                anchors.leftMargin: 18
+                anchors.verticalCenter: parent.verticalCenter
+                width: 250
+                height: 20
+
+                Frame {
+                    name: "LFRQueueFrameCommentDiabolicField"
+                    wowParent: "LFRQueueFrameComment"
+                    anchors.left: parent.left
+                    anchors.leftMargin: -8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 266
+                    height: 22
+                }
+
+                FontString {
+                    name: "LFRQueueFrameCommentExplanation"
+                    text: "Type your comment here."
+                    wowParent: "LFRQueueFrameComment"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 250
+                    height: 20
+                }
+
+                Button {
+                    name: "LFRQueueFrameCommentTextButton"
+                    wowParent: "LFRQueueFrame"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 250
+                    height: 20
+                }
+            }
+        }
+
+        Frame {
+            name: "LFRParentFrameDiabolicBorder"
+            wowParent: "LFRParentFrameDiabolic"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: 32
+            width: 370
+            height: 512
+
+            Frame {
+                name: "LFRParentFrameDiabolicTitlePlate"
+                wowParent: "LFRParentFrameDiabolic"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.top
+                anchors.verticalCenterOffset: 15
+                width: 300
+                height: 41
+
+                FontString {
+                    name: "LFRQueueFrameTitleText"
+                    text: "Raid Browser"
+                    wowParent: "LFRParentFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 120.9
+                    height: 14.2
+                }
+            }
+        }
+
+        Frame {
+            name: "LFRParentFrameDiabolicRail"
+            wowParent: "LFRParentFrameDiabolic"
+            anchors.left: parent.left
+            anchors.leftMargin: 18
+            anchors.top: parent.bottom
+            anchors.topMargin: -19
+            width: 130
+            height: 18
+        }
+
+        Frame {
+            name: "LFRParentFrameDiabolicSocket"
+            wowParent: "LFRParentFrameDiabolic"
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 52
+            width: 42
+            height: 42
+        }
+
+        Button {
+            name: "LFRParentFrameTab1"
+            text: "Choose Raid"
+            wowParent: "LFRParentFrame"
+            style: "Banner"
+            anchors.left: parent.left
+            anchors.leftMargin: 28
+            anchors.top: parent.bottom
+            anchors.topMargin: -23
+            width: 52
+            height: 116
+        }
+
+        Button {
+            name: "LFRParentFrameTab2"
+            text: "Browse"
+            wowParent: "LFRParentFrame"
+            style: "Banner"
+            anchors.left: parent.left
+            anchors.leftMargin: 86
+            anchors.top: parent.bottom
+            anchors.topMargin: -23
+            width: 52
+            height: 116
+        }
+
+        Button {
+            name: "LFRQueueFrameRoleButtonTank"
+            wowParent: "LFRQueueFrame"
+            anchors.left: parent.horizontalCenter
+            anchors.leftMargin: -116
+            anchors.top: parent.top
+            anchors.topMargin: 128
+            width: 48
+            height: 48
+
+            Button {
+                name: "LFRQueueFrameRoleButtonHealer"
+                wowParent: "LFRQueueFrame"
+                anchors.left: parent.right
+                anchors.leftMargin: 45
+                anchors.verticalCenter: parent.verticalCenter
+                width: 48
+                height: 48
+
+                Button {
+                    name: "LFRQueueFrameRoleButtonDPS"
+                    wowParent: "LFRQueueFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 43
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 48
+                    height: 48
+                }
+            }
+        }
+
+        // the browse page's buttons across the foot, clear of the iron
+        WowRow {
+            name: "LFRBrowseButtons"
+            anchors.left: parent.left
+            anchors.leftMargin: 37
+            anchors.right: parent.right
+            anchors.rightMargin: 37
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+
+            Button {
+                name: "LFRBrowseFrameSendMessageButton"
+                text: "Send Message"
+                wowParent: "LFRBrowseFrame"
+                style: "Button"
+                pin: "all"
+                width: 126.3
+                height: 22
+
+                FontString {
+                    name: "LFRBrowseFrameSendMessageButtonText"
+                    text: "Send Message"
+                    wowParent: "LFRBrowseFrameSendMessageButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 98
+                    height: 11.9
+                }
+
+                Frame {
+                    name: "LFRParentFrameDiabolicFoot"
+                    wowParent: "LFRParentFrameDiabolic"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: 84.9
+                    anchors.top: parent.top
+                    anchors.topMargin: -6
+                    width: 324
+                    height: 35
+                }
+            }
+
+            Button {
+                name: "LFRBrowseFrameInviteButton"
+                text: "Invite"
+                wowParent: "LFRBrowseFrame"
+                style: "Button"
+                pin: "all"
+                width: 74.1
+                height: 22
+
+                FontString {
+                    name: "LFRBrowseFrameInviteButtonText"
+                    text: "Invite"
+                    wowParent: "LFRBrowseFrameInviteButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 45.8
+                    height: 11.9
+                }
+            }
+
+            Button {
+                name: "LFRBrowseFrameRefreshButton"
+                text: "Refresh"
+                wowParent: "LFRBrowseFrame"
+                style: "Button"
+                pin: "all"
+                width: 83.6
+                height: 22
+
+                FontString {
+                    name: "LFRBrowseFrameRefreshButtonText"
+                    text: "Refresh"
+                    wowParent: "LFRBrowseFrameRefreshButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 55.3
+                    height: 11.9
+                }
+            }
+        }
+
+        // the raid page's two at the foot's ends, as far in
+        WowRow {
+            name: "LFRQueueButtons"
+            fit: "ends"
+            anchors.left: parent.left
+            anchors.leftMargin: 37
+            anchors.right: parent.right
+            anchors.rightMargin: 37
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+
+            Button {
+                name: "LFRQueueFrameFindGroupButton"
+                text: "List My Name"
+                wowParent: "LFRQueueFrame"
+                style: "Button"
+                pin: "place"
+                width: 125
+                height: 22
+
+                FontString {
+                    name: "LFRQueueFrameFindGroupButtonText"
+                    text: "List My Name"
+                    wowParent: "LFRQueueFrameFindGroupButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 97.2
+                    height: 11.9
+                }
+            }
+
+            Button {
+                name: "LFRQueueFrameAcceptCommentButton"
+                text: "Set Comment"
+                wowParent: "LFRQueueFrame"
+                style: "Button"
+                pin: "place"
+                width: 115
+                height: 22
+
+                FontString {
+                    name: "LFRQueueFrameAcceptCommentButtonText"
+                    text: "Set Comment"
+                    wowParent: "LFRQueueFrameAcceptCommentButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 96.4
+                    height: 11.9
+                }
+            }
+        }
     }
 
     Frame {
-        id: lFRParentFrameDiabolicBand
-        name: "LFRParentFrameDiabolicBand"
-        wowParent: "LFRParentFrameDiabolic"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 24
-        anchors.top: lFRParentFrameDiabolic.top
-        anchors.topMargin: 56
-        width: 322
-        height: 40
-    }
-
-    Frame {
-        id: lFRParentFrameDiabolicBorder
-        name: "LFRParentFrameDiabolicBorder"
-        wowParent: "LFRParentFrameDiabolic"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.top: lFRParentFrameDiabolic.top
-        anchors.topMargin: 32
-        width: 370
-        height: 512
-    }
-
-    Frame {
-        id: lFRParentFrameDiabolicFoot
-        name: "LFRParentFrameDiabolicFoot"
-        wowParent: "LFRParentFrameDiabolic"
-        anchors.horizontalCenter: lFRBrowseFrameSendMessageButton.horizontalCenter
-        anchors.horizontalCenterOffset: 84.9
-        anchors.top: lFRBrowseFrameSendMessageButton.top
-        anchors.topMargin: -6
-        width: 324
-        height: 35
-    }
-
-    Frame {
-        id: lFRParentFrameDiabolicRail
-        name: "LFRParentFrameDiabolicRail"
-        wowParent: "LFRParentFrameDiabolic"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 18
-        anchors.top: lFRParentFrameDiabolic.bottom
-        anchors.topMargin: -19
-        width: 130
-        height: 18
-    }
-
-    Frame {
-        id: lFRParentFrameDiabolicSocket
-        name: "LFRParentFrameDiabolicSocket"
-        wowParent: "LFRParentFrameDiabolic"
-        anchors.right: lFRParentFrameDiabolic.right
-        anchors.rightMargin: 20
-        anchors.top: lFRParentFrameDiabolic.top
-        anchors.topMargin: 52
-        width: 42
-        height: 42
-    }
-
-    Frame {
-        id: lFRParentFrameDiabolicTitlePlate
-        name: "LFRParentFrameDiabolicTitlePlate"
-        wowParent: "LFRParentFrameDiabolic"
-        anchors.horizontalCenter: lFRParentFrameDiabolicBorder.horizontalCenter
-        anchors.verticalCenter: lFRParentFrameDiabolicBorder.top
-        anchors.verticalCenterOffset: 15
-        width: 300
-        height: 41
-    }
-
-    Button {
-        id: lFRParentFrameTab1
-        name: "LFRParentFrameTab1"
-        text: "Choose Raid"
-        wowParent: "LFRParentFrame"
-        style: "Banner"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 28
-        anchors.top: lFRParentFrameDiabolic.bottom
-        anchors.topMargin: -23
-        width: 52
-        height: 116
-    }
-
-    Button {
-        id: lFRParentFrameTab2
-        name: "LFRParentFrameTab2"
-        text: "Browse"
-        wowParent: "LFRParentFrame"
-        style: "Banner"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 86
-        anchors.top: lFRParentFrameDiabolic.bottom
-        anchors.topMargin: -23
-        width: 52
-        height: 116
-    }
-
-    Frame {
-        id: lFRQueueFrame
         name: "LFRQueueFrame"
         wowParent: "LFRParentFrame"
-        anchors.left: lFRParentFrame.left
-        anchors.top: lFRParentFrame.top
+        anchors.left: parent.left
+        anchors.top: parent.top
         width: 355
         height: 440
+
+        Frame {
+            name: "LFRQueueFrameSpecific"
+            wowParent: "LFRQueueFrame"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 355
+            height: 440
+
+            Frame {
+                name: "LFRQueueFrameSpecificListButton1"
+                wowParent: "LFRQueueFrameSpecific"
+                pin: "place"
+                anchors.left: parent.left
+                anchors.leftMargin: 17
+                anchors.top: parent.top
+                anchors.topMargin: 132
+                width: 295
+                height: 16
+
+                Button {
+                    name: "LFRQueueFrameSpecificListButton1ExpandOrCollapseButton"
+                    wowParent: "LFRQueueFrameSpecificListButton1"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 3
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 13
+                    height: 13
+                }
+
+                FontString {
+                    name: "LFRQueueFrameSpecificListButton1InstanceLevel"
+                    text: "(80 - 83)"
+                    wowParent: "LFRQueueFrameSpecificListButton1"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 60
+                    height: 16
+                }
+
+                FontString {
+                    name: "LFRQueueFrameSpecificListButton1InstanceName"
+                    text: "Wrath of the Lich King Raid (25)"
+                    wowParent: "LFRQueueFrameSpecificListButton1"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 255
+                    height: 16
+                }
+
+                ScrollFrame {
+                    name: "LFRQueueFrameSpecificListScrollFrame"
+                    wowParent: "LFRQueueFrameSpecific"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.topMargin: -2
+                    width: 296
+                    height: 228
+
+                    Frame {
+                        name: "LFRQueueFrameSpecificListScrollFrameDiabolicZone"
+                        wowParent: "LFRQueueFrameSpecific"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: 2
+                        anchors.top: parent.top
+                        anchors.topMargin: -6
+                        width: 330
+                        height: 270
+                    }
+
+                    Slider {
+                        name: "LFRQueueFrameSpecificListScrollFrameScrollBar"
+                        wowParent: "LFRQueueFrameSpecificListScrollFrame"
+                        style: "ScrollBar"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 6
+                        anchors.top: parent.top
+                        anchors.topMargin: 16
+                        width: 16
+                        height: 196
+
+                        Button {
+                            name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
+                            wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
+                            style: "ScrollBar"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.bottom
+                            width: 16
+                            height: 16
+                        }
+
+                        Button {
+                            name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
+                            wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
+                            style: "ScrollBar"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.top
+                            width: 16
+                            height: 16
+
+                            Frame {
+                                name: "LFRQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
+                                wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 18
+                                height: 230
+                            }
+                        }
+                    }
+
+                    Frame {
+                        name: "LFRQueueFrameSpecificListScrollFrameScrollChildFrame"
+                        wowParent: "LFRQueueFrameSpecificListScrollFrame"
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        width: 300
+                        height: 624
+                    }
+                }
+            }
+        }
     }
 
-    Button {
-        id: lFRQueueFrameAcceptCommentButton
-        name: "LFRQueueFrameAcceptCommentButton"
-        text: "Set Comment"
-        wowParent: "LFRQueueFrame"
-        style: "Button"
-        pin: "place"
-        anchors.left: lFRQueueFrameFindGroupButton.right
-        anchors.leftMargin: 56
-        anchors.verticalCenter: lFRQueueFrameFindGroupButton.verticalCenter
-        width: 115
-        height: 22
+    Ghost {
+        name: "LFRBrowseFrameListScrollFrame"
+        x: 167
+        y: 66
+        width: 0
+        height: 0
+
+        Frame {
+            name: "LFRBrowseFrameListScrollFrameDiabolicZone"
+            wowParent: "LFRBrowseFrame"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: -4
+            width: 330
+            height: 332
+
+            Frame {
+                name: "LFRBrowseFrameListScrollFrameDiabolicZoneColumnBar"
+                wowParent: "LFRBrowseFrameListScrollFrameDiabolicZone"
+                anchors.left: parent.left
+                anchors.bottom: parent.top
+                width: 330
+                height: 22
+            }
+        }
     }
 
-    FontString {
-        id: lFRQueueFrameAcceptCommentButtonText
-        name: "LFRQueueFrameAcceptCommentButtonText"
-        text: "Set Comment"
-        wowParent: "LFRQueueFrameAcceptCommentButton"
-        anchors.horizontalCenter: lFRQueueFrameAcceptCommentButton.horizontalCenter
-        anchors.verticalCenter: lFRQueueFrameAcceptCommentButton.verticalCenter
-        width: 96.4
-        height: 11.9
-    }
-
-    EditBox {
-        id: lFRQueueFrameComment
-        name: "LFRQueueFrameComment"
-        wowParent: "LFRQueueFrame"
-        style: "EditBox"
-        anchors.left: lFRParentFrameDiabolicBand.left
-        anchors.leftMargin: 18
-        anchors.verticalCenter: lFRParentFrameDiabolicBand.verticalCenter
-        width: 250
-        height: 20
-    }
-
-    Frame {
-        id: lFRQueueFrameCommentDiabolicField
-        name: "LFRQueueFrameCommentDiabolicField"
-        wowParent: "LFRQueueFrameComment"
-        anchors.left: lFRQueueFrameComment.left
-        anchors.leftMargin: -8
-        anchors.verticalCenter: lFRQueueFrameComment.verticalCenter
-        width: 266
-        height: 22
-    }
-
-    FontString {
-        id: lFRQueueFrameCommentExplanation
-        name: "LFRQueueFrameCommentExplanation"
-        text: "Type your comment here."
-        wowParent: "LFRQueueFrameComment"
-        anchors.left: lFRQueueFrameComment.left
-        anchors.top: lFRQueueFrameComment.top
-        width: 250
-        height: 20
-    }
-
-    Button {
-        id: lFRQueueFrameCommentTextButton
-        name: "LFRQueueFrameCommentTextButton"
-        wowParent: "LFRQueueFrame"
-        anchors.left: lFRQueueFrameComment.left
-        anchors.top: lFRQueueFrameComment.top
-        width: 250
-        height: 20
-    }
-
-    Button {
-        id: lFRQueueFrameFindGroupButton
-        name: "LFRQueueFrameFindGroupButton"
-        text: "List My Name"
-        wowParent: "LFRQueueFrame"
-        style: "Button"
-        pin: "place"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 37
-        anchors.bottom: lFRParentFrameDiabolic.bottom
-        anchors.bottomMargin: 30
-        width: 125
-        height: 22
-    }
-
-    FontString {
-        id: lFRQueueFrameFindGroupButtonText
-        name: "LFRQueueFrameFindGroupButtonText"
-        text: "List My Name"
-        wowParent: "LFRQueueFrameFindGroupButton"
-        anchors.horizontalCenter: lFRQueueFrameFindGroupButton.horizontalCenter
-        anchors.verticalCenter: lFRQueueFrameFindGroupButton.verticalCenter
-        width: 97.2
-        height: 11.9
-    }
-
-    Button {
-        id: lFRQueueFrameRoleButtonDPS
-        name: "LFRQueueFrameRoleButtonDPS"
-        wowParent: "LFRQueueFrame"
-        anchors.left: lFRQueueFrameRoleButtonHealer.right
-        anchors.leftMargin: 43
-        anchors.verticalCenter: lFRQueueFrameRoleButtonHealer.verticalCenter
-        width: 48
-        height: 48
-    }
-
-    Button {
-        id: lFRQueueFrameRoleButtonHealer
-        name: "LFRQueueFrameRoleButtonHealer"
-        wowParent: "LFRQueueFrame"
-        anchors.left: lFRQueueFrameRoleButtonTank.right
-        anchors.leftMargin: 45
-        anchors.verticalCenter: lFRQueueFrameRoleButtonTank.verticalCenter
-        width: 48
-        height: 48
-    }
-
-    Button {
-        id: lFRQueueFrameRoleButtonTank
-        name: "LFRQueueFrameRoleButtonTank"
-        wowParent: "LFRQueueFrame"
-        anchors.left: lFRParentFrameDiabolic.horizontalCenter
-        anchors.leftMargin: -116
-        anchors.top: lFRParentFrameDiabolic.top
-        anchors.topMargin: 128
-        width: 48
-        height: 48
-    }
-
-    Frame {
-        id: lFRQueueFrameSpecific
-        name: "LFRQueueFrameSpecific"
-        wowParent: "LFRQueueFrame"
-        anchors.left: lFRQueueFrame.left
-        anchors.top: lFRQueueFrame.top
-        width: 355
-        height: 440
-    }
-
-    Frame {
-        id: lFRQueueFrameSpecificListButton1
-        name: "LFRQueueFrameSpecificListButton1"
-        wowParent: "LFRQueueFrameSpecific"
-        pin: "place"
-        anchors.left: lFRQueueFrameSpecific.left
-        anchors.leftMargin: 17
-        anchors.top: lFRQueueFrameSpecific.top
-        anchors.topMargin: 132
+    Ghost {
+        name: "LFRQueueFrameSpecificListButton12"
+        x: 17
+        y: 308
         width: 295
         height: 16
+
+        Button {
+            name: "LFRQueueFrameSpecificListButton12ExpandOrCollapseButton"
+            wowParent: "LFRQueueFrameSpecificListButton12"
+            anchors.left: parent.left
+            anchors.leftMargin: 3
+            anchors.verticalCenter: parent.verticalCenter
+            width: 13
+            height: 13
+        }
     }
 
-    Button {
-        id: lFRQueueFrameSpecificListButton12ExpandOrCollapseButton
-        name: "LFRQueueFrameSpecificListButton12ExpandOrCollapseButton"
-        wowParent: "LFRQueueFrameSpecificListButton12"
-        anchors.left: lFRQueueFrameSpecificListButton12.left
-        anchors.leftMargin: 3
-        anchors.verticalCenter: lFRQueueFrameSpecificListButton12.verticalCenter
-        width: 13
-        height: 13
+    Ghost {
+        name: "LFRQueueFrameSpecificListButton1LockedIndicator"
+        x: 48
+        y: 140
+        width: 0
+        height: 0
+
+        CheckButton {
+            name: "LFRQueueFrameSpecificListButton1EnableButton"
+            wowParent: "LFRQueueFrameSpecificListButton1"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: 20
+            height: 20
+        }
     }
 
-    CheckButton {
-        id: lFRQueueFrameSpecificListButton1EnableButton
-        name: "LFRQueueFrameSpecificListButton1EnableButton"
-        wowParent: "LFRQueueFrameSpecificListButton1"
-        anchors.horizontalCenter: lFRQueueFrameSpecificListButton1LockedIndicator.horizontalCenter
-        anchors.verticalCenter: lFRQueueFrameSpecificListButton1LockedIndicator.verticalCenter
-        width: 20
-        height: 20
-    }
-
-    Button {
-        id: lFRQueueFrameSpecificListButton1ExpandOrCollapseButton
-        name: "LFRQueueFrameSpecificListButton1ExpandOrCollapseButton"
-        wowParent: "LFRQueueFrameSpecificListButton1"
-        anchors.left: lFRQueueFrameSpecificListButton1.left
-        anchors.leftMargin: 3
-        anchors.verticalCenter: lFRQueueFrameSpecificListButton1.verticalCenter
-        width: 13
-        height: 13
-    }
-
-    FontString {
-        id: lFRQueueFrameSpecificListButton1InstanceLevel
-        name: "LFRQueueFrameSpecificListButton1InstanceLevel"
-        text: "(80 - 83)"
-        wowParent: "LFRQueueFrameSpecificListButton1"
-        anchors.right: lFRQueueFrameSpecificListButton1.right
-        anchors.verticalCenter: lFRQueueFrameSpecificListButton1.verticalCenter
-        width: 60
+    Ghost {
+        name: "LFRQueueFrameSpecificListButton6"
+        x: 17
+        y: 212
+        width: 295
         height: 16
-    }
 
-    FontString {
-        id: lFRQueueFrameSpecificListButton1InstanceName
-        name: "LFRQueueFrameSpecificListButton1InstanceName"
-        text: "Wrath of the Lich King Raid (25)"
-        wowParent: "LFRQueueFrameSpecificListButton1"
-        anchors.left: lFRQueueFrameSpecificListButton1.left
-        anchors.leftMargin: 40
-        anchors.verticalCenter: lFRQueueFrameSpecificListButton1.verticalCenter
-        width: 255
-        height: 16
+        Button {
+            name: "LFRQueueFrameSpecificListButton6ExpandOrCollapseButton"
+            wowParent: "LFRQueueFrameSpecificListButton6"
+            anchors.left: parent.left
+            anchors.leftMargin: 3
+            anchors.verticalCenter: parent.verticalCenter
+            width: 13
+            height: 13
+        }
     }
-
-    Button {
-        id: lFRQueueFrameSpecificListButton6ExpandOrCollapseButton
-        name: "LFRQueueFrameSpecificListButton6ExpandOrCollapseButton"
-        wowParent: "LFRQueueFrameSpecificListButton6"
-        anchors.left: lFRQueueFrameSpecificListButton6.left
-        anchors.leftMargin: 3
-        anchors.verticalCenter: lFRQueueFrameSpecificListButton6.verticalCenter
-        width: 13
-        height: 13
-    }
-
-    ScrollFrame {
-        id: lFRQueueFrameSpecificListScrollFrame
-        name: "LFRQueueFrameSpecificListScrollFrame"
-        wowParent: "LFRQueueFrameSpecific"
-        anchors.left: lFRQueueFrameSpecificListButton1.left
-        anchors.top: lFRQueueFrameSpecificListButton1.top
-        anchors.topMargin: -2
-        width: 296
-        height: 228
-    }
-
-    Frame {
-        id: lFRQueueFrameSpecificListScrollFrameDiabolicZone
-        name: "LFRQueueFrameSpecificListScrollFrameDiabolicZone"
-        wowParent: "LFRQueueFrameSpecific"
-        anchors.horizontalCenter: lFRQueueFrameSpecificListScrollFrame.horizontalCenter
-        anchors.horizontalCenterOffset: 2
-        anchors.top: lFRQueueFrameSpecificListScrollFrame.top
-        anchors.topMargin: -6
-        width: 330
-        height: 270
-    }
-
-    Slider {
-        id: lFRQueueFrameSpecificListScrollFrameScrollBar
-        name: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-        wowParent: "LFRQueueFrameSpecificListScrollFrame"
-        style: "ScrollBar"
-        anchors.left: lFRQueueFrameSpecificListScrollFrame.right
-        anchors.leftMargin: 6
-        anchors.top: lFRQueueFrameSpecificListScrollFrame.top
-        anchors.topMargin: 16
-        width: 16
-        height: 196
-    }
-
-    Frame {
-        id: lFRQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack
-        name: "LFRQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
-        wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-        anchors.horizontalCenter: lFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.horizontalCenter
-        anchors.top: lFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.top
-        anchors.topMargin: -1
-        width: 18
-        height: 230
-    }
-
-    Button {
-        id: lFRQueueFrameSpecificListScrollFrameScrollBarScrollDownButton
-        name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
-        wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-        style: "ScrollBar"
-        anchors.horizontalCenter: lFRQueueFrameSpecificListScrollFrameScrollBar.horizontalCenter
-        anchors.top: lFRQueueFrameSpecificListScrollFrameScrollBar.bottom
-        width: 16
-        height: 16
-    }
-
-    Button {
-        id: lFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton
-        name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
-        wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-        style: "ScrollBar"
-        anchors.horizontalCenter: lFRQueueFrameSpecificListScrollFrameScrollBar.horizontalCenter
-        anchors.bottom: lFRQueueFrameSpecificListScrollFrameScrollBar.top
-        width: 16
-        height: 16
-    }
-
-    Frame {
-        id: lFRQueueFrameSpecificListScrollFrameScrollChildFrame
-        name: "LFRQueueFrameSpecificListScrollFrameScrollChildFrame"
-        wowParent: "LFRQueueFrameSpecificListScrollFrame"
-        anchors.left: lFRQueueFrameSpecificListScrollFrame.left
-        anchors.top: lFRQueueFrameSpecificListScrollFrame.top
-        width: 300
-        height: 624
-    }
-
-    FontString {
-        id: lFRQueueFrameTitleText
-        name: "LFRQueueFrameTitleText"
-        text: "Raid Browser"
-        wowParent: "LFRParentFrameDiabolicTitlePlate"
-        anchors.horizontalCenter: lFRParentFrameDiabolicTitlePlate.horizontalCenter
-        anchors.verticalCenter: lFRParentFrameDiabolicTitlePlate.verticalCenter
-        anchors.verticalCenterOffset: -1
-        width: 120.9
-        height: 14.2
-    }
-
-    // the browse page's buttons across the foot, clear of the iron
-    WowRow {
-        name: "LFRBrowseButtons"
-        parts: ["LFRBrowseFrameSendMessageButton", "LFRBrowseFrameInviteButton", "LFRBrowseFrameRefreshButton"]
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 37
-        anchors.right: lFRParentFrameDiabolic.right
-        anchors.rightMargin: 37
-        anchors.bottom: lFRParentFrameDiabolic.bottom
-        anchors.bottomMargin: 30
-    }
-
-    // the raid page's two at the foot's ends, as far in
-    WowRow {
-        name: "LFRQueueButtons"
-        parts: ["LFRQueueFrameFindGroupButton", "LFRQueueFrameAcceptCommentButton"]
-        fit: "ends"
-        anchors.left: lFRParentFrameDiabolic.left
-        anchors.leftMargin: 37
-        anchors.right: lFRParentFrameDiabolic.right
-        anchors.rightMargin: 37
-        anchors.bottom: lFRParentFrameDiabolic.bottom
-        anchors.bottomMargin: 30
-    }
-
-    Ghost { id: lFRBrowseFrameListScrollFrame; name: "LFRBrowseFrameListScrollFrame"; x: 167; y: 66; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton12; name: "LFRQueueFrameSpecificListButton12"; x: 17; y: 308; width: 295; height: 16 }
-    Ghost { id: lFRQueueFrameSpecificListButton1LockedIndicator; name: "LFRQueueFrameSpecificListButton1LockedIndicator"; x: 48; y: 140; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton6; name: "LFRQueueFrameSpecificListButton6"; x: 17; y: 212; width: 295; height: 16 }
 }

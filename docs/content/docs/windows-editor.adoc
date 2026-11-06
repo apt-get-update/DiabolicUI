@@ -39,17 +39,19 @@ values, one anchor target per part, no bindings or JavaScript.
 |===
 | File | What it is
 
-| `<Window>.qml` | One window: a `WowWindow` holding its parts, rows and Ghosts as direct children
+| `<Window>.qml` | One window: a `WowWindow` holding its parts and rows, each inside what it's placed on
 | `Part.qml` | What every part is: anchors, size, `pin`, and how the editor draws it
 | `Frame.qml`, `Button.qml`, `FontString.qml`... | A kind of part: just `Part { kind: "..." }`
-| `WowRow.qml` | A row of buttons (below)
-| `Ghost.qml` | A frame with parts on it that isn't in this file
+| `WowRow.qml` | A row of buttons, the ones inside it (below)
+| `Ghost.qml` | A frame that isn't in this file, with the parts placed on it inside it
+| `GameText.qml` | A text as the game draws it
 | `components/*.qml` | What every window inherits: buttons, scroll bars, the window itself
 |===
 
-Parts are flat, all direct children of the window, not nested by parent: QML only
-anchors on a parent or a sibling, and a part is often placed on something that's neither.
-The editor's list shows the game's parents as a tree instead.
+The nesting is by placement, not by the game's parents (those are `wowParent`): QML only
+anchors on a parent or a sibling, and a part is often placed on neither in the game. So a
+part's anchors say `parent`, moving a part moves what's in it, and the editor's list is this
+tree.
 
 == A part
 
@@ -57,13 +59,12 @@ The editor's list shows the game's parents as a tree instead.
 ----
 // why it's there: kept when the tool rewrites the file
 EditBox {
-    id: whoFrameEditBox
     name: "WhoFrameEditBox"
     wowParent: "WhoFrame"
     pin: "all"
-    anchors.bottom: whoFrame.bottom
+    anchors.bottom: parent.bottom
     anchors.bottomMargin: 103
-    anchors.horizontalCenter: whoFrame.horizontalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.horizontalCenterOffset: -20
     width: 296
     height: 32
@@ -73,12 +74,14 @@ EditBox {
 * *The block's name is its kind.* A kind with no file (see `KINDS` in
   `tools/positions.lua`) is written `Part { kind: "Cooldown" }`, a part never scanned
   plain `Part { }`.
-* *One anchor across and one down*, both on one frame of the file.
+* *One anchor across and one down*, on `parent`. An `id` of the file also reads, for a
+  sibling: the tool then moves the part inside it and writes `parent`.
 * *`pin`* says what goes in `settings/positions.lua`: `"all"`, or only its `"place"` or
   `"size"`. Without one the part follows the next scan.
 * *Don't pin* what the game moves on its own: parts Blizzard reparents (the quest
   log's details), what an addon may add later (Postal), buttons `LineRows` spreads unless
-  a row holds them. Don't anchor anything on a window's foot: it hangs from its buttons.
+  a row holds them. Don't put anything that decides a foot's height inside that foot: it
+  hangs from its buttons, for now.
 
 Our own parts are named after their window: `ClassTrainerFrameDiabolicBand`.
 
@@ -88,13 +91,15 @@ Our own parts are named after their window: `ClassTrainerFrameDiabolicBand`.
 ----
 WowRow {
     name: "LFRBrowseButtons"
-    parts: ["LFRBrowseFrameSendMessageButton", "LFRBrowseFrameInviteButton", "LFRBrowseFrameRefreshButton"]
     fit: "fill"
-    anchors.left: lFRParentFrameDiabolic.left
+    anchors.left: parent.left
     anchors.leftMargin: 37
-    anchors.right: lFRParentFrameDiabolic.right
+    anchors.right: parent.right
     anchors.rightMargin: 37
-    anchors.bottom: lFRParentFrameDiabolic.bottom
+    anchors.bottom: parent.bottom
+    Button { name: "LFRBrowseFrameSendMessageButton"; width: 90; height: 22 }
+    Button { name: "LFRBrowseFrameInviteButton"; width: 90; height: 22 }
+    Button { name: "LFRBrowseFrameRefreshButton"; width: 90; height: 22 }
     anchors.bottomMargin: 30
 }
 ----
@@ -113,8 +118,8 @@ sizes and writes them as any other pinned part's, so the game knows nothing abou
 That means widths are fixed when the tool runs, and a button that hides in game leaves its
 gap. A row in too little room still fits (`fill`, `equal`); a printed message says so.
 
-A row goes from a frame's left to its right. Anchor it on the window, not its foot. A
-one-row foot is 35 high: its 22-high buttons 30 over the window's bottom, 37 from its side.
+A row goes from what it's in's left to its right. Put it in the window, not its foot. Its
+parts are in it, in their order, with no anchors. A one-row foot is 35 high: its 22-high buttons 30 over the window's bottom, 37 from its side.
 
 == Stretching
 
@@ -166,10 +171,11 @@ return {
 }
 ----
 
-*What a part is now* comes from `entry(name)`: its row's result (`rowPlaced`), else its edit,
-else its file's. `applyItem` sets its QML anchors from that.
+*What a part is now* comes from `entry(name)`: its edit, else its file's. `applyItem` puts it
+in what it's placed on and sets its QML anchors from that. Anything that needs where a part
+is in the window asks `rectOf(name)`: `x` and `y` are from its parent.
 
-*Rows are worked out twice*: `rowLayout` in `tools/editor.qml` shows them live, `ResolveRow`
+*Rows are worked out twice*: `windows/WowRow.qml` shows them live, `ResolveRow`
 in `tools/positions.lua` writes them. *Change one, change the other.*
 
 == What the editor can't show
@@ -189,7 +195,7 @@ Check looks, readable text and anything near those limits in game.
 | To | Do
 
 | Add a kind of part | Add it to `KINDS` in `tools/positions.lua` and write `windows/<kind>.qml`
-| Add a row `fit` | `ResolveRow`, `rowLayout`, the check in `ReadWindow`, the list in the row panel, `windows/WowRow.qml`
+| Add a row `fit` | `ResolveRow`, `windows/WowRow.qml`, the check in `ReadWindow`, the list in the row panel
 | Export something to the editor | The `copy` table near the end of `tools/positions.lua`: check its name isn't one of the scan's
 | Change what's a preview | The block before `windows/components/*.qml` in `tools/positions.lua`; `IsBagItem` in the scan
 |===

@@ -1,5 +1,5 @@
-// A window of settings/positions.lua's parts: its parts are all its direct
-// children, so any can anchor on any (QML anchors only on parents and siblings).
+// A window: its parts inside it, each in what it's placed on (QML anchors only on a
+// parent or a sibling), as settings/positions.lua places them in the game.
 import QtQuick
 
 Item {

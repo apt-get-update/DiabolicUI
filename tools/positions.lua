@@ -141,7 +141,8 @@ local KINDS = { Button = true, CheckButton = true, DressUpModel = true, EditBox 
 	PlayerModel = true, ScrollFrame = true, ScrollingMessageFrame = true, Slider = true, StatusBar = true, Texture = true }
 
 -- A window's file: its name, its size, its parts (each with its notes, the
--- note at its end, its place, its size, its pin).
+-- note at its end, its place, its size, its pin), nested in what they're placed
+-- on: `parent` in an anchor is the block it's in, or an id of the file.
 local ReadWindow = function(path)
 	local file = assert(io.open(path))
 	local text = file:read("*a")
@@ -149,63 +150,69 @@ local ReadWindow = function(path)
 	local Problem = function(name, what)
 		error(path .. ": " .. name .. ": " .. what, 0)
 	end
-	local window, block, kindOf, notes = { parts = {}, ghosts = {}, rows = {} }, nil, nil, {}
+	local window, notes = { parts = {}, ghosts = {}, rows = {} }, {}
+	local open = {} -- the blocks open, the window's first
 	local names, raw = {}, {}
-	local depth = 0
 	for _, statement in ipairs(Statements(text)) do
 		local kind, value = statement[1], statement[2]
+		local block = open[#open]
 		if (kind == "open") then
-			depth = depth + 1
-			if ((depth == 1) and (value ~= "WowWindow")) or ((depth == 2) and (value ~= "Part") and (value ~= "Ghost") and (value ~= "WowRow") and (not KINDS[value])) or (depth > 2) then
-				Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
+			if (not block) then
+				if (value ~= "WowWindow") then
+					Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
+				end
+				open[1] = window
+			else
+				local what = KINDS[value] and "Part" or value
+				if ((what ~= "Part") and (what ~= "Ghost") and (what ~= "WowRow"))
+					or (block.what == "WowRow" and (what ~= "Part")) or ((what == "Ghost") and (block ~= window)) then
+					Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
+				end
+				open[#open + 1] = { notes = (#notes > 0) and notes or nil, anchors = {}, margins = {}, what = what, over = block,
+					kind = KINDS[value] and value or nil }
 			end
-			if (depth == 1) then
-				notes = {}
-			elseif (depth == 2) then
-				block, kindOf = { notes = (#notes > 0) and notes or nil, anchors = {}, margins = {} }, KINDS[value] and "Part" or value
-				block.kind = KINDS[value] and value or nil
-				notes = {}
-			end
+			notes = {}
 		elseif (kind == "close") then
-			if (depth == 2) then
+			open[#open] = nil
+			if block and (block ~= window) then
 				if (not block.name) then
-					Problem(block.id or kindOf, "a part needs a name")
+					Problem(block.id or block.what, "a part needs a name")
 				end
 				names[block.id or block.name] = block.name
-				if (kindOf == "Part") then
+				if (block.what == "Part") then
 					block.tail = statement.tail
 					window.parts[block.name] = block
 					raw[block.name] = block
-				elseif (kindOf == "WowRow") then
+					if (block.over.what == "WowRow") then
+						if next(block.anchors) then
+							Problem(block.name, "its row places it: no anchors")
+						end
+						block.over.members = block.over.members or {}
+						table.insert(block.over.members, block.name)
+					end
+				elseif (block.what == "WowRow") then
 					window.rows[#window.rows + 1] = block
 				else
 					window.ghosts[block.name] = { block.x, block.y, block.width, block.height }
 				end
 			end
-			depth = depth - 1
 		elseif (kind == "note") then
 			notes[#notes + 1] = value
-		elseif (depth > 0) then
+		elseif block then
 			local key, content = value:match("^([%w%.]+)%s*:%s*(.+)$")
 			if (not key) then
 				Problem(value, "not a property")
 			end
-			local target = (depth == 1) and window or block
 			local line = key:match("^anchors%.(.+)$")
 			if (key == "id") then
-				target.id = content
+				block.id = content
 			elseif (key == "name") or (key == "kind") or (key == "text") or (key == "wowParent") or (key == "pin") or (key == "style") or (key == "fit") then
-				target[key] = Unquote(content) or Problem(key, "needs a text, not " .. content)
+				block[key] = Unquote(content) or Problem(key, "needs a text, not " .. content)
 			elseif (key == "width") or (key == "height") or (key == "x") or (key == "y") or (key == "spacing") then
-				target[key] = tonumber(content) or Problem(key, "needs a number, not " .. content)
-			elseif (key == "parts") and (depth == 2) then
-				block.members = {}
-				for name in content:gmatch('"([^"]+)"') do
-					block.members[#block.members + 1] = name
-				end
-			elseif line and (depth == 2) and MARGINS[line] then
+				block[key] = tonumber(content) or Problem(key, "needs a number, not " .. content)
+			elseif line and (block ~= window) and MARGINS[line] then
 				block.margins[MARGINS[line][1]] = tonumber(content) or Problem(key, "needs a number, not " .. content)
-			elseif line and (depth == 2) and (ACROSS[line] or DOWN[line]) then
+			elseif line and (block ~= window) and (ACROSS[line] or DOWN[line]) then
 				local id, other = content:match("^([%w_]+)%.(%w+)$")
 				if (not id) then
 					Problem(key, "needs a part and its line, not " .. content)
@@ -228,6 +235,13 @@ local ReadWindow = function(path)
 		Problem(path, "a window needs a name")
 	end
 	names[window.id or window.name] = window.name
+	-- what an anchor's on: the block it's in, or an id
+	local On = function(block, anchor)
+		if (anchor.id == "parent") then
+			return block.over.name
+		end
+		return names[anchor.id]
+	end
 	-- their anchors as WoW places
 	-- (a stretch's two lines in order: left then right, top then bottom)
 	local InOrder = function(name, first, second, a, b)
@@ -249,10 +263,10 @@ local ReadWindow = function(path)
 		local across, across2 = InOrder(name, part.anchors.across, part.anchors.across2, "left", "right")
 		local down, down2 = InOrder(name, part.anchors.down, part.anchors.down2, "top", "bottom")
 		if across or down then
-			if (not across) or (not down) or (across.id ~= down.id) or (not names[across.id]) then
+			if (not across) or (not down) or (across.id ~= down.id) or (not On(part, across)) then
 				Problem(name, "needs one anchor across and one down, on one part of this file")
 			end
-			part.place = { PointOf(across.line, down.line), names[across.id], PointOf(across.to, down.to),
+			part.place = { PointOf(across.line, down.line), On(part, across), PointOf(across.to, down.to),
 				Offset(part.margins, across.line), Offset(part.margins, down.line) }
 			if across2 or down2 then
 				local x, y = across2 or across, down2 or down
@@ -268,10 +282,11 @@ local ReadWindow = function(path)
 		if part.width and part.height and ((part.kind ~= "FontString") or (part.pin == "all") or (part.pin == "size")) then
 			part.size = { part.width, part.height }
 		end
-		part.anchors, part.margins, part.id, part.width, part.height = nil, nil, nil, nil, nil
+		local inRow = part.over.what == "WowRow" -- (its row places it)
+		part.anchors, part.margins, part.id, part.width, part.height, part.over, part.what = nil, nil, nil, nil, nil, nil, nil
 		if part.pin and (part.pin ~= "all") and (part.pin ~= "place") and (part.pin ~= "size") then
 			Problem(name, 'its pin is "all", "place" or "size"')
-		elseif ((part.pin == "all") or (part.pin == "place")) and (not part.place) then
+		elseif ((part.pin == "all") or (part.pin == "place")) and (not part.place) and (not inRow) then
 			Problem(name, "its pin needs anchors")
 		elseif ((part.pin == "all") or (part.pin == "size")) and (not part.size) then
 			Problem(name, "its pin needs a width and a height")
@@ -283,14 +298,15 @@ local ReadWindow = function(path)
 		local left, right = InOrder(row.name, anchors.across, anchors.across2, "left", "right")
 		local down = anchors.down
 		if (not right) or (left.to ~= "left") or (right.to ~= "right") or (not down) or anchors.down2
-			or (left.id ~= right.id) or (down.id ~= left.id) or (not names[left.id]) then
+			or (left.id ~= right.id) or (down.id ~= left.id) or (not On(row, left)) then
 			Problem(row.name, "a row goes from a part's left to its right, with one anchor down on it")
-		elseif (not row.members) or (not row.members[1]) then
+		end
+		if (not row.members) or (not row.members[1]) then
 			Problem(row.name, "a row needs its parts")
 		elseif row.fit and (row.fit ~= "fill") and (row.fit ~= "equal") and (row.fit ~= "center") and (row.fit ~= "ends") then
 			Problem(row.name, 'its fit is "fill", "equal", "center" or "ends"')
 		end
-		row.on, row.line, row.to = names[left.id], down.line, down.to
+		row.on, row.line, row.to = On(row, left), down.line, down.to
 		row.left, row.right, row.y = row.margins.left or 0, row.margins.right or 0, Offset(row.margins, down.line)
 	end
 	return window
@@ -569,22 +585,6 @@ end
 
 -- writing windows/*.qml ------------------------------------------------------
 
-local RESERVED = { id = true, parent = true, default = true, ["function"] = true, ["in"] = true, ["for"] = true, ["if"] = true,
-	["new"] = true, this = true, name = true, kind = true, text = true, pin = true, property = true, signal = true, import = true }
-
--- an id for each name in a file: its name from a small letter, unique
-local IdsOf = function(names)
-	local ids, taken = {}, {}
-	for _, name in ipairs(Sorted(names)) do
-		local id = name:gsub("[^%w_]", "_"):gsub("^%u", string.lower):gsub("^%d", "_%0")
-		while RESERVED[id] or taken[id] do
-			id = id .. "_"
-		end
-		ids[name], taken[id] = id, true
-	end
-	return ids
-end
-
 -- How big a window is: as the scan saw it, as its file says, or as far as
 -- what's placed from its top left goes.
 local WindowSize = function(window)
@@ -792,16 +792,17 @@ for _, title in ipairs(Sorted(windows)) do
 	end
 end
 
-local WritePart = function(out, part, ids)
+-- A part's block, what's placed on it inside it (`kids`, by what they're on).
+local WriteKids
+local WritePart = function(out, part, kids, indent, inRow)
 	for _, note in ipairs(part.notes or {}) do
-		out[#out + 1] = "    " .. note
+		out[#out + 1] = indent .. note
 	end
 	local typed = part.kind and KINDS[part.kind]
-	out[#out + 1] = "    " .. (typed and part.kind or "Part") .. " {"
+	out[#out + 1] = indent .. (typed and part.kind or "Part") .. " {"
 	local Set = function(key, value)
-		out[#out + 1] = "        " .. key .. ": " .. value
+		out[#out + 1] = indent .. "    " .. key .. ": " .. value
 	end
-	Set("id", ids[part.name])
 	Set("name", Quote(part.name))
 	if part.kind and (not typed) then
 		Set("kind", Quote(part.kind))
@@ -818,10 +819,10 @@ local WritePart = function(out, part, ids)
 	if part.pin then
 		Set("pin", Quote(part.pin))
 	end
-	if part.place then
+	if part.place and (not inRow) and (not part.loose) then
 		local place = part.place
 		for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(place[3]), place[4] }, { DownOf(place[1]), DownOf(place[3]), place[5] } }) do
-			Set("anchors." .. axis[1], ids[place[2]] .. "." .. axis[2])
+			Set("anchors." .. axis[1], "parent." .. axis[2])
 			local margin = MARGIN_OF[axis[1]]
 			if (axis[3] ~= 0) then
 				Set("anchors." .. margin, Number(axis[3] * MARGINS[margin][2]))
@@ -833,7 +834,7 @@ local WritePart = function(out, part, ids)
 			for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(second[1]), AcrossOf(second[2]), second[3] },
 				{ DownOf(place[1]), DownOf(second[1]), DownOf(second[2]), second[4] } }) do
 				if (axis[1] ~= axis[2]) then
-					Set("anchors." .. axis[2], ids[place[2]] .. "." .. axis[3])
+					Set("anchors." .. axis[2], "parent." .. axis[3])
 					if (axis[4] ~= 0) then
 						Set("anchors." .. MARGIN_OF[axis[2]], Number(axis[4] * MARGINS[MARGIN_OF[axis[2]]][2]))
 					end
@@ -846,88 +847,136 @@ local WritePart = function(out, part, ids)
 		or { 6 * #(part.text or part.name), 12 }
 	Set("width", Number(size[1]))
 	Set("height", Number(size[2]))
-	out[#out + 1] = "    }" .. (part.tail and (" " .. part.tail) or "")
-	out[#out + 1] = ""
+	WriteKids(out, kids[part.name], kids, indent .. "    ")
+	out[#out + 1] = indent .. "}" .. (part.tail and (" " .. part.tail) or "")
 end
 
--- A row as it's written: what it is, not where its parts ended up (theirs).
-local WriteRow = function(out, row, ids)
+-- A row as it's written: what it is, not where its parts ended up (they're in it).
+local WriteRow = function(out, row, window, kids, indent)
 	for _, note in ipairs(row.notes or {}) do
-		out[#out + 1] = "    " .. note
+		out[#out + 1] = indent .. note
 	end
-	out[#out + 1] = "    WowRow {"
+	out[#out + 1] = indent .. "WowRow {"
 	local Set = function(key, value)
-		out[#out + 1] = "        " .. key .. ": " .. value
-	end
-	local members = {}
-	for i, name in ipairs(row.members) do
-		members[i] = Quote(name)
+		out[#out + 1] = indent .. "    " .. key .. ": " .. value
 	end
 	Set("name", Quote(row.name))
-	Set("parts", "[" .. table.concat(members, ", ") .. "]")
 	if row.fit then
 		Set("fit", Quote(row.fit))
 	end
 	if row.spacing then
 		Set("spacing", Number(row.spacing))
 	end
-	local on = ids[row.on]
-	Set("anchors.left", on .. ".left")
+	Set("anchors.left", "parent.left")
 	if (row.left ~= 0) then
 		Set("anchors.leftMargin", Number(row.left))
 	end
-	Set("anchors.right", on .. ".right")
+	Set("anchors.right", "parent.right")
 	if (row.right ~= 0) then
 		Set("anchors.rightMargin", Number(row.right))
 	end
-	Set("anchors." .. row.line, on .. "." .. row.to)
+	Set("anchors." .. row.line, "parent." .. row.to)
 	if (row.y ~= 0) then
 		local margin = MARGIN_OF[row.line]
 		Set("anchors." .. margin, Number(row.y * MARGINS[margin][2]))
 	end
-	out[#out + 1] = "    }"
-	out[#out + 1] = ""
+	for _, name in ipairs(row.members) do
+		out[#out + 1] = ""
+		WritePart(out, window.parts[name], kids, indent .. "    ", true)
+	end
+	out[#out + 1] = indent .. "}"
+end
+
+-- What's placed on something, in its block: its parts by name, then its rows.
+WriteKids = function(out, these, kids, indent)
+	for _, part in ipairs(these and these.parts or {}) do
+		out[#out + 1] = ""
+		WritePart(out, part, kids, indent)
+	end
+	for _, row in ipairs(these and these.rows or {}) do
+		out[#out + 1] = ""
+		WriteRow(out, row, these.window, kids, indent)
+	end
 end
 
 local WriteWindow = function(window)
-	local names, ghosts = { [window.name] = true }, {}
+	local inFile, inRow, ghosts = { [window.name] = true }, {}, {}
 	for name, part in pairs(window.parts) do
-		names[name] = (not part.preview) or nil
+		inFile[name] = (not part.preview) or nil
 	end
 	for _, row in ipairs(window.rows or {}) do
-		if (not names[row.on]) then
-			ghosts[row.on] = true
+		for _, name in ipairs(row.members) do
+			inRow[name], inFile[name] = row, true
 		end
 	end
-	for _, part in pairs(window.parts) do
-		local rel = (not part.preview) and part.place and part.place[2]
-		if rel and (not names[rel]) then
-			ghosts[rel] = true
+	local Note = function(on)
+		if on and (not inFile[on]) then
+			ghosts[on] = true
 		end
 	end
-	for name in pairs(ghosts) do
-		names[name] = true
+	for _, row in ipairs(window.rows or {}) do
+		Note(row.on)
 	end
-	local ids = IdsOf(names)
-	local width, height = WindowSize(window)
-	local out = { "// Written by tools/positions.lua, yours to change (docs: Common Tasks): a part",
-		'// with a pin is put in settings/positions.lua ("all", or only its "place" or',
-		"// its \"size\"), the others follow /dui layout's scan.",
-		"import QtQuick", "", "WowWindow {",
-		"    id: " .. ids[window.name], "    name: " .. Quote(window.name),
-		"    width: " .. Number(width), "    height: " .. Number(height), "" }
+	for name, part in pairs(window.parts) do
+		if inFile[name] and (not inRow[name]) then
+			Note(part.place and part.place[2])
+		end
+	end
+	-- what each part is written in. (Parts placed on each other can't nest: the
+	-- first of them stands in the window, not anchored, the scan placing it.)
+	local Over = function(name)
+		if inRow[name] then
+			return inRow[name].on
+		end
+		local place = window.parts[name] and window.parts[name].place
+		return place and place[2]
+	end
+	local loose = {}
 	for _, name in ipairs(Sorted(window.parts)) do
-		if (not window.parts[name].preview) then
-			WritePart(out, window.parts[name], ids)
+		local walked, up = {}, name
+		while up and (not walked[up]) and (not loose[up]) do
+			walked[up] = true
+			up = Over(up)
+		end
+		if up and walked[up] and (not loose[up]) then
+			local part = window.parts[up]
+			if part.pin or inRow[up] then
+				error(window.name .. ": " .. up .. " is placed on what's placed on it", 0)
+			end
+			loose[up], part.loose = true, true
+		end
+	end
+	local kids = {}
+	local Into = function(on, kind, item)
+		kids[on] = kids[on] or { parts = {}, rows = {}, window = window }
+		table.insert(kids[on][kind], item)
+	end
+	for _, name in ipairs(Sorted(window.parts)) do
+		if inFile[name] and (not inRow[name]) then
+			local part = window.parts[name]
+			Into((not loose[name]) and part.place and part.place[2] or window.name, "parts", part)
 		end
 	end
 	for _, row in ipairs(window.rows or {}) do
-		WriteRow(out, row, ids)
+		Into(row.on, "rows", row)
 	end
+	local width, height = WindowSize(window)
+	local out = { "// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part",
+		"// is in what it's placed on. One with a pin is put in settings/positions.lua (\"all\",",
+		"// or only its \"place\" or its \"size\"), the others follow /dui layout's scan.",
+		"import QtQuick", "", "WowWindow {",
+		"    name: " .. Quote(window.name),
+		"    width: " .. Number(width), "    height: " .. Number(height) }
+	WriteKids(out, kids[window.name], kids, "    ")
 	for _, name in ipairs(Sorted(ghosts)) do
 		local x, y, w, h = GhostRect(window, name)
-		out[#out + 1] = string.format("    Ghost { id: %s; name: %s; x: %s; y: %s; width: %s; height: %s }",
-			ids[name], Quote(name), Number(x), Number(y), Number(w), Number(h))
+		out[#out + 1] = ""
+		out[#out + 1] = "    Ghost {"
+		for _, line in ipairs({ "name: " .. Quote(name), "x: " .. Number(x), "y: " .. Number(y), "width: " .. Number(w), "height: " .. Number(h) }) do
+			out[#out + 1] = "        " .. line
+		end
+		WriteKids(out, kids[name], kids, "        ")
+		out[#out + 1] = "    }"
 	end
 	out[#out + 1] = "}\n"
 	local path = DIR .. "/" .. window.name:gsub("[^%w_]", "_") .. ".qml"
@@ -1061,11 +1110,11 @@ for title, window in pairs(windows) do
 		first = first or view.art
 		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, scale = view.scale, art = Pictures(view.art), worded = view.worded }
 	end
-	-- its rows, as the editor works them out too (its rowLayout, ResolveRow's)
+	-- its rows (windows/WowRow.qml works them out too, as ResolveRow does)
 	local rows = {}
 	for i, row in ipairs(window.rows or {}) do
 		rows[i] = { name = row.name, parts = row.members, fit = row.fit or "fill", spacing = row.spacing, gap = RowGap(), on = row.on,
-			left = row.left, right = row.right, y = row.y, point = PointOf("left", row.line), relPoint = PointOf("left", row.to) }
+			left = row.left, right = row.right, y = row.y, point = PointOf("left", row.line) }
 	end
 	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,
 		art = Pictures(first), file = window.file, views = views[1] and views or nil, rows = rows[1] and rows or nil }

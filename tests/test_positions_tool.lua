@@ -143,41 +143,51 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	local positions = PositionsOf(dir)
 	local exported = Read(dir .. "/layout.json")
 	-- a part: its anchors for its point, y and margins the other way round
+	-- (in what it's placed on, whatever its parent in the game)
 	lu.assertStrContains(friends, [[
-    EditBox {
-        id: whoFrameEditBox
-        name: "WhoFrameEditBox"
-        wowParent: "WhoFrame"
-        anchors.horizontalCenter: whoFrame.horizontalCenter
-        anchors.horizontalCenterOffset: -20
-        anchors.bottom: whoFrame.bottom
-        anchors.bottomMargin: 100
-        width: 296
-        height: 32
+    Frame {
+        name: "WhoFrame"
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.top: parent.top
+        anchors.topMargin: 20
+        width: 300
+        height: 400
+]])
+	lu.assertStrContains(friends, [[
+        EditBox {
+            name: "WhoFrameEditBox"
+            wowParent: "WhoFrame"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: -20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 100
+            width: 296
+            height: 32
+        }
     }
 ]])
-	lu.assertStrContains(friends, "    id: friendsFrame\n    name: \"FriendsFrame\"\n    width: 384\n    height: 500\n")
-	lu.assertStrContains(friends, 'anchors.left: friendsFrame.left\n        anchors.leftMargin: 10\n        anchors.top: friendsFrame.top\n        anchors.topMargin: 20')
+	lu.assertStrContains(friends, "WowWindow {\n    name: \"FriendsFrame\"\n    width: 384\n    height: 500\n")
+	lu.assertNil(friends:find("id:", 1, true))
 	-- the scan's rect for a text's box, the first window seen keeps a part
-	lu.assertStrContains(friends, 'id: odd_Name')
-	lu.assertStrContains(friends, 'id: name_\n')
-	lu.assertStrContains(friends, 'id: _1st\n')
+	lu.assertStrContains(friends, 'name: "Odd-Name"')
 	-- its notes over it, the note at its end after it; on another window, kept
-	lu.assertStrContains(auction, '    // why it\'s there,\n    // on two lines\n    FontString {\n        id: whoFrameTotals')
-	lu.assertStrContains(auction, '        width: 72\n        height: 12\n    } // (a note at its end)')
+	lu.assertStrContains(auction, '        // why it\'s there,\n        // on two lines\n        FontString {\n            name: "WhoFrameTotals"')
+	lu.assertStrContains(auction, '            width: 72\n            height: 12\n        } // (a note at its end)')
 	lu.assertStrContains(auction, 'text: "Seen \\"first\\""')
 	-- several points: the place that keeps it where it is, its rect's size
-	lu.assertStrContains(friends, 'Frame {\n        id: whoFrameBar\n        name: "WhoFrameBar"\n        wowParent: "WhoFrame"\n'
-		.. '        anchors.horizontalCenter: whoFrame.horizontalCenter\n        anchors.horizontalCenterOffset: 10\n        anchors.top: whoFrame.top\n        anchors.topMargin: 10\n        width: 300\n        height: 12')
+	lu.assertStrContains(friends, 'Frame {\n            name: "WhoFrameBar"\n            wowParent: "WhoFrame"\n'
+		.. '            anchors.horizontalCenter: parent.horizontalCenter\n            anchors.horizontalCenterOffset: 10\n            anchors.top: parent.top\n')
 	-- what's not in it stands in as a Ghost, where what's on it says
-	lu.assertStrContains(friends, 'Ghost { id: elsewhere; name: "Elsewhere"; x: 89; y: 409; width: 102; height: 0 }')
-	lu.assertStrContains(friends, 'Ghost { id: below; name: "Below"; x: 95; y: 302; width: 0; height: 0 }')
-	lu.assertStrContains(friends, 'Ghost { id: beside; name: "Beside"; x: 100; y: 307; width: 0; height: 0 }')
-	lu.assertStrContains(friends, 'Ghost { id: unseen; name: "Unseen"; x: 0; y: 0; width: 0; height: 0 }')
+	-- (with what's on it inside it)
+	lu.assertStrContains(friends, 'Ghost {\n        name: "Elsewhere"\n        x: 89\n        y: 409\n        width: 102\n        height: 0\n\n        Frame {\n            name: "OnCentre"')
+	lu.assertStrContains(friends, 'Ghost {\n        name: "Below"\n        x: 95\n        y: 302\n')
+	lu.assertStrContains(friends, 'Ghost {\n        name: "Beside"\n        x: 100\n        y: 307\n')
+	lu.assertStrContains(friends, 'Ghost {\n        name: "Unseen"\n        x: 0\n        y: 0\n')
 	-- in use in a window no scan saw, or none: kept, a size alone without anchors
-	lu.assertStrContains(dressUp, '    // a size only\n    Part {\n        id: sizedFrame\n        name: "SizedFrame"\n        pin: "size"\n        width: 10\n        height: 20')
-	lu.assertStrContains(notSeen, 'name: "GoneFrame"\n        pin: "all"')
-	lu.assertStrContains(notSeen, 'name: "PlaceOnly"\n        pin: "place"')
+	lu.assertStrContains(dressUp, '    // a size only\n    Part {\n        name: "SizedFrame"\n        pin: "size"\n        width: 10\n        height: 20')
+	lu.assertStrContains(notSeen, 'name: "GoneFrame"\n            pin: "all"')
+	lu.assertStrContains(notSeen, 'name: "PlaceOnly"\n            pin: "place"')
 	lu.assertNil(friends:find("WhoFrameOld", 1, true))
 	lu.assertNil(friends:find("OldLine", 1, true))
 	-- settings/positions.lua: the pinned ones, by window, their notes kept
@@ -221,7 +231,7 @@ function TestPositionsTool:test_the_windows_read_back()
 	local positions = PositionsOf(dir)
 	lu.assertEquals(positions["Odd-Name"], { "TOP", "WhoFrame", "TOP", 0, 0, 10, 10 })
 	lu.assertNil(positions.OnLeft)
-	lu.assertStrContains(Read(dir .. "/windows/FriendsFrame.qml"), 'anchors.left: elsewhere.left\n        anchors.leftMargin: 7\n')
+	lu.assertStrContains(Read(dir .. "/windows/FriendsFrame.qml"), 'name: "OnLeft"\n            anchors.left: parent.left\n            anchors.leftMargin: 7\n')
 	-- the editor's changes; a part gone from every file: nothing
 	Write(dir .. "/edits.lua", [[return {
 		WhoFrame = { place = { "TOP", "FriendsFrame", "TOP", 3, 4 }, size = { 30, 40 }, pin = "all" },
@@ -271,10 +281,11 @@ WowWindow {
 	Write(dir .. "/saved.lua", "OtherThing = 1")
 	lu.assertStrContains(Runs(dir), "4 parts, 2 in use.")
 	local text = Read(dir .. "/windows/Mine.qml")
-	lu.assertStrContains(text, '    id: mine\n    name: "Mine"\n    width: 510\n    height: 620\n')
-	lu.assertStrContains(text, '    // over a part\n    Part {\n        id: far')
-	lu.assertStrContains(text, 'name: "NoId"\n        anchors.right: far.right\n        anchors.rightMargin: 2\n        anchors.verticalCenter: far.verticalCenter\n        anchors.verticalCenterOffset: 3\n')
-	lu.assertStrContains(text, 'text: "a \\\\ \\"text\\""\n        anchors.horizontalCenter: mine.horizontalCenter\n        anchors.bottom: mine.bottom\n')
+	lu.assertStrContains(text, 'WowWindow {\n    name: "Mine"\n    width: 510\n    height: 620\n')
+	lu.assertStrContains(text, '    // over a part\n    Part {\n        name: "Far"')
+	-- (an id of the file: in that part from now on, by `parent`)
+	lu.assertStrContains(text, 'name: "NoId"\n            anchors.right: parent.right\n            anchors.rightMargin: 2\n            anchors.verticalCenter: parent.verticalCenter\n')
+	lu.assertStrContains(text, 'text: "a \\\\ \\"text\\""\n        anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom\n')
 	lu.assertEquals(PositionsOf(dir).Open, { 4, 5 })
 	os.execute("rm -rf '" .. dir .. "'")
 end
@@ -417,7 +428,7 @@ DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	local window = Read(addon .. "/windows/BankFrame.qml")
 	lu.assertStrContains(Read(addon .. "/tools/layout.json"), '"BankCloseButton":{"kind":"Button"')
 	os.execute("rm -rf '" .. base .. "'")
-	lu.assertStrContains(window, 'anchors.right: bankFrame.right\n        anchors.rightMargin: 46\n        anchors.top: bankFrame.top\n        anchors.topMargin: 8\n        width: 32')
+	lu.assertStrContains(window, 'anchors.right: parent.right\n        anchors.rightMargin: 46\n        anchors.top: parent.top\n        anchors.topMargin: 8\n')
 end
 
 -- The art for the editor: our files as they are in media/ (whatever their
@@ -554,8 +565,8 @@ WowWindow {
 	for _, name in ipairs({ "ListRow2", "ListRow9", "ListRow2Name", "AdiBagsItemButton5", "AdiBagsItemButton5Count" }) do
 		lu.assertNil(file:find('name: "' .. name .. '"\n', 1, true), name)
 	end
-	lu.assertStrContains(file, 'Ghost { id: listRow7; name: "ListRow7"; x: 10;')
-	-- the editor still has them all, to draw and for the rules
+	lu.assertStrContains(file, 'Ghost {\n        name: "ListRow7"\n        x: 10\n')
+	-- the editor still has them all, to draw
 	lu.assertStrContains(json, '"ListRow2":{')
 	lu.assertStrContains(json, '"AdiBagsItemButton5Count":{')
 	lu.assertStrContains(json, '"preview":true')
@@ -592,10 +603,10 @@ WowWindow {
 ]=])
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 	local file = Read(dir .. "/windows/W.qml")
-	lu.assertStrContains(file, 'Button {\n        id: old\n        name: "Old"\n        pin: "all"')
-	lu.assertStrContains(file, 'FontString {\n        id: words\n        name: "Words"\n        text: "Hi"')
-	lu.assertStrContains(file, 'Part {\n        id: odd\n        name: "Odd"\n        kind: "Cooldown"')
-	lu.assertStrContains(file, 'Part {\n        id: plain\n        name: "Plain"\n        width: 7')
+	lu.assertStrContains(file, 'Button {\n        name: "Old"\n        pin: "all"')
+	lu.assertStrContains(file, 'FontString {\n        name: "Words"\n        text: "Hi"')
+	lu.assertStrContains(file, 'Part {\n        name: "Odd"\n        kind: "Cooldown"')
+	lu.assertStrContains(file, 'Part {\n        name: "Plain"\n        width: 7')
 	lu.assertStrContains(Read(dir .. "/layout.json"), '"kind":"FontString"')
 	-- it settles
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
@@ -608,7 +619,7 @@ function TestPositionsTool:test_every_kind_has_its_file()
 	for path in pipe:lines() do
 		local text = Read(path)
 		if text:find("\nWowWindow {", 1, true) then
-			for kind in text:gmatch("\n    (%u%w*) {") do
+			for kind in text:gmatch("\n%s*(%u%w*) {") do
 				lu.assertNotNil(io.open(ROOT .. "/windows/" .. kind .. ".qml"), path .. ": no windows/" .. kind .. ".qml")
 			end
 		end
@@ -625,8 +636,6 @@ WowWindow {
     name: "W"
     width: 400
     height: 200
-    Part { id: a; name: "A"; kind: "Button"; pin: "all"; anchors.left: w.left; anchors.top: w.top; width: 50; height: 20 }
-    Part { id: b; name: "B"; kind: "Button"; pin: "all"; anchors.left: w.left; anchors.top: w.top; width: 70; height: 20 }
     Part { id: c; name: "C"; kind: "Frame"; pin: "place"; anchors.left: w.left; anchors.top: w.top; anchors.topMargin: 30; width: 40; height: 20 }
     Part {
         id: d
@@ -641,11 +650,12 @@ WowWindow {
     }
     WowRow {
         name: "Row"
-        parts: ["A", "B"]
         fit: "equal"
         anchors.left: w.left
         anchors.right: w.right
         anchors.bottom: w.bottom
+        Part { name: "A"; kind: "Button"; pin: "all"; width: 50; height: 20 }
+        Part { name: "B"; kind: "Button"; pin: "all"; width: 70; height: 20 }
     }
 }
 ]=])
@@ -659,13 +669,13 @@ WowWindow {
 	local file, text, json = Read(dir .. "/windows/W.qml"), Read(dir .. "/positions.lua"), Read(dir .. "/layout.json")
 	-- the row told: "ends" in 370 of room, the parts pinned at their size stay so
 	lu.assertStrContains(file, 'fit: "ends"')
-	lu.assertStrContains(file, "anchors.leftMargin: 10\n        anchors.right: w.right\n        anchors.rightMargin: 20")
+	lu.assertStrContains(file, "anchors.leftMargin: 10\n        anchors.right: parent.right\n        anchors.rightMargin: 20")
 	lu.assertStrContains(file, "anchors.bottomMargin: 5")
 	lu.assertStrContains(text, 'A = { "BOTTOMLEFT", "W", "BOTTOMLEFT", 10, 5,')
 	lu.assertNotStrContains(file, 'fit: "equal"')
 	-- stretched from the editor, its far side in its file and the game's
 	lu.assertStrContains(text, 'C = { "TOPLEFT", "W", "TOPLEFT", 10, -30, second = { "TOPRIGHT", "TOPRIGHT", -30, -30 } }')
-	lu.assertStrContains(file, "anchors.right: w.right\n        anchors.rightMargin: 30")
+	lu.assertStrContains(file, "anchors.right: parent.right\n        anchors.rightMargin: 30")
 	-- no longer stretched: its second side gone, its size held
 	lu.assertStrContains(text, 'D = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 400, 20 }')
 	-- for the editor: the rows, and which part's in one
@@ -703,12 +713,11 @@ WowWindow {
     name: "W"
     width: 400
     height: 200
-    Part { id: a; name: "A"; kind: "Button"; text: "A long text"; width: 50; height: 20 }
-    Part { id: b; name: "B"; kind: "Button"; text: "B"; width: 90; height: 20 }
-    Part { id: c; name: "C"; kind: "Button"; width: 40; height: 20 }
     WowRow {
         name: "Same"
-        parts: ["A", "B", "C"]
+        Part { name: "A"; kind: "Button"; text: "A long text"; width: 50; height: 20 }
+        Part { name: "B"; kind: "Button"; text: "B"; width: 90; height: 20 }
+        Part { name: "C"; kind: "Button"; width: 40; height: 20 }
         fit: "equal"
         spacing: 5
         anchors.left: w.left
@@ -742,12 +751,6 @@ WowWindow {
     name: "W"
     width: 400
     height: 200
-    Part { id: a; name: "A"; kind: "Button"; text: "Aaa"; width: 50; height: 20 }
-    Part { id: b; name: "B"; kind: "Button"; text: "Bb"; width: 50; height: 20 }
-    Part { id: c; name: "C"; kind: "Button"; width: 40; height: 20 }
-    Part { id: d; name: "D"; kind: "Button"; width: 40; height: 20 }
-    Part { id: e; name: "E"; kind: "Button"; width: 40; height: 20 }
-    Part { id: f; name: "F"; kind: "Button"; width: 30; height: 20 }
     Part {
         id: wide
         name: "Wide"
@@ -766,7 +769,9 @@ WowWindow {
     // the room shared
     WowRow {
         name: "Fills"
-        parts: ["A", "B", "C"]
+        Part { name: "A"; kind: "Button"; text: "Aaa"; width: 50; height: 20 }
+        Part { name: "B"; kind: "Button"; text: "Bb"; width: 50; height: 20 }
+        Part { name: "C"; kind: "Button"; width: 40; height: 20 }
         spacing: 10
         anchors.left: w.left
         anchors.leftMargin: 20
@@ -777,7 +782,8 @@ WowWindow {
     }
     WowRow {
         name: "Middle"
-        parts: ["D", "E"]
+        Part { name: "D"; kind: "Button"; width: 40; height: 20 }
+        Part { name: "E"; kind: "Button"; width: 40; height: 20 }
         fit: "center"
         spacing: 10
         anchors.left: w.left
@@ -786,7 +792,7 @@ WowWindow {
     }
     WowRow {
         name: "Ends"
-        parts: ["F"]
+        Part { name: "F"; kind: "Button"; width: 30; height: 20 }
         fit: "ends"
         anchors.left: w.left
         anchors.right: w.right
@@ -819,7 +825,8 @@ WowWindow {
 	lu.assertStrContains(file, "height: 180")
 	-- the rows kept; what they hold not to be dragged
 	lu.assertStrContains(file, "// the room shared\n    WowRow {")
-	lu.assertStrContains(file, 'parts: ["A", "B", "C"]')
+	lu.assertStrContains(file, 'anchors.bottomMargin: 8\n\n        Button {\n            name: "A"\n            text: "Aaa"\n            pin: "all"\n            width: 155\n')
+	lu.assertStrContains(file, '\n        }\n\n        Button {\n            name: "B"')
 	lu.assertStrContains(json, '"heldBy":"row Fills"')
 	lu.assertStrContains(json, '"heldBy":"its two sides"')
 	-- again: the same
@@ -844,9 +851,65 @@ function TestPositionsTool:test_what_a_row_or_a_stretch_cant_be()
 		"stretched, it needs a pin")
 	lu.assertStrContains(Says('    Part { id: a; name: "A"; pin: "place"; anchors.left: w.left; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top; width: 1; height: 1 }'),
 		"stretches between left and right only")
-	lu.assertStrContains(Says('    WowRow { name: "R"; parts: ["A"]; anchors.left: w.left; anchors.top: w.top }'), "a row goes from")
+	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.top: w.top; Part { name: "A" } }'), "a row goes from")
 	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'), "a row needs its parts")
-	lu.assertStrContains(Says('    WowRow { name: "R"; parts: ["Nope"]; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'), "Nope isn't a part")
+	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; anchors.left: parent.left; anchors.top: parent.top } }'), "its row places it")
+	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Frame { name: "A"; WowRow { name: "S" } } }'), "a row goes from")
+	lu.assertStrContains(Says('    Part { name: "A"; Ghost { name: "G" } }'), "only a WowWindow")
+end
+
+-- Each part in what it's placed on: moved there by the editor, or by the scan;
+-- parts placed on each other can't nest, so one stands in the window.
+function TestPositionsTool:test_a_part_goes_in_what_its_placed_on()
+	local dir = Folder()
+	Write(dir .. "/windows/W.qml", [=[
+import QtQuick
+WowWindow {
+    name: "W"
+    width: 400
+    height: 200
+    Frame {
+        name: "Foot"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        width: 400
+        height: 35
+    }
+    Button {
+        name: "Go"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: 37
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 6
+        width: 80
+        height: 22
+    }
+}
+]=])
+	Write(dir .. "/edits.lua", [=[return { Go = { window = "W", place = { "BOTTOMLEFT", "Foot", "BOTTOMLEFT", 37, 6 }, size = { 80, 22 }, pin = "all" } }]=])
+	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" })
+	local file, text = Read(dir .. "/windows/W.qml"), Read(dir .. "/positions.lua")
+	lu.assertStrContains(file, 'height: 35\n\n        Button {\n            name: "Go"\n            pin: "all"\n            anchors.left: parent.left\n            anchors.leftMargin: 37\n')
+	lu.assertStrContains(text, 'Go = { "BOTTOMLEFT", "Foot", "BOTTOMLEFT", 37, 6, 80, 22 }')
+	-- it settles
+	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
+	lu.assertEquals(Read(dir .. "/windows/W.qml"), file)
+	lu.assertEquals(Read(dir .. "/positions.lua"), text)
+	-- on each other, as a scan may say: one in the window, the other in it
+	dir = Folder()
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
+		A = { "TOP", "B", "BOTTOM", 0, 0, 10, 10, kind = "Frame", rect = { 0, 0, 10, 10 } },
+		B = { "TOP", "A", "BOTTOM", 0, 0, 10, 10, kind = "Frame", rect = { 0, 0, 10, 10 } },
+	} } } }]=])
+	Runs(dir)
+	file = Read(dir .. "/windows/W.qml")
+	lu.assertStrContains(file, '    Frame {\n        name: "A"\n        width: 10\n        height: 10\n\n        Frame {\n            name: "B"\n')
+	-- pinned, it can't be: said
+	Write(dir .. "/positions.lua", 'local _, E = ...\nE:NewStaticConfig("Positions", {\n\tA = { "TOP", "B", "BOTTOM", 0, 0 },\n\tB = { "TOP", "A", "BOTTOM", 0, 0 },\n})\n')
+	os.execute("rm -rf '" .. dir .. "/windows'")
+	lu.assertStrContains(Runs(dir), "is placed on what's placed on it")
 end
 
 -- A window the game scales: its rects on screen in its own units, as its parts'

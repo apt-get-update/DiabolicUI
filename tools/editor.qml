@@ -1,8 +1,8 @@
 // The windows' editor (tools/editor.py runs it): a windows/*.qml file loaded
-// as it is, its anchors live, so what's placed on a part follows it. Press a
-// part to pick it (again: the one under it), drag it (it snaps to the others'
-// edges, Alt: not), drag a handle to size it, drag a dot to another part's
-// to place it there. Right-click: all that's under the cursor.
+// as it is, each part inside what it's placed on, so what's on a part goes with
+// it. Press a part to pick it (again: the one under it), drag it (it snaps to the
+// others' edges, Alt: not), drag a handle to size it, drag a dot to another part's
+// to place it in that part. Right-click: all that's under the cursor.
 import QtCore
 import QtQuick
 import QtQuick.Controls
@@ -64,8 +64,7 @@ ApplicationWindow {
     property var data: null          // its part of layout.json
     property string title_: ""
     property var parts: ({})         // its parts, by name
-    property var items: ({})         // the QML items, by name (the window's and the Ghosts' too)
-    property var names: []           // every name a part can be placed on
+    property var items: ({})         // the QML items, by name (the window's, the Ghosts' and the rows' too)
     property Item root: null
     property var edits: JSON.parse(backend.kept()) // what's not saved, by name: { window, place, size, pin, second }; "@rows": by window, by row
     property var undoList: []
@@ -83,6 +82,7 @@ ApplicationWindow {
     property var pickedEntry: null
     property string hovered: ""
     property Item hoveredItem: hovered && hovered !== picked ? items[hovered] || null : null
+    property int moved: 0            // up each time parts have moved: what's drawn from where they are follows
     property string status: backend.startMessage()
     property string leftText: backend.leftText()
     property var shown: ({ Frame: true, FontString: true, Texture: true })
@@ -97,7 +97,6 @@ ApplicationWindow {
         property string lastWindow
         property alias listWidth: left.width_
         property alias outlines: showOutlines.checked
-        property alias anchorsOpen: fields.open
     }
 
     function kindOf(kind) { return kind === "Texture" || kind === "FontString" ? kind : "Frame" }
@@ -107,22 +106,28 @@ ApplicationWindow {
     function lineX(p) { return p.indexOf("LEFT") >= 0 ? "left" : p.indexOf("RIGHT") >= 0 ? "right" : "horizontalCenter" }
     function lineY(p) { return p.indexOf("TOP") >= 0 ? "top" : p.indexOf("BOTTOM") >= 0 ? "bottom" : "verticalCenter" }
     function same(a, b) { return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b) }
+    // where a part (or the window) is in the window: x, y, width, height
+    function rectOf(name) {
+        const item = items[name], at = item.mapToItem(root, 0, 0)
+        return [at.x, at.y, item.width, item.height]
+    }
+    function under(name, over) {
+        for (let up = items[name]; up && up !== root; up = up.parent) if (up === items[over]) return true
+        return false
+    }
+    function isRow(name) { return !!items[name] && items[name].fit !== undefined }
+    function bumpMoved() { moved++ }
     function fileEntry(name) {
         const p = parts[name]
         return { place: p.place, size: p.size, pin: p.pin || "", second: p.second }
     }
-    function entry(name) { return rowPlaced[name] || edits[name] || fileEntry(name) }
-
-    function itemFor(name) { return items[name] }
-    function editsText() { return JSON.stringify(edits) }
-    function listCount() { return listModel.length }
+    function entry(name) { return edits[name] || fileEntry(name) }
 
     // ---- opening
     function openWindow(name) {
+        pick(""); hovered = ""; artModel = [] // (first: what's drawn on a part comes out of it)
         if (root) root.destroy()
         root = null
-        pick(""); hovered = ""; artModel = []
-        rowPlaced = {}
         unfolded = {}
         data = JSON.parse(backend.window(name))
         title_ = name
@@ -141,24 +146,28 @@ ApplicationWindow {
         root.outlines = Qt.binding(() => showOutlines.checked)
         const map = {}
         map[name] = root
-        const children = root.children
-        for (let i = 0; i < children.length; i++) map[children[i].name] = children[i]
+        const walk = item => {
+            for (let i = 0; i < item.children.length; i++) {
+                const child = item.children[i]
+                if (child.name !== undefined) { map[child.name] = child; walk(child) }
+            }
+        }
+        walk(root)
         items = map
-        const rowNames = (data.rows || []).map(r => r.name)
-        names = Object.keys(map).filter(n => rowNames.indexOf(n) < 0).sort()
-        for (const n in edits) if (edits[n].window === name && items[n] && parts[n]) applyItem(n)
-        rowsUpdate()
-        for (const n in parts) if (items[n] && !parts[n].preview && parts[n].justify) items[n].justify = justifyOf(parts[n], items[n].width)
         // (a button with a text and no part for it, the game's unnamed: it draws it itself; a tab's is our banner's tooltip)
         const worded = {}
         const says = p => !!p.text || !!(p.words && Object.keys(p.words).length)
         for (const n in parts) if (parts[n].kind === "FontString" && says(parts[n])) worded[parts[n].parent] = true
-        for (const n in parts) if (items[n] && !parts[n].preview && says(parts[n]) && parts[n].kind !== "FontString" && !worded[n] && !/Tab\d+$/.test(n)) items[n].labelled = true
-        for (const n in parts) if (items[n] && !parts[n].preview) items[n].look = parts[n]
-        applyShown()
+        for (const n in parts) if (items[n] && !parts[n].preview) {
+            items[n].look = parts[n]
+            if (says(parts[n]) && parts[n].kind !== "FontString" && !worded[n] && !/Tab\d+$/.test(n)) items[n].labelled = true
+        }
+        for (const n in edits) if (edits[n].window === name && items[n] && parts[n]) applyItem(n)
+        for (const row of data.rows || []) applyRow(row)
+        for (const n in parts) if (items[n] && !parts[n].preview && parts[n].justify) items[n].justify = justifyOf(parts[n], items[n].width)
         // the art follows its part from where the part is now
         const base = {}
-        for (const n in map) base[n] = [map[n].x, map[n].y, map[n].width, map[n].height]
+        for (const n in map) base[n] = rectOf(n)
         artBase = base
         showView(0)
         fit(false)
@@ -203,7 +212,7 @@ ApplicationWindow {
         artModel = (view_ ? view_.art : data.art) || []
         previewUpdate()
         applyShown()
-        if (picked && !(items[picked] && items[picked].visible)) pick("")
+        if (picked && !(items[picked] && items[picked].shown)) pick("")
         listModelUpdate()
     }
     function inView(name) {
@@ -220,9 +229,9 @@ ApplicationWindow {
 
     function applyShown() {
         for (const n in parts) if (items[n]) {
-            items[n].visible = shown[kindOf(parts[n].kind)] && inView(n)
-            // (only what the last look at this tab saw, as the rules: the rest stays to pick)
+            // (only what the last look at this tab saw: the rest stays to pick)
             if (!parts[n].preview) { // (a preview's may be a Ghost)
+                items[n].shown = shown[kindOf(parts[n].kind)] && inView(n)
                 items[n].wordless = !!parts[n].faded || !!(view_ && parts[n].current && !parts[n].current[view_.key])
                 items[n].text = wordsOf(parts[n])
             }
@@ -233,15 +242,18 @@ ApplicationWindow {
     readonly property var marginOf: ({ left: ["leftMargin", 1], right: ["rightMargin", -1], horizontalCenter: ["horizontalCenterOffset", 1],
         top: ["topMargin", -1], bottom: ["bottomMargin", 1], verticalCenter: ["verticalCenterOffset", -1] })
 
+    // a part where it's told: inside what it's placed on, by its anchors (a row places its own)
     function applyItem(name) {
         const item = items[name], e = entry(name)
         if (!item) return
         const anchors = item.anchors, target = e.place && items[e.place[1]]
-        if (target) {
+        if (target && !rowOf(name)) {
             const x = lineX(e.place[0]), y = lineY(e.place[0])
             const x2 = e.second ? lineX(e.second[0]) : x, y2 = e.second ? lineY(e.second[0]) : y // (stretched: its other side)
+            const moving = item.parent !== target
             for (const line of ["left", "right", "horizontalCenter", "top", "bottom", "verticalCenter"])
-                if (line !== x && line !== y && line !== x2 && line !== y2) { anchors[line] = undefined; anchors[marginOf[line][0]] = 0 }
+                if (moving || (line !== x && line !== y && line !== x2 && line !== y2)) { anchors[line] = undefined; anchors[marginOf[line][0]] = 0 }
+            if (moving) item.parent = target
             anchors[x] = target[lineX(e.place[2])]
             anchors[y] = target[lineY(e.place[2])]
             anchors[marginOf[x][0]] = e.place[3] * marginOf[x][1]
@@ -249,9 +261,10 @@ ApplicationWindow {
             if (x2 !== x) { anchors[x2] = target[lineX(e.second[1])]; anchors[marginOf[x2][0]] = e.second[2] * marginOf[x2][1] }
             if (y2 !== y) { anchors[y2] = target[lineY(e.second[1])]; anchors[marginOf[y2][0]] = e.second[3] * marginOf[y2][1] }
         }
-        if (e.size) { item.width = e.size[0]; item.height = e.size[1] }
+        if (e.size && !rowOf(name)) { item.width = e.size[0]; item.height = e.size[1] }
         item.pin = e.pin
-        item.changed = !!edits[name] || !!rowPlaced[name]
+        item.changed = !!edits[name]
+        Qt.callLater(bumpMoved)
     }
 
     function remember() {
@@ -293,14 +306,13 @@ ApplicationWindow {
     function changed() {
         backend.keep(JSON.stringify(edits))
         listModelUpdate()
-        linkUpdate()
     }
 
     function restore(text) {
         const before = edits
         edits = JSON.parse(text)
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
-        rowsUpdate()
+        for (const row of (data && data.rows) || []) applyRow(row)
         drawSample()
         if (picked) pickedEntry = entry(picked)
         changed()
@@ -320,8 +332,7 @@ ApplicationWindow {
         restore(last)
     }
 
-    // ---- the rows: as told here, worked out as tools/positions.lua does when saved
-    property var rowPlaced: ({})     // their parts, by name, while a row's changed: { place, size, pin }
+    // ---- the rows: as told here, windows/WowRow.qml works out their parts
     readonly property var pickedRow: {
         const row = picked && parts[picked] ? rowOf(picked) : null
         return row ? rowNow(row) : null
@@ -339,57 +350,16 @@ ApplicationWindow {
         const edit = rowEdit(row)
         return edit ? Object.assign({}, row, edit, { spacing: edit.spacing }) : row
     }
-    // { [part]: { place, size, pin } } for a row (ResolveRow's, tools/positions.lua)
-    function rowLayout(row) {
-        const on = items[row.on], out = {}
-        if (!on) return out
-        const names = row.parts, count = names.length, room = on.width - row.left - row.right
-        const has = row.spacing !== undefined && row.spacing !== null
-        let gap = has ? row.spacing : row.gap, first = row.left
-        const sizeOf = n => parts[n].size || (parts[n].rect ? [parts[n].rect[2], parts[n].rect[3]] : [items[n].width, items[n].height])
-        const widths = names.map(n => sizeOf(n)[0])
-        const shared = room - gap * (count - 1)
-        let sum = widths.reduce((a, b) => a + b, 0)
-        if (row.fit === "fill") {
-            const texted = n => parts[n].textWidth !== undefined && parts[n].textWidth !== null
-            let sharing = names.filter(texted).length
-            const all = !sharing
-            if (all) sharing = count
-            names.forEach((n, i) => { if (texted(n)) widths[i] = parts[n].textWidth })
-            sum = widths.reduce((a, b) => a + b, 0)
-            const extra = (shared - sum) / sharing
-            let last = count - 1
-            names.forEach((n, i) => {
-                if (all || texted(n)) { widths[i] = roundTenth(widths[i] + extra); last = i }
-                else widths[i] = roundTenth(widths[i])
-            })
-            sum = widths.reduce((a, b) => a + b, 0)
-            widths[last] = roundTenth(widths[last] + shared - sum)
-        } else if (row.fit === "equal") {
-            names.forEach((n, i) => { widths[i] = roundTenth(shared / count) })
-            sum = widths.reduce((a, b) => a + b, 0)
-            widths[count - 1] = roundTenth(widths[count - 1] + shared - sum)
-        } else if (row.fit === "center") {
-            first = row.left + (room - sum - gap * (count - 1)) / 2
-        } else if (count > 1) {
-            gap = (room - sum) / (count - 1)
-        } else {
-            first = row.left + (room - sum) / 2
-        }
-        const sized = row.fit === "fill" || row.fit === "equal"
-        names.forEach((n, i) => {
-            const place = i === 0 ? [row.point, row.on, row.relPoint, roundTenth(first), row.y] : ["LEFT", names[i - 1], "RIGHT", roundTenth(gap), 0]
-            out[n] = { place: place, size: [widths[i], sizeOf(n)[1]], pin: sized || parts[n].pin === "all" ? "all" : "place" }
-        })
-        return out
-    }
-    // the parts of the rows changed where they're told, those of the others back
-    function rowsUpdate() {
-        const placed = {}
-        for (const row of (data && data.rows) || []) if (rowEdit(row)) Object.assign(placed, rowLayout(rowNow(row)))
-        const before = rowPlaced
-        rowPlaced = placed
-        for (const n in Object.assign({}, before, placed)) if (items[n]) applyItem(n)
+    function applyRow(row) {
+        const item = items[row.name], now = rowNow(row), line = marginOf[lineY(row.point)]
+        item.fit = now.fit
+        item.spacing = now.spacing === undefined || now.spacing === null ? row.gap : now.spacing
+        item.anchors.leftMargin = now.left
+        item.anchors.rightMargin = now.right
+        item.anchors[line[0]] = now.y * line[1]
+        item.place()
+        for (const n of row.parts) if (items[n]) items[n].changed = !!rowEdit(row)
+        Qt.callLater(bumpMoved)
     }
     // `changes` (fit, spacing, left, right, y) to a row. Quiet: while dragged.
     function setRow(row, changes, quiet) {
@@ -408,9 +378,8 @@ ApplicationWindow {
         if (Object.keys(rows).length) copy["@rows"] = rows
         else delete copy["@rows"]
         edits = copy
-        rowsUpdate()
+        applyRow(file)
         if (picked) pickedEntry = entry(picked)
-        linkUpdate()
         if (!quiet) changed()
     }
     function resetRow(row) {
@@ -562,7 +531,6 @@ ApplicationWindow {
         if (name) componentsMode = false // (a part picked: its own panel)
         picked = name
         pickedEntry = name ? entry(name) : null
-        linkUpdate()
         if (name) unfoldTo(name)
         const at = listModel.indexOf(name)
         if (at >= 0) list.positionViewAtIndex(at, ListView.Contain)
@@ -571,8 +539,6 @@ ApplicationWindow {
             if (items[n].picked !== undefined) {
                 items[n].picked = n === name
                 items[n].placedOn = n === on
-                const e = parts[n] && entry(n)
-                items[n].follower = !!(name && e && e.place && e.place[1] === name)
             }
         }
     }
@@ -580,9 +546,9 @@ ApplicationWindow {
     function partsAt(x, y) {
         const hits = []
         for (const n in parts) {
-            const item = items[n]
-            if (item && !parts[n].preview && item.visible && x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height)
-                hits.push(n)
+            if (!items[n] || parts[n].preview || !items[n].shown) continue
+            const r = rectOf(n)
+            if (x >= r[0] && x <= r[0] + r[2] && y >= r[1] && y <= r[1] + r[3]) hits.push(n)
         }
         hits.sort((a, b) => items[a].width * items[a].height - items[b].width * items[b].height)
         // a button before its own text, what's pressed is the button (press again for the text)
@@ -594,26 +560,26 @@ ApplicationWindow {
 
     // the place keeping a part where it is, on another point or frame
     function anchored(name, point, rel, relPoint) {
-        const item = items[name], target = items[rel]
+        const r = rectOf(name), t = rectOf(rel)
         return [point, rel, relPoint,
-            roundTenth(item.x + fractionX(point) * item.width - target.x - fractionX(relPoint) * target.width),
-            roundTenth(-(item.y + fractionY(point) * item.height - target.y - fractionY(relPoint) * target.height))]
+            roundTenth(r[0] + fractionX(point) * r[2] - t[0] - fractionX(relPoint) * t[2]),
+            roundTenth(-(r[1] + fractionY(point) * r[3] - t[1] - fractionY(relPoint) * t[3]))]
     }
 
     // is `p` (in the view) on the picked part's handles or dots?
     readonly property real handleGap: 24
     function overControls(p) {
         if (!pickedItem || componentsMode) return false
-        const at = toRoot(p), item = pickedItem, near = 8 / content.scale, gap = handleGap / content.scale
+        const at = toRoot(p), near = 8 / content.scale, gap = handleGap / content.scale
         if (pickedRow) { // (only its ends' handles)
-            const on = items[pickedRow.on], left = on.x + pickedRow.left, right = on.x + on.width - pickedRow.right
-            const y = item.y + item.height / 2
-            return Math.hypot(at.x - left + gap / 2, at.y - y) < near || Math.hypot(at.x - right - gap / 2, at.y - y) < near
+            const r = rectOf(pickedRow.name), y = r[1] + r[3] / 2
+            return Math.hypot(at.x - r[0] + gap / 2, at.y - y) < near || Math.hypot(at.x - r[0] - r[2] - gap / 2, at.y - y) < near
         }
         if (pickedHeld) return false
+        const r = rectOf(picked)
         for (const fx of [0, .5, 1]) {
             for (const fy of [0, .5, 1]) {
-                const x = item.x + fx * item.width, y = item.y + fy * item.height
+                const x = r[0] + fx * r[2], y = r[1] + fy * r[3]
                 if (Math.hypot(at.x - x, at.y - y) < near) return true
                 if (pickedEntry && pickedEntry.size && Math.hypot(at.x - x - (fx - .5) * gap, at.y - y - (fy - .5) * gap) < near) return true
             }
@@ -664,24 +630,22 @@ ApplicationWindow {
     property var guideY: null
     function snapped(name, x, y, alone) {
         guideX = null; guideY = null
-        const item = items[name]
         if (alone) return [x, y]
-        const reach = 5 / content.scale, row = rowOf(name)
+        const box = rectOf(name), reach = 5 / content.scale, row = rowOf(name)
         let bestX = row ? -1 : reach, bestY = reach, dx = 0, dy = 0 // (a row goes up and down only)
-        const follows = {}
-        for (const n in parts) { const e = entry(n); if (e.place && e.place[1] === name) follows[n] = true }
-        if (row) for (const n of row.parts) follows[n] = true // (they go with it)
-        const candidates = Object.keys(parts).filter(n => n !== name && !follows[n] && items[n] && items[n].visible)
+        // (not what goes with it: what's in it, its row's)
+        const moving = row ? row.name : name
+        const candidates = Object.keys(parts).filter(n => items[n] && items[n].shown && !parts[n].preview && !under(n, moving))
         candidates.push(title_)
         for (const n of candidates) {
-            const o = items[n]
-            for (const a of [x, x + item.width / 2, x + item.width]) {
-                for (const b of [o.x, o.x + o.width / 2, o.x + o.width]) {
+            const o = rectOf(n)
+            for (const a of [x, x + box[2] / 2, x + box[2]]) {
+                for (const b of [o[0], o[0] + o[2] / 2, o[0] + o[2]]) {
                     if (Math.abs(b - a) < bestX) { bestX = Math.abs(b - a); dx = b - a; guideX = b }
                 }
             }
-            for (const a of [y, y + item.height / 2, y + item.height]) {
-                for (const b of [o.y, o.y + o.height / 2, o.y + o.height]) {
+            for (const a of [y, y + box[3] / 2, y + box[3]]) {
+                for (const b of [o[1], o[1] + o[3] / 2, o[1] + o[3]]) {
                     if (Math.abs(b - a) < bestY) { bestY = Math.abs(b - a); dy = b - a; guideY = b }
                 }
             }
@@ -689,63 +653,52 @@ ApplicationWindow {
         return [x + dx, y + dy]
     }
 
-    // ---- the line to what it's placed on
-    property var linkA: null
-    property var linkB: null
-    function linkUpdate() {
-        const e = picked && entry(picked)
-        const target = e && e.place && items[e.place[1]]
-        if (!target) { linkA = null; linkB = null; return }
-        const item = items[picked]
-        linkB = Qt.point(target.x + fractionX(e.place[2]) * target.width, target.y + fractionY(e.place[2]) * target.height)
-        linkA = Qt.point(item.x + fractionX(e.place[0]) * item.width, item.y + fractionY(e.place[0]) * item.height)
-    }
-
     // ---- the list
-    // (a tree by the game's parents: each part under the nearest that shows, folded
-    // but for what's been opened; a search shows what's found, under its parents)
+    // (the window's tree: each part under what it's placed on, folded but for
+    // what's been opened; a search shows what's found, under what it's in)
     property var listModel: []       // the rows shown, their names
-    property var listInfo: ({})      // by name: { depth, kids, open }
+    property var listInfo: ({})      // by name: { depth, kids, open, over }
     property var unfolded: ({})
     property var artModel: []
+    // the parts in `item`: a row's and a Ghost's as if its own
+    function partsIn(item) {
+        const out = []
+        for (let i = 0; i < item.children.length; i++) {
+            const child = item.children[i]
+            if (child.name === undefined) continue
+            if (parts[child.name]) out.push(child)
+            else out.push(...partsIn(child))
+        }
+        return out.sort((a, b) => a.name < b.name ? -1 : 1)
+    }
     function listModelUpdate() {
-        const q = find.text.toLowerCase(), seen = n => !parts[n].preview && shown[kindOf(parts[n].kind)] && inView(n)
-        const names_ = Object.keys(parts).sort().filter(seen), kids = {}, roots = [], over = {}
-        const nearest = n => {
-            let up = parts[n].parent
-            for (let i = 0; up && parts[up] && !seen(up) && i < 50; i++) up = parts[up].parent
-            return up && parts[up] && seen(up) && up !== n ? up : null
-        }
-        for (const n of names_) over[n] = nearest(n)
-        for (const n of names_) {
-            // (one held by what it holds, should a scan say so: on top)
-            let up = over[n], loop = false
-            for (let i = 0; up && i < 50; i++) { if (up === n) { loop = true; break } up = over[up] }
-            if (over[n] && !loop) (kids[over[n]] = kids[over[n]] || []).push(n)
-            else roots.push(n)
-        }
-        const wanted = {}
-        if (q) for (const n of names_) {
-            if (n.toLowerCase().indexOf(q) >= 0 || (parts[n].text || "").toLowerCase().indexOf(q) >= 0)
-                for (let up = n, i = 0; up && i < 50; i++) { wanted[up] = true; up = over[up] }
-        }
-        const out = [], info = {}
-        const add = (n, depth) => {
-            if (q && !wanted[n]) return
-            const under = kids[n] || [], open = !!q || !!unfolded[n]
+        if (!root) return
+        const q = find.text.toLowerCase(), out = [], info = {}
+        const found = n => !q || n.toLowerCase().indexOf(q) >= 0 || (parts[n].text || "").toLowerCase().indexOf(q) >= 0
+        const seen = n => shown[kindOf(parts[n].kind)] && inView(n) && found(n)
+        // (what's not in this tab stays, for what's on it that is)
+        const add = (item, depth, over) => {
+            const n = item.name, at = out.length
             out.push(n)
-            info[n] = { depth: depth, kids: under.length, open: open }
-            if (open) for (const c of under) add(c, depth + 1)
+            const open = !!q || !!unfolded[n]
+            let kids = 0
+            for (const child of partsIn(item)) {
+                const before = out.length
+                if (add(child, depth + 1, n)) kids++
+                if (!open) out.length = before
+            }
+            if (!kids && !seen(n)) { out.length = at; return false }
+            info[n] = { depth: depth, kids: kids, open: open, over: over }
+            return true
         }
-        for (const n of roots) add(n, 0)
+        for (const child of partsIn(root)) add(child, 0, "")
         listInfo = info
         listModel = out
     }
     function unfoldTo(name) {
-        let any = false, up = parts[name] && parts[name].parent
-        for (let i = 0; up && parts[up] && i < 50; i++) {
-            if (!unfolded[up]) { unfolded[up] = true; any = true }
-            up = parts[up].parent
+        let any = false
+        for (let up = items[name] && items[name].parent; up && up !== root; up = up.parent) {
+            if (parts[up.name] && !unfolded[up.name]) { unfolded[up.name] = true; any = true }
         }
         if (any) listModelUpdate()
     }
@@ -759,35 +712,11 @@ ApplicationWindow {
         if (picked) unfoldTo(picked)
         listModelUpdate()
     }
-    // its name without its parent's, which is just above it; its text
+    // its name without what it's in's, which is just above it; its text
     function listText(name) {
-        const p = parts[name] || {}, under = p.parent && parts[p.parent] && name.indexOf(p.parent) === 0 && name.length > p.parent.length
-        return (under ? name.slice(p.parent.length) : name) + (p.text ? "  “" + p.text + "”" : "")
-    }
-
-    function lineFor(name, e) {
-        if (name === "@components") {
-            const lines = []
-            for (const c of Object.keys(e).sort())
-                for (const key of Object.keys(e[c]).sort()) lines.push(c + "." + key + " = " + JSON.stringify(e[c][key]))
-            return lines.join("\n")
-        }
-        if (name === "@rows") {
-            const lines = []
-            for (const w of Object.keys(e).sort())
-                for (const row of Object.keys(e[w]).sort()) lines.push(row + " = " + JSON.stringify(e[w][row]))
-            return lines.join("\n")
-        }
-        const parts_ = []
-        if (e.pin === "") return name + " = follows the scan"
-        if (e.pin !== "size") parts_.push('"' + e.place[0] + '", "' + e.place[1] + '", "' + e.place[2] + '", ' + e.place[3] + ", " + e.place[4])
-        if (e.pin !== "place") parts_.push(e.size[0] + ", " + e.size[1])
-        return name + " = { " + parts_.join(", ") + " }"
-    }
-    readonly property string changesText: {
-        const out = []
-        for (const n of Object.keys(edits).sort()) out.push(lineFor(n, edits[n]))
-        return out.join("\n")
+        const p = parts[name] || {}, over = (listInfo[name] || {}).over
+        const inIt = over && name.indexOf(over) === 0 && name.length > over.length
+        return (inIt ? name.slice(over.length) : name) + (p.text ? "  “" + p.text + "”" : "")
     }
 
     // ---- keys
@@ -1063,7 +992,7 @@ ApplicationWindow {
                         }
                         Text {
                             Layout.fillWidth: true
-                            text: (app.edits[modelData] || app.rowPlaced[modelData] ? "● " : "") + (app.parts[modelData] && app.parts[modelData].pin ? "◆ " : "") + app.listText(modelData)
+                            text: (app.edits[modelData] ? "● " : "") + (app.parts[modelData] && app.parts[modelData].pin ? "◆ " : "") + app.listText(modelData)
                             color: modelData === app.picked ? app.gold : (app.parts[modelData] || {}).kind === "FontString" ? "#8fce7a" : app.palette.text
                             elide: Text.ElideRight
                             verticalAlignment: Text.AlignVCenter
@@ -1180,6 +1109,7 @@ ApplicationWindow {
                             readonly property var f: app.viewRect || [modelData.rect[0], modelData.rect[1] + modelData.rect[3], 0, 0]
                             readonly property Item owner: modelData.owner && app.parts[modelData.owner] ? app.items[modelData.owner] || null : null
                             readonly property var base: owner ? app.artBase[modelData.owner] : null
+                            readonly property var at: { app.moved; return owner && owner.parent ? owner.mapToItem(app.root, 0, 0) : null }
                             readonly property real ax: modelData.rect[0] - f[0]
                             readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
                             // (sized with its part if it's on it: a tab can draw it elsewhere)
@@ -1188,8 +1118,8 @@ ApplicationWindow {
                             readonly property real sx: onOwner && base[2] ? owner.width / base[2] : 1
                             readonly property real sy: onOwner && base[3] ? owner.height / base[3] : 1
                             visible: showArt.checked
-                            x: owner && base ? owner.x + (ax - base[0]) * sx : ax
-                            y: owner && base ? owner.y + (ay - base[1]) * sy : ay
+                            x: at && base ? at.x + (ax - base[0]) * sx : ax
+                            y: at && base ? at.y + (ay - base[1]) * sy : ay
                             width: modelData.rect[2] * sx
                             height: modelData.rect[3] * sy
                             opacity: (modelData.alpha === undefined ? 1 : modelData.alpha) * (modelData.backdrop || !modelData.color ? 1 : modelData.color[3])
@@ -1213,31 +1143,14 @@ ApplicationWindow {
                     }
                     Item { id: holder }
 
-                    // the hovered part
+                    // the hovered part (drawn in it, it goes with it)
                     Rectangle {
+                        parent: app.hoveredItem || holder
                         visible: !!app.hoveredItem
-                        x: app.hoveredItem ? app.hoveredItem.x : 0; y: app.hoveredItem ? app.hoveredItem.y : 0
-                        width: app.hoveredItem ? app.hoveredItem.width : 0; height: app.hoveredItem ? app.hoveredItem.height : 0
+                        anchors.fill: parent
+                        z: 90
                         color: "#18ffffff"
                         border.color: "#ffffff"; border.width: 1 / content.scale
-                    }
-
-                    // the line to what it's placed on
-                    Rectangle {
-                        visible: !!app.linkA && !drop.active
-                        readonly property real dx: app.linkA && app.linkB ? app.linkB.x - app.linkA.x : 0
-                        readonly property real dy: app.linkA && app.linkB ? app.linkB.y - app.linkA.y : 0
-                        x: app.linkA ? app.linkA.x : 0; y: app.linkA ? app.linkA.y : 0
-                        width: Math.sqrt(dx * dx + dy * dy); height: 2 / content.scale
-                        transformOrigin: Item.TopLeft
-                        rotation: Math.atan2(dy, dx) * 180 / Math.PI
-                        color: "#e0c040"
-                    }
-                    Rectangle {
-                        visible: !!app.linkB
-                        width: 9 / content.scale; height: width; radius: width / 2
-                        x: app.linkB ? app.linkB.x - width / 2 : 0; y: app.linkB ? app.linkB.y - width / 2 : 0
-                        color: "transparent"; border.color: "#e0c040"; border.width: 2 / content.scale
                     }
 
                     // the guides it snaps to
@@ -1255,9 +1168,10 @@ ApplicationWindow {
                     // the picked part: its handles, its dots
                     Item {
                         id: selection
+                        parent: app.pickedItem || holder
                         visible: !!app.pickedItem
-                        x: app.pickedItem ? app.pickedItem.x : 0; y: app.pickedItem ? app.pickedItem.y : 0
-                        width: app.pickedItem ? app.pickedItem.width : 0; height: app.pickedItem ? app.pickedItem.height : 0
+                        anchors.fill: parent
+                        z: 100
 
                         Repeater {
                             model: [[0, 0], [.5, 0], [1, 0], [0, .5], [1, .5], [0, 1], [.5, 1], [1, 1]]
@@ -1300,7 +1214,6 @@ ApplicationWindow {
                                         place[3] = app.roundTenth(s.place[3] + (fx === 0 ? (s.w - w) + px * (w - s.w) : fx === 1 ? px * (w - s.w) : 0))
                                         place[4] = app.roundTenth(s.place[4] - (fy === 0 ? (s.h - h) + py * (h - s.h) : fy === 1 ? py * (h - s.h) : 0))
                                         app.change(app.picked, place, [w, h], true)
-                                        app.linkUpdate()
                                     }
                                 }
                             }
@@ -1338,12 +1251,10 @@ ApplicationWindow {
                         id: rowBox
                         objectName: "rowBox"
                         readonly property var row: app.pickedRow
-                        readonly property Item on: row ? app.items[row.on] || null : null
-                        visible: !!on && !!app.pickedItem
-                        x: on ? on.x + row.left : 0
-                        width: on ? on.width - row.left - row.right : 0
-                        y: app.pickedItem ? app.pickedItem.y : 0
-                        height: app.pickedItem ? app.pickedItem.height : 0
+                        parent: (row && app.items[row.name]) || holder
+                        visible: !!row
+                        anchors.fill: parent
+                        z: 100
                         Rectangle {
                             anchors.fill: parent
                             color: "transparent"
@@ -1395,9 +1306,9 @@ ApplicationWindow {
                         property string target: ""
                         property string targetPoint: ""
                         function begin(p) {
-                            const item = app.items[app.picked]
+                            const r = app.rectOf(app.picked)
                             point = p
-                            from = Qt.point(item.x + app.fractionX(p) * item.width, item.y + app.fractionY(p) * item.height)
+                            from = Qt.point(r[0] + app.fractionX(p) * r[2], r[1] + app.fractionY(p) * r[3])
                             to = from
                             target = ""
                             active = true
@@ -1406,11 +1317,12 @@ ApplicationWindow {
                             const local = content.mapFromItem(null, scene.x, scene.y)
                             to = local
                             let best = 14 / content.scale, name = "", at = ""
-                            for (const n of app.names) {
-                                const o = app.items[n]
-                                if (n === app.picked || !o.visible) continue
+                            // (not what's in it: it would be in itself)
+                            for (const n in app.items) {
+                                if (n === app.picked || app.isRow(n) || app.items[n].shown === false || app.under(n, app.picked)) continue
+                                const o = app.rectOf(n)
                                 for (const q of app.pointNames) {
-                                    const d = Math.hypot(o.x + app.fractionX(q) * o.width - local.x, o.y + app.fractionY(q) * o.height - local.y)
+                                    const d = Math.hypot(o[0] + app.fractionX(q) * o[2] - local.x, o[1] + app.fractionY(q) * o[3] - local.y)
                                     if (d < best) { best = d; name = n; at = q }
                                 }
                             }
@@ -1438,10 +1350,10 @@ ApplicationWindow {
                         }
                         Rectangle {
                             visible: drop.active && drop.target !== ""
-                            readonly property Item o: drop.target ? app.items[drop.target] || null : null
+                            readonly property var o: drop.target ? app.rectOf(drop.target) : null
                             width: 13 / content.scale; height: width; radius: width / 2
-                            x: o ? o.x + app.fractionX(drop.targetPoint) * o.width - width / 2 : 0
-                            y: o ? o.y + app.fractionY(drop.targetPoint) * o.height - height / 2 : 0
+                            x: o ? o[0] + app.fractionX(drop.targetPoint) * o[2] - width / 2 : 0
+                            y: o ? o[1] + app.fractionY(drop.targetPoint) * o[3] - height / 2 : 0
                             color: "#40e0d0"
                         }
                     }
@@ -1531,7 +1443,7 @@ ApplicationWindow {
                     let name = hits.indexOf(app.picked) >= 0 ? app.picked : hits[0]
                     if (!name) { start = { pan: true, x: content.x - press.x, y: content.y - press.y }; return }
                     if (name !== app.picked) app.pick(name)
-                    const item = app.items[name], e = app.entry(name), row = app.rowOf(name)
+                    const r = app.rectOf(name), e = app.entry(name), row = app.rowOf(name)
                     if (e.second && !row) {
                         app.status = name + " is stretched: its sides are in its panel."
                         start = null
@@ -1539,11 +1451,10 @@ ApplicationWindow {
                     }
                     app.remember()
                     if (row) { // (the whole row, up and down)
-                        start = { row: row.name, rowY: app.rowNow(row).y, name: name, press: press, x: item.x, y: item.y }
+                        start = { row: row.name, rowY: app.rowNow(row).y, name: name, press: press, x: r[0], y: r[1] }
                         return
                     }
-                    start = { move: true, name: name, press: press, place: app.placeOf(name).slice(), size: e.size,
-                        x: item.x, y: item.y }
+                    start = { move: true, name: name, press: press, place: app.placeOf(name).slice(), size: e.size, x: r[0], y: r[1] }
                 }
                 onCentroidChanged: {
                     if (!active || !start) return
@@ -1560,7 +1471,6 @@ ApplicationWindow {
                     place[3] = app.roundTenth(start.place[3] + to[0] - start.x)
                     place[4] = app.roundTenth(start.place[4] - (to[1] - start.y))
                     app.change(start.name, place, start.size, true)
-                    app.linkUpdate()
                 }
             }
             TapHandler {
@@ -1762,19 +1672,12 @@ ApplicationWindow {
                     // (a row's part: its row's panel says it all)
                     visible: !!(app.picked && app.pickedEntry && !app.pickedRow)
                     columns: 2
-                    property bool open: false // (what it's placed on: to change, otherwise said in a line)
                     Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
                     readonly property var place: app.pickedEntry ? app.pickedEntry.place : null
                     readonly property var size: app.pickedEntry ? app.pickedEntry.size : null
                     readonly property var second: app.pickedEntry ? app.pickedEntry.second || null : null
                     readonly property bool across: !!(second && place && app.lineX(second[0]) !== app.lineX(place[0]))
                     readonly property bool down: !!(second && place && app.lineY(second[0]) !== app.lineY(place[0]))
-                    function anchor(point, rel, relPoint) {
-                        if (app.items[rel]) {
-                            app.change(app.picked, app.anchored(app.picked, point, rel, relPoint), app.entry(app.picked).size)
-                            app.pick(app.picked)
-                        }
-                    }
                     function numbers() {
                         const e = app.entry(app.picked), place = app.placeOf(app.picked).slice()
                         place[3] = fx.value / 10; place[4] = (down ? -fy.value : fy.value) / 10
@@ -1788,49 +1691,17 @@ ApplicationWindow {
                         app.change(app.picked, place, e.size ? [fw.value / 10, fh.value / 10] : e.size, false, other)
                     }
 
-                    Label {
+                    Button {
                         objectName: "placedOn"
                         Layout.columnSpan: 2; Layout.fillWidth: true
-                        visible: !fields.open
-                        color: app.dim
-                        wrapMode: Text.WrapAnywhere
-                        font.family: app.plain
-                        text: fields.place ? "On " + fields.place[1] + (fields.place[0] === fields.place[2] ? "" : "  (" + fields.place[0] + " to " + fields.place[2] + ")") : "Not placed"
-                    }
-                    Button {
-                        objectName: "anchorsToggle"
-                        Layout.columnSpan: 2
-                        visible: !fields.second
-                        text: fields.open ? "Hide where it's placed" : "Change where it's placed"
                         flat: true
-                        onClicked: fields.open = !fields.open
-                    }
-                    Label { text: "Point"; color: app.dim; visible: fields.open && !fields.second }
-                    ComboBox {
-                        Layout.fillWidth: true
-                        visible: fields.open && !fields.second
-                        model: app.pointNames
-                        currentIndex: fields.place ? model.indexOf(fields.place[0]) : -1
-                        onActivated: fields.anchor(currentText, fields.place ? fields.place[1] : app.title_, fields.place ? fields.place[2] : "TOPLEFT")
-                    }
-                    Label { text: "On"; color: app.dim; visible: fields.open && !fields.second }
-                    ComboBox {
-                        Layout.fillWidth: true
-                        visible: fields.open && !fields.second
-                        editable: true
+                        enabled: !!(fields.place && app.parts[fields.place[1]])
                         font.family: app.plain
-                        model: app.names
-                        currentIndex: fields.place ? model.indexOf(fields.place[1]) : -1
-                        onActivated: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", currentText, fields.place ? fields.place[2] : "TOPLEFT")
-                        onAccepted: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", editText, fields.place ? fields.place[2] : "TOPLEFT")
-                    }
-                    Label { text: "At"; color: app.dim; visible: fields.open && !fields.second }
-                    ComboBox {
-                        Layout.fillWidth: true
-                        visible: fields.open && !fields.second
-                        model: app.pointNames
-                        currentIndex: fields.place ? model.indexOf(fields.place[2]) : -1
-                        onActivated: fields.anchor(fields.place ? fields.place[0] : "TOPLEFT", fields.place ? fields.place[1] : app.title_, currentText)
+                        text: fields.place ? "In " + fields.place[1] + (fields.place[0] === fields.place[2] ? "" : "  (" + fields.place[0] + " to " + fields.place[2] + ")") : "Not placed"
+                        onClicked: app.pick(fields.place[1])
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Pick it. To place this part in another, drag one of its dots there"
                     }
                     Label { text: fields.across ? "From left" : "X"; color: app.dim }
                     NumberBox { id: fx; number: fields.place ? fields.place[3] : 0; onEdited: fields.numbers() }
@@ -1969,21 +1840,6 @@ ApplicationWindow {
                         wrapMode: Text.Wrap
                         font.pixelSize: 12
                         font.family: app.plain
-                    }
-                }
-
-                Fold {
-                    objectName: "toSaveFold"
-                    title: "To save (" + app.changeCount + ")"
-                    visible: app.changeCount > 0
-                    Layout.fillWidth: true; Layout.bottomMargin: 10
-                    TextArea {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 170
-                        readOnly: true
-                        wrapMode: TextEdit.WrapAnywhere
-                        font.family: "monospace"; font.pixelSize: 11
-                        text: app.changesText
                     }
                 }
             }
