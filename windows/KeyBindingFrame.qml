@@ -1214,12 +1214,11 @@ WowWindow {
         text: "Cancel"
         wowParent: "KeyBindingFrame"
         style: "Button"
-        pin: "place"
-        anchors.right: keyBindingFrame.right
-        anchors.rightMargin: 64
-        anchors.bottom: keyBindingFrame.bottom
-        anchors.bottomMargin: -16
-        width: 126
+        pin: "all"
+        anchors.left: keyBindingFrameOkayButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: keyBindingFrameOkayButton.verticalCenter
+        width: 120.3
         height: 22
     }
 
@@ -1283,10 +1282,10 @@ WowWindow {
         wowParent: "KeyBindingFrame"
         style: "Button"
         pin: "place"
-        anchors.left: keyBindingFrame.left
-        anchors.leftMargin: 10
-        anchors.bottom: keyBindingFrame.bottom
-        anchors.bottomMargin: -16
+        anchors.left: keyBindingFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: keyBindingFrameDiabolic.bottom
+        anchors.bottomMargin: 30
         width: 130
         height: 22
     }
@@ -1399,11 +1398,11 @@ WowWindow {
         text: "Okay"
         wowParent: "KeyBindingFrame"
         style: "Button"
-        anchors.right: keyBindingFrame.right
-        anchors.rightMargin: 196
-        anchors.bottom: keyBindingFrame.bottom
-        anchors.bottomMargin: -16
-        width: 126
+        pin: "all"
+        anchors.left: keyBindingFrameUnbindButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: keyBindingFrameUnbindButton.verticalCenter
+        width: 106.8
         height: 22
     }
 
@@ -1530,11 +1529,12 @@ WowWindow {
         text: "Unbind Key"
         wowParent: "KeyBindingFrame"
         style: "Button"
-        anchors.right: keyBindingFrame.right
-        anchors.rightMargin: 328
-        anchors.bottom: keyBindingFrame.bottom
-        anchors.bottomMargin: -16
-        width: 126
+        pin: "all"
+        anchors.left: keyBindingFrameDiabolic.left
+        anchors.leftMargin: 210
+        anchors.bottom: keyBindingFrameDiabolic.bottom
+        anchors.bottomMargin: 30
+        width: 147.9
         height: 22
     }
 
@@ -1548,6 +1548,17 @@ WowWindow {
         anchors.verticalCenter: keyBindingFrameUnbindButton.verticalCenter
         width: 73.5
         height: 10.3
+    }
+
+    WowRow {
+        name: "KeyBindingButtons"
+        parts: ["KeyBindingFrameUnbindButton", "KeyBindingFrameOkayButton", "KeyBindingFrameCancelButton"]
+        anchors.left: keyBindingFrameDiabolic.left
+        anchors.leftMargin: 210
+        anchors.right: keyBindingFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: keyBindingFrameDiabolic.bottom
+        anchors.bottomMargin: 30
     }
 
 }

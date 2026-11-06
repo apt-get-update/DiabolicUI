@@ -913,7 +913,6 @@ Engine:NewStaticConfig("Blizzard", {
 		-- title on the window's top edge); the rest up into the search's
 		-- old row, the buttons lower for their frames
 		search_width = 128,
-		buttons_lower = 6, -- the buttons
 		count = { arrow_size = 20, box_width = 26 }, -- how many to make: its arrows, its box (its plate past it), from Create All (86 to Create)
 		reagent_font = DiabolicFont_SansBold10, reagent_name_width = 100, -- their names (Blizzard's 12, 90 wide): most on one line
 		highlight_inset = 6, -- the chosen recipe's copper bar, in from the parchment's sides

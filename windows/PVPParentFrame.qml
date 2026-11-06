@@ -164,11 +164,11 @@ WowWindow {
         text: "Cancel"
         wowParent: "PVPBattlegroundFrame"
         style: "Button"
-        pin: "place"
+        pin: "all"
         anchors.left: pVPBattlegroundFrameJoinButton.right
-        anchors.leftMargin: 8
+        anchors.leftMargin: 6
         anchors.verticalCenter: pVPBattlegroundFrameJoinButton.verticalCenter
-        width: 83
+        width: 77.4
         height: 22
     }
 
@@ -205,11 +205,12 @@ WowWindow {
         text: "Join as Party"
         wowParent: "PVPBattlegroundFrame"
         style: "Button"
-        pin: "place"
-        anchors.right: pVPBattlegroundFrameJoinButton.left
-        anchors.rightMargin: 8
-        anchors.verticalCenter: pVPBattlegroundFrameJoinButton.verticalCenter
-        width: 136
+        pin: "all"
+        anchors.left: pVPParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: pVPParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
+        width: 128
         height: 22
     }
 
@@ -465,12 +466,11 @@ WowWindow {
         text: "Join Battle"
         wowParent: "PVPBattlegroundFrame"
         style: "Button"
-        pin: "place"
-        anchors.horizontalCenter: pVPParentFrame.horizontalCenter
-        anchors.horizontalCenterOffset: 12
-        anchors.bottom: pVPParentFrame.bottom
-        anchors.bottomMargin: 69
-        width: 109
+        pin: "all"
+        anchors.left: pVPBattlegroundFrameGroupJoinButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: pVPBattlegroundFrameGroupJoinButton.verticalCenter
+        width: 110.6
         height: 22
     }
 
@@ -1082,6 +1082,17 @@ WowWindow {
         anchors.verticalCenterOffset: 53
         width: 32
         height: 32
+    }
+
+    WowRow {
+        name: "PVPButtons"
+        parts: ["PVPBattlegroundFrameGroupJoinButton", "PVPBattlegroundFrameJoinButton", "PVPBattlegroundFrameCancelButton"]
+        anchors.left: pVPParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: pVPParentFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: pVPParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: pVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol; name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"; x: 150; y: 346.9; width: 0; height: 0 }

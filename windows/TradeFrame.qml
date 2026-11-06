@@ -16,11 +16,11 @@ WowWindow {
         text: "Cancel"
         wowParent: "TradeFrame"
         style: "Button"
-        anchors.right: tradeFrame.right
-        anchors.rightMargin: 33
-        anchors.bottom: tradeFrame.bottom
-        anchors.bottomMargin: 55
-        width: 75.6
+        pin: "all"
+        anchors.left: tradeFrameTradeButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: tradeFrameTradeButton.verticalCenter
+        width: 83.4
         height: 22
     }
 
@@ -149,11 +149,12 @@ WowWindow {
         text: "Trade"
         wowParent: "TradeFrame"
         style: "Button"
-        anchors.right: tradeFrame.right
-        anchors.rightMargin: 114.6
-        anchors.bottom: tradeFrame.bottom
-        anchors.bottomMargin: 55
-        width: 83.4
+        pin: "all"
+        anchors.left: tradeFrameDiabolic.left
+        anchors.leftMargin: 210
+        anchors.bottom: tradeFrameDiabolic.bottom
+        anchors.bottomMargin: 39
+        width: 75.6
         height: 22
     }
 
@@ -708,6 +709,17 @@ WowWindow {
         anchors.topMargin: 78
         width: 13
         height: 13
+    }
+
+    WowRow {
+        name: "TradeButtons"
+        parts: ["TradeFrameTradeButton", "TradeFrameCancelButton"]
+        anchors.left: tradeFrameDiabolic.left
+        anchors.leftMargin: 210
+        anchors.right: tradeFrameDiabolic.right
+        anchors.rightMargin: 47
+        anchors.bottom: tradeFrameDiabolic.bottom
+        anchors.bottomMargin: 39
     }
 
     Ghost { id: tradePlayerItem1NameFrame; name: "TradePlayerItem1NameFrame"; x: 57; y: 123; width: 0; height: 0 }

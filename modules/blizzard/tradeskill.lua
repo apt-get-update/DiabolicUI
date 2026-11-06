@@ -108,16 +108,9 @@ Module.SpanHighlight = function(self)
 	bar:SetWidth(list:GetWidth() + insets[1] + insets[3] - inset * 2)
 end
 
--- A part moved `down` from where Blizzard put it.
-local Lower = function(part, down)
-	local point, relative, relativePoint, x, y = part:GetPoint()
-	part:ClearAllPoints()
-	part:SetPoint(point, relative, relativePoint, x, y - down)
-end
-
 -- The search in the band (the title on the window's top edge), Have
 -- Materials right of it; the filters, the recipes and the chosen one up
--- into the search's old row, the buttons lower; the dropdowns and the reagents' names on
+-- into the search's old row; the dropdowns and the reagents' names on
 -- the parchment, without Blizzard's plates.
 Module.Layout = function(self)
 	local config = self.config
@@ -143,9 +136,6 @@ Module.Layout = function(self)
 	-- over the band (the window's level + 1), under the iron's (+ 3)
 	for _, part in ipairs({ search, filter }) do
 		part:SetFrameLevel(frame:GetFrameLevel() + 2)
-	end
-	for _, name in ipairs({ "TradeSkillCreateButton", "TradeSkillCancelButton" }) do
-		Lower(_G[name], config.buttons_lower)
 	end
 	-- how many to make: our box between our arrows (the pages'), in the
 	-- room between Create All and Create

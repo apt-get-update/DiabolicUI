@@ -43,11 +43,11 @@ WowWindow {
         text: "Exit"
         wowParent: "TradeSkillFrame"
         style: "Button"
-        anchors.right: tradeSkillFrame.right
-        anchors.rightMargin: 39
-        anchors.bottom: tradeSkillFrame.bottom
-        anchors.bottomMargin: 73
-        width: 77.5
+        pin: "all"
+        anchors.left: tradeSkillCreateButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: tradeSkillCreateButton.verticalCenter
+        width: 78
         height: 22
     }
 
@@ -134,11 +134,12 @@ WowWindow {
         text: "Create"
         wowParent: "TradeSkillFrame"
         style: "Button"
-        anchors.right: tradeSkillFrame.right
-        anchors.rightMargin: 122.5
-        anchors.bottom: tradeSkillFrame.bottom
-        anchors.bottomMargin: 73
-        width: 77.5
+        pin: "all"
+        anchors.left: tradeSkillFrameDiabolic.left
+        anchors.leftMargin: 208
+        anchors.bottom: tradeSkillFrameDiabolic.bottom
+        anchors.bottomMargin: 30
+        width: 93
         height: 22
     }
 
@@ -1444,6 +1445,17 @@ WowWindow {
         anchors.verticalCenter: tradeSkillSubClassDropDownDiabolicField.verticalCenter
         width: 108
         height: 10
+    }
+
+    WowRow {
+        name: "TradeSkillButtons"
+        parts: ["TradeSkillCreateButton", "TradeSkillCancelButton"]
+        anchors.left: tradeSkillFrameDiabolic.left
+        anchors.leftMargin: 208
+        anchors.right: tradeSkillFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: tradeSkillFrameDiabolic.bottom
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: tradeSkillCollapseAllButtonHighlight; name: "TradeSkillCollapseAllButtonHighlight"; x: 42; y: 66; width: 0; height: 0 }

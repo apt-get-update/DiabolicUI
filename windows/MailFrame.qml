@@ -1420,11 +1420,11 @@ WowWindow {
         text: "Cancel"
         wowParent: "SendMailFrame"
         style: "Button"
-        anchors.right: mailFrame.right
-        anchors.rightMargin: 39
-        anchors.bottom: mailFrame.bottom
-        anchors.bottomMargin: 80
-        width: 77
+        pin: "all"
+        anchors.left: sendMailMailButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: sendMailMailButton.verticalCenter
+        width: 87.1
         height: 22
     }
 
@@ -1508,11 +1508,12 @@ WowWindow {
         text: "Send"
         wowParent: "SendMailFrame"
         style: "Button"
-        anchors.right: mailFrame.right
-        anchors.rightMargin: 122
-        anchors.bottom: mailFrame.bottom
-        anchors.bottomMargin: 80
-        width: 77
+        pin: "all"
+        anchors.left: mailFrameDiabolic.left
+        anchors.leftMargin: 201
+        anchors.bottom: mailFrameDiabolic.bottom
+        anchors.bottomMargin: 40
+        width: 68.9
         height: 22
     }
 
@@ -1881,6 +1882,17 @@ WowWindow {
         anchors.verticalCenterOffset: -230
         width: 224
         height: 14
+    }
+
+    WowRow {
+        name: "SendMailButtons"
+        parts: ["SendMailMailButton", "SendMailCancelButton"]
+        anchors.left: mailFrameDiabolic.left
+        anchors.leftMargin: 201
+        anchors.right: mailFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: mailFrameDiabolic.bottom
+        anchors.bottomMargin: 40
     }
 
     Ghost { id: sendMailHorizontalBarLeft2; name: "SendMailHorizontalBarLeft2"; x: 184.5; y: 291; width: 0; height: 0 }

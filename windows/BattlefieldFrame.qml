@@ -16,11 +16,11 @@ WowWindow {
         text: "Cancel"
         wowParent: "BattlefieldFrame"
         style: "Button"
-        anchors.left: battlefieldFrame.left
-        anchors.leftMargin: 266
-        anchors.bottom: battlefieldFrame.bottom
-        anchors.bottomMargin: 78
-        width: 80.5
+        pin: "all"
+        anchors.left: battlefieldFrameJoinButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: battlefieldFrameJoinButton.verticalCenter
+        width: 75.6
         height: 22
     }
 
@@ -118,11 +118,12 @@ WowWindow {
         text: "Join as Group"
         wowParent: "BattlefieldFrame"
         style: "Button"
-        anchors.left: battlefieldFrame.left
-        anchors.leftMargin: 16.5
-        anchors.bottom: battlefieldFrame.bottom
-        anchors.bottomMargin: 78
-        width: 131.9
+        pin: "all"
+        anchors.left: battlefieldFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: battlefieldFrameDiabolic.bottom
+        anchors.bottomMargin: 39
+        width: 127.7
         height: 22
     }
 
@@ -376,11 +377,11 @@ WowWindow {
         text: "Join Battle"
         wowParent: "BattlefieldFrame"
         style: "Button"
-        anchors.left: battlefieldFrame.left
-        anchors.leftMargin: 154.4
-        anchors.bottom: battlefieldFrame.bottom
-        anchors.bottomMargin: 78
-        width: 105.7
+        pin: "all"
+        anchors.left: battlefieldFrameGroupJoinButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: battlefieldFrameGroupJoinButton.verticalCenter
+        width: 108.7
         height: 22
     }
 
@@ -451,6 +452,17 @@ WowWindow {
         anchors.verticalCenterOffset: -1
         width: 84.5
         height: 11.9
+    }
+
+    WowRow {
+        name: "BattlefieldButtons"
+        parts: ["BattlefieldFrameGroupJoinButton", "BattlefieldFrameJoinButton", "BattlefieldFrameCancelButton"]
+        anchors.left: battlefieldFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: battlefieldFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: battlefieldFrameDiabolic.bottom
+        anchors.bottomMargin: 39
     }
 
     Ghost { id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol; name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"; x: 152; y: 363.5; width: 0; height: 0 }

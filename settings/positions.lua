@@ -10,9 +10,12 @@ local _, Engine = ...
 Engine:NewStaticConfig("Positions", {
 
 	-- BattlefieldFrame ------------------------------------------------------
+	BattlefieldFrameCancelButton = { "LEFT", "BattlefieldFrameJoinButton", "RIGHT", 6, 0, 75.6, 22 }, -- Button "Cancel"
+	BattlefieldFrameGroupJoinButton = { "BOTTOMLEFT", "BattlefieldFrameDiabolic", "BOTTOMLEFT", 37, 39, 127.7, 22 }, -- Button "Join as Group"
 	-- the rewards on slate too, under the instances: 16 higher (its panel clear
 	-- of the buttons), its top 7 lower (apart from theirs; Blizzard's 232 high)
 	BattlefieldFrameInfoScrollFrame = { "BOTTOMLEFT", "BattlefieldFrame", "BOTTOMLEFT", 19, 116, 298, 209 }, -- ScrollFrame
+	BattlefieldFrameJoinButton = { "LEFT", "BattlefieldFrameGroupJoinButton", "RIGHT", 6, 0, 108.7, 22 }, -- Button "Join Battle"
 	-- "Battlefield Instance:" 5 higher, apart from its list
 	BattlefieldFrameNameHeader = { "TOPLEFT", "BattlefieldFrame", "TOPLEFT", 75, -50 }, -- FontString "Battlefield Instance:"
 
@@ -25,6 +28,7 @@ Engine:NewStaticConfig("Positions", {
 	TokenFramePopupCloseButton = { "TOPRIGHT", "TokenFramePopup", "TOPRIGHT", -1, -1 }, -- Button
 
 	-- ClassTrainerFrame -----------------------------------------------------
+	ClassTrainerCancelButton = { "LEFT", "ClassTrainerTrainButton", "RIGHT", 6, 0, 78.7, 22 }, -- Button "Exit"
 	-- the chosen one's page 6 under the list's (Blizzard's 8 under its text)
 	ClassTrainerDetailScrollFrame = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", 0, -14 }, -- ScrollFrame
 	-- "All" and the list under the greeting (the chosen one's height: trainer.lua)
@@ -33,27 +37,40 @@ Engine:NewStaticConfig("Positions", {
 	-- the parchments', its right on their panels'
 	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -102 }, -- ScrollFrame
+	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolic", "BOTTOMLEFT", 208, 42, 88.3, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
 	-- its "CTRL-Left Click..." under the band, over the picture (Blizzard's hangs from the title)
 	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 },
 
 	-- FriendsFrame ----------------------------------------------------------
+	FriendsFrameAddFriendButton = { "BOTTOMLEFT", "FriendsFrameDiabolic", "BOTTOMLEFT", 37, 41 }, -- Button "Add Friend"
 	FriendsFrameFriendsScrollFrameScrollBar = { "TOPLEFT", "FriendsFrameFriendsScrollFrame", "TOPRIGHT", 6, -15, second = { "BOTTOMLEFT", "BOTTOMRIGHT", 6, 15 } }, -- Slider
 	FriendsFrameIgnoreButton1 = { "TOPLEFT", "FriendsFrame", "TOPLEFT", 21, -39 }, -- Button
+	FriendsFrameIgnorePlayerButton = { "BOTTOMLEFT", "FriendsFrameDiabolic", "BOTTOMLEFT", 37, 41 }, -- Button "Ignore Player"
 	FriendsFrameIgnoreScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -65, -36, 298, 340 }, -- ScrollFrame
+	FriendsFrameSendMessageButton = { "LEFT", "FriendsFrameAddFriendButton", "RIGHT", 64, 0 }, -- Button "Send Message"
+	FriendsFrameUnsquelchButton = { "BOTTOMRIGHT", "FriendsFrameDiabolic", "BOTTOMRIGHT", -37, 41 }, -- Button "Remove Player"
 	GuildEventLogFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
+	GuildFrameAddMemberButton = { "LEFT", "GuildFrameGuildInformationButton", "RIGHT", 6, 0, 94.4, 22 }, -- Button "Add Member"
+	GuildFrameControlButton = { "LEFT", "GuildFrameAddMemberButton", "RIGHT", 6, 0, 96.7, 22 }, -- Button "Guild Control"
+	GuildFrameGuildInformationButton = { "BOTTOMLEFT", "FriendsFrameDiabolic", "BOTTOMLEFT", 37, 42, 122.9, 22 }, -- Button "Guild Information"
 	GuildInfoFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
 	GuildMemberDetailFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
+	WhoFrameAddFriendButton = { "LEFT", "WhoFrameWhoButton", "RIGHT", 6, 0, 106.8, 22 }, -- Button "Add Friend"
 	WhoFrameButton1 = { "TOPLEFT", "WhoFrame", "TOPLEFT", 15, -61 }, -- Button
 	WhoFrameColumnHeader1 = { "TOPLEFT", "WhoFrame", "TOPLEFT", 20, -34 }, -- Button "Name"
+	WhoFrameGroupInviteButton = { "LEFT", "WhoFrameAddFriendButton", "RIGHT", 6, 0, 117.8, 22 }, -- Button "Group Invite"
+	WhoFrameWhoButton = { "BOTTOMLEFT", "FriendsFrameDiabolic", "BOTTOMLEFT", 37, 42, 89.4, 22 }, -- Button "Refresh"
 	WhoListScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -67, -62 }, -- ScrollFrame
 
 	-- GuildBankFrame --------------------------------------------------------
 	-- the slots, logs and info 27 higher than Blizzard's: as far from the band
 	-- as from the foot's iron bar
 	GuildBankColumn1 = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 30, -43 }, -- Frame
+	GuildBankFrameDepositButton = { "LEFT", "GuildBankFrameWithdrawButton", "RIGHT", 6, 0, 84.2, 21 }, -- Button "Deposit"
 	GuildBankFrameLog = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 0, 27 }, -- Frame
+	GuildBankFrameWithdrawButton = { "BOTTOMLEFT", "GuildBankFrameDiabolic", "BOTTOMLEFT", 585, 73, 104.8, 21 }, -- Button "Withdraw"
 	GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 }, -- Frame
 	-- the info's page the logs' size, in the same place
 	GuildBankInfoScrollFrame = { 688, 304 }, -- ScrollFrame
@@ -66,17 +83,19 @@ Engine:NewStaticConfig("Positions", {
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
-	KeyBindingFrameCancelButton = { "BOTTOMRIGHT", "KeyBindingFrame", "BOTTOMRIGHT", -64, -16 }, -- Button "Cancel"
+	KeyBindingFrameCancelButton = { "LEFT", "KeyBindingFrameOkayButton", "RIGHT", 6, 0, 120.3, 22 }, -- Button "Cancel"
 	-- the buttons 16 lower, on the foot, as far in from both sides
-	KeyBindingFrameDefaultButton = { "BOTTOMLEFT", "KeyBindingFrame", "BOTTOMLEFT", 10, -16 }, -- Button "Reset To Default"
+	KeyBindingFrameDefaultButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolic", "BOTTOMLEFT", 37, 30 }, -- Button "Reset To Default"
+	KeyBindingFrameOkayButton = { "LEFT", "KeyBindingFrameUnbindButton", "RIGHT", 6, 0, 106.8, 22 }, -- Button "Okay"
 	-- what a key was bound to between the list and the foot
 	KeyBindingFrameOutputText = { "TOP", "KeyBindingFrame", "TOPLEFT", 293, -465 }, -- FontString
 	-- the list (its rows too) 6 under the column names
 	KeyBindingFrameScrollFrame = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 2, -72 }, -- ScrollFrame
+	KeyBindingFrameUnbindButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolic", "BOTTOMLEFT", 210, 30, 147.9, 22 }, -- Button "Unbind Key"
 
 	-- LFDParentFrame --------------------------------------------------------
-	LFDQueueFrameCancelButton = { "BOTTOMRIGHT", "LFDParentFrameDiabolic", "BOTTOMRIGHT", -34, 30 }, -- Button "Close"
-	LFDQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFDParentFrameDiabolic", "BOTTOMLEFT", 34, 30 }, -- Button "Find Group"
+	LFDQueueFrameCancelButton = { "LEFT", "LFDQueueFrameFindGroupButton", "RIGHT", 92, 0 }, -- Button "Close"
+	LFDQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFDParentFrameDiabolic", "BOTTOMLEFT", 37, 30 }, -- Button "Find Group"
 	LFDQueueFrameRandom = { "TOPLEFT", "LFDQueueFrame", "TOPLEFT", 0, 62, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 46 } }, -- Frame
 	LFDQueueFrameRandomScrollFrame = { "BOTTOMRIGHT", "LFDQueueFrameRandom", "BOTTOMRIGHT", -34, 34, 298, 265 }, -- ScrollFrame
 	LFDQueueFrameSpecific = { "TOPLEFT", "LFDQueueFrame", "TOPLEFT", 0, 62, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 46 } }, -- Frame
@@ -96,18 +115,20 @@ Engine:NewStaticConfig("Positions", {
 	-- foot's bar, from the sides)
 	MacroButtonScrollFrame = { "TOPLEFT", "MacroFrame", "TOPLEFT", 17, -56 }, -- ScrollFrame
 	-- the buttons 10 down (30 over the window's bottom)
-	MacroDeleteButton = { "BOTTOMLEFT", "MacroFrame", "BOTTOMLEFT", 17, 69 }, -- Button "Delete"
-	MacroExitButton = { "CENTER", "MacroFrame", "TOPLEFT", 303, -432 }, -- Button "Exit"
+	MacroDeleteButton = { "BOTTOMLEFT", "MacroFrameDiabolic", "BOTTOMLEFT", 37, 30 }, -- Button "Delete"
+	MacroExitButton = { "LEFT", "MacroNewButton", "RIGHT", 6, 0, 80.8, 22 }, -- Button "Exit"
 	-- the count of characters right of "Enter Macro Commands:" (Blizzard's
 	-- under the text, over the foot)
 	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "80/255 Characters Used"
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
-	MacroNewButton = { "RIGHT", "MacroExitButton", "LEFT", -6, 0 }, -- Button "New"
+	MacroNewButton = { "BOTTOMLEFT", "MacroFrameDiabolic", "BOTTOMLEFT", 195, 30, 79.2, 22 }, -- Button "New"
 
 	-- MailFrame -------------------------------------------------------------
 	InboxCurrentPage = { "BOTTOM", "InboxFrame", "BOTTOM", -14, 72 }, -- FontString
 	InboxNextPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 314, 80 }, -- Button
 	InboxPrevPageButton = { "CENTER", "InboxFrame", "BOTTOMLEFT", 50, 80 }, -- Button
+	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 6, 0, 87.1, 22 }, -- Button "Cancel"
+	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolic", "BOTTOMLEFT", 201, 40, 68.9, 22 }, -- Button "Send"
 	SendMailMoneyButton = { "BOTTOMLEFT", "SendMailFrame", "BOTTOMLEFT", 30, 120 }, -- Frame
 
 	-- MerchantFrame ---------------------------------------------------------
@@ -131,19 +152,24 @@ Engine:NewStaticConfig("Positions", {
 	MerchantPrevPageButton = { "RIGHT", "MerchantPageText", "LEFT", -8, 0 }, -- Button
 	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 288, -434 }, -- Button
 
+	-- OpenMailFrame ---------------------------------------------------------
+	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 75.3, 22 }, -- Button "Close"
+	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 83.3, 22 }, -- Button "Delete"
+	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolic", "BOTTOMLEFT", 117, 40, 75.4, 22 }, -- Button "Reply"
+
 	-- PVPParentFrame --------------------------------------------------------
 	-- the battlegrounds' block (title row, list, rewards) 5 left: in the middle
 	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Random Battleground"
 	-- 8 apart
-	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0 }, -- Button "Cancel"
+	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 6, 0, 77.4, 22 }, -- Button "Cancel"
 	-- 8 apart
-	PVPBattlegroundFrameGroupJoinButton = { "RIGHT", "PVPBattlegroundFrameJoinButton", "LEFT", -8, 0 }, -- Button "Join as Party"
+	PVPBattlegroundFrameGroupJoinButton = { "BOTTOMLEFT", "PVPParentFrameDiabolic", "BOTTOMLEFT", 37, 30, 128, 22 }, -- Button "Join as Party"
 	-- the rewards 208 high (Blizzard's 232): 6 over the foot's iron bar, 6 under the list
 	PVPBattlegroundFrameInfoScrollFrame = { "BOTTOMLEFT", "PVPBattlegroundFrame", "BOTTOMLEFT", 15, 122, 298, 208 }, -- ScrollFrame
 	-- the buttons in the middle of the window's foot (its middle 15 left of the
 	-- frame's; Join as Party wider than Cancel, so Join Battle 27 right of it),
 	-- room between the rewards and the foot
-	PVPBattlegroundFrameJoinButton = { "BOTTOM", "PVPParentFrame", "BOTTOM", 12, 69 }, -- Button "Join Battle"
+	PVPBattlegroundFrameJoinButton = { "LEFT", "PVPBattlegroundFrameGroupJoinButton", "RIGHT", 6, 0, 110.6, 22 }, -- Button "Join Battle"
 	PVPBattlegroundFrameNameHeader = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 65, -53 }, -- FontString "Battleground"
 	-- as wide with no scroll bar: Blizzard widens the rows it hangs from when
 	-- the list doesn't scroll, and the panels would follow
@@ -183,11 +209,15 @@ Engine:NewStaticConfig("Positions", {
 	SpellBookSkillLineTab8 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -452 }, -- CheckButton
 
 	-- TradeFrame ------------------------------------------------------------
+	TradeFrameCancelButton = { "LEFT", "TradeFrameTradeButton", "RIGHT", 6, 0, 83.4, 22 }, -- Button "Cancel"
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
 	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Velkara"
+	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolic", "BOTTOMLEFT", 210, 39, 75.6, 22 }, -- Button "Trade"
 
 	-- TradeSkillFrame -------------------------------------------------------
+	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Exit"
+	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolic", "BOTTOMLEFT", 208, 30, 93, 22 }, -- Button "Create"
 	TradeSkillDecrementButton = { "LEFT", "TradeSkillCreateAllButton", "RIGHT", 2, 0 }, -- Button
 	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 20, -255, 297, 132 }, -- ScrollFrame
 	TradeSkillExpandButtonFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 15, -53 }, -- Frame

@@ -1153,10 +1153,11 @@ WowWindow {
         text: "Add Friend"
         wowParent: "FriendsListFrame"
         style: "Button"
-        anchors.left: friendsFrame.left
-        anchors.leftMargin: 15
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 81
+        pin: "place"
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 41
         width: 131
         height: 21
     }
@@ -1230,12 +1231,12 @@ WowWindow {
         name: "FriendsFrameDiabolicFoot"
         kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
-        anchors.horizontalCenter: friendsFrameAddFriendButton.horizontalCenter
-        anchors.horizontalCenterOffset: 99.5
-        anchors.top: friendsFrameAddFriendButton.top
+        anchors.horizontalCenter: guildFrameGuildInformationButton.horizontalCenter
+        anchors.horizontalCenterOffset: 110.5
+        anchors.top: guildFrameGuildInformationButton.top
         anchors.topMargin: -6
         width: 354
-        height: 45
+        height: 47
     }
 
     Part {
@@ -1404,7 +1405,7 @@ WowWindow {
         id: friendsFrameFriendsScrollFrameButton12Name
         name: "FriendsFrameFriendsScrollFrameButton12Name"
         kind: "FontString"
-        text: "Fatleia"
+        text: "Isilda"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12.left
         anchors.leftMargin: 20
@@ -2131,10 +2132,11 @@ WowWindow {
         text: "Ignore Player"
         wowParent: "IgnoreListFrame"
         style: "Button"
-        anchors.left: friendsFrame.left
-        anchors.leftMargin: 15
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 81
+        pin: "place"
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 41
         width: 131
         height: 21
     }
@@ -2210,10 +2212,10 @@ WowWindow {
         text: "Send Message"
         wowParent: "FriendsListFrame"
         style: "Button"
-        anchors.right: friendsFrame.right
-        anchors.rightMargin: 41
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 81
+        pin: "place"
+        anchors.left: friendsFrameAddFriendButton.right
+        anchors.leftMargin: 64
+        anchors.verticalCenter: friendsFrameAddFriendButton.verticalCenter
         width: 131
         height: 21
     }
@@ -2358,12 +2360,12 @@ WowWindow {
         id: friendsFrameTitleText
         name: "FriendsFrameTitleText"
         kind: "FontString"
-        text: "Friends List"
+        text: "Raid"
         wowParent: "FriendsFrameDiabolicTitlePlate"
         anchors.horizontalCenter: friendsFrameDiabolicTitlePlate.horizontalCenter
         anchors.verticalCenter: friendsFrameDiabolicTitlePlate.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 107.5
+        width: 38.7
         height: 14.2
     }
 
@@ -2374,10 +2376,11 @@ WowWindow {
         text: "Remove Player"
         wowParent: "IgnoreListFrame"
         style: "Button"
-        anchors.right: friendsFrame.right
-        anchors.rightMargin: 38
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 81
+        pin: "place"
+        anchors.right: friendsFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 41
         width: 134
         height: 21
     }
@@ -2474,10 +2477,10 @@ WowWindow {
         name: "FriendsTooltip"
         kind: "Frame"
         wowParent: "FriendsFrame"
-        anchors.left: friendsFrameFriendsScrollFrameButton6.right
+        anchors.left: friendsFrameFriendsScrollFrameButton9.right
         anchors.leftMargin: 36
-        anchors.top: friendsFrameFriendsScrollFrameButton6.top
-        width: 73.1
+        anchors.top: friendsFrameFriendsScrollFrameButton9.top
+        width: 65.8
         height: 35.8
     }
 
@@ -2485,7 +2488,7 @@ WowWindow {
         id: friendsTooltipHeader
         name: "FriendsTooltipHeader"
         kind: "FontString"
-        text: "Spaenei"
+        text: "Drread"
         wowParent: "FriendsTooltip"
         anchors.left: friendsTooltip.left
         anchors.leftMargin: 12
@@ -2493,6 +2496,20 @@ WowWindow {
         anchors.topMargin: 12
         width: 152.9
         height: 10.3
+    }
+
+    Part {
+        id: friendsTooltipNoteText
+        name: "FriendsTooltipNoteText"
+        kind: "FontString"
+        text: "THE ONLY ONE"
+        wowParent: "FriendsTooltip"
+        anchors.horizontalCenter: friendsTooltipHeader.horizontalCenter
+        anchors.horizontalCenterOffset: 7.8
+        anchors.top: friendsTooltipHeader.bottom
+        anchors.topMargin: -95.1
+        width: 137.3
+        height: 8.7
     }
 
     Part {
@@ -2680,10 +2697,11 @@ WowWindow {
         text: "Add Member"
         wowParent: "GuildFrame"
         style: "Button"
-        anchors.right: guildFrameControlButton.left
-        anchors.rightMargin: 6
-        anchors.verticalCenter: guildFrameControlButton.verticalCenter
-        width: 98
+        pin: "all"
+        anchors.left: guildFrameGuildInformationButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: guildFrameGuildInformationButton.verticalCenter
+        width: 94.4
         height: 22
     }
 
@@ -3361,11 +3379,11 @@ WowWindow {
         text: "Guild Control"
         wowParent: "GuildFrame"
         style: "Button"
-        anchors.right: guildFrame.right
-        anchors.rightMargin: 39
-        anchors.bottom: guildFrame.bottom
-        anchors.bottomMargin: 82
-        width: 104
+        pin: "all"
+        anchors.left: guildFrameAddMemberButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: guildFrameAddMemberButton.verticalCenter
+        width: 96.7
         height: 22
     }
 
@@ -3388,10 +3406,12 @@ WowWindow {
         text: "Guild Information"
         wowParent: "GuildFrame"
         style: "Button"
-        anchors.right: guildFrameAddMemberButton.left
-        anchors.rightMargin: 6
-        anchors.verticalCenter: guildFrameAddMemberButton.verticalCenter
-        width: 123
+        pin: "all"
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 42
+        width: 122.9
         height: 22
     }
 
@@ -3936,11 +3956,11 @@ WowWindow {
         text: "Add Friend"
         wowParent: "WhoFrame"
         style: "Button"
-        anchors.left: friendsFrame.left
-        anchors.leftMargin: 106.9
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 82
-        width: 115.6
+        pin: "all"
+        anchors.left: whoFrameWhoButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: whoFrameWhoButton.verticalCenter
+        width: 106.8
         height: 22
     }
 
@@ -5180,7 +5200,7 @@ WowWindow {
         anchors.left: whoFrameColumnHeader1.right
         anchors.leftMargin: -2
         anchors.verticalCenter: whoFrameColumnHeader1.verticalCenter
-        width: 105
+        width: 120
         height: 22
     }
 
@@ -5291,11 +5311,11 @@ WowWindow {
         text: "Group Invite"
         wowParent: "WhoFrame"
         style: "Button"
-        anchors.left: friendsFrame.left
-        anchors.leftMargin: 228.4
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 82
-        width: 115.6
+        pin: "all"
+        anchors.left: whoFrameAddFriendButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: whoFrameAddFriendButton.verticalCenter
+        width: 117.8
         height: 22
     }
 
@@ -5315,7 +5335,7 @@ WowWindow {
         id: whoFrameTotals
         name: "WhoFrameTotals"
         kind: "FontString"
-        text: "559 People Found  (50 displayed)"
+        text: "0 People Found  "
         wowParent: "WhoFrame"
         anchors.horizontalCenter: whoFrame.horizontalCenter
         anchors.horizontalCenterOffset: -10
@@ -5332,11 +5352,12 @@ WowWindow {
         text: "Refresh"
         wowParent: "WhoFrame"
         style: "Button"
-        anchors.left: friendsFrame.left
-        anchors.leftMargin: 19
-        anchors.bottom: friendsFrame.bottom
-        anchors.bottomMargin: 82
-        width: 81.9
+        pin: "all"
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 42
+        width: 89.4
         height: 22
     }
 
@@ -5450,6 +5471,41 @@ WowWindow {
         anchors.topMargin: -480
         width: 300
         height: 784
+    }
+
+    // kept as they are, at the foot's ends
+    WowRow {
+        name: "FriendsButtons"
+        parts: ["FriendsFrameAddFriendButton", "FriendsFrameSendMessageButton"]
+        fit: "ends"
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: friendsFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 41
+    }
+
+    WowRow {
+        name: "WhoButtons"
+        parts: ["WhoFrameWhoButton", "WhoFrameAddFriendButton", "WhoFrameGroupInviteButton"]
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: friendsFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 42
+    }
+
+    WowRow {
+        name: "GuildButtons"
+        parts: ["GuildFrameGuildInformationButton", "GuildFrameAddMemberButton", "GuildFrameControlButton"]
+        anchors.left: friendsFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: friendsFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: friendsFrameDiabolic.bottom
+        anchors.bottomMargin: 42
     }
 
     Ghost { id: guildListScrollFrame; name: "GuildListScrollFrame"; x: 21; y: 73; width: 0; height: 0 }

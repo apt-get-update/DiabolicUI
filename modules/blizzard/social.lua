@@ -293,18 +293,6 @@ Module.StyleGuild = function(self, window)
 			end
 		end
 	end
-	-- the foot's buttons the rows' gap apart (Blizzard's 2), from Guild
-	-- Control's left
-	local gap = kit.config.layout.button_gap
-	local previous = _G.GuildFrameControlButton
-	for _, name in ipairs({ "GuildFrameAddMemberButton", "GuildFrameGuildInformationButton" }) do
-		local button = _G[name]
-		if button and previous then
-			button:ClearAllPoints()
-			button:SetPoint("RIGHT", previous, "LEFT", -gap, 0)
-			previous = button
-		end
-	end
 	if toggle then
 		local Place = function()
 			local point, relative, relativePoint, x = toggle:GetPoint()

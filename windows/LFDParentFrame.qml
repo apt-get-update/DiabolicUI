@@ -116,10 +116,9 @@ WowWindow {
         wowParent: "LFDQueueFrame"
         style: "Button"
         pin: "place"
-        anchors.right: lFDParentFrameDiabolic.right
-        anchors.rightMargin: 34
-        anchors.bottom: lFDParentFrameDiabolic.bottom
-        anchors.bottomMargin: 30
+        anchors.left: lFDQueueFrameFindGroupButton.right
+        anchors.leftMargin: 92
+        anchors.verticalCenter: lFDQueueFrameFindGroupButton.verticalCenter
         width: 112
         height: 22
     }
@@ -145,7 +144,7 @@ WowWindow {
         style: "Button"
         pin: "place"
         anchors.left: lFDParentFrameDiabolic.left
-        anchors.leftMargin: 34
+        anchors.leftMargin: 37
         anchors.bottom: lFDParentFrameDiabolic.bottom
         anchors.bottomMargin: 30
         width: 135
@@ -1405,6 +1404,19 @@ WowWindow {
         anchors.verticalCenter: lFDQueueFrameTypeDropDown.verticalCenter
         width: 205
         height: 10
+    }
+
+    // kept as they are, at the foot's ends
+    WowRow {
+        name: "LFDButtons"
+        parts: ["LFDQueueFrameFindGroupButton", "LFDQueueFrameCancelButton"]
+        fit: "ends"
+        anchors.left: lFDParentFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.right: lFDParentFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: lFDParentFrameDiabolic.bottom
+        anchors.bottomMargin: 30
     }
 
     Ghost { id: lFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture; name: "LFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture"; x: 72; y: 261.1; width: 0; height: 0 }

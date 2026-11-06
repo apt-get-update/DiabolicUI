@@ -16,11 +16,11 @@ WowWindow {
         text: "Exit"
         wowParent: "ClassTrainerFrame"
         style: "Button"
-        anchors.right: classTrainerFrame.right
-        anchors.rightMargin: 39
-        anchors.bottom: classTrainerFrame.bottom
-        anchors.bottomMargin: 81
-        width: 77.5
+        pin: "all"
+        anchors.left: classTrainerTrainButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: classTrainerTrainButton.verticalCenter
+        width: 78.7
         height: 22
     }
 
@@ -1180,11 +1180,12 @@ WowWindow {
         text: "Train"
         wowParent: "ClassTrainerFrame"
         style: "Button"
-        anchors.right: classTrainerFrame.right
-        anchors.rightMargin: 122.5
-        anchors.bottom: classTrainerFrame.bottom
-        anchors.bottomMargin: 81
-        width: 77.5
+        pin: "all"
+        anchors.left: classTrainerFrameDiabolic.left
+        anchors.leftMargin: 208
+        anchors.bottom: classTrainerFrameDiabolic.bottom
+        anchors.bottomMargin: 42
+        width: 88.3
         height: 22
     }
 
@@ -1198,6 +1199,17 @@ WowWindow {
         anchors.verticalCenter: classTrainerTrainButton.verticalCenter
         width: 41.9
         height: 11.9
+    }
+
+    WowRow {
+        name: "TrainerButtons"
+        parts: ["ClassTrainerTrainButton", "ClassTrainerCancelButton"]
+        anchors.left: classTrainerFrameDiabolic.left
+        anchors.leftMargin: 208
+        anchors.right: classTrainerFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: classTrainerFrameDiabolic.bottom
+        anchors.bottomMargin: 42
     }
 
     Ghost { id: classTrainerCollapseAllButtonHighlight; name: "ClassTrainerCollapseAllButtonHighlight"; x: 42; y: 79; width: 0; height: 0 }

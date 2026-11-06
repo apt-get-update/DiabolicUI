@@ -2658,11 +2658,11 @@ WowWindow {
         text: "Deposit"
         wowParent: "GuildBankFrame"
         style: "Button"
-        anchors.right: guildBankFrame.right
-        anchors.rightMargin: 11
-        anchors.bottom: guildBankFrame.bottom
-        anchors.bottomMargin: 37
-        width: 95.5
+        pin: "all"
+        anchors.left: guildBankFrameWithdrawButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: guildBankFrameWithdrawButton.verticalCenter
+        width: 84.2
         height: 21
     }
 
@@ -2834,11 +2834,12 @@ WowWindow {
         text: "Withdraw"
         wowParent: "GuildBankFrame"
         style: "Button"
-        anchors.right: guildBankFrame.right
-        anchors.rightMargin: 112.5
-        anchors.bottom: guildBankFrame.bottom
-        anchors.bottomMargin: 37
-        width: 95.5
+        pin: "all"
+        anchors.left: guildBankFrameDiabolic.left
+        anchors.leftMargin: 585
+        anchors.bottom: guildBankFrameDiabolic.bottom
+        anchors.bottomMargin: 73
+        width: 104.8
         height: 21
     }
 
@@ -3382,6 +3383,17 @@ WowWindow {
         anchors.verticalCenter: guildBankWithdrawMoneyFrameCopperButton.verticalCenter
         width: 10.3
         height: 14.2
+    }
+
+    WowRow {
+        name: "GuildBankButtons"
+        parts: ["GuildBankFrameWithdrawButton", "GuildBankFrameDepositButton"]
+        anchors.left: guildBankFrameDiabolic.left
+        anchors.leftMargin: 585
+        anchors.right: guildBankFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: guildBankFrameDiabolic.bottom
+        anchors.bottomMargin: 73
     }
 
     Ghost { id: guildBankTabLimitBackground; name: "GuildBankTabLimitBackground"; x: 390.5; y: 397; width: 0; height: 0 }

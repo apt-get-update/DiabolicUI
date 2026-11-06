@@ -347,9 +347,9 @@ WowWindow {
         name: "LFRParentFrameDiabolicFoot"
         kind: "Frame"
         wowParent: "LFRParentFrameDiabolic"
-        anchors.horizontalCenter: lFRBrowseFrameSendMessageButton.horizontalCenter
-        anchors.horizontalCenterOffset: 88.6
-        anchors.top: lFRBrowseFrameSendMessageButton.top
+        anchors.horizontalCenter: lFRQueueFrameFindGroupButton.horizontalCenter
+        anchors.horizontalCenterOffset: 85.5
+        anchors.top: lFRQueueFrameFindGroupButton.top
         anchors.topMargin: -6
         width: 324
         height: 35
@@ -1401,12 +1401,12 @@ WowWindow {
     Ghost { id: lFRQueueFrameSpecificListButton12LockedIndicator; name: "LFRQueueFrameSpecificListButton12LockedIndicator"; x: 48; y: 316; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton14LockedIndicator; name: "LFRQueueFrameSpecificListButton14LockedIndicator"; x: 48; y: 348; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton1LockedIndicator; name: "LFRQueueFrameSpecificListButton1LockedIndicator"; x: 48; y: 140; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton2LockedIndicator; name: "LFRQueueFrameSpecificListButton2LockedIndicator"; x: -464.2; y: 163.1; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton2LockedIndicator; name: "LFRQueueFrameSpecificListButton2LockedIndicator"; x: -352; y: 156; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton3LockedIndicator; name: "LFRQueueFrameSpecificListButton3LockedIndicator"; x: 48; y: 172; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton4LockedIndicator; name: "LFRQueueFrameSpecificListButton4LockedIndicator"; x: 48; y: 188; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton5LockedIndicator; name: "LFRQueueFrameSpecificListButton5LockedIndicator"; x: 48; y: 204; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton5LockedIndicator; name: "LFRQueueFrameSpecificListButton5LockedIndicator"; x: 160.2; y: 196.9; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton6LockedIndicator; name: "LFRQueueFrameSpecificListButton6LockedIndicator"; x: 48; y: 220; width: 0; height: 0 }
     Ghost { id: lFRQueueFrameSpecificListButton7LockedIndicator; name: "LFRQueueFrameSpecificListButton7LockedIndicator"; x: 48; y: 236; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton8LockedIndicator; name: "LFRQueueFrameSpecificListButton8LockedIndicator"; x: 48; y: 252; width: 0; height: 0 }
-    Ghost { id: lFRQueueFrameSpecificListButton9LockedIndicator; name: "LFRQueueFrameSpecificListButton9LockedIndicator"; x: 48; y: 268; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton8LockedIndicator; name: "LFRQueueFrameSpecificListButton8LockedIndicator"; x: 160.2; y: 244.9; width: 0; height: 0 }
+    Ghost { id: lFRQueueFrameSpecificListButton9LockedIndicator; name: "LFRQueueFrameSpecificListButton9LockedIndicator"; x: 160.2; y: 260.9; width: 0; height: 0 }
 }

@@ -29,11 +29,11 @@ WowWindow {
         text: "Close"
         wowParent: "OpenMailFrame"
         style: "Button"
-        anchors.right: openMailFrame.right
-        anchors.rightMargin: 39
-        anchors.bottom: openMailFrame.bottom
-        anchors.bottomMargin: 80
-        width: 76.1
+        pin: "all"
+        anchors.left: openMailDeleteButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: openMailDeleteButton.verticalCenter
+        width: 75.3
         height: 22
     }
 
@@ -70,11 +70,11 @@ WowWindow {
         text: "Delete"
         wowParent: "OpenMailFrame"
         style: "Button"
-        anchors.right: openMailFrame.right
-        anchors.rightMargin: 121.1
-        anchors.bottom: openMailFrame.bottom
-        anchors.bottomMargin: 80
-        width: 78
+        pin: "all"
+        anchors.left: openMailReplyButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: openMailReplyButton.verticalCenter
+        width: 83.3
         height: 22
     }
 
@@ -430,11 +430,12 @@ WowWindow {
         text: "Reply"
         wowParent: "OpenMailFrame"
         style: "Button"
-        anchors.right: openMailFrame.right
-        anchors.rightMargin: 205
-        anchors.bottom: openMailFrame.bottom
-        anchors.bottomMargin: 80
-        width: 78
+        pin: "all"
+        anchors.left: openMailFrameDiabolic.left
+        anchors.leftMargin: 117
+        anchors.bottom: openMailFrameDiabolic.bottom
+        anchors.bottomMargin: 40
+        width: 75.4
         height: 22
     }
 
@@ -793,6 +794,17 @@ WowWindow {
         anchors.verticalCenter: openMailTransactionAmountMoneyFrameSilverButton.verticalCenter
         width: 17.4
         height: 14.2
+    }
+
+    WowRow {
+        name: "OpenMailButtons"
+        parts: ["OpenMailReplyButton", "OpenMailDeleteButton", "OpenMailCancelButton"]
+        anchors.left: openMailFrameDiabolic.left
+        anchors.leftMargin: 117
+        anchors.right: openMailFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: openMailFrameDiabolic.bottom
+        anchors.bottomMargin: 40
     }
 
 }

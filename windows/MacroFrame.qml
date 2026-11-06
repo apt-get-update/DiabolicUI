@@ -977,10 +977,10 @@ WowWindow {
         wowParent: "MacroFrame"
         style: "Button"
         pin: "place"
-        anchors.left: macroFrame.left
-        anchors.leftMargin: 17
-        anchors.bottom: macroFrame.bottom
-        anchors.bottomMargin: 69
+        anchors.left: macroFrameDiabolic.left
+        anchors.leftMargin: 37
+        anchors.bottom: macroFrameDiabolic.bottom
+        anchors.bottomMargin: 30
         width: 80
         height: 22
     }
@@ -1019,12 +1019,11 @@ WowWindow {
         text: "Exit"
         wowParent: "MacroFrame"
         style: "Button"
-        pin: "place"
-        anchors.horizontalCenter: macroFrame.left
-        anchors.horizontalCenterOffset: 303
-        anchors.verticalCenter: macroFrame.top
-        anchors.verticalCenterOffset: 432
-        width: 80
+        pin: "all"
+        anchors.left: macroNewButton.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: macroNewButton.verticalCenter
+        width: 80.8
         height: 22
     }
 
@@ -1358,11 +1357,12 @@ WowWindow {
         text: "New"
         wowParent: "MacroFrame"
         style: "Button"
-        pin: "place"
-        anchors.right: macroExitButton.left
-        anchors.rightMargin: 6
-        anchors.verticalCenter: macroExitButton.verticalCenter
-        width: 80
+        pin: "all"
+        anchors.left: macroFrameDiabolic.left
+        anchors.leftMargin: 195
+        anchors.bottom: macroFrameDiabolic.bottom
+        anchors.bottomMargin: 30
+        width: 79.2
         height: 22
     }
 
@@ -1376,6 +1376,17 @@ WowWindow {
         anchors.verticalCenter: macroNewButton.verticalCenter
         width: 30.8
         height: 11.9
+    }
+
+    WowRow {
+        name: "MacroButtons"
+        parts: ["MacroNewButton", "MacroExitButton"]
+        anchors.left: macroFrameDiabolic.left
+        anchors.leftMargin: 195
+        anchors.right: macroFrameDiabolic.right
+        anchors.rightMargin: 37
+        anchors.bottom: macroFrameDiabolic.bottom
+        anchors.bottomMargin: 30
     }
 
 }
