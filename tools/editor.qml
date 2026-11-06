@@ -7,7 +7,6 @@
 import QtCore
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
 import QtQuick.Layouts
 import "rules.js" as Rules
 
@@ -167,7 +166,6 @@ ApplicationWindow {
         viewIndex = index
         artModel = (view_ ? view_.art : data.art) || []
         applyShown()
-        shot.place()
         if (picked && !(items[picked] && items[picked].visible)) pick("")
         listModelUpdate()
         ruleTimer.restart()
@@ -495,7 +493,7 @@ ApplicationWindow {
                     id: showButton
                     objectName: "showButton"
                     text: "Show ▾"
-                    tip: showPopup.opened ? "" : "What's drawn, and a screenshot under it"
+                    tip: showPopup.opened ? "" : "What's drawn"
                     onClicked: showPopup.open()
                     Popup {
                         id: showPopup
@@ -518,11 +516,6 @@ ApplicationWindow {
                             }
                             CheckBox { id: showArt; text: "Art"; checked: true }
                             CheckBox { id: showOutlines; text: "Outlines"; checked: true }
-                            RowLayout {
-                                Layout.topMargin: 6
-                                Button { text: "Screenshot…"; onClicked: { showPopup.close(); shotDialog.open() } }
-                                Slider { id: shotAlpha; Layout.preferredWidth: 120; from: 0; to: 1; value: .6 }
-                            }
                         }
                     }
                 }
@@ -608,13 +601,6 @@ ApplicationWindow {
         }
     }
 
-    FileDialog {
-        id: shotDialog
-        nameFilters: ["Images (*.jpg *.png *.tga)"]
-        currentFolder: Qt.resolvedUrl("../../../../Screenshots")
-        onAccepted: shot.source = selectedFile
-    }
-
     SplitView {
         anchors.fill: parent
         orientation: Qt.Horizontal
@@ -688,17 +674,6 @@ ApplicationWindow {
                 id: content
                 objectName: "content"
                 transformOrigin: Item.TopLeft
-                Image {
-                    id: shot
-                    opacity: shotAlpha.value
-                    visible: source != ""
-                    function place() {
-                        const f = app.viewRect, s = app.data ? app.data.screen : [1024, 768]
-                        x = f ? -f[0] : 0
-                        y = f ? -(s[1] - (f[1] + f[3])) : 0
-                        width = s[0]; height = s[1]
-                    }
-                }
                 Repeater {
                     visible: showArt.checked
                     model: app.artModel
@@ -1038,10 +1013,6 @@ ApplicationWindow {
                 elide: Text.ElideRight
                 color: app.dim
                 background: Rectangle { color: "#d814110f" }
-            }
-            DropArea {
-                anchors.fill: parent
-                onDropped: drop => { if (drop.hasUrls) shot.source = drop.urls[0] }
             }
         }
 

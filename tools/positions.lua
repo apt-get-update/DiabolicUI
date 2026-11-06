@@ -697,15 +697,18 @@ for path in pipe:lines() do
 end
 pipe:close()
 
--- a texture's file: its picture's path (made once), true if white, or nil
+-- a texture's file: its picture's path (ours, made once; the game's: read by
+-- tools/gametextures.py when drawn), true if white, or nil
 local made = {}
+local WHITE = { ["interface/chatframe/chatframebackground"] = true, ["interface/buttons/white8x8"] = true }
 local Picture = function(file)
 	if (not file) then
 		return
 	end
 	local rest = file:gsub("\\", "/"):match("[Dd]iabolic[Uu][Ii]/(.*)$")
 	if (not rest) then
-		return true
+		local path = file:gsub("\\", "/"):lower():gsub("%.%a+$", "")
+		return WHITE[path] or ("game/" .. path)
 	end
 	local path = media[rest:lower()] or media[rest:lower() .. ".tga"]
 	if path and (made[path] == nil) then

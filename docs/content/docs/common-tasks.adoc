@@ -96,7 +96,7 @@ Part {
 }
 ----
 
-*With the editor:* `tools/editor.py` (needs PySide6 and `lua5.1`;
+*With the editor:* `tools/editor.py` (needs PySide6, Pillow and `lua5.1`;
 `tools/install-editor.sh` puts it in your desktop's menu). Each
 window opens as it is in its file, with our art under its boxes; a window with
 tabs has them on top, each showing only its own parts.
@@ -110,8 +110,8 @@ tabs has them on top, each showing only its own parts.
 * Arrows move it 1 (Shift 10), Ctrl + arrows size it. Ctrl+Z, Ctrl+Shift+Z,
   wheel to zoom, the middle button or the empty space to pan, F to fit.
 * *Save* (Ctrl+S) writes the files, then `/reload`.
-* *Show* hides the frames, texts, art or outlines, and lines up a full screenshot
-  from `Screenshots/` under the boxes.
+* *Show* hides the frames, texts, art or outlines. The art is ours and the game's
+  (read from its MPQ archives the first time, kept in `tools/art/game/`).
 * *Rules* lists what breaks the windows' rules in the tab shown (`tools/rules.js`,
   the numbers in `settings/blizzard.lua` `layout`), as you drag. Click one to
   pick its part.

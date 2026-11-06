@@ -196,14 +196,12 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	lu.assertEquals({ page.strata, page.level }, { frame:GetFrameStrata(), _G.AuditPage:GetFrameLevel() })
 	lu.assertEquals({ ink.layer, ink.level }, { "ARTWORK", frame:GetFrameLevel() })
 	lu.assertEquals(_G.DiabolicUI_Layout.windows.AuditFine.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
-	-- our own art (for the editor to draw it): the textures from our media
-	-- or white, our backdrops (its border), in the order they're drawn
+	-- the art (for the editor to draw it): the textures, the backdrops (its
+	-- border), in the order they're drawn
 	local art, lines, backdrops = _G.DiabolicUI_Layout.windows.AuditFine.views[""].art, {}, {}
 	for _, item in ipairs(art) do
 		lu.assertNil(item.order)
 		lu.assertNotEquals(item.owner, "AuditGlow")
-		local file = item.file or item.backdrop.edgeFile or item.backdrop.bgFile
-		lu.assertTrue((file:find("[Dd]iabolic[Uu][Ii]") ~= nil) or (file == [[Interface\Buttons\WHITE8X8]]), file)
 		if (item.file == [[Interface\Buttons\WHITE8X8]]) then
 			lines[#lines + 1] = item
 		elseif item.backdrop then
@@ -263,13 +261,21 @@ function TestLayoutAudit:test_a_window_by_its_tabs()
 		return tab
 	end
 	local first, second = Tab("AuditTabbedTab1", "First"), Tab("AuditTabbedTab2", "")
+	local icon = first:CreateTexture("AuditTabbedIcon", "ARTWORK")
+	icon:SetTexture([[Interface\Icons\INV_Misc_QuestionMark]])
+	icon:SetAllPoints()
 	zone(frame, "AuditPageOne", 30, -80, 340, 150, "parchment")
 	first:Disable()
 	frame:Show()
 	slash("layout")
 	local seen = _G.DiabolicUI_Layout.windows.AuditTabbed
 	lu.assertEquals(seen.views.AuditTabbedTab1.label, "First")
-	lu.assertNotNil(seen.views.AuditTabbedTab1.art)
+	-- (the game's art too)
+	local files = {}
+	for _, item in ipairs(seen.views.AuditTabbedTab1.art) do
+		files[item.file or ""] = item.owner
+	end
+	lu.assertEquals(files[ [[Interface\Icons\INV_Misc_QuestionMark]] ], "AuditTabbedIcon")
 	lu.assertEquals(seen.views.AuditTabbedTab1.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
 	lu.assertEquals(seen.parts.AuditPageOne.tabs, { AuditTabbedTab1 = true })
 	-- the other tab (no text: by its name), a part in both, one only there

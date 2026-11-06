@@ -255,16 +255,13 @@ local Entry = function(part, window, rows)
 	return entry
 end
 
--- Our own art in a window, for the editor out of the game to draw
--- (tools/positions.lua makes pictures of the files): each texture shown
--- from our media folder (or white, colored: lines, fills) with where it is,
--- its file, the part of it shown (its 8 corners), its color, alpha,
--- blend and gradient (ours: kit.Gradient); each backdrop of ours with its
--- files, sizes and colors. In the order the game draws them, with the
--- nearest named frame (`owner`) they follow when it moves.
-local WHITE = { ["interface\\chatframe\\chatframebackground"] = true, ["interface\\buttons\\white8x8"] = true }
-local Ours = function(file)
-	return (type(file) == "string") and (string_find(file, "[Dd]iabolic[Uu][Ii][\\/]") or WHITE[file:lower()]) and true
+-- A window's art, ours and the game's, for the editor out of the game to draw:
+-- each texture shown with where it is, its file, the part of it shown (its 8
+-- corners), its color, alpha, blend and gradient (ours: kit.Gradient); each
+-- backdrop with its files, sizes and colors. In the order the game draws them,
+-- with the nearest named frame (`owner`) they follow when it moves.
+local IsFile = function(file)
+	return (type(file) == "string") and (file ~= "")
 end
 
 local Round3 = function(...)
@@ -283,18 +280,18 @@ CollectArt = function(frame, owner, alpha, art)
 	owner, alpha = frame:GetName() or owner, alpha * frame:GetAlpha()
 	local order = { STRATA[frame:GetFrameStrata()] or 3, frame:GetFrameLevel() }
 	local backdrop = frame:GetBackdrop()
-	if backdrop and (Ours(backdrop.bgFile) or Ours(backdrop.edgeFile)) and frame:GetLeft() then
+	if backdrop and (IsFile(backdrop.bgFile) or IsFile(backdrop.edgeFile)) and frame:GetLeft() then
 		local insets = backdrop.insets or {}
 		art[#art + 1] = { order = { order[1], order[2], 0, #art }, owner = owner, alpha = alpha, rect = Rect(frame),
 			scale = kit.ScaleOf(frame) / _G.UIParent:GetEffectiveScale(),
-			backdrop = { bgFile = Ours(backdrop.bgFile) and backdrop.bgFile, edgeFile = Ours(backdrop.edgeFile) and backdrop.edgeFile,
+			backdrop = { bgFile = backdrop.bgFile, edgeFile = backdrop.edgeFile,
 				edgeSize = backdrop.edgeSize, tile = backdrop.tile and true, tileSize = backdrop.tileSize,
 				insets = { insets.left or 0, insets.right or 0, insets.top or 0, insets.bottom or 0 } },
 			color = Round3(frame:GetBackdropColor()), border = Round3(frame:GetBackdropBorderColor()) }
 	end
 	for i = 1, select("#", frame:GetRegions()) do
 		local region = select(i, frame:GetRegions())
-		if region:IsObjectType("Texture") and region:IsShown() and Ours(region:GetTexture())
+		if region:IsObjectType("Texture") and region:IsShown() and IsFile(region:GetTexture())
 			and LAYERS[region:GetDrawLayer()] and region:GetLeft() then
 			art[#art + 1] = { order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
 				owner = region:GetName() or owner, alpha = alpha * region:GetAlpha(), rect = Rect(region),

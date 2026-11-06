@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The windows' editor: windows/*.qml opened as they are, each part to drag.
 
-Run from anywhere: python3 tools/editor.py (needs PySide6 and lua5.1). It reads
+Run from anywhere: python3 tools/editor.py (needs PySide6, Pillow and lua5.1). It reads
 the newest /dui layout scan by itself, again each time the game writes one;
 Save writes the changes into windows/*.qml and settings/positions.lua through
 tools/positions.lua. This file: that, and our art drawn as the game draws it.
@@ -12,6 +12,7 @@ import os
 import subprocess
 import sys
 
+import gametextures
 from PySide6.QtCore import QFileSystemWatcher, QObject, QPointF, QRectF, Qt, QTimer, QUrl, Signal, Slot
 from PySide6.QtGui import QBrush, QColor, QGuiApplication, QIcon, QImage, QLinearGradient, QPainter, QPolygonF, QTransform
 from PySide6.QtQml import QQmlApplicationEngine
@@ -105,7 +106,8 @@ class Art(QQuickImageProvider):
 
     def picture(self, path):
         if path not in self.files:
-            image = QImage(os.path.join("tools", path))
+            file = gametextures.png(path[5:]) if path.startswith("game/") else os.path.join("tools", path)
+            image = QImage(file) if file else QImage()
             self.files[path] = None if image.isNull() else image.convertToFormat(QImage.Format_ARGB32_Premultiplied)
         return self.files[path]
 
@@ -136,8 +138,10 @@ class Art(QQuickImageProvider):
 
             def middle(p, _, __):
                 area = QRectF(left, top, w - left - right, h - top - bottom)
-                if not image:
+                if b["bg"] is True:
                     p.fillRect(area, Qt.white)
+                elif not image:  # (the game couldn't give it)
+                    return
                 elif b.get("tile") and b.get("tileSize"):
                     size = b["tileSize"] * k
                     scale = QTransform().translate(left, top).scale(size / image.width(), size / image.height())
@@ -235,9 +239,6 @@ class Backend(QObject):
         data["rules"] = self.layout.get("rules")
         data["unit"] = float(self.layout.get("unit") or 0)
         data["generation"] = self.generation
-        size = str(self.layout.get("resolution") or "").split("x")
-        unit = float(self.layout.get("unit") or 0)
-        data["screen"] = [int(size[0]) / unit, int(size[1]) / unit] if unit and len(size) == 2 else [1024, 768]
         self.engine.clearComponentCache()
         return json.dumps(data)
 
