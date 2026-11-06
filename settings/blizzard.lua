@@ -497,8 +497,6 @@ Engine:NewStaticConfig("Blizzard", {
 		header_height = 40,
 		header_insets = { 24, 24 },
 		map_button = { -32, 41 }, -- the map's button: its right, in the foot (level with Abandon's middle)
-		list = { 30, -40 }, -- the quests' top left (Blizzard's 305 wide, its bar right of it): under the iron (no band, the count in the title)
-		list_height = 340, -- (Blizzard's 335): its panel 6 over the foot's iron bar
 		list_panel_insets = { 6, 6, 22, 4 }, -- (its bottom 4: clear of the foot)
 		highlight_left = 4, -- the chosen quest's bar, in from its row's left: off the slate's edge
 		highlight_reach = 14, -- the chosen quest's bar, past its row's right: to the scroll bar

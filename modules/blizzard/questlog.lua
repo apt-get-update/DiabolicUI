@@ -165,9 +165,6 @@ Module.StyleQuestLog = function(self)
 
 	-- the quests on the left on slate, the details on the right on parchment
 	local list = _G.QuestLogScrollFrame
-	list:ClearAllPoints()
-	list:SetPoint("TOPLEFT", window, "TOPLEFT", unpack(config.list))
-	list:SetHeight(config.list_height)
 	kit:AddZone(list, "slate", config.list_panel_insets, list) -- (in the list: over the painting, under its rows)
 	local empty = _G.EmptyQuestLogFrame
 	kit:HideTextures(empty)

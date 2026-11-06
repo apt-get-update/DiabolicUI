@@ -569,6 +569,7 @@ WowWindow {
         name: "QuestLogScrollFrame"
         kind: "ScrollFrame"
         wowParent: "QuestLogFrame"
+        pin: "all"
         anchors.left: questLogFrameDiabolic.left
         anchors.leftMargin: 30
         anchors.top: questLogFrameDiabolic.top

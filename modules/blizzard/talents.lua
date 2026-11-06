@@ -159,12 +159,8 @@ Module.StyleTalents = function(self)
 	-- band's middle
 	local status = _G.PlayerTalentFrameStatusFrame
 	Hide("PlayerTalentFramePointsLeft", "PlayerTalentFramePointsMiddle", "PlayerTalentFramePointsRight")
-	status:ClearAllPoints()
-	status:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
 	kit:StyleBandText(_G.PlayerTalentFrameStatusText)
 	local activate = _G.PlayerTalentFrameActivateButton
-	activate:ClearAllPoints()
-	activate:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
 	activate:SetFrameLevel(window:GetFrameLevel() + 4)
 	kit:StyleButton(activate, config.button_height)
 	-- as wide as its text in our font, with room at its ends (Blizzard's

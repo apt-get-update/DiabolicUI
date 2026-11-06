@@ -154,6 +154,7 @@ WowWindow {
         kind: "Button"
         text: "Activate These Talents"
         wowParent: "PlayerTalentFrame"
+        pin: "place"
         anchors.horizontalCenter: playerTalentFrameDiabolicBand.horizontalCenter
         anchors.verticalCenter: playerTalentFrameDiabolicBand.verticalCenter
         width: 201.8
@@ -465,6 +466,7 @@ WowWindow {
         name: "PlayerTalentFrameStatusFrame"
         kind: "Frame"
         wowParent: "PlayerTalentFrame"
+        pin: "place"
         anchors.horizontalCenter: playerTalentFrameDiabolicBand.horizontalCenter
         anchors.verticalCenter: playerTalentFrameDiabolicBand.verticalCenter
         width: 264

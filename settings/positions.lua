@@ -107,6 +107,13 @@ Engine:NewStaticConfig("Positions", {
 	PVPBattlegroundFrameTypeScrollFrame = { "TOPLEFT", "BattlegroundType1", "TOPLEFT", 0, 2, 295, 87 }, -- ScrollFrame
 	WintergraspTimer = { "RIGHT", "PVPBattlegroundFrame", "TOPRIGHT", -45, -53 }, -- Frame
 
+	-- PlayerTalentFrame -----------------------------------------------------
+	PlayerTalentFrameActivateButton = { "CENTER", "PlayerTalentFrameDiabolicBand", "CENTER", 0, 0 }, -- Button "Activate These Talents"
+	PlayerTalentFrameStatusFrame = { "CENTER", "PlayerTalentFrameDiabolicBand", "CENTER", 0, 0 }, -- Frame
+
+	-- QuestLogFrame ---------------------------------------------------------
+	QuestLogScrollFrame = { "TOPLEFT", "QuestLogFrameDiabolic", "TOPLEFT", 30, -40, 305, 340 }, -- ScrollFrame
+
 	-- TradeFrame ------------------------------------------------------------
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
