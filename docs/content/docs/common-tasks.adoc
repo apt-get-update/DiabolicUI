@@ -100,8 +100,7 @@ than a line have their own file in `modules/blizzard/` (code).
 
 A button in the wrong place, in any window. Every named part of the windows
 is in `windows/<its window>.qml`, a part being a QML block named after its kind
-(`Frame`, `Button`, `FontString`..., a kind with no file of its own in `windows/` is
-`Part { kind: "..." }`), with its anchors:
+(`Frame`, `Button`, `FontString`...), with its anchors:
 
 [source,qml]
 ----
@@ -135,50 +134,19 @@ list or the files: a part of those that's pinned stays.
 * Arrows move it 1 (Shift 10), Ctrl + arrows size it. Ctrl+Z, Ctrl+Shift+Z,
   wheel to zoom, the middle button or the empty space to pan, F to fit.
 * *Save* (Ctrl+S) writes the files, then `/reload`.
-* *Show* hides the frames, texts, art or outlines. The art is ours and the game's
-  (read from its MPQ archives the first time, kept in `tools/art/game/`).
+* *Show* hides the frames, texts or art, or shows every part's outline.
 * *Rules* lists what breaks the windows' rules in the tab shown (`tools/rules.js`,
   the numbers in `settings/blizzard.lua` `layout`), as you drag. Click one to
   pick its part.
 
-*By hand:* change a part's block, then `lua5.1 tools/positions.lua`. Each part
-needs one anchor across and one down, on one frame of its file, with plain
-numbers (the tool says what it can't read). Pinned, it can stretch: `left` and
-`right`, or `top` and `bottom`, on that one frame. A `pin` puts it in
-`settings/positions.lua` (`"all"`, or only its `"place"` or `"size"`), which the
-game loads and the tool writes: don't change that one. Without a pin a part
-follows the scan. Say why with `//` lines over its block: they're kept.
+*By hand:* change a part's block, then `lua5.1 tools/positions.lua`. The tool says what
+it can't read. A `pin` puts a part in `settings/positions.lua`, which the tool writes: don't
+change that one. link:{{< relref "windows-editor" >}}[Windows Editor] has how the files work.
 
-*Rows:* buttons that share a width go in a `WowRow`, so nothing's added up by hand:
-
-[source,qml]
-----
-WowRow {
-    name: "LFRBrowseButtons"
-    parts: ["LFRBrowseFrameSendMessageButton", "LFRBrowseFrameInviteButton", "LFRBrowseFrameRefreshButton"]
-    anchors.left: lFRParentFrameDiabolic.left
-    anchors.leftMargin: 37
-    anchors.right: lFRParentFrameDiabolic.right
-    anchors.rightMargin: 37
-    anchors.bottom: lFRParentFrameDiabolic.bottom
-    anchors.bottomMargin: 30
-}
-----
-
-`fit` is `"fill"` (the default: each as wide as its text, the room left shared),
-`"equal"` (all as wide, filling the room), `"center"` or `"ends"`; `spacing` defaults to the windows' `button_gap`. The tool
-writes its parts' places and sizes when it runs, so a button that hides in game
-leaves its gap. Anchor it on the window, not its foot, which hangs from these
-buttons. In the editor, pick one of its buttons: its panel has the row's fit, spacing
-and margins, dragging a button moves the whole row up or down, and the handles at
-its ends change its room.
-
-*Stretching:* a pinned part with anchors on both sides of one frame follows them. In
-the editor, tick *Stretch left to right* or *Stretch top to bottom* on a part: it stays
-where it is and keeps those sides on what it's placed on (pick that first), and its
-panel sets how far each side is from that frame's.
-
-A `Ghost` stands for a frame with parts on it that isn't in that window's file.
+*Rows and stretching:* pick a button in a row and its panel has the row's fit, spacing and
+margins. Dragging a button moves the whole row up or down, the handles at its ends change
+its room. Tick *Stretch left to right* or *Stretch top to bottom* on a part: it stays where it
+is, and its panel sets how far each side is from the frame it's placed on (pick that first).
 
 *Filling the files:* `/dui layout all` opens every window that needs no NPC
 and each of its tabs (open the others yourself while it's on: mail, auction

@@ -99,7 +99,7 @@ flowchart LR
 | `windows.lua` | The window kit: stone, iron, red band, title plate, tabs, buttons, panels (below)
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
 | `character.lua`, `spellbook.lua`, `mail.lua`, `auction.lua`... | One file per window that needs more than that table
-| `layout-scan.lua` | `/dui layout`: saves the open windows' parts and art for the editor (`tools/editor.py`)
+| `layout-scan.lua` | `/dui layout`: saves the open windows' parts and art for the link:{{< relref "windows-editor" >}}[editor]
 | `tooltips.lua`, `itemtooltips.lua`, `spelltooltips.lua` | Tooltips and menus
 | `lootframe.lua`, `rollwindow.lua`, `lootpreview.lua` | Loot (link:{{< relref "case-study-loot-window" >}}[case study], link:{{< relref "raid-rolls" >}}[Raid Rolls])
 | `adibags.lua`, `immersion.lua`, `trinketmenu.lua`... | Other addons in our look
