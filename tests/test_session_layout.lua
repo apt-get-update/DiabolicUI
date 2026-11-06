@@ -196,6 +196,9 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	lu.assertEquals({ page.strata, page.level }, { frame:GetFrameStrata(), _G.AuditPage:GetFrameLevel() })
 	lu.assertEquals({ ink.layer, ink.level }, { "ARTWORK", frame:GetFrameLevel() })
 	lu.assertEquals(_G.DiabolicUI_Layout.windows.AuditFine.rect, { frame:GetLeft(), frame:GetBottom(), 400, 300 })
+	-- what's styled says as what (windows/components/): the window's close
+	lu.assertEquals(parts.AuditFineCloseButton.style, "CloseButton")
+	lu.assertNil(page.style)
 	-- the art (for the editor to draw it): the textures, the backdrops (its
 	-- border), in the order they're drawn
 	local art, lines, backdrops = _G.DiabolicUI_Layout.windows.AuditFine.views[""].art, {}, {}

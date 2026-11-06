@@ -235,6 +235,7 @@ local Entry = function(part, window, rows)
 		entry[6], entry[7] = Round(part:GetWidth()), Round(part:GetHeight())
 	end
 	entry.kind = part:GetObjectType()
+	entry.style = part.DiabolicStyle -- (windows/components/: what it inherits)
 	local text = part.GetText and part:GetText()
 	if text and (text ~= "") and (not string_find(text, "[|\n]")) then
 		entry.text = text

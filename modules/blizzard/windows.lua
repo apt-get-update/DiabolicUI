@@ -554,6 +554,7 @@ end
 -- A section's title bar on `frame` (its own art out of sight): `title` on
 -- its left in orange.
 Module.StyleSection = function(self, frame, title, regions)
+	frame.DiabolicStyle = "Section"
 	for _, region in ipairs(regions or {}) do
 		region:SetAlpha(0)
 	end
@@ -604,6 +605,7 @@ end
 -- A status bar in Diablo III's orange, in the spiked frame; its own
 -- `regions` (Blizzard's frame) out of sight.
 Module.StyleBar = function(self, bar, regions)
+	bar.DiabolicStyle = "Bar"
 	for _, region in ipairs(regions or {}) do
 		region:SetAlpha(0)
 	end
@@ -756,6 +758,7 @@ end
 -- the room around its text if it's to be sized to it (leave it out when
 -- Blizzard sizes it).
 Module.StyleTab = function(self, tab, options)
+	tab.DiabolicStyle = "Tab"
 	local inset = options.inset or 0
 	local name = tab:GetName()
 	-- (and the achievement tabs' yellow hover glow)
@@ -861,6 +864,7 @@ end
 -- (SetBannerIcon). Blizzard's art out of sight, its text in the invisible
 -- font (UpdateBanner); its own width and height kept (FitTab).
 Module.StyleBanner = function(self, tab, icon)
+	tab.DiabolicStyle = "Banner"
 	local spec = config.banner
 	local name = tab:GetName()
 	for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled",
@@ -1059,6 +1063,7 @@ end
 -- `window`'s iron frame at its top right corner: lit under the mouse,
 -- darker pressed. (`header` is the band's, kept for its callers.)
 Module.StyleClose = function(self, button, window, header)
+	button.DiabolicStyle = "CloseButton"
 	local spec = config.close
 	self:SkinClose(button)
 	if not window.DiabolicSocket then
@@ -1208,6 +1213,7 @@ local MenusFitted
 -- text sits above its frame's middle, `inset` is how far in from its sides
 -- the field is drawn (the template's own by default).
 Module.StyleDropDown = function(self, frame, offset, inset)
+	frame.DiabolicStyle = "DropDown"
 	local name = frame:GetName()
 	-- as wide as its art first: one never sized (Auctionator's,
 	-- Overachiever's) is narrower, its art reaching past it
@@ -1268,6 +1274,7 @@ end
 -- dropdowns' field, its own art out of sight; the field `edit_padding`
 -- past its sides, around its text.
 Module.StyleEditBox = function(self, box)
+	box.DiabolicStyle = "EditBox"
 	local name = box:GetName()
 	for _, part in ipairs({ "Left", "Middle", "Right" }) do
 		local region = name and _G[name .. part]
@@ -1289,6 +1296,7 @@ end
 -- its label (Blizzard's "Text") right of it in the title's gold; its size
 -- and its label's font `look`'s (check_box.stacked) if not check_box's.
 Module.StyleCheckBox = function(self, button, look)
+	button.DiabolicStyle = "CheckBox"
 	local spec = config.check_box
 	look = look or spec
 	button:SetSize(look.size, look.size)
@@ -1404,6 +1412,7 @@ end
 -- A push button (UIPanelButtonTemplate's) as a flat red one, `height`
 -- high: lit under the mouse, dark while disabled.
 Module.StyleButton = function(self, button, height)
+	button.DiabolicStyle = "Button"
 	for _, texture in ipairs({ button:GetNormalTexture() or false, button:GetPushedTexture() or false,
 		button:GetDisabledTexture() or false, button:GetHighlightTexture() or false }) do
 		if texture then
@@ -1605,6 +1614,7 @@ Module.StyleScrollBar = function(self, bar)
 		return
 	end
 	bar.DiabolicStyled = true
+	bar.DiabolicStyle, up.DiabolicStyle, down.DiabolicStyle = "ScrollBar", "ScrollBar", "ScrollBar"
 	local spec = config.scrollbar
 	-- its own track (the hybrid ones have one, the light ones an edge)
 	local thumb = bar:GetThumbTexture()
