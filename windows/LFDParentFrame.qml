@@ -9,10 +9,9 @@ WowWindow {
     width: 355
     height: 440
 
-    Part {
+    Frame {
         id: lFDParentFrameDiabolic
         name: "LFDParentFrameDiabolic"
-        kind: "Frame"
         wowParent: "LFDParentFrame"
         anchors.left: lFDParentFrame.left
         anchors.leftMargin: -24
@@ -22,10 +21,9 @@ WowWindow {
         height: 482
     }
 
-    Part {
+    Frame {
         id: lFDParentFrameDiabolicBand
         name: "LFDParentFrameDiabolicBand"
-        kind: "Frame"
         wowParent: "LFDParentFrameDiabolic"
         anchors.left: lFDParentFrameDiabolic.left
         anchors.leftMargin: 24
@@ -35,10 +33,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    Frame {
         id: lFDParentFrameDiabolicBorder
         name: "LFDParentFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "LFDParentFrameDiabolic"
         anchors.left: lFDParentFrameDiabolic.left
         anchors.top: lFDParentFrameDiabolic.top
@@ -46,10 +43,9 @@ WowWindow {
         height: 482
     }
 
-    Part {
+    Frame {
         id: lFDParentFrameDiabolicFoot
         name: "LFDParentFrameDiabolicFoot"
-        kind: "Frame"
         wowParent: "LFDParentFrameDiabolic"
         anchors.horizontalCenter: lFDQueueFrameFindGroupButton.horizontalCenter
         anchors.horizontalCenterOffset: 102
@@ -59,10 +55,9 @@ WowWindow {
         height: 35
     }
 
-    Part {
+    Frame {
         id: lFDParentFrameDiabolicSocket
         name: "LFDParentFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "LFDParentFrameDiabolic"
         anchors.right: lFDParentFrameDiabolic.right
         anchors.rightMargin: 20
@@ -72,10 +67,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: lFDParentFrameDiabolicTitlePlate
         name: "LFDParentFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "LFDParentFrameDiabolic"
         anchors.horizontalCenter: lFDParentFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: lFDParentFrameDiabolicBorder.top
@@ -84,10 +78,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    Frame {
         id: lFDParentFramePortrait
         name: "LFDParentFramePortrait"
-        kind: "Frame"
         wowParent: "LFDParentFrame"
         anchors.left: lFDParentFrame.left
         anchors.leftMargin: 9
@@ -97,10 +90,9 @@ WowWindow {
         height: 64
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrame
         name: "LFDQueueFrame"
-        kind: "Frame"
         wowParent: "LFDParentFrame"
         anchors.left: lFDParentFrame.left
         anchors.top: lFDParentFrame.top
@@ -108,10 +100,9 @@ WowWindow {
         height: 440
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameCancelButton
         name: "LFDQueueFrameCancelButton"
-        kind: "Button"
         text: "Close"
         wowParent: "LFDQueueFrame"
         style: "Button"
@@ -123,10 +114,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameCancelButtonText
         name: "LFDQueueFrameCancelButtonText"
-        kind: "FontString"
         text: "Close"
         wowParent: "LFDQueueFrameCancelButton"
         anchors.horizontalCenter: lFDQueueFrameCancelButton.horizontalCenter
@@ -135,10 +125,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameFindGroupButton
         name: "LFDQueueFrameFindGroupButton"
-        kind: "Button"
         text: "Find Group"
         wowParent: "LFDQueueFrame"
         style: "Button"
@@ -151,10 +140,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameFindGroupButtonText
         name: "LFDQueueFrameFindGroupButtonText"
-        kind: "FontString"
         text: "Find Group"
         wowParent: "LFDQueueFrameFindGroupButton"
         anchors.horizontalCenter: lFDQueueFrameFindGroupButton.horizontalCenter
@@ -163,10 +151,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameRandom
         name: "LFDQueueFrameRandom"
-        kind: "Frame"
         wowParent: "LFDQueueFrame"
         pin: "place"
         anchors.left: lFDQueueFrame.left
@@ -179,10 +166,9 @@ WowWindow {
         height: 456
     }
 
-    Part {
+    ScrollFrame {
         id: lFDQueueFrameRandomScrollFrame
         name: "LFDQueueFrameRandomScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "LFDQueueFrameRandom"
         pin: "all"
         anchors.right: lFDQueueFrameRandom.right
@@ -193,10 +179,9 @@ WowWindow {
         height: 265
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameRandomScrollFrameChildFrame
         name: "LFDQueueFrameRandomScrollFrameChildFrame"
-        kind: "Frame"
         wowParent: "LFDQueueFrameRandomScrollFrame"
         anchors.left: lFDQueueFrameRandomScrollFrame.left
         anchors.top: lFDQueueFrameRandomScrollFrame.top
@@ -204,10 +189,9 @@ WowWindow {
         height: 1
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameDescription
         name: "LFDQueueFrameRandomScrollFrameChildFrameDescription"
-        kind: "FontString"
         text: "Using the Dungeon Finder to do a Random Dungeon will earn you extra rewards."
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameTitle.left
@@ -217,10 +201,9 @@ WowWindow {
         height: 25.3
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRandomScrollFrameChildFrameItem1
         name: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
-        kind: "Button"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameRewardsDescription.left
         anchors.top: lFDQueueFrameRandomScrollFrameChildFrameRewardsDescription.bottom
@@ -229,10 +212,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameItem1Count
         name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Count"
-        kind: "FontString"
         text: "2"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture.right
@@ -243,10 +225,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameItem1Name
         name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Name"
-        kind: "FontString"
         text: "Emblem of Conquest"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameItem1NameFrame.left
@@ -256,10 +237,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrame
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
-        kind: "Frame"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.right
         anchors.leftMargin: 10
@@ -268,10 +248,9 @@ WowWindow {
         height: 28
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
-        kind: "Button"
         text: "22"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.left
@@ -281,10 +260,9 @@ WowWindow {
         height: 19
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText"
-        kind: "FontString"
         text: "22"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton.right
@@ -294,10 +272,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton"
-        kind: "Button"
         text: "20"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton.right
@@ -306,10 +283,9 @@ WowWindow {
         height: 19
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButtonText
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "20"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton"
         anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.right
@@ -319,10 +295,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel
         name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyLabel"
-        kind: "FontString"
         text: "Money:"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameItem1.left
@@ -333,10 +308,9 @@ WowWindow {
         height: 12.6
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameRewardsDescription
         name: "LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription"
-        kind: "FontString"
         text: "The first random dungeon that you complete each day will earn you:"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameRewardsLabel.left
@@ -346,10 +320,9 @@ WowWindow {
         height: 25.3
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameRewardsLabel
         name: "LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel"
-        kind: "FontString"
         text: "Rewards"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameDescription.left
@@ -359,10 +332,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameRandomScrollFrameChildFrameSpacer
         name: "LFDQueueFrameRandomScrollFrameChildFrameSpacer"
-        kind: "Frame"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.left
         anchors.top: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.bottom
@@ -371,10 +343,9 @@ WowWindow {
         height: 2
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameTitle
         name: "LFDQueueFrameRandomScrollFrameChildFrameTitle"
-        kind: "FontString"
         text: "Random Dungeon"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrame.left
@@ -385,10 +356,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameXPAmount
         name: "LFDQueueFrameRandomScrollFrameChildFrameXPAmount"
-        kind: "FontString"
         text: "16000"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameXPLabel.right
@@ -398,10 +368,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameRandomScrollFrameChildFrameXPLabel
         name: "LFDQueueFrameRandomScrollFrameChildFrameXPLabel"
-        kind: "FontString"
         text: "Experience:"
         wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
         anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.left
@@ -411,10 +380,9 @@ WowWindow {
         height: 12.6
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameRandomScrollFrameDiabolicZone
         name: "LFDQueueFrameRandomScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "LFDQueueFrameRandom"
         anchors.left: lFDQueueFrameRandomScrollFrame.left
         anchors.leftMargin: -6
@@ -424,10 +392,9 @@ WowWindow {
         height: 277
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRoleButtonDPS
         name: "LFDQueueFrameRoleButtonDPS"
-        kind: "Button"
         wowParent: "LFDQueueFrame"
         anchors.left: lFDQueueFrameRoleButtonHealer.right
         anchors.leftMargin: 23
@@ -436,10 +403,9 @@ WowWindow {
         height: 48
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRoleButtonHealer
         name: "LFDQueueFrameRoleButtonHealer"
-        kind: "Button"
         wowParent: "LFDQueueFrame"
         anchors.left: lFDQueueFrameRoleButtonTank.right
         anchors.leftMargin: 25
@@ -448,10 +414,9 @@ WowWindow {
         height: 48
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRoleButtonLeader
         name: "LFDQueueFrameRoleButtonLeader"
-        kind: "Button"
         wowParent: "LFDQueueFrame"
         anchors.left: lFDQueueFrameRoleButtonDPS.right
         anchors.leftMargin: 32
@@ -460,10 +425,9 @@ WowWindow {
         height: 48
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameRoleButtonTank
         name: "LFDQueueFrameRoleButtonTank"
-        kind: "Button"
         wowParent: "LFDQueueFrame"
         anchors.left: lFDParentFrameDiabolic.horizontalCenter
         anchors.leftMargin: -136
@@ -473,10 +437,9 @@ WowWindow {
         height: 48
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecific
         name: "LFDQueueFrameSpecific"
-        kind: "Frame"
         wowParent: "LFDQueueFrame"
         pin: "place"
         anchors.left: lFDQueueFrame.left
@@ -489,10 +452,9 @@ WowWindow {
         height: 456
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton1
         name: "LFDQueueFrameSpecificListButton1"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecific.left
         anchors.leftMargin: 25
@@ -502,10 +464,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton10
         name: "LFDQueueFrameSpecificListButton10"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton9.left
         anchors.top: lFDQueueFrameSpecificListButton9.bottom
@@ -513,10 +474,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton10EnableButton
         name: "LFDQueueFrameSpecificListButton10EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton10"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton10LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton10LockedIndicator.verticalCenter
@@ -524,10 +484,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton10InstanceLevel
         name: "LFDQueueFrameSpecificListButton10InstanceLevel"
-        kind: "FontString"
         text: "(77 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton10"
         anchors.right: lFDQueueFrameSpecificListButton10.right
@@ -536,10 +495,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton10InstanceName
         name: "LFDQueueFrameSpecificListButton10InstanceName"
-        kind: "FontString"
         text: "The Culling of Stratholme"
         wowParent: "LFDQueueFrameSpecificListButton10"
         anchors.left: lFDQueueFrameSpecificListButton10.left
@@ -549,10 +507,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton11
         name: "LFDQueueFrameSpecificListButton11"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton10.left
         anchors.top: lFDQueueFrameSpecificListButton10.bottom
@@ -560,10 +517,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton11EnableButton
         name: "LFDQueueFrameSpecificListButton11EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton11"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton11LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton11LockedIndicator.verticalCenter
@@ -571,10 +527,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton11InstanceLevel
         name: "LFDQueueFrameSpecificListButton11InstanceLevel"
-        kind: "FontString"
         text: "(77 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton11"
         anchors.right: lFDQueueFrameSpecificListButton11.right
@@ -583,10 +538,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton11InstanceName
         name: "LFDQueueFrameSpecificListButton11InstanceName"
-        kind: "FontString"
         text: "The Oculus"
         wowParent: "LFDQueueFrameSpecificListButton11"
         anchors.left: lFDQueueFrameSpecificListButton11.left
@@ -596,10 +550,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton12
         name: "LFDQueueFrameSpecificListButton12"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton11.left
         anchors.top: lFDQueueFrameSpecificListButton11.bottom
@@ -607,10 +560,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton12EnableButton
         name: "LFDQueueFrameSpecificListButton12EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton12"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton12LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton12LockedIndicator.verticalCenter
@@ -618,10 +570,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton12InstanceLevel
         name: "LFDQueueFrameSpecificListButton12InstanceLevel"
-        kind: "FontString"
         text: "(77 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton12"
         anchors.right: lFDQueueFrameSpecificListButton12.right
@@ -630,10 +581,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton12InstanceName
         name: "LFDQueueFrameSpecificListButton12InstanceName"
-        kind: "FontString"
         text: "Utgarde Pinnacle"
         wowParent: "LFDQueueFrameSpecificListButton12"
         anchors.left: lFDQueueFrameSpecificListButton12.left
@@ -643,10 +593,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton13
         name: "LFDQueueFrameSpecificListButton13"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton12.left
         anchors.top: lFDQueueFrameSpecificListButton12.bottom
@@ -654,10 +603,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton13EnableButton
         name: "LFDQueueFrameSpecificListButton13EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton13"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton13LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton13LockedIndicator.verticalCenter
@@ -665,10 +613,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton13InstanceLevel
         name: "LFDQueueFrameSpecificListButton13InstanceLevel"
-        kind: "FontString"
         text: "(80)"
         wowParent: "LFDQueueFrameSpecificListButton13"
         anchors.right: lFDQueueFrameSpecificListButton13.right
@@ -677,10 +624,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton13InstanceName
         name: "LFDQueueFrameSpecificListButton13InstanceName"
-        kind: "FontString"
         text: "Halls of Reflection"
         wowParent: "LFDQueueFrameSpecificListButton13"
         anchors.left: lFDQueueFrameSpecificListButton13.left
@@ -690,10 +636,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton14
         name: "LFDQueueFrameSpecificListButton14"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton13.left
         anchors.top: lFDQueueFrameSpecificListButton13.bottom
@@ -701,10 +646,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton14InstanceLevel
         name: "LFDQueueFrameSpecificListButton14InstanceLevel"
-        kind: "FontString"
         text: "(80)"
         wowParent: "LFDQueueFrameSpecificListButton14"
         anchors.right: lFDQueueFrameSpecificListButton14.right
@@ -713,10 +657,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton14InstanceName
         name: "LFDQueueFrameSpecificListButton14InstanceName"
-        kind: "FontString"
         text: "Pit of Saron"
         wowParent: "LFDQueueFrameSpecificListButton14"
         anchors.left: lFDQueueFrameSpecificListButton14.left
@@ -726,10 +669,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton15
         name: "LFDQueueFrameSpecificListButton15"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton14.left
         anchors.top: lFDQueueFrameSpecificListButton14.bottom
@@ -737,10 +679,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton15EnableButton
         name: "LFDQueueFrameSpecificListButton15EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton15"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton15LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton15LockedIndicator.verticalCenter
@@ -748,10 +689,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton15InstanceLevel
         name: "LFDQueueFrameSpecificListButton15InstanceLevel"
-        kind: "FontString"
         text: "(80)"
         wowParent: "LFDQueueFrameSpecificListButton15"
         anchors.right: lFDQueueFrameSpecificListButton15.right
@@ -760,10 +700,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton15InstanceName
         name: "LFDQueueFrameSpecificListButton15InstanceName"
-        kind: "FontString"
         text: "The Forge of Souls"
         wowParent: "LFDQueueFrameSpecificListButton15"
         anchors.left: lFDQueueFrameSpecificListButton15.left
@@ -773,10 +712,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton16
         name: "LFDQueueFrameSpecificListButton16"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton15.left
         anchors.top: lFDQueueFrameSpecificListButton15.bottom
@@ -784,10 +722,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton16EnableButton
         name: "LFDQueueFrameSpecificListButton16EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton16"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton16LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton16LockedIndicator.verticalCenter
@@ -795,10 +732,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton16InstanceLevel
         name: "LFDQueueFrameSpecificListButton16InstanceLevel"
-        kind: "FontString"
         text: "(80)"
         wowParent: "LFDQueueFrameSpecificListButton16"
         anchors.right: lFDQueueFrameSpecificListButton16.right
@@ -807,10 +743,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton16InstanceName
         name: "LFDQueueFrameSpecificListButton16InstanceName"
-        kind: "FontString"
         text: "Trial of the Champion"
         wowParent: "LFDQueueFrameSpecificListButton16"
         anchors.left: lFDQueueFrameSpecificListButton16.left
@@ -820,10 +755,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton1EnableButton
         name: "LFDQueueFrameSpecificListButton1EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton1"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton1LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton1LockedIndicator.verticalCenter
@@ -831,10 +765,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameSpecificListButton1ExpandOrCollapseButton
         name: "LFDQueueFrameSpecificListButton1ExpandOrCollapseButton"
-        kind: "Button"
         wowParent: "LFDQueueFrameSpecificListButton1"
         anchors.left: lFDQueueFrameSpecificListButton1.left
         anchors.leftMargin: 3
@@ -843,10 +776,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton1InstanceLevel
         name: "LFDQueueFrameSpecificListButton1InstanceLevel"
-        kind: "FontString"
         text: "(69 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton1"
         anchors.right: lFDQueueFrameSpecificListButton1.right
@@ -855,10 +787,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton1InstanceName
         name: "LFDQueueFrameSpecificListButton1InstanceName"
-        kind: "FontString"
         text: "The Nexus"
         wowParent: "LFDQueueFrameSpecificListButton1"
         anchors.left: lFDQueueFrameSpecificListButton1.left
@@ -868,10 +799,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton2
         name: "LFDQueueFrameSpecificListButton2"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton1.left
         anchors.top: lFDQueueFrameSpecificListButton1.bottom
@@ -879,10 +809,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton2EnableButton
         name: "LFDQueueFrameSpecificListButton2EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton2"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton2LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton2LockedIndicator.verticalCenter
@@ -890,10 +819,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton2InstanceLevel
         name: "LFDQueueFrameSpecificListButton2InstanceLevel"
-        kind: "FontString"
         text: "(68 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton2"
         anchors.right: lFDQueueFrameSpecificListButton2.right
@@ -902,10 +830,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton2InstanceName
         name: "LFDQueueFrameSpecificListButton2InstanceName"
-        kind: "FontString"
         text: "Utgarde Keep"
         wowParent: "LFDQueueFrameSpecificListButton2"
         anchors.left: lFDQueueFrameSpecificListButton2.left
@@ -915,10 +842,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton3
         name: "LFDQueueFrameSpecificListButton3"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton2.left
         anchors.top: lFDQueueFrameSpecificListButton2.bottom
@@ -926,10 +852,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton3EnableButton
         name: "LFDQueueFrameSpecificListButton3EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton3"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton3LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton3LockedIndicator.verticalCenter
@@ -937,10 +862,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton3InstanceLevel
         name: "LFDQueueFrameSpecificListButton3InstanceLevel"
-        kind: "FontString"
         text: "(71 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton3"
         anchors.right: lFDQueueFrameSpecificListButton3.right
@@ -949,10 +873,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton3InstanceName
         name: "LFDQueueFrameSpecificListButton3InstanceName"
-        kind: "FontString"
         text: "Ahn'kahet: The Old Kingdom"
         wowParent: "LFDQueueFrameSpecificListButton3"
         anchors.left: lFDQueueFrameSpecificListButton3.left
@@ -962,10 +885,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton4
         name: "LFDQueueFrameSpecificListButton4"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton3.left
         anchors.top: lFDQueueFrameSpecificListButton3.bottom
@@ -973,10 +895,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton4EnableButton
         name: "LFDQueueFrameSpecificListButton4EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton4"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton4LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton4LockedIndicator.verticalCenter
@@ -984,10 +905,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton4InstanceLevel
         name: "LFDQueueFrameSpecificListButton4InstanceLevel"
-        kind: "FontString"
         text: "(70 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton4"
         anchors.right: lFDQueueFrameSpecificListButton4.right
@@ -996,10 +916,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton4InstanceName
         name: "LFDQueueFrameSpecificListButton4InstanceName"
-        kind: "FontString"
         text: "Azjol-Nerub"
         wowParent: "LFDQueueFrameSpecificListButton4"
         anchors.left: lFDQueueFrameSpecificListButton4.left
@@ -1009,10 +928,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton5
         name: "LFDQueueFrameSpecificListButton5"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton4.left
         anchors.top: lFDQueueFrameSpecificListButton4.bottom
@@ -1020,10 +938,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton5EnableButton
         name: "LFDQueueFrameSpecificListButton5EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton5"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton5LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton5LockedIndicator.verticalCenter
@@ -1031,10 +948,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton5InstanceLevel
         name: "LFDQueueFrameSpecificListButton5InstanceLevel"
-        kind: "FontString"
         text: "(72 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton5"
         anchors.right: lFDQueueFrameSpecificListButton5.right
@@ -1043,10 +959,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton5InstanceName
         name: "LFDQueueFrameSpecificListButton5InstanceName"
-        kind: "FontString"
         text: "Drak'Tharon Keep"
         wowParent: "LFDQueueFrameSpecificListButton5"
         anchors.left: lFDQueueFrameSpecificListButton5.left
@@ -1056,10 +971,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton6
         name: "LFDQueueFrameSpecificListButton6"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton5.left
         anchors.top: lFDQueueFrameSpecificListButton5.bottom
@@ -1067,10 +981,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton6EnableButton
         name: "LFDQueueFrameSpecificListButton6EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton6"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton6LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton6LockedIndicator.verticalCenter
@@ -1078,10 +991,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton6InstanceLevel
         name: "LFDQueueFrameSpecificListButton6InstanceLevel"
-        kind: "FontString"
         text: "(73 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton6"
         anchors.right: lFDQueueFrameSpecificListButton6.right
@@ -1090,10 +1002,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton6InstanceName
         name: "LFDQueueFrameSpecificListButton6InstanceName"
-        kind: "FontString"
         text: "Violet Hold"
         wowParent: "LFDQueueFrameSpecificListButton6"
         anchors.left: lFDQueueFrameSpecificListButton6.left
@@ -1103,10 +1014,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton7
         name: "LFDQueueFrameSpecificListButton7"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton6.left
         anchors.top: lFDQueueFrameSpecificListButton6.bottom
@@ -1114,10 +1024,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton7EnableButton
         name: "LFDQueueFrameSpecificListButton7EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton7"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton7LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton7LockedIndicator.verticalCenter
@@ -1125,10 +1034,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton7InstanceLevel
         name: "LFDQueueFrameSpecificListButton7InstanceLevel"
-        kind: "FontString"
         text: "(74 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton7"
         anchors.right: lFDQueueFrameSpecificListButton7.right
@@ -1137,10 +1045,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton7InstanceName
         name: "LFDQueueFrameSpecificListButton7InstanceName"
-        kind: "FontString"
         text: "Gundrak"
         wowParent: "LFDQueueFrameSpecificListButton7"
         anchors.left: lFDQueueFrameSpecificListButton7.left
@@ -1150,10 +1057,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton8
         name: "LFDQueueFrameSpecificListButton8"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton7.left
         anchors.top: lFDQueueFrameSpecificListButton7.bottom
@@ -1161,10 +1067,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton8EnableButton
         name: "LFDQueueFrameSpecificListButton8EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton8"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton8LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton8LockedIndicator.verticalCenter
@@ -1172,10 +1077,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton8InstanceLevel
         name: "LFDQueueFrameSpecificListButton8InstanceLevel"
-        kind: "FontString"
         text: "(75 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton8"
         anchors.right: lFDQueueFrameSpecificListButton8.right
@@ -1184,10 +1088,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton8InstanceName
         name: "LFDQueueFrameSpecificListButton8InstanceName"
-        kind: "FontString"
         text: "Halls of Stone"
         wowParent: "LFDQueueFrameSpecificListButton8"
         anchors.left: lFDQueueFrameSpecificListButton8.left
@@ -1197,10 +1100,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListButton9
         name: "LFDQueueFrameSpecificListButton9"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton8.left
         anchors.top: lFDQueueFrameSpecificListButton8.bottom
@@ -1208,10 +1110,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    CheckButton {
         id: lFDQueueFrameSpecificListButton9EnableButton
         name: "LFDQueueFrameSpecificListButton9EnableButton"
-        kind: "CheckButton"
         wowParent: "LFDQueueFrameSpecificListButton9"
         anchors.horizontalCenter: lFDQueueFrameSpecificListButton9LockedIndicator.horizontalCenter
         anchors.verticalCenter: lFDQueueFrameSpecificListButton9LockedIndicator.verticalCenter
@@ -1219,10 +1120,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton9InstanceLevel
         name: "LFDQueueFrameSpecificListButton9InstanceLevel"
-        kind: "FontString"
         text: "(77 - 80)"
         wowParent: "LFDQueueFrameSpecificListButton9"
         anchors.right: lFDQueueFrameSpecificListButton9.right
@@ -1231,10 +1131,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameSpecificListButton9InstanceName
         name: "LFDQueueFrameSpecificListButton9InstanceName"
-        kind: "FontString"
         text: "Halls of Lightning"
         wowParent: "LFDQueueFrameSpecificListButton9"
         anchors.left: lFDQueueFrameSpecificListButton9.left
@@ -1244,10 +1143,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    ScrollFrame {
         id: lFDQueueFrameSpecificListScrollFrame
         name: "LFDQueueFrameSpecificListScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListButton1.left
         anchors.top: lFDQueueFrameSpecificListButton1.top
@@ -1256,10 +1154,9 @@ WowWindow {
         height: 270
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListScrollFrameDiabolicZone
         name: "LFDQueueFrameSpecificListScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecific"
         anchors.left: lFDQueueFrameSpecificListScrollFrame.left
         anchors.leftMargin: -6
@@ -1269,10 +1166,9 @@ WowWindow {
         height: 282
     }
 
-    Part {
+    Slider {
         id: lFDQueueFrameSpecificListScrollFrameScrollBar
         name: "LFDQueueFrameSpecificListScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "LFDQueueFrameSpecificListScrollFrame"
         style: "ScrollBar"
         anchors.left: lFDQueueFrameSpecificListScrollFrame.right
@@ -1283,10 +1179,9 @@ WowWindow {
         height: 238
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack
         name: "LFDQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecificListScrollFrameScrollBar"
         anchors.horizontalCenter: lFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: lFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.top
@@ -1295,10 +1190,9 @@ WowWindow {
         height: 272
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameSpecificListScrollFrameScrollBarScrollDownButton
         name: "LFDQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "LFDQueueFrameSpecificListScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: lFDQueueFrameSpecificListScrollFrameScrollBar.horizontalCenter
@@ -1307,10 +1201,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton
         name: "LFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "LFDQueueFrameSpecificListScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: lFDQueueFrameSpecificListScrollFrameScrollBar.horizontalCenter
@@ -1319,10 +1212,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameSpecificListScrollFrameScrollChildFrame
         name: "LFDQueueFrameSpecificListScrollFrameScrollChildFrame"
-        kind: "Frame"
         wowParent: "LFDQueueFrameSpecificListScrollFrame"
         anchors.left: lFDQueueFrameSpecificListScrollFrame.left
         anchors.top: lFDQueueFrameSpecificListScrollFrame.top
@@ -1331,10 +1223,9 @@ WowWindow {
         height: 544
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameTitleText
         name: "LFDQueueFrameTitleText"
-        kind: "FontString"
         text: "Dungeon Finder"
         wowParent: "LFDParentFrameDiabolicTitlePlate"
         anchors.horizontalCenter: lFDParentFrameDiabolicTitlePlate.horizontalCenter
@@ -1344,10 +1235,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameTypeDropDown
         name: "LFDQueueFrameTypeDropDown"
-        kind: "Frame"
         wowParent: "LFDQueueFrame"
         style: "DropDown"
         anchors.left: lFDParentFrameDiabolicBand.left
@@ -1357,10 +1247,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    Button {
         id: lFDQueueFrameTypeDropDownButton
         name: "LFDQueueFrameTypeDropDownButton"
-        kind: "Button"
         wowParent: "LFDQueueFrameTypeDropDown"
         anchors.right: lFDQueueFrameTypeDropDownDiabolicField.right
         anchors.rightMargin: 18
@@ -1369,10 +1258,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: lFDQueueFrameTypeDropDownDiabolicField
         name: "LFDQueueFrameTypeDropDownDiabolicField"
-        kind: "Frame"
         wowParent: "LFDQueueFrameTypeDropDown"
         anchors.left: lFDQueueFrameTypeDropDown.left
         anchors.verticalCenter: lFDQueueFrameTypeDropDown.verticalCenter
@@ -1380,10 +1268,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameTypeDropDownName
         name: "LFDQueueFrameTypeDropDownName"
-        kind: "FontString"
         text: "Type:"
         wowParent: "LFDQueueFrameTypeDropDown"
         anchors.right: lFDQueueFrameTypeDropDown.left
@@ -1393,10 +1280,9 @@ WowWindow {
         height: 24
     }
 
-    Part {
+    FontString {
         id: lFDQueueFrameTypeDropDownText
         name: "LFDQueueFrameTypeDropDownText"
-        kind: "FontString"
         text: "Random Lich King Heroic"
         wowParent: "LFDQueueFrameTypeDropDown"
         anchors.horizontalCenter: lFDQueueFrameTypeDropDown.horizontalCenter

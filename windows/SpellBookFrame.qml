@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    CheckButton {
         id: companionButton1
         name: "CompanionButton1"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -23,10 +22,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton10
         name: "CompanionButton10"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -37,10 +35,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton11
         name: "CompanionButton11"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -51,10 +48,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton12
         name: "CompanionButton12"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -65,10 +61,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton2
         name: "CompanionButton2"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -79,10 +74,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton3
         name: "CompanionButton3"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -93,10 +87,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton4
         name: "CompanionButton4"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -107,10 +100,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton5
         name: "CompanionButton5"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -121,10 +113,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton6
         name: "CompanionButton6"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -135,10 +126,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton7
         name: "CompanionButton7"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -149,10 +139,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton8
         name: "CompanionButton8"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -163,10 +152,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: companionButton9
         name: "CompanionButton9"
-        kind: "CheckButton"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -177,10 +165,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    DressUpModel {
         id: companionModelFrame
         name: "CompanionModelFrame"
-        kind: "DressUpModel"
         wowParent: "PetPaperDollFrameCompanionFrame"
         anchors.left: petPaperDollFrameCompanionFrame.left
         anchors.leftMargin: 11
@@ -190,10 +177,9 @@ WowWindow {
         height: 146
     }
 
-    Part {
+    Button {
         id: companionModelFrameRotateLeftButton
         name: "CompanionModelFrameRotateLeftButton"
-        kind: "Button"
         wowParent: "CompanionModelFrame"
         anchors.left: companionModelFrame.left
         anchors.leftMargin: 6
@@ -203,10 +189,9 @@ WowWindow {
         height: 35
     }
 
-    Part {
+    Button {
         id: companionModelFrameRotateRightButton
         name: "CompanionModelFrameRotateRightButton"
-        kind: "Button"
         wowParent: "CompanionModelFrame"
         anchors.right: companionModelFrame.right
         anchors.rightMargin: 6
@@ -216,10 +201,9 @@ WowWindow {
         height: 35
     }
 
-    Part {
+    Button {
         id: companionNextPageButton
         name: "CompanionNextPageButton"
-        kind: "Button"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.right: petPaperDollFrameCompanionFrame.right
@@ -230,10 +214,9 @@ WowWindow {
         height: 26
     }
 
-    Part {
+    FontString {
         id: companionPageNumber
         name: "CompanionPageNumber"
-        kind: "FontString"
         text: "Page 1 of 1"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
@@ -244,10 +227,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: companionPrevPageButton
         name: "CompanionPrevPageButton"
-        kind: "Button"
         wowParent: "PetPaperDollFrameCompanionFrame"
         pin: "place"
         anchors.right: companionPageNumber.left
@@ -257,10 +239,9 @@ WowWindow {
         height: 26
     }
 
-    Part {
+    FontString {
         id: companionSelectedName
         name: "CompanionSelectedName"
-        kind: "FontString"
         text: "Bronze Drake Mount"
         wowParent: "PetPaperDollFrameCompanionFrame"
         anchors.left: petPaperDollFrameCompanionFrame.left
@@ -271,10 +252,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: companionSummonButton
         name: "CompanionSummonButton"
-        kind: "Button"
         text: "Mount"
         wowParent: "PetPaperDollFrameCompanionFrame"
         style: "Button"
@@ -285,10 +265,9 @@ WowWindow {
         height: 24
     }
 
-    Part {
+    FontString {
         id: companionSummonButtonText
         name: "CompanionSummonButtonText"
-        kind: "FontString"
         text: "Mount"
         wowParent: "CompanionSummonButton"
         anchors.horizontalCenter: companionSummonButton.horizontalCenter
@@ -297,10 +276,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    EditBox {
         id: diabolicUISpellBookSearchBox
         name: "DiabolicUISpellBookSearchBox"
-        kind: "EditBox"
         wowParent: "SpellBookFrame"
         style: "EditBox"
         anchors.left: spellBookFrameDiabolicBand.left
@@ -310,10 +288,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    Frame {
         id: diabolicUISpellBookSearchBoxDiabolicField
         name: "DiabolicUISpellBookSearchBoxDiabolicField"
-        kind: "Frame"
         wowParent: "DiabolicUISpellBookSearchBox"
         anchors.left: diabolicUISpellBookSearchBox.left
         anchors.leftMargin: -8
@@ -322,10 +299,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: diabolicUISpellBookTabCRITTER
         name: "DiabolicUISpellBookTabCRITTER"
-        kind: "Button"
         text: "Companions"
         wowParent: "SpellBookFrame"
         style: "Banner"
@@ -337,10 +313,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: diabolicUISpellBookTabMOUNT
         name: "DiabolicUISpellBookTabMOUNT"
-        kind: "Button"
         text: "Mounts"
         wowParent: "SpellBookFrame"
         style: "Banner"
@@ -352,10 +327,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: diabolicUISpellBookTabPROFESSIONS
         name: "DiabolicUISpellBookTabPROFESSIONS"
-        kind: "Button"
         text: "Professions"
         wowParent: "SpellBookFrame"
         style: "Banner"
@@ -367,10 +341,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    CheckButton {
         id: diabolicUISpellBookUnassignedBox
         name: "DiabolicUISpellBookUnassignedBox"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         style: "CheckBox"
         anchors.left: showAllSpellRanksCheckBox.right
@@ -380,10 +353,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: diabolicUISpellBookUnassignedBoxText
         name: "DiabolicUISpellBookUnassignedBoxText"
-        kind: "FontString"
         text: "Unassigned"
         wowParent: "DiabolicUISpellBookUnassignedBox"
         anchors.left: diabolicUISpellBookUnassignedBox.right
@@ -393,10 +365,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: petPaperDollFrameCompanionFrame
         name: "PetPaperDollFrameCompanionFrame"
-        kind: "Frame"
         wowParent: "SpellBookFrameDiabolicCover"
         anchors.left: spellBookFrameDiabolicCover.left
         anchors.top: spellBookFrameDiabolicCover.top
@@ -405,10 +376,9 @@ WowWindow {
         height: 452
     }
 
-    Part {
+    CheckButton {
         id: showAllSpellRanksCheckBox
         name: "ShowAllSpellRanksCheckBox"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         style: "CheckBox"
         anchors.left: diabolicUISpellBookSearchBox.right
@@ -418,10 +388,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: showAllSpellRanksCheckBoxText
         name: "ShowAllSpellRanksCheckBoxText"
-        kind: "FontString"
         text: "All ranks"
         wowParent: "ShowAllSpellRanksCheckBox"
         anchors.left: showAllSpellRanksCheckBox.right
@@ -431,10 +400,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: spellBookCloseButton
         name: "SpellBookCloseButton"
-        kind: "Button"
         wowParent: "SpellBookFrame"
         style: "CloseButton"
         anchors.horizontalCenter: spellBookFrameDiabolic.right
@@ -445,10 +413,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolic
         name: "SpellBookFrameDiabolic"
-        kind: "Frame"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrame.left
         anchors.top: spellBookFrame.top
@@ -457,10 +424,9 @@ WowWindow {
         height: 548
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolicBand
         name: "SpellBookFrameDiabolicBand"
-        kind: "Frame"
         wowParent: "SpellBookFrameDiabolic"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 24
@@ -470,10 +436,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolicBorder
         name: "SpellBookFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "SpellBookFrameDiabolic"
         anchors.left: spellBookFrameDiabolic.left
         anchors.top: spellBookFrameDiabolic.top
@@ -482,10 +447,9 @@ WowWindow {
         height: 516
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolicCover
         name: "SpellBookFrameDiabolicCover"
-        kind: "Frame"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 23
@@ -495,10 +459,9 @@ WowWindow {
         height: 470
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolicRail
         name: "SpellBookFrameDiabolicRail"
-        kind: "Frame"
         wowParent: "SpellBookFrameDiabolic"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 18
@@ -508,10 +471,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolicSocket
         name: "SpellBookFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "SpellBookFrameDiabolic"
         anchors.right: spellBookFrameDiabolic.right
         anchors.rightMargin: 20
@@ -521,10 +483,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: spellBookFrameDiabolicTitlePlate
         name: "SpellBookFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "SpellBookFrameDiabolic"
         anchors.horizontalCenter: spellBookFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: spellBookFrameDiabolicBorder.top
@@ -533,10 +494,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    Button {
         id: spellBookFrameTabButton1
         name: "SpellBookFrameTabButton1"
-        kind: "Button"
         text: "Spellbook"
         wowParent: "SpellBookFrame"
         style: "Banner"
@@ -548,10 +508,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: spellBookNextPageButton
         name: "SpellBookNextPageButton"
-        kind: "Button"
         wowParent: "SpellBookFrame"
         anchors.right: spellBookFrameDiabolic.right
         anchors.rightMargin: 72
@@ -561,10 +520,9 @@ WowWindow {
         height: 26
     }
 
-    Part {
+    FontString {
         id: spellBookPageText
         name: "SpellBookPageText"
-        kind: "FontString"
         text: "Page 1"
         wowParent: "SpellBookFrame"
         anchors.right: spellBookNextPageButton.left
@@ -574,10 +532,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: spellBookPrevPageButton
         name: "SpellBookPrevPageButton"
-        kind: "Button"
         wowParent: "SpellBookFrame"
         anchors.right: spellBookPageText.left
         anchors.rightMargin: 4
@@ -586,10 +543,9 @@ WowWindow {
         height: 26
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab1
         name: "SpellBookSkillLineTab1"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -600,10 +556,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab2
         name: "SpellBookSkillLineTab2"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -614,10 +569,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab3
         name: "SpellBookSkillLineTab3"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -628,10 +582,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab4
         name: "SpellBookSkillLineTab4"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -642,10 +595,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab5
         name: "SpellBookSkillLineTab5"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -656,10 +608,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab6
         name: "SpellBookSkillLineTab6"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -670,10 +621,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab7
         name: "SpellBookSkillLineTab7"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -684,10 +634,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: spellBookSkillLineTab8
         name: "SpellBookSkillLineTab8"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         pin: "place"
         anchors.left: spellBookFrameDiabolic.left
@@ -698,10 +647,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: spellBookTitleText
         name: "SpellBookTitleText"
-        kind: "FontString"
         text: "Spellbook"
         wowParent: "SpellBookFrameDiabolicTitlePlate"
         anchors.horizontalCenter: spellBookFrameDiabolicTitlePlate.horizontalCenter
@@ -711,10 +659,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    CheckButton {
         id: spellButton1
         name: "SpellButton1"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 50
@@ -724,10 +671,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    CheckButton {
         id: spellButton10
         name: "SpellButton10"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 282
@@ -737,10 +683,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton10SpellName
         name: "SpellButton10SpellName"
-        kind: "FontString"
         text: "Psychic Scream"
         wowParent: "SpellButton10"
         anchors.left: spellButton10.right
@@ -751,10 +696,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton10SubSpellName
         name: "SpellButton10SubSpellName"
-        kind: "FontString"
         text: "Rank 4"
         wowParent: "SpellButton10"
         anchors.left: spellButton10SpellName.left
@@ -764,10 +708,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton11
         name: "SpellButton11"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 50
@@ -777,10 +720,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton11SpellName
         name: "SpellButton11SpellName"
-        kind: "FontString"
         text: "Mind Flay"
         wowParent: "SpellButton11"
         anchors.left: spellButton11.right
@@ -791,10 +733,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton11SubSpellName
         name: "SpellButton11SubSpellName"
-        kind: "FontString"
         text: "Rank 9"
         wowParent: "SpellButton11"
         anchors.left: spellButton11SpellName.left
@@ -804,10 +745,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton12
         name: "SpellButton12"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 282
@@ -817,10 +757,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton12SpellName
         name: "SpellButton12SpellName"
-        kind: "FontString"
         text: "Shadow Protection"
         wowParent: "SpellButton12"
         anchors.left: spellButton12.right
@@ -831,10 +770,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton12SubSpellName
         name: "SpellButton12SubSpellName"
-        kind: "FontString"
         text: "Rank 5"
         wowParent: "SpellButton12"
         anchors.left: spellButton12SpellName.left
@@ -844,10 +782,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    FontString {
         id: spellButton1SpellName
         name: "SpellButton1SpellName"
-        kind: "FontString"
         text: "Devouring Plague"
         wowParent: "SpellButton1"
         anchors.left: spellButton1.right
@@ -858,10 +795,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton1SubSpellName
         name: "SpellButton1SubSpellName"
-        kind: "FontString"
         text: "Rank 9"
         wowParent: "SpellButton1"
         anchors.left: spellButton1SpellName.left
@@ -871,10 +807,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton2
         name: "SpellButton2"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 282
@@ -884,10 +819,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton2SpellName
         name: "SpellButton2SpellName"
-        kind: "FontString"
         text: "Mind Sear"
         wowParent: "SpellButton2"
         anchors.left: spellButton2.right
@@ -898,10 +832,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton2SubSpellName
         name: "SpellButton2SubSpellName"
-        kind: "FontString"
         text: "Rank 2"
         wowParent: "SpellButton2"
         anchors.left: spellButton2SpellName.left
@@ -911,10 +844,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton3
         name: "SpellButton3"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 50
@@ -924,10 +856,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton3SpellName
         name: "SpellButton3SpellName"
-        kind: "FontString"
         text: "Dispersion"
         wowParent: "SpellButton3"
         anchors.left: spellButton3.right
@@ -938,10 +869,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton3SubSpellName
         name: "SpellButton3SubSpellName"
-        kind: "FontString"
         wowParent: "SpellButton3"
         anchors.left: spellButton3SpellName.left
         anchors.top: spellButton3SpellName.bottom
@@ -950,10 +880,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton4
         name: "SpellButton4"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 282
@@ -963,10 +892,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton4SpellName
         name: "SpellButton4SpellName"
-        kind: "FontString"
         text: "Mind Soothe"
         wowParent: "SpellButton4"
         anchors.left: spellButton4.right
@@ -977,10 +905,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton4SubSpellName
         name: "SpellButton4SubSpellName"
-        kind: "FontString"
         wowParent: "SpellButton4"
         anchors.left: spellButton4SpellName.left
         anchors.top: spellButton4SpellName.bottom
@@ -989,10 +916,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton5
         name: "SpellButton5"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 50
@@ -1002,10 +928,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton5SpellName
         name: "SpellButton5SpellName"
-        kind: "FontString"
         text: "Fade"
         wowParent: "SpellButton5"
         anchors.left: spellButton5.right
@@ -1016,10 +941,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton5SubSpellName
         name: "SpellButton5SubSpellName"
-        kind: "FontString"
         wowParent: "SpellButton5"
         anchors.left: spellButton5SpellName.left
         anchors.top: spellButton5SpellName.bottom
@@ -1028,10 +952,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton6
         name: "SpellButton6"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 282
@@ -1041,10 +964,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton6SpellName
         name: "SpellButton6SpellName"
-        kind: "FontString"
         text: "Mind Vision"
         wowParent: "SpellButton6"
         anchors.left: spellButton6.right
@@ -1055,10 +977,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton6SubSpellName
         name: "SpellButton6SubSpellName"
-        kind: "FontString"
         text: "Rank 2"
         wowParent: "SpellButton6"
         anchors.left: spellButton6SpellName.left
@@ -1068,10 +989,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton7
         name: "SpellButton7"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 50
@@ -1081,10 +1001,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton7SpellName
         name: "SpellButton7SpellName"
-        kind: "FontString"
         text: "Mind Blast"
         wowParent: "SpellButton7"
         anchors.left: spellButton7.right
@@ -1095,10 +1014,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton7SubSpellName
         name: "SpellButton7SubSpellName"
-        kind: "FontString"
         text: "Rank 13"
         wowParent: "SpellButton7"
         anchors.left: spellButton7SpellName.left
@@ -1108,10 +1026,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton8
         name: "SpellButton8"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 282
@@ -1121,10 +1038,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton8SpellName
         name: "SpellButton8SpellName"
-        kind: "FontString"
         text: "Prayer of Shadow Protection"
         wowParent: "SpellButton8"
         anchors.left: spellButton8.right
@@ -1135,10 +1051,9 @@ WowWindow {
         height: 23.7
     }
 
-    Part {
+    FontString {
         id: spellButton8SubSpellName
         name: "SpellButton8SubSpellName"
-        kind: "FontString"
         text: "Rank 3"
         wowParent: "SpellButton8"
         anchors.left: spellButton8SpellName.left
@@ -1148,10 +1063,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    CheckButton {
         id: spellButton9
         name: "SpellButton9"
-        kind: "CheckButton"
         wowParent: "SpellBookFrame"
         anchors.left: spellBookFrameDiabolic.left
         anchors.leftMargin: 50
@@ -1161,10 +1075,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: spellButton9SpellName
         name: "SpellButton9SpellName"
-        kind: "FontString"
         text: "Mind Control"
         wowParent: "SpellButton9"
         anchors.left: spellButton9.right
@@ -1175,10 +1088,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: spellButton9SubSpellName
         name: "SpellButton9SubSpellName"
-        kind: "FontString"
         wowParent: "SpellButton9"
         anchors.left: spellButton9SpellName.left
         anchors.top: spellButton9SpellName.bottom

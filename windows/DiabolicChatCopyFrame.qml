@@ -9,10 +9,9 @@ WowWindow {
     width: 560
     height: 340
 
-    Part {
+    Frame {
         id: diabolicChatCopyFrameDiabolic
         name: "DiabolicChatCopyFrameDiabolic"
-        kind: "Frame"
         wowParent: "DiabolicChatCopyFrame"
         anchors.left: diabolicChatCopyFrame.left
         anchors.top: diabolicChatCopyFrame.top
@@ -20,10 +19,9 @@ WowWindow {
         height: 340
     }
 
-    Part {
+    Frame {
         id: diabolicChatCopyFrameDiabolicBorder
         name: "DiabolicChatCopyFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "DiabolicChatCopyFrameDiabolic"
         anchors.left: diabolicChatCopyFrameDiabolic.left
         anchors.top: diabolicChatCopyFrameDiabolic.top
@@ -31,10 +29,9 @@ WowWindow {
         height: 340
     }
 
-    Part {
+    Frame {
         id: diabolicChatCopyFrameDiabolicSocket
         name: "DiabolicChatCopyFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "DiabolicChatCopyFrameDiabolic"
         anchors.right: diabolicChatCopyFrameDiabolic.right
         anchors.rightMargin: 20
@@ -44,10 +41,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: diabolicChatCopyFrameDiabolicTitlePlate
         name: "DiabolicChatCopyFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "DiabolicChatCopyFrameDiabolic"
         anchors.horizontalCenter: diabolicChatCopyFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: diabolicChatCopyFrameDiabolicBorder.top
@@ -56,10 +52,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    ScrollFrame {
         id: diabolicChatCopyScroll
         name: "DiabolicChatCopyScroll"
-        kind: "ScrollFrame"
         wowParent: "DiabolicChatCopyFrame"
         anchors.left: diabolicChatCopyFrame.left
         anchors.leftMargin: 36
@@ -69,10 +64,9 @@ WowWindow {
         height: 268
     }
 
-    Part {
+    Frame {
         id: diabolicChatCopyScrollDiabolicPanel
         name: "DiabolicChatCopyScrollDiabolicPanel"
-        kind: "Frame"
         wowParent: "DiabolicChatCopyFrame"
         anchors.left: diabolicChatCopyScroll.left
         anchors.leftMargin: -6
@@ -82,10 +76,9 @@ WowWindow {
         height: 280
     }
 
-    Part {
+    Slider {
         id: diabolicChatCopyScrollScrollBar
         name: "DiabolicChatCopyScrollScrollBar"
-        kind: "Slider"
         wowParent: "DiabolicChatCopyScroll"
         style: "ScrollBar"
         anchors.left: diabolicChatCopyScroll.right
@@ -96,10 +89,9 @@ WowWindow {
         height: 236
     }
 
-    Part {
+    Frame {
         id: diabolicChatCopyScrollScrollBarDiabolicTrack
         name: "DiabolicChatCopyScrollScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "DiabolicChatCopyScrollScrollBar"
         anchors.horizontalCenter: diabolicChatCopyScrollScrollBarScrollUpButton.horizontalCenter
         anchors.top: diabolicChatCopyScrollScrollBarScrollUpButton.top
@@ -108,10 +100,9 @@ WowWindow {
         height: 270
     }
 
-    Part {
+    Button {
         id: diabolicChatCopyScrollScrollBarScrollDownButton
         name: "DiabolicChatCopyScrollScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "DiabolicChatCopyScrollScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: diabolicChatCopyScrollScrollBar.horizontalCenter
@@ -120,10 +111,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: diabolicChatCopyScrollScrollBarScrollUpButton
         name: "DiabolicChatCopyScrollScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "DiabolicChatCopyScrollScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: diabolicChatCopyScrollScrollBar.horizontalCenter

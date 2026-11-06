@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    CheckButton {
         id: macroButton1
         name: "MacroButton1"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButtonContainer.left
         anchors.leftMargin: 6
@@ -22,10 +21,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: macroButton10
         name: "MacroButton10"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton9.right
         anchors.leftMargin: 13
@@ -34,10 +32,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton10Name
         name: "MacroButton10Name"
-        kind: "FontString"
         wowParent: "MacroButton10"
         anchors.horizontalCenter: macroButton10.horizontalCenter
         anchors.bottom: macroButton10.bottom
@@ -46,10 +43,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton11
         name: "MacroButton11"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton10.right
         anchors.leftMargin: 13
@@ -58,10 +54,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton11Name
         name: "MacroButton11Name"
-        kind: "FontString"
         wowParent: "MacroButton11"
         anchors.horizontalCenter: macroButton11.horizontalCenter
         anchors.bottom: macroButton11.bottom
@@ -70,10 +65,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton12
         name: "MacroButton12"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton11.right
         anchors.leftMargin: 13
@@ -82,10 +76,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton12Name
         name: "MacroButton12Name"
-        kind: "FontString"
         wowParent: "MacroButton12"
         anchors.horizontalCenter: macroButton12.horizontalCenter
         anchors.bottom: macroButton12.bottom
@@ -94,10 +87,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton13
         name: "MacroButton13"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.horizontalCenter: macroButton7.horizontalCenter
         anchors.top: macroButton7.bottom
@@ -106,10 +98,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton13Name
         name: "MacroButton13Name"
-        kind: "FontString"
         wowParent: "MacroButton13"
         anchors.horizontalCenter: macroButton13.horizontalCenter
         anchors.bottom: macroButton13.bottom
@@ -118,10 +109,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton14
         name: "MacroButton14"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton13.right
         anchors.leftMargin: 13
@@ -130,10 +120,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton14Name
         name: "MacroButton14Name"
-        kind: "FontString"
         wowParent: "MacroButton14"
         anchors.horizontalCenter: macroButton14.horizontalCenter
         anchors.bottom: macroButton14.bottom
@@ -142,10 +131,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton15
         name: "MacroButton15"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton14.right
         anchors.leftMargin: 13
@@ -154,10 +142,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton15Name
         name: "MacroButton15Name"
-        kind: "FontString"
         wowParent: "MacroButton15"
         anchors.horizontalCenter: macroButton15.horizontalCenter
         anchors.bottom: macroButton15.bottom
@@ -166,10 +153,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton16
         name: "MacroButton16"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton15.right
         anchors.leftMargin: 13
@@ -178,10 +164,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton16Name
         name: "MacroButton16Name"
-        kind: "FontString"
         wowParent: "MacroButton16"
         anchors.horizontalCenter: macroButton16.horizontalCenter
         anchors.bottom: macroButton16.bottom
@@ -190,10 +175,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton17
         name: "MacroButton17"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton16.right
         anchors.leftMargin: 13
@@ -202,10 +186,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton17Name
         name: "MacroButton17Name"
-        kind: "FontString"
         wowParent: "MacroButton17"
         anchors.horizontalCenter: macroButton17.horizontalCenter
         anchors.bottom: macroButton17.bottom
@@ -214,10 +197,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton18
         name: "MacroButton18"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton17.right
         anchors.leftMargin: 13
@@ -226,10 +208,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton18Name
         name: "MacroButton18Name"
-        kind: "FontString"
         wowParent: "MacroButton18"
         anchors.horizontalCenter: macroButton18.horizontalCenter
         anchors.bottom: macroButton18.bottom
@@ -238,10 +219,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton19
         name: "MacroButton19"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.horizontalCenter: macroButton13.horizontalCenter
         anchors.top: macroButton13.bottom
@@ -250,10 +230,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton19Name
         name: "MacroButton19Name"
-        kind: "FontString"
         wowParent: "MacroButton19"
         anchors.horizontalCenter: macroButton19.horizontalCenter
         anchors.bottom: macroButton19.bottom
@@ -262,10 +241,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: macroButton1Name
         name: "MacroButton1Name"
-        kind: "FontString"
         text: "DUI Holy End"
         wowParent: "MacroButton1"
         anchors.horizontalCenter: macroButton1.horizontalCenter
@@ -275,10 +253,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton2
         name: "MacroButton2"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton1.right
         anchors.leftMargin: 13
@@ -287,10 +264,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: macroButton20
         name: "MacroButton20"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton19.right
         anchors.leftMargin: 13
@@ -299,10 +275,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton20Name
         name: "MacroButton20Name"
-        kind: "FontString"
         wowParent: "MacroButton20"
         anchors.horizontalCenter: macroButton20.horizontalCenter
         anchors.bottom: macroButton20.bottom
@@ -311,10 +286,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton21
         name: "MacroButton21"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton20.right
         anchors.leftMargin: 13
@@ -323,10 +297,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton21Name
         name: "MacroButton21Name"
-        kind: "FontString"
         wowParent: "MacroButton21"
         anchors.horizontalCenter: macroButton21.horizontalCenter
         anchors.bottom: macroButton21.bottom
@@ -335,10 +308,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton22
         name: "MacroButton22"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton21.right
         anchors.leftMargin: 13
@@ -347,10 +319,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton22Name
         name: "MacroButton22Name"
-        kind: "FontString"
         wowParent: "MacroButton22"
         anchors.horizontalCenter: macroButton22.horizontalCenter
         anchors.bottom: macroButton22.bottom
@@ -359,10 +330,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton23
         name: "MacroButton23"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton22.right
         anchors.leftMargin: 13
@@ -371,10 +341,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton23Name
         name: "MacroButton23Name"
-        kind: "FontString"
         wowParent: "MacroButton23"
         anchors.horizontalCenter: macroButton23.horizontalCenter
         anchors.bottom: macroButton23.bottom
@@ -383,10 +352,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton24
         name: "MacroButton24"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton23.right
         anchors.leftMargin: 13
@@ -395,10 +363,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton24Name
         name: "MacroButton24Name"
-        kind: "FontString"
         wowParent: "MacroButton24"
         anchors.horizontalCenter: macroButton24.horizontalCenter
         anchors.bottom: macroButton24.bottom
@@ -407,10 +374,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton25
         name: "MacroButton25"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.horizontalCenter: macroButton19.horizontalCenter
         anchors.top: macroButton19.bottom
@@ -419,10 +385,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton25Name
         name: "MacroButton25Name"
-        kind: "FontString"
         wowParent: "MacroButton25"
         anchors.horizontalCenter: macroButton25.horizontalCenter
         anchors.bottom: macroButton25.bottom
@@ -431,10 +396,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton26
         name: "MacroButton26"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton25.right
         anchors.leftMargin: 13
@@ -443,10 +407,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton26Name
         name: "MacroButton26Name"
-        kind: "FontString"
         wowParent: "MacroButton26"
         anchors.horizontalCenter: macroButton26.horizontalCenter
         anchors.bottom: macroButton26.bottom
@@ -455,10 +418,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton27
         name: "MacroButton27"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton26.right
         anchors.leftMargin: 13
@@ -467,10 +429,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton27Name
         name: "MacroButton27Name"
-        kind: "FontString"
         wowParent: "MacroButton27"
         anchors.horizontalCenter: macroButton27.horizontalCenter
         anchors.bottom: macroButton27.bottom
@@ -479,10 +440,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton28
         name: "MacroButton28"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton27.right
         anchors.leftMargin: 13
@@ -491,10 +451,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton28Name
         name: "MacroButton28Name"
-        kind: "FontString"
         wowParent: "MacroButton28"
         anchors.horizontalCenter: macroButton28.horizontalCenter
         anchors.bottom: macroButton28.bottom
@@ -503,10 +462,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton29
         name: "MacroButton29"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton28.right
         anchors.leftMargin: 13
@@ -515,10 +473,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton29Name
         name: "MacroButton29Name"
-        kind: "FontString"
         wowParent: "MacroButton29"
         anchors.horizontalCenter: macroButton29.horizontalCenter
         anchors.bottom: macroButton29.bottom
@@ -527,10 +484,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: macroButton2Name
         name: "MacroButton2Name"
-        kind: "FontString"
         text: "DUI Holy Start"
         wowParent: "MacroButton2"
         anchors.horizontalCenter: macroButton2.horizontalCenter
@@ -540,10 +496,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton3
         name: "MacroButton3"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton2.right
         anchors.leftMargin: 13
@@ -552,10 +507,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    CheckButton {
         id: macroButton30
         name: "MacroButton30"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton29.right
         anchors.leftMargin: 13
@@ -564,10 +518,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton30Name
         name: "MacroButton30Name"
-        kind: "FontString"
         wowParent: "MacroButton30"
         anchors.horizontalCenter: macroButton30.horizontalCenter
         anchors.bottom: macroButton30.bottom
@@ -576,10 +529,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton31
         name: "MacroButton31"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.horizontalCenter: macroButton25.horizontalCenter
         anchors.top: macroButton25.bottom
@@ -588,10 +540,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton31Name
         name: "MacroButton31Name"
-        kind: "FontString"
         wowParent: "MacroButton31"
         anchors.horizontalCenter: macroButton31.horizontalCenter
         anchors.bottom: macroButton31.bottom
@@ -600,10 +551,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton32
         name: "MacroButton32"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton31.right
         anchors.leftMargin: 13
@@ -612,10 +562,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton32Name
         name: "MacroButton32Name"
-        kind: "FontString"
         wowParent: "MacroButton32"
         anchors.horizontalCenter: macroButton32.horizontalCenter
         anchors.bottom: macroButton32.bottom
@@ -624,10 +573,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton33
         name: "MacroButton33"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton32.right
         anchors.leftMargin: 13
@@ -636,10 +584,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton33Name
         name: "MacroButton33Name"
-        kind: "FontString"
         wowParent: "MacroButton33"
         anchors.horizontalCenter: macroButton33.horizontalCenter
         anchors.bottom: macroButton33.bottom
@@ -648,10 +595,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton34
         name: "MacroButton34"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton33.right
         anchors.leftMargin: 13
@@ -660,10 +606,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton34Name
         name: "MacroButton34Name"
-        kind: "FontString"
         wowParent: "MacroButton34"
         anchors.horizontalCenter: macroButton34.horizontalCenter
         anchors.bottom: macroButton34.bottom
@@ -672,10 +617,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton35
         name: "MacroButton35"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton34.right
         anchors.leftMargin: 13
@@ -684,10 +628,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton35Name
         name: "MacroButton35Name"
-        kind: "FontString"
         wowParent: "MacroButton35"
         anchors.horizontalCenter: macroButton35.horizontalCenter
         anchors.bottom: macroButton35.bottom
@@ -696,10 +639,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton36
         name: "MacroButton36"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton35.right
         anchors.leftMargin: 13
@@ -708,10 +650,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton36Name
         name: "MacroButton36Name"
-        kind: "FontString"
         wowParent: "MacroButton36"
         anchors.horizontalCenter: macroButton36.horizontalCenter
         anchors.bottom: macroButton36.bottom
@@ -720,10 +661,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: macroButton3Name
         name: "MacroButton3Name"
-        kind: "FontString"
         text: "DUI Shadow End"
         wowParent: "MacroButton3"
         anchors.horizontalCenter: macroButton3.horizontalCenter
@@ -733,10 +673,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton4
         name: "MacroButton4"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton3.right
         anchors.leftMargin: 13
@@ -745,10 +684,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton4Name
         name: "MacroButton4Name"
-        kind: "FontString"
         text: "DUI Shadow Start"
         wowParent: "MacroButton4"
         anchors.horizontalCenter: macroButton4.horizontalCenter
@@ -758,10 +696,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton5
         name: "MacroButton5"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton4.right
         anchors.leftMargin: 13
@@ -770,10 +707,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton5Name
         name: "MacroButton5Name"
-        kind: "FontString"
         wowParent: "MacroButton5"
         anchors.horizontalCenter: macroButton5.horizontalCenter
         anchors.bottom: macroButton5.bottom
@@ -782,10 +718,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton6
         name: "MacroButton6"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton5.right
         anchors.leftMargin: 13
@@ -794,10 +729,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton6Name
         name: "MacroButton6Name"
-        kind: "FontString"
         wowParent: "MacroButton6"
         anchors.horizontalCenter: macroButton6.horizontalCenter
         anchors.bottom: macroButton6.bottom
@@ -806,10 +740,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton7
         name: "MacroButton7"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.horizontalCenter: macroButton1.horizontalCenter
         anchors.top: macroButton1.bottom
@@ -818,10 +751,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton7Name
         name: "MacroButton7Name"
-        kind: "FontString"
         wowParent: "MacroButton7"
         anchors.horizontalCenter: macroButton7.horizontalCenter
         anchors.bottom: macroButton7.bottom
@@ -830,10 +762,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton8
         name: "MacroButton8"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton7.right
         anchors.leftMargin: 13
@@ -842,10 +773,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton8Name
         name: "MacroButton8Name"
-        kind: "FontString"
         wowParent: "MacroButton8"
         anchors.horizontalCenter: macroButton8.horizontalCenter
         anchors.bottom: macroButton8.bottom
@@ -854,10 +784,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    CheckButton {
         id: macroButton9
         name: "MacroButton9"
-        kind: "CheckButton"
         wowParent: "MacroButtonContainer"
         anchors.left: macroButton8.right
         anchors.leftMargin: 13
@@ -866,10 +795,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroButton9Name
         name: "MacroButton9Name"
-        kind: "FontString"
         wowParent: "MacroButton9"
         anchors.horizontalCenter: macroButton9.horizontalCenter
         anchors.bottom: macroButton9.bottom
@@ -878,10 +806,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    Frame {
         id: macroButtonContainer
         name: "MacroButtonContainer"
-        kind: "Frame"
         wowParent: "MacroButtonScrollFrame"
         anchors.left: macroButtonScrollFrame.left
         anchors.top: macroButtonScrollFrame.top
@@ -891,10 +818,9 @@ WowWindow {
 
     // the icons and the macro 20 up and 6 left (as far from the band as from the
     // foot's bar, from the sides)
-    Part {
+    ScrollFrame {
         id: macroButtonScrollFrame
         name: "MacroButtonScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "MacroFrame"
         pin: "place"
         anchors.left: macroFrame.left
@@ -905,10 +831,9 @@ WowWindow {
         height: 146
     }
 
-    Part {
+    Frame {
         id: macroButtonScrollFrameDiabolicZone
         name: "MacroButtonScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "MacroFrame"
         anchors.left: macroButtonScrollFrame.left
         anchors.leftMargin: -6
@@ -918,10 +843,9 @@ WowWindow {
         height: 158
     }
 
-    Part {
+    Slider {
         id: macroButtonScrollFrameScrollBar
         name: "MacroButtonScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "MacroButtonScrollFrame"
         style: "ScrollBar"
         anchors.left: macroButtonScrollFrame.right
@@ -932,10 +856,9 @@ WowWindow {
         height: 114
     }
 
-    Part {
+    Frame {
         id: macroButtonScrollFrameScrollBarDiabolicTrack
         name: "MacroButtonScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "MacroButtonScrollFrameScrollBar"
         anchors.horizontalCenter: macroButtonScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: macroButtonScrollFrameScrollBarScrollUpButton.top
@@ -944,10 +867,9 @@ WowWindow {
         height: 148
     }
 
-    Part {
+    Button {
         id: macroButtonScrollFrameScrollBarScrollDownButton
         name: "MacroButtonScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "MacroButtonScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: macroButtonScrollFrameScrollBar.horizontalCenter
@@ -956,10 +878,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: macroButtonScrollFrameScrollBarScrollUpButton
         name: "MacroButtonScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "MacroButtonScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: macroButtonScrollFrameScrollBar.horizontalCenter
@@ -969,10 +890,9 @@ WowWindow {
     }
 
     // the buttons 10 down (30 over the window's bottom)
-    Part {
+    Button {
         id: macroDeleteButton
         name: "MacroDeleteButton"
-        kind: "Button"
         text: "Delete"
         wowParent: "MacroFrame"
         style: "Button"
@@ -985,10 +905,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: macroEditButton
         name: "MacroEditButton"
-        kind: "Button"
         text: "Change Name/Icon"
         wowParent: "MacroFrame"
         style: "Button"
@@ -1000,10 +919,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: macroEditButtonText
         name: "MacroEditButtonText"
-        kind: "FontString"
         text: "Change Name/Icon"
         wowParent: "MacroEditButton"
         anchors.horizontalCenter: macroEditButton.horizontalCenter
@@ -1012,10 +930,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: macroExitButton
         name: "MacroExitButton"
-        kind: "Button"
         text: "Exit"
         wowParent: "MacroFrame"
         style: "Button"
@@ -1027,10 +944,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: macroExitButtonText
         name: "MacroExitButtonText"
-        kind: "FontString"
         text: "Exit"
         wowParent: "MacroExitButton"
         anchors.horizontalCenter: macroExitButton.horizontalCenter
@@ -1041,10 +957,9 @@ WowWindow {
 
     // the count of characters right of "Enter Macro Commands:" (Blizzard's
     // under the text, over the foot)
-    Part {
+    FontString {
         id: macroFrameCharLimitText
         name: "MacroFrameCharLimitText"
-        kind: "FontString"
         text: "80/255 Characters Used"
         wowParent: "MacroFrame"
         pin: "place"
@@ -1055,10 +970,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    Button {
         id: macroFrameCloseButton
         name: "MacroFrameCloseButton"
-        kind: "Button"
         wowParent: "MacroFrame"
         style: "CloseButton"
         anchors.horizontalCenter: macroFrameDiabolic.right
@@ -1069,10 +983,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: macroFrameDiabolic
         name: "MacroFrameDiabolic"
-        kind: "Frame"
         wowParent: "MacroFrame"
         anchors.left: macroFrame.left
         anchors.leftMargin: -24
@@ -1082,10 +995,9 @@ WowWindow {
         height: 501
     }
 
-    Part {
+    Frame {
         id: macroFrameDiabolicBorder
         name: "MacroFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.left: macroFrameDiabolic.left
         anchors.top: macroFrameDiabolic.top
@@ -1094,10 +1006,9 @@ WowWindow {
         height: 469
     }
 
-    Part {
+    Frame {
         id: macroFrameDiabolicFoot
         name: "MacroFrameDiabolicFoot"
-        kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.horizontalCenter: macroExitButton.horizontalCenter
         anchors.horizontalCenterOffset: -122
@@ -1107,10 +1018,9 @@ WowWindow {
         height: 35
     }
 
-    Part {
+    Frame {
         id: macroFrameDiabolicRail
         name: "MacroFrameDiabolicRail"
-        kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.left: macroFrameDiabolic.left
         anchors.leftMargin: 18
@@ -1120,10 +1030,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: macroFrameDiabolicSocket
         name: "MacroFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.right: macroFrameDiabolic.right
         anchors.rightMargin: 20
@@ -1133,10 +1042,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: macroFrameDiabolicTitlePlate
         name: "MacroFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "MacroFrameDiabolic"
         anchors.horizontalCenter: macroFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: macroFrameDiabolicBorder.top
@@ -1145,10 +1053,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    FontString {
         id: macroFrameEnterMacroText
         name: "MacroFrameEnterMacroText"
-        kind: "FontString"
         text: "Enter Macro Commands:"
         wowParent: "MacroFrame"
         anchors.left: macroFrameSelectedMacroBackground.left
@@ -1158,10 +1065,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    ScrollFrame {
         id: macroFrameScrollFrame
         name: "MacroFrameScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "MacroFrame"
         anchors.left: macroFrameSelectedMacroBackground.left
         anchors.leftMargin: 11
@@ -1171,10 +1077,9 @@ WowWindow {
         height: 85
     }
 
-    Part {
+    Frame {
         id: macroFrameScrollFrameDiabolicZone
         name: "MacroFrameScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "MacroFrameScrollFrame"
         anchors.left: macroFrameScrollFrame.left
         anchors.leftMargin: -6
@@ -1184,10 +1089,9 @@ WowWindow {
         height: 97
     }
 
-    Part {
+    Slider {
         id: macroFrameScrollFrameScrollBar
         name: "MacroFrameScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "MacroFrameScrollFrame"
         style: "ScrollBar"
         anchors.left: macroFrameScrollFrame.right
@@ -1198,10 +1102,9 @@ WowWindow {
         height: 53
     }
 
-    Part {
+    Frame {
         id: macroFrameScrollFrameScrollBarDiabolicTrack
         name: "MacroFrameScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "MacroFrameScrollFrameScrollBar"
         anchors.horizontalCenter: macroFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: macroFrameScrollFrameScrollBarScrollUpButton.top
@@ -1210,10 +1113,9 @@ WowWindow {
         height: 87
     }
 
-    Part {
+    Button {
         id: macroFrameScrollFrameScrollBarScrollDownButton
         name: "MacroFrameScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "MacroFrameScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: macroFrameScrollFrameScrollBar.horizontalCenter
@@ -1222,10 +1124,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: macroFrameScrollFrameScrollBarScrollUpButton
         name: "MacroFrameScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "MacroFrameScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: macroFrameScrollFrameScrollBar.horizontalCenter
@@ -1246,10 +1147,9 @@ WowWindow {
         height: 64
     }
 
-    Part {
+    CheckButton {
         id: macroFrameSelectedMacroButton
         name: "MacroFrameSelectedMacroButton"
-        kind: "CheckButton"
         wowParent: "MacroFrame"
         anchors.left: macroFrameSelectedMacroBackground.left
         anchors.leftMargin: 14
@@ -1259,10 +1159,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: macroFrameSelectedMacroButtonName
         name: "MacroFrameSelectedMacroButtonName"
-        kind: "FontString"
         wowParent: "MacroFrameSelectedMacroButton"
         anchors.horizontalCenter: macroFrameSelectedMacroButton.horizontalCenter
         anchors.bottom: macroFrameSelectedMacroButton.bottom
@@ -1271,10 +1170,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: macroFrameSelectedMacroName
         name: "MacroFrameSelectedMacroName"
-        kind: "FontString"
         text: "DUI Holy End"
         wowParent: "MacroFrame"
         anchors.left: macroFrameSelectedMacroBackground.right
@@ -1285,10 +1183,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: macroFrameTab1
         name: "MacroFrameTab1"
-        kind: "Button"
         text: "General Macros"
         wowParent: "MacroFrame"
         style: "Banner"
@@ -1300,10 +1197,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: macroFrameTab2
         name: "MacroFrameTab2"
-        kind: "Button"
         text: "Padirac Specific Macros"
         wowParent: "MacroFrame"
         style: "Banner"
@@ -1315,10 +1211,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    EditBox {
         id: macroFrameText
         name: "MacroFrameText"
-        kind: "EditBox"
         wowParent: "MacroFrameScrollFrame"
         anchors.left: macroFrameScrollFrame.left
         anchors.top: macroFrameScrollFrame.top
@@ -1326,10 +1221,9 @@ WowWindow {
         height: 30.8
     }
 
-    Part {
+    Frame {
         id: macroFrameTextBackground
         name: "MacroFrameTextBackground"
-        kind: "Frame"
         wowParent: "MacroFrame"
         anchors.left: macroFrame.left
         anchors.leftMargin: 18
@@ -1339,10 +1233,9 @@ WowWindow {
         height: 95
     }
 
-    Part {
+    Button {
         id: macroFrameTextButton
         name: "MacroFrameTextButton"
-        kind: "Button"
         wowParent: "MacroFrame"
         anchors.left: macroFrameText.left
         anchors.top: macroFrameText.top
@@ -1350,10 +1243,9 @@ WowWindow {
         height: 85
     }
 
-    Part {
+    Button {
         id: macroNewButton
         name: "MacroNewButton"
-        kind: "Button"
         text: "New"
         wowParent: "MacroFrame"
         style: "Button"
@@ -1366,10 +1258,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: macroNewButtonText
         name: "MacroNewButtonText"
-        kind: "FontString"
         text: "New"
         wowParent: "MacroNewButton"
         anchors.horizontalCenter: macroNewButton.horizontalCenter

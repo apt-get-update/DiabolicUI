@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    Button {
         id: classTrainerCancelButton
         name: "ClassTrainerCancelButton"
-        kind: "Button"
         text: "Exit"
         wowParent: "ClassTrainerFrame"
         style: "Button"
@@ -24,10 +23,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: classTrainerCancelButtonText
         name: "ClassTrainerCancelButtonText"
-        kind: "FontString"
         text: "Exit"
         wowParent: "ClassTrainerCancelButton"
         anchors.horizontalCenter: classTrainerCancelButton.horizontalCenter
@@ -36,10 +34,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: classTrainerCollapseAllButton
         name: "ClassTrainerCollapseAllButton"
-        kind: "Button"
         text: "All"
         wowParent: "ClassTrainerExpandButtonFrame"
         anchors.left: classTrainerExpandTabLeft.right
@@ -49,10 +46,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: classTrainerCollapseAllButtonSubText
         name: "ClassTrainerCollapseAllButtonSubText"
-        kind: "FontString"
         wowParent: "ClassTrainerCollapseAllButton"
         anchors.left: classTrainerCollapseAllButton.left
         anchors.verticalCenter: classTrainerCollapseAllButton.verticalCenter
@@ -60,10 +56,9 @@ WowWindow {
         height: 1
     }
 
-    Part {
+    FontString {
         id: classTrainerCollapseAllButtonText
         name: "ClassTrainerCollapseAllButtonText"
-        kind: "FontString"
         text: "All"
         wowParent: "ClassTrainerCollapseAllButton"
         anchors.left: classTrainerCollapseAllButtonHighlight.right
@@ -74,10 +69,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerCostLabel
         name: "ClassTrainerCostLabel"
-        kind: "FontString"
         text: "Cost:"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerDetailScrollChildFrame.left
@@ -88,10 +82,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: classTrainerDetailMoneyFrame
         name: "ClassTrainerDetailMoneyFrame"
-        kind: "Frame"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerCostLabel.right
         anchors.leftMargin: 5
@@ -100,10 +93,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerDetailMoneyFrameCopperButton
         name: "ClassTrainerDetailMoneyFrameCopperButton"
-        kind: "Button"
         text: "8"
         wowParent: "ClassTrainerDetailMoneyFrame"
         anchors.right: classTrainerDetailMoneyFrame.right
@@ -113,10 +105,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerDetailMoneyFrameCopperButtonText
         name: "ClassTrainerDetailMoneyFrameCopperButtonText"
-        kind: "FontString"
         text: "8"
         wowParent: "ClassTrainerDetailMoneyFrameCopperButton"
         anchors.right: classTrainerDetailMoneyFrameCopperButton.right
@@ -126,10 +117,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: classTrainerDetailMoneyFrameGoldButton
         name: "ClassTrainerDetailMoneyFrameGoldButton"
-        kind: "Button"
         text: "1"
         wowParent: "ClassTrainerDetailMoneyFrame"
         anchors.right: classTrainerDetailMoneyFrameSilverButton.left
@@ -139,10 +129,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerDetailMoneyFrameGoldButtonText
         name: "ClassTrainerDetailMoneyFrameGoldButtonText"
-        kind: "FontString"
         text: "1"
         wowParent: "ClassTrainerDetailMoneyFrameGoldButton"
         anchors.right: classTrainerDetailMoneyFrameGoldButton.right
@@ -152,10 +141,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: classTrainerDetailMoneyFrameSilverButton
         name: "ClassTrainerDetailMoneyFrameSilverButton"
-        kind: "Button"
         text: "2"
         wowParent: "ClassTrainerDetailMoneyFrame"
         anchors.right: classTrainerDetailMoneyFrameCopperButton.left
@@ -165,10 +153,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerDetailMoneyFrameSilverButtonText
         name: "ClassTrainerDetailMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "2"
         wowParent: "ClassTrainerDetailMoneyFrameSilverButton"
         anchors.right: classTrainerDetailMoneyFrameSilverButton.right
@@ -178,10 +165,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: classTrainerDetailScrollChildFrame
         name: "ClassTrainerDetailScrollChildFrame"
-        kind: "Frame"
         wowParent: "ClassTrainerDetailScrollFrame"
         anchors.left: classTrainerDetailScrollFrame.left
         anchors.top: classTrainerDetailScrollFrame.top
@@ -190,10 +176,9 @@ WowWindow {
     }
 
     // the chosen one's page 6 under the list's (Blizzard's 8 under its text)
-    Part {
+    ScrollFrame {
         id: classTrainerDetailScrollFrame
         name: "ClassTrainerDetailScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "ClassTrainerFrame"
         pin: "place"
         anchors.left: classTrainerListScrollFrame.left
@@ -203,10 +188,9 @@ WowWindow {
         height: 95
     }
 
-    Part {
+    Frame {
         id: classTrainerDetailScrollFrameDiabolicPanel
         name: "ClassTrainerDetailScrollFrameDiabolicPanel"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerDetailScrollFrame.left
         anchors.leftMargin: -16
@@ -216,10 +200,9 @@ WowWindow {
         height: 107
     }
 
-    Part {
+    Frame {
         id: classTrainerDetailScrollFrameDiabolicParchment
         name: "ClassTrainerDetailScrollFrameDiabolicParchment"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.horizontalCenter: classTrainerDetailScrollFrame.horizontalCenter
         anchors.horizontalCenterOffset: 5
@@ -229,10 +212,9 @@ WowWindow {
         height: 103
     }
 
-    Part {
+    Slider {
         id: classTrainerDetailScrollFrameScrollBar
         name: "ClassTrainerDetailScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "ClassTrainerDetailScrollFrame"
         style: "ScrollBar"
         anchors.left: classTrainerDetailScrollFrame.right
@@ -243,10 +225,9 @@ WowWindow {
         height: 47
     }
 
-    Part {
+    Frame {
         id: classTrainerDetailScrollFrameScrollBarDiabolicTrack
         name: "ClassTrainerDetailScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "ClassTrainerDetailScrollFrameScrollBar"
         anchors.horizontalCenter: classTrainerDetailScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: classTrainerDetailScrollFrameScrollBarScrollUpButton.top
@@ -255,10 +236,9 @@ WowWindow {
         height: 81
     }
 
-    Part {
+    Button {
         id: classTrainerDetailScrollFrameScrollBarScrollDownButton
         name: "ClassTrainerDetailScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "ClassTrainerDetailScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: classTrainerDetailScrollFrameScrollBar.horizontalCenter
@@ -267,10 +247,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: classTrainerDetailScrollFrameScrollBarScrollUpButton
         name: "ClassTrainerDetailScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "ClassTrainerDetailScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: classTrainerDetailScrollFrameScrollBar.horizontalCenter
@@ -280,10 +259,9 @@ WowWindow {
     }
 
     // "All" and the list under the greeting (the chosen one's height: trainer.lua)
-    Part {
+    Frame {
         id: classTrainerExpandButtonFrame
         name: "ClassTrainerExpandButtonFrame"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         pin: "place"
         anchors.left: classTrainerFrame.left
@@ -294,10 +272,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    Button {
         id: classTrainerFrameCloseButton
         name: "ClassTrainerFrameCloseButton"
-        kind: "Button"
         wowParent: "ClassTrainerFrame"
         style: "CloseButton"
         anchors.horizontalCenter: classTrainerFrameDiabolic.right
@@ -308,10 +285,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameDiabolic
         name: "ClassTrainerFrameDiabolic"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerFrame.left
         anchors.leftMargin: -24
@@ -321,10 +297,9 @@ WowWindow {
         height: 513
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameDiabolicBand
         name: "ClassTrainerFrameDiabolicBand"
-        kind: "Frame"
         wowParent: "ClassTrainerFrameDiabolic"
         anchors.left: classTrainerFrameDiabolic.left
         anchors.leftMargin: 24
@@ -334,10 +309,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameDiabolicBorder
         name: "ClassTrainerFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "ClassTrainerFrameDiabolic"
         anchors.left: classTrainerFrameDiabolic.left
         anchors.top: classTrainerFrameDiabolic.top
@@ -345,10 +319,9 @@ WowWindow {
         height: 513
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameDiabolicFoot
         name: "ClassTrainerFrameDiabolicFoot"
-        kind: "Frame"
         wowParent: "ClassTrainerFrameDiabolic"
         anchors.horizontalCenter: classTrainerTrainButton.horizontalCenter
         anchors.horizontalCenterOffset: -37.7
@@ -358,10 +331,9 @@ WowWindow {
         height: 47
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameDiabolicSocket
         name: "ClassTrainerFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "ClassTrainerFrameDiabolic"
         anchors.right: classTrainerFrameDiabolic.right
         anchors.rightMargin: 20
@@ -371,10 +343,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameDiabolicTitlePlate
         name: "ClassTrainerFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "ClassTrainerFrameDiabolic"
         anchors.horizontalCenter: classTrainerFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: classTrainerFrameDiabolicBorder.top
@@ -383,10 +354,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameFilterDropDown
         name: "ClassTrainerFrameFilterDropDown"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         style: "DropDown"
         anchors.left: classTrainerFrameDiabolicBand.left
@@ -396,10 +366,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    Button {
         id: classTrainerFrameFilterDropDownButton
         name: "ClassTrainerFrameFilterDropDownButton"
-        kind: "Button"
         wowParent: "ClassTrainerFrameFilterDropDown"
         anchors.right: classTrainerFrameFilterDropDownDiabolicField.right
         anchors.rightMargin: 18
@@ -408,10 +377,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: classTrainerFrameFilterDropDownDiabolicField
         name: "ClassTrainerFrameFilterDropDownDiabolicField"
-        kind: "Frame"
         wowParent: "ClassTrainerFrameFilterDropDown"
         anchors.left: classTrainerFrameFilterDropDown.left
         anchors.verticalCenter: classTrainerFrameFilterDropDown.verticalCenter
@@ -419,10 +387,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: classTrainerFrameFilterDropDownText
         name: "ClassTrainerFrameFilterDropDownText"
-        kind: "FontString"
         text: "Filter"
         wowParent: "ClassTrainerFrameFilterDropDown"
         anchors.left: classTrainerFrameFilterDropDownDiabolicField.left
@@ -434,10 +401,9 @@ WowWindow {
 
     // the greeting across the list's width under the band, its panel's left on
     // the parchments', its right on their panels'
-    Part {
+    FontString {
         id: classTrainerGreetingText
         name: "ClassTrainerGreetingText"
-        kind: "FontString"
         text: "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
         wowParent: "ClassTrainerFrame"
         pin: "all"
@@ -449,10 +415,9 @@ WowWindow {
         height: 24
     }
 
-    Part {
+    Frame {
         id: classTrainerGreetingTextDiabolicPanel
         name: "ClassTrainerGreetingTextDiabolicPanel"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerGreetingText.left
         anchors.leftMargin: -4
@@ -462,10 +427,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    ScrollFrame {
         id: classTrainerListScrollFrame
         name: "ClassTrainerListScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "ClassTrainerFrame"
         pin: "place"
         anchors.right: classTrainerFrame.right
@@ -476,10 +440,9 @@ WowWindow {
         height: 168
     }
 
-    Part {
+    Frame {
         id: classTrainerListScrollFrameDiabolicPanel
         name: "ClassTrainerListScrollFrameDiabolicPanel"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerListScrollFrame.left
         anchors.leftMargin: -16
@@ -489,10 +452,9 @@ WowWindow {
         height: 180
     }
 
-    Part {
+    Frame {
         id: classTrainerListScrollFrameDiabolicParchment
         name: "ClassTrainerListScrollFrameDiabolicParchment"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerListScrollFrame.left
         anchors.leftMargin: -14
@@ -502,10 +464,9 @@ WowWindow {
         height: 176
     }
 
-    Part {
+    Slider {
         id: classTrainerListScrollFrameScrollBar
         name: "ClassTrainerListScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "ClassTrainerListScrollFrame"
         style: "ScrollBar"
         anchors.left: classTrainerListScrollFrame.right
@@ -516,10 +477,9 @@ WowWindow {
         height: 136
     }
 
-    Part {
+    Frame {
         id: classTrainerListScrollFrameScrollBarDiabolicTrack
         name: "ClassTrainerListScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "ClassTrainerListScrollFrameScrollBar"
         anchors.horizontalCenter: classTrainerListScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: classTrainerListScrollFrameScrollBarScrollUpButton.top
@@ -528,10 +488,9 @@ WowWindow {
         height: 170
     }
 
-    Part {
+    Button {
         id: classTrainerListScrollFrameScrollBarScrollDownButton
         name: "ClassTrainerListScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "ClassTrainerListScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: classTrainerListScrollFrameScrollBar.horizontalCenter
@@ -540,10 +499,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: classTrainerListScrollFrameScrollBarScrollUpButton
         name: "ClassTrainerListScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "ClassTrainerListScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: classTrainerListScrollFrameScrollBar.horizontalCenter
@@ -552,10 +510,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: classTrainerListScrollFrameScrollChildFrame
         name: "ClassTrainerListScrollFrameScrollChildFrame"
-        kind: "Frame"
         wowParent: "ClassTrainerListScrollFrame"
         anchors.left: classTrainerListScrollFrame.left
         anchors.top: classTrainerListScrollFrame.top
@@ -564,10 +521,9 @@ WowWindow {
         height: 1680
     }
 
-    Part {
+    Frame {
         id: classTrainerMoneyFrame
         name: "ClassTrainerMoneyFrame"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.right: classTrainerFrame.left
         anchors.rightMargin: -180
@@ -577,10 +533,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerMoneyFrameCopperButton
         name: "ClassTrainerMoneyFrameCopperButton"
-        kind: "Button"
         text: "13"
         wowParent: "ClassTrainerMoneyFrame"
         anchors.right: classTrainerMoneyFrame.right
@@ -590,10 +545,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerMoneyFrameCopperButtonText
         name: "ClassTrainerMoneyFrameCopperButtonText"
-        kind: "FontString"
         text: "13"
         wowParent: "ClassTrainerMoneyFrameCopperButton"
         anchors.right: classTrainerMoneyFrameCopperButton.right
@@ -603,10 +557,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: classTrainerMoneyFrameGoldButton
         name: "ClassTrainerMoneyFrameGoldButton"
-        kind: "Button"
         text: "3654"
         wowParent: "ClassTrainerMoneyFrame"
         anchors.right: classTrainerMoneyFrameSilverButton.left
@@ -616,10 +569,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerMoneyFrameGoldButtonText
         name: "ClassTrainerMoneyFrameGoldButtonText"
-        kind: "FontString"
         text: "3654"
         wowParent: "ClassTrainerMoneyFrameGoldButton"
         anchors.right: classTrainerMoneyFrameGoldButton.right
@@ -629,10 +581,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: classTrainerMoneyFrameSilverButton
         name: "ClassTrainerMoneyFrameSilverButton"
-        kind: "Button"
         text: "16"
         wowParent: "ClassTrainerMoneyFrame"
         anchors.right: classTrainerMoneyFrameCopperButton.left
@@ -642,10 +593,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerMoneyFrameSilverButtonText
         name: "ClassTrainerMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "16"
         wowParent: "ClassTrainerMoneyFrameSilverButton"
         anchors.right: classTrainerMoneyFrameSilverButton.right
@@ -655,10 +605,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    FontString {
         id: classTrainerNameText
         name: "ClassTrainerNameText"
-        kind: "FontString"
         text: "Georgio Bolero"
         wowParent: "ClassTrainerFrameDiabolicTitlePlate"
         anchors.horizontalCenter: classTrainerFrameDiabolicTitlePlate.horizontalCenter
@@ -668,10 +617,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: classTrainerSkill1
         name: "ClassTrainerSkill1"
-        kind: "Button"
         text: "  Apprentice Tailor"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerFrame.left
@@ -682,10 +630,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: classTrainerSkill10
         name: "ClassTrainerSkill10"
-        kind: "Button"
         text: "  Simple Linen Boots"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill9.left
@@ -694,10 +641,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill10SubText
         name: "ClassTrainerSkill10SubText"
-        kind: "FontString"
         text: "(Rank 9)"
         wowParent: "ClassTrainerSkill10"
         anchors.right: classTrainerSkill10.right
@@ -707,10 +653,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill10Text
         name: "ClassTrainerSkill10Text"
-        kind: "FontString"
         text: "  Simple Linen Boots"
         wowParent: "ClassTrainerSkill10"
         anchors.left: classTrainerSkill10Highlight.right
@@ -721,10 +666,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill11
         name: "ClassTrainerSkill11"
-        kind: "Button"
         text: "  Shadowfiend"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill10.left
@@ -733,10 +677,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill11SubText
         name: "ClassTrainerSkill11SubText"
-        kind: "FontString"
         text: "(Rank 4)"
         wowParent: "ClassTrainerSkill11"
         anchors.right: classTrainerSkill11.right
@@ -746,10 +689,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill11Text
         name: "ClassTrainerSkill11Text"
-        kind: "FontString"
         text: "  Shadowfiend"
         wowParent: "ClassTrainerSkill11"
         anchors.left: classTrainerSkill11Highlight.right
@@ -760,10 +702,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill1SubText
         name: "ClassTrainerSkill1SubText"
-        kind: "FontString"
         text: "(Rank 4)"
         wowParent: "ClassTrainerSkill1"
         anchors.right: classTrainerSkill1.right
@@ -773,10 +714,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill1Text
         name: "ClassTrainerSkill1Text"
-        kind: "FontString"
         text: "  Apprentice Tailor"
         wowParent: "ClassTrainerSkill1"
         anchors.left: classTrainerSkill1Highlight.right
@@ -787,10 +727,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill2
         name: "ClassTrainerSkill2"
-        kind: "Button"
         text: "  Journeyman Tailor"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill1.left
@@ -799,10 +738,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill2SubText
         name: "ClassTrainerSkill2SubText"
-        kind: "FontString"
         text: "(Rank 3)"
         wowParent: "ClassTrainerSkill2"
         anchors.right: classTrainerSkill2.right
@@ -812,10 +750,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill2Text
         name: "ClassTrainerSkill2Text"
-        kind: "FontString"
         text: "  Journeyman Tailor"
         wowParent: "ClassTrainerSkill2"
         anchors.left: classTrainerSkill2Highlight.right
@@ -826,10 +763,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill3
         name: "ClassTrainerSkill3"
-        kind: "Button"
         text: "  Expert Tailor"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill2.left
@@ -838,10 +774,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill3SubText
         name: "ClassTrainerSkill3SubText"
-        kind: "FontString"
         text: "(Rank 9)"
         wowParent: "ClassTrainerSkill3"
         anchors.right: classTrainerSkill3.right
@@ -851,10 +786,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill3Text
         name: "ClassTrainerSkill3Text"
-        kind: "FontString"
         text: "  Expert Tailor"
         wowParent: "ClassTrainerSkill3"
         anchors.left: classTrainerSkill3Highlight.right
@@ -865,10 +799,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill4
         name: "ClassTrainerSkill4"
-        kind: "Button"
         text: "  Artisan Tailor"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill3.left
@@ -877,10 +810,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill4SubText
         name: "ClassTrainerSkill4SubText"
-        kind: "FontString"
         text: "(Rank 8)"
         wowParent: "ClassTrainerSkill4"
         anchors.right: classTrainerSkill4.right
@@ -890,10 +822,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill4Text
         name: "ClassTrainerSkill4Text"
-        kind: "FontString"
         text: "  Artisan Tailor"
         wowParent: "ClassTrainerSkill4"
         anchors.left: classTrainerSkill4Highlight.right
@@ -904,10 +835,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill5
         name: "ClassTrainerSkill5"
-        kind: "Button"
         text: "Recipes"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill4.left
@@ -916,10 +846,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill5SubText
         name: "ClassTrainerSkill5SubText"
-        kind: "FontString"
         text: "(Rank 6)"
         wowParent: "ClassTrainerSkill5"
         anchors.right: classTrainerSkill5.right
@@ -929,10 +858,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill5Text
         name: "ClassTrainerSkill5Text"
-        kind: "FontString"
         text: "Recipes"
         wowParent: "ClassTrainerSkill5"
         anchors.left: classTrainerSkill5Highlight.right
@@ -943,10 +871,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill6
         name: "ClassTrainerSkill6"
-        kind: "Button"
         text: "  Brown Linen Shirt"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill5.left
@@ -955,10 +882,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill6SubText
         name: "ClassTrainerSkill6SubText"
-        kind: "FontString"
         text: "(Rank 6)"
         wowParent: "ClassTrainerSkill6"
         anchors.right: classTrainerSkill6.right
@@ -968,10 +894,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill6Text
         name: "ClassTrainerSkill6Text"
-        kind: "FontString"
         text: "  Brown Linen Shirt"
         wowParent: "ClassTrainerSkill6"
         anchors.left: classTrainerSkill6Highlight.right
@@ -982,10 +907,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill7
         name: "ClassTrainerSkill7"
-        kind: "Button"
         text: "  White Linen Shirt"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill6.left
@@ -994,10 +918,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill7SubText
         name: "ClassTrainerSkill7SubText"
-        kind: "FontString"
         text: "(Rank 2)"
         wowParent: "ClassTrainerSkill7"
         anchors.right: classTrainerSkill7.right
@@ -1007,10 +930,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill7Text
         name: "ClassTrainerSkill7Text"
-        kind: "FontString"
         text: "  White Linen Shirt"
         wowParent: "ClassTrainerSkill7"
         anchors.left: classTrainerSkill7Highlight.right
@@ -1021,10 +943,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill8
         name: "ClassTrainerSkill8"
-        kind: "Button"
         text: "  Brown Linen Vest"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill7.left
@@ -1033,10 +954,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill8SubText
         name: "ClassTrainerSkill8SubText"
-        kind: "FontString"
         text: "(Rank 1)"
         wowParent: "ClassTrainerSkill8"
         anchors.right: classTrainerSkill8.right
@@ -1046,10 +966,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill8Text
         name: "ClassTrainerSkill8Text"
-        kind: "FontString"
         text: "  Brown Linen Vest"
         wowParent: "ClassTrainerSkill8"
         anchors.left: classTrainerSkill8Highlight.right
@@ -1060,10 +979,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: classTrainerSkill9
         name: "ClassTrainerSkill9"
-        kind: "Button"
         text: "  Linen Belt"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill8.left
@@ -1072,10 +990,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill9SubText
         name: "ClassTrainerSkill9SubText"
-        kind: "FontString"
         text: "(Rank 10)"
         wowParent: "ClassTrainerSkill9"
         anchors.right: classTrainerSkill9.right
@@ -1085,10 +1002,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSkill9Text
         name: "ClassTrainerSkill9Text"
-        kind: "FontString"
         text: "  Linen Belt"
         wowParent: "ClassTrainerSkill9"
         anchors.left: classTrainerSkill9Highlight.right
@@ -1099,10 +1015,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: classTrainerSkillDescription
         name: "ClassTrainerSkillDescription"
-        kind: "FontString"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerCostLabel.left
         anchors.top: classTrainerCostLabel.bottom
@@ -1111,10 +1026,9 @@ WowWindow {
         height: 1
     }
 
-    Part {
+    Frame {
         id: classTrainerSkillHighlightFrame
         name: "ClassTrainerSkillHighlightFrame"
-        kind: "Frame"
         wowParent: "ClassTrainerFrame"
         anchors.left: classTrainerSkill1.left
         anchors.top: classTrainerSkill1.top
@@ -1122,10 +1036,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: classTrainerSkillIcon
         name: "ClassTrainerSkillIcon"
-        kind: "Button"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerDetailScrollChildFrame.left
         anchors.leftMargin: 5
@@ -1135,10 +1048,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: classTrainerSkillName
         name: "ClassTrainerSkillName"
-        kind: "FontString"
         text: "Apprentice Tailor"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerDetailScrollChildFrame.left
@@ -1149,10 +1061,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: classTrainerSkillRequirements
         name: "ClassTrainerSkillRequirements"
-        kind: "FontString"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerSkillName.left
         anchors.top: classTrainerSkillName.bottom
@@ -1160,10 +1071,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: classTrainerSubSkillName
         name: "ClassTrainerSubSkillName"
-        kind: "FontString"
         text: "()"
         wowParent: "ClassTrainerDetailScrollChildFrame"
         anchors.left: classTrainerSkillName.right
@@ -1173,10 +1083,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: classTrainerTrainButton
         name: "ClassTrainerTrainButton"
-        kind: "Button"
         text: "Train"
         wowParent: "ClassTrainerFrame"
         style: "Button"
@@ -1189,10 +1098,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: classTrainerTrainButtonText
         name: "ClassTrainerTrainButtonText"
-        kind: "FontString"
         text: "Train"
         wowParent: "ClassTrainerTrainButton"
         anchors.horizontalCenter: classTrainerTrainButton.horizontalCenter

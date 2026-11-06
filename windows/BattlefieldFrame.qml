@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    Button {
         id: battlefieldFrameCancelButton
         name: "BattlefieldFrameCancelButton"
-        kind: "Button"
         text: "Cancel"
         wowParent: "BattlefieldFrame"
         style: "Button"
@@ -24,10 +23,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameCancelButtonText
         name: "BattlefieldFrameCancelButtonText"
-        kind: "FontString"
         text: "Cancel"
         wowParent: "BattlefieldFrameCancelButton"
         anchors.horizontalCenter: battlefieldFrameCancelButton.horizontalCenter
@@ -36,10 +34,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: battlefieldFrameCloseButton
         name: "BattlefieldFrameCloseButton"
-        kind: "Button"
         wowParent: "BattlefieldFrame"
         style: "CloseButton"
         anchors.horizontalCenter: battlefieldFrameDiabolic.right
@@ -50,10 +47,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameDiabolic
         name: "BattlefieldFrameDiabolic"
-        kind: "Frame"
         wowParent: "BattlefieldFrame"
         anchors.left: battlefieldFrame.left
         anchors.leftMargin: -19
@@ -62,10 +58,9 @@ WowWindow {
         height: 473
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameDiabolicBorder
         name: "BattlefieldFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "BattlefieldFrameDiabolic"
         anchors.left: battlefieldFrameDiabolic.left
         anchors.top: battlefieldFrameDiabolic.top
@@ -73,10 +68,9 @@ WowWindow {
         height: 473
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameDiabolicSocket
         name: "BattlefieldFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "BattlefieldFrameDiabolic"
         anchors.right: battlefieldFrameDiabolic.right
         anchors.rightMargin: 20
@@ -86,10 +80,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameDiabolicTitlePlate
         name: "BattlefieldFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "BattlefieldFrameDiabolic"
         anchors.horizontalCenter: battlefieldFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: battlefieldFrameDiabolicBorder.top
@@ -98,10 +91,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameFrameLabel
         name: "BattlefieldFrameFrameLabel"
-        kind: "FontString"
         text: "Arathi Basin"
         wowParent: "BattlefieldFrameDiabolicTitlePlate"
         anchors.horizontalCenter: battlefieldFrameDiabolicTitlePlate.horizontalCenter
@@ -111,10 +103,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: battlefieldFrameGroupJoinButton
         name: "BattlefieldFrameGroupJoinButton"
-        kind: "Button"
         text: "Join as Group"
         wowParent: "BattlefieldFrame"
         style: "Button"
@@ -127,10 +118,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameGroupJoinButtonText
         name: "BattlefieldFrameGroupJoinButtonText"
-        kind: "FontString"
         text: "Join as Group"
         wowParent: "BattlefieldFrameGroupJoinButton"
         anchors.horizontalCenter: battlefieldFrameGroupJoinButton.horizontalCenter
@@ -141,10 +131,9 @@ WowWindow {
 
     // the rewards on slate too, under the instances: 16 higher (its panel clear
     // of the buttons), its top 7 lower (apart from theirs; Blizzard's 232 high)
-    Part {
+    ScrollFrame {
         id: battlefieldFrameInfoScrollFrame
         name: "BattlefieldFrameInfoScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "BattlefieldFrame"
         pin: "all"
         anchors.left: battlefieldFrame.left
@@ -155,10 +144,9 @@ WowWindow {
         height: 209
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameInfoScrollFrameChildFrame
         name: "BattlefieldFrameInfoScrollFrameChildFrame"
-        kind: "Frame"
         wowParent: "BattlefieldFrameInfoScrollFrame"
         anchors.left: battlefieldFrameInfoScrollFrame.left
         anchors.top: battlefieldFrameInfoScrollFrame.top
@@ -166,10 +154,9 @@ WowWindow {
         height: 1
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfo
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
-        kind: "Frame"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrame"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrame.left
         anchors.top: battlefieldFrameInfoScrollFrameChildFrame.top
@@ -177,10 +164,9 @@ WowWindow {
         height: 232
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoDescription
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoDescription"
-        kind: "FontString"
         text: "Your urgent assistance is needed to combat our foes! Completing this Battleground will earn you extra rewards."
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoTitle.left
@@ -190,10 +176,9 @@ WowWindow {
         height: 37.9
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
-        kind: "Frame"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward.left
         anchors.top: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward.bottom
@@ -202,10 +187,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount"
-        kind: "FontString"
         text: "620"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol.right
@@ -215,10 +199,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardLabel
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardLabel"
-        kind: "FontString"
         text: "Loss"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward.left
@@ -228,10 +211,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoRewardsLabel
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoRewardsLabel"
-        kind: "FontString"
         text: "Rewards"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoDescription.left
@@ -241,10 +223,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoTitle
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoTitle"
-        kind: "FontString"
         text: "Call to Arms"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfo.left
@@ -255,10 +236,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
-        kind: "Frame"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoRewardsLabel.left
         anchors.leftMargin: -19
@@ -268,10 +248,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaAmount
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaAmount"
-        kind: "FontString"
         text: "25"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol.right
@@ -281,10 +260,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount"
-        kind: "FontString"
         text: "3720"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol.right
@@ -294,10 +272,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardLabel
         name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardLabel"
-        kind: "FontString"
         text: "Win"
         wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
         anchors.left: battlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward.left
@@ -307,10 +284,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameInfoScrollFrameDiabolicZone
         name: "BattlefieldFrameInfoScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "BattlefieldFrame"
         anchors.horizontalCenter: battlefieldFrameInfoScrollFrame.horizontalCenter
         anchors.horizontalCenterOffset: 12
@@ -320,10 +296,9 @@ WowWindow {
         height: 221
     }
 
-    Part {
+    Slider {
         id: battlefieldFrameInfoScrollFrameScrollBar
         name: "BattlefieldFrameInfoScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "BattlefieldFrameInfoScrollFrame"
         style: "ScrollBar"
         anchors.left: battlefieldFrameInfoScrollFrame.right
@@ -334,10 +309,9 @@ WowWindow {
         height: 177
     }
 
-    Part {
+    Frame {
         id: battlefieldFrameInfoScrollFrameScrollBarDiabolicTrack
         name: "BattlefieldFrameInfoScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "BattlefieldFrameInfoScrollFrameScrollBar"
         anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton.top
@@ -346,10 +320,9 @@ WowWindow {
         height: 211
     }
 
-    Part {
+    Button {
         id: battlefieldFrameInfoScrollFrameScrollBarScrollDownButton
         name: "BattlefieldFrameInfoScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "BattlefieldFrameInfoScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBar.horizontalCenter
@@ -358,10 +331,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton
         name: "BattlefieldFrameInfoScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "BattlefieldFrameInfoScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBar.horizontalCenter
@@ -370,10 +342,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: battlefieldFrameJoinButton
         name: "BattlefieldFrameJoinButton"
-        kind: "Button"
         text: "Join Battle"
         wowParent: "BattlefieldFrame"
         style: "Button"
@@ -385,10 +356,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: battlefieldFrameJoinButtonText
         name: "BattlefieldFrameJoinButtonText"
-        kind: "FontString"
         text: "Join Battle"
         wowParent: "BattlefieldFrameJoinButton"
         anchors.horizontalCenter: battlefieldFrameJoinButton.horizontalCenter
@@ -398,10 +368,9 @@ WowWindow {
     }
 
     // "Battlefield Instance:" 5 higher, apart from its list
-    Part {
+    FontString {
         id: battlefieldFrameNameHeader
         name: "BattlefieldFrameNameHeader"
-        kind: "FontString"
         text: "Battlefield Instance:"
         wowParent: "BattlefieldFrame"
         pin: "place"
@@ -413,10 +382,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Frame {
         id: battlefieldListScrollFrameDiabolicZone
         name: "BattlefieldListScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "BattlefieldFrame"
         anchors.left: battlefieldListScrollFrame.left
         anchors.leftMargin: -6
@@ -426,10 +394,9 @@ WowWindow {
         height: 107
     }
 
-    Part {
+    Button {
         id: battlefieldZone1
         name: "BattlefieldZone1"
-        kind: "Button"
         text: "First Available"
         wowParent: "BattlefieldFrame"
         anchors.left: battlefieldFrame.left
@@ -440,10 +407,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: battlefieldZone1Text
         name: "BattlefieldZone1Text"
-        kind: "FontString"
         text: "First Available"
         wowParent: "BattlefieldZone1"
         anchors.left: battlefieldZone1.left

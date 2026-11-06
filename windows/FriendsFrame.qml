@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    Button {
         id: channelButton1
         name: "ChannelButton1"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelListScrollChildFrame.left
         anchors.top: channelListScrollChildFrame.top
@@ -20,10 +19,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton1Text
         name: "ChannelButton1Text"
-        kind: "FontString"
         wowParent: "ChannelButton1"
         anchors.left: channelButton1.left
         anchors.leftMargin: 5
@@ -32,10 +30,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton2
         name: "ChannelButton2"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton1.left
         anchors.top: channelButton1.bottom
@@ -43,10 +40,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton2Collapsed
         name: "ChannelButton2Collapsed"
-        kind: "FontString"
         text: "-"
         wowParent: "ChannelButton2"
         anchors.right: channelButton2.right
@@ -56,10 +52,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: channelButton2Text
         name: "ChannelButton2Text"
-        kind: "FontString"
         wowParent: "ChannelButton2"
         anchors.left: channelButton2.left
         anchors.leftMargin: 5
@@ -68,10 +63,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton3
         name: "ChannelButton3"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton2.left
         anchors.top: channelButton2.bottom
@@ -79,10 +73,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton3Text
         name: "ChannelButton3Text"
-        kind: "FontString"
         wowParent: "ChannelButton3"
         anchors.left: channelButton3.left
         anchors.leftMargin: 10
@@ -91,10 +84,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton4
         name: "ChannelButton4"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton3.left
         anchors.top: channelButton3.bottom
@@ -102,10 +94,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton4Text
         name: "ChannelButton4Text"
-        kind: "FontString"
         wowParent: "ChannelButton4"
         anchors.left: channelButton4.left
         anchors.leftMargin: 10
@@ -114,10 +105,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton5
         name: "ChannelButton5"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton4.left
         anchors.top: channelButton4.bottom
@@ -125,10 +115,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton5Text
         name: "ChannelButton5Text"
-        kind: "FontString"
         wowParent: "ChannelButton5"
         anchors.left: channelButton5.left
         anchors.leftMargin: 10
@@ -137,10 +126,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton6
         name: "ChannelButton6"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton5.left
         anchors.top: channelButton5.bottom
@@ -148,10 +136,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton6Collapsed
         name: "ChannelButton6Collapsed"
-        kind: "FontString"
         text: "-"
         wowParent: "ChannelButton6"
         anchors.right: channelButton6.right
@@ -161,10 +148,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: channelButton6Text
         name: "ChannelButton6Text"
-        kind: "FontString"
         wowParent: "ChannelButton6"
         anchors.left: channelButton6.left
         anchors.leftMargin: 5
@@ -173,10 +159,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton7
         name: "ChannelButton7"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton6.left
         anchors.top: channelButton6.bottom
@@ -184,10 +169,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton7Collapsed
         name: "ChannelButton7Collapsed"
-        kind: "FontString"
         text: "-"
         wowParent: "ChannelButton7"
         anchors.right: channelButton7.right
@@ -197,10 +181,9 @@ WowWindow {
         height: 15.8
     }
 
-    Part {
+    FontString {
         id: channelButton7Text
         name: "ChannelButton7Text"
-        kind: "FontString"
         wowParent: "ChannelButton7"
         anchors.left: channelButton7.left
         anchors.leftMargin: 10
@@ -209,10 +192,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Button {
         id: channelButton8
         name: "ChannelButton8"
-        kind: "Button"
         wowParent: "ChannelListScrollChildFrame"
         anchors.left: channelButton7.left
         anchors.top: channelButton7.bottom
@@ -220,10 +202,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: channelButton8Text
         name: "ChannelButton8Text"
-        kind: "FontString"
         wowParent: "ChannelButton8"
         anchors.left: channelButton8.left
         anchors.leftMargin: 10
@@ -232,10 +213,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    Frame {
         id: channelFrame
         name: "ChannelFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -243,10 +223,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Frame {
         id: channelFrameDaughterFrame
         name: "ChannelFrameDaughterFrame"
-        kind: "Frame"
         wowParent: "ChannelFrame"
         anchors.horizontalCenter: uIParent.horizontalCenter
         anchors.verticalCenter: uIParent.verticalCenter
@@ -255,10 +234,9 @@ WowWindow {
         height: 200
     }
 
-    Part {
+    Button {
         id: channelFrameDaughterFrameCancelButton
         name: "ChannelFrameDaughterFrameCancelButton"
-        kind: "Button"
         text: "Cancel"
         wowParent: "ChannelFrameDaughterFrame"
         anchors.right: channelFrameDaughterFrame.right
@@ -269,10 +247,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: channelFrameDaughterFrameCancelButtonText
         name: "ChannelFrameDaughterFrameCancelButtonText"
-        kind: "FontString"
         text: "Cancel"
         wowParent: "ChannelFrameDaughterFrameCancelButton"
         anchors.horizontalCenter: channelFrameDaughterFrameCancelButton.horizontalCenter
@@ -281,10 +258,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    EditBox {
         id: channelFrameDaughterFrameChannelName
         name: "ChannelFrameDaughterFrameChannelName"
-        kind: "EditBox"
         wowParent: "ChannelFrameDaughterFrame"
         anchors.left: channelFrameDaughterFrame.left
         anchors.leftMargin: 23
@@ -294,10 +270,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: channelFrameDaughterFrameChannelNameDiabolicField
         name: "ChannelFrameDaughterFrameChannelNameDiabolicField"
-        kind: "Frame"
         wowParent: "ChannelFrameDaughterFrameChannelName"
         anchors.left: channelFrameDaughterFrameChannelName.left
         anchors.leftMargin: -8
@@ -306,10 +281,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: channelFrameDaughterFrameChannelNameLabel
         name: "ChannelFrameDaughterFrameChannelNameLabel"
-        kind: "FontString"
         text: "Channel Name"
         wowParent: "ChannelFrameDaughterFrameChannelName"
         anchors.left: channelFrameDaughterFrameChannelName.left
@@ -319,10 +293,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    EditBox {
         id: channelFrameDaughterFrameChannelPassword
         name: "ChannelFrameDaughterFrameChannelPassword"
-        kind: "EditBox"
         wowParent: "ChannelFrameDaughterFrame"
         anchors.left: channelFrameDaughterFrameChannelName.left
         anchors.top: channelFrameDaughterFrameChannelName.bottom
@@ -331,10 +304,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: channelFrameDaughterFrameChannelPasswordDiabolicField
         name: "ChannelFrameDaughterFrameChannelPasswordDiabolicField"
-        kind: "Frame"
         wowParent: "ChannelFrameDaughterFrameChannelPassword"
         anchors.left: channelFrameDaughterFrameChannelPassword.left
         anchors.leftMargin: -8
@@ -343,10 +315,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: channelFrameDaughterFrameChannelPasswordLabel
         name: "ChannelFrameDaughterFrameChannelPasswordLabel"
-        kind: "FontString"
         text: "Password"
         wowParent: "ChannelFrameDaughterFrameChannelPassword"
         anchors.left: channelFrameDaughterFrameChannelPassword.left
@@ -356,10 +327,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    FontString {
         id: channelFrameDaughterFrameChannelPasswordOptional
         name: "ChannelFrameDaughterFrameChannelPasswordOptional"
-        kind: "FontString"
         text: "(optional)"
         wowParent: "ChannelFrameDaughterFrameChannelPassword"
         anchors.left: channelFrameDaughterFrameChannelPasswordLabel.right
@@ -369,10 +339,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelFrameDaughterFrameDetailCloseButton
         name: "ChannelFrameDaughterFrameDetailCloseButton"
-        kind: "Button"
         wowParent: "ChannelFrameDaughterFrame"
         anchors.right: channelFrameDaughterFrame.right
         anchors.rightMargin: 2
@@ -382,10 +351,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: channelFrameDaughterFrameName
         name: "ChannelFrameDaughterFrameName"
-        kind: "FontString"
         text: "New Channel"
         wowParent: "ChannelFrameDaughterFrame"
         anchors.horizontalCenter: channelFrameDaughterFrame.horizontalCenter
@@ -396,10 +364,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: channelFrameDaughterFrameOkayButton
         name: "ChannelFrameDaughterFrameOkayButton"
-        kind: "Button"
         text: "Okay"
         wowParent: "ChannelFrameDaughterFrame"
         anchors.right: channelFrameDaughterFrame.right
@@ -410,10 +377,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: channelFrameDaughterFrameOkayButtonText
         name: "ChannelFrameDaughterFrameOkayButtonText"
-        kind: "FontString"
         text: "Okay"
         wowParent: "ChannelFrameDaughterFrameOkayButton"
         anchors.horizontalCenter: channelFrameDaughterFrameOkayButton.horizontalCenter
@@ -422,10 +388,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelFrameNewButton
         name: "ChannelFrameNewButton"
-        kind: "Button"
         text: "Add"
         wowParent: "ChannelFrame"
         style: "Button"
@@ -437,10 +402,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: channelFrameNewButtonText
         name: "ChannelFrameNewButtonText"
-        kind: "FontString"
         text: "Add"
         wowParent: "ChannelFrameNewButton"
         anchors.horizontalCenter: channelFrameNewButton.horizontalCenter
@@ -449,10 +413,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: channelFrameVerticalBar
         name: "ChannelFrameVerticalBar"
-        kind: "Frame"
         wowParent: "ChannelFrame"
         anchors.horizontalCenter: channelFrame.horizontalCenter
         anchors.horizontalCenterOffset: 3
@@ -462,10 +425,9 @@ WowWindow {
         height: 300
     }
 
-    Part {
+    Frame {
         id: channelListScrollChildFrame
         name: "ChannelListScrollChildFrame"
-        kind: "Frame"
         wowParent: "ChannelListScrollFrame"
         anchors.left: channelListScrollFrame.left
         anchors.top: channelListScrollFrame.top
@@ -473,10 +435,9 @@ WowWindow {
         height: -1780
     }
 
-    Part {
+    ScrollFrame {
         id: channelListScrollFrame
         name: "ChannelListScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "ChannelFrame"
         anchors.left: channelFrame.left
         anchors.leftMargin: 20
@@ -486,10 +447,9 @@ WowWindow {
         height: 327
     }
 
-    Part {
+    Button {
         id: channelMemberButton1
         name: "ChannelMemberButton1"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelFrame.left
         anchors.leftMargin: 186
@@ -499,10 +459,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    Button {
         id: channelMemberButton10
         name: "ChannelMemberButton10"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton9.left
         anchors.top: channelMemberButton9.bottom
@@ -510,10 +469,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton10Name
         name: "ChannelMemberButton10Name"
-        kind: "FontString"
         text: "Carez"
         wowParent: "?"
         anchors.left: channelMemberButton10.left
@@ -524,10 +482,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton11
         name: "ChannelMemberButton11"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton10.left
         anchors.top: channelMemberButton10.bottom
@@ -535,10 +492,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton11Name
         name: "ChannelMemberButton11Name"
-        kind: "FontString"
         text: "Cattiviy"
         wowParent: "?"
         anchors.left: channelMemberButton11.left
@@ -549,10 +505,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton12
         name: "ChannelMemberButton12"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton11.left
         anchors.top: channelMemberButton11.bottom
@@ -560,10 +515,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton12Name
         name: "ChannelMemberButton12Name"
-        kind: "FontString"
         text: "Chickenbutt"
         wowParent: "?"
         anchors.left: channelMemberButton12.left
@@ -574,10 +528,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton13
         name: "ChannelMemberButton13"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton12.left
         anchors.top: channelMemberButton12.bottom
@@ -585,10 +538,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton13Name
         name: "ChannelMemberButton13Name"
-        kind: "FontString"
         text: "Chilliwilli"
         wowParent: "?"
         anchors.left: channelMemberButton13.left
@@ -599,10 +551,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton14
         name: "ChannelMemberButton14"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton13.left
         anchors.top: channelMemberButton13.bottom
@@ -610,10 +561,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton14Name
         name: "ChannelMemberButton14Name"
-        kind: "FontString"
         text: "Chillydruid"
         wowParent: "?"
         anchors.left: channelMemberButton14.left
@@ -624,10 +574,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton15
         name: "ChannelMemberButton15"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton14.left
         anchors.top: channelMemberButton14.bottom
@@ -635,10 +584,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton15Name
         name: "ChannelMemberButton15Name"
-        kind: "FontString"
         text: "Dirtymerlin"
         wowParent: "?"
         anchors.left: channelMemberButton15.left
@@ -649,10 +597,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton16
         name: "ChannelMemberButton16"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton15.left
         anchors.top: channelMemberButton15.bottom
@@ -660,10 +607,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton16Name
         name: "ChannelMemberButton16Name"
-        kind: "FontString"
         text: "Dodedodedum"
         wowParent: "?"
         anchors.left: channelMemberButton16.left
@@ -674,10 +620,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton17
         name: "ChannelMemberButton17"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton16.left
         anchors.top: channelMemberButton16.bottom
@@ -685,10 +630,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton17Name
         name: "ChannelMemberButton17Name"
-        kind: "FontString"
         text: "Dornoxia"
         wowParent: "?"
         anchors.left: channelMemberButton17.left
@@ -699,10 +643,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton18
         name: "ChannelMemberButton18"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton17.left
         anchors.top: channelMemberButton17.bottom
@@ -710,10 +653,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton18Name
         name: "ChannelMemberButton18Name"
-        kind: "FontString"
         text: "Endorhim"
         wowParent: "?"
         anchors.left: channelMemberButton18.left
@@ -724,10 +666,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton19
         name: "ChannelMemberButton19"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton18.left
         anchors.top: channelMemberButton18.bottom
@@ -735,10 +676,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton19Name
         name: "ChannelMemberButton19Name"
-        kind: "FontString"
         text: "Ependytis"
         wowParent: "?"
         anchors.left: channelMemberButton19.left
@@ -749,10 +689,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: channelMemberButton1Name
         name: "ChannelMemberButton1Name"
-        kind: "FontString"
         text: "Aashwath"
         wowParent: "?"
         anchors.left: channelMemberButton1.left
@@ -763,10 +702,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton2
         name: "ChannelMemberButton2"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton1.left
         anchors.top: channelMemberButton1.bottom
@@ -774,10 +712,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    Button {
         id: channelMemberButton20
         name: "ChannelMemberButton20"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton19.left
         anchors.top: channelMemberButton19.bottom
@@ -785,10 +722,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton20Name
         name: "ChannelMemberButton20Name"
-        kind: "FontString"
         text: "Estra"
         wowParent: "?"
         anchors.left: channelMemberButton20.left
@@ -799,10 +735,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton21
         name: "ChannelMemberButton21"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton20.left
         anchors.top: channelMemberButton20.bottom
@@ -810,10 +745,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton21Name
         name: "ChannelMemberButton21Name"
-        kind: "FontString"
         text: "Faenielle"
         wowParent: "?"
         anchors.left: channelMemberButton21.left
@@ -824,10 +758,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton22
         name: "ChannelMemberButton22"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton21.left
         anchors.top: channelMemberButton21.bottom
@@ -835,10 +768,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton22Name
         name: "ChannelMemberButton22Name"
-        kind: "FontString"
         text: "Fercho"
         wowParent: "?"
         anchors.left: channelMemberButton22.left
@@ -849,10 +781,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: channelMemberButton2Name
         name: "ChannelMemberButton2Name"
-        kind: "FontString"
         text: "Aendriel"
         wowParent: "?"
         anchors.left: channelMemberButton2.left
@@ -863,10 +794,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton3
         name: "ChannelMemberButton3"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton2.left
         anchors.top: channelMemberButton2.bottom
@@ -874,10 +804,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton3Name
         name: "ChannelMemberButton3Name"
-        kind: "FontString"
         text: "Aldore"
         wowParent: "?"
         anchors.left: channelMemberButton3.left
@@ -888,10 +817,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton4
         name: "ChannelMemberButton4"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton3.left
         anchors.top: channelMemberButton3.bottom
@@ -899,10 +827,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton4Name
         name: "ChannelMemberButton4Name"
-        kind: "FontString"
         text: "Amarin"
         wowParent: "?"
         anchors.left: channelMemberButton4.left
@@ -913,10 +840,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton5
         name: "ChannelMemberButton5"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton4.left
         anchors.top: channelMemberButton4.bottom
@@ -924,10 +850,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton5Name
         name: "ChannelMemberButton5Name"
-        kind: "FontString"
         text: "Aquablue"
         wowParent: "?"
         anchors.left: channelMemberButton5.left
@@ -938,10 +863,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton6
         name: "ChannelMemberButton6"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton5.left
         anchors.top: channelMemberButton5.bottom
@@ -949,10 +873,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton6Name
         name: "ChannelMemberButton6Name"
-        kind: "FontString"
         text: "Archidruid"
         wowParent: "?"
         anchors.left: channelMemberButton6.left
@@ -963,10 +886,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton7
         name: "ChannelMemberButton7"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton6.left
         anchors.top: channelMemberButton6.bottom
@@ -974,10 +896,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton7Name
         name: "ChannelMemberButton7Name"
-        kind: "FontString"
         text: "Armlok"
         wowParent: "?"
         anchors.left: channelMemberButton7.left
@@ -988,10 +909,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton8
         name: "ChannelMemberButton8"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton7.left
         anchors.top: channelMemberButton7.bottom
@@ -999,10 +919,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton8Name
         name: "ChannelMemberButton8Name"
-        kind: "FontString"
         text: "Bleedfury"
         wowParent: "?"
         anchors.left: channelMemberButton8.left
@@ -1013,10 +932,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: channelMemberButton9
         name: "ChannelMemberButton9"
-        kind: "Button"
         wowParent: "ChannelRoster"
         anchors.left: channelMemberButton8.left
         anchors.top: channelMemberButton8.bottom
@@ -1024,10 +942,9 @@ WowWindow {
         height: 15
     }
 
-    Part {
+    FontString {
         id: channelMemberButton9Name
         name: "ChannelMemberButton9Name"
-        kind: "FontString"
         text: "Bmachie"
         wowParent: "?"
         anchors.left: channelMemberButton9.left
@@ -1038,10 +955,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: channelRoster
         name: "ChannelRoster"
-        kind: "Frame"
         wowParent: "ChannelFrame"
         anchors.left: channelFrame.horizontalCenter
         anchors.leftMargin: 121
@@ -1051,10 +967,9 @@ WowWindow {
         height: 327
     }
 
-    Part {
+    FontString {
         id: channelRosterChannelCount
         name: "ChannelRosterChannelCount"
-        kind: "FontString"
         wowParent: "ChannelRoster"
         anchors.left: channelRosterChannelName.right
         anchors.verticalCenter: channelRosterChannelName.verticalCenter
@@ -1062,10 +977,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: channelRosterChannelName
         name: "ChannelRosterChannelName"
-        kind: "FontString"
         wowParent: "ChannelRoster"
         anchors.left: channelRoster.left
         anchors.leftMargin: -115
@@ -1075,10 +989,9 @@ WowWindow {
         height: 1
     }
 
-    Part {
+    ScrollFrame {
         id: channelRosterScrollFrame
         name: "ChannelRosterScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "ChannelRoster"
         anchors.right: channelFrame.right
         anchors.rightMargin: 39
@@ -1088,10 +1001,9 @@ WowWindow {
         height: 327
     }
 
-    Part {
+    Slider {
         id: channelRosterScrollFrameScrollBar
         name: "ChannelRosterScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "ChannelRosterScrollFrame"
         anchors.left: channelRosterScrollFrame.right
         anchors.leftMargin: 6
@@ -1101,10 +1013,9 @@ WowWindow {
         height: 295
     }
 
-    Part {
+    Frame {
         id: channelRosterScrollFrameScrollBarDiabolicTrack
         name: "ChannelRosterScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "ChannelRosterScrollFrameScrollBar"
         anchors.horizontalCenter: channelRosterScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: channelRosterScrollFrameScrollBarScrollUpButton.top
@@ -1113,10 +1024,9 @@ WowWindow {
         height: 329
     }
 
-    Part {
+    Button {
         id: channelRosterScrollFrameScrollBarScrollDownButton
         name: "ChannelRosterScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "ChannelRosterScrollFrameScrollBar"
         anchors.horizontalCenter: channelRosterScrollFrameScrollBar.horizontalCenter
         anchors.top: channelRosterScrollFrameScrollBar.bottom
@@ -1124,10 +1034,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: channelRosterScrollFrameScrollBarScrollUpButton
         name: "ChannelRosterScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "ChannelRosterScrollFrameScrollBar"
         anchors.horizontalCenter: channelRosterScrollFrameScrollBar.horizontalCenter
         anchors.bottom: channelRosterScrollFrameScrollBar.top
@@ -1135,10 +1044,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: channelRosterScrollFrameScrollChildFrame
         name: "ChannelRosterScrollFrameScrollChildFrame"
-        kind: "Frame"
         wowParent: "ChannelRosterScrollFrame"
         anchors.left: channelRosterScrollFrame.left
         anchors.top: channelRosterScrollFrame.top
@@ -1146,10 +1054,9 @@ WowWindow {
         height: 1245
     }
 
-    Part {
+    Button {
         id: friendsFrameAddFriendButton
         name: "FriendsFrameAddFriendButton"
-        kind: "Button"
         text: "Add Friend"
         wowParent: "FriendsListFrame"
         style: "Button"
@@ -1162,10 +1069,9 @@ WowWindow {
         height: 21
     }
 
-    Part {
+    FontString {
         id: friendsFrameAddFriendButtonText
         name: "FriendsFrameAddFriendButtonText"
-        kind: "FontString"
         text: "Add Friend"
         wowParent: "FriendsFrameAddFriendButton"
         anchors.horizontalCenter: friendsFrameAddFriendButton.horizontalCenter
@@ -1174,10 +1080,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: friendsFrameCloseButton
         name: "FriendsFrameCloseButton"
-        kind: "Button"
         wowParent: "FriendsFrame"
         style: "CloseButton"
         anchors.horizontalCenter: friendsFrameDiabolic.right
@@ -1188,10 +1093,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolic
         name: "FriendsFrameDiabolic"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.leftMargin: -20
@@ -1201,10 +1105,9 @@ WowWindow {
         height: 540
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolicBand
         name: "FriendsFrameDiabolicBand"
-        kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.left: friendsFrameDiabolic.left
         anchors.leftMargin: 24
@@ -1214,10 +1117,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolicBorder
         name: "FriendsFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.left: friendsFrameDiabolic.left
         anchors.top: friendsFrameDiabolic.top
@@ -1226,10 +1128,9 @@ WowWindow {
         height: 508
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolicFoot
         name: "FriendsFrameDiabolicFoot"
-        kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.horizontalCenter: guildFrameGuildInformationButton.horizontalCenter
         anchors.horizontalCenterOffset: 101.6
@@ -1239,10 +1140,9 @@ WowWindow {
         height: 47
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolicRail
         name: "FriendsFrameDiabolicRail"
-        kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.left: friendsFrameDiabolic.left
         anchors.leftMargin: 18
@@ -1252,10 +1152,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolicSocket
         name: "FriendsFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.right: friendsFrameDiabolic.right
         anchors.rightMargin: 20
@@ -1265,10 +1164,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: friendsFrameDiabolicTitlePlate
         name: "FriendsFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "FriendsFrameDiabolic"
         anchors.horizontalCenter: friendsFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: friendsFrameDiabolicBorder.top
@@ -1277,10 +1175,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    ScrollFrame {
         id: friendsFrameFriendsScrollFrame
         name: "FriendsFrameFriendsScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "FriendsListFrame"
         anchors.left: friendsFrame.left
         anchors.leftMargin: 21
@@ -1290,10 +1187,9 @@ WowWindow {
         height: 340
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton1
         name: "FriendsFrameFriendsScrollFrameButton1"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameScrollChild.left
         anchors.top: friendsFrameFriendsScrollFrameScrollChild.top
@@ -1301,10 +1197,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton10
         name: "FriendsFrameFriendsScrollFrameButton10"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton9.left
         anchors.top: friendsFrameFriendsScrollFrameButton9.bottom
@@ -1312,10 +1207,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton10Info
         name: "FriendsFrameFriendsScrollFrameButton10Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton10"
         anchors.left: friendsFrameFriendsScrollFrameButton10Name.left
@@ -1325,10 +1219,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton10Name
         name: "FriendsFrameFriendsScrollFrameButton10Name"
-        kind: "FontString"
         text: "Enby"
         wowParent: "FriendsFrameFriendsScrollFrameButton10"
         anchors.left: friendsFrameFriendsScrollFrameButton10.left
@@ -1339,10 +1232,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton11
         name: "FriendsFrameFriendsScrollFrameButton11"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton10.left
         anchors.top: friendsFrameFriendsScrollFrameButton10.bottom
@@ -1350,10 +1242,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton11Info
         name: "FriendsFrameFriendsScrollFrameButton11Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton11"
         anchors.left: friendsFrameFriendsScrollFrameButton11Name.left
@@ -1363,10 +1254,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton11Name
         name: "FriendsFrameFriendsScrollFrameButton11Name"
-        kind: "FontString"
         text: "Eske"
         wowParent: "FriendsFrameFriendsScrollFrameButton11"
         anchors.left: friendsFrameFriendsScrollFrameButton11.left
@@ -1377,10 +1267,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton12
         name: "FriendsFrameFriendsScrollFrameButton12"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton11.left
         anchors.top: friendsFrameFriendsScrollFrameButton11.bottom
@@ -1388,10 +1277,9 @@ WowWindow {
         height: 680
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton12Info
         name: "FriendsFrameFriendsScrollFrameButton12Info"
-        kind: "FontString"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12Name.left
         anchors.top: friendsFrameFriendsScrollFrameButton12Name.bottom
@@ -1400,10 +1288,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton12Name
         name: "FriendsFrameFriendsScrollFrameButton12Name"
-        kind: "FontString"
         wowParent: "FriendsFrameFriendsScrollFrameButton12"
         anchors.left: friendsFrameFriendsScrollFrameButton12.left
         anchors.leftMargin: 20
@@ -1413,10 +1300,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton1Info
         name: "FriendsFrameFriendsScrollFrameButton1Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton1"
         anchors.left: friendsFrameFriendsScrollFrameButton1Name.left
@@ -1426,10 +1312,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton1Name
         name: "FriendsFrameFriendsScrollFrameButton1Name"
-        kind: "FontString"
         text: "Annah"
         wowParent: "FriendsFrameFriendsScrollFrameButton1"
         anchors.left: friendsFrameFriendsScrollFrameButton1.left
@@ -1440,10 +1325,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton2
         name: "FriendsFrameFriendsScrollFrameButton2"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton1.left
         anchors.top: friendsFrameFriendsScrollFrameButton1.bottom
@@ -1451,10 +1335,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton2Info
         name: "FriendsFrameFriendsScrollFrameButton2Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton2"
         anchors.left: friendsFrameFriendsScrollFrameButton2Name.left
@@ -1464,10 +1347,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton2Name
         name: "FriendsFrameFriendsScrollFrameButton2Name"
-        kind: "FontString"
         text: "Apoyagtten"
         wowParent: "FriendsFrameFriendsScrollFrameButton2"
         anchors.left: friendsFrameFriendsScrollFrameButton2.left
@@ -1478,10 +1360,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton3
         name: "FriendsFrameFriendsScrollFrameButton3"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton2.left
         anchors.top: friendsFrameFriendsScrollFrameButton2.bottom
@@ -1489,10 +1370,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton3Info
         name: "FriendsFrameFriendsScrollFrameButton3Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton3"
         anchors.left: friendsFrameFriendsScrollFrameButton3Name.left
@@ -1502,10 +1382,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton3Name
         name: "FriendsFrameFriendsScrollFrameButton3Name"
-        kind: "FontString"
         text: "Clydruid"
         wowParent: "FriendsFrameFriendsScrollFrameButton3"
         anchors.left: friendsFrameFriendsScrollFrameButton3.left
@@ -1516,10 +1395,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton4
         name: "FriendsFrameFriendsScrollFrameButton4"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton3.left
         anchors.top: friendsFrameFriendsScrollFrameButton3.bottom
@@ -1527,10 +1405,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton4Info
         name: "FriendsFrameFriendsScrollFrameButton4Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton4"
         anchors.left: friendsFrameFriendsScrollFrameButton4Name.left
@@ -1540,10 +1417,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton4Name
         name: "FriendsFrameFriendsScrollFrameButton4Name"
-        kind: "FontString"
         text: "Cottonee"
         wowParent: "FriendsFrameFriendsScrollFrameButton4"
         anchors.left: friendsFrameFriendsScrollFrameButton4.left
@@ -1554,10 +1430,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton5
         name: "FriendsFrameFriendsScrollFrameButton5"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton4.left
         anchors.top: friendsFrameFriendsScrollFrameButton4.bottom
@@ -1565,10 +1440,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton5Info
         name: "FriendsFrameFriendsScrollFrameButton5Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton5"
         anchors.left: friendsFrameFriendsScrollFrameButton5Name.left
@@ -1578,10 +1452,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton5Name
         name: "FriendsFrameFriendsScrollFrameButton5Name"
-        kind: "FontString"
         text: "Darkdrifter"
         wowParent: "FriendsFrameFriendsScrollFrameButton5"
         anchors.left: friendsFrameFriendsScrollFrameButton5.left
@@ -1592,10 +1465,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton6
         name: "FriendsFrameFriendsScrollFrameButton6"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton5.left
         anchors.top: friendsFrameFriendsScrollFrameButton5.bottom
@@ -1603,10 +1475,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton6Info
         name: "FriendsFrameFriendsScrollFrameButton6Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton6"
         anchors.left: friendsFrameFriendsScrollFrameButton6Name.left
@@ -1616,10 +1487,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton6Name
         name: "FriendsFrameFriendsScrollFrameButton6Name"
-        kind: "FontString"
         text: "Dcde"
         wowParent: "FriendsFrameFriendsScrollFrameButton6"
         anchors.left: friendsFrameFriendsScrollFrameButton6.left
@@ -1630,10 +1500,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton7
         name: "FriendsFrameFriendsScrollFrameButton7"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton6.left
         anchors.top: friendsFrameFriendsScrollFrameButton6.bottom
@@ -1641,10 +1510,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton7Info
         name: "FriendsFrameFriendsScrollFrameButton7Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton7"
         anchors.left: friendsFrameFriendsScrollFrameButton7Name.left
@@ -1654,10 +1522,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton7Name
         name: "FriendsFrameFriendsScrollFrameButton7Name"
-        kind: "FontString"
         text: "Decadde"
         wowParent: "FriendsFrameFriendsScrollFrameButton7"
         anchors.left: friendsFrameFriendsScrollFrameButton7.left
@@ -1668,10 +1535,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton8
         name: "FriendsFrameFriendsScrollFrameButton8"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton7.left
         anchors.top: friendsFrameFriendsScrollFrameButton7.bottom
@@ -1679,10 +1545,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton8Info
         name: "FriendsFrameFriendsScrollFrameButton8Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton8"
         anchors.left: friendsFrameFriendsScrollFrameButton8Name.left
@@ -1692,10 +1557,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton8Name
         name: "FriendsFrameFriendsScrollFrameButton8Name"
-        kind: "FontString"
         text: "Droxus"
         wowParent: "FriendsFrameFriendsScrollFrameButton8"
         anchors.left: friendsFrameFriendsScrollFrameButton8.left
@@ -1706,10 +1570,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameButton9
         name: "FriendsFrameFriendsScrollFrameButton9"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollChild"
         anchors.left: friendsFrameFriendsScrollFrameButton8.left
         anchors.top: friendsFrameFriendsScrollFrameButton8.bottom
@@ -1717,10 +1580,9 @@ WowWindow {
         height: 34
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton9Info
         name: "FriendsFrameFriendsScrollFrameButton9Info"
-        kind: "FontString"
         text: "Unknown"
         wowParent: "FriendsFrameFriendsScrollFrameButton9"
         anchors.left: friendsFrameFriendsScrollFrameButton9Name.left
@@ -1730,10 +1592,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    FontString {
         id: friendsFrameFriendsScrollFrameButton9Name
         name: "FriendsFrameFriendsScrollFrameButton9Name"
-        kind: "FontString"
         text: "Drread"
         wowParent: "FriendsFrameFriendsScrollFrameButton9"
         anchors.left: friendsFrameFriendsScrollFrameButton9.left
@@ -1744,10 +1605,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Frame {
         id: friendsFrameFriendsScrollFrameDiabolicZone
         name: "FriendsFrameFriendsScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "FriendsListFrame"
         anchors.left: friendsFrameFriendsScrollFrame.left
         anchors.leftMargin: -6
@@ -1757,10 +1617,9 @@ WowWindow {
         height: 352
     }
 
-    Part {
+    Slider {
         id: friendsFrameFriendsScrollFrameScrollBar
         name: "FriendsFrameFriendsScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "FriendsFrameFriendsScrollFrame"
         style: "ScrollBar"
         pin: "place"
@@ -1774,10 +1633,9 @@ WowWindow {
         height: 310
     }
 
-    Part {
+    Frame {
         id: friendsFrameFriendsScrollFrameScrollBarDiabolicTrack
         name: "FriendsFrameFriendsScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "FriendsFrameFriendsScrollFrameScrollBar"
         anchors.horizontalCenter: friendsFrameFriendsScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: friendsFrameFriendsScrollFrameScrollBarScrollUpButton.top
@@ -1786,10 +1644,9 @@ WowWindow {
         height: 344
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameScrollBarScrollDownButton
         name: "FriendsFrameFriendsScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: friendsFrameFriendsScrollFrameScrollBar.horizontalCenter
@@ -1798,10 +1655,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: friendsFrameFriendsScrollFrameScrollBarScrollUpButton
         name: "FriendsFrameFriendsScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "FriendsFrameFriendsScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: friendsFrameFriendsScrollFrameScrollBar.horizontalCenter
@@ -1810,10 +1666,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: friendsFrameFriendsScrollFrameScrollChild
         name: "FriendsFrameFriendsScrollFrameScrollChild"
-        kind: "Frame"
         wowParent: "FriendsFrameFriendsScrollFrame"
         anchors.left: friendsFrameFriendsScrollFrame.left
         anchors.top: friendsFrameFriendsScrollFrame.top
@@ -1821,10 +1676,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton1
         name: "FriendsFrameIgnoreButton1"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         pin: "place"
         anchors.left: friendsFrame.left
@@ -1835,10 +1689,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton10
         name: "FriendsFrameIgnoreButton10"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton9.horizontalCenter
         anchors.top: friendsFrameIgnoreButton9.bottom
@@ -1846,10 +1699,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton10Name
         name: "FriendsFrameIgnoreButton10Name"
-        kind: "FontString"
         text: "Isotopebelle"
         wowParent: "FriendsFrameIgnoreButton10"
         anchors.left: friendsFrameIgnoreButton10.left
@@ -1860,10 +1712,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton11
         name: "FriendsFrameIgnoreButton11"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton10.horizontalCenter
         anchors.top: friendsFrameIgnoreButton10.bottom
@@ -1871,10 +1722,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton11Name
         name: "FriendsFrameIgnoreButton11Name"
-        kind: "FontString"
         text: "Thrallsonjr"
         wowParent: "FriendsFrameIgnoreButton11"
         anchors.left: friendsFrameIgnoreButton11.left
@@ -1885,10 +1735,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton12
         name: "FriendsFrameIgnoreButton12"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton11.horizontalCenter
         anchors.top: friendsFrameIgnoreButton11.bottom
@@ -1896,10 +1745,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton12Name
         name: "FriendsFrameIgnoreButton12Name"
-        kind: "FontString"
         text: "Tyrandewind"
         wowParent: "FriendsFrameIgnoreButton12"
         anchors.left: friendsFrameIgnoreButton12.left
@@ -1910,10 +1758,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton1Name
         name: "FriendsFrameIgnoreButton1Name"
-        kind: "FontString"
         wowParent: "FriendsFrameIgnoreButton1"
         anchors.left: friendsFrameIgnoreButton1.left
         anchors.leftMargin: 10
@@ -1923,10 +1770,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton2
         name: "FriendsFrameIgnoreButton2"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton1.horizontalCenter
         anchors.top: friendsFrameIgnoreButton1.bottom
@@ -1934,10 +1780,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton2Name
         name: "FriendsFrameIgnoreButton2Name"
-        kind: "FontString"
         text: "Booped"
         wowParent: "FriendsFrameIgnoreButton2"
         anchors.left: friendsFrameIgnoreButton2.left
@@ -1948,10 +1793,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton3
         name: "FriendsFrameIgnoreButton3"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton2.horizontalCenter
         anchors.top: friendsFrameIgnoreButton2.bottom
@@ -1959,10 +1803,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton3Name
         name: "FriendsFrameIgnoreButton3Name"
-        kind: "FontString"
         text: "Carmelita"
         wowParent: "FriendsFrameIgnoreButton3"
         anchors.left: friendsFrameIgnoreButton3.left
@@ -1973,10 +1816,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton4
         name: "FriendsFrameIgnoreButton4"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton3.horizontalCenter
         anchors.top: friendsFrameIgnoreButton3.bottom
@@ -1984,10 +1826,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton4Name
         name: "FriendsFrameIgnoreButton4Name"
-        kind: "FontString"
         text: "Chouafa"
         wowParent: "FriendsFrameIgnoreButton4"
         anchors.left: friendsFrameIgnoreButton4.left
@@ -1998,10 +1839,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton5
         name: "FriendsFrameIgnoreButton5"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton4.horizontalCenter
         anchors.top: friendsFrameIgnoreButton4.bottom
@@ -2009,10 +1849,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton5Name
         name: "FriendsFrameIgnoreButton5Name"
-        kind: "FontString"
         text: "Danty"
         wowParent: "FriendsFrameIgnoreButton5"
         anchors.left: friendsFrameIgnoreButton5.left
@@ -2023,10 +1862,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton6
         name: "FriendsFrameIgnoreButton6"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton5.horizontalCenter
         anchors.top: friendsFrameIgnoreButton5.bottom
@@ -2034,10 +1872,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton6Name
         name: "FriendsFrameIgnoreButton6Name"
-        kind: "FontString"
         text: "Droxus"
         wowParent: "FriendsFrameIgnoreButton6"
         anchors.left: friendsFrameIgnoreButton6.left
@@ -2048,10 +1885,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton7
         name: "FriendsFrameIgnoreButton7"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton6.horizontalCenter
         anchors.top: friendsFrameIgnoreButton6.bottom
@@ -2059,10 +1895,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton7Name
         name: "FriendsFrameIgnoreButton7Name"
-        kind: "FontString"
         text: "Faenyll"
         wowParent: "FriendsFrameIgnoreButton7"
         anchors.left: friendsFrameIgnoreButton7.left
@@ -2073,10 +1908,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton8
         name: "FriendsFrameIgnoreButton8"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton7.horizontalCenter
         anchors.top: friendsFrameIgnoreButton7.bottom
@@ -2084,10 +1918,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton8Name
         name: "FriendsFrameIgnoreButton8Name"
-        kind: "FontString"
         text: "Fransisco"
         wowParent: "FriendsFrameIgnoreButton8"
         anchors.left: friendsFrameIgnoreButton8.left
@@ -2098,10 +1931,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnoreButton9
         name: "FriendsFrameIgnoreButton9"
-        kind: "Button"
         wowParent: "IgnoreListFrame"
         anchors.horizontalCenter: friendsFrameIgnoreButton8.horizontalCenter
         anchors.top: friendsFrameIgnoreButton8.bottom
@@ -2109,10 +1941,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoreButton9Name
         name: "FriendsFrameIgnoreButton9Name"
-        kind: "FontString"
         text: "Harmful"
         wowParent: "FriendsFrameIgnoreButton9"
         anchors.left: friendsFrameIgnoreButton9.left
@@ -2123,10 +1954,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: friendsFrameIgnorePlayerButton
         name: "FriendsFrameIgnorePlayerButton"
-        kind: "Button"
         text: "Ignore Player"
         wowParent: "IgnoreListFrame"
         style: "Button"
@@ -2139,10 +1969,9 @@ WowWindow {
         height: 21
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnorePlayerButtonText
         name: "FriendsFrameIgnorePlayerButtonText"
-        kind: "FontString"
         text: "Ignore Player"
         wowParent: "FriendsFrameIgnorePlayerButton"
         anchors.horizontalCenter: friendsFrameIgnorePlayerButton.horizontalCenter
@@ -2151,10 +1980,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    ScrollFrame {
         id: friendsFrameIgnoreScrollFrame
         name: "FriendsFrameIgnoreScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "IgnoreListFrame"
         pin: "all"
         anchors.right: friendsFrame.right
@@ -2165,10 +1993,9 @@ WowWindow {
         height: 340
     }
 
-    Part {
+    Frame {
         id: friendsFrameIgnoreScrollFrameDiabolicZone
         name: "FriendsFrameIgnoreScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "IgnoreListFrame"
         anchors.left: friendsFrameIgnoreScrollFrame.left
         anchors.leftMargin: -6
@@ -2178,10 +2005,9 @@ WowWindow {
         height: 344
     }
 
-    Part {
+    Frame {
         id: friendsFrameIgnoredHeader
         name: "FriendsFrameIgnoredHeader"
-        kind: "Frame"
         wowParent: "FriendsFrameIgnoreButton1"
         anchors.left: friendsFrameIgnoreButton1.left
         anchors.top: friendsFrameIgnoreButton1.top
@@ -2189,10 +2015,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: friendsFrameIgnoredHeaderTitle
         name: "FriendsFrameIgnoredHeaderTitle"
-        kind: "FontString"
         text: "Ignored"
         wowParent: "FriendsFrameIgnoredHeader"
         anchors.left: friendsFrameIgnoredHeader.left
@@ -2203,10 +2028,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: friendsFrameSendMessageButton
         name: "FriendsFrameSendMessageButton"
-        kind: "Button"
         text: "Send Message"
         wowParent: "FriendsListFrame"
         style: "Button"
@@ -2218,10 +2042,9 @@ WowWindow {
         height: 21
     }
 
-    Part {
+    FontString {
         id: friendsFrameSendMessageButtonText
         name: "FriendsFrameSendMessageButtonText"
-        kind: "FontString"
         text: "Send Message"
         wowParent: "FriendsFrameSendMessageButton"
         anchors.horizontalCenter: friendsFrameSendMessageButton.horizontalCenter
@@ -2230,10 +2053,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: friendsFrameStatusDropDown
         name: "FriendsFrameStatusDropDown"
-        kind: "Frame"
         wowParent: "FriendsTabHeader"
         style: "DropDown"
         anchors.left: friendsFrameDiabolicBand.left
@@ -2243,10 +2065,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    Button {
         id: friendsFrameStatusDropDownButton
         name: "FriendsFrameStatusDropDownButton"
-        kind: "Button"
         wowParent: "FriendsFrameStatusDropDown"
         anchors.right: friendsFrameStatusDropDownDiabolicField.right
         anchors.rightMargin: 18
@@ -2255,10 +2076,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: friendsFrameStatusDropDownDiabolicField
         name: "FriendsFrameStatusDropDownDiabolicField"
-        kind: "Frame"
         wowParent: "FriendsFrameStatusDropDown"
         anchors.left: friendsFrameStatusDropDown.left
         anchors.verticalCenter: friendsFrameStatusDropDown.verticalCenter
@@ -2266,10 +2086,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: friendsFrameStatusDropDownMouseOver
         name: "FriendsFrameStatusDropDownMouseOver"
-        kind: "Frame"
         wowParent: "FriendsFrameStatusDropDown"
         anchors.left: friendsFrameStatusDropDown.left
         anchors.leftMargin: 16
@@ -2279,10 +2098,9 @@ WowWindow {
         height: 23
     }
 
-    Part {
+    Button {
         id: friendsFrameTab1
         name: "FriendsFrameTab1"
-        kind: "Button"
         text: "Friends"
         wowParent: "FriendsFrame"
         style: "Banner"
@@ -2294,10 +2112,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: friendsFrameTab2
         name: "FriendsFrameTab2"
-        kind: "Button"
         text: "Who"
         wowParent: "FriendsFrame"
         style: "Banner"
@@ -2309,10 +2126,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: friendsFrameTab3
         name: "FriendsFrameTab3"
-        kind: "Button"
         text: "Guild"
         wowParent: "FriendsFrame"
         style: "Banner"
@@ -2324,10 +2140,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: friendsFrameTab4
         name: "FriendsFrameTab4"
-        kind: "Button"
         text: "Chat"
         wowParent: "FriendsFrame"
         style: "Banner"
@@ -2339,10 +2154,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    Button {
         id: friendsFrameTab5
         name: "FriendsFrameTab5"
-        kind: "Button"
         text: "Raid"
         wowParent: "FriendsFrame"
         style: "Banner"
@@ -2354,10 +2168,9 @@ WowWindow {
         height: 116
     }
 
-    Part {
+    FontString {
         id: friendsFrameTitleText
         name: "FriendsFrameTitleText"
-        kind: "FontString"
         text: "Raid"
         wowParent: "FriendsFrameDiabolicTitlePlate"
         anchors.horizontalCenter: friendsFrameDiabolicTitlePlate.horizontalCenter
@@ -2367,10 +2180,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: friendsFrameUnsquelchButton
         name: "FriendsFrameUnsquelchButton"
-        kind: "Button"
         text: "Remove Player"
         wowParent: "IgnoreListFrame"
         style: "Button"
@@ -2383,10 +2195,9 @@ WowWindow {
         height: 21
     }
 
-    Part {
+    FontString {
         id: friendsFrameUnsquelchButtonText
         name: "FriendsFrameUnsquelchButtonText"
-        kind: "FontString"
         text: "Remove Player"
         wowParent: "FriendsFrameUnsquelchButton"
         anchors.horizontalCenter: friendsFrameUnsquelchButton.horizontalCenter
@@ -2395,10 +2206,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: friendsListFrame
         name: "FriendsListFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -2406,10 +2216,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Frame {
         id: friendsTabHeader
         name: "FriendsTabHeader"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -2417,10 +2226,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Button {
         id: friendsTabHeaderTab1
         name: "FriendsTabHeaderTab1"
-        kind: "Button"
         text: "Friends"
         wowParent: "FriendsTabHeader"
         style: "Tab"
@@ -2431,10 +2239,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    FontString {
         id: friendsTabHeaderTab1Text
         name: "FriendsTabHeaderTab1Text"
-        kind: "FontString"
         text: "Friends"
         wowParent: "FriendsTabHeaderTab1"
         anchors.horizontalCenter: friendsTabHeaderTab1.horizontalCenter
@@ -2444,10 +2251,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: friendsTabHeaderTab2
         name: "FriendsTabHeaderTab2"
-        kind: "Button"
         text: "Ignore"
         wowParent: "FriendsTabHeader"
         style: "Tab"
@@ -2457,10 +2263,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    FontString {
         id: friendsTabHeaderTab2Text
         name: "FriendsTabHeaderTab2Text"
-        kind: "FontString"
         text: "Ignore"
         wowParent: "FriendsTabHeaderTab2"
         anchors.horizontalCenter: friendsTabHeaderTab2.horizontalCenter
@@ -2470,10 +2275,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Frame {
         id: friendsTooltip
         name: "FriendsTooltip"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrameFriendsScrollFrameButton9.right
         anchors.leftMargin: 36
@@ -2482,10 +2286,9 @@ WowWindow {
         height: 35.8
     }
 
-    Part {
+    FontString {
         id: friendsTooltipHeader
         name: "FriendsTooltipHeader"
-        kind: "FontString"
         text: "Drread"
         wowParent: "FriendsTooltip"
         anchors.left: friendsTooltip.left
@@ -2496,10 +2299,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: friendsTooltipNoteText
         name: "FriendsTooltipNoteText"
-        kind: "FontString"
         text: "THE ONLY ONE"
         wowParent: "FriendsTooltip"
         anchors.horizontalCenter: friendsTooltipHeader.horizontalCenter
@@ -2510,10 +2312,9 @@ WowWindow {
         height: 8.7
     }
 
-    Part {
+    Frame {
         id: guildEventFrame
         name: "GuildEventFrame"
-        kind: "Frame"
         wowParent: "GuildEventLogFrame"
         anchors.left: guildEventLogFrame.left
         anchors.leftMargin: 11
@@ -2523,10 +2324,9 @@ WowWindow {
         height: 360
     }
 
-    Part {
+    Button {
         id: guildEventLogCancelButton
         name: "GuildEventLogCancelButton"
-        kind: "Button"
         text: "Close"
         wowParent: "GuildEventLogFrame"
         style: "Button"
@@ -2538,10 +2338,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildEventLogCancelButtonText
         name: "GuildEventLogCancelButtonText"
-        kind: "FontString"
         text: "Close"
         wowParent: "GuildEventLogCancelButton"
         anchors.horizontalCenter: guildEventLogCancelButton.horizontalCenter
@@ -2550,10 +2349,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: guildEventLogCloseButton
         name: "GuildEventLogCloseButton"
-        kind: "Button"
         wowParent: "GuildEventLogFrame"
         anchors.right: guildEventLogFrame.right
         anchors.rightMargin: 3
@@ -2563,10 +2361,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: guildEventLogFrame
         name: "GuildEventLogFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         pin: "place"
         anchors.left: friendsFrameDiabolic.right
@@ -2577,10 +2374,9 @@ WowWindow {
         height: 435
     }
 
-    Part {
+    Frame {
         id: guildEventLogScrollChildFrame
         name: "GuildEventLogScrollChildFrame"
-        kind: "Frame"
         wowParent: "GuildEventLogScrollFrame"
         anchors.left: guildEventLogScrollFrame.left
         anchors.top: guildEventLogScrollFrame.top
@@ -2589,10 +2385,9 @@ WowWindow {
         height: 359
     }
 
-    Part {
+    ScrollFrame {
         id: guildEventLogScrollFrame
         name: "GuildEventLogScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "GuildEventFrame"
         anchors.right: guildEventFrame.right
         anchors.rightMargin: 28
@@ -2602,10 +2397,9 @@ WowWindow {
         height: 349
     }
 
-    Part {
+    Slider {
         id: guildEventLogScrollFrameScrollBar
         name: "GuildEventLogScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "GuildEventLogScrollFrame"
         style: "ScrollBar"
         anchors.left: guildEventLogScrollFrame.right
@@ -2616,10 +2410,9 @@ WowWindow {
         height: 317
     }
 
-    Part {
+    Frame {
         id: guildEventLogScrollFrameScrollBarDiabolicTrack
         name: "GuildEventLogScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "GuildEventLogScrollFrameScrollBar"
         anchors.horizontalCenter: guildEventLogScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: guildEventLogScrollFrameScrollBarScrollUpButton.top
@@ -2628,10 +2421,9 @@ WowWindow {
         height: 351
     }
 
-    Part {
+    Button {
         id: guildEventLogScrollFrameScrollBarScrollDownButton
         name: "GuildEventLogScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "GuildEventLogScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: guildEventLogScrollFrameScrollBar.horizontalCenter
@@ -2640,10 +2432,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: guildEventLogScrollFrameScrollBarScrollUpButton
         name: "GuildEventLogScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "GuildEventLogScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: guildEventLogScrollFrameScrollBar.horizontalCenter
@@ -2652,10 +2443,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildEventLogTitle
         name: "GuildEventLogTitle"
-        kind: "FontString"
         text: "Log"
         wowParent: "GuildEventLogFrame"
         anchors.left: guildEventLogFrame.left
@@ -2666,10 +2456,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: guildEventMessage
         name: "GuildEventMessage"
-        kind: "FontString"
         wowParent: "GuildEventLogScrollChildFrame"
         anchors.left: guildEventLogScrollChildFrame.left
         anchors.top: guildEventLogScrollChildFrame.top
@@ -2677,10 +2466,9 @@ WowWindow {
         height: 1635.6
     }
 
-    Part {
+    Frame {
         id: guildFrame
         name: "GuildFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -2688,10 +2476,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Button {
         id: guildFrameAddMemberButton
         name: "GuildFrameAddMemberButton"
-        kind: "Button"
         text: "Add Member"
         wowParent: "GuildFrame"
         style: "Button"
@@ -2703,10 +2490,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildFrameAddMemberButtonText
         name: "GuildFrameAddMemberButtonText"
-        kind: "FontString"
         text: "Add Member"
         wowParent: "GuildFrameAddMemberButton"
         anchors.horizontalCenter: guildFrameAddMemberButton.horizontalCenter
@@ -2715,10 +2501,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: guildFrameButton1
         name: "GuildFrameButton1"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrame.left
         anchors.leftMargin: 15
@@ -2728,10 +2513,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton1Class
         name: "GuildFrameButton1Class"
-        kind: "FontString"
         text: "Warrior"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Level.right
@@ -2741,10 +2525,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton1Group
         name: "GuildFrameButton1Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Class.right
         anchors.verticalCenter: guildFrameButton1Class.verticalCenter
@@ -2752,10 +2535,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton1Level
         name: "GuildFrameButton1Level"
-        kind: "FontString"
         text: "70"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Zone.right
@@ -2765,10 +2547,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton1Name
         name: "GuildFrameButton1Name"
-        kind: "FontString"
         text: "Tocha"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1.left
@@ -2779,10 +2560,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton1Zone
         name: "GuildFrameButton1Zone"
-        kind: "FontString"
         text: "Borean Tundra"
         wowParent: "GuildFrameButton1"
         anchors.left: guildFrameButton1Name.right
@@ -2792,10 +2572,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton2
         name: "GuildFrameButton2"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton1.left
         anchors.top: guildFrameButton1.bottom
@@ -2803,10 +2582,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton2Class
         name: "GuildFrameButton2Class"
-        kind: "FontString"
         text: "Death Knight"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2Level.right
@@ -2816,10 +2594,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton2Group
         name: "GuildFrameButton2Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2Class.right
         anchors.verticalCenter: guildFrameButton2Class.verticalCenter
@@ -2827,10 +2604,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton2Level
         name: "GuildFrameButton2Level"
-        kind: "FontString"
         text: "80"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2Zone.right
@@ -2840,10 +2616,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton2Name
         name: "GuildFrameButton2Name"
-        kind: "FontString"
         text: "Chiftea"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2.left
@@ -2854,10 +2629,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton2Zone
         name: "GuildFrameButton2Zone"
-        kind: "FontString"
         text: "Dalaran"
         wowParent: "GuildFrameButton2"
         anchors.left: guildFrameButton2Name.right
@@ -2867,10 +2641,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton3
         name: "GuildFrameButton3"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton2.left
         anchors.top: guildFrameButton2.bottom
@@ -2878,10 +2651,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton3Class
         name: "GuildFrameButton3Class"
-        kind: "FontString"
         text: "Priest"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Level.right
@@ -2891,10 +2663,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton3Group
         name: "GuildFrameButton3Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Class.right
         anchors.verticalCenter: guildFrameButton3Class.verticalCenter
@@ -2902,10 +2673,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton3Level
         name: "GuildFrameButton3Level"
-        kind: "FontString"
         text: "80"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Zone.right
@@ -2915,10 +2685,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton3Name
         name: "GuildFrameButton3Name"
-        kind: "FontString"
         text: "Padirac"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3.left
@@ -2929,10 +2698,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton3Zone
         name: "GuildFrameButton3Zone"
-        kind: "FontString"
         text: "Stormwind City"
         wowParent: "GuildFrameButton3"
         anchors.left: guildFrameButton3Name.right
@@ -2942,10 +2710,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton4
         name: "GuildFrameButton4"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton3.left
         anchors.top: guildFrameButton3.bottom
@@ -2953,10 +2720,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton4Class
         name: "GuildFrameButton4Class"
-        kind: "FontString"
         text: "Mage"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Level.right
@@ -2966,10 +2732,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton4Group
         name: "GuildFrameButton4Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Class.right
         anchors.verticalCenter: guildFrameButton4Class.verticalCenter
@@ -2977,10 +2742,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton4Level
         name: "GuildFrameButton4Level"
-        kind: "FontString"
         text: "80"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Zone.right
@@ -2990,10 +2754,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton4Name
         name: "GuildFrameButton4Name"
-        kind: "FontString"
         text: "Stephanaeon"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4.left
@@ -3004,10 +2767,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton4Zone
         name: "GuildFrameButton4Zone"
-        kind: "FontString"
         text: "Halls of Stone"
         wowParent: "GuildFrameButton4"
         anchors.left: guildFrameButton4Name.right
@@ -3017,10 +2779,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton5
         name: "GuildFrameButton5"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton4.left
         anchors.top: guildFrameButton4.bottom
@@ -3028,10 +2789,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton5Class
         name: "GuildFrameButton5Class"
-        kind: "FontString"
         text: "Paladin"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Level.right
@@ -3041,10 +2801,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton5Group
         name: "GuildFrameButton5Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Class.right
         anchors.verticalCenter: guildFrameButton5Class.verticalCenter
@@ -3052,10 +2811,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton5Level
         name: "GuildFrameButton5Level"
-        kind: "FontString"
         text: "1"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Zone.right
@@ -3065,10 +2823,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton5Name
         name: "GuildFrameButton5Name"
-        kind: "FontString"
         text: "Discordignis"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5.left
@@ -3079,10 +2836,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton5Zone
         name: "GuildFrameButton5Zone"
-        kind: "FontString"
         text: "Azuremyst Isle"
         wowParent: "GuildFrameButton5"
         anchors.left: guildFrameButton5Name.right
@@ -3092,10 +2848,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton6
         name: "GuildFrameButton6"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton5.left
         anchors.top: guildFrameButton5.bottom
@@ -3103,10 +2858,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton6Class
         name: "GuildFrameButton6Class"
-        kind: "FontString"
         text: "Death Knight"
         wowParent: "GuildFrameButton6"
         anchors.left: guildFrameButton6Level.right
@@ -3116,10 +2870,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton6Group
         name: "GuildFrameButton6Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton6"
         anchors.left: guildFrameButton6Class.right
         anchors.verticalCenter: guildFrameButton6Class.verticalCenter
@@ -3127,10 +2880,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton6Level
         name: "GuildFrameButton6Level"
-        kind: "FontString"
         text: "80"
         wowParent: "GuildFrameButton6"
         anchors.left: guildFrameButton6Zone.right
@@ -3140,10 +2892,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton6Name
         name: "GuildFrameButton6Name"
-        kind: "FontString"
         text: "Ryddk"
         wowParent: "GuildFrameButton6"
         anchors.left: guildFrameButton6.left
@@ -3154,10 +2905,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton6Zone
         name: "GuildFrameButton6Zone"
-        kind: "FontString"
         text: "Naxxramas"
         wowParent: "GuildFrameButton6"
         anchors.left: guildFrameButton6Name.right
@@ -3167,10 +2917,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton7
         name: "GuildFrameButton7"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton6.left
         anchors.top: guildFrameButton6.bottom
@@ -3178,10 +2927,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton7Class
         name: "GuildFrameButton7Class"
-        kind: "FontString"
         text: "Mage"
         wowParent: "GuildFrameButton7"
         anchors.left: guildFrameButton7Level.right
@@ -3191,10 +2939,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton7Group
         name: "GuildFrameButton7Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton7"
         anchors.left: guildFrameButton7Class.right
         anchors.verticalCenter: guildFrameButton7Class.verticalCenter
@@ -3202,10 +2949,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton7Level
         name: "GuildFrameButton7Level"
-        kind: "FontString"
         text: "80"
         wowParent: "GuildFrameButton7"
         anchors.left: guildFrameButton7Zone.right
@@ -3215,10 +2961,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton7Name
         name: "GuildFrameButton7Name"
-        kind: "FontString"
         text: "Stephanaeon"
         wowParent: "GuildFrameButton7"
         anchors.left: guildFrameButton7.left
@@ -3229,10 +2974,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton7Zone
         name: "GuildFrameButton7Zone"
-        kind: "FontString"
         text: "Naxxramas"
         wowParent: "GuildFrameButton7"
         anchors.left: guildFrameButton7Name.right
@@ -3242,10 +2986,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameButton8
         name: "GuildFrameButton8"
-        kind: "Button"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameButton7.left
         anchors.top: guildFrameButton7.bottom
@@ -3253,10 +2996,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameButton8Class
         name: "GuildFrameButton8Class"
-        kind: "FontString"
         text: "Paladin"
         wowParent: "GuildFrameButton8"
         anchors.left: guildFrameButton8Level.right
@@ -3266,10 +3008,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton8Group
         name: "GuildFrameButton8Group"
-        kind: "FontString"
         wowParent: "GuildFrameButton8"
         anchors.left: guildFrameButton8Class.right
         anchors.verticalCenter: guildFrameButton8Class.verticalCenter
@@ -3277,10 +3018,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton8Level
         name: "GuildFrameButton8Level"
-        kind: "FontString"
         text: "1"
         wowParent: "GuildFrameButton8"
         anchors.left: guildFrameButton8Zone.right
@@ -3290,10 +3030,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton8Name
         name: "GuildFrameButton8Name"
-        kind: "FontString"
         text: "Discordignis"
         wowParent: "GuildFrameButton8"
         anchors.left: guildFrameButton8.left
@@ -3304,10 +3043,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: guildFrameButton8Zone
         name: "GuildFrameButton8Zone"
-        kind: "FontString"
         text: "Azuremyst Isle"
         wowParent: "GuildFrameButton8"
         anchors.left: guildFrameButton8Name.right
@@ -3317,10 +3055,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: guildFrameColumnHeader1
         name: "GuildFrameColumnHeader1"
-        kind: "Button"
         text: "Name"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildPlayerStatusFrame.left
@@ -3331,10 +3068,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: guildFrameColumnHeader2
         name: "GuildFrameColumnHeader2"
-        kind: "Button"
         text: "Zone"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameColumnHeader1.right
@@ -3344,10 +3080,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: guildFrameColumnHeader3
         name: "GuildFrameColumnHeader3"
-        kind: "Button"
         text: "Lvl"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameColumnHeader2.right
@@ -3357,10 +3092,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: guildFrameColumnHeader4
         name: "GuildFrameColumnHeader4"
-        kind: "Button"
         text: "Class"
         wowParent: "GuildPlayerStatusFrame"
         anchors.left: guildFrameColumnHeader3.right
@@ -3370,10 +3104,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: guildFrameControlButton
         name: "GuildFrameControlButton"
-        kind: "Button"
         text: "Guild Control"
         wowParent: "GuildFrame"
         style: "Button"
@@ -3385,10 +3118,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildFrameControlButtonText
         name: "GuildFrameControlButtonText"
-        kind: "FontString"
         text: "Guild Control"
         wowParent: "GuildFrameControlButton"
         anchors.horizontalCenter: guildFrameControlButton.horizontalCenter
@@ -3397,10 +3129,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: guildFrameGuildInformationButton
         name: "GuildFrameGuildInformationButton"
-        kind: "Button"
         text: "Guild Information"
         wowParent: "GuildFrame"
         style: "Button"
@@ -3413,10 +3144,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildFrameGuildInformationButtonText
         name: "GuildFrameGuildInformationButtonText"
-        kind: "FontString"
         text: "Guild Information"
         wowParent: "GuildFrameGuildInformationButton"
         anchors.horizontalCenter: guildFrameGuildInformationButton.horizontalCenter
@@ -3425,10 +3155,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: guildFrameGuildListToggleButton
         name: "GuildFrameGuildListToggleButton"
-        kind: "Button"
         text: "Player Status"
         wowParent: "GuildFrame"
         anchors.left: guildFrame.left
@@ -3439,10 +3168,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    CheckButton {
         id: guildFrameLFGButton
         name: "GuildFrameLFGButton"
-        kind: "CheckButton"
         wowParent: "GuildFrameLFGFrame"
         style: "CheckBox"
         anchors.left: friendsFrameDiabolicBand.left
@@ -3452,10 +3180,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    FontString {
         id: guildFrameLFGButtonText
         name: "GuildFrameLFGButtonText"
-        kind: "FontString"
         text: "Show Offline Members"
         wowParent: "GuildFrameLFGButton"
         anchors.left: guildFrameLFGButton.right
@@ -3465,10 +3192,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: guildFrameLFGFrame
         name: "GuildFrameLFGFrame"
-        kind: "Frame"
         wowParent: "GuildFrame"
         anchors.right: guildFrame.right
         anchors.rightMargin: 42
@@ -3478,10 +3204,9 @@ WowWindow {
         height: 23
     }
 
-    Part {
+    FontString {
         id: guildFrameNotesLabel
         name: "GuildFrameNotesLabel"
-        kind: "FontString"
         text: "Guild Message Of The Day:"
         wowParent: "GuildFrame"
         anchors.left: guildFrame.left
@@ -3492,10 +3217,9 @@ WowWindow {
         height: 11
     }
 
-    Part {
+    FontString {
         id: guildFrameNotesText
         name: "GuildFrameNotesText"
-        kind: "FontString"
         text: "https://discord.gg/Xkh2Q6kW4m - WE NEED MORE PET PICTURES "
         wowParent: "GuildFrame"
         anchors.left: guildFrameNotesLabel.left
@@ -3505,10 +3229,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    FontString {
         id: guildFrameOnlineTotals
         name: "GuildFrameOnlineTotals"
-        kind: "FontString"
         wowParent: "GuildFrame"
         anchors.left: guildFrameTotals.right
         anchors.leftMargin: 3
@@ -3517,10 +3240,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: guildFrameTotals
         name: "GuildFrameTotals"
-        kind: "FontString"
         wowParent: "GuildFrame"
         anchors.horizontalCenter: guildFrame.left
         anchors.horizontalCenterOffset: 75
@@ -3530,10 +3252,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: guildInfoCancelButton
         name: "GuildInfoCancelButton"
-        kind: "Button"
         text: "Close"
         wowParent: "GuildInfoFrame"
         style: "Button"
@@ -3545,10 +3266,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildInfoCancelButtonText
         name: "GuildInfoCancelButtonText"
-        kind: "FontString"
         text: "Close"
         wowParent: "GuildInfoCancelButton"
         anchors.horizontalCenter: guildInfoCancelButton.horizontalCenter
@@ -3557,10 +3277,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: guildInfoCloseButton
         name: "GuildInfoCloseButton"
-        kind: "Button"
         wowParent: "GuildInfoFrame"
         anchors.right: guildInfoFrame.right
         anchors.rightMargin: 3
@@ -3570,10 +3289,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    EditBox {
         id: guildInfoEditBox
         name: "GuildInfoEditBox"
-        kind: "EditBox"
         wowParent: "GuildInfoFrameScrollFrame"
         anchors.left: guildInfoFrameScrollFrame.left
         anchors.top: guildInfoFrameScrollFrame.top
@@ -3581,10 +3299,9 @@ WowWindow {
         height: 118.5
     }
 
-    Part {
+    Frame {
         id: guildInfoFrame
         name: "GuildInfoFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         pin: "place"
         anchors.left: friendsFrameDiabolic.right
@@ -3595,10 +3312,9 @@ WowWindow {
         height: 298
     }
 
-    Part {
+    ScrollFrame {
         id: guildInfoFrameScrollFrame
         name: "GuildInfoFrameScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "GuildInfoTextBackground"
         anchors.left: guildInfoTextBackground.left
         anchors.leftMargin: 5
@@ -3608,10 +3324,9 @@ WowWindow {
         height: 208
     }
 
-    Part {
+    Slider {
         id: guildInfoFrameScrollFrameScrollBar
         name: "GuildInfoFrameScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "GuildInfoFrameScrollFrame"
         style: "ScrollBar"
         anchors.left: guildInfoFrameScrollFrame.right
@@ -3622,10 +3337,9 @@ WowWindow {
         height: 176
     }
 
-    Part {
+    Frame {
         id: guildInfoFrameScrollFrameScrollBarDiabolicTrack
         name: "GuildInfoFrameScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "GuildInfoFrameScrollFrameScrollBar"
         anchors.horizontalCenter: guildInfoFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: guildInfoFrameScrollFrameScrollBarScrollUpButton.top
@@ -3634,10 +3348,9 @@ WowWindow {
         height: 210
     }
 
-    Part {
+    Button {
         id: guildInfoFrameScrollFrameScrollBarScrollDownButton
         name: "GuildInfoFrameScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "GuildInfoFrameScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: guildInfoFrameScrollFrameScrollBar.horizontalCenter
@@ -3646,10 +3359,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: guildInfoFrameScrollFrameScrollBarScrollUpButton
         name: "GuildInfoFrameScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "GuildInfoFrameScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: guildInfoFrameScrollFrameScrollBar.horizontalCenter
@@ -3658,10 +3370,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: guildInfoGuildEventButton
         name: "GuildInfoGuildEventButton"
-        kind: "Button"
         text: "Log"
         wowParent: "GuildInfoFrame"
         style: "Button"
@@ -3672,10 +3383,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildInfoGuildEventButtonText
         name: "GuildInfoGuildEventButtonText"
-        kind: "FontString"
         text: "Log"
         wowParent: "GuildInfoGuildEventButton"
         anchors.horizontalCenter: guildInfoGuildEventButton.horizontalCenter
@@ -3684,10 +3394,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: guildInfoSaveButton
         name: "GuildInfoSaveButton"
-        kind: "Button"
         text: "Accept"
         wowParent: "GuildInfoFrame"
         style: "Button"
@@ -3699,10 +3408,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: guildInfoSaveButtonText
         name: "GuildInfoSaveButtonText"
-        kind: "FontString"
         text: "Accept"
         wowParent: "GuildInfoSaveButton"
         anchors.horizontalCenter: guildInfoSaveButton.horizontalCenter
@@ -3711,10 +3419,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: guildInfoTextBackground
         name: "GuildInfoTextBackground"
-        kind: "Frame"
         wowParent: "GuildInfoFrame"
         anchors.left: guildInfoFrame.left
         anchors.leftMargin: 11
@@ -3724,10 +3431,9 @@ WowWindow {
         height: 220
     }
 
-    Part {
+    FontString {
         id: guildInfoTitle
         name: "GuildInfoTitle"
-        kind: "FontString"
         text: "Guild Information"
         wowParent: "GuildInfoFrame"
         anchors.left: guildInfoFrame.left
@@ -3738,10 +3444,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Frame {
         id: guildListScrollFrameDiabolicZone
         name: "GuildListScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "GuildFrame"
         anchors.left: guildListScrollFrame.left
         anchors.leftMargin: -6
@@ -3751,10 +3456,9 @@ WowWindow {
         height: 240
     }
 
-    Part {
+    Frame {
         id: guildListScrollFrameDiabolicZoneColumnBar
         name: "GuildListScrollFrameDiabolicZoneColumnBar"
-        kind: "Frame"
         wowParent: "GuildListScrollFrameDiabolicZone"
         anchors.left: guildListScrollFrameDiabolicZone.left
         anchors.bottom: guildListScrollFrameDiabolicZone.top
@@ -3762,10 +3466,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: guildMOTDEditButton
         name: "GuildMOTDEditButton"
-        kind: "Button"
         wowParent: "GuildFrame"
         anchors.left: guildFrameNotesText.left
         anchors.top: guildFrameNotesText.top
@@ -3773,10 +3476,9 @@ WowWindow {
         height: 36
     }
 
-    Part {
+    Frame {
         id: guildMemberDetailFrame
         name: "GuildMemberDetailFrame"
-        kind: "Frame"
         wowParent: "GuildFrame"
         pin: "place"
         anchors.left: friendsFrameDiabolic.right
@@ -3787,10 +3489,9 @@ WowWindow {
         height: 270
     }
 
-    Part {
+    Frame {
         id: guildPlayerStatusFrame
         name: "GuildPlayerStatusFrame"
-        kind: "Frame"
         wowParent: "GuildFrame"
         anchors.left: guildFrame.left
         anchors.top: guildFrame.top
@@ -3799,10 +3500,9 @@ WowWindow {
         height: 200
     }
 
-    Part {
+    Frame {
         id: ignoreListFrame
         name: "IgnoreListFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -3810,10 +3510,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Frame {
         id: raidFrame
         name: "RaidFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -3821,10 +3520,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Button {
         id: raidFrameConvertToRaidButton
         name: "RaidFrameConvertToRaidButton"
-        kind: "Button"
         text: "Convert To Raid"
         wowParent: "RaidFrame"
         style: "Button"
@@ -3835,10 +3533,9 @@ WowWindow {
         height: 21
     }
 
-    Part {
+    FontString {
         id: raidFrameConvertToRaidButtonText
         name: "RaidFrameConvertToRaidButtonText"
-        kind: "FontString"
         text: "Convert To Raid"
         wowParent: "RaidFrameConvertToRaidButton"
         anchors.horizontalCenter: raidFrameConvertToRaidButton.horizontalCenter
@@ -3847,10 +3544,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: raidFrameNotInRaid
         name: "RaidFrameNotInRaid"
-        kind: "Frame"
         wowParent: "RaidFrame"
         anchors.left: raidFrame.left
         anchors.top: raidFrame.top
@@ -3858,10 +3554,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Button {
         id: raidFrameNotInRaidRaidBrowserButton
         name: "RaidFrameNotInRaidRaidBrowserButton"
-        kind: "Button"
         text: "Open Raid Browser"
         wowParent: "RaidFrameNotInRaid"
         style: "Button"
@@ -3872,10 +3567,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: raidFrameNotInRaidRaidBrowserButtonText
         name: "RaidFrameNotInRaidRaidBrowserButtonText"
-        kind: "FontString"
         text: "Open Raid Browser"
         wowParent: "RaidFrameNotInRaidRaidBrowserButton"
         anchors.horizontalCenter: raidFrameNotInRaidRaidBrowserButton.horizontalCenter
@@ -3884,10 +3578,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: raidFrameRaidBrowserDescription
         name: "RaidFrameRaidBrowserDescription"
-        kind: "FontString"
         text: "Find a Raid Group or Assemble a Raid"
         wowParent: "RaidFrameNotInRaid"
         anchors.horizontalCenter: raidFrameRaidDescription.horizontalCenter
@@ -3897,10 +3590,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: raidFrameRaidDescription
         name: "RaidFrameRaidDescription"
-        kind: "FontString"
         wowParent: "RaidFrameNotInRaid"
         anchors.left: raidFrameNotInRaid.left
         anchors.leftMargin: 29
@@ -3910,10 +3602,9 @@ WowWindow {
         height: 165.9
     }
 
-    Part {
+    Button {
         id: raidFrameRaidInfoButton
         name: "RaidFrameRaidInfoButton"
-        kind: "Button"
         text: "Raid Info"
         wowParent: "RaidFrame"
         style: "Button"
@@ -3924,10 +3615,9 @@ WowWindow {
         height: 21
     }
 
-    Part {
+    FontString {
         id: raidFrameRaidInfoButtonText
         name: "RaidFrameRaidInfoButtonText"
-        kind: "FontString"
         text: "Raid Info"
         wowParent: "RaidFrameRaidInfoButton"
         anchors.horizontalCenter: raidFrameRaidInfoButton.horizontalCenter
@@ -3936,10 +3626,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Frame {
         id: whoFrame
         name: "WhoFrame"
-        kind: "Frame"
         wowParent: "FriendsFrame"
         anchors.left: friendsFrame.left
         anchors.top: friendsFrame.top
@@ -3947,10 +3636,9 @@ WowWindow {
         height: 512
     }
 
-    Part {
+    Button {
         id: whoFrameAddFriendButton
         name: "WhoFrameAddFriendButton"
-        kind: "Button"
         text: "Add Friend"
         wowParent: "WhoFrame"
         style: "Button"
@@ -3962,10 +3650,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: whoFrameAddFriendButtonText
         name: "WhoFrameAddFriendButtonText"
-        kind: "FontString"
         text: "Add Friend"
         wowParent: "WhoFrameAddFriendButton"
         anchors.horizontalCenter: whoFrameAddFriendButton.horizontalCenter
@@ -3974,10 +3661,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    Button {
         id: whoFrameButton1
         name: "WhoFrameButton1"
-        kind: "Button"
         wowParent: "WhoFrame"
         pin: "place"
         anchors.left: whoFrame.left
@@ -3988,10 +3674,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: whoFrameButton10
         name: "WhoFrameButton10"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton9.left
         anchors.top: whoFrameButton9.bottom
@@ -3999,10 +3684,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton10Class
         name: "WhoFrameButton10Class"
-        kind: "FontString"
         text: "Druid"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10Level.right
@@ -4012,10 +3696,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton10Level
         name: "WhoFrameButton10Level"
-        kind: "FontString"
         text: "73"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10Variable.right
@@ -4025,10 +3708,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton10Name
         name: "WhoFrameButton10Name"
-        kind: "FontString"
         text: "Hindel"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10.left
@@ -4039,10 +3721,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton10Variable
         name: "WhoFrameButton10Variable"
-        kind: "FontString"
         text: "Stormwind City"
         wowParent: "WhoFrameButton10"
         anchors.left: whoFrameButton10Name.right
@@ -4051,10 +3732,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton11
         name: "WhoFrameButton11"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton10.left
         anchors.top: whoFrameButton10.bottom
@@ -4062,10 +3742,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton11Class
         name: "WhoFrameButton11Class"
-        kind: "FontString"
         text: "Priest"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11Level.right
@@ -4075,10 +3754,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton11Level
         name: "WhoFrameButton11Level"
-        kind: "FontString"
         text: "33"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11Variable.right
@@ -4088,10 +3766,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton11Name
         name: "WhoFrameButton11Name"
-        kind: "FontString"
         text: "Kassara"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11.left
@@ -4102,10 +3779,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton11Variable
         name: "WhoFrameButton11Variable"
-        kind: "FontString"
         text: "Stranglethorn Vale"
         wowParent: "WhoFrameButton11"
         anchors.left: whoFrameButton11Name.right
@@ -4114,10 +3790,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton12
         name: "WhoFrameButton12"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton11.left
         anchors.top: whoFrameButton11.bottom
@@ -4125,10 +3800,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton12Class
         name: "WhoFrameButton12Class"
-        kind: "FontString"
         text: "Paladin"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12Level.right
@@ -4138,10 +3812,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton12Level
         name: "WhoFrameButton12Level"
-        kind: "FontString"
         text: "40"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12Variable.right
@@ -4151,10 +3824,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton12Name
         name: "WhoFrameButton12Name"
-        kind: "FontString"
         text: "Diestero"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12.left
@@ -4165,10 +3837,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton12Variable
         name: "WhoFrameButton12Variable"
-        kind: "FontString"
         text: "Stranglethorn Vale"
         wowParent: "WhoFrameButton12"
         anchors.left: whoFrameButton12Name.right
@@ -4177,10 +3848,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton13
         name: "WhoFrameButton13"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton12.left
         anchors.top: whoFrameButton12.bottom
@@ -4188,10 +3858,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton13Class
         name: "WhoFrameButton13Class"
-        kind: "FontString"
         text: "Mage"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13Level.right
@@ -4201,10 +3870,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton13Level
         name: "WhoFrameButton13Level"
-        kind: "FontString"
         text: "80"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13Variable.right
@@ -4214,10 +3882,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton13Name
         name: "WhoFrameButton13Name"
-        kind: "FontString"
         text: "Iguanna"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13.left
@@ -4228,10 +3895,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton13Variable
         name: "WhoFrameButton13Variable"
-        kind: "FontString"
         text: "The Culling of Stratholme"
         wowParent: "WhoFrameButton13"
         anchors.left: whoFrameButton13Name.right
@@ -4240,10 +3906,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton14
         name: "WhoFrameButton14"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton13.left
         anchors.top: whoFrameButton13.bottom
@@ -4251,10 +3916,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton14Class
         name: "WhoFrameButton14Class"
-        kind: "FontString"
         text: "Warlock"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14Level.right
@@ -4264,10 +3928,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton14Level
         name: "WhoFrameButton14Level"
-        kind: "FontString"
         text: "68"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14Variable.right
@@ -4277,10 +3940,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton14Name
         name: "WhoFrameButton14Name"
-        kind: "FontString"
         text: "Pikica"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14.left
@@ -4291,10 +3953,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton14Variable
         name: "WhoFrameButton14Variable"
-        kind: "FontString"
         text: "The Exodar"
         wowParent: "WhoFrameButton14"
         anchors.left: whoFrameButton14Name.right
@@ -4303,10 +3964,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton15
         name: "WhoFrameButton15"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton14.left
         anchors.top: whoFrameButton14.bottom
@@ -4314,10 +3974,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton15Class
         name: "WhoFrameButton15Class"
-        kind: "FontString"
         text: "Druid"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15Level.right
@@ -4327,10 +3986,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton15Level
         name: "WhoFrameButton15Level"
-        kind: "FontString"
         text: "80"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15Variable.right
@@ -4340,10 +3998,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton15Name
         name: "WhoFrameButton15Name"
-        kind: "FontString"
         text: "Moohahaha"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15.left
@@ -4354,10 +4011,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton15Variable
         name: "WhoFrameButton15Variable"
-        kind: "FontString"
         text: "The Slave Pens"
         wowParent: "WhoFrameButton15"
         anchors.left: whoFrameButton15Name.right
@@ -4366,10 +4022,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton16
         name: "WhoFrameButton16"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton15.left
         anchors.top: whoFrameButton15.bottom
@@ -4377,10 +4032,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton16Class
         name: "WhoFrameButton16Class"
-        kind: "FontString"
         text: "Paladin"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16Level.right
@@ -4390,10 +4044,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton16Level
         name: "WhoFrameButton16Level"
-        kind: "FontString"
         text: "80"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16Variable.right
@@ -4403,10 +4056,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton16Name
         name: "WhoFrameButton16Name"
-        kind: "FontString"
         text: "Paroxysm"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16.left
@@ -4417,10 +4069,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton16Variable
         name: "WhoFrameButton16Variable"
-        kind: "FontString"
         text: "The Storm Peaks"
         wowParent: "WhoFrameButton16"
         anchors.left: whoFrameButton16Name.right
@@ -4429,10 +4080,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton17
         name: "WhoFrameButton17"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton16.left
         anchors.top: whoFrameButton16.bottom
@@ -4440,10 +4090,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton17Class
         name: "WhoFrameButton17Class"
-        kind: "FontString"
         text: "Warrior"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17Level.right
@@ -4453,10 +4102,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton17Level
         name: "WhoFrameButton17Level"
-        kind: "FontString"
         text: "2"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17Variable.right
@@ -4466,10 +4114,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton17Name
         name: "WhoFrameButton17Name"
-        kind: "FontString"
         text: "Keeroq"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17.left
@@ -4480,10 +4127,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton17Variable
         name: "WhoFrameButton17Variable"
-        kind: "FontString"
         text: "Undercity"
         wowParent: "WhoFrameButton17"
         anchors.left: whoFrameButton17Name.right
@@ -4492,10 +4138,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton18
         name: "WhoFrameButton18"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton17.left
         anchors.top: whoFrameButton17.bottom
@@ -4503,10 +4148,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton18Class
         name: "WhoFrameButton18Class"
-        kind: "FontString"
         text: "Druid"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18Level.right
@@ -4516,10 +4160,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton18Level
         name: "WhoFrameButton18Level"
-        kind: "FontString"
         text: "79"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18Variable.right
@@ -4529,10 +4172,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton18Name
         name: "WhoFrameButton18Name"
-        kind: "FontString"
         text: "Saltypanther"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18.left
@@ -4543,10 +4185,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton18Variable
         name: "WhoFrameButton18Variable"
-        kind: "FontString"
         text: "Zangarmarsh"
         wowParent: "WhoFrameButton18"
         anchors.left: whoFrameButton18Name.right
@@ -4555,10 +4196,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton19
         name: "WhoFrameButton19"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton18.left
         anchors.top: whoFrameButton18.bottom
@@ -4566,10 +4206,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton19Class
         name: "WhoFrameButton19Class"
-        kind: "FontString"
         text: "Mage"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19Level.right
@@ -4579,10 +4218,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton19Level
         name: "WhoFrameButton19Level"
-        kind: "FontString"
         text: "80"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19Variable.right
@@ -4592,10 +4230,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton19Name
         name: "WhoFrameButton19Name"
-        kind: "FontString"
         text: "Honeycandy"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19.left
@@ -4606,10 +4243,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton19Variable
         name: "WhoFrameButton19Variable"
-        kind: "FontString"
         text: "Zul'Drak"
         wowParent: "WhoFrameButton19"
         anchors.left: whoFrameButton19Name.right
@@ -4618,10 +4254,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton1Class
         name: "WhoFrameButton1Class"
-        kind: "FontString"
         text: "Paladin"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1Level.right
@@ -4631,10 +4266,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton1Level
         name: "WhoFrameButton1Level"
-        kind: "FontString"
         text: "30"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1Variable.right
@@ -4644,10 +4278,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton1Name
         name: "WhoFrameButton1Name"
-        kind: "FontString"
         text: "Avitar"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1.left
@@ -4658,10 +4291,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton1Variable
         name: "WhoFrameButton1Variable"
-        kind: "FontString"
         text: "Hillsbrad Foothills"
         wowParent: "WhoFrameButton1"
         anchors.left: whoFrameButton1Name.right
@@ -4670,10 +4302,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton2
         name: "WhoFrameButton2"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton1.left
         anchors.top: whoFrameButton1.bottom
@@ -4681,10 +4312,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton2Class
         name: "WhoFrameButton2Class"
-        kind: "FontString"
         text: "Shaman"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2Level.right
@@ -4694,10 +4324,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton2Level
         name: "WhoFrameButton2Level"
-        kind: "FontString"
         text: "73"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2Variable.right
@@ -4707,10 +4336,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton2Name
         name: "WhoFrameButton2Name"
-        kind: "FontString"
         text: "Ginst"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2.left
@@ -4721,10 +4349,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton2Variable
         name: "WhoFrameButton2Variable"
-        kind: "FontString"
         text: "Howling Fjord"
         wowParent: "WhoFrameButton2"
         anchors.left: whoFrameButton2Name.right
@@ -4733,10 +4360,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton3
         name: "WhoFrameButton3"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton2.left
         anchors.top: whoFrameButton2.bottom
@@ -4744,10 +4370,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton3Class
         name: "WhoFrameButton3Class"
-        kind: "FontString"
         text: "Druid"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3Level.right
@@ -4757,10 +4382,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton3Level
         name: "WhoFrameButton3Level"
-        kind: "FontString"
         text: "80"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3Variable.right
@@ -4770,10 +4394,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton3Name
         name: "WhoFrameButton3Name"
-        kind: "FontString"
         text: "Ursalles"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3.left
@@ -4784,10 +4407,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton3Variable
         name: "WhoFrameButton3Variable"
-        kind: "FontString"
         text: "Icecrown"
         wowParent: "WhoFrameButton3"
         anchors.left: whoFrameButton3Name.right
@@ -4796,10 +4418,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton4
         name: "WhoFrameButton4"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton3.left
         anchors.top: whoFrameButton3.bottom
@@ -4807,10 +4428,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton4Class
         name: "WhoFrameButton4Class"
-        kind: "FontString"
         text: "Hunter"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4Level.right
@@ -4820,10 +4440,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton4Level
         name: "WhoFrameButton4Level"
-        kind: "FontString"
         text: "80"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4Variable.right
@@ -4833,10 +4452,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton4Name
         name: "WhoFrameButton4Name"
-        kind: "FontString"
         text: "Grassmangler"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4.left
@@ -4847,10 +4465,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton4Variable
         name: "WhoFrameButton4Variable"
-        kind: "FontString"
         text: "Icecrown"
         wowParent: "WhoFrameButton4"
         anchors.left: whoFrameButton4Name.right
@@ -4859,10 +4476,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton5
         name: "WhoFrameButton5"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton4.left
         anchors.top: whoFrameButton4.bottom
@@ -4870,10 +4486,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton5Class
         name: "WhoFrameButton5Class"
-        kind: "FontString"
         text: "Warrior"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5Level.right
@@ -4883,10 +4498,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton5Level
         name: "WhoFrameButton5Level"
-        kind: "FontString"
         text: "10"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5Variable.right
@@ -4896,10 +4510,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton5Name
         name: "WhoFrameButton5Name"
-        kind: "FontString"
         text: "Donutreset"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5.left
@@ -4910,10 +4523,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton5Variable
         name: "WhoFrameButton5Variable"
-        kind: "FontString"
         text: "Ironforge"
         wowParent: "WhoFrameButton5"
         anchors.left: whoFrameButton5Name.right
@@ -4922,10 +4534,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton6
         name: "WhoFrameButton6"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton5.left
         anchors.top: whoFrameButton5.bottom
@@ -4933,10 +4544,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton6Class
         name: "WhoFrameButton6Class"
-        kind: "FontString"
         text: "Druid"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6Level.right
@@ -4946,10 +4556,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton6Level
         name: "WhoFrameButton6Level"
-        kind: "FontString"
         text: "71"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6Variable.right
@@ -4959,10 +4568,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton6Name
         name: "WhoFrameButton6Name"
-        kind: "FontString"
         text: "Foxifoxi"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6.left
@@ -4973,10 +4581,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton6Variable
         name: "WhoFrameButton6Variable"
-        kind: "FontString"
         text: "Nagrand"
         wowParent: "WhoFrameButton6"
         anchors.left: whoFrameButton6Name.right
@@ -4985,10 +4592,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton7
         name: "WhoFrameButton7"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton6.left
         anchors.top: whoFrameButton6.bottom
@@ -4996,10 +4602,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton7Class
         name: "WhoFrameButton7Class"
-        kind: "FontString"
         text: "Priest"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7Level.right
@@ -5009,10 +4614,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton7Level
         name: "WhoFrameButton7Level"
-        kind: "FontString"
         text: "1"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7Variable.right
@@ -5022,10 +4626,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton7Name
         name: "WhoFrameButton7Name"
-        kind: "FontString"
         text: "Fortknoxx"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7.left
@@ -5036,10 +4639,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton7Variable
         name: "WhoFrameButton7Variable"
-        kind: "FontString"
         text: "Stormwind City"
         wowParent: "WhoFrameButton7"
         anchors.left: whoFrameButton7Name.right
@@ -5048,10 +4650,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton8
         name: "WhoFrameButton8"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton7.left
         anchors.top: whoFrameButton7.bottom
@@ -5059,10 +4660,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton8Class
         name: "WhoFrameButton8Class"
-        kind: "FontString"
         text: "Warlock"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8Level.right
@@ -5072,10 +4672,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton8Level
         name: "WhoFrameButton8Level"
-        kind: "FontString"
         text: "15"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8Variable.right
@@ -5085,10 +4684,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton8Name
         name: "WhoFrameButton8Name"
-        kind: "FontString"
         text: "Lodix"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8.left
@@ -5099,10 +4697,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton8Variable
         name: "WhoFrameButton8Variable"
-        kind: "FontString"
         text: "Stormwind City"
         wowParent: "WhoFrameButton8"
         anchors.left: whoFrameButton8Name.right
@@ -5111,10 +4708,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameButton9
         name: "WhoFrameButton9"
-        kind: "Button"
         wowParent: "WhoFrame"
         anchors.left: whoFrameButton8.left
         anchors.top: whoFrameButton8.bottom
@@ -5122,10 +4718,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: whoFrameButton9Class
         name: "WhoFrameButton9Class"
-        kind: "FontString"
         text: "Warlock"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9Level.right
@@ -5135,10 +4730,9 @@ WowWindow {
         height: 8
     }
 
-    Part {
+    FontString {
         id: whoFrameButton9Level
         name: "WhoFrameButton9Level"
-        kind: "FontString"
         text: "36"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9Variable.right
@@ -5148,10 +4742,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton9Name
         name: "WhoFrameButton9Name"
-        kind: "FontString"
         text: "Voidmaster"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9.left
@@ -5162,10 +4755,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    FontString {
         id: whoFrameButton9Variable
         name: "WhoFrameButton9Variable"
-        kind: "FontString"
         text: "Stormwind City"
         wowParent: "WhoFrameButton9"
         anchors.left: whoFrameButton9Name.right
@@ -5174,10 +4766,9 @@ WowWindow {
         height: 14
     }
 
-    Part {
+    Button {
         id: whoFrameColumnHeader1
         name: "WhoFrameColumnHeader1"
-        kind: "Button"
         text: "Name"
         wowParent: "WhoFrame"
         pin: "place"
@@ -5189,10 +4780,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: whoFrameColumnHeader2
         name: "WhoFrameColumnHeader2"
-        kind: "Button"
         text: "Zone"
         wowParent: "WhoFrame"
         anchors.left: whoFrameColumnHeader1.right
@@ -5202,10 +4792,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: whoFrameColumnHeader3
         name: "WhoFrameColumnHeader3"
-        kind: "Button"
         text: "Lvl"
         wowParent: "WhoFrame"
         anchors.left: whoFrameColumnHeader2.right
@@ -5215,10 +4804,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: whoFrameColumnHeader4
         name: "WhoFrameColumnHeader4"
-        kind: "Button"
         text: "Class"
         wowParent: "WhoFrame"
         anchors.left: whoFrameColumnHeader3.right
@@ -5228,10 +4816,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: whoFrameDropDown
         name: "WhoFrameDropDown"
-        kind: "Frame"
         wowParent: "WhoFrameColumnHeader2"
         style: "DropDown"
         anchors.left: friendsFrameDiabolicBand.left
@@ -5241,10 +4828,9 @@ WowWindow {
         height: 32
     }
 
-    Part {
+    Button {
         id: whoFrameDropDownButton
         name: "WhoFrameDropDownButton"
-        kind: "Button"
         wowParent: "WhoFrameDropDown"
         anchors.right: whoFrameDropDownDiabolicField.right
         anchors.rightMargin: 18
@@ -5253,10 +4839,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    Frame {
         id: whoFrameDropDownDiabolicField
         name: "WhoFrameDropDownDiabolicField"
-        kind: "Frame"
         wowParent: "WhoFrameDropDown"
         anchors.left: whoFrameDropDown.left
         anchors.verticalCenter: whoFrameDropDown.verticalCenter
@@ -5264,10 +4849,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: whoFrameDropDownText
         name: "WhoFrameDropDownText"
-        kind: "FontString"
         text: "Zone"
         wowParent: "WhoFrameDropDown"
         anchors.horizontalCenter: whoFrameDropDown.horizontalCenter
@@ -5277,10 +4861,9 @@ WowWindow {
         height: 10
     }
 
-    Part {
+    EditBox {
         id: whoFrameEditBox
         name: "WhoFrameEditBox"
-        kind: "EditBox"
         wowParent: "WhoFrame"
         style: "EditBox"
         anchors.left: whoFrameDropDown.right
@@ -5290,10 +4873,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    Frame {
         id: whoFrameEditBoxDiabolicField
         name: "WhoFrameEditBoxDiabolicField"
-        kind: "Frame"
         wowParent: "WhoFrameEditBox"
         anchors.left: whoFrameEditBox.left
         anchors.leftMargin: -8
@@ -5302,10 +4884,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: whoFrameGroupInviteButton
         name: "WhoFrameGroupInviteButton"
-        kind: "Button"
         text: "Group Invite"
         wowParent: "WhoFrame"
         style: "Button"
@@ -5317,10 +4898,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: whoFrameGroupInviteButtonText
         name: "WhoFrameGroupInviteButtonText"
-        kind: "FontString"
         text: "Group Invite"
         wowParent: "WhoFrameGroupInviteButton"
         anchors.horizontalCenter: whoFrameGroupInviteButton.horizontalCenter
@@ -5329,10 +4909,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: whoFrameTotals
         name: "WhoFrameTotals"
-        kind: "FontString"
         text: "0 People Found  "
         wowParent: "WhoFrame"
         anchors.horizontalCenter: whoFrame.horizontalCenter
@@ -5343,10 +4922,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: whoFrameWhoButton
         name: "WhoFrameWhoButton"
-        kind: "Button"
         text: "Refresh"
         wowParent: "WhoFrame"
         style: "Button"
@@ -5359,10 +4937,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: whoFrameWhoButtonText
         name: "WhoFrameWhoButtonText"
-        kind: "FontString"
         text: "Refresh"
         wowParent: "WhoFrameWhoButton"
         anchors.horizontalCenter: whoFrameWhoButton.horizontalCenter
@@ -5371,10 +4948,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    ScrollFrame {
         id: whoListScrollFrame
         name: "WhoListScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "WhoFrame"
         pin: "place"
         anchors.right: friendsFrame.right
@@ -5385,10 +4961,9 @@ WowWindow {
         height: 298
     }
 
-    Part {
+    Frame {
         id: whoListScrollFrameDiabolicZone
         name: "WhoListScrollFrameDiabolicZone"
-        kind: "Frame"
         wowParent: "WhoFrame"
         anchors.left: whoListScrollFrame.left
         anchors.leftMargin: -6
@@ -5398,10 +4973,9 @@ WowWindow {
         height: 328
     }
 
-    Part {
+    Frame {
         id: whoListScrollFrameDiabolicZoneColumnBar
         name: "WhoListScrollFrameDiabolicZoneColumnBar"
-        kind: "Frame"
         wowParent: "WhoListScrollFrameDiabolicZone"
         anchors.left: whoListScrollFrameDiabolicZone.left
         anchors.bottom: whoListScrollFrameDiabolicZone.top
@@ -5409,10 +4983,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Slider {
         id: whoListScrollFrameScrollBar
         name: "WhoListScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "WhoListScrollFrame"
         style: "ScrollBar"
         anchors.left: whoListScrollFrame.right
@@ -5423,10 +4996,9 @@ WowWindow {
         height: 266
     }
 
-    Part {
+    Frame {
         id: whoListScrollFrameScrollBarDiabolicTrack
         name: "WhoListScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "WhoListScrollFrameScrollBar"
         anchors.horizontalCenter: whoListScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: whoListScrollFrameScrollBarScrollUpButton.top
@@ -5435,10 +5007,9 @@ WowWindow {
         height: 300
     }
 
-    Part {
+    Button {
         id: whoListScrollFrameScrollBarScrollDownButton
         name: "WhoListScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "WhoListScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: whoListScrollFrameScrollBar.horizontalCenter
@@ -5447,10 +5018,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: whoListScrollFrameScrollBarScrollUpButton
         name: "WhoListScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "WhoListScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: whoListScrollFrameScrollBar.horizontalCenter
@@ -5459,10 +5029,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Frame {
         id: whoListScrollFrameScrollChildFrame
         name: "WhoListScrollFrameScrollChildFrame"
-        kind: "Frame"
         wowParent: "WhoListScrollFrame"
         anchors.left: whoListScrollFrame.left
         anchors.top: whoListScrollFrame.top

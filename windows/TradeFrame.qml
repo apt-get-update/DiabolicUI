@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    Button {
         id: tradeFrameCancelButton
         name: "TradeFrameCancelButton"
-        kind: "Button"
         text: "Cancel"
         wowParent: "TradeFrame"
         style: "Button"
@@ -24,10 +23,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: tradeFrameCloseButton
         name: "TradeFrameCloseButton"
-        kind: "Button"
         wowParent: "TradeFrame"
         style: "CloseButton"
         anchors.horizontalCenter: tradeFrameDiabolic.right
@@ -38,10 +36,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: tradeFrameDiabolic
         name: "TradeFrameDiabolic"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeFrame.left
         anchors.leftMargin: -24
@@ -50,10 +47,9 @@ WowWindow {
         height: 496
     }
 
-    Part {
+    Frame {
         id: tradeFrameDiabolicBorder
         name: "TradeFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "TradeFrameDiabolic"
         anchors.left: tradeFrameDiabolic.left
         anchors.top: tradeFrameDiabolic.top
@@ -61,10 +57,9 @@ WowWindow {
         height: 496
     }
 
-    Part {
+    Frame {
         id: tradeFrameDiabolicSocket
         name: "TradeFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "TradeFrameDiabolic"
         anchors.right: tradeFrameDiabolic.right
         anchors.rightMargin: 20
@@ -74,10 +69,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: tradeFrameDiabolicTitlePlate
         name: "TradeFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "TradeFrameDiabolic"
         anchors.horizontalCenter: tradeFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: tradeFrameDiabolicBorder.top
@@ -86,10 +80,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    FontString {
         id: tradeFramePlayerEnchantText
         name: "TradeFramePlayerEnchantText"
-        kind: "FontString"
         text: "Will not be traded"
         wowParent: "TradeFrame"
         anchors.left: tradeFrame.left
@@ -101,10 +94,9 @@ WowWindow {
     }
 
     // the names over their columns, out from under the band (Blizzard's beside portraits)
-    Part {
+    FontString {
         id: tradeFramePlayerNameText
         name: "TradeFramePlayerNameText"
-        kind: "FontString"
         text: "Padirac"
         wowParent: "TradeFrame"
         pin: "place"
@@ -115,10 +107,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    FontString {
         id: tradeFrameRecipientEnchantText
         name: "TradeFrameRecipientEnchantText"
-        kind: "FontString"
         text: "Will not be traded"
         wowParent: "TradeFrame"
         anchors.left: tradeFramePlayerEnchantText.left
@@ -128,10 +119,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: tradeFrameRecipientNameText
         name: "TradeFrameRecipientNameText"
-        kind: "FontString"
         text: "Velkara"
         wowParent: "TradeFrame"
         pin: "place"
@@ -142,10 +132,9 @@ WowWindow {
         height: 12
     }
 
-    Part {
+    Button {
         id: tradeFrameTradeButton
         name: "TradeFrameTradeButton"
-        kind: "Button"
         text: "Trade"
         wowParent: "TradeFrame"
         style: "Button"
@@ -158,10 +147,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Frame {
         id: tradePlayerInputMoneyFrame
         name: "TradePlayerInputMoneyFrame"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeFrame.left
         anchors.leftMargin: 26
@@ -171,10 +159,9 @@ WowWindow {
         height: 18
     }
 
-    Part {
+    EditBox {
         id: tradePlayerInputMoneyFrameCopper
         name: "TradePlayerInputMoneyFrameCopper"
-        kind: "EditBox"
         wowParent: "TradePlayerInputMoneyFrame"
         anchors.left: tradePlayerInputMoneyFrameSilver.right
         anchors.leftMargin: 11
@@ -183,10 +170,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    EditBox {
         id: tradePlayerInputMoneyFrameGold
         name: "TradePlayerInputMoneyFrameGold"
-        kind: "EditBox"
         wowParent: "TradePlayerInputMoneyFrame"
         anchors.left: tradePlayerInputMoneyFrame.left
         anchors.top: tradePlayerInputMoneyFrame.top
@@ -194,10 +180,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    EditBox {
         id: tradePlayerInputMoneyFrameSilver
         name: "TradePlayerInputMoneyFrameSilver"
-        kind: "EditBox"
         wowParent: "TradePlayerInputMoneyFrame"
         anchors.left: tradePlayerInputMoneyFrameGold.right
         anchors.leftMargin: 22
@@ -206,10 +191,9 @@ WowWindow {
         height: 20
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem1
         name: "TradePlayerItem1"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeFrame.left
         anchors.leftMargin: 26
@@ -219,10 +203,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem1ItemButton
         name: "TradePlayerItem1ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem1"
         anchors.left: tradePlayerItem1.left
         anchors.top: tradePlayerItem1.top
@@ -230,10 +213,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem1Name
         name: "TradePlayerItem1Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem1"
         anchors.left: tradePlayerItem1NameFrame.left
         anchors.leftMargin: 15
@@ -242,10 +224,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem2
         name: "TradePlayerItem2"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradePlayerItem1.left
         anchors.top: tradePlayerItem1.bottom
@@ -254,10 +235,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem2ItemButton
         name: "TradePlayerItem2ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem2"
         anchors.left: tradePlayerItem2.left
         anchors.top: tradePlayerItem2.top
@@ -265,10 +245,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem2Name
         name: "TradePlayerItem2Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem2"
         anchors.left: tradePlayerItem2NameFrame.left
         anchors.leftMargin: 15
@@ -277,10 +256,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem3
         name: "TradePlayerItem3"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradePlayerItem2.left
         anchors.top: tradePlayerItem2.bottom
@@ -289,10 +267,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem3ItemButton
         name: "TradePlayerItem3ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem3"
         anchors.left: tradePlayerItem3.left
         anchors.top: tradePlayerItem3.top
@@ -300,10 +277,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem3Name
         name: "TradePlayerItem3Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem3"
         anchors.left: tradePlayerItem3NameFrame.left
         anchors.leftMargin: 15
@@ -312,10 +288,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem4
         name: "TradePlayerItem4"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradePlayerItem3.left
         anchors.top: tradePlayerItem3.bottom
@@ -324,10 +299,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem4ItemButton
         name: "TradePlayerItem4ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem4"
         anchors.left: tradePlayerItem4.left
         anchors.top: tradePlayerItem4.top
@@ -335,10 +309,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem4Name
         name: "TradePlayerItem4Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem4"
         anchors.left: tradePlayerItem4NameFrame.left
         anchors.leftMargin: 15
@@ -347,10 +320,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem5
         name: "TradePlayerItem5"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradePlayerItem4.left
         anchors.top: tradePlayerItem4.bottom
@@ -359,10 +331,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem5ItemButton
         name: "TradePlayerItem5ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem5"
         anchors.left: tradePlayerItem5.left
         anchors.top: tradePlayerItem5.top
@@ -370,10 +341,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem5Name
         name: "TradePlayerItem5Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem5"
         anchors.left: tradePlayerItem5NameFrame.left
         anchors.leftMargin: 15
@@ -382,10 +352,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem6
         name: "TradePlayerItem6"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradePlayerItem5.left
         anchors.top: tradePlayerItem5.bottom
@@ -394,10 +363,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem6ItemButton
         name: "TradePlayerItem6ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem6"
         anchors.left: tradePlayerItem6.left
         anchors.top: tradePlayerItem6.top
@@ -405,10 +373,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem6Name
         name: "TradePlayerItem6Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem6"
         anchors.left: tradePlayerItem6NameFrame.left
         anchors.leftMargin: 15
@@ -417,10 +384,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradePlayerItem7
         name: "TradePlayerItem7"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradePlayerItem6.left
         anchors.top: tradePlayerItem6.bottom
@@ -429,10 +395,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradePlayerItem7ItemButton
         name: "TradePlayerItem7ItemButton"
-        kind: "Button"
         wowParent: "TradePlayerItem7"
         anchors.left: tradePlayerItem7.left
         anchors.top: tradePlayerItem7.top
@@ -440,10 +405,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradePlayerItem7Name
         name: "TradePlayerItem7Name"
-        kind: "FontString"
         wowParent: "TradePlayerItem7"
         anchors.left: tradePlayerItem7NameFrame.left
         anchors.leftMargin: 15
@@ -452,10 +416,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem1
         name: "TradeRecipientItem1"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeFrame.left
         anchors.leftMargin: 195
@@ -465,10 +428,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem1ItemButton
         name: "TradeRecipientItem1ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem1"
         anchors.left: tradeRecipientItem1.left
         anchors.top: tradeRecipientItem1.top
@@ -476,10 +438,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem1Name
         name: "TradeRecipientItem1Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem1"
         anchors.left: tradeRecipientItem1NameFrame.left
         anchors.leftMargin: 15
@@ -488,10 +449,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem2
         name: "TradeRecipientItem2"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeRecipientItem1.left
         anchors.top: tradeRecipientItem1.bottom
@@ -500,10 +460,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem2ItemButton
         name: "TradeRecipientItem2ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem2"
         anchors.left: tradeRecipientItem2.left
         anchors.top: tradeRecipientItem2.top
@@ -511,10 +470,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem2Name
         name: "TradeRecipientItem2Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem2"
         anchors.left: tradeRecipientItem2NameFrame.left
         anchors.leftMargin: 15
@@ -523,10 +481,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem3
         name: "TradeRecipientItem3"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeRecipientItem2.left
         anchors.top: tradeRecipientItem2.bottom
@@ -535,10 +492,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem3ItemButton
         name: "TradeRecipientItem3ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem3"
         anchors.left: tradeRecipientItem3.left
         anchors.top: tradeRecipientItem3.top
@@ -546,10 +502,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem3Name
         name: "TradeRecipientItem3Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem3"
         anchors.left: tradeRecipientItem3NameFrame.left
         anchors.leftMargin: 15
@@ -558,10 +513,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem4
         name: "TradeRecipientItem4"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeRecipientItem3.left
         anchors.top: tradeRecipientItem3.bottom
@@ -570,10 +524,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem4ItemButton
         name: "TradeRecipientItem4ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem4"
         anchors.left: tradeRecipientItem4.left
         anchors.top: tradeRecipientItem4.top
@@ -581,10 +534,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem4Name
         name: "TradeRecipientItem4Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem4"
         anchors.left: tradeRecipientItem4NameFrame.left
         anchors.leftMargin: 15
@@ -593,10 +545,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem5
         name: "TradeRecipientItem5"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeRecipientItem4.left
         anchors.top: tradeRecipientItem4.bottom
@@ -605,10 +556,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem5ItemButton
         name: "TradeRecipientItem5ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem5"
         anchors.left: tradeRecipientItem5.left
         anchors.top: tradeRecipientItem5.top
@@ -616,10 +566,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem5Name
         name: "TradeRecipientItem5Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem5"
         anchors.left: tradeRecipientItem5NameFrame.left
         anchors.leftMargin: 15
@@ -628,10 +577,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem6
         name: "TradeRecipientItem6"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeRecipientItem5.left
         anchors.top: tradeRecipientItem5.bottom
@@ -640,10 +588,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem6ItemButton
         name: "TradeRecipientItem6ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem6"
         anchors.left: tradeRecipientItem6.left
         anchors.top: tradeRecipientItem6.top
@@ -651,10 +598,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem6Name
         name: "TradeRecipientItem6Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem6"
         anchors.left: tradeRecipientItem6NameFrame.left
         anchors.leftMargin: 15
@@ -663,10 +609,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientItem7
         name: "TradeRecipientItem7"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.left: tradeRecipientItem6.left
         anchors.top: tradeRecipientItem6.bottom
@@ -675,10 +620,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: tradeRecipientItem7ItemButton
         name: "TradeRecipientItem7ItemButton"
-        kind: "Button"
         wowParent: "TradeRecipientItem7"
         anchors.left: tradeRecipientItem7.left
         anchors.top: tradeRecipientItem7.top
@@ -686,10 +630,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    FontString {
         id: tradeRecipientItem7Name
         name: "TradeRecipientItem7Name"
-        kind: "FontString"
         wowParent: "TradeRecipientItem7"
         anchors.left: tradeRecipientItem7NameFrame.left
         anchors.leftMargin: 15
@@ -698,10 +641,9 @@ WowWindow {
         height: 30
     }
 
-    Part {
+    Frame {
         id: tradeRecipientMoneyFrame
         name: "TradeRecipientMoneyFrame"
-        kind: "Frame"
         wowParent: "TradeFrame"
         anchors.right: tradeFrame.right
         anchors.rightMargin: 40

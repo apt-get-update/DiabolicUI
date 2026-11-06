@@ -9,10 +9,9 @@ WowWindow {
     width: 384
     height: 512
 
-    Part {
+    FontString {
         id: openMailBodyText
         name: "OpenMailBodyText"
-        kind: "FontString"
         wowParent: "OpenMailScrollChildFrame"
         anchors.left: openMailScrollChildFrame.left
         anchors.leftMargin: 10
@@ -22,10 +21,9 @@ WowWindow {
         height: 240.2
     }
 
-    Part {
+    Button {
         id: openMailCancelButton
         name: "OpenMailCancelButton"
-        kind: "Button"
         text: "Close"
         wowParent: "OpenMailFrame"
         style: "Button"
@@ -37,10 +35,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: openMailCancelButtonText
         name: "OpenMailCancelButtonText"
-        kind: "FontString"
         text: "Close"
         wowParent: "OpenMailCancelButton"
         anchors.horizontalCenter: openMailCancelButton.horizontalCenter
@@ -49,10 +46,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: openMailCloseButton
         name: "OpenMailCloseButton"
-        kind: "Button"
         wowParent: "OpenMailFrame"
         style: "CloseButton"
         anchors.horizontalCenter: openMailFrameDiabolic.right
@@ -63,10 +59,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    Button {
         id: openMailDeleteButton
         name: "OpenMailDeleteButton"
-        kind: "Button"
         text: "Delete"
         wowParent: "OpenMailFrame"
         style: "Button"
@@ -78,10 +73,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: openMailDeleteButtonText
         name: "OpenMailDeleteButtonText"
-        kind: "FontString"
         text: "Delete"
         wowParent: "OpenMailDeleteButton"
         anchors.horizontalCenter: openMailDeleteButton.horizontalCenter
@@ -90,10 +84,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Frame {
         id: openMailDepositMoneyFrame
         name: "OpenMailDepositMoneyFrame"
-        kind: "Frame"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceDeposit.right
         anchors.rightMargin: -130
@@ -102,10 +95,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: openMailDepositMoneyFrameCopperButton
         name: "OpenMailDepositMoneyFrameCopperButton"
-        kind: "Button"
         text: "0"
         wowParent: "OpenMailDepositMoneyFrame"
         anchors.right: openMailDepositMoneyFrame.right
@@ -115,10 +107,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailDepositMoneyFrameCopperButtonText
         name: "OpenMailDepositMoneyFrameCopperButtonText"
-        kind: "FontString"
         text: "0"
         wowParent: "OpenMailDepositMoneyFrameCopperButton"
         anchors.right: openMailDepositMoneyFrameCopperButton.right
@@ -128,10 +119,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: openMailDepositMoneyFrameSilverButton
         name: "OpenMailDepositMoneyFrameSilverButton"
-        kind: "Button"
         text: "6"
         wowParent: "OpenMailDepositMoneyFrame"
         anchors.right: openMailDepositMoneyFrameCopperButton.left
@@ -141,10 +131,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailDepositMoneyFrameSilverButtonText
         name: "OpenMailDepositMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "6"
         wowParent: "OpenMailDepositMoneyFrameSilverButton"
         anchors.right: openMailDepositMoneyFrameSilverButton.right
@@ -154,10 +143,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: openMailFrameDiabolic
         name: "OpenMailFrameDiabolic"
-        kind: "Frame"
         wowParent: "OpenMailFrame"
         anchors.left: openMailFrame.left
         anchors.leftMargin: -16
@@ -167,10 +155,9 @@ WowWindow {
         height: 540
     }
 
-    Part {
+    Frame {
         id: openMailFrameDiabolicBand
         name: "OpenMailFrameDiabolicBand"
-        kind: "Frame"
         wowParent: "OpenMailFrameDiabolic"
         anchors.left: openMailFrameDiabolic.left
         anchors.leftMargin: 24
@@ -180,10 +167,9 @@ WowWindow {
         height: 40
     }
 
-    Part {
+    Frame {
         id: openMailFrameDiabolicBorder
         name: "OpenMailFrameDiabolicBorder"
-        kind: "Frame"
         wowParent: "OpenMailFrameDiabolic"
         anchors.left: openMailFrameDiabolic.left
         anchors.top: openMailFrameDiabolic.top
@@ -191,10 +177,9 @@ WowWindow {
         height: 540
     }
 
-    Part {
+    Frame {
         id: openMailFrameDiabolicFoot
         name: "OpenMailFrameDiabolicFoot"
-        kind: "Frame"
         wowParent: "OpenMailFrameDiabolic"
         anchors.horizontalCenter: openMailCancelButton.horizontalCenter
         anchors.horizontalCenterOffset: -122.9
@@ -204,10 +189,9 @@ WowWindow {
         height: 45
     }
 
-    Part {
+    Frame {
         id: openMailFrameDiabolicSocket
         name: "OpenMailFrameDiabolicSocket"
-        kind: "Frame"
         wowParent: "OpenMailFrameDiabolic"
         anchors.right: openMailFrameDiabolic.right
         anchors.rightMargin: 20
@@ -217,10 +201,9 @@ WowWindow {
         height: 42
     }
 
-    Part {
+    Frame {
         id: openMailFrameDiabolicTitlePlate
         name: "OpenMailFrameDiabolicTitlePlate"
-        kind: "Frame"
         wowParent: "OpenMailFrameDiabolic"
         anchors.horizontalCenter: openMailFrameDiabolicBorder.horizontalCenter
         anchors.verticalCenter: openMailFrameDiabolicBorder.top
@@ -229,10 +212,9 @@ WowWindow {
         height: 41
     }
 
-    Part {
+    Frame {
         id: openMailHouseCutMoneyFrame
         name: "OpenMailHouseCutMoneyFrame"
-        kind: "Frame"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceHouseCut.right
         anchors.rightMargin: -130
@@ -241,10 +223,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: openMailHouseCutMoneyFrameCopperButton
         name: "OpenMailHouseCutMoneyFrameCopperButton"
-        kind: "Button"
         text: "72"
         wowParent: "OpenMailHouseCutMoneyFrame"
         anchors.right: openMailHouseCutMoneyFrame.right
@@ -254,10 +235,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailHouseCutMoneyFrameCopperButtonText
         name: "OpenMailHouseCutMoneyFrameCopperButtonText"
-        kind: "FontString"
         text: "72"
         wowParent: "OpenMailHouseCutMoneyFrameCopperButton"
         anchors.right: openMailHouseCutMoneyFrameCopperButton.right
@@ -267,10 +247,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: openMailHouseCutMoneyFrameSilverButton
         name: "OpenMailHouseCutMoneyFrameSilverButton"
-        kind: "Button"
         text: "1"
         wowParent: "OpenMailHouseCutMoneyFrame"
         anchors.right: openMailHouseCutMoneyFrameCopperButton.left
@@ -280,10 +259,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailHouseCutMoneyFrameSilverButtonText
         name: "OpenMailHouseCutMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "1"
         wowParent: "OpenMailHouseCutMoneyFrameSilverButton"
         anchors.right: openMailHouseCutMoneyFrameSilverButton.right
@@ -293,10 +271,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    FontString {
         id: openMailInvoiceAmountReceived
         name: "OpenMailInvoiceAmountReceived"
-        kind: "FontString"
         text: "Amount Received:"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceHouseCut.right
@@ -306,10 +283,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: openMailInvoiceBuyMode
         name: "OpenMailInvoiceBuyMode"
-        kind: "FontString"
         text: "(Buyout)"
         wowParent: "OpenMailInvoiceFrame"
         anchors.left: openMailInvoicePurchaser.right
@@ -319,10 +295,9 @@ WowWindow {
         height: 10.3
     }
 
-    Part {
+    FontString {
         id: openMailInvoiceDeposit
         name: "OpenMailInvoiceDeposit"
-        kind: "FontString"
         text: "Deposit:"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceSalePrice.right
@@ -332,10 +307,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Frame {
         id: openMailInvoiceFrame
         name: "OpenMailInvoiceFrame"
-        kind: "Frame"
         wowParent: "OpenMailScrollChildFrame"
         anchors.left: openMailScrollChildFrame.left
         anchors.top: openMailScrollChildFrame.top
@@ -343,10 +317,9 @@ WowWindow {
         height: 314.7
     }
 
-    Part {
+    FontString {
         id: openMailInvoiceHouseCut
         name: "OpenMailInvoiceHouseCut"
-        kind: "FontString"
         text: "Auction House Cut:"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceDeposit.right
@@ -356,10 +329,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: openMailInvoiceItemLabel
         name: "OpenMailInvoiceItemLabel"
-        kind: "FontString"
         text: "Item Sold: Runecloth"
         wowParent: "OpenMailInvoiceFrame"
         anchors.left: openMailInvoiceFrame.left
@@ -370,10 +342,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: openMailInvoicePurchaser
         name: "OpenMailInvoicePurchaser"
-        kind: "FontString"
         text: "Purchased By: Gruzurpator"
         wowParent: "OpenMailInvoiceFrame"
         anchors.left: openMailInvoiceItemLabel.left
@@ -383,10 +354,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    FontString {
         id: openMailInvoiceSalePrice
         name: "OpenMailInvoiceSalePrice"
-        kind: "FontString"
         text: "Sale Price:"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoicePurchaser.left
@@ -397,10 +367,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Button {
         id: openMailLetterButton
         name: "OpenMailLetterButton"
-        kind: "Button"
         wowParent: "OpenMailFrame"
         anchors.left: openMailFrame.left
         anchors.leftMargin: 161.5
@@ -410,10 +379,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: openMailMoneyButton
         name: "OpenMailMoneyButton"
-        kind: "Button"
         wowParent: "OpenMailFrame"
         anchors.left: openMailFrame.left
         anchors.leftMargin: 161.5
@@ -423,10 +391,9 @@ WowWindow {
         height: 37
     }
 
-    Part {
+    Button {
         id: openMailReplyButton
         name: "OpenMailReplyButton"
-        kind: "Button"
         text: "Reply"
         wowParent: "OpenMailFrame"
         style: "Button"
@@ -439,10 +406,9 @@ WowWindow {
         height: 22
     }
 
-    Part {
+    FontString {
         id: openMailReplyButtonText
         name: "OpenMailReplyButtonText"
-        kind: "FontString"
         text: "Reply"
         wowParent: "OpenMailReplyButton"
         anchors.horizontalCenter: openMailReplyButton.horizontalCenter
@@ -451,10 +417,9 @@ WowWindow {
         height: 11.9
     }
 
-    Part {
+    Frame {
         id: openMailSalePriceMoneyFrame
         name: "OpenMailSalePriceMoneyFrame"
-        kind: "Frame"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceSalePrice.right
         anchors.rightMargin: -130
@@ -463,10 +428,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: openMailSalePriceMoneyFrameCopperButton
         name: "OpenMailSalePriceMoneyFrameCopperButton"
-        kind: "Button"
         text: "0"
         wowParent: "OpenMailSalePriceMoneyFrame"
         anchors.right: openMailSalePriceMoneyFrame.right
@@ -476,10 +440,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailSalePriceMoneyFrameCopperButtonText
         name: "OpenMailSalePriceMoneyFrameCopperButtonText"
-        kind: "FontString"
         text: "0"
         wowParent: "OpenMailSalePriceMoneyFrameCopperButton"
         anchors.right: openMailSalePriceMoneyFrameCopperButton.right
@@ -489,10 +452,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: openMailSalePriceMoneyFrameGoldButton
         name: "OpenMailSalePriceMoneyFrameGoldButton"
-        kind: "Button"
         text: "1"
         wowParent: "OpenMailSalePriceMoneyFrame"
         anchors.right: openMailSalePriceMoneyFrameSilverButton.left
@@ -502,10 +464,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailSalePriceMoneyFrameGoldButtonText
         name: "OpenMailSalePriceMoneyFrameGoldButtonText"
-        kind: "FontString"
         text: "1"
         wowParent: "OpenMailSalePriceMoneyFrameGoldButton"
         anchors.right: openMailSalePriceMoneyFrameGoldButton.right
@@ -515,10 +476,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: openMailSalePriceMoneyFrameSilverButton
         name: "OpenMailSalePriceMoneyFrameSilverButton"
-        kind: "Button"
         text: "15"
         wowParent: "OpenMailSalePriceMoneyFrame"
         anchors.right: openMailSalePriceMoneyFrameCopperButton.left
@@ -528,10 +488,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailSalePriceMoneyFrameSilverButtonText
         name: "OpenMailSalePriceMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "15"
         wowParent: "OpenMailSalePriceMoneyFrameSilverButton"
         anchors.right: openMailSalePriceMoneyFrameSilverButton.right
@@ -541,10 +500,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: openMailScrollChildFrame
         name: "OpenMailScrollChildFrame"
-        kind: "Frame"
         wowParent: "OpenMailScrollFrame"
         anchors.left: openMailScrollFrame.left
         anchors.top: openMailScrollFrame.top
@@ -552,10 +510,9 @@ WowWindow {
         height: 314.7
     }
 
-    Part {
+    ScrollFrame {
         id: openMailScrollFrame
         name: "OpenMailScrollFrame"
-        kind: "ScrollFrame"
         wowParent: "OpenMailFrame"
         anchors.left: openMailFrame.left
         anchors.leftMargin: 21
@@ -565,10 +522,9 @@ WowWindow {
         height: 314.7
     }
 
-    Part {
+    Frame {
         id: openMailScrollFrameDiabolicPanel
         name: "OpenMailScrollFrameDiabolicPanel"
-        kind: "Frame"
         wowParent: "OpenMailFrame"
         anchors.left: openMailScrollFrame.left
         anchors.leftMargin: -6
@@ -578,10 +534,9 @@ WowWindow {
         height: 326.7
     }
 
-    Part {
+    Frame {
         id: openMailScrollFrameDiabolicParchment
         name: "OpenMailScrollFrameDiabolicParchment"
-        kind: "Frame"
         wowParent: "OpenMailScrollFrame"
         anchors.left: openMailScrollFrame.left
         anchors.leftMargin: -4
@@ -591,10 +546,9 @@ WowWindow {
         height: 322.7
     }
 
-    Part {
+    Slider {
         id: openMailScrollFrameScrollBar
         name: "OpenMailScrollFrameScrollBar"
-        kind: "Slider"
         wowParent: "OpenMailScrollFrame"
         style: "ScrollBar"
         anchors.left: openMailScrollFrame.right
@@ -605,10 +559,9 @@ WowWindow {
         height: 282.7
     }
 
-    Part {
+    Frame {
         id: openMailScrollFrameScrollBarDiabolicTrack
         name: "OpenMailScrollFrameScrollBarDiabolicTrack"
-        kind: "Frame"
         wowParent: "OpenMailScrollFrameScrollBar"
         anchors.horizontalCenter: openMailScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: openMailScrollFrameScrollBarScrollUpButton.top
@@ -617,10 +570,9 @@ WowWindow {
         height: 316.7
     }
 
-    Part {
+    Button {
         id: openMailScrollFrameScrollBarScrollDownButton
         name: "OpenMailScrollFrameScrollBarScrollDownButton"
-        kind: "Button"
         wowParent: "OpenMailScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: openMailScrollFrameScrollBar.horizontalCenter
@@ -629,10 +581,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    Button {
         id: openMailScrollFrameScrollBarScrollUpButton
         name: "OpenMailScrollFrameScrollBarScrollUpButton"
-        kind: "Button"
         wowParent: "OpenMailScrollFrameScrollBar"
         style: "ScrollBar"
         anchors.horizontalCenter: openMailScrollFrameScrollBar.horizontalCenter
@@ -641,10 +592,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: openMailSender
         name: "OpenMailSender"
-        kind: "FontString"
         text: "Brew of the Month Club"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.left: openMailSenderLabel.right
@@ -654,10 +604,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    FontString {
         id: openMailSenderLabel
         name: "OpenMailSenderLabel"
-        kind: "FontString"
         text: "From:"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.right: openMailFrameDiabolicBand.left
@@ -667,10 +616,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: openMailSubject
         name: "OpenMailSubject"
-        kind: "FontString"
         text: "Fun For You And Your Friends"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.left: openMailSubjectLabel.right
@@ -680,10 +628,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: openMailSubjectLabel
         name: "OpenMailSubjectLabel"
-        kind: "FontString"
         text: "Subject:"
         wowParent: "OpenMailFrameDiabolicBand"
         anchors.right: openMailFrameDiabolicBand.left
@@ -693,10 +640,9 @@ WowWindow {
         height: 16
     }
 
-    Part {
+    FontString {
         id: openMailTitleText
         name: "OpenMailTitleText"
-        kind: "FontString"
         text: "Open Mail"
         wowParent: "OpenMailFrameDiabolicTitlePlate"
         anchors.horizontalCenter: openMailFrameDiabolicTitlePlate.horizontalCenter
@@ -706,10 +652,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Frame {
         id: openMailTransactionAmountMoneyFrame
         name: "OpenMailTransactionAmountMoneyFrame"
-        kind: "Frame"
         wowParent: "OpenMailInvoiceFrame"
         anchors.right: openMailInvoiceAmountReceived.right
         anchors.rightMargin: -130
@@ -718,10 +663,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    Button {
         id: openMailTransactionAmountMoneyFrameCopperButton
         name: "OpenMailTransactionAmountMoneyFrameCopperButton"
-        kind: "Button"
         text: "28"
         wowParent: "OpenMailTransactionAmountMoneyFrame"
         anchors.right: openMailTransactionAmountMoneyFrame.right
@@ -731,10 +675,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailTransactionAmountMoneyFrameCopperButtonText
         name: "OpenMailTransactionAmountMoneyFrameCopperButtonText"
-        kind: "FontString"
         text: "28"
         wowParent: "OpenMailTransactionAmountMoneyFrameCopperButton"
         anchors.right: openMailTransactionAmountMoneyFrameCopperButton.right
@@ -744,10 +687,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: openMailTransactionAmountMoneyFrameGoldButton
         name: "OpenMailTransactionAmountMoneyFrameGoldButton"
-        kind: "Button"
         text: "1"
         wowParent: "OpenMailTransactionAmountMoneyFrame"
         anchors.right: openMailTransactionAmountMoneyFrameSilverButton.left
@@ -757,10 +699,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailTransactionAmountMoneyFrameGoldButtonText
         name: "OpenMailTransactionAmountMoneyFrameGoldButtonText"
-        kind: "FontString"
         text: "1"
         wowParent: "OpenMailTransactionAmountMoneyFrameGoldButton"
         anchors.right: openMailTransactionAmountMoneyFrameGoldButton.right
@@ -770,10 +711,9 @@ WowWindow {
         height: 14.2
     }
 
-    Part {
+    Button {
         id: openMailTransactionAmountMoneyFrameSilverButton
         name: "OpenMailTransactionAmountMoneyFrameSilverButton"
-        kind: "Button"
         text: "19"
         wowParent: "OpenMailTransactionAmountMoneyFrame"
         anchors.right: openMailTransactionAmountMoneyFrameCopperButton.left
@@ -783,10 +723,9 @@ WowWindow {
         height: 13
     }
 
-    Part {
+    FontString {
         id: openMailTransactionAmountMoneyFrameSilverButtonText
         name: "OpenMailTransactionAmountMoneyFrameSilverButtonText"
-        kind: "FontString"
         text: "19"
         wowParent: "OpenMailTransactionAmountMoneyFrameSilverButton"
         anchors.right: openMailTransactionAmountMoneyFrameSilverButton.right
