@@ -107,7 +107,7 @@ Engine:NewStaticConfig("Blizzard", {
 		offset_y = 32, -- Blizzard's frame up into its tabs' old row (the tabs hang from the foot): the lists 6 under the band
 		header_height = 48, -- the red band
 		header_insets = { 24, 24 }, -- inside the iron frame, its solid part
-		tab_sigils = { "star", "sun" }, -- the tabs' emblems (window.banner's): achievements, statistics; an addon's get the default
+		tab_sigils = { "star", "sun", "AllSeeing", "owl", "crow" }, -- the tabs' emblems (window.banner's): achievements, statistics, Overachiever's search, suggestions, watch
 		category_font = DiabolicFont_HeaderRegular12,
 		category_color = { .93, .86, .74 },
 		category_text_offset = 14, -- from the button's left (and kept that far from its right)
@@ -698,7 +698,7 @@ Engine:NewStaticConfig("Blizzard", {
 			{ frame = "ItemSocketingFrame", band = false, background = "zoltun", addon = "Blizzard_ItemSocketingUI", insets = { 24, 40, 24, 36 }, offset_y = -4,
 				text = "ITEM_SOCKETING", close = "ItemSocketingCloseButton", lists = { "ItemSocketingScrollFrame" } },
 			{ frame = "AuctionFrame", addon = "Blizzard_AuctionUI", insets = { 24, 56, 24, 48 }, offset_y = -20, text = "AUCTIONS", background = "street", footer = "BrowseCloseButton",
-				close = "AuctionFrameCloseButton", tabs = "AuctionFrameTab", sigils = { "AllSeeing", "scarab", "stein" }, art = { "ui%-auctionframe%-" },
+				close = "AuctionFrameCloseButton", tabs = "AuctionFrameTab", sigils = { "AllSeeing", "scarab", "stein", "fleur", "gryphon", "orbLight" }, art = { "ui%-auctionframe%-" }, -- browse, bids, auctions, Auctionator's buy, sell, more
 				hide = { "BrowseTitle", "BidTitle", "AuctionsTitle", -- the pages' own titles, under the tabs
 					"BrowseNameText", "BrowseDropDownName" }, -- the search's labels (Name in its box)
 				-- the search in the band, its two checkboxes one under the other
