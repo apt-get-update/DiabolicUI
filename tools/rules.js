@@ -10,8 +10,9 @@
 // { left, top, right, bottom (y down) and what /dui layout saved: kind, text,
 // written, faded, own, hung, chain, parent, control, dropdown, diablo, zone,
 // material, edge, row, textWidth, justify, inset, light, onArt, onLit } }, view:
-// { frame, band, foot, railOver, close, iron }, rules: { button_gap, content_gap,
-// uneven }, unit (screen pixels per unit), origin: [ left, top ] on screen }.
+// { frame, band, foot, railOver, close, iron, scale (of a window the game scales) },
+// rules: { button_gap, content_gap, uneven }, unit (screen pixels per unit),
+// origin: [ left, top ] on screen }.
 
 var LIGHT = { parchment: true, lined: true, page: true } // the materials read in ink
 var COLUMN_NAMES = [/Sort$/, /ColumnHeader\d+$/, /_Heading_Button$/]
@@ -109,14 +110,18 @@ function check(model) {
         }
     })
 
-    // Band: its controls and texts over each other, the title, the X.
+    // Band: its controls and texts over each other, the title, the X. (Not what
+    // scrolls: a list's row past its top is cut off at its scroll frame's edge.)
+    function scrolls(p) {
+        return (p.chain || []).some(function (name) { return byName[name] && byName[name].kind === "ScrollFrame" })
+    }
     if (band) {
         var inBand = []
         controls.concat(texts).concat(close ? [close] : [])
             .concat(all.filter(function (p) { return p.kind === "FontString" && p.written && p.parent === band.name }))
             .forEach(function (p) {
                 var b = box(p), middle = (b.top + b.bottom) / 2
-                if (middle > band.top && middle < band.bottom && !inBand.some(function (o) { return o.part === p })) inBand.push(b)
+                if (middle > band.top && middle < band.bottom && !scrolls(p) && !inBand.some(function (o) { return o.part === p })) inBand.push(b)
             })
         inBand.forEach(function (a, i) {
             inBand.slice(i + 1).forEach(function (b) {
@@ -235,7 +240,8 @@ function check(model) {
         checked.forEach(function (p) {
             total++
             var most = 0
-            var edges = [model.origin[0] + p.left, model.origin[1] - p.top, model.origin[0] + p.right, model.origin[1] - p.bottom]
+            var s = view.scale || 1
+            var edges = [model.origin[0] + p.left * s, model.origin[1] - p.top * s, model.origin[0] + p.right * s, model.origin[1] - p.bottom * s]
             edges.forEach(function (edge) {
                 var at = edge * unit
                 most = Math.max(most, Math.abs(at - round(at)))

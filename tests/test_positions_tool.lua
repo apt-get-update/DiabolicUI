@@ -459,4 +459,30 @@ function TestPositionsTool:test_the_art_by_its_files()
 	lu.assertEquals(count, 4)
 end
 
+-- A window the game scales: its rects on screen in its own units, as its parts'
+-- places and sizes are; a part held by two points sized with them.
+function TestPositionsTool:test_a_scaled_windows_rects_in_its_own_units()
+	local dir = Folder()
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 100, 100, 220, 110 }, window = { 100, 100, 220, 110 },
+		views = { [""] = { rect = { 100, 100, 220, 110 }, window = { 100, 100, 220, 110 }, frame = "W",
+			art = { { file = "Interface\\Buttons\\WHITE8X8", rect = { 122, 188, 44, 11 }, coords = { 0, 0, 0, 1, 1, 0, 1, 1 }, scale = 1.1 } } } },
+		parts = {
+			Box = { "TOPLEFT", "W", "TOPLEFT", 20, -10, 40, 20, kind = "Frame", rect = { 122, 177, 44, 22 } },
+			Field = { "LEFT", "Box", "LEFT", 0, 0, 40, 10, kind = "Frame", rect = { 122, 182.5, 44, 11 },
+				points = { { "LEFT", "Box", "LEFT", 0, 0 }, { "RIGHT", "Box", "RIGHT", 0, 0 } } },
+		} } } }]=])
+	Runs(dir)
+	local json, file = Read(dir .. "/layout.json"), Read(dir .. "/windows/W.qml")
+	os.execute("rm -rf '" .. dir .. "'")
+	-- the window from its top left, its art, its parts
+	lu.assertStrContains(json, '"rect":[100,110,200,100]')
+	lu.assertStrContains(json, '"scale":1.1')
+	lu.assertStrContains(json, '"rect":[120,190,40,10]')
+	lu.assertStrContains(json, '"rect":[120,180,40,20]')
+	lu.assertStrContains(file, "width: 200")
+	-- the one held by two points, not its size on screen
+	lu.assertStrContains(json, '"size":[40,10]')
+	lu.assertNotStrContains(file, "width: 44")
+end
+
 os.exit(lu.LuaUnit.run())

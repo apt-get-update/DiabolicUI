@@ -328,6 +328,50 @@ for _, title in ipairs(Sorted(layout.windows or {})) do
 		end
 	end
 end
+-- A window the game scales (the auction house): the scan's rects are on screen,
+-- its parts' places and sizes in its own units, as its file and
+-- settings/positions.lua have them. Its rects in its own units too, from its top
+-- left, for all of it to line up.
+local ScaleOf = function(window)
+	local scales = {}
+	for _, part in pairs(window.parts) do
+		local seen = part.seen
+		if seen and seen.rect and seen[6] and (seen[6] > 0) and (seen.rect[3] > 0) then
+			scales[#scales + 1] = math.floor(seen.rect[3] / seen[6] * 100 + .5) / 100
+		end
+	end
+	table.sort(scales)
+	return scales[math.ceil(#scales / 2)] or 1
+end
+
+for _, window in pairs(windows) do
+	local seen = window.seen
+	local scale = ScaleOf(window)
+	if seen and seen.rect and (scale ~= 1) then
+		local left, top = seen.rect[1], seen.rect[2] + seen.rect[4]
+		local Own = function(rect)
+			return rect and { left + (rect[1] - left) / scale, top - (top - rect[2]) / scale, rect[3] / scale, rect[4] / scale }
+		end
+		local OwnArt = function(art)
+			for _, item in ipairs(art or {}) do
+				item.rect = Own(item.rect)
+				item.scale = item.scale and (item.scale / scale)
+			end
+		end
+		for _, part in pairs(window.parts) do
+			if part.seen then
+				part.seen.rect = Own(part.seen.rect)
+			end
+		end
+		for _, view in pairs(seen.views or {}) do
+			view.rect, view.window, view.scale = Own(view.rect), Own(view.window), scale
+			OwnArt(view.art)
+		end
+		seen.rect, seen.window = Own(seen.rect), Own(seen.window)
+		OwnArt(seen.art)
+	end
+end
+
 -- A part placed by several points: the one place and size that keep it
 -- where it is (its first point's wouldn't: the others stretch it).
 local X_OF = { left = 0, horizontalCenter = .5, right = 1 }
@@ -647,7 +691,7 @@ for title, window in pairs(windows) do
 	for _, key in ipairs(Sorted(seen.views or {})) do
 		local view = seen.views[key]
 		first = first or view.art
-		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, art = Pictures(view.art),
+		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, scale = view.scale, art = Pictures(view.art),
 			frame = view.frame, band = view.band, foot = view.foot, railOver = view.railOver, close = view.close, iron = view.iron }
 	end
 	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,

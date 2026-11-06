@@ -6,8 +6,8 @@ import QtQuick
 WowWindow {
     id: auctionFrame
     name: "AuctionFrame"
-    width: 915.2
-    height: 491.7
+    width: 832
+    height: 447
 
     Part {
         id: atr_ActiveItems_Text
@@ -19,8 +19,8 @@ WowWindow {
         anchors.horizontalCenterOffset: -350
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 32
-        width: 71.1
-        height: 11.1
+        width: 64.6
+        height: 10.1
     }
 
     Part {
@@ -44,8 +44,8 @@ WowWindow {
         wowParent: "Atr_AddToSListButton"
         anchors.horizontalCenter: atr_AddToSListButton.horizontalCenter
         anchors.verticalCenter: atr_AddToSListButton.verticalCenter
-        width: 53.7
-        height: 11.1
+        width: 48.8
+        height: 10.1
     }
 
     Part {
@@ -69,8 +69,8 @@ WowWindow {
         wowParent: "Atr_Adv_Search_Button"
         anchors.horizontalCenter: atr_Adv_Search_Button.horizontalCenter
         anchors.verticalCenter: atr_Adv_Search_Button.verticalCenter
-        width: 7.1
-        height: 11.1
+        width: 6.5
+        height: 10.1
     }
 
     Part {
@@ -95,8 +95,8 @@ WowWindow {
         wowParent: "Atr_Buy1_Button"
         anchors.horizontalCenter: atr_Buy1_Button.horizontalCenter
         anchors.verticalCenter: atr_Buy1_Button.verticalCenter
-        width: 22.1
-        height: 11.1
+        width: 20.1
+        height: 10.1
     }
 
     Part {
@@ -121,8 +121,8 @@ WowWindow {
         wowParent: "Atr_CancelSelectionButton"
         anchors.horizontalCenter: atr_CancelSelectionButton.horizontalCenter
         anchors.verticalCenter: atr_CancelSelectionButton.verticalCenter
-        width: 95.6
-        height: 11.1
+        width: 86.9
+        height: 10.1
     }
 
     Part {
@@ -147,8 +147,8 @@ WowWindow {
         wowParent: "Atr_CheckActiveButton"
         anchors.horizontalCenter: atr_CheckActiveButton.horizontalCenter
         anchors.verticalCenter: atr_CheckActiveButton.verticalCenter
-        width: 121.7
-        height: 11.1
+        width: 110.6
+        height: 10.1
     }
 
     Part {
@@ -161,8 +161,8 @@ WowWindow {
         anchors.leftMargin: 40
         anchors.verticalCenter: atr_HeadingsBarMiddle.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 110
-        height: 11.1
+        width: 100
+        height: 10.1
     }
 
     Part {
@@ -175,8 +175,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.verticalCenter: atr_HeadingsBarMiddle.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 94.8
-        height: 11.1
+        width: 86.2
+        height: 10.1
     }
 
     Part {
@@ -189,8 +189,8 @@ WowWindow {
         anchors.leftMargin: 500
         anchors.verticalCenter: atr_HeadingsBarMiddle.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 61.6
-        height: 11.1
+        width: 56
+        height: 10.1
     }
 
     Part {
@@ -224,8 +224,8 @@ WowWindow {
         wowParent: "Atr_DropDownSL"
         anchors.left: atr_DropDownSL.left
         anchors.verticalCenter: atr_DropDownSL.verticalCenter
-        width: 220
-        height: 24.2
+        width: 200
+        height: 22
     }
 
     Part {
@@ -238,8 +238,8 @@ WowWindow {
         anchors.horizontalCenterOffset: -5
         anchors.verticalCenter: atr_DropDownSLMiddle.verticalCenter
         anchors.verticalCenterOffset: -2
-        width: 137.5
-        height: 11
+        width: 125
+        height: 10
     }
 
     Part {
@@ -263,8 +263,8 @@ WowWindow {
         wowParent: "Atr_FullScanButton"
         anchors.horizontalCenter: atr_FullScanButton.horizontalCenter
         anchors.verticalCenter: atr_FullScanButton.verticalCenter
-        width: 64.8
-        height: 11.1
+        width: 58.9
+        height: 10.1
     }
 
     Part {
@@ -323,11 +323,11 @@ WowWindow {
         kind: "Slider"
         wowParent: "Atr_Hlist_ScrollFrame"
         anchors.left: atr_Hlist_ScrollFrame.right
-        anchors.leftMargin: 6.6
+        anchors.leftMargin: 6
         anchors.top: atr_Hlist_ScrollFrame.top
-        anchors.topMargin: 17.6
-        width: 17.6
-        height: 242
+        anchors.topMargin: 16
+        width: 16
+        height: 220
     }
 
     Part {
@@ -337,9 +337,9 @@ WowWindow {
         wowParent: "Atr_Hlist_ScrollFrameScrollBar"
         anchors.horizontalCenter: atr_Hlist_ScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: atr_Hlist_ScrollFrameScrollBarScrollUpButton.top
-        anchors.topMargin: -1.1
-        width: 19.8
-        height: 279.4
+        anchors.topMargin: -1
+        width: 18
+        height: 254
     }
 
     Part {
@@ -409,8 +409,8 @@ WowWindow {
         anchors.horizontalCenter: atr_ListTabsTab1.horizontalCenter
         anchors.verticalCenter: atr_ListTabsTab1.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 58.5
-        height: 14.3
+        width: 53.2
+        height: 13
     }
 
     Part {
@@ -435,8 +435,8 @@ WowWindow {
         anchors.horizontalCenter: atr_ListTabsTab2.horizontalCenter
         anchors.verticalCenter: atr_ListTabsTab2.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 55.3
-        height: 14.3
+        width: 50.3
+        height: 13
     }
 
     Part {
@@ -461,8 +461,8 @@ WowWindow {
         anchors.horizontalCenter: atr_ListTabsTab3.horizontalCenter
         anchors.verticalCenter: atr_ListTabsTab3.verticalCenter
         anchors.verticalCenterOffset: -1
-        width: 42.7
-        height: 14.3
+        width: 38.8
+        height: 13
     }
 
     Part {
@@ -499,8 +499,8 @@ WowWindow {
         wowParent: "Atr_MngSListsButton"
         anchors.horizontalCenter: atr_MngSListsButton.horizontalCenter
         anchors.verticalCenter: atr_MngSListsButton.verticalCenter
-        width: 135.9
-        height: 11.1
+        width: 123.5
+        height: 10.1
     }
 
     Part {
@@ -525,8 +525,8 @@ WowWindow {
         wowParent: "Atr_NewSListButton"
         anchors.horizontalCenter: atr_NewSListButton.horizontalCenter
         anchors.verticalCenter: atr_NewSListButton.verticalCenter
-        width: 108.2
-        height: 11.1
+        width: 98.4
+        height: 10.1
     }
 
     Part {
@@ -551,8 +551,8 @@ WowWindow {
         anchors.leftMargin: 87
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 73
-        width: 122.5
-        height: 13.4
+        width: 111.4
+        height: 12.2
     }
 
     Part {
@@ -577,8 +577,8 @@ WowWindow {
         wowParent: "Atr_RemFromSListButton"
         anchors.horizontalCenter: atr_RemFromSListButton.horizontalCenter
         anchors.verticalCenter: atr_RemFromSListButton.verticalCenter
-        width: 78.2
-        height: 11.1
+        width: 71.1
+        height: 10.1
     }
 
     Part {
@@ -600,10 +600,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "Atr_Search_Box"
         anchors.left: atr_Search_Box.left
-        anchors.leftMargin: -8.8
+        anchors.leftMargin: -8
         anchors.verticalCenter: atr_Search_Box.verticalCenter
-        width: 303.6
-        height: 24.2
+        width: 276
+        height: 22
     }
 
     Part {
@@ -627,8 +627,8 @@ WowWindow {
         wowParent: "Atr_Search_Button"
         anchors.horizontalCenter: atr_Search_Button.horizontalCenter
         anchors.verticalCenter: atr_Search_Button.verticalCenter
-        width: 40.3
-        height: 11.1
+        width: 36.6
+        height: 10.1
     }
 
     Part {
@@ -653,8 +653,8 @@ WowWindow {
         wowParent: "Atr_SrchSListButton"
         anchors.horizontalCenter: atr_SrchSListButton.horizontalCenter
         anchors.verticalCenter: atr_SrchSListButton.verticalCenter
-        width: 117.7
-        height: 11.1
+        width: 107
+        height: 10.1
     }
 
     Part {
@@ -692,8 +692,8 @@ WowWindow {
         anchors.left: auctionFilterButton10.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton10.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -717,8 +717,8 @@ WowWindow {
         anchors.left: auctionFilterButton11.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton11.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -742,8 +742,8 @@ WowWindow {
         anchors.left: auctionFilterButton12.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton12.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -765,8 +765,8 @@ WowWindow {
         anchors.left: auctionFilterButton13.left
         anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton13.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -788,8 +788,8 @@ WowWindow {
         anchors.left: auctionFilterButton14.left
         anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton14.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -811,8 +811,8 @@ WowWindow {
         anchors.left: auctionFilterButton15.left
         anchors.leftMargin: 12
         anchors.verticalCenter: auctionFilterButton15.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -824,8 +824,8 @@ WowWindow {
         anchors.left: auctionFilterButton1.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton1.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -849,8 +849,8 @@ WowWindow {
         anchors.left: auctionFilterButton2.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton2.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -874,8 +874,8 @@ WowWindow {
         anchors.left: auctionFilterButton3.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton3.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -899,8 +899,8 @@ WowWindow {
         anchors.left: auctionFilterButton4.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton4.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -924,8 +924,8 @@ WowWindow {
         anchors.left: auctionFilterButton5.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton5.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -949,8 +949,8 @@ WowWindow {
         anchors.left: auctionFilterButton6.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton6.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -974,8 +974,8 @@ WowWindow {
         anchors.left: auctionFilterButton7.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton7.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -999,8 +999,8 @@ WowWindow {
         anchors.left: auctionFilterButton8.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton8.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -1024,8 +1024,8 @@ WowWindow {
         anchors.left: auctionFilterButton9.left
         anchors.leftMargin: 4
         anchors.verticalCenter: auctionFilterButton9.verticalCenter
-        width: 126.5
-        height: 8.8
+        width: 115
+        height: 8
     }
 
     Part {
@@ -1080,11 +1080,11 @@ WowWindow {
         kind: "Frame"
         wowParent: "AuctionFrame"
         anchors.left: auctionFrame.left
-        anchors.leftMargin: -26.4
+        anchors.leftMargin: -24
         anchors.top: auctionFrame.top
-        anchors.topMargin: -61.6
-        width: 968
-        height: 606.1
+        anchors.topMargin: -56
+        width: 880
+        height: 551
     }
 
     Part {
@@ -1093,11 +1093,11 @@ WowWindow {
         kind: "Frame"
         wowParent: "AuctionFrameDiabolic"
         anchors.left: auctionFrameDiabolic.left
-        anchors.leftMargin: 26.4
+        anchors.leftMargin: 24
         anchors.top: auctionFrameDiabolic.top
-        anchors.topMargin: 61.6
-        width: 915.2
-        height: 44
+        anchors.topMargin: 56
+        width: 832
+        height: 40
     }
 
     Part {
@@ -1107,9 +1107,9 @@ WowWindow {
         wowParent: "AuctionFrameDiabolic"
         anchors.left: auctionFrameDiabolic.left
         anchors.top: auctionFrameDiabolic.top
-        anchors.topMargin: 35.2
-        width: 968
-        height: 570.9
+        anchors.topMargin: 32
+        width: 880
+        height: 519
     }
 
     Part {
@@ -1118,11 +1118,11 @@ WowWindow {
         kind: "Frame"
         wowParent: "AuctionFrameDiabolic"
         anchors.horizontalCenter: browseCloseButton.horizontalCenter
-        anchors.horizontalCenterOffset: -407
+        anchors.horizontalCenterOffset: -370
         anchors.top: browseCloseButton.top
-        anchors.topMargin: -6.6
-        width: 917.4
-        height: 45.1
+        anchors.topMargin: -6
+        width: 834
+        height: 41
     }
 
     Part {
@@ -1198,8 +1198,8 @@ WowWindow {
         anchors.right: auctionFrameMoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionFrameMoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -1224,8 +1224,8 @@ WowWindow {
         anchors.right: auctionFrameMoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionFrameMoneyFrameGoldButton.verticalCenter
-        width: 31.6
-        height: 15
+        width: 28.7
+        height: 13.6
     }
 
     Part {
@@ -1250,8 +1250,8 @@ WowWindow {
         anchors.right: auctionFrameMoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionFrameMoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -1359,8 +1359,8 @@ WowWindow {
         wowParent: "Auctionator1Button"
         anchors.horizontalCenter: auctionator1Button.horizontalCenter
         anchors.verticalCenter: auctionator1Button.verticalCenter
-        width: 47.4
-        height: 11.1
+        width: 43.1
+        height: 10.1
     }
 
     Part {
@@ -1385,8 +1385,8 @@ WowWindow {
         wowParent: "AuctionatorCloseButton"
         anchors.horizontalCenter: auctionatorCloseButton.horizontalCenter
         anchors.verticalCenter: auctionatorCloseButton.verticalCenter
-        width: 30.8
-        height: 11.1
+        width: 28
+        height: 10.1
     }
 
     Part {
@@ -1422,8 +1422,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry10.top
         anchors.topMargin: 3
-        width: 71.9
-        height: 11.1
+        width: 65.4
+        height: 10.1
     }
 
     Part {
@@ -1461,8 +1461,8 @@ WowWindow {
         anchors.right: auctionatorEntry10_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry10_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -1487,8 +1487,8 @@ WowWindow {
         anchors.right: auctionatorEntry10_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry10_PerItem_PriceSilverButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -1501,8 +1501,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry10.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -1526,8 +1526,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry11.top
         anchors.topMargin: 3
-        width: 75.9
-        height: 11.1
+        width: 69
+        height: 10.1
     }
 
     Part {
@@ -1565,8 +1565,8 @@ WowWindow {
         anchors.right: auctionatorEntry11_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry11_PerItem_PriceCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -1591,8 +1591,8 @@ WowWindow {
         anchors.right: auctionatorEntry11_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry11_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -1604,8 +1604,8 @@ WowWindow {
         anchors.leftMargin: 559
         anchors.top: auctionatorEntry11.top
         anchors.topMargin: 7.5
-        width: 1.1
-        height: 1.1
+        width: 1
+        height: 1
     }
 
     Part {
@@ -1629,8 +1629,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry12.top
         anchors.topMargin: 3
-        width: 75.1
-        height: 11.1
+        width: 68.3
+        height: 10.1
     }
 
     Part {
@@ -1668,8 +1668,8 @@ WowWindow {
         anchors.right: auctionatorEntry12_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry12_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -1694,8 +1694,8 @@ WowWindow {
         anchors.right: auctionatorEntry12_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry12_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -1708,8 +1708,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry12.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -1722,8 +1722,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry1.top
         anchors.topMargin: 3
-        width: 70.3
-        height: 11.1
+        width: 63.9
+        height: 10.1
     }
 
     Part {
@@ -1736,8 +1736,8 @@ WowWindow {
         anchors.leftMargin: 46.3
         anchors.top: auctionatorEntry1.top
         anchors.topMargin: 2
-        width: 87.7
-        height: 11.1
+        width: 79.7
+        height: 10.1
     }
 
     Part {
@@ -1749,8 +1749,8 @@ WowWindow {
         anchors.leftMargin: 559
         anchors.top: auctionatorEntry1.top
         anchors.topMargin: 7.5
-        width: 1.1
-        height: 1.1
+        width: 1
+        height: 1
     }
 
     Part {
@@ -1774,8 +1774,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry2.top
         anchors.topMargin: 3
-        width: 77.4
-        height: 11.1
+        width: 70.4
+        height: 10.1
     }
 
     Part {
@@ -1813,8 +1813,8 @@ WowWindow {
         anchors.right: auctionatorEntry2_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry2_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -1839,8 +1839,8 @@ WowWindow {
         anchors.right: auctionatorEntry2_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry2_PerItem_PriceSilverButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -1853,8 +1853,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry2.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -1878,8 +1878,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry3.top
         anchors.topMargin: 3
-        width: 64
-        height: 11.1
+        width: 58.2
+        height: 10.1
     }
 
     Part {
@@ -1917,8 +1917,8 @@ WowWindow {
         anchors.right: auctionatorEntry3_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry3_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -1943,8 +1943,8 @@ WowWindow {
         anchors.right: auctionatorEntry3_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry3_PerItem_PriceSilverButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -1957,8 +1957,8 @@ WowWindow {
         anchors.leftMargin: 519.1
         anchors.top: auctionatorEntry3.top
         anchors.topMargin: 3
-        width: 45
-        height: 11.1
+        width: 40.9
+        height: 10.1
     }
 
     Part {
@@ -1982,8 +1982,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry4.top
         anchors.topMargin: 3
-        width: 71.1
-        height: 11.1
+        width: 64.6
+        height: 10.1
     }
 
     Part {
@@ -2021,8 +2021,8 @@ WowWindow {
         anchors.right: auctionatorEntry4_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry4_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -2047,8 +2047,8 @@ WowWindow {
         anchors.right: auctionatorEntry4_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry4_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -2061,8 +2061,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry4.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -2086,8 +2086,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry5.top
         anchors.topMargin: 3
-        width: 64.8
-        height: 11.1
+        width: 58.9
+        height: 10.1
     }
 
     Part {
@@ -2125,8 +2125,8 @@ WowWindow {
         anchors.right: auctionatorEntry5_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry5_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -2151,8 +2151,8 @@ WowWindow {
         anchors.right: auctionatorEntry5_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry5_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -2165,8 +2165,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry5.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -2190,8 +2190,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry6.top
         anchors.topMargin: 3
-        width: 64
-        height: 11.1
+        width: 58.2
+        height: 10.1
     }
 
     Part {
@@ -2229,8 +2229,8 @@ WowWindow {
         anchors.right: auctionatorEntry6_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry6_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -2255,8 +2255,8 @@ WowWindow {
         anchors.right: auctionatorEntry6_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry6_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -2269,8 +2269,8 @@ WowWindow {
         anchors.leftMargin: 519.8
         anchors.top: auctionatorEntry6.top
         anchors.topMargin: 3
-        width: 44.2
-        height: 11.1
+        width: 40.2
+        height: 10.1
     }
 
     Part {
@@ -2294,8 +2294,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry7.top
         anchors.topMargin: 3
-        width: 68.7
-        height: 11.1
+        width: 62.5
+        height: 10.1
     }
 
     Part {
@@ -2333,8 +2333,8 @@ WowWindow {
         anchors.right: auctionatorEntry7_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry7_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -2359,8 +2359,8 @@ WowWindow {
         anchors.right: auctionatorEntry7_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry7_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -2373,8 +2373,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry7.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -2398,8 +2398,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry8.top
         anchors.topMargin: 3
-        width: 64.8
-        height: 11.1
+        width: 58.9
+        height: 10.1
     }
 
     Part {
@@ -2437,8 +2437,8 @@ WowWindow {
         anchors.right: auctionatorEntry8_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry8_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -2463,8 +2463,8 @@ WowWindow {
         anchors.right: auctionatorEntry8_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry8_PerItem_PriceSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -2477,8 +2477,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry8.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -2502,8 +2502,8 @@ WowWindow {
         anchors.leftMargin: 205
         anchors.top: auctionatorEntry9.top
         anchors.topMargin: 3
-        width: 71.1
-        height: 11.1
+        width: 64.6
+        height: 10.1
     }
 
     Part {
@@ -2541,8 +2541,8 @@ WowWindow {
         anchors.right: auctionatorEntry9_PerItem_PriceCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry9_PerItem_PriceCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -2567,8 +2567,8 @@ WowWindow {
         anchors.right: auctionatorEntry9_PerItem_PriceSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionatorEntry9_PerItem_PriceSilverButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -2581,8 +2581,8 @@ WowWindow {
         anchors.leftMargin: 503.3
         anchors.top: auctionatorEntry9.top
         anchors.topMargin: 3
-        width: 62.4
-        height: 11.1
+        width: 56.7
+        height: 10.1
     }
 
     Part {
@@ -2618,8 +2618,8 @@ WowWindow {
         anchors.left: auctionatorHEntry10.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry10.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2643,8 +2643,8 @@ WowWindow {
         anchors.left: auctionatorHEntry11.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry11.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2668,8 +2668,8 @@ WowWindow {
         anchors.left: auctionatorHEntry12.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry12.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2693,8 +2693,8 @@ WowWindow {
         anchors.left: auctionatorHEntry13.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry13.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2718,8 +2718,8 @@ WowWindow {
         anchors.left: auctionatorHEntry14.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry14.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2743,8 +2743,8 @@ WowWindow {
         anchors.left: auctionatorHEntry15.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry15.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2756,8 +2756,8 @@ WowWindow {
         anchors.left: auctionatorHEntry1.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry1.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2781,8 +2781,8 @@ WowWindow {
         anchors.left: auctionatorHEntry2.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry2.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2806,8 +2806,8 @@ WowWindow {
         anchors.left: auctionatorHEntry3.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry3.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2831,8 +2831,8 @@ WowWindow {
         anchors.left: auctionatorHEntry4.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry4.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2856,8 +2856,8 @@ WowWindow {
         anchors.left: auctionatorHEntry5.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry5.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2881,8 +2881,8 @@ WowWindow {
         anchors.left: auctionatorHEntry6.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry6.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2906,8 +2906,8 @@ WowWindow {
         anchors.left: auctionatorHEntry7.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry7.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2931,8 +2931,8 @@ WowWindow {
         anchors.left: auctionatorHEntry8.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry8.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2956,8 +2956,8 @@ WowWindow {
         anchors.left: auctionatorHEntry9.left
         anchors.leftMargin: 2
         anchors.verticalCenter: auctionatorHEntry9.verticalCenter
-        width: 191.4
-        height: 17.6
+        width: 174
+        height: 16
     }
 
     Part {
@@ -2970,8 +2970,8 @@ WowWindow {
         anchors.horizontalCenterOffset: 18
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: 65
-        width: 206.2
-        height: 110
+        width: 187.5
+        height: 100
     }
 
     Part {
@@ -2993,11 +2993,11 @@ WowWindow {
         kind: "Slider"
         wowParent: "AuctionatorScrollFrame"
         anchors.left: auctionatorScrollFrame.right
-        anchors.leftMargin: 6.6
+        anchors.leftMargin: 6
         anchors.top: auctionatorScrollFrame.top
-        anchors.topMargin: 17.6
-        width: 17.6
-        height: 180.4
+        anchors.topMargin: 16
+        width: 16
+        height: 164
     }
 
     Part {
@@ -3007,9 +3007,9 @@ WowWindow {
         wowParent: "AuctionatorScrollFrameScrollBar"
         anchors.horizontalCenter: auctionatorScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: auctionatorScrollFrameScrollBarScrollUpButton.top
-        anchors.topMargin: -1.1
-        width: 19.8
-        height: 217.8
+        anchors.topMargin: -1
+        width: 18
+        height: 198
     }
 
     Part {
@@ -3055,8 +3055,8 @@ WowWindow {
         anchors.horizontalCenterOffset: -90
         anchors.top: atr_Main_Panel.top
         anchors.topMargin: -7
-        width: 128
-        height: 13.4
+        width: 116.4
+        height: 12.2
     }
 
     Part {
@@ -3081,8 +3081,8 @@ WowWindow {
         anchors.left: auctionsBidSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: auctionsBidSort.verticalCenter
-        width: 63.2
-        height: 11.1
+        width: 57.5
+        height: 10.1
     }
 
     Part {
@@ -3105,9 +3105,9 @@ WowWindow {
         wowParent: "AuctionsButton1"
         anchors.right: auctionsButton1MoneyFrame.right
         anchors.top: auctionsButton1MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -3143,8 +3143,8 @@ WowWindow {
         anchors.right: auctionsButton1BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton1BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3169,8 +3169,8 @@ WowWindow {
         anchors.right: auctionsButton1BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton1BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3195,8 +3195,8 @@ WowWindow {
         anchors.right: auctionsButton1BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton1BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3206,8 +3206,8 @@ WowWindow {
         wowParent: "AuctionsButton1BuyoutFrame"
         anchors.left: auctionsButton1BuyoutFrame.left
         anchors.top: auctionsButton1BuyoutFrame.top
-        width: 96.4
-        height: 14.3
+        width: 87.6
+        height: 13
     }
 
     Part {
@@ -3230,8 +3230,8 @@ WowWindow {
         wowParent: "AuctionsButton1ClosingTime"
         anchors.left: auctionsButton1ClosingTime.left
         anchors.top: auctionsButton1ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -3242,8 +3242,8 @@ WowWindow {
         anchors.left: auctionsButton1.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton1.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -3267,8 +3267,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: auctionsButton1Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3306,8 +3306,8 @@ WowWindow {
         anchors.right: auctionsButton1MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton1MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3332,8 +3332,8 @@ WowWindow {
         anchors.right: auctionsButton1MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton1MoneyFrameGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3358,8 +3358,8 @@ WowWindow {
         anchors.right: auctionsButton1MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton1MoneyFrameSilverButton.verticalCenter
-        width: 15.8
-        height: 15
+        width: 14.4
+        height: 13.6
     }
 
     Part {
@@ -3371,8 +3371,8 @@ WowWindow {
         anchors.left: auctionsButton1.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton1.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -3393,9 +3393,9 @@ WowWindow {
         wowParent: "AuctionsButton2"
         anchors.right: auctionsButton2MoneyFrame.right
         anchors.top: auctionsButton2MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -3431,8 +3431,8 @@ WowWindow {
         anchors.right: auctionsButton2BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton2BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3457,8 +3457,8 @@ WowWindow {
         anchors.right: auctionsButton2BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton2BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3483,8 +3483,8 @@ WowWindow {
         anchors.right: auctionsButton2BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton2BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3494,8 +3494,8 @@ WowWindow {
         wowParent: "AuctionsButton2BuyoutFrame"
         anchors.left: auctionsButton2BuyoutFrame.left
         anchors.top: auctionsButton2BuyoutFrame.top
-        width: 96.4
-        height: 14.3
+        width: 87.6
+        height: 13
     }
 
     Part {
@@ -3518,8 +3518,8 @@ WowWindow {
         wowParent: "AuctionsButton2ClosingTime"
         anchors.left: auctionsButton2ClosingTime.left
         anchors.top: auctionsButton2ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -3530,8 +3530,8 @@ WowWindow {
         anchors.left: auctionsButton2.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton2.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -3555,8 +3555,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: auctionsButton2Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3594,8 +3594,8 @@ WowWindow {
         anchors.right: auctionsButton2MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton2MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3620,8 +3620,8 @@ WowWindow {
         anchors.right: auctionsButton2MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton2MoneyFrameGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3646,8 +3646,8 @@ WowWindow {
         anchors.right: auctionsButton2MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton2MoneyFrameSilverButton.verticalCenter
-        width: 15.8
-        height: 15
+        width: 14.4
+        height: 13.6
     }
 
     Part {
@@ -3659,8 +3659,8 @@ WowWindow {
         anchors.left: auctionsButton2.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton2.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -3681,9 +3681,9 @@ WowWindow {
         wowParent: "AuctionsButton3"
         anchors.right: auctionsButton3MoneyFrame.right
         anchors.top: auctionsButton3MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -3719,8 +3719,8 @@ WowWindow {
         anchors.right: auctionsButton3BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton3BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3745,8 +3745,8 @@ WowWindow {
         anchors.right: auctionsButton3BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton3BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3771,8 +3771,8 @@ WowWindow {
         anchors.right: auctionsButton3BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton3BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3782,8 +3782,8 @@ WowWindow {
         wowParent: "AuctionsButton3BuyoutFrame"
         anchors.left: auctionsButton3BuyoutFrame.left
         anchors.top: auctionsButton3BuyoutFrame.top
-        width: 96.4
-        height: 14.3
+        width: 87.6
+        height: 13
     }
 
     Part {
@@ -3806,8 +3806,8 @@ WowWindow {
         wowParent: "AuctionsButton3ClosingTime"
         anchors.left: auctionsButton3ClosingTime.left
         anchors.top: auctionsButton3ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -3818,8 +3818,8 @@ WowWindow {
         anchors.left: auctionsButton3.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton3.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -3843,8 +3843,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: auctionsButton3Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3882,8 +3882,8 @@ WowWindow {
         anchors.right: auctionsButton3MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton3MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3908,8 +3908,8 @@ WowWindow {
         anchors.right: auctionsButton3MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton3MoneyFrameGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -3934,8 +3934,8 @@ WowWindow {
         anchors.right: auctionsButton3MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton3MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -3947,8 +3947,8 @@ WowWindow {
         anchors.left: auctionsButton3.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton3.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -3969,9 +3969,9 @@ WowWindow {
         wowParent: "AuctionsButton4"
         anchors.right: auctionsButton4MoneyFrame.right
         anchors.top: auctionsButton4MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -4007,8 +4007,8 @@ WowWindow {
         anchors.right: auctionsButton4BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton4BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4033,8 +4033,8 @@ WowWindow {
         anchors.right: auctionsButton4BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton4BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4044,8 +4044,8 @@ WowWindow {
         wowParent: "AuctionsButton4BuyoutFrame"
         anchors.left: auctionsButton4BuyoutFrame.left
         anchors.top: auctionsButton4BuyoutFrame.top
-        width: 128.9
-        height: 14.3
+        width: 117.2
+        height: 13
     }
 
     Part {
@@ -4068,8 +4068,8 @@ WowWindow {
         wowParent: "AuctionsButton4ClosingTime"
         anchors.left: auctionsButton4ClosingTime.left
         anchors.top: auctionsButton4ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -4080,8 +4080,8 @@ WowWindow {
         anchors.left: auctionsButton4.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton4.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -4130,8 +4130,8 @@ WowWindow {
         anchors.right: auctionsButton4MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton4MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4156,8 +4156,8 @@ WowWindow {
         anchors.right: auctionsButton4MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton4MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4169,8 +4169,8 @@ WowWindow {
         anchors.left: auctionsButton4.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton4.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -4191,9 +4191,9 @@ WowWindow {
         wowParent: "AuctionsButton5"
         anchors.right: auctionsButton5MoneyFrame.right
         anchors.top: auctionsButton5MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -4229,8 +4229,8 @@ WowWindow {
         anchors.right: auctionsButton5BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton5BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -4255,8 +4255,8 @@ WowWindow {
         anchors.right: auctionsButton5BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton5BuyoutFrameMoneySilverButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4266,8 +4266,8 @@ WowWindow {
         wowParent: "AuctionsButton5BuyoutFrame"
         anchors.left: auctionsButton5BuyoutFrame.left
         anchors.top: auctionsButton5BuyoutFrame.top
-        width: 136
-        height: 14.3
+        width: 123.6
+        height: 13
     }
 
     Part {
@@ -4290,8 +4290,8 @@ WowWindow {
         wowParent: "AuctionsButton5ClosingTime"
         anchors.left: auctionsButton5ClosingTime.left
         anchors.top: auctionsButton5ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -4302,8 +4302,8 @@ WowWindow {
         anchors.left: auctionsButton5.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton5.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -4352,8 +4352,8 @@ WowWindow {
         anchors.right: auctionsButton5MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton5MoneyFrameCopperButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -4378,8 +4378,8 @@ WowWindow {
         anchors.right: auctionsButton5MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton5MoneyFrameSilverButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4391,8 +4391,8 @@ WowWindow {
         anchors.left: auctionsButton5.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton5.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -4413,9 +4413,9 @@ WowWindow {
         wowParent: "AuctionsButton6"
         anchors.right: auctionsButton6MoneyFrame.right
         anchors.top: auctionsButton6MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -4451,8 +4451,8 @@ WowWindow {
         anchors.right: auctionsButton6BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton6BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4477,8 +4477,8 @@ WowWindow {
         anchors.right: auctionsButton6BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton6BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4488,8 +4488,8 @@ WowWindow {
         wowParent: "AuctionsButton6BuyoutFrame"
         anchors.left: auctionsButton6BuyoutFrame.left
         anchors.top: auctionsButton6BuyoutFrame.top
-        width: 128.9
-        height: 14.3
+        width: 117.2
+        height: 13
     }
 
     Part {
@@ -4512,8 +4512,8 @@ WowWindow {
         wowParent: "AuctionsButton6ClosingTime"
         anchors.left: auctionsButton6ClosingTime.left
         anchors.top: auctionsButton6ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -4524,8 +4524,8 @@ WowWindow {
         anchors.left: auctionsButton6.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton6.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -4574,8 +4574,8 @@ WowWindow {
         anchors.right: auctionsButton6MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton6MoneyFrameCopperButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -4600,8 +4600,8 @@ WowWindow {
         anchors.right: auctionsButton6MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton6MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4613,8 +4613,8 @@ WowWindow {
         anchors.left: auctionsButton6.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton6.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -4635,9 +4635,9 @@ WowWindow {
         wowParent: "AuctionsButton7"
         anchors.right: auctionsButton7MoneyFrame.right
         anchors.top: auctionsButton7MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -4673,8 +4673,8 @@ WowWindow {
         anchors.right: auctionsButton7BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton7BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4699,8 +4699,8 @@ WowWindow {
         anchors.right: auctionsButton7BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton7BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4725,8 +4725,8 @@ WowWindow {
         anchors.right: auctionsButton7BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton7BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4736,8 +4736,8 @@ WowWindow {
         wowParent: "AuctionsButton7BuyoutFrame"
         anchors.left: auctionsButton7BuyoutFrame.left
         anchors.top: auctionsButton7BuyoutFrame.top
-        width: 96.4
-        height: 14.3
+        width: 87.6
+        height: 13
     }
 
     Part {
@@ -4760,8 +4760,8 @@ WowWindow {
         wowParent: "AuctionsButton7ClosingTime"
         anchors.left: auctionsButton7ClosingTime.left
         anchors.top: auctionsButton7ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -4772,8 +4772,8 @@ WowWindow {
         anchors.left: auctionsButton7.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton7.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -4797,8 +4797,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: auctionsButton7Item.bottom
         anchors.bottomMargin: 2
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4836,8 +4836,8 @@ WowWindow {
         anchors.right: auctionsButton7MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton7MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4862,8 +4862,8 @@ WowWindow {
         anchors.right: auctionsButton7MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton7MoneyFrameGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4888,8 +4888,8 @@ WowWindow {
         anchors.right: auctionsButton7MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton7MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -4901,8 +4901,8 @@ WowWindow {
         anchors.left: auctionsButton7.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton7.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -4923,9 +4923,9 @@ WowWindow {
         wowParent: "AuctionsButton8"
         anchors.right: auctionsButton8MoneyFrame.right
         anchors.top: auctionsButton8MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -4961,8 +4961,8 @@ WowWindow {
         anchors.right: auctionsButton8BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton8BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -4987,8 +4987,8 @@ WowWindow {
         anchors.right: auctionsButton8BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton8BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -5013,8 +5013,8 @@ WowWindow {
         anchors.right: auctionsButton8BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton8BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -5024,8 +5024,8 @@ WowWindow {
         wowParent: "AuctionsButton8BuyoutFrame"
         anchors.left: auctionsButton8BuyoutFrame.left
         anchors.top: auctionsButton8BuyoutFrame.top
-        width: 96.4
-        height: 14.3
+        width: 87.6
+        height: 13
     }
 
     Part {
@@ -5048,8 +5048,8 @@ WowWindow {
         wowParent: "AuctionsButton8ClosingTime"
         anchors.left: auctionsButton8ClosingTime.left
         anchors.top: auctionsButton8ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -5060,8 +5060,8 @@ WowWindow {
         anchors.left: auctionsButton8.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton8.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -5085,8 +5085,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: auctionsButton8Item.bottom
         anchors.bottomMargin: 2
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -5124,8 +5124,8 @@ WowWindow {
         anchors.right: auctionsButton8MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton8MoneyFrameCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -5150,8 +5150,8 @@ WowWindow {
         anchors.right: auctionsButton8MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton8MoneyFrameGoldButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -5176,8 +5176,8 @@ WowWindow {
         anchors.right: auctionsButton8MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton8MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -5189,8 +5189,8 @@ WowWindow {
         anchors.left: auctionsButton8.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton8.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -5211,9 +5211,9 @@ WowWindow {
         wowParent: "AuctionsButton9"
         anchors.right: auctionsButton9MoneyFrame.right
         anchors.top: auctionsButton9MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 216.7
-        height: 14.3
+        anchors.topMargin: 1
+        width: 197
+        height: 13
     }
 
     Part {
@@ -5249,8 +5249,8 @@ WowWindow {
         anchors.right: auctionsButton9BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton9BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -5275,8 +5275,8 @@ WowWindow {
         anchors.right: auctionsButton9BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton9BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -5286,8 +5286,8 @@ WowWindow {
         wowParent: "AuctionsButton9BuyoutFrame"
         anchors.left: auctionsButton9BuyoutFrame.left
         anchors.top: auctionsButton9BuyoutFrame.top
-        width: 128.9
-        height: 14.3
+        width: 117.2
+        height: 13
     }
 
     Part {
@@ -5310,8 +5310,8 @@ WowWindow {
         wowParent: "AuctionsButton9ClosingTime"
         anchors.left: auctionsButton9ClosingTime.left
         anchors.top: auctionsButton9ClosingTime.top
-        width: 71.5
-        height: 30.8
+        width: 65
+        height: 28
     }
 
     Part {
@@ -5322,8 +5322,8 @@ WowWindow {
         anchors.left: auctionsButton9.left
         anchors.leftMargin: 279
         anchors.top: auctionsButton9.top
-        width: 114.4
-        height: 30.8
+        width: 104
+        height: 28
     }
 
     Part {
@@ -5372,8 +5372,8 @@ WowWindow {
         anchors.right: auctionsButton9MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton9MoneyFrameCopperButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -5398,8 +5398,8 @@ WowWindow {
         anchors.right: auctionsButton9MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsButton9MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -5411,8 +5411,8 @@ WowWindow {
         anchors.left: auctionsButton9.left
         anchors.leftMargin: 43
         anchors.top: auctionsButton9.top
-        width: 156.2
-        height: 30.8
+        width: 142
+        height: 28
     }
 
     Part {
@@ -5424,8 +5424,8 @@ WowWindow {
         anchors.leftMargin: -10
         anchors.bottom: buyoutPrice.top
         anchors.bottomMargin: 3
-        width: 126.4
-        height: 11.1
+        width: 114.9
+        height: 10.1
     }
 
     Part {
@@ -5450,8 +5450,8 @@ WowWindow {
         wowParent: "AuctionsCancelAuctionButton"
         anchors.horizontalCenter: auctionsCancelAuctionButton.horizontalCenter
         anchors.verticalCenter: auctionsCancelAuctionButton.verticalCenter
-        width: 89.3
-        height: 11.1
+        width: 81.2
+        height: 10.1
     }
 
     Part {
@@ -5476,8 +5476,8 @@ WowWindow {
         wowParent: "AuctionsCloseButton"
         anchors.horizontalCenter: auctionsCloseButton.horizontalCenter
         anchors.verticalCenter: auctionsCloseButton.verticalCenter
-        width: 30.8
-        height: 11.1
+        width: 28
+        height: 10.1
     }
 
     Part {
@@ -5502,8 +5502,8 @@ WowWindow {
         wowParent: "AuctionsCreateAuctionButton"
         anchors.horizontalCenter: auctionsCreateAuctionButton.horizontalCenter
         anchors.verticalCenter: auctionsCreateAuctionButton.verticalCenter
-        width: 89.3
-        height: 11.1
+        width: 81.2
+        height: 10.1
     }
 
     Part {
@@ -5541,8 +5541,8 @@ WowWindow {
         anchors.right: auctionsDepositMoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsDepositMoneyFrameGoldButton.verticalCenter
-        width: 8.7
-        height: 15
+        width: 7.9
+        height: 13.6
     }
 
     Part {
@@ -5566,8 +5566,8 @@ WowWindow {
         anchors.right: auctionsDepositMoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: auctionsDepositMoneyFrameSilverButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -5580,8 +5580,8 @@ WowWindow {
         anchors.leftMargin: 9
         anchors.verticalCenter: auctionFrameAuctions.bottom
         anchors.verticalCenterOffset: -77
-        width: 55.3
-        height: 13.4
+        width: 50.3
+        height: 12.2
     }
 
     Part {
@@ -5606,8 +5606,8 @@ WowWindow {
         anchors.left: auctionsDurationSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: auctionsDurationSort.verticalCenter
-        width: 52.9
-        height: 11.1
+        width: 48.1
+        height: 10.1
     }
 
     Part {
@@ -5632,8 +5632,8 @@ WowWindow {
         anchors.left: auctionsHighBidderSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: auctionsHighBidderSort.verticalCenter
-        width: 67.2
-        height: 11.1
+        width: 61.1
+        height: 10.1
     }
 
     Part {
@@ -5659,8 +5659,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: auctionsItemButton.bottom
         anchors.bottomMargin: 2
-        width: 24.5
-        height: 15
+        width: 22.3
+        height: 13.6
     }
 
     Part {
@@ -5672,8 +5672,8 @@ WowWindow {
         anchors.left: auctionsItemButton.right
         anchors.leftMargin: 5
         anchors.top: auctionsItemButton.top
-        width: 136.4
-        height: 33
+        width: 124
+        height: 30
     }
 
     Part {
@@ -5686,8 +5686,8 @@ WowWindow {
         anchors.leftMargin: 9
         anchors.top: auctionFrameAuctions.top
         anchors.topMargin: 78
-        width: 73.5
-        height: 11.1
+        width: 66.8
+        height: 10.1
     }
 
     Part {
@@ -5725,8 +5725,8 @@ WowWindow {
         wowParent: "AuctionsNumStacksMaxButton"
         anchors.horizontalCenter: auctionsNumStacksMaxButton.horizontalCenter
         anchors.verticalCenter: auctionsNumStacksMaxButton.verticalCenter
-        width: 59.3
-        height: 11.1
+        width: 53.9
+        height: 10.1
     }
 
     Part {
@@ -5752,8 +5752,8 @@ WowWindow {
         anchors.left: auctionsQualitySort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: auctionsQualitySort.verticalCenter
-        width: 32.4
-        height: 11.1
+        width: 29.5
+        height: 10.1
     }
 
     Part {
@@ -5775,11 +5775,11 @@ WowWindow {
         kind: "Slider"
         wowParent: "AuctionsScrollFrame"
         anchors.left: auctionsScrollFrame.right
-        anchors.leftMargin: 6.6
+        anchors.leftMargin: 6
         anchors.top: auctionsScrollFrame.top
-        anchors.topMargin: 17.6
-        width: 17.6
-        height: 336.6
+        anchors.topMargin: 16
+        width: 16
+        height: 306
     }
 
     Part {
@@ -5789,9 +5789,9 @@ WowWindow {
         wowParent: "AuctionsScrollFrameScrollBar"
         anchors.horizontalCenter: auctionsScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: auctionsScrollFrameScrollBarScrollUpButton.top
-        anchors.topMargin: -1.1
-        width: 19.8
-        height: 374
+        anchors.topMargin: -1
+        width: 18
+        height: 340
     }
 
     Part {
@@ -5863,8 +5863,8 @@ WowWindow {
         wowParent: "AuctionsStackSizeMaxButton"
         anchors.horizontalCenter: auctionsStackSizeMaxButton.horizontalCenter
         anchors.verticalCenter: auctionsStackSizeMaxButton.verticalCenter
-        width: 59.3
-        height: 11.1
+        width: 53.9
+        height: 10.1
     }
 
     Part {
@@ -5877,8 +5877,8 @@ WowWindow {
         anchors.horizontalCenterOffset: 105
         anchors.top: auctionFrameAuctions.top
         anchors.topMargin: 53
-        width: 83.8
-        height: 11.1
+        width: 76.2
+        height: 10.1
     }
 
     Part {
@@ -5890,8 +5890,8 @@ WowWindow {
         anchors.horizontalCenter: auctionFrameAuctions.horizontalCenter
         anchors.top: auctionFrameAuctions.top
         anchors.topMargin: 18
-        width: 125.6
-        height: 13.4
+        width: 114.2
+        height: 12.2
     }
 
     Part {
@@ -5916,8 +5916,8 @@ WowWindow {
         wowParent: "BidBidButton"
         anchors.horizontalCenter: bidBidButton.horizontalCenter
         anchors.verticalCenter: bidBidButton.verticalCenter
-        width: 19
-        height: 11.1
+        width: 17.3
+        height: 10.1
     }
 
     Part {
@@ -5990,8 +5990,8 @@ WowWindow {
         anchors.left: bidBidSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: bidBidSort.verticalCenter
-        width: 63.2
-        height: 11.1
+        width: 57.5
+        height: 10.1
     }
 
     Part {
@@ -6004,8 +6004,8 @@ WowWindow {
         anchors.rightMargin: 115
         anchors.bottom: auctionFrameBid.bottom
         anchors.bottomMargin: -5
-        width: 19
-        height: 11.1
+        width: 17.3
+        height: 10.1
     }
 
     Part {
@@ -6030,8 +6030,8 @@ WowWindow {
         wowParent: "BidBuyoutButton"
         anchors.horizontalCenter: bidBuyoutButton.horizontalCenter
         anchors.verticalCenter: bidBuyoutButton.verticalCenter
-        width: 42.7
-        height: 11.1
+        width: 38.8
+        height: 10.1
     }
 
     Part {
@@ -6056,8 +6056,8 @@ WowWindow {
         anchors.left: bidBuyoutSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: bidBuyoutSort.verticalCenter
-        width: 70.3
-        height: 11.1
+        width: 63.9
+        height: 10.1
     }
 
     Part {
@@ -6082,8 +6082,8 @@ WowWindow {
         wowParent: "BidCloseButton"
         anchors.horizontalCenter: bidCloseButton.horizontalCenter
         anchors.verticalCenter: bidCloseButton.verticalCenter
-        width: 30.8
-        height: 11.1
+        width: 28
+        height: 10.1
     }
 
     Part {
@@ -6108,8 +6108,8 @@ WowWindow {
         anchors.left: bidDurationSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: bidDurationSort.verticalCenter
-        width: 52.9
-        height: 11.1
+        width: 48.1
+        height: 10.1
     }
 
     Part {
@@ -6134,8 +6134,8 @@ WowWindow {
         anchors.left: bidLevelSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: bidLevelSort.verticalCenter
-        width: 16.6
-        height: 11.1
+        width: 15.1
+        height: 10.1
     }
 
     Part {
@@ -6161,8 +6161,8 @@ WowWindow {
         anchors.left: bidQualitySort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: bidQualitySort.verticalCenter
-        width: 32.4
-        height: 11.1
+        width: 29.5
+        height: 10.1
     }
 
     Part {
@@ -6187,8 +6187,8 @@ WowWindow {
         anchors.left: bidStatusSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: bidStatusSort.verticalCenter
-        width: 56.1
-        height: 11.1
+        width: 51
+        height: 10.1
     }
 
     Part {
@@ -6200,8 +6200,8 @@ WowWindow {
         anchors.horizontalCenter: auctionFrameBid.horizontalCenter
         anchors.top: auctionFrameBid.top
         anchors.topMargin: 18
-        width: 22.1
-        height: 13.4
+        width: 20.1
+        height: 12.2
     }
 
     Part {
@@ -6226,8 +6226,8 @@ WowWindow {
         wowParent: "BrowseBidButton"
         anchors.horizontalCenter: browseBidButton.horizontalCenter
         anchors.verticalCenter: browseBidButton.verticalCenter
-        width: 19
-        height: 11.1
+        width: 17.3
+        height: 10.1
     }
 
     Part {
@@ -6287,8 +6287,8 @@ WowWindow {
         anchors.right: browseBidPrice.left
         anchors.rightMargin: 10
         anchors.verticalCenter: browseBidPrice.verticalCenter
-        width: 19
-        height: 11.1
+        width: 17.3
+        height: 10.1
     }
 
     Part {
@@ -6311,9 +6311,9 @@ WowWindow {
         wowParent: "BrowseButton1"
         anchors.right: browseButton1MoneyFrame.right
         anchors.top: browseButton1MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -6349,8 +6349,8 @@ WowWindow {
         anchors.right: browseButton1BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6375,8 +6375,8 @@ WowWindow {
         anchors.right: browseButton1BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6401,8 +6401,8 @@ WowWindow {
         anchors.right: browseButton1BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6412,8 +6412,8 @@ WowWindow {
         wowParent: "BrowseButton1BuyoutFrame"
         anchors.left: browseButton1BuyoutFrame.left
         anchors.top: browseButton1BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -6436,8 +6436,8 @@ WowWindow {
         wowParent: "BrowseButton1ClosingTime"
         anchors.left: browseButton1ClosingTime.left
         anchors.top: browseButton1ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -6449,8 +6449,8 @@ WowWindow {
         anchors.left: browseButton1.left
         anchors.leftMargin: 345
         anchors.top: browseButton1.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -6474,8 +6474,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton1Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6487,8 +6487,8 @@ WowWindow {
         anchors.left: browseButton1.left
         anchors.leftMargin: 205
         anchors.top: browseButton1.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -6526,8 +6526,8 @@ WowWindow {
         anchors.right: browseButton1MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -6552,8 +6552,8 @@ WowWindow {
         anchors.right: browseButton1MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1MoneyFrameGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6578,8 +6578,8 @@ WowWindow {
         anchors.right: browseButton1MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton1MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6591,8 +6591,8 @@ WowWindow {
         anchors.left: browseButton1.left
         anchors.leftMargin: 43
         anchors.top: browseButton1.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -6613,9 +6613,9 @@ WowWindow {
         wowParent: "BrowseButton2"
         anchors.right: browseButton2MoneyFrame.right
         anchors.top: browseButton2MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -6651,8 +6651,8 @@ WowWindow {
         anchors.right: browseButton2BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6677,8 +6677,8 @@ WowWindow {
         anchors.right: browseButton2BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6703,8 +6703,8 @@ WowWindow {
         anchors.right: browseButton2BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6714,8 +6714,8 @@ WowWindow {
         wowParent: "BrowseButton2BuyoutFrame"
         anchors.left: browseButton2BuyoutFrame.left
         anchors.top: browseButton2BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -6738,8 +6738,8 @@ WowWindow {
         wowParent: "BrowseButton2ClosingTime"
         anchors.left: browseButton2ClosingTime.left
         anchors.top: browseButton2ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -6751,8 +6751,8 @@ WowWindow {
         anchors.left: browseButton2.left
         anchors.leftMargin: 345
         anchors.top: browseButton2.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -6776,8 +6776,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton2Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6789,8 +6789,8 @@ WowWindow {
         anchors.left: browseButton2.left
         anchors.leftMargin: 205
         anchors.top: browseButton2.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -6828,8 +6828,8 @@ WowWindow {
         anchors.right: browseButton2MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -6854,8 +6854,8 @@ WowWindow {
         anchors.right: browseButton2MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2MoneyFrameGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6880,8 +6880,8 @@ WowWindow {
         anchors.right: browseButton2MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton2MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6893,8 +6893,8 @@ WowWindow {
         anchors.left: browseButton2.left
         anchors.leftMargin: 43
         anchors.top: browseButton2.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -6915,9 +6915,9 @@ WowWindow {
         wowParent: "BrowseButton3"
         anchors.right: browseButton3MoneyFrame.right
         anchors.top: browseButton3MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -6953,8 +6953,8 @@ WowWindow {
         anchors.right: browseButton3BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -6979,8 +6979,8 @@ WowWindow {
         anchors.right: browseButton3BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7005,8 +7005,8 @@ WowWindow {
         anchors.right: browseButton3BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7016,8 +7016,8 @@ WowWindow {
         wowParent: "BrowseButton3BuyoutFrame"
         anchors.left: browseButton3BuyoutFrame.left
         anchors.top: browseButton3BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -7040,8 +7040,8 @@ WowWindow {
         wowParent: "BrowseButton3ClosingTime"
         anchors.left: browseButton3ClosingTime.left
         anchors.top: browseButton3ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -7053,8 +7053,8 @@ WowWindow {
         anchors.left: browseButton3.left
         anchors.leftMargin: 345
         anchors.top: browseButton3.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -7078,8 +7078,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton3Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7091,8 +7091,8 @@ WowWindow {
         anchors.left: browseButton3.left
         anchors.leftMargin: 205
         anchors.top: browseButton3.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -7130,8 +7130,8 @@ WowWindow {
         anchors.right: browseButton3MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -7156,8 +7156,8 @@ WowWindow {
         anchors.right: browseButton3MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3MoneyFrameGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7182,8 +7182,8 @@ WowWindow {
         anchors.right: browseButton3MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton3MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7195,8 +7195,8 @@ WowWindow {
         anchors.left: browseButton3.left
         anchors.leftMargin: 43
         anchors.top: browseButton3.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -7217,9 +7217,9 @@ WowWindow {
         wowParent: "BrowseButton4"
         anchors.right: browseButton4MoneyFrame.right
         anchors.top: browseButton4MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -7255,8 +7255,8 @@ WowWindow {
         anchors.right: browseButton4BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7281,8 +7281,8 @@ WowWindow {
         anchors.right: browseButton4BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7307,8 +7307,8 @@ WowWindow {
         anchors.right: browseButton4BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7318,8 +7318,8 @@ WowWindow {
         wowParent: "BrowseButton4BuyoutFrame"
         anchors.left: browseButton4BuyoutFrame.left
         anchors.top: browseButton4BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -7342,8 +7342,8 @@ WowWindow {
         wowParent: "BrowseButton4ClosingTime"
         anchors.left: browseButton4ClosingTime.left
         anchors.top: browseButton4ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -7355,8 +7355,8 @@ WowWindow {
         anchors.left: browseButton4.left
         anchors.leftMargin: 345
         anchors.top: browseButton4.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -7380,8 +7380,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton4Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7393,8 +7393,8 @@ WowWindow {
         anchors.left: browseButton4.left
         anchors.leftMargin: 205
         anchors.top: browseButton4.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -7432,8 +7432,8 @@ WowWindow {
         anchors.right: browseButton4MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -7458,8 +7458,8 @@ WowWindow {
         anchors.right: browseButton4MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4MoneyFrameGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7484,8 +7484,8 @@ WowWindow {
         anchors.right: browseButton4MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton4MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7497,8 +7497,8 @@ WowWindow {
         anchors.left: browseButton4.left
         anchors.leftMargin: 43
         anchors.top: browseButton4.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -7519,9 +7519,9 @@ WowWindow {
         wowParent: "BrowseButton5"
         anchors.right: browseButton5MoneyFrame.right
         anchors.top: browseButton5MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -7557,8 +7557,8 @@ WowWindow {
         anchors.right: browseButton5BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7583,8 +7583,8 @@ WowWindow {
         anchors.right: browseButton5BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7609,8 +7609,8 @@ WowWindow {
         anchors.right: browseButton5BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7620,8 +7620,8 @@ WowWindow {
         wowParent: "BrowseButton5BuyoutFrame"
         anchors.left: browseButton5BuyoutFrame.left
         anchors.top: browseButton5BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -7644,8 +7644,8 @@ WowWindow {
         wowParent: "BrowseButton5ClosingTime"
         anchors.left: browseButton5ClosingTime.left
         anchors.top: browseButton5ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -7657,8 +7657,8 @@ WowWindow {
         anchors.left: browseButton5.left
         anchors.leftMargin: 345
         anchors.top: browseButton5.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -7682,8 +7682,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton5Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7695,8 +7695,8 @@ WowWindow {
         anchors.left: browseButton5.left
         anchors.leftMargin: 205
         anchors.top: browseButton5.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -7734,8 +7734,8 @@ WowWindow {
         anchors.right: browseButton5MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -7760,8 +7760,8 @@ WowWindow {
         anchors.right: browseButton5MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5MoneyFrameGoldButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -7786,8 +7786,8 @@ WowWindow {
         anchors.right: browseButton5MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton5MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7799,8 +7799,8 @@ WowWindow {
         anchors.left: browseButton5.left
         anchors.leftMargin: 43
         anchors.top: browseButton5.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -7821,9 +7821,9 @@ WowWindow {
         wowParent: "BrowseButton6"
         anchors.right: browseButton6MoneyFrame.right
         anchors.top: browseButton6MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -7859,8 +7859,8 @@ WowWindow {
         anchors.right: browseButton6BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7885,8 +7885,8 @@ WowWindow {
         anchors.right: browseButton6BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7911,8 +7911,8 @@ WowWindow {
         anchors.right: browseButton6BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7922,8 +7922,8 @@ WowWindow {
         wowParent: "BrowseButton6BuyoutFrame"
         anchors.left: browseButton6BuyoutFrame.left
         anchors.top: browseButton6BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -7946,8 +7946,8 @@ WowWindow {
         wowParent: "BrowseButton6ClosingTime"
         anchors.left: browseButton6ClosingTime.left
         anchors.top: browseButton6ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -7959,8 +7959,8 @@ WowWindow {
         anchors.left: browseButton6.left
         anchors.leftMargin: 345
         anchors.top: browseButton6.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -7984,8 +7984,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton6Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -7997,8 +7997,8 @@ WowWindow {
         anchors.left: browseButton6.left
         anchors.leftMargin: 205
         anchors.top: browseButton6.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -8036,8 +8036,8 @@ WowWindow {
         anchors.right: browseButton6MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -8062,8 +8062,8 @@ WowWindow {
         anchors.right: browseButton6MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6MoneyFrameGoldButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -8088,8 +8088,8 @@ WowWindow {
         anchors.right: browseButton6MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton6MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8101,8 +8101,8 @@ WowWindow {
         anchors.left: browseButton6.left
         anchors.leftMargin: 43
         anchors.top: browseButton6.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -8123,9 +8123,9 @@ WowWindow {
         wowParent: "BrowseButton7"
         anchors.right: browseButton7MoneyFrame.right
         anchors.top: browseButton7MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -8161,8 +8161,8 @@ WowWindow {
         anchors.right: browseButton7BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8187,8 +8187,8 @@ WowWindow {
         anchors.right: browseButton7BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8213,8 +8213,8 @@ WowWindow {
         anchors.right: browseButton7BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8224,8 +8224,8 @@ WowWindow {
         wowParent: "BrowseButton7BuyoutFrame"
         anchors.left: browseButton7BuyoutFrame.left
         anchors.top: browseButton7BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -8248,8 +8248,8 @@ WowWindow {
         wowParent: "BrowseButton7ClosingTime"
         anchors.left: browseButton7ClosingTime.left
         anchors.top: browseButton7ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -8261,8 +8261,8 @@ WowWindow {
         anchors.left: browseButton7.left
         anchors.leftMargin: 345
         anchors.top: browseButton7.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -8286,8 +8286,8 @@ WowWindow {
         anchors.rightMargin: 5
         anchors.bottom: browseButton7Item.bottom
         anchors.bottomMargin: 2
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8299,8 +8299,8 @@ WowWindow {
         anchors.left: browseButton7.left
         anchors.leftMargin: 205
         anchors.top: browseButton7.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -8338,8 +8338,8 @@ WowWindow {
         anchors.right: browseButton7MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -8364,8 +8364,8 @@ WowWindow {
         anchors.right: browseButton7MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7MoneyFrameGoldButton.verticalCenter
-        width: 18.2
-        height: 15
+        width: 16.5
+        height: 13.6
     }
 
     Part {
@@ -8390,8 +8390,8 @@ WowWindow {
         anchors.right: browseButton7MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton7MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8403,8 +8403,8 @@ WowWindow {
         anchors.left: browseButton7.left
         anchors.leftMargin: 43
         anchors.top: browseButton7.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -8425,9 +8425,9 @@ WowWindow {
         wowParent: "BrowseButton8"
         anchors.right: browseButton8MoneyFrame.right
         anchors.top: browseButton8MoneyFrame.bottom
-        anchors.topMargin: 1.1
-        width: 203.5
-        height: 14.3
+        anchors.topMargin: 1
+        width: 185
+        height: 13
     }
 
     Part {
@@ -8463,8 +8463,8 @@ WowWindow {
         anchors.right: browseButton8BuyoutFrameMoneyCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8BuyoutFrameMoneyCopperButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8489,8 +8489,8 @@ WowWindow {
         anchors.right: browseButton8BuyoutFrameMoneyGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8BuyoutFrameMoneyGoldButton.verticalCenter
-        width: 24.5
-        height: 15
+        width: 22.3
+        height: 13.6
     }
 
     Part {
@@ -8515,8 +8515,8 @@ WowWindow {
         anchors.right: browseButton8BuyoutFrameMoneySilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8BuyoutFrameMoneySilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8526,8 +8526,8 @@ WowWindow {
         wowParent: "BrowseButton8BuyoutFrame"
         anchors.left: browseButton8BuyoutFrame.left
         anchors.top: browseButton8BuyoutFrame.top
-        width: 115.7
-        height: 14.3
+        width: 105.2
+        height: 13
     }
 
     Part {
@@ -8550,8 +8550,8 @@ WowWindow {
         wowParent: "BrowseButton8ClosingTime"
         anchors.left: browseButton8ClosingTime.left
         anchors.top: browseButton8ClosingTime.top
-        width: 71.5
-        height: 35.2
+        width: 65
+        height: 32
     }
 
     Part {
@@ -8563,8 +8563,8 @@ WowWindow {
         anchors.left: browseButton8.left
         anchors.leftMargin: 345
         anchors.top: browseButton8.top
-        width: 85.8
-        height: 35.2
+        width: 78
+        height: 32
     }
 
     Part {
@@ -8587,8 +8587,8 @@ WowWindow {
         anchors.left: browseButton8.left
         anchors.leftMargin: 205
         anchors.top: browseButton8.top
-        width: 57.2
-        height: 35.2
+        width: 52
+        height: 32
     }
 
     Part {
@@ -8626,8 +8626,8 @@ WowWindow {
         anchors.right: browseButton8MoneyFrameCopperButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8MoneyFrameCopperButton.verticalCenter
-        width: 10.3
-        height: 15
+        width: 9.4
+        height: 13.6
     }
 
     Part {
@@ -8652,8 +8652,8 @@ WowWindow {
         anchors.right: browseButton8MoneyFrameGoldButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8MoneyFrameGoldButton.verticalCenter
-        width: 24.5
-        height: 15
+        width: 22.3
+        height: 13.6
     }
 
     Part {
@@ -8678,8 +8678,8 @@ WowWindow {
         anchors.right: browseButton8MoneyFrameSilverButton.right
         anchors.rightMargin: 13
         anchors.verticalCenter: browseButton8MoneyFrameSilverButton.verticalCenter
-        width: 17.4
-        height: 15
+        width: 15.8
+        height: 13.6
     }
 
     Part {
@@ -8691,8 +8691,8 @@ WowWindow {
         anchors.left: browseButton8.left
         anchors.leftMargin: 43
         anchors.top: browseButton8.top
-        width: 183.7
-        height: 35.2
+        width: 167
+        height: 32
     }
 
     Part {
@@ -8717,8 +8717,8 @@ WowWindow {
         wowParent: "BrowseBuyoutButton"
         anchors.horizontalCenter: browseBuyoutButton.horizontalCenter
         anchors.verticalCenter: browseBuyoutButton.verticalCenter
-        width: 42.7
-        height: 11.1
+        width: 38.8
+        height: 10.1
     }
 
     Part {
@@ -8743,8 +8743,8 @@ WowWindow {
         wowParent: "BrowseCloseButton"
         anchors.horizontalCenter: browseCloseButton.horizontalCenter
         anchors.verticalCenter: browseCloseButton.verticalCenter
-        width: 30.8
-        height: 11.1
+        width: 28
+        height: 10.1
     }
 
     Part {
@@ -8769,8 +8769,8 @@ WowWindow {
         anchors.left: browseCurrentBidSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: browseCurrentBidSort.verticalCenter
-        width: 63.2
-        height: 11.1
+        width: 57.5
+        height: 10.1
     }
 
     Part {
@@ -8804,8 +8804,8 @@ WowWindow {
         wowParent: "BrowseDropDown"
         anchors.left: browseDropDown.left
         anchors.verticalCenter: browseDropDown.verticalCenter
-        width: 181.5
-        height: 24.2
+        width: 165
+        height: 22
     }
 
     Part {
@@ -8817,8 +8817,8 @@ WowWindow {
         anchors.left: browseDropDown.left
         anchors.leftMargin: 20
         anchors.bottom: browseDropDown.top
-        width: 32.4
-        height: 11.1
+        width: 29.5
+        height: 10.1
     }
 
     Part {
@@ -8828,10 +8828,10 @@ WowWindow {
         text: "All"
         wowParent: "BrowseDropDown"
         anchors.left: browseDropDownDiabolicField.left
-        anchors.leftMargin: 24.2
+        anchors.leftMargin: 22
         anchors.verticalCenter: browseDropDownDiabolicField.verticalCenter
-        width: 113.3
-        height: 11
+        width: 103
+        height: 10
     }
 
     Part {
@@ -8856,8 +8856,8 @@ WowWindow {
         anchors.left: browseDurationSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: browseDurationSort.verticalCenter
-        width: 52.9
-        height: 11.1
+        width: 48.1
+        height: 10.1
     }
 
     Part {
@@ -8879,11 +8879,11 @@ WowWindow {
         kind: "Slider"
         wowParent: "BrowseFilterScrollFrame"
         anchors.left: browseFilterScrollFrame.right
-        anchors.leftMargin: 6.6
+        anchors.leftMargin: 6
         anchors.top: browseFilterScrollFrame.top
-        anchors.topMargin: 17.6
-        width: 17.6
-        height: 324.5
+        anchors.topMargin: 16
+        width: 16
+        height: 295
     }
 
     Part {
@@ -8893,9 +8893,9 @@ WowWindow {
         wowParent: "BrowseFilterScrollFrameScrollBar"
         anchors.horizontalCenter: browseFilterScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: browseFilterScrollFrameScrollBarScrollUpButton.top
-        anchors.topMargin: -1.1
-        width: 19.8
-        height: 361.9
+        anchors.topMargin: -1
+        width: 18
+        height: 329
     }
 
     Part {
@@ -8953,8 +8953,8 @@ WowWindow {
         anchors.left: browseHighBidderSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: browseHighBidderSort.verticalCenter
-        width: 33.2
-        height: 11.1
+        width: 30.2
+        height: 10.1
     }
 
     Part {
@@ -8966,8 +8966,8 @@ WowWindow {
         anchors.left: browseMinLevel.right
         anchors.leftMargin: 20
         anchors.verticalCenter: browseMinLevel.verticalCenter
-        width: 5.5
-        height: 15
+        width: 5
+        height: 13.6
     }
 
     Part {
@@ -8992,8 +8992,8 @@ WowWindow {
         anchors.left: browseLevelSort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: browseLevelSort.verticalCenter
-        width: 16.6
-        height: 11.1
+        width: 15.1
+        height: 10.1
     }
 
     Part {
@@ -9005,8 +9005,8 @@ WowWindow {
         anchors.left: browseName.right
         anchors.leftMargin: 20
         anchors.verticalCenter: browseName.verticalCenter
-        width: 73.5
-        height: 15
+        width: 66.8
+        height: 13.6
     }
 
     Part {
@@ -9027,10 +9027,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "BrowseMaxLevel"
         anchors.left: browseMaxLevel.left
-        anchors.leftMargin: -8.8
+        anchors.leftMargin: -8
         anchors.verticalCenter: browseMaxLevel.verticalCenter
-        width: 45.1
-        height: 24.2
+        width: 41
+        height: 22
     }
 
     Part {
@@ -9051,10 +9051,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "BrowseMinLevel"
         anchors.left: browseMinLevel.left
-        anchors.leftMargin: -8.8
+        anchors.leftMargin: -8
         anchors.verticalCenter: browseMinLevel.verticalCenter
-        width: 45.1
-        height: 24.2
+        width: 41
+        height: 22
     }
 
     Part {
@@ -9076,10 +9076,10 @@ WowWindow {
         kind: "Frame"
         wowParent: "BrowseName"
         anchors.left: browseName.left
-        anchors.leftMargin: -8.8
+        anchors.leftMargin: -8
         anchors.verticalCenter: browseName.verticalCenter
-        width: 171.6
-        height: 24.2
+        width: 156
+        height: 22
     }
 
     Part {
@@ -9092,8 +9092,8 @@ WowWindow {
         anchors.leftMargin: 80
         anchors.top: auctionFrameBrowse.top
         anchors.topMargin: 41
-        width: 34
-        height: 11.1
+        width: 30.9
+        height: 10.1
     }
 
     Part {
@@ -9119,8 +9119,8 @@ WowWindow {
         anchors.horizontalCenterOffset: 509
         anchors.top: auctionFrame.top
         anchors.topMargin: 118
-        width: 103.5
-        height: 13.4
+        width: 94.1
+        height: 12.2
     }
 
     Part {
@@ -9159,8 +9159,8 @@ WowWindow {
         anchors.left: browseQualitySort.left
         anchors.leftMargin: 8
         anchors.verticalCenter: browseQualitySort.verticalCenter
-        width: 32.4
-        height: 11.1
+        width: 29.5
+        height: 10.1
     }
 
     Part {
@@ -9185,8 +9185,8 @@ WowWindow {
         wowParent: "BrowseResetButton"
         anchors.horizontalCenter: browseResetButton.horizontalCenter
         anchors.verticalCenter: browseResetButton.verticalCenter
-        width: 33.2
-        height: 11.1
+        width: 30.2
+        height: 10.1
     }
 
     Part {
@@ -9208,11 +9208,11 @@ WowWindow {
         kind: "Slider"
         wowParent: "BrowseScrollFrame"
         anchors.left: browseScrollFrame.right
-        anchors.leftMargin: 6.6
+        anchors.leftMargin: 6
         anchors.top: browseScrollFrame.top
-        anchors.topMargin: 17.6
-        width: 17.6
-        height: 301.4
+        anchors.topMargin: 16
+        width: 16
+        height: 274
     }
 
     Part {
@@ -9222,9 +9222,9 @@ WowWindow {
         wowParent: "BrowseScrollFrameScrollBar"
         anchors.horizontalCenter: browseScrollFrameScrollBarScrollUpButton.horizontalCenter
         anchors.top: browseScrollFrameScrollBarScrollUpButton.top
-        anchors.topMargin: -1.1
-        width: 19.8
-        height: 338.8
+        anchors.topMargin: -1
+        width: 18
+        height: 308
     }
 
     Part {
@@ -9282,8 +9282,8 @@ WowWindow {
         wowParent: "BrowseSearchButton"
         anchors.horizontalCenter: browseSearchButton.horizontalCenter
         anchors.verticalCenter: browseSearchButton.verticalCenter
-        width: 40.3
-        height: 11.1
+        width: 36.6
+        height: 10.1
     }
 
     Part {
@@ -9296,8 +9296,8 @@ WowWindow {
         anchors.leftMargin: 182
         anchors.verticalCenter: auctionFrame.top
         anchors.verticalCenterOffset: 58
-        width: 133.5
-        height: 11.1
+        width: 121.4
+        height: 10.1
     }
 
     Part {
@@ -9309,8 +9309,8 @@ WowWindow {
         anchors.horizontalCenter: auctionFrameBrowse.horizontalCenter
         anchors.top: auctionFrameBrowse.top
         anchors.topMargin: 18
-        width: 113
-        height: 13.4
+        width: 102.7
+        height: 12.2
     }
 
     Part {
@@ -9393,8 +9393,8 @@ WowWindow {
         wowParent: "DurationDropDown"
         anchors.left: durationDropDown.left
         anchors.verticalCenter: durationDropDown.verticalCenter
-        width: 143
-        height: 24.2
+        width: 130
+        height: 22
     }
 
     Part {
@@ -9404,10 +9404,10 @@ WowWindow {
         text: "24 Hours"
         wowParent: "DurationDropDown"
         anchors.left: durationDropDownDiabolicField.left
-        anchors.leftMargin: 24.2
+        anchors.leftMargin: 22
         anchors.verticalCenter: durationDropDownDiabolicField.verticalCenter
-        width: 74.8
-        height: 11
+        width: 68
+        height: 10
     }
 
     Part {
@@ -9432,8 +9432,8 @@ WowWindow {
         anchors.left: isUsableCheckButton.right
         anchors.leftMargin: 4
         anchors.verticalCenter: isUsableCheckButton.verticalCenter
-        width: 77.4
-        height: 15
+        width: 70.4
+        height: 13.6
     }
 
     Part {
@@ -9468,8 +9468,8 @@ WowWindow {
         wowParent: "PriceDropDown"
         anchors.left: priceDropDown.left
         anchors.verticalCenter: priceDropDown.verticalCenter
-        width: 143
-        height: 24.2
+        width: 130
+        height: 22
     }
 
     Part {
@@ -9479,10 +9479,10 @@ WowWindow {
         text: "per stack"
         wowParent: "PriceDropDown"
         anchors.left: priceDropDownDiabolicField.left
-        anchors.leftMargin: 24.2
+        anchors.leftMargin: 22
         anchors.verticalCenter: priceDropDownDiabolicField.verticalCenter
-        width: 74.8
-        height: 11
+        width: 68
+        height: 10
     }
 
     Part {
@@ -9507,8 +9507,8 @@ WowWindow {
         anchors.left: showOnPlayerCheckButton.right
         anchors.leftMargin: 4
         anchors.verticalCenter: showOnPlayerCheckButton.verticalCenter
-        width: 123.3
-        height: 15
+        width: 112.1
+        height: 13.6
     }
 
     Part {
@@ -9561,8 +9561,8 @@ WowWindow {
         height: 20
     }
 
-    Ghost { id: atr_DropDownSLMiddle; name: "Atr_DropDownSLMiddle"; x: 103; y: 20.7; width: 0; height: 0 }
-    Ghost { id: atr_HeadingsBarMiddle; name: "Atr_HeadingsBarMiddle"; x: 298.6; y: 186.9; width: 0; height: 0 }
-    Ghost { id: atr_Hilite1; name: "Atr_Hilite1"; x: 917.4; y: 49.5; width: 0; height: 0 }
-    Ghost { id: auctionsDepositMoneyFrameCopperButton; name: "AuctionsDepositMoneyFrameCopperButton"; x: 130.6; y: 408.2; width: 0; height: 0 }
+    Ghost { id: atr_DropDownSLMiddle; name: "Atr_DropDownSLMiddle"; x: 94; y: 19; width: 0; height: 0 }
+    Ghost { id: atr_HeadingsBarMiddle; name: "Atr_HeadingsBarMiddle"; x: 226; y: 170; width: 0; height: 0 }
+    Ghost { id: atr_Hilite1; name: "Atr_Hilite1"; x: 834; y: 45; width: 0; height: 0 }
+    Ghost { id: auctionsDepositMoneyFrameCopperButton; name: "AuctionsDepositMoneyFrameCopperButton"; x: 118.7; y: 371; width: 0; height: 0 }
 }
