@@ -57,8 +57,8 @@ fake client. Save, then `/reload`; the windows themselves show it in the editor
 after `/dui layout`.
 
 A value that only matters in a rare case doesn't change the sample: a text too
-wide for its button or dropdown, a title too long for its plate. Nor does what only
-the layout's rules read (`content_gap`, `uneven`).
+wide for its button or dropdown, a title too long for its plate. `content_gap` and
+`uneven` don't either: nothing reads them while the layout's rules are dropped.
 
 *By hand:* change the property, one a line, then `lua5.1 tools/positions.lua`,
 which writes `settings/components.lua`: don't change that one. What only one
@@ -88,7 +88,7 @@ Most Blizzard windows are restyled from one line each in the `panels` table of
 | `band` | `false`: no red band under the title
 | `background` | The painted picture behind it: `slabs`, `lava`, `zoltun`, `artisan`...
 | `tabs` | Its tabs' names without the number (`"MacroFrameTab"`)
-| `footer` | The highest button of its foot (`"MacroExitButton"`)
+| `footer` | Its rough stone foot: `true`, or how high if it holds more than a row of buttons
 |===
 
 More keys are explained in the comment above the table. To restyle a new
@@ -120,7 +120,8 @@ EditBox {
 `tools/install-editor.sh` puts it in your desktop's menu). Each
 window opens as it is in its file, with our art and its texts (*Show*: its parts'
 boxes too); a window with tabs has them on top, each showing only its own parts. The
-list on the left is the game's parents, folded: picking a part opens the way to it.
+list on the left is the file's tree, each part under what it's placed on, folded: picking a
+part opens the way to it. The panel's *In ...* button picks what it's in.
 What's in a bag and the rows of a long list after the first are only drawn, not in the
 list or the files: a part of those that's pinned stays.
 

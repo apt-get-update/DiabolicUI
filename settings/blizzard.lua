@@ -758,7 +758,6 @@ Engine:NewStaticConfig("Blizzard", {
 	-- (modules/blizzard/lfg.lua): the window grows around Blizzard's
 	-- 355x440 frames, whose parts are placed against them
 	lfg = {
-		-- the raid browser's rough stone foot up to each page's buttons
 		header_height = 40,
 		header_insets = { 24, 24 },
 		dungeons = {

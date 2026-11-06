@@ -29,7 +29,9 @@ tests/coverage/run.sh --readme   # also refresh the badge in README.adoc
 
 `coverage/hook.lua` is loaded in front of each test file and records every
 addon line that runs (a `debug.sethook` line hook; test files, `docs/` and
-vendored `Libs/` are left out). The tests run in parallel, one job per CPU
+vendored `Libs/` are left out). The tools run in processes of their own, so
+`test_positions_tool.lua` and `test_sample_tool.lua` load the hook in those too,
+each into its own stats file. The tests run in parallel, one job per CPU
 (`JOBS=2 tests/coverage/run.sh` to change that), each into its own file
 under `coverage/stats.d/`, merged at the end: the session tests, the slow
 ones under the hook, one test per job, the other files one file per job. Lua 5.1.5 itself crashes now and then under a

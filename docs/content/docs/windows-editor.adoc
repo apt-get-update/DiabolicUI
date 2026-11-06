@@ -187,6 +187,12 @@ return {
 in what it's placed on and sets its QML anchors from that. Anything that needs where a part
 is in the window asks `rectOf(name)`: `x` and `y` are from its parent.
 
+*What's drawn on a part goes in it:* the selection's handles and dots, the row's ends and the
+hover box have the part as their `parent`, so they follow it with no code. The art can't: it's
+drawn in the game's order, apart from the parts. It reads `moved`, a counter up each time parts
+move, to ask again where its part is. A part hides with `shown`, not QML's `visible`, which
+would hide what's in it too.
+
 *Rows are worked out twice*: `windows/WowRow.qml` shows them live, `ResolveRow`
 in `tools/positions.lua` writes them. *Change one, change the other.*
 
@@ -213,5 +219,12 @@ Check looks, readable text and anything near those limits in game.
 |===
 
 `tests/test_positions_tool.lua` covers the tool: reading, writing, rows, edits, and that
-running it again changes nothing. The tests don't load `tools/editor.qml`, so after changing it
-open a few windows by hand and try what you changed.
+running it again changes nothing. The tests don't load the QML (`tools/editor.qml`,
+`windows/WowRow.qml`), so after changing it open a few windows by hand and try what you changed.
+
+== The rules
+
+The layout's rules (`tools/rules.js`, checked live) were dropped when the windows were nested,
+to come back simpler: a rule can now ask what a part is in instead of working it out. What they
+read in the game is still set (`DiabolicContent`, `DiabolicEdge`...), and so are `content_gap`
+and `uneven` in `windows/components/Window.qml`; the scan no longer saves them.
