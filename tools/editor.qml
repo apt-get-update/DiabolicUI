@@ -1061,7 +1061,7 @@ ApplicationWindow {
 
                 Label { text: "SCREENSHOT"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10 }
                 RowLayout {
-                    Layout.leftMargin: 10; Layout.rightMargin: 10
+                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
                     Button { text: "Open…"; onClicked: shotDialog.open() }
                     Slider { id: shotAlpha; Layout.fillWidth: true; from: 0; to: 1; value: .6 }
                 }
@@ -1082,11 +1082,12 @@ ApplicationWindow {
                     text: app.changesText
                 }
                 RowLayout {
-                    Layout.leftMargin: 10; Layout.rightMargin: 10
-                    Button { objectName: "saveButton"; text: "Save"; highlighted: app.changeCount > 0; enabled: app.changeCount > 0; onClicked: app.save() }
-                    Button { text: "Undo"; onClicked: app.undo() }
-                    Button { text: "Redo"; onClicked: app.redo() }
-                    Button { text: "Fit"; onClicked: app.fit(true) }
+                    // (sharing the panel's width: their own would push it all past the edge)
+                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
+                    Button { Layout.fillWidth: true; objectName: "saveButton"; text: "Save"; highlighted: app.changeCount > 0; enabled: app.changeCount > 0; onClicked: app.save() }
+                    Button { Layout.fillWidth: true; text: "Undo"; onClicked: app.undo() }
+                    Button { Layout.fillWidth: true; text: "Redo"; onClicked: app.redo() }
+                    Button { Layout.fillWidth: true; text: "Fit"; onClicked: app.fit(true) }
                 }
                 Label {
                     objectName: "status"
