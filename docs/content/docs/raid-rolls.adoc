@@ -15,6 +15,17 @@ chat, whatever addon wrote it, so raiders need nothing else.
 | `lootpreview.lua` | The boss's loot still to roll, the item being rolled in gold
 |===
 
+++++
+{{< mermaid >}}
+flowchart LR
+    ml["👑 Master looter"] -- "chat" --> check{"🔒 CanPutUpRolls"}
+    check -- "Roll for [item] 20s" --> roll["🎲 Roll window"]
+    check -- "Loot from Boss: ..." --> preview["📋 Loot preview"]
+    corpse["💀 A corpse opened"] -- "addon message" --> preview
+    roll -- "rolling, ended" --> preview
+{{< /mermaid >}}
+++++
+
 `CanPutUpRolls` in `rollwindow.lua` says who's trusted: a raid warning or the leader always, raid and
 party chat from the master looter or an assistant.
 

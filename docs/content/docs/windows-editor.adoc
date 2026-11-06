@@ -17,6 +17,15 @@ tools/install-editor.sh      # optional: adds it to your desktop's menu
 
 == The loop
 
+++++
+{{< mermaid >}}
+flowchart LR
+    game["🎮 Game<br/>/dui layout, /reload"] -- "what each window shows" --> editor["🖱️ Editor<br/>pick, drag, size"]
+    editor -- "Ctrl+S" --> files["📄 windows/*.qml<br/>settings/positions.lua"]
+    files -- "/reload" --> game
+{{< /mermaid >}}
+++++
+
 . *In game:* `/dui layout all`, then `/reload`. It opens every window that needs no NPC. Open
   the others yourself while it's on (mail, auction house, bank, vendor, trainer).
 . *In the editor:* pick a window at the top, a tab under it, and change what you want. It reads a
@@ -38,6 +47,18 @@ Rescan when a window looks out of date in the editor: its art and texts come fro
 | Undo | Ctrl+Z, Ctrl+Shift+Z. *Reset* forgets what's not saved of a part
 | See better | Wheel to zoom, drag the empty space to pan, F to fit. *Show* turns frames, texts, art and outlines on and off
 |===
+
+++++
+{{< mermaid >}}
+flowchart TD
+    frame["🪟 FriendsFrame<br/>Blizzard's window"] --> window["🧱 FriendsFrameDiabolic<br/>our window"]
+    window --> foot["🪨 FriendsFrameDiabolicFoot"]
+    foot --> row["↔️ WhoButtons<br/>a row"]
+    row --> refresh["🔘 Refresh"]
+    row --> add["🔘 Add Friend"]
+    row --> invite["🔘 Group Invite"]
+{{< /mermaid >}}
+++++
 
 The list on the left is the window's tree: each part is under what it's placed on, so moving a
 part moves what's in it. The *In ...* button in the panel picks what it's in.

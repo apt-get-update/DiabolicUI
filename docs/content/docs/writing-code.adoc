@@ -17,6 +17,17 @@ local ADDON, Engine = ...
 
 == The pieces
 
+++++
+{{< mermaid >}}
+flowchart TD
+    engine["⚙️ Engine"] --> module["🧩 Module<br/>a feature"]
+    engine --> handler["🧰 Handler<br/>a shared building block"]
+    module --> widget["🔹 Widget<br/>a part of a module"]
+    handler --> element["🔸 Element<br/>what a unit frame shows"]
+    module -. "uses" .-> handler
+{{< /mermaid >}}
+++++
+
 |===
 | Piece | Is | Create | Fetch
 
@@ -47,6 +58,21 @@ Module.OnEnable = function(self)
 	end
 end
 ----
+
+++++
+{{< mermaid >}}
+sequenceDiagram
+    participant G as 🎮 Game
+    participant E as ⚙️ Engine
+    participant M as 🧩 Modules
+    G->>E: ADDON_LOADED, VARIABLES_LOADED
+    E->>E: ParseSavedVariables
+    E->>M: OnInit (all of them)
+    E->>M: OnEnable (HIGH, NORMAL)
+    G->>E: PLAYER_LOGIN
+    E->>M: OnEnable (LOW)
+{{< /mermaid >}}
+++++
 
 * Every `OnInit` runs before any `OnEnable`: fetch config in the first, make frames and call other
   modules in the second. Never read config at file scope: it's replaced before `OnInit`.
