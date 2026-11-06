@@ -130,6 +130,7 @@ local updateQualityGlow = function(self, quality)
 	if color then
 		local r, g, b = unpack(color)
 		qualityGlow:SetGradientAlpha("VERTICAL", r, g, b, QUALITY_GLOW_ALPHA, r, g, b, 0)
+		qualityGlow.DiabolicGradient = { "VERTICAL", r, g, b, QUALITY_GLOW_ALPHA, r, g, b, 0 } -- (the game can't say it: /dui layout)
 		qualityGlow:Show()
 	else
 		qualityGlow:Hide()
