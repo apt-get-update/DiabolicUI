@@ -49,16 +49,7 @@ The generic window and its controls are in `windows/components/`: `Window`,
 `CloseButton`, `Section`, `Columns`, `Panel`, `ListRow`, `Bar`, `Pager`, `TabRow`.
 Change one and every window inherits it.
 
-*With the editor:* *Components* in its top bar, or *Styled as...* on a part
-(after a `/dui layout all` with this version). It shows a sample window with every
-control in its states; press one to open its component. What you change shows
-there at once: `tools/sample.lua` styles it with the game's own code, in the tests'
-fake client. Save, then `/reload`; the windows themselves show it in the editor
-after `/dui layout`.
-
-A value that only matters in a rare case doesn't change the sample: a text too
-wide for its button or dropdown, a title too long for its plate. `content_gap` and
-`uneven` don't either: nothing reads them while the layout's rules are dropped.
+*With the editor:* *Components*, see link:{{< relref "windows-editor" >}}[Windows Editor].
 
 *By hand:* change the property, one a line, then `lua5.1 tools/positions.lua`,
 which writes `settings/components.lua`: don't change that one. What only one
@@ -98,63 +89,7 @@ than a line have their own file in `modules/blizzard/` (code).
 
 == Fix a visual bug
 
-A button in the wrong place, in any window. Every named part of the windows
-is in `windows/<its window>.qml`, a part being a QML block named after its kind
-(`Frame`, `Button`, `FontString`...), inside what it's placed on, with its anchors:
-
-[source,qml]
-----
-EditBox {
-    name: "WhoFrameEditBox"
-    pin: "all"
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 103
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.horizontalCenterOffset: -20
-    width: 296
-    height: 32
-}
-----
-
-*With the editor:* `tools/editor.py` (needs PySide6, Pillow and `lua5.1`;
-`tools/install-editor.sh` puts it in your desktop's menu). Each
-window opens as it is in its file, with our art and its texts (*Show*: its parts'
-boxes too); a window with tabs has them on top, each showing only its own parts. The
-list on the left is the file's tree, each part under what it's placed on, folded: picking a
-part opens the way to it. The panel's *In ...* button picks what it's in.
-What's in a bag and the rows of a long list after the first are only drawn, not in the
-list or the files: a part of those that's pinned stays.
-
-* Press a part to pick it (again: the one under it; right-click lists all that's
-  there, Tab goes through them). Drag it: it snaps to the others' edges (Alt: it
-  doesn't), what's placed on it follows.
-* The gold handles size it, on any side (the other side stays).
-* The dots are its 9 points, the yellow one the point it's placed by. Drag a dot
-  onto another part's point to place it in that part: it stays where it is, and goes with
-  that part from then on.
-* Arrows move it 1 (Shift 10), Ctrl + arrows size it. Ctrl+Z, Ctrl+Shift+Z,
-  wheel to zoom, the middle button or the empty space to pan, F to fit.
-* *Save* (Ctrl+S) writes the files, then `/reload`.
-* *Show* hides the frames, texts or art, or shows every part's outline.
-
-*By hand:* change a part's block, then `lua5.1 tools/positions.lua`. The tool says what
-it can't read. A `pin` puts a part in `settings/positions.lua`, which the tool writes: don't
-change that one. link:{{< relref "windows-editor" >}}[Windows Editor] has how the files work.
-
-*Rows and stretching:* pick a button in a row and its panel has the row's fit, spacing and
-margins. Dragging a button moves the whole row up or down, the handles at its ends change
-its room. Tick *Stretch left to right* or *Stretch top to bottom* on a part: it stays where it
-is, and its panel sets how far each side is from the frame it's placed on (pick that first).
-
-*Filling the files:* `/dui layout all` opens every window that needs no NPC
-and each of its tabs (open the others yourself while it's on: mail, auction
-house, bank, vendor, trainer...), `/reload`. The editor reads it by itself, or
-run `lua5.1 tools/positions.lua`: pinned parts stay, the others follow the scan.
-It also writes `tools/layout.json` for the editor (not in git).
-`/dui layout left` (said too when it starts and when `all` ends, shown in the
-editor) lists what's left: the windows we style not scanned, or scanned by an older
-version, the tabs not visited, and any window seen shown that we don't style.
-Our own parts are named after their window (`ClassTrainerFrameDiabolicBand`).
+A button in the wrong place, in any window: link:{{< relref "windows-editor" >}}[Windows Editor].
 
 == Put a part in a window's red band
 

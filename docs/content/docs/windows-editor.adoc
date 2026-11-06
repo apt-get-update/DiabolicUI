@@ -5,226 +5,107 @@ weight: 3
 
 = Windows Editor
 
-How windows are placed outside the game: QML files as the source of truth, an editor
-to change them, a tool that turns them into what the game loads. To simply move a
-button, link:{{< relref "common-tasks" >}}[Common Tasks] is enough.
+Where we tweak how the windows look: open a window, drag its parts, save, `/reload`.
 
-== How it fits together
+== Start it
 
-[source,text]
+[source,bash]
 ----
-in game   /dui layout            saves what's open: SavedVariables, DiabolicUI_Layout
-                                 (written on /reload or logout)
-               |
-tool      tools/positions.lua    reads the scan and windows/*.qml, writes:
-               |                   windows/*.qml          the parts, for you and the editor
-               |                   settings/positions.lua the pinned parts, for the game
-               |                   settings/components.lua what every window inherits
-               |                   tools/layout.json      all of it for the editor (not in git)
-               |
-editor    tools/editor.py + .qml opens a window's file in a real QML engine;
-               |                 Save passes its changes to the tool
-               |
-in game   modules/blizzard/adjust.lua  applies settings/positions.lua, and again
-                                       whenever something else moves a part
+tools/editor.py              # needs PySide6, Pillow and lua5.1
+tools/install-editor.sh      # optional: adds it to your desktop's menu
 ----
 
-Run the tool by hand with `lua5.1 tools/positions.lua [saved ("" newest, "-" none) [out
-[json [windows [edits]]]]]`. It rewrites every window file, so what you write by hand
-has to be something it can read back. It has its own small QML reader: only plain
-values, one anchor target per part, no bindings or JavaScript.
+== The loop
 
-== The files in `windows/`
+. *In game:* `/dui layout all`, then `/reload`. It opens every window that needs no NPC. Open
+  the others yourself while it's on (mail, auction house, bank, vendor, trainer).
+. *In the editor:* pick a window at the top, a tab under it, and change what you want. It reads a
+  new scan by itself. *Still to scan* on the right says what's missing.
+. *Ctrl+S*, then `/reload` in game.
 
-|===
-| File | What it is
+Rescan when a window looks out of date in the editor: its art and texts come from the last scan.
 
-| `<Window>.qml` | One window: a `WowWindow` holding its parts and rows, each inside what it's placed on
-| `Part.qml` | What every part is: anchors, size, `pin`, and how the editor draws it
-| `Frame.qml`, `Button.qml`, `FontString.qml`... | A kind of part: just `Part { kind: "..." }`
-| `WowRow.qml` | A row of buttons, the ones inside it (below)
-| `Ghost.qml` | A frame that isn't in this file, with the parts placed on it inside it
-| `GameText.qml` | A text as the game draws it
-| `components/*.qml` | What every window inherits: buttons, scroll bars, the window itself
-|===
-
-The nesting is by placement, not by the game's parents (those are `wowParent`): QML only
-anchors on a parent or a sibling, and a part is often placed on neither in the game. So a
-part's anchors say `parent`, moving a part moves what's in it, and the editor's list is this
-tree.
-
-== A part
-
-[source,qml]
-----
-// why it's there: kept when the tool rewrites the file
-EditBox {
-    name: "WhoFrameEditBox"
-    wowParent: "WhoFrame"
-    pin: "all"
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 103
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.horizontalCenterOffset: -20
-    width: 296
-    height: 32
-}
-----
-
-* *The block's name is its kind.* A kind with no file (see `KINDS` in
-  `tools/positions.lua`) is written `Part { kind: "Cooldown" }`, a part never scanned
-  plain `Part { }`.
-* *One anchor across and one down*, on `parent`. An `id` of the file also reads, for a
-  sibling: the tool then moves the part inside it and writes `parent`.
-* *`pin`* says what goes in `settings/positions.lua`: `"all"`, or only its `"place"` or
-  `"size"`. Without one the part follows the next scan.
-* *Don't pin* what the game moves on its own: parts Blizzard reparents (the quest
-  log's details), what an addon may add later (Postal), buttons `LineRows` spreads unless
-  a row holds them.
-
-Our own parts are named after their window: `ClassTrainerFrameDiabolicBand`.
-
-== Rows
-
-[source,qml]
-----
-WowRow {
-    name: "LFRBrowseButtons"
-    fit: "fill"
-    anchors.left: parent.left
-    anchors.leftMargin: 14
-    anchors.right: parent.right
-    anchors.rightMargin: 14
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 7
-    Button { name: "LFRBrowseFrameSendMessageButton"; width: 90; height: 22 }
-    Button { name: "LFRBrowseFrameInviteButton"; width: 90; height: 22 }
-    Button { name: "LFRBrowseFrameRefreshButton"; width: 90; height: 22 }
-}
-----
-
-|===
-| `fit` | Its parts
-
-| `"fill"` | As wide as their texts, the room left shared (the default)
-| `"equal"` | All as wide, filling the room
-| `"center"` | As they are, together in the middle
-| `"ends"` | As they are, first and last at the ends
-|===
-
-`spacing` defaults to the windows' `button_gap`. The tool works out the parts' places and
-sizes and writes them as any other pinned part's, so the game knows nothing about rows.
-That means widths are fixed when the tool runs, and a button that hides in game leaves its
-gap. A row in too little room still fits (`fill`, `equal`); a printed message says so.
-
-A row goes from what it's in's left to its right, its parts in it, in their order, with no
-anchors.
-
-== A window's foot
-
-A foot is a part like the others: `<Window>DiabolicFoot`, stretched along the window's bottom,
-its place pinned. Its buttons go in it. Its height doesn't follow them: it's
-`footer_height` in `windows/components/Window.qml` (35) unless its window says otherwise
-(`footer` in `settings/blizzard.lua`: the merchant's 65, the guild bank's 77), and a page can go
-without one (`footers`). A row of 22-high buttons goes 7 over its bottom, 14 from its sides.
-What the game moves back on its own stays out of the files and is placed on the foot in code
-(the quest log's Abandon, Share and Track, its map button), as does what an addon adds later
-(Postal's Open All). Lists and panels over a foot go by its top: `FootBar` says how far its iron
-reaches. A page with no foot drawn can still use it (the Chat page's Add button): it's always
-placed. A letter's own text is the exception: the game sets its height from its attachments.
-
-== Stretching
-
-A pinned part with anchors on both sides of one frame follows them: `left` and `right`,
-`top` and `bottom`, or both. In `settings/positions.lua` it has a `second` point.
-
-== What's only a preview
-
-To keep the list and the files to what's worth changing, the tool marks these `preview`
-and leaves them out of the window files:
-
-* what's in a bag (`AdiBagsItemButton...`, `AdiBagsBankItemButton...`): AdiBags places it;
-* the rows of a list: 8 or more parts with one name but for their numbers, all but the first.
-
-A pinned one always stays, and a family ending in `Tab<number>` is never a list. They're
-still in `tools/layout.json`: the editor draws their art and texts,
-but they can't be picked. To change another row of a list, write its block with a `pin`.
-
-== The scan
-
-`modules/blizzard/layout-scan.lua` saves each window's parts and, per tab (a "view"), its
-art. Things to know:
-
-* Each view's art is packed in strings of Lua (`Packed`); the tool reads them back when it
-  loads the scan. Older scans with plain tables still load.
-* A part keeps `last`, the look that last saw it per view. `current` in `tools/layout.json`
-  says which views' last look saw it: the editor's texts go by it.
-* Bag items not seen in a look are dropped; other parts stay until they're seen again.
-* A part has one place, whichever tab was scanned last. Its `words` are per view, as the
-  game shows them with their colour codes, so text on a shared plate reads right in every tab.
-* What a scroll frame's child has mostly past its edges saves no art or words: the game
-  cuts it off. Parts stay, so they can still be picked.
-
-== Inside the editor
-
-`tools/editor.py` is the backend: it runs the tool, serves the art (reading the game's MPQs
-the first time, kept in `tools/art/game/`) and keeps unsaved changes in
-`tools/editor-unsaved.json`. `tools/editor.qml` is everything else.
-
-*Changes* live in `edits` until Save, which passes them to the tool as a Lua file:
-
-[source,lua]
-----
-return {
-    PartName = { window = "W", place = { "TOPLEFT", "W", "TOPLEFT", 10, -30 }, size = { 40, 20 }, pin = "place",
-        second = { "TOPRIGHT", "TOPRIGHT", -30, -30 } }, -- (stretched: a part's whole state)
-    ["@rows"] = { W = { RowName = { fit = "ends", left = 10, right = 20, y = 5 } } },
-    ["@components"] = { Button = { height = 24 } },
-}
-----
-
-*What a part is now* comes from `entry(name)`: its edit, else its file's. `applyItem` puts it
-in what it's placed on and sets its QML anchors from that. Anything that needs where a part
-is in the window asks `rectOf(name)`: `x` and `y` are from its parent.
-
-*What's drawn on a part goes in it:* the selection's handles and dots, the row's ends and the
-hover box have the part as their `parent`, so they follow it with no code. The art can't: it's
-drawn in the game's order, apart from the parts. It reads `moved`, a counter up each time parts
-move, to ask again where its part is. A part hides with `shown`, not QML's `visible`, which
-would hide what's in it too.
-
-*Rows are worked out twice*: `windows/WowRow.qml` shows them live, `ResolveRow`
-in `tools/positions.lua` writes them. *Change one, change the other.*
-
-== What the editor can't show
-
-The picture is close to the game, not the game. It doesn't:
-
-* cut a row at a scroll frame's edge: it's drawn whole, or not at all when mostly past it;
-* draw a text's icons, or wrap and shorten it exactly where the game does (`windows/GameText.qml`
-  uses the game's font and size, but its own measuring);
-* show the 3D models.
-
-Check looks, readable text and anything near those limits in game.
-
-== Changing it
+== Change a part
 
 |===
 | To | Do
 
-| Add a kind of part | Add it to `KINDS` in `tools/positions.lua` and write `windows/<kind>.qml`
-| Add a row `fit` | `ResolveRow`, `windows/WowRow.qml`, the check in `ReadWindow`, the list in the row panel
-| Export something to the editor | The `copy` table near the end of `tools/positions.lua`: check its name isn't one of the scan's
-| Change what's a preview | The block before `windows/components/*.qml` in `tools/positions.lua`; `IsBagItem` in the scan
+| Pick | Click it, click again for the one under it. Or the list on the left, Ctrl+F to find. Right-click lists all that's there
+| Move | Drag it, or arrows (Shift: 10). It snaps to other parts, Alt stops that
+| Size | Gold handles, or Ctrl + arrows
+| Place it in another part | Drag one of its dots onto that part's point. It stays where it is, and moves with that part from then on
+| Stretch it | *Stretch left to right* or *top to bottom* in the panel: its sides stay on what it's in
+| Undo | Ctrl+Z, Ctrl+Shift+Z. *Reset* forgets what's not saved of a part
+| See better | Wheel to zoom, drag the empty space to pan, F to fit. *Show* turns frames, texts, art and outlines on and off
 |===
 
-`tests/test_positions_tool.lua` covers the tool: reading, writing, rows, edits, and that
-running it again changes nothing. The tests don't load the QML (`tools/editor.qml`,
-`windows/WowRow.qml`), so after changing it open a few windows by hand and try what you changed.
+The list on the left is the window's tree: each part is under what it's placed on, so moving a
+part moves what's in it. The *In ...* button in the panel picks what it's in.
 
-== The rules
+A part you change gets a pin (◆) and stays as you set it. Without one it follows the next scan.
+*Unpin* gives it back to the scan. Leave unpinned what the game moves by itself.
 
-The layout's rules (`tools/rules.js`, checked live) were dropped when the windows were nested,
-to come back simpler: a rule can now ask what a part is in instead of working it out. What they
-read in the game is still set (`DiabolicContent`, `DiabolicEdge`...), and so are `content_gap`
-and `uneven` in `windows/components/Window.qml`; the scan no longer saves them.
+== Rows of buttons
+
+Pick a button in a row: the panel shows the row. Dragging moves the whole row up or down, its
+gold ends change its room.
+
+|===
+| Fit | Its buttons
+
+| `fill` | As wide as their texts, the room left shared
+| `equal` | All as wide, filling the room
+| `center` | As they are, together in the middle
+| `ends` | As they are, first and last at the ends
+|===
+
+== The foot
+
+A window's buttons and money sit in its foot, so moving the foot moves them. A row of buttons
+goes 7 over its bottom and 14 from its sides. It's 35 high: `footer_height` in *Components*, or
+`footer` in that window's settings in `settings/blizzard.lua` for a taller one.
+
+== Every window at once
+
+*Components* in the top bar, or *Styled as...* on a part: buttons, scroll bars, dropdowns, the
+window itself. Press a control in the sample window and change its values: it shows at once.
+Save and `/reload`. The windows show it in the editor after a new `/dui layout`.
+
+== By hand
+
+Each window is a file, `windows/<window>.qml`, with each part inside what it's placed on:
+
+[source,qml]
+----
+Button {
+    name: "MacroDeleteButton"
+    text: "Delete"
+    pin: "place"
+    anchors.left: parent.left
+    anchors.leftMargin: 14
+    anchors.bottom: parent.bottom
+    anchors.bottomMargin: 7
+    width: 80
+    height: 22
+}
+----
+
+Then run `lua5.1 tools/positions.lua`. It says what it can't read, and writes
+`settings/positions.lua` for the game: don't change that one. Plain values only, anchors on
+`parent`. A comment over a part stays.
+
+== What it can't show
+
+It's close to the game, not the game, so check the result in game:
+
+* Rows cut at a list's edge are drawn whole, or not at all.
+* Text can wrap a little differently, and its icons aren't drawn.
+* 3D models are only boxes.
+* What's in a bag and a long list's other rows are drawn but can't be picked.
+
+== Changing the editor itself
+
+`tools/editor.qml` is the editor, `tools/editor.py` its backend, `tools/positions.lua` the tool
+behind Save. Rows are worked out twice: `windows/WowRow.qml` shows them, `ResolveRow` in
+`tools/positions.lua` writes them, so change both. The tests don't load the QML: after changing
+it, open a few windows and try it.
