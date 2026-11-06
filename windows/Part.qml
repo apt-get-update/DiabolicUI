@@ -9,6 +9,7 @@ Rectangle {
     property string text
     property string wowParent
     property string pin
+    property string style // (the component it's styled as: windows/components/)
     // (the editor's)
     property bool picked
     property bool placedOn

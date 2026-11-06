@@ -316,17 +316,89 @@ function TestPositionsTool:test_what_cant_be_read()
 	end
 end
 
+-- What every window shares: windows/components/*.qml written for the game
+-- (our files, the game's, our fonts; added to the window's settings, or under
+-- its objectName), and for the editor, each property on its own; the editor's
+-- changes written back on their lines, the rest as it was.
+function TestPositionsTool:test_the_components()
+	local dir = Folder()
+	os.execute("mkdir -p '" .. dir .. "/windows/components'")
+	local path = dir .. "/windows/components/Thing.qml"
+	Write(path, table.concat({
+		"// A thing, on two",
+		"// lines.",
+		"// Shared by every window: settings/components.lua is written from this by",
+		"// tools/positions.lua (or the editor's Components). One line per property.",
+		"import QtQml",
+		"",
+		"QtObject {",
+		'    objectName: "thing"',
+		"",
+		"    // how wide",
+		"    property real width: 16 // Blizzard's",
+		'    property string art: "textures/A.tga"',
+		'    property string blank: "Interface/Buttons/WHITE8X8"',
+		'    property string font: "DiabolicFont_Narrow14"',
+		"    property var coords: [14/64, 1]",
+		"    property var line_color: [.5, 1, 0]",
+		'    property var up: ({ normal: "textures/U.tga", deep: { size: 2 } })',
+		"}",
+		"",
+	}, "\n"))
+	Write(dir .. "/windows/components/Flat.qml", 'import QtQml\nQtObject {\n    objectName: ""\n    property real gap: 6\n}\n')
+	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
+	local lua, json = Read(dir .. "/components.lua"), Read(dir .. "/layout.json")
+	lu.assertStrContains(lua, "\tthing = {\n\t\twidth = 16,\n\t\tart = path .. [[textures\\A.tga]],\n\t\tblank = [[Interface\\Buttons\\WHITE8X8]],\n\t\tfont = DiabolicFont_Narrow14,\n\t\tcoords = { 0.21875, 1 },")
+	lu.assertStrContains(lua, "up = { deep = { size = 2 }, normal = path .. [[textures\\U.tga]] },")
+	lu.assertStrContains(lua, "Merge(window, {\n\tgap = 6,\n})")
+	lu.assertStrContains(json, '{"comment":"A thing, on two lines.","fields":[{"key":"width","kind":"number","note":"how wide","value":16}')
+	lu.assertStrContains(json, '{"key":"art","kind":"texture","value":"textures/A.tga"}')
+	lu.assertStrContains(json, '{"key":"line_color","kind":"color","value":[0.5,1,0]}')
+	lu.assertStrContains(json, '{"key":"coords","kind":"list","value":[0.2188,1]}')
+	lu.assertStrContains(json, '{"key":"up.deep.size","kind":"number","value":2}')
+	-- the editor's changes
+	Write(dir .. "/edits.lua", 'return { ["@components"] = { Thing = { width = 18, ["up.deep.size"] = 3, line_color = { 1, 1, 1 } }, Gone = { a = 1 } } }')
+	local before = Read(path)
+	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" })
+	local after = Read(path)
+	lua = Read(dir .. "/components.lua")
+	lu.assertStrContains(after, "    // how wide\n    property real width: 18 // Blizzard's\n")
+	lu.assertStrContains(after, '    property var up: ({ deep: { size: 3 }, normal: "textures/U.tga" })\n')
+	lu.assertStrContains(after, "    property var line_color: [1, 1, 1]\n")
+	lu.assertStrContains(after, "    property var coords: [14/64, 1]\n") -- (what's not changed, as it was)
+	lu.assertNotEquals(after, before)
+	lu.assertStrContains(lua, "width = 18,")
+	lu.assertStrContains(lua, "up = { deep = { size = 3 }")
+	-- what can't be read is said, naming it, and nothing's written
+	for _, case in ipairs({
+		{ "    property var a: nope", "needs a plain value" },
+		{ "    property var a: [1,", "needs a plain value" },
+		{ "    onClicked: a()", "not a property" },
+	}) do
+		Write(path, "import QtQml\nQtObject {\n    objectName: \"thing\"\n" .. case[1] .. "\n}\n")
+		Write(dir .. "/components.lua", "-- as it was")
+		local said = Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
+		lu.assertStrContains(said, "Thing.qml")
+		lu.assertStrContains(said, case[2])
+		lu.assertEquals(Read(dir .. "/components.lua"), "-- as it was")
+	end
+	Write(path, "import QtQml\nQtObject {\n    property real a: 1\n}\n")
+	lu.assertStrContains(Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" }), "needs an objectName")
+	os.execute("rm -rf '" .. dir .. "'")
+end
+
 -- What's in the repository agrees: settings/positions.lua is what
 -- windows/*.qml say, and they stay as they are when read and written back.
 function TestPositionsTool:test_the_files_agree()
 	local dir = Folder()
-	os.execute("cp '" .. ROOT .. "'/windows/*.qml '" .. dir .. "/windows/'")
+	os.execute("cp -r '" .. ROOT .. "'/windows/. '" .. dir .. "/windows/'")
 	Write(dir .. "/positions.lua", "")
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
-	local written = Read(dir .. "/positions.lua")
+	local written, components = Read(dir .. "/positions.lua"), Read(dir .. "/components.lua")
 	local same = os.execute("diff -r '" .. ROOT .. "/windows' '" .. dir .. "/windows' >/dev/null")
 	os.execute("rm -rf '" .. dir .. "'")
 	lu.assertEquals(written, Read(ROOT .. "/settings/positions.lua"))
+	lu.assertEquals(components, Read(ROOT .. "/settings/components.lua"))
 	lu.assertEquals(same, 0)
 end
 
@@ -360,7 +432,7 @@ function TestPositionsTool:test_the_art_by_its_files()
 	local ours = [[Interface\\AddOns\\DiabolicUI\\media\\textures\\]]
 	local item = function(file) return string.format('{ file = "%s", rect = { 0, 0, 2, 1 }, coords = { 0, 0, 0, 1, .125, 0, .125, 1 }, color = { 1, 1, 1, 1 }, alpha = 1, owner = "W" },', file) end
 	-- (a part's second point on nothing: on its parent)
-	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = { P = { 'TOP', 'W', 'TOP', 0, 0, 1, 1, kind = 'Frame', parent = 'W',"
+	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = { P = { 'TOP', 'W', 'TOP', 0, 0, 1, 1, kind = 'Frame', style = 'ScrollBar', parent = 'W',"
 		.. " points = { { 'TOP', 'W', 'TOP', 0, 0 }, { 'CENTER', nil, 'CENTER', 0, 0 } } } }, art = {\n"
 		.. item(ours .. "Raw32") .. item(ours .. "raw24.TGA") .. item(ours .. "Missing") .. item([[Interface\\Buttons\\WHITE8X8]]) .. item([[Interface\\Icons\\INV_Sword.blp]])
 		.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "' .. ours .. 'Raw24", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
@@ -368,7 +440,14 @@ function TestPositionsTool:test_the_art_by_its_files()
 		.. "} } } }")
 	Run({ addon .. "/saved.lua", addon .. "/positions.lua", addon .. "/tools/layout.json", addon .. "/windows" }, addon)
 	local json = Read(addon .. "/tools/layout.json")
+	local window = Read(addon .. "/windows/W.qml")
+	-- (the component a part is styled as, from the scan, and read back)
+	Run({ "-", addon .. "/positions.lua", addon .. "/tools/layout.json", addon .. "/windows" }, addon)
+	local again = Read(addon .. "/tools/layout.json")
 	os.execute("rm -rf '" .. addon .. "'")
+	lu.assertStrContains(window, 'style: "ScrollBar"')
+	lu.assertStrContains(json, '"style":"ScrollBar"')
+	lu.assertStrContains(again, '"style":"ScrollBar"')
 	lu.assertStrContains(json, '"art":[{"alpha":1,"color":[1,1,1,1],"coords":[0,0,0,1,0.125,0,0.125,1],"image":"media/textures/Raw32.tga"')
 	lu.assertStrContains(json, '"image":"media/textures/Raw24.tga"')
 	lu.assertStrContains(json, '"image":true')

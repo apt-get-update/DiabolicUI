@@ -7,6 +7,7 @@
 -- /reload or a logout), any number of times:
 --   lua5.1 tools/positions.lua [saved variables, "" newest, "-" none [out [json [windows [edits]]]]]
 -- (edits: a Lua file returning { [name] = { place, size, pin } }, the editor's.)
+-- It also writes settings/components.lua from windows/components/*.qml.
 local SAVED = arg[1] or ""
 local OUT = arg[2] or "settings/positions.lua"
 local JSON = arg[3] or "tools/layout.json"
@@ -184,7 +185,7 @@ local ReadWindow = function(path)
 			local line = key:match("^anchors%.(.+)$")
 			if (key == "id") then
 				target.id = content
-			elseif (key == "name") or (key == "kind") or (key == "text") or (key == "wowParent") or (key == "pin") then
+			elseif (key == "name") or (key == "kind") or (key == "text") or (key == "wowParent") or (key == "pin") or (key == "style") then
 				target[key] = Unquote(content) or Problem(key, "needs a text, not " .. content)
 			elseif (key == "width") or (key == "height") or (key == "x") or (key == "y") then
 				target[key] = tonumber(content) or Problem(key, "needs a number, not " .. content)
@@ -333,6 +334,7 @@ for _, title in ipairs(Sorted(layout.windows or {})) do
 		if (type(entry) == "table") and (not (owner[name] and windows[owner[name]].parts[name] and windows[owner[name]].parts[name].seen)) then
 			local part = PartNamed(name, title)
 			part.seen, part.kind, part.text, part.wowParent = entry, entry.kind, entry.text, entry.parent
+			part.style = entry.style or part.style
 			Follow(part)
 		end
 	end
@@ -375,14 +377,152 @@ for name, entry in pairs(active) do
 		end
 	end
 end
-if EDITS then
-	for name, edit in pairs(assert(loadfile(EDITS))()) do
-		local part = owner[name] and windows[owner[name]].parts[name]
-		if part then
-			part.pin = (edit.pin ~= "") and edit.pin or nil
-			part.place, part.size = edit.place or part.place, edit.size or part.size
-			Follow(part)
+local edits = EDITS and assert(loadfile(EDITS))() or {}
+for name, edit in pairs(edits) do
+	local part = owner[name] and windows[owner[name]].parts[name]
+	if part then
+		part.pin = (edit.pin ~= "") and edit.pin or nil
+		part.place, part.size = edit.place or part.place, edit.size or part.size
+		Follow(part)
+	end
+end
+
+-- windows/components/*.qml ---------------------------------------------------
+
+-- What every window shares (the generic window, its controls): a file's
+-- properties, one a line, plain values. settings/components.lua is written from
+-- them for the game; the editor changes them (edits["@components"]).
+
+-- Its property's value, "..." or [...] or ({...}), and what's after it (a //).
+local ValueAndTail = function(text)
+	local quoted = false
+	for i = 1, #text do
+		local c = text:sub(i, i)
+		if (c == '"') then
+			quoted = not quoted
+		elseif (not quoted) and (text:sub(i, i + 1) == "//") then
+			return text:sub(1, i - 1):match("^(.-)%s*$"), text:sub(i)
 		end
+	end
+	return text:match("^(.-)%s*$"), nil
+end
+
+local LUA_OF = { ["["] = "{", ["]"] = "}", [":"] = "=" }
+local ValueOf = function(text)
+	local out, quoted = {}, false
+	for c in (text:match("^%((.*)%)$") or text):gmatch(".") do
+		if (c == '"') then
+			quoted = not quoted
+		end
+		out[#out + 1] = (not quoted) and LUA_OF[c] or c
+	end
+	local chunk = loadstring("return " .. table.concat(out))
+	if chunk then
+		local ok, value = pcall(setfenv(chunk, {}))
+		if ok and (value ~= nil) then
+			return value
+		end
+	end
+end
+
+local IsList = function(value)
+	return (next(value) ~= nil) and (#Sorted(value) == #value)
+end
+
+-- A value back as the file writes it.
+local JsOf
+JsOf = function(value)
+	if (type(value) == "string") then
+		return string.format("%q", value)
+	elseif (type(value) == "number") then
+		return string.format("%.10g", value)
+	elseif (type(value) ~= "table") then
+		return tostring(value)
+	elseif IsList(value) then
+		local out = {}
+		for i, item in ipairs(value) do
+			out[i] = JsOf(item)
+		end
+		return "[" .. table.concat(out, ", ") .. "]"
+	end
+	local out = {}
+	for _, key in ipairs(Sorted(value)) do
+		out[#out + 1] = key .. ": " .. JsOf(value[key])
+	end
+	return "{ " .. table.concat(out, ", ") .. " }"
+end
+
+local ReadComponent = function(path)
+	local name = path:match("([^/]+)%.qml$")
+	local component = { name = name, path = path, lines = {}, comment = {}, order = {}, values = {}, at = {}, notes = {} }
+	local Problem = function(what)
+		error(path .. ": " .. what, 0)
+	end
+	local notes, started = {}, false
+	for line in io.lines(path) do
+		local at = #component.lines + 1
+		component.lines[at] = line
+		local kind, key, rest = line:match("^%s*property%s+(%w+)%s+([%w_]+):%s*(.-)%s*$")
+		local note = line:match("^%s*//%s?(.*)$")
+		if key then
+			local text, tail = ValueAndTail(rest)
+			local value = ValueOf(text)
+			if (value == nil) then
+				Problem(key .. ": needs a plain value on its line, not " .. text)
+			end
+			component.order[#component.order + 1] = key
+			component.values[key], component.at[key] = value, { line = at, kind = kind, tail = tail }
+			component.notes[key] = table.concat(notes, " ")
+			notes = {}
+		elseif note then
+			if started then
+				notes[#notes + 1] = note
+			elseif (not note:find("^Shared by every window")) and (not note:find("^tools/positions.lua")) then
+				component.comment[#component.comment + 1] = note
+			end
+		elseif line:find("^%s*objectName:") then
+			component.key = Unquote(line:match("^%s*objectName:%s*(.-)%s*$")) or Problem("objectName needs a text")
+		elseif line:find("^%s*QtObject") then
+			started = true
+		elseif (line ~= "") and (not line:find("^import ")) and (not line:find("^%s*}%s*$")) then
+			Problem("not a property of its own line: " .. line)
+		end
+	end
+	if (not component.key) then
+		Problem("needs an objectName (\"\": its properties directly in the window's settings)")
+	end
+	component.comment = table.concat(component.comment, " ")
+	return component
+end
+
+local components = {}
+for _, path in ipairs(Lines("ls '" .. DIR .. "'/components/*.qml 2>/dev/null")) do
+	components[#components + 1] = ReadComponent(path)
+end
+
+-- the editor's changes, each by its property's path: "up.normal"
+local changedComponents = edits["@components"] or {}
+for _, component in ipairs(components) do
+	local changes = changedComponents[component.name]
+	if changes then
+		for path, value in pairs(changes) do
+			local head, rest = path:match("^([^.]+)%.?(.*)$")
+			local holder, key = component.values, head
+			if (rest ~= "") then
+				for step in rest:gmatch("[^.]+") do
+					holder = holder[key]
+					key = step
+				end
+			end
+			holder[key] = value
+			local at = component.at[head]
+			local text = JsOf(component.values[head])
+			text = ((type(component.values[head]) == "table") and (not IsList(component.values[head]))) and ("(" .. text .. ")") or text
+			component.lines[at.line] = "    property " .. at.kind .. " " .. head .. ": " .. text .. (at.tail and (" " .. at.tail) or "")
+		end
+		local file = assert(io.open(component.path, "w"))
+		file:write(table.concat(component.lines, "\n"), "\n")
+		file:close()
 	end
 end
 
@@ -473,6 +613,9 @@ local WritePart = function(out, part, ids)
 	end
 	if part.wowParent then
 		Set("wowParent", Quote(part.wowParent))
+	end
+	if part.style then
+		Set("style", Quote(part.style))
 	end
 	if part.pin then
 		Set("pin", Quote(part.pin))
@@ -595,6 +738,82 @@ file:write(table.concat(out, "\n"))
 file:close()
 print(string.format("%s: %d parts, %d in use.", OUT, total, pinned))
 
+-- settings/components.lua ----------------------------------------------------
+
+-- A value in Lua: our files from the media folder, the game's with its slashes,
+-- our fonts by their names.
+local LuaOf
+LuaOf = function(value)
+	if (type(value) == "string") then
+		if value:find("^textures/") or value:find("^fonts/") then
+			return "path .. [[" .. value:gsub("/", "\\") .. "]]"
+		elseif value:find("^Interface/") then
+			return "[[" .. value:gsub("/", "\\") .. "]]"
+		elseif value:find("^DiabolicFont_") then
+			return value
+		end
+		return string.format("%q", value)
+	elseif (type(value) == "number") then
+		return string.format("%.10g", value)
+	elseif (type(value) ~= "table") then
+		return tostring(value)
+	end
+	local out = {}
+	if IsList(value) then
+		for i, item in ipairs(value) do
+			out[i] = LuaOf(item)
+		end
+	else
+		for _, key in ipairs(Sorted(value)) do
+			out[#out + 1] = key .. " = " .. LuaOf(value[key])
+		end
+	end
+	return "{ " .. table.concat(out, ", ") .. " }"
+end
+
+if components[1] then
+	local out = { [[
+-- What every window shares, the generic window and its controls: added to
+-- settings/blizzard.lua's `window`.
+-- Written from windows/components/*.qml by tools/positions.lua: change those (docs:
+-- Common Tasks), this file is overwritten.
+local ADDON, Engine = ...
+local path = ([=[Interface\AddOns\%s\media\]=]):format(ADDON)
+local window = Engine:GetDB("Blizzard").window
+
+local Merge
+Merge = function(into, values)
+	for key, value in pairs(values) do
+		if (type(value) == "table") and (type(into[key]) == "table") then
+			Merge(into[key], value)
+		else
+			into[key] = value
+		end
+	end
+end
+]] }
+	for _, component in ipairs(components) do
+		out[#out + 1] = "-- " .. component.name
+		out[#out + 1] = "Merge(window, {"
+		local into = ""
+		if (component.key ~= "") then
+			out[#out + 1] = "\t" .. component.key .. " = {"
+			into = "\t"
+		end
+		for _, key in ipairs(component.order) do
+			out[#out + 1] = into .. "\t" .. key .. " = " .. LuaOf(component.values[key]) .. ","
+		end
+		if (component.key ~= "") then
+			out[#out + 1] = "\t},"
+		end
+		out[#out + 1] = "})"
+		out[#out + 1] = ""
+	end
+	local file = assert(io.open((OUT:match("^(.*)/[^/]*$") or ".") .. "/components.lua", "w"))
+	file:write(table.concat(out, "\n"))
+	file:close()
+end
+
 -- tools/layout.json ----------------------------------------------------------
 
 -- `value` (a string, a number or a table) in JSON: a table with 1..n only
@@ -684,7 +903,7 @@ for title, window in pairs(windows) do
 	local parts = {}
 	for name, part in pairs(window.parts) do
 		local seen = part.seen or {}
-		local copy = { kind = part.kind, text = part.text, parent = part.wowParent, place = part.place, size = part.size,
+		local copy = { kind = part.kind, text = part.text, parent = part.wowParent, style = part.style, place = part.place, size = part.size,
 			pin = part.pin, rect = seen.rect, strata = seen.strata, level = seen.level, layer = seen.layer }
 		-- (what the rules go by: tools/rules.js)
 		for _, key in ipairs({ "chain", "control", "diablo", "dropdown", "edge", "faded", "hung", "inset", "justify", "light",
@@ -711,6 +930,47 @@ for title, window in pairs(windows) do
 	end
 	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,
 		art = Pictures(first), file = window.file, views = views[1] and views or nil }
+end
+
+-- the components for the editor, each property on its own: a table of names by
+-- its path, a color by its name
+local COLORS = { fill = true, line = true, label = true, value = true, line_dark = true }
+local IsColor = function(key, value)
+	local last = key:match("([^.]+)$")
+	return (#value >= 3) and (#value <= 4) and (type(value[1]) == "number") and (COLORS[last] or last:find("color"))
+end
+local Fields
+Fields = function(fields, key, value, note)
+	if (type(value) == "table") and (not IsList(value)) then
+		for _, inner in ipairs(Sorted(value)) do
+			Fields(fields, key .. "." .. inner, value[inner], note)
+			note = nil
+		end
+		return
+	end
+	local kind = type(value)
+	if (kind == "table") then
+		kind = IsColor(key, value) and "color" or "list"
+	elseif (kind == "string") and value:find("^textures/") then
+		kind = "texture"
+	end
+	fields[#fields + 1] = { key = key, value = value, kind = kind, note = (note ~= "") and note or nil }
+end
+if components[1] then
+	export.components = {}
+	for _, component in ipairs(components) do
+		local fields = {}
+		for _, key in ipairs(component.order) do
+			Fields(fields, key, component.values[key], component.notes[key])
+			if (component.name == "Window") and (key == "layout") then
+				export.rules = export.rules or {}
+				for rule, value in pairs(component.values[key]) do
+					export.rules[rule] = value
+				end
+			end
+		end
+		export.components[#export.components + 1] = { name = component.name, comment = component.comment, fields = fields }
+	end
 end
 local json = {}
 Encode(export, json)
