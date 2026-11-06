@@ -1,12 +1,11 @@
 -- /dui layout: saves the windows as they show, for tools/positions.lua and
 -- the editor (tools/editor.py), in DiabolicUI_Layout (WTF, after a /reload):
--- each named part with where it is and how it's placed, the tabs it shows in
--- and what the rules (tools/rules.js) go by, each window's art by the tabs
--- chosen. While it's on each window is saved as it shows and each second (for
+-- each named part with where it is and how it's placed, the tabs it shows in,
+-- each window's art by the tabs chosen. While it's on each window is saved as it shows and each second (for
 -- its pages). /dui layout all opens each window that needs no NPC, page by
 -- page, to save them all at once. It says what's left (/dui layout left, saved
--- for the editor too): the windows we style not scanned, or before the rules
--- were, their tabs not visited; and any Blizzard or addon window seen shown
+-- for the editor too): the windows we style not scanned, their tabs not
+-- visited; and any Blizzard or addon window seen shown
 -- that we don't style.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Scan", "LOW")
@@ -23,16 +22,12 @@ local pcall = pcall
 local select = select
 local string_find = string.find
 local string_format = string.format
-local string_match = string.match
-local tonumber = tonumber
 local table_concat = table.concat
 local table_sort = table.sort
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetAddOnInfo = _G.GetAddOnInfo
-local GetCurrentResolution = _G.GetCurrentResolution
-local GetScreenResolutions = _G.GetScreenResolutions
 local GetTime = _G.GetTime
 local InCombatLockdown = _G.InCombatLockdown
 local date = _G.date
@@ -41,93 +36,12 @@ local kit
 local Said -- what's been said (by text)
 local Counted -- the windows whose parts were counted (by name)
 local LeftCount -- how many things were left to scan, last said
-local Saved -- DiabolicUI_Layout: { resolution, unit, rules, windows = { [name] = { checked, parts, views } } }
+local Saved -- DiabolicUI_Layout: { windows = { [name] = { checked, parts, views } } }
 local Shown = {} -- when each window shown was first seen so (by window)
 local SETTLE_TIME = .5 -- a window saved once shown that long (an addon's lays itself out over a few frames)
 
 local Print = function(text)
 	_G.DEFAULT_CHAT_FRAME:AddMessage("|cffff8000DiabolicUI|r " .. text)
-end
-
--- A dropdown (UIDropDownMenuTemplate's: a frame with its art and its
--- button), not a status bar named the same way.
-local IsDropDown = function(frame)
-	local name = frame:GetName()
-	return name and (frame:GetObjectType() == "Frame") and _G[name .. "Button"] and _G[name .. "Middle"] and true
-end
-
--- A control drawn by us or Blizzard: a button with art or text, an edit
--- box, a dropdown (not the empty frames laid over them to click).
-local IsControl = function(frame)
-	if IsDropDown(frame) or frame:IsObjectType("EditBox") then
-		return true
-	end
-	if frame:IsObjectType("Button") then
-		return frame.DiabolicStyled or frame:GetNormalTexture() or (((frame:GetText()) or "") ~= "")
-	end
-end
-
--- A zone named after the frame it's around (or what that's on).
-local ZoneName = function(zone)
-	local frame = zone
-	for _ = 1, 3 do
-		local _, relative = frame:GetPoint()
-		if (not relative) then
-			break
-		end
-		if relative:GetName() then
-			return relative:GetName()
-		end
-		frame = relative
-	end
-	return L["a part"]
-end
-
--- `text` (its middle at `x`, `y`) on its own frame's art: a button's face
--- (ours), an icon (its count), not the page under it.
-local OnArt = function(text, x, y)
-	local frame = text:GetParent()
-	if frame.DiabolicStyled then
-		return true
-	end
-	for i = 1, select("#", frame:GetRegions()) do
-		local region = select(i, frame:GetRegions())
-		if region:IsObjectType("Texture") and region:IsVisible() and (region:GetAlpha() > 0) and region:GetTexture()
-			and (region:GetDrawLayer() ~= "HIGHLIGHT") then
-			local left, bottom, right, top = kit.Edges(region)
-			if left and (x >= left) and (x <= right) and (y >= bottom) and (y <= top) then
-				return true
-			end
-		end
-	end
-end
-
--- How light a color is, 0 to 1.
-local Lightness = function(r, g, b)
-	return .299 * r + .587 * g + .114 * b
-end
-
--- A text's color light, or a color in it.
-local IsLight = function(text)
-	local light = Lightness(text:GetTextColor()) > .5
-	for hex in (text:GetText() or ""):gmatch("|c%x%x(%x%x%x%x%x%x)") do
-		light = light or (Lightness(tonumber(hex:sub(1, 2), 16) / 255, tonumber(hex:sub(3, 4), 16) / 255, tonumber(hex:sub(5, 6), 16) / 255) > .5)
-	end
-	return light
-end
-
--- The resolution chosen ("1920x1080"), if known.
-local Resolution = function()
-	local index = GetCurrentResolution()
-	return index and (index > 0) and (select(index, GetScreenResolutions()))
-end
-
--- How many screen pixels a unit of the screen is (768 of them high), or
--- nothing if the resolution isn't known.
-local ScreenPixels = function()
-	local resolution = Resolution()
-	local height = resolution and tonumber(string_match(resolution, "x(%d+)"))
-	return height and height / 768
 end
 
 -- The named parts shown in `frame` and all it holds (frames and texts), not
@@ -175,55 +89,18 @@ local Rect = function(part)
 	return { Round(left * scale), Round(bottom * scale), Round(width * scale), Round(height * scale) }
 end
 
--- What the rules go by that only the game knows: what's above a part (its
--- named frames; ours, hung out of the window on purpose, faded to nothing), a
--- text's width, color and what's under it, what a frame is.
+-- What only the game knows: a part faded to nothing, a text's width and how
+-- it's justified, a button's text's width (a row's room shares by it).
 local Facts = function(part, entry, window, rows)
-	local frame, chain = part, {}
+	local frame = part
 	while frame and (frame ~= window.Frame) do
-		if frame.DiabolicBanner or frame.DiabolicOutside or frame:IsObjectType("ScrollFrame")
-			or (frame:IsObjectType("Frame") and (frame:GetFrameStrata() == "TOOLTIP")) then
-			entry.hung = true
-		end
 		entry.faded = (frame:GetAlpha() <= 0) or entry.faded or nil
-		entry.own = (frame == window) or entry.own or nil
-		if (frame ~= part) and frame:GetName() then
-			chain[#chain + 1] = frame:GetName()
-		end
 		frame = frame:GetParent()
 	end
-	entry.chain = chain[1] and chain or nil
-	local text = part.GetText and part:GetText()
-	entry.written = ((text or "") ~= "") or nil
 	if part:IsObjectType("FontString") then
 		entry.textWidth, entry.justify = Round(part:GetStringWidth()), part:GetJustifyH()
-		local left, bottom, right, top = kit.Edges(part)
-		local x, y = (left + right) / 2, (bottom + top) / 2
-		entry.light = IsLight(part) or nil
-		entry.onArt = OnArt(part, x, y) or nil
-		for _, bar in ipairs(kit.LitRows) do
-			if bar:IsVisible() then
-				local barLeft, barBottom, barRight, barTop = kit.Edges(bar)
-				if barLeft and (x >= barLeft) and (x <= barRight) and (y >= barBottom) and (y <= barTop) then
-					entry.onLit = true
-				end
-			end
-		end
-		return
-	end
-	entry.control = IsControl(part) and true or nil
-	entry.dropdown = IsDropDown(part) or nil
-	entry.diablo = part.DiabolicDropDown and true or nil
-	entry.edge = part.DiabolicEdge and true or nil
-	if part.DiabolicContent then
-		entry.zone, entry.material, entry.aside = ZoneName(part), part.DiabolicMaterial, part.DiabolicAside
-	end
-	if rows[part] then
-		entry.row, entry.textWidth = true, Round(part:GetTextWidth())
-	end
-	local inLeft, inRight = kit.ArtInsets(part)
-	if (inLeft ~= 0) or (inRight ~= 0) then
-		entry.inset = { Round(inLeft), Round(inRight) }
+	elseif rows[part] then
+		entry.textWidth = Round(part:GetTextWidth())
 	end
 end
 
@@ -446,7 +323,7 @@ local ViewOf = function(named)
 end
 
 -- `window` saved: its parts with where they are and the tabs they showed in,
--- its art and what the rules go by, by the tabs chosen.
+-- its art, by the tabs chosen.
 local Scan = function(window)
 	local frame = window.Frame
 	local title = frame:GetName() or L["a window"]
@@ -472,18 +349,10 @@ local Scan = function(window)
 		end
 	end
 	local view, label = ViewOf(named)
-	local foot = window.DiabolicFoot
-	local close = window.DiabolicClose
 	-- (this look at it: what's not in it now, a state ago, isn't checked with what is)
 	Saved.stamp = (Saved.stamp or 0) + 1
 	seen.views[view] = { label = label, art = PackedArt(frame), rect = seen.rect, window = seen.window, stamp = Saved.stamp,
-		worded = true, -- (its parts' `words` say what shows in it)
-		frame = window:GetName(), band = window.DiabolicHeaders[1] and NameOf(window.DiabolicHeaders[1]),
-		foot = foot and foot.DiabolicShown and NameOf(foot),
-		railOver = foot and foot.DiabolicShown and Round(foot.Rail:GetTop() - foot:GetTop()), -- (the iron bar along its top)
-		footRect = foot and foot.DiabolicShown and Rect(foot), -- (its top follows the page's buttons)
-		close = close and close:IsVisible() and NameOf(close),
-		iron = kit.config.backdrop.insets.top + (window.DiabolicDrop or 0) }
+		worded = true } -- (its parts' `words` say what shows in it)
 	local new = 0
 	for name, part in pairs(named) do
 		local entry = Entry(part, window, rows)
@@ -676,18 +545,8 @@ local CheckShown = function()
 	LeftCount = left.count
 end
 
--- The screen and the rules' numbers, as they were (tools/rules.js).
-local SaveScreen = function()
-	local pixels = ScreenPixels()
-	local layout = kit.config.layout
-	Saved.resolution = Resolution()
-	Saved.unit = pixels and string_format("%.3f", _G.UIParent:GetEffectiveScale() * pixels) -- screen pixels per UI unit (whole: pixel perfect)
-	Saved.rules = { button_gap = layout.button_gap, content_gap = layout.content_gap, uneven = layout.uneven }
-end
-
 Module.Start = function(self)
 	Said, Counted = {}, {}
-	SaveScreen()
 	-- (those already shown: settled)
 	for _, window in ipairs(kit.Windows) do
 		if window.Frame:IsVisible() then

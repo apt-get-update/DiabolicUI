@@ -69,9 +69,8 @@ Engine:NewStaticConfig("Blizzard", {
 		},
 		material_scale = .4, -- their edges' size on screen, of their art's (a material's `scale` instead)
 		pane_outset = 6, -- a pane (a model's, slots') past what it holds
-		-- the rules every window's layout follows (windows.lua), and that
-		-- tools/rules.js checks: buttons on a row (LineRows), the band's
-		-- controls (LineBand), the content's room
+		-- the rules every window's layout follows (windows.lua): buttons on
+		-- a row (LineRows), the band's controls (LineBand), the content's room
 		layout = {
 			-- /dui layout's list of what's left: our windows made only once
 			-- their addon loads (the others: settings below, or already made)

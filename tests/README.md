@@ -262,11 +262,9 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
   banners, coins, the stack split box), and AdiBags' and Group Bulletin
   Board's windows.
 - `test_session_auction.lua` - the auction house on its grid: each page,
-  Blizzard's and Auctionator's, kept to the layout's rules (`tools/rules.js`
-  finds nothing), its zones and toolbar where the grid puts them, the
+  Blizzard's and Auctionator's, its zones and toolbar where the grid puts them, the
   categories as our buttons, Auctionator's band and foot.
-- `test_session_layout.lua` - `/dui layout`: what it saves, the editor's rules
-  (`tools/rules.js`, with node) on a window built to break each of them, parts
+- `test_session_layout.lua` - `/dui layout`: what it saves, parts
   placed by `settings/positions.lua`, and `/dui layout all` opening each window
   in turn.
 - `test_sample_tool.lua` - `tools/sample.lua`, Components' sample window in the

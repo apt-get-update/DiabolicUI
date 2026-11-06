@@ -385,6 +385,5 @@ L["Every window scanned, every tab visited."] = true
 L["%d left to scan (/dui layout left)."] = true
 L["Not in combat."] = true
 L["%d parts saved (%d new)."] = true
-L["a part"] = true
 L["a window"] = true
 L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = true

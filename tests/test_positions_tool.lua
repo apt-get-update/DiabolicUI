@@ -79,7 +79,7 @@ DiabolicUI_Layout = {
 			["WhoFrame"] = { "TOPLEFT", "FriendsFrame", "TOPLEFT", 10, -20, 300, 400, kind = "Frame", rect = { 20, 112, 300, 400 } },
 			["WhoFrameEditBox"] = { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100, 296, 32, kind = "EditBox",
 				points = { { "BOTTOM", "WhoFrame", "BOTTOM", -20, 100 } }, parent = "WhoFrame", rect = { 50, 100, 296, 32 },
-				strata = "MEDIUM", level = 3, tabs = { FriendsFrameTab2 = true }, control = true },
+				strata = "MEDIUM", level = 3, tabs = { FriendsFrameTab2 = true } },
 			["WhoFrameTotals"] = { "LEFT", "WhoFrame", "LEFT", 4.5, 0, kind = "FontString", text = "738 \"People\"" },
 			["Odd-Name"] = { "TOP", "WhoFrame", "TOP", 0, 0, 10, 10, kind = "Frame" },
 			["WhoFrameOld"] = "an older scan's line",
@@ -191,7 +191,7 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	lu.assertNil(positions["Odd-Name"])
 	lu.assertNil(positions.WhoFrame)
 	-- for the editor: the parts, their pins, where they were, their tabs, the views
-	lu.assertStrContains(exported, '"WhoFrameEditBox":{"control":true,"current":{"FriendsFrameTab1":true,"FriendsFrameTab2":true},"kind":"EditBox","level":3,"parent":"WhoFrame",'
+	lu.assertStrContains(exported, '"WhoFrameEditBox":{"current":{"FriendsFrameTab1":true,"FriendsFrameTab2":true},"kind":"EditBox","level":3,"parent":"WhoFrame",'
 		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
 		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","tabs":["FriendsFrameTab2"]}')
 	lu.assertStrContains(exported, '"points":[["TOP","WhoFrame","TOP",0,0],["LEFT","WhoFrame","LEFT",0,0]]')
@@ -456,47 +456,6 @@ function TestPositionsTool:test_the_art_by_its_files()
 	lu.assertNotStrContains(json, "Missing")
 	local _, count = json:gsub('"owner"', "")
 	lu.assertEquals(count, 4)
-end
-
--- The rules go by what each view has: the window and foot where it has them, not
--- where their one part was last seen; a list in a column aside says nothing of the
--- window's sides.
-function TestPositionsTool:test_the_rules_by_what_a_view_has()
-	local pipe = io.popen("command -v node 2>/dev/null")
-	local node = pipe:read("*l")
-	pipe:close()
-	if (not node) then
-		lu.skip("needs node")
-	end
-	local dir = Folder()
-	Write(dir .. "/layout.json", [=[{ "rules": { "button_gap": 6, "content_gap": 6, "uneven": 8 }, "unit": 1, "windows": {
-		"Stale": { "views": [ { "key": "a", "frame": "Win", "foot": "Foot", "railOver": 0, "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100], "footRect": [0, 0, 200, 16] } ],
-			"parts": { "Win": { "rect": [0, 0, 100, 100] }, "Foot": { "rect": [0, 0, 200, 24] }, "Zone": { "zone": "Z", "rect": [10, 26, 180, 64] } } },
-		"Aside": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
-			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Zone": { "zone": "Z", "aside": true, "rect": [150, 26, 30, 64] } } },
-		"Sides": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
-			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Zone": { "zone": "Z", "rect": [150, 26, 30, 64] } } },
-		"Past": { "views": [ { "key": "a", "frame": "Win", "foot": "Foot", "railOver": 0, "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100], "footRect": [20, 0, 160, 24] } ],
-			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Foot": { "rect": [20, 0, 160, 24] }, "Past": { "control": true, "rect": [150, 2, 40, 20] }, "On": { "control": true, "rect": [30, 2, 40, 20] } } },
-		"Bags": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
-			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "AdiBagsItemButton1": { "control": true, "rect": [500, 0, 37, 37] },
-				"AdiBagsBankItemButton1": { "control": true, "rect": [500, 0, 37, 37] }, "OtherButton": { "control": true, "rect": [500, 0, 37, 37] } } }
-	} }]=])
-	local Said = function(window)
-		local run = io.popen("node tests/rules_run.js '" .. dir .. "/layout.json' " .. window .. " 2>&1")
-		local text = run:read("*a")
-		run:close()
-		return text
-	end
-	local stale, aside, sides, bags, past = Said("Stale"), Said("Aside"), Said("Sides"), Said("Bags"), Said("Past")
-	os.execute("rm -rf '" .. dir .. "'")
-	lu.assertEquals(stale, "")
-	lu.assertNotStrContains(aside, "of room left of the content")
-	lu.assertStrContains(sides, "of room left of the content")
-	lu.assertStrContains(bags, "OtherButton is out of the window")
-	lu.assertNotStrContains(bags, "AdiBags")
-	lu.assertStrContains(past, "Past is past the foot's side")
-	lu.assertNotStrContains(past, "On is past")
 end
 
 -- A part seen only with no tab chosen shows only then; which views' last look saw a

@@ -1,8 +1,7 @@
 -- Run from the addon root: lua5.1 tests/test_session_auction.lua
 --
 -- The auction house on its grid (modules/blizzard/auction.lua) in the fake
--- client: each page, Blizzard's and Auctionator's, kept to the layout's
--- rules (tools/rules.js finds nothing), its parts where the grid puts them,
+-- client: each page, Blizzard's and Auctionator's, its parts where the grid puts them,
 -- the categories as our buttons, Auctionator's own art gone and its band's
 -- buttons on one row.
 
@@ -12,7 +11,6 @@ local lu = require("luaunit")
 local Client = require("mocks.client")
 local Blizzard = require("mocks.client_blizzard")
 local Session = require("mocks.session")
-local Rules = require("mocks.rules")
 
 local assertClean = Session.assertClean
 
@@ -36,17 +34,10 @@ local function open(withAuctionator)
 	return frame
 end
 
--- The page of tab `i` shown, checked; its problems.
+-- The page of tab `i` shown.
 local function page(i)
 	_G.AuctionFrameTab_OnClick(_G["AuctionFrameTab" .. i])
 	client:Tick(1.2, 0.1)
-	local found = {}
-	if Rules.available then
-		for problem in pairs(Rules.Problems("AuctionFrame")) do
-			found[#found + 1] = problem
-		end
-	end
-	return found
 end
 
 -- `part`'s edges in the auction frame's units: left, top, right, bottom
@@ -76,18 +67,18 @@ function TestAuctionHouse:tearDown()
 	client = nil
 end
 
-function TestAuctionHouse:test_each_blizzard_page_keeps_the_rules()
+function TestAuctionHouse:test_each_blizzard_page_shows()
 	open()
 	for i = 1, 3 do
-		lu.assertEquals(page(i), {}, "tab " .. i)
+		page(i)
 	end
 	assertClean(client)
 end
 
-function TestAuctionHouse:test_each_auctionator_page_keeps_the_rules()
+function TestAuctionHouse:test_each_auctionator_page_shows()
 	open(true)
 	for i = 1, 6 do
-		lu.assertEquals(page(i), {}, "tab " .. i)
+		page(i)
 	end
 	assertClean(client)
 end

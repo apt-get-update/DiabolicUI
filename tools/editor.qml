@@ -2,14 +2,12 @@
 // as it is, its anchors live, so what's placed on a part follows it. Press a
 // part to pick it (again: the one under it), drag it (it snaps to the others'
 // edges, Alt: not), drag a handle to size it, drag a dot to another part's
-// to place it there. Right-click: all that's under the cursor. What breaks the
-// windows' rules (rules.js) is listed as it happens.
+// to place it there. Right-click: all that's under the cursor.
 import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import "rules.js" as Rules
 import "../windows" as Game
 
 ApplicationWindow {
@@ -118,26 +116,6 @@ ApplicationWindow {
     function itemFor(name) { return items[name] }
     function editsText() { return JSON.stringify(edits) }
     function listCount() { return listModel.length }
-    function problemsText() { return JSON.stringify(problems.map(p => p.text)) }
-
-    // ---- the rules, for the tab shown, as parts move
-    property var problems: []
-    readonly property bool canCheck: !!(view_ && view_.frame && data && data.rules)
-    Timer { id: ruleTimer; interval: 120; onTriggered: app.runRules() }
-    function runRules() {
-        if (!canCheck) { problems = []; return }
-        const model = {}
-        for (const n in parts) {
-            const item = items[n]
-            if (item && inView(n) && (!parts[n].current || parts[n].current[view_.key])) model[n] = Object.assign({}, parts[n], { left: item.x, top: item.y, right: item.x + item.width, bottom: item.y + item.height })
-            else if (parts[n].preview && parts[n].rect && inView(n) && (!parts[n].current || parts[n].current[view_.key])) { // (where the scan saw it)
-                const r = previewBox(parts[n].rect)
-                model[n] = Object.assign({}, parts[n], { left: r[0], top: r[1], right: r[0] + r[2], bottom: r[1] + r[3] })
-            }
-        }
-        const f = viewRect
-        problems = Rules.check({ parts: model, view: view_, rules: data.rules, unit: data.unit, origin: f ? [f[0], f[1] + f[3]] : null })
-    }
 
     // ---- opening
     function openWindow(name) {
@@ -182,7 +160,6 @@ ApplicationWindow {
         const base = {}
         for (const n in map) base[n] = [map[n].x, map[n].y, map[n].width, map[n].height]
         artBase = base
-        applyComponents()
         showView(0)
         fit(false)
     }
@@ -228,7 +205,6 @@ ApplicationWindow {
         applyShown()
         if (picked && !(items[picked] && items[picked].visible)) pick("")
         listModelUpdate()
-        ruleTimer.restart()
     }
     function inView(name) {
         const tabs = parts[name].tabs
@@ -311,7 +287,6 @@ ApplicationWindow {
             edits = sized_
         }
         if (name === picked) pickedEntry = entry(name)
-        ruleTimer.restart()
         if (!quiet) changed()
     }
 
@@ -326,9 +301,8 @@ ApplicationWindow {
         edits = JSON.parse(text)
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
         rowsUpdate()
-        applyComponents()
+        drawSample()
         if (picked) pickedEntry = entry(picked)
-        ruleTimer.restart()
         changed()
     }
     function undo() {
@@ -437,7 +411,6 @@ ApplicationWindow {
         rowsUpdate()
         if (picked) pickedEntry = entry(picked)
         linkUpdate()
-        ruleTimer.restart()
         if (!quiet) changed()
     }
     function resetRow(row) {
@@ -528,8 +501,7 @@ ApplicationWindow {
         if (Object.keys(shared).length) copy["@components"] = shared
         else delete copy["@components"]
         edits = copy
-        applyComponents()
-        ruleTimer.restart()
+        drawSample()
         changed()
     }
     function resetComponent(name) {
@@ -539,30 +511,9 @@ ApplicationWindow {
         delete copy["@components"][name]
         if (!Object.keys(copy["@components"]).length) delete copy["@components"]
         edits = copy
-        applyComponents()
-        ruleTimer.restart()
+        drawSample()
         changed()
     }
-    // What a part of a component takes from a change not saved yet, in the window
-    // open too (its rules go by it; the rest of its art shows once saved, /reload
-    // and /dui layout).
-    function componentSize(item) {
-        const shared = edits["@components"], changes = shared && shared[item.style]
-        if (!changes) return null
-        const key = item.style === "ScrollBar" ? (/Scroll(Up|Down)Button$/.test(item.name) ? "width" : "")
-            : item.style === "CloseButton" || item.style === "CheckBox" ? "size" : ""
-        return key && changes[key] !== undefined ? [changes[key], changes[key]] : null
-    }
-    function applyComponents() {
-        drawSample()
-        for (const name in items) {
-            const item = items[name]
-            if (!item.style || !parts[name]) continue
-            const e = entry(name), size = e.pin === "all" || e.pin === "size" ? null : componentSize(item) || e.size
-            if (size) { item.width = size[0]; item.height = size[1] }
-        }
-    }
-
     // Reset: what's not saved of it gone, as in its file.
     function resetPart(name) {
         if (!edits[name]) return
@@ -572,7 +523,6 @@ ApplicationWindow {
         edits = copy
         applyItem(name)
         if (name === picked) pickedEntry = entry(name)
-        ruleTimer.restart()
         changed()
     }
 
@@ -586,7 +536,6 @@ ApplicationWindow {
         applyItem(name)
         if (name === picked) pickedEntry = entry(name)
         status = name + " follows the scan once saved."
-        ruleTimer.restart()
         changed()
     }
 
@@ -2005,36 +1954,6 @@ ApplicationWindow {
                     ToolTip.delay: 400
                     ToolTip.text: "Its look is shared by every window: change it there"
                 }
-                }
-
-                Label {
-                    objectName: "rulesTitle"
-                    text: "RULES" + (app.problems.length ? " (" + app.problems.length + ")" : "")
-                    color: app.problems.length ? "#e8703a" : app.dim
-                    font.pixelSize: 11; Layout.topMargin: 10; Layout.leftMargin: 10
-                }
-                Label {
-                    Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
-                    visible: !app.problems.length
-                    color: app.dim
-                    wrapMode: Text.Wrap
-                    text: app.canCheck ? "Nothing breaks them." : "Needs a new scan: /dui layout all, then /reload."
-                }
-                Repeater {
-                    model: app.problems
-                    ItemDelegate {
-                        required property var modelData
-                        Layout.fillWidth: true; Layout.leftMargin: 6; Layout.rightMargin: 6
-                        padding: 3; leftPadding: 4; rightPadding: 4
-                        contentItem: Text {
-                            text: modelData.text
-                            color: "#e8c0a0"
-                            wrapMode: Text.Wrap
-                            font.pixelSize: 12
-                            font.family: app.plain
-                        }
-                        onClicked: if (modelData.parts.length && app.items[modelData.parts[0]]) app.pick(modelData.parts[0])
-                    }
                 }
 
                 Fold {

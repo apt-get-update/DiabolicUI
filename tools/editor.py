@@ -277,8 +277,6 @@ class Backend(QObject):
         for part in data["parts"].values():
             if part.get("font"):
                 part["family"] = self.family(part["font"])
-        data["rules"] = self.layout.get("rules")
-        data["unit"] = float(self.layout.get("unit") or 0)
         data["generation"] = self.generation
         self.engine.clearComponentCache()
         return json.dumps(data)

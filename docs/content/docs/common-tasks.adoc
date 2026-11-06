@@ -58,7 +58,7 @@ after `/dui layout`.
 
 A value that only matters in a rare case doesn't change the sample: a text too
 wide for its button or dropdown, a title too long for its plate. Nor does what only
-the layout's rules read (`content_gap`, `uneven`): those show in the *Rules* list.
+the layout's rules read (`content_gap`, `uneven`).
 
 *By hand:* change the property, one a line, then `lua5.1 tools/positions.lua`,
 which writes `settings/components.lua`: don't change that one. What only one
@@ -135,9 +135,6 @@ list or the files: a part of those that's pinned stays.
   wheel to zoom, the middle button or the empty space to pan, F to fit.
 * *Save* (Ctrl+S) writes the files, then `/reload`.
 * *Show* hides the frames, texts or art, or shows every part's outline.
-* *Rules* lists what breaks the windows' rules in the tab shown (`tools/rules.js`,
-  the numbers in `settings/blizzard.lua` `layout`), as you drag. Click one to
-  pick its part.
 
 *By hand:* change a part's block, then `lua5.1 tools/positions.lua`. The tool says what
 it can't read. A `pin` puts a part in `settings/positions.lua`, which the tool writes: don't

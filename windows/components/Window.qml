@@ -36,7 +36,7 @@ QtObject {
     // turned; cut, the part of it drawn, bar, the bar itself (from the window's edge)
     property var footer_rail: ({ cut: [12, 28], bar: [15, 24] })
 
-    // the rules every window's layout follows, and tools/rules.js checks:
+    // the rules every window's layout follows:
     // button_gap, between buttons on a row (those closer narrowed, as wide in all);
     // band_edge, the band's first control from its left end; band_gap, between its
     // controls; band_right_edge, its last on the right from its right end (short of

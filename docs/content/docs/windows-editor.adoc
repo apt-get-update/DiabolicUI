@@ -111,8 +111,7 @@ WowRow {
 `spacing` defaults to the windows' `button_gap`. The tool works out the parts' places and
 sizes and writes them as any other pinned part's, so the game knows nothing about rows.
 That means widths are fixed when the tool runs, and a button that hides in game leaves its
-gap. A row in too little room still fits (`fill`, `equal`); the rules or a printed message
-say so.
+gap. A row in too little room still fits (`fill`, `equal`); a printed message says so.
 
 A row goes from a frame's left to its right. Anchor it on the window, not its foot. A
 one-row foot is 35 high: its 22-high buttons 30 over the window's bottom, 37 from its side.
@@ -131,18 +130,18 @@ and leaves them out of the window files:
 * the rows of a list: 8 or more parts with one name but for their numbers, all but the first.
 
 A pinned one always stays, and a family ending in `Tab<number>` is never a list. They're
-still in `tools/layout.json`: the editor draws their art and texts and the rules check them,
+still in `tools/layout.json`: the editor draws their art and texts,
 but they can't be picked. To change another row of a list, write its block with a `pin`.
 
 == The scan
 
 `modules/blizzard/layout-scan.lua` saves each window's parts and, per tab (a "view"), its
-art and what the rules need. Things to know:
+art. Things to know:
 
 * Each view's art is packed in strings of Lua (`Packed`); the tool reads them back when it
   loads the scan. Older scans with plain tables still load.
 * A part keeps `last`, the look that last saw it per view. `current` in `tools/layout.json`
-  says which views' last look saw it: the rules and the editor's texts go by it.
+  says which views' last look saw it: the editor's texts go by it.
 * Bag items not seen in a look are dropped; other parts stay until they're seen again.
 * A part has one place, whichever tab was scanned last. Its `words` are per view, as the
   game shows them with their colour codes, so text on a shared plate reads right in every tab.
@@ -173,10 +172,6 @@ else its file's. `applyItem` sets its QML anchors from that.
 *Rows are worked out twice*: `rowLayout` in `tools/editor.qml` shows them live, `ResolveRow`
 in `tools/positions.lua` writes them. *Change one, change the other.*
 
-*Rules* are in `tools/rules.js`, run live by the editor and by the tests through
-`tests/rules_run.js`. `row` on a part means "a button on a row" (the scan's); the row it's held
-by is `inRow`.
-
 == What the editor can't show
 
 The picture is close to the game, not the game. It doesn't:
@@ -195,7 +190,6 @@ Check looks, readable text and anything near those limits in game.
 
 | Add a kind of part | Add it to `KINDS` in `tools/positions.lua` and write `windows/<kind>.qml`
 | Add a row `fit` | `ResolveRow`, `rowLayout`, the check in `ReadWindow`, the list in the row panel, `windows/WowRow.qml`
-| Add a rule | `tools/rules.js`, a case in `tests/test_session_layout.lua`
 | Export something to the editor | The `copy` table near the end of `tools/positions.lua`: check its name isn't one of the scan's
 | Change what's a preview | The block before `windows/components/*.qml` in `tools/positions.lua`; `IsBagItem` in the scan
 |===
