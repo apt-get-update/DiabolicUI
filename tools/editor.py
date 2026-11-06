@@ -185,6 +185,11 @@ class Art(QQuickImageProvider):
         return out
 
     def requestImage(self, key, size, requested):
+        if key.startswith("file/"):  # (a component's texture)
+            out = self.picture(key[5:]) or blank(1, 1)
+            size.setWidth(out.width())
+            size.setHeight(out.height())
+            return out
         _, window, view, index = key.split("/")
         data = self.backend.layout["windows"][window]
         art = (data["views"][int(view)].get("art") if data.get("views") else data.get("art")) or []
@@ -251,6 +256,10 @@ class Backend(QObject):
         data["generation"] = self.generation
         self.engine.clearComponentCache()
         return json.dumps(data)
+
+    @Slot(result=str)
+    def components(self):
+        return json.dumps(self.layout.get("components") or [])
 
     @Slot(result=str)
     def leftText(self):

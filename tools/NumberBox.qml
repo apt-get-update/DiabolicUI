@@ -6,16 +6,17 @@ import QtQuick.Layouts
 SpinBox {
     id: box
     Layout.fillWidth: true
-    from: -999990; to: 999990
-    stepSize: 10
+    // (in whole units outside; `factor`: how finely inside)
+    property int factor: 10
+    from: -99999 * factor; to: 99999 * factor
+    stepSize: factor
     editable: true
     wheelEnabled: true
-    textFromValue: (v) => String(v / 10)
-    valueFromText: (t) => Math.round(Number(t) * 10)
-    validator: DoubleValidator { decimals: 1; notation: DoubleValidator.StandardNotation }
-    // (in whole units outside)
+    textFromValue: (v) => String(v / factor)
+    valueFromText: (t) => Math.round(Number(t) * factor)
+    validator: DoubleValidator { decimals: box.factor > 10 ? 3 : 1; notation: DoubleValidator.StandardNotation }
     property real number: 0
-    value: Math.round(number * 10)
+    value: Math.round(number * factor)
     signal edited(real number)
-    onValueModified: edited(value / 10)
+    onValueModified: edited(value / factor)
 }

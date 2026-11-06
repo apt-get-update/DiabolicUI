@@ -7,6 +7,7 @@
 import QtCore
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import QtQuick.Layouts
 import "rules.js" as Rules
 
@@ -70,7 +71,12 @@ ApplicationWindow {
     property var edits: JSON.parse(backend.kept()) // what's not saved, by name: { window, place, size, pin }
     property var undoList: []
     property var redoList: []
-    property int changeCount: Object.keys(edits).length
+    property int changeCount: {
+        const shared = edits["@components"] || {}
+        let count = Object.keys(edits).length - (edits["@components"] ? 1 : 0)
+        for (const name in shared) count += Object.keys(shared[name]).length
+        return count
+    }
     property string picked: ""
     property Item pickedItem: picked ? items[picked] || null : null
     property var pickedEntry: null
@@ -156,6 +162,7 @@ ApplicationWindow {
         const base = {}
         for (const n in map) base[n] = [map[n].x, map[n].y, map[n].width, map[n].height]
         artBase = base
+        applyComponents()
         showView(0)
         fit(false)
     }
@@ -178,6 +185,7 @@ ApplicationWindow {
     function reload() {
         status = backend.rescan()
         leftText = backend.leftText()
+        components = JSON.parse(backend.components())
         openWindow(title_)
     }
 
@@ -241,6 +249,7 @@ ApplicationWindow {
         const before = edits
         edits = JSON.parse(text)
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
+        applyComponents()
         if (picked) pickedEntry = entry(picked)
         ruleTimer.restart()
         changed()
@@ -258,6 +267,66 @@ ApplicationWindow {
         const last = redoList[redoList.length - 1]
         redoList = redoList.slice(0, -1)
         restore(last)
+    }
+
+    // ---- the components (windows/components/): what every window inherits
+    property var components: JSON.parse(backend.components())
+    property bool componentsMode: false
+    property string componentName: components.length ? components[0].name : ""
+    readonly property var currentComponent: components.filter(c => c.name === componentName)[0] || null
+
+    function openComponent(name) {
+        componentName = name
+        componentsMode = true
+    }
+    function componentValue(name, field) {
+        const shared = edits["@components"], changed_ = shared && shared[name]
+        return changed_ && changed_[field.key] !== undefined ? changed_[field.key] : field.value
+    }
+    function componentEdited(name) { return !!(edits["@components"] && edits["@components"][name]) }
+    function setComponent(field, value) {
+        remember()
+        const copy = JSON.parse(JSON.stringify(edits))
+        const shared = copy["@components"] || {}
+        const changes = shared[componentName] || {}
+        if (same(value, field.value)) delete changes[field.key]
+        else changes[field.key] = value
+        if (Object.keys(changes).length) shared[componentName] = changes
+        else delete shared[componentName]
+        if (Object.keys(shared).length) copy["@components"] = shared
+        else delete copy["@components"]
+        edits = copy
+        applyComponents()
+        ruleTimer.restart()
+        changed()
+    }
+    function resetComponent(name) {
+        if (!componentEdited(name)) return
+        remember()
+        const copy = JSON.parse(JSON.stringify(edits))
+        delete copy["@components"][name]
+        if (!Object.keys(copy["@components"]).length) delete copy["@components"]
+        edits = copy
+        applyComponents()
+        ruleTimer.restart()
+        changed()
+    }
+    // What a part of a component takes from a change not saved yet, seen in the
+    // window open (the rest shows once saved, /reload and /dui layout).
+    function componentSize(item) {
+        const shared = edits["@components"], changes = shared && shared[item.style]
+        if (!changes) return null
+        const key = item.style === "ScrollBar" ? (/Scroll(Up|Down)Button$/.test(item.name) ? "width" : "")
+            : item.style === "CloseButton" || item.style === "CheckBox" ? "size" : ""
+        return key && changes[key] !== undefined ? [changes[key], changes[key]] : null
+    }
+    function applyComponents() {
+        for (const name in items) {
+            const item = items[name]
+            if (!item.style || !parts[name]) continue
+            const e = entry(name), size = e.pin === "all" || e.pin === "size" ? null : componentSize(item) || e.size
+            if (size) { item.width = size[0]; item.height = size[1] }
+        }
     }
 
     // Reset: what's not saved of it gone, as in its file.
@@ -288,20 +357,24 @@ ApplicationWindow {
     }
 
     function save() {
+        const inComponents = componentsMode
         status = backend.save(JSON.stringify(edits))
         if (status.indexOf("Not saved") === 0) return
         leftText = backend.leftText()
+        components = JSON.parse(backend.components())
         edits = {}
         undoList = []; redoList = []
         backend.keep("{}")
         const was = picked
         openWindow(title_)
         if (was && parts[was]) pick(was)
+        componentsMode = inComponents
         status += "  Saved: /reload the game."
     }
 
     // ---- picking
     function pick(name) {
+        if (name) componentsMode = false // (a part picked: its own panel)
         picked = name
         pickedEntry = name ? entry(name) : null
         linkUpdate()
@@ -441,6 +514,12 @@ ApplicationWindow {
     }
 
     function lineFor(name, e) {
+        if (name === "@components") {
+            const lines = []
+            for (const c of Object.keys(e).sort())
+                for (const key of Object.keys(e[c]).sort()) lines.push(c + "." + key + " = " + JSON.stringify(e[c][key]))
+            return lines.join("\n")
+        }
         const parts_ = []
         if (e.pin === "") return name + " = follows the scan"
         if (e.pin !== "size") parts_.push('"' + e.place[0] + '", "' + e.place[1] + '", "' + e.place[2] + '", ' + e.place[3] + ", " + e.place[4])
@@ -527,6 +606,13 @@ ApplicationWindow {
                         }
                     }
                 }
+                Action {
+                    objectName: "componentsButton"
+                    text: "Components"
+                    tip: "What every window inherits: scroll bars, buttons, dropdowns..."
+                    highlighted: app.componentsMode
+                    onClicked: app.componentsMode = !app.componentsMode
+                }
                 Item { Layout.fillWidth: true }
                 Action { objectName: "undoButton"; text: "Undo"; tip: "Ctrl+Z"; enabled: app.undoList.length > 0; onClicked: app.undo() }
                 Action { objectName: "redoButton"; text: "Redo"; tip: "Ctrl+Shift+Z"; enabled: app.redoList.length > 0; onClicked: app.redo() }
@@ -590,7 +676,9 @@ ApplicationWindow {
                 elide: Text.ElideRight
                 color: app.dim
                 font.family: app.plain
-                text: app.picked
+                text: app.componentsMode
+                    ? "Every window inherits these once saved, then /reload  ·  sizes of arrows, close and checkboxes show here at once, the rest after /dui layout"
+                    : app.picked
                     ? "Drag to move  ·  gold handles to size  ·  drag a dot onto another part to place it there  ·  arrows: 1, Shift: 10  ·  Alt: no snapping"
                     : "Press a part to pick it, again for the one under it  ·  wheel to zoom  ·  drag the empty space to pan  ·  right-click: all that's there"
             }
@@ -620,8 +708,30 @@ ApplicationWindow {
             SplitView.preferredWidth: width_
             SplitView.minimumWidth: 200
             spacing: 6
+            ListView {
+                objectName: "componentList"
+                visible: app.componentsMode
+                Layout.fillWidth: true; Layout.fillHeight: true; Layout.margins: 8
+                clip: true
+                model: app.components
+                delegate: ItemDelegate {
+                    required property var modelData
+                    width: ListView.view.width
+                    height: 28
+                    padding: 2
+                    leftPadding: 6
+                    contentItem: Text {
+                        text: (app.componentEdited(modelData.name) ? "● " : "") + modelData.name
+                        color: modelData.name === app.componentName ? app.gold : app.palette.text
+                        font.family: app.plain
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: app.componentName = modelData.name
+                }
+            }
             TextField {
                 id: find
+                visible: !app.componentsMode
                 Layout.fillWidth: true; Layout.margins: 8; Layout.bottomMargin: 0
                 placeholderText: "Find a part…  (Ctrl+F)"
                 font.family: app.plain
@@ -630,6 +740,7 @@ ApplicationWindow {
             ListView {
                 id: list
                 objectName: "list"
+                visible: !app.componentsMode
                 Layout.fillWidth: true; Layout.fillHeight: true; Layout.margins: 8; Layout.topMargin: 0
                 clip: true
                 model: app.listModel
@@ -693,8 +804,11 @@ ApplicationWindow {
                         readonly property var base: owner ? app.artBase[modelData.owner] : null
                         readonly property real ax: modelData.rect[0] - f[0]
                         readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
-                        readonly property real sx: owner && base && base[2] ? owner.width / base[2] : 1
-                        readonly property real sy: owner && base && base[3] ? owner.height / base[3] : 1
+                        // (sized with its part if it's on it: a tab can draw it elsewhere)
+                        readonly property bool onOwner: !!(owner && base) && ax + modelData.rect[2] / 2 >= base[0] && ax + modelData.rect[2] / 2 <= base[0] + base[2]
+                            && ay + modelData.rect[3] / 2 >= base[1] && ay + modelData.rect[3] / 2 <= base[1] + base[3]
+                        readonly property real sx: onOwner && base[2] ? owner.width / base[2] : 1
+                        readonly property real sy: onOwner && base[3] ? owner.height / base[3] : 1
                         visible: showArt.checked
                         x: owner && base ? owner.x + (ax - base[0]) * sx : ax
                         y: owner && base ? owner.y + (ay - base[1]) * sy : ay
@@ -1033,6 +1147,122 @@ ApplicationWindow {
             ColumnLayout {
                 width: side.availableWidth
                 spacing: 6
+                // ---- the component chosen
+                ColumnLayout {
+                    objectName: "componentPanel"
+                    visible: app.componentsMode && !!app.currentComponent
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 10; Layout.rightMargin: 10; Layout.topMargin: 8
+                    spacing: 6
+                    Label { text: "SHARED BY EVERY WINDOW"; color: app.dim; font.pixelSize: 11 }
+                    Label { text: app.componentName; color: app.gold; font.family: app.plain }
+                    Label {
+                        Layout.fillWidth: true
+                        text: app.currentComponent ? app.currentComponent.comment : ""
+                        color: app.dim
+                        wrapMode: Text.Wrap
+                        font.family: app.plain
+                        font.pixelSize: 12
+                    }
+                    Button {
+                        objectName: "componentReset"
+                        text: "Reset"
+                        enabled: app.componentEdited(app.componentName)
+                        onClicked: app.resetComponent(app.componentName)
+                        ToolTip.visible: hovered
+                        ToolTip.delay: 400
+                        ToolTip.text: "Forget what's not saved of this component"
+                    }
+                    Repeater {
+                        model: app.currentComponent ? app.currentComponent.fields : []
+                        ColumnLayout {
+                            id: fieldRow
+                            required property var modelData
+                            readonly property var current: app.componentValue(app.componentName, modelData)
+                            readonly property string kind: modelData.kind
+                            Layout.fillWidth: true
+                            Layout.topMargin: 4
+                            spacing: 2
+                            Label {
+                                Layout.fillWidth: true
+                                text: fieldRow.modelData.key
+                                color: JSON.stringify(fieldRow.current) === JSON.stringify(fieldRow.modelData.value) ? app.dim : "#e8703a"
+                                font.family: app.plain
+                                font.pixelSize: 12
+                                elide: Text.ElideRight
+                            }
+                            Label {
+                                Layout.fillWidth: true
+                                visible: !!fieldRow.modelData.note
+                                text: fieldRow.modelData.note || ""
+                                color: "#6f6657"
+                                wrapMode: Text.Wrap
+                                font.family: app.plain
+                                font.pixelSize: 11
+                            }
+                            NumberBox {
+                                visible: fieldRow.kind === "number"
+                                factor: 1000
+                                stepSize: fieldRow.kind === "number" && Math.abs(fieldRow.modelData.value) < 2 ? 50 : 1000
+                                number: fieldRow.kind === "number" ? fieldRow.current : 0
+                                onEdited: value => app.setComponent(fieldRow.modelData, value)
+                            }
+                            CheckBox {
+                                visible: fieldRow.kind === "boolean"
+                                checked: fieldRow.current === true
+                                onToggled: app.setComponent(fieldRow.modelData, checked)
+                            }
+                            RowLayout {
+                                visible: fieldRow.kind === "color"
+                                Rectangle {
+                                    objectName: "swatch"
+                                    width: 48; height: 22
+                                    radius: 2
+                                    border.color: app.dim
+                                    color: fieldRow.kind === "color" ? Qt.rgba(Math.min(1, fieldRow.current[0]), Math.min(1, fieldRow.current[1]), Math.min(1, fieldRow.current[2]), 1) : "transparent"
+                                    TapHandler { onTapped: app.pickColor(fieldRow.modelData, fieldRow.current) }
+                                    HoverHandler { cursorShape: Qt.PointingHandCursor }
+                                }
+                                Label {
+                                    Layout.fillWidth: true
+                                    text: fieldRow.kind === "color" ? fieldRow.current.map(v => Math.round(v * 100) / 100).join(", ") : ""
+                                    color: app.dim
+                                    font.family: app.plain
+                                    font.pixelSize: 12
+                                }
+                            }
+                            RowLayout {
+                                visible: fieldRow.kind === "texture" || fieldRow.kind === "string" || fieldRow.kind === "list"
+                                Image {
+                                    visible: fieldRow.kind === "texture"
+                                    Layout.preferredWidth: 32; Layout.preferredHeight: 32
+                                    fillMode: Image.PreserveAspectFit
+                                    source: fieldRow.kind === "texture" ? "image://art/file/media/" + fieldRow.current : ""
+                                }
+                                TextField {
+                                    Layout.fillWidth: true
+                                    font.family: app.plain
+                                    font.pixelSize: 12
+                                    text: fieldRow.kind === "list" ? fieldRow.current.join(", ") : String(fieldRow.current)
+                                    onEditingFinished: {
+                                        if (fieldRow.kind !== "list") {
+                                            if (text !== fieldRow.current) app.setComponent(fieldRow.modelData, text)
+                                            return
+                                        }
+                                        const items = text.split(",").map(t => t.trim()).filter(t => t !== "").map(t => isFinite(t) ? Number(t) : t)
+                                        if (JSON.stringify(items) !== JSON.stringify(fieldRow.current)) app.setComponent(fieldRow.modelData, items)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ---- the part picked
+                ColumnLayout {
+                    visible: !app.componentsMode
+                    Layout.fillWidth: true
+                    spacing: 6
                 Label { text: "PART"; color: app.dim; font.pixelSize: 11; Layout.topMargin: 8; Layout.leftMargin: 10 }
                 Label {
                     Layout.fillWidth: true; Layout.leftMargin: 10; Layout.rightMargin: 10
@@ -1130,6 +1360,18 @@ ApplicationWindow {
                         ToolTip.text: "Let it follow the game's scan again, once saved"
                     }
                 }
+                Button {
+                    objectName: "partComponent"
+                    Layout.leftMargin: 10
+                    readonly property string style: (app.parts[app.picked] || {}).style || ""
+                    visible: style !== ""
+                    text: "Styled as " + style + " ▸"
+                    onClicked: app.openComponent(style)
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 400
+                    ToolTip.text: "Its look is shared by every window: change it there"
+                }
+                }
 
                 Label {
                     objectName: "rulesTitle"
@@ -1193,6 +1435,26 @@ ApplicationWindow {
                 }
             }
         }
+    }
+
+    ColorDialog {
+        id: colorDialog
+        objectName: "colorDialog"
+        property var field: null
+        property var was: null
+        options: ColorDialog.ShowAlphaChannel
+        onAccepted: {
+            const r3 = v => Math.round(v * 1000) / 1000
+            const out = [r3(selectedColor.r), r3(selectedColor.g), r3(selectedColor.b)]
+            if (was.length > 3) out.push(r3(selectedColor.a))
+            app.setComponent(field, out)
+        }
+    }
+    function pickColor(field, value) {
+        colorDialog.field = field
+        colorDialog.was = value
+        colorDialog.selectedColor = Qt.rgba(Math.min(1, value[0]), Math.min(1, value[1]), Math.min(1, value[2]), value.length > 3 ? value[3] : 1)
+        colorDialog.open()
     }
 
     Connections {
