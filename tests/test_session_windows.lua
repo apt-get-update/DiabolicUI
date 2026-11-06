@@ -865,10 +865,13 @@ function TestMail:test_the_letters_attachments_alone()
 	-- (again on the next update, from where Blizzard puts them again)
 	_G.OpenMail_Update()
 	lu.assertEquals(select(5, money:GetPoint()), y)
-	-- a letter without any: nothing moved
+	-- a letter without any: nothing moved, its text longer into their room
 	client.world.emptyLetter = true
 	_G.OpenMail_Update()
 	lu.assertEquals(select(5, money:GetPoint()), y)
+	lu.assertEquals(scroll:GetHeight(), 256 + config.open_text_rise + config.open_text_lower + config.open_text_alone)
+	_G.OpenMail_Update()
+	lu.assertEquals(scroll:GetHeight(), 256 + config.open_text_rise + config.open_text_lower + config.open_text_alone)
 	assertClean(client)
 end
 

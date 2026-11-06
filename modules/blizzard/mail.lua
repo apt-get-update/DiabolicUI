@@ -122,6 +122,7 @@ Module.StyleMail = function(self)
 		end
 	end
 	_G.OpenMailBodyText:SetTextColor(unpack(config.text_color))
+	self:InkInvoice()
 	for name, spec in pairs(config.attachment_panes) do
 		self:AddAttachmentPane(_G[name], _G[spec[1]], unpack(spec, 2))
 	end
@@ -136,6 +137,20 @@ Module.StyleMail = function(self)
 		self:PlaceRows()
 	end)
 	open:HookScript("OnShow", function() kit:StyleButtons(open) end)
+end
+
+-- An auction's invoice: its sums in the letter's ink, as its labels (Blizzard's
+-- are white, drawn for its dark page), no shadow to blur them on the parchment.
+Module.InkInvoice = function(self)
+	for _, frame in ipairs({ "OpenMailSalePriceMoneyFrame", "OpenMailDepositMoneyFrame", "OpenMailHouseCutMoneyFrame", "OpenMailTransactionAmountMoneyFrame" }) do
+		for _, coin in ipairs({ "Gold", "Silver", "Copper" }) do
+			local text = _G[frame .. coin .. "ButtonText"]
+			if text then
+				text:SetTextColor(unpack(self.config.text_color))
+				text:SetShadowColor(0, 0, 0, 0)
+			end
+		end
+	end
 end
 
 -- The letter's To and Subject (their labels pale in them while empty) and
@@ -271,6 +286,9 @@ Module.PlaceOpenBand = function(self, header)
 		local height = scroll:GetHeight()
 		if (height ~= scroll.DiabolicHeight) then
 			local grown = height + rise + self.config.open_text_lower
+			if (#(_G.OpenMailFrame.activeAttachmentButtons or {}) == 0) then
+				grown = grown + self.config.open_text_alone
+			end
 			scroll.DiabolicHeight = grown
 			scroll:SetHeight(grown)
 			child:SetHeight(grown)
@@ -430,7 +448,7 @@ end
 -- `bar`'s top (Blizzard moves it as their rows change) to `over` over the
 -- window's bottom, `left` and `right` in from its sides.
 Module.AddAttachmentPane = function(self, frame, bar, under, over, left, right)
-	local pane = CreateFrame("Frame", nil, frame)
+	local pane = CreateFrame("Frame", kit.NameFor(frame, "DiabolicAttachments"), frame)
 	pane:SetFrameLevel(frame:GetFrameLevel())
 	pane:SetPoint("TOP", bar, "TOP", 0, -under)
 	pane:SetPoint("LEFT", frame, "LEFT", left, 0)

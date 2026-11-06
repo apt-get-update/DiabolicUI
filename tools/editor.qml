@@ -124,7 +124,7 @@ ApplicationWindow {
         const model = {}
         for (const n in parts) {
             const item = items[n]
-            if (item && inView(n)) model[n] = Object.assign({}, parts[n], { left: item.x, top: item.y, right: item.x + item.width, bottom: item.y + item.height })
+            if (item && inView(n) && (!parts[n].current || parts[n].current[view_.key])) model[n] = Object.assign({}, parts[n], { left: item.x, top: item.y, right: item.x + item.width, bottom: item.y + item.height })
         }
         const f = viewRect
         problems = Rules.check({ parts: model, view: view_, rules: data.rules, unit: data.unit, origin: f ? [f[0], f[1] + f[3]] : null })

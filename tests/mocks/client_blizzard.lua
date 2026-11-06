@@ -1786,8 +1786,10 @@ local function frameXML(client)
 		_G.OpenMailAttachmentText:SetTextColor(1, 1, 1)
 		_G.OpenMailAttachmentText:ClearAllPoints()
 		_G.OpenMailAttachmentText:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 23, 150)
-		-- (the letter's money and its item; none when `world.emptyLetter`)
+		-- (the letter's money and its item; none when `world.emptyLetter`,
+		-- its text then as tall as Blizzard lets it)
 		open.activeAttachmentButtons = {}
+		_G.OpenMailScrollFrame:SetHeight(client.world.emptyLetter and 256 or 246)
 		if not client.world.emptyLetter then
 			open.activeAttachmentButtons = { _G.OpenMailMoneyButton, _G.OpenMailAttachmentButton1 }
 		end

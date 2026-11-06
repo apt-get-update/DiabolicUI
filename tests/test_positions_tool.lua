@@ -192,7 +192,7 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	lu.assertNil(positions["Odd-Name"])
 	lu.assertNil(positions.WhoFrame)
 	-- for the editor: the parts, their pins, where they were, their tabs, the views
-	lu.assertStrContains(exported, '"WhoFrameEditBox":{"control":true,"kind":"EditBox","level":3,"parent":"WhoFrame",'
+	lu.assertStrContains(exported, '"WhoFrameEditBox":{"control":true,"current":{"FriendsFrameTab1":true,"FriendsFrameTab2":true},"kind":"EditBox","level":3,"parent":"WhoFrame",'
 		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
 		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","tabs":["FriendsFrameTab2"]}')
 	lu.assertStrContains(exported, '"points":[["TOP","WhoFrame","TOP",0,0],["LEFT","WhoFrame","LEFT",0,0]]')
@@ -457,6 +457,75 @@ function TestPositionsTool:test_the_art_by_its_files()
 	lu.assertNotStrContains(json, "Missing")
 	local _, count = json:gsub('"owner"', "")
 	lu.assertEquals(count, 4)
+end
+
+-- The rules go by what each view has: the window and foot where it has them, not
+-- where their one part was last seen; a list in a column aside says nothing of the
+-- window's sides.
+function TestPositionsTool:test_the_rules_by_what_a_view_has()
+	local pipe = io.popen("command -v node 2>/dev/null")
+	local node = pipe:read("*l")
+	pipe:close()
+	if (not node) then
+		lu.skip("needs node")
+	end
+	local dir = Folder()
+	Write(dir .. "/layout.json", [=[{ "rules": { "button_gap": 6, "content_gap": 6, "uneven": 8 }, "unit": 1, "windows": {
+		"Stale": { "views": [ { "key": "a", "frame": "Win", "foot": "Foot", "railOver": 0, "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100], "footRect": [0, 0, 200, 16] } ],
+			"parts": { "Win": { "rect": [0, 0, 100, 100] }, "Foot": { "rect": [0, 0, 200, 24] }, "Zone": { "zone": "Z", "rect": [10, 26, 180, 64] } } },
+		"Aside": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
+			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Zone": { "zone": "Z", "aside": true, "rect": [150, 26, 30, 64] } } },
+		"Sides": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
+			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "Zone": { "zone": "Z", "rect": [150, 26, 30, 64] } } },
+		"Bags": { "views": [ { "key": "a", "frame": "Win", "rect": [0, 0, 200, 100], "window": [0, 0, 200, 100] } ],
+			"parts": { "Win": { "rect": [0, 0, 200, 100] }, "AdiBagsItemButton1": { "control": true, "rect": [500, 0, 37, 37] },
+				"AdiBagsBankItemButton1": { "control": true, "rect": [500, 0, 37, 37] }, "OtherButton": { "control": true, "rect": [500, 0, 37, 37] } } }
+	} }]=])
+	local Said = function(window)
+		local run = io.popen("node tests/rules_run.js '" .. dir .. "/layout.json' " .. window .. " 2>&1")
+		local text = run:read("*a")
+		run:close()
+		return text
+	end
+	local stale, aside, sides, bags = Said("Stale"), Said("Aside"), Said("Sides"), Said("Bags")
+	os.execute("rm -rf '" .. dir .. "'")
+	lu.assertEquals(stale, "")
+	lu.assertNotStrContains(aside, "of room left of the content")
+	lu.assertStrContains(sides, "of room left of the content")
+	lu.assertStrContains(bags, "OtherButton is out of the window")
+	lu.assertNotStrContains(bags, "AdiBags")
+end
+
+-- A part seen only with no tab chosen shows only then; which views' last look saw a
+-- part; one only placed and never scanned sized from what's placed on its points.
+function TestPositionsTool:test_what_a_view_saw_and_a_parts_size_from_others()
+	local dir = Folder()
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 200, 200 }, window = { 0, 0, 200, 200 },
+		views = { [""] = { rect = { 0, 0, 200, 200 }, stamp = 2 }, Tab1 = { label = "One", rect = { 0, 0, 200, 200 }, stamp = 3 } },
+		parts = {
+			NoTab = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 0, 190, 10, 10 }, tabs = {}, last = { [""] = 2 } },
+			Gone = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 0, 190, 10, 10 }, tabs = { Tab1 = true }, last = { Tab1 = 1 } },
+			There = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 0, 190, 10, 10 }, tabs = { Tab1 = true }, last = { Tab1 = 3 } },
+			OnTopLeft = { "TOPLEFT", "Texture", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 20, 170, 10, 10 } },
+			OnBottomRight = { "BOTTOMRIGHT", "Texture", "BOTTOMRIGHT", 0, 0, 10, 10, kind = "Frame", rect = { 74, 106, 10, 10 } },
+		} } } }]=])
+	Write(dir .. "/positions.lua", [=[
+local _, Engine = ...
+Engine:NewStaticConfig("Positions", {
+	-- W ---------------------------------------------------------------------
+	Texture = { "TOPLEFT", "W", "TOPLEFT", 20, -20 },
+})
+]=])
+	Runs(dir)
+	local json, file = Read(dir .. "/layout.json"), Read(dir .. "/windows/W.qml")
+	os.execute("rm -rf '" .. dir .. "'")
+	lu.assertStrContains(json, '"NoTab":{"current":{"":true}')
+	lu.assertStrContains(json, '"tabs":[""]')
+	lu.assertStrContains(json, '"Gone":{"current":{}')
+	lu.assertStrContains(json, '"There":{"current":{"Tab1":true}')
+	-- (from the one's top left to the other's bottom right: 64 by 74)
+	lu.assertStrContains(file, "width: 64")
+	lu.assertStrContains(file, "height: 74")
 end
 
 -- A window the game scales: its rects on screen in its own units, as its parts'

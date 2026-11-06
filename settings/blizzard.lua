@@ -410,6 +410,7 @@ Engine:NewStaticConfig("Blizzard", {
 		send_text_lower = -13, -- its foot that much higher (6 over the attachments' pane)
 		open_text_rise = 84, -- the letter opened's (its From and Subject in the band)
 		open_text_lower = -16, -- its foot that much higher
+		open_text_alone = 38, -- and this much lower with no attachments under it (as far over the foot's iron as under the band)
 		open_attachments_floor = 112, -- the attachments between the letter's panel and this, over the window's bottom (14 over the foot's iron)
 		open_band = { x = 10, label_gap = 5 }, -- the letter opened's From and Subject in the band: their labels' left, from its left
 		-- moved once, up: the money
@@ -797,6 +798,10 @@ Engine:NewStaticConfig("Blizzard", {
 		},
 		tab_sigils = { "time", "AllSeeing" }, -- the raid browser's tabs' emblems (window.banner's): queue, browse
 		list_panel_insets = { 6, 6, 28, 6 },
+		list_panel_overrides = {
+			LFDQueueFrameSpecificListScrollFrame = { 6, 6, 28, 2 } -- the dungeons' list: its panel 6 over the foot's iron bar
+		},
+		list_bottom_raise = 2, -- its scroll frame's bottom up (its scroll bar's track stays in that panel)
 		raid_list_margins = { 18, 22 }, -- the Raid Browser's lists' zones, from the window's left and right (inside its iron frame)
 		raid_rows_left = 8, -- its lists' rows, left of Blizzard's
 		raid_browse_top = 4, -- the browse list's zone over its rows (the others' 6): clear of its column names

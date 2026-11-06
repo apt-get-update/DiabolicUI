@@ -98,7 +98,7 @@ Module.StyleLFG = function(self)
 		-- longer: the list's rows more (its update shows as many as
 		-- NUM_LFD_CHOICE_BUTTONS), the random dungeon's text as much taller
 		-- (its bottom with its page's)
-		local grow = self:AddDungeonRows(config.extra_rows)
+		local grow = self:AddDungeonRows(config.extra_rows, config.list_bottom_raise)
 		for _, name in ipairs({ "LFDQueueFrameRandom", "LFDQueueFrameSpecific" }) do
 			local page = _G[name]
 			if page then
@@ -232,7 +232,7 @@ Module.StyleLFG = function(self)
 	end
 	for _, name in ipairs(LISTS) do
 		if _G[name] then
-			kit:AddZone(_G[name], "slate", config.list_panel_insets)
+			kit:AddZone(_G[name], "slate", config.list_panel_overrides[name] or config.list_panel_insets)
 		end
 	end
 	-- Find Group and Close over the lists' slate, which reaches down to
@@ -246,8 +246,9 @@ Module.StyleLFG = function(self)
 end
 
 -- `count` more rows in the Dungeon Finder's list, under Blizzard's, its
--- scroll frame down to the last. How much longer it is returned.
-Module.AddDungeonRows = function(self, count)
+-- scroll frame down to the last, its bottom `raise` higher. How much longer
+-- it is returned.
+Module.AddDungeonRows = function(self, count, raise)
 	local first = _G.NUM_LFD_CHOICE_BUTTONS
 	local list = _G.LFDQueueFrameSpecificListScrollFrame
 	local last = _G["LFDQueueFrameSpecificListButton" .. first]
@@ -258,7 +259,7 @@ Module.AddDungeonRows = function(self, count)
 		row:SetPoint("TOPLEFT", last, "BOTTOMLEFT")
 		last = row
 	end
-	list:SetPoint(point, last, relativePoint, x, y)
+	list:SetPoint(point, last, relativePoint, x, y + raise)
 	_G.NUM_LFD_CHOICE_BUTTONS = first + count
 	return count * last:GetHeight()
 end

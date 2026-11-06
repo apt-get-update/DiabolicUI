@@ -364,7 +364,7 @@ for _, window in pairs(windows) do
 			end
 		end
 		for _, view in pairs(seen.views or {}) do
-			view.rect, view.window, view.scale = Own(view.rect), Own(view.window), scale
+			view.rect, view.window, view.footRect, view.scale = Own(view.rect), Own(view.window), Own(view.footRect), scale
 			OwnArt(view.art)
 		end
 		seen.rect, seen.window = Own(seen.rect), Own(seen.window)
@@ -509,6 +509,19 @@ local GhostRect = function(window, name)
 		return unpack(window.ghosts[name])
 	end
 	return x, y, width, height
+end
+
+-- A part only placed and never scanned (a named texture): its size from what's
+-- placed on its points, as a Ghost's, for those to be where the game has them.
+for _, window in pairs(windows) do
+	for name, part in pairs(window.parts) do
+		if (part.pin == "place") and (not part.seen) then
+			local _, _, width, height = GhostRect(window, name)
+			if (width > 0) and (height > 0) then
+				part.size = { width, height }
+			end
+		end
+	end
 end
 
 local WritePart = function(out, part, ids)
@@ -672,11 +685,26 @@ for title, window in pairs(windows) do
 		local copy = { kind = part.kind, text = part.text, parent = part.wowParent, style = part.style, place = part.place, size = part.size,
 			pin = part.pin, rect = seen.rect, strata = seen.strata, level = seen.level, layer = seen.layer }
 		-- (what the rules go by: tools/rules.js)
-		for _, key in ipairs({ "chain", "control", "diablo", "dropdown", "edge", "faded", "hung", "inset", "justify", "light",
+		for _, key in ipairs({ "aside", "chain", "control", "diablo", "dropdown", "edge", "faded", "hung", "inset", "justify", "light",
 			"material", "onArt", "onLit", "own", "row", "textWidth", "written", "zone" }) do
 			copy[key] = seen[key]
 		end
 		copy.tabs = (next(seen.tabs or {}) ~= nil) and Sorted(seen.tabs) or nil
+		-- (seen only with no tab chosen, as the spellbook's companions: only then)
+		local views = window.seen and window.seen.views
+		if (not copy.tabs) and part.seen and views and views[""] and (next(views, next(views)) ~= nil) then
+			copy.tabs = { "" }
+		end
+		-- the views whose last look at the window saw it (a view not looked at
+		-- since looks were told apart: all it had)
+		if views then
+			copy.current = {}
+			for view, was in pairs(views) do
+				if (not was.stamp) or ((seen.last or {})[view] == was.stamp) then
+					copy.current[view] = true
+				end
+			end
+		end
 		copy.use = part.pin and { place = (part.pin ~= "size") and part.place or nil, size = (part.pin ~= "place") and part.size or nil } or nil
 		-- (a point placed on nothing: on its parent, as the game has it)
 		for i, point in ipairs(seen.points or {}) do
@@ -691,7 +719,7 @@ for title, window in pairs(windows) do
 	for _, key in ipairs(Sorted(seen.views or {})) do
 		local view = seen.views[key]
 		first = first or view.art
-		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, scale = view.scale, art = Pictures(view.art),
+		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, footRect = view.footRect, scale = view.scale, art = Pictures(view.art),
 			frame = view.frame, band = view.band, foot = view.foot, railOver = view.railOver, close = view.close, iron = view.iron }
 	end
 	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,

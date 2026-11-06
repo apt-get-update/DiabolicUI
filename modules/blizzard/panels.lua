@@ -486,7 +486,9 @@ Module.StylePanel = function(self, spec)
 		end
 		local scroll = _G[name]
 		if scroll then
-			kit:AddPanel(scroll, spec.parchment_panel or kit.config.parchment_panel_insets)
+			local panel = spec.parchment_panel or kit.config.parchment_panel_insets
+			-- (up with its page, when that reaches over its text's)
+			kit:AddPanel(scroll, { panel[1], panel[2] + (raise or 0), panel[3], panel[4] })
 			-- (its window's: Blizzard hides a list's scroll frame when it all fits)
 			local page = kit:AddParchment(scroll, nil, material, scroll:GetParent())[1]:GetParent()
 			pages[name] = page

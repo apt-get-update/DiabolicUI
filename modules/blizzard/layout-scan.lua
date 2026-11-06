@@ -214,7 +214,7 @@ local Facts = function(part, entry, window, rows)
 	entry.diablo = part.DiabolicDropDown and true or nil
 	entry.edge = part.DiabolicEdge and true or nil
 	if part.DiabolicContent then
-		entry.zone, entry.material = ZoneName(part), part.DiabolicMaterial
+		entry.zone, entry.material, entry.aside = ZoneName(part), part.DiabolicMaterial, part.DiabolicAside
 	end
 	if rows[part] then
 		entry.row, entry.textWidth = true, Round(part:GetTextWidth())
@@ -386,10 +386,13 @@ local Scan = function(window)
 	local view, label = ViewOf(named)
 	local foot = window.DiabolicFoot
 	local close = window.DiabolicClose
-	seen.views[view] = { label = label, art = Art(frame), rect = seen.rect, window = seen.window,
+	-- (this look at it: what's not in it now, a state ago, isn't checked with what is)
+	Saved.stamp = (Saved.stamp or 0) + 1
+	seen.views[view] = { label = label, art = Art(frame), rect = seen.rect, window = seen.window, stamp = Saved.stamp,
 		frame = window:GetName(), band = window.DiabolicHeaders[1] and NameOf(window.DiabolicHeaders[1]),
 		foot = foot and foot.DiabolicShown and NameOf(foot),
 		railOver = foot and foot.DiabolicShown and Round(foot.Rail:GetTop() - foot:GetTop()), -- (the iron bar along its top)
+		footRect = foot and foot.DiabolicShown and Rect(foot), -- (its top follows the page's buttons)
 		close = close and close:IsVisible() and NameOf(close),
 		iron = kit.config.backdrop.insets.top + (window.DiabolicDrop or 0) }
 	local new = 0
@@ -402,6 +405,8 @@ local Scan = function(window)
 			if (view ~= "") then
 				entry.tabs[view] = true
 			end
+			entry.last = (type(old) == "table") and old.last or {}
+			entry.last[view] = Saved.stamp
 			parts[name] = entry
 		end
 	end

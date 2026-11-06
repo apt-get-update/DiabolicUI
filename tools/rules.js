@@ -10,7 +10,9 @@
 // { left, top, right, bottom (y down) and what /dui layout saved: kind, text,
 // written, faded, own, hung, chain, parent, control, dropdown, diablo, zone,
 // material, edge, row, textWidth, justify, inset, light, onArt, onLit } }, view:
-// { frame, band, foot, railOver, close, iron, scale (of a window the game scales) },
+// { frame, window, foot, footRect (where this view has them: a tab can resize the
+// window, a page's buttons raise its foot), band, railOver, close, iron, scale (of a
+// window the game scales) },
 // rules: { button_gap, content_gap, uneven }, unit (screen pixels per unit),
 // origin: [ left, top ] on screen }.
 
@@ -73,6 +75,15 @@ function check(model) {
     var band = view.band ? named_(view.band) : null
     var close = view.close ? named_(view.close) : null
     var foot = view.foot ? named_(view.foot) : null
+    function placed(p, rect) {
+        if (!p || !rect || !model.origin) return
+        p.left = rect[0] - model.origin[0]
+        p.right = p.left + rect[2]
+        p.top = model.origin[1] - rect[1] - rect[3]
+        p.bottom = p.top + rect[3]
+    }
+    placed(win, view.window)
+    placed(foot, view.footRect)
     var controls = all.filter(function (p) { return p.control && !p.own && !p.faded })
     var texts = all.filter(function (p) { return p.kind === "FontString" && p.written && !p.own && !p.faded })
     var zones = all.filter(function (p) { return p.zone })
@@ -133,7 +144,8 @@ function check(model) {
 
     // Inside: parts past the window's sides.
     controls.concat(texts).forEach(function (p) {
-        if (p === close || isHung(p)) return
+        // (AdiBags hands its item buttons round its sections and bags: a saved one says nothing)
+        if (p === close || isHung(p) || /^AdiBags(Bank)?ItemButton/.test(p.name)) return
         var b = box(p)
         if (b.left < win.left - 1 || b.right > win.right + 1 || b.top < win.top - 1 || b.bottom > win.bottom + 1)
             say(named(p) + " is out of the window.", [p.name])
@@ -176,14 +188,16 @@ function check(model) {
             left = Math.min(left, p.left)
             right = Math.max(right, p.right)
         }
-        zones.forEach(reach)
+        // (a list in a column's own frame beside the window's content says nothing of it)
+        var measured = zones.filter(function (z) { return !z.aside })
+        measured.forEach(reach)
         all.filter(function (p) { return p.edge }).forEach(reach)
         all.filter(function (p) { return p.kind === "Slider" && !isHung(p) }).forEach(function (bar) {
             reach(bar)
             all.filter(function (p) { return p.parent === bar.name }).forEach(reach)
         })
         var before = round(left - win.left), after = round(win.right - right)
-        if (Math.abs(before - after) > rules.uneven) say(before + " of room left of the content, " + after + " right of it: uneven.", [])
+        if (measured.length && Math.abs(before - after) > rules.uneven) say(before + " of room left of the content, " + after + " right of it: uneven.", [])
 
         // Gaps and Align: the zones seen, apart by the rule's at least, their
         // edges not 1 to 3 off lining up.

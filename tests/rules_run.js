@@ -9,7 +9,7 @@ const window = layout.windows[process.argv[3]];
 for (const view of (window && window.views) || []) {
 	const f = view.rect, top = f[1] + f[3], parts = {};
 	for (const [name, part] of Object.entries(window.parts)) {
-		const seen = !part.tabs || part.tabs.includes(view.key);
+		const seen = (!part.tabs || part.tabs.includes(view.key)) && (!part.current || part.current[view.key]);
 		if (part.rect && seen) {
 			const r = part.rect, left = r[0] - f[0], y = top - (r[1] + r[3]);
 			parts[name] = Object.assign({}, part, { left, top: y, right: left + r[2], bottom: y + r[3] });

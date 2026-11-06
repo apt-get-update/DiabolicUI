@@ -158,6 +158,27 @@ function TestLayoutAudit:test_a_window_breaking_the_rules()
 	assertClean(client)
 end
 
+-- What's gone at the last look (the talents' button, their status where it was)
+-- isn't checked with what's there now; both there, it is.
+function TestLayoutAudit:test_only_whats_there_at_the_last_look()
+	boot()
+	local frame = window("AuditLook")
+	local one, two = button(frame, "AuditLookOne", 100, 265, 80, "One"), button(frame, "AuditLookTwo", 120, 265, 80, "Two")
+	local WARNING = "\"One\" and \"Two\" are -60 apart on their row (the rule: 6)."
+	slash("layout")
+	frame:Show()
+	two:Hide()
+	client:Tick(1.1)
+	one:Hide()
+	two:Show()
+	client:Tick(1.1)
+	lu.assertNil(problems("AuditLook")[WARNING])
+	one:Show()
+	client:Tick(1.1)
+	lu.assertTrue(problems("AuditLook")[WARNING])
+	assertClean(client)
+end
+
 function TestLayoutAudit:test_a_window_keeping_them()
 	boot()
 	local frame = window("AuditFine")
