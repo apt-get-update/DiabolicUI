@@ -29,10 +29,10 @@ local function slash(text)
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER(text)
 end
 
--- What the chat frame (ChatFrame1 unless given) was told, without our prefix.
-local function said(frame)
+-- What the Layout chat window (the first free one, ChatFrame3) was told, without our prefix.
+local function said()
 	local lines = {}
-	for _, message in ipairs(client.widgetState[frame or _G.DEFAULT_CHAT_FRAME].messages) do
+	for _, message in ipairs(client.widgetState[_G.ChatFrame3].messages) do
 		lines[#lines + 1] = (message.text:gsub("^|cffff8000DiabolicUI|r ", ""))
 	end
 	return lines
@@ -638,6 +638,123 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	client:Tick(2, 0.1)
 	lu.assertEquals(done(), 2)
 	client:LeaveCombat()
+	assertClean(client)
+end
+
+-- A checked tab (a spellbook school's, a talent spec's) is a view of its own.
+function TestLayoutAudit:test_a_checked_tab_is_a_view()
+	boot()
+	local frame = window("AuditChecked")
+	local one = CreateFrame("CheckButton", "AuditCheckedTab1", frame)
+	local two = CreateFrame("CheckButton", "AuditCheckedTab2", frame)
+	one:SetChecked(1)
+	frame:Show()
+	slash("layout")
+	client:Tick(1.5, 0.1)
+	one:SetChecked(nil)
+	two:SetChecked(1)
+	client:Tick(1.5, 0.1)
+	local views = _G.DiabolicUI_Layout.windows.AuditChecked.views
+	lu.assertNotNil(views.AuditCheckedTab1)
+	lu.assertNotNil(views.AuditCheckedTab2)
+	lu.assertNil(views[""])
+	assertClean(client)
+end
+
+-- Those views from before that are dropped once, for the next scan to see them.
+function TestLayoutAudit:test_views_from_before_checked_tabs_are_dropped()
+	local parts = function()
+		return { Part = { "TOP", "X", "TOP", 0, 0, tabs = { Old = true }, last = { Old = 1 }, words = { Old = "a" } }, Older = "x" }
+	end
+	local old = function()
+		return { parts = parts(), views = { Old = { stamp = 1 } } }
+	end
+	boot({ savedVariables = { DiabolicUI_Layout = { windows = {
+		SpellBookFrame = old(), PlayerTalentFrame = old(), MailFrame = old(),
+	} } } })
+	local windows = _G.DiabolicUI_Layout.windows
+	lu.assertNil(windows.SpellBookFrame.views)
+	lu.assertNil(windows.PlayerTalentFrame.parts.Part.last)
+	lu.assertEquals(windows.PlayerTalentFrame.parts.Older, "x")
+	lu.assertNotNil(windows.MailFrame.views.Old)
+	-- (not again: what the new scan saved stays)
+	boot({ savedVariables = { DiabolicUI_Layout = { checkedTabs = true, windows = { SpellBookFrame = old() } } } })
+	lu.assertNotNil(_G.DiabolicUI_Layout.windows.SpellBookFrame.views.Old)
+	assertClean(client)
+end
+
+-- An NPC's window: its tabs looked at in turn when it shows, once a scan, then
+-- back on the first.
+function TestLayoutAudit:test_an_npc_window_walks_its_tabs()
+	boot()
+	local frame = window("MailFrame")
+	local clicks = {}
+	local tabs = {}
+	for i = 1, 3 do
+		local tab = CreateFrame("Button", "MailFrameTab" .. i, frame)
+		tab:SetScript("OnClick", function(self)
+			clicks[#clicks + 1] = i
+			for _, other in ipairs(tabs) do
+				other:Enable()
+			end
+			self:Disable()
+		end)
+		tabs[i] = tab
+	end
+	tabs[1]:Disable()
+	tabs[3]:Hide()
+	slash("layout")
+	frame:Show()
+	client:Tick(5, 0.1)
+	lu.assertEquals(clicks, { 2, 1 })
+	local views = _G.DiabolicUI_Layout.windows.MailFrame.views
+	lu.assertNotNil(views.MailFrameTab1)
+	lu.assertNotNil(views.MailFrameTab2)
+	-- opened again: left alone
+	frame:Hide()
+	client:Tick(1.5, 0.1)
+	frame:Show()
+	client:Tick(3, 0.1)
+	lu.assertEquals(clicks, { 2, 1 })
+	-- a new scan looks again, not in a fight
+	slash("layout")
+	client:EnterCombat()
+	slash("layout")
+	client:Tick(3, 0.1)
+	lu.assertEquals(clicks, { 2, 1 })
+	client:LeaveCombat()
+	client:Tick(5, 0.1)
+	lu.assertEquals(clicks, { 2, 1, 2, 1 })
+	assertClean(client)
+end
+
+function TestLayoutAudit:test_it_talks_in_a_chat_window_named_layout()
+	boot()
+	local count = function(frame)
+		return #(client.widgetState[frame].messages or {})
+	end
+	-- opened the first time, then the same one
+	local general = count(_G.ChatFrame1)
+	slash("layout left")
+	lu.assertEquals((_G.GetChatWindowInfo(3)), "Layout")
+	lu.assertEquals(count(_G.ChatFrame3), 1)
+	slash("layout left")
+	lu.assertEquals(count(_G.ChatFrame3), 2)
+	lu.assertEquals(count(_G.ChatFrame1), general)
+	lu.assertEquals((_G.GetChatWindowInfo(4)), "")
+	-- closed by the player: a new one, its old name not it
+	client.chatWindows[3] = { name = "Layout" }
+	_G.ChatFrame3.isDocked = nil
+	slash("layout left")
+	lu.assertEquals(client.chatWindows[3].shown, 1)
+	lu.assertEquals(count(_G.ChatFrame3), 3)
+	-- all windows taken: none written over, the default one told
+	for i = 1, 10 do
+		client.chatWindows[i] = { name = "Mine", shown = 1 }
+	end
+	slash("layout left")
+	lu.assertEquals((_G.GetChatWindowInfo(10)), "Mine")
+	lu.assertEquals(count(_G.ChatFrame1), general + 1)
 	assertClean(client)
 end
 

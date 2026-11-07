@@ -36,12 +36,37 @@ local kit
 local Said -- what's been said (by text)
 local Counted -- the windows whose parts were counted (by name)
 local LeftCount -- how many things were left to scan, last said
+local Walked -- the NPC windows' tabs looked at this scan (by window: the last one, false when all were)
 local Saved -- DiabolicUI_Layout: { windows = { [name] = { checked, parts, views } } }
 local Shown = {} -- when each window shown was first seen so (by window)
 local SETTLE_TIME = .5 -- a window saved once shown that long (an addon's lays itself out over a few frames)
 
+-- The chat window the scan talks in: "Layout", opened the first time (with
+-- nothing else in it). All windows taken, the default one: opening another
+-- would write over the last.
+local ChatWindow = function()
+	local free = false
+	for i = 1, _G.NUM_CHAT_WINDOWS do
+		local name, _, _, _, _, _, shown = _G.GetChatWindowInfo(i)
+		if shown or _G["ChatFrame" .. i].isDocked then
+			if (name == L["Layout"]) then
+				return _G["ChatFrame" .. i]
+			end
+		else
+			free = true
+		end
+	end
+	if (not free) then
+		return _G.DEFAULT_CHAT_FRAME
+	end
+	local frame = _G.FCF_OpenNewWindow(L["Layout"])
+	_G.ChatFrame_RemoveAllMessageGroups(frame)
+	_G.ChatFrame_RemoveAllChannels(frame)
+	return frame
+end
+
 local Print = function(text)
-	_G.DEFAULT_CHAT_FRAME:AddMessage("|cffff8000DiabolicUI|r " .. text)
+	ChatWindow():AddMessage("|cffff8000DiabolicUI|r " .. text)
 end
 
 -- The named parts shown in `frame` and all it holds (frames and texts), not
@@ -307,7 +332,8 @@ end
 local ViewOf = function(named)
 	local names = {}
 	for name, part in pairs(named) do
-		if IsTab(name, part) and kit.IsSelected(part) then
+		-- (a spellbook school's and a talent spec's are checked, not disabled)
+		if IsTab(name, part) and (kit.IsSelected(part) or (part.GetChecked and part:GetChecked())) then
 			names[#names + 1] = name
 		end
 	end
@@ -521,12 +547,35 @@ local Watch = function()
 	end
 end
 
+-- The tabs of a window only an NPC opens are looked at one by one once it
+-- shows, once a scan, then back on the first.
+local NPC_TABS = { AuctionFrame = true, GuildBankFrame = true, MailFrame = true, MerchantFrame = true }
+local Walk = function(window)
+	local name = window.Frame:GetName()
+	if (not NPC_TABS[name]) or (Walked[name] == false) or InCombatLockdown() then
+		return
+	end
+	local i, tab = Walked[name] or 0
+	repeat
+		i = i + 1
+		tab = _G[name .. "Tab" .. i]
+	until (not tab) or (tab:IsVisible() and (not kit.IsSelected(tab)))
+	Walked[name] = tab and i or false
+	tab = tab or _G[name .. "Tab1"]
+	if tab and (not kit.IsSelected(tab)) then
+		tab:Click()
+	end
+end
+
 local CheckShown = function()
 	Watch()
 	for _, window in ipairs(kit.Windows) do
 		if window.Frame:IsVisible() and window:GetLeft() and (GetTime() - Shown[window] >= SETTLE_TIME) then
 			-- (one that breaks said once, the others still saved)
 			local ok, err = pcall(Scan, window)
+			if ok then
+				ok, err = pcall(Walk, window)
+			end
 			if (not ok) and (not Said[err]) then
 				Said[err] = true
 				Print(string_format(L["%s couldn't be scanned: %s"], window.Frame:GetName() or L["a window"], err))
@@ -543,7 +592,7 @@ local CheckShown = function()
 end
 
 Module.Start = function(self)
-	Said, Counted = {}, {}
+	Said, Counted, Walked = {}, {}, {}
 	-- (those already shown: settled)
 	for _, window in ipairs(kit.Windows) do
 		if window.Frame:IsVisible() then
@@ -605,12 +654,12 @@ local STEPS = {
 	function() _G.ToggleCharacter("PetPaperDollFrame") end, -- (the pet's, or the companions')
 	Tab("PetPaperDollFrameTab2"), Tab("PetPaperDollFrameTab3"),
 	Open(function() _G.ToggleSpellBook(_G.BOOKTYPE_SPELL) end),
-	Tab("SpellBookSkillLineTab2"), Tab("SpellBookSkillLineTab3"), Tab("SpellBookSkillLineTab4"),
+	Tab("SpellBookSkillLineTab2"), Tab("SpellBookSkillLineTab3"), Tab("SpellBookSkillLineTab4"), Tab("SpellBookSkillLineTab1"),
 	Page("CRITTER"), Page("MOUNT"), Page("PROFESSIONS"), Page(nil),
 	Tab("SpellBookFrameTabButton2"), -- the pet's book
 	Open(function() _G.ToggleTalentFrame() end),
-	Tab("PlayerTalentFrameTab2"), Tab("PlayerTalentFrameTab3"), Tab("PlayerTalentFrameTab4"),
-	Tab("PlayerSpecTab2"), -- the second spec
+	Tab("PlayerTalentFrameTab1"), Tab("PlayerTalentFrameTab2"), Tab("PlayerTalentFrameTab3"), Tab("PlayerTalentFrameTab4"),
+	Tab("PlayerSpecTab2"), Tab("PlayerSpecTab3"), -- the second spec, the pet's
 	Open(function() _G.ToggleFriendsFrame(1) end),
 	Tab("FriendsTabHeaderTab2"), Tab("FriendsTabHeaderTab3"), -- ignored, pending
 	function() _G.ToggleFriendsFrame(2) end,
@@ -630,11 +679,13 @@ local STEPS = {
 	Tab("PVPParentFrameTab2"),
 	Open(function() _G.ShowMacroFrame() end),
 	Tab("MacroFrameTab2"),
-	Open(function()
-		_G.KeyBindingFrame_LoadUI()
-		_G.ShowUIPanel(_G.KeyBindingFrame)
-	end),
 	Open(function() _G.ShowUIPanel(_G.DressUpFrame) end),
+	Open(function()
+		local board = _G.GroupBulletinBoard_Addon
+		if board and board.ShowWindow then
+			board.ShowWindow()
+		end
+	end),
 	-- the one targeted, when a player in reach
 	Open(function()
 		if _G.UnitIsPlayer("target") and _G.CanInspect("target") and _G.CheckInteractDistance("target", 1) then
@@ -642,6 +693,12 @@ local STEPS = {
 		end
 	end),
 	Tab("InspectFrameTab2"), Tab("InspectFrameTab3"),
+	-- (closed, it opens the game menu, and no panel opens over that: the next
+	-- ones aren't panels)
+	Open(function()
+		_G.KeyBindingFrame_LoadUI()
+		_G.ShowUIPanel(_G.KeyBindingFrame)
+	end),
 	Open(function() Engine:GetModule("ChatCopy"):Show(_G.ChatFrame1) end),
 	Open(function() _G.OpenAllBags() end),
 	function()
@@ -704,6 +761,21 @@ Module.OnEnable = function(self)
 	Saved = _G.DiabolicUI_Layout or {}
 	Saved.windows = Saved.windows or {}
 	Saved.on, Saved.moved, Saved.adjust = nil, nil, nil -- (an older version's)
+	-- (their views from before a checked tab counted: seen again by the next scan)
+	if (not Saved.checkedTabs) then
+		Saved.checkedTabs = true
+		for _, name in ipairs({ "SpellBookFrame", "PlayerTalentFrame" }) do
+			local seen = Saved.windows[name]
+			if seen then
+				seen.views = nil
+				for _, part in pairs(seen.parts or {}) do
+					if (type(part) == "table") then
+						part.tabs, part.last, part.words = nil, nil, nil
+					end
+				end
+			end
+		end
+	end
 	_G.DiabolicUI_Layout = Saved
 	self:GetHandler("ChatCommand"):Register("layout", function(what)
 		if (what == "all") then

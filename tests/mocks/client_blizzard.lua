@@ -1463,6 +1463,20 @@ local function frameXML(client)
 		_G.SELECTED_CHAT_FRAME = frame
 		return frame
 	end
+	-- (as FloatingChatFrame.lua: the first window not in use, else the last one)
+	f.FCF_OpenNewWindow = function(name)
+		for i = 1, _G.NUM_CHAT_WINDOWS do
+			local _, _, _, _, _, _, shown = api.GetChatWindowInfo(i)
+			local frame = _G["ChatFrame" .. i]
+			if ((not shown) and (not frame.isDocked)) or (i == _G.NUM_CHAT_WINDOWS) then
+				client.chatWindows = client.chatWindows or {}
+				client.chatWindows[i] = { name = name, shown = 1, docked = i }
+				frame.isDocked = 1
+				frame:Show()
+				return frame
+			end
+		end
+	end
 	f.FCF_FadeInChatFrame = noop
 	f.FCF_FadeOutChatFrame = noop
 	f.FCF_DockUpdate = noop

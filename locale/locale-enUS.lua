@@ -372,6 +372,7 @@ L["Drag the highlighted frames to move them. Right-drag the minimap to resize it
 L["You can't move frames in combat."] = true
 L["UI Scale"] = true
 L["%s (%d found)"] = true
+L["Layout"] = true
 L["Layout scan on: each window is saved as it shows. /dui layout again to stop."] = true
 L["Layout scan off: /reload to write it."] = true
 L["Layout scan: each window opened in turn."] = true

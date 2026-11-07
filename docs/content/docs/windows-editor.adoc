@@ -27,7 +27,9 @@ flowchart LR
 ++++
 
 . *In game:* `/dui layout all`, then `/reload`. It opens every window that needs no NPC. Open
-  the others yourself while it's on (mail, auction house, bank, vendor, trainer).
+  the others yourself while it's on (mail, auction house, bank, vendor, trainer): the mail's, the
+  auction house's, the vendor's and the guild bank's tabs turn by themselves. It reports in a chat
+  tab named Layout.
 . *In the editor:* pick a window at the top, a tab under it, and change what you want. It reads a
   new scan by itself. *Still to scan* on the right says what's missing.
 . *Ctrl+S*, then `/reload` in game.
