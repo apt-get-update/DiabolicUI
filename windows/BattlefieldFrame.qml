@@ -244,6 +244,25 @@ WowWindow {
                                         width: 90
                                         height: 10
                                     }
+
+                                    Ghost {
+                                        name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"
+                                        x: 132
+                                        y: 20
+                                        width: 0
+                                        height: 0
+
+                                        FontString {
+                                            name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount"
+                                            text: "620"
+                                            wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
+                                            anchors.left: parent.right
+                                            anchors.leftMargin: 3
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            width: 65
+                                            height: 12
+                                        }
+                                    }
                                 }
 
                                 FontString {
@@ -255,6 +274,44 @@ WowWindow {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: 90
                                     height: 10
+                                }
+
+                                Ghost {
+                                    name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol"
+                                    x: 237
+                                    y: 20
+                                    width: 0
+                                    height: 0
+
+                                    FontString {
+                                        name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaAmount"
+                                        text: "25"
+                                        wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
+                                        anchors.left: parent.right
+                                        anchors.leftMargin: 3
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 65
+                                        height: 12
+                                    }
+                                }
+
+                                Ghost {
+                                    name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol"
+                                    x: 132
+                                    y: 20
+                                    width: 0
+                                    height: 0
+
+                                    FontString {
+                                        name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount"
+                                        text: "3720"
+                                        wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
+                                        anchors.left: parent.right
+                                        anchors.leftMargin: 3
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 65
+                                        height: 12
+                                    }
                                 }
                             }
                         }
@@ -352,63 +409,6 @@ WowWindow {
             anchors.verticalCenterOffset: -1
             width: 84.5
             height: 11.9
-        }
-    }
-
-    Ghost {
-        name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"
-        x: 152
-        y: 363.5
-        width: 0
-        height: 0
-
-        FontString {
-            name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount"
-            text: "620"
-            wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.verticalCenter: parent.verticalCenter
-            width: 65
-            height: 12
-        }
-    }
-
-    Ghost {
-        name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol"
-        x: 257
-        y: 321.5
-        width: 0
-        height: 0
-
-        FontString {
-            name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaAmount"
-            text: "25"
-            wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.verticalCenter: parent.verticalCenter
-            width: 65
-            height: 12
-        }
-    }
-
-    Ghost {
-        name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol"
-        x: 152
-        y: 321.5
-        width: 0
-        height: 0
-
-        FontString {
-            name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount"
-            text: "3720"
-            wowParent: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.verticalCenter: parent.verticalCenter
-            width: 65
-            height: 12
         }
     }
 

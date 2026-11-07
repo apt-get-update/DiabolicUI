@@ -237,6 +237,15 @@ ApplicationWindow {
     // Where a picture goes as its part grows, along one side: pieces at an end stay
     // that size at it, what's between grows with it, the rest in proportion.
     // [ from the part's start, size ]
+    // the part art is drawn on: its own, or for a texture that's no part (a
+    // button's NormalTexture) the part its name starts with
+    function artOwner(name) {
+        for (let n = name || ""; n && n !== title_; n = n.replace(/([A-Z][a-z]*|\d+)$/, "")) {
+            if (parts[n]) return n
+            if (!/([A-Z][a-z]*|\d+)$/.test(n)) break
+        }
+        return ""
+    }
     function artSpan(start, size, whole, now) {
         const end = whole - start - size, grown = now - whole, length = Math.abs(size)
         if (start <= 8 && length <= 40) return [start, size]
@@ -1221,9 +1230,10 @@ ApplicationWindow {
                             required property var modelData
                             required property int index
                             readonly property var f: app.viewRect || [modelData.rect[0], modelData.rect[1] + modelData.rect[3], 0, 0]
-                            readonly property Item owner: modelData.owner && app.parts[modelData.owner] ? app.items[modelData.owner] || null : null
+                            readonly property string ownerName: app.artOwner(modelData.owner)
+                            readonly property Item owner: ownerName ? app.items[ownerName] || null : null
                             // (where its part was when the scan drew it, not where it's saved to be since)
-                            readonly property var base: !owner ? null : app.parts[modelData.owner].rect ? app.previewBox(app.parts[modelData.owner].rect) : app.artBase[modelData.owner]
+                            readonly property var base: !owner ? null : app.parts[ownerName].rect ? app.previewBox(app.parts[ownerName].rect) : app.artBase[ownerName]
                             readonly property var at: { app.moved; return owner && owner.parent ? owner.mapToItem(app.root, 0, 0) : null }
                             readonly property real ax: modelData.rect[0] - f[0]
                             readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
@@ -1994,7 +2004,7 @@ ApplicationWindow {
         }
         function onSampleFailed(problem) { app.status = "Sample window: " + problem }
         function onScanned() {
-            if (app.changeCount) { app.status = "A new scan: Save, and it's read."; return }
+            if (app.changeCount) { app.status = "A new scan or window file: Save, and it's read."; return }
             app.reload()
         }
     }

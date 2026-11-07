@@ -165,12 +165,12 @@ WowWindow {
 
                 FontString {
                     name: "SpellBookTitleText"
-                    text: "Spellbook"
+                    text: "Professions"
                     wowParent: "SpellBookFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 88.5
+                    width: 106.7
                     height: 14.2
                 }
             }

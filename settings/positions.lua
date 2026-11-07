@@ -49,15 +49,17 @@ Engine:NewStaticConfig("Positions", {
 	-- ClassTrainerFrame -----------------------------------------------------
 	ClassTrainerCancelButton = { "LEFT", "ClassTrainerTrainButton", "RIGHT", 6, 0, 83.5, 22 }, -- Button "Exit"
 	-- the chosen one's page 6 under the list's (Blizzard's 8 under its text)
-	ClassTrainerDetailScrollFrame = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", 0, -14, 296, 135 }, -- ScrollFrame
+	ClassTrainerDetailScrollFrame = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", 0, -28, 296, 121 }, -- ScrollFrame
 	-- "All" and the list under the greeting (the chosen one's height: trainer.lua)
 	ClassTrainerExpandButtonFrame = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 15, -66 }, -- Frame
 	ClassTrainerFrameDiabolicFoot = { "BOTTOMLEFT", "ClassTrainerFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
+	ClassTrainerFrameDiabolicIronBar = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", -30, -6.5, 388, 16 }, -- Frame
 	-- the greeting across the list's width under the band, its panel's left on
 	-- the parchments', its right on their panels'
 	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Hello, priest!  Ready for some training?"
-	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -102, 296, 128 }, -- ScrollFrame
+	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -72, 296, 158 }, -- ScrollFrame
 	ClassTrainerMoneyFrame = { "BOTTOMRIGHT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 181, 12 }, -- Frame
+	ClassTrainerSkill1 = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 22, -90 }, -- Button "Discipline"
 	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 83.5, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
@@ -256,15 +258,15 @@ Engine:NewStaticConfig("Positions", {
 	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 85.5, 22 }, -- Button "Exit"
 	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 85.5, 22 }, -- Button "Create"
 	TradeSkillDecrementButton = { "LEFT", "TradeSkillCreateAllButton", "RIGHT", 2, 0 }, -- Button
-	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -1, -41, 297, 164 }, -- ScrollFrame
-	TradeSkillExpandButtonFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 15, -53 }, -- Frame
+	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -1, -34, 297, 157 }, -- ScrollFrame
+	TradeSkillExpandButtonFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 15, -64 }, -- Frame
 	TradeSkillFrameAvailableFilterCheckButton = { "LEFT", "TradeSkillFrameEditBox", "RIGHT", 12, 0 }, -- CheckButton
 	TradeSkillFrameDiabolicFoot = { "BOTTOMLEFT", "TradeSkillFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	TradeSkillFrameDiabolicIronBar = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -30, -13.5, 392, 16 }, -- Frame
+	TradeSkillFrameDiabolicIronBar = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -30, -6.5, 392, 16 }, -- Frame
 	TradeSkillIncrementButton = { "LEFT", "TradeSkillInputBox", "RIGHT", 8, 0 }, -- Button
 	TradeSkillInputBox = { "LEFT", "TradeSkillDecrementButton", "RIGHT", 8, 0 }, -- EditBox "1"
-	TradeSkillInvSlotDropDown = { "TOPRIGHT", "TradeSkillFrame", "TOPRIGHT", -21, -48 }, -- Frame
-	TradeSkillListScrollFrame = { "TOPRIGHT", "TradeSkillFrame", "TOPRIGHT", -67, -89, 296, 93 }, -- ScrollFrame
+	TradeSkillInvSlotDropDown = { "TOPRIGHT", "TradeSkillFrame", "TOPRIGHT", -78, -27 }, -- Frame
+	TradeSkillListScrollFrame = { "TOPRIGHT", "TradeSkillFrame", "TOPRIGHT", -67, -68, 296, 135 }, -- ScrollFrame
 	-- the skill's bar centred on our window (24 left of the frame, 14 right of it:
 	-- room for the scroll bars), its rank in it
 	TradeSkillRankFrame = { "TOP", "TradeSkillFrame", "TOPLEFT", 187, -32 }, -- StatusBar
@@ -274,6 +276,6 @@ Engine:NewStaticConfig("Positions", {
 	TradeSkillReagent5 = { "TOPLEFT", "TradeSkillReagent3", "BOTTOMLEFT", 0, -6 }, -- Button
 	TradeSkillReagent6 = { "LEFT", "TradeSkillReagent5", "RIGHT", 0, 0 }, -- Button
 	TradeSkillReagent7 = { "TOPLEFT", "TradeSkillReagent6", "BOTTOMLEFT", 0, -6 }, -- Button
-	TradeSkillSkill1 = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 22, -89 }, -- Button " Heavy Silk Bandage"
+	TradeSkillSkill1 = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 22, -88 }, -- Button " Frostweave Bag"
 	TradeSkillSubClassDropDown = { "RIGHT", "TradeSkillInvSlotDropDown", "LEFT", 27, 0 }, -- Frame
 })

@@ -120,6 +120,33 @@ WowWindow {
             width: 79.8
             height: 11.9
         }
+
+        Ghost {
+            name: "LFRBrowseFrameListScrollFrame"
+            x: 167
+            y: 66
+            width: 0
+            height: 0
+
+            Frame {
+                name: "LFRBrowseFrameListScrollFrameDiabolicZone"
+                wowParent: "LFRBrowseFrame"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: -4
+                width: 330
+                height: 332
+
+                Frame {
+                    name: "LFRBrowseFrameListScrollFrameDiabolicZoneColumnBar"
+                    wowParent: "LFRBrowseFrameListScrollFrameDiabolicZone"
+                    anchors.left: parent.left
+                    anchors.bottom: parent.top
+                    width: 330
+                    height: 22
+                }
+            }
+        }
     }
 
     Frame {
@@ -182,7 +209,7 @@ WowWindow {
 
                         FontString {
                             name: "LFRBrowseFrameRaidDropDownText"
-                            text: "(25) Icecrown Citadel"
+                            text: "None"
                             wowParent: "LFRBrowseFrameRaidDropDown"
                             anchors.left: parent.left
                             anchors.leftMargin: 22
@@ -614,33 +641,23 @@ WowWindow {
                         height: 624
                     }
                 }
-            }
-        }
-    }
 
-    Ghost {
-        name: "LFRBrowseFrameListScrollFrame"
-        x: 167
-        y: 66
-        width: 0
-        height: 0
+                Ghost {
+                    name: "LFRQueueFrameSpecificListButton1LockedIndicator"
+                    x: 31
+                    y: 8
+                    width: 0
+                    height: 0
 
-        Frame {
-            name: "LFRBrowseFrameListScrollFrameDiabolicZone"
-            wowParent: "LFRBrowseFrame"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -4
-            width: 330
-            height: 332
-
-            Frame {
-                name: "LFRBrowseFrameListScrollFrameDiabolicZoneColumnBar"
-                wowParent: "LFRBrowseFrameListScrollFrameDiabolicZone"
-                anchors.left: parent.left
-                anchors.bottom: parent.top
-                width: 330
-                height: 22
+                    CheckButton {
+                        name: "LFRQueueFrameSpecificListButton1EnableButton"
+                        wowParent: "LFRQueueFrameSpecificListButton1"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 20
+                        height: 20
+                    }
+                }
             }
         }
     }
@@ -660,23 +677,6 @@ WowWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: 13
             height: 13
-        }
-    }
-
-    Ghost {
-        name: "LFRQueueFrameSpecificListButton1LockedIndicator"
-        x: 48
-        y: 140
-        width: 0
-        height: 0
-
-        CheckButton {
-            name: "LFRQueueFrameSpecificListButton1EnableButton"
-            wowParent: "LFRQueueFrameSpecificListButton1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            width: 20
-            height: 20
         }
     }
 

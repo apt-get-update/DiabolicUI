@@ -396,6 +396,24 @@ WowWindow {
                     anchors.topMargin: 20
                     width: 37
                     height: 37
+
+                    Ghost {
+                        name: "PlayerTalentFrameTalent1RankBorder"
+                        x: 37
+                        y: 36.9
+                        width: 0
+                        height: 0
+
+                        FontString {
+                            name: "PlayerTalentFrameTalent1Rank"
+                            text: "3"
+                            wowParent: "PlayerTalentFrameTalent1"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 7.9
+                            height: 10.3
+                        }
+                    }
                 }
             }
 
@@ -492,24 +510,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-    }
-
-    Ghost {
-        name: "PlayerTalentFrameTalent1RankBorder"
-        x: 114
-        y: 130.9
-        width: 0
-        height: 0
-
-        FontString {
-            name: "PlayerTalentFrameTalent1Rank"
-            text: "3"
-            wowParent: "PlayerTalentFrameTalent1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            width: 7.9
-            height: 10.3
         }
     }
 }

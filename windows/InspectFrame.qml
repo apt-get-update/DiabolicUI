@@ -141,6 +141,285 @@ WowWindow {
         anchors.top: parent.top
         width: 384
         height: 512
+
+        Ghost {
+            name: "InspectPVPFrameBackground"
+            x: 14
+            y: 36
+            width: 0
+            height: 512
+
+            Frame {
+                name: "InspectPVPFrameArena"
+                wowParent: "InspectPVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 120
+                anchors.top: parent.top
+                anchors.topMargin: 95
+                width: 300
+                height: 20
+
+                FontString {
+                    name: "InspectPVPFrameArenaLabel"
+                    text: "ARENA:"
+                    wowParent: "InspectPVPFrameArena"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 41.9
+                    height: 10.3
+                }
+            }
+
+            Frame {
+                name: "InspectPVPFrameHonor"
+                wowParent: "InspectPVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 118
+                anchors.top: parent.top
+                anchors.topMargin: 2
+                width: 300
+                height: 20
+
+                FontString {
+                    name: "InspectPVPFrameHonorLabel"
+                    text: "HONOR:"
+                    wowParent: "InspectPVPFrameHonor"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 47.4
+                    height: 10.3
+                }
+            }
+
+            Frame {
+                name: "InspectPVPHonor"
+                wowParent: "InspectPVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                anchors.top: parent.top
+                anchors.topMargin: 28
+                width: 300
+                height: 100
+
+                FontString {
+                    name: "InspectPVPHonorKillsLabel"
+                    text: "Kills"
+                    wowParent: "InspectPVPHonor"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 25
+                    anchors.top: parent.top
+                    anchors.topMargin: 24
+                    width: 22.9
+                    height: 10.3
+
+                    FontString {
+                        name: "InspectPVPHonorHonorLabel"
+                        text: "Honor"
+                        wowParent: "InspectPVPHonor"
+                        anchors.right: parent.right
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 10
+                        width: 34.8
+                        height: 10.3
+                    }
+
+                    FontString {
+                        name: "InspectPVPHonorTodayLabel"
+                        text: "Today"
+                        wowParent: "InspectPVPHonor"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 30
+                        anchors.bottom: parent.top
+                        anchors.bottomMargin: 10
+                        width: 34.8
+                        height: 10.3
+
+                        FontString {
+                            name: "InspectPVPHonorTodayKills"
+                            text: "0"
+                            wowParent: "InspectPVPHonor"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.bottom
+                            anchors.topMargin: 10
+                            width: 7.9
+                            height: 10.3
+
+                            FontString {
+                                name: "InspectPVPHonorTodayHonor"
+                                text: "0"
+                                wowParent: "InspectPVPHonor"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 10
+                                width: 7.9
+                                height: 14
+                            }
+                        }
+
+                        FontString {
+                            name: "InspectPVPHonorYesterdayLabel"
+                            text: "Yesterday"
+                            wowParent: "InspectPVPHonor"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 30
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 53.7
+                            height: 10.3
+
+                            FontString {
+                                name: "InspectPVPHonorLifetimeLabel"
+                                text: "Lifetime"
+                                wowParent: "InspectPVPHonor"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 30
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 45
+                                height: 10.3
+
+                                FontString {
+                                    name: "InspectPVPHonorLifetimeKills"
+                                    text: "30"
+                                    wowParent: "InspectPVPHonor"
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.top: parent.bottom
+                                    anchors.topMargin: 10
+                                    width: 15
+                                    height: 10.3
+
+                                    FontString {
+                                        name: "InspectPVPHonorLifetimeHonor"
+                                        text: "-"
+                                        wowParent: "InspectPVPHonor"
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.top: parent.bottom
+                                        anchors.topMargin: 10
+                                        width: 5.5
+                                        height: 10.3
+                                    }
+                                }
+                            }
+
+                            FontString {
+                                name: "InspectPVPHonorYesterdayKills"
+                                text: "0"
+                                wowParent: "InspectPVPHonor"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 10
+                                width: 7.9
+                                height: 10.3
+
+                                FontString {
+                                    name: "InspectPVPHonorYesterdayHonor"
+                                    text: "0"
+                                    wowParent: "InspectPVPHonor"
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.top: parent.bottom
+                                    anchors.topMargin: 10
+                                    width: 7.9
+                                    height: 10.3
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Frame {
+                name: "InspectPVPTeam1Standard"
+                wowParent: "InspectPVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -85
+                width: 64
+                height: 64
+
+                Button {
+                    name: "InspectPVPTeam1"
+                    wowParent: "InspectPVPFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 33
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 78
+
+                    FontString {
+                        name: "InspectPVPTeam1TeamType"
+                        text: "(2v2)"
+                        wowParent: "InspectPVPTeam1"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 15.8
+                    }
+                }
+            }
+
+            Frame {
+                name: "InspectPVPTeam2Standard"
+                wowParent: "InspectPVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
+                width: 64
+                height: 64
+
+                Button {
+                    name: "InspectPVPTeam2"
+                    wowParent: "InspectPVPFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 33
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 78
+
+                    FontString {
+                        name: "InspectPVPTeam2TeamType"
+                        text: "(3v3)"
+                        wowParent: "InspectPVPTeam2"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 15.8
+                    }
+                }
+            }
+
+            Frame {
+                name: "InspectPVPTeam3Standard"
+                wowParent: "InspectPVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 85
+                width: 64
+                height: 64
+
+                Button {
+                    name: "InspectPVPTeam3"
+                    wowParent: "InspectPVPFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 33
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 78
+
+                    FontString {
+                        name: "InspectPVPTeam3TeamType"
+                        text: "(5v5)"
+                        wowParent: "InspectPVPTeam3"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 15.8
+                    }
+                }
+            }
+        }
     }
 
     Frame {
@@ -492,6 +771,24 @@ WowWindow {
                     anchors.topMargin: 20
                     width: 37
                     height: 37
+
+                    Ghost {
+                        name: "InspectTalentFrameTalent1RankBorder"
+                        x: 99.9
+                        y: -336.6
+                        width: 0
+                        height: 0
+
+                        FontString {
+                            name: "InspectTalentFrameTalent1Rank"
+                            text: "5"
+                            wowParent: "InspectTalentFrameTalent1"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 7.9
+                            height: 10.3
+                        }
+                    }
                 }
             }
 
@@ -583,303 +880,6 @@ WowWindow {
                 width: 28
                 height: 28
             }
-        }
-    }
-
-    Ghost {
-        name: "InspectPVPFrameBackground"
-        x: 14
-        y: 36
-        width: 0
-        height: 512
-
-        Frame {
-            name: "InspectPVPFrameArena"
-            wowParent: "InspectPVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 120
-            anchors.top: parent.top
-            anchors.topMargin: 95
-            width: 300
-            height: 20
-
-            FontString {
-                name: "InspectPVPFrameArenaLabel"
-                text: "ARENA:"
-                wowParent: "InspectPVPFrameArena"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                width: 41.9
-                height: 10.3
-            }
-        }
-
-        Frame {
-            name: "InspectPVPFrameHonor"
-            wowParent: "InspectPVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 118
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            width: 300
-            height: 20
-
-            FontString {
-                name: "InspectPVPFrameHonorLabel"
-                text: "HONOR:"
-                wowParent: "InspectPVPFrameHonor"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                width: 47.4
-                height: 10.3
-            }
-        }
-
-        Frame {
-            name: "InspectPVPHonor"
-            wowParent: "InspectPVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.top: parent.top
-            anchors.topMargin: 28
-            width: 300
-            height: 100
-
-            FontString {
-                name: "InspectPVPHonorKillsLabel"
-                text: "Kills"
-                wowParent: "InspectPVPHonor"
-                anchors.left: parent.left
-                anchors.leftMargin: 25
-                anchors.top: parent.top
-                anchors.topMargin: 24
-                width: 22.9
-                height: 10.3
-
-                FontString {
-                    name: "InspectPVPHonorHonorLabel"
-                    text: "Honor"
-                    wowParent: "InspectPVPHonor"
-                    anchors.right: parent.right
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 10
-                    width: 34.8
-                    height: 10.3
-                }
-
-                FontString {
-                    name: "InspectPVPHonorTodayLabel"
-                    text: "Today"
-                    wowParent: "InspectPVPHonor"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 30
-                    anchors.bottom: parent.top
-                    anchors.bottomMargin: 10
-                    width: 34.8
-                    height: 10.3
-
-                    FontString {
-                        name: "InspectPVPHonorTodayKills"
-                        text: "0"
-                        wowParent: "InspectPVPHonor"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 10
-                        width: 7.9
-                        height: 10.3
-
-                        FontString {
-                            name: "InspectPVPHonorTodayHonor"
-                            text: "0"
-                            wowParent: "InspectPVPHonor"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 10
-                            width: 7.9
-                            height: 14
-                        }
-                    }
-
-                    FontString {
-                        name: "InspectPVPHonorYesterdayLabel"
-                        text: "Yesterday"
-                        wowParent: "InspectPVPHonor"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 30
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 53.7
-                        height: 10.3
-
-                        FontString {
-                            name: "InspectPVPHonorLifetimeLabel"
-                            text: "Lifetime"
-                            wowParent: "InspectPVPHonor"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 30
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 45
-                            height: 10.3
-
-                            FontString {
-                                name: "InspectPVPHonorLifetimeKills"
-                                text: "30"
-                                wowParent: "InspectPVPHonor"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 10
-                                width: 15
-                                height: 10.3
-
-                                FontString {
-                                    name: "InspectPVPHonorLifetimeHonor"
-                                    text: "-"
-                                    wowParent: "InspectPVPHonor"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 10
-                                    width: 5.5
-                                    height: 10.3
-                                }
-                            }
-                        }
-
-                        FontString {
-                            name: "InspectPVPHonorYesterdayKills"
-                            text: "0"
-                            wowParent: "InspectPVPHonor"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 10
-                            width: 7.9
-                            height: 10.3
-
-                            FontString {
-                                name: "InspectPVPHonorYesterdayHonor"
-                                text: "0"
-                                wowParent: "InspectPVPHonor"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 10
-                                width: 7.9
-                                height: 10.3
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Frame {
-            name: "InspectPVPTeam1Standard"
-            wowParent: "InspectPVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -85
-            width: 64
-            height: 64
-
-            Button {
-                name: "InspectPVPTeam1"
-                wowParent: "InspectPVPFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 33
-                anchors.verticalCenter: parent.verticalCenter
-                width: 300
-                height: 78
-
-                FontString {
-                    name: "InspectPVPTeam1TeamType"
-                    text: "(2v2)"
-                    wowParent: "InspectPVPTeam1"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 15.8
-                }
-            }
-        }
-
-        Frame {
-            name: "InspectPVPTeam2Standard"
-            wowParent: "InspectPVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-            anchors.verticalCenter: parent.verticalCenter
-            width: 64
-            height: 64
-
-            Button {
-                name: "InspectPVPTeam2"
-                wowParent: "InspectPVPFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 33
-                anchors.verticalCenter: parent.verticalCenter
-                width: 300
-                height: 78
-
-                FontString {
-                    name: "InspectPVPTeam2TeamType"
-                    text: "(3v3)"
-                    wowParent: "InspectPVPTeam2"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 15.8
-                }
-            }
-        }
-
-        Frame {
-            name: "InspectPVPTeam3Standard"
-            wowParent: "InspectPVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 85
-            width: 64
-            height: 64
-
-            Button {
-                name: "InspectPVPTeam3"
-                wowParent: "InspectPVPFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 33
-                anchors.verticalCenter: parent.verticalCenter
-                width: 300
-                height: 78
-
-                FontString {
-                    name: "InspectPVPTeam3TeamType"
-                    text: "(5v5)"
-                    wowParent: "InspectPVPTeam3"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 15.8
-                }
-            }
-        }
-    }
-
-    Ghost {
-        name: "InspectTalentFrameTalent1RankBorder"
-        x: 158
-        y: -239.6
-        width: 0
-        height: 0
-
-        FontString {
-            name: "InspectTalentFrameTalent1Rank"
-            text: "5"
-            wowParent: "InspectTalentFrameTalent1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            width: 7.9
-            height: 10.3
         }
     }
 }

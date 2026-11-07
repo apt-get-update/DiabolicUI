@@ -856,7 +856,9 @@ function TestPositionsTool:test_what_a_row_or_a_stretch_cant_be()
 	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'), "a row needs its parts")
 	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; anchors.left: parent.left; anchors.top: parent.top } }'), "its row places it")
 	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Frame { name: "A"; WowRow { name: "S" } } }'), "a row goes from")
-	lu.assertStrContains(Says('    Part { name: "A"; Ghost { name: "G" } }'), "only a WowWindow")
+	lu.assertStrContains(Says('    Ghost { name: "F"; Ghost { name: "G" } }'), "only a WowWindow")
+	-- (a Ghost in a part: one of its frame's textures)
+	lu.assertNotStrContains(Says('    Part { name: "A"; width: 1; height: 1; Ghost { name: "G"; x: 1; y: 1; width: 0; height: 0 } }'), "only a WowWindow")
 	lu.assertStrContains(Says('    Part { name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top }'),
 		"two anchors across and two down at most")
 	lu.assertStrContains(Says('    Part { id: b; name: "B"; width: 1; height: 1 }\n    Part { name: "A"; pin: "place"; anchors.left: w.left; anchors.right: b.right; anchors.top: w.top; width: 1; height: 1 }'),

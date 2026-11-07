@@ -17,6 +17,25 @@ WowWindow {
         anchors.topMargin: 41
         width: 92.4
         height: 20
+
+        Ghost {
+            name: "QuestLogCountTopRight"
+            x: 84.4
+            y: 7.9
+            width: 0
+            height: 0
+
+            FontString {
+                name: "QuestLogQuestCount"
+                wowParent: "QuestLogCount"
+                anchors.right: parent.left
+                anchors.rightMargin: -1
+                anchors.top: parent.bottom
+                anchors.topMargin: -3
+                width: 77.4
+                height: 10.3
+            }
+        }
     }
 
     Button {
@@ -162,6 +181,58 @@ WowWindow {
                                                         anchors.verticalCenter: parent.verticalCenter
                                                         width: 91
                                                         height: 28
+
+                                                        Ghost {
+                                                            name: "QuestInfoMoneyFrameCopperButton"
+                                                            x: 78
+                                                            y: 14
+                                                            width: 0
+                                                            height: 0
+
+                                                            Button {
+                                                                name: "QuestInfoMoneyFrameGoldButton"
+                                                                text: "42"
+                                                                wowParent: "QuestInfoMoneyFrame"
+                                                                anchors.right: questInfoMoneyFrameSilverButton.left
+                                                                anchors.rightMargin: 4
+                                                                anchors.verticalCenter: questInfoMoneyFrameSilverButton.verticalCenter
+                                                                width: 38
+                                                                height: 19
+
+                                                                FontString {
+                                                                    name: "QuestInfoMoneyFrameGoldButtonText"
+                                                                    text: "42"
+                                                                    wowParent: "QuestInfoMoneyFrameGoldButton"
+                                                                    anchors.right: parent.right
+                                                                    anchors.rightMargin: 19
+                                                                    anchors.verticalCenter: parent.verticalCenter
+                                                                    width: 19
+                                                                    height: 15.8
+                                                                }
+                                                            }
+
+                                                            Button {
+                                                                id: questInfoMoneyFrameSilverButton
+                                                                name: "QuestInfoMoneyFrameSilverButton"
+                                                                text: "6"
+                                                                wowParent: "QuestInfoMoneyFrame"
+                                                                anchors.right: parent.right
+                                                                anchors.verticalCenter: parent.verticalCenter
+                                                                width: 30.1
+                                                                height: 19
+
+                                                                FontString {
+                                                                    name: "QuestInfoMoneyFrameSilverButtonText"
+                                                                    text: "6"
+                                                                    wowParent: "QuestInfoMoneyFrameSilverButton"
+                                                                    anchors.right: parent.right
+                                                                    anchors.rightMargin: 19
+                                                                    anchors.verticalCenter: parent.verticalCenter
+                                                                    width: 11.1
+                                                                    height: 15.8
+                                                                }
+                                                            }
+                                                        }
                                                     }
 
                                                     Frame {
@@ -520,77 +591,6 @@ WowWindow {
                     }
                 }
             }
-        }
-    }
-
-    Ghost {
-        name: "QuestInfoMoneyFrameCopperButton"
-        x: 587.7
-        y: 414.3
-        width: 0
-        height: 0
-
-        Button {
-            name: "QuestInfoMoneyFrameGoldButton"
-            text: "42"
-            wowParent: "QuestInfoMoneyFrame"
-            anchors.right: questInfoMoneyFrameSilverButton.left
-            anchors.rightMargin: 4
-            anchors.verticalCenter: questInfoMoneyFrameSilverButton.verticalCenter
-            width: 38
-            height: 19
-
-            FontString {
-                name: "QuestInfoMoneyFrameGoldButtonText"
-                text: "42"
-                wowParent: "QuestInfoMoneyFrameGoldButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 19
-                anchors.verticalCenter: parent.verticalCenter
-                width: 19
-                height: 15.8
-            }
-        }
-
-        Button {
-            id: questInfoMoneyFrameSilverButton
-            name: "QuestInfoMoneyFrameSilverButton"
-            text: "6"
-            wowParent: "QuestInfoMoneyFrame"
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30.1
-            height: 19
-
-            FontString {
-                name: "QuestInfoMoneyFrameSilverButtonText"
-                text: "6"
-                wowParent: "QuestInfoMoneyFrameSilverButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 19
-                anchors.verticalCenter: parent.verticalCenter
-                width: 11.1
-                height: 15.8
-            }
-        }
-    }
-
-    Ghost {
-        name: "QuestLogCountTopRight"
-        x: 164.4
-        y: 48.9
-        width: 0
-        height: 0
-
-        FontString {
-            name: "QuestLogQuestCount"
-            wowParent: "QuestLogCount"
-            anchors.right: parent.left
-            anchors.rightMargin: -1
-            anchors.top: parent.bottom
-            anchors.topMargin: -3
-            width: 77.4
-            height: 10.3
         }
     }
 

@@ -663,6 +663,8 @@ Engine:NewStaticConfig("Blizzard", {
 				band = { left = { "ClassTrainerFrameFilterDropDown" } }, -- the filter in the band (modules/blizzard/trainer.lua)
 				-- the trainings, and the chosen one, on parchment, as the recipes
 				parchments = { { "ClassTrainerListScrollFrame", "parchment" }, { "ClassTrainerDetailScrollFrame", "lined", "ClassTrainerListScrollFrame" } },
+				-- the window's iron across between them (hung under the trainings: settings/positions.lua)
+				iron_bars = { 284 },
 				ink = { "ClassTrainerSkillName", "ClassTrainerSubSkillName", "ClassTrainerSkillRequirements", "ClassTrainerCostLabel",
 					"ClassTrainerSkillDescription" },
 				hide = { "ClassTrainerExpandTabLeft", "ClassTrainerExpandTabMiddle", "ClassTrainerExpandTabRight" } }, -- "All"'s tab
@@ -674,7 +676,6 @@ Engine:NewStaticConfig("Blizzard", {
 				parchments = { { "TradeSkillListScrollFrame", "parchment" }, { "TradeSkillDetailScrollFrame", "lined", "TradeSkillListScrollFrame", 6 } },
 				ink = { "TradeSkillSkillName", "TradeSkillRequirementLabel", "TradeSkillRequirementText", "TradeSkillSkillLineName",
 					"TradeSkillDescription", "TradeSkillReagentLabel" },
-				bars = { "TradeSkillRankFrame" }, -- the skill's, its rank in it
 				hide = { "TradeSkillExpandTabLeft", "TradeSkillExpandTabMiddle", "TradeSkillExpandTabRight" }, -- "All"'s tab
 				-- the window's iron across between the recipes and the chosen one
 				-- (hung under the recipes: settings/positions.lua)

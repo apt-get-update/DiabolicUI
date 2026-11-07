@@ -1377,6 +1377,26 @@ WowWindow {
             anchors.topMargin: 49
             width: 62.8
             height: 32
+
+            Ghost {
+                name: "SkillFrameExpandTabLeft"
+                x: 8
+                y: 10
+                width: 0
+                height: 0
+
+                Button {
+                    name: "SkillFrameCollapseAllButton"
+                    text: "All"
+                    wowParent: "SkillFrameExpandButtonFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: -3
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: 3
+                    width: 40
+                    height: 22
+                }
+            }
         }
 
         ScrollFrame {
@@ -1437,6 +1457,23 @@ WowWindow {
                                 width: 128
                                 height: 10.3
                             }
+                        }
+                    }
+
+                    Ghost {
+                        name: "SkillDetailCostText"
+                        x: 150
+                        y: 39.5
+                        width: 0
+                        height: 0
+
+                        FontString {
+                            name: "SkillDetailDescriptionText"
+                            wowParent: "SkillDetailScrollChildFrame"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            width: 275
+                            height: 41.1
                         }
                     }
                 }
@@ -1505,6 +1542,118 @@ WowWindow {
             width: 285
             height: 14
         }
+
+        Ghost {
+            name: "SkillRankFrame1"
+            x: 38
+            y: 94
+            width: 0
+            height: 0
+
+            StatusBar {
+                name: "SkillRankFrame2"
+                wowParent: "SkillFrame"
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                anchors.topMargin: 3
+                width: 271
+                height: 15
+
+                Button {
+                    name: "SkillRankFrame2Border"
+                    wowParent: "SkillRankFrame2"
+                    anchors.left: parent.left
+                    anchors.leftMargin: -5
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 281
+                    height: 32
+                }
+
+                FontString {
+                    name: "SkillRankFrame2SkillName"
+                    text: "Discipline"
+                    wowParent: "SkillRankFrame2"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 52.9
+                    height: 10.3
+
+                    FontString {
+                        name: "SkillRankFrame2SkillRank"
+                        wowParent: "SkillRankFrame2"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 128
+                        height: 1
+                    }
+                }
+            }
+        }
+
+        Ghost {
+            name: "SkillTypeLabel4"
+            x: 22
+            y: 140
+            width: 0
+            height: 0
+
+            Button {
+                id: skillTypeLabel5
+                name: "SkillTypeLabel5"
+                text: "Professions"
+                wowParent: "SkillFrame"
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 18
+                width: 285
+                height: 14
+            }
+
+            Button {
+                name: "SkillTypeLabel6"
+                text: "Secondary Skills"
+                wowParent: "SkillFrame"
+                anchors.left: skillTypeLabel5.left
+                anchors.verticalCenter: skillTypeLabel5.verticalCenter
+                anchors.verticalCenterOffset: 18
+                width: 285
+                height: 14
+            }
+        }
+
+        Ghost {
+            name: "SkillTypeLabel7"
+            x: 22
+            y: 194
+            width: 0
+            height: 0
+
+            Button {
+                id: skillTypeLabel8
+                name: "SkillTypeLabel8"
+                text: "Secondary Skills"
+                wowParent: "SkillFrame"
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 18
+                width: 285
+                height: 14
+            }
+
+            Button {
+                name: "SkillTypeLabel9"
+                text: "Weapon Skills"
+                wowParent: "SkillFrame"
+                anchors.left: skillTypeLabel8.left
+                anchors.verticalCenter: skillTypeLabel8.verticalCenter
+                anchors.verticalCenterOffset: 18
+                width: 285
+                height: 14
+            }
+        }
     }
 
     Frame {
@@ -1554,6 +1703,24 @@ WowWindow {
                         width: 210
                         height: 11
                     }
+
+                    Ghost {
+                        name: "TokenFrameContainerButton1Icon"
+                        x: 278
+                        y: 8.5
+                        width: 0
+                        height: 0
+
+                        FontString {
+                            name: "TokenFrameContainerButton1Count"
+                            wowParent: "TokenFrameContainerButton1"
+                            anchors.right: parent.left
+                            anchors.rightMargin: 5
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 1
+                            height: 1
+                        }
+                    }
                 }
             }
         }
@@ -1572,7 +1739,7 @@ WowWindow {
             Button {
                 id: tokenFrameMoneyFrameCopperButton
                 name: "TokenFrameMoneyFrameCopperButton"
-                text: "13"
+                text: "63"
                 wowParent: "TokenFrameMoneyFrame"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
@@ -1582,7 +1749,7 @@ WowWindow {
 
                 FontString {
                     name: "TokenFrameMoneyFrameCopperButtonText"
-                    text: "13"
+                    text: "63"
                     wowParent: "TokenFrameMoneyFrameCopperButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -1594,7 +1761,7 @@ WowWindow {
 
             Button {
                 name: "TokenFrameMoneyFrameGoldButton"
-                text: "3654"
+                text: "3653"
                 wowParent: "TokenFrameMoneyFrame"
                 anchors.right: tokenFrameMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
@@ -1604,7 +1771,7 @@ WowWindow {
 
                 FontString {
                     name: "TokenFrameMoneyFrameGoldButtonText"
-                    text: "3654"
+                    text: "3653"
                     wowParent: "TokenFrameMoneyFrameGoldButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -1617,7 +1784,7 @@ WowWindow {
             Button {
                 id: tokenFrameMoneyFrameSilverButton
                 name: "TokenFrameMoneyFrameSilverButton"
-                text: "16"
+                text: "55"
                 wowParent: "TokenFrameMoneyFrame"
                 anchors.right: tokenFrameMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
@@ -1627,7 +1794,7 @@ WowWindow {
 
                 FontString {
                     name: "TokenFrameMoneyFrameSilverButtonText"
-                    text: "16"
+                    text: "55"
                     wowParent: "TokenFrameMoneyFrameSilverButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -1636,173 +1803,6 @@ WowWindow {
                     height: 14.2
                 }
             }
-        }
-    }
-
-    Ghost {
-        name: "SkillDetailCostText"
-        x: 190
-        y: 362.5
-        width: 0
-        height: 0
-
-        FontString {
-            name: "SkillDetailDescriptionText"
-            wowParent: "SkillDetailScrollChildFrame"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 275
-            height: 41.1
-        }
-    }
-
-    Ghost {
-        name: "SkillFrameExpandTabLeft"
-        x: 97
-        y: 79
-        width: 0
-        height: 0
-
-        Button {
-            name: "SkillFrameCollapseAllButton"
-            text: "All"
-            wowParent: "SkillFrameExpandButtonFrame"
-            anchors.left: parent.right
-            anchors.leftMargin: -3
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 3
-            width: 40
-            height: 22
-        }
-    }
-
-    Ghost {
-        name: "SkillRankFrame1"
-        x: 57
-        y: 114
-        width: 0
-        height: 0
-
-        StatusBar {
-            name: "SkillRankFrame2"
-            wowParent: "SkillFrame"
-            anchors.left: parent.left
-            anchors.top: parent.bottom
-            anchors.topMargin: 3
-            width: 271
-            height: 15
-
-            Button {
-                name: "SkillRankFrame2Border"
-                wowParent: "SkillRankFrame2"
-                anchors.left: parent.left
-                anchors.leftMargin: -5
-                anchors.verticalCenter: parent.verticalCenter
-                width: 281
-                height: 32
-            }
-
-            FontString {
-                name: "SkillRankFrame2SkillName"
-                text: "Discipline"
-                wowParent: "SkillRankFrame2"
-                anchors.left: parent.left
-                anchors.leftMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                width: 52.9
-                height: 10.3
-
-                FontString {
-                    name: "SkillRankFrame2SkillRank"
-                    wowParent: "SkillRankFrame2"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 128
-                    height: 1
-                }
-            }
-        }
-    }
-
-    Ghost {
-        name: "SkillTypeLabel4"
-        x: 41
-        y: 160
-        width: 0
-        height: 0
-
-        Button {
-            id: skillTypeLabel5
-            name: "SkillTypeLabel5"
-            text: "Professions"
-            wowParent: "SkillFrame"
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 18
-            width: 285
-            height: 14
-        }
-
-        Button {
-            name: "SkillTypeLabel6"
-            text: "Secondary Skills"
-            wowParent: "SkillFrame"
-            anchors.left: skillTypeLabel5.left
-            anchors.verticalCenter: skillTypeLabel5.verticalCenter
-            anchors.verticalCenterOffset: 18
-            width: 285
-            height: 14
-        }
-    }
-
-    Ghost {
-        name: "SkillTypeLabel7"
-        x: 41
-        y: 214
-        width: 0
-        height: 0
-
-        Button {
-            id: skillTypeLabel8
-            name: "SkillTypeLabel8"
-            text: "Secondary Skills"
-            wowParent: "SkillFrame"
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 18
-            width: 285
-            height: 14
-        }
-
-        Button {
-            name: "SkillTypeLabel9"
-            text: "Weapon Skills"
-            wowParent: "SkillFrame"
-            anchors.left: skillTypeLabel8.left
-            anchors.verticalCenter: skillTypeLabel8.verticalCenter
-            anchors.verticalCenterOffset: 18
-            width: 285
-            height: 14
-        }
-    }
-
-    Ghost {
-        name: "TokenFrameContainerButton1Icon"
-        x: 323
-        y: 107.5
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TokenFrameContainerButton1Count"
-            wowParent: "TokenFrameContainerButton1"
-            anchors.right: parent.left
-            anchors.rightMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 1
-            height: 1
         }
     }
 }

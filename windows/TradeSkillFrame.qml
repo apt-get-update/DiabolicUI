@@ -15,9 +15,57 @@ WowWindow {
         anchors.left: parent.left
         anchors.leftMargin: 15
         anchors.top: parent.top
-        anchors.topMargin: 53
+        anchors.topMargin: 64
         width: 54
         height: 32
+
+        Ghost {
+            name: "TradeSkillExpandTabLeft"
+            x: 8
+            y: 16
+            width: 0
+            height: 0
+
+            Button {
+                name: "TradeSkillCollapseAllButton"
+                text: "All"
+                wowParent: "TradeSkillExpandButtonFrame"
+                anchors.left: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -3
+                width: 40
+                height: 22
+
+                FontString {
+                    name: "TradeSkillCollapseAllButtonSubText"
+                    wowParent: "TradeSkillCollapseAllButton"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 1
+                    height: 1
+                }
+
+                Ghost {
+                    name: "TradeSkillCollapseAllButtonHighlight"
+                    x: 19
+                    y: 11
+                    width: 0
+                    height: 0
+
+                    FontString {
+                        name: "TradeSkillCollapseAllButtonText"
+                        text: "All"
+                        wowParent: "TradeSkillCollapseAllButton"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 2
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.verticalCenterOffset: -1
+                        width: 270
+                        height: 13
+                    }
+                }
+            }
+        }
     }
 
     Frame {
@@ -127,12 +175,12 @@ WowWindow {
 
                 FontString {
                     name: "TradeSkillFrameTitleText"
-                    text: "First Aid"
+                    text: "Tailoring 450/450"
                     wowParent: "TradeSkillFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 79.8
+                    width: 160.4
                     height: 14.2
 
                     Button {
@@ -299,9 +347,9 @@ WowWindow {
         style: "DropDown"
         pin: "place"
         anchors.right: parent.right
-        anchors.rightMargin: 21
+        anchors.rightMargin: 78
         anchors.top: parent.top
-        anchors.topMargin: 48
+        anchors.topMargin: 27
         width: 170
         height: 32
 
@@ -385,9 +433,9 @@ WowWindow {
         anchors.right: parent.right
         anchors.rightMargin: 67
         anchors.top: parent.top
-        anchors.topMargin: 89
+        anchors.topMargin: 68
         width: 296
-        height: 93
+        height: 135
 
         ScrollFrame {
             name: "TradeSkillDetailScrollFrame"
@@ -396,9 +444,9 @@ WowWindow {
             anchors.left: parent.left
             anchors.leftMargin: -1
             anchors.top: parent.bottom
-            anchors.topMargin: 41
+            anchors.topMargin: 34
             width: 297
-            height: 164
+            height: 157
 
             Frame {
                 name: "TradeSkillDetailScrollChildFrame"
@@ -461,6 +509,45 @@ WowWindow {
                             anchors.topMargin: 7
                             width: 147
                             height: 41
+
+                            Ghost {
+                                name: "TradeSkillReagent1IconTexture"
+                                x: 39
+                                y: 39
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent1Count"
+                                    text: "0 /5"
+                                    wowParent: "TradeSkillReagent1"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 1
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 1
+                                    width: 25.3
+                                    height: 14.2
+                                }
+                            }
+
+                            Ghost {
+                                name: "TradeSkillReagent1NameFrame"
+                                x: 29
+                                y: 19.5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent1Name"
+                                    text: "Bolt of Runecloth"
+                                    wowParent: "TradeSkillReagent1"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 100
+                                    height: 36
+                                }
+                            }
                         }
 
                         Button {
@@ -470,6 +557,45 @@ WowWindow {
                             anchors.verticalCenter: tradeSkillReagent1.verticalCenter
                             width: 147
                             height: 41
+
+                            Ghost {
+                                name: "TradeSkillReagent2IconTexture"
+                                x: 39
+                                y: 39
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent2Count"
+                                    text: "0 /2"
+                                    wowParent: "TradeSkillReagent2"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 1
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 1
+                                    width: 25.3
+                                    height: 14.2
+                                }
+                            }
+
+                            Ghost {
+                                name: "TradeSkillReagent2NameFrame"
+                                x: 29
+                                y: 19.5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent2Name"
+                                    text: "Rugged Leather"
+                                    wowParent: "TradeSkillReagent2"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 100
+                                    height: 36
+                                }
+                            }
                         }
 
                         Button {
@@ -482,6 +608,45 @@ WowWindow {
                             anchors.topMargin: 6
                             width: 147
                             height: 41
+
+                            Ghost {
+                                name: "TradeSkillReagent3IconTexture"
+                                x: 39
+                                y: 39
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent3Count"
+                                    text: "0 /1"
+                                    wowParent: "TradeSkillReagent3"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 1
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 1
+                                    width: 23.7
+                                    height: 14.2
+                                }
+                            }
+
+                            Ghost {
+                                name: "TradeSkillReagent3NameFrame"
+                                x: 29
+                                y: 19.5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent3Name"
+                                    text: "Rune Thread"
+                                    wowParent: "TradeSkillReagent3"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 100
+                                    height: 36
+                                }
+                            }
                         }
 
                         Button {
@@ -491,6 +656,45 @@ WowWindow {
                             anchors.verticalCenter: tradeSkillReagent3.verticalCenter
                             width: 147
                             height: 41
+
+                            Ghost {
+                                name: "TradeSkillReagent4IconTexture"
+                                x: 39
+                                y: 39
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent4Count"
+                                    text: "0 /1"
+                                    wowParent: "TradeSkillReagent4"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 1
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 1
+                                    width: 23.7
+                                    height: 14.2
+                                }
+                            }
+
+                            Ghost {
+                                name: "TradeSkillReagent4NameFrame"
+                                x: 29
+                                y: 19.5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeSkillReagent4Name"
+                                    text: "Northern Spices"
+                                    wowParent: "TradeSkillReagent4"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 100
+                                    height: 36
+                                }
+                            }
                         }
 
                         Button {
@@ -553,14 +757,14 @@ WowWindow {
 
                 FontString {
                     name: "TradeSkillSkillName"
-                    text: "Heavy Frostweave Bandage"
+                    text: "Runecloth Bag"
                     wowParent: "TradeSkillDetailScrollChildFrame"
                     anchors.left: parent.left
                     anchors.leftMargin: 50
                     anchors.top: parent.top
                     anchors.topMargin: 5
                     width: 146
-                    height: 23.7
+                    height: 11.9
 
                     FontString {
                         name: "TradeSkillRequirementLabel"
@@ -601,7 +805,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -12
                 width: 361
-                height: 150
+                height: 175
             }
 
             Frame {
@@ -612,7 +816,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -10
                 width: 334
-                height: 146
+                height: 171
             }
 
             Slider {
@@ -624,7 +828,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 16
                 width: 16
-                height: 100
+                height: 125
 
                 Button {
                     name: "TradeSkillDetailScrollFrameScrollBarScrollDownButton"
@@ -652,7 +856,7 @@ WowWindow {
                         anchors.top: parent.top
                         anchors.topMargin: -1
                         width: 18
-                        height: 134
+                        height: 159
                     }
                 }
             }
@@ -665,7 +869,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.leftMargin: -30
             anchors.top: parent.bottom
-            anchors.topMargin: 13.5
+            anchors.topMargin: 6.5
             width: 392
             height: 16
         }
@@ -678,7 +882,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -6
             width: 360
-            height: 137
+            height: 147
         }
 
         Frame {
@@ -689,7 +893,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -4
             width: 334
-            height: 133
+            height: 143
         }
 
         Slider {
@@ -701,7 +905,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 16
             width: 16
-            height: 93
+            height: 103
 
             Button {
                 name: "TradeSkillListScrollFrameScrollBarScrollDownButton"
@@ -729,7 +933,7 @@ WowWindow {
                     anchors.top: parent.top
                     anchors.topMargin: -1
                     width: 18
-                    height: 127
+                    height: 137
                 }
             }
         }
@@ -739,9 +943,9 @@ WowWindow {
             wowParent: "TradeSkillListScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.topMargin: -144
+            anchors.topMargin: -288
             width: 300
-            height: 272
+            height: 4192
         }
     }
 
@@ -773,13 +977,13 @@ WowWindow {
 
     Button {
         name: "TradeSkillSkill1"
-        text: " Heavy Silk Bandage"
+        text: " Frostweave Bag"
         wowParent: "TradeSkillFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 22
         anchors.top: parent.top
-        anchors.topMargin: 89
+        anchors.topMargin: 88
         width: 293
         height: 16
 
@@ -791,246 +995,42 @@ WowWindow {
             width: 1
             height: 1
         }
-    }
 
-    Ghost {
-        name: "TradeSkillCollapseAllButtonHighlight"
-        x: 42
-        y: 66
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillCollapseAllButtonText"
-            text: "All"
-            wowParent: "TradeSkillCollapseAllButton"
-            anchors.left: parent.right
-            anchors.leftMargin: 2
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
-            width: 270
-            height: 13
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillExpandTabLeft"
-        x: 23
-        y: 69
-        width: 0
-        height: 0
-
-        Button {
-            name: "TradeSkillCollapseAllButton"
-            text: "All"
-            wowParent: "TradeSkillExpandButtonFrame"
-            anchors.left: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -3
-            width: 40
-            height: 22
+        Ghost {
+            name: "TradeSkillSkill1Highlight"
+            x: 19
+            y: 8
+            width: 0
+            height: 0
 
             FontString {
-                name: "TradeSkillCollapseAllButtonSubText"
-                wowParent: "TradeSkillCollapseAllButton"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                width: 1
-                height: 1
-            }
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent1IconTexture"
-        x: 62
-        y: 361.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent1Count"
-            text: "0 /2"
-            wowParent: "TradeSkillReagent1"
-            anchors.right: parent.right
-            anchors.rightMargin: 1
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 1
-            width: 25.3
-            height: 14.2
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent1NameFrame"
-        x: 52
-        y: 341.7
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent1Name"
-            text: "Frostweave Cloth"
-            wowParent: "TradeSkillReagent1"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 100
-            height: 36
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent2IconTexture"
-        x: 209
-        y: 385.8
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent2Count"
-            text: "0 /6"
-            wowParent: "TradeSkillReagent2"
-            anchors.right: parent.right
-            anchors.rightMargin: 1
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 1
-            width: 25.3
-            height: 14.2
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent2NameFrame"
-        x: 199
-        y: 366.3
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent2Name"
-            text: "Dream Shard"
-            wowParent: "TradeSkillReagent2"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 100
-            height: 36
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent3IconTexture"
-        x: 62
-        y: 432.8
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent3Count"
-            text: "0 /6"
-            wowParent: "TradeSkillReagent3"
-            anchors.right: parent.right
-            anchors.rightMargin: 1
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 1
-            width: 25.3
-            height: 14.2
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent3NameFrame"
-        x: 52
-        y: 413.3
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent3Name"
-            text: "Abyss Crystal"
-            wowParent: "TradeSkillReagent3"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 100
-            height: 36
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent4IconTexture"
-        x: 209
-        y: 354.8
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent4Count"
-            text: "0 /1"
-            wowParent: "TradeSkillReagent4"
-            anchors.right: parent.right
-            anchors.rightMargin: 1
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 1
-            width: 23.7
-            height: 14.2
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillReagent4NameFrame"
-        x: 199
-        y: 335.3
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillReagent4Name"
-            text: "Northern Spices"
-            wowParent: "TradeSkillReagent4"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 100
-            height: 36
-        }
-    }
-
-    Ghost {
-        name: "TradeSkillSkill1Highlight"
-        x: 41
-        y: 97
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeSkillSkill1Text"
-            text: " Heavy Silk Bandage"
-            wowParent: "TradeSkillSkill1"
-            anchors.left: parent.right
-            anchors.leftMargin: 2
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
-            width: 275
-            height: 13
-
-            FontString {
-                name: "TradeSkillSkill1Count"
+                name: "TradeSkillSkill1Text"
+                text: " Frostweave Bag"
                 wowParent: "TradeSkillSkill1"
                 anchors.left: parent.right
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
-                width: 1
+                anchors.verticalCenterOffset: -1
+                width: 275
                 height: 13
+
+                FontString {
+                    name: "TradeSkillSkill1Count"
+                    wowParent: "TradeSkillSkill1"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 1
+                    height: 13
+                }
             }
         }
     }
 
     Ghost {
-        name: "TradeSkillSkill2"
+        name: "TradeSkillSkill5"
         x: 22
-        y: 105
+        y: 152
         width: 293
         height: 16
 

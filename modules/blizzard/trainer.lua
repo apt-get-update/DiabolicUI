@@ -48,7 +48,7 @@ end
 -- others hidden. (Blizzard sets its count as it opens, by the trainer's kind.)
 local ROWS = 11
 local FitList = function()
-	local rows = kit:RowsFitting(_G.ClassTrainerListScrollFrame, _G.CLASS_TRAINER_SKILL_HEIGHT, ROWS)
+	local rows = kit:RowsFitting(_G.ClassTrainerListScrollFrame, _G.CLASS_TRAINER_SKILL_HEIGHT, ROWS, _G.ClassTrainerSkill1)
 	_G.CLASS_TRAINER_SKILLS_DISPLAYED = rows
 	for i = rows + 1, ROWS do
 		_G["ClassTrainerSkill" .. i]:Hide()
@@ -87,7 +87,13 @@ Module.StyleTrainer = function(self)
 	kit:LightRow(_G.ClassTrainerSkillHighlight) -- the chosen one in an orange box
 	kit:StyleExpanderRows("ClassTrainerSkill", ROWS) -- (Blizzard shows 10 or 11)
 	kit:StyleExpanders(_G.ClassTrainerCollapseAllButton)
-	kit:StyleLabelButton(_G.ClassTrainerCollapseAllButton) -- (its All)
+	-- its All on the list's parchment, in the headers' ink
+	local all = CreateFont("DiabolicUITrainerAll")
+	all:SetFont(_G.GameFontNormalLeft:GetFont())
+	all:SetTextColor(unpack(config.inks.header))
+	all:SetShadowColor(0, 0, 0, 0)
+	_G.ClassTrainerCollapseAllButton:SetNormalFontObject(all)
+	_G.ClassTrainerCollapseAllButton:SetHighlightFontObject(all)
 	-- the trainer's words in the middle of their panel
 	local greeting = _G.ClassTrainerGreetingText
 	greeting:SetJustifyH("CENTER")

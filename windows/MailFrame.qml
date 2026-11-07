@@ -1641,23 +1641,23 @@ WowWindow {
             width: 224
             height: 14
         }
-    }
 
-    Ghost {
-        name: "SendMailHorizontalBarLeft2"
-        x: 184.5
-        y: 291
-        width: 0
-        height: 0
+        Ghost {
+            name: "SendMailHorizontalBarLeft2"
+            x: 184.5
+            y: 291
+            width: 0
+            height: 0
 
-        Frame {
-            name: "SendMailFrameDiabolicAttachments"
-            wowParent: "SendMailFrame"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            width: 319
-            height: 63
+            Frame {
+                name: "SendMailFrameDiabolicAttachments"
+                wowParent: "SendMailFrame"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 1
+                width: 319
+                height: 63
+            }
         }
     }
 }

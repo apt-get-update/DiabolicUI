@@ -164,6 +164,50 @@ WowWindow {
                     }
                 }
             }
+
+            Ghost {
+                name: "Atr_HeadingsBarMiddle"
+                x: 0
+                y: 32
+                width: 0
+                height: 0
+
+                FontString {
+                    name: "Atr_Col1_Heading"
+                    text: "Item Price"
+                    wowParent: "Atr_HeadingsBar"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 100
+                    height: 10.1
+                }
+
+                FontString {
+                    name: "Atr_Col3_Heading"
+                    text: "Current Auctions"
+                    wowParent: "Atr_HeadingsBar"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 205
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 86.2
+                    height: 10.1
+                }
+
+                FontString {
+                    name: "Atr_Col4_Heading"
+                    text: "Stack Price"
+                    wowParent: "Atr_HeadingsBar"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 500
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 56
+                    height: 10.1
+                }
+            }
         }
 
         Frame {
@@ -1088,6 +1132,23 @@ WowWindow {
             width: 114.2
             height: 12.2
         }
+
+        Ghost {
+            name: "Atr_Hilite1"
+            x: 624
+            y: 45
+            width: 0
+            height: 0
+
+            Button {
+                name: "Atr_Hilite1_btn"
+                wowParent: "Atr_Main_Panel"
+                anchors.right: parent.right
+                anchors.top: parent.top
+                width: 610
+                height: 116
+            }
+        }
     }
 
     Button {
@@ -1187,6 +1248,58 @@ WowWindow {
                 anchors.verticalCenterOffset: 1
                 width: 13
                 height: 13
+
+                Ghost {
+                    name: "AuctionsDepositMoneyFrameCopperButton"
+                    x: 55.2
+                    y: 3.7
+                    width: 0
+                    height: 0
+
+                    Button {
+                        name: "AuctionsDepositMoneyFrameGoldButton"
+                        text: "1"
+                        wowParent: "AuctionsDepositMoneyFrame"
+                        anchors.right: auctionsDepositMoneyFrameSilverButton.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: auctionsDepositMoneyFrameSilverButton.verticalCenter
+                        width: 20.9
+                        height: 13
+
+                        FontString {
+                            name: "AuctionsDepositMoneyFrameGoldButtonText"
+                            text: "1"
+                            wowParent: "AuctionsDepositMoneyFrameGoldButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 7.9
+                            height: 13.6
+                        }
+                    }
+
+                    Button {
+                        id: auctionsDepositMoneyFrameSilverButton
+                        name: "AuctionsDepositMoneyFrameSilverButton"
+                        text: "65"
+                        wowParent: "AuctionsDepositMoneyFrame"
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 29.5
+                        height: 13
+
+                        FontString {
+                            name: "AuctionsDepositMoneyFrameSilverButtonText"
+                            text: "65"
+                            wowParent: "AuctionsDepositMoneyFrameSilverButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 16.5
+                            height: 13.6
+                        }
+                    }
+                }
             }
         }
 
@@ -1746,6 +1859,26 @@ WowWindow {
                             width: 36.6
                             height: 10.1
                         }
+                    }
+                }
+
+                Ghost {
+                    name: "Atr_DropDownSLMiddle"
+                    x: 100
+                    y: 15
+                    width: 0
+                    height: 0
+
+                    FontString {
+                        name: "Atr_DropDownSLText"
+                        text: "Recent Searches"
+                        wowParent: "Atr_DropDownSL"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -5
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.verticalCenterOffset: -2
+                        width: 125
+                        height: 10
                     }
                 }
             }
@@ -3638,87 +3771,6 @@ WowWindow {
     }
 
     Ghost {
-        name: "Atr_DropDownSLMiddle"
-        x: 94
-        y: 19
-        width: 0
-        height: 0
-
-        FontString {
-            name: "Atr_DropDownSLText"
-            text: "Recent Searches"
-            wowParent: "Atr_DropDownSL"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -5
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -2
-            width: 125
-            height: 10
-        }
-    }
-
-    Ghost {
-        name: "Atr_HeadingsBarMiddle"
-        x: 226
-        y: 170
-        width: 0
-        height: 0
-
-        FontString {
-            name: "Atr_Col1_Heading"
-            text: "Item Price"
-            wowParent: "Atr_HeadingsBar"
-            anchors.left: parent.left
-            anchors.leftMargin: 40
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
-            width: 100
-            height: 10.1
-        }
-
-        FontString {
-            name: "Atr_Col3_Heading"
-            text: "Current Auctions"
-            wowParent: "Atr_HeadingsBar"
-            anchors.left: parent.left
-            anchors.leftMargin: 205
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
-            width: 86.2
-            height: 10.1
-        }
-
-        FontString {
-            name: "Atr_Col4_Heading"
-            text: "Stack Price"
-            wowParent: "Atr_HeadingsBar"
-            anchors.left: parent.left
-            anchors.leftMargin: 500
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
-            width: 56
-            height: 10.1
-        }
-    }
-
-    Ghost {
-        name: "Atr_Hilite1"
-        x: 834
-        y: 45
-        width: 0
-        height: 0
-
-        Button {
-            name: "Atr_Hilite1_btn"
-            wowParent: "Atr_Main_Panel"
-            anchors.right: parent.right
-            anchors.top: parent.top
-            width: 610
-            height: 116
-        }
-    }
-
-    Ghost {
         name: "AuctionsButton2BuyoutFrameMoneySilverButton"
         x: 729
         y: 124
@@ -4033,58 +4085,6 @@ WowWindow {
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
                 width: 9.4
-                height: 13.6
-            }
-        }
-    }
-
-    Ghost {
-        name: "AuctionsDepositMoneyFrameCopperButton"
-        x: 119.5
-        y: 368.1
-        width: 0
-        height: 0
-
-        Button {
-            name: "AuctionsDepositMoneyFrameGoldButton"
-            text: "1"
-            wowParent: "AuctionsDepositMoneyFrame"
-            anchors.right: auctionsDepositMoneyFrameSilverButton.left
-            anchors.rightMargin: 4
-            anchors.verticalCenter: auctionsDepositMoneyFrameSilverButton.verticalCenter
-            width: 20.9
-            height: 13
-
-            FontString {
-                name: "AuctionsDepositMoneyFrameGoldButtonText"
-                text: "1"
-                wowParent: "AuctionsDepositMoneyFrameGoldButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 7.9
-                height: 13.6
-            }
-        }
-
-        Button {
-            id: auctionsDepositMoneyFrameSilverButton
-            name: "AuctionsDepositMoneyFrameSilverButton"
-            text: "65"
-            wowParent: "AuctionsDepositMoneyFrame"
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            width: 29.5
-            height: 13
-
-            FontString {
-                name: "AuctionsDepositMoneyFrameSilverButtonText"
-                text: "65"
-                wowParent: "AuctionsDepositMoneyFrameSilverButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 16.5
                 height: 13.6
             }
         }

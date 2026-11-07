@@ -27,6 +27,7 @@ EDITS = "tools/edits.lua"
 SAMPLE_EDITS = "tools/edits-sample.lua"
 UNSAVED = "tools/editor-unsaved.json"
 SAVED = "../../../WTF/Account/*/SavedVariables/DiabolicUI.lua"
+WINDOWS = "windows"
 QUALITY = 2  # the art's pixels per unit
 
 
@@ -236,17 +237,28 @@ class Backend(QObject):
         self.sample_process = None
         self.engine = None
         self.message = self.run()
+        # a new scan, or a window file changed out of the editor
         self.watcher = QFileSystemWatcher(self)
-        self.seen = self.stamp()
         for path in glob.glob(SAVED):
             self.watcher.addPath(os.path.dirname(path))
+        self.watcher.addPath(WINDOWS)
+        self.watchFiles()
         self.wait = QTimer(self, singleShot=True, interval=1500, timeout=self.written)
         self.watcher.directoryChanged.connect(lambda _: self.wait.start())
+        self.watcher.fileChanged.connect(lambda _: self.wait.start())
+
+    def watchFiles(self):
+        # (a file written by renaming a new one over it is watched again)
+        new = set(glob.glob(WINDOWS + "/*.qml")) - set(self.watcher.files())
+        if new:
+            self.watcher.addPaths(sorted(new))
 
     def stamp(self):
-        return max((os.path.getmtime(p) for p in glob.glob(SAVED)), default=0)
+        files = glob.glob(SAVED) + glob.glob(WINDOWS + "/*.qml")
+        return (max((os.path.getmtime(p) for p in files), default=0), len(files))
 
     def written(self):
+        self.watchFiles()
         if self.stamp() != self.seen:
             self.seen = self.stamp()
             self.scanned.emit()
@@ -259,6 +271,7 @@ class Backend(QObject):
             return "Not saved: " + done.stderr.strip().splitlines()[0]
         with open(LAYOUT, encoding="utf-8") as file:
             self.layout = json.load(file)
+        self.seen = self.stamp()  # (what it wrote itself isn't news)
         self.generation += 1
         return done.stdout.strip()
 

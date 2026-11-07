@@ -139,6 +139,76 @@ WowWindow {
                         height: 26
                     }
                 }
+
+                Ghost {
+                    name: "MerchantBuyBackItemNameFrame"
+                    x: 53.4
+                    y: 61.4
+                    width: 0
+                    height: 0
+
+                    Frame {
+                        name: "MerchantBuyBackItemMoneyFrame"
+                        wowParent: "MerchantBuyBackItem"
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 25
+                        width: 69.1
+                        height: 13
+
+                        Ghost {
+                            name: "MerchantBuyBackItemMoneyFrameCopperButton"
+                            x: 56.1
+                            y: 6.5
+                            width: 0
+                            height: 0
+
+                            Button {
+                                name: "MerchantBuyBackItemMoneyFrameGoldButton"
+                                text: "1"
+                                wowParent: "MerchantBuyBackItemMoneyFrame"
+                                anchors.right: merchantBuyBackItemMoneyFrameSilverButton.left
+                                anchors.rightMargin: 4
+                                anchors.verticalCenter: merchantBuyBackItemMoneyFrameSilverButton.verticalCenter
+                                width: 21.7
+                                height: 13
+
+                                FontString {
+                                    name: "MerchantBuyBackItemMoneyFrameGoldButtonText"
+                                    text: "1"
+                                    wowParent: "MerchantBuyBackItemMoneyFrameGoldButton"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 13
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 8.7
+                                    height: 14.2
+                                }
+                            }
+
+                            Button {
+                                id: merchantBuyBackItemMoneyFrameSilverButton
+                                name: "MerchantBuyBackItemMoneyFrameSilverButton"
+                                text: "10"
+                                wowParent: "MerchantBuyBackItemMoneyFrame"
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 30.4
+                                height: 13
+
+                                FontString {
+                                    name: "MerchantBuyBackItemMoneyFrameSilverButtonText"
+                                    text: "10"
+                                    wowParent: "MerchantBuyBackItemMoneyFrameSilverButton"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 13
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 17.4
+                                    height: 14.2
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             Frame {
@@ -336,6 +406,70 @@ WowWindow {
                     height: 26
                 }
             }
+
+            Ghost {
+                name: "MerchantItem1NameFrame"
+                x: 54.1
+                y: 69.1
+                width: 0
+                height: 0
+
+                Frame {
+                    name: "MerchantItem1MoneyFrame"
+                    wowParent: "MerchantItem1"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 2
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 31
+                    width: 43.4
+                    height: 13
+
+                    Button {
+                        id: merchantItem1MoneyFrameCopperButton
+                        name: "MerchantItem1MoneyFrameCopperButton"
+                        text: "20"
+                        wowParent: "MerchantItem1MoneyFrame"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 30.4
+                        height: 13
+
+                        FontString {
+                            name: "MerchantItem1MoneyFrameCopperButtonText"
+                            text: "20"
+                            wowParent: "MerchantItem1MoneyFrameCopperButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 17.4
+                            height: 14.2
+                        }
+                    }
+
+                    Button {
+                        name: "MerchantItem1MoneyFrameSilverButton"
+                        text: "41"
+                        wowParent: "MerchantItem1MoneyFrame"
+                        anchors.right: merchantItem1MoneyFrameCopperButton.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: merchantItem1MoneyFrameCopperButton.verticalCenter
+                        width: 28.8
+                        height: 13
+
+                        FontString {
+                            name: "MerchantItem1MoneyFrameSilverButtonText"
+                            text: "41"
+                            wowParent: "MerchantItem1MoneyFrameSilverButton"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 15.8
+                            height: 14.2
+                        }
+                    }
+                }
+            }
         }
 
         Frame {
@@ -515,140 +649,6 @@ WowWindow {
         anchors.bottomMargin: 103
         width: 67.2
         height: 10.3
-    }
-
-    Ghost {
-        name: "MerchantBuyBackItemMoneyFrameCopperButton"
-        x: 148.7
-        y: 427.7
-        width: 0
-        height: 0
-
-        Button {
-            name: "MerchantBuyBackItemMoneyFrameGoldButton"
-            text: "1"
-            wowParent: "MerchantBuyBackItemMoneyFrame"
-            anchors.right: merchantBuyBackItemMoneyFrameSilverButton.left
-            anchors.rightMargin: 4
-            anchors.verticalCenter: merchantBuyBackItemMoneyFrameSilverButton.verticalCenter
-            width: 21.7
-            height: 13
-
-            FontString {
-                name: "MerchantBuyBackItemMoneyFrameGoldButtonText"
-                text: "1"
-                wowParent: "MerchantBuyBackItemMoneyFrameGoldButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 8.7
-                height: 14.2
-            }
-        }
-
-        Button {
-            id: merchantBuyBackItemMoneyFrameSilverButton
-            name: "MerchantBuyBackItemMoneyFrameSilverButton"
-            text: "10"
-            wowParent: "MerchantBuyBackItemMoneyFrame"
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30.4
-            height: 13
-
-            FontString {
-                name: "MerchantBuyBackItemMoneyFrameSilverButtonText"
-                text: "10"
-                wowParent: "MerchantBuyBackItemMoneyFrameSilverButton"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 17.4
-                height: 14.2
-            }
-        }
-    }
-
-    Ghost {
-        name: "MerchantBuyBackItemNameFrame"
-        x: 92.6
-        y: 459.2
-        width: 0
-        height: 0
-
-        Frame {
-            name: "MerchantBuyBackItemMoneyFrame"
-            wowParent: "MerchantBuyBackItem"
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 25
-            width: 69.1
-            height: 13
-        }
-    }
-
-    Ghost {
-        name: "MerchantItem1NameFrame"
-        x: 93.4
-        y: 105.1
-        width: 0
-        height: 0
-
-        Frame {
-            name: "MerchantItem1MoneyFrame"
-            wowParent: "MerchantItem1"
-            anchors.left: parent.left
-            anchors.leftMargin: 2
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 31
-            width: 43.4
-            height: 13
-
-            Button {
-                id: merchantItem1MoneyFrameCopperButton
-                name: "MerchantItem1MoneyFrameCopperButton"
-                text: "20"
-                wowParent: "MerchantItem1MoneyFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30.4
-                height: 13
-
-                FontString {
-                    name: "MerchantItem1MoneyFrameCopperButtonText"
-                    text: "20"
-                    wowParent: "MerchantItem1MoneyFrameCopperButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
-                    height: 14.2
-                }
-            }
-
-            Button {
-                name: "MerchantItem1MoneyFrameSilverButton"
-                text: "41"
-                wowParent: "MerchantItem1MoneyFrame"
-                anchors.right: merchantItem1MoneyFrameCopperButton.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: merchantItem1MoneyFrameCopperButton.verticalCenter
-                width: 28.8
-                height: 13
-
-                FontString {
-                    name: "MerchantItem1MoneyFrameSilverButtonText"
-                    text: "41"
-                    wowParent: "MerchantItem1MoneyFrameSilverButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 15.8
-                    height: 14.2
-                }
-            }
-        }
     }
 
     Ghost {

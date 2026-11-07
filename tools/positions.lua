@@ -165,7 +165,7 @@ local ReadWindow = function(path)
 			else
 				local what = KINDS[value] and "Part" or value
 				if ((what ~= "Part") and (what ~= "Ghost") and (what ~= "WowRow"))
-					or (block.what == "WowRow" and (what ~= "Part")) or ((what == "Ghost") and (block ~= window)) then
+					or (block.what == "WowRow" and (what ~= "Part")) or ((what == "Ghost") and (block ~= window) and (block.what ~= "Part")) then
 					Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
 				end
 				open[#open + 1] = { notes = (#notes > 0) and notes or nil, anchors = {}, margins = {}, what = what, over = block,
@@ -193,7 +193,9 @@ local ReadWindow = function(path)
 				elseif (block.what == "WowRow") then
 					window.rows[#window.rows + 1] = block
 				else
-					window.ghosts[block.name] = { block.x, block.y, block.width, block.height }
+					-- (from the top left of what it's in)
+					window.ghosts[block.name] = { block.x, block.y, block.width, block.height,
+						on = (block.over == window) and window.name or block.over.name }
 				end
 			end
 		elseif (kind == "note") then
@@ -607,7 +609,8 @@ end
 
 -- Where a frame that's in no part of this window is, in its coordinates
 -- (from its top left, y down), going by what's placed on it: it stands in
--- for it in the file (a "Ghost").
+-- for it in the file (a "Ghost"). With nothing to go by, its file's, and what
+-- that has it in.
 local GhostRect = function(window, name)
 	local root = window.seen and window.seen.rect
 	-- (a part only for the preview: where it was seen)
@@ -636,9 +639,10 @@ local GhostRect = function(window, name)
 	end
 	local x, width = Span("left", "horizontalCenter", "right")
 	local y, height = Span("top", "verticalCenter", "bottom")
-	-- (nothing to go by: where its file has it)
+	-- (nothing to go by: where its file has it, in what it has it in)
 	if (not next(spots.left)) and (not next(spots.horizontalCenter)) and (not next(spots.right)) and window.ghosts and window.ghosts[name] then
-		return unpack(window.ghosts[name])
+		local ghost = window.ghosts[name]
+		return ghost[1], ghost[2], ghost[3], ghost[4], ghost.on
 	end
 	return x, y, width, height
 end
@@ -891,7 +895,8 @@ local WriteRow = function(out, row, window, kids, indent)
 	out[#out + 1] = indent .. "}"
 end
 
--- What's placed on something, in its block: its parts by name, then its rows.
+-- What's placed on something, in its block: its parts by name, its rows, then
+-- the Ghosts in it.
 WriteKids = function(out, these, kids, indent)
 	for _, part in ipairs(these and these.parts or {}) do
 		out[#out + 1] = ""
@@ -900,6 +905,16 @@ WriteKids = function(out, these, kids, indent)
 	for _, row in ipairs(these and these.rows or {}) do
 		out[#out + 1] = ""
 		WriteRow(out, row, these.window, kids, indent)
+	end
+	for _, ghost in ipairs(these and these.ghosts or {}) do
+		out[#out + 1] = ""
+		out[#out + 1] = indent .. "Ghost {"
+		for _, line in ipairs({ "name: " .. Quote(ghost.name), "x: " .. Number(ghost.x), "y: " .. Number(ghost.y),
+			"width: " .. Number(ghost.width), "height: " .. Number(ghost.height) }) do
+			out[#out + 1] = indent .. "    " .. line
+		end
+		WriteKids(out, kids[ghost.name], kids, indent .. "    ")
+		out[#out + 1] = indent .. "}"
 	end
 end
 
@@ -974,8 +989,47 @@ local WriteWindow = function(window)
 	end
 	local kids = {}
 	local Into = function(on, kind, item)
-		kids[on] = kids[on] or { parts = {}, rows = {}, window = window }
+		kids[on] = kids[on] or { parts = {}, rows = {}, ghosts = {}, window = window }
 		table.insert(kids[on][kind], item)
+	end
+	-- A Ghost in the part what's placed on it is in (one of that frame's
+	-- textures), from that part's top left: it moves with it. Else in the window.
+	local root = window.seen and window.seen.rect
+	for _, name in ipairs(Sorted(ghosts)) do
+		local x, y, w, h, on = GhostRect(window, name)
+		if (not on) then
+			local Owner = function(part)
+				on = ((on == nil) or (on == part.wowParent)) and part.wowParent or false
+			end
+			for _, partName in ipairs(Sorted(window.parts)) do
+				local part = window.parts[partName]
+				if inFile[partName] and (not inRow[partName]) and part.place and (part.place[2] == name) then
+					Owner(part)
+				end
+			end
+			for _, row in ipairs(window.rows or {}) do
+				if (row.on == name) then
+					for _, member in ipairs(row.members) do
+						Owner(window.parts[member])
+					end
+				end
+			end
+			-- (a part in the file, not in what's on this Ghost)
+			local up, walked = on, {}
+			while up and (up ~= name) and (not walked[up]) and (not loose[up]) do
+				walked[up], up = true, Over(up)
+			end
+			local owner = on and window.parts[on]
+			local rect = owner and owner.seen and owner.seen.rect
+			if root and rect and inFile[on] and (not inRow[on]) and (up ~= name) then
+				x, y = x - (rect[1] - root[1]), y - ((root[2] + root[4]) - (rect[2] + rect[4]))
+			else
+				on = window.name
+			end
+		elseif (on ~= window.name) and ((not inFile[on]) or inRow[on]) then
+			on = window.name
+		end
+		Into(on, "ghosts", { name = name, x = x, y = y, width = w, height = h })
 	end
 	for _, name in ipairs(Sorted(window.parts)) do
 		if inFile[name] and (not inRow[name]) then
@@ -1003,16 +1057,6 @@ local WriteWindow = function(window)
 		"    name: " .. Quote(window.name),
 		"    width: " .. Number(width), "    height: " .. Number(height) }
 	WriteKids(out, kids[window.name], kids, "    ")
-	for _, name in ipairs(Sorted(ghosts)) do
-		local x, y, w, h = GhostRect(window, name)
-		out[#out + 1] = ""
-		out[#out + 1] = "    Ghost {"
-		for _, line in ipairs({ "name: " .. Quote(name), "x: " .. Number(x), "y: " .. Number(y), "width: " .. Number(w), "height: " .. Number(h) }) do
-			out[#out + 1] = "        " .. line
-		end
-		WriteKids(out, kids[name], kids, "        ")
-		out[#out + 1] = "    }"
-	end
 	out[#out + 1] = "}\n"
 	local path = DIR .. "/" .. window.name:gsub("[^%w_]", "_") .. ".qml"
 	local written = assert(io.open(path, "w"))

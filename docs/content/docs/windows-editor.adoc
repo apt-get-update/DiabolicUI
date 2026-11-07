@@ -31,7 +31,7 @@ flowchart LR
   auction house's, the vendor's and the guild bank's tabs turn by themselves. It reports in a chat
   tab named Layout.
 . *In the editor:* pick a window at the top, a tab under it, and change what you want. It reads a
-  new scan by itself. *Still to scan* on the right says what's missing.
+  new scan by itself, and a window file changed outside it. *Still to scan* on the right says what's missing.
 . *Ctrl+S*, then `/reload` in game.
 
 Rescan when a window looks out of date in the editor: its art and texts come from the last scan.
@@ -117,7 +117,8 @@ Button {
 
 Then run `lua5.1 tools/positions.lua`. It says what it can't read, and writes
 `settings/positions.lua` for the game: don't change that one. Plain values only, anchors on
-`parent` or an `id`. A comment over a part stays.
+`parent` or an `id`. A comment over a part stays. A `Ghost` stands for a texture something hangs
+on (the trainer's "All" on its tab): it's in the part it belongs to, and moves with it.
 
 == What it can't show
 

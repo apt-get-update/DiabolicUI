@@ -340,10 +340,136 @@ WowWindow {
                                     width: 37
                                     height: 37
                                 }
+
+                                Ghost {
+                                    name: "TradePlayerItem7NameFrame"
+                                    x: 31
+                                    y: 19
+                                    width: 0
+                                    height: 0
+
+                                    FontString {
+                                        name: "TradePlayerItem7Name"
+                                        wowParent: "TradePlayerItem7"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 90
+                                        height: 30
+                                    }
+                                }
+                            }
+
+                            Ghost {
+                                name: "TradePlayerItem6NameFrame"
+                                x: 31
+                                y: 19
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradePlayerItem6Name"
+                                    wowParent: "TradePlayerItem6"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 90
+                                    height: 30
+                                }
+                            }
+                        }
+
+                        Ghost {
+                            name: "TradePlayerItem5NameFrame"
+                            x: 31
+                            y: 19
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "TradePlayerItem5Name"
+                                wowParent: "TradePlayerItem5"
+                                anchors.left: parent.left
+                                anchors.leftMargin: 15
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 90
+                                height: 30
                             }
                         }
                     }
+
+                    Ghost {
+                        name: "TradePlayerItem4NameFrame"
+                        x: 31
+                        y: 19
+                        width: 0
+                        height: 0
+
+                        FontString {
+                            name: "TradePlayerItem4Name"
+                            wowParent: "TradePlayerItem4"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 90
+                            height: 30
+                        }
+                    }
                 }
+
+                Ghost {
+                    name: "TradePlayerItem3NameFrame"
+                    x: 31
+                    y: 19
+                    width: 0
+                    height: 0
+
+                    FontString {
+                        name: "TradePlayerItem3Name"
+                        wowParent: "TradePlayerItem3"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 90
+                        height: 30
+                    }
+                }
+            }
+
+            Ghost {
+                name: "TradePlayerItem2NameFrame"
+                x: 31
+                y: 19
+                width: 0
+                height: 0
+
+                FontString {
+                    name: "TradePlayerItem2Name"
+                    wowParent: "TradePlayerItem2"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 90
+                    height: 30
+                }
+            }
+        }
+
+        Ghost {
+            name: "TradePlayerItem1NameFrame"
+            x: 31
+            y: 19
+            width: 0
+            height: 0
+
+            FontString {
+                name: "TradePlayerItem1Name"
+                wowParent: "TradePlayerItem1"
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                anchors.verticalCenter: parent.verticalCenter
+                width: 90
+                height: 30
             }
         }
     }
@@ -486,10 +612,136 @@ WowWindow {
                                     width: 37
                                     height: 37
                                 }
+
+                                Ghost {
+                                    name: "TradeRecipientItem7NameFrame"
+                                    x: 31
+                                    y: 19
+                                    width: 0
+                                    height: 0
+
+                                    FontString {
+                                        name: "TradeRecipientItem7Name"
+                                        wowParent: "TradeRecipientItem7"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 90
+                                        height: 30
+                                    }
+                                }
+                            }
+
+                            Ghost {
+                                name: "TradeRecipientItem6NameFrame"
+                                x: 31
+                                y: 19
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "TradeRecipientItem6Name"
+                                    wowParent: "TradeRecipientItem6"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 90
+                                    height: 30
+                                }
+                            }
+                        }
+
+                        Ghost {
+                            name: "TradeRecipientItem5NameFrame"
+                            x: 31
+                            y: 19
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "TradeRecipientItem5Name"
+                                wowParent: "TradeRecipientItem5"
+                                anchors.left: parent.left
+                                anchors.leftMargin: 15
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 90
+                                height: 30
                             }
                         }
                     }
+
+                    Ghost {
+                        name: "TradeRecipientItem4NameFrame"
+                        x: 31
+                        y: 19
+                        width: 0
+                        height: 0
+
+                        FontString {
+                            name: "TradeRecipientItem4Name"
+                            wowParent: "TradeRecipientItem4"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 90
+                            height: 30
+                        }
+                    }
                 }
+
+                Ghost {
+                    name: "TradeRecipientItem3NameFrame"
+                    x: 31
+                    y: 19
+                    width: 0
+                    height: 0
+
+                    FontString {
+                        name: "TradeRecipientItem3Name"
+                        wowParent: "TradeRecipientItem3"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 90
+                        height: 30
+                    }
+                }
+            }
+
+            Ghost {
+                name: "TradeRecipientItem2NameFrame"
+                x: 31
+                y: 19
+                width: 0
+                height: 0
+
+                FontString {
+                    name: "TradeRecipientItem2Name"
+                    wowParent: "TradeRecipientItem2"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 90
+                    height: 30
+                }
+            }
+        }
+
+        Ghost {
+            name: "TradeRecipientItem1NameFrame"
+            x: 31
+            y: 19
+            width: 0
+            height: 0
+
+            FontString {
+                name: "TradeRecipientItem1Name"
+                wowParent: "TradeRecipientItem1"
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                anchors.verticalCenter: parent.verticalCenter
+                width: 90
+                height: 30
             }
         }
     }
@@ -503,257 +755,5 @@ WowWindow {
         anchors.topMargin: 78
         width: 13
         height: 13
-    }
-
-    Ghost {
-        name: "TradePlayerItem1NameFrame"
-        x: 57
-        y: 123
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem1Name"
-            wowParent: "TradePlayerItem1"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradePlayerItem2NameFrame"
-        x: 57
-        y: 167
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem2Name"
-            wowParent: "TradePlayerItem2"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradePlayerItem3NameFrame"
-        x: 57
-        y: 211
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem3Name"
-            wowParent: "TradePlayerItem3"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradePlayerItem4NameFrame"
-        x: 57
-        y: 255
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem4Name"
-            wowParent: "TradePlayerItem4"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradePlayerItem5NameFrame"
-        x: 57
-        y: 299
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem5Name"
-            wowParent: "TradePlayerItem5"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradePlayerItem6NameFrame"
-        x: 57
-        y: 343
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem6Name"
-            wowParent: "TradePlayerItem6"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradePlayerItem7NameFrame"
-        x: 57
-        y: 408
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradePlayerItem7Name"
-            wowParent: "TradePlayerItem7"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem1NameFrame"
-        x: 226
-        y: 123
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem1Name"
-            wowParent: "TradeRecipientItem1"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem2NameFrame"
-        x: 226
-        y: 167
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem2Name"
-            wowParent: "TradeRecipientItem2"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem3NameFrame"
-        x: 226
-        y: 211
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem3Name"
-            wowParent: "TradeRecipientItem3"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem4NameFrame"
-        x: 226
-        y: 255
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem4Name"
-            wowParent: "TradeRecipientItem4"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem5NameFrame"
-        x: 226
-        y: 299
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem5Name"
-            wowParent: "TradeRecipientItem5"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem6NameFrame"
-        x: 226
-        y: 343
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem6Name"
-            wowParent: "TradeRecipientItem6"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
-    }
-
-    Ghost {
-        name: "TradeRecipientItem7NameFrame"
-        x: 226
-        y: 408
-        width: 0
-        height: 0
-
-        FontString {
-            name: "TradeRecipientItem7Name"
-            wowParent: "TradeRecipientItem7"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.verticalCenter: parent.verticalCenter
-            width: 90
-            height: 30
-        }
     }
 }

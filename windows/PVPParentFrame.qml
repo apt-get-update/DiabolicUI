@@ -310,6 +310,25 @@ WowWindow {
                                             width: 90
                                             height: 10
                                         }
+
+                                        Ghost {
+                                            name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"
+                                            x: 132
+                                            y: 20
+                                            width: 0
+                                            height: 0
+
+                                            FontString {
+                                                name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount"
+                                                text: "620"
+                                                wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
+                                                anchors.left: parent.right
+                                                anchors.leftMargin: 3
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                width: 65
+                                                height: 12
+                                            }
+                                        }
                                     }
 
                                     FontString {
@@ -321,6 +340,44 @@ WowWindow {
                                         anchors.verticalCenter: parent.verticalCenter
                                         width: 90
                                         height: 10
+                                    }
+
+                                    Ghost {
+                                        name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol"
+                                        x: 237
+                                        y: 20
+                                        width: 0
+                                        height: 0
+
+                                        FontString {
+                                            name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaAmount"
+                                            text: "25"
+                                            wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
+                                            anchors.left: parent.right
+                                            anchors.leftMargin: 3
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            width: 65
+                                            height: 12
+                                        }
+                                    }
+
+                                    Ghost {
+                                        name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol"
+                                        x: 132
+                                        y: 20
+                                        width: 0
+                                        height: 0
+
+                                        FontString {
+                                            name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount"
+                                            text: "3720"
+                                            wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
+                                            anchors.left: parent.right
+                                            anchors.leftMargin: 3
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            width: 65
+                                            height: 12
+                                        }
                                     }
                                 }
                             }
@@ -416,6 +473,309 @@ WowWindow {
         anchors.top: parent.top
         width: 384
         height: 512
+
+        Ghost {
+            name: "PVPFrameBackground"
+            x: 14
+            y: 36
+            width: 0
+            height: 512
+
+            Frame {
+                name: "PVPFrameArena"
+                wowParent: "PVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 120
+                anchors.top: parent.top
+                anchors.topMargin: 95
+                width: 300
+                height: 20
+
+                FontString {
+                    name: "PVPFrameArenaLabel"
+                    text: "ARENA:"
+                    wowParent: "PVPFrameArena"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 41.9
+                    height: 10.3
+
+                    FontString {
+                        name: "PVPFrameArenaPoints"
+                        text: "0"
+                        wowParent: "PVPFrameArena"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 8.7
+                        height: 11.9
+                    }
+                }
+            }
+
+            Frame {
+                name: "PVPFrameHonor"
+                wowParent: "PVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 118
+                anchors.top: parent.top
+                anchors.topMargin: 2
+                width: 300
+                height: 20
+
+                FontString {
+                    name: "PVPFrameHonorLabel"
+                    text: "HONOR:"
+                    wowParent: "PVPFrameHonor"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 47.4
+                    height: 10.3
+
+                    FontString {
+                        name: "PVPFrameHonorPoints"
+                        text: "50130"
+                        wowParent: "PVPFrameHonor"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 15
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 38.7
+                        height: 11.9
+                    }
+                }
+            }
+
+            Frame {
+                name: "PVPHonor"
+                wowParent: "PVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                anchors.top: parent.top
+                anchors.topMargin: 28
+                width: 300
+                height: 100
+
+                FontString {
+                    name: "PVPHonorKillsLabel"
+                    text: "Kills"
+                    wowParent: "PVPHonor"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 20
+                    anchors.top: parent.top
+                    anchors.topMargin: 24
+                    width: 40
+                    height: 12
+
+                    FontString {
+                        name: "PVPHonorHonorLabel"
+                        text: "Honor"
+                        wowParent: "PVPHonor"
+                        anchors.right: parent.right
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 8
+                        width: 50
+                        height: 12
+                    }
+
+                    FontString {
+                        name: "PVPHonorLifetimeLabel"
+                        text: "Lifetime"
+                        wowParent: "PVPHonor"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 170
+                        anchors.bottom: parent.top
+                        anchors.bottomMargin: 10
+                        width: 45
+                        height: 10.3
+
+                        FontString {
+                            name: "PVPHonorLifetimeKills"
+                            text: "66"
+                            wowParent: "PVPHonor"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.bottom
+                            anchors.topMargin: 10
+                            width: 50
+                            height: 14
+
+                            FontString {
+                                name: "PVPHonorLifetimeHonor"
+                                text: "-"
+                                wowParent: "PVPHonor"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 5
+                                width: 50
+                                height: 14
+                            }
+                        }
+                    }
+
+                    FontString {
+                        name: "PVPHonorTodayLabel"
+                        text: "Today"
+                        wowParent: "PVPHonor"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 20
+                        anchors.bottom: parent.top
+                        anchors.bottomMargin: 10
+                        width: 34.8
+                        height: 10.3
+
+                        FontString {
+                            name: "PVPHonorTodayKills"
+                            text: "0"
+                            wowParent: "PVPHonor"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.bottom
+                            anchors.topMargin: 10
+                            width: 50
+                            height: 14
+
+                            FontString {
+                                name: "PVPHonorTodayHonor"
+                                text: "0"
+                                wowParent: "PVPHonor"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 5
+                                width: 50
+                                height: 14
+                            }
+                        }
+                    }
+
+                    FontString {
+                        name: "PVPHonorYesterdayLabel"
+                        text: "Yesterday"
+                        wowParent: "PVPHonor"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 90
+                        anchors.bottom: parent.top
+                        anchors.bottomMargin: 10
+                        width: 53.7
+                        height: 10.3
+
+                        FontString {
+                            name: "PVPHonorYesterdayKills"
+                            text: "0"
+                            wowParent: "PVPHonor"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.bottom
+                            anchors.topMargin: 10
+                            width: 50
+                            height: 14
+
+                            FontString {
+                                name: "PVPHonorYesterdayHonor"
+                                text: "0"
+                                wowParent: "PVPHonor"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 5
+                                width: 50
+                                height: 14
+                            }
+                        }
+                    }
+                }
+            }
+
+            Frame {
+                name: "PVPTeam1Standard"
+                wowParent: "PVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -85
+                width: 64
+                height: 64
+
+                Button {
+                    name: "PVPTeam1"
+                    wowParent: "PVPFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 33
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 78
+
+                    FontString {
+                        name: "PVPTeam1TeamType"
+                        text: "(2v2)"
+                        wowParent: "PVPTeam1"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 15.8
+                    }
+                }
+            }
+
+            Frame {
+                name: "PVPTeam2Standard"
+                wowParent: "PVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 64
+                height: 64
+
+                Button {
+                    name: "PVPTeam2"
+                    wowParent: "PVPFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 33
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 78
+
+                    FontString {
+                        name: "PVPTeam2TeamType"
+                        text: "(3v3)"
+                        wowParent: "PVPTeam2"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 15.8
+                    }
+                }
+            }
+
+            Frame {
+                name: "PVPTeam3Standard"
+                wowParent: "PVPFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 85
+                width: 64
+                height: 64
+
+                Button {
+                    name: "PVPTeam3"
+                    wowParent: "PVPFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 33
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 300
+                    height: 78
+
+                    FontString {
+                        name: "PVPTeam3TeamType"
+                        text: "(5v5)"
+                        wowParent: "PVPTeam3"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41.9
+                        height: 15.8
+                    }
+                }
+            }
+        }
     }
 
     Frame {
@@ -606,366 +966,6 @@ WowWindow {
             anchors.topMargin: -23
             width: 52
             height: 116
-        }
-    }
-
-    Ghost {
-        name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorSymbol"
-        x: 150
-        y: 346.9
-        width: 0
-        height: 0
-
-        FontString {
-            name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossRewardHonorAmount"
-            text: "620"
-            wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoLossReward"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.verticalCenter: parent.verticalCenter
-            width: 65
-            height: 12
-        }
-    }
-
-    Ghost {
-        name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaSymbol"
-        x: 255
-        y: 304.9
-        width: 0
-        height: 0
-
-        FontString {
-            name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardArenaAmount"
-            text: "25"
-            wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.verticalCenter: parent.verticalCenter
-            width: 65
-            height: 12
-        }
-    }
-
-    Ghost {
-        name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorSymbol"
-        x: 150
-        y: 304.9
-        width: 0
-        height: 0
-
-        FontString {
-            name: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinRewardHonorAmount"
-            text: "3720"
-            wowParent: "PVPBattlegroundFrameInfoScrollFrameChildFrameRewardsInfoWinReward"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.verticalCenter: parent.verticalCenter
-            width: 65
-            height: 12
-        }
-    }
-
-    Ghost {
-        name: "PVPFrameBackground"
-        x: 14
-        y: 36
-        width: 0
-        height: 512
-
-        Frame {
-            name: "PVPFrameArena"
-            wowParent: "PVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 120
-            anchors.top: parent.top
-            anchors.topMargin: 95
-            width: 300
-            height: 20
-
-            FontString {
-                name: "PVPFrameArenaLabel"
-                text: "ARENA:"
-                wowParent: "PVPFrameArena"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                width: 41.9
-                height: 10.3
-
-                FontString {
-                    name: "PVPFrameArenaPoints"
-                    text: "0"
-                    wowParent: "PVPFrameArena"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 15
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 8.7
-                    height: 11.9
-                }
-            }
-        }
-
-        Frame {
-            name: "PVPFrameHonor"
-            wowParent: "PVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 118
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            width: 300
-            height: 20
-
-            FontString {
-                name: "PVPFrameHonorLabel"
-                text: "HONOR:"
-                wowParent: "PVPFrameHonor"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                width: 47.4
-                height: 10.3
-
-                FontString {
-                    name: "PVPFrameHonorPoints"
-                    text: "50130"
-                    wowParent: "PVPFrameHonor"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 15
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 38.7
-                    height: 11.9
-                }
-            }
-        }
-
-        Frame {
-            name: "PVPHonor"
-            wowParent: "PVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.top: parent.top
-            anchors.topMargin: 28
-            width: 300
-            height: 100
-
-            FontString {
-                name: "PVPHonorKillsLabel"
-                text: "Kills"
-                wowParent: "PVPHonor"
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 24
-                width: 40
-                height: 12
-
-                FontString {
-                    name: "PVPHonorHonorLabel"
-                    text: "Honor"
-                    wowParent: "PVPHonor"
-                    anchors.right: parent.right
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 8
-                    width: 50
-                    height: 12
-                }
-
-                FontString {
-                    name: "PVPHonorLifetimeLabel"
-                    text: "Lifetime"
-                    wowParent: "PVPHonor"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 170
-                    anchors.bottom: parent.top
-                    anchors.bottomMargin: 10
-                    width: 45
-                    height: 10.3
-
-                    FontString {
-                        name: "PVPHonorLifetimeKills"
-                        text: "66"
-                        wowParent: "PVPHonor"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 10
-                        width: 50
-                        height: 14
-
-                        FontString {
-                            name: "PVPHonorLifetimeHonor"
-                            text: "-"
-                            wowParent: "PVPHonor"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 5
-                            width: 50
-                            height: 14
-                        }
-                    }
-                }
-
-                FontString {
-                    name: "PVPHonorTodayLabel"
-                    text: "Today"
-                    wowParent: "PVPHonor"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 20
-                    anchors.bottom: parent.top
-                    anchors.bottomMargin: 10
-                    width: 34.8
-                    height: 10.3
-
-                    FontString {
-                        name: "PVPHonorTodayKills"
-                        text: "0"
-                        wowParent: "PVPHonor"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 10
-                        width: 50
-                        height: 14
-
-                        FontString {
-                            name: "PVPHonorTodayHonor"
-                            text: "0"
-                            wowParent: "PVPHonor"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 5
-                            width: 50
-                            height: 14
-                        }
-                    }
-                }
-
-                FontString {
-                    name: "PVPHonorYesterdayLabel"
-                    text: "Yesterday"
-                    wowParent: "PVPHonor"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 90
-                    anchors.bottom: parent.top
-                    anchors.bottomMargin: 10
-                    width: 53.7
-                    height: 10.3
-
-                    FontString {
-                        name: "PVPHonorYesterdayKills"
-                        text: "0"
-                        wowParent: "PVPHonor"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 10
-                        width: 50
-                        height: 14
-
-                        FontString {
-                            name: "PVPHonorYesterdayHonor"
-                            text: "0"
-                            wowParent: "PVPHonor"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 5
-                            width: 50
-                            height: 14
-                        }
-                    }
-                }
-            }
-        }
-
-        Frame {
-            name: "PVPTeam1Standard"
-            wowParent: "PVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -85
-            width: 64
-            height: 64
-
-            Button {
-                name: "PVPTeam1"
-                wowParent: "PVPFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 33
-                anchors.verticalCenter: parent.verticalCenter
-                width: 300
-                height: 78
-
-                FontString {
-                    name: "PVPTeam1TeamType"
-                    text: "(2v2)"
-                    wowParent: "PVPTeam1"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 15.8
-                }
-            }
-        }
-
-        Frame {
-            name: "PVPTeam2Standard"
-            wowParent: "PVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            width: 64
-            height: 64
-
-            Button {
-                name: "PVPTeam2"
-                wowParent: "PVPFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 33
-                anchors.verticalCenter: parent.verticalCenter
-                width: 300
-                height: 78
-
-                FontString {
-                    name: "PVPTeam2TeamType"
-                    text: "(3v3)"
-                    wowParent: "PVPTeam2"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 15.8
-                }
-            }
-        }
-
-        Frame {
-            name: "PVPTeam3Standard"
-            wowParent: "PVPFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 85
-            width: 64
-            height: 64
-
-            Button {
-                name: "PVPTeam3"
-                wowParent: "PVPFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 33
-                anchors.verticalCenter: parent.verticalCenter
-                width: 300
-                height: 78
-
-                FontString {
-                    name: "PVPTeam3TeamType"
-                    text: "(5v5)"
-                    wowParent: "PVPTeam3"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 41.9
-                    height: 15.8
-                }
-            }
         }
     }
 }

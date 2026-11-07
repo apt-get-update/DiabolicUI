@@ -145,6 +145,25 @@ WowWindow {
                                     anchors.top: parent.top
                                     width: 120.3
                                     height: 15
+
+                                    Ghost {
+                                        name: "AchievementFrameCriteria1Check"
+                                        x: 38
+                                        y: 10.6
+                                        width: 0
+                                        height: 0
+
+                                        FontString {
+                                            name: "AchievementFrameCriteria1Name"
+                                            text: "Sinister Squashling"
+                                            wowParent: "AchievementFrameCriteria1"
+                                            anchors.left: parent.right
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.verticalCenterOffset: -2
+                                            width: 100.3
+                                            height: 10.3
+                                        }
+                                    }
                                 }
 
                                 Frame {
@@ -155,6 +174,25 @@ WowWindow {
                                     anchors.top: parent.top
                                     width: 102.2
                                     height: 15
+
+                                    Ghost {
+                                        name: "AchievementFrameCriteria2Check"
+                                        x: 38
+                                        y: 10.6
+                                        width: 0
+                                        height: 0
+
+                                        FontString {
+                                            name: "AchievementFrameCriteria2Name"
+                                            text: "Hallowed Helm"
+                                            wowParent: "AchievementFrameCriteria2"
+                                            anchors.left: parent.right
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.verticalCenterOffset: -2
+                                            width: 82.2
+                                            height: 10.3
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -210,6 +248,43 @@ WowWindow {
                                 anchors.topMargin: 26
                                 width: 32
                                 height: 16
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton1RewardBackground"
+                            x: 248
+                            y: 148.1
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton1Reward"
+                                text: "Title Reward: Brewmaster"
+                                wowParent: "AchievementFrameAchievementsContainerButton1"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton1TitleBackground"
+                            x: 248
+                            y: 5.1
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton1Label"
+                                text: "Sinister Calling"
+                                wowParent: "AchievementFrameAchievementsContainerButton1"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
                             }
                         }
                     }
@@ -310,6 +385,43 @@ WowWindow {
                                 height: 16
                             }
                         }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton2RewardBackground"
+                            x: 261
+                            y: 142.8
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton2Reward"
+                                text: "Reward: Tabard of the Explorer"
+                                wowParent: "AchievementFrameAchievementsContainerButton2"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton2TitleBackground"
+                            x: 248
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton2Label"
+                                text: "Out With It"
+                                wowParent: "AchievementFrameAchievementsContainerButton2"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
+                            }
+                        }
                     }
 
                     Button {
@@ -394,6 +506,43 @@ WowWindow {
                                 anchors.topMargin: 26
                                 width: 32
                                 height: 16
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton3RewardBackground"
+                            x: 248
+                            y: 142.8
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton3Reward"
+                                text: "Title Reward: Flame Warden"
+                                wowParent: "AchievementFrameAchievementsContainerButton3"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton3TitleBackground"
+                            x: 248
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton3Label"
+                                text: "Trick or Treat!"
+                                wowParent: "AchievementFrameAchievementsContainerButton3"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
                             }
                         }
                     }
@@ -483,6 +632,43 @@ WowWindow {
                                 height: 16
                             }
                         }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton4RewardBackground"
+                            x: 261
+                            y: 142.8
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton4Reward"
+                                text: "Title: Bloodsail Admiral"
+                                wowParent: "AchievementFrameAchievementsContainerButton4"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton4TitleBackground"
+                            x: 248
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton4Label"
+                                text: "The Mask Task"
+                                wowParent: "AchievementFrameAchievementsContainerButton4"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
+                            }
+                        }
                     }
 
                     Button {
@@ -558,6 +744,43 @@ WowWindow {
                                 anchors.topMargin: 26
                                 width: 32
                                 height: 16
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton5RewardBackground"
+                            x: 248
+                            y: 142.8
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton5Reward"
+                                text: "Title Reward: The Love Fool"
+                                wowParent: "AchievementFrameAchievementsContainerButton5"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton5TitleBackground"
+                            x: 248
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton5Label"
+                                text: "Bring Me The Head of... Oh Wait"
+                                wowParent: "AchievementFrameAchievementsContainerButton5"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
                             }
                         }
                     }
@@ -637,6 +860,43 @@ WowWindow {
                                 height: 16
                             }
                         }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton6RewardBackground"
+                            x: 248
+                            y: 142.8
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton6Reward"
+                                text: "Title Reward: the Noble"
+                                wowParent: "AchievementFrameAchievementsContainerButton6"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton6TitleBackground"
+                            x: 248
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton6Label"
+                                text: "The Savior of Hallow's End"
+                                wowParent: "AchievementFrameAchievementsContainerButton6"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
+                            }
+                        }
                     }
 
                     Button {
@@ -710,6 +970,43 @@ WowWindow {
                                 anchors.topMargin: 26
                                 width: 32
                                 height: 16
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton7RewardBackground"
+                            x: 248
+                            y: 142.8
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton7Reward"
+                                text: "Title Reward: Matron/Patron"
+                                wowParent: "AchievementFrameAchievementsContainerButton7"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: -1
+                                width: 400
+                                height: 20
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameAchievementsContainerButton7TitleBackground"
+                            x: 248
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton7Label"
+                                text: "A Mask for All Occasions"
+                                wowParent: "AchievementFrameAchievementsContainerButton7"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
                             }
                         }
                     }
@@ -832,6 +1129,24 @@ WowWindow {
                                     anchors.topMargin: 26
                                     width: 32
                                     height: 16
+                                }
+                            }
+
+                            Ghost {
+                                name: "Overachiever_SuggestionsFrameContainerButton1TitleBackground"
+                                x: 261
+                                y: 5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "Overachiever_SuggestionsFrameContainerButton1Label"
+                                    text: "City Defender"
+                                    wowParent: "Overachiever_SuggestionsFrameContainerButton1"
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.top: parent.top
+                                    width: 320
+                                    height: 20
                                 }
                             }
                         }
@@ -1164,6 +1479,24 @@ WowWindow {
                                 height: 26
                             }
                         }
+
+                        Ghost {
+                            name: "AchievementFrameSummaryAchievement1TitleBackground"
+                            x: 242
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameSummaryAchievement1Label"
+                                text: "That Sparkling Smile"
+                                wowParent: "AchievementFrameSummaryAchievement1"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 260
+                                height: 20
+                            }
+                        }
                     }
 
                     Button {
@@ -1230,6 +1563,24 @@ WowWindow {
                                 anchors.verticalCenterOffset: -3
                                 width: 40
                                 height: 26
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameSummaryAchievement2TitleBackground"
+                            x: 242
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameSummaryAchievement2Label"
+                                text: "Exalted Argent Champion of the Alliance"
+                                wowParent: "AchievementFrameSummaryAchievement2"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 260
+                                height: 20
                             }
                         }
                     }
@@ -1308,6 +1659,24 @@ WowWindow {
                                 height: 26
                             }
                         }
+
+                        Ghost {
+                            name: "AchievementFrameSummaryAchievement3TitleBackground"
+                            x: 242
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameSummaryAchievement3Label"
+                                text: "Exalted Champion of the Alliance"
+                                wowParent: "AchievementFrameSummaryAchievement3"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 260
+                                height: 20
+                            }
+                        }
                     }
 
                     Button {
@@ -1382,6 +1751,24 @@ WowWindow {
                                 anchors.verticalCenterOffset: -3
                                 width: 40
                                 height: 26
+                            }
+                        }
+
+                        Ghost {
+                            name: "AchievementFrameSummaryAchievement4TitleBackground"
+                            x: 242
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "AchievementFrameSummaryAchievement4Label"
+                                text: "Ambassador of the Alliance"
+                                wowParent: "AchievementFrameSummaryAchievement4"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 260
+                                height: 20
                             }
                         }
                     }
@@ -2241,303 +2628,6 @@ WowWindow {
     }
 
     Ghost {
-        name: "AchievementFrameAchievementsContainerButton1RewardBackground"
-        x: 470
-        y: 86
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton1Reward"
-            text: "Title Reward: Brewmaster"
-            wowParent: "AchievementFrameAchievementsContainerButton1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton1TitleBackground"
-        x: 470
-        y: -57
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton1Label"
-            text: "Sinister Calling"
-            wowParent: "AchievementFrameAchievementsContainerButton1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton2RewardBackground"
-        x: 483
-        y: 170
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton2Reward"
-            text: "Reward: Tabard of the Explorer"
-            wowParent: "AchievementFrameAchievementsContainerButton2"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton2TitleBackground"
-        x: 470
-        y: 32.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton2Label"
-            text: "Out With It"
-            wowParent: "AchievementFrameAchievementsContainerButton2"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton3RewardBackground"
-        x: 470
-        y: 254
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton3Reward"
-            text: "Title Reward: Flame Warden"
-            wowParent: "AchievementFrameAchievementsContainerButton3"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton3TitleBackground"
-        x: 470
-        y: 116.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton3Label"
-            text: "Trick or Treat!"
-            wowParent: "AchievementFrameAchievementsContainerButton3"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton4RewardBackground"
-        x: 483
-        y: 338
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton4Reward"
-            text: "Title: Bloodsail Admiral"
-            wowParent: "AchievementFrameAchievementsContainerButton4"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton4TitleBackground"
-        x: 470
-        y: 200.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton4Label"
-            text: "The Mask Task"
-            wowParent: "AchievementFrameAchievementsContainerButton4"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton5RewardBackground"
-        x: 470
-        y: 422
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton5Reward"
-            text: "Title Reward: The Love Fool"
-            wowParent: "AchievementFrameAchievementsContainerButton5"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton5TitleBackground"
-        x: 470
-        y: 284.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton5Label"
-            text: "Bring Me The Head of... Oh Wait"
-            wowParent: "AchievementFrameAchievementsContainerButton5"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton6RewardBackground"
-        x: 470
-        y: 506
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton6Reward"
-            text: "Title Reward: the Noble"
-            wowParent: "AchievementFrameAchievementsContainerButton6"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton6TitleBackground"
-        x: 470
-        y: 368.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton6Label"
-            text: "The Savior of Hallow's End"
-            wowParent: "AchievementFrameAchievementsContainerButton6"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton7RewardBackground"
-        x: 470
-        y: 590
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton7Reward"
-            text: "Title Reward: Matron/Patron"
-            wowParent: "AchievementFrameAchievementsContainerButton7"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: -1
-            width: 400
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameAchievementsContainerButton7TitleBackground"
-        x: 470
-        y: 452.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameAchievementsContainerButton7Label"
-            text: "A Mask for All Occasions"
-            wowParent: "AchievementFrameAchievementsContainerButton7"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameCriteria1Check"
-        x: 323
-        y: -3.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameCriteria1Name"
-            text: "Sinister Squashling"
-            wowParent: "AchievementFrameCriteria1"
-            anchors.left: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -2
-            width: 100.3
-            height: 10.3
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameCriteria2Check"
-        x: 488
-        y: -3.2
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameCriteria2Name"
-            text: "Hallowed Helm"
-            wowParent: "AchievementFrameCriteria2"
-            anchors.left: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -2
-            width: 82.2
-            height: 10.3
-        }
-    }
-
-    Ghost {
         name: "AchievementFrameStatsContainerButton17"
         x: 221
         y: 406
@@ -2624,96 +2714,6 @@ WowWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: 119.3
             height: 15.8
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameSummaryAchievement1TitleBackground"
-        x: 483
-        y: 62
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameSummaryAchievement1Label"
-            text: "That Sparkling Smile"
-            wowParent: "AchievementFrameSummaryAchievement1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 260
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameSummaryAchievement2TitleBackground"
-        x: 483
-        y: 107
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameSummaryAchievement2Label"
-            text: "Exalted Argent Champion of the Alliance"
-            wowParent: "AchievementFrameSummaryAchievement2"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 260
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameSummaryAchievement3TitleBackground"
-        x: 483
-        y: 152
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameSummaryAchievement3Label"
-            text: "Exalted Champion of the Alliance"
-            wowParent: "AchievementFrameSummaryAchievement3"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 260
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "AchievementFrameSummaryAchievement4TitleBackground"
-        x: 483
-        y: 197
-        width: 0
-        height: 0
-
-        FontString {
-            name: "AchievementFrameSummaryAchievement4Label"
-            text: "Ambassador of the Alliance"
-            wowParent: "AchievementFrameSummaryAchievement4"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 260
-            height: 20
-        }
-    }
-
-    Ghost {
-        name: "Overachiever_SuggestionsFrameContainerButton1TitleBackground"
-        x: 483
-        y: 29
-        width: 0
-        height: 0
-
-        FontString {
-            name: "Overachiever_SuggestionsFrameContainerButton1Label"
-            text: "City Defender"
-            wowParent: "Overachiever_SuggestionsFrameContainerButton1"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            width: 320
-            height: 20
         }
     }
 }

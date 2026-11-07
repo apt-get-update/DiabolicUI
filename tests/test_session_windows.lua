@@ -953,10 +953,12 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	Session.assertPlaced(client, "TradeSkillFrameDiabolicIronBar") -- (hung under the recipes)
 	-- as many recipes as fit the list, the chosen one's detail taller
 	_G.TradeSkillFrame_Update()
-	lu.assertEquals(_G.TradeSkillDetailScrollFrame:GetHeight(), 164)
-	lu.assertEquals(_G.TRADE_SKILLS_DISPLAYED, 6)
-	lu.assertFalse(_G.TradeSkillSkill7:IsShown() == 1)
+	lu.assertEquals(_G.TradeSkillDetailScrollFrame:GetHeight(), 157)
+	lu.assertEquals(_G.TRADE_SKILLS_DISPLAYED, 7) -- (the dropdowns in the rank's row)
 	lu.assertFalse(_G.TradeSkillSkill8:IsShown() == 1)
+	-- the rank in the title, its bar hidden
+	lu.assertEquals(_G.TradeSkillFrameTitleText:GetText(), "Tailoring 300/450")
+	lu.assertFalse(_G.TradeSkillRankFrame:IsShown() == 1)
 
 	-- the recipes in their difficulty's ink, the chosen one too, no shadows
 	client.world.tradeSkill.selected = 3
@@ -1107,10 +1109,11 @@ function TestTrainer:test_the_trainings_in_ink()
 	-- the sizes pinned, not Blizzard's, and as many trainings as fit the list, for
 	-- a profession's trainer too
 	local fits = function()
-		lu.assertEquals(_G.ClassTrainerListScrollFrame:GetHeight(), 128)
-		lu.assertEquals(_G.ClassTrainerDetailScrollFrame:GetHeight(), 135)
-		lu.assertEquals(_G.CLASS_TRAINER_SKILLS_DISPLAYED, 8)
-		lu.assertFalse(_G.ClassTrainerSkill9:IsShown() == 1)
+		lu.assertEquals(_G.ClassTrainerListScrollFrame:GetHeight(), 158)
+		lu.assertEquals(_G.ClassTrainerDetailScrollFrame:GetHeight(), 121)
+		lu.assertEquals(_G.CLASS_TRAINER_SKILLS_DISPLAYED, 9) -- (from the first row, right under its All)
+		lu.assertFalse(_G.ClassTrainerSkill10:IsShown() == 1)
+		Session.assertPlaced(client, "ClassTrainerFrameDiabolicIronBar") -- (hung under the trainings)
 		lu.assertFalse(_G.ClassTrainerSkill11:IsShown() == 1)
 	end
 	fits()

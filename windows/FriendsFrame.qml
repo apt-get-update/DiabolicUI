@@ -43,7 +43,7 @@ WowWindow {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 145
-                height: -1780
+                height: -380
 
                 Button {
                     name: "ChannelButton1"
@@ -176,6 +176,165 @@ WowWindow {
                 anchors.top: parent.top
                 width: 300
                 height: 1245
+            }
+        }
+
+        Ghost {
+            name: "UIParent"
+            x: 738.5
+            y: 290.6
+            width: 0
+            height: 0
+
+            Frame {
+                name: "ChannelFrameDaughterFrame"
+                wowParent: "ChannelFrame"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -100
+                width: 212
+                height: 200
+
+                Button {
+                    name: "ChannelFrameDaughterFrameCancelButton"
+                    text: "Cancel"
+                    wowParent: "ChannelFrameDaughterFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 9
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 12
+                    width: 93.5
+                    height: 22
+
+                    FontString {
+                        name: "ChannelFrameDaughterFrameCancelButtonText"
+                        text: "Cancel"
+                        wowParent: "ChannelFrameDaughterFrameCancelButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 35.6
+                        height: 10.3
+                    }
+                }
+
+                EditBox {
+                    name: "ChannelFrameDaughterFrameChannelName"
+                    wowParent: "ChannelFrameDaughterFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 23
+                    anchors.top: parent.top
+                    anchors.topMargin: 60
+                    width: 170
+                    height: 16
+
+                    Frame {
+                        name: "ChannelFrameDaughterFrameChannelNameDiabolicField"
+                        wowParent: "ChannelFrameDaughterFrameChannelName"
+                        anchors.left: parent.left
+                        anchors.leftMargin: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 186
+                        height: 22
+                    }
+
+                    FontString {
+                        name: "ChannelFrameDaughterFrameChannelNameLabel"
+                        text: "Channel Name"
+                        wowParent: "ChannelFrameDaughterFrameChannelName"
+                        anchors.left: parent.left
+                        anchors.bottom: parent.top
+                        anchors.bottomMargin: 5
+                        width: 85.3
+                        height: 14.2
+                    }
+
+                    EditBox {
+                        name: "ChannelFrameDaughterFrameChannelPassword"
+                        wowParent: "ChannelFrameDaughterFrame"
+                        anchors.left: parent.left
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 30
+                        width: 170
+                        height: 16
+
+                        Frame {
+                            name: "ChannelFrameDaughterFrameChannelPasswordDiabolicField"
+                            wowParent: "ChannelFrameDaughterFrameChannelPassword"
+                            anchors.left: parent.left
+                            anchors.leftMargin: -8
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 186
+                            height: 22
+                        }
+
+                        FontString {
+                            name: "ChannelFrameDaughterFrameChannelPasswordLabel"
+                            text: "Password"
+                            wowParent: "ChannelFrameDaughterFrameChannelPassword"
+                            anchors.left: parent.left
+                            anchors.bottom: parent.top
+                            anchors.bottomMargin: 5
+                            width: 55.3
+                            height: 14.2
+
+                            FontString {
+                                name: "ChannelFrameDaughterFrameChannelPasswordOptional"
+                                text: "(optional)"
+                                wowParent: "ChannelFrameDaughterFrameChannelPassword"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 3
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 52.9
+                                height: 10.3
+                            }
+                        }
+                    }
+                }
+
+                Button {
+                    name: "ChannelFrameDaughterFrameDetailCloseButton"
+                    wowParent: "ChannelFrameDaughterFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 2
+                    anchors.top: parent.top
+                    anchors.topMargin: 3
+                    width: 22
+                    height: 22
+                }
+
+                FontString {
+                    name: "ChannelFrameDaughterFrameName"
+                    text: "New Channel"
+                    wowParent: "ChannelFrameDaughterFrame"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: -5
+                    anchors.top: parent.top
+                    anchors.topMargin: 13
+                    width: 79
+                    height: 12
+                }
+
+                Button {
+                    name: "ChannelFrameDaughterFrameOkayButton"
+                    text: "Okay"
+                    wowParent: "ChannelFrameDaughterFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 108.5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 12
+                    width: 93.5
+                    height: 22
+
+                    FontString {
+                        name: "ChannelFrameDaughterFrameOkayButtonText"
+                        text: "Okay"
+                        wowParent: "ChannelFrameDaughterFrameOkayButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 28.4
+                        height: 10.3
+                    }
+                }
             }
         }
     }
@@ -448,12 +607,12 @@ WowWindow {
 
                 FontString {
                     name: "FriendsFrameTitleText"
-                    text: "Friends List"
+                    text: "Raid"
                     wowParent: "FriendsFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 107.5
+                    width: 38.7
                     height: 14.2
                 }
             }
@@ -1417,7 +1576,7 @@ WowWindow {
 
                 FontString {
                     name: "FriendsFrameFriendsScrollFrameButton1Name"
-                    text: "Enby, Level 80 Rogue"
+                    text: "Annah"
                     wowParent: "FriendsFrameFriendsScrollFrameButton1"
                     anchors.left: parent.left
                     anchors.leftMargin: 20
@@ -1428,7 +1587,7 @@ WowWindow {
 
                     FontString {
                         name: "FriendsFrameFriendsScrollFrameButton1Info"
-                        text: "Dalaran"
+                        text: "Unknown"
                         wowParent: "FriendsFrameFriendsScrollFrameButton1"
                         anchors.left: parent.left
                         anchors.top: parent.bottom
@@ -1900,6 +2059,34 @@ WowWindow {
                 height: 22
             }
         }
+
+        Ghost {
+            name: "GuildListScrollFrame"
+            x: 21
+            y: 73
+            width: 0
+            height: 0
+
+            Frame {
+                name: "GuildListScrollFrameDiabolicZone"
+                wowParent: "GuildFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: -6
+                anchors.top: parent.top
+                anchors.topMargin: -6
+                width: 330
+                height: 240
+
+                Frame {
+                    name: "GuildListScrollFrameDiabolicZoneColumnBar"
+                    wowParent: "GuildListScrollFrameDiabolicZone"
+                    anchors.left: parent.left
+                    anchors.bottom: parent.top
+                    width: 330
+                    height: 22
+                }
+            }
+        }
     }
 
     Frame {
@@ -2059,7 +2246,7 @@ WowWindow {
             anchors.left: whoFrameColumnHeader1.right
             anchors.leftMargin: -2
             anchors.verticalCenter: whoFrameColumnHeader1.verticalCenter
-            width: 105
+            width: 120
             height: 22
         }
 
@@ -2088,7 +2275,7 @@ WowWindow {
 
         FontString {
             name: "WhoFrameTotals"
-            text: "407 People Found  (50 displayed)"
+            text: "0 People Found  "
             wowParent: "WhoFrame"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -10
@@ -2242,7 +2429,7 @@ WowWindow {
     Ghost {
         name: "FriendsFrameFriendsScrollFrameButton3"
         x: 21
-        y: 86
+        y: 104
         width: 298
         height: 34
 
@@ -2299,193 +2486,6 @@ WowWindow {
                         width: 146
                         height: 8.7
                     }
-                }
-            }
-        }
-    }
-
-    Ghost {
-        name: "GuildListScrollFrame"
-        x: 21
-        y: 73
-        width: 0
-        height: 0
-
-        Frame {
-            name: "GuildListScrollFrameDiabolicZone"
-            wowParent: "GuildFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: -6
-            anchors.top: parent.top
-            anchors.topMargin: -6
-            width: 330
-            height: 240
-
-            Frame {
-                name: "GuildListScrollFrameDiabolicZoneColumnBar"
-                wowParent: "GuildListScrollFrameDiabolicZone"
-                anchors.left: parent.left
-                anchors.bottom: parent.top
-                width: 330
-                height: 22
-            }
-        }
-    }
-
-    Ghost {
-        name: "UIParent"
-        x: 738.5
-        y: 290.6
-        width: 0
-        height: 0
-
-        Frame {
-            name: "ChannelFrameDaughterFrame"
-            wowParent: "ChannelFrame"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -100
-            width: 212
-            height: 200
-
-            Button {
-                name: "ChannelFrameDaughterFrameCancelButton"
-                text: "Cancel"
-                wowParent: "ChannelFrameDaughterFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 9
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 12
-                width: 93.5
-                height: 22
-
-                FontString {
-                    name: "ChannelFrameDaughterFrameCancelButtonText"
-                    text: "Cancel"
-                    wowParent: "ChannelFrameDaughterFrameCancelButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 35.6
-                    height: 10.3
-                }
-            }
-
-            EditBox {
-                name: "ChannelFrameDaughterFrameChannelName"
-                wowParent: "ChannelFrameDaughterFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: 23
-                anchors.top: parent.top
-                anchors.topMargin: 60
-                width: 170
-                height: 16
-
-                Frame {
-                    name: "ChannelFrameDaughterFrameChannelNameDiabolicField"
-                    wowParent: "ChannelFrameDaughterFrameChannelName"
-                    anchors.left: parent.left
-                    anchors.leftMargin: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 186
-                    height: 22
-                }
-
-                FontString {
-                    name: "ChannelFrameDaughterFrameChannelNameLabel"
-                    text: "Channel Name"
-                    wowParent: "ChannelFrameDaughterFrameChannelName"
-                    anchors.left: parent.left
-                    anchors.bottom: parent.top
-                    anchors.bottomMargin: 5
-                    width: 85.3
-                    height: 14.2
-                }
-
-                EditBox {
-                    name: "ChannelFrameDaughterFrameChannelPassword"
-                    wowParent: "ChannelFrameDaughterFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 30
-                    width: 170
-                    height: 16
-
-                    Frame {
-                        name: "ChannelFrameDaughterFrameChannelPasswordDiabolicField"
-                        wowParent: "ChannelFrameDaughterFrameChannelPassword"
-                        anchors.left: parent.left
-                        anchors.leftMargin: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 186
-                        height: 22
-                    }
-
-                    FontString {
-                        name: "ChannelFrameDaughterFrameChannelPasswordLabel"
-                        text: "Password"
-                        wowParent: "ChannelFrameDaughterFrameChannelPassword"
-                        anchors.left: parent.left
-                        anchors.bottom: parent.top
-                        anchors.bottomMargin: 5
-                        width: 55.3
-                        height: 14.2
-
-                        FontString {
-                            name: "ChannelFrameDaughterFrameChannelPasswordOptional"
-                            text: "(optional)"
-                            wowParent: "ChannelFrameDaughterFrameChannelPassword"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 3
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 52.9
-                            height: 10.3
-                        }
-                    }
-                }
-            }
-
-            Button {
-                name: "ChannelFrameDaughterFrameDetailCloseButton"
-                wowParent: "ChannelFrameDaughterFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                anchors.top: parent.top
-                anchors.topMargin: 3
-                width: 22
-                height: 22
-            }
-
-            FontString {
-                name: "ChannelFrameDaughterFrameName"
-                text: "New Channel"
-                wowParent: "ChannelFrameDaughterFrame"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: -5
-                anchors.top: parent.top
-                anchors.topMargin: 13
-                width: 79
-                height: 12
-            }
-
-            Button {
-                name: "ChannelFrameDaughterFrameOkayButton"
-                text: "Okay"
-                wowParent: "ChannelFrameDaughterFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 108.5
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 12
-                width: 93.5
-                height: 22
-
-                FontString {
-                    name: "ChannelFrameDaughterFrameOkayButtonText"
-                    text: "Okay"
-                    wowParent: "ChannelFrameDaughterFrameOkayButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 28.4
-                    height: 10.3
                 }
             }
         }

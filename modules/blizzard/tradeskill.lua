@@ -2,8 +2,8 @@
 -- the chosen one's details on it): the recipes in inks of their
 -- difficulty, the chosen one in an orange box, the reagents' names in
 -- ink (Blizzard sets both again as it updates, so after it does); the
--- search on our plate in a row of its own under the rank, Have Materials
--- right of it, the dropdowns on our plate.
+-- search in the band, Have Materials right of it, the rank in the title,
+-- the dropdowns under the band.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trade Skill", "LOW")
 local kit
@@ -17,6 +17,7 @@ local select = select
 local unpack = unpack
 
 -- WoW API
+local CreateFont = _G.CreateFont
 local GetItemInfo = _G.GetItemInfo
 local GetSpellInfo = _G.GetSpellInfo
 local GetTradeSkillInfo = _G.GetTradeSkillInfo
@@ -108,10 +109,20 @@ Module.SpanHighlight = function(self)
 	bar:SetWidth(list:GetWidth() + insets[1] + insets[3] - inset * 2)
 end
 
+-- The profession's rank in its title ("Enchanting 450/450"), its bar hidden:
+-- the dropdowns in its row (settings/positions.lua). Blizzard sets the title
+-- as it updates and on each choice.
+Module.RankTitle = function(self)
+	local name, rank, most = GetTradeSkillLine()
+	if name and most and (most > 0) then
+		_G.TradeSkillFrameTitleText:SetFormattedText("%s %d/%d", name, rank, most)
+	end
+end
+
 -- As many recipes as fit the list (its height: settings/positions.lua), the
 -- others hidden. Whether that changed the count.
 Module.FitList = function(self)
-	local rows = kit:RowsFitting(_G.TradeSkillListScrollFrame, _G.TRADE_SKILL_HEIGHT, self.Rows)
+	local rows = kit:RowsFitting(_G.TradeSkillListScrollFrame, _G.TRADE_SKILL_HEIGHT, self.Rows, _G.TradeSkillSkill1)
 	if (rows == _G.TRADE_SKILLS_DISPLAYED) then
 		return false
 	end
@@ -215,7 +226,13 @@ Module.StyleTradeSkill = function(self)
 	kit:LightRow(_G.TradeSkillHighlight) -- the chosen recipe in an orange box
 	kit:StyleExpanderRows("TradeSkillSkill", self.Rows)
 	kit:StyleExpanders(_G.TradeSkillCollapseAllButton)
-	kit:StyleLabelButton(_G.TradeSkillCollapseAllButton) -- (its All)
+	-- its All on the recipes' parchment (settings/positions.lua), in the headers' ink
+	local all = CreateFont("DiabolicUITradeSkillAll")
+	all:SetFont(_G.GameFontNormalLeft:GetFont())
+	all:SetTextColor(unpack(self.config.inks.header))
+	all:SetShadowColor(0, 0, 0, 0)
+	_G.TradeSkillCollapseAllButton:SetNormalFontObject(all)
+	_G.TradeSkillCollapseAllButton:SetHighlightFontObject(all)
 	self:SpanHighlight()
 	hooksecurefunc("TradeSkillFrame_Update", function()
 		-- (its count changed: again with it, for the scroll bar)
@@ -225,11 +242,14 @@ Module.StyleTradeSkill = function(self)
 		end
 		self:ShadeList()
 		self:UpdateGem()
+		self:RankTitle()
 	end)
 	hooksecurefunc("TradeSkillFrame_SetSelection", function(id)
 		self:InkReagents(id)
 		self:ClearScan()
+		self:RankTitle()
 	end)
+	_G.TradeSkillRankFrame:Hide() -- (still there for its event: Blizzard updates on it)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
