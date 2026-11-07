@@ -14,7 +14,8 @@ runs for players, it's a local dev tool only.
 From the addon root (`DiabolicUI/`):
 
 ```bash
-tests/run_all.sh            # every test file, one after another
+tests/run_all.sh            # every test file, six at once (about 300 MB each): not while the game runs
+JOBS=1 tests/run_all.sh     # one after another
 lua5.1 tests/test_tooltip_positioning.lua   # a single file
 ```
 
