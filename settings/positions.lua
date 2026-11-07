@@ -308,10 +308,21 @@ Engine:NewStaticConfig("Positions", {
 	-- TradeFrame ------------------------------------------------------------
 	TradeFrameCancelButton = { "LEFT", "TradeFrameTradeButton", "RIGHT", 6, 0, 80, 22 }, -- Button "Cancel"
 	TradeFrameDiabolicFoot = { "BOTTOMLEFT", "TradeFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
+	TradeFramePlayerEnchantText = { "TOPLEFT", "TradePlayerItem7", "TOPLEFT", 0, 18 }, -- FontString "Will not be traded"
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
-	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
-	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Tmanx"
+	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 44 }, -- FontString "Padirac"
+	TradeFrameRecipientEnchantText = { "TOPLEFT", "TradeRecipientItem7", "TOPLEFT", 0, 18 }, -- FontString "Will not be traded"
+	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 44 }, -- FontString "Tmanx"
 	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolicFoot", "BOTTOMLEFT", 196, 7, 80, 22 }, -- Button "Trade"
+	TradeHighlightPlayer = { "TOPLEFT", "TradePlayerItem1", "TOPLEFT", -7, 4 }, -- Frame
+	-- the recipient's accepted glow, as yours (not seen by a scan made before they accept)
+	TradeHighlightRecipient = { "TOPLEFT", "TradeRecipientItem1", "TOPLEFT", -6, 4 }, -- Frame
+	TradePlayerInputMoneyFrame = { "TOPLEFT", "TradePlayerItem1", "TOPLEFT", 0, 31 }, -- Frame
+	TradePlayerItem1 = { "TOPLEFT", "TradeFrame", "TOPLEFT", 20, -96 }, -- Frame
+	TradePlayerItem7 = { "TOPLEFT", "TradePlayerItem6", "BOTTOMLEFT", 0, -26 }, -- Frame
+	TradeRecipientItem1 = { "TOPLEFT", "TradeFrame", "TOPLEFT", 201, -96 }, -- Frame
+	TradeRecipientItem7 = { "TOPLEFT", "TradeRecipientItem6", "BOTTOMLEFT", 0, -26 }, -- Frame
+	TradeRecipientMoneyFrame = { "RIGHT", "TradeRecipientItem1", "TOPRIGHT", 0, 22 }, -- Frame
 
 	-- TradeSkillFrame -------------------------------------------------------
 	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 85.5, 22 }, -- Button "Exit"

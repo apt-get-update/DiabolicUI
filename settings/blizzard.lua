@@ -607,7 +607,9 @@ Engine:NewStaticConfig("Blizzard", {
 			{ frame = "BattlefieldFrame", band = false, insets = { 19, 40, -5, -39 }, offset_y = -4, background = "lava", title = "BattlefieldFrameFrameLabel", footer = true,
 				close = "BattlefieldFrameCloseButton", lists = { "BattlefieldListScrollFrame", { "BattlefieldFrameInfoScrollFrame", 0, "BattlefieldListScrollFrame" } }, pale = true },
 			{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4, title = "BankFrameTitleText", close = "BankCloseButton" },
-			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton", footer = true },
+			-- the trade: each side's slots, and its enchant slot, in a stone pane
+			{ frame = "TradeFrame", band = false, background = "slabs", insets = { 24, 40, 14, -16 }, offset_y = -4, text = "TRADE", close = "TradeFrameCloseButton", footer = true,
+				panes = { { "TradePlayerItem1", "TradePlayerItem6" }, { "TradeRecipientItem1", "TradeRecipientItem6" }, { "TradePlayerItem7" }, { "TradeRecipientItem7" } } },
 			-- the flight master's: the window around its map (Blizzard's 316 x 352,
 			-- 21 in from the frame's left, 75 from its top, 47 from its right, 85
 			-- from its foot), in the stone pane, 10 in from the iron's solid

@@ -116,98 +116,14 @@ WowWindow {
         }
     }
 
-    FontString {
-        name: "TradeFramePlayerEnchantText"
-        text: "Will not be traded"
-        wowParent: "TradeFrame"
-        anchors.left: parent.left
-        anchors.leftMargin: 26
-        anchors.top: parent.top
-        anchors.topMargin: 374
-        width: 95.6
-        height: 10.3
-
-        FontString {
-            name: "TradeFrameRecipientEnchantText"
-            text: "Will not be traded"
-            wowParent: "TradeFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 170
-            anchors.verticalCenter: parent.verticalCenter
-            width: 95.6
-            height: 10.3
-        }
-    }
-
-    Frame {
-        name: "TradeHighlightPlayer"
-        wowParent: "TradeFrame"
-        anchors.left: parent.left
-        anchors.leftMargin: 19
-        anchors.top: parent.top
-        anchors.topMargin: 100
-        width: 161
-        height: 266
-
-        Frame {
-            name: "TradeHighlightPlayerEnchant"
-            wowParent: "TradeFrame"
-            anchors.left: parent.left
-            anchors.top: parent.bottom
-            anchors.topMargin: 4
-            width: 161
-            height: 61
-        }
-    }
-
-    Frame {
-        name: "TradePlayerInputMoneyFrame"
-        wowParent: "TradeFrame"
-        anchors.left: parent.left
-        anchors.leftMargin: 26
-        anchors.top: parent.top
-        anchors.topMargin: 73
-        width: 176
-        height: 18
-
-        EditBox {
-            name: "TradePlayerInputMoneyFrameGold"
-            wowParent: "TradePlayerInputMoneyFrame"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 56
-            height: 20
-
-            EditBox {
-                name: "TradePlayerInputMoneyFrameSilver"
-                text: "2"
-                wowParent: "TradePlayerInputMoneyFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 22
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30
-                height: 20
-
-                EditBox {
-                    name: "TradePlayerInputMoneyFrameCopper"
-                    wowParent: "TradePlayerInputMoneyFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 11
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30
-                    height: 20
-                }
-            }
-        }
-    }
-
     Frame {
         name: "TradePlayerItem1"
         wowParent: "TradeFrame"
+        pin: "place"
         anchors.left: parent.left
-        anchors.leftMargin: 26
+        anchors.leftMargin: 20
         anchors.top: parent.top
-        anchors.topMargin: 104
+        anchors.topMargin: 96
         width: 153
         height: 37
 
@@ -219,9 +135,72 @@ WowWindow {
             pin: "place"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.top
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 44
             width: 100
             height: 12
+        }
+
+        Frame {
+            name: "TradeHighlightPlayer"
+            wowParent: "TradeFrame"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: -7
+            anchors.top: parent.top
+            anchors.topMargin: -4
+            width: 161
+            height: 266
+
+            Frame {
+                name: "TradeHighlightPlayerEnchant"
+                wowParent: "TradeFrame"
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                anchors.topMargin: 4
+                width: 161
+                height: 61
+            }
+        }
+
+        Frame {
+            name: "TradePlayerInputMoneyFrame"
+            wowParent: "TradeFrame"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: -31
+            width: 176
+            height: 18
+
+            EditBox {
+                name: "TradePlayerInputMoneyFrameGold"
+                wowParent: "TradePlayerInputMoneyFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 56
+                height: 20
+
+                EditBox {
+                    name: "TradePlayerInputMoneyFrameSilver"
+                    text: "2"
+                    wowParent: "TradePlayerInputMoneyFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 22
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 30
+                    height: 20
+
+                    EditBox {
+                        name: "TradePlayerInputMoneyFrameCopper"
+                        wowParent: "TradePlayerInputMoneyFrame"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 11
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 30
+                        height: 20
+                    }
+                }
+            }
         }
 
         Button {
@@ -326,11 +305,24 @@ WowWindow {
                             Frame {
                                 name: "TradePlayerItem7"
                                 wowParent: "TradeFrame"
+                                pin: "place"
                                 anchors.left: parent.left
                                 anchors.top: parent.bottom
-                                anchors.topMargin: 28
+                                anchors.topMargin: 26
                                 width: 153
                                 height: 37
+
+                                FontString {
+                                    name: "TradeFramePlayerEnchantText"
+                                    text: "Will not be traded"
+                                    wowParent: "TradeFrame"
+                                    pin: "place"
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.topMargin: -18
+                                    width: 95.6
+                                    height: 10.3
+                                }
 
                                 Button {
                                     name: "TradePlayerItem7ItemButton"
@@ -477,10 +469,11 @@ WowWindow {
     Frame {
         name: "TradeRecipientItem1"
         wowParent: "TradeFrame"
+        pin: "place"
         anchors.left: parent.left
-        anchors.leftMargin: 195
+        anchors.leftMargin: 201
         anchors.top: parent.top
-        anchors.topMargin: 104
+        anchors.topMargin: 96
         width: 153
         height: 37
 
@@ -491,9 +484,22 @@ WowWindow {
             pin: "place"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.top
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 44
             width: 80
             height: 12
+        }
+
+        // the recipient's accepted glow, as yours (not seen by a scan made before they accept)
+        Frame {
+            name: "TradeHighlightRecipient"
+            wowParent: "TradeFrame"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: -6
+            anchors.top: parent.top
+            anchors.topMargin: -4
+            width: 161
+            height: 266
         }
 
         Button {
@@ -598,11 +604,24 @@ WowWindow {
                             Frame {
                                 name: "TradeRecipientItem7"
                                 wowParent: "TradeFrame"
+                                pin: "place"
                                 anchors.left: parent.left
                                 anchors.top: parent.bottom
-                                anchors.topMargin: 28
+                                anchors.topMargin: 26
                                 width: 153
                                 height: 37
+
+                                FontString {
+                                    name: "TradeFrameRecipientEnchantText"
+                                    text: "Will not be traded"
+                                    wowParent: "TradeFrame"
+                                    pin: "place"
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.topMargin: -18
+                                    width: 95.6
+                                    height: 10.3
+                                }
 
                                 Button {
                                     name: "TradeRecipientItem7ItemButton"
@@ -727,6 +746,17 @@ WowWindow {
             }
         }
 
+        Frame {
+            name: "TradeRecipientMoneyFrame"
+            wowParent: "TradeFrame"
+            pin: "place"
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.top
+            anchors.verticalCenterOffset: -22
+            width: 13
+            height: 13
+        }
+
         Ghost {
             name: "TradeRecipientItem1NameFrame"
             x: 31
@@ -744,16 +774,5 @@ WowWindow {
                 height: 30
             }
         }
-    }
-
-    Frame {
-        name: "TradeRecipientMoneyFrame"
-        wowParent: "TradeFrame"
-        anchors.right: parent.right
-        anchors.rightMargin: 40
-        anchors.top: parent.top
-        anchors.topMargin: 78
-        width: 13
-        height: 13
     }
 }
