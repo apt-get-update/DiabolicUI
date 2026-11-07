@@ -44,6 +44,17 @@ Module.ShadeList = function(self)
 	end
 end
 
+-- As many trainings as fit the list (its height: settings/positions.lua), the
+-- others hidden. (Blizzard sets its count as it opens, by the trainer's kind.)
+local ROWS = 11
+local FitList = function()
+	local rows = kit:RowsFitting(_G.ClassTrainerListScrollFrame, _G.CLASS_TRAINER_SKILL_HEIGHT, ROWS)
+	_G.CLASS_TRAINER_SKILLS_DISPLAYED = rows
+	for i = rows + 1, ROWS do
+		_G["ClassTrainerSkill" .. i]:Hide()
+	end
+end
+
 -- A color as a text's code.
 local ColorCode = function(color)
 	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
@@ -74,7 +85,7 @@ end
 Module.StyleTrainer = function(self)
 	local config = self.config
 	kit:LightRow(_G.ClassTrainerSkillHighlight) -- the chosen one in an orange box
-	kit:StyleExpanderRows("ClassTrainerSkill", 11) -- (Blizzard shows 10 or 11)
+	kit:StyleExpanderRows("ClassTrainerSkill", ROWS) -- (Blizzard shows 10 or 11)
 	kit:StyleExpanders(_G.ClassTrainerCollapseAllButton)
 	kit:StyleLabelButton(_G.ClassTrainerCollapseAllButton) -- (its All)
 	-- the trainer's words in the middle of their panel
@@ -88,7 +99,7 @@ Module.StyleTrainer = function(self)
 	hover:SetJustifyH("LEFT")
 	hover:SetTextColor(unpack(config.hover_color))
 	hover:SetShadowColor(0, 0, 0, 0)
-	for i = 1, _G.CLASS_TRAINER_SKILLS_DISPLAYED do
+	for i = 1, ROWS do
 		local button = _G["ClassTrainerSkill" .. i]
 		button:SetHighlightFontObject(hover)
 		button:HookScript("OnEnter", function()
@@ -96,14 +107,8 @@ Module.StyleTrainer = function(self)
 		end)
 	end
 	_G.UIDropDownMenu_SetWidth(_G.ClassTrainerFrameFilterDropDown, config.filter_width)
-	-- the chosen one's over the foot (Blizzard sets its height as it opens,
-	-- by the trainer's kind)
-	local Trim = function()
-		local detail = _G.ClassTrainerDetailScrollFrame
-		detail:SetHeight(detail:GetHeight() - config.detail_trim)
-	end
-	hooksecurefunc("ClassTrainer_SetToClassTrainer", Trim)
-	hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", Trim)
+	hooksecurefunc("ClassTrainer_SetToClassTrainer", FitList)
+	hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", FitList)
 	hooksecurefunc("ClassTrainerFrame_Update", function() self:ShadeList() end)
 	hooksecurefunc("ClassTrainer_SetSelection", function() self:InkDetails() end)
 end

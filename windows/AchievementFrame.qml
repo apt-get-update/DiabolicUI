@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -87,6 +87,7 @@ WowWindow {
                     height: 593.3
 
                     Button {
+                        id: achievementFrameAchievementsContainerButton1
                         name: "AchievementFrameAchievementsContainerButton1"
                         wowParent: "AchievementFrameAchievementsContainerScrollChild"
                         anchors.left: parent.left
@@ -211,499 +212,504 @@ WowWindow {
                                 height: 16
                             }
                         }
+                    }
 
-                        Button {
-                            name: "AchievementFrameAchievementsContainerButton2"
-                            wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                    Button {
+                        id: achievementFrameAchievementsContainerButton2
+                        name: "AchievementFrameAchievementsContainerButton2"
+                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                        anchors.left: achievementFrameAchievementsContainerButton1.left
+                        anchors.top: achievementFrameAchievementsContainerButton1.bottom
+                        width: 496
+                        height: 84
+
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton2Description"
+                            text: "Eat so many Tricky Treats that you get an upset tummy."
+                            wowParent: "AchievementFrameAchievementsContainerButton2"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
+
+                            Frame {
+                                name: "AchievementFrameAchievementsContainerButton2Objectives"
+                                wowParent: "AchievementFrameAchievementsContainerButton2"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -2
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 340
+                                height: -6
+                            }
+                        }
+
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton2HiddenDescription"
+                            text: "Obtain a Sinister Squashling pet and Hallowed Helm."
+                            wowParent: "AchievementFrameAchievementsContainerButton2"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 10.3
+                        }
+
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton2Highlight"
+                            wowParent: "AchievementFrameAchievementsContainerButton2"
                             anchors.left: parent.left
-                            anchors.top: parent.bottom
+                            anchors.top: parent.top
+                            anchors.topMargin: 78.7
+                            width: 496
+                            height: 89.3
+                        }
+
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton2Icon"
+                            wowParent: "AchievementFrameAchievementsContainerButton2"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
+
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton2Shield"
+                            wowParent: "AchievementFrameAchievementsContainerButton2"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton2DateCompleted"
+                                text: "10/21/26"
+                                wowParent: "AchievementFrameAchievementsContainerButton2"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -3
+                                anchors.top: parent.bottom
+                                anchors.topMargin: -6
+                                width: 100
+                                height: 14
+                            }
+
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton2ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameAchievementsContainerButton2Shield"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+                    }
+
+                    Button {
+                        id: achievementFrameAchievementsContainerButton3
+                        name: "AchievementFrameAchievementsContainerButton3"
+                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                        anchors.left: achievementFrameAchievementsContainerButton2.left
+                        anchors.top: achievementFrameAchievementsContainerButton2.bottom
+                        width: 496
+                        height: 84
+
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton3Description"
+                            text: "Receive a handful of a candy from one of the Candy Buckets located in an inn."
+                            wowParent: "AchievementFrameAchievementsContainerButton3"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
+
+                            Frame {
+                                name: "AchievementFrameAchievementsContainerButton3Objectives"
+                                wowParent: "AchievementFrameAchievementsContainerButton3"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -2
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 340
+                                height: -6
+                            }
+                        }
+
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton3Highlight"
+                            wowParent: "AchievementFrameAchievementsContainerButton3"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
                             width: 496
                             height: 84
+                        }
+
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton3Icon"
+                            wowParent: "AchievementFrameAchievementsContainerButton3"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
+
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton3Shield"
+                            wowParent: "AchievementFrameAchievementsContainerButton3"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
 
                             FontString {
-                                name: "AchievementFrameAchievementsContainerButton2Description"
-                                text: "Eat so many Tricky Treats that you get an upset tummy."
-                                wowParent: "AchievementFrameAchievementsContainerButton2"
+                                name: "AchievementFrameAchievementsContainerButton3DateCompleted"
+                                text: "10/21/26"
+                                wowParent: "AchievementFrameAchievementsContainerButton3"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.top
-                                anchors.topMargin: 30
-                                width: 330
-                                height: 30
-
-                                Frame {
-                                    name: "AchievementFrameAchievementsContainerButton2Objectives"
-                                    wowParent: "AchievementFrameAchievementsContainerButton2"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.horizontalCenterOffset: -2
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 8
-                                    width: 340
-                                    height: -6
-                                }
-                            }
-
-                            FontString {
-                                name: "AchievementFrameAchievementsContainerButton2HiddenDescription"
-                                text: "Obtain a Sinister Squashling pet and Hallowed Helm."
-                                wowParent: "AchievementFrameAchievementsContainerButton2"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.top
-                                anchors.topMargin: 30
-                                width: 330
-                                height: 10.3
-                            }
-
-                            Frame {
-                                name: "AchievementFrameAchievementsContainerButton2Highlight"
-                                wowParent: "AchievementFrameAchievementsContainerButton2"
-                                anchors.left: parent.left
-                                anchors.top: parent.top
-                                anchors.topMargin: 78.7
-                                width: 496
-                                height: 89.3
-                            }
-
-                            Frame {
-                                name: "AchievementFrameAchievementsContainerButton2Icon"
-                                wowParent: "AchievementFrameAchievementsContainerButton2"
-                                anchors.left: parent.left
-                                anchors.leftMargin: 8
-                                anchors.top: parent.top
-                                anchors.topMargin: 9
-                                width: 60
-                                height: 60
-                            }
-
-                            Frame {
-                                name: "AchievementFrameAchievementsContainerButton2Shield"
-                                wowParent: "AchievementFrameAchievementsContainerButton2"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 6
-                                anchors.top: parent.top
-                                width: 64
-                                height: 64
-
-                                FontString {
-                                    name: "AchievementFrameAchievementsContainerButton2DateCompleted"
-                                    text: "10/21/26"
-                                    wowParent: "AchievementFrameAchievementsContainerButton2"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.horizontalCenterOffset: -3
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: -6
-                                    width: 100
-                                    height: 14
-                                }
-
-                                FontString {
-                                    name: "AchievementFrameAchievementsContainerButton2ShieldPoints"
-                                    text: "10"
-                                    wowParent: "AchievementFrameAchievementsContainerButton2Shield"
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: 18
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 26
-                                    width: 32
-                                    height: 16
-                                }
-                            }
-
-                            Button {
-                                name: "AchievementFrameAchievementsContainerButton3"
-                                wowParent: "AchievementFrameAchievementsContainerScrollChild"
-                                anchors.left: parent.left
+                                anchors.horizontalCenterOffset: -3
                                 anchors.top: parent.bottom
-                                width: 496
-                                height: 84
+                                anchors.topMargin: -6
+                                width: 100
+                                height: 14
+                            }
 
-                                FontString {
-                                    name: "AchievementFrameAchievementsContainerButton3Description"
-                                    text: "Receive a handful of a candy from one of the Candy Buckets located in an inn."
-                                    wowParent: "AchievementFrameAchievementsContainerButton3"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 30
-                                    width: 330
-                                    height: 30
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton3ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameAchievementsContainerButton3Shield"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+                    }
 
-                                    Frame {
-                                        name: "AchievementFrameAchievementsContainerButton3Objectives"
-                                        wowParent: "AchievementFrameAchievementsContainerButton3"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.horizontalCenterOffset: -2
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 8
-                                        width: 340
-                                        height: -6
-                                    }
-                                }
+                    Button {
+                        id: achievementFrameAchievementsContainerButton4
+                        name: "AchievementFrameAchievementsContainerButton4"
+                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                        anchors.left: achievementFrameAchievementsContainerButton3.left
+                        anchors.top: achievementFrameAchievementsContainerButton3.bottom
+                        width: 496
+                        height: 84
 
-                                Frame {
-                                    name: "AchievementFrameAchievementsContainerButton3Highlight"
-                                    wowParent: "AchievementFrameAchievementsContainerButton3"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.top
-                                    width: 496
-                                    height: 84
-                                }
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton4Description"
+                            text: "Obtain a Flimsy Mask during Hallow's End."
+                            wowParent: "AchievementFrameAchievementsContainerButton4"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
 
-                                Frame {
-                                    name: "AchievementFrameAchievementsContainerButton3Icon"
-                                    wowParent: "AchievementFrameAchievementsContainerButton3"
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 8
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 9
-                                    width: 60
-                                    height: 60
-                                }
+                            Frame {
+                                name: "AchievementFrameAchievementsContainerButton4Objectives"
+                                wowParent: "AchievementFrameAchievementsContainerButton4"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -2
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 340
+                                height: -6
+                            }
+                        }
 
-                                Frame {
-                                    name: "AchievementFrameAchievementsContainerButton3Shield"
-                                    wowParent: "AchievementFrameAchievementsContainerButton3"
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: 6
-                                    anchors.top: parent.top
-                                    width: 64
-                                    height: 64
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton4Highlight"
+                            wowParent: "AchievementFrameAchievementsContainerButton4"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.topMargin: 80.8
+                            width: 496
+                            height: 84
+                        }
 
-                                    FontString {
-                                        name: "AchievementFrameAchievementsContainerButton3DateCompleted"
-                                        text: "10/21/26"
-                                        wowParent: "AchievementFrameAchievementsContainerButton3"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.horizontalCenterOffset: -3
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: -6
-                                        width: 100
-                                        height: 14
-                                    }
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton4Icon"
+                            wowParent: "AchievementFrameAchievementsContainerButton4"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
 
-                                    FontString {
-                                        name: "AchievementFrameAchievementsContainerButton3ShieldPoints"
-                                        text: "10"
-                                        wowParent: "AchievementFrameAchievementsContainerButton3Shield"
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: 18
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 26
-                                        width: 32
-                                        height: 16
-                                    }
-                                }
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton4Shield"
+                            wowParent: "AchievementFrameAchievementsContainerButton4"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
 
-                                Button {
-                                    name: "AchievementFrameAchievementsContainerButton4"
-                                    wowParent: "AchievementFrameAchievementsContainerScrollChild"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    width: 496
-                                    height: 84
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton4DateCompleted"
+                                text: "10/18/26"
+                                wowParent: "AchievementFrameAchievementsContainerButton4"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -3
+                                anchors.top: parent.bottom
+                                anchors.topMargin: -6
+                                width: 100
+                                height: 14
+                            }
 
-                                    FontString {
-                                        name: "AchievementFrameAchievementsContainerButton4Description"
-                                        text: "Obtain a Flimsy Mask during Hallow's End."
-                                        wowParent: "AchievementFrameAchievementsContainerButton4"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 30
-                                        width: 330
-                                        height: 30
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton4ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameAchievementsContainerButton4Shield"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+                    }
 
-                                        Frame {
-                                            name: "AchievementFrameAchievementsContainerButton4Objectives"
-                                            wowParent: "AchievementFrameAchievementsContainerButton4"
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.horizontalCenterOffset: -2
-                                            anchors.top: parent.bottom
-                                            anchors.topMargin: 8
-                                            width: 340
-                                            height: -6
-                                        }
-                                    }
+                    Button {
+                        id: achievementFrameAchievementsContainerButton5
+                        name: "AchievementFrameAchievementsContainerButton5"
+                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                        anchors.left: achievementFrameAchievementsContainerButton4.left
+                        anchors.top: achievementFrameAchievementsContainerButton4.bottom
+                        width: 496
+                        height: 84
 
-                                    Frame {
-                                        name: "AchievementFrameAchievementsContainerButton4Highlight"
-                                        wowParent: "AchievementFrameAchievementsContainerButton4"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 80.8
-                                        width: 496
-                                        height: 84
-                                    }
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton5Description"
+                            text: "Kill the Headless Horseman."
+                            wowParent: "AchievementFrameAchievementsContainerButton5"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
 
-                                    Frame {
-                                        name: "AchievementFrameAchievementsContainerButton4Icon"
-                                        wowParent: "AchievementFrameAchievementsContainerButton4"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 8
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 9
-                                        width: 60
-                                        height: 60
-                                    }
+                            Frame {
+                                name: "AchievementFrameAchievementsContainerButton5Objectives"
+                                wowParent: "AchievementFrameAchievementsContainerButton5"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -2
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 340
+                                height: -6
+                            }
+                        }
 
-                                    Frame {
-                                        name: "AchievementFrameAchievementsContainerButton4Shield"
-                                        wowParent: "AchievementFrameAchievementsContainerButton4"
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: 6
-                                        anchors.top: parent.top
-                                        width: 64
-                                        height: 64
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton5Icon"
+                            wowParent: "AchievementFrameAchievementsContainerButton5"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
 
-                                        FontString {
-                                            name: "AchievementFrameAchievementsContainerButton4DateCompleted"
-                                            text: "10/18/26"
-                                            wowParent: "AchievementFrameAchievementsContainerButton4"
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.horizontalCenterOffset: -3
-                                            anchors.top: parent.bottom
-                                            anchors.topMargin: -6
-                                            width: 100
-                                            height: 14
-                                        }
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton5Shield"
+                            wowParent: "AchievementFrameAchievementsContainerButton5"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
 
-                                        FontString {
-                                            name: "AchievementFrameAchievementsContainerButton4ShieldPoints"
-                                            text: "10"
-                                            wowParent: "AchievementFrameAchievementsContainerButton4Shield"
-                                            anchors.right: parent.right
-                                            anchors.rightMargin: 18
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 26
-                                            width: 32
-                                            height: 16
-                                        }
-                                    }
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton5DateCompleted"
+                                text: "10/18/26"
+                                wowParent: "AchievementFrameAchievementsContainerButton5"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -3
+                                anchors.top: parent.bottom
+                                anchors.topMargin: -6
+                                width: 100
+                                height: 14
+                            }
 
-                                    Button {
-                                        name: "AchievementFrameAchievementsContainerButton5"
-                                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.bottom
-                                        width: 496
-                                        height: 84
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton5ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameAchievementsContainerButton5Shield"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+                    }
 
-                                        FontString {
-                                            name: "AchievementFrameAchievementsContainerButton5Description"
-                                            text: "Kill the Headless Horseman."
-                                            wowParent: "AchievementFrameAchievementsContainerButton5"
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 30
-                                            width: 330
-                                            height: 30
+                    Button {
+                        id: achievementFrameAchievementsContainerButton6
+                        name: "AchievementFrameAchievementsContainerButton6"
+                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                        anchors.left: achievementFrameAchievementsContainerButton5.left
+                        anchors.top: achievementFrameAchievementsContainerButton5.bottom
+                        width: 496
+                        height: 84
 
-                                            Frame {
-                                                name: "AchievementFrameAchievementsContainerButton5Objectives"
-                                                wowParent: "AchievementFrameAchievementsContainerButton5"
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.horizontalCenterOffset: -2
-                                                anchors.top: parent.bottom
-                                                anchors.topMargin: 8
-                                                width: 340
-                                                height: -6
-                                            }
-                                        }
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton6Description"
+                            text: "Complete one of the quests to save a village from the Headless Horseman."
+                            wowParent: "AchievementFrameAchievementsContainerButton6"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
 
-                                        Frame {
-                                            name: "AchievementFrameAchievementsContainerButton5Icon"
-                                            wowParent: "AchievementFrameAchievementsContainerButton5"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 8
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 9
-                                            width: 60
-                                            height: 60
-                                        }
+                            Frame {
+                                name: "AchievementFrameAchievementsContainerButton6Objectives"
+                                wowParent: "AchievementFrameAchievementsContainerButton6"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -2
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 340
+                                height: -6
+                            }
+                        }
 
-                                        Frame {
-                                            name: "AchievementFrameAchievementsContainerButton5Shield"
-                                            wowParent: "AchievementFrameAchievementsContainerButton5"
-                                            anchors.right: parent.right
-                                            anchors.rightMargin: 6
-                                            anchors.top: parent.top
-                                            width: 64
-                                            height: 64
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton6Icon"
+                            wowParent: "AchievementFrameAchievementsContainerButton6"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
 
-                                            FontString {
-                                                name: "AchievementFrameAchievementsContainerButton5DateCompleted"
-                                                text: "10/18/26"
-                                                wowParent: "AchievementFrameAchievementsContainerButton5"
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.horizontalCenterOffset: -3
-                                                anchors.top: parent.bottom
-                                                anchors.topMargin: -6
-                                                width: 100
-                                                height: 14
-                                            }
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton6Shield"
+                            wowParent: "AchievementFrameAchievementsContainerButton6"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
 
-                                            FontString {
-                                                name: "AchievementFrameAchievementsContainerButton5ShieldPoints"
-                                                text: "10"
-                                                wowParent: "AchievementFrameAchievementsContainerButton5Shield"
-                                                anchors.right: parent.right
-                                                anchors.rightMargin: 18
-                                                anchors.top: parent.top
-                                                anchors.topMargin: 26
-                                                width: 32
-                                                height: 16
-                                            }
-                                        }
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton6DateCompleted"
+                                text: "10/18/26"
+                                wowParent: "AchievementFrameAchievementsContainerButton6"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -3
+                                anchors.top: parent.bottom
+                                anchors.topMargin: -6
+                                width: 100
+                                height: 14
+                            }
 
-                                        Button {
-                                            name: "AchievementFrameAchievementsContainerButton6"
-                                            wowParent: "AchievementFrameAchievementsContainerScrollChild"
-                                            anchors.left: parent.left
-                                            anchors.top: parent.bottom
-                                            width: 496
-                                            height: 84
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton6ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameAchievementsContainerButton6Shield"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+                    }
 
-                                            FontString {
-                                                name: "AchievementFrameAchievementsContainerButton6Description"
-                                                text: "Complete one of the quests to save a village from the Headless Horseman."
-                                                wowParent: "AchievementFrameAchievementsContainerButton6"
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.top: parent.top
-                                                anchors.topMargin: 30
-                                                width: 330
-                                                height: 30
+                    Button {
+                        name: "AchievementFrameAchievementsContainerButton7"
+                        wowParent: "AchievementFrameAchievementsContainerScrollChild"
+                        anchors.left: achievementFrameAchievementsContainerButton6.left
+                        anchors.top: achievementFrameAchievementsContainerButton6.bottom
+                        width: 496
+                        height: 84
 
-                                                Frame {
-                                                    name: "AchievementFrameAchievementsContainerButton6Objectives"
-                                                    wowParent: "AchievementFrameAchievementsContainerButton6"
-                                                    anchors.horizontalCenter: parent.horizontalCenter
-                                                    anchors.horizontalCenterOffset: -2
-                                                    anchors.top: parent.bottom
-                                                    anchors.topMargin: 8
-                                                    width: 340
-                                                    height: -6
-                                                }
-                                            }
+                        FontString {
+                            name: "AchievementFrameAchievementsContainerButton7Description"
+                            text: "Collect the 20 unique Flimsy Masks listed below."
+                            wowParent: "AchievementFrameAchievementsContainerButton7"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
 
-                                            Frame {
-                                                name: "AchievementFrameAchievementsContainerButton6Icon"
-                                                wowParent: "AchievementFrameAchievementsContainerButton6"
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 8
-                                                anchors.top: parent.top
-                                                anchors.topMargin: 9
-                                                width: 60
-                                                height: 60
-                                            }
+                            Frame {
+                                name: "AchievementFrameAchievementsContainerButton7Objectives"
+                                wowParent: "AchievementFrameAchievementsContainerButton7"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -2
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 340
+                                height: -6
+                            }
+                        }
 
-                                            Frame {
-                                                name: "AchievementFrameAchievementsContainerButton6Shield"
-                                                wowParent: "AchievementFrameAchievementsContainerButton6"
-                                                anchors.right: parent.right
-                                                anchors.rightMargin: 6
-                                                anchors.top: parent.top
-                                                width: 64
-                                                height: 64
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton7Icon"
+                            wowParent: "AchievementFrameAchievementsContainerButton7"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
 
-                                                FontString {
-                                                    name: "AchievementFrameAchievementsContainerButton6DateCompleted"
-                                                    text: "10/18/26"
-                                                    wowParent: "AchievementFrameAchievementsContainerButton6"
-                                                    anchors.horizontalCenter: parent.horizontalCenter
-                                                    anchors.horizontalCenterOffset: -3
-                                                    anchors.top: parent.bottom
-                                                    anchors.topMargin: -6
-                                                    width: 100
-                                                    height: 14
-                                                }
+                        Frame {
+                            name: "AchievementFrameAchievementsContainerButton7Shield"
+                            wowParent: "AchievementFrameAchievementsContainerButton7"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
 
-                                                FontString {
-                                                    name: "AchievementFrameAchievementsContainerButton6ShieldPoints"
-                                                    text: "10"
-                                                    wowParent: "AchievementFrameAchievementsContainerButton6Shield"
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 18
-                                                    anchors.top: parent.top
-                                                    anchors.topMargin: 26
-                                                    width: 32
-                                                    height: 16
-                                                }
-                                            }
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton7DateCompleted"
+                                text: "5/26/26"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -3
+                                anchors.top: parent.bottom
+                                anchors.topMargin: -6
+                                width: 42
+                                height: 12
+                            }
 
-                                            Button {
-                                                name: "AchievementFrameAchievementsContainerButton7"
-                                                wowParent: "AchievementFrameAchievementsContainerScrollChild"
-                                                anchors.left: parent.left
-                                                anchors.top: parent.bottom
-                                                width: 496
-                                                height: 84
-
-                                                FontString {
-                                                    name: "AchievementFrameAchievementsContainerButton7Description"
-                                                    text: "Collect the 20 unique Flimsy Masks listed below."
-                                                    wowParent: "AchievementFrameAchievementsContainerButton7"
-                                                    anchors.horizontalCenter: parent.horizontalCenter
-                                                    anchors.top: parent.top
-                                                    anchors.topMargin: 30
-                                                    width: 330
-                                                    height: 30
-
-                                                    Frame {
-                                                        name: "AchievementFrameAchievementsContainerButton7Objectives"
-                                                        wowParent: "AchievementFrameAchievementsContainerButton7"
-                                                        anchors.horizontalCenter: parent.horizontalCenter
-                                                        anchors.horizontalCenterOffset: -2
-                                                        anchors.top: parent.bottom
-                                                        anchors.topMargin: 8
-                                                        width: 340
-                                                        height: -6
-                                                    }
-                                                }
-
-                                                Frame {
-                                                    name: "AchievementFrameAchievementsContainerButton7Icon"
-                                                    wowParent: "AchievementFrameAchievementsContainerButton7"
-                                                    anchors.left: parent.left
-                                                    anchors.leftMargin: 8
-                                                    anchors.top: parent.top
-                                                    anchors.topMargin: 9
-                                                    width: 60
-                                                    height: 60
-                                                }
-
-                                                Frame {
-                                                    name: "AchievementFrameAchievementsContainerButton7Shield"
-                                                    wowParent: "AchievementFrameAchievementsContainerButton7"
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 6
-                                                    anchors.top: parent.top
-                                                    width: 64
-                                                    height: 64
-
-                                                    FontString {
-                                                        name: "AchievementFrameAchievementsContainerButton7DateCompleted"
-                                                        text: "5/26/26"
-                                                        anchors.horizontalCenter: parent.horizontalCenter
-                                                        anchors.horizontalCenterOffset: -3
-                                                        anchors.top: parent.bottom
-                                                        anchors.topMargin: -6
-                                                        width: 42
-                                                        height: 12
-                                                    }
-
-                                                    FontString {
-                                                        name: "AchievementFrameAchievementsContainerButton7ShieldPoints"
-                                                        text: "20"
-                                                        wowParent: "AchievementFrameAchievementsContainerButton7Shield"
-                                                        anchors.right: parent.right
-                                                        anchors.rightMargin: 18
-                                                        anchors.top: parent.top
-                                                        anchors.topMargin: 26
-                                                        width: 32
-                                                        height: 16
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                            FontString {
+                                name: "AchievementFrameAchievementsContainerButton7ShieldPoints"
+                                text: "20"
+                                wowParent: "AchievementFrameAchievementsContainerButton7Shield"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
                             }
                         }
                     }
@@ -1083,6 +1089,7 @@ WowWindow {
                     height: 20
 
                     Button {
+                        id: achievementFrameSummaryAchievement1
                         name: "AchievementFrameSummaryAchievement1"
                         wowParent: "AchievementFrameSummaryAchievements"
                         anchors.left: parent.left
@@ -1157,222 +1164,224 @@ WowWindow {
                                 height: 26
                             }
                         }
+                    }
 
-                        Button {
-                            name: "AchievementFrameSummaryAchievement2"
-                            wowParent: "AchievementFrameSummaryAchievements"
+                    Button {
+                        id: achievementFrameSummaryAchievement2
+                        name: "AchievementFrameSummaryAchievement2"
+                        wowParent: "AchievementFrameSummaryAchievements"
+                        anchors.left: achievementFrameSummaryAchievement1.left
+                        anchors.top: achievementFrameSummaryAchievement1.bottom
+                        anchors.topMargin: -3
+                        width: 484
+                        height: 48
+
+                        FontString {
+                            name: "AchievementFrameSummaryAchievement2DateCompleted"
+                            text: "10/30/26"
+                            wowParent: "AchievementFrameSummaryAchievement2"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 63
+                            anchors.top: parent.top
+                            anchors.topMargin: 8
+                            width: 100
+                            height: 14
+                        }
+
+                        FontString {
+                            name: "AchievementFrameSummaryAchievement2Description"
+                            text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
+                            wowParent: "AchievementFrameSummaryAchievement2"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 380
+                            height: 13
+                        }
+
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement2Icon"
+                            wowParent: "AchievementFrameSummaryAchievement2"
                             anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            anchors.topMargin: -3
-                            width: 484
+                            anchors.leftMargin: 3
+                            anchors.top: parent.top
+                            anchors.topMargin: 3
+                            width: 48
+                            height: 48
+                        }
+
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement2Shield"
+                            wowParent: "AchievementFrameSummaryAchievement2"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.top: parent.top
+                            anchors.topMargin: 4
+                            width: 48
                             height: 48
 
                             FontString {
-                                name: "AchievementFrameSummaryAchievement2DateCompleted"
-                                text: "10/30/26"
-                                wowParent: "AchievementFrameSummaryAchievement2"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 63
-                                anchors.top: parent.top
-                                anchors.topMargin: 8
-                                width: 100
-                                height: 14
+                                name: "AchievementFrameSummaryAchievement2ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameSummaryAchievement2Shield"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -1
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenterOffset: -3
+                                width: 40
+                                height: 26
                             }
+                        }
+                    }
+
+                    Button {
+                        id: achievementFrameSummaryAchievement3
+                        name: "AchievementFrameSummaryAchievement3"
+                        wowParent: "AchievementFrameSummaryAchievements"
+                        anchors.left: achievementFrameSummaryAchievement2.left
+                        anchors.top: achievementFrameSummaryAchievement2.bottom
+                        anchors.topMargin: -3
+                        width: 484
+                        height: 48
+
+                        FontString {
+                            name: "AchievementFrameSummaryAchievement3DateCompleted"
+                            text: "10/30/26"
+                            wowParent: "AchievementFrameSummaryAchievement3"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 63
+                            anchors.top: parent.top
+                            anchors.topMargin: 8
+                            width: 100
+                            height: 14
+                        }
+
+                        FontString {
+                            name: "AchievementFrameSummaryAchievement3Description"
+                            text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
+                            wowParent: "AchievementFrameSummaryAchievement3"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 380
+                            height: 13
+                        }
+
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement3Highlight"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 484
+                            height: 48
+                        }
+
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement3Icon"
+                            wowParent: "AchievementFrameSummaryAchievement3"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 3
+                            anchors.top: parent.top
+                            anchors.topMargin: 3
+                            width: 48
+                            height: 48
+                        }
+
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement3Shield"
+                            wowParent: "AchievementFrameSummaryAchievement3"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.top: parent.top
+                            anchors.topMargin: 4
+                            width: 48
+                            height: 48
 
                             FontString {
-                                name: "AchievementFrameSummaryAchievement2Description"
-                                text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
-                                wowParent: "AchievementFrameSummaryAchievement2"
+                                name: "AchievementFrameSummaryAchievement3ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameSummaryAchievement3Shield"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.top
-                                anchors.topMargin: 30
-                                width: 380
-                                height: 13
+                                anchors.horizontalCenterOffset: -1
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenterOffset: -3
+                                width: 40
+                                height: 26
                             }
+                        }
+                    }
 
-                            Frame {
-                                name: "AchievementFrameSummaryAchievement2Icon"
-                                wowParent: "AchievementFrameSummaryAchievement2"
-                                anchors.left: parent.left
-                                anchors.leftMargin: 3
-                                anchors.top: parent.top
-                                anchors.topMargin: 3
-                                width: 48
-                                height: 48
-                            }
+                    Button {
+                        name: "AchievementFrameSummaryAchievement4"
+                        wowParent: "AchievementFrameSummaryAchievements"
+                        anchors.left: achievementFrameSummaryAchievement3.left
+                        anchors.top: achievementFrameSummaryAchievement3.bottom
+                        anchors.topMargin: -3
+                        width: 484
+                        height: 48
 
-                            Frame {
-                                name: "AchievementFrameSummaryAchievement2Shield"
-                                wowParent: "AchievementFrameSummaryAchievement2"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 4
-                                width: 48
-                                height: 48
+                        FontString {
+                            name: "AchievementFrameSummaryAchievement4DateCompleted"
+                            text: "10/30/26"
+                            wowParent: "AchievementFrameSummaryAchievement4"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 63
+                            anchors.top: parent.top
+                            anchors.topMargin: 8
+                            width: 100
+                            height: 14
+                        }
 
-                                FontString {
-                                    name: "AchievementFrameSummaryAchievement2ShieldPoints"
-                                    text: "10"
-                                    wowParent: "AchievementFrameSummaryAchievement2Shield"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.horizontalCenterOffset: -1
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.verticalCenterOffset: -3
-                                    width: 40
-                                    height: 26
-                                }
-                            }
+                        FontString {
+                            name: "AchievementFrameSummaryAchievement4Description"
+                            text: "Earn exalted reputation with 5 home cities."
+                            wowParent: "AchievementFrameSummaryAchievement4"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 380
+                            height: 13
+                        }
 
-                            Button {
-                                name: "AchievementFrameSummaryAchievement3"
-                                wowParent: "AchievementFrameSummaryAchievements"
-                                anchors.left: parent.left
-                                anchors.top: parent.bottom
-                                anchors.topMargin: -3
-                                width: 484
-                                height: 48
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement4Highlight"
+                            wowParent: "AchievementFrameSummaryAchievement4"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 484
+                            height: 48
+                        }
 
-                                FontString {
-                                    name: "AchievementFrameSummaryAchievement3DateCompleted"
-                                    text: "10/30/26"
-                                    wowParent: "AchievementFrameSummaryAchievement3"
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: 63
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 8
-                                    width: 100
-                                    height: 14
-                                }
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement4Icon"
+                            wowParent: "AchievementFrameSummaryAchievement4"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 3
+                            anchors.top: parent.top
+                            anchors.topMargin: 3
+                            width: 48
+                            height: 48
+                        }
 
-                                FontString {
-                                    name: "AchievementFrameSummaryAchievement3Description"
-                                    text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
-                                    wowParent: "AchievementFrameSummaryAchievement3"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 30
-                                    width: 380
-                                    height: 13
-                                }
+                        Frame {
+                            name: "AchievementFrameSummaryAchievement4Shield"
+                            wowParent: "AchievementFrameSummaryAchievement4"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.top: parent.top
+                            anchors.topMargin: 4
+                            width: 48
+                            height: 48
 
-                                Frame {
-                                    name: "AchievementFrameSummaryAchievement3Highlight"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.top
-                                    width: 484
-                                    height: 48
-                                }
-
-                                Frame {
-                                    name: "AchievementFrameSummaryAchievement3Icon"
-                                    wowParent: "AchievementFrameSummaryAchievement3"
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 3
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 3
-                                    width: 48
-                                    height: 48
-                                }
-
-                                Frame {
-                                    name: "AchievementFrameSummaryAchievement3Shield"
-                                    wowParent: "AchievementFrameSummaryAchievement3"
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 4
-                                    width: 48
-                                    height: 48
-
-                                    FontString {
-                                        name: "AchievementFrameSummaryAchievement3ShieldPoints"
-                                        text: "10"
-                                        wowParent: "AchievementFrameSummaryAchievement3Shield"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.horizontalCenterOffset: -1
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.verticalCenterOffset: -3
-                                        width: 40
-                                        height: 26
-                                    }
-                                }
-
-                                Button {
-                                    name: "AchievementFrameSummaryAchievement4"
-                                    wowParent: "AchievementFrameSummaryAchievements"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: -3
-                                    width: 484
-                                    height: 48
-
-                                    FontString {
-                                        name: "AchievementFrameSummaryAchievement4DateCompleted"
-                                        text: "10/30/26"
-                                        wowParent: "AchievementFrameSummaryAchievement4"
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: 63
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 8
-                                        width: 100
-                                        height: 14
-                                    }
-
-                                    FontString {
-                                        name: "AchievementFrameSummaryAchievement4Description"
-                                        text: "Earn exalted reputation with 5 home cities."
-                                        wowParent: "AchievementFrameSummaryAchievement4"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 30
-                                        width: 380
-                                        height: 13
-                                    }
-
-                                    Frame {
-                                        name: "AchievementFrameSummaryAchievement4Highlight"
-                                        wowParent: "AchievementFrameSummaryAchievement4"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.top
-                                        width: 484
-                                        height: 48
-                                    }
-
-                                    Frame {
-                                        name: "AchievementFrameSummaryAchievement4Icon"
-                                        wowParent: "AchievementFrameSummaryAchievement4"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 3
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 3
-                                        width: 48
-                                        height: 48
-                                    }
-
-                                    Frame {
-                                        name: "AchievementFrameSummaryAchievement4Shield"
-                                        wowParent: "AchievementFrameSummaryAchievement4"
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: 10
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 4
-                                        width: 48
-                                        height: 48
-
-                                        FontString {
-                                            name: "AchievementFrameSummaryAchievement4ShieldPoints"
-                                            text: "10"
-                                            wowParent: "AchievementFrameSummaryAchievement4Shield"
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.horizontalCenterOffset: -1
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            anchors.verticalCenterOffset: -3
-                                            width: 40
-                                            height: 26
-                                        }
-                                    }
-                                }
+                            FontString {
+                                name: "AchievementFrameSummaryAchievement4ShieldPoints"
+                                text: "10"
+                                wowParent: "AchievementFrameSummaryAchievement4Shield"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -1
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenterOffset: -3
+                                width: 40
+                                height: 26
                             }
                         }
                     }

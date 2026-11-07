@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -182,6 +182,7 @@ WowWindow {
                 height: 13
 
                 Button {
+                    id: guildBankMoneyFrameCopperButton
                     name: "GuildBankMoneyFrameCopperButton"
                     text: "6"
                     wowParent: "GuildBankMoneyFrame"
@@ -201,49 +202,50 @@ WowWindow {
                         width: 10.3
                         height: 14.2
                     }
+                }
 
-                    Button {
-                        name: "GuildBankMoneyFrameSilverButton"
-                        text: "16"
-                        wowParent: "GuildBankMoneyFrame"
-                        anchors.right: parent.left
-                        anchors.rightMargin: 4
+                Button {
+                    name: "GuildBankMoneyFrameGoldButton"
+                    text: "12023"
+                    wowParent: "GuildBankMoneyFrame"
+                    anchors.right: guildBankMoneyFrameSilverButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: guildBankMoneyFrameSilverButton.verticalCenter
+                    width: 51.7
+                    height: 13
+
+                    FontString {
+                        name: "GuildBankMoneyFrameGoldButtonText"
+                        text: "12023"
+                        wowParent: "GuildBankMoneyFrameGoldButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 30.4
-                        height: 13
+                        width: 38.7
+                        height: 14.2
+                    }
+                }
 
-                        Button {
-                            name: "GuildBankMoneyFrameGoldButton"
-                            text: "12023"
-                            wowParent: "GuildBankMoneyFrame"
-                            anchors.right: parent.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 51.7
-                            height: 13
+                Button {
+                    id: guildBankMoneyFrameSilverButton
+                    name: "GuildBankMoneyFrameSilverButton"
+                    text: "16"
+                    wowParent: "GuildBankMoneyFrame"
+                    anchors.right: guildBankMoneyFrameCopperButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: guildBankMoneyFrameCopperButton.verticalCenter
+                    width: 30.4
+                    height: 13
 
-                            FontString {
-                                name: "GuildBankMoneyFrameGoldButtonText"
-                                text: "12023"
-                                wowParent: "GuildBankMoneyFrameGoldButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 38.7
-                                height: 14.2
-                            }
-                        }
-
-                        FontString {
-                            name: "GuildBankMoneyFrameSilverButtonText"
-                            text: "16"
-                            wowParent: "GuildBankMoneyFrameSilverButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 17.4
-                            height: 14.2
-                        }
+                    FontString {
+                        name: "GuildBankMoneyFrameSilverButtonText"
+                        text: "16"
+                        wowParent: "GuildBankMoneyFrameSilverButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 17.4
+                        height: 14.2
                     }
                 }
             }

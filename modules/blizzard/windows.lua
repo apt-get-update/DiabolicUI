@@ -2144,6 +2144,12 @@ Module.AddParchment = function(self, frame, insets, material, parent)
 	return self:CreateNine(holder, "BACKGROUND", material or "page")
 end
 
+-- How many rows of `height` a list shows, at most `most` (the last may reach a
+-- little past its bottom, onto the parchment's edge).
+Module.RowsFitting = function(self, list, height, most)
+	return math_min(math_floor(list:GetHeight() / height + .25), most)
+end
+
 -- A parchment's scroll bar (UIPanelScrollFrameTemplate's) out past its
 -- pages' edges, or `x` from its text's right.
 Module.PlaceParchmentBar = function(self, frame, x)

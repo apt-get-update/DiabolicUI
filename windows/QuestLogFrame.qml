@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -346,6 +346,7 @@ WowWindow {
                 height: 26
 
                 Button {
+                    id: questLogFrameAbandonButton
                     name: "QuestLogFrameAbandonButton"
                     text: "Abandon"
                     wowParent: "QuestLogControlPanel"
@@ -365,27 +366,27 @@ WowWindow {
                         width: 64.8
                         height: 11.9
                     }
+                }
 
-                    Button {
-                        name: "QuestLogFramePushQuestButton"
+                Button {
+                    name: "QuestLogFramePushQuestButton"
+                    text: "Share"
+                    wowParent: "QuestLogControlPanel"
+                    style: "Button"
+                    anchors.left: questLogFrameAbandonButton.right
+                    anchors.leftMargin: 6
+                    anchors.verticalCenter: questLogFrameAbandonButton.verticalCenter
+                    width: 96
+                    height: 21
+
+                    FontString {
+                        name: "QuestLogFramePushQuestButtonText"
                         text: "Share"
-                        wowParent: "QuestLogControlPanel"
-                        style: "Button"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 6
+                        wowParent: "QuestLogFramePushQuestButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 96
-                        height: 21
-
-                        FontString {
-                            name: "QuestLogFramePushQuestButtonText"
-                            text: "Share"
-                            wowParent: "QuestLogFramePushQuestButton"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 41.1
-                            height: 11.9
-                        }
+                        width: 41.1
+                        height: 11.9
                     }
                 }
 
@@ -530,6 +531,29 @@ WowWindow {
         height: 0
 
         Button {
+            name: "QuestInfoMoneyFrameGoldButton"
+            text: "42"
+            wowParent: "QuestInfoMoneyFrame"
+            anchors.right: questInfoMoneyFrameSilverButton.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: questInfoMoneyFrameSilverButton.verticalCenter
+            width: 38
+            height: 19
+
+            FontString {
+                name: "QuestInfoMoneyFrameGoldButtonText"
+                text: "42"
+                wowParent: "QuestInfoMoneyFrameGoldButton"
+                anchors.right: parent.right
+                anchors.rightMargin: 19
+                anchors.verticalCenter: parent.verticalCenter
+                width: 19
+                height: 15.8
+            }
+        }
+
+        Button {
+            id: questInfoMoneyFrameSilverButton
             name: "QuestInfoMoneyFrameSilverButton"
             text: "6"
             wowParent: "QuestInfoMoneyFrame"
@@ -537,28 +561,6 @@ WowWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: 30.1
             height: 19
-
-            Button {
-                name: "QuestInfoMoneyFrameGoldButton"
-                text: "42"
-                wowParent: "QuestInfoMoneyFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 38
-                height: 19
-
-                FontString {
-                    name: "QuestInfoMoneyFrameGoldButtonText"
-                    text: "42"
-                    wowParent: "QuestInfoMoneyFrameGoldButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 19
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 19
-                    height: 15.8
-                }
-            }
 
             FontString {
                 name: "QuestInfoMoneyFrameSilverButtonText"

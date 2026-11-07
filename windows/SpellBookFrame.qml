@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -99,6 +99,29 @@ WowWindow {
                 }
 
                 CheckButton {
+                    name: "DiabolicUISpellBookUnassignedBox"
+                    wowParent: "SpellBookFrame"
+                    style: "CheckBox"
+                    anchors.left: showAllSpellRanksCheckBox.right
+                    anchors.leftMargin: 65.8
+                    anchors.verticalCenter: showAllSpellRanksCheckBox.verticalCenter
+                    width: 20
+                    height: 20
+
+                    FontString {
+                        name: "DiabolicUISpellBookUnassignedBoxText"
+                        text: "Unassigned"
+                        wowParent: "DiabolicUISpellBookUnassignedBox"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 68
+                        height: 14.2
+                    }
+                }
+
+                CheckButton {
+                    id: showAllSpellRanksCheckBox
                     name: "ShowAllSpellRanksCheckBox"
                     wowParent: "SpellBookFrame"
                     style: "CheckBox"
@@ -107,28 +130,6 @@ WowWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 20
                     height: 20
-
-                    CheckButton {
-                        name: "DiabolicUISpellBookUnassignedBox"
-                        wowParent: "SpellBookFrame"
-                        style: "CheckBox"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 65.8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 20
-                        height: 20
-
-                        FontString {
-                            name: "DiabolicUISpellBookUnassignedBoxText"
-                            text: "Unassigned"
-                            wowParent: "DiabolicUISpellBookUnassignedBox"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 4
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 68
-                            height: 14.2
-                        }
-                    }
 
                     FontString {
                         name: "ShowAllSpellRanksCheckBoxText"

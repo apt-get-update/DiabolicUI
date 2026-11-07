@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -143,6 +143,7 @@ WowWindow {
     }
 
     Button {
+        id: dressUpModelRotateLeftButton
         name: "DressUpModelRotateLeftButton"
         wowParent: "DressUpModel"
         anchors.left: parent.left
@@ -151,15 +152,15 @@ WowWindow {
         anchors.topMargin: 75
         width: 35
         height: 35
+    }
 
-        Button {
-            name: "DressUpModelRotateRightButton"
-            wowParent: "DressUpModel"
-            anchors.left: parent.right
-            anchors.top: parent.top
-            width: 35
-            height: 35
-        }
+    Button {
+        name: "DressUpModelRotateRightButton"
+        wowParent: "DressUpModel"
+        anchors.left: dressUpModelRotateLeftButton.right
+        anchors.top: dressUpModelRotateLeftButton.top
+        width: 35
+        height: 35
     }
 
     Ghost {

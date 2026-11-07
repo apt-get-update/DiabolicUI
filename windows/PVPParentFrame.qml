@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -20,6 +20,7 @@ WowWindow {
 
         // the battlegrounds' block (title row, list, rewards) 5 left: in the middle
         Button {
+            id: battlegroundType1
             name: "BattlegroundType1"
             text: "Random Battleground"
             wowParent: "PVPBattlegroundFrame"
@@ -41,94 +42,6 @@ WowWindow {
                 anchors.verticalCenterOffset: -1
                 width: 130.4
                 height: 11.9
-            }
-
-            Button {
-                name: "BattlegroundType2"
-                text: "Arathi Basin (Call to Arms)"
-                wowParent: "PVPBattlegroundFrame"
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                width: 295
-                height: 16
-
-                FontString {
-                    name: "BattlegroundType2Text"
-                    text: "Arathi Basin (Call to Arms)"
-                    wowParent: "BattlegroundType2"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: -1
-                    width: 155.7
-                    height: 11.9
-                }
-
-                Button {
-                    name: "BattlegroundType3"
-                    text: "Warsong Gulch"
-                    wowParent: "PVPBattlegroundFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    width: 295
-                    height: 16
-
-                    FontString {
-                        name: "BattlegroundType3Text"
-                        text: "Warsong Gulch"
-                        wowParent: "BattlegroundType3"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 20
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -1
-                        width: 91.7
-                        height: 11.9
-                    }
-
-                    Button {
-                        name: "BattlegroundType4"
-                        text: "Alterac Valley"
-                        wowParent: "PVPBattlegroundFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        width: 295
-                        height: 16
-
-                        FontString {
-                            name: "BattlegroundType4Text"
-                            text: "Alterac Valley"
-                            wowParent: "BattlegroundType4"
-                            anchors.left: parent.left
-                            anchors.leftMargin: 20
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: -1
-                            width: 83
-                            height: 11.9
-                        }
-
-                        Button {
-                            name: "BattlegroundType5"
-                            text: "Eye of the Storm"
-                            wowParent: "PVPBattlegroundFrame"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            width: 295
-                            height: 16
-
-                            FontString {
-                                name: "BattlegroundType5Text"
-                                text: "Eye of the Storm"
-                                wowParent: "BattlegroundType5"
-                                anchors.left: parent.left
-                                anchors.leftMargin: 20
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: -1
-                                width: 99.6
-                                height: 11.9
-                            }
-                        }
-                    }
-                }
             }
 
             // as wide with no scroll bar: Blizzard widens the rows it hangs from when
@@ -204,6 +117,97 @@ WowWindow {
                     width: 300
                     height: 112
                 }
+            }
+        }
+
+        Button {
+            id: battlegroundType2
+            name: "BattlegroundType2"
+            text: "Arathi Basin (Call to Arms)"
+            wowParent: "PVPBattlegroundFrame"
+            anchors.left: battlegroundType1.left
+            anchors.top: battlegroundType1.bottom
+            width: 295
+            height: 16
+
+            FontString {
+                name: "BattlegroundType2Text"
+                text: "Arathi Basin (Call to Arms)"
+                wowParent: "BattlegroundType2"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -1
+                width: 155.7
+                height: 11.9
+            }
+        }
+
+        Button {
+            id: battlegroundType3
+            name: "BattlegroundType3"
+            text: "Warsong Gulch"
+            wowParent: "PVPBattlegroundFrame"
+            anchors.left: battlegroundType2.left
+            anchors.top: battlegroundType2.bottom
+            width: 295
+            height: 16
+
+            FontString {
+                name: "BattlegroundType3Text"
+                text: "Warsong Gulch"
+                wowParent: "BattlegroundType3"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -1
+                width: 91.7
+                height: 11.9
+            }
+        }
+
+        Button {
+            id: battlegroundType4
+            name: "BattlegroundType4"
+            text: "Alterac Valley"
+            wowParent: "PVPBattlegroundFrame"
+            anchors.left: battlegroundType3.left
+            anchors.top: battlegroundType3.bottom
+            width: 295
+            height: 16
+
+            FontString {
+                name: "BattlegroundType4Text"
+                text: "Alterac Valley"
+                wowParent: "BattlegroundType4"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -1
+                width: 83
+                height: 11.9
+            }
+        }
+
+        Button {
+            name: "BattlegroundType5"
+            text: "Eye of the Storm"
+            wowParent: "PVPBattlegroundFrame"
+            anchors.left: battlegroundType4.left
+            anchors.top: battlegroundType4.bottom
+            width: 295
+            height: 16
+
+            FontString {
+                name: "BattlegroundType5Text"
+                text: "Eye of the Storm"
+                wowParent: "BattlegroundType5"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -1
+                width: 99.6
+                height: 11.9
             }
         }
 

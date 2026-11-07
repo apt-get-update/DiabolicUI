@@ -677,7 +677,7 @@ Engine:NewStaticConfig("Blizzard", {
 				bars = { "TradeSkillRankFrame" }, -- the skill's, its rank in it
 				hide = { "TradeSkillExpandTabLeft", "TradeSkillExpandTabMiddle", "TradeSkillExpandTabRight" }, -- "All"'s tab
 				-- the window's iron across between the recipes and the chosen one
-				iron_bars = { 275 },
+				iron_bars = { 243 },
 				-- the recipe's name wrapped short of Auctionator's Scan AH, over it
 				late = { beside = { { "TradeSkillSkillName", "Auctionator_Search", 146 } } } },
 			{ frame = "MacroFrame", band = false, background = "zoltun", addon = "Blizzard_MacroUI", insets = { 24, 68, -10, -39 }, offset_y = -32, text = "CREATE_MACROS", footer = true,
@@ -928,8 +928,7 @@ Engine:NewStaticConfig("Blizzard", {
 		greeting_insets = { 4, 4, 4, 4 }, -- the trainer's words, a dark panel around them
 		missing_color = { .5, .1, .04 }, -- a requirement not met: red ink
 		hover_color = { 0, 0, 0 }, -- a training under the mouse: black ink (Blizzard's white)
-		filter_width = 80, -- the filter's, in the band left of the title
-		detail_trim = 40 -- the chosen one's, shorter than Blizzard's (set as it opens): 6 over the foot, as far as the greeting under the band
+		filter_width = 80 -- the filter's, in the band left of the title
 	},
 	-- Immersion's own dialogue box with our close button, Exocet titles and
 	-- coins (modules/blizzard/immersion.lua)

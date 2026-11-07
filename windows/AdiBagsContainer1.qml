@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -101,6 +101,7 @@ WowWindow {
             height: 19
 
             Button {
+                id: adiBagsMoneyFrameCopperButton
                 name: "AdiBagsMoneyFrameCopperButton"
                 text: "63"
                 wowParent: "AdiBagsMoneyFrame"
@@ -120,49 +121,50 @@ WowWindow {
                     width: 19
                     height: 15.8
                 }
+            }
 
-                Button {
-                    name: "AdiBagsMoneyFrameSilverButton"
-                    text: "55"
-                    wowParent: "AdiBagsMoneyFrame"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 4
+            Button {
+                name: "AdiBagsMoneyFrameGoldButton"
+                text: "3653"
+                wowParent: "AdiBagsMoneyFrame"
+                anchors.right: adiBagsMoneyFrameSilverButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: adiBagsMoneyFrameSilverButton.verticalCenter
+                width: 53.8
+                height: 19
+
+                FontString {
+                    name: "AdiBagsMoneyFrameGoldButtonText"
+                    text: "3653"
+                    wowParent: "AdiBagsMoneyFrameGoldButton"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 38
-                    height: 19
+                    width: 34.8
+                    height: 15.8
+                }
+            }
 
-                    Button {
-                        name: "AdiBagsMoneyFrameGoldButton"
-                        text: "3653"
-                        wowParent: "AdiBagsMoneyFrame"
-                        anchors.right: parent.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 53.8
-                        height: 19
+            Button {
+                id: adiBagsMoneyFrameSilverButton
+                name: "AdiBagsMoneyFrameSilverButton"
+                text: "55"
+                wowParent: "AdiBagsMoneyFrame"
+                anchors.right: adiBagsMoneyFrameCopperButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: adiBagsMoneyFrameCopperButton.verticalCenter
+                width: 38
+                height: 19
 
-                        FontString {
-                            name: "AdiBagsMoneyFrameGoldButtonText"
-                            text: "3653"
-                            wowParent: "AdiBagsMoneyFrameGoldButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 19
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 34.8
-                            height: 15.8
-                        }
-                    }
-
-                    FontString {
-                        name: "AdiBagsMoneyFrameSilverButtonText"
-                        text: "55"
-                        wowParent: "AdiBagsMoneyFrameSilverButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 19
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 19
-                        height: 15.8
-                    }
+                FontString {
+                    name: "AdiBagsMoneyFrameSilverButtonText"
+                    text: "55"
+                    wowParent: "AdiBagsMoneyFrameSilverButton"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 19
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 19
+                    height: 15.8
                 }
             }
         }

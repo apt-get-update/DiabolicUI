@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -152,6 +152,62 @@ WowWindow {
         height: 512
 
         Button {
+            id: inspectBackSlot
+            name: "InspectBackSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectShoulderSlot.left
+            anchors.top: inspectShoulderSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectChestSlot
+            name: "InspectChestSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectBackSlot.left
+            anchors.top: inspectBackSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectFeetSlot
+            name: "InspectFeetSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectLegsSlot.left
+            anchors.top: inspectLegsSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectFinger0Slot
+            name: "InspectFinger0Slot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectFeetSlot.left
+            anchors.top: inspectFeetSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectFinger1Slot
+            name: "InspectFinger1Slot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectFinger0Slot.left
+            anchors.top: inspectFinger0Slot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectHandsSlot
             name: "InspectHandsSlot"
             wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
@@ -160,79 +216,10 @@ WowWindow {
             anchors.topMargin: 74
             width: 37
             height: 37
-
-            Button {
-                name: "InspectWaistSlot"
-                wowParent: "InspectPaperDollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                anchors.topMargin: 4
-                width: 37
-                height: 37
-
-                Button {
-                    name: "InspectLegsSlot"
-                    wowParent: "InspectPaperDollFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 4
-                    width: 37
-                    height: 37
-
-                    Button {
-                        name: "InspectFeetSlot"
-                        wowParent: "InspectPaperDollFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 4
-                        width: 37
-                        height: 37
-
-                        Button {
-                            name: "InspectFinger0Slot"
-                            wowParent: "InspectPaperDollFrame"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 4
-                            width: 37
-                            height: 37
-
-                            Button {
-                                name: "InspectFinger1Slot"
-                                wowParent: "InspectPaperDollFrame"
-                                anchors.left: parent.left
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 4
-                                width: 37
-                                height: 37
-
-                                Button {
-                                    name: "InspectTrinket0Slot"
-                                    wowParent: "InspectPaperDollFrame"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 4
-                                    width: 37
-                                    height: 37
-
-                                    Button {
-                                        name: "InspectTrinket1Slot"
-                                        wowParent: "InspectPaperDollFrame"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 4
-                                        width: 37
-                                        height: 37
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         Button {
+            id: inspectHeadSlot
             name: "InspectHeadSlot"
             wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
@@ -241,79 +228,21 @@ WowWindow {
             anchors.topMargin: 74
             width: 37
             height: 37
-
-            Button {
-                name: "InspectNeckSlot"
-                wowParent: "InspectPaperDollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                anchors.topMargin: 4
-                width: 37
-                height: 37
-
-                Button {
-                    name: "InspectShoulderSlot"
-                    wowParent: "InspectPaperDollFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 4
-                    width: 37
-                    height: 37
-
-                    Button {
-                        name: "InspectBackSlot"
-                        wowParent: "InspectPaperDollFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 4
-                        width: 37
-                        height: 37
-
-                        Button {
-                            name: "InspectChestSlot"
-                            wowParent: "InspectPaperDollFrame"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 4
-                            width: 37
-                            height: 37
-
-                            Button {
-                                name: "InspectShirtSlot"
-                                wowParent: "InspectPaperDollFrame"
-                                anchors.left: parent.left
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 4
-                                width: 37
-                                height: 37
-
-                                Button {
-                                    name: "InspectTabardSlot"
-                                    wowParent: "InspectPaperDollFrame"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 4
-                                    width: 37
-                                    height: 37
-
-                                    Button {
-                                        name: "InspectWristSlot"
-                                        wowParent: "InspectPaperDollFrame"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 4
-                                        width: 37
-                                        height: 37
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         Button {
+            id: inspectLegsSlot
+            name: "InspectLegsSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectWaistSlot.left
+            anchors.top: inspectWaistSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectMainHandSlot
             name: "InspectMainHandSlot"
             wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
@@ -322,26 +251,6 @@ WowWindow {
             anchors.topMargin: -127
             width: 37
             height: 37
-
-            Button {
-                name: "InspectSecondaryHandSlot"
-                wowParent: "InspectPaperDollFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 5
-                anchors.top: parent.top
-                width: 37
-                height: 37
-
-                Button {
-                    name: "InspectRangedSlot"
-                    wowParent: "InspectPaperDollFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 5
-                    anchors.top: parent.top
-                    width: 37
-                    height: 37
-                }
-            }
         }
 
         PlayerModel {
@@ -368,22 +277,130 @@ WowWindow {
             }
 
             Button {
+                id: inspectModelRotateLeftButton
                 name: "InspectModelRotateLeftButton"
                 wowParent: "InspectModelFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 35
                 height: 35
-
-                Button {
-                    name: "InspectModelRotateRightButton"
-                    wowParent: "InspectModelFrame"
-                    anchors.left: parent.right
-                    anchors.top: parent.top
-                    width: 35
-                    height: 35
-                }
             }
+
+            Button {
+                name: "InspectModelRotateRightButton"
+                wowParent: "InspectModelFrame"
+                anchors.left: inspectModelRotateLeftButton.right
+                anchors.top: inspectModelRotateLeftButton.top
+                width: 35
+                height: 35
+            }
+        }
+
+        Button {
+            id: inspectNeckSlot
+            name: "InspectNeckSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectHeadSlot.left
+            anchors.top: inspectHeadSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "InspectRangedSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectSecondaryHandSlot.right
+            anchors.leftMargin: 5
+            anchors.top: inspectSecondaryHandSlot.top
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectSecondaryHandSlot
+            name: "InspectSecondaryHandSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectMainHandSlot.right
+            anchors.leftMargin: 5
+            anchors.top: inspectMainHandSlot.top
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectShirtSlot
+            name: "InspectShirtSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectChestSlot.left
+            anchors.top: inspectChestSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectShoulderSlot
+            name: "InspectShoulderSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectNeckSlot.left
+            anchors.top: inspectNeckSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectTabardSlot
+            name: "InspectTabardSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectShirtSlot.left
+            anchors.top: inspectShirtSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectTrinket0Slot
+            name: "InspectTrinket0Slot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectFinger1Slot.left
+            anchors.top: inspectFinger1Slot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "InspectTrinket1Slot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectTrinket0Slot.left
+            anchors.top: inspectTrinket0Slot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            id: inspectWaistSlot
+            name: "InspectWaistSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectHandsSlot.left
+            anchors.top: inspectHandsSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "InspectWristSlot"
+            wowParent: "InspectPaperDollFrame"
+            anchors.left: inspectTabardSlot.left
+            anchors.top: inspectTabardSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
         }
     }
 
@@ -532,6 +549,7 @@ WowWindow {
             }
 
             Button {
+                id: inspectTalentFrameTab1
                 name: "InspectTalentFrameTab1"
                 text: "Arms"
                 wowParent: "InspectTalentFrame"
@@ -541,28 +559,29 @@ WowWindow {
                 anchors.bottomMargin: 12
                 width: 28
                 height: 28
+            }
 
-                Button {
-                    name: "InspectTalentFrameTab2"
-                    text: "Fury"
-                    wowParent: "InspectTalentFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 6
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 28
-                    height: 28
+            Button {
+                id: inspectTalentFrameTab2
+                name: "InspectTalentFrameTab2"
+                text: "Fury"
+                wowParent: "InspectTalentFrame"
+                anchors.left: inspectTalentFrameTab1.right
+                anchors.leftMargin: 6
+                anchors.verticalCenter: inspectTalentFrameTab1.verticalCenter
+                width: 28
+                height: 28
+            }
 
-                    Button {
-                        name: "InspectTalentFrameTab3"
-                        text: "Protection"
-                        wowParent: "InspectTalentFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 28
-                        height: 28
-                    }
-                }
+            Button {
+                name: "InspectTalentFrameTab3"
+                text: "Protection"
+                wowParent: "InspectTalentFrame"
+                anchors.left: inspectTalentFrameTab2.right
+                anchors.leftMargin: 6
+                anchors.verticalCenter: inspectTalentFrameTab2.verticalCenter
+                width: 28
+                height: 28
             }
         }
     }

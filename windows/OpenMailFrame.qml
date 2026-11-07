@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -356,6 +356,7 @@ WowWindow {
                                     height: 13
 
                                     Button {
+                                        id: openMailDepositMoneyFrameCopperButton
                                         name: "OpenMailDepositMoneyFrameCopperButton"
                                         text: "0"
                                         wowParent: "OpenMailDepositMoneyFrame"
@@ -375,27 +376,27 @@ WowWindow {
                                             width: 10.3
                                             height: 14.2
                                         }
+                                    }
 
-                                        Button {
-                                            name: "OpenMailDepositMoneyFrameSilverButton"
+                                    Button {
+                                        name: "OpenMailDepositMoneyFrameSilverButton"
+                                        text: "6"
+                                        wowParent: "OpenMailDepositMoneyFrame"
+                                        anchors.right: openMailDepositMoneyFrameCopperButton.left
+                                        anchors.rightMargin: 4
+                                        anchors.verticalCenter: openMailDepositMoneyFrameCopperButton.verticalCenter
+                                        width: 23.3
+                                        height: 13
+
+                                        FontString {
+                                            name: "OpenMailDepositMoneyFrameSilverButtonText"
                                             text: "6"
-                                            wowParent: "OpenMailDepositMoneyFrame"
-                                            anchors.right: parent.left
-                                            anchors.rightMargin: 4
+                                            wowParent: "OpenMailDepositMoneyFrameSilverButton"
+                                            anchors.right: parent.right
+                                            anchors.rightMargin: 13
                                             anchors.verticalCenter: parent.verticalCenter
-                                            width: 23.3
-                                            height: 13
-
-                                            FontString {
-                                                name: "OpenMailDepositMoneyFrameSilverButtonText"
-                                                text: "6"
-                                                wowParent: "OpenMailDepositMoneyFrameSilverButton"
-                                                anchors.right: parent.right
-                                                anchors.rightMargin: 13
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                width: 10.3
-                                                height: 14.2
-                                            }
+                                            width: 10.3
+                                            height: 14.2
                                         }
                                     }
                                 }
@@ -420,6 +421,7 @@ WowWindow {
                                         height: 13
 
                                         Button {
+                                            id: openMailHouseCutMoneyFrameCopperButton
                                             name: "OpenMailHouseCutMoneyFrameCopperButton"
                                             text: "72"
                                             wowParent: "OpenMailHouseCutMoneyFrame"
@@ -439,27 +441,27 @@ WowWindow {
                                                 width: 17.4
                                                 height: 14.2
                                             }
+                                        }
 
-                                            Button {
-                                                name: "OpenMailHouseCutMoneyFrameSilverButton"
+                                        Button {
+                                            name: "OpenMailHouseCutMoneyFrameSilverButton"
+                                            text: "1"
+                                            wowParent: "OpenMailHouseCutMoneyFrame"
+                                            anchors.right: openMailHouseCutMoneyFrameCopperButton.left
+                                            anchors.rightMargin: 4
+                                            anchors.verticalCenter: openMailHouseCutMoneyFrameCopperButton.verticalCenter
+                                            width: 21.7
+                                            height: 13
+
+                                            FontString {
+                                                name: "OpenMailHouseCutMoneyFrameSilverButtonText"
                                                 text: "1"
-                                                wowParent: "OpenMailHouseCutMoneyFrame"
-                                                anchors.right: parent.left
-                                                anchors.rightMargin: 4
+                                                wowParent: "OpenMailHouseCutMoneyFrameSilverButton"
+                                                anchors.right: parent.right
+                                                anchors.rightMargin: 13
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                width: 21.7
-                                                height: 13
-
-                                                FontString {
-                                                    name: "OpenMailHouseCutMoneyFrameSilverButtonText"
-                                                    text: "1"
-                                                    wowParent: "OpenMailHouseCutMoneyFrameSilverButton"
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 13
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                    width: 8.7
-                                                    height: 14.2
-                                                }
+                                                width: 8.7
+                                                height: 14.2
                                             }
                                         }
                                     }
@@ -484,6 +486,7 @@ WowWindow {
                                             height: 13
 
                                             Button {
+                                                id: openMailTransactionAmountMoneyFrameCopperButton
                                                 name: "OpenMailTransactionAmountMoneyFrameCopperButton"
                                                 text: "28"
                                                 wowParent: "OpenMailTransactionAmountMoneyFrame"
@@ -503,49 +506,50 @@ WowWindow {
                                                     width: 17.4
                                                     height: 14.2
                                                 }
+                                            }
 
-                                                Button {
-                                                    name: "OpenMailTransactionAmountMoneyFrameSilverButton"
-                                                    text: "19"
-                                                    wowParent: "OpenMailTransactionAmountMoneyFrame"
-                                                    anchors.right: parent.left
-                                                    anchors.rightMargin: 4
+                                            Button {
+                                                name: "OpenMailTransactionAmountMoneyFrameGoldButton"
+                                                text: "1"
+                                                wowParent: "OpenMailTransactionAmountMoneyFrame"
+                                                anchors.right: openMailTransactionAmountMoneyFrameSilverButton.left
+                                                anchors.rightMargin: 4
+                                                anchors.verticalCenter: openMailTransactionAmountMoneyFrameSilverButton.verticalCenter
+                                                width: 21.7
+                                                height: 13
+
+                                                FontString {
+                                                    name: "OpenMailTransactionAmountMoneyFrameGoldButtonText"
+                                                    text: "1"
+                                                    wowParent: "OpenMailTransactionAmountMoneyFrameGoldButton"
+                                                    anchors.right: parent.right
+                                                    anchors.rightMargin: 13
                                                     anchors.verticalCenter: parent.verticalCenter
-                                                    width: 32
-                                                    height: 13
+                                                    width: 8.7
+                                                    height: 14.2
+                                                }
+                                            }
 
-                                                    Button {
-                                                        name: "OpenMailTransactionAmountMoneyFrameGoldButton"
-                                                        text: "1"
-                                                        wowParent: "OpenMailTransactionAmountMoneyFrame"
-                                                        anchors.right: parent.left
-                                                        anchors.rightMargin: 4
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                        width: 21.7
-                                                        height: 13
+                                            Button {
+                                                id: openMailTransactionAmountMoneyFrameSilverButton
+                                                name: "OpenMailTransactionAmountMoneyFrameSilverButton"
+                                                text: "19"
+                                                wowParent: "OpenMailTransactionAmountMoneyFrame"
+                                                anchors.right: openMailTransactionAmountMoneyFrameCopperButton.left
+                                                anchors.rightMargin: 4
+                                                anchors.verticalCenter: openMailTransactionAmountMoneyFrameCopperButton.verticalCenter
+                                                width: 32
+                                                height: 13
 
-                                                        FontString {
-                                                            name: "OpenMailTransactionAmountMoneyFrameGoldButtonText"
-                                                            text: "1"
-                                                            wowParent: "OpenMailTransactionAmountMoneyFrameGoldButton"
-                                                            anchors.right: parent.right
-                                                            anchors.rightMargin: 13
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            width: 8.7
-                                                            height: 14.2
-                                                        }
-                                                    }
-
-                                                    FontString {
-                                                        name: "OpenMailTransactionAmountMoneyFrameSilverButtonText"
-                                                        text: "19"
-                                                        wowParent: "OpenMailTransactionAmountMoneyFrameSilverButton"
-                                                        anchors.right: parent.right
-                                                        anchors.rightMargin: 13
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                        width: 17.4
-                                                        height: 14.2
-                                                    }
+                                                FontString {
+                                                    name: "OpenMailTransactionAmountMoneyFrameSilverButtonText"
+                                                    text: "19"
+                                                    wowParent: "OpenMailTransactionAmountMoneyFrameSilverButton"
+                                                    anchors.right: parent.right
+                                                    anchors.rightMargin: 13
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    width: 17.4
+                                                    height: 14.2
                                                 }
                                             }
                                         }
@@ -563,6 +567,7 @@ WowWindow {
                                 height: 13
 
                                 Button {
+                                    id: openMailSalePriceMoneyFrameCopperButton
                                     name: "OpenMailSalePriceMoneyFrameCopperButton"
                                     text: "0"
                                     wowParent: "OpenMailSalePriceMoneyFrame"
@@ -582,49 +587,50 @@ WowWindow {
                                         width: 10.3
                                         height: 14.2
                                     }
+                                }
 
-                                    Button {
-                                        name: "OpenMailSalePriceMoneyFrameSilverButton"
-                                        text: "15"
-                                        wowParent: "OpenMailSalePriceMoneyFrame"
-                                        anchors.right: parent.left
-                                        anchors.rightMargin: 4
+                                Button {
+                                    name: "OpenMailSalePriceMoneyFrameGoldButton"
+                                    text: "1"
+                                    wowParent: "OpenMailSalePriceMoneyFrame"
+                                    anchors.right: openMailSalePriceMoneyFrameSilverButton.left
+                                    anchors.rightMargin: 4
+                                    anchors.verticalCenter: openMailSalePriceMoneyFrameSilverButton.verticalCenter
+                                    width: 21.7
+                                    height: 13
+
+                                    FontString {
+                                        name: "OpenMailSalePriceMoneyFrameGoldButtonText"
+                                        text: "1"
+                                        wowParent: "OpenMailSalePriceMoneyFrameGoldButton"
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 13
                                         anchors.verticalCenter: parent.verticalCenter
-                                        width: 32
-                                        height: 13
+                                        width: 8.7
+                                        height: 14.2
+                                    }
+                                }
 
-                                        Button {
-                                            name: "OpenMailSalePriceMoneyFrameGoldButton"
-                                            text: "1"
-                                            wowParent: "OpenMailSalePriceMoneyFrame"
-                                            anchors.right: parent.left
-                                            anchors.rightMargin: 4
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 21.7
-                                            height: 13
+                                Button {
+                                    id: openMailSalePriceMoneyFrameSilverButton
+                                    name: "OpenMailSalePriceMoneyFrameSilverButton"
+                                    text: "15"
+                                    wowParent: "OpenMailSalePriceMoneyFrame"
+                                    anchors.right: openMailSalePriceMoneyFrameCopperButton.left
+                                    anchors.rightMargin: 4
+                                    anchors.verticalCenter: openMailSalePriceMoneyFrameCopperButton.verticalCenter
+                                    width: 32
+                                    height: 13
 
-                                            FontString {
-                                                name: "OpenMailSalePriceMoneyFrameGoldButtonText"
-                                                text: "1"
-                                                wowParent: "OpenMailSalePriceMoneyFrameGoldButton"
-                                                anchors.right: parent.right
-                                                anchors.rightMargin: 13
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                width: 8.7
-                                                height: 14.2
-                                            }
-                                        }
-
-                                        FontString {
-                                            name: "OpenMailSalePriceMoneyFrameSilverButtonText"
-                                            text: "15"
-                                            wowParent: "OpenMailSalePriceMoneyFrameSilverButton"
-                                            anchors.right: parent.right
-                                            anchors.rightMargin: 13
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 17.4
-                                            height: 14.2
-                                        }
+                                    FontString {
+                                        name: "OpenMailSalePriceMoneyFrameSilverButtonText"
+                                        text: "15"
+                                        wowParent: "OpenMailSalePriceMoneyFrameSilverButton"
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 13
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 17.4
+                                        height: 14.2
                                     }
                                 }
                             }

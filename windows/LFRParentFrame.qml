@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -17,6 +17,7 @@ WowWindow {
         height: 440
 
         Button {
+            id: lFRBrowseFrameColumnHeader1
             name: "LFRBrowseFrameColumnHeader1"
             text: "Name"
             wowParent: "LFRBrowseFrame"
@@ -27,68 +28,73 @@ WowWindow {
             anchors.topMargin: 40
             width: 97
             height: 22
+        }
 
-            Button {
-                name: "LFRBrowseFrameColumnHeader2"
-                text: "Lvl"
-                wowParent: "LFRBrowseFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: -2
-                anchors.verticalCenter: parent.verticalCenter
-                width: 34
-                height: 22
+        Button {
+            id: lFRBrowseFrameColumnHeader2
+            name: "LFRBrowseFrameColumnHeader2"
+            text: "Lvl"
+            wowParent: "LFRBrowseFrame"
+            anchors.left: lFRBrowseFrameColumnHeader1.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: lFRBrowseFrameColumnHeader1.verticalCenter
+            width: 34
+            height: 22
+        }
 
-                Button {
-                    name: "LFRBrowseFrameColumnHeader3"
-                    text: "Class"
-                    wowParent: "LFRBrowseFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -2
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 80
-                    height: 22
+        Button {
+            id: lFRBrowseFrameColumnHeader3
+            name: "LFRBrowseFrameColumnHeader3"
+            text: "Class"
+            wowParent: "LFRBrowseFrame"
+            anchors.left: lFRBrowseFrameColumnHeader2.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: lFRBrowseFrameColumnHeader2.verticalCenter
+            width: 80
+            height: 22
+        }
 
-                    Button {
-                        name: "LFRBrowseFrameColumnHeader4"
-                        wowParent: "LFRBrowseFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: -2
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25
-                        height: 22
+        Button {
+            id: lFRBrowseFrameColumnHeader4
+            name: "LFRBrowseFrameColumnHeader4"
+            wowParent: "LFRBrowseFrame"
+            anchors.left: lFRBrowseFrameColumnHeader3.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: lFRBrowseFrameColumnHeader3.verticalCenter
+            width: 25
+            height: 22
+        }
 
-                        Button {
-                            name: "LFRBrowseFrameColumnHeader5"
-                            wowParent: "LFRBrowseFrame"
-                            anchors.left: parent.right
-                            anchors.leftMargin: -2
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 25
-                            height: 22
+        Button {
+            id: lFRBrowseFrameColumnHeader5
+            name: "LFRBrowseFrameColumnHeader5"
+            wowParent: "LFRBrowseFrame"
+            anchors.left: lFRBrowseFrameColumnHeader4.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: lFRBrowseFrameColumnHeader4.verticalCenter
+            width: 25
+            height: 22
+        }
 
-                            Button {
-                                name: "LFRBrowseFrameColumnHeader6"
-                                wowParent: "LFRBrowseFrame"
-                                anchors.left: parent.right
-                                anchors.leftMargin: -2
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 25
-                                height: 22
+        Button {
+            id: lFRBrowseFrameColumnHeader6
+            name: "LFRBrowseFrameColumnHeader6"
+            wowParent: "LFRBrowseFrame"
+            anchors.left: lFRBrowseFrameColumnHeader5.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: lFRBrowseFrameColumnHeader5.verticalCenter
+            width: 25
+            height: 22
+        }
 
-                                Button {
-                                    name: "LFRBrowseFrameColumnHeader7"
-                                    wowParent: "LFRBrowseFrame"
-                                    anchors.left: parent.right
-                                    anchors.leftMargin: -2
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 25
-                                    height: 22
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        Button {
+            name: "LFRBrowseFrameColumnHeader7"
+            wowParent: "LFRBrowseFrame"
+            anchors.left: lFRBrowseFrameColumnHeader6.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: lFRBrowseFrameColumnHeader6.verticalCenter
+            width: 25
+            height: 22
         }
 
         Button {
@@ -446,6 +452,28 @@ WowWindow {
         }
 
         Button {
+            name: "LFRQueueFrameRoleButtonDPS"
+            wowParent: "LFRQueueFrame"
+            anchors.left: lFRQueueFrameRoleButtonHealer.right
+            anchors.leftMargin: 43
+            anchors.verticalCenter: lFRQueueFrameRoleButtonHealer.verticalCenter
+            width: 48
+            height: 48
+        }
+
+        Button {
+            id: lFRQueueFrameRoleButtonHealer
+            name: "LFRQueueFrameRoleButtonHealer"
+            wowParent: "LFRQueueFrame"
+            anchors.left: lFRQueueFrameRoleButtonTank.right
+            anchors.leftMargin: 45
+            anchors.verticalCenter: lFRQueueFrameRoleButtonTank.verticalCenter
+            width: 48
+            height: 48
+        }
+
+        Button {
+            id: lFRQueueFrameRoleButtonTank
             name: "LFRQueueFrameRoleButtonTank"
             wowParent: "LFRQueueFrame"
             anchors.left: parent.horizontalCenter
@@ -454,26 +482,6 @@ WowWindow {
             anchors.topMargin: 128
             width: 48
             height: 48
-
-            Button {
-                name: "LFRQueueFrameRoleButtonHealer"
-                wowParent: "LFRQueueFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 45
-                anchors.verticalCenter: parent.verticalCenter
-                width: 48
-                height: 48
-
-                Button {
-                    name: "LFRQueueFrameRoleButtonDPS"
-                    wowParent: "LFRQueueFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 43
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 48
-                    height: 48
-                }
-            }
         }
     }
 

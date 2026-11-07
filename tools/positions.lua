@@ -268,6 +268,7 @@ local ReadWindow = function(path)
 			end
 			part.place = { PointOf(across.line, down.line), On(part, across), PointOf(across.to, down.to),
 				Offset(part.margins, across.line), Offset(part.margins, down.line) }
+			part.besideOn = (across.id ~= "parent") and part.place[2] or nil
 			if across2 or down2 then
 				local x, y = across2 or across, down2 or down
 				if (x.id ~= across.id) or (y.id ~= across.id) then
@@ -791,6 +792,7 @@ for _, title in ipairs(Sorted(windows)) do
 end
 
 -- A part's block, what's placed on it inside it (`kids`, by what they're on).
+local BUTTONS = { Button = true, CheckButton = true }
 local WriteKids
 local WritePart = function(out, part, kids, indent, inRow)
 	for _, note in ipairs(part.notes or {}) do
@@ -800,6 +802,9 @@ local WritePart = function(out, part, kids, indent, inRow)
 	out[#out + 1] = indent .. (typed and part.kind or "Part") .. " {"
 	local Set = function(key, value)
 		out[#out + 1] = indent .. "    " .. key .. ": " .. value
+	end
+	if part.fileId then
+		Set("id", part.fileId)
 	end
 	Set("name", Quote(part.name))
 	if part.kind and (not typed) then
@@ -819,8 +824,9 @@ local WritePart = function(out, part, kids, indent, inRow)
 	end
 	if part.place and (not inRow) and (not part.loose) then
 		local place = part.place
+		local on = part.besideId or "parent"
 		for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(place[3]), place[4] }, { DownOf(place[1]), DownOf(place[3]), place[5] } }) do
-			Set("anchors." .. axis[1], "parent." .. axis[2])
+			Set("anchors." .. axis[1], on .. "." .. axis[2])
 			local margin = MARGIN_OF[axis[1]]
 			if (axis[3] ~= 0) then
 				Set("anchors." .. margin, Number(axis[3] * MARGINS[margin][2]))
@@ -832,7 +838,7 @@ local WritePart = function(out, part, kids, indent, inRow)
 			for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(second[1]), AcrossOf(second[2]), second[3] },
 				{ DownOf(place[1]), DownOf(second[1]), DownOf(second[2]), second[4] } }) do
 				if (axis[1] ~= axis[2]) then
-					Set("anchors." .. axis[2], "parent." .. axis[3])
+					Set("anchors." .. axis[2], on .. "." .. axis[3])
 					if (axis[4] ~= 0) then
 						Set("anchors." .. MARGIN_OF[axis[2]], Number(axis[4] * MARGINS[MARGIN_OF[axis[2]]][2]))
 					end
@@ -944,6 +950,28 @@ local WriteWindow = function(window)
 			loose[up], part.loose = true, true
 		end
 	end
+	-- A button next to another (coins, tabs, a list's): not in it, side by side in
+	-- what that one's in. (Blizzard's anchors kept: a row would pin them.)
+	local Beside = function(name)
+		local part = window.parts[name]
+		local on = part.place and part.place[2]
+		local other = on and window.parts[on]
+		if (not other) or (not BUTTONS[part.kind]) or (not BUTTONS[other.kind]) or loose[name] or inRow[on] or (not inFile[on]) then
+			return false
+		end
+		local x, y, toX, toY = AcrossOf(part.place[1]), DownOf(part.place[1]), AcrossOf(part.place[3]), DownOf(part.place[3])
+		if ((x == "left") and (toX == "right")) or ((x == "right") and (toX == "left"))
+			or ((y == "top") and (toY == "bottom")) or ((y == "bottom") and (toY == "top")) then
+			return true
+		end
+		-- (or by where the scan saw it: its middle out of that one)
+		local rect, box = part.seen and part.seen.rect, other.seen and other.seen.rect
+		if (not rect) or (not box) then
+			return part.besideOn == on -- (no scan: as its file has it)
+		end
+		local midX, midY = rect[1] + rect[3] / 2, rect[2] + rect[4] / 2
+		return (midX < box[1]) or (midX > box[1] + box[3]) or (midY < box[2]) or (midY > box[2] + box[4])
+	end
 	local kids = {}
 	local Into = function(on, kind, item)
 		kids[on] = kids[on] or { parts = {}, rows = {}, window = window }
@@ -951,8 +979,17 @@ local WriteWindow = function(window)
 	end
 	for _, name in ipairs(Sorted(window.parts)) do
 		if inFile[name] and (not inRow[name]) then
-			local part = window.parts[name]
-			Into((not loose[name]) and part.place and part.place[2] or window.name, "parts", part)
+			local part, up = window.parts[name], name
+			if Beside(name) then
+				local other = window.parts[part.place[2]]
+				other.fileId = other.name:gsub("[^%w_]", "_"):gsub("^%u", string.lower)
+				part.besideId = other.fileId
+			end
+			while Beside(up) do
+				up = window.parts[up].place[2]
+			end
+			local top = window.parts[up]
+			Into((not loose[up]) and top.place and top.place[2] or window.name, "parts", part)
 		end
 	end
 	for _, row in ipairs(window.rows or {}) do
@@ -960,7 +997,7 @@ local WriteWindow = function(window)
 	end
 	local width, height = WindowSize(window)
 	local out = { "// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part",
-		"// is in what it's placed on. One with a pin is put in settings/positions.lua (\"all\",",
+		"// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua (\"all\",",
 		"// or only its \"place\" or its \"size\"), the others follow /dui layout's scan.",
 		"import QtQuick", "", "WowWindow {",
 		"    name: " .. Quote(window.name),

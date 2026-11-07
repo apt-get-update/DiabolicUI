@@ -113,6 +113,12 @@ ApplicationWindow {
     }
     function under(name, over) {
         for (let up = items[name]; up && up !== root; up = up.parent) if (up === items[over]) return true
+        // (or next to it, by what it's placed on)
+        const seen = {}
+        for (let up = name; up && parts[up] && !seen[up]; up = (entry(up).place || [])[1]) {
+            if (up === over) return true
+            seen[up] = true
+        }
         return false
     }
     function isRow(name) { return !!items[name] && items[name].fit !== undefined }
@@ -125,7 +131,7 @@ ApplicationWindow {
 
     // ---- opening
     function openWindow(name) {
-        pick(""); hovered = ""; artModel = [] // (first: what's drawn on a part comes out of it)
+        pick(""); hovered = ""; artModel = []; scrollFrames = []; follows = ({}) // (first: what's drawn on a part comes out of it)
         if (root) root.destroy()
         root = null
         unfolded = {}
@@ -164,6 +170,7 @@ ApplicationWindow {
         }
         for (const n in edits) if (edits[n].window === name && items[n] && parts[n]) applyItem(n)
         for (const row of data.rows || []) applyRow(row)
+        followSides()
         for (const n in parts) if (items[n] && !parts[n].preview && parts[n].justify) items[n].justify = justifyOf(parts[n], items[n].width)
         // the art follows its part from where the part is now
         const base = {}
@@ -171,6 +178,72 @@ ApplicationWindow {
         artBase = base
         showView(0)
         fit(false)
+    }
+
+    // What the game stretches between the sides of what it's placed on (a panel on
+    // its list, a scroll bar) does so here, with no pin: sizing that sizes it, and
+    // sizing it sizes that.
+    property var follows: ({})
+    property var scrollFrames: []
+    function followSides() {
+        const found = {}, lists = []
+        for (const n in parts) {
+            const p = parts[n], item = items[n], points = p.points
+            if (item && !p.preview && p.kind === "ScrollFrame" && p.rect) lists.push(n)
+            if (!item || p.preview || p.pin || p.inRow || edits[n] || !p.place || !points || points.length < 2) continue
+            const on = items[p.place[1]]
+            if (!on || (item.parent !== on && item.parent !== on.parent)) continue
+            // (its other side as the scan saw it placed: what it's on may have been sized since)
+            const stretch = (line, offset) => {
+                const first = line(p.place[0])
+                if (first === "horizontalCenter" || first === "verticalCenter" || !points.some(q => q[1] === p.place[1] && line(q[0]) === first)) return
+                const other = points.filter(q => line(q[0]) !== first && line(q[0]) !== "horizontalCenter" && line(q[0]) !== "verticalCenter")[0]
+                if (!other) return
+                const side = line(other[0])
+                if (other[1] === p.place[1]) {
+                    item.anchors[side] = on[line(other[2])]
+                    item.anchors[marginOf[side][0]] = other[offset] * marginOf[side][1]
+                    found[n] = p.place[1]
+                } else if (line === lineY && side === "bottom" && items[other[1]]) { // (a track between its arrows: anchors can't reach)
+                    const to = other[1], below = other[4]
+                    const track = n
+                    item.height = Qt.binding(() => { moved; if (!root || !items[track] || !items[to]) return 1; const t = rectOf(to); return Math.max(1, t[1] + t[3] - below - items[track].mapToItem(root, 0, 0).y) })
+                }
+            }
+            stretch(lineX, 3)
+            stretch(lineY, 4)
+        }
+        follows = found
+        scrollFrames = lists
+    }
+    function sizer(name) { return follows[name] && !edits[name] ? follows[name] : name }
+    // A list made shorter than the scan saw it: are these rows now under it?
+    function cutOff(x, y, width, height) {
+        moved // (again as parts move)
+        const cx = x + width / 2, cy = y + height / 2
+        for (const n of scrollFrames) {
+            const was = previewBox(parts[n].rect), now = rectOf(n)
+            if (now[3] < was[3] - .5 && cx >= was[0] && cx <= was[0] + was[2] && cy > now[1] + now[3] && cy <= was[1] + was[3]) return true
+        }
+        return false
+    }
+    // A scroll bar's thumb where the scan saw it, past the end of a bar made shorter?
+    function thumbPast(name, y, height) {
+        moved
+        if (!/ScrollBarThumbTexture$/.test(name)) return false
+        const bar = name.replace(/ThumbTexture$/, "")
+        return !!items[bar] && y + height > rectOf(bar)[1] + rectOf(bar)[3] + 1
+    }
+    // Where a picture goes as its part grows, along one side: pieces at an end stay
+    // that size at it, what's between grows with it, the rest in proportion.
+    // [ from the part's start, size ]
+    function artSpan(start, size, whole, now) {
+        const end = whole - start - size, grown = now - whole, length = Math.abs(size)
+        if (start <= 8 && length <= 40) return [start, size]
+        if (end <= 8 && length <= 40) return [start + grown, size]
+        if (start <= 40 && end <= 40) return [start, size + grown]
+        const k = whole ? now / whole : 1
+        return [start * k, size * k]
     }
 
     // a rect the scan saw (from the bottom left) as drawn: x, y from the top left, width, height
@@ -250,7 +323,7 @@ ApplicationWindow {
         if (target && !rowOf(name)) {
             const x = lineX(e.place[0]), y = lineY(e.place[0])
             const x2 = e.second ? lineX(e.second[0]) : x, y2 = e.second ? lineY(e.second[0]) : y // (stretched: its other side)
-            const moving = item.parent !== target
+            const moving = item.parent !== target && item.parent !== target.parent // (a button next to another: its sibling)
             for (const line of ["left", "right", "horizontalCenter", "top", "bottom", "verticalCenter"])
                 if (moving || (line !== x && line !== y && line !== x2 && line !== y2)) { anchors[line] = undefined; anchors[marginOf[line][0]] = 0 }
             if (moving) item.parent = target
@@ -299,8 +372,49 @@ ApplicationWindow {
             sized_[name] = Object.assign({}, next, { size: [roundTenth(item.width), roundTenth(item.height)] })
             edits = sized_
         }
-        if (name === picked) pickedEntry = entry(name)
+        if (name === picked || sizer(picked) === name) pickedEntry = pickedNow()
         if (!quiet) changed()
+    }
+
+    // what the panel says of the picked part (one that follows another: its size now)
+    function pickedNow() {
+        const e = entry(picked), item = items[picked]
+        return follows[picked] && !edits[picked] && e.size ? Object.assign({}, e, { size: [roundTenth(item.width), roundTenth(item.height)] }) : e
+    }
+
+    // ---- sizing, by a handle or a number
+    // What a part hangs from, under it or right of it, gives up the room it takes:
+    // the gap between them stays, and its far side doesn't move.
+    function giving(name, side) {
+        const place = placeOf(name), on = place[1]
+        const fraction = side === "above" ? fractionY : fractionX
+        if (!parts[on] || rowOf(on) || fraction(place[0]) !== 0 || fraction(place[2]) !== 1) return null
+        const e = entry(on)
+        return e.size && !e.second ? { name: on, place: placeOf(on).slice(), size: e.size.slice() } : null
+    }
+    function sizeStart(name) {
+        const e = entry(name)
+        return e.size ? { name: name, place: placeOf(name).slice(), w: e.size[0], h: e.size[1], above: giving(name, "above"), beside: giving(name, "beside") } : null
+    }
+    // `fx`, `fy`: the side that moves (0 its left or top, 1 its right or bottom, .5 neither)
+    function sizeTo(s, w, h, fx, fy) {
+        const above = fy === 0 ? s.above : null, beside = fx === 0 ? s.beside : null
+        if (above) h = Math.min(h, s.h + above.size[1] - 16)
+        if (beside) w = Math.min(w, s.w + beside.size[0] - 16)
+        const px = fractionX(s.place[0]), py = fractionY(s.place[0]), place = s.place.slice()
+        // (the side across from the handle stays: its point goes with what's between)
+        place[3] = roundTenth(s.place[3] + (beside ? 0 : fx === 0 ? (s.w - w) + px * (w - s.w) : fx === 1 ? px * (w - s.w) : 0))
+        place[4] = roundTenth(s.place[4] - (above ? 0 : fy === 0 ? (s.h - h) + py * (h - s.h) : fy === 1 ? py * (h - s.h) : 0))
+        if (above) change(above.name, above.place, [above.size[0], above.size[1] - (h - s.h)], true)
+        if (beside) change(beside.name, beside.place, [beside.size[0] - (w - s.w), beside.size[1]], true)
+        change(s.name, place, [w, h], true)
+    }
+    function sizeBy(name, dw, dh) {
+        const s = sizeStart(sizer(name))
+        if (!s) return
+        remember()
+        sizeTo(s, Math.max(1, s.w + dw), Math.max(1, s.h + dh), dw && s.beside ? 0 : .5, dh && s.above ? 0 : .5)
+        changed()
     }
 
     function changed() {
@@ -314,7 +428,7 @@ ApplicationWindow {
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
         for (const row of (data && data.rows) || []) applyRow(row)
         drawSample()
-        if (picked) pickedEntry = entry(picked)
+        if (picked) pickedEntry = pickedNow()
         changed()
     }
     function undo() {
@@ -530,7 +644,7 @@ ApplicationWindow {
         if (name && parts[name] && parts[name].preview) return // (only to be seen)
         if (name) componentsMode = false // (a part picked: its own panel)
         picked = name
-        pickedEntry = name ? entry(name) : null
+        pickedEntry = name ? pickedNow() : null
         if (name) unfoldTo(name)
         const at = listModel.indexOf(name)
         if (at >= 0) list.positionViewAtIndex(at, ListView.Contain)
@@ -744,7 +858,7 @@ ApplicationWindow {
             return true
         }
         if (modifiers & Qt.ControlModifier) {
-            if (e.size) change(picked, e.place, [Math.max(1, e.size[0] + across * step), Math.max(1, e.size[1] + up * step)])
+            if (e.size) sizeBy(picked, across * step, up * step)
         } else {
             const place = placeOf(picked).slice()
             place[3] = roundTenth(place[3] + across * step)
@@ -1108,20 +1222,23 @@ ApplicationWindow {
                             required property int index
                             readonly property var f: app.viewRect || [modelData.rect[0], modelData.rect[1] + modelData.rect[3], 0, 0]
                             readonly property Item owner: modelData.owner && app.parts[modelData.owner] ? app.items[modelData.owner] || null : null
-                            readonly property var base: owner ? app.artBase[modelData.owner] : null
+                            // (where its part was when the scan drew it, not where it's saved to be since)
+                            readonly property var base: !owner ? null : app.parts[modelData.owner].rect ? app.previewBox(app.parts[modelData.owner].rect) : app.artBase[modelData.owner]
                             readonly property var at: { app.moved; return owner && owner.parent ? owner.mapToItem(app.root, 0, 0) : null }
                             readonly property real ax: modelData.rect[0] - f[0]
                             readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
                             // (sized with its part if it's on it: a tab can draw it elsewhere)
-                            readonly property bool onOwner: !!(owner && base) && ax + modelData.rect[2] / 2 >= base[0] && ax + modelData.rect[2] / 2 <= base[0] + base[2]
+                            readonly property bool drawnOnIt: !!(owner && base) && ax + modelData.rect[2] / 2 >= base[0] && ax + modelData.rect[2] / 2 <= base[0] + base[2]
                                 && ay + modelData.rect[3] / 2 >= base[1] && ay + modelData.rect[3] / 2 <= base[1] + base[3]
-                            readonly property real sx: onOwner && base[2] ? owner.width / base[2] : 1
-                            readonly property real sy: onOwner && base[3] ? owner.height / base[3] : 1
-                            visible: showArt.checked
-                            x: at && base ? at.x + (ax - base[0]) * sx : ax
-                            y: at && base ? at.y + (ay - base[1]) * sy : ay
-                            width: modelData.rect[2] * sx
-                            height: modelData.rect[3] * sy
+                            readonly property var spanX: drawnOnIt ? app.artSpan(ax - base[0], modelData.rect[2], base[2], owner.width) : [ax - (base ? base[0] : 0), modelData.rect[2]]
+                            readonly property var spanY: drawnOnIt ? app.artSpan(ay - base[1], modelData.rect[3], base[3], owner.height) : [ay - (base ? base[1] : 0), modelData.rect[3]]
+                            // (a row's, under a list made shorter)
+                            readonly property bool cut: !!(modelData.owner && app.parts[modelData.owner] && app.parts[modelData.owner].preview) && app.cutOff(ax, ay, modelData.rect[2], modelData.rect[3])
+                            visible: showArt.checked && !cut && !app.thumbPast(modelData.owner || "", ay, modelData.rect[3])
+                            x: at && base ? at.x + spanX[0] : ax
+                            y: at && base ? at.y + spanY[0] : ay
+                            width: spanX[1]
+                            height: spanY[1]
                             opacity: (modelData.alpha === undefined ? 1 : modelData.alpha) * (modelData.backdrop || !modelData.color ? 1 : modelData.color[3])
                             source: "image://art/" + app.data.generation + "/" + app.title_ + "/" + app.viewIndex + "/" + index
                             cache: false
@@ -1133,7 +1250,7 @@ ApplicationWindow {
                         model: app.previewTexts
                         Game.GameText {
                             required property var modelData
-                            visible: !!app.shown.FontString
+                            visible: !!app.shown.FontString && !app.cutOff(modelData.x, modelData.y, modelData.width, modelData.height)
                             x: modelData.x; y: modelData.y
                             width: modelData.width; height: modelData.height
                             words: modelData.words
@@ -1197,9 +1314,8 @@ ApplicationWindow {
                                     onActiveChanged: {
                                         if (active) {
                                             app.remember()
-                                            const e = app.entry(app.picked), item = app.items[app.picked]
-                                            parent.start = { e: JSON.parse(JSON.stringify(e)), place: app.placeOf(app.picked).slice(),
-                                                x0: centroid.scenePosition.x, y0: centroid.scenePosition.y, w: e.size[0], h: e.size[1] }
+                                            parent.start = app.sizeStart(app.sizer(app.picked))
+                                            if (parent.start) { parent.start.x0 = centroid.scenePosition.x; parent.start.y0 = centroid.scenePosition.y }
                                         } else app.changed()
                                     }
                                     onCentroidChanged: {
@@ -1208,12 +1324,7 @@ ApplicationWindow {
                                         const dx = (centroid.scenePosition.x - s.x0) / content.scale, dy = (centroid.scenePosition.y - s.y0) / content.scale
                                         const w = Math.max(1, Math.round(s.w + (fx === 1 ? dx : fx === 0 ? -dx : 0)))
                                         const h = Math.max(1, Math.round(s.h + (fy === 1 ? dy : fy === 0 ? -dy : 0)))
-                                        // the side across from the handle stays: its point goes with what's between
-                                        const px = app.fractionX(s.place[0]), py = app.fractionY(s.place[0])
-                                        const place = s.place.slice()
-                                        place[3] = app.roundTenth(s.place[3] + (fx === 0 ? (s.w - w) + px * (w - s.w) : fx === 1 ? px * (w - s.w) : 0))
-                                        place[4] = app.roundTenth(s.place[4] - (fy === 0 ? (s.h - h) + py * (h - s.h) : fy === 1 ? py * (h - s.h) : 0))
-                                        app.change(app.picked, place, [w, h], true)
+                                        app.sizeTo(s, w, h, fx, fy)
                                     }
                                 }
                             }
@@ -1680,6 +1791,12 @@ ApplicationWindow {
                     readonly property bool down: !!(second && place && app.lineY(second[0]) !== app.lineY(place[0]))
                     function numbers() {
                         const e = app.entry(app.picked), place = app.placeOf(app.picked).slice()
+                        // (a size: what it's sized by, and what gives up the room)
+                        const shown = app.pickedEntry.size
+                        if (!second && shown && (fw.value / 10 !== shown[0] || fh.value / 10 !== shown[1])) {
+                            app.sizeBy(app.picked, fw.value / 10 - shown[0], fh.value / 10 - shown[1])
+                            return
+                        }
                         place[3] = fx.value / 10; place[4] = (down ? -fy.value : fy.value) / 10
                         let other = undefined
                         if (second) {

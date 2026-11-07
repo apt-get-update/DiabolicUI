@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -19,6 +19,7 @@ WowWindow {
         height: 562
 
         Button {
+            id: groupBulletinBoardFrameCloseButton
             name: "GroupBulletinBoardFrameCloseButton"
             text: "Close"
             wowParent: "GroupBulletinBoardFrame"
@@ -29,16 +30,6 @@ WowWindow {
             anchors.verticalCenterOffset: 31
             width: 22
             height: 22
-
-            Button {
-                name: "GroupBulletinBoardFrameSettingsButton"
-                wowParent: "GroupBulletinBoardFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                width: 18
-                height: 18
-            }
         }
 
         Frame {
@@ -91,6 +82,16 @@ WowWindow {
             anchors.topMargin: 20
             width: 42
             height: 42
+        }
+
+        Button {
+            name: "GroupBulletinBoardFrameSettingsButton"
+            wowParent: "GroupBulletinBoardFrame"
+            anchors.right: groupBulletinBoardFrameCloseButton.left
+            anchors.rightMargin: 6
+            anchors.verticalCenter: groupBulletinBoardFrameCloseButton.verticalCenter
+            width: 18
+            height: 18
         }
     }
 

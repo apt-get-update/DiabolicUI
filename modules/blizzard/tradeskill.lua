@@ -108,6 +108,20 @@ Module.SpanHighlight = function(self)
 	bar:SetWidth(list:GetWidth() + insets[1] + insets[3] - inset * 2)
 end
 
+-- As many recipes as fit the list (its height: settings/positions.lua), the
+-- others hidden. Whether that changed the count.
+Module.FitList = function(self)
+	local rows = kit:RowsFitting(_G.TradeSkillListScrollFrame, _G.TRADE_SKILL_HEIGHT, self.Rows)
+	if (rows == _G.TRADE_SKILLS_DISPLAYED) then
+		return false
+	end
+	_G.TRADE_SKILLS_DISPLAYED = rows
+	for i = rows + 1, self.Rows do
+		_G["TradeSkillSkill" .. i]:Hide()
+	end
+	return true
+end
+
 -- The search in the band (the title on the window's top edge), Have
 -- Materials right of it; the filters, the recipes and the chosen one up
 -- into the search's old row; the dropdowns and the reagents' names on
@@ -197,12 +211,18 @@ end
 
 Module.StyleTradeSkill = function(self)
 	self:Layout()
+	self.Rows = _G.TRADE_SKILLS_DISPLAYED
 	kit:LightRow(_G.TradeSkillHighlight) -- the chosen recipe in an orange box
-	kit:StyleExpanderRows("TradeSkillSkill", _G.TRADE_SKILLS_DISPLAYED)
+	kit:StyleExpanderRows("TradeSkillSkill", self.Rows)
 	kit:StyleExpanders(_G.TradeSkillCollapseAllButton)
 	kit:StyleLabelButton(_G.TradeSkillCollapseAllButton) -- (its All)
 	self:SpanHighlight()
 	hooksecurefunc("TradeSkillFrame_Update", function()
+		-- (its count changed: again with it, for the scroll bar)
+		if self:FitList() then
+			_G.TradeSkillFrame_Update()
+			return
+		end
 		self:ShadeList()
 		self:UpdateGem()
 	end)

@@ -1096,13 +1096,16 @@ local ON_DEMAND = {
 		-- Blizzard_TrainerUI.lua: the list and the chosen service's details,
 		-- without the scrolling
 		_G.CLASS_TRAINER_SKILLS_DISPLAYED = 11
+		_G.CLASS_TRAINER_SKILL_HEIGHT = 16
 		_G.ClassTrainer_SetToTradeSkillTrainer = function()
 			_G.CLASS_TRAINER_SKILLS_DISPLAYED = 10
 			_G.ClassTrainerSkill11:Hide()
+			_G.ClassTrainerListScrollFrame:SetHeight(168)
 			_G.ClassTrainerDetailScrollFrame:SetHeight(135)
 		end
 		_G.ClassTrainer_SetToClassTrainer = function()
 			_G.CLASS_TRAINER_SKILLS_DISPLAYED = 11
+			_G.ClassTrainerListScrollFrame:SetHeight(184)
 			_G.ClassTrainerDetailScrollFrame:SetHeight(119)
 		end
 		_G.ClassTrainerFrame_Update = function()
@@ -1137,6 +1140,7 @@ local ON_DEMAND = {
 		-- Blizzard_TradeSkillUI.lua: the list and the chosen recipe's
 		-- reagents, without the scrolling and filters
 		_G.TRADE_SKILLS_DISPLAYED, _G.MAX_TRADE_SKILL_REAGENTS = 8, 8
+		_G.TRADE_SKILL_HEIGHT = 16
 		_G.TradeSkillFrame_Update = function()
 			local selected = _G.GetTradeSkillSelectionIndex()
 			for i = 1, _G.TRADE_SKILLS_DISPLAYED do

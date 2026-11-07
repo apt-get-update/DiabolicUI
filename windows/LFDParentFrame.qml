@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -189,6 +189,39 @@ WowWindow {
         }
 
         Button {
+            id: lFDQueueFrameRoleButtonDPS
+            name: "LFDQueueFrameRoleButtonDPS"
+            wowParent: "LFDQueueFrame"
+            anchors.left: lFDQueueFrameRoleButtonHealer.right
+            anchors.leftMargin: 23
+            anchors.verticalCenter: lFDQueueFrameRoleButtonHealer.verticalCenter
+            width: 48
+            height: 48
+        }
+
+        Button {
+            id: lFDQueueFrameRoleButtonHealer
+            name: "LFDQueueFrameRoleButtonHealer"
+            wowParent: "LFDQueueFrame"
+            anchors.left: lFDQueueFrameRoleButtonTank.right
+            anchors.leftMargin: 25
+            anchors.verticalCenter: lFDQueueFrameRoleButtonTank.verticalCenter
+            width: 48
+            height: 48
+        }
+
+        Button {
+            name: "LFDQueueFrameRoleButtonLeader"
+            wowParent: "LFDQueueFrame"
+            anchors.left: lFDQueueFrameRoleButtonDPS.right
+            anchors.leftMargin: 32
+            anchors.verticalCenter: lFDQueueFrameRoleButtonDPS.verticalCenter
+            width: 48
+            height: 48
+        }
+
+        Button {
+            id: lFDQueueFrameRoleButtonTank
             name: "LFDQueueFrameRoleButtonTank"
             wowParent: "LFDQueueFrame"
             anchors.left: parent.horizontalCenter
@@ -197,36 +230,6 @@ WowWindow {
             anchors.topMargin: 72
             width: 48
             height: 48
-
-            Button {
-                name: "LFDQueueFrameRoleButtonHealer"
-                wowParent: "LFDQueueFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 25
-                anchors.verticalCenter: parent.verticalCenter
-                width: 48
-                height: 48
-
-                Button {
-                    name: "LFDQueueFrameRoleButtonDPS"
-                    wowParent: "LFDQueueFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 23
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 48
-                    height: 48
-
-                    Button {
-                        name: "LFDQueueFrameRoleButtonLeader"
-                        wowParent: "LFDQueueFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 32
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 48
-                        height: 48
-                    }
-                }
-            }
         }
     }
 
@@ -581,6 +584,29 @@ WowWindow {
         height: 0
 
         Button {
+            name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
+            text: "22"
+            wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
+            anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.verticalCenter
+            width: 32
+            height: 19
+
+            FontString {
+                name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText"
+                text: "22"
+                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 19
+                height: 15.8
+            }
+        }
+
+        Button {
+            id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton
             name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton"
             text: "20"
             wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
@@ -588,28 +614,6 @@ WowWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: 32
             height: 19
-
-            Button {
-                name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
-                text: "22"
-                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 32
-                height: 19
-
-                FontString {
-                    name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText"
-                    text: "22"
-                    wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 19
-                    height: 15.8
-                }
-            }
 
             FontString {
                 name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButtonText"

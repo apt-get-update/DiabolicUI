@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -188,6 +188,7 @@ WowWindow {
             height: 203
 
             CheckButton {
+                id: reputationDetailAtWarCheckBox
                 name: "ReputationDetailAtWarCheckBox"
                 wowParent: "ReputationDetailFrame"
                 anchors.left: parent.left
@@ -228,27 +229,6 @@ WowWindow {
                         }
                     }
                 }
-
-                CheckButton {
-                    name: "ReputationDetailMainScreenCheckBox"
-                    wowParent: "ReputationDetailFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    anchors.topMargin: -3
-                    width: 26
-                    height: 26
-
-                    FontString {
-                        name: "ReputationDetailMainScreenCheckBoxText"
-                        text: "Show as Experience Bar"
-                        wowParent: "ReputationDetailMainScreenCheckBox"
-                        anchors.left: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -1
-                        width: 126.4
-                        height: 10.3
-                    }
-                }
             }
 
             Button {
@@ -283,6 +263,27 @@ WowWindow {
                     height: 50.6
                 }
             }
+
+            CheckButton {
+                name: "ReputationDetailMainScreenCheckBox"
+                wowParent: "ReputationDetailFrame"
+                anchors.left: reputationDetailAtWarCheckBox.left
+                anchors.top: reputationDetailAtWarCheckBox.bottom
+                anchors.topMargin: -3
+                width: 26
+                height: 26
+
+                FontString {
+                    name: "ReputationDetailMainScreenCheckBoxText"
+                    text: "Show as Experience Bar"
+                    wowParent: "ReputationDetailMainScreenCheckBox"
+                    anchors.left: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 126.4
+                    height: 10.3
+                }
+            }
         }
 
         Frame {
@@ -295,6 +296,29 @@ WowWindow {
             anchors.topMargin: 96
             width: 205
             height: 100
+
+            CheckButton {
+                name: "TokenFramePopupBackpackCheckBox"
+                wowParent: "TokenFramePopup"
+                style: "CheckBox"
+                pin: "place"
+                anchors.left: tokenFramePopupInactiveCheckBox.left
+                anchors.top: tokenFramePopupInactiveCheckBox.bottom
+                anchors.topMargin: 6
+                width: 20
+                height: 20
+
+                FontString {
+                    name: "TokenFramePopupBackpackCheckBoxText"
+                    text: "Show on Backpack"
+                    wowParent: "TokenFramePopupBackpackCheckBox"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 4
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 109
+                    height: 14.2
+                }
+            }
 
             Button {
                 name: "TokenFramePopupCloseButton"
@@ -309,6 +333,7 @@ WowWindow {
             }
 
             CheckButton {
+                id: tokenFramePopupInactiveCheckBox
                 name: "TokenFramePopupInactiveCheckBox"
                 wowParent: "TokenFramePopup"
                 style: "CheckBox"
@@ -318,29 +343,6 @@ WowWindow {
                 anchors.topMargin: 32
                 width: 20
                 height: 20
-
-                CheckButton {
-                    name: "TokenFramePopupBackpackCheckBox"
-                    wowParent: "TokenFramePopup"
-                    style: "CheckBox"
-                    pin: "place"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 6
-                    width: 20
-                    height: 20
-
-                    FontString {
-                        name: "TokenFramePopupBackpackCheckBoxText"
-                        text: "Show on Backpack"
-                        wowParent: "TokenFramePopupBackpackCheckBox"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 109
-                        height: 14.2
-                    }
-                }
 
                 FontString {
                     name: "TokenFramePopupInactiveCheckBoxText"
@@ -388,6 +390,122 @@ WowWindow {
         height: 512
 
         Button {
+            name: "CharacterAmmoSlot"
+            wowParent: "PaperDollFrame"
+            anchors.left: characterRangedSlot.right
+            anchors.leftMargin: 15
+            anchors.verticalCenter: characterRangedSlot.verticalCenter
+            width: 27
+            height: 27
+        }
+
+        Button {
+            id: characterBackSlot
+            name: "CharacterBackSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterShoulderSlot.horizontalCenter
+            anchors.top: characterShoulderSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterBackSlotPopoutButton"
+            wowParent: "CharacterBackSlot"
+            anchors.left: characterBackSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterBackSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterChestSlot
+            name: "CharacterChestSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterBackSlot.horizontalCenter
+            anchors.top: characterBackSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterChestSlotPopoutButton"
+            wowParent: "CharacterChestSlot"
+            anchors.left: characterChestSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterChestSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterFeetSlot
+            name: "CharacterFeetSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterLegsSlot.horizontalCenter
+            anchors.top: characterLegsSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterFeetSlotPopoutButton"
+            wowParent: "CharacterFeetSlot"
+            anchors.left: characterFeetSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterFeetSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterFinger0Slot
+            name: "CharacterFinger0Slot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterFeetSlot.horizontalCenter
+            anchors.top: characterFeetSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterFinger0SlotPopoutButton"
+            wowParent: "CharacterFinger0Slot"
+            anchors.left: characterFinger0Slot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterFinger0Slot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterFinger1Slot
+            name: "CharacterFinger1Slot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterFinger0Slot.horizontalCenter
+            anchors.top: characterFinger0Slot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterFinger1SlotPopoutButton"
+            wowParent: "CharacterFinger1Slot"
+            anchors.left: characterFinger1Slot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterFinger1Slot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterHandsSlot
             name: "CharacterHandsSlot"
             wowParent: "PaperDollFrame"
             anchors.left: parent.left
@@ -396,159 +514,20 @@ WowWindow {
             anchors.topMargin: 70
             width: 37
             height: 37
-
-            Button {
-                name: "CharacterHandsSlotPopoutButton"
-                wowParent: "CharacterHandsSlot"
-                anchors.left: parent.right
-                anchors.leftMargin: -8
-                anchors.verticalCenter: parent.verticalCenter
-                width: 16
-                height: 38
-            }
-
-            Button {
-                name: "CharacterWaistSlot"
-                wowParent: "PaperDollFrame"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                anchors.topMargin: 4
-                width: 37
-                height: 37
-
-                Button {
-                    name: "CharacterLegsSlot"
-                    wowParent: "PaperDollFrame"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 4
-                    width: 37
-                    height: 37
-
-                    Button {
-                        name: "CharacterFeetSlot"
-                        wowParent: "PaperDollFrame"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 4
-                        width: 37
-                        height: 37
-
-                        Button {
-                            name: "CharacterFeetSlotPopoutButton"
-                            wowParent: "CharacterFeetSlot"
-                            anchors.left: parent.right
-                            anchors.leftMargin: -8
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 16
-                            height: 38
-                        }
-
-                        Button {
-                            name: "CharacterFinger0Slot"
-                            wowParent: "PaperDollFrame"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 4
-                            width: 37
-                            height: 37
-
-                            Button {
-                                name: "CharacterFinger0SlotPopoutButton"
-                                wowParent: "CharacterFinger0Slot"
-                                anchors.left: parent.right
-                                anchors.leftMargin: -8
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 16
-                                height: 38
-                            }
-
-                            Button {
-                                name: "CharacterFinger1Slot"
-                                wowParent: "PaperDollFrame"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 4
-                                width: 37
-                                height: 37
-
-                                Button {
-                                    name: "CharacterFinger1SlotPopoutButton"
-                                    wowParent: "CharacterFinger1Slot"
-                                    anchors.left: parent.right
-                                    anchors.leftMargin: -8
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 16
-                                    height: 38
-                                }
-
-                                Button {
-                                    name: "CharacterTrinket0Slot"
-                                    wowParent: "PaperDollFrame"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 4
-                                    width: 37
-                                    height: 37
-
-                                    Button {
-                                        name: "CharacterTrinket0SlotPopoutButton"
-                                        wowParent: "CharacterTrinket0Slot"
-                                        anchors.left: parent.right
-                                        anchors.leftMargin: -8
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        width: 16
-                                        height: 38
-                                    }
-
-                                    Button {
-                                        name: "CharacterTrinket1Slot"
-                                        wowParent: "PaperDollFrame"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 4
-                                        width: 37
-                                        height: 37
-
-                                        Button {
-                                            name: "CharacterTrinket1SlotPopoutButton"
-                                            wowParent: "CharacterTrinket1Slot"
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: -8
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 16
-                                            height: 38
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Button {
-                        name: "CharacterLegsSlotPopoutButton"
-                        wowParent: "CharacterLegsSlot"
-                        anchors.left: parent.right
-                        anchors.leftMargin: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 16
-                        height: 38
-                    }
-                }
-
-                Button {
-                    name: "CharacterWaistSlotPopoutButton"
-                    wowParent: "CharacterWaistSlot"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 16
-                    height: 38
-                }
-            }
         }
 
         Button {
+            name: "CharacterHandsSlotPopoutButton"
+            wowParent: "CharacterHandsSlot"
+            anchors.left: characterHandsSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterHandsSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterHeadSlot
             name: "CharacterHeadSlot"
             wowParent: "PaperDollFrame"
             anchors.left: parent.left
@@ -557,156 +536,58 @@ WowWindow {
             anchors.topMargin: 70
             width: 37
             height: 37
+        }
 
-            Button {
-                name: "CharacterHeadSlotPopoutButton"
-                wowParent: "CharacterHeadSlot"
-                anchors.left: parent.right
-                anchors.leftMargin: -8
-                anchors.verticalCenter: parent.verticalCenter
-                width: 16
-                height: 38
-            }
+        Button {
+            name: "CharacterHeadSlotPopoutButton"
+            wowParent: "CharacterHeadSlot"
+            anchors.left: characterHeadSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterHeadSlot.verticalCenter
+            width: 16
+            height: 38
+        }
 
-            Button {
-                name: "CharacterNeckSlot"
-                wowParent: "PaperDollFrame"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                anchors.topMargin: 4
-                width: 37
-                height: 37
+        Button {
+            id: characterLegsSlot
+            name: "CharacterLegsSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterWaistSlot.horizontalCenter
+            anchors.top: characterWaistSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
 
-                Button {
-                    name: "CharacterNeckSlotPopoutButton"
-                    wowParent: "CharacterNeckSlot"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 16
-                    height: 38
-                }
+        Button {
+            name: "CharacterLegsSlotPopoutButton"
+            wowParent: "CharacterLegsSlot"
+            anchors.left: characterLegsSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterLegsSlot.verticalCenter
+            width: 16
+            height: 38
+        }
 
-                Button {
-                    name: "CharacterShoulderSlot"
-                    wowParent: "PaperDollFrame"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 4
-                    width: 37
-                    height: 37
+        Button {
+            id: characterMainHandSlot
+            name: "CharacterMainHandSlot"
+            wowParent: "PaperDollFrame"
+            anchors.right: characterSecondaryHandSlot.left
+            anchors.rightMargin: 6
+            anchors.top: characterSecondaryHandSlot.top
+            width: 37
+            height: 37
+        }
 
-                    Button {
-                        name: "CharacterBackSlot"
-                        wowParent: "PaperDollFrame"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 4
-                        width: 37
-                        height: 37
-
-                        Button {
-                            name: "CharacterBackSlotPopoutButton"
-                            wowParent: "CharacterBackSlot"
-                            anchors.left: parent.right
-                            anchors.leftMargin: -8
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 16
-                            height: 38
-                        }
-
-                        Button {
-                            name: "CharacterChestSlot"
-                            wowParent: "PaperDollFrame"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 4
-                            width: 37
-                            height: 37
-
-                            Button {
-                                name: "CharacterChestSlotPopoutButton"
-                                wowParent: "CharacterChestSlot"
-                                anchors.left: parent.right
-                                anchors.leftMargin: -8
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 16
-                                height: 38
-                            }
-
-                            Button {
-                                name: "CharacterShirtSlot"
-                                wowParent: "PaperDollFrame"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 4
-                                width: 37
-                                height: 37
-
-                                Button {
-                                    name: "CharacterShirtSlotPopoutButton"
-                                    wowParent: "CharacterShirtSlot"
-                                    anchors.left: parent.right
-                                    anchors.leftMargin: -8
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 16
-                                    height: 38
-                                }
-
-                                Button {
-                                    name: "CharacterTabardSlot"
-                                    wowParent: "PaperDollFrame"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 4
-                                    width: 37
-                                    height: 37
-
-                                    Button {
-                                        name: "CharacterTabardSlotPopoutButton"
-                                        wowParent: "CharacterTabardSlot"
-                                        anchors.left: parent.right
-                                        anchors.leftMargin: -8
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        width: 16
-                                        height: 38
-                                    }
-
-                                    Button {
-                                        name: "CharacterWristSlot"
-                                        wowParent: "PaperDollFrame"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 4
-                                        width: 37
-                                        height: 37
-
-                                        Button {
-                                            name: "CharacterWristSlotPopoutButton"
-                                            wowParent: "CharacterWristSlot"
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: -8
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 16
-                                            height: 38
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Button {
-                        name: "CharacterShoulderSlotPopoutButton"
-                        wowParent: "CharacterShoulderSlot"
-                        anchors.left: parent.right
-                        anchors.leftMargin: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 16
-                        height: 38
-                    }
-                }
-            }
+        Button {
+            name: "CharacterMainHandSlotPopoutButton"
+            wowParent: "CharacterMainHandSlot"
+            anchors.horizontalCenter: characterMainHandSlot.horizontalCenter
+            anchors.top: characterMainHandSlot.bottom
+            anchors.topMargin: -4
+            width: 38
+            height: 16
         }
 
         PlayerModel {
@@ -720,6 +601,7 @@ WowWindow {
             height: 372
 
             Button {
+                id: characterModelFrameRotateLeftButton
                 name: "CharacterModelFrameRotateLeftButton"
                 wowParent: "CharacterModelFrame"
                 anchors.left: parent.left
@@ -727,16 +609,58 @@ WowWindow {
                 anchors.topMargin: 26
                 width: 35
                 height: 35
-
-                Button {
-                    name: "CharacterModelFrameRotateRightButton"
-                    wowParent: "CharacterModelFrame"
-                    anchors.left: parent.right
-                    anchors.top: parent.top
-                    width: 35
-                    height: 35
-                }
             }
+
+            Button {
+                name: "CharacterModelFrameRotateRightButton"
+                wowParent: "CharacterModelFrame"
+                anchors.left: characterModelFrameRotateLeftButton.right
+                anchors.top: characterModelFrameRotateLeftButton.top
+                width: 35
+                height: 35
+            }
+        }
+
+        Button {
+            id: characterNeckSlot
+            name: "CharacterNeckSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterHeadSlot.horizontalCenter
+            anchors.top: characterHeadSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterNeckSlotPopoutButton"
+            wowParent: "CharacterNeckSlot"
+            anchors.left: characterNeckSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterNeckSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterRangedSlot
+            name: "CharacterRangedSlot"
+            wowParent: "PaperDollFrame"
+            anchors.left: characterSecondaryHandSlot.right
+            anchors.leftMargin: 6
+            anchors.top: characterSecondaryHandSlot.top
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterRangedSlotPopoutButton"
+            wowParent: "CharacterRangedSlot"
+            anchors.horizontalCenter: characterRangedSlot.horizontalCenter
+            anchors.top: characterRangedSlot.bottom
+            anchors.topMargin: -4
+            width: 38
+            height: 16
         }
 
         Frame {
@@ -751,6 +675,7 @@ WowWindow {
         }
 
         Button {
+            id: characterSecondaryHandSlot
             name: "CharacterSecondaryHandSlot"
             wowParent: "PaperDollFrame"
             anchors.left: parent.left
@@ -759,69 +684,178 @@ WowWindow {
             anchors.topMargin: 398
             width: 37
             height: 37
-
-            Button {
-                name: "CharacterMainHandSlot"
-                wowParent: "PaperDollFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 6
-                anchors.top: parent.top
-                width: 37
-                height: 37
-
-                Button {
-                    name: "CharacterMainHandSlotPopoutButton"
-                    wowParent: "CharacterMainHandSlot"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: -4
-                    width: 38
-                    height: 16
-                }
-            }
-
-            Button {
-                name: "CharacterRangedSlot"
-                wowParent: "PaperDollFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                width: 37
-                height: 37
-
-                Button {
-                    name: "CharacterAmmoSlot"
-                    wowParent: "PaperDollFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 15
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 27
-                    height: 27
-                }
-
-                Button {
-                    name: "CharacterRangedSlotPopoutButton"
-                    wowParent: "CharacterRangedSlot"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: -4
-                    width: 38
-                    height: 16
-                }
-            }
-
-            Button {
-                name: "CharacterSecondaryHandSlotPopoutButton"
-                wowParent: "CharacterSecondaryHandSlot"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                anchors.topMargin: -4
-                width: 38
-                height: 16
-            }
         }
 
         Button {
+            name: "CharacterSecondaryHandSlotPopoutButton"
+            wowParent: "CharacterSecondaryHandSlot"
+            anchors.horizontalCenter: characterSecondaryHandSlot.horizontalCenter
+            anchors.top: characterSecondaryHandSlot.bottom
+            anchors.topMargin: -4
+            width: 38
+            height: 16
+        }
+
+        Button {
+            id: characterShirtSlot
+            name: "CharacterShirtSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterChestSlot.horizontalCenter
+            anchors.top: characterChestSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterShirtSlotPopoutButton"
+            wowParent: "CharacterShirtSlot"
+            anchors.left: characterShirtSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterShirtSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterShoulderSlot
+            name: "CharacterShoulderSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterNeckSlot.horizontalCenter
+            anchors.top: characterNeckSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterShoulderSlotPopoutButton"
+            wowParent: "CharacterShoulderSlot"
+            anchors.left: characterShoulderSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterShoulderSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterTabardSlot
+            name: "CharacterTabardSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterShirtSlot.horizontalCenter
+            anchors.top: characterShirtSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterTabardSlotPopoutButton"
+            wowParent: "CharacterTabardSlot"
+            anchors.left: characterTabardSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterTabardSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterTrinket0Slot
+            name: "CharacterTrinket0Slot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterFinger1Slot.horizontalCenter
+            anchors.top: characterFinger1Slot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterTrinket0SlotPopoutButton"
+            wowParent: "CharacterTrinket0Slot"
+            anchors.left: characterTrinket0Slot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterTrinket0Slot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterTrinket1Slot
+            name: "CharacterTrinket1Slot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterTrinket0Slot.horizontalCenter
+            anchors.top: characterTrinket0Slot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterTrinket1SlotPopoutButton"
+            wowParent: "CharacterTrinket1Slot"
+            anchors.left: characterTrinket1Slot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterTrinket1Slot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterWaistSlot
+            name: "CharacterWaistSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterHandsSlot.horizontalCenter
+            anchors.top: characterHandsSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterWaistSlotPopoutButton"
+            wowParent: "CharacterWaistSlot"
+            anchors.left: characterWaistSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterWaistSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            id: characterWristSlot
+            name: "CharacterWristSlot"
+            wowParent: "PaperDollFrame"
+            anchors.horizontalCenter: characterTabardSlot.horizontalCenter
+            anchors.top: characterTabardSlot.bottom
+            anchors.topMargin: 4
+            width: 37
+            height: 37
+        }
+
+        Button {
+            name: "CharacterWristSlotPopoutButton"
+            wowParent: "CharacterWristSlot"
+            anchors.left: characterWristSlot.right
+            anchors.leftMargin: -8
+            anchors.verticalCenter: characterWristSlot.verticalCenter
+            width: 16
+            height: 38
+        }
+
+        Button {
+            name: "DiabolicUICharacterSideTab1"
+            wowParent: "?"
+            style: "Tab"
+            anchors.right: diabolicUICharacterSideTab2.left
+            anchors.rightMargin: 6
+            anchors.verticalCenter: diabolicUICharacterSideTab2.verticalCenter
+            width: 44
+            height: 30
+        }
+
+        Button {
+            id: diabolicUICharacterSideTab2
             name: "DiabolicUICharacterSideTab2"
             wowParent: "?"
             style: "Tab"
@@ -831,28 +865,17 @@ WowWindow {
             anchors.topMargin: 78
             width: 44
             height: 30
+        }
 
-            Button {
-                name: "DiabolicUICharacterSideTab1"
-                wowParent: "?"
-                style: "Tab"
-                anchors.right: parent.left
-                anchors.rightMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                width: 44
-                height: 30
-            }
-
-            Button {
-                name: "DiabolicUICharacterSideTab3"
-                wowParent: "?"
-                style: "Tab"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                width: 44
-                height: 30
-            }
+        Button {
+            name: "DiabolicUICharacterSideTab3"
+            wowParent: "?"
+            style: "Tab"
+            anchors.left: diabolicUICharacterSideTab2.right
+            anchors.leftMargin: 6
+            anchors.verticalCenter: diabolicUICharacterSideTab2.verticalCenter
+            width: 44
+            height: 30
         }
 
         Frame {
@@ -969,6 +992,27 @@ WowWindow {
             height: 151.5
 
             Button {
+                name: "GearManagerDialogDeleteSet"
+                wowParent: "GearManagerDialog"
+                style: "Button"
+                anchors.horizontalCenter: gearManagerDialogSaveSet.horizontalCenter
+                anchors.top: gearManagerDialogSaveSet.bottom
+                anchors.topMargin: 6
+                width: 24
+                height: 24
+
+                FontString {
+                    name: "GearManagerDialogDeleteSetText"
+                    wowParent: "GearManagerDialogDeleteSet"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 1
+                    height: 1
+                }
+            }
+
+            Button {
+                id: gearManagerDialogEquipSet
                 name: "GearManagerDialogEquipSet"
                 wowParent: "GearManagerDialog"
                 style: "Button"
@@ -987,45 +1031,26 @@ WowWindow {
                     width: 1
                     height: 1
                 }
+            }
 
-                Button {
-                    name: "GearManagerDialogSaveSet"
-                    wowParent: "GearManagerDialog"
-                    style: "Button"
+            Button {
+                id: gearManagerDialogSaveSet
+                name: "GearManagerDialogSaveSet"
+                wowParent: "GearManagerDialog"
+                style: "Button"
+                anchors.horizontalCenter: gearManagerDialogEquipSet.horizontalCenter
+                anchors.top: gearManagerDialogEquipSet.bottom
+                anchors.topMargin: 6
+                width: 24
+                height: 24
+
+                FontString {
+                    name: "GearManagerDialogSaveSetText"
+                    wowParent: "GearManagerDialogSaveSet"
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 6
-                    width: 24
-                    height: 24
-
-                    Button {
-                        name: "GearManagerDialogDeleteSet"
-                        wowParent: "GearManagerDialog"
-                        style: "Button"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 6
-                        width: 24
-                        height: 24
-
-                        FontString {
-                            name: "GearManagerDialogDeleteSetText"
-                            wowParent: "GearManagerDialogDeleteSet"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 1
-                            height: 1
-                        }
-                    }
-
-                    FontString {
-                        name: "GearManagerDialogSaveSetText"
-                        wowParent: "GearManagerDialogSaveSet"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 1
-                        height: 1
-                    }
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 1
+                    height: 1
                 }
             }
 
@@ -1545,6 +1570,7 @@ WowWindow {
             height: 13
 
             Button {
+                id: tokenFrameMoneyFrameCopperButton
                 name: "TokenFrameMoneyFrameCopperButton"
                 text: "13"
                 wowParent: "TokenFrameMoneyFrame"
@@ -1564,49 +1590,50 @@ WowWindow {
                     width: 17.4
                     height: 14.2
                 }
+            }
 
-                Button {
-                    name: "TokenFrameMoneyFrameSilverButton"
-                    text: "16"
-                    wowParent: "TokenFrameMoneyFrame"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 4
+            Button {
+                name: "TokenFrameMoneyFrameGoldButton"
+                text: "3654"
+                wowParent: "TokenFrameMoneyFrame"
+                anchors.right: tokenFrameMoneyFrameSilverButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: tokenFrameMoneyFrameSilverButton.verticalCenter
+                width: 44.6
+                height: 13
+
+                FontString {
+                    name: "TokenFrameMoneyFrameGoldButtonText"
+                    text: "3654"
+                    wowParent: "TokenFrameMoneyFrameGoldButton"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 30.4
-                    height: 13
+                    width: 31.6
+                    height: 14.2
+                }
+            }
 
-                    Button {
-                        name: "TokenFrameMoneyFrameGoldButton"
-                        text: "3654"
-                        wowParent: "TokenFrameMoneyFrame"
-                        anchors.right: parent.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 44.6
-                        height: 13
+            Button {
+                id: tokenFrameMoneyFrameSilverButton
+                name: "TokenFrameMoneyFrameSilverButton"
+                text: "16"
+                wowParent: "TokenFrameMoneyFrame"
+                anchors.right: tokenFrameMoneyFrameCopperButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: tokenFrameMoneyFrameCopperButton.verticalCenter
+                width: 30.4
+                height: 13
 
-                        FontString {
-                            name: "TokenFrameMoneyFrameGoldButtonText"
-                            text: "3654"
-                            wowParent: "TokenFrameMoneyFrameGoldButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 31.6
-                            height: 14.2
-                        }
-                    }
-
-                    FontString {
-                        name: "TokenFrameMoneyFrameSilverButtonText"
-                        text: "16"
-                        wowParent: "TokenFrameMoneyFrameSilverButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 17.4
-                        height: 14.2
-                    }
+                FontString {
+                    name: "TokenFrameMoneyFrameSilverButtonText"
+                    text: "16"
+                    wowParent: "TokenFrameMoneyFrameSilverButton"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 17.4
+                    height: 14.2
                 }
             }
         }
@@ -1707,6 +1734,7 @@ WowWindow {
         height: 0
 
         Button {
+            id: skillTypeLabel5
             name: "SkillTypeLabel5"
             text: "Professions"
             wowParent: "SkillFrame"
@@ -1715,17 +1743,17 @@ WowWindow {
             anchors.verticalCenterOffset: 18
             width: 285
             height: 14
+        }
 
-            Button {
-                name: "SkillTypeLabel6"
-                text: "Secondary Skills"
-                wowParent: "SkillFrame"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 18
-                width: 285
-                height: 14
-            }
+        Button {
+            name: "SkillTypeLabel6"
+            text: "Secondary Skills"
+            wowParent: "SkillFrame"
+            anchors.left: skillTypeLabel5.left
+            anchors.verticalCenter: skillTypeLabel5.verticalCenter
+            anchors.verticalCenterOffset: 18
+            width: 285
+            height: 14
         }
     }
 
@@ -1737,6 +1765,7 @@ WowWindow {
         height: 0
 
         Button {
+            id: skillTypeLabel8
             name: "SkillTypeLabel8"
             text: "Secondary Skills"
             wowParent: "SkillFrame"
@@ -1745,17 +1774,17 @@ WowWindow {
             anchors.verticalCenterOffset: 18
             width: 285
             height: 14
+        }
 
-            Button {
-                name: "SkillTypeLabel9"
-                text: "Weapon Skills"
-                wowParent: "SkillFrame"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 18
-                width: 285
-                height: 14
-            }
+        Button {
+            name: "SkillTypeLabel9"
+            text: "Weapon Skills"
+            wowParent: "SkillFrame"
+            anchors.left: skillTypeLabel8.left
+            anchors.verticalCenter: skillTypeLabel8.verticalCenter
+            anchors.verticalCenterOffset: 18
+            width: 285
+            height: 14
         }
     }
 

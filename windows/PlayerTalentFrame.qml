@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -137,6 +137,7 @@ WowWindow {
             height: 40
 
             CheckButton {
+                id: playerSpecTab1
                 name: "PlayerSpecTab1"
                 wowParent: "PlayerTalentFrame"
                 anchors.left: parent.left
@@ -144,16 +145,16 @@ WowWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 28
                 height: 28
+            }
 
-                CheckButton {
-                    name: "PlayerSpecTab2"
-                    wowParent: "PlayerTalentFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 6
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 28
-                    height: 28
-                }
+            CheckButton {
+                name: "PlayerSpecTab2"
+                wowParent: "PlayerTalentFrame"
+                anchors.left: playerSpecTab1.right
+                anchors.leftMargin: 6
+                anchors.verticalCenter: playerSpecTab1.verticalCenter
+                width: 28
+                height: 28
             }
 
             Button {
@@ -305,6 +306,27 @@ WowWindow {
             width: 338
             height: 26
 
+            Button {
+                name: "PlayerTalentFrameLearnButton"
+                text: "Learn"
+                wowParent: "PlayerTalentFramePreviewBar"
+                style: "Button"
+                anchors.right: playerTalentFrameResetButton.left
+                anchors.verticalCenter: playerTalentFrameResetButton.verticalCenter
+                width: 80
+                height: 22
+
+                FontString {
+                    name: "PlayerTalentFrameLearnButtonText"
+                    text: "Learn"
+                    wowParent: "PlayerTalentFrameLearnButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 42.7
+                    height: 11.9
+                }
+            }
+
             Frame {
                 name: "PlayerTalentFramePreviewBarFiller"
                 wowParent: "PlayerTalentFramePreviewBar"
@@ -315,6 +337,7 @@ WowWindow {
             }
 
             Button {
+                id: playerTalentFrameResetButton
                 name: "PlayerTalentFrameResetButton"
                 text: "Reset"
                 wowParent: "PlayerTalentFramePreviewBar"
@@ -324,27 +347,6 @@ WowWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 80
                 height: 22
-
-                Button {
-                    name: "PlayerTalentFrameLearnButton"
-                    text: "Learn"
-                    wowParent: "PlayerTalentFramePreviewBar"
-                    style: "Button"
-                    anchors.right: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 80
-                    height: 22
-
-                    FontString {
-                        name: "PlayerTalentFrameLearnButtonText"
-                        text: "Learn"
-                        wowParent: "PlayerTalentFrameLearnButton"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 42.7
-                        height: 11.9
-                    }
-                }
 
                 FontString {
                     name: "PlayerTalentFrameResetButtonText"

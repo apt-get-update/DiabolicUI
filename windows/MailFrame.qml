@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -792,6 +792,7 @@ WowWindow {
                     height: 105
 
                     Button {
+                        id: autoCompleteButton1
                         name: "AutoCompleteButton1"
                         text: "Acta"
                         wowParent: "AutoCompleteBox"
@@ -812,93 +813,96 @@ WowWindow {
                             width: 29.2
                             height: 11.9
                         }
+                    }
 
-                        Button {
-                            name: "AutoCompleteButton2"
+                    Button {
+                        id: autoCompleteButton2
+                        name: "AutoCompleteButton2"
+                        text: "Adoradear"
+                        wowParent: "AutoCompleteBox"
+                        anchors.left: autoCompleteButton1.left
+                        anchors.top: autoCompleteButton1.bottom
+                        width: 120
+                        height: 14
+
+                        FontString {
+                            name: "AutoCompleteButton2Text"
                             text: "Adoradear"
-                            wowParent: "AutoCompleteBox"
+                            wowParent: "AutoCompleteButton2"
                             anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            width: 120
-                            height: 14
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenterOffset: -0.1
+                            width: 65.6
+                            height: 11.9
+                        }
+                    }
 
-                            FontString {
-                                name: "AutoCompleteButton2Text"
-                                text: "Adoradear"
-                                wowParent: "AutoCompleteButton2"
-                                anchors.left: parent.left
-                                anchors.leftMargin: 15
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: -0.1
-                                width: 65.6
-                                height: 11.9
-                            }
+                    Button {
+                        id: autoCompleteButton3
+                        name: "AutoCompleteButton3"
+                        text: "Aeriana"
+                        wowParent: "AutoCompleteBox"
+                        anchors.left: autoCompleteButton2.left
+                        anchors.top: autoCompleteButton2.bottom
+                        width: 120
+                        height: 14
 
-                            Button {
-                                name: "AutoCompleteButton3"
-                                text: "Aeriana"
-                                wowParent: "AutoCompleteBox"
-                                anchors.left: parent.left
-                                anchors.top: parent.bottom
-                                width: 120
-                                height: 14
+                        FontString {
+                            name: "AutoCompleteButton3Text"
+                            text: "Aeriana"
+                            wowParent: "AutoCompleteButton3"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenterOffset: -0.1
+                            width: 47.4
+                            height: 11.9
+                        }
+                    }
 
-                                FontString {
-                                    name: "AutoCompleteButton3Text"
-                                    text: "Aeriana"
-                                    wowParent: "AutoCompleteButton3"
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.verticalCenterOffset: -0.1
-                                    width: 47.4
-                                    height: 11.9
-                                }
+                    Button {
+                        id: autoCompleteButton4
+                        name: "AutoCompleteButton4"
+                        text: "Aishidin"
+                        wowParent: "AutoCompleteBox"
+                        anchors.left: autoCompleteButton3.left
+                        anchors.top: autoCompleteButton3.bottom
+                        width: 120
+                        height: 14
 
-                                Button {
-                                    name: "AutoCompleteButton4"
-                                    text: "Aishidin"
-                                    wowParent: "AutoCompleteBox"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    width: 120
-                                    height: 14
+                        FontString {
+                            name: "AutoCompleteButton4Text"
+                            text: "Aishidin"
+                            wowParent: "AutoCompleteButton4"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenterOffset: -0.1
+                            width: 49
+                            height: 11.9
+                        }
+                    }
 
-                                    FontString {
-                                        name: "AutoCompleteButton4Text"
-                                        text: "Aishidin"
-                                        wowParent: "AutoCompleteButton4"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.verticalCenterOffset: -0.1
-                                        width: 49
-                                        height: 11.9
-                                    }
+                    Button {
+                        name: "AutoCompleteButton5"
+                        text: "..."
+                        wowParent: "AutoCompleteBox"
+                        anchors.left: autoCompleteButton4.left
+                        anchors.top: autoCompleteButton4.bottom
+                        width: 120
+                        height: 14
 
-                                    Button {
-                                        name: "AutoCompleteButton5"
-                                        text: "..."
-                                        wowParent: "AutoCompleteBox"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.bottom
-                                        width: 120
-                                        height: 14
-
-                                        FontString {
-                                            name: "AutoCompleteButton5Text"
-                                            text: "..."
-                                            wowParent: "AutoCompleteButton5"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            anchors.verticalCenterOffset: -0.1
-                                            width: 10.3
-                                            height: 11.9
-                                        }
-                                    }
-                                }
-                            }
+                        FontString {
+                            name: "AutoCompleteButton5Text"
+                            text: "..."
+                            wowParent: "AutoCompleteButton5"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenterOffset: -0.1
+                            width: 10.3
+                            height: 11.9
                         }
                     }
 
@@ -1038,6 +1042,7 @@ WowWindow {
             }
 
             Button {
+                id: postalOpenAllButton
                 name: "PostalOpenAllButton"
                 text: "Open All"
                 wowParent: "InboxFrame"
@@ -1058,16 +1063,16 @@ WowWindow {
                     width: 64
                     height: 11.9
                 }
+            }
 
-                Button {
-                    name: "Postal_OpenAllMenuButton"
-                    wowParent: "InboxFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -2
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30
-                    height: 30
-                }
+            Button {
+                name: "Postal_OpenAllMenuButton"
+                wowParent: "InboxFrame"
+                anchors.left: postalOpenAllButton.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: postalOpenAllButton.verticalCenter
+                width: 30
+                height: 30
             }
 
             Frame {
@@ -1101,6 +1106,27 @@ WowWindow {
                         width: 176
                         height: 18
 
+                        CheckButton {
+                            name: "SendMailCODButton"
+                            wowParent: "SendMailMoneyButton"
+                            anchors.left: sendMailSendMoneyButton.left
+                            anchors.top: sendMailSendMoneyButton.bottom
+                            anchors.topMargin: -1
+                            width: 16
+                            height: 16
+
+                            FontString {
+                                name: "SendMailCODButtonText"
+                                text: "C.O.D."
+                                wowParent: "SendMailCODButton"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 5
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 34.8
+                                height: 10.3
+                            }
+                        }
+
                         EditBox {
                             name: "SendMailMoneyGold"
                             wowParent: "SendMailMoney"
@@ -1131,6 +1157,7 @@ WowWindow {
                         }
 
                         CheckButton {
+                            id: sendMailSendMoneyButton
                             name: "SendMailSendMoneyButton"
                             wowParent: "SendMailMoneyButton"
                             anchors.left: parent.right
@@ -1138,27 +1165,6 @@ WowWindow {
                             anchors.topMargin: -12
                             width: 16
                             height: 16
-
-                            CheckButton {
-                                name: "SendMailCODButton"
-                                wowParent: "SendMailMoneyButton"
-                                anchors.left: parent.left
-                                anchors.top: parent.bottom
-                                anchors.topMargin: -1
-                                width: 16
-                                height: 16
-
-                                FontString {
-                                    name: "SendMailCODButtonText"
-                                    text: "C.O.D."
-                                    wowParent: "SendMailCODButton"
-                                    anchors.left: parent.right
-                                    anchors.leftMargin: 5
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 34.8
-                                    height: 10.3
-                                }
-                            }
 
                             FontString {
                                 name: "SendMailSendMoneyButtonText"
@@ -1187,6 +1193,7 @@ WowWindow {
                 height: 13
 
                 Button {
+                    id: sendMailMoneyFrameCopperButton
                     name: "SendMailMoneyFrameCopperButton"
                     text: "13"
                     wowParent: "SendMailMoneyFrame"
@@ -1206,49 +1213,50 @@ WowWindow {
                         width: 17.4
                         height: 14.2
                     }
+                }
 
-                    Button {
-                        name: "SendMailMoneyFrameSilverButton"
-                        text: "16"
-                        wowParent: "SendMailMoneyFrame"
-                        anchors.right: parent.left
-                        anchors.rightMargin: 4
+                Button {
+                    name: "SendMailMoneyFrameGoldButton"
+                    text: "3654"
+                    wowParent: "SendMailMoneyFrame"
+                    anchors.right: sendMailMoneyFrameSilverButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: sendMailMoneyFrameSilverButton.verticalCenter
+                    width: 44.6
+                    height: 13
+
+                    FontString {
+                        name: "SendMailMoneyFrameGoldButtonText"
+                        text: "3654"
+                        wowParent: "SendMailMoneyFrameGoldButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 30.4
-                        height: 13
+                        width: 31.6
+                        height: 14.2
+                    }
+                }
 
-                        Button {
-                            name: "SendMailMoneyFrameGoldButton"
-                            text: "3654"
-                            wowParent: "SendMailMoneyFrame"
-                            anchors.right: parent.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 44.6
-                            height: 13
+                Button {
+                    id: sendMailMoneyFrameSilverButton
+                    name: "SendMailMoneyFrameSilverButton"
+                    text: "16"
+                    wowParent: "SendMailMoneyFrame"
+                    anchors.right: sendMailMoneyFrameCopperButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: sendMailMoneyFrameCopperButton.verticalCenter
+                    width: 30.4
+                    height: 13
 
-                            FontString {
-                                name: "SendMailMoneyFrameGoldButtonText"
-                                text: "3654"
-                                wowParent: "SendMailMoneyFrameGoldButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 31.6
-                                height: 14.2
-                            }
-                        }
-
-                        FontString {
-                            name: "SendMailMoneyFrameSilverButtonText"
-                            text: "16"
-                            wowParent: "SendMailMoneyFrameSilverButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 17.4
-                            height: 14.2
-                        }
+                    FontString {
+                        name: "SendMailMoneyFrameSilverButtonText"
+                        text: "16"
+                        wowParent: "SendMailMoneyFrameSilverButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 17.4
+                        height: 14.2
                     }
                 }
             }

@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -253,6 +253,7 @@ WowWindow {
                 }
 
                 Button {
+                    id: friendsTabHeaderTab1
                     name: "FriendsTabHeaderTab1"
                     text: "Friends"
                     wowParent: "FriendsTabHeader"
@@ -273,27 +274,27 @@ WowWindow {
                         width: 48.2
                         height: 13
                     }
+                }
 
-                    Button {
-                        name: "FriendsTabHeaderTab2"
+                Button {
+                    name: "FriendsTabHeaderTab2"
+                    text: "Ignore"
+                    wowParent: "FriendsTabHeader"
+                    style: "Tab"
+                    anchors.left: friendsTabHeaderTab1.right
+                    anchors.verticalCenter: friendsTabHeaderTab1.verticalCenter
+                    width: 65.4
+                    height: 32
+
+                    FontString {
+                        name: "FriendsTabHeaderTab2Text"
                         text: "Ignore"
-                        wowParent: "FriendsTabHeader"
-                        style: "Tab"
-                        anchors.left: parent.right
+                        wowParent: "FriendsTabHeaderTab2"
+                        anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 65.4
-                        height: 32
-
-                        FontString {
-                            name: "FriendsTabHeaderTab2Text"
-                            text: "Ignore"
-                            wowParent: "FriendsTabHeaderTab2"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.verticalCenterOffset: -1
-                            width: 43.5
-                            height: 13
-                        }
+                        anchors.verticalCenterOffset: -1
+                        width: 43.5
+                        height: 13
                     }
                 }
             }
@@ -1009,6 +1010,29 @@ WowWindow {
             }
 
             Button {
+                name: "GuildInfoGuildEventButton"
+                text: "Log"
+                wowParent: "GuildInfoFrame"
+                style: "Button"
+                anchors.right: guildInfoSaveButton.left
+                anchors.rightMargin: 32
+                anchors.verticalCenter: guildInfoSaveButton.verticalCenter
+                width: 65
+                height: 22
+
+                FontString {
+                    name: "GuildInfoGuildEventButtonText"
+                    text: "Log"
+                    wowParent: "GuildInfoGuildEventButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 20.5
+                    height: 10.3
+                }
+            }
+
+            Button {
+                id: guildInfoSaveButton
                 name: "GuildInfoSaveButton"
                 text: "Accept"
                 wowParent: "GuildInfoFrame"
@@ -1019,28 +1043,6 @@ WowWindow {
                 anchors.bottomMargin: 12
                 width: 87
                 height: 22
-
-                Button {
-                    name: "GuildInfoGuildEventButton"
-                    text: "Log"
-                    wowParent: "GuildInfoFrame"
-                    style: "Button"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 32
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 65
-                    height: 22
-
-                    FontString {
-                        name: "GuildInfoGuildEventButtonText"
-                        text: "Log"
-                        wowParent: "GuildInfoGuildEventButton"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 20.5
-                        height: 10.3
-                    }
-                }
 
                 FontString {
                     name: "GuildInfoSaveButtonText"
@@ -1533,6 +1535,7 @@ WowWindow {
         height: 512
 
         Button {
+            id: guildFrameButton1
             name: "GuildFrameButton1"
             wowParent: "GuildPlayerStatusFrame"
             anchors.left: parent.left
@@ -1589,60 +1592,6 @@ WowWindow {
                                 anchors.left: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 40
-                                height: 14
-                            }
-                        }
-                    }
-                }
-            }
-
-            Button {
-                name: "GuildFrameGuildStatusButton2"
-                wowParent: "GuildStatusFrame"
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                width: 298
-                height: 16
-
-                FontString {
-                    name: "GuildFrameGuildStatusButton2Name"
-                    text: "Discordignis"
-                    wowParent: "GuildFrameGuildStatusButton2"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 14
-                    anchors.top: parent.top
-                    anchors.topMargin: 3
-                    width: 75
-                    height: 14
-
-                    FontString {
-                        name: "GuildFrameGuildStatusButton2Rank"
-                        text: "Guild Master"
-                        wowParent: "GuildFrameGuildStatusButton2"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 55
-                        height: 14
-
-                        FontString {
-                            name: "GuildFrameGuildStatusButton2Note"
-                            text: "Discord Chat Bot"
-                            wowParent: "GuildFrameGuildStatusButton2"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 11
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 85
-                            height: 14
-
-                            FontString {
-                                name: "GuildFrameGuildStatusButton2Online"
-                                text: "Online"
-                                wowParent: "GuildFrameGuildStatusButton2"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 10
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 80
                                 height: 14
                             }
                         }
@@ -1707,6 +1656,60 @@ WowWindow {
                             name: "GuildFrameGuildStatusButton1Online"
                             text: "Online"
                             wowParent: "GuildFrameGuildStatusButton1"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 80
+                            height: 14
+                        }
+                    }
+                }
+            }
+        }
+
+        Button {
+            name: "GuildFrameGuildStatusButton2"
+            wowParent: "GuildStatusFrame"
+            anchors.left: guildFrameButton1.left
+            anchors.top: guildFrameButton1.bottom
+            width: 298
+            height: 16
+
+            FontString {
+                name: "GuildFrameGuildStatusButton2Name"
+                text: "Discordignis"
+                wowParent: "GuildFrameGuildStatusButton2"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 75
+                height: 14
+
+                FontString {
+                    name: "GuildFrameGuildStatusButton2Rank"
+                    text: "Guild Master"
+                    wowParent: "GuildFrameGuildStatusButton2"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 55
+                    height: 14
+
+                    FontString {
+                        name: "GuildFrameGuildStatusButton2Note"
+                        text: "Discord Chat Bot"
+                        wowParent: "GuildFrameGuildStatusButton2"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 11
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 85
+                        height: 14
+
+                        FontString {
+                            name: "GuildFrameGuildStatusButton2Online"
+                            text: "Online"
+                            wowParent: "GuildFrameGuildStatusButton2"
                             anchors.left: parent.right
                             anchors.leftMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
@@ -1792,6 +1795,7 @@ WowWindow {
             height: 200
 
             Button {
+                id: guildFrameColumnHeader1
                 name: "GuildFrameColumnHeader1"
                 text: "Name"
                 wowParent: "GuildPlayerStatusFrame"
@@ -1801,39 +1805,41 @@ WowWindow {
                 anchors.topMargin: 70
                 width: 83
                 height: 22
+            }
 
-                Button {
-                    name: "GuildFrameColumnHeader2"
-                    text: "Zone"
-                    wowParent: "GuildPlayerStatusFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -2
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 120
-                    height: 22
+            Button {
+                id: guildFrameColumnHeader2
+                name: "GuildFrameColumnHeader2"
+                text: "Zone"
+                wowParent: "GuildPlayerStatusFrame"
+                anchors.left: guildFrameColumnHeader1.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: guildFrameColumnHeader1.verticalCenter
+                width: 120
+                height: 22
+            }
 
-                    Button {
-                        name: "GuildFrameColumnHeader3"
-                        text: "Lvl"
-                        wowParent: "GuildPlayerStatusFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: -2
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 32
-                        height: 22
+            Button {
+                id: guildFrameColumnHeader3
+                name: "GuildFrameColumnHeader3"
+                text: "Lvl"
+                wowParent: "GuildPlayerStatusFrame"
+                anchors.left: guildFrameColumnHeader2.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: guildFrameColumnHeader2.verticalCenter
+                width: 32
+                height: 22
+            }
 
-                        Button {
-                            name: "GuildFrameColumnHeader4"
-                            text: "Class"
-                            wowParent: "GuildPlayerStatusFrame"
-                            anchors.left: parent.right
-                            anchors.leftMargin: -2
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 92
-                            height: 22
-                        }
-                    }
-                }
+            Button {
+                name: "GuildFrameColumnHeader4"
+                text: "Class"
+                wowParent: "GuildPlayerStatusFrame"
+                anchors.left: guildFrameColumnHeader3.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: guildFrameColumnHeader3.verticalCenter
+                width: 92
+                height: 22
             }
         }
 
@@ -1847,6 +1853,7 @@ WowWindow {
             height: 200
 
             Button {
+                id: guildFrameGuildStatusColumnHeader1
                 name: "GuildFrameGuildStatusColumnHeader1"
                 text: "Name"
                 wowParent: "GuildStatusFrame"
@@ -1856,39 +1863,41 @@ WowWindow {
                 anchors.topMargin: 70
                 width: 83
                 height: 22
+            }
 
-                Button {
-                    name: "GuildFrameGuildStatusColumnHeader2"
-                    text: "Rank"
-                    wowParent: "GuildStatusFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -2
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 75
-                    height: 22
+            Button {
+                id: guildFrameGuildStatusColumnHeader2
+                name: "GuildFrameGuildStatusColumnHeader2"
+                text: "Rank"
+                wowParent: "GuildStatusFrame"
+                anchors.left: guildFrameGuildStatusColumnHeader1.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: guildFrameGuildStatusColumnHeader1.verticalCenter
+                width: 75
+                height: 22
+            }
 
-                    Button {
-                        name: "GuildFrameGuildStatusColumnHeader3"
-                        text: "Note"
-                        wowParent: "GuildStatusFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: -2
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 90
-                        height: 22
+            Button {
+                id: guildFrameGuildStatusColumnHeader3
+                name: "GuildFrameGuildStatusColumnHeader3"
+                text: "Note"
+                wowParent: "GuildStatusFrame"
+                anchors.left: guildFrameGuildStatusColumnHeader2.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: guildFrameGuildStatusColumnHeader2.verticalCenter
+                width: 90
+                height: 22
+            }
 
-                        Button {
-                            name: "GuildFrameGuildStatusColumnHeader4"
-                            text: "Last Online"
-                            wowParent: "GuildStatusFrame"
-                            anchors.left: parent.right
-                            anchors.leftMargin: -2
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 75
-                            height: 22
-                        }
-                    }
-                }
+            Button {
+                name: "GuildFrameGuildStatusColumnHeader4"
+                text: "Last Online"
+                wowParent: "GuildStatusFrame"
+                anchors.left: guildFrameGuildStatusColumnHeader3.right
+                anchors.leftMargin: -2
+                anchors.verticalCenter: guildFrameGuildStatusColumnHeader3.verticalCenter
+                width: 75
+                height: 22
             }
         }
     }
@@ -2029,6 +2038,7 @@ WowWindow {
         }
 
         Button {
+            id: whoFrameColumnHeader1
             name: "WhoFrameColumnHeader1"
             text: "Name"
             wowParent: "WhoFrame"
@@ -2039,39 +2049,41 @@ WowWindow {
             anchors.topMargin: 34
             width: 83
             height: 22
+        }
 
-            Button {
-                name: "WhoFrameColumnHeader2"
-                text: "Zone"
-                wowParent: "WhoFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: -2
-                anchors.verticalCenter: parent.verticalCenter
-                width: 105
-                height: 22
+        Button {
+            id: whoFrameColumnHeader2
+            name: "WhoFrameColumnHeader2"
+            text: "Zone"
+            wowParent: "WhoFrame"
+            anchors.left: whoFrameColumnHeader1.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: whoFrameColumnHeader1.verticalCenter
+            width: 105
+            height: 22
+        }
 
-                Button {
-                    name: "WhoFrameColumnHeader3"
-                    text: "Lvl"
-                    wowParent: "WhoFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -2
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32
-                    height: 22
+        Button {
+            id: whoFrameColumnHeader3
+            name: "WhoFrameColumnHeader3"
+            text: "Lvl"
+            wowParent: "WhoFrame"
+            anchors.left: whoFrameColumnHeader2.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: whoFrameColumnHeader2.verticalCenter
+            width: 32
+            height: 22
+        }
 
-                    Button {
-                        name: "WhoFrameColumnHeader4"
-                        text: "Class"
-                        wowParent: "WhoFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: -2
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 92
-                        height: 22
-                    }
-                }
-            }
+        Button {
+            name: "WhoFrameColumnHeader4"
+            text: "Class"
+            wowParent: "WhoFrame"
+            anchors.left: whoFrameColumnHeader3.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: whoFrameColumnHeader3.verticalCenter
+            width: 92
+            height: 22
         }
 
         FontString {
