@@ -195,55 +195,29 @@ Module.CreateSpec = function(self)
 	self:RegisterEvent("PLAYER_TALENT_UPDATE", "UpdateSpec")
 end
 
--- the gear slots, in their columns from the top, and the weapons
-local LEFT_SLOTS = {
-	"CharacterHeadSlot", "CharacterNeckSlot", "CharacterShoulderSlot", "CharacterBackSlot",
-	"CharacterChestSlot", "CharacterShirtSlot", "CharacterTabardSlot", "CharacterWristSlot"
-}
-local RIGHT_SLOTS = {
-	"CharacterHandsSlot", "CharacterWaistSlot", "CharacterLegsSlot", "CharacterFeetSlot",
-	"CharacterFinger0Slot", "CharacterFinger1Slot", "CharacterTrinket0Slot", "CharacterTrinket1Slot"
-}
-
 -- the dropdowns (UIDropDownMenuTemplate's art, and the title's own)
 local DROPDOWNS = { "PlayerTitleFrame" }
 
 -- The character tab in two columns, with room around everything: the
 -- gear on the left, the slots along its sides, a tall model between them in
 -- a stone pane, the weapons in a row at the bottom; the right one is
--- CreateColumn's.
+-- CreateColumn's. The slots, the model's panel and its arrow, the title's
+-- dropdown and the weapons are placed from windows/CharacterFrame.qml.
 Module.LayoutPaperDoll = function(self, window)
 	local layout = self.config.paperdoll
-	local pane = CreateFrame("Frame", nil, _G.PaperDollFrame)
+	local pane = CreateFrame("Frame", kit.NameFor(window, "Gear"), _G.PaperDollFrame)
 	pane:SetPoint("TOPLEFT", window, "TOPLEFT")
 	pane:SetPoint("BOTTOMLEFT", window, "BOTTOMLEFT")
 	pane:SetWidth(layout.pane_width)
 	self.GearPane = pane
-
-	for _, column in ipairs({ { LEFT_SLOTS, "TOPLEFT", 1 }, { RIGHT_SLOTS, "TOPRIGHT", -1 } }) do
-		local slots, point, side = column[1], column[2], column[3]
-		local previous
-		for _, name in ipairs(slots) do
-			local slot = _G[name]
-			slot:ClearAllPoints()
-			if previous then
-				slot:SetPoint("TOP", previous, "BOTTOM", 0, -layout.slot_gap)
-			else
-				slot:SetPoint(point, pane, point, side * layout.slot_margin, layout.slot_top)
-			end
-			previous = slot
-		end
-		-- (the content's edge, for the rules: no zone around the slots)
-		_G[slots[1]].DiabolicEdge = true
-	end
+	-- (the content's edge, for the rules: no zone around the slots)
+	_G.CharacterHeadSlot.DiabolicEdge = true
+	_G.CharacterHandsSlot.DiabolicEdge = true
 
 	-- the model's panel (its scene) between the slot columns
-	local width, height = unpack(layout.model_size)
 	local inset = layout.model_panel_inset
-	local panel = CreateFrame("Frame", nil, _G.PaperDollFrame)
+	local panel = CreateFrame("Frame", kit.NameFor(window, "Scene"), _G.PaperDollFrame)
 	panel:SetFrameLevel(_G.PaperDollFrame:GetFrameLevel())
-	panel:SetPoint("TOP", pane, "TOP", 0, layout.model_top + inset)
-	panel:SetSize(width + inset * 2, height + inset * 2)
 	kit:StylePane(panel, true) -- (Diablo III's stone around your home city)
 	panel.DiabolicContent = true
 	self:AddScene(panel)
@@ -263,11 +237,8 @@ Module.LayoutPaperDoll = function(self, window)
 	model:SetPoint("TOPLEFT", panel, "TOPLEFT", inset, up - inset)
 	model:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -inset, inset - down)
 	model:SetHitRectInsets(0, 0, up, down)
-	local turn = _G.CharacterModelFrameRotateLeftButton
-	turn:ClearAllPoints()
-	turn:SetPoint("TOPLEFT", panel, "TOPLEFT", inset, -inset)
 	-- the turning arrows only while the mouse is over the model
-	local arrows = { turn, _G.CharacterModelFrameRotateRightButton }
+	local arrows = { _G.CharacterModelFrameRotateLeftButton, _G.CharacterModelFrameRotateRightButton }
 	local shown
 	panel:SetScript("OnUpdate", function()
 		local over = MouseIsOver(panel) and true or false
@@ -279,25 +250,10 @@ Module.LayoutPaperDoll = function(self, window)
 		end
 	end)
 
-	-- (the resistances: the right column's, CreateColumn), the title's
-	-- dropdown
-	local titles = _G.PlayerTitleFrame
-	titles:ClearAllPoints()
-	titles:SetPoint("TOP", pane, "TOP", 0, layout.title_top)
-
 	-- Blizzard's two stat columns out of sight: the right column has them
 	local attributes = _G.CharacterAttributesFrame
 	attributes:Hide()
 	attributes:HookScript("OnShow", attributes.Hide)
-
-	-- the weapons in a row at the bottom
-	local main, off, ranged = _G.CharacterMainHandSlot, _G.CharacterSecondaryHandSlot, _G.CharacterRangedSlot
-	main:ClearAllPoints()
-	off:ClearAllPoints()
-	ranged:ClearAllPoints()
-	off:SetPoint("TOP", panel, "BOTTOM", 0, layout.weapon_top)
-	main:SetPoint("TOPRIGHT", off, "TOPLEFT", -layout.weapon_gap, 0)
-	ranged:SetPoint("TOPLEFT", off, "TOPRIGHT", layout.weapon_gap, 0)
 
 	-- the ammo slot in the action buttons' border instead of its frame art
 	local ammo = _G.CharacterAmmoSlot
@@ -1146,12 +1102,6 @@ Module.StyleInspectTrees = function(self)
 			tab.DiabolicIcon:SetAllPoints()
 			tab.DiabolicIcon:SetTexCoord(.08, .92, .08, .92)
 			kit:AddBorder(tab, config.size)
-			tab:ClearAllPoints()
-			if (i == 1) then
-				tab:SetPoint("BOTTOMLEFT", _G.InspectTalentFrameScrollFrame, "TOPLEFT", unpack(config.offset))
-			else
-				tab:SetPoint("LEFT", tabs[i - 1], "RIGHT", config.gap, 0)
-			end
 			tab:HookScript("OnEnter", function()
 				local tree, _, points = GetTalentTabInfo(i, talents.inspect, talents.pet, talents.talentGroup)
 				if tree then

@@ -39,7 +39,30 @@ Engine:NewStaticConfig("Positions", {
 	BattlefieldFrameNameHeader = { "TOPLEFT", "BattlefieldFrame", "TOPLEFT", 75, -50 }, -- FontString "Battlefield Instance:"
 
 	-- CharacterFrame --------------------------------------------------------
+	CharacterBackSlot = { "TOP", "CharacterShoulderSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterChestSlot = { "TOP", "CharacterBackSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterFeetSlot = { "TOP", "CharacterLegsSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterFinger0Slot = { "TOP", "CharacterFeetSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterFinger1Slot = { "TOP", "CharacterFinger0Slot", "BOTTOM", 0, -4 }, -- Button
+	CharacterFrameDiabolicScene = { "TOP", "CharacterFrameDiabolicGear", "TOP", 0, -62, 248, 322 }, -- Frame
+	CharacterHandsSlot = { "TOPRIGHT", "CharacterFrameDiabolicGear", "TOPRIGHT", -38, -66 }, -- Button
+	CharacterHeadSlot = { "TOPLEFT", "CharacterFrameDiabolicGear", "TOPLEFT", 38, -66 }, -- Button
+	CharacterLegsSlot = { "TOP", "CharacterWaistSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterMainHandSlot = { "TOPRIGHT", "CharacterSecondaryHandSlot", "TOPLEFT", -6, 0 }, -- Button
+	CharacterModelFrameRotateLeftButton = { "TOPLEFT", "CharacterFrameDiabolicScene", "TOPLEFT", 4, -4 }, -- Button
+	CharacterNeckSlot = { "TOP", "CharacterHeadSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterRangedSlot = { "TOPLEFT", "CharacterSecondaryHandSlot", "TOPRIGHT", 6, 0 }, -- Button
+	CharacterSecondaryHandSlot = { "TOP", "CharacterFrameDiabolicScene", "BOTTOM", 0, -10 }, -- Button
+	CharacterShirtSlot = { "TOP", "CharacterChestSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterShoulderSlot = { "TOP", "CharacterNeckSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterTabardSlot = { "TOP", "CharacterShirtSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterTrinket0Slot = { "TOP", "CharacterFinger1Slot", "BOTTOM", 0, -4 }, -- Button
+	CharacterTrinket1Slot = { "TOP", "CharacterTrinket0Slot", "BOTTOM", 0, -4 }, -- Button
+	CharacterWaistSlot = { "TOP", "CharacterHandsSlot", "BOTTOM", 0, -4 }, -- Button
+	CharacterWristSlot = { "TOP", "CharacterTabardSlot", "BOTTOM", 0, -4 }, -- Button
 	GearManagerDialogPopup = { "TOPLEFT", "CharacterFrameDiabolic", "TOPRIGHT", 6, 0 }, -- Frame
+	-- the title's dropdown, out of sight (the titles' page has them)
+	PlayerTitleFrame = { "TOP", "CharacterFrameDiabolicGear", "TOP", 0, -60 }, -- Frame
 	ReputationDetailFrame = { "TOPLEFT", "CharacterFrameDiabolic", "TOPRIGHT", -8, -96 }, -- Frame
 	TokenFrameMoneyFrame = { "BOTTOMRIGHT", "TokenFrame", "BOTTOMRIGHT", -44, 84 }, -- Frame
 	TokenFramePopup = { "TOPLEFT", "CharacterFrameDiabolic", "TOPRIGHT", -8, -96 }, -- Frame
@@ -108,6 +131,9 @@ Engine:NewStaticConfig("Positions", {
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
 	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 61 Human Warrior"
+	InspectTalentFrameTab1 = { "BOTTOMLEFT", "InspectTalentFrameScrollFrame", "TOPLEFT", -6, 12 }, -- Button "Arms"
+	InspectTalentFrameTab2 = { "LEFT", "InspectTalentFrameTab1", "RIGHT", 6, 0 }, -- Button "Fury"
+	InspectTalentFrameTab3 = { "LEFT", "InspectTalentFrameTab2", "RIGHT", 6, 0 }, -- Button "Protection"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame

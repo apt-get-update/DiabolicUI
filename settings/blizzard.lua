@@ -156,18 +156,10 @@ Engine:NewStaticConfig("Blizzard", {
 		paperdoll = {
 			wide_insets = { 0, 36, 266, -30 }, -- (its foot 6 under the weapons' row, past the iron)
 			pane_width = 418, -- the gear's column
-			slot_margin = 38, -- the slot columns from its sides
-			slot_top = -66, -- from its top, under the iron (the model's panel 6 under it, as the stats')
-			slot_gap = 4,
-			title_top = -60, -- the title's dropdown, from its top (out of sight: the titles' page has them)
-			model_top = -66, -- the model's top, from its top: with the slots'
-			model_size = { 240, 314 }, -- between the slot columns, 14 from each; as tall as them (its bottom where it was)
-			model_panel_inset = 4, -- the panel around it
+			model_panel_inset = 4, -- the panel around the model (its place and size: windows/CharacterFrame.qml)
 			-- its frame past the panel, up and down: the character larger and
 			-- lower in it, on the scene's floor (the dressing room's is so)
 			model_reach = { 26, 32 },
-			weapon_top = -10, -- the weapons' row, under the model's panel
-			weapon_gap = 6,
 			ammo_size = 27, -- Blizzard's ammo slot, in the action buttons' border
 			-- the right column: the level, two groups of stats (Blizzard's
 			-- choice, a click on their title bar shows the next)
@@ -263,7 +255,7 @@ Engine:NewStaticConfig("Blizzard", {
 		popup_color = { 0, 0, 0, .92 }, -- the title picker, the equipment manager
 		scene_inset = 3, -- your home city behind the model, inside its panel's bronze line
 		scene_color = { .75, .75, .75 }, -- dimmed a little under the model
-		inspect_trees = { size = 28, gap = 6, offset = { -6, 12 } }, -- the inspected one's talent trees as icons: over the tree's panel (its inset 6, then a gap of 6)
+		inspect_trees = { size = 28 }, -- the inspected one's talent trees as icons (placed from windows/InspectFrame.qml)
 		level_font = DiabolicFont_HeaderRegular14, -- the inspected one's "Level 80 Dwarf Priest", over the model
 		reputation_detail_close = 8, -- their X on their ribbon, this far in from their right side
 		reputation_detail_inset = 3, -- their parchment, inside their panel's bronze line

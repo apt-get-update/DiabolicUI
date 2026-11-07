@@ -505,23 +505,29 @@ function TestCharacter:test_the_gear_column()
 	local layout = config.paperdoll
 	local module = client:GetModule("Blizzard: Character")
 	-- the slots in two columns in the gear's column, the model between them
+	-- (placed from windows/CharacterFrame.qml: settings/positions.lua)
+	local positions = client.Engine:GetDB("Positions")
 	local pane = module.GearPane
+	lu.assertEquals(pane:GetName(), "CharacterFrameDiabolicGear")
 	lu.assertEquals(pane:GetWidth(), layout.pane_width)
-	lu.assertEquals({ _G.CharacterHeadSlot:GetPoint() }, { "TOPLEFT", pane, "TOPLEFT", layout.slot_margin, layout.slot_top })
-	lu.assertEquals({ _G.CharacterNeckSlot:GetPoint() }, { "TOP", _G.CharacterHeadSlot, "BOTTOM", 0, -layout.slot_gap })
-	lu.assertEquals({ _G.CharacterHandsSlot:GetPoint() }, { "TOPRIGHT", pane, "TOPRIGHT", -layout.slot_margin, layout.slot_top })
+	local head = positions.CharacterHeadSlot
+	lu.assertEquals({ _G.CharacterHeadSlot:GetPoint() }, { head[1], pane, head[3], head[4], head[5] })
+	lu.assertEquals({ _G.CharacterNeckSlot:GetPoint() }, { "TOP", _G.CharacterHeadSlot, "BOTTOM", 0, positions.CharacterNeckSlot[5] })
+	local hands = positions.CharacterHandsSlot
+	lu.assertEquals({ _G.CharacterHandsSlot:GetPoint() }, { hands[1], pane, hands[3], hands[4], hands[5] })
 	-- (its frame past its panel's top and bottom: the character larger
 	-- and lower in it, as the dressing room's)
-	local reach = layout.model_reach
-	lu.assertEquals({ _G.CharacterModelFrame:GetSize() }, { layout.model_size[1], layout.model_size[2] + reach[1] + reach[2] })
+	local reach, inset, scene = layout.model_reach, layout.model_panel_inset, positions.CharacterFrameDiabolicScene
+	lu.assertEquals({ _G.CharacterModelFrame:GetSize() }, { scene[6] - inset * 2, scene[7] - inset * 2 + reach[1] + reach[2] })
 	-- the weapons in a row under the model's panel
 	local main, off, ranged = _G.CharacterMainHandSlot, _G.CharacterSecondaryHandSlot, _G.CharacterRangedSlot
 	local point, panel, relative, x, y = off:GetPoint()
-	lu.assertEquals({ point, relative, x, y }, { "TOP", "BOTTOM", 0, layout.weapon_top })
+	lu.assertEquals({ point, relative, x, y }, { "TOP", "BOTTOM", 0, positions.CharacterSecondaryHandSlot[5] })
+	lu.assertEquals(panel, _G.CharacterFrameDiabolicScene)
 	-- (the model's panel: Diablo III's stone pane, open on the scene)
 	lu.assertEquals((panel:GetRegions()):GetTexture(), client.Engine:GetDB("Blizzard").window.materials.pane_open.texture)
-	lu.assertEquals({ main:GetPoint() }, { "TOPRIGHT", off, "TOPLEFT", -layout.weapon_gap, 0 })
-	lu.assertEquals({ ranged:GetPoint() }, { "TOPLEFT", off, "TOPRIGHT", layout.weapon_gap, 0 })
+	lu.assertEquals({ main:GetPoint() }, { "TOPRIGHT", off, "TOPLEFT", positions.CharacterMainHandSlot[4], 0 })
+	lu.assertEquals({ ranged:GetPoint() }, { "TOPLEFT", off, "TOPRIGHT", positions.CharacterRangedSlot[4], 0 })
 	-- Blizzard's stat columns out of sight for good
 	lu.assertFalse(shown(_G.CharacterAttributesFrame))
 	_G.CharacterFrame:Show()

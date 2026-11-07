@@ -850,6 +850,7 @@ WowWindow {
                 name: "InspectTalentFrameTab1"
                 text: "Arms"
                 wowParent: "InspectTalentFrame"
+                pin: "place"
                 anchors.left: parent.left
                 anchors.leftMargin: -6
                 anchors.bottom: parent.top
@@ -863,6 +864,7 @@ WowWindow {
                 name: "InspectTalentFrameTab2"
                 text: "Fury"
                 wowParent: "InspectTalentFrame"
+                pin: "place"
                 anchors.left: inspectTalentFrameTab1.right
                 anchors.leftMargin: 6
                 anchors.verticalCenter: inspectTalentFrameTab1.verticalCenter
@@ -874,6 +876,7 @@ WowWindow {
                 name: "InspectTalentFrameTab3"
                 text: "Protection"
                 wowParent: "InspectTalentFrame"
+                pin: "place"
                 anchors.left: inspectTalentFrameTab2.right
                 anchors.leftMargin: 6
                 anchors.verticalCenter: inspectTalentFrameTab2.verticalCenter
