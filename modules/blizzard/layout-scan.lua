@@ -315,9 +315,11 @@ local IsBagItem = function(name)
 end
 
 -- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
--- what the window shows now, by their names and as they read.
+-- what the window shows now, by their names and as they read. (Our own
+-- pages' too: the spellbook's companions, mounts and professions.)
 local IsTab = function(name, part)
-	return (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$")) and part:IsObjectType("Button")
+	return (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$") or part.DiabolicPageTab)
+		and part:IsObjectType("Button")
 end
 
 -- How a tab reads: its text, or its tooltip's for an icon's (else its name).
@@ -761,16 +763,19 @@ Module.OnEnable = function(self)
 	Saved = _G.DiabolicUI_Layout or {}
 	Saved.windows = Saved.windows or {}
 	Saved.on, Saved.moved, Saved.adjust = nil, nil, nil -- (an older version's)
-	-- (their views from before a checked tab counted: seen again by the next scan)
-	if (not Saved.checkedTabs) then
-		Saved.checkedTabs = true
-		for _, name in ipairs({ "SpellBookFrame", "PlayerTalentFrame" }) do
-			local seen = Saved.windows[name]
-			if seen then
-				seen.views = nil
-				for _, part in pairs(seen.parts or {}) do
-					if (type(part) == "table") then
-						part.tabs, part.last, part.words = nil, nil, nil
+	-- (their views from before a checked tab counted, and our pages' tabs:
+	-- seen again by the next scan)
+	for _, dropped in ipairs({ { "checkedTabs", "SpellBookFrame", "PlayerTalentFrame" }, { "pageTabs", "SpellBookFrame" } }) do
+		if (not Saved[dropped[1]]) then
+			Saved[dropped[1]] = true
+			for i = 2, #dropped do
+				local seen = Saved.windows[dropped[i]]
+				if seen then
+					seen.views = nil
+					for _, part in pairs(seen.parts or {}) do
+						if (type(part) == "table") then
+							part.tabs, part.last, part.words = nil, nil, nil
+						end
 					end
 				end
 			end

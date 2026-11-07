@@ -341,6 +341,7 @@ Module.CreateTabs = function(self, window)
 		tab:SetText(_G[page[2]])
 		tab:SetScript("OnClick", function() self:ShowPage(page[1]) end)
 		tab.mode = page[1]
+		tab.DiabolicPageTab = true -- (a tab for /dui layout: its page a view of its own)
 		self.Tabs[i] = tab
 	end
 	local tabs = {}

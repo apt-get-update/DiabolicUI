@@ -661,6 +661,23 @@ function TestLayoutAudit:test_a_checked_tab_is_a_view()
 	assertClean(client)
 end
 
+-- Our own page's tab (the spellbook's companions'), chosen: a view of its own.
+function TestLayoutAudit:test_a_page_tab_is_a_view()
+	boot()
+	local frame = window("AuditPages")
+	local page = CreateFrame("Button", "AuditPagesTabMOUNT", frame)
+	page.DiabolicPageTab = true
+	frame:Show()
+	slash("layout")
+	client:Tick(1.5, 0.1)
+	page:Disable()
+	client:Tick(1.5, 0.1)
+	local views = _G.DiabolicUI_Layout.windows.AuditPages.views
+	lu.assertNotNil(views[""])
+	lu.assertNotNil(views.AuditPagesTabMOUNT)
+	assertClean(client)
+end
+
 -- Those views from before that are dropped once, for the next scan to see them.
 function TestLayoutAudit:test_views_from_before_checked_tabs_are_dropped()
 	local parts = function()
@@ -678,8 +695,12 @@ function TestLayoutAudit:test_views_from_before_checked_tabs_are_dropped()
 	lu.assertEquals(windows.PlayerTalentFrame.parts.Older, "x")
 	lu.assertNotNil(windows.MailFrame.views.Old)
 	-- (not again: what the new scan saved stays)
-	boot({ savedVariables = { DiabolicUI_Layout = { checkedTabs = true, windows = { SpellBookFrame = old() } } } })
+	boot({ savedVariables = { DiabolicUI_Layout = { checkedTabs = true, pageTabs = true, windows = { SpellBookFrame = old() } } } })
 	lu.assertNotNil(_G.DiabolicUI_Layout.windows.SpellBookFrame.views.Old)
+	-- (the spellbook's once more, from before its pages' tabs counted)
+	boot({ savedVariables = { DiabolicUI_Layout = { checkedTabs = true, windows = { SpellBookFrame = old(), PlayerTalentFrame = old() } } } })
+	lu.assertNil(_G.DiabolicUI_Layout.windows.SpellBookFrame.views)
+	lu.assertNotNil(_G.DiabolicUI_Layout.windows.PlayerTalentFrame.views.Old)
 	assertClean(client)
 end
 
