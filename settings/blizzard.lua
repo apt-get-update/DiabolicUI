@@ -677,6 +677,7 @@ Engine:NewStaticConfig("Blizzard", {
 				bars = { "TradeSkillRankFrame" }, -- the skill's, its rank in it
 				hide = { "TradeSkillExpandTabLeft", "TradeSkillExpandTabMiddle", "TradeSkillExpandTabRight" }, -- "All"'s tab
 				-- the window's iron across between the recipes and the chosen one
+				-- (hung under the recipes: settings/positions.lua)
 				iron_bars = { 243 },
 				-- the recipe's name wrapped short of Auctionator's Scan AH, over it
 				late = { beside = { { "TradeSkillSkillName", "Auctionator_Search", 146 } } } },

@@ -950,6 +950,7 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	-- the reagents' plates gone, the chosen one's detail lower
 	lu.assertEquals(_G.TradeSkillReagent1NameFrame:GetAlpha(), 0)
 	Session.assertPlaced(client, "TradeSkillDetailScrollFrame")
+	Session.assertPlaced(client, "TradeSkillFrameDiabolicIronBar") -- (hung under the recipes)
 	-- as many recipes as fit the list, the chosen one's detail taller
 	_G.TradeSkillFrame_Update()
 	lu.assertEquals(_G.TradeSkillDetailScrollFrame:GetHeight(), 164)

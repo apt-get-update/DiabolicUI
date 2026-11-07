@@ -282,15 +282,6 @@ WowWindow {
         }
 
         Frame {
-            name: "TradeSkillFrameDiabolicIronBar"
-            wowParent: "TradeSkillFrameDiabolic"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 422
-            height: 509
-        }
-
-        Frame {
             name: "TradeSkillFrameDiabolicSocket"
             wowParent: "TradeSkillFrameDiabolic"
             anchors.right: parent.right
@@ -665,6 +656,18 @@ WowWindow {
                     }
                 }
             }
+        }
+
+        Frame {
+            name: "TradeSkillFrameDiabolicIronBar"
+            wowParent: "TradeSkillFrameDiabolic"
+            pin: "all"
+            anchors.left: parent.left
+            anchors.leftMargin: -30
+            anchors.top: parent.bottom
+            anchors.topMargin: 13.5
+            width: 392
+            height: 16
         }
 
         Frame {

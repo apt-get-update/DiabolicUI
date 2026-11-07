@@ -1984,15 +1984,17 @@ end
 -- A bar of the window's iron across `window` between two of its zones,
 -- its middle `y` under the window's top, its ends under the frame's
 -- sides (as the foot's): over what the window shows, under its frame.
+-- (Its frame is the bar: settings/positions.lua can hang it elsewhere.)
 Module.AddIronBar = function(self, window, y)
 	local spec = config.footer_rail
 	local holder = CreateFrame("Frame", NameFor(window, "IronBar"), window)
 	holder:SetFrameLevel(window:GetFrameLevel() + 2)
-	holder:SetAllPoints()
 	local bar = IronBar(holder)
 	local top = y - ((spec.bar[1] + spec.bar[2]) / 2 - spec.cut[1]) -- (the bar's middle in its cut)
-	bar:SetPoint("TOPLEFT", window, "TOPLEFT", spec.bar[1], -top)
-	bar:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.bar[1], -top)
+	holder:SetPoint("TOPLEFT", window, "TOPLEFT", spec.bar[1], -top)
+	holder:SetPoint("TOPRIGHT", window, "TOPRIGHT", -spec.bar[1], -top)
+	holder:SetHeight(bar:GetHeight())
+	bar:SetAllPoints(holder)
 	return bar
 end
 
