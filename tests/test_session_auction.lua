@@ -116,12 +116,19 @@ function TestAuctionHouse:test_browse_on_the_grid()
 	local _, resultsTop, _, resultsBottom = edges(results)
 	lu.assertEquals({ resultsTop, resultsBottom }, { top, bottom })
 	lu.assertTrue(select(1, edges(results)) > right)
-	-- the toolbar over them: Reset over the categories, the arrows at the
-	-- results' right end
+	-- the toolbar over them: Reset over the categories' buttons, as wide;
+	-- the search's checkboxes side by side after the count; the arrows
+	-- ending with the column names
 	local resetLeft, _, resetRight, resetBottom = edges(_G.BrowseResetButton)
-	lu.assertEquals({ resetLeft, resetRight }, { left, right })
+	local buttonLeft = edges(_G.AuctionFilterButton1)
+	lu.assertEquals({ resetLeft, resetRight }, { buttonLeft, buttonLeft + _G.BrowseResetButton:GetWidth() })
 	lu.assertTrue(resetBottom < top)
-	lu.assertEquals(select(3, edges(_G.BrowseNextPageButton)), select(3, edges(results)))
+	local usable, onPlayer = _G.IsUsableCheckButton, _G.ShowOnPlayerCheckButton
+	lu.assertTrue(usable:GetLeft() > _G.BrowseSearchCountText:GetLeft())
+	lu.assertTrue(onPlayer:GetLeft() > _G.IsUsableCheckButtonText:GetRight())
+	lu.assertEquals(select(2, usable:GetCenter()), select(2, onPlayer:GetCenter()))
+	lu.assertTrue(select(2, edges(usable)) > select(4, edges(_G.BrowseSearchButton))) -- (under the band)
+	lu.assertEquals(select(3, edges(_G.BrowseNextPageButton)), select(3, edges(results)) + positions.BrowseNextPageButton[4])
 	local headerLeft, headerTop = edges(_G.BrowseQualitySort)
 	lu.assertEquals(headerTop, top - positions.BrowseQualitySort[5])
 	lu.assertTrue(headerLeft > select(1, edges(results)))

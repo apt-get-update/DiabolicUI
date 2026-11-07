@@ -335,7 +335,7 @@ Engine:NewStaticConfig("Blizzard", {
 		browse = { filter_alpha = { class = 1, subclass = .45, invtype = 0 } },
 		-- Auctions: Blizzard's selling column (its parts left of `column` on the
 		-- page), moved as one (right, up); its item's slot dark, framed
-		auctions = { column = 210, move = { -16, 2 },
+		auctions = { column = 210, move = { -24, 2 }, -- (in the middle of their zone, 9 from its sides)
 			slot_texture = path .. [[textures\DiabolicUI_Button_64x64_Backdrop.tga]], slot_scale = 2 },
 		-- Auctionator's page: its left column (its history, shopping lists
 		-- or selling column) and the rest (the recommended price, its
@@ -678,9 +678,10 @@ Engine:NewStaticConfig("Blizzard", {
 				close = "AuctionFrameCloseButton", tabs = "AuctionFrameTab", sigils = { "AllSeeing", "scarab", "stein", "fleur", "gryphon", "orbLight" }, art = { "ui%-auctionframe%-" }, -- browse, bids, auctions, Auctionator's buy, sell, more
 				hide = { "BrowseTitle", "BidTitle", "AuctionsTitle", -- the pages' own titles, under the tabs
 					"BrowseNameText", "BrowseDropDownName" }, -- the search's labels (Name in its box)
-				-- the search in the band, its two checkboxes one under the other
+				-- the search in the band (its two checkboxes under it, in Browse's
+				-- toolbar: modules/blizzard/auction.lua)
 				band = { left = { "BrowseName", "BrowseLevelText", "BrowseMinLevel", "BrowseLevelHyphen", "BrowseMaxLevel", "BrowseDropDown",
-					{ "IsUsableCheckButton", "ShowOnPlayerCheckButton" }, "BrowseSearchButton" }, hints = { BrowseName = "NAME" } },
+					"BrowseSearchButton" }, hints = { BrowseName = "NAME" } },
 				-- (its pages' content: modules/blizzard/auction.lua)
 				-- Auctionator's pages too: its title gone (the tabs say it), its
 				-- lists and the sell column on their black, Blizzard's tabs over

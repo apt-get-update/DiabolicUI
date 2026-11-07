@@ -33,6 +33,7 @@ Engine:NewStaticConfig("Positions", {
 	AuctionsButton1 = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -25 }, -- Button
 	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 621, 7, 121.1, 22 }, -- Button "Cancel Auction"
 	AuctionsCloseButton = { "LEFT", "AuctionsCancelAuctionButton", "RIGHT", 6, 0, 76.9, 22 }, -- Button "Close"
+	AuctionsCreateAuctionButton = { "BOTTOM", "AuctionFrameAuctionsDiabolicSelling", "BOTTOM", 0, 7 }, -- Button "Create Auction"
 	AuctionsQualitySort = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -4 }, -- Button "Rarity"
 	AuctionsScrollFrame = { "TOPRIGHT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 593, -25, 435, 338 }, -- ScrollFrame
 	BidBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
@@ -50,12 +51,14 @@ Engine:NewStaticConfig("Positions", {
 	BrowseBuyoutButton = { "LEFT", "BrowseBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
 	BrowseCloseButton = { "LEFT", "BrowseBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
 	BrowseFilterScrollFrame = { "TOPRIGHT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 146, -4, 160, 327 }, -- ScrollFrame
-	BrowseNextPageButton = { "RIGHT", "AuctionFrameBrowseDiabolicResults", "TOPRIGHT", 0, 20, 24, 24 }, -- Button
+	BrowseNextPageButton = { "RIGHT", "AuctionFrameBrowseDiabolicResults", "TOPRIGHT", -16, 20, 24, 24 }, -- Button
 	BrowseNoResultsText = { "TOP", "AuctionFrameBrowseDiabolicResults", "TOP", 0, -40 }, -- FontString "Choose search criteria and press \"Search\""
 	BrowseQualitySort = { "TOPLEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 9, -4 }, -- Button "Rarity"
-	BrowseResetButton = { "BOTTOMLEFT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 0, 8, 178, 24 }, -- Button "Reset"
+	BrowseResetButton = { "BOTTOMLEFT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 10, 8, 156, 24 }, -- Button "Reset"
 	BrowseScrollFrame = { "TOPRIGHT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 620, -25, 465, 306 }, -- ScrollFrame
 	BrowseSearchCountText = { "LEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 4, 20 }, -- FontString "Items 1 - 18  ( 118 total )"
+	IsUsableCheckButton = { "LEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 182, 20 }, -- CheckButton
+	ShowOnPlayerCheckButton = { "LEFT", "IsUsableCheckButtonText", "RIGHT", 16, 0 }, -- CheckButton
 
 	-- BattlefieldFrame ------------------------------------------------------
 	BattlefieldFrameCancelButton = { "LEFT", "BattlefieldFrameJoinButton", "RIGHT", 6, 0, 75.6, 22 }, -- Button "Cancel"

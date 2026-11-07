@@ -1208,29 +1208,6 @@ WowWindow {
         width: 758
         height: 447
 
-        Button {
-            name: "AuctionsCreateAuctionButton"
-            text: "Create Auction"
-            wowParent: "AuctionFrameAuctions"
-            style: "Button"
-            anchors.left: parent.left
-            anchors.leftMargin: 2
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 41
-            width: 191
-            height: 20
-
-            FontString {
-                name: "AuctionsCreateAuctionButtonText"
-                text: "Create Auction"
-                wowParent: "AuctionsCreateAuctionButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 81.2
-                height: 10.1
-            }
-        }
-
         FontString {
             name: "AuctionsDepositText"
             text: "Deposit:"
@@ -2046,6 +2023,29 @@ WowWindow {
         anchors.topMargin: 46
         width: 210
         height: 367
+
+        Button {
+            name: "AuctionsCreateAuctionButton"
+            text: "Create Auction"
+            wowParent: "AuctionFrameAuctions"
+            style: "Button"
+            pin: "place"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 7
+            width: 191
+            height: 20
+
+            FontString {
+                name: "AuctionsCreateAuctionButtonText"
+                text: "Create Auction"
+                wowParent: "AuctionsCreateAuctionButton"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: 81.2
+                height: 10.1
+            }
+        }
     }
 
     Frame {
@@ -2298,52 +2298,6 @@ WowWindow {
             width: 102.7
             height: 12.2
         }
-
-        CheckButton {
-            name: "IsUsableCheckButton"
-            wowParent: "AuctionFrameBrowse"
-            style: "CheckBox"
-            anchors.left: parent.left
-            anchors.leftMargin: 524.8
-            anchors.top: parent.top
-            anchors.topMargin: 4
-            width: 16
-            height: 16
-
-            FontString {
-                name: "IsUsableCheckButtonText"
-                text: "Usable Items"
-                wowParent: "IsUsableCheckButton"
-                anchors.left: parent.right
-                anchors.leftMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 70.4
-                height: 13.6
-            }
-        }
-
-        CheckButton {
-            name: "ShowOnPlayerCheckButton"
-            wowParent: "AuctionFrameBrowse"
-            style: "CheckBox"
-            anchors.left: parent.left
-            anchors.leftMargin: 524.8
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            width: 16
-            height: 16
-
-            FontString {
-                name: "ShowOnPlayerCheckButtonText"
-                text: "Display on Character"
-                wowParent: "ShowOnPlayerCheckButton"
-                anchors.left: parent.right
-                anchors.leftMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 112.1
-                height: 13.6
-            }
-        }
     }
 
     // Browse's categories, under its toolbar
@@ -2452,9 +2406,10 @@ WowWindow {
             style: "Button"
             pin: "all"
             anchors.left: parent.left
+            anchors.leftMargin: 10
             anchors.bottom: parent.top
             anchors.bottomMargin: 8
-            width: 178
+            width: 156
             height: 24
 
             FontString {
@@ -2839,6 +2794,7 @@ WowWindow {
             wowParent: "AuctionFrameBrowse"
             pin: "all"
             anchors.right: parent.right
+            anchors.rightMargin: 16
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: -20
             width: 24
@@ -2966,6 +2922,53 @@ WowWindow {
             anchors.verticalCenterOffset: -20
             width: 121.4
             height: 10.1
+        }
+
+        CheckButton {
+            name: "IsUsableCheckButton"
+            wowParent: "AuctionFrameBrowse"
+            style: "CheckBox"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 182
+            anchors.verticalCenter: parent.top
+            anchors.verticalCenterOffset: -20
+            width: 16
+            height: 16
+
+            FontString {
+                name: "IsUsableCheckButtonText"
+                text: "Usable Items"
+                wowParent: "IsUsableCheckButton"
+                anchors.left: parent.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: parent.verticalCenter
+                width: 70.4
+                height: 13.6
+
+                CheckButton {
+                    name: "ShowOnPlayerCheckButton"
+                    wowParent: "AuctionFrameBrowse"
+                    style: "CheckBox"
+                    pin: "place"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 16
+                    height: 16
+
+                    FontString {
+                        name: "ShowOnPlayerCheckButtonText"
+                        text: "Display on Character"
+                        wowParent: "ShowOnPlayerCheckButton"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 112.1
+                        height: 13.6
+                    }
+                }
+            }
         }
     }
 

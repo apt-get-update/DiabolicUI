@@ -29,7 +29,6 @@ local tonumber = tonumber
 local unpack = unpack
 
 -- WoW API
-local CreateFrame = _G.CreateFrame
 local IsAddOnLoaded = _G.IsAddOnLoaded
 
 -- their scroll bars' tracks, by file (lowercase, as patterns)
@@ -197,8 +196,7 @@ end
 -- The parts an addon adds to a window once it's shown (`late`, its
 -- spec's), each once.
 -- Controls moved into `header`'s band (the band's rule: LineBand), once:
--- `left`, from its left end (a table in it: controls one under the
--- other); `right`, from its right end; `hints`, edit boxes' labels (their
+-- `left`, from its left end; `right`, from its right end; `hints`, edit boxes' labels (their
 -- global strings' names) pale in them while they're empty. Its texts in
 -- its labels' font, its boxes on Diablo III's plates, its checkboxes
 -- Diablo III's, all over the band.
@@ -207,7 +205,7 @@ Module.PlaceBand = function(self, header, band)
 		return
 	end
 	local level = header:GetFrameLevel() + 1
-	local Prepare = function(name, stacked)
+	local Prepare = function(name)
 		local part = _G[name]
 		if not part then
 			return
@@ -218,7 +216,7 @@ Module.PlaceBand = function(self, header, band)
 		if part:IsObjectType("EditBox") then
 			kit:StyleEditBox(part)
 		elseif part:IsObjectType("CheckButton") then
-			kit:StyleCheckBox(part, stacked and kit.config.check_box.stacked)
+			kit:StyleCheckBox(part)
 		end
 		if (part:GetFrameLevel() < level) then
 			part:SetFrameLevel(level)
@@ -231,26 +229,8 @@ Module.PlaceBand = function(self, header, band)
 		end
 	end
 	local left, right = {}, {}
-	for _, entry in ipairs(band.left or {}) do
-		if (type(entry) == "table") then
-			-- one under the other, in a holder as wide as the widest
-			local holder = CreateFrame("Frame", nil, header)
-			local width, height = 0, 0
-			for _, name in ipairs(entry) do
-				local part = Prepare(name, true)
-				if part then
-					local inLeft, inRight = kit.ArtInsets(part)
-					part:ClearAllPoints()
-					part:SetPoint("TOPLEFT", holder, "TOPLEFT", -inLeft, -height)
-					width = math_max(width, part:GetWidth() - inLeft - inRight)
-					height = height + part:GetHeight()
-				end
-			end
-			holder:SetSize(width, height)
-			left[#left + 1] = holder
-		else
-			left[#left + 1] = Prepare(entry)
-		end
+	for _, name in ipairs(band.left or {}) do
+		left[#left + 1] = Prepare(name)
 	end
 	for _, name in ipairs(band.right or {}) do
 		right[#right + 1] = Prepare(name)

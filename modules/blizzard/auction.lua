@@ -87,8 +87,13 @@ Module.PlaceBrowse = function(self)
 	local config = self.config
 	local page = _G.AuctionFrameBrowse
 
-	-- (the previous page's arrow left of the numbers: CreatePages)
-	Ours("BrowseResetButton", "BrowseSearchCountText", "BrowseNextPageButton")
+	-- the toolbar: Reset, the results' count, the search's two checkboxes
+	-- side by side (Diablo III's), the page arrows (the previous one left
+	-- of the numbers: CreatePages)
+	Ours("BrowseResetButton", "BrowseSearchCountText", "IsUsableCheckButton", "ShowOnPlayerCheckButton", "BrowseNextPageButton")
+	for _, name in ipairs({ "IsUsableCheckButton", "ShowOnPlayerCheckButton" }) do
+		kit:StyleCheckBox(_G[name])
+	end
 	_G.BrowsePrevPageButton:SetSize(config.toolbar, config.toolbar)
 
 	-- the categories: their buttons, their scroll bar beside them
