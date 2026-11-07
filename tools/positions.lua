@@ -992,7 +992,7 @@ local WriteWindow = function(window)
 		kids[on] = kids[on] or { parts = {}, rows = {}, ghosts = {}, window = window }
 		table.insert(kids[on][kind], item)
 	end
-	-- A Ghost in the part what's placed on it is in (one of that frame's
+	-- A Ghost in the part the parts placed on it are in (one of that frame's
 	-- textures), from that part's top left: it moves with it. Else in the window.
 	local root = window.seen and window.seen.rect
 	for _, name in ipairs(Sorted(ghosts)) do
@@ -1007,13 +1007,6 @@ local WriteWindow = function(window)
 					Owner(part)
 				end
 			end
-			for _, row in ipairs(window.rows or {}) do
-				if (row.on == name) then
-					for _, member in ipairs(row.members) do
-						Owner(window.parts[member])
-					end
-				end
-			end
 			-- (a part in the file, not in what's on this Ghost)
 			local up, walked = on, {}
 			while up and (up ~= name) and (not walked[up]) and (not loose[up]) do
@@ -1026,8 +1019,6 @@ local WriteWindow = function(window)
 			else
 				on = window.name
 			end
-		elseif (on ~= window.name) and ((not inFile[on]) or inRow[on]) then
-			on = window.name
 		end
 		Into(on, "ghosts", { name = name, x = x, y = y, width = w, height = h })
 	end

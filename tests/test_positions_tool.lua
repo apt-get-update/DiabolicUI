@@ -929,6 +929,31 @@ WowWindow {
 	lu.assertStrContains(Runs(dir), "is placed on what's placed on it")
 end
 
+-- A texture something's placed on: its Ghost in the frame that's in, from its
+-- top left (it moves with it); a button its scan saw out of another, beside it.
+function TestPositionsTool:test_a_ghost_in_its_frame_and_a_button_beside()
+	local dir = Folder()
+	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
+		F = { "TOPLEFT", "W", "TOPLEFT", 20, -30, 60, 30, kind = "Frame", parent = "W", rect = { 20, 140, 60, 30 } },
+		A = { "LEFT", "FTab", "RIGHT", 0, 0, 40, 20, kind = "Button", parent = "F", rect = { 30, 145, 40, 20 } },
+		B = { "TOPLEFT", "A", "TOPLEFT", 50, 0, 40, 20, kind = "Button", parent = "F", rect = { 80, 145, 40, 20 } },
+		C = { "TOPLEFT", "A", "TOPLEFT", 5, 0, 10, 10, kind = "Button", parent = "F", rect = { 35, 155, 10, 10 } },
+		L = { "LEFT", "Loose", "RIGHT", 0, 0, 10, 10, kind = "Frame", parent = "W", rect = { 300, 100, 10, 10 } },
+	} } } }]=])
+	Runs(dir)
+	local file = Read(dir .. "/windows/W.qml")
+	lu.assertStrContains(file, '        name: "F"\n')
+	lu.assertStrContains(file, '        Ghost {\n            name: "FTab"\n            x: 10\n            y: 15\n')
+	lu.assertStrContains(file, '                name: "B"\n                wowParent: "F"\n                anchors.left: a.left\n')
+	lu.assertStrContains(file, '                    name: "C"\n                    wowParent: "F"\n                    anchors.left: parent.left\n')
+	-- (on a window's own: in the window)
+	lu.assertStrContains(file, '    Ghost {\n        name: "Loose"\n')
+	-- it settles
+	Runs(dir)
+	lu.assertEquals(Read(dir .. "/windows/W.qml"), file)
+	os.execute("rm -rf '" .. dir .. "'")
+end
+
 -- A window the game scales: its rects on screen in its own units, as its parts'
 -- places and sizes are; a part held by two points sized with them.
 function TestPositionsTool:test_a_scaled_windows_rects_in_its_own_units()

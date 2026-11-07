@@ -370,9 +370,6 @@ Module.StylePanel = function(self, spec)
 			_G[name].DiabolicOutside = true -- (the rules: not out of the window by mistake)
 		end
 	end
-	for _, name in ipairs(spec.bars or {}) do
-		kit:StyleBar(_G[name], { _G[name .. "Border"], _G[name .. "Background"] })
-	end
 	kit:HideArt(frame, ART)
 	if spec.art then
 		kit:HideArt(frame, spec.art)

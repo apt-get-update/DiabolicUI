@@ -615,10 +615,15 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 		opened[#opened + 1] = tab
 		return toggle(tab)
 	end
+	-- (the Bulletin Board's, when it's there)
+	local board = false
+	_G.GroupBulletinBoard_Addon = { ShowWindow = function() board = true end }
 	slash("layout all")
 	lu.assertTrue(checking())
 	client:Tick(60, 0.1)
 	lu.assertEquals(opened, { 1, 2, 4, 5 })
+	lu.assertTrue(board)
+	_G.GroupBulletinBoard_Addon = nil
 	lu.assertEquals(_G.InspectFrame.unit, "target")
 	-- (how many times it's said it's done, what's left after it)
 	local function done()
