@@ -453,6 +453,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "PVPParentFrameDiabolicTitle"
+                    text: "Player vs. Player"
+                    wowParent: "PVPParentFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 158.8
+                    height: 14.2
+                }
             }
         }
 

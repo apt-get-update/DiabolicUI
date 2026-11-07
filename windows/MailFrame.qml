@@ -47,11 +47,23 @@ WowWindow {
                 anchors.topMargin: 3
                 width: 37
                 height: 37
+
+                FontString {
+                    name: "MailItem1ButtonCount"
+                    text: "20"
+                    wowParent: "MailItem1Button"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
+                    width: 17.4
+                    height: 14.2
+                }
             }
 
             Button {
                 name: "MailItem1ExpireTime"
-                text: "28 Days "
+                text: "27 Days "
                 wowParent: "MailItem1"
                 anchors.right: parent.right
                 anchors.rightMargin: -10
@@ -110,11 +122,23 @@ WowWindow {
                     anchors.topMargin: 3
                     width: 37
                     height: 37
+
+                    FontString {
+                        name: "MailItem2ButtonCount"
+                        text: "6"
+                        wowParent: "MailItem2Button"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 2
+                        width: 10.3
+                        height: 14.2
+                    }
                 }
 
                 Button {
                     name: "MailItem2ExpireTime"
-                    text: "3627 Days "
+                    text: "3626 Days "
                     wowParent: "MailItem2"
                     anchors.right: parent.right
                     anchors.rightMargin: -10
@@ -177,7 +201,7 @@ WowWindow {
 
                     Button {
                         name: "MailItem3ExpireTime"
-                        text: "3627 Days "
+                        text: "29 Days "
                         wowParent: "MailItem3"
                         anchors.right: parent.right
                         anchors.rightMargin: -10
@@ -234,11 +258,23 @@ WowWindow {
                             anchors.topMargin: 3
                             width: 37
                             height: 37
+
+                            FontString {
+                                name: "MailItem4ButtonCount"
+                                text: "9"
+                                wowParent: "MailItem4Button"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 5
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 2
+                                width: 10.3
+                                height: 14.2
+                            }
                         }
 
                         Button {
                             name: "MailItem4ExpireTime"
-                            text: "3627 Days "
+                            text: "29 Days "
                             wowParent: "MailItem4"
                             anchors.right: parent.right
                             anchors.rightMargin: -10
@@ -299,7 +335,7 @@ WowWindow {
 
                             Button {
                                 name: "MailItem5ExpireTime"
-                                text: "24 Days "
+                                text: "29 Days "
                                 wowParent: "MailItem5"
                                 anchors.right: parent.right
                                 anchors.rightMargin: -10
@@ -359,7 +395,7 @@ WowWindow {
 
                                     FontString {
                                         name: "MailItem6ButtonCount"
-                                        text: "3"
+                                        text: "2"
                                         wowParent: "MailItem6Button"
                                         anchors.right: parent.right
                                         anchors.rightMargin: 5
@@ -372,7 +408,7 @@ WowWindow {
 
                                 Button {
                                     name: "MailItem6ExpireTime"
-                                    text: "24 Days "
+                                    text: "29 Days "
                                     wowParent: "MailItem6"
                                     anchors.right: parent.right
                                     anchors.rightMargin: -10
@@ -433,7 +469,7 @@ WowWindow {
 
                                     Button {
                                         name: "MailItem7ExpireTime"
-                                        text: "24 Days "
+                                        text: "29 Days "
                                         wowParent: "MailItem7"
                                         anchors.right: parent.right
                                         anchors.rightMargin: -10
@@ -625,39 +661,6 @@ WowWindow {
                 }
             }
         }
-
-        Button {
-            name: "PostalOpenAllButton"
-            text: "Open All"
-            wowParent: "InboxFrame"
-            style: "Button"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -22
-            anchors.verticalCenter: parent.top
-            anchors.verticalCenterOffset: 432
-            width: 120
-            height: 25
-
-            FontString {
-                name: "PostalOpenAllButtonText"
-                text: "Open All"
-                wowParent: "PostalOpenAllButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 64
-                height: 11.9
-            }
-
-            Button {
-                name: "Postal_OpenAllMenuButton"
-                wowParent: "InboxFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: -2
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30
-                height: 30
-            }
-        }
     }
 
     Frame {
@@ -668,7 +671,7 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: -68
         width: 400
-        height: 540
+        height: 530
 
         Button {
             name: "InboxCloseButton"
@@ -770,6 +773,7 @@ WowWindow {
 
             EditBox {
                 name: "SendMailNameEditBox"
+                text: "Padizwerch"
                 wowParent: "SendMailFrame"
                 style: "EditBox"
                 anchors.left: parent.left
@@ -960,7 +964,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 32
             width: 400
-            height: 508
+            height: 498
 
             Frame {
                 name: "MailFrameDiabolicTitlePlate"
@@ -970,6 +974,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "MailFrameDiabolicTitle"
+                    text: "Send Mail"
+                    wowParent: "MailFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 86.9
+                    height: 14.2
+                }
             }
         }
 
@@ -984,7 +999,7 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: 23
             width: 354
-            height: 36
+            height: 35
 
             FontString {
                 name: "InboxCurrentPage"
@@ -1020,6 +1035,39 @@ WowWindow {
                 anchors.verticalCenterOffset: -16
                 width: 26
                 height: 26
+            }
+
+            Button {
+                name: "PostalOpenAllButton"
+                text: "Open All"
+                wowParent: "InboxFrame"
+                style: "Button"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: -14
+                anchors.verticalCenter: parent.bottom
+                anchors.verticalCenterOffset: -16
+                width: 120
+                height: 25
+
+                FontString {
+                    name: "PostalOpenAllButtonText"
+                    text: "Open All"
+                    wowParent: "PostalOpenAllButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 64
+                    height: 11.9
+                }
+
+                Button {
+                    name: "Postal_OpenAllMenuButton"
+                    wowParent: "InboxFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: -2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 30
+                    height: 30
+                }
             }
 
             Frame {
@@ -1140,7 +1188,7 @@ WowWindow {
 
                 Button {
                     name: "SendMailMoneyFrameCopperButton"
-                    text: "79"
+                    text: "13"
                     wowParent: "SendMailMoneyFrame"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -1150,7 +1198,7 @@ WowWindow {
 
                     FontString {
                         name: "SendMailMoneyFrameCopperButtonText"
-                        text: "79"
+                        text: "13"
                         wowParent: "SendMailMoneyFrameCopperButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
@@ -1161,7 +1209,7 @@ WowWindow {
 
                     Button {
                         name: "SendMailMoneyFrameSilverButton"
-                        text: "83"
+                        text: "16"
                         wowParent: "SendMailMoneyFrame"
                         anchors.right: parent.left
                         anchors.rightMargin: 4
@@ -1171,7 +1219,7 @@ WowWindow {
 
                         Button {
                             name: "SendMailMoneyFrameGoldButton"
-                            text: "8146"
+                            text: "3654"
                             wowParent: "SendMailMoneyFrame"
                             anchors.right: parent.left
                             anchors.rightMargin: 4
@@ -1181,7 +1229,7 @@ WowWindow {
 
                             FontString {
                                 name: "SendMailMoneyFrameGoldButtonText"
-                                text: "8146"
+                                text: "3654"
                                 wowParent: "SendMailMoneyFrameGoldButton"
                                 anchors.right: parent.right
                                 anchors.rightMargin: 13
@@ -1193,7 +1241,7 @@ WowWindow {
 
                         FontString {
                             name: "SendMailMoneyFrameSilverButtonText"
-                            text: "83"
+                            text: "16"
                             wowParent: "SendMailMoneyFrameSilverButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13

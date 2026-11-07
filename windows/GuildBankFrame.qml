@@ -143,6 +143,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "GuildBankFrameDiabolicTitle"
+                    text: "Guild Bank"
+                    wowParent: "GuildBankFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 97.2
+                    height: 14.2
+                }
             }
         }
 
@@ -203,7 +214,7 @@ WowWindow {
 
                         Button {
                             name: "GuildBankMoneyFrameGoldButton"
-                            text: "12008"
+                            text: "12023"
                             wowParent: "GuildBankMoneyFrame"
                             anchors.right: parent.left
                             anchors.rightMargin: 4
@@ -213,7 +224,7 @@ WowWindow {
 
                             FontString {
                                 name: "GuildBankMoneyFrameGoldButtonText"
-                                text: "12008"
+                                text: "12023"
                                 wowParent: "GuildBankMoneyFrameGoldButton"
                                 anchors.right: parent.right
                                 anchors.rightMargin: 13
@@ -737,7 +748,7 @@ WowWindow {
 
     Ghost {
         name: "GuildBankTabLimitBackground"
-        x: 390.5
+        x: 390.6
         y: 397
         width: 0
         height: 0
@@ -748,7 +759,7 @@ WowWindow {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -1
-            width: 254.4
+            width: 260.7
             height: 10.3
         }
     }

@@ -351,7 +351,6 @@ WowWindow {
             wowParent: "KeyBindingFrameScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.topMargin: -2100
             width: 300
             height: 7775
         }

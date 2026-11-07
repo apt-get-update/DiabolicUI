@@ -49,12 +49,12 @@ WowWindow {
 
                 FontString {
                     name: "MerchantNameText"
-                    text: "Duncan Cullen"
+                    text: "Innkeeper Allison"
                     wowParent: "MerchantFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 136.7
+                    width: 161.2
                     height: 14.2
                 }
             }
@@ -71,7 +71,7 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: 23
             width: 454
-            height: 65.2
+            height: 65
 
             Button {
                 name: "DiabolicSellJunkButton"
@@ -154,7 +154,7 @@ WowWindow {
 
                 Button {
                     name: "MerchantMoneyFrameCopperButton"
-                    text: "13"
+                    text: "63"
                     wowParent: "MerchantMoneyFrame"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -164,7 +164,7 @@ WowWindow {
 
                     FontString {
                         name: "MerchantMoneyFrameCopperButtonText"
-                        text: "13"
+                        text: "63"
                         wowParent: "MerchantMoneyFrameCopperButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
@@ -175,7 +175,7 @@ WowWindow {
 
                     Button {
                         name: "MerchantMoneyFrameSilverButton"
-                        text: "16"
+                        text: "55"
                         wowParent: "MerchantMoneyFrame"
                         anchors.right: parent.left
                         anchors.rightMargin: 4
@@ -185,7 +185,7 @@ WowWindow {
 
                         Button {
                             name: "MerchantMoneyFrameGoldButton"
-                            text: "3654"
+                            text: "3653"
                             wowParent: "MerchantMoneyFrame"
                             anchors.right: parent.left
                             anchors.rightMargin: 4
@@ -195,7 +195,7 @@ WowWindow {
 
                             FontString {
                                 name: "MerchantMoneyFrameGoldButtonText"
-                                text: "3654"
+                                text: "3653"
                                 wowParent: "MerchantMoneyFrameGoldButton"
                                 anchors.right: parent.right
                                 anchors.rightMargin: 13
@@ -207,7 +207,7 @@ WowWindow {
 
                         FontString {
                             name: "MerchantMoneyFrameSilverButtonText"
-                            text: "16"
+                            text: "55"
                             wowParent: "MerchantMoneyFrameSilverButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
@@ -323,7 +323,7 @@ WowWindow {
 
                 FontString {
                     name: "MerchantItem1Name"
-                    text: "Cuirboulli Vest"
+                    text: "Refreshing Spring Water"
                     wowParent: "MerchantItem1"
                     anchors.left: parent.right
                     anchors.leftMargin: 16
@@ -469,13 +469,13 @@ WowWindow {
 
         FontString {
             name: "MerchantPageText"
-            text: "Page 1 of 4"
+            text: "Page 1 of 3"
             wowParent: "MerchantFrame"
             pin: "place"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.top
             anchors.verticalCenterOffset: 384
-            width: 68.7
+            width: 68
             height: 11.9
 
             Button {
@@ -597,12 +597,12 @@ WowWindow {
             anchors.leftMargin: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 31
-            width: 76.2
+            width: 43.4
             height: 13
 
             Button {
                 name: "MerchantItem1MoneyFrameCopperButton"
-                text: "79"
+                text: "20"
                 wowParent: "MerchantItem1MoneyFrame"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
@@ -612,7 +612,7 @@ WowWindow {
 
                 FontString {
                     name: "MerchantItem1MoneyFrameCopperButtonText"
-                    text: "79"
+                    text: "20"
                     wowParent: "MerchantItem1MoneyFrameCopperButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -669,7 +669,7 @@ WowWindow {
         name: "MerchantItem4MoneyFrameSilverButton"
         x: 313.4
         y: 113.1
-        width: 28.8
+        width: 30.4
         height: 13
 
         Button {
@@ -699,7 +699,7 @@ WowWindow {
         name: "MerchantItem5MoneyFrameSilverButton"
         x: 95.4
         y: 165.1
-        width: 28.8
+        width: 23.3
         height: 13
 
         Button {
@@ -776,7 +776,7 @@ WowWindow {
         name: "MerchantItem7MoneyFrameSilverButton"
         x: 95.4
         y: 217.1
-        width: 30.4
+        width: 21.7
         height: 13
 
         Button {
@@ -804,7 +804,7 @@ WowWindow {
         name: "MerchantItem8MoneyFrameSilverButton"
         x: 313.4
         y: 217.1
-        width: 30.4
+        width: 23.3
         height: 13
 
         Button {

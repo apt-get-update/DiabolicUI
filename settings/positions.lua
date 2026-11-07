@@ -11,7 +11,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- AuctionFrame ----------------------------------------------------------
 	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 548, 7, 84.3, 22 }, -- Button "Buy"
-	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auctions"
+	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auction"
 	AuctionFrameDiabolicFoot = { "BOTTOMLEFT", "AuctionFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	AuctionFrameMoneyFrame = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 182, 13 }, -- Frame
 	AuctionatorCloseButton = { "LEFT", "Atr_CancelSelectionButton", "RIGHT", 6, 0, 74.9, 22 }, -- Button "Close"
@@ -55,14 +55,14 @@ Engine:NewStaticConfig("Positions", {
 	ClassTrainerFrameDiabolicFoot = { "BOTTOMLEFT", "ClassTrainerFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	-- the greeting across the list's width under the band, its panel's left on
 	-- the parchments', its right on their panels'
-	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
+	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Hello, priest!  Ready for some training?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -102 }, -- ScrollFrame
 	ClassTrainerMoneyFrame = { "BOTTOMRIGHT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 181, 12 }, -- Frame
 	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 83.5, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
 	-- its "CTRL-Left Click..." under the band, over the picture (Blizzard's hangs from the title)
-	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 },
+	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 }, -- FontString "CTRL-Left Click additional items to display them on your character"
 
 	-- FriendsFrame ----------------------------------------------------------
 	ChannelFrameNewButton = { "BOTTOMRIGHT", "FriendsFrameDiabolicFoot", "BOTTOMRIGHT", -14, 9 }, -- Button "Add"
@@ -105,7 +105,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
-	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 25 Gnome Warrior"
+	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 61 Human Warrior"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
@@ -181,13 +181,13 @@ Engine:NewStaticConfig("Positions", {
 	MerchantItem9 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -280 }, -- Frame
 	MerchantMoneyFrame = { "BOTTOMRIGHT", "MerchantFrameDiabolicFoot", "BOTTOMRIGHT", -1, 7 }, -- Frame
 	MerchantNextPageButton = { "LEFT", "MerchantPageText", "RIGHT", 8, 0 }, -- Button
-	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 4"
+	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 3"
 	MerchantPrevPageButton = { "RIGHT", "MerchantPageText", "LEFT", -8, 0 }, -- Button
 	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolicFoot", "TOPLEFT", 265, -14 }, -- Button
 
 	-- OpenMailFrame ---------------------------------------------------------
 	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Close"
-	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Delete"
+	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Return"
 	OpenMailFrameDiabolicFoot = { "BOTTOMLEFT", "OpenMailFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolicFoot", "BOTTOMLEFT", 94, 7, 78, 22 }, -- Button "Reply"
 
@@ -249,7 +249,7 @@ Engine:NewStaticConfig("Positions", {
 	TradeFrameDiabolicFoot = { "BOTTOMLEFT", "TradeFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 50 }, -- FontString "Padirac"
-	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Velkara"
+	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 50 }, -- FontString "Tmanx"
 	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolicFoot", "BOTTOMLEFT", 196, 7, 80, 22 }, -- Button "Trade"
 
 	-- TradeSkillFrame -------------------------------------------------------

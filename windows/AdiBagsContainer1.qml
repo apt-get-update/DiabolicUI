@@ -102,7 +102,7 @@ WowWindow {
 
             Button {
                 name: "AdiBagsMoneyFrameCopperButton"
-                text: "13"
+                text: "63"
                 wowParent: "AdiBagsMoneyFrame"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
@@ -112,7 +112,7 @@ WowWindow {
 
                 FontString {
                     name: "AdiBagsMoneyFrameCopperButtonText"
-                    text: "13"
+                    text: "63"
                     wowParent: "AdiBagsMoneyFrameCopperButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
@@ -123,7 +123,7 @@ WowWindow {
 
                 Button {
                     name: "AdiBagsMoneyFrameSilverButton"
-                    text: "16"
+                    text: "55"
                     wowParent: "AdiBagsMoneyFrame"
                     anchors.right: parent.left
                     anchors.rightMargin: 4
@@ -133,7 +133,7 @@ WowWindow {
 
                     Button {
                         name: "AdiBagsMoneyFrameGoldButton"
-                        text: "3654"
+                        text: "3653"
                         wowParent: "AdiBagsMoneyFrame"
                         anchors.right: parent.left
                         anchors.rightMargin: 4
@@ -143,7 +143,7 @@ WowWindow {
 
                         FontString {
                             name: "AdiBagsMoneyFrameGoldButtonText"
-                            text: "3654"
+                            text: "3653"
                             wowParent: "AdiBagsMoneyFrameGoldButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 19
@@ -155,7 +155,7 @@ WowWindow {
 
                     FontString {
                         name: "AdiBagsMoneyFrameSilverButtonText"
-                        text: "16"
+                        text: "55"
                         wowParent: "AdiBagsMoneyFrameSilverButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 19

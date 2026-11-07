@@ -185,6 +185,7 @@ WowWindow {
 
                 FontString {
                     name: "AuctionatorHEntry1_EntryText"
+                    text: "Morrowgrain"
                     wowParent: "AuctionatorHEntry1"
                     anchors.left: parent.left
                     anchors.leftMargin: 2
@@ -312,6 +313,18 @@ WowWindow {
             anchors.topMargin: 62
             width: 37
             height: 37
+
+            FontString {
+                name: "Atr_RecommendItem_TexCount"
+                text: "2"
+                wowParent: "Atr_RecommendItem_Tex"
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 2
+                width: 9.4
+                height: 13.6
+            }
         }
 
         Frame {
@@ -424,7 +437,7 @@ WowWindow {
 
                 Button {
                     name: "Atr_RecommendPerStack_PriceSilverButton"
-                    text: "94"
+                    text: "88"
                     wowParent: "Atr_RecommendPerStack_Price"
                     anchors.right: parent.left
                     anchors.rightMargin: 4
@@ -434,7 +447,7 @@ WowWindow {
 
                     Button {
                         name: "Atr_RecommendPerStack_PriceGoldButton"
-                        text: "4"
+                        text: "9"
                         wowParent: "Atr_RecommendPerStack_Price"
                         anchors.right: parent.left
                         anchors.rightMargin: 4
@@ -444,7 +457,7 @@ WowWindow {
 
                         FontString {
                             name: "Atr_RecommendPerStack_PriceGoldButtonText"
-                            text: "4"
+                            text: "9"
                             wowParent: "Atr_RecommendPerStack_PriceGoldButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
@@ -456,7 +469,7 @@ WowWindow {
 
                     FontString {
                         name: "Atr_RecommendPerStack_PriceSilverButtonText"
-                        text: "94"
+                        text: "88"
                         wowParent: "Atr_RecommendPerStack_PriceSilverButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
@@ -470,13 +483,14 @@ WowWindow {
 
         FontString {
             name: "Atr_Recommend_Text"
+            text: "Auction created for Elixir of Giants"
             wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: 87
             anchors.top: parent.top
             anchors.topMargin: 73
-            width: 1
-            height: 1
+            width: 209
+            height: 12.2
 
             FontString {
                 name: "Atr_RecommendPerItem_Text"
@@ -492,25 +506,25 @@ WowWindow {
 
             FontString {
                 name: "Atr_RecommendPerStack_Text"
-                text: "for your stack of 1"
+                text: "for your stack of 2"
                 wowParent: "Atr_Main_Panel"
                 anchors.left: parent.left
                 anchors.leftMargin: 152
                 anchors.top: parent.top
                 anchors.topMargin: 28
-                width: 89.8
+                width: 91.2
                 height: 10.1
             }
 
             FontString {
                 name: "Atr_Recommend_Basis_Text"
-                text: "(based on selected auction)"
+                text: "(based on cheapest current auction)"
                 wowParent: "Atr_Main_Panel"
                 anchors.left: parent.right
                 anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 2
-                width: 140.1
+                width: 181.7
                 height: 10.1
             }
         }
@@ -682,6 +696,61 @@ WowWindow {
                 }
             }
 
+            FontString {
+                name: "Atr_ItemPriceText"
+                text: "Per Item"
+                wowParent: "Atr_SellControls"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.top: parent.top
+                anchors.topMargin: 128
+                width: 43.8
+                height: 10.1
+
+                Frame {
+                    name: "Atr_ItemPrice"
+                    wowParent: "Atr_SellControls"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.top: parent.bottom
+                    anchors.topMargin: 2
+                    width: 176
+                    height: 18
+
+                    EditBox {
+                        name: "Atr_ItemPriceGold"
+                        text: "4"
+                        wowParent: "Atr_ItemPrice"
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        width: 58
+                        height: 20
+
+                        EditBox {
+                            name: "Atr_ItemPriceSilver"
+                            text: "94"
+                            wowParent: "Atr_ItemPrice"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 26
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 30
+                            height: 20
+
+                            EditBox {
+                                name: "Atr_ItemPriceCopper"
+                                text: "0"
+                                wowParent: "Atr_ItemPrice"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 16
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 30
+                                height: 20
+                            }
+                        }
+                    }
+                }
+            }
+
             Button {
                 name: "Atr_SellControls_Tex"
                 wowParent: "Atr_SellControls"
@@ -691,6 +760,18 @@ WowWindow {
                 anchors.topMargin: 23
                 width: 37
                 height: 37
+
+                FontString {
+                    name: "Atr_SellControls_TexCount"
+                    text: "2"
+                    wowParent: "Atr_SellControls_Tex"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
+                    width: 9.4
+                    height: 13.6
+                }
 
                 FontString {
                     name: "Atr_SellControls_TexName"
@@ -745,6 +826,7 @@ WowWindow {
 
                             EditBox {
                                 name: "Atr_StackPriceCopper"
+                                text: "0"
                                 wowParent: "Atr_StackPrice"
                                 anchors.left: parent.right
                                 anchors.leftMargin: 16
@@ -826,7 +908,7 @@ WowWindow {
 
                 FontString {
                     name: "AuctionatorEntry1_EntryText"
-                    text: "1 stack of 1 (yours)"
+                    text: "1 stack of 2 (yours)"
                     wowParent: "?"
                     anchors.left: parent.left
                     anchors.leftMargin: 205
@@ -927,13 +1009,14 @@ WowWindow {
 
                 FontString {
                     name: "AuctionatorEntry1_StackPrice"
+                    text: "9g 88s 00c"
                     wowParent: "?"
                     anchors.left: parent.left
-                    anchors.leftMargin: 559
+                    anchors.leftMargin: 503.3
                     anchors.top: parent.top
-                    anchors.topMargin: 7.5
-                    width: 1
-                    height: 1
+                    anchors.topMargin: 3
+                    width: 56.7
+                    height: 10.1
                 }
             }
 
@@ -988,13 +1071,13 @@ WowWindow {
 
         FontString {
             name: "AuctionatorTitle"
-            text: "Auctionator+ - More..."
+            text: "Auctionator+ - Sell"
             wowParent: "Atr_Main_Panel"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -90
             anchors.top: parent.top
             anchors.topMargin: -7
-            width: 135.7
+            width: 114.2
             height: 12.2
         }
     }
@@ -1539,7 +1622,7 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: -56
         width: 880
-        height: 551
+        height: 545
 
         Button {
             name: "AuctionFrameCloseButton"
@@ -1847,7 +1930,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 32
             width: 880
-            height: 519
+            height: 513
 
             Frame {
                 name: "AuctionFrameDiabolicTitlePlate"
@@ -1857,6 +1940,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "AuctionFrameDiabolicTitle"
+                    text: "Auctions"
+                    wowParent: "AuctionFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 79
+                    height: 13.6
+                }
             }
         }
 
@@ -1871,7 +1965,7 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: 23
             width: 834
-            height: 41
+            height: 35
 
             Frame {
                 name: "AuctionFrameMoneyFrame"
@@ -2282,7 +2376,7 @@ WowWindow {
 
                 Button {
                     name: "Atr_CancelSelectionButton"
-                    text: "Cancel Auctions"
+                    text: "Cancel Auction"
                     wowParent: "Atr_Main_Panel"
                     style: "Button"
                     pin: "all"
@@ -2291,11 +2385,11 @@ WowWindow {
 
                     FontString {
                         name: "Atr_CancelSelectionButtonText"
-                        text: "Cancel Auctions"
+                        text: "Cancel Auction"
                         wowParent: "Atr_CancelSelectionButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 86.9
+                        width: 81.2
                         height: 10.1
                     }
                 }
@@ -2716,7 +2810,7 @@ WowWindow {
                     anchors.left: parent.right
                     anchors.leftMargin: -2
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 193
+                    width: 213
                     height: 19
 
                     FontString {
@@ -3563,13 +3657,14 @@ WowWindow {
 
         FontString {
             name: "Atr_Col4_Heading"
+            text: "Stack Price"
             wowParent: "Atr_HeadingsBar"
             anchors.left: parent.left
             anchors.leftMargin: 500
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -1
-            width: 1
-            height: 1
+            width: 56
+            height: 10.1
         }
     }
 
@@ -3585,8 +3680,8 @@ WowWindow {
             wowParent: "Atr_Main_Panel"
             anchors.right: parent.right
             anchors.top: parent.top
-            width: 805
-            height: 341
+            width: 610
+            height: 116
         }
     }
 

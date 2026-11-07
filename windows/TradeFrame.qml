@@ -45,6 +45,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "TradeFrameDiabolicTitle"
+                    text: "Trade"
+                    wowParent: "TradeFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 52.9
+                    height: 14.2
+                }
             }
         }
 
@@ -129,6 +140,27 @@ WowWindow {
     }
 
     Frame {
+        name: "TradeHighlightPlayer"
+        wowParent: "TradeFrame"
+        anchors.left: parent.left
+        anchors.leftMargin: 19
+        anchors.top: parent.top
+        anchors.topMargin: 100
+        width: 161
+        height: 266
+
+        Frame {
+            name: "TradeHighlightPlayerEnchant"
+            wowParent: "TradeFrame"
+            anchors.left: parent.left
+            anchors.top: parent.bottom
+            anchors.topMargin: 4
+            width: 161
+            height: 61
+        }
+    }
+
+    Frame {
         name: "TradePlayerInputMoneyFrame"
         wowParent: "TradeFrame"
         anchors.left: parent.left
@@ -148,6 +180,7 @@ WowWindow {
 
             EditBox {
                 name: "TradePlayerInputMoneyFrameSilver"
+                text: "2"
                 wowParent: "TradePlayerInputMoneyFrame"
                 anchors.left: parent.right
                 anchors.leftMargin: 22
@@ -327,7 +360,7 @@ WowWindow {
 
         FontString {
             name: "TradeFrameRecipientNameText"
-            text: "Velkara"
+            text: "Tmanx"
             wowParent: "TradeFrame"
             pin: "place"
             anchors.horizontalCenter: parent.horizontalCenter

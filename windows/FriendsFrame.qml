@@ -188,7 +188,7 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: -68
         width: 400
-        height: 540
+        height: 530
 
         Button {
             name: "FriendsFrameCloseButton"
@@ -434,7 +434,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 32
             width: 400
-            height: 508
+            height: 498
 
             Frame {
                 name: "FriendsFrameDiabolicTitlePlate"
@@ -447,12 +447,12 @@ WowWindow {
 
                 FontString {
                     name: "FriendsFrameTitleText"
-                    text: "Raid"
+                    text: "Friends List"
                     wowParent: "FriendsFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 38.7
+                    width: 107.5
                     height: 14.2
                 }
             }
@@ -469,7 +469,7 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: 23
             width: 354
-            height: 47
+            height: 35
 
             Button {
                 name: "ChannelFrameNewButton"
@@ -859,7 +859,6 @@ WowWindow {
                         wowParent: "GuildEventLogScrollFrame"
                         anchors.left: parent.left
                         anchors.top: parent.top
-                        anchors.topMargin: -1109.5
                         width: 325
                         height: 359
 
@@ -1142,14 +1141,193 @@ WowWindow {
 
         Frame {
             name: "GuildMemberDetailFrame"
-            wowParent: "GuildFrame"
+            wowParent: "FriendsFrame"
             pin: "place"
             anchors.left: parent.right
             anchors.leftMargin: 6
             anchors.top: parent.top
             anchors.topMargin: 96
             width: 212
-            height: 270
+            height: 195
+
+            Button {
+                name: "GuildMemberDetailCloseButton"
+                wowParent: "GuildMemberDetailFrame"
+                anchors.right: parent.right
+                anchors.rightMargin: 3
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 22
+                height: 22
+            }
+
+            FontString {
+                name: "GuildMemberDetailName"
+                text: "Discordignis"
+                wowParent: "GuildMemberDetailFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 17
+                anchors.top: parent.top
+                anchors.topMargin: 18
+                width: 74.3
+                height: 12
+
+                FontString {
+                    name: "GuildMemberDetailLevel"
+                    text: "Level 1 Paladin"
+                    wowParent: "GuildMemberDetailFrame"
+                    anchors.left: parent.left
+                    anchors.top: parent.bottom
+                    anchors.topMargin: 2
+                    width: 82.2
+                    height: 10.3
+
+                    FontString {
+                        name: "GuildMemberDetailZoneLabel"
+                        text: "Zone:"
+                        wowParent: "GuildMemberDetailFrame"
+                        anchors.left: parent.left
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 11
+                        width: 30.8
+                        height: 10.3
+
+                        FontString {
+                            name: "GuildMemberDetailRankLabel"
+                            text: "Rank:"
+                            wowParent: "GuildMemberDetailFrame"
+                            anchors.left: parent.left
+                            anchors.top: parent.bottom
+                            anchors.topMargin: 8
+                            width: 29.2
+                            height: 10.3
+
+                            FontString {
+                                name: "GuildMemberDetailOnlineLabel"
+                                text: "Last Online:"
+                                wowParent: "GuildMemberDetailFrame"
+                                anchors.left: parent.left
+                                anchors.top: parent.bottom
+                                anchors.topMargin: 8
+                                width: 64
+                                height: 10.3
+
+                                FontString {
+                                    name: "GuildMemberDetailNoteLabel"
+                                    text: "Note:"
+                                    wowParent: "GuildMemberDetailFrame"
+                                    anchors.left: parent.left
+                                    anchors.top: parent.bottom
+                                    anchors.topMargin: 8
+                                    width: 30
+                                    height: 10.3
+
+                                    Frame {
+                                        name: "GuildMemberNoteBackground"
+                                        wowParent: "GuildMemberDetailFrame"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: -2
+                                        anchors.top: parent.bottom
+                                        width: 181
+                                        height: 40
+
+                                        FontString {
+                                            name: "PersonalNoteText"
+                                            text: "Discord Chat Bot"
+                                            wowParent: "GuildMemberNoteBackground"
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.horizontalCenterOffset: 1
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 6
+                                            width: 165
+                                            height: 32
+                                        }
+                                    }
+                                }
+
+                                FontString {
+                                    name: "GuildMemberDetailOnlineText"
+                                    text: "Online"
+                                    wowParent: "GuildMemberDetailFrame"
+                                    anchors.left: parent.right
+                                    anchors.leftMargin: 2
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 39.5
+                                    height: 11.9
+                                }
+                            }
+
+                            FontString {
+                                name: "GuildMemberDetailRankText"
+                                text: "Guild Master"
+                                wowParent: "GuildMemberDetailFrame"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 2
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 103.8
+                                height: 11.9
+                            }
+                        }
+
+                        FontString {
+                            name: "GuildMemberDetailZoneText"
+                            text: "Azuremyst Isle"
+                            wowParent: "GuildMemberDetailFrame"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 2
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 147
+                            height: 12
+                        }
+                    }
+                }
+            }
+
+            Button {
+                name: "GuildMemberGroupInviteButton"
+                text: "Group Invite"
+                wowParent: "GuildMemberDetailFrame"
+                style: "Button"
+                anchors.right: parent.right
+                anchors.rightMargin: 9
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 12
+                width: 93.5
+                height: 22
+
+                FontString {
+                    name: "GuildMemberGroupInviteButtonText"
+                    text: "Group Invite"
+                    wowParent: "GuildMemberGroupInviteButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 70.3
+                    height: 10.3
+                }
+            }
+
+            Button {
+                name: "GuildMemberRemoveButton"
+                text: "Remove"
+                wowParent: "GuildMemberDetailFrame"
+                style: "Button"
+                anchors.right: parent.right
+                anchors.rightMargin: 108.5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 12
+                width: 93.5
+                height: 22
+
+                FontString {
+                    name: "GuildMemberRemoveButtonText"
+                    text: "Remove"
+                    wowParent: "GuildMemberRemoveButton"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 44.2
+                    height: 10.3
+                }
+            }
         }
     }
 
@@ -1237,7 +1415,7 @@ WowWindow {
 
                 FontString {
                     name: "FriendsFrameFriendsScrollFrameButton1Name"
-                    text: "Annah"
+                    text: "Enby, Level 80 Rogue"
                     wowParent: "FriendsFrameFriendsScrollFrameButton1"
                     anchors.left: parent.left
                     anchors.leftMargin: 20
@@ -1248,7 +1426,7 @@ WowWindow {
 
                     FontString {
                         name: "FriendsFrameFriendsScrollFrameButton1Info"
-                        text: "Unknown"
+                        text: "Dalaran"
                         wowParent: "FriendsFrameFriendsScrollFrameButton1"
                         anchors.left: parent.left
                         anchors.top: parent.bottom
@@ -1366,7 +1544,7 @@ WowWindow {
 
             FontString {
                 name: "GuildFrameButton1Name"
-                text: "Tocha"
+                text: "Padirac"
                 wowParent: "GuildFrameButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 14
@@ -1377,7 +1555,7 @@ WowWindow {
 
                 FontString {
                     name: "GuildFrameButton1Zone"
-                    text: "Borean Tundra"
+                    text: "Stormwind City"
                     wowParent: "GuildFrameButton1"
                     anchors.left: parent.right
                     anchors.leftMargin: 3
@@ -1387,7 +1565,7 @@ WowWindow {
 
                     FontString {
                         name: "GuildFrameButton1Level"
-                        text: "70"
+                        text: "80"
                         wowParent: "GuildFrameButton1"
                         anchors.left: parent.right
                         anchors.leftMargin: 4
@@ -1397,7 +1575,7 @@ WowWindow {
 
                         FontString {
                             name: "GuildFrameButton1Class"
-                            text: "Warrior"
+                            text: "Priest"
                             wowParent: "GuildFrameButton1"
                             anchors.left: parent.right
                             anchors.leftMargin: 12
@@ -1417,6 +1595,60 @@ WowWindow {
                     }
                 }
             }
+
+            Button {
+                name: "GuildFrameGuildStatusButton2"
+                wowParent: "GuildStatusFrame"
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                width: 298
+                height: 16
+
+                FontString {
+                    name: "GuildFrameGuildStatusButton2Name"
+                    text: "Discordignis"
+                    wowParent: "GuildFrameGuildStatusButton2"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 14
+                    anchors.top: parent.top
+                    anchors.topMargin: 3
+                    width: 75
+                    height: 14
+
+                    FontString {
+                        name: "GuildFrameGuildStatusButton2Rank"
+                        text: "Guild Master"
+                        wowParent: "GuildFrameGuildStatusButton2"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 55
+                        height: 14
+
+                        FontString {
+                            name: "GuildFrameGuildStatusButton2Note"
+                            text: "Discord Chat Bot"
+                            wowParent: "GuildFrameGuildStatusButton2"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 11
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 85
+                            height: 14
+
+                            FontString {
+                                name: "GuildFrameGuildStatusButton2Online"
+                                text: "Online"
+                                wowParent: "GuildFrameGuildStatusButton2"
+                                anchors.left: parent.right
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 80
+                                height: 14
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         Button {
@@ -1429,6 +1661,61 @@ WowWindow {
             anchors.verticalCenterOffset: 34
             width: 32
             height: 32
+        }
+
+        Button {
+            name: "GuildFrameGuildStatusButton1"
+            wowParent: "GuildStatusFrame"
+            anchors.left: parent.left
+            anchors.leftMargin: 15
+            anchors.top: parent.top
+            anchors.topMargin: 70
+            width: 298
+            height: 16
+
+            FontString {
+                name: "GuildFrameGuildStatusButton1Name"
+                text: "Padirac"
+                wowParent: "GuildFrameGuildStatusButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 75
+                height: 14
+
+                FontString {
+                    name: "GuildFrameGuildStatusButton1Rank"
+                    text: "Senior Member"
+                    wowParent: "GuildFrameGuildStatusButton1"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 55
+                    height: 14
+
+                    FontString {
+                        name: "GuildFrameGuildStatusButton1Note"
+                        wowParent: "GuildFrameGuildStatusButton1"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 11
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 85
+                        height: 14
+
+                        FontString {
+                            name: "GuildFrameGuildStatusButton1Online"
+                            text: "Online"
+                            wowParent: "GuildFrameGuildStatusButton1"
+                            anchors.left: parent.right
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 80
+                            height: 14
+                        }
+                    }
+                }
+            }
         }
 
         Frame {
@@ -1549,6 +1836,61 @@ WowWindow {
                 }
             }
         }
+
+        Frame {
+            name: "GuildStatusFrame"
+            wowParent: "GuildFrame"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: -25
+            width: 300
+            height: 200
+
+            Button {
+                name: "GuildFrameGuildStatusColumnHeader1"
+                text: "Name"
+                wowParent: "GuildStatusFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.top: parent.top
+                anchors.topMargin: 70
+                width: 83
+                height: 22
+
+                Button {
+                    name: "GuildFrameGuildStatusColumnHeader2"
+                    text: "Rank"
+                    wowParent: "GuildStatusFrame"
+                    anchors.left: parent.right
+                    anchors.leftMargin: -2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 75
+                    height: 22
+
+                    Button {
+                        name: "GuildFrameGuildStatusColumnHeader3"
+                        text: "Note"
+                        wowParent: "GuildStatusFrame"
+                        anchors.left: parent.right
+                        anchors.leftMargin: -2
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 90
+                        height: 22
+
+                        Button {
+                            name: "GuildFrameGuildStatusColumnHeader4"
+                            text: "Last Online"
+                            wowParent: "GuildStatusFrame"
+                            anchors.left: parent.right
+                            anchors.leftMargin: -2
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 75
+                            height: 22
+                        }
+                    }
+                }
+            }
+        }
     }
 
     Frame {
@@ -1643,7 +1985,7 @@ WowWindow {
 
             FontString {
                 name: "WhoFrameButton1Name"
-                text: "Avitar"
+                text: "Ches"
                 wowParent: "WhoFrameButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
@@ -1654,7 +1996,7 @@ WowWindow {
 
                 FontString {
                     name: "WhoFrameButton1Variable"
-                    text: "Hillsbrad Foothills"
+                    text: "Alterac Mountains"
                     wowParent: "WhoFrameButton1"
                     anchors.left: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -1663,7 +2005,7 @@ WowWindow {
 
                     FontString {
                         name: "WhoFrameButton1Level"
-                        text: "30"
+                        text: "37"
                         wowParent: "WhoFrameButton1"
                         anchors.left: parent.right
                         anchors.leftMargin: 2
@@ -1705,7 +2047,7 @@ WowWindow {
                 anchors.left: parent.right
                 anchors.leftMargin: -2
                 anchors.verticalCenter: parent.verticalCenter
-                width: 120
+                width: 105
                 height: 22
 
                 Button {
@@ -1734,7 +2076,7 @@ WowWindow {
 
         FontString {
             name: "WhoFrameTotals"
-            text: "0 People Found  "
+            text: "407 People Found  (50 displayed)"
             wowParent: "WhoFrame"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -10
@@ -1764,7 +2106,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -6
             width: 330
-            height: 328
+            height: 330
 
             Frame {
                 name: "WhoListScrollFrameDiabolicZoneColumnBar"
@@ -1823,7 +2165,6 @@ WowWindow {
             wowParent: "WhoListScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.topMargin: -480
             width: 300
             height: 784
         }
@@ -1887,9 +2228,9 @@ WowWindow {
     }
 
     Ghost {
-        name: "FriendsFrameFriendsScrollFrameButton9"
+        name: "FriendsFrameFriendsScrollFrameButton3"
         x: 21
-        y: 308
+        y: 86
         width: 298
         height: 34
 
@@ -1899,12 +2240,12 @@ WowWindow {
             anchors.left: parent.right
             anchors.leftMargin: 36
             anchors.top: parent.top
-            width: 65.8
+            width: 64
             height: 35.8
 
             FontString {
                 name: "FriendsTooltipHeader"
-                text: "Drread"
+                text: "Annah"
                 wowParent: "FriendsTooltip"
                 anchors.left: parent.left
                 anchors.leftMargin: 12
@@ -1920,9 +2261,32 @@ WowWindow {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.horizontalCenterOffset: 7.8
                     anchors.top: parent.bottom
-                    anchors.topMargin: -95.1
+                    anchors.topMargin: 126.9
                     width: 137.3
                     height: 8.7
+                }
+
+                FontString {
+                    name: "FriendsTooltipToon1Name"
+                    text: "Level 80 Rogue"
+                    wowParent: "FriendsTooltip"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    anchors.topMargin: -46.6
+                    width: 152.9
+                    height: 8.7
+
+                    FontString {
+                        name: "FriendsTooltipToon1Info"
+                        text: "Dalaran"
+                        wowParent: "FriendsTooltip"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: 3.5
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 3.5
+                        width: 146
+                        height: 8.7
+                    }
                 }
             }
         }

@@ -29,7 +29,7 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: -40
         width: 418
-        height: 513
+        height: 501
 
         Button {
             name: "ClassTrainerFrameCloseButton"
@@ -101,7 +101,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 418
-            height: 513
+            height: 501
 
             Frame {
                 name: "ClassTrainerFrameDiabolicTitlePlate"
@@ -114,13 +114,13 @@ WowWindow {
 
                 FontString {
                     name: "ClassTrainerNameText"
-                    text: "Georgio Bolero"
+                    text: "High Priestess Laurena"
                     wowParent: "ClassTrainerFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 140.6
-                    height: 14.2
+                    width: 200
+                    height: 16
                 }
             }
         }
@@ -136,7 +136,7 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: 23
             width: 372
-            height: 47
+            height: 35
 
             Frame {
                 name: "ClassTrainerMoneyFrame"
@@ -151,7 +151,7 @@ WowWindow {
 
                 Button {
                     name: "ClassTrainerMoneyFrameCopperButton"
-                    text: "13"
+                    text: "63"
                     wowParent: "ClassTrainerMoneyFrame"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
@@ -161,7 +161,7 @@ WowWindow {
 
                     FontString {
                         name: "ClassTrainerMoneyFrameCopperButtonText"
-                        text: "13"
+                        text: "63"
                         wowParent: "ClassTrainerMoneyFrameCopperButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
@@ -172,7 +172,7 @@ WowWindow {
 
                     Button {
                         name: "ClassTrainerMoneyFrameSilverButton"
-                        text: "16"
+                        text: "55"
                         wowParent: "ClassTrainerMoneyFrame"
                         anchors.right: parent.left
                         anchors.rightMargin: 4
@@ -182,7 +182,7 @@ WowWindow {
 
                         Button {
                             name: "ClassTrainerMoneyFrameGoldButton"
-                            text: "3654"
+                            text: "3653"
                             wowParent: "ClassTrainerMoneyFrame"
                             anchors.right: parent.left
                             anchors.rightMargin: 4
@@ -192,7 +192,7 @@ WowWindow {
 
                             FontString {
                                 name: "ClassTrainerMoneyFrameGoldButtonText"
-                                text: "3654"
+                                text: "3653"
                                 wowParent: "ClassTrainerMoneyFrameGoldButton"
                                 anchors.right: parent.right
                                 anchors.rightMargin: 13
@@ -204,7 +204,7 @@ WowWindow {
 
                         FontString {
                             name: "ClassTrainerMoneyFrameSilverButtonText"
-                            text: "16"
+                            text: "55"
                             wowParent: "ClassTrainerMoneyFrameSilverButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
@@ -284,7 +284,7 @@ WowWindow {
     // the parchments', its right on their panels'
     FontString {
         name: "ClassTrainerGreetingText"
-        text: "Greetings!  Can I teach you how to turn found cloth into cloth armor?"
+        text: "Hello, priest!  Ready for some training?"
         wowParent: "ClassTrainerFrame"
         pin: "all"
         anchors.left: parent.left
@@ -315,7 +315,7 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: 102
         width: 296
-        height: 168
+        height: 184
 
         // the chosen one's page 6 under the list's (Blizzard's 8 under its text)
         ScrollFrame {
@@ -326,7 +326,7 @@ WowWindow {
             anchors.top: parent.bottom
             anchors.topMargin: 14
             width: 296
-            height: 95
+            height: 79
 
             Frame {
                 name: "ClassTrainerDetailScrollChildFrame"
@@ -353,38 +353,37 @@ WowWindow {
                         anchors.left: parent.right
                         anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 36.3
+                        width: 43.4
                         height: 13
 
                         Button {
                             name: "ClassTrainerDetailMoneyFrameCopperButton"
-                            text: "8"
+                            text: "40"
                             wowParent: "ClassTrainerDetailMoneyFrame"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 23.3
+                            width: 30.4
                             height: 13
 
                             FontString {
                                 name: "ClassTrainerDetailMoneyFrameCopperButtonText"
-                                text: "8"
+                                text: "40"
                                 wowParent: "ClassTrainerDetailMoneyFrameCopperButton"
                                 anchors.right: parent.right
                                 anchors.rightMargin: 13
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 10.3
+                                width: 17.4
                                 height: 14.2
                             }
 
                             Button {
                                 name: "ClassTrainerDetailMoneyFrameSilverButton"
-                                text: "2"
+                                text: "72"
                                 wowParent: "ClassTrainerDetailMoneyFrame"
-                                anchors.right: parent.left
-                                anchors.rightMargin: 4
+                                anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 23.3
+                                width: 30.4
                                 height: 13
 
                                 Button {
@@ -411,12 +410,12 @@ WowWindow {
 
                                 FontString {
                                     name: "ClassTrainerDetailMoneyFrameSilverButtonText"
-                                    text: "2"
+                                    text: "72"
                                     wowParent: "ClassTrainerDetailMoneyFrameSilverButton"
                                     anchors.right: parent.right
                                     anchors.rightMargin: 13
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: 10.3
+                                    width: 17.4
                                     height: 14.2
                                 }
                             }
@@ -425,12 +424,13 @@ WowWindow {
 
                     FontString {
                         name: "ClassTrainerSkillDescription"
+                        text: "Causes 935 Shadow damage over 15 sec to your target and causes up to 10 party or raid members to gain 1% of their maximum mana per 5 sec when you deal damage from Mind Blast. In addition, if the Vampiric Touch is dispelled it will cause 1496 damage to the afflicted target."
                         wowParent: "ClassTrainerDetailScrollChildFrame"
                         anchors.left: parent.left
                         anchors.top: parent.bottom
                         anchors.topMargin: 10
                         width: 290
-                        height: 1
+                        height: 61.6
                     }
                 }
 
@@ -447,7 +447,7 @@ WowWindow {
 
                 FontString {
                     name: "ClassTrainerSkillName"
-                    text: "Apprentice Tailor"
+                    text: "Vampiric Touch"
                     wowParent: "ClassTrainerDetailScrollChildFrame"
                     anchors.left: parent.left
                     anchors.leftMargin: 46
@@ -467,12 +467,12 @@ WowWindow {
 
                     FontString {
                         name: "ClassTrainerSubSkillName"
-                        text: "()"
+                        text: "(Rank 5)"
                         wowParent: "ClassTrainerDetailScrollChildFrame"
                         anchors.left: parent.right
                         anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 8.7
+                        width: 48.2
                         height: 11.9
                     }
                 }
@@ -486,7 +486,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -6
                 width: 360
-                height: 107
+                height: 91
             }
 
             Frame {
@@ -497,7 +497,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -4
                 width: 334
-                height: 103
+                height: 87
             }
 
             Slider {
@@ -507,7 +507,7 @@ WowWindow {
                 anchors.left: parent.right
                 anchors.leftMargin: 26
                 anchors.top: parent.top
-                anchors.topMargin: 32
+                anchors.topMargin: 16
                 width: 16
                 height: 47
 
@@ -551,7 +551,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -6
             width: 360
-            height: 180
+            height: 196
         }
 
         Frame {
@@ -562,7 +562,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -4
             width: 334
-            height: 176
+            height: 192
         }
 
         Slider {
@@ -574,7 +574,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 16
             width: 16
-            height: 136
+            height: 152
 
             Button {
                 name: "ClassTrainerListScrollFrameScrollBarScrollDownButton"
@@ -602,7 +602,7 @@ WowWindow {
                     anchors.top: parent.top
                     anchors.topMargin: -1
                     width: 18
-                    height: 170
+                    height: 186
                 }
             }
         }
@@ -612,15 +612,15 @@ WowWindow {
             wowParent: "ClassTrainerListScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.topMargin: -16
+            anchors.topMargin: -3360
             width: 300
-            height: 1680
+            height: 3536
         }
     }
 
     Button {
         name: "ClassTrainerSkill1"
-        text: "  Apprentice Tailor"
+        text: "  Shadow Word: Pain"
         wowParent: "ClassTrainerFrame"
         anchors.left: parent.left
         anchors.leftMargin: 22
@@ -631,22 +631,13 @@ WowWindow {
 
         FontString {
             name: "ClassTrainerSkill1SubText"
-            text: "(Rank 4)"
+            text: "(Rank 11)"
             wowParent: "ClassTrainerSkill1"
             anchors.right: parent.right
             anchors.rightMargin: 2
             anchors.verticalCenter: parent.verticalCenter
-            width: 44.2
+            width: 49.8
             height: 10.3
-        }
-
-        Frame {
-            name: "ClassTrainerSkillHighlightFrame"
-            wowParent: "ClassTrainerFrame"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 293
-            height: 16
         }
     }
 
@@ -699,6 +690,23 @@ WowWindow {
     }
 
     Ghost {
+        name: "ClassTrainerSkill11"
+        x: 22
+        y: 260
+        width: 293
+        height: 16
+
+        Frame {
+            name: "ClassTrainerSkillHighlightFrame"
+            wowParent: "ClassTrainerFrame"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 293
+            height: 16
+        }
+    }
+
+    Ghost {
         name: "ClassTrainerSkill1Highlight"
         x: 41
         y: 108
@@ -707,13 +715,13 @@ WowWindow {
 
         FontString {
             name: "ClassTrainerSkill1Text"
-            text: "  Apprentice Tailor"
+            text: "  Shadow Word: Pain"
             wowParent: "ClassTrainerSkill1"
             anchors.left: parent.right
             anchors.leftMargin: 2
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -1
-            width: 270
+            width: 210
             height: 13
         }
     }

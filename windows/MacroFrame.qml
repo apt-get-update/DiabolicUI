@@ -145,6 +145,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "MacroFrameDiabolicTitle"
+                    text: "Create Macros"
+                    wowParent: "MacroFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 134.3
+                    height: 14.2
+                }
             }
         }
 

@@ -50,12 +50,12 @@ WowWindow {
 
                 FontString {
                     name: "InspectNameText"
-                    text: "Bastoncino"
+                    text: "Wolvenblood"
                     wowParent: "InspectFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 105.1
+                    width: 123.3
                     height: 14.2
                 }
             }
@@ -357,7 +357,7 @@ WowWindow {
             // the level line (the guild's under it) out of the band, over the model
             FontString {
                 name: "InspectLevelText"
-                text: "Level 25 Gnome Warrior"
+                text: "Level 61 Human Warrior"
                 wowParent: "InspectPaperDollFrame"
                 pin: "place"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -703,12 +703,12 @@ WowWindow {
 
                             FontString {
                                 name: "InspectPVPHonorLifetimeKills"
-                                text: "0"
+                                text: "30"
                                 wowParent: "InspectPVPHonor"
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: parent.bottom
                                 anchors.topMargin: 10
-                                width: 7.9
+                                width: 15
                                 height: 10.3
 
                                 FontString {

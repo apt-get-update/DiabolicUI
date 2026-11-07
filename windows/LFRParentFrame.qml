@@ -176,7 +176,7 @@ WowWindow {
 
                         FontString {
                             name: "LFRBrowseFrameRaidDropDownText"
-                            text: "None"
+                            text: "(25) Icecrown Citadel"
                             wowParent: "LFRBrowseFrameRaidDropDown"
                             anchors.left: parent.left
                             anchors.leftMargin: 22

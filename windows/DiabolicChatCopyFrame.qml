@@ -32,6 +32,17 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                FontString {
+                    name: "DiabolicChatCopyFrameDiabolicTitle"
+                    text: "Copy Chat"
+                    wowParent: "DiabolicChatCopyFrameDiabolicTitlePlate"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 92.4
+                    height: 14.2
+                }
             }
         }
 

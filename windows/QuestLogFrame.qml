@@ -50,84 +50,6 @@ WowWindow {
         width: 752
         height: 463
 
-        Frame {
-            name: "QuestLogControlPanel"
-            wowParent: "QuestLogFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 30
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 28
-            width: 321
-            height: 26
-
-            Button {
-                name: "QuestLogFrameAbandonButton"
-                text: "Abandon"
-                wowParent: "QuestLogControlPanel"
-                style: "Button"
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                width: 110
-                height: 21
-
-                FontString {
-                    name: "QuestLogFrameAbandonButtonText"
-                    text: "Abandon"
-                    wowParent: "QuestLogFrameAbandonButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 64.8
-                    height: 11.9
-                }
-
-                Button {
-                    name: "QuestLogFramePushQuestButton"
-                    text: "Share"
-                    wowParent: "QuestLogControlPanel"
-                    style: "Button"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 6
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 96
-                    height: 21
-
-                    FontString {
-                        name: "QuestLogFramePushQuestButtonText"
-                        text: "Share"
-                        wowParent: "QuestLogFramePushQuestButton"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 41.1
-                        height: 11.9
-                    }
-                }
-            }
-
-            Button {
-                name: "QuestLogFrameTrackButton"
-                text: "Track"
-                wowParent: "QuestLogControlPanel"
-                style: "Button"
-                anchors.right: parent.right
-                anchors.rightMargin: 3
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                width: 100
-                height: 21
-
-                FontString {
-                    name: "QuestLogFrameTrackButtonText"
-                    text: "Track"
-                    wowParent: "QuestLogFrameTrackButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 43.5
-                    height: 11.9
-                }
-            }
-        }
-
         ScrollFrame {
             name: "QuestLogDetailScrollFrame"
             wowParent: "QuestLogFrame"
@@ -411,7 +333,85 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: 23
             width: 706
-            height: 35.5
+            height: 35
+
+            Frame {
+                name: "QuestLogControlPanel"
+                wowParent: "QuestLogFrame"
+                anchors.left: parent.left
+                anchors.leftMargin: 7
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 5
+                width: 321
+                height: 26
+
+                Button {
+                    name: "QuestLogFrameAbandonButton"
+                    text: "Abandon"
+                    wowParent: "QuestLogControlPanel"
+                    style: "Button"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 110
+                    height: 21
+
+                    FontString {
+                        name: "QuestLogFrameAbandonButtonText"
+                        text: "Abandon"
+                        wowParent: "QuestLogFrameAbandonButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 64.8
+                        height: 11.9
+                    }
+
+                    Button {
+                        name: "QuestLogFramePushQuestButton"
+                        text: "Share"
+                        wowParent: "QuestLogControlPanel"
+                        style: "Button"
+                        anchors.left: parent.right
+                        anchors.leftMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 96
+                        height: 21
+
+                        FontString {
+                            name: "QuestLogFramePushQuestButtonText"
+                            text: "Share"
+                            wowParent: "QuestLogFramePushQuestButton"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 41.1
+                            height: 11.9
+                        }
+                    }
+                }
+
+                Button {
+                    name: "QuestLogFrameTrackButton"
+                    text: "Track"
+                    wowParent: "QuestLogControlPanel"
+                    style: "Button"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 3
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 100
+                    height: 21
+
+                    FontString {
+                        name: "QuestLogFrameTrackButtonText"
+                        text: "Track"
+                        wowParent: "QuestLogFrameTrackButton"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 43.5
+                        height: 11.9
+                    }
+                }
+            }
         }
 
         Frame {

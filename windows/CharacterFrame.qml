@@ -14,8 +14,8 @@ WowWindow {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.topMargin: 4
-        width: 650
-        height: 478
+        width: 402
+        height: 490
 
         Button {
             name: "CharacterFrameCloseButton"
@@ -35,8 +35,8 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
-            width: 650
-            height: 446
+            width: 402
+            height: 458
 
             Frame {
                 name: "CharacterFrameDiabolicTitlePlate"

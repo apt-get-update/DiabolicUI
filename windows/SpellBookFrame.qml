@@ -617,18 +617,17 @@ WowWindow {
 
             FontString {
                 name: "SpellButton1SpellName"
-                text: "Devouring Plague"
+                text: "Auto Attack"
                 wowParent: "SpellButton1"
                 anchors.left: parent.right
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -4
+                anchors.verticalCenterOffset: -2
                 width: 145
                 height: 11.9
 
                 FontString {
                     name: "SpellButton1SubSpellName"
-                    text: "Rank 9"
                     wowParent: "SpellButton1"
                     anchors.left: parent.left
                     anchors.top: parent.bottom
