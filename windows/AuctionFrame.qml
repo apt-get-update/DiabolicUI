@@ -1151,6 +1151,32 @@ WowWindow {
         }
     }
 
+    // Auctionator's left column (its parts: auction.lua)
+    Frame {
+        name: "Atr_Main_PanelDiabolicLeft"
+        wowParent: "Atr_Main_Panel"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: -8
+        anchors.top: parent.top
+        anchors.topMargin: 46
+        width: 212
+        height: 367
+    }
+
+    // Auctionator's results, right of it
+    Frame {
+        name: "Atr_Main_PanelDiabolicRight"
+        wowParent: "Atr_Main_Panel"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: 212
+        anchors.top: parent.top
+        anchors.topMargin: 46
+        width: 628
+        height: 367
+    }
+
     Button {
         name: "Atr_RemFromSListButton"
         text: "Remove Item"
@@ -1171,29 +1197,6 @@ WowWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: 71.1
             height: 10.1
-        }
-    }
-
-    Button {
-        name: "AuctionFilterButton1"
-        text: "Weapon"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: parent.left
-        anchors.leftMargin: 2
-        anchors.top: parent.top
-        anchors.topMargin: 82
-        width: 156
-        height: 20
-
-        FontString {
-            name: "AuctionFilterButton1NormalText"
-            text: "Weapon"
-            wowParent: "AuctionFilterButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-            width: 115
-            height: 8
         }
     }
 
@@ -1614,6 +1617,437 @@ WowWindow {
         }
     }
 
+    // Auctions' results, right of it
+    Frame {
+        name: "AuctionFrameAuctionsDiabolicResults"
+        wowParent: "AuctionFrameAuctions"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: 210
+        anchors.top: parent.top
+        anchors.topMargin: 46
+        width: 630
+        height: 367
+
+        Button {
+            name: "AuctionsBidSort"
+            text: "Current Bid"
+            wowParent: "AuctionFrameAuctions"
+            anchors.left: auctionsHighBidderSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: auctionsHighBidderSort.verticalCenter
+            width: 213
+            height: 19
+
+            FontString {
+                name: "AuctionsBidSortText"
+                text: "Current Bid"
+                wowParent: "AuctionsBidSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 57.5
+                height: 10.1
+            }
+        }
+
+        Button {
+            name: "AuctionsButton1"
+            wowParent: "AuctionFrameAuctions"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            width: 576
+            height: 37
+
+            Frame {
+                name: "AuctionsButton1ClosingTime"
+                wowParent: "AuctionsButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 191
+                anchors.top: parent.top
+                width: 65
+                height: 28
+
+                FontString {
+                    name: "AuctionsButton1ClosingTimeText"
+                    text: "Medium"
+                    wowParent: "AuctionsButton1ClosingTime"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 65
+                    height: 28
+                }
+            }
+
+            FontString {
+                name: "AuctionsButton1HighBidder"
+                wowParent: "AuctionsButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 279
+                anchors.top: parent.top
+                width: 104
+                height: 28
+            }
+
+            Button {
+                name: "AuctionsButton1Item"
+                wowParent: "AuctionsButton1"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 32
+                height: 32
+
+                FontString {
+                    name: "AuctionsButton1ItemCount"
+                    text: "20"
+                    wowParent: "AuctionsButton1Item"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
+                    width: 15.8
+                    height: 13.6
+                }
+            }
+
+            Frame {
+                name: "AuctionsButton1MoneyFrame"
+                wowParent: "AuctionsButton1"
+                anchors.right: parent.right
+                anchors.rightMargin: -10
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -10
+                width: 107.3
+                height: 13
+
+                Frame {
+                    name: "AuctionsButton1BuyoutFrame"
+                    wowParent: "AuctionsButton1"
+                    anchors.right: parent.right
+                    anchors.top: parent.bottom
+                    anchors.topMargin: 1
+                    width: 197
+                    height: 13
+
+                    Frame {
+                        name: "AuctionsButton1BuyoutFrameMoney"
+                        wowParent: "AuctionsButton1BuyoutFrame"
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 107.3
+                        height: 13
+
+                        Button {
+                            id: auctionsButton1BuyoutFrameMoneyCopperButton
+                            name: "AuctionsButton1BuyoutFrameMoneyCopperButton"
+                            text: "0"
+                            wowParent: "AuctionsButton1BuyoutFrameMoney"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 32
+                            height: 13
+
+                            FontString {
+                                name: "AuctionsButton1BuyoutFrameMoneyCopperButtonText"
+                                text: "0"
+                                wowParent: "AuctionsButton1BuyoutFrameMoneyCopperButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 9.4
+                                height: 13.6
+                            }
+                        }
+
+                        Button {
+                            name: "AuctionsButton1BuyoutFrameMoneyGoldButton"
+                            text: "9"
+                            wowParent: "AuctionsButton1BuyoutFrameMoney"
+                            anchors.right: auctionsButton1BuyoutFrameMoneySilverButton.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: auctionsButton1BuyoutFrameMoneySilverButton.verticalCenter
+                            width: 22.3
+                            height: 13
+
+                            FontString {
+                                name: "AuctionsButton1BuyoutFrameMoneyGoldButtonText"
+                                text: "9"
+                                wowParent: "AuctionsButton1BuyoutFrameMoneyGoldButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 9.4
+                                height: 13.6
+                            }
+                        }
+
+                        Button {
+                            id: auctionsButton1BuyoutFrameMoneySilverButton
+                            name: "AuctionsButton1BuyoutFrameMoneySilverButton"
+                            text: "80"
+                            wowParent: "AuctionsButton1BuyoutFrameMoney"
+                            anchors.right: auctionsButton1BuyoutFrameMoneyCopperButton.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: auctionsButton1BuyoutFrameMoneyCopperButton.verticalCenter
+                            width: 32
+                            height: 13
+
+                            FontString {
+                                name: "AuctionsButton1BuyoutFrameMoneySilverButtonText"
+                                text: "80"
+                                wowParent: "AuctionsButton1BuyoutFrameMoneySilverButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 15.8
+                                height: 13.6
+                            }
+                        }
+                    }
+
+                    Frame {
+                        name: "AuctionsButton1BuyoutFrameText"
+                        wowParent: "AuctionsButton1BuyoutFrame"
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        width: 87.6
+                        height: 13
+                    }
+                }
+
+                Button {
+                    id: auctionsButton1MoneyFrameCopperButton
+                    name: "AuctionsButton1MoneyFrameCopperButton"
+                    text: "0"
+                    wowParent: "AuctionsButton1MoneyFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 32
+                    height: 13
+
+                    FontString {
+                        name: "AuctionsButton1MoneyFrameCopperButtonText"
+                        text: "0"
+                        wowParent: "AuctionsButton1MoneyFrameCopperButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 9.4
+                        height: 13.6
+                    }
+                }
+
+                Button {
+                    name: "AuctionsButton1MoneyFrameGoldButton"
+                    text: "9"
+                    wowParent: "AuctionsButton1MoneyFrame"
+                    anchors.right: auctionsButton1MoneyFrameSilverButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: auctionsButton1MoneyFrameSilverButton.verticalCenter
+                    width: 22.3
+                    height: 13
+
+                    FontString {
+                        name: "AuctionsButton1MoneyFrameGoldButtonText"
+                        text: "9"
+                        wowParent: "AuctionsButton1MoneyFrameGoldButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 9.4
+                        height: 13.6
+                    }
+                }
+
+                Button {
+                    id: auctionsButton1MoneyFrameSilverButton
+                    name: "AuctionsButton1MoneyFrameSilverButton"
+                    text: "31"
+                    wowParent: "AuctionsButton1MoneyFrame"
+                    anchors.right: auctionsButton1MoneyFrameCopperButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: auctionsButton1MoneyFrameCopperButton.verticalCenter
+                    width: 32
+                    height: 13
+
+                    FontString {
+                        name: "AuctionsButton1MoneyFrameSilverButtonText"
+                        text: "31"
+                        wowParent: "AuctionsButton1MoneyFrameSilverButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 14.4
+                        height: 13.6
+                    }
+                }
+            }
+
+            FontString {
+                name: "AuctionsButton1Name"
+                text: "Packet of Tharlendris Seeds"
+                wowParent: "AuctionsButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 43
+                anchors.top: parent.top
+                width: 142
+                height: 28
+            }
+        }
+
+        Button {
+            id: auctionsDurationSort
+            name: "AuctionsDurationSort"
+            text: "Time Left"
+            wowParent: "AuctionFrameAuctions"
+            anchors.left: auctionsQualitySort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: auctionsQualitySort.verticalCenter
+            width: 100
+            height: 19
+
+            FontString {
+                name: "AuctionsDurationSortText"
+                text: "Time Left"
+                wowParent: "AuctionsDurationSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 48.1
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: auctionsHighBidderSort
+            name: "AuctionsHighBidderSort"
+            text: "High Bidder"
+            wowParent: "AuctionFrameAuctions"
+            anchors.left: auctionsDurationSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: auctionsDurationSort.verticalCenter
+            width: 108
+            height: 19
+
+            FontString {
+                name: "AuctionsHighBidderSortText"
+                text: "High Bidder"
+                wowParent: "AuctionsHighBidderSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 61.1
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: auctionsQualitySort
+            name: "AuctionsQualitySort"
+            text: "Rarity"
+            wowParent: "AuctionFrameAuctions"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.top: parent.top
+            anchors.topMargin: 4
+            width: 185
+            height: 19
+
+            FontString {
+                name: "AuctionsQualitySortText"
+                text: "Rarity"
+                wowParent: "AuctionsQualitySort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 29.5
+                height: 10.1
+            }
+        }
+
+        ScrollFrame {
+            name: "AuctionsScrollFrame"
+            wowParent: "AuctionFrameAuctions"
+            pin: "all"
+            anchors.right: parent.left
+            anchors.rightMargin: -593
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            width: 435
+            height: 338
+
+            Slider {
+                name: "AuctionsScrollFrameScrollBar"
+                wowParent: "AuctionsScrollFrame"
+                style: "ScrollBar"
+                anchors.left: parent.right
+                anchors.leftMargin: 6
+                anchors.top: parent.top
+                anchors.topMargin: 16
+                width: 16
+                height: 306
+
+                Button {
+                    name: "AuctionsScrollFrameScrollBarScrollDownButton"
+                    wowParent: "AuctionsScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    name: "AuctionsScrollFrameScrollBarScrollUpButton"
+                    wowParent: "AuctionsScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+
+                    Frame {
+                        name: "AuctionsScrollFrameScrollBarDiabolicTrack"
+                        wowParent: "AuctionsScrollFrameScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 340
+                    }
+                }
+            }
+
+            Frame {
+                name: "AuctionsScrollFrameScrollChildFrame"
+                wowParent: "AuctionsScrollFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 300
+                height: 555
+            }
+        }
+    }
+
+    // Auctions' selling column (Blizzard's parts: auction.lua)
+    Frame {
+        name: "AuctionFrameAuctionsDiabolicSelling"
+        wowParent: "AuctionFrameAuctions"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: -8
+        anchors.top: parent.top
+        anchors.topMargin: 46
+        width: 210
+        height: 367
+    }
+
     Frame {
         name: "AuctionFrameBid"
         wowParent: "AuctionFrame"
@@ -1631,6 +2065,183 @@ WowWindow {
             anchors.topMargin: 18
             width: 20.1
             height: 12.2
+        }
+    }
+
+    // Bids' results, across the page
+    Frame {
+        name: "AuctionFrameBidDiabolicResults"
+        wowParent: "AuctionFrameBid"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: -8
+        anchors.top: parent.top
+        anchors.topMargin: 46
+        width: 848
+        height: 367
+
+        Button {
+            name: "BidBidSort"
+            text: "Current Bid"
+            wowParent: "AuctionFrameBid"
+            anchors.left: bidStatusSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: bidStatusSort.verticalCenter
+            width: 169
+            height: 19
+
+            FontString {
+                name: "BidBidSortText"
+                text: "Current Bid"
+                wowParent: "BidBidSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 57.5
+                height: 10.1
+            }
+        }
+
+        // its rows (shown with bids: a scan without any doesn't see them)
+        Button {
+            name: "BidButton1"
+            wowParent: "AuctionFrameBid"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 27
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            width: 793
+            height: 37
+        }
+
+        Button {
+            id: bidBuyoutSort
+            name: "BidBuyoutSort"
+            text: "Buyout Price"
+            wowParent: "AuctionFrameBid"
+            anchors.left: bidDurationSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: bidDurationSort.verticalCenter
+            width: 162
+            height: 19
+
+            FontString {
+                name: "BidBuyoutSortText"
+                text: "Buyout Price"
+                wowParent: "BidBuyoutSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 63.9
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: bidDurationSort
+            name: "BidDurationSort"
+            text: "Time Left"
+            wowParent: "AuctionFrameBid"
+            anchors.left: bidLevelSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: bidLevelSort.verticalCenter
+            width: 79
+            height: 19
+
+            FontString {
+                name: "BidDurationSortText"
+                text: "Time Left"
+                wowParent: "BidDurationSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 48.1
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: bidLevelSort
+            name: "BidLevelSort"
+            text: "Lvl"
+            wowParent: "AuctionFrameBid"
+            anchors.left: bidQualitySort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: bidQualitySort.verticalCenter
+            width: 65
+            height: 19
+
+            FontString {
+                name: "BidLevelSortText"
+                text: "Lvl"
+                wowParent: "BidLevelSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 15.1
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: bidQualitySort
+            name: "BidQualitySort"
+            text: "Rarity"
+            wowParent: "AuctionFrameBid"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 65
+            anchors.top: parent.top
+            anchors.topMargin: 4
+            width: 195
+            height: 19
+
+            FontString {
+                name: "BidQualitySortText"
+                text: "Rarity"
+                wowParent: "BidQualitySort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 29.5
+                height: 10.1
+            }
+        }
+
+        ScrollFrame {
+            name: "BidScrollFrame"
+            wowParent: "AuctionFrameBid"
+            pin: "all"
+            anchors.right: parent.left
+            anchors.rightMargin: -798
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            width: 625
+            height: 338
+        }
+
+        Button {
+            id: bidStatusSort
+            name: "BidStatusSort"
+            text: "Bid Status"
+            wowParent: "AuctionFrameBid"
+            anchors.left: bidBuyoutSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: bidBuyoutSort.verticalCenter
+            width: 94
+            height: 19
+
+            FontString {
+                name: "BidStatusSortText"
+                text: "Bid Status"
+                wowParent: "BidStatusSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 51
+                height: 10.1
+            }
         }
     }
 
@@ -1732,6 +2343,629 @@ WowWindow {
                 width: 112.1
                 height: 13.6
             }
+        }
+    }
+
+    // Browse's categories, under its toolbar
+    Frame {
+        name: "AuctionFrameBrowseDiabolicCategories"
+        wowParent: "AuctionFrameBrowse"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: -8
+        anchors.top: parent.top
+        anchors.topMargin: 78
+        width: 178
+        height: 335
+
+        Button {
+            name: "AuctionFilterButton1"
+            text: "Weapon"
+            wowParent: "AuctionFrameBrowse"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.top: parent.top
+            anchors.topMargin: 4
+            width: 156
+            height: 20
+
+            FontString {
+                name: "AuctionFilterButton1NormalText"
+                text: "Weapon"
+                wowParent: "AuctionFilterButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 4
+                anchors.verticalCenter: parent.verticalCenter
+                width: 115
+                height: 8
+            }
+        }
+
+        ScrollFrame {
+            name: "BrowseFilterScrollFrame"
+            wowParent: "AuctionFrameBrowse"
+            pin: "all"
+            anchors.right: parent.left
+            anchors.rightMargin: -146
+            anchors.top: parent.top
+            anchors.topMargin: 4
+            width: 160
+            height: 327
+
+            Slider {
+                name: "BrowseFilterScrollFrameScrollBar"
+                wowParent: "BrowseFilterScrollFrame"
+                style: "ScrollBar"
+                anchors.left: parent.right
+                anchors.leftMargin: 6
+                anchors.top: parent.top
+                anchors.topMargin: 16
+                width: 16
+                height: 295
+
+                Button {
+                    name: "BrowseFilterScrollFrameScrollBarScrollDownButton"
+                    wowParent: "BrowseFilterScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    name: "BrowseFilterScrollFrameScrollBarScrollUpButton"
+                    wowParent: "BrowseFilterScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+
+                    Frame {
+                        name: "BrowseFilterScrollFrameScrollBarDiabolicTrack"
+                        wowParent: "BrowseFilterScrollFrameScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 329
+                    }
+                }
+            }
+
+            Frame {
+                name: "BrowseFilterScrollFrameScrollChildFrame"
+                wowParent: "BrowseFilterScrollFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 300
+                height: 420
+            }
+        }
+
+        Button {
+            name: "BrowseResetButton"
+            text: "Reset"
+            wowParent: "AuctionFrameBrowse"
+            style: "Button"
+            pin: "all"
+            anchors.left: parent.left
+            anchors.bottom: parent.top
+            anchors.bottomMargin: 8
+            width: 178
+            height: 24
+
+            FontString {
+                name: "BrowseResetButtonText"
+                text: "Reset"
+                wowParent: "BrowseResetButton"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: 30.2
+                height: 10.1
+            }
+        }
+    }
+
+    // Browse's results, right of the categories
+    Frame {
+        name: "AuctionFrameBrowseDiabolicResults"
+        wowParent: "AuctionFrameBrowse"
+        pin: "all"
+        anchors.left: parent.left
+        anchors.leftMargin: 178
+        anchors.top: parent.top
+        anchors.topMargin: 78
+        width: 662
+        height: 335
+
+        Button {
+            name: "BrowseButton1"
+            wowParent: "AuctionFrameBrowse"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 18
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            width: 600
+            height: 37
+
+            Frame {
+                name: "BrowseButton1ClosingTime"
+                wowParent: "BrowseButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 267
+                anchors.top: parent.top
+                width: 65
+                height: 32
+
+                FontString {
+                    name: "BrowseButton1ClosingTimeText"
+                    text: "Very Long"
+                    wowParent: "BrowseButton1ClosingTime"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 65
+                    height: 32
+                }
+            }
+
+            FontString {
+                name: "BrowseButton1HighBidder"
+                text: "Kovasky"
+                wowParent: "BrowseButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 345
+                anchors.top: parent.top
+                width: 78
+                height: 32
+            }
+
+            Button {
+                name: "BrowseButton1Item"
+                wowParent: "BrowseButton1"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 32
+                height: 32
+
+                FontString {
+                    name: "BrowseButton1ItemCount"
+                    text: "20"
+                    wowParent: "BrowseButton1Item"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
+                    width: 15.8
+                    height: 13.6
+                }
+            }
+
+            FontString {
+                name: "BrowseButton1Level"
+                text: "80"
+                wowParent: "BrowseButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 205
+                anchors.top: parent.top
+                width: 52
+                height: 32
+            }
+
+            Frame {
+                name: "BrowseButton1MoneyFrame"
+                wowParent: "BrowseButton1"
+                anchors.right: parent.right
+                anchors.rightMargin: -10
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -10
+                width: 120.3
+                height: 13
+
+                Frame {
+                    name: "BrowseButton1BuyoutFrame"
+                    wowParent: "BrowseButton1"
+                    anchors.right: parent.right
+                    anchors.top: parent.bottom
+                    anchors.topMargin: 1
+                    width: 185
+                    height: 13
+
+                    Frame {
+                        name: "BrowseButton1BuyoutFrameMoney"
+                        wowParent: "BrowseButton1BuyoutFrame"
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 120.3
+                        height: 13
+
+                        Button {
+                            id: browseButton1BuyoutFrameMoneyCopperButton
+                            name: "BrowseButton1BuyoutFrameMoneyCopperButton"
+                            text: "0"
+                            wowParent: "BrowseButton1BuyoutFrameMoney"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 32
+                            height: 13
+
+                            FontString {
+                                name: "BrowseButton1BuyoutFrameMoneyCopperButtonText"
+                                text: "0"
+                                wowParent: "BrowseButton1BuyoutFrameMoneyCopperButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 9.4
+                                height: 13.6
+                            }
+                        }
+
+                        Button {
+                            name: "BrowseButton1BuyoutFrameMoneyGoldButton"
+                            text: "249"
+                            wowParent: "BrowseButton1BuyoutFrameMoney"
+                            anchors.right: browseButton1BuyoutFrameMoneySilverButton.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
+                            width: 35.3
+                            height: 13
+
+                            FontString {
+                                name: "BrowseButton1BuyoutFrameMoneyGoldButtonText"
+                                text: "249"
+                                wowParent: "BrowseButton1BuyoutFrameMoneyGoldButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 22.3
+                                height: 13.6
+                            }
+                        }
+
+                        Button {
+                            id: browseButton1BuyoutFrameMoneySilverButton
+                            name: "BrowseButton1BuyoutFrameMoneySilverButton"
+                            text: "75"
+                            wowParent: "BrowseButton1BuyoutFrameMoney"
+                            anchors.right: browseButton1BuyoutFrameMoneyCopperButton.left
+                            anchors.rightMargin: 4
+                            anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
+                            width: 32
+                            height: 13
+
+                            FontString {
+                                name: "BrowseButton1BuyoutFrameMoneySilverButtonText"
+                                text: "75"
+                                wowParent: "BrowseButton1BuyoutFrameMoneySilverButton"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 16.5
+                                height: 13.6
+                            }
+                        }
+                    }
+
+                    Frame {
+                        name: "BrowseButton1BuyoutFrameText"
+                        wowParent: "BrowseButton1BuyoutFrame"
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        width: 62.7
+                        height: 13
+                    }
+                }
+
+                Button {
+                    id: browseButton1MoneyFrameCopperButton
+                    name: "BrowseButton1MoneyFrameCopperButton"
+                    text: "25"
+                    wowParent: "BrowseButton1MoneyFrame"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 32
+                    height: 13
+
+                    FontString {
+                        name: "BrowseButton1MoneyFrameCopperButtonText"
+                        text: "25"
+                        wowParent: "BrowseButton1MoneyFrameCopperButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 16.5
+                        height: 13.6
+                    }
+                }
+
+                Button {
+                    name: "BrowseButton1MoneyFrameGoldButton"
+                    text: "237"
+                    wowParent: "BrowseButton1MoneyFrame"
+                    anchors.right: browseButton1MoneyFrameSilverButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: browseButton1MoneyFrameSilverButton.verticalCenter
+                    width: 35.3
+                    height: 13
+
+                    FontString {
+                        name: "BrowseButton1MoneyFrameGoldButtonText"
+                        text: "237"
+                        wowParent: "BrowseButton1MoneyFrameGoldButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 22.3
+                        height: 13.6
+                    }
+                }
+
+                Button {
+                    id: browseButton1MoneyFrameSilverButton
+                    name: "BrowseButton1MoneyFrameSilverButton"
+                    text: "26"
+                    wowParent: "BrowseButton1MoneyFrame"
+                    anchors.right: browseButton1MoneyFrameCopperButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: browseButton1MoneyFrameCopperButton.verticalCenter
+                    width: 32
+                    height: 13
+
+                    FontString {
+                        name: "BrowseButton1MoneyFrameSilverButtonText"
+                        text: "26"
+                        wowParent: "BrowseButton1MoneyFrameSilverButton"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 15.8
+                        height: 13.6
+                    }
+                }
+            }
+
+            FontString {
+                name: "BrowseButton1Name"
+                text: "Durable Nerubhide Cape"
+                wowParent: "BrowseButton1"
+                anchors.left: parent.left
+                anchors.leftMargin: 43
+                anchors.top: parent.top
+                width: 167
+                height: 32
+            }
+        }
+
+        Button {
+            name: "BrowseCurrentBidSort"
+            text: "Current Bid"
+            wowParent: "AuctionFrameBrowse"
+            anchors.left: browseHighBidderSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: browseHighBidderSort.verticalCenter
+            width: 207
+            height: 19
+
+            FontString {
+                name: "BrowseCurrentBidSortText"
+                text: "Current Bid"
+                wowParent: "BrowseCurrentBidSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 57.5
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: browseDurationSort
+            name: "BrowseDurationSort"
+            text: "Time Left"
+            wowParent: "AuctionFrameBrowse"
+            anchors.left: browseLevelSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: browseLevelSort.verticalCenter
+            width: 91
+            height: 19
+
+            FontString {
+                name: "BrowseDurationSortText"
+                text: "Time Left"
+                wowParent: "BrowseDurationSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 48.1
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: browseHighBidderSort
+            name: "BrowseHighBidderSort"
+            text: "Seller"
+            wowParent: "AuctionFrameBrowse"
+            anchors.left: browseDurationSort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: browseDurationSort.verticalCenter
+            width: 76
+            height: 19
+
+            FontString {
+                name: "BrowseHighBidderSortText"
+                text: "Seller"
+                wowParent: "BrowseHighBidderSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 30.2
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: browseLevelSort
+            name: "BrowseLevelSort"
+            text: "Lvl"
+            wowParent: "AuctionFrameBrowse"
+            anchors.left: browseQualitySort.right
+            anchors.leftMargin: -2
+            anchors.verticalCenter: browseQualitySort.verticalCenter
+            width: 57
+            height: 19
+
+            FontString {
+                name: "BrowseLevelSortText"
+                text: "Lvl"
+                wowParent: "BrowseLevelSort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 15.1
+                height: 10.1
+            }
+        }
+
+        Button {
+            id: browseNextPageButton
+            name: "BrowseNextPageButton"
+            wowParent: "AuctionFrameBrowse"
+            pin: "all"
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.top
+            anchors.verticalCenterOffset: -20
+            width: 24
+            height: 24
+        }
+
+        FontString {
+            name: "BrowseNoResultsText"
+            text: "Choose search criteria and press \"Search\""
+            wowParent: "AuctionFrameBrowse"
+            pin: "place"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 40
+            width: 252.1
+            height: 12.2
+        }
+
+        Button {
+            name: "BrowsePrevPageButton"
+            wowParent: "AuctionFrameBrowse"
+            anchors.right: browseNextPageButton.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: browseNextPageButton.verticalCenter
+            width: 24
+            height: 24
+        }
+
+        Button {
+            id: browseQualitySort
+            name: "BrowseQualitySort"
+            text: "Rarity"
+            wowParent: "AuctionFrameBrowse"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 9
+            anchors.top: parent.top
+            anchors.topMargin: 4
+            width: 214
+            height: 19
+
+            FontString {
+                name: "BrowseQualitySortText"
+                text: "Rarity"
+                wowParent: "BrowseQualitySort"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: 29.5
+                height: 10.1
+            }
+        }
+
+        ScrollFrame {
+            name: "BrowseScrollFrame"
+            wowParent: "AuctionFrameBrowse"
+            pin: "all"
+            anchors.right: parent.left
+            anchors.rightMargin: -620
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            width: 465
+            height: 306
+
+            Slider {
+                name: "BrowseScrollFrameScrollBar"
+                wowParent: "BrowseScrollFrame"
+                style: "ScrollBar"
+                anchors.left: parent.right
+                anchors.leftMargin: 6
+                anchors.top: parent.top
+                anchors.topMargin: 16
+                width: 16
+                height: 274
+
+                Button {
+                    name: "BrowseScrollFrameScrollBarScrollDownButton"
+                    wowParent: "BrowseScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    name: "BrowseScrollFrameScrollBarScrollUpButton"
+                    wowParent: "BrowseScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+
+                    Frame {
+                        name: "BrowseScrollFrameScrollBarDiabolicTrack"
+                        wowParent: "BrowseScrollFrameScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 308
+                    }
+                }
+            }
+
+            Frame {
+                name: "BrowseScrollFrameScrollChildFrame"
+                wowParent: "BrowseScrollFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 300
+                height: 1887
+            }
+        }
+
+        FontString {
+            name: "BrowseSearchCountText"
+            text: "Items 1 - 18  ( 118 total )"
+            wowParent: "AuctionFrameBrowse"
+            pin: "place"
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            anchors.verticalCenter: parent.top
+            anchors.verticalCenterOffset: -20
+            width: 121.4
+            height: 10.1
         }
     }
 
@@ -2660,1114 +3894,6 @@ WowWindow {
             width: 52
             height: 116
         }
-    }
-
-    Button {
-        name: "AuctionsBidSort"
-        text: "Current Bid"
-        wowParent: "AuctionFrameAuctions"
-        anchors.left: auctionsHighBidderSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: auctionsHighBidderSort.verticalCenter
-        width: 213
-        height: 19
-
-        FontString {
-            name: "AuctionsBidSortText"
-            text: "Current Bid"
-            wowParent: "AuctionsBidSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 57.5
-            height: 10.1
-        }
-    }
-
-    Button {
-        name: "AuctionsButton1"
-        wowParent: "AuctionFrameAuctions"
-        anchors.left: parent.left
-        anchors.leftMargin: 224
-        anchors.top: parent.top
-        anchors.topMargin: 71
-        width: 576
-        height: 37
-
-        Frame {
-            name: "AuctionsButton1ClosingTime"
-            wowParent: "AuctionsButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 191
-            anchors.top: parent.top
-            width: 65
-            height: 28
-
-            FontString {
-                name: "AuctionsButton1ClosingTimeText"
-                text: "Medium"
-                wowParent: "AuctionsButton1ClosingTime"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 65
-                height: 28
-            }
-        }
-
-        FontString {
-            name: "AuctionsButton1HighBidder"
-            wowParent: "AuctionsButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 279
-            anchors.top: parent.top
-            width: 104
-            height: 28
-        }
-
-        Button {
-            name: "AuctionsButton1Item"
-            wowParent: "AuctionsButton1"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 32
-            height: 32
-
-            FontString {
-                name: "AuctionsButton1ItemCount"
-                text: "20"
-                wowParent: "AuctionsButton1Item"
-                anchors.right: parent.right
-                anchors.rightMargin: 5
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 2
-                width: 15.8
-                height: 13.6
-            }
-        }
-
-        Frame {
-            name: "AuctionsButton1MoneyFrame"
-            wowParent: "AuctionsButton1"
-            anchors.right: parent.right
-            anchors.rightMargin: -10
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -10
-            width: 107.3
-            height: 13
-
-            Frame {
-                name: "AuctionsButton1BuyoutFrame"
-                wowParent: "AuctionsButton1"
-                anchors.right: parent.right
-                anchors.top: parent.bottom
-                anchors.topMargin: 1
-                width: 197
-                height: 13
-
-                Frame {
-                    name: "AuctionsButton1BuyoutFrameMoney"
-                    wowParent: "AuctionsButton1BuyoutFrame"
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 107.3
-                    height: 13
-
-                    Button {
-                        id: auctionsButton1BuyoutFrameMoneyCopperButton
-                        name: "AuctionsButton1BuyoutFrameMoneyCopperButton"
-                        text: "0"
-                        wowParent: "AuctionsButton1BuyoutFrameMoney"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 32
-                        height: 13
-
-                        FontString {
-                            name: "AuctionsButton1BuyoutFrameMoneyCopperButtonText"
-                            text: "0"
-                            wowParent: "AuctionsButton1BuyoutFrameMoneyCopperButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 9.4
-                            height: 13.6
-                        }
-                    }
-
-                    Button {
-                        name: "AuctionsButton1BuyoutFrameMoneyGoldButton"
-                        text: "9"
-                        wowParent: "AuctionsButton1BuyoutFrameMoney"
-                        anchors.right: auctionsButton1BuyoutFrameMoneySilverButton.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: auctionsButton1BuyoutFrameMoneySilverButton.verticalCenter
-                        width: 22.3
-                        height: 13
-
-                        FontString {
-                            name: "AuctionsButton1BuyoutFrameMoneyGoldButtonText"
-                            text: "9"
-                            wowParent: "AuctionsButton1BuyoutFrameMoneyGoldButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 9.4
-                            height: 13.6
-                        }
-                    }
-
-                    Button {
-                        id: auctionsButton1BuyoutFrameMoneySilverButton
-                        name: "AuctionsButton1BuyoutFrameMoneySilverButton"
-                        text: "80"
-                        wowParent: "AuctionsButton1BuyoutFrameMoney"
-                        anchors.right: auctionsButton1BuyoutFrameMoneyCopperButton.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: auctionsButton1BuyoutFrameMoneyCopperButton.verticalCenter
-                        width: 32
-                        height: 13
-
-                        FontString {
-                            name: "AuctionsButton1BuyoutFrameMoneySilverButtonText"
-                            text: "80"
-                            wowParent: "AuctionsButton1BuyoutFrameMoneySilverButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 15.8
-                            height: 13.6
-                        }
-                    }
-                }
-
-                Frame {
-                    name: "AuctionsButton1BuyoutFrameText"
-                    wowParent: "AuctionsButton1BuyoutFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    width: 87.6
-                    height: 13
-                }
-            }
-
-            Button {
-                id: auctionsButton1MoneyFrameCopperButton
-                name: "AuctionsButton1MoneyFrameCopperButton"
-                text: "0"
-                wowParent: "AuctionsButton1MoneyFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 32
-                height: 13
-
-                FontString {
-                    name: "AuctionsButton1MoneyFrameCopperButtonText"
-                    text: "0"
-                    wowParent: "AuctionsButton1MoneyFrameCopperButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 9.4
-                    height: 13.6
-                }
-            }
-
-            Button {
-                name: "AuctionsButton1MoneyFrameGoldButton"
-                text: "9"
-                wowParent: "AuctionsButton1MoneyFrame"
-                anchors.right: auctionsButton1MoneyFrameSilverButton.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: auctionsButton1MoneyFrameSilverButton.verticalCenter
-                width: 22.3
-                height: 13
-
-                FontString {
-                    name: "AuctionsButton1MoneyFrameGoldButtonText"
-                    text: "9"
-                    wowParent: "AuctionsButton1MoneyFrameGoldButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 9.4
-                    height: 13.6
-                }
-            }
-
-            Button {
-                id: auctionsButton1MoneyFrameSilverButton
-                name: "AuctionsButton1MoneyFrameSilverButton"
-                text: "31"
-                wowParent: "AuctionsButton1MoneyFrame"
-                anchors.right: auctionsButton1MoneyFrameCopperButton.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: auctionsButton1MoneyFrameCopperButton.verticalCenter
-                width: 32
-                height: 13
-
-                FontString {
-                    name: "AuctionsButton1MoneyFrameSilverButtonText"
-                    text: "31"
-                    wowParent: "AuctionsButton1MoneyFrameSilverButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 14.4
-                    height: 13.6
-                }
-            }
-        }
-
-        FontString {
-            name: "AuctionsButton1Name"
-            text: "Packet of Tharlendris Seeds"
-            wowParent: "AuctionsButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 43
-            anchors.top: parent.top
-            width: 142
-            height: 28
-        }
-    }
-
-    Button {
-        id: auctionsDurationSort
-        name: "AuctionsDurationSort"
-        text: "Time Left"
-        wowParent: "AuctionFrameAuctions"
-        anchors.left: auctionsQualitySort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: auctionsQualitySort.verticalCenter
-        width: 100
-        height: 19
-
-        FontString {
-            name: "AuctionsDurationSortText"
-            text: "Time Left"
-            wowParent: "AuctionsDurationSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 48.1
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: auctionsHighBidderSort
-        name: "AuctionsHighBidderSort"
-        text: "High Bidder"
-        wowParent: "AuctionFrameAuctions"
-        anchors.left: auctionsDurationSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: auctionsDurationSort.verticalCenter
-        width: 108
-        height: 19
-
-        FontString {
-            name: "AuctionsHighBidderSortText"
-            text: "High Bidder"
-            wowParent: "AuctionsHighBidderSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 61.1
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: auctionsQualitySort
-        name: "AuctionsQualitySort"
-        text: "Rarity"
-        wowParent: "AuctionFrameAuctions"
-        anchors.left: parent.left
-        anchors.leftMargin: 224
-        anchors.top: parent.top
-        anchors.topMargin: 50
-        width: 185
-        height: 19
-
-        FontString {
-            name: "AuctionsQualitySortText"
-            text: "Rarity"
-            wowParent: "AuctionsQualitySort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 29.5
-            height: 10.1
-        }
-    }
-
-    ScrollFrame {
-        name: "AuctionsScrollFrame"
-        wowParent: "AuctionFrameAuctions"
-        anchors.right: parent.left
-        anchors.rightMargin: -803
-        anchors.top: parent.top
-        anchors.topMargin: 71
-        width: 435
-        height: 338
-
-        Slider {
-            name: "AuctionsScrollFrameScrollBar"
-            wowParent: "AuctionsScrollFrame"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 306
-
-            Button {
-                name: "AuctionsScrollFrameScrollBarScrollDownButton"
-                wowParent: "AuctionsScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                width: 16
-                height: 16
-            }
-
-            Button {
-                name: "AuctionsScrollFrameScrollBarScrollUpButton"
-                wowParent: "AuctionsScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
-
-                Frame {
-                    name: "AuctionsScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "AuctionsScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 340
-                }
-            }
-        }
-
-        Frame {
-            name: "AuctionsScrollFrameScrollChildFrame"
-            wowParent: "AuctionsScrollFrame"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 300
-            height: 555
-        }
-    }
-
-    Button {
-        name: "BidBidSort"
-        text: "Current Bid"
-        wowParent: "AuctionFrameBid"
-        anchors.left: bidStatusSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: bidStatusSort.verticalCenter
-        width: 169
-        height: 19
-
-        FontString {
-            name: "BidBidSortText"
-            text: "Current Bid"
-            wowParent: "BidBidSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 57.5
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: bidBuyoutSort
-        name: "BidBuyoutSort"
-        text: "Buyout Price"
-        wowParent: "AuctionFrameBid"
-        anchors.left: bidDurationSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: bidDurationSort.verticalCenter
-        width: 162
-        height: 19
-
-        FontString {
-            name: "BidBuyoutSortText"
-            text: "Buyout Price"
-            wowParent: "BidBuyoutSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 63.9
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: bidDurationSort
-        name: "BidDurationSort"
-        text: "Time Left"
-        wowParent: "AuctionFrameBid"
-        anchors.left: bidLevelSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: bidLevelSort.verticalCenter
-        width: 79
-        height: 19
-
-        FontString {
-            name: "BidDurationSortText"
-            text: "Time Left"
-            wowParent: "BidDurationSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 48.1
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: bidLevelSort
-        name: "BidLevelSort"
-        text: "Lvl"
-        wowParent: "AuctionFrameBid"
-        anchors.left: bidQualitySort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: bidQualitySort.verticalCenter
-        width: 65
-        height: 19
-
-        FontString {
-            name: "BidLevelSortText"
-            text: "Lvl"
-            wowParent: "BidLevelSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 15.1
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: bidQualitySort
-        name: "BidQualitySort"
-        text: "Rarity"
-        wowParent: "AuctionFrameBid"
-        anchors.left: parent.left
-        anchors.leftMargin: 57
-        anchors.top: parent.top
-        anchors.topMargin: 50
-        width: 195
-        height: 19
-
-        FontString {
-            name: "BidQualitySortText"
-            text: "Rarity"
-            wowParent: "BidQualitySort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 29.5
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: bidStatusSort
-        name: "BidStatusSort"
-        text: "Bid Status"
-        wowParent: "AuctionFrameBid"
-        anchors.left: bidBuyoutSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: bidBuyoutSort.verticalCenter
-        width: 94
-        height: 19
-
-        FontString {
-            name: "BidStatusSortText"
-            text: "Bid Status"
-            wowParent: "BidStatusSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 51
-            height: 10.1
-        }
-    }
-
-    Button {
-        name: "BrowseButton1"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: parent.left
-        anchors.leftMargin: 196
-        anchors.top: parent.top
-        anchors.topMargin: 103
-        width: 600
-        height: 37
-
-        Frame {
-            name: "BrowseButton1ClosingTime"
-            wowParent: "BrowseButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 267
-            anchors.top: parent.top
-            width: 65
-            height: 32
-
-            FontString {
-                name: "BrowseButton1ClosingTimeText"
-                text: "Very Long"
-                wowParent: "BrowseButton1ClosingTime"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 65
-                height: 32
-            }
-        }
-
-        FontString {
-            name: "BrowseButton1HighBidder"
-            text: "Kovasky"
-            wowParent: "BrowseButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 345
-            anchors.top: parent.top
-            width: 78
-            height: 32
-        }
-
-        Button {
-            name: "BrowseButton1Item"
-            wowParent: "BrowseButton1"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 32
-            height: 32
-
-            FontString {
-                name: "BrowseButton1ItemCount"
-                text: "20"
-                wowParent: "BrowseButton1Item"
-                anchors.right: parent.right
-                anchors.rightMargin: 5
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 2
-                width: 15.8
-                height: 13.6
-            }
-        }
-
-        FontString {
-            name: "BrowseButton1Level"
-            text: "80"
-            wowParent: "BrowseButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 205
-            anchors.top: parent.top
-            width: 52
-            height: 32
-        }
-
-        Frame {
-            name: "BrowseButton1MoneyFrame"
-            wowParent: "BrowseButton1"
-            anchors.right: parent.right
-            anchors.rightMargin: -10
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -10
-            width: 120.3
-            height: 13
-
-            Frame {
-                name: "BrowseButton1BuyoutFrame"
-                wowParent: "BrowseButton1"
-                anchors.right: parent.right
-                anchors.top: parent.bottom
-                anchors.topMargin: 1
-                width: 185
-                height: 13
-
-                Frame {
-                    name: "BrowseButton1BuyoutFrameMoney"
-                    wowParent: "BrowseButton1BuyoutFrame"
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 120.3
-                    height: 13
-
-                    Button {
-                        id: browseButton1BuyoutFrameMoneyCopperButton
-                        name: "BrowseButton1BuyoutFrameMoneyCopperButton"
-                        text: "0"
-                        wowParent: "BrowseButton1BuyoutFrameMoney"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 32
-                        height: 13
-
-                        FontString {
-                            name: "BrowseButton1BuyoutFrameMoneyCopperButtonText"
-                            text: "0"
-                            wowParent: "BrowseButton1BuyoutFrameMoneyCopperButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 9.4
-                            height: 13.6
-                        }
-                    }
-
-                    Button {
-                        name: "BrowseButton1BuyoutFrameMoneyGoldButton"
-                        text: "249"
-                        wowParent: "BrowseButton1BuyoutFrameMoney"
-                        anchors.right: browseButton1BuyoutFrameMoneySilverButton.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
-                        width: 35.3
-                        height: 13
-
-                        FontString {
-                            name: "BrowseButton1BuyoutFrameMoneyGoldButtonText"
-                            text: "249"
-                            wowParent: "BrowseButton1BuyoutFrameMoneyGoldButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 22.3
-                            height: 13.6
-                        }
-                    }
-
-                    Button {
-                        id: browseButton1BuyoutFrameMoneySilverButton
-                        name: "BrowseButton1BuyoutFrameMoneySilverButton"
-                        text: "75"
-                        wowParent: "BrowseButton1BuyoutFrameMoney"
-                        anchors.right: browseButton1BuyoutFrameMoneyCopperButton.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
-                        width: 32
-                        height: 13
-
-                        FontString {
-                            name: "BrowseButton1BuyoutFrameMoneySilverButtonText"
-                            text: "75"
-                            wowParent: "BrowseButton1BuyoutFrameMoneySilverButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 16.5
-                            height: 13.6
-                        }
-                    }
-                }
-
-                Frame {
-                    name: "BrowseButton1BuyoutFrameText"
-                    wowParent: "BrowseButton1BuyoutFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    width: 62.7
-                    height: 13
-                }
-            }
-
-            Button {
-                id: browseButton1MoneyFrameCopperButton
-                name: "BrowseButton1MoneyFrameCopperButton"
-                text: "25"
-                wowParent: "BrowseButton1MoneyFrame"
-                anchors.right: parent.right
-                anchors.rightMargin: 13
-                anchors.verticalCenter: parent.verticalCenter
-                width: 32
-                height: 13
-
-                FontString {
-                    name: "BrowseButton1MoneyFrameCopperButtonText"
-                    text: "25"
-                    wowParent: "BrowseButton1MoneyFrameCopperButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 16.5
-                    height: 13.6
-                }
-            }
-
-            Button {
-                name: "BrowseButton1MoneyFrameGoldButton"
-                text: "237"
-                wowParent: "BrowseButton1MoneyFrame"
-                anchors.right: browseButton1MoneyFrameSilverButton.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: browseButton1MoneyFrameSilverButton.verticalCenter
-                width: 35.3
-                height: 13
-
-                FontString {
-                    name: "BrowseButton1MoneyFrameGoldButtonText"
-                    text: "237"
-                    wowParent: "BrowseButton1MoneyFrameGoldButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 22.3
-                    height: 13.6
-                }
-            }
-
-            Button {
-                id: browseButton1MoneyFrameSilverButton
-                name: "BrowseButton1MoneyFrameSilverButton"
-                text: "26"
-                wowParent: "BrowseButton1MoneyFrame"
-                anchors.right: browseButton1MoneyFrameCopperButton.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: browseButton1MoneyFrameCopperButton.verticalCenter
-                width: 32
-                height: 13
-
-                FontString {
-                    name: "BrowseButton1MoneyFrameSilverButtonText"
-                    text: "26"
-                    wowParent: "BrowseButton1MoneyFrameSilverButton"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 15.8
-                    height: 13.6
-                }
-            }
-        }
-
-        FontString {
-            name: "BrowseButton1Name"
-            text: "Durable Nerubhide Cape"
-            wowParent: "BrowseButton1"
-            anchors.left: parent.left
-            anchors.leftMargin: 43
-            anchors.top: parent.top
-            width: 167
-            height: 32
-        }
-    }
-
-    Button {
-        name: "BrowseCurrentBidSort"
-        text: "Current Bid"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: browseHighBidderSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: browseHighBidderSort.verticalCenter
-        width: 207
-        height: 19
-
-        FontString {
-            name: "BrowseCurrentBidSortText"
-            text: "Current Bid"
-            wowParent: "BrowseCurrentBidSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 57.5
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: browseDurationSort
-        name: "BrowseDurationSort"
-        text: "Time Left"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: browseLevelSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: browseLevelSort.verticalCenter
-        width: 91
-        height: 19
-
-        FontString {
-            name: "BrowseDurationSortText"
-            text: "Time Left"
-            wowParent: "BrowseDurationSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 48.1
-            height: 10.1
-        }
-    }
-
-    ScrollFrame {
-        name: "BrowseFilterScrollFrame"
-        wowParent: "AuctionFrameBrowse"
-        anchors.right: parent.left
-        anchors.rightMargin: -138
-        anchors.top: parent.top
-        anchors.topMargin: 82
-        width: 160
-        height: 327
-
-        Slider {
-            name: "BrowseFilterScrollFrameScrollBar"
-            wowParent: "BrowseFilterScrollFrame"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 295
-
-            Button {
-                name: "BrowseFilterScrollFrameScrollBarScrollDownButton"
-                wowParent: "BrowseFilterScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                width: 16
-                height: 16
-            }
-
-            Button {
-                name: "BrowseFilterScrollFrameScrollBarScrollUpButton"
-                wowParent: "BrowseFilterScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
-
-                Frame {
-                    name: "BrowseFilterScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "BrowseFilterScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 329
-                }
-            }
-        }
-
-        Frame {
-            name: "BrowseFilterScrollFrameScrollChildFrame"
-            wowParent: "BrowseFilterScrollFrame"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 300
-            height: 420
-        }
-    }
-
-    Button {
-        id: browseHighBidderSort
-        name: "BrowseHighBidderSort"
-        text: "Seller"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: browseDurationSort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: browseDurationSort.verticalCenter
-        width: 76
-        height: 19
-
-        FontString {
-            name: "BrowseHighBidderSortText"
-            text: "Seller"
-            wowParent: "BrowseHighBidderSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30.2
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: browseLevelSort
-        name: "BrowseLevelSort"
-        text: "Lvl"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: browseQualitySort.right
-        anchors.leftMargin: -2
-        anchors.verticalCenter: browseQualitySort.verticalCenter
-        width: 57
-        height: 19
-
-        FontString {
-            name: "BrowseLevelSortText"
-            text: "Lvl"
-            wowParent: "BrowseLevelSort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 15.1
-            height: 10.1
-        }
-    }
-
-    Button {
-        id: browseNextPageButton
-        name: "BrowseNextPageButton"
-        wowParent: "AuctionFrameBrowse"
-        anchors.right: parent.left
-        anchors.rightMargin: -840
-        anchors.verticalCenter: parent.top
-        anchors.verticalCenterOffset: 58
-        width: 24
-        height: 24
-    }
-
-    FontString {
-        name: "BrowseNoResultsText"
-        text: "Choose search criteria and press \"Search\""
-        wowParent: "AuctionFrameBrowse"
-        anchors.horizontalCenter: parent.left
-        anchors.horizontalCenterOffset: 509
-        anchors.top: parent.top
-        anchors.topMargin: 118
-        width: 252.1
-        height: 12.2
-    }
-
-    Button {
-        name: "BrowsePrevPageButton"
-        wowParent: "AuctionFrameBrowse"
-        anchors.right: browseNextPageButton.left
-        anchors.rightMargin: 4
-        anchors.verticalCenter: browseNextPageButton.verticalCenter
-        width: 24
-        height: 24
-    }
-
-    Button {
-        id: browseQualitySort
-        name: "BrowseQualitySort"
-        text: "Rarity"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: parent.left
-        anchors.leftMargin: 187
-        anchors.top: parent.top
-        anchors.topMargin: 82
-        width: 214
-        height: 19
-
-        FontString {
-            name: "BrowseQualitySortText"
-            text: "Rarity"
-            wowParent: "BrowseQualitySort"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 29.5
-            height: 10.1
-        }
-    }
-
-    Button {
-        name: "BrowseResetButton"
-        text: "Reset"
-        wowParent: "AuctionFrameBrowse"
-        style: "Button"
-        anchors.left: parent.left
-        anchors.leftMargin: -8
-        anchors.top: parent.top
-        anchors.topMargin: 46
-        width: 178
-        height: 24
-
-        FontString {
-            name: "BrowseResetButtonText"
-            text: "Reset"
-            wowParent: "BrowseResetButton"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30.2
-            height: 10.1
-        }
-    }
-
-    ScrollFrame {
-        name: "BrowseScrollFrame"
-        wowParent: "AuctionFrameBrowse"
-        anchors.right: parent.left
-        anchors.rightMargin: -798
-        anchors.top: parent.top
-        anchors.topMargin: 103
-        width: 465
-        height: 306
-
-        Slider {
-            name: "BrowseScrollFrameScrollBar"
-            wowParent: "BrowseScrollFrame"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 274
-
-            Button {
-                name: "BrowseScrollFrameScrollBarScrollDownButton"
-                wowParent: "BrowseScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
-                width: 16
-                height: 16
-            }
-
-            Button {
-                name: "BrowseScrollFrameScrollBarScrollUpButton"
-                wowParent: "BrowseScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
-
-                Frame {
-                    name: "BrowseScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "BrowseScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 308
-                }
-            }
-        }
-
-        Frame {
-            name: "BrowseScrollFrameScrollChildFrame"
-            wowParent: "BrowseScrollFrame"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 300
-            height: 1887
-        }
-    }
-
-    FontString {
-        name: "BrowseSearchCountText"
-        text: "Items 1 - 18  ( 118 total )"
-        wowParent: "AuctionFrameBrowse"
-        anchors.left: parent.left
-        anchors.leftMargin: 182
-        anchors.verticalCenter: parent.top
-        anchors.verticalCenterOffset: 58
-        width: 121.4
-        height: 10.1
     }
 
     Ghost {

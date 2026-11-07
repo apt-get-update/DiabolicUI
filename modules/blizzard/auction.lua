@@ -1,12 +1,12 @@
--- Gives the auction house's pages one layout on a grid (settings/blizzard.lua
--- auction): under the band Browse's toolbar (Reset over its categories,
--- the results' count and the page arrows over its results), then each
--- page's columns down to the foot, each on slate: the categories, the
--- selling column, the results with their column names on top. Blizzard's
--- Browse, Bids and Auctions pages, and Auctionator's (its own page, under
--- its tabs). The window itself (its band, tabs and foot) is panels.lua's.
--- Places only (and Browse's page numbers, Diablo III's, between its
--- arrows): Blizzard's and Auctionator's code are left as they are.
+-- Gives the auction house's pages one layout: under the band Browse's toolbar
+-- (Reset over its categories, the results' count and the page arrows over
+-- its results), then each page's columns down to the foot, each on slate:
+-- the categories, the selling column, the results with their column names on
+-- top. Blizzard's Browse, Bids and Auctions pages, and Auctionator's (its own
+-- page, under its tabs). The slate zones and what's in them are placed from
+-- windows/AuctionFrame.qml; the window itself (its band, tabs and foot) is
+-- panels.lua's. Browse's page numbers are ours (Diablo III's, between its
+-- arrows); Blizzard's and Auctionator's code are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Auction House", "LOW")
 
@@ -21,7 +21,6 @@ local math_floor = math.floor
 local math_max = math.max
 local math_min = math.min
 local select = select
-local type = type
 local unpack = unpack
 
 -- WoW API
@@ -31,44 +30,31 @@ local GetNumAuctionItems = _G.GetNumAuctionItems
 local hooksecurefunc = _G.hooksecurefunc
 local IsAddOnLoaded = _G.IsAddOnLoaded
 
--- `part` (or the part of that name) placed by its `point` (its top left
--- unless said) `x` right of the auction frame's left and `y` under its top.
-local Place = function(part, x, y, point)
-	part = (type(part) == "string") and _G[part] or part
-	if part then
-		part:ClearAllPoints()
-		part:SetPoint(point or "TOPLEFT", _G.AuctionFrame, "TOPLEFT", x, -y)
-		-- (kept where it is: panels' raise and lower are for what's not ours)
-		part.DiabolicRaised, part.DiabolicLowered = true, true
+-- Each part named is placed from windows/AuctionFrame.qml: kept where it
+-- is (panels' raise and lower are for what's not ours).
+local Ours = function(...)
+	for i = 1, select("#", ...) do
+		local part = _G[select(i, ...)]
+		if part then
+			part.DiabolicRaised, part.DiabolicLowered = true, true
+		end
 	end
-	return part
 end
 
--- A zone of slate on `page` from `left`, `top` to `right`, `bottom`, under
--- what the page holds (shown with it).
-local Zone = function(page, left, top, right, bottom)
-	local holder = CreateFrame("Frame", nil, page)
-	holder:SetPoint("TOPLEFT", _G.AuctionFrame, "TOPLEFT", left, -top)
-	holder:SetPoint("BOTTOMRIGHT", _G.AuctionFrame, "TOPLEFT", right, -bottom)
+-- A zone of slate named `name` on `page`, under what the page holds (shown
+-- with it), placed and sized from windows/AuctionFrame.qml.
+local Zone = function(page, name)
+	local holder = CreateFrame("Frame", name, page)
+	Engine:GetModule("Blizzard: Adjust"):Add(name)
 	return kit:AddZone(holder, "slate", { 0, 0, 0, 0 }, page)
 end
 
--- A list of results on `page` in `left`..`right` from `top` down to the
--- content's bottom, on slate: its rows (from `row`, the first) and their
--- scroll bar (`spec.width` wide in all) in its middle; its column names
--- (from `header`, the first) along its top, `spec.row_from` left of the
--- rows; its scroll frame `list` `spec.reach` right of the rows' left
--- (Blizzard's: its bar by their end).
-Module.PlaceResults = function(self, page, left, top, right, header, row, list, spec)
-	local config = self.config
-	local bottom = config.content.bottom
-	Zone(page, left, top, right, bottom)
-	local x, y = math_floor(left + (right - left - spec.width) / 2), top + config.pad
-	Place(header, x - spec.row_from, y)
-	local rowsTop = y + config.header_height + config.row_gap
-	Place(row, x, rowsTop)
-	local scroll = Place(list, x + spec.reach, rowsTop, "TOPRIGHT")
-	scroll:SetHeight(bottom - config.pad - rowsTop)
+-- A list of results on `page`, on slate (the zone `name`): its column names
+-- (from `header`, the first) along its top, its rows (from `row`, the first)
+-- and their scroll frame `list` (Blizzard's: its bar by their end) under them.
+Module.PlaceResults = function(self, page, name, header, row, list)
+	Zone(page, name)
+	Ours(header, row, list)
 end
 
 -- A category's button as our flat red one (a subcategory's fainter, an
@@ -99,26 +85,15 @@ end
 -- under it.
 Module.PlaceBrowse = function(self)
 	local config = self.config
-	local spec, content = config.browse, config.content
 	local page = _G.AuctionFrameBrowse
-	local top, middle = content.top, content.top + config.toolbar / 2
-	local split = content.left + spec.column
-	local zoneTop = top + config.toolbar + config.gap
 
-	local reset = Place("BrowseResetButton", content.left, top)
-	reset:SetSize(spec.column, config.toolbar)
-	Place("BrowseSearchCountText", split + config.gap + config.pad, middle, "LEFT")
-	local nextPage = Place("BrowseNextPageButton", content.right, middle, "RIGHT")
-	nextPage:SetSize(config.toolbar, config.toolbar)
-	local previous = _G.BrowsePrevPageButton
-	previous:ClearAllPoints()
-	previous:SetPoint("RIGHT", nextPage, "LEFT", -config.arrow_gap, 0)
-	previous:SetSize(config.toolbar, config.toolbar)
+	-- (the previous page's arrow left of the numbers: CreatePages)
+	Ours("BrowseResetButton", "BrowseSearchCountText", "BrowseNextPageButton")
+	_G.BrowsePrevPageButton:SetSize(config.toolbar, config.toolbar)
 
 	-- the categories: their buttons, their scroll bar beside them
-	Zone(page, content.left, zoneTop, split, content.bottom)
-	local x, y = content.left + spec.inset, zoneTop + config.pad
-	Place("AuctionFilterButton1", x, y)
+	Zone(page, "AuctionFrameBrowseDiabolicCategories")
+	Ours("AuctionFilterButton1", "BrowseFilterScrollFrame", "BrowseNoResultsText")
 	local i = 1
 	while _G["AuctionFilterButton" .. i] do
 		StyleFilter(_G["AuctionFilterButton" .. i])
@@ -127,12 +102,8 @@ Module.PlaceBrowse = function(self)
 	if _G.FilterButton_SetType then
 		hooksecurefunc("FilterButton_SetType", StyleFilter)
 	end
-	local filters = Place("BrowseFilterScrollFrame", x + spec.filter_width, y, "TOPRIGHT")
-	filters:SetHeight(content.bottom - config.pad - y)
 
-	local left = split + config.gap
-	self:PlaceResults(page, left, zoneTop, content.right, "BrowseQualitySort", "BrowseButton1", "BrowseScrollFrame", spec)
-	Place("BrowseNoResultsText", (left + content.right) / 2, zoneTop + spec.no_results_y, "TOP")
+	self:PlaceResults(page, "AuctionFrameBrowseDiabolicResults", "BrowseQualitySort", "BrowseButton1", "BrowseScrollFrame")
 end
 
 -- Browse's pages as Diablo III's: up to `pages.shown` numbers between its
@@ -195,9 +166,7 @@ end
 
 -- Bids: its results across the page.
 Module.PlaceBids = function(self)
-	local content = self.config.content
-	self:PlaceResults(_G.AuctionFrameBid, content.left, content.top, content.right, "BidQualitySort", "BidButton1",
-		"BidScrollFrame", self.config.bids)
+	self:PlaceResults(_G.AuctionFrameBid, "AuctionFrameBidDiabolicResults", "BidQualitySort", "BidButton1", "BidScrollFrame")
 end
 
 -- What's placed on `holder` by its top (by one point) moved by `move`
@@ -221,11 +190,9 @@ end
 -- Auctions: the selling column (Blizzard's parts placed from the page's
 -- left, moved as one) and its results.
 Module.PlaceAuctions = function(self)
-	local config = self.config
-	local content, spec = config.content, config.auctions
+	local spec = self.config.auctions
 	local page = _G.AuctionFrameAuctions
-	local split = content.left + spec.column
-	Zone(page, content.left, content.top, split, content.bottom)
+	Zone(page, "AuctionFrameAuctionsDiabolicSelling")
 	-- (by where they are: a dropdown is placed by its right)
 	local Left = function(relativePoint, x, left)
 		return relativePoint:find("LEFT$") and (left < spec.column)
@@ -239,8 +206,8 @@ Module.PlaceAuctions = function(self)
 	slot:SetPoint("CENTER")
 	slot:SetSize(button:GetWidth() * spec.slot_scale, button:GetHeight() * spec.slot_scale)
 	kit:AddBorder(button, button:GetWidth())
-	self:PlaceResults(page, split + config.gap, content.top, content.right, "AuctionsQualitySort", "AuctionsButton1",
-		"AuctionsScrollFrame", spec)
+	self:PlaceResults(page, "AuctionFrameAuctionsDiabolicResults", "AuctionsQualitySort", "AuctionsButton1",
+		"AuctionsScrollFrame")
 end
 
 -- Auctionator's page (it makes it as the auction house loads; placed as
@@ -254,11 +221,9 @@ Module.PlaceAuctionator = function(self)
 		return
 	end
 	page.DiabolicPlaced = true
-	local config = self.config
-	local content, spec = config.content, config.auctionator
-	local split = content.left + spec.column
-	Zone(page, content.left, content.top, split, content.bottom)
-	Zone(page, split + config.gap, content.top, content.right, content.bottom)
+	local spec = self.config.auctionator
+	Zone(page, "Atr_Main_PanelDiabolicLeft")
+	Zone(page, "Atr_Main_PanelDiabolicRight")
 	local Left = function(relativePoint, x)
 		return (relativePoint == "TOPLEFT") and (x < 0)
 	end

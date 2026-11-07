@@ -317,12 +317,8 @@ Engine:NewStaticConfig("Blizzard", {
 	-- in its frame's units from its top left (y down); its window, band,
 	-- tabs and foot are panels'
 	auction = {
-		-- the content's room: 16 in from the window's sides, 6 under the
-		-- band, 6 over the foot's iron bar
-		content = { left = -8, right = 840, top = 46, bottom = 413 },
-		gap = 8, -- between two zones, and under the toolbar
-		pad = 4, -- a zone's parts in from its edges
-		toolbar = 24, -- Browse's row under the band: Reset, the results' count, the page arrows
+		-- (its slate zones and what's in them: windows/AuctionFrame.qml)
+		toolbar = 24, -- Browse's previous page's arrow (its next's: the QML's)
 		arrow_gap = 4,
 		-- Browse's page numbers between its arrows, as Diablo III's: small
 		-- dark squares in a thin bronze line, the page shown boxed in orange
@@ -334,28 +330,17 @@ Engine:NewStaticConfig("Blizzard", {
 			border = { .45, .36, .22, 1 }, text_color = { .72, .68, .62 },
 			shown_border = { 1, .6, .15, 1 }, shown_color = { 1, 1, 1 }
 		},
-		row_gap = 2, -- the first row under its column names
-		header_height = 19,
-		-- each page's results: their rows and scroll bar `width` wide in all
-		-- (their rows' widest, without the bar: Blizzard's), in the middle of
-		-- their zone; their rows that far right of their column names (Bids':
-		-- left, their icon), their scroll frame's right that far right of
-		-- the rows' left (Blizzard's)
-		-- Browse: the categories' column too (their buttons and a scroll bar
-		-- beside them, `inset` in from its sides), "no results" that far under
-		-- the results' top; its categories' buttons red by their kind (a
-		-- category, a subcategory, an item type)
-		browse = { column = 178, inset = 10, filter_width = 136, width = 625, row_from = 9, reach = 602, no_results_y = 40,
-			filter_alpha = { class = 1, subclass = .45, invtype = 0 } },
-		bids = { width = 793, row_from = -38, reach = 771 },
-		-- Auctions: the selling column too (Blizzard's parts, moved as one:
-		-- right, up; its item's slot dark, framed)
-		auctions = { column = 210, width = 601, row_from = 0, reach = 579, move = { -16, 2 },
+		-- Browse's categories' buttons red by their kind (a category, a
+		-- subcategory, an item type)
+		browse = { filter_alpha = { class = 1, subclass = .45, invtype = 0 } },
+		-- Auctions: Blizzard's selling column (its parts left of `column` on the
+		-- page), moved as one (right, up); its item's slot dark, framed
+		auctions = { column = 210, move = { -16, 2 },
 			slot_texture = path .. [[textures\DiabolicUI_Button_64x64_Backdrop.tga]], slot_scale = 2 },
 		-- Auctionator's page: its left column (its history, shopping lists
 		-- or selling column) and the rest (the recommended price, its
 		-- results), each moved as one (right, up)
-		auctionator = { column = 212, left_move = { -15, 25 }, right_move = { 10, 25 } },
+		auctionator = { left_move = { -15, 25 }, right_move = { 10, 25 } },
 	},
 	mail = {
 		insets = { 16, 68, 0, -50 }, -- up over the band and the tabs

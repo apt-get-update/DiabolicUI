@@ -105,34 +105,37 @@ end
 function TestAuctionHouse:test_browse_on_the_grid()
 	open()
 	page(1)
-	local config = client.Engine:GetDB("Blizzard").auction
-	local content = config.content
-	-- the toolbar under the band: Reset over the categories, the arrows at
-	-- the right end
-	local left, top, right, bottom = edges(_G.BrowseResetButton)
-	lu.assertEquals({ left, top, right, bottom }, { content.left, content.top, content.left + config.browse.column,
-		content.top + config.toolbar })
-	lu.assertEquals(select(3, edges(_G.BrowseNextPageButton)), content.right)
-	-- the categories and the results side by side under it, tops and
-	-- bottoms lined up, apart by the gap; the column names on the results
+	-- (placed from windows/AuctionFrame.qml)
+	local positions = client.Engine:GetDB("Positions")
+	local spot = positions.AuctionFrameBrowseDiabolicCategories
+	-- the categories and the results side by side, tops and bottoms lined
+	-- up; the column names on the results
 	local categories, results = unpack(zones(_G.AuctionFrameBrowse))
-	local zoneTop = content.top + config.toolbar + config.gap
-	lu.assertEquals({ edges(categories) }, { content.left, zoneTop, content.left + config.browse.column, content.bottom })
-	lu.assertEquals({ edges(results) }, { content.left + config.browse.column + config.gap, zoneTop, content.right, content.bottom })
+	local left, top, right, bottom = edges(categories)
+	lu.assertEquals({ left, top, right - left, bottom - top }, { spot[4], -spot[5], spot[6], spot[7] })
+	local _, resultsTop, _, resultsBottom = edges(results)
+	lu.assertEquals({ resultsTop, resultsBottom }, { top, bottom })
+	lu.assertTrue(select(1, edges(results)) > right)
+	-- the toolbar over them: Reset over the categories, the arrows at the
+	-- results' right end
+	local resetLeft, _, resetRight, resetBottom = edges(_G.BrowseResetButton)
+	lu.assertEquals({ resetLeft, resetRight }, { left, right })
+	lu.assertTrue(resetBottom < top)
+	lu.assertEquals(select(3, edges(_G.BrowseNextPageButton)), select(3, edges(results)))
 	local headerLeft, headerTop = edges(_G.BrowseQualitySort)
-	lu.assertEquals(headerTop, zoneTop + config.pad)
+	lu.assertEquals(headerTop, top - positions.BrowseQualitySort[5])
 	lu.assertTrue(headerLeft > select(1, edges(results)))
 	assertClean(client)
 end
 
 function TestAuctionHouse:test_bids_and_auctions_rows_in_their_zones_middle()
 	open()
-	local content = client.Engine:GetDB("Blizzard").auction.content
 	-- Bids' rows (their icon too) as far from the zone's sides, the bar
 	-- by their end
 	page(2)
 	local left, _, right = edges(_G.BidButton1)
-	lu.assertTrue(math.abs((left - content.left) - (content.right - right)) <= 1)
+	local zoneLeft, _, zoneRight = edges(zones(_G.AuctionFrameBid)[1])
+	lu.assertTrue(math.abs((left - zoneLeft) - (zoneRight - right)) <= 1)
 	-- Auctions' item in a dark slot of ours
 	page(3)
 	local button, found = _G.AuctionsItemButton, false
@@ -213,13 +216,15 @@ end
 function TestAuctionHouse:test_auctionators_page_on_the_grid()
 	open(true)
 	page(5)
-	local config = client.Engine:GetDB("Blizzard").auction
-	local content = config.content
-	-- its two columns on slate across the content
+	-- its two columns on slate across the content, as the auctions' (made as it
+	-- first shows: placed then, windows/AuctionFrame.qml)
 	local column, rest = unpack(zones(_G.Atr_Main_Panel))
-	local split = content.left + config.auctionator.column
-	lu.assertEquals({ edges(column) }, { content.left, content.top, split, content.bottom })
-	lu.assertEquals({ edges(rest) }, { split + config.gap, content.top, content.right, content.bottom })
+	local spot = client.Engine:GetDB("Positions").Atr_Main_PanelDiabolicLeft
+	local left, top, right, bottom = edges(column)
+	lu.assertEquals({ left, top, right - left, bottom - top }, { spot[4], -spot[5], spot[6], spot[7] })
+	local restLeft, restTop, _, restBottom = edges(rest)
+	lu.assertEquals({ restTop, restBottom }, { top, bottom })
+	lu.assertTrue(restLeft > right)
 	-- its own black and its headings' bar gone
 	lu.assertNil(_G.Atr_Hlist:GetBackdrop())
 	lu.assertEquals(_G.Atr_HeadingsBarMiddle:GetAlpha(), 0)

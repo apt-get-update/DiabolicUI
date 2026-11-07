@@ -12,20 +12,50 @@ Engine:NewStaticConfig("Positions", {
 	-- AuctionFrame ----------------------------------------------------------
 	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 548, 7, 84.3, 22 }, -- Button "Buy"
 	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auction"
+	-- Auctionator's left column (its parts: auction.lua)
+	Atr_Main_PanelDiabolicLeft = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -46, 212, 367 }, -- Frame
+	-- Auctionator's results, right of it
+	Atr_Main_PanelDiabolicRight = { "TOPLEFT", "AuctionFrame", "TOPLEFT", 212, -46, 628, 367 }, -- Frame
+	AuctionFilterButton1 = { "TOPLEFT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 10, -4 }, -- Button "Weapon"
+	-- Auctions' results, right of it
+	AuctionFrameAuctionsDiabolicResults = { "TOPLEFT", "AuctionFrame", "TOPLEFT", 210, -46, 630, 367 }, -- Frame
+	-- Auctions' selling column (Blizzard's parts: auction.lua)
+	AuctionFrameAuctionsDiabolicSelling = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -46, 210, 367 }, -- Frame
+	-- Bids' results, across the page
+	AuctionFrameBidDiabolicResults = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -46, 848, 367 }, -- Frame
+	-- Browse's categories, under its toolbar
+	AuctionFrameBrowseDiabolicCategories = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -78, 178, 335 }, -- Frame
+	-- Browse's results, right of the categories
+	AuctionFrameBrowseDiabolicResults = { "TOPLEFT", "AuctionFrame", "TOPLEFT", 178, -78, 662, 335 }, -- Frame
 	AuctionFrameDiabolicFoot = { "BOTTOMLEFT", "AuctionFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	AuctionFrameMoneyFrame = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 182, 13 }, -- Frame
 	AuctionatorCloseButton = { "LEFT", "Atr_CancelSelectionButton", "RIGHT", 6, 0, 74.9, 22 }, -- Button "Close"
+	AuctionsButton1 = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -25 }, -- Button
 	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 621, 7, 121.1, 22 }, -- Button "Cancel Auction"
 	AuctionsCloseButton = { "LEFT", "AuctionsCancelAuctionButton", "RIGHT", 6, 0, 76.9, 22 }, -- Button "Close"
+	AuctionsQualitySort = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -4 }, -- Button "Rarity"
+	AuctionsScrollFrame = { "TOPRIGHT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 593, -25, 435, 338 }, -- ScrollFrame
 	BidBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
 	BidBidPrice = { "BOTTOM", "AuctionFrameDiabolicFoot", "BOTTOM", -52, 11 }, -- Frame
 	BidBidText = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOM", -151.9, 14 }, -- FontString "Bid"
+	-- its rows (shown with bids: a scan without any doesn't see them)
+	BidButton1 = { "TOPLEFT", "AuctionFrameBidDiabolicResults", "TOPLEFT", 27, -25 }, -- Button
 	BidBuyoutButton = { "LEFT", "BidBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
 	BidCloseButton = { "LEFT", "BidBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
+	BidQualitySort = { "TOPLEFT", "AuctionFrameBidDiabolicResults", "TOPLEFT", 65, -4 }, -- Button "Rarity"
+	BidScrollFrame = { "TOPRIGHT", "AuctionFrameBidDiabolicResults", "TOPLEFT", 798, -25, 625, 338 }, -- ScrollFrame
 	BrowseBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
 	BrowseBidPrice = { "BOTTOM", "AuctionFrameDiabolicFoot", "BOTTOM", -12, 11 }, -- Frame
+	BrowseButton1 = { "TOPLEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 18, -25 }, -- Button
 	BrowseBuyoutButton = { "LEFT", "BrowseBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
 	BrowseCloseButton = { "LEFT", "BrowseBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
+	BrowseFilterScrollFrame = { "TOPRIGHT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 146, -4, 160, 327 }, -- ScrollFrame
+	BrowseNextPageButton = { "RIGHT", "AuctionFrameBrowseDiabolicResults", "TOPRIGHT", 0, 20, 24, 24 }, -- Button
+	BrowseNoResultsText = { "TOP", "AuctionFrameBrowseDiabolicResults", "TOP", 0, -40 }, -- FontString "Choose search criteria and press \"Search\""
+	BrowseQualitySort = { "TOPLEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 9, -4 }, -- Button "Rarity"
+	BrowseResetButton = { "BOTTOMLEFT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 0, 8, 178, 24 }, -- Button "Reset"
+	BrowseScrollFrame = { "TOPRIGHT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 620, -25, 465, 306 }, -- ScrollFrame
+	BrowseSearchCountText = { "LEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 4, 20 }, -- FontString "Items 1 - 18  ( 118 total )"
 
 	-- BattlefieldFrame ------------------------------------------------------
 	BattlefieldFrameCancelButton = { "LEFT", "BattlefieldFrameJoinButton", "RIGHT", 6, 0, 75.6, 22 }, -- Button "Cancel"

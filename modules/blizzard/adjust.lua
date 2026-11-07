@@ -124,6 +124,13 @@ Module.PlaceWaiting = function(self)
 	end
 end
 
+-- A part of ours made after the others were placed (a page's zone, as the
+-- page is styled): followed and placed now, and what waits on it.
+Module.Add = function(self, name)
+	Follow(name)
+	self:PlaceWaiting()
+end
+
 -- `part`'s place as it is: its first anchor, or (on an unnamed frame) its
 -- top left from its first named parent's.
 local PlaceOf = function(part)
