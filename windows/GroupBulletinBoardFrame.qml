@@ -87,6 +87,7 @@ WowWindow {
         Button {
             name: "GroupBulletinBoardFrameSettingsButton"
             wowParent: "GroupBulletinBoardFrame"
+            pin: "place"
             anchors.right: groupBulletinBoardFrameCloseButton.left
             anchors.rightMargin: 6
             anchors.verticalCenter: groupBulletinBoardFrameCloseButton.verticalCenter

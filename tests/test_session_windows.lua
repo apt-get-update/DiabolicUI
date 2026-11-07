@@ -1537,10 +1537,10 @@ function TestBulletinBoard:test_its_window_ours()
 	boot({ world = bulletinBoard })
 	client:FireEvent("ADDON_LOADED", "SomethingElse")
 	client.api.LoadAddOn("GroupBulletinBoard")
-	local config = client.Engine:GetDB("Blizzard").bulletin_board
 	local close, settings = _G.GroupBulletinBoardFrameCloseButton, _G.GroupBulletinBoardFrameSettingsButton
-	-- its settings left of the windows' X
-	lu.assertEquals({ settings:GetPoint() }, { "RIGHT", close, "LEFT", -config.button_gap, 0 })
+	-- its settings left of the windows' X (windows/GroupBulletinBoardFrame.qml)
+	local place = client.Engine:GetDB("Positions").GroupBulletinBoardFrameSettingsButton
+	lu.assertEquals({ settings:GetPoint() }, { "RIGHT", close, "LEFT", place[4], 0 })
 	lu.assertEquals(settings:GetFrameLevel(), close:GetFrameLevel())
 	assertClean(client)
 end

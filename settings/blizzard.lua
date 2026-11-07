@@ -745,7 +745,6 @@ Engine:NewStaticConfig("Blizzard", {
 		insets = { 20, 44, 20, 18 },
 		header_height = 40,
 		header_insets = { 24, 24 },
-		button_gap = 6, -- its settings button, left of the close button
 		list_panel_insets = { 2, 4, 26, 4 } -- its scroll bar inside on the right
 	},
 	-- the Dungeon Finder and the Raid Browser in Diablo III's

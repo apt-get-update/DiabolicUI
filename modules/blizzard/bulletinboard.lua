@@ -27,11 +27,10 @@ Module.StyleBoard = function(self)
 	kit:SetTitle(header, _G.GroupBulletinBoardFrameTitle)
 	local close = _G.GroupBulletinBoardFrameCloseButton
 	kit:StyleClose(close, window, header)
+	-- (its settings button left of it: windows/GroupBulletinBoardFrame.qml)
 	local settings = _G.GroupBulletinBoardFrameSettingsButton
 	if settings then
 		settings:SetFrameLevel(close:GetFrameLevel())
-		settings:ClearAllPoints()
-		settings:SetPoint("RIGHT", close, "LEFT", -config.button_gap, 0)
 	end
 	kit:AddZone(_G.GroupBulletinBoardFrame_ScrollFrame, "slate", config.list_panel_insets)
 	kit:StyleButtons(frame)

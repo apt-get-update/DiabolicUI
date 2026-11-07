@@ -112,6 +112,9 @@ Engine:NewStaticConfig("Positions", {
 	WhoFrameWhoButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 89.4, 22 }, -- Button "Refresh"
 	WhoListScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -67, -62 }, -- ScrollFrame
 
+	-- GroupBulletinBoardFrame -----------------------------------------------
+	GroupBulletinBoardFrameSettingsButton = { "RIGHT", "GroupBulletinBoardFrameCloseButton", "LEFT", -6, 0 }, -- Button
+
 	-- GuildBankFrame --------------------------------------------------------
 	-- the slots, logs and info 27 higher than Blizzard's: as far from the band
 	-- as from the foot's iron bar
