@@ -41,9 +41,19 @@ function TestMinimap:tearDown()
 end
 
 function TestMinimap:test_the_diabolic_look_replaces_blizzards_pieces()
-	for _, name in ipairs({ "MinimapBorder", "MinimapBorderTop", "GameTimeFrame", "MiniMapTracking",
-		"MinimapZoneTextButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapWorldMapButton", "MiniMapMailFrame",
-		"MiniMapInstanceDifficulty", "TimeManagerClockButton" }) do
+	for _, name in ipairs({
+		"MinimapBorder",
+		"MinimapBorderTop",
+		"GameTimeFrame",
+		"MiniMapTracking",
+		"MinimapZoneTextButton",
+		"MinimapZoomIn",
+		"MinimapZoomOut",
+		"MiniMapWorldMapButton",
+		"MiniMapMailFrame",
+		"MiniMapInstanceDifficulty",
+		"TimeManagerClockButton",
+	}) do
 		lu.assertEquals(_G[name]:GetParent(), ns.Hider, name)
 	end
 	-- the dungeon finder eye becomes a border button
@@ -217,7 +227,7 @@ end
 
 function TestMinimap:test_its_art_keeps_its_proportions_at_any_size()
 	-- the border, clock and zone text grow and shrink with the map
-	for _, size in ipairs({ .5, 1, 1.5 }) do
+	for _, size in ipairs({ 0.5, 1, 1.5 }) do
 		ns.db.global.minimap.userScale = size
 		module:UpdateSize()
 		lu.assertAlmostEquals(module.widgetFrame:GetScale(), 1 / 1.614, 1e-6)
@@ -261,8 +271,12 @@ end
 
 function TestMinimap:test_positions_are_saved_relative_to_the_nearest_edge()
 	local cases = {
-		{ "TOP", 0, -30, "TOP" }, { "RIGHT", -30, 0, "RIGHT" }, { "CENTER", 0, 0, "CENTER" },
-		{ "BOTTOM", 0, 30, "BOTTOM" }, { "BOTTOMRIGHT", -30, 30, "BOTTOMRIGHT" }, { "TOPLEFT", 30, -30, "TOPLEFT" },
+		{ "TOP", 0, -30, "TOP" },
+		{ "RIGHT", -30, 0, "RIGHT" },
+		{ "CENTER", 0, 0, "CENTER" },
+		{ "BOTTOM", 0, 30, "BOTTOM" },
+		{ "BOTTOMRIGHT", -30, 30, "BOTTOMRIGHT" },
+		{ "TOPLEFT", 30, -30, "TOPLEFT" },
 	}
 	-- (the fake client lays frames out without their scales: at scale 1,
 	-- what it computes is what the game would)
@@ -279,7 +293,9 @@ function TestMinimap:test_positions_are_saved_relative_to_the_nearest_edge()
 end
 
 function TestMinimap:test_the_namespace_keeps_its_private_values()
-	local ok, err = pcall(function() ns.Prefix = "Other" end)
+	local ok, err = pcall(function()
+		ns.Prefix = "Other"
+	end)
 	lu.assertFalse(ok)
 	lu.assertStrContains(err, "Can't replace the protected")
 	ns.Custom = true -- anything else is fine
@@ -338,7 +354,8 @@ end
 
 function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
 	local mbb = {
-		name = "MBB", enabled = true,
+		name = "MBB",
+		enabled = true,
 		onLoad = function()
 			local frame = _G.CreateFrame("Button", "MBB_MinimapButtonFrame", _G.Minimap)
 			frame:CreateTexture("MBB_MinimapButtonFrame_Texture")
@@ -346,7 +363,11 @@ function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
 			_G.MBB_TOOLTIP1 = "Click to open"
 		end,
 	}
-	boot({ world = function(world) table.insert(world.addons, mbb) end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, mbb)
+		end,
+	})
 	local frame = _G.MBB_MinimapButtonFrame
 	lu.assertEquals(frame:GetParent(), module.mbbButton)
 	lu.assertEquals(select(1, module.mbbButton:GetPoint()), "BOTTOMLEFT")
@@ -382,7 +403,11 @@ function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
 end
 
 function TestMinimap:test_a_disabled_minimap_button_bag_is_left_alone()
-	boot({ world = function(world) table.insert(world.addons, { name = "MBB", enabled = false }) end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "MBB", enabled = false })
+		end,
+	})
 	lu.assertNil(module.mbbButton)
 	assertClean(client)
 end
@@ -398,7 +423,9 @@ function TestMinimap:test_the_options_page_is_a_diabolicui_subcategory()
 	lu.assertEquals(page.parent, "DiabolicUI")
 	local found
 	for _, registered in ipairs(client.optionsPanels) do
-		if registered == page then found = true end
+		if registered == page then
+			found = true
+		end
 	end
 	lu.assertTrue(found)
 	_G.Minimap:SetScale(1) -- (the fake client lays frames out without their scales)

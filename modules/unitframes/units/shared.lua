@@ -41,7 +41,7 @@ local HealthColor = function(unit, isUnavailable, useClassColor, plainControlled
 	local color
 	if (isUnavailable == "dead") or (isUnavailable == "ghost") then
 		color = C.Status.Dead
-	elseif (isUnavailable == "offline") then
+	elseif isUnavailable == "offline" then
 		color = C.Status.Disconnected
 	elseif UnitIsPlayer(unit) then
 		if useClassColor then
@@ -74,12 +74,12 @@ Library.HealthColor = HealthColor
 -- of combat when dimOutOfCombat is set.
 Library.PostUpdateHealth = function(health, unit, curHealth, maxHealth, isUnavailable)
 	local r, g, b = HealthColor(unit, isUnavailable, health.useClassColor, health.plainControlled)
-	if not((r == health.r) and (g == health.g) and (b == health.b)) then
+	if not ((r == health.r) and (g == health.g) and (b == health.b)) then
 		health:SetStatusBarColor(r, g, b)
 		health.r, health.g, health.b = r, g, b
 	end
 	if health.dimOutOfCombat then
-		health.Value:SetAlpha(UnitAffectingCombat("player") and 1 or .7)
+		health.Value:SetAlpha(UnitAffectingCombat("player") and 1 or 0.7)
 	end
 end
 
@@ -140,19 +140,19 @@ Library.PostCreateAuraButton = function(self, button)
 	local iconDarken = scaffold:CreateTexture()
 	iconDarken:SetDrawLayer("OVERLAY")
 	iconDarken:SetAllPoints(icon)
-	iconDarken:SetTexture(0, 0, 0, .15)
+	iconDarken:SetTexture(0, 0, 0, 0.15)
 
 	button.SetBorderColor = function(self, r, g, b)
-		overlay:SetBackdropBorderColor(r, g, b, .5)
-		glow:SetBackdropBorderColor(r/3, g/3, b/3, .75)
-		scaffold:SetBackdropColor(r * 1/3, g * 1/3, b * 1/3)
+		overlay:SetBackdropBorderColor(r, g, b, 0.5)
+		glow:SetBackdropBorderColor(r / 3, g / 3, b / 3, 0.75)
+		scaffold:SetBackdropColor(r * 1 / 3, g * 1 / 3, b * 1 / 3)
 		scaffold:SetBackdropBorderColor(r, g, b)
 	end
 
 	button:SetElement("Glow", glow)
 	button:SetSize(unpack(config.size))
 	button:SetBorderColor(unpack(config.color))
-	icon:SetVertexColor(.85, .85, .85)
+	icon:SetVertexColor(0.85, 0.85, 0.85)
 end
 
 -- Aura filters
@@ -162,31 +162,46 @@ end
 
 -- Buffs on an enemy (boss and arena frames): boss auras, stealable ones,
 -- and short ones from you or the unit itself.
-Library.EnemyBuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
+Library.EnemyBuffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff,
+	isCastByPlayer
+)
 	local unit = self.unit
-	if (isBossDebuff) or (isStealable) then
+	if isBossDebuff or isStealable then
 		return true
-
-	elseif (isCastByPlayer or (unitCaster == "vehicle")) and (duration and ((duration > 0) and (duration <= TIME_LIMIT_LOW))) then
+	elseif
+		(isCastByPlayer or (unitCaster == "vehicle"))
+		and (duration and ((duration > 0) and (duration <= TIME_LIMIT_LOW)))
+	then
 		return true
-
-	elseif ((unitCaster and UnitIsUnit(unit, unitCaster)) and duration and ((duration > 0) and (duration < TIME_LIMIT_LOW))) then
+	elseif
+		(unitCaster and UnitIsUnit(unit, unitCaster))
+		and duration
+		and ((duration > 0) and (duration < TIME_LIMIT_LOW))
+	then
 		return true
-
 	elseif (not unitCaster) and (not IsInInstance()) then
 		-- EXPERIMENTAL: ignore auras from players outside the group, eg. world bosses
 		return
-
-	elseif (UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit))) then
+	elseif UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit)) then
 		-- Hostile NPC.
 		-- Show auras cast by the unit, and auras of unknown origin.
 		return (not unitCaster) or (unitCaster == unit)
-
-	elseif (not unitCaster) then
+	elseif not unitCaster then
 		-- Friendly target or hostile player
 		-- Show auras of unknown origin
 		return true
-
 	else
 		-- others' (TODO: a whitelist of the PvP shields and cooldowns worth
 		-- knowing about), and your own longer buffs
@@ -196,21 +211,31 @@ end
 
 -- Debuffs on an enemy: boss debuffs, yours and your vehicle's, and the
 -- ones a hostile NPC put on itself.
-Library.EnemyDebuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
+Library.EnemyDebuffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff,
+	isCastByPlayer
+)
 	local unit = self.unit
 	if isBossDebuff or isCastByPlayer then
 		return true
-
 	elseif unitCaster and ((unitCaster == "vehicle") or UnitIsUnit("vehicle", unitCaster)) then
 		return true
-
 	elseif (not unitCaster) and (not IsInInstance()) then
 		-- EXPERIMENTAL: ignore debuffs from players outside the group, eg. world bosses
 		return
-
 	elseif UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit)) then
 		return (not unitCaster) or (unitCaster == unit)
-
 	else
 		-- (TODO: a whitelist of the PvP debuffs worth knowing about)
 		return false
@@ -219,19 +244,75 @@ end
 
 -- Buffs on a group member: only yours (or your vehicle's). A mind
 -- controlled member is an enemy for the time being.
-Library.GroupBuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
+Library.GroupBuffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff,
+	isCastByPlayer
+)
 	if UnitIsFriend("player", self.unit) then
 		return isCastByPlayer or (unitCaster == "vehicle")
 	end
-	return Library.EnemyBuffFilter(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
+	return Library.EnemyBuffFilter(
+		self,
+		name,
+		rank,
+		icon,
+		count,
+		debuffType,
+		duration,
+		expirationTime,
+		unitCaster,
+		isStealable,
+		spellId,
+		isBossDebuff,
+		isCastByPlayer
+	)
 end
 
 -- Debuffs on a group member: boss debuffs, dispellable ones, and yours.
-Library.GroupDebuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
+Library.GroupDebuffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff,
+	isCastByPlayer
+)
 	if UnitIsFriend("player", self.unit) then
 		return (isBossDebuff or debuffType or isCastByPlayer or (unitCaster == "vehicle")) and true or false
 	end
-	return Library.EnemyDebuffFilter(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
+	return Library.EnemyDebuffFilter(
+		self,
+		name,
+		rank,
+		icon,
+		count,
+		debuffType,
+		duration,
+		expirationTime,
+		unitCaster,
+		isStealable,
+		spellId,
+		isBossDebuff,
+		isCastByPlayer
+	)
 end
 
 Engine:NewStaticConfig("Library: UnitFrames", Library)

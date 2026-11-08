@@ -5,9 +5,6 @@ local ControllerWidget = Module:SetWidget("Controller: Party")
 
 -- WoW API
 
+ControllerWidget.OnEnable = function(self) end
 
-ControllerWidget.OnEnable = function(self)
-end
-
-ControllerWidget.GetFrame = function(self)
-end
+ControllerWidget.GetFrame = function(self) end

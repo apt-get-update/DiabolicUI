@@ -19,7 +19,9 @@ local WowApiMock = require("mocks.wow_api_mock")
 local AutoStub = require("mocks.auto_stub")
 
 local state = { dead = false }
-_G.UnitIsDeadOrGhost = function() return state.dead end
+_G.UnitIsDeadOrGhost = function()
+	return state.dead
+end
 WowApiMock.install()
 AutoStub.install()
 
@@ -33,9 +35,9 @@ local function loadButtonPrototype()
 	-- Handler.New (it builds real secure frames, so it isn't called here)
 	for i = 1, math.huge do
 		local name, value = debug.getupvalue(Handler.New, i)
-		if (not name) then
+		if not name then
 			break
-		elseif (name == "Button_MT") then
+		elseif name == "Button_MT" then
 			return value.__index
 		end
 	end
@@ -47,12 +49,24 @@ local function newButton(Button, usable, notEnoughMana, inRange)
 	-- the ones UpdateUsable checks are set explicitly)
 	local button = setmetatable({ redraws = 0, OverrideUsable = false, outOfRange = false }, { __index = Button })
 	button.icon = {
-		SetDesaturated = function(self, flag) self.desaturated = flag; return true end,
-		SetVertexColor = function(self, r, g, b) self.color = { r, g, b } end,
+		SetDesaturated = function(self, flag)
+			self.desaturated = flag
+			return true
+		end,
+		SetVertexColor = function(self, r, g, b)
+			self.color = { r, g, b }
+		end,
 	}
-	button.IsUsable = function() return usable, notEnoughMana end
-	button.IsInRange = function() return inRange end
-	button.PostUpdateUsable = function(self, usableState) self.redraws = self.redraws + 1; self.drawn = usableState end
+	button.IsUsable = function()
+		return usable, notEnoughMana
+	end
+	button.IsInRange = function()
+		return inRange
+	end
+	button.PostUpdateUsable = function(self, usableState)
+		self.redraws = self.redraws + 1
+		self.drawn = usableState
+	end
 	return button
 end
 
@@ -97,9 +111,15 @@ local LAYERS = { "empty", "empty_highlight", "normal", "normal_highlight", "chec
 
 local function newArtworkButton(Button, hasAction, checked, highlighted)
 	local button = setmetatable({ _checked = checked, _highlighted = highlighted, border = {} }, { __index = Button })
-	button.HasAction = function() return hasAction end
+	button.HasAction = function()
+		return hasAction
+	end
 	for _, layer in ipairs(LAYERS) do
-		button.border[layer] = { SetAlpha = function(self, alpha) self.alpha = alpha end }
+		button.border[layer] = {
+			SetAlpha = function(self, alpha)
+				self.alpha = alpha
+			end,
+		}
 	end
 	return button
 end
@@ -146,22 +166,40 @@ TestButtonCooldown = {}
 
 function TestButtonCooldown:setUp()
 	self.now, self.omniCC = 100, false
-	_G.GetTime = function() return self.now end
-	_G.IsAddOnLoaded = function(name) return (name == "OmniCC") and self.omniCC end
+	_G.GetTime = function()
+		return self.now
+	end
+	_G.IsAddOnLoaded = function(name)
+		return (name == "OmniCC") and self.omniCC
+	end
 	local Button = loadButtonPrototype()
 	local button = setmetatable({}, { __index = Button })
-	local text = { SetText = function(t, value) t.text = value end }
+	local text = {
+		SetText = function(t, value)
+			t.text = value
+		end,
+	}
 	local cooldown = {
 		count = text,
 		SetCooldown = function() end,
-		Show = function(c) c.shown = true end,
-		Hide = function(c) c.shown = false; c.count:SetText(""); c.OnUpdate = nil end, -- (its OnHide)
-		SetScript = function(c, _, func) c.OnUpdate = func end,
+		Show = function(c)
+			c.shown = true
+		end,
+		Hide = function(c)
+			c.shown = false
+			c.count:SetText("")
+			c.OnUpdate = nil
+		end, -- (its OnHide)
+		SetScript = function(c, _, func)
+			c.OnUpdate = func
+		end,
 	}
 	button.cooldown, self.text, self.cooldown = cooldown, text, cooldown
 	self.button = button
 	self.cooldownTimes = { 0, 0, 1 }
-	button.GetCooldown = function() return unpack(self.cooldownTimes) end
+	button.GetCooldown = function()
+		return unpack(self.cooldownTimes)
+	end
 end
 
 function TestButtonCooldown:tick(seconds)

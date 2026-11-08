@@ -98,7 +98,7 @@ Module.CreateBook = function(self, window, owner)
 		fold:SetTexture([[Interface\Buttons\WHITE8X8]])
 		fold:SetSize(config.fold_width, height)
 		local dark = config.fold_alpha
-		if (side == 0) then
+		if side == 0 then
 			fold:SetPoint("TOPRIGHT", window, "TOPLEFT", x + half, y)
 			kit.Gradient(fold, "HORIZONTAL", 0, 0, 0, 0, 0, 0, 0, dark)
 		else
@@ -120,9 +120,13 @@ Module.LayoutSpells = function(self, window)
 		local name = button:GetName()
 		local row, column = math_floor((i - 1) / 2), (i - 1) % 2
 		button:ClearAllPoints()
-		button:SetPoint("TOPLEFT", window, "TOPLEFT",
+		button:SetPoint(
+			"TOPLEFT",
+			window,
+			"TOPLEFT",
 			x + column * config.slot_pitch[1] + config.icon_inset,
-			y - row * config.slot_pitch[2] - (config.slot_size[2] - button:GetHeight()) / 2)
+			y - row * config.slot_pitch[2] - (config.slot_size[2] - button:GetHeight()) / 2
+		)
 		_G[name .. "Background"]:SetAlpha(0)
 		_G[name .. "NormalTexture"]:SetAlpha(0)
 		button.DiabolicBorder = kit:AddBorder(button, button:GetWidth())
@@ -156,7 +160,7 @@ Module.LayoutSpells = function(self, window)
 		local _, _, _, _, top = spell:GetPoint()
 		spell:SetPoint("LEFT", button, "RIGHT", config.name_offset, top or 0)
 		local r = spell:GetTextColor()
-		spell:SetTextColor(unpack((r < .9) and config.passive_color or kit.config.ink))
+		spell:SetTextColor(unpack((r < 0.9) and config.passive_color or kit.config.ink))
 		self:UpdateUnassigned(button)
 	end)
 
@@ -230,12 +234,16 @@ Module.PlaceBoxes = function(self)
 	local ranks, label = _G.ShowAllSpellRanksCheckBox, _G.ShowAllSpellRanksCheckBoxText
 	kit:StyleCheckBox(ranks)
 	label:SetText(L["All ranks"])
-	ranks:HookScript("OnClick", function() self.db.showAllRanks = ranks:GetChecked() and true or false end)
+	ranks:HookScript("OnClick", function()
+		self.db.showAllRanks = ranks:GetChecked() and true or false
+	end)
 	ranks:HookScript("OnEnter", function()
 		_G.GameTooltip:SetOwner(ranks, "ANCHOR_RIGHT")
 		_G.GameTooltip:SetText(_G.SHOW_ALL_SPELL_RANKS)
 	end)
-	ranks:HookScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	ranks:HookScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 	local unassigned = self:CreateUnassignedBox()
 	kit:LineBand(self.Header, { self.SearchBox, ranks, unassigned })
 	for _, box in ipairs({ ranks, unassigned }) do
@@ -246,7 +254,8 @@ end
 -- Our box for the spells on no action bar, as Blizzard's "all ranks" one.
 -- The box returned.
 Module.CreateUnassignedBox = function(self)
-	local box = CreateFrame("CheckButton", "DiabolicUISpellBookUnassignedBox", _G.SpellBookFrame, "OptionsCheckButtonTemplate")
+	local box =
+		CreateFrame("CheckButton", "DiabolicUISpellBookUnassignedBox", _G.SpellBookFrame, "OptionsCheckButtonTemplate")
 	kit:StyleCheckBox(box)
 	_G[box:GetName() .. "Text"]:SetText(L["Unassigned"])
 	box:SetChecked(self.db.showUnassigned)
@@ -260,7 +269,9 @@ Module.CreateUnassignedBox = function(self)
 		_G.GameTooltip:AddLine(L["Rings the spells you can cast that are on none of your action bars."], 1, 1, 1, true)
 		_G.GameTooltip:Show()
 	end)
-	box:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	box:SetScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 	self.UnassignedBox = box
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "ForgetAssigned")
 	return box
@@ -269,14 +280,14 @@ end
 -- The spells on the action bars, by name (their own or their macros'),
 -- read again once one changes.
 Module.GetAssigned = function(self)
-	if (not self.Assigned) then
+	if not self.Assigned then
 		local assigned = {}
 		for slot = 1, NUM_ACTIONS do
 			local kind, id, _, spellID = GetActionInfo(slot)
 			local name
-			if (kind == "spell") then
+			if kind == "spell" then
 				name = (spellID and GetSpellInfo(spellID)) or GetSpellName(id, _G.BOOKTYPE_SPELL)
-			elseif (kind == "macro") then
+			elseif kind == "macro" then
 				name = GetMacroSpell(id)
 			end
 			if name then
@@ -301,7 +312,11 @@ Module.UpdateUnassigned = function(self, button)
 	local ring = button.DiabolicUnassigned
 	local bookType = _G.SpellBookFrame.bookType
 	local show = false
-	if self.db.showUnassigned and (bookType == _G.BOOKTYPE_SPELL) and _G[button:GetName() .. "IconTexture"]:IsShown() then
+	if
+		self.db.showUnassigned
+		and (bookType == _G.BOOKTYPE_SPELL)
+		and _G[button:GetName() .. "IconTexture"]:IsShown()
+	then
 		-- (Blizzard's own checks: a slot past the tab's end, or empty, while
 		-- the tab or the ranks shown change, isn't a spell; nor one past the
 		-- book's end, while a spell is learned or unlearned)
@@ -309,10 +324,14 @@ Module.UpdateUnassigned = function(self, button)
 		local _, _, offset, count = GetSpellTabInfo(_G.SpellBookFrame.selectedSkillLine or 1)
 		local _, _, lastOffset, lastCount = GetSpellTabInfo(GetNumSpellTabs())
 		local total = (lastOffset or 0) + (lastCount or 0)
-		local texture = id and displayID and (id > 0) and (id <= total)
-			and (displayID <= (offset or 0) + (count or 0)) and GetSpellTexture(id, bookType)
+		local texture = id
+			and displayID
+			and (id > 0)
+			and (id <= total)
+			and (displayID <= (offset or 0) + (count or 0))
+			and GetSpellTexture(id, bookType)
 		local name = texture and (texture ~= "") and GetSpellName(id, bookType)
-		show = name and (not IsPassiveSpell(id, bookType)) and (not self:GetAssigned()[name]) and true or false
+		show = name and (not IsPassiveSpell(id, bookType)) and not self:GetAssigned()[name] and true or false
 	end
 	if show then
 		ring:Show()
@@ -337,7 +356,9 @@ Module.CreateTabs = function(self, window)
 		tab:SetFrameLevel(frame:GetFrameLevel() + 2)
 		tab:SetNormalFontObject(kit.config.tab.font)
 		tab:SetText(_G[page[2]])
-		tab:SetScript("OnClick", function() self:ShowPage(page[1]) end)
+		tab:SetScript("OnClick", function()
+			self:ShowPage(page[1])
+		end)
 		tab.mode = page[1]
 		tab.DiabolicPageTab = true -- (a tab for /dui layout: its page a view of its own)
 		self.Tabs[i] = tab
@@ -356,7 +377,9 @@ Module.CreateTabs = function(self, window)
 	local back = CreateFrame("Button", nil, frame)
 	back:SetFrameLevel(frame:GetFrameLevel() + 5)
 	back:Hide()
-	back:SetScript("OnClick", function() self:ShowPage(nil) end)
+	back:SetScript("OnClick", function()
+		self:ShowPage(nil)
+	end)
 	back:SetScript("OnEnter", function()
 		if back.tab then
 			back.tab:LockHighlight()
@@ -375,7 +398,7 @@ end
 
 -- Whether a page's tab shows: companions or mounts known, professions.
 Module.HasPage = function(self, mode)
-	if (mode == "PROFESSIONS") then
+	if mode == "PROFESSIONS" then
 		return self:HasProfessions()
 	end
 	return GetNumCompanions(mode) > 0
@@ -390,7 +413,7 @@ Module.UpdateTabs = function(self)
 	for i = 1, 3 do
 		local tab = _G["SpellBookFrameTabButton" .. i]
 		if tab and tab:IsShown() then
-			if (tab.bookType == frame.bookType) then
+			if tab.bookType == frame.bookType then
 				active = tab
 				-- unchosen while a page shows; Blizzard disables the chosen one
 				if page then
@@ -408,7 +431,7 @@ Module.UpdateTabs = function(self)
 		else
 			tab:Hide()
 		end
-		if (page == tab.mode) then
+		if page == tab.mode then
 			tab:Disable()
 		else
 			tab:Enable()
@@ -427,7 +450,7 @@ Module.UpdateTabs = function(self)
 	-- the page's title in the plate
 	if page then
 		for _, spec in ipairs(PAGES) do
-			if (spec[1] == page) then
+			if spec[1] == page then
 				_G.SpellBookTitleText:SetText(_G[spec[2]])
 			end
 		end
@@ -498,7 +521,9 @@ Module.LayoutCompanions = function(self, cover)
 		label:SetPoint("LEFT", button, "RIGHT", config.name_offset, 0)
 		self.CompanionNames[i] = label
 	end
-	hooksecurefunc("PetPaperDollFrame_UpdateCompanions", function() self:UpdateNames() end)
+	hooksecurefunc("PetPaperDollFrame_UpdateCompanions", function()
+		self:UpdateNames()
+	end)
 
 	local prev, nextPage, text = _G.CompanionPrevPageButton, _G.CompanionNextPageButton, _G.CompanionPageNumber
 	text:SetTextColor(unpack(config.page_color))
@@ -540,11 +565,11 @@ end
 -- in combat: the cover holds secure buttons.
 Module.ShowPage = function(self, mode)
 	if InCombatLockdown() then
-		_G.UIErrorsFrame:AddMessage(_G.ERR_NOT_IN_COMBAT, 1, .1, .1)
+		_G.UIErrorsFrame:AddMessage(_G.ERR_NOT_IN_COMBAT, 1, 0.1, 0.1)
 		return
 	end
 	self.page = mode
-	if (mode ~= "SEARCH") then
+	if mode ~= "SEARCH" then
 		self:ClearSearch()
 	end
 	if mode then
@@ -580,16 +605,23 @@ Module.FitCover = function(self)
 			window[part]:SetFrameLevel(level + above)
 		end
 	end
-	local left, top = config.cover_insets[1], bare and (config.bare_cover_top + (window.DiabolicDrop or 0)) or config.cover_insets[2]
-	if (cover.DiabolicY ~= top) then
+	local left, top =
+		config.cover_insets[1], bare and (config.bare_cover_top + (window.DiabolicDrop or 0)) or config.cover_insets[2]
+	if cover.DiabolicY ~= top then
 		cover.DiabolicY = top -- (its stone tiled from there: LayoutCover)
 		cover:SetPoint("TOPLEFT", cover.DiabolicWindow, "TOPLEFT", left, -top)
 	end
 	-- the companions' page where it was under the band, a little higher
 	-- (its name over the model in the band's room)
 	local companions = _G.PetPaperDollFrameCompanionFrame
-	if (companions:GetParent() == cover) then
-		companions:SetPoint("TOPLEFT", cover, "TOPLEFT", 0, -math_max(0, config.cover_insets[2] - top - config.companions_rise))
+	if companions:GetParent() == cover then
+		companions:SetPoint(
+			"TOPLEFT",
+			cover,
+			"TOPLEFT",
+			0,
+			-math_max(0, config.cover_insets[2] - top - config.companions_rise)
+		)
 	end
 end
 
@@ -603,13 +635,13 @@ Module.ApplyPage = function(self)
 	local companions = (page == "CRITTER") or (page == "MOUNT")
 	self.Cover.Art:SetTexture(config.cover_art[page])
 	self.Cover.Art:SetVertexColor(unpack(config.cover_art_colors[page] or config.cover_art_color))
-	if (page == "PROFESSIONS") then
+	if page == "PROFESSIONS" then
 		self.Professions:Show()
 		self:UpdateProfessions()
 	else
 		self.Professions:Hide()
 	end
-	if (page == "SEARCH") then
+	if page == "SEARCH" then
 		self.Found:Show()
 		self:UpdateFound()
 	else
@@ -630,7 +662,7 @@ end
 -- mounts gone from it: the tab hidden without a pet (as Blizzard hides it
 -- without anything to show), no tabs of its own.
 Module.PetOnly = function(self)
-	if (not HasPetUI()) then
+	if not HasPetUI() then
 		_G.PetPaperDollFrame.hidden = true
 		_G.CharacterFrameTab2:Hide()
 		_G.CharacterFrameTab3:SetPoint("LEFT", _G.CharacterFrameTab2, "LEFT", 0, 0)
@@ -644,7 +676,12 @@ Module.HidePetTabs = function(self)
 	for i = 1, 3 do
 		_G["PetPaperDollFrameTab" .. i]:Hide()
 	end
-	if HasPetUI() and _G.PetPaperDollFrame:IsVisible() and (_G.PetPaperDollFrame.selectedTab ~= 1) and (not InCombatLockdown()) then
+	if
+		HasPetUI()
+		and _G.PetPaperDollFrame:IsVisible()
+		and (_G.PetPaperDollFrame.selectedTab ~= 1)
+		and (not InCombatLockdown())
+	then
 		_G.PetPaperDollFrame_SetTab(1)
 	end
 end
@@ -704,7 +741,9 @@ Module.StyleSpellbook = function(self)
 		self:UpdateTabs()
 		self:UpdateAllUnassigned()
 	end)
-	frame:HookScript("OnShow", function() self:UpdateTabs() end)
+	frame:HookScript("OnShow", function()
+		self:UpdateTabs()
+	end)
 	-- back to the spells once closed
 	frame:HookScript("OnHide", function()
 		if self.page then
@@ -727,8 +766,12 @@ Module.StyleSpellbook = function(self)
 			_G.PetPaperDollFrameCompanionFrame:Hide()
 		end
 	end)
-	hooksecurefunc("PetPaperDollFrame_UpdateIsAvailable", function() self:PetOnly() end)
-	hooksecurefunc("PetPaperDollFrame_UpdateTabs", function() self:HidePetTabs() end)
+	hooksecurefunc("PetPaperDollFrame_UpdateIsAvailable", function()
+		self:PetOnly()
+	end)
+	hooksecurefunc("PetPaperDollFrame_UpdateTabs", function()
+		self:HidePetTabs()
+	end)
 	self:PetOnly()
 	self:HidePetTabs()
 	self:RegisterEvent("COMPANION_LEARNED", "UpdateTabs")
@@ -756,7 +799,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	SetCVar("ShowAllSpellRanks", self.db.showAllRanks and "1" or "0")

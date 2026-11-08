@@ -1,8 +1,9 @@
 local _, Engine = ...
 
 local L = Engine:NewLocale("frFR")
-if not L then return end
-
+if not L then
+	return
+end
 
 -- actionbar module
 ---------------------------------------------------------------------
@@ -70,36 +71,47 @@ L["<Left-click> to land at the next flight point."] = "<Clic gauche> pour atterr
 -- item tooltips
 L["Equipped"] = "Équipé"
 L["Reskin Tooltip"] = "Relooker les infobulles"
-L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."] = "Affiche les infobulles d'objets et de techniques dans le style de Diablo III : le nom sur un bandeau et l'icône à gauche. Les objets ont la couleur de leur qualité, les dégâts par seconde ou l'armure en gros chiffre, et le prix de vente et la durabilité en bas ; les techniques ont leurs chiffres en vert.|n|nDésactivé, les infobulles de Blizzard sont utilisées."
+L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."] =
+	"Affiche les infobulles d'objets et de techniques dans le style de Diablo III : le nom sur un bandeau et l'icône à gauche. Les objets ont la couleur de leur qualité, les dégâts par seconde ou l'armure en gros chiffre, et le prix de vente et la durabilité en bas ; les techniques ont leurs chiffres en vert.|n|nDésactivé, les infobulles de Blizzard sont utilisées."
 
 -- minimap
 
 -- unitframe module
 L["Units"] = "Unités"
 L["Show class colors"] = "Afficher les couleurs de classe"
-L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = "Colore les barres de vie du joueur, de la cible, du groupe, du raid et de la cible de la cible selon la classe de l'unité.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] =
+	"Colore les barres de vie du joueur, de la cible, du groupe, du raid et de la cible de la cible selon la classe de l'unité.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Show Portrait"] = "Afficher le portrait"
-L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] = "Affiche un portrait animé en 3D sur les cadres de groupe et de cible secondaire.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] =
+	"Affiche un portrait animé en 3D sur les cadres de groupe et de cible secondaire.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Toggle Fake Party"] = "Basculer faux groupe"
-L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] = "Affiche ou masque un faux groupe de membres fictifs, pour prévisualiser l'apparence des cadres de groupe sans avoir besoin d'un vrai groupe."
+L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] =
+	"Affiche ou masque un faux groupe de membres fictifs, pour prévisualiser l'apparence des cadres de groupe sans avoir besoin d'un vrai groupe."
 L["Toggle Fake Raid"] = "Basculer faux raid"
-L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."] = "Affiche ou masque un faux raid de membres fictifs, pour prévisualiser l'apparence des cadres de raid sans avoir besoin d'un vrai groupe."
+L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."] =
+	"Affiche ou masque un faux raid de membres fictifs, pour prévisualiser l'apparence des cadres de raid sans avoir besoin d'un vrai groupe."
 L["Menu"] = "Menu"
 L["Show Gold"] = "Afficher l'argent"
-L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] = "Affiche la quantité d'argent que vous portez, à côté du bouton de menu en bas à droite."
+L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] =
+	"Affiche la quantité d'argent que vous portez, à côté du bouton de menu en bas à droite."
 L["Show FPS & Latency"] = "Afficher les FPS et la latence"
-L["Shows your framerate and latency, next to the menu button in the bottom right corner."] = "Affiche votre nombre d'images par seconde et votre latence, à côté du bouton de menu en bas à droite."
+L["Shows your framerate and latency, next to the menu button in the bottom right corner."] =
+	"Affiche votre nombre d'images par seconde et votre latence, à côté du bouton de menu en bas à droite."
 L["Objectives"] = "Objectifs"
 L["Fade Quest Tracker"] = "Estomper le suivi de quêtes"
-L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."] = "Estompe le suivi de quêtes après un moment sans survol de la souris, et le réaffiche dès que vous le survolez.|n|nUtilise le suivi de Questie s'il est activé, sinon celui de Blizzard."
-L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = "Nombre de secondes pendant lesquelles le suivi reste pleinement visible avant de commencer à s'estomper, une fois que vous cessez de le survoler."
+L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."] =
+	"Estompe le suivi de quêtes après un moment sans survol de la souris, et le réaffiche dès que vous le survolez.|n|nUtilise le suivi de Questie s'il est activé, sinon celui de Blizzard."
+L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] =
+	"Nombre de secondes pendant lesquelles le suivi reste pleinement visible avant de commencer à s'estomper, une fois que vous cessez de le survoler."
 L["Opacity"] = "Opacité"
-L["How visible the tracker stays once it has fully faded, as a percentage."] = "À quel point le suivi reste visible une fois entièrement estompé, en pourcentage."
+L["How visible the tracker stays once it has fully faded, as a percentage."] =
+	"À quel point le suivi reste visible une fois entièrement estompé, en pourcentage."
 L["Items"] = "Objets" -- loot window title
 L["Reskin Loot Window"] = "Relooker la fenêtre de butin"
 L["Reskin Windows"] = "Relooker les fenêtres"
 L["Show unassigned spells"] = "Sorts non assignés"
-L["Rings the spells you can cast that are on none of your action bars."] = "Entoure les sorts lançables qui ne sont sur aucune de vos barres d'action."
+L["Rings the spells you can cast that are on none of your action bars."] =
+	"Entoure les sorts lançables qui ne sont sur aucune de vos barres d'action."
 L["Unassigned"] = "Non assignés"
 L["All ranks"] = "Tous les rangs"
 L["No spell found"] = "Aucun sort trouvé"
@@ -110,16 +122,22 @@ L["Artisan"] = "Artisan"
 L["Master"] = "Maître"
 L["Grand Master"] = "Grand maître"
 L["Missing Primary Profession"] = "Métier principal manquant"
-L["Visit a profession trainer in a capital city to learn one."] = "Rendez-vous chez un maître de métier dans une capitale pour en apprendre un."
-L["Not learned yet: visit its trainer to learn it."] = "Pas encore appris : rendez-vous chez son maître pour l'apprendre."
-L["Shows Blizzard's windows in the Diablo III style: the character, spellbook, talents, quest log, social, mail, merchant, achievements and the other windows, and AdiBags' bags. When disabled, Blizzard's own windows are used.|n|nRequires a UI reload to apply."] = "Affiche les fenêtres de Blizzard dans le style de Diablo III : personnage, grimoire, talents, journal de quêtes, social, courrier, marchand, hauts faits et les autres fenêtres, ainsi que les sacs d'AdiBags. Si désactivé, les fenêtres de Blizzard sont utilisées.|n|nNécessite un rechargement de l'interface pour s'appliquer."
-L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = "Relooke la fenêtre de butin pour correspondre au reste de l'interface. Si désactivé, la fenêtre de butin par défaut de Blizzard est utilisée à la place.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Visit a profession trainer in a capital city to learn one."] =
+	"Rendez-vous chez un maître de métier dans une capitale pour en apprendre un."
+L["Not learned yet: visit its trainer to learn it."] =
+	"Pas encore appris : rendez-vous chez son maître pour l'apprendre."
+L["Shows Blizzard's windows in the Diablo III style: the character, spellbook, talents, quest log, social, mail, merchant, achievements and the other windows, and AdiBags' bags. When disabled, Blizzard's own windows are used.|n|nRequires a UI reload to apply."] =
+	"Affiche les fenêtres de Blizzard dans le style de Diablo III : personnage, grimoire, talents, journal de quêtes, social, courrier, marchand, hauts faits et les autres fenêtres, ainsi que les sacs d'AdiBags. Si désactivé, les fenêtres de Blizzard sont utilisées.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] =
+	"Relooke la fenêtre de butin pour correspondre au reste de l'interface. Si désactivé, la fenêtre de butin par défaut de Blizzard est utilisée à la place.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Roll Window"] = "Fenêtre de jets"
 L["Coming Up"] = "À venir"
 L["Fake Loot Roll"] = "Faux jet de butin"
 L["Fake Boss"] = "Faux boss"
-L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."] = "Affiche la fenêtre de jets et la liste du butin avec du faux butin, pour les essayer sans raid. Nécessite la fenêtre de jets activée."
-L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."] = "Affiche une fenêtre quand le maître du butin, le chef ou un avertissement de raid met un objet en jeu, avec le temps restant et des boutons pour le tirer : Spé principale (/roll 100) ou Spé secondaire (/roll 99). Le butin du boss qu'ils annoncent dans le chat s'affiche dans une liste à droite.|n|nNécessite un rechargement de l'interface pour s'appliquer."
+L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."] =
+	"Affiche la fenêtre de jets et la liste du butin avec du faux butin, pour les essayer sans raid. Nécessite la fenêtre de jets activée."
+L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."] =
+	"Affiche une fenêtre quand le maître du butin, le chef ou un avertissement de raid met un objet en jeu, avec le temps restant et des boutons pour le tirer : Spé principale (/roll 100) ou Spé secondaire (/roll 99). Le butin du boss qu'ils annoncent dans le chat s'affiche dans une liste à droite.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Rolls"] = "Jets" -- roll window title
 L["Main Spec"] = "Spé principale"
 L["Off Spec"] = "Spé secondaire"
@@ -131,10 +149,13 @@ L["You rolled %d (%s)"] = "Vous avez fait %d (%s)"
 L["Tooltips"] = "Infobulles"
 L["Horizontal Offset"] = "Décalage horizontal"
 L["Vertical Offset"] = "Décalage vertical"
-L["At 0, the tooltip is centered horizontally on the cursor."] = "À 0, l'infobulle est centrée horizontalement sur le curseur."
-L["At 0, the cursor is at the bottom edge of the tooltip."] = "À 0, le curseur se trouve sur le bord inférieur de l'infobulle."
+L["At 0, the tooltip is centered horizontally on the cursor."] =
+	"À 0, l'infobulle est centrée horizontalement sur le curseur."
+L["At 0, the cursor is at the bottom edge of the tooltip."] =
+	"À 0, le curseur se trouve sur le bord inférieur de l'infobulle."
 L["Tooltip mouse anchor"] = "Point d'ancrage à la souris"
-L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."] = "Détermine quel point de l'infobulle est ancré à votre curseur, afin de choisir le coin ou le bord qui chevauche le moins votre souris."
+L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."] =
+	"Détermine quel point de l'infobulle est ancré à votre curseur, afin de choisir le coin ou le bord qui chevauche le moins votre souris."
 L["Top Left"] = "Haut gauche"
 L["Top"] = "Haut"
 L["Top Right"] = "Haut droite"
@@ -148,78 +169,104 @@ L["Bottom Right"] = "Bas droite"
 -- chat module
 L["Appearance"] = "Apparence"
 L["Fade Chat"] = "Fondu du chat"
-L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] = "Estompe le texte du chat après un certain temps, au lieu de le laisser affiché en permanence."
+L["Fades chat text out after it has been visible for a while, instead of leaving it on screen permanently."] =
+	"Estompe le texte du chat après un certain temps, au lieu de le laisser affiché en permanence."
 L["Time Fading"] = "Durée du fondu"
-L["How many seconds it takes for chat text to fade out."] = "Nombre de secondes nécessaires pour que le texte du chat s'estompe."
+L["How many seconds it takes for chat text to fade out."] =
+	"Nombre de secondes nécessaires pour que le texte du chat s'estompe."
 L["Time Visible"] = "Durée visible"
-L["How many seconds chat text stays fully visible before it starts fading."] = "Nombre de secondes pendant lesquelles le texte du chat reste pleinement visible avant de commencer à s'estomper."
+L["How many seconds chat text stays fully visible before it starts fading."] =
+	"Nombre de secondes pendant lesquelles le texte du chat reste pleinement visible avant de commencer à s'estomper."
 L["Background Opacity"] = "Opacité de l'arrière-plan"
-L["How opaque the chat window's background is while you're typing."] = "Opacité de l'arrière-plan de la fenêtre de chat pendant que vous écrivez."
+L["How opaque the chat window's background is while you're typing."] =
+	"Opacité de l'arrière-plan de la fenêtre de chat pendant que vous écrivez."
 L["Click to copy the link."] = "Cliquez pour copier le lien."
 L["Messages"] = "Messages"
 L["Shorter Messages"] = "Messages plus courts"
 L["Loot & Money"] = "Butin et argent"
-L["'You receive loot: [Item]x3.' becomes '+ [Item] (3)', and looted money shows as coins."] = "« Vous recevez le butin : [Objet]x3. » devient « + [Objet] (3) », et l'argent ramassé s'affiche en pièces."
+L["'You receive loot: [Item]x3.' becomes '+ [Item] (3)', and looted money shows as coins."] =
+	"« Vous recevez le butin : [Objet]x3. » devient « + [Objet] (3) », et l'argent ramassé s'affiche en pièces."
 L["Experience, Reputation & Honor"] = "Expérience et réputation"
-L["Shorter experience, reputation, honor, skill and level up lines, like '+ 75 Reputation: Argent Crusade'."] = "Lignes plus courtes pour l'expérience, la réputation, l'honneur, les compétences et les niveaux, comme « + 75 Réputation : La Croisade d'argent »."
+L["Shorter experience, reputation, honor, skill and level up lines, like '+ 75 Reputation: Argent Crusade'."] =
+	"Lignes plus courtes pour l'expérience, la réputation, l'honneur, les compétences et les niveaux, comme « + 75 Réputation : La Croisade d'argent »."
 L["Quests"] = "Quêtes"
 L["Shorter lines for quests accepted and completed."] = "Lignes plus courtes pour les quêtes acceptées et terminées."
 L["Away, Busy & Rested"] = "Absent, occupé et reposé"
-L["'You are now Away.' becomes '+ Away', and the same for busy and rested."] = "« Vous êtes maintenant absent. » devient « + Absent », de même pour occupé et reposé."
+L["'You are now Away.' becomes '+ Away', and the same for busy and rested."] =
+	"« Vous êtes maintenant absent. » devient « + Absent », de même pour occupé et reposé."
 L["Online & Offline"] = "Connexions"
-L["Marks friends and guild members coming online with a green +, and dims them going offline."] = "Marque d'un + vert les amis et membres de guilde qui se connectent, et grise ceux qui se déconnectent."
+L["Marks friends and guild members coming online with a green +, and dims them going offline."] =
+	"Marque d'un + vert les amis et membres de guilde qui se connectent, et grise ceux qui se déconnectent."
 L["Auctions"] = "Enchères"
-L["Marks auctions created, sold and won with a green +, and cancelled, outbid and expired ones with a red -."] = "Marque d'un + vert les enchères créées, vendues et remportées, et d'un - rouge celles annulées, surenchéries et expirées."
+L["Marks auctions created, sold and won with a green +, and cancelled, outbid and expired ones with a red -."] =
+	"Marque d'un + vert les enchères créées, vendues et remportées, et d'un - rouge celles annulées, surenchéries et expirées."
 L["Achievements"] = "Hauts faits"
-L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] = "« Nom a accompli le haut fait [Nom] ! » devient « Nom : [Nom] »."
+L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] =
+	"« Nom a accompli le haut fait [Nom] ! » devient « Nom : [Nom] »."
 L["Hide Channel Notices"] = "Masquer les canaux"
-L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] = "Masque les avis d'arrivée, de départ et de changement de canal, et les lignes de chat vides."
+L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] =
+	"Masque les avis d'arrivée, de départ et de changement de canal, et les lignes de chat vides."
 L["Talent Specialization"] = "Spécialisation"
 L["<Left-click> to switch"] = "<Clic gauche> pour changer"
 L["Specializations"] = "Spécialisations"
 L["Equipment set '%s' not found."] = "Ensemble d'équipement « %s » introuvable."
-L["Action Bar Saver isn't loaded, can't restore '%s'."] = "Action Bar Saver n'est pas chargé, impossible de restaurer « %s »."
+L["Action Bar Saver isn't loaded, can't restore '%s'."] =
+	"Action Bar Saver n'est pas chargé, impossible de restaurer « %s »."
 L["Action Bar Saver isn't loaded"] = "Action Bar Saver n'est pas chargé"
 L["Equipment Set"] = "Ensemble d'équipement"
 L["New Equipment Set"] = "Nouvel ensemble d'équipement"
 L["Stats"] = "Statistiques"
 L["Titles"] = "Titres"
 L["Sets"] = "Ensembles"
-L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."] = "L'ensemble d'équipement à mettre quand vous passez à cette spécialisation, depuis le gestionnaire d'équipement de la fenêtre du personnage."
+L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."] =
+	"L'ensemble d'équipement à mettre quand vous passez à cette spécialisation, depuis le gestionnaire d'équipement de la fenêtre du personnage."
 L["Action Bar Saver Profile"] = "Profil Action Bar Saver"
-L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."] = "Le profil Action Bar Saver à restaurer quand vous passez à cette spécialisation. Enregistrez-en un avec « /abs save <nom> »."
+L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."] =
+	"Le profil Action Bar Saver à restaurer quand vous passez à cette spécialisation. Enregistrez-en un avec « /abs save <nom> »."
 L["Action Bars"] = "Barres d'action"
 L["Side Bars"] = "Barres latérales"
 L["None"] = "Aucun"
 L["Unchanged"] = "Inchangé"
 L["<Left-click> to use %s."] = "<Clic gauche> pour utiliser %s."
 L["Macro Before"] = "Macro avant"
-L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."] = "Une de vos macros à lancer quand vous passez à cette spécialisation : le clic sur le bouton de spécialisation du crâne qui change la lance d'abord."
+L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."] =
+	"Une de vos macros à lancer quand vous passez à cette spécialisation : le clic sur le bouton de spécialisation du crâne qui change la lance d'abord."
 L["Macro After"] = "Macro après"
 L["Runs your '%s' macro first"] = "Lance d'abord votre macro « %s »"
-L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."] = "Une de vos macros à lancer quand vous passez à cette spécialisation. Le jeu ne lance les macros que sur un clic : le bouton de spécialisation sur le crâne brille, et son prochain clic lance la macro."
+L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."] =
+	"Une de vos macros à lancer quand vous passez à cette spécialisation. Le jeu ne lance les macros que sur un clic : le bouton de spécialisation sur le crâne brille, et son prochain clic lance la macro."
 L["<Left-click> to run your '%s' macro"] = "<Clic gauche> pour lancer votre macro « %s »"
 L["Macro '%s' not found."] = "Macro « %s » introuvable."
-L["Your %s commands are too long for a macro, make one yourself: %s"] = "Vos commandes %s sont trop longues pour une macro, créez-la vous-même : %s"
-L["Your other commands are now the character macro '%s', run by a click on the skull after switching."] = "Vos autres commandes sont maintenant la macro de personnage « %s », lancée par un clic sur le crâne après le changement."
-L["No free character macro slot for your %s commands, they're kept until there's one."] = "Plus de place pour une macro de personnage pour vos commandes %s, elles sont gardées jusqu'à ce qu'il y en ait."
+L["Your %s commands are too long for a macro, make one yourself: %s"] =
+	"Vos commandes %s sont trop longues pour une macro, créez-la vous-même : %s"
+L["Your other commands are now the character macro '%s', run by a click on the skull after switching."] =
+	"Vos autres commandes sont maintenant la macro de personnage « %s », lancée par un clic sur le crâne après le changement."
+L["No free character macro slot for your %s commands, they're kept until there's one."] =
+	"Plus de place pour une macro de personnage pour vos commandes %s, elles sont gardées jusqu'à ce qu'il y en ait."
 
 -- AddOns page (other addons styled)
-L["DiabolicUI: Questie has changed, its tracker is left as it is."] = "DiabolicUI : Questie a changé, son suivi de quêtes est laissé tel quel."
+L["DiabolicUI: Questie has changed, its tracker is left as it is."] =
+	"DiabolicUI : Questie a changé, son suivi de quêtes est laissé tel quel."
 L["Drag to move the tracker"] = "Glissez pour déplacer le suivi"
 L["Reset Positions"] = "Positions par défaut"
 L["Preview"] = "Aperçu"
-L["Puts the menu buttons, the chat and Blizzard's quest tracker back in their places."] = "Remet les boutons du menu, le chat et le suivi de quêtes de Blizzard à leur place."
+L["Puts the menu buttons, the chat and Blizzard's quest tracker back in their places."] =
+	"Remet les boutons du menu, le chat et le suivi de quêtes de Blizzard à leur place."
 L["Frames & AddOns"] = "Fenêtres et addons"
 L["Blizzard Frames"] = "Fenêtres de Blizzard"
 L["Chat Commands"] = "Commandes"
 L["Version %s"] = "Version %s"
-L["A Diablo III style interface. Its settings are on the pages below this one."] = "Une interface dans le style de Diablo III. Ses réglages sont sur les pages en dessous de celle-ci."
-L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them"] = "/dui config - ces options|n/dui move - déverrouille la minicarte, le chat, les boutons du menu et le suivi des quêtes pour les déplacer"
+L["A Diablo III style interface. Its settings are on the pages below this one."] =
+	"Une interface dans le style de Diablo III. Ses réglages sont sur les pages en dessous de celle-ci."
+L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them"] =
+	"/dui config - ces options|n/dui move - déverrouille la minicarte, le chat, les boutons du menu et le suivi des quêtes pour les déplacer"
 L["Unlock Frames"] = "Déverrouiller les cadres"
 L["Lock Frames"] = "Verrouiller les cadres"
-L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] = "Met en évidence les cadres déplaçables - la minicarte, le chat, les boutons du menu, le suivi des quêtes (de Blizzard ou de Questie) et TrinketMenu - pour les glisser où vous voulez. Glissez la minicarte avec le clic droit pour la redimensionner. Un bouton Verrouiller les cadres les fige à leurs nouvelles places.|n|nAussi : /dui move"
-L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."] = "Glissez les cadres mis en évidence pour les déplacer. Glissez la minicarte avec le clic droit pour la redimensionner."
+L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] =
+	"Met en évidence les cadres déplaçables - la minicarte, le chat, les boutons du menu, le suivi des quêtes (de Blizzard ou de Questie) et TrinketMenu - pour les glisser où vous voulez. Glissez la minicarte avec le clic droit pour la redimensionner. Un bouton Verrouiller les cadres les fige à leurs nouvelles places.|n|nAussi : /dui move"
+L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."] =
+	"Glissez les cadres mis en évidence pour les déplacer. Glissez la minicarte avec le clic droit pour la redimensionner."
 L["You can't move frames in combat."] = "Impossible de déplacer les cadres en combat."
 L["UI Scale"] = "Échelle de l'interface"
-L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = "La taille des barres, orbes, cadres de DiabolicUI et de tout ce qu'ils portent, en pourcentage de la taille prévue pour votre écran. L'échelle de l'interface de WoW et les autres addons ne changent pas.|n|nAussi : /dui setscale 0.9"
+L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] =
+	"La taille des barres, orbes, cadres de DiabolicUI et de tout ce qu'ils portent, en pourcentage de la taille prévue pour votre écran. L'échelle de l'interface de WoW et les autres addons ne changent pas.|n|nAussi : /dui setscale 0.9"

@@ -15,7 +15,6 @@ local strmatch = string.match
 -- WoW API
 local GetTime = _G.GetTime
 
-
 local OnUpdate = function(self, elapsed)
 	if self.new_message then
 		self.showing_message = self.new_message
@@ -93,17 +92,17 @@ Module.AddMessage = function(self, msg, type, r, g, b)
 	local isQuestProgress
 	local isBlackListed
 
-	if (not hasPriority) then
+	if not hasPriority then
 		-- first check if it's blacklisted
-		for _,pattern in ipairs(config.blacklist.pattern) do
+		for _, pattern in ipairs(config.blacklist.pattern) do
 			if strmatch(msg, pattern) then
 				isBlackListed = true
 				break
 			end
 		end
 		-- then do a sweep to see if it's whitelisted
-		if (not isBlackListed) then
-			for _,pattern in ipairs(config.whitelist.pattern) do
+		if not isBlackListed then
+			for _, pattern in ipairs(config.whitelist.pattern) do
 				if strmatch(msg, pattern) then
 					hasPriority = true
 					break
@@ -112,7 +111,7 @@ Module.AddMessage = function(self, msg, type, r, g, b)
 			-- quest update?
 			isQuestProgress = config.tracker.plain[msg]
 			if not isQuestProgress then
-				for _,pattern in ipairs(config.tracker.pattern) do
+				for _, pattern in ipairs(config.tracker.pattern) do
 					if strmatch(msg, pattern) then
 						isQuestProgress = true
 						break
@@ -122,33 +121,33 @@ Module.AddMessage = function(self, msg, type, r, g, b)
 		end
 	end
 
-	if (type == "error") then
+	if type == "error" then
 		r, g, b = unpack(config.color.error)
-	elseif (type == "info") then
+	elseif type == "info" then
 		r, g, b = unpack(config.color.info)
-	elseif (type == "system") and not(r and g and b) then
+	elseif (type == "system") and not (r and g and b) then
 		r, g, b = unpack(config.color.system)
 	end
 
 	-- whitelisted info messages and quest progress show in the quest line,
 	-- the other whitelisted ones in the warning line
-	if (hasPriority and (type ~= "info")) then
+	if hasPriority and (type ~= "info") then
 		self.player.new_message = msg
 		return
-	elseif (hasPriority or isQuestProgress) then
+	elseif hasPriority or isQuestProgress then
 		self.player.new_quest_message = msg
 		return
 	end
 
-	if (not isBlackListed) then
+	if not isBlackListed then
 		DEFAULT_CHAT_FRAME:AddMessage(msg, r, g, b)
 	end
 end
 
 Module.OnEvent = function(self, event, msg, r, g, b)
-	if (event == "UI_ERROR_MESSAGE") then
+	if event == "UI_ERROR_MESSAGE" then
 		self:AddMessage(msg, "error")
-	elseif (event == "UI_INFO_MESSAGE") then
+	elseif event == "UI_INFO_MESSAGE" then
 		self:AddMessage(msg, "info")
 	else -- SYSMSG: a message with its own color
 		self:AddMessage(msg, "system", r, g, b)
@@ -173,7 +172,6 @@ Module.OnInit = function(self)
 	self.player = self.frames.player
 	self.message = self.frames.player.message
 	self.message_quest = self.frames.player.message_quest
-
 end
 
 Module.OnEnable = function(self)
@@ -209,14 +207,21 @@ Module.OnEnable = function(self)
 	self.message_quest.shade:SetVertexColor(0, 0, 0)
 	self.message_quest.shade:SetAlpha(0)
 
-	hooksecurefunc(self.frames.player.message, "SetAlpha", function(self, alpha) self.shade:SetAlpha(alpha * 2/3) end)
-	hooksecurefunc(self.frames.player.message, "SetText", function(self) self.shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48) end)
-	hooksecurefunc(self.frames.player.message_quest, "SetAlpha", function(self, alpha) self.shade:SetAlpha(alpha * 2/3) end)
-	hooksecurefunc(self.frames.player.message_quest, "SetText", function(self) self.shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48) end)
+	hooksecurefunc(self.frames.player.message, "SetAlpha", function(self, alpha)
+		self.shade:SetAlpha(alpha * 2 / 3)
+	end)
+	hooksecurefunc(self.frames.player.message, "SetText", function(self)
+		self.shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48)
+	end)
+	hooksecurefunc(self.frames.player.message_quest, "SetAlpha", function(self, alpha)
+		self.shade:SetAlpha(alpha * 2 / 3)
+	end)
+	hooksecurefunc(self.frames.player.message_quest, "SetText", function(self)
+		self.shade:SetSize(self:GetStringWidth() + 128, self:GetStringHeight() + 48)
+	end)
 
 	self:RegisterEvent("UI_ERROR_MESSAGE", "OnEvent")
 	self:RegisterEvent("UI_INFO_MESSAGE", "OnEvent")
 	self:RegisterEvent("SYSMSG", "OnEvent")
 	self.player:SetScript("OnUpdate", OnUpdate)
-
 end

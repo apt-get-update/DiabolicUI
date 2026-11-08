@@ -67,7 +67,7 @@ local CollectButtons
 CollectButtons = function(frame, found)
 	for i = 1, select("#", frame:GetChildren()) do
 		local child = select(i, frame:GetChildren())
-		if child:IsObjectType("Button") and (not child.DiabolicStyled) and IsPanelButton(child) then
+		if child:IsObjectType("Button") and not child.DiabolicStyled and IsPanelButton(child) then
 			found[#found + 1] = child
 		end
 		CollectButtons(child, found)
@@ -99,14 +99,20 @@ Module.AddHint = function(self, box, text)
 	hint:SetPoint("LEFT", box, "LEFT", spec.inset, 0)
 	hint:SetText(text)
 	local Update = function()
-		if (box:GetText() == "") and (not box.DiabolicFocused) then
+		if (box:GetText() == "") and not box.DiabolicFocused then
 			hint:Show()
 		else
 			hint:Hide()
 		end
 	end
-	box:HookScript("OnEditFocusGained", function() box.DiabolicFocused = true Update() end)
-	box:HookScript("OnEditFocusLost", function() box.DiabolicFocused = nil Update() end)
+	box:HookScript("OnEditFocusGained", function()
+		box.DiabolicFocused = true
+		Update()
+	end)
+	box:HookScript("OnEditFocusLost", function()
+		box.DiabolicFocused = nil
+		Update()
+	end)
 	box:HookScript("OnTextChanged", Update)
 	Update()
 	return hint
@@ -116,7 +122,7 @@ end
 -- font).
 local AllFit = function(buttons)
 	for _, button in ipairs(buttons) do
-		if (button:GetTextWidth() > button:GetWidth() - Module.config.button_text_margin * 2) then
+		if button:GetTextWidth() > button:GetWidth() - Module.config.button_text_margin * 2 then
 			return false
 		end
 	end
@@ -153,7 +159,12 @@ Module.StyleScrollBar = function(self, bar)
 		button:SetDisabledTexture(art.disabled)
 		button:SetHighlightTexture(art.lit)
 		button:GetHighlightTexture():SetBlendMode("BLEND")
-		for _, texture in ipairs({ button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture(), button:GetHighlightTexture() }) do
+		for _, texture in ipairs({
+			button:GetNormalTexture(),
+			button:GetPushedTexture(),
+			button:GetDisabledTexture(),
+			button:GetHighlightTexture(),
+		}) do
 			texture:SetTexCoord(unpack(spec.arrow_texcoords))
 			texture:ClearAllPoints()
 			texture:SetAllPoints()
@@ -169,7 +180,12 @@ Module.StyleScrollBar = function(self, bar)
 	track:SetPoint("TOP", up, "TOP", 0, spec.line)
 	track:SetPoint("BOTTOM", down, "BOTTOM", 0, -spec.line)
 	track:SetWidth(spec.width + spec.line * 2)
-	track:SetBackdrop({ bgFile = spec.blank, edgeFile = spec.blank, edgeSize = spec.line, insets = { left = spec.line, right = spec.line, top = spec.line, bottom = spec.line } })
+	track:SetBackdrop({
+		bgFile = spec.blank,
+		edgeFile = spec.blank,
+		edgeSize = spec.line,
+		insets = { left = spec.line, right = spec.line, top = spec.line, bottom = spec.line },
+	})
 	track:SetBackdropColor(unpack(spec.track_color))
 	track:SetBackdropBorderColor(unpack(spec.line_color))
 end
@@ -243,7 +259,7 @@ local Spread = function(frame, buttons)
 		widths = widths + button:GetWidth() * scale
 	end
 	local fit = (right - left - gap * (#buttons - 1)) / widths
-	if (fit <= 0) then
+	if fit <= 0 then
 		return
 	end
 	local frameLeft, frameBottom, frameRight, frameTop = Edges(frame)
@@ -291,10 +307,14 @@ local LineRows = function(frame)
 					local _, _, beforeRight = Edges(before)
 					apart = ((Edges(button)) - beforeRight) / button:GetEffectiveScale()
 				end
-				if apart and (apart < wanted - .5) and (apart > -math_min(before:GetWidth(), button:GetWidth()) / 2) then
+				if
+					apart
+					and (apart < wanted - 0.5)
+					and (apart > -math_min(before:GetWidth(), button:GetWidth()) / 2)
+				then
 					close[#close + 1] = button
 				else
-					if (#close > 1) then
+					if #close > 1 then
 						Spread(frame, close)
 					end
 					close = { button }
@@ -324,7 +344,9 @@ Module.StyleButtons = function(self, frame)
 	for _, button in ipairs(buttons) do
 		button.DiabolicStyled = true
 		button.DiabolicPanelButton = true
-		button:HookScript("OnShow", function() QueueRows(frame) end)
+		button:HookScript("OnShow", function()
+			QueueRows(frame)
+		end)
 		local name = button:GetName()
 		for _, part in ipairs({ "Left", "Middle", "Right" }) do
 			local region = name and _G[name .. part]

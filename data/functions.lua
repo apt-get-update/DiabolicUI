@@ -2,7 +2,6 @@ local _, Engine = ...
 local C = Engine:GetDB("Data: Colors")
 local F = {}
 
-
 -- Lua API
 local math_floor = math.floor
 local tonumber = tonumber
@@ -13,8 +12,6 @@ local unpack = unpack
 -- Get the current client locale
 local gameLocale = GetLocale()
 
-
-
 -- Number abbreviations
 ---------------------------------------------------------------------
 -- value / divisor with one decimal, and the suffix: "1.5k", or "2k"
@@ -24,32 +21,35 @@ local abbreviate = function(value, divisor, suffix)
 end
 
 -- Chinese counts in 万 (ten thousand) and 亿 (a hundred million)
-F.Short = (gameLocale == "zhCN") and function(value)
-	value = tonumber(value)
-	if not value then return "" end
-	if value >= 1e8 then
-		return abbreviate(value, 1e8, "亿")
-	elseif value >= 1e4 or value <= -1e3 then
-		return abbreviate(value, 1e4, "万")
-	else
-		return tostring(math_floor(value))
+F.Short = (gameLocale == "zhCN")
+		and function(value)
+			value = tonumber(value)
+			if not value then
+				return ""
+			end
+			if value >= 1e8 then
+				return abbreviate(value, 1e8, "亿")
+			elseif value >= 1e4 or value <= -1e3 then
+				return abbreviate(value, 1e4, "万")
+			else
+				return tostring(math_floor(value))
+			end
+		end
+	or function(value)
+		value = tonumber(value)
+		if not value then
+			return ""
+		end
+		if value >= 1e9 then
+			return abbreviate(value, 1e9, "b")
+		elseif value >= 1e6 then
+			return abbreviate(value, 1e6, "m")
+		elseif value >= 1e3 or value <= -1e3 then
+			return abbreviate(value, 1e3, "k")
+		else
+			return tostring(math_floor(value))
+		end
 	end
-end
-
-or function(value)
-	value = tonumber(value)
-	if not value then return "" end
-	if value >= 1e9 then
-		return abbreviate(value, 1e9, "b")
-	elseif value >= 1e6 then
-		return abbreviate(value, 1e6, "m")
-	elseif value >= 1e3 or value <= -1e3 then
-		return abbreviate(value, 1e3, "k")
-	else
-		return tostring(math_floor(value))
-	end
-end
-
 
 -- Colorize a piece of text with the given color
 ---------------------------------------------------------------------
@@ -60,10 +60,8 @@ F.Colorize = function(str, ...)
 	elseif type(r) == "string" then
 		r, g, b = unpack(C.General[r])
 	end
-	return ("|cff%02X%02X%02X%s|r"):format(math_floor(r*255), math_floor(g*255), math_floor(b*255), str or "")
+	return ("|cff%02X%02X%02X%s|r"):format(math_floor(r * 255), math_floor(g * 255), math_floor(b * 255), str or "")
 end
-
-
 
 -- Money with coin icons ("12[g] 34[s] 56[c]"), leaving out leading zero
 -- denominations. The icons come from the shared coin style in
@@ -78,19 +76,31 @@ local BuildCoinIcon = function(texture, texcoord, size, offset)
 	local atlasSize = 64 -- the texcoords are fractions of this
 	local left, right = texcoord[1] * atlasSize, texcoord[2] * atlasSize
 	local top, bottom = texcoord[3] * atlasSize, texcoord[4] * atlasSize
-	return ("|T%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|t"):format(texture, height, width, offset[1], offset[2], atlasSize, atlasSize, left, right, top, bottom)
+	return ("|T%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d|t"):format(
+		texture,
+		height,
+		width,
+		offset[1],
+		offset[2],
+		atlasSize,
+		atlasSize,
+		left,
+		right,
+		top,
+		bottom
+	)
 end
 
 F.Money = function(money, yOffset)
 	local coin = Engine:GetDB("UI").coin
 	yOffset = yOffset or coin.coin_offset[2]
 	local coinIcons = coinIconSets[yOffset]
-	if (not coinIcons) then
+	if not coinIcons then
 		local offset = { coin.coin_offset[1], yOffset }
 		coinIcons = {
 			gold = BuildCoinIcon(coin.gold_texture, coin.gold_texcoord, coin.gold_size, offset),
 			silver = BuildCoinIcon(coin.silver_texture, coin.silver_texcoord, coin.silver_size, offset),
-			copper = BuildCoinIcon(coin.copper_texture, coin.copper_texcoord, coin.copper_size, offset)
+			copper = BuildCoinIcon(coin.copper_texture, coin.copper_texcoord, coin.copper_size, offset),
 		}
 		coinIconSets[yOffset] = coinIcons
 	end
@@ -98,15 +108,13 @@ F.Money = function(money, yOffset)
 	local gold = math_floor(money / 10000)
 	local silver = math_floor((money / 100) % 100)
 	local copper = money % 100
-	if (gold > 0) then
+	if gold > 0 then
 		return ("%d%s %d%s %d%s"):format(gold, coinIcons.gold, silver, coinIcons.silver, copper, coinIcons.copper)
-	elseif (silver > 0) then
+	elseif silver > 0 then
 		return ("%d%s %d%s"):format(silver, coinIcons.silver, copper, coinIcons.copper)
 	else
 		return ("%d%s"):format(copper, coinIcons.copper)
 	end
 end
-
-
 
 Engine:NewStaticConfig("Library: Format", F)

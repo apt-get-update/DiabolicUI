@@ -39,7 +39,7 @@ local LeftCount -- how many things were left to scan, last said
 local Walked -- the NPC windows' tabs looked at this scan (by window: the last one, false when all were)
 local Saved -- DiabolicUI_Layout: { windows = { [name] = { checked, parts, views } } }
 local Shown = {} -- when each window shown was first seen so (by window)
-local SETTLE_TIME = .5 -- a window saved once shown that long (an addon's lays itself out over a few frames)
+local SETTLE_TIME = 0.5 -- a window saved once shown that long (an addon's lays itself out over a few frames)
 
 -- The chat window the scan talks in: "Layout", opened the first time (with
 -- nothing else in it). All windows taken, the default one: opening another
@@ -49,14 +49,14 @@ local ChatWindow = function()
 	for i = 1, _G.NUM_CHAT_WINDOWS do
 		local name, _, _, _, _, _, shown = _G.GetChatWindowInfo(i)
 		if shown or _G["ChatFrame" .. i].isDocked then
-			if (name == L["Layout"]) then
+			if name == L["Layout"] then
 				return _G["ChatFrame" .. i]
 			end
 		else
 			free = true
 		end
 	end
-	if (not free) then
+	if not free then
 		return _G.DEFAULT_CHAT_FRAME
 	end
 	local frame = _G.FCF_OpenNewWindow(L["Layout"])
@@ -100,7 +100,7 @@ end
 -- where it is on screen ({ left, bottom, width, height } in UIParent's
 -- units), its strata and level (a text: its layer and its frame's level).
 local Round = function(value)
-	return math_floor(value * 10 + .5) / 10
+	return math_floor(value * 10 + 0.5) / 10
 end
 
 local NameOf = function(frame)
@@ -132,7 +132,7 @@ end
 local Round3 = function(...)
 	local values = { ... }
 	for i, value in ipairs(values) do
-		values[i] = math_floor(value * 1000 + .5) / 1000
+		values[i] = math_floor(value * 1000 + 0.5) / 1000
 	end
 	return values
 end
@@ -148,8 +148,10 @@ local ScrolledOut = function(region)
 			if outerLeft then
 				local across = math_min(right, outerRight) - math_max(left, outerLeft)
 				local down = math_min(top, outerTop) - math_max(bottom, outerBottom)
-				if (across < math_min(right - left, outerRight - outerLeft) / 2)
-					or (down < math_min(top - bottom, outerTop - outerBottom) / 2) then
+				if
+					(across < math_min(right - left, outerRight - outerLeft) / 2)
+					or (down < math_min(top - bottom, outerTop - outerBottom) / 2)
+				then
 					return true
 				end
 			end
@@ -185,7 +187,7 @@ local Entry = function(part, window, rows)
 	end
 	local entry = Engine:GetModule("Blizzard: Adjust").PlaceOf(part)
 	entry[4], entry[5] = Round(entry[4]), Round(entry[5])
-	if (not part:IsObjectType("FontString")) then
+	if not part:IsObjectType("FontString") then
 		entry[6], entry[7] = Round(part:GetWidth()), Round(part:GetHeight())
 	end
 	entry.kind = part:GetObjectType()
@@ -224,7 +226,8 @@ local IsFile = function(file)
 	return (type(file) == "string") and (file ~= "")
 end
 
-local STRATA = { BACKGROUND = 1, LOW = 2, MEDIUM = 3, HIGH = 4, DIALOG = 5, FULLSCREEN = 6, FULLSCREEN_DIALOG = 7, TOOLTIP = 8 }
+local STRATA =
+	{ BACKGROUND = 1, LOW = 2, MEDIUM = 3, HIGH = 4, DIALOG = 5, FULLSCREEN = 6, FULLSCREEN_DIALOG = 7, TOOLTIP = 8 }
 local LAYERS = { BACKGROUND = 1, BORDER = 2, ARTWORK = 3, OVERLAY = 4 } -- (HIGHLIGHT: only under the cursor)
 
 local CollectArt
@@ -232,23 +235,52 @@ CollectArt = function(frame, owner, alpha, art)
 	owner, alpha = frame:GetName() or owner, alpha * frame:GetAlpha()
 	local order = { STRATA[frame:GetFrameStrata()] or 3, frame:GetFrameLevel() }
 	local backdrop = frame:GetBackdrop()
-	if backdrop and (IsFile(backdrop.bgFile) or IsFile(backdrop.edgeFile)) and frame:GetLeft() and (not ScrolledOut(frame)) then
+	if
+		backdrop
+		and (IsFile(backdrop.bgFile) or IsFile(backdrop.edgeFile))
+		and frame:GetLeft()
+		and (not ScrolledOut(frame))
+	then
 		local insets = backdrop.insets or {}
-		art[#art + 1] = { order = { order[1], order[2], 0, #art }, owner = owner, alpha = alpha, rect = Rect(frame),
+		art[#art + 1] = {
+			order = { order[1], order[2], 0, #art },
+			owner = owner,
+			alpha = alpha,
+			rect = Rect(frame),
 			scale = kit.ScaleOf(frame) / _G.UIParent:GetEffectiveScale(),
-			backdrop = { bgFile = backdrop.bgFile, edgeFile = backdrop.edgeFile,
-				edgeSize = backdrop.edgeSize, tile = backdrop.tile and true, tileSize = backdrop.tileSize,
-				insets = { insets.left or 0, insets.right or 0, insets.top or 0, insets.bottom or 0 } },
-			color = Round3(frame:GetBackdropColor()), border = Round3(frame:GetBackdropBorderColor()) }
+			backdrop = {
+				bgFile = backdrop.bgFile,
+				edgeFile = backdrop.edgeFile,
+				edgeSize = backdrop.edgeSize,
+				tile = backdrop.tile and true,
+				tileSize = backdrop.tileSize,
+				insets = { insets.left or 0, insets.right or 0, insets.top or 0, insets.bottom or 0 },
+			},
+			color = Round3(frame:GetBackdropColor()),
+			border = Round3(frame:GetBackdropBorderColor()),
+		}
 	end
 	for i = 1, select("#", frame:GetRegions()) do
 		local region = select(i, frame:GetRegions())
-		if region:IsObjectType("Texture") and region:IsShown() and IsFile(region:GetTexture())
-			and LAYERS[region:GetDrawLayer()] and region:GetLeft() and (not ScrolledOut(region)) then
-			art[#art + 1] = { order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
-				owner = region:GetName() or owner, alpha = alpha * region:GetAlpha(), rect = Rect(region),
-				file = region:GetTexture(), coords = Round3(region:GetTexCoord()), color = Round3(region:GetVertexColor()),
-				blend = region:GetBlendMode(), gradient = region.DiabolicGradient }
+		if
+			region:IsObjectType("Texture")
+			and region:IsShown()
+			and IsFile(region:GetTexture())
+			and LAYERS[region:GetDrawLayer()]
+			and region:GetLeft()
+			and (not ScrolledOut(region))
+		then
+			art[#art + 1] = {
+				order = { order[1], order[2], LAYERS[region:GetDrawLayer()], #art },
+				owner = region:GetName() or owner,
+				alpha = alpha * region:GetAlpha(),
+				rect = Rect(region),
+				file = region:GetTexture(),
+				coords = Round3(region:GetTexCoord()),
+				color = Round3(region:GetVertexColor()),
+				blend = region:GetBlendMode(),
+				gradient = region.DiabolicGradient,
+			}
 		end
 	end
 	for i = 1, select("#", frame:GetChildren()) do
@@ -262,7 +294,7 @@ end
 
 local DrawnFirst = function(a, b)
 	for i = 1, 4 do
-		if (a.order[i] ~= b.order[i]) then
+		if a.order[i] ~= b.order[i] then
 			return a.order[i] < b.order[i]
 		end
 	end
@@ -283,9 +315,9 @@ Module.ArtOf = Art -- (tools/sample.lua's)
 local Packed
 Packed = function(value)
 	local kind = type(value)
-	if (kind == "string") then
+	if kind == "string" then
 		return string_format("%q", value)
-	elseif (kind ~= "table") then
+	elseif kind ~= "table" then
 		return tostring(value)
 	end
 	local out = {}
@@ -293,7 +325,7 @@ Packed = function(value)
 		out[i] = Packed(item)
 	end
 	for key, item in pairs(value) do
-		if (type(key) == "string") then
+		if type(key) == "string" then
 			out[#out + 1] = key .. "=" .. Packed(item)
 		end
 	end
@@ -376,8 +408,14 @@ local Scan = function(window)
 	local view, label = ViewOf(named)
 	-- (this look at it: what's not in it now, a state ago, isn't checked with what is)
 	Saved.stamp = (Saved.stamp or 0) + 1
-	seen.views[view] = { label = label, art = PackedArt(frame), rect = seen.rect, window = seen.window, stamp = Saved.stamp,
-		worded = true } -- (its parts' `words` say what shows in it)
+	seen.views[view] = {
+		label = label,
+		art = PackedArt(frame),
+		rect = seen.rect,
+		window = seen.window,
+		stamp = Saved.stamp,
+		worded = true,
+	} -- (its parts' `words` say what shows in it)
 	local new = 0
 	for name, part in pairs(named) do
 		local entry = Entry(part, window, rows)
@@ -385,7 +423,7 @@ local Scan = function(window)
 			local old = parts[name]
 			new = new + ((type(old) == "table") and 0 or 1)
 			entry.tabs = (type(old) == "table") and old.tabs or {}
-			if (view ~= "") then
+			if view ~= "" then
 				entry.tabs[view] = true
 			end
 			entry.last = (type(old) == "table") and old.last or {}
@@ -396,13 +434,13 @@ local Scan = function(window)
 		end
 	end
 	for name in pairs(parts) do
-		if IsBagItem(name) and (not named[name]) then
+		if IsBagItem(name) and not named[name] then
 			parts[name] = nil
 		end
 	end
 	-- its parts counted once, and again when new ones show (a page, a tab):
 	-- none new, it's all been seen
-	if (new > 0) or (not Counted[title]) then
+	if (new > 0) or not Counted[title] then
 		Counted[title] = true
 		local total = 0
 		for _, entry in pairs(parts) do
@@ -453,8 +491,14 @@ end
 -- `name` (in the game's lists of windows) shown and not ours: said once, kept.
 local NoteUnstyled = function(name)
 	local frame = _G[name]
-	if (type(frame) == "table") and frame.IsVisible and frame:IsVisible() and (not kit.config.layout.not_windows[name])
-		and (not InOurs(frame)) and (not Saved.unstyled[name]) then
+	if
+		(type(frame) == "table")
+		and frame.IsVisible
+		and frame:IsVisible()
+		and not kit.config.layout.not_windows[name]
+		and (not InOurs(frame))
+		and not Saved.unstyled[name]
+	then
 		Saved.unstyled[name] = true
 		Print(string_format(L["Not styled: %s."], name))
 	end
@@ -476,10 +520,10 @@ local Left = function()
 	local styled = Styled()
 	for name in pairs(styled) do
 		local seen = Saved.windows[name]
-		if (not seen) or (not seen.parts) then
+		if (not seen) or not seen.parts then
 			left.windows[#left.windows + 1] = name
 			left.count = left.count + 1
-		elseif (not seen.views) then
+		elseif not seen.views then
 			left.old[#left.old + 1] = name
 			left.count = left.count + 1
 		else
@@ -489,7 +533,7 @@ local Left = function()
 				for key in pairs(seen.views) do
 					visited = visited or (("+" .. key .. "+"):find("+" .. tab .. "+", 1, true) ~= nil)
 				end
-				if (not visited) then
+				if not visited then
 					labels[#labels + 1] = label
 				end
 			end
@@ -533,7 +577,7 @@ Module.Report = function(self)
 	if left.unstyled[1] then
 		Print(string_format(L["Not styled: %s."], table_concat(left.unstyled, ", ")))
 	end
-	if (left.count == 0) then
+	if left.count == 0 then
 		Print(L["Every window scanned, every tab visited."])
 	end
 end
@@ -578,7 +622,7 @@ local CheckShown = function()
 			if ok then
 				ok, err = pcall(Walk, window)
 			end
-			if (not ok) and (not Said[err]) then
+			if (not ok) and not Said[err] then
 				Said[err] = true
 				Print(string_format(L["%s couldn't be scanned: %s"], window.Frame:GetName() or L["a window"], err))
 			end
@@ -643,45 +687,100 @@ local Page = function(mode)
 	end
 end
 local STEPS = {
-	Open(function() _G.ToggleCharacter("PaperDollFrame") end),
-	Tab("DiabolicUICharacterSideTab2"), Tab("DiabolicUICharacterSideTab3"), Tab("DiabolicUICharacterSideTab1"), -- titles, sets, stats
-	function() _G.ToggleCharacter("ReputationFrame") end,
-	function() _G.ToggleCharacter("SkillFrame") end,
-	function() _G.ToggleCharacter("TokenFrame") end,
+	Open(function()
+		_G.ToggleCharacter("PaperDollFrame")
+	end),
+	Tab("DiabolicUICharacterSideTab2"),
+	Tab("DiabolicUICharacterSideTab3"),
+	Tab("DiabolicUICharacterSideTab1"), -- titles, sets, stats
+	function()
+		_G.ToggleCharacter("ReputationFrame")
+	end,
+	function()
+		_G.ToggleCharacter("SkillFrame")
+	end,
+	function()
+		_G.ToggleCharacter("TokenFrame")
+	end,
 	function()
 		if _G.TokenFramePopup then
 			_G.TokenFramePopup:Show()
 		end
 	end,
-	function() _G.ToggleCharacter("PetPaperDollFrame") end, -- (the pet's, or the companions')
-	Tab("PetPaperDollFrameTab2"), Tab("PetPaperDollFrameTab3"),
-	Open(function() _G.ToggleSpellBook(_G.BOOKTYPE_SPELL) end),
-	Tab("SpellBookSkillLineTab2"), Tab("SpellBookSkillLineTab3"), Tab("SpellBookSkillLineTab4"), Tab("SpellBookSkillLineTab1"),
-	Page("CRITTER"), Page("MOUNT"), Page("PROFESSIONS"), Page(nil),
+	function()
+		_G.ToggleCharacter("PetPaperDollFrame")
+	end, -- (the pet's, or the companions')
+	Tab("PetPaperDollFrameTab2"),
+	Tab("PetPaperDollFrameTab3"),
+	Open(function()
+		_G.ToggleSpellBook(_G.BOOKTYPE_SPELL)
+	end),
+	Tab("SpellBookSkillLineTab2"),
+	Tab("SpellBookSkillLineTab3"),
+	Tab("SpellBookSkillLineTab4"),
+	Tab("SpellBookSkillLineTab1"),
+	Page("CRITTER"),
+	Page("MOUNT"),
+	Page("PROFESSIONS"),
+	Page(nil),
 	Tab("SpellBookFrameTabButton2"), -- the pet's book
-	Open(function() _G.ToggleTalentFrame() end),
-	Tab("PlayerTalentFrameTab1"), Tab("PlayerTalentFrameTab2"), Tab("PlayerTalentFrameTab3"), Tab("PlayerTalentFrameTab4"),
-	Tab("PlayerSpecTab2"), Tab("PlayerSpecTab3"), -- the second spec, the pet's
-	Open(function() _G.ToggleFriendsFrame(1) end),
-	Tab("FriendsTabHeaderTab2"), Tab("FriendsTabHeaderTab3"), -- ignored, pending
-	function() _G.ToggleFriendsFrame(2) end,
-	function() _G.ToggleFriendsFrame(3) end,
+	Open(function()
+		_G.ToggleTalentFrame()
+	end),
+	Tab("PlayerTalentFrameTab1"),
+	Tab("PlayerTalentFrameTab2"),
+	Tab("PlayerTalentFrameTab3"),
+	Tab("PlayerTalentFrameTab4"),
+	Tab("PlayerSpecTab2"),
+	Tab("PlayerSpecTab3"), -- the second spec, the pet's
+	Open(function()
+		_G.ToggleFriendsFrame(1)
+	end),
+	Tab("FriendsTabHeaderTab2"),
+	Tab("FriendsTabHeaderTab3"), -- ignored, pending
+	function()
+		_G.ToggleFriendsFrame(2)
+	end,
+	function()
+		_G.ToggleFriendsFrame(3)
+	end,
 	Tab("GuildFrameGuildInformationButton"),
-	function() _G.ToggleFriendsFrame(4) end,
-	function() _G.ToggleFriendsFrame(5) end,
+	function()
+		_G.ToggleFriendsFrame(4)
+	end,
+	function()
+		_G.ToggleFriendsFrame(5)
+	end,
 	Tab("RaidFrameRaidInfoButton"),
-	Open(function() _G.ToggleFrame(_G.QuestLogFrame) end),
-	Open(function() _G.ToggleAchievementFrame() end),
-	Tab("AchievementFrameTab2"), Tab("AchievementFrameTab3"), -- and Overachiever's
-	Tab("AchievementFrameTab4"), Tab("AchievementFrameTab5"), Tab("AchievementFrameTab6"),
-	Open(function() _G.ToggleLFDParentFrame() end),
-	Open(function() _G.ToggleLFRParentFrame() end),
+	Open(function()
+		_G.ToggleFrame(_G.QuestLogFrame)
+	end),
+	Open(function()
+		_G.ToggleAchievementFrame()
+	end),
+	Tab("AchievementFrameTab2"),
+	Tab("AchievementFrameTab3"), -- and Overachiever's
+	Tab("AchievementFrameTab4"),
+	Tab("AchievementFrameTab5"),
+	Tab("AchievementFrameTab6"),
+	Open(function()
+		_G.ToggleLFDParentFrame()
+	end),
+	Open(function()
+		_G.ToggleLFRParentFrame()
+	end),
 	Tab("LFRParentFrameTab2"),
-	Open(function() _G.TogglePVPFrame() end),
+	Open(function()
+		_G.TogglePVPFrame()
+	end),
 	Tab("PVPParentFrameTab2"),
-	Open(function() _G.ShowMacroFrame() end),
+	Open(function()
+		_G.ShowMacroFrame()
+	end),
 	Tab("MacroFrameTab2"),
-	Open(function() _G.ShowUIPanel(_G.DressUpFrame) end),
+	Open(function()
+		_G.ShowUIPanel(_G.DressUpFrame)
+	end),
 	Open(function()
 		local board = _G.GroupBulletinBoard_Addon
 		if board and board.ShowWindow then
@@ -694,21 +793,26 @@ local STEPS = {
 			_G.InspectUnit("target")
 		end
 	end),
-	Tab("InspectFrameTab2"), Tab("InspectFrameTab3"),
+	Tab("InspectFrameTab2"),
+	Tab("InspectFrameTab3"),
 	-- (closed, it opens the game menu, and no panel opens over that: the next
 	-- ones aren't panels)
 	Open(function()
 		_G.KeyBindingFrame_LoadUI()
 		_G.ShowUIPanel(_G.KeyBindingFrame)
 	end),
-	Open(function() Engine:GetModule("ChatCopy"):Show(_G.ChatFrame1) end),
-	Open(function() _G.OpenAllBags() end),
+	Open(function()
+		Engine:GetModule("ChatCopy"):Show(_G.ChatFrame1)
+	end),
+	Open(function()
+		_G.OpenAllBags()
+	end),
 	function()
 		_G.CloseAllBags()
 		_G.CloseAllWindows()
-	end
+	end,
 }
-local STEP_TIME = .6 -- each step's wait before it's saved (the layout done on the next frame)
+local STEP_TIME = 0.6 -- each step's wait before it's saved (the layout done on the next frame)
 
 -- Each window that needs no NPC opened in turn, page by page, and saved.
 Module.Sweep = function(self)
@@ -717,19 +821,19 @@ Module.Sweep = function(self)
 		return
 	end
 	Print(L["Layout scan: each window opened in turn."])
-	if (not self.Ticker:IsShown()) then
+	if not self.Ticker:IsShown() then
 		self:Start()
 	end
 	local step, elapsed = 0, STEP_TIME
 	self.Sweeper:SetScript("OnUpdate", function(sweeper, delta)
 		elapsed = elapsed + delta
-		if (elapsed < STEP_TIME) then
+		if elapsed < STEP_TIME then
 			return
 		end
 		elapsed = 0
 		CheckShown()
 		step = step + 1
-		if InCombatLockdown() or (not STEPS[step]) then
+		if InCombatLockdown() or not STEPS[step] then
 			sweeper:SetScript("OnUpdate", nil)
 			local windows = 0
 			for _ in pairs(Saved.windows) do
@@ -740,7 +844,7 @@ Module.Sweep = function(self)
 			return
 		end
 		local ok, err = pcall(STEPS[step])
-		if (not ok) then
+		if not ok then
 			Print(string_format(L["%s couldn't be scanned: %s"], L["a window"], err))
 		end
 	end)
@@ -753,7 +857,7 @@ Module.OnEnable = function(self)
 	ticker:SetScript("OnUpdate", function(_, delta)
 		Watch()
 		elapsed = elapsed + delta
-		if (elapsed >= 1) then
+		if elapsed >= 1 then
 			elapsed = 0
 			CheckShown()
 		end
@@ -765,15 +869,18 @@ Module.OnEnable = function(self)
 	Saved.on, Saved.moved, Saved.adjust = nil, nil, nil -- (an older version's)
 	-- (their views from before a checked tab counted, and our pages' tabs:
 	-- seen again by the next scan)
-	for _, dropped in ipairs({ { "checkedTabs", "SpellBookFrame", "PlayerTalentFrame" }, { "pageTabs", "SpellBookFrame" } }) do
-		if (not Saved[dropped[1]]) then
+	for _, dropped in ipairs({
+		{ "checkedTabs", "SpellBookFrame", "PlayerTalentFrame" },
+		{ "pageTabs", "SpellBookFrame" },
+	}) do
+		if not Saved[dropped[1]] then
 			Saved[dropped[1]] = true
 			for i = 2, #dropped do
 				local seen = Saved.windows[dropped[i]]
 				if seen then
 					seen.views = nil
 					for _, part in pairs(seen.parts or {}) do
-						if (type(part) == "table") then
+						if type(part) == "table" then
 							part.tabs, part.last, part.words = nil, nil, nil
 						end
 					end
@@ -783,9 +890,9 @@ Module.OnEnable = function(self)
 	end
 	_G.DiabolicUI_Layout = Saved
 	self:GetHandler("ChatCommand"):Register("layout", function(what)
-		if (what == "all") then
+		if what == "all" then
 			self:Sweep()
-		elseif (what == "left") then
+		elseif what == "left" then
 			self:Report()
 		else
 			self:Toggle()

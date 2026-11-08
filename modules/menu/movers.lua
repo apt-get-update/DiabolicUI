@@ -39,7 +39,7 @@ end
 
 -- A frame's effective scale; a text's or texture's, its first frame's.
 local EffectiveScale = function(region)
-	while region and (not region.GetEffectiveScale) do
+	while region and not region.GetEffectiveScale do
 		region = region:GetParent()
 	end
 	return region and region:GetEffectiveScale() or 1
@@ -64,7 +64,7 @@ local FitMover = function(mover, target, extra, extraOnly, padding)
 	end
 	for _, entry in ipairs(extra) do
 		local frame, edges = entry, "lrtb"
-		if (type(entry) == "table") and (not entry.GetLeft) then
+		if (type(entry) == "table") and not entry.GetLeft then
 			frame, edges = entry[1], entry[2]
 		end
 		local fl, fr, ft, fb = frame:GetLeft(), frame:GetRight(), frame:GetTop(), frame:GetBottom()
@@ -73,13 +73,21 @@ local FitMover = function(mover, target, extra, extraOnly, padding)
 			-- frame's: 3.3.5 gives them none of their own)
 			local scale = EffectiveScale(frame) / EffectiveScale(target)
 			fl, fr, ft, fb = fl * scale, fr * scale, ft * scale, fb * scale
-			if edges:find("l") then l = math.min(l, fl) end
-			if edges:find("r") then r = math.max(r, fr) end
-			if edges:find("t") then t = math.max(t, ft) end
-			if edges:find("b") then b = math.min(b, fb) end
+			if edges:find("l") then
+				l = math.min(l, fl)
+			end
+			if edges:find("r") then
+				r = math.max(r, fr)
+			end
+			if edges:find("t") then
+				t = math.max(t, ft)
+			end
+			if edges:find("b") then
+				b = math.min(b, fb)
+			end
 		end
 	end
-	if (l > r) then -- none of them placed
+	if l > r then -- none of them placed
 		mover:SetAllPoints(target)
 		return
 	end
@@ -99,16 +107,18 @@ local CreateMover = function(name, target, text, onDragStart, onDragStop, extra,
 	mover:SetFrameStrata("FULLSCREEN_DIALOG")
 	mover:SetAllPoints(target)
 	if extra then
-		mover:SetScript("OnShow", function(self) FitMover(self, target, extra, extraOnly, padding) end)
+		mover:SetScript("OnShow", function(self)
+			FitMover(self, target, extra, extraOnly, padding)
+		end)
 	end
 	mover:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
 		edgeSize = 12,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+		insets = { left = 3, right = 3, top = 3, bottom = 3 },
 	})
-	mover:SetBackdropColor(.6, .1, .1, .5)
-	mover:SetBackdropBorderColor(1, .82, 0, 1)
+	mover:SetBackdropColor(0.6, 0.1, 0.1, 0.5)
+	mover:SetBackdropBorderColor(1, 0.82, 0, 1)
 	mover:EnableMouse(true)
 	mover:RegisterForDrag("LeftButton")
 	mover.Text = mover:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -150,16 +160,19 @@ Module.GetMovers = function(self)
 		end, { { _G.ChatFrame1ButtonFrame, "lr" }, { _G.ChatFrameMenuButton, "lrt" }, _G.ChatFrame1EditBox }),
 		CreateMover("DiabolicUIMenuMover", menu:GetFrame(), L["Menu"], nil, function()
 			menu:SavePosition()
-		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true, 6)
+		end, { master, menuButtons.BagBarMenuButton, master.Gold, master.Performance }, true, 6),
 	}
 	-- TrinketMenu's worn trinkets, saved where TrinketMenu keeps them
 	local trinkets = _G.TrinketMenu_MainFrame
 	if trinkets and _G.TrinketMenuPerOptions then
-		table.insert(self.Movers, CreateMover("DiabolicUITrinketMenuMover", trinkets, "TrinketMenu", nil, function()
-			_G.TrinketMenuPerOptions.XPos = trinkets:GetLeft()
-			_G.TrinketMenuPerOptions.YPos = trinkets:GetTop()
-			self:PinTrinketMenu()
-		end))
+		table.insert(
+			self.Movers,
+			CreateMover("DiabolicUITrinketMenuMover", trinkets, "TrinketMenu", nil, function()
+				_G.TrinketMenuPerOptions.XPos = trinkets:GetLeft()
+				_G.TrinketMenuPerOptions.YPos = trinkets:GetTop()
+				self:PinTrinketMenu()
+			end)
+		)
 	end
 	return self.Movers
 end
@@ -177,7 +190,9 @@ Module.GetLockButton = function(self)
 	button:SetSize(160, BUTTON_HEIGHT)
 	button:SetPoint("TOP", UIParent, "TOP", 0, -120)
 	button:SetText(L["Lock Frames"])
-	button:SetScript("OnClick", function() self:SetFramesUnlocked(false) end)
+	button:SetScript("OnClick", function()
+		self:SetFramesUnlocked(false)
+	end)
 	button.Hint = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	button.Hint:SetPoint("TOP", button, "BOTTOM", 0, -6)
 	button.Hint:SetText(L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."])
@@ -208,7 +223,7 @@ Module.SetFramesUnlocked = function(self, unlocked)
 		if unlocked then
 			self.questieWasLocked = questie.trackerLocked
 			questie.trackerLocked = false
-		elseif (self.questieWasLocked ~= nil) then
+		elseif self.questieWasLocked ~= nil then
 			questie.trackerLocked = self.questieWasLocked
 			self.questieWasLocked = nil
 		end
@@ -216,7 +231,7 @@ Module.SetFramesUnlocked = function(self, unlocked)
 	end
 	local questieFrame = _G.Questie_BaseFrame
 	if unlocked and questie and questieFrame then
-		if (not self.QuestieBox) then
+		if not self.QuestieBox then
 			self.QuestieBox = CreateMover("DiabolicUIQuestieMover", questieFrame, "Questie", nil, nil)
 			self.QuestieBox:EnableMouse(false)
 		end

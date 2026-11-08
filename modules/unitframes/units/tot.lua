@@ -13,12 +13,10 @@ local unpack = unpack
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.tot
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
-	
 	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
-
 
 	-- Artwork
 	-------------------------------------------------------------------
@@ -38,18 +36,17 @@ local Style = function(self, unit)
 	local Border = self:CreateFrame("Frame")
 	Border:SetFrameLevel(self:GetFrameLevel() + 4)
 	Border:SetAllPoints()
-	
+
 	local BorderNormal = Border:CreateTexture(nil, "BORDER")
 	BorderNormal:SetSize(unpack(config.border.texture_size))
 	BorderNormal:SetPoint(unpack(config.border.texture_position))
 	BorderNormal:SetTexture(config.border.textures.normal)
-	
+
 	local BorderNormalHighlight = Border:CreateTexture(nil, "BORDER")
 	BorderNormalHighlight:SetSize(unpack(config.border.texture_size))
 	BorderNormalHighlight:SetPoint(unpack(config.border.texture_position))
 	BorderNormalHighlight:SetTexture(config.border.textures.highlight)
 	BorderNormalHighlight:Hide()
-
 
 	-- Threat
 	-------------------------------------------------------------------
@@ -58,7 +55,6 @@ local Style = function(self, unit)
 	Threat:SetSize(unpack(config.border.texture_size))
 	Threat:SetPoint(unpack(config.border.texture_position))
 	Threat:SetTexture(config.border.textures.threat)
-	
 
 	-- Health
 	-------------------------------------------------------------------
@@ -66,12 +62,12 @@ local Style = function(self, unit)
 	Health:SetSize(unpack(config.health.size))
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
-	Health.frequent = 1/30
+	Health.frequent = 1 / 30
 
 	local HealthValueHolder = Health:CreateFrame("Frame")
 	HealthValueHolder:SetAllPoints()
 	HealthValueHolder:SetFrameLevel(Border:GetFrameLevel() + 1)
-	
+
 	Health.Value = HealthValueHolder:CreateFontString(nil, "OVERLAY")
 	Health.Value:SetFontObject(config.texts.health.font_object)
 	Health.Value:SetPoint(unpack(config.texts.health.position))
@@ -84,16 +80,14 @@ local Style = function(self, unit)
 	Health.useClassColor = db.showClassColors
 	Health.dimOutOfCombat = true
 
-
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
 	CastBar:Hide()
 	CastBar:SetAllPoints()
-	CastBar:SetStatusBarTexture(1, 1, 1, .15)
+	CastBar:SetStatusBarTexture(1, 1, 1, 0.15)
 	CastBar:SetSize(Health:GetSize())
 	CastBar:DisableSmoothing(true)
-
 
 	-- Texts
 	-------------------------------------------------------------------
@@ -107,7 +101,6 @@ local Style = function(self, unit)
 	Name:SetWordWrap(true)
 	Name:SetNonSpaceWrap(false)
 
-
 	self.CastBar = CastBar
 	self.Health = Health
 	self.Name = Name
@@ -118,14 +111,12 @@ local Style = function(self, unit)
 
 	self:HookScript("OnEnter", Library.UpdateLayers)
 	self:HookScript("OnLeave", Library.UpdateLayers)
-	
 end
 
 UnitFrameWidget.OnEnable = function(self)
-	self.UnitFrame = UnitFrame:New("targettarget", Engine:GetFrame(), Style) 
+	self.UnitFrame = UnitFrame:New("targettarget", Engine:GetFrame(), Style)
 end
 
 UnitFrameWidget.GetFrame = function(self)
 	return self.UnitFrame
 end
-

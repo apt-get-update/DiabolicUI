@@ -19,9 +19,11 @@ local client
 -- The auction house open (Auctionator's too, if `withAuctionator`), the
 -- layout check on.
 local function open(withAuctionator)
-	client = Client.boot(withAuctionator and { world = function(world)
-		table.insert(world.addons, { name = "Auctionator", enabled = true, onLoad = Blizzard.Auctionator })
-	end } or nil)
+	client = Client.boot(withAuctionator and {
+		world = function(world)
+			table.insert(world.addons, { name = "Auctionator", enabled = true, onLoad = Blizzard.Auctionator })
+		end,
+	} or nil)
 	client:Tick(0.2)
 	client.api.LoadAddOn("Blizzard_AuctionUI")
 	if withAuctionator then
@@ -44,7 +46,9 @@ end
 -- (y down from its top).
 local function edges(part)
 	local frame = _G.AuctionFrame
-	return part:GetLeft() - frame:GetLeft(), frame:GetTop() - part:GetTop(), part:GetRight() - frame:GetLeft(),
+	return part:GetLeft() - frame:GetLeft(),
+		frame:GetTop() - part:GetTop(),
+		part:GetRight() - frame:GetLeft(),
 		frame:GetTop() - part:GetBottom()
 end
 
@@ -57,7 +61,9 @@ local function zones(holder)
 			found[#found + 1] = child
 		end
 	end
-	table.sort(found, function(a, b) return a:GetLeft() < b:GetLeft() end)
+	table.sort(found, function(a, b)
+		return a:GetLeft() < b:GetLeft()
+	end)
 	return found
 end
 
@@ -89,13 +95,17 @@ function TestAuctionHouse:test_the_bottom_rows_on_the_foot()
 	open(true)
 	local foot = _G.AuctionFrameDiabolicFoot
 	lu.assertEquals(foot:GetHeight(), 35)
-	for _, row in ipairs({ { "BrowseBidButton", "BrowseCloseButton" }, { "BidBidButton", "BidCloseButton" },
-		{ "AuctionsCancelAuctionButton", "AuctionsCloseButton" }, { "Atr_Buy1_Button", "AuctionatorCloseButton" } }) do
+	for _, row in ipairs({
+		{ "BrowseBidButton", "BrowseCloseButton" },
+		{ "BidBidButton", "BidCloseButton" },
+		{ "AuctionsCancelAuctionButton", "AuctionsCloseButton" },
+		{ "Atr_Buy1_Button", "AuctionatorCloseButton" },
+	}) do
 		local first, last = _G[row[1]], _G[row[2]]
 		local _, on = first:GetPoint()
 		lu.assertEquals(on, foot, row[1])
 		lu.assertEquals(first:GetBottom() - foot:GetBottom(), 7, row[1])
-		lu.assertTrue(math.abs(foot:GetRight() - last:GetRight() - 9) < .2, row[2])
+		lu.assertTrue(math.abs(foot:GetRight() - last:GetRight() - 9) < 0.2, row[2])
 	end
 	local _, money = _G.AuctionFrameMoneyFrame:GetPoint()
 	lu.assertEquals(money, foot)
@@ -128,7 +138,10 @@ function TestAuctionHouse:test_browse_on_the_grid()
 	lu.assertTrue(onPlayer:GetLeft() > _G.IsUsableCheckButtonText:GetRight())
 	lu.assertEquals(select(2, usable:GetCenter()), select(2, onPlayer:GetCenter()))
 	lu.assertTrue(select(2, edges(usable)) > select(4, edges(_G.BrowseSearchButton))) -- (under the band)
-	lu.assertEquals(select(3, edges(_G.BrowseNextPageButton)), select(3, edges(results)) + positions.BrowseNextPageButton[4])
+	lu.assertEquals(
+		select(3, edges(_G.BrowseNextPageButton)),
+		select(3, edges(results)) + positions.BrowseNextPageButton[4]
+	)
 	local headerLeft, headerTop = edges(_G.BrowseQualitySort)
 	lu.assertEquals(headerTop, top - positions.BrowseQualitySort[5])
 	lu.assertTrue(headerLeft > select(1, edges(results)))
@@ -263,8 +276,10 @@ function TestAuctionHouse:test_auctionators_dialogs_over_the_window()
 			window = child
 		end
 	end
-	lu.assertEquals({ mask:GetLeft(), mask:GetTop(), mask:GetRight(), mask:GetBottom() },
-		{ window:GetLeft(), window:GetTop(), window:GetRight(), window:GetBottom() })
+	lu.assertEquals(
+		{ mask:GetLeft(), mask:GetTop(), mask:GetRight(), mask:GetBottom() },
+		{ window:GetLeft(), window:GetTop(), window:GetRight(), window:GetBottom() }
+	)
 	local x, y = dialog:GetCenter()
 	local wx, wy = window:GetCenter()
 	lu.assertEquals({ x, y }, { wx, wy })

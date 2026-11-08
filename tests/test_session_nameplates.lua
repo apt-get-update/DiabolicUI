@@ -49,7 +49,8 @@ end
 
 function TestNamePlates:test_a_hostile_npc_gets_a_plate_that_fades_in()
 	local client = self.client
-	local blizzard = client:AddNamePlate({ name = "Hogger", level = 11, health = 400, healthMax = 800, color = HOSTILE })
+	local blizzard =
+		client:AddNamePlate({ name = "Hogger", level = 11, health = 400, healthMax = 800, color = HOSTILE })
 	client:Tick(0.1)
 	local plate = ours(client, blizzard)
 	lu.assertNotNil(plate, "the plate was found")
@@ -90,7 +91,9 @@ function TestNamePlates:test_level_colors_follow_the_difficulty()
 		colors[text:match("^|c(%x+)")] = true
 	end
 	local count = 0
-	for _ in pairs(colors) do count = count + 1 end
+	for _ in pairs(colors) do
+		count = count + 1
+	end
 	lu.assertEquals(count, 5, "five difficulty colors")
 	assertClean(client)
 end
@@ -98,8 +101,12 @@ end
 function TestNamePlates:test_every_kind_of_unit_reads_right()
 	local client = self.client
 	local kinds = {
-		hostile = HOSTILE, friendlyNpc = FRIENDLY_NPC, neutral = NEUTRAL, friendlyPlayer = FRIENDLY_PLAYER,
-		tapped = TAPPED, enemyPlayer = { 0.5, 0.2, 0.9 },
+		hostile = HOSTILE,
+		friendlyNpc = FRIENDLY_NPC,
+		neutral = NEUTRAL,
+		friendlyPlayer = FRIENDLY_PLAYER,
+		tapped = TAPPED,
+		enemyPlayer = { 0.5, 0.2, 0.9 },
 	}
 	local plates = {}
 	for name, color in pairs(kinds) do
@@ -109,7 +116,9 @@ function TestNamePlates:test_every_kind_of_unit_reads_right()
 	plates.paladin = client:AddNamePlate({ name = "paladin", level = 80, color = { c.r, c.g, c.b } })
 	client:Tick(0.2)
 	assertClean(client)
-	local info = function(name) return ours(client, plates[name]).info end
+	local info = function(name)
+		return ours(client, plates[name]).info
+	end
 	lu.assertTrue(info("hostile").isFriendly == false and info("hostile").isPlayer == false)
 	lu.assertTrue(info("friendlyNpc").isFriendly)
 	lu.assertTrue(info("neutral").isNeutral)
@@ -153,7 +162,8 @@ function TestNamePlates:test_threat_glow_and_raid_icons()
 	local client = self.client
 	local plates = {}
 	for status = 0, 3 do
-		plates[status] = client:AddNamePlate({ name = "Threat" .. status, level = 80, color = HOSTILE, threat = status })
+		plates[status] =
+			client:AddNamePlate({ name = "Threat" .. status, level = 80, color = HOSTILE, threat = status })
 	end
 	client:Tick(0.2)
 	client:FireEvent("UNIT_THREAT_SITUATION_UPDATE", "player")
@@ -209,13 +219,13 @@ function TestNamePlates:test_plates_fade_out_gradually()
 	-- noticed on the next read of Blizzard's plate (10 times a second),
 	-- which fades it by one update's 1/30s of the 0.05s fade
 	for _ = 1, 200 do
-		if (plate.targetAlpha == 0) then
+		if plate.targetAlpha == 0 then
 			break
 		end
 		client:Tick(0.001, 0.001)
 	end
 	lu.assertEquals(plate.targetAlpha, 0)
-	lu.assertAlmostEquals(plate:GetAlpha(), 0.7 - (1/30) / 0.05, 0.03)
+	lu.assertAlmostEquals(plate:GetAlpha(), 0.7 - (1 / 30) / 0.05, 0.03)
 	client:Tick(0.034, 0.034)
 	lu.assertEquals(plate:GetAlpha(), 0)
 	lu.assertNil(plate:IsShown())
@@ -419,7 +429,12 @@ function TestNamePlates:test_long_and_trade_skill_casts_and_names()
 	lu.assertEquals(cast.Name:GetText(), string.rep("Ä", 32) .. "...")
 
 	-- names are cut at 32 characters, whatever their byte length
-	for _, name in ipairs({ string.rep("a", 40), string.rep("€", 40), string.rep("\240\157\132\158", 40), string.rep("Ä", 20) }) do
+	for _, name in ipairs({
+		string.rep("a", 40),
+		string.rep("€", 40),
+		string.rep("\240\157\132\158", 40),
+		string.rep("Ä", 20),
+	}) do
 		unit.casting = casting(client, "Crafter", name, 2)
 		client:FireEvent("UNIT_SPELLCAST_START", "target")
 		local shown = cast.Name:GetText():gsub("%.%.%.$", "")
@@ -462,13 +477,27 @@ end
 -- Your auras ----------------------------------------------------------------------
 
 local function hostile(name, auras)
-	return Client.newUnit({ name = name, isPlayer = false, isFriend = false, isEnemy = true, canAttack = true, auras = auras or {} })
+	return Client.newUnit({
+		name = name,
+		isPlayer = false,
+		isFriend = false,
+		isEnemy = true,
+		canAttack = true,
+		auras = auras or {},
+	})
 end
 
 -- one of yours (or someone else's: caster) for `seconds`
 local function debuff(client, spellId, seconds, caster)
-	return { name = "Spell" .. spellId, spellId = spellId, icon = "Interface\\Icons\\Spell" .. spellId, harmful = true,
-		caster = caster or "player", duration = seconds, expires = seconds and (client.world.time + seconds) or 0 }
+	return {
+		name = "Spell" .. spellId,
+		spellId = spellId,
+		icon = "Interface\\Icons\\Spell" .. spellId,
+		harmful = true,
+		caster = caster or "player",
+		duration = seconds,
+		expires = seconds and (client.world.time + seconds) or 0,
+	}
 end
 
 -- the icons shown on a plate, in order
@@ -518,14 +547,40 @@ function TestNamePlates:test_the_plate_keeps_them_once_the_unit_isnt_the_target(
 	lu.assertEquals(#shownAuras(plate), 1)
 	-- the combat log: yours added and removed on it
 	local log = function(event, spellId)
-		client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, event, client.world.units.player.guid, "Me", 0, unit.guid, "Wolf", 0, spellId, "Spell" .. spellId, 1)
+		client:FireEvent(
+			"COMBAT_LOG_EVENT_UNFILTERED",
+			0,
+			event,
+			client.world.units.player.guid,
+			"Me",
+			0,
+			unit.guid,
+			"Wolf",
+			0,
+			spellId,
+			"Spell" .. spellId,
+			1
+		)
 	end
 	log("SPELL_AURA_APPLIED", 7)
 	lu.assertEquals(shownAuras(plate), { "Interface\\Icons\\Spell1", "Interface\\Icons\\Spell7" })
 	log("SPELL_AURA_REMOVED", 1)
 	lu.assertEquals(shownAuras(plate), { "Interface\\Icons\\Spell7" })
 	-- someone else's: nothing
-	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_AURA_APPLIED", "0xOTHER", "Other", 0, unit.guid, "Wolf", 0, 8, "Spell8", 1)
+	client:FireEvent(
+		"COMBAT_LOG_EVENT_UNFILTERED",
+		0,
+		"SPELL_AURA_APPLIED",
+		"0xOTHER",
+		"Other",
+		0,
+		unit.guid,
+		"Wolf",
+		0,
+		8,
+		"Spell8",
+		1
+	)
 	lu.assertEquals(#shownAuras(plate), 1)
 	-- it dies
 	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "UNIT_DIED", nil, nil, 0, unit.guid, "Wolf", 0)
@@ -559,7 +614,10 @@ end
 function TestNamePlates:test_long_auras_read_in_days_hours_minutes_and_a_refresh_restarts_one()
 	local client = self.client
 	local blizzard = client:AddNamePlate({ name = "Wolf", level = 80, color = HOSTILE, target = true })
-	local unit = hostile("Wolf", { debuff(client, 1, 2 * 86400), debuff(client, 2, 3 * 3600), debuff(client, 3, 5 * 60), debuff(client, 4, 30) })
+	local unit = hostile(
+		"Wolf",
+		{ debuff(client, 1, 2 * 86400), debuff(client, 2, 3 * 3600), debuff(client, 3, 5 * 60), debuff(client, 4, 30) }
+	)
 	client:SetUnit("target", unit)
 	client:Tick(0.5)
 	local plate = ours(client, blizzard)
@@ -571,7 +629,20 @@ function TestNamePlates:test_long_auras_read_in_days_hours_minutes_and_a_refresh
 	-- cast again (the combat log only): its time starts over
 	client:Tick(20)
 	lu.assertStrMatches(plate.Auras[1].Time:GetText(), "9%.%d") -- tenths under 10 seconds
-	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_AURA_REFRESH", client.world.units.player.guid, "Me", 0, unit.guid, "Wolf", 0, 4, "Spell4", 1)
+	client:FireEvent(
+		"COMBAT_LOG_EVENT_UNFILTERED",
+		0,
+		"SPELL_AURA_REFRESH",
+		client.world.units.player.guid,
+		"Me",
+		0,
+		unit.guid,
+		"Wolf",
+		0,
+		4,
+		"Spell4",
+		1
+	)
 	client:Tick(0.5)
 	lu.assertEquals(plate.Auras[1].Time:GetText(), "29")
 	assertClean(client)

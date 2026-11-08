@@ -7,8 +7,6 @@ Engine:NewConfig("UnitFrames", {
 	testRaidMode = false, -- preview a mock raid with fake members
 	showPortrait = false, -- show an animated 3D model portrait on party and focus frames
 	lowHealthWarning = true, -- the screen's edges pulse red while your health is low (modules/unitframes/lowhealth.lua)
-	player = {
-	},
-	target = {
-	}
+	player = {},
+	target = {},
 })

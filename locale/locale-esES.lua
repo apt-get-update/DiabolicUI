@@ -1,8 +1,9 @@
 local _, Engine = ...
 
 local L = Engine:NewLocale("esES")
-if not L then return end
-
+if not L then
+	return
+end
 
 -- actionbar module
 ---------------------------------------------------------------------

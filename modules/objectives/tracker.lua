@@ -10,11 +10,11 @@ local hooksecurefunc = hooksecurefunc
 
 -- How long the actual fade transition itself takes. The delay before it
 -- starts (Time Fading) and how far it fades (Opacity) are user settings.
-local FADE_DURATION = .3
+local FADE_DURATION = 0.3
 
 -- The cursor and the tracker are checked this often; only a fade itself
 -- runs every frame.
-local CHECK_INTERVAL = 1/20
+local CHECK_INTERVAL = 1 / 20
 
 local trackerFrame
 local state -- nil (idle, fully visible) | "waiting" | "fading"
@@ -73,7 +73,7 @@ ticker:SetScript("OnUpdate", function(self, elapsed)
 	-- Switching trackers mid-fade (Questie's toggled on or off) would
 	-- otherwise leave the old one stuck at whatever alpha it had reached.
 	local tracker = GetTracker()
-	if (tracker ~= trackerFrame) then
+	if tracker ~= trackerFrame then
 		CancelFade()
 		trackerFrame = tracker
 		wasOver = false
@@ -83,7 +83,7 @@ ticker:SetScript("OnUpdate", function(self, elapsed)
 	end
 
 	local over = IsCursorOver(trackerFrame)
-	if over and (not wasOver) then
+	if over and not wasOver then
 		CancelFade()
 	elseif (not over) and wasOver then
 		state = "waiting"
@@ -92,15 +92,15 @@ ticker:SetScript("OnUpdate", function(self, elapsed)
 	wasOver = over
 
 	local now = GetTime()
-	if (state == "waiting") then
+	if state == "waiting" then
 		if (now - stateStart) >= Module.db.fadeDelay then
 			state = "fading"
 			stateStart = now
 		end
-	elseif (state == "fading") then
+	elseif state == "fading" then
 		local fadedAlpha = Module.db.fadeOpacity / 100
 		local progress = (now - stateStart) / FADE_DURATION
-		if (progress >= 1) then
+		if progress >= 1 then
 			trackerFrame:SetAlpha(fadedAlpha)
 			state = nil
 		else
@@ -159,10 +159,10 @@ Module.GetMover = function(self)
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
 		edgeSize = 12,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+		insets = { left = 3, right = 3, top = 3, bottom = 3 },
 	})
-	mover:SetBackdropColor(.6, .1, .1, .5)
-	mover:SetBackdropBorderColor(1, .82, 0, 1)
+	mover:SetBackdropColor(0.6, 0.1, 0.1, 0.5)
+	mover:SetBackdropBorderColor(1, 0.82, 0, 1)
 	mover:EnableMouse(true)
 	mover:SetMovable(true)
 	mover:SetClampedToScreen(true)
@@ -217,7 +217,9 @@ end
 
 Module.OnEnable = function(self)
 	-- Blizzard re-lays its frames out often (bags, arena frames, ...)
-	hooksecurefunc("UIParent_ManageFramePositions", function() self:PlaceTracker() end)
+	hooksecurefunc("UIParent_ManageFramePositions", function()
+		self:PlaceTracker()
+	end)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "PlaceTracker")
 	self:PlaceTracker()
 end

@@ -29,14 +29,21 @@ local hooksecurefunc = _G.hooksecurefunc
 
 -- the frames' art, by its file (lowercase, as patterns)
 local ART = {
-	"ui%-itemtext%-", "ui%-spellbookpanel%-", "mail%-icon", "ui%-classtrainer%-", "ui%-openmail%-",
-	"ui%-character%-scrollbar", "mailitemborder" -- the rows' parchment bars and empty icon sockets
+	"ui%-itemtext%-",
+	"ui%-spellbookpanel%-",
+	"mail%-icon",
+	"ui%-classtrainer%-",
+	"ui%-openmail%-",
+	"ui%-character%-scrollbar",
+	"mailitemborder", -- the rows' parchment bars and empty icon sockets
 }
 
 -- the letters' paper (Blizzard sets its file as they show): ours instead
 local STATIONERY = {
-	"SendStationeryBackgroundLeft", "SendStationeryBackgroundRight",
-	"OpenStationeryBackgroundLeft", "OpenStationeryBackgroundRight"
+	"SendStationeryBackgroundLeft",
+	"SendStationeryBackgroundRight",
+	"OpenStationeryBackgroundLeft",
+	"OpenStationeryBackgroundRight",
 }
 
 local NUM_ITEMS = 7 -- INBOXITEMS_TO_DISPLAY
@@ -77,8 +84,12 @@ Module.StyleMail = function(self)
 	_G.SendMailTitleText:SetAlpha(0)
 	-- the rough stone foot
 	self.Foot = kit:AddFooter(window, true)
-	_G.InboxFrame:HookScript("OnShow", function() title:SetText(_G.INBOX) end)
-	_G.SendMailFrame:HookScript("OnShow", function() title:SetText(_G.SENDMAIL) end)
+	_G.InboxFrame:HookScript("OnShow", function()
+		title:SetText(_G.INBOX)
+	end)
+	_G.SendMailFrame:HookScript("OnShow", function()
+		title:SetText(_G.SENDMAIL)
+	end)
 
 	-- the tabs as banners hanging from the window's foot
 	kit:HangTabs(window, { _G.MailFrameTab1, _G.MailFrameTab2 }, config.tab_sigils)
@@ -124,13 +135,20 @@ Module.StyleMail = function(self)
 		self:PlacePostal()
 		self:PlaceRows()
 	end)
-	open:HookScript("OnShow", function() kit:StyleButtons(open) end)
+	open:HookScript("OnShow", function()
+		kit:StyleButtons(open)
+	end)
 end
 
 -- An auction's invoice: its sums in the letter's ink, as its labels (Blizzard's
 -- are white, drawn for its dark page), no shadow to blur them on the parchment.
 Module.InkInvoice = function(self)
-	for _, frame in ipairs({ "OpenMailSalePriceMoneyFrame", "OpenMailDepositMoneyFrame", "OpenMailHouseCutMoneyFrame", "OpenMailTransactionAmountMoneyFrame" }) do
+	for _, frame in ipairs({
+		"OpenMailSalePriceMoneyFrame",
+		"OpenMailDepositMoneyFrame",
+		"OpenMailHouseCutMoneyFrame",
+		"OpenMailTransactionAmountMoneyFrame",
+	}) do
 		for _, coin in ipairs({ "Gold", "Silver", "Copper" }) do
 			local text = _G[frame .. coin .. "ButtonText"]
 			if text then
@@ -152,8 +170,10 @@ Module.PlaceSendBand = function(self, header)
 	local pad = kit.config.edit_padding
 	local x = spec.x
 	local name, subject = _G.SendMailNameEditBox, _G.SendMailSubjectEditBox
-	for _, part in ipairs({ { name, _G.MAIL_TO_LABEL, spec.name_width, spec.arrow_gap + spec.arrow_width + spec.gap },
-		{ subject, _G.MAIL_SUBJECT_LABEL, 0, spec.gap } }) do
+	for _, part in ipairs({
+		{ name, _G.MAIL_TO_LABEL, spec.name_width, spec.arrow_gap + spec.arrow_width + spec.gap },
+		{ subject, _G.MAIL_SUBJECT_LABEL, 0, spec.gap },
+	}) do
 		local box, width = part[1], part[3]
 		local label = FindText(box, part[2])
 		if label then
@@ -167,14 +187,20 @@ Module.PlaceSendBand = function(self, header)
 		hint:SetPoint("LEFT", box, "LEFT", spec.hint_inset, 0)
 		hint:SetText((part[2]:gsub("%s*:%s*$", "")))
 		local Hint = function()
-			if (box:GetText() == "") and (not box.DiabolicFocused) then
+			if (box:GetText() == "") and not box.DiabolicFocused then
 				hint:Show()
 			else
 				hint:Hide()
 			end
 		end
-		box:HookScript("OnEditFocusGained", function() box.DiabolicFocused = true Hint() end)
-		box:HookScript("OnEditFocusLost", function() box.DiabolicFocused = nil Hint() end)
+		box:HookScript("OnEditFocusGained", function()
+			box.DiabolicFocused = true
+			Hint()
+		end)
+		box:HookScript("OnEditFocusLost", function()
+			box.DiabolicFocused = nil
+			Hint()
+		end)
 		box:HookScript("OnTextChanged", Hint)
 		Hint()
 		kit:StyleEditBox(box)
@@ -197,7 +223,7 @@ Module.PlaceSendBand = function(self, header)
 	local subjectLeft = x - spec.gap - pad
 	local Stretch = function()
 		local right = header:GetWidth() - spec.postage_right - cost:GetWidth() - spec.gap - pad
-		if (right > subjectLeft) then
+		if right > subjectLeft then
 			subject:SetWidth(right - subjectLeft)
 		end
 	end
@@ -272,9 +298,9 @@ Module.PlaceOpenBand = function(self, header)
 	-- before it does)
 	local Grow = function()
 		local height = scroll:GetHeight()
-		if (height ~= scroll.DiabolicHeight) then
+		if height ~= scroll.DiabolicHeight then
 			local grown = height + rise + self.config.open_text_lower
-			if (#(_G.OpenMailFrame.activeAttachmentButtons or {}) == 0) then
+			if #(_G.OpenMailFrame.activeAttachmentButtons or {}) == 0 then
 				grown = grown + self.config.open_text_alone
 			end
 			scroll.DiabolicHeight = grown
@@ -309,7 +335,7 @@ Module.PlaceOpenAttachments = function(self)
 		end
 		local frameLeft, frameBottom = frame:GetLeft(), frame:GetBottom()
 		local panelBottom = scroll:GetBottom()
-		if (#placed == 0) or (not frameLeft) or (not frameBottom) or (not panelBottom) or (not self.OpenFoot:GetTop()) then
+		if (#placed == 0) or not frameLeft or not frameBottom or not panelBottom or (not self.OpenFoot:GetTop()) then
 			return
 		end
 		local panelLeft = scroll:GetLeft() - frameLeft - insets[1]
@@ -362,7 +388,7 @@ end
 Module.PlacePostal = function(self)
 	local spec = self.config.select_buttons
 	local open, back = _G.PostalSelectOpenButton, _G.PostalSelectReturnButton
-	if open and back and (not self.SelectPlaced) then
+	if open and back and not self.SelectPlaced then
 		self.SelectPlaced = true
 		local header = self.Header
 		open:ClearAllPoints()
@@ -376,7 +402,7 @@ Module.PlacePostal = function(self)
 	end
 	-- its Open All on the foot, between the pages (its menu's arrow follows)
 	local openAll = _G.PostalOpenAllButton
-	if openAll and (not self.OpenAllPlaced) then
+	if openAll and not self.OpenAllPlaced then
 		self.OpenAllPlaced = true
 		openAll:ClearAllPoints()
 		openAll:SetPoint("CENTER", self.Foot, "BOTTOM", unpack(self.config.postal_open_all))
@@ -385,7 +411,7 @@ Module.PlacePostal = function(self)
 	for name, offset in pairs(self.config.postal_offsets) do
 		for _, suffix in ipairs({ "", 1, 2, 3, 4, 5, 6, 7 }) do -- the button, the rows' boxes
 			local part = _G[name .. suffix]
-			if part and (not self.PostalPlaced[part]) then
+			if part and not self.PostalPlaced[part] then
 				self.PostalPlaced[part] = true
 				local point, relative, relativePoint, x, y = part:GetPoint()
 				part:SetPoint(point, relative, relativePoint, x + offset[1], y + offset[2])
@@ -416,7 +442,7 @@ Module.StyleRows = function(self)
 	hooksecurefunc("InboxFrame_Update", function()
 		for i = 1, NUM_ITEMS do
 			local sender, subject = _G["MailItem" .. i .. "Sender"], _G["MailItem" .. i .. "Subject"]
-			local read = (sender:GetTextColor() < .8) -- Blizzard's grey (.75) for read mail
+			local read = (sender:GetTextColor() < 0.8) -- Blizzard's grey (.75) for read mail
 			sender:SetTextColor(unpack(read and ink.read or ink.sender))
 			subject:SetTextColor(unpack(read and ink.read or ink.subject))
 			sender:SetShadowColor(0, 0, 0, 0)
@@ -456,7 +482,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleMail()

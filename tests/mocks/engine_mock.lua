@@ -22,11 +22,17 @@ local EngineMock = {}
 -- instead of a load error. Same idea as mocks/auto_stub.lua, duplicated
 -- narrowly here so this file has no dependency on it.
 local Stub = {}
-Stub.__index = function() return setmetatable({}, Stub) end
-Stub.__call = function() return setmetatable({}, Stub) end
+Stub.__index = function()
+	return setmetatable({}, Stub)
+end
+Stub.__call = function()
+	return setmetatable({}, Stub)
+end
 Stub.__concat = function(a, b)
 	local function str(v)
-		if type(v) == "table" and getmetatable(v) == Stub then return "" end
+		if type(v) == "table" and getmetatable(v) == Stub then
+			return ""
+		end
 		return tostring(v)
 	end
 	return str(a) .. str(b)
@@ -41,7 +47,11 @@ end
 -- haven't explicitly mocked is a harmless no-op instead of a load error.
 -- Real, explicitly defined methods always take priority.
 local function permissive(t)
-	return setmetatable(t, { __index = function() return noOp() end })
+	return setmetatable(t, {
+		__index = function()
+			return noOp()
+		end,
+	})
 end
 
 local ModuleMT = {}
@@ -71,12 +81,24 @@ end
 -- into the shared Engine's DB/config/handler/module lookups on themselves
 -- (e.g. `self.config = self:GetDB("ActionBars")`), not just via `Engine:...`
 -- - so those need to delegate to whichever Engine instance created us.
-function ModuleMT:GetDB(...) return self._engine:GetDB(...) end
-function ModuleMT:GetConfig(...) return self._engine:GetConfig(...) end
-function ModuleMT:NewStaticConfig(...) return self._engine:NewStaticConfig(...) end
-function ModuleMT:NewConfig(...) return self._engine:NewConfig(...) end
-function ModuleMT:GetHandler(...) return self._engine:GetHandler(...) end
-function ModuleMT:GetModule(...) return self._engine:GetModule(...) end
+function ModuleMT:GetDB(...)
+	return self._engine:GetDB(...)
+end
+function ModuleMT:GetConfig(...)
+	return self._engine:GetConfig(...)
+end
+function ModuleMT:NewStaticConfig(...)
+	return self._engine:NewStaticConfig(...)
+end
+function ModuleMT:NewConfig(...)
+	return self._engine:NewConfig(...)
+end
+function ModuleMT:GetHandler(...)
+	return self._engine:GetHandler(...)
+end
+function ModuleMT:GetModule(...)
+	return self._engine:GetModule(...)
+end
 
 function EngineMock.new()
 	local modules = {}
@@ -86,7 +108,11 @@ function EngineMock.new()
 
 	-- Every unlisted locale string just returns its own English key, same
 	-- fallback behaviour as the real locale_handler.lua.
-	local locale = setmetatable({}, { __index = function(_, key) return key end })
+	local locale = setmetatable({}, {
+		__index = function(_, key)
+			return key
+		end,
+	})
 
 	local Engine = {}
 
@@ -150,7 +176,9 @@ function EngineMock.new()
 	function Engine:GetConstant() end
 	function Engine:RegisterKeyword() end
 	function Engine:RegisterKeywordDefault() end
-	function Engine:IsBuild() return false end
+	function Engine:IsBuild()
+		return false
+	end
 
 	-- Used by several files as a base "class" table for their own local
 	-- widget/bar prototypes (e.g. `local Bar = Engine:CreateFrame("Frame")`

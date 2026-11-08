@@ -26,14 +26,16 @@ local LUAC = os.getenv("LUAC") or "luac5.1"
 
 -- Lowercase globals that exist: Lua's own, and the ones WoW adds.
 local LOWERCASE_GLOBALS = {}
-for name in ([[
+for name in
+	([[
 	_G assert bit collectgarbage coroutine date debug debugstack error format gcinfo
 	getfenv geterrorhandler getmetatable hooksecurefunc ipairs issecurevariable
 	loadstring math next pairs pcall print rawequal rawget rawset securecall select
 	seterrorhandler setfenv setmetatable string strjoin strsplit strtrim strupper
 	strlower strmatch strfind strlen strsub strrep gsub table time tinsert tonumber
 	tostring tremove type unpack wipe xpcall floor ceil abs max min random sqrt
-]]):gmatch("%S+") do
+]]):gmatch("%S+")
+do
 	LOWERCASE_GLOBALS[name] = true
 end
 
@@ -60,16 +62,32 @@ local LATER_EVENTS = {
 
 -- API functions and frame methods only later expansions have.
 local LATER_GLOBALS = {
-	Enum = true, BreakUpLargeNumbers = true, FindSpellBookSlotBySpellID = true,
-	GetAddOnEnableState = true, GetLossOfControlCooldown = true, GetSpecialization = true,
-	GetSpellCharges = true, StartChargeCooldown = true, UnitHasVehiclePlayerFrameUI = true,
+	Enum = true,
+	BreakUpLargeNumbers = true,
+	FindSpellBookSlotBySpellID = true,
+	GetAddOnEnableState = true,
+	GetLossOfControlCooldown = true,
+	GetSpecialization = true,
+	GetSpellCharges = true,
+	StartChargeCooldown = true,
+	UnitHasVehiclePlayerFrameUI = true,
 	UnitIsTapDenied = true, -- DiabolicUI has its own, Engine.UnitIsTapDenied
 }
 local LATER_METHODS = {
-	RegisterUnitEvent = true, SetAtlas = true, SetBlingTexture = true, SetColorTexture = true,
-	SetDrawBling = true, SetDrawEdge = true, SetDrawSwipe = true, SetEdgeTexture = true,
-	SetHideCountdownNumbers = true, SetIgnoreParentAlpha = true, SetShown = true,
-	SetSnapToPixelGrid = true, SetSpellByID = true, SetSwipeColor = true,
+	RegisterUnitEvent = true,
+	SetAtlas = true,
+	SetBlingTexture = true,
+	SetColorTexture = true,
+	SetDrawBling = true,
+	SetDrawEdge = true,
+	SetDrawSwipe = true,
+	SetEdgeTexture = true,
+	SetHideCountdownNumbers = true,
+	SetIgnoreParentAlpha = true,
+	SetShown = true,
+	SetSnapToPixelGrid = true,
+	SetSpellByID = true,
+	SetSwipeColor = true,
 }
 
 local readFile = function(path)
@@ -88,7 +106,9 @@ end
 
 local listSourceFiles = function()
 	local files = {}
-	local pipe = io.popen("find engine handlers modules settings defaults data locale -name '*.lua' -not -path '*/Libs/*' | sort")
+	local pipe = io.popen(
+		"find engine handlers modules settings defaults data locale -name '*.lua' -not -path '*/Libs/*' | sort"
+	)
 	for path in pipe:lines() do
 		files[#files + 1] = path
 	end
@@ -197,15 +217,21 @@ end
 function TestApiUsage:test_no_events_from_later_expansions()
 	local found = scanAll().events
 	if next(found) then
-		lu.fail("Events 3.3.5 never fires:\n  " .. report(found, function(name) return "  (use " .. LATER_EVENTS[name] .. ")" end))
+		lu.fail("Events 3.3.5 never fires:\n  " .. report(found, function(name)
+			return "  (use " .. LATER_EVENTS[name] .. ")"
+		end))
 	end
 end
 
 function TestApiUsage:test_no_api_from_later_expansions()
 	local all = scanAll()
 	local found = {}
-	for name, where in pairs(all.globals) do found[name] = where end
-	for name, where in pairs(all.methods) do found[":" .. name] = where end
+	for name, where in pairs(all.globals) do
+		found[name] = where
+	end
+	for name, where in pairs(all.methods) do
+		found[":" .. name] = where
+	end
 	if next(found) then
 		lu.fail("API that 3.3.5 doesn't have:\n  " .. report(found))
 	end
@@ -253,7 +279,7 @@ function TestApiUsage:test_detectors_catch_planted_mistakes()
 	local tmp = tempName()
 	local source = table.concat({
 		"local f = CreateFrame('Frame')",
-		"f:RegisterEvent(\"GROUP_ROSTER_UPDATE\")",
+		'f:RegisterEvent("GROUP_ROSTER_UPDATE")',
 		"if hasVehicleUI then f:SetShown(true) end",
 		"local n = _G.BreakUpLargeNumbers",
 		"local ok = GetSpellCharges",

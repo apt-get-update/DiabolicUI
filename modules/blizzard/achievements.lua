@@ -25,15 +25,25 @@ local IsAddOnLoaded = _G.IsAddOnLoaded
 -- Blizzard's art in the window, by name: the header's banner (its points
 -- and shield stay), and the backgrounds of the lists.
 local HIDDEN = {
-	"AchievementFrameHeaderLeft", "AchievementFrameHeaderRight", "AchievementFrameHeaderPointBorder",
-	"AchievementFrameHeaderRightDDLInset", "AchievementFrameAchievementsBackground",
-	"AchievementFrameSummaryBackground", "AchievementFrameComparisonBackground",
-	"AchievementFrameComparisonDark", "AchievementFrameComparisonWatermark"
+	"AchievementFrameHeaderLeft",
+	"AchievementFrameHeaderRight",
+	"AchievementFrameHeaderPointBorder",
+	"AchievementFrameHeaderRightDDLInset",
+	"AchievementFrameAchievementsBackground",
+	"AchievementFrameSummaryBackground",
+	"AchievementFrameComparisonBackground",
+	"AchievementFrameComparisonDark",
+	"AchievementFrameComparisonWatermark",
 }
 
 -- the frames whose panel (a backdrop of their own, or an unnamed child's)
 -- becomes one of ours
-local PANELS = { "AchievementFrameCategories", "AchievementFrameAchievements", "AchievementFrameStatsBG", "AchievementFrameSummary" }
+local PANELS = {
+	"AchievementFrameCategories",
+	"AchievementFrameAchievements",
+	"AchievementFrameStatsBG",
+	"AchievementFrameSummary",
+}
 
 -- the summary's bars, the big one first, and the parts of Blizzard's frame
 -- around each (their hover glow included)
@@ -136,7 +146,11 @@ local StyleRow = function(row, earned)
 end
 
 -- the lists of achievements (HybridScrollFrames'), with their rows
-local ROW_LISTS = { "AchievementFrameAchievementsContainer", "AchievementFrameSummaryAchievements", "AchievementFrameComparisonContainer" }
+local ROW_LISTS = {
+	"AchievementFrameAchievementsContainer",
+	"AchievementFrameSummaryAchievements",
+	"AchievementFrameComparisonContainer",
+}
 
 -- Each row, as Blizzard colors it: its Saturate and Desaturate are its own
 -- (copied when it loads, so hooking Blizzard's functions misses them).
@@ -146,10 +160,14 @@ Module.StyleRows = function(self)
 		for _, button in ipairs(buttons or {}) do
 			-- a comparison row is two: the player's and the friend's
 			for _, row in ipairs({ button, button.player or false, button.friend or false }) do
-				if row and (not row.DiabolicRow) and (type(row.Saturate) == "function") then
+				if row and not row.DiabolicRow and (type(row.Saturate) == "function") then
 					row.DiabolicRow = true
-					hooksecurefunc(row, "Saturate", function() StyleRow(row, true) end)
-					hooksecurefunc(row, "Desaturate", function() StyleRow(row, false) end)
+					hooksecurefunc(row, "Saturate", function()
+						StyleRow(row, true)
+					end)
+					hooksecurefunc(row, "Desaturate", function()
+						StyleRow(row, false)
+					end)
 					-- (the summary's rows don't say: they're all earned)
 					StyleRow(row, (row.saturated ~= nil) or (list == "AchievementFrameSummaryAchievements"))
 				end
@@ -194,7 +212,13 @@ Module.StyleControls = function(self, panel)
 			-- (one right of another: the rule's gap apart, Search's Reset)
 			local gap = kit.config.layout.button_gap
 			local point, relative, relativePoint, x, y = child:GetPoint()
-			if (point == "LEFT") and (relativePoint == "RIGHT") and relative and IsPanelButton(relative) and (x < gap) then
+			if
+				(point == "LEFT")
+				and (relativePoint == "RIGHT")
+				and relative
+				and IsPanelButton(relative)
+				and (x < gap)
+			then
 				child:SetPoint(point, relative, relativePoint, gap, y)
 			end
 		elseif name and _G[name .. "Button"] and _G[name .. "Middle"] then
@@ -212,7 +236,7 @@ Module.StyleOverachiever = function(self)
 	local i, tab = 1, _G.AchievementFrameTab1
 	while tab do
 		local frame = tab.frame
-		if frame and (not frame.DiabolicStyled) then
+		if frame and not frame.DiabolicStyled then
 			frame.DiabolicStyled = true
 			kit:HideTextures(frame)
 			for _, child in ipairs({ frame:GetChildren() }) do
@@ -225,7 +249,9 @@ Module.StyleOverachiever = function(self)
 			-- (its controls, made after it: as it shows)
 			local panel = frame.panel
 			if panel then
-				panel:HookScript("OnShow", function() self:StyleControls(panel) end)
+				panel:HookScript("OnShow", function()
+					self:StyleControls(panel)
+				end)
 			end
 		end
 		if frame and frame.panel then
@@ -311,12 +337,12 @@ Module.StyleAchievements = function(self)
 				text:ClearAllPoints()
 				text:SetPoint("RIGHT", bar, "RIGHT", -8, 0)
 			end
-			if (i == 1) then
+			if i == 1 then
 				bar:SetWidth(config.summary_width - spike * 2)
 			else
 				bar:SetWidth((config.summary_width - spike * 4 - config.bar_gap) / 2)
 				-- the right column, after the left one's spike and its own
-				if (i % 2 == 1) then
+				if i % 2 == 1 then
 					bar:ClearAllPoints()
 					bar:SetPoint("TOPLEFT", _G[BARS[i - 1]], "TOPRIGHT", spike * 2 + config.bar_gap, 0)
 				end
@@ -336,7 +362,9 @@ Module.StyleAchievements = function(self)
 	-- the achievements, as Blizzard colors them; the summary's, made the
 	-- first time it shows
 	self:StyleRows()
-	hooksecurefunc("AchievementFrameSummary_UpdateAchievements", function() self:StyleRows() end)
+	hooksecurefunc("AchievementFrameSummary_UpdateAchievements", function()
+		self:StyleRows()
+	end)
 
 	-- Blizzard's header (its art hidden) over the band only: it reached
 	-- down over the tabs' row and took their clicks (Overachiever drags
@@ -356,7 +384,7 @@ Module.StyleAchievements = function(self)
 	kit:StyleScrollBars(frame)
 	-- Overachiever's, as it adds them (it may do so once the window shows)
 	hooksecurefunc("PanelTemplates_SetNumTabs", function(panel)
-		if (panel == frame) then
+		if panel == frame then
 			self:StyleTabs()
 		end
 	end)
@@ -365,7 +393,7 @@ end
 -- Blizzard's window, then Overachiever's tabs (loaded as it first shows:
 -- their controls, made after their pages, styled once they're all made).
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "Blizzard_AchievementUI") then
+	if addon == "Blizzard_AchievementUI" then
 		self:StyleAchievements()
 	elseif (addon == "Overachiever_Tabs") and IsAddOnLoaded("Blizzard_AchievementUI") then
 		self:StyleOverachiever()
@@ -381,7 +409,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded("Blizzard_AchievementUI") then

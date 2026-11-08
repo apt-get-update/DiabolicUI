@@ -38,7 +38,7 @@ end
 
 -- let the bubble size scale from 400 to 660ish (font size 22)
 local getMaxWidth = function()
-	return 400 + math_floor((fontsize - 14)/22 * 260)
+	return 400 + math_floor((fontsize - 14) / 22 * 260)
 end
 
 local getBackdrop = function(scale)
@@ -50,11 +50,10 @@ local getBackdrop = function(scale)
 			left = 2.5 * scale,
 			right = 2.5 * scale,
 			top = 2.5 * scale,
-			bottom = 2.5 * scale
-		}
+			bottom = 2.5 * scale,
+		},
 	}
 end
-
 
 ------------------------------------------------------------------------------
 -- 	Namebubble Detection & Update Cycle
@@ -81,7 +80,7 @@ Updater.OnUpdate = function(self, elapsed)
 		local frames = { WorldFrame:GetChildren() }
 		for i = 1, children do
 			local frame = frames[i]
-			if not(bubbles[frame]) and self:IsBubble(frame) then
+			if not bubbles[frame] and self:IsBubble(frame) then
 				self:InitBubble(frame)
 			end
 		end
@@ -90,7 +89,7 @@ Updater.OnUpdate = function(self, elapsed)
 
 	-- bubble, bubble.text = original bubble and message
 	-- bubbles[bubble], bubbles[bubble].text = our custom bubble and message
-	local scale = WorldFrame:GetHeight()/UIParent:GetHeight()
+	local scale = WorldFrame:GetHeight() / UIParent:GetHeight()
 	for bubble in pairs(bubbles) do
 		local msg = bubble.text:GetText()
 		if bubble:IsShown() and msg and (msg ~= "") then
@@ -102,10 +101,10 @@ Updater.OnUpdate = function(self, elapsed)
 			local point, _, rpoint, blizzX, blizzY = bubble.text:GetPoint()
 			local r, g, b = bubble.text:GetTextColor()
 			if blizzTextWidth and blizzTextHeight and point and rpoint and blizzX and blizzY then
-				if (not bubbles[bubble]:IsShown()) then
+				if not bubbles[bubble]:IsShown() then
 					bubbles[bubble]:Show()
 				end
-				if (bubbles[bubble].last ~= msg) then
+				if bubbles[bubble].last ~= msg then
 					bubbles[bubble].text:SetText(msg)
 					bubbles[bubble].text:SetTextColor(r, g, b)
 					bubbles[bubble].last = msg
@@ -120,17 +119,18 @@ Updater.OnUpdate = function(self, elapsed)
 				local space = getPadding()
 				local ourTextWidth = bubbles[bubble].text:GetWidth()
 				local ourTextHeight = bubbles[bubble].text:GetHeight()
-				local ourX = math_floor(offsetX + (blizzX - blizzTextWidth/2)/scale - (ourTextWidth-blizzTextWidth)/2) -- chatbubbles are rendered at BOTTOM, WorldFrame, BOTTOMLEFT, x, y
-				local ourY = math_floor(offsetY + blizzY/scale - (ourTextHeight-blizzTextHeight)/2) -- get correct bottom coordinate
-				local ourWidth = math_floor(ourTextWidth + space*2)
-				local ourHeight = math_floor(ourTextHeight + space*2)
+				local ourX =
+					math_floor(offsetX + (blizzX - blizzTextWidth / 2) / scale - (ourTextWidth - blizzTextWidth) / 2) -- chatbubbles are rendered at BOTTOM, WorldFrame, BOTTOMLEFT, x, y
+				local ourY = math_floor(offsetY + blizzY / scale - (ourTextHeight - blizzTextHeight) / 2) -- get correct bottom coordinate
+				local ourWidth = math_floor(ourTextWidth + space * 2)
+				local ourHeight = math_floor(ourTextHeight + space * 2)
 				-- only resize and move when it changed: this runs every frame
 				if (ourWidth ~= bubbles[bubble].width) or (ourHeight ~= bubbles[bubble].height) then
 					bubbles[bubble]:SetSize(ourWidth, ourHeight)
 					bubbles[bubble].width, bubbles[bubble].height = ourWidth, ourHeight
 				end
 				local oldX, oldY = select(4, bubbles[bubble]:GetPoint())
-				if not(oldX and oldY) or ((math_abs(oldX - ourX) > .5) or (math_abs(oldY - ourY) > .5)) then
+				if not (oldX and oldY) or ((math_abs(oldX - ourX) > 0.5) or (math_abs(oldY - ourY) > 0.5)) then
 					bubbles[bubble]:ClearAllPoints()
 					bubbles[bubble]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", ourX, ourY)
 				end
@@ -153,16 +153,16 @@ Updater.InitBubble = function(self, bubble)
 	bubbles[bubble] = CreateFrame("Frame", nil, self.BubbleBox)
 	bubbles[bubble]:Hide()
 	bubbles[bubble]:SetFrameStrata("BACKGROUND")
-	bubbles[bubble]:SetFrameLevel(numBubbles%128 + 1) -- try to avoid overlapping bubbles blending into each other
+	bubbles[bubble]:SetFrameLevel(numBubbles % 128 + 1) -- try to avoid overlapping bubbles blending into each other
 	bubbles[bubble]:SetBackdrop(getBackdrop(1))
-	bubbles[bubble]:SetBackdropColor(0, 0, 0, .5)
-	bubbles[bubble]:SetBackdropBorderColor(0, 0, 0, .25)
+	bubbles[bubble]:SetBackdropColor(0, 0, 0, 0.5)
+	bubbles[bubble]:SetBackdropBorderColor(0, 0, 0, 0.25)
 
 	bubbles[bubble].text = bubbles[bubble]:CreateFontString()
 	bubbles[bubble].text:SetPoint("BOTTOMLEFT", space, space)
 	bubbles[bubble].text:SetFontObject(MailFont_Large)
 	bubbles[bubble].text:SetFont(MailFont_Large:GetFont(), fontsize + 1, "")
-	bubbles[bubble].text:SetShadowOffset(-.75, -.75)
+	bubbles[bubble].text:SetShadowOffset(-0.75, -0.75)
 	bubbles[bubble].text:SetShadowColor(0, 0, 0, 1)
 
 	-- empty the blizzard bubble: no artwork, invisible text

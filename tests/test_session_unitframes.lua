@@ -36,17 +36,27 @@ local function npc(fields)
 	local unit = Client.newUnit(fields)
 	unit.isPlayer = fields.isPlayer or false
 	unit.playerControlled = fields.playerControlled or false
-	if fields.reaction == nil then unit.reaction = 2 end
-	if fields.canAttack == nil then unit.canAttack = true end
-	if fields.isFriend == nil then unit.isFriend = false end
-	if fields.isEnemy == nil then unit.isEnemy = true end
+	if fields.reaction == nil then
+		unit.reaction = 2
+	end
+	if fields.canAttack == nil then
+		unit.canAttack = true
+	end
+	if fields.isFriend == nil then
+		unit.isFriend = false
+	end
+	if fields.isEnemy == nil then
+		unit.isEnemy = true
+	end
 	return unit
 end
 
 local function casting(seconds, fields)
 	local now = client.world.time * 1000
 	local cast = { name = "Frostbolt", startTime = now, endTime = now + seconds * 1000 }
-	for key, value in pairs(fields or {}) do cast[key] = value end
+	for key, value in pairs(fields or {}) do
+		cast[key] = value
+	end
 	return cast
 end
 
@@ -54,7 +64,9 @@ local function shownButtons(owner)
 	local count = 0
 	for i = 1, 40 do
 		local button = owner[tostring(i)]
-		if button and button:IsShown() then count = count + 1 end
+		if button and button:IsShown() then
+			count = count + 1
+		end
 	end
 	return count
 end
@@ -88,7 +100,12 @@ function TestPlayerOrbs:test_health_and_mana_follow_the_player()
 end
 
 function TestPlayerOrbs:test_every_power_type()
-	for _, case in ipairs({ { "WARRIOR", 1, 50, 100 }, { "ROGUE", 3, 70, 100 }, { "DEATHKNIGHT", 6, 40, 100 }, { "HUNTER", 0, 3000, 6000 } }) do
+	for _, case in ipairs({
+		{ "WARRIOR", 1, 50, 100 },
+		{ "ROGUE", 3, 70, 100 },
+		{ "DEATHKNIGHT", 6, 40, 100 },
+		{ "HUNTER", 0, 3000, 6000 },
+	}) do
 		boot({ class = case[1] })
 		local player = client.world.units.player
 		player.powerType, player.power, player.powerMax = case[2], case[3], case[4]
@@ -116,17 +133,33 @@ function TestPlayerOrbs:test_a_druid_in_cat_form_keeps_an_eye_on_mana()
 end
 
 function TestPlayerOrbs:test_buffs_debuffs_and_weapon_enchants()
-	boot({ class = "SHAMAN", world = function(world)
-		local now = world.time
-		world.units.player.auras = {
-			{ name = "Bloodlust", duration = 40, expires = now + 40, caster = "player", spellId = 2825 },
-			{ name = "Blessing of Kings", duration = 3600, expires = now + 3000, caster = "party1", spellId = 20217 },
-			{ name = "Ghost Wolf", duration = 0, expires = 0, caster = "player", spellId = 2645 },
-			{ name = "Weakened Soul", harmful = true, debuffType = "Magic", duration = 15, expires = now + 15, spellId = 6788 },
-			{ name = "Decomposing Aura", harmful = true, count = 3, duration = 0, expires = 0, spellId = 12 },
-		}
-		world.weaponEnchants = { true, 1800000, 0, true, 60000, 3 }
-	end })
+	boot({
+		class = "SHAMAN",
+		world = function(world)
+			local now = world.time
+			world.units.player.auras = {
+				{ name = "Bloodlust", duration = 40, expires = now + 40, caster = "player", spellId = 2825 },
+				{
+					name = "Blessing of Kings",
+					duration = 3600,
+					expires = now + 3000,
+					caster = "party1",
+					spellId = 20217,
+				},
+				{ name = "Ghost Wolf", duration = 0, expires = 0, caster = "player", spellId = 2645 },
+				{
+					name = "Weakened Soul",
+					harmful = true,
+					debuffType = "Magic",
+					duration = 15,
+					expires = now + 15,
+					spellId = 6788,
+				},
+				{ name = "Decomposing Aura", harmful = true, count = 3, duration = 0, expires = 0, spellId = 12 },
+			}
+			world.weaponEnchants = { true, 1800000, 0, true, 60000, 3 }
+		end,
+	})
 	local left, right = frameOf("Unit: Player")
 	client:FireEvent("UNIT_AURA", "player")
 	client:Tick(0.2)
@@ -199,11 +232,19 @@ function TestPlayerOrbs:test_auras_move_with_the_bars_the_pet_bar_and_the_minima
 end
 
 function TestPlayerOrbs:test_death_knight_runes()
-	boot({ class = "DEATHKNIGHT", world = function(world)
-		world.runes = { { start = 999, duration = 10, ready = false, type = 1 }, { ready = true, type = 1 },
-			{ start = 995, duration = 10, ready = false, type = 2 }, { ready = true, type = 2 },
-			{ ready = true, type = 4 }, { ready = true, type = 3 } }
-	end })
+	boot({
+		class = "DEATHKNIGHT",
+		world = function(world)
+			world.runes = {
+				{ start = 999, duration = 10, ready = false, type = 1 },
+				{ ready = true, type = 1 },
+				{ start = 995, duration = 10, ready = false, type = 2 },
+				{ ready = true, type = 2 },
+				{ ready = true, type = 4 },
+				{ ready = true, type = 3 },
+			}
+		end,
+	})
 	client:FireEvent("RUNE_POWER_UPDATE", 1, false)
 	client:FireEvent("RUNE_TYPE_UPDATE", 5)
 	client:Tick(1)
@@ -226,9 +267,12 @@ function TestPlayerOrbs:test_debuffs_worth_seeing_even_without_a_duration()
 end
 
 function TestPlayerOrbs:test_the_runes_move_up_for_the_ghouls_bar()
-	boot({ class = "DEATHKNIGHT", world = function(world)
-		world.units.pet = Client.newUnit({ name = "Ghoul", isPlayer = false })
-	end })
+	boot({
+		class = "DEATHKNIGHT",
+		world = function(world)
+			world.units.pet = Client.newUnit({ name = "Ghoul", isPlayer = false })
+		end,
+	})
 	local left = frameOf("Unit: Player")
 	local config = module:GetWidget("Unit: Player").config
 	lu.assertNotNil(left.Runes)
@@ -242,11 +286,15 @@ function TestPlayerOrbs:test_the_runes_move_up_for_the_ghouls_bar()
 end
 
 function TestPlayerOrbs:test_a_reload_inside_a_vehicle()
-	boot({ class = "PALADIN", login = false, world = function(world)
-		world.units.player.hasVehicleUI, world.units.player.inVehicle = true, true
-		world.units.player.vehicle = Client.newUnit({ name = "Siege Engine", isPlayer = false })
-		world.bonusBarOffset = 5
-	end })
+	boot({
+		class = "PALADIN",
+		login = false,
+		world = function(world)
+			world.units.player.hasVehicleUI, world.units.player.inVehicle = true, true
+			world.units.player.vehicle = Client.newUnit({ name = "Siege Engine", isPlayer = false })
+			world.bonusBarOffset = 5
+		end,
+	})
 	client:Login()
 	client:Tick(0.5)
 	local left = frameOf("Unit: Player")
@@ -256,9 +304,15 @@ function TestPlayerOrbs:test_a_reload_inside_a_vehicle()
 end
 
 function TestPlayerOrbs:test_no_cast_bar_with_quartz()
-	boot({ class = "MAGE", world = function(world)
-		table.insert(world.addons, { name = "Quartz", title = "Quartz", enabled = true, loadable = true, loaded = true })
-	end })
+	boot({
+		class = "MAGE",
+		world = function(world)
+			table.insert(
+				world.addons,
+				{ name = "Quartz", title = "Quartz", enabled = true, loadable = true, loaded = true }
+			)
+		end,
+	})
 	local left = frameOf("Unit: Player")
 	lu.assertNil(left.CastBar)
 	-- moving out of the pet bar's way still works
@@ -281,8 +335,12 @@ end
 
 function TestTargetFrame:test_every_classification()
 	for _, fields in ipairs({
-		{ classification = "normal" }, { classification = "elite" }, { classification = "rare" },
-		{ classification = "rareelite" }, { classification = "worldboss", level = -1 }, { level = -1 },
+		{ classification = "normal" },
+		{ classification = "elite" },
+		{ classification = "rare" },
+		{ classification = "rareelite" },
+		{ classification = "worldboss", level = -1 },
+		{ level = -1 },
 		{ classification = "trivial", powerMax = 0, power = 0 },
 	}) do
 		client:SetUnit("target", npc(fields))
@@ -382,8 +440,21 @@ end
 -- caster, duration, stealable, boss (isBossDebuff) and mine (isCastByPlayer).
 local function targetFilter(frame, name, aura)
 	local auras = frame.Auras
-	return auras[name](auras, "Aura", "", "", 1, nil, aura.duration, nil,
-		aura.caster, aura.stealable, nil, aura.boss, aura.mine)
+	return auras[name](
+		auras,
+		"Aura",
+		"",
+		"",
+		1,
+		nil,
+		aura.duration,
+		nil,
+		aura.caster,
+		aura.stealable,
+		nil,
+		aura.boss,
+		aura.mine
+	)
 end
 
 function TestTargetFrame:test_which_auras_the_target_shows()
@@ -727,9 +798,15 @@ function TestGroupFrames:test_a_party_of_four()
 end
 
 function TestGroupFrames:test_party_portraits_and_no_class_colors()
-	boot({ class = "PALADIN", world = party, savedVariables = {
-		DiabolicUI_DB = { UnitFrames = { profiles = { global = { showPortrait = true, showClassColors = false } } } },
-	} })
+	boot({
+		class = "PALADIN",
+		world = party,
+		savedVariables = {
+			DiabolicUI_DB = {
+				UnitFrames = { profiles = { global = { showPortrait = true, showClassColors = false } } },
+			},
+		},
+	})
 	client:FireEvent("PARTY_MEMBERS_CHANGED")
 	client:Tick(0.5)
 	local frame = frameOf("Unit: Party", 1)
@@ -756,16 +833,19 @@ local function roleOf(i)
 		return nil
 	end
 	local left, top = icon:GetTexCoord()
-	return (top > .5 and "DAMAGER") or (left > .5 and "HEALER") or "TANK"
+	return (top > 0.5 and "DAMAGER") or (left > 0.5 and "HEALER") or "TANK"
 end
 
 function TestGroupFrames:test_roles_assigned_or_guessed_from_talents()
-	boot({ class = "PALADIN", world = function(world)
-		world.units.party1 = Client.newUnit({ class = "WARRIOR", role = "TANK" }) -- through the Dungeon Finder
-		world.units.party2 = Client.newUnit({ class = "PRIEST" })
-		world.units.party3 = Client.newUnit({ class = "MAGE" })
-		world.inspectTalents = { { "Discipline", "", 51 }, { "Holy", "", 20 }, { "Shadow", "", 0 } }
-	end })
+	boot({
+		class = "PALADIN",
+		world = function(world)
+			world.units.party1 = Client.newUnit({ class = "WARRIOR", role = "TANK" }) -- through the Dungeon Finder
+			world.units.party2 = Client.newUnit({ class = "PRIEST" })
+			world.units.party3 = Client.newUnit({ class = "MAGE" })
+			world.inspectTalents = { { "Discipline", "", 51 }, { "Holy", "", 20 }, { "Shadow", "", 0 } }
+		end,
+	})
 	client:FireEvent("PARTY_MEMBERS_CHANGED")
 	client:Tick(0.3)
 	lu.assertEquals(roleOf(1), "TANK")
@@ -801,23 +881,26 @@ end
 
 function TestGroupFrames:test_a_raid_of_forty_and_what_each_class_can_dispel()
 	for _, class in ipairs({ "PRIEST", "PALADIN", "DRUID", "SHAMAN", "MAGE", "WARRIOR" }) do
-		boot({ class = class, world = function(world)
-			for i = 1, 40 do
-				local member = Client.newUnit({ class = ({ "WARRIOR", "PRIEST", "MAGE", "DRUID" })[i % 4 + 1] })
-				member.subgroup = math.floor((i - 1) / 5) + 1
-				local now = world.time
-				member.auras = {
-					{ name = "Fortitude", duration = 600, expires = now + 600, caster = "raid2" }, -- no buffs on raid frames
-					{ name = "Magic", harmful = true, debuffType = "Magic", duration = 10, expires = now + 10 },
-					{ name = "Curse", harmful = true, debuffType = "Curse", duration = 10, expires = now + 10 },
-					{ name = "Poison", harmful = true, debuffType = "Poison", duration = 10, expires = now + 10 },
-					{ name = "Disease", harmful = true, debuffType = "Disease", duration = 10, expires = now + 10 },
-					{ name = "Boss", harmful = true, duration = 10, expires = now + 10, caster = "boss1" },
-				}
-				world.units["raid" .. i] = member
-			end
-			world.spells[51886] = { name = "Cleanse Spirit" }
-		end })
+		boot({
+			class = class,
+			world = function(world)
+				for i = 1, 40 do
+					local member = Client.newUnit({ class = ({ "WARRIOR", "PRIEST", "MAGE", "DRUID" })[i % 4 + 1] })
+					member.subgroup = math.floor((i - 1) / 5) + 1
+					local now = world.time
+					member.auras = {
+						{ name = "Fortitude", duration = 600, expires = now + 600, caster = "raid2" }, -- no buffs on raid frames
+						{ name = "Magic", harmful = true, debuffType = "Magic", duration = 10, expires = now + 10 },
+						{ name = "Curse", harmful = true, debuffType = "Curse", duration = 10, expires = now + 10 },
+						{ name = "Poison", harmful = true, debuffType = "Poison", duration = 10, expires = now + 10 },
+						{ name = "Disease", harmful = true, debuffType = "Disease", duration = 10, expires = now + 10 },
+						{ name = "Boss", harmful = true, duration = 10, expires = now + 10, caster = "boss1" },
+					}
+					world.units["raid" .. i] = member
+				end
+				world.spells[51886] = { name = "Cleanse Spirit" }
+			end,
+		})
 		client:FireEvent("RAID_ROSTER_UPDATE")
 		for i = 1, 40 do
 			client:FireEvent("UNIT_AURA", "raid" .. i)
@@ -874,7 +957,14 @@ function TestOtherFrames:test_arena_opponents()
 	boot({ class = "ROGUE" })
 	local now = client.world.time
 	for i = 1, 5 do
-		local enemy = Client.newUnit({ class = "MAGE", canAttack = true, isEnemy = true, isFriend = false, reaction = 2, pvp = true })
+		local enemy = Client.newUnit({
+			class = "MAGE",
+			canAttack = true,
+			isEnemy = true,
+			isFriend = false,
+			reaction = 2,
+			pvp = true,
+		})
 		enemy.auras = {
 			{ name = "Ice Barrier", duration = 60, expires = now + 60, caster = "arena" .. i, spellId = 43039 },
 			{ name = "Fort", duration = 3600, expires = now + 3600, caster = "arena2" },
@@ -917,9 +1007,14 @@ function TestOtherFrames:test_test_mode_previews()
 	lu.assertNil(module.raidContainer:IsShown())
 	-- the previews follow the class color option
 	client.Engine:GetConfig("UnitFrames").showClassColors = false
-	boot({ class = "MAGE", savedVariables = {
-		DiabolicUI_DB = { UnitFrames = { profiles = { global = { showClassColors = false, showPortrait = true } } } },
-	} })
+	boot({
+		class = "MAGE",
+		savedVariables = {
+			DiabolicUI_DB = {
+				UnitFrames = { profiles = { global = { showClassColors = false, showPortrait = true } } },
+			},
+		},
+	})
 	module:SetPartyMockShown(true)
 	module:SetPartyMockShown(false)
 	client.world.mounted = true -- the portraits keep their whole-model camera
@@ -966,7 +1061,9 @@ function TestLowHealthWarning:test_the_edges_pulse_red_under_35_percent()
 end
 
 function TestLowHealthWarning:test_can_be_turned_off()
-	boot({ savedVariables = { DiabolicUI_DB = { UnitFrames = { profiles = { global = { lowHealthWarning = false } } } } } })
+	boot({
+		savedVariables = { DiabolicUI_DB = { UnitFrames = { profiles = { global = { lowHealthWarning = false } } } } },
+	})
 	lu.assertNil(_G.DiabolicLowHealthFrame)
 	assertClean(client)
 end

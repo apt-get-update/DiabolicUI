@@ -18,7 +18,7 @@ local Style = function(self, unit, kind)
 	local unitNum = tonumber(string_match(unit, "%d"))
 
 	self:SetSize(unpack(config.size))
-	self:Place("TOP", 0, -((unitNum-1) * 90))
+	self:Place("TOP", 0, -((unitNum - 1) * 90))
 
 	-- Artwork
 	-------------------------------------------------------------------
@@ -50,7 +50,6 @@ local Style = function(self, unit, kind)
 	BorderNormalHighlight:SetTexture(config.border.textures.highlight)
 	BorderNormalHighlight:Hide()
 
-
 	-- Threat
 	-------------------------------------------------------------------
 	local Threat = self:CreateTexture(nil, "BACKGROUND")
@@ -59,7 +58,6 @@ local Style = function(self, unit, kind)
 	Threat:SetPoint(unpack(config.border.texture_position))
 	Threat:SetTexture(config.border.textures.threat)
 
-
 	-- Health
 	-------------------------------------------------------------------
 	local Health = StatusBar:New(self)
@@ -67,7 +65,7 @@ local Style = function(self, unit, kind)
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
 	Health:SetOrientation("LEFT")
-	Health.frequent = 1/30
+	Health.frequent = 1 / 30
 
 	local HealthValueHolder = Health:CreateFrame("Frame")
 	HealthValueHolder:SetAllPoints()
@@ -85,17 +83,15 @@ local Style = function(self, unit, kind)
 	Health.useClassColor = true
 	Health.dimOutOfCombat = true
 
-
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
 	CastBar:Hide()
 	CastBar:SetAllPoints()
-	CastBar:SetStatusBarTexture(1, 1, 1, .15)
+	CastBar:SetStatusBarTexture(1, 1, 1, 0.15)
 	CastBar:SetSize(Health:GetSize())
 	CastBar:SetOrientation("LEFT")
 	CastBar:DisableSmoothing(true)
-
 
 	-- Auras
 	-------------------------------------------------------------------
@@ -116,7 +112,6 @@ local Style = function(self, unit, kind)
 	auras.DebuffFilter = Library.EnemyDebuffFilter
 	auras.PostCreateButton = Library.PostCreateAuraButton
 
-
 	-- Texts
 	-------------------------------------------------------------------
 	local Name = Border:CreateFontString(nil, "OVERLAY")
@@ -128,7 +123,6 @@ local Style = function(self, unit, kind)
 	Name:SetIndentedWordWrap(false)
 	Name:SetWordWrap(true)
 	Name:SetNonSpaceWrap(false)
-
 
 	self.Auras = auras
 	self.CastBar = CastBar
@@ -150,15 +144,17 @@ local NewEnemyFrames = function(widgetName, kind, count)
 	UnitFrameWidget.OnEnable = function(self)
 		local config = self:GetDB("UnitFrames").visuals.units[kind]
 		local UnitFrame = Engine:GetHandler("UnitFrame")
-		local style = function(frame, unit) return Style(frame, unit, kind) end
+		local style = function(frame, unit)
+			return Style(frame, unit, kind)
+		end
 
 		-- A holder for the frames
 		self.UnitFrame = Engine:CreateFrame("Frame")
 		self.UnitFrame:Place(unpack(config.position))
-		self.UnitFrame:SetSize(config.size[1], config.size[2]*4 + config.offset*3)
+		self.UnitFrame:SetSize(config.size[1], config.size[2] * 4 + config.offset * 3)
 
 		for i = 1, count do
-			self.UnitFrame[i] = UnitFrame:New(kind..i, self.UnitFrame, style)
+			self.UnitFrame[i] = UnitFrame:New(kind .. i, self.UnitFrame, style)
 		end
 	end
 

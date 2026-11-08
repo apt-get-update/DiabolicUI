@@ -22,7 +22,7 @@ local ValueAndTail = function(text)
 	local quoted = false
 	for i = 1, #text do
 		local c = text:sub(i, i)
-		if (c == '"') then
+		if c == '"' then
 			quoted = not quoted
 		elseif (not quoted) and (text:sub(i, i + 1) == "//") then
 			return text:sub(1, i - 1):match("^(.-)%s*$"), text:sub(i)
@@ -35,7 +35,7 @@ local LUA_OF = { ["["] = "{", ["]"] = "}", [":"] = "=" }
 local ValueOf = function(text)
 	local out, quoted = {}, false
 	for c in (text:match("^%((.*)%)$") or text):gmatch(".") do
-		if (c == '"') then
+		if c == '"' then
 			quoted = not quoted
 		end
 		out[#out + 1] = (not quoted) and LUA_OF[c] or c
@@ -56,11 +56,11 @@ end
 -- A value back as the file writes it.
 local JsOf
 JsOf = function(value)
-	if (type(value) == "string") then
+	if type(value) == "string" then
 		return string.format("%q", value)
-	elseif (type(value) == "number") then
+	elseif type(value) == "number" then
 		return string.format("%.10g", value)
-	elseif (type(value) ~= "table") then
+	elseif type(value) ~= "table" then
 		return tostring(value)
 	elseif IsList(value) then
 		local out = {}
@@ -78,7 +78,8 @@ end
 
 local ReadComponent = function(path)
 	local name = path:match("([^/]+)%.qml$")
-	local component = { name = name, path = path, lines = {}, comment = {}, order = {}, values = {}, at = {}, notes = {} }
+	local component =
+		{ name = name, path = path, lines = {}, comment = {}, order = {}, values = {}, at = {}, notes = {} }
 	local Problem = function(what)
 		error(path .. ": " .. what, 0)
 	end
@@ -91,7 +92,7 @@ local ReadComponent = function(path)
 		if key then
 			local text, tail = ValueAndTail(rest)
 			local value = ValueOf(text)
-			if (value == nil) then
+			if value == nil then
 				Problem(key .. ": needs a plain value on its line, not " .. text)
 			end
 			component.order[#component.order + 1] = key
@@ -112,8 +113,8 @@ local ReadComponent = function(path)
 			Problem("not a property of its own line: " .. line)
 		end
 	end
-	if (not component.key) then
-		Problem("needs an objectName (\"\": its properties directly in the window's settings)")
+	if not component.key then
+		Problem('needs an objectName ("": its properties directly in the window\'s settings)')
 	end
 	component.comment = table.concat(component.comment, " ")
 	return component
@@ -124,7 +125,7 @@ local ChangeComponent = function(component, changes)
 	for path, value in pairs(changes) do
 		local head, rest = path:match("^([^.]+)%.?(.*)$")
 		local holder, key = component.values, head
-		if (rest ~= "") then
+		if rest ~= "" then
 			for step in rest:gmatch("[^.]+") do
 				holder = holder[key]
 				key = step
@@ -133,8 +134,16 @@ local ChangeComponent = function(component, changes)
 		holder[key] = value
 		local at = component.at[head]
 		local text = JsOf(component.values[head])
-		text = ((type(component.values[head]) == "table") and (not IsList(component.values[head]))) and ("(" .. text .. ")") or text
-		component.lines[at.line] = "    property " .. at.kind .. " " .. head .. ": " .. text .. (at.tail and (" " .. at.tail) or "")
+		text = ((type(component.values[head]) == "table") and (not IsList(component.values[head])))
+				and ("(" .. text .. ")")
+			or text
+		component.lines[at.line] = "    property "
+			.. at.kind
+			.. " "
+			.. head
+			.. ": "
+			.. text
+			.. (at.tail and (" " .. at.tail) or "")
 	end
 end
 
@@ -142,7 +151,7 @@ end
 -- our fonts by their names.
 local LuaOf
 LuaOf = function(value)
-	if (type(value) == "string") then
+	if type(value) == "string" then
 		if value:find("^textures/") or value:find("^fonts/") then
 			return "path .. [[" .. value:gsub("/", "\\") .. "]]"
 		elseif value:find("^Interface/") then
@@ -151,9 +160,9 @@ LuaOf = function(value)
 			return value
 		end
 		return string.format("%q", value)
-	elseif (type(value) == "number") then
+	elseif type(value) == "number" then
 		return string.format("%.10g", value)
-	elseif (type(value) ~= "table") then
+	elseif type(value) ~= "table" then
 		return tostring(value)
 	end
 	local out = {}
@@ -171,7 +180,8 @@ end
 
 -- settings/components.lua's text.
 local ComponentsLua = function(components)
-	local out = { [[
+	local out = {
+		[[
 -- What every window shares, the generic window and its controls: added to
 -- settings/blizzard.lua's `window`.
 -- Written from windows/components/*.qml by tools/positions.lua: change those (docs:
@@ -191,19 +201,20 @@ Merge = function(into, values)
 		end
 	end
 end
-]] }
+]],
+	}
 	for _, component in ipairs(components) do
 		out[#out + 1] = "-- " .. component.name
 		out[#out + 1] = "Merge(window, {"
 		local into = ""
-		if (component.key ~= "") then
+		if component.key ~= "" then
 			out[#out + 1] = "\t" .. component.key .. " = {"
 			into = "\t"
 		end
 		for _, key in ipairs(component.order) do
 			out[#out + 1] = into .. "\t" .. key .. " = " .. LuaOf(component.values[key]) .. ","
 		end
-		if (component.key ~= "") then
+		if component.key ~= "" then
 			out[#out + 1] = "\t},"
 		end
 		out[#out + 1] = "})"
@@ -217,14 +228,14 @@ end
 local Encode
 Encode = function(value, out)
 	local kind = type(value)
-	if (kind == "string") then
+	if kind == "string" then
 		local escaped = value:gsub('[%c"\\]', function(c)
 			return (c == '"' and '\\"') or (c == "\\" and "\\\\") or string.format("\\u%04x", c:byte())
 		end)
 		out[#out + 1] = '"' .. escaped .. '"'
-	elseif (kind == "number") then
+	elseif kind == "number" then
 		out[#out + 1] = (string.format("%.4f", value):gsub("%.?0+$", ""))
-	elseif (kind == "boolean") then
+	elseif kind == "boolean" then
 		out[#out + 1] = tostring(value)
 	elseif (kind == "table") and (next(value) ~= nil) and (#Sorted(value) == #value) then
 		out[#out + 1] = "["
@@ -257,11 +268,11 @@ pipe:close()
 -- tools/gametextures.py), true if white, or nil
 local WHITE = { ["interface/chatframe/chatframebackground"] = true, ["interface/buttons/white8x8"] = true }
 local Picture = function(file)
-	if (not file) then
+	if not file then
 		return
 	end
 	local rest = file:gsub("\\", "/"):match("[Dd]iabolic[Uu][Ii]/(.*)$")
-	if (not rest) then
+	if not rest then
 		local path = file:gsub("\\", "/"):lower():gsub("%.%a+$", "")
 		return WHITE[path] or ("game/" .. path)
 	end

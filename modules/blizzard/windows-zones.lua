@@ -73,12 +73,12 @@ Module.CreateNine = function(self, frame, layer, material, owner)
 	local columns = {
 		{ "LEFT", 0, "LEFT", edge },
 		{ "LEFT", edge, "RIGHT", -edge },
-		{ "RIGHT", -edge, "RIGHT", 0 }
+		{ "RIGHT", -edge, "RIGHT", 0 },
 	}
 	local rows = {
 		{ "TOP", 0, "TOP", -edge },
 		{ "TOP", -edge, "BOTTOM", edge },
-		{ "BOTTOM", edge, "BOTTOM", 0 }
+		{ "BOTTOM", edge, "BOTTOM", 0 },
 	}
 	local slices = setmetatable({}, Slices)
 	for _, row in ipairs(rows) do
@@ -90,7 +90,9 @@ Module.CreateNine = function(self, frame, layer, material, owner)
 		end
 	end
 	slices:SetTexture(spec.texture)
-	local fit = function() FitNine(frame, slices, spec) end
+	local fit = function()
+		FitNine(frame, slices, spec)
+	end
 	frame:HookScript("OnSizeChanged", fit)
 	fit()
 	return slices
@@ -147,7 +149,7 @@ Module.StyleColumnHeaders = function(self, prefix, count)
 				highlight:ClearAllPoints()
 				highlight:SetAllPoints(header)
 			end
-			if (i < count) then
+			if i < count then
 				local line = header:CreateTexture(nil, "OVERLAY")
 				line:SetTexture(unpack(spec.line_color))
 				line:SetWidth(1)
@@ -223,7 +225,7 @@ end
 -- on a page left without one.
 Module.SetFooter = function(self, foot, height)
 	foot.DiabolicShown = height and true -- (the slices can't say)
-	if (not height) then
+	if not height then
 		foot.Material:Hide()
 		foot.Rail:Hide()
 		return
@@ -275,7 +277,12 @@ end
 -- row: faintly lit, in a thin orange box shown with it; in its own colours
 -- (Blizzard tints it by the row's kind). Its blend kept: an added one (the
 -- quest log's) lies over the row's text.
-local BOX_SIDES = { { "TOPLEFT", "TOPRIGHT" }, { "BOTTOMLEFT", "BOTTOMRIGHT" }, { "TOPLEFT", "BOTTOMLEFT" }, { "TOPRIGHT", "BOTTOMRIGHT" } }
+local BOX_SIDES = {
+	{ "TOPLEFT", "TOPRIGHT" },
+	{ "BOTTOMLEFT", "BOTTOMRIGHT" },
+	{ "TOPLEFT", "BOTTOMLEFT" },
+	{ "TOPRIGHT", "BOTTOMRIGHT" },
+}
 
 Module.LightRow = function(self, texture)
 	local spec = Module.config.chosen_row
@@ -288,7 +295,7 @@ Module.LightRow = function(self, texture)
 		line:SetTexture(unpack(spec.line))
 		line:SetPoint(side[1], texture, side[1])
 		line:SetPoint(side[2], texture, side[2])
-		if (i <= 2) then
+		if i <= 2 then
 			line:SetHeight(spec.width)
 		else
 			line:SetWidth(spec.width)
@@ -298,7 +305,7 @@ Module.LightRow = function(self, texture)
 	texture.DiabolicBox = box
 	local Follow = function()
 		for _, line in ipairs(box) do
-			if (texture:IsShown() == 1) then
+			if texture:IsShown() == 1 then
 				line:Show()
 			else
 				line:Hide()
@@ -310,7 +317,7 @@ Module.LightRow = function(self, texture)
 	Follow()
 	local busy
 	hooksecurefunc(texture, "SetVertexColor", function()
-		if (not busy) then
+		if not busy then
 			busy = true
 			texture:SetVertexColor(1, 1, 1)
 			busy = nil
@@ -341,7 +348,7 @@ end
 Module.RowsFitting = function(self, list, height, most, first)
 	local top, bottom = first and first:GetTop(), list:GetBottom()
 	local room = (top and bottom) and (top - bottom) or list:GetHeight()
-	return math_max(0, math_min(math_floor(room / height + .25), most))
+	return math_max(0, math_min(math_floor(room / height + 0.25), most))
 end
 
 -- A parchment's scroll bar (UIPanelScrollFrameTemplate's) out past its
@@ -368,7 +375,7 @@ end
 
 -- The coin icons Blizzard draws from its money icons (money inputs'), in
 -- `frame` and all it holds, ours.
-local COINS = { [0] = "gold", [.25] = "silver", [.5] = "copper" }
+local COINS = { [0] = "gold", [0.25] = "silver", [0.5] = "copper" }
 Module.StyleCoins = function(self, frame)
 	for i = 1, select("#", frame:GetRegions()) do
 		local region = select(i, frame:GetRegions())

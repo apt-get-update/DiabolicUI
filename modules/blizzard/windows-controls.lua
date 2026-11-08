@@ -63,13 +63,13 @@ Module.CreateSocket = function(self, window)
 	fill:SetPoint("BOTTOMRIGHT", socket, "BOTTOMRIGHT", -inner, spec.socket_inset)
 	local left = socket:CreateTexture(nil, "BORDER")
 	left:SetTexture(file)
-	left:SetTexCoord(0, 1/8, 0, 1)
+	left:SetTexCoord(0, 1 / 8, 0, 1)
 	left:SetPoint("TOPLEFT", socket, "TOPLEFT")
 	left:SetSize(edge, size - edge)
 	-- up to the window's iron, not over it
 	local bottom = socket:CreateTexture(nil, "BORDER")
 	bottom:SetTexture(file)
-	bottom:SetTexCoord(1/8, 0, 0, 0, 1/8, 1, 0, 1)
+	bottom:SetTexCoord(1 / 8, 0, 0, 0, 1 / 8, 1, 0, 1)
 	bottom:SetPoint("BOTTOMRIGHT", socket, "BOTTOMRIGHT", -inner, 0)
 	bottom:SetSize(size - edge - inner, edge)
 	local corner = socket:CreateTexture(nil, "BORDER")
@@ -92,7 +92,12 @@ Module.SkinClose = function(self, button)
 	button:SetHighlightTexture(spec.texture.lit)
 	button:GetHighlightTexture():SetBlendMode("BLEND")
 	button:GetDisabledTexture():SetDesaturated(true)
-	for _, texture in ipairs({ button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture(), button:GetHighlightTexture() }) do
+	for _, texture in ipairs({
+		button:GetNormalTexture(),
+		button:GetPushedTexture(),
+		button:GetDisabledTexture(),
+		button:GetHighlightTexture(),
+	}) do
 		texture:SetTexCoord(unpack(spec.texcoords))
 		texture:ClearAllPoints()
 		texture:SetAllPoints()
@@ -114,7 +119,7 @@ local FIELD_SEGMENTS = {
 	{ "light", "VERTICAL", "TOPLEFT", "TOPLEFT", "BOTTOMLEFT", "LEFT", 1, 0, false },
 	{ "light", "VERTICAL", "TOPLEFT", "LEFT", "BOTTOMLEFT", "BOTTOMLEFT", 1, 0, true },
 	{ "dark", "VERTICAL", "TOPRIGHT", "TOPRIGHT", "BOTTOMRIGHT", "RIGHT", -1, 0, false },
-	{ "dark", "VERTICAL", "TOPRIGHT", "RIGHT", "BOTTOMRIGHT", "BOTTOMRIGHT", -1, 0, true }
+	{ "dark", "VERTICAL", "TOPRIGHT", "RIGHT", "BOTTOMRIGHT", "BOTTOMRIGHT", -1, 0, true },
 }
 local Field = function(plate, inset, owner)
 	local spec = Module.config.dropdown.field
@@ -128,14 +133,15 @@ local Field = function(plate, inset, owner)
 	for depth, look in ipairs({ { spec.line_color, "ARTWORK" }, { spec.line_dark, "BORDER" } }) do
 		for _, segment in ipairs(FIELD_SEGMENTS) do
 			local light = spec.bevel[segment[1]]
-			local r, g, b = math_min(1, look[1][1] * light), math_min(1, look[1][2] * light), math_min(1, look[1][3] * light)
+			local r, g, b =
+				math_min(1, look[1][1] * light), math_min(1, look[1][2] * light), math_min(1, look[1][3] * light)
 			local ends = spec.sheen_ends
 			local line = owner:CreateTexture(nil, look[2])
 			line:SetTexture(spec.texture)
 			local x, y = segment[7] * (depth - 1), segment[8] * (depth - 1)
 			line:SetPoint(segment[3], fill, segment[4], x, y)
 			line:SetPoint(segment[5], fill, segment[6], x, y)
-			if (segment[2] == "HORIZONTAL") then
+			if segment[2] == "HORIZONTAL" then
 				line:SetHeight(1)
 			else
 				line:SetWidth(1)
@@ -160,7 +166,7 @@ local FitMenu = function(level, _, dropdown)
 	end
 	local inset = dropdown.DiabolicInset or Module.config.dropdown.inset
 	local width = (plate:GetWidth() - inset * 2) * plate:GetEffectiveScale() / list:GetEffectiveScale()
-	if (list:GetWidth() < width) then
+	if list:GetWidth() < width then
 		list:SetWidth(width)
 		for i = 1, list.numButtons or 0 do
 			_G["DropDownList1Button" .. i]:SetWidth(width - 25) -- (Blizzard's: the list 25 wider)
@@ -214,7 +220,12 @@ Module.StyleDropDown = function(self, frame, offset, inset)
 		button:SetHighlightTexture(arrow.lit)
 		button:GetHighlightTexture():SetBlendMode("BLEND")
 		button:GetDisabledTexture():SetDesaturated(true)
-		for _, texture in ipairs({ button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture(), button:GetHighlightTexture() }) do
+		for _, texture in ipairs({
+			button:GetNormalTexture(),
+			button:GetPushedTexture(),
+			button:GetDisabledTexture(),
+			button:GetHighlightTexture(),
+		}) do
 			texture:SetTexCoord(unpack(spec.arrow_texcoords))
 			texture:ClearAllPoints()
 			texture:SetAllPoints()
@@ -360,7 +371,12 @@ Module.LineBand = function(self, header, parts, fromRight)
 				self:StyleBandText(_G[name .. "Text"], true)
 			end
 			-- (its plate first, under it: a child keeps its own level)
-			for _, piece in ipairs({ part.DiabolicPlate or false, part, _G[name .. "Button"], _G[name .. "MouseOver"] or false }) do
+			for _, piece in ipairs({
+				part.DiabolicPlate or false,
+				part,
+				_G[name .. "Button"],
+				_G[name .. "MouseOver"] or false,
+			}) do
 				if piece then
 					piece:SetFrameLevel(level)
 					level = level + 1
@@ -374,8 +390,12 @@ end
 -- high: lit under the mouse, dark while disabled.
 Module.StyleButton = function(self, button, height)
 	button.DiabolicStyle = "Button"
-	for _, texture in ipairs({ button:GetNormalTexture() or false, button:GetPushedTexture() or false,
-		button:GetDisabledTexture() or false, button:GetHighlightTexture() or false }) do
+	for _, texture in ipairs({
+		button:GetNormalTexture() or false,
+		button:GetPushedTexture() or false,
+		button:GetDisabledTexture() or false,
+		button:GetHighlightTexture() or false,
+	}) do
 		if texture then
 			texture:SetAlpha(0)
 		end
@@ -383,10 +403,12 @@ Module.StyleButton = function(self, button, height)
 	local spec = Module.config.rect_button
 	local normal = self:CreateSlices(button, "BACKGROUND", spec, spec.texture.normal, height)
 	local dark = self:CreateSlices(button, "BACKGROUND", spec, spec.texture.dark, height)
-	button.DiabolicNotLit = function() return button:IsEnabled() == 0 end
+	button.DiabolicNotLit = function()
+		return button:IsEnabled() == 0
+	end
 	self:AddLit(button, self:CreateSlices(button, "BORDER", spec, spec.texture.lit, height))
 	local update = function()
-		if (button:IsEnabled() == 0) then
+		if button:IsEnabled() == 0 then
 			normal:Hide()
 			dark:Show()
 		else
@@ -398,7 +420,11 @@ Module.StyleButton = function(self, button, height)
 		-- (a color set on the text stays until another is)
 		local text = button:GetFontString()
 		if text then
-			text:SetTextColor(unpack((button:IsEnabled() == 0) and Module.config.button_disabled_color or Module.config.button_text_color))
+			text:SetTextColor(
+				unpack(
+					(button:IsEnabled() == 0) and Module.config.button_disabled_color or Module.config.button_text_color
+				)
+			)
 		end
 	end
 	hooksecurefunc(button, "Enable", update)
@@ -431,7 +457,12 @@ Module.StylePager = function(self, prev, nextPage)
 		button:SetDisabledTexture(art.disabled)
 		button:SetHighlightTexture(art.lit)
 		button:GetHighlightTexture():SetBlendMode("BLEND")
-		for _, texture in ipairs({ button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture(), button:GetHighlightTexture() }) do
+		for _, texture in ipairs({
+			button:GetNormalTexture(),
+			button:GetPushedTexture(),
+			button:GetDisabledTexture(),
+			button:GetHighlightTexture(),
+		}) do
 			-- (a quarter turn: the art's top on the left)
 			texture:SetTexCoord(right, top, left, top, right, bottom, left, bottom)
 			texture:ClearAllPoints()

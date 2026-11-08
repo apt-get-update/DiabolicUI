@@ -56,10 +56,19 @@ end
 
 function TestWorldState:test_scores_show_with_our_faction_icons()
 	setWorldStates({
-		{ text = "Bases: 3  Resources: 1200/1600", icon = [[Interface\TargetingFrame\UI-PVP-Alliance]],
-			tooltip = "Alliance score", dynamicIcon = [[Interface\WorldStateFrame\AllianceFlag]], state = 2 },
-		{ text = "Bases: 2  Resources: 900/1600", icon = [[Interface\Icons\Something]],
-			dynamicIcon = [[Interface\Icons\Else]], state = 3 },
+		{
+			text = "Bases: 3  Resources: 1200/1600",
+			icon = [[Interface\TargetingFrame\UI-PVP-Alliance]],
+			tooltip = "Alliance score",
+			dynamicIcon = [[Interface\WorldStateFrame\AllianceFlag]],
+			state = 2,
+		},
+		{
+			text = "Bases: 2  Resources: 900/1600",
+			icon = [[Interface\Icons\Something]],
+			dynamicIcon = [[Interface\Icons\Else]],
+			state = 3,
+		},
 		{ text = "Not shown", state = 0 },
 		{ text = "Captured", icon = [[Interface\WorldStateFrame\NeutralTower]] },
 	})
@@ -97,8 +106,12 @@ function TestWorldState:test_scores_show_with_our_faction_icons()
 end
 
 function TestWorldState:test_a_dynamic_icon_hides_when_the_state_stops_flashing()
-	local flag = { text = "Flag", icon = [[Interface\WorldStateFrame\HordeFlag]],
-		dynamicIcon = [[Interface\WorldStateFrame\HordeFlag]], state = 2 }
+	local flag = {
+		text = "Flag",
+		icon = [[Interface\WorldStateFrame\HordeFlag]],
+		dynamicIcon = [[Interface\WorldStateFrame\HordeFlag]],
+		state = 2,
+	}
 	setWorldStates({ flag })
 	lu.assertTrue(shown(self.module:GetUI(1).dynamicIcon))
 	flag.state = 1
@@ -286,11 +299,13 @@ end
 TestWarnings = {}
 
 function TestWarnings:setUp()
-	boot({ world = function()
-		_G.ERR_QUEST_ADD_KILL_SII = "%s slain: %d/%d"
-		_G.ERR_LOOT_GONE = "Already looted (%d/%d)"
-		_G.ERR_OUT_OF_POWER_DISPLAY = "Not enough %s"
-	end })
+	boot({
+		world = function()
+			_G.ERR_QUEST_ADD_KILL_SII = "%s slain: %d/%d"
+			_G.ERR_LOOT_GONE = "Already looted (%d/%d)"
+			_G.ERR_OUT_OF_POWER_DISPLAY = "Not enough %s"
+		end,
+	})
 	self.module = client:GetModule("Warnings")
 	self.chat = {}
 	local chat = self.chat
@@ -419,8 +434,18 @@ function TestPvPEmotes:tearDown()
 end
 
 local function combatLog(subEvent, sourceGUID, destGUID, destName, destFlags, ...)
-	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 1000, subEvent, sourceGUID, "Source", 0x511,
-		destGUID, destName, destFlags, ...)
+	client:FireEvent(
+		"COMBAT_LOG_EVENT_UNFILTERED",
+		1000,
+		subEvent,
+		sourceGUID,
+		"Source",
+		0x511,
+		destGUID,
+		destName,
+		destFlags,
+		...
+	)
 end
 
 function TestPvPEmotes:test_hugs_the_first_victim_then_picks_random_emotes()
@@ -458,7 +483,18 @@ function TestPvPEmotes:test_overkill_from_the_player_or_pet_counts()
 	client:SetUnit("pet", pet)
 	combatLog("SWING_DAMAGE", pet.guid, "0x0100000000000002", "Grumpy", PLAYER_FLAGS, 800, 50)
 	lu.assertEquals(client.emotes, { { "HUG", "Grumpy" } })
-	combatLog("SPELL_PERIODIC_DAMAGE", self.me, "0x0100000000000003", "Sneaky", PLAYER_FLAGS, 172, "Corruption", 32, 300, 1)
+	combatLog(
+		"SPELL_PERIODIC_DAMAGE",
+		self.me,
+		"0x0100000000000003",
+		"Sneaky",
+		PLAYER_FLAGS,
+		172,
+		"Corruption",
+		32,
+		300,
+		1
+	)
 	lu.assertEquals(#client.emotes, 2)
 	assertClean(client)
 end

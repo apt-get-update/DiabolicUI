@@ -87,7 +87,9 @@ end
 -- Calls fn(...) protected. Returns true on success.
 function Client:Call(fn, ...)
 	local args, n = { ... }, select("#", ...)
-	local ok, err = xpcall(function() return fn(unpack(args, 1, n)) end, function(message)
+	local ok, err = xpcall(function()
+		return fn(unpack(args, 1, n))
+	end, function(message)
 		return debug.traceback(tostring(message), 2)
 	end)
 	if not ok then
@@ -105,7 +107,9 @@ function Client:RunScript(widget, script, ...)
 	if handler then
 		if s.wrapped and s.wrapped[script] then
 			-- a secure header wrapped it (see mocks/client_secure.lua)
-			local call = function(...) self:Call(handler, ...) end
+			local call = function(...)
+				self:Call(handler, ...)
+			end
 			Secure.runWrapped(widget, script, call, widget, ...)
 		else
 			self:Call(handler, widget, ...)
@@ -120,7 +124,11 @@ function Client:RunScript(widget, script, ...)
 end
 
 function Client:Blocked(widget, method)
-	self.blocked[#self.blocked + 1] = (state[widget].name or tostring(widget)) .. ":" .. method .. "()\n" .. debug.traceback("", 3)
+	self.blocked[#self.blocked + 1] = (state[widget].name or tostring(widget))
+		.. ":"
+		.. method
+		.. "()\n"
+		.. debug.traceback("", 3)
 end
 
 ------------------------------------------------------------------------
@@ -136,7 +144,9 @@ function Client:FireEvent(event, ...)
 			targets[#targets + 1] = widget
 		end
 	end
-	table.sort(targets, function(a, b) return state[a].serial < state[b].serial end)
+	table.sort(targets, function(a, b)
+		return state[a].serial < state[b].serial
+	end)
 	for _, widget in ipairs(targets) do
 		local s = state[widget]
 		-- a handler earlier in the list may have unregistered it
@@ -168,7 +178,9 @@ function Client:Tick(seconds, frameTime)
 				updaters[#updaters + 1] = widget
 			end
 		end
-		table.sort(updaters, function(a, b) return state[a].serial < state[b].serial end)
+		table.sort(updaters, function(a, b)
+			return state[a].serial < state[b].serial
+		end)
 		for _, widget in ipairs(updaters) do
 			self:RunScript(widget, "OnUpdate", elapsed)
 		end
@@ -176,7 +188,9 @@ function Client:Tick(seconds, frameTime)
 		for group in pairs(self.playing) do
 			groups[#groups + 1] = group
 		end
-		table.sort(groups, function(a, b) return state[a].serial < state[b].serial end)
+		table.sort(groups, function(a, b)
+			return state[a].serial < state[b].serial
+		end)
 		for _, group in ipairs(groups) do
 			Widgets.advanceAnimation(group, elapsed)
 		end
@@ -331,23 +345,64 @@ end
 -- WoW's global shortcuts to the Lua standard library, and its additions.
 local function installLua(client)
 	local aliases = {
-		strbyte = string.byte, strchar = string.char, strfind = string.find,
-		format = string.format, gsub = string.gsub, strlen = string.len, strlower = string.lower,
-		strmatch = string.match, strrep = string.rep, strrev = string.reverse, strsub = string.sub,
-		strupper = string.upper, gmatch = string.gmatch,
-		tinsert = table.insert, tremove = table.remove, sort = table.sort, getn = table.getn,
-		foreach = table.foreach, foreachi = table.foreachi,
-		abs = math.abs, ceil = math.ceil, floor = math.floor, max = math.max, min = math.min,
-		mod = math.fmod, sqrt = math.sqrt, random = math.random, exp = math.exp, log = math.log,
-		log10 = math.log10, frexp = math.frexp, ldexp = math.ldexp, deg = math.deg, rad = math.rad,
-		sin = function(degrees) return math.sin(math.rad(degrees)) end,
-		cos = function(degrees) return math.cos(math.rad(degrees)) end,
-		tan = function(degrees) return math.tan(math.rad(degrees)) end,
-		asin = function(x) return math.deg(math.asin(x)) end,
-		acos = function(x) return math.deg(math.acos(x)) end,
-		atan = function(x) return math.deg(math.atan(x)) end,
-		atan2 = function(y, x) return math.deg(math.atan2(y, x)) end,
-		date = os.date, time = os.time, difftime = os.difftime,
+		strbyte = string.byte,
+		strchar = string.char,
+		strfind = string.find,
+		format = string.format,
+		gsub = string.gsub,
+		strlen = string.len,
+		strlower = string.lower,
+		strmatch = string.match,
+		strrep = string.rep,
+		strrev = string.reverse,
+		strsub = string.sub,
+		strupper = string.upper,
+		gmatch = string.gmatch,
+		tinsert = table.insert,
+		tremove = table.remove,
+		sort = table.sort,
+		getn = table.getn,
+		foreach = table.foreach,
+		foreachi = table.foreachi,
+		abs = math.abs,
+		ceil = math.ceil,
+		floor = math.floor,
+		max = math.max,
+		min = math.min,
+		mod = math.fmod,
+		sqrt = math.sqrt,
+		random = math.random,
+		exp = math.exp,
+		log = math.log,
+		log10 = math.log10,
+		frexp = math.frexp,
+		ldexp = math.ldexp,
+		deg = math.deg,
+		rad = math.rad,
+		sin = function(degrees)
+			return math.sin(math.rad(degrees))
+		end,
+		cos = function(degrees)
+			return math.cos(math.rad(degrees))
+		end,
+		tan = function(degrees)
+			return math.tan(math.rad(degrees))
+		end,
+		asin = function(x)
+			return math.deg(math.asin(x))
+		end,
+		acos = function(x)
+			return math.deg(math.acos(x))
+		end,
+		atan = function(x)
+			return math.deg(math.atan(x))
+		end,
+		atan2 = function(y, x)
+			return math.deg(math.atan2(y, x))
+		end,
+		date = os.date,
+		time = os.time,
+		difftime = os.difftime,
 	}
 	for name, value in pairs(aliases) do
 		_G[name] = value
@@ -378,28 +433,38 @@ local function installLua(client)
 		return table.concat({ ... }, sep)
 	end
 	_G.strtrim, _G.strsplit, _G.strjoin = strtrim, strsplit, strjoin
-	_G.strconcat = function(...) return table.concat({ ... }) end
+	_G.strconcat = function(...)
+		return table.concat({ ... })
+	end
 	_G.tostringall = function(...)
 		local t = { ... }
-		for i = 1, select("#", ...) do t[i] = tostring(t[i]) end
+		for i = 1, select("#", ...) do
+			t[i] = tostring(t[i])
+		end
 		return unpack(t, 1, select("#", ...))
 	end
 	-- the same functions: string.split(delimiter, text), like strsplit
 	string.trim, string.split, string.join = strtrim, strsplit, strjoin
 	_G.wipe = function(t)
-		for key in pairs(t) do t[key] = nil end
+		for key in pairs(t) do
+			t[key] = nil
+		end
 		return t
 	end
 	table.wipe = _G.wipe
 	_G.tContains = function(t, value)
 		for _, v in pairs(t) do
-			if v == value then return 1 end
+			if v == value then
+				return 1
+			end
 		end
 		return nil
 	end
 	_G.tDeleteItem = function(t, value)
 		for i = #t, 1, -1 do
-			if t[i] == value then table.remove(t, i) end
+			if t[i] == value then
+				table.remove(t, i)
+			end
 		end
 	end
 	-- the parts of LuaBitOp WoW ships
@@ -412,7 +477,9 @@ local function installLua(client)
 		local result, bitValue = 0, 1
 		for _ = 1, 32 do
 			local x, y = a % 2, b % 2
-			if op(x, y) then result = result + bitValue end
+			if op(x, y) then
+				result = result + bitValue
+			end
 			a, b = (a - x) / 2, (b - y) / 2
 			bitValue = bitValue * 2
 		end
@@ -420,21 +487,41 @@ local function installLua(client)
 	end
 	_G.bit = {
 		band = function(a, b, ...)
-			local r = bitOp(a, b, function(x, y) return x == 1 and y == 1 end)
-			if ... then return _G.bit.band(r, ...) end
+			local r = bitOp(a, b, function(x, y)
+				return x == 1 and y == 1
+			end)
+			if ... then
+				return _G.bit.band(r, ...)
+			end
 			return r
 		end,
 		bor = function(a, b, ...)
-			local r = bitOp(a, b, function(x, y) return x == 1 or y == 1 end)
-			if ... then return _G.bit.bor(r, ...) end
+			local r = bitOp(a, b, function(x, y)
+				return x == 1 or y == 1
+			end)
+			if ... then
+				return _G.bit.bor(r, ...)
+			end
 			return r
 		end,
-		bxor = function(a, b) return bitOp(a, b, function(x, y) return x ~= y end) end,
-		bnot = function(a) return 4294967295 - toBits(a) end,
-		lshift = function(a, n) return toBits(a * 2 ^ n) end,
-		rshift = function(a, n) return math.floor(toBits(a) / 2 ^ n) end,
+		bxor = function(a, b)
+			return bitOp(a, b, function(x, y)
+				return x ~= y
+			end)
+		end,
+		bnot = function(a)
+			return 4294967295 - toBits(a)
+		end,
+		lshift = function(a, n)
+			return toBits(a * 2 ^ n)
+		end,
+		rshift = function(a, n)
+			return math.floor(toBits(a) / 2 ^ n)
+		end,
 	}
-	_G.debugstack = function() return debug.traceback("", 2) end
+	_G.debugstack = function()
+		return debug.traceback("", 2)
+	end
 	_G.geterrorhandler = function()
 		return client.errorHandler
 	end
@@ -443,7 +530,9 @@ local function installLua(client)
 		client.errorHandler = handler
 	end
 	_G.securecall = function(fn, ...)
-		if type(fn) == "string" then fn = _G[fn] end
+		if type(fn) == "string" then
+			fn = _G[fn]
+		end
 		local results = { pcall(fn, ...) }
 		if not results[1] then
 			client:RecordError(results[2])
@@ -451,7 +540,9 @@ local function installLua(client)
 		end
 		return unpack(results, 2)
 	end
-	_G.issecure = function() return client.secureContext and 1 or nil end
+	_G.issecure = function()
+		return client.secureContext and 1 or nil
+	end
 	-- every value in the fake world was set by the addon (tainted); a key
 	-- with nothing in it is secure
 	_G.issecurevariable = function(t, name)
@@ -482,7 +573,9 @@ local function installLua(client)
 			table.remove(results, 1)
 			local n = select("#", ...)
 			local args = { ... }
-			client:Call(function() hook(unpack(args, 1, n)) end)
+			client:Call(function()
+				hook(unpack(args, 1, n))
+			end)
 			return unpack(results)
 		end
 		if target == _G then
@@ -590,10 +683,18 @@ function Client:CreateXmlFont(spec)
 		local path, height, flags = font:GetFont()
 		font:SetFont(spec.font or path, spec.height or height, spec.outline or flags)
 	end
-	if spec.justifyH then font:SetJustifyH(spec.justifyH) end
-	if spec.justifyV then font:SetJustifyV(spec.justifyV) end
-	if spec.shadowOffset then font:SetShadowOffset(unpack(spec.shadowOffset)) end
-	if spec.color then font:SetTextColor(unpack(spec.color)) end
+	if spec.justifyH then
+		font:SetJustifyH(spec.justifyH)
+	end
+	if spec.justifyV then
+		font:SetJustifyV(spec.justifyV)
+	end
+	if spec.shadowOffset then
+		font:SetShadowOffset(unpack(spec.shadowOffset))
+	end
+	if spec.color then
+		font:SetTextColor(unpack(spec.color))
+	end
 	return font
 end
 
@@ -614,8 +715,15 @@ function Client:Problems()
 		local first = text:match("^[^\n]*")
 		local where = {}
 		for line in text:gmatch("\n%s*([^\n]+)") do
-			if not (line:match("tests/") or line:match("^stack traceback") or line:match("%[C%]")
-				or line:match("tail call") or line:match("^%.%.%.")) and #where < 4 then
+			if
+				not (
+					line:match("tests/")
+					or line:match("^stack traceback")
+					or line:match("%[C%]")
+					or line:match("tail call")
+					or line:match("^%.%.%.")
+				) and #where < 4
+			then
 				where[#where + 1] = "    " .. line
 			end
 		end

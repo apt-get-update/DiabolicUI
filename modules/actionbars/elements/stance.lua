@@ -22,31 +22,31 @@ local UpdateStanceButtons = Engine:Wrap(function(self)
 	local numShown = 0
 	local numForms = GetNumShapeshiftForms()
 	local needUpdate
-	
+
 	for i = 1, #buttons do
 		if buttons[i]:IsShown() then
 			numShown = numShown + 1
 		end
 	end
-	
-	if (numShown ~= numForms) then
+
+	if numShown ~= numForms then
 		needUpdate = true
 	end
-	
+
 	for i = 1, numForms do
 		buttons[i]:Show()
 		buttons[i]:SetAttribute("statehidden", nil)
 		buttons[i]:UpdateAction(true) -- force an update, in case it's a new ability (?)
 	end
 
-	for i = numForms+1, #buttons do
+	for i = numForms + 1, #buttons do
 		buttons[i]:Hide()
 		buttons[i]:SetAttribute("statehidden", true)
 		buttons[i]:SetChecked(nil)
 	end
 
 	if needUpdate then
-		self:SetSize(unpack(Module.config.structure.bars.stance.bar_size[numForms]))	
+		self:SetSize(unpack(Module.config.structure.bars.stance.bar_size[numForms]))
 	end
 end)
 
@@ -55,7 +55,7 @@ local UpdateButtonStates = function(self)
 	local buttons = self.buttons
 	local numForms = GetNumShapeshiftForms()
 	local currentForm = GetShapeshiftForm()
-	for i = 1, numForms do 
+	for i = 1, numForms do
 		if currentForm == i then
 			buttons[i]:SetChecked(true)
 		else
@@ -71,7 +71,8 @@ BarWidget.OnEnable = function(self)
 
 	local Artwork = Module:GetWidget("Artwork")
 
-	local Bar = Module:GetHandler("ActionBar"):New("stance", Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
+	local Bar = Module:GetHandler("ActionBar")
+		:New("stance", Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
 	Bar:SetSize(unpack(barConfig.bar_size[GetNumShapeshiftForms()]))
 	Bar:Place(unpack(barConfig.position))
 	Bar:SetAttribute("old_button_size", barConfig.buttonsize)
@@ -81,7 +82,6 @@ BarWidget.OnEnable = function(self)
 	Bar.UpdateButtonStates = UpdateButtonStates
 	Bar.UpdateStanceButtons = UpdateStanceButtons
 
-	
 	--------------------------------------------------------------------
 	-- Buttons
 	--------------------------------------------------------------------
@@ -90,14 +90,18 @@ BarWidget.OnEnable = function(self)
 	local padding = config.structure.controllers.main.padding
 
 	-- Spawn the action buttons
-	for i = 1,NUM_BUTTONS do
+	for i = 1, NUM_BUTTONS do
 		local button = Bar:NewButton("stance", i, Artwork:GetButtonTemplate())
 		button:SetStateAction(0, "stance", i) -- no real effect whatsoever for stances
 		button:SetSize(barConfig.buttonsize, barConfig.buttonsize)
-		button:SetPoint(banchor, (barConfig.buttonsize + padding) * (i-1) * bx, (barConfig.buttonsize + padding) * (i-1) * by)
+		button:SetPoint(
+			banchor,
+			(barConfig.buttonsize + padding) * (i - 1) * bx,
+			(barConfig.buttonsize + padding) * (i - 1) * by
+		)
 	end
 
-	Bar:SetAttribute("state", "0") 
+	Bar:SetAttribute("state", "0")
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
@@ -121,7 +125,7 @@ BarWidget.OnEvent = function(self, event, ...)
 end
 
 BarWidget.UpdateStanceButton = function(self, event)
-	if (event == "PLAYER_REGEN_ENABLED") then
+	if event == "PLAYER_REGEN_ENABLED" then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButton")
 	end
 
@@ -130,7 +134,7 @@ BarWidget.UpdateStanceButton = function(self, event)
 	local oldNumForms = Bar.numForms
 	local numForms = GetNumShapeshiftForms()
 
-	if (oldNumForms == numForms) then
+	if oldNumForms == numForms then
 		return
 	end
 
@@ -138,7 +142,7 @@ BarWidget.UpdateStanceButton = function(self, event)
 		return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButton")
 	end
 
-	if (numForms == 0) then
+	if numForms == 0 then
 		UnregisterStateDriver(Bar, "visibility")
 		RegisterStateDriver(Bar, "visibility", "hide")
 	else
@@ -153,7 +157,7 @@ end
 -- The bar and buttons are created later, so it can't be done on controller init.
 BarWidget.UpdateBarArtwork = function(self)
 	local Bar = self.Bar
-	if (Bar and Bar.PostUpdate) then
+	if Bar and Bar.PostUpdate then
 		Bar:PostUpdate()
 	end
 end

@@ -26,24 +26,25 @@ local RUNE_COLORS = {
 	[1] = C.Power.RUNES_BLOOD,
 	[2] = C.Power.RUNES_UNHOLY,
 	[3] = C.Power.RUNES_FROST,
-	[4] = C.Power.RUNES_DEATH
+	[4] = C.Power.RUNES_DEATH,
 }
 
 -- Fills a rune from the bottom: the fill and its glow grow with progress
 -- (0-1) and show only the matching bottom part of their glyph, so the art
 -- is cropped rather than squashed.
 local SetProgress = function(rune, progress)
-	if (progress < 0) then
+	if progress < 0 then
 		progress = 0
-	elseif (progress > 1) then
+	elseif progress > 1 then
 		progress = 1
 	end
 	rune.progress = progress
 	for _, texture in ipairs(rune.layers) do
-		if (progress == 0) then
+		if progress == 0 then
 			texture:Hide()
 		else
-			local left, right, top, bottom = texture.texCoords[1], texture.texCoords[2], texture.texCoords[3], texture.texCoords[4]
+			local left, right, top, bottom =
+				texture.texCoords[1], texture.texCoords[2], texture.texCoords[3], texture.texCoords[4]
 			texture:SetHeight(rune.size * progress)
 			texture:SetTexCoord(left, right, bottom - (bottom - top) * progress, bottom)
 			texture:Show()
@@ -52,7 +53,7 @@ local SetProgress = function(rune, progress)
 end
 
 local SetRuneType = function(Runes, rune, runeType)
-	if (runeType == rune.runeType) then
+	if runeType == rune.runeType then
 		return
 	end
 	rune.runeType = runeType
@@ -69,7 +70,7 @@ local UpdateAlpha = function(Runes, allReady)
 	local recharging = Runes.config.alpha_recharging
 	for index = 1, #RUNE_ORDER do
 		local rune = Runes[index]
-		if (allReady) then
+		if allReady then
 			rune:SetAlpha(Runes.inCombat and 1 or 0)
 		else
 			rune:SetAlpha(rune.ready and 1 or recharging)
@@ -82,7 +83,7 @@ local OnUpdate = function(Runes, elapsed)
 	local now = GetTime()
 	for index = 1, #RUNE_ORDER do
 		local rune = Runes[index]
-		if (not rune.ready) and (rune.duration) and (rune.duration > 0) then
+		if (not rune.ready) and rune.duration and (rune.duration > 0) then
 			SetProgress(rune, (now - rune.start) / rune.duration)
 		end
 	end
@@ -90,12 +91,12 @@ end
 
 local Update = function(self, event, ...)
 	local Runes = self.Runes
-	if (event == "PLAYER_REGEN_DISABLED") then
+	if event == "PLAYER_REGEN_DISABLED" then
 		Runes.inCombat = true
-	elseif (event == "PLAYER_REGEN_ENABLED") then
+	elseif event == "PLAYER_REGEN_ENABLED" then
 		Runes.inCombat = false
 	elseif (event == "UNIT_ENTERED_VEHICLE") or (event == "UNIT_EXITED_VEHICLE") then
-		if ((...) ~= "player") then
+		if (...) ~= "player" then
 			return
 		end
 	elseif (event ~= "RUNE_POWER_UPDATE") and (event ~= "RUNE_TYPE_UPDATE") then
@@ -115,7 +116,7 @@ local Update = function(self, event, ...)
 		local start, duration, ready = GetRuneCooldown(runeID)
 		SetRuneType(Runes, rune, GetRuneType(runeID))
 		rune.start, rune.duration, rune.ready = start, duration, ready
-		if (ready) or (not start) or (not duration) or (duration <= 0) then
+		if ready or not start or not duration or (duration <= 0) then
 			rune.ready = true
 			SetProgress(rune, 1)
 		else

@@ -1,7 +1,9 @@
 local _, Engine = ...
 
 local L = Engine:NewLocale("zhCN")
-if not L then return end
+if not L then
+	return
+end
 
 ---------------------------------------------------------------------
 -- System Messages
@@ -16,12 +18,14 @@ L["The module '%s' has no method named '%s'!"] = true
 L["The module widget '%s' has no method named '%s'!"] = true
 L["The event '%s' isn't currently registered to any object."] = true
 L["The event '%s' isn't currently registered to the object '%s'."] = true
-L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] = true
+L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] =
+	true
 L["The method named '%s' isn't registered for the event '%s' in the object '%s'."] = true
 L["The function call assigned to the event '%s' in the object '%s' doesn't exist."] = true
 L["The message '%s' isn't currently registered to any object."] = true
 L["The message '%s' isn't currently registered to the object '%s'."] = true
-L["Attempting to unregister the general occurence of the message '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterMessage?"] = true
+L["Attempting to unregister the general occurence of the message '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterMessage?"] =
+	true
 L["The method named '%s' isn't registered for the message '%s' in the object '%s'."] = true
 L["The function call assigned to the message '%s' in the object '%s' doesn't exist."] = true
 L["The config '%s' already exists!"] = true
@@ -41,16 +45,15 @@ L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities
 L["Accept"] = "接受"
 L["Cancel"] = "取消"
 L["Reload Needed"] = "需要重新加载"
-L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = "用户界面必须重新加载应用更改.你想现在这样做吗?"
+L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] =
+	"用户界面必须重新加载应用更改.你想现在这样做吗?"
 L["The Engine can't be tampered with!"] = "引擎不能被篡改!"
 
 -- Blizzard Handler
 
-
 ---------------------------------------------------------------------
 -- User Interface
 ---------------------------------------------------------------------
-
 
 -- actionbar module
 ---------------------------------------------------------------------
@@ -59,7 +62,7 @@ L["Main Menu"] = "主菜单"
 L["<Left-click> to toggle menu."] = "<点击左键>打开菜单"
 L["Action Bars"] = "动作条"
 L["<Left-click> to toggle action bar menu."] = "<点击左键>打开动作条选项"
-L["Bags"] ="背包"
+L["Bags"] = "背包"
 L["<Left-click> to toggle bags."] = "<点击左键>打开背包"
 L["<Right-click> to toggle bag bar."] = "<点击右键>打开背包栏"
 L["Chat"] = "聊天"
@@ -67,7 +70,8 @@ L["Chat"] = "聊天"
 -- actionbar menu
 --L["Action Bars"] = "动作条"
 L["Side Bars"] = "侧边栏"
-L["Hold |cff00b200<Alt+Ctrl+Shift>|r and drag to remove spells, macros and items from the action buttons."] = "按住|cff00b200<Alt+Ctrl+Shift>|r拖动或移除动作条上的技能、宏和物品"
+L["Hold |cff00b200<Alt+Ctrl+Shift>|r and drag to remove spells, macros and items from the action buttons."] =
+	"按住|cff00b200<Alt+Ctrl+Shift>|r拖动或移除动作条上的技能、宏和物品"
 L["No Bars"] = "无"
 L["One"] = "一栏"
 L["Two"] = "两栏"
@@ -85,9 +89,9 @@ L["You must rest for %s additional\nminutes to become fully rested."] = "你必�
 L["Normal"] = "正常"
 L["You should rest at an Inn."] = "你应该在一个旅馆休息"
 
--- artifact bar 
+-- artifact bar
 
--- honor bar 
+-- honor bar
 
 -- floating buttons
 L["Stances"] = "姿态栏"
@@ -153,17 +157,17 @@ L["Left Arrow"] = "Lf"
 L["Right Arrow"] = "Rt"
 L["Up Arrow"] = "Up"
 
-
 -- chat module
 ---------------------------------------------------------------------
 L["Chat Setup"] = "聊天设置"
-L["Would you like to automatically have the main chat window sized and positioned to match Diablo III, or would you like to manually handle this yourself?|n|nIf you choose to manually position things yourself, you won't be asked about this issue again."] = "你想让主聊天窗口的大小和位置自动与暗黑破坏神III相匹配吗？还是你想自己动手处理呢?|n|n如果你选择手动设置位置,你就不会再被问到这个问题了"
+L["Would you like to automatically have the main chat window sized and positioned to match Diablo III, or would you like to manually handle this yourself?|n|nIf you choose to manually position things yourself, you won't be asked about this issue again."] =
+	"你想让主聊天窗口的大小和位置自动与暗黑破坏神III相匹配吗？还是你想自己动手处理呢?|n|n如果你选择手动设置位置,你就不会再被问到这个问题了"
 L["Auto"] = "自动"
 L["Manual"] = "说明"
-L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] = "你可以通过在聊天框输入|cff448800/diabolic autoposition|r启用自动定位"
+L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] =
+	"你可以通过在聊天框输入|cff448800/diabolic autoposition|r启用自动定位"
 L["Auto positioning of chat windows has been enabled."] = "聊天窗口自动定位已启用"
 L["Auto positioning of chat windows has been disabled."] = "聊天窗口自动定位已禁用"
-
 
 -- minimap module
 ---------------------------------------------------------------------
@@ -177,11 +181,8 @@ L["PvP"] = "件PVP装"
 L["SpellID:"] = "法术ID:"
 L["Caster:"] = "施法者:"
 
-
 -- unitframe module
 ---------------------------------------------------------------------
-
-
 
 -- abbreviations
 ---------------------------------------------------------------------
@@ -189,4 +190,3 @@ L["d"] = true -- abbreviation for "days" when showing time
 L["h"] = true -- abbreviation for "hours" when showing time
 L["m"] = true -- abbreviation for "minutes" when showing time
 L["s"] = true -- abbreviation for "seconds" when showing time
-

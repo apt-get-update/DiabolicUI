@@ -24,20 +24,35 @@ local Module, ticker
 -- A tracker frame covering (0,0)-(100,200) at scale 1.
 local function newTracker()
 	return {
-		alpha = 1, shown = true,
-		GetLeft = function() return 0 end,
-		GetRight = function() return 100 end,
-		GetBottom = function() return 0 end,
-		GetTop = function() return 200 end,
-		GetEffectiveScale = function() return 1 end,
-		IsShown = function(self) return self.shown end,
-		SetAlpha = function(self, alpha) self.alpha = alpha end,
+		alpha = 1,
+		shown = true,
+		GetLeft = function()
+			return 0
+		end,
+		GetRight = function()
+			return 100
+		end,
+		GetBottom = function()
+			return 0
+		end,
+		GetTop = function()
+			return 200
+		end,
+		GetEffectiveScale = function()
+			return 1
+		end,
+		IsShown = function(self)
+			return self.shown
+		end,
+		SetAlpha = function(self, alpha)
+			self.alpha = alpha
+		end,
 	}
 end
 
 -- One frame, by default as long as the time between two cursor checks.
 local function tick(seconds)
-	seconds = seconds or 1/20
+	seconds = seconds or 1 / 20
 	clock.now = clock.now + seconds
 	ticker:Fire("OnUpdate", seconds)
 end
@@ -51,8 +66,12 @@ local function loadTracker()
 	cursor = { x = 500, y = 500 }
 	local frames = FrameMock.new()
 	_G.CreateFrame = frames.CreateFrame
-	_G.GetTime = function() return clock.now end
-	_G.GetCursorPosition = function() return cursor.x, cursor.y end
+	_G.GetTime = function()
+		return clock.now
+	end
+	_G.GetCursorPosition = function()
+		return cursor.x, cursor.y
+	end
 	_G.Questie_BaseFrame = nil
 	_G.WatchFrame = newTracker()
 
@@ -85,7 +104,7 @@ end
 
 function TestTrackerFade:test_fades_to_the_opacity_setting()
 	leaveAfterHover()
-	tick(5)   -- delay over, fade starts
+	tick(5) -- delay over, fade starts
 	tick(0.15) -- halfway through the 0.3s fade
 	lu.assertAlmostEquals(_G.WatchFrame.alpha, 0.6, 1e-9)
 	tick(0.15)
@@ -141,7 +160,9 @@ end
 
 function TestTrackerFade:test_a_tracker_not_placed_yet_is_never_under_the_cursor()
 	-- (no rect: GetLeft and friends give nothing)
-	_G.WatchFrame.GetLeft = function() return nil end
+	_G.WatchFrame.GetLeft = function()
+		return nil
+	end
 	hover(true)
 	tick()
 	hover(false)

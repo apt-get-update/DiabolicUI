@@ -111,8 +111,18 @@ Module.StyleBox = function(self, talkBox)
 	-- its art, the shadow over the model, and its glows and sheens on it
 	-- (flashed as a box shows, some left lit beside the portrait)
 	local overlay = main.Overlay or model.Overlay or {}
-	for _, art in pairs({ background.TextBackground, background.SolidBackground, portrait.Portrait, model.PortraitBG,
-		model.ModelShadow, main.Sheen, main.TextSheen, overlay.Glow_TopBar, overlay.Glow_LeftBar, overlay.Glow_RightBar }) do
+	for _, art in pairs({
+		background.TextBackground,
+		background.SolidBackground,
+		portrait.Portrait,
+		model.PortraitBG,
+		model.ModelShadow,
+		main.Sheen,
+		main.TextSheen,
+		overlay.Glow_TopBar,
+		overlay.Glow_LeftBar,
+		overlay.Glow_RightBar,
+	}) do
 		if art then
 			art:SetTexture(nil)
 		end
@@ -146,8 +156,12 @@ Module.StyleBox = function(self, talkBox)
 			end
 		end
 	end
-	portrait:HookScript("OnShow", function() Show(true) end)
-	portrait:HookScript("OnHide", function() Show(false) end)
+	portrait:HookScript("OnShow", function()
+		Show(true)
+	end)
+	portrait:HookScript("OnHide", function()
+		Show(false)
+	end)
 	Show(portrait:IsShown())
 
 	-- the box: from under the portrait frame's right side (no left edge:
@@ -195,7 +209,7 @@ end
 -- pieces are drawn turned).
 Module.AddPlate = function(self, owner, box, size, openLeft)
 	local spec = self.config.plate
-	local e = 1/8
+	local e = 1 / 8
 	local inset = spec.inset * size / spec.edge_size
 	local fill = owner:CreateTexture(nil, "BACKGROUND")
 	fill:SetTexture(unpack(spec.color))
@@ -313,9 +327,15 @@ Module.StyleChoice = function(self, button)
 				icon:SetVertexColor(unpack(config.icon_color))
 			end
 		end
-		hooksecurefunc(button, "SetGossipIcon", function() Tint(true) end)
-		hooksecurefunc(button, "SetGossipQuestIcon", function() Tint(false) end)
-		hooksecurefunc(button, "SetIcon", function() Tint(false) end)
+		hooksecurefunc(button, "SetGossipIcon", function()
+			Tint(true)
+		end)
+		hooksecurefunc(button, "SetGossipQuestIcon", function()
+			Tint(false)
+		end)
+		hooksecurefunc(button, "SetIcon", function()
+			Tint(false)
+		end)
 	end
 end
 

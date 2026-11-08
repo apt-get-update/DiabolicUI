@@ -4,7 +4,9 @@
 local _, Engine = ...
 
 local L = Engine:NewLocale("enUS")
-if not L then return end
+if not L then
+	return
+end
 
 ---------------------------------------------------------------------
 -- System Messages
@@ -19,12 +21,14 @@ L["The module '%s' has no method named '%s'!"] = true
 L["The module widget '%s' has no method named '%s'!"] = true
 L["The event '%s' isn't currently registered to any object."] = true
 L["The event '%s' isn't currently registered to the object '%s'."] = true
-L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] = true
+L["Attempting to unregister the general occurence of the event '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterEvent?"] =
+	true
 L["The method named '%s' isn't registered for the event '%s' in the object '%s'."] = true
 L["The function call assigned to the event '%s' in the object '%s' doesn't exist."] = true
 L["The message '%s' isn't currently registered to any object."] = true
 L["The message '%s' isn't currently registered to the object '%s'."] = true
-L["Attempting to unregister the general occurence of the message '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterMessage?"] = true
+L["Attempting to unregister the general occurence of the message '%s' in the object '%s', when no such thing has been registered. Did you forget to add function or method name to UnregisterMessage?"] =
+	true
 L["The method named '%s' isn't registered for the message '%s' in the object '%s'."] = true
 L["The function call assigned to the message '%s' in the object '%s' doesn't exist."] = true
 L["The config '%s' already exists!"] = true
@@ -48,17 +52,16 @@ L["The user interface has to be reloaded for the changes to be applied.|n|nDo yo
 L["The Engine can't be tampered with!"] = true
 
 -- /dui cpu (engine/profiler.lua)
-L["Turn on the CPU profiling first: /console scriptProfile 1, then /reload. Turn it off the same way afterwards (0), it slows the game down."] = true
+L["Turn on the CPU profiling first: /console scriptProfile 1, then /reload. Turn it off the same way afterwards (0), it slows the game down."] =
+	true
 L["Measuring DiabolicUI's CPU use for %d seconds..."] = true
 L["DiabolicUI used %.2f ms per second. The busiest functions, with what they call (ms per second):"] = true
 
 -- Blizzard Handler
 
-
 ---------------------------------------------------------------------
 -- User Interface
 ---------------------------------------------------------------------
-
 
 -- actionbar module
 ---------------------------------------------------------------------
@@ -74,7 +77,7 @@ L["Bags"] = true
 L["<Left-click> to toggle bags."] = true
 L["<Right-click> to toggle bag bar."] = true
 L["Chat"] = true
-L["Guild Members Online:"] = true 
+L["Guild Members Online:"] = true
 L["Friends Online:"] = true
 
 -- actionbar menu
@@ -98,9 +101,9 @@ L["You must rest for %s additional\nminutes to become fully rested."] = true
 L["Normal"] = true
 L["You should rest at an Inn."] = true
 
--- artifact bar 
+-- artifact bar
 
--- honor bar 
+-- honor bar
 
 -- floating buttons
 L["Stances"] = true
@@ -113,7 +116,8 @@ L["Request Stop"] = true
 -- item tooltips
 L["Equipped"] = true
 L["Reskin Tooltip"] = true
-L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."] = true
+L["Shows item and ability tooltips in the Diablo III style: the name on a title banner and the icon on the left. Items get their quality color, damage per second or armor as a big number, and the sell price and durability at the bottom; abilities get their numbers in green.|n|nWhen disabled, Blizzard's own tooltips are used."] =
+	true
 L["<Left-click> to land at the next flight point."] = true
 
 -- added to the interface options menu in WotLK
@@ -175,18 +179,17 @@ L["Left Arrow"] = "Lf"
 L["Right Arrow"] = "Rt"
 L["Up Arrow"] = "Up"
 
-
 -- chat module
 ---------------------------------------------------------------------
 L["Chat Setup"] = true
-L["Would you like to automatically have the main chat window sized and positioned to match Diablo III, or would you like to manually handle this yourself?|n|nIf you choose to manually position things yourself, you won't be asked about this issue again."] = true
+L["Would you like to automatically have the main chat window sized and positioned to match Diablo III, or would you like to manually handle this yourself?|n|nIf you choose to manually position things yourself, you won't be asked about this issue again."] =
+	true
 L["Auto"] = true
 L["Manual"] = true
 L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] = true
 L["Auto positioning of chat windows has been enabled."] = true
 L["Auto positioning of chat windows has been disabled."] = true
 L["Reputation: "] = true
-
 
 -- minimap module
 ---------------------------------------------------------------------
@@ -200,12 +203,12 @@ L["PvP"] = true
 L["SpellID:"] = true
 L["Caster:"] = true
 
-
 -- unitframe module
 ---------------------------------------------------------------------
 L["Units"] = true
 L["Show class colors"] = true
-L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] = true
+L["Colors the player, target, party, raid and tab-target of target health bars by the unit's class.|n|nRequires a UI reload to apply."] =
+	true
 L["Show Portrait"] = true
 L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] = true
 L["Toggle Fake Party"] = true
@@ -219,7 +222,8 @@ L["Show FPS & Latency"] = true
 L["Shows your framerate and latency, next to the menu button in the bottom right corner."] = true
 L["Objectives"] = true
 L["Fade Quest Tracker"] = true
-L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."] = true
+L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."] =
+	true
 L["How many seconds the tracker stays fully visible before it starts fading, once you stop hovering it."] = true
 L["Opacity"] = true
 L["How visible the tracker stays once it has fully faded, as a percentage."] = true
@@ -239,15 +243,19 @@ L["Grand Master"] = true
 L["Missing Primary Profession"] = true
 L["Visit a profession trainer in a capital city to learn one."] = true
 L["Not learned yet: visit its trainer to learn it."] = true
-L["Shows Blizzard's windows in the Diablo III style: the character, spellbook, talents, quest log, social, mail, merchant, achievements and the other windows, and AdiBags' bags. When disabled, Blizzard's own windows are used.|n|nRequires a UI reload to apply."] = true
+L["Shows Blizzard's windows in the Diablo III style: the character, spellbook, talents, quest log, social, mail, merchant, achievements and the other windows, and AdiBags' bags. When disabled, Blizzard's own windows are used.|n|nRequires a UI reload to apply."] =
+	true
 L["Reskin Loot Window"] = true
-L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] = true
+L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzard's own loot window is used instead.|n|nRequires a UI reload to apply."] =
+	true
 L["Roll Window"] = true
 L["Coming Up"] = true
 L["Fake Loot Roll"] = true
 L["Fake Boss"] = true
-L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."] = true
-L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."] = true
+L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."] =
+	true
+L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."] =
+	true
 L["Rolls"] = true -- roll window title
 L["Main Spec"] = true
 L["Off Spec"] = true
@@ -263,7 +271,8 @@ L["Vertical Offset"] = true
 L["At 0, the tooltip is centered horizontally on the cursor."] = true
 L["At 0, the cursor is at the bottom edge of the tooltip."] = true
 L["Tooltip mouse anchor"] = true
-L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."] = true
+L["Which point of the tooltip gets anchored to your cursor, so you can pick the corner or edge that overlaps your mouse the least."] =
+	true
 L["Top Left"] = true
 L["Top"] = true
 L["Top Right"] = true
@@ -299,16 +308,20 @@ L["New Equipment Set"] = true
 L["Stats"] = true
 L["Titles"] = true
 L["Sets"] = true
-L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."] = true
+L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."] =
+	true
 L["Action Bar Saver Profile"] = true
-L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."] = true
+L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."] =
+	true
 L["None"] = true
 L["Unchanged"] = true
 L["Macro Before"] = true
-L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."] = true
+L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."] =
+	true
 L["Macro After"] = true
 L["Runs your '%s' macro first"] = true
-L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."] = true
+L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."] =
+	true
 L["<Left-click> to run your '%s' macro"] = true
 L["Macro '%s' not found."] = true
 L["Your %s commands are too long for a macro, make one yourself: %s"] = true
@@ -335,7 +348,6 @@ L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] = true
 L["Hide Channel Notices"] = true
 L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] = true
 
-
 -- worldmap module
 ---------------------------------------------------------------------
 
@@ -358,16 +370,19 @@ L["%d grey items, for %s."] = true
 L["No grey items in your bags."] = true
 L["Copy Chat"] = true
 L["Low Health Warning"] = true
-L["The edges of the screen pulse red while your health is under 35%, like in Diablo III.|n|nRequires a UI reload to apply."] = true
+L["The edges of the screen pulse red while your health is under 35%, like in Diablo III.|n|nRequires a UI reload to apply."] =
+	true
 L["Frames & AddOns"] = true
 L["Blizzard Frames"] = true
 L["Chat Commands"] = true
 L["Version %s"] = true
 L["A Diablo III style interface. Its settings are on the pages below this one."] = true
-L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them"] = true
+L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them"] =
+	true
 L["Unlock Frames"] = true
 L["Lock Frames"] = true
-L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] = true
+L["Highlights the frames you can move - the minimap, the chat, the menu buttons, the quest tracker (Blizzard's or Questie's) and TrinketMenu - to drag them around. Right-drag the minimap to resize it. A Lock Frames button locks them in their new places.|n|nAlso: /dui move"] =
+	true
 L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."] = true
 L["You can't move frames in combat."] = true
 L["UI Scale"] = true
@@ -387,4 +402,5 @@ L["%d left to scan (/dui layout left)."] = true
 L["Not in combat."] = true
 L["%d parts saved (%d new)."] = true
 L["a window"] = true
-L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] = true
+L["The size of DiabolicUI's bars, orbs, frames and everything on them, as a percentage of the size made for your screen. WoW's own UI scale and other addons aren't changed.|n|nAlso: /dui setscale 0.9"] =
+	true

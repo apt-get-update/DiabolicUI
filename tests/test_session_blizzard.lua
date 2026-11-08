@@ -83,7 +83,9 @@ function TestLootWindow:test_shows_the_loot_in_rows()
 	-- Escape closes it
 	local special
 	for _, name in ipairs(_G.UISpecialFrames) do
-		if name == "DiabolicLootFrame" then special = true end
+		if name == "DiabolicLootFrame" then
+			special = true
+		end
 	end
 	lu.assertTrue(special)
 	assertClean(client)
@@ -161,7 +163,11 @@ end
 local function textureOf(button, file)
 	local highlight = button.GetHighlightTexture and button:GetHighlightTexture()
 	for _, region in ipairs({ button:GetRegions() }) do
-		if region:GetObjectType() == "Texture" and (region ~= highlight) and (region:GetTexture() or ""):find(file, 1, true) then
+		if
+			region:GetObjectType() == "Texture"
+			and (region ~= highlight)
+			and (region:GetTexture() or ""):find(file, 1, true)
+		then
 			return region
 		end
 	end
@@ -180,8 +186,11 @@ end
 -- while it's hidden.
 local function glowOf(button)
 	for _, region in ipairs({ button:GetRegions() }) do
-		if region:GetObjectType() == "Texture" and region:GetBlendMode() == "ADD"
-			and region:GetTexture() == [[Interface\ChatFrame\ChatFrameBackground]] then
+		if
+			region:GetObjectType() == "Texture"
+			and region:GetBlendMode() == "ADD"
+			and region:GetTexture() == [[Interface\ChatFrame\ChatFrameBackground]]
+		then
 			local gradient = client.widgetState[region].gradient
 			return shown(region) and { gradient[2], gradient[3], gradient[4] } or nil
 		end
@@ -190,8 +199,14 @@ end
 
 function TestBags:test_every_bag_and_the_bank_get_our_slots()
 	boot()
-	for _, name in ipairs({ "ContainerFrame1Item1", "ContainerFrame2Item1", "ContainerFrame5Item36",
-		"ContainerFrame13Item7", "BankFrameItem1", "BankFrameItem28" }) do
+	for _, name in ipairs({
+		"ContainerFrame1Item1",
+		"ContainerFrame2Item1",
+		"ContainerFrame5Item36",
+		"ContainerFrame13Item7",
+		"BankFrameItem1",
+		"BankFrameItem28",
+	}) do
 		lu.assertEquals(_G[name .. "NormalTexture"]:GetAlpha(), 0, name)
 		lu.assertNotNil(borderOf(_G[name]), name)
 		lu.assertEquals({ frameOf(_G[name]):GetSize() }, { _G[name]:GetWidth() * 2, _G[name]:GetHeight() * 2 }, name)
@@ -205,19 +220,24 @@ function TestBags:test_slots_show_quality_quests_junk_and_item_levels()
 	boot()
 	local epic = Session.item(client, 100, { quality = 4, iLevel = 213, equipSlot = "INVTYPE_WEAPON" })
 	local cloth = Session.item(client, 101, { quality = 1, iLevel = 20, equipSlot = "" })
-	client.world.containers[0] = { size = 6, items = {
-		[1] = { quality = 4, link = epic },
-		[2] = { quality = 0 },
-		[3] = { quality = 1, questId = 123, isActive = false },
-		[4] = { quality = 1, isQuestItem = true },
-		[5] = { quality = 1, link = cloth },
-	} }
+	client.world.containers[0] = {
+		size = 6,
+		items = {
+			[1] = { quality = 4, link = epic },
+			[2] = { quality = 0 },
+			[3] = { quality = 1, questId = 123, isActive = false },
+			[4] = { quality = 1, isQuestItem = true },
+			[5] = { quality = 1, link = cloth },
+		},
+	}
 	local bag = _G.ContainerFrame1
 	bag:SetID(0)
 	bag.size = 6
 	_G.ContainerFrame_Update(bag)
 
-	local function slot(i) return _G["ContainerFrame1Item" .. i] end
+	local function slot(i)
+		return _G["ContainerFrame1Item" .. i]
+	end
 	near(color(borderOf(slot(1)):GetVertexColor()), C.Quality[4], "epic")
 	lu.assertFalse(shown(borderOf(slot(2))), "junk")
 	near(color(borderOf(slot(3)):GetVertexColor()), C.General.Gold, "quest starter")
@@ -302,13 +322,14 @@ function TestStyling:test_talents_and_professions_once_loaded()
 end
 
 function TestStyling:test_bags_are_left_to_bag_addons()
-	boot({ world = function(world)
-		table.insert(world.addons, { name = "Backpacker", enabled = true })
-	end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "Backpacker", enabled = true })
+		end,
+	})
 	lu.assertNil(client:GetModule("Blizzard: Containers"):IsEnabled())
 	assertClean(client)
 end
-
 
 -- The character window ---------------------------------------------------------------
 
@@ -336,7 +357,7 @@ function TestCharacter:test_the_stats_come_back_over_the_window()
 	local window = module.Backdrop:GetFrameLevel()
 	-- as seen in game: all of the column at the window's own level
 	local chain, part = {}, line
-	while (part ~= paperdoll) do
+	while part ~= paperdoll do
 		chain[#chain + 1] = part
 		part:SetFrameLevel(window)
 		part = part:GetParent()
@@ -404,12 +425,18 @@ function TestCharacter:test_our_window_on_every_tab()
 	lu.assertEquals(_G.CharacterFramePortrait:GetAlpha(), 0)
 	lu.assertEquals(_G.CharacterNameText:GetParent(), module.Backdrop.DiabolicPlate)
 	near(color(_G.CharacterNameText:GetTextColor()), window.title_plate.color)
-	lu.assertEquals({ _G.CharacterNameText:GetPoint() }, { "CENTER", module.Backdrop.DiabolicPlate, "CENTER", 0, window.title_plate.text_offset })
+	lu.assertEquals(
+		{ _G.CharacterNameText:GetPoint() },
+		{ "CENTER", module.Backdrop.DiabolicPlate, "CENTER", 0, window.title_plate.text_offset }
+	)
 	local gem = window.title_plate.gem
 	lu.assertEquals({ module.Spec:GetPoint() }, { "CENTER", module.Backdrop.DiabolicPlate, "LEFT", gem.x, gem.y })
 	local socket = window.close.socket_size
 	-- (the window's top lowered by the tab row: its tabs hang under it)
-	lu.assertEquals({ _G.CharacterFrameCloseButton:GetPoint() }, { "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 - window.tab_row })
+	lu.assertEquals(
+		{ _G.CharacterFrameCloseButton:GetPoint() },
+		{ "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 - window.tab_row }
+	)
 	-- no red band: nothing in it
 	lu.assertFalse(shown(module.Header))
 	lu.assertEquals(_G.CharacterFrameCloseButton:GetNormalTexture():GetTexture(), window.close.texture.normal)
@@ -437,7 +464,13 @@ function TestCharacter:test_our_window_on_every_tab()
 	end
 	local below = banner.rail.height - banner.rail.up
 	for i, tab in ipairs(hanging) do
-		lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", backdrop, "BOTTOMLEFT", banner.left + (i - 1) * (banner.width + banner.gap), banner.tuck - below })
+		lu.assertEquals({ tab:GetPoint() }, {
+			"TOPLEFT",
+			backdrop,
+			"BOTTOMLEFT",
+			banner.left + (i - 1) * (banner.width + banner.gap),
+			banner.tuck - below,
+		})
 	end
 	lu.assertEquals(_G.CharacterFrameTab1Left:GetAlpha(), 0)
 	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
@@ -480,7 +513,10 @@ function TestCharacter:test_our_window_on_every_tab()
 	mounts:Show()
 	module:CenterPetTabs()
 	local width = companions:GetWidth() + mounts:GetWidth() + spec.tab_gap
-	lu.assertEquals({ companions:GetPoint() }, { "TOPLEFT", _G.PetPaperDollFrame, "TOP", spec.tab_position[1] - width / 2, spec.tab_position[2] })
+	lu.assertEquals(
+		{ companions:GetPoint() },
+		{ "TOPLEFT", _G.PetPaperDollFrame, "TOP", spec.tab_position[1] - width / 2, spec.tab_position[2] }
+	)
 	lu.assertEquals({ mounts:GetPoint() }, { "LEFT", companions, "RIGHT", spec.tab_gap, 0 })
 	-- none shown, none placed
 	companions:Hide()
@@ -491,9 +527,11 @@ function TestCharacter:test_our_window_on_every_tab()
 end
 
 function TestCharacter:test_the_currency_tab_loaded_before_us()
-	boot({ world = function(world, c)
-		c.api.LoadAddOn("Blizzard_TokenUI")
-	end })
+	boot({
+		world = function(world, c)
+			c.api.LoadAddOn("Blizzard_TokenUI")
+		end,
+	})
 	lu.assertEquals(alphasOf(_G.TokenFrame, "UI-TalentFrame-"), { 0, 0, 0, 0 })
 	lu.assertFalse(shown(_G.TokenFrameCancelButton))
 	assertClean(client)
@@ -512,20 +550,29 @@ function TestCharacter:test_the_gear_column()
 	lu.assertEquals(pane:GetWidth(), layout.pane_width)
 	local head = positions.CharacterHeadSlot
 	lu.assertEquals({ _G.CharacterHeadSlot:GetPoint() }, { head[1], pane, head[3], head[4], head[5] })
-	lu.assertEquals({ _G.CharacterNeckSlot:GetPoint() }, { "TOP", _G.CharacterHeadSlot, "BOTTOM", 0, positions.CharacterNeckSlot[5] })
+	lu.assertEquals(
+		{ _G.CharacterNeckSlot:GetPoint() },
+		{ "TOP", _G.CharacterHeadSlot, "BOTTOM", 0, positions.CharacterNeckSlot[5] }
+	)
 	local hands = positions.CharacterHandsSlot
 	lu.assertEquals({ _G.CharacterHandsSlot:GetPoint() }, { hands[1], pane, hands[3], hands[4], hands[5] })
 	-- (its frame past its panel's top and bottom: the character larger
 	-- and lower in it, as the dressing room's)
 	local reach, inset, scene = layout.model_reach, layout.model_panel_inset, positions.CharacterFrameDiabolicScene
-	lu.assertEquals({ _G.CharacterModelFrame:GetSize() }, { scene[6] - inset * 2, scene[7] - inset * 2 + reach[1] + reach[2] })
+	lu.assertEquals(
+		{ _G.CharacterModelFrame:GetSize() },
+		{ scene[6] - inset * 2, scene[7] - inset * 2 + reach[1] + reach[2] }
+	)
 	-- the weapons in a row under the model's panel
 	local main, off, ranged = _G.CharacterMainHandSlot, _G.CharacterSecondaryHandSlot, _G.CharacterRangedSlot
 	local point, panel, relative, x, y = off:GetPoint()
 	lu.assertEquals({ point, relative, x, y }, { "TOP", "BOTTOM", 0, positions.CharacterSecondaryHandSlot[5] })
 	lu.assertEquals(panel, _G.CharacterFrameDiabolicScene)
 	-- (the model's panel: Diablo III's stone pane, open on the scene)
-	lu.assertEquals((panel:GetRegions()):GetTexture(), client.Engine:GetDB("Blizzard").window.materials.pane_open.texture)
+	lu.assertEquals(
+		(panel:GetRegions()):GetTexture(),
+		client.Engine:GetDB("Blizzard").window.materials.pane_open.texture
+	)
 	lu.assertEquals({ main:GetPoint() }, { "TOPRIGHT", off, "TOPLEFT", positions.CharacterMainHandSlot[4], 0 })
 	lu.assertEquals({ ranged:GetPoint() }, { "TOPLEFT", off, "TOPRIGHT", positions.CharacterRangedSlot[4], 0 })
 	-- Blizzard's stat columns out of sight for good
@@ -544,7 +591,8 @@ function TestCharacter:test_the_right_column()
 	local gearScore = client:GetModule("Blizzard: GearScore")
 	-- the GearScore in its color and the average item level, under the
 	-- model as the inspected one's: a two-hander of 232 alone is 2 slots' worth, the average over 16 slots
-	client.world.inventory[16] = Session.item(client, 3016, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_2HWEAPON" })
+	client.world.inventory[16] =
+		Session.item(client, 3016, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_2HWEAPON" })
 	client.world.inventory[1] = Session.item(client, 3001, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_HEAD" })
 	local score = function()
 		return Session.stripColors(module.Score:GetText()):match("^GS (%d+)")
@@ -596,9 +644,11 @@ function TestCharacter:test_the_right_column()
 end
 
 function TestCharacter:test_the_equipment_manager()
-	boot({ world = function(world)
-		world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" }, { "Shadow", "Interface\\Icons\\Shadow" } }
-	end })
+	boot({
+		world = function(world)
+			world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" }, { "Shadow", "Interface\\Icons\\Shadow" } }
+		end,
+	})
 	local config = client.Engine:GetDB("Blizzard").character.paperdoll.gear_manager
 	local module = client:GetModule("Blizzard: Character")
 	local dialog = _G.GearManagerDialog
@@ -654,7 +704,7 @@ function TestCharacter:test_the_equipment_manager()
 			icon = region
 		end
 	end
-	lu.assertEquals(icon:GetAlpha(), .4)
+	lu.assertEquals(icon:GetAlpha(), 0.4)
 	client:Click(sets[2])
 	lu.assertEquals(icon:GetAlpha(), 1)
 
@@ -663,7 +713,7 @@ function TestCharacter:test_the_equipment_manager()
 	lu.assertTrue(free.DiabolicNew)
 	lu.assertEquals(free:IsEnabled(), 1)
 	lu.assertEquals(free.icon:GetTexture(), config.icons)
-	lu.assertEquals(select(5, free.icon:GetTexCoord()), .25)
+	lu.assertEquals(select(5, free.icon:GetTexCoord()), 0.25)
 	client:Hover(free)
 	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "New Equipment Set")
 	client:Leave()
@@ -694,8 +744,12 @@ function TestCharacter:test_dragged_by_its_stone()
 	client:RunScript(backdrop, "OnDragStart")
 	-- BlizzMove's handler on the tab: the stone hands it the drag
 	local dragged = {}
-	_G.PaperDollFrame:SetScript("OnDragStart", function(self) dragged[#dragged + 1] = "start" end)
-	_G.PaperDollFrame:SetScript("OnDragStop", function(self) dragged[#dragged + 1] = "stop" end)
+	_G.PaperDollFrame:SetScript("OnDragStart", function(self)
+		dragged[#dragged + 1] = "start"
+	end)
+	_G.PaperDollFrame:SetScript("OnDragStop", function(self)
+		dragged[#dragged + 1] = "stop"
+	end)
 	client:RunScript(backdrop, "OnDragStart")
 	client:RunScript(backdrop, "OnDragStop")
 	lu.assertEquals(dragged, { "start", "stop" })
@@ -714,7 +768,7 @@ function TestCharacter:test_gearscore_under_the_inspect_model()
 	_G.InspectFrame:Show()
 	lu.assertEquals(module.InspectLine:GetText(), "")
 	friend.inventory = { [5] = Session.item(client, 3005, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_CHEST" }) }
-	client:Tick(.6)
+	client:Tick(0.6)
 	lu.assertEquals(Session.stripColors(module.InspectLine:GetText()), "GS 402   Item Level 13")
 	assertClean(client)
 end
@@ -722,19 +776,33 @@ end
 function TestCharacter:test_gearscore_counts_like_gearscorelite()
 	boot()
 	local module = client:GetModule("Blizzard: GearScore")
-	local item = function(id, fields) return Session.item(client, id, fields) end
+	local item = function(id, fields)
+		return Session.item(client, id, fields)
+	end
 	-- grey gear next to nothing, heirlooms as blues of 187, artifacts and
 	-- what isn't gear nothing
-	lu.assertEquals({ module:GetItemScore(item(4001, { iLevel = 200, quality = 0, equipSlot = "INVTYPE_HEAD" })) }, { 1, 200 })
-	lu.assertEquals({ module:GetItemScore(item(4002, { iLevel = 1, quality = 7, equipSlot = "INVTYPE_HEAD" })) }, { 242, 187.05 })
-	lu.assertEquals({ module:GetItemScore(item(4003, { iLevel = 200, quality = 6, equipSlot = "INVTYPE_HEAD" })) }, { 0, 200 })
-	lu.assertEquals({ module:GetItemScore(item(4004, { iLevel = 200, quality = 4, equipSlot = "INVTYPE_BAG" })) }, { 0, 200 })
+	lu.assertEquals(
+		{ module:GetItemScore(item(4001, { iLevel = 200, quality = 0, equipSlot = "INVTYPE_HEAD" })) },
+		{ 1, 200 }
+	)
+	lu.assertEquals(
+		{ module:GetItemScore(item(4002, { iLevel = 1, quality = 7, equipSlot = "INVTYPE_HEAD" })) },
+		{ 242, 187.05 }
+	)
+	lu.assertEquals(
+		{ module:GetItemScore(item(4003, { iLevel = 200, quality = 6, equipSlot = "INVTYPE_HEAD" })) },
+		{ 0, 200 }
+	)
+	lu.assertEquals(
+		{ module:GetItemScore(item(4004, { iLevel = 200, quality = 4, equipSlot = "INVTYPE_BAG" })) },
+		{ 0, 200 }
+	)
 
 	-- Titan's Grip: two two-handers count half each
 	local warrior = Client.newUnit({ name = "Warrior", class = "WARRIOR" })
 	warrior.inventory = {
 		[16] = item(4016, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_2HWEAPON" }),
-		[17] = item(4017, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_2HWEAPON" })
+		[17] = item(4017, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_2HWEAPON" }),
 	}
 	client.world.units.target = warrior
 	lu.assertEquals(module:GetUnitScore("target"), 805)
@@ -742,7 +810,7 @@ function TestCharacter:test_gearscore_counts_like_gearscorelite()
 	local hunter = Client.newUnit({ name = "Hunter", class = "HUNTER" })
 	hunter.inventory = {
 		[16] = item(4026, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_WEAPON" }),
-		[18] = item(4028, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_RANGED" })
+		[18] = item(4028, { iLevel = 232, quality = 4, equipSlot = "INVTYPE_RANGED" }),
 	}
 	client.world.units.target = hunter
 	lu.assertEquals(module:GetUnitScore("target"), 803)
@@ -753,9 +821,12 @@ function TestCharacter:test_gearscore_counts_like_gearscorelite()
 end
 
 function TestCharacter:test_the_inspected_trees_on_hover()
-	boot({ world = function(world)
-		world.inspectTalents = { { "Arms", "Interface\\Icons\\Arms", 51 }, { "Fury", "Interface\\Icons\\Fury", 20 } }
-	end })
+	boot({
+		world = function(world)
+			world.inspectTalents =
+				{ { "Arms", "Interface\\Icons\\Arms", 51 }, { "Fury", "Interface\\Icons\\Fury", 20 } }
+		end,
+	})
 	client.api.LoadAddOn("Blizzard_InspectUI")
 	_G.InspectTalentFrame.inspect = true
 	-- a tree's name and points in its tab's tooltip (the format the client's)
@@ -785,9 +856,11 @@ end
 
 function TestCharacter:test_the_inspect_window_loaded_before_us()
 	local friend = Client.newUnit({ name = "Friend", class = "WARRIOR" })
-	boot({ world = function(world, c)
-		c.api.LoadAddOn("Blizzard_InspectUI")
-	end })
+	boot({
+		world = function(world, c)
+			c.api.LoadAddOn("Blizzard_InspectUI")
+		end,
+	})
 	local module = client:GetModule("Blizzard: GearScore")
 	lu.assertNotNil(module.InspectLine)
 	-- their gear changing while inspected; another's isn't theirs
@@ -803,9 +876,15 @@ function TestCharacter:test_the_inspect_window_loaded_before_us()
 end
 
 function TestCharacter:test_the_talent_spec_in_the_band()
-	boot({ world = function(world)
-		world.talents = { { "Discipline", "Interface\\Icons\\Disc", 13 }, { "Holy", "Interface\\Icons\\Holy", 58 }, { "Shadow", "", 0 } }
-	end })
+	boot({
+		world = function(world)
+			world.talents = {
+				{ "Discipline", "Interface\\Icons\\Disc", 13 },
+				{ "Holy", "Interface\\Icons\\Holy", 58 },
+				{ "Shadow", "", 0 },
+			}
+		end,
+	})
 	local module = client:GetModule("Blizzard: Character")
 	local spec = module.Spec
 	-- the tree with the most points, its icon round in the title plate's ring
@@ -835,10 +914,12 @@ function TestCharacter:test_the_talent_spec_in_the_band()
 end
 
 function TestCharacter:test_the_titles_page()
-	boot({ world = function(world)
-		world.titles = { { name = "Private %s" }, false, { name = " Champion of the Naaru" } }
-		world.currentTitle = 3
-	end })
+	boot({
+		world = function(world)
+			world.titles = { { name = "Private %s" }, false, { name = " Champion of the Naaru" } }
+			world.currentTitle = 3
+		end,
+	})
 	local config = client.Engine:GetDB("Blizzard").character.paperdoll.titles
 	_G.CharacterFrame:Show()
 	-- the side tabs named under the mouse
@@ -897,15 +978,20 @@ function TestCharacter:test_the_inspected_home_behind_them()
 	lu.assertEquals(scene.Bottom:GetHeight(), 100)
 	-- tall: its sides cut
 	scene:SetSize(128, 329)
-	lu.assertEquals({ scene.Top:GetTexCoord() }, { .25, 0, .25, 1, .75, 0, .75, 1 })
+	lu.assertEquals({ scene.Top:GetTexCoord() }, { 0.25, 0, 0.25, 1, 0.75, 0, 0.75, 1 })
 	assertClean(client)
 end
 
 function TestCharacter:test_a_factions_details()
-	boot({ world = function(world)
-		world.factions = { { "Stormwind", "The city.", 6, 0, 1000, 500, nil, 1 }, { "Bloodsail", "Pirates.", 4, 0, 100, 0, 1, 1 } }
-		world.selectedFaction = 1
-	end })
+	boot({
+		world = function(world)
+			world.factions = {
+				{ "Stormwind", "The city.", 6, 0, 1000, 500, nil, 1 },
+				{ "Bloodsail", "Pirates.", 4, 0, 100, 0, 1, 1 },
+			}
+			world.selectedFaction = 1
+		end,
+	})
 	local config = client.Engine:GetDB("Blizzard").character
 	local C = client.Engine:GetDB("Data: Colors")
 	-- a dark panel right of the window, its name in its standing's color
@@ -955,10 +1041,17 @@ function TestAchievements:test_our_window_once_it_loads()
 	lu.assertEquals(backdrop.Border:GetBackdrop().edgeFile, window.backdrop.edgeFile)
 	lu.assertEquals({ backdrop:GetPoint(1) }, { "TOPLEFT", frame, "TOPLEFT", -config.insets[1], config.insets[2] })
 	-- its own art out of sight, the watermark too when Blizzard sets it again
-	for _, name in ipairs({ "AchievementFrameBackground", "AchievementFrameMetalBorderLeft",
-		"AchievementFrameWoodBorderTopLeft", "AchievementFrameCategoriesBG", "AchievementFrameHeaderLeft",
-		"AchievementFrameAchievementsBackground", "AchievementFrameSummaryBackground",
-		"AchievementFrameComparisonWatermark", "AchievementFrameStatsBGTexture" }) do
+	for _, name in ipairs({
+		"AchievementFrameBackground",
+		"AchievementFrameMetalBorderLeft",
+		"AchievementFrameWoodBorderTopLeft",
+		"AchievementFrameCategoriesBG",
+		"AchievementFrameHeaderLeft",
+		"AchievementFrameAchievementsBackground",
+		"AchievementFrameSummaryBackground",
+		"AchievementFrameComparisonWatermark",
+		"AchievementFrameStatsBGTexture",
+	}) do
 		lu.assertEquals(_G[name]:GetAlpha(), 0, name)
 	end
 	_G.AchievementFrameWaterMark:SetTexture([[Interface\AchievementFrame\UI-Achievement-StatWatermark]])
@@ -978,7 +1071,10 @@ function TestAchievements:test_our_window_once_it_loads()
 	lu.assertEquals(cartouche:GetWidth(), points:GetStringWidth() + shield:GetWidth() + window.cartouche.padding)
 	lu.assertEquals(shield:GetAlpha(), 1)
 	local socket = window.close.socket_size
-	lu.assertEquals({ _G.AchievementFrameCloseButton:GetPoint() }, { "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 })
+	lu.assertEquals(
+		{ _G.AchievementFrameCloseButton:GetPoint() },
+		{ "CENTER", backdrop, "TOPRIGHT", -socket / 2, -socket / 2 }
+	)
 	-- Blizzard's header over the band only, the list's filter under it
 	lu.assertEquals({ _G.AchievementFrameHeader:GetPoint(1) }, { "TOPLEFT", module.Header, "TOPLEFT", 0, 0 })
 	lu.assertEquals((select(2, _G.AchievementFrameFilterDropDown:GetPoint())), module.Header)
@@ -1004,8 +1100,10 @@ function TestAchievements:test_our_window_once_it_loads()
 
 	-- the summary's bars orange in spiked frames, the right column past the spikes
 	local spike = window.bar.spike
-	local big, first, second = _G.AchievementFrameSummaryCategoriesStatusBar,
-		_G.AchievementFrameSummaryCategoriesCategory1, _G.AchievementFrameSummaryCategoriesCategory2
+	local big, first, second =
+		_G.AchievementFrameSummaryCategoriesStatusBar,
+		_G.AchievementFrameSummaryCategoriesCategory1,
+		_G.AchievementFrameSummaryCategoriesCategory2
 	lu.assertEquals(_G.AchievementFrameSummaryCategoriesCategory1Left:GetAlpha(), 0)
 	lu.assertEquals(first.DiabolicBorder[1]:GetTexture(), window.bar.texture)
 	near(color(first:GetStatusBarColor()), window.bar.color)
@@ -1023,7 +1121,8 @@ function TestAchievements:test_our_window_once_it_loads()
 	near(color(row.description:GetTextColor()), config.row_text_color)
 
 	-- the summary's recent ones, made the first time it shows (always earned)
-	local recent = _G.CreateFrame("Button", "AchievementFrameSummaryAchievement1", _G.AchievementFrameSummaryAchievements)
+	local recent =
+		_G.CreateFrame("Button", "AchievementFrameSummaryAchievement1", _G.AchievementFrameSummaryAchievements)
 	_G.CreateFrame("Frame", nil, recent) -- (a texture holder)
 	local recentBackground = recent:CreateTexture("AchievementFrameSummaryAchievement1Background")
 	recent.Saturate, recent.Desaturate = function() end, function() end
@@ -1094,9 +1193,11 @@ function TestAchievements:test_overachievers_pages()
 end
 
 function TestAchievements:test_overachiever_loaded_after_the_window()
-	boot({ world = function(world)
-		table.insert(world.addons, { name = "Overachiever_Tabs", enabled = true, loadOnDemand = true })
-	end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "Overachiever_Tabs", enabled = true, loadOnDemand = true })
+		end,
+	})
 	client.api.LoadAddOn("Blizzard_AchievementUI")
 	local frame = _G.AchievementFrame
 	local tab = _G.CreateFrame("Button", "AchievementFrameTab3", frame)
@@ -1108,9 +1209,11 @@ function TestAchievements:test_overachiever_loaded_after_the_window()
 end
 
 function TestAchievements:test_loaded_before_us()
-	boot({ world = function(world, c)
-		c.api.LoadAddOn("Blizzard_AchievementUI")
-	end })
+	boot({
+		world = function(world, c)
+			c.api.LoadAddOn("Blizzard_AchievementUI")
+		end,
+	})
 	lu.assertNotNil(client.Engine:GetModule("Blizzard: Achievements").Window)
 	lu.assertEquals(_G.AchievementFrameHeaderTitle:GetText(), "Achievements")
 	assertClean(client)
@@ -1122,15 +1225,25 @@ TestGameMenu = {}
 
 function TestGameMenu:setUp()
 	self.addons = function(world)
-		table.insert(world.addons, { name = "MoveAnything", enabled = true, onLoad = function()
-			local b = CreateFrame("Button", "GameMenuButtonMoveAnything", _G.GameMenuFrame, "UIPanelButtonTemplate")
-			b:SetText("MoveAnything")
-		end })
-		table.insert(world.addons, { name = "ACP", enabled = true, onLoad = function()
-			local b = CreateFrame("Button", "GameMenuButtonAddOns", _G.GameMenuFrame, "UIPanelButtonTemplate")
-			b:SetText("AddOns")
-			b:SetScript("OnShow", function() b.movedByACP = true end)
-		end })
+		table.insert(world.addons, {
+			name = "MoveAnything",
+			enabled = true,
+			onLoad = function()
+				local b = CreateFrame("Button", "GameMenuButtonMoveAnything", _G.GameMenuFrame, "UIPanelButtonTemplate")
+				b:SetText("MoveAnything")
+			end,
+		})
+		table.insert(world.addons, {
+			name = "ACP",
+			enabled = true,
+			onLoad = function()
+				local b = CreateFrame("Button", "GameMenuButtonAddOns", _G.GameMenuFrame, "UIPanelButtonTemplate")
+				b:SetText("AddOns")
+				b:SetScript("OnShow", function()
+					b.movedByACP = true
+				end)
+			end,
+		})
 	end
 end
 
@@ -1147,8 +1260,10 @@ function TestGameMenu:test_buttons_are_restyled_and_centered()
 	lu.assertEquals(options.normal:GetAlpha(), 1)
 	lu.assertEquals(options.highlight:GetAlpha(), 0)
 	-- stacked from the first one down, the Korean ratings and mac buttons left out
-	lu.assertEquals({ _G.GameMenuButtonSoundOptions:GetPoint() },
-		{ "TOPLEFT", options, "BOTTOMLEFT", 0, -menu.config.button_spacing })
+	lu.assertEquals(
+		{ _G.GameMenuButtonSoundOptions:GetPoint() },
+		{ "TOPLEFT", options, "BOTTOMLEFT", 0, -menu.config.button_spacing }
+	)
 	lu.assertEquals(select(2, _G.GameMenuButtonLogout:GetPoint()), _G.GameMenuButtonMacros)
 	lu.assertNil(_G.GameMenuButtonMacOptions:IsVisible())
 	-- centered
@@ -1207,7 +1322,13 @@ function TestGameMenu:test_addon_buttons_are_styled_once_their_addons_load()
 end
 
 function TestGameMenu:test_the_mac_options_on_a_mac()
-	boot({ world = function() _G.IsMacClient = function() return 1 end end })
+	boot({
+		world = function()
+			_G.IsMacClient = function()
+				return 1
+			end
+		end,
+	})
 	local mac = _G.GameMenuButtonMacOptions
 	lu.assertEquals(mac.text.normal:GetText(), _G.MAC_OPTIONS)
 	lu.assertEquals(select(2, mac:GetPoint()), _G.GameMenuButtonUIOptions)
@@ -1303,9 +1424,11 @@ function TestAnchors:test_blizzard_cant_move_them_back()
 end
 
 function TestAnchors:test_frames_mappy_took_over_are_taken_back()
-	boot({ world = function(world)
-		table.insert(world.addons, { name = "Mappy", enabled = true })
-	end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "Mappy", enabled = true })
+		end,
+	})
 	lu.assertTrue(_G.DurabilityFrame.Mappy_DidHook)
 	lu.assertTrue(_G.VehicleSeatIndicator.Mappy_DidHook)
 	assertClean(client)
@@ -1331,7 +1454,11 @@ function TestFonts:test_blizzard_fonts_use_ours()
 end
 
 function TestFonts:test_fonts_without_the_locales_letters_are_kept()
-	boot({ world = function(world) world.locale = "zhCN" end })
+	boot({
+		world = function(world)
+			world.locale = "zhCN"
+		end,
+	})
 	local fonts = client.Engine:GetDB("Fonts").fonts
 	local face = _G.QuestFont_Large:GetFont()
 	lu.assertNotEquals(face, fonts.header_normal.path)
@@ -1409,32 +1536,35 @@ function TestItemSlots:tearDown()
 	client, C = nil, nil
 end
 
-local RED = { 1, .125, .125 }
+local RED = { 1, 0.125, 0.125 }
 
 function TestItemSlots:test_items_with_a_red_tooltip_line_are_tinted_red()
 	boot()
 	local plate = Session.item(client, 200, { quality = 3, lines = { "Plate Helm", { "Head", "Plate", RED } } })
 	local cloth = Session.item(client, 201, { quality = 3, lines = { "Cloth Hood", { "Head", "Cloth" } } })
 	local level = Session.item(client, 202, { quality = 2, lines = { "Big Sword", { "Requires Level 85", nil, RED } } })
-	client.world.containers[0] = { size = 4, items = {
-		[1] = { quality = 3, link = plate },
-		[2] = { quality = 3, link = cloth },
-		[3] = { quality = 2, link = level },
-		[4] = { quality = 3, link = "|cff0070dd|Hitem:99998:0:0:0:0:0:0:0:80|h[Not Cached]|h|r" },
-	} }
+	client.world.containers[0] = {
+		size = 4,
+		items = {
+			[1] = { quality = 3, link = plate },
+			[2] = { quality = 3, link = cloth },
+			[3] = { quality = 2, link = level },
+			[4] = { quality = 3, link = "|cff0070dd|Hitem:99998:0:0:0:0:0:0:0:80|h[Not Cached]|h|r" },
+		},
+	}
 	local bag = _G.ContainerFrame1
 	bag:SetID(0)
 	bag.size = 4
 	_G.ContainerFrame_Update(bag)
-	near(color(_G.ContainerFrame1Item1IconTexture:GetVertexColor()), { 1, .3, .3 }, "red armor type")
+	near(color(_G.ContainerFrame1Item1IconTexture:GetVertexColor()), { 1, 0.3, 0.3 }, "red armor type")
 	near(color(_G.ContainerFrame1Item2IconTexture:GetVertexColor()), { 1, 1, 1 }, "usable")
-	near(color(_G.ContainerFrame1Item3IconTexture:GetVertexColor()), { 1, .3, .3 }, "red requirement")
+	near(color(_G.ContainerFrame1Item3IconTexture:GetVertexColor()), { 1, 0.3, 0.3 }, "red requirement")
 	near(color(_G.ContainerFrame1Item4IconTexture:GetVertexColor()), { 1, 1, 1 }, "not cached yet: usable")
 
 	-- learned to wear plate: asked again after the next level
 	client.world.itemInfo[200].lines = { "Plate Helm", { "Head", "Plate" } }
 	_G.ContainerFrame_Update(bag)
-	near(color(_G.ContainerFrame1Item1IconTexture:GetVertexColor()), { 1, .3, .3 }, "remembered")
+	near(color(_G.ContainerFrame1Item1IconTexture:GetVertexColor()), { 1, 0.3, 0.3 }, "remembered")
 	client:FireEvent("PLAYER_LEVEL_UP", 81)
 	_G.ContainerFrame_Update(bag)
 	near(color(_G.ContainerFrame1Item1IconTexture:GetVertexColor()), { 1, 1, 1 }, "asked again")
@@ -1445,7 +1575,9 @@ end
 local function itemLevelOf(button)
 	for _, child in ipairs({ button:GetChildren() }) do
 		for _, region in ipairs({ child:GetRegions() }) do
-			if region:GetObjectType() == "FontString" then return region end
+			if region:GetObjectType() == "FontString" then
+				return region
+			end
 		end
 	end
 end
@@ -1493,7 +1625,8 @@ function TestItemSlots:test_the_inspected_players_slots()
 	local head = _G.InspectHeadSlot
 	head:SetID(1)
 	client:SetUnit("target", Client.newUnit({ name = "Thrall", class = "SHAMAN", isPlayer = true }))
-	client.world.units.target.inventory = { [1] = Session.item(client, 303, { quality = 4, iLevel = 245, equipSlot = "INVTYPE_HEAD" }) }
+	client.world.units.target.inventory =
+		{ [1] = Session.item(client, 303, { quality = 4, iLevel = 245, equipSlot = "INVTYPE_HEAD" }) }
 	-- nobody inspected yet: left as it is
 	_G.InspectPaperDollItemSlotButton_Update(head)
 	lu.assertNil(borderOf(head))
@@ -1528,14 +1661,19 @@ local GREY = "|cff9d9d9d|Hitem:%d:0:0:0:0:0:0:0:1|h[%s]|h|r"
 -- three Broken Fangs (25 copper each), a grey item no merchant takes, and a
 -- blue one
 local function junkBags()
-	client.world.itemInfo[1] = { name = "Broken Fang", quality = 0, vendorPrice = 25, link = GREY:format(1, "Broken Fang") }
-	client.world.itemInfo[2] = { name = "Grey Keepsake", quality = 0, vendorPrice = 0, link = GREY:format(2, "Grey Keepsake") }
+	client.world.itemInfo[1] =
+		{ name = "Broken Fang", quality = 0, vendorPrice = 25, link = GREY:format(1, "Broken Fang") }
+	client.world.itemInfo[2] =
+		{ name = "Grey Keepsake", quality = 0, vendorPrice = 0, link = GREY:format(2, "Grey Keepsake") }
 	local blue = Session.item(client, 3, { quality = 3, vendorPrice = 900 })
-	client.world.containers[0] = { size = 4, items = {
-		[1] = { quality = 0, count = 3, link = GREY:format(1, "Broken Fang") },
-		[2] = { quality = 0, link = GREY:format(2, "Grey Keepsake") },
-		[3] = { quality = 3, link = blue },
-	} }
+	client.world.containers[0] = {
+		size = 4,
+		items = {
+			[1] = { quality = 0, count = 3, link = GREY:format(1, "Broken Fang") },
+			[2] = { quality = 0, link = GREY:format(2, "Grey Keepsake") },
+			[3] = { quality = 3, link = blue },
+		},
+	}
 end
 
 local function openMerchant()
@@ -1549,7 +1687,9 @@ function TestSellJunk:test_sells_the_grey_items_a_merchant_takes()
 	boot()
 	junkBags()
 	local said = {}
-	hooksecurefunc(_G.DEFAULT_CHAT_FRAME, "AddMessage", function(_, text) said[#said + 1] = text end)
+	hooksecurefunc(_G.DEFAULT_CHAT_FRAME, "AddMessage", function(_, text)
+		said[#said + 1] = text
+	end)
 	openMerchant()
 	local button = _G.DiabolicSellJunkButton
 	lu.assertTrue(shown(button))

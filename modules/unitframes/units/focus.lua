@@ -12,12 +12,11 @@ local unpack = unpack
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.focus
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
 	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
 
-	
 	-- Artwork
 	-------------------------------------------------------------------
 
@@ -36,18 +35,17 @@ local Style = function(self, unit)
 	local Border = self:CreateFrame("Frame")
 	Border:SetFrameLevel(self:GetFrameLevel() + 5)
 	Border:SetAllPoints()
-	
+
 	local BorderNormal = Border:CreateTexture(nil, "BORDER")
 	BorderNormal:SetSize(unpack(config.border.texture_size))
 	BorderNormal:SetPoint(unpack(config.border.texture_position))
 	BorderNormal:SetTexture(config.border.textures.normal)
-	
+
 	local BorderNormalHighlight = Border:CreateTexture(nil, "BORDER")
 	BorderNormalHighlight:SetSize(unpack(config.border.texture_size))
 	BorderNormalHighlight:SetPoint(unpack(config.border.texture_position))
 	BorderNormalHighlight:SetTexture(config.border.textures.highlight)
 	BorderNormalHighlight:Hide()
-
 
 	-- Health
 	-------------------------------------------------------------------
@@ -55,29 +53,26 @@ local Style = function(self, unit)
 	Health:SetSize(unpack(config.health.size))
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
-	Health.frequent = 1/30
+	Health.frequent = 1 / 30
 	Health.PostUpdate = Library.PostUpdateHealth
 	Health.useClassColor = true
 
-	
 	-- Power
 	-------------------------------------------------------------------
 	local Power = StatusBar:New(self)
 	Power:SetSize(unpack(config.power.size))
 	Power:SetPoint(unpack(config.power.position))
 	Power:SetStatusBarTexture(config.power.texture)
-	Power.frequent = 1/30
-	
+	Power.frequent = 1 / 30
 
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
 	CastBar:Hide()
 	CastBar:SetAllPoints()
-	CastBar:SetStatusBarTexture(1, 1, 1, .15)
+	CastBar:SetStatusBarTexture(1, 1, 1, 0.15)
 	CastBar:SetSize(Health:GetSize())
 	CastBar:DisableSmoothing(true)
-
 
 	-- Portrait
 	-------------------------------------------------------------------
@@ -128,15 +123,19 @@ local Style = function(self, unit)
 		-- button's own rect, so clicking it wouldn't select the unit
 		-- without extending the button's hit-test area to cover it.
 		local chromeOverflow = (config.portrait.texture_size[2] - config.portrait.size[2]) / 2
-		local topOverflow = config.health.position[3] + config.health.size[2] + portraitPos[4] + config.portrait.size[2] + chromeOverflow - config.size[2]
+		local topOverflow = config.health.position[3]
+			+ config.health.size[2]
+			+ portraitPos[4]
+			+ config.portrait.size[2]
+			+ chromeOverflow
+			- config.size[2]
 		self:SetHitRectInsets(0, 0, -topOverflow, 0)
 	end
-
 
 	-- Threat
 	-------------------------------------------------------------------
 	local Threat = {}
-	
+
 	Threat.Border = self:CreateTexture(nil, "BACKGROUND")
 	Threat.Border:Hide()
 	Threat.Border:SetSize(unpack(config.border.texture_size))
@@ -154,7 +153,6 @@ local Style = function(self, unit)
 	Threat.SetVertexColor = function(self, ...)
 		self.Border:SetVertexColor(...)
 	end
-
 
 	-- Texts
 	-------------------------------------------------------------------
@@ -179,7 +177,6 @@ local Style = function(self, unit)
 	Name:SetWordWrap(true)
 	Name:SetNonSpaceWrap(false)
 
-
 	self.CastBar = CastBar
 	self.Health = Health
 	self.Name = Name
@@ -195,7 +192,6 @@ local Style = function(self, unit)
 
 	self:HookScript("OnEnter", Library.UpdateLayers)
 	self:HookScript("OnLeave", Library.UpdateLayers)
-	
 end
 
 UnitFrameWidget.OnEnable = function(self)
@@ -205,4 +201,3 @@ end
 UnitFrameWidget.GetFrame = function(self)
 	return self.UnitFrame
 end
-

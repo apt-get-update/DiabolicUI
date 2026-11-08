@@ -107,7 +107,10 @@ function TestNoGlobalLeaks:test_no_unexpected_global_writes()
 		end
 	end
 	if #leaks > 0 then
-		lu.fail("Unexpected global writes (missing `local`?), or add to ALLOWED if intentional:\n  " .. table.concat(leaks, "\n  "))
+		lu.fail(
+			"Unexpected global writes (missing `local`?), or add to ALLOWED if intentional:\n  "
+				.. table.concat(leaks, "\n  ")
+		)
 	end
 end
 

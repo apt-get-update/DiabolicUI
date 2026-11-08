@@ -37,13 +37,13 @@ local getEditbox = function(frame)
 	else
 		if isDocked(frame) then
 			for _, frame in pairs(GENERAL_CHAT_DOCK.DOCKED_CHAT_FRAMES) do
-				local editbox = _G[frame:GetName().."EditBox"]
+				local editbox = _G[frame:GetName() .. "EditBox"]
 				if editbox and editbox:IsShown() then
 					return editbox
 				end
 			end
 		end
-		return _G[frame:GetName().."EditBox"]
+		return _G[frame:GetName() .. "EditBox"]
 	end
 end
 
@@ -57,7 +57,7 @@ local updateWindowAlpha = function(frame)
 	end
 	for _, value in pairs(CHAT_FRAME_TEXTURES) do
 		if not value:find("Tab") then
-			local object = _G[frame:GetName()..value]
+			local object = _G[frame:GetName() .. value]
 			if object:IsShown() then
 				UIFrameFadeRemoveFrame(object)
 				object:SetAlpha(alpha)
@@ -71,7 +71,7 @@ Module.OnEnter = function(self)
 		self.UIHider = CreateFrame("Frame")
 		self.UIHider:Hide()
 	end
-	
+
 	-- kill off FriendsMicroButton
 	FriendsMicroButton:UnregisterAllEvents()
 	FriendsMicroButton:Hide()
@@ -81,12 +81,11 @@ Module.OnEnter = function(self)
 end
 
 Module.OnInit = function(self, event, ...)
-
 	self.config = self:GetDB("ChatWindows") -- setup
 	self.db = self:GetConfig("ChatWindows") -- user settings
-	
+
 	local config = self.config
-	
+
 	CHAT_FRAME_BUTTON_FRAME_MIN_ALPHA = 0
 
 	-- (ChatFrame1 and 2 stay in UIPARENT_MANAGED_FRAME_POSITIONS: removing
@@ -115,8 +114,8 @@ Module.OnInit = function(self, event, ...)
 			end
 		end
 	end)
-	
-	for _,name in ipairs(CHAT_FRAMES) do
+
+	for _, name in ipairs(CHAT_FRAMES) do
 		self:StyleFrame(_G[name])
 	end
 
@@ -129,7 +128,7 @@ Module.OnInit = function(self, event, ...)
 
 	-- ChatFrame1 Menu Button
 	_G["ChatFrameMenuButton"]:ClearAllPoints()
-	_G["ChatFrameMenuButton"]:SetPoint("BOTTOM", _G["ChatFrame1ButtonFrameUpButton"], "TOP", 0, 0) 
+	_G["ChatFrameMenuButton"]:SetPoint("BOTTOM", _G["ChatFrame1ButtonFrameUpButton"], "TOP", 0, 0)
 	_G["ChatFrameMenuButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
 	_G["ChatFrameMenuButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
@@ -155,12 +154,12 @@ Module.OnInit = function(self, event, ...)
 
 	-- hook buttonframe side changes to our custom inputbox icons
 	hooksecurefunc("FCF_SetButtonSide", function(chatFrame, buttonSide, forceUpdate)
-		local EditBoxIcon = _G[chatFrame:GetName().."EditBoxIcon"]
+		local EditBoxIcon = _G[chatFrame:GetName() .. "EditBoxIcon"]
 		if EditBoxIcon then
 			EditBoxIcon:UpdateSide(chatFrame.buttonSide or buttonSide or "left")
 		end
 	end)
-	
+
 	_G["ChatFrameMenuButton"]:Hide()
 	_G["ChatFrameMenuButton"]:HookScript("OnShow", function(self)
 		local allow_menu_button
@@ -183,7 +182,7 @@ Module.OnInit = function(self, event, ...)
 		_G["ChatFrameMenuButton"]:SetParent(UICenter)
 	end
 
-	hooksecurefunc(_G["ChatFrameMenuButton"], "SetParent", function(self, parent) 
+	hooksecurefunc(_G["ChatFrameMenuButton"], "SetParent", function(self, parent)
 		if parent == UIParent then
 			self:SetParent(UICenter)
 		end
@@ -228,126 +227,138 @@ Module.StyleFrame = function(self, frame)
 	frame:SetIndentedWordWrap(true)
 	frame:SetClampRectInsets(unpack(config.clamps))
 	frame:SetMinResize(unpack(config.minimum_size))
-	
-	for _,v in pairs(CHAT_FRAME_TEXTURES) do
+
+	for _, v in pairs(CHAT_FRAME_TEXTURES) do
 		if strfind(v, "ButtonFrame") then
 			_G[name .. v]:SetTexture("")
 		end
 	end
-
 
 	local UICenter = Engine:GetFrame()
 	if frame:GetParent() == UIParent then
 		frame:SetParent(UICenter)
 	end
 
-	hooksecurefunc(frame, "SetParent", function(self, parent) 
+	hooksecurefunc(frame, "SetParent", function(self, parent)
 		if parent == UIParent then
 			self:SetParent(UICenter)
 		end
 	end)
 
-	
-
 	-- Tabs
 	------------------------------
-	_G[name.."TabLeft"]:SetTexture("")
-	_G[name.."TabMiddle"]:SetTexture("")
-	_G[name.."TabRight"]:SetTexture("")
-	_G[name.."TabSelectedLeft"]:SetTexture("")
-	_G[name.."TabSelectedMiddle"]:SetTexture("")
-	_G[name.."TabSelectedRight"]:SetTexture("")
-	_G[name.."TabHighlightLeft"]:SetTexture("")
-	_G[name.."TabHighlightMiddle"]:SetTexture("")
-	_G[name.."TabHighlightRight"]:SetTexture("")
+	_G[name .. "TabLeft"]:SetTexture("")
+	_G[name .. "TabMiddle"]:SetTexture("")
+	_G[name .. "TabRight"]:SetTexture("")
+	_G[name .. "TabSelectedLeft"]:SetTexture("")
+	_G[name .. "TabSelectedMiddle"]:SetTexture("")
+	_G[name .. "TabSelectedRight"]:SetTexture("")
+	_G[name .. "TabHighlightLeft"]:SetTexture("")
+	_G[name .. "TabHighlightMiddle"]:SetTexture("")
+	_G[name .. "TabHighlightRight"]:SetTexture("")
 
-	if _G[name.."TabConversationIcon"] then
-		_G[name.."TabConversationIcon"]:SetTexture("")
-		_G[name.."TabConversationIcon"]:SetAlpha(0)
+	if _G[name .. "TabConversationIcon"] then
+		_G[name .. "TabConversationIcon"]:SetTexture("")
+		_G[name .. "TabConversationIcon"]:SetAlpha(0)
 	end
 
-	_G[name.."Tab"]:SetAlpha(1)
-	_G[name.."Tab"].SetAlpha = UIFrameFadeRemoveFrame
+	_G[name .. "Tab"]:SetAlpha(1)
+	_G[name .. "Tab"].SetAlpha = UIFrameFadeRemoveFrame
 
-	_G[name.."TabText"]:Hide()
+	_G[name .. "TabText"]:Hide()
 
-	_G[name.."Tab"]:HookScript("OnEnter", function(self) _G[name.."TabText"]:Show() end)
-	_G[name.."Tab"]:HookScript("OnLeave", function(self) _G[name.."TabText"]:Hide() end)
+	_G[name .. "Tab"]:HookScript("OnEnter", function(self)
+		_G[name .. "TabText"]:Show()
+	end)
+	_G[name .. "Tab"]:HookScript("OnLeave", function(self)
+		_G[name .. "TabText"]:Hide()
+	end)
 
 	-- We need to hide both tabs and button frames here, but it must depend on visible editboxes. /sigh
-	_G[name.."Tab"]:HookScript("OnClick", function() 
+	_G[name .. "Tab"]:HookScript("OnClick", function()
 		local frame = selectedFrame()
 		local editbox = getEditbox(frame)
 		editbox:Hide()
-		_G[name.."ButtonFrame"]:Hide()
+		_G[name .. "ButtonFrame"]:Hide()
 	end)
-	
-	_G[name.."ClickAnywhereButton"]:HookScript("OnEnter", function(self) _G[name .. "TabText"]:Show() end)
-	_G[name.."ClickAnywhereButton"]:HookScript("OnLeave", function(self) _G[name .. "TabText"]:Hide() end)
-	_G[name.."ClickAnywhereButton"]:HookScript("OnClick", function() 
+
+	_G[name .. "ClickAnywhereButton"]:HookScript("OnEnter", function(self)
+		_G[name .. "TabText"]:Show()
+	end)
+	_G[name .. "ClickAnywhereButton"]:HookScript("OnLeave", function(self)
+		_G[name .. "TabText"]:Hide()
+	end)
+	_G[name .. "ClickAnywhereButton"]:HookScript("OnClick", function()
 		FCF_Tab_OnClick(_G[name]) -- click the tab to actually select this frame
 		local editbox = getEditbox(frame)
 		if editbox then
-			editbox:Hide() -- hide the annoying half-transparent editbox 
+			editbox:Hide() -- hide the annoying half-transparent editbox
 		end
 	end)
 
 	-- Inputbox
 	------------------------------
-	_G[name.."EditBoxLeft"]:SetTexture("")
-	_G[name.."EditBoxRight"]:SetTexture("")
-	_G[name.."EditBoxMid"]:SetTexture("")
-	_G[name.."EditBoxFocusLeft"]:SetTexture("")
-	_G[name.."EditBoxFocusMid"]:SetTexture("")
-	_G[name.."EditBoxFocusRight"]:SetTexture("")
- 
-	_G[name.."EditBox"]:Hide()
-	_G[name.."EditBox"]:SetAltArrowKeyMode(false)
-	_G[name.."EditBox"]:SetHeight(config.editbox.size)
-	_G[name.."EditBox"]:ClearAllPoints()
-	_G[name.."EditBox"]:SetPoint("LEFT", frame, "LEFT", -config.editbox.offsets[1], 0)
+	_G[name .. "EditBoxLeft"]:SetTexture("")
+	_G[name .. "EditBoxRight"]:SetTexture("")
+	_G[name .. "EditBoxMid"]:SetTexture("")
+	_G[name .. "EditBoxFocusLeft"]:SetTexture("")
+	_G[name .. "EditBoxFocusMid"]:SetTexture("")
+	_G[name .. "EditBoxFocusRight"]:SetTexture("")
 
-	_G[name.."EditBox"]:SetPoint("RIGHT", frame, "RIGHT", config.editbox.offsets[2], 0)
-	_G[name.."EditBox"]:SetPoint("TOP", frame, "BOTTOM", 0, -config.editbox.offsets[3])
+	_G[name .. "EditBox"]:Hide()
+	_G[name .. "EditBox"]:SetAltArrowKeyMode(false)
+	_G[name .. "EditBox"]:SetHeight(config.editbox.size)
+	_G[name .. "EditBox"]:ClearAllPoints()
+	_G[name .. "EditBox"]:SetPoint("LEFT", frame, "LEFT", -config.editbox.offsets[1], 0)
+
+	_G[name .. "EditBox"]:SetPoint("RIGHT", frame, "RIGHT", config.editbox.offsets[2], 0)
+	_G[name .. "EditBox"]:SetPoint("TOP", frame, "BOTTOM", 0, -config.editbox.offsets[3])
 
 	-- new smooth backdrop
-	_G[name.."EditBox"]:SetBackdrop(config.editbox.backdrop)
-	_G[name.."EditBox"]:SetBackdropColor(unpack(config.editbox.colors.backdrop))
-	_G[name.."EditBox"]:SetBackdropBorderColor(unpack(config.editbox.colors.border))
-	
+	_G[name .. "EditBox"]:SetBackdrop(config.editbox.backdrop)
+	_G[name .. "EditBox"]:SetBackdropColor(unpack(config.editbox.colors.backdrop))
+	_G[name .. "EditBox"]:SetBackdropBorderColor(unpack(config.editbox.colors.border))
+
 	-- add a glow around the backdrop
-	_G[name.."EditBoxGlow"] = CreateFrame("Frame", nil, _G[name.."EditBox"])
-	_G[name.."EditBoxGlow"]:SetFrameStrata("BACKGROUND")
-	_G[name.."EditBoxGlow"]:SetFrameLevel(0)
-	_G[name.."EditBoxGlow"]:SetPoint("LEFT", -config.editbox.glow.offsets[1], 0)
-	_G[name.."EditBoxGlow"]:SetPoint("RIGHT", config.editbox.glow.offsets[2], 0)
-	_G[name.."EditBoxGlow"]:SetPoint("TOP", 0, config.editbox.glow.offsets[3])
-	_G[name.."EditBoxGlow"]:SetPoint("BOTTOM", 0, -config.editbox.glow.offsets[4])
-	_G[name.."EditBoxGlow"]:SetBackdrop(config.editbox.glow.backdrop)
-	_G[name.."EditBoxGlow"]:SetBackdropColor(0, 0, 0, 0)
-	_G[name.."EditBoxGlow"]:SetBackdropBorderColor(unpack(config.editbox.colors.glow))
-	
+	_G[name .. "EditBoxGlow"] = CreateFrame("Frame", nil, _G[name .. "EditBox"])
+	_G[name .. "EditBoxGlow"]:SetFrameStrata("BACKGROUND")
+	_G[name .. "EditBoxGlow"]:SetFrameLevel(0)
+	_G[name .. "EditBoxGlow"]:SetPoint("LEFT", -config.editbox.glow.offsets[1], 0)
+	_G[name .. "EditBoxGlow"]:SetPoint("RIGHT", config.editbox.glow.offsets[2], 0)
+	_G[name .. "EditBoxGlow"]:SetPoint("TOP", 0, config.editbox.glow.offsets[3])
+	_G[name .. "EditBoxGlow"]:SetPoint("BOTTOM", 0, -config.editbox.glow.offsets[4])
+	_G[name .. "EditBoxGlow"]:SetBackdrop(config.editbox.glow.backdrop)
+	_G[name .. "EditBoxGlow"]:SetBackdropColor(0, 0, 0, 0)
+	_G[name .. "EditBoxGlow"]:SetBackdropBorderColor(unpack(config.editbox.colors.glow))
+
 	-- add a chat icon for style
 	local buttonSide = frame.buttonSide or "left"
-	_G[name.."EditBoxIcon"] = CreateFrame("Frame", nil, _G[name.."EditBox"])
-	_G[name.."EditBoxIcon"]:SetSize(unpack(config.editbox.icon.size))
-	_G[name.."EditBoxIcon"]:SetPoint(unpack(config.editbox.icon.position[buttonSide]))
-	_G[name.."EditBoxIcon"].UpdateSide = function(self, side) self:ClearAllPoints(); self:SetPoint(unpack(config.editbox.icon.position[side])) end
-	_G[name.."EditBoxIconTexture"] = _G[name.."EditBoxIcon"]:CreateTexture(nil, "ARTWORK")
-	_G[name.."EditBoxIconTexture"]:SetSize(unpack(config.editbox.icon.texture_size))
-	_G[name.."EditBoxIconTexture"]:SetPoint(unpack(config.editbox.icon.texture_position))
-	_G[name.."EditBoxIconTexture"]:SetTexture(config.editbox.icon.texture)
-	_G[name.."EditBox"]:HookScript("OnEditFocusGained", function(self) self:Show() end)
-	_G[name.."EditBox"]:HookScript("OnEditFocusLost", function(self) self:Hide() end)
+	_G[name .. "EditBoxIcon"] = CreateFrame("Frame", nil, _G[name .. "EditBox"])
+	_G[name .. "EditBoxIcon"]:SetSize(unpack(config.editbox.icon.size))
+	_G[name .. "EditBoxIcon"]:SetPoint(unpack(config.editbox.icon.position[buttonSide]))
+	_G[name .. "EditBoxIcon"].UpdateSide = function(self, side)
+		self:ClearAllPoints()
+		self:SetPoint(unpack(config.editbox.icon.position[side]))
+	end
+	_G[name .. "EditBoxIconTexture"] = _G[name .. "EditBoxIcon"]:CreateTexture(nil, "ARTWORK")
+	_G[name .. "EditBoxIconTexture"]:SetSize(unpack(config.editbox.icon.texture_size))
+	_G[name .. "EditBoxIconTexture"]:SetPoint(unpack(config.editbox.icon.texture_position))
+	_G[name .. "EditBoxIconTexture"]:SetTexture(config.editbox.icon.texture)
+	_G[name .. "EditBox"]:HookScript("OnEditFocusGained", function(self)
+		self:Show()
+	end)
+	_G[name .. "EditBox"]:HookScript("OnEditFocusLost", function(self)
+		self:Hide()
+	end)
 
 	-- Avoid dying from having the editbox open in combat
-	_G[name.."EditBox"]:HookScript("OnTextChanged", function(self)
+	_G[name .. "EditBox"]:HookScript("OnTextChanged", function(self)
 		local msg = self:GetText()
 		local maxRepeats = UnitAffectingCombat("player") and 5 or 10
-		if (strlen(msg) > maxRepeats) then
+		if strlen(msg) > maxRepeats then
 			local stuck = true
-			for i = 1, maxRepeats, 1 do 
-				if (strsub(msg,0-i, 0-i) ~= strsub(msg,(-1-i),(-1-i))) then
+			for i = 1, maxRepeats, 1 do
+				if strsub(msg, 0 - i, 0 - i) ~= strsub(msg, (-1 - i), (-1 - i)) then
 					stuck = false
 					break
 				end
@@ -360,22 +371,20 @@ Module.StyleFrame = function(self, frame)
 		end
 	end)
 
-	hooksecurefunc(_G[name.."EditBox"], "SetParent", function(self, parent) 
-		if (parent == UIParent) then
+	hooksecurefunc(_G[name .. "EditBox"], "SetParent", function(self, parent)
+		if parent == UIParent then
 			self:SetParent(UICenter)
 		end
 	end)
 
-
 	-- Buttons
 	------------------------------
 
-	
-	_G[name.."EditBox"]:HookScript("OnShow", function(self) 
+	_G[name .. "EditBox"]:HookScript("OnShow", function(self)
 		local frame = selectedFrame()
 		if frame then
 			local name = frame:GetName()
-			local buttonframe = _G[name.."ButtonFrame"]
+			local buttonframe = _G[name .. "ButtonFrame"]
 			if buttonframe then
 				buttonframe:Show()
 				buttonframe:SetAlpha(1)
@@ -387,11 +396,11 @@ Module.StyleFrame = function(self, frame)
 		end
 	end)
 
-	_G[name.."EditBox"]:HookScript("OnHide", function(self) 
+	_G[name .. "EditBox"]:HookScript("OnHide", function(self)
 		local frame = selectedFrame()
 		if frame then
 			local name = frame:GetName()
-			local buttonframe = _G[name.."ButtonFrame"]
+			local buttonframe = _G[name .. "ButtonFrame"]
 			if buttonframe then
 				buttonframe:Hide()
 			end
@@ -401,17 +410,17 @@ Module.StyleFrame = function(self, frame)
 			updateWindowAlpha(frame)
 		end
 	end)
-	
-	hooksecurefunc(_G[name.."ButtonFrame"], "SetAlpha", function(self, alpha)
+
+	hooksecurefunc(_G[name .. "ButtonFrame"], "SetAlpha", function(self, alpha)
 		-- avoid stack overflow
-		if self._alpha_lock then 
-			return 
+		if self._alpha_lock then
+			return
 		else
 			self._alpha_lock = true
 			local frame = selectedFrame()
 			if UIFrameIsFading(frame) then
 				UIFrameFadeRemoveFrame(frame)
-			end	
+			end
 			local editbox = getEditbox(frame)
 			if editbox:IsShown() then
 				self:SetAlpha(1)
@@ -419,144 +428,198 @@ Module.StyleFrame = function(self, frame)
 				self:SetAlpha(0)
 			end
 			self._alpha_lock = false
-		end 
+		end
 	end)
 
 	-- size the buttonframe
-	_G[name.."ButtonFrame"]:Hide()
-	_G[name.."ButtonFrame"]:SetWidth(config.button_frame.size)
+	_G[name .. "ButtonFrame"]:Hide()
+	_G[name .. "ButtonFrame"]:SetWidth(config.button_frame.size)
 
 	-- bottom button
-	_G[name.."ButtonFrameBottomButton"]:ClearAllPoints()
-	_G[name.."ButtonFrameBottomButton"]:SetPoint("BOTTOM", 0, -(7) + 1) 
-	_G[name.."ButtonFrameBottomButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	_G[name .. "ButtonFrameBottomButton"]:ClearAllPoints()
+	_G[name .. "ButtonFrameBottomButton"]:SetPoint("BOTTOM", 0, -7 + 1)
+	_G[name .. "ButtonFrameBottomButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():ClearAllPoints()
-	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameBottomButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.bottom.normal)
+	_G[name .. "ButtonFrameBottomButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameBottomButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetNormalTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetNormalTexture()
+		:SetTexture(config.button_frame.buttons.textures.bottom.normal)
 
-	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():ClearAllPoints()
-	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.bottom.highlight)
-	_G[name.."ButtonFrameBottomButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetHighlightTexture()
+		:SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameBottomButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetHighlightTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetHighlightTexture()
+		:SetTexture(config.button_frame.buttons.textures.bottom.highlight)
+	_G[name .. "ButtonFrameBottomButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():ClearAllPoints()
-	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameBottomButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.bottom.highlight)
+	_G[name .. "ButtonFrameBottomButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameBottomButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetPushedTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetPushedTexture()
+		:SetTexture(config.button_frame.buttons.textures.bottom.highlight)
 
-	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():ClearAllPoints()
-	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameBottomButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.bottom.disabled)
+	_G[name .. "ButtonFrameBottomButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameBottomButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetDisabledTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameBottomButton"]
+		:GetDisabledTexture()
+		:SetTexture(config.button_frame.buttons.textures.bottom.disabled)
 
 	-- down button
-	_G[name.."ButtonFrameDownButton"]:ClearAllPoints()
-	_G[name.."ButtonFrameDownButton"]:SetPoint("BOTTOM", _G[name.."ButtonFrameBottomButton"], "TOP", 0, 0) 
-	_G[name.."ButtonFrameDownButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	_G[name .. "ButtonFrameDownButton"]:ClearAllPoints()
+	_G[name .. "ButtonFrameDownButton"]:SetPoint("BOTTOM", _G[name .. "ButtonFrameBottomButton"], "TOP", 0, 0)
+	_G[name .. "ButtonFrameDownButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():ClearAllPoints()
-	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameDownButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.down.normal)
+	_G[name .. "ButtonFrameDownButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameDownButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameDownButton"]
+		:GetNormalTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameDownButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.down.normal)
 
-	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():ClearAllPoints()
-	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.down.highlight)
-	_G[name.."ButtonFrameDownButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name .. "ButtonFrameDownButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameDownButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameDownButton"]
+		:GetHighlightTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameDownButton"]
+		:GetHighlightTexture()
+		:SetTexture(config.button_frame.buttons.textures.down.highlight)
+	_G[name .. "ButtonFrameDownButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():ClearAllPoints()
-	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameDownButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.down.highlight)
+	_G[name .. "ButtonFrameDownButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameDownButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameDownButton"]
+		:GetPushedTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameDownButton"]
+		:GetPushedTexture()
+		:SetTexture(config.button_frame.buttons.textures.down.highlight)
 
-	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():ClearAllPoints()
-	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameDownButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.down.disabled)
+	_G[name .. "ButtonFrameDownButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameDownButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameDownButton"]
+		:GetDisabledTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameDownButton"]
+		:GetDisabledTexture()
+		:SetTexture(config.button_frame.buttons.textures.down.disabled)
 
 	-- minimize button on floating windows
-	_G[name.."ButtonFrameMinimizeButton"]:ClearAllPoints()
-	_G[name.."ButtonFrameMinimizeButton"]:SetPoint("TOP", _G[name.."ButtonFrame"], "TOP", 0, 7 - 2) 
-	_G[name.."ButtonFrameMinimizeButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	_G[name .. "ButtonFrameMinimizeButton"]:ClearAllPoints()
+	_G[name .. "ButtonFrameMinimizeButton"]:SetPoint("TOP", _G[name .. "ButtonFrame"], "TOP", 0, 7 - 2)
+	_G[name .. "ButtonFrameMinimizeButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-	_G[name.."ButtonFrameMinimizeButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMinimizeButton"]:GetNormalTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMinimizeButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMinimizeButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.minimize.normal)
+	_G[name .. "ButtonFrameMinimizeButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameMinimizeButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetNormalTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetNormalTexture()
+		:SetTexture(config.button_frame.buttons.textures.minimize.normal)
 
-	_G[name.."ButtonFrameMinimizeButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMinimizeButton"]:GetHighlightTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMinimizeButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMinimizeButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.minimize.highlight)
-	_G[name.."ButtonFrameMinimizeButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetHighlightTexture()
+		:SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameMinimizeButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetHighlightTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetHighlightTexture()
+		:SetTexture(config.button_frame.buttons.textures.minimize.highlight)
+	_G[name .. "ButtonFrameMinimizeButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-	_G[name.."ButtonFrameMinimizeButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMinimizeButton"]:GetPushedTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMinimizeButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameMinimizeButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.minimize.highlight)
-	
+	_G[name .. "ButtonFrameMinimizeButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameMinimizeButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetPushedTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetPushedTexture()
+		:SetTexture(config.button_frame.buttons.textures.minimize.highlight)
+
 	-- No disabled texture, so we're making one. For no real good reason, really.
-	_G[name.."ButtonFrameMinimizeButton"]:SetDisabledTexture(config.button_frame.buttons.textures.minimize.disabled)
-	_G[name.."ButtonFrameMinimizeButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameMinimizeButton"]:GetDisabledTexture():ClearAllPoints()
-	_G[name.."ButtonFrameMinimizeButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameMinimizeButton"]:SetDisabledTexture(config.button_frame.buttons.textures.minimize.disabled)
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetDisabledTexture()
+		:SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameMinimizeButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameMinimizeButton"]
+		:GetDisabledTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
 
 	-- Keep this down here, order matters when they are hooked to each other!
-	_G[name.."ButtonFrameUpButton"]:ClearAllPoints()
-	_G[name.."ButtonFrameUpButton"]:SetPoint("TOP", _G[name.."ButtonFrameMinimizeButton"], "BOTTOM", 0, 0) 
-	_G[name.."ButtonFrameUpButton"]:SetSize(unpack(config.button_frame.buttons.size))
+	_G[name .. "ButtonFrameUpButton"]:ClearAllPoints()
+	_G[name .. "ButtonFrameUpButton"]:SetPoint("TOP", _G[name .. "ButtonFrameMinimizeButton"], "BOTTOM", 0, 0)
+	_G[name .. "ButtonFrameUpButton"]:SetSize(unpack(config.button_frame.buttons.size))
 
-	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():ClearAllPoints()
-	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameUpButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.up.normal)
+	_G[name .. "ButtonFrameUpButton"]:GetNormalTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameUpButton"]:GetNormalTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameUpButton"]:GetNormalTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameUpButton"]:GetNormalTexture():SetTexture(config.button_frame.buttons.textures.up.normal)
 
-	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():ClearAllPoints()
-	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
-	_G[name.."ButtonFrameUpButton"]:GetHighlightTexture():SetBlendMode("BLEND")
+	_G[name .. "ButtonFrameUpButton"]:GetHighlightTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameUpButton"]:GetHighlightTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameUpButton"]
+		:GetHighlightTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameUpButton"]
+		:GetHighlightTexture()
+		:SetTexture(config.button_frame.buttons.textures.up.highlight)
+	_G[name .. "ButtonFrameUpButton"]:GetHighlightTexture():SetBlendMode("BLEND")
 
-	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():ClearAllPoints()
-	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameUpButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
+	_G[name .. "ButtonFrameUpButton"]:GetPushedTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameUpButton"]:GetPushedTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameUpButton"]:GetPushedTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameUpButton"]:GetPushedTexture():SetTexture(config.button_frame.buttons.textures.up.highlight)
 
-	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
-	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():ClearAllPoints()
-	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetPoint(unpack(config.button_frame.buttons.texture_position))
-	_G[name.."ButtonFrameUpButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.up.disabled)
+	_G[name .. "ButtonFrameUpButton"]:GetDisabledTexture():SetSize(unpack(config.button_frame.buttons.texture_size))
+	_G[name .. "ButtonFrameUpButton"]:GetDisabledTexture():ClearAllPoints()
+	_G[name .. "ButtonFrameUpButton"]
+		:GetDisabledTexture()
+		:SetPoint(unpack(config.button_frame.buttons.texture_position))
+	_G[name .. "ButtonFrameUpButton"]:GetDisabledTexture():SetTexture(config.button_frame.buttons.textures.up.disabled)
 
 	-- add a super fancy slider to our chat frame
-	
+
 	-- Slider placeholder!
-	_G[name.."ButtonFrameSlider"] = CreateFrame("Slider", nil, _G[name.."ButtonFrame"])
-	_G[name.."ButtonFrameSlider"]:SetPoint("TOP", _G[name.."ButtonFrameUpButton"], "BOTTOM", 0, -1) 
-	_G[name.."ButtonFrameSlider"]:SetPoint("BOTTOM", _G[name.."ButtonFrameDownButton"], "TOP", 0, 1) 
-	_G[name.."ButtonFrameSlider"]:SetWidth(config.button_frame.buttons.size[1] - 4)
-	
+	_G[name .. "ButtonFrameSlider"] = CreateFrame("Slider", nil, _G[name .. "ButtonFrame"])
+	_G[name .. "ButtonFrameSlider"]:SetPoint("TOP", _G[name .. "ButtonFrameUpButton"], "BOTTOM", 0, -1)
+	_G[name .. "ButtonFrameSlider"]:SetPoint("BOTTOM", _G[name .. "ButtonFrameDownButton"], "TOP", 0, 1)
+	_G[name .. "ButtonFrameSlider"]:SetWidth(config.button_frame.buttons.size[1] - 4)
+
 	-- new smooth backdrop
-	_G[name.."ButtonFrameSlider"]:SetBackdrop(config.editbox.backdrop)
-	_G[name.."ButtonFrameSlider"]:SetBackdropColor(unpack(config.editbox.colors.backdrop))
-	_G[name.."ButtonFrameSlider"]:SetBackdropBorderColor(unpack(config.editbox.colors.border))
-	
+	_G[name .. "ButtonFrameSlider"]:SetBackdrop(config.editbox.backdrop)
+	_G[name .. "ButtonFrameSlider"]:SetBackdropColor(unpack(config.editbox.colors.backdrop))
+	_G[name .. "ButtonFrameSlider"]:SetBackdropBorderColor(unpack(config.editbox.colors.border))
+
 	-- add a glow around the backdrop
-	_G[name.."ButtonFrameSliderGlow"] = CreateFrame("Frame", nil, _G[name.."ButtonFrameSlider"])
-	_G[name.."ButtonFrameSliderGlow"]:SetFrameStrata("BACKGROUND")
-	_G[name.."ButtonFrameSliderGlow"]:SetFrameLevel(0)
-	_G[name.."ButtonFrameSliderGlow"]:SetPoint("LEFT", -config.editbox.glow.offsets[1], 0)
-	_G[name.."ButtonFrameSliderGlow"]:SetPoint("RIGHT", config.editbox.glow.offsets[2], 0)
-	_G[name.."ButtonFrameSliderGlow"]:SetPoint("TOP", 0, config.editbox.glow.offsets[3])
-	_G[name.."ButtonFrameSliderGlow"]:SetPoint("BOTTOM", 0, -config.editbox.glow.offsets[4])
-	_G[name.."ButtonFrameSliderGlow"]:SetBackdrop(config.editbox.glow.backdrop)
-	_G[name.."ButtonFrameSliderGlow"]:SetBackdropColor(0, 0, 0, 0)
-	_G[name.."ButtonFrameSliderGlow"]:SetBackdropBorderColor(unpack(config.editbox.colors.glow))
-
-
+	_G[name .. "ButtonFrameSliderGlow"] = CreateFrame("Frame", nil, _G[name .. "ButtonFrameSlider"])
+	_G[name .. "ButtonFrameSliderGlow"]:SetFrameStrata("BACKGROUND")
+	_G[name .. "ButtonFrameSliderGlow"]:SetFrameLevel(0)
+	_G[name .. "ButtonFrameSliderGlow"]:SetPoint("LEFT", -config.editbox.glow.offsets[1], 0)
+	_G[name .. "ButtonFrameSliderGlow"]:SetPoint("RIGHT", config.editbox.glow.offsets[2], 0)
+	_G[name .. "ButtonFrameSliderGlow"]:SetPoint("TOP", 0, config.editbox.glow.offsets[3])
+	_G[name .. "ButtonFrameSliderGlow"]:SetPoint("BOTTOM", 0, -config.editbox.glow.offsets[4])
+	_G[name .. "ButtonFrameSliderGlow"]:SetBackdrop(config.editbox.glow.backdrop)
+	_G[name .. "ButtonFrameSliderGlow"]:SetBackdropColor(0, 0, 0, 0)
+	_G[name .. "ButtonFrameSliderGlow"]:SetBackdropBorderColor(unpack(config.editbox.colors.glow))
 end
 
 local SetPoint = function(self, ...)
@@ -584,8 +647,8 @@ Module.PositionChatFrames = function(self)
 	ChatFrame:SetIndentedWordWrap(true)
 	ChatFrame:SetClampRectInsets(unpack(config.clamps))
 	ChatFrame:SetMinResize(unpack(config.minimum_size))
-	
-	if (not db.hasbeenqueried) then
+
+	if not db.hasbeenqueried then
 		local PopUpMessage = self:GetHandler("PopUpMessage")
 		if not PopUpMessage:GetPopUp("ENGINE_AUTO_SETUP_CHAT") then
 			PopUpMessage:RegisterPopUp("ENGINE_AUTO_SETUP_CHAT", {
@@ -599,18 +662,20 @@ Module.PositionChatFrames = function(self)
 				end,
 				OnCancel = function()
 					db.autoposition = false
-					print(L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."])
+					print(
+						L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."]
+					)
 					db.hasbeenqueried = true
 				end,
 				timeout = 0,
 				exclusive = 1,
 				whileDead = 1,
-				hideOnEscape = false
+				hideOnEscape = false,
 			})
 		end
-		PopUpMessage:ShowPopUp("ENGINE_AUTO_SETUP_CHAT", self:GetDB("UI").popup) 
+		PopUpMessage:ShowPopUp("ENGINE_AUTO_SETUP_CHAT", self:GetDB("UI").popup)
 	end
-	
+
 	if db.autoposition then
 		ChatFrame:SetSize(unpack(config.size))
 		ChatFrame:ClearAllPoints()
@@ -633,7 +698,6 @@ Module.PositionChatFrames = function(self)
 			ChatFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.positionX, db.positionY)
 		end
 	end
-
 end
 
 -- Remembers the main chat window's current position and size, so it can be
@@ -650,7 +714,6 @@ Module.SaveChatFrameLayout = function(self)
 end
 
 Module.OnEnable = function(self, event, ...)
-
 	-- fired when chat window settings are loaded into the client
 	self:RegisterEvent("UPDATE_CHAT_WINDOWS", "PositionChatFrames")
 
@@ -670,14 +733,14 @@ Module.OnEnable = function(self, event, ...)
 	end)
 
 	-- Register the chat command to re-enable autopositioning
-	self:GetHandler("ChatCommand"):Register("autoposition", function() 
+	self:GetHandler("ChatCommand"):Register("autoposition", function()
 		self.db.autoposition = not self.db.autoposition
 		if self.db.autoposition then
 			print(L["Auto positioning of chat windows has been enabled."])
 		else
 			print(L["Auto positioning of chat windows has been disabled."])
 		end
-		self:PositionChatFrames() 
+		self:PositionChatFrames()
 	end)
 
 	self:PositionChatFrames()

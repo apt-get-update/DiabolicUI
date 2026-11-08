@@ -59,14 +59,14 @@ Module.InkReagents = function(self, id)
 	label:SetTextColor(unpack(kit.config.ink))
 	label:SetShadowColor(0, 0, 0, 0)
 	local point, relative, relativePoint = label:GetPoint()
-	if (relativePoint == "BOTTOMLEFT") then
+	if relativePoint == "BOTTOMLEFT" then
 		label:SetPoint(point, relative, relativePoint, 0, -self.config.reagents_label_gap)
 	end
 	for i = 1, _G.MAX_TRADE_SKILL_REAGENTS do
 		local name, icon = _G["TradeSkillReagent" .. i .. "Name"], _G["TradeSkillReagent" .. i .. "IconTexture"]
 		if name then
 			local r = name:GetTextColor()
-			name:SetTextColor(unpack((r < .9) and self.config.missing_color or kit.config.ink))
+			name:SetTextColor(unpack((r < 0.9) and self.config.missing_color or kit.config.ink))
 			name:SetShadowColor(0, 0, 0, 0)
 		end
 		if icon then
@@ -123,7 +123,7 @@ end
 -- others hidden. Whether that changed the count.
 Module.FitList = function(self)
 	local rows = kit:RowsFitting(_G.TradeSkillListScrollFrame, _G.TRADE_SKILL_HEIGHT, self.Rows, _G.TradeSkillSkill1)
-	if (rows == _G.TRADE_SKILLS_DISPLAYED) then
+	if rows == _G.TRADE_SKILLS_DISPLAYED then
 		return false
 	end
 	_G.TRADE_SKILLS_DISPLAYED = rows
@@ -149,7 +149,7 @@ Module.Layout = function(self)
 	search:SetFontObject(book.search_font)
 	local r, g, b = unpack(kit.config.band_text.value)
 	local Hint = function()
-		if (search:GetText() == _G.SEARCH) then
+		if search:GetText() == _G.SEARCH then
 			search:SetTextColor(unpack(book.search_hint_color))
 		else
 			search:SetTextColor(r, g, b)
@@ -200,9 +200,9 @@ end
 -- the panel's, made as Blizzard's addon loads).
 Module.UpdateGem = function(self)
 	local holder = self.Gem
-	if (not holder) then
+	if not holder then
 		local header = _G.TradeSkillFrameTitleText.DiabolicHeader
-		if (not header) then
+		if not header then
 			return
 		end
 		holder = kit:AddTitleGem(header)
@@ -253,7 +253,7 @@ Module.StyleTradeSkill = function(self)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == ADDON) then
+	if addon == ADDON then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleTradeSkill()
 	end
@@ -265,7 +265,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded(ADDON) then

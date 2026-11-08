@@ -84,16 +84,18 @@ end
 -- code), the others (item qualities, Blizzard's red) darkened to `bright`
 -- at most.
 local DarkenCodes = function(text, ink, bright)
-	return (text:gsub("|c%x%x(%x%x)(%x%x)(%x%x)", function(r, g, b)
-		r, g, b = tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255
-		local top = math_max(r, g, b)
-		if (top <= bright) then
-			return nil
-		elseif (math_min(r, g, b) > .8) then
-			return ink
-		end
-		return ColorCode({ r * bright / top, g * bright / top, b * bright / top })
-	end))
+	return (
+		text:gsub("|c%x%x(%x%x)(%x%x)(%x%x)", function(r, g, b)
+			r, g, b = tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255
+			local top = math_max(r, g, b)
+			if top <= bright then
+				return nil
+			elseif math_min(r, g, b) > 0.8 then
+				return ink
+			end
+			return ColorCode({ r * bright / top, g * bright / top, b * bright / top })
+		end)
+	)
 end
 
 -- The dark text in `frame` and all it holds (drawn for parchment) pale.
@@ -103,7 +105,7 @@ PaleText = function(frame, color)
 		local region = select(i, frame:GetRegions())
 		if region:IsObjectType("FontString") then
 			local r, g, b = region:GetTextColor()
-			if (r + g + b < 1) then
+			if r + g + b < 1 then
 				region:SetTextColor(unpack(color))
 			end
 		end
@@ -154,19 +156,29 @@ local ExtendRail = function(window, rail)
 			art:SetWidth(file - to)
 			art:SetTexCoord(to / file, 1, top, bottom)
 			stretch:SetPoint("TOPRIGHT", art, "TOPLEFT")
-			fits[#fits + 1] = { stretch, function() return art:GetLeft() - (from - tip) - window:GetLeft() - rail.reach end }
+			fits[#fits + 1] = {
+				stretch,
+				function()
+					return art:GetLeft() - (from - tip) - window:GetLeft() - rail.reach
+				end,
+			}
 		else
 			local tipPiece = Piece(to, tip)
 			tipPiece:SetPoint("TOPLEFT", stretch, "TOPRIGHT")
 			art:SetWidth(from)
 			art:SetTexCoord(0, from / file, top, bottom)
 			stretch:SetPoint("TOPLEFT", art, "TOPRIGHT")
-			fits[#fits + 1] = { stretch, function() return window:GetRight() - rail.reach - (tip - to) - art:GetRight() end }
+			fits[#fits + 1] = {
+				stretch,
+				function()
+					return window:GetRight() - rail.reach - (tip - to) - art:GetRight()
+				end,
+			}
 		end
 	end
 	-- (as wide as the room left, once the window is placed)
 	local Fit = function()
-		if (not window:GetLeft()) then
+		if not window:GetLeft() then
 			return
 		end
 		for _, fit in ipairs(fits) do
@@ -218,7 +230,7 @@ Module.PlaceBand = function(self, header, band)
 		elseif part:IsObjectType("CheckButton") then
 			kit:StyleCheckBox(part)
 		end
-		if (part:GetFrameLevel() < level) then
+		if part:GetFrameLevel() < level then
 			part:SetFrameLevel(level)
 		end
 		return part
@@ -303,19 +315,23 @@ Module.StylePanel = function(self, spec)
 	-- no band (nothing in it): its room given back, the frame and all it
 	-- holds up into it, the window's top where it was, its foot higher
 	local insets, offsetY = spec.insets, spec.offset_y
-	if (spec.band == false) then
+	if spec.band == false then
 		insets = { insets[1], insets[2] - config.header_height, insets[3], insets[4] }
 		offsetY = (offsetY or 0) + config.header_height
 	end
 	local window = kit:CreateWindow(frame, insets)
 	kit:SetBackground(window, spec.background or config.background)
-	if (type(spec.footer) == "table") then
+	if type(spec.footer) == "table" then
 		-- one page's: there while it shows
 		local foot = kit:AddFooter(window)
 		for page, height in pairs(spec.footer) do
 			if _G[page] then
-				_G[page]:HookScript("OnShow", function() kit:SetFooter(foot, height) end)
-				_G[page]:HookScript("OnHide", function() kit:SetFooter(foot, nil) end)
+				_G[page]:HookScript("OnShow", function()
+					kit:SetFooter(foot, height)
+				end)
+				_G[page]:HookScript("OnHide", function()
+					kit:SetFooter(foot, nil)
+				end)
 				kit:SetFooter(foot, _G[page]:IsShown() and height or nil)
 			end
 		end
@@ -323,7 +339,7 @@ Module.StylePanel = function(self, spec)
 		kit:AddFooter(window, spec.footer)
 	end
 	kit:AddDrag(window, frame)
-	if (spec.panel ~= false) then
+	if spec.panel ~= false then
 		kit:SetPanelLayout(frame, insets, insets[1], offsetY)
 	end
 	HideOwnArt(frame, spec.keep)
@@ -383,7 +399,7 @@ Module.StylePanel = function(self, spec)
 			kit:StyleDropDown(dropdown)
 		end
 	end
-	if (spec.band == false) then
+	if spec.band == false then
 		kit:DropBand(header)
 	elseif spec.band then
 		self:PlaceBand(header, spec.band)
@@ -436,8 +452,12 @@ Module.StylePanel = function(self, spec)
 		end
 		if _G[name] then
 			local insets = spec.list_insets or config.list_panel_insets
-			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] },
-				inside and _G[name] or nil)
+			local zone = kit:AddZone(
+				_G[name],
+				material or spec.list_material or "slate",
+				{ insets[1] + wider, insets[2], insets[3], insets[4] },
+				inside and _G[name] or nil
+			)
 			zones[name] = zone
 			-- (a zone on the frame itself: the window under it, not drawn
 			-- level with it in an order of the client's choosing)
@@ -538,7 +558,7 @@ end
 -- The windows of `addon` (nil: those always loaded).
 Module.StyleAddon = function(self, addon)
 	for _, spec in ipairs(self.config.frames) do
-		if (spec.addon == addon) then
+		if spec.addon == addon then
 			self:StylePanel(spec)
 		end
 	end
@@ -557,7 +577,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleAddon(nil)

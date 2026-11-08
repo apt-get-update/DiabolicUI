@@ -40,7 +40,7 @@ end
 -- The window's lines, oldest first.
 Module.GetText = function(self, frame)
 	local lines = history[frame]
-	if (not lines) then
+	if not lines then
 		return ""
 	end
 	local text, first = {}, lines.count - MAX_LINES + 1
@@ -91,14 +91,16 @@ Module.CreateWindow = function(self)
 	editBox:SetAutoFocus(false)
 	editBox:SetFontObject(_G.ChatFontNormal)
 	editBox:SetWidth(WIDTH - 2 * SIDE - BAR)
-	editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
+	editBox:SetScript("OnEscapePressed", function()
+		frame:Hide()
+	end)
 	scroll:SetScrollChild(editBox)
 
 	self.frame, self.editBox = frame, editBox
 end
 
 Module.Show = function(self, chatFrame)
-	if (not self.frame) then
+	if not self.frame then
 		self:CreateWindow()
 	end
 	self.frame:Show()
@@ -115,7 +117,7 @@ Module.HookFrame = function(self, frame)
 	hooksecurefunc(frame, "AddMessage", OnAddMessage)
 	-- Blizzard's double-click only minimizes undocked windows
 	_G[frame:GetName() .. "Tab"]:HookScript("OnDoubleClick", function(_, button)
-		if (button ~= "RightButton") then
+		if button ~= "RightButton" then
 			self:Show(frame)
 		end
 	end)
@@ -124,7 +126,7 @@ end
 Module.OnEnable = function(self)
 	for i = 1, _G.NUM_CHAT_WINDOWS do
 		-- not the combat log: it scrolls constantly
-		if (i ~= 2) then
+		if i ~= 2 then
 			self:HookFrame(_G["ChatFrame" .. i])
 		end
 	end

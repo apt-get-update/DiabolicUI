@@ -16,44 +16,74 @@ local EngineMock = require("mocks.engine_mock")
 
 -- The 3.3.5 enUS texts (Interface\FrameXML\GlobalStrings.lua)
 local STRINGS = {
-	LOOT_ITEM_SELF = "You receive loot: %s.", LOOT_ITEM_SELF_MULTIPLE = "You receive loot: %sx%d.",
-	LOOT_ITEM = "%s receives loot: %s.", LOOT_ITEM_MULTIPLE = "%s receives loot: %sx%d.",
-	LOOT_ITEM_PUSHED_SELF = "You receive item: %s.", LOOT_ITEM_PUSHED_SELF_MULTIPLE = "You receive item: %sx%d.",
-	LOOT_ITEM_CREATED_SELF = "You create: %s.", LOOT_ITEM_CREATED_SELF_MULTIPLE = "You create: %sx%d.",
-	LOOT_ROLL_YOU_WON = "You won: %s", YOU_LOOT_MONEY = "You loot %s", LOOT_MONEY_SPLIT = "Your share of the loot is %s.",
-	GOLD_AMOUNT = "%d Gold", SILVER_AMOUNT = "%d Silver", COPPER_AMOUNT = "%d Copper",
+	LOOT_ITEM_SELF = "You receive loot: %s.",
+	LOOT_ITEM_SELF_MULTIPLE = "You receive loot: %sx%d.",
+	LOOT_ITEM = "%s receives loot: %s.",
+	LOOT_ITEM_MULTIPLE = "%s receives loot: %sx%d.",
+	LOOT_ITEM_PUSHED_SELF = "You receive item: %s.",
+	LOOT_ITEM_PUSHED_SELF_MULTIPLE = "You receive item: %sx%d.",
+	LOOT_ITEM_CREATED_SELF = "You create: %s.",
+	LOOT_ITEM_CREATED_SELF_MULTIPLE = "You create: %sx%d.",
+	LOOT_ROLL_YOU_WON = "You won: %s",
+	YOU_LOOT_MONEY = "You loot %s",
+	LOOT_MONEY_SPLIT = "Your share of the loot is %s.",
+	GOLD_AMOUNT = "%d Gold",
+	SILVER_AMOUNT = "%d Silver",
+	COPPER_AMOUNT = "%d Copper",
 	COMBATLOG_XPGAIN_FIRSTPERSON = "%s dies, you gain %d experience.",
 	COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED = "You gain %d experience.",
 	ERR_QUEST_REWARD_EXP_I = "Experience gained: %d.",
 	LEVEL_UP = "Congratulations, you have reached level %d!",
-	LEVEL_UP_HEALTH_MANA = "You have gained %d hit points and %d mana.", LEVEL_UP_HEALTH = "You have gained %d hit points.",
+	LEVEL_UP_HEALTH_MANA = "You have gained %d hit points and %d mana.",
+	LEVEL_UP_HEALTH = "You have gained %d hit points.",
 	LEVEL_UP_STAT = "Your %s increases by %d.",
-	FACTION_STANDING_INCREASED = "Reputation with %s increased by %d.", FACTION_STANDING_DECREASED = "Reputation with %s decreased by %d.",
-	FACTION_STANDING_INCREASED_GENERIC = "Reputation with %s increased.", FACTION_STANDING_DECREASED_GENERIC = "Reputation with %s decreased.",
+	FACTION_STANDING_INCREASED = "Reputation with %s increased by %d.",
+	FACTION_STANDING_DECREASED = "Reputation with %s decreased by %d.",
+	FACTION_STANDING_INCREASED_GENERIC = "Reputation with %s increased.",
+	FACTION_STANDING_DECREASED_GENERIC = "Reputation with %s decreased.",
 	FACTION_STANDING_CHANGED = "You are now %s with %s.",
 	COMBATLOG_HONORGAIN = "%s dies, honorable kill Rank: %s (%d Honor Points)",
 	COMBATLOG_HONORGAIN_NO_RANK = "%s dies, honorable kill (%d Honor Points)",
 	COMBATLOG_HONORAWARD = "You have been awarded %d honor points.",
 	SKILL_RANK_UP = "Your skill in %s has increased to %d.",
-	ERR_QUEST_ACCEPTED_S = "Quest accepted: %s", ERR_QUEST_COMPLETE_S = "%s completed.",
-	ERR_QUEST_REWARD_ITEM_S = "Received item: %s.", ERR_QUEST_REWARD_MONEY_S = "Received %s.",
+	ERR_QUEST_ACCEPTED_S = "Quest accepted: %s",
+	ERR_QUEST_COMPLETE_S = "%s completed.",
+	ERR_QUEST_REWARD_ITEM_S = "Received item: %s.",
+	ERR_QUEST_REWARD_MONEY_S = "Received %s.",
 	ERR_QUEST_REWARD_ITEM_MULT_IS = "Received %d of item: %s.",
-	MARKED_AFK = "You are now Away.", MARKED_AFK_MESSAGE = "You are now Away: %s", CLEARED_AFK = "You are no longer Away.",
-	MARKED_DND = "You are now Busy: %s.", CLEARED_DND = "You are no longer marked Busy.",
-	ERR_EXHAUSTION_RESTED = "You feel rested.", ERR_EXHAUSTION_WELLRESTED = "You feel well rested.",
+	MARKED_AFK = "You are now Away.",
+	MARKED_AFK_MESSAGE = "You are now Away: %s",
+	CLEARED_AFK = "You are no longer Away.",
+	MARKED_DND = "You are now Busy: %s.",
+	CLEARED_DND = "You are no longer marked Busy.",
+	ERR_EXHAUSTION_RESTED = "You feel rested.",
+	ERR_EXHAUSTION_WELLRESTED = "You feel well rested.",
 	ERR_EXHAUSTION_NORMAL = "You feel normal.",
-	ERR_FRIEND_ONLINE_SS = "|Hplayer:%s|h[%s]|h has come online.", ERR_FRIEND_OFFLINE_S = "%s has gone offline.",
-	ERR_AUCTION_STARTED = "Auction created.", ERR_AUCTION_REMOVED = "Auction cancelled.", ERR_AUCTION_BID_PLACED = "Bid accepted.",
-	ERR_AUCTION_WON_S = "You won an auction for %s", ERR_AUCTION_SOLD_S = "A buyer has been found for your auction of %s.",
-	ERR_AUCTION_OUTBID_S = "You have been outbid on %s.", ERR_AUCTION_EXPIRED_S = "Your auction of %s has expired.",
+	ERR_FRIEND_ONLINE_SS = "|Hplayer:%s|h[%s]|h has come online.",
+	ERR_FRIEND_OFFLINE_S = "%s has gone offline.",
+	ERR_AUCTION_STARTED = "Auction created.",
+	ERR_AUCTION_REMOVED = "Auction cancelled.",
+	ERR_AUCTION_BID_PLACED = "Bid accepted.",
+	ERR_AUCTION_WON_S = "You won an auction for %s",
+	ERR_AUCTION_SOLD_S = "A buyer has been found for your auction of %s.",
+	ERR_AUCTION_OUTBID_S = "You have been outbid on %s.",
+	ERR_AUCTION_EXPIRED_S = "Your auction of %s has expired.",
 	ACHIEVEMENT_BROADCAST = "%s has earned the achievement %s!",
-	FRIENDS_LIST_AWAY = "Away", FRIENDS_LIST_BUSY = "Busy", TUTORIAL_TITLE26 = "Rested",
-	DEFAULT_AFK_MESSAGE = "Away", DEFAULT_DND_MESSAGE = "Busy",
+	FRIENDS_LIST_AWAY = "Away",
+	FRIENDS_LIST_BUSY = "Busy",
+	TUTORIAL_TITLE26 = "Rested",
+	DEFAULT_AFK_MESSAGE = "Away",
+	DEFAULT_DND_MESSAGE = "Busy",
 	CHAT_YOU_JOINED_NOTICE = "Joined Channel: |Hchannel:%d|h[%s]|h",
 	CHAT_YOU_CHANGED_NOTICE = "Changed Channel: |Hchannel:%d|h[%s]|h",
 	CHAT_YOU_LEFT_NOTICE = "Left Channel: |Hchannel:%d|h[%s]|h",
 	CHAT_SUSPENDED_NOTICE = "Left Channel: |Hchannel:%d|h[%s]|h ",
-	XP = "XP", REPUTATION = "Reputation", HONOR = "Honor", LEVEL = "Level", HEALTH = "Health", MANA = "Mana",
+	XP = "XP",
+	REPUTATION = "Reputation",
+	HONOR = "Honor",
+	LEVEL = "Level",
+	HEALTH = "Health",
+	MANA = "Mana",
 }
 
 local PLUS, MINUS = "|cff33cc33+|r ", "|cffcc3333-|r "
@@ -71,12 +101,24 @@ local function load()
 		table.insert(filters[event], filter)
 	end
 	local Engine = EngineMock.new()
-	Engine:NewStaticConfig("Library: Format", { Money = function(copper) return "<" .. copper .. ">" end })
+	Engine:NewStaticConfig("Library: Format", {
+		Money = function(copper)
+			return "<" .. copper .. ">"
+		end,
+	})
 	db = {
-		cleanLoot = true, cleanProgress = true, cleanQuests = true, cleanStatus = true, cleanOnline = true,
-		cleanAuctions = true, cleanAchievements = true, hideChatNoise = true,
+		cleanLoot = true,
+		cleanProgress = true,
+		cleanQuests = true,
+		cleanStatus = true,
+		cleanOnline = true,
+		cleanAuctions = true,
+		cleanAchievements = true,
+		hideChatNoise = true,
 	}
-	Engine.GetConfig = function() return db end
+	Engine.GetConfig = function()
+		return db
+	end
 	assert(loadfile("modules/chat/cleaner.lua"))("DiabolicUI", Engine)
 	Module = Engine:GetModule("ChatCleaner")
 	Module:OnInit()
@@ -124,30 +166,66 @@ function TestChatCleaner:test_loot_and_money()
 end
 
 function TestChatCleaner:test_experience_reputation_honor_skills_levels()
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_XP_GAIN", "Kobold Vermin dies, you gain 250 experience."), PLUS .. "250 XP: Kobold Vermin")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_XP_GAIN", "Kobold Vermin dies, you gain 250 experience. (+125 exp Rested bonus)"),
-		PLUS .. "250 XP: Kobold Vermin |cff999999(+125 exp Rested bonus)|r")
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_XP_GAIN", "Kobold Vermin dies, you gain 250 experience."),
+		PLUS .. "250 XP: Kobold Vermin"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_XP_GAIN", "Kobold Vermin dies, you gain 250 experience. (+125 exp Rested bonus)"),
+		PLUS .. "250 XP: Kobold Vermin |cff999999(+125 exp Rested bonus)|r"
+	)
 	lu.assertEquals(chat("CHAT_MSG_COMBAT_XP_GAIN", "You gain 80 experience."), PLUS .. "80 XP")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Experience gained: 4400."), PLUS .. "4400 XP")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Argent Crusade increased by 75."),
-		PLUS .. "75 Reputation: |cffffd200Argent Crusade|r")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Booty Bay decreased by 25."),
-		MINUS .. "25 Reputation: |cffffd200Booty Bay|r")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Ravenholdt increased."), PLUS .. "Reputation: |cffffd200Ravenholdt|r")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Ravenholdt decreased."), MINUS .. "Reputation: |cffffd200Ravenholdt|r")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "You are now Revered with Argent Crusade."), "|cffffd200Argent Crusade|r: Revered")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_HONOR_GAIN", "Thrall dies, honorable kill Rank: Warlord (15 Honor Points)"), PLUS .. "15 Honor: Thrall (Warlord)")
-	lu.assertEquals(chat("CHAT_MSG_COMBAT_HONOR_GAIN", "Thrall dies, honorable kill (12 Honor Points)"), PLUS .. "12 Honor: Thrall")
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Argent Crusade increased by 75."),
+		PLUS .. "75 Reputation: |cffffd200Argent Crusade|r"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Booty Bay decreased by 25."),
+		MINUS .. "25 Reputation: |cffffd200Booty Bay|r"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Ravenholdt increased."),
+		PLUS .. "Reputation: |cffffd200Ravenholdt|r"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "Reputation with Ravenholdt decreased."),
+		MINUS .. "Reputation: |cffffd200Ravenholdt|r"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_FACTION_CHANGE", "You are now Revered with Argent Crusade."),
+		"|cffffd200Argent Crusade|r: Revered"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_HONOR_GAIN", "Thrall dies, honorable kill Rank: Warlord (15 Honor Points)"),
+		PLUS .. "15 Honor: Thrall (Warlord)"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_COMBAT_HONOR_GAIN", "Thrall dies, honorable kill (12 Honor Points)"),
+		PLUS .. "12 Honor: Thrall"
+	)
 	lu.assertEquals(chat("CHAT_MSG_COMBAT_HONOR_GAIN", "You have been awarded 300 honor points."), PLUS .. "300 Honor")
-	lu.assertEquals(chat("CHAT_MSG_SKILL", "Your skill in Tailoring has increased to 441."), PLUS .. "|cffffd200Tailoring|r: 441")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Congratulations, you have reached level 80!"), PLUS .. "|cffffd200Level 80|r")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You have gained 120 hit points and 90 mana."), PLUS .. "120 Health, " .. PLUS .. "90 Mana")
+	lu.assertEquals(
+		chat("CHAT_MSG_SKILL", "Your skill in Tailoring has increased to 441."),
+		PLUS .. "|cffffd200Tailoring|r: 441"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "Congratulations, you have reached level 80!"),
+		PLUS .. "|cffffd200Level 80|r"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "You have gained 120 hit points and 90 mana."),
+		PLUS .. "120 Health, " .. PLUS .. "90 Mana"
+	)
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You have gained 120 hit points."), PLUS .. "120 Health")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Your Stamina increases by 3."), PLUS .. "3 Stamina")
 end
 
 function TestChatCleaner:test_quests_status_online_auctions()
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Quest accepted: The Lich King"), PLUS .. "Quest accepted: |cffffd200The Lich King|r")
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "Quest accepted: The Lich King"),
+		PLUS .. "Quest accepted: |cffffd200The Lich King|r"
+	)
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "The Lich King completed."), PLUS .. "|cffffd200The Lich King|r completed")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You are now Away."), "|cffff9900+ Away|r")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You are now Away: Away"), "|cffff9900+ Away|r") -- the default message
@@ -158,25 +236,49 @@ function TestChatCleaner:test_quests_status_online_auctions()
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You feel rested."), PLUS .. "Rested")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You feel well rested."), PLUS .. "Rested")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You feel normal."), "|cff999999- Rested|r")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "|Hplayer:Ally|h[Ally]|h has come online."), PLUS .. "|Hplayer:Ally|h[Ally]|h has come online")
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "|Hplayer:Ally|h[Ally]|h has come online."),
+		PLUS .. "|Hplayer:Ally|h[Ally]|h has come online"
+	)
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Ally has gone offline."), "|cff999999- Ally has gone offline|r")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Auction created."), PLUS .. "Auction created")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Auction cancelled."), MINUS .. "Auction cancelled")
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Bid accepted."), PLUS .. "Bid accepted")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "A buyer has been found for your auction of Silk Cloth."), PLUS .. "A buyer has been found for your auction of Silk Cloth")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You won an auction for Silk Cloth"), PLUS .. "You won an auction for Silk Cloth")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "You have been outbid on Silk Cloth."), MINUS .. "You have been outbid on Silk Cloth")
-	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Your auction of Silk Cloth has expired."), MINUS .. "Your auction of Silk Cloth has expired")
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "A buyer has been found for your auction of Silk Cloth."),
+		PLUS .. "A buyer has been found for your auction of Silk Cloth"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "You won an auction for Silk Cloth"),
+		PLUS .. "You won an auction for Silk Cloth"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "You have been outbid on Silk Cloth."),
+		MINUS .. "You have been outbid on Silk Cloth"
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_SYSTEM", "Your auction of Silk Cloth has expired."),
+		MINUS .. "Your auction of Silk Cloth has expired"
+	)
 	-- anything else stays as it is
 	lu.assertEquals(chat("CHAT_MSG_SYSTEM", "Welcome to ChromieCraft."), "Welcome to ChromieCraft.")
 end
 
 function TestChatCleaner:test_achievements_keep_the_name_slot()
 	local link = "|cffffff00|Hachievement:6:0:0:0:0:0:0:0:0:0:0|h[Level 10]|h|r"
-	lu.assertEquals(chat("CHAT_MSG_ACHIEVEMENT", "%s has earned the achievement " .. link .. "!", "Ally"), "%s: " .. link)
-	lu.assertEquals(chat("CHAT_MSG_GUILD_ACHIEVEMENT", "%s has earned the achievement " .. link .. "!", "Ally"), "%s: " .. link)
+	lu.assertEquals(
+		chat("CHAT_MSG_ACHIEVEMENT", "%s has earned the achievement " .. link .. "!", "Ally"),
+		"%s: " .. link
+	)
+	lu.assertEquals(
+		chat("CHAT_MSG_GUILD_ACHIEVEMENT", "%s has earned the achievement " .. link .. "!", "Ally"),
+		"%s: " .. link
+	)
 	-- already filled in by someone: left alone
-	lu.assertEquals(chat("CHAT_MSG_ACHIEVEMENT", "Ally has earned the achievement " .. link .. "!"), "Ally has earned the achievement " .. link .. "!")
+	lu.assertEquals(
+		chat("CHAT_MSG_ACHIEVEMENT", "Ally has earned the achievement " .. link .. "!"),
+		"Ally has earned the achievement " .. link .. "!"
+	)
 end
 
 function TestChatCleaner:test_each_group_has_its_option()

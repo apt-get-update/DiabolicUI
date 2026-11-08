@@ -38,8 +38,11 @@ local UnitIsPlayer = _G.UnitIsPlayer
 local UnitName = _G.UnitName
 
 local CHATS = {
-	CHAT_MSG_RAID_WARNING = true, CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true,
-	CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true
+	CHAT_MSG_RAID_WARNING = true,
+	CHAT_MSG_RAID = true,
+	CHAT_MSG_RAID_LEADER = true,
+	CHAT_MSG_PARTY = true,
+	CHAT_MSG_PARTY_LEADER = true,
 }
 
 local LINK = "|c%x+|Hitem:[^|]+|h%[[^%]]+%]|h|r"
@@ -97,7 +100,7 @@ Module.Update = function(self)
 		local row = self.rows[i] or self:CreateRow()
 		self.rows[i] = row
 		local _, _, _, _, _, _, _, _, _, texture = GetItemInfo(item.link)
-		self.waitingForInfo = self.waitingForInfo or (not texture)
+		self.waitingForInfo = self.waitingForInfo or not texture
 		row.link = item.link
 		row.Icon:SetTexture(texture or [[Interface\Icons\INV_Misc_QuestionMark]])
 		row.Name:SetText(item.link)
@@ -114,7 +117,7 @@ Module.Update = function(self)
 	for i = #items + 1, #self.rows do
 		self.rows[i]:Hide()
 	end
-	if (#items == 0) then
+	if #items == 0 then
 		frame:Hide()
 		return
 	end
@@ -140,7 +143,7 @@ Module.AddLinks = function(self, message)
 		end
 	end
 	for link in string_gmatch(message, LINK) do
-		if (not listed[link]) then
+		if not listed[link] then
 			self.items[#self.items + 1] = { link = link }
 		end
 	end
@@ -150,7 +153,7 @@ end
 -- The first of these items not rolled yet, or the first rolled
 local Find = function(items, link, rolling)
 	for i, item in ipairs(items) do
-		if (item.link == link) and ((not rolling) or (not item.rolling)) then
+		if (item.link == link) and ((not rolling) or not item.rolling) then
 			return i, item
 		end
 	end
@@ -197,17 +200,17 @@ end
 
 -- Anyone's, yours included: each slot of a corpse once, whoever opened it
 Module.OnAddonMessage = function(self, event, prefix, message)
-	if (prefix ~= PREFIX) then
+	if prefix ~= PREFIX then
 		return
 	end
 	local corpse, boss, slot, link = message:match("^(.-)~(.-)~(%d+)~(" .. LINK .. ")$")
 	if not corpse then
 		return
 	end
-	if (corpse ~= self.source) then
+	if corpse ~= self.source then
 		self:Start((boss ~= "") and boss or nil, corpse)
 	end
-	if (not self.slots[slot]) then
+	if not self.slots[slot] then
 		self.slots[slot] = true
 		self.items[#self.items + 1] = { link = link }
 		self:Update()
@@ -256,11 +259,11 @@ end
 -- first item, as a raid warning puts them, to try both windows solo
 local FAKE_LOOT = {
 	"|cffff8000|Hitem:19019:0:0:0:0:0:0:0:0|h[Thunderfury, Blessed Blade of the Windseeker]|h|r",
-	"|cff0070dd|Hitem:6182:0:0:0:0:0:0:0:0|h[Wirt's Third Leg]|h|r"
+	"|cff0070dd|Hitem:6182:0:0:0:0:0:0:0:0|h[Wirt's Third Leg]|h|r",
 }
 
 Module.ShowFakeRoll = function(self)
-	if (not self.frame) then
+	if not self.frame then
 		return
 	end
 	local player = UnitName("player")
@@ -290,7 +293,7 @@ Module.CreateWindow = function(self)
 	local sinceUpdate = 0
 	frame:SetScript("OnUpdate", function(_, elapsed)
 		sinceUpdate = sinceUpdate + elapsed
-		if self.waitingForInfo and (sinceUpdate > .5) then
+		if self.waitingForInfo and (sinceUpdate > 0.5) then
 			sinceUpdate = 0
 			self:Update()
 		end
@@ -318,7 +321,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not self:GetConfig("LootFrame").rollWindow) then
+	if not self:GetConfig("LootFrame").rollWindow then
 		return
 	end
 	self:CreateWindow()

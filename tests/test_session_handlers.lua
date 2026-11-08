@@ -80,10 +80,16 @@ function TestPopups:test_three_buttons_and_every_callback()
 		end
 	end
 	local frame = self:show("TEST_THREE", {
-		title = "Three ways", text = "Pick one.",
-		button1 = "Yes", button2 = "No", button3 = "Later",
-		OnAccept = record("accept"), OnCancel = record("cancel"), OnAlt = record("alt"),
-		OnShow = record("show"), OnHide = record("hide"),
+		title = "Three ways",
+		text = "Pick one.",
+		button1 = "Yes",
+		button2 = "No",
+		button3 = "Later",
+		OnAccept = record("accept"),
+		OnCancel = record("cancel"),
+		OnAlt = record("alt"),
+		OnShow = record("show"),
+		OnHide = record("hide"),
 	})
 	lu.assertEquals(calls, { "show" })
 	lu.assertEquals(frame.title:GetText(), "Three ways")
@@ -128,7 +134,15 @@ function TestPopups:test_two_buttons_in_any_pair()
 	local frame = self:show("TEST_ACCEPT_ALT", { text = "Two.", button1 = "Yes", button3 = "Later" })
 	lu.assertEquals(frame.button1:GetPoint(), "BOTTOMLEFT")
 	lu.assertEquals(frame.button3:GetPoint(), "BOTTOMRIGHT")
-	lu.assertEquals(frame:GetWidth(), footer.insets[1] + button.insets[1] + button.size[1] * 2 + footer.button_spacing + button.insets[2] + footer.insets[2])
+	lu.assertEquals(
+		frame:GetWidth(),
+		footer.insets[1]
+			+ button.insets[1]
+			+ button.size[1] * 2
+			+ footer.button_spacing
+			+ button.insets[2]
+			+ footer.insets[2]
+	)
 	client:Click(frame.button1)
 
 	frame = self:show("TEST_CANCEL_ALT", { text = "Two.", button2 = "No", button3 = "Later" })
@@ -143,8 +157,16 @@ function TestPopups:test_text_only_has_no_footer()
 	local frame = self:show("TEST_NOTE", { title = "Note", text = "Just so you know." })
 	lu.assertFalse(shown(frame.footer))
 	local body = self.style.body
-	lu.assertAlmostEquals(frame:GetHeight(), frame.header:GetHeight() + self.style.padding + frame.body:GetHeight(), 0.001)
-	lu.assertAlmostEquals(frame.body:GetHeight(), body.insets[3] + body.insets[4] + frame.message:GetStringHeight(), 0.001)
+	lu.assertAlmostEquals(
+		frame:GetHeight(),
+		frame.header:GetHeight() + self.style.padding + frame.body:GetHeight(),
+		0.001
+	)
+	lu.assertAlmostEquals(
+		frame.body:GetHeight(),
+		body.insets[3] + body.insets[4] + frame.message:GetStringHeight(),
+		0.001
+	)
 	frame:Hide()
 	assertClean(client)
 end
@@ -192,7 +214,9 @@ function TestPopups:test_the_buttons_light_up_and_press()
 	local button = frame.button1
 	local colors = self.style.footer.button.fontColor
 	local function look()
-		return (shown(button.normal) and "normal") or (shown(button.pushed) and "pushed") or (shown(button.highlight) and "highlight")
+		return (shown(button.normal) and "normal")
+			or (shown(button.pushed) and "pushed")
+			or (shown(button.highlight) and "highlight")
 	end
 	local function textColor()
 		return { button.text:GetTextColor() }
@@ -246,25 +270,25 @@ function TestStatusBars:test_it_fills_in_every_direction()
 	local bar = self.bar
 	bar:DisableSmoothing(true)
 	bar:SetValue(25)
-	lu.assertEquals(crop(bar.bar), { 0, .25, 0, 1 })
+	lu.assertEquals(crop(bar.bar), { 0, 0.25, 0, 1 })
 	lu.assertAlmostEquals(bar.bar:GetWidth(), 50, 1e-9)
 	lu.assertEquals(select(3, bar.spark:GetPoint()), "RIGHT")
 
 	bar:SetOrientation("LEFT")
 	bar:Update()
-	lu.assertEquals(crop(bar.bar), { .75, 1, 0, 1 })
+	lu.assertEquals(crop(bar.bar), { 0.75, 1, 0, 1 })
 	lu.assertEquals(bar.bar:GetPoint(3), "RIGHT")
 	lu.assertEquals(select(3, bar.spark:GetPoint()), "LEFT")
 
 	bar:SetOrientation("UP")
 	bar:Update()
-	lu.assertEquals(crop(bar.bar), { 0, 1, .75, 1 })
+	lu.assertEquals(crop(bar.bar), { 0, 1, 0.75, 1 })
 	lu.assertAlmostEquals(bar.bar:GetHeight(), 5, 1e-9)
 	lu.assertEquals(select(3, bar.spark:GetPoint()), "TOP")
 
 	bar:SetOrientation("DOWN")
 	bar:Update()
-	lu.assertEquals(crop(bar.bar), { 0, 1, 0, .25 })
+	lu.assertEquals(crop(bar.bar), { 0, 1, 0, 0.25 })
 	lu.assertEquals(select(3, bar.spark:GetPoint()), "BOTTOM")
 	assertClean(client)
 end
@@ -468,38 +492,38 @@ end
 
 function TestOrbs:test_layer_colors()
 	local orb = self.orb
-	orb:SetStatusBarColor(.2, .3, .4)
-	assertColor({ orb:GetStatusBarColor("bar") }, { .2, .3, .4, 1 })
-	orb:SetStatusBarColor(.2, .3, .4, .6)
-	assertColor({ orb:GetStatusBarColor("bar") }, { .2, .3, .4, .6 })
-	assertColor({ orb.scaffold.bar:GetVertexColor() }, { .2, .3, .4, .6 })
-	orb:SetStatusBarColor(.5, .5, .5, "moon")
-	assertColor({ orb:GetStatusBarColor("moon") }, { .5, .5, .5, .5 })
-	orb:SetStatusBarColor(.1, .2, .3, .7, "shade")
-	assertColor({ orb:GetStatusBarColor("shade") }, { .1, .2, .3, .7 })
+	orb:SetStatusBarColor(0.2, 0.3, 0.4)
+	assertColor({ orb:GetStatusBarColor("bar") }, { 0.2, 0.3, 0.4, 1 })
+	orb:SetStatusBarColor(0.2, 0.3, 0.4, 0.6)
+	assertColor({ orb:GetStatusBarColor("bar") }, { 0.2, 0.3, 0.4, 0.6 })
+	assertColor({ orb.scaffold.bar:GetVertexColor() }, { 0.2, 0.3, 0.4, 0.6 })
+	orb:SetStatusBarColor(0.5, 0.5, 0.5, "moon")
+	assertColor({ orb:GetStatusBarColor("moon") }, { 0.5, 0.5, 0.5, 0.5 })
+	orb:SetStatusBarColor(0.1, 0.2, 0.3, 0.7, "shade")
+	assertColor({ orb:GetStatusBarColor("shade") }, { 0.1, 0.2, 0.3, 0.7 })
 
 	-- the smoke is the main color, and the spark a bright shade of it
 	-- (less green when blue leads)
 	orb:SetStatusBarColor(0, 0, 1, "smoke")
-	assertColor({ orb:GetStatusBarColor() }, { 0, 0, 1, .9 })
-	assertColor({ orb.overlay.spark:GetVertexColor() }, { .375, .5625, 1 })
-	assertColor({ orb.overlay.spark.glow:GetVertexColor() }, { .375, .5625, 1 })
+	assertColor({ orb:GetStatusBarColor() }, { 0, 0, 1, 0.9 })
+	assertColor({ orb.overlay.spark:GetVertexColor() }, { 0.375, 0.5625, 1 })
+	assertColor({ orb.overlay.spark.glow:GetVertexColor() }, { 0.375, 0.5625, 1 })
 	assertClean(client)
 end
 
 function TestOrbs:test_one_color_for_all_layers()
 	local orb = self.orb
-	orb:SetStatusBarColor(1, .5, 0, "ALL")
-	assertColor({ orb:GetStatusBarColor("bar") }, { .25, .125, 0, 1 })
-	assertColor({ orb:GetStatusBarColor("moon") }, { .5, .25, 0, .5 })
-	assertColor({ orb:GetStatusBarColor("smoke") }, { 1, .5, 0, .9 })
-	assertColor({ orb:GetStatusBarColor("shade") }, { .1, .05, 0, 1 })
-	assertColor({ orb.scaffold.moon:GetVertexColor() }, { .5, .25, 0, .5 })
+	orb:SetStatusBarColor(1, 0.5, 0, "ALL")
+	assertColor({ orb:GetStatusBarColor("bar") }, { 0.25, 0.125, 0, 1 })
+	assertColor({ orb:GetStatusBarColor("moon") }, { 0.5, 0.25, 0, 0.5 })
+	assertColor({ orb:GetStatusBarColor("smoke") }, { 1, 0.5, 0, 0.9 })
+	assertColor({ orb:GetStatusBarColor("shade") }, { 0.1, 0.05, 0, 1 })
+	assertColor({ orb.scaffold.moon:GetVertexColor() }, { 0.5, 0.25, 0, 0.5 })
 	-- less green when red leads
-	assertColor({ orb.overlay.spark:GetVertexColor() }, { 1, .7, .75 })
+	assertColor({ orb.overlay.spark:GetVertexColor() }, { 1, 0.7, 0.75 })
 
-	orb:SetStatusBarColor(1, 1, 1, .4, "ALL")
-	assertColor({ orb:GetStatusBarColor("shade") }, { .1, .1, .1, .4 })
+	orb:SetStatusBarColor(1, 1, 1, 0.4, "ALL")
+	assertColor({ orb:GetStatusBarColor("shade") }, { 0.1, 0.1, 0.1, 0.4 })
 	assertClean(client)
 end
 
@@ -518,10 +542,10 @@ function TestOrbs:test_layer_textures()
 	lu.assertNil(scaffold.bar:GetTexture())
 	orb:SetStatusBarTexture(1, 0, 0, "moon")
 	lu.assertNil(scaffold.moon:GetTexture())
-	orb:SetStatusBarTexture(1, 0, 0, .5, "smoke")
+	orb:SetStatusBarTexture(1, 0, 0, 0.5, "smoke")
 	lu.assertNil(scaffold.smoke:GetTexture())
 	orb:SetStatusBarTexture("bar.tga")
-	orb:SetStatusBarTexture(1, 0, 0, .5)
+	orb:SetStatusBarTexture(1, 0, 0, 0.5)
 	lu.assertNil(scaffold.bar:GetTexture())
 	lu.assertEquals(scaffold.shade:GetTexture(), "shade.tga")
 	assertClean(client)
@@ -558,12 +582,12 @@ function TestOrbs:test_a_cropped_orb_crops_its_spark()
 	orb:SetCrop(30, 0)
 	lu.assertEquals(orb.scrollframe:GetWidth(), 70)
 	lu.assertEquals(orb.scrollframe:GetHorizontalScroll(), 30)
-	lu.assertEquals(crop(spark), { .3, 1, 0, 1 })
+	lu.assertEquals(crop(spark), { 0.3, 1, 0, 1 })
 	lu.assertEquals({ spark:GetPoint() }, { "LEFT", orb.scrollframe, "TOPLEFT", 0, -1 })
 	lu.assertAlmostEquals(spark:GetWidth(), 70, 1e-9)
 
 	orb:SetCrop(0, 20)
-	lu.assertEquals(crop(spark), { 0, .8, 0, 1 })
+	lu.assertEquals(crop(spark), { 0, 0.8, 0, 1 })
 	lu.assertEquals({ spark:GetPoint() }, { "RIGHT", orb.scrollframe, "TOPRIGHT", 0, -1 })
 
 	orb:SetWidth(120)
@@ -763,7 +787,7 @@ function TestActionButtons:test_usable_out_of_mana_unusable_out_of_range_and_dea
 	client.world.noShaders = true
 	button:UpdateUsable("forced")
 	lu.assertNil(button.icon:IsDesaturated())
-	assertColor({ button.icon:GetVertexColor() }, { .3, .3, .3 })
+	assertColor({ button.icon:GetVertexColor() }, { 0.3, 0.3, 0.3 })
 	assertClean(client)
 end
 
@@ -862,15 +886,26 @@ function TestActionButtons:test_trade_skills_update_the_checked_look()
 end
 
 function TestActionButtons:test_pet_actions()
-	boot({ class = "HUNTER", world = function(world)
-		_G.PET_ACTION_ATTACK = "Attack"
-		_G.PET_ATTACK_TEXTURE = [[Interface\Icons\Ability_GhoulFrenzy]]
-		world.units.pet = Client.newUnit({ name = "Wolf" })
-		world.petActionsUsable = true
-		world.petActions[1] = { name = "PET_ACTION_ATTACK", texture = "PET_ATTACK_TEXTURE", isToken = true, isActive = true }
-		world.petActions[2] = { name = "Bite", subtext = "Rank 3", texture = [[Interface\Icons\Ability_Racial_Cannibalize]], autoCastAllowed = true, autoCastEnabled = true }
-		world.petActions[3] = { name = "Growl", texture = [[Interface\Icons\Ability_Physical_Taunt]], autoCastAllowed = true }
-	end })
+	boot({
+		class = "HUNTER",
+		world = function(world)
+			_G.PET_ACTION_ATTACK = "Attack"
+			_G.PET_ATTACK_TEXTURE = [[Interface\Icons\Ability_GhoulFrenzy]]
+			world.units.pet = Client.newUnit({ name = "Wolf" })
+			world.petActionsUsable = true
+			world.petActions[1] =
+				{ name = "PET_ACTION_ATTACK", texture = "PET_ATTACK_TEXTURE", isToken = true, isActive = true }
+			world.petActions[2] = {
+				name = "Bite",
+				subtext = "Rank 3",
+				texture = [[Interface\Icons\Ability_Racial_Cannibalize]],
+				autoCastAllowed = true,
+				autoCastEnabled = true,
+			}
+			world.petActions[3] =
+				{ name = "Growl", texture = [[Interface\Icons\Ability_Physical_Taunt]], autoCastAllowed = true }
+		end,
+	})
 	client:FireEvent("PET_BAR_UPDATE")
 	local attack, bite, growl = _G.EnginePetBarButton1, _G.EnginePetBarButton2, _G.EnginePetBarButton3
 	lu.assertEquals(attack.icon:GetTexture(), [[Interface\Icons\Ability_GhoulFrenzy]])
@@ -905,8 +940,15 @@ function TestActionButtons:test_pet_actions()
 	client:FireEvent("PET_BAR_HIDEGRID")
 	lu.assertEquals(growl.showgrid, showgrid)
 
-	for _, event in ipairs({ "PET_STABLE_UPDATE", "PET_STABLE_SHOW", "PLAYER_CONTROL_LOST", "PLAYER_CONTROL_GAINED",
-		"PET_BAR_UPDATE_COOLDOWN", "SPELLS_CHANGED", "PLAYER_FARSIGHT_FOCUS_CHANGED" }) do
+	for _, event in ipairs({
+		"PET_STABLE_UPDATE",
+		"PET_STABLE_SHOW",
+		"PLAYER_CONTROL_LOST",
+		"PLAYER_CONTROL_GAINED",
+		"PET_BAR_UPDATE_COOLDOWN",
+		"SPELLS_CHANGED",
+		"PLAYER_FARSIGHT_FOCUS_CHANGED",
+	}) do
 		client:FireEvent(event)
 	end
 	client:FireEvent("UNIT_FLAGS", "pet")
@@ -973,7 +1015,9 @@ end
 function TestUnitFrames:test_an_event_registered_twice_runs_once()
 	local frame = self.module:GetWidget("Unit: Player"):GetFrame()
 	local runs = 0
-	local count = function() runs = runs + 1 end
+	local count = function()
+		runs = runs + 1
+	end
 	frame:RegisterEvent("PLAYER_FLAGS_CHANGED", count)
 	frame:RegisterEvent("PLAYER_FLAGS_CHANGED", count)
 	client:FireEvent("PLAYER_FLAGS_CHANGED", "player")

@@ -4,7 +4,7 @@
 -- modules call :GetElement(name):Disable() for what they take over, and
 -- Menu_Panel / Menu_Option remove Interface Options entries that no longer
 -- apply.
-local _, Engine = ... 
+local _, Engine = ...
 local Handler = Engine:NewHandler("BlizzardUI")
 
 -- Lua API
@@ -50,7 +50,7 @@ local kill = function(object)
 		UIHider[object] = {
 			parent = object:GetParent(),
 			isshown = object:IsShown(),
-			point = { object:GetPoint() }
+			point = { object:GetPoint() },
 		}
 	end
 	object:SetParent(UIHider)
@@ -58,7 +58,6 @@ local kill = function(object)
 		object:UnregisterAllEvents()
 	end
 end
-
 
 ------------------------------------------------------------------------
 --	Unit Frames
@@ -98,9 +97,9 @@ local disableUnitFrame = function(unit)
 		local PlayerFrame = _G.PlayerFrame
 
 		killUnitFrame(PlayerFrame)
-		
+
 		-- A lot of blizz modules relies on PlayerFrame.unit
-		-- This includes the aura frame and several others. 
+		-- This includes the aura frame and several others.
 		PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 		PlayerFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
 		PlayerFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
@@ -110,7 +109,6 @@ local disableUnitFrame = function(unit)
 		-- User placed frames don't animate
 		PlayerFrame:SetUserPlaced(true)
 		PlayerFrame:SetDontSavePosition(true)
-
 	elseif unit == "pet" then
 		killUnitFrame(_G.PetFrame)
 	elseif unit == "target" then
@@ -148,7 +146,7 @@ end
 local elements = {
 	Menu_Panel = {
 		Remove = function(self, panel_id, panel_name)
-			-- remove an entire blizzard options panel, 
+			-- remove an entire blizzard options panel,
 			-- and disable its automatic cancel/okay functionality
 			-- this is needed, or the option will be reset when the menu closes
 			-- it is also a major source of taint related to the Compact group frames!
@@ -171,12 +169,12 @@ local elements = {
 					panel.refresh = function() end
 				end
 			end
-		end
+		end,
 	},
 	Menu_Option = {
 		Remove = function(self, option_shrink, option_name)
 			local option = _G[option_name]
-			if not(option) or not(option.IsObjectType) or not(option:IsObjectType("Frame")) then
+			if not option or not option.IsObjectType or not (option:IsObjectType("Frame")) then
 				return
 			end
 			option:SetParent(UIHider)
@@ -193,7 +191,7 @@ local elements = {
 			option.oldValue = nil
 			option.defaultValue = nil
 			option.setFunc = function() end
-		end
+		end,
 	},
 
 	ActionBars = {
@@ -233,7 +231,7 @@ local elements = {
 			MainMenuExpBar:SetParent(UIHider)
 
 			-- Trying to work around a bug sometimes happening
-			-- on level 20 starter edition characters. 
+			-- on level 20 starter edition characters.
 			MainMenuExpBar:SetScript("OnShow", nil)
 			MainMenuExpBar:SetScript("OnHide", nil)
 			MainMenuExpBar:SetScript("OnEvent", nil)
@@ -248,7 +246,7 @@ local elements = {
 			BonusActionBarFrame:UnregisterAllEvents()
 			BonusActionBarFrame:Hide()
 			BonusActionBarFrame:SetAlpha(0)
-			
+
 			VehicleMenuBar:UnregisterAllEvents()
 			VehicleMenuBar:Hide()
 			VehicleMenuBar:SetAlpha(0)
@@ -269,14 +267,14 @@ local elements = {
 			MultiBarBottomRight:SetParent(UIHider)
 			MultiBarLeft:SetParent(UIHider)
 			MultiBarRight:SetParent(UIHider)
-			
+
 			TutorialFrameAlertButton:UnregisterAllEvents()
 			TutorialFrameAlertButton:Hide()
 
 			MainMenuBarMaxLevelBar:SetParent(UIHider)
 			MainMenuBarMaxLevelBar:Hide()
 			ReputationWatchBar:SetParent(UIHider)
-			
+
 			local ShapeshiftBarFrame = _G.ShapeshiftBarFrame
 			local ShapeshiftBarLeft = _G.ShapeshiftBarLeft
 			local ShapeshiftBarMiddle = _G.ShapeshiftBarMiddle
@@ -296,7 +294,7 @@ local elements = {
 			ShapeshiftBarRight:Hide()
 			ShapeshiftBarRight:SetAlpha(0)
 
-			for i = 1,12 do
+			for i = 1, 12 do
 				local ActionButton = _G["ActionButton" .. i]
 				local MultiBarBottomLeftButton = _G["MultiBarBottomLeftButton" .. i]
 				local MultiBarBottomRightButton = _G["MultiBarBottomRightButton" .. i]
@@ -331,13 +329,14 @@ local elements = {
 			UIPARENT_MANAGED_FRAME_POSITIONS["MultiCastActionBarFrame"] = nil
 			UIPARENT_MANAGED_FRAME_POSITIONS["MULTICASTACTIONBAR_YPOS"] = nil
 
-			
 			if _G.PlayerTalentFrame then
 				_G.PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 			else
-				hooksecurefunc("TalentFrame_LoadUI", function() _G.PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
-			end 
-		end 
+				hooksecurefunc("TalentFrame_LoadUI", function()
+					_G.PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+				end)
+			end
+		end,
 	},
 	Auras = {
 		OnDisable = function(self)
@@ -358,7 +357,7 @@ local elements = {
 			local ConsolidatedBuffs = _G.ConsolidatedBuffs
 			ConsolidatedBuffs:SetScript("OnUpdate", nil)
 			ConsolidatedBuffs:SetParent(UIHider)
-		end
+		end,
 	},
 	CastBars = {
 		Remove = function(self, unit)
@@ -373,14 +372,14 @@ local elements = {
 				CastingBarFrame:SetScript("OnUpdate", nil)
 				CastingBarFrame:SetParent(UIHider)
 				CastingBarFrame:UnregisterAllEvents()
-				
+
 				-- player's pet's castbar
 				PetCastingBarFrame:SetScript("OnEvent", nil)
 				PetCastingBarFrame:SetScript("OnUpdate", nil)
 				PetCastingBarFrame:SetParent(UIHider)
 				PetCastingBarFrame:UnregisterAllEvents()
 			end
-		end
+		end,
 	},
 	Tutorials = {
 		OnDisable = function(self)
@@ -393,7 +392,7 @@ local elements = {
 			TutorialFrame:UnregisterAllEvents()
 			TutorialFrame:Hide()
 			TutorialFrame.Show = TutorialFrame.Hide
-		end
+		end,
 	},
 	UnitFrames = {
 		OnDisable = function(self)
@@ -414,19 +413,18 @@ local elements = {
 			disableUnitFrame("boss")
 			disableUnitFrame("arena")
 
-			-- I can not remembe when the following two got removed, 
-			-- so instead of the more correct build checks, 
-			-- we decided to go with simple existence checks here. 
+			-- I can not remembe when the following two got removed,
+			-- so instead of the more correct build checks,
+			-- we decided to go with simple existence checks here.
 			if InterfaceOptionsUnitFramePanelPartyBackground then
 				InterfaceOptionsUnitFramePanelPartyBackground:Hide()
 				InterfaceOptionsUnitFramePanelPartyBackground:SetAlpha(0)
-			end 
+			end
 			if PartyMemberBackground then
 				PartyMemberBackground:SetParent(UIHider)
 				PartyMemberBackground:Hide()
 				PartyMemberBackground:SetAlpha(0)
 			end
-
 		end,
 	},
 	Warnings = {
@@ -439,22 +437,22 @@ local elements = {
 
 			UIErrorsFrame:SetParent(UIHider)
 			UIErrorsFrame:UnregisterAllEvents()
-			
+
 			RaidWarningFrame:SetParent(UIHider)
 			RaidWarningFrame:UnregisterAllEvents()
-			
+
 			RaidBossEmoteFrame:SetParent(UIHider)
 			RaidBossEmoteFrame:UnregisterAllEvents()
-		end
+		end,
 	},
 	WorldState = {
 		OnDisable = function(self)
 			local WorldStateAlwaysUpFrame = _G.WorldStateAlwaysUpFrame
 			WorldStateAlwaysUpFrame:SetParent(UIHider)
-			WorldStateAlwaysUpFrame:SetScript("OnEvent", nil) 
-			WorldStateAlwaysUpFrame:SetScript("OnUpdate", nil) 
+			WorldStateAlwaysUpFrame:SetScript("OnEvent", nil)
+			WorldStateAlwaysUpFrame:SetScript("OnUpdate", nil)
 			WorldStateAlwaysUpFrame:UnregisterAllEvents()
-		end
+		end,
 	},
 	ZoneText = {
 		OnDisable = function(self)
@@ -467,28 +465,26 @@ local elements = {
 			ZoneTextFrame:SetParent(UIHider)
 			ZoneTextFrame:UnregisterAllEvents()
 			ZoneTextFrame:SetScript("OnUpdate", nil)
-			
+
 			SubZoneTextFrame:SetParent(UIHider)
 			SubZoneTextFrame:UnregisterAllEvents()
 			SubZoneTextFrame:SetScript("OnUpdate", nil)
-			
+
 			AutoFollowStatus:SetParent(UIHider)
 			AutoFollowStatus:UnregisterAllEvents()
 			AutoFollowStatus:SetScript("OnUpdate", nil)
-		end
-	}
-	
+		end,
+	},
 }
-
 
 Handler.OnEnable = function(self)
 	-- This handler is "reversed", meaning that all elements
 	-- are considered "enabled" upon creation, even when no enable function has been called!
-	-- We're doing it this way, since it seems more correct to think of the original 
+	-- We're doing it this way, since it seems more correct to think of the original
 	-- blizzard UI elements as "enabled" until forcefully disabled by this handler!
 	self:SetElementDefaultEnabledState(true)
 
-	-- register elements 
+	-- register elements
 	for name, element in pairs(elements) do
 		self:SetElement(name, element)
 	end

@@ -15,7 +15,7 @@ Engine:NewConfig("ChatWindows", {
 	positionX = nil,
 	positionY = nil,
 	width = nil,
-	height = nil
+	height = nil,
 })
 
 -- chat filters and emoticons
@@ -29,6 +29,5 @@ Engine:NewConfig("ChatFilters", {
 	cleanOnline = true, -- friends and guild members coming online / going offline
 	cleanAuctions = true, -- auctions created, sold, won, outbid, expired
 	cleanAchievements = true, -- "Name: [Achievement]"
-	hideChatNoise = true -- channel join/leave/change notices, empty lines
+	hideChatNoise = true, -- channel join/leave/change notices, empty lines
 })
-

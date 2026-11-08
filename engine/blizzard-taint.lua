@@ -9,7 +9,8 @@
 
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-]]--
+]]
+--
 
 ---------------------------------------------------------------
 -- UIDropDown taints
@@ -17,19 +18,19 @@
 -- A hidden menu button still holding a value an addon gave it taints the
 -- next Blizzard menu that uses it; clear those values. The version is
 -- shared with the other addons carrying this same fix, so it runs once.
-if ((UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2) then
+if (UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2 then
 	UIDROPDOWNMENU_VALUE_PATCH_VERSION = 2
 	hooksecurefunc("UIDropDownMenu_InitializeHelper", function()
 		if UIDROPDOWNMENU_VALUE_PATCH_VERSION ~= 2 then
 			return
 		end
-		for i=1, UIDROPDOWNMENU_MAXLEVELS do
-			for j=1, UIDROPDOWNMENU_MAXBUTTONS do
+		for i = 1, UIDROPDOWNMENU_MAXLEVELS do
+			for j = 1, UIDROPDOWNMENU_MAXBUTTONS do
 				local b = _G["DropDownList" .. i .. "Button" .. j]
 				if not (issecurevariable(b, "value") or b:IsShown()) then
 					b.value = nil
 					repeat
-						j, b["fx" .. j] = j+1 -- luacheck: ignore 532
+						j, b["fx" .. j] = j + 1 -- luacheck: ignore 532
 					until issecurevariable(b, "value")
 				end
 			end

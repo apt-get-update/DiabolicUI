@@ -13,11 +13,9 @@ local tinsert = table.insert
 -- WoW API
 local CreateFrame = CreateFrame
 
-
 -- our new flyout template
 local FlyoutBar = CreateFrame("Frame")
 local FlyoutBar_MT = { __index = FlyoutBar }
-
 
 FlyoutBar.SetRowSize = function(self, size)
 	self.rowsize = size
@@ -93,7 +91,7 @@ FlyoutBar.GetJustify = function(self)
 end
 
 -- Arrange the bar's current buttons according to stored settings.
--- This will force both button position and button size, 
+-- This will force both button position and button size,
 -- so it should only be used in cases where identical buttons are desired.
 -- This will also resize the bar's window to fit the buttons.
 FlyoutBar.Arrange = function(self)
@@ -102,29 +100,32 @@ FlyoutBar.Arrange = function(self)
 	local padding = self:GetButtonPadding()
 	local spacing = self:GetRowSpacing()
 	local width, height = self:GetButtonSize()
-	local anchor = self:GetButtonAnchor()	
+	local anchor = self:GetButtonAnchor()
 	local growthx = self:GetButtonGrowthX() == "RIGHT" and 1 or -1
 	local growthy = self:GetButtonGrowthY() == "DOWN" and -1 or 1
 	local left, right, top, bottom = self:GetWindowInsets()
 	local offsetx = self:GetButtonGrowthX() == "RIGHT" and left or -right
 	local offsety = self:GetButtonGrowthY() == "DOWN" and -top or bottom
 	local justify = self:GetJustify() == "RIGHT"
-	
+
 	local emptyslots = (rowsize * rows) - self:NumButtons()
-	
-	for index, button in self:GetAll() do 
-		local y = floor((index-1)/rowsize)
-		local x = index - (y*rowsize) - 1
+
+	for index, button in self:GetAll() do
+		local y = floor((index - 1) / rowsize)
+		local x = index - (y * rowsize) - 1
 		if justify and ((y + 1) == rows) then -- last row
-			x = x + emptyslots -- align last row 
+			x = x + emptyslots -- align last row
 		end
 		button:SetParent(self) -- needed
 		button:SetSize(width, height) -- force button sizing when this is called
 		button:ClearAllPoints()
-		button:SetPoint(anchor, offsetx + (width+padding)*x * growthx, offsety + (height+spacing)*y * growthy )
+		button:SetPoint(anchor, offsetx + (width + padding) * x * growthx, offsety + (height + spacing) * y * growthy)
 	end
-	
-	self:SetSize( left + rowsize*width + (rowsize-1)*padding + right, top + rows*height + (rows-1)*spacing + bottom)
+
+	self:SetSize(
+		left + rowsize * width + (rowsize - 1) * padding + right,
+		top + rows * height + (rows - 1) * spacing + bottom
+	)
 end
 
 -- Inserts an already existing button into the bar's button pool
@@ -148,16 +149,18 @@ end
 -- but will run the button's stored attributes "leftclick" and "rightclick"
 -- if they exist and the matching mouse button was pressed.
 FlyoutBar.AttachToButton = function(self, button)
-	self:HookScript("OnShow", function(self) 
+	self:HookScript("OnShow", function(self)
 		self:GetParent():SetButtonState("PUSHED", 1)
 	end)
-	
-	self:HookScript("OnHide", function(self) 
+
+	self:HookScript("OnHide", function(self)
 		self:GetParent():SetButtonState("NORMAL")
 	end)
-	
+
 	button:SetFrameRef("window", self)
-	button:SetAttribute("_onclick", [[
+	button:SetAttribute(
+		"_onclick",
+		[[
 		if button == "LeftButton" then
 			local window = self:GetFrameRef("window");
 			if window:IsShown() then
@@ -185,25 +188,26 @@ FlyoutBar.AttachToButton = function(self, button)
 			end
 		end
 		control:CallMethod("OnClick", button);
-	]])
+	]]
+	)
 end
 
 FlyoutBar.AddToAutoHide = function(self, frame)
-	if not self.autohiders then 
+	if not self.autohiders then
 		self.autohiders = {}
-	end 
+	end
 	local autohideParent = CreateFrame("Frame", nil, self, "SecureHandlerStateTemplate")
 	autohideParent:SetAllPoints(frame)
 	tinsert(self.autohiders, autohideParent)
-	self:SetFrameRef("autohide"..#self.autohiders,autohideParent)
+	self:SetFrameRef("autohide" .. #self.autohiders, autohideParent)
 end
 
 FlyoutBarWidget.New = function(self, parent)
 	local bar = setmetatable(CreateFrame("Frame", nil, parent, "SecureHandlerStateTemplate"), FlyoutBar_MT)
-	
+
 	bar:Hide()
 	bar:EnableMouse(true)
 	bar.buttons = {}
-	
+
 	return bar
 end

@@ -34,13 +34,13 @@ local icons = { -- todo: add the objectives icon used in Ashran!
 	[ [[Interface\WorldStateFrame\HordeFlag]] ] = "hordeflag",
 	[ [[Interface\WorldStateScore\ColumnIcon-FlagCapture1]] ] = "hordeflag",
 	[ [[Interface\WorldStateScore\ColumnIcon-FlagReturn0]] ] = "hordeflag",
-	[ [[Interface\TargetingFrame\UI-PVP-Alliance]] ] = "alliance", 
+	[ [[Interface\TargetingFrame\UI-PVP-Alliance]] ] = "alliance",
 	[ [[Interface\WorldStateScore\AllianceIcon]] ] = "alliance",
 	[ [[Interface\WorldStateFrame\AllianceTower]] ] = "alliancetower",
 	[ [[Interface\WorldStateFrame\AllianceFlag]] ] = "allianceflag",
 	[ [[Interface\WorldStateScore\ColumnIcon-FlagCapture0]] ] = "allianceflag",
 	[ [[Interface\WorldStateScore\ColumnIcon-FlagReturn1]] ] = "allianceflag",
-	[ [[Interface\WorldStateFrame\NeutralTower]] ] = "neutraltower"
+	[ [[Interface\WorldStateFrame\NeutralTower]] ] = "neutraltower",
 }
 
 local iconData = {}
@@ -55,7 +55,7 @@ end
 local MINUTE = 60
 -- (ran out timers are taken away before they get here)
 local formatTime = function(value)
-	return ("%02d:%02d"):format(math_floor(value / MINUTE), value%MINUTE)
+	return ("%02d:%02d"):format(math_floor(value / MINUTE), value % MINUTE)
 end
 
 ------------------------------------------------------------------------
@@ -69,7 +69,7 @@ local WorldStateUI_MT = { __index = WorldStateUI }
 WorldStateUI.elapsed = 0
 WorldStateUI:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
-	if (self.elapsed > .1) then
+	if self.elapsed > 0.1 then
 		local reposition
 		for timerIndex = #timerInfo, 1, -1 do
 			-- Update time left
@@ -77,7 +77,7 @@ WorldStateUI:SetScript("OnUpdate", function(self, elapsed)
 			timer.timeLeft = timer.timeEnding - GetTime()
 
 			-- cancel timers that have ran out
-			if (timer.timeLeft < 0) then
+			if timer.timeLeft < 0 then
 				table_remove(timerInfo, timerIndex) -- pull the timer out of the info table
 				timer.timeLeft = 0
 				activeTimers[timer.msg].enabled = false
@@ -86,14 +86,13 @@ WorldStateUI:SetScript("OnUpdate", function(self, elapsed)
 				end
 				reposition = true
 			end
-			
+
 			-- update the text of active timers
 			if activeTimers[timer.msg].enabled then
 				if timer.ui then
 					timer.ui.text:SetText(formatTime(math_floor(timer.timeLeft)))
 				end
 			end
-
 		end
 		if reposition then
 			Module:UpdateUIPositions()
@@ -123,7 +122,7 @@ WorldStateUI.EnableMouseScripts = function(self)
 end
 
 WorldStateUI.SetIcon = function(self, iconType, pathName, reset)
-	if (reset or (pathName == "") or (not pathName)) then
+	if reset or (pathName == "") or not pathName then
 		self[iconType]:SetSize(32, 32)
 		self[iconType]:SetTexture(pathName or "")
 		self[iconType]:SetTexCoord(0, 1, 0, 1)
@@ -152,23 +151,21 @@ WorldStateUI.Clear = function(self)
 	self.text:Place("LEFT", 32, 0)
 end
 
-
 Module.GetUI = function(self, uiIndex)
-
-	if (uiIndex > self:GetNumUIs()) then
-		local new = setmetatable(self.frame:CreateFrame("Frame"), WorldStateUI_MT) 
+	if uiIndex > self:GetNumUIs() then
+		local new = setmetatable(self.frame:CreateFrame("Frame"), WorldStateUI_MT)
 		new:EnableMouseScripts()
 
-		new.icon = new:CreateTexture() 
+		new.icon = new:CreateTexture()
 		new.icon:SetSize(32, 32)
 		new.icon:SetPoint("TOPLEFT")
 
-		new.text = new:CreateFontString() 
+		new.text = new:CreateFontString()
 		new.text:SetPoint("LEFT", 32, 0)
-		new.text:SetFontObject(GameFontNormalSmall) 
-		new.text:SetTextColor(.8, .8, .8) 
-		new.text:SetShadowColor(0, 0, 0, 1) 
-		new.text:SetShadowOffset(.75, -.75)
+		new.text:SetFontObject(GameFontNormalSmall)
+		new.text:SetTextColor(0.8, 0.8, 0.8)
+		new.text:SetShadowColor(0, 0, 0, 1)
+		new.text:SetShadowOffset(0.75, -0.75)
 
 		new.holder = self.frame:CreateFrame("Frame")
 		new.holder:SetAllPoints()
@@ -177,7 +174,7 @@ Module.GetUI = function(self, uiIndex)
 		new.dynamicIcon:SetSize(32, 32)
 		new.dynamicIcon:SetPoint("TOPLEFT", new.text, "TOPRIGHT", 10, 0)
 
-		if (not self.uis) then
+		if not self.uis then
 			self.uis = {}
 		end
 		table_insert(self.uis, new)
@@ -195,8 +192,8 @@ Module.GetNumUIs = function(self)
 end
 
 Module.UpdateUIPositions = function(self)
-	if (not self.numTotalUIs) then 
-		return 
+	if not self.numTotalUIs then
+		return
 	end
 
 	-- hide all redundant uis, if any
@@ -206,40 +203,40 @@ Module.UpdateUIPositions = function(self)
 			ui:Clear()
 		end
 	end
-	
+
 	-- sort and display the info UIs
 	local currentPosition = 0
-	for i = 1, self.numInfoUIs do 
+	for i = 1, self.numInfoUIs do
 		if uiInfo[i] then
 			currentPosition = currentPosition + 1
 			local ui = uiInfo[i].ui
 			if i == 1 then
 				ui:Place("TOPLEFT")
 			else
-				ui:Place("TOPLEFT", uiInfo[i-1].ui, "BOTTOMLEFT", 0, -4)
+				ui:Place("TOPLEFT", uiInfo[i - 1].ui, "BOTTOMLEFT", 0, -4)
 			end
 			ui:Show()
 		end
 	end
-	
+
 	-- sort and display the timer UIs
-	for i = 1, self.numTimerUIs do 
+	for i = 1, self.numTimerUIs do
 		if timerInfo[i] then
 			currentPosition = currentPosition + 1
 			local ui = timerInfo[i].ui
-			if (currentPosition == 1) then -- this is the first ui
-				ui:Place("TOPLEFT") 
+			if currentPosition == 1 then -- this is the first ui
+				ui:Place("TOPLEFT")
 			elseif i == 1 then -- this is the first timer ui, but there are info uis prior to it
-				ui:Place("TOPLEFT", uiInfo[self.numInfoUIs].ui, "BOTTOMLEFT", 0, -4) 
+				ui:Place("TOPLEFT", uiInfo[self.numInfoUIs].ui, "BOTTOMLEFT", 0, -4)
 			else -- not the first timer ui
-				ui:Place("TOPLEFT", timerInfo[i-1].ui, "BOTTOMLEFT", 0, -4)
+				ui:Place("TOPLEFT", timerInfo[i - 1].ui, "BOTTOMLEFT", 0, -4)
 			end
 			ui:Show()
 		end
 	end
-	
+
 	-- update master visibility
-	if (currentPosition > 0) then
+	if currentPosition > 0 then
 		self.frame:Show()
 	else
 		self.frame:Hide()
@@ -249,21 +246,21 @@ end
 Module.UpdateStates = function(self)
 	local numBlizzardUI = GetNumWorldStateUI() or 0
 	local uiIndex, infoIndex, timerIndex = 0, 0, 0
-	
+
 	-- halt all timers until new data has been processed
 	for _, info in pairs(activeTimers) do
 		info.ui = nil
 		info.enabled = false
 	end
-	
+
 	-- disable all uis until new data has been processed
 	for i = 1, self:GetNumUIs() do
 		self:GetUI(i).enabled = false
 	end
-	
+
 	wipe(timerInfo)
 	wipe(uiInfo)
-	
+
 	for blizzardID = 1, numBlizzardUI do
 		-- retrieve info about this specific blizzardUI
 		local _, state, text, icon, dynamicIcon, tooltip, _, extendedUI = GetWorldStateUIInfo(blizzardID)
@@ -272,7 +269,7 @@ Module.UpdateStates = function(self)
 
 			local ui = self:GetUI(uiIndex) -- get or create a custom ui
 			ui.blizzardID = blizzardID -- store blizzards id here
-			
+
 			-- figure out what kind of UI this is
 			local mins, secs = text:match("(%d+):(%d+)") -- we assume only 1 time value will be listed in any single ui
 			if mins and secs then
@@ -287,8 +284,8 @@ Module.UpdateStates = function(self)
 				ui.tooltip = tooltip
 
 				-- calculate actual seconds remaining and grab blizzards msg here
-				local seconds = math_floor((mins and tonumber(mins)*60 or 0) + tonumber(secs))
-				local msg = text:gsub("(%d+):(%d+)", "") 
+				local seconds = math_floor((mins and tonumber(mins) * 60 or 0) + tonumber(secs))
+				local msg = text:gsub("(%d+):(%d+)", "")
 
 				-- feed the timer into our timer table
 				if not timerInfo[timerIndex] then
@@ -298,30 +295,30 @@ Module.UpdateStates = function(self)
 				timerInfo[timerIndex].msg = msg -- just ignore the timer message? Keep it neat?
 				timerInfo[timerIndex].timeLeft = seconds
 				timerInfo[timerIndex].timeEnding = GetTime() + seconds
-				
+
 				-- feed the timer into our active timers listing
 				if not activeTimers[msg] then
 					activeTimers[msg] = {}
 				end
 				activeTimers[msg].ui = ui
-				activeTimers[msg].enabled = true 
-				
+				activeTimers[msg].enabled = true
+
 				-- give the ui references to its tables
 				ui.infoTable = timerInfo[timerIndex]
 			else
 				ui.uiType = "info"
 				infoIndex = infoIndex + 1 -- increase the info ui counter
-				
+
 				-- feed the timer into our info table
 				if not uiInfo[infoIndex] then
 					uiInfo[infoIndex] = {}
 				end
 				uiInfo[infoIndex].ui = ui
 				uiInfo[infoIndex].msg = text
-				
+
 				ui.text:SetText(text)
-				
-				if (icon and icons[icon]) then
+
+				if icon and icons[icon] then
 					local _, w, _, _, rects = getIconData(icon)
 					ui:SetSize(w, uiHeight)
 					ui:SetHitRectInsets(unpack(rects))
@@ -347,9 +344,9 @@ Module.UpdateStates = function(self)
 						ui:SetIcon("dynamicIcon", dynamicIcon, true)
 						ui.dynamicIcon:Place("TOPLEFT", ui.text, "TOPRIGHT", 0, 0)
 					end
-					if (state == 2) then -- start flashing ui.holder
+					if state == 2 then -- start flashing ui.holder
 						ui.dynamicIcon:Show()
-					elseif (state == 3) then -- stop flashing ui.holder
+					elseif state == 3 then -- stop flashing ui.holder
 						ui.dynamicIcon:Show()
 					else -- stop flashing ui.holder
 						ui.dynamicIcon:Hide()
@@ -357,14 +354,13 @@ Module.UpdateStates = function(self)
 				else -- stop flashing ui.holder
 					ui:SetIcon("dynamicIcon", "")
 					ui.dynamicIcon:Hide()
-				end	
-				
+				end
+
 				-- give the ui references to its tables
 				ui.infoTable = uiInfo[infoIndex]
-				
-			end	
+			end
 			ui.enabled = true
-		end	
+		end
 	end
 
 	self.numInfoUIs = infoIndex
@@ -381,8 +377,8 @@ Module.Clear = function(self)
 end
 
 Module.OnEvent = function(self, event, ...)
-	if (event == "PLAYER_ENTERING_WORLD") then
-		self:Clear() 
+	if event == "PLAYER_ENTERING_WORLD" then
+		self:Clear()
 	end
 	self:UpdateStates()
 end
@@ -396,7 +392,7 @@ Module.OnInit = function(self)
 			path = self.config.texPath,
 			size = self.config.texSize,
 			rects = self.config.texHitRects,
-			coords = texCoords
+			coords = texCoords,
 		}
 	end
 end
@@ -405,7 +401,7 @@ Module.OnEnable = function(self)
 	self:GetHandler("BlizzardUI"):GetElement("WorldState"):Disable()
 
 	local parent = Engine:CreateFrame("Frame", nil, "UICenter", "SecureHandlerAttributeTemplate")
-	parent:SetSize(2,2)
+	parent:SetSize(2, 2)
 	parent:SetPoint("TOP")
 
 	RegisterStateDriver(parent, "visibility", "[@target,exists]hide;show")
@@ -423,5 +419,5 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
-	self:UpdateStates() 
+	self:UpdateStates()
 end

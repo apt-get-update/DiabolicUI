@@ -17,7 +17,8 @@ local UIDropDownMenu_SetText = UIDropDownMenu_SetText
 local C = Module.Controls
 local NewPage = C.NewPage
 local EDGE, LABEL_HEIGHT, SPEC_COLUMN, SPEC_ICON_SIZE = C.EDGE, C.LABEL_HEIGHT, C.SPEC_COLUMN, C.SPEC_ICON_SIZE
-local SPEC_LABEL_WIDTH, DROPDOWN_HEIGHT, DROPDOWN_OVERHANG, DROPDOWN_WIDTH = C.SPEC_LABEL_WIDTH, C.DROPDOWN_HEIGHT, C.DROPDOWN_OVERHANG, C.DROPDOWN_WIDTH
+local SPEC_LABEL_WIDTH, DROPDOWN_HEIGHT, DROPDOWN_OVERHANG, DROPDOWN_WIDTH =
+	C.SPEC_LABEL_WIDTH, C.DROPDOWN_HEIGHT, C.DROPDOWN_OVERHANG, C.DROPDOWN_WIDTH
 local SMALL_DROPDOWN_WIDTH, HEADER_GAP, CreateDropDown = C.SMALL_DROPDOWN_WIDTH, C.HEADER_GAP, C.CreateDropDown
 
 -- The Specializations page
@@ -65,8 +66,11 @@ Module.CreateSpecsPage = function(self)
 
 	-- a saved choice, false when it's left as it is
 	local specSetting = function(key)
-		return function() return actionbarsDB[key] or false end,
-			function(value) actionbarsDB[key] = value end
+		return function()
+			return actionbarsDB[key] or false
+		end, function(value)
+			actionbarsDB[key] = value
+		end
 	end
 
 	local barChoices = function(counts)
@@ -93,7 +97,14 @@ Module.CreateSpecsPage = function(self)
 		column.name:SetPoint("LEFT", column.icon, "RIGHT", 8, 0)
 
 		-- equipment set
-		layout:Place(specLabel(L["Equipment Set"], L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."]), x, rows.equipSetLabel)
+		layout:Place(
+			specLabel(
+				L["Equipment Set"],
+				L["The equipment set to put on once you switch to this specialization, from the equipment manager of your character window."]
+			),
+			x,
+			rows.equipSetLabel
+		)
 		local getSet, setSet = specSetting("specEquipSet" .. group)
 		column.equipSet = CreateDropDown(specsPanel, "Spec" .. group .. "EquipSet", DROPDOWN_WIDTH, function()
 			local items = { { text = L["None"], value = false } }
@@ -105,7 +116,14 @@ Module.CreateSpecsPage = function(self)
 		layout:Place(column.equipSet, x - DROPDOWN_OVERHANG, rows.equipSet)
 
 		-- Action Bar Saver profile
-		layout:Place(specLabel(L["Action Bar Saver Profile"], L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."]), x, rows.profileLabel)
+		layout:Place(
+			specLabel(
+				L["Action Bar Saver Profile"],
+				L["The Action Bar Saver profile to restore once you switch to this specialization. Save one with '/abs save <name>'."]
+			),
+			x,
+			rows.profileLabel
+		)
 		local getProfile, setProfile = specSetting("specProfile" .. group)
 		column.profile = CreateDropDown(specsPanel, "Spec" .. group .. "Profile", DROPDOWN_WIDTH, function()
 			local items = { { text = L["None"], value = false } }
@@ -118,12 +136,26 @@ Module.CreateSpecsPage = function(self)
 
 		-- number of action bars and side bars
 		local getBars, setBars = specSetting("specBars" .. group)
-		column.bars = CreateDropDown(specsPanel, "Spec" .. group .. "Bars", SMALL_DROPDOWN_WIDTH, barChoices({ 1, 2, 3 }), getBars, setBars)
+		column.bars = CreateDropDown(
+			specsPanel,
+			"Spec" .. group .. "Bars",
+			SMALL_DROPDOWN_WIDTH,
+			barChoices({ 1, 2, 3 }),
+			getBars,
+			setBars
+		)
 		layout:Place(column.bars, x + SPEC_LABEL_WIDTH - DROPDOWN_OVERHANG, rows.bars)
 		specLabel(L["Action Bars"]):SetPoint("LEFT", specsPanel, "TOPLEFT", x, rows.bars - DROPDOWN_HEIGHT / 2)
 
 		local getSideBars, setSideBars = specSetting("specSideBars" .. group)
-		column.sideBars = CreateDropDown(specsPanel, "Spec" .. group .. "SideBars", SMALL_DROPDOWN_WIDTH, barChoices({ 0, 1, 2 }), getSideBars, setSideBars)
+		column.sideBars = CreateDropDown(
+			specsPanel,
+			"Spec" .. group .. "SideBars",
+			SMALL_DROPDOWN_WIDTH,
+			barChoices({ 0, 1, 2 }),
+			getSideBars,
+			setSideBars
+		)
 		layout:Place(column.sideBars, x + SPEC_LABEL_WIDTH - DROPDOWN_OVERHANG, rows.sideBars)
 		specLabel(L["Side Bars"]):SetPoint("LEFT", specsPanel, "TOPLEFT", x, rows.sideBars - DROPDOWN_HEIGHT / 2)
 
@@ -136,14 +168,36 @@ Module.CreateSpecsPage = function(self)
 			return items
 		end
 
-		layout:Place(specLabel(L["Macro Before"], L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."]), x, rows.macroBeforeLabel)
+		layout:Place(
+			specLabel(
+				L["Macro Before"],
+				L["A macro of yours to run as you switch to this specialization: the click on the skull's specialization button that switches runs it first."]
+			),
+			x,
+			rows.macroBeforeLabel
+		)
 		local getBefore, setBefore = specSetting("specMacroBefore" .. group)
-		column.macroBefore = CreateDropDown(specsPanel, "Spec" .. group .. "MacroBefore", DROPDOWN_WIDTH, macroChoices, getBefore, setBefore)
+		column.macroBefore = CreateDropDown(
+			specsPanel,
+			"Spec" .. group .. "MacroBefore",
+			DROPDOWN_WIDTH,
+			macroChoices,
+			getBefore,
+			setBefore
+		)
 		layout:Place(column.macroBefore, x - DROPDOWN_OVERHANG, rows.macroBefore)
 
-		layout:Place(specLabel(L["Macro After"], L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."]), x, rows.macroLabel)
+		layout:Place(
+			specLabel(
+				L["Macro After"],
+				L["A macro of yours to run once you switch to this specialization. The game only runs macros on a click, so the specialization button on the skull glows, and its next click runs the macro."]
+			),
+			x,
+			rows.macroLabel
+		)
 		local getMacro, setMacro = specSetting("specMacroName" .. group)
-		column.macro = CreateDropDown(specsPanel, "Spec" .. group .. "Macro", DROPDOWN_WIDTH, macroChoices, getMacro, setMacro)
+		column.macro =
+			CreateDropDown(specsPanel, "Spec" .. group .. "Macro", DROPDOWN_WIDTH, macroChoices, getMacro, setMacro)
 		layout:Place(column.macro, x - DROPDOWN_OVERHANG, rows.macro)
 
 		specColumns[group] = column

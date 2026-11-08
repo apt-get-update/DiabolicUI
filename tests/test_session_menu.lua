@@ -67,8 +67,17 @@ function TestOptionsMenu:test_the_pages_under_diabolicui()
 			names[#names + 1] = (panel.parent and (panel.parent .. "/") or "") .. panel.name
 		end
 	end
-	lu.assertEquals(names, { "DiabolicUI", "DiabolicUI/Action Bars", "DiabolicUI/Specializations", "DiabolicUI/Units",
-		"DiabolicUI/Chat", "DiabolicUI/Messages", "DiabolicUI/Quests", "DiabolicUI/Tooltips", "DiabolicUI/Frames & AddOns" })
+	lu.assertEquals(names, {
+		"DiabolicUI",
+		"DiabolicUI/Action Bars",
+		"DiabolicUI/Specializations",
+		"DiabolicUI/Units",
+		"DiabolicUI/Chat",
+		"DiabolicUI/Messages",
+		"DiabolicUI/Quests",
+		"DiabolicUI/Tooltips",
+		"DiabolicUI/Frames & AddOns",
+	})
 	-- the main page: what's where, the commands and the version
 	_G.DiabolicUIOptionsPanel.refresh()
 	assertClean(client)
@@ -195,7 +204,10 @@ function TestOptionsMenu:test_descriptions_on_hover()
 	-- the anchor picker's label
 	local label
 	for _, region in ipairs({ _G.DiabolicUIOptionsPanelTooltips:GetRegions() }) do
-		if region:GetObjectType() == "FontString" and region:GetText() == client.Engine:GetLocale()["Tooltip mouse anchor"] then
+		if
+			region:GetObjectType() == "FontString"
+			and region:GetText() == client.Engine:GetLocale()["Tooltip mouse anchor"]
+		then
 			label = region
 		end
 	end
@@ -220,11 +232,21 @@ end
 function TestOptionsMenu:test_the_pages_go_from_the_main_frames_to_the_extras()
 	local names = {}
 	for _, category in ipairs(_G.INTERFACEOPTIONS_ADDONCATEGORIES) do
-		if (category.parent == "DiabolicUI") then
+		if category.parent == "DiabolicUI" then
 			names[#names + 1] = category.name
 		end
 	end
-	lu.assertEquals(names, { "Action Bars", "Specializations", "Units", "Chat", "Messages", "Minimap", "Quests", "Tooltips", "Frames & AddOns" })
+	lu.assertEquals(names, {
+		"Action Bars",
+		"Specializations",
+		"Units",
+		"Chat",
+		"Messages",
+		"Minimap",
+		"Quests",
+		"Tooltips",
+		"Frames & AddOns",
+	})
 end
 
 function TestOptionsMenu:test_the_fake_group_buttons()
@@ -258,8 +280,16 @@ function TestOptionsMenu:test_the_chat_page()
 	lu.assertEquals(_G.ChatFrame1:GetTimeVisible(), 30)
 
 	-- the shorter messages, on their own page, one checkbox each
-	for i, setting in ipairs({ "cleanProgress", "cleanQuests", "cleanStatus", "cleanOnline",
-		"cleanLoot", "cleanAuctions", "cleanAchievements", "hideChatNoise" }) do
+	for i, setting in ipairs({
+		"cleanProgress",
+		"cleanQuests",
+		"cleanStatus",
+		"cleanOnline",
+		"cleanLoot",
+		"cleanAuctions",
+		"cleanAchievements",
+		"hideChatNoise",
+	}) do
 		local before = filters[setting]
 		click("MessagesCleaner" .. i)
 		lu.assertEquals(filters[setting], not before, setting)
@@ -308,9 +338,15 @@ end
 function TestOptionsMenu:test_the_specializations_page()
 	local L = client.Engine:GetLocale()
 	local bars = db("ActionBars", "character")
-	client.world.talents = { { "Discipline", "Interface\\Icons\\Disc", 13 }, { "Holy", "Interface\\Icons\\Holy", 58 }, { "Shadow", "", 0 } }
-	client.world.secondaryTalents = { { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "Interface\\Icons\\Shadow", 57 } }
-	client.world.equipmentSets = { { "Holy", "Interface\\Icons\\HolySet" }, { "Shadow", "Interface\\Icons\\ShadowSet" } }
+	client.world.talents = {
+		{ "Discipline", "Interface\\Icons\\Disc", 13 },
+		{ "Holy", "Interface\\Icons\\Holy", 58 },
+		{ "Shadow", "", 0 },
+	}
+	client.world.secondaryTalents =
+		{ { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "Interface\\Icons\\Shadow", 57 } }
+	client.world.equipmentSets =
+		{ { "Holy", "Interface\\Icons\\HolySet" }, { "Shadow", "Interface\\Icons\\ShadowSet" } }
 	bars.specEquipSet2, bars.specBars2 = "Shadow", 3
 	_G.DiabolicUIOptionsPanelSpecs.refresh()
 
@@ -325,8 +361,11 @@ function TestOptionsMenu:test_the_specializations_page()
 	lu.assertEquals(widget("Spec1Profile").text, "|cff808080" .. L["Action Bar Saver isn't loaded"] .. "|r")
 
 	-- picking from the dropdowns saves
-	lu.assertEquals(openDropDown("Spec1EquipSet", "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy"),
-		{ L["None"], "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy", "|TInterface\\Icons\\ShadowSet:16:16:0:0|t Shadow" })
+	lu.assertEquals(openDropDown("Spec1EquipSet", "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy"), {
+		L["None"],
+		"|TInterface\\Icons\\HolySet:16:16:0:0|t Holy",
+		"|TInterface\\Icons\\ShadowSet:16:16:0:0|t Shadow",
+	})
 	lu.assertEquals(bars.specEquipSet1, "Holy")
 	lu.assertEquals(widget("Spec1EquipSet").text, "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy")
 	lu.assertEquals(openDropDown("Spec1Bars", "2"), { L["Unchanged"], "1", "2", "3" })
@@ -364,14 +403,19 @@ end
 function TestOptionsMenu:test_the_specialization_macros()
 	local L = client.Engine:GetLocale()
 	local bars = db("ActionBars", "character")
-	client.world.macros = { [1] = { "Toy", "Interface\\Icons\\Toy", "/use item:44430" }, [37] = { "DUI Holy", "Interface\\Icons\\Q", "" } }
+	client.world.macros = {
+		[1] = { "Toy", "Interface\\Icons\\Toy", "/use item:44430" },
+		[37] = { "DUI Holy", "Interface\\Icons\\Q", "" },
+	}
 	bars.specMacroName2 = "Toy"
 	_G.DiabolicUIOptionsPanelSpecs.refresh()
 
 	lu.assertEquals(widget("Spec1Macro").text, L["None"])
 	lu.assertEquals(widget("Spec2Macro").text, "|TInterface\\Icons\\Toy:16:16:0:0|t Toy")
-	lu.assertEquals(openDropDown("Spec1Macro", "|TInterface\\Icons\\Q:16:16:0:0|t DUI Holy"),
-		{ L["None"], "|TInterface\\Icons\\Toy:16:16:0:0|t Toy", "|TInterface\\Icons\\Q:16:16:0:0|t DUI Holy" })
+	lu.assertEquals(
+		openDropDown("Spec1Macro", "|TInterface\\Icons\\Q:16:16:0:0|t DUI Holy"),
+		{ L["None"], "|TInterface\\Icons\\Toy:16:16:0:0|t Toy", "|TInterface\\Icons\\Q:16:16:0:0|t DUI Holy" }
+	)
 	lu.assertEquals(bars.specMacroName1, "DUI Holy")
 	openDropDown("Spec2Macro", L["None"])
 	lu.assertFalse(bars.specMacroName2)
@@ -410,7 +454,10 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	lu.assertEquals(unlock:GetText(), L["Lock Frames"])
 	local lock = _G.DiabolicUILockFramesButton
 	lu.assertEquals(lock:IsShown(), 1)
-	lu.assertEquals(lock.Hint:GetText(), L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."])
+	lu.assertEquals(
+		lock.Hint:GetText(),
+		L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."]
+	)
 	_G.DiabolicUIOptionsPanel.refresh()
 	lu.assertEquals(unlock:GetText(), L["Lock Frames"])
 	client:Click(lock)
@@ -429,7 +476,10 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	lu.assertEquals({ chatMover:IsShown(), menuMover:IsShown() }, { 1, 1 })
 	-- the menu's box: over its buttons (on top: they can't be clicked meanwhile)
 	local master = client:GetModule("ActionBars"):GetWidget("Menu: Main").MasterMenuButton
-	lu.assertEquals({ menuMover:GetRight(), (menuMover:GetBottom()) <= (master:GetBottom()) }, { master:GetRight() + 6, true })
+	lu.assertEquals(
+		{ menuMover:GetRight(), (menuMover:GetBottom()) <= (master:GetBottom()) },
+		{ master:GetRight() + 6, true }
+	)
 	lu.assertEquals(menuMover:GetFrameStrata(), "FULLSCREEN_DIALOG") -- above the buttons' DIALOG
 	chat.db.autoposition = true
 	client:RunScript(chatMover, "OnDragStart", "LeftButton")
@@ -503,7 +553,15 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	local updates = 0
 	_G.Questie = { db = { profile = { trackerEnabled = true, trackerLocked = true } } }
 	CreateFrame("Frame", "Questie_BaseFrame", _G.UIParent)
-	_G.QuestieLoader = { ImportModule = function() return { Update = function() updates = updates + 1 end } end }
+	_G.QuestieLoader = {
+		ImportModule = function()
+			return {
+				Update = function()
+					updates = updates + 1
+				end,
+			}
+		end,
+	}
 	client:Click(unlock)
 	lu.assertFalse(_G.Questie.db.profile.trackerLocked)
 	lu.assertFalse(tracker:IsTrackerUnlocked()) -- Questie's instead of Blizzard's
@@ -552,7 +610,9 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	client:EnterCombat()
 	lu.assertFalse(menu:AreFramesUnlocked())
 	local printed, print = {}, _G.print
-	_G.print = function(text) printed[#printed + 1] = text end
+	_G.print = function(text)
+		printed[#printed + 1] = text
+	end
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("move")
 	_G.print = print
 	lu.assertFalse(menu:AreFramesUnlocked())
@@ -634,8 +694,10 @@ function TestOptionsMenu:test_a_box_over_unplaced_frames_covers_its_frame()
 	menu:SetFramesUnlocked(true)
 	local frame = client:GetModule("ActionBars"):GetWidget("Controller: Menu"):GetFrame()
 	mover = _G.DiabolicUIMenuMover
-	lu.assertEquals({ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) },
-		{ frame:GetLeft(), frame:GetRight(), frame:GetTop(), (frame:GetBottom()) })
+	lu.assertEquals(
+		{ mover:GetLeft(), mover:GetRight(), mover:GetTop(), (mover:GetBottom()) },
+		{ frame:GetLeft(), frame:GetRight(), frame:GetTop(), (frame:GetBottom()) }
+	)
 	menu:SetFramesUnlocked(false)
 	assertClean(client)
 end
@@ -645,8 +707,8 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 	local frame = client.Engine:GetFrame()
 	local before = frame:GetScale()
 	widget("UIScale"):SetValue(80)
-	lu.assertEquals(scaling.scale, .8)
-	lu.assertAlmostEquals(frame:GetScale(), before * .8, 1e-6)
+	lu.assertEquals(scaling.scale, 0.8)
+	lu.assertAlmostEquals(frame:GetScale(), before * 0.8, 1e-6)
 	-- the page shows the saved value, /dui setscale included
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("setscale 1.2")
 	_G.DiabolicUIOptionsPanel.refresh()
@@ -665,35 +727,43 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 	local trinkets = CreateFrame("Frame", "TrinketMenu_MainFrame", _G.UIParent)
 	trinkets:SetScale(1.5) -- TrinketMenu's own scale
 	widget("UIScale"):SetValue(80)
-	lu.assertAlmostEquals(minimap:GetBaseScale(), mapBefore * .8, 1e-6)
-	lu.assertAlmostEquals(questie:GetScale(), .8, 1e-6)
+	lu.assertAlmostEquals(minimap:GetBaseScale(), mapBefore * 0.8, 1e-6)
+	lu.assertAlmostEquals(questie:GetScale(), 0.8, 1e-6)
 	-- TrinketMenu's still reads and sets its own scale, ours on top
 	lu.assertEquals(trinkets:GetScale(), 1.5)
-	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), 1.5 * .8 * _G.UIParent:GetEffectiveScale(), 1e-6)
+	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), 1.5 * 0.8 * _G.UIParent:GetEffectiveScale(), 1e-6)
 	trinkets:SetScale(1)
-	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), .8 * _G.UIParent:GetEffectiveScale(), 1e-6)
+	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), 0.8 * _G.UIParent:GetEffectiveScale(), 1e-6)
 	-- in combat, it waits for its end
 	client:EnterCombat()
 	widget("UIScale"):SetValue(100)
-	lu.assertAlmostEquals(questie:GetScale(), .8, 1e-6)
+	lu.assertAlmostEquals(questie:GetScale(), 0.8, 1e-6)
 	client:LeaveCombat()
 	lu.assertAlmostEquals(questie:GetScale(), 1, 1e-6)
 	-- /dui setscale too
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("setscale 0.7")
-	lu.assertAlmostEquals(minimap:GetBaseScale(), mapBefore * .7, 1e-6)
-	lu.assertAlmostEquals(questie:GetScale(), .7, 1e-6)
-	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), .7 * _G.UIParent:GetEffectiveScale(), 1e-6)
+	lu.assertAlmostEquals(minimap:GetBaseScale(), mapBefore * 0.7, 1e-6)
+	lu.assertAlmostEquals(questie:GetScale(), 0.7, 1e-6)
+	lu.assertAlmostEquals(trinkets:GetEffectiveScale(), 0.7 * _G.UIParent:GetEffectiveScale(), 1e-6)
 
 	-- Questie building its tracker later: scaled on its next update
 	local updated
-	local trackerModule = { Update = function() updated = true end }
-	_G.QuestieLoader = { ImportModule = function() return trackerModule end }
+	local trackerModule = {
+		Update = function()
+			updated = true
+		end,
+	}
+	_G.QuestieLoader = {
+		ImportModule = function()
+			return trackerModule
+		end,
+	}
 	widget("UIScale"):SetValue(90)
 	client:FireEvent("PLAYER_ENTERING_WORLD")
 	questie:SetScale(1) -- Questie remade it
 	trackerModule.Update()
 	lu.assertTrue(updated)
-	lu.assertAlmostEquals(questie:GetScale(), .9, 1e-6)
+	lu.assertAlmostEquals(questie:GetScale(), 0.9, 1e-6)
 	client:EnterCombat()
 	questie:SetScale(1)
 	trackerModule.Update() -- in combat: left alone
@@ -706,30 +776,36 @@ end
 function TestOptionsMenu:test_scales_chosen_before_keep_their_size()
 	-- 110% of the UI Scale is the new 100%, 80% of the minimap's size too
 	client = nil
-	boot({ savedVariables = {
-		DiabolicUI_DB = { ScreenScaling = { profiles = { global = { scale = 1.21 } } } },
-		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.6 } } },
-	} })
+	boot({
+		savedVariables = {
+			DiabolicUI_DB = { ScreenScaling = { profiles = { global = { scale = 1.21 } } } },
+			DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.6 } } },
+		},
+	})
 	lu.assertEquals(db("ScreenScaling").scale, 1.1)
 	-- (2.0 in the new sizes, beyond the slider's 150%)
 	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1.5)
 	-- only once
 	lu.assertTrue(db("ScreenScaling").rebased)
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.sizeBase, .8)
+	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.sizeBase, 0.8)
 	client = nil
 
 	-- saved against the 100% it briefly had (.64 of the original): back
-	boot({ savedVariables = {
-		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.25, sizeBase = .64 } } },
-	} })
+	boot({
+		savedVariables = {
+			DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.25, sizeBase = 0.64 } } },
+		},
+	})
 	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1)
 	client = nil
 
 	-- already against this 100%: left as it is
-	boot({ savedVariables = {
-		DiabolicUI_Minimap_DB = { global = { minimap = { userScale = .8, sizeRebased = true } } },
-	} })
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, .8)
+	boot({
+		savedVariables = {
+			DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 0.8, sizeRebased = true } } },
+		},
+	})
+	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 0.8)
 	assertClean(client)
 end
 
@@ -763,7 +839,8 @@ function TestOptionsMenu:test_trinketmenu_stays_on_screen_when_the_ui_scale_chan
 	_G.TrinketMenuPerOptions = { XPos = 400, YPos = 300 }
 	local menu = client:GetModule("Menu")
 	menu:ApplyUIScale()
-	local left, top = trinkets:GetLeft() * trinkets:GetEffectiveScale(), trinkets:GetTop() * trinkets:GetEffectiveScale()
+	local left, top =
+		trinkets:GetLeft() * trinkets:GetEffectiveScale(), trinkets:GetTop() * trinkets:GetEffectiveScale()
 	-- its saved spot converts to the new scale: same place on screen
 	widget("UIScale"):SetValue(80)
 	lu.assertAlmostEquals(_G.TrinketMenuPerOptions.XPos, 500, 1e-6)
@@ -799,7 +876,10 @@ function TestOptionsMenu:test_every_page_fits_in_the_window()
 				end
 				-- (a dropdown's frame runs past its art, so those are left out)
 				if right and child:IsShown() and not child.initialize then
-					lu.assertTrue(right <= container:GetRight(), panel:GetName() .. ": " .. tostring(child:GetName()) .. " sticks out")
+					lu.assertTrue(
+						right <= container:GetRight(),
+						panel:GetName() .. ": " .. tostring(child:GetName()) .. " sticks out"
+					)
 				end
 			end
 		end

@@ -37,7 +37,7 @@ Module.StyleBoard = function(self)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == ADDON) then
+	if addon == ADDON then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleBoard()
 	end
@@ -49,7 +49,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded(ADDON) and _G.GroupBulletinBoardFrame then

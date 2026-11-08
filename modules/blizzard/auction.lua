@@ -90,7 +90,13 @@ Module.PlaceBrowse = function(self)
 	-- the toolbar: Reset, the results' count, the search's two checkboxes
 	-- side by side (Diablo III's), the page arrows (the previous one left
 	-- of the numbers: CreatePages)
-	Ours("BrowseResetButton", "BrowseSearchCountText", "IsUsableCheckButton", "ShowOnPlayerCheckButton", "BrowseNextPageButton")
+	Ours(
+		"BrowseResetButton",
+		"BrowseSearchCountText",
+		"IsUsableCheckButton",
+		"ShowOnPlayerCheckButton",
+		"BrowseNextPageButton"
+	)
 	for _, name in ipairs({ "IsUsableCheckButton", "ShowOnPlayerCheckButton" }) do
 		kit:StyleCheckBox(_G[name])
 	end
@@ -108,7 +114,13 @@ Module.PlaceBrowse = function(self)
 		hooksecurefunc("FilterButton_SetType", StyleFilter)
 	end
 
-	self:PlaceResults(page, "AuctionFrameBrowseDiabolicResults", "BrowseQualitySort", "BrowseButton1", "BrowseScrollFrame")
+	self:PlaceResults(
+		page,
+		"AuctionFrameBrowseDiabolicResults",
+		"BrowseQualitySort",
+		"BrowseButton1",
+		"BrowseScrollFrame"
+	)
 end
 
 -- Browse's pages as Diablo III's: up to `pages.shown` numbers between its
@@ -146,7 +158,7 @@ Module.CreatePages = function(self)
 		local anchor = nextPage
 		for i = 1, spec.shown do
 			local button = buttons[i]
-			if (i <= count) then
+			if i <= count then
 				button.page = first + count - i
 				button:SetText(button.page + 1)
 				local shown = (button.page == current)
@@ -171,7 +183,13 @@ end
 
 -- Bids: its results across the page.
 Module.PlaceBids = function(self)
-	self:PlaceResults(_G.AuctionFrameBid, "AuctionFrameBidDiabolicResults", "BidQualitySort", "BidButton1", "BidScrollFrame")
+	self:PlaceResults(
+		_G.AuctionFrameBid,
+		"AuctionFrameBidDiabolicResults",
+		"BidQualitySort",
+		"BidButton1",
+		"BidScrollFrame"
+	)
 end
 
 -- What's placed on `holder` by its top (by one point) moved by `move`
@@ -183,7 +201,8 @@ local Move = function(holder, move, Pick, ...)
 		if (not part.DiabolicPlaced) and (part:GetNumPoints() == 1) then
 			local point, relative, relativePoint, x, y = part:GetPoint()
 			-- (its left: from its point's offset and its width)
-			local left = x - (point:find("RIGHT$") and part:GetWidth() or point:find("LEFT$") and 0 or part:GetWidth() / 2)
+			local left = x
+				- (point:find("RIGHT$") and part:GetWidth() or point:find("LEFT$") and 0 or part:GetWidth() / 2)
 			if ((relative == holder) or (relative == nil)) and Pick(relativePoint, x, left) then
 				part:SetPoint(point, relative, relativePoint, x + move[1], y + move[2])
 				part.DiabolicPlaced, part.DiabolicRaised, part.DiabolicLowered = true, true, true
@@ -211,8 +230,13 @@ Module.PlaceAuctions = function(self)
 	slot:SetPoint("CENTER")
 	slot:SetSize(button:GetWidth() * spec.slot_scale, button:GetHeight() * spec.slot_scale)
 	kit:AddBorder(button, button:GetWidth())
-	self:PlaceResults(page, "AuctionFrameAuctionsDiabolicResults", "AuctionsQualitySort", "AuctionsButton1",
-		"AuctionsScrollFrame")
+	self:PlaceResults(
+		page,
+		"AuctionFrameAuctionsDiabolicResults",
+		"AuctionsQualitySort",
+		"AuctionsButton1",
+		"AuctionsScrollFrame"
+	)
 end
 
 -- Auctionator's page (it makes it as the auction house loads; placed as
@@ -274,18 +298,18 @@ local DIALOGS = {
 	Atr_Buy_Confirm_Frame = { "Atr_Buy_Confirm_OKBut", "Atr_Buy_Confirm_CancelBut" },
 	Atr_Confirm_Frame = { "Atr_Confirm_Cancel" },
 	Atr_Error_Frame = {},
-	Atr_FullScanFrame = { "Atr_FullScanStartButton", "Atr_FullScanDone" }
+	Atr_FullScanFrame = { "Atr_FullScanStartButton", "Atr_FullScanDone" },
 }
 Module.PlaceAuctionatorDialogs = function(self)
 	local window
 	for i = 1, select("#", _G.AuctionFrame:GetChildren()) do
 		local child = select(i, _G.AuctionFrame:GetChildren())
-		if (child.Frame == _G.AuctionFrame) then
+		if child.Frame == _G.AuctionFrame then
 			window = child
 		end
 	end
 	local mask = _G.Atr_Mask
-	if (not window) or (not mask) then
+	if (not window) or not mask then
 		return
 	end
 	local Cover = function()
@@ -330,7 +354,7 @@ Module.StyleAuctionHouse = function(self)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "Blizzard_AuctionUI") then
+	if addon == "Blizzard_AuctionUI" then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleAuctionHouse()
 	end
@@ -342,7 +366,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded("Blizzard_AuctionUI") then

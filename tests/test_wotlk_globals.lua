@@ -49,7 +49,9 @@ end
 
 local listSourceFiles = function()
 	local files = {}
-	local pipe = io.popen("find engine handlers modules settings defaults data locale -name '*.lua' -not -path '*/Libs/*' | sort")
+	local pipe = io.popen(
+		"find engine handlers modules settings defaults data locale -name '*.lua' -not -path '*/Libs/*' | sort"
+	)
 	for path in pipe:lines() do
 		files[#files + 1] = path
 	end
@@ -125,14 +127,17 @@ function TestWotlkGlobals:test_only_reads_globals_that_exist_in_wotlk()
 	end
 	table.sort(missing)
 	if #missing > 0 then
-		lu.fail("Globals that don't exist in WotLK 3.3.5 (use a locale string, or add to ALLOWED with a reason):\n  " .. table.concat(missing, "\n  "))
+		lu.fail(
+			"Globals that don't exist in WotLK 3.3.5 (use a locale string, or add to ALLOWED with a reason):\n  "
+				.. table.concat(missing, "\n  ")
+		)
 	end
 end
 
 function TestWotlkGlobals:test_detector_catches_a_missing_global()
 	local tmp = tempName()
 	local file = io.open(tmp, "w")
-	file:write('local x = TAXI_CANCEL\nlocal y = _G.PANDAREN_THING\n_G.OWN_VALUE = 1\nlocal z = _G.UIParent\n')
+	file:write("local x = TAXI_CANCEL\nlocal y = _G.PANDAREN_THING\n_G.OWN_VALUE = 1\nlocal z = _G.UIParent\n")
 	file:close()
 	local reads, writes = scanFile(tmp)
 	os.remove(tmp)

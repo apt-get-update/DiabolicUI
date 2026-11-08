@@ -37,7 +37,7 @@ ns.Colors = {
 	green = color(25, 178, 25),
 	ui = color(192, 192, 192),
 	quest = {
-		green = color(89, 201, 89)
+		green = color(89, 201, 89),
 	},
 	-- zone names, by GetZonePVPInfo's pvp type
 	zone = {
@@ -46,6 +46,6 @@ ns.Colors = {
 		contested = color(229, 159, 28),
 		friendly = color(64, 175, 38),
 		hostile = color(175, 76, 56),
-		sanctuary = color(104, 204, 239)
-	}
+		sanctuary = color(104, 204, 239),
+	},
 }

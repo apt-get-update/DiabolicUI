@@ -38,12 +38,22 @@ local function newFrame(frameType, name, parent)
 	}, frameMT)
 end
 
-function methods:RegisterEvent(event) self.events[event] = true end
-function methods:UnregisterEvent(event) self.events[event] = nil end
-function methods:IsEventRegistered(event) return self.events[event] or false end
+function methods:RegisterEvent(event)
+	self.events[event] = true
+end
+function methods:UnregisterEvent(event)
+	self.events[event] = nil
+end
+function methods:IsEventRegistered(event)
+	return self.events[event] or false
+end
 
-function methods:SetScript(script, func) self.scripts[script] = func end
-function methods:GetScript(script) return self.scripts[script] end
+function methods:SetScript(script, func)
+	self.scripts[script] = func
+end
+function methods:GetScript(script)
+	return self.scripts[script]
+end
 function methods:HookScript(script, func)
 	self.hooks[script] = self.hooks[script] or {}
 	table.insert(self.hooks[script], func)
@@ -60,30 +70,74 @@ function methods:Fire(script, ...)
 	end
 end
 
-function methods:SetSize(width, height) self.width, self.height = width, height end
-function methods:GetSize() return self.width, self.height end
-function methods:SetWidth(width) self.width = width end
-function methods:SetHeight(height) self.height = height end
-function methods:GetWidth() return self.width end
-function methods:GetHeight() return self.height end
-function methods:SetScale(scale) self.scale = scale end
-function methods:GetScale() return self.scale end
-function methods:SetFrameLevel(level) self.frameLevel = level end
-function methods:GetFrameLevel() return self.frameLevel end
-function methods:SetFrameStrata(strata) self.frameStrata = strata end
-function methods:GetFrameStrata() return self.frameStrata end
-function methods:SetPoint(...) table.insert(self.points, { ... }) end
-function methods:ClearAllPoints() self.points = {} end
-function methods:SetAllPoints(target) self.points = { { "ALL", target } } end
-function methods:Show() self.shown = true end
-function methods:Hide() self.shown = false end
-function methods:IsShown() return self.shown end
-function methods:SetParent(parent) self.parent = parent end
-function methods:GetParent() return self.parent end
+function methods:SetSize(width, height)
+	self.width, self.height = width, height
+end
+function methods:GetSize()
+	return self.width, self.height
+end
+function methods:SetWidth(width)
+	self.width = width
+end
+function methods:SetHeight(height)
+	self.height = height
+end
+function methods:GetWidth()
+	return self.width
+end
+function methods:GetHeight()
+	return self.height
+end
+function methods:SetScale(scale)
+	self.scale = scale
+end
+function methods:GetScale()
+	return self.scale
+end
+function methods:SetFrameLevel(level)
+	self.frameLevel = level
+end
+function methods:GetFrameLevel()
+	return self.frameLevel
+end
+function methods:SetFrameStrata(strata)
+	self.frameStrata = strata
+end
+function methods:GetFrameStrata()
+	return self.frameStrata
+end
+function methods:SetPoint(...)
+	table.insert(self.points, { ... })
+end
+function methods:ClearAllPoints()
+	self.points = {}
+end
+function methods:SetAllPoints(target)
+	self.points = { { "ALL", target } }
+end
+function methods:Show()
+	self.shown = true
+end
+function methods:Hide()
+	self.shown = false
+end
+function methods:IsShown()
+	return self.shown
+end
+function methods:SetParent(parent)
+	self.parent = parent
+end
+function methods:GetParent()
+	return self.parent
+end
 
 -- Regions are frames too, as far as these tests care.
-function methods:CreateTexture() return newFrame("Texture", nil, self) end
-function methods:CreateFontString() return newFrame("FontString", nil, self) end
+function methods:CreateTexture()
+	return newFrame("Texture", nil, self)
+end
+function methods:CreateFontString()
+	return newFrame("FontString", nil, self)
+end
 
 -- Returns a fresh registry: its CreateFrame records every frame it makes in
 -- `created`, in creation order.

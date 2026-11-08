@@ -44,7 +44,7 @@ local IsUsableAction = _G.IsUsableAction
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
 -- Will replace these with our custom tooltiplib later on!
-local GameTooltip = _G.GameTooltip 
+local GameTooltip = _G.GameTooltip
 
 -- Registries
 local ButtonRegistry = {} -- all buttons
@@ -59,10 +59,9 @@ local FLASH_TIMER = 0
 local RANGE_TIMER = -1
 
 -- Tracking whether or not all three modifiers are down.
--- We're using this to correcly fire the show/hide grid functions when holding the modifiers, 
+-- We're using this to correcly fire the show/hide grid functions when holding the modifiers,
 -- without destroying the normal show/hide behaviour of the button grids.
 local MODIFIERS_DOWN = false
-
 
 -- Button Prototypes
 ------------------------------------------------------
@@ -84,7 +83,7 @@ local button_type_meta_map = {
 	empty = Button_MT,
 	action = ActionButton_MT,
 	pet = PetActionButton_MT,
-	stance = StanceButton_MT
+	stance = StanceButton_MT,
 }
 
 -- Frame to gather up stuff we want to hide from the actionbutton templates
@@ -94,14 +93,14 @@ UIHider:Hide()
 -- Button coloring
 local colors = {
 	-- icon coloring
-	usable 				= { 1, 1, 1 }, -- normal icons
-	unusable 			= { .3, .3, .3 }, -- used when icons can't be desaturated
-	outOfRange 			= { 1, 0, 0 }, -- spell target is out of range (too far / too close)
-	outOfMana 			= { 77/255, 77/255, 179/255 }, -- player has too little mana
+	usable = { 1, 1, 1 }, -- normal icons
+	unusable = { 0.3, 0.3, 0.3 }, -- used when icons can't be desaturated
+	outOfRange = { 1, 0, 0 }, -- spell target is out of range (too far / too close)
+	outOfMana = { 77 / 255, 77 / 255, 179 / 255 }, -- player has too little mana
 
 	-- button texts
-	keyText 			= { 1, 1, 1, 1 },
-	keyTextDisabled 	= { .3 + .5*73/255, .3 + .5*25/255, .3 + .5*9/255 } -- C.Status.Dead
+	keyText = { 1, 1, 1, 1 },
+	keyTextDisabled = { 0.3 + 0.5 * 73 / 255, 0.3 + 0.5 * 25 / 255, 0.3 + 0.5 * 9 / 255 }, -- C.Status.Dead
 }
 
 -- In combat the client often fires these several times in one frame:
@@ -127,11 +126,10 @@ local OnUpdate = function(self, elapsed)
 	RunPending()
 	FLASH_TIMER = FLASH_TIMER - elapsed
 	RANGE_TIMER = RANGE_TIMER - elapsed
-	
+
 	if (RANGE_TIMER <= 0) or (FLASH_TIMER <= 0) then
 		for button in next, ActiveButtons do
 			if button:IsShown() then
-
 				-- Put the flash check before the range timer check
 				if (button.flashing == 1) and (FLASH_TIMER <= 0) then
 					if button.flash:IsShown() then
@@ -141,9 +139,9 @@ local OnUpdate = function(self, elapsed)
 					end
 				end
 
-				if (RANGE_TIMER <= 0) then
+				if RANGE_TIMER <= 0 then
 					local outOfRange = not button:IsInRange()
-					if (outOfRange ~= button.outOfRange) then
+					if outOfRange ~= button.outOfRange then
 						button.outOfRange = outOfRange
 						button:UpdateUsable("range")
 					end
@@ -151,44 +149,43 @@ local OnUpdate = function(self, elapsed)
 			end
 		end
 
-		if (FLASH_TIMER <= 0) then
-			FLASH_TIMER = .4 -- ATTACK_BUTTON_FLASH_TIME
+		if FLASH_TIMER <= 0 then
+			FLASH_TIMER = 0.4 -- ATTACK_BUTTON_FLASH_TIME
 		end
 
-		if (RANGE_TIMER <= 0) then
-			RANGE_TIMER = .2 -- TOOLTIP_UPDATE_TIME
+		if RANGE_TIMER <= 0 then
+			RANGE_TIMER = 0.2 -- TOOLTIP_UPDATE_TIME
 		end
 	end
 end
 
--- In WotLK (possibly other old clients as well) desaturation of icons 
--- fail at the initial login or reload, for reasons I can't figure out. 
--- 
--- Might be something with the older graphics engine, or might even be 
--- the Wine Direct3D command stream since I'm using linux, for all I know. 
--- Though in the latter case, I would expect ALL clients to be affected, 
--- not just the older ones. So I'm leaning towards a blizzard problem. 
--- 
--- However, a simply 1 sec postponing of the update process along with 
--- a forced button usable update seems to handle the problem. 
+-- In WotLK (possibly other old clients as well) desaturation of icons
+-- fail at the initial login or reload, for reasons I can't figure out.
+--
+-- Might be something with the older graphics engine, or might even be
+-- the Wine Direct3D command stream since I'm using linux, for all I know.
+-- Though in the latter case, I would expect ALL clients to be affected,
+-- not just the older ones. So I'm leaning towards a blizzard problem.
+--
+-- However, a simply 1 sec postponing of the update process along with
+-- a forced button usable update seems to handle the problem.
 local WaitForUpdates = function(self, elapsed)
 	RunPending()
 	self.scheduleUpdate = (self.scheduleUpdate or 1) - elapsed
 	if self.scheduleUpdate <= 0 then
 		for button in next, ActiveButtons do
 			button:UpdateUsable("forced")
-		end	
+		end
 		self:SetScript("OnUpdate", OnUpdate)
 		self.scheduleUpdate = nil
 	end
 end
 
-
 -- Tooltip Updates
 --------------------------------------------------------------------
 local UpdateTooltip
 UpdateTooltip = function(self)
-	if (GetCVar("UberTooltips") == "1") then
+	if GetCVar("UberTooltips") == "1" then
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	else
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -200,17 +197,16 @@ UpdateTooltip = function(self)
 	end
 end
 
-
 -- Button Template
 --------------------------------------------------------------------
 
 -- Figure out if the grid should be shown or not
 Button.UpdateGrid = function(self)
 	local showGrid
-	if (self.showgrid == 0) then
-		if self:GetTexture() or self:HasAction() then 
+	if self.showgrid == 0 then
+		if self:GetTexture() or self:HasAction() then
 			showGrid = true
-		else 
+		else
 			if self.hidegrid then
 				showGrid = false
 			else
@@ -224,8 +220,8 @@ Button.UpdateGrid = function(self)
 	self:SetAlpha(showGrid and 1 or 0)
 end
 
--- Called when a show grid event is fired, 
--- not the same as definitely showing the grid. 
+-- Called when a show grid event is fired,
+-- not the same as definitely showing the grid.
 Button.ShowGrid = function(self)
 	self.showgrid = self.showgrid + 1
 	self:UpdateGrid()
@@ -233,8 +229,8 @@ end
 
 -- Same applies to this as the show grid method.
 Button.HideGrid = function(self)
-	if self.showgrid > 0 then 
-		self.showgrid = self.showgrid - 1 
+	if self.showgrid > 0 then
+		self.showgrid = self.showgrid - 1
 	end
 	self:UpdateGrid()
 end
@@ -255,16 +251,16 @@ end
 Button.Update = function(self)
 	if self:HasAction() then
 		ActiveButtons[self] = true
-		
-		if (self.type_by_state == "pet") then
+
+		if self.type_by_state == "pet" then
 			ActionButtons[self] = nil
 
 			local name, subtext, _, isToken, _, autoCastAllowed, autoCastEnabled = GetPetActionInfo(self.id)
-		
+
 			-- needed for tooltip functionality
 			self.tooltipName = isToken and _G[name] or name
 			self.tooltipSubtext = subtext
-			
+
 			if autoCastAllowed then
 				if autoCastEnabled then
 					self.autocastable:Hide()
@@ -277,7 +273,6 @@ Button.Update = function(self)
 				self.autocastable:Hide()
 				AutoCastShine_AutoCastStop(self.autocast)
 			end
-
 		else
 			-- (only action, pet and stance buttons ever hold an action)
 			ActionButtons[self] = true
@@ -291,12 +286,11 @@ Button.Update = function(self)
 		self:UpdateUsable()
 		self:UpdateCooldown()
 		self:UpdateFlash()
-
 	else
 		ActiveButtons[self] = nil
 		ActionButtons[self] = nil
 
-		if (self.type_by_state == "pet") then
+		if self.type_by_state == "pet" then
 			self.autocastable:Hide()
 			AutoCastShine_AutoCastStop(self.autocast)
 
@@ -314,18 +308,17 @@ Button.Update = function(self)
 	self:UpdateGrid()
 	self:UpdateCount()
 
-	if (GameTooltip:GetOwner() == self) then
+	if GameTooltip:GetOwner() == self then
 		UpdateTooltip(self)
 	end
 
 	if self.PostUpdate then
 		return self:PostUpdate()
-	end	
-
+	end
 end
 
 -- Updates the current action of the button
--- for the insecure environment. 
+-- for the insecure environment.
 Button.UpdateAction = function(self, force)
 	local button_type, button_action = self:GetAction()
 	if force or (button_type ~= self.type_by_state) or (button_action ~= self.action_by_state) then
@@ -335,14 +328,14 @@ Button.UpdateAction = function(self, force)
 		end
 		self.action_by_state = button_action
 		self:Update()
-	end	
+	end
 end
 
 -- Retrieves button type and button action for the current state.
 -- Unless the button_state is given, the header's state will be assumed.
 Button.GetAction = function(self, button_state)
-	if not button_state then 
-		button_state = self.header:GetAttribute("state") 
+	if not button_state then
+		button_state = self.header:GetAttribute("state")
 	end
 	button_state = tostring(button_state)
 	return self._type_by_state[button_state] or "empty", self._action_by_state[button_state]
@@ -353,7 +346,7 @@ Button.SetStateAction = function(self, button_state, button_type, button_action)
 	button_state = tostring(button_state)
 	self._type_by_state[button_state] = button_type
 	self._action_by_state[button_state] = button_action
-	
+
 	self:SetAttribute(format("type-by-state-%s", button_state), button_type)
 	self:SetAttribute(format("action-by-state-%s", button_state), button_action)
 end
@@ -363,7 +356,7 @@ Button.OnEnter = function(self)
 	UpdateTooltip(self)
 	if self.PostMouseEnter then
 		return self:PostMouseEnter()
-	end	
+	end
 end
 
 Button.OnLeave = function(self)
@@ -371,26 +364,26 @@ Button.OnLeave = function(self)
 	GameTooltip:Hide()
 	if self.PostMouseLeave then
 		return self:PostMouseLeave()
-	end	
+	end
 end
 
-Button.OnMouseDown = function(self, ...) 
+Button.OnMouseDown = function(self, ...)
 	if self.PostMouseDown then
 		return self:PostMouseDown(...)
-	end	
+	end
 end
 
-Button.OnMouseUp = function(self, ...)  
+Button.OnMouseUp = function(self, ...)
 	if self.PostMouseUp then
 		return self:PostMouseUp(...)
-	end	
+	end
 end
 
 -- update the checked status of a button (pet/minion autocast)
 Button.UpdateChecked = function(self)
 	local checked
-	if (self.type_by_state == "pet") then
-		if (self:IsCurrentlyActive() or self:IsAutoRepeat()) then
+	if self.type_by_state == "pet" then
+		if self:IsCurrentlyActive() or self:IsAutoRepeat() then
 			checked = true
 		else
 			checked = false
@@ -400,7 +393,7 @@ Button.UpdateChecked = function(self)
 		checked = (get_checked == true) or (get_checked == 1)
 	end
 
-	if (self._checked == checked) then
+	if self._checked == checked then
 		return
 	end
 
@@ -409,7 +402,7 @@ Button.UpdateChecked = function(self)
 
 	if self.PostUpdateChecked then
 		return self:PostUpdateChecked(checked)
-	end	
+	end
 end
 
 -- The button template's OverrideBindingKey writes the binding text
@@ -419,7 +412,8 @@ Button.UpdateBindings = function(self)
 end
 
 Button.GetKeyBind = function(self)
-	return self.keybindAction and GetBindingKey(self.keybindAction) or GetBindingKey("CLICK "..self:GetName()..":LeftButton")
+	return self.keybindAction and GetBindingKey(self.keybindAction)
+		or GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton")
 end
 
 Button.SetBindingAction = function(self, keybindAction)
@@ -442,16 +436,16 @@ Button.UpdateUsable = function(self, updateType)
 		usableState = "taxi"
 	elseif notEnoughMana then
 		usableState = "mana"
-	elseif (not isUsable) then
+	elseif not isUsable then
 		usableState = "unusable"
-	elseif (self.outOfRange or not(self:IsInRange())) then
+	elseif self.outOfRange or not (self:IsInRange()) then
 		usableState = "range"
 	else
 		usableState = "usable"
 	end
 
 	-- bail out of nothing actually has changed
-	if (previousUsableState == usableState) and (updateType ~= "forced") then 
+	if (previousUsableState == usableState) and (updateType ~= "forced") then
 		return
 	end
 
@@ -459,18 +453,18 @@ Button.UpdateUsable = function(self, updateType)
 	self.usableState = usableState
 
 	-- Change what needs to be changed
-	--  "taxi" is meant to apply to all states where 
+	--  "taxi" is meant to apply to all states where
 	--   the buttons can't really be used at all.
-	if (usableState == "taxi") then
+	if usableState == "taxi" then
 		-- NOTE!
 		-- SetDesaturated FAILS early in the reload process, for reasons unknown.
-		-- I've only encountered this in WotLK so far, not in Legion. 
-		-- I've yet to try Cata and MoP. Will do later. 
+		-- I've only encountered this in WotLK so far, not in Legion.
+		-- I've yet to try Cata and MoP. Will do later.
 
-		-- attempt to desaturate when on a taxi or flying, 
+		-- attempt to desaturate when on a taxi or flying,
 		-- to give the impression of a deactivated button
-		canDesaturate = icon:SetDesaturated(true) -- need to pass on the results of this to PostUpdate 
-		if canDesaturate then 
+		canDesaturate = icon:SetDesaturated(true) -- need to pass on the results of this to PostUpdate
+		if canDesaturate then
 			icon:SetVertexColor(colors.usable[1], colors.usable[2], colors.usable[3])
 		else
 			-- fallback to standard darkening if desaturation fails
@@ -478,38 +472,38 @@ Button.UpdateUsable = function(self, updateType)
 			icon:SetVertexColor(colors.unusable[1], colors.unusable[2], colors.unusable[3])
 		end
 	else
-		if (usableState == "unusable") then
+		if usableState == "unusable" then
 			icon:SetDesaturated(false)
 			icon:SetVertexColor(colors.unusable[1], colors.unusable[2], colors.unusable[3])
-		elseif (usableState == "range") then
+		elseif usableState == "range" then
 			icon:SetDesaturated(false)
 			icon:SetVertexColor(colors.outOfRange[1], colors.outOfRange[2], colors.outOfRange[3])
-		elseif (usableState == "usable") then
+		elseif usableState == "usable" then
 			icon:SetDesaturated(false)
 			icon:SetVertexColor(colors.usable[1], colors.usable[2], colors.usable[3])
-		elseif (usableState == "mana") then
+		elseif usableState == "mana" then
 			icon:SetDesaturated(false)
 			icon:SetVertexColor(colors.outOfMana[1], colors.outOfMana[2], colors.outOfMana[3])
 		end
-	end 
+	end
 
 	if self.PostUpdateUsable then
 		return self:PostUpdateUsable(usableState, canDesaturate)
-	end	
+	end
 end
 
 -- The time left of a cooldown, longer than the global one: hours, then
 -- minutes, then seconds, rounded up.
 local MIN_COUNT_DURATION = 2
-local COUNT_HZ = .1
+local COUNT_HZ = 0.1
 
 local FormatCooldown = function(timeLeft)
 	local seconds = math_ceil(timeLeft)
-	if (seconds < 60) then
+	if seconds < 60 then
 		return seconds
 	end
 	local minutes = math_ceil(timeLeft / 60)
-	if (minutes < 60) then
+	if minutes < 60 then
 		return minutes .. "m"
 	end
 	return math_ceil(timeLeft / 3600) .. "h"
@@ -518,12 +512,12 @@ end
 -- the cooldown frame's: it runs while the cooldown shows
 local UpdateCooldownCount = function(cooldown, elapsed)
 	cooldown.elapsed = (cooldown.elapsed or 0) + elapsed
-	if (cooldown.elapsed < COUNT_HZ) then
+	if cooldown.elapsed < COUNT_HZ then
 		return
 	end
 	cooldown.elapsed = 0
 	local timeLeft = cooldown.endTime - GetTime()
-	if (timeLeft > 0) then
+	if timeLeft > 0 then
 		cooldown.count:SetText(FormatCooldown(timeLeft))
 	else
 		cooldown.count:SetText("")
@@ -540,7 +534,7 @@ end
 Button.UpdateCooldown = function(self)
 	local start, duration, enable = self:GetCooldown()
 	local cooldown = self.cooldown
-	if (enable ~= 0) and (duration > .5) then
+	if (enable ~= 0) and (duration > 0.5) then
 		cooldown:SetCooldown(start, duration)
 		cooldown:Show()
 		if (duration > MIN_COUNT_DURATION) and not IsAddOnLoaded("OmniCC") then
@@ -573,7 +567,7 @@ Button.UpdateFlash = function(self)
 end
 
 Button.UpdateCount = function(self)
-	if (not self:HasAction()) then
+	if not self:HasAction() then
 		self.stack:SetText("")
 		return
 	end
@@ -589,48 +583,98 @@ Button.UpdateCount = function(self)
 	end
 end
 
-
 -- Button API Mapping
 -----------------------------------------------------------
 
 --- Generic Button API mapping
-Button.HasAction						= function(self) return nil end
-Button.GetTexture						= function(self) return nil end
-Button.GetCount							= function(self) return 0 end
-Button.GetCooldown						= function(self) return 0, 0, 0 end
-Button.IsAttack							= function(self) return nil end
-Button.IsCurrentlyActive				= function(self) return nil end
-Button.IsAutoRepeat						= function(self) return nil end
-Button.IsUsable							= function(self) return nil end
-Button.IsConsumableOrStackable 			= function(self) return nil end
-Button.GetRangeCheck					= function(self) return nil end -- 1 in range, 0 out of it, nil no range
-Button.IsInRange						= function(self)
+Button.HasAction = function(self)
+	return nil
+end
+Button.GetTexture = function(self)
+	return nil
+end
+Button.GetCount = function(self)
+	return 0
+end
+Button.GetCooldown = function(self)
+	return 0, 0, 0
+end
+Button.IsAttack = function(self)
+	return nil
+end
+Button.IsCurrentlyActive = function(self)
+	return nil
+end
+Button.IsAutoRepeat = function(self)
+	return nil
+end
+Button.IsUsable = function(self)
+	return nil
+end
+Button.IsConsumableOrStackable = function(self)
+	return nil
+end
+Button.GetRangeCheck = function(self)
+	return nil
+end -- 1 in range, 0 out of it, nil no range
+Button.IsInRange = function(self)
 	-- (no range counts as in range)
 	return self:GetRangeCheck() ~= 0
 end
-Button.SetTooltip						= function(self) return nil end
+Button.SetTooltip = function(self)
+	return nil
+end
 
 -- Action Button API mapping
-ActionButton.HasAction					= function(self) return HasAction(self.action_by_state) end
-ActionButton.GetTexture					= function(self) return GetActionTexture(self.action_by_state) end
-ActionButton.GetCount					= function(self) return GetActionCount(self.action_by_state) end
-ActionButton.GetCooldown				= function(self) return GetActionCooldown(self.action_by_state) end
-ActionButton.IsAttack					= function(self) return IsAttackAction(self.action_by_state) end
-ActionButton.IsCurrentlyActive			= function(self) return IsCurrentAction(self.action_by_state) end
-ActionButton.IsAutoRepeat				= function(self) return IsAutoRepeatAction(self.action_by_state) end
-ActionButton.IsUsable					= function(self) return IsUsableAction(self.action_by_state) end
-ActionButton.IsConsumableOrStackable	= function(self) return IsConsumableAction(self.action_by_state) or IsStackableAction(self.action_by_state) end
-ActionButton.GetRangeCheck				= function(self) return IsActionInRange(self.action_by_state) end
-ActionButton.SetTooltip					= function(self) return GameTooltip:SetAction(self.action_by_state) end
-
+ActionButton.HasAction = function(self)
+	return HasAction(self.action_by_state)
+end
+ActionButton.GetTexture = function(self)
+	return GetActionTexture(self.action_by_state)
+end
+ActionButton.GetCount = function(self)
+	return GetActionCount(self.action_by_state)
+end
+ActionButton.GetCooldown = function(self)
+	return GetActionCooldown(self.action_by_state)
+end
+ActionButton.IsAttack = function(self)
+	return IsAttackAction(self.action_by_state)
+end
+ActionButton.IsCurrentlyActive = function(self)
+	return IsCurrentAction(self.action_by_state)
+end
+ActionButton.IsAutoRepeat = function(self)
+	return IsAutoRepeatAction(self.action_by_state)
+end
+ActionButton.IsUsable = function(self)
+	return IsUsableAction(self.action_by_state)
+end
+ActionButton.IsConsumableOrStackable = function(self)
+	return IsConsumableAction(self.action_by_state) or IsStackableAction(self.action_by_state)
+end
+ActionButton.GetRangeCheck = function(self)
+	return IsActionInRange(self.action_by_state)
+end
+ActionButton.SetTooltip = function(self)
+	return GameTooltip:SetAction(self.action_by_state)
+end
 
 --- Pet Button
-PetActionButton.HasAction				= function(self) return GetPetActionInfo(self.id) end
-PetActionButton.GetCooldown				= function(self) return GetPetActionCooldown(self.id) end
-PetActionButton.IsCurrentlyActive		= function(self) return select(5, GetPetActionInfo(self.id)) end
-PetActionButton.IsAutoRepeat			= function(self) return nil end
-PetActionButton.SetTooltip				= function(self) 
-	if (not self.tooltipName) then
+PetActionButton.HasAction = function(self)
+	return GetPetActionInfo(self.id)
+end
+PetActionButton.GetCooldown = function(self)
+	return GetPetActionCooldown(self.id)
+end
+PetActionButton.IsCurrentlyActive = function(self)
+	return select(5, GetPetActionInfo(self.id))
+end
+PetActionButton.IsAutoRepeat = function(self)
+	return nil
+end
+PetActionButton.SetTooltip = function(self)
+	if not self.tooltipName then
 		return
 	end
 
@@ -644,72 +688,86 @@ PetActionButton.SetTooltip				= function(self)
 	-- (Not GameTooltip:SetPetAction: it doesn't work for the generic attack, defend and so on.)
 	return GameTooltip:Show()
 end
-PetActionButton.IsAttack				= function(self) return nil end
-PetActionButton.IsUsable				= function(self) return GetPetActionsUsable() end
-PetActionButton.GetTexture				= function(self)
+PetActionButton.IsAttack = function(self)
+	return nil
+end
+PetActionButton.IsUsable = function(self)
+	return GetPetActionsUsable()
+end
+PetActionButton.GetTexture = function(self)
 	local _, _, texture, isToken = GetPetActionInfo(self.id)
 	return isToken and _G[texture] or texture
 end
 
 --- Stance Button
-StanceButton.HasAction 					= function(self) return GetShapeshiftFormInfo(self.id) end
-StanceButton.GetCooldown 				= function(self) return GetShapeshiftFormCooldown(self.id) end
-StanceButton.GetTexture 				= function(self) return GetShapeshiftFormInfo(self.id) end
-StanceButton.IsCurrentlyActive 			= function(self) return select(3,GetShapeshiftFormInfo(self.id)) end
-StanceButton.IsUsable 					= function(self) return select(4,GetShapeshiftFormInfo(self.id)) end
-StanceButton.SetTooltip					= function(self) return GameTooltip:SetShapeshift(self.id) end
-
+StanceButton.HasAction = function(self)
+	return GetShapeshiftFormInfo(self.id)
+end
+StanceButton.GetCooldown = function(self)
+	return GetShapeshiftFormCooldown(self.id)
+end
+StanceButton.GetTexture = function(self)
+	return GetShapeshiftFormInfo(self.id)
+end
+StanceButton.IsCurrentlyActive = function(self)
+	return select(3, GetShapeshiftFormInfo(self.id))
+end
+StanceButton.IsUsable = function(self)
+	return select(4, GetShapeshiftFormInfo(self.id))
+end
+StanceButton.SetTooltip = function(self)
+	return GameTooltip:SetShapeshift(self.id)
+end
 
 Handler.OnEvent = function(self, event, ...)
 	local arg1 = ...
 
-
-	if (event == "ACTIONBAR_SLOT_CHANGED") then
+	if event == "ACTIONBAR_SLOT_CHANGED" then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) and (button.type_by_state == "action") and ((arg1 == 0) or (arg1 == tonumber(button.action_by_state))) then
+			if
+				(button:IsShown())
+				and (button.type_by_state == "action")
+				and ((arg1 == 0) or (arg1 == tonumber(button.action_by_state)))
+			then
 				button:Update()
 			end
 		end
-		
-	elseif (event == "UPDATE_SHAPESHIFT_FORM") then
+	elseif event == "UPDATE_SHAPESHIFT_FORM" then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) then
+			if button:IsShown() then
 				button:UpdateTexture()
 			end
 		end
-	elseif (event == "CURRENT_SPELL_CAST_CHANGED") then
+	elseif event == "CURRENT_SPELL_CAST_CHANGED" then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) then
+			if button:IsShown() then
 				button:UpdateTexture()
 			end
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") or (event == "UPDATE_VEHICLE_ACTIONBAR") then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) then
+			if button:IsShown() then
 				button:Update()
 			end
 		end
-
-	elseif (event == "ACTIONBAR_SHOWGRID") then
+	elseif event == "ACTIONBAR_SHOWGRID" then
 		for button in next, ButtonRegistry do
 			if (button:IsShown()) and (button.type_by_state ~= "pet") then
 				button:ShowGrid()
 			end
 		end
-
-	elseif (event == "ACTIONBAR_HIDEGRID") then
+	elseif event == "ACTIONBAR_HIDEGRID" then
 		for button in next, ButtonRegistry do
 			if (button:IsShown()) and (button.type_by_state ~= "pet") then
 				button:HideGrid()
 			end
 		end
-	
-	elseif (event == "MODIFIER_STATE_CHANGED") then
+	elseif event == "MODIFIER_STATE_CHANGED" then
 		if IsShiftKeyDown() and IsAltKeyDown() and IsControlKeyDown() then
-			if (not MODIFIERS_DOWN) then
+			if not MODIFIERS_DOWN then
 				MODIFIERS_DOWN = true
 				for button in next, ButtonRegistry do
-					if (button:IsShown()) then
+					if button:IsShown() then
 						button:ShowGrid()
 					end
 				end
@@ -722,102 +780,93 @@ Handler.OnEvent = function(self, event, ...)
 				end
 			end
 		end
-	
-	elseif (event == "UPDATE_BINDINGS") then
+	elseif event == "UPDATE_BINDINGS" then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) then
+			if button:IsShown() then
 				button:UpdateBindings()
 			end
 		end
-
-	elseif (event == "ACTIONBAR_UPDATE_STATE") 
-	or ((event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and (arg1 == "player")) 
-	or ((event == "COMPANION_UPDATE") and (arg1 == "MOUNT")) then
+	elseif
+		(event == "ACTIONBAR_UPDATE_STATE")
+		or ((event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE") and (arg1 == "player"))
+		or ((event == "COMPANION_UPDATE") and (arg1 == "MOUNT"))
+	then
 		for button in next, ActiveButtons do
 			button:UpdateUsable()
 		end
 
-		-- needed after ACTIONBAR_UPDATE_STATE 
+		-- needed after ACTIONBAR_UPDATE_STATE
 		for button in next, ActionButtons do
 			button:UpdateUsable()
 		end
-
-	elseif (event == "ACTIONBAR_UPDATE_USABLE") then
+	elseif event == "ACTIONBAR_UPDATE_USABLE" then
 		pendingUsable = true -- (see RunPending)
-
-	elseif (event == "UPDATE_SHAPESHIFT_COOLDOWN")
-	or (event == "ACTIONBAR_UPDATE_COOLDOWN") then
+	elseif (event == "UPDATE_SHAPESHIFT_COOLDOWN") or (event == "ACTIONBAR_UPDATE_COOLDOWN") then
 		pendingCooldown = true
-
 	elseif (event == "TRADE_SKILL_SHOW") or (event == "TRADE_SKILL_CLOSE") then
 		for button in next, ActiveButtons do
 			button:UpdateChecked()
 		end
-	
-	elseif (event == "PLAYER_ENTER_COMBAT") then
+	elseif event == "PLAYER_ENTER_COMBAT" then
 		for button in next, ActiveButtons do
 			if button:IsAttack() then
 				button:StartFlash()
 			end
 		end
-	
-	elseif (event == "PLAYER_LEAVE_COMBAT") then
+	elseif event == "PLAYER_LEAVE_COMBAT" then
 		for button in next, ActiveButtons do
 			if button:IsAttack() then
 				button:StopFlash()
 			end
 		end
-	
-	elseif (event == "START_AUTOREPEAT_SPELL") then
+	elseif event == "START_AUTOREPEAT_SPELL" then
 		for button in next, ActiveButtons do
 			if button:IsAutoRepeat() then
 				button:StartFlash()
 			end
 		end
-	
-	elseif (event == "STOP_AUTOREPEAT_SPELL") then
+	elseif event == "STOP_AUTOREPEAT_SPELL" then
 		for button in next, ActiveButtons do
 			if (button.flashing == 1) and (not button:IsAttack()) then
 				button:StopFlash()
 			end
 		end
-	
 	elseif (event == "PET_STABLE_UPDATE") or (event == "PET_STABLE_SHOW") then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) then
+			if button:IsShown() then
 				button:Update()
 			end
 		end
-	
-	elseif (event == "PET_BAR_SHOWGRID") then
+	elseif event == "PET_BAR_SHOWGRID" then
 		for button in next, ButtonRegistry do
 			if (button:IsShown()) and (button.type_by_state == "pet") then
 				button:ShowGrid()
 			end
 		end
-	
-	elseif (event == "PET_BAR_HIDEGRID") then
+	elseif event == "PET_BAR_HIDEGRID" then
 		for button in next, ButtonRegistry do
-			if (button.type_by_state == "pet") then
+			if button.type_by_state == "pet" then
 				button:HideGrid()
 			end
 		end
-	
+
 	-- Various pet bar related updates
-	elseif (event == "PET_BAR_UPDATE") 
-	or (event == "SPELLS_CHANGED")
-	or (event == "PET_BAR_UPDATE_COOLDOWN")
-	or (event == "UNIT_PET" and arg1 == "player") 
-	or ((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet")
-	or (event == "PLAYER_FARSIGHT_FOCUS_CHANGED") then
+	elseif
+		(event == "PET_BAR_UPDATE")
+		or (event == "SPELLS_CHANGED")
+		or (event == "PET_BAR_UPDATE_COOLDOWN")
+		or (event == "UNIT_PET" and arg1 == "player")
+		or ((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet")
+		or (event == "PLAYER_FARSIGHT_FOCUS_CHANGED")
+	then
 		for button in next, ButtonRegistry do
 			if (button.type_by_state == "pet") and (button:IsShown()) then
 				button:Update()
 			end
 		end
 
-	-- Usable pet spells changed 
-	elseif (event == "PET_BAR_UPDATE_USABLE") then
+	-- Usable pet spells changed
+	elseif event == "PET_BAR_UPDATE_USABLE" then
 		for button in next, ButtonRegistry do
 			if (button.type_by_state == "pet") and (button:IsShown()) then
 				button:UpdateUsable()
@@ -827,19 +876,21 @@ Handler.OnEvent = function(self, event, ...)
 	-- Fired when player control is lost/gained or when the player takes an automated flight path
 	elseif (event == "PLAYER_CONTROL_LOST") or (event == "PLAYER_CONTROL_GAINED") then
 		for button in next, ButtonRegistry do
-			if (button:IsShown()) then
+			if button:IsShown() then
 				button:Update()
 			end
 		end
 
 	-- Cast on key down or up. In most cases this won't happen in combat,
 	-- but better to be safe than sorry.
-	elseif ((event == "CVAR_UPDATE") and ((arg1 == "ACTION_BUTTON_USE_KEY_DOWN") or (arg1 == "LOCK_ACTIONBAR_TEXT")))
-	or (event == "PLAYER_REGEN_ENABLED") then
+	elseif
+		((event == "CVAR_UPDATE") and ((arg1 == "ACTION_BUTTON_USE_KEY_DOWN") or (arg1 == "LOCK_ACTIONBAR_TEXT")))
+		or (event == "PLAYER_REGEN_ENABLED")
+	then
 		if InCombatLockdown() then
 			return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
 		end
-		if (event == "PLAYER_REGEN_ENABLED") then
+		if event == "PLAYER_REGEN_ENABLED" then
 			self:UnregisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
 		end
 		local clicks = GetCVarBool("ActionButtonUseKeyDown") and "AnyDown" or "AnyUp"
@@ -906,21 +957,20 @@ Handler.Start = function(self, event)
 end
 
 Handler.OnEnable = function(self)
-	-- Only register this event here, 
+	-- Only register this event here,
 	-- to avoid the handler starting updates too early.
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "Start")
 end
 
 -- button constructor
 Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
-
-	-- I would like to completely avoid frame names in this UI, 
-	-- to avoid any sort of external tampering, 
+	-- I would like to completely avoid frame names in this UI,
+	-- to avoid any sort of external tampering,
 	-- but currently button names are required to fully support
 	-- the keybind functionality of the blizzard UI. >:(
 	local name
 	if (type(header.id) == "number") and (header.id > 0) then
-		local button_num = id > NUM_ACTIONBAR_BUTTONS and id%NUM_ACTIONBAR_BUTTONS or id
+		local button_num = id > NUM_ACTIONBAR_BUTTONS and id % NUM_ACTIONBAR_BUTTONS or id
 		local bar_num
 		if header.id == 1 then
 			bar_num = 1
@@ -933,33 +983,34 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 		elseif header.id == LEFT_ACTIONBAR_PAGE then
 			bar_num = 5
 		end
-		name = "EngineBar"..bar_num.."Button"..button_num
-	elseif (header.id == "stance") then
-		name = "EngineStanceBarButton"..id
-	elseif (header.id == "pet") then
-		name = "EnginePetBarButton"..id
-	elseif (header.id == "vehicle") then
-		name = "EngineVehicleBarButton"..id
+		name = "EngineBar" .. bar_num .. "Button" .. button_num
+	elseif header.id == "stance" then
+		name = "EngineStanceBarButton" .. id
+	elseif header.id == "pet" then
+		name = "EnginePetBarButton" .. id
+	elseif header.id == "vehicle" then
+		name = "EngineVehicleBarButton" .. id
 	end
-	
+
 	local button
-	if (buttonType == "pet") then
-		button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "PetActionButtonTemplate"), Button_MT)
+	if buttonType == "pet" then
+		button = setmetatable(Engine:CreateFrame("CheckButton", name, header, "PetActionButtonTemplate"), Button_MT)
 		button:UnregisterAllEvents()
 		button:SetScript("OnEvent", nil)
 		button:SetScript("OnUpdate", nil)
 		button:SetScript("OnDragStart", nil)
 		button:SetScript("OnReceiveDrag", nil)
-		
-	elseif (buttonType == "stance") then
-		button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "ShapeshiftButtonTemplate"), Button_MT)
+	elseif buttonType == "stance" then
+		button = setmetatable(Engine:CreateFrame("CheckButton", name, header, "ShapeshiftButtonTemplate"), Button_MT)
 		button:UnregisterAllEvents()
 		button:SetScript("OnEvent", nil)
-		
 	else
-		button = setmetatable(Engine:CreateFrame("CheckButton", name , header, "SecureActionButtonTemplate, ActionButtonTemplate"), Button_MT)
+		button = setmetatable(
+			Engine:CreateFrame("CheckButton", name, header, "SecureActionButtonTemplate, ActionButtonTemplate"),
+			Button_MT
+		)
 		button:RegisterForDrag("LeftButton", "RightButton")
-		
+
 		local cast_on_down = GetCVarBool("ActionButtonUseKeyDown")
 		if cast_on_down then
 			button:RegisterForClicks("AnyDown")
@@ -967,7 +1018,7 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 			button:RegisterForClicks("AnyUp")
 		end
 	end
-	
+
 	button.config = header.config
 	button.id = id -- the initial id (or action) of the button
 	button.header = header -- header/parent containing statedrivers and layout methods
@@ -977,8 +1028,8 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- (Our own checked and highlight looks are kept in button._checked
 	-- and button._highlighted.)
 
-	-- tables to hold the button type and button action, 
-	-- for the various states the button can have. 
+	-- tables to hold the button type and button action,
+	-- for the various states the button can have.
 	button._action_by_state = {} -- if the button action changes with its state/page
 	button._type_by_state = {} -- if the button type changes with its state/page
 	button.action_by_state = button.id -- initial/current action
@@ -990,15 +1041,18 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	-- TODO: let the user control clicks and locks
 	button:SetAttribute("buttonlock", true)
 
-	-- Drag N Drop Fuctionality, allow the user to pick up and drop stuff on the buttons! 
+	-- Drag N Drop Fuctionality, allow the user to pick up and drop stuff on the buttons!
 	-- params:
 	-- 		self = the actionbutton frame handle
 	-- 		button = the mousebutton clicked to start the drag
 	--  	kind = what kind of action is picked up (nil?)
-	-- 		value = detail of the thing on the cursor 
+	-- 		value = detail of the thing on the cursor
 	--
 	-- returns: ["clear",] kind, value
-	header:WrapScript(button, "OnDragStart", [[
+	header:WrapScript(
+		button,
+		"OnDragStart",
+		[[
 		local button_state = self:GetParent():GetAttribute("state"); 
 		if not button_state then
 			return
@@ -1011,7 +1065,8 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 				return "action", action_by_state
 			end
 		end
-	]])
+	]]
+	)
 	setmetatable(button, button_type_meta_map[buttonType]) -- assign correct metatable
 
 	-- Explicitly place the button above its own bar, instead of relying on
@@ -1027,11 +1082,11 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	button.icon = button:CreateTexture(nil, "ARTWORK")
 	button.icon:SetSize(button:GetSize())
 	button.icon:SetPoint("CENTER", 0, 0)
-	button.icon:SetTexCoord(5/64, 59/64, 5/64, 59/64) 
+	button.icon:SetTexCoord(5 / 64, 59 / 64, 5 / 64, 59 / 64)
 
 	button.flash = button:CreateTexture(nil, "OVERLAY")
 	button.flash:SetAllPoints(button.icon)
-	button.flash:SetTexture(.7, 0, 0, .3)
+	button.flash:SetTexture(0.7, 0, 0, 0.3)
 	button.flash:Hide()
 
 	button.name = button:CreateFontString(nil, "OVERLAY")
@@ -1046,16 +1101,16 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	button.keybind:SetFontObject(GameFontNormal)
 	button.keybind:SetPoint("TOPRIGHT")
 
-	-- We're doing these ourselves with our own system, 
+	-- We're doing these ourselves with our own system,
 	-- so we simply blank out the ones existing
-	-- in the blizzard templates. 
+	-- in the blizzard templates.
 	button:SetCheckedTexture("")
 	button:SetHighlightTexture("")
 	button:SetNormalTexture("")
 
 	-- cooldown frame
 	-- stance and pet buttons have this in their template, I think
-	local oldCooldown = _G[button:GetName().."Cooldown"] 
+	local oldCooldown = _G[button:GetName() .. "Cooldown"]
 	if oldCooldown then
 		oldCooldown:SetParent(UIHider)
 		oldCooldown:SetAlpha(0)
@@ -1066,21 +1121,21 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	button.cooldown:SetAllPoints(button.icon)
 	button.cooldown:SetFrameLevel(button:GetFrameLevel() + 3)
 
-	button.cooldown:SetAlpha(.75)
+	button.cooldown:SetAlpha(0.75)
 
 	-- let blizz handle this one
 	button.pushed = button:CreateTexture(nil, "OVERLAY")
 	button.pushed:SetAllPoints(button.icon)
-	button.pushed:SetTexture(1, 1, 1, .25)
+	button.pushed:SetTexture(1, 1, 1, 0.25)
 
 	button:SetPushedTexture(button.pushed)
 	button:GetPushedTexture():SetBlendMode("BLEND")
-	
-	-- We need to put it back in its correct drawlayer, 
-	-- or Blizzard will set it to ARTWORK which can lead 
-	-- to it randomly being drawn behind the icon texture. 
-	button:GetPushedTexture():SetDrawLayer("OVERLAY") 
-		
+
+	-- We need to put it back in its correct drawlayer,
+	-- or Blizzard will set it to ARTWORK which can lead
+	-- to it randomly being drawn behind the icon texture.
+	button:GetPushedTexture():SetDrawLayer("OVERLAY")
+
 	-- cooldown numbers, written by the cooldown frame (UpdateCooldown)
 	button.cooldowncount = button:CreateFontString(nil, "OVERLAY")
 	button.cooldowncount:SetFontObject(GameFontNormal)
@@ -1090,10 +1145,10 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 
 	-- autocast texture
 	-- exists on pet button templates
-	if (buttonType == "pet") then
+	if buttonType == "pet" then
 		button.autocastable = _G[button:GetName() .. "AutoCastable"]
 		button.autocastable:SetDrawLayer("OVERLAY")
-		
+
 		button.autocast = _G[button:GetName() .. "Shine"]
 		button.autocast:SetAllPoints(button.icon)
 		button.autocast:SetFrameLevel(button:GetFrameLevel() + 4)
@@ -1109,20 +1164,20 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 	hooksecurefunc(button, "SetChecked", function(self)
 		if self.PostUpdateChecked then
 			return self:PostUpdateChecked(self._checked)
-		end	
+		end
 	end)
 
 	-- Add any methods from the optional template.
 	-- This can NOT override existing methods!
 	if buttonTemplate then
 		for name, method in pairs(buttonTemplate) do
-			if (not button[name]) then
+			if not button[name] then
 				button[name] = method
 			end
 		end
 	end
 
-	-- Call the post create method if it exists, 
+	-- Call the post create method if it exists,
 	-- and pass along any remaining arguments.
 	if button.PostCreate then
 		button:PostCreate(...)
@@ -1130,7 +1185,7 @@ Handler.New = function(self, buttonType, id, header, buttonTemplate, ...)
 
 	-- Add the new button to our registry
 	ButtonRegistry[button] = true
-	
+
 	-- Return the button to whatever requested it
 	return button
 end

@@ -29,21 +29,47 @@ local units, state, Library
 
 local function load()
 	units, state = {}, { instance = false, combat = false }
-	local function u(unit) return units[unit] or {} end
-	_G.IsInInstance = function() return state.instance end
-	_G.UnitAffectingCombat = function() return state.combat end
-	_G.UnitCanAttack = function(_, unit) return u(unit).canAttack end
-	_G.UnitClass = function(unit) return u(unit).class, u(unit).class end
-	_G.UnitIsEnemy = function(unit) return u(unit).enemy end
-	_G.UnitIsFriend = function(_, unit) return u(unit).friend end
-	_G.UnitIsPlayer = function(unit) return u(unit).player end
-	_G.UnitIsUnit = function(a, b) return a == b end
-	_G.UnitPlayerControlled = function(unit) return u(unit).controlled end
-	_G.UnitReaction = function(unit) return u(unit).reaction end
+	local function u(unit)
+		return units[unit] or {}
+	end
+	_G.IsInInstance = function()
+		return state.instance
+	end
+	_G.UnitAffectingCombat = function()
+		return state.combat
+	end
+	_G.UnitCanAttack = function(_, unit)
+		return u(unit).canAttack
+	end
+	_G.UnitClass = function(unit)
+		return u(unit).class, u(unit).class
+	end
+	_G.UnitIsEnemy = function(unit)
+		return u(unit).enemy
+	end
+	_G.UnitIsFriend = function(_, unit)
+		return u(unit).friend
+	end
+	_G.UnitIsPlayer = function(unit)
+		return u(unit).player
+	end
+	_G.UnitIsUnit = function(a, b)
+		return a == b
+	end
+	_G.UnitPlayerControlled = function(unit)
+		return u(unit).controlled
+	end
+	_G.UnitReaction = function(unit)
+		return u(unit).reaction
+	end
 
 	local Engine = EngineMock.new()
-	Engine.GetConstant = function(_, name) return ({ AURA_TIME_LIMIT_LOW = TIME_LIMIT_LOW })[name] end
-	Engine.UnitIsTapDenied = function(unit) return u(unit).tapDenied end
+	Engine.GetConstant = function(_, name)
+		return ({ AURA_TIME_LIMIT_LOW = TIME_LIMIT_LOW })[name]
+	end
+	Engine.UnitIsTapDenied = function(unit)
+		return u(unit).tapDenied
+	end
 	Engine:NewStaticConfig("Data: Colors", COLORS)
 	assert(loadfile("modules/unitframes/units/shared.lua"))("DiabolicUI", Engine)
 	Library = Engine:GetDB("Library: UnitFrames")
@@ -100,14 +126,21 @@ function TestHealthColor:test_post_update_colors_on_change_and_dims_out_of_comba
 	units.target = { reaction = 2 }
 	local sets = 0
 	local health = {
-		SetStatusBarColor = function(self, r) sets = sets + 1; self.color = r end,
-		Value = { SetAlpha = function(self, alpha) self.alpha = alpha end },
+		SetStatusBarColor = function(self, r)
+			sets = sets + 1
+			self.color = r
+		end,
+		Value = {
+			SetAlpha = function(self, alpha)
+				self.alpha = alpha
+			end,
+		},
 		dimOutOfCombat = true,
 	}
 	Library.PostUpdateHealth(health, "target", 100, 100)
 	Library.PostUpdateHealth(health, "target", 90, 100)
 	lu.assertEquals({ health.color, sets }, { "hostile", 1 })
-	lu.assertEquals(health.Value.alpha, .7)
+	lu.assertEquals(health.Value.alpha, 0.7)
 	state.combat = true
 	units.target.reaction = 4
 	Library.PostUpdateHealth(health, "target", 90, 100)
@@ -120,27 +153,51 @@ end
 TestUpdateLayers = {}
 
 local function texture()
-	return { Show = function(self) self.shown = true end, Hide = function(self) self.shown = false end }
+	return {
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
+	}
 end
 
 function TestUpdateLayers:test_the_borders_light_up_under_the_mouse()
 	load()
 	local frame = {
-		BorderNormal = texture(), BorderNormalHighlight = texture(),
-		PortraitBorderNormal = texture(), PortraitBorderHighlight = texture(), PortraitGlow = texture(),
-		IsMouseOver = function(self) return self.over end,
+		BorderNormal = texture(),
+		BorderNormalHighlight = texture(),
+		PortraitBorderNormal = texture(),
+		PortraitBorderHighlight = texture(),
+		PortraitGlow = texture(),
+		IsMouseOver = function(self)
+			return self.over
+		end,
 	}
 	frame.over = true
 	Library.UpdateLayers(frame)
 	lu.assertEquals({ frame.BorderNormal.shown, frame.BorderNormalHighlight.shown }, { false, true })
-	lu.assertEquals({ frame.PortraitBorderNormal.shown, frame.PortraitBorderHighlight.shown, frame.PortraitGlow.shown }, { false, true, true })
+	lu.assertEquals(
+		{ frame.PortraitBorderNormal.shown, frame.PortraitBorderHighlight.shown, frame.PortraitGlow.shown },
+		{ false, true, true }
+	)
 	frame.over = false
 	Library.UpdateLayers(frame)
 	lu.assertEquals({ frame.BorderNormal.shown, frame.BorderNormalHighlight.shown }, { true, false })
-	lu.assertEquals({ frame.PortraitBorderNormal.shown, frame.PortraitBorderHighlight.shown, frame.PortraitGlow.shown }, { true, false, false })
+	lu.assertEquals(
+		{ frame.PortraitBorderNormal.shown, frame.PortraitBorderHighlight.shown, frame.PortraitGlow.shown },
+		{ true, false, false }
+	)
 
 	-- without a portrait
-	local plain = { BorderNormal = texture(), BorderNormalHighlight = texture(), IsMouseOver = function() return true end }
+	local plain = {
+		BorderNormal = texture(),
+		BorderNormalHighlight = texture(),
+		IsMouseOver = function()
+			return true
+		end,
+	}
 	Library.UpdateLayers(plain)
 	lu.assertTrue(plain.BorderNormalHighlight.shown)
 end
@@ -163,8 +220,21 @@ end
 -- duration, debuffType, stealable, spellId, boss (isBossDebuff) and mine
 -- (isCastByPlayer).
 local function filter(name, unit, aura)
-	return Library[name]({ unit = unit }, "Aura", "", "", 1, aura.debuffType, aura.duration, nil,
-		aura.caster, aura.stealable, aura.spellId, aura.boss, aura.mine)
+	return Library[name](
+		{ unit = unit },
+		"Aura",
+		"",
+		"",
+		1,
+		aura.debuffType,
+		aura.duration,
+		nil,
+		aura.caster,
+		aura.stealable,
+		aura.spellId,
+		aura.boss,
+		aura.mine
+	)
 end
 
 function TestAuraFilters:test_enemy_buffs()

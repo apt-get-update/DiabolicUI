@@ -41,7 +41,7 @@ local count, font_mt = 0
 font_mt = {
 	__index = function(t, k)
 		-- Create a new category and subtable
-		if (type(k) == "string") then
+		if type(k) == "string" then
 			local new = setmetatable({}, font_mt)
 			rawset(t, k, new)
 			return new
@@ -52,16 +52,17 @@ font_mt = {
 		new:SetJustifyH("LEFT")
 		rawset(t, k, new)
 		return new
-	end
+	end,
 }
 local Fonts = setmetatable({}, font_mt)
 
 -- Return a font object, re-use existing ones that match.
 API.GetFont = function(size, outline, type)
-	local inherit = type == "Chat" and _G.ChatFontNormal or type == "Number" and _G.NumberFont_Normal_Med or
-	_G.MailFont_Large
+	local inherit = type == "Chat" and _G.ChatFontNormal
+		or type == "Number" and _G.NumberFont_Normal_Med
+		or _G.MailFont_Large
 	local fontObject = Fonts[type or "Normal"][outline and "Outline" or "None"][size]
-	if (fontObject:GetFontObject() ~= inherit) then
+	if fontObject:GetFontObject() ~= inherit then
 		fontObject:SetFontObject(inherit)
 		fontObject:SetFont(fontObject:GetFont(), size, outline and "OUTLINE" or "")
 		fontObject:SetShadowColor(0, 0, 0, 0)

@@ -77,7 +77,7 @@ local LayoutScene = function(scene)
 	-- the part of the picture shown, in its pixels
 	local total = SCENE_TOP + SCENE_BOTTOM
 	local x0, x1, y0 = 0, SCENE_WIDTH, 0
-	if (width / height > SCENE_WIDTH / total) then
+	if width / height > SCENE_WIDTH / total then
 		y0 = total - SCENE_WIDTH * height / width
 	else
 		local cut = (SCENE_WIDTH - total * width / height) / 2
@@ -86,7 +86,7 @@ local LayoutScene = function(scene)
 	local scale = width / (x1 - x0)
 	local left, right = x0 / SCENE_WIDTH, x1 / SCENE_WIDTH
 	local top, bottom = scene.Top, scene.Bottom
-	if (y0 < SCENE_TOP) then
+	if y0 < SCENE_TOP then
 		top:SetHeight((SCENE_TOP - y0) * scale)
 		top:SetTexCoord(left, right, y0 / SCENE_TOP, 1)
 		top:Show()
@@ -103,9 +103,17 @@ end
 -- the skills' dividers, the scroll bar tracks, the sort tab, the companions'
 -- frames. The rest of their textures (bars, stat boxes, icons) stay.
 local PANEL_ART = {
-	"ui%-character%-general%-", "ui%-character%-charactertab%-", "ui%-petpaperdollframe%-bot",
-	"skillframe%-bot", "ui%-talentframe%-bot", "ui%-classtrainer%-horizontalbar",
-	"ui%-classtrainer%-scrollbar", "ui%-character%-scrollbar", "ui%-questlogsorttab%-", "ui%-petframe%-frame$", "ui%-petframe%-slots$"
+	"ui%-character%-general%-",
+	"ui%-character%-charactertab%-",
+	"ui%-petpaperdollframe%-bot",
+	"skillframe%-bot",
+	"ui%-talentframe%-bot",
+	"ui%-classtrainer%-horizontalbar",
+	"ui%-classtrainer%-scrollbar",
+	"ui%-character%-scrollbar",
+	"ui%-questlogsorttab%-",
+	"ui%-petframe%-frame$",
+	"ui%-petframe%-slots$",
 }
 
 -- the tabs' frames; the currency tab's comes with Blizzard_TokenUI
@@ -187,10 +195,14 @@ Module.CreateSpec = function(self)
 	local button = kit:AddTitleGem(self.Header)
 	button:SetScript("OnEnter", Spec_OnEnter)
 	button:SetScript("OnLeave", Spec_OnLeave)
-	button:SetScript("OnClick", function() _G.ToggleTalentFrame() end)
+	button:SetScript("OnClick", function()
+		_G.ToggleTalentFrame()
+	end)
 	self.Spec = button
 	self:UpdateSpec()
-	_G.CharacterFrame:HookScript("OnShow", function() self:UpdateSpec() end)
+	_G.CharacterFrame:HookScript("OnShow", function()
+		self:UpdateSpec()
+	end)
 	self:RegisterEvent("PLAYER_TALENT_UPDATE", "UpdateSpec")
 end
 
@@ -241,7 +253,7 @@ Module.LayoutPaperDoll = function(self, window)
 	local shown
 	panel:SetScript("OnUpdate", function()
 		local over = MouseIsOver(panel) and true or false
-		if (over ~= shown) then
+		if over ~= shown then
 			shown = over
 			for _, arrow in ipairs(arrows) do
 				arrow:SetAlpha(over and 1 or 0)
@@ -283,10 +295,16 @@ Module.LayoutPaperDoll = function(self, window)
 	self:CreateColumn(window)
 
 	-- the window wide on this tab only
-	_G.PaperDollFrame:HookScript("OnShow", function() self:SetWide(true) end)
-	_G.PaperDollFrame:HookScript("OnHide", function() self:SetWide(false) end)
+	_G.PaperDollFrame:HookScript("OnShow", function()
+		self:SetWide(true)
+	end)
+	_G.PaperDollFrame:HookScript("OnHide", function()
+		self:SetWide(false)
+	end)
 	self:SetWide(_G.PaperDollFrame:IsShown())
-	_G.CharacterFrame:HookScript("OnShow", function() self:SetWide(_G.PaperDollFrame:IsShown()) end)
+	_G.CharacterFrame:HookScript("OnShow", function()
+		self:SetWide(_G.PaperDollFrame:IsShown())
+	end)
 end
 
 -- The window's size: wide for the character tab's two columns. Blizzard
@@ -424,7 +442,13 @@ Module.CreateColumn = function(self, window)
 		resistance:SetFrameLevel(star:GetFrameLevel() + 1)
 		resistance:SetSize(size, size)
 		resistance:ClearAllPoints()
-		resistance:SetPoint("CENTER", star, "CENTER", reach * math_cos(math_rad(angle)), reach * math_sin(math_rad(angle)))
+		resistance:SetPoint(
+			"CENTER",
+			star,
+			"CENTER",
+			reach * math_cos(math_rad(angle)),
+			reach * math_sin(math_rad(angle))
+		)
 		-- its school's icon without Blizzard's bevel
 		for _, region in ipairs({ resistance:GetRegions() }) do
 			if region:IsObjectType("Texture") then
@@ -453,7 +477,9 @@ Module.CreateColumn = function(self, window)
 	local titles = {}
 	for g, cvar in ipairs(STAT_CVARS) do
 		local section = CreateSection(stats, spec, y, "", "Button")
-		section:SetScript("OnClick", function() self:NextStats(cvar) end)
+		section:SetScript("OnClick", function()
+			self:NextStats(cvar)
+		end)
 		titles[g] = section.title
 		for i = 1, 6 do
 			local line = CreateFrame("Frame", STAT_PREFIX .. g .. i, stats, "StatFrameTemplate")
@@ -492,7 +518,7 @@ Module.CreateColumn = function(self, window)
 		-- (seen in game: the column and all it holds at the window's own level,
 		-- its painted background hiding all but their top layers)
 		local level = _G.PaperDollFrame:GetFrameLevel()
-		if (column:GetFrameLevel() <= level) then
+		if column:GetFrameLevel() <= level then
 			Stack(column, level + 1)
 		end
 		self:UpdateScore()
@@ -511,7 +537,7 @@ Module.CreatePages = function(self, column)
 	local below = stats.padding + spec.top + spec.tab_height
 	local Show = function(chosen)
 		for i, page in ipairs(pages) do
-			if (i == chosen) then
+			if i == chosen then
 				page:Show()
 				tabs[i]:Disable()
 			else
@@ -539,7 +565,9 @@ Module.CreatePages = function(self, column)
 		local icon = tab:CreateTexture(nil, "OVERLAY")
 		if art.portrait then
 			SetPortraitTexture(icon, "player")
-			_G.PaperDollFrame:HookScript("OnShow", function() SetPortraitTexture(icon, "player") end)
+			_G.PaperDollFrame:HookScript("OnShow", function()
+				SetPortraitTexture(icon, "player")
+			end)
 		else
 			icon:SetTexture(art.texture)
 			icon:SetTexCoord(unpack(art.coords))
@@ -553,7 +581,9 @@ Module.CreatePages = function(self, column)
 			GameTooltip:SetText(tab.tooltip)
 			GameTooltip:Show()
 		end)
-		tab:SetScript("OnLeave", function() GameTooltip:Hide() end)
+		tab:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
 		tabs[i] = tab
 		local page = CreateFrame("Frame", nil, column)
 		page:SetPoint("TOPLEFT", 0, -below - spec.gap)
@@ -626,11 +656,13 @@ Module.CreateTitles = function(self, page)
 		current = current or GetCurrentTitle()
 		local titles = {}
 		for id = 1, GetNumTitles() do
-			if (IsTitleKnown(id) ~= 0) then
+			if IsTitleKnown(id) ~= 0 then
 				titles[#titles + 1] = { id = id, name = GetTitleName(id):match("^%s*(.-)%s*$") }
 			end
 		end
-		table_sort(titles, function(a, b) return a.name < b.name end)
+		table_sort(titles, function(a, b)
+			return a.name < b.name
+		end)
 		table_insert(titles, 1, { id = -1, name = _G.NONE })
 		for i, title in ipairs(titles) do
 			local row = Row(i)
@@ -650,7 +682,9 @@ Module.CreateTitles = function(self, page)
 		end
 		list:SetSize(scroll:GetWidth(), #titles * spec.row_height)
 	end
-	page:HookScript("OnShow", function() Update() end)
+	page:HookScript("OnShow", function()
+		Update()
+	end)
 end
 
 -- The next group of stats in a section (Blizzard's dropdowns' list).
@@ -658,7 +692,7 @@ Module.NextStats = function(self, cvar)
 	local options = _G.PLAYERSTAT_DROPDOWN_OPTIONS
 	local current, nextOption = GetCVar(cvar), options[1]
 	for i, option in ipairs(options) do
-		if (option == current) then
+		if option == current then
 			nextOption = options[i % #options + 1]
 		end
 	end
@@ -690,8 +724,12 @@ Module.StyleCompanions = function(self)
 		end
 	end
 	-- centred over the panels, as Blizzard shows and places them
-	hooksecurefunc("PetPaperDollFrame_UpdateTabs", function() self:CenterPetTabs() end)
-	_G.PetPaperDollFrame:HookScript("OnShow", function() self:CenterPetTabs() end)
+	hooksecurefunc("PetPaperDollFrame_UpdateTabs", function()
+		self:CenterPetTabs()
+	end)
+	_G.PetPaperDollFrame:HookScript("OnShow", function()
+		self:CenterPetTabs()
+	end)
 end
 
 -- The pet tab's own tabs (pet, companions, mounts: those shown), in a row
@@ -706,14 +744,14 @@ Module.CenterPetTabs = function(self)
 			width = width + tab:GetWidth()
 		end
 	end
-	if (#shown == 0) then
+	if #shown == 0 then
 		return
 	end
 	width = width + config.tab_gap * (#shown - 1)
 	local x, y = unpack(config.tab_position)
 	for i, tab in ipairs(shown) do
 		tab:ClearAllPoints()
-		if (i == 1) then
+		if i == 1 then
 			tab:SetPoint("TOPLEFT", _G.PetPaperDollFrame, "TOP", x - width / 2, y)
 		else
 			tab:SetPoint("LEFT", shown[i - 1], "RIGHT", config.tab_gap, 0)
@@ -784,9 +822,15 @@ Module.EmbedGearManager = function(self, header, column)
 	end)
 	-- (only on its page: open, it plays its sound and puts Blizzard's
 	-- yellow arrows by the slots)
-	column:HookScript("OnShow", function() opener:Show() end)
-	column:HookScript("OnHide", function() dialog:Hide() end)
-	hooksecurefunc("CloseChildWindows", function() opener:Show() end)
+	column:HookScript("OnShow", function()
+		opener:Show()
+	end)
+	column:HookScript("OnHide", function()
+		dialog:Hide()
+	end)
+	hooksecurefunc("CloseChildWindows", function()
+		opener:Show()
+	end)
 end
 
 -- The equipment manager's sets in rows under its title bar (`rows`: how
@@ -818,9 +862,9 @@ Module.LayoutSets = function(self)
 	for i, button in ipairs(buttons) do
 		button:SetScale(fit * ratio)
 		button:ClearAllPoints()
-		if (i == 1) then
+		if i == 1 then
 			button:SetPoint("TOPLEFT", header, "BOTTOMLEFT", left / fit, -spec.top / fit)
-		elseif (i - first == count) then
+		elseif i - first == count then
 			button:SetPoint("TOP", buttons[first], "BOTTOM", 0, -spec.row_gap)
 			r, first = r + 1, i
 			count = rows[r] or rows[#rows]
@@ -842,7 +886,7 @@ Module.LayoutSets = function(self)
 	for i, button in ipairs(self.GearActions) do
 		button:SetScale(ratio)
 		button:ClearAllPoints()
-		if (i == 1) then
+		if i == 1 then
 			button:SetPoint("TOP", header, "BOTTOMLEFT", x, -spec.top - (span - icons) / 2)
 		else
 			button:SetPoint("TOP", self.GearActions[i - 1], "BOTTOM", 0, -spec.action_gap)
@@ -850,7 +894,7 @@ Module.LayoutSets = function(self)
 	end
 	-- as high as its rows need
 	local total, used = 0, 0
-	while (used < #buttons) do
+	while used < #buttons do
 		total = total + 1
 		used = used + (rows[total] or rows[#rows])
 	end
@@ -884,7 +928,7 @@ Module.IconButton = function(self, button, index, look)
 	end
 	local update = function()
 		icon:SetDesaturated(button:IsEnabled() == 0)
-		icon:SetAlpha((button:IsEnabled() == 0) and .4 or 1)
+		icon:SetAlpha((button:IsEnabled() == 0) and 0.4 or 1)
 	end
 	hooksecurefunc(button, "Enable", update)
 	hooksecurefunc(button, "Disable", update)
@@ -894,7 +938,9 @@ Module.IconButton = function(self, button, index, look)
 		GameTooltip:SetText(text)
 		GameTooltip:Show()
 	end)
-	button:HookScript("OnLeave", function() GameTooltip:Hide() end)
+	button:HookScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
 end
 
 -- The first free set as a "+": a click names a new one (Blizzard's save,
@@ -993,9 +1039,9 @@ end
 local HomePath = function(unit)
 	local _, race = UnitRace(unit)
 	local key = race and race:upper()
-	if (key == "GNOME") then
+	if key == "GNOME" then
 		race = "Dwarf"
-	elseif (key == "TROLL") or (not key) then
+	elseif (key == "TROLL") or not key then
 		race = "Orc"
 	end
 	return [[Interface\DressUpFrame\DressUpBackground-]] .. race
@@ -1099,7 +1145,7 @@ Module.StyleInspectTrees = function(self)
 			end
 			tab.DiabolicIcon = tab:CreateTexture(nil, "ARTWORK")
 			tab.DiabolicIcon:SetAllPoints()
-			tab.DiabolicIcon:SetTexCoord(.08, .92, .08, .92)
+			tab.DiabolicIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 			kit:AddBorder(tab, config.size)
 			tab:HookScript("OnEnter", function()
 				local tree, _, points = GetTalentTabInfo(i, talents.inspect, talents.pet, talents.talentGroup)
@@ -1108,7 +1154,9 @@ Module.StyleInspectTrees = function(self)
 					_G.GameTooltip:SetText(_G.MASTERY_POINTS_SPENT:format(tree, points))
 				end
 			end)
-			tab:HookScript("OnLeave", function() _G.GameTooltip:Hide() end)
+			tab:HookScript("OnLeave", function()
+				_G.GameTooltip:Hide()
+			end)
 			tabs[i] = tab
 		end
 	end
@@ -1149,8 +1197,13 @@ Module.StyleReputationDetail = function(self)
 	local ink = config.reputation_detail_ink
 	local description = _G.ReputationDetailFactionDescription
 	description:SetFontObject(_G.QuestFontLeft)
-	for _, name in ipairs({ "ReputationDetailFactionName", "ReputationDetailFactionDescription", "ReputationDetailAtWarCheckBoxText",
-		"ReputationDetailInactiveCheckBoxText", "ReputationDetailMainScreenCheckBoxText" }) do
+	for _, name in ipairs({
+		"ReputationDetailFactionName",
+		"ReputationDetailFactionDescription",
+		"ReputationDetailAtWarCheckBoxText",
+		"ReputationDetailInactiveCheckBoxText",
+		"ReputationDetailMainScreenCheckBoxText",
+	}) do
 		_G[name]:SetShadowColor(0, 0, 0, 0)
 	end
 	_G.ReputationDetailFactionName:SetTextColor(unpack(ink.title))
@@ -1213,8 +1266,11 @@ Module.StyleReputationDetail = function(self)
 		ribbon:SetTexture(spec.standings[standing] or spec.texture)
 		local lines = name:GetStringHeight()
 		ribbon:SetHeight((lines + spec.padding * 2) * spec.canvas)
-		local text = config.reputation_detail_name_top + lines + config.reputation_detail_name_gap
-			+ description:GetHeight() + config.reputation_detail_boxes
+		local text = config.reputation_detail_name_top
+			+ lines
+			+ config.reputation_detail_name_gap
+			+ description:GetHeight()
+			+ config.reputation_detail_boxes
 		detail:SetHeight(math_max(height, text))
 		local war = _G.ReputationDetailAtWarCheckBox
 		_G.ReputationDetailAtWarCheckBoxText:SetTextColor(unpack((war:IsEnabled() == 1) and ink.war or ink.off))
@@ -1225,7 +1281,9 @@ Module.StyleReputationDetail = function(self)
 	end
 	Ink()
 	hooksecurefunc("ReputationFrame_Update", Ink)
-	hooksecurefunc("ReputationFrame_Update", function() self:ColorReputation() end)
+	hooksecurefunc("ReputationFrame_Update", function()
+		self:ColorReputation()
+	end)
 	for i = 1, _G.NUM_FACTIONS_DISPLAYED do
 		kit:StyleExpanders(_G["ReputationBar" .. i .. "ExpandOrCollapseButton"])
 	end
@@ -1265,7 +1323,7 @@ Module.StyleCharacter = function(self)
 	self:AddDrag(window)
 	for i, tab in ipairs(TABS) do
 		self:HidePanelArt(_G[tab])
-		if (i > 1) then
+		if i > 1 then
 			self:CenterTab(_G[tab])
 		end
 	end
@@ -1321,9 +1379,9 @@ Module.StyleCharacter = function(self)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "Blizzard_TokenUI") then
+	if addon == "Blizzard_TokenUI" then
 		self:StyleTokens()
-	elseif (addon == "Blizzard_InspectUI") then
+	elseif addon == "Blizzard_InspectUI" then
 		self:StyleInspect()
 	end
 end
@@ -1334,7 +1392,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleCharacter()

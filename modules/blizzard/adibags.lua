@@ -39,11 +39,15 @@ Module.StyleContainer = function(self, frame)
 		kit:StylePanel(panel)
 		panel.Title:SetFontObject(config.title_font)
 		panel.Title:SetTextColor(unpack(kit.config.title_plate.color))
-		panel:HookScript("OnShow", function() kit:StylePanel(panel) end)
+		panel:HookScript("OnShow", function()
+			kit:StylePanel(panel)
+		end)
 	end
 	-- its push buttons ours, each once (its modules add theirs as it
 	-- shows: sorting, search)
-	frame:HookScript("OnShow", function() kit:StyleButtons(frame) end)
+	frame:HookScript("OnShow", function()
+		kit:StyleButtons(frame)
+	end)
 	kit:StyleButtons(frame)
 end
 
@@ -60,7 +64,9 @@ Module.StyleAdiBags = function(self)
 			frame:SetBackdrop(nil)
 		end
 	end)
-	hooksecurefunc(container, "OnShow", function(frame) self:StyleContainer(frame) end)
+	hooksecurefunc(container, "OnShow", function(frame)
+		self:StyleContainer(frame)
+	end)
 	-- the slots after AdiBags (and its modules) drew theirs
 	hooksecurefunc(AdiBags:GetClass("ItemButton").prototype, "UpdateBorder", function(button)
 		slots:StyleSlot(button, button.bag)
@@ -73,7 +79,7 @@ Module.StyleAdiBags = function(self)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "AdiBags") then
+	if addon == "AdiBags" then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleAdiBags()
 	end
@@ -85,7 +91,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded("AdiBags") then

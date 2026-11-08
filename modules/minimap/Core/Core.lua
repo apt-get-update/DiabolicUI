@@ -25,26 +25,27 @@
 --]]
 local Addon, ns = ..., DiabolicUIMinimapNS
 ns = LibStub("AceAddon-3.0"):NewAddon(ns, Addon, "AceConsole-3.0")
-ns.Hider = CreateFrame("Frame"); ns.Hider:Hide()
+ns.Hider = CreateFrame("Frame")
+ns.Hider:Hide()
 ns.Noop = function() end
 
 -- The minimap's 100% size, from the original Diabolic one (it was .64
 -- for a while: sizes saved then convert back).
-ns.SIZE_BASE = .8
+ns.SIZE_BASE = 0.8
 
 -- Default settings
 local defaults = {
 	global = {
 		core = {
-			relativeScale = 1
+			relativeScale = 1,
 		},
 		minimap = {
 			useServerTime = false,
 			userScale = 1, -- of the size below (what 80% used to be)
 			zoneFadeEnabled = true,
-			zoneFadeDuration = .25 -- seconds each half (out, then in) of the zone label's crossfade takes
-		}
-	}
+			zoneFadeDuration = 0.25, -- seconds each half (out, then in) of the zone label's crossfade takes
+		},
+	},
 }
 
 -- Lua API
@@ -64,15 +65,14 @@ local ReloadUI = ReloadUI
 local IsAddOnAvailable = ns.API.IsAddOnAvailable
 local SetRelativeScale = ns.API.SetRelativeScale
 
-
 local LimitScale = function(scale)
-	return math_min(1.5, math_max(.5, scale))
+	return math_min(1.5, math_max(0.5, scale))
 end
 
 -- Keeps the relative scale within bounds.
 local SanitizeSettings = function(db)
 	local scale = db.global.core.relativeScale
-	if (scale) then
+	if scale then
 		db.global.core.relativeScale = LimitScale(scale)
 	end
 	return db
@@ -87,25 +87,25 @@ end
 
 -- /resetscale
 ns.ResetScale = function(self)
-	if (InCombatLockdown()) then
+	if InCombatLockdown() then
 		return
 	end
 	local defaultScale = defaults.global.core.relativeScale
-	if (self.db.global.core.relativeScale ~= defaultScale) then
+	if self.db.global.core.relativeScale ~= defaultScale then
 		ApplyRelativeScale(self, defaultScale)
 	end
 end
 
 -- /setscale 0.5-1.5
 ns.SetScale = function(self, input)
-	if (InCombatLockdown()) then
+	if InCombatLockdown() then
 		return
 	end
 	local scale = tonumber((self:GetArgs(string_lower(input))))
-	if (scale) then
+	if scale then
 		-- Sanitize it, don't want crazy values
 		scale = LimitScale(scale)
-		if (self.db.global.core.relativeScale ~= scale) then
+		if self.db.global.core.relativeScale ~= scale then
 			ApplyRelativeScale(self, scale)
 		end
 	end
@@ -113,17 +113,20 @@ end
 
 -- /go and /switchto: switches to another of Goldpaw's UIs.
 ns.SwitchUI = function(self, input)
-	if (not self._ui_list) then
+	if not self._ui_list then
 		-- Create a list of currently installed UIs.
 		self._ui_list = {}
-		for ui, cmds in next, {
-			["AzeriteUI"]   = { "azerite", "azui" },
-			["DiabolicUI2"] = { "diabolic", "diablo", "dui" },
-			["GoldpawUI"]   = { "goldpaw", "gui" },
-			["JourneyUI"]   = { "journey", "jui" }
-		} do
+		for ui, cmds in
+			next,
+			{
+				["AzeriteUI"] = { "azerite", "azui" },
+				["DiabolicUI2"] = { "diabolic", "diablo", "dui" },
+				["GoldpawUI"] = { "goldpaw", "gui" },
+				["JourneyUI"] = { "journey", "jui" },
+			}
+		do
 			-- Only include existing UIs that can be switched to.
-			if (IsAddOnAvailable(ui)) then
+			if IsAddOnAvailable(ui) then
 				for _, cmd in next, cmds do
 					self._ui_list[cmd] = ui
 				end
@@ -132,15 +135,15 @@ ns.SwitchUI = function(self, input)
 	end
 	local arg = self:GetArgs(string_lower(input))
 	local target = arg and self._ui_list[arg]
-	if (target) then
-		EnableAddOn(target)      -- Enable the desired UI
+	if target then
+		EnableAddOn(target) -- Enable the desired UI
 		for _, ui in next, self._ui_list do
-			if (ui ~= target) then -- Don't disable target UI
+			if ui ~= target then -- Don't disable target UI
 				DisableAddOn(ui) -- Disable all other UIs
 			end
 		end
 		DisableAddOn(Addon) -- Disable the current UI
-		ReloadUI()    -- Reload interface to the selected UI
+		ReloadUI() -- Reload interface to the selected UI
 	end
 end
 
@@ -152,10 +155,10 @@ ns.OnInitialize = function(self)
 	-- "sizeBase" is the 100% a saved size counts from. (AceDB fills in the
 	-- defaults, and old defaults were never saved: 1 is always the new one.)
 	local minimap = self.db.global.minimap
-	local base = minimap.sizeBase or (minimap.sizeRebased and .8) or 1
-	if (base ~= ns.SIZE_BASE) then
-		if (minimap.userScale ~= 1) then
-			minimap.userScale = math.floor(minimap.userScale * base / ns.SIZE_BASE * 100 + .5) / 100
+	local base = minimap.sizeBase or (minimap.sizeRebased and 0.8) or 1
+	if base ~= ns.SIZE_BASE then
+		if minimap.userScale ~= 1 then
+			minimap.userScale = math.floor(minimap.userScale * base / ns.SIZE_BASE * 100 + 0.5) / 100
 		end
 		minimap.sizeBase = ns.SIZE_BASE
 		minimap.sizeRebased = nil
@@ -173,7 +176,7 @@ ns.OnInitialize = function(self)
 	self:RegisterChatCommand("clear", function()
 		for _, frameName in pairs(_G.CHAT_FRAMES) do
 			local frame = _G[frameName]
-			if (frame:IsShown()) then
+			if frame:IsShown() then
 				frame:Clear()
 			end
 		end

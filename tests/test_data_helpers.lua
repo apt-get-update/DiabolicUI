@@ -24,7 +24,9 @@ local function install(globals)
 end
 
 local function unitField(field)
-	return function(unit) return units[unit] and units[unit][field] end
+	return function(unit)
+		return units[unit] and units[unit][field]
+	end
 end
 
 -- Loads the given files against one Engine mock, like the real load order.
@@ -47,7 +49,9 @@ end
 TestFormatShort = {}
 
 function TestFormatShort:setUp()
-	_G.GetLocale = function() return "enUS" end
+	_G.GetLocale = function()
+		return "enUS"
+	end
 	self.Short = loadFiles({ "data/functions.lua" }):GetDB("Library: Format").Short
 end
 
@@ -75,7 +79,9 @@ function TestFormatShort:test_negative_thousands_are_abbreviated()
 end
 
 function TestFormatShort:test_chinese_counts_in_wan_and_yi()
-	_G.GetLocale = function() return "zhCN" end
+	_G.GetLocale = function()
+		return "zhCN"
+	end
 	local Short = loadFiles({ "data/functions.lua" }):GetDB("Library: Format").Short
 	lu.assertEquals(Short(9999), "9999")
 	lu.assertEquals(Short(15000), "1.5万")
@@ -94,7 +100,9 @@ end
 TestFormatColorize = {}
 
 function TestFormatColorize:setUp()
-	_G.GetLocale = function() return "enUS" end
+	_G.GetLocale = function()
+		return "enUS"
+	end
 	local Engine = loadFiles({ "data/functions.lua" }, function(Engine)
 		Engine:NewStaticConfig("Data: Colors", { General = { Normal = { 1, 0.5, 0 } } })
 	end)
@@ -120,15 +128,27 @@ end
 TestFormatMoney = {}
 
 function TestFormatMoney:setUp()
-	_G.GetLocale = function() return "enUS" end
+	_G.GetLocale = function()
+		return "enUS"
+	end
 	local Engine = loadFiles({ "data/functions.lua" }, function(Engine)
-		local coin = function(x, y) return { x, x + .5, y, y + .5 } end
-		Engine:NewStaticConfig("UI", { coin = {
-			gold_texture = "coins", gold_texcoord = coin(0, 0), gold_size = { 16, 16 },
-			silver_texture = "coins", silver_texcoord = coin(.5, 0), silver_size = { 16, 16 },
-			copper_texture = "coins", copper_texcoord = coin(0, .5), copper_size = { 16, 16 },
-			coin_offset = { 2, -4 },
-		} })
+		local coin = function(x, y)
+			return { x, x + 0.5, y, y + 0.5 }
+		end
+		Engine:NewStaticConfig("UI", {
+			coin = {
+				gold_texture = "coins",
+				gold_texcoord = coin(0, 0),
+				gold_size = { 16, 16 },
+				silver_texture = "coins",
+				silver_texcoord = coin(0.5, 0),
+				silver_size = { 16, 16 },
+				copper_texture = "coins",
+				copper_texcoord = coin(0, 0.5),
+				copper_size = { 16, 16 },
+				coin_offset = { 2, -4 },
+			},
+		})
 	end)
 	self.Money = Engine:GetDB("Library: Format").Money
 	self.GOLD = "|Tcoins:16:16:2:-4:64:64:0:32:0:32|t"
@@ -171,7 +191,9 @@ function TestAuraFunctions:setUp()
 		UnitAura = aura,
 		UnitBuff = aura,
 		UnitDebuff = aura,
-		UnitHasVehicleUI = function() return self.inVehicle end,
+		UnitHasVehicleUI = function()
+			return self.inVehicle
+		end,
 	})
 	self.Aura = loadFiles({ "data/aura-functions.lua" }):GetDB("Library: AuraFunctions")
 end
@@ -183,13 +205,15 @@ local function extras(func, unit, index)
 end
 
 function TestAuraFunctions:test_adds_boss_and_player_flags()
-	units.target = { auras = {
-		{ name = "Mine", caster = "player", spellId = 1 },
-		{ name = "Boss", caster = "boss1", spellId = 2, debuffType = "Magic" },
-		{ name = "Pet", caster = "pet", spellId = 3 },
-		{ name = "Other", caster = "party2", spellId = 4 },
-		{ name = "Unknown", spellId = 5 },
-	} }
+	units.target = {
+		auras = {
+			{ name = "Mine", caster = "player", spellId = 1 },
+			{ name = "Boss", caster = "boss1", spellId = 2, debuffType = "Magic" },
+			{ name = "Pet", caster = "pet", spellId = 3 },
+			{ name = "Other", caster = "party2", spellId = 4 },
+			{ name = "Unknown", spellId = 5 },
+		},
+	}
 	for _, name in ipairs({ "UnitAura", "UnitBuff", "UnitDebuff" }) do
 		local func = self.Aura[name]
 		local spellId, isBoss, isMine = extras(func, "target", 1)
@@ -232,7 +256,9 @@ function TestWotlkHelpers:setUp()
 		UnitPlayerControlled = unitField("player"),
 		UnitIsTappedByPlayer = unitField("mine"),
 		UnitIsTappedByAllThreatList = unitField("everyone"),
-		UnitIsFriend = function(_, unit) return units[unit] and units[unit].friend end,
+		UnitIsFriend = function(_, unit)
+			return units[unit] and units[unit].friend
+		end,
 		SlashCmdList = {},
 		ReloadUI = function() end,
 	})

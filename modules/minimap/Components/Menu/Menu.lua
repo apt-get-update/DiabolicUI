@@ -36,9 +36,14 @@ local tonumber = tonumber
 -- The 8 anchor points shown on the picker, in the same
 -- layout as they sit around the rectangle (no center point).
 local ANCHOR_POINTS = {
-	"TOPLEFT", "TOP", "TOPRIGHT",
-	"LEFT", "RIGHT",
-	"BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT"
+	"TOPLEFT",
+	"TOP",
+	"TOPRIGHT",
+	"LEFT",
+	"RIGHT",
+	"BOTTOMLEFT",
+	"BOTTOM",
+	"BOTTOMRIGHT",
 }
 
 -- Default screen inset used when snapping to a given anchor point.
@@ -50,7 +55,7 @@ local ANCHOR_OFFSETS = {
 	RIGHT = { -30, 0 },
 	BOTTOMLEFT = { 30, 30 },
 	BOTTOM = { 0, 30 },
-	BOTTOMRIGHT = { -30, 30 }
+	BOTTOMRIGHT = { -30, 30 },
 }
 
 -- Strings
@@ -58,11 +63,13 @@ local L_PARENT_CATEGORY = "DiabolicUI"
 local L_MINIMAP_CATEGORY = "Minimap"
 local L_SIZE_SLIDER_TOOLTIP = "Resizes the minimap."
 local L_ZONE_FADE_CHECKBOX = "Animate Zone Text"
-local L_ZONE_FADE_TOOLTIP = "Fades the zone label out and back in whenever you change zones, instead of swapping it instantly."
+local L_ZONE_FADE_TOOLTIP =
+	"Fades the zone label out and back in whenever you change zones, instead of swapping it instantly."
 local L_ZONE_FADE_DURATION_SLIDER = "Fade Duration"
 local L_ZONE_LABEL_HEADER = "Zone Label"
 local L_ANCHOR_HEADER = "Minimap Screen Anchor"
-local L_ANCHOR_TOOLTIP = "Which corner or edge of the screen the minimap snaps to when moved, and which side it stays clear of when resized."
+local L_ANCHOR_TOOLTIP =
+	"Which corner or edge of the screen the minimap snaps to when moved, and which side it stays clear of when resized."
 
 -- Styled to match how Immersion (and other AceGUI-3.0 based addons) render
 -- their own options sliders: a flat backdrop-textured bar instead of
@@ -71,20 +78,24 @@ local L_ANCHOR_TOOLTIP = "Which corner or edge of the screen the minimap snaps t
 local SLIDER_BACKDROP = {
 	bgFile = [[Interface\Buttons\UI-SliderBar-Background]],
 	edgeFile = [[Interface\Buttons\UI-SliderBar-Border]],
-	tile = true, tileSize = 8, edgeSize = 8,
-	insets = { left = 3, right = 3, top = 6, bottom = 6 }
+	tile = true,
+	tileSize = 8,
+	edgeSize = 8,
+	insets = { left = 3, right = 3, top = 6, bottom = 6 },
 }
 local SLIDER_THUMB_TEXTURE = [[Interface\Buttons\UI-SliderBar-Button-Horizontal]]
 
 local INPUT_BACKDROP = {
 	bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 	edgeFile = [[Interface\ChatFrame\ChatFrameBackground]],
-	tile = true, tileSize = 5, edgeSize = 1
+	tile = true,
+	tileSize = 5,
+	edgeSize = 1,
 }
-local INPUT_BORDER_COLOR = { .3, .3, .3, .8 }
-local INPUT_BORDER_COLOR_HOVER = { .5, .5, .5, 1 }
-local LABEL_COLOR = { 1, .82, 0 }
-local LABEL_COLOR_DISABLED = { .5, .5, .5 }
+local INPUT_BORDER_COLOR = { 0.3, 0.3, 0.3, 0.8 }
+local INPUT_BORDER_COLOR_HOVER = { 0.5, 0.5, 0.5, 1 }
+local LABEL_COLOR = { 1, 0.82, 0 }
+local LABEL_COLOR_DISABLED = { 0.5, 0.5, 0.5 }
 
 -- Layout grid, identical to DiabolicUI's own option pages in
 -- modules/menu/controls.lua, so this page lines up with its siblings.
@@ -114,7 +125,8 @@ local SkinDurationSlider = function(slider)
 	slider:SetBackdrop(SLIDER_BACKDROP)
 	slider:SetThumbTexture(SLIDER_THUMB_TEXTURE)
 
-	local lowText, highText, labelText = _G[slider:GetName() .. "Low"], _G[slider:GetName() .. "High"], _G[slider:GetName() .. "Text"]
+	local lowText, highText, labelText =
+		_G[slider:GetName() .. "Low"], _G[slider:GetName() .. "High"], _G[slider:GetName() .. "Text"]
 	lowText:SetTextColor(1, 1, 1)
 	highText:SetTextColor(1, 1, 1)
 	labelText:SetTextColor(unpack(LABEL_COLOR))
@@ -127,10 +139,14 @@ local SkinDurationSlider = function(slider)
 	input:SetFontObject(GameFontHighlightSmall)
 	input:SetMaxLetters(5)
 	input:SetBackdrop(INPUT_BACKDROP)
-	input:SetBackdropColor(0, 0, 0, .5)
+	input:SetBackdropColor(0, 0, 0, 0.5)
 	input:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR))
-	input:SetScript("OnEnter", function(self) self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR_HOVER)) end)
-	input:SetScript("OnLeave", function(self) self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR)) end)
+	input:SetScript("OnEnter", function(self)
+		self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR_HOVER))
+	end)
+	input:SetScript("OnLeave", function(self)
+		self:SetBackdropBorderColor(unpack(INPUT_BORDER_COLOR))
+	end)
 
 	return input, lowText, highText, labelText
 end
@@ -154,18 +170,18 @@ end
 local SizeInput_Commit = function(self)
 	local panel = self:GetParent()
 	local value = tonumber(self:GetText())
-	if (value) then
+	if value then
 		local db = ns.Config.Minimap
 		local newScale = value / 100
-		if (newScale < db.MinUserScale) then
+		if newScale < db.MinUserScale then
 			newScale = db.MinUserScale
-		elseif (newScale > db.MaxUserScale) then
+		elseif newScale > db.MaxUserScale then
 			newScale = db.MaxUserScale
 		end
 		ns.db.global.minimap.userScale = newScale
 		ns:GetModule("Minimap"):UpdateSize()
 
-		if (panel.sizeSlider) then
+		if panel.sizeSlider then
 			panel.sizeSlider.updatingFromCode = true
 			panel.sizeSlider:SetValue(newScale * 100)
 			panel.sizeSlider.updatingFromCode = false
@@ -188,13 +204,15 @@ end
 
 -- Applies a dragged size percentage.
 local SizeSlider_OnValueChanged = function(self, value)
-	if (self.updatingFromCode) then return end
+	if self.updatingFromCode then
+		return
+	end
 
 	ns.db.global.minimap.userScale = value / 100
 	ns:GetModule("Minimap"):UpdateSize()
 
 	local panel = self:GetParent()
-	if (panel.sizeInput) and (not panel.sizeInput:HasFocus()) then
+	if panel.sizeInput and (not panel.sizeInput:HasFocus()) then
 		panel.sizeInput:SetText(string_format("%.0f", value))
 	end
 end
@@ -232,10 +250,10 @@ local CreateDurationSlider = function(panel, name, label, tooltipText, minMs, ma
 
 	local commit = function(self)
 		local value = tonumber(input:GetText())
-		if (value) then
-			if (value < minMs) then
+		if value then
+			if value < minMs then
 				value = minMs
-			elseif (value > maxMs) then
+			elseif value > maxMs then
 				value = maxMs
 			end
 			setValue(value / 1000)
@@ -246,20 +264,24 @@ local CreateDurationSlider = function(panel, name, label, tooltipText, minMs, ma
 		input:ClearFocus()
 	end
 	input:SetScript("OnEnterPressed", commit)
-	input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+	input:SetScript("OnEscapePressed", function(self)
+		self:ClearFocus()
+	end)
 	input:SetScript("OnEditFocusLost", commit)
 
 	slider:SetScript("OnValueChanged", function(self, value)
-		if (self.updatingFromCode) then return end
+		if self.updatingFromCode then
+			return
+		end
 		setValue(value / 1000)
-		if (not input:HasFocus()) then
+		if not input:HasFocus() then
 			input:SetText(string_format("%.0f", value))
 		end
 	end)
 
 	slider.Refresh = function()
 		local ms = getValue() * 1000
-		if (not input:HasFocus()) then
+		if not input:HasFocus() then
 			input:SetText(string_format("%.0f", ms))
 		end
 		slider.updatingFromCode = true
@@ -270,9 +292,10 @@ local CreateDurationSlider = function(panel, name, label, tooltipText, minMs, ma
 	-- *EditBox has no Enable()/Disable() of its own in this client (only
 	--  Button/CheckButton/Slider do), so it's faked here instead: block
 	--  mouse and keyboard input, drop any current focus, and dim the text.
-	local lowText, highText, labelText = _G[slider:GetName() .. "Low"], _G[slider:GetName() .. "High"], _G[slider:GetName() .. "Text"]
+	local lowText, highText, labelText =
+		_G[slider:GetName() .. "Low"], _G[slider:GetName() .. "High"], _G[slider:GetName() .. "Text"]
 	slider.SetEnabled = function(self, enabled)
-		if (enabled) then
+		if enabled then
 			slider:Enable()
 			input:EnableMouse(true)
 			input:EnableKeyboard(true)
@@ -287,12 +310,12 @@ local CreateDurationSlider = function(panel, name, label, tooltipText, minMs, ma
 			input:ClearFocus()
 			input:EnableMouse(false)
 			input:EnableKeyboard(false)
-			input:SetTextColor(.5, .5, .5)
+			input:SetTextColor(0.5, 0.5, 0.5)
 			labelText:SetTextColor(unpack(LABEL_COLOR_DISABLED))
-			lowText:SetTextColor(.5, .5, .5)
-			highText:SetTextColor(.5, .5, .5)
-			slider:SetAlpha(.5)
-			input:SetAlpha(.5)
+			lowText:SetTextColor(0.5, 0.5, 0.5)
+			highText:SetTextColor(0.5, 0.5, 0.5)
+			slider:SetAlpha(0.5)
+			input:SetAlpha(0.5)
 		end
 	end
 
@@ -309,7 +332,7 @@ UpdateInfo = function(panel)
 	end
 
 	-- Don't stomp on the user while they're actively typing in it.
-	if (not panel.sizeInput:HasFocus()) then
+	if not panel.sizeInput:HasFocus() then
 		panel.sizeInput:SetText(string_format("%.0f", sizePct))
 	end
 
@@ -331,7 +354,9 @@ end
 -- the user is resizing/moving the minimap at the same time.
 local Panel_OnUpdate = function(panel, elapsed)
 	panel.elapsed = (panel.elapsed or 0) + elapsed
-	if (panel.elapsed < .2) then return end
+	if panel.elapsed < 0.2 then
+		return
+	end
 	panel.elapsed = 0
 	UpdateInfo(panel)
 end
@@ -342,7 +367,9 @@ end
 -- one - doing so ourselves would just result in a second, empty,
 -- duplicate "DiabolicUI" entry in the list.
 MenuMod.CreatePanel = function(self)
-	if (self.panel) then return self.panel end
+	if self.panel then
+		return self.panel
+	end
 
 	local panel = CreateFrame("Frame", "DiabolicMinimapOptionsPanel", UIParent)
 	panel.name = L_MINIMAP_CATEGORY
@@ -408,9 +435,9 @@ MenuMod.CreatePanel = function(self)
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
 		edgeSize = 12,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+		insets = { left = 3, right = 3, top = 3, bottom = 3 },
 	})
-	anchorBox:SetBackdropColor(0, 0, 0, .75)
+	anchorBox:SetBackdropColor(0, 0, 0, 0.75)
 	anchorBox:SetBackdropBorderColor(1, 1, 1, 1)
 
 	-- *TOPRIGHT is the addon's default anchor point, so the
@@ -467,12 +494,17 @@ MenuMod.CreatePanel = function(self)
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
 		edgeSize = 12,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+		insets = { left = 3, right = 3, top = 3, bottom = 3 },
 	})
-	zoneFadeGroup:SetBackdropColor(0, 0, 0, .25)
+	zoneFadeGroup:SetBackdropColor(0, 0, 0, 0.25)
 	zoneFadeGroup:SetBackdropBorderColor(1, 1, 1, 1)
 
-	local zoneFadeCheckbox = CreateFrame("CheckButton", "DiabolicMinimapZoneFadeCheckbox", zoneFadeGroup, "InterfaceOptionsCheckButtonTemplate")
+	local zoneFadeCheckbox = CreateFrame(
+		"CheckButton",
+		"DiabolicMinimapZoneFadeCheckbox",
+		zoneFadeGroup,
+		"InterfaceOptionsCheckButtonTemplate"
+	)
 	zoneFadeCheckbox:SetPoint("TOPLEFT", panel, "TOPLEFT", CHECK_X, Row(CHECK_HEIGHT))
 	_G[zoneFadeCheckbox:GetName() .. "Text"]:SetText(L_ZONE_FADE_CHECKBOX)
 	zoneFadeCheckbox.tooltipText = L_ZONE_FADE_CHECKBOX
@@ -482,11 +514,27 @@ MenuMod.CreatePanel = function(self)
 
 	-- One duration covers both halves of the crossfade (out, then in).
 	-- Indented under its checkbox, same as DiabolicUI's "Fade Chat" sliders.
-	local zoneFadeDurationSlider = CreateDurationSlider(zoneFadeGroup, "DiabolicMinimapZoneFadeDurationSlider", L_ZONE_FADE_DURATION_SLIDER, L_ZONE_FADE_TOOLTIP,
-		50, 1000,
-		function() return ns.db.global.minimap.zoneFadeDuration end,
-		function(value) ns.db.global.minimap.zoneFadeDuration = value end)
-	zoneFadeDurationSlider:SetPoint("TOPLEFT", panel, "TOPLEFT", INDENT, Row(SLIDER_BLOCK_HEIGHT, ROW_GAP) - SLIDER_LABEL_HEIGHT)
+	local zoneFadeDurationSlider = CreateDurationSlider(
+		zoneFadeGroup,
+		"DiabolicMinimapZoneFadeDurationSlider",
+		L_ZONE_FADE_DURATION_SLIDER,
+		L_ZONE_FADE_TOOLTIP,
+		50,
+		1000,
+		function()
+			return ns.db.global.minimap.zoneFadeDuration
+		end,
+		function(value)
+			ns.db.global.minimap.zoneFadeDuration = value
+		end
+	)
+	zoneFadeDurationSlider:SetPoint(
+		"TOPLEFT",
+		panel,
+		"TOPLEFT",
+		INDENT,
+		Row(SLIDER_BLOCK_HEIGHT, ROW_GAP) - SLIDER_LABEL_HEIGHT
+	)
 
 	y = y - GROUP_PAD
 	zoneFadeGroup:SetPoint("TOPLEFT", panel, "TOPLEFT", EDGE - GROUP_PAD, groupTop)
@@ -508,14 +556,14 @@ MenuMod.CreatePanel = function(self)
 	local quests = _G.DiabolicUIOptionsPanelQuests
 	local position -- where it was, without a Quests page
 	for i, category in ipairs(categories) do
-		if (category == panel) then
+		if category == panel then
 			position = i
 			table_remove(categories, i)
 			break
 		end
 	end
 	for i, category in ipairs(categories) do
-		if (category == quests) then
+		if category == quests then
 			position = i
 			break
 		end

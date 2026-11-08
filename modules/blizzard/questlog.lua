@@ -25,12 +25,20 @@ local GetQuestResetTime = _G.GetQuestResetTime
 local hooksecurefunc = _G.hooksecurefunc
 
 -- the details' text, by its color: Blizzard's titles and the rest
-local HEADERS = { "QuestInfoTitleHeader", "QuestInfoDescriptionHeader", "QuestInfoObjectivesHeader", "QuestInfoRewardsHeader" }
+local HEADERS =
+	{ "QuestInfoTitleHeader", "QuestInfoDescriptionHeader", "QuestInfoObjectivesHeader", "QuestInfoRewardsHeader" }
 local TEXTS = {
-	"QuestInfoDescriptionText", "QuestInfoObjectivesText", "QuestInfoGroupSize", "QuestInfoRewardText",
-	"QuestInfoItemChooseText", "QuestInfoItemReceiveText", "QuestInfoSpellLearnText",
-	"QuestInfoHonorFrameReceiveText", "QuestInfoArenaPointsFrameReceiveText",
-	"QuestInfoTalentFrameReceiveText", "QuestInfoXPFrameReceiveText"
+	"QuestInfoDescriptionText",
+	"QuestInfoObjectivesText",
+	"QuestInfoGroupSize",
+	"QuestInfoRewardText",
+	"QuestInfoItemChooseText",
+	"QuestInfoItemReceiveText",
+	"QuestInfoSpellLearnText",
+	"QuestInfoHonorFrameReceiveText",
+	"QuestInfoArenaPointsFrameReceiveText",
+	"QuestInfoTalentFrameReceiveText",
+	"QuestInfoXPFrameReceiveText",
 }
 
 -- Named textures out of sight.
@@ -98,17 +106,25 @@ Module.AddCountTooltip = function(self)
 		local tooltip = _G.GameTooltip
 		tooltip:SetOwner(hover, "ANCHOR_BOTTOM")
 		tooltip:SetText(_G.QUEST_LOG_DAILY_COUNT_TEMPLATE:format(GetDailyQuestsCompleted(), GetMaxDailyQuests()))
-		tooltip:AddLine(_G.QUEST_LOG_DAILY_TOOLTIP:format(GetMaxDailyQuests(), _G.SecondsToTime(GetQuestResetTime(), nil, 1)), 1, 1, 1, true)
+		tooltip:AddLine(
+			_G.QUEST_LOG_DAILY_TOOLTIP:format(GetMaxDailyQuests(), _G.SecondsToTime(GetQuestResetTime(), nil, 1)),
+			1,
+			1,
+			1,
+			true
+		)
 		tooltip:Show()
 	end)
-	hover:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	hover:SetScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 end
 
 -- The map's button in the foot, at its right (Blizzard puts it back each
 -- time), over the foot's stone as the buttons left of it.
 Module.PlaceMapButton = function(self)
 	local button = _G.QuestLogFrameShowMapButton
-	if (button:GetParent() == _G.QuestLogFrame) then
+	if button:GetParent() == _G.QuestLogFrame then
 		button:ClearAllPoints()
 		button:SetPoint("RIGHT", self.Window.DiabolicFoot, "BOTTOMRIGHT", unpack(self.config.map_button))
 		button:SetFrameLevel(_G.QuestLogFrameAbandonButton:GetFrameLevel())
@@ -118,7 +134,7 @@ end
 -- The buttons under the quests (Blizzard puts them back each time).
 Module.PlaceControls = function(self)
 	local panel = _G.QuestLogControlPanel
-	if (panel:GetParent() == _G.QuestLogFrame) then
+	if panel:GetParent() == _G.QuestLogFrame then
 		local config = self.config
 		panel:ClearAllPoints()
 		panel:SetPoint("BOTTOMLEFT", self.Window.DiabolicFoot, "BOTTOMLEFT", unpack(config.controls))
@@ -129,7 +145,7 @@ end
 -- The details right of the quests (Blizzard moves them when they show).
 Module.PlaceDetails = function(self)
 	local scroll = _G.QuestLogDetailScrollFrame
-	if (scroll:GetParent() == _G.QuestLogFrame) then
+	if scroll:GetParent() == _G.QuestLogFrame then
 		scroll:ClearAllPoints()
 		scroll:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", unpack(self.config.details))
 		scroll:SetHeight(self.config.details_height)
@@ -158,10 +174,14 @@ Module.StyleQuestLog = function(self)
 	-- the quests' count in the title, the dailies' in its tooltip; the
 	-- map's button in the foot
 	self:AddCountTooltip()
-	hooksecurefunc("QuestLog_UpdateQuestCount", function(numQuests) self:UpdateCount(numQuests) end)
+	hooksecurefunc("QuestLog_UpdateQuestCount", function(numQuests)
+		self:UpdateCount(numQuests)
+	end)
 	self:UpdateCount()
 	self:PlaceMapButton()
-	hooksecurefunc("QuestLogShowMapPOI_UpdatePosition", function() self:PlaceMapButton() end)
+	hooksecurefunc("QuestLogShowMapPOI_UpdatePosition", function()
+		self:PlaceMapButton()
+	end)
 
 	-- the quests on the left on slate, the details on the right on parchment
 	local list = _G.QuestLogScrollFrame
@@ -171,12 +191,16 @@ Module.StyleQuestLog = function(self)
 	empty:ClearAllPoints()
 	empty:SetAllPoints(list)
 	self:PlaceDetails()
-	hooksecurefunc("QuestLogDetailFrame_AttachToQuestLog", function() self:PlaceDetails() end)
+	hooksecurefunc("QuestLogDetailFrame_AttachToQuestLog", function()
+		self:PlaceDetails()
+	end)
 	-- in the log, not the details' own window Blizzard keeps them in until it shows
 	kit:AddPanel(_G.QuestLogDetailScrollFrame, kit.config.parchment_panel_insets, frame)
 	kit:AddParchment(_G.QuestLogDetailScrollFrame) -- the scroll bar beside it
 	Hide("QuestLogDetailScrollFrameScrollBackgroundTopLeft", "QuestLogDetailScrollFrameScrollBackgroundBottomRight")
-	hooksecurefunc("QuestInfo_Display", function(_, parent, _, _, material) self:ColorDetails(parent, material) end)
+	hooksecurefunc("QuestInfo_Display", function(_, parent, _, _, material)
+		self:ColorDetails(parent, material)
+	end)
 	-- the chosen quest in an orange box, from inside the slate's edge out
 	-- to the scroll bar (Blizzard's row starts on the edge, stops short of it)
 	local highlight = _G.QuestLogSkillHighlight
@@ -187,7 +211,8 @@ Module.StyleQuestLog = function(self)
 	highlight:SetPoint("BOTTOMRIGHT", _G.QuestLogHighlightFrame, "BOTTOMRIGHT", config.highlight_reach, 0)
 
 	-- Abandon, Share and Track under the quests
-	local abandon, share, track = _G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton
+	local abandon, share, track =
+		_G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton
 	for _, button in ipairs({ abandon, share, track }) do
 		kit:StyleButton(button, config.button_height)
 	end
@@ -197,7 +222,9 @@ Module.StyleQuestLog = function(self)
 	share:SetPoint("LEFT", abandon, "RIGHT", gap, 0)
 	share:SetPoint("RIGHT", track, "LEFT", -gap, 0)
 	self:PlaceControls()
-	hooksecurefunc("QuestLogControlPanel_UpdatePosition", function() self:PlaceControls() end)
+	hooksecurefunc("QuestLogControlPanel_UpdatePosition", function()
+		self:PlaceControls()
+	end)
 	kit:StyleScrollBars(frame)
 	kit:StyleScrollBar(_G.QuestLogDetailScrollFrameScrollBar) -- (the details' window's until it shows)
 end
@@ -208,7 +235,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleQuestLog()

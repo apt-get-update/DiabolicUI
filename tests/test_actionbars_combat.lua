@@ -29,9 +29,11 @@ end
 resetState()
 
 -- Real functions first: files keep some of them as upvalues at load time.
-_G.InCombatLockdown = function() return state.lockdown end
+_G.InCombatLockdown = function()
+	return state.lockdown
+end
 _G.GetCVarBool = function(name)
-	if (name == "ActionButtonUseKeyDown") then
+	if name == "ActionButtonUseKeyDown" then
 		return state.castOnDown
 	end
 end
@@ -41,8 +43,12 @@ end
 _G.UnregisterStateDriver = function(frame, attribute)
 	drivers[#drivers + 1] = { "unregister", attribute }
 end
-_G.GetNumShapeshiftForms = function() return state.forms end
-_G.UnitLevel = function() return 80 end
+_G.GetNumShapeshiftForms = function()
+	return state.forms
+end
+_G.UnitLevel = function()
+	return 80
+end
 WowApiMock.install()
 AutoStub.install()
 
@@ -54,7 +60,7 @@ local function trackEvents(object)
 		self.events[event] = method
 	end
 	object.UnregisterEvent = function(self, event, method)
-		if (self.events[event] == method) then
+		if self.events[event] == method then
 			self.events[event] = nil
 		end
 	end
@@ -83,9 +89,9 @@ function TestActionButtonClicksInCombat:setUp()
 	local registry
 	for i = 1, math.huge do
 		local name, value = debug.getupvalue(self.Handler.OnEvent, i)
-		if (not name) then
+		if not name then
 			break
-		elseif (name == "ButtonRegistry") then
+		elseif name == "ButtonRegistry" then
 			registry = value
 		end
 	end
@@ -93,7 +99,9 @@ function TestActionButtonClicksInCombat:setUp()
 	self.buttons = {}
 	for i = 1, 2 do
 		local button = {
-			RegisterForClicks = function(self, clicks) self.clicks = clicks end,
+			RegisterForClicks = function(self, clicks)
+				self.clicks = clicks
+			end,
 		}
 		registry[button] = true
 		self.buttons[i] = button
@@ -137,16 +145,24 @@ function TestPetBarInCombat:setUp()
 	resetState()
 	local Engine = EngineMock.new()
 	local Module = Engine:NewModule("ActionBars")
-	Module.config = { structure = { bars = { pet = {
-		position = { "BOTTOM", 0, 100 },
-		positionXP = { "BOTTOM", 0, 120 },
-	} } } }
-	Module.IsXPVisible = function() return false end
-	Module.IsReputationVisible = function() return false end
+	Module.config = {
+		structure = { bars = { pet = {
+			position = { "BOTTOM", 0, 100 },
+			positionXP = { "BOTTOM", 0, 120 },
+		} } },
+	}
+	Module.IsXPVisible = function()
+		return false
+	end
+	Module.IsReputationVisible = function()
+		return false
+	end
 	assert(loadfile("modules/actionbars/elements/pet.lua"))("DiabolicUI", Engine)
 	self.Widget = trackEvents(Module:GetWidget("Bar: Pet"))
 	self.Widget.Bar = {
-		Place = function(self, ...) self.place = { ... } end,
+		Place = function(self, ...)
+			self.place = { ... }
+		end,
 	}
 end
 

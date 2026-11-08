@@ -26,29 +26,33 @@ for _, spec in ipairs(BARS) do
 		local config = Module.config
 
 		local Artwork = Module:GetWidget("Artwork")
-		local Bar = Module:GetHandler("ActionBar"):New(_G[spec.page], Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
+		local Bar = Module:GetHandler("ActionBar")
+			:New(_G[spec.page], Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
 
 		--------------------------------------------------------------------
 		-- Buttons
 		--------------------------------------------------------------------
 
 		-- Spawn the action buttons
-		for i = 1,NUM_ACTIONBAR_BUTTONS do
+		for i = 1, NUM_ACTIONBAR_BUTTONS do
 			local button = Bar:NewButton("action", i, Artwork:GetButtonTemplate())
 			button:SetStateAction(0, "action", i)
-			for state = 1,14 do
+			for state = 1, 14 do
 				button:SetStateAction(state, "action", (state - 1) * NUM_ACTIONBAR_BUTTONS + i)
 			end
 		end
 
-		Bar:SetAttribute("_onstate-page", [[
+		Bar:SetAttribute(
+			"_onstate-page",
+			[[
 			self:SetAttribute("state", newstate);
 			for i = 1, self:GetAttribute("num_buttons") do
 				local Button = self:GetFrameRef("Button"..i);
 				Button:SetAttribute("actionpage", tonumber(newstate));
 			end
 			control:CallMethod("UpdateAction");
-		]])
+		]]
+		)
 
 		-- reset the page before applying a new page driver
 		Bar:SetAttribute("state-page", "0")
@@ -59,13 +63,16 @@ for _, spec in ipairs(BARS) do
 		--------------------------------------------------------------------
 		-- Visibility Drivers
 		--------------------------------------------------------------------
-		Bar:SetAttribute("_onstate-vis", [[
+		Bar:SetAttribute(
+			"_onstate-vis",
+			[[
 			if newstate == "hide" then
 				self:Hide();
 			elseif newstate == "show" then
 				self:Show();
 			end
-		]])
+		]]
+		)
 
 		-- Register a proxy visibility driver
 		local visibility_driver = "[bonusbar:5]hide;[vehicleui]hide;show"
@@ -120,7 +127,6 @@ for _, spec in ipairs(BARS) do
 			]=], num);
 		]])
 
-
 		-- store bar settings
 		local bar_config = config.structure.bars[spec.key]
 		Bar:SetAttribute("flyout_direction", bar_config.flyout_direction)
@@ -128,11 +134,11 @@ for _, spec in ipairs(BARS) do
 		Bar:SetAttribute("growth_y", bar_config.growthY)
 		Bar:SetAttribute("padding", bar_config.padding)
 
-		for i = 1,3 do
+		for i = 1, 3 do
 			local id = tostring(i)
-			Bar:SetAttribute("bar_width-"..id, bar_config.bar_size[id][1])
-			Bar:SetAttribute("bar_height-"..id, bar_config.bar_size[id][2])
-			Bar:SetAttribute("button_size-"..id, bar_config.buttonsize[id])
+			Bar:SetAttribute("bar_width-" .. id, bar_config.bar_size[id][1])
+			Bar:SetAttribute("bar_height-" .. id, bar_config.bar_size[id][2])
+			Bar:SetAttribute("button_size-" .. id, bar_config.buttonsize[id])
 		end
 
 		local previous = Module:GetWidget(spec.over):GetFrame()

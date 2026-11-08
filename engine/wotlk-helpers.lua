@@ -8,7 +8,8 @@
 
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-]]--
+]]
+--
 
 -- Small WotLK 3.3.5 helpers shared by the rest of the addon. They live on
 -- the addon's private Engine table, never in the global namespace: other
@@ -25,7 +26,13 @@ local UnitPlayerControlled = _G.UnitPlayerControlled
 -- True when someone outside your group tagged the unit, so you won't get
 -- loot or credit from it (grayed-out health bars).
 Engine.UnitIsTapDenied = function(unit)
-	return UnitIsTapped(unit) and not(UnitPlayerControlled(unit) or UnitIsTappedByPlayer(unit) or UnitIsTappedByAllThreatList(unit) or UnitIsFriend("player", unit))
+	return UnitIsTapped(unit)
+		and not (
+			UnitPlayerControlled(unit)
+			or UnitIsTappedByPlayer(unit)
+			or UnitIsTappedByAllThreatList(unit)
+			or UnitIsFriend("player", unit)
+		)
 end
 
 -- /rl, /reload and /reloadui

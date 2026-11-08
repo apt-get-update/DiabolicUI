@@ -138,10 +138,12 @@ end
 
 function TestMenus:test_a_disabled_micro_button_starts_grey()
 	-- below level 10 the talent button is disabled before we skin it
-	boot({ world = function(world)
-		world.units.player.level = 5
-		_G.TalentMicroButton:Disable()
-	end })
+	boot({
+		world = function(world)
+			world.units.player.level = 5
+			_G.TalentMicroButton:Disable()
+		end,
+	})
 	lu.assertAlmostEquals(select(1, _G.TalentMicroButton.Icon:GetVertexColor()), 0.4, 1e-6)
 	assertClean(client)
 end
@@ -151,7 +153,10 @@ function TestMenus:test_micro_buttons_rearranged_after_combat()
 	local window = widget("Menu: Main").MicroMenuWindow
 	local arranged = 0
 	local arrange = window.Arrange
-	window.Arrange = function(...) arranged = arranged + 1 return arrange(...) end
+	window.Arrange = function(...)
+		arranged = arranged + 1
+		return arrange(...)
+	end
 	_G.UpdateMicroButtons()
 	lu.assertEquals(arranged, 1)
 	client:EnterCombat()
@@ -197,14 +202,24 @@ function TestMenus:test_the_bag_bar()
 end
 
 local function bagAddons(world)
-	table.insert(world.addons, { name = "Bagnon", enabled = true, onLoad = function()
-		_G.Bagnon = { OnEnable = function()
-			CreateFrame("Frame", "BagnonFrameinventory", _G.UIParent):Hide()
-		end }
-	end })
-	table.insert(world.addons, { name = "LiteBag", enabled = true, onLoad = function()
-		CreateFrame("Frame", "LiteBagInventory", _G.UIParent):Hide()
-	end })
+	table.insert(world.addons, {
+		name = "Bagnon",
+		enabled = true,
+		onLoad = function()
+			_G.Bagnon = {
+				OnEnable = function()
+					CreateFrame("Frame", "BagnonFrameinventory", _G.UIParent):Hide()
+				end,
+			}
+		end,
+	})
+	table.insert(world.addons, {
+		name = "LiteBag",
+		enabled = true,
+		onLoad = function()
+			CreateFrame("Frame", "LiteBagInventory", _G.UIParent):Hide()
+		end,
+	})
 end
 
 function TestMenus:test_bagnon_and_litebag_bags_push_the_bag_button()
@@ -226,16 +241,18 @@ function TestMenus:test_bagnon_and_litebag_bags_push_the_bag_button()
 end
 
 function TestMenus:test_bag_addons_loaded_before_us()
-	boot({ world = function(world)
-		bagAddons(world)
-		for _, addon in ipairs(world.addons) do
-			if addon.onLoad and (addon.name == "Bagnon" or addon.name == "LiteBag") then
-				addon.loaded = true
-				addon.onLoad()
+	boot({
+		world = function(world)
+			bagAddons(world)
+			for _, addon in ipairs(world.addons) do
+				if addon.onLoad and (addon.name == "Bagnon" or addon.name == "LiteBag") then
+					addon.loaded = true
+					addon.onLoad()
+				end
 			end
-		end
-		_G.Bagnon.OnEnable()
-	end })
+			_G.Bagnon.OnEnable()
+		end,
+	})
 	local bagButton = bagButtonOf()
 	_G.BagnonFrameinventory:Show()
 	lu.assertEquals(bagButton:GetButtonState(), "PUSHED")
@@ -246,14 +263,19 @@ function TestMenus:test_bag_addons_loaded_before_us()
 end
 
 function TestMenus:test_the_social_button_counts_friends_and_guild_members_online()
-	boot({ world = function(world)
-		world.guild = { name = "Testers", members = {
-			{ name = "Tester", class = "WARRIOR", online = true },
-			{ name = "Ally", class = "MAGE", online = true },
-			{ name = "Away", class = "PRIEST" },
-		} }
-		world.friends = { { name = "Pal", connected = true }, { name = "Gone" } }
-	end })
+	boot({
+		world = function(world)
+			world.guild = {
+				name = "Testers",
+				members = {
+					{ name = "Tester", class = "WARRIOR", online = true },
+					{ name = "Ally", class = "MAGE", online = true },
+					{ name = "Away", class = "PRIEST" },
+				},
+			}
+			world.friends = { { name = "Pal", connected = true }, { name = "Gone" } }
+		end,
+	})
 	local L = client.Engine:GetLocale()
 	local social = _G.SocialsMicroButton
 	client:Hover(social)
@@ -280,10 +302,12 @@ function TestMenus:test_the_social_button_counts_friends_and_guild_members_onlin
 end
 
 function TestMenus:test_the_spec_switch_on_the_skull()
-	boot({ world = function(world)
-		world.talents = { { "Holy", "", 51 }, { "Protection", "", 20 }, { "Retribution", "", 0 } }
-		world.secondaryTalents = { { "Holy", "", 0 }, { "Protection", "", 5 }, { "Retribution", "", 66 } }
-	end })
+	boot({
+		world = function(world)
+			world.talents = { { "Holy", "", 51 }, { "Protection", "", 20 }, { "Retribution", "", 0 } }
+			world.secondaryTalents = { { "Holy", "", 0 }, { "Protection", "", 5 }, { "Retribution", "", 66 } }
+		end,
+	})
 	local config = client:GetModule("ActionBars"):GetDB("ActionBars").visuals.specswitch
 	local switch = widget("Button: Spec Switch")
 	local button = switch:GetFrame()
@@ -340,26 +364,32 @@ function TestMenus:test_the_spec_switch_on_the_skull()
 end
 
 function TestMenus:test_what_a_specialization_sets_up_once_switched_to_it()
-	boot({ world = function(world)
-		world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" }, { "Shadow", "Interface\\Icons\\Shadow" } }
-	end })
+	boot({
+		world = function(world)
+			world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" }, { "Shadow", "Interface\\Icons\\Shadow" } }
+		end,
+	})
 	local L = client.Engine:GetLocale()
 	local bars = client.Engine:GetConfig("ActionBars", "character")
 	local switch = widget("Button: Spec Switch")
 	local calls = {}
 	_G.SLASH_ABS1, _G.SLASH_ABS2 = "/abs", "/actionbarsaver"
-	_G.SlashCmdList.ABS = function(arguments) calls[#calls + 1] = "abs " .. arguments end
+	_G.SlashCmdList.ABS = function(arguments)
+		calls[#calls + 1] = "abs " .. arguments
+	end
 	local messages = client.widgetState[_G.ChatFrame1].messages
-	local lastMessage = function() return messages[#messages].text end
+	local lastMessage = function()
+		return messages[#messages].text
+	end
 
 	bars.specEquipSet2, bars.specProfile2, bars.specBars2, bars.specSideBars2 = "Shadow", "shadow", 3, 2
 	bars.num_bars, bars.num_side_bars = 1, 0
 
 	-- the switch completes: a moment later, the set, the profile, the bars
 	_G.SetActiveTalentGroup(2)
-	client:Tick(.5)
+	client:Tick(0.5)
 	lu.assertEquals(calls, {})
-	client:Tick(.6)
+	client:Tick(0.6)
 	lu.assertEquals(client.world.equippedSet, "Shadow")
 	lu.assertEquals(calls, { "abs restore shadow" })
 	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 2 })
@@ -401,9 +431,11 @@ function TestMenus:test_what_a_specialization_sets_up_once_switched_to_it()
 end
 
 function TestMenus:test_a_specialization_macro_runs_on_the_next_click()
-	boot({ world = function(world)
-		world.macros = { [1] = { "Holy Toy", "Interface\\Icons\\Toy", "/use item:44430" } }
-	end })
+	boot({
+		world = function(world)
+			world.macros = { [1] = { "Holy Toy", "Interface\\Icons\\Toy", "/use item:44430" } }
+		end,
+	})
 	local L = client.Engine:GetLocale()
 	local bars = client.Engine:GetConfig("ActionBars", "character")
 	local button = widget("Button: Spec Switch"):GetFrame()
@@ -488,9 +520,11 @@ function TestMenus:test_a_specialization_macro_runs_on_the_next_click()
 end
 
 function TestMenus:test_a_specialization_macro_before_the_switch()
-	boot({ world = function(world)
-		world.macros = { [1] = { "Corruption", "Interface\\Icons\\Toy", "/say Hoo the corruption" } }
-	end })
+	boot({
+		world = function(world)
+			world.macros = { [1] = { "Corruption", "Interface\\Icons\\Toy", "/say Hoo the corruption" } }
+		end,
+	})
 	local L = client.Engine:GetLocale()
 	local bars = client.Engine:GetConfig("ActionBars", "character")
 	local switch = widget("Button: Spec Switch")
@@ -506,7 +540,9 @@ function TestMenus:test_a_specialization_macro_before_the_switch()
 	-- the click that switches runs it: the macro set up for the template's
 	-- OnClick, then taken off again, and the switch
 	local typeOnClick
-	button:HookScript("OnClick", function(self) typeOnClick = self:GetAttribute("macro") end)
+	button:HookScript("OnClick", function(self)
+		typeOnClick = self:GetAttribute("macro")
+	end)
 	client:Click(button)
 	lu.assertEquals(typeOnClick, "Corruption")
 	lu.assertNil(button:GetAttribute("type"))
@@ -553,11 +589,13 @@ function TestMenus:test_artwork_loaded_in_combat_places_the_button_after_it()
 end
 
 function TestMenus:test_the_old_commands_become_a_macro()
-	boot({ world = function(world)
-		world.talents = { { "Discipline", "", 13 }, { "Holy", "", 58 }, { "Shadow", "", 0 } }
-		world.secondaryTalents = { { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "", 57 } }
-		world.macros = { [37] = { "DUI Shadow", "", "/say hi" } }
-	end })
+	boot({
+		world = function(world)
+			world.talents = { { "Discipline", "", 13 }, { "Holy", "", 58 }, { "Shadow", "", 0 } }
+			world.secondaryTalents = { { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "", 57 } }
+			world.macros = { [37] = { "DUI Shadow", "", "/say hi" } }
+		end,
+	})
 	local L = client.Engine:GetLocale()
 	local bars = client.Engine:GetConfig("ActionBars", "character")
 	local switch = widget("Button: Spec Switch")
@@ -565,9 +603,17 @@ function TestMenus:test_the_old_commands_become_a_macro()
 
 	bars.specMacro1, bars.specMacro2 = "/use item:44430\n/gear holy", "/use item:1"
 	switch:MoveCommandsToMacros()
-	lu.assertEquals({ _G.GetMacroInfo("DUI Holy") }, { "DUI Holy", "Interface\\Icons\\INV_Misc_QuestionMark", "/use item:44430\n/gear holy", 1 })
+	lu.assertEquals(
+		{ _G.GetMacroInfo("DUI Holy") },
+		{ "DUI Holy", "Interface\\Icons\\INV_Misc_QuestionMark", "/use item:44430\n/gear holy", 1 }
+	)
 	lu.assertEquals({ bars.specMacroName1, bars.specMacro1 }, { "DUI Holy", nil })
-	lu.assertEquals(messages[#messages].text, L["Your other commands are now the character macro '%s', run by a click on the skull after switching."]:format("DUI Holy"))
+	lu.assertEquals(
+		messages[#messages].text,
+		L["Your other commands are now the character macro '%s', run by a click on the skull after switching."]:format(
+			"DUI Holy"
+		)
+	)
 	-- one by that name already: picked as it is
 	lu.assertEquals({ bars.specMacroName2, bars.specMacro2 }, { "DUI Shadow", nil })
 	lu.assertEquals(select(3, _G.GetMacroInfo("DUI Shadow")), "/say hi")
@@ -586,7 +632,10 @@ function TestMenus:test_the_old_commands_become_a_macro()
 	client.world.macros[37] = { "Other", "", "" }
 	switch:MoveCommandsToMacros()
 	lu.assertEquals({ bars.specMacroName2, bars.specMacro2 }, { false, "/use item:1" })
-	lu.assertEquals(messages[#messages].text, L["No free character macro slot for your %s commands, they're kept until there's one."]:format("DUI Shadow"))
+	lu.assertEquals(
+		messages[#messages].text,
+		L["No free character macro slot for your %s commands, they're kept until there's one."]:format("DUI Shadow")
+	)
 
 	-- too long for a macro: printed for you to make it
 	bars.specMacro2 = string.rep("x", 256)
@@ -603,21 +652,30 @@ function TestMenus:test_the_old_commands_become_a_macro()
 end
 
 function TestMenus:test_the_dropdown_choices()
-	boot({ world = function(world)
-		world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" } }
-	end })
+	boot({
+		world = function(world)
+			world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" } }
+		end,
+	})
 	local switch = widget("Button: Spec Switch")
 	lu.assertEquals(switch:GetEquipmentSets(), { { text = "Holy", value = "Holy", icon = "Interface\\Icons\\Holy" } })
 	lu.assertNil(switch:GetActionBarProfiles()) -- not loaded
 	_G.SlashCmdList.ABS = function() end
 	_G.ActionBarSaverDB = { sets = { WARRIOR = { tank = {}, arms = {} }, PRIEST = { holy = {} } } }
-	lu.assertEquals(switch:GetActionBarProfiles(), { { text = "arms", value = "arms" }, { text = "tank", value = "tank" } })
+	lu.assertEquals(
+		switch:GetActionBarProfiles(),
+		{ { text = "arms", value = "arms" }, { text = "tank", value = "tank" } }
+	)
 	_G.ActionBarSaverDB.sets.WARRIOR = nil
 	lu.assertEquals(switch:GetActionBarProfiles(), {})
 	_G.SlashCmdList.ABS, _G.ActionBarSaverDB = nil, nil
 
 	-- the macros: the account ones, then the character ones
-	client.world.macros = { [2] = { "Mount", "Interface\\Icons\\Mount", "" }, [1] = { "Toy", "Interface\\Icons\\Toy", "" }, [37] = { "DUI Holy", "Interface\\Icons\\Q", "" } }
+	client.world.macros = {
+		[2] = { "Mount", "Interface\\Icons\\Mount", "" },
+		[1] = { "Toy", "Interface\\Icons\\Toy", "" },
+		[37] = { "DUI Holy", "Interface\\Icons\\Q", "" },
+	}
 	lu.assertEquals(switch:GetMacros(), {
 		{ text = "Toy", value = "Toy", icon = "Interface\\Icons\\Toy" },
 		{ text = "Mount", value = "Mount", icon = "Interface\\Icons\\Mount" },
@@ -705,11 +763,13 @@ function TestXPBars:tearDown()
 end
 
 function TestXPBars:test_the_xp_bar_and_its_tooltip()
-	boot({ world = function(world)
-		world.units.player.level = 40
-		world.xp, world.xpMax, world.exhaustion, world.restState, world.resting = 1000, 5000, 2000, 1, true
-		world.timeToWellRested = 3 * 3600
-	end })
+	boot({
+		world = function(world)
+			world.units.player.level = 40
+			world.xp, world.xpMax, world.exhaustion, world.restState, world.resting = 1000, 5000, 2000, 1, true
+			world.timeToWellRested = 3 * 3600
+		end,
+	})
 	local xp = widget("Bar: XP")
 	local L = client.Engine:GetLocale()
 	lu.assertTrue(shown(xp:GetFrame()))
@@ -726,7 +786,10 @@ function TestXPBars:test_the_xp_bar_and_its_tooltip()
 
 	client.world.timeToWellRested = 30 * 60
 	client:Hover(xp:GetFrame())
-	lu.assertStrContains(table.concat(tooltip(), "\n"), L["You must rest for %s additional\nminutes to become fully rested."]:format("30"))
+	lu.assertStrContains(
+		table.concat(tooltip(), "\n"),
+		L["You must rest for %s additional\nminutes to become fully rested."]:format("30")
+	)
 	client:Leave()
 
 	-- not rested
@@ -753,12 +816,17 @@ function TestXPBars:test_the_xp_bar_and_its_tooltip()
 end
 
 function TestXPBars:test_at_the_level_cap_or_watching_a_faction()
-	boot({ world = function(world) world.units.player.level = 80 end })
+	boot({
+		world = function(world)
+			world.units.player.level = 80
+		end,
+	})
 	local xp, rep = widget("Bar: XP"), widget("Bar: Reputation")
 	lu.assertFalse(shown(xp:GetFrame()))
 	lu.assertFalse(shown(rep:GetFrame()))
 
-	client.world.watchedFaction = { name = "The Kalu'ak", standing = 5, min = 3000, max = 9000, value = 4500, id = 1073 }
+	client.world.watchedFaction =
+		{ name = "The Kalu'ak", standing = 5, min = 3000, max = 9000, value = 4500, id = 1073 }
 	client:FireEvent("UPDATE_FACTION")
 	lu.assertTrue(shown(rep:GetFrame()))
 	lu.assertEquals(rep.Bar.XP:GetValue(), 1500)
@@ -793,10 +861,13 @@ function TestPetAndStance:tearDown()
 end
 
 function TestPetAndStance:test_a_low_level_warlocks_imp_gets_its_bar()
-	boot({ class = "WARLOCK", world = function(world)
-		world.units.player.level = 5
-		world.units.pet = Client.newUnit({ name = "Imp" })
-	end })
+	boot({
+		class = "WARLOCK",
+		world = function(world)
+			world.units.player.level = 5
+			world.units.pet = Client.newUnit({ name = "Imp" })
+		end,
+	})
 	local bar = widget("Bar: Pet"):GetFrame()
 	lu.assertTrue(visible(bar))
 	client:SetUnit("pet", nil)
@@ -805,10 +876,13 @@ function TestPetAndStance:test_a_low_level_warlocks_imp_gets_its_bar()
 end
 
 function TestPetAndStance:test_the_pet_bar_moves_out_of_the_xp_bars_way()
-	boot({ class = "HUNTER", world = function(world)
-		world.units.player.level = 80
-		world.units.pet = Client.newUnit({ name = "Wolf" })
-	end })
+	boot({
+		class = "HUNTER",
+		world = function(world)
+			world.units.player.level = 80
+			world.units.pet = Client.newUnit({ name = "Wolf" })
+		end,
+	})
 	local config = module.config.structure.bars.pet
 	local bar = widget("Bar: Pet"):GetFrame()
 	lu.assertEquals(select(5, bar:GetPoint()), config.position[#config.position])
@@ -831,7 +905,12 @@ local function forms(count, active)
 end
 
 function TestPetAndStance:test_the_stance_bar_and_its_toggle()
-	boot({ class = "WARRIOR", world = function(world) world.forms = forms(3, 1) end })
+	boot({
+		class = "WARRIOR",
+		world = function(world)
+			world.forms = forms(3, 1)
+		end,
+	})
 	local toggle = _G.EngineStanceBarButton
 	local bar = widget("Bar: Stance"):GetFrame()
 	lu.assertTrue(shown(toggle))
@@ -877,10 +956,13 @@ local function formSpells(world, count)
 end
 
 function TestPetAndStance:test_the_toggle_shows_the_active_form()
-	boot({ class = "WARRIOR", world = function(world)
-		world.forms = forms(3, 1)
-		formSpells(world, 3)
-	end })
+	boot({
+		class = "WARRIOR",
+		world = function(world)
+			world.forms = forms(3, 1)
+			formSpells(world, 3)
+		end,
+	})
 	local icon = _G.EngineStanceBarButton.Icon
 	local default = module.config.visuals.floaters.stance.icon.texture
 	lu.assertEquals(icon:GetTexture(), "Interface\\Icons\\SpellForm1")
@@ -896,10 +978,13 @@ function TestPetAndStance:test_the_toggle_shows_the_active_form()
 end
 
 function TestPetAndStance:test_a_single_form_is_its_own_button()
-	boot({ class = "PRIEST", world = function(world)
-		world.forms = forms(1)
-		formSpells(world, 1)
-	end })
+	boot({
+		class = "PRIEST",
+		world = function(world)
+			world.forms = forms(1)
+			formSpells(world, 1)
+		end,
+	})
 	local L = client.Engine:GetLocale()
 	local floaters = widget("Bar: Floaters")
 	local toggle, proxy = _G.EngineStanceBarButton, floaters.StanceProxyButton
@@ -909,7 +994,7 @@ function TestPetAndStance:test_a_single_form_is_its_own_button()
 	lu.assertFalse(visible(bar))
 	-- its icon, dimmed while the form is off
 	lu.assertEquals(toggle.Icon:GetTexture(), "Interface\\Icons\\SpellForm1")
-	lu.assertEquals({ toggle.Icon:GetVertexColor() }, { .5, .5, .5, 1 })
+	lu.assertEquals({ toggle.Icon:GetVertexColor() }, { 0.5, 0.5, 0.5, 1 })
 	client.world.forms[1].active = true
 	client:FireEvent("UPDATE_SHAPESHIFT_FORM")
 	lu.assertEquals({ toggle.Icon:GetVertexColor() }, { 1, 1, 1, 1 })
@@ -1020,7 +1105,11 @@ end
 
 function TestBarSettings:test_cast_on_key_down_after_a_reload()
 	-- the CVar stays registered through a /reload: the option comes back anyway
-	boot({ world = function(world) world.cvars.ActionButtonUseKeyDown = "1" end })
+	boot({
+		world = function(world)
+			world.cvars.ActionButtonUseKeyDown = "1"
+		end,
+	})
 	local checkbox = _G.InterfaceOptionsCombatPanelActionButtonUseKeyDown
 	lu.assertNotNil(checkbox)
 	lu.assertEquals(_G.GetCVar("ActionButtonUseKeyDown"), "0") -- the saved setting

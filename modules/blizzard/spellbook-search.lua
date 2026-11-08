@@ -47,9 +47,13 @@ Module.CreateFoundButton = function(self, parent, window, i)
 	local x, y = unpack(config.spells)
 	local half = NUM_FOUND / 2
 	local row, column = (i - 1) % half, math_floor((i - 1) / half)
-	button:SetPoint("TOPLEFT", window, "TOPLEFT",
+	button:SetPoint(
+		"TOPLEFT",
+		window,
+		"TOPLEFT",
 		x + column * config.slot_pitch[1] + config.icon_inset,
-		y - row * config.slot_pitch[2] - (config.slot_size[2] - size) / 2)
+		y - row * config.slot_pitch[2] - (config.slot_size[2] - size) / 2
+	)
 	button.Icon = button:CreateTexture(nil, "ARTWORK")
 	button.Icon:SetAllPoints()
 	kit:AddBorder(button, size)
@@ -74,9 +78,11 @@ Module.CreateFoundButton = function(self, parent, window, i)
 		_G.GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 		_G.GameTooltip:SetSpell(button.index, _G.BOOKTYPE_SPELL)
 	end)
-	button:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	button:SetScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 	button:SetScript("OnDragStart", function()
-		if (not InCombatLockdown()) then
+		if not InCombatLockdown() then
 			PickupSpell(button.index, _G.BOOKTYPE_SPELL)
 		end
 	end)
@@ -102,9 +108,11 @@ Module.CreateSearch = function(self, window, cover)
 	hint:SetTextColor(unpack(config.search_hint_color))
 	hint:SetPoint("LEFT", box, "LEFT", config.search_inset, 0)
 	hint:SetText(_G.SEARCH)
-	box:SetScript("OnEditFocusGained", function() hint:Hide() end)
+	box:SetScript("OnEditFocusGained", function()
+		hint:Hide()
+	end)
 	box:SetScript("OnEditFocusLost", function()
-		if (box:GetText() == "") then
+		if box:GetText() == "" then
 			hint:Show()
 		end
 	end)
@@ -112,9 +120,11 @@ Module.CreateSearch = function(self, window, cover)
 		box:SetText("")
 		box:ClearFocus()
 	end)
-	box:SetScript("OnEnterPressed", function() box:ClearFocus() end)
+	box:SetScript("OnEnterPressed", function()
+		box:ClearFocus()
+	end)
 	box:SetScript("OnTextChanged", function()
-		if (not self.Clearing) then
+		if not self.Clearing then
 			self:Search(box:GetText())
 		end
 	end)
@@ -139,13 +149,17 @@ Module.CreateSearch = function(self, window, cover)
 
 	-- its pages, as the spells' (PlacePages, StylePager)
 	local nextPage = CreateFrame("Button", nil, found)
-	nextPage:SetScript("OnClick", function() self:TurnFound(1) end)
+	nextPage:SetScript("OnClick", function()
+		self:TurnFound(1)
+	end)
 	local text = found:CreateFontString(nil, "OVERLAY")
 	text:SetFontObject(_G.SpellBookPageText:GetFontObject())
 	text:SetTextColor(unpack(kit.config.ink))
 	text:SetShadowColor(0, 0, 0, 0)
 	local prev = CreateFrame("Button", nil, found)
-	prev:SetScript("OnClick", function() self:TurnFound(-1) end)
+	prev:SetScript("OnClick", function()
+		self:TurnFound(-1)
+	end)
 	self:PlacePages(window, prev, nextPage, text)
 	kit:StylePager(prev, nextPage)
 	found.Next, found.Prev, found.Page = nextPage, prev, text
@@ -190,7 +204,7 @@ Module.FindSpells = function(self, query)
 		local name, rank = GetSpellName(index, _G.BOOKTYPE_SPELL)
 		if name and string_lower(name):find(query, 1, true) then
 			local spell = byName[name]
-			if spell and (not everyRank) then
+			if spell and not everyRank then
 				spell.index, spell.rank = index, rank -- a later rank, a better one
 			else
 				spell = { index = index, name = name, rank = rank }
@@ -204,19 +218,19 @@ end
 
 -- What's typed: its spells on the cover, the spells again once it's empty.
 Module.Search = function(self, text)
-	if (text == "") then
-		if (self.page == "SEARCH") then
+	if text == "" then
+		if self.page == "SEARCH" then
 			self:ShowPage(nil)
 		end
 		return
 	end
 	if InCombatLockdown() then
-		_G.UIErrorsFrame:AddMessage(_G.ERR_NOT_IN_COMBAT, 1, .1, .1)
+		_G.UIErrorsFrame:AddMessage(_G.ERR_NOT_IN_COMBAT, 1, 0.1, 0.1)
 		return
 	end
 	self.FoundSpells = self:FindSpells(text)
 	self.FoundPage = 1
-	if (self.page == "SEARCH") then
+	if self.page == "SEARCH" then
 		self:UpdateFound()
 	else
 		self:ShowPage("SEARCH")
@@ -278,18 +292,18 @@ Module.UpdateFound = function(self)
 		end
 	end
 	local found = self.Found
-	if (#spells == 0) then
+	if #spells == 0 then
 		found.None:Show()
 	else
 		found.None:Hide()
 	end
 	found.Page:SetText(_G.PAGE_NUMBER:format(self.FoundPage))
-	if (self.FoundPage > 1) then
+	if self.FoundPage > 1 then
 		found.Prev:Enable()
 	else
 		found.Prev:Disable()
 	end
-	if (self.FoundPage < pages) then
+	if self.FoundPage < pages then
 		found.Next:Enable()
 	else
 		found.Next:Disable()

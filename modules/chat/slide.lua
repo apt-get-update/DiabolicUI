@@ -18,7 +18,7 @@ local select = select
 local hooksecurefunc = _G.hooksecurefunc
 local MouseIsOver = _G.MouseIsOver
 
-local SLIDE_DURATION = .3
+local SLIDE_DURATION = 0.3
 local LINE_SPACING = 2
 
 local GetSlide = function(frame)
@@ -45,7 +45,7 @@ local IsBusy = function(frame)
 end
 
 local OnAddMessage = function(frame)
-	if (not frame:IsVisible()) then
+	if not frame:IsVisible() then
 		return
 	end
 	if (not frame:AtBottom()) or IsBusy(frame) then
@@ -73,7 +73,7 @@ end
 Module.OnEnable = function(self)
 	for i = 1, _G.NUM_CHAT_WINDOWS do
 		-- not the combat log: it scrolls constantly
-		if (i ~= 2) then
+		if i ~= 2 then
 			self:HookFrame(_G["ChatFrame" .. i])
 		end
 	end

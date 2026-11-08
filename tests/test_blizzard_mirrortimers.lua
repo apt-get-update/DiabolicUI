@@ -27,18 +27,28 @@ local Module
 -- call passes, so recorded calls don't embed the spy itself).
 local function newSpy()
 	local spy = { calls = {} }
-	setmetatable(spy, { __index = function(t, key)
-		return function(_, ...) table.insert(t.calls, { key, ... }) end
-	end })
+	setmetatable(spy, {
+		__index = function(t, key)
+			return function(_, ...)
+				table.insert(t.calls, { key, ... })
+			end
+		end,
+	})
 	return spy
 end
 
 local function newFakeBar(min, max, value)
 	local statusBarTexture = newSpy()
 	return {
-		GetMinMaxValues = function() return min, max end,
-		GetValue = function() return value end,
-		GetStatusBarTexture = function() return statusBarTexture end,
+		GetMinMaxValues = function()
+			return min, max
+		end,
+		GetValue = function()
+			return value
+		end,
+		GetStatusBarTexture = function()
+			return statusBarTexture
+		end,
 		statusBarTexture = statusBarTexture,
 	}
 end
@@ -46,7 +56,9 @@ end
 local function newFakeTimerFrame(shown)
 	local spy = newSpy()
 	spy.shown = shown
-	spy.IsShown = function(self) return self.shown end
+	spy.IsShown = function(self)
+		return self.shown
+	end
 	return spy
 end
 
@@ -54,7 +66,9 @@ local function loadMirrorTimersModule()
 	-- table.wipe is a WoW-custom extension, not standard Lua 5.1, captured
 	-- as a local upvalue at file scope (`local table_wipe = table.wipe`).
 	_G.table.wipe = _G.table.wipe or function(t)
-		for k in pairs(t) do t[k] = nil end
+		for k in pairs(t) do
+			t[k] = nil
+		end
 	end
 
 	local Engine = EngineMock.new()
@@ -110,9 +124,15 @@ end
 function TestMirrorTimers:test_does_nothing_when_min_max_or_value_is_unavailable()
 	local frame = newFakeTimerFrame(true)
 	local bar = {
-		GetMinMaxValues = function() return nil, nil end,
-		GetValue = function() return nil end,
-		GetStatusBarTexture = function() error("should not be reached") end,
+		GetMinMaxValues = function()
+			return nil, nil
+		end,
+		GetValue = function()
+			return nil
+		end,
+		GetStatusBarTexture = function()
+			error("should not be reached")
+		end,
 	}
 	Module.timers[frame] = { bar = bar }
 

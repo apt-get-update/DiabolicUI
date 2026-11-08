@@ -67,7 +67,11 @@ local function oursFor(bubble)
 end
 
 function TestChatBubbles:test_our_bubble_follows_blizzards()
-	boot({ world = function(world) world.cvars.chatBubbles = "0" end })
+	boot({
+		world = function(world)
+			world.cvars.chatBubbles = "0"
+		end,
+	})
 	lu.assertEquals(_G.GetCVar("chatBubbles"), "1")
 	-- other children of the WorldFrame are left alone
 	CreateFrame("Frame", "SomeNamedFrame", _G.WorldFrame)
@@ -113,9 +117,11 @@ function TestChatBubbles:test_long_lines_wrap()
 end
 
 function TestChatBubbles:test_left_to_nicebubbles()
-	boot({ world = function(world)
-		table.insert(world.addons, { name = "NiceBubbles", enabled = true })
-	end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "NiceBubbles", enabled = true })
+		end,
+	})
 	local bubble = say("Hello")
 	client:Tick(0.1)
 	lu.assertNotNil(bubble.background:GetTexture())
@@ -131,8 +137,12 @@ function TestChatWindows:tearDown()
 end
 
 function TestChatWindows:test_the_im_style_input_box_of_the_dock()
-	boot({ world = function(world) world.cvars.chatStyle = "im" end,
-		savedVariables = chatWindows({ backgroundOpacity = 50 }) })
+	boot({
+		world = function(world)
+			world.cvars.chatStyle = "im"
+		end,
+		savedVariables = chatWindows({ backgroundOpacity = 50 }),
+	})
 	_G.ChatFrame2EditBox:Show()
 	_G.FCF_SetWindowAlpha(_G.ChatFrame1, 0)
 	lu.assertEquals(_G.ChatFrame1Background:GetAlpha(), 0.5)
@@ -209,7 +219,9 @@ function TestChatWindows:test_the_button_frame_fades_with_the_input_box()
 	boot()
 	_G.SELECTED_CHAT_FRAME = _G.ChatFrame1
 	local fading = true
-	_G.UIFrameIsFading = function() return fading end
+	_G.UIFrameIsFading = function()
+		return fading
+	end
 	_G.ChatFrame1ButtonFrame:SetAlpha(0.5)
 	lu.assertEquals(_G.ChatFrame1ButtonFrame:GetAlpha(), 0)
 	fading = false
@@ -249,7 +261,9 @@ end
 function TestChatWindows:test_the_first_run_question()
 	local printed = {}
 	boot({ login = false })
-	_G.print = function(text) printed[#printed + 1] = text end
+	_G.print = function(text)
+		printed[#printed + 1] = text
+	end
 	client:Login()
 	local db = client.Engine:GetConfig("ChatWindows")
 	local popup = popupFrame("ENGINE_AUTO_SETUP_CHAT")
@@ -295,8 +309,15 @@ function TestChatWindows:test_clicking_a_tab_or_the_window_closes_the_input_box(
 end
 
 function TestChatWindows:test_a_hand_placed_window_comes_back()
-	boot({ savedVariables = chatWindows({ autoposition = false, width = 500, height = 200,
-		positionX = 40, positionY = 120 }) })
+	boot({
+		savedVariables = chatWindows({
+			autoposition = false,
+			width = 500,
+			height = 200,
+			positionX = 40,
+			positionY = 120,
+		}),
+	})
 	local frame = _G.ChatFrame1
 	lu.assertEquals({ frame:GetSize() }, { 500, 200 })
 	lu.assertEquals({ frame:GetPoint() }, { "BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 40, 120 })
@@ -313,7 +334,9 @@ end
 function TestChatWindows:test_the_autoposition_command()
 	boot({ savedVariables = chatWindows({ autoposition = false }) })
 	local printed = {}
-	_G.print = function(text) printed[#printed + 1] = text end
+	_G.print = function(text)
+		printed[#printed + 1] = text
+	end
 	local db = client.Engine:GetConfig("ChatWindows")
 	local config = client.Engine:GetDB("ChatWindows")
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("autoposition")
@@ -396,7 +419,9 @@ end
 function TestChatCopy:test_double_clicking_a_tab_shows_its_lines_as_plain_text()
 	boot({ savedVariables = chatWindows({}) })
 	_G.ChatFrame1:AddMessage("|cffffd000Hello|r there")
-	_G.ChatFrame1:AddMessage("Look: |cffa335ee|Hitem:100:0:0:0:0:0:0:0:80|h[Big Sword]|h|r |TInterface\\Icons\\Coin:0|t")
+	_G.ChatFrame1:AddMessage(
+		"Look: |cffa335ee|Hitem:100:0:0:0:0:0:0:0:80|h[Big Sword]|h|r |TInterface\\Icons\\Coin:0|t"
+	)
 	_G.ChatFrame3:AddMessage("elsewhere")
 	client:RunScript(_G.ChatFrame1Tab, "OnDoubleClick", "LeftButton")
 	local frame = _G.DiabolicChatCopyFrame

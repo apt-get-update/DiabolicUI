@@ -33,7 +33,7 @@ end
 local KeepColor = function(text, color)
 	local busy
 	local Paint = function()
-		if (not busy) then
+		if not busy then
 			busy = true
 			text:SetTextColor(unpack(color))
 			busy = nil
@@ -46,18 +46,29 @@ end
 -- the tabs' art, by its file (lowercase, as patterns): the frames, their
 -- scroll bar tracks, the column headers' backgrounds
 local ART = {
-	"ui%-friendsframe", "friendsframescrollicon", "ui%-character%-scrollbar", "ui%-classtrainer%-",
-	"whoframe%-", "guildframe%-", "ui%-channelframe", "ui%-character%-general", "ui%-raidframe%-"
+	"ui%-friendsframe",
+	"friendsframescrollicon",
+	"ui%-character%-scrollbar",
+	"ui%-classtrainer%-",
+	"whoframe%-",
+	"guildframe%-",
+	"ui%-channelframe",
+	"ui%-character%-general",
+	"ui%-raidframe%-",
 }
 
 -- the tabs' frames
-local TABS = { "FriendsListFrame", "IgnoreListFrame", "PendingListFrame", "WhoFrame", "GuildFrame", "ChannelFrame", "RaidFrame" }
+local TABS =
+	{ "FriendsListFrame", "IgnoreListFrame", "PendingListFrame", "WhoFrame", "GuildFrame", "ChannelFrame", "RaidFrame" }
 
 -- the lists, each in a darker panel (not the chat channels': their rows
 -- are bars of their own)
 local LISTS = {
-	"FriendsFrameFriendsScrollFrame", "FriendsFrameIgnoreScrollFrame", "FriendsFramePendingScrollFrame",
-	"WhoListScrollFrame", "GuildListScrollFrame"
+	"FriendsFrameFriendsScrollFrame",
+	"FriendsFrameIgnoreScrollFrame",
+	"FriendsFramePendingScrollFrame",
+	"WhoListScrollFrame",
+	"GuildListScrollFrame",
 }
 
 Module.StyleSocial = function(self)
@@ -71,7 +82,9 @@ Module.StyleSocial = function(self)
 	for _, name in ipairs(TABS) do
 		local page = _G[name]
 		if page then
-			page:HookScript("OnShow", function() kit:SetFooter(foot, config.footers[name]) end)
+			page:HookScript("OnShow", function()
+				kit:SetFooter(foot, config.footers[name])
+			end)
 		end
 	end
 	kit:AddDrag(window, frame)
@@ -114,7 +127,13 @@ Module.StyleSocial = function(self)
 			local insets = config.list_panel_overrides[name] or config.list_panel_insets
 			local zone = kit:AddZone(list, "leather", insets)
 			if config.lists_on_foot[name] then
-				self:SetZoneBottom(zone, list, insets, window.DiabolicFoot, kit:FootBar() + (config.list_gaps[name] or config.list_gap))
+				self:SetZoneBottom(
+					zone,
+					list,
+					insets,
+					window.DiabolicFoot,
+					kit:FootBar() + (config.list_gaps[name] or config.list_gap)
+				)
 			elseif (name == "GuildListScrollFrame") and self.MOTD then
 				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
 			end
@@ -185,9 +204,15 @@ Module.LayoutWho = function(self, window)
 	-- the list sorted by the choice instead
 	local button = _G.WhoFrameDropDownButton
 	_G.WhoFrameDropDownHighlightTexture:SetAlpha(0)
-	dropdown:SetScript("OnMouseUp", function() button:Click() end)
-	dropdown:HookScript("OnEnter", function() button:LockHighlight() end)
-	dropdown:HookScript("OnLeave", function() button:UnlockHighlight() end)
+	dropdown:SetScript("OnMouseUp", function()
+		button:Click()
+	end)
+	dropdown:HookScript("OnEnter", function()
+		button:LockHighlight()
+	end)
+	dropdown:HookScript("OnLeave", function()
+		button:UnlockHighlight()
+	end)
 	hooksecurefunc("WhoFrameDropDownButton_OnClick", function()
 		local choice = _G.WHOFRAME_DROPDOWN_LIST[_G.UIDropDownMenu_GetSelectedID(dropdown)]
 		if choice and choice.sortType then
@@ -295,7 +320,13 @@ Module.StyleGuild = function(self, window)
 	if toggle then
 		local Place = function()
 			local point, relative, relativePoint, x = toggle:GetPoint()
-			toggle:SetPoint(point, relative, relativePoint, x, config.guild_toggle_y + config.guild_totals_raise + config.guild_raise)
+			toggle:SetPoint(
+				point,
+				relative,
+				relativePoint,
+				x,
+				config.guild_toggle_y + config.guild_totals_raise + config.guild_raise
+			)
 		end
 		hooksecurefunc("GuildStatus_Update", Place)
 		Place()
@@ -442,7 +473,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleSocial()

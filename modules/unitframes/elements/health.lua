@@ -17,7 +17,7 @@ local UnitIsPlayer = _G.UnitIsPlayer
 -- Most frames poll their health 30 times a second ("FREQUENT"). A poll that finds
 -- nothing changed skips the work, but a full refresh still happens this
 -- often, for colors that change on their own (a mob getting tapped).
-local IDLE_REFRESH = .5
+local IDLE_REFRESH = 0.5
 
 local Update = function(self, event, ...)
 	local Health = self.Health
@@ -28,7 +28,7 @@ local Update = function(self, event, ...)
 	local isUnavailable
 
 	if UnitIsPlayer(unit) then
-		if (not UnitIsConnected(unit)) then
+		if not UnitIsConnected(unit) then
 			curHealth = 1
 			maxHealth = 1
 			isUnavailable = "offline"
@@ -36,16 +36,22 @@ local Update = function(self, event, ...)
 			curHealth = 0
 			maxHealth = 0
 			isUnavailable = UnitIsGhost(unit) and "ghost" or "dead"
-		end 
+		end
 	elseif UnitIsDead(unit) then
 		curHealth = 0
 		maxHealth = 0
 		isUnavailable = "dead"
 	end
 
-	if (event == "FREQUENT") and (unit == Health._unit) and (curHealth == Health._cur) and (maxHealth == Health._max) and (isUnavailable == Health._state) then
+	if
+		(event == "FREQUENT")
+		and (unit == Health._unit)
+		and (curHealth == Health._cur)
+		and (maxHealth == Health._max)
+		and (isUnavailable == Health._state)
+	then
 		Health._idle = Health._idle + ((...) or 0)
-		if (Health._idle < IDLE_REFRESH) then
+		if Health._idle < IDLE_REFRESH then
 			return
 		end
 	end
@@ -55,7 +61,7 @@ local Update = function(self, event, ...)
 	Health:SetValue(curHealth)
 
 	if Health.Value then
-		if (isUnavailable == "offline") then
+		if isUnavailable == "offline" then
 			Health.Value:SetText(PLAYER_OFFLINE)
 		elseif isUnavailable then -- dead, or a ghost
 			Health.Value:SetText(DEAD)
@@ -68,7 +74,7 @@ local Update = function(self, event, ...)
 		return Health:PostUpdate(unit, curHealth, maxHealth, isUnavailable)
 	end
 end
-	
+
 local Enable = function(self)
 	local Health = self.Health
 	if Health then

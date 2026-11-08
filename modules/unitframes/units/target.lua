@@ -46,23 +46,28 @@ local PostUpdateArtwork = function(self)
 	local power = UnitPower(unit, powerID)
 	local powermax = UnitPowerMax(unit, powerID)
 
-	local haspower = isPlayer or not(power == 0 or powermax == 0)
+	local haspower = isPlayer or not (power == 0 or powermax == 0)
 
 	local level = UnitLevel(unit)
 	local classification = UnitClassification(unit)
 
 	local isElite = (classification == "elite") or (classification == "rare") or (classification == "rareelite")
 	local isboss = (classification == "worldboss") or (level and level < 1)
-	
+
 	local ishighlight = self:IsMouseOver()
-	
-	if (isboss == self.isboss) and (isElite == self.iselite) and (haspower == self.haspower) and (ishighlight == self.ishighlight) then
+
+	if
+		(isboss == self.isboss)
+		and (isElite == self.iselite)
+		and (haspower == self.haspower)
+		and (ishighlight == self.ishighlight)
+	then
 		return -- avoid unneeded graphic updates
 	else
 		if (not haspower) and (self.haspower == true) then
-			-- Forcefully empty the bar fast to avoid 
+			-- Forcefully empty the bar fast to avoid
 			-- it being visible after the border has been hidden.
-			self.Power:Clear() 
+			self.Power:Clear()
 		end
 
 		self.iselite = isElite
@@ -71,81 +76,105 @@ local PostUpdateArtwork = function(self)
 		self.ishighlight = ishighlight
 
 		local cache = self.layers
-		local border_name = "Border" .. (isElite and "Elite" or isboss and "Boss" or "Normal") .. (haspower and "Power" or "") .. (ishighlight and "Highlight" or "")
+		local border_name = "Border"
+			.. (isElite and "Elite" or isboss and "Boss" or "Normal")
+			.. (haspower and "Power" or "")
+			.. (ishighlight and "Highlight" or "")
 		local backdrop_name = "Backdrop" .. (haspower and "Power" or "")
 		local threat_name = "Threat" .. ((isElite or isboss) and "Boss" or "Normal") .. (haspower and "Power" or "")
-		
+
 		-- display the correct border texture
 		cache.border[border_name]:Show()
-		for id,layer in pairs(cache.border) do
+		for id, layer in pairs(cache.border) do
 			if id ~= border_name then
 				layer:Hide()
 			end
 		end
-		
+
 		-- display the correct backdrop texture
 		cache.backdrop[backdrop_name]:Show()
-		for id,layer in pairs(cache.backdrop) do
+		for id, layer in pairs(cache.backdrop) do
 			if id ~= backdrop_name then
 				layer:Hide()
 			end
 		end
-		
+
 		-- display the correct threat texture
-		--  *This does not affect the visibility of the main threat object, 
+		--  *This does not affect the visibility of the main threat object,
 		--   it only handles the visibility of the separate sub-textures.
 		cache.threat[threat_name]:Show()
-		for id,layer in pairs(cache.threat) do
+		for id, layer in pairs(cache.threat) do
 			if id ~= threat_name then
 				layer:Hide()
 			end
 		end
 	end
-	
 end
-
 
 -- TODO: Add PvP relevant buffs to a whitelist in these filters
 
-
-local buffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
-
+local buffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff,
+	isCastByPlayer
+)
 	local unit = self.unit
-	if (isBossDebuff) 
-	or (isStealable) 
-	or (isCastByPlayer or (unitCaster == "vehicle"))
-	or ((unitCaster and UnitIsUnit(unit, unitCaster)) and duration and (duration > 0) and (duration < TIME_LIMIT)) then
+	if
+		isBossDebuff
+		or isStealable
+		or (isCastByPlayer or (unitCaster == "vehicle"))
+		or ((unitCaster and UnitIsUnit(unit, unitCaster)) and duration and (duration > 0) and (duration < TIME_LIMIT))
+	then
 		return true
-
 	elseif (not unitCaster) and (not IsInInstance()) then -- cache this
 		-- EXPERIMENTAL: ignore debuffs from players outside the group, eg. world bosses
 		return
-
-	elseif (UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit))) then
+	elseif UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit)) then
 		-- Hostile NPC.
 		-- Show auras cast by the unit, and auras of unknown origin.
 		return (not unitCaster) or (unitCaster == unit)
-
-	elseif (not unitCaster) then
+	elseif not unitCaster then
 		-- Friendly target or hostile player
 		-- Show auras of unknown origin
 		return true
-
 	else
 		-- others' (see the TODO above)
 		return false
 	end
 end
 
-local debuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer)
-
+local debuffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff,
+	isCastByPlayer
+)
 	-- The unitframe's unitID
 	local unit = self.unit
 
 	-- Info about the unitframe's unit (the unit the auras are applied to)
 	local unitIsHostileNPC = UnitCanAttack("player", unit) and (not UnitPlayerControlled(unit))
 
-	-- Info about the caster of the auras 
+	-- Info about the caster of the auras
 	local casterIsVehicle = unitCaster and ((unitCaster == "vehicle") or UnitIsUnit("vehicle", unitCaster))
 
 	-- Info about the auras themselves
@@ -154,21 +183,18 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	if isBossDebuff then
 		return true
 
-	-- Always show debuffs cast by your vehicle 
+	-- Always show debuffs cast by your vehicle
 	elseif casterIsVehicle then
 		return true
 
 	-- Show debuffs cast by the player, unless it's currently visible on a nameplate
 	elseif isCastByPlayer then
 		return true
-
 	elseif (not unitCaster) and (not IsInInstance()) then
 		-- EXPERIMENTAL: ignore debuffs from players outside the group, eg. world bosses
 		return
-
 	elseif unitIsHostileNPC then
 		return (not unitCaster) or (unitCaster == unit)
-
 	else
 		-- others' (see the TODO above)
 		return false
@@ -177,11 +203,10 @@ end
 
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.target
-	local db = Module:GetConfig("UnitFrames") 
-	
+	local db = Module:GetConfig("UnitFrames")
+
 	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
-
 
 	-- Artwork
 	-------------------------------------------------------------------
@@ -201,16 +226,16 @@ local Style = function(self, unit)
 	backdropPower:SetSize(unpack(config.textures.size))
 	backdropPower:SetPoint(unpack(config.textures.position))
 	backdropPower:SetTexture(config.textures.layers.backdrop.double)
-	
+
 	local border = self:CreateFrame()
 	border:SetFrameLevel(self:GetFrameLevel() + 4)
 	border:SetAllPoints()
-	
+
 	local borderNormal = border:CreateTexture(nil, "BORDER")
 	borderNormal:SetSize(unpack(config.textures.size))
 	borderNormal:SetPoint(unpack(config.textures.position))
 	borderNormal:SetTexture(config.textures.layers.border.standard_single.normal)
-	
+
 	local borderNormalHighlight = border:CreateTexture(nil, "BORDER")
 	borderNormalHighlight:SetSize(unpack(config.textures.size))
 	borderNormalHighlight:SetPoint(unpack(config.textures.position))
@@ -266,19 +291,18 @@ local Style = function(self, unit)
 	borderElitePowerHighlight:SetPoint(unpack(config.textures.position))
 	borderElitePowerHighlight:SetTexture(config.textures.layers.border.elite_double.highlight)
 
-
 	-- Health
 	-------------------------------------------------------------------
 	local health = self:CreateStatusBar()
 	health:SetSize(unpack(config.health.size))
 	health:SetPoint(unpack(config.health.position))
 	health:SetStatusBarTexture(config.health.texture)
-	health.frequent = 1/30
-	
+	health.frequent = 1 / 30
+
 	local healthValueHolder = health:CreateFrame()
 	healthValueHolder:SetAllPoints()
 	healthValueHolder:SetFrameLevel(border:GetFrameLevel() + 1)
-	
+
 	health.Value = healthValueHolder:CreateFontString(nil, "OVERLAY")
 	health.Value:SetFontObject(config.texts.health.font_object)
 	health.Value:SetPoint(unpack(config.texts.health.position))
@@ -290,43 +314,39 @@ local Style = function(self, unit)
 	health.plainControlled = true -- pets and vehicles in the plain health color
 	health.dimOutOfCombat = true
 
-	
 	-- Power
 	-------------------------------------------------------------------
 	local power = self:CreateStatusBar()
 	power:SetSize(unpack(config.power.size))
 	power:SetPoint(unpack(config.power.position))
 	power:SetStatusBarTexture(config.power.texture)
-	power.frequent = 1/30
+	power.frequent = 1 / 30
 
 	-- Add a postupdate to dynamically toggle powerbar artwork when needed
 	power.PostUpdate = function(power, min, max)
 		local unit = self.unit
-		local showPower = (UnitIsPlayer(unit) or not(min == 0 or max == 0))
-		if (showPower == self.haspower) then 
-			return 
-		end 
+		local showPower = (UnitIsPlayer(unit) or not (min == 0 or max == 0))
+		if showPower == self.haspower then
+			return
+		end
 		PostUpdateArtwork(self)
-	end 
-
+	end
 
 	-- CastBar
 	-------------------------------------------------------------------
 	local castBar = health:CreateStatusBar()
 	castBar:Hide()
 	castBar:SetAllPoints()
-	castBar:SetStatusBarTexture(1, 1, 1, .15)
+	castBar:SetStatusBarTexture(1, 1, 1, 0.15)
 	castBar:SetSize(health:GetSize())
 	castBar:DisableSmoothing(true)
 
-
-	
 	-- Auras
 	-------------------------------------------------------------------
 	local auras = self:CreateFrame()
 	auras:SetSize(unpack(config.auras.size))
 	auras:Place(unpack(config.auras.position))
-	
+
 	auras.config = config.auras
 	auras.buttonConfig = config.auras.button
 	auras.auraSize = config.auras.button.size
@@ -340,21 +360,19 @@ local Style = function(self, unit)
 	auras.DebuffFilter = debuffFilter
 	auras.PostCreateButton = Library.PostCreateAuraButton
 
-	
-
 	-- Threat
 	-------------------------------------------------------------------
 	local threat = self:CreateFrame()
 	threat:SetFrameLevel(0)
 	threat:SetAllPoints()
 	threat:Hide()
-	
+
 	local threatNormal = threat:CreateTexture(nil, "BACKGROUND")
 	threatNormal:Hide()
 	threatNormal:SetSize(unpack(config.textures.size))
 	threatNormal:SetPoint(unpack(config.textures.position))
 	threatNormal:SetTexture(config.textures.layers.border.standard_single.threat)
-	
+
 	local threatNormalPower = threat:CreateTexture(nil, "BACKGROUND")
 	threatNormalPower:Hide()
 	threatNormalPower:SetSize(unpack(config.textures.size))
@@ -373,7 +391,6 @@ local Style = function(self, unit)
 	threatBossPower:SetPoint(unpack(config.textures.position))
 	threatBossPower:SetTexture(config.textures.layers.border.boss_double.threat)
 
-
 	-- Texts
 	-------------------------------------------------------------------
 	local name = border:CreateFontString(nil, "OVERLAY")
@@ -386,7 +403,7 @@ local Style = function(self, unit)
 	name:SetWordWrap(true)
 	name:SetNonSpaceWrap(false)
 	name.colorBoss = true
-	
+
 	local classification = border:CreateFontString(nil, "OVERLAY")
 	classification:SetFontObject(config.classification.font_object)
 	classification:SetPoint(unpack(config.classification.position))
@@ -399,24 +416,23 @@ local Style = function(self, unit)
 	castTime:SetFontObject(config.texts.castTime.font_object)
 	castTime:SetPoint(unpack(config.texts.castTime.position))
 
-	castBar:HookScript("OnShow", function() 
+	castBar:HookScript("OnShow", function()
 		classification:Hide()
-		spellName:Show() 
+		spellName:Show()
 	end)
 
-	castBar:HookScript("OnHide", function() 
+	castBar:HookScript("OnHide", function()
 		classification:Show()
-		spellName:Hide() 
+		spellName:Hide()
 	end)
 
-	
 	-- Put everything into our layer cache
 	-------------------------------------------------------------------
-	self.layers = { 
+	self.layers = {
 		backdrop = {
 			Backdrop = backdrop,
-			BackdropPower = backdropPower
-		}, 
+			BackdropPower = backdropPower,
+		},
 		border = {
 			BorderNormal = borderNormal,
 			BorderNormalHighlight = borderNormalHighlight,
@@ -429,15 +445,15 @@ local Style = function(self, unit)
 			BorderElite = borderElite,
 			BorderEliteHighlight = borderEliteHighlight,
 			BorderElitePower = borderElitePower,
-			BorderElitePowerHighlight = borderElitePowerHighlight
-		}, 
+			BorderElitePowerHighlight = borderElitePowerHighlight,
+		},
 		threat = {
 			ThreatNormal = threatNormal,
 			ThreatNormalPower = threatNormalPower,
 			ThreatBoss = threatBoss,
-			ThreatBossPower = threatBossPower
-		} 
-	} 
+			ThreatBossPower = threatBossPower,
+		},
+	}
 
 	self.Auras = auras
 	self.CastBar = castBar
@@ -448,8 +464,8 @@ local Style = function(self, unit)
 	self.Name = name
 	self.Power = power
 	self.Threat = threat
-	self.Threat.SetVertexColor = function(_, ...) 
-		for _,v in pairs(self.layers.threat) do
+	self.Threat.SetVertexColor = function(_, ...)
+		for _, v in pairs(self.layers.threat) do
 			v:SetVertexColor(...)
 		end
 	end
@@ -462,11 +478,10 @@ local Style = function(self, unit)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", PostUpdateArtwork)
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", PostUpdateArtwork)
 	self:RegisterEvent("UNIT_NAME_UPDATE", PostUpdateArtwork)
-
 end
 
 UnitFrameWidget.OnEvent = function(self, event, ...)
-	if (event == "PLAYER_TARGET_CHANGED") then
+	if event == "PLAYER_TARGET_CHANGED" then
 		if UnitExists("target") then
 			if UnitIsEnemy("target", "player") then
 				PlaySound("igCreatureAggroSelect")

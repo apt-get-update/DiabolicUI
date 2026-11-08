@@ -16,12 +16,11 @@ local UnitPower = _G.UnitPower
 local UnitPowerMax = _G.UnitPowerMax
 local UnitPowerType = _G.UnitPowerType
 
-
 local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA
 
 -- Like health: a "FREQUENT" poll that finds nothing changed skips the work,
 -- with a full refresh this often regardless.
-local IDLE_REFRESH = .5
+local IDLE_REFRESH = 0.5
 
 local Update = function(self, event, ...)
 	local Power = self.Power
@@ -40,21 +39,32 @@ local Update = function(self, event, ...)
 	local manamax = Mana and UnitPowerMax(unit, _SECONDARY_RESOURCE_TOKEN)
 
 	local last = self._lastPower
-	if (not last) then
+	if not last then
 		last = {}
 		self._lastPower = last
 	end
-	if (event == "FREQUENT") and (unit == last.unit) and (powerType == last.powerType) and (power == last.power) and (powermax == last.powermax)
-	and (mana == last.mana) and (manamax == last.manamax) and (dead == last.dead) and (connected == last.connected) and (tapped == last.tapped) then
+	if
+		(event == "FREQUENT")
+		and (unit == last.unit)
+		and (powerType == last.powerType)
+		and (power == last.power)
+		and (powermax == last.powermax)
+		and (mana == last.mana)
+		and (manamax == last.manamax)
+		and (dead == last.dead)
+		and (connected == last.connected)
+		and (tapped == last.tapped)
+	then
 		last.idle = last.idle + ((...) or 0)
-		if (last.idle < IDLE_REFRESH) then
+		if last.idle < IDLE_REFRESH then
 			return
 		end
 	end
-	last.unit, last.powerType, last.power, last.powermax, last.mana, last.manamax = unit, powerType, power, powermax, mana, manamax
+	last.unit, last.powerType, last.power, last.powermax, last.mana, last.manamax =
+		unit, powerType, power, powermax, mana, manamax
 	last.dead, last.connected, last.tapped, last.idle = dead, connected, tapped, 0
 
-	if Power then 
+	if Power then
 		if dead then
 			power = 0
 			powermax = 0
@@ -63,7 +73,7 @@ local Update = function(self, event, ...)
 		local objectType = Power:GetObjectType()
 
 		if objectType == "Orb" then
-			local colorMulti = powerType and C.Orb[powerType] 
+			local colorMulti = powerType and C.Orb[powerType]
 			local colorSingle = powerType and C.Power[powerType] or C.Power.UNUSED
 
 			if Power.powerType ~= powerType then
@@ -73,17 +83,16 @@ local Update = function(self, event, ...)
 
 			Power:SetMinMaxValues(0, powermax)
 			Power:SetValue(power)
-			
+
 			if colorMulti then
-				for i = 1,4 do
+				for i = 1, 4 do
 					Power:SetStatusBarColor(unpack(colorMulti[i]))
 				end
 			else
 				--for i = 1,4 do
-					Power:SetStatusBarColor(unpack(colorSingle))
+				Power:SetStatusBarColor(unpack(colorSingle))
 				--end
 			end
-
 		elseif objectType == "StatusBar" then
 			local color = powerType and C.Power[powerType] or C.Power.UNUSED
 			if Power.powerType ~= powerType then
@@ -92,7 +101,7 @@ local Update = function(self, event, ...)
 
 			Power:SetMinMaxValues(0, powermax)
 			Power:SetValue(power)
-			
+
 			local r, g, b
 			if not connected then
 				r, g, b = unpack(C.Status.Disconnected)
@@ -105,14 +114,14 @@ local Update = function(self, event, ...)
 			end
 			Power:SetStatusBarColor(r, g, b)
 		end
-		
+
 		if Power.Value then
 			Power.Value:SetText(((power == 0) or (powermax == 0)) and "" or power)
 		end
-				
+
 		if Power.PostUpdate then
 			Power:PostUpdate(power, powermax)
-		end		
+		end
 	end
 
 	if Mana then

@@ -12,36 +12,39 @@ local RegisterStateDriver = RegisterStateDriver
 
 local NUM_BUTTONS = VEHICLE_MAX_ACTIONBUTTONS or 6
 
-BarWidget.OnEnable = function (self)
-  local config = Module.config
+BarWidget.OnEnable = function(self)
+	local config = Module.config
 
-  local Artwork = Module:GetWidget("Artwork")
-  local Bar = Module:GetHandler("ActionBar"):New("vehicle", Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
+	local Artwork = Module:GetWidget("Artwork")
+	local Bar = Module:GetHandler("ActionBar")
+		:New("vehicle", Module:GetWidget("Controller: Main"):GetFrame(), Artwork:GetBarTemplate())
 
-  --------------------------------------------------------------------
-  -- Buttons
-  --------------------------------------------------------------------
+	--------------------------------------------------------------------
+	-- Buttons
+	--------------------------------------------------------------------
 
-  -- Spawn the action buttons
-  for i = 1, NUM_BUTTONS do
-    local button = Bar:NewButton("action", i, Artwork:GetButtonTemplate())
-    button:SetStateAction(0, "action", i)
-    for state = 1, 14 do
-      button:SetStateAction(state, "action", (state - 1) * NUM_ACTIONBAR_BUTTONS + i)
-    end
-  end
-  --------------------------------------------------------------------
-  -- Page Driver
-  --------------------------------------------------------------------
+	-- Spawn the action buttons
+	for i = 1, NUM_BUTTONS do
+		local button = Bar:NewButton("action", i, Artwork:GetButtonTemplate())
+		button:SetStateAction(0, "action", i)
+		for state = 1, 14 do
+			button:SetStateAction(state, "action", (state - 1) * NUM_ACTIONBAR_BUTTONS + i)
+		end
+	end
+	--------------------------------------------------------------------
+	-- Page Driver
+	--------------------------------------------------------------------
 
-  -- This driver updates the bar state attribute to follow its current page,
-  -- and also moves the vehicle, override, possess and temp shapeshift
-  -- bars into the main bar as state/page changes.
-  --
-  -- After a state change the state-page childupdate is called
-  -- on all the bar's children, which in turn updates button actions
-  -- and initiate a texture update!
-  Bar:SetAttribute("_onstate-page", [[
+	-- This driver updates the bar state attribute to follow its current page,
+	-- and also moves the vehicle, override, possess and temp shapeshift
+	-- bars into the main bar as state/page changes.
+	--
+	-- After a state change the state-page childupdate is called
+	-- on all the bar's children, which in turn updates button actions
+	-- and initiate a texture update!
+	Bar:SetAttribute(
+		"_onstate-page",
+		[[
     self:SetAttribute("state", newstate);
 
     for i = 1, self:GetAttribute("num_buttons") do
@@ -50,57 +53,61 @@ BarWidget.OnEnable = function (self)
     end
 
     control:CallMethod("UpdateAction");
-  ]])
+  ]]
+	)
 
-  -- reset the page before applying a new page driver
-  Bar:SetAttribute("state-page", "0")
+	-- reset the page before applying a new page driver
+	Bar:SetAttribute("state-page", "0")
 
-  -- Main actionbar paging based on class/stance
-  -- also supports user changed paging
-  local driver = {}
+	-- Main actionbar paging based on class/stance
+	-- also supports user changed paging
+	local driver = {}
 
-  tinsert(driver, "[bonusbar:5]11")
+	tinsert(driver, "[bonusbar:5]11")
 
-  tinsert(driver, "11")
-  local page_driver = tconcat(driver, "; ")
+	tinsert(driver, "11")
+	local page_driver = tconcat(driver, "; ")
 
-  -- enable the new page driver
-  RegisterStateDriver(Bar, "page", page_driver)
+	-- enable the new page driver
+	RegisterStateDriver(Bar, "page", page_driver)
 
-  --------------------------------------------------------------------
-  -- Visibility Drivers
-  --------------------------------------------------------------------
-  Bar:SetAttribute("_onstate-vis", [[
+	--------------------------------------------------------------------
+	-- Visibility Drivers
+	--------------------------------------------------------------------
+	Bar:SetAttribute(
+		"_onstate-vis",
+		[[
     if newstate == "hide" then
       self:Hide();
     elseif newstate == "show" then
       self:Show();
     end
-  ]])
+  ]]
+	)
 
-  twipe(driver)
-  tinsert(driver, "[bonusbar:5]show")
-  tinsert(driver, "[vehicleui]show")
-  tinsert(driver, "hide")
+	twipe(driver)
+	tinsert(driver, "[bonusbar:5]show")
+	tinsert(driver, "[vehicleui]show")
+	tinsert(driver, "hide")
 
-  -- Register a proxy visibility driver
-  local visibility_driver = tconcat(driver, "; ")
-  RegisterStateDriver(Bar, "vis", visibility_driver)
+	-- Register a proxy visibility driver
+	local visibility_driver = tconcat(driver, "; ")
+	RegisterStateDriver(Bar, "vis", visibility_driver)
 
-  -- store bar settings
-  local bar_config = config.structure.bars.vehicle
-  Bar:SetAttribute("flyout_direction", bar_config.flyout_direction)
-  Bar:SetAttribute("growth_x", bar_config.growthX)
-  Bar:SetAttribute("growth_y", bar_config.growthY)
-  Bar:SetAttribute("padding", bar_config.padding)
-  Bar:SetAttribute("bar_width", bar_config.bar_size[1])
-  Bar:SetAttribute("bar_height", bar_config.bar_size[2])
-  Bar:SetAttribute("button_size", bar_config.buttonsize)
+	-- store bar settings
+	local bar_config = config.structure.bars.vehicle
+	Bar:SetAttribute("flyout_direction", bar_config.flyout_direction)
+	Bar:SetAttribute("growth_x", bar_config.growthX)
+	Bar:SetAttribute("growth_y", bar_config.growthY)
+	Bar:SetAttribute("padding", bar_config.padding)
+	Bar:SetAttribute("bar_width", bar_config.bar_size[1])
+	Bar:SetAttribute("bar_height", bar_config.bar_size[2])
+	Bar:SetAttribute("button_size", bar_config.buttonsize)
 
-  -- The vehicle bar always has the same size,
-  -- so a one time setup execution will do.
-  -- Note: We could easily do this from Lua...
-  Bar:Execute([[
+	-- The vehicle bar always has the same size,
+	-- so a one time setup execution will do.
+	-- Note: We could easily do this from Lua...
+	Bar:Execute([[
     -- update bar size
     local bar_width = self:GetAttribute("bar_width");
     local bar_height = self:GetAttribute("bar_height");
@@ -125,11 +132,11 @@ BarWidget.OnEnable = function (self)
     end
   ]])
 
-  Bar:SetPoint("BOTTOM")
-  Bar:PostUpdate()
+	Bar:SetPoint("BOTTOM")
+	Bar:PostUpdate()
 
-  self.Bar = Bar
+	self.Bar = Bar
 end
-BarWidget.GetFrame = function (self)
-  return self.Bar
+BarWidget.GetFrame = function(self)
+	return self.Bar
 end

@@ -37,8 +37,10 @@ Bar.UpdateData = function(self)
 
 	if repName then
 		local curRep, maxRep = repValue - repMin, repMax - repMin
-		if maxRep <= 0 then maxRep = 1 end
-		local standingLabel = _G["FACTION_STANDING_LABEL"..repStanding] or ""
+		if maxRep <= 0 then
+			maxRep = 1
+		end
+		local standingLabel = _G["FACTION_STANDING_LABEL" .. repStanding] or ""
 
 		self.data.curRep = curRep
 		self.data.maxRep = maxRep
@@ -57,19 +59,22 @@ end
 
 Bar.Update = function(self)
 	local data = self:UpdateData()
-	if (not data.repName) then return end
+	if not data.repName then
+		return
+	end
 	local r, g, b = unpack(C.Reaction[data.repStanding])
 
 	self.XP:SetStatusBarColor(r, g, b)
 	self.XP:SetMinMaxValues(0, data.maxRep)
 	self.XP:SetValue(data.curRep)
-	self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
+	self.Backdrop:SetVertexColor(r * 0.25, g * 0.25, b * 0.25)
 end
 
 Bar.OnEnter = function(self)
 	local data = self:UpdateData()
-	if (not data.repName) then return end
-
+	if not data.repName then
+		return
+	end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 
@@ -80,8 +85,17 @@ Bar.OnEnter = function(self)
 	GameTooltip:AddLine(data.repName)
 	GameTooltip:AddLine(" ")
 
-	GameTooltip:AddLine(F.Colorize(data.standingLabel, {r3, g3, b3} ))
-	GameTooltip:AddDoubleLine(L["Reputation: "], longXPString:format(F.Colorize(F.Short(data.curRep), "Normal"), F.Colorize(F.Short(data.maxRep), "Normal")), r, g, b, r2, g2, b2)
+	GameTooltip:AddLine(F.Colorize(data.standingLabel, { r3, g3, b3 }))
+	GameTooltip:AddDoubleLine(
+		L["Reputation: "],
+		longXPString:format(F.Colorize(F.Short(data.curRep), "Normal"), F.Colorize(F.Short(data.maxRep), "Normal")),
+		r,
+		g,
+		b,
+		r2,
+		g2,
+		b2
+	)
 	GameTooltip:Show()
 end
 
@@ -102,7 +116,7 @@ end
 BarWidget.UpdateVisibility = function(self)
 	local isVisible = Module:IsReputationVisible()
 	if isVisible then
-		if (not self.Controller:IsShown()) then
+		if not self.Controller:IsShown() then
 			self.Controller:Show()
 		end
 	else
@@ -110,7 +124,7 @@ BarWidget.UpdateVisibility = function(self)
 			self.Controller:Hide()
 		end
 	end
-	if (REPBARVISIBLE ~= isVisible) then
+	if REPBARVISIBLE ~= isVisible then
 		self:SendMessage("ENGINE_ACTIONBAR_REPUTATION_VISIBLE_CHANGED", isVisible)
 		REPBARVISIBLE = isVisible
 	end
@@ -148,9 +162,15 @@ BarWidget.OnEnable = function(self)
 	self.Controller = controller
 
 	local bar = setmetatable(controller:CreateFrame("Frame"), Bar_MT)
-	controller:SetScript("OnEnter", function() bar:OnEnter() end)
-	controller:SetScript("OnLeave", function() bar:OnLeave() end)
-	controller:SetScript("OnMouseUp", function() bar:OnClick() end)
+	controller:SetScript("OnEnter", function()
+		bar:OnEnter()
+	end)
+	controller:SetScript("OnLeave", function()
+		bar:OnLeave()
+	end)
+	controller:SetScript("OnMouseUp", function()
+		bar:OnClick()
+	end)
 	bar:SetSize(controller:GetSize())
 	bar:SetAllPoints(controller)
 	bar.data = {}
@@ -159,7 +179,7 @@ BarWidget.OnEnable = function(self)
 	backdrop:SetSize(unpack(art_config.backdrop.texture_size))
 	backdrop:SetPoint(unpack(art_config.backdrop.texture_position))
 	backdrop:SetTexture(art_config.backdrop.textures[num_bars])
-	backdrop:SetAlpha(.75)
+	backdrop:SetAlpha(0.75)
 
 	local xp = StatusBar:New(controller)
 	xp:SetSize(controller:GetSize())
@@ -169,7 +189,7 @@ BarWidget.OnEnable = function(self)
 	xp:SetStatusBarTexture(art_config.bar.texture)
 	xp:SetSparkTexture(art_config.bar.spark.texture)
 	xp:SetSparkSize(unpack(art_config.bar.spark.size))
-	xp:SetSparkFlash(2.75, 1.25, .35, .85)
+	xp:SetSparkFlash(2.75, 1.25, 0.35, 0.85)
 
 	bar.Backdrop = backdrop
 	bar.XP = xp
@@ -179,7 +199,7 @@ BarWidget.OnEnable = function(self)
 	-- Our reputation bar isn't secure, so we need to update its size
 	-- from normal Lua, not the secure environment.
 	Main:HookScript("OnAttributeChanged", function(_, name)
-		if (name == "numbars") then
+		if name == "numbars" then
 			self:UpdateBarSettings()
 		end
 		bar:Update()

@@ -22,8 +22,13 @@ local CreateFrame = _G.CreateFrame
 
 -- their frame art, by its file (lowercase, as patterns)
 local ART = {
-	"ui%-lfg%-frame", "ui%-lfr%-frame", "ui%-lfg%-portrait", "ui%-lfr%-portrait", "ui%-character%-scrollbar", "ui%-lfg%-filigree",
-	"ui%-lfg%-background%-questpaper"
+	"ui%-lfg%-frame",
+	"ui%-lfr%-frame",
+	"ui%-lfg%-portrait",
+	"ui%-lfr%-portrait",
+	"ui%-character%-scrollbar",
+	"ui%-lfg%-filigree",
+	"ui%-lfg%-background%-questpaper",
 }
 
 -- the lists, each on slate
@@ -76,7 +81,9 @@ Module.StyleLFG = function(self)
 			kit:StyleDropDown(dropdown)
 			kit:LineBand(header, { dropdown })
 			_G.UIDropDownMenu_SetWidth(dropdown, config.type_width)
-			dropdown:HookScript("OnShow", function() _G.UIDropDownMenu_SetWidth(dropdown, config.type_width) end)
+			dropdown:HookScript("OnShow", function()
+				_G.UIDropDownMenu_SetWidth(dropdown, config.type_width)
+			end)
 			_G.LFDQueueFrameTypeDropDownName:SetAlpha(0)
 			-- its text in the middle of the plate's room left of the arrow
 			-- (Blizzard's sits right-aligned, above the middle)
@@ -104,7 +111,12 @@ Module.StyleLFG = function(self)
 		local count = _G.NUM_LFR_LIST_BUTTONS
 		local last = count and _G["LFRBrowseFrameListButton" .. count]
 		if last then
-			local row = CreateFrame("Button", "LFRBrowseFrameListButton" .. (count + 1), last:GetParent(), "LFRBrowseButtonTemplate")
+			local row = CreateFrame(
+				"Button",
+				"LFRBrowseFrameListButton" .. (count + 1),
+				last:GetParent(),
+				"LFRBrowseButtonTemplate"
+			)
 			row:SetID(count + 1)
 			row:SetPoint("TOPLEFT", last, "BOTTOMLEFT")
 			-- (its scroll frame's bottom right on the last row's, as Blizzard's)
@@ -122,13 +134,18 @@ Module.StyleLFG = function(self)
 			local list = _G[name]
 			if list then
 				local zone = kit:AddZone(list, "slate", insets)
-				Across(zone, list, (name == "LFRBrowseFrameListScrollFrame") and config.raid_browse_top or insets[2], insets[4])
+				Across(
+					zone,
+					list,
+					(name == "LFRBrowseFrameListScrollFrame") and config.raid_browse_top or insets[2],
+					insets[4]
+				)
 				-- (the browse list's column names on a dark bar, as the who list's)
-				if (name == "LFRBrowseFrameListScrollFrame") then
+				if name == "LFRBrowseFrameListScrollFrame" then
 					kit:AddHeaderBar(zone)
 				end
 				-- the queue's down to over its foot: its room under it as over it
-				if (name == "LFRQueueFrameSpecificListScrollFrame") then
+				if name == "LFRQueueFrameSpecificListScrollFrame" then
 					zone:SetPoint("BOTTOM", window.DiabolicFoot, "TOP", 0, kit:FootBar() + config.raid_queue_gap)
 				end
 			end
@@ -193,7 +210,12 @@ Module.AddDungeonRows = function(self, count, raise)
 	local last = _G["LFDQueueFrameSpecificListButton" .. first]
 	local point, _, relativePoint, x, y = list:GetPoint(2) -- (its bottom right, on the last row's)
 	for i = first + 1, first + count do
-		local row = CreateFrame("Frame", "LFDQueueFrameSpecificListButton" .. i, _G.LFDQueueFrameSpecific, "LFDFrameDungeonChoiceTemplate")
+		local row = CreateFrame(
+			"Frame",
+			"LFDQueueFrameSpecificListButton" .. i,
+			_G.LFDQueueFrameSpecific,
+			"LFDFrameDungeonChoiceTemplate"
+		)
 		row:SetID(i)
 		row:SetPoint("TOPLEFT", last, "BOTTOMLEFT")
 		last = row
@@ -210,7 +232,7 @@ Module.CenterRoles = function(self, window, prefix, roles, top)
 	for i, role in ipairs(roles) do
 		local button = _G[prefix .. role]
 		width = width + button:GetWidth()
-		if (i > 1) then
+		if i > 1 then
 			width = width + select(4, button:GetPoint())
 		end
 	end
@@ -225,7 +247,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleLFG()

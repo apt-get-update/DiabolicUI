@@ -58,19 +58,41 @@ local function loadEngine()
 	_G.WorldFrame = FrameMock.newFrame("Frame", "WorldFrame")
 	_G.WorldFrame:SetSize(1920, 1080)
 
-	_G.GetLocale = function() return "enUS" end
-	_G.GetRealmName = function() return "Realm" end
-	_G.UnitName = function() return "Me" end
-	_G.UnitFactionGroup = function() return "Horde" end
-	_G.UnitAffectingCombat = function() return state.inCombat end
-	_G.InCombatLockdown = function() return state.lockdown end
-	_G.IsLoggedIn = function() return state.loggedIn end
-	_G.GetCVarBool = function() return false end
-	_G.debugstack = function() return ": in function `Test'" end
-	_G.geterrorhandler = function()
-		return function(err) table.insert(state.errors, err) end
+	_G.GetLocale = function()
+		return "enUS"
 	end
-	_G.GetNumAddOns = function() return #state.addons end
+	_G.GetRealmName = function()
+		return "Realm"
+	end
+	_G.UnitName = function()
+		return "Me"
+	end
+	_G.UnitFactionGroup = function()
+		return "Horde"
+	end
+	_G.UnitAffectingCombat = function()
+		return state.inCombat
+	end
+	_G.InCombatLockdown = function()
+		return state.lockdown
+	end
+	_G.IsLoggedIn = function()
+		return state.loggedIn
+	end
+	_G.GetCVarBool = function()
+		return false
+	end
+	_G.debugstack = function()
+		return ": in function `Test'"
+	end
+	_G.geterrorhandler = function()
+		return function(err)
+			table.insert(state.errors, err)
+		end
+	end
+	_G.GetNumAddOns = function()
+		return #state.addons
+	end
 	_G.GetAddOnInfo = function(index)
 		local addon = state.addons[index]
 		return addon.name, addon.name, "", addon.enabled, addon.loadable, addon.reason
@@ -89,7 +111,9 @@ local function addStartupHandlers()
 	Engine:NewHandler("StatusBar")
 	local ChatCommand = Engine:NewHandler("ChatCommand")
 	ChatCommand.commands = {}
-	ChatCommand.Register = function(self, name, func) self.commands[name] = func end
+	ChatCommand.Register = function(self, name, func)
+		self.commands[name] = func
+	end
 end
 
 -- ADDON_LOADED and VARIABLES_LOADED, in either order, start the engine.
@@ -169,7 +193,9 @@ function TestEngineRegistry:test_handler_elements()
 end
 
 function TestEngineRegistry:test_engine_is_write_protected()
-	lu.assertErrorMsgContains("The Engine can't be tampered with", function() Engine.Injected = true end)
+	lu.assertErrorMsgContains("The Engine can't be tampered with", function()
+		Engine.Injected = true
+	end)
 end
 
 ------------------------------------------------------------------------
@@ -186,8 +212,12 @@ end
 -- Records OnInit/OnEnable calls of several modules into one shared log.
 local function trackedModule(log, name, priority)
 	local module = Engine:NewModule(name, priority)
-	module.OnInit = function() table.insert(log, name .. ":init") end
-	module.OnEnable = function() table.insert(log, name .. ":enable") end
+	module.OnInit = function()
+		table.insert(log, name .. ":init")
+	end
+	module.OnEnable = function()
+		table.insert(log, name .. ":enable")
+	end
 	return module
 end
 
@@ -246,8 +276,12 @@ end
 function TestEngineStartup:test_handlers_are_enabled_before_modules()
 	local handler = Engine:NewHandler("Early")
 	local seen
-	handler.OnEnable = function() seen = "handler" end
-	Engine:NewModule("A").OnInit = function() seen = seen and (seen .. "+module") end
+	handler.OnEnable = function()
+		seen = "handler"
+	end
+	Engine:NewModule("A").OnInit = function()
+		seen = seen and (seen .. "+module")
+	end
 	startUp()
 	lu.assertEquals(seen, "handler+module")
 end
@@ -255,8 +289,12 @@ end
 function TestEngineStartup:test_enable_and_disable_run_only_once()
 	local count = 0
 	local module = Engine:NewModule("A")
-	module.OnEnable = function() count = count + 1 end
-	module.OnDisable = function() count = count - 10 end
+	module.OnEnable = function()
+		count = count + 1
+	end
+	module.OnDisable = function()
+		count = count - 10
+	end
 	startUp()
 	module:Enable()
 	lu.assertEquals(count, 1)
@@ -288,7 +326,9 @@ function TestEngineStartup:test_incompatibility_condition_function_decides()
 	addAddOn("Questie", true)
 	local log = {}
 	local module = trackedModule(log, "A")
-	module:SetIncompatible("Questie", function() return false end)
+	module:SetIncompatible("Questie", function()
+		return false
+	end)
 	startUp()
 	lu.assertEquals(log, { "A:init", "A:enable" })
 end
@@ -297,7 +337,9 @@ function TestEngineStartup:test_a_failing_module_does_not_stop_the_others()
 	local log = {}
 	trackedModule(log, "A")
 	local broken = trackedModule(log, "B")
-	broken.OnInit = function() error("B is broken") end
+	broken.OnInit = function()
+		error("B is broken")
+	end
 	trackedModule(log, "C")
 	startUp()
 	table.sort(log)
@@ -309,7 +351,9 @@ end
 function TestEngineStartup:test_for_all_calls_a_method_by_priority()
 	local calls = {}
 	local high = Engine:NewModule("H", "HIGH")
-	high.Ping = function(self, value) calls[#calls + 1] = "H" .. value end
+	high.Ping = function(self, value)
+		calls[#calls + 1] = "H" .. value
+	end
 	Engine:NewModule("N") -- no Ping: skipped
 	Engine:ForAll("Ping", "HIGH", 1)
 	Engine:ForAll("Ping", "NORMAL", 2)
@@ -331,7 +375,9 @@ end
 function TestEngineEvents:test_events_reach_enabled_modules_only()
 	local received = {}
 	local module = Engine:NewModule("A")
-	module.OnBagUpdate = function(self, event, bag) table.insert(received, { event, bag }) end
+	module.OnBagUpdate = function(self, event, bag)
+		table.insert(received, { event, bag })
+	end
 	module:RegisterEvent("BAG_UPDATE", "OnBagUpdate")
 
 	fire("BAG_UPDATE", 1)
@@ -345,8 +391,12 @@ end
 function TestEngineEvents:test_default_handler_calls_method_named_after_event()
 	local received = {}
 	local module = Engine:NewModule("A")
-	module.PLAYER_TARGET_CHANGED = function(self, event) table.insert(received, event) end
-	module.OnEvent = function(self, event) table.insert(received, "OnEvent:" .. event) end
+	module.PLAYER_TARGET_CHANGED = function(self, event)
+		table.insert(received, event)
+	end
+	module.OnEvent = function(self, event)
+		table.insert(received, "OnEvent:" .. event)
+	end
 	module:RegisterEvent("PLAYER_TARGET_CHANGED")
 	module:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	startUp()
@@ -358,7 +408,9 @@ end
 
 function TestEngineEvents:test_function_callbacks_and_no_duplicates()
 	local count = 0
-	local callback = function() count = count + 1 end
+	local callback = function()
+		count = count + 1
+	end
 	local module = Engine:NewModule("A")
 	module:RegisterEvent("UNIT_HEALTH", callback)
 	module:RegisterEvent("UNIT_HEALTH", callback)
@@ -372,7 +424,9 @@ function TestEngineEvents:test_a_widget_not_enabled_yet_gets_nothing()
 	local received = 0
 	local module = Engine:NewModule("A")
 	local widget = module:SetWidget("Bar: One")
-	widget.UPDATE_BINDINGS = function() received = received + 1 end
+	widget.UPDATE_BINDINGS = function()
+		received = received + 1
+	end
 	widget:RegisterEvent("UPDATE_BINDINGS") -- through the default Update
 	startUp()
 	fire("UPDATE_BINDINGS")
@@ -385,8 +439,12 @@ end
 function TestEngineEvents:test_unregistering_the_first_of_two()
 	local calls = {}
 	local module = Engine:NewModule("A")
-	module.First = function() calls[#calls + 1] = "First" end
-	module.Second = function() calls[#calls + 1] = "Second" end
+	module.First = function()
+		calls[#calls + 1] = "First"
+	end
+	module.Second = function()
+		calls[#calls + 1] = "Second"
+	end
 	module:RegisterEvent("UNIT_AURA", "First")
 	module:RegisterEvent("UNIT_AURA", "Second")
 	module:RegisterMessage("DIABOLICUI_TEST", "First")
@@ -403,7 +461,9 @@ function TestEngineEvents:test_widgets_receive_events_with_their_module()
 	local received = 0
 	local module = Engine:NewModule("A")
 	local widget = module:SetWidget("Bar: One")
-	widget:RegisterEvent("UPDATE_BINDINGS", function() received = received + 1 end)
+	widget:RegisterEvent("UPDATE_BINDINGS", function()
+		received = received + 1
+	end)
 	startUp()
 	fire("UPDATE_BINDINGS")
 	lu.assertEquals(received, 1)
@@ -433,7 +493,9 @@ function TestEngineEvents:test_one_of_several_handlers_leaving_keeps_the_rest()
 		calls[#calls + 1] = "First"
 		self:UnregisterEvent(event, "First")
 	end
-	module.Second = function(self) calls[#calls + 1] = "Second" end
+	module.Second = function(self)
+		calls[#calls + 1] = "Second"
+	end
 	module:RegisterEvent("PLAYER_REGEN_ENABLED", "First")
 	module:RegisterEvent("PLAYER_REGEN_ENABLED", "Second")
 	startUp()
@@ -470,7 +532,9 @@ function TestEngineEvents:test_messages_with_several_handlers()
 		calls[#calls + 1] = "First"
 		self:UnregisterMessage(message, "First")
 	end
-	module.Second = function(self) calls[#calls + 1] = "Second" end
+	module.Second = function(self)
+		calls[#calls + 1] = "Second"
+	end
 	module:RegisterMessage("DIABOLICUI_TEST", "First")
 	module:RegisterMessage("DIABOLICUI_TEST", "Second")
 	startUp()
@@ -481,13 +545,36 @@ end
 
 function TestEngineEvents:test_unregistering_unknown_event_errors()
 	local module = Engine:NewModule("A")
-	lu.assertErrorMsgContains("isn't currently registered to any object", module.UnregisterEvent, module, "NEVER_REGISTERED")
+	lu.assertErrorMsgContains(
+		"isn't currently registered to any object",
+		module.UnregisterEvent,
+		module,
+		"NEVER_REGISTERED"
+	)
 	module:RegisterEvent("UNIT_AURA", "OnAura")
-	lu.assertErrorMsgContains("The method named 'Other' isn't registered", module.UnregisterEvent, module, "UNIT_AURA", "Other")
+	lu.assertErrorMsgContains(
+		"The method named 'Other' isn't registered",
+		module.UnregisterEvent,
+		module,
+		"UNIT_AURA",
+		"Other"
+	)
 	lu.assertErrorMsgContains("general occurence of the event 'UNIT_AURA'", module.UnregisterEvent, module, "UNIT_AURA")
-	lu.assertErrorMsgContains("The function call assigned to the event 'UNIT_AURA'", module.UnregisterEvent, module, "UNIT_AURA", function() end)
+	lu.assertErrorMsgContains(
+		"The function call assigned to the event 'UNIT_AURA'",
+		module.UnregisterEvent,
+		module,
+		"UNIT_AURA",
+		function() end
+	)
 	local other = Engine:NewModule("B")
-	lu.assertErrorMsgContains("isn't currently registered to the object 'B'", other.UnregisterEvent, other, "UNIT_AURA", "OnAura")
+	lu.assertErrorMsgContains(
+		"isn't currently registered to the object 'B'",
+		other.UnregisterEvent,
+		other,
+		"UNIT_AURA",
+		"OnAura"
+	)
 end
 
 function TestEngineEvents:test_is_event_registered()
@@ -506,13 +593,41 @@ end
 
 function TestEngineEvents:test_unregistering_unknown_message_errors()
 	local module = Engine:NewModule("A")
-	lu.assertErrorMsgContains("The message 'NEVER' isn't currently registered to any object", module.UnregisterMessage, module, "NEVER")
+	lu.assertErrorMsgContains(
+		"The message 'NEVER' isn't currently registered to any object",
+		module.UnregisterMessage,
+		module,
+		"NEVER"
+	)
 	module:RegisterMessage("DIABOLICUI_TEST", "OnTest")
-	lu.assertErrorMsgContains("The method named 'Other' isn't registered for the message", module.UnregisterMessage, module, "DIABOLICUI_TEST", "Other")
-	lu.assertErrorMsgContains("general occurence of the message 'DIABOLICUI_TEST'", module.UnregisterMessage, module, "DIABOLICUI_TEST")
-	lu.assertErrorMsgContains("The function call assigned to the message 'DIABOLICUI_TEST'", module.UnregisterMessage, module, "DIABOLICUI_TEST", function() end)
+	lu.assertErrorMsgContains(
+		"The method named 'Other' isn't registered for the message",
+		module.UnregisterMessage,
+		module,
+		"DIABOLICUI_TEST",
+		"Other"
+	)
+	lu.assertErrorMsgContains(
+		"general occurence of the message 'DIABOLICUI_TEST'",
+		module.UnregisterMessage,
+		module,
+		"DIABOLICUI_TEST"
+	)
+	lu.assertErrorMsgContains(
+		"The function call assigned to the message 'DIABOLICUI_TEST'",
+		module.UnregisterMessage,
+		module,
+		"DIABOLICUI_TEST",
+		function() end
+	)
 	local other = Engine:NewModule("B")
-	lu.assertErrorMsgContains("isn't currently registered to the object 'B'", other.UnregisterMessage, other, "DIABOLICUI_TEST", "OnTest")
+	lu.assertErrorMsgContains(
+		"isn't currently registered to the object 'B'",
+		other.UnregisterMessage,
+		other,
+		"DIABOLICUI_TEST",
+		"OnTest"
+	)
 
 	-- and the default "Update" method
 	lu.assertFalse(module:IsMessageRegistered("DIABOLICUI_TEST"))
@@ -544,7 +659,9 @@ end
 function TestEngineEvents:test_messages()
 	local received = {}
 	local module = Engine:NewModule("A")
-	module.OnConfig = function(self, message, value) table.insert(received, value) end
+	module.OnConfig = function(self, message, value)
+		table.insert(received, value)
+	end
 	module:RegisterMessage("DIABOLICUI_CONFIG_CHANGED", "OnConfig")
 	lu.assertTrue(module:IsMessageRegistered("DIABOLICUI_CONFIG_CHANGED", "OnConfig"))
 	startUp()
@@ -592,14 +709,18 @@ end
 
 function TestEngineWrap:test_runs_immediately_out_of_combat()
 	local calls = {}
-	local wrapped = Engine:Wrap(function(...) table.insert(calls, { ... }) end)
+	local wrapped = Engine:Wrap(function(...)
+		table.insert(calls, { ... })
+	end)
 	wrapped(1, 2)
 	lu.assertEquals(calls, { { 1, 2 } })
 end
 
 function TestEngineWrap:test_combat_calls_are_deferred_and_merged()
 	local calls = {}
-	local wrapped = Engine:Wrap(function(...) table.insert(calls, { ... }) end)
+	local wrapped = Engine:Wrap(function(...)
+		table.insert(calls, { ... })
+	end)
 
 	fire("PLAYER_REGEN_DISABLED")
 	state.lockdown = true
@@ -618,7 +739,9 @@ end
 
 function TestEngineWrap:test_deferred_calls_keep_nil_arguments()
 	local calls = {}
-	local wrapped = Engine:Wrap(function(...) table.insert(calls, { n = select("#", ...), ... }) end)
+	local wrapped = Engine:Wrap(function(...)
+		table.insert(calls, { n = select("#", ...), ... })
+	end)
 	fire("PLAYER_REGEN_DISABLED")
 	state.lockdown = true
 	wrapped("a", "b", "c")
@@ -632,7 +755,9 @@ function TestEngineWrap:test_runs_when_lockdown_already_lifted()
 	-- PLAYER_REGEN_DISABLED fired, but the lockdown ended before
 	-- PLAYER_REGEN_ENABLED did: no reason to wait.
 	local calls = 0
-	local wrapped = Engine:Wrap(function() calls = calls + 1 end)
+	local wrapped = Engine:Wrap(function()
+		calls = calls + 1
+	end)
 	fire("PLAYER_REGEN_DISABLED")
 	wrapped()
 	lu.assertEquals(calls, 1)
@@ -642,7 +767,9 @@ function TestEngineWrap:test_module_enable_waits_for_combat_end()
 	addStartupHandlers()
 	local enabled = false
 	local module = Engine:NewModule("A")
-	module.OnEnable = function() enabled = true end
+	module.OnEnable = function()
+		enabled = true
+	end
 	fire("PLAYER_REGEN_DISABLED")
 	state.lockdown = true
 	module:Enable()
@@ -687,12 +814,14 @@ end
 function TestEngineConfig:test_saved_values_are_merged_over_defaults()
 	Engine:NewConfig("Foo", { size = 10, shown = true, nested = { a = 1, b = 2 } })
 	_G.DiabolicUI_DB = {
-		Foo = { profiles = {
-			global = { size = 20, nested = { b = 3 } },
-			character = { ["Me-Realm"] = { shown = false } },
-			realm = { Realm = { size = 30 } },
-			faction = { Horde = { size = 40 } },
-		} },
+		Foo = {
+			profiles = {
+				global = { size = 20, nested = { b = 3 } },
+				character = { ["Me-Realm"] = { shown = false } },
+				realm = { Realm = { size = 30 } },
+				faction = { Horde = { size = 40 } },
+			},
+		},
 		-- a config no module registers any more is left alone
 		Gone = { profiles = { global = { x = 1 } } },
 	}
@@ -735,7 +864,13 @@ function TestEngineConfig:test_private_configs_are_engine_only()
 	lu.assertEquals(Engine:GetConstant("B"), 3)
 
 	local module = Engine:NewModule("A")
-	lu.assertErrorMsgContains("Only the Engine can access private configs", module.GetDB, module, "Data: Constants", true)
+	lu.assertErrorMsgContains(
+		"Only the Engine can access private configs",
+		module.GetDB,
+		module,
+		"Data: Constants",
+		true
+	)
 	-- and a private config isn't visible as a public one
 	lu.assertErrorMsgContains("doesn't exist", module.GetDB, module, "Data: Constants")
 end

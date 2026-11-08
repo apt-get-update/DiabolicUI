@@ -65,7 +65,9 @@ Module.CreateWindow = function(self)
 	frame:Hide()
 
 	-- Escape closes it, and closing it ends the looting, like Blizzard's
-	frame:SetScript("OnHide", function() CloseLoot() end)
+	frame:SetScript("OnHide", function()
+		CloseLoot()
+	end)
 	table.insert(UISpecialFrames, "DiabolicLootFrame")
 
 	local title = frame:CreateFontString(nil, "OVERLAY")
@@ -76,7 +78,9 @@ Module.CreateWindow = function(self)
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	Engine:GetModule("Blizzard: Windows"):SkinClose(close)
 	close:SetPoint("TOPRIGHT", config.close_button_offset[1], config.close_button_offset[2])
-	close:SetScript("OnClick", function() CloseLoot() end)
+	close:SetScript("OnClick", function()
+		CloseLoot()
+	end)
 
 	self.frame = frame
 	self.rows = {}
@@ -89,7 +93,7 @@ Module.CreateRow = function(self, index)
 	local iconConfig = self.config.icon
 	local rowConfig = self.config.row
 
-	local button = CreateFrame("Button", "DiabolicLootButton"..index, self.frame, "LootButtonTemplate")
+	local button = CreateFrame("Button", "DiabolicLootButton" .. index, self.frame, "LootButtonTemplate")
 	button:SetHeight(iconConfig.size + iconConfig.icon_padding * 2)
 
 	-- The template's own Normal/Highlight/Pushed textures are native Button
@@ -100,7 +104,7 @@ Module.CreateRow = function(self, index)
 	button:SetHighlightTexture("")
 	button:SetPushedTexture("")
 
-	local icon = _G[button:GetName().."IconTexture"]
+	local icon = _G[button:GetName() .. "IconTexture"]
 	icon:SetTexCoord(unpack(iconConfig.texcoords))
 	icon:SetSize(iconConfig.size, iconConfig.size)
 	icon:ClearAllPoints()
@@ -131,7 +135,7 @@ Module.CreateRow = function(self, index)
 	pushed:SetTexture(rowConfig.texture.pushed)
 	pushed:Hide()
 
-	local text = _G[button:GetName().."Text"]
+	local text = _G[button:GetName() .. "Text"]
 	text:SetFontObject(rowConfig.text_font)
 	text:ClearAllPoints()
 	text:SetPoint("LEFT", icon, "RIGHT", rowConfig.text_offset, 0)
@@ -142,10 +146,17 @@ Module.CreateRow = function(self, index)
 	-- label used to sit) - hide any texture region that isn't one of ours,
 	-- rather than trying to guess each one's name. FontStrings (the name/
 	-- count text) are left alone; GetObjectType tells them apart.
-	local ours = { [icon] = true, [border] = true, [borderHighlight] = true, [normal] = true, [highlight] = true, [pushed] = true }
+	local ours = {
+		[icon] = true,
+		[border] = true,
+		[borderHighlight] = true,
+		[normal] = true,
+		[highlight] = true,
+		[pushed] = true,
+	}
 	for i = 1, select("#", button:GetRegions()) do
 		local region = select(i, button:GetRegions())
-		if (region and (not ours[region]) and region.GetObjectType and (region:GetObjectType() == "Texture")) then
+		if region and not ours[region] and region.GetObjectType and (region:GetObjectType() == "Texture") then
 			region:SetTexture(nil)
 			region:Hide()
 		end
@@ -161,14 +172,18 @@ Module.CreateRow = function(self, index)
 	button:SetScript("OnEnter", function(self)
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetLootItem(self:GetID())
-		highlight:Show(); normal:Hide()
-		borderHighlight:Show(); border:Hide()
+		highlight:Show()
+		normal:Hide()
+		borderHighlight:Show()
+		border:Hide()
 	end)
 
 	button:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
-		highlight:Hide(); normal:Show()
-		borderHighlight:Hide(); border:Show()
+		highlight:Hide()
+		normal:Show()
+		borderHighlight:Hide()
+		border:Show()
 	end)
 
 	-- LootButtonTemplate's own XML also wires up an OnUpdate that keeps
@@ -225,7 +240,7 @@ Module.Update = function(self)
 		self.rows[i]:Hide()
 	end
 
-	if (shown == 0) then
+	if shown == 0 then
 		self.frame:Hide()
 		return
 	end
@@ -239,7 +254,7 @@ Module.Update = function(self)
 		local button = self.rows[i]
 		button:SetWidth(rowWidth)
 		button:ClearAllPoints()
-		if (i == 1) then
+		if i == 1 then
 			button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", config.row_padding, -config.top_padding)
 		else
 			button:SetPoint("TOPLEFT", self.rows[i - 1], "BOTTOMLEFT", 0, -rowConfig.gap)
@@ -260,7 +275,9 @@ Module.Update = function(self)
 	end
 
 	self.frame:SetWidth(rowWidth + config.row_padding * 2)
-	self.frame:SetHeight(config.top_padding + (shown * rowHeight) + math_max(0, shown - 1) * rowConfig.gap + config.bottom_padding)
+	self.frame:SetHeight(
+		config.top_padding + (shown * rowHeight) + math_max(0, shown - 1) * rowConfig.gap + config.bottom_padding
+	)
 	self.frame:Show()
 end
 
@@ -272,7 +289,7 @@ end
 Module.OnEnable = function(self)
 	-- Disabled by default - Blizzard's own loot window is left completely
 	-- untouched unless the user has explicitly opted into the replacement.
-	if (not self.db.enableSkin) then
+	if not self.db.enableSkin then
 		return
 	end
 

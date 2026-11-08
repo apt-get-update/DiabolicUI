@@ -39,7 +39,7 @@ local formatTime = function(time)
 	elseif time > HOUR then -- more than an hour
 		return ("%1d%s"):format(math_floor(time / HOUR), hour)
 	elseif time > MINUTE then -- more than a minute
-		return ("%1d%s %d%s"):format(math_floor(time / MINUTE), minute, math_floor(time%MINUTE), second)
+		return ("%1d%s %d%s"):format(math_floor(time / MINUTE), minute, math_floor(time % MINUTE), second)
 	elseif time > 10 then -- more than 10 seconds
 		return ("%d%s"):format(math_floor(time), second)
 	elseif time > 0 then
@@ -50,7 +50,9 @@ local formatTime = function(time)
 end
 
 local utf8sub = function(str, i, dots)
-	if not str then return end
+	if not str then
+		return
+	end
 	local bytes = str:len()
 	if bytes <= i then
 		return str
@@ -68,10 +70,12 @@ local utf8sub = function(str, i, dots)
 			elseif c >= 240 and c <= 247 then
 				pos = pos + 4
 			end
-			if len == i then break end
+			if len == i then
+				break
+			end
 		end
 		if len == i and pos <= bytes then
-			return str:sub(1, pos - 1)..(dots and "..." or "")
+			return str:sub(1, pos - 1) .. (dots and "..." or "")
 		else
 			return str
 		end
@@ -94,16 +98,16 @@ end
 -- right end is their start.)
 local UpdateSafeZone = function(CastBar, unit, castdata)
 	local SafeZone = CastBar.SafeZone
-	if (not SafeZone) then
+	if not SafeZone then
 		return
 	end
 	local _, _, latency = GetNetStats() -- in milliseconds
-	if (unit ~= "player") or (not castdata.casting) or (latency == 0) then
+	if (unit ~= "player") or not castdata.casting or (latency == 0) then
 		SafeZone:Hide()
 		return
 	end
 	local share = (latency / 1e3) / castdata.max
-	if (share > 1) then
+	if share > 1 then
 		share = 1
 	end
 	SafeZone:SetWidth(CastBar:GetWidth() * share)
@@ -113,7 +117,7 @@ end
 -- The bar moves every frame; its time text (tenths of a second at most)
 -- and the latency's safe zone only this often. A new, delayed or changed
 -- cast writes them on its next frame.
-local TEXT_INTERVAL = .1
+local TEXT_INTERVAL = 0.1
 
 -- Whether the text is due, counting this frame.
 local TextDue = function(castdata, elapsed)
@@ -145,14 +149,17 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 			if castdata.tradeskill then
 				CastBar.Value:SetText(formatTime(castdata.max - duration))
 			elseif castdata.delay and castdata.delay ~= 0 then
-				CastBar.Value:SetFormattedText("%s|cffff0000 -%s|r", formatTime(math_floor(castdata.max - duration)), formatTime(castdata.delay))
+				CastBar.Value:SetFormattedText(
+					"%s|cffff0000 -%s|r",
+					formatTime(math_floor(castdata.max - duration)),
+					formatTime(castdata.delay)
+				)
 			else
 				CastBar.Value:SetText(formatTime(castdata.max - duration))
 			end
 		end
 		castdata.duration = duration
 		CastBar:SetValue(duration)
-
 	elseif castdata.channeling then
 		local duration = castdata.duration - elapsed
 		if duration <= 0 then
@@ -217,29 +224,39 @@ Update = function(self, event, ...)
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(castdata.duration)
 
-		if CastBar.Name then CastBar.Name:SetText(utf8sub(text, 32, true)) end
-		if CastBar.Value then CastBar.Value:SetText("") end
+		if CastBar.Name then
+			CastBar.Name:SetText(utf8sub(text, 32, true))
+		end
+		if CastBar.Value then
+			CastBar.Value:SetText("")
+		end
 		UpdateSafeZone(CastBar, unit, castdata)
 
 		CastBar:Show()
 
 	-- (the 4th argument of these is the cast's ID)
-	elseif (event == "UNIT_SPELLCAST_FAILED") or (event == "UNIT_SPELLCAST_STOP") or (event == "UNIT_SPELLCAST_INTERRUPTED") then
+	elseif
+		(event == "UNIT_SPELLCAST_FAILED")
+		or (event == "UNIT_SPELLCAST_STOP")
+		or (event == "UNIT_SPELLCAST_INTERRUPTED")
+	then
 		if castdata.castID == select(4, ...) then
 			Stop(CastBar, castdata)
 		end
-
 	elseif event == "UNIT_SPELLCAST_DELAYED" then
 		local unit = ...
 		local _, _, _, _, startTime = UnitCastingInfo(unit)
-		if not startTime or not castdata.duration then return end
+		if not startTime or not castdata.duration then
+			return
+		end
 		local duration = GetTime() - (startTime / 1000)
-		if duration < 0 then duration = 0 end
+		if duration < 0 then
+			duration = 0
+		end
 		castdata.delay = (castdata.delay or 0) + castdata.duration - duration
 		castdata.sinceText = nil
 		castdata.duration = duration
 		CastBar:SetValue(duration)
-
 	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 		local unit = ...
 		local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
@@ -264,16 +281,21 @@ Update = function(self, event, ...)
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(castdata.duration)
 
-		if CastBar.Name then CastBar.Name:SetText(utf8sub(name, 32, true)) end
-		if CastBar.Value then CastBar.Value:SetText("") end
+		if CastBar.Name then
+			CastBar.Name:SetText(utf8sub(name, 32, true))
+		end
+		if CastBar.Value then
+			CastBar.Value:SetText("")
+		end
 		UpdateSafeZone(CastBar, unit, castdata)
 
 		CastBar:Show()
-
 	elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
 		local unit = ...
 		local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
-		if not name or not castdata.duration then return end
+		if not name or not castdata.duration then
+			return
+		end
 		local duration = (endTime / 1000) - GetTime()
 		castdata.delay = (castdata.delay or 0) + castdata.duration - duration
 		castdata.sinceText = nil
@@ -281,12 +303,10 @@ Update = function(self, event, ...)
 		castdata.max = (endTime - startTime) / 1000
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(duration)
-
 	elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
 		if CastBar:IsShown() then
 			Stop(CastBar, castdata)
 		end
-
 	else
 		-- The unit may have changed (UNIT_TARGET, PLAYER_TARGET_CHANGED,
 		-- PLAYER_FOCUS_CHANGED): show whatever it's casting now. Also on

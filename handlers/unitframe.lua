@@ -31,7 +31,6 @@ local Elements = {} -- element registry
 local Events = {} -- registry of frame and element event callbacks
 local FrequentUpdates = {} -- registry of frame updates
 
-
 -- UnitFrame Right Click Menus
 --------------------------------------------------------------------------
 -- get rid of stuff we don't want from the dropdown menus
@@ -56,11 +55,11 @@ local UnWanted = {
 	["LOCK_TARGET_FRAME"] = true,
 	["UNLOCK_TARGET_FRAME"] = true,
 	["TARGET_FRAME_BUFFS_ON_TOP"] = true,
-	["RESET_TARGET_FRAME_POSITION"] = true
+	["RESET_TARGET_FRAME_POSITION"] = true,
 }
 
 local UnitPopupMenus = _G.UnitPopupMenus
-for id,menu in pairs(UnitPopupMenus) do
+for id, menu in pairs(UnitPopupMenus) do
 	for i = #menu, 1, -1 do
 		local option = UnitPopupMenus[id][i]
 		if option and UnWanted[option] then
@@ -77,14 +76,12 @@ local UnitFrameMenu = function(self)
 		return
 	end
 	local unit = self.unit:gsub("(.)", string_upper, 1)
-	if _G[unit.."FrameDropDown"] then
-		ToggleDropDownMenu(1, nil, _G[unit.."FrameDropDown"], "cursor")
+	if _G[unit .. "FrameDropDown"] then
+		ToggleDropDownMenu(1, nil, _G[unit .. "FrameDropDown"], "cursor")
 		return
-
 	elseif self.unit:match("party") then
-		ToggleDropDownMenu(1, nil, _G["PartyMemberFrame"..self.id.."DropDown"], "cursor")
+		ToggleDropDownMenu(1, nil, _G["PartyMemberFrame" .. self.id .. "DropDown"], "cursor")
 		return
-
 	else
 		FriendsDropDown.unit = self.unit
 		FriendsDropDown.id = self.id
@@ -93,13 +90,12 @@ local UnitFrameMenu = function(self)
 	end
 end
 
-
 -- Hidden frames (empty raid and party slots, boss and arena frames outside
 -- those fights, everything while the UI is hidden) are skipped: they're
 -- brought up to date by the first update after they show again.
 -- The loop itself asks every polled frame (hidden raid frames too) whether
 -- it's shown, so it runs no more often than the fastest poll needs.
-local LOOP_INTERVAL = 1/30
+local LOOP_INTERVAL = 1 / 30
 local sinceLoop = 0
 local OnUpdate = function(self, elapsed)
 	sinceLoop = sinceLoop + elapsed
@@ -124,9 +120,6 @@ end
 -- the one frame running every frequent update
 local updater
 
-
-
-
 -- Unitframe Template
 --------------------------------------------------------------------------
 local UnitFrame = Engine:CreateFrame("Button")
@@ -136,9 +129,8 @@ local UnitFrame_MT = { __index = UnitFrame }
 local RegisterEvent = UnitFrame_MT.__index.RegisterEvent
 local IsEventRegistered = UnitFrame_MT.__index.IsEventRegistered
 
-
 UnitFrame.OnEvent = function(self, event, ...)
-	if (not self:IsShown()) or (not Events[self]) or (not Events[self][event]) then
+	if (not self:IsShown()) or not Events[self] or not Events[self][event] then
 		return
 	end
 
@@ -210,7 +202,7 @@ UnitFrame.OnEnter = function(self)
 	-- The default tooltip doesn't include your own title, unlike
 	-- other players (whose title comes from the server as part of
 	-- their name), so it's added here manually.
-	if (self.unit == "player") then
+	if self.unit == "player" then
 		local titleIndex = GetCurrentTitle and GetCurrentTitle()
 		local title = titleIndex and titleIndex > 0 and GetTitleName(titleIndex)
 		if title then
@@ -227,7 +219,7 @@ UnitFrame.OnLeave = function(self)
 end
 
 UnitFrame.OnAttributeChanged = function(self, name, value)
-	if (name == "unit") then
+	if name == "unit" then
 		self.unit = value
 		self:UpdateAllElements()
 	end
@@ -237,15 +229,16 @@ UnitFrame.GetRealUnit = function(self)
 	return self:GetAttribute("real_unit")
 end
 
-
-
 -- Handler API
 --------------------------------------------------------------------------
 -- spawn and style a new unitframe
 -- (a plain button rather than a secure unit button if 'nonSecure' is true)
 Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 	local secure = not nonSecure
-	local object = setmetatable(Engine:CreateFrame("Button", nil, parent, secure and "SecureUnitButtonTemplate" or nil), UnitFrame_MT)
+	local object = setmetatable(
+		Engine:CreateFrame("Button", nil, parent, secure and "SecureUnitButtonTemplate" or nil),
+		UnitFrame_MT
+	)
 	object:SetFrameStrata("LOW")
 
 	object.unit = unit
@@ -295,22 +288,21 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 	object:SetScript("OnAttributeChanged", UnitFrame.OnAttributeChanged)
 	object:HookScript("OnShow", UnitFrame.UpdateAllElements)
 
-
-	if (unit == "target") then
+	if unit == "target" then
 		object:RegisterEvent("PLAYER_TARGET_CHANGED", UnitFrame.UpdateAllElements)
-	elseif (unit == "focus") then
+	elseif unit == "focus" then
 		object:RegisterEvent("PLAYER_FOCUS_CHANGED", UnitFrame.UpdateAllElements)
-	elseif (unit:match("boss%d?$")) then
+	elseif unit:match("boss%d?$") then
 		object:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", UnitFrame.UpdateAllElements)
-	elseif (unit:match("arena%d?$")) then
+	elseif unit:match("arena%d?$") then
 		object:RegisterEvent("ARENA_OPPONENT_UPDATE", UnitFrame.UpdateAllElements)
-	elseif (unit:match("%w+target")) then
+	elseif unit:match("%w+target") then
 		-- No events fire for these units changing, so they're polled,
 		-- or stuff like their names would very often be wrong.
 		local timer = 0
 		local OnUpdate = function(self, elapsed)
 			timer = timer + elapsed
-			if timer >= .5 then
+			if timer >= 0.5 then
 				self:UpdateAllElements()
 				timer = 0
 			end
@@ -323,11 +315,14 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		local VehicleUpdater = CreateFrame("Frame", nil, nil, "SecureHandlerStateTemplate")
 		VehicleUpdater:SetFrameRef("unitframe", object)
 		VehicleUpdater:SetAttribute("real-unit", unit)
-		VehicleUpdater.UpdateUnit = function(self, unit) object.unit = unit end
+		VehicleUpdater.UpdateUnit = function(self, unit)
+			object.unit = unit
+		end
 
-
-		if (unit == "player") then
-			VehicleUpdater:SetAttribute("_onstate-vehicleupdate", [[
+		if unit == "player" then
+			VehicleUpdater:SetAttribute(
+				"_onstate-vehicleupdate",
+				[[
 				-- the vehicle's unit while in one
 				local newUnit = (newstate == "invehicle") and "pet" or "player";
 
@@ -336,12 +331,15 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 
 				-- update secure unit
 				self:GetFrameRef("unitframe"):SetAttribute("unit", newUnit);
-			]])
+			]]
+			)
 
 			-- We never hide the player unitframe. Ever.
 			RegisterStateDriver(object, "visibility", "show")
 		else
-			VehicleUpdater:SetAttribute("_onstate-vehicleupdate", [[
+			VehicleUpdater:SetAttribute(
+				"_onstate-vehicleupdate",
+				[[
 				-- the player while in a vehicle
 				local newUnit = (newstate == "invehicle") and "player" or self:GetAttribute("real-unit");
 
@@ -350,7 +348,8 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 
 				-- update secure unit
 				self:GetFrameRef("unitframe"):SetAttribute("unit", newUnit);
-			]])
+			]]
+			)
 
 			-- Pet frames are used as player frames when we have a vehicleui
 			RegisterStateDriver(object, "visibility", "[@pet,exists][vehicleui]show;hide")
@@ -370,6 +369,6 @@ end
 Handler.RegisterElement = function(self, element, enableFunc, updateFunc)
 	Elements[element] = {
 		Enable = enableFunc,
-		Update = updateFunc
+		Update = updateFunc,
 	}
 end

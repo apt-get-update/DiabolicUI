@@ -162,7 +162,12 @@ local TileStone = function(frame, left, top, x, y, width, height)
 			tile:ClearAllPoints()
 			tile:SetPoint("TOPLEFT", frame, "TOPLEFT", left + x0 - x, -top - (y0 - y))
 			tile:SetSize(x1 - x0, y1 - y0)
-			tile:SetTexCoord((x0 - column * size) / size, (x1 - column * size) / size, (y0 - row * size) / size, (y1 - row * size) / size)
+			tile:SetTexCoord(
+				(x0 - column * size) / size,
+				(x1 - column * size) / size,
+				(y0 - row * size) / size,
+				(y1 - row * size) / size
+			)
 			tile:Show()
 		end
 	end
@@ -177,7 +182,7 @@ local FitBackground = function(window, width, height)
 	end
 	local aspect = width / height
 	local art = window.DiabolicBackgroundAspect
-	if (aspect > art) then
+	if aspect > art then
 		local cut = (1 - art / aspect) / 2
 		background:SetTexCoord(0, 1, cut, 1 - cut)
 	else
@@ -279,7 +284,7 @@ Module.CreateWindow = function(self, frame, insets)
 	border:SetBackdrop({
 		edgeFile = config.backdrop.edgeFile,
 		edgeSize = config.backdrop.edgeSize,
-		insets = config.backdrop.insets
+		insets = config.backdrop.insets,
 	})
 	border:SetBackdropBorderColor(unpack(config.backdrop_border_color))
 	window.Border = border
@@ -396,7 +401,7 @@ Module.DropBand = function(self, header)
 	header:Hide()
 	local headers = header:GetParent().DiabolicHeaders
 	for i = #headers, 1, -1 do
-		if (headers[i] == header) then
+		if headers[i] == header then
 			table_remove(headers, i)
 		end
 	end
@@ -465,7 +470,7 @@ Module.SetTitle = function(self, header, title)
 			else
 				piece:SetPoint("LEFT", plate, "LEFT")
 			end
-			if (i % 2 == 0) then
+			if i % 2 == 0 then
 				plate.DiabolicStretches[#plate.DiabolicStretches + 1] = piece
 			else
 				plate.DiabolicFixed = plate.DiabolicFixed + piece:GetWidth()
@@ -617,7 +622,7 @@ Module.StyleBar = function(self, bar, regions)
 			bar:SetStatusBarColor(r, g, b)
 		end
 	end)
-	if (not bar.DiabolicTrack) then
+	if not bar.DiabolicTrack then
 		local track = bar:CreateTexture(nil, "BACKGROUND")
 		track:SetTexture(spec.track)
 		track:SetAllPoints()
@@ -631,7 +636,8 @@ end
 -- layer would cover it. `IsLit` can veto it (a chosen tab isn't lit).
 local UpdateLit = function(button)
 	local lit = button.DiabolicLit
-	local on = (button.DiabolicLocked or button:IsMouseOver()) and (not button.DiabolicNotLit or not button.DiabolicNotLit(button))
+	local on = (button.DiabolicLocked or button:IsMouseOver())
+		and (not button.DiabolicNotLit or not button.DiabolicNotLit(button))
 	if on then
 		lit:Show()
 	else
@@ -644,8 +650,14 @@ Module.AddLit = function(self, button, slices)
 	slices:Hide()
 	button:HookScript("OnEnter", UpdateLit)
 	button:HookScript("OnLeave", UpdateLit)
-	hooksecurefunc(button, "LockHighlight", function() button.DiabolicLocked = true UpdateLit(button) end)
-	hooksecurefunc(button, "UnlockHighlight", function() button.DiabolicLocked = nil UpdateLit(button) end)
+	hooksecurefunc(button, "LockHighlight", function()
+		button.DiabolicLocked = true
+		UpdateLit(button)
+	end)
+	hooksecurefunc(button, "UnlockHighlight", function()
+		button.DiabolicLocked = nil
+		UpdateLit(button)
+	end)
 end
 
 -- What the kit's other files share (windows-tabs.lua and the others).
@@ -674,7 +686,7 @@ Module.OnInit = function(self)
 	self:IndexBanners()
 	self.db = self:GetConfig("Windows")
 	-- Blizzard's own windows (and their tabs and coins) when it's off
-	if (not self.db.enableSkin) then
+	if not self.db.enableSkin then
 		return
 	end
 	self:StartLiner()
@@ -684,7 +696,7 @@ Module.OnInit = function(self)
 	hooksecurefunc("MoneyFrame_Update", function(frame)
 		-- (an unnamed one, Immersion's: no coins of its name)
 		local name = frame
-		if (type(frame) == "table") then
+		if type(frame) == "table" then
 			name = frame:GetName()
 		end
 		for _, kind in ipairs({ "gold", "silver", "copper" }) do

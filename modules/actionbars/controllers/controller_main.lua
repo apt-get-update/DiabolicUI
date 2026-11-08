@@ -26,8 +26,8 @@ Controller.SaveNumSideBars = function(self)
 end
 
 Controller.UpdateSideBarArtwork = function(self)
-	for i = 1,self:GetAttribute("numsidebars") do
-		local Bar = Module:GetWidget("Bar: "..(i+3)):GetFrame()
+	for i = 1, self:GetAttribute("numsidebars") do
+		local Bar = Module:GetWidget("Bar: " .. (i + 3)):GetFrame()
 		if Bar and Bar.PostUpdate then
 			Bar:PostUpdate()
 		end
@@ -51,8 +51,8 @@ end
 
 -- Updates bar and button artwork upon bar num changes and vehicles/possess
 Controller.UpdateBarArtwork = function(self)
-	for i = 1,self:GetAttribute("numbars") do
-		local Bar = Module:GetWidget("Bar: "..i):GetFrame()
+	for i = 1, self:GetAttribute("numbars") do
+		local Bar = Module:GetWidget("Bar: " .. i):GetFrame()
 		if Bar and Bar.PostUpdate then
 			Bar:PostUpdate()
 		end
@@ -65,22 +65,31 @@ ControllerWidget.OnEnable = function(self)
 	local controlConfig = config.structure.controllers.main
 	local controlPosition = config.structure.controllers.main.position
 
-	self.Controller = setmetatable(Engine:CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"), Controller_MT)
+	self.Controller = setmetatable(
+		Engine:CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"),
+		Controller_MT
+	)
 	self.Controller:SetFrameStrata("BACKGROUND")
 	self.Controller:SetAllPoints()
 	self.Controller.db = db
-	
+
 	-- store controller settings
 	for id in pairs(controlConfig.size) do
-		self.Controller:SetAttribute("controller_width-"..id, controlConfig.size[id][1])
-		self.Controller:SetAttribute("controller_height-"..id, controlConfig.size[id][2])
+		self.Controller:SetAttribute("controller_width-" .. id, controlConfig.size[id][1])
+		self.Controller:SetAttribute("controller_height-" .. id, controlConfig.size[id][2])
 	end
 	self.Controller:SetAttribute("padding", controlConfig.padding)
-	self.Controller:Place(controlPosition.point, controlPosition.anchor, controlPosition.anchor_point, controlPosition.xoffset, controlPosition.yoffset)
-	
+	self.Controller:Place(
+		controlPosition.point,
+		controlPosition.anchor,
+		controlPosition.anchor_point,
+		controlPosition.xoffset,
+		controlPosition.yoffset
+	)
+
 	-- reset the page before applying a new page driver
-	self.Controller:SetAttribute("state-page", "0") 
-	
+	self.Controller:SetAttribute("state-page", "0")
+
 	-- Paging based on class/stance
 	-- *in theory a copy of what the main actionbar uses
 	-- *also supports user changed paging
@@ -92,7 +101,10 @@ ControllerWidget.OnEnable = function(self)
 	table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
 
 	if playerClass == "DRUID" then
-		table_insert(driver, "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10")
+		table_insert(
+			driver,
+			"[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10"
+		)
 	elseif playerClass == "PRIEST" then
 		table_insert(driver, "[bonusbar:1] 7")
 	elseif playerClass == "ROGUE" then
@@ -102,12 +114,14 @@ ControllerWidget.OnEnable = function(self)
 	elseif playerClass == "WARRIOR" then
 		table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
 	end
-	
+
 	table_insert(driver, "1")
 	local page_driver = table_concat(driver, "; ")
-	
+
 	-- attribute driver to handle number of visible bars, layouts, sizes etc
-	self.Controller:SetAttribute("_onattributechanged", [[
+	self.Controller:SetAttribute(
+		"_onattributechanged",
+		[[
 
 		-- In theory we could use this to create different artworks and layouts
 		-- for each stance, actionpage or macro conditional there is. 
@@ -208,11 +222,11 @@ ControllerWidget.OnEnable = function(self)
 				end
 			end
 		end
-	]])
-	
+	]]
+	)
+
 	-- enable the new page driver
 	RegisterStateDriver(self.Controller, "page", page_driver)
-	
 end
 
 ControllerWidget.GetFrame = function(self)

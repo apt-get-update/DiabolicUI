@@ -20,21 +20,46 @@ local EngineMock = require("mocks.engine_mock")
 -- SaveChatFrameLayout and ApplyBackgroundOpacity call.
 local function newFakeChatFrame(name)
 	local frame = {
-		fadingCalls = {}, timeVisibleCalls = {},
-		left = 100, bottom = 50, width = 400, height = 200,
+		fadingCalls = {},
+		timeVisibleCalls = {},
+		left = 100,
+		bottom = 50,
+		width = 400,
+		height = 200,
 	}
-	function frame:GetName() return name end
-	function frame:SetFading(enabled) table.insert(self.fadingCalls, enabled) end
-	function frame:SetTimeVisible(seconds) table.insert(self.timeVisibleCalls, seconds) end
-	function frame:GetLeft() return self.left end
-	function frame:GetBottom() return self.bottom end
-	function frame:GetWidth() return self.width end
-	function frame:GetHeight() return self.height end
-	function frame:SetSize(width, height) self.width, self.height = width, height end
-	function frame:ClearAllPoints() self.points = {} end
+	function frame:GetName()
+		return name
+	end
+	function frame:SetFading(enabled)
+		table.insert(self.fadingCalls, enabled)
+	end
+	function frame:SetTimeVisible(seconds)
+		table.insert(self.timeVisibleCalls, seconds)
+	end
+	function frame:GetLeft()
+		return self.left
+	end
+	function frame:GetBottom()
+		return self.bottom
+	end
+	function frame:GetWidth()
+		return self.width
+	end
+	function frame:GetHeight()
+		return self.height
+	end
+	function frame:SetSize(width, height)
+		self.width, self.height = width, height
+	end
+	function frame:ClearAllPoints()
+		self.points = {}
+	end
 	function frame:SetPoint(point, relativeTo, relativePoint, x, y)
 		self.points = self.points or {}
-		table.insert(self.points, { point = point, relativeTo = relativeTo, relativePoint = relativePoint, x = x, y = y })
+		table.insert(
+			self.points,
+			{ point = point, relativeTo = relativeTo, relativePoint = relativePoint, x = x, y = y }
+		)
 	end
 	return frame
 end
@@ -43,7 +68,9 @@ end
 -- currently typing" check (getEditbox looks this up by name).
 local function newFakeEditBox(shown)
 	local box = { shown = shown or false }
-	function box:IsShown() return self.shown end
+	function box:IsShown()
+		return self.shown
+	end
 	return box
 end
 
@@ -51,8 +78,12 @@ end
 -- sets the alpha on.
 local function newFakeBackgroundTexture()
 	local texture = { shown = true, alphaCalls = {} }
-	function texture:IsShown() return self.shown end
-	function texture:SetAlpha(alpha) table.insert(self.alphaCalls, alpha) end
+	function texture:IsShown()
+		return self.shown
+	end
+	function texture:SetAlpha(alpha)
+		table.insert(self.alphaCalls, alpha)
+	end
 	return texture
 end
 
@@ -66,7 +97,9 @@ local function loadChatWindowsModule()
 
 	-- Only needed for ApplyBackgroundOpacity's underlying updateWindowAlpha,
 	-- which getEditbox/the texture loop both touch at call time.
-	_G.GetCVar = function() return "" end -- anything but "classic"
+	_G.GetCVar = function()
+		return ""
+	end -- anything but "classic"
 	_G.UIFrameFadeRemoveFrame = function() end
 	_G.CHAT_FRAME_TEXTURES = { "Background" }
 	_G.ChatFrame1EditBox = newFakeEditBox()

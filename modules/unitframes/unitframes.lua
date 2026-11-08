@@ -10,7 +10,6 @@ local unpack = unpack
 -- WoW API
 local CreateFrame = CreateFrame
 
-
 Module.LoadArtWork = function(self)
 	local config = self.config.visuals.artwork
 
@@ -41,7 +40,6 @@ Module.LoadArtWork = function(self)
 
 	self.artwork["powershade"] = new(backdrop, config.power.shade)
 	self.artwork["powerborder"] = new(overlay, config.power.overlay)
-
 end
 
 Module.OnInit = function(self)
@@ -69,8 +67,9 @@ Module.OnInit = function(self)
 	-- Set a keyword for our petframe,
 	-- for modules like the actionbars to hook into.
 	local PetFrame = self:GetWidget("Unit: Pet"):GetFrame()
-	Engine:RegisterKeyword("PetFrame", function() return PetFrame end)
-
+	Engine:RegisterKeyword("PetFrame", function()
+		return PetFrame
+	end)
 end
 
 Module.OnEnable = function(self)

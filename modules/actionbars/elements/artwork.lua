@@ -7,7 +7,7 @@ local L = Engine:GetLocale()
 local unpack = unpack
 
 -- Media
-local path = ([[Interface\AddOns\%s\media\]]):format(ADDON) 
+local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 local auraShade = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
 
 -- Bar & Button objects
@@ -26,9 +26,9 @@ local PLAYER_BAR_ID
 
 local colors = {
 	-- icon overlays, a dark brown at different strengths
-	unusableOverlay 	= { 51/255, 17/255, 6/255, .25 },
-	flightOverlay 		= { 51/255, 17/255, 6/255, .7 },
-	rangeOverlay 		= { 51/255, 17/255, 6/255, .10 },
+	unusableOverlay = { 51 / 255, 17 / 255, 6 / 255, 0.25 },
+	flightOverlay = { 51 / 255, 17 / 255, 6 / 255, 0.7 },
+	rangeOverlay = { 51 / 255, 17 / 255, 6 / 255, 0.10 },
 }
 
 -- Hotkey abbreviations for better readability
@@ -165,7 +165,7 @@ Button.PostUpdate = function(self)
 	end
 end
 
--- No need for extra functions here, 
+-- No need for extra functions here,
 -- we're only updating for visual layers anyway.
 Button.PostMouseDown = Button.PostUpdate
 Button.PostMouseUp = Button.PostUpdate
@@ -177,30 +177,50 @@ Button.PostUpdateUsable = function(self, usableState, canDesaturate)
 	local dark = self.icon.dark
 	local colors = colors
 
-	-- Attempt to desaturate when on a taxi or flying, 
+	-- Attempt to desaturate when on a taxi or flying,
 	-- to give the impression of a deactivated button.
-	if (usableState == "taxi") then
+	if usableState == "taxi" then
 		if canDesaturate then
-			dark:SetVertexColor(colors.flightOverlay[1], colors.flightOverlay[2], colors.flightOverlay[3], colors.flightOverlay[4])
+			dark:SetVertexColor(
+				colors.flightOverlay[1],
+				colors.flightOverlay[2],
+				colors.flightOverlay[3],
+				colors.flightOverlay[4]
+			)
 			dark:SetAlpha(colors.flightOverlay[4] or 1)
 		else
 			-- fallback to standard darkening if desaturation fails
-			dark:SetVertexColor(colors.unusableOverlay[1], colors.unusableOverlay[2], colors.unusableOverlay[3], colors.unusableOverlay[4])
+			dark:SetVertexColor(
+				colors.unusableOverlay[1],
+				colors.unusableOverlay[2],
+				colors.unusableOverlay[3],
+				colors.unusableOverlay[4]
+			)
 			dark:SetAlpha(colors.unusableOverlay[4] or 1)
 		end
 	else
-		if (usableState == "unusable") then
-			dark:SetVertexColor(colors.unusableOverlay[1], colors.unusableOverlay[2], colors.unusableOverlay[3], colors.unusableOverlay[4])
+		if usableState == "unusable" then
+			dark:SetVertexColor(
+				colors.unusableOverlay[1],
+				colors.unusableOverlay[2],
+				colors.unusableOverlay[3],
+				colors.unusableOverlay[4]
+			)
 			dark:SetAlpha(colors.unusableOverlay[4] or 1)
-		elseif (usableState == "range") then
-			dark:SetVertexColor(colors.rangeOverlay[1], colors.rangeOverlay[2], colors.rangeOverlay[3], colors.rangeOverlay[4])
+		elseif usableState == "range" then
+			dark:SetVertexColor(
+				colors.rangeOverlay[1],
+				colors.rangeOverlay[2],
+				colors.rangeOverlay[3],
+				colors.rangeOverlay[4]
+			)
 			dark:SetAlpha(colors.rangeOverlay[4] or 1)
-		elseif (usableState == "usable") then
+		elseif usableState == "usable" then
 			dark:SetAlpha(0)
-		elseif (usableState == "mana") then
+		elseif usableState == "mana" then
 			dark:SetAlpha(0)
 		end
-	end 
+	end
 end
 
 Button.OverrideBindingKey = function(self, key)
@@ -214,37 +234,37 @@ Button.OverrideBindingKey = function(self, key)
 	end
 end
 
--- Called from the secure environment when the parent bar's 
+-- Called from the secure environment when the parent bar's
 -- layout, size or buttonsize changes.
 -- This is where we change textures and fonts.
 Button.UpdateStyle = function(self, STYLE)
 	-- slot
 	SetTexture(self.slot, STYLE.slot)
-	
+
 	-- icon
 	SetTexture(self.icon, STYLE.icon)
-	
+
 	-- empty button border
 	SetTexture(self.border.empty, STYLE.border_empty)
 	SetTexture(self.border.empty_highlight, STYLE.border_empty_highlight)
-	
+
 	-- normal border
 	SetTexture(self.border.normal, STYLE.border_normal)
 	SetTexture(self.border.normal_highlight, STYLE.border_normal_highlight)
-	
+
 	-- checked border
 	SetTexture(self.border.checked, STYLE.border_checked)
 	SetTexture(self.border.checked_highlight, STYLE.border_checked_highlight)
 
 	-- keybind
 	SetFont(self.keybind, STYLE.keybind)
-	
+
 	-- stack size
 	SetFont(self.stack, STYLE.stacksize)
-	
+
 	-- macro name
 	SetFont(self.name, STYLE.nametext)
-	
+
 	-- cooldowncount
 	SetFont(self.cooldowncount, STYLE.cooldown_numbers)
 
@@ -254,7 +274,6 @@ Button.UpdateStyle = function(self, STYLE)
 end
 
 Button.PostCreate = function(self, buttonType)
-
 	-- Speeeed!
 	local icon = self.icon
 	local keybind = self.keybind
@@ -265,13 +284,13 @@ Button.PostCreate = function(self, buttonType)
 	local iconShade = self:CreateTexture(nil, "OVERLAY")
 	iconShade:SetAllPoints(icon)
 	iconShade:SetTexture(auraShade)
-	iconShade:SetVertexColor(0, 0, 0, .75)
+	iconShade:SetVertexColor(0, 0, 0, 0.75)
 
 	-- darker texture for unusable actions
 	local iconDimmer = self:CreateTexture(nil, "OVERLAY")
 	iconDimmer:SetAlpha(0)
 	iconDimmer:SetAllPoints(icon)
-	iconDimmer:SetTexture(.3, .3, .3, 1)
+	iconDimmer:SetTexture(0.3, 0.3, 0.3, 1)
 
 	-- backdrop and shadow
 	local backdrop = self:CreateTexture(nil, "BACKGROUND")
@@ -294,7 +313,7 @@ Button.PostCreate = function(self, buttonType)
 	border.normal_highlight = border:CreateTexture(nil, "BORDER")
 	border.normal_highlight:SetAllPoints()
 	border.normal_highlight:SetAlpha(0)
-	
+
 	-- border when the ability is checked
 	border.checked = border:CreateTexture(nil, "BORDER")
 	border.checked:SetAllPoints()
@@ -342,11 +361,10 @@ Button.PostCreate = function(self, buttonType)
 	-- Add references
 	icon.shade = iconShade
 	icon.dark = iconDimmer
-	
+
 	self.backdrop = backdrop
 	self.slot = slot
 	self.border = border
-
 end
 
 -- update visual styles and cosmetic textures
@@ -354,7 +372,7 @@ Bar.PostUpdate = function(self)
 	local buttonSize = self:GetAttribute("old_button_size")
 	if buttonSize then
 		local styleTable = Module.config.visuals.buttons[buttonSize]
-		if styleTable then 
+		if styleTable then
 			local buttons = self.buttons
 			for i in ipairs(buttons) do
 				if buttons[i].UpdateStyle then
@@ -384,12 +402,11 @@ Widget.OnEnable = function(self)
 	self:RegisterMessage("ENGINE_ACTIONBAR_VISIBLE_CHANGED", "UpdateArtwork")
 	self:RegisterMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", "UpdateArtwork")
 	self:RegisterMessage("ENGINE_ACTIONBAR_REPUTATION_VISIBLE_CHANGED", "UpdateArtwork")
-
 end
 
 Widget.LoadArtwork = function(self)
 	local config = self.config.visuals.artwork
-	
+
 	local Main = Module:GetWidget("Controller: Main"):GetFrame()
 
 	-- holder for the artwork behind the buttons and globes
@@ -397,7 +414,7 @@ Widget.LoadArtwork = function(self)
 	background:SetFrameStrata("BACKGROUND")
 	background:SetFrameLevel(10) -- room for the xp/rep bar
 	background:SetAllPoints()
-	
+
 	-- artwork overlaying the globes (demon and angel)
 	local overlay = Main:CreateFrame("Frame")
 	overlay:SetFrameStrata("MEDIUM")
@@ -416,9 +433,11 @@ Widget.LoadArtwork = function(self)
 
 	for element in pairs(config) do
 		local e = config[element]
-		if (not e.disableAutomation) then 
-
-			local artwork = (e.layer == "BACKGROUND" and background or e.layer == "OVERLAY" and overlay):CreateTexture(e.globalName, "ARTWORK")
+		if not e.disableAutomation then
+			local artwork = (e.layer == "BACKGROUND" and background or e.layer == "OVERLAY" and overlay):CreateTexture(
+				e.globalName,
+				"ARTWORK"
+			)
 			artwork:SetSize(unpack(e.size))
 			artwork.Update = e.callback == "position" and "Place" or e.callback == "texture" and "SetTexture"
 
@@ -429,9 +448,9 @@ Widget.LoadArtwork = function(self)
 			end
 
 			artworkCache[artwork] = e[e.callback]
-		end 
+		end
 	end
-	
+
 	return artworkCache
 end
 
@@ -443,7 +462,7 @@ Widget.LoadPetBarArtwork = function(self)
 	artworkHolder:SetAllPoints()
 	artworkHolder:SetFrameStrata("BACKGROUND")
 	artworkHolder:SetFrameLevel(5)
-	
+
 	local artwork = artworkHolder:CreateTexture()
 	artwork:SetDrawLayer("ARTWORK")
 	artwork:SetSize(unpack(config.size))
@@ -457,7 +476,6 @@ Widget.LoadPetBarArtwork = function(self)
 end
 
 Widget.UpdateArtwork = function(self, event, ...)
-
 	-- On a fresh login (as opposed to a UI reload), a side bar (bar4/bar5 -
 	-- confirmed by direct in-game print debugging) loses its explicitly-set
 	-- frame level at some point after creation - dropping from 50 down to
@@ -473,16 +491,15 @@ Widget.UpdateArtwork = function(self, event, ...)
 		end
 	end
 
-	if (self.LoadPetBarArtwork) then
+	if self.LoadPetBarArtwork then
 		self:LoadPetBarArtwork()
 	end
-
 
 	-- figure out which backdrop texture to show
 	local Main = Module:GetWidget("Controller: Main"):GetFrame()
 	local Pet = Module:GetWidget("Bar: Pet"):GetFrame()
 	local hasXP = Module:IsXPVisible() or Module:IsReputationVisible()
-	local hasPet = Pet:IsShown() 
+	local hasPet = Pet:IsShown()
 	local numBars = tostring(Main:GetAttribute("numbars"))
 	local barState = tostring(Main:GetAttribute("state-page"))
 	local barID = ((barState == "possess") or (barState == "vehicle")) and "vehicle" or numBars
@@ -490,11 +507,12 @@ Widget.UpdateArtwork = function(self, event, ...)
 	local xpID = hasXP and "xp" or ""
 
 	-- Avoid pointless updates
-	if (PLAYER_HAS_XP == hasXP) 
-	and (PLAYER_VISIBLE_BARS == numBars) 
-	and (PLAYER_HAS_PET == hasPet) 
-	and (PLAYER_BAR_STATE == barState) 
-	and (PLAYER_BAR_ID == barID)
+	if
+		(PLAYER_HAS_XP == hasXP)
+		and (PLAYER_VISIBLE_BARS == numBars)
+		and (PLAYER_HAS_PET == hasPet)
+		and (PLAYER_BAR_STATE == barState)
+		and (PLAYER_BAR_ID == barID)
 	then
 		return
 	end
@@ -514,16 +532,14 @@ Widget.UpdateArtwork = function(self, event, ...)
 	PLAYER_BAR_STATE = barState
 	PLAYER_BAR_ID = barID
 
-
 	-- we do a load on demand system here
 	-- that creates the artwork upon the first bar update
-	if (not self.artworkCache) then
+	if not self.artworkCache then
 		self.artworkCache = self:LoadArtwork()
 		Module:SendMessage("ENGINE_ACTIONBAR_ARTWORK_LOADED") -- what sits on it can be placed now
 	end
 
 	for artwork, artworkDB in pairs(self.artworkCache) do
-
 		local id
 		if artworkDB[barID .. xpID .. petID] then
 			id = barID .. xpID .. petID
@@ -544,6 +560,4 @@ Widget.UpdateArtwork = function(self, event, ...)
 		end
 	end
 	Module:SendMessage("ENGINE_ACTIONBAR_ARTWORK_PLACED") -- what sits on it follows
-
 end
-

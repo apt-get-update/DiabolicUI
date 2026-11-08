@@ -32,7 +32,9 @@ local function loadMinimapApi()
 		{ name = "MBB", enabled = false, loadable = true },
 		{ name = "SomeLoDAddon", enabled = false, loadable = false },
 	}
-	_G.GetNumAddOns = function() return #addonList end
+	_G.GetNumAddOns = function()
+		return #addonList
+	end
 	_G.GetAddOnInfo = function(index)
 		local a = addonList[index]
 		return a.name, a.name, "", a.enabled, a.loadable, nil, nil
@@ -75,7 +77,7 @@ end
 function TestMinimapApi:test_bottom_center_region_uses_x_relative_to_center()
 	local point, x, y = API.GetParsedPosition(300, 300, 150, 50, -1, -2, -3, -4)
 	lu.assertEquals(point, "BOTTOM")
-	lu.assertEquals(x, 150 - 300/2)
+	lu.assertEquals(x, 150 - 300 / 2)
 	lu.assertEquals(y, -1)
 end
 
@@ -90,14 +92,14 @@ function TestMinimapApi:test_center_left_region()
 	local point, x, y = API.GetParsedPosition(300, 300, 50, 150, -1, -2, -3, -4)
 	lu.assertEquals(point, "LEFT")
 	lu.assertEquals(x, -2) -- leftOffset
-	lu.assertEquals(y, 150 - 300/2)
+	lu.assertEquals(y, 150 - 300 / 2)
 end
 
 function TestMinimapApi:test_dead_center_region()
 	local point, x, y = API.GetParsedPosition(300, 300, 150, 150, -1, -2, -3, -4)
 	lu.assertEquals(point, "CENTER")
-	lu.assertEquals(x, 150 - 300/2)
-	lu.assertEquals(y, 150 - 300/2)
+	lu.assertEquals(x, 150 - 300 / 2)
+	lu.assertEquals(y, 150 - 300 / 2)
 end
 
 -- Addon lookups

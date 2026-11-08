@@ -48,7 +48,8 @@ end
 -- others hidden. (Blizzard sets its count as it opens, by the trainer's kind.)
 local ROWS = 11
 local FitList = function()
-	local rows = kit:RowsFitting(_G.ClassTrainerListScrollFrame, _G.CLASS_TRAINER_SKILL_HEIGHT, ROWS, _G.ClassTrainerSkill1)
+	local rows =
+		kit:RowsFitting(_G.ClassTrainerListScrollFrame, _G.CLASS_TRAINER_SKILL_HEIGHT, ROWS, _G.ClassTrainerSkill1)
 	_G.CLASS_TRAINER_SKILLS_DISPLAYED = rows
 	for i = rows + 1, ROWS do
 		_G["ClassTrainerSkill" .. i]:Hide()
@@ -115,12 +116,16 @@ Module.StyleTrainer = function(self)
 	_G.UIDropDownMenu_SetWidth(_G.ClassTrainerFrameFilterDropDown, config.filter_width)
 	hooksecurefunc("ClassTrainer_SetToClassTrainer", FitList)
 	hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", FitList)
-	hooksecurefunc("ClassTrainerFrame_Update", function() self:ShadeList() end)
-	hooksecurefunc("ClassTrainer_SetSelection", function() self:InkDetails() end)
+	hooksecurefunc("ClassTrainerFrame_Update", function()
+		self:ShadeList()
+	end)
+	hooksecurefunc("ClassTrainer_SetSelection", function()
+		self:InkDetails()
+	end)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == ADDON) then
+	if addon == ADDON then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleTrainer()
 	end
@@ -132,7 +137,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded(ADDON) then

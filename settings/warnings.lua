@@ -1,7 +1,7 @@
 local ADDON, Engine = ...
 local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
-	
--- Utility function to convert a formatstring 
+
+-- Utility function to convert a formatstring
 -- to a searchable pattern.
 local to_pattern = function(msg)
 	msg = msg:gsub("%%%d?$?c", ".+")
@@ -30,7 +30,7 @@ local to_patterns = function(list)
 		local msg = list[i]
 		if msg then
 			local pattern = to_pattern(msg)
-			if (not seen[pattern]) then
+			if not seen[pattern] then
 				seen[pattern] = true
 				patterns[#patterns + 1] = pattern
 			end
@@ -41,39 +41,38 @@ end
 
 Engine:NewStaticConfig("Warnings", {
 	size = { 600, 18 + 4 + 18 }, -- size of the message frame
-	point = { "CENTER", UIParent, "CENTER", 0, -60 }, 
+	point = { "CENTER", UIParent, "CENTER", 0, -60 },
 
-	-- display- and fade durations of the messages 
+	-- display- and fade durations of the messages
 	HZ = 3.0, -- time in seconds between each identical error message
 	time_to_show = 3, -- time in seconds to display the messages
 	time_to_fade = 1.5, -- duration in seconds to fade out the messages
 
 	font = {
 		size = { 600, 18 }, -- size of the font object's total area, not the text size
-		point = { "BOTTOM", .5, .5 }, -- position relative to the frame
+		point = { "BOTTOM", 0.5, 0.5 }, -- position relative to the frame
 		font_object = DiabolicFont_HeaderRegular16Red, -- Exocet, like the Diablo UI
-		
+
 		size_quest = { 600, 18 }, -- size of the font object's total area, not the text size
-		point_quest = { "BOTTOM", .5, 4 + 18 + .5 }, -- position relative to the frame
+		point_quest = { "BOTTOM", 0.5, 4 + 18 + 0.5 }, -- position relative to the frame
 		font_object_quest = DiabolicFont_HeaderRegular16Orange, -- Exocet, like the Diablo UI
-		
 	},
-	
+
 	color = {
 		backdrop = { 0, 0, 0, 1 },
-		error = { .85, .15, .04 },
-		info = { 1, .82, .04 }, 
-		system = { 1, .82, .04 } -- fallback for system messages with no color listed, if any
+		error = { 0.85, 0.15, 0.04 },
+		info = { 1, 0.82, 0.04 },
+		system = { 1, 0.82, 0.04 }, -- fallback for system messages with no color listed, if any
 	},
 
 	shade = {
 		position = { "CENTER", 0, 0 },
-		color = { 0, 0, 0, .5 },
-		texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+		color = { 0, 0, 0, 0.5 },
+		texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 	},
-		
-	-- The whitelist contains messages that will be displayed in our 
-	-- custom error frame, located above the player character's head. 
+
+	-- The whitelist contains messages that will be displayed in our
+	-- custom error frame, located above the player character's head.
 	-- All other messages will still be shown, but in the default chat frame.
 	whitelist = {
 		plain = to_set({
@@ -92,7 +91,7 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_BADATTACKPOS, -- "You are too far away!"; -- Melee combat error
 
 			ERR_BAG_FULL, -- "That bag is full."
-			ERR_BANK_FULL, -- "Your bank is full." 
+			ERR_BANK_FULL, -- "Your bank is full."
 
 			ERR_DOOR_LOCKED, -- "The door is locked."
 
@@ -102,7 +101,7 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_EXHAUSTION_TIRED, -- "You feel tired."
 			ERR_EXHAUSTION_WELLRESTED, -- "You feel well rested."
 
-			ERR_FISH_ESCAPED, -- "Your fish got away!" 
+			ERR_FISH_ESCAPED, -- "Your fish got away!"
 			ERR_FISH_NOT_HOOKED, -- "No fish are hooked."
 
 			ERR_FOOD_COOLDOWN, -- "You are too full to eat more now."
@@ -111,8 +110,7 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_GENERIC_NO_VALID_TARGETS, -- "No valid targets."
 			ERR_GENERIC_STUNNED, -- "You are stunned"
 
-
-			ERR_INV_FULL, -- "Inventory is full." 
+			ERR_INV_FULL, -- "Inventory is full."
 
 			ERR_INVALID_ATTACK_TARGET, -- "You cannot attack that target."
 			ERR_INVALID_FOLLOW_TARGET, -- "You can't follow that unit."
@@ -121,13 +119,13 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_ITEM_COOLDOWN, -- "Item is not ready yet."
 			ERR_ITEM_LOCKED, -- "Item is locked.";
 			ERR_ITEM_MAX_COUNT, -- "You can't carry any more of those items."
-			
+
 			ERR_LOOT_ROLL_PENDING, -- "That item is still being rolled for";
 			ERR_LOOT_STUNNED, -- "You can't loot anything while stunned!";
 			ERR_LOOT_TOO_FAR, -- "You are too far away to loot that corpse.";
 			ERR_LOOT_WHILE_INVULNERABLE, -- "Cannot loot while invulnerable.";
 
-			ERR_NOT_ENOUGH_MONEY, -- "You don't have enough money." 
+			ERR_NOT_ENOUGH_MONEY, -- "You don't have enough money."
 
 			ERR_NOT_WHILE_DISARMED, -- "You can't do that while disarmed"
 			ERR_NOT_WHILE_FALLING, -- "You can't do that while jumping or falling"
@@ -166,12 +164,12 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_TOO_FAR_TO_INTERACT, -- "You need to be closer to interact with that target."
 			ERR_TOO_MUCH_GOLD, -- "At gold limit"
 			ERR_VENDOR_TOO_FAR, -- "You are too far away."
-			
+
 			ERR_PVP_TOGGLE_OFF, -- "PvP combat toggled off"
 			ERR_PVP_TOGGLE_ON, -- "PvP combat toggled on"
 
 			POTION_TIMER, -- "You can't do that yet."
-			
+
 			SPELL_FAILED_AFFECTING_COMBAT, -- "You are in combat"
 			SPELL_FAILED_ALREADY_BEING_TAMED, -- "That creature is already being tamed"
 			SPELL_FAILED_ALREADY_HAVE_CHARM, -- "You already control a charmed creature"
@@ -255,10 +253,10 @@ Engine:NewStaticConfig("Warnings", {
 
 			SPELL_FAILED_UNIT_NOT_BEHIND, -- "Target needs to be behind you."
 			SPELL_FAILED_UNIT_NOT_INFRONT, -- "Target needs to be in front of you."
-			
-			TOO_FAR_TO_LOOT -- "You are too far away to loot that corpse!"; -- The player is too far away to loot a corpse
+
+			TOO_FAR_TO_LOOT, -- "You are too far away to loot that corpse!"; -- The player is too far away to loot a corpse
 		}),
-		
+
 		pattern = to_patterns({
 			ERR_USE_LOCKED_WITH_SPELL_KNOWN_SI, -- "Requires %s %d"
 			ERR_USE_LOCKED_WITH_ITEM_S, -- "Requires %s"
@@ -281,16 +279,15 @@ Engine:NewStaticConfig("Warnings", {
 			SPELL_FAILED_TOTEMS, --  "Requires %s"
 			SPELL_FAILED_TOTEM_CATEGORY, -- "Requires %s"
 			SPELL_REQUIRED_FORM, -- "Requires %s";
-			SPELL_REQUIRED_FORM_NOSPACE -- "Requires %s";
-
-		})
+			SPELL_REQUIRED_FORM_NOSPACE, -- "Requires %s";
+		}),
 	},
-	
+
 	-- blacklisted stuff
 	blacklist = {
 		pattern = to_patterns({
 			ERR_LOOT_GONE, -- "Already looted (%d/%d)" -- Happens on Felsong ALL the time! Appears to be a TrinityCore issue.
-		})			
+		}),
 	},
 
 	tracker = {
@@ -309,9 +306,9 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_QUEST_NEED_PREREQS, -- "You don't meet the requirements for that quest"
 			ERR_QUEST_ONLY_ONE_TIMED, -- "You can only be on one timed quest at a time"
 			ERR_QUEST_UNKNOWN_COMPLETE, -- "Objective Complete."
-			
+
 			QUEST_COMPLETE, -- "Quest completed"
-			QUEST_FAILED -- "Quest completion failed."
+			QUEST_FAILED, -- "Quest completion failed."
 		}),
 		pattern = to_patterns({
 			ERR_QUEST_ACCEPTED_S, -- "Quest accepted: %s"
@@ -329,7 +326,7 @@ Engine:NewStaticConfig("Warnings", {
 			ERR_QUEST_REWARD_EXP_I, -- "Experience gained: %d."
 			ERR_QUEST_REWARD_ITEM_MULT_IS, -- "Received %d of item: %s."
 			ERR_QUEST_REWARD_ITEM_S, -- "Received item: %s."
-			ERR_QUEST_REWARD_MONEY_S -- "Received %s."
-		})
-	}
+			ERR_QUEST_REWARD_MONEY_S, -- "Received %s."
+		}),
+	},
 })

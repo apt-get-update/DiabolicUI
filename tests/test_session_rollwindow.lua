@@ -177,14 +177,17 @@ end
 -- BiS-Tooltip Renewed's lookup, as its BuildReverseLookup makes it
 local function bisTooltip(phaseIndex)
 	_G.BisTooltip_PhaseData = { "PR", "T7", "T8", "T9", "T10", "RS" }
-	_G.BisTooltipAddon = { db = { char = { phase_index = phaseIndex } }, ReverseLookup = {
-		[100] = {
-			{ class = "Mage", spec = "Fire", rightText = "T9 BIS" },
-			{ class = "Priest", spec = "Holy", rightText = "T8 alt 1 / T9 BIS" },
-			{ class = "Priest", spec = "Shadow", rightText = "T9 alt 2" },
+	_G.BisTooltipAddon = {
+		db = { char = { phase_index = phaseIndex } },
+		ReverseLookup = {
+			[100] = {
+				{ class = "Mage", spec = "Fire", rightText = "T9 BIS" },
+				{ class = "Priest", spec = "Holy", rightText = "T8 alt 1 / T9 BIS" },
+				{ class = "Priest", spec = "Shadow", rightText = "T9 alt 2" },
+			},
+			[101] = { { class = "Priest", spec = "Holy", rightText = "T7 BIS" } },
 		},
-		[101] = { { class = "Priest", spec = "Holy", rightText = "T7 BIS" } },
-	} }
+	}
 end
 
 function TestRollWindow:test_bis_tooltips_ranks_for_your_specs_in_its_phase()
@@ -193,7 +196,11 @@ function TestRollWindow:test_bis_tooltips_ranks_for_your_specs_in_its_phase()
 	client.world.units.raid1 = Client.newUnit({ name = "Loot", rank = 2 })
 	module = client:GetModule("Blizzard: RollWindow")
 	client:Tick(0.2)
-	say("CHAT_MSG_RAID", "Roll " .. Session.item(client, 100, { name = "Sword" }) .. " " .. Session.item(client, 101, { name = "Ring" }), "Loot")
+	say(
+		"CHAT_MSG_RAID",
+		"Roll " .. Session.item(client, 100, { name = "Sword" }) .. " " .. Session.item(client, 101, { name = "Ring" }),
+		"Loot"
+	)
 	lu.assertEquals(rows()[1].Bis:GetText(), "T9: Holy BIS, Shadow alt 2")
 	-- not in this phase: no line
 	lu.assertEquals(rows()[2].Bis:GetText(), "")
@@ -328,7 +335,10 @@ function TestRollWindow:test_what_you_see_opening_the_boss_goes_to_the_raid()
 		{ name = "Bone", quality = 1, link = Session.item(client, 102, { name = "Bone", quality = 1 }) },
 		{ name = "Ring", quality = 4, link = ring },
 	}
-	client:SetUnit("target", Client.newUnit({ name = "Marrowgar", guid = "0xF130009069000001", dead = true, isPlayer = false }))
+	client:SetUnit(
+		"target",
+		Client.newUnit({ name = "Marrowgar", guid = "0xF130009069000001", dead = true, isPlayer = false })
+	)
 	client:FireEvent("LOOT_OPENED")
 	-- what the master looter can give, one message each
 	lu.assertEquals(client.addonMessages, {

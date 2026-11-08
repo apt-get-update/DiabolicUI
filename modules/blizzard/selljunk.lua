@@ -25,9 +25,9 @@ local JUNK_COLOR = "|cff9d9d9d"
 -- means the merchant won't take it.
 local GetJunk = function(bag, slot)
 	local _, count, locked, _, _, _, link = GetContainerItemInfo(bag, slot)
-	if link and (not locked) and (link:sub(1, 10) == JUNK_COLOR) then
+	if link and not locked and (link:sub(1, 10) == JUNK_COLOR) then
 		local price = select(11, GetItemInfo(link))
-		if (price ~= 0) then
+		if price ~= 0 then
 			return link, count or 1, price or 0
 		end
 	end
@@ -57,18 +57,20 @@ end
 
 Module.SellJunk = function(self)
 	local items, money = self:CountJunk()
-	if (items == 0) then
+	if items == 0 then
 		return
 	end
 	-- the bag and slot only: a third argument would use it on yourself
-	ForEachJunk(function(bag, slot) UseContainerItem(bag, slot) end)
+	ForEachJunk(function(bag, slot)
+		UseContainerItem(bag, slot)
+	end)
 	_G.DEFAULT_CHAT_FRAME:AddMessage(L["Sold %d junk items for %s."]:format(items, GetCoinTextureString(money)))
 end
 
 -- Greyed out when there's nothing to sell.
 Module.UpdateButton = function(self)
 	local items = self:CountJunk()
-	if (items > 0) then
+	if items > 0 then
 		self.button:Enable()
 	else
 		self.button:Disable()
@@ -80,7 +82,7 @@ Module.ShowTooltip = function(self, button)
 	local tooltip = _G.GameTooltip
 	tooltip:SetOwner(button, "ANCHOR_RIGHT")
 	tooltip:SetText(L["Sell Junk"])
-	if (items > 0) then
+	if items > 0 then
 		tooltip:AddLine(L["%d grey items, for %s."]:format(items, GetCoinTextureString(money)), 1, 1, 1)
 	else
 		tooltip:AddLine(L["No grey items in your bags."], 1, 1, 1)
@@ -95,9 +97,15 @@ Module.CreateButton = function(self)
 	button:SetSize(90, 22)
 	button:SetPoint("BOTTOMLEFT", merchant, "BOTTOMLEFT", 22, 64)
 	button:SetText(L["Sell Junk"])
-	button:SetScript("OnClick", function() self:SellJunk() end)
-	button:SetScript("OnEnter", function(button) self:ShowTooltip(button) end)
-	button:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	button:SetScript("OnClick", function()
+		self:SellJunk()
+	end)
+	button:SetScript("OnEnter", function(button)
+		self:ShowTooltip(button)
+	end)
+	button:SetScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 	self.button = button
 
 	-- the merchant's own tab only, not the buyback one
@@ -105,13 +113,15 @@ Module.CreateButton = function(self)
 		button:Show()
 		self:UpdateButton()
 	end)
-	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function() button:Hide() end)
+	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
+		button:Hide()
+	end)
 end
 
 -- The bags are only watched while the window is open. MERCHANT_CLOSED can
 -- come twice in a row.
 Module.OnMerchantShow = function(self)
-	if (not self.watching) then
+	if not self.watching then
 		self.watching = true
 		self:RegisterEvent("BAG_UPDATE", "UpdateButton")
 	end

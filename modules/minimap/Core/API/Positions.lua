@@ -29,16 +29,16 @@ ns.API = API
 
 -- Convert a coordinate within a frame to a usable position
 API.GetParsedPosition = function(parentWidth, parentHeight, x, y, bottomOffset, leftOffset, topOffset, rightOffset)
-	if (y < parentHeight * 1 / 3) then
-		if (x < parentWidth * 1 / 3) then
+	if y < parentHeight * 1 / 3 then
+		if x < parentWidth * 1 / 3 then
 			return "BOTTOMLEFT", leftOffset, bottomOffset
-		elseif (x > parentWidth * 2 / 3) then
+		elseif x > parentWidth * 2 / 3 then
 			return "BOTTOMRIGHT", rightOffset, bottomOffset
 		else
 			return "BOTTOM", x - parentWidth / 2, bottomOffset
 		end
-	elseif (y > parentHeight * 2 / 3) then
-		if (x < parentWidth * 1 / 3) then
+	elseif y > parentHeight * 2 / 3 then
+		if x < parentWidth * 1 / 3 then
 			return "TOPLEFT", leftOffset, topOffset
 		elseif x > parentWidth * 2 / 3 then
 			return "TOPRIGHT", rightOffset, topOffset
@@ -46,9 +46,9 @@ API.GetParsedPosition = function(parentWidth, parentHeight, x, y, bottomOffset, 
 			return "TOP", x - parentWidth / 2, topOffset
 		end
 	else
-		if (x < parentWidth * 1 / 3) then
+		if x < parentWidth * 1 / 3 then
 			return "LEFT", leftOffset, y - parentHeight / 2
-		elseif (x > parentWidth * 2 / 3) then
+		elseif x > parentWidth * 2 / 3 then
 			return "RIGHT", rightOffset, y - parentHeight / 2
 		else
 			return "CENTER", x - parentWidth / 2, y - parentHeight / 2
@@ -72,10 +72,11 @@ API.GetPosition = function(frame)
 	-- Retrieve frame coordinates, convert to unscaled screen coordinates
 	local frameScale = frame:GetEffectiveScale()
 	local x, y = frame:GetCenter()
-	if (not x or not y) then
+	if not x or not y then
 		return "CENTER", 0, 0
 	end
-	x = x * frameScale; y = y * frameScale
+	x = x * frameScale
+	y = y * frameScale
 	local bottom = frame:GetBottom() * frameScale
 	local left = frame:GetLeft() * frameScale
 	local top = frame:GetTop() * frameScale - worldHeight -- use values relative to edges, not origin

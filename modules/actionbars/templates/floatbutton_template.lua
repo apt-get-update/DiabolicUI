@@ -20,7 +20,7 @@ local FloatButton = {
 	UpdateLayers = function(self)
 		local look = (self.isDown and "Pushed") or (self:IsMouseOver() and "Highlight") or "Normal"
 		for _, layer in ipairs(LAYERS) do
-			if (layer == look) then
+			if layer == look then
 				self[layer]:Show()
 			else
 				self[layer]:Hide()
@@ -44,7 +44,7 @@ local FloatButton = {
 	end,
 
 	OnMouseDown = function(self)
-		self.isDown = true 
+		self.isDown = true
 		self:UpdateLayers()
 	end,
 
@@ -67,12 +67,14 @@ local FloatButton = {
 		if self.PostClick then
 			self:PostClick(button)
 		end
-		self:UpdateLayers() 
+		self:UpdateLayers()
 	end,
 
 	SetClickTarget = function(self, target)
 		self:SetFrameRef("window", target)
-		self:SetAttribute("_onclick", [[
+		self:SetAttribute(
+			"_onclick",
+			[[
 			if button == "LeftButton" then
 				local window = self:GetFrameRef("window");
 				local visibility = window:GetFrameRef("Visibility");
@@ -105,8 +107,9 @@ local FloatButton = {
 				end
 			end
 			control:CallMethod("OnClick", button);
-		]])
-	end
+		]]
+		)
+	end,
 }
 
 -- The scripts every float button runs
@@ -116,29 +119,28 @@ local buttonScripts = {
 	OnHide = FloatButton.OnHide,
 	OnShow = FloatButton.OnShow,
 	OnMouseDown = FloatButton.OnMouseDown,
-	OnMouseUp = FloatButton.OnMouseUp
+	OnMouseUp = FloatButton.OnMouseUp,
 }
 
 -- The methods each type gets
 local buttonEmbeds = {
 	Action = {
-		UpdateLayers = FloatButton.UpdateLayers
+		UpdateLayers = FloatButton.UpdateLayers,
 	},
 	Click = {
 		OnClick = FloatButton.OnClick,
 		SetClickTarget = FloatButton.SetClickTarget,
-		UpdateLayers = FloatButton.UpdateLayers
-	}
+		UpdateLayers = FloatButton.UpdateLayers,
+	},
 }
 
 local buttonTemplates = {
 	Action = "SecureActionButtonTemplate",
-	Click = "SecureHandlerClickTemplate"
+	Click = "SecureHandlerClickTemplate",
 }
 
-
--- This is for our own buttons, that we make from scratch. 
--- Most of these should be macro driven for visibility. 
+-- This is for our own buttons, that we make from scratch.
+-- Most of these should be macro driven for visibility.
 FloatButtonWidget.New = function(self, buttonType, parent, name)
 	local button = parent:CreateFrame("CheckButton", name, buttonTemplates[buttonType])
 	button:SetFrameStrata("MEDIUM")
@@ -170,17 +172,16 @@ FloatButtonWidget.New = function(self, buttonType, parent, name)
 	button.Icon = button:CreateTexture(nil, "BACKGROUND")
 	button.Icon:SetSize(button:GetSize())
 	button.Icon:SetPoint("CENTER", 0, 0)
-	button.Icon:SetTexCoord(5/64, 59/64, 5/64, 59/64) 
+	button.Icon:SetTexCoord(5 / 64, 59 / 64, 5 / 64, 59 / 64)
 
 	-- let blizz handle this one
 	-- *note that this is the icon overlay, not the border!
 	local buttonPushed = button:CreateTexture(nil, "OVERLAY")
 	buttonPushed:SetAllPoints(button.Icon)
-	buttonPushed:SetTexture(1, 1, 1, .25)
+	buttonPushed:SetTexture(1, 1, 1, 0.25)
 
 	button:SetPushedTexture(buttonPushed)
 	button:GetPushedTexture():SetBlendMode("BLEND")
 
 	return button
 end
-

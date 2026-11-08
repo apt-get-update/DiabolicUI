@@ -12,7 +12,7 @@ local select = select
 local unpack = unpack
 
 -- Ignore the container frames if one of our standalone bag addons are loaded
-local Backpacker = not(Engine:IsAddOnEnabled("Backpacker") or Engine:IsAddOnEnabled("BlizzardBagsPlus")) or nil
+local Backpacker = not (Engine:IsAddOnEnabled("Backpacker") or Engine:IsAddOnEnabled("BlizzardBagsPlus")) or nil
 
 -- List of elements to be styled
 local elements = {
@@ -43,14 +43,14 @@ local elements = {
 	["PlayerStatFrameRightDropDownButton"] = true,
 	["PlayerTitleFrame"] = true,
 	["PlayerTitleFrameButton"] = true,
-	["WorldMapFrame"] = true
+	["WorldMapFrame"] = true,
 }
 
 Module.StyleRegion = function(self, region)
 	local objectType = region:GetObjectType()
-	if (objectType == "Texture") then
+	if objectType == "Texture" then
 		region:SetVertexColor(unpack(C.General.UIBackdrop))
-	elseif (objectType == "FontString") then
+	elseif objectType == "FontString" then
 		region:SetTextColor(unpack(C.General.Title))
 	end
 end

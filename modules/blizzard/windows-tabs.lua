@@ -140,8 +140,17 @@ Module.StyleTab = function(self, tab, options)
 	local inset = options.inset or 0
 	local name = tab:GetName()
 	-- (and the achievement tabs' yellow hover glow)
-	for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled",
-		"LeftHighlight", "MiddleHighlight", "RightHighlight" }) do
+	for _, part in ipairs({
+		"Left",
+		"Middle",
+		"Right",
+		"LeftDisabled",
+		"MiddleDisabled",
+		"RightDisabled",
+		"LeftHighlight",
+		"MiddleHighlight",
+		"RightHighlight",
+	}) do
 		local region = _G[name .. part]
 		if region then
 			region:SetAlpha(0)
@@ -155,7 +164,7 @@ Module.StyleTab = function(self, tab, options)
 	local spec = Module.config.rect_button
 	tab.DiabolicArt = {
 		red = self:CreateSlices(tab, "BACKGROUND", spec, spec.texture.lit, height, inset),
-		dark = self:CreateSlices(tab, "BACKGROUND", spec, spec.texture.dark, height, inset)
+		dark = self:CreateSlices(tab, "BACKGROUND", spec, spec.texture.dark, height, inset),
 	}
 	tab.DiabolicNotLit = IsSelected
 	self:AddLit(tab, self:CreateSlices(tab, "BORDER", spec, spec.texture.normal, height, inset))
@@ -245,15 +254,28 @@ Module.StyleBanner = function(self, tab, icon)
 	tab.DiabolicStyle = "Banner"
 	local spec = Module.config.banner
 	local name = tab:GetName()
-	for _, part in ipairs({ "Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled",
-		"LeftHighlight", "MiddleHighlight", "RightHighlight" }) do
+	for _, part in ipairs({
+		"Left",
+		"Middle",
+		"Right",
+		"LeftDisabled",
+		"MiddleDisabled",
+		"RightDisabled",
+		"LeftHighlight",
+		"MiddleHighlight",
+		"RightHighlight",
+	}) do
 		local region = name and _G[name .. part]
 		if region then
 			region:SetAlpha(0)
 		end
 	end
-	for _, texture in ipairs({ tab:GetNormalTexture() or false, tab:GetPushedTexture() or false,
-		tab:GetDisabledTexture() or false, tab:GetHighlightTexture() or false }) do
+	for _, texture in ipairs({
+		tab:GetNormalTexture() or false,
+		tab:GetPushedTexture() or false,
+		tab:GetDisabledTexture() or false,
+		tab:GetHighlightTexture() or false,
+	}) do
 		if texture then
 			texture:SetAlpha(0)
 		end
@@ -335,13 +357,13 @@ local HangBanners = function(window)
 		end
 	end
 	local rail = window.DiabolicRail
-	if (#shown == 0) then
+	if #shown == 0 then
 		if rail then
 			rail:Hide()
 		end
 		return
 	end
-	if (not rail) then
+	if not rail then
 		rail = CreateRail(window)
 		window.DiabolicRail = rail
 	end
@@ -365,7 +387,7 @@ local HangBanners = function(window)
 		for j, middle in ipairs(spec.clasp.x) do
 			local index = (i - 1) * #spec.clasp.x + j
 			local clasp = rail.Clasps[index]
-			if (not clasp) then
+			if not clasp then
 				clasp = rail:CreateTexture(nil, "OVERLAY")
 				clasp:SetTexture(spec.clasp.texture)
 				clasp:SetVertexColor(unpack(spec.clasp.color))
@@ -387,7 +409,7 @@ end
 -- shows them: the pet's tab).
 local Rehang = function(tab)
 	local window = tab.DiabolicWindow
-	if window and (not window.DiabolicHanging) then
+	if window and not window.DiabolicHanging then
 		HangBanners(window)
 	end
 end
@@ -433,7 +455,13 @@ Module.DropTop = function(self, window)
 	end
 	if close then
 		local spec = Module.config.close
-		close:SetPoint("CENTER", window, "TOPRIGHT", -spec.socket_size / 2, -spec.socket_size / 2 - Module.config.tab_row)
+		close:SetPoint(
+			"CENTER",
+			window,
+			"TOPRIGHT",
+			-spec.socket_size / 2,
+			-spec.socket_size / 2 - Module.config.tab_row
+		)
 	end
 end
 

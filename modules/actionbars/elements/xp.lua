@@ -46,7 +46,7 @@ local vehicleEvents = {
 	UNIT_ENTERING_VEHICLE = "player",
 	UNIT_EXITING_VEHICLE = "player",
 	UNIT_ENTERED_VEHICLE = "player",
-	UNIT_EXITED_VEHICLE = "player"
+	UNIT_EXITED_VEHICLE = "player",
 }
 
 -- Bar Templates
@@ -80,7 +80,9 @@ end
 
 Bar_XP.Update = function(self)
 	local data = self:UpdateData()
-	if (not data.xpMax) then return end
+	if not data.xpMax then
+		return
+	end
 	local r, g, b = unpack(C.General[data.color])
 	self.XP:SetStatusBarColor(r, g, b)
 	self.XP:SetMinMaxValues(0, data.xpMax)
@@ -90,13 +92,14 @@ Bar_XP.Update = function(self)
 	if data.restedLeft then
 		r, g, b = unpack(C.General.XPRestedBonus)
 	end
-	self.Backdrop:SetVertexColor(r *.25, g *.25, b *.25)
+	self.Backdrop:SetVertexColor(r * 0.25, g * 0.25, b * 0.25)
 end
 
 Bar_XP.OnEnter = function(self)
 	local data = self:UpdateData()
-	if not data.xpMax then return end
-
+	if not data.xpMax then
+		return
+	end
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 
@@ -106,32 +109,69 @@ Bar_XP.OnEnter = function(self)
 	GameTooltip:AddLine(" ")
 
 	GameTooltip:AddLine(F.Colorize(L["Experience"], "Normal"))
-	GameTooltip:AddDoubleLine(L["Current XP: "], longXPString:format(F.Colorize(F.Short(data.xp), "Normal"), F.Colorize(F.Short(data.xpMax), "Normal")), r2, g2, b2, r2, g2, b2)
+	GameTooltip:AddDoubleLine(
+		L["Current XP: "],
+		longXPString:format(F.Colorize(F.Short(data.xp), "Normal"), F.Colorize(F.Short(data.xpMax), "Normal")),
+		r2,
+		g2,
+		b2,
+		r2,
+		g2,
+		b2
+	)
 
 	-- add rested bonus if it exists
 	if data.restedLeft and data.restedLeft > 0 then
-		GameTooltip:AddDoubleLine(L["Rested Bonus: "], longXPString:format(F.Colorize(F.Short(data.restedLeft), "Normal"), F.Colorize(F.Short(data.xpMax * maxRested), "Normal")), r2, g2, b2, r2, g2, b2)
+		GameTooltip:AddDoubleLine(
+			L["Rested Bonus: "],
+			longXPString:format(
+				F.Colorize(F.Short(data.restedLeft), "Normal"),
+				F.Colorize(F.Short(data.xpMax * maxRested), "Normal")
+			),
+			r2,
+			g2,
+			b2,
+			r2,
+			g2,
+			b2
+		)
 	end
 
 	if data.restState == 1 then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["Rested"], unpack(C.General.Highlight))
-		GameTooltip:AddLine(L["%s of normal experience\ngained from monsters."]:format(shortXPString:format(data.mult)), unpack(C.General.Green))
+		GameTooltip:AddLine(
+			L["%s of normal experience\ngained from monsters."]:format(shortXPString:format(data.mult)),
+			unpack(C.General.Green)
+		)
 		if data.resting and data.restedTimeLeft and data.restedTimeLeft > 0 then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(L["Resting"], unpack(C.General.Highlight))
-			if data.restedTimeLeft > HOUR*2 then
-				GameTooltip:AddLine(L["You must rest for %s additional\nhours to become fully rested."]:format(F.Colorize(math_floor(data.restedTimeLeft/HOUR), "OffWhite")), unpack(C.General.Normal))
+			if data.restedTimeLeft > HOUR * 2 then
+				GameTooltip:AddLine(
+					L["You must rest for %s additional\nhours to become fully rested."]:format(
+						F.Colorize(math_floor(data.restedTimeLeft / HOUR), "OffWhite")
+					),
+					unpack(C.General.Normal)
+				)
 			else
-				GameTooltip:AddLine(L["You must rest for %s additional\nminutes to become fully rested."]:format(F.Colorize(math_floor(data.restedTimeLeft/MINUTE), "OffWhite")), unpack(C.General.Normal))
+				GameTooltip:AddLine(
+					L["You must rest for %s additional\nminutes to become fully rested."]:format(
+						F.Colorize(math_floor(data.restedTimeLeft / MINUTE), "OffWhite")
+					),
+					unpack(C.General.Normal)
+				)
 			end
 		end
 	elseif data.restState >= 2 then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["Normal"], unpack(C.General.Highlight))
-		GameTooltip:AddLine(L["%s of normal experience\ngained from monsters."]:format(shortXPString:format(data.mult)), unpack(C.General.Green))
+		GameTooltip:AddLine(
+			L["%s of normal experience\ngained from monsters."]:format(shortXPString:format(data.mult)),
+			unpack(C.General.Green)
+		)
 
-		if not(data.restedTimeLeft and data.restedTimeLeft > 0) then
+		if not (data.restedTimeLeft and data.restedTimeLeft > 0) then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(L["You should rest at an Inn."], unpack(C.General.DimRed))
 		end
@@ -158,7 +198,7 @@ BarWidget.UpdateVisibility = function(self)
 	-- being watched, so we hide in favor of it.
 	local isXPVisible = Module:IsXPVisible() and not Module:IsReputationVisible()
 	if isXPVisible then
-		if (not self.Controller:IsShown()) then
+		if not self.Controller:IsShown() then
 			self.Controller:Show()
 		end
 	else
@@ -166,7 +206,7 @@ BarWidget.UpdateVisibility = function(self)
 			self.Controller:Hide()
 		end
 	end
-	if (XPBARVISIBLE ~= isXPVisible) then
+	if XPBARVISIBLE ~= isXPVisible then
 		self:SendMessage("ENGINE_ACTIONBAR_XP_VISIBLE_CHANGED", isXPVisible)
 		XPBARVISIBLE = isXPVisible
 	end
@@ -204,8 +244,12 @@ BarWidget.OnEnable = function(self)
 	self.Controller = controller
 
 	local bar = setmetatable(controller:CreateFrame("Frame"), Bar_XP_MT)
-	controller:SetScript("OnEnter", function() bar:OnEnter() end)
-	controller:SetScript("OnLeave", function() bar:OnLeave() end)
+	controller:SetScript("OnEnter", function()
+		bar:OnEnter()
+	end)
+	controller:SetScript("OnLeave", function()
+		bar:OnLeave()
+	end)
 	bar:SetSize(controller:GetSize())
 	bar:SetAllPoints(controller)
 	bar.data = {}
@@ -214,7 +258,7 @@ BarWidget.OnEnable = function(self)
 	backdrop:SetSize(unpack(art_config.backdrop.texture_size))
 	backdrop:SetPoint(unpack(art_config.backdrop.texture_position))
 	backdrop:SetTexture(art_config.backdrop.textures[num_bars])
-	backdrop:SetAlpha(.75)
+	backdrop:SetAlpha(0.75)
 
 	local rested = StatusBar:New(controller)
 	rested:SetSize(controller:GetSize())
@@ -225,7 +269,7 @@ BarWidget.OnEnable = function(self)
 	rested:SetStatusBarColor(unpack(C.General[C_XP_BONUS]))
 	rested:SetSparkTexture(art_config.rested.spark.texture)
 	rested:SetSparkSize(unpack(art_config.rested.spark.size))
-	rested:SetSparkFlash(2.75, 1.25, .175, .425)
+	rested:SetSparkFlash(2.75, 1.25, 0.175, 0.425)
 
 	local xp = StatusBar:New(controller)
 	xp:SetSize(controller:GetSize())
@@ -235,7 +279,7 @@ BarWidget.OnEnable = function(self)
 	xp:SetStatusBarTexture(art_config.bar.texture)
 	xp:SetSparkTexture(art_config.bar.spark.texture)
 	xp:SetSparkSize(unpack(art_config.bar.spark.size))
-	xp:SetSparkFlash(2.75, 1.25, .35, .85)
+	xp:SetSparkFlash(2.75, 1.25, 0.35, 0.85)
 
 	bar.Backdrop = backdrop
 	bar.Rested = rested
@@ -246,7 +290,7 @@ BarWidget.OnEnable = function(self)
 	-- Our XP/Rep bars aren't secure, so we need to update their sizes
 	-- from normal Lua, not the secure environment.
 	Main:HookScript("OnAttributeChanged", function(_, name)
-		if (name == "numbars") then
+		if name == "numbars" then
 			self:UpdateBarSettings()
 		end
 		bar:Update()
@@ -266,7 +310,7 @@ BarWidget.OnEnable = function(self)
 	self:RegisterEvent("UNIT_EXITING_VEHICLE", "Update")
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "Update")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "Update")
-  self:RegisterEvent("UNIT_PET", "Update")
+	self:RegisterEvent("UNIT_PET", "Update")
 
 	-- The reputation bar takes our slot whenever a faction is watched,
 	-- so we need to hide/reappear the moment that changes too.
@@ -276,4 +320,3 @@ end
 BarWidget.GetFrame = function(self)
 	return self.Controller
 end
-

@@ -18,74 +18,181 @@ local state = Widgets.state
 ------------------------------------------------------------------------
 
 local CLASS_COLORS = {
-	WARRIOR = { 0.78, 0.61, 0.43, "ffc79c6e" }, PALADIN = { 0.96, 0.55, 0.73, "fff58cba" },
-	HUNTER = { 0.67, 0.83, 0.45, "ffabd473" }, ROGUE = { 1, 0.96, 0.41, "fffff569" },
-	PRIEST = { 1, 1, 1, "ffffffff" }, DEATHKNIGHT = { 0.77, 0.12, 0.23, "ffc41f3b" },
-	SHAMAN = { 0, 0.44, 0.87, "ff0070de" }, MAGE = { 0.41, 0.8, 0.94, "ff69ccf0" },
-	WARLOCK = { 0.58, 0.51, 0.79, "ff9482c9" }, DRUID = { 1, 0.49, 0.04, "ffff7d0a" },
+	WARRIOR = { 0.78, 0.61, 0.43, "ffc79c6e" },
+	PALADIN = { 0.96, 0.55, 0.73, "fff58cba" },
+	HUNTER = { 0.67, 0.83, 0.45, "ffabd473" },
+	ROGUE = { 1, 0.96, 0.41, "fffff569" },
+	PRIEST = { 1, 1, 1, "ffffffff" },
+	DEATHKNIGHT = { 0.77, 0.12, 0.23, "ffc41f3b" },
+	SHAMAN = { 0, 0.44, 0.87, "ff0070de" },
+	MAGE = { 0.41, 0.8, 0.94, "ff69ccf0" },
+	WARLOCK = { 0.58, 0.51, 0.79, "ff9482c9" },
+	DRUID = { 1, 0.49, 0.04, "ffff7d0a" },
 }
 
 local function constants()
 	local c = {
-		NUM_ACTIONBAR_BUTTONS = 12, NUM_PET_ACTION_SLOTS = 10, NUM_POSSESS_SLOTS = 2,
-		NUM_SHAPESHIFT_SLOTS = 10, NUM_MULTIBAR_BUTTONS = 12, VEHICLE_MAX_ACTIONBUTTONS = 6,
-		BUFF_MAX_DISPLAY = 32, DEBUFF_MAX_DISPLAY = 16, NUM_CHAT_WINDOWS = 10, MAX_PARTY_MEMBERS = 4,
-		MAX_RAID_MEMBERS = 40, MAX_BOSS_FRAMES = 4, MAX_ARENA_ENEMIES = 5, MAX_PLAYER_LEVEL = 80,
-		NUM_BAG_SLOTS = 4, NUM_BANKBAGSLOTS = 7, NUM_BANKGENERIC_SLOTS = 28, NUM_CONTAINER_FRAMES = 13, BANK_CONTAINER = -1, KEYRING_CONTAINER = -2,
-		MAX_CONTAINER_ITEMS = 36, MAX_TOTEMS = 4, MIRRORTIMER_NUMTIMERS = 3, STATICPOPUP_NUMDIALOGS = 4,
-		UIDROPDOWNMENU_MAXBUTTONS = 32, UIDROPDOWNMENU_MAXLEVELS = 2, UIDROPDOWNMENU_BORDER_HEIGHT = 15, UIDROPDOWNMENU_VALUE_PATCH_VERSION = nil,
-		LEFT_ACTIONBAR_PAGE = 4, RIGHT_ACTIONBAR_PAGE = 3, BOTTOMLEFT_ACTIONBAR_PAGE = 6,
-		BOTTOMRIGHT_ACTIONBAR_PAGE = 5, NUM_ACTIONBAR_PAGES = 6, MAX_WATCHABLE_QUESTS = 25,
-		MAX_QUESTLOG_QUESTS = 25, LOOTFRAME_NUMBUTTONS = 4, NUM_GROUP_LOOT_FRAMES = 4,
-		MAX_SKILLLINE_TABS = 8, NUM_WORLDMAP_POIS = 0, MAX_NUM_TALENTS = 40, MAX_TALENT_TABS = 3,
-		INVSLOT_AMMO = 0, INVSLOT_HEAD = 1, INVSLOT_NECK = 2, INVSLOT_SHOULDER = 3, INVSLOT_BODY = 4,
-		INVSLOT_CHEST = 5, INVSLOT_WAIST = 6, INVSLOT_LEGS = 7, INVSLOT_FEET = 8, INVSLOT_WRIST = 9,
-		INVSLOT_HAND = 10, INVSLOT_FINGER1 = 11, INVSLOT_FINGER2 = 12, INVSLOT_TRINKET1 = 13,
-		INVSLOT_TRINKET2 = 14, INVSLOT_BACK = 15, INVSLOT_MAINHAND = 16, INVSLOT_OFFHAND = 17,
-		INVSLOT_RANGED = 18, INVSLOT_TABARD = 19, INVSLOT_FIRST_EQUIPPED = 1, INVSLOT_LAST_EQUIPPED = 19,
-		SPELL_POWER_MANA = 0, SPELL_POWER_RAGE = 1, SPELL_POWER_FOCUS = 2, SPELL_POWER_ENERGY = 3,
-		SPELL_POWER_HAPPINESS = 4, SPELL_POWER_RUNES = 5, SPELL_POWER_RUNIC_POWER = 6,
-		COMBATLOG_OBJECT_CONTROL_PLAYER = 0x00000100, COMBATLOG_OBJECT_TYPE_PLAYER = 0x00000400,
-		COMBATLOG_OBJECT_REACTION_HOSTILE = 0x00000040, COMBATLOG_OBJECT_AFFILIATION_MINE = 0x00000001,
+		NUM_ACTIONBAR_BUTTONS = 12,
+		NUM_PET_ACTION_SLOTS = 10,
+		NUM_POSSESS_SLOTS = 2,
+		NUM_SHAPESHIFT_SLOTS = 10,
+		NUM_MULTIBAR_BUTTONS = 12,
+		VEHICLE_MAX_ACTIONBUTTONS = 6,
+		BUFF_MAX_DISPLAY = 32,
+		DEBUFF_MAX_DISPLAY = 16,
+		NUM_CHAT_WINDOWS = 10,
+		MAX_PARTY_MEMBERS = 4,
+		MAX_RAID_MEMBERS = 40,
+		MAX_BOSS_FRAMES = 4,
+		MAX_ARENA_ENEMIES = 5,
+		MAX_PLAYER_LEVEL = 80,
+		NUM_BAG_SLOTS = 4,
+		NUM_BANKBAGSLOTS = 7,
+		NUM_BANKGENERIC_SLOTS = 28,
+		NUM_CONTAINER_FRAMES = 13,
+		BANK_CONTAINER = -1,
+		KEYRING_CONTAINER = -2,
+		MAX_CONTAINER_ITEMS = 36,
+		MAX_TOTEMS = 4,
+		MIRRORTIMER_NUMTIMERS = 3,
+		STATICPOPUP_NUMDIALOGS = 4,
+		UIDROPDOWNMENU_MAXBUTTONS = 32,
+		UIDROPDOWNMENU_MAXLEVELS = 2,
+		UIDROPDOWNMENU_BORDER_HEIGHT = 15,
+		UIDROPDOWNMENU_VALUE_PATCH_VERSION = nil,
+		LEFT_ACTIONBAR_PAGE = 4,
+		RIGHT_ACTIONBAR_PAGE = 3,
+		BOTTOMLEFT_ACTIONBAR_PAGE = 6,
+		BOTTOMRIGHT_ACTIONBAR_PAGE = 5,
+		NUM_ACTIONBAR_PAGES = 6,
+		MAX_WATCHABLE_QUESTS = 25,
+		MAX_QUESTLOG_QUESTS = 25,
+		LOOTFRAME_NUMBUTTONS = 4,
+		NUM_GROUP_LOOT_FRAMES = 4,
+		MAX_SKILLLINE_TABS = 8,
+		NUM_WORLDMAP_POIS = 0,
+		MAX_NUM_TALENTS = 40,
+		MAX_TALENT_TABS = 3,
+		INVSLOT_AMMO = 0,
+		INVSLOT_HEAD = 1,
+		INVSLOT_NECK = 2,
+		INVSLOT_SHOULDER = 3,
+		INVSLOT_BODY = 4,
+		INVSLOT_CHEST = 5,
+		INVSLOT_WAIST = 6,
+		INVSLOT_LEGS = 7,
+		INVSLOT_FEET = 8,
+		INVSLOT_WRIST = 9,
+		INVSLOT_HAND = 10,
+		INVSLOT_FINGER1 = 11,
+		INVSLOT_FINGER2 = 12,
+		INVSLOT_TRINKET1 = 13,
+		INVSLOT_TRINKET2 = 14,
+		INVSLOT_BACK = 15,
+		INVSLOT_MAINHAND = 16,
+		INVSLOT_OFFHAND = 17,
+		INVSLOT_RANGED = 18,
+		INVSLOT_TABARD = 19,
+		INVSLOT_FIRST_EQUIPPED = 1,
+		INVSLOT_LAST_EQUIPPED = 19,
+		SPELL_POWER_MANA = 0,
+		SPELL_POWER_RAGE = 1,
+		SPELL_POWER_FOCUS = 2,
+		SPELL_POWER_ENERGY = 3,
+		SPELL_POWER_HAPPINESS = 4,
+		SPELL_POWER_RUNES = 5,
+		SPELL_POWER_RUNIC_POWER = 6,
+		COMBATLOG_OBJECT_CONTROL_PLAYER = 0x00000100,
+		COMBATLOG_OBJECT_TYPE_PLAYER = 0x00000400,
+		COMBATLOG_OBJECT_REACTION_HOSTILE = 0x00000040,
+		COMBATLOG_OBJECT_AFFILIATION_MINE = 0x00000001,
 		LE_PARTY_CATEGORY_HOME = nil,
-		SHOW_TARGET_OF_TARGET = "1", SHOW_TARGET_OF_TARGET_STATE = "5", SHOW_PARTY_BACKGROUND = "0",
+		SHOW_TARGET_OF_TARGET = "1",
+		SHOW_TARGET_OF_TARGET_STATE = "5",
+		SHOW_PARTY_BACKGROUND = "0",
 		PLAYER_FRAME_CASTBARS_SHOWN = "0",
-		DEFAULT_CHATFRAME_ALPHA = 0.25, CHAT_FRAME_FADE_TIME = 0.15, CHAT_FRAME_FADE_OUT_TIME = 2,
-		CHAT_TAB_SHOW_DELAY = 0.2, CHAT_TAB_HIDE_DELAY = 1, CHAT_FRAME_MIN_WIDTH = 296,
-		CHAT_FRAME_NORMAL_MIN_HEIGHT = 120, CHAT_FRAME_BIGGER_MIN_HEIGHT = 147,
+		DEFAULT_CHATFRAME_ALPHA = 0.25,
+		CHAT_FRAME_FADE_TIME = 0.15,
+		CHAT_FRAME_FADE_OUT_TIME = 2,
+		CHAT_TAB_SHOW_DELAY = 0.2,
+		CHAT_TAB_HIDE_DELAY = 1,
+		CHAT_FRAME_MIN_WIDTH = 296,
+		CHAT_FRAME_NORMAL_MIN_HEIGHT = 120,
+		CHAT_FRAME_BIGGER_MIN_HEIGHT = 147,
 		UIPARENT_MANAGED_FRAME_POSITIONS = {
-			MainMenuBar = {}, ShapeshiftBarFrame = {}, PossessBarFrame = {}, PETACTIONBAR_YPOS = {},
-			MultiCastActionBarFrame = {}, MULTICASTACTIONBAR_YPOS = {},
+			MainMenuBar = {},
+			ShapeshiftBarFrame = {},
+			PossessBarFrame = {},
+			PETACTIONBAR_YPOS = {},
+			MultiCastActionBarFrame = {},
+			MULTICASTACTIONBAR_YPOS = {},
 		},
 		RAID_CLASS_COLORS = {},
 		CLASS_ICON_TCOORDS = {},
-		CLASS_SORT_ORDER = { "WARRIOR", "DEATHKNIGHT", "PALADIN", "PRIEST", "SHAMAN", "DRUID", "ROGUE", "MAGE", "WARLOCK", "HUNTER" },
-		LOCALIZED_CLASS_NAMES_MALE = {}, LOCALIZED_CLASS_NAMES_FEMALE = {},
+		CLASS_SORT_ORDER = {
+			"WARRIOR",
+			"DEATHKNIGHT",
+			"PALADIN",
+			"PRIEST",
+			"SHAMAN",
+			"DRUID",
+			"ROGUE",
+			"MAGE",
+			"WARLOCK",
+			"HUNTER",
+		},
+		LOCALIZED_CLASS_NAMES_MALE = {},
+		LOCALIZED_CLASS_NAMES_FEMALE = {},
 		ITEM_QUALITY_COLORS = {},
 		PowerBarColor = {
-			MANA = { r = 0, g = 0, b = 1 }, RAGE = { r = 1, g = 0, b = 0 }, FOCUS = { r = 1, g = 0.5, b = 0.25 },
-			ENERGY = { r = 1, g = 1, b = 0 }, HAPPINESS = { r = 0, g = 1, b = 1 }, RUNES = { r = 0.5, g = 0.5, b = 0.5 },
+			MANA = { r = 0, g = 0, b = 1 },
+			RAGE = { r = 1, g = 0, b = 0 },
+			FOCUS = { r = 1, g = 0.5, b = 0.25 },
+			ENERGY = { r = 1, g = 1, b = 0 },
+			HAPPINESS = { r = 0, g = 1, b = 1 },
+			RUNES = { r = 0.5, g = 0.5, b = 0.5 },
 			RUNIC_POWER = { r = 0, g = 0.82, b = 1 },
 		},
 		FACTION_BAR_COLORS = {
-			{ r = 0.8, g = 0.3, b = 0.22 }, { r = 0.8, g = 0.3, b = 0.22 }, { r = 0.75, g = 0.27, b = 0 },
-			{ r = 0.9, g = 0.7, b = 0 }, { r = 0, g = 0.6, b = 0.1 }, { r = 0, g = 0.6, b = 0.1 },
-			{ r = 0, g = 0.6, b = 0.1 }, { r = 0, g = 0.6, b = 0.1 },
+			{ r = 0.8, g = 0.3, b = 0.22 },
+			{ r = 0.8, g = 0.3, b = 0.22 },
+			{ r = 0.75, g = 0.27, b = 0 },
+			{ r = 0.9, g = 0.7, b = 0 },
+			{ r = 0, g = 0.6, b = 0.1 },
+			{ r = 0, g = 0.6, b = 0.1 },
+			{ r = 0, g = 0.6, b = 0.1 },
+			{ r = 0, g = 0.6, b = 0.1 },
 		},
 		MAX_PLAYER_LEVEL_TABLE = { [0] = 60, 70, 80 },
 		ChatTypeInfo = {},
 		ChatTypeGroup = { SYSTEM = { "CHAT_MSG_SYSTEM" }, SAY = { "CHAT_MSG_SAY" } },
 		CHAT_FRAMES = {},
 		CHAT_FRAME_TEXTURES = {
-			"Background", "TopLeftTexture", "BottomLeftTexture", "TopRightTexture", "BottomRightTexture",
-			"LeftTexture", "RightTexture", "BottomTexture", "TopTexture",
-			"ButtonFrameBackground", "ButtonFrameTopLeftTexture", "ButtonFrameBottomLeftTexture",
-			"ButtonFrameTopRightTexture", "ButtonFrameBottomRightTexture", "ButtonFrameLeftTexture",
-			"ButtonFrameRightTexture", "ButtonFrameBottomTexture", "ButtonFrameTopTexture",
+			"Background",
+			"TopLeftTexture",
+			"BottomLeftTexture",
+			"TopRightTexture",
+			"BottomRightTexture",
+			"LeftTexture",
+			"RightTexture",
+			"BottomTexture",
+			"TopTexture",
+			"ButtonFrameBackground",
+			"ButtonFrameTopLeftTexture",
+			"ButtonFrameBottomLeftTexture",
+			"ButtonFrameTopRightTexture",
+			"ButtonFrameBottomRightTexture",
+			"ButtonFrameLeftTexture",
+			"ButtonFrameRightTexture",
+			"ButtonFrameBottomTexture",
+			"ButtonFrameTopTexture",
 		},
 		StaticPopupDialogs = {},
 		UnitPopupMenus = {
-			SELF = { "RAID_TARGET_ICON", "CANCEL" }, PARTY = { "CANCEL" }, PLAYER = { "CANCEL" }, RAID_PLAYER = { "CANCEL" },
+			SELF = { "RAID_TARGET_ICON", "CANCEL" },
+			PARTY = { "CANCEL" },
+			PLAYER = { "CANCEL" },
+			RAID_PLAYER = { "CANCEL" },
 			TARGET = { "SET_FOCUS", "RAID_TARGET_ICON", "CANCEL" },
 			FOCUS = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CLEAR_FOCUS", "CANCEL" },
 		},
@@ -95,86 +202,179 @@ local function constants()
 		UISpecialFrames = {},
 		UIChildWindows = { "GearManagerDialog" },
 		NUM_GEARSETS_PER_ROW = 5,
-		PLAYERSTAT_DROPDOWN_OPTIONS = { "PLAYERSTAT_BASE_STATS", "PLAYERSTAT_MELEE_COMBAT", "PLAYERSTAT_RANGED_COMBAT",
-			"PLAYERSTAT_SPELL_COMBAT", "PLAYERSTAT_DEFENSES" },
+		PLAYERSTAT_DROPDOWN_OPTIONS = {
+			"PLAYERSTAT_BASE_STATS",
+			"PLAYERSTAT_MELEE_COMBAT",
+			"PLAYERSTAT_RANGED_COMBAT",
+			"PLAYERSTAT_SPELL_COMBAT",
+			"PLAYERSTAT_DEFENSES",
+		},
 		-- the windows' (FriendsFrame.lua, SpellBookFrame.lua, QuestInfo.lua)
 		NUM_LFD_CHOICE_BUTTONS = 15, -- LFDFrame.lua
 		NUM_LFR_LIST_BUTTONS = 19, -- LFRFrame.lua
-		WHOS_TO_DISPLAY = 17, FRIENDS_FRAME_WHO_HEIGHT = 16, MAX_OBJECTIVES = 10, NUM_FACTIONS_DISPLAYED = 15,
-		WHOFRAME_DROPDOWN_LIST = { { name = "Zone", sortType = "zone" }, { name = "Guild", sortType = "guild" },
-			{ name = "Race", sortType = "race" } },
-		BOOKTYPE_SPELL = "spell", BOOKTYPE_PET = "pet",
-		PLAYERSTAT_BASE_STATS = "Base Stats", PLAYERSTAT_MELEE_COMBAT = "Melee", PLAYERSTAT_RANGED_COMBAT = "Ranged",
-		PLAYERSTAT_SPELL_COMBAT = "Spell", PLAYERSTAT_DEFENSES = "Defenses",
-		EQUIPMENT_MANAGER = "Equipment Manager", ACHIEVEMENTS = "Achievements", OBJECTIVES_TRACKER_LABEL = "Objectives",
-		DELETE = "Delete", EQUIPSET_EQUIP = "Equip", SAVE = "Save",
+		WHOS_TO_DISPLAY = 17,
+		FRIENDS_FRAME_WHO_HEIGHT = 16,
+		MAX_OBJECTIVES = 10,
+		NUM_FACTIONS_DISPLAYED = 15,
+		WHOFRAME_DROPDOWN_LIST = {
+			{ name = "Zone", sortType = "zone" },
+			{ name = "Guild", sortType = "guild" },
+			{ name = "Race", sortType = "race" },
+		},
+		BOOKTYPE_SPELL = "spell",
+		BOOKTYPE_PET = "pet",
+		PLAYERSTAT_BASE_STATS = "Base Stats",
+		PLAYERSTAT_MELEE_COMBAT = "Melee",
+		PLAYERSTAT_RANGED_COMBAT = "Ranged",
+		PLAYERSTAT_SPELL_COMBAT = "Spell",
+		PLAYERSTAT_DEFENSES = "Defenses",
+		EQUIPMENT_MANAGER = "Equipment Manager",
+		ACHIEVEMENTS = "Achievements",
+		OBJECTIVES_TRACKER_LABEL = "Objectives",
+		DELETE = "Delete",
+		EQUIPSET_EQUIP = "Equip",
+		SAVE = "Save",
 		UIPanelWindows = {},
 		COMBAT_TEXT_LOCATIONS = {
-			startX = 0, startY = 384, endX = 0, endY = 609,
+			startX = 0,
+			startY = 384,
+			endX = 0,
+			endY = 609,
 		},
-		COMBAT_TEXT_HEIGHT = 25, COMBAT_TEXT_SCROLLSPEED = 1.9, COMBAT_TEXT_FADEOUT_TIME = 1.3,
-		COMBAT_TEXT_SPACING = 10, COMBAT_TEXT_MAX_OFFSET = 130, NUM_COMBAT_TEXT_LINES = 20,
+		COMBAT_TEXT_HEIGHT = 25,
+		COMBAT_TEXT_SCROLLSPEED = 1.9,
+		COMBAT_TEXT_FADEOUT_TIME = 1.3,
+		COMBAT_TEXT_SPACING = 10,
+		COMBAT_TEXT_MAX_OFFSET = 130,
+		NUM_COMBAT_TEXT_LINES = 20,
 		MICRO_BUTTONS = nil,
-		DEFAULT_CHAT_FRAME = nil, SELECTED_CHAT_FRAME = nil, SELECTED_DOCK_FRAME = nil,
+		DEFAULT_CHAT_FRAME = nil,
+		SELECTED_CHAT_FRAME = nil,
+		SELECTED_DOCK_FRAME = nil,
 		GENERAL_CHAT_DOCK = nil,
 		CUSTOM_CLASS_COLORS = nil,
 		TOOLTIP_DEFAULT_COLOR = { r = 1, g = 1, b = 1 },
 		TOOLTIP_DEFAULT_BACKGROUND_COLOR = { r = 0.09, g = 0.09, b = 0.19 },
-		NORMAL_FONT_COLOR = { r = 1, g = 0.82, b = 0 }, HIGHLIGHT_FONT_COLOR = { r = 1, g = 1, b = 1 },
-		RED_FONT_COLOR = { r = 1, g = 0.1, b = 0.1 }, GREEN_FONT_COLOR = { r = 0.1, g = 1, b = 0.1 },
-		GRAY_FONT_COLOR = { r = 0.5, g = 0.5, b = 0.5 }, YELLOW_FONT_COLOR = { r = 1, g = 1, b = 0 },
-		NORMAL_FONT_COLOR_CODE = "|cffffd200", HIGHLIGHT_FONT_COLOR_CODE = "|cffffffff",
-		RED_FONT_COLOR_CODE = "|cffff2020", GREEN_FONT_COLOR_CODE = "|cff20ff20",
-		GRAY_FONT_COLOR_CODE = "|cff808080", FONT_COLOR_CODE_CLOSE = "|r",
-		STANDARD_TEXT_FONT = "Fonts\\FRIZQT__.TTF", UNIT_NAME_FONT = "Fonts\\FRIZQT__.TTF",
-		DAMAGE_TEXT_FONT = "Fonts\\FRIZQT__.TTF", NAMEPLATE_FONT = "Fonts\\FRIZQT__.TTF",
-		COPPER_PER_SILVER = 100, SILVER_PER_GOLD = 100, COPPER_PER_GOLD = 10000,
-		SECONDS_PER_MIN = 60, SECONDS_PER_HOUR = 3600, SECONDS_PER_DAY = 86400,
-		GOLD_AMOUNT = "%dg", SILVER_AMOUNT = "%ds", COPPER_AMOUNT = "%dc",
-		SELL_PRICE = "Sell Price", CURRENTLY_EQUIPPED = "Currently Equipped", ARMOR = "Armor",
-		ITEM_MOD_DAMAGE_PER_SECOND_SHORT = "Damage Per Second", ITEM_SOULBOUND = "Soulbound",
-		ITEM_BIND_ON_PICKUP = "Binds when picked up", ITEM_BIND_ON_EQUIP = "Binds when equipped",
-		ITEM_BIND_ON_USE = "Binds when used", ITEM_BIND_TO_ACCOUNT = "Binds to account",
-		ITEM_ACCOUNTBOUND = "Account Bound", ITEM_BIND_QUEST = "Quest Item", ITEM_UNIQUE = "Unique",
+		NORMAL_FONT_COLOR = { r = 1, g = 0.82, b = 0 },
+		HIGHLIGHT_FONT_COLOR = { r = 1, g = 1, b = 1 },
+		RED_FONT_COLOR = { r = 1, g = 0.1, b = 0.1 },
+		GREEN_FONT_COLOR = { r = 0.1, g = 1, b = 0.1 },
+		GRAY_FONT_COLOR = { r = 0.5, g = 0.5, b = 0.5 },
+		YELLOW_FONT_COLOR = { r = 1, g = 1, b = 0 },
+		NORMAL_FONT_COLOR_CODE = "|cffffd200",
+		HIGHLIGHT_FONT_COLOR_CODE = "|cffffffff",
+		RED_FONT_COLOR_CODE = "|cffff2020",
+		GREEN_FONT_COLOR_CODE = "|cff20ff20",
+		GRAY_FONT_COLOR_CODE = "|cff808080",
+		FONT_COLOR_CODE_CLOSE = "|r",
+		STANDARD_TEXT_FONT = "Fonts\\FRIZQT__.TTF",
+		UNIT_NAME_FONT = "Fonts\\FRIZQT__.TTF",
+		DAMAGE_TEXT_FONT = "Fonts\\FRIZQT__.TTF",
+		NAMEPLATE_FONT = "Fonts\\FRIZQT__.TTF",
+		COPPER_PER_SILVER = 100,
+		SILVER_PER_GOLD = 100,
+		COPPER_PER_GOLD = 10000,
+		SECONDS_PER_MIN = 60,
+		SECONDS_PER_HOUR = 3600,
+		SECONDS_PER_DAY = 86400,
+		GOLD_AMOUNT = "%dg",
+		SILVER_AMOUNT = "%ds",
+		COPPER_AMOUNT = "%dc",
+		SELL_PRICE = "Sell Price",
+		CURRENTLY_EQUIPPED = "Currently Equipped",
+		ARMOR = "Armor",
+		ITEM_MOD_DAMAGE_PER_SECOND_SHORT = "Damage Per Second",
+		ITEM_SOULBOUND = "Soulbound",
+		ITEM_BIND_ON_PICKUP = "Binds when picked up",
+		ITEM_BIND_ON_EQUIP = "Binds when equipped",
+		ITEM_BIND_ON_USE = "Binds when used",
+		ITEM_BIND_TO_ACCOUNT = "Binds to account",
+		ITEM_ACCOUNTBOUND = "Account Bound",
+		ITEM_BIND_QUEST = "Quest Item",
+		ITEM_UNIQUE = "Unique",
 		ITEM_UNIQUE_EQUIPPABLE = "Unique-Equipped",
 		-- UI strings whose placeholders the addon depends on
-		UNIT_LEVEL_TEMPLATE = "Level %s", UNIT_TYPE_LEVEL_TEMPLATE = "Level %s %s",
-		UNIT_PLUS_LEVEL_TEMPLATE = "Level %s Elite", UNIT_TYPE_PLUS_LEVEL_TEMPLATE = "Level %s Elite %s",
-		UNIT_LEVEL_DEAD_TEMPLATE = "Level %s (Dead)", FRIENDS_LEVEL_TEMPLATE = "Level %d %s",
-		ITEM_LEVEL = "Item Level %d", TALENTS = "Talents", LEVEL = "Level", DEAD = "Dead",
-		PLAYER_OFFLINE = "Offline", AFK = "AFK", DND = "DND", ELITE = "Elite", NONE = "None",
-		HAVE_MAIL = "You have unread mail", HAVE_MAIL_FROM = "Unread mail from:",
+		UNIT_LEVEL_TEMPLATE = "Level %s",
+		UNIT_TYPE_LEVEL_TEMPLATE = "Level %s %s",
+		UNIT_PLUS_LEVEL_TEMPLATE = "Level %s Elite",
+		UNIT_TYPE_PLUS_LEVEL_TEMPLATE = "Level %s Elite %s",
+		UNIT_LEVEL_DEAD_TEMPLATE = "Level %s (Dead)",
+		FRIENDS_LEVEL_TEMPLATE = "Level %d %s",
+		ITEM_LEVEL = "Item Level %d",
+		TALENTS = "Talents",
+		LEVEL = "Level",
+		DEAD = "Dead",
+		PLAYER_OFFLINE = "Offline",
+		AFK = "AFK",
+		DND = "DND",
+		ELITE = "Elite",
+		NONE = "None",
+		HAVE_MAIL = "You have unread mail",
+		HAVE_MAIL_FROM = "Unread mail from:",
 		RANDOM_ROLL_RESULT = "%s rolls %d (%d-%d)",
-		FPS_ABBR = "fps", MILLISECONDS_ABBR = "ms", YOU = "You", CLOSE = "Close", CONTINUED = "...", GROUP = "Group",
-		FACTION_ALLIANCE = "Alliance", FACTION_HORDE = "Horde", PVP_ENABLED = "PvP",
-		SPELL_TIME_REMAINING_DAYS = "%d |4day:days; remaining", SPELL_TIME_REMAINING_HOURS = "%d |4hour:hours; remaining",
-		SPELL_TIME_REMAINING_MIN = "%d |4minute:minutes; remaining", SPELL_TIME_REMAINING_SEC = "%d |4second:seconds; remaining",
-		CONTAINER_SLOTS = "%d Slot %s", DPS_TEMPLATE = "(%.1f damage per second)", ARMOR_TEMPLATE = "%d Armor",
-		DURABILITY_TEMPLATE = "Durability %d / %d", ITEM_CLASSES_ALLOWED = "Classes: %s",
-		ITEM_UNIQUE_MULTIPLE = "Unique (%d)", ITEM_LIMIT_CATEGORY = "Unique: %s (%d)",
-		ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)", ITEM_MIN_LEVEL = "Requires Level %d",
-		ITEM_LEVEL_RANGE = "Requires level %d to %d", ITEM_LEVEL_RANGE_CURRENT = "Requires level %d to %d (%d)",
-		ITEM_MIN_SKILL = "Requires %s (%d)", ITEM_REQ_SKILL = "Requires %s", ITEM_REQ_REPUTATION = "Requires %s - %s",
+		FPS_ABBR = "fps",
+		MILLISECONDS_ABBR = "ms",
+		YOU = "You",
+		CLOSE = "Close",
+		CONTINUED = "...",
+		GROUP = "Group",
+		FACTION_ALLIANCE = "Alliance",
+		FACTION_HORDE = "Horde",
+		PVP_ENABLED = "PvP",
+		SPELL_TIME_REMAINING_DAYS = "%d |4day:days; remaining",
+		SPELL_TIME_REMAINING_HOURS = "%d |4hour:hours; remaining",
+		SPELL_TIME_REMAINING_MIN = "%d |4minute:minutes; remaining",
+		SPELL_TIME_REMAINING_SEC = "%d |4second:seconds; remaining",
+		CONTAINER_SLOTS = "%d Slot %s",
+		DPS_TEMPLATE = "(%.1f damage per second)",
+		ARMOR_TEMPLATE = "%d Armor",
+		DURABILITY_TEMPLATE = "Durability %d / %d",
+		ITEM_CLASSES_ALLOWED = "Classes: %s",
+		ITEM_UNIQUE_MULTIPLE = "Unique (%d)",
+		ITEM_LIMIT_CATEGORY = "Unique: %s (%d)",
+		ITEM_LIMIT_CATEGORY_MULTIPLE = "Unique-Equipped: %s (%d)",
+		ITEM_MIN_LEVEL = "Requires Level %d",
+		ITEM_LEVEL_RANGE = "Requires level %d to %d",
+		ITEM_LEVEL_RANGE_CURRENT = "Requires level %d to %d (%d)",
+		ITEM_MIN_SKILL = "Requires %s (%d)",
+		ITEM_REQ_SKILL = "Requires %s",
+		ITEM_REQ_REPUTATION = "Requires %s - %s",
 		ITEM_REQ_ARENA_RATING = "Requires personal and team arena rating of %d",
-		ERR_QUEST_ADD_KILL_SII = "%s slain: %d/%d", ERR_QUEST_ADD_ITEM_SII = "%s: %d/%d",
-		ERR_QUEST_ADD_FOUND_SII = "%s: %d/%d", ERR_QUEST_ADD_PLAYER_KILL_SII = "Players slain: %d/%d",
-		ERR_QUEST_OBJECTIVE_COMPLETE_S = "%s (Complete)", ERR_QUEST_COMPLETE_S = "%s completed.",
-		ERR_QUEST_ACCEPTED_S = "Quest accepted: %s", ERR_QUEST_FAILED_S = "%s failed.",
-		ERR_QUEST_REWARD_EXP_I = "Experience gained: %d.", ERR_QUEST_REWARD_MONEY_S = "Received %s.",
-		ERR_QUEST_REWARD_ITEM_S = "Received item: %s.", ERR_QUEST_REWARD_ITEM_MULT_IS = "Received %d of item: %s.",
-		ERR_KILLED_BY_S = "%s has slain you.", ERR_USE_LOCKED_WITH_ITEM_S = "Requires %s",
-		ERR_USE_LOCKED_WITH_SPELL_S = "Requires %s", ERR_USE_LOCKED_WITH_SPELL_KNOWN_SI = "Requires %s %d",
+		ERR_QUEST_ADD_KILL_SII = "%s slain: %d/%d",
+		ERR_QUEST_ADD_ITEM_SII = "%s: %d/%d",
+		ERR_QUEST_ADD_FOUND_SII = "%s: %d/%d",
+		ERR_QUEST_ADD_PLAYER_KILL_SII = "Players slain: %d/%d",
+		ERR_QUEST_OBJECTIVE_COMPLETE_S = "%s (Complete)",
+		ERR_QUEST_COMPLETE_S = "%s completed.",
+		ERR_QUEST_ACCEPTED_S = "Quest accepted: %s",
+		ERR_QUEST_FAILED_S = "%s failed.",
+		ERR_QUEST_REWARD_EXP_I = "Experience gained: %d.",
+		ERR_QUEST_REWARD_MONEY_S = "Received %s.",
+		ERR_QUEST_REWARD_ITEM_S = "Received item: %s.",
+		ERR_QUEST_REWARD_ITEM_MULT_IS = "Received %d of item: %s.",
+		ERR_KILLED_BY_S = "%s has slain you.",
+		ERR_USE_LOCKED_WITH_ITEM_S = "Requires %s",
+		ERR_USE_LOCKED_WITH_SPELL_S = "Requires %s",
+		ERR_USE_LOCKED_WITH_SPELL_KNOWN_SI = "Requires %s %d",
 		ERR_USE_PREVENTED_BY_MECHANIC_S = "Can't do that while %s",
 		ERR_ATTACK_PREVENTED_BY_MECHANIC_S = "Can't attack while %s",
-		ERR_QUEST_FAILED_BAG_FULL_S = "%s failed: Inventory is full.", ERR_QUEST_FAILED_MAX_COUNT_S = "%s failed: max count",
+		ERR_QUEST_FAILED_BAG_FULL_S = "%s failed: Inventory is full.",
+		ERR_QUEST_FAILED_MAX_COUNT_S = "%s failed: max count",
 		ERR_QUEST_FORCE_REMOVED_S = "The quest %s has been removed from your quest log.",
 		ERR_QUEST_FAILED_TOO_MANY_DAILY_QUESTS_I = "You have completed %d daily quests today",
-		SPELL_FAILED_CASTER_AURASTATE = "You can't do that yet", SPELL_EQUIPPED_ITEM = "Requires %s",
-		SPELL_EQUIPPED_ITEM_NOSPACE = "Requires %s", SPELL_REQUIRED_FORM = "Must be in %s",
-		SPELL_REQUIRED_FORM_NOSPACE = "Must be in %s", LOCKED_WITH_ITEM = "Requires %s",
-		LOCKED_WITH_SPELL = "Requires %s", LOCKED_WITH_SPELL_KNOWN = "Requires %s",
-		TIMEMANAGER_AM = "AM", TIMEMANAGER_PM = "PM", TIMEMANAGER_TOOLTIP_LOCALTIME = "Local Time:",
-		TIMEMANAGER_TOOLTIP_REALMTIME = "Realm Time:", TIMEMANAGER_TOOLTIP_TITLE = "Time Info",
+		SPELL_FAILED_CASTER_AURASTATE = "You can't do that yet",
+		SPELL_EQUIPPED_ITEM = "Requires %s",
+		SPELL_EQUIPPED_ITEM_NOSPACE = "Requires %s",
+		SPELL_REQUIRED_FORM = "Must be in %s",
+		SPELL_REQUIRED_FORM_NOSPACE = "Must be in %s",
+		LOCKED_WITH_ITEM = "Requires %s",
+		LOCKED_WITH_SPELL = "Requires %s",
+		LOCKED_WITH_SPELL_KNOWN = "Requires %s",
+		TIMEMANAGER_AM = "AM",
+		TIMEMANAGER_PM = "PM",
+		TIMEMANAGER_TOOLTIP_LOCALTIME = "Local Time:",
+		TIMEMANAGER_TOOLTIP_REALMTIME = "Realm Time:",
+		TIMEMANAGER_TOOLTIP_TITLE = "Time Info",
 		GAMETIME_TOOLTIP_TOGGLE_CALENDAR = "Click to toggle the calendar.",
 		MBB_TOOLTIP1 = nil,
 		SLASH_RELOADUI1 = nil,
@@ -187,14 +387,30 @@ local function constants()
 	end
 	for quality = 0, 7 do
 		local colors = {
-			[0] = { 0.62, 0.62, 0.62, "|cff9d9d9d" }, { 1, 1, 1, "|cffffffff" }, { 0.12, 1, 0, "|cff1eff00" },
-			{ 0, 0.44, 0.87, "|cff0070dd" }, { 0.64, 0.21, 0.93, "|cffa335ee" }, { 1, 0.5, 0, "|cffff8000" },
-			{ 0.9, 0.8, 0.5, "|cffe6cc80" }, { 0.9, 0.8, 0.5, "|cffe6cc80" },
+			[0] = { 0.62, 0.62, 0.62, "|cff9d9d9d" },
+			{ 1, 1, 1, "|cffffffff" },
+			{ 0.12, 1, 0, "|cff1eff00" },
+			{ 0, 0.44, 0.87, "|cff0070dd" },
+			{ 0.64, 0.21, 0.93, "|cffa335ee" },
+			{ 1, 0.5, 0, "|cffff8000" },
+			{ 0.9, 0.8, 0.5, "|cffe6cc80" },
+			{ 0.9, 0.8, 0.5, "|cffe6cc80" },
 		}
 		local q = colors[quality]
 		c.ITEM_QUALITY_COLORS[quality] = { r = q[1], g = q[2], b = q[3], hex = q[4] }
 	end
-	for _, chatType in ipairs({ "SYSTEM", "SAY", "PARTY", "RAID", "GUILD", "WHISPER", "YELL", "CHANNEL", "EMOTE", "RAID_WARNING" }) do
+	for _, chatType in ipairs({
+		"SYSTEM",
+		"SAY",
+		"PARTY",
+		"RAID",
+		"GUILD",
+		"WHISPER",
+		"YELL",
+		"CHANNEL",
+		"EMOTE",
+		"RAID_WARNING",
+	}) do
 		c.ChatTypeInfo[chatType] = { r = 1, g = 1, b = 1, id = 1, sticky = 0 }
 	end
 	return c
@@ -203,11 +419,21 @@ end
 -- ALL CAPS globals that read nil in the client (the fallback would make
 -- them a string).
 local NIL_CAPS = {
-	CUSTOM_CLASS_COLORS = true, MBB_TOOLTIP1 = true, SLASH_RELOADUI1 = true, SLASH_RELOADUI2 = true,
-	UIDROPDOWNMENU_VALUE_PATCH_VERSION = true, LE_PARTY_CATEGORY_HOME = true, MICRO_BUTTONS = true,
-	DEFAULT_CHAT_FRAME = true, SELECTED_CHAT_FRAME = true, SELECTED_DOCK_FRAME = true,
-	GENERAL_CHAT_DOCK = true, ACTION_BUTTON_SHOW_GRID_REASON_CVAR = true, NUM_LE_BAG_FILTER_FLAGS = true,
-	MAX_ACCOUNT_MACROS = true, PLAYER_FRAME_UNLOCKED = true,
+	CUSTOM_CLASS_COLORS = true,
+	MBB_TOOLTIP1 = true,
+	SLASH_RELOADUI1 = true,
+	SLASH_RELOADUI2 = true,
+	UIDROPDOWNMENU_VALUE_PATCH_VERSION = true,
+	LE_PARTY_CATEGORY_HOME = true,
+	MICRO_BUTTONS = true,
+	DEFAULT_CHAT_FRAME = true,
+	SELECTED_CHAT_FRAME = true,
+	SELECTED_DOCK_FRAME = true,
+	GENERAL_CHAT_DOCK = true,
+	ACTION_BUTTON_SHOW_GRID_REASON_CVAR = true,
+	NUM_LE_BAG_FILTER_FLAGS = true,
+	MAX_ACCOUNT_MACROS = true,
+	PLAYER_FRAME_UNLOCKED = true,
 }
 Blizzard.NIL_CAPS = NIL_CAPS
 
@@ -216,26 +442,95 @@ Blizzard.NIL_CAPS = NIL_CAPS
 ------------------------------------------------------------------------
 
 local FONTS = {
-	"GameFontNormal", "GameFontHighlight", "GameFontNormalSmall", "GameFontHighlightSmall", "GameFontHighlightSmallLeft",
-	"GameFontNormalLarge", "GameFontHighlightLarge", "GameFontDisable", "GameFontDisableSmall",
-	"GameFontGreen", "GameFontRed", "GameFontWhite", "GameFontBlack", "GameFontNormalHuge",
-	"GameTooltipText", "GameTooltipTextSmall", "GameTooltipHeaderText", "NumberFontNormal",
-	"NumberFontNormalSmall", "NumberFontNormalLarge", "NumberFontNormalHuge", "NumberFont_Normal_Med",
-	"NumberFont_Outline_Med", "NumberFont_Outline_Large", "NumberFont_Outline_Huge", "NumberFont_Shadow_Med",
-	"NumberFont_Shadow_Small", "ChatFontNormal", "ChatFontSmall", "ChatFontLarge", "SystemFont_Small",
-	"SystemFont_Med1", "SystemFont_Med2", "SystemFont_Med3", "SystemFont_Large", "SystemFont_Huge1",
-	"SystemFont_OutlineThick_Huge2", "SystemFont_OutlineThick_Huge4", "SystemFont_OutlineThick_WTF",
-	"SystemFont_Shadow_Small", "SystemFont_Shadow_Med1", "SystemFont_Shadow_Med3", "SystemFont_Shadow_Large",
-	"SystemFont_Shadow_Huge1", "SystemFont_Tiny", "SystemFont_Outline_Small", "SystemFont_InverseShadow_Large",
-	"QuestFont", "QuestFont_Large", "QuestFont_Shadow_Huge", "QuestFont_Shadow_Small", "QuestFontNormalSmall",
-	"QuestFontHighlight", "QuestTitleFont", "QuestTitleFontBlackShadow", "FriendsFont_Normal", "FriendsFont_Large",
-	"FriendsFont_Small", "FriendsFont_UserText", "MailFont_Large", "SpellFont_Small", "InvoiceFont_Med",
-	"InvoiceFont_Small", "ReputationDetailFont", "AchievementFont_Small", "CombatTextFont", "CombatLogFont",
-	"ErrorFont", "TextStatusBarText", "TextStatusBarTextLarge", "ZoneTextFont", "SubZoneTextFont",
-	"PVPInfoTextFont", "WorldMapTextFont", "DialogButtonNormalText", "DialogButtonHighlightText",
-	"GameFontNormalLeft", "GameFontHighlightLeft", "GameFontNormalMed3", "BossEmoteNormalHuge",
-	"NumberFontNormalRightRed", "NumberFontNormalYellow", "CombatTextFontOutline", "MovieSubtitleFont",
-	"Tooltip_Med", "Tooltip_Small", "GameFont_Gigantic", "Game13Font", "Game15Font",
+	"GameFontNormal",
+	"GameFontHighlight",
+	"GameFontNormalSmall",
+	"GameFontHighlightSmall",
+	"GameFontHighlightSmallLeft",
+	"GameFontNormalLarge",
+	"GameFontHighlightLarge",
+	"GameFontDisable",
+	"GameFontDisableSmall",
+	"GameFontGreen",
+	"GameFontRed",
+	"GameFontWhite",
+	"GameFontBlack",
+	"GameFontNormalHuge",
+	"GameTooltipText",
+	"GameTooltipTextSmall",
+	"GameTooltipHeaderText",
+	"NumberFontNormal",
+	"NumberFontNormalSmall",
+	"NumberFontNormalLarge",
+	"NumberFontNormalHuge",
+	"NumberFont_Normal_Med",
+	"NumberFont_Outline_Med",
+	"NumberFont_Outline_Large",
+	"NumberFont_Outline_Huge",
+	"NumberFont_Shadow_Med",
+	"NumberFont_Shadow_Small",
+	"ChatFontNormal",
+	"ChatFontSmall",
+	"ChatFontLarge",
+	"SystemFont_Small",
+	"SystemFont_Med1",
+	"SystemFont_Med2",
+	"SystemFont_Med3",
+	"SystemFont_Large",
+	"SystemFont_Huge1",
+	"SystemFont_OutlineThick_Huge2",
+	"SystemFont_OutlineThick_Huge4",
+	"SystemFont_OutlineThick_WTF",
+	"SystemFont_Shadow_Small",
+	"SystemFont_Shadow_Med1",
+	"SystemFont_Shadow_Med3",
+	"SystemFont_Shadow_Large",
+	"SystemFont_Shadow_Huge1",
+	"SystemFont_Tiny",
+	"SystemFont_Outline_Small",
+	"SystemFont_InverseShadow_Large",
+	"QuestFont",
+	"QuestFont_Large",
+	"QuestFont_Shadow_Huge",
+	"QuestFont_Shadow_Small",
+	"QuestFontNormalSmall",
+	"QuestFontHighlight",
+	"QuestTitleFont",
+	"QuestTitleFontBlackShadow",
+	"FriendsFont_Normal",
+	"FriendsFont_Large",
+	"FriendsFont_Small",
+	"FriendsFont_UserText",
+	"MailFont_Large",
+	"SpellFont_Small",
+	"InvoiceFont_Med",
+	"InvoiceFont_Small",
+	"ReputationDetailFont",
+	"AchievementFont_Small",
+	"CombatTextFont",
+	"CombatLogFont",
+	"ErrorFont",
+	"TextStatusBarText",
+	"TextStatusBarTextLarge",
+	"ZoneTextFont",
+	"SubZoneTextFont",
+	"PVPInfoTextFont",
+	"WorldMapTextFont",
+	"DialogButtonNormalText",
+	"DialogButtonHighlightText",
+	"GameFontNormalLeft",
+	"GameFontHighlightLeft",
+	"GameFontNormalMed3",
+	"BossEmoteNormalHuge",
+	"NumberFontNormalRightRed",
+	"NumberFontNormalYellow",
+	"CombatTextFontOutline",
+	"MovieSubtitleFont",
+	"Tooltip_Med",
+	"Tooltip_Small",
+	"GameFont_Gigantic",
+	"Game13Font",
+	"Game15Font",
 }
 
 ------------------------------------------------------------------------
@@ -322,14 +617,32 @@ local function chatFrame(index)
 	frame.isDocked = index <= 2 and 1 or nil
 	frame:SetSize(430, 120)
 	frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 32, 95)
-	for _, texture in ipairs({ "Background", "TopLeftTexture", "BottomLeftTexture", "TopRightTexture",
-		"BottomRightTexture", "LeftTexture", "RightTexture", "BottomTexture", "TopTexture" }) do
+	for _, texture in ipairs({
+		"Background",
+		"TopLeftTexture",
+		"BottomLeftTexture",
+		"TopRightTexture",
+		"BottomRightTexture",
+		"LeftTexture",
+		"RightTexture",
+		"BottomTexture",
+		"TopTexture",
+	}) do
 		new("Texture", name .. texture, frame)
 	end
 	local buttonFrame = new("Frame", name .. "ButtonFrame", frame)
 	frame.buttonFrame = buttonFrame
-	for _, texture in ipairs({ "Background", "TopLeftTexture", "BottomLeftTexture", "TopRightTexture",
-		"BottomRightTexture", "LeftTexture", "RightTexture", "BottomTexture", "TopTexture" }) do
+	for _, texture in ipairs({
+		"Background",
+		"TopLeftTexture",
+		"BottomLeftTexture",
+		"TopRightTexture",
+		"BottomRightTexture",
+		"LeftTexture",
+		"RightTexture",
+		"BottomTexture",
+		"TopTexture",
+	}) do
 		new("Texture", name .. "ButtonFrame" .. texture, buttonFrame)
 	end
 	for _, b in ipairs({ "UpButton", "DownButton", "BottomButton", "MinimizeButton" }) do
@@ -339,8 +652,20 @@ local function chatFrame(index)
 	button("Button", name .. "ResizeButton", frame)
 	local tab = button("Button", name .. "Tab", UIParent)
 	tab:SetID(index)
-	for _, texture in ipairs({ "Left", "Middle", "Right", "SelectedLeft", "SelectedMiddle", "SelectedRight",
-		"HighlightLeft", "HighlightMiddle", "HighlightRight", "Flash", "Glow", "ConversationIcon" }) do
+	for _, texture in ipairs({
+		"Left",
+		"Middle",
+		"Right",
+		"SelectedLeft",
+		"SelectedMiddle",
+		"SelectedRight",
+		"HighlightLeft",
+		"HighlightMiddle",
+		"HighlightRight",
+		"Flash",
+		"Glow",
+		"ConversationIcon",
+	}) do
 		new("Texture", name .. "Tab" .. texture, tab)
 	end
 	local tabText = new("FontString", name .. "TabText", tab)
@@ -359,7 +684,12 @@ end
 
 local function actionButtons(prefix, parent, count, templates)
 	for i = 1, count do
-		local b = button("CheckButton", prefix .. i, parent, templates or "ActionBarButtonTemplate, SecureActionButtonTemplate")
+		local b = button(
+			"CheckButton",
+			prefix .. i,
+			parent,
+			templates or "ActionBarButtonTemplate, SecureActionButtonTemplate"
+		)
 		b:SetID(i)
 		b.icon = _G[prefix .. i .. "Icon"]
 		b.cooldown = _G[prefix .. i .. "Cooldown"]
@@ -433,8 +763,14 @@ end
 -- hand when there are some. `addon`: a load-on-demand addon's, or nil.
 local FRAMEXML
 local BUTTON_ROLES = {
-	normal = "normalTexture", pushed = "pushedTexture", disabled = "disabledTexture", highlight = "highlightTexture",
-	checked = "checkedTexture", disabledChecked = "disabledCheckedTexture", thumb = "thumb", bar = "barTexture",
+	normal = "normalTexture",
+	pushed = "pushedTexture",
+	disabled = "disabledTexture",
+	highlight = "highlightTexture",
+	checked = "checkedTexture",
+	disabledChecked = "disabledCheckedTexture",
+	thumb = "thumb",
+	bar = "barTexture",
 	text = "fontString",
 }
 local function fromFrameXML(addon)
@@ -457,7 +793,7 @@ local function fromFrameXML(addon)
 			fresh[#fresh + 1] = { object, owner, size, anchor }
 			if key then
 				state[owner][key] = object
-			elseif (role == "scrollChild") then
+			elseif role == "scrollChild" then
 				owner:SetScrollChild(object)
 			end
 			if file and object.SetTexture then
@@ -504,13 +840,39 @@ end
 -- column, the recommended price, its results); More, the history and Check
 -- for Undercuts. Made as the auction house loads (an addon's onLoad).
 local AUCTIONATOR_PARTS = {
-	{ "Atr_Hlist", "Atr_Hlist_ScrollFrame", "Atr_Search_Box", "Atr_Search_Button", "Atr_Adv_Search_Button",
-		"Atr_AddToSListButton", "Atr_RemFromSListButton", "Atr_NewSListButton", "Atr_MngSListsButton",
-		"Atr_SrchSListButton", "Atr_DropDownSL", "Atr_HeadingsBar", "Atr_ListTabs" },
-	{ "Atr_SellControls", "Atr_HeadingsBar", "Atr_ListTabs", "Atr_Recommend_Text", "Atr_Recommend_Basis_Text",
-		"Atr_RecommendPerStack_Text", "Atr_RecommendPerItem_Text", "Atr_RecommendItem_Tex" },
-	{ "Atr_Hlist", "Atr_Hlist_ScrollFrame", "Atr_ActiveItems_Text", "Atr_CheckActiveButton", "Atr_HeadingsBar",
-		"Atr_ListTabs" },
+	{
+		"Atr_Hlist",
+		"Atr_Hlist_ScrollFrame",
+		"Atr_Search_Box",
+		"Atr_Search_Button",
+		"Atr_Adv_Search_Button",
+		"Atr_AddToSListButton",
+		"Atr_RemFromSListButton",
+		"Atr_NewSListButton",
+		"Atr_MngSListsButton",
+		"Atr_SrchSListButton",
+		"Atr_DropDownSL",
+		"Atr_HeadingsBar",
+		"Atr_ListTabs",
+	},
+	{
+		"Atr_SellControls",
+		"Atr_HeadingsBar",
+		"Atr_ListTabs",
+		"Atr_Recommend_Text",
+		"Atr_Recommend_Basis_Text",
+		"Atr_RecommendPerStack_Text",
+		"Atr_RecommendPerItem_Text",
+		"Atr_RecommendItem_Tex",
+	},
+	{
+		"Atr_Hlist",
+		"Atr_Hlist_ScrollFrame",
+		"Atr_ActiveItems_Text",
+		"Atr_CheckActiveButton",
+		"Atr_HeadingsBar",
+		"Atr_ListTabs",
+	},
 }
 function Blizzard.Auctionator()
 	fromFrameXML("Auctionator")
@@ -540,7 +902,7 @@ function Blizzard.Auctionator()
 		local index = self:GetID()
 		_G.Atr_Main_Panel:Hide()
 		blizzard(self)
-		if (index > 3) then
+		if index > 3 then
 			for name in pairs(all) do
 				_G[name]:Hide()
 			end
@@ -560,13 +922,22 @@ local function buildFrames()
 	local UIParent = _G.UIParent
 
 	-- tooltips
-	for _, name in ipairs({ "GameTooltip", "ItemRefTooltip", "ShoppingTooltip1", "ShoppingTooltip2",
-		"ShoppingTooltip3", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3",
-		"WorldMapTooltip" }) do
+	for _, name in ipairs({
+		"GameTooltip",
+		"ItemRefTooltip",
+		"ShoppingTooltip1",
+		"ShoppingTooltip2",
+		"ShoppingTooltip3",
+		"ItemRefShoppingTooltip1",
+		"ItemRefShoppingTooltip2",
+		"ItemRefShoppingTooltip3",
+		"WorldMapTooltip",
+	}) do
 		tooltip(name)
 	end
 	_G.GameTooltip.shoppingTooltips = { _G.ShoppingTooltip1, _G.ShoppingTooltip2, _G.ShoppingTooltip3 }
-	_G.ItemRefTooltip.shoppingTooltips = { _G.ItemRefShoppingTooltip1, _G.ItemRefShoppingTooltip2, _G.ItemRefShoppingTooltip3 }
+	_G.ItemRefTooltip.shoppingTooltips =
+		{ _G.ItemRefShoppingTooltip1, _G.ItemRefShoppingTooltip2, _G.ItemRefShoppingTooltip3 }
 	button("Button", "ItemRefCloseButton", _G.ItemRefTooltip)
 	new("StatusBar", "GameTooltipStatusBar", _G.GameTooltip):SetMinMaxValues(0, 1)
 	_G.GameTooltip.statusBar = _G.GameTooltipStatusBar
@@ -633,16 +1004,27 @@ local function buildFrames()
 	local multicast = hidden(new("Frame", "MultiCastActionBarFrame", UIParent))
 	button("Button", "MultiCastRecallSpellButton", multicast)
 	button("Button", "MultiCastSummonSpellButton", multicast)
-	for _, name in ipairs({ "CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton",
-		"AchievementMicroButton", "QuestLogMicroButton", "SocialsMicroButton", "PVPMicroButton",
-		"LFDMicroButton", "MainMenuMicroButton", "HelpMicroButton" }) do
+	for _, name in ipairs({
+		"CharacterMicroButton",
+		"SpellbookMicroButton",
+		"TalentMicroButton",
+		"AchievementMicroButton",
+		"QuestLogMicroButton",
+		"SocialsMicroButton",
+		"PVPMicroButton",
+		"LFDMicroButton",
+		"MainMenuMicroButton",
+		"HelpMicroButton",
+	}) do
 		local micro = button("Button", name, mainMenuBar)
 		-- MainMenuBarMicroButton's tooltip scripts
 		micro:SetScript("OnEnter", function(self)
 			_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			_G.GameTooltip:SetText(name)
 		end)
-		micro:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+		micro:SetScript("OnLeave", function()
+			_G.GameTooltip:Hide()
+		end)
 	end
 	new("Texture", "MicroButtonPortrait", _G.CharacterMicroButton)
 	new("Texture", "PVPMicroButtonTexture", _G.PVPMicroButton)
@@ -684,8 +1066,19 @@ local function buildFrames()
 	new("Frame", "TemporaryEnchantFrame", UIParent)
 	hidden(new("Button", "ConsolidatedBuffs", _G.BuffFrame))
 	hidden(new("Frame", "DurabilityFrame", UIParent))
-	for _, slot in ipairs({ "Head", "Shoulders", "Chest", "Waist", "Legs", "Feet", "Wrists", "Hands", "Weapon",
-		"Shield", "Ranged" }) do
+	for _, slot in ipairs({
+		"Head",
+		"Shoulders",
+		"Chest",
+		"Waist",
+		"Legs",
+		"Feet",
+		"Wrists",
+		"Hands",
+		"Weapon",
+		"Shield",
+		"Ranged",
+	}) do
 		new("Texture", "Durability" .. slot, _G.DurabilityFrame)
 	end
 	hidden(new("Frame", "VehicleSeatIndicator", UIParent))
@@ -758,8 +1151,18 @@ local function buildFrames()
 	local gameMenu = hidden(new("Frame", "GameMenuFrame", UIParent))
 	new("Texture", "GameMenuFrameHeader", gameMenu)
 	new("FontString", "GameMenuFrameHeaderText", gameMenu)
-	for _, name in ipairs({ "Options", "SoundOptions", "UIOptions", "Keybindings", "Macros",
-		"MacOptions", "Ratings", "Logout", "Quit", "Continue" }) do
+	for _, name in ipairs({
+		"Options",
+		"SoundOptions",
+		"UIOptions",
+		"Keybindings",
+		"Macros",
+		"MacOptions",
+		"Ratings",
+		"Logout",
+		"Quit",
+		"Continue",
+	}) do
 		button("Button", "GameMenuButton" .. name, gameMenu, "UIPanelButtonTemplate")
 	end
 	_G.GameMenuButtonRatings:Hide() -- shown in Korea only
@@ -777,25 +1180,59 @@ local function buildFrames()
 	end
 	button("Button", "InterfaceOptionsFrameOkay", options, "UIPanelButtonTemplate")
 	button("Button", "InterfaceOptionsFrameCancel", options, "UIPanelButtonTemplate")
-	for _, name in ipairs({ "Controls", "Combat", "Display", "Objectives", "Social", "ActionBars", "Names",
-		"CombatText", "StatusText", "Party", "UnitFrame", "Camera", "Mouse", "Help", "Buffs", "Features" }) do
-		local panel = hidden(new("Frame", "InterfaceOptions" .. name .. "Panel", _G.InterfaceOptionsFramePanelContainer))
+	for _, name in ipairs({
+		"Controls",
+		"Combat",
+		"Display",
+		"Objectives",
+		"Social",
+		"ActionBars",
+		"Names",
+		"CombatText",
+		"StatusText",
+		"Party",
+		"UnitFrame",
+		"Camera",
+		"Mouse",
+		"Help",
+		"Buffs",
+		"Features",
+	}) do
+		local panel =
+			hidden(new("Frame", "InterfaceOptions" .. name .. "Panel", _G.InterfaceOptionsFramePanelContainer))
 		panel.name = name
 	end
-	for _, name in ipairs({ "InterfaceOptionsCombatPanelTargetOfTarget",
-		"InterfaceOptionsCombatPanelEnemyCastBars", "InterfaceOptionsCombatPanelEnemyCastBarsOnPortrait",
-		"InterfaceOptionsDisplayPanelShowFreeBagSpace", "InterfaceOptionsUnitFramePanelPartyBackground",
-		"InterfaceOptionsActionBarsPanelBottomLeft", "InterfaceOptionsActionBarsPanelBottomRight",
-		"InterfaceOptionsActionBarsPanelRight", "InterfaceOptionsActionBarsPanelRightTwo",
-		"InterfaceOptionsActionBarsPanelAlwaysShowActionBars", "InterfaceOptionsBuffsPanelConsolidateBuffs" }) do
+	for _, name in ipairs({
+		"InterfaceOptionsCombatPanelTargetOfTarget",
+		"InterfaceOptionsCombatPanelEnemyCastBars",
+		"InterfaceOptionsCombatPanelEnemyCastBarsOnPortrait",
+		"InterfaceOptionsDisplayPanelShowFreeBagSpace",
+		"InterfaceOptionsUnitFramePanelPartyBackground",
+		"InterfaceOptionsActionBarsPanelBottomLeft",
+		"InterfaceOptionsActionBarsPanelBottomRight",
+		"InterfaceOptionsActionBarsPanelRight",
+		"InterfaceOptionsActionBarsPanelRightTwo",
+		"InterfaceOptionsActionBarsPanelAlwaysShowActionBars",
+		"InterfaceOptionsBuffsPanelConsolidateBuffs",
+	}) do
 		local panelName = name:match("^(InterfaceOptions%u%l+%a-Panel)")
 		new("CheckButton", name, _G[panelName] or _G.InterfaceOptionsCombatPanel, "InterfaceOptionsCheckButtonTemplate")
 	end
 	new("Frame", "InterfaceOptionsCombatPanelTOTDropDown", _G.InterfaceOptionsCombatPanel, "UIDropDownMenuTemplate")
-	new("Frame", "InterfaceOptionsCombatPanelSelfCastKeyDropDown", _G.InterfaceOptionsCombatPanel, "UIDropDownMenuTemplate")
+	new(
+		"Frame",
+		"InterfaceOptionsCombatPanelSelfCastKeyDropDown",
+		_G.InterfaceOptionsCombatPanel,
+		"UIDropDownMenuTemplate"
+	)
 	local video = hidden(new("Frame", "VideoOptionsFrame", UIParent))
 	new("Frame", "VideoOptionsResolutionPanel", video)
-	new("CheckButton", "VideoOptionsResolutionPanelUseUIScale", _G.VideoOptionsResolutionPanel, "OptionsCheckButtonTemplate")
+	new(
+		"CheckButton",
+		"VideoOptionsResolutionPanelUseUIScale",
+		_G.VideoOptionsResolutionPanel,
+		"OptionsCheckButtonTemplate"
+	)
 	new("Slider", "VideoOptionsResolutionPanelUIScaleSlider", _G.VideoOptionsResolutionPanel, "OptionsSliderTemplate")
 	button("Button", "VideoOptionsFrameOkay", video, "UIPanelButtonTemplate")
 	button("Button", "VideoOptionsFrameApply", video, "UIPanelButtonTemplate")
@@ -815,7 +1252,7 @@ local function buildFrames()
 	-- each from the one before (CharacterFrame.xml)
 	for i, text in ipairs({ "Character", "Pet", "Reputation", "Skills", "Currency" }) do
 		local t = tab("CharacterFrameTab" .. i, character, text)
-		if (i == 1) then
+		if i == 1 then
 			t:SetPoint("BOTTOMLEFT", character, "BOTTOMLEFT", 11, 46)
 		else
 			t:SetPoint("LEFT", _G["CharacterFrameTab" .. (i - 1)], "RIGHT", -15, 0)
@@ -831,12 +1268,33 @@ local function buildFrames()
 	local attributes = new("Frame", "CharacterAttributesFrame", paperDoll)
 	for _, side in ipairs({ "Left", "Right" }) do
 		for _, part in ipairs({ "Top", "Middle", "Bottom" }) do
-			new("Texture", "PlayerStat" .. side .. part, attributes):SetTexture([[Interface\PaperDollInfoFrame\UI-Character-StatBackground]])
+			new("Texture", "PlayerStat" .. side .. part, attributes):SetTexture(
+				[[Interface\PaperDollInfoFrame\UI-Character-StatBackground]]
+			)
 		end
 	end
-	for _, slot in ipairs({ "Head", "Neck", "Shoulder", "Back", "Chest", "Shirt", "Tabard", "Wrist", "Hands",
-		"Waist", "Legs", "Feet", "Finger0", "Finger1", "Trinket0", "Trinket1", "MainHand", "SecondaryHand",
-		"Ranged", "Ammo" }) do
+	for _, slot in ipairs({
+		"Head",
+		"Neck",
+		"Shoulder",
+		"Back",
+		"Chest",
+		"Shirt",
+		"Tabard",
+		"Wrist",
+		"Hands",
+		"Waist",
+		"Legs",
+		"Feet",
+		"Finger0",
+		"Finger1",
+		"Trinket0",
+		"Trinket1",
+		"MainHand",
+		"SecondaryHand",
+		"Ranged",
+		"Ammo",
+	}) do
 		itemButton("Character" .. slot .. "Slot", paperDoll)
 	end
 	-- the ammo slot's frame art (PaperDollFrame.xml)
@@ -857,8 +1315,13 @@ local function buildFrames()
 	end
 	local resistances = new("Frame", "CharacterResistanceFrame", paperDoll)
 	-- its five schools (MagicResistanceFrameTemplate): the icon, the value
-	for i, coords in ipairs({ { .2265625, .33984375 }, { 0, .11328125 }, { .11328125, .2265625 },
-		{ .33984375, .453125 }, { .453125, .56640625 } }) do
+	for i, coords in ipairs({
+		{ 0.2265625, 0.33984375 },
+		{ 0, 0.11328125 },
+		{ 0.11328125, 0.2265625 },
+		{ 0.33984375, 0.453125 },
+		{ 0.453125, 0.56640625 },
+	}) do
 		local resistance = new("Frame", "MagicResFrame" .. i, resistances)
 		resistance:SetSize(32, 29)
 		local icon = new("Texture", nil, resistance)
@@ -873,8 +1336,18 @@ local function buildFrames()
 	-- the equipment manager (GearManagerDialog, UIPanelDialogTemplate) and its button
 	button("Button", "GearManagerToggleButton", paperDoll)
 	local gear = hidden(new("Frame", "GearManagerDialog", paperDoll))
-	for _, part in ipairs({ "TopLeft", "TopRight", "Top", "BottomLeft", "BottomRight", "Bottom", "Left", "Right",
-		"TitleBG", "DialogBG" }) do
+	for _, part in ipairs({
+		"TopLeft",
+		"TopRight",
+		"Top",
+		"BottomLeft",
+		"BottomRight",
+		"Bottom",
+		"Left",
+		"Right",
+		"TitleBG",
+		"DialogBG",
+	}) do
 		new("Texture", "GearManagerDialog" .. part, gear)
 	end
 	gear.title = new("FontString", nil, gear)
@@ -892,7 +1365,9 @@ local function buildFrames()
 		set:SetSize(36, 36)
 		set.icon = set:GetNormalTexture()
 		set.text = new("FontString", "GearSetButton" .. i .. "Name", set)
-		set:SetScript("OnClick", function(self) _G.GearSetButton_OnClick(self) end)
+		set:SetScript("OnClick", function(self)
+			_G.GearSetButton_OnClick(self)
+		end)
 		gear.buttons[i] = set
 	end
 	local popup = hidden(new("Frame", "GearManagerDialogPopup", gear))
@@ -902,9 +1377,15 @@ local function buildFrames()
 	new("EditBox", "GearManagerDialogPopupEditBox", popup)
 	button("Button", "GearManagerDialogPopupOkay", popup, "UIPanelButtonTemplate")
 	button("Button", "GearManagerDialogPopupCancel", popup, "UIPanelButtonTemplate")
-	gear:SetScript("OnShow", function() _G.GearManagerDialog_Update() end)
-	paperDoll:SetScript("OnShow", function() _G.PaperDollFrame_UpdateStats() end)
-	paperDoll:SetScript("OnHide", function() gear:Hide() end)
+	gear:SetScript("OnShow", function()
+		_G.GearManagerDialog_Update()
+	end)
+	paperDoll:SetScript("OnShow", function()
+		_G.PaperDollFrame_UpdateStats()
+	end)
+	paperDoll:SetScript("OnHide", function()
+		gear:Hide()
+	end)
 	local rep = hidden(new("Frame", "ReputationFrame", character))
 	rep.name = "ReputationFrame" -- its art and parts from FrameXML
 	local pet = hidden(new("Frame", "PetPaperDollFrame", character))
@@ -954,7 +1435,9 @@ local function buildFrames()
 	local readyPopup = hidden(new("Frame", "LFDDungeonReadyPopup", UIParent))
 	new("Frame", "LFDDungeonReadyStatus", readyPopup)
 	local readyDialog = new("Frame", "LFDDungeonReadyDialog", readyPopup)
-	new("Texture", "LFDDungeonReadyDialogBackground", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-BACKGROUND-RANDOMDUNGEON]])
+	new("Texture", "LFDDungeonReadyDialogBackground", readyDialog):SetTexture(
+		[[Interface\LFGFrame\UI-LFG-BACKGROUND-RANDOMDUNGEON]]
+	)
 	new("Texture", "LFDDungeonReadyDialogFiligree", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-FILIGREE]])
 	new("Texture", "LFDDungeonReadyDialogBottomArt", readyDialog):SetTexture([[Interface\LFGFrame\UI-LFG-FILIGREE]])
 	button2("LFDDungeonReadyDialogEnterDungeonButton", readyDialog)
@@ -968,8 +1451,14 @@ local function buildFrames()
 		new("Texture", "MerchantItem" .. i .. "SlotTexture", item)
 		itemButton("MerchantItem" .. i .. "ItemButton", item)
 	end
-	for _, name in ipairs({ "MerchantRepairItemButton", "MerchantRepairAllButton", "MerchantGuildBankRepairButton",
-		"MerchantNextPageButton", "MerchantPrevPageButton", "MerchantBuyBackItem" }) do
+	for _, name in ipairs({
+		"MerchantRepairItemButton",
+		"MerchantRepairAllButton",
+		"MerchantGuildBankRepairButton",
+		"MerchantNextPageButton",
+		"MerchantPrevPageButton",
+		"MerchantBuyBackItem",
+	}) do
 		button("Button", name, merchant)
 	end
 	local worldMap = hidden(new("Frame", "WorldMapFrame", UIParent))
@@ -998,8 +1487,12 @@ local function buildFrames()
 	local backdrop = new("Frame", "MinimapBackdrop", minimap)
 	new("Texture", "MinimapCompassTexture", backdrop)
 	new("Texture", "MinimapNorthTag", minimap)
-	button("Button", "MinimapZoomIn", minimap):SetScript("OnClick", function() _G.Minimap_ZoomIn() end)
-	button("Button", "MinimapZoomOut", minimap):SetScript("OnClick", function() _G.Minimap_ZoomOut() end)
+	button("Button", "MinimapZoomIn", minimap):SetScript("OnClick", function()
+		_G.Minimap_ZoomIn()
+	end)
+	button("Button", "MinimapZoomOut", minimap):SetScript("OnClick", function()
+		_G.Minimap_ZoomOut()
+	end)
 	local zone = button("Button", "MinimapZoneTextButton", cluster)
 	new("FontString", "MinimapZoneText", zone)
 	button("Button", "MiniMapWorldMapButton", minimap)
@@ -1163,9 +1656,11 @@ local ON_DEMAND = {
 		end
 		-- (its own, as Blizzard_TradeSkillUI.lua names them)
 		_G.TradeSkillTypeColor = {
-			optimal = { r = 1, g = .5, b = .25 }, medium = { r = 1, g = 1, b = 0 },
-			easy = { r = .25, g = .75, b = .25 }, trivial = { r = .5, g = .5, b = .5 },
-			header = { r = 1, g = .82, b = 0 },
+			optimal = { r = 1, g = 0.5, b = 0.25 },
+			medium = { r = 1, g = 1, b = 0 },
+			easy = { r = 0.25, g = 0.75, b = 0.25 },
+			trivial = { r = 0.5, g = 0.5, b = 0.5 },
+			header = { r = 1, g = 0.82, b = 0 },
 		}
 		_G.TradeSkillFrame_SetSelection = function(id)
 			client.world.tradeSkill.selected = id
@@ -1175,8 +1670,8 @@ local ON_DEMAND = {
 				if name then
 					text:SetText(name)
 					-- (grey when short, white when not)
-					if (have < need) then
-						text:SetTextColor(.5, .5, .5)
+					if have < need then
+						text:SetTextColor(0.5, 0.5, 0.5)
 					else
 						text:SetTextColor(1, 1, 1)
 					end
@@ -1230,16 +1725,28 @@ local ON_DEMAND = {
 			client.auctionQuery = _G.AuctionFrameBrowse.page
 			_G.AuctionFrameBrowse_Update()
 		end
-		local classes = { "Weapon", "Armor", "Container", "Consumable", "Glyph", "Trade Goods", "Projectile", "Quiver",
-			"Recipe", "Gem", "Miscellaneous", "Quest" }
+		local classes = {
+			"Weapon",
+			"Armor",
+			"Container",
+			"Consumable",
+			"Glyph",
+			"Trade Goods",
+			"Projectile",
+			"Quiver",
+			"Recipe",
+			"Gem",
+			"Miscellaneous",
+			"Quest",
+		}
 		-- (a button's kind: its art's alpha, its text's indent)
 		_G.FilterButton_SetType = function(button, kind, text)
 			local name = button:GetName()
 			button:SetText(text)
 			local alpha, indent = 1, 4
-			if (kind == "subclass") then
-				alpha, indent = .4, 12
-			elseif (kind == "invtype") then
+			if kind == "subclass" then
+				alpha, indent = 0.4, 12
+			elseif kind == "invtype" then
 				alpha, indent = 0, 20
 			end
 			_G[name .. "NormalTexture"]:SetAlpha(alpha)
@@ -1264,12 +1771,12 @@ local ON_DEMAND = {
 			_G.AuctionFrameAuctions:Hide()
 			_G.AuctionFrameBrowse:Hide()
 			_G.AuctionFrameBid:Hide()
-			if (index == 1) then
+			if index == 1 then
 				_G.AuctionFrameBrowse:Show()
 				_G.AuctionFrameFilters_Update()
-			elseif (index == 2) then
+			elseif index == 2 then
 				_G.AuctionFrameBid:Show()
-			elseif (index == 3) then
+			elseif index == 3 then
 				_G.AuctionFrameAuctions:Show()
 			end
 		end
@@ -1290,7 +1797,7 @@ local ON_DEMAND = {
 		-- a panel in the tooltip's border, gold (AchievementFrameAchievementsBackdrop_OnLoad)
 		local function panel(f)
 			f:SetBackdrop({ edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], edgeSize = 16 })
-			f:SetBackdropBorderColor(1, .675, .125, 1)
+			f:SetBackdropBorderColor(1, 0.675, 0.125, 1)
 			return f
 		end
 		local categories = panel(new("Frame", "AchievementFrameCategories", frame))
@@ -1344,7 +1851,7 @@ local ON_DEMAND = {
 		bar("AchievementFrameSummaryCategoriesStatusBar", "Title"):SetSize(488, 21)
 		for i = 1, 8 do
 			local b = bar("AchievementFrameSummaryCategoriesCategory" .. i, "Label")
-			if (i % 2 == 0) then
+			if i % 2 == 0 then
 				b:SetPoint("TOPLEFT", _G["AchievementFrameSummaryCategoriesCategory" .. (i - 1)], "TOPRIGHT", 20, 0)
 			end
 		end
@@ -1376,12 +1883,16 @@ local ON_DEMAND = {
 		end
 		_G.AchievementButton_Saturate = function(self)
 			self.saturated = true
-			_G[self:GetName() .. "Background"]:SetTexture([[Interface\AchievementFrame\UI-Achievement-Parchment-Horizontal]])
+			_G[self:GetName() .. "Background"]:SetTexture(
+				[[Interface\AchievementFrame\UI-Achievement-Parchment-Horizontal]]
+			)
 			self.description:SetTextColor(0, 0, 0, 1)
 		end
 		_G.AchievementButton_Desaturate = function(self)
 			self.saturated = nil
-			_G[self:GetName() .. "Background"]:SetTexture([[Interface\AchievementFrame\UI-Achievement-Parchment-Horizontal-Desaturated]])
+			_G[self:GetName() .. "Background"]:SetTexture(
+				[[Interface\AchievementFrame\UI-Achievement-Parchment-Horizontal-Desaturated]]
+			)
 			self.description:SetTextColor(1, 1, 1, 1)
 		end
 		-- AchievementButton_OnLoad: its own copies
@@ -1433,14 +1944,23 @@ local function frameXML(client)
 			end
 		end
 	end
-	f.RegisterUnitWatch = function(frame) client.unitWatches[frame] = true client:UpdateStateDrivers() end
-	f.UnregisterUnitWatch = function(frame) client.unitWatches[frame] = nil end
-	f.UnitWatchRegistered = function(frame) return client.unitWatches[frame] and 1 or nil end
+	f.RegisterUnitWatch = function(frame)
+		client.unitWatches[frame] = true
+		client:UpdateStateDrivers()
+	end
+	f.UnregisterUnitWatch = function(frame)
+		client.unitWatches[frame] = nil
+	end
+	f.UnitWatchRegistered = function(frame)
+		return client.unitWatches[frame] and 1 or nil
+	end
 	f.SecureHandler_OnLoad = noop
 	f.SecureHandlerWrapScript = noop
 	f.SecureHandlerUnwrapScript = noop
 	f.SecureHandlerExecute = noop
-	f.SecureHandlerSetFrameRef = function(frame, label, ref) frame:SetAttribute("frameref-" .. label, ref) end
+	f.SecureHandlerSetFrameRef = function(frame, label, ref)
+		frame:SetAttribute("frameref-" .. label, ref)
+	end
 
 	f.CreateFont = function(name)
 		local font = Widgets.new("Font", name)
@@ -1452,10 +1972,16 @@ local function frameXML(client)
 	end
 
 	-- chat
-	f.FCF_GetCurrentChatFrame = function() return _G.SELECTED_CHAT_FRAME end
+	f.FCF_GetCurrentChatFrame = function()
+		return _G.SELECTED_CHAT_FRAME
+	end
 	f.FCF_SavePositionAndDimensions = noop
-	f.FCF_SetLocked = function(frame, locked) frame.isLocked = locked end
-	f.FCF_SetWindowAlpha = function(frame, alpha) frame.oldAlpha = alpha end
+	f.FCF_SetLocked = function(frame, locked)
+		frame.isLocked = locked
+	end
+	f.FCF_SetWindowAlpha = function(frame, alpha)
+		frame.oldAlpha = alpha
+	end
 	f.FCF_SetWindowColor = noop
 	f.FCF_Tab_OnClick = function(tab, button) end
 	f.FCF_UpdateButtonSide = noop
@@ -1472,7 +1998,7 @@ local function frameXML(client)
 		for i = 1, _G.NUM_CHAT_WINDOWS do
 			local _, _, _, _, _, _, shown = api.GetChatWindowInfo(i)
 			local frame = _G["ChatFrame" .. i]
-			if ((not shown) and (not frame.isDocked)) or (i == _G.NUM_CHAT_WINDOWS) then
+			if ((not shown) and not frame.isDocked) or (i == _G.NUM_CHAT_WINDOWS) then
 				client.chatWindows = client.chatWindows or {}
 				client.chatWindows[i] = { name = name, shown = 1, docked = i }
 				frame.isDocked = 1
@@ -1488,9 +2014,13 @@ local function frameXML(client)
 	f.FCF_StopAlertFlash = noop
 	f.FCF_ResetChatWindows = noop
 	f.FCF_SetChatWindowFontSize = noop
-	f.FCF_GetChatWindowInfo = function(id) return api.GetChatWindowInfo(id) end
+	f.FCF_GetChatWindowInfo = function(id)
+		return api.GetChatWindowInfo(id)
+	end
 	f.FloatingChatFrame_OnMouseScroll = noop
-	f.FCFDock_GetSelectedWindow = function(dock) return dock.selected end
+	f.FCFDock_GetSelectedWindow = function(dock)
+		return dock.selected
+	end
 	f.FCFTab_UpdateColors = noop
 	f.ChatFrame_AddMessageEventFilter = function(event, filter)
 		client.chatFilters[event] = client.chatFilters[event] or {}
@@ -1504,23 +2034,42 @@ local function frameXML(client)
 			end
 		end
 	end
-	f.ChatFrame_GetMessageEventFilters = function(event) return client.chatFilters[event] end
+	f.ChatFrame_GetMessageEventFilters = function(event)
+		return client.chatFilters[event]
+	end
 	f.ChatFrame_AddMessageGroup = noop
 	f.ChatFrame_RemoveMessageGroup = noop
 	f.ChatFrame_RemoveAllMessageGroups = noop
 	f.ChatFrame_AddChannel = noop
 	f.ChatFrame_RemoveAllChannels = noop
-	f.ChatFrame_OpenChat = function(text) _G.ChatFrame1EditBox:Show() _G.ChatFrame1EditBox:SetText(text or "") end
+	f.ChatFrame_OpenChat = function(text)
+		_G.ChatFrame1EditBox:Show()
+		_G.ChatFrame1EditBox:SetText(text or "")
+	end
 	f.ChatFrame_OnHyperlinkShow = noop
-	f.ChatEdit_GetActiveWindow = function() return _G.ChatFrame1EditBox:IsShown() and _G.ChatFrame1EditBox or nil end
-	f.ChatEdit_GetLastActiveWindow = function() return _G.ChatFrame1EditBox end
-	f.ChatEdit_ActivateChat = function(editBox) editBox:Show() end
-	f.ChatEdit_DeactivateChat = function(editBox) editBox:Hide() end
+	f.ChatEdit_GetActiveWindow = function()
+		return _G.ChatFrame1EditBox:IsShown() and _G.ChatFrame1EditBox or nil
+	end
+	f.ChatEdit_GetLastActiveWindow = function()
+		return _G.ChatFrame1EditBox
+	end
+	f.ChatEdit_ActivateChat = function(editBox)
+		editBox:Show()
+	end
+	f.ChatEdit_DeactivateChat = function(editBox)
+		editBox:Hide()
+	end
 	f.ChatEdit_FocusActiveWindow = noop
-	f.ChatEdit_InsertLink = function(link) return nil end
+	f.ChatEdit_InsertLink = function(link)
+		return nil
+	end
 	f.ChatEdit_SendText = noop
-	f.EquipmentManager_EquipSet = function(name) client.world.equippedSet = name end
-	f.ChatEdit_OnEscapePressed = function(editBox) editBox:Hide() end
+	f.EquipmentManager_EquipSet = function(name)
+		client.world.equippedSet = name
+	end
+	f.ChatEdit_OnEscapePressed = function(editBox)
+		editBox:Hide()
+	end
 	f.ChatTypeInfo = nil
 
 	-- tooltips
@@ -1535,7 +2084,9 @@ local function frameXML(client)
 		if api.UnitIsPlayer(unit) then
 			local _, class = api.UnitClass(unit)
 			local color = _G.RAID_CLASS_COLORS[class]
-			if color then r, g, b = color.r, color.g, color.b end
+			if color then
+				r, g, b = color.r, color.g, color.b
+			end
 		elseif api.UnitCanAttack("player", unit) then
 			r, g, b = 1, 0.1, 0.1
 		end
@@ -1570,7 +2121,9 @@ local function frameXML(client)
 			client:Call(init, frame, level or 1, menuList)
 		end
 	end
-	f.UIDropDownMenu_CreateInfo = function() return {} end
+	f.UIDropDownMenu_CreateInfo = function()
+		return {}
+	end
 	-- (UIDropDownMenu.lua's: the list's next line, its text in Blizzard's
 	-- small font, a title or a disabled one disabled, the list as wide as
 	-- its widest, measured before the font is set)
@@ -1614,13 +2167,27 @@ local function frameXML(client)
 		frame.noResize = 1
 	end
 	f.UIDropDownMenu_SetButtonWidth = noop
-	f.UIDropDownMenu_SetText = function(frame, text) frame.text = text end
-	f.UIDropDownMenu_GetText = function(frame) return frame.text end
-	f.UIDropDownMenu_SetSelectedValue = function(frame, value) frame.selectedValue = value end
-	f.UIDropDownMenu_GetSelectedValue = function(frame) return frame.selectedValue end
-	f.UIDropDownMenu_SetSelectedID = function(frame, id) frame.selectedID = id end
-	f.UIDropDownMenu_GetSelectedID = function(frame) return frame.selectedID end
-	f.UIDropDownMenu_SetSelectedName = function(frame, name) frame.selectedName = name end
+	f.UIDropDownMenu_SetText = function(frame, text)
+		frame.text = text
+	end
+	f.UIDropDownMenu_GetText = function(frame)
+		return frame.text
+	end
+	f.UIDropDownMenu_SetSelectedValue = function(frame, value)
+		frame.selectedValue = value
+	end
+	f.UIDropDownMenu_GetSelectedValue = function(frame)
+		return frame.selectedValue
+	end
+	f.UIDropDownMenu_SetSelectedID = function(frame, id)
+		frame.selectedID = id
+	end
+	f.UIDropDownMenu_GetSelectedID = function(frame)
+		return frame.selectedID
+	end
+	f.UIDropDownMenu_SetSelectedName = function(frame, name)
+		frame.selectedName = name
+	end
 	f.UIDropDownMenu_JustifyText = noop
 	f.UIDropDownMenu_EnableDropDown = noop
 	f.UIDropDownMenu_DisableDropDown = noop
@@ -1644,8 +2211,13 @@ local function frameXML(client)
 		end
 		_G.DropDownList1:Show()
 	end
-	f.CloseDropDownMenus = function() _G.DropDownList1:Hide() _G.DropDownList2:Hide() end
-	f.EasyMenu = function(menuList, menuFrame) client.easyMenu = menuList end
+	f.CloseDropDownMenus = function()
+		_G.DropDownList1:Hide()
+		_G.DropDownList2:Hide()
+	end
+	f.EasyMenu = function(menuList, menuFrame)
+		client.easyMenu = menuList
+	end
 	f.UnitPopup_ShowMenu = noop
 	f.UnitPopup_OnUpdate = noop
 	f.RaidFrameDropDown_Initialize = noop
@@ -1653,25 +2225,37 @@ local function frameXML(client)
 	f.TargetFrameDropDown_Initialize = noop
 	f.StaticPopup_Show = function(which, text1, text2, data)
 		local info = _G.StaticPopupDialogs[which]
-		if not info then return nil end
+		if not info then
+			return nil
+		end
 		local popup = _G.StaticPopup1
 		popup.which, popup.data = which, data
 		popup.text:SetText(string.format(info.text or "", text1 or "", text2 or ""))
-		if info.hasEditBox then popup.editBox:Show() else popup.editBox:Hide() end
+		if info.hasEditBox then
+			popup.editBox:Show()
+		else
+			popup.editBox:Hide()
+		end
 		popup:Show()
-		if info.OnShow then client:Call(info.OnShow, popup, data) end
+		if info.OnShow then
+			client:Call(info.OnShow, popup, data)
+		end
 		return popup
 	end
 	f.StaticPopup_Hide = function(which)
 		for i = 1, 4 do
 			local popup = _G["StaticPopup" .. i]
-			if popup.which == which then popup:Hide() end
+			if popup.which == which then
+				popup:Hide()
+			end
 		end
 	end
 	f.StaticPopup_Visible = function(which)
 		for i = 1, 4 do
 			local popup = _G["StaticPopup" .. i]
-			if popup.which == which and popup:IsShown() then return popup:GetName(), popup end
+			if popup.which == which and popup:IsShown() then
+				return popup:GetName(), popup
+			end
 		end
 	end
 	f.StaticPopup_SetUpPosition = noop
@@ -1703,7 +2287,9 @@ local function frameXML(client)
 			panel:Show()
 		end
 	end
-	f.InterfaceOptionsFrame_Show = function() _G.InterfaceOptionsFrame:Show() end
+	f.InterfaceOptionsFrame_Show = function()
+		_G.InterfaceOptionsFrame:Show()
+	end
 	f.InterfaceOptionsFrameOkay_OnClick = noop
 	f.BlizzardOptionsPanel_OnLoad = noop
 	f.BlizzardOptionsPanel_RegisterControl = noop
@@ -1715,35 +2301,53 @@ local function frameXML(client)
 		return function()
 			local frame = _G[name]
 			if frame then
-				if frame:IsShown() then frame:Hide() else frame:Show() end
+				if frame:IsShown() then
+					frame:Hide()
+				else
+					frame:Show()
+				end
 			end
 		end
 	end
 	-- tabs (UIPanelTemplates.lua)
 	f.PanelTemplates_DeselectTab = function(tab)
 		local name = tab:GetName()
-		_G[name .. "Left"]:Show(); _G[name .. "Middle"]:Show(); _G[name .. "Right"]:Show()
+		_G[name .. "Left"]:Show()
+		_G[name .. "Middle"]:Show()
+		_G[name .. "Right"]:Show()
 		tab:Enable()
-		_G[name .. "LeftDisabled"]:Hide(); _G[name .. "MiddleDisabled"]:Hide(); _G[name .. "RightDisabled"]:Hide()
+		_G[name .. "LeftDisabled"]:Hide()
+		_G[name .. "MiddleDisabled"]:Hide()
+		_G[name .. "RightDisabled"]:Hide()
 	end
 	f.PanelTemplates_SelectTab = function(tab)
 		local name = tab:GetName()
-		_G[name .. "Left"]:Hide(); _G[name .. "Middle"]:Hide(); _G[name .. "Right"]:Hide()
+		_G[name .. "Left"]:Hide()
+		_G[name .. "Middle"]:Hide()
+		_G[name .. "Right"]:Hide()
 		tab:Disable()
 		tab:SetDisabledFontObject(_G.GameFontHighlightSmall)
-		_G[name .. "LeftDisabled"]:Show(); _G[name .. "MiddleDisabled"]:Show(); _G[name .. "RightDisabled"]:Show()
+		_G[name .. "LeftDisabled"]:Show()
+		_G[name .. "MiddleDisabled"]:Show()
+		_G[name .. "RightDisabled"]:Show()
 	end
-	f.PanelTemplates_SetNumTabs = function(frame, numTabs) frame.numTabs = numTabs end
-	f.PanelTemplates_GetSelectedTab = function(frame) return frame.selectedTab end
+	f.PanelTemplates_SetNumTabs = function(frame, numTabs)
+		frame.numTabs = numTabs
+	end
+	f.PanelTemplates_GetSelectedTab = function(frame)
+		return frame.selectedTab
+	end
 	-- sized to its text, plus `padding` (24 without)
 	f.PanelTemplates_TabResize = function(tab, padding)
-		tab:SetWidth(tab:GetFontString():GetStringWidth() + (padding or 24) + 2 * _G[tab:GetName() .. "Left"]:GetWidth())
+		tab:SetWidth(
+			tab:GetFontString():GetStringWidth() + (padding or 24) + 2 * _G[tab:GetName() .. "Left"]:GetWidth()
+		)
 	end
 	f.PanelTemplates_UpdateTabs = function(frame)
 		if frame.selectedTab then
 			for i = 1, frame.numTabs do
 				local tab = _G[frame:GetName() .. "Tab" .. i]
-				if (i == frame.selectedTab) then
+				if i == frame.selectedTab then
 					_G.PanelTemplates_SelectTab(tab)
 				else
 					_G.PanelTemplates_DeselectTab(tab)
@@ -1756,7 +2360,9 @@ local function frameXML(client)
 		_G.PanelTemplates_UpdateTabs(frame)
 	end
 	-- the panels' places (UIParent.lua), and the windows closed with them
-	f.UpdateUIPanelPositions = function(frame) client.panelUpdates = (client.panelUpdates or 0) + 1 end
+	f.UpdateUIPanelPositions = function(frame)
+		client.panelUpdates = (client.panelUpdates or 0) + 1
+	end
 	f.CloseChildWindows = function()
 		for _, name in ipairs(_G.UIChildWindows) do
 			if _G[name] then
@@ -1860,7 +2466,7 @@ local function frameXML(client)
 				set.text:SetText(name)
 				set.icon:SetTexture(icon)
 				set:SetChecked(dialog.selectedSetName == name)
-				if (dialog.selectedSetName == name) then
+				if dialog.selectedSetName == name then
 					dialog.selectedSet = set
 				end
 			else
@@ -1890,33 +2496,93 @@ local function frameXML(client)
 	f.GearManagerDialogSaveSet_OnClick = function(self)
 		_G.GearManagerDialogPopup:Show()
 	end
-	f.ShowUIPanel = function(frame) if frame then frame:Show() end end
-	f.HideUIPanel = function(frame) if frame then frame:Hide() end end
-	f.ToggleFrame = function(frame) if frame:IsShown() then frame:Hide() else frame:Show() end end
-	f.ToggleCharacter = function(tab) client.toggled = "CharacterFrame:" .. tostring(tab) toggle("CharacterFrame")() end
-	f.ToggleSpellBook = function(book) client.toggled = "SpellBookFrame" toggle("SpellBookFrame")() end
-	f.ToggleTalentFrame = function() client.toggled = "PlayerTalentFrame" end
-	f.ToggleAchievementFrame = function() client.toggled = "AchievementFrame" end
-	f.ToggleFriendsFrame = function(tab) client.toggled = "FriendsFrame:" .. tostring(tab) toggle("FriendsFrame")() end
-	f.ToggleCalendar = function() client.toggled = "Calendar" end
-	f.ToggleGameMenu = function() client.toggled = "GameMenu" toggle("GameMenuFrame")() end
-	f.ToggleHelpFrame = function() client.toggled = "HelpFrame" end
-	f.ToggleLFDParentFrame = function() client.toggled = "LFDParentFrame" toggle("LFDParentFrame")() end
-	f.TogglePVPFrame = function() client.toggled = "PVPFrame" end
-	f.ToggleLFRParentFrame = function() client.toggled = "LFRParentFrame" toggle("LFRParentFrame")() end
+	f.ShowUIPanel = function(frame)
+		if frame then
+			frame:Show()
+		end
+	end
+	f.HideUIPanel = function(frame)
+		if frame then
+			frame:Hide()
+		end
+	end
+	f.ToggleFrame = function(frame)
+		if frame:IsShown() then
+			frame:Hide()
+		else
+			frame:Show()
+		end
+	end
+	f.ToggleCharacter = function(tab)
+		client.toggled = "CharacterFrame:" .. tostring(tab)
+		toggle("CharacterFrame")()
+	end
+	f.ToggleSpellBook = function(book)
+		client.toggled = "SpellBookFrame"
+		toggle("SpellBookFrame")()
+	end
+	f.ToggleTalentFrame = function()
+		client.toggled = "PlayerTalentFrame"
+	end
+	f.ToggleAchievementFrame = function()
+		client.toggled = "AchievementFrame"
+	end
+	f.ToggleFriendsFrame = function(tab)
+		client.toggled = "FriendsFrame:" .. tostring(tab)
+		toggle("FriendsFrame")()
+	end
+	f.ToggleCalendar = function()
+		client.toggled = "Calendar"
+	end
+	f.ToggleGameMenu = function()
+		client.toggled = "GameMenu"
+		toggle("GameMenuFrame")()
+	end
+	f.ToggleHelpFrame = function()
+		client.toggled = "HelpFrame"
+	end
+	f.ToggleLFDParentFrame = function()
+		client.toggled = "LFDParentFrame"
+		toggle("LFDParentFrame")()
+	end
+	f.TogglePVPFrame = function()
+		client.toggled = "PVPFrame"
+	end
+	f.ToggleLFRParentFrame = function()
+		client.toggled = "LFRParentFrame"
+		toggle("LFRParentFrame")()
+	end
 	-- UIParent.lua: the load-on-demand windows' loaders, and every window
 	-- closed (the panels Blizzard places, the special frames, the bags)
-	f.MacroFrame_LoadUI = function() api.LoadAddOn("Blizzard_MacroUI") end
-	f.KeyBindingFrame_LoadUI = function() api.LoadAddOn("Blizzard_BindingUI") end
+	f.MacroFrame_LoadUI = function()
+		api.LoadAddOn("Blizzard_MacroUI")
+	end
+	f.KeyBindingFrame_LoadUI = function()
+		api.LoadAddOn("Blizzard_BindingUI")
+	end
 	f.ShowMacroFrame = function()
 		_G.MacroFrame_LoadUI()
 		_G.ShowUIPanel(_G.MacroFrame)
 	end
 	f.CloseAllWindows = function()
 		local closed
-		for _, name in ipairs({ "CharacterFrame", "SpellBookFrame", "PlayerTalentFrame", "FriendsFrame", "QuestLogFrame",
-			"AchievementFrame", "LFDParentFrame", "LFRParentFrame", "PVPParentFrame", "MacroFrame", "KeyBindingFrame",
-			"DressUpFrame", "MerchantFrame", "TradeSkillFrame", "ClassTrainerFrame" }) do
+		for _, name in ipairs({
+			"CharacterFrame",
+			"SpellBookFrame",
+			"PlayerTalentFrame",
+			"FriendsFrame",
+			"QuestLogFrame",
+			"AchievementFrame",
+			"LFDParentFrame",
+			"LFRParentFrame",
+			"PVPParentFrame",
+			"MacroFrame",
+			"KeyBindingFrame",
+			"DressUpFrame",
+			"MerchantFrame",
+			"TradeSkillFrame",
+			"ClassTrainerFrame",
+		}) do
 			local frame = rawget(_G, name)
 			if frame and frame:IsShown() then
 				frame:Hide()
@@ -1925,24 +2591,52 @@ local function frameXML(client)
 		end
 		return closed
 	end
-	f.ToggleQuestLog = function() client.toggled = "QuestLogFrame" end
-	f.ToggleWorldMap = function() client.toggled = "WorldMapFrame" end
-	f.ToggleKeyRing = function() client.toggled = "KeyRing" end
-	f.ToggleBackpack = function() client.toggled = "Backpack" end
-	f.ToggleBag = function(id) client.toggled = "Bag" .. tostring(id) end
-	f.ToggleAllBags = function() client.toggled = "AllBags" end
-	f.OpenAllBags = function() client.bagsOpen = true end
-	f.CloseAllBags = function() client.bagsOpen = false end
-	f.OpenBackpack = function() client.bagsOpen = true end
-	f.CloseBackpack = function() client.bagsOpen = false end
+	f.ToggleQuestLog = function()
+		client.toggled = "QuestLogFrame"
+	end
+	f.ToggleWorldMap = function()
+		client.toggled = "WorldMapFrame"
+	end
+	f.ToggleKeyRing = function()
+		client.toggled = "KeyRing"
+	end
+	f.ToggleBackpack = function()
+		client.toggled = "Backpack"
+	end
+	f.ToggleBag = function(id)
+		client.toggled = "Bag" .. tostring(id)
+	end
+	f.ToggleAllBags = function()
+		client.toggled = "AllBags"
+	end
+	f.OpenAllBags = function()
+		client.bagsOpen = true
+	end
+	f.CloseAllBags = function()
+		client.bagsOpen = false
+	end
+	f.OpenBackpack = function()
+		client.bagsOpen = true
+	end
+	f.CloseBackpack = function()
+		client.bagsOpen = false
+	end
 	f.ToggleFramerate = function()
 		local shown = not _G.FramerateText:IsShown()
 		for _, name in ipairs({ "FramerateLabel", "FramerateText", "MapFramerateLabel", "MapFramerateText" }) do
-			if shown then _G[name]:Show() else _G[name]:Hide() end
+			if shown then
+				_G[name]:Show()
+			else
+				_G[name]:Hide()
+			end
 		end
 	end
-	f.TalentFrame_LoadUI = function() api.LoadAddOn("Blizzard_TalentUI") end
-	f.InspectFrame_LoadUI = function() api.LoadAddOn("Blizzard_InspectUI") end
+	f.TalentFrame_LoadUI = function()
+		api.LoadAddOn("Blizzard_TalentUI")
+	end
+	f.InspectFrame_LoadUI = function()
+		api.LoadAddOn("Blizzard_InspectUI")
+	end
 	-- UIParent.lua
 	f.InspectUnit = function(unit)
 		_G.InspectFrame_LoadUI()
@@ -1950,15 +2644,31 @@ local function frameXML(client)
 			_G.InspectFrame_Show(unit)
 		end
 	end
-	f.TimeManager_LoadUI = function() api.LoadAddOn("Blizzard_TimeManager") end
-	f.Calendar_LoadUI = function() api.LoadAddOn("Blizzard_Calendar") end
-	f.Arena_LoadUI = function() api.LoadAddOn("Blizzard_ArenaUI") end
+	f.TimeManager_LoadUI = function()
+		api.LoadAddOn("Blizzard_TimeManager")
+	end
+	f.Calendar_LoadUI = function()
+		api.LoadAddOn("Blizzard_Calendar")
+	end
+	f.Arena_LoadUI = function()
+		api.LoadAddOn("Blizzard_ArenaUI")
+	end
 	f.UpdateMicroButtons = noop
 	f.MainMenuBar_UpdateKeyRing = noop
-	f.MainMenuBarPerformanceBarFrame_OnEnter = function(self) _G.GameTooltip:SetOwner(self) _G.GameTooltip:AddLine("Latency") _G.GameTooltip:Show() end
-	f.Minimap_OnClick = function() client.minimapPinged = true end
-	f.Minimap_ZoomIn = function() _G.Minimap:SetZoom(_G.Minimap:GetZoom() + 1) end
-	f.Minimap_ZoomOut = function() _G.Minimap:SetZoom(math.max(0, _G.Minimap:GetZoom() - 1)) end
+	f.MainMenuBarPerformanceBarFrame_OnEnter = function(self)
+		_G.GameTooltip:SetOwner(self)
+		_G.GameTooltip:AddLine("Latency")
+		_G.GameTooltip:Show()
+	end
+	f.Minimap_OnClick = function()
+		client.minimapPinged = true
+	end
+	f.Minimap_ZoomIn = function()
+		_G.Minimap:SetZoom(_G.Minimap:GetZoom() + 1)
+	end
+	f.Minimap_ZoomOut = function()
+		_G.Minimap:SetZoom(math.max(0, _G.Minimap:GetZoom() - 1))
+	end
 	f.MiniMapTracking_Update = noop
 	f.MiniMapLFGFrame_OnClick = noop
 	f.BattlefieldFrame_UpdateStatus = noop
@@ -1981,22 +2691,32 @@ local function frameXML(client)
 		end
 	end
 	f.MirrorTimerFrame_OnUpdate = noop
-	f.AutoCastShine_AutoCastStart = function(shine) shine.autocasting = true end
-	f.AutoCastShine_AutoCastStop = function(shine) shine.autocasting = false end
+	f.AutoCastShine_AutoCastStart = function(shine)
+		shine.autocasting = true
+	end
+	f.AutoCastShine_AutoCastStop = function(shine)
+		shine.autocasting = false
+	end
 	f.SetItemButtonTexture = function(b, texture)
 		local icon = _G[b:GetName() .. "IconTexture"]
-		if icon then icon:SetTexture(texture) end
+		if icon then
+			icon:SetTexture(texture)
+		end
 	end
 	f.SetItemButtonCount = function(b, count)
 		local text = _G[b:GetName() .. "Count"]
 		b.count = count
-		if text then text:SetText(count and count > 1 and count or "") end
+		if text then
+			text:SetText(count and count > 1 and count or "")
+		end
 	end
 	f.SetItemButtonDesaturated = noop
 	f.SetItemButtonNormalTextureVertexColor = noop
 	f.SetItemButtonTextureVertexColor = noop
 	f.ContainerFrame_Update = noop
-	f.ContainerFrame_GetOpenFrame = function() return _G.ContainerFrame1 end
+	f.ContainerFrame_GetOpenFrame = function()
+		return _G.ContainerFrame1
+	end
 	f.BankFrameItemButton_Update = noop
 	f.PaperDollFrame_SetArmor = noop
 	f.PaperDollItemSlotButton_Update = noop
@@ -2004,7 +2724,7 @@ local function frameXML(client)
 	f.MerchantFrame_UpdateMerchantInfo = noop
 	f.MerchantFrame_UpdateBuybackInfo = noop
 	f.MerchantFrame_Update = function()
-		if (_G.MerchantFrame.selectedTab == 1) then
+		if _G.MerchantFrame.selectedTab == 1 then
 			_G.MerchantFrame_UpdateMerchantInfo()
 		else
 			_G.MerchantFrame_UpdateBuybackInfo()
@@ -2029,14 +2749,24 @@ local function frameXML(client)
 	-- time and number formatting
 	f.SecondsToTime = function(seconds)
 		seconds = math.floor(seconds or 0)
-		if seconds >= 3600 then return string.format("%d Hr %d Min", seconds / 3600, (seconds % 3600) / 60) end
-		if seconds >= 60 then return string.format("%d Min %d Sec", seconds / 60, seconds % 60) end
+		if seconds >= 3600 then
+			return string.format("%d Hr %d Min", seconds / 3600, (seconds % 3600) / 60)
+		end
+		if seconds >= 60 then
+			return string.format("%d Min %d Sec", seconds / 60, seconds % 60)
+		end
 		return string.format("%d Sec", seconds)
 	end
 	f.SecondsToTimeAbbrev = function(seconds)
-		if seconds >= 86400 then return "%d d", math.ceil(seconds / 86400) end
-		if seconds >= 3600 then return "%d h", math.ceil(seconds / 3600) end
-		if seconds >= 60 then return "%d m", math.ceil(seconds / 60) end
+		if seconds >= 86400 then
+			return "%d d", math.ceil(seconds / 86400)
+		end
+		if seconds >= 3600 then
+			return "%d h", math.ceil(seconds / 3600)
+		end
+		if seconds >= 60 then
+			return "%d m", math.ceil(seconds / 60)
+		end
 		return "%d s", seconds
 	end
 	f.GameTime_GetTime = function(showAMPM)
@@ -2045,24 +2775,43 @@ local function frameXML(client)
 	end
 	f.GameTime_GetLocalTime = f.GameTime_GetTime
 	f.GameTime_GetGameTime = f.GameTime_GetTime
-	f.GameTime_ComputeMilitaryTime = function(hour) return hour end
-	f.GameTime_ComputeStandardTime = function(hour) return hour > 12 and hour - 12 or hour, hour >= 12 and 1 or 0 end
+	f.GameTime_ComputeMilitaryTime = function(hour)
+		return hour
+	end
+	f.GameTime_ComputeStandardTime = function(hour)
+		return hour > 12 and hour - 12 or hour, hour >= 12 and 1 or 0
+	end
 
 	-- fades and flashes
-	f.UIFrameFadeIn = function(frame, time, from, to) frame:SetAlpha(to or 1) frame:Show() end
-	f.UIFrameFadeOut = function(frame, time, from, to) frame:SetAlpha(to or 0) end
-	f.UIFrameFade = function(frame, info) frame:SetAlpha(info.endAlpha or 1) end
+	f.UIFrameFadeIn = function(frame, time, from, to)
+		frame:SetAlpha(to or 1)
+		frame:Show()
+	end
+	f.UIFrameFadeOut = function(frame, time, from, to)
+		frame:SetAlpha(to or 0)
+	end
+	f.UIFrameFade = function(frame, info)
+		frame:SetAlpha(info.endAlpha or 1)
+	end
 	f.UIFrameFadeRemoveFrame = noop
-	f.UIFrameIsFading = function() return nil end
+	f.UIFrameIsFading = function()
+		return nil
+	end
 	f.UIFrameFlash = noop
 	f.UIFrameFlashStop = noop
-	f.UIFrameIsFlashing = function() return nil end
+	f.UIFrameIsFlashing = function()
+		return nil
+	end
 
 	-- misc
 	f.EventTraceFrame_HandleSlashCmd = noop
 	f.ScriptErrorsFrame_OnError = noop
-	f.CombatLog_Object_IsA = function() return nil end
-	f.RaidNotice_AddMessage = function(frame, text) frame:AddMessage(text) end
+	f.CombatLog_Object_IsA = function()
+		return nil
+	end
+	f.RaidNotice_AddMessage = function(frame, text)
+		frame:AddMessage(text)
+	end
 	f.PlaySound = api.PlaySound
 	f.QuestLog_Update = noop
 	f.WatchFrame_Update = noop
@@ -2072,16 +2821,18 @@ local function frameXML(client)
 	f.WatchFrame_SetLine = function(line, anchor, verticalOffset, isHeader, text, dash, hasItem, isComplete)
 		line.text:SetText(text)
 		if isHeader then
-			line.text:SetTextColor(.75, .61, 0)
+			line.text:SetTextColor(0.75, 0.61, 0)
 		end
-		if (dash == 1) then
+		if dash == 1 then
 			line.dash:SetText("- ")
-		elseif (dash == 2) then
+		elseif dash == 2 then
 			line.dash:SetText("- ")
 			line.dash:Hide()
 		end
 	end
-	f.MouseIsOver = function(frame) return frame:IsMouseOver() end
+	f.MouseIsOver = function(frame)
+		return frame:IsMouseOver()
+	end
 	f.WatchFrame_Expand = noop
 	f.WatchFrame_Collapse = noop
 	f.WorldStateAlwaysUpFrame_Update = noop
@@ -2114,7 +2865,9 @@ local function frameXML(client)
 	f.GroupLootFrame_OnShow = noop
 	f.MoneyFrame_Update = noop
 	f.SetMoneyFrameColor = noop
-	f.RealPartyIsFull = function() return nil end
+	f.RealPartyIsFull = function()
+		return nil
+	end
 	f.AbbreviateLargeNumbers = nil -- Cataclysm
 	f.BreakUpLargeNumbers = nil -- Cataclysm
 	f.GetMouseFocus = api.GetMouseFocus
@@ -2285,7 +3038,11 @@ function Blizzard.addNamePlate(client, spec)
 		else
 			regions.eliteicon:Hide()
 		end
-		if spec.boss then regions.bossicon:Show() else regions.bossicon:Hide() end
+		if spec.boss then
+			regions.bossicon:Show()
+		else
+			regions.bossicon:Hide()
+		end
 		if spec.raidIcon then
 			regions.raidicon:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 			regions.raidicon:SetTexCoord(unpack(spec.raidIcon))
@@ -2293,9 +3050,17 @@ function Blizzard.addNamePlate(client, spec)
 		else
 			regions.raidicon:Hide()
 		end
-		if spec.mouseover then regions.highlight:Show() else regions.highlight:Hide() end
+		if spec.mouseover then
+			regions.highlight:Show()
+		else
+			regions.highlight:Hide()
+		end
 		plate:SetAlpha(spec.target and 1 or 0.5)
-		if spec.hidden then plate:Hide() else plate:Show() end
+		if spec.hidden then
+			plate:Hide()
+		else
+			plate:Show()
+		end
 	end
 	nameplate:Update()
 	client.namePlates[#client.namePlates + 1] = nameplate
@@ -2331,11 +3096,29 @@ function Blizzard.install(owner)
 	buildFrames()
 
 	-- Blizzard's load-on-demand addons: in the addon list, loaded on request
-	for _, name in ipairs({ "Blizzard_TimeManager", "Blizzard_TalentUI", "Blizzard_InspectUI",
-		"Blizzard_CombatText", "Blizzard_DebugTools", "Blizzard_ArenaUI", "Blizzard_Calendar",
-		"Blizzard_AchievementUI", "Blizzard_TradeSkillUI", "Blizzard_TokenUI", "Blizzard_GlyphUI", "Blizzard_AuctionUI",
-		"Blizzard_MacroUI", "Blizzard_TrainerUI", "Blizzard_GuildBankUI", "Blizzard_ItemSocketingUI", "Blizzard_BindingUI" }) do
-		table.insert(client.world.addons, { name = name, title = name, enabled = true, loadOnDemand = true, blizzard = true })
+	for _, name in ipairs({
+		"Blizzard_TimeManager",
+		"Blizzard_TalentUI",
+		"Blizzard_InspectUI",
+		"Blizzard_CombatText",
+		"Blizzard_DebugTools",
+		"Blizzard_ArenaUI",
+		"Blizzard_Calendar",
+		"Blizzard_AchievementUI",
+		"Blizzard_TradeSkillUI",
+		"Blizzard_TokenUI",
+		"Blizzard_GlyphUI",
+		"Blizzard_AuctionUI",
+		"Blizzard_MacroUI",
+		"Blizzard_TrainerUI",
+		"Blizzard_GuildBankUI",
+		"Blizzard_ItemSocketingUI",
+		"Blizzard_BindingUI",
+	}) do
+		table.insert(
+			client.world.addons,
+			{ name = name, title = name, enabled = true, loadOnDemand = true, blizzard = true }
+		)
 	end
 	local loadAddOn = client.api.LoadAddOn
 	client.api.LoadAddOn = function(name)

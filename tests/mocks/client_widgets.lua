@@ -19,7 +19,9 @@ local client -- set by Widgets.attach
 
 -- `frame`'s own children of a kind (Frame, LayeredRegion), in the order
 -- they were made, as the game lists them.
-local bySerial = function(a, b) return state[a].serial < state[b].serial end
+local bySerial = function(a, b)
+	return state[a].serial < state[b].serial
+end
 local function childrenOf(frame, kind)
 	local list = {}
 	for widget in pairs(state[frame].children) do
@@ -55,8 +57,16 @@ end
 -- The frames combat lockdown protects: every method below refuses to run on
 -- a protected frame in combat, like the real client (ADDON_ACTION_BLOCKED).
 local RESTRICTED = {
-	Show = true, Hide = true, SetPoint = true, ClearAllPoints = true, SetAllPoints = true,
-	SetParent = true, SetWidth = true, SetHeight = true, SetSize = true, SetScale = true,
+	Show = true,
+	Hide = true,
+	SetPoint = true,
+	ClearAllPoints = true,
+	SetAllPoints = true,
+	SetParent = true,
+	SetWidth = true,
+	SetHeight = true,
+	SetSize = true,
+	SetScale = true,
 	SetAttribute = true,
 }
 
@@ -90,8 +100,10 @@ end
 -- Color setters take numbers: the client reads anything else as 0 (a table
 -- passed as the color makes it black and opaque), so a test fails instead.
 local function checkColor(method, r, g, b)
-	assert(type(r) == "number" and type(g) == "number" and type(b) == "number",
-		method .. ": r, g and b must be numbers, got " .. type(r) .. ", " .. type(g) .. ", " .. type(b))
+	assert(
+		type(r) == "number" and type(g) == "number" and type(b) == "number",
+		method .. ": r, g and b must be numbers, got " .. type(r) .. ", " .. type(g) .. ", " .. type(b)
+	)
 end
 
 local function guard(self, method)
@@ -123,14 +135,24 @@ end
 local UIObject = newClass("UIObject")
 
 define(UIObject, {
-	GetName = function(self) return state[self].name end,
-	GetObjectType = function(self) return state[self].class.name end,
+	GetName = function(self)
+		return state[self].name
+	end,
+	GetObjectType = function(self)
+		return state[self].class.name
+	end,
 	IsObjectType = function(self, name)
 		return state[self].class.isA[name] or false
 	end,
-	GetParent = function(self) return state[self].parent end,
-	IsForbidden = function() return false end,
-	GetAlpha = function(self) return state[self].alpha end,
+	GetParent = function(self)
+		return state[self].parent
+	end,
+	IsForbidden = function()
+		return false
+	end,
+	GetAlpha = function(self)
+		return state[self].alpha
+	end,
 	SetAlpha = function(self, alpha)
 		assert(type(alpha) == "number", "SetAlpha: alpha must be a number")
 		state[self].alpha = math.max(0, math.min(1, alpha))
@@ -203,11 +225,16 @@ Widgets.setParent = setParent
 ------------------------------------------------------------------------
 
 local POINT_OFFSETS = {
-	TOPLEFT = { 0, 1 }, TOP = { 0.5, 1 }, TOPRIGHT = { 1, 1 },
-	LEFT = { 0, 0.5 }, CENTER = { 0.5, 0.5 }, RIGHT = { 1, 0.5 },
-	BOTTOMLEFT = { 0, 0 }, BOTTOM = { 0.5, 0 }, BOTTOMRIGHT = { 1, 0 },
+	TOPLEFT = { 0, 1 },
+	TOP = { 0.5, 1 },
+	TOPRIGHT = { 1, 1 },
+	LEFT = { 0, 0.5 },
+	CENTER = { 0.5, 0.5 },
+	RIGHT = { 1, 0.5 },
+	BOTTOMLEFT = { 0, 0 },
+	BOTTOM = { 0.5, 0 },
+	BOTTOMRIGHT = { 1, 0 },
 }
-
 
 -- Whether `widget` is a texture or font string, or anchored (through any
 -- chain of anchors) to one.
@@ -243,7 +270,10 @@ local function normalizePoint(self, point, relativeTo, relativePoint, x, y)
 		-- SetPoint("TOP", "BOTTOM")? not valid; treat as a frame name
 		relativeTo = _G[relativeTo]
 	elseif type(relativeTo) == "string" then
-		local name = relativeTo:gsub("%$parent", state[self].parent and state[state[self].parent] and (state[state[self].parent].name or "") or "")
+		local name = relativeTo:gsub(
+			"%$parent",
+			state[self].parent and state[state[self].parent] and (state[state[self].parent].name or "") or ""
+		)
 		relativeTo = _G[name]
 		assert(relativeTo, "SetPoint: unknown frame " .. name)
 	end
@@ -252,7 +282,10 @@ local function normalizePoint(self, point, relativeTo, relativePoint, x, y)
 	end
 	relativeTo = resolve(relativeTo)
 	if relativeTo ~= nil then
-		assert(state[relativeTo], "SetPoint: relativeTo isn't a widget: " .. tostring(relativeTo) .. " (" .. type(relativeTo) .. ")")
+		assert(
+			state[relativeTo],
+			"SetPoint: relativeTo isn't a widget: " .. tostring(relativeTo) .. " (" .. type(relativeTo) .. ")"
+		)
 		assert(relativeTo ~= self, "SetPoint: can't anchor to itself")
 	end
 	relativeTo = relativeTo or state[self].parent
@@ -269,12 +302,20 @@ local function sizeOf(widget)
 	if (w == 0 or h == 0) and s.allPoints then
 		local _, _, rw, rh = rectOf(s.allPoints)
 		rw, rh = rw or 0, rh or 0
-		if w == 0 then w = rw end
-		if h == 0 then h = rh end
+		if w == 0 then
+			w = rw
+		end
+		if h == 0 then
+			h = rh
+		end
 	end
 	if (w == 0 or h == 0) and s.class.isA.FontString and s.text then
-		if w == 0 then w = #tostring(s.text) * 6 end
-		if h == 0 then h = 12 end
+		if w == 0 then
+			w = #tostring(s.text) * 6
+		end
+		if h == 0 then
+			h = 12
+		end
 	end
 	return w, h
 end
@@ -295,13 +336,15 @@ function rectOf(widget)
 	if s.allPoints then
 		local l, b, rw, rh = rectOf(s.allPoints)
 		depth = depth - 1
-		if not l then return nil end
+		if not l then
+			return nil
+		end
 		return l, b, rw, rh
 	end
 	local anchor = s.points[1]
 	-- a scroll frame's child, not placed: at its top left (scrolled)
 	local scroller = s.parent and state[s.parent]
-	if (not anchor) and (not s.allPoints) and scroller and (scroller.scrollChild == widget) then
+	if (not anchor) and not s.allPoints and scroller and (scroller.scrollChild == widget) then
 		anchor = { "TOPLEFT", s.parent, "TOPLEFT", -(scroller.hScroll or 0), scroller.vScroll or 0 }
 	end
 	if anchor then
@@ -355,8 +398,12 @@ function stretchedSize(widget)
 	local w, h = sizeOf(widget)
 	if (w == 0 or h == 0) and #state[widget].points >= 2 then
 		local _, _, rw, rh = rectOf(widget)
-		if w == 0 then w = rw or 0 end
-		if h == 0 then h = rh or 0 end
+		if w == 0 then
+			w = rw or 0
+		end
+		if h == 0 then
+			h = rh or 0
+		end
 	end
 	return w, h
 end
@@ -365,10 +412,18 @@ local Region = newClass("Region", "UIObject")
 
 define(Region, {
 	SetParent = setParent,
-	Show = function(self) setShown(self, true) end,
-	Hide = function(self) setShown(self, false) end,
-	IsShown = function(self) return state[self].shown and 1 or nil end,
-	IsVisible = function(self) return isVisible(self) and 1 or nil end,
+	Show = function(self)
+		setShown(self, true)
+	end,
+	Hide = function(self)
+		setShown(self, false)
+	end,
+	IsShown = function(self)
+		return state[self].shown and 1 or nil
+	end,
+	IsVisible = function(self)
+		return isVisible(self) and 1 or nil
+	end,
 	SetPoint = function(self, ...)
 		local point, relativeTo, relativePoint, x, y = normalizePoint(self, ...)
 		local s = state[self]
@@ -420,24 +475,42 @@ define(Region, {
 	SetWidth = function(self, width)
 		assert(type(width) == "number", "SetWidth: width must be a number")
 		state[self].width = width
-		if state[self].scripts then client:RunScript(self, "OnSizeChanged", sizeOf(self)) end
+		if state[self].scripts then
+			client:RunScript(self, "OnSizeChanged", sizeOf(self))
+		end
 	end,
 	SetHeight = function(self, height)
 		assert(type(height) == "number", "SetHeight: height must be a number")
 		state[self].height = height
-		if state[self].scripts then client:RunScript(self, "OnSizeChanged", sizeOf(self)) end
+		if state[self].scripts then
+			client:RunScript(self, "OnSizeChanged", sizeOf(self))
+		end
 	end,
 	SetSize = function(self, width, height)
 		assert(type(width) == "number" and type(height) == "number", "SetSize: needs two numbers")
 		state[self].width, state[self].height = width, height
-		if state[self].scripts then client:RunScript(self, "OnSizeChanged", width, height) end
+		if state[self].scripts then
+			client:RunScript(self, "OnSizeChanged", width, height)
+		end
 	end,
-	GetWidth = function(self) return (stretchedSize(self)) end,
-	GetHeight = function(self) return select(2, stretchedSize(self)) end,
-	GetSize = function(self) return stretchedSize(self) end,
-	GetRect = function(self) return rectOf(self) end,
-	GetLeft = function(self) return (rectOf(self)) end,
-	GetBottom = function(self) return select(2, rectOf(self)) end,
+	GetWidth = function(self)
+		return (stretchedSize(self))
+	end,
+	GetHeight = function(self)
+		return select(2, stretchedSize(self))
+	end,
+	GetSize = function(self)
+		return stretchedSize(self)
+	end,
+	GetRect = function(self)
+		return rectOf(self)
+	end,
+	GetLeft = function(self)
+		return (rectOf(self))
+	end,
+	GetBottom = function(self)
+		return select(2, rectOf(self))
+	end,
 	GetRight = function(self)
 		local l, _, w = rectOf(self)
 		return l and l + w
@@ -462,12 +535,18 @@ define(Region, {
 			end
 		end
 	end,
-	IsProtected = function(self) return state[self].protected and 1 or nil, state[self].protected and 1 or nil end,
-	CanChangeProtectedState = function(self) return not (client.world.inCombat and state[self].protected) end,
+	IsProtected = function(self)
+		return state[self].protected and 1 or nil, state[self].protected and 1 or nil
+	end,
+	CanChangeProtectedState = function(self)
+		return not (client.world.inCombat and state[self].protected)
+	end,
 	IsMouseOver = function(self)
 		local focus = client.mouseFocus
 		while focus do
-			if focus == self then return 1 end
+			if focus == self then
+				return 1
+			end
 			focus = state[focus] and state[focus].parent
 		end
 		return nil
@@ -480,7 +559,9 @@ define(LayeredRegion, {
 	SetDrawLayer = function(self, layer, sublevel)
 		state[self].drawLayer, state[self].subLevel = layer, sublevel
 	end,
-	GetDrawLayer = function(self) return state[self].drawLayer or "ARTWORK", state[self].subLevel or 0 end,
+	GetDrawLayer = function(self)
+		return state[self].drawLayer or "ARTWORK", state[self].subLevel or 0
+	end,
 	SetVertexColor = function(self, r, g, b, a)
 		checkColor("SetVertexColor", r, g, b)
 		state[self].vertexColor = { r, g, b, a or 1 }
@@ -507,7 +588,9 @@ define(Texture, {
 		end
 		return texture ~= nil and 1 or nil
 	end,
-	GetTexture = function(self) return state[self].texture end,
+	GetTexture = function(self)
+		return state[self].texture
+	end,
 	SetTexCoord = function(self, ...)
 		local n = select("#", ...)
 		assert(n == 4 or n == 8, "SetTexCoord: needs 4 or 8 numbers")
@@ -529,14 +612,26 @@ define(Texture, {
 		state[self].desaturated = flag and true or false
 		return 1
 	end,
-	IsDesaturated = function(self) return state[self].desaturated and 1 or nil end,
-	SetBlendMode = function(self, mode) state[self].blendMode = mode end,
-	GetBlendMode = function(self) return state[self].blendMode or "BLEND" end,
+	IsDesaturated = function(self)
+		return state[self].desaturated and 1 or nil
+	end,
+	SetBlendMode = function(self, mode)
+		state[self].blendMode = mode
+	end,
+	GetBlendMode = function(self)
+		return state[self].blendMode or "BLEND"
+	end,
 	SetGradient = function() end,
-	SetGradientAlpha = function(self, ...) state[self].gradient = { ... } end,
-	SetRotation = function(self, radians) state[self].rotation = radians end,
+	SetGradientAlpha = function(self, ...)
+		state[self].gradient = { ... }
+	end,
+	SetRotation = function(self, radians)
+		state[self].rotation = radians
+	end,
 	SetNonBlocking = function() end,
-	GetNonBlocking = function() return nil end,
+	GetNonBlocking = function()
+		return nil
+	end,
 })
 
 ------------------------------------------------------------------------
@@ -570,38 +665,66 @@ local fontMethods = {
 		-- (as on 3.3.5, where SetFontObject after SetFont changes nothing)
 		state[self].fontObject = font
 	end,
-	GetFontObject = function(self) return state[self].fontObject end,
-	SetTextColor = function(self, r, g, b, a) checkColor("SetTextColor", r, g, b) state[self].textColor = { r, g, b, a or 1 } end,
+	GetFontObject = function(self)
+		return state[self].fontObject
+	end,
+	SetTextColor = function(self, r, g, b, a)
+		checkColor("SetTextColor", r, g, b)
+		state[self].textColor = { r, g, b, a or 1 }
+	end,
 	GetTextColor = function(self)
 		local c = state[self].textColor or { 1, 1, 1, 1 }
 		return c[1], c[2], c[3], c[4]
 	end,
-	SetShadowColor = function(self, r, g, b, a) checkColor("SetShadowColor", r, g, b) state[self].shadowColor = { r, g, b, a or 1 } end,
+	SetShadowColor = function(self, r, g, b, a)
+		checkColor("SetShadowColor", r, g, b)
+		state[self].shadowColor = { r, g, b, a or 1 }
+	end,
 	GetShadowColor = function(self)
 		local c = state[self].shadowColor or { 0, 0, 0, 0 }
 		return c[1], c[2], c[3], c[4]
 	end,
-	SetShadowOffset = function(self, x, y) state[self].shadowOffset = { x, y } end,
+	SetShadowOffset = function(self, x, y)
+		state[self].shadowOffset = { x, y }
+	end,
 	GetShadowOffset = function(self)
 		local o = state[self].shadowOffset or { 0, 0 }
 		return o[1], o[2]
 	end,
-	SetJustifyH = function(self, justify) state[self].justifyH = justify end,
-	GetJustifyH = function(self) return state[self].justifyH or "CENTER" end,
-	SetJustifyV = function(self, justify) state[self].justifyV = justify end,
-	GetJustifyV = function(self) return state[self].justifyV or "MIDDLE" end,
-	SetSpacing = function(self, spacing) state[self].spacing = spacing end,
-	GetSpacing = function(self) return state[self].spacing or 0 end,
+	SetJustifyH = function(self, justify)
+		state[self].justifyH = justify
+	end,
+	GetJustifyH = function(self)
+		return state[self].justifyH or "CENTER"
+	end,
+	SetJustifyV = function(self, justify)
+		state[self].justifyV = justify
+	end,
+	GetJustifyV = function(self)
+		return state[self].justifyV or "MIDDLE"
+	end,
+	SetSpacing = function(self, spacing)
+		state[self].spacing = spacing
+	end,
+	GetSpacing = function(self)
+		return state[self].spacing or 0
+	end,
 	-- 3.3's chat frames indent wrapped lines (FrameXML's indented="true")
-	SetIndentedWordWrap = function(self, wrap) state[self].indentedWordWrap = wrap end,
-	GetIndentedWordWrap = function(self) return state[self].indentedWordWrap and 1 or nil end,
+	SetIndentedWordWrap = function(self, wrap)
+		state[self].indentedWordWrap = wrap
+	end,
+	GetIndentedWordWrap = function(self)
+		return state[self].indentedWordWrap and 1 or nil
+	end,
 }
 
 local Font = newClass("Font", "UIObject")
 define(Font, fontMethods)
 define(Font, {
 	CopyFontObject = function(self, other)
-		if type(other) == "string" then other = _G[other] end
+		if type(other) == "string" then
+			other = _G[other]
+		end
 		other = resolve(other)
 		local o = state[other]
 		local s = state[self]
@@ -622,7 +745,9 @@ define(FontString, {
 		end
 		state[self].text = text
 	end,
-	GetText = function(self) return state[self].text end,
+	GetText = function(self)
+		return state[self].text
+	end,
 	SetFormattedText = function(self, fmt, ...)
 		state[self].text = string.format(fmt, ...)
 	end,
@@ -636,28 +761,45 @@ define(FontString, {
 		local _, lines = text:gsub("\n", "")
 		return 12 * (lines + 1)
 	end,
-	SetWordWrap = function(self, wrap) state[self].wordWrap = wrap end,
-	CanWordWrap = function(self) return state[self].wordWrap ~= false and 1 or nil end,
-	SetNonSpaceWrap = function(self, wrap) state[self].nonSpaceWrap = wrap end,
-	CanNonSpaceWrap = function(self) return state[self].nonSpaceWrap and 1 or nil end,
-	SetAlphaGradient = function() return nil end,
-	SetTextHeight = function(self, height) state[self].textHeight = height end,
-	IsTruncated = function() return nil end,
+	SetWordWrap = function(self, wrap)
+		state[self].wordWrap = wrap
+	end,
+	CanWordWrap = function(self)
+		return state[self].wordWrap ~= false and 1 or nil
+	end,
+	SetNonSpaceWrap = function(self, wrap)
+		state[self].nonSpaceWrap = wrap
+	end,
+	CanNonSpaceWrap = function(self)
+		return state[self].nonSpaceWrap and 1 or nil
+	end,
+	SetAlphaGradient = function()
+		return nil
+	end,
+	SetTextHeight = function(self, height)
+		state[self].textHeight = height
+	end,
+	IsTruncated = function()
+		return nil
+	end,
 })
 
 ------------------------------------------------------------------------
 -- Animations
 ------------------------------------------------------------------------
 
-local ANIMATION_SCRIPTS = { OnPlay = true, OnFinished = true, OnStop = true, OnUpdate = true, OnLoop = true, OnPause = true }
+local ANIMATION_SCRIPTS =
+	{ OnPlay = true, OnFinished = true, OnStop = true, OnUpdate = true, OnLoop = true, OnPause = true }
 
 local scriptMethods = {
 	SetScript = function(self, script, func)
 		local s = state[self]
 		assert(type(script) == "string", "SetScript: script name must be a string")
 		assert(func == nil or type(func) == "function", "SetScript: handler must be a function or nil")
-		assert(s.class.validScripts == nil or s.class.validScripts[script],
-			s.class.name .. " doesn't have a \"" .. script .. "\" script")
+		assert(
+			s.class.validScripts == nil or s.class.validScripts[script],
+			s.class.name .. " doesn't have a \"" .. script .. '" script'
+		)
 		s.scripts[script] = func
 		s.hooks[script] = nil
 		if script == "OnUpdate" and func then
@@ -670,8 +812,10 @@ local scriptMethods = {
 	HookScript = function(self, script, func)
 		local s = state[self]
 		assert(type(func) == "function", "HookScript: handler must be a function")
-		assert(s.class.validScripts == nil or s.class.validScripts[script],
-			s.class.name .. " doesn't have a \"" .. script .. "\" script")
+		assert(
+			s.class.validScripts == nil or s.class.validScripts[script],
+			s.class.name .. " doesn't have a \"" .. script .. '" script'
+		)
 		if script == "OnUpdate" then
 			client.updaters[self] = true
 		end
@@ -698,7 +842,9 @@ define(AnimationGroup, {
 		table.insert(state[self].animations, anim)
 		return anim
 	end,
-	GetAnimations = function(self) return unpack(state[self].animations) end,
+	GetAnimations = function(self)
+		return unpack(state[self].animations)
+	end,
 	Play = function(self)
 		local s = state[self]
 		s.playing, s.elapsed = true, 0
@@ -725,17 +871,29 @@ define(AnimationGroup, {
 		state[self].playing = false
 		client.playing[self] = nil
 	end,
-	IsPlaying = function(self) return state[self].playing and 1 or nil end,
-	IsPaused = function() return nil end,
-	IsDone = function(self) return not state[self].playing and 1 or nil end,
-	SetLooping = function(self, looping) state[self].looping = looping end,
-	GetLooping = function(self) return state[self].looping or "NONE" end,
+	IsPlaying = function(self)
+		return state[self].playing and 1 or nil
+	end,
+	IsPaused = function()
+		return nil
+	end,
+	IsDone = function(self)
+		return not state[self].playing and 1 or nil
+	end,
+	SetLooping = function(self, looping)
+		state[self].looping = looping
+	end,
+	GetLooping = function(self)
+		return state[self].looping or "NONE"
+	end,
 	GetProgress = function(self)
 		local s = state[self]
 		local total = Widgets.animationDuration(self)
 		return total > 0 and math.min(1, (s.elapsed or 0) / total) or 0
 	end,
-	GetDuration = function(self) return Widgets.animationDuration(self) end,
+	GetDuration = function(self)
+		return Widgets.animationDuration(self)
+	end,
 })
 
 -- The orders play one after the other; animations sharing an order play
@@ -785,45 +943,89 @@ local Animation = newClass("Animation", "UIObject")
 classes.Animation.validScripts = ANIMATION_SCRIPTS
 define(Animation, scriptMethods)
 define(Animation, {
-	SetDuration = function(self, duration) state[self].duration = duration end,
-	GetDuration = function(self) return state[self].duration or 0 end,
-	SetStartDelay = function(self, delay) state[self].startDelay = delay end,
-	GetStartDelay = function(self) return state[self].startDelay or 0 end,
-	SetEndDelay = function(self, delay) state[self].endDelay = delay end,
-	SetOrder = function(self, order) state[self].order = order end,
-	GetOrder = function(self) return state[self].order or 1 end,
-	SetSmoothing = function(self, smoothing) state[self].smoothing = smoothing end,
+	SetDuration = function(self, duration)
+		state[self].duration = duration
+	end,
+	GetDuration = function(self)
+		return state[self].duration or 0
+	end,
+	SetStartDelay = function(self, delay)
+		state[self].startDelay = delay
+	end,
+	GetStartDelay = function(self)
+		return state[self].startDelay or 0
+	end,
+	SetEndDelay = function(self, delay)
+		state[self].endDelay = delay
+	end,
+	SetOrder = function(self, order)
+		state[self].order = order
+	end,
+	GetOrder = function(self)
+		return state[self].order or 1
+	end,
+	SetSmoothing = function(self, smoothing)
+		state[self].smoothing = smoothing
+	end,
 	SetMaxFramerate = function() end,
-	GetRegionParent = function(self) return state[state[self].parent].parent end,
-	Play = function(self) state[self].playing = true end,
-	Stop = function(self) state[self].playing = false end,
-	IsPlaying = function(self) return state[self].playing and 1 or nil end,
-	GetProgress = function() return 0 end,
-	GetElapsed = function() return 0 end,
+	GetRegionParent = function(self)
+		return state[state[self].parent].parent
+	end,
+	Play = function(self)
+		state[self].playing = true
+	end,
+	Stop = function(self)
+		state[self].playing = false
+	end,
+	IsPlaying = function(self)
+		return state[self].playing and 1 or nil
+	end,
+	GetProgress = function()
+		return 0
+	end,
+	GetElapsed = function()
+		return 0
+	end,
 })
 
 newClass("Alpha", "Animation")
 define(classes.Alpha.methods, {
-	SetChange = function(self, change) state[self].change = change end,
-	GetChange = function(self) return state[self].change or 0 end,
+	SetChange = function(self, change)
+		state[self].change = change
+	end,
+	GetChange = function(self)
+		return state[self].change or 0
+	end,
 })
 classes.Alpha.validScripts = ANIMATION_SCRIPTS
 newClass("Scale", "Animation")
 define(classes.Scale.methods, {
-	SetScale = function(self, x, y) state[self].scaleTo = { x, y } end,
+	SetScale = function(self, x, y)
+		state[self].scaleTo = { x, y }
+	end,
 	SetOrigin = function() end,
 })
 classes.Scale.validScripts = ANIMATION_SCRIPTS
 newClass("Rotation", "Animation")
 define(classes.Rotation.methods, {
-	SetDegrees = function(self, degrees) state[self].degrees = degrees end,
-	GetDegrees = function(self) return state[self].degrees or 0 end,
-	SetRadians = function(self, radians) state[self].degrees = math.deg(radians) end,
+	SetDegrees = function(self, degrees)
+		state[self].degrees = degrees
+	end,
+	GetDegrees = function(self)
+		return state[self].degrees or 0
+	end,
+	SetRadians = function(self, radians)
+		state[self].degrees = math.deg(radians)
+	end,
 	SetOrigin = function() end,
 })
 classes.Rotation.validScripts = ANIMATION_SCRIPTS
 newClass("Translation", "Animation")
-define(classes.Translation.methods, { SetOffset = function(self, x, y) state[self].offset = { x, y } end })
+define(classes.Translation.methods, {
+	SetOffset = function(self, x, y)
+		state[self].offset = { x, y }
+	end,
+})
 classes.Translation.validScripts = ANIMATION_SCRIPTS
 
 ------------------------------------------------------------------------
@@ -845,10 +1047,26 @@ define(Frame, {
 })
 
 local FRAME_SCRIPTS = {
-	OnAttributeChanged = true, OnChar = true, OnDisable = true, OnDragStart = true, OnDragStop = true,
-	OnEnable = true, OnEnter = true, OnEvent = true, OnHide = true, OnKeyDown = true, OnKeyUp = true,
-	OnLeave = true, OnLoad = true, OnMouseDown = true, OnMouseUp = true, OnMouseWheel = true,
-	OnReceiveDrag = true, OnShow = true, OnSizeChanged = true, OnUpdate = true,
+	OnAttributeChanged = true,
+	OnChar = true,
+	OnDisable = true,
+	OnDragStart = true,
+	OnDragStop = true,
+	OnEnable = true,
+	OnEnter = true,
+	OnEvent = true,
+	OnHide = true,
+	OnKeyDown = true,
+	OnKeyUp = true,
+	OnLeave = true,
+	OnLoad = true,
+	OnMouseDown = true,
+	OnMouseUp = true,
+	OnMouseWheel = true,
+	OnReceiveDrag = true,
+	OnShow = true,
+	OnSizeChanged = true,
+	OnUpdate = true,
 }
 
 local function scriptSet(...)
@@ -864,8 +1082,15 @@ end
 classes.Frame.validScripts = scriptSet()
 
 local STRATA = {
-	BACKGROUND = true, LOW = true, MEDIUM = true, HIGH = true, DIALOG = true,
-	FULLSCREEN = true, FULLSCREEN_DIALOG = true, TOOLTIP = true, PARENT = true,
+	BACKGROUND = true,
+	LOW = true,
+	MEDIUM = true,
+	HIGH = true,
+	DIALOG = true,
+	FULLSCREEN = true,
+	FULLSCREEN_DIALOG = true,
+	TOOLTIP = true,
+	PARENT = true,
 }
 
 define(Frame, {
@@ -905,7 +1130,9 @@ define(Frame, {
 		assert(type(level) == "number", "SetFrameLevel: level must be a number")
 		state[self].frameLevel = math.max(0, math.floor(level))
 	end,
-	GetFrameLevel = function(self) return state[self].frameLevel end,
+	GetFrameLevel = function(self)
+		return state[self].frameLevel
+	end,
 	SetFrameStrata = function(self, strata)
 		assert(STRATA[strata], "SetFrameStrata: bad strata " .. tostring(strata))
 		state[self].frameStrata = strata
@@ -921,61 +1148,125 @@ define(Frame, {
 		assert(type(scale) == "number" and scale > 0, "SetScale: scale must be a positive number")
 		state[self].scale = scale
 	end,
-	GetScale = function(self) return state[self].scale end,
-	EnableMouse = function(self, enable) state[self].mouse = enable and true or false end,
-	IsMouseEnabled = function(self) return state[self].mouse and 1 or nil end,
-	EnableMouseWheel = function(self, enable) state[self].mouseWheel = enable and true or false end,
-	IsMouseWheelEnabled = function(self) return state[self].mouseWheel and 1 or nil end,
-	EnableKeyboard = function(self, enable) state[self].keyboard = enable and true or false end,
-	IsKeyboardEnabled = function(self) return state[self].keyboard and 1 or nil end,
-	SetMovable = function(self, movable) state[self].movable = movable and true or false end,
-	IsMovable = function(self) return state[self].movable and 1 or nil end,
-	SetResizable = function(self, resizable) state[self].resizable = resizable and true or false end,
-	IsResizable = function(self) return state[self].resizable and 1 or nil end,
-	SetMinResize = function(self, w, h) state[self].minResize = { w, h } end,
+	GetScale = function(self)
+		return state[self].scale
+	end,
+	EnableMouse = function(self, enable)
+		state[self].mouse = enable and true or false
+	end,
+	IsMouseEnabled = function(self)
+		return state[self].mouse and 1 or nil
+	end,
+	EnableMouseWheel = function(self, enable)
+		state[self].mouseWheel = enable and true or false
+	end,
+	IsMouseWheelEnabled = function(self)
+		return state[self].mouseWheel and 1 or nil
+	end,
+	EnableKeyboard = function(self, enable)
+		state[self].keyboard = enable and true or false
+	end,
+	IsKeyboardEnabled = function(self)
+		return state[self].keyboard and 1 or nil
+	end,
+	SetMovable = function(self, movable)
+		state[self].movable = movable and true or false
+	end,
+	IsMovable = function(self)
+		return state[self].movable and 1 or nil
+	end,
+	SetResizable = function(self, resizable)
+		state[self].resizable = resizable and true or false
+	end,
+	IsResizable = function(self)
+		return state[self].resizable and 1 or nil
+	end,
+	SetMinResize = function(self, w, h)
+		state[self].minResize = { w, h }
+	end,
 	GetMinResize = function(self)
 		local m = state[self].minResize or { 0, 0 }
 		return m[1], m[2]
 	end,
-	SetMaxResize = function(self, w, h) state[self].maxResize = { w, h } end,
+	SetMaxResize = function(self, w, h)
+		state[self].maxResize = { w, h }
+	end,
 	GetMaxResize = function(self)
 		local m = state[self].maxResize or { 0, 0 }
 		return m[1], m[2]
 	end,
-	StartMoving = function(self) state[self].moving = true end,
-	StartSizing = function(self) state[self].sizing = true end,
-	StopMovingOrSizing = function(self) state[self].moving, state[self].sizing = nil, nil end,
-	SetUserPlaced = function(self, placed) state[self].userPlaced = placed and true or false end,
-	IsUserPlaced = function(self) return state[self].userPlaced and 1 or nil end,
-	SetDontSavePosition = function(self, flag) state[self].dontSavePosition = flag end,
-	RegisterForDrag = function(self, ...) state[self].dragButtons = { ... } end,
-	SetClampedToScreen = function(self, clamped) state[self].clamped = clamped and true or false end,
-	IsClampedToScreen = function(self) return state[self].clamped and 1 or nil end,
-	SetClampRectInsets = function(self, l, r, t, b) state[self].clampInsets = { l, r, t, b } end,
+	StartMoving = function(self)
+		state[self].moving = true
+	end,
+	StartSizing = function(self)
+		state[self].sizing = true
+	end,
+	StopMovingOrSizing = function(self)
+		state[self].moving, state[self].sizing = nil, nil
+	end,
+	SetUserPlaced = function(self, placed)
+		state[self].userPlaced = placed and true or false
+	end,
+	IsUserPlaced = function(self)
+		return state[self].userPlaced and 1 or nil
+	end,
+	SetDontSavePosition = function(self, flag)
+		state[self].dontSavePosition = flag
+	end,
+	RegisterForDrag = function(self, ...)
+		state[self].dragButtons = { ... }
+	end,
+	SetClampedToScreen = function(self, clamped)
+		state[self].clamped = clamped and true or false
+	end,
+	IsClampedToScreen = function(self)
+		return state[self].clamped and 1 or nil
+	end,
+	SetClampRectInsets = function(self, l, r, t, b)
+		state[self].clampInsets = { l, r, t, b }
+	end,
 	GetClampRectInsets = function(self)
 		local c = state[self].clampInsets or { 0, 0, 0, 0 }
 		return c[1], c[2], c[3], c[4]
 	end,
-	SetHitRectInsets = function(self, l, r, t, b) state[self].hitInsets = { l, r, t, b } end,
+	SetHitRectInsets = function(self, l, r, t, b)
+		state[self].hitInsets = { l, r, t, b }
+	end,
 	GetHitRectInsets = function(self)
 		local c = state[self].hitInsets or { 0, 0, 0, 0 }
 		return c[1], c[2], c[3], c[4]
 	end,
-	SetToplevel = function(self, toplevel) state[self].toplevel = toplevel end,
-	IsToplevel = function(self) return state[self].toplevel and 1 or nil end,
-	Raise = function(self) state[self].frameLevel = state[self].frameLevel + 1 end,
-	Lower = function(self) state[self].frameLevel = math.max(0, state[self].frameLevel - 1) end,
+	SetToplevel = function(self, toplevel)
+		state[self].toplevel = toplevel
+	end,
+	IsToplevel = function(self)
+		return state[self].toplevel and 1 or nil
+	end,
+	Raise = function(self)
+		state[self].frameLevel = state[self].frameLevel + 1
+	end,
+	Lower = function(self)
+		state[self].frameLevel = math.max(0, state[self].frameLevel - 1)
+	end,
 	SetBackdrop = function(self, backdrop)
 		assert(backdrop == nil or type(backdrop) == "table", "SetBackdrop: backdrop must be a table or nil")
 		state[self].backdrop = backdrop
 	end,
-	GetBackdrop = function(self) return state[self].backdrop end,
-	SetBackdropColor = function(self, r, g, b, a) checkColor("SetBackdropColor", r, g, b) state[self].backdropColor = { r, g, b, a or 1 } end,
+	GetBackdrop = function(self)
+		return state[self].backdrop
+	end,
+	SetBackdropColor = function(self, r, g, b, a)
+		checkColor("SetBackdropColor", r, g, b)
+		state[self].backdropColor = { r, g, b, a or 1 }
+	end,
 	GetBackdropColor = function(self)
 		local c = state[self].backdropColor or { 1, 1, 1, 1 }
 		return c[1], c[2], c[3], c[4]
 	end,
-	SetBackdropBorderColor = function(self, r, g, b, a) checkColor("SetBackdropBorderColor", r, g, b) state[self].backdropBorderColor = { r, g, b, a or 1 } end,
+	SetBackdropBorderColor = function(self, r, g, b, a)
+		checkColor("SetBackdropBorderColor", r, g, b)
+		state[self].backdropBorderColor = { r, g, b, a or 1 }
+	end,
 	GetBackdropBorderColor = function(self)
 		local c = state[self].backdropBorderColor or { 1, 1, 1, 1 }
 		return c[1], c[2], c[3], c[4]
@@ -984,15 +1275,21 @@ define(Frame, {
 		assert(type(id) == "number", "SetID: id must be a number")
 		state[self].id = id
 	end,
-	GetID = function(self) return state[self].id or 0 end,
+	GetID = function(self)
+		return state[self].id or 0
+	end,
 	GetChildren = function(self)
 		return unpack(childrenOf(self, "Frame"))
 	end,
-	GetNumChildren = function(self) return select("#", self:GetChildren()) end,
+	GetNumChildren = function(self)
+		return select("#", self:GetChildren())
+	end,
 	GetRegions = function(self)
 		return unpack(childrenOf(self, "LayeredRegion"))
 	end,
-	GetNumRegions = function(self) return select("#", self:GetRegions()) end,
+	GetNumRegions = function(self)
+		return select("#", self:GetRegions())
+	end,
 	SetAttribute = function(self, name, value)
 		local s = state[self]
 		s.attributes[name] = value
@@ -1012,8 +1309,12 @@ define(Frame, {
 	IgnoreDepth = function() end,
 	EnableDrawLayer = function() end,
 	DisableDrawLayer = function() end,
-	CreateTitleRegion = function(self) return Widgets.new("Region", nil, self) end,
-	GetTitleRegion = function() return nil end,
+	CreateTitleRegion = function(self)
+		return Widgets.new("Region", nil, self)
+	end,
+	GetTitleRegion = function()
+		return nil
+	end,
 	SetAlpha = UIObject.SetAlpha,
 })
 
@@ -1034,7 +1335,9 @@ local function buttonTexture(self, key, layer)
 	return function(self, texture)
 		local s = state[self]
 		if texture == nil then
-			if s[key] then s[key]:SetTexture(nil) end
+			if s[key] then
+				s[key]:SetTexture(nil)
+			end
 			return
 		end
 		if type(texture) == "string" then
@@ -1053,18 +1356,26 @@ end
 
 define(Button, {
 	SetNormalTexture = buttonTexture(nil, "normalTexture", "ARTWORK"),
-	GetNormalTexture = function(self) return state[self].normalTexture end,
+	GetNormalTexture = function(self)
+		return state[self].normalTexture
+	end,
 	SetPushedTexture = buttonTexture(nil, "pushedTexture", "ARTWORK"),
-	GetPushedTexture = function(self) return state[self].pushedTexture end,
+	GetPushedTexture = function(self)
+		return state[self].pushedTexture
+	end,
 	SetHighlightTexture = function(self, texture, mode)
 		buttonTexture(nil, "highlightTexture", "HIGHLIGHT")(self, texture)
 		if state[self].highlightTexture and mode then
 			state[self].highlightTexture:SetBlendMode(mode)
 		end
 	end,
-	GetHighlightTexture = function(self) return state[self].highlightTexture end,
+	GetHighlightTexture = function(self)
+		return state[self].highlightTexture
+	end,
 	SetDisabledTexture = buttonTexture(nil, "disabledTexture", "ARTWORK"),
-	GetDisabledTexture = function(self) return state[self].disabledTexture end,
+	GetDisabledTexture = function(self)
+		return state[self].disabledTexture
+	end,
 	SetText = function(self, text)
 		local s = state[self]
 		s.fontString = s.fontString or Widgets.new("FontString", nil, self)
@@ -1077,18 +1388,38 @@ define(Button, {
 	SetFormattedText = function(self, ...)
 		self:SetText(string.format(...))
 	end,
-	GetFontString = function(self) return state[self].fontString end,
-	SetFontString = function(self, fontString) state[self].fontString = fontString end,
+	GetFontString = function(self)
+		return state[self].fontString
+	end,
+	SetFontString = function(self, fontString)
+		state[self].fontString = fontString
+	end,
 	GetTextWidth = function(self)
 		local s = state[self]
 		return s.fontString and s.fontString:GetStringWidth() or 0
 	end,
-	SetNormalFontObject = function(self, font) font = resolve(font) state[self].normalFont = font end,
-	GetNormalFontObject = function(self) return state[self].normalFont end,
-	SetHighlightFontObject = function(self, font) font = resolve(font) state[self].highlightFont = font end,
-	GetHighlightFontObject = function(self) return state[self].highlightFont end,
-	SetDisabledFontObject = function(self, font) font = resolve(font) state[self].disabledFont = font end,
-	SetTextFontObject = function(self, font) font = resolve(font) state[self].normalFont = font end,
+	SetNormalFontObject = function(self, font)
+		font = resolve(font)
+		state[self].normalFont = font
+	end,
+	GetNormalFontObject = function(self)
+		return state[self].normalFont
+	end,
+	SetHighlightFontObject = function(self, font)
+		font = resolve(font)
+		state[self].highlightFont = font
+	end,
+	GetHighlightFontObject = function(self)
+		return state[self].highlightFont
+	end,
+	SetDisabledFontObject = function(self, font)
+		font = resolve(font)
+		state[self].disabledFont = font
+	end,
+	SetTextFontObject = function(self, font)
+		font = resolve(font)
+		state[self].normalFont = font
+	end,
 	RegisterForClicks = function(self, ...)
 		state[self].clicks = { ... }
 	end,
@@ -1117,17 +1448,29 @@ define(Button, {
 		end
 	end,
 	-- 1 or 0, as 3.3.5's FrameXML compares it ("IsEnabled() == 0")
-	IsEnabled = function(self) return (not state[self].disabled) and 1 or 0 end,
+	IsEnabled = function(self)
+		return (not state[self].disabled) and 1 or 0
+	end,
 	SetButtonState = function(self, buttonState, locked)
-		assert(buttonState == "NORMAL" or buttonState == "PUSHED" or buttonState == "DISABLED",
-			"SetButtonState: bad state " .. tostring(buttonState))
+		assert(
+			buttonState == "NORMAL" or buttonState == "PUSHED" or buttonState == "DISABLED",
+			"SetButtonState: bad state " .. tostring(buttonState)
+		)
 		state[self].buttonState, state[self].stateLocked = buttonState, locked
 	end,
-	GetButtonState = function(self) return state[self].buttonState or "NORMAL" end,
-	LockHighlight = function(self) state[self].highlightLocked = true end,
-	UnlockHighlight = function(self) state[self].highlightLocked = false end,
+	GetButtonState = function(self)
+		return state[self].buttonState or "NORMAL"
+	end,
+	LockHighlight = function(self)
+		state[self].highlightLocked = true
+	end,
+	UnlockHighlight = function(self)
+		state[self].highlightLocked = false
+	end,
 	SetPushedTextOffset = function() end,
-	GetPushedTextOffset = function() return 0, 0 end,
+	GetPushedTextOffset = function()
+		return 0, 0
+	end,
 })
 
 local CheckButton = frameClass("CheckButton", "Button", "OnClick", "PreClick", "PostClick", "OnDoubleClick")
@@ -1136,11 +1479,17 @@ define(CheckButton, {
 	SetChecked = function(self, checked)
 		state[self].checked = (checked and checked ~= 0) and true or false
 	end,
-	GetChecked = function(self) return state[self].checked and 1 or nil end,
+	GetChecked = function(self)
+		return state[self].checked and 1 or nil
+	end,
 	SetCheckedTexture = buttonTexture(nil, "checkedTexture", "OVERLAY"),
-	GetCheckedTexture = function(self) return state[self].checkedTexture end,
+	GetCheckedTexture = function(self)
+		return state[self].checkedTexture
+	end,
 	SetDisabledCheckedTexture = buttonTexture(nil, "disabledCheckedTexture", "OVERLAY"),
-	GetDisabledCheckedTexture = function(self) return state[self].disabledCheckedTexture end,
+	GetDisabledCheckedTexture = function(self)
+		return state[self].disabledCheckedTexture
+	end,
 	Click = function(self, button, down)
 		local s = state[self]
 		if s.disabled then
@@ -1167,7 +1516,9 @@ define(StatusBar, {
 		s.min, s.max = min, max
 		client:RunScript(self, "OnMinMaxChanged", min, max)
 	end,
-	GetMinMaxValues = function(self) return state[self].min, state[self].max end,
+	GetMinMaxValues = function(self)
+		return state[self].min, state[self].max
+	end,
 	SetValue = function(self, value)
 		assert(type(value) == "number", "SetValue: value must be a number")
 		local s = state[self]
@@ -1177,13 +1528,17 @@ define(StatusBar, {
 			client:RunScript(self, "OnValueChanged", value)
 		end
 	end,
-	GetValue = function(self) return state[self].value end,
+	GetValue = function(self)
+		return state[self].value
+	end,
 	SetStatusBarTexture = function(self, texture, layer)
 		local s = state[self]
 		if type(texture) == "string" then
 			s.barTexture = s.barTexture or Widgets.new("Texture", nil, self)
 			s.barTexture:SetTexture(texture)
-			if layer then s.barTexture:SetDrawLayer(layer) end
+			if layer then
+				s.barTexture:SetDrawLayer(layer)
+			end
 		elseif texture then
 			s.barTexture = texture
 		end
@@ -1205,7 +1560,9 @@ define(StatusBar, {
 		assert(orientation == "HORIZONTAL" or orientation == "VERTICAL", "SetOrientation: bad orientation")
 		state[self].orientation = orientation
 	end,
-	GetOrientation = function(self) return state[self].orientation or "HORIZONTAL" end,
+	GetOrientation = function(self)
+		return state[self].orientation or "HORIZONTAL"
+	end,
 	SetRotatesTexture = function() end,
 })
 
@@ -1216,8 +1573,12 @@ define(Slider, {
 	GetMinMaxValues = StatusBar.GetMinMaxValues,
 	SetValue = StatusBar.SetValue,
 	GetValue = StatusBar.GetValue,
-	SetValueStep = function(self, step) state[self].step = step end,
-	GetValueStep = function(self) return state[self].step or 0 end,
+	SetValueStep = function(self, step)
+		state[self].step = step
+	end,
+	GetValueStep = function(self)
+		return state[self].step or 0
+	end,
 	SetOrientation = StatusBar.SetOrientation,
 	GetOrientation = StatusBar.GetOrientation,
 	SetThumbTexture = function(self, texture)
@@ -1229,19 +1590,40 @@ define(Slider, {
 			s.thumb = texture
 		end
 	end,
-	GetThumbTexture = function(self) return state[self].thumb end,
-	Enable = function(self) state[self].disabled = false end,
-	Disable = function(self) state[self].disabled = true end,
-	IsEnabled = function(self) return (not state[self].disabled) and 1 or nil end,
+	GetThumbTexture = function(self)
+		return state[self].thumb
+	end,
+	Enable = function(self)
+		state[self].disabled = false
+	end,
+	Disable = function(self)
+		state[self].disabled = true
+	end,
+	IsEnabled = function(self)
+		return (not state[self].disabled) and 1 or nil
+	end,
 })
 
 ------------------------------------------------------------------------
 -- EditBox, ScrollFrame, message frames
 ------------------------------------------------------------------------
 
-local EditBox = frameClass("EditBox", "Frame", "OnEnterPressed", "OnEscapePressed", "OnSpacePressed",
-	"OnTabPressed", "OnTextChanged", "OnTextSet", "OnCursorChanged", "OnInputLanguageChanged",
-	"OnEditFocusGained", "OnEditFocusLost", "OnArrowPressed", "OnChar")
+local EditBox = frameClass(
+	"EditBox",
+	"Frame",
+	"OnEnterPressed",
+	"OnEscapePressed",
+	"OnSpacePressed",
+	"OnTabPressed",
+	"OnTextChanged",
+	"OnTextSet",
+	"OnCursorChanged",
+	"OnInputLanguageChanged",
+	"OnEditFocusGained",
+	"OnEditFocusLost",
+	"OnArrowPressed",
+	"OnChar"
+)
 define(EditBox, fontMethods)
 
 define(EditBox, {
@@ -1250,17 +1632,23 @@ define(EditBox, {
 		client:RunScript(self, "OnTextSet")
 		client:RunScript(self, "OnTextChanged", false)
 	end,
-	GetText = function(self) return state[self].text or "" end,
+	GetText = function(self)
+		return state[self].text or ""
+	end,
 	Insert = function(self, text)
 		state[self].text = (state[self].text or "") .. tostring(text)
 		client:RunScript(self, "OnTextChanged", true)
 	end,
-	GetNumLetters = function(self) return #(state[self].text or "") end,
+	GetNumLetters = function(self)
+		return #(state[self].text or "")
+	end,
 	SetFocus = function(self)
 		if client.focus ~= self then
 			local old = client.focus
 			client.focus = self
-			if old then client:RunScript(old, "OnEditFocusLost") end
+			if old then
+				client:RunScript(old, "OnEditFocusLost")
+			end
 			client:RunScript(self, "OnEditFocusGained")
 		end
 	end,
@@ -1270,28 +1658,50 @@ define(EditBox, {
 			client:RunScript(self, "OnEditFocusLost")
 		end
 	end,
-	HasFocus = function(self) return client.focus == self and 1 or nil end,
-	SetAutoFocus = function(self, flag) state[self].autoFocus = flag end,
-	SetMaxLetters = function(self, max) state[self].maxLetters = max end,
-	GetMaxLetters = function(self) return state[self].maxLetters or 0 end,
-	SetMultiLine = function(self, flag) state[self].multiLine = flag end,
-	IsMultiLine = function(self) return state[self].multiLine and 1 or nil end,
+	HasFocus = function(self)
+		return client.focus == self and 1 or nil
+	end,
+	SetAutoFocus = function(self, flag)
+		state[self].autoFocus = flag
+	end,
+	SetMaxLetters = function(self, max)
+		state[self].maxLetters = max
+	end,
+	GetMaxLetters = function(self)
+		return state[self].maxLetters or 0
+	end,
+	SetMultiLine = function(self, flag)
+		state[self].multiLine = flag
+	end,
+	IsMultiLine = function(self)
+		return state[self].multiLine and 1 or nil
+	end,
 	HighlightText = function() end,
-	SetTextInsets = function(self, l, r, t, b) state[self].textInsets = { l, r, t, b } end,
+	SetTextInsets = function(self, l, r, t, b)
+		state[self].textInsets = { l, r, t, b }
+	end,
 	GetTextInsets = function(self)
 		local i = state[self].textInsets or { 0, 0, 0, 0 }
 		return i[1], i[2], i[3], i[4]
 	end,
 	SetCursorPosition = function() end,
-	GetCursorPosition = function(self) return #(state[self].text or "") end,
-	SetAltArrowKeyMode = function(self, flag) state[self].altArrow = flag end,
+	GetCursorPosition = function(self)
+		return #(state[self].text or "")
+	end,
+	SetAltArrowKeyMode = function(self, flag)
+		state[self].altArrow = flag
+	end,
 	SetHistoryLines = function() end,
 	AddHistoryLine = function() end,
 	SetNumeric = function() end,
 	SetPassword = function() end,
 	SetBlinkSpeed = function() end,
-	IsInIMECompositionMode = function() return nil end,
-	GetInputLanguage = function() return "ROMAN" end,
+	IsInIMECompositionMode = function()
+		return nil
+	end,
+	GetInputLanguage = function()
+		return "ROMAN"
+	end,
 	ToggleInputLanguage = function() end,
 })
 
@@ -1303,17 +1713,31 @@ define(ScrollFrame, {
 		state[self].scrollChild = child
 		setParent(child, self)
 	end,
-	GetScrollChild = function(self) return state[self].scrollChild end,
-	SetHorizontalScroll = function(self, value) state[self].hScroll = value end,
-	GetHorizontalScroll = function(self) return state[self].hScroll or 0 end,
-	SetVerticalScroll = function(self, value) state[self].vScroll = value end,
-	GetVerticalScroll = function(self) return state[self].vScroll or 0 end,
+	GetScrollChild = function(self)
+		return state[self].scrollChild
+	end,
+	SetHorizontalScroll = function(self, value)
+		state[self].hScroll = value
+	end,
+	GetHorizontalScroll = function(self)
+		return state[self].hScroll or 0
+	end,
+	SetVerticalScroll = function(self, value)
+		state[self].vScroll = value
+	end,
+	GetVerticalScroll = function(self)
+		return state[self].vScroll or 0
+	end,
 	GetVerticalScrollRange = function(self)
 		local child = state[self].scrollChild
-		if not child then return 0 end
+		if not child then
+			return 0
+		end
 		return math.max(0, child:GetHeight() - self:GetHeight())
 	end,
-	GetHorizontalScrollRange = function() return 0 end,
+	GetHorizontalScrollRange = function()
+		return 0
+	end,
 	UpdateScrollChildRect = function() end,
 })
 
@@ -1323,37 +1747,91 @@ define(MessageFrame, {
 	AddMessage = function(self, text, r, g, b, id, holdTime)
 		table.insert(state[self].messages, { text = text, r = r, g = g, b = b, id = id })
 	end,
-	Clear = function(self) state[self].messages = {} end,
-	SetFading = function(self, fading) state[self].fading = fading end,
-	GetFading = function(self) return state[self].fading ~= false and 1 or nil end,
-	SetTimeVisible = function(self, seconds) state[self].timeVisible = seconds end,
-	GetTimeVisible = function(self) return state[self].timeVisible or 10 end,
-	SetFadeDuration = function(self, seconds) state[self].fadeDuration = seconds end,
-	GetFadeDuration = function(self) return state[self].fadeDuration or 3 end,
-	SetInsertMode = function(self, mode) state[self].insertMode = mode end,
-	GetInsertMode = function(self) return state[self].insertMode or "BOTTOM" end,
+	Clear = function(self)
+		state[self].messages = {}
+	end,
+	SetFading = function(self, fading)
+		state[self].fading = fading
+	end,
+	GetFading = function(self)
+		return state[self].fading ~= false and 1 or nil
+	end,
+	SetTimeVisible = function(self, seconds)
+		state[self].timeVisible = seconds
+	end,
+	GetTimeVisible = function(self)
+		return state[self].timeVisible or 10
+	end,
+	SetFadeDuration = function(self, seconds)
+		state[self].fadeDuration = seconds
+	end,
+	GetFadeDuration = function(self)
+		return state[self].fadeDuration or 3
+	end,
+	SetInsertMode = function(self, mode)
+		state[self].insertMode = mode
+	end,
+	GetInsertMode = function(self)
+		return state[self].insertMode or "BOTTOM"
+	end,
 })
 
-local ScrollingMessageFrame = frameClass("ScrollingMessageFrame", "Frame", "OnHyperlinkClick",
-	"OnHyperlinkEnter", "OnHyperlinkLeave", "OnMessageScrollChanged")
+local ScrollingMessageFrame = frameClass(
+	"ScrollingMessageFrame",
+	"Frame",
+	"OnHyperlinkClick",
+	"OnHyperlinkEnter",
+	"OnHyperlinkLeave",
+	"OnMessageScrollChanged"
+)
 define(ScrollingMessageFrame, fontMethods)
 define(ScrollingMessageFrame, MessageFrame)
 define(ScrollingMessageFrame, {
-	SetMaxLines = function(self, lines) state[self].maxLines = lines end,
-	GetMaxLines = function(self) return state[self].maxLines or 128 end,
-	GetNumMessages = function(self) return #state[self].messages end,
-	GetCurrentLine = function(self) return #state[self].messages end,
-	GetNumLinesDisplayed = function(self) return math.min(#state[self].messages, 10) end,
-	GetCurrentScroll = function(self) return state[self].scroll or 0 end,
-	SetScrollOffset = function(self, offset) state[self].scroll = offset end,
-	ScrollUp = function(self) state[self].scroll = (state[self].scroll or 0) + 1 end,
-	ScrollDown = function(self) state[self].scroll = math.max(0, (state[self].scroll or 0) - 1) end,
-	ScrollToTop = function(self) state[self].scroll = #state[self].messages end,
-	ScrollToBottom = function(self) state[self].scroll = 0 end,
-	PageUp = function(self) state[self].scroll = (state[self].scroll or 0) + 10 end,
-	PageDown = function(self) state[self].scroll = math.max(0, (state[self].scroll or 0) - 10) end,
-	AtTop = function(self) return (state[self].scroll or 0) >= #state[self].messages and 1 or nil end,
-	AtBottom = function(self) return (state[self].scroll or 0) == 0 and 1 or nil end,
+	SetMaxLines = function(self, lines)
+		state[self].maxLines = lines
+	end,
+	GetMaxLines = function(self)
+		return state[self].maxLines or 128
+	end,
+	GetNumMessages = function(self)
+		return #state[self].messages
+	end,
+	GetCurrentLine = function(self)
+		return #state[self].messages
+	end,
+	GetNumLinesDisplayed = function(self)
+		return math.min(#state[self].messages, 10)
+	end,
+	GetCurrentScroll = function(self)
+		return state[self].scroll or 0
+	end,
+	SetScrollOffset = function(self, offset)
+		state[self].scroll = offset
+	end,
+	ScrollUp = function(self)
+		state[self].scroll = (state[self].scroll or 0) + 1
+	end,
+	ScrollDown = function(self)
+		state[self].scroll = math.max(0, (state[self].scroll or 0) - 1)
+	end,
+	ScrollToTop = function(self)
+		state[self].scroll = #state[self].messages
+	end,
+	ScrollToBottom = function(self)
+		state[self].scroll = 0
+	end,
+	PageUp = function(self)
+		state[self].scroll = (state[self].scroll or 0) + 10
+	end,
+	PageDown = function(self)
+		state[self].scroll = math.max(0, (state[self].scroll or 0) - 10)
+	end,
+	AtTop = function(self)
+		return (state[self].scroll or 0) >= #state[self].messages and 1 or nil
+	end,
+	AtBottom = function(self)
+		return (state[self].scroll or 0) == 0 and 1 or nil
+	end,
 	SetHyperlinksEnabled = function() end,
 	UpdateColorByID = function() end,
 })
@@ -1361,16 +1839,28 @@ define(ScrollingMessageFrame, {
 local SimpleHTML = frameClass("SimpleHTML", "Frame", "OnHyperlinkClick", "OnHyperlinkEnter", "OnHyperlinkLeave")
 define(SimpleHTML, fontMethods)
 define(SimpleHTML, {
-	SetText = function(self, text) state[self].text = text end,
-	GetText = function(self) return state[self].text end,
+	SetText = function(self, text)
+		state[self].text = text
+	end,
+	GetText = function(self)
+		return state[self].text
+	end,
 })
 
 ------------------------------------------------------------------------
 -- GameTooltip
 ------------------------------------------------------------------------
 
-local GameTooltip = frameClass("GameTooltip", "Frame", "OnTooltipSetUnit", "OnTooltipSetItem",
-	"OnTooltipSetSpell", "OnTooltipCleared", "OnTooltipAddMoney", "OnTooltipSetDefaultAnchor")
+local GameTooltip = frameClass(
+	"GameTooltip",
+	"Frame",
+	"OnTooltipSetUnit",
+	"OnTooltipSetItem",
+	"OnTooltipSetSpell",
+	"OnTooltipCleared",
+	"OnTooltipAddMoney",
+	"OnTooltipSetDefaultAnchor"
+)
 
 -- The TextLeftN / TextRightN font strings, created as the tooltip grows,
 -- named like the real ones so `_G[name .. "TextLeft" .. i]` finds them.
@@ -1412,7 +1902,8 @@ local function measureTooltip(self)
 	local width, height = 0, 0
 	for i = 1, s.numLines do
 		local left, right = tooltipLine(self, "Left", i), tooltipLine(self, "Right", i)
-		local w = left:GetStringWidth() + ((state[right].shown and right:GetText()) and (right:GetStringWidth() + 20) or 0)
+		local w = left:GetStringWidth()
+			+ ((state[right].shown and right:GetText()) and (right:GetStringWidth() + 20) or 0)
 		width = math.max(width, w)
 		height = height + left:GetStringHeight() + ((i > 1) and 2 or 0)
 	end
@@ -1474,9 +1965,15 @@ define(GameTooltip, {
 		clearTooltip(self)
 		self:Hide()
 	end,
-	GetOwner = function(self) return state[self].owner end,
-	IsOwned = function(self, frame) return state[self].owner == frame and 1 or nil end,
-	GetAnchorType = function(self) return state[self].anchor or "ANCHOR_NONE" end,
+	GetOwner = function(self)
+		return state[self].owner
+	end,
+	IsOwned = function(self, frame)
+		return state[self].owner == frame and 1 or nil
+	end,
+	GetAnchorType = function(self)
+		return state[self].anchor or "ANCHOR_NONE"
+	end,
 	ClearLines = clearTooltip,
 	AddLine = function(self, text, r, g, b, wrap)
 		addTooltipLine(self, text, nil, r, g, b)
@@ -1497,10 +1994,16 @@ define(GameTooltip, {
 		addTooltipLine(self, text, nil, r, g, b)
 		self:Show()
 	end,
-	NumLines = function(self) return state[self].numLines end,
-	SetMinimumWidth = function(self, width) state[self].minWidth = width end,
+	NumLines = function(self)
+		return state[self].numLines
+	end,
+	SetMinimumWidth = function(self, width)
+		state[self].minWidth = width
+	end,
 	SetPadding = nil, -- Cataclysm
-	FadeOut = function(self) self:Hide() end,
+	FadeOut = function(self)
+		self:Hide()
+	end,
 	GetUnit = function(self)
 		local unit = state[self].unit
 		if unit then
@@ -1581,7 +2084,9 @@ define(GameTooltip, {
 	-- tooltip up to date only then)
 	SetAction = function(self, slot)
 		local action = client.world.actions[slot]
-		if not action then return end
+		if not action then
+			return
+		end
 		if action.itemLink then
 			self:SetHyperlink(action.itemLink)
 		else
@@ -1598,11 +2103,15 @@ define(GameTooltip, {
 	end,
 	SetBagItem = function(self, bag, slot)
 		local link = client.api.GetContainerItemLink(bag, slot)
-		if link then self:SetHyperlink(link) end
+		if link then
+			self:SetHyperlink(link)
+		end
 	end,
 	SetLootItem = function(self, slot)
 		local link = client.api.GetLootSlotLink(slot)
-		if link then self:SetHyperlink(link) end
+		if link then
+			self:SetHyperlink(link)
+		end
 	end,
 	SetUnitAura = function(self, unit, index, filter)
 		local api = client.api
@@ -1631,11 +2140,15 @@ define(GameTooltip, {
 	end,
 	SetPetAction = function(self, slot)
 		local name = client.api.GetPetActionInfo(slot)
-		if name then showTooltipContent(self, nil, nil, nil, { { name } }) end
+		if name then
+			showTooltipContent(self, nil, nil, nil, { { name } })
+		end
 	end,
 	SetShapeshift = function(self, index)
 		local _, name = client.api.GetShapeshiftFormInfo(index)
-		if name then showTooltipContent(self, nil, nil, nil, { { name } }) end
+		if name then
+			showTooltipContent(self, nil, nil, nil, { { name } })
+		end
 	end,
 	-- (world.spells[id].lines: its lines, as showTooltipContent takes them)
 	SetSpell = function(self, id)
@@ -1675,26 +2188,48 @@ define(Cooldown, {
 		local c = state[self].cooldown or { 0, 0 }
 		return c[1] * 1000, c[2] * 1000
 	end,
-	SetReverse = function(self, reverse) state[self].reverse = reverse end,
-	GetReverse = function(self) return state[self].reverse and 1 or nil end,
+	SetReverse = function(self, reverse)
+		state[self].reverse = reverse
+	end,
+	GetReverse = function(self)
+		return state[self].reverse and 1 or nil
+	end,
 	SetDrawEdge = nil, -- Cataclysm
 })
 
 local Model = frameClass("Model", "Frame", "OnAnimFinished", "OnUpdateModel")
 define(Model, {
-	SetModel = function(self, path) state[self].model = path end,
-	GetModel = function(self) return state[self].model or "" end,
-	ClearModel = function(self) state[self].model, state[self].unit = nil, nil end,
-	SetCamera = function(self, index) state[self].camera = index end,
-	SetPosition = function(self, x, y, z) state[self].position = { x, y, z } end,
+	SetModel = function(self, path)
+		state[self].model = path
+	end,
+	GetModel = function(self)
+		return state[self].model or ""
+	end,
+	ClearModel = function(self)
+		state[self].model, state[self].unit = nil, nil
+	end,
+	SetCamera = function(self, index)
+		state[self].camera = index
+	end,
+	SetPosition = function(self, x, y, z)
+		state[self].position = { x, y, z }
+	end,
 	GetPosition = function(self)
 		local p = state[self].position or { 0, 0, 0 }
 		return p[1], p[2], p[3]
 	end,
-	SetFacing = function(self, facing) state[self].facing = facing end,
-	GetFacing = function(self) return state[self].facing or 0 end,
-	SetModelScale = function(self, scale) state[self].modelScale = scale end,
-	GetModelScale = function(self) return state[self].modelScale or 1 end,
+	SetFacing = function(self, facing)
+		state[self].facing = facing
+	end,
+	GetFacing = function(self)
+		return state[self].facing or 0
+	end,
+	SetModelScale = function(self, scale)
+		state[self].modelScale = scale
+	end,
+	GetModelScale = function(self)
+		return state[self].modelScale or 1
+	end,
 	SetLight = function() end,
 	SetFogColor = function() end,
 	SetFogNear = function() end,
@@ -1711,14 +2246,24 @@ local PlayerModel = frameClass("PlayerModel", "Model", "OnAnimFinished", "OnUpda
 define(PlayerModel, {
 	SetUnit = function(self, unit)
 		state[self].unit = unit
-		state[self].model = client.api.UnitExists(unit) and ("Creature\\" .. tostring(client.api.UnitName(unit)) .. ".m2") or ""
+		state[self].model = client.api.UnitExists(unit)
+				and ("Creature\\" .. tostring(client.api.UnitName(unit)) .. ".m2")
+			or ""
 	end,
 	RefreshUnit = function(self)
-		if state[self].unit then self:SetUnit(state[self].unit) end
+		if state[self].unit then
+			self:SetUnit(state[self].unit)
+		end
 	end,
-	SetCreature = function(self, id) state[self].model = "creature:" .. tostring(id) end,
-	SetRotation = function(self, radians) state[self].facing = radians end,
-	SetDisplayInfo = function(self, id) state[self].model = "display:" .. tostring(id) end,
+	SetCreature = function(self, id)
+		state[self].model = "creature:" .. tostring(id)
+	end,
+	SetRotation = function(self, radians)
+		state[self].facing = radians
+	end,
+	SetDisplayInfo = function(self, id)
+		state[self].model = "display:" .. tostring(id)
+	end,
 	SetPortraitZoom = nil, -- Cataclysm
 })
 frameClass("DressUpModel", "PlayerModel")
@@ -1726,19 +2271,33 @@ frameClass("TabardModel", "PlayerModel")
 
 local Minimap = frameClass("Minimap", "Frame", "OnMouseWheel")
 define(Minimap, {
-	SetZoom = function(self, zoom) state[self].zoom = zoom end,
-	GetZoom = function(self) return state[self].zoom or 0 end,
-	GetZoomLevels = function() return 6 end,
-	SetMaskTexture = function(self, path) state[self].mask = path end,
-	SetBlipTexture = function(self, path) state[self].blips = path end,
-	SetIconTexture = function(self, path) state[self].icons = path end,
+	SetZoom = function(self, zoom)
+		state[self].zoom = zoom
+	end,
+	GetZoom = function(self)
+		return state[self].zoom or 0
+	end,
+	GetZoomLevels = function()
+		return 6
+	end,
+	SetMaskTexture = function(self, path)
+		state[self].mask = path
+	end,
+	SetBlipTexture = function(self, path)
+		state[self].blips = path
+	end,
+	SetIconTexture = function(self, path)
+		state[self].icons = path
+	end,
 	SetClassBlipTexture = nil,
 	SetPlayerTexture = function() end,
 	SetPlayerTextureHeight = function() end,
 	SetPlayerTextureWidth = function() end,
 	SetArrowModel = function() end,
 	SetPlayerModel = function() end,
-	GetPingPosition = function() return 0, 0 end,
+	GetPingPosition = function()
+		return 0, 0
+	end,
 	PingLocation = function() end,
 	SetCorpsePOIArrowTexture = function() end,
 	SetPOIArrowTexture = function() end,
@@ -1747,7 +2306,9 @@ define(Minimap, {
 
 local ColorSelect = frameClass("ColorSelect", "Frame", "OnColorSelect")
 define(ColorSelect, {
-	SetColorRGB = function(self, r, g, b) state[self].color = { r, g, b } end,
+	SetColorRGB = function(self, r, g, b)
+		state[self].color = { r, g, b }
+	end,
 	GetColorRGB = function(self)
 		local c = state[self].color or { 1, 1, 1 }
 		return c[1], c[2], c[3]
@@ -1772,24 +2333,40 @@ end
 -- `_G[name .. "Icon"]` and friends exist, like in game.
 local TEMPLATE_CHILDREN = {
 	ActionButtonTemplate = {
-		{ "Texture", "Icon" }, { "Texture", "Flash" }, { "FontString", "HotKey" }, { "FontString", "Count" },
-		{ "FontString", "Name" }, { "Texture", "Border" }, { "Cooldown", "Cooldown" },
+		{ "Texture", "Icon" },
+		{ "Texture", "Flash" },
+		{ "FontString", "HotKey" },
+		{ "FontString", "Count" },
+		{ "FontString", "Name" },
+		{ "Texture", "Border" },
+		{ "Cooldown", "Cooldown" },
 		{ "Texture", "NormalTexture", "normal" },
 	},
 	PetActionButtonTemplate = {
 		inherits = "ActionButtonTemplate",
-		{ "Texture", "AutoCastable" }, { "Frame", "Shine" }, { "Texture", "NormalTexture2", "normal" },
+		{ "Texture", "AutoCastable" },
+		{ "Frame", "Shine" },
+		{ "Texture", "NormalTexture2", "normal" },
 	},
 	ShapeshiftButtonTemplate = { inherits = "ActionButtonTemplate" },
 	ActionBarButtonTemplate = { inherits = "ActionButtonTemplate" },
 	OptionsSliderTemplate = {
-		{ "FontString", "Text" }, { "FontString", "Low" }, { "FontString", "High" }, { "Texture", "Thumb", "thumb" },
+		{ "FontString", "Text" },
+		{ "FontString", "Low" },
+		{ "FontString", "High" },
+		{ "Texture", "Thumb", "thumb" },
 	},
 	UIPanelButtonTemplate = {
-		{ "Texture", "Left" }, { "Texture", "Middle" }, { "Texture", "Right" }, { "FontString", "Text", "text" },
+		{ "Texture", "Left" },
+		{ "Texture", "Middle" },
+		{ "Texture", "Right" },
+		{ "FontString", "Text", "text" },
 	},
 	UIPanelButtonTemplate2 = {
-		{ "Texture", "Left" }, { "Texture", "Middle" }, { "Texture", "Right" }, { "FontString", "Text", "text" },
+		{ "Texture", "Left" },
+		{ "Texture", "Middle" },
+		{ "Texture", "Right" },
+		{ "FontString", "Text", "text" },
 	},
 	StatFrameTemplate = { { "FontString", "Label" }, { "FontString", "StatText" } },
 	InterfaceOptionsCheckButtonTemplate = { { "FontString", "Text" } },
@@ -1797,30 +2374,51 @@ local TEMPLATE_CHILDREN = {
 	UICheckButtonTemplate = { { "FontString", "Text" } },
 	UIRadioButtonTemplate = { { "FontString", "Text" } },
 	LootButtonTemplate = {
-		{ "Texture", "IconTexture" }, { "FontString", "Count" }, { "FontString", "Text" }, { "Texture", "NameFrame" },
+		{ "Texture", "IconTexture" },
+		{ "FontString", "Count" },
+		{ "FontString", "Text" },
+		{ "Texture", "NameFrame" },
 		{ "Texture", "IconQuestTexture" },
 	},
 	UIDropDownMenuTemplate = {
-		{ "Texture", "Left" }, { "Texture", "Middle" }, { "Texture", "Right" }, { "FontString", "Text" },
-		{ "Button", "Button" }, { "Texture", "Icon" },
+		{ "Texture", "Left" },
+		{ "Texture", "Middle" },
+		{ "Texture", "Right" },
+		{ "FontString", "Text" },
+		{ "Button", "Button" },
+		{ "Texture", "Icon" },
 	},
 	InputBoxTemplate = { { "Texture", "Left" }, { "Texture", "Middle" }, { "Texture", "Right" } },
 	UIPanelScrollFrameTemplate = { { "Slider", "ScrollBar" } },
 	GameTooltipTemplate = {},
 	CooldownFrameTemplate = {},
 	ItemButtonTemplate = {
-		{ "Texture", "IconTexture" }, { "FontString", "Count" }, { "FontString", "Stock" },
+		{ "Texture", "IconTexture" },
+		{ "FontString", "Count" },
+		{ "FontString", "Stock" },
 		{ "Texture", "NormalTexture", "normal" },
 	},
 }
 
 local SECURE_TEMPLATES = {
-	SecureHandlerStateTemplate = true, SecureHandlerAttributeTemplate = true, SecureHandlerClickTemplate = true,
-	SecureHandlerBaseTemplate = true, SecureHandlerShowHideTemplate = true, SecureHandlerEnterLeaveTemplate = true,
-	SecureActionButtonTemplate = true, SecureUnitButtonTemplate = true, SecureFrameTemplate = true,
-	SecureGroupHeaderTemplate = true, SecurePartyHeaderTemplate = true, SecureRaidGroupHeaderTemplate = true,
-	SecureAnchorButtonTemplate = true, SecureHandlerDragTemplate = true, SecureHandlerMouseUpDownTemplate = true,
-	SecureHandlerMouseWheelTemplate = true, ActionButtonTemplate = true, PetActionButtonTemplate = true,
+	SecureHandlerStateTemplate = true,
+	SecureHandlerAttributeTemplate = true,
+	SecureHandlerClickTemplate = true,
+	SecureHandlerBaseTemplate = true,
+	SecureHandlerShowHideTemplate = true,
+	SecureHandlerEnterLeaveTemplate = true,
+	SecureActionButtonTemplate = true,
+	SecureUnitButtonTemplate = true,
+	SecureFrameTemplate = true,
+	SecureGroupHeaderTemplate = true,
+	SecurePartyHeaderTemplate = true,
+	SecureRaidGroupHeaderTemplate = true,
+	SecureAnchorButtonTemplate = true,
+	SecureHandlerDragTemplate = true,
+	SecureHandlerMouseUpDownTemplate = true,
+	SecureHandlerMouseWheelTemplate = true,
+	ActionButtonTemplate = true,
+	PetActionButtonTemplate = true,
 	ShapeshiftButtonTemplate = true,
 }
 

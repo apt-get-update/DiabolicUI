@@ -91,7 +91,8 @@ end
 function TestLayoutAudit:test_a_bag_keeps_only_what_it_shows()
 	boot()
 	local frame = window("AuditBag")
-	local one, _ = button(frame, "AdiBagsItemButton1", 40, 100, 30, "1"), button(frame, "AdiBagsItemButton2", 80, 100, 30, "2")
+	local one, _ =
+		button(frame, "AdiBagsItemButton1", 40, 100, 30, "1"), button(frame, "AdiBagsItemButton2", 80, 100, 30, "2")
 	local other = button(frame, "AuditBagOther", 120, 100, 30, "3")
 	slash("layout")
 	frame:Show()
@@ -119,8 +120,8 @@ function TestLayoutAudit:test_a_window_keeping_them()
 	-- (art: a white line colored, a glow under the cursor only, Blizzard's)
 	local line = frame:CreateTexture(nil, "BACKGROUND")
 	line:SetTexture([[Interface\Buttons\WHITE8X8]])
-	line:SetVertexColor(1, .5, 0)
-	kit.Gradient(line, "HORIZONTAL", 1, .5, 0, 1, .5, .25, 0, .5)
+	line:SetVertexColor(1, 0.5, 0)
+	kit.Gradient(line, "HORIZONTAL", 1, 0.5, 0, 1, 0.5, 0.25, 0, 0.5)
 	line:SetPoint("TOPLEFT", 10, -10)
 	line:SetSize(100, 1)
 	local glow = frame:CreateTexture("AuditGlow", "HIGHLIGHT")
@@ -159,18 +160,18 @@ function TestLayoutAudit:test_a_window_keeping_them()
 		local item = assert(loadstring("return " .. packed))()
 		lu.assertNil(item.order)
 		lu.assertNotEquals(item.owner, "AuditGlow")
-		if (item.file == [[Interface\Buttons\WHITE8X8]]) then
+		if item.file == [[Interface\Buttons\WHITE8X8]] then
 			lines[#lines + 1] = item
 		elseif item.backdrop then
 			backdrops[#backdrops + 1] = item
 		end
 	end
 	lu.assertEquals(#lines, 1)
-	lu.assertEquals(lines[1].color, { 1, .5, 0, 1 })
+	lu.assertEquals(lines[1].color, { 1, 0.5, 0, 1 })
 	lu.assertEquals(lines[1].coords, { 0, 0, 0, 1, 1, 0, 1, 1 })
 	lu.assertEquals(lines[1].rect, { frame:GetLeft() + 10, frame:GetTop() - 11, 100, 1 })
 	lu.assertEquals({ lines[1].owner, lines[1].alpha, lines[1].blend }, { "AuditFine", 1, "BLEND" })
-	lu.assertEquals(lines[1].gradient, { "HORIZONTAL", 1, .5, 0, 1, .5, .25, 0, .5 })
+	lu.assertEquals(lines[1].gradient, { "HORIZONTAL", 1, 0.5, 0, 1, 0.5, 0.25, 0, 0.5 })
 	lu.assertTrue(#backdrops > 0)
 	lu.assertEquals(#backdrops[1].backdrop.insets, 4)
 	-- our own parts named after it, listed too (its window, its band, the
@@ -262,7 +263,7 @@ function TestLayoutAudit:test_what_the_editor_draws()
 	boot()
 	local frame = window("AuditWords")
 	local coded = "|cffff0000Red|r\nline"
-	text(frame, "AuditWordsText", 40, -80, coded):SetTextColor(.5, .25, 0)
+	text(frame, "AuditWordsText", 40, -80, coded):SetTextColor(0.5, 0.25, 0)
 	local Art = function(parent, name, y)
 		local art = parent:CreateTexture(name, "ARTWORK")
 		art:SetTexture([[Interface\Icons\INV_Misc_QuestionMark]])
@@ -297,7 +298,7 @@ function TestLayoutAudit:test_what_the_editor_draws()
 	lu.assertTrue(view.worded)
 	lu.assertNil(parts.AuditWordsText.text) -- (not a file's text)
 	lu.assertEquals(parts.AuditWordsText.words[""], coded)
-	lu.assertEquals(parts.AuditWordsText.color, { .5, .25, 0, 1 })
+	lu.assertEquals(parts.AuditWordsText.color, { 0.5, 0.25, 0, 1 })
 	lu.assertEquals(parts.AuditWordsText.justifyV, "MIDDLE")
 	lu.assertNotNil(parts.AuditWordsText.font)
 	lu.assertNotNil(parts.AuditWordsText.fontSize)
@@ -335,7 +336,8 @@ function TestLayoutAudit:test_a_part_stretched_on_two_points()
 	local adjust = client:GetModule("Blizzard: Adjust")
 	local frame = CreateFrame("Frame", "StretchFrame", _G.UIParent)
 	local part = CreateFrame("Frame", "StretchPart", frame)
-	adjust.config.StretchPart = { "TOPLEFT", "StretchFrame", "TOPLEFT", 5, -5, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -6, 7 } }
+	adjust.config.StretchPart =
+		{ "TOPLEFT", "StretchFrame", "TOPLEFT", 5, -5, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -6, 7 } }
 	adjust:Apply()
 	local Points = function()
 		lu.assertEquals(part:GetNumPoints(), 2)
@@ -433,10 +435,22 @@ function TestLayoutAudit:test_parts_sized_only_and_chains_swapped()
 end
 
 function TestLayoutAudit:test_off_after_a_reload_what_is_old_forgotten()
-	boot({ savedVariables = { DiabolicUI_Layout = { on = true, moved = { Old = { 1, 2 } }, adjust = true, windows = {
-		AuditFine = { checked = "2026-10-27 20:00", problems = { "an old one" } },
-		Elsewhere = { checked = "2026-10-27 20:00", parts = { Kept = { "TOP", "Elsewhere", "TOP", 0, 0, kind = "Frame" } } },
-	} } } })
+	boot({
+		savedVariables = {
+			DiabolicUI_Layout = {
+				on = true,
+				moved = { Old = { 1, 2 } },
+				adjust = true,
+				windows = {
+					AuditFine = { checked = "2026-10-27 20:00", problems = { "an old one" } },
+					Elsewhere = {
+						checked = "2026-10-27 20:00",
+						parts = { Kept = { "TOP", "Elsewhere", "TOP", 0, 0, kind = "Frame" } },
+					},
+				},
+			},
+		},
+	})
 	-- (an older version's: the scan is on for a session only)
 	lu.assertNil(_G.DiabolicUI_Layout.on)
 	lu.assertNil(_G.DiabolicUI_Layout.moved)
@@ -455,12 +469,18 @@ end
 -- What's left to scan: our windows not scanned, by an older version, their
 -- tabs not visited, what we don't style; less of it said as it goes.
 function TestLayoutAudit:test_what_is_left_to_scan()
-	boot({ savedVariables = { DiabolicUI_Layout = { windows = {
-		DressUpFrame = { parts = { Old = { "TOP", "DressUpFrame", "TOP", 0, 0, kind = "Frame" } } },
-	} } } })
+	boot({
+		savedVariables = {
+			DiabolicUI_Layout = {
+				windows = {
+					DressUpFrame = { parts = { Old = { "TOP", "DressUpFrame", "TOP", 0, 0, kind = "Frame" } } },
+				},
+			},
+		},
+	})
 	local function lineWith(start)
 		for _, line in ipairs(said()) do
-			if (line:sub(1, #start) == start) then
+			if line:sub(1, #start) == start then
 				return line
 			end
 		end
@@ -498,7 +518,10 @@ function TestLayoutAudit:test_what_is_left_to_scan()
 	lu.assertTrue(lineWith("Still to open: "):find("BankFrame", 1, true) ~= nil)
 	-- (a window for an addon: only if it's there)
 	lu.assertNil(lineWith("Still to open: "):find("AtrFake", 1, true))
-	lu.assertEquals(lineWith("Scanned by an older version, open again: "), "Scanned by an older version, open again: DressUpFrame.")
+	lu.assertEquals(
+		lineWith("Scanned by an older version, open again: "),
+		"Scanned by an older version, open again: DressUpFrame."
+	)
 	lu.assertEquals(lineWith("Tabs not visited: "), "Tabs not visited: AuditLeft (AuditLeftTab3, Second).")
 	lu.assertNotNil(lineWith("Not styled: "))
 	local left = _G.DiabolicUI_Layout.left
@@ -510,7 +533,10 @@ function TestLayoutAudit:test_what_is_left_to_scan()
 	second:Disable()
 	client:Tick(1.1)
 	lu.assertEquals(_G.DiabolicUI_Layout.left.count, count - 1)
-	lu.assertEquals(lineWith(string.format("%d left", count - 1)), string.format("%d left to scan (/dui layout left).", count - 1))
+	lu.assertEquals(
+		lineWith(string.format("%d left", count - 1)),
+		string.format("%d left to scan (/dui layout left).", count - 1)
+	)
 	lu.assertEquals(_G.DiabolicUI_Layout.left.tabs, { "AuditLeft (AuditLeftTab3)" })
 	-- styled since: not said any more
 	_G.DiabolicUI_Layout.unstyled.BankFrame = true
@@ -570,8 +596,10 @@ end
 -- A list over a foot goes by its iron bar, not by its buttons.
 function TestLayoutAudit:test_a_list_goes_by_the_foot()
 	boot()
-	lu.assertEquals({ _G.FriendsFrameFriendsScrollFrameDiabolicZone:GetPoint(3) },
-		{ "BOTTOM", _G.FriendsFrameDiabolicFoot, "TOP", 0, kit:FootBar() + 6 })
+	lu.assertEquals(
+		{ _G.FriendsFrameFriendsScrollFrameDiabolicZone:GetPoint(3) },
+		{ "BOTTOM", _G.FriendsFrameDiabolicFoot, "TOP", 0, kit:FootBar() + 6 }
+	)
 	assertClean(client)
 end
 
@@ -579,7 +607,9 @@ function TestLayoutAudit:test_a_check_that_breaks_said_once()
 	boot()
 	local frame = window("AuditBroken")
 	zone(frame, "AuditPage", 30, -80, 340, 150, "parchment")
-	_G.AuditPage.GetLeft = function() error("broken") end
+	_G.AuditPage.GetLeft = function()
+		error("broken")
+	end
 	frame:Show()
 	slash("layout")
 	client:Tick(2)
@@ -595,11 +625,13 @@ end
 
 function TestLayoutAudit:test_the_sweep_opens_each_window()
 	-- (the currencies' popup there, a player targeted in reach)
-	boot({ world = function(world, c)
-		c.api.LoadAddOn("Blizzard_TokenUI")
-		world.units.target = Client.newUnit({ name = "Friend", class = "WARRIOR", isPlayer = true, inRange = true })
-		world.inspectReady = true
-	end })
+	boot({
+		world = function(world, c)
+			c.api.LoadAddOn("Blizzard_TokenUI")
+			world.units.target = Client.newUnit({ name = "Friend", class = "WARRIOR", isPlayer = true, inRange = true })
+			world.inspectReady = true
+		end,
+	})
 	-- not in a fight
 	client:EnterCombat()
 	slash("layout all")
@@ -609,7 +641,7 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	local opened = {}
 	local toggle = _G.ToggleFriendsFrame
 	_G.ToggleFriendsFrame = function(tab)
-		if (tab == 3) then
+		if tab == 3 then
 			error("no such tab")
 		end
 		opened[#opened + 1] = tab
@@ -617,7 +649,11 @@ function TestLayoutAudit:test_the_sweep_opens_each_window()
 	end
 	-- (the Bulletin Board's, when it's there)
 	local board = false
-	_G.GroupBulletinBoard_Addon = { ShowWindow = function() board = true end }
+	_G.GroupBulletinBoard_Addon = {
+		ShowWindow = function()
+			board = true
+		end,
+	}
 	slash("layout all")
 	lu.assertTrue(checking())
 	client:Tick(60, 0.1)
@@ -686,24 +722,43 @@ end
 -- Those views from before that are dropped once, for the next scan to see them.
 function TestLayoutAudit:test_views_from_before_checked_tabs_are_dropped()
 	local parts = function()
-		return { Part = { "TOP", "X", "TOP", 0, 0, tabs = { Old = true }, last = { Old = 1 }, words = { Old = "a" } }, Older = "x" }
+		return {
+			Part = { "TOP", "X", "TOP", 0, 0, tabs = { Old = true }, last = { Old = 1 }, words = { Old = "a" } },
+			Older = "x",
+		}
 	end
 	local old = function()
 		return { parts = parts(), views = { Old = { stamp = 1 } } }
 	end
-	boot({ savedVariables = { DiabolicUI_Layout = { windows = {
-		SpellBookFrame = old(), PlayerTalentFrame = old(), MailFrame = old(),
-	} } } })
+	boot({
+		savedVariables = {
+			DiabolicUI_Layout = {
+				windows = {
+					SpellBookFrame = old(),
+					PlayerTalentFrame = old(),
+					MailFrame = old(),
+				},
+			},
+		},
+	})
 	local windows = _G.DiabolicUI_Layout.windows
 	lu.assertNil(windows.SpellBookFrame.views)
 	lu.assertNil(windows.PlayerTalentFrame.parts.Part.last)
 	lu.assertEquals(windows.PlayerTalentFrame.parts.Older, "x")
 	lu.assertNotNil(windows.MailFrame.views.Old)
 	-- (not again: what the new scan saved stays)
-	boot({ savedVariables = { DiabolicUI_Layout = { checkedTabs = true, pageTabs = true, windows = { SpellBookFrame = old() } } } })
+	boot({
+		savedVariables = {
+			DiabolicUI_Layout = { checkedTabs = true, pageTabs = true, windows = { SpellBookFrame = old() } },
+		},
+	})
 	lu.assertNotNil(_G.DiabolicUI_Layout.windows.SpellBookFrame.views.Old)
 	-- (the spellbook's once more, from before its pages' tabs counted)
-	boot({ savedVariables = { DiabolicUI_Layout = { checkedTabs = true, windows = { SpellBookFrame = old(), PlayerTalentFrame = old() } } } })
+	boot({
+		savedVariables = {
+			DiabolicUI_Layout = { checkedTabs = true, windows = { SpellBookFrame = old(), PlayerTalentFrame = old() } },
+		},
+	})
 	lu.assertNil(_G.DiabolicUI_Layout.windows.SpellBookFrame.views)
 	lu.assertNotNil(_G.DiabolicUI_Layout.windows.PlayerTalentFrame.views.Old)
 	assertClean(client)

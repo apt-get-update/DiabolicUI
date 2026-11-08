@@ -15,24 +15,24 @@ Module.SetUp = function(self)
 		header_normal = config.fonts.header_normal.path,
 		header_light = config.fonts.header_light.path,
 		number = config.fonts.number.path,
-		damage = config.fonts.damage.path
+		damage = config.fonts.damage.path,
 	}
 
 	-- hash table to quickly tell us if font face supports the current locale
 	local fonts = self.fonts
 	self.canIUse = {
-		[fonts.text_normal] = config.fonts.text_normal.locales[gameLocale], 
+		[fonts.text_normal] = config.fonts.text_normal.locales[gameLocale],
 		[fonts.text_narrow] = config.fonts.text_narrow.locales[gameLocale],
-		[fonts.text_serif] = config.fonts.text_serif.locales[gameLocale], 
-		[fonts.text_serif_italic] = config.fonts.text_serif_italic.locales[gameLocale], 
-		[fonts.header_normal] = config.fonts.header_normal.locales[gameLocale], 
-		[fonts.header_light] = config.fonts.header_light.locales[gameLocale], 
-		[fonts.number] = config.fonts.number.locales[gameLocale], 
-		[fonts.damage] = config.fonts.damage.locales[gameLocale]
+		[fonts.text_serif] = config.fonts.text_serif.locales[gameLocale],
+		[fonts.text_serif_italic] = config.fonts.text_serif_italic.locales[gameLocale],
+		[fonts.header_normal] = config.fonts.header_normal.locales[gameLocale],
+		[fonts.header_light] = config.fonts.header_light.locales[gameLocale],
+		[fonts.number] = config.fonts.number.locales[gameLocale],
+		[fonts.damage] = config.fonts.damage.locales[gameLocale],
 	}
 end
 
--- Changes the fonts rendered by the game engine 
+-- Changes the fonts rendered by the game engine
 -- (These are the fonts rendered directly in the 3D world)
 Module.SetGameEngineFonts = function(self)
 	local canIUse = self.canIUse
@@ -40,25 +40,25 @@ Module.SetGameEngineFonts = function(self)
 
 	-- game engine fonts
 	-- *These will only be updated when the user
-	-- relogs into the game from the character selection screen, 
+	-- relogs into the game from the character selection screen,
 	-- not when simply reloading the user interface!
-	if canIUse[fonts.header_light] then 
-		UNIT_NAME_FONT = fonts.header_light 
+	if canIUse[fonts.header_light] then
+		UNIT_NAME_FONT = fonts.header_light
 
-		-- the following need the string to be the global name of a fontobject. weird. 
+		-- the following need the string to be the global name of a fontobject. weird.
 		NAMEPLATE_FONT = fonts.header_light
 	end
-	
-	-- Legion features much nicer and smoother damage, 
-	-- so we should just leave that as it is. 
-	if canIUse[fonts.damage] then 
-		DAMAGE_TEXT_FONT = fonts.damage 
+
+	-- Legion features much nicer and smoother damage,
+	-- so we should just leave that as it is.
+	if canIUse[fonts.damage] then
+		DAMAGE_TEXT_FONT = fonts.damage
 	end
-	
-	if canIUse[fonts.text_normal] then 
-		STANDARD_TEXT_FONT = fonts.text_normal 
+
+	if canIUse[fonts.text_normal] then
+		STANDARD_TEXT_FONT = fonts.text_normal
 	end
-	
+
 	-- default values
 	UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = 14
 	CHAT_FONT_HEIGHTS = { 12, 13, 14, 15, 16, 18, 20, 22 }
@@ -68,7 +68,7 @@ end
 -- (These are the fonts rendered by the user interface's 2D engine.)
 Module.SetFontObjects = function(self)
 	local fonts = self.fonts
-	
+
 	self:SetFont(NumberFontNormal, fonts.number)
 
 	self:SetFont(FriendsFont_Large, fonts.header_light)
@@ -76,21 +76,20 @@ Module.SetFontObjects = function(self)
 	self:SetFont(QuestFont_Large, fonts.header_normal, 14, "", 0, 0, 0) -- 15
 	self:SetFont(QuestFont_Shadow_Huge, fonts.header_normal, 16, "", 0, 0, 0) -- 18
 	self:SetFont(MailFont_Large, fonts.header_normal, nil, "", 0, 0, 0) -- 15
-	
+
 	-- floating combat text
-	self:SetFont(CombatTextFont, fonts.header_normal, nil, "", -2.5, -2.5, .35) 
+	self:SetFont(CombatTextFont, fonts.header_normal, nil, "", -2.5, -2.5, 0.35)
 
 	-- chat font
-	-- *Choosing not to override this, as the default chat fonts are fairly good 
-	--  and Warcraft/Diablo-looking enough as it is. One of the better Blizzard choices. 
-	self:SetFont(ChatFontNormal, nil, nil, "", -.75, -.75, 1)
-	
+	-- *Choosing not to override this, as the default chat fonts are fairly good
+	--  and Warcraft/Diablo-looking enough as it is. One of the better Blizzard choices.
+	self:SetFont(ChatFontNormal, nil, nil, "", -0.75, -0.75, 1)
 end
 
 -- Changes a font object's face (when it supports the game's locale), size,
 -- style and shadow; nil keeps the current one.
 Module.SetFont = function(self, fontObject, font, size, style, shadowX, shadowY, shadowA)
-	local oldFont, oldSize, oldStyle  = fontObject:GetFont()
+	local oldFont, oldSize, oldStyle = fontObject:GetFont()
 
 	if not font then
 		font = oldFont
@@ -102,7 +101,7 @@ Module.SetFont = function(self, fontObject, font, size, style, shadowX, shadowY,
 
 	-- forcefully keep the outlines thin
 	if not style then
-		style = (oldStyle == "OUTLINE") and "THINOUTLINE" or oldStyle 
+		style = (oldStyle == "OUTLINE") and "THINOUTLINE" or oldStyle
 	end
 
 	-- don't change the font face if it doesn't support the current locale
@@ -120,13 +119,13 @@ Module.HookCombatText = function(self)
 	COMBAT_TEXT_CRIT_MINHEIGHT = 8
 	COMBAT_TEXT_SCROLLSPEED = 3
 
-	hooksecurefunc("CombatText_UpdateDisplayedMessages", function() 
+	hooksecurefunc("CombatText_UpdateDisplayedMessages", function()
 		COMBAT_TEXT_LOCATIONS.startY = 220
 		COMBAT_TEXT_LOCATIONS.endY = 440
 	end)
 end
 
--- Fonts (especially game engine fonts) need to be set very early in the loading process, 
+-- Fonts (especially game engine fonts) need to be set very early in the loading process,
 -- so for this specific module we'll bypass the normal loading order, and just fire away!
 Module:SetUp()
 Module:SetGameEngineFonts()

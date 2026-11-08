@@ -33,38 +33,55 @@ local UnitLevel = _G.UnitLevel
 
 -- each slot's share of the score
 local SLOT_SCALE = {
-	INVTYPE_HEAD = 1, INVTYPE_CHEST = 1, INVTYPE_ROBE = 1, INVTYPE_LEGS = 1,
-	INVTYPE_SHOULDER = .75, INVTYPE_WAIST = .75, INVTYPE_FEET = .75, INVTYPE_HAND = .75,
-	INVTYPE_NECK = .5625, INVTYPE_WRIST = .5625, INVTYPE_FINGER = .5625, INVTYPE_TRINKET = .5625, INVTYPE_CLOAK = .5625,
-	INVTYPE_2HWEAPON = 2, INVTYPE_WEAPON = 1, INVTYPE_WEAPONMAINHAND = 1, INVTYPE_WEAPONOFFHAND = 1,
-	INVTYPE_SHIELD = 1, INVTYPE_HOLDABLE = 1,
-	INVTYPE_RANGED = .3164, INVTYPE_RANGEDRIGHT = .3164, INVTYPE_THROWN = .3164, INVTYPE_RELIC = .3164
+	INVTYPE_HEAD = 1,
+	INVTYPE_CHEST = 1,
+	INVTYPE_ROBE = 1,
+	INVTYPE_LEGS = 1,
+	INVTYPE_SHOULDER = 0.75,
+	INVTYPE_WAIST = 0.75,
+	INVTYPE_FEET = 0.75,
+	INVTYPE_HAND = 0.75,
+	INVTYPE_NECK = 0.5625,
+	INVTYPE_WRIST = 0.5625,
+	INVTYPE_FINGER = 0.5625,
+	INVTYPE_TRINKET = 0.5625,
+	INVTYPE_CLOAK = 0.5625,
+	INVTYPE_2HWEAPON = 2,
+	INVTYPE_WEAPON = 1,
+	INVTYPE_WEAPONMAINHAND = 1,
+	INVTYPE_WEAPONOFFHAND = 1,
+	INVTYPE_SHIELD = 1,
+	INVTYPE_HOLDABLE = 1,
+	INVTYPE_RANGED = 0.3164,
+	INVTYPE_RANGEDRIGHT = 0.3164,
+	INVTYPE_THROWN = 0.3164,
+	INVTYPE_RELIC = 0.3164,
 }
 
 -- the item level curve, by quality (2 uncommon to 4 epic), above and up to
 -- item level 120
-local CURVE_HIGH = { [2] = { 73, 1 }, [3] = { 81.375, .8125 }, [4] = { 91.45, .65 } }
-local CURVE_LOW = { [1] = { 0, 2.25 }, [2] = { 8, 2 }, [3] = { .75, 1.8 }, [4] = { 26, 1.2 } }
+local CURVE_HIGH = { [2] = { 73, 1 }, [3] = { 81.375, 0.8125 }, [4] = { 91.45, 0.65 } }
+local CURVE_LOW = { [1] = { 0, 2.25 }, [2] = { 8, 2 }, [3] = { 0.75, 1.8 }, [4] = { 26, 1.2 } }
 local SCALE = 1.8618
 
 -- the color of a score, by thousands: { from, per point } for red, green, blue
 local COLORS = {
-	{ { .55, 0, .00045 }, { .55, 0, .00045 }, { .55, 0, .00045 } }, -- grey
-	{ { 1, 1000, -.00088 }, { 1, 0, 0 }, { 1, 1000, -.001 } }, -- white
-	{ { .12, 2000, -.00012 }, { 1, 2000, -.0005 }, { 0, 2000, .001 } }, -- green
-	{ { 0, 3000, .00069 }, { .5, 3000, -.00022 }, { 1, 3000, -.00003 } }, -- blue
-	{ { .69, 4000, .00025 }, { .28, 4000, .00019 }, { .97, 4000, -.00096 } }, -- purple
-	{ { .94, 5000, .00006 }, { .47, 5000, -.00047 }, { 0, 0, 0 } } -- orange
+	{ { 0.55, 0, 0.00045 }, { 0.55, 0, 0.00045 }, { 0.55, 0, 0.00045 } }, -- grey
+	{ { 1, 1000, -0.00088 }, { 1, 0, 0 }, { 1, 1000, -0.001 } }, -- white
+	{ { 0.12, 2000, -0.00012 }, { 1, 2000, -0.0005 }, { 0, 2000, 0.001 } }, -- green
+	{ { 0, 3000, 0.00069 }, { 0.5, 3000, -0.00022 }, { 1, 3000, -0.00003 } }, -- blue
+	{ { 0.69, 4000, 0.00025 }, { 0.28, 4000, 0.00019 }, { 0.97, 4000, -0.00096 } }, -- purple
+	{ { 0.94, 5000, 0.00006 }, { 0.47, 5000, -0.00047 }, { 0, 0, 0 } }, -- orange
 }
 
 -- a hunter's weapons count little, their ranged weapon a lot
-local HUNTER_MELEE, HUNTER_RANGED = .3164, 5.3224
+local HUNTER_MELEE, HUNTER_RANGED = 0.3164, 5.3224
 
 local MAIN_HAND, OFF_HAND, RANGED, SHIRT = 16, 17, 18, 4
 
 Module.GetColor = function(self, score)
 	if (not score) or (score <= 0) then
-		return .55, .55, .55
+		return 0.55, 0.55, 0.55
 	end
 	score = math_min(score, 5999)
 	local band = COLORS[math_floor((score - 1) / 1000) + 1]
@@ -80,19 +97,19 @@ end
 -- isn't gear.
 Module.GetItemScore = function(self, item)
 	local name, _, quality, level, _, _, _, _, equipLoc = GetItemInfo(item)
-	if (not name) or (not level) then
+	if (not name) or not level then
 		return
 	end
 	local slot = SLOT_SCALE[equipLoc]
-	if (not slot) or (not quality) then
+	if (not slot) or not quality then
 		return 0, level
 	end
 	local qualityScale = 1
-	if (quality == 5) then -- legendary
+	if quality == 5 then -- legendary
 		quality, qualityScale = 4, 1.3
-	elseif (quality <= 1) then -- poor and common
-		quality, qualityScale = 2, .005
-	elseif (quality == 7) then -- heirloom: as a blue of 187
+	elseif quality <= 1 then -- poor and common
+		quality, qualityScale = 2, 0.005
+	elseif quality == 7 then -- heirloom: as a blue of 187
 		quality, level = 3, 187.05
 	end
 	local curve = ((level > 120) and CURVE_HIGH or CURVE_LOW)[quality]
@@ -123,12 +140,12 @@ Module.GetUnitScore = function(self, unit)
 	local titanGrip = 1
 	for _, link in ipairs({ mainHand or false, offHand or false }) do
 		if link and (select(9, GetItemInfo(link)) == "INVTYPE_2HWEAPON") and mainHand and offHand then
-			titanGrip = .5
+			titanGrip = 0.5
 		end
 	end
 	local score, levels, count, twoHander = 0, 0, 0, false
 	for slot = 1, RANGED do
-		if (slot ~= SHIRT) then
+		if slot ~= SHIRT then
 			local link = GetInventoryItemLink(unit, slot)
 			if (not link) and GetInventoryItemTexture(unit, slot) then
 				return -- there, not known yet (inspecting)
@@ -144,7 +161,7 @@ Module.GetUnitScore = function(self, unit)
 				elseif (slot == RANGED) and hunter then
 					itemScore = itemScore * HUNTER_RANGED
 				end
-				if (select(3, GetItemInfo(link)) == 7) then
+				if select(3, GetItemInfo(link)) == 7 then
 					level = HeirloomLevel(UnitLevel(unit))
 				end
 				score = score + itemScore
@@ -153,7 +170,7 @@ Module.GetUnitScore = function(self, unit)
 			end
 		end
 	end
-	local slots = (twoHander and (not offHand)) and 16 or 17
+	local slots = (twoHander and not offHand) and 16 or 17
 	return math_floor(score), (count > 0) and (levels / slots) or 0
 end
 
@@ -180,7 +197,7 @@ Module.UpdateLine = function(self, line, unit)
 	else
 		line:SetText("")
 		line.tries = (line.tries or 0) + 1
-		if (line.tries <= self.config.retries) then
+		if line.tries <= self.config.retries then
 			self.pending[line] = unit
 			self.timer:Show()
 		end
@@ -190,7 +207,7 @@ end
 -- the lines waiting on gear, tried again every `retry_delay`
 Module.OnTimer = function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
-	if (self.elapsed < self.config.retry_delay) then
+	if self.elapsed < self.config.retry_delay then
 		return
 	end
 	self.elapsed = 0
@@ -213,23 +230,25 @@ end
 
 Module.StyleInspect = function(self)
 	local model = _G.InspectModelFrame
-	if model and (not self.InspectLine) then
+	if model and not self.InspectLine then
 		self.InspectLine = CreateLine(model, { "BOTTOM", model, "BOTTOM", 0, self.config.inspect_offset }, self.config)
-		_G.InspectFrame:HookScript("OnShow", function() self:UpdateInspect() end)
+		_G.InspectFrame:HookScript("OnShow", function()
+			self:UpdateInspect()
+		end)
 	end
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "Blizzard_InspectUI") then
+	if addon == "Blizzard_InspectUI" then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleInspect()
 	end
 end
 
 Module.OnEvent = function(self, event, unit)
-	if (event == "INSPECT_TALENT_READY") then
+	if event == "INSPECT_TALENT_READY" then
 		self:UpdateInspect()
-	elseif (event == "UNIT_INVENTORY_CHANGED") then
+	elseif event == "UNIT_INVENTORY_CHANGED" then
 		local frame = _G.InspectFrame
 		if frame and frame.unit and (unit == frame.unit) then
 			self:UpdateInspect()
@@ -242,7 +261,9 @@ Module.OnInit = function(self)
 	self.pending = {}
 	self.timer = CreateFrame("Frame")
 	self.timer:Hide()
-	self.timer:SetScript("OnUpdate", function(_, elapsed) self:OnTimer(elapsed) end)
+	self.timer:SetScript("OnUpdate", function(_, elapsed)
+		self:OnTimer(elapsed)
+	end)
 end
 
 Module.OnEnable = function(self)

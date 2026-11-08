@@ -18,12 +18,54 @@ local COMBATLOG_OBJECT_TYPE_PLAYER = _G.COMBATLOG_OBJECT_TYPE_PLAYER
 
 -- Obey the alphabet!
 local emotes = {
-	"BARK", "BECKON", "BYE", "BITE", "BONK", 
-	"CACKLE", "CALM", "CHUCKLE", "COMFORT", "CUDDLE", "CURTSEY", "FLEX", 
-	"GIGGLE", "GLOAT", "GRIN", "GROWL", "GUFFAW", "INSULT", "LAUGH", "LICK", 
-	"MOCK", "MOO", "MOON", "MOURN", "NO", "PITY", "RASP", "ROAR", "ROFL", "RUDE", 
-	"SCRATCH", "SHOO", "SIGH", "SLAP", "SMIRK", "SNARL", "SNICKER", "SNIFF", "SNUB", "SOOTHE", 
-	"TAP", "TAUNT", "TEASE", "THANK", "TICKLE", "VETO", "VIOLIN", "YAWN"
+	"BARK",
+	"BECKON",
+	"BYE",
+	"BITE",
+	"BONK",
+	"CACKLE",
+	"CALM",
+	"CHUCKLE",
+	"COMFORT",
+	"CUDDLE",
+	"CURTSEY",
+	"FLEX",
+	"GIGGLE",
+	"GLOAT",
+	"GRIN",
+	"GROWL",
+	"GUFFAW",
+	"INSULT",
+	"LAUGH",
+	"LICK",
+	"MOCK",
+	"MOO",
+	"MOON",
+	"MOURN",
+	"NO",
+	"PITY",
+	"RASP",
+	"ROAR",
+	"ROFL",
+	"RUDE",
+	"SCRATCH",
+	"SHOO",
+	"SIGH",
+	"SLAP",
+	"SMIRK",
+	"SNARL",
+	"SNICKER",
+	"SNIFF",
+	"SNUB",
+	"SOOTHE",
+	"TAP",
+	"TAUNT",
+	"TEASE",
+	"THANK",
+	"TICKLE",
+	"VETO",
+	"VIOLIN",
+	"YAWN",
 }
 
 -- The damage events whose overkill also marks a killing blow, in case
@@ -35,20 +77,22 @@ local overkillIndex = {
 	RANGE_DAMAGE = 13, -- spellId, spellName, spellSchool, amount, overkill, ...
 	SPELL_DAMAGE = 13,
 	SPELL_BUILDING_DAMAGE = 13,
-	SPELL_PERIODIC_DAMAGE = 13
+	SPELL_PERIODIC_DAMAGE = 13,
 }
 
 Module.OnEvent = function(self, event, _, subEvent, sourceGUID, _, _, destGUID, destName, destFlags, ...)
-	if (bit_band(destFlags or 0, COMBATLOG_OBJECT_TYPE_PLAYER) == 0) then
+	if bit_band(destFlags or 0, COMBATLOG_OBJECT_TYPE_PLAYER) == 0 then
 		return
 	end
 
 	local isKillingBlow
-	if (subEvent == "PARTY_KILL") then
+	if subEvent == "PARTY_KILL" then
 		isKillingBlow = (sourceGUID == UnitGUID("player"))
 	elseif overkillIndex[subEvent] then
 		local overkill = select(overkillIndex[subEvent] - 8, ...)
-		isKillingBlow = overkill and (overkill > 0) and ((sourceGUID == UnitGUID("player")) or (sourceGUID == UnitGUID("pet")))
+		isKillingBlow = overkill
+			and (overkill > 0)
+			and ((sourceGUID == UnitGUID("player")) or (sourceGUID == UnitGUID("pet")))
 	end
 
 	-- one emote per kill: the overkill hit and PARTY_KILL both report it

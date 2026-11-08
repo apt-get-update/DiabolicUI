@@ -17,16 +17,28 @@ Module.CreateActionBarsPage = function(self)
 
 	CreateHeader(actionBarsPanel, layout, L["Menu"])
 
-	local showGold = CreateCheckbox(actionBarsPanel, "ShowGold", L["Show Gold"], L["Shows how much money you're carrying, next to the menu button in the bottom right corner."], function(button)
-		actionbarsDB.showGold = button:GetChecked() and true or false
-		Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdateGoldVisibility()
-	end)
+	local showGold = CreateCheckbox(
+		actionBarsPanel,
+		"ShowGold",
+		L["Show Gold"],
+		L["Shows how much money you're carrying, next to the menu button in the bottom right corner."],
+		function(button)
+			actionbarsDB.showGold = button:GetChecked() and true or false
+			Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdateGoldVisibility()
+		end
+	)
 	layout:Place(showGold, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
 
-	local showPerformance = CreateCheckbox(actionBarsPanel, "ShowPerformance", L["Show FPS & Latency"], L["Shows your framerate and latency, next to the menu button in the bottom right corner."], function(button)
-		actionbarsDB.showPerformance = button:GetChecked() and true or false
-		Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdatePerformanceVisibility()
-	end)
+	local showPerformance = CreateCheckbox(
+		actionBarsPanel,
+		"ShowPerformance",
+		L["Show FPS & Latency"],
+		L["Shows your framerate and latency, next to the menu button in the bottom right corner."],
+		function(button)
+			actionbarsDB.showPerformance = button:GetChecked() and true or false
+			Engine:GetModule("ActionBars"):GetWidget("Menu: Main"):UpdatePerformanceVisibility()
+		end
+	)
 	layout:Place(showPerformance, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
 	actionBarsPanel.okay = function() end

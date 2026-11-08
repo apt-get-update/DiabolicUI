@@ -16,7 +16,7 @@ local Update = function(self, event, unit)
 	if not unit or not UnitExists(unit) then
 		return
 	end
-	
+
 	local Threat = self.Threat
 
 	local status = UnitThreatSituation(unit)

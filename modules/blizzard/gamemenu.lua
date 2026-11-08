@@ -41,7 +41,7 @@ Module.UpdateButtonLayout = Module:Wrap(function(self)
 
 	local previous
 	local first, last
-	for _,v in ipairs(self.buttons) do
+	for _, v in ipairs(self.buttons) do
 		local button = v.button
 		if button and button:IsShown() then
 			button:ClearAllPoints()
@@ -54,25 +54,24 @@ Module.UpdateButtonLayout = Module:Wrap(function(self)
 			previous = button
 			last = button
 		end
-	end	
+	end
 
 	-- re-align first button so that the menu will be vertically centered
 	local top = first:GetTop()
 	local bottom = last:GetBottom()
 	local screen_height = UICenter:GetHeight()
 	local height = top - bottom
-	local y_position = (screen_height - height)/2
+	local y_position = (screen_height - height) / 2
 
 	first:ClearAllPoints()
 	first:SetPoint("TOP", UICenter, "TOP", 0, -y_position)
-
 end)
 
 Module.StyleButtons = function(self)
 	local uiconfig = self.uiconfig
 
 	local need_addon_watch
-	for _,v in ipairs(self.buttons) do
+	for _, v in ipairs(self.buttons) do
 		-- figure out the real frame handle of the button
 		local button
 		if type(v.content) == "string" then
@@ -119,7 +118,7 @@ Module.StyleButtons = function(self)
 					for _, name in ipairs(LAYERS) do
 						self[name]:ClearAllPoints()
 					end
-				end
+				end,
 			}
 			for _, name in ipairs(LAYERS) do
 				local texture = button:CreateTexture(nil, "ARTWORK")
@@ -129,7 +128,7 @@ Module.StyleButtons = function(self)
 				button[name] = texture
 
 				local text = button:CreateFontString(nil, "OVERLAY")
-				text:SetFontObject(uiconfig.menubutton[name.."Font"])
+				text:SetFontObject(uiconfig.menubutton[name .. "Font"])
 				text:SetText(label)
 				button.text[name] = text
 			end
@@ -137,17 +136,24 @@ Module.StyleButtons = function(self)
 			button.UpdateLayers = updateLayers
 			button:HookScript("OnEnter", updateLayers)
 			button:HookScript("OnLeave", updateLayers)
-			button:HookScript("OnMouseDown", function(self) setDown(self, true) end)
-			button:HookScript("OnMouseUp", function(self) setDown(self, false) end)
-			button:HookScript("OnShow", function(self) setDown(self, false) end)
-			button:HookScript("OnHide", function(self) setDown(self, false) end)
+			button:HookScript("OnMouseDown", function(self)
+				setDown(self, true)
+			end)
+			button:HookScript("OnMouseUp", function(self)
+				setDown(self, false)
+			end)
+			button:HookScript("OnShow", function(self)
+				setDown(self, false)
+			end)
+			button:HookScript("OnHide", function(self)
+				setDown(self, false)
+			end)
 
 			button:SetSize(unpack(uiconfig.menubutton.size))
 			button:UpdateLayers() -- update colors and layers
 
 			v.button = button -- add a reference to the frame handle for the layout function
 			v.styled = true -- avoid double styling
-
 		elseif v.addon then
 			-- a button from an addon that isn't loaded yet
 			need_addon_watch = true
@@ -178,7 +184,7 @@ Module.StyleWindow = function(self)
 
 	for i = 1, self.frame:GetNumRegions() do
 		local region = select(i, self.frame:GetRegions())
-		if (region:GetObjectType() == "Texture") then
+		if region:GetObjectType() == "Texture" then
 			region:SetTexture(nil)
 			region:SetAlpha(0)
 		else
@@ -205,13 +211,26 @@ Module.OnInit = function(self)
 		{ content = GameMenuButtonSoundOptions, label = VOICE_SOUND }, -- SOUNDOPTIONS_MENU
 		{ content = GameMenuButtonUIOptions, label = UIOPTIONS_MENU },
 		{ content = GameMenuButtonKeybindings, label = KEY_BINDINGS },
-		{ content = "GameMenuButtonMoveAnything", label = function() return GameMenuButtonMoveAnything:GetText() end, addon = true }, -- MoveAnything
+		{
+			content = "GameMenuButtonMoveAnything",
+			label = function()
+				return GameMenuButtonMoveAnything:GetText()
+			end,
+			addon = true,
+		}, -- MoveAnything
 		{ content = GameMenuButtonMacros, label = MACROS },
-		{ content = "GameMenuButtonAddOns", label = function() return GameMenuButtonAddOns:GetText() end, run = Fix_ACP, addon = true }, -- ACP (Addon Control Panel)
+		{
+			content = "GameMenuButtonAddOns",
+			label = function()
+				return GameMenuButtonAddOns:GetText()
+			end,
+			run = Fix_ACP,
+			addon = true,
+		}, -- ACP (Addon Control Panel)
 		{ content = GameMenuButtonRatings, label = RATINGS_MENU },
 		{ content = GameMenuButtonLogout, label = LOGOUT },
 		{ content = GameMenuButtonQuit, label = EXIT_GAME },
-		{ content = GameMenuButtonContinue, label = RETURN_TO_GAME }
+		{ content = GameMenuButtonContinue, label = RETURN_TO_GAME },
 	}
 
 	-- the mac options button, on a mac client only
@@ -228,12 +247,15 @@ Module.OnInit = function(self)
 	self:RegisterEvent("UI_SCALE_CHANGED", "UpdateButtonLayout")
 	self:RegisterEvent("DISPLAY_SIZE_CHANGED", "UpdateButtonLayout")
 
-	VideoOptionsFrameApply:HookScript("OnClick", function() self:UpdateButtonLayout() end)
-	VideoOptionsFrameOkay:HookScript("OnClick", function() self:UpdateButtonLayout() end)
+	VideoOptionsFrameApply:HookScript("OnClick", function()
+		self:UpdateButtonLayout()
+	end)
+	VideoOptionsFrameOkay:HookScript("OnClick", function()
+		self:UpdateButtonLayout()
+	end)
 end
 
 Module.OnEnable = function(self)
 	self:StyleWindow()
 	self:StyleButtons()
 end
-

@@ -55,8 +55,14 @@ function TestTooltips:test_players_are_class_colored_with_their_pvp_icon()
 		lu.assertNotEquals(lines[i], "PvP")
 		lu.assertNotEquals(lines[i], "Horde")
 	end
-	lu.assertStrContains(hover(Client.newUnit({ name = "Jaina", class = "MAGE", faction = "Alliance", pvp = true })), "UI-PVP-Alliance")
-	lu.assertStrContains(hover(Client.newUnit({ name = "Nobody", class = "MAGE", faction = "Neutral", pvp = true })), "UI-PVP-Neutral")
+	lu.assertStrContains(
+		hover(Client.newUnit({ name = "Jaina", class = "MAGE", faction = "Alliance", pvp = true })),
+		"UI-PVP-Alliance"
+	)
+	lu.assertStrContains(
+		hover(Client.newUnit({ name = "Nobody", class = "MAGE", faction = "Neutral", pvp = true })),
+		"UI-PVP-Neutral"
+	)
 	lu.assertStrContains(hover(Client.newUnit({ name = "Brawler", class = "ROGUE", ffa = true })), "UI-PVP-FFA")
 	lu.assertEquals(_G.GameTooltip:IsShown(), 1)
 	assertClean(client)
@@ -67,8 +73,14 @@ function TestTooltips:test_npcs_are_colored_by_reaction_and_bosses_get_a_skull()
 	lu.assertEquals(colorOf(hostile), hex(C.Reaction[2]))
 	local friendly = hover(Client.newUnit({ name = "Guard", isPlayer = false, reaction = 5 }))
 	lu.assertEquals(colorOf(friendly), hex(C.Reaction[5]))
-	lu.assertStrContains(hover(Client.newUnit({ name = "Arthas", isPlayer = false, reaction = 2, classification = "worldboss" })), "Skull")
-	lu.assertStrContains(hover(Client.newUnit({ name = "Hidden", isPlayer = false, reaction = 2, level = -1 })), "Skull")
+	lu.assertStrContains(
+		hover(Client.newUnit({ name = "Arthas", isPlayer = false, reaction = 2, classification = "worldboss" })),
+		"Skull"
+	)
+	lu.assertStrContains(
+		hover(Client.newUnit({ name = "Hidden", isPlayer = false, reaction = 2, level = -1 })),
+		"Skull"
+	)
 	local object = hover(Client.newUnit({ name = "Chair", isPlayer = false, reaction = false }))
 	lu.assertEquals(colorOf(object), hex(C.General.Normal))
 	assertClean(client)
@@ -83,7 +95,14 @@ function TestTooltips:test_dead_offline_and_tapped_units_keep_their_tooltip()
 	lu.assertEquals(_G.GameTooltip:IsShown(), 1, "an offline player's tooltip stays up")
 	lu.assertEquals(colorOf(offline), hex(C.Status.Disconnected))
 
-	local tapped = hover(Client.newUnit({ name = "Taken", isPlayer = false, playerControlled = false, reaction = 2, tapped = true, isFriend = false }))
+	local tapped = hover(Client.newUnit({
+		name = "Taken",
+		isPlayer = false,
+		playerControlled = false,
+		reaction = 2,
+		tapped = true,
+		isFriend = false,
+	}))
 	lu.assertEquals(_G.GameTooltip:IsShown(), 1, "a tapped unit's tooltip stays up")
 	lu.assertEquals(colorOf(tapped), hex(C.Status.Tapped))
 	assertClean(client)
@@ -215,7 +234,10 @@ end
 
 function TestTooltips:test_own_gear_level()
 	local player = client.world.units.player
-	for slot, item in pairs({ [1] = { iLevel = 200, quality = 4 }, [16] = { iLevel = 200, quality = 4, equipSlot = "INVTYPE_2HWEAPON" } }) do
+	for slot, item in pairs({
+		[1] = { iLevel = 200, quality = 4 },
+		[16] = { iLevel = 200, quality = 4, equipSlot = "INVTYPE_2HWEAPON" },
+	}) do
 		client.world.inventory[slot] = Session.item(client, 2000 + slot, item)
 	end
 	client.world.modifiers.shift = true
@@ -328,7 +350,8 @@ function TestTooltips:test_remaining_time_lines_stand_out()
 		{ name = "Minutes", spellId = 6, duration = 600, expires = now + 300 },
 		{ name = "Seconds", harmful = true, spellId = 7, duration = 30, expires = now + 20 },
 	}
-	local title, gray = client.Engine:GetDB("Data: Colors").General.Title, client.Engine:GetDB("Data: Colors").General.Gray
+	local title, gray =
+		client.Engine:GetDB("Data: Colors").General.Title, client.Engine:GetDB("Data: Colors").General.Gray
 	tooltip:SetOwner(_G.UIParent)
 	for i, show in ipairs({ "SetUnitBuff", "SetUnitBuff", "SetUnitDebuff" }) do
 		tooltip[show](tooltip, "player", show == "SetUnitDebuff" and 1 or i)
@@ -399,13 +422,22 @@ function TestTooltips:test_menus_dropdowns_and_debug_tools_get_skinned()
 	local inset = menu.text_pad - (15 - menu.edge)
 	lu.assertEquals({ text:GetPoint() }, { "LEFT", choice, "LEFT", inset, 0 })
 	lu.assertEquals({ text:GetTextColor() }, { 1, 1, 1, 1 })
-	lu.assertEquals({ title:GetFontString():GetTextColor() }, { menu.title_color[1], menu.title_color[2], menu.title_color[3], 1 })
+	lu.assertEquals(
+		{ title:GetFontString():GetTextColor() },
+		{ menu.title_color[1], menu.title_color[2], menu.title_color[3], 1 }
+	)
 	lu.assertEquals(_G.DropDownList1.maxWidth, inset + text:GetStringWidth() + menu.text_pad + menu.edge - 10)
-	lu.assertEquals({ _G.DropDownList1Button2Highlight:GetPoint(1) }, { "TOPLEFT", choice, "TOPLEFT", menu.edge - 15, 0 })
+	lu.assertEquals(
+		{ _G.DropDownList1Button2Highlight:GetPoint(1) },
+		{ "TOPLEFT", choice, "TOPLEFT", menu.edge - 15, 0 }
+	)
 	-- a line it can't pick grey; a unit's menu titled in its name's colour
 	-- (as its tooltip); nothing added to a level not there
 	_G.UIDropDownMenu_AddButton({ text = "Master Looter", disabled = 1 })
-	lu.assertEquals({ _G.DropDownList1Button3:GetFontString():GetTextColor() }, { menu.disabled_color[1], menu.disabled_color[2], menu.disabled_color[3], 1 })
+	lu.assertEquals(
+		{ _G.DropDownList1Button3:GetFontString():GetTextColor() },
+		{ menu.disabled_color[1], menu.disabled_color[2], menu.disabled_color[3], 1 }
+	)
 	_G.UIDROPDOWNMENU_INIT_MENU = { unit = "player" }
 	_G.UIDropDownMenu_InitializeHelper()
 	_G.UIDropDownMenu_AddButton({ text = "Me", isTitle = 1 })
@@ -482,17 +514,24 @@ end
 TestSpellTooltips = {}
 
 function TestSpellTooltips:setUp()
-	client = Client.boot({ class = "MAGE", world = function(world)
-		-- the client's own lines: the name and rank, the cost and range, the
-		-- cast time, its description in gold
-		local white = { 1, 1, 1 }
-		world.spells[133] = { name = "Fireball", icon = [[Interface\Icons\Spell_Fire_FlameBolt]], lines = {
-			{ "Fireball", "Rank 14", white, { .5, .5, .5 } },
-			{ "400 Mana", "35 yd range", white, white },
-			{ "3.5 sec cast", nil, white },
-			{ "Hurls a fiery ball that causes 888 to 1132 Fire damage.", nil, { 1, .82, 0 } },
-		} }
-	end })
+	client = Client.boot({
+		class = "MAGE",
+		world = function(world)
+			-- the client's own lines: the name and rank, the cost and range, the
+			-- cast time, its description in gold
+			local white = { 1, 1, 1 }
+			world.spells[133] = {
+				name = "Fireball",
+				icon = [[Interface\Icons\Spell_Fire_FlameBolt]],
+				lines = {
+					{ "Fireball", "Rank 14", white, { 0.5, 0.5, 0.5 } },
+					{ "400 Mana", "35 yd range", white, white },
+					{ "3.5 sec cast", nil, white },
+					{ "Hurls a fiery ball that causes 888 to 1132 Fire damage.", nil, { 1, 0.82, 0 } },
+				},
+			}
+		end,
+	})
 end
 
 function TestSpellTooltips:tearDown()

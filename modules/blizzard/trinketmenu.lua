@@ -93,7 +93,7 @@ Module.StyleTrinketMenu = function(self)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "TrinketMenu") then
+	if addon == "TrinketMenu" then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleTrinketMenu()
 	end

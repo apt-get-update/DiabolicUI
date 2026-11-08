@@ -21,7 +21,9 @@ local LOCALES = { "deDE", "esES", "esMX", "frFR", "koKR", "ruRU", "zhCN", "zhTW"
 -- Loads locale_handler.lua for the given client locale, then the given
 -- locale files through it (like locale.xml does). Returns the Engine table.
 local function loadLocales(gameLocale, files)
-	_G.GetLocale = function() return gameLocale end
+	_G.GetLocale = function()
+		return gameLocale
+	end
 	local Engine = {}
 	assert(loadfile("locale/locale_handler.lua"))("DiabolicUI", Engine)
 	for _, file in ipairs(files) do
@@ -34,13 +36,19 @@ end
 -- table instead of the real locale. Also returns the keys it assigns twice.
 local function keysOf(file)
 	local keys, twice = {}, {}
-	local recorder = setmetatable({}, { __newindex = function(_, key)
-		if keys[key] then
-			table.insert(twice, key)
-		end
-		keys[key] = true
-	end })
-	assert(loadfile(file))("DiabolicUI", { NewLocale = function() return recorder end })
+	local recorder = setmetatable({}, {
+		__newindex = function(_, key)
+			if keys[key] then
+				table.insert(twice, key)
+			end
+			keys[key] = true
+		end,
+	})
+	assert(loadfile(file))("DiabolicUI", {
+		NewLocale = function()
+			return recorder
+		end,
+	})
 	return keys, twice
 end
 
@@ -49,7 +57,9 @@ end
 local function capturePrint(func)
 	local printed = {}
 	local print = _G.print
-	_G.print = function(...) table.insert(printed, table.concat({ ... }, " ")) end
+	_G.print = function(...)
+		table.insert(printed, table.concat({ ... }, " "))
+	end
 	local ok, err = pcall(func)
 	_G.print = print
 	assert(ok, err)
@@ -92,7 +102,9 @@ function TestLocaleHandler:test_unknown_key_returns_itself_and_complains()
 	local Engine = loadLocales("enUS", { "locale/locale-enUS.lua" })
 	local L = Engine:GetLocale()
 	local value
-	local printed = capturePrint(function() value = L["No such text"] end)
+	local printed = capturePrint(function()
+		value = L["No such text"]
+	end)
 	lu.assertEquals(value, "No such text")
 	lu.assertEquals(#printed, 1)
 	lu.assertStrContains(printed[1], "missing locale")
@@ -151,7 +163,11 @@ end
 
 function TestLocaleFiles:test_code_only_uses_known_keys()
 	local english = keysOf("locale/locale-enUS.lua")
-	local pipe = assert(io.popen("find engine handlers modules data defaults settings -name '*.lua' -not -path 'modules/minimap/*' | sort"))
+	local pipe = assert(
+		io.popen(
+			"find engine handlers modules data defaults settings -name '*.lua' -not -path 'modules/minimap/*' | sort"
+		)
+	)
 	local missing = {}
 	for path in pipe:lines() do
 		for _, key in ipairs(literalKeysUsedBy(path)) do
@@ -168,7 +184,11 @@ end
 -- (looked up as L["..."], or handed to code that looks it up).
 function TestLocaleFiles:test_every_english_key_is_used()
 	local sources = {}
-	local pipe = assert(io.popen("find engine handlers modules data defaults settings -name '*.lua' -not -path 'modules/minimap/*' | sort"))
+	local pipe = assert(
+		io.popen(
+			"find engine handlers modules data defaults settings -name '*.lua' -not -path 'modules/minimap/*' | sort"
+		)
+	)
 	for path in pipe:lines() do
 		local file = assert(io.open(path, "r"))
 		sources[#sources + 1] = file:read("*a")

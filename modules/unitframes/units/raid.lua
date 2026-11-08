@@ -17,12 +17,10 @@ local GetRaidRosterInfo = _G.GetRaidRosterInfo
 local GetSpellInfo = _G.GetSpellInfo
 local UnitClass = _G.UnitClass
 
-
 -- No buffs at all on raid frames
 local buffFilter = function(self, ...)
 	return false
 end
-
 
 -- Cleanse Spirit is a talent. GetSpellInfo by ID always returns the
 -- localized name; GetSpellInfo by *name* only returns something when the
@@ -40,7 +38,7 @@ local IsDispellableByPlayer = function(debuffType)
 	elseif class == "DRUID" then
 		return (debuffType == "Curse" or debuffType == "Poison")
 	elseif class == "SHAMAN" then
-		if (debuffType == "Poison" or debuffType == "Disease") then
+		if debuffType == "Poison" or debuffType == "Disease" then
 			return true
 		end
 		return (debuffType == "Curse") and (CLEANSE_SPIRIT ~= nil) and (GetSpellInfo(CLEANSE_SPIRIT) ~= nil)
@@ -51,7 +49,20 @@ local IsDispellableByPlayer = function(debuffType)
 end
 
 -- Only show the most important dispellable debuff
-local debuffFilter = function(self, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff)
+local debuffFilter = function(
+	self,
+	name,
+	rank,
+	icon,
+	count,
+	debuffType,
+	duration,
+	expirationTime,
+	unitCaster,
+	isStealable,
+	spellId,
+	isBossDebuff
+)
 	-- If it's a boss debuff, always show it
 	if isBossDebuff then
 		return true
@@ -65,15 +76,14 @@ local debuffFilter = function(self, name, rank, icon, count, debuffType, duratio
 	return false
 end
 
-
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.raid
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
 	local unitNum = string_match(unit, "%d") -- (raid1 to raid40)
 
 	self:SetSize(unpack(config.size))
-	self:Place("TOP", 0, -((unitNum-1) * 90))
+	self:Place("TOP", 0, -((unitNum - 1) * 90))
 
 	-- Artwork
 	-------------------------------------------------------------------
@@ -93,18 +103,17 @@ local Style = function(self, unit)
 	local Border = self:CreateFrame("Frame")
 	Border:SetFrameLevel(self:GetFrameLevel() + 4)
 	Border:SetAllPoints()
-	
+
 	local BorderNormal = Border:CreateTexture(nil, "BORDER")
 	BorderNormal:SetSize(unpack(config.border.texture_size))
 	BorderNormal:SetPoint(unpack(config.border.texture_position))
 	BorderNormal:SetTexture(config.border.textures.normal)
-	
+
 	local BorderNormalHighlight = Border:CreateTexture(nil, "BORDER")
 	BorderNormalHighlight:SetSize(unpack(config.border.texture_size))
 	BorderNormalHighlight:SetPoint(unpack(config.border.texture_position))
 	BorderNormalHighlight:SetTexture(config.border.textures.highlight)
 	BorderNormalHighlight:Hide()
-
 
 	-- Threat
 	-------------------------------------------------------------------
@@ -113,7 +122,6 @@ local Style = function(self, unit)
 	Threat:SetSize(unpack(config.border.texture_size))
 	Threat:SetPoint(unpack(config.border.texture_position))
 	Threat:SetTexture(config.border.textures.threat)
-	
 
 	-- Health
 	-------------------------------------------------------------------
@@ -121,12 +129,12 @@ local Style = function(self, unit)
 	Health:SetSize(unpack(config.health.size))
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
-	Health.frequent = 1/30
+	Health.frequent = 1 / 30
 
 	local HealthValueHolder = Health:CreateFrame("Frame")
 	HealthValueHolder:SetAllPoints()
 	HealthValueHolder:SetFrameLevel(Border:GetFrameLevel() + 1)
-	
+
 	Health.Value = HealthValueHolder:CreateFontString(nil, "OVERLAY")
 	Health.Value:SetFontObject(config.texts.health.font_object)
 	Health.Value:SetPoint(unpack(config.texts.health.position))
@@ -139,23 +147,21 @@ local Style = function(self, unit)
 	Health.useClassColor = db.showClassColors
 	Health.dimOutOfCombat = true
 
-
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
 	CastBar:Hide()
 	CastBar:SetAllPoints()
-	CastBar:SetStatusBarTexture(1, 1, 1, .15)
+	CastBar:SetStatusBarTexture(1, 1, 1, 0.15)
 	CastBar:SetSize(Health:GetSize())
 	CastBar:DisableSmoothing(true)
-
 
 	-- Auras
 	-------------------------------------------------------------------
 	local auras = self:CreateFrame()
 	auras:SetSize(unpack(config.auras.size))
 	auras:Place(unpack(config.auras.position))
-	
+
 	auras.config = config.auras
 	auras.buttonConfig = config.auras.button
 	auras.auraSize = config.auras.button.size
@@ -169,7 +175,6 @@ local Style = function(self, unit)
 	auras.DebuffFilter = debuffFilter
 	auras.PostCreateButton = Library.PostCreateAuraButton
 
-
 	-- Texts
 	-------------------------------------------------------------------
 	local Name = Border:CreateFontString(nil, "OVERLAY")
@@ -182,7 +187,6 @@ local Style = function(self, unit)
 	Name:SetWordWrap(true)
 	Name:SetNonSpaceWrap(false)
 
-
 	-- Role Icon
 	-------------------------------------------------------------------
 	-- Parented to Border (elevated frame level) so it isn't drawn behind
@@ -192,7 +196,6 @@ local Style = function(self, unit)
 	Role:SetPoint(config.role.position[1], Health, config.role.position[2], config.role.position[3])
 	Role:SetTexture(config.role.texture)
 	Role:Hide()
-
 
 	self.Auras = auras
 	self.CastBar = CastBar
@@ -206,8 +209,6 @@ local Style = function(self, unit)
 
 	self:HookScript("OnEnter", Library.UpdateLayers)
 	self:HookScript("OnLeave", Library.UpdateLayers)
-
-
 end
 
 -- Exposed so units/testmode.lua's Toggle Fake Raid can reuse this purely-visual
@@ -227,7 +228,9 @@ local MEMBERS_PER_GROUP, GROUPS_PER_COLUMN = 5, 2
 local GetGroupPosition = function(config, subgroup)
 	local column = math_floor((subgroup - 1) / GROUPS_PER_COLUMN)
 	local width = config.size[1] + config.offset + config.auras.button.size[1] + 3 -- the frame and its auras
-	local height = config.groups.label_height + MEMBERS_PER_GROUP * (config.size[2] + config.offset) + config.groups.spacing
+	local height = config.groups.label_height
+		+ MEMBERS_PER_GROUP * (config.size[2] + config.offset)
+		+ config.groups.spacing
 	return column * width, -((subgroup - 1) % GROUPS_PER_COLUMN) * height
 end
 
@@ -270,7 +273,7 @@ UnitFrameWidget.OnEnable = function(self)
 	-- Create 40 frames
 	self.UnitFrames = {}
 	for i = 1, 40 do
-		self.UnitFrames[i] = UnitFrame:New("raid"..i, self.UnitFrame, Style)
+		self.UnitFrames[i] = UnitFrame:New("raid" .. i, self.UnitFrame, Style)
 	end
 	self.GroupLabels = CreateGroupLabels(config, self.UnitFrame)
 
@@ -281,7 +284,7 @@ UnitFrameWidget.OnEnable = function(self)
 			self.UnitFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 			return
 		end
-		if (event == "PLAYER_REGEN_ENABLED") then
+		if event == "PLAYER_REGEN_ENABLED" then
 			self.UnitFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		end
 
@@ -296,7 +299,12 @@ UnitFrameWidget.OnEnable = function(self)
 			local name, _, subgroup = GetRaidRosterInfo(i)
 			if name then
 				local frame = self.UnitFrames[i]
-				frame:SetPoint("TOPLEFT", self.UnitFrame, "TOPLEFT", GetMemberPosition(config, subgroup, rows[subgroup]))
+				frame:SetPoint(
+					"TOPLEFT",
+					self.UnitFrame,
+					"TOPLEFT",
+					GetMemberPosition(config, subgroup, rows[subgroup])
+				)
 				frame:Show()
 				rows[subgroup] = rows[subgroup] + 1
 			end
@@ -304,7 +312,7 @@ UnitFrameWidget.OnEnable = function(self)
 
 		-- labels on the groups with someone in them
 		for subgroup = 1, 8 do
-			if (rows[subgroup] > 0) then
+			if rows[subgroup] > 0 then
 				self.GroupLabels[subgroup]:Show()
 			else
 				self.GroupLabels[subgroup]:Hide()

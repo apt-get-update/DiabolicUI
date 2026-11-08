@@ -23,14 +23,13 @@ local unit_events = {
 	UNIT_ENTERED_VEHICLE = true,
 	UNIT_EXITED_VEHICLE = true,
 	UNIT_NAME_UPDATE = true,
-	UNIT_AURA = true
+	UNIT_AURA = true,
 }
-
 
 local female_human = {
 	-- Human Illusion in Caverns of Time (Escape from Durnholde Keep + Culling of Stratholme)
 	[35481] = true, -- Horde (?)
-	[35483] = true -- Alliance (?)
+	[35483] = true, -- Alliance (?)
 }
 
 -- We're actually doing this... /sigh
@@ -72,7 +71,7 @@ local HasFemaleHumanPortrait = function(unit)
 	-- Do we have an illusion?
 	for i = 1, 40 do
 		local name, _, _, _, _, _, _, _, _, _, spellId = UnitAura(unit, i)
-		if (not name) then
+		if not name then
 			return false
 		end
 		if female_human[spellId] then

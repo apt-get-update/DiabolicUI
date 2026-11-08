@@ -22,40 +22,54 @@ local petOffset = 10 + BUTTON_SIZE_TRIPLE - 3 -- copied from 'petskulloffset' in
 local orbOffsetX, orbOffsetY = 0, 0 -- -4
 
 Engine:NewStaticConfig("UnitFrames", {
-	structure = {
-		
-	},
+	structure = {},
 	visuals = {
 		-- artwork is attached to the actionbar module's "Controller: Main" widget's frame
 		artwork = {
 			health = {
 				shade = {
 					size = { 256, 256 },
-					position = { "BOTTOMLEFT", orbOffsetX + -256 + (256 - 160)/2 -8, orbOffsetY + -(256 - 160)/2 -6},
+					position = {
+						"BOTTOMLEFT",
+						orbOffsetX + -256 + (256 - 160) / 2 - 8,
+						orbOffsetY + -(256 - 160) / 2 - 6,
+					},
 					texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Backdrop.tga]],
-					color = { 0, 0, 0, 1 }
+					color = { 0, 0, 0, 1 },
 				},
 				overlay = {
 					size = { 256, 256 },
-					position = { "BOTTOMLEFT", orbOffsetX + -256 + (256 - 160)/2 -8, orbOffsetY + -(256 - 160)/2 -6},
+					position = {
+						"BOTTOMLEFT",
+						orbOffsetX + -256 + (256 - 160) / 2 - 8,
+						orbOffsetY + -(256 - 160) / 2 - 6,
+					},
 					texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Border.tga]],
-					color = { 1, 1, 1, 1 }
-				}
+					color = { 1, 1, 1, 1 },
+				},
 			},
 			power = {
 				shade = {
 					size = { 256, 256 },
-					position = { "BOTTOMRIGHT", -orbOffsetX + 256 - (256 - 160)/2 +8, orbOffsetY + -(256 - 160)/2 -6},
+					position = {
+						"BOTTOMRIGHT",
+						-orbOffsetX + 256 - (256 - 160) / 2 + 8,
+						orbOffsetY + -(256 - 160) / 2 - 6,
+					},
 					texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Backdrop.tga]],
-					color = { 0, 0, 0, 1 }
+					color = { 0, 0, 0, 1 },
 				},
 				overlay = {
 					size = { 256, 256 },
-					position = { "BOTTOMRIGHT", -orbOffsetX + 256 - (256 - 160)/2 +8, orbOffsetY + -(256 - 160)/2 -6},
+					position = {
+						"BOTTOMRIGHT",
+						-orbOffsetX + 256 - (256 - 160) / 2 + 8,
+						orbOffsetY + -(256 - 160) / 2 - 6,
+					},
 					texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Border.tga]],
-					color = { 1, 1, 1, 1 }
-				}
-			}
+					color = { 1, 1, 1, 1 },
+				},
+			},
 		},
 		units = {
 			player = {
@@ -67,50 +81,48 @@ Engine:NewStaticConfig("UnitFrames", {
 					positionPet = { "BOTTOM", "Main", "TOP", 0, 140 + petOffset },
 					rune_size = 70,
 					texture = path .. [[textures\DiabolicUI_Runes.tga]], -- 8 glyphs x 3 rows (slot, fill, glow)
-					glyph_size = { 128/1024, 128/512 }, -- one glyph, in texture coordinates
+					glyph_size = { 128 / 1024, 128 / 512 }, -- one glyph, in texture coordinates
 					glyph_rows = { slot = 0, fill = 1, glow = 2 },
-					fill_multiplier = .5, -- the fill art is white; halve the rune color so it isn't neon
-					slot_multiplier = .25,
-					glow_alpha = .75,
-					alpha_recharging = .5
+					fill_multiplier = 0.5, -- the fill art is white; halve the rune color so it isn't neon
+					slot_multiplier = 0.25,
+					glow_alpha = 0.75,
+					alpha_recharging = 0.5,
 				},
 				castbar = {
 					size = { 227, 15 },
 					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 }, -- 0, 210
-					positionPet = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + petOffset }, 
+					positionPet = { "BOTTOM", "Main", "TOP", 0, 210 + 20 + petOffset },
 					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
-					color = { .4, .4, .9 }, 
+					color = { 0.4, 0.4, 0.9 },
 					name = {
 						font_object = DiabolicFont_HeaderRegular16White,
-						position = { "BOTTOM", .5, -30.5 }
+						position = { "BOTTOM", 0.5, -30.5 },
 					},
 					value = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 3.5, .5 }
+						position = { "CENTER", 3.5, 0.5 },
 					},
-					icon = {
-						
-					},
+					icon = {},
 					spark = {
 						size = { 128, 128 },
 						texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_Spark_Warcraft.tga]],
-						flash = { 2.75, 1.25, .45, .95 }
+						flash = { 2.75, 1.25, 0.45, 0.95 },
 					},
 					shade = {
 						position = { "CENTER", 0, 0 },
-						color = { 0, 0, 0, .5 },
-						texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+						color = { 0, 0, 0, 0.5 },
+						texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 					},
 					backdrop = {
 						size = { 512, 64 },
-						position =  { "TOPLEFT", -142, 25 },
-						texture = path .. [[textures\DiabolicUI_Target_227x15_Backdrop.tga]]
+						position = { "TOPLEFT", -142, 25 },
+						texture = path .. [[textures\DiabolicUI_Target_227x15_Backdrop.tga]],
 					},
 					border = {
 						size = { 512, 64 },
-						position =  { "TOPLEFT", -142, 25 },
-						texture = path .. [[textures\DiabolicUI_Target_227x15_Border.tga]]
-					}
+						position = { "TOPLEFT", -142, 25 },
+						texture = path .. [[textures\DiabolicUI_Target_227x15_Border.tga]],
+					},
 				},
 				auras = {
 					position = { "TOPRIGHT", "Minimap", "TOPLEFT", -20, 0 },
@@ -119,8 +131,8 @@ Engine:NewStaticConfig("UnitFrames", {
 					-- grow out to its right instead of running offscreen.
 					positionMinimapLeft = { "TOPLEFT", "Minimap", "TOPRIGHT", 20, 0 },
 					size = { 200, 200 },
-					spacingH = 4, 
-					spacingV = 4, 
+					spacingH = 4,
+					spacingV = 4,
 					button = {
 						size = { 30, 30 },
 						color = C.General.UIBorder,
@@ -135,9 +147,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -150,30 +162,49 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
 				},
 				buffs = {
 					position = { "BOTTOMLEFT", "Main", "TOPLEFT", 26, 46 },
 					positionPet = { "BOTTOMLEFT", "Main", "TOPLEFT", 26, 46 + petOffset },
-					size = { 
-						["1"] = { math_floor((BUTTON_SIZE_SINGLE*NUM_ACTIONBAR_SLOTS + bar_padding*(NUM_ACTIONBAR_SLOTS-1))/2) -(16 + 10), 38*2 + 8 + 3 + 2 },
-						["2"] = { math_floor((BUTTON_SIZE_DOUBLE*NUM_ACTIONBAR_SLOTS + bar_padding*(NUM_ACTIONBAR_SLOTS-1))/2) -(16 + 10), 38*2 + 8 + 3 + 2 },
-						["3"] = { math_floor((BUTTON_SIZE_TRIPLE*NUM_ACTIONBAR_SLOTS + bar_padding*(NUM_ACTIONBAR_SLOTS-1))/2) -(16  + 10), 38*2 + 8 + 3 + 2 },
-						["vehicle"] = { math_floor((BUTTON_SIZE_VEHICLE*NUM_VEHICLE_SLOTS + bar_padding*(NUM_VEHICLE_SLOTS-1))/2) -(16 + 10), 38*2 + 8 + 3 + 2 }
+					size = {
+						["1"] = {
+							math_floor(
+								(BUTTON_SIZE_SINGLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
+						["2"] = {
+							math_floor(
+								(BUTTON_SIZE_DOUBLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
+						["3"] = {
+							math_floor(
+								(BUTTON_SIZE_TRIPLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
+						["vehicle"] = {
+							math_floor(
+								(BUTTON_SIZE_VEHICLE * NUM_VEHICLE_SLOTS + bar_padding * (NUM_VEHICLE_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
 					},
-					spacingH = 4, 
-					spacingV = 12, 
+					spacingH = 4,
+					spacingV = 12,
 					button = {
 						size = { 30, 30 },
 						color = C.General.XP,
@@ -188,9 +219,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -203,30 +234,49 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
 				},
 				debuffs = {
 					position = { "BOTTOMRIGHT", "Main", "TOPRIGHT", -26, 46 },
 					positionPet = { "BOTTOMRIGHT", "Main", "TOPRIGHT", 26, 46 + petOffset },
-					size = { 
-						["1"] = { math_floor((BUTTON_SIZE_SINGLE*NUM_ACTIONBAR_SLOTS + bar_padding*(NUM_ACTIONBAR_SLOTS-1))/2) -(16 + 10), 38*2 + 8 + 3 + 2 },
-						["2"] = { math_floor((BUTTON_SIZE_DOUBLE*NUM_ACTIONBAR_SLOTS + bar_padding*(NUM_ACTIONBAR_SLOTS-1))/2) -(16 + 10), 38*2 + 8 + 3 + 2 },
-						["3"] = { math_floor((BUTTON_SIZE_TRIPLE*NUM_ACTIONBAR_SLOTS + bar_padding*(NUM_ACTIONBAR_SLOTS-1))/2) -(16  + 10), 38*2 + 8 + 3 + 2 },
-						["vehicle"] = { math_floor((BUTTON_SIZE_VEHICLE*NUM_VEHICLE_SLOTS + bar_padding*(NUM_VEHICLE_SLOTS-1))/2) -(16 + 10), 38*2 + 8 + 3 + 2 }
+					size = {
+						["1"] = {
+							math_floor(
+								(BUTTON_SIZE_SINGLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
+						["2"] = {
+							math_floor(
+								(BUTTON_SIZE_DOUBLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
+						["3"] = {
+							math_floor(
+								(BUTTON_SIZE_TRIPLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
+						["vehicle"] = {
+							math_floor(
+								(BUTTON_SIZE_VEHICLE * NUM_VEHICLE_SLOTS + bar_padding * (NUM_VEHICLE_SLOTS - 1)) / 2
+							) - (16 + 10),
+							38 * 2 + 8 + 3 + 2,
+						},
 					},
-					spacingH = 4, 
-					spacingV = 12, 
+					spacingH = 4,
+					spacingV = 12,
 					button = {
 						size = { 30, 30 },
 						color = C.General.DarkRed,
@@ -241,9 +291,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -256,102 +306,113 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
 				},
 				left = {
-					size = { 140, 140 }, 
-					position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", orbOffsetX -140 + (140 - 160)/2 -8, orbOffsetY -(140 - 160)/2 -6 },
+					size = { 140, 140 },
+					position = {
+						"BOTTOMLEFT",
+						"Main",
+						"BOTTOMLEFT",
+						orbOffsetX - 140 + (140 - 160) / 2 - 8,
+						orbOffsetY - (140 - 160) / 2 - 6,
+					},
 					health = {
 						size = { 150, 150 },
 						position = { "CENTER" },
-						color = { 175/255, 17/255, 28/255 }, -- blood
+						color = { 175 / 255, 17 / 255, 28 / 255 }, -- blood
 						spark = {
 							size = { 128, 128 },
 							texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],
-							flash = { 2.75, 1.25, .45, .95 },
+							flash = { 2.75, 1.25, 0.45, 0.95 },
 							flash_size = { 64, 16 },
-							flash_texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+							flash_texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 						},
 						layers = {
 							gradient = {
-								alpha = .85,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Gradient.tga]]
+								alpha = 0.85,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Gradient.tga]],
 							},
 							moon = {
-								alpha = .5,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Moon.tga]]
+								alpha = 0.5,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Moon.tga]],
 							},
 							smoke = {
-								alpha = .5,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]]
+								alpha = 0.5,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]],
 							},
 							shade = {
-								alpha = .9,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Shade.tga]]
-							}
-						}
-					}
+								alpha = 0.9,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Shade.tga]],
+							},
+						},
+					},
 				},
 				right = {
 					size = { 140, 140 },
-					position = { "BOTTOMRIGHT", "Main", "BOTTOMRIGHT", orbOffsetX + 140 - (140 - 160)/2 +8, orbOffsetY -(140 - 160)/2 -6 },
+					position = {
+						"BOTTOMRIGHT",
+						"Main",
+						"BOTTOMRIGHT",
+						orbOffsetX + 140 - (140 - 160) / 2 + 8,
+						orbOffsetY - (140 - 160) / 2 - 6,
+					},
 					power = {
 						size = { 150, 150 },
 						position = { "CENTER" },
-						color = { 37/255, 37/255, 198/255 },
+						color = { 37 / 255, 37 / 255, 198 / 255 },
 						spark = {
 							size = { 128, 128 },
 							texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],
-							flash = { 2.75, 1.25, .45, .95 },
+							flash = { 2.75, 1.25, 0.45, 0.95 },
 							flash_size = { 64, 16 },
-							flash_texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+							flash_texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 						},
 						separator = {
 							size = { 256, 256 },
 							position = { "CENTER", 0, 0 },
-							texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Split.tga]]
+							texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Split.tga]],
 						},
 						layers = {
 							gradient = {
-								alpha = .85,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Gradient.tga]]
+								alpha = 0.85,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Gradient.tga]],
 							},
 							moon = {
-								alpha = .75,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Moon.tga]]
+								alpha = 0.75,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Moon.tga]],
 							},
 							smoke = {
-								alpha = .5,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]]
+								alpha = 0.5,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]],
 							},
 							shade = {
-								alpha = .75,
-								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Shade.tga]]
-							}
-						}
-					}
+								alpha = 0.75,
+								texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Shade.tga]],
+							},
+						},
+					},
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold10Title,
-						position = { "TOP", .5, 24.5 }
+						position = { "TOP", 0.5, 24.5 },
 					},
 					power = {
 						font_object = DiabolicFont_SansBold10Title,
-						position = { "TOP", .5, 24.5 }
-					}
-				}
+						position = { "TOP", 0.5, 24.5 },
+					},
+				},
 			},
 			target = {
 				size = { 346, 40 },
@@ -359,35 +420,35 @@ Engine:NewStaticConfig("UnitFrames", {
 				health = {
 					size = { 305, 15 },
 					position = { "TOP", 0, -3 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
-				power = { 
+				power = {
 					size = { 274, 10 },
 					position = { "TOP", 0, -(3 + 25) },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular18,
 					position = { "TOP", 0.5, 32.5 + 38 },
-					size = { 346 + 80, 38 }
+					size = { 346 + 80, 38 },
 				},
 				classification = {
 					font_object = DiabolicFont_HeaderRegular10, -- will also apply to spell name when casting
-					position = { "TOP", 0.5, 26.5 }
+					position = { "TOP", 0.5, 26.5 },
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "RIGHT", -6, 0 }
+						position = { "RIGHT", -6, 0 },
 					},
 					power = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "RIGHT", -6, 0 }
+						position = { "RIGHT", -6, 0 },
 					},
 					castTime = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "LEFT", 6, 0 } -- should mirror the health text
-					}
+						position = { "LEFT", 6, 0 }, -- should mirror the health text
+					},
 				},
 				textures = {
 					size = { 512, 128 },
@@ -396,55 +457,59 @@ Engine:NewStaticConfig("UnitFrames", {
 						shade = {
 							size = { 768, 256 },
 							position = { "CENTER", 0, 0 },
-							color = { 0, 0, 0, .5 },
-							texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+							color = { 0, 0, 0, 0.5 },
+							texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 						},
 						backdrop = {
 							single = path .. [[textures\DiabolicUI_Target_305x15_Backdrop.tga]],
-							double = path .. [[textures\DiabolicUI_Target_305x15_Backdrop2Bars.tga]]
+							double = path .. [[textures\DiabolicUI_Target_305x15_Backdrop2Bars.tga]],
 						},
 						border = {
 							standard_single = {
 								normal = path .. [[textures\DiabolicUI_Target_305x15_Border.tga]],
 								highlight = path .. [[textures\DiabolicUI_Target_305x15_BorderHighlight.tga]],
-								threat = path .. [[textures\DiabolicUI_Target_305x15_Glow.tga]]
+								threat = path .. [[textures\DiabolicUI_Target_305x15_Glow.tga]],
 							},
 							standard_double = {
 								normal = path .. [[textures\DiabolicUI_Target_305x15_Border2Bars.tga]],
 								highlight = path .. [[textures\DiabolicUI_Target_305x15_Border2BarsHighlight.tga]],
-								threat = path .. [[textures\DiabolicUI_Target_305x15_Glow2Bars.tga]]
+								threat = path .. [[textures\DiabolicUI_Target_305x15_Glow2Bars.tga]],
 							},
 							elite_single = {
 								normal = path .. [[textures\DiabolicUI_Target_305x15_BorderElite.tga]],
 								highlight = path .. [[textures\DiabolicUI_Target_305x15_BorderEliteHighlight.tga]],
-								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss.tga]]
+								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss.tga]],
 							},
 							elite_double = {
 								normal = path .. [[textures\DiabolicUI_Target_305x15_BorderElite2Bars.tga]],
 								highlight = path .. [[textures\DiabolicUI_Target_305x15_BorderElite2BarsHighlight.tga]],
-								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss2Bars.tga]]
+								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss2Bars.tga]],
 							},
 							boss_single = {
 								normal = path .. [[textures\DiabolicUI_Target_305x15_BorderBoss.tga]],
 								highlight = path .. [[textures\DiabolicUI_Target_305x15_BorderBossHighlight.tga]],
-								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss.tga]]
+								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss.tga]],
 							},
 							boss_double = {
 								normal = path .. [[textures\DiabolicUI_Target_305x15_BorderBoss2Bars.tga]],
 								highlight = path .. [[textures\DiabolicUI_Target_305x15_BorderBoss2BarsHighlight.tga]],
-								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss2Bars.tga]]
-							}
-						}
-					}
+								threat = path .. [[textures\DiabolicUI_Target_305x15_GlowBoss2Bars.tga]],
+							},
+						},
+					},
 				},
 				auras = {
 					position = { "TOP", 0, -45 },
-					size = { 30*8 + 4*7 + 1, 44*3 },
-					spacingH = 4, 
-					spacingV = 12, 
+					size = { 30 * 8 + 4 * 7 + 1, 44 * 3 },
+					spacingH = 4,
+					spacingV = 12,
 					button = {
 						size = { 24, 24 },
-						color = { (C.Status.Dead[1]/3 + .3)*.7, (C.Status.Dead[2]/3 + .3)*.7, (C.Status.Dead[3]/3 + .3)*.7 },  -- C.General.XP,
+						color = {
+							(C.Status.Dead[1] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[2] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[3] / 3 + 0.3) * 0.7,
+						}, -- C.General.XP,
 						glow = {
 							backdrop = {
 								bgFile = nil, -- [[Interface\ChatFrame\ChatFrameBackground]],
@@ -456,9 +521,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -471,73 +536,78 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
 				},
 			},
 			tot = {
 				size = { 148, 35 },
-				position = { "TOP", "UICenter", "TOP", -(346/2 + 120), -62 }, 
+				position = { "TOP", "UICenter", "TOP", -(346 / 2 + 120), -62 },
 				shade = {
 					size = { 384, 128 },
 					position = { "CENTER", 0, 0 },
-					color = { 0, 0, 0, .35 },
-					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+					color = { 0, 0, 0, 0.35 },
+					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 				},
 				backdrop = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
-					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]]
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
+					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]],
 				},
 				border = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
 					textures = {
 						normal = path .. [[textures\DiabolicUI_Target_114x15_Border.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_114x15_Highlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]]
-					}
+						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]],
+					},
 				},
 				health = {
 					size = { 114, 15 },
 					position = { "BOTTOM", 0, 10 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 6, 0 }
-					}
+						position = { "CENTER", 6, 0 },
+					},
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
 					position = { "TOP", 0.5, 24.5 + 17 },
-					size = { 148 + 40, 34 }
-				}
+					size = { 148 + 40, 34 },
+				},
 			},
 			focus = {
 				size = { 90, 17 },
-				position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", orbOffsetX -140 + (140 - 160)/2 -8 + (140-90)/2, 440 },
+				position = {
+					"BOTTOMLEFT",
+					"Main",
+					"BOTTOMLEFT",
+					orbOffsetX - 140 + (140 - 160) / 2 - 8 + (140 - 90) / 2,
+					440,
+				},
 				shade = {
 					size = { 196, 64 },
 					position = { "BOTTOM", 0, -20 },
-					color = { 0, 0, 0, .5 },
-					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+					color = { 0, 0, 0, 0.5 },
+					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 				},
 				backdrop = {
 					texture_size = { 256, 64 },
 					texture_position = { "TOPLEFT", -83, 24 }, -- -(70 + 8)
-					texture = path .. [[textures\DiabolicUI_Target_80x15_Backdrop.tga]]
+					texture = path .. [[textures\DiabolicUI_Target_80x15_Backdrop.tga]],
 				},
 				border = {
 					texture_size = { 256, 64 },
@@ -545,18 +615,18 @@ Engine:NewStaticConfig("UnitFrames", {
 					textures = {
 						normal = path .. [[textures\DiabolicUI_Target_80x15_Border.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_80x15_Highlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_80x15_Glow.tga]]
-					}
+						threat = path .. [[textures\DiabolicUI_Target_80x15_Glow.tga]],
+					},
 				},
 				health = {
 					size = { 82, 9 },
 					position = { "BOTTOM", 0, 7 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
-				power = { 
+				power = {
 					size = { 82, 3 },
 					position = { "BOTTOM", 0, 3 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				portrait = {
 					size = { 40, 40 }, -- the model's own viewport
@@ -567,63 +637,69 @@ Engine:NewStaticConfig("UnitFrames", {
 						backdrop = path .. [[textures\DiabolicUI_Target_80x80_PortraitBackdrop.tga]],
 						border = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorder.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorderHighlight.tga]],
-						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
+						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]],
 					},
 					-- Where the name moves to when the portrait takes over the
 					-- space it normally floats in above the frame: { point, relativePoint, x, y }, anchored to the health bar.
-					name_position = { "TOP", "BOTTOM", 0, -2 }
+					name_position = { "TOP", "BOTTOM", 0, -2 },
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular14,
 					position = { "TOP", 0.5, 24.5 + 17 },
-					size = { 90 + 50, 30 }
-				}
+					size = { 90 + 50, 30 },
+				},
 			},
 			pet = {
-				size = { 85 *1.15, 85 *1.15 },
-				position = { "BOTTOMLEFT", "Main", "BOTTOMLEFT", orbOffsetX -140 + (140 - 160)/2 -8  -56, orbOffsetY -(140 - 160)/2 -6 +72 },
+				size = { 85 * 1.15, 85 * 1.15 },
+				position = {
+					"BOTTOMLEFT",
+					"Main",
+					"BOTTOMLEFT",
+					orbOffsetX - 140 + (140 - 160) / 2 - 8 - 56,
+					orbOffsetY - (140 - 160) / 2 - 6 + 72,
+				},
 				health = {
-					size = { 75 *1.15, 75 *1.15 },
+					size = { 75 * 1.15, 75 * 1.15 },
 					position = { "CENTER" },
-					color = { 175/255, 17/255, 28/255 }, -- blood
+					color = { 175 / 255, 17 / 255, 28 / 255 }, -- blood
 					spark = {
 						size = { 64, 64 },
 						texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],
-						flash = { 2.75, 1.25, .45, .95 },
+						flash = { 2.75, 1.25, 0.45, 0.95 },
 						flash_size = { 64, 16 },
-						flash_texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+						flash_texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 					},
 					shade = {
-						size = { 128 *1.15, 128 *1.15 },
+						size = { 128 * 1.15, 128 * 1.15 },
 						position = { "CENTER", 0, 0 },
 						texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Backdrop.tga]],
-						color = { 0, 0, 0, 1 }
+						color = { 0, 0, 0, 1 },
 					},
 					overlay = {
-						size = { 128 *1.15, 128 *1.15 },
+						size = { 128 * 1.15, 128 * 1.15 },
 						position = { "CENTER", 0, 0 },
 						texture = path .. [[textures\DiabolicUI_PlayerGlobes_150x150_Border.tga]],
-						color = { 1, 1, 1, 1 }
-					},					
+						color = { 1, 1, 1, 1 },
+					},
 					layers = {
 						gradient = {
-							alpha = .85,
-							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Gradient.tga]]
+							alpha = 0.85,
+							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Gradient.tga]],
 						},
 						moon = {
-							alpha = .5,
-							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Moon.tga]]
+							alpha = 0.5,
+							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Moon.tga]],
 						},
 						smoke = {
-							alpha = .5,
-							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]]
+							alpha = 0.5,
+							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Smoke.tga]],
 						},
 						shade = {
-							alpha = .9,
-							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Shade.tga]]
-						}
-					}
-				}
+							alpha = 0.9,
+							texture = path .. [[textures\DiabolicUI_HealthGlobe512x512_Shade.tga]],
+						},
+					},
+				},
 			},
 			party = {
 				size = { 148, 35 },
@@ -632,38 +708,38 @@ Engine:NewStaticConfig("UnitFrames", {
 				shade = {
 					size = { 384, 128 },
 					position = { "CENTER", 0, 0 },
-					color = { 0, 0, 0, .35 },
-					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+					color = { 0, 0, 0, 0.35 },
+					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 				},
 				backdrop = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
-					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]]
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
+					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]],
 				},
 				border = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
 					textures = {
 						normal = path .. [[textures\DiabolicUI_Target_114x15_Border.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_114x15_Highlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]]
-					}
+						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]],
+					},
 				},
 				health = {
 					size = { 114, 15 },
 					position = { "BOTTOM", 0, 10 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 6, 0 }
-					}
+						position = { "CENTER", 6, 0 },
+					},
 				},
 				role = {
 					size = { 32, 32 },
 					position = { "LEFT", -70, 0 }, -- relative to the health bar, clear of the frame's left edge
-					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
+					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]],
 				},
 				portrait = {
 					size = { 40, 40 }, -- the model's own viewport
@@ -674,25 +750,29 @@ Engine:NewStaticConfig("UnitFrames", {
 						backdrop = path .. [[textures\DiabolicUI_Target_80x80_PortraitBackdrop.tga]],
 						border = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorder.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_80x80_PortraitBorderHighlight.tga]],
-						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]]
+						glow = path .. [[textures\DiabolicUI_Target_80x80_PortraitGlow.tga]],
 					},
 					-- Where the name moves to when the portrait takes over the
 					-- space it normally floats in above the frame: { point, relativePoint, x, y }, anchored to the health bar.
-					name_position = { "TOP", "BOTTOM", 0, -2 }
+					name_position = { "TOP", "BOTTOM", 0, -2 },
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
 					position = { "TOP", 0.5, 24.5 + 17 },
-					size = { 148 + 40, 34 }
+					size = { 148 + 40, 34 },
 				},
 				auras = {
 					position = { "TOPLEFT", 148 + 30, -4 },
-					size = { 26*6 + 4*5 + 1, 40*2 },
-					spacingH = 4, 
-					spacingV = 4, 
+					size = { 26 * 6 + 4 * 5 + 1, 40 * 2 },
+					spacingH = 4,
+					spacingV = 4,
 					button = {
 						size = { 26, 26 },
-						color = { (C.Status.Dead[1]/3 + .3)*.7, (C.Status.Dead[2]/3 + .3)*.7, (C.Status.Dead[3]/3 + .3)*.7 },  -- C.General.XP,
+						color = {
+							(C.Status.Dead[1] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[2] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[3] / 3 + 0.3) * 0.7,
+						}, -- C.General.XP,
 						glow = {
 							backdrop = {
 								bgFile = nil, -- [[Interface\ChatFrame\ChatFrameBackground]],
@@ -704,9 +784,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -719,19 +799,18 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
-				}				
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
+				},
 			},
 			raid = {
 				size = { 90, 24 },
@@ -740,48 +819,48 @@ Engine:NewStaticConfig("UnitFrames", {
 				groups = {
 					font_object = DiabolicFont_HeaderRegular12,
 					label_height = 40, -- above a group's first frame: its label, and that frame's name
-					spacing = 10 -- between two groups
+					spacing = 10, -- between two groups
 				},
 				shade = {
 					size = { 234, 78 }, -- scaled from 384×128
 					position = { "CENTER", 0, 0 },
-					color = { 0, 0, 0, .35 },
-					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+					color = { 0, 0, 0, 0.35 },
+					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 				},
 				backdrop = {
 					texture_size = { 156, 39 }, -- scaled from 256×64
-					texture_position = { "TOPLEFT", -43 + (90-69)/2, 15 -(24-10)/2 },
-					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]]
+					texture_position = { "TOPLEFT", -43 + (90 - 69) / 2, 15 - (24 - 10) / 2 },
+					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]],
 				},
 				border = {
 					texture_size = { 156, 39 },
-					texture_position = { "TOPLEFT", -43 + (90-69)/2, 15 -(24-10)/2 },
+					texture_position = { "TOPLEFT", -43 + (90 - 69) / 2, 15 - (24 - 10) / 2 },
 					textures = {
 						normal = path .. [[textures\DiabolicUI_Target_114x15_Border.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_114x15_Highlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]]
-					}
+						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]],
+					},
 				},
 				health = {
 					size = { 69, 10 }, -- scaled from 114×15
 					position = { "BOTTOM", 0, 7 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold8, -- smaller font
-						position = { "CENTER", 4, 0 }
-					}
+						position = { "CENTER", 4, 0 },
+					},
 				},
 				role = {
 					size = { 22, 22 },
 					position = { "LEFT", -42, 0 }, -- relative to the health bar
-					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]]
+					texture = path .. [[textures\DiabolicUI_Texture_32x32_RoleIconGrid_Warcraft.tga]],
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular12,
 					position = { "TOP", 0.5, 15 + 11 },
-					size = { 90 + 24, 22 }
+					size = { 90 + 24, 22 },
 				},
 				auras = {
 					position = { "TOPLEFT", 90 + 18, -3 },
@@ -790,7 +869,11 @@ Engine:NewStaticConfig("UnitFrames", {
 					spacingV = 3,
 					button = {
 						size = { 18, 18 },
-						color = { (C.Status.Dead[1]/3 + .3)*.7, (C.Status.Dead[2]/3 + .3)*.7, (C.Status.Dead[3]/3 + .3)*.7 },
+						color = {
+							(C.Status.Dead[1] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[2] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[3] / 3 + 0.3) * 0.7,
+						},
 						glow = {
 							backdrop = {
 								bgFile = nil,
@@ -798,8 +881,8 @@ Engine:NewStaticConfig("UnitFrames", {
 								edgeSize = 3,
 								tile = false,
 								tileSize = 0,
-								insets = { left = 0, right = 0, top = 0, bottom = 0 }
-							}
+								insets = { left = 0, right = 0, top = 0, bottom = 0 },
+							},
 						},
 						border = {
 							backdrop = {
@@ -808,17 +891,17 @@ Engine:NewStaticConfig("UnitFrames", {
 								edgeSize = 1,
 								tile = false,
 								tileSize = 0,
-								insets = { left = 0, right = 0, top = 0, bottom = 0 }
-							}
+								insets = { left = 0, right = 0, top = 0, bottom = 0 },
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
 					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-					}
-				}
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
+				},
 			},
 			boss = {
 				size = { 148, 35 },
@@ -827,47 +910,51 @@ Engine:NewStaticConfig("UnitFrames", {
 				shade = {
 					size = { 384, 128 },
 					position = { "CENTER", 0, 0 },
-					color = { 0, 0, 0, .35 },
-					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+					color = { 0, 0, 0, 0.35 },
+					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 				},
 				backdrop = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
-					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]]
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
+					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]],
 				},
 				border = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
 					textures = {
 						normal = path .. [[textures\DiabolicUI_Target_114x15_Border.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_114x15_Highlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]]
-					}
+						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]],
+					},
 				},
 				health = {
 					size = { 114, 15 },
 					position = { "BOTTOM", 0, 10 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 6, 0 }
-					}
+						position = { "CENTER", 6, 0 },
+					},
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
 					position = { "TOP", 0.5, 24.5 + 17 },
-					size = { 148 + 40, 34 }
+					size = { 148 + 40, 34 },
 				},
 				auras = {
 					position = { "TOPRIGHT", -(148 + 30), -4 },
-					size = { 26*6 + 4*5 + 1, 40*2 },
-					spacingH = 4, 
-					spacingV = 4, 
+					size = { 26 * 6 + 4 * 5 + 1, 40 * 2 },
+					spacingH = 4,
+					spacingV = 4,
 					button = {
 						size = { 26, 26 },
-						color = { (C.Status.Dead[1]/3 + .3)*.7, (C.Status.Dead[2]/3 + .3)*.7, (C.Status.Dead[3]/3 + .3)*.7 },  -- C.General.XP,
+						color = {
+							(C.Status.Dead[1] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[2] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[3] / 3 + 0.3) * 0.7,
+						}, -- C.General.XP,
 						glow = {
 							backdrop = {
 								bgFile = nil, -- [[Interface\ChatFrame\ChatFrameBackground]],
@@ -879,9 +966,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -894,19 +981,18 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
-				}				
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
+				},
 			},
 			arena = {
 				size = { 148, 35 },
@@ -915,47 +1001,51 @@ Engine:NewStaticConfig("UnitFrames", {
 				shade = {
 					size = { 384, 128 },
 					position = { "CENTER", 0, 0 },
-					color = { 0, 0, 0, .35 },
-					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
+					color = { 0, 0, 0, 0.35 },
+					texture = path .. [[textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]],
 				},
 				backdrop = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
-					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]]
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
+					texture = path .. [[textures\DiabolicUI_Target_114x15_Backdrop.tga]],
 				},
 				border = {
 					texture_size = { 256, 64 },
-					texture_position = { "TOPLEFT", -71 + (148-114)/2, 25 -(35-15)/2 },
+					texture_position = { "TOPLEFT", -71 + (148 - 114) / 2, 25 - (35 - 15) / 2 },
 					textures = {
 						normal = path .. [[textures\DiabolicUI_Target_114x15_Border.tga]],
 						highlight = path .. [[textures\DiabolicUI_Target_114x15_Highlight.tga]],
-						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]]
-					}
+						threat = path .. [[textures\DiabolicUI_Target_114x15_Glow.tga]],
+					},
 				},
 				health = {
 					size = { 114, 15 },
 					position = { "BOTTOM", 0, 10 },
-					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
+					texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
 				},
 				texts = {
 					health = {
 						font_object = DiabolicFont_SansBold10,
-						position = { "CENTER", 6, 0 }
-					}
+						position = { "CENTER", 6, 0 },
+					},
 				},
 				name = {
 					font_object = DiabolicFont_HeaderRegular16,
 					position = { "TOP", 0.5, 24.5 + 17 },
-					size = { 148 + 40, 34 }
+					size = { 148 + 40, 34 },
 				},
 				auras = {
 					position = { "TOPRIGHT", -(148 + 30), -4 },
-					size = { 26*6 + 4*5 + 1, 40*2 },
-					spacingH = 4, 
-					spacingV = 4, 
+					size = { 26 * 6 + 4 * 5 + 1, 40 * 2 },
+					spacingH = 4,
+					spacingV = 4,
 					button = {
 						size = { 26, 26 },
-						color = { (C.Status.Dead[1]/3 + .3)*.7, (C.Status.Dead[2]/3 + .3)*.7, (C.Status.Dead[3]/3 + .3)*.7 },  -- C.General.XP,
+						color = {
+							(C.Status.Dead[1] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[2] / 3 + 0.3) * 0.7,
+							(C.Status.Dead[3] / 3 + 0.3) * 0.7,
+						}, -- C.General.XP,
 						glow = {
 							backdrop = {
 								bgFile = nil, -- [[Interface\ChatFrame\ChatFrameBackground]],
@@ -967,9 +1057,9 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						border = {
 							backdrop = {
@@ -982,24 +1072,20 @@ Engine:NewStaticConfig("UnitFrames", {
 									left = 0,
 									right = 0,
 									top = 0,
-									bottom = 0
-								}
-							}
+									bottom = 0,
+								},
+							},
 						},
 						shade = {
-							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]]
-						}
-					}, 
+							texture = path .. [[textures\DiabolicUI_Shade_64x64.tga]],
+						},
+					},
 					timer = {
-						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]]
-
-					}
-				}	
-			}
+						statusBar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
+					},
+				},
+			},
 		},
-		colors = {
-			
-		}
-	}
+		colors = {},
+	},
 })
-

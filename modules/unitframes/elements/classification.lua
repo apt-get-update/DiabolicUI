@@ -31,7 +31,7 @@ local not_specified = {
 	["Не указано"] = true,
 	["기타"] = true,
 	["未指定"] = true,
-	["不明"] = true
+	["不明"] = true,
 }
 
 local Update = function(self, event, ...)
@@ -44,12 +44,12 @@ local Update = function(self, event, ...)
 	local level = UnitLevel(unit)
 	local class = UnitClass(unit)
 	local race = UnitRace(unit)
-	
+
 	if not_specified[creaturetype] then
 		creaturetype = nil
 	end
 	local type = creaturetype or creaturefamily
-	
+
 	if level < 0 then
 		level = nil
 	end
@@ -65,14 +65,12 @@ local Update = function(self, event, ...)
 		if class then
 			msg = add(msg, class)
 		end
-		
 	elseif UnitIsDead(unit) or UnitIsGhost(unit) then
 		if level then
 			msg = add(msg, UNIT_LEVEL_DEAD_TEMPLATE:format(level))
 		else
 			msg = add(msg, DEAD)
 		end
-		
 	else
 		if classification == "worldboss" or classification == "elite" or classification == "rareelite" then
 			if level then

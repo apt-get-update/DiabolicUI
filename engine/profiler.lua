@@ -136,7 +136,9 @@ end
 
 Handler.Measure = function(self, seconds)
 	if GetCVar("scriptProfile") ~= "1" then
-		Print(L["Turn on the CPU profiling first: /console scriptProfile 1, then /reload. Turn it off the same way afterwards (0), it slows the game down."])
+		Print(
+			L["Turn on the CPU profiling first: /console scriptProfile 1, then /reload. Turn it off the same way afterwards (0), it slows the game down."]
+		)
 		return
 	end
 	if self.timer and self.timer:IsShown() then
@@ -163,8 +165,15 @@ Handler.Measure = function(self, seconds)
 				rows[#rows + 1] = { functions[func], used / seconds }
 			end
 		end
-		table_sort(rows, function(a, b) return a[2] > b[2] end)
-		Print(string_format(L["DiabolicUI used %.2f ms per second. The busiest functions, with what they call (ms per second):"], (addonAfter - addonBefore) / seconds))
+		table_sort(rows, function(a, b)
+			return a[2] > b[2]
+		end)
+		Print(
+			string_format(
+				L["DiabolicUI used %.2f ms per second. The busiest functions, with what they call (ms per second):"],
+				(addonAfter - addonBefore) / seconds
+			)
+		)
 		for i = 1, math_min(TOP, #rows) do
 			Print(string_format("  %.2f  %s", rows[i][2], rows[i][1]))
 		end

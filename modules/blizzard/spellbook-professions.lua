@@ -31,14 +31,18 @@ local SECONDARY = { 2550, 7620, 3273 } -- Cooking, Fishing, First Aid
 
 -- a profession's rank's title by its highest skill (the trainer's)
 local RANKS = {
-	{ 75, "Apprentice" }, { 150, "Journeyman" }, { 225, "Expert" },
-	{ 300, "Artisan" }, { 375, "Master" }, { 450, "Grand Master" }
+	{ 75, "Apprentice" },
+	{ 150, "Journeyman" },
+	{ 225, "Expert" },
+	{ 300, "Artisan" },
+	{ 375, "Master" },
+	{ 450, "Grand Master" },
 }
 
 local RankTitle = function(max)
 	local title
 	for _, rank in ipairs(RANKS) do
-		if (max >= rank[1]) then
+		if max >= rank[1] then
 			title = L[rank[2]]
 		end
 	end
@@ -63,7 +67,7 @@ local PROFESSIONS = {
 	{ skill = 8613, open = false }, -- Skinning
 	{ skill = 2550, extra = 818 }, -- Cooking, Basic Campfire
 	{ skill = 3273 }, -- First Aid
-	{ skill = 7620 } -- Fishing
+	{ skill = 7620 }, -- Fishing
 }
 
 -- the skill lines' sections the professions are in
@@ -79,7 +83,7 @@ end
 -- A profession's data by its skill line's name.
 local Find = function(name)
 	for _, data in ipairs(PROFESSIONS) do
-		if (GetSpellInfo(data.skill) == name) then
+		if GetSpellInfo(data.skill) == name then
 			return data
 		end
 	end
@@ -105,7 +109,9 @@ local CreateSpellButton = function(parent, size)
 			_G.GameTooltip:SetHyperlink("spell:" .. button.spellID)
 		end
 	end)
-	button:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	button:SetScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 	return button
 end
 
@@ -215,11 +221,11 @@ Module.GetProfessions = function(self)
 	local found = { primary = {}, secondary = {} }
 	local section
 	local i = 1
-	while (i <= GetNumSkillLines()) do
+	while i <= GetNumSkillLines() do
 		local name, header, expanded, rank, _, modifier, max = GetSkillLineInfo(i)
 		if header then
 			section = SECTIONS[name]
-			if section and (not expanded) then
+			if section and not expanded then
 				_G.ExpandSkillHeader(i)
 			end
 		elseif section then
@@ -283,15 +289,19 @@ Module.UpdateProfessions = function(self)
 		if skill then
 			self:FillProfession(row, skill)
 		else
-			self:ShowMissing(row, L["Missing Primary Profession"], config.profession_missing_icon,
-				L["Visit a profession trainer in a capital city to learn one."])
+			self:ShowMissing(
+				row,
+				L["Missing Primary Profession"],
+				config.profession_missing_icon,
+				L["Visit a profession trainer in a capital city to learn one."]
+			)
 		end
 	end
 	for i, row in ipairs(self.ProfessionRows.secondary) do
 		local name, icon = SpellOf(SECONDARY[i])
 		local skill
 		for _, learned in ipairs(found.secondary) do
-			if (learned.name == name) then
+			if learned.name == name then
 				skill = learned
 			end
 		end
@@ -304,13 +314,13 @@ Module.UpdateProfessions = function(self)
 end
 
 Module.OnSkillsChanged = function(self, event)
-	if (event == "PLAYER_REGEN_ENABLED") then
+	if event == "PLAYER_REGEN_ENABLED" then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "OnSkillsChanged")
 	end
 	if self.Professions:IsShown() then
 		self:UpdateProfessions()
 	end
-	if (not InCombatLockdown()) then
+	if not InCombatLockdown() then
 		self:UpdateTabs()
 	end
 end

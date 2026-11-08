@@ -21,11 +21,11 @@ local GetTime = GetTime
 -- (most visibly along the top of the DAMAGER icon, fed by TANK's glow
 -- right above it). Insetting the crop by a couple of texels keeps it
 -- safely inside its own quadrant instead.
-local epsilon = 2/64
+local epsilon = 2 / 64
 local texcoords = {
 	TANK = { 0 + epsilon, 0.5 - epsilon, 0 + epsilon, 0.5 - epsilon },
 	HEALER = { 0.5 + epsilon, 1 - epsilon, 0 + epsilon, 0.5 - epsilon },
-	DAMAGER = { 0 + epsilon, 0.5 - epsilon, 0.5 + epsilon, 1 - epsilon }
+	DAMAGER = { 0 + epsilon, 0.5 - epsilon, 0.5 + epsilon, 1 - epsilon },
 }
 
 -- Role guessed from a class's primary (most points spent) talent tree,
@@ -35,16 +35,16 @@ local texcoords = {
 -- apart from talent points alone, so it's guessed as DAMAGER.
 -- Death Knight tab 1 (Blood) is guessed as TANK, its common raid role in 3.3.5.
 local specRoles = {
-	WARRIOR     = { "DAMAGER", "DAMAGER", "TANK" },
-	PALADIN     = { "HEALER", "TANK", "DAMAGER" },
-	HUNTER      = { "DAMAGER", "DAMAGER", "DAMAGER" },
-	ROGUE       = { "DAMAGER", "DAMAGER", "DAMAGER" },
-	PRIEST      = { "HEALER", "HEALER", "DAMAGER" },
+	WARRIOR = { "DAMAGER", "DAMAGER", "TANK" },
+	PALADIN = { "HEALER", "TANK", "DAMAGER" },
+	HUNTER = { "DAMAGER", "DAMAGER", "DAMAGER" },
+	ROGUE = { "DAMAGER", "DAMAGER", "DAMAGER" },
+	PRIEST = { "HEALER", "HEALER", "DAMAGER" },
 	DEATHKNIGHT = { "TANK", "DAMAGER", "DAMAGER" },
-	SHAMAN      = { "DAMAGER", "DAMAGER", "HEALER" },
-	MAGE        = { "DAMAGER", "DAMAGER", "DAMAGER" },
-	WARLOCK     = { "DAMAGER", "DAMAGER", "DAMAGER" },
-	DRUID       = { "DAMAGER", "DAMAGER", "HEALER" }
+	SHAMAN = { "DAMAGER", "DAMAGER", "HEALER" },
+	MAGE = { "DAMAGER", "DAMAGER", "DAMAGER" },
+	WARLOCK = { "DAMAGER", "DAMAGER", "DAMAGER" },
+	DRUID = { "DAMAGER", "DAMAGER", "HEALER" },
 }
 
 -- Cached fallback role per player name, filled in by the inspect queue
@@ -163,7 +163,7 @@ Update = function(self, event, ...)
 	-- (3.3.5 answers with three flags, not a role name)
 	local isTank, isHealer, isDamager = UnitGroupRolesAssigned(unit)
 	local role = (isTank and "TANK") or (isHealer and "HEALER") or (isDamager and "DAMAGER")
-	if (not role) then
+	if not role then
 		local name = UnitName(unit)
 		if name then
 			role = roleByName[name]

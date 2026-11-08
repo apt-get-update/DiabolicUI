@@ -32,17 +32,35 @@ local handled = {}
 local URL_COLOR = "|cff40a6ff"
 
 local COMMON_TLDS = {
-	app = true, biz = true, co = true, com = true, dev = true, edu = true, gg = true, gl = true, gov = true,
-	info = true, io = true, me = true, net = true, online = true, org = true, tv = true, wiki = true, xyz = true,
+	app = true,
+	biz = true,
+	co = true,
+	com = true,
+	dev = true,
+	edu = true,
+	gg = true,
+	gl = true,
+	gov = true,
+	info = true,
+	io = true,
+	me = true,
+	net = true,
+	online = true,
+	org = true,
+	tv = true,
+	wiki = true,
+	xyz = true,
 }
 
 local IsWebAddress = function(word)
-	if word:find("^%a[%w%+%.%-]*://.") -- scheme://...
-	or word:find("^[Ww][Ww][Ww]%.[%w%.%-]+%.%a%a") -- www.domain.tld
-	or word:find("^mailto:.")
-	or word:find("^[%w%.%-_%+]+@[%w%.%-]+%.%a%a+$") -- e-mail
-	or word:find("^%d+%.%d+%.%d+%.%d+") -- IPv4, with a port or a path
-	or word:find("^[%w%.%-]+%.[%w%-]+[:/]") then -- domain.tld:port or domain.tld/path
+	if
+		word:find("^%a[%w%+%.%-]*://.") -- scheme://...
+		or word:find("^[Ww][Ww][Ww]%.[%w%.%-]+%.%a%a") -- www.domain.tld
+		or word:find("^mailto:.")
+		or word:find("^[%w%.%-_%+]+@[%w%.%-]+%.%a%a+$") -- e-mail
+		or word:find("^%d+%.%d+%.%d+%.%d+") -- IPv4, with a port or a path
+		or word:find("^[%w%.%-]+%.[%w%-]+[:/]")
+	then -- domain.tld:port or domain.tld/path
 		return true
 	end
 	local tld = word:match("^[%w%.%-]+%.(%a%a+)$") -- domain.tld
@@ -62,13 +80,13 @@ end
 local ESCAPES = { "^|H.-|h.-|h", "^|T.-|t", "^|c%x%x%x%x%x%x%x%x", "^|r", "^||" }
 
 local WrapWebLinks = function(msg)
-	if (not msg:find(".", 1, true)) then -- every web address has a dot
+	if not msg:find(".", 1, true) then -- every web address has a dot
 		return msg
 	end
 	local out, plain, pos = {}, 1, 1
 	while true do
 		local bar = msg:find("|", pos, true)
-		if (not bar) then
+		if not bar then
 			break
 		end
 		local last
@@ -106,13 +124,17 @@ _G.StaticPopupDialogs["DIABOLICUI_COPY_CHAT_TEXT"] = {
 	end,
 	-- read only: any change puts the text back, selected
 	EditBoxOnTextChanged = function(self, data)
-		if (self:GetText() ~= (data or "")) then
+		if self:GetText() ~= (data or "") then
 			self:SetText(data or "")
 			self:HighlightText()
 		end
 	end,
-	EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
-	EditBoxOnEnterPressed = function(self) self:GetParent():Hide() end,
+	EditBoxOnEscapePressed = function(self)
+		self:GetParent():Hide()
+	end,
+	EditBoxOnEnterPressed = function(self)
+		self:GetParent():Hide()
+	end,
 	timeout = 0,
 	whileDead = true,
 	hideOnEscape = true,
@@ -150,7 +172,7 @@ local OnHyperlinkEnter = function(frame, link)
 end
 
 local OnHyperlinkLeave = function(frame)
-	if (GameTooltip:GetOwner() == frame) then
+	if GameTooltip:GetOwner() == frame then
 		GameTooltip:Hide()
 	end
 end
@@ -172,11 +194,11 @@ local AddMessage = function(frame, msg, ...)
 	msg = msg:gsub("^(.-|h) yells", "%1")
 
 	-- player status messages
-	msg = msg:gsub("<"..AFK..">", "|cffFF0000<"..AFK..">|r ")
-	msg = msg:gsub("<"..DND..">", "|cffE7E716<"..DND..">|r ")
+	msg = msg:gsub("<" .. AFK .. ">", "|cffFF0000<" .. AFK .. ">|r ")
+	msg = msg:gsub("<" .. DND .. ">", "|cffE7E716<" .. DND .. ">|r ")
 
 	-- raid warnings
-	msg = msg:gsub("^%["..RAID_WARNING.."%]", "|cffff0000!|r")
+	msg = msg:gsub("^%[" .. RAID_WARNING .. "%]", "|cffff0000!|r")
 
 	msg = WrapWebLinks(msg)
 
@@ -184,7 +206,9 @@ local AddMessage = function(frame, msg, ...)
 end
 
 Module.SetUpFrame = function(self, frame)
-	if handled[frame] then return end
+	if handled[frame] then
+		return
+	end
 	handled[frame] = true
 
 	frame.old = {}
@@ -201,8 +225,7 @@ Module.SetUpFrame = function(self, frame)
 	frame:HookScript("OnHyperlinkLeave", OnHyperlinkLeave)
 end
 
-Module.SetUpFilters = function(self)
-end
+Module.SetUpFilters = function(self) end
 
 Module.OnInit = function(self, event, ...)
 	self.config = self:GetDB("ChatFilters")
@@ -210,8 +233,7 @@ Module.OnInit = function(self, event, ...)
 end
 
 Module.OnEnable = function(self, event, ...)
-
-	for _,name in ipairs(CHAT_FRAMES) do
+	for _, name in ipairs(CHAT_FRAMES) do
 		self:SetUpFrame(_G[name])
 	end
 

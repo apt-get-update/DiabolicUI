@@ -20,8 +20,16 @@ Module.CreateOptionsPanel = function(self)
 
 	-- the pages, from the main frames to the extras (the minimap's goes
 	-- before Quests, modules/minimap/Components/Menu/Menu.lua)
-	for _, page in ipairs({ self:CreateActionBarsPage(), self:CreateSpecsPage(), self:CreateUnitsPage(), self:CreateChatPage(),
-		self:CreateMessagesPage(), self:CreateQuestsPage(), self:CreateTooltipsPage(), self:CreateAddOnsPage() }) do
+	for _, page in ipairs({
+		self:CreateActionBarsPage(),
+		self:CreateSpecsPage(),
+		self:CreateUnitsPage(),
+		self:CreateChatPage(),
+		self:CreateMessagesPage(),
+		self:CreateQuestsPage(),
+		self:CreateTooltipsPage(),
+		self:CreateAddOnsPage(),
+	}) do
 		InterfaceOptions_AddCategory(page)
 	end
 
@@ -118,7 +126,7 @@ end
 -- Questie builds its tracker some time after login: scaled once it's updated.
 Module.OnEnteringWorld = function(self)
 	local loader = _G.QuestieLoader
-	if loader and (not self.questieHooked) then
+	if loader and not self.questieHooked then
 		self.questieHooked = true
 		hooksecurefunc(loader:ImportModule("TrackerBaseFrame"), "Update", function()
 			local frame = _G.Questie_BaseFrame

@@ -22,11 +22,11 @@ local L = setmetatable({}, {
 	__newindex = store,
 	__index = function(self, key)
 		local value = rawget(L_fallback, key)
-		if (not value) then
+		if not value then
 			print("Tell Goldpaw! There's a missing locale: ", key)
 		end
 		return value or key
-	end
+	end,
 })
 
 -- The table a locale file fills in: English's, the client's own, or none

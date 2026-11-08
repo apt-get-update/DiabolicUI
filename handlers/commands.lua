@@ -10,7 +10,7 @@ local string_split = string.split
 local SlashCmdList = _G.SlashCmdList
 
 -- command registry for all modules
-local commandRegistry = {} 
+local commandRegistry = {}
 
 Handler.ParseCommand = function(self, msg)
 	-- Remove spaces at the start and end
@@ -18,11 +18,11 @@ Handler.ParseCommand = function(self, msg)
 	msg = string_gsub(msg, "%s+$", "")
 
 	-- Replace all space characters with single spaces
-	msg = string_gsub(msg, "%s+", " ") 
+	msg = string_gsub(msg, "%s+", " ")
 
 	-- If multiple arguments exist, split them into separate return values
 	if string_find(msg, "%s") then
-		return string_split(" ", msg) 
+		return string_split(" ", msg)
 	else
 		return msg
 	end
@@ -39,7 +39,6 @@ Handler.PerformCommand = function(self, command, ...)
 end
 
 Handler.OnEnable = function(self)
-
 	_G.SLASH_DIABOLICUISLASHHANDLER1 = "/diabolic"
 	_G.SLASH_DIABOLICUISLASHHANDLER2 = "/diabolicui"
 	_G.SLASH_DIABOLICUISLASHHANDLER3 = "/dui"

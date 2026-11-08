@@ -28,14 +28,26 @@ local function resetState()
 	}
 end
 
-_G.UnitHasVehicleUI = function() return state.inVehicle end
-_G.UnitIsPossessed = function() return state.possessedPet and 1 or nil end
-_G.GetAccountExpansionLevel = function() return state.expansionLevel end
-_G.UnitLevel = function() return state.playerLevel end
-_G.MAX_PLAYER_LEVEL_TABLE = setmetatable({}, { __index = function(_, k)
-	return state.maxLevelForExpansion[k]
-end })
-_G.GetWatchedFactionInfo = function() return state.watchedFaction end
+_G.UnitHasVehicleUI = function()
+	return state.inVehicle
+end
+_G.UnitIsPossessed = function()
+	return state.possessedPet and 1 or nil
+end
+_G.GetAccountExpansionLevel = function()
+	return state.expansionLevel
+end
+_G.UnitLevel = function()
+	return state.playerLevel
+end
+_G.MAX_PLAYER_LEVEL_TABLE = setmetatable({}, {
+	__index = function(_, k)
+		return state.maxLevelForExpansion[k]
+	end,
+})
+_G.GetWatchedFactionInfo = function()
+	return state.watchedFaction
+end
 
 local function loadActionBarsModule()
 	local Engine = EngineMock.new()

@@ -12,22 +12,22 @@ local UnitExists = UnitExists
 local UnitName = UnitName
 
 local colors = {
-	elite = { 0/255, 112/255, 221/255 },
-	boss = { 163/255, 53/255, 255/238 },
-	normal = { 255/255, 255/255, 255/255 }
+	elite = { 0 / 255, 112 / 255, 221 / 255 },
+	boss = { 163 / 255, 53 / 255, 255 / 238 },
+	normal = { 255 / 255, 255 / 255, 255 / 255 },
 }
 
 local Update = function(self, event, ...)
 	local unit = self.unit
-	
-	if (not UnitExists(self.unit)) or (event == "UNIT_TARGET" and not(UnitIsUnit(self.unit, unit.."target"))) then
+
+	if (not UnitExists(self.unit)) or (event == "UNIT_TARGET" and not (UnitIsUnit(self.unit, unit .. "target"))) then
 		return
 	end
 
 	local Name = self.Name
 	local name = UnitName(unit)
 	local classification = UnitClassification(unit)
-	
+
 	local r, g, b
 	if Name.colorBoss and classification == "worldboss" then
 		r, g, b = unpack(colors.boss)
@@ -36,7 +36,7 @@ local Update = function(self, event, ...)
 	else
 		r, g, b = unpack(colors.normal)
 	end
-	
+
 	Name:SetText(name)
 	Name:SetTextColor(r, g, b)
 end

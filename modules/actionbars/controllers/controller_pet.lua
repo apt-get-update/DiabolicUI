@@ -23,7 +23,10 @@ ControllerWidget.OnEnable = function(self)
 	local controlConfig = config.structure.controllers.pet
 	local controlPosition = config.structure.controllers.pet.position
 
-	self.Controller = setmetatable(Engine:CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"), Controller_MT)
+	self.Controller = setmetatable(
+		Engine:CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"),
+		Controller_MT
+	)
 	self.Controller.db = db
 	self.Controller:SetFrameStrata("BACKGROUND")
 	self.Controller:SetAllPoints()
@@ -33,11 +36,16 @@ ControllerWidget.OnEnable = function(self)
 	self.Controller:SetAttribute("controller_width_vehicle", controlConfig.size_vehicle[1])
 	self.Controller:SetAttribute("controller_height_vehicle", controlConfig.size_vehicle[2])
 	self.Controller:SetSize(controlConfig.size[1], controlConfig.size[2])
-	self.Controller:Place(controlPosition.point, controlPosition.anchor, controlPosition.anchor_point, controlPosition.xoffset, controlPosition.yoffset)
-		
+	self.Controller:Place(
+		controlPosition.point,
+		controlPosition.anchor,
+		controlPosition.anchor_point,
+		controlPosition.xoffset,
+		controlPosition.yoffset
+	)
+
 	-- because the bars aren't created when the first call comes
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateBarArtwork")
-
 end
 
 ControllerWidget.UpdateBarArtwork = function(self)

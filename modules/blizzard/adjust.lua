@@ -50,7 +50,7 @@ local Place = function(part)
 	end
 	local point, relative, relativePoint, x, y = unpack(entry)
 	local target = _G[relative]
-	if (not target) then
+	if not target then
 		Waiting[part] = true
 		return
 	end
@@ -81,19 +81,23 @@ end
 local Follow = function(name)
 	local part = _G[name]
 	local entry = Module:GetEntry(name)
-	if (not part) or (not part.SetPoint) or (not entry) then
+	if (not part) or not part.SetPoint or not entry then
 		return
 	end
 	if not Placed[part] then
 		Placed[part] = name
-		local Again = function() Place(part) end
+		local Again = function()
+			Place(part)
+		end
 		hooksecurefunc(part, "SetPoint", Again)
 		hooksecurefunc(part, "SetAllPoints", Again)
 	end
 	Place(part)
-	if SizeOf(entry) and (not Sized[part]) then
+	if SizeOf(entry) and not Sized[part] then
 		Sized[part] = name
-		local Again = function() Size(part) end
+		local Again = function()
+			Size(part)
+		end
 		hooksecurefunc(part, "SetWidth", Again)
 		hooksecurefunc(part, "SetHeight", Again)
 		if part.SetSize then
@@ -144,8 +148,13 @@ local PlaceOf = function(part)
 	end
 	holder = holder or _G.UIParent
 	local scale = kit.ScaleOf(part) / holder:GetEffectiveScale()
-	return { "TOPLEFT", holder:GetName(), "TOPLEFT", part:GetLeft() - holder:GetLeft() / scale,
-		part:GetTop() - holder:GetTop() / scale }
+	return {
+		"TOPLEFT",
+		holder:GetName(),
+		"TOPLEFT",
+		part:GetLeft() - holder:GetLeft() / scale,
+		part:GetTop() - holder:GetTop() / scale,
+	}
 end
 Module.PlaceOf = PlaceOf
 
@@ -163,7 +172,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:Apply()

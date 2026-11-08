@@ -17,30 +17,55 @@ local C = Engine:GetDB("Data: Colors")
 -- texcoord table - duplicated here rather than exported just for this.
 -- Inset by a couple of texels to stay clear of the neighboring icon's
 -- edge-glow bleed at the shared 0.5 seam (see role.lua for the detail).
-local epsilon = 2/64
+local epsilon = 2 / 64
 local ROLE_TEXCOORDS = {
 	TANK = { 0 + epsilon, 0.5 - epsilon, 0 + epsilon, 0.5 - epsilon },
 	HEALER = { 0.5 + epsilon, 1 - epsilon, 0 + epsilon, 0.5 - epsilon },
-	DAMAGER = { 0 + epsilon, 0.5 - epsilon, 0.5 + epsilon, 1 - epsilon }
+	DAMAGER = { 0 + epsilon, 0.5 - epsilon, 0.5 + epsilon, 1 - epsilon },
 }
 
 -- A small, clearly-fake roster used to preview the party/raid layout and
 -- styling (health bar, name, role icon, class color) without needing a
 -- real group. Cycled to cover up to 40 raid slots.
 local FAKE_NAMES = {
-	"Aldric", "Brynn", "Caelum", "Doran", "Elowen", "Fenwick", "Garrick", "Hilda",
-	"Ivo", "Jorah", "Kestrel", "Liora", "Maren", "Nyx", "Orin", "Petra",
-	"Quill", "Ravi", "Sable", "Tamsin"
+	"Aldric",
+	"Brynn",
+	"Caelum",
+	"Doran",
+	"Elowen",
+	"Fenwick",
+	"Garrick",
+	"Hilda",
+	"Ivo",
+	"Jorah",
+	"Kestrel",
+	"Liora",
+	"Maren",
+	"Nyx",
+	"Orin",
+	"Petra",
+	"Quill",
+	"Ravi",
+	"Sable",
+	"Tamsin",
 }
 local FAKE_CLASSES = {
-	"WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST",
-	"DEATHKNIGHT", "SHAMAN", "MAGE", "WARLOCK", "DRUID"
+	"WARRIOR",
+	"PALADIN",
+	"HUNTER",
+	"ROGUE",
+	"PRIEST",
+	"DEATHKNIGHT",
+	"SHAMAN",
+	"MAGE",
+	"WARLOCK",
+	"DRUID",
 }
 local FAKE_ROLES = { "TANK", "HEALER", "DAMAGER", "DAMAGER", "DAMAGER" }
 
 local GetFakeUnitData = function(i)
 	local name = FAKE_NAMES[((i - 1) % #FAKE_NAMES) + 1]
-	if (i > #FAKE_NAMES) then
+	if i > #FAKE_NAMES then
 		name = name .. math_floor((i - 1) / #FAKE_NAMES) + 1
 	end
 
@@ -52,7 +77,7 @@ local GetFakeUnitData = function(i)
 		class = FAKE_CLASSES[((i - 1) % #FAKE_CLASSES) + 1],
 		role = FAKE_ROLES[((i - 1) % #FAKE_ROLES) + 1],
 		cur = cur,
-		max = max
+		max = max,
 	}
 end
 
@@ -111,14 +136,14 @@ local ApplyFakeData = function(frame, data, showClassColors)
 end
 
 Module.SetPartyMockShown = function(self, shown)
-	if (not shown) then
+	if not shown then
 		if self.partyContainer then
 			self.partyContainer:Hide()
 		end
 		return
 	end
 
-	if (not self.partyContainer) then
+	if not self.partyContainer then
 		local PartyWidget = self:GetWidget("Unit: Party")
 		local config = self:GetDB("UnitFrames").visuals.units.party
 		local db = self:GetConfig("UnitFrames")
@@ -143,14 +168,14 @@ Module.SetPartyMockShown = function(self, shown)
 end
 
 Module.SetRaidMockShown = function(self, shown)
-	if (not shown) then
+	if not shown then
 		if self.raidContainer then
 			self.raidContainer:Hide()
 		end
 		return
 	end
 
-	if (not self.raidContainer) then
+	if not self.raidContainer then
 		local RaidWidget = self:GetWidget("Unit: Raid")
 		local config = self:GetDB("UnitFrames").visuals.units.raid
 		local db = self:GetConfig("UnitFrames")
@@ -173,7 +198,12 @@ Module.SetRaidMockShown = function(self, shown)
 			ApplyFakeData(frame, GetFakeUnitData(i), db.showClassColors)
 
 			frame:ClearAllPoints()
-			frame:SetPoint("TOPLEFT", container, "TOPLEFT", RaidWidget.GetMemberPosition(config, math_floor((i - 1) / 5) + 1, (i - 1) % 5))
+			frame:SetPoint(
+				"TOPLEFT",
+				container,
+				"TOPLEFT",
+				RaidWidget.GetMemberPosition(config, math_floor((i - 1) / 5) + 1, (i - 1) % 5)
+			)
 			frame:Show()
 
 			self.raidFrames[i] = frame

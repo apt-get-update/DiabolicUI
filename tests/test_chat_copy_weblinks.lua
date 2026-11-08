@@ -7,7 +7,7 @@
 --    e-mails, IPv4, domains with a port or a path, and bare domains with a
 --    common top level domain. Brackets and sentence punctuation around one
 --    stay out of the link; other links, textures and colors are left alone.
---  - hovering such a link shows "Click to copy the link." 
+--  - hovering such a link shows "Click to copy the link."
 --  - filters.lua *replaces* (not hooksecurefunc's) the real SetItemRef, so
 --    it can catch that custom link type and return before Blizzard's own
 --    version ever sees it (which would otherwise error - "Unknown link
@@ -39,14 +39,26 @@ local function loadFiltersModule()
 	-- `cursor` table) - it just records what reached it, standing in for
 	-- what would otherwise be Blizzard's own link handling.
 	passedThroughLinks = {}
-	_G.SetItemRef = function(link) table.insert(passedThroughLinks, link) end
+	_G.SetItemRef = function(link)
+		table.insert(passedThroughLinks, link)
+	end
 
 	_G.GameTooltip = {
-		SetOwner = function(self, owner) self.owner = owner end,
-		GetOwner = function(self) return self.owner end,
-		SetText = function(self, text) self.text = text end,
-		Show = function(self) self.shown = true end,
-		Hide = function(self) self.shown = false end,
+		SetOwner = function(self, owner)
+			self.owner = owner
+		end,
+		GetOwner = function(self)
+			return self.owner
+		end,
+		SetText = function(self, text)
+			self.text = text
+		end,
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
 	}
 
 	popupCalls = {}
@@ -103,15 +115,27 @@ end
 function TestCopyWebLinks:test_links_a_url_found_in_the_message()
 	self.frame:AddMessage("|Hplayer:Gandalf|h[Gandalf]|h: check https://wowhead.com/item=123 for stats")
 
-	lu.assertEquals(self.frame.captured, -- (player names lose their brackets)
-		"|Hplayer:Gandalf|hGandalf|h: check " .. asLink("https://wowhead.com/item=123") .. " for stats")
+	lu.assertEquals(
+		self.frame.captured, -- (player names lose their brackets)
+		"|Hplayer:Gandalf|hGandalf|h: check " .. asLink("https://wowhead.com/item=123") .. " for stats"
+	)
 end
 
 function TestCopyWebLinks:test_what_counts_as_a_web_address()
 	local addresses = {
-		"http://one.com", "ftp://files.example.org/a", "www.wowhead.com", "WWW.Example.net/x",
-		"mailto:me@example.com", "someone@mail.example.fr", "192.168.1.10:8080", "10.0.0.1/admin",
-		"example.fr/page", "localhost.lan:3000", "discord.gg", "wowhead.com", "Example.COM",
+		"http://one.com",
+		"ftp://files.example.org/a",
+		"www.wowhead.com",
+		"WWW.Example.net/x",
+		"mailto:me@example.com",
+		"someone@mail.example.fr",
+		"192.168.1.10:8080",
+		"10.0.0.1/admin",
+		"example.fr/page",
+		"localhost.lan:3000",
+		"discord.gg",
+		"wowhead.com",
+		"Example.COM",
 	}
 	for _, address in ipairs(addresses) do
 		self.frame:AddMessage("see " .. address .. " now")
@@ -125,17 +149,27 @@ function TestCopyWebLinks:test_what_counts_as_a_web_address()
 end
 
 function TestCopyWebLinks:test_brackets_and_punctuation_stay_outside()
-	self.frame:AddMessage("(see https://example.com/a), or \"www.example.com\". Also <discord.gg>!")
-	lu.assertEquals(self.frame.captured, "(see " .. asLink("https://example.com/a") .. "), or \""
-		.. asLink("www.example.com") .. "\". Also <" .. asLink("discord.gg") .. ">!")
+	self.frame:AddMessage('(see https://example.com/a), or "www.example.com". Also <discord.gg>!')
+	lu.assertEquals(
+		self.frame.captured,
+		"(see "
+			.. asLink("https://example.com/a")
+			.. '), or "'
+			.. asLink("www.example.com")
+			.. '". Also <'
+			.. asLink("discord.gg")
+			.. ">!"
+	)
 end
 
 function TestCopyWebLinks:test_links_textures_and_colors_are_left_alone()
 	local item = "|cff1eff00|Hitem:12345:0:0:0:0:0:0:0|h[www.sword.com]|h|r"
 	local texture = "|TInterface\\Icons\\a.b.com:14|t"
 	self.frame:AddMessage(item .. " " .. texture .. " |cffff0000red.com|r a||b.com")
-	lu.assertEquals(self.frame.captured,
-		item .. " " .. texture .. " |cffff0000" .. asLink("red.com") .. "|r a||" .. asLink("b.com"))
+	lu.assertEquals(
+		self.frame.captured,
+		item .. " " .. texture .. " |cffff0000" .. asLink("red.com") .. "|r a||" .. asLink("b.com")
+	)
 	-- an unknown escape is left as it is, and the text around it still checked
 	self.frame:AddMessage("|x www.a.com")
 	lu.assertEquals(self.frame.captured, "|x " .. asLink("www.a.com"))
@@ -167,7 +201,10 @@ end
 function TestCopyWebLinks:test_hovering_a_link_says_a_click_copies_it()
 	local enter, leave = self.frame.scripts.OnHyperlinkEnter, self.frame.scripts.OnHyperlinkLeave
 	enter(self.frame, "url:https://example.com")
-	lu.assertEquals({ GameTooltip.owner, GameTooltip.text, GameTooltip.shown }, { self.frame, "Click to copy the link.", true })
+	lu.assertEquals(
+		{ GameTooltip.owner, GameTooltip.text, GameTooltip.shown },
+		{ self.frame, "Click to copy the link.", true }
+	)
 	leave(self.frame)
 	lu.assertFalse(GameTooltip.shown)
 

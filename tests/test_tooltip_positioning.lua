@@ -19,7 +19,9 @@ WowApiMock.install()
 -- effect on an already-loaded module. Instead we install one fixed closure
 -- up front and let tests mutate the table it reads from.
 local cursor = { x = 0, y = 0 }
-_G.GetCursorPosition = function() return cursor.x, cursor.y end
+_G.GetCursorPosition = function()
+	return cursor.x, cursor.y
+end
 _G.UIParent = { name = "UIParent" }
 
 local function setCursorPosition(x, y)
@@ -44,12 +46,23 @@ local function newFakeTooltip(overrides)
 	for k, v in pairs(overrides or {}) do
 		tooltip[k] = v
 	end
-	function tooltip:GetEffectiveScale() return self.scale end
-	function tooltip:GetWidth() return self.width end
-	function tooltip:GetHeight() return self.height end
-	function tooltip:ClearAllPoints() self.points = {} end
+	function tooltip:GetEffectiveScale()
+		return self.scale
+	end
+	function tooltip:GetWidth()
+		return self.width
+	end
+	function tooltip:GetHeight()
+		return self.height
+	end
+	function tooltip:ClearAllPoints()
+		self.points = {}
+	end
 	function tooltip:SetPoint(point, relativeTo, relativePoint, x, y)
-		table.insert(self.points, { point = point, relativeTo = relativeTo, relativePoint = relativePoint, x = x, y = y })
+		table.insert(
+			self.points,
+			{ point = point, relativeTo = relativeTo, relativePoint = relativePoint, x = x, y = y }
+		)
 	end
 	return tooltip
 end
@@ -57,15 +70,15 @@ end
 -- point name -> { horizontal fraction, vertical fraction }, mirroring the
 -- ANCHOR_POINTS table in modules/blizzard/tooltips.lua.
 local ALL_POINTS = {
-	TOPLEFT     = { 0,  1  },
-	TOP         = { .5, 1  },
-	TOPRIGHT    = { 1,  1  },
-	LEFT        = { 0,  .5 },
-	CENTER      = { .5, .5 },
-	RIGHT       = { 1,  .5 },
-	BOTTOMLEFT  = { 0,  0  },
-	BOTTOM      = { .5, 0  },
-	BOTTOMRIGHT = { 1,  0  },
+	TOPLEFT = { 0, 1 },
+	TOP = { 0.5, 1 },
+	TOPRIGHT = { 1, 1 },
+	LEFT = { 0, 0.5 },
+	CENTER = { 0.5, 0.5 },
+	RIGHT = { 1, 0.5 },
+	BOTTOMLEFT = { 0, 0 },
+	BOTTOM = { 0.5, 0 },
+	BOTTOMRIGHT = { 1, 0 },
 }
 
 TestTooltipGetAnchorFractions = {}

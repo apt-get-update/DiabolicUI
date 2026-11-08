@@ -70,7 +70,7 @@ local GetSpec = function(group)
 	for tab = 1, GetNumTalentTabs() do
 		local tabName, tabIcon, spent = GetTalentTabInfo(tab, false, false, group)
 		points[tab] = spent
-		if (spent > most) then
+		if spent > most then
 			name, icon, most = tabName, tabIcon, spent
 		end
 	end
@@ -102,18 +102,18 @@ local OnEnter = function(self)
 	for group, label in ipairs({ _G.PRIMARY, _G.SECONDARY }) do
 		local name, points = GetSpec(group)
 		local r, g, b = 1, 1, 1
-		if (group ~= active) then
-			r, g, b = .6, .6, .6
+		if group ~= active then
+			r, g, b = 0.6, 0.6, 0.6
 		end
 		GameTooltip:AddDoubleLine(label, (name or _G.NONE) .. " (" .. points .. ")", r, g, b, r, g, b)
 	end
 	if self.macro then
-		GameTooltip:AddLine(L["<Left-click> to run your '%s' macro"]:format(self.macro), 0, .7, 0)
+		GameTooltip:AddLine(L["<Left-click> to run your '%s' macro"]:format(self.macro), 0, 0.7, 0)
 	else
-		GameTooltip:AddLine(L["<Left-click> to switch"], 0, .7, 0)
+		GameTooltip:AddLine(L["<Left-click> to switch"], 0, 0.7, 0)
 		local before = Module.db["specMacroBefore" .. (3 - active)]
 		if before then
-			GameTooltip:AddLine(L["Runs your '%s' macro first"]:format(before), .6, .6, .6)
+			GameTooltip:AddLine(L["Runs your '%s' macro first"]:format(before), 0.6, 0.6, 0.6)
 		end
 	end
 	GameTooltip:Show()
@@ -137,7 +137,7 @@ local OnMouseUp = function(self)
 end
 
 local Print = function(message)
-	_G.DEFAULT_CHAT_FRAME:AddMessage(message, 1, .3, .3)
+	_G.DEFAULT_CHAT_FRAME:AddMessage(message, 1, 0.3, 0.3)
 end
 
 -- The glow of a macro waiting for its click: the highlight art, pulsing.
@@ -178,7 +178,7 @@ end
 -- for it (the switch can't happen in combat, so neither can this).
 local PreClick = function(self)
 	self.ranMacro = nil
-	if (self:GetAttribute("type") == "macro") then
+	if self:GetAttribute("type") == "macro" then
 		self.ranMacro = "after"
 	elseif (GetNumTalentGroups() > 1) and not InCombatLockdown() then
 		local before = Module.db["specMacroBefore" .. (3 - GetActiveTalentGroup())]
@@ -192,14 +192,14 @@ local PreClick = function(self)
 end
 
 local PostClick = function(self)
-	if (self.ranMacro == "after") then
+	if self.ranMacro == "after" then
 		ClearMacro(self)
 		return
 	end
-	if (self.ranMacro == "before") then
+	if self.ranMacro == "before" then
 		SetMacroAttributes(self, nil)
 	end
-	if (GetNumTalentGroups() > 1) then
+	if GetNumTalentGroups() > 1 then
 		SetActiveTalentGroup(3 - GetActiveTalentGroup())
 	end
 end
@@ -238,7 +238,7 @@ end
 -- addon isn't loaded. It saves the names in lower case.
 ButtonWidget.GetActionBarProfiles = function(self)
 	local db = _G.ActionBarSaverDB
-	if (not (db and db.sets and _G.SlashCmdList.ABS)) then
+	if not (db and db.sets and _G.SlashCmdList.ABS) then
 		return
 	end
 	local profiles = {}
@@ -295,7 +295,7 @@ ButtonWidget.SetMacro = function(self, macro)
 		Print(L["Macro '%s' not found."]:format(macro))
 		macro = nil
 	end
-	if (not button) then
+	if not button then
 		return
 	end
 	if macro then
@@ -335,20 +335,29 @@ ButtonWidget.MoveCommandsToMacros = function(self)
 		if text and not text:find("%S") then
 			db["specMacro" .. group] = nil
 		elseif text and not db["specMacroName" .. group] then
-			local name = ("DUI " .. (GetSpec(group) or (group == 1 and _G.PRIMARY or _G.SECONDARY))):sub(1, MACRO_NAME_LENGTH)
+			local name = ("DUI " .. (GetSpec(group) or (group == 1 and _G.PRIMARY or _G.SECONDARY))):sub(
+				1,
+				MACRO_NAME_LENGTH
+			)
 			local _, numCharacter = GetNumMacros()
-			if (#text > MACRO_BODY_LENGTH) then
+			if #text > MACRO_BODY_LENGTH then
 				Print(L["Your %s commands are too long for a macro, make one yourself: %s"]:format(name, text))
 				db["specMacro" .. group] = nil
-			elseif (GetMacroIndexByName(name) > 0) then
+			elseif GetMacroIndexByName(name) > 0 then
 				-- one with that name already: picked as it is
 				db["specMacroName" .. group], db["specMacro" .. group] = name, nil
-			elseif (numCharacter < CHARACTER_MACROS) then
+			elseif numCharacter < CHARACTER_MACROS then
 				CreateMacro(name, 1, text, 1)
 				db["specMacroName" .. group], db["specMacro" .. group] = name, nil
-				Print(L["Your other commands are now the character macro '%s', run by a click on the skull after switching."]:format(name))
+				Print(
+					L["Your other commands are now the character macro '%s', run by a click on the skull after switching."]:format(
+						name
+					)
+				)
 			else
-				Print(L["No free character macro slot for your %s commands, they're kept until there's one."]:format(name))
+				Print(
+					L["No free character macro slot for your %s commands, they're kept until there's one."]:format(name)
+				)
 			end
 		end
 	end
@@ -357,7 +366,7 @@ end
 -- What's saved for the specialization just switched to, a moment later.
 local OnSetupUpdate = function(self, elapsed)
 	self.delay = self.delay - elapsed
-	if (self.delay <= 0) then
+	if self.delay <= 0 then
 		self:Hide()
 		RunSpec(self.group)
 	end
@@ -368,7 +377,7 @@ ButtonWidget.OnTalentGroupChanged = function(self)
 	-- The group at login is no switch; only a change from it is.
 	if self.talentGroup and (group ~= self.talentGroup) then
 		local timer = self.SetupTimer
-		if (not timer) then
+		if not timer then
 			timer = CreateFrame("Frame")
 			timer:SetScript("OnUpdate", OnSetupUpdate)
 			self.SetupTimer = timer
@@ -382,7 +391,7 @@ end
 
 ButtonWidget.OnEnteringWorld = function(self)
 	self.talentGroup = self.talentGroup or GetActiveTalentGroup()
-	if (not InCombatLockdown()) then
+	if not InCombatLockdown() then
 		self:MoveCommandsToMacros()
 	end
 	self:Update()
@@ -390,7 +399,7 @@ end
 
 ButtonWidget.Update = function(self)
 	local button = self.Button
-	if (not button) then
+	if not button then
 		return -- not placed yet
 	end
 	if InCombatLockdown() then
@@ -403,7 +412,7 @@ ButtonWidget.Update = function(self)
 	-- Shown through a state driver, which hides it in a vehicle or while
 	-- possessing (the bars are the vehicle's then), like the stance toggle.
 	UnregisterStateDriver(button, "visibility")
-	if (GetNumTalentGroups() < 2) then
+	if GetNumTalentGroups() < 2 then
 		if button.macro then
 			ClearMacro(button)
 		end
@@ -451,8 +460,8 @@ ButtonWidget.CreateButton = function(self)
 	button.Glow.Pulse = button.Glow:CreateAnimationGroup()
 	button.Glow.Pulse:SetLooping("BOUNCE")
 	local fade = button.Glow.Pulse:CreateAnimation("Alpha")
-	fade:SetChange(-.8)
-	fade:SetDuration(.8)
+	fade:SetChange(-0.8)
+	fade:SetDuration(0.8)
 
 	-- OnClick is the template's: it runs the macro the attributes name
 	button:SetScript("OnEnter", OnEnter)
@@ -477,7 +486,7 @@ end
 -- of combat only: a move in combat is followed once it ends.
 ButtonWidget.PlaceButton = function(self)
 	local button = self.Button
-	if (not button) then
+	if not button then
 		return
 	end
 	if InCombatLockdown() then
@@ -486,7 +495,7 @@ ButtonWidget.PlaceButton = function(self)
 		return
 	end
 	local point, relativeTo, relativePoint, x, y = _G.DiabolicUISkullTexture:GetPoint()
-	if (not point) then
+	if not point then
 		return -- not placed yet
 	end
 	-- (the skull's points are all BOTTOM ones, like the button's)

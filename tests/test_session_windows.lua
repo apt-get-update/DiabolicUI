@@ -47,7 +47,10 @@ end
 local function companions(world)
 	world.companions = {
 		CRITTER = { { 101, "Mechanical Squirrel", 4055, "Interface\\Icons\\Squirrel" } },
-		MOUNT = { { 201, "Swift Gryphon", 32242, "Interface\\Icons\\Gryphon" }, { 202, "Black Stallion", 470, "Interface\\Icons\\Horse" } },
+		MOUNT = {
+			{ 201, "Swift Gryphon", 32242, "Interface\\Icons\\Gryphon" },
+			{ 202, "Black Stallion", 470, "Interface\\Icons\\Horse" },
+		},
 	}
 end
 
@@ -59,13 +62,13 @@ function TestSpellbook:test_the_spells_on_the_book()
 	-- a spell: its border, its name in ink right of it
 	local button, name = _G.SpellButton1, _G.SpellButton1SpellName
 	_G.SpellButton1IconTexture:Show()
-	name:SetTextColor(1, .82, 0)
+	name:SetTextColor(1, 0.82, 0)
 	_G.SpellButton_UpdateButton(button)
 	lu.assertTrue(shown(button.DiabolicBorder))
 	lu.assertEquals({ name:GetPoint() }, { "LEFT", button, "RIGHT", config.name_offset, 0 })
 	near(color(name:GetTextColor()), ink)
 	-- a passive one (Blizzard's grey) in its own ink
-	name:SetTextColor(.5, .5, .5)
+	name:SetTextColor(0.5, 0.5, 0.5)
 	_G.SpellButton_UpdateButton(button)
 	near(color(name:GetTextColor()), config.passive_color)
 	-- an empty one not drawn
@@ -99,7 +102,13 @@ function TestSpellbook:test_the_tabs_hang_under_the_window()
 	local function row(...)
 		local below = banner.rail.height - banner.rail.up
 		for i, tab in ipairs({ ... }) do
-			lu.assertEquals({ tab:GetPoint() }, { "TOPLEFT", window, "BOTTOMLEFT", banner.left + (i - 1) * (banner.width + banner.gap), banner.tuck - below })
+			lu.assertEquals({ tab:GetPoint() }, {
+				"TOPLEFT",
+				window,
+				"BOTTOMLEFT",
+				banner.left + (i - 1) * (banner.width + banner.gap),
+				banner.tuck - below,
+			})
 		end
 	end
 	local shownOwn = {}
@@ -237,7 +246,9 @@ function TestSpellbook:test_the_pet_tab_for_the_pet_only()
 	_G.PetPaperDollFrame:Show()
 	_G.PetPaperDollFrame.selectedTab = 2
 	local chosen
-	_G.PetPaperDollFrame_SetTab = function(tab) chosen = tab end
+	_G.PetPaperDollFrame_SetTab = function(tab)
+		chosen = tab
+	end
 	_G.PetPaperDollFrame_UpdateTabs()
 	lu.assertEquals(chosen, 1)
 	assertClean(client)
@@ -257,7 +268,8 @@ local function mageBook(world)
 	end
 	world.spellBook = book
 	-- on the bars: Fireball's best rank, a macro casting Frostbolt
-	world.actions[1] = { type = "spell", id = 2, spellID = 143, name = "Fireball", texture = "x", count = 0, cooldown = { 0, 0, 1 } }
+	world.actions[1] =
+		{ type = "spell", id = 2, spellID = 143, name = "Fireball", texture = "x", count = 0, cooldown = { 0, 0, 1 } }
 	world.spells[143] = { name = "Fireball" }
 end
 
@@ -401,7 +413,8 @@ function TestSpellbookPages:test_the_spells_on_no_action_bar_ringed()
 	lu.assertTrue(shown(frostbolt.DiabolicUnassigned))
 	lu.assertFalse(shown(passive.DiabolicUnassigned))
 	-- Frostbolt on a bar (in a macro): ringed no more
-	client.world.actions[2] = { type = "macro", id = 1, name = "Frost", texture = "x", count = 0, cooldown = { 0, 0, 1 } }
+	client.world.actions[2] =
+		{ type = "macro", id = 1, name = "Frost", texture = "x", count = 0, cooldown = { 0, 0, 1 } }
 	client.world.macroSpells = { [1] = "Frostbolt" }
 	client:FireEvent("ACTIONBAR_SLOT_CHANGED", 2)
 	lu.assertFalse(shown(frostbolt.DiabolicUnassigned))
@@ -413,22 +426,33 @@ function TestSpellbookPages:test_the_spells_on_no_action_bar_ringed()
 end
 
 function TestSpellbookPages:test_the_professions_page()
-	boot({ class = "MAGE", world = function(world)
-		mageBook(world)
-		for id, name in pairs({ [3908] = "Tailoring", [2575] = "Mining", [2656] = "Smelting", [2580] = "Find Minerals",
-			[2550] = "Cooking", [818] = "Basic Campfire", [7620] = "Fishing", [3273] = "First Aid" }) do
-			world.spells[id] = { name = name, icon = [[Interface\Icons\]] .. name }
-		end
-		world.unknownSpells = { ["Basic Campfire"] = true }
-		-- { name, header, expanded, rank, temp, modifier, max }
-		world.skillLines = {
-			{ "TRADE_SKILLS", true, nil }, -- (collapsed: opened to read it)
-			{ "Tailoring", nil, nil, 290, 0, 10, 450 },
-			{ "SECONDARY_SKILLS", true, 1 },
-			{ "Cooking", nil, nil, 75, 0, 0, 75 },
-			{ "Riding", nil, nil, 150, 0, 0, 150 },
-		}
-	end })
+	boot({
+		class = "MAGE",
+		world = function(world)
+			mageBook(world)
+			for id, name in pairs({
+				[3908] = "Tailoring",
+				[2575] = "Mining",
+				[2656] = "Smelting",
+				[2580] = "Find Minerals",
+				[2550] = "Cooking",
+				[818] = "Basic Campfire",
+				[7620] = "Fishing",
+				[3273] = "First Aid",
+			}) do
+				world.spells[id] = { name = name, icon = [[Interface\Icons\]] .. name }
+			end
+			world.unknownSpells = { ["Basic Campfire"] = true }
+			-- { name, header, expanded, rank, temp, modifier, max }
+			world.skillLines = {
+				{ "TRADE_SKILLS", true, nil }, -- (collapsed: opened to read it)
+				{ "Tailoring", nil, nil, 290, 0, 10, 450 },
+				{ "SECONDARY_SKILLS", true, 1 },
+				{ "Cooking", nil, nil, 75, 0, 0, 75 },
+				{ "Riding", nil, nil, 150, 0, 0, 150 },
+			}
+		end,
+	})
 	local module = client:GetModule("Blizzard: Spellbook")
 	local frame = _G.SpellBookFrame
 	frame.bookType = _G.BOOKTYPE_SPELL
@@ -489,7 +513,9 @@ end
 function TestSocial:test_the_who_list_sorted_by_the_column_chosen()
 	boot()
 	local sorted
-	_G.SortWho = function(sortType) sorted = sortType end
+	_G.SortWho = function(sortType)
+		sorted = sortType
+	end
 	local option = _G.CreateFrame("Button")
 	option:SetID(2)
 	_G.WhoFrameDropDownButton_OnClick(option)
@@ -503,13 +529,17 @@ function TestSocial:test_the_who_count_in_the_title_and_its_menu_as_wide()
 	boot()
 	_G.FriendsFrame:Show()
 	_G.WhoFrame:Show()
-	_G.GetNumWhoResults = function() return 49, 809 end
+	_G.GetNumWhoResults = function()
+		return 49, 809
+	end
 	_G.WhoList_Update()
 	lu.assertEquals(_G.FriendsFrameTitleText:GetText(), _G.WHO_LIST .. " (809 found)")
 	lu.assertEquals(_G.WhoFrameTotals:GetAlpha(), 0)
 	-- none found: Blizzard's title left
 	_G.FriendsFrameTitleText:SetText("Who")
-	_G.GetNumWhoResults = function() return 0, 0 end
+	_G.GetNumWhoResults = function()
+		return 0, 0
+	end
 	_G.FriendsFrame_Update()
 	lu.assertEquals(_G.FriendsFrameTitleText:GetText(), "Who")
 	-- the menu narrower than the field: widened, its lines 25 narrower
@@ -552,8 +582,14 @@ end
 function TestQuestLog:test_the_details_in_ink_on_the_parchment()
 	boot()
 	local config = client.Engine:GetDB("Blizzard").questlog
-	client.world.quests = { { title = "Hogger", level = 10, id = 1,
-		objectives = { { text = "Hogger slain: 1/1", finished = true }, { text = "Claws: 0/3", finished = false } } } }
+	client.world.quests = {
+		{
+			title = "Hogger",
+			level = 10,
+			id = 1,
+			objectives = { { text = "Hogger slain: 1/1", finished = true }, { text = "Claws: 0/3", finished = false } },
+		},
+	}
 	_G.SelectQuestLogEntry(1)
 	_G.QuestLogFrame:Show()
 	_G.QuestInfoObjective1:Show()
@@ -570,14 +606,18 @@ function TestQuestLog:test_the_details_in_ink_on_the_parchment()
 end
 
 function TestQuestLog:test_the_count_in_the_title_the_dailies_on_hover()
-	boot({ world = function(world) world.dailiesDone = 3 end })
+	boot({
+		world = function(world)
+			world.dailiesDone = 3
+		end,
+	})
 	local title = _G.QuestLogTitleText
 	_G.QuestLog_UpdateQuestCount(15)
 	lu.assertEquals(title:GetText(), "QUEST_LOG  15/25")
 	-- the title's tooltip: the dailies done, when they reset
 	local hover
 	for _, child in ipairs({ title:GetParent():GetChildren() }) do
-		if (select(2, child:GetPoint()) == title) then
+		if select(2, child:GetPoint()) == title then
 			hover = child
 		end
 	end
@@ -596,7 +636,10 @@ function TestQuestLog:test_the_details_and_buttons_kept_in_place()
 	local panel, scroll = _G.QuestLogControlPanel, _G.QuestLogDetailScrollFrame
 	panel:SetParent(_G.QuestLogFrame)
 	_G.QuestLogControlPanel_UpdatePosition()
-	lu.assertEquals({ panel:GetPoint() }, { "BOTTOMLEFT", module.Window.DiabolicFoot, "BOTTOMLEFT", unpack(config.controls) })
+	lu.assertEquals(
+		{ panel:GetPoint() },
+		{ "BOTTOMLEFT", module.Window.DiabolicFoot, "BOTTOMLEFT", unpack(config.controls) }
+	)
 	scroll:SetParent(_G.QuestLogFrame)
 	_G.QuestLogDetailFrame_AttachToQuestLog()
 	lu.assertEquals({ scroll:GetPoint() }, { "TOPRIGHT", module.Window, "TOPRIGHT", unpack(config.details) })
@@ -639,11 +682,13 @@ function TestTalents:test_the_specs_in_the_band_and_the_glyphs()
 end
 
 function TestTalents:test_the_glyphs_shown_as_they_load()
-	boot({ world = function(world, c)
-		c.api.LoadAddOn("Blizzard_TalentUI")
-		c.api.LoadAddOn("Blizzard_GlyphUI")
-		_G.GlyphFrame:Show()
-	end })
+	boot({
+		world = function(world, c)
+			c.api.LoadAddOn("Blizzard_TalentUI")
+			c.api.LoadAddOn("Blizzard_GlyphUI")
+			_G.GlyphFrame:Show()
+		end,
+	})
 	lu.assertEquals(_G.PlayerTalentFrameScrollFrameScrollBar:GetAlpha(), 0)
 	assertClean(client)
 end
@@ -657,11 +702,13 @@ function TestPanels:tearDown()
 end
 
 function TestPanels:test_their_dark_text_pale_and_their_titles()
-	boot({ world = function(world, c)
-		-- a title with no name of its own, and text drawn for parchment
-		local title = _G.PVPParentFrame:CreateFontString(nil, "ARTWORK")
-		title:SetText(_G.PLAYER_V_PLAYER)
-	end })
+	boot({
+		world = function(world, c)
+			-- a title with no name of its own, and text drawn for parchment
+			local title = _G.PVPParentFrame:CreateFontString(nil, "ARTWORK")
+			title:SetText(_G.PLAYER_V_PLAYER)
+		end,
+	})
 	local config = client.Engine:GetDB("Blizzard").panels
 	local frame = _G.PetitionFrame
 	local dark = frame:CreateFontString(nil, "ARTWORK")
@@ -686,10 +733,12 @@ function TestPanels:test_books_in_ink()
 end
 
 function TestPanels:test_the_guild_banks_log_in_ink()
-	boot({ world = function()
-		-- (its time's code, as the client's global string has it)
-		rawset(_G, "GUILD_BANK_LOG_TIME_PREPEND", "|cff009999   (%s)|r")
-	end })
+	boot({
+		world = function()
+			-- (its time's code, as the client's global string has it)
+			rawset(_G, "GUILD_BANK_LOG_TIME_PREPEND", "|cff009999   (%s)|r")
+		end,
+	})
 	client.api.LoadAddOn("Blizzard_GuildBankUI")
 	local inks = client.Engine:GetDB("Blizzard").panels.log_inks
 	local ink = client.Engine:GetDB("Blizzard").window.ink
@@ -697,7 +746,10 @@ function TestPanels:test_the_guild_banks_log_in_ink()
 		return string.format("|cff%02x%02x%02x", c[1] * 255, c[2] * 255, c[3] * 255)
 	end
 	local log = _G.GuildBankMessageFrame
-	log:AddMessage(_G.NORMAL_FONT_COLOR_CODE .. "Thrall|r deposited |cffa335ee[Frostmourne]|r, |cffffffffLinen|r, |cff1d1d1dgrey|r|cff009999   (2 hours ago)|r")
+	log:AddMessage(
+		_G.NORMAL_FONT_COLOR_CODE
+			.. "Thrall|r deposited |cffa335ee[Frostmourne]|r, |cffffffffLinen|r, |cff1d1d1dgrey|r|cff009999   (2 hours ago)|r"
+	)
 	local messages = client.widgetState[log].messages
 	local message = messages[#messages]
 	-- the name and time in their inks, the epic darkened, white as ink,
@@ -728,20 +780,33 @@ function TestPanels:test_the_guild_banks_rail_fitted_once_placed()
 end
 
 function TestPanels:test_loaded_before_us()
-	boot({ world = function(world, c)
-		c.api.LoadAddOn("Blizzard_MacroUI")
-	end })
+	boot({
+		world = function(world, c)
+			c.api.LoadAddOn("Blizzard_MacroUI")
+		end,
+	})
 	lu.assertTrue(_G.MacroFrame.DiabolicPanel)
 	assertClean(client)
 end
 
 function TestPanels:test_the_other_load_on_demand_windows()
 	boot()
-	for _, addon in ipairs({ "Blizzard_GuildBankUI", "Blizzard_BindingUI", "Blizzard_MacroUI", "Blizzard_TrainerUI",
-		"Blizzard_ItemSocketingUI" }) do
+	for _, addon in ipairs({
+		"Blizzard_GuildBankUI",
+		"Blizzard_BindingUI",
+		"Blizzard_MacroUI",
+		"Blizzard_TrainerUI",
+		"Blizzard_ItemSocketingUI",
+	}) do
 		client.api.LoadAddOn(addon)
 	end
-	for _, name in ipairs({ "GuildBankFrame", "KeyBindingFrame", "MacroFrame", "ClassTrainerFrame", "ItemSocketingFrame" }) do
+	for _, name in ipairs({
+		"GuildBankFrame",
+		"KeyBindingFrame",
+		"MacroFrame",
+		"ClassTrainerFrame",
+		"ItemSocketingFrame",
+	}) do
 		lu.assertTrue(_G[name].DiabolicPanel, name)
 	end
 	assertClean(client)
@@ -765,10 +830,13 @@ local function postal()
 		b:SetPoint("TOPLEFT", inbox, "TOPLEFT", 10, -10)
 	end
 	for i = 1, 7 do
-		_G.CreateFrame("CheckButton", "PostalInboxCB" .. i, _G["MailItem" .. i]):SetPoint("RIGHT", _G["MailItem" .. i], "LEFT", 0, 0)
+		_G.CreateFrame("CheckButton", "PostalInboxCB" .. i, _G["MailItem" .. i])
+			:SetPoint("RIGHT", _G["MailItem" .. i], "LEFT", 0, 0)
 	end
-	_G.CreateFrame("Button", "Postal_ModuleMenuButton", _G.MailFrame):SetPoint("TOPRIGHT", _G.MailFrame, "TOPRIGHT", -40, -10)
-	_G.CreateFrame("Button", "Postal_BlackBookButton", _G.SendMailFrame):SetPoint("LEFT", _G.SendMailNameEditBox, "RIGHT", 0, 0)
+	_G.CreateFrame("Button", "Postal_ModuleMenuButton", _G.MailFrame)
+		:SetPoint("TOPRIGHT", _G.MailFrame, "TOPRIGHT", -40, -10)
+	_G.CreateFrame("Button", "Postal_BlackBookButton", _G.SendMailFrame)
+		:SetPoint("LEFT", _G.SendMailNameEditBox, "RIGHT", 0, 0)
 end
 
 function TestMail:test_the_inbox_and_the_letter_being_written()
@@ -820,8 +888,8 @@ function TestMail:test_the_inbox_and_the_letter_being_written()
 
 	-- the letters in ink: unread and read, the days left (red: running out)
 	local ink = config.list_ink
-	_G.MailItem1Sender:SetTextColor(1, .82, 0)
-	_G.MailItem2Sender:SetTextColor(.75, .75, .75)
+	_G.MailItem1Sender:SetTextColor(1, 0.82, 0)
+	_G.MailItem2Sender:SetTextColor(0.75, 0.75, 0.75)
 	_G.MailItem1ExpireTime:SetText("|cff20ff2029 Days|r")
 	_G.MailItem2ExpireTime:SetText(_G.RED_FONT_COLOR_CODE .. "2 Days|r")
 	_G.InboxFrame_Update()
@@ -856,12 +924,25 @@ function TestMail:test_the_letters_attachments_alone()
 	local money, item = _G.OpenMailMoneyButton, _G.OpenMailAttachmentButton1
 	local insets = config.text_panel_insets
 	local left, right = select(4, money:GetPoint()), select(4, item:GetPoint()) + item:GetWidth()
-	lu.assertAlmostEquals((left + right) / 2, (scroll:GetLeft() - frame:GetLeft() - insets[1]
-		+ scroll:GetRight() - frame:GetLeft() + insets[3]) / 2, 1e-6)
+	lu.assertAlmostEquals(
+		(left + right) / 2,
+		(scroll:GetLeft() - frame:GetLeft() - insets[1] + scroll:GetRight() - frame:GetLeft() + insets[3]) / 2,
+		1e-6
+	)
 	local y = select(5, money:GetPoint())
 	lu.assertEquals(select(5, item:GetPoint()), y)
-	lu.assertAlmostEquals(y - money:GetHeight() / 2, (scroll:GetBottom() - frame:GetBottom() - insets[4]
-		+ _G.OpenMailFrameDiabolicFoot:GetTop() - frame:GetBottom() + config.open_attachments_over) / 2, 1e-6)
+	lu.assertAlmostEquals(
+		y - money:GetHeight() / 2,
+		(
+			scroll:GetBottom()
+			- frame:GetBottom()
+			- insets[4]
+			+ _G.OpenMailFrameDiabolicFoot:GetTop()
+			- frame:GetBottom()
+			+ config.open_attachments_over
+		) / 2,
+		1e-6
+	)
 	-- (again on the next update, from where Blizzard puts them again)
 	_G.OpenMail_Update()
 	lu.assertEquals(select(5, money:GetPoint()), y)
@@ -888,7 +969,10 @@ function TestMail:test_postals_parts_in_place()
 	lu.assertEquals({ _G.PostalSelectReturnButton:GetPoint() }, { "LEFT", module.Header, "CENTER", spec.gap / 2, 0 })
 	lu.assertEquals(_G.PostalSelectOpenButton:GetWidth(), spec.width)
 	-- its other parts moved once
-	lu.assertEquals({ _G.PostalOpenAllButton:GetPoint() }, { "CENTER", _G.MailFrameDiabolicFoot, "BOTTOM", unpack(config.postal_open_all) })
+	lu.assertEquals(
+		{ _G.PostalOpenAllButton:GetPoint() },
+		{ "CENTER", _G.MailFrameDiabolicFoot, "BOTTOM", unpack(config.postal_open_all) }
+	)
 	frame:Hide()
 	frame:Show()
 	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), config.postal_open_all[2])
@@ -896,8 +980,13 @@ function TestMail:test_postals_parts_in_place()
 	-- the address book's arrow right of the To box's plate, as the letter shows
 	_G.SendMailFrame:Show()
 	local band = config.send_band
-	lu.assertEquals({ _G.Postal_BlackBookButton:GetPoint() },
-		{ "LEFT", _G.SendMailNameEditBox, "RIGHT", client.Engine:GetDB("Blizzard").window.edit_padding + band.arrow_gap, 0 })
+	lu.assertEquals({ _G.Postal_BlackBookButton:GetPoint() }, {
+		"LEFT",
+		_G.SendMailNameEditBox,
+		"RIGHT",
+		client.Engine:GetDB("Blizzard").window.edit_padding + band.arrow_gap,
+		0,
+	})
 	assertClean(client)
 end
 
@@ -917,8 +1006,15 @@ local function recipes(world)
 	world.itemInfo[200] = { name = "Frostweave", quality = 2, iLevel = 70 }
 	world.tradeSkill.recipes = {
 		{ name = "Cloth", kind = "header", expanded = true },
-		{ name = "Frostwoven Belt", kind = "optimal", available = 2, reagents = {
-			{ name = "Thread", need = 2, have = 0 }, { name = "Frostweave", link = cloth, need = 1, have = 5 } } },
+		{
+			name = "Frostwoven Belt",
+			kind = "optimal",
+			available = 2,
+			reagents = {
+				{ name = "Thread", need = 2, have = 0 },
+				{ name = "Frostweave", link = cloth, need = 1, have = 5 },
+			},
+		},
 		{ name = "Frostwoven Boots", kind = "medium" },
 		{ name = "Frostwoven Cowl", kind = "easy" },
 		{ name = "Linen Bandage", kind = "trivial" },
@@ -1025,10 +1121,12 @@ function TestTradeSkill:test_the_requirement_short_of_auctionators_scan()
 end
 
 function TestTradeSkill:test_loaded_before_us_and_not_without_the_skin()
-	boot({ world = function(world, c)
-		recipes(world)
-		c.api.LoadAddOn("Blizzard_TradeSkillUI")
-	end })
+	boot({
+		world = function(world, c)
+			recipes(world)
+			c.api.LoadAddOn("Blizzard_TradeSkillUI")
+		end,
+	})
 	lu.assertEquals(_G.TradeSkillFrameEditBox:GetWidth(), client.Engine:GetDB("Blizzard").tradeskill.search_width)
 	assertClean(client)
 	-- Blizzard's own windows: left alone
@@ -1061,9 +1159,18 @@ end
 local function services(world)
 	world.trainer.services = {
 		{ name = "Fire", kind = "header", expanded = true },
-		{ name = "Fireball", subText = "Rank 2", kind = "available",
-			requirements = "Requires: |cffffffffLevel 6|r, |cffff2020Fireball (Rank 1)|r" },
-		{ name = "Pyroblast", subText = "Rank 1", kind = "unavailable", requirements = "Requires: |cffff2020Level 20|r" },
+		{
+			name = "Fireball",
+			subText = "Rank 2",
+			kind = "available",
+			requirements = "Requires: |cffffffffLevel 6|r, |cffff2020Fireball (Rank 1)|r",
+		},
+		{
+			name = "Pyroblast",
+			subText = "Rank 1",
+			kind = "unavailable",
+			requirements = "Requires: |cffff2020Level 20|r",
+		},
 		{ name = "Scorch", subText = "Rank 1", kind = "used" },
 	}
 end
@@ -1100,8 +1207,10 @@ function TestTrainer:test_the_trainings_in_ink()
 	local function code(c)
 		return string.format("|cff%02x%02x%02x", c[1] * 255, c[2] * 255, c[3] * 255)
 	end
-	lu.assertEquals(_G.ClassTrainerSkillRequirements:GetText(),
-		"Requires: " .. code(ink) .. "Level 6|r, " .. code(config.missing_color) .. "Fireball (Rank 1)|r")
+	lu.assertEquals(
+		_G.ClassTrainerSkillRequirements:GetText(),
+		"Requires: " .. code(ink) .. "Level 6|r, " .. code(config.missing_color) .. "Fireball (Rank 1)|r"
+	)
 	near(color(_G.ClassTrainerDetailMoneyFrameGoldButton:GetFontString():GetTextColor()), ink)
 	-- (none: nothing to ink)
 	_G.ClassTrainerSkillRequirements:SetText(nil)
@@ -1124,10 +1233,12 @@ function TestTrainer:test_the_trainings_in_ink()
 end
 
 function TestTrainer:test_loaded_before_us_and_not_without_the_skin()
-	boot({ world = function(world, c)
-		services(world)
-		c.api.LoadAddOn("Blizzard_TrainerUI")
-	end })
+	boot({
+		world = function(world, c)
+			services(world)
+			c.api.LoadAddOn("Blizzard_TrainerUI")
+		end,
+	})
 	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyV(), "MIDDLE")
 	assertClean(client)
 	boot({ savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } } })
@@ -1149,8 +1260,17 @@ function TestWindowKit:test_blizzards_own_windows_when_its_off()
 	for _, addon in ipairs({ "Blizzard_TalentUI", "Blizzard_GlyphUI", "Blizzard_AchievementUI", "Blizzard_MacroUI" }) do
 		client.api.LoadAddOn(addon)
 	end
-	for _, name in ipairs({ "QuestLogFrame", "MerchantFrame", "FriendsFrame", "SpellBookFrame", "LFDParentFrame",
-		"PlayerTalentFrame", "MacroFrame", "AchievementFrame", "CharacterFrame" }) do
+	for _, name in ipairs({
+		"QuestLogFrame",
+		"MerchantFrame",
+		"FriendsFrame",
+		"SpellBookFrame",
+		"LFDParentFrame",
+		"PlayerTalentFrame",
+		"MacroFrame",
+		"AchievementFrame",
+		"CharacterFrame",
+	}) do
 		lu.assertNil(_G[name].DiabolicPanel, name)
 	end
 	assertClean(client)
@@ -1166,7 +1286,10 @@ function TestWindowKit:test_the_stack_split_and_coins_boxes()
 	-- the coins' sum left of its coin, the pair in the middle of the black field
 	local text = _G.CoinPickupText
 	local x = spec.border + spec.text[1] * spec.scale - (spec.coin_size + spec.coin_gap) / 2
-	lu.assertEquals({ text:GetPoint() }, { "CENTER", _G.CoinPickupFrame, "TOPLEFT", x, -spec.border + spec.text[2] * spec.scale })
+	lu.assertEquals(
+		{ text:GetPoint() },
+		{ "CENTER", _G.CoinPickupFrame, "TOPLEFT", x, -spec.border + spec.text[2] * spec.scale }
+	)
 	for _, kind in ipairs({ "Gold", "Silver", "Copper" }) do
 		local coin = _G["CoinPickup" .. kind .. "Icon"]
 		lu.assertEquals(coin:GetWidth(), spec.coin_size)
@@ -1202,9 +1325,13 @@ function TestWindowKit:test_buttons_on_a_row_spread_apart()
 	-- three touching at the bottom left, two 2 apart at the top right, two
 	-- one over the other, one apart enough
 	local frame, _, buttons = kitFrame("RowFrame", {
-		{ 20, 20, 80 }, { 100, 20, 80 }, { 180, 20, 80 },
-		{ -102, -50, 80, "TOPRIGHT" }, { -20, -50, 80, "TOPRIGHT" },
-		{ 20, 120, 80 }, { 30, 121, 80 },
+		{ 20, 20, 80 },
+		{ 100, 20, 80 },
+		{ 180, 20, 80 },
+		{ -102, -50, 80, "TOPRIGHT" },
+		{ -20, -50, 80, "TOPRIGHT" },
+		{ 20, 120, 80 },
+		{ 30, 121, 80 },
 		{ 300, 20, 60 },
 	})
 	kit:StyleButtons(frame)
@@ -1228,7 +1355,10 @@ function TestWindowKit:test_rows_left_alone_in_a_fight_or_too_narrow()
 	boot()
 	local kit = client:GetModule("Blizzard: Windows")
 	-- secure ones in a fight
-	local frame, _, buttons = kitFrame("SecureRows", { { 20, 20, 80, nil, "UIPanelButtonTemplate,SecureActionButtonTemplate" }, { 100, 20, 80 } })
+	local frame, _, buttons = kitFrame(
+		"SecureRows",
+		{ { 20, 20, 80, nil, "UIPanelButtonTemplate,SecureActionButtonTemplate" }, { 100, 20, 80 } }
+	)
 	kit:StyleButtons(frame)
 	client:EnterCombat()
 	frame:Show()
@@ -1310,7 +1440,9 @@ end
 function TestWindowKit:test_dragged_as_blizzards_frame_is()
 	boot()
 	local dragged
-	_G.QuestLogFrame:SetScript("OnDragStart", function(frame) dragged = frame end)
+	_G.QuestLogFrame:SetScript("OnDragStart", function(frame)
+		dragged = frame
+	end)
 	client:RunScript(client:GetModule("Blizzard: Quest Log").Window, "OnDragStart")
 	lu.assertEquals(dragged, _G.QuestLogFrame)
 	assertClean(client)
@@ -1330,9 +1462,11 @@ function TestWindowKit:test_a_long_title_cut_short_in_the_band()
 end
 
 function TestWindowKit:test_a_disabled_buttons_text_greyed()
-	boot({ world = function(world)
-		_G.QuestLogFrameAbandonButton:Disable()
-	end })
+	boot({
+		world = function(world)
+			_G.QuestLogFrameAbandonButton:Disable()
+		end,
+	})
 	local config = client.Engine:GetDB("Blizzard").window
 	near(color(_G.QuestLogFrameAbandonButton:GetFontString():GetTextColor()), config.button_disabled_color)
 	assertClean(client)
@@ -1393,7 +1527,7 @@ function TestWindowKit:test_the_chosen_row_in_an_orange_box()
 	highlight:Show()
 	lu.assertEquals(box[2]:IsShown(), 1)
 	-- Blizzard's tint by the row's kind: its own colours kept
-	highlight:SetVertexColor(1, .5, .25)
+	highlight:SetVertexColor(1, 0.5, 0.25)
 	near({ highlight:GetVertexColor() }, { 1, 1, 1 })
 	assertClean(client)
 end
@@ -1409,49 +1543,63 @@ end
 -- AdiBags' classes as the skin uses them: its bags' frames (made as they
 -- first show), their buttons.
 local function adiBags(world)
-	table.insert(world.addons, { name = "AdiBags", enabled = true, onLoad = function()
-		local addon = _G.LibStub("AceAddon-3.0"):NewAddon("AdiBags")
-		local classes = { Container = { prototype = {} }, ItemButton = { prototype = {} } }
-		local container, button = classes.Container.prototype, classes.ItemButton.prototype
-		container.UpdateSkin = function(frame) frame:SetBackdrop({ bgFile = "AdiBags" }) end
-		container.OnShow = function() end
-		button.UpdateBorder = function() end
-		addon.GetClass = function(_, name) return classes[name] end
-		-- the backpack's frame made, the bank's not yet
-		local function bag(name, isBank)
-			local frame = _G.CreateFrame("Frame", name, _G.UIParent)
-			frame:SetBackdrop({ bgFile = "AdiBags" })
-			frame.isBank = isBank
-			frame.CloseButton = _G.CreateFrame("Button", nil, frame)
-			frame.Title = frame:CreateFontString(nil, "ARTWORK")
-			local slots = _G.CreateFrame("Frame", nil, frame)
-			slots.Title = slots:CreateFontString(nil, "ARTWORK")
-			frame.BagSlotPanel = slots
-			return frame
-		end
-		local backpack = { frame = bag("AdiBagsContainer1") }
-		local bank = {}
-		backpack.HasFrame = function(self) return self.frame ~= nil end
-		backpack.GetFrame = function(self) return self.frame end
-		bank.HasFrame = backpack.HasFrame
-		addon.IterateBags = function() return ipairs({ backpack, bank }) end
-		addon.Bank = bank
-		addon.MakeBank = function()
-			bank.frame = bag("AdiBagsContainer2", true)
-			container.OnShow(bank.frame)
-			return bank.frame
-		end
-		addon.MakeButton = function(name, bagID, slot)
-			local item = _G.CreateFrame("Button", name, backpack.frame)
-			item:SetID(slot)
-			item.bag = bagID
-			item:CreateTexture(name .. "NormalTexture")
-			item:CreateTexture(name .. "IconTexture")
-			item:CreateTexture(name .. "IconQuestTexture")
-			button.UpdateBorder(item)
-			return item
-		end
-	end })
+	table.insert(world.addons, {
+		name = "AdiBags",
+		enabled = true,
+		onLoad = function()
+			local addon = _G.LibStub("AceAddon-3.0"):NewAddon("AdiBags")
+			local classes = { Container = { prototype = {} }, ItemButton = { prototype = {} } }
+			local container, button = classes.Container.prototype, classes.ItemButton.prototype
+			container.UpdateSkin = function(frame)
+				frame:SetBackdrop({ bgFile = "AdiBags" })
+			end
+			container.OnShow = function() end
+			button.UpdateBorder = function() end
+			addon.GetClass = function(_, name)
+				return classes[name]
+			end
+			-- the backpack's frame made, the bank's not yet
+			local function bag(name, isBank)
+				local frame = _G.CreateFrame("Frame", name, _G.UIParent)
+				frame:SetBackdrop({ bgFile = "AdiBags" })
+				frame.isBank = isBank
+				frame.CloseButton = _G.CreateFrame("Button", nil, frame)
+				frame.Title = frame:CreateFontString(nil, "ARTWORK")
+				local slots = _G.CreateFrame("Frame", nil, frame)
+				slots.Title = slots:CreateFontString(nil, "ARTWORK")
+				frame.BagSlotPanel = slots
+				return frame
+			end
+			local backpack = { frame = bag("AdiBagsContainer1") }
+			local bank = {}
+			backpack.HasFrame = function(self)
+				return self.frame ~= nil
+			end
+			backpack.GetFrame = function(self)
+				return self.frame
+			end
+			bank.HasFrame = backpack.HasFrame
+			addon.IterateBags = function()
+				return ipairs({ backpack, bank })
+			end
+			addon.Bank = bank
+			addon.MakeBank = function()
+				bank.frame = bag("AdiBagsContainer2", true)
+				container.OnShow(bank.frame)
+				return bank.frame
+			end
+			addon.MakeButton = function(name, bagID, slot)
+				local item = _G.CreateFrame("Button", name, backpack.frame)
+				item:SetID(slot)
+				item.bag = bagID
+				item:CreateTexture(name .. "NormalTexture")
+				item:CreateTexture(name .. "IconTexture")
+				item:CreateTexture(name .. "IconQuestTexture")
+				button.UpdateBorder(item)
+				return item
+			end
+		end,
+	})
 end
 
 function TestAdiBags:test_its_bags_in_our_windows()
@@ -1466,8 +1614,10 @@ function TestAdiBags:test_its_bags_in_our_windows()
 	lu.assertNil(backpack:GetBackdrop())
 	-- the equipped bags over it, in a panel
 	local config = client.Engine:GetDB("Blizzard").adibags
-	lu.assertEquals({ backpack.BagSlotPanel:GetPoint() },
-		{ "BOTTOMLEFT", backpack, "TOPLEFT", -config.insets[1], config.insets[2] + config.panel_gap })
+	lu.assertEquals(
+		{ backpack.BagSlotPanel:GetPoint() },
+		{ "BOTTOMLEFT", backpack, "TOPLEFT", -config.insets[1], config.insets[2] + config.panel_gap }
+	)
 	backpack.BagSlotPanel:Show()
 	backpack:Show()
 	-- the bank once it's made, in smoke; styled once
@@ -1506,9 +1656,11 @@ end
 
 function TestAdiBags:test_another_addon_by_its_name()
 	-- (AdiBags in the addon list, not made as an AceAddon)
-	boot({ world = function(world)
-		table.insert(world.addons, { name = "AdiBags", enabled = true })
-	end })
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "AdiBags", enabled = true })
+		end,
+	})
 	client.api.LoadAddOn("AdiBags")
 	assertClean(client)
 end
@@ -1522,15 +1674,19 @@ function TestBulletinBoard:tearDown()
 end
 
 local function bulletinBoard(world)
-	table.insert(world.addons, { name = "GroupBulletinBoard", enabled = true, onLoad = function()
-		local frame = _G.CreateFrame("Frame", "GroupBulletinBoardFrame", _G.UIParent)
-		frame:SetSize(500, 400)
-		frame:CreateTexture(nil, "BACKGROUND")
-		frame:CreateFontString("GroupBulletinBoardFrameTitle", "ARTWORK"):SetText("GroupBulletinBoard")
-		_G.CreateFrame("Button", "GroupBulletinBoardFrameCloseButton", frame)
-		_G.CreateFrame("Button", "GroupBulletinBoardFrameSettingsButton", frame)
-		_G.CreateFrame("ScrollFrame", "GroupBulletinBoardFrame_ScrollFrame", frame)
-	end })
+	table.insert(world.addons, {
+		name = "GroupBulletinBoard",
+		enabled = true,
+		onLoad = function()
+			local frame = _G.CreateFrame("Frame", "GroupBulletinBoardFrame", _G.UIParent)
+			frame:SetSize(500, 400)
+			frame:CreateTexture(nil, "BACKGROUND")
+			frame:CreateFontString("GroupBulletinBoardFrameTitle", "ARTWORK"):SetText("GroupBulletinBoard")
+			_G.CreateFrame("Button", "GroupBulletinBoardFrameCloseButton", frame)
+			_G.CreateFrame("Button", "GroupBulletinBoardFrameSettingsButton", frame)
+			_G.CreateFrame("ScrollFrame", "GroupBulletinBoardFrame_ScrollFrame", frame)
+		end,
+	})
 end
 
 function TestBulletinBoard:test_its_window_ours()
@@ -1546,12 +1702,16 @@ function TestBulletinBoard:test_its_window_ours()
 end
 
 function TestBulletinBoard:test_loaded_before_us()
-	boot({ world = function(world, c)
-		bulletinBoard(world)
-		c.api.LoadAddOn("GroupBulletinBoard")
-	end })
-	lu.assertEquals(_G.GroupBulletinBoardFrameSettingsButton:GetFrameLevel(),
-		_G.GroupBulletinBoardFrameCloseButton:GetFrameLevel())
+	boot({
+		world = function(world, c)
+			bulletinBoard(world)
+			c.api.LoadAddOn("GroupBulletinBoard")
+		end,
+	})
+	lu.assertEquals(
+		_G.GroupBulletinBoardFrameSettingsButton:GetFrameLevel(),
+		_G.GroupBulletinBoardFrameCloseButton:GetFrameLevel()
+	)
 	assertClean(client)
 end
 

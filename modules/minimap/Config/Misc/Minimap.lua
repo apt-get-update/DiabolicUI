@@ -36,13 +36,13 @@ Config.Minimap = {
 
 	-- Limits for the user-adjustable size set in edit mode, around its
 	-- 100% (what used to be 80%), like DiabolicUI's UI Scale.
-	MinUserScale = .5,
+	MinUserScale = 0.5,
 	MaxUserScale = 1.5,
 
 	CompassInset = 10,
 	CompassFont = GetFont(16, true),
-	CompassColor = { Colors.normal[1], Colors.normal[2], Colors.normal[3], .75 },
+	CompassColor = { Colors.normal[1], Colors.normal[2], Colors.normal[3], 0.75 },
 	CompassNorthTag = "N",
 
-	MailSize = { 48, 48 }
+	MailSize = { 48, 48 },
 }

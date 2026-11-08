@@ -134,7 +134,8 @@ end
 -- a section over a panel: a list, its row chosen, its + and -, its scroll bar
 local LEFT, TOP = 34, 124
 Build[#Build + 1] = function()
-	local section = At(CreateFrame("Frame", "SampleSection", frame), LEFT, TOP, 310, window and kit.config.section.height)
+	local section =
+		At(CreateFrame("Frame", "SampleSection", frame), LEFT, TOP, 310, window and kit.config.section.height)
 	local title = section:CreateFontString("SampleSectionTitle")
 	title:SetText("Section")
 	kit:StyleSection(section, title)
@@ -155,10 +156,12 @@ Build[#Build + 1] = function()
 			local expander = CreateFrame("Button", "SampleExpander" .. i, list)
 			expander:SetSize(18, 18)
 			expander:SetPoint("TOPLEFT", list, "TOPLEFT", 8, -y - 1)
-			expander:SetNormalTexture((i == 1) and [[Interface\Buttons\UI-MinusButton-Up]] or [[Interface\Buttons\UI-PlusButton-Up]])
+			expander:SetNormalTexture(
+				(i == 1) and [[Interface\Buttons\UI-MinusButton-Up]] or [[Interface\Buttons\UI-PlusButton-Up]]
+			)
 			kit:StyleExpanders(expander)
 			Mark("ListRow", expander)
-		elseif (i == 3) then
+		elseif i == 3 then
 			local chosen = list:CreateTexture(nil, "ARTWORK")
 			chosen:SetPoint("TOPLEFT", list, "TOPLEFT", 4, -y)
 			chosen:SetPoint("BOTTOMRIGHT", list, "TOPRIGHT", -4, -y - 22)
@@ -183,7 +186,8 @@ end
 
 -- a table's column names, one as under the mouse
 Build[#Build + 1] = function()
-	local zone = kit:AddZone(At(CreateFrame("Frame", "SampleTable", frame), LEFT, TOP + 208, 310, 60), "slate", { 0, 0, 0, 0 })
+	local zone =
+		kit:AddZone(At(CreateFrame("Frame", "SampleTable", frame), LEFT, TOP + 208, 310, 60), "slate", { 0, 0, 0, 0 })
 	kit:AddHeaderBar(zone)
 	local names = { "Name", "Level", "Zone" }
 	for i, name in ipairs(names) do
@@ -230,7 +234,7 @@ Build[#Build + 1] = function()
 		local tab = CreateFrame("Button", "SampleTab" .. i, frame)
 		At(tab, RIGHT + (i - 1) * 100, TOP + 92, 96, 32)
 		tab:SetText(name)
-		if (i == 2) then
+		if i == 2 then
 			tab:Disable()
 		end
 		kit:StyleTab(tab, {})
@@ -286,10 +290,10 @@ Build[#Build + 1] = function()
 	local fill = bar:CreateTexture(nil, "ARTWORK")
 	fill:SetTexture(bar:GetStatusBarTexture():GetTexture())
 	fill:SetVertexColor(bar:GetStatusBarColor())
-	fill:SetTexCoord(0, .6, 0, 1)
+	fill:SetTexCoord(0, 0.6, 0, 1)
 	fill:SetPoint("TOPLEFT", bar, "TOPLEFT")
 	fill:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT")
-	fill:SetWidth(bar:GetWidth() * .6)
+	fill:SetWidth(bar:GetWidth() * 0.6)
 end
 
 -- what the controls above show only under the mouse, pressed or disabled:
@@ -340,13 +344,13 @@ end
 local problems = {}
 for _, build in ipairs(Build) do
 	local ok, problem = pcall(build)
-	if (not ok) then
+	if not ok then
 		problems[#problems + 1] = tostring(problem)
 	end
 end
 frame:Show()
-client:Tick(.05)
-if (client:Problems() ~= "") then
+client:Tick(0.05)
+if client:Problems() ~= "" then
 	problems[#problems + 1] = client:Problems()
 end
 
@@ -367,7 +371,7 @@ States = function(from)
 		local enabled = from:IsEnabled() == 1
 		local disabled = from:GetDisabledTexture()
 		local pressed = from.SamplePressed and from:GetPushedTexture()
-		Show(from:GetNormalTexture(), (not pressed) and (enabled or (not disabled)))
+		Show(from:GetNormalTexture(), (not pressed) and (enabled or not disabled))
 		Show(from:GetPushedTexture(), pressed)
 		Show(disabled, not enabled)
 		if from.SampleLit and from:GetHighlightTexture() then
@@ -376,7 +380,7 @@ States = function(from)
 		if from:IsObjectType("CheckButton") then
 			local checked = from:GetChecked()
 			Show(from:GetCheckedTexture(), checked and enabled)
-			Show(from:GetDisabledCheckedTexture(), checked and (not enabled))
+			Show(from:GetDisabledCheckedTexture(), checked and not enabled)
 		end
 	end
 	for i = 1, select("#", from:GetChildren()) do
@@ -422,9 +426,16 @@ local Add = function(region, text)
 	-- (held by one point its width is its text's: from that point; the fake
 	-- client only guesses that width)
 	local point = (region:GetNumPoints() == 1) and region:GetPoint(1) or region:GetJustifyH()
-	texts[#texts + 1] = { text = text, rect = Rect(region), size = size, outline = (flags or ""):find("OUTLINE") and true or nil,
-		font = fonts[path:match("(media/.*)$") or ""] or ("game/" .. path), color = color, alpha = region:GetAlpha(),
-		align = (point:find("LEFT") and "left") or (point:find("RIGHT") and "right") or "center" }
+	texts[#texts + 1] = {
+		text = text,
+		rect = Rect(region),
+		size = size,
+		outline = (flags or ""):find("OUTLINE") and true or nil,
+		font = fonts[path:match("(media/.*)$") or ""] or ("game/" .. path),
+		color = color,
+		alpha = region:GetAlpha(),
+		align = (point:find("LEFT") and "left") or (point:find("RIGHT") and "right") or "center",
+	}
 end
 
 local Texts
@@ -440,7 +451,7 @@ Texts = function(from)
 	elseif from:IsObjectType("Button") and from:GetFontString() and from:GetFontString():IsVisible() then
 		local text = from:GetFontString()
 		-- (in its button's middle in its font: the client's own doing)
-		if (not text:GetLeft()) then
+		if not text:GetLeft() then
 			text:SetPoint("CENTER", from, "CENTER")
 		end
 		if (not text:GetFontObject()) and from:GetNormalFontObject() then
@@ -477,4 +488,13 @@ for _, control in ipairs(controls) do
 	end
 end
 
-io.write(Shared.Encode({ rect = { left, bottom, right - left, top - bottom }, art = art, texts = texts, controls = out, problems = problems }), "\n")
+io.write(
+	Shared.Encode({
+		rect = { left, bottom, right - left, top - bottom },
+		art = art,
+		texts = texts,
+		controls = out,
+		problems = problems,
+	}),
+	"\n"
+)

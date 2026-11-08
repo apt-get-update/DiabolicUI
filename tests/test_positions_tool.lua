@@ -37,15 +37,21 @@ local Run = function(args, dir)
 	for i, path in ipairs(args) do
 		quoted[i] = string.format("%q", path)
 	end
-	local code = string.format('arg = { [0] = %q, %s }; '
-		.. 'local file = assert(io.open(%q)); local chunk = assert(loadstring(file:read("*a"), "@tools/positions.lua")); '
-		.. 'file:close(); chunk()', ROOT .. "/tools/positions.lua", table.concat(quoted, ", "), ROOT .. "/tools/positions.lua")
+	local code = string.format(
+		"arg = { [0] = %q, %s }; "
+			.. 'local file = assert(io.open(%q)); local chunk = assert(loadstring(file:read("*a"), "@tools/positions.lua")); '
+			.. "file:close(); chunk()",
+		ROOT .. "/tools/positions.lua",
+		table.concat(quoted, ", "),
+		ROOT .. "/tools/positions.lua"
+	)
 	local env = ""
 	local stats = os.getenv("DIABOLICUI_COVERAGE_STATS")
 	if stats then
 		stats = (stats:sub(1, 1) == "/") and stats or (ROOT .. "/" .. stats)
 		-- (what it can't read ends it with an error: said, and recorded too)
-		code = string.format("dofile(%q); local ok, problem = pcall(function() ", ROOT .. "/tests/coverage/hook.lua") .. code
+		code = string.format("dofile(%q); local ok, problem = pcall(function() ", ROOT .. "/tests/coverage/hook.lua")
+			.. code
 			.. " end); if not ok then print(problem) end; os.exit(0)"
 		env = "DIABOLICUI_COVERAGE_STATS=" .. stats:gsub("%.out$", "") .. ".tool.out "
 	end
@@ -70,7 +76,11 @@ end
 
 local PositionsOf = function(dir)
 	local positions
-	assert(loadstring(Read(dir .. "/positions.lua")))("DiabolicUI", { NewStaticConfig = function(_, _, t) positions = t end })
+	assert(loadstring(Read(dir .. "/positions.lua")))("DiabolicUI", {
+		NewStaticConfig = function(_, _, t)
+			positions = t
+		end,
+	})
 	return positions
 end
 
@@ -146,7 +156,9 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	local exported = Read(dir .. "/layout.json")
 	-- a part: its anchors for its point, y and margins the other way round
 	-- (in what it's placed on, whatever its parent in the game)
-	lu.assertStrContains(friends, [[
+	lu.assertStrContains(
+		friends,
+		[[
     Frame {
         name: "WhoFrame"
         anchors.left: parent.left
@@ -155,8 +167,11 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
         anchors.topMargin: 20
         width: 300
         height: 400
-]])
-	lu.assertStrContains(friends, [[
+]]
+	)
+	lu.assertStrContains(
+		friends,
+		[[
         EditBox {
             name: "WhoFrameEditBox"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -167,34 +182,50 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
             height: 32
         }
     }
-]])
-	lu.assertStrContains(friends, "WowWindow {\n    name: \"FriendsFrame\"\n    width: 384\n    height: 500\n")
+]]
+	)
+	lu.assertStrContains(friends, 'WowWindow {\n    name: "FriendsFrame"\n    width: 384\n    height: 500\n')
 	lu.assertNil(friends:find("id:", 1, true))
 	-- the scan's rect for a text's box, the first window seen keeps a part
 	lu.assertStrContains(friends, 'name: "Odd-Name"')
 	-- its notes over it, the note at its end after it; on another window, kept
-	lu.assertStrContains(auction, '        // why it\'s there,\n        // on two lines\n        FontString {\n            name: "WhoFrameTotals"')
-	lu.assertStrContains(auction, '            width: 72\n            height: 12\n        } // (a note at its end)')
+	lu.assertStrContains(
+		auction,
+		'        // why it\'s there,\n        // on two lines\n        FontString {\n            name: "WhoFrameTotals"'
+	)
+	lu.assertStrContains(auction, "            width: 72\n            height: 12\n        } // (a note at its end)")
 	lu.assertStrContains(auction, 'text: "Seen \\"first\\""')
 	-- several points: the place that keeps it where it is, its rect's size
-	lu.assertStrContains(friends, 'Frame {\n            name: "WhoFrameBar"\n'
-		.. '            anchors.horizontalCenter: parent.horizontalCenter\n            anchors.horizontalCenterOffset: 10\n            anchors.top: parent.top\n')
+	lu.assertStrContains(
+		friends,
+		'Frame {\n            name: "WhoFrameBar"\n'
+			.. "            anchors.horizontalCenter: parent.horizontalCenter\n            anchors.horizontalCenterOffset: 10\n            anchors.top: parent.top\n"
+	)
 	-- what's not in it stands in as a Ghost, where what's on it says
 	-- (with what's on it inside it)
-	lu.assertStrContains(friends, 'Ghost {\n        name: "Elsewhere"\n        x: 89\n        y: 409\n        width: 102\n        height: 0\n\n        Frame {\n            name: "OnCentre"')
+	lu.assertStrContains(
+		friends,
+		'Ghost {\n        name: "Elsewhere"\n        x: 89\n        y: 409\n        width: 102\n        height: 0\n\n        Frame {\n            name: "OnCentre"'
+	)
 	lu.assertStrContains(friends, 'Ghost {\n        name: "Below"\n        x: 95\n        y: 302\n')
 	lu.assertStrContains(friends, 'Ghost {\n        name: "Beside"\n        x: 100\n        y: 307\n')
 	lu.assertStrContains(friends, 'Ghost {\n        name: "Unseen"\n        x: 0\n        y: 0\n')
 	-- in use in a window no scan saw, or none: kept, a size alone without anchors
-	lu.assertStrContains(dressUp, '    // a size only\n    Part {\n        name: "SizedFrame"\n        pin: "size"\n        width: 10\n        height: 20')
+	lu.assertStrContains(
+		dressUp,
+		'    // a size only\n    Part {\n        name: "SizedFrame"\n        pin: "size"\n        width: 10\n        height: 20'
+	)
 	lu.assertStrContains(notSeen, 'name: "GoneFrame"\n            pin: "all"')
 	lu.assertStrContains(notSeen, 'name: "PlaceOnly"\n            pin: "place"')
 	lu.assertNil(friends:find("WhoFrameOld", 1, true))
 	lu.assertNil(friends:find("OldLine", 1, true))
 	-- settings/positions.lua: the pinned ones, by window, their notes kept
 	lu.assertStrContains(text, "\t-- AuctionFrame ---")
-	lu.assertStrContains(text, "\t-- why it's there,\n\t-- on two lines\n"
-		.. '\tWhoFrameTotals = { "LEFT", "WhoFrame", "LEFT", 8, 0 }, -- (a note at its end)')
+	lu.assertStrContains(
+		text,
+		"\t-- why it's there,\n\t-- on two lines\n"
+			.. '\tWhoFrameTotals = { "LEFT", "WhoFrame", "LEFT", 8, 0 }, -- (a note at its end)'
+	)
 	lu.assertStrContains(text, '\tOnLeft = { "LEFT", "Elsewhere", "LEFT", 1, 2, 10, 10 }, -- Frame')
 	lu.assertStrContains(text, "\t-- a size only\n\tSizedFrame = { 10, 20 },")
 	lu.assertStrContains(text, "-- Not seen by /dui layout")
@@ -202,11 +233,17 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	lu.assertNil(positions["Odd-Name"])
 	lu.assertNil(positions.WhoFrame)
 	-- for the editor: the parts, their pins, where they were, their tabs, the views
-	lu.assertStrContains(exported, '"WhoFrameEditBox":{"current":{"FriendsFrameTab1":true,"FriendsFrameTab2":true},"kind":"EditBox","level":3,"parent":"WhoFrame",'
-		.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
-		.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","tabs":["FriendsFrameTab2"]}')
+	lu.assertStrContains(
+		exported,
+		'"WhoFrameEditBox":{"current":{"FriendsFrameTab1":true,"FriendsFrameTab2":true},"kind":"EditBox","level":3,"parent":"WhoFrame",'
+			.. '"place":["BOTTOM","WhoFrame","BOTTOM",-20,100],"points":[["BOTTOM","WhoFrame","BOTTOM",-20,100]],'
+			.. '"rect":[50,100,296,32],"size":[296,32],"strata":"MEDIUM","tabs":["FriendsFrameTab2"]}'
+	)
 	lu.assertStrContains(exported, '"points":[["TOP","WhoFrame","TOP",0,0],["LEFT","WhoFrame","LEFT",0,0]]')
-	lu.assertStrContains(exported, '"views":[{"key":"FriendsFrameTab1","label":"Friends"},{"key":"FriendsFrameTab2","label":"Who","rect":[10,112,384,500],"window":[0,100,400,520]}]')
+	lu.assertStrContains(
+		exported,
+		'"views":[{"key":"FriendsFrameTab1","label":"Friends"},{"key":"FriendsFrameTab2","label":"Who","rect":[10,112,384,500],"window":[0,100,400,520]}]'
+	)
 	lu.assertStrContains(exported, '"file":"' .. dir .. '/windows/FriendsFrame.qml"')
 	os.execute("rm -rf '" .. dir .. "'")
 end
@@ -224,21 +261,31 @@ function TestPositionsTool:test_the_windows_read_back()
 	lu.assertEquals(Read(dir .. "/positions.lua"), lines)
 	-- pinned by hand, a text kept with its own size; comments dropped inside a
 	-- block, a statement after another on a line; let go by hand
-	local text = first:gsub('name: "Odd%-Name"\n', 'name: "Odd-Name"; pin: "all" // a comment\n'):gsub("    } // nothing", "")
+	local text =
+		first:gsub('name: "Odd%-Name"\n', 'name: "Odd-Name"; pin: "all" // a comment\n'):gsub("    } // nothing", "")
 	text = text:gsub('name: "OnLeft"\n(.-)pin: "all"\n', 'name: "OnLeft"\n%1')
 	Write(dir .. "/windows/FriendsFrame.qml", text)
-	Write(dir .. "/saved.lua", 'DiabolicUI_Layout = { windows = { FriendsFrame = { parts = { OnLeft = { "LEFT", "Elsewhere", "LEFT", 7, 7, 10, 10, kind = "Frame" } } } } }')
+	Write(
+		dir .. "/saved.lua",
+		'DiabolicUI_Layout = { windows = { FriendsFrame = { parts = { OnLeft = { "LEFT", "Elsewhere", "LEFT", 7, 7, 10, 10, kind = "Frame" } } } } }'
+	)
 	Runs(dir)
 	local positions = PositionsOf(dir)
 	lu.assertEquals(positions["Odd-Name"], { "TOP", "WhoFrame", "TOP", 0, 0, 10, 10 })
 	lu.assertNil(positions.OnLeft)
-	lu.assertStrContains(Read(dir .. "/windows/FriendsFrame.qml"), 'name: "OnLeft"\n            anchors.left: parent.left\n            anchors.leftMargin: 7\n')
+	lu.assertStrContains(
+		Read(dir .. "/windows/FriendsFrame.qml"),
+		'name: "OnLeft"\n            anchors.left: parent.left\n            anchors.leftMargin: 7\n'
+	)
 	-- the editor's changes; a part gone from every file: nothing
-	Write(dir .. "/edits.lua", [[return {
+	Write(
+		dir .. "/edits.lua",
+		[[return {
 		WhoFrame = { place = { "TOP", "FriendsFrame", "TOP", 3, 4 }, size = { 30, 40 }, pin = "all" },
 		["Odd-Name"] = { pin = "" },
 		Nothing = { pin = "" },
-	}]])
+	}]]
+	)
 	Runs(dir, dir .. "/edits.lua")
 	positions = PositionsOf(dir)
 	lu.assertEquals(positions.WhoFrame, { "TOP", "FriendsFrame", "TOP", 3, 4, 30, 40 })
@@ -258,7 +305,9 @@ function TestPositionsTool:test_a_window_from_its_parts()
 	Write(dir .. "/windows/Part.qml", "import QtQuick\nItem {}\n")
 	Write(dir .. "/windows/Ghost.qml", "import QtQuick\nItem {}\n")
 	Write(dir .. "/windows/WowWindow.qml", "import QtQuick\nItem {}\n")
-	Write(dir .. "/windows/Mine.qml", [[
+	Write(
+		dir .. "/windows/Mine.qml",
+		[[
 // a comment on the file
 import QtQuick
 WowWindow {
@@ -278,15 +327,22 @@ WowWindow {
     Part { name: "Open"; pin: "size"; width: 4; height: 5 }
     Ghost { id: extra; name: "Extra"; x: 1; y: 2 }
 }
-]])
+]]
+	)
 	Write(dir .. "/saved.lua", "OtherThing = 1")
 	lu.assertStrContains(Runs(dir), "4 parts, 2 in use.")
 	local text = Read(dir .. "/windows/Mine.qml")
 	lu.assertStrContains(text, 'WowWindow {\n    name: "Mine"\n    width: 510\n    height: 620\n')
 	lu.assertStrContains(text, '    // over a part\n    Part {\n        id: far\n        name: "Far"')
 	-- (on an id of the file: beside that part, as the file has it)
-	lu.assertStrContains(text, '    Part {\n        name: "NoId"\n        anchors.right: far.right\n        anchors.rightMargin: 2\n        anchors.verticalCenter: far.verticalCenter\n')
-	lu.assertStrContains(text, 'text: "a \\\\ \\"text\\""\n        anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom\n')
+	lu.assertStrContains(
+		text,
+		'    Part {\n        name: "NoId"\n        anchors.right: far.right\n        anchors.rightMargin: 2\n        anchors.verticalCenter: far.verticalCenter\n'
+	)
+	lu.assertStrContains(
+		text,
+		'text: "a \\\\ \\"text\\""\n        anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom\n'
+	)
 	lu.assertEquals(PositionsOf(dir).Open, { 4, 5 })
 	os.execute("rm -rf '" .. dir .. "'")
 end
@@ -299,18 +355,30 @@ function TestPositionsTool:test_what_cant_be_read()
 		{ 'WowWindow {\n name: "W"\n Part {\n Item {\n }\n }\n}\n', "only a WowWindow" },
 		{ 'WowWindow {\n name: "W"\n Part {\n id: a\n }\n}\n', "a part needs a name" },
 		{ 'WowWindow {\n name: "W"\n Part {\n }\n}\n', "a part needs a name" },
-		{ 'WowWindow {\n name: W\n}\n', "needs a text" },
-		{ 'WowWindow {\n width: 3 + 4\n}\n', "needs a number" },
+		{ "WowWindow {\n name: W\n}\n", "needs a text" },
+		{ "WowWindow {\n width: 3 + 4\n}\n", "needs a number" },
 		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n anchors.leftMargin: 1 + 2\n }\n}\n', "needs a number" },
 		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n anchors.left: w\n }\n}\n', "needs a part and its line" },
-		{ 'WowWindow {\n id: w\n name: "W"\n Part {\n name: "P"\n anchors.left: w.left\n anchors.right: w.right\n }\n}\n', "one anchor across" },
-		{ 'WowWindow {\n id: w\n name: "W"\n Part {\n name: "P"\n anchors.left: w.left\n }\n}\n', "one anchor across and one down" },
-		{ 'WowWindow {\n id: w\n name: "W"\n Part {\n name: "P"\n anchors.left: w.left\n anchors.top: x.top\n }\n}\n', "one anchor across and one down" },
-		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n anchors.left: x.left\n anchors.top: x.top\n }\n}\n', "one anchor across and one down" },
+		{
+			'WowWindow {\n id: w\n name: "W"\n Part {\n name: "P"\n anchors.left: w.left\n anchors.right: w.right\n }\n}\n',
+			"one anchor across",
+		},
+		{
+			'WowWindow {\n id: w\n name: "W"\n Part {\n name: "P"\n anchors.left: w.left\n }\n}\n',
+			"one anchor across and one down",
+		},
+		{
+			'WowWindow {\n id: w\n name: "W"\n Part {\n name: "P"\n anchors.left: w.left\n anchors.top: x.top\n }\n}\n',
+			"one anchor across and one down",
+		},
+		{
+			'WowWindow {\n name: "W"\n Part {\n name: "P"\n anchors.left: x.left\n anchors.top: x.top\n }\n}\n',
+			"one anchor across and one down",
+		},
 		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n anchors.fill: parent\n }\n}\n', "can't be read" },
 		{ 'WowWindow {\n name: "W"\n onClicked: a()\n}\n', "can't be read" },
 		{ 'WowWindow {\n name: "W"\n a b c\n}\n', "not a property" },
-		{ 'WowWindow {\n id: w\n}\n', "a window needs a name" },
+		{ "WowWindow {\n id: w\n}\n", "a window needs a name" },
 		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n pin: "some"\n }\n}\n', "its pin is" },
 		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n pin: "place"\n }\n}\n', "its pin needs anchors" },
 		{ 'WowWindow {\n name: "W"\n Part {\n name: "P"\n pin: "size"\n }\n}\n', "its pin needs a width" },
@@ -335,41 +403,56 @@ function TestPositionsTool:test_the_components()
 	local dir = Folder()
 	os.execute("mkdir -p '" .. dir .. "/windows/components'")
 	local path = dir .. "/windows/components/Thing.qml"
-	Write(path, table.concat({
-		"// A thing, on two",
-		"// lines.",
-		"// Shared by every window: settings/components.lua is written from this by",
-		"// tools/positions.lua (or the editor's Components). One line per property.",
-		"import QtQml",
-		"",
-		"QtObject {",
-		'    objectName: "thing"',
-		"",
-		"    // how wide",
-		"    property real width: 16 // Blizzard's",
-		'    property string art: "textures/A.tga"',
-		'    property string blank: "Interface/Buttons/WHITE8X8"',
-		'    property string font: "DiabolicFont_Narrow14"',
-		"    property var coords: [14/64, 1]",
-		"    property var line_color: [.5, 1, 0]",
-		'    property var up: ({ normal: "textures/U.tga", deep: { size: 2 } })',
-		"    property bool shown: true",
-		"}",
-		"",
-	}, "\n"))
-	Write(dir .. "/windows/components/Flat.qml", 'import QtQml\nQtObject {\n    objectName: ""\n    property real gap: 6\n}\n')
+	Write(
+		path,
+		table.concat({
+			"// A thing, on two",
+			"// lines.",
+			"// Shared by every window: settings/components.lua is written from this by",
+			"// tools/positions.lua (or the editor's Components). One line per property.",
+			"import QtQml",
+			"",
+			"QtObject {",
+			'    objectName: "thing"',
+			"",
+			"    // how wide",
+			"    property real width: 16 // Blizzard's",
+			'    property string art: "textures/A.tga"',
+			'    property string blank: "Interface/Buttons/WHITE8X8"',
+			'    property string font: "DiabolicFont_Narrow14"',
+			"    property var coords: [14/64, 1]",
+			"    property var line_color: [.5, 1, 0]",
+			'    property var up: ({ normal: "textures/U.tga", deep: { size: 2 } })',
+			"    property bool shown: true",
+			"}",
+			"",
+		}, "\n")
+	)
+	Write(
+		dir .. "/windows/components/Flat.qml",
+		'import QtQml\nQtObject {\n    objectName: ""\n    property real gap: 6\n}\n'
+	)
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 	local lua, json = Read(dir .. "/components.lua"), Read(dir .. "/layout.json")
-	lu.assertStrContains(lua, "\tthing = {\n\t\twidth = 16,\n\t\tart = path .. [[textures\\A.tga]],\n\t\tblank = [[Interface\\Buttons\\WHITE8X8]],\n\t\tfont = DiabolicFont_Narrow14,\n\t\tcoords = { 0.21875, 1 },")
+	lu.assertStrContains(
+		lua,
+		"\tthing = {\n\t\twidth = 16,\n\t\tart = path .. [[textures\\A.tga]],\n\t\tblank = [[Interface\\Buttons\\WHITE8X8]],\n\t\tfont = DiabolicFont_Narrow14,\n\t\tcoords = { 0.21875, 1 },"
+	)
 	lu.assertStrContains(lua, "up = { deep = { size = 2 }, normal = path .. [[textures\\U.tga]] },")
 	lu.assertStrContains(lua, "Merge(window, {\n\tgap = 6,\n})")
-	lu.assertStrContains(json, '{"comment":"A thing, on two lines.","fields":[{"key":"width","kind":"number","note":"how wide","value":16}')
+	lu.assertStrContains(
+		json,
+		'{"comment":"A thing, on two lines.","fields":[{"key":"width","kind":"number","note":"how wide","value":16}'
+	)
 	lu.assertStrContains(json, '{"key":"art","kind":"texture","value":"textures/A.tga"}')
 	lu.assertStrContains(json, '{"key":"line_color","kind":"color","value":[0.5,1,0]}')
 	lu.assertStrContains(json, '{"key":"coords","kind":"list","value":[0.2188,1]}')
 	lu.assertStrContains(json, '{"key":"up.deep.size","kind":"number","value":2}')
 	-- the editor's changes
-	Write(dir .. "/edits.lua", 'return { ["@components"] = { Thing = { width = 18, ["up.deep.size"] = 3, line_color = { 1, 1, 1 }, shown = false }, Gone = { a = 1 } } }')
+	Write(
+		dir .. "/edits.lua",
+		'return { ["@components"] = { Thing = { width = 18, ["up.deep.size"] = 3, line_color = { 1, 1, 1 }, shown = false }, Gone = { a = 1 } } }'
+	)
 	local before = Read(path)
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" })
 	local after = Read(path)
@@ -388,7 +471,7 @@ function TestPositionsTool:test_the_components()
 		{ "    property var a: [1,", "needs a plain value" },
 		{ "    onClicked: a()", "not a property" },
 	}) do
-		Write(path, "import QtQml\nQtObject {\n    objectName: \"thing\"\n" .. case[1] .. "\n}\n")
+		Write(path, 'import QtQml\nQtObject {\n    objectName: "thing"\n' .. case[1] .. "\n}\n")
 		Write(dir .. "/components.lua", "-- as it was")
 		local said = Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 		lu.assertStrContains(said, "Thing.qml")
@@ -396,7 +479,10 @@ function TestPositionsTool:test_the_components()
 		lu.assertEquals(Read(dir .. "/components.lua"), "-- as it was")
 	end
 	Write(path, "import QtQml\nQtObject {\n    property real a: 1\n}\n")
-	lu.assertStrContains(Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" }), "needs an objectName")
+	lu.assertStrContains(
+		Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" }),
+		"needs an objectName"
+	)
 	os.execute("rm -rf '" .. dir .. "'")
 end
 
@@ -420,18 +506,26 @@ end
 function TestPositionsTool:test_the_newest_saved_variables_by_default()
 	local base = TempName()
 	local addon = base .. "/Interface/AddOns/DiabolicUI"
-	os.execute("mkdir -p '" .. addon .. "/settings' '" .. addon .. "/tools' '" .. base .. "/WTF/Account/ME/SavedVariables'")
-	Write(base .. "/WTF/Account/ME/SavedVariables/DiabolicUI.lua", [[
+	os.execute(
+		"mkdir -p '" .. addon .. "/settings' '" .. addon .. "/tools' '" .. base .. "/WTF/Account/ME/SavedVariables'"
+	)
+	Write(
+		base .. "/WTF/Account/ME/SavedVariables/DiabolicUI.lua",
+		[[
 DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	["BankCloseButton"] = { "TOPRIGHT", "BankFrame", "TOPRIGHT", -46, -8, 32, 32, kind = "Button" },
 } } } }
-]])
+]]
+	)
 	local said = Run({}, addon)
 	lu.assertStrContains(said, "settings/positions.lua: 1 parts, 0 in use.")
 	local window = Read(addon .. "/windows/BankFrame.qml")
 	lu.assertStrContains(Read(addon .. "/tools/layout.json"), '"BankCloseButton":{"kind":"Button"')
 	os.execute("rm -rf '" .. base .. "'")
-	lu.assertStrContains(window, 'anchors.right: parent.right\n        anchors.rightMargin: 46\n        anchors.top: parent.top\n        anchors.topMargin: 8\n')
+	lu.assertStrContains(
+		window,
+		"anchors.right: parent.right\n        anchors.rightMargin: 46\n        anchors.top: parent.top\n        anchors.topMargin: 8\n"
+	)
 end
 
 -- The art for the editor: our files as they are in media/ (whatever their
@@ -443,14 +537,30 @@ function TestPositionsTool:test_the_art_by_its_files()
 	Write(addon .. "/media/textures/Raw32.tga", "")
 	Write(addon .. "/media/textures/Raw24.tga", "")
 	local ours = [[Interface\\AddOns\\DiabolicUI\\media\\textures\\]]
-	local item = function(file) return string.format('{ file = "%s", rect = { 0, 0, 2, 1 }, coords = { 0, 0, 0, 1, .125, 0, .125, 1 }, color = { 1, 1, 1, 1 }, alpha = 1, owner = "W" },', file) end
+	local item = function(file)
+		return string.format(
+			'{ file = "%s", rect = { 0, 0, 2, 1 }, coords = { 0, 0, 0, 1, .125, 0, .125, 1 }, color = { 1, 1, 1, 1 }, alpha = 1, owner = "W" },',
+			file
+		)
+	end
 	-- (a part's second point on nothing: on its parent)
-	Write(addon .. "/saved.lua", "DiabolicUI_Layout = { windows = { W = { parts = { P = { 'TOP', 'W', 'TOP', 0, 0, 1, 1, kind = 'Frame', style = 'ScrollBar', parent = 'W',"
-		.. " points = { { 'TOP', 'W', 'TOP', 0, 0 }, { 'CENTER', nil, 'CENTER', 0, 0 } } } }, art = {\n"
-		.. item(ours .. "Raw32") .. item(ours .. "raw24.TGA") .. item(ours .. "Missing") .. item([[Interface\\Buttons\\WHITE8X8]]) .. item([[Interface\\Icons\\INV_Sword.blp]])
-		.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "' .. ours .. 'Raw24", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
-		.. '{ backdrop = { edgeFile = "' .. ours .. 'Missing" }, rect = { 0, 0, 9, 9 } },'
-		.. "} } } }")
+	Write(
+		addon .. "/saved.lua",
+		"DiabolicUI_Layout = { windows = { W = { parts = { P = { 'TOP', 'W', 'TOP', 0, 0, 1, 1, kind = 'Frame', style = 'ScrollBar', parent = 'W',"
+			.. " points = { { 'TOP', 'W', 'TOP', 0, 0 }, { 'CENTER', nil, 'CENTER', 0, 0 } } } }, art = {\n"
+			.. item(ours .. "Raw32")
+			.. item(ours .. "raw24.TGA")
+			.. item(ours .. "Missing")
+			.. item([[Interface\\Buttons\\WHITE8X8]])
+			.. item([[Interface\\Icons\\INV_Sword.blp]])
+			.. '{ backdrop = { bgFile = [[Interface\\ChatFrame\\ChatFrameBackground]], edgeFile = "'
+			.. ours
+			.. 'Raw24", edgeSize = 32, tile = true, insets = { 1, 2, 3, 4 } }, rect = { 0, 0, 9, 9 }, scale = 1 },'
+			.. '{ backdrop = { edgeFile = "'
+			.. ours
+			.. 'Missing" }, rect = { 0, 0, 9, 9 } },'
+			.. "} } } }"
+	)
 	Run({ addon .. "/saved.lua", addon .. "/positions.lua", addon .. "/tools/layout.json", addon .. "/windows" }, addon)
 	local json = Read(addon .. "/tools/layout.json")
 	local window = Read(addon .. "/windows/W.qml")
@@ -461,11 +571,17 @@ function TestPositionsTool:test_the_art_by_its_files()
 	lu.assertStrContains(window, 'style: "ScrollBar"')
 	lu.assertStrContains(json, '"style":"ScrollBar"')
 	lu.assertStrContains(again, '"style":"ScrollBar"')
-	lu.assertStrContains(json, '"art":[{"alpha":1,"color":[1,1,1,1],"coords":[0,0,0,1,0.125,0,0.125,1],"image":"media/textures/Raw32.tga"')
+	lu.assertStrContains(
+		json,
+		'"art":[{"alpha":1,"color":[1,1,1,1],"coords":[0,0,0,1,0.125,0,0.125,1],"image":"media/textures/Raw32.tga"'
+	)
 	lu.assertStrContains(json, '"image":"media/textures/Raw24.tga"')
 	lu.assertStrContains(json, '"image":true')
 	lu.assertStrContains(json, '"image":"game/interface/icons/inv_sword"')
-	lu.assertStrContains(json, '"backdrop":{"bg":true,"edge":"media/textures/Raw24.tga","edgeSize":32,"insets":[1,2,3,4],"tile":true}')
+	lu.assertStrContains(
+		json,
+		'"backdrop":{"bg":true,"edge":"media/textures/Raw24.tga","edgeSize":32,"insets":[1,2,3,4],"tile":true}'
+	)
 	lu.assertStrContains(json, '"points":[["TOP","W","TOP",0,0],["CENTER","W","CENTER",0,0]]')
 	lu.assertNotStrContains(json, "Missing")
 	local _, count = json:gsub('"owner"', "")
@@ -476,7 +592,9 @@ end
 -- part; one only placed and never scanned sized from what's placed on its points.
 function TestPositionsTool:test_what_a_view_saw_and_a_parts_size_from_others()
 	local dir = Folder()
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 200, 200 }, window = { 0, 0, 200, 200 },
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 200, 200 }, window = { 0, 0, 200, 200 },
 		views = { [""] = { rect = { 0, 0, 200, 200 }, stamp = 2 }, Tab1 = { label = "One", rect = { 0, 0, 200, 200 }, stamp = 3 } },
 		parts = {
 			NoTab = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 0, 190, 10, 10 }, tabs = {}, last = { [""] = 2 } },
@@ -484,14 +602,18 @@ function TestPositionsTool:test_what_a_view_saw_and_a_parts_size_from_others()
 			There = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 0, 190, 10, 10 }, tabs = { Tab1 = true }, last = { Tab1 = 3 } },
 			OnTopLeft = { "TOPLEFT", "Texture", "TOPLEFT", 0, 0, 10, 10, kind = "Frame", rect = { 20, 170, 10, 10 } },
 			OnBottomRight = { "BOTTOMRIGHT", "Texture", "BOTTOMRIGHT", 0, 0, 10, 10, kind = "Frame", rect = { 74, 106, 10, 10 } },
-		} } } }]=])
-	Write(dir .. "/positions.lua", [=[
+		} } } }]=]
+	)
+	Write(
+		dir .. "/positions.lua",
+		[=[
 local _, Engine = ...
 Engine:NewStaticConfig("Positions", {
 	-- W ---------------------------------------------------------------------
 	Texture = { "TOPLEFT", "W", "TOPLEFT", 20, -20 },
 })
-]=])
+]=]
+	)
 	Runs(dir)
 	local json, file = Read(dir .. "/layout.json"), Read(dir .. "/windows/W.qml")
 	os.execute("rm -rf '" .. dir .. "'")
@@ -507,12 +629,15 @@ end
 -- How the editor draws a text comes through, by the tabs chosen for its words.
 function TestPositionsTool:test_how_the_editor_draws_a_text()
 	local dir = Folder()
-	Write(dir .. "/saved.lua", [=[
+	Write(
+		dir .. "/saved.lua",
+		[=[
 DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, views = { Tab1 = { label = "One", art = {}, stamp = 1, worded = true } }, parts = {
 	Said = { "TOPLEFT", "W", "TOPLEFT", 1, -1, kind = "FontString", rect = { 10, 20, 30, 40 }, tabs = { Tab1 = true }, last = { Tab1 = 1 },
 		words = { Tab1 = "|cffff0000Red|r" }, color = { 1, 0.5, 0, 1 }, font = "Fonts\\A.TTF", fontSize = 12, justifyV = "TOP", outline = true, shadow = true },
 } } } }
-]=])
+]=]
+	)
 	Runs(dir)
 	local json = Read(dir .. "/layout.json")
 	os.execute("rm -rf '" .. dir .. "'")
@@ -530,7 +655,12 @@ function TestPositionsTool:test_what_only_shows_in_the_preview()
 	local dir = Folder()
 	local lines = { "DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {" }
 	local Add = function(name, kind, text)
-		lines[#lines + 1] = string.format('[%q] = { "TOPLEFT", "W", "TOPLEFT", 1, -1, 30, 40, kind = %q, text = %s, rect = { 10, 20, 30, 40 } },', name, kind, text and string.format("%q", text) or "nil")
+		lines[#lines + 1] = string.format(
+			'[%q] = { "TOPLEFT", "W", "TOPLEFT", 1, -1, 30, 40, kind = %q, text = %s, rect = { 10, 20, 30, 40 } },',
+			name,
+			kind,
+			text and string.format("%q", text) or "nil"
+		)
 	end
 	for i = 1, 9 do
 		Add("ListRow" .. i, "Button")
@@ -548,7 +678,9 @@ function TestPositionsTool:test_what_only_shows_in_the_preview()
 	lines[#lines + 1] = "} } } }"
 	Write(dir .. "/saved.lua", table.concat(lines, "\n"))
 	-- pinned, one of them stays, and what's placed on one of the others has it as a Ghost
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     id: w
@@ -559,7 +691,8 @@ WowWindow {
     Frame { id: on; name: "On"; pin: "place"; anchors.left: ghost.left; anchors.top: ghost.top; width: 5; height: 5 }
     Ghost { id: ghost; name: "ListRow7"; x: 0; y: 0; width: 0; height: 0 }
 }
-]=])
+]=]
+	)
 	Runs(dir)
 	local file, json = Read(dir .. "/windows/W.qml"), Read(dir .. "/layout.json")
 	for _, name in ipairs({ "ListRow1", "ListRow1Name", "ListRow5", "Short7", "WinTab8", "Other", "On" }) do
@@ -580,18 +713,26 @@ end
 
 function TestPositionsTool:test_the_art_as_the_scan_packs_it()
 	local dir = Folder()
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, window = { 0, 0, 400, 200 }, views = { [""] = { label = "", rect = { 0, 0, 400, 200 }, art = {
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, window = { 0, 0, 400, 200 }, views = { [""] = { label = "", rect = { 0, 0, 400, 200 }, art = {
 		'{owner="W",alpha=1,rect={1,2,3,4},file="Interface\\\\Icons\\\\INV_Thing",coords={0,0,0,1,1,0,1,1},color={1,1,1,1},blend="BLEND"}',
-	} } }, parts = { A = { "TOP", "W", "TOP", 0, 0, 3, 4, kind = "Frame", rect = { 1, 2, 3, 4 } } } } } }]=])
+	} } }, parts = { A = { "TOP", "W", "TOP", 0, 0, 3, 4, kind = "Frame", rect = { 1, 2, 3, 4 } } } } } }]=]
+	)
 	Runs(dir)
-	lu.assertStrContains(Read(dir .. "/layout.json"), '"image":"game/interface/icons/inv_thing","owner":"W","rect":[1,2,3,4]')
+	lu.assertStrContains(
+		Read(dir .. "/layout.json"),
+		'"image":"game/interface/icons/inv_thing","owner":"W","rect":[1,2,3,4]'
+	)
 end
 
 function TestPositionsTool:test_a_part_written_as_its_kind()
 	local dir = Folder()
 	-- (a kind's own file there isn't a window)
 	Write(dir .. "/windows/FontString.qml", 'Part { kind: "FontString" }\n')
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     id: w
@@ -603,7 +744,8 @@ WowWindow {
     Part { id: odd; name: "Odd"; kind: "Cooldown"; width: 5; height: 6 }
     Part { id: plain; name: "Plain"; width: 7; height: 8 }
 }
-]=])
+]=]
+	)
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 	local file = Read(dir .. "/windows/W.qml")
 	lu.assertStrContains(file, 'Button {\n        name: "Old"\n        pin: "all"')
@@ -623,7 +765,10 @@ function TestPositionsTool:test_every_kind_has_its_file()
 		local text = Read(path)
 		if text:find("\nWowWindow {", 1, true) then
 			for kind in text:gmatch("\n%s*(%u%w*) {") do
-				lu.assertNotNil(io.open(ROOT .. "/windows/" .. kind .. ".qml"), path .. ": no windows/" .. kind .. ".qml")
+				lu.assertNotNil(
+					io.open(ROOT .. "/windows/" .. kind .. ".qml"),
+					path .. ": no windows/" .. kind .. ".qml"
+				)
 			end
 		end
 	end
@@ -632,7 +777,9 @@ end
 
 function TestPositionsTool:test_the_editors_changes_to_rows_and_stretches()
 	local dir = Folder()
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     id: w
@@ -661,23 +808,33 @@ WowWindow {
         Part { name: "B"; kind: "Button"; pin: "all"; width: 70; height: 20 }
     }
 }
-]=])
-	Write(dir .. "/edits.lua", [=[return {
+]=]
+	)
+	Write(
+		dir .. "/edits.lua",
+		[=[return {
 		["@rows"] = { W = { Row = { fit = "ends", left = 10, right = 20, y = 5 } } },
 		C = { window = "W", place = { "TOPLEFT", "W", "TOPLEFT", 10, -30 }, size = { 40, 20 }, pin = "place",
 			second = { "TOPRIGHT", "TOPRIGHT", -30, -30 } },
 		D = { window = "W", place = { "TOPLEFT", "W", "TOPLEFT", 0, 0 }, size = { 400, 20 }, pin = "all" },
-	}]=])
+	}]=]
+	)
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" })
 	local file, text, json = Read(dir .. "/windows/W.qml"), Read(dir .. "/positions.lua"), Read(dir .. "/layout.json")
 	-- the row told: "ends" in 370 of room, the parts pinned at their size stay so
 	lu.assertStrContains(file, 'fit: "ends"')
-	lu.assertStrContains(file, "anchors.leftMargin: 10\n        anchors.right: parent.right\n        anchors.rightMargin: 20")
+	lu.assertStrContains(
+		file,
+		"anchors.leftMargin: 10\n        anchors.right: parent.right\n        anchors.rightMargin: 20"
+	)
 	lu.assertStrContains(file, "anchors.bottomMargin: 5")
 	lu.assertStrContains(text, 'A = { "BOTTOMLEFT", "W", "BOTTOMLEFT", 10, 5,')
 	lu.assertNotStrContains(file, 'fit: "equal"')
 	-- stretched from the editor, its far side in its file and the game's
-	lu.assertStrContains(text, 'C = { "TOPLEFT", "W", "TOPLEFT", 10, -30, second = { "TOPRIGHT", "TOPRIGHT", -30, -30 } }')
+	lu.assertStrContains(
+		text,
+		'C = { "TOPLEFT", "W", "TOPLEFT", 10, -30, second = { "TOPRIGHT", "TOPRIGHT", -30, -30 } }'
+	)
 	lu.assertStrContains(file, "anchors.right: parent.right\n        anchors.rightMargin: 30")
 	-- no longer stretched: its second side gone, its size held
 	lu.assertStrContains(text, 'D = { "TOPLEFT", "W", "TOPLEFT", 0, 0, 400, 20 }')
@@ -692,7 +849,9 @@ end
 
 function TestPositionsTool:test_a_stretch_from_the_editor_needs_a_pin()
 	local dir = Folder()
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     id: w
@@ -701,15 +860,24 @@ WowWindow {
     height: 200
     Part { id: a; name: "A"; kind: "Frame"; width: 50; height: 20 }
 }
-]=])
-	Write(dir .. "/edits.lua", [=[return { A = { window = "W", place = { "TOPLEFT", "W", "TOPLEFT", 0, 0 }, size = { 50, 20 }, pin = "",
-		second = { "TOPRIGHT", "TOPRIGHT", 0, 0 } } }]=])
-	lu.assertStrContains(Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" }), "it needs a pin")
+]=]
+	)
+	Write(
+		dir .. "/edits.lua",
+		[=[return { A = { window = "W", place = { "TOPLEFT", "W", "TOPLEFT", 0, 0 }, size = { 50, 20 }, pin = "",
+		second = { "TOPRIGHT", "TOPRIGHT", 0, 0 } } }]=]
+	)
+	lu.assertStrContains(
+		Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" }),
+		"it needs a pin"
+	)
 end
 
 function TestPositionsTool:test_a_row_of_equal_widths()
 	local dir = Folder()
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     id: w
@@ -731,11 +899,15 @@ WowWindow {
         anchors.bottomMargin: 8
     }
 }
-]=])
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { parts = {
+]=]
+	)
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { parts = {
 		A = { "CENTER", "W", "CENTER", 0, 0, 50, 20, kind = "Button", text = "A long text", textWidth = 70, rect = { 0, 0, 50, 20 } },
 		B = { "CENTER", "W", "CENTER", 0, 0, 90, 20, kind = "Button", text = "B", textWidth = 8, rect = { 0, 0, 90, 20 } },
-	} } } }]=])
+	} } } }]=]
+	)
 	Runs(dir)
 	local text = Read(dir .. "/positions.lua")
 	-- 380 of room, 10 of gaps: 370 in three, the last taking what rounding left
@@ -747,7 +919,9 @@ end
 
 function TestPositionsTool:test_rows_and_what_stretches()
 	local dir = Folder()
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     id: w
@@ -802,11 +976,15 @@ WowWindow {
         anchors.verticalCenter: w.verticalCenter
     }
 }
-]=])
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { parts = {
+]=]
+	)
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { parts = {
 		A = { "CENTER", "W", "CENTER", 0, 0, 50, 20, kind = "Button", text = "Aaa", textWidth = 30, rect = { 0, 0, 50, 20 } },
 		B = { "CENTER", "W", "CENTER", 0, 0, 50, 20, kind = "Button", text = "Bb", textWidth = 20, rect = { 0, 0, 50, 20 } },
-	} } } }]=])
+	} } } }]=]
+	)
 	local Run = function()
 		Runs(dir)
 		return Read(dir .. "/windows/W.qml"), Read(dir .. "/positions.lua"), Read(dir .. "/layout.json")
@@ -821,14 +999,20 @@ WowWindow {
 	lu.assertStrContains(text, 'E = { "LEFT", "D", "RIGHT", 10, 0 }')
 	lu.assertStrContains(text, 'F = { "LEFT", "W", "LEFT", 185, 0 }')
 	-- stretched: both its points for the game, its size from them
-	lu.assertStrContains(text, 'Wide = { "TOPLEFT", "W", "TOPLEFT", 10, -5, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -20, 15 } }')
+	lu.assertStrContains(
+		text,
+		'Wide = { "TOPLEFT", "W", "TOPLEFT", 10, -5, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -20, 15 } }'
+	)
 	lu.assertStrContains(file, "anchors.rightMargin: 20")
 	lu.assertStrContains(file, "anchors.bottomMargin: 15")
 	lu.assertStrContains(file, "width: 370")
 	lu.assertStrContains(file, "height: 180")
 	-- the rows kept; what they hold not to be dragged
 	lu.assertStrContains(file, "// the room shared\n    WowRow {")
-	lu.assertStrContains(file, 'anchors.bottomMargin: 8\n\n        Button {\n            name: "A"\n            text: "Aaa"\n            pin: "all"\n            width: 155\n')
+	lu.assertStrContains(
+		file,
+		'anchors.bottomMargin: 8\n\n        Button {\n            name: "A"\n            text: "Aaa"\n            pin: "all"\n            width: 155\n'
+	)
 	lu.assertStrContains(file, '\n        }\n\n        Button {\n            name: "B"')
 	lu.assertStrContains(json, '"heldBy":"row Fills"')
 	lu.assertStrContains(json, '"heldBy":"its two sides"')
@@ -842,43 +1026,106 @@ end
 function TestPositionsTool:test_what_a_row_or_a_stretch_cant_be()
 	local Says = function(body)
 		local dir = Folder()
-		Write(dir .. "/windows/W.qml", 'WowWindow {\n    id: w\n    name: "W"\n    width: 100\n    height: 100\n' .. body .. "\n}\n")
+		Write(
+			dir .. "/windows/W.qml",
+			'WowWindow {\n    id: w\n    name: "W"\n    width: 100\n    height: 100\n' .. body .. "\n}\n"
+		)
 		local said = Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 		os.execute("rm -rf '" .. dir .. "'")
 		return said
 	end
-	lu.assertStrContains(Says('    Part { id: a; name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; width: 1; height: 1 }'),
-		"stretched, it needs a pin")
-	lu.assertStrContains(Says('    Part { id: a; name: "A"; pin: "place"; anchors.left: w.left; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top; width: 1; height: 1 }'),
-		"stretches between left and right only")
-	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.top: w.top; Part { name: "A" } }'), "a row goes from")
-	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'), "a row needs its parts")
-	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; anchors.left: parent.left; anchors.top: parent.top } }'), "its row places it")
-	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Frame { name: "A"; WowRow { name: "S" } } }'), "a row goes from")
+	lu.assertStrContains(
+		Says(
+			'    Part { id: a; name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; width: 1; height: 1 }'
+		),
+		"stretched, it needs a pin"
+	)
+	lu.assertStrContains(
+		Says(
+			'    Part { id: a; name: "A"; pin: "place"; anchors.left: w.left; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top; width: 1; height: 1 }'
+		),
+		"stretches between left and right only"
+	)
+	lu.assertStrContains(
+		Says('    WowRow { name: "R"; anchors.left: w.left; anchors.top: w.top; Part { name: "A" } }'),
+		"a row goes from"
+	)
+	lu.assertStrContains(
+		Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top }'),
+		"a row needs its parts"
+	)
+	lu.assertStrContains(
+		Says(
+			'    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; anchors.left: parent.left; anchors.top: parent.top } }'
+		),
+		"its row places it"
+	)
+	lu.assertStrContains(
+		Says(
+			'    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Frame { name: "A"; WowRow { name: "S" } } }'
+		),
+		"a row goes from"
+	)
 	lu.assertStrContains(Says('    Ghost { name: "F"; Ghost { name: "G" } }'), "only a WowWindow")
 	-- (a Ghost in a part: one of its frame's textures)
-	lu.assertNotStrContains(Says('    Part { name: "A"; width: 1; height: 1; Ghost { name: "G"; x: 1; y: 1; width: 0; height: 0 } }'), "only a WowWindow")
-	lu.assertStrContains(Says('    Part { name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top }'),
-		"two anchors across and two down at most")
-	lu.assertStrContains(Says('    Part { id: b; name: "B"; width: 1; height: 1 }\n    Part { name: "A"; pin: "place"; anchors.left: w.left; anchors.right: b.right; anchors.top: w.top; width: 1; height: 1 }'),
-		"stretches between the lines of one part only")
-	lu.assertStrContains(Says('    WowRow { name: "R"; fit: "wide"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A" } }'), "its fit is")
+	lu.assertNotStrContains(
+		Says('    Part { name: "A"; width: 1; height: 1; Ghost { name: "G"; x: 1; y: 1; width: 0; height: 0 } }'),
+		"only a WowWindow"
+	)
+	lu.assertStrContains(
+		Says(
+			'    Part { name: "A"; anchors.left: w.left; anchors.right: w.right; anchors.horizontalCenter: w.horizontalCenter; anchors.top: w.top }'
+		),
+		"two anchors across and two down at most"
+	)
+	lu.assertStrContains(
+		Says(
+			'    Part { id: b; name: "B"; width: 1; height: 1 }\n    Part { name: "A"; pin: "place"; anchors.left: w.left; anchors.right: b.right; anchors.top: w.top; width: 1; height: 1 }'
+		),
+		"stretches between the lines of one part only"
+	)
+	lu.assertStrContains(
+		Says(
+			'    WowRow { name: "R"; fit: "wide"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A" } }'
+		),
+		"its fit is"
+	)
 	-- (in a frame of no known width; a part in two rows)
-	lu.assertStrContains(Says('    Ghost { name: "G"; x: 0; y: 0; WowRow { name: "R"; anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; Part { name: "A"; width: 1; height: 1 } } }'),
-		"how wide G is")
-	lu.assertStrContains(Says('    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; width: 1; height: 1 } }\n'
-		.. '    WowRow { name: "S"; anchors.left: w.left; anchors.right: w.right; anchors.bottom: w.bottom; Part { name: "A"; width: 1; height: 1 } }'), "A is held by row R")
+	lu.assertStrContains(
+		Says(
+			'    Ghost { name: "G"; x: 0; y: 0; WowRow { name: "R"; anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; Part { name: "A"; width: 1; height: 1 } } }'
+		),
+		"how wide G is"
+	)
+	lu.assertStrContains(
+		Says(
+			'    WowRow { name: "R"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; width: 1; height: 1 } }\n'
+				.. '    WowRow { name: "S"; anchors.left: w.left; anchors.right: w.right; anchors.bottom: w.bottom; Part { name: "A"; width: 1; height: 1 } }'
+		),
+		"A is held by row R"
+	)
 	-- what's only said: wider than its room, as they are; a stretch's sides either way round
-	lu.assertStrContains(Says('    WowRow { name: "R"; fit: "ends"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; width: 90; height: 1 }; Part { name: "B"; width: 90; height: 1 } }'),
-		"W: R is wider than its room (100).")
-	lu.assertStrContains(Says('    Part { name: "A"; pin: "place"; anchors.right: w.right; anchors.left: w.left; anchors.top: w.top; width: 1; height: 1 }'), "in use.")
+	lu.assertStrContains(
+		Says(
+			'    WowRow { name: "R"; fit: "ends"; anchors.left: w.left; anchors.right: w.right; anchors.top: w.top; Part { name: "A"; width: 90; height: 1 }; Part { name: "B"; width: 90; height: 1 } }'
+		),
+		"W: R is wider than its room (100)."
+	)
+	lu.assertStrContains(
+		Says(
+			'    Part { name: "A"; pin: "place"; anchors.right: w.right; anchors.left: w.left; anchors.top: w.top; width: 1; height: 1 }'
+		),
+		"in use."
+	)
 end
 
 -- Each part in what it's placed on: moved there by the editor, or by the scan;
 -- parts placed on each other can't nest, so one stands in the window.
 function TestPositionsTool:test_a_part_goes_in_what_its_placed_on()
 	local dir = Folder()
-	Write(dir .. "/windows/W.qml", [=[
+	Write(
+		dir .. "/windows/W.qml",
+		[=[
 import QtQuick
 WowWindow {
     name: "W"
@@ -903,11 +1150,18 @@ WowWindow {
         height: 22
     }
 }
-]=])
-	Write(dir .. "/edits.lua", [=[return { Go = { window = "W", place = { "BOTTOMLEFT", "Foot", "BOTTOMLEFT", 37, 6 }, size = { 80, 22 }, pin = "all" } }]=])
+]=]
+	)
+	Write(
+		dir .. "/edits.lua",
+		[=[return { Go = { window = "W", place = { "BOTTOMLEFT", "Foot", "BOTTOMLEFT", 37, 6 }, size = { 80, 22 }, pin = "all" } }]=]
+	)
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows", dir .. "/edits.lua" })
 	local file, text = Read(dir .. "/windows/W.qml"), Read(dir .. "/positions.lua")
-	lu.assertStrContains(file, 'height: 35\n\n        Button {\n            name: "Go"\n            pin: "all"\n            anchors.left: parent.left\n            anchors.leftMargin: 37\n')
+	lu.assertStrContains(
+		file,
+		'height: 35\n\n        Button {\n            name: "Go"\n            pin: "all"\n            anchors.left: parent.left\n            anchors.leftMargin: 37\n'
+	)
 	lu.assertStrContains(text, 'Go = { "BOTTOMLEFT", "Foot", "BOTTOMLEFT", 37, 6, 80, 22 }')
 	-- it settles
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
@@ -915,15 +1169,24 @@ WowWindow {
 	lu.assertEquals(Read(dir .. "/positions.lua"), text)
 	-- on each other, as a scan may say: one in the window, the other beside it
 	dir = Folder()
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
 		A = { "TOP", "B", "BOTTOM", 0, 0, 10, 10, kind = "Frame", rect = { 0, 0, 10, 10 } },
 		B = { "TOP", "A", "BOTTOM", 0, 0, 10, 10, kind = "Frame", rect = { 0, 0, 10, 10 } },
-	} } } }]=])
+	} } } }]=]
+	)
 	Runs(dir)
 	file = Read(dir .. "/windows/W.qml")
-	lu.assertStrContains(file, '    Frame {\n        id: a\n        name: "A"\n        width: 10\n        height: 10\n    }\n\n    Frame {\n        name: "B"\n        anchors.horizontalCenter: a.horizontalCenter\n        anchors.top: a.bottom\n')
+	lu.assertStrContains(
+		file,
+		'    Frame {\n        id: a\n        name: "A"\n        width: 10\n        height: 10\n    }\n\n    Frame {\n        name: "B"\n        anchors.horizontalCenter: a.horizontalCenter\n        anchors.top: a.bottom\n'
+	)
 	-- pinned, it can't be: said
-	Write(dir .. "/positions.lua", 'local _, E = ...\nE:NewStaticConfig("Positions", {\n\tA = { "TOP", "B", "BOTTOM", 0, 0 },\n\tB = { "TOP", "A", "BOTTOM", 0, 0 },\n})\n')
+	Write(
+		dir .. "/positions.lua",
+		'local _, E = ...\nE:NewStaticConfig("Positions", {\n\tA = { "TOP", "B", "BOTTOM", 0, 0 },\n\tB = { "TOP", "A", "BOTTOM", 0, 0 },\n})\n'
+	)
 	os.execute("rm -rf '" .. dir .. "/windows'")
 	lu.assertStrContains(Runs(dir), "is placed on what's placed on it")
 end
@@ -933,7 +1196,9 @@ end
 -- its own child in it, wherever it hangs; no wowParent where the block says it.
 function TestPositionsTool:test_a_ghost_in_its_frame_and_a_button_beside()
 	local dir = Folder()
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
 		F = { "TOPLEFT", "W", "TOPLEFT", 20, -30, 60, 30, kind = "Frame", parent = "W", rect = { 20, 140, 60, 30 } },
 		A = { "LEFT", "FTab", "RIGHT", 0, 0, 40, 20, kind = "Button", parent = "F", rect = { 30, 145, 40, 20 } },
 		B = { "TOPLEFT", "A", "TOPLEFT", 50, 0, 40, 20, kind = "Button", parent = "F", rect = { 80, 145, 40, 20 } },
@@ -943,13 +1208,20 @@ function TestPositionsTool:test_a_ghost_in_its_frame_and_a_button_beside()
 		Value = { "LEFT", "Label", "RIGHT", 4, 0, 20, 10, kind = "FontString", parent = "F", rect = { 46, 158, 20, 10 } },
 		Check = { "TOPLEFT", "W", "TOPLEFT", 100, -100, 20, 20, kind = "CheckButton", parent = "W", rect = { 100, 80, 20, 20 } },
 		CheckText = { "LEFT", "Check", "RIGHT", 2, 0, 30, 10, kind = "FontString", parent = "Check", rect = { 122, 85, 30, 10 } },
-	} } } }]=])
+	} } } }]=]
+	)
 	Runs(dir)
 	local file = Read(dir .. "/windows/W.qml")
 	lu.assertStrContains(file, '        name: "F"\n')
 	lu.assertStrContains(file, '        Ghost {\n            name: "FTab"\n            x: 10\n            y: 15\n')
-	lu.assertStrContains(file, '                name: "B"\n                wowParent: "F"\n                anchors.left: a.left\n')
-	lu.assertStrContains(file, '                    name: "C"\n                    wowParent: "F"\n                    anchors.left: parent.left\n')
+	lu.assertStrContains(
+		file,
+		'                name: "B"\n                wowParent: "F"\n                anchors.left: a.left\n'
+	)
+	lu.assertStrContains(
+		file,
+		'                    name: "C"\n                    wowParent: "F"\n                    anchors.left: parent.left\n'
+	)
 	-- (on a window's own: in the window)
 	lu.assertStrContains(file, '    Ghost {\n        name: "Loose"\n')
 	-- a value after its label: beside it, in the frame they're both in
@@ -970,14 +1242,17 @@ end
 -- places and sizes are; a part held by two points sized with them.
 function TestPositionsTool:test_a_scaled_windows_rects_in_its_own_units()
 	local dir = Folder()
-	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 100, 100, 220, 110 }, window = { 100, 100, 220, 110 },
+	Write(
+		dir .. "/saved.lua",
+		[=[DiabolicUI_Layout = { windows = { W = { rect = { 100, 100, 220, 110 }, window = { 100, 100, 220, 110 },
 		views = { [""] = { rect = { 100, 100, 220, 110 }, window = { 100, 100, 220, 110 }, frame = "W",
 			art = { { file = "Interface\\Buttons\\WHITE8X8", rect = { 122, 188, 44, 11 }, coords = { 0, 0, 0, 1, 1, 0, 1, 1 }, scale = 1.1 } } } },
 		parts = {
 			Box = { "TOPLEFT", "W", "TOPLEFT", 20, -10, 40, 20, kind = "Frame", rect = { 122, 177, 44, 22 } },
 			Field = { "LEFT", "Box", "LEFT", 0, 0, 40, 10, kind = "Frame", rect = { 122, 182.5, 44, 11 },
 				points = { { "LEFT", "Box", "LEFT", 0, 0 }, { "RIGHT", "Box", "RIGHT", 0, 0 } } },
-		} } } }]=])
+		} } } }]=]
+	)
 	Runs(dir)
 	local json, file = Read(dir .. "/layout.json"), Read(dir .. "/windows/W.qml")
 	os.execute("rm -rf '" .. dir .. "'")

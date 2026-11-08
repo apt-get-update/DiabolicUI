@@ -22,7 +22,11 @@ function Session.assertPlaced(client, name)
 	lu.assertNotNil(entry, name)
 	local part = _G[name]
 	local point, relative, relativePoint, x, y = part:GetPoint()
-	lu.assertEquals({ point, relative:GetName(), relativePoint, x, y }, { entry[1], entry[2], entry[3], entry[4], entry[5] }, name)
+	lu.assertEquals(
+		{ point, relative:GetName(), relativePoint, x, y },
+		{ entry[1], entry[2], entry[3], entry[4], entry[5] },
+		name
+	)
 	if entry[6] then
 		lu.assertEquals({ part:GetWidth(), part:GetHeight() }, { entry[6], entry[7] }, name)
 	end

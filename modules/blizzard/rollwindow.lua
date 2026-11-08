@@ -37,12 +37,17 @@ local UnitName = _G.UnitName
 local ENDINGS = { "wins", "won", "winner", "awarded", "finished", "no one", "nobody", "cancel" }
 
 -- "Name rolls 87 (1-100)" (GlobalStrings.lua)
-local ROLL_PATTERN = "^" .. _G.RANDOM_ROLL_RESULT:gsub("([%(%)%-])", "%%%1"):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)") .. "$"
+local ROLL_PATTERN = "^"
+	.. _G.RANDOM_ROLL_RESULT:gsub("([%(%)%-])", "%%%1"):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)")
+	.. "$"
 
 -- The chat a roll can be put up in
 local CHATS = {
-	CHAT_MSG_RAID_WARNING = true, CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true,
-	CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true
+	CHAT_MSG_RAID_WARNING = true,
+	CHAT_MSG_RAID = true,
+	CHAT_MSG_RAID_LEADER = true,
+	CHAT_MSG_PARTY = true,
+	CHAT_MSG_PARTY_LEADER = true,
 }
 
 -- Who puts rolls up ------------------------------------------------------
@@ -50,12 +55,12 @@ local CHATS = {
 -- The master looter's name, if there's one
 local MasterLooter = function()
 	local method, partyID, raidID = GetLootMethod()
-	if (method ~= "master") then
+	if method ~= "master" then
 		return
 	end
 	if raidID then
 		return (GetRaidRosterInfo(raidID))
-	elseif (partyID == 0) then
+	elseif partyID == 0 then
 		return (UnitName("player"))
 	elseif partyID then
 		return (UnitName("party" .. partyID))
@@ -66,7 +71,7 @@ end
 local IsRaidOfficer = function(name)
 	for i = 1, GetNumRaidMembers() do
 		local member, rank = GetRaidRosterInfo(i)
-		if (member == name) then
+		if member == name then
 			return rank and (rank > 0)
 		end
 	end
@@ -75,7 +80,11 @@ end
 -- A raid warning can only come from them; the leader's messages say so;
 -- in the raid's or party's chat, the master looter or an officer.
 local CanPutUpRolls = function(event, sender)
-	if (event == "CHAT_MSG_RAID_WARNING") or (event == "CHAT_MSG_RAID_LEADER") or (event == "CHAT_MSG_PARTY_LEADER") then
+	if
+		(event == "CHAT_MSG_RAID_WARNING")
+		or (event == "CHAT_MSG_RAID_LEADER")
+		or (event == "CHAT_MSG_PARTY_LEADER")
+	then
 		return true
 	end
 	return (sender == MasterLooter()) or IsRaidOfficer(sender)
@@ -96,7 +105,7 @@ local BisText = function(link)
 	local class = (token == "DEATHKNIGHT") and "Death Knight" or (token:sub(1, 1) .. token:sub(2):lower())
 	local specs = {}
 	for _, entry in ipairs(entries) do
-		if (entry.class == class) then
+		if entry.class == class then
 			-- its labels: "T8 BIS / T9 alt 2"
 			for label in (entry.rightText .. " / "):gmatch("(.-) / ") do
 				local rank = label:match("^" .. phase .. " (.+)$")
@@ -106,7 +115,7 @@ local BisText = function(link)
 			end
 		end
 	end
-	if (#specs > 0) then
+	if #specs > 0 then
 		return phase .. ": " .. table_concat(specs, ", ")
 	end
 end
@@ -115,12 +124,12 @@ end
 
 local OnRowUpdate = function(row, elapsed)
 	local timeLeft = row.endTime - GetTime()
-	if (timeLeft <= 0) then
+	if timeLeft <= 0 then
 		return Module:RemoveRow(row)
 	end
 	row.Bar:SetValue(timeLeft)
 	row.Time:SetText(math_ceil(timeLeft))
-	if (not row.hasInfo) then
+	if not row.hasInfo then
 		Module:UpdateItem(row) -- not seen by the client yet when it was put up
 	end
 end
@@ -224,7 +233,7 @@ Module.CreateRow = function(self)
 	bar:SetPoint("RIGHT", row, "RIGHT", -24, 0)
 	local barBackdrop = bar:CreateTexture(nil, "BACKGROUND")
 	barBackdrop:SetAllPoints()
-	barBackdrop:SetTexture(0, 0, 0, .75)
+	barBackdrop:SetTexture(0, 0, 0, 0.75)
 
 	local time = row:CreateFontString(nil, "OVERLAY")
 	time:SetFontObject(config.time_font)
@@ -278,7 +287,7 @@ Module.Layout = function(self)
 		row:ClearAllPoints()
 		row:SetPoint("TOP", frame, "TOP", 0, -(config.top_padding + (i - 1) * (rowHeight + config.row_gap)))
 	end
-	if (#rows == 0) then
+	if #rows == 0 then
 		frame:Hide()
 		return
 	end
@@ -288,7 +297,7 @@ end
 
 Module.FindRow = function(self, link)
 	for _, row in ipairs(self.rows) do
-		if (row.link == link) then
+		if row.link == link then
 			return row
 		end
 	end
@@ -297,7 +306,7 @@ end
 -- An item put up for a roll, for `seconds`: again, and its time starts over
 Module.AddRoll = function(self, link, seconds)
 	local row = self:FindRow(link)
-	if (not row) then
+	if not row then
 		row = table_remove(self.unused) or self:CreateRow()
 		row.link, row.rolling, row.rolled = link, nil, nil
 		row.Result:SetText("")
@@ -315,7 +324,7 @@ end
 
 Module.RemoveRow = function(self, row)
 	for i, shown in ipairs(self.rows) do
-		if (shown == row) then
+		if shown == row then
 			table_remove(self.rows, i)
 			break
 		end
@@ -360,7 +369,7 @@ Module.OnChat = function(self, event, message, sender)
 		end
 	end
 	-- "Stopping rolls in 3": the last item's time
-	if (not found) and (not ending) and self.rows[#self.rows] then
+	if (not found) and not ending and self.rows[#self.rows] then
 		local seconds = lower:find("roll", 1, true) and tonumber(lower:match("(%d+)"))
 		if seconds and (seconds <= 60) then
 			local row = self.rows[#self.rows]
@@ -372,15 +381,19 @@ end
 -- Your roll's result, in place of the buttons
 Module.OnSystemMessage = function(self, event, message)
 	local name, roll, _, high = (message or ""):match(ROLL_PATTERN)
-	if (name ~= UnitName("player")) then
+	if name ~= UnitName("player") then
 		return
 	end
 	high = tonumber(high)
 	for _, row in ipairs(self.rows) do
-		if row.rolling and (not row.rolled) then
+		if row.rolling and not row.rolled then
 			row.rolled = true
 			ShowButtons(row, false)
-			row.Result:SetFormattedText(L["You rolled %d (%s)"], roll, (high == self.config.main_spec) and L["Main Spec"] or L["Off Spec"])
+			row.Result:SetFormattedText(
+				L["You rolled %d (%s)"],
+				roll,
+				(high == self.config.main_spec) and L["Main Spec"] or L["Off Spec"]
+			)
 			return
 		end
 	end
@@ -420,7 +433,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not self:GetConfig("LootFrame").rollWindow) then
+	if not self:GetConfig("LootFrame").rollWindow then
 		return
 	end
 	self:CreateWindow()

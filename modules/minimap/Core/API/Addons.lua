@@ -34,7 +34,7 @@ local string_lower = string.lower
 API.IsAddOnAvailable = function(target)
 	target = string_lower(target)
 	for i = 1, _G.GetNumAddOns() do
-		if (string_lower((_G.GetAddOnInfo(i))) == target) then
+		if string_lower((_G.GetAddOnInfo(i))) == target then
 			return true
 		end
 	end
@@ -45,7 +45,7 @@ API.IsAddOnEnabled = function(target)
 	target = string_lower(target)
 	for i = 1, _G.GetNumAddOns() do
 		local name, _, _, enabled, loadable = _G.GetAddOnInfo(i)
-		if (string_lower(name) == target) then
+		if string_lower(name) == target then
 			return (enabled and loadable) and true or nil
 		end
 	end

@@ -29,7 +29,7 @@ local Lines = function(command)
 end
 
 local Number = function(value)
-	value = math.floor(value * 10 + .5) / 10
+	value = math.floor(value * 10 + 0.5) / 10
 	return (value == math.floor(value)) and string.format("%d", value) or string.format("%.1f", value)
 end
 
@@ -38,7 +38,8 @@ local Round = function(value)
 end
 
 local layout = {}
-local saved = (SAVED == "") and Lines("ls -t ../../../WTF/Account/*/SavedVariables/DiabolicUI.lua 2>/dev/null")[1] or SAVED
+local saved = (SAVED == "") and Lines("ls -t ../../../WTF/Account/*/SavedVariables/DiabolicUI.lua 2>/dev/null")[1]
+	or SAVED
 if saved and (saved ~= "-") then
 	local env = {}
 	setfenv(assert(loadfile(saved)), env)()
@@ -49,7 +50,7 @@ end
 for _, seen in pairs(layout.windows or {}) do
 	for _, view in pairs(type(seen) == "table" and seen.views or {}) do
 		for i, item in ipairs(view.art or {}) do
-			if (type(item) == "string") then
+			if type(item) == "string" then
 				view.art[i] = assert(loadstring("return " .. item))()
 			end
 		end
@@ -65,32 +66,32 @@ local Statements = function(text)
 	local Flush = function()
 		local statement = table.concat(buffer):match("^%s*(.-)%s*$")
 		buffer = {}
-		if (statement ~= "") then
+		if statement ~= "" then
 			out[#out + 1] = { "set", statement }
 		end
 	end
-	while (at <= #text) do
+	while at <= #text do
 		local c = text:sub(at, at)
-		if (c == '"') then
+		if c == '"' then
 			local stop = at + 1
 			while (stop <= #text) and (text:sub(stop, stop) ~= '"') do
 				stop = stop + ((text:sub(stop, stop) == "\\") and 2 or 1)
 			end
 			buffer[#buffer + 1] = text:sub(at, stop)
 			at = stop
-		elseif (text:sub(at, at + 1) == "//") then
+		elseif text:sub(at, at + 1) == "//" then
 			local stop = text:find("\n", at, true) or (#text + 1)
 			local comment = text:sub(at, stop - 1):match("^(.-)%s*$")
 			if closed then
 				out[#out].tail = comment
-			elseif (not table.concat(buffer):find("%S")) then
+			elseif not table.concat(buffer):find("%S") then
 				out[#out + 1] = { "note", comment }
 			end
 			at = stop - 1
-		elseif (c == "{") then
+		elseif c == "{" then
 			out[#out + 1] = { "open", table.concat(buffer):match("^%s*(.-)%s*$") }
 			buffer = {}
-		elseif (c == "}") then
+		elseif c == "}" then
 			Flush()
 			out[#out + 1] = { "close" }
 			closed = true
@@ -110,8 +111,12 @@ end
 local ACROSS = { left = "LEFT", right = "RIGHT", horizontalCenter = "" }
 local DOWN = { top = "TOP", bottom = "BOTTOM", verticalCenter = "" }
 local MARGINS = { -- what each moves: x or y, its sign
-	leftMargin = { "left", 1 }, rightMargin = { "right", -1 }, horizontalCenterOffset = { "horizontalCenter", 1 },
-	topMargin = { "top", -1 }, bottomMargin = { "bottom", 1 }, verticalCenterOffset = { "verticalCenter", -1 },
+	leftMargin = { "left", 1 },
+	rightMargin = { "right", -1 },
+	horizontalCenterOffset = { "horizontalCenter", 1 },
+	topMargin = { "top", -1 },
+	bottomMargin = { "bottom", 1 },
+	verticalCenterOffset = { "verticalCenter", -1 },
 }
 local MARGIN_OF = {}
 for margin, info in pairs(MARGINS) do
@@ -137,8 +142,20 @@ end
 
 -- The kinds of part with a type of their own (windows/<kind>.qml): `FontString { }`.
 -- Any other kind the scan finds is written `Part { kind: "..." }`.
-local KINDS = { Button = true, CheckButton = true, DressUpModel = true, EditBox = true, FontString = true, Frame = true,
-	PlayerModel = true, ScrollFrame = true, ScrollingMessageFrame = true, Slider = true, StatusBar = true, Texture = true }
+local KINDS = {
+	Button = true,
+	CheckButton = true,
+	DressUpModel = true,
+	EditBox = true,
+	FontString = true,
+	Frame = true,
+	PlayerModel = true,
+	ScrollFrame = true,
+	ScrollingMessageFrame = true,
+	Slider = true,
+	StatusBar = true,
+	Texture = true,
+}
 
 -- A window's file: its name, its size, its parts (each with its notes, the
 -- note at its end, its place, its size, its pin), nested in what they're placed
@@ -156,30 +173,39 @@ local ReadWindow = function(path)
 	for _, statement in ipairs(Statements(text)) do
 		local kind, value = statement[1], statement[2]
 		local block = open[#open]
-		if (kind == "open") then
-			if (not block) then
-				if (value ~= "WowWindow") then
+		if kind == "open" then
+			if not block then
+				if value ~= "WowWindow" then
 					Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
 				end
 				open[1] = window
 			else
 				local what = KINDS[value] and "Part" or value
-				if ((what ~= "Part") and (what ~= "Ghost") and (what ~= "WowRow"))
-					or (block.what == "WowRow" and (what ~= "Part")) or ((what == "Ghost") and (block ~= window) and (block.what ~= "Part")) then
+				if
+					((what ~= "Part") and (what ~= "Ghost") and (what ~= "WowRow"))
+					or (block.what == "WowRow" and (what ~= "Part"))
+					or ((what == "Ghost") and (block ~= window) and (block.what ~= "Part"))
+				then
 					Problem(value, "only a WowWindow of parts, WowRows and Ghosts can be read")
 				end
-				open[#open + 1] = { notes = (#notes > 0) and notes or nil, anchors = {}, margins = {}, what = what, over = block,
-					kind = KINDS[value] and value or nil }
+				open[#open + 1] = {
+					notes = (#notes > 0) and notes or nil,
+					anchors = {},
+					margins = {},
+					what = what,
+					over = block,
+					kind = KINDS[value] and value or nil,
+				}
 			end
 			notes = {}
-		elseif (kind == "close") then
+		elseif kind == "close" then
 			open[#open] = nil
 			if block and (block ~= window) then
-				if (not block.name) then
+				if not block.name then
 					Problem(block.id or block.what, "a part needs a name")
 				end
 				names[block.id or block.name] = block.name
-				if (block.what == "Part") then
+				if block.what == "Part" then
 					block.tail = statement.tail
 					-- (none written: the part it's in, or the window)
 					if (not block.wowParent) and ((block.over == window) or (block.over.what == "Part")) then
@@ -187,32 +213,45 @@ local ReadWindow = function(path)
 					end
 					window.parts[block.name] = block
 					raw[block.name] = block
-					if (block.over.what == "WowRow") then
+					if block.over.what == "WowRow" then
 						if next(block.anchors) then
 							Problem(block.name, "its row places it: no anchors")
 						end
 						block.over.members = block.over.members or {}
 						table.insert(block.over.members, block.name)
 					end
-				elseif (block.what == "WowRow") then
+				elseif block.what == "WowRow" then
 					window.rows[#window.rows + 1] = block
 				else
 					-- (from the top left of what it's in)
-					window.ghosts[block.name] = { block.x, block.y, block.width, block.height,
-						on = (block.over == window) and window.name or block.over.name }
+					window.ghosts[block.name] = {
+						block.x,
+						block.y,
+						block.width,
+						block.height,
+						on = (block.over == window) and window.name or block.over.name,
+					}
 				end
 			end
-		elseif (kind == "note") then
+		elseif kind == "note" then
 			notes[#notes + 1] = value
 		elseif block then
 			local key, content = value:match("^([%w%.]+)%s*:%s*(.+)$")
-			if (not key) then
+			if not key then
 				Problem(value, "not a property")
 			end
 			local line = key:match("^anchors%.(.+)$")
-			if (key == "id") then
+			if key == "id" then
 				block.id = content
-			elseif (key == "name") or (key == "kind") or (key == "text") or (key == "wowParent") or (key == "pin") or (key == "style") or (key == "fit") then
+			elseif
+				(key == "name")
+				or (key == "kind")
+				or (key == "text")
+				or (key == "wowParent")
+				or (key == "pin")
+				or (key == "style")
+				or (key == "fit")
+			then
 				block[key] = Unquote(content) or Problem(key, "needs a text, not " .. content)
 			elseif (key == "width") or (key == "height") or (key == "x") or (key == "y") or (key == "spacing") then
 				block[key] = tonumber(content) or Problem(key, "needs a number, not " .. content)
@@ -220,7 +259,7 @@ local ReadWindow = function(path)
 				block.margins[MARGINS[line][1]] = tonumber(content) or Problem(key, "needs a number, not " .. content)
 			elseif line and (block ~= window) and (ACROSS[line] or DOWN[line]) then
 				local id, other = content:match("^([%w_]+)%.(%w+)$")
-				if (not id) then
+				if not id then
 					Problem(key, "needs a part and its line, not " .. content)
 				end
 				local axis = ACROSS[line] and "across" or "down"
@@ -237,13 +276,13 @@ local ReadWindow = function(path)
 			end
 		end
 	end
-	if (not window.name) then
+	if not window.name then
 		Problem(path, "a window needs a name")
 	end
 	names[window.id or window.name] = window.name
 	-- what an anchor's on: the block it's in, or an id
 	local On = function(block, anchor)
-		if (anchor.id == "parent") then
+		if anchor.id == "parent" then
 			return block.over.name
 		end
 		return names[anchor.id]
@@ -269,11 +308,16 @@ local ReadWindow = function(path)
 		local across, across2 = InOrder(name, part.anchors.across, part.anchors.across2, "left", "right")
 		local down, down2 = InOrder(name, part.anchors.down, part.anchors.down2, "top", "bottom")
 		if across or down then
-			if (not across) or (not down) or (across.id ~= down.id) or (not On(part, across)) then
+			if (not across) or not down or (across.id ~= down.id) or (not On(part, across)) then
 				Problem(name, "needs one anchor across and one down, on one part of this file")
 			end
-			part.place = { PointOf(across.line, down.line), On(part, across), PointOf(across.to, down.to),
-				Offset(part.margins, across.line), Offset(part.margins, down.line) }
+			part.place = {
+				PointOf(across.line, down.line),
+				On(part, across),
+				PointOf(across.to, down.to),
+				Offset(part.margins, across.line),
+				Offset(part.margins, down.line),
+			}
 			part.besideOn = (across.id ~= "parent") and part.place[2] or nil
 			if across2 or down2 then
 				local x, y = across2 or across, down2 or down
@@ -282,20 +326,30 @@ local ReadWindow = function(path)
 				elseif (part.pin ~= "place") and (part.pin ~= "all") then
 					Problem(name, 'stretched, it needs a pin of "place" or "all"')
 				end
-				part.second = { PointOf(x.line, y.line), PointOf(x.to, y.to), Offset(part.margins, x.line), Offset(part.margins, y.line) }
+				part.second = {
+					PointOf(x.line, y.line),
+					PointOf(x.to, y.to),
+					Offset(part.margins, x.line),
+					Offset(part.margins, y.line),
+				}
 			end
 		end
 		part.w, part.h = part.width, part.height
-		if part.width and part.height and ((part.kind ~= "FontString") or (part.pin == "all") or (part.pin == "size")) then
+		if
+			part.width
+			and part.height
+			and ((part.kind ~= "FontString") or (part.pin == "all") or (part.pin == "size"))
+		then
 			part.size = { part.width, part.height }
 		end
 		local inRow = part.over.what == "WowRow" -- (its row places it)
-		part.anchors, part.margins, part.id, part.width, part.height, part.over, part.what = nil, nil, nil, nil, nil, nil, nil
+		part.anchors, part.margins, part.id, part.width, part.height, part.over, part.what =
+			nil, nil, nil, nil, nil, nil, nil
 		if part.pin and (part.pin ~= "all") and (part.pin ~= "place") and (part.pin ~= "size") then
 			Problem(name, 'its pin is "all", "place" or "size"')
-		elseif ((part.pin == "all") or (part.pin == "place")) and (not part.place) and (not inRow) then
+		elseif ((part.pin == "all") or (part.pin == "place")) and not part.place and not inRow then
 			Problem(name, "its pin needs anchors")
-		elseif ((part.pin == "all") or (part.pin == "size")) and (not part.size) then
+		elseif ((part.pin == "all") or (part.pin == "size")) and not part.size then
 			Problem(name, "its pin needs a width and a height")
 		end
 	end
@@ -304,13 +358,27 @@ local ReadWindow = function(path)
 		local anchors = row.anchors
 		local left, right = InOrder(row.name, anchors.across, anchors.across2, "left", "right")
 		local down = anchors.down
-		if (not right) or (left.to ~= "left") or (right.to ~= "right") or (not down) or anchors.down2
-			or (left.id ~= right.id) or (down.id ~= left.id) or (not On(row, left)) then
+		if
+			not right
+			or (left.to ~= "left")
+			or (right.to ~= "right")
+			or not down
+			or anchors.down2
+			or (left.id ~= right.id)
+			or (down.id ~= left.id)
+			or (not On(row, left))
+		then
 			Problem(row.name, "a row goes from a part's left to its right, with one anchor down on it")
 		end
-		if (not row.members) or (not row.members[1]) then
+		if (not row.members) or not row.members[1] then
 			Problem(row.name, "a row needs its parts")
-		elseif row.fit and (row.fit ~= "fill") and (row.fit ~= "equal") and (row.fit ~= "center") and (row.fit ~= "ends") then
+		elseif
+			row.fit
+			and (row.fit ~= "fill")
+			and (row.fit ~= "equal")
+			and (row.fit ~= "center")
+			and (row.fit ~= "ends")
+		then
 			Problem(row.name, 'its fit is "fill", "equal", "center" or "ends"')
 		end
 		row.on, row.line, row.to = On(row, left), down.line, down.to
@@ -325,7 +393,14 @@ local windows, owner, inFile = {}, {}, {}
 os.execute("mkdir -p '" .. DIR .. "'")
 for _, path in ipairs(Lines("ls '" .. DIR .. "'/*.qml 2>/dev/null")) do
 	local base = path:match("([^/]+)%.qml$")
-	if (base ~= "Part") and (base ~= "Ghost") and (base ~= "GameText") and (base ~= "WowWindow") and (base ~= "WowRow") and (not KINDS[base]) then
+	if
+		(base ~= "Part")
+		and (base ~= "Ghost")
+		and (base ~= "GameText")
+		and (base ~= "WowWindow")
+		and (base ~= "WowRow")
+		and not KINDS[base]
+	then
 		local window = ReadWindow(path)
 		windows[window.name] = window
 		for name in pairs(window.parts) do
@@ -339,7 +414,11 @@ end
 local active, notes, tails, sections = {}, {}, {}, {}
 local chunk = loadfile(OUT)
 if chunk then
-	chunk("DiabolicUI", { NewStaticConfig = function(_, _, positions) active = positions end })
+	chunk("DiabolicUI", {
+		NewStaticConfig = function(_, _, positions)
+			active = positions
+		end,
+	})
 end
 local file = io.open(OUT)
 if file then
@@ -384,7 +463,7 @@ end
 
 -- what a part is placed and sized by for good: a line of settings/positions.lua
 local Pin = function(part, entry)
-	if (type(entry[1]) == "number") then
+	if type(entry[1]) == "number" then
 		part.size, part.pin = { Round(entry[1]), Round(entry[2]) }, "size"
 	else
 		part.place = { entry[1], entry[2], entry[3], Round(entry[4]), Round(entry[5]) }
@@ -414,9 +493,13 @@ for _, title in ipairs(Sorted(layout.windows or {})) do
 	WindowNamed(title).seen = seen
 	for _, name in ipairs(Sorted(seen.parts or {})) do
 		local entry = seen.parts[name]
-		if (type(entry) == "table") and (not (owner[name] and windows[owner[name]].parts[name] and windows[owner[name]].parts[name].seen)) then
+		if
+			(type(entry) == "table")
+			and not (owner[name] and windows[owner[name]].parts[name] and windows[owner[name]].parts[name].seen)
+		then
 			local part = PartNamed(name, title)
-			part.seen, part.kind, part.text, part.wowParent, part.guessedParent = entry, entry.kind, entry.text, entry.parent, nil
+			part.seen, part.kind, part.text, part.wowParent, part.guessedParent =
+				entry, entry.kind, entry.text, entry.parent, nil
 			part.style = entry.style or part.style
 			Follow(part)
 		end
@@ -431,7 +514,7 @@ local ScaleOf = function(window)
 	for _, part in pairs(window.parts) do
 		local seen = part.seen
 		if seen and seen.rect and seen[6] and (seen[6] > 0) and (seen.rect[3] > 0) then
-			scales[#scales + 1] = math.floor(seen.rect[3] / seen[6] * 100 + .5) / 100
+			scales[#scales + 1] = math.floor(seen.rect[3] / seen[6] * 100 + 0.5) / 100
 		end
 	end
 	table.sort(scales)
@@ -444,7 +527,8 @@ for _, window in pairs(windows) do
 	if seen and seen.rect and (scale ~= 1) then
 		local left, top = seen.rect[1], seen.rect[2] + seen.rect[4]
 		local Own = function(rect)
-			return rect and { left + (rect[1] - left) / scale, top - (top - rect[2]) / scale, rect[3] / scale, rect[4] / scale }
+			return rect
+				and { left + (rect[1] - left) / scale, top - (top - rect[2]) / scale, rect[3] / scale, rect[4] / scale }
 		end
 		local OwnArt = function(art)
 			for _, item in ipairs(art or {}) do
@@ -468,8 +552,8 @@ end
 
 -- A part placed by several points: the one place and size that keep it
 -- where it is (its first point's wouldn't: the others stretch it).
-local X_OF = { left = 0, horizontalCenter = .5, right = 1 }
-local Y_OF = { bottom = 0, verticalCenter = .5, top = 1 }
+local X_OF = { left = 0, horizontalCenter = 0.5, right = 1 }
+local Y_OF = { bottom = 0, verticalCenter = 0.5, top = 1 }
 for title, window in pairs(windows) do
 	for _, part in pairs(window.parts) do
 		local seen = part.seen
@@ -489,7 +573,7 @@ for title, window in pairs(windows) do
 	end
 end
 for name, entry in pairs(active) do
-	if (not inFile[name]) then
+	if not inFile[name] then
 		local section = sections[name]
 		local part = PartNamed(name, (section and (section ~= NOT_SEEN_TITLE)) and section or NOT_SEEN)
 		Pin(part, entry)
@@ -499,7 +583,7 @@ for name, entry in pairs(active) do
 		end
 		-- (the note at its end, unless it's what's written there anyway)
 		local tail = tails[name]
-		if tail and (not (part.kind and tail:find("-- " .. part.kind, 1, true) == 1)) then
+		if tail and not (part.kind and tail:find("-- " .. part.kind, 1, true) == 1) then
 			part.tail = tail:gsub("^%-%-", "//")
 		end
 	end
@@ -541,7 +625,7 @@ end
 local ByNumbers = function(a, b)
 	local x, y = NumbersOf(a), NumbersOf(b)
 	for i = 1, math.min(#x, #y) do
-		if (x[i] ~= y[i]) then
+		if x[i] ~= y[i] then
 			return x[i] < y[i]
 		end
 	end
@@ -644,7 +728,13 @@ local GhostRect = function(window, name)
 	local x, width = Span("left", "horizontalCenter", "right")
 	local y, height = Span("top", "verticalCenter", "bottom")
 	-- (nothing to go by: where its file has it, in what it has it in)
-	if (not next(spots.left)) and (not next(spots.horizontalCenter)) and (not next(spots.right)) and window.ghosts and window.ghosts[name] then
+	if
+		(not next(spots.left))
+		and (not next(spots.horizontalCenter))
+		and (not next(spots.right))
+		and window.ghosts
+		and window.ghosts[name]
+	then
 		local ghost = window.ghosts[name]
 		return ghost[1], ghost[2], ghost[3], ghost[4], ghost.on
 	end
@@ -655,7 +745,7 @@ end
 -- placed on its points, as a Ghost's, for those to be where the game has them.
 for _, window in pairs(windows) do
 	for name, part in pairs(window.parts) do
-		if (part.pin == "place") and (not part.seen) then
+		if (part.pin == "place") and not part.seen then
 			local _, _, width, height = GhostRect(window, name)
 			if (width > 0) and (height > 0) then
 				part.size = { width, height }
@@ -666,7 +756,7 @@ end
 
 -- How wide and tall `name` is in `window`: the window's, a part's.
 local BoxOf = function(window, name)
-	if (name == window.name) then
+	if name == window.name then
 		return WindowSize(window)
 	end
 	local part = window.parts[name]
@@ -690,8 +780,10 @@ for _, window in pairs(windows) do
 			local box = part.size or { 0, 0 }
 			local w = width * (X_OF[AcrossOf(second[2])] - X_OF[AcrossOf(place[3])]) + second[3] - place[4]
 			local h = height * (Y_OF[DownOf(place[3])] - Y_OF[DownOf(second[2])]) + place[5] - second[4]
-			part.size = { (AcrossOf(second[1]) ~= AcrossOf(place[1])) and Round(w) or box[1],
-				(DownOf(second[1]) ~= DownOf(place[1])) and Round(h) or box[2] }
+			part.size = {
+				(AcrossOf(second[1]) ~= AcrossOf(place[1])) and Round(w) or box[1],
+				(DownOf(second[1]) ~= DownOf(place[1])) and Round(h) or box[2],
+			}
 		end
 	end
 end
@@ -730,7 +822,7 @@ local ResolveRow = function(window, row)
 		sum = sum + widths[i]
 	end
 	local fit, first = row.fit or "fill", row.left
-	if (fit == "fill") then
+	if fit == "fill" then
 		-- those with a text as wide as it, the room left shared between them; those
 		-- without as they are (no text known: all of them as they are, what's left shared)
 		local sharing, last = 0, nil
@@ -744,7 +836,7 @@ local ResolveRow = function(window, row)
 				parts[i].sharing = true
 			end
 		end
-		if (sharing == 0) then
+		if sharing == 0 then
 			sharing, last = count, count
 			for _, part in ipairs(parts) do
 				part.sharing = true
@@ -758,7 +850,7 @@ local ResolveRow = function(window, row)
 			sum = sum + widths[i]
 		end
 		widths[last] = Round(widths[last] + room - gap * (count - 1) - sum)
-	elseif (fit == "equal") then
+	elseif fit == "equal" then
 		-- all as wide, whatever their texts (the last takes what rounding left)
 		local shared = room - gap * (count - 1)
 		sum = 0
@@ -767,9 +859,9 @@ local ResolveRow = function(window, row)
 			sum = sum + widths[i]
 		end
 		widths[count] = Round(widths[count] + shared - sum)
-	elseif (fit == "center") then
+	elseif fit == "center" then
 		first = row.left + (room - sum - gap * (count - 1)) / 2
-	elseif (count > 1) then
+	elseif count > 1 then
 		gap = (room - sum) / (count - 1)
 	else
 		first = row.left + (room - sum) / 2
@@ -778,7 +870,7 @@ local ResolveRow = function(window, row)
 		print(string.format("%s: %s is wider than its room (%s).", window.name, row.name, Number(room)))
 	end
 	for i, part in ipairs(parts) do
-		if (i == 1) then
+		if i == 1 then
 			part.place = { PointOf("left", row.line), row.on, PointOf("left", row.to), Round(first), row.y }
 		else
 			part.place = { "LEFT", parts[i - 1].name, "RIGHT", Round(gap), 0 }
@@ -814,13 +906,13 @@ local WritePart = function(out, part, kids, indent, inRow, inBlock)
 		Set("id", part.fileId)
 	end
 	Set("name", Quote(part.name))
-	if part.kind and (not typed) then
+	if part.kind and not typed then
 		Set("kind", Quote(part.kind))
 	end
 	if part.text then
 		Set("text", Quote(part.text))
 	end
-	if part.wowParent and (not part.guessedParent) and (part.wowParent ~= inBlock) then
+	if part.wowParent and not part.guessedParent and (part.wowParent ~= inBlock) then
 		Set("wowParent", Quote(part.wowParent))
 	end
 	if part.style then
@@ -829,24 +921,29 @@ local WritePart = function(out, part, kids, indent, inRow, inBlock)
 	if part.pin then
 		Set("pin", Quote(part.pin))
 	end
-	if part.place and (not inRow) and (not part.loose) then
+	if part.place and not inRow and not part.loose then
 		local place = part.place
 		local on = part.besideId or "parent"
-		for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(place[3]), place[4] }, { DownOf(place[1]), DownOf(place[3]), place[5] } }) do
+		for _, axis in ipairs({
+			{ AcrossOf(place[1]), AcrossOf(place[3]), place[4] },
+			{ DownOf(place[1]), DownOf(place[3]), place[5] },
+		}) do
 			Set("anchors." .. axis[1], on .. "." .. axis[2])
 			local margin = MARGIN_OF[axis[1]]
-			if (axis[3] ~= 0) then
+			if axis[3] ~= 0 then
 				Set("anchors." .. margin, Number(axis[3] * MARGINS[margin][2]))
 			end
 		end
 		-- (stretched: the other side's line, or lines)
 		local second = part.second
 		if second then
-			for _, axis in ipairs({ { AcrossOf(place[1]), AcrossOf(second[1]), AcrossOf(second[2]), second[3] },
-				{ DownOf(place[1]), DownOf(second[1]), DownOf(second[2]), second[4] } }) do
-				if (axis[1] ~= axis[2]) then
+			for _, axis in ipairs({
+				{ AcrossOf(place[1]), AcrossOf(second[1]), AcrossOf(second[2]), second[3] },
+				{ DownOf(place[1]), DownOf(second[1]), DownOf(second[2]), second[4] },
+			}) do
+				if axis[1] ~= axis[2] then
 					Set("anchors." .. axis[2], on .. "." .. axis[3])
-					if (axis[4] ~= 0) then
+					if axis[4] ~= 0 then
 						Set("anchors." .. MARGIN_OF[axis[2]], Number(axis[4] * MARGINS[MARGIN_OF[axis[2]]][2]))
 					end
 				end
@@ -854,7 +951,9 @@ local WritePart = function(out, part, kids, indent, inRow, inBlock)
 		end
 	end
 	local rect = part.seen and part.seen.rect
-	local size = part.size or (rect and { rect[3], rect[4] }) or (part.w and { part.w, part.h })
+	local size = part.size
+		or (rect and { rect[3], rect[4] })
+		or (part.w and { part.w, part.h })
 		or { 6 * #(part.text or part.name), 12 }
 	Set("width", Number(size[1]))
 	Set("height", Number(size[2]))
@@ -879,15 +978,15 @@ local WriteRow = function(out, row, window, kids, indent)
 		Set("spacing", Number(row.spacing))
 	end
 	Set("anchors.left", "parent.left")
-	if (row.left ~= 0) then
+	if row.left ~= 0 then
 		Set("anchors.leftMargin", Number(row.left))
 	end
 	Set("anchors.right", "parent.right")
-	if (row.right ~= 0) then
+	if row.right ~= 0 then
 		Set("anchors.rightMargin", Number(row.right))
 	end
 	Set("anchors." .. row.line, "parent." .. row.to)
-	if (row.y ~= 0) then
+	if row.y ~= 0 then
 		local margin = MARGIN_OF[row.line]
 		Set("anchors." .. margin, Number(row.y * MARGINS[margin][2]))
 	end
@@ -912,8 +1011,13 @@ WriteKids = function(out, these, kids, indent)
 	for _, ghost in ipairs(these and these.ghosts or {}) do
 		out[#out + 1] = ""
 		out[#out + 1] = indent .. "Ghost {"
-		for _, line in ipairs({ "name: " .. Quote(ghost.name), "x: " .. Number(ghost.x), "y: " .. Number(ghost.y),
-			"width: " .. Number(ghost.width), "height: " .. Number(ghost.height) }) do
+		for _, line in ipairs({
+			"name: " .. Quote(ghost.name),
+			"x: " .. Number(ghost.x),
+			"y: " .. Number(ghost.y),
+			"width: " .. Number(ghost.width),
+			"height: " .. Number(ghost.height),
+		}) do
 			out[#out + 1] = indent .. "    " .. line
 		end
 		WriteKids(out, kids[ghost.name], kids, indent .. "    ")
@@ -932,7 +1036,7 @@ local WriteWindow = function(window)
 		end
 	end
 	local Note = function(on)
-		if on and (not inFile[on]) then
+		if on and not inFile[on] then
 			ghosts[on] = true
 		end
 	end
@@ -940,7 +1044,7 @@ local WriteWindow = function(window)
 		Note(row.on)
 	end
 	for name, part in pairs(window.parts) do
-		if inFile[name] and (not inRow[name]) then
+		if inFile[name] and not inRow[name] then
 			Note(part.place and part.place[2])
 		end
 	end
@@ -956,11 +1060,11 @@ local WriteWindow = function(window)
 	local loose = {}
 	for _, name in ipairs(Sorted(window.parts)) do
 		local walked, up = {}, name
-		while up and (not walked[up]) and (not loose[up]) do
+		while up and not walked[up] and not loose[up] do
 			walked[up] = true
 			up = Over(up)
 		end
-		if up and walked[up] and (not loose[up]) then
+		if up and walked[up] and not loose[up] then
 			local part = window.parts[up]
 			if part.pin or inRow[up] then
 				error(window.name .. ": " .. up .. " is placed on what's placed on it", 0)
@@ -976,17 +1080,22 @@ local WriteWindow = function(window)
 		local part = window.parts[name]
 		local on = part.place and part.place[2]
 		local other = on and window.parts[on]
-		if (not other) or (part.wowParent == on) or loose[name] or inRow[on] or (not inFile[on]) then
+		if (not other) or (part.wowParent == on) or loose[name] or inRow[on] or not inFile[on] then
 			return false
 		end
-		local x, y, toX, toY = AcrossOf(part.place[1]), DownOf(part.place[1]), AcrossOf(part.place[3]), DownOf(part.place[3])
-		if ((x == "left") and (toX == "right")) or ((x == "right") and (toX == "left"))
-			or ((y == "top") and (toY == "bottom")) or ((y == "bottom") and (toY == "top")) then
+		local x, y, toX, toY =
+			AcrossOf(part.place[1]), DownOf(part.place[1]), AcrossOf(part.place[3]), DownOf(part.place[3])
+		if
+			((x == "left") and (toX == "right"))
+			or ((x == "right") and (toX == "left"))
+			or ((y == "top") and (toY == "bottom"))
+			or ((y == "bottom") and (toY == "top"))
+		then
 			return true
 		end
 		-- (or by where the scan saw it: its middle out of that one)
 		local rect, box = part.seen and part.seen.rect, other.seen and other.seen.rect
-		if (not rect) or (not box) then
+		if (not rect) or not box then
 			return part.besideOn == on -- (no scan: as its file has it)
 		end
 		local midX, midY = rect[1] + rect[3] / 2, rect[2] + rect[4] / 2
@@ -995,7 +1104,8 @@ local WriteWindow = function(window)
 	local kids = {}
 	local Into = function(on, kind, item)
 		-- (`name`: what a part in it needs no wowParent for; a Ghost's isn't a frame)
-		kids[on] = kids[on] or { name = (not ghosts[on]) and on or nil, parts = {}, rows = {}, ghosts = {}, window = window }
+		kids[on] = kids[on]
+			or { name = (not ghosts[on]) and on or nil, parts = {}, rows = {}, ghosts = {}, window = window }
 		table.insert(kids[on][kind], item)
 	end
 	-- A Ghost in the part the parts placed on it are in (one of that frame's
@@ -1003,24 +1113,24 @@ local WriteWindow = function(window)
 	local root = window.seen and window.seen.rect
 	for _, name in ipairs(Sorted(ghosts)) do
 		local x, y, w, h, on = GhostRect(window, name)
-		if (not on) then
+		if not on then
 			local Owner = function(part)
 				on = ((on == nil) or (on == part.wowParent)) and part.wowParent or false
 			end
 			for _, partName in ipairs(Sorted(window.parts)) do
 				local part = window.parts[partName]
-				if inFile[partName] and (not inRow[partName]) and part.place and (part.place[2] == name) then
+				if inFile[partName] and not inRow[partName] and part.place and (part.place[2] == name) then
 					Owner(part)
 				end
 			end
 			-- (a part in the file, not in what's on this Ghost)
 			local up, walked = on, {}
-			while up and (up ~= name) and (not walked[up]) and (not loose[up]) do
+			while up and (up ~= name) and not walked[up] and not loose[up] do
 				walked[up], up = true, Over(up)
 			end
 			local owner = on and window.parts[on]
 			local rect = owner and owner.seen and owner.seen.rect
-			if root and rect and inFile[on] and (not inRow[on]) and (up ~= name) then
+			if root and rect and inFile[on] and not inRow[on] and (up ~= name) then
 				x, y = x - (rect[1] - root[1]), y - ((root[2] + root[4]) - (rect[2] + rect[4]))
 			else
 				on = window.name
@@ -1029,7 +1139,7 @@ local WriteWindow = function(window)
 		Into(on, "ghosts", { name = name, x = x, y = y, width = w, height = h })
 	end
 	for _, name in ipairs(Sorted(window.parts)) do
-		if inFile[name] and (not inRow[name]) then
+		if inFile[name] and not inRow[name] then
 			local part, up = window.parts[name], name
 			if Beside(name) then
 				local other = window.parts[part.place[2]]
@@ -1047,12 +1157,17 @@ local WriteWindow = function(window)
 		Into(row.on, "rows", row)
 	end
 	local width, height = WindowSize(window)
-	local out = { "// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part",
-		"// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua (\"all\",",
-		"// or only its \"place\" or its \"size\"), the others follow /dui layout's scan.",
-		"import QtQuick", "", "WowWindow {",
+	local out = {
+		"// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part",
+		'// is in what it\'s placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",',
+		'// or only its "place" or its "size"), the others follow /dui layout\'s scan.',
+		"import QtQuick",
+		"",
+		"WowWindow {",
 		"    name: " .. Quote(window.name),
-		"    width: " .. Number(width), "    height: " .. Number(height) }
+		"    width: " .. Number(width),
+		"    height: " .. Number(height),
+	}
 	WriteKids(out, kids[window.name], kids, "    ")
 	out[#out + 1] = "}\n"
 	local path = DIR .. "/" .. window.name:gsub("[^%w_]", "_") .. ".qml"
@@ -1072,26 +1187,35 @@ local Line = function(part)
 	local name = part.name
 	local key = name:match("^[%a_][%w_]*$") and name or string.format("[%q]", name)
 	local values = {}
-	if (part.pin ~= "size") then
+	if part.pin ~= "size" then
 		local place = part.place
-		values = { string.format("%q", place[1]), string.format("%q", place[2]), string.format("%q", place[3]), Number(place[4]), Number(place[5]) }
+		values = {
+			string.format("%q", place[1]),
+			string.format("%q", place[2]),
+			string.format("%q", place[3]),
+			Number(place[4]),
+			Number(place[5]),
+		}
 	end
-	if (part.pin ~= "place") then
+	if part.pin ~= "place" then
 		values[#values + 1] = Number(part.size[1])
 		values[#values + 1] = Number(part.size[2])
 	end
 	if part.second then
 		local second = part.second
-		values[#values + 1] = string.format("second = { %q, %q, %s, %s }", second[1], second[2], Number(second[3]), Number(second[4]))
+		values[#values + 1] =
+			string.format("second = { %q, %q, %s, %s }", second[1], second[2], Number(second[3]), Number(second[4]))
 	end
 	local line = string.format("%s = { %s },", key, table.concat(values, ", "))
 	if part.tail then
 		return line .. " " .. part.tail:gsub("^//", "--")
 	end
-	return line .. (part.kind and (" -- " .. part.kind .. (part.text and (" " .. string.format("%q", part.text)) or "")) or "")
+	return line
+		.. (part.kind and (" -- " .. part.kind .. (part.text and (" " .. string.format("%q", part.text)) or "")) or "")
 end
 
-local out = { [[
+local out = {
+	[[
 -- The parts placed for good: { point, the frame it's placed on, that frame's
 -- point, x, y, width, height } (x right, y up), without a width and height it
 -- keeps its size, { width, height } alone sizes it where it is, whatever else
@@ -1101,7 +1225,8 @@ local out = { [[
 -- Common Tasks), this file is overwritten.
 local _, Engine = ...
 
-Engine:NewStaticConfig("Positions", {]] }
+Engine:NewStaticConfig("Positions", {]],
+}
 local total, pinned = 0, 0
 for _, title in ipairs(Sorted(windows)) do
 	local window, first = windows[title], true
@@ -1143,10 +1268,32 @@ for title, window in pairs(windows) do
 	local parts = {}
 	for name, part in pairs(window.parts) do
 		local seen = part.seen or {}
-		local copy = { kind = part.kind, text = part.text, parent = part.wowParent, style = part.style, place = part.place, size = part.size,
-			pin = part.pin, rect = seen.rect, strata = seen.strata, level = seen.level, layer = seen.layer }
+		local copy = {
+			kind = part.kind,
+			text = part.text,
+			parent = part.wowParent,
+			style = part.style,
+			place = part.place,
+			size = part.size,
+			pin = part.pin,
+			rect = seen.rect,
+			strata = seen.strata,
+			level = seen.level,
+			layer = seen.layer,
+		}
 		-- (how the editor draws its text)
-		for _, key in ipairs({ "color", "faded", "font", "fontSize", "justify", "justifyV", "outline", "shadow", "textWidth", "words" }) do
+		for _, key in ipairs({
+			"color",
+			"faded",
+			"font",
+			"fontSize",
+			"justify",
+			"justifyV",
+			"outline",
+			"shadow",
+			"textWidth",
+			"words",
+		}) do
 			copy[key] = seen[key]
 		end
 		copy.tabs = (next(seen.tabs or {}) ~= nil) and Sorted(seen.tabs) or nil
@@ -1170,7 +1317,12 @@ for title, window in pairs(windows) do
 		copy.inRow = part.heldBy and part.heldBy:match("^row (.+)$") -- (its WowRow; `row` is the scan's: a button on a row)
 		copy.second = part.second
 		copy.preview = part.preview
-		copy.use = part.pin and { place = (part.pin ~= "size") and part.place or nil, size = (part.pin ~= "place") and part.size or nil } or nil
+		copy.use = part.pin
+				and {
+					place = (part.pin ~= "size") and part.place or nil,
+					size = (part.pin ~= "place") and part.size or nil,
+				}
+			or nil
 		-- (a point placed on nothing: on its parent, as the game has it)
 		for i, point in ipairs(seen.points or {}) do
 			copy.points = copy.points or {}
@@ -1184,16 +1336,42 @@ for title, window in pairs(windows) do
 	for _, key in ipairs(Sorted(seen.views or {})) do
 		local view = seen.views[key]
 		first = first or view.art
-		views[#views + 1] = { key = key, label = view.label, rect = view.rect, window = view.window, scale = view.scale, art = Pictures(view.art), worded = view.worded }
+		views[#views + 1] = {
+			key = key,
+			label = view.label,
+			rect = view.rect,
+			window = view.window,
+			scale = view.scale,
+			art = Pictures(view.art),
+			worded = view.worded,
+		}
 	end
 	-- its rows (windows/WowRow.qml works them out too, as ResolveRow does)
 	local rows = {}
 	for i, row in ipairs(window.rows or {}) do
-		rows[i] = { name = row.name, parts = row.members, fit = row.fit or "fill", spacing = row.spacing, gap = RowGap(), on = row.on,
-			left = row.left, right = row.right, y = row.y, point = PointOf("left", row.line) }
+		rows[i] = {
+			name = row.name,
+			parts = row.members,
+			fit = row.fit or "fill",
+			spacing = row.spacing,
+			gap = RowGap(),
+			on = row.on,
+			left = row.left,
+			right = row.right,
+			y = row.y,
+			point = PointOf("left", row.line),
+		}
 	end
-	export.windows[title] = { checked = seen.checked, rect = seen.rect, window = seen.window, parts = parts,
-		art = Pictures(first), file = window.file, views = views[1] and views or nil, rows = rows[1] and rows or nil }
+	export.windows[title] = {
+		checked = seen.checked,
+		rect = seen.rect,
+		window = seen.window,
+		parts = parts,
+		art = Pictures(first),
+		file = window.file,
+		views = views[1] and views or nil,
+		rows = rows[1] and rows or nil,
+	}
 end
 
 -- the components for the editor, each property on its own: a table of names by
@@ -1213,7 +1391,7 @@ Fields = function(fields, key, value, note)
 		return
 	end
 	local kind = type(value)
-	if (kind == "table") then
+	if kind == "table" then
 		kind = IsColor(key, value) and "color" or "list"
 	elseif (kind == "string") and value:find("^textures/") then
 		kind = "texture"
@@ -1227,7 +1405,8 @@ if components[1] then
 		for _, key in ipairs(component.order) do
 			Fields(fields, key, component.values[key], component.notes[key])
 		end
-		export.components[#export.components + 1] = { name = component.name, comment = component.comment, fields = fields }
+		export.components[#export.components + 1] =
+			{ name = component.name, comment = component.comment, fields = fields }
 	end
 end
 file = assert(io.open(JSON, "w"))
