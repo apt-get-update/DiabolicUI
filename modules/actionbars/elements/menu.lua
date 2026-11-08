@@ -326,25 +326,10 @@ MenuWidget.HookLiteBag = function(self, menuButton, menuWindow)
 	end)
 end
 
-MenuWidget.OnEnable = function(self)
-	local widget = self
-	local config = Module.config
-	local db = Module.db
-
-	local Main = Module:GetWidget("Controller: Main"):GetFrame()
-	local Menu = Module:GetWidget("Controller: Menu"):GetFrame()
-	local MenuButton = Module:GetWidget("Template: MenuButton")
-	local FlyoutBar = Module:GetWidget("Template: FlyoutBar")
-
-	-- config table shortcuts
-	local main_menu_config = config.structure.controllers.mainmenu
-	local micro_menu_config = config.visuals.menus.main.micromenu
-	local actionbar_menu_config = config.visuals.menus.main.barmenu
-	local bagbar_menu_config = config.visuals.menus.main.bagmenu
-
-
-	-- Main Buttons
-	---------------------------------------------
+-- The four buttons on the bar: the main menu, the bags, Blizzard's micro menu
+-- and the action bars.
+MenuWidget.CreateMainButtons = function(self, menu)
+	local Menu, MenuButton, main_menu_config, micro_menu_config, actionbar_menu_config, bagbar_menu_config = menu.Menu, menu.MenuButton, menu.main_menu_config, menu.micro_menu_config, menu.actionbar_menu_config, menu.bagbar_menu_config
 	local MasterMenuButton = MenuButton:New(Menu)
 	MasterMenuButton:SetPoint("BOTTOMRIGHT")
 	MasterMenuButton:SetSize(unpack(micro_menu_config.button.size))
@@ -363,10 +348,15 @@ MenuWidget.OnEnable = function(self)
 	local ActionBarMenuButton = MenuButton:New(Menu)
 	ActionBarMenuButton:SetSize(unpack(actionbar_menu_config.button.size))
 	self:Skin(ActionBarMenuButton, micro_menu_config, "bars")
+	menu.MasterMenuButton = MasterMenuButton
+	menu.BagBarMenuButton = BagBarMenuButton
+	menu.MicroMenuButton = MicroMenuButton
+	menu.ActionBarMenuButton = ActionBarMenuButton
+end
 
-
-	-- Menu Window #0: MasterMenu
-	---------------------------------------------
+-- The main menu's window: the micro menu's and the action bars' buttons.
+MenuWidget.CreateMasterWindow = function(self, menu)
+	local FlyoutBar, micro_menu_config, MasterMenuButton, MicroMenuButton, ActionBarMenuButton = menu.FlyoutBar, menu.micro_menu_config, menu.MasterMenuButton, menu.MicroMenuButton, menu.ActionBarMenuButton
 	local MasterMenuWindow = FlyoutBar:New(MasterMenuButton)
 	MasterMenuWindow:AttachToButton(MasterMenuButton)
 	MasterMenuWindow:SetPoint(unpack(micro_menu_config.position))
@@ -387,10 +377,13 @@ MenuWidget.OnEnable = function(self)
 	MasterMenuWindow:Arrange()
 
 	self.MasterMenuWindow = MasterMenuWindow
+	menu.MasterMenuWindow = MasterMenuWindow
+end
 
-
-	-- Menu Window #1: MicroMenu
-	---------------------------------------------
+-- The micro menu's window: Blizzard's micro buttons, in our look.
+MenuWidget.CreateMicroWindow = function(self, menu)
+	local FlyoutBar, micro_menu_config, MicroMenuButton, MasterMenuWindow = menu.FlyoutBar, menu.micro_menu_config, menu.MicroMenuButton, menu.MasterMenuWindow
+	local widget = self
 	local MicroMenuWindow = FlyoutBar:New(MicroMenuButton)
 	MicroMenuWindow:AttachToButton(MicroMenuButton)
 	MicroMenuWindow:SetBackdrop(micro_menu_config.backdrop)
@@ -491,11 +484,68 @@ MenuWidget.OnEnable = function(self)
 
 	-- Arrange the buttons and size the window
 	MicroMenuWindow:Arrange()
-	
+	menu.MicroMenuWindow = MicroMenuWindow
+end
 
+-- A title bar over a part of the action bar menu; `...`: where its top goes.
+local AddMenuHeader = function(new, headerKey, titleKey, style, text, ...)
+	local header = CreateFrame("Frame", nil, new)
+	new[headerKey] = header
+	header:SetPoint("TOP", ...)
+	header:SetPoint("LEFT", style.header.insets[1], 0)
+	header:SetPoint("RIGHT", -style.header.insets[2], 0)
+	header:SetHeight(style.header.height)
+	header:SetBackdrop(style.header.backdrop)
+	header:SetBackdropColor(unpack(style.header.backdrop_color))
+	header:SetBackdropBorderColor(unpack(style.header.backdrop_border_color))
 
-	-- Menu Window #2: ActionBars
-	---------------------------------------------
+	local title = header:CreateFontString(nil, "ARTWORK")
+	new[titleKey] = title
+	title:SetPoint("CENTER")
+	title:SetJustifyV("TOP")
+	title:SetJustifyH("CENTER")
+	title:SetFontObject(style.header.title.normalFont)
+	title:SetText(text)
+end
+
+-- The body under a title bar, three buttons high.
+local AddMenuBody = function(new, bodyKey, header, style, buttonStyle)
+	local body = CreateFrame("Frame", nil, new)
+	new[bodyKey] = body
+	body:SetPoint("TOP", header, "BOTTOM", 0, -style.padding)
+	body:SetPoint("LEFT", style.body.insets[1], 0)
+	body:SetPoint("RIGHT", -style.body.insets[2], 0)
+	body:SetBackdrop(style.body.backdrop)
+	body:SetBackdropColor(unpack(style.body.backdrop_color))
+	body:SetBackdropBorderColor(unpack(style.body.backdrop_border_color))
+	body:SetHeight(buttonStyle.size[2]*3 + 16*2 + 4*2)
+	return body
+end
+
+-- Three buttons in `body`, each setting the controller's `attribute` to its
+-- value: `choices` { text, value }, named new.button<first> and on.
+local AddBarChoices = function(widget, new, body, buttonStyle, controller, attribute, first, choices)
+	local previous
+	for i, choice in ipairs(choices) do
+		local button = widget:NewMenuButton(body, buttonStyle, choice[1])
+		new["button" .. (first + i - 1)] = button
+		if previous then
+			button:SetPoint("TOP", previous, "BOTTOM", 0, -4 )
+		else
+			button:SetPoint("TOP", 0, -16 )
+		end
+		button:SetFrameRef("controller", controller)
+		button:SetAttribute("_onclick", ([[
+			local controller = self:GetFrameRef("controller");
+			controller:SetAttribute("%s", %d);
+		]]):format(attribute, choice[2]))
+		previous = button
+	end
+end
+
+-- The action bars' window: how many bars and side bars, and the note on dragging.
+MenuWidget.CreateActionBarWindow = function(self, menu)
+	local FlyoutBar, Main, actionbar_menu_config, ActionBarMenuButton, MicroMenuWindow, MasterMenuWindow = menu.FlyoutBar, menu.Main, menu.actionbar_menu_config, menu.ActionBarMenuButton, menu.MicroMenuWindow, menu.MasterMenuWindow
 	local ActionBarMenuWindow = FlyoutBar:New(ActionBarMenuButton)
 	ActionBarMenuWindow:AttachToButton(ActionBarMenuButton)
 	ActionBarMenuWindow:SetSize(unpack(actionbar_menu_config.size))
@@ -513,164 +563,50 @@ MenuWidget.OnEnable = function(self)
 	
 	MasterMenuWindow:AddToAutoHide(ActionBarMenuWindow)
 
-	-- Raise your hand if you hate writing menus!!!1 >:(
-	do
-		
-		local style_table = actionbar_menu_config.ui.window
-		local style_table_button = actionbar_menu_config.ui.menubutton
-		local new = ActionBarMenuWindow
-		
-			-- Header1
-			------------------------------------------------------------------
-			new.header = CreateFrame("Frame", nil, new)
-			new.header:SetPoint("TOP", 0, -style_table.header.insets[3])
-			new.header:SetPoint("LEFT", style_table.header.insets[1], 0)
-			new.header:SetPoint("RIGHT", -style_table.header.insets[2], 0)
-			new.header:SetHeight(style_table.header.height)
-			new.header:SetBackdrop(style_table.header.backdrop)
-			new.header:SetBackdropColor(unpack(style_table.header.backdrop_color))
-			new.header:SetBackdropBorderColor(unpack(style_table.header.backdrop_border_color))
-			
-			-- title
-			new.title = new.header:CreateFontString(nil, "ARTWORK")
-			new.title:SetPoint("CENTER")
-			new.title:SetJustifyV("TOP")
-			new.title:SetJustifyH("CENTER")
-			new.title:SetFontObject(style_table.header.title.normalFont) 
-			new.title:SetText(L["Action Bars"])
-			
-			-- Body
-			------------------------------------------------------------------
-			new.body = CreateFrame("Frame", nil, new)
-			new.body:SetPoint("TOP", new.header, "BOTTOM", 0, -style_table.padding)
-			new.body:SetPoint("LEFT", style_table.body.insets[1], 0)
-			new.body:SetPoint("RIGHT", -style_table.body.insets[2], 0)
-			new.body:SetBackdrop(style_table.body.backdrop)
-			new.body:SetBackdropColor(unpack(style_table.body.backdrop_color))
-			new.body:SetBackdropBorderColor(unpack(style_table.body.backdrop_border_color))
-			new.body:SetHeight(style_table_button.size[2]*3 + 16*2 + 4*2)
-			
-			-- Buttons
-			------------------------------------------------------------------
-			new.button1 = self:NewMenuButton(new.body, style_table_button, L["One"])
-			new.button1:SetPoint("TOP", 0, -16 )
-			new.button1:SetFrameRef("controller", Main)
-			new.button1:SetAttribute("_onclick", [[
-				local controller = self:GetFrameRef("controller");
-				controller:SetAttribute("numbars", 1);
-			]])
+	local style_table = actionbar_menu_config.ui.window
+	local style_table_button = actionbar_menu_config.ui.menubutton
+	local new = ActionBarMenuWindow
 
-			new.button2 = self:NewMenuButton(new.body, style_table_button, L["Two"])
-			new.button2:SetPoint("TOP", new.button1, "BOTTOM", 0, -4 )
-			new.button2:SetFrameRef("controller", Main)
-			new.button2:SetAttribute("_onclick", [[
-				local controller = self:GetFrameRef("controller");
-				controller:SetAttribute("numbars", 2);
-			]])
+	AddMenuHeader(new, "header", "title", style_table, L["Action Bars"], 0, -style_table.header.insets[3])
+	AddMenuBody(new, "body", new.header, style_table, style_table_button)
+	AddBarChoices(self, new, new.body, style_table_button, Main, "numbars", 1, { { L["One"], 1 }, { L["Two"], 2 }, { L["Three"], 3 } })
 
-			new.button3 = self:NewMenuButton(new.body, style_table_button, L["Three"])
-			new.button3:SetPoint("TOP", new.button2, "BOTTOM", 0, -4 )
-			new.button3:SetFrameRef("controller", Main)
-			new.button3:SetAttribute("_onclick", [[
-				local controller = self:GetFrameRef("controller");
-				controller:SetAttribute("numbars", 3);
-			]])
+	AddMenuHeader(new, "header2", "title2", style_table, L["Side Bars"], new.body, "BOTTOM", 0, -style_table.padding)
+	AddMenuBody(new, "body2", new.header2, style_table, style_table_button)
+	AddBarChoices(self, new, new.body2, style_table_button, Main, "numsidebars", 4, { { L["No Bars"], 0 }, { L["One"], 1 }, { L["Two"], 2 } })
 
+	new.footer = CreateFrame("Frame", nil, new)
+	new.footer:SetPoint("TOP", new.body2, "BOTTOM", 0, -style_table.footer.offset)
+	new.footer:SetPoint("LEFT", style_table.footer.insets[1], 0)
+	new.footer:SetPoint("RIGHT", -style_table.footer.insets[2], 0)
+	new.footer:SetPoint("BOTTOM", 0, style_table.footer.insets[3])
+	new.footer:SetBackdrop(style_table.footer.backdrop)
+	new.footer:SetBackdropColor(unpack(style_table.footer.backdrop_color))
+	new.footer:SetBackdropBorderColor(unpack(style_table.footer.backdrop_border_color))
 
-			-- Header2
-			------------------------------------------------------------------
-			new.header2 = CreateFrame("Frame", nil, new)
-			new.header2:SetPoint("TOP", new.body, "BOTTOM", 0, -style_table.padding)
-			new.header2:SetPoint("LEFT", style_table.header.insets[1], 0)
-			new.header2:SetPoint("RIGHT", -style_table.header.insets[2], 0)
-			new.header2:SetHeight(style_table.header.height)
-			new.header2:SetBackdrop(style_table.header.backdrop)
-			new.header2:SetBackdropColor(unpack(style_table.header.backdrop_color))
-			new.header2:SetBackdropBorderColor(unpack(style_table.header.backdrop_border_color))
+	-- message
+	new.message = new.footer:CreateFontString(nil, "ARTWORK")
+	new.message:SetWidth(new.footer:GetWidth() - (style_table.footer.message.insets[1] + style_table.footer.message.insets[2]))
+	new.message:SetPoint("TOP")
+	new.message:SetPoint("LEFT")
+	new.message:SetPoint("RIGHT")
+	new.message:SetJustifyV("TOP")
+	new.message:SetJustifyH("CENTER")
+	new.message:SetIndentedWordWrap(false)
+	new.message:SetWordWrap(true)
+	new.message:SetNonSpaceWrap(false)
+	new.message:SetSpacing(0) -- or it will become truncated
+	new.message:SetPoint("TOP", 0, -style_table.footer.message.insets[3])
+	new.message:SetPoint("LEFT", style_table.footer.message.insets[1], 0)
+	new.message:SetPoint("RIGHT", -style_table.footer.message.insets[2], 0)
+	new.message:SetFontObject(style_table.footer.message.normalFont) 
+	new.message:SetText(L["Hold |cff00b200<Alt+Ctrl+Shift>|r and drag to remove spells, macros and items from the action buttons."])
+	menu.ActionBarMenuWindow = ActionBarMenuWindow
+end
 
-			-- title2
-			new.title2 = new.header2:CreateFontString(nil, "ARTWORK")
-			new.title2:SetPoint("CENTER")
-			new.title2:SetJustifyV("TOP")
-			new.title2:SetJustifyH("CENTER")
-			new.title2:SetFontObject(style_table.header.title.normalFont)  
-			new.title2:SetText(L["Side Bars"])
-
-
-			-- Body2
-			------------------------------------------------------------------
-			new.body2 = CreateFrame("Frame", nil, new)
-			new.body2:SetPoint("TOP", new.header2, "BOTTOM", 0, -style_table.padding)
-			new.body2:SetPoint("LEFT", style_table.body.insets[1], 0)
-			new.body2:SetPoint("RIGHT", -style_table.body.insets[2], 0)
-			new.body2:SetBackdrop(style_table.body.backdrop)
-			new.body2:SetBackdropColor(unpack(style_table.body.backdrop_color))
-			new.body2:SetBackdropBorderColor(unpack(style_table.body.backdrop_border_color))
-			new.body2:SetHeight(style_table_button.size[2]*3 + 16*2 + 4*2)
-			
-			-- Buttons2
-			------------------------------------------------------------------
-			new.button4 = self:NewMenuButton(new.body2, style_table_button, L["No Bars"])
-			new.button4:SetPoint("TOP", 0, -16 )
-			new.button4:SetFrameRef("controller", Main)
-			new.button4:SetAttribute("_onclick", [[
-				local controller = self:GetFrameRef("controller");
-				controller:SetAttribute("numsidebars", 0);
-			]])
-
-			new.button5 = self:NewMenuButton(new.body2, style_table_button, L["One"])
-			new.button5:SetPoint("TOP", new.button4, "BOTTOM", 0, -4 )
-			new.button5:SetFrameRef("controller", Main)
-			new.button5:SetAttribute("_onclick", [[
-				local controller = self:GetFrameRef("controller");
-				controller:SetAttribute("numsidebars", 1);
-			]])
-
-			new.button6 = self:NewMenuButton(new.body2, style_table_button, L["Two"])
-			new.button6:SetPoint("TOP", new.button5, "BOTTOM", 0, -4 )
-			new.button6:SetFrameRef("controller", Main)
-			new.button6:SetAttribute("_onclick", [[
-				local controller = self:GetFrameRef("controller");
-				controller:SetAttribute("numsidebars", 2);
-			]])
-
-
-			-- Footer
-			------------------------------------------------------------------
-			new.footer = CreateFrame("Frame", nil, new)
-			new.footer:SetPoint("TOP", new.body2, "BOTTOM", 0, -style_table.footer.offset)
-			new.footer:SetPoint("LEFT", style_table.footer.insets[1], 0)
-			new.footer:SetPoint("RIGHT", -style_table.footer.insets[2], 0)
-			new.footer:SetPoint("BOTTOM", 0, style_table.footer.insets[3])
-			new.footer:SetBackdrop(style_table.footer.backdrop)
-			new.footer:SetBackdropColor(unpack(style_table.footer.backdrop_color))
-			new.footer:SetBackdropBorderColor(unpack(style_table.footer.backdrop_border_color))
-
-			-- message
-			new.message = new.footer:CreateFontString(nil, "ARTWORK")
-			new.message:SetWidth(new.footer:GetWidth() - (style_table.footer.message.insets[1] + style_table.footer.message.insets[2]))
-			new.message:SetPoint("TOP")
-			new.message:SetPoint("LEFT")
-			new.message:SetPoint("RIGHT")
-			new.message:SetJustifyV("TOP")
-			new.message:SetJustifyH("CENTER")
-			new.message:SetIndentedWordWrap(false)
-			new.message:SetWordWrap(true)
-			new.message:SetNonSpaceWrap(false)
-			new.message:SetSpacing(0) -- or it will become truncated
-			new.message:SetPoint("TOP", 0, -style_table.footer.message.insets[3])
-			new.message:SetPoint("LEFT", style_table.footer.message.insets[1], 0)
-			new.message:SetPoint("RIGHT", -style_table.footer.message.insets[2], 0)
-			new.message:SetFontObject(style_table.footer.message.normalFont) 
-			new.message:SetText(L["Hold |cff00b200<Alt+Ctrl+Shift>|r and drag to remove spells, macros and items from the action buttons."])
-		
-
-	end
-	
-
-
-	-- Menu Window #3: BagBar
-	---------------------------------------------
+-- The bag bar's window.
+MenuWidget.CreateBagBarWindow = function(self, menu)
+	local FlyoutBar, bagbar_menu_config, BagBarMenuButton = menu.FlyoutBar, menu.bagbar_menu_config, menu.BagBarMenuButton
 	local BagBarMenuWindow = FlyoutBar:New(BagBarMenuButton)
 	BagBarMenuWindow:Hide()
 	BagBarMenuWindow:SetSize(unpack(bagbar_menu_config.size))
@@ -678,7 +614,12 @@ MenuWidget.OnEnable = function(self)
 	BagBarMenuWindow:SetBackdrop(bagbar_menu_config.backdrop)
 	BagBarMenuWindow:SetBackdropColor(unpack(bagbar_menu_config.backdrop_color))
 	BagBarMenuWindow:SetBackdropBorderColor(unpack(bagbar_menu_config.backdrop_border_color))
-	
+	menu.BagBarMenuWindow = BagBarMenuWindow
+end
+
+-- The four buttons' tooltips and clicks.
+MenuWidget.AddTooltips = function(self, menu)
+	local MasterMenuButton, BagBarMenuButton, MicroMenuButton, ActionBarMenuButton = menu.MasterMenuButton, menu.BagBarMenuButton, menu.MicroMenuButton, menu.ActionBarMenuButton
 	BagBarMenuButton.OnEnter = function(self) 
 		if MasterMenuButton:GetButtonState() == "PUSHED"
 		or BagBarMenuButton:GetButtonState() == "PUSHED" then
@@ -764,8 +705,12 @@ MenuWidget.OnEnable = function(self)
 			self:OnEnter() -- update tooltips
 		end
 	end
+end
 
-
+-- The backpack, bags and keyring in the bag bar's window, and the bags' button
+-- pushed while they show (Bagnon's and LiteBag's too).
+MenuWidget.MoveBagButtons = function(self, menu)
+	local bagbar_menu_config, BagBarMenuButton, BagBarMenuWindow = menu.bagbar_menu_config, menu.BagBarMenuButton, menu.BagBarMenuWindow
 	local BagWindow = ContainerFrame1 -- to easier transition to our custom bags later
 	
 	-- Move the backpack-, bag- and keyring buttons to a visible frame
@@ -841,8 +786,13 @@ MenuWidget.OnEnable = function(self)
 			self:RegisterEvent("ADDON_LOADED", proxy)
 		end
 	end
+	menu.BagWindow = BagWindow
+end
 
-	
+-- A button's click hiding the other windows (secure: works in combat), the bags
+-- closing as ours open.
+MenuWidget.LinkWindows = function(self, menu)
+	local BagWindow, MasterMenuButton, BagBarMenuButton, MicroMenuButton, ActionBarMenuButton, MasterMenuWindow, BagBarMenuWindow, MicroMenuWindow, ActionBarMenuWindow = menu.BagWindow, menu.MasterMenuButton, menu.BagBarMenuButton, menu.MicroMenuButton, menu.ActionBarMenuButton, menu.MasterMenuWindow, menu.BagBarMenuWindow, menu.MicroMenuWindow, menu.ActionBarMenuWindow
 	BagBarMenuButton:SetFrameRef("bags", BagWindow)
 	BagBarMenuButton:SetFrameRef("window", BagBarMenuWindow)
 	BagBarMenuButton:SetFrameRef("otherwindow1", ActionBarMenuWindow)
@@ -905,10 +855,11 @@ MenuWidget.OnEnable = function(self)
 		self:GetFrameRef("otherwindow1"):Hide();
 		self:GetFrameRef("otherwindow2"):Hide();
 	]])
+end
 
-
-	-- Texts
-	---------------------------------------------
+-- The money and the framerate and latency on the main menu's button.
+MenuWidget.CreateTexts = function(self, menu)
+	local db, micro_menu_config, MasterMenuButton, BagBarMenuButton, BagBarMenuWindow = menu.db, menu.micro_menu_config, menu.MasterMenuButton, menu.BagBarMenuButton, menu.BagBarMenuWindow
 	local Performance = MasterMenuButton:CreateFontString()
 	Performance:SetDrawLayer("ARTWORK")
 	Performance:SetFontObject(micro_menu_config.performance.normalFont)
@@ -958,10 +909,11 @@ MenuWidget.OnEnable = function(self)
 	-- Ctrl+R (Blizzard's "Toggle Framerate" key binding) toggles our
 	-- fps & latency text instead of Blizzard's own framerate display.
 	hooksecurefunc("ToggleFramerate", function() self:TogglePerformance() end)
+end
 
-
-	-- Sounds
-	---------------------------------------------
+-- The windows' sounds as they open and close.
+MenuWidget.AddSounds = function(self, menu)
+	local MasterMenuWindow, MicroMenuWindow, ActionBarMenuWindow = menu.MasterMenuWindow, menu.MicroMenuWindow, menu.ActionBarMenuWindow
 	ActionBarMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
 	ActionBarMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
 
@@ -970,7 +922,33 @@ MenuWidget.OnEnable = function(self)
 
 	MasterMenuWindow:HookScript("OnShow", function(self) PlaySound("igMainMenuOpen") end)
 	MasterMenuWindow:HookScript("OnHide", function(self) PlaySound("igMainMenuClose") end)
-	
+end
+
+MenuWidget.OnEnable = function(self)
+	local config = Module.config
+	-- what the steps share, each adding what it makes
+	local menu = {
+		db = Module.db,
+		Main = Module:GetWidget("Controller: Main"):GetFrame(),
+		Menu = Module:GetWidget("Controller: Menu"):GetFrame(),
+		MenuButton = Module:GetWidget("Template: MenuButton"),
+		FlyoutBar = Module:GetWidget("Template: FlyoutBar"),
+		main_menu_config = config.structure.controllers.mainmenu,
+		micro_menu_config = config.visuals.menus.main.micromenu,
+		actionbar_menu_config = config.visuals.menus.main.barmenu,
+		bagbar_menu_config = config.visuals.menus.main.bagmenu,
+	}
+	self:CreateMainButtons(menu)
+	self:CreateMasterWindow(menu)
+	self:CreateMicroWindow(menu)
+	self:CreateActionBarWindow(menu)
+	self:CreateBagBarWindow(menu)
+	self:AddTooltips(menu)
+	self:MoveBagButtons(menu)
+	self:LinkWindows(menu)
+	self:CreateTexts(menu)
+	self:AddSounds(menu)
+
 
 	-- We need to manually handle this, as our actionbar script 
 	-- is blocking this event for the talent button. Or?

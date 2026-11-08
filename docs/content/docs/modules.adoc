@@ -23,7 +23,7 @@ weight: 8
 |===
 | File | Does
 
-| `windows.lua` | The kit: stone, iron, red band, title plate, foot, tabs, buttons
+| `windows.lua` and `windows-*.lua` | The kit: stone, iron, red band, title plate and foot; `-tabs`, `-controls`, `-buttons` and `-zones` hold those parts
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
 | `character.lua`, `mail.lua`, `auction.lua`... | A window that needs more than that line
 | `adjust.lua` | Puts parts where `settings/positions.lua` says

@@ -2,6 +2,10 @@
 
 <Script file='anchors.lua'/>
 <Script file='windows.lua'/>
+<Script file='windows-tabs.lua'/>
+<Script file='windows-controls.lua'/>
+<Script file='windows-buttons.lua'/>
+<Script file='windows-zones.lua'/>
 <Script file='adjust.lua'/>
 <Script file='layout-scan.lua'/>
 <Script file='achievements.lua'/>
