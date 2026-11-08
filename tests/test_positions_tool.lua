@@ -159,7 +159,6 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	lu.assertStrContains(friends, [[
         EditBox {
             name: "WhoFrameEditBox"
-            wowParent: "WhoFrame"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -20
             anchors.bottom: parent.bottom
@@ -178,7 +177,7 @@ function TestPositionsTool:test_the_windows_written_from_the_scan_and_the_lines(
 	lu.assertStrContains(auction, '            width: 72\n            height: 12\n        } // (a note at its end)')
 	lu.assertStrContains(auction, 'text: "Seen \\"first\\""')
 	-- several points: the place that keeps it where it is, its rect's size
-	lu.assertStrContains(friends, 'Frame {\n            name: "WhoFrameBar"\n            wowParent: "WhoFrame"\n'
+	lu.assertStrContains(friends, 'Frame {\n            name: "WhoFrameBar"\n'
 		.. '            anchors.horizontalCenter: parent.horizontalCenter\n            anchors.horizontalCenterOffset: 10\n            anchors.top: parent.top\n')
 	-- what's not in it stands in as a Ghost, where what's on it says
 	-- (with what's on it inside it)
@@ -284,9 +283,9 @@ WowWindow {
 	lu.assertStrContains(Runs(dir), "4 parts, 2 in use.")
 	local text = Read(dir .. "/windows/Mine.qml")
 	lu.assertStrContains(text, 'WowWindow {\n    name: "Mine"\n    width: 510\n    height: 620\n')
-	lu.assertStrContains(text, '    // over a part\n    Part {\n        name: "Far"')
-	-- (an id of the file: in that part from now on, by `parent`)
-	lu.assertStrContains(text, 'name: "NoId"\n            anchors.right: parent.right\n            anchors.rightMargin: 2\n            anchors.verticalCenter: parent.verticalCenter\n')
+	lu.assertStrContains(text, '    // over a part\n    Part {\n        id: far\n        name: "Far"')
+	-- (on an id of the file: beside that part, as the file has it)
+	lu.assertStrContains(text, '    Part {\n        name: "NoId"\n        anchors.right: far.right\n        anchors.rightMargin: 2\n        anchors.verticalCenter: far.verticalCenter\n')
 	lu.assertStrContains(text, 'text: "a \\\\ \\"text\\""\n        anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom\n')
 	lu.assertEquals(PositionsOf(dir).Open, { 4, 5 })
 	os.execute("rm -rf '" .. dir .. "'")
@@ -914,7 +913,7 @@ WowWindow {
 	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
 	lu.assertEquals(Read(dir .. "/windows/W.qml"), file)
 	lu.assertEquals(Read(dir .. "/positions.lua"), text)
-	-- on each other, as a scan may say: one in the window, the other in it
+	-- on each other, as a scan may say: one in the window, the other beside it
 	dir = Folder()
 	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
 		A = { "TOP", "B", "BOTTOM", 0, 0, 10, 10, kind = "Frame", rect = { 0, 0, 10, 10 } },
@@ -922,7 +921,7 @@ WowWindow {
 	} } } }]=])
 	Runs(dir)
 	file = Read(dir .. "/windows/W.qml")
-	lu.assertStrContains(file, '    Frame {\n        name: "A"\n        width: 10\n        height: 10\n\n        Frame {\n            name: "B"\n')
+	lu.assertStrContains(file, '    Frame {\n        id: a\n        name: "A"\n        width: 10\n        height: 10\n    }\n\n    Frame {\n        name: "B"\n        anchors.horizontalCenter: a.horizontalCenter\n        anchors.top: a.bottom\n')
 	-- pinned, it can't be: said
 	Write(dir .. "/positions.lua", 'local _, E = ...\nE:NewStaticConfig("Positions", {\n\tA = { "TOP", "B", "BOTTOM", 0, 0 },\n\tB = { "TOP", "A", "BOTTOM", 0, 0 },\n})\n')
 	os.execute("rm -rf '" .. dir .. "/windows'")
@@ -930,7 +929,8 @@ WowWindow {
 end
 
 -- A texture something's placed on: its Ghost in the frame that's in, from its
--- top left (it moves with it); a button its scan saw out of another, beside it.
+-- top left (it moves with it); what its scan saw out of what it's on, beside it;
+-- its own child in it, wherever it hangs; no wowParent where the block says it.
 function TestPositionsTool:test_a_ghost_in_its_frame_and_a_button_beside()
 	local dir = Folder()
 	Write(dir .. "/saved.lua", [=[DiabolicUI_Layout = { windows = { W = { rect = { 0, 0, 400, 200 }, parts = {
@@ -939,6 +939,10 @@ function TestPositionsTool:test_a_ghost_in_its_frame_and_a_button_beside()
 		B = { "TOPLEFT", "A", "TOPLEFT", 50, 0, 40, 20, kind = "Button", parent = "F", rect = { 80, 145, 40, 20 } },
 		C = { "TOPLEFT", "A", "TOPLEFT", 5, 0, 10, 10, kind = "Button", parent = "F", rect = { 35, 155, 10, 10 } },
 		L = { "LEFT", "Loose", "RIGHT", 0, 0, 10, 10, kind = "Frame", parent = "W", rect = { 300, 100, 10, 10 } },
+		Label = { "TOPLEFT", "F", "TOPLEFT", 2, -2, 20, 10, kind = "FontString", parent = "F", rect = { 22, 158, 20, 10 } },
+		Value = { "LEFT", "Label", "RIGHT", 4, 0, 20, 10, kind = "FontString", parent = "F", rect = { 46, 158, 20, 10 } },
+		Check = { "TOPLEFT", "W", "TOPLEFT", 100, -100, 20, 20, kind = "CheckButton", parent = "W", rect = { 100, 80, 20, 20 } },
+		CheckText = { "LEFT", "Check", "RIGHT", 2, 0, 30, 10, kind = "FontString", parent = "Check", rect = { 122, 85, 30, 10 } },
 	} } } }]=])
 	Runs(dir)
 	local file = Read(dir .. "/windows/W.qml")
@@ -948,9 +952,17 @@ function TestPositionsTool:test_a_ghost_in_its_frame_and_a_button_beside()
 	lu.assertStrContains(file, '                    name: "C"\n                    wowParent: "F"\n                    anchors.left: parent.left\n')
 	-- (on a window's own: in the window)
 	lu.assertStrContains(file, '    Ghost {\n        name: "Loose"\n')
+	-- a value after its label: beside it, in the frame they're both in
+	lu.assertStrContains(file, '            id: label\n            name: "Label"\n')
+	lu.assertStrContains(file, '            name: "Value"\n            anchors.left: label.right\n')
+	-- a check button's text out of it, still in it
+	lu.assertStrContains(file, '            name: "CheckText"\n            anchors.left: parent.right\n')
 	-- it settles
 	Runs(dir)
 	lu.assertEquals(Read(dir .. "/windows/W.qml"), file)
+	-- no scan: the block it's in says it
+	Run({ "-", dir .. "/positions.lua", dir .. "/layout.json", dir .. "/windows" })
+	lu.assertStrContains(Read(dir .. "/layout.json"):match('"Label":(%b{})'), '"parent":"F"')
 	os.execute("rm -rf '" .. dir .. "'")
 end
 

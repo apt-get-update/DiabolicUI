@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -11,7 +11,6 @@ WowWindow {
     Button {
         name: "DressUpFrameCancelButton"
         text: "Close"
-        wowParent: "DressUpFrame"
         style: "Button"
         anchors.right: parent.right
         anchors.rightMargin: 39
@@ -23,7 +22,6 @@ WowWindow {
         FontString {
             name: "DressUpFrameCancelButtonText"
             text: "Close"
-            wowParent: "DressUpFrameCancelButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 40.3
@@ -35,7 +33,6 @@ WowWindow {
     FontString {
         name: "DressUpFrameDescriptionText"
         text: "CTRL-Left Click additional items to display them on your character"
-        wowParent: "DressUpFrame"
         pin: "place"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: -11
@@ -47,7 +44,6 @@ WowWindow {
 
     Frame {
         name: "DressUpFrameDiabolic"
-        wowParent: "DressUpFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -68,7 +64,6 @@ WowWindow {
 
         Frame {
             name: "DressUpFrameDiabolicBorder"
-            wowParent: "DressUpFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 402
@@ -86,7 +81,6 @@ WowWindow {
                 FontString {
                     name: "DressUpFrameTitleText"
                     text: "Dressing Room"
-                    wowParent: "DressUpFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -98,7 +92,6 @@ WowWindow {
 
         Frame {
             name: "DressUpFrameDiabolicSocket"
-            wowParent: "DressUpFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -111,7 +104,6 @@ WowWindow {
     Button {
         name: "DressUpFrameResetButton"
         text: "Reset"
-        wowParent: "DressUpFrame"
         style: "Button"
         anchors.right: parent.right
         anchors.rightMargin: 122
@@ -123,7 +115,6 @@ WowWindow {
         FontString {
             name: "DressUpFrameResetButtonText"
             text: "Reset"
-            wowParent: "DressUpFrameResetButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 40.3
@@ -133,7 +124,6 @@ WowWindow {
 
     DressUpModel {
         name: "DressUpModel"
-        wowParent: "DressUpFrame"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: -11
         anchors.bottom: parent.bottom

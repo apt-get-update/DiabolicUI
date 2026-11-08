@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "LFRBrowseFrame"
-        wowParent: "LFRParentFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 355
@@ -20,7 +19,6 @@ WowWindow {
             id: lFRBrowseFrameColumnHeader1
             name: "LFRBrowseFrameColumnHeader1"
             text: "Name"
-            wowParent: "LFRBrowseFrame"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 26
@@ -34,7 +32,6 @@ WowWindow {
             id: lFRBrowseFrameColumnHeader2
             name: "LFRBrowseFrameColumnHeader2"
             text: "Lvl"
-            wowParent: "LFRBrowseFrame"
             anchors.left: lFRBrowseFrameColumnHeader1.right
             anchors.leftMargin: -2
             anchors.verticalCenter: lFRBrowseFrameColumnHeader1.verticalCenter
@@ -46,7 +43,6 @@ WowWindow {
             id: lFRBrowseFrameColumnHeader3
             name: "LFRBrowseFrameColumnHeader3"
             text: "Class"
-            wowParent: "LFRBrowseFrame"
             anchors.left: lFRBrowseFrameColumnHeader2.right
             anchors.leftMargin: -2
             anchors.verticalCenter: lFRBrowseFrameColumnHeader2.verticalCenter
@@ -57,7 +53,6 @@ WowWindow {
         Button {
             id: lFRBrowseFrameColumnHeader4
             name: "LFRBrowseFrameColumnHeader4"
-            wowParent: "LFRBrowseFrame"
             anchors.left: lFRBrowseFrameColumnHeader3.right
             anchors.leftMargin: -2
             anchors.verticalCenter: lFRBrowseFrameColumnHeader3.verticalCenter
@@ -68,7 +63,6 @@ WowWindow {
         Button {
             id: lFRBrowseFrameColumnHeader5
             name: "LFRBrowseFrameColumnHeader5"
-            wowParent: "LFRBrowseFrame"
             anchors.left: lFRBrowseFrameColumnHeader4.right
             anchors.leftMargin: -2
             anchors.verticalCenter: lFRBrowseFrameColumnHeader4.verticalCenter
@@ -79,7 +73,6 @@ WowWindow {
         Button {
             id: lFRBrowseFrameColumnHeader6
             name: "LFRBrowseFrameColumnHeader6"
-            wowParent: "LFRBrowseFrame"
             anchors.left: lFRBrowseFrameColumnHeader5.right
             anchors.leftMargin: -2
             anchors.verticalCenter: lFRBrowseFrameColumnHeader5.verticalCenter
@@ -89,7 +82,6 @@ WowWindow {
 
         Button {
             name: "LFRBrowseFrameColumnHeader7"
-            wowParent: "LFRBrowseFrame"
             anchors.left: lFRBrowseFrameColumnHeader6.right
             anchors.leftMargin: -2
             anchors.verticalCenter: lFRBrowseFrameColumnHeader6.verticalCenter
@@ -99,7 +91,6 @@ WowWindow {
 
         Button {
             name: "LFRBrowseFrameListButton1"
-            wowParent: "LFRBrowseFrame"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 12
@@ -112,7 +103,6 @@ WowWindow {
         FontString {
             name: "LFRBrowseFrameTitleText"
             text: "Raid Browser"
-            wowParent: "LFRBrowseFrame"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: 12
             anchors.top: parent.top
@@ -139,7 +129,6 @@ WowWindow {
 
                 Frame {
                     name: "LFRBrowseFrameListScrollFrameDiabolicZoneColumnBar"
-                    wowParent: "LFRBrowseFrameListScrollFrameDiabolicZone"
                     anchors.left: parent.left
                     anchors.bottom: parent.top
                     width: 330
@@ -150,8 +139,8 @@ WowWindow {
     }
 
     Frame {
+        id: lFRParentFrameDiabolic
         name: "LFRParentFrameDiabolic"
-        wowParent: "LFRParentFrame"
         anchors.left: parent.left
         anchors.leftMargin: -16
         anchors.top: parent.top
@@ -161,7 +150,6 @@ WowWindow {
 
         Frame {
             name: "LFRParentFrameDiabolicBand"
-            wowParent: "LFRParentFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -169,7 +157,48 @@ WowWindow {
             width: 322
             height: 40
 
+            Frame {
+                name: "LFRBrowseFrameRaidDropDown"
+                wowParent: "LFRBrowseFrame"
+                style: "DropDown"
+                anchors.left: lFRBrowseFrameRaidDropDownName.right
+                anchors.leftMargin: -4
+                anchors.verticalCenter: lFRBrowseFrameRaidDropDownName.verticalCenter
+                width: 190
+                height: 32
+
+                Frame {
+                    name: "LFRBrowseFrameRaidDropDownDiabolicField"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 190
+                    height: 22
+
+                    Button {
+                        name: "LFRBrowseFrameRaidDropDownButton"
+                        wowParent: "LFRBrowseFrameRaidDropDown"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 18
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 18
+                        height: 18
+                    }
+
+                    FontString {
+                        name: "LFRBrowseFrameRaidDropDownText"
+                        text: "None"
+                        wowParent: "LFRBrowseFrameRaidDropDown"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 128
+                        height: 10
+                    }
+                }
+            }
+
             FontString {
+                id: lFRBrowseFrameRaidDropDownName
                 name: "LFRBrowseFrameRaidDropDownName"
                 text: "Browsing:"
                 wowParent: "LFRBrowseFrameRaidDropDown"
@@ -178,47 +207,6 @@ WowWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 55.3
                 height: 12
-
-                Frame {
-                    name: "LFRBrowseFrameRaidDropDown"
-                    wowParent: "LFRBrowseFrame"
-                    style: "DropDown"
-                    anchors.left: parent.right
-                    anchors.leftMargin: -4
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 190
-                    height: 32
-
-                    Frame {
-                        name: "LFRBrowseFrameRaidDropDownDiabolicField"
-                        wowParent: "LFRBrowseFrameRaidDropDown"
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 190
-                        height: 22
-
-                        Button {
-                            name: "LFRBrowseFrameRaidDropDownButton"
-                            wowParent: "LFRBrowseFrameRaidDropDown"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 18
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 18
-                            height: 18
-                        }
-
-                        FontString {
-                            name: "LFRBrowseFrameRaidDropDownText"
-                            text: "None"
-                            wowParent: "LFRBrowseFrameRaidDropDown"
-                            anchors.left: parent.left
-                            anchors.leftMargin: 22
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 128
-                            height: 10
-                        }
-                    }
-                }
             }
 
             EditBox {
@@ -233,7 +221,6 @@ WowWindow {
 
                 Frame {
                     name: "LFRQueueFrameCommentDiabolicField"
-                    wowParent: "LFRQueueFrameComment"
                     anchors.left: parent.left
                     anchors.leftMargin: -8
                     anchors.verticalCenter: parent.verticalCenter
@@ -244,7 +231,6 @@ WowWindow {
                 FontString {
                     name: "LFRQueueFrameCommentExplanation"
                     text: "Type your comment here."
-                    wowParent: "LFRQueueFrameComment"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 250
@@ -264,7 +250,6 @@ WowWindow {
 
         Frame {
             name: "LFRParentFrameDiabolicBorder"
-            wowParent: "LFRParentFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
@@ -283,7 +268,6 @@ WowWindow {
                 FontString {
                     name: "LFRQueueFrameTitleText"
                     text: "Raid Browser"
-                    wowParent: "LFRParentFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -295,7 +279,6 @@ WowWindow {
 
         Frame {
             name: "LFRParentFrameDiabolicFoot"
-            wowParent: "LFRParentFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -328,7 +311,6 @@ WowWindow {
                     FontString {
                         name: "LFRBrowseFrameSendMessageButtonText"
                         text: "Send Message"
-                        wowParent: "LFRBrowseFrameSendMessageButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 98
@@ -348,7 +330,6 @@ WowWindow {
                     FontString {
                         name: "LFRBrowseFrameInviteButtonText"
                         text: "Invite"
-                        wowParent: "LFRBrowseFrameInviteButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 45.8
@@ -368,7 +349,6 @@ WowWindow {
                     FontString {
                         name: "LFRBrowseFrameRefreshButtonText"
                         text: "Refresh"
-                        wowParent: "LFRBrowseFrameRefreshButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 55.3
@@ -400,7 +380,6 @@ WowWindow {
                     FontString {
                         name: "LFRQueueFrameFindGroupButtonText"
                         text: "List My Name"
-                        wowParent: "LFRQueueFrameFindGroupButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 97.2
@@ -420,7 +399,6 @@ WowWindow {
                     FontString {
                         name: "LFRQueueFrameAcceptCommentButtonText"
                         text: "Set Comment"
-                        wowParent: "LFRQueueFrameAcceptCommentButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 96.4
@@ -432,7 +410,6 @@ WowWindow {
 
         Frame {
             name: "LFRParentFrameDiabolicRail"
-            wowParent: "LFRParentFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 18
             anchors.top: parent.bottom
@@ -443,39 +420,12 @@ WowWindow {
 
         Frame {
             name: "LFRParentFrameDiabolicSocket"
-            wowParent: "LFRParentFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
             anchors.topMargin: 52
             width: 42
             height: 42
-        }
-
-        Button {
-            name: "LFRParentFrameTab1"
-            text: "Choose Raid"
-            wowParent: "LFRParentFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 28
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "LFRParentFrameTab2"
-            text: "Browse"
-            wowParent: "LFRParentFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 86
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
         }
 
         Button {
@@ -512,9 +462,32 @@ WowWindow {
         }
     }
 
+    Button {
+        name: "LFRParentFrameTab1"
+        text: "Choose Raid"
+        style: "Banner"
+        anchors.left: lFRParentFrameDiabolic.left
+        anchors.leftMargin: 28
+        anchors.top: lFRParentFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "LFRParentFrameTab2"
+        text: "Browse"
+        style: "Banner"
+        anchors.left: lFRParentFrameDiabolic.left
+        anchors.leftMargin: 86
+        anchors.top: lFRParentFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
     Frame {
         name: "LFRQueueFrame"
-        wowParent: "LFRParentFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 355
@@ -522,15 +495,14 @@ WowWindow {
 
         Frame {
             name: "LFRQueueFrameSpecific"
-            wowParent: "LFRQueueFrame"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 355
             height: 440
 
             Frame {
+                id: lFRQueueFrameSpecificListButton1
                 name: "LFRQueueFrameSpecificListButton1"
-                wowParent: "LFRQueueFrameSpecific"
                 pin: "place"
                 anchors.left: parent.left
                 anchors.leftMargin: 17
@@ -541,7 +513,6 @@ WowWindow {
 
                 Button {
                     name: "LFRQueueFrameSpecificListButton1ExpandOrCollapseButton"
-                    wowParent: "LFRQueueFrameSpecificListButton1"
                     anchors.left: parent.left
                     anchors.leftMargin: 3
                     anchors.verticalCenter: parent.verticalCenter
@@ -552,7 +523,6 @@ WowWindow {
                 FontString {
                     name: "LFRQueueFrameSpecificListButton1InstanceLevel"
                     text: "(80 - 83)"
-                    wowParent: "LFRQueueFrameSpecificListButton1"
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     width: 60
@@ -562,84 +532,11 @@ WowWindow {
                 FontString {
                     name: "LFRQueueFrameSpecificListButton1InstanceName"
                     text: "Wrath of the Lich King Raid (25)"
-                    wowParent: "LFRQueueFrameSpecificListButton1"
                     anchors.left: parent.left
                     anchors.leftMargin: 40
                     anchors.verticalCenter: parent.verticalCenter
                     width: 255
                     height: 16
-                }
-
-                ScrollFrame {
-                    name: "LFRQueueFrameSpecificListScrollFrame"
-                    wowParent: "LFRQueueFrameSpecific"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.topMargin: -2
-                    width: 296
-                    height: 228
-
-                    Frame {
-                        name: "LFRQueueFrameSpecificListScrollFrameDiabolicZone"
-                        wowParent: "LFRQueueFrameSpecific"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: 2
-                        anchors.top: parent.top
-                        anchors.topMargin: -6
-                        width: 330
-                        height: 270
-                    }
-
-                    Slider {
-                        name: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-                        wowParent: "LFRQueueFrameSpecificListScrollFrame"
-                        style: "ScrollBar"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 6
-                        anchors.top: parent.top
-                        anchors.topMargin: 16
-                        width: 16
-                        height: 196
-
-                        Button {
-                            name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
-                            wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-                            style: "ScrollBar"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            width: 16
-                            height: 16
-                        }
-
-                        Button {
-                            name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
-                            wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-                            style: "ScrollBar"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottom: parent.top
-                            width: 16
-                            height: 16
-
-                            Frame {
-                                name: "LFRQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
-                                wowParent: "LFRQueueFrameSpecificListScrollFrameScrollBar"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.top
-                                anchors.topMargin: -1
-                                width: 18
-                                height: 230
-                            }
-                        }
-                    }
-
-                    Frame {
-                        name: "LFRQueueFrameSpecificListScrollFrameScrollChildFrame"
-                        wowParent: "LFRQueueFrameSpecificListScrollFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        width: 300
-                        height: 624
-                    }
                 }
 
                 Ghost {
@@ -657,6 +554,73 @@ WowWindow {
                         width: 20
                         height: 20
                     }
+                }
+            }
+
+            ScrollFrame {
+                name: "LFRQueueFrameSpecificListScrollFrame"
+                anchors.left: lFRQueueFrameSpecificListButton1.left
+                anchors.top: lFRQueueFrameSpecificListButton1.top
+                anchors.topMargin: -2
+                width: 296
+                height: 228
+
+                Frame {
+                    name: "LFRQueueFrameSpecificListScrollFrameDiabolicZone"
+                    wowParent: "LFRQueueFrameSpecific"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: 2
+                    anchors.top: parent.top
+                    anchors.topMargin: -6
+                    width: 330
+                    height: 270
+                }
+
+                Slider {
+                    name: "LFRQueueFrameSpecificListScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 6
+                    anchors.top: parent.top
+                    anchors.topMargin: 16
+                    width: 16
+                    height: 196
+
+                    Frame {
+                        name: "LFRQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
+                        anchors.horizontalCenter: lFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.horizontalCenter
+                        anchors.top: lFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 230
+                    }
+
+                    Button {
+                        name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.bottom
+                        width: 16
+                        height: 16
+                    }
+
+                    Button {
+                        id: lFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton
+                        name: "LFRQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.top
+                        width: 16
+                        height: 16
+                    }
+                }
+
+                Frame {
+                    name: "LFRQueueFrameSpecificListScrollFrameScrollChildFrame"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 300
+                    height: 624
                 }
             }
         }

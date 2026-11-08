@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -22,7 +22,6 @@ WowWindow {
         FontString {
             name: "Atr_AddToSListButtonText"
             text: "Add Item"
-            wowParent: "Atr_AddToSListButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 48.8
@@ -32,7 +31,6 @@ WowWindow {
 
     Frame {
         name: "Atr_Main_Panel"
-        wowParent: "AuctionFrame"
         anchors.left: parent.left
         anchors.leftMargin: 210
         anchors.top: parent.top
@@ -42,7 +40,6 @@ WowWindow {
         FontString {
             name: "Atr_ActiveItems_Text"
             text: "Active Items"
-            wowParent: "Atr_Main_Panel"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -350
             anchors.top: parent.top
@@ -54,7 +51,6 @@ WowWindow {
         Button {
             name: "Atr_CheckActiveButton"
             text: "Check for Undercuts"
-            wowParent: "Atr_Main_Panel"
             style: "Button"
             anchors.left: parent.left
             anchors.leftMargin: -210
@@ -66,7 +62,6 @@ WowWindow {
             FontString {
                 name: "Atr_CheckActiveButtonText"
                 text: "Check for Undercuts"
-                wowParent: "Atr_CheckActiveButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 110.6
@@ -75,95 +70,14 @@ WowWindow {
         }
 
         Frame {
+            id: atr_HeadingsBar
             name: "Atr_HeadingsBar"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: 16
             anchors.top: parent.top
             anchors.topMargin: 138
             width: 605
             height: 64
-
-            Frame {
-                name: "Atr_ListTabs"
-                wowParent: "Atr_Main_Panel"
-                anchors.right: parent.right
-                anchors.bottom: parent.top
-                anchors.bottomMargin: -22
-                width: 250
-                height: 40
-
-                Button {
-                    name: "Atr_ListTabsTab1"
-                    text: "Current"
-                    wowParent: "Atr_ListTabs"
-                    style: "Tab"
-                    anchors.right: atr_ListTabsTab2.left
-                    anchors.rightMargin: 2
-                    anchors.verticalCenter: atr_ListTabsTab2.verticalCenter
-                    width: 70.4
-                    height: 32
-
-                    FontString {
-                        name: "Atr_ListTabsTab1Text"
-                        text: "Current"
-                        wowParent: "Atr_ListTabsTab1"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -1
-                        width: 53.2
-                        height: 13
-                    }
-                }
-
-                Button {
-                    id: atr_ListTabsTab2
-                    name: "Atr_ListTabsTab2"
-                    text: "History"
-                    wowParent: "Atr_ListTabs"
-                    style: "Tab"
-                    anchors.right: atr_ListTabsTab3.left
-                    anchors.rightMargin: 2
-                    anchors.verticalCenter: atr_ListTabsTab3.verticalCenter
-                    width: 69
-                    height: 32
-
-                    FontString {
-                        name: "Atr_ListTabsTab2Text"
-                        text: "History"
-                        wowParent: "Atr_ListTabsTab2"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -1
-                        width: 50.3
-                        height: 13
-                    }
-                }
-
-                Button {
-                    id: atr_ListTabsTab3
-                    name: "Atr_ListTabsTab3"
-                    text: "Other"
-                    wowParent: "Atr_ListTabs"
-                    style: "Tab"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 8
-                    anchors.bottom: parent.bottom
-                    width: 61.9
-                    height: 32
-
-                    FontString {
-                        name: "Atr_ListTabsTab3Text"
-                        text: "Other"
-                        wowParent: "Atr_ListTabsTab3"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -1
-                        width: 38.8
-                        height: 13
-                    }
-                }
-            }
 
             Ghost {
                 name: "Atr_HeadingsBarMiddle"
@@ -212,7 +126,6 @@ WowWindow {
 
         Frame {
             name: "Atr_Hlist"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: -208
             anchors.top: parent.top
@@ -222,7 +135,6 @@ WowWindow {
 
             Button {
                 name: "AuctionatorHEntry1"
-                wowParent: "Atr_Hlist"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.topMargin: 5
@@ -232,7 +144,6 @@ WowWindow {
                 FontString {
                     name: "AuctionatorHEntry1_EntryText"
                     text: "Morrowgrain"
-                    wowParent: "AuctionatorHEntry1"
                     anchors.left: parent.left
                     anchors.leftMargin: 2
                     anchors.verticalCenter: parent.verticalCenter
@@ -244,7 +155,6 @@ WowWindow {
 
         ScrollFrame {
             name: "Atr_Hlist_ScrollFrame"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: -208
             anchors.top: parent.top
@@ -254,7 +164,6 @@ WowWindow {
 
             Slider {
                 name: "Atr_Hlist_ScrollFrameScrollBar"
-                wowParent: "Atr_Hlist_ScrollFrame"
                 style: "ScrollBar"
                 anchors.left: parent.right
                 anchors.leftMargin: 6
@@ -263,9 +172,17 @@ WowWindow {
                 width: 16
                 height: 220
 
+                Frame {
+                    name: "Atr_Hlist_ScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: atr_Hlist_ScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: atr_Hlist_ScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 254
+                }
+
                 Button {
                     name: "Atr_Hlist_ScrollFrameScrollBarScrollDownButton"
-                    wowParent: "Atr_Hlist_ScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.bottom
@@ -274,29 +191,18 @@ WowWindow {
                 }
 
                 Button {
+                    id: atr_Hlist_ScrollFrameScrollBarScrollUpButton
                     name: "Atr_Hlist_ScrollFrameScrollBarScrollUpButton"
-                    wowParent: "Atr_Hlist_ScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
                     width: 16
                     height: 16
-
-                    Frame {
-                        name: "Atr_Hlist_ScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "Atr_Hlist_ScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 254
-                    }
                 }
             }
 
             Frame {
                 name: "Atr_Hlist_ScrollFrameScrollChildFrame"
-                wowParent: "Atr_Hlist_ScrollFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 300
@@ -304,10 +210,83 @@ WowWindow {
             }
         }
 
+        Frame {
+            name: "Atr_ListTabs"
+            anchors.right: atr_HeadingsBar.right
+            anchors.bottom: atr_HeadingsBar.top
+            anchors.bottomMargin: -22
+            width: 250
+            height: 40
+
+            Button {
+                name: "Atr_ListTabsTab1"
+                text: "Current"
+                style: "Tab"
+                anchors.right: atr_ListTabsTab2.left
+                anchors.rightMargin: 2
+                anchors.verticalCenter: atr_ListTabsTab2.verticalCenter
+                width: 70.4
+                height: 32
+
+                FontString {
+                    name: "Atr_ListTabsTab1Text"
+                    text: "Current"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 53.2
+                    height: 13
+                }
+            }
+
+            Button {
+                id: atr_ListTabsTab2
+                name: "Atr_ListTabsTab2"
+                text: "History"
+                style: "Tab"
+                anchors.right: atr_ListTabsTab3.left
+                anchors.rightMargin: 2
+                anchors.verticalCenter: atr_ListTabsTab3.verticalCenter
+                width: 69
+                height: 32
+
+                FontString {
+                    name: "Atr_ListTabsTab2Text"
+                    text: "History"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 50.3
+                    height: 13
+                }
+            }
+
+            Button {
+                id: atr_ListTabsTab3
+                name: "Atr_ListTabsTab3"
+                text: "Other"
+                style: "Tab"
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                anchors.bottom: parent.bottom
+                width: 61.9
+                height: 32
+
+                FontString {
+                    name: "Atr_ListTabsTab3Text"
+                    text: "Other"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 38.8
+                    height: 13
+                }
+            }
+        }
+
         Button {
             name: "Atr_MngSListsButton"
             text: "Manage Shopping Lists"
-            wowParent: "Atr_Main_Panel"
             style: "Button"
             anchors.left: parent.left
             anchors.leftMargin: -210
@@ -319,7 +298,6 @@ WowWindow {
             FontString {
                 name: "Atr_MngSListsButtonText"
                 text: "Manage Shopping Lists"
-                wowParent: "Atr_MngSListsButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 123.5
@@ -330,7 +308,6 @@ WowWindow {
         Button {
             name: "Atr_NewSListButton"
             text: "New Shopping List"
-            wowParent: "Atr_Main_Panel"
             style: "Button"
             anchors.left: parent.left
             anchors.leftMargin: -210
@@ -342,7 +319,6 @@ WowWindow {
             FontString {
                 name: "Atr_NewSListButtonText"
                 text: "New Shopping List"
-                wowParent: "Atr_NewSListButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 98.4
@@ -352,7 +328,6 @@ WowWindow {
 
         Button {
             name: "Atr_RecommendItem_Tex"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: 34
             anchors.top: parent.top
@@ -363,7 +338,6 @@ WowWindow {
             FontString {
                 name: "Atr_RecommendItem_TexCount"
                 text: "2"
-                wowParent: "Atr_RecommendItem_Tex"
                 anchors.right: parent.right
                 anchors.rightMargin: 5
                 anchors.bottom: parent.bottom
@@ -387,7 +361,6 @@ WowWindow {
                 id: atr_RecommendPerItem_PriceCopperButton
                 name: "Atr_RecommendPerItem_PriceCopperButton"
                 text: "0"
-                wowParent: "Atr_RecommendPerItem_Price"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -397,7 +370,6 @@ WowWindow {
                 FontString {
                     name: "Atr_RecommendPerItem_PriceCopperButtonText"
                     text: "0"
-                    wowParent: "Atr_RecommendPerItem_PriceCopperButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -409,7 +381,6 @@ WowWindow {
             Button {
                 name: "Atr_RecommendPerItem_PriceGoldButton"
                 text: "4"
-                wowParent: "Atr_RecommendPerItem_Price"
                 anchors.right: atr_RecommendPerItem_PriceSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: atr_RecommendPerItem_PriceSilverButton.verticalCenter
@@ -419,7 +390,6 @@ WowWindow {
                 FontString {
                     name: "Atr_RecommendPerItem_PriceGoldButtonText"
                     text: "4"
-                    wowParent: "Atr_RecommendPerItem_PriceGoldButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -432,7 +402,6 @@ WowWindow {
                 id: atr_RecommendPerItem_PriceSilverButton
                 name: "Atr_RecommendPerItem_PriceSilverButton"
                 text: "94"
-                wowParent: "Atr_RecommendPerItem_Price"
                 anchors.right: atr_RecommendPerItem_PriceCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: atr_RecommendPerItem_PriceCopperButton.verticalCenter
@@ -442,7 +411,6 @@ WowWindow {
                 FontString {
                     name: "Atr_RecommendPerItem_PriceSilverButtonText"
                     text: "94"
-                    wowParent: "Atr_RecommendPerItem_PriceSilverButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -450,6 +418,17 @@ WowWindow {
                     height: 13.6
                 }
             }
+        }
+
+        FontString {
+            name: "Atr_RecommendPerItem_Text"
+            text: "per item"
+            anchors.left: atr_Recommend_Text.left
+            anchors.leftMargin: 152
+            anchors.top: atr_Recommend_Text.top
+            anchors.topMargin: 51
+            width: 43.1
+            height: 10.1
         }
 
         Frame {
@@ -466,7 +445,6 @@ WowWindow {
                 id: atr_RecommendPerStack_PriceCopperButton
                 name: "Atr_RecommendPerStack_PriceCopperButton"
                 text: "0"
-                wowParent: "Atr_RecommendPerStack_Price"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -476,7 +454,6 @@ WowWindow {
                 FontString {
                     name: "Atr_RecommendPerStack_PriceCopperButtonText"
                     text: "0"
-                    wowParent: "Atr_RecommendPerStack_PriceCopperButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -488,7 +465,6 @@ WowWindow {
             Button {
                 name: "Atr_RecommendPerStack_PriceGoldButton"
                 text: "9"
-                wowParent: "Atr_RecommendPerStack_Price"
                 anchors.right: atr_RecommendPerStack_PriceSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: atr_RecommendPerStack_PriceSilverButton.verticalCenter
@@ -498,7 +474,6 @@ WowWindow {
                 FontString {
                     name: "Atr_RecommendPerStack_PriceGoldButtonText"
                     text: "9"
-                    wowParent: "Atr_RecommendPerStack_PriceGoldButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -511,7 +486,6 @@ WowWindow {
                 id: atr_RecommendPerStack_PriceSilverButton
                 name: "Atr_RecommendPerStack_PriceSilverButton"
                 text: "88"
-                wowParent: "Atr_RecommendPerStack_Price"
                 anchors.right: atr_RecommendPerStack_PriceCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: atr_RecommendPerStack_PriceCopperButton.verticalCenter
@@ -521,7 +495,6 @@ WowWindow {
                 FontString {
                     name: "Atr_RecommendPerStack_PriceSilverButtonText"
                     text: "88"
-                    wowParent: "Atr_RecommendPerStack_PriceSilverButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -532,56 +505,41 @@ WowWindow {
         }
 
         FontString {
+            name: "Atr_RecommendPerStack_Text"
+            text: "for your stack of 2"
+            anchors.left: atr_Recommend_Text.left
+            anchors.leftMargin: 152
+            anchors.top: atr_Recommend_Text.top
+            anchors.topMargin: 28
+            width: 91.2
+            height: 10.1
+        }
+
+        FontString {
+            name: "Atr_Recommend_Basis_Text"
+            text: "(based on cheapest current auction)"
+            anchors.left: atr_Recommend_Text.right
+            anchors.leftMargin: 20
+            anchors.verticalCenter: atr_Recommend_Text.verticalCenter
+            anchors.verticalCenterOffset: 2
+            width: 181.7
+            height: 10.1
+        }
+
+        FontString {
+            id: atr_Recommend_Text
             name: "Atr_Recommend_Text"
             text: "Auction created for Elixir of Giants"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: 87
             anchors.top: parent.top
             anchors.topMargin: 73
             width: 209
             height: 12.2
-
-            FontString {
-                name: "Atr_RecommendPerItem_Text"
-                text: "per item"
-                wowParent: "Atr_Main_Panel"
-                anchors.left: parent.left
-                anchors.leftMargin: 152
-                anchors.top: parent.top
-                anchors.topMargin: 51
-                width: 43.1
-                height: 10.1
-            }
-
-            FontString {
-                name: "Atr_RecommendPerStack_Text"
-                text: "for your stack of 2"
-                wowParent: "Atr_Main_Panel"
-                anchors.left: parent.left
-                anchors.leftMargin: 152
-                anchors.top: parent.top
-                anchors.topMargin: 28
-                width: 91.2
-                height: 10.1
-            }
-
-            FontString {
-                name: "Atr_Recommend_Basis_Text"
-                text: "(based on cheapest current auction)"
-                wowParent: "Atr_Main_Panel"
-                anchors.left: parent.right
-                anchors.leftMargin: 20
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 2
-                width: 181.7
-                height: 10.1
-            }
         }
 
         Frame {
             name: "Atr_SellControls"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: -205
             anchors.top: parent.top
@@ -590,78 +548,62 @@ WowWindow {
             height: 338
 
             FontString {
+                name: "Atr_Batch_MaxAuctions_Text"
+                text: "max: 0"
+                anchors.left: atr_Batch_Stacksize_Text.left
+                anchors.leftMargin: -34
+                anchors.top: atr_Batch_Stacksize_Text.top
+                anchors.topMargin: 21
+                width: 34.5
+                height: 10.1
+            }
+
+            FontString {
+                name: "Atr_Batch_MaxStacksize_Text"
+                text: "max: 0"
+                anchors.left: atr_Batch_Stacksize_Text.left
+                anchors.leftMargin: 79
+                anchors.top: atr_Batch_Stacksize_Text.top
+                anchors.topMargin: 21
+                width: 34.5
+                height: 10.1
+            }
+
+            EditBox {
+                name: "Atr_Batch_NumAuctions"
+                text: "0"
+                anchors.left: atr_Batch_Stacksize_Text.left
+                anchors.leftMargin: -37
+                anchors.top: atr_Batch_Stacksize_Text.top
+                width: 40
+                height: 20
+            }
+
+            EditBox {
+                name: "Atr_Batch_Stacksize"
+                text: "0"
+                anchors.left: atr_Batch_Stacksize_Text.left
+                anchors.leftMargin: 84
+                anchors.top: atr_Batch_Stacksize_Text.top
+                width: 40
+                height: 20
+            }
+
+            FontString {
+                id: atr_Batch_Stacksize_Text
                 name: "Atr_Batch_Stacksize_Text"
                 text: "stack of"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 55
                 anchors.top: parent.top
                 anchors.topMargin: 224
                 width: 82
                 height: 22
-
-                FontString {
-                    name: "Atr_Batch_MaxAuctions_Text"
-                    text: "max: 0"
-                    wowParent: "Atr_SellControls"
-                    anchors.left: parent.left
-                    anchors.leftMargin: -34
-                    anchors.top: parent.top
-                    anchors.topMargin: 21
-                    width: 34.5
-                    height: 10.1
-                }
-
-                FontString {
-                    name: "Atr_Batch_MaxStacksize_Text"
-                    text: "max: 0"
-                    wowParent: "Atr_SellControls"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 79
-                    anchors.top: parent.top
-                    anchors.topMargin: 21
-                    width: 34.5
-                    height: 10.1
-                }
-
-                EditBox {
-                    name: "Atr_Batch_NumAuctions"
-                    text: "0"
-                    wowParent: "Atr_SellControls"
-                    anchors.left: parent.left
-                    anchors.leftMargin: -37
-                    anchors.top: parent.top
-                    width: 40
-                    height: 20
-                }
-
-                EditBox {
-                    name: "Atr_Batch_Stacksize"
-                    text: "0"
-                    wowParent: "Atr_SellControls"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 84
-                    anchors.top: parent.top
-                    width: 40
-                    height: 20
-                }
-
-                FontString {
-                    name: "Atr_ItemsOwned_Text"
-                    text: "Items owned: 0"
-                    wowParent: "Atr_SellControls"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: -22
-                    width: 79
-                    height: 10.1
-                }
             }
 
             Button {
                 name: "Atr_CreateAuctionButton"
                 text: "Create Auction"
-                wowParent: "Atr_SellControls"
                 style: "Button"
                 anchors.left: parent.left
                 anchors.leftMargin: 3
@@ -673,7 +615,6 @@ WowWindow {
                 FontString {
                     name: "Atr_CreateAuctionButtonText"
                     text: "Create Auction"
-                    wowParent: "Atr_CreateAuctionButton"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     width: 81.2
@@ -683,7 +624,6 @@ WowWindow {
 
             FontString {
                 name: "Atr_Deposit_Text"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.top: parent.top
@@ -692,118 +632,123 @@ WowWindow {
                 height: 1
             }
 
+            Frame {
+                name: "Atr_Duration"
+                style: "DropDown"
+                anchors.left: atr_Duration_Text.left
+                anchors.leftMargin: 32
+                anchors.top: atr_Duration_Text.top
+                anchors.topMargin: -7
+                width: 145
+                height: 32
+
+                Frame {
+                    name: "Atr_DurationDiabolicField"
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 145
+                    height: 22
+
+                    Button {
+                        name: "Atr_DurationButton"
+                        wowParent: "Atr_Duration"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 18
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 18
+                        height: 18
+                    }
+
+                    FontString {
+                        name: "Atr_DurationText"
+                        text: "48 Hours"
+                        wowParent: "Atr_Duration"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 83
+                        height: 10
+                    }
+                }
+            }
+
             FontString {
+                id: atr_Duration_Text
                 name: "Atr_Duration_Text"
                 text: "Duration"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.top: parent.top
                 anchors.topMargin: 304
                 width: 43.8
                 height: 10.1
+            }
 
-                Frame {
-                    name: "Atr_Duration"
-                    wowParent: "Atr_SellControls"
-                    style: "DropDown"
+            Frame {
+                name: "Atr_ItemPrice"
+                anchors.left: atr_ItemPriceText.left
+                anchors.leftMargin: 8
+                anchors.top: atr_ItemPriceText.bottom
+                anchors.topMargin: 2
+                width: 176
+                height: 18
+
+                EditBox {
+                    name: "Atr_ItemPriceCopper"
+                    text: "0"
+                    anchors.left: atr_ItemPriceSilver.right
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: atr_ItemPriceSilver.verticalCenter
+                    width: 30
+                    height: 20
+                }
+
+                EditBox {
+                    id: atr_ItemPriceGold
+                    name: "Atr_ItemPriceGold"
+                    text: "4"
                     anchors.left: parent.left
-                    anchors.leftMargin: 32
                     anchors.top: parent.top
-                    anchors.topMargin: -7
-                    width: 145
-                    height: 32
+                    width: 58
+                    height: 20
+                }
 
-                    Frame {
-                        name: "Atr_DurationDiabolicField"
-                        wowParent: "Atr_Duration"
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 145
-                        height: 22
-
-                        Button {
-                            name: "Atr_DurationButton"
-                            wowParent: "Atr_Duration"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 18
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 18
-                            height: 18
-                        }
-
-                        FontString {
-                            name: "Atr_DurationText"
-                            text: "48 Hours"
-                            wowParent: "Atr_Duration"
-                            anchors.left: parent.left
-                            anchors.leftMargin: 22
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 83
-                            height: 10
-                        }
-                    }
+                EditBox {
+                    id: atr_ItemPriceSilver
+                    name: "Atr_ItemPriceSilver"
+                    text: "94"
+                    anchors.left: atr_ItemPriceGold.right
+                    anchors.leftMargin: 26
+                    anchors.verticalCenter: atr_ItemPriceGold.verticalCenter
+                    width: 30
+                    height: 20
                 }
             }
 
             FontString {
+                id: atr_ItemPriceText
                 name: "Atr_ItemPriceText"
                 text: "Per Item"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.top: parent.top
                 anchors.topMargin: 128
                 width: 43.8
                 height: 10.1
+            }
 
-                Frame {
-                    name: "Atr_ItemPrice"
-                    wowParent: "Atr_SellControls"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 8
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 2
-                    width: 176
-                    height: 18
-
-                    EditBox {
-                        name: "Atr_ItemPriceGold"
-                        text: "4"
-                        wowParent: "Atr_ItemPrice"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        width: 58
-                        height: 20
-
-                        EditBox {
-                            name: "Atr_ItemPriceSilver"
-                            text: "94"
-                            wowParent: "Atr_ItemPrice"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 26
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 30
-                            height: 20
-
-                            EditBox {
-                                name: "Atr_ItemPriceCopper"
-                                text: "0"
-                                wowParent: "Atr_ItemPrice"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 16
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 30
-                                height: 20
-                            }
-                        }
-                    }
-                }
+            FontString {
+                name: "Atr_ItemsOwned_Text"
+                text: "Items owned: 0"
+                anchors.horizontalCenter: atr_Batch_Stacksize_Text.horizontalCenter
+                anchors.verticalCenter: atr_Batch_Stacksize_Text.verticalCenter
+                anchors.verticalCenterOffset: -22
+                width: 79
+                height: 10.1
             }
 
             Button {
                 name: "Atr_SellControls_Tex"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 11
                 anchors.top: parent.top
@@ -814,7 +759,6 @@ WowWindow {
                 FontString {
                     name: "Atr_SellControls_TexCount"
                     text: "2"
-                    wowParent: "Atr_SellControls_Tex"
                     anchors.right: parent.right
                     anchors.rightMargin: 5
                     anchors.bottom: parent.bottom
@@ -825,7 +769,6 @@ WowWindow {
 
                 FontString {
                     name: "Atr_SellControls_TexName"
-                    wowParent: "Atr_SellControls_Tex"
                     anchors.left: parent.right
                     anchors.leftMargin: 5
                     anchors.top: parent.top
@@ -834,65 +777,62 @@ WowWindow {
                 }
             }
 
+            Frame {
+                name: "Atr_StackPrice"
+                anchors.left: atr_StackPriceText.left
+                anchors.leftMargin: 8
+                anchors.top: atr_StackPriceText.bottom
+                anchors.topMargin: 2
+                width: 176
+                height: 18
+
+                EditBox {
+                    name: "Atr_StackPriceCopper"
+                    text: "0"
+                    anchors.left: atr_StackPriceSilver.right
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: atr_StackPriceSilver.verticalCenter
+                    width: 30
+                    height: 20
+                }
+
+                EditBox {
+                    id: atr_StackPriceGold
+                    name: "Atr_StackPriceGold"
+                    text: "0"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 58
+                    height: 20
+                }
+
+                EditBox {
+                    id: atr_StackPriceSilver
+                    name: "Atr_StackPriceSilver"
+                    text: "0"
+                    anchors.left: atr_StackPriceGold.right
+                    anchors.leftMargin: 26
+                    anchors.verticalCenter: atr_StackPriceGold.verticalCenter
+                    width: 30
+                    height: 20
+                }
+            }
+
             FontString {
+                id: atr_StackPriceText
                 name: "Atr_StackPriceText"
                 text: "Buyout Price"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.top: parent.top
                 anchors.topMargin: 82
                 width: 63.9
                 height: 10.1
-
-                Frame {
-                    name: "Atr_StackPrice"
-                    wowParent: "Atr_SellControls"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 8
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 2
-                    width: 176
-                    height: 18
-
-                    EditBox {
-                        name: "Atr_StackPriceGold"
-                        text: "0"
-                        wowParent: "Atr_StackPrice"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        width: 58
-                        height: 20
-
-                        EditBox {
-                            name: "Atr_StackPriceSilver"
-                            text: "0"
-                            wowParent: "Atr_StackPrice"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 26
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 30
-                            height: 20
-
-                            EditBox {
-                                name: "Atr_StackPriceCopper"
-                                text: "0"
-                                wowParent: "Atr_StackPrice"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 16
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 30
-                                height: 20
-                            }
-                        }
-                    }
-                }
             }
 
             FontString {
                 name: "Atr_StartingPriceDiscountText"
                 text: "Starting Price Discount:  5%"
-                wowParent: "Atr_SellControls"
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.top: parent.top
@@ -905,7 +845,6 @@ WowWindow {
         Button {
             name: "Atr_SrchSListButton"
             text: "Search for All Items"
-            wowParent: "Atr_Main_Panel"
             style: "Button"
             anchors.left: parent.left
             anchors.leftMargin: -210
@@ -917,7 +856,6 @@ WowWindow {
             FontString {
                 name: "Atr_SrchSListButtonText"
                 text: "Search for All Items"
-                wowParent: "Atr_SrchSListButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 107
@@ -928,7 +866,6 @@ WowWindow {
         FontString {
             name: "AuctionatorMessage2Frame"
             text: "Drag an item you want to sell to this area."
-            wowParent: "Atr_Main_Panel"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: 18
             anchors.top: parent.top
@@ -939,7 +876,6 @@ WowWindow {
 
         ScrollFrame {
             name: "AuctionatorScrollFrame"
-            wowParent: "Atr_Main_Panel"
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.top: parent.top
@@ -982,7 +918,6 @@ WowWindow {
                         id: auctionatorEntry1_PerItem_PriceCopperButton
                         name: "AuctionatorEntry1_PerItem_PriceCopperButton"
                         text: "0"
-                        wowParent: "AuctionatorEntry1_PerItem_Price"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -992,7 +927,6 @@ WowWindow {
                         FontString {
                             name: "AuctionatorEntry1_PerItem_PriceCopperButtonText"
                             text: "0"
-                            wowParent: "AuctionatorEntry1_PerItem_PriceCopperButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
                             anchors.verticalCenter: parent.verticalCenter
@@ -1004,7 +938,6 @@ WowWindow {
                     Button {
                         name: "AuctionatorEntry1_PerItem_PriceGoldButton"
                         text: "4"
-                        wowParent: "AuctionatorEntry1_PerItem_Price"
                         anchors.right: auctionatorEntry1_PerItem_PriceSilverButton.left
                         anchors.rightMargin: 4
                         anchors.verticalCenter: auctionatorEntry1_PerItem_PriceSilverButton.verticalCenter
@@ -1014,7 +947,6 @@ WowWindow {
                         FontString {
                             name: "AuctionatorEntry1_PerItem_PriceGoldButtonText"
                             text: "4"
-                            wowParent: "AuctionatorEntry1_PerItem_PriceGoldButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
                             anchors.verticalCenter: parent.verticalCenter
@@ -1027,7 +959,6 @@ WowWindow {
                         id: auctionatorEntry1_PerItem_PriceSilverButton
                         name: "AuctionatorEntry1_PerItem_PriceSilverButton"
                         text: "94"
-                        wowParent: "AuctionatorEntry1_PerItem_Price"
                         anchors.right: auctionatorEntry1_PerItem_PriceCopperButton.left
                         anchors.rightMargin: 4
                         anchors.verticalCenter: auctionatorEntry1_PerItem_PriceCopperButton.verticalCenter
@@ -1037,7 +968,6 @@ WowWindow {
                         FontString {
                             name: "AuctionatorEntry1_PerItem_PriceSilverButtonText"
                             text: "94"
-                            wowParent: "AuctionatorEntry1_PerItem_PriceSilverButton"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
                             anchors.verticalCenter: parent.verticalCenter
@@ -1074,7 +1004,6 @@ WowWindow {
 
             Slider {
                 name: "AuctionatorScrollFrameScrollBar"
-                wowParent: "AuctionatorScrollFrame"
                 anchors.left: parent.right
                 anchors.leftMargin: 6
                 anchors.top: parent.top
@@ -1082,9 +1011,17 @@ WowWindow {
                 width: 16
                 height: 164
 
+                Frame {
+                    name: "AuctionatorScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: auctionatorScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: auctionatorScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 198
+                }
+
                 Button {
                     name: "AuctionatorScrollFrameScrollBarScrollDownButton"
-                    wowParent: "AuctionatorScrollFrameScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.bottom
                     width: 16
@@ -1092,28 +1029,17 @@ WowWindow {
                 }
 
                 Button {
+                    id: auctionatorScrollFrameScrollBarScrollUpButton
                     name: "AuctionatorScrollFrameScrollBarScrollUpButton"
-                    wowParent: "AuctionatorScrollFrameScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
                     width: 16
                     height: 16
-
-                    Frame {
-                        name: "AuctionatorScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "AuctionatorScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 198
-                    }
                 }
             }
 
             Frame {
                 name: "AuctionatorScrollFrameScrollChildFrame"
-                wowParent: "AuctionatorScrollFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 300
@@ -1124,7 +1050,6 @@ WowWindow {
         FontString {
             name: "AuctionatorTitle"
             text: "Auctionator+ - Sell"
-            wowParent: "Atr_Main_Panel"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -90
             anchors.top: parent.top
@@ -1192,7 +1117,6 @@ WowWindow {
         FontString {
             name: "Atr_RemFromSListButtonText"
             text: "Remove Item"
-            wowParent: "Atr_RemFromSListButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 71.1
@@ -1202,90 +1126,85 @@ WowWindow {
 
     Frame {
         name: "AuctionFrameAuctions"
-        wowParent: "AuctionFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 758
         height: 447
 
+        Frame {
+            name: "AuctionsDepositMoneyFrame"
+            anchors.left: auctionsDepositText.right
+            anchors.leftMargin: 5
+            anchors.verticalCenter: auctionsDepositText.verticalCenter
+            anchors.verticalCenterOffset: 1
+            width: 13
+            height: 13
+
+            Ghost {
+                name: "AuctionsDepositMoneyFrameCopperButton"
+                x: 55.2
+                y: 3.7
+                width: 0
+                height: 0
+
+                Button {
+                    name: "AuctionsDepositMoneyFrameGoldButton"
+                    text: "1"
+                    wowParent: "AuctionsDepositMoneyFrame"
+                    anchors.right: auctionsDepositMoneyFrameSilverButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: auctionsDepositMoneyFrameSilverButton.verticalCenter
+                    width: 20.9
+                    height: 13
+
+                    FontString {
+                        name: "AuctionsDepositMoneyFrameGoldButtonText"
+                        text: "1"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 7.9
+                        height: 13.6
+                    }
+                }
+
+                Button {
+                    id: auctionsDepositMoneyFrameSilverButton
+                    name: "AuctionsDepositMoneyFrameSilverButton"
+                    text: "65"
+                    wowParent: "AuctionsDepositMoneyFrame"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 29.5
+                    height: 13
+
+                    FontString {
+                        name: "AuctionsDepositMoneyFrameSilverButtonText"
+                        text: "65"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 16.5
+                        height: 13.6
+                    }
+                }
+            }
+        }
+
         FontString {
+            id: auctionsDepositText
             name: "AuctionsDepositText"
             text: "Deposit:"
-            wowParent: "AuctionFrameAuctions"
             anchors.left: parent.left
             anchors.leftMargin: 9
             anchors.verticalCenter: parent.bottom
             anchors.verticalCenterOffset: -77
             width: 50.3
             height: 12.2
-
-            Frame {
-                name: "AuctionsDepositMoneyFrame"
-                wowParent: "AuctionFrameAuctions"
-                anchors.left: parent.right
-                anchors.leftMargin: 5
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 1
-                width: 13
-                height: 13
-
-                Ghost {
-                    name: "AuctionsDepositMoneyFrameCopperButton"
-                    x: 55.2
-                    y: 3.7
-                    width: 0
-                    height: 0
-
-                    Button {
-                        name: "AuctionsDepositMoneyFrameGoldButton"
-                        text: "1"
-                        wowParent: "AuctionsDepositMoneyFrame"
-                        anchors.right: auctionsDepositMoneyFrameSilverButton.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: auctionsDepositMoneyFrameSilverButton.verticalCenter
-                        width: 20.9
-                        height: 13
-
-                        FontString {
-                            name: "AuctionsDepositMoneyFrameGoldButtonText"
-                            text: "1"
-                            wowParent: "AuctionsDepositMoneyFrameGoldButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 7.9
-                            height: 13.6
-                        }
-                    }
-
-                    Button {
-                        id: auctionsDepositMoneyFrameSilverButton
-                        name: "AuctionsDepositMoneyFrameSilverButton"
-                        text: "65"
-                        wowParent: "AuctionsDepositMoneyFrame"
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 29.5
-                        height: 13
-
-                        FontString {
-                            name: "AuctionsDepositMoneyFrameSilverButtonText"
-                            text: "65"
-                            wowParent: "AuctionsDepositMoneyFrameSilverButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 16.5
-                            height: 13.6
-                        }
-                    }
-                }
-            }
         }
 
         Button {
             name: "AuctionsItemButton"
-            wowParent: "AuctionFrameAuctions"
             anchors.left: parent.left
             anchors.leftMargin: 14
             anchors.top: parent.top
@@ -1296,7 +1215,6 @@ WowWindow {
             FontString {
                 name: "AuctionsItemButtonCount"
                 text: "100"
-                wowParent: "AuctionsItemButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 5
                 anchors.bottom: parent.bottom
@@ -1307,7 +1225,6 @@ WowWindow {
 
             FontString {
                 name: "AuctionsItemButtonName"
-                wowParent: "AuctionsItemButton"
                 anchors.left: parent.right
                 anchors.leftMargin: 5
                 anchors.top: parent.top
@@ -1319,7 +1236,6 @@ WowWindow {
         FontString {
             name: "AuctionsItemText"
             text: "Auction Item"
-            wowParent: "AuctionFrameAuctions"
             anchors.left: parent.left
             anchors.leftMargin: 9
             anchors.top: parent.top
@@ -1329,76 +1245,71 @@ WowWindow {
         }
 
         EditBox {
+            id: auctionsNumStacksEntry
+            name: "AuctionsNumStacksEntry"
+            text: "1"
+            anchors.left: auctionsStackSizeEntry.left
+            anchors.top: auctionsStackSizeEntry.bottom
+            anchors.topMargin: 15
+            width: 50
+            height: 20
+        }
+
+        Button {
+            name: "AuctionsNumStacksMaxButton"
+            text: "Maximum"
+            anchors.left: auctionsNumStacksEntry.right
+            anchors.leftMargin: 5
+            anchors.verticalCenter: auctionsNumStacksEntry.verticalCenter
+            anchors.verticalCenterOffset: -1
+            width: 100
+            height: 21
+
+            FontString {
+                name: "AuctionsNumStacksMaxButtonText"
+                text: "Maximum"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: 53.9
+                height: 10.1
+            }
+        }
+
+        EditBox {
+            id: auctionsStackSizeEntry
             name: "AuctionsStackSizeEntry"
             text: "20"
-            wowParent: "AuctionFrameAuctions"
             anchors.left: parent.left
             anchors.leftMargin: 17
             anchors.top: parent.top
             anchors.topMargin: 145
             width: 50
             height: 20
+        }
 
-            EditBox {
-                name: "AuctionsNumStacksEntry"
-                text: "1"
-                wowParent: "AuctionFrameAuctions"
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                anchors.topMargin: 15
-                width: 50
-                height: 20
+        Button {
+            name: "AuctionsStackSizeMaxButton"
+            text: "Maximum"
+            anchors.left: auctionsStackSizeEntry.right
+            anchors.leftMargin: 5
+            anchors.verticalCenter: auctionsStackSizeEntry.verticalCenter
+            anchors.verticalCenterOffset: -1
+            width: 100
+            height: 21
 
-                Button {
-                    name: "AuctionsNumStacksMaxButton"
-                    text: "Maximum"
-                    wowParent: "AuctionFrameAuctions"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: -1
-                    width: 100
-                    height: 21
-
-                    FontString {
-                        name: "AuctionsNumStacksMaxButtonText"
-                        text: "Maximum"
-                        wowParent: "AuctionsNumStacksMaxButton"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 53.9
-                        height: 10.1
-                    }
-                }
-            }
-
-            Button {
-                name: "AuctionsStackSizeMaxButton"
+            FontString {
+                name: "AuctionsStackSizeMaxButtonText"
                 text: "Maximum"
-                wowParent: "AuctionFrameAuctions"
-                anchors.left: parent.right
-                anchors.leftMargin: 5
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -1
-                width: 100
-                height: 21
-
-                FontString {
-                    name: "AuctionsStackSizeMaxButtonText"
-                    text: "Maximum"
-                    wowParent: "AuctionsStackSizeMaxButton"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 53.9
-                    height: 10.1
-                }
+                width: 53.9
+                height: 10.1
             }
         }
 
         FontString {
             name: "AuctionsTabText"
             text: "Create Auction"
-            wowParent: "AuctionFrameAuctions"
             anchors.horizontalCenter: parent.left
             anchors.horizontalCenterOffset: 105
             anchors.top: parent.top
@@ -1410,7 +1321,6 @@ WowWindow {
         FontString {
             name: "AuctionsTitle"
             text: "Padirac's Auctions"
-            wowParent: "AuctionFrameAuctions"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 18
@@ -1420,7 +1330,6 @@ WowWindow {
 
         Frame {
             name: "BuyoutPrice"
-            wowParent: "AuctionFrameAuctions"
             anchors.left: parent.left
             anchors.leftMargin: 19
             anchors.bottom: parent.bottom
@@ -1430,7 +1339,6 @@ WowWindow {
 
             FontString {
                 name: "AuctionsBuyoutText"
-                wowParent: "BuyoutPrice"
                 anchors.left: parent.left
                 anchors.leftMargin: -10
                 anchors.bottom: parent.top
@@ -1440,38 +1348,36 @@ WowWindow {
             }
 
             EditBox {
+                name: "BuyoutPriceCopper"
+                anchors.left: buyoutPriceSilver.right
+                anchors.leftMargin: 16
+                anchors.verticalCenter: buyoutPriceSilver.verticalCenter
+                width: 30
+                height: 20
+            }
+
+            EditBox {
+                id: buyoutPriceGold
                 name: "BuyoutPriceGold"
-                wowParent: "BuyoutPrice"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 58
                 height: 20
+            }
 
-                EditBox {
-                    name: "BuyoutPriceSilver"
-                    wowParent: "BuyoutPrice"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 26
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30
-                    height: 20
-
-                    EditBox {
-                        name: "BuyoutPriceCopper"
-                        wowParent: "BuyoutPrice"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 16
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 30
-                        height: 20
-                    }
-                }
+            EditBox {
+                id: buyoutPriceSilver
+                name: "BuyoutPriceSilver"
+                anchors.left: buyoutPriceGold.right
+                anchors.leftMargin: 26
+                anchors.verticalCenter: buyoutPriceGold.verticalCenter
+                width: 30
+                height: 20
             }
         }
 
         Frame {
             name: "DurationDropDown"
-            wowParent: "AuctionFrameAuctions"
             style: "DropDown"
             anchors.right: parent.left
             anchors.rightMargin: -201
@@ -1482,7 +1388,6 @@ WowWindow {
 
             Frame {
                 name: "DurationDropDownDiabolicField"
-                wowParent: "DurationDropDown"
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 width: 130
@@ -1513,7 +1418,6 @@ WowWindow {
 
         Frame {
             name: "PriceDropDown"
-            wowParent: "AuctionFrameAuctions"
             style: "DropDown"
             anchors.right: parent.left
             anchors.rightMargin: -201
@@ -1524,7 +1428,6 @@ WowWindow {
 
             Frame {
                 name: "PriceDropDownDiabolicField"
-                wowParent: "PriceDropDown"
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 width: 130
@@ -1555,7 +1458,6 @@ WowWindow {
 
         Frame {
             name: "StartPrice"
-            wowParent: "AuctionFrameAuctions"
             anchors.left: parent.left
             anchors.leftMargin: 19
             anchors.bottom: parent.bottom
@@ -1564,38 +1466,38 @@ WowWindow {
             height: 18
 
             EditBox {
+                name: "StartPriceCopper"
+                anchors.left: startPriceSilver.right
+                anchors.leftMargin: 16
+                anchors.verticalCenter: startPriceSilver.verticalCenter
+                width: 30
+                height: 20
+            }
+
+            EditBox {
+                id: startPriceGold
                 name: "StartPriceGold"
-                wowParent: "StartPrice"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 58
                 height: 20
+            }
 
-                EditBox {
-                    name: "StartPriceSilver"
-                    wowParent: "StartPrice"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 26
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30
-                    height: 20
-
-                    EditBox {
-                        name: "StartPriceCopper"
-                        wowParent: "StartPrice"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 16
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 30
-                        height: 20
-                    }
-                }
+            EditBox {
+                id: startPriceSilver
+                name: "StartPriceSilver"
+                anchors.left: startPriceGold.right
+                anchors.leftMargin: 26
+                anchors.verticalCenter: startPriceGold.verticalCenter
+                width: 30
+                height: 20
             }
         }
     }
 
     // Auctions' results, right of it
     Frame {
+        id: auctionFrameAuctionsDiabolicResults
         name: "AuctionFrameAuctionsDiabolicResults"
         wowParent: "AuctionFrameAuctions"
         pin: "all"
@@ -1619,7 +1521,6 @@ WowWindow {
             FontString {
                 name: "AuctionsBidSortText"
                 text: "Current Bid"
-                wowParent: "AuctionsBidSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -1640,8 +1541,94 @@ WowWindow {
             height: 37
 
             Frame {
+                name: "AuctionsButton1BuyoutFrame"
+                anchors.right: auctionsButton1MoneyFrame.right
+                anchors.top: auctionsButton1MoneyFrame.bottom
+                anchors.topMargin: 1
+                width: 197
+                height: 13
+
+                Frame {
+                    name: "AuctionsButton1BuyoutFrameMoney"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 107.3
+                    height: 13
+
+                    Button {
+                        id: auctionsButton1BuyoutFrameMoneyCopperButton
+                        name: "AuctionsButton1BuyoutFrameMoneyCopperButton"
+                        text: "0"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 32
+                        height: 13
+
+                        FontString {
+                            name: "AuctionsButton1BuyoutFrameMoneyCopperButtonText"
+                            text: "0"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 9.4
+                            height: 13.6
+                        }
+                    }
+
+                    Button {
+                        name: "AuctionsButton1BuyoutFrameMoneyGoldButton"
+                        text: "9"
+                        anchors.right: auctionsButton1BuyoutFrameMoneySilverButton.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: auctionsButton1BuyoutFrameMoneySilverButton.verticalCenter
+                        width: 22.3
+                        height: 13
+
+                        FontString {
+                            name: "AuctionsButton1BuyoutFrameMoneyGoldButtonText"
+                            text: "9"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 9.4
+                            height: 13.6
+                        }
+                    }
+
+                    Button {
+                        id: auctionsButton1BuyoutFrameMoneySilverButton
+                        name: "AuctionsButton1BuyoutFrameMoneySilverButton"
+                        text: "80"
+                        anchors.right: auctionsButton1BuyoutFrameMoneyCopperButton.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: auctionsButton1BuyoutFrameMoneyCopperButton.verticalCenter
+                        width: 32
+                        height: 13
+
+                        FontString {
+                            name: "AuctionsButton1BuyoutFrameMoneySilverButtonText"
+                            text: "80"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 15.8
+                            height: 13.6
+                        }
+                    }
+                }
+
+                Frame {
+                    name: "AuctionsButton1BuyoutFrameText"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 87.6
+                    height: 13
+                }
+            }
+
+            Frame {
                 name: "AuctionsButton1ClosingTime"
-                wowParent: "AuctionsButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 191
                 anchors.top: parent.top
@@ -1651,7 +1638,6 @@ WowWindow {
                 FontString {
                     name: "AuctionsButton1ClosingTimeText"
                     text: "Medium"
-                    wowParent: "AuctionsButton1ClosingTime"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 65
@@ -1661,7 +1647,6 @@ WowWindow {
 
             FontString {
                 name: "AuctionsButton1HighBidder"
-                wowParent: "AuctionsButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 279
                 anchors.top: parent.top
@@ -1671,7 +1656,6 @@ WowWindow {
 
             Button {
                 name: "AuctionsButton1Item"
-                wowParent: "AuctionsButton1"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 32
@@ -1680,7 +1664,6 @@ WowWindow {
                 FontString {
                     name: "AuctionsButton1ItemCount"
                     text: "20"
-                    wowParent: "AuctionsButton1Item"
                     anchors.right: parent.right
                     anchors.rightMargin: 5
                     anchors.bottom: parent.bottom
@@ -1691,8 +1674,8 @@ WowWindow {
             }
 
             Frame {
+                id: auctionsButton1MoneyFrame
                 name: "AuctionsButton1MoneyFrame"
-                wowParent: "AuctionsButton1"
                 anchors.right: parent.right
                 anchors.rightMargin: -10
                 anchors.verticalCenter: parent.verticalCenter
@@ -1700,107 +1683,10 @@ WowWindow {
                 width: 107.3
                 height: 13
 
-                Frame {
-                    name: "AuctionsButton1BuyoutFrame"
-                    wowParent: "AuctionsButton1"
-                    anchors.right: parent.right
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 1
-                    width: 197
-                    height: 13
-
-                    Frame {
-                        name: "AuctionsButton1BuyoutFrameMoney"
-                        wowParent: "AuctionsButton1BuyoutFrame"
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 107.3
-                        height: 13
-
-                        Button {
-                            id: auctionsButton1BuyoutFrameMoneyCopperButton
-                            name: "AuctionsButton1BuyoutFrameMoneyCopperButton"
-                            text: "0"
-                            wowParent: "AuctionsButton1BuyoutFrameMoney"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 32
-                            height: 13
-
-                            FontString {
-                                name: "AuctionsButton1BuyoutFrameMoneyCopperButtonText"
-                                text: "0"
-                                wowParent: "AuctionsButton1BuyoutFrameMoneyCopperButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 9.4
-                                height: 13.6
-                            }
-                        }
-
-                        Button {
-                            name: "AuctionsButton1BuyoutFrameMoneyGoldButton"
-                            text: "9"
-                            wowParent: "AuctionsButton1BuyoutFrameMoney"
-                            anchors.right: auctionsButton1BuyoutFrameMoneySilverButton.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: auctionsButton1BuyoutFrameMoneySilverButton.verticalCenter
-                            width: 22.3
-                            height: 13
-
-                            FontString {
-                                name: "AuctionsButton1BuyoutFrameMoneyGoldButtonText"
-                                text: "9"
-                                wowParent: "AuctionsButton1BuyoutFrameMoneyGoldButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 9.4
-                                height: 13.6
-                            }
-                        }
-
-                        Button {
-                            id: auctionsButton1BuyoutFrameMoneySilverButton
-                            name: "AuctionsButton1BuyoutFrameMoneySilverButton"
-                            text: "80"
-                            wowParent: "AuctionsButton1BuyoutFrameMoney"
-                            anchors.right: auctionsButton1BuyoutFrameMoneyCopperButton.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: auctionsButton1BuyoutFrameMoneyCopperButton.verticalCenter
-                            width: 32
-                            height: 13
-
-                            FontString {
-                                name: "AuctionsButton1BuyoutFrameMoneySilverButtonText"
-                                text: "80"
-                                wowParent: "AuctionsButton1BuyoutFrameMoneySilverButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 15.8
-                                height: 13.6
-                            }
-                        }
-                    }
-
-                    Frame {
-                        name: "AuctionsButton1BuyoutFrameText"
-                        wowParent: "AuctionsButton1BuyoutFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        width: 87.6
-                        height: 13
-                    }
-                }
-
                 Button {
                     id: auctionsButton1MoneyFrameCopperButton
                     name: "AuctionsButton1MoneyFrameCopperButton"
                     text: "0"
-                    wowParent: "AuctionsButton1MoneyFrame"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -1810,7 +1696,6 @@ WowWindow {
                     FontString {
                         name: "AuctionsButton1MoneyFrameCopperButtonText"
                         text: "0"
-                        wowParent: "AuctionsButton1MoneyFrameCopperButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -1822,7 +1707,6 @@ WowWindow {
                 Button {
                     name: "AuctionsButton1MoneyFrameGoldButton"
                     text: "9"
-                    wowParent: "AuctionsButton1MoneyFrame"
                     anchors.right: auctionsButton1MoneyFrameSilverButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: auctionsButton1MoneyFrameSilverButton.verticalCenter
@@ -1832,7 +1716,6 @@ WowWindow {
                     FontString {
                         name: "AuctionsButton1MoneyFrameGoldButtonText"
                         text: "9"
-                        wowParent: "AuctionsButton1MoneyFrameGoldButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -1845,7 +1728,6 @@ WowWindow {
                     id: auctionsButton1MoneyFrameSilverButton
                     name: "AuctionsButton1MoneyFrameSilverButton"
                     text: "31"
-                    wowParent: "AuctionsButton1MoneyFrame"
                     anchors.right: auctionsButton1MoneyFrameCopperButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: auctionsButton1MoneyFrameCopperButton.verticalCenter
@@ -1855,7 +1737,6 @@ WowWindow {
                     FontString {
                         name: "AuctionsButton1MoneyFrameSilverButtonText"
                         text: "31"
-                        wowParent: "AuctionsButton1MoneyFrameSilverButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -1868,7 +1749,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton1Name"
                 text: "Packet of Tharlendris Seeds"
-                wowParent: "AuctionsButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 43
                 anchors.top: parent.top
@@ -1891,7 +1771,6 @@ WowWindow {
             FontString {
                 name: "AuctionsDurationSortText"
                 text: "Time Left"
-                wowParent: "AuctionsDurationSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -1914,7 +1793,6 @@ WowWindow {
             FontString {
                 name: "AuctionsHighBidderSortText"
                 text: "High Bidder"
-                wowParent: "AuctionsHighBidderSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -1939,75 +1817,11 @@ WowWindow {
             FontString {
                 name: "AuctionsQualitySortText"
                 text: "Rarity"
-                wowParent: "AuctionsQualitySort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 width: 29.5
                 height: 10.1
-            }
-        }
-
-        ScrollFrame {
-            name: "AuctionsScrollFrame"
-            wowParent: "AuctionFrameAuctions"
-            pin: "all"
-            anchors.right: parent.left
-            anchors.rightMargin: -593
-            anchors.top: parent.top
-            anchors.topMargin: 25
-            width: 435
-            height: 338
-
-            Slider {
-                name: "AuctionsScrollFrameScrollBar"
-                wowParent: "AuctionsScrollFrame"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                anchors.topMargin: 16
-                width: 16
-                height: 306
-
-                Button {
-                    name: "AuctionsScrollFrameScrollBarScrollDownButton"
-                    wowParent: "AuctionsScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    width: 16
-                    height: 16
-                }
-
-                Button {
-                    name: "AuctionsScrollFrameScrollBarScrollUpButton"
-                    wowParent: "AuctionsScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
-
-                    Frame {
-                        name: "AuctionsScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "AuctionsScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 340
-                    }
-                }
-            }
-
-            Frame {
-                name: "AuctionsScrollFrameScrollChildFrame"
-                wowParent: "AuctionsScrollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 300
-                height: 555
             }
         }
     }
@@ -2039,7 +1853,6 @@ WowWindow {
             FontString {
                 name: "AuctionsCreateAuctionButtonText"
                 text: "Create Auction"
-                wowParent: "AuctionsCreateAuctionButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 81.2
@@ -2050,7 +1863,6 @@ WowWindow {
 
     Frame {
         name: "AuctionFrameBid"
-        wowParent: "AuctionFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 758
@@ -2059,7 +1871,6 @@ WowWindow {
         FontString {
             name: "BidTitle"
             text: "Bid"
-            wowParent: "AuctionFrameBid"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 18
@@ -2070,6 +1881,7 @@ WowWindow {
 
     // Bids' results, across the page
     Frame {
+        id: auctionFrameBidDiabolicResults
         name: "AuctionFrameBidDiabolicResults"
         wowParent: "AuctionFrameBid"
         pin: "all"
@@ -2093,7 +1905,6 @@ WowWindow {
             FontString {
                 name: "BidBidSortText"
                 text: "Current Bid"
-                wowParent: "BidBidSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2129,7 +1940,6 @@ WowWindow {
             FontString {
                 name: "BidBuyoutSortText"
                 text: "Buyout Price"
-                wowParent: "BidBuyoutSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2152,7 +1962,6 @@ WowWindow {
             FontString {
                 name: "BidDurationSortText"
                 text: "Time Left"
-                wowParent: "BidDurationSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2175,7 +1984,6 @@ WowWindow {
             FontString {
                 name: "BidLevelSortText"
                 text: "Lvl"
-                wowParent: "BidLevelSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2200,25 +2008,12 @@ WowWindow {
             FontString {
                 name: "BidQualitySortText"
                 text: "Rarity"
-                wowParent: "BidQualitySort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 width: 29.5
                 height: 10.1
             }
-        }
-
-        ScrollFrame {
-            name: "BidScrollFrame"
-            wowParent: "AuctionFrameBid"
-            pin: "all"
-            anchors.right: parent.left
-            anchors.rightMargin: -798
-            anchors.top: parent.top
-            anchors.topMargin: 25
-            width: 625
-            height: 338
         }
 
         Button {
@@ -2235,7 +2030,6 @@ WowWindow {
             FontString {
                 name: "BidStatusSortText"
                 text: "Bid Status"
-                wowParent: "BidStatusSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2247,7 +2041,6 @@ WowWindow {
 
     Frame {
         name: "AuctionFrameBrowse"
-        wowParent: "AuctionFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 758
@@ -2256,7 +2049,6 @@ WowWindow {
         FontString {
             name: "BrowseNameText"
             text: "Name"
-            wowParent: "AuctionFrameBrowse"
             anchors.left: parent.left
             anchors.leftMargin: 80
             anchors.top: parent.top
@@ -2268,7 +2060,6 @@ WowWindow {
         Button {
             name: "BrowseSearchButton"
             text: "Search"
-            wowParent: "AuctionFrameBrowse"
             style: "Button"
             anchors.left: parent.left
             anchors.leftMargin: 676.3
@@ -2280,7 +2071,6 @@ WowWindow {
             FontString {
                 name: "BrowseSearchButtonText"
                 text: "Search"
-                wowParent: "BrowseSearchButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 36.6
@@ -2291,7 +2081,6 @@ WowWindow {
         FontString {
             name: "BrowseTitle"
             text: "Browse Auctions"
-            wowParent: "AuctionFrameBrowse"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 18
@@ -2302,6 +2091,7 @@ WowWindow {
 
     // Browse's categories, under its toolbar
     Frame {
+        id: auctionFrameBrowseDiabolicCategories
         name: "AuctionFrameBrowseDiabolicCategories"
         wowParent: "AuctionFrameBrowse"
         pin: "all"
@@ -2327,7 +2117,6 @@ WowWindow {
             FontString {
                 name: "AuctionFilterButton1NormalText"
                 text: "Weapon"
-                wowParent: "AuctionFilterButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
@@ -2335,97 +2124,11 @@ WowWindow {
                 height: 8
             }
         }
-
-        ScrollFrame {
-            name: "BrowseFilterScrollFrame"
-            wowParent: "AuctionFrameBrowse"
-            pin: "all"
-            anchors.right: parent.left
-            anchors.rightMargin: -146
-            anchors.top: parent.top
-            anchors.topMargin: 4
-            width: 160
-            height: 327
-
-            Slider {
-                name: "BrowseFilterScrollFrameScrollBar"
-                wowParent: "BrowseFilterScrollFrame"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                anchors.topMargin: 16
-                width: 16
-                height: 295
-
-                Button {
-                    name: "BrowseFilterScrollFrameScrollBarScrollDownButton"
-                    wowParent: "BrowseFilterScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    width: 16
-                    height: 16
-                }
-
-                Button {
-                    name: "BrowseFilterScrollFrameScrollBarScrollUpButton"
-                    wowParent: "BrowseFilterScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
-
-                    Frame {
-                        name: "BrowseFilterScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "BrowseFilterScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 329
-                    }
-                }
-            }
-
-            Frame {
-                name: "BrowseFilterScrollFrameScrollChildFrame"
-                wowParent: "BrowseFilterScrollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 300
-                height: 420
-            }
-        }
-
-        Button {
-            name: "BrowseResetButton"
-            text: "Reset"
-            wowParent: "AuctionFrameBrowse"
-            style: "Button"
-            pin: "all"
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.bottom: parent.top
-            anchors.bottomMargin: 8
-            width: 156
-            height: 24
-
-            FontString {
-                name: "BrowseResetButtonText"
-                text: "Reset"
-                wowParent: "BrowseResetButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: 30.2
-                height: 10.1
-            }
-        }
     }
 
     // Browse's results, right of the categories
     Frame {
+        id: auctionFrameBrowseDiabolicResults
         name: "AuctionFrameBrowseDiabolicResults"
         wowParent: "AuctionFrameBrowse"
         pin: "all"
@@ -2448,8 +2151,94 @@ WowWindow {
             height: 37
 
             Frame {
+                name: "BrowseButton1BuyoutFrame"
+                anchors.right: browseButton1MoneyFrame.right
+                anchors.top: browseButton1MoneyFrame.bottom
+                anchors.topMargin: 1
+                width: 185
+                height: 13
+
+                Frame {
+                    name: "BrowseButton1BuyoutFrameMoney"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 120.3
+                    height: 13
+
+                    Button {
+                        id: browseButton1BuyoutFrameMoneyCopperButton
+                        name: "BrowseButton1BuyoutFrameMoneyCopperButton"
+                        text: "0"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 32
+                        height: 13
+
+                        FontString {
+                            name: "BrowseButton1BuyoutFrameMoneyCopperButtonText"
+                            text: "0"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 9.4
+                            height: 13.6
+                        }
+                    }
+
+                    Button {
+                        name: "BrowseButton1BuyoutFrameMoneyGoldButton"
+                        text: "249"
+                        anchors.right: browseButton1BuyoutFrameMoneySilverButton.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
+                        width: 35.3
+                        height: 13
+
+                        FontString {
+                            name: "BrowseButton1BuyoutFrameMoneyGoldButtonText"
+                            text: "249"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 22.3
+                            height: 13.6
+                        }
+                    }
+
+                    Button {
+                        id: browseButton1BuyoutFrameMoneySilverButton
+                        name: "BrowseButton1BuyoutFrameMoneySilverButton"
+                        text: "75"
+                        anchors.right: browseButton1BuyoutFrameMoneyCopperButton.left
+                        anchors.rightMargin: 4
+                        anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
+                        width: 32
+                        height: 13
+
+                        FontString {
+                            name: "BrowseButton1BuyoutFrameMoneySilverButtonText"
+                            text: "75"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 16.5
+                            height: 13.6
+                        }
+                    }
+                }
+
+                Frame {
+                    name: "BrowseButton1BuyoutFrameText"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: 62.7
+                    height: 13
+                }
+            }
+
+            Frame {
                 name: "BrowseButton1ClosingTime"
-                wowParent: "BrowseButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 267
                 anchors.top: parent.top
@@ -2459,7 +2248,6 @@ WowWindow {
                 FontString {
                     name: "BrowseButton1ClosingTimeText"
                     text: "Very Long"
-                    wowParent: "BrowseButton1ClosingTime"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 65
@@ -2470,7 +2258,6 @@ WowWindow {
             FontString {
                 name: "BrowseButton1HighBidder"
                 text: "Kovasky"
-                wowParent: "BrowseButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 345
                 anchors.top: parent.top
@@ -2480,7 +2267,6 @@ WowWindow {
 
             Button {
                 name: "BrowseButton1Item"
-                wowParent: "BrowseButton1"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 32
@@ -2489,7 +2275,6 @@ WowWindow {
                 FontString {
                     name: "BrowseButton1ItemCount"
                     text: "20"
-                    wowParent: "BrowseButton1Item"
                     anchors.right: parent.right
                     anchors.rightMargin: 5
                     anchors.bottom: parent.bottom
@@ -2502,7 +2287,6 @@ WowWindow {
             FontString {
                 name: "BrowseButton1Level"
                 text: "80"
-                wowParent: "BrowseButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 205
                 anchors.top: parent.top
@@ -2511,8 +2295,8 @@ WowWindow {
             }
 
             Frame {
+                id: browseButton1MoneyFrame
                 name: "BrowseButton1MoneyFrame"
-                wowParent: "BrowseButton1"
                 anchors.right: parent.right
                 anchors.rightMargin: -10
                 anchors.verticalCenter: parent.verticalCenter
@@ -2520,107 +2304,10 @@ WowWindow {
                 width: 120.3
                 height: 13
 
-                Frame {
-                    name: "BrowseButton1BuyoutFrame"
-                    wowParent: "BrowseButton1"
-                    anchors.right: parent.right
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 1
-                    width: 185
-                    height: 13
-
-                    Frame {
-                        name: "BrowseButton1BuyoutFrameMoney"
-                        wowParent: "BrowseButton1BuyoutFrame"
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 120.3
-                        height: 13
-
-                        Button {
-                            id: browseButton1BuyoutFrameMoneyCopperButton
-                            name: "BrowseButton1BuyoutFrameMoneyCopperButton"
-                            text: "0"
-                            wowParent: "BrowseButton1BuyoutFrameMoney"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 32
-                            height: 13
-
-                            FontString {
-                                name: "BrowseButton1BuyoutFrameMoneyCopperButtonText"
-                                text: "0"
-                                wowParent: "BrowseButton1BuyoutFrameMoneyCopperButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 9.4
-                                height: 13.6
-                            }
-                        }
-
-                        Button {
-                            name: "BrowseButton1BuyoutFrameMoneyGoldButton"
-                            text: "249"
-                            wowParent: "BrowseButton1BuyoutFrameMoney"
-                            anchors.right: browseButton1BuyoutFrameMoneySilverButton.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: browseButton1BuyoutFrameMoneySilverButton.verticalCenter
-                            width: 35.3
-                            height: 13
-
-                            FontString {
-                                name: "BrowseButton1BuyoutFrameMoneyGoldButtonText"
-                                text: "249"
-                                wowParent: "BrowseButton1BuyoutFrameMoneyGoldButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 22.3
-                                height: 13.6
-                            }
-                        }
-
-                        Button {
-                            id: browseButton1BuyoutFrameMoneySilverButton
-                            name: "BrowseButton1BuyoutFrameMoneySilverButton"
-                            text: "75"
-                            wowParent: "BrowseButton1BuyoutFrameMoney"
-                            anchors.right: browseButton1BuyoutFrameMoneyCopperButton.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: browseButton1BuyoutFrameMoneyCopperButton.verticalCenter
-                            width: 32
-                            height: 13
-
-                            FontString {
-                                name: "BrowseButton1BuyoutFrameMoneySilverButtonText"
-                                text: "75"
-                                wowParent: "BrowseButton1BuyoutFrameMoneySilverButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 16.5
-                                height: 13.6
-                            }
-                        }
-                    }
-
-                    Frame {
-                        name: "BrowseButton1BuyoutFrameText"
-                        wowParent: "BrowseButton1BuyoutFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        width: 62.7
-                        height: 13
-                    }
-                }
-
                 Button {
                     id: browseButton1MoneyFrameCopperButton
                     name: "BrowseButton1MoneyFrameCopperButton"
                     text: "25"
-                    wowParent: "BrowseButton1MoneyFrame"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -2630,7 +2317,6 @@ WowWindow {
                     FontString {
                         name: "BrowseButton1MoneyFrameCopperButtonText"
                         text: "25"
-                        wowParent: "BrowseButton1MoneyFrameCopperButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -2642,7 +2328,6 @@ WowWindow {
                 Button {
                     name: "BrowseButton1MoneyFrameGoldButton"
                     text: "237"
-                    wowParent: "BrowseButton1MoneyFrame"
                     anchors.right: browseButton1MoneyFrameSilverButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: browseButton1MoneyFrameSilverButton.verticalCenter
@@ -2652,7 +2337,6 @@ WowWindow {
                     FontString {
                         name: "BrowseButton1MoneyFrameGoldButtonText"
                         text: "237"
-                        wowParent: "BrowseButton1MoneyFrameGoldButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -2665,7 +2349,6 @@ WowWindow {
                     id: browseButton1MoneyFrameSilverButton
                     name: "BrowseButton1MoneyFrameSilverButton"
                     text: "26"
-                    wowParent: "BrowseButton1MoneyFrame"
                     anchors.right: browseButton1MoneyFrameCopperButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: browseButton1MoneyFrameCopperButton.verticalCenter
@@ -2675,7 +2358,6 @@ WowWindow {
                     FontString {
                         name: "BrowseButton1MoneyFrameSilverButtonText"
                         text: "26"
-                        wowParent: "BrowseButton1MoneyFrameSilverButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -2688,7 +2370,6 @@ WowWindow {
             FontString {
                 name: "BrowseButton1Name"
                 text: "Durable Nerubhide Cape"
-                wowParent: "BrowseButton1"
                 anchors.left: parent.left
                 anchors.leftMargin: 43
                 anchors.top: parent.top
@@ -2710,7 +2391,6 @@ WowWindow {
             FontString {
                 name: "BrowseCurrentBidSortText"
                 text: "Current Bid"
-                wowParent: "BrowseCurrentBidSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2733,7 +2413,6 @@ WowWindow {
             FontString {
                 name: "BrowseDurationSortText"
                 text: "Time Left"
-                wowParent: "BrowseDurationSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2756,7 +2435,6 @@ WowWindow {
             FontString {
                 name: "BrowseHighBidderSortText"
                 text: "Seller"
-                wowParent: "BrowseHighBidderSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2779,7 +2457,6 @@ WowWindow {
             FontString {
                 name: "BrowseLevelSortText"
                 text: "Lvl"
-                wowParent: "BrowseLevelSort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -2839,75 +2516,11 @@ WowWindow {
             FontString {
                 name: "BrowseQualitySortText"
                 text: "Rarity"
-                wowParent: "BrowseQualitySort"
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 width: 29.5
                 height: 10.1
-            }
-        }
-
-        ScrollFrame {
-            name: "BrowseScrollFrame"
-            wowParent: "AuctionFrameBrowse"
-            pin: "all"
-            anchors.right: parent.left
-            anchors.rightMargin: -620
-            anchors.top: parent.top
-            anchors.topMargin: 25
-            width: 465
-            height: 306
-
-            Slider {
-                name: "BrowseScrollFrameScrollBar"
-                wowParent: "BrowseScrollFrame"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                anchors.topMargin: 16
-                width: 16
-                height: 274
-
-                Button {
-                    name: "BrowseScrollFrameScrollBarScrollDownButton"
-                    wowParent: "BrowseScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    width: 16
-                    height: 16
-                }
-
-                Button {
-                    name: "BrowseScrollFrameScrollBarScrollUpButton"
-                    wowParent: "BrowseScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
-
-                    Frame {
-                        name: "BrowseScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "BrowseScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 308
-                    }
-                }
-            }
-
-            Frame {
-                name: "BrowseScrollFrameScrollChildFrame"
-                wowParent: "BrowseScrollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 300
-                height: 1887
             }
         }
 
@@ -2937,44 +2550,43 @@ WowWindow {
             height: 16
 
             FontString {
+                id: isUsableCheckButtonText
                 name: "IsUsableCheckButtonText"
                 text: "Usable Items"
-                wowParent: "IsUsableCheckButton"
                 anchors.left: parent.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
                 width: 70.4
                 height: 13.6
+            }
 
-                CheckButton {
-                    name: "ShowOnPlayerCheckButton"
-                    wowParent: "AuctionFrameBrowse"
-                    style: "CheckBox"
-                    pin: "place"
+            CheckButton {
+                name: "ShowOnPlayerCheckButton"
+                wowParent: "AuctionFrameBrowse"
+                style: "CheckBox"
+                pin: "place"
+                anchors.left: isUsableCheckButtonText.right
+                anchors.leftMargin: 16
+                anchors.verticalCenter: isUsableCheckButtonText.verticalCenter
+                width: 16
+                height: 16
+
+                FontString {
+                    name: "ShowOnPlayerCheckButtonText"
+                    text: "Display on Character"
                     anchors.left: parent.right
-                    anchors.leftMargin: 16
+                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 16
-                    height: 16
-
-                    FontString {
-                        name: "ShowOnPlayerCheckButtonText"
-                        text: "Display on Character"
-                        wowParent: "ShowOnPlayerCheckButton"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 112.1
-                        height: 13.6
-                    }
+                    width: 112.1
+                    height: 13.6
                 }
             }
         }
     }
 
     Frame {
+        id: auctionFrameDiabolic
         name: "AuctionFrameDiabolic"
-        wowParent: "AuctionFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -2996,7 +2608,6 @@ WowWindow {
 
         Frame {
             name: "AuctionFrameDiabolicBand"
-            wowParent: "AuctionFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -3004,7 +2615,29 @@ WowWindow {
             width: 832
             height: 40
 
+            Button {
+                name: "Atr_Adv_Search_Button"
+                text: "+"
+                wowParent: "Atr_Main_Panel"
+                style: "Button"
+                anchors.left: atr_Search_Button.right
+                anchors.leftMargin: 12
+                anchors.verticalCenter: atr_Search_Button.verticalCenter
+                width: 22
+                height: 22
+
+                FontString {
+                    name: "Atr_Adv_Search_ButtonText"
+                    text: "+"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 6.5
+                    height: 10.1
+                }
+            }
+
             Frame {
+                id: atr_DropDownSL
                 name: "Atr_DropDownSL"
                 wowParent: "Atr_Main_Panel"
                 style: "DropDown"
@@ -3016,7 +2649,6 @@ WowWindow {
 
                 Frame {
                     name: "Atr_DropDownSLDiabolicField"
-                    wowParent: "Atr_DropDownSL"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: 200
@@ -3030,72 +2662,6 @@ WowWindow {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 18
                         height: 18
-                    }
-                }
-
-                EditBox {
-                    name: "Atr_Search_Box"
-                    wowParent: "Atr_Main_Panel"
-                    style: "EditBox"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 260
-                    height: 20
-
-                    Button {
-                        name: "Atr_Adv_Search_Button"
-                        text: "+"
-                        wowParent: "Atr_Main_Panel"
-                        style: "Button"
-                        anchors.left: atr_Search_Button.right
-                        anchors.leftMargin: 12
-                        anchors.verticalCenter: atr_Search_Button.verticalCenter
-                        width: 22
-                        height: 22
-
-                        FontString {
-                            name: "Atr_Adv_Search_ButtonText"
-                            text: "+"
-                            wowParent: "Atr_Adv_Search_Button"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 6.5
-                            height: 10.1
-                        }
-                    }
-
-                    Frame {
-                        name: "Atr_Search_BoxDiabolicField"
-                        wowParent: "Atr_Search_Box"
-                        anchors.left: parent.left
-                        anchors.leftMargin: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 276
-                        height: 22
-                    }
-
-                    Button {
-                        id: atr_Search_Button
-                        name: "Atr_Search_Button"
-                        text: "Search"
-                        wowParent: "Atr_Main_Panel"
-                        style: "Button"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 20
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 80
-                        height: 22
-
-                        FontString {
-                            name: "Atr_Search_ButtonText"
-                            text: "Search"
-                            wowParent: "Atr_Search_Button"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 36.6
-                            height: 10.1
-                        }
                     }
                 }
 
@@ -3134,10 +2700,52 @@ WowWindow {
                 FontString {
                     name: "Atr_FullScanButtonText"
                     text: "Full Scan..."
-                    wowParent: "Atr_FullScanButton"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     width: 58.9
+                    height: 10.1
+                }
+            }
+
+            EditBox {
+                id: atr_Search_Box
+                name: "Atr_Search_Box"
+                wowParent: "Atr_Main_Panel"
+                style: "EditBox"
+                anchors.left: atr_DropDownSL.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: atr_DropDownSL.verticalCenter
+                width: 260
+                height: 20
+
+                Frame {
+                    name: "Atr_Search_BoxDiabolicField"
+                    anchors.left: parent.left
+                    anchors.leftMargin: -8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 276
+                    height: 22
+                }
+            }
+
+            Button {
+                id: atr_Search_Button
+                name: "Atr_Search_Button"
+                text: "Search"
+                wowParent: "Atr_Main_Panel"
+                style: "Button"
+                anchors.left: atr_Search_Box.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: atr_Search_Box.verticalCenter
+                width: 80
+                height: 22
+
+                FontString {
+                    name: "Atr_Search_ButtonText"
+                    text: "Search"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 36.6
                     height: 10.1
                 }
             }
@@ -3157,7 +2765,6 @@ WowWindow {
                 FontString {
                     name: "Auctionator1ButtonText"
                     text: "Options"
-                    wowParent: "Auctionator1Button"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     width: 43.1
@@ -3165,7 +2772,122 @@ WowWindow {
                 }
             }
 
+            FontString {
+                id: browseLevelText
+                name: "BrowseLevelText"
+                text: "Level Range"
+                wowParent: "AuctionFrameBrowse"
+                anchors.left: browseName.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: browseName.verticalCenter
+                width: 66.8
+                height: 13.6
+            }
+
             EditBox {
+                name: "BrowseMinLevel"
+                wowParent: "AuctionFrameBrowse"
+                style: "EditBox"
+                anchors.left: browseLevelText.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: browseLevelText.verticalCenter
+                width: 25
+                height: 16
+
+                Frame {
+                    name: "BrowseDropDown"
+                    wowParent: "AuctionFrameBrowse"
+                    style: "DropDown"
+                    anchors.left: browseMaxLevel.right
+                    anchors.leftMargin: 4
+                    anchors.verticalCenter: browseMaxLevel.verticalCenter
+                    width: 165
+                    height: 32
+
+                    Frame {
+                        name: "BrowseDropDownDiabolicField"
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 165
+                        height: 22
+
+                        Button {
+                            name: "BrowseDropDownButton"
+                            wowParent: "BrowseDropDown"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 18
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 18
+                            height: 18
+                        }
+
+                        FontString {
+                            name: "BrowseDropDownText"
+                            text: "All"
+                            wowParent: "BrowseDropDown"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 22
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 103
+                            height: 10
+                        }
+                    }
+
+                    FontString {
+                        name: "BrowseDropDownName"
+                        text: "Rarity"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 20
+                        anchors.bottom: parent.top
+                        width: 29.5
+                        height: 10.1
+                    }
+                }
+
+                FontString {
+                    id: browseLevelHyphen
+                    name: "BrowseLevelHyphen"
+                    text: "-"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 5
+                    height: 13.6
+                }
+
+                EditBox {
+                    id: browseMaxLevel
+                    name: "BrowseMaxLevel"
+                    wowParent: "AuctionFrameBrowse"
+                    style: "EditBox"
+                    anchors.left: browseLevelHyphen.right
+                    anchors.leftMargin: 20
+                    anchors.verticalCenter: browseLevelHyphen.verticalCenter
+                    width: 25
+                    height: 16
+
+                    Frame {
+                        name: "BrowseMaxLevelDiabolicField"
+                        anchors.left: parent.left
+                        anchors.leftMargin: -8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 41
+                        height: 22
+                    }
+                }
+
+                Frame {
+                    name: "BrowseMinLevelDiabolicField"
+                    anchors.left: parent.left
+                    anchors.leftMargin: -8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 41
+                    height: 22
+                }
+            }
+
+            EditBox {
+                id: browseName
                 name: "BrowseName"
                 wowParent: "AuctionFrameBrowse"
                 style: "EditBox"
@@ -3175,125 +2897,8 @@ WowWindow {
                 width: 140
                 height: 16
 
-                FontString {
-                    name: "BrowseLevelText"
-                    text: "Level Range"
-                    wowParent: "AuctionFrameBrowse"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 66.8
-                    height: 13.6
-
-                    EditBox {
-                        name: "BrowseMinLevel"
-                        wowParent: "AuctionFrameBrowse"
-                        style: "EditBox"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 20
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 25
-                        height: 16
-
-                        FontString {
-                            name: "BrowseLevelHyphen"
-                            text: "-"
-                            wowParent: "BrowseMinLevel"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 20
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 5
-                            height: 13.6
-
-                            EditBox {
-                                name: "BrowseMaxLevel"
-                                wowParent: "AuctionFrameBrowse"
-                                style: "EditBox"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 20
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 25
-                                height: 16
-
-                                Frame {
-                                    name: "BrowseDropDown"
-                                    wowParent: "AuctionFrameBrowse"
-                                    style: "DropDown"
-                                    anchors.left: parent.right
-                                    anchors.leftMargin: 4
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 165
-                                    height: 32
-
-                                    Frame {
-                                        name: "BrowseDropDownDiabolicField"
-                                        wowParent: "BrowseDropDown"
-                                        anchors.left: parent.left
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        width: 165
-                                        height: 22
-
-                                        Button {
-                                            name: "BrowseDropDownButton"
-                                            wowParent: "BrowseDropDown"
-                                            anchors.right: parent.right
-                                            anchors.rightMargin: 18
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 18
-                                            height: 18
-                                        }
-
-                                        FontString {
-                                            name: "BrowseDropDownText"
-                                            text: "All"
-                                            wowParent: "BrowseDropDown"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 22
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 103
-                                            height: 10
-                                        }
-                                    }
-
-                                    FontString {
-                                        name: "BrowseDropDownName"
-                                        text: "Rarity"
-                                        wowParent: "BrowseDropDown"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        anchors.bottom: parent.top
-                                        width: 29.5
-                                        height: 10.1
-                                    }
-                                }
-
-                                Frame {
-                                    name: "BrowseMaxLevelDiabolicField"
-                                    wowParent: "BrowseMaxLevel"
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: -8
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 41
-                                    height: 22
-                                }
-                            }
-                        }
-
-                        Frame {
-                            name: "BrowseMinLevelDiabolicField"
-                            wowParent: "BrowseMinLevel"
-                            anchors.left: parent.left
-                            anchors.leftMargin: -8
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 41
-                            height: 22
-                        }
-                    }
-                }
-
                 Frame {
                     name: "BrowseNameDiabolicField"
-                    wowParent: "BrowseName"
                     anchors.left: parent.left
                     anchors.leftMargin: -8
                     anchors.verticalCenter: parent.verticalCenter
@@ -3305,7 +2910,6 @@ WowWindow {
 
         Frame {
             name: "AuctionFrameDiabolicBorder"
-            wowParent: "AuctionFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
@@ -3324,7 +2928,6 @@ WowWindow {
                 FontString {
                     name: "AuctionFrameDiabolicTitle"
                     text: "Auctions"
-                    wowParent: "AuctionFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -3335,8 +2938,8 @@ WowWindow {
         }
 
         Frame {
+            id: auctionFrameDiabolicFoot
             name: "AuctionFrameDiabolicFoot"
-            wowParent: "AuctionFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -3346,86 +2949,6 @@ WowWindow {
             anchors.rightMargin: 23
             width: 834
             height: 35
-
-            Frame {
-                name: "AuctionFrameMoneyFrame"
-                wowParent: "AuctionFrame"
-                pin: "place"
-                anchors.right: parent.left
-                anchors.rightMargin: -182
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 13
-                width: 120.3
-                height: 13
-
-                Button {
-                    id: auctionFrameMoneyFrameCopperButton
-                    name: "AuctionFrameMoneyFrameCopperButton"
-                    text: "13"
-                    wowParent: "AuctionFrameMoneyFrame"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 28.8
-                    height: 13
-
-                    FontString {
-                        name: "AuctionFrameMoneyFrameCopperButtonText"
-                        text: "13"
-                        wowParent: "AuctionFrameMoneyFrameCopperButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 15.8
-                        height: 13.6
-                    }
-                }
-
-                Button {
-                    name: "AuctionFrameMoneyFrameGoldButton"
-                    text: "3654"
-                    wowParent: "AuctionFrameMoneyFrame"
-                    anchors.right: auctionFrameMoneyFrameSilverButton.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: auctionFrameMoneyFrameSilverButton.verticalCenter
-                    width: 41.7
-                    height: 13
-
-                    FontString {
-                        name: "AuctionFrameMoneyFrameGoldButtonText"
-                        text: "3654"
-                        wowParent: "AuctionFrameMoneyFrameGoldButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 28.7
-                        height: 13.6
-                    }
-                }
-
-                Button {
-                    id: auctionFrameMoneyFrameSilverButton
-                    name: "AuctionFrameMoneyFrameSilverButton"
-                    text: "16"
-                    wowParent: "AuctionFrameMoneyFrame"
-                    anchors.right: auctionFrameMoneyFrameCopperButton.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: auctionFrameMoneyFrameCopperButton.verticalCenter
-                    width: 28.8
-                    height: 13
-
-                    FontString {
-                        name: "AuctionFrameMoneyFrameSilverButtonText"
-                        text: "16"
-                        wowParent: "AuctionFrameMoneyFrameSilverButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 15.8
-                        height: 13.6
-                    }
-                }
-            }
 
             Frame {
                 name: "BidBidPrice"
@@ -3439,32 +2962,31 @@ WowWindow {
                 height: 18
 
                 EditBox {
+                    name: "BidBidPriceCopper"
+                    anchors.left: bidBidPriceSilver.right
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: bidBidPriceSilver.verticalCenter
+                    width: 30
+                    height: 20
+                }
+
+                EditBox {
+                    id: bidBidPriceGold
                     name: "BidBidPriceGold"
-                    wowParent: "BidBidPrice"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 58
                     height: 20
+                }
 
-                    EditBox {
-                        name: "BidBidPriceSilver"
-                        wowParent: "BidBidPrice"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 26
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 30
-                        height: 20
-
-                        EditBox {
-                            name: "BidBidPriceCopper"
-                            wowParent: "BidBidPrice"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 16
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 30
-                            height: 20
-                        }
-                    }
+                EditBox {
+                    id: bidBidPriceSilver
+                    name: "BidBidPriceSilver"
+                    anchors.left: bidBidPriceGold.right
+                    anchors.leftMargin: 26
+                    anchors.verticalCenter: bidBidPriceGold.verticalCenter
+                    width: 30
+                    height: 20
                 }
             }
 
@@ -3493,38 +3015,36 @@ WowWindow {
                 height: 18
 
                 EditBox {
+                    name: "BrowseBidPriceCopper"
+                    anchors.left: browseBidPriceSilver.right
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: browseBidPriceSilver.verticalCenter
+                    width: 30
+                    height: 20
+                }
+
+                EditBox {
+                    id: browseBidPriceGold
                     name: "BrowseBidPriceGold"
-                    wowParent: "BrowseBidPrice"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 58
                     height: 20
+                }
 
-                    EditBox {
-                        name: "BrowseBidPriceSilver"
-                        wowParent: "BrowseBidPrice"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 26
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 30
-                        height: 20
-
-                        EditBox {
-                            name: "BrowseBidPriceCopper"
-                            wowParent: "BrowseBidPrice"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 16
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 30
-                            height: 20
-                        }
-                    }
+                EditBox {
+                    id: browseBidPriceSilver
+                    name: "BrowseBidPriceSilver"
+                    anchors.left: browseBidPriceGold.right
+                    anchors.leftMargin: 26
+                    anchors.verticalCenter: browseBidPriceGold.verticalCenter
+                    width: 30
+                    height: 20
                 }
 
                 FontString {
                     name: "BrowseBidText"
                     text: "Bid"
-                    wowParent: "BrowseBidPrice"
                     anchors.right: parent.left
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
@@ -3555,7 +3075,6 @@ WowWindow {
                     FontString {
                         name: "BrowseBidButtonText"
                         text: "Bid"
-                        wowParent: "BrowseBidButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 17.3
@@ -3575,7 +3094,6 @@ WowWindow {
                     FontString {
                         name: "BrowseBuyoutButtonText"
                         text: "Buyout"
-                        wowParent: "BrowseBuyoutButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 38.8
@@ -3595,7 +3113,6 @@ WowWindow {
                     FontString {
                         name: "BrowseCloseButtonText"
                         text: "Close"
-                        wowParent: "BrowseCloseButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 28
@@ -3626,7 +3143,6 @@ WowWindow {
                     FontString {
                         name: "BidBidButtonText"
                         text: "Bid"
-                        wowParent: "BidBidButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 17.3
@@ -3646,7 +3162,6 @@ WowWindow {
                     FontString {
                         name: "BidBuyoutButtonText"
                         text: "Buyout"
-                        wowParent: "BidBuyoutButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 38.8
@@ -3666,7 +3181,6 @@ WowWindow {
                     FontString {
                         name: "BidCloseButtonText"
                         text: "Close"
-                        wowParent: "BidCloseButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 28
@@ -3697,7 +3211,6 @@ WowWindow {
                     FontString {
                         name: "AuctionsCancelAuctionButtonText"
                         text: "Cancel Auction"
-                        wowParent: "AuctionsCancelAuctionButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 81.2
@@ -3717,7 +3230,6 @@ WowWindow {
                     FontString {
                         name: "AuctionsCloseButtonText"
                         text: "Close"
-                        wowParent: "AuctionsCloseButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 28
@@ -3748,7 +3260,6 @@ WowWindow {
                     FontString {
                         name: "Atr_Buy1_ButtonText"
                         text: "Buy"
-                        wowParent: "Atr_Buy1_Button"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 20.1
@@ -3768,7 +3279,6 @@ WowWindow {
                     FontString {
                         name: "Atr_CancelSelectionButtonText"
                         text: "Cancel Auction"
-                        wowParent: "Atr_CancelSelectionButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 81.2
@@ -3788,7 +3298,6 @@ WowWindow {
                     FontString {
                         name: "AuctionatorCloseButtonText"
                         text: "Close"
-                        wowParent: "AuctionatorCloseButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 28
@@ -3800,7 +3309,6 @@ WowWindow {
 
         Frame {
             name: "AuctionFrameDiabolicRail"
-            wowParent: "AuctionFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 18
             anchors.top: parent.bottom
@@ -3811,7 +3319,6 @@ WowWindow {
 
         Frame {
             name: "AuctionFrameDiabolicSocket"
-            wowParent: "AuctionFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -3820,82 +3327,362 @@ WowWindow {
             height: 42
         }
 
-        Button {
-            name: "AuctionFrameTab1"
-            text: "Browse"
+        Frame {
+            name: "AuctionFrameMoneyFrame"
             wowParent: "AuctionFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 28
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
+            pin: "place"
+            anchors.right: auctionFrameDiabolicFoot.left
+            anchors.rightMargin: -182
+            anchors.bottom: auctionFrameDiabolicFoot.bottom
+            anchors.bottomMargin: 13
+            width: 120.3
+            height: 13
+
+            Button {
+                id: auctionFrameMoneyFrameCopperButton
+                name: "AuctionFrameMoneyFrameCopperButton"
+                text: "13"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 28.8
+                height: 13
+
+                FontString {
+                    name: "AuctionFrameMoneyFrameCopperButtonText"
+                    text: "13"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 15.8
+                    height: 13.6
+                }
+            }
+
+            Button {
+                name: "AuctionFrameMoneyFrameGoldButton"
+                text: "3654"
+                anchors.right: auctionFrameMoneyFrameSilverButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: auctionFrameMoneyFrameSilverButton.verticalCenter
+                width: 41.7
+                height: 13
+
+                FontString {
+                    name: "AuctionFrameMoneyFrameGoldButtonText"
+                    text: "3654"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 28.7
+                    height: 13.6
+                }
+            }
+
+            Button {
+                id: auctionFrameMoneyFrameSilverButton
+                name: "AuctionFrameMoneyFrameSilverButton"
+                text: "16"
+                anchors.right: auctionFrameMoneyFrameCopperButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: auctionFrameMoneyFrameCopperButton.verticalCenter
+                width: 28.8
+                height: 13
+
+                FontString {
+                    name: "AuctionFrameMoneyFrameSilverButtonText"
+                    text: "16"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 15.8
+                    height: 13.6
+                }
+            }
+        }
+    }
+
+    Button {
+        name: "AuctionFrameTab1"
+        text: "Browse"
+        style: "Banner"
+        anchors.left: auctionFrameDiabolic.left
+        anchors.leftMargin: 28
+        anchors.top: auctionFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "AuctionFrameTab2"
+        text: "Bids"
+        style: "Banner"
+        anchors.left: auctionFrameDiabolic.left
+        anchors.leftMargin: 86
+        anchors.top: auctionFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "AuctionFrameTab3"
+        text: "Auctions"
+        style: "Banner"
+        anchors.left: auctionFrameDiabolic.left
+        anchors.leftMargin: 144
+        anchors.top: auctionFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "AuctionFrameTab4"
+        text: "Buy"
+        style: "Banner"
+        anchors.left: auctionFrameDiabolic.left
+        anchors.leftMargin: 202
+        anchors.top: auctionFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "AuctionFrameTab5"
+        text: "Sell"
+        style: "Banner"
+        anchors.left: auctionFrameDiabolic.left
+        anchors.leftMargin: 260
+        anchors.top: auctionFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "AuctionFrameTab6"
+        text: "More..."
+        style: "Banner"
+        anchors.left: auctionFrameDiabolic.left
+        anchors.leftMargin: 318
+        anchors.top: auctionFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    ScrollFrame {
+        name: "AuctionsScrollFrame"
+        wowParent: "AuctionFrameAuctions"
+        pin: "all"
+        anchors.right: auctionFrameAuctionsDiabolicResults.left
+        anchors.rightMargin: -593
+        anchors.top: auctionFrameAuctionsDiabolicResults.top
+        anchors.topMargin: 25
+        width: 435
+        height: 338
+
+        Slider {
+            name: "AuctionsScrollFrameScrollBar"
+            style: "ScrollBar"
+            anchors.left: parent.right
+            anchors.leftMargin: 6
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            width: 16
+            height: 306
+
+            Frame {
+                name: "AuctionsScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: auctionsScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: auctionsScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 340
+            }
+
+            Button {
+                name: "AuctionsScrollFrameScrollBarScrollDownButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.bottom
+                width: 16
+                height: 16
+            }
+
+            Button {
+                id: auctionsScrollFrameScrollBarScrollUpButton
+                name: "AuctionsScrollFrameScrollBarScrollUpButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.top
+                width: 16
+                height: 16
+            }
         }
 
-        Button {
-            name: "AuctionFrameTab2"
-            text: "Bids"
-            wowParent: "AuctionFrame"
-            style: "Banner"
+        Frame {
+            name: "AuctionsScrollFrameScrollChildFrame"
             anchors.left: parent.left
-            anchors.leftMargin: 86
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
+            anchors.top: parent.top
+            width: 300
+            height: 555
+        }
+    }
+
+    ScrollFrame {
+        name: "BidScrollFrame"
+        wowParent: "AuctionFrameBid"
+        pin: "all"
+        anchors.right: auctionFrameBidDiabolicResults.left
+        anchors.rightMargin: -798
+        anchors.top: auctionFrameBidDiabolicResults.top
+        anchors.topMargin: 25
+        width: 625
+        height: 338
+    }
+
+    ScrollFrame {
+        name: "BrowseFilterScrollFrame"
+        wowParent: "AuctionFrameBrowse"
+        pin: "all"
+        anchors.right: auctionFrameBrowseDiabolicCategories.left
+        anchors.rightMargin: -146
+        anchors.top: auctionFrameBrowseDiabolicCategories.top
+        anchors.topMargin: 4
+        width: 160
+        height: 327
+
+        Slider {
+            name: "BrowseFilterScrollFrameScrollBar"
+            style: "ScrollBar"
+            anchors.left: parent.right
+            anchors.leftMargin: 6
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            width: 16
+            height: 295
+
+            Frame {
+                name: "BrowseFilterScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: browseFilterScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: browseFilterScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 329
+            }
+
+            Button {
+                name: "BrowseFilterScrollFrameScrollBarScrollDownButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.bottom
+                width: 16
+                height: 16
+            }
+
+            Button {
+                id: browseFilterScrollFrameScrollBarScrollUpButton
+                name: "BrowseFilterScrollFrameScrollBarScrollUpButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.top
+                width: 16
+                height: 16
+            }
         }
 
-        Button {
-            name: "AuctionFrameTab3"
-            text: "Auctions"
-            wowParent: "AuctionFrame"
-            style: "Banner"
+        Frame {
+            name: "BrowseFilterScrollFrameScrollChildFrame"
             anchors.left: parent.left
-            anchors.leftMargin: 144
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
+            anchors.top: parent.top
+            width: 300
+            height: 420
+        }
+    }
+
+    Button {
+        name: "BrowseResetButton"
+        text: "Reset"
+        wowParent: "AuctionFrameBrowse"
+        style: "Button"
+        pin: "all"
+        anchors.left: auctionFrameBrowseDiabolicCategories.left
+        anchors.leftMargin: 10
+        anchors.bottom: auctionFrameBrowseDiabolicCategories.top
+        anchors.bottomMargin: 8
+        width: 156
+        height: 24
+
+        FontString {
+            name: "BrowseResetButtonText"
+            text: "Reset"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: 30.2
+            height: 10.1
+        }
+    }
+
+    ScrollFrame {
+        name: "BrowseScrollFrame"
+        wowParent: "AuctionFrameBrowse"
+        pin: "all"
+        anchors.right: auctionFrameBrowseDiabolicResults.left
+        anchors.rightMargin: -620
+        anchors.top: auctionFrameBrowseDiabolicResults.top
+        anchors.topMargin: 25
+        width: 465
+        height: 306
+
+        Slider {
+            name: "BrowseScrollFrameScrollBar"
+            style: "ScrollBar"
+            anchors.left: parent.right
+            anchors.leftMargin: 6
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            width: 16
+            height: 274
+
+            Frame {
+                name: "BrowseScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: browseScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: browseScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 308
+            }
+
+            Button {
+                name: "BrowseScrollFrameScrollBarScrollDownButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.bottom
+                width: 16
+                height: 16
+            }
+
+            Button {
+                id: browseScrollFrameScrollBarScrollUpButton
+                name: "BrowseScrollFrameScrollBarScrollUpButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.top
+                width: 16
+                height: 16
+            }
         }
 
-        Button {
-            name: "AuctionFrameTab4"
-            text: "Buy"
-            wowParent: "AuctionFrame"
-            style: "Banner"
+        Frame {
+            name: "BrowseScrollFrameScrollChildFrame"
             anchors.left: parent.left
-            anchors.leftMargin: 202
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "AuctionFrameTab5"
-            text: "Sell"
-            wowParent: "AuctionFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 260
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "AuctionFrameTab6"
-            text: "More..."
-            wowParent: "AuctionFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 318
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
+            anchors.top: parent.top
+            width: 300
+            height: 1887
         }
     }
 
@@ -3919,7 +3706,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton2BuyoutFrameMoneyGoldButtonText"
                 text: "9"
-                wowParent: "AuctionsButton2BuyoutFrameMoneyGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -3969,7 +3755,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton2MoneyFrameGoldButtonText"
                 text: "9"
-                wowParent: "AuctionsButton2MoneyFrameGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -3999,7 +3784,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton3BuyoutFrameMoneyGoldButtonText"
                 text: "8"
-                wowParent: "AuctionsButton3BuyoutFrameMoneyGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -4049,7 +3833,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton3MoneyFrameGoldButtonText"
                 text: "8"
-                wowParent: "AuctionsButton3MoneyFrameGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -4079,7 +3862,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton7BuyoutFrameMoneyGoldButtonText"
                 text: "9"
-                wowParent: "AuctionsButton7BuyoutFrameMoneyGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -4129,7 +3911,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton7MoneyFrameGoldButtonText"
                 text: "9"
-                wowParent: "AuctionsButton7MoneyFrameGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -4159,7 +3940,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton8BuyoutFrameMoneyGoldButtonText"
                 text: "6"
-                wowParent: "AuctionsButton8BuyoutFrameMoneyGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -4209,7 +3989,6 @@ WowWindow {
             FontString {
                 name: "AuctionsButton8MoneyFrameGoldButtonText"
                 text: "6"
-                wowParent: "AuctionsButton8MoneyFrameGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter

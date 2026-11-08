@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -12,7 +12,6 @@ WowWindow {
     // foot's bar, from the sides)
     ScrollFrame {
         name: "MacroButtonScrollFrame"
-        wowParent: "MacroFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 17
@@ -23,7 +22,6 @@ WowWindow {
 
         Frame {
             name: "MacroButtonContainer"
-            wowParent: "MacroButtonScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 285
@@ -31,7 +29,6 @@ WowWindow {
 
             CheckButton {
                 name: "MacroButton1"
-                wowParent: "MacroButtonContainer"
                 anchors.left: parent.left
                 anchors.leftMargin: 6
                 anchors.top: parent.top
@@ -42,7 +39,6 @@ WowWindow {
                 FontString {
                     name: "MacroButton1Name"
                     text: "DUI Holy End"
-                    wowParent: "MacroButton1"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 2
@@ -65,7 +61,6 @@ WowWindow {
 
         Slider {
             name: "MacroButtonScrollFrameScrollBar"
-            wowParent: "MacroButtonScrollFrame"
             style: "ScrollBar"
             anchors.left: parent.right
             anchors.leftMargin: 6
@@ -74,9 +69,17 @@ WowWindow {
             width: 16
             height: 114
 
+            Frame {
+                name: "MacroButtonScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: macroButtonScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: macroButtonScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 148
+            }
+
             Button {
                 name: "MacroButtonScrollFrameScrollBarScrollDownButton"
-                wowParent: "MacroButtonScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
@@ -85,30 +88,33 @@ WowWindow {
             }
 
             Button {
+                id: macroButtonScrollFrameScrollBarScrollUpButton
                 name: "MacroButtonScrollFrameScrollBarScrollUpButton"
-                wowParent: "MacroButtonScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.top
                 width: 16
                 height: 16
-
-                Frame {
-                    name: "MacroButtonScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "MacroButtonScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 148
-                }
             }
         }
     }
 
+    // the count of characters right of "Enter Macro Commands:" (Blizzard's
+    // under the text, over the foot)
+    FontString {
+        name: "MacroFrameCharLimitText"
+        text: "80/255 Characters Used"
+        pin: "place"
+        anchors.right: macroFrameScrollFrame.right
+        anchors.bottom: macroFrameScrollFrame.top
+        anchors.bottomMargin: 8
+        width: 129.6
+        height: 10
+    }
+
     Frame {
+        id: macroFrameDiabolic
         name: "MacroFrameDiabolic"
-        wowParent: "MacroFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -130,7 +136,6 @@ WowWindow {
 
         Frame {
             name: "MacroFrameDiabolicBorder"
-            wowParent: "MacroFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
@@ -149,7 +154,6 @@ WowWindow {
                 FontString {
                     name: "MacroFrameDiabolicTitle"
                     text: "Create Macros"
-                    wowParent: "MacroFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -161,7 +165,6 @@ WowWindow {
 
         Frame {
             name: "MacroFrameDiabolicFoot"
-            wowParent: "MacroFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -209,7 +212,6 @@ WowWindow {
                     FontString {
                         name: "MacroNewButtonText"
                         text: "New"
-                        wowParent: "MacroNewButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 30.8
@@ -229,7 +231,6 @@ WowWindow {
                     FontString {
                         name: "MacroExitButtonText"
                         text: "Exit"
-                        wowParent: "MacroExitButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 32.4
@@ -241,7 +242,6 @@ WowWindow {
 
         Frame {
             name: "MacroFrameDiabolicRail"
-            wowParent: "MacroFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 18
             anchors.top: parent.bottom
@@ -252,7 +252,6 @@ WowWindow {
 
         Frame {
             name: "MacroFrameDiabolicSocket"
-            wowParent: "MacroFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -260,35 +259,98 @@ WowWindow {
             width: 42
             height: 42
         }
+    }
 
-        Button {
-            name: "MacroFrameTab1"
-            text: "General Macros"
-            wowParent: "MacroFrame"
-            style: "Banner"
+    FontString {
+        name: "MacroFrameEnterMacroText"
+        text: "Enter Macro Commands:"
+        anchors.left: macroFrameSelectedMacroBackground.left
+        anchors.leftMargin: 8
+        anchors.top: macroFrameSelectedMacroBackground.bottom
+        width: 131.2
+        height: 10.3
+    }
+
+    ScrollFrame {
+        id: macroFrameScrollFrame
+        name: "MacroFrameScrollFrame"
+        anchors.left: macroFrameSelectedMacroBackground.left
+        anchors.leftMargin: 11
+        anchors.top: macroFrameSelectedMacroBackground.bottom
+        anchors.topMargin: 18
+        width: 286
+        height: 85
+
+        Frame {
+            name: "MacroFrameScrollFrameDiabolicZone"
             anchors.left: parent.left
-            anchors.leftMargin: 28
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
+            anchors.leftMargin: -6
+            anchors.top: parent.top
+            anchors.topMargin: -6
+            width: 320
+            height: 97
+        }
+
+        Slider {
+            name: "MacroFrameScrollFrameScrollBar"
+            style: "ScrollBar"
+            anchors.left: parent.right
+            anchors.leftMargin: 6
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            width: 16
+            height: 53
+
+            Frame {
+                name: "MacroFrameScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: macroFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: macroFrameScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 87
+            }
+
+            Button {
+                name: "MacroFrameScrollFrameScrollBarScrollDownButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.bottom
+                width: 16
+                height: 16
+            }
+
+            Button {
+                id: macroFrameScrollFrameScrollBarScrollUpButton
+                name: "MacroFrameScrollFrameScrollBarScrollUpButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.top
+                width: 16
+                height: 16
+            }
+        }
+
+        EditBox {
+            id: macroFrameText
+            name: "MacroFrameText"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 286
+            height: 30.8
         }
 
         Button {
-            name: "MacroFrameTab2"
-            text: "Padirac Specific Macros"
+            name: "MacroFrameTextButton"
             wowParent: "MacroFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 86
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
+            anchors.left: macroFrameText.left
+            anchors.top: macroFrameText.top
+            width: 286
+            height: 85
         }
     }
 
     Part {
+        id: macroFrameSelectedMacroBackground
         name: "MacroFrameSelectedMacroBackground"
         pin: "place"
         anchors.left: parent.left
@@ -313,118 +375,10 @@ WowWindow {
             FontString {
                 name: "MacroEditButtonText"
                 text: "Change Name/Icon"
-                wowParent: "MacroEditButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 width: 135.1
                 height: 11.9
-            }
-        }
-
-        FontString {
-            name: "MacroFrameEnterMacroText"
-            text: "Enter Macro Commands:"
-            wowParent: "MacroFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.top: parent.bottom
-            width: 131.2
-            height: 10.3
-        }
-
-        ScrollFrame {
-            name: "MacroFrameScrollFrame"
-            wowParent: "MacroFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 11
-            anchors.top: parent.bottom
-            anchors.topMargin: 18
-            width: 286
-            height: 85
-
-            // the count of characters right of "Enter Macro Commands:" (Blizzard's
-            // under the text, over the foot)
-            FontString {
-                name: "MacroFrameCharLimitText"
-                text: "80/255 Characters Used"
-                wowParent: "MacroFrame"
-                pin: "place"
-                anchors.right: parent.right
-                anchors.bottom: parent.top
-                anchors.bottomMargin: 8
-                width: 129.6
-                height: 10
-            }
-
-            Frame {
-                name: "MacroFrameScrollFrameDiabolicZone"
-                wowParent: "MacroFrameScrollFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: -6
-                anchors.top: parent.top
-                anchors.topMargin: -6
-                width: 320
-                height: 97
-            }
-
-            Slider {
-                name: "MacroFrameScrollFrameScrollBar"
-                wowParent: "MacroFrameScrollFrame"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                anchors.topMargin: 16
-                width: 16
-                height: 53
-
-                Button {
-                    name: "MacroFrameScrollFrameScrollBarScrollDownButton"
-                    wowParent: "MacroFrameScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    width: 16
-                    height: 16
-                }
-
-                Button {
-                    name: "MacroFrameScrollFrameScrollBarScrollUpButton"
-                    wowParent: "MacroFrameScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
-
-                    Frame {
-                        name: "MacroFrameScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "MacroFrameScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 87
-                    }
-                }
-            }
-
-            EditBox {
-                name: "MacroFrameText"
-                wowParent: "MacroFrameScrollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 286
-                height: 30.8
-
-                Button {
-                    name: "MacroFrameTextButton"
-                    wowParent: "MacroFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    width: 286
-                    height: 85
-                }
             }
         }
 
@@ -440,7 +394,6 @@ WowWindow {
 
             FontString {
                 name: "MacroFrameSelectedMacroButtonName"
-                wowParent: "MacroFrameSelectedMacroButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 2
@@ -448,23 +401,45 @@ WowWindow {
                 height: 10
             }
         }
+    }
 
-        FontString {
-            name: "MacroFrameSelectedMacroName"
-            text: "DUI Holy End"
-            wowParent: "MacroFrame"
-            anchors.left: parent.right
-            anchors.leftMargin: -4
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            width: 256
-            height: 16
-        }
+    FontString {
+        name: "MacroFrameSelectedMacroName"
+        text: "DUI Holy End"
+        anchors.left: macroFrameSelectedMacroBackground.right
+        anchors.leftMargin: -4
+        anchors.top: macroFrameSelectedMacroBackground.top
+        anchors.topMargin: 10
+        width: 256
+        height: 16
+    }
+
+    Button {
+        name: "MacroFrameTab1"
+        text: "General Macros"
+        style: "Banner"
+        anchors.left: macroFrameDiabolic.left
+        anchors.leftMargin: 28
+        anchors.top: macroFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "MacroFrameTab2"
+        text: "Padirac Specific Macros"
+        style: "Banner"
+        anchors.left: macroFrameDiabolic.left
+        anchors.leftMargin: 86
+        anchors.top: macroFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
     }
 
     Frame {
         name: "MacroFrameTextBackground"
-        wowParent: "MacroFrame"
         anchors.left: parent.left
         anchors.leftMargin: 18
         anchors.top: parent.top

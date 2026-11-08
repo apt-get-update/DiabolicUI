@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -8,53 +8,50 @@ WowWindow {
     width: 384
     height: 512
 
+    Button {
+        name: "DiabolicUISpellBookTabCRITTER"
+        text: "Companions"
+        style: "Banner"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 86
+        anchors.top: spellBookFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "DiabolicUISpellBookTabMOUNT"
+        text: "Mounts"
+        style: "Banner"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 144
+        anchors.top: spellBookFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "DiabolicUISpellBookTabPROFESSIONS"
+        text: "Professions"
+        style: "Banner"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 202
+        anchors.top: spellBookFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
     Frame {
+        id: spellBookFrameDiabolic
         name: "SpellBookFrameDiabolic"
-        wowParent: "SpellBookFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.topMargin: -36
         width: 550
         height: 548
-
-        Button {
-            name: "DiabolicUISpellBookTabCRITTER"
-            text: "Companions"
-            wowParent: "SpellBookFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 86
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "DiabolicUISpellBookTabMOUNT"
-            text: "Mounts"
-            wowParent: "SpellBookFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 144
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "DiabolicUISpellBookTabPROFESSIONS"
-            text: "Professions"
-            wowParent: "SpellBookFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 202
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
 
         Button {
             name: "SpellBookCloseButton"
@@ -70,7 +67,6 @@ WowWindow {
 
         Frame {
             name: "SpellBookFrameDiabolicBand"
-            wowParent: "SpellBookFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -79,6 +75,7 @@ WowWindow {
             height: 40
 
             EditBox {
+                id: diabolicUISpellBookSearchBox
                 name: "DiabolicUISpellBookSearchBox"
                 wowParent: "SpellBookFrame"
                 style: "EditBox"
@@ -90,64 +87,60 @@ WowWindow {
 
                 Frame {
                     name: "DiabolicUISpellBookSearchBoxDiabolicField"
-                    wowParent: "DiabolicUISpellBookSearchBox"
                     anchors.left: parent.left
                     anchors.leftMargin: -8
                     anchors.verticalCenter: parent.verticalCenter
                     width: 176
                     height: 22
                 }
+            }
 
-                CheckButton {
-                    name: "DiabolicUISpellBookUnassignedBox"
-                    wowParent: "SpellBookFrame"
-                    style: "CheckBox"
-                    anchors.left: showAllSpellRanksCheckBox.right
-                    anchors.leftMargin: 65.8
-                    anchors.verticalCenter: showAllSpellRanksCheckBox.verticalCenter
-                    width: 20
-                    height: 20
+            CheckButton {
+                name: "DiabolicUISpellBookUnassignedBox"
+                wowParent: "SpellBookFrame"
+                style: "CheckBox"
+                anchors.left: showAllSpellRanksCheckBox.right
+                anchors.leftMargin: 65.8
+                anchors.verticalCenter: showAllSpellRanksCheckBox.verticalCenter
+                width: 20
+                height: 20
 
-                    FontString {
-                        name: "DiabolicUISpellBookUnassignedBoxText"
-                        text: "Unassigned"
-                        wowParent: "DiabolicUISpellBookUnassignedBox"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 68
-                        height: 14.2
-                    }
-                }
-
-                CheckButton {
-                    id: showAllSpellRanksCheckBox
-                    name: "ShowAllSpellRanksCheckBox"
-                    wowParent: "SpellBookFrame"
-                    style: "CheckBox"
+                FontString {
+                    name: "DiabolicUISpellBookUnassignedBoxText"
+                    text: "Unassigned"
                     anchors.left: parent.right
-                    anchors.leftMargin: 20
+                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 20
-                    height: 20
+                    width: 68
+                    height: 14.2
+                }
+            }
 
-                    FontString {
-                        name: "ShowAllSpellRanksCheckBoxText"
-                        text: "All ranks"
-                        wowParent: "ShowAllSpellRanksCheckBox"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 49.8
-                        height: 14.2
-                    }
+            CheckButton {
+                id: showAllSpellRanksCheckBox
+                name: "ShowAllSpellRanksCheckBox"
+                wowParent: "SpellBookFrame"
+                style: "CheckBox"
+                anchors.left: diabolicUISpellBookSearchBox.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: diabolicUISpellBookSearchBox.verticalCenter
+                width: 20
+                height: 20
+
+                FontString {
+                    name: "ShowAllSpellRanksCheckBoxText"
+                    text: "All ranks"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 4
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 49.8
+                    height: 14.2
                 }
             }
         }
 
         Frame {
             name: "SpellBookFrameDiabolicBorder"
-            wowParent: "SpellBookFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
@@ -166,7 +159,6 @@ WowWindow {
                 FontString {
                     name: "SpellBookTitleText"
                     text: "Professions"
-                    wowParent: "SpellBookFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -188,7 +180,6 @@ WowWindow {
 
             Frame {
                 name: "PetPaperDollFrameCompanionFrame"
-                wowParent: "SpellBookFrameDiabolicCover"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.topMargin: 18
@@ -197,7 +188,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton1"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 16
@@ -209,7 +199,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton10"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 16
@@ -221,7 +210,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton11"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 178
@@ -233,7 +221,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton12"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 340
@@ -245,7 +232,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton2"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 178
@@ -257,7 +243,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton3"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 340
@@ -269,7 +254,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton4"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 16
@@ -281,7 +265,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton5"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 178
@@ -293,7 +276,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton6"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 340
@@ -305,7 +287,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton7"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 16
@@ -317,7 +298,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton8"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 178
@@ -329,7 +309,6 @@ WowWindow {
 
                 CheckButton {
                     name: "CompanionButton9"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.left: parent.left
                     anchors.leftMargin: 340
@@ -341,7 +320,6 @@ WowWindow {
 
                 DressUpModel {
                     name: "CompanionModelFrame"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     anchors.left: parent.left
                     anchors.leftMargin: 11
                     anchors.top: parent.top
@@ -351,7 +329,6 @@ WowWindow {
 
                     Button {
                         name: "CompanionModelFrameRotateLeftButton"
-                        wowParent: "CompanionModelFrame"
                         anchors.left: parent.left
                         anchors.leftMargin: 6
                         anchors.bottom: parent.bottom
@@ -362,7 +339,6 @@ WowWindow {
 
                     Button {
                         name: "CompanionModelFrameRotateRightButton"
-                        wowParent: "CompanionModelFrame"
                         anchors.right: parent.right
                         anchors.rightMargin: 6
                         anchors.bottom: parent.bottom
@@ -385,7 +361,6 @@ WowWindow {
                         FontString {
                             name: "CompanionSummonButtonText"
                             text: "Mount"
-                            wowParent: "CompanionSummonButton"
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
                             width: 49.8
@@ -395,8 +370,8 @@ WowWindow {
                 }
 
                 Button {
+                    id: companionNextPageButton
                     name: "CompanionNextPageButton"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     pin: "place"
                     anchors.right: parent.right
                     anchors.rightMargin: 12
@@ -404,35 +379,33 @@ WowWindow {
                     anchors.topMargin: 387
                     width: 26
                     height: 26
+                }
 
-                    FontString {
-                        name: "CompanionPageNumber"
-                        text: "Page 1 of 1"
-                        wowParent: "PetPaperDollFrameCompanionFrame"
-                        pin: "place"
-                        anchors.right: parent.left
-                        anchors.rightMargin: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 60
-                        height: 10.3
+                FontString {
+                    id: companionPageNumber
+                    name: "CompanionPageNumber"
+                    text: "Page 1 of 1"
+                    pin: "place"
+                    anchors.right: companionNextPageButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: companionNextPageButton.verticalCenter
+                    width: 60
+                    height: 10.3
+                }
 
-                        Button {
-                            name: "CompanionPrevPageButton"
-                            wowParent: "PetPaperDollFrameCompanionFrame"
-                            pin: "place"
-                            anchors.right: parent.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 26
-                            height: 26
-                        }
-                    }
+                Button {
+                    name: "CompanionPrevPageButton"
+                    pin: "place"
+                    anchors.right: companionPageNumber.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: companionPageNumber.verticalCenter
+                    width: 26
+                    height: 26
                 }
 
                 FontString {
                     name: "CompanionSelectedName"
                     text: "Bronze Drake Mount"
-                    wowParent: "PetPaperDollFrameCompanionFrame"
                     anchors.left: parent.left
                     anchors.leftMargin: 107
                     anchors.top: parent.top
@@ -445,7 +418,6 @@ WowWindow {
 
         Frame {
             name: "SpellBookFrameDiabolicRail"
-            wowParent: "SpellBookFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 18
             anchors.top: parent.bottom
@@ -456,7 +428,6 @@ WowWindow {
 
         Frame {
             name: "SpellBookFrameDiabolicSocket"
-            wowParent: "SpellBookFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -466,19 +437,7 @@ WowWindow {
         }
 
         Button {
-            name: "SpellBookFrameTabButton1"
-            text: "Spellbook"
-            wowParent: "SpellBookFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 28
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
+            id: spellBookNextPageButton
             name: "SpellBookNextPageButton"
             wowParent: "SpellBookFrame"
             anchors.right: parent.right
@@ -487,27 +446,28 @@ WowWindow {
             anchors.verticalCenterOffset: 483
             width: 26
             height: 26
+        }
 
-            FontString {
-                name: "SpellBookPageText"
-                text: "Page 1"
-                wowParent: "SpellBookFrame"
-                anchors.right: parent.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                width: 39.5
-                height: 11.9
+        FontString {
+            id: spellBookPageText
+            name: "SpellBookPageText"
+            text: "Page 1"
+            wowParent: "SpellBookFrame"
+            anchors.right: spellBookNextPageButton.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: spellBookNextPageButton.verticalCenter
+            width: 39.5
+            height: 11.9
+        }
 
-                Button {
-                    name: "SpellBookPrevPageButton"
-                    wowParent: "SpellBookFrame"
-                    anchors.right: parent.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 26
-                    height: 26
-                }
-            }
+        Button {
+            name: "SpellBookPrevPageButton"
+            wowParent: "SpellBookFrame"
+            anchors.right: spellBookPageText.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: spellBookPageText.verticalCenter
+            width: 26
+            height: 26
         }
 
         CheckButton {
@@ -617,26 +577,37 @@ WowWindow {
             height: 37
 
             FontString {
+                id: spellButton1SpellName
                 name: "SpellButton1SpellName"
                 text: "Auto Attack"
-                wowParent: "SpellButton1"
                 anchors.left: parent.right
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -2
                 width: 145
                 height: 11.9
+            }
 
-                FontString {
-                    name: "SpellButton1SubSpellName"
-                    wowParent: "SpellButton1"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    anchors.topMargin: -4
-                    width: 145
-                    height: 18
-                }
+            FontString {
+                name: "SpellButton1SubSpellName"
+                anchors.left: spellButton1SpellName.left
+                anchors.top: spellButton1SpellName.bottom
+                anchors.topMargin: -4
+                width: 145
+                height: 18
             }
         }
+    }
+
+    Button {
+        name: "SpellBookFrameTabButton1"
+        text: "Spellbook"
+        style: "Banner"
+        anchors.left: spellBookFrameDiabolic.left
+        anchors.leftMargin: 28
+        anchors.top: spellBookFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
     }
 }

@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "DiabolicChatCopyFrameDiabolic"
-        wowParent: "DiabolicChatCopyFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 560
@@ -18,7 +17,6 @@ WowWindow {
 
         Frame {
             name: "DiabolicChatCopyFrameDiabolicBorder"
-            wowParent: "DiabolicChatCopyFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 560
@@ -36,7 +34,6 @@ WowWindow {
                 FontString {
                     name: "DiabolicChatCopyFrameDiabolicTitle"
                     text: "Copy Chat"
-                    wowParent: "DiabolicChatCopyFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -48,7 +45,6 @@ WowWindow {
 
         Frame {
             name: "DiabolicChatCopyFrameDiabolicSocket"
-            wowParent: "DiabolicChatCopyFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -60,7 +56,6 @@ WowWindow {
 
     ScrollFrame {
         name: "DiabolicChatCopyScroll"
-        wowParent: "DiabolicChatCopyFrame"
         anchors.left: parent.left
         anchors.leftMargin: 36
         anchors.top: parent.top
@@ -81,7 +76,6 @@ WowWindow {
 
         Slider {
             name: "DiabolicChatCopyScrollScrollBar"
-            wowParent: "DiabolicChatCopyScroll"
             style: "ScrollBar"
             anchors.left: parent.right
             anchors.leftMargin: 6
@@ -90,9 +84,17 @@ WowWindow {
             width: 16
             height: 236
 
+            Frame {
+                name: "DiabolicChatCopyScrollScrollBarDiabolicTrack"
+                anchors.horizontalCenter: diabolicChatCopyScrollScrollBarScrollUpButton.horizontalCenter
+                anchors.top: diabolicChatCopyScrollScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 270
+            }
+
             Button {
                 name: "DiabolicChatCopyScrollScrollBarScrollDownButton"
-                wowParent: "DiabolicChatCopyScrollScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
@@ -101,23 +103,13 @@ WowWindow {
             }
 
             Button {
+                id: diabolicChatCopyScrollScrollBarScrollUpButton
                 name: "DiabolicChatCopyScrollScrollBarScrollUpButton"
-                wowParent: "DiabolicChatCopyScrollScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.top
                 width: 16
                 height: 16
-
-                Frame {
-                    name: "DiabolicChatCopyScrollScrollBarDiabolicTrack"
-                    wowParent: "DiabolicChatCopyScrollScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 270
-                }
             }
         }
     }

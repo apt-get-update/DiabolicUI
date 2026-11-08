@@ -4,6 +4,9 @@ import QtQuick
 
 Item {
     property string name
+    // (from the part it's in, any kind: not known to the linter)
+    // qmllint disable missing-property
     property real px: parent && parent.px !== undefined ? parent.px : 1
     property bool outlines: parent && parent.outlines !== undefined ? parent.outlines : true
+    // qmllint enable missing-property
 }

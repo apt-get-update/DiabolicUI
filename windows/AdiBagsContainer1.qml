@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "AdiBagsContainer1Diabolic"
-        wowParent: "AdiBagsContainer1"
         anchors.left: parent.left
         anchors.leftMargin: -18
         anchors.top: parent.top
@@ -20,7 +19,6 @@ WowWindow {
 
         Frame {
             name: "AdiBagsContainer1DiabolicBorder"
-            wowParent: "AdiBagsContainer1Diabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 864
@@ -29,7 +27,6 @@ WowWindow {
 
         Frame {
             name: "AdiBagsContainer1DiabolicSocket"
-            wowParent: "AdiBagsContainer1Diabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -39,9 +36,27 @@ WowWindow {
         }
     }
 
+    FontString {
+        name: "AdiBagsContainer1Title"
+        text: "Backpack"
+        anchors.left: adiBagsSimpleLayeredRegion1.right
+        anchors.leftMargin: 4
+        anchors.verticalCenter: adiBagsSimpleLayeredRegion1.verticalCenter
+        width: 761.9
+        height: 18
+
+        Frame {
+            name: "AdiBagsAnchor2"
+            wowParent: "AdiBagsContainer1"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 761.9
+            height: 18
+        }
+    }
+
     Frame {
         name: "AdiBagsSection1"
-        wowParent: "AdiBagsContainer1"
         anchors.left: parent.left
         anchors.leftMargin: 225.3
         anchors.top: parent.top
@@ -51,39 +66,18 @@ WowWindow {
     }
 
     Frame {
+        id: adiBagsSimpleLayeredRegion1
         name: "AdiBagsSimpleLayeredRegion1"
-        wowParent: "AdiBagsContainer1"
         anchors.left: parent.left
         anchors.leftMargin: 8
         anchors.top: parent.top
         anchors.topMargin: 8
         width: 18
         height: 18
-
-        FontString {
-            name: "AdiBagsContainer1Title"
-            text: "Backpack"
-            wowParent: "AdiBagsContainer1"
-            anchors.left: parent.right
-            anchors.leftMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-            width: 761.9
-            height: 18
-
-            Frame {
-                name: "AdiBagsAnchor2"
-                wowParent: "AdiBagsContainer1"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 761.9
-                height: 18
-            }
-        }
     }
 
     Frame {
         name: "AdiBagsSimpleLayeredRegion4"
-        wowParent: "AdiBagsContainer1"
         anchors.right: parent.right
         anchors.rightMargin: 8
         anchors.bottom: parent.bottom
@@ -104,7 +98,6 @@ WowWindow {
                 id: adiBagsMoneyFrameCopperButton
                 name: "AdiBagsMoneyFrameCopperButton"
                 text: "63"
-                wowParent: "AdiBagsMoneyFrame"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -114,7 +107,6 @@ WowWindow {
                 FontString {
                     name: "AdiBagsMoneyFrameCopperButtonText"
                     text: "63"
-                    wowParent: "AdiBagsMoneyFrameCopperButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter
@@ -126,7 +118,6 @@ WowWindow {
             Button {
                 name: "AdiBagsMoneyFrameGoldButton"
                 text: "3653"
-                wowParent: "AdiBagsMoneyFrame"
                 anchors.right: adiBagsMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: adiBagsMoneyFrameSilverButton.verticalCenter
@@ -136,7 +127,6 @@ WowWindow {
                 FontString {
                     name: "AdiBagsMoneyFrameGoldButtonText"
                     text: "3653"
-                    wowParent: "AdiBagsMoneyFrameGoldButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter
@@ -149,7 +139,6 @@ WowWindow {
                 id: adiBagsMoneyFrameSilverButton
                 name: "AdiBagsMoneyFrameSilverButton"
                 text: "55"
-                wowParent: "AdiBagsMoneyFrame"
                 anchors.right: adiBagsMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: adiBagsMoneyFrameCopperButton.verticalCenter
@@ -159,7 +148,6 @@ WowWindow {
                 FontString {
                     name: "AdiBagsMoneyFrameSilverButtonText"
                     text: "55"
-                    wowParent: "AdiBagsMoneyFrameSilverButton"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter

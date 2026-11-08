@@ -62,8 +62,9 @@ flowchart TD
 {{< /mermaid >}}
 ++++
 
-The list on the left is the window's tree: each part is under what it's placed on, so moving a
-part moves what's in it. The *In ...* button in the panel picks what it's in.
+The list on the left is the window's tree: each part is under what it's in, one next to the part
+it's placed on sits beside it. Moving a part moves what's placed on it. The *In ...* button in the
+panel picks what it's placed on.
 
 A part you change gets a pin (◆) and stays as you set it. Without one it follows the next scan.
 *Unpin* gives it back to the scan. Leave unpinned what the game moves by itself.
@@ -96,9 +97,9 @@ Save and `/reload`. The windows show it in the editor after a new `/dui layout`.
 
 == By hand
 
-Each window is a file, `windows/<window>.qml`, with each part inside what it's placed on. A button
-next to another (coins, tabs, a list's) sits beside it instead, on its `id`, and the game still
-places it:
+Each window is a file, `windows/<window>.qml`, with each part inside what it's placed on. A part
+next to it (coins, a list's next line, a value after its label) sits beside it instead, on its
+`id`, and the game still places it. `wowParent` only shows when it's not the block it's in:
 
 [source,qml]
 ----
@@ -117,7 +118,7 @@ Button {
 
 Then run `lua5.1 tools/positions.lua`. It says what it can't read, and writes
 `settings/positions.lua` for the game: don't change that one. Plain values only, anchors on
-`parent` or an `id`. A comment over a part stays. A `Ghost` stands for a texture something hangs
+`parent` or an `id`. `tools/lint-qml.sh` checks the files with Qt 6's `qmllint`. A comment over a part stays. A `Ghost` stands for a texture something hangs
 on (the trainer's "All" on its tab): it's in the part it belongs to, and moves with it.
 
 == What it can't show

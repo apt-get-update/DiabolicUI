@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -8,10 +8,221 @@ WowWindow {
     width: 384
     height: 512
 
+    // the chosen one's page 6 under the list's (Blizzard's 8 under its text)
+    ScrollFrame {
+        name: "ClassTrainerDetailScrollFrame"
+        pin: "all"
+        anchors.left: classTrainerListScrollFrame.left
+        anchors.top: classTrainerListScrollFrame.bottom
+        anchors.topMargin: 28
+        width: 296
+        height: 121
+
+        Frame {
+            name: "ClassTrainerDetailScrollChildFrame"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 296
+            height: 50
+
+            FontString {
+                id: classTrainerCostLabel
+                name: "ClassTrainerCostLabel"
+                text: "Cost:"
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.top: parent.top
+                anchors.topMargin: 50
+                width: 27.7
+                height: 10.3
+            }
+
+            Frame {
+                name: "ClassTrainerDetailMoneyFrame"
+                anchors.left: classTrainerCostLabel.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: classTrainerCostLabel.verticalCenter
+                width: 70.7
+                height: 13
+
+                Button {
+                    id: classTrainerDetailMoneyFrameCopperButton
+                    name: "ClassTrainerDetailMoneyFrameCopperButton"
+                    text: "8"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 23.3
+                    height: 13
+
+                    FontString {
+                        name: "ClassTrainerDetailMoneyFrameCopperButtonText"
+                        text: "8"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 10.3
+                        height: 14.2
+                    }
+                }
+
+                Button {
+                    name: "ClassTrainerDetailMoneyFrameGoldButton"
+                    text: "3"
+                    anchors.right: classTrainerDetailMoneyFrameSilverButton.left
+                    anchors.rightMargin: 4
+                    anchors.verticalCenter: classTrainerDetailMoneyFrameSilverButton.verticalCenter
+                    width: 23.3
+                    height: 13
+
+                    FontString {
+                        name: "ClassTrainerDetailMoneyFrameGoldButtonText"
+                        text: "3"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 10.3
+                        height: 14.2
+                    }
+                }
+
+                Button {
+                    id: classTrainerDetailMoneyFrameSilverButton
+                    name: "ClassTrainerDetailMoneyFrameSilverButton"
+                    text: "68"
+                    anchors.right: classTrainerDetailMoneyFrameCopperButton.right
+                    anchors.verticalCenter: classTrainerDetailMoneyFrameCopperButton.verticalCenter
+                    width: 30.4
+                    height: 13
+
+                    FontString {
+                        name: "ClassTrainerDetailMoneyFrameSilverButtonText"
+                        text: "68"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 17.4
+                        height: 14.2
+                    }
+                }
+            }
+
+            FontString {
+                name: "ClassTrainerSkillDescription"
+                text: "Power infuses all party and raid members, increasing their Stamina by 70 for 1 hour."
+                anchors.left: classTrainerCostLabel.left
+                anchors.top: classTrainerCostLabel.bottom
+                anchors.topMargin: 10
+                width: 290
+                height: 20.5
+            }
+
+            Button {
+                name: "ClassTrainerSkillIcon"
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.top: parent.top
+                anchors.topMargin: 4
+                width: 37
+                height: 37
+            }
+
+            FontString {
+                id: classTrainerSkillName
+                name: "ClassTrainerSkillName"
+                text: "Prayer of Fortitude"
+                anchors.left: parent.left
+                anchors.leftMargin: 46
+                anchors.top: parent.top
+                anchors.topMargin: 2
+                width: 244
+                height: 11.9
+            }
+
+            FontString {
+                name: "ClassTrainerSkillRequirements"
+                anchors.left: classTrainerSkillName.left
+                anchors.top: classTrainerSkillName.bottom
+                width: 244
+                height: 20.5
+            }
+
+            FontString {
+                name: "ClassTrainerSubSkillName"
+                text: "(Rank 2)"
+                anchors.left: classTrainerSkillName.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: classTrainerSkillName.verticalCenter
+                width: 48.2
+                height: 11.9
+            }
+        }
+
+        Frame {
+            name: "ClassTrainerDetailScrollFrameDiabolicPanel"
+            wowParent: "ClassTrainerFrame"
+            anchors.left: parent.left
+            anchors.leftMargin: -16
+            anchors.top: parent.top
+            anchors.topMargin: -6
+            width: 360
+            height: 133
+        }
+
+        Frame {
+            name: "ClassTrainerDetailScrollFrameDiabolicParchment"
+            wowParent: "ClassTrainerFrame"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: 5
+            anchors.top: parent.top
+            anchors.topMargin: -4
+            width: 334
+            height: 129
+        }
+
+        Slider {
+            name: "ClassTrainerDetailScrollFrameScrollBar"
+            style: "ScrollBar"
+            anchors.left: parent.right
+            anchors.leftMargin: 26
+            anchors.top: parent.top
+            anchors.topMargin: 2
+            width: 16
+            height: 103
+
+            Frame {
+                name: "ClassTrainerDetailScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: classTrainerDetailScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: classTrainerDetailScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 137
+            }
+
+            Button {
+                name: "ClassTrainerDetailScrollFrameScrollBarScrollDownButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.bottom
+                width: 16
+                height: 16
+            }
+
+            Button {
+                id: classTrainerDetailScrollFrameScrollBarScrollUpButton
+                name: "ClassTrainerDetailScrollFrameScrollBarScrollUpButton"
+                style: "ScrollBar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.top
+                width: 16
+                height: 16
+            }
+        }
+    }
+
     // "All" and the list under the greeting (the chosen one's height: trainer.lua)
     Frame {
         name: "ClassTrainerExpandButtonFrame"
-        wowParent: "ClassTrainerFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 15
@@ -39,7 +250,6 @@ WowWindow {
 
                 FontString {
                     name: "ClassTrainerCollapseAllButtonSubText"
-                    wowParent: "ClassTrainerCollapseAllButton"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: 1
@@ -71,7 +281,6 @@ WowWindow {
 
     Frame {
         name: "ClassTrainerFrameDiabolic"
-        wowParent: "ClassTrainerFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -93,7 +302,6 @@ WowWindow {
 
         Frame {
             name: "ClassTrainerFrameDiabolicBand"
-            wowParent: "ClassTrainerFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -113,7 +321,6 @@ WowWindow {
 
                 Frame {
                     name: "ClassTrainerFrameFilterDropDownDiabolicField"
-                    wowParent: "ClassTrainerFrameFilterDropDown"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: 180
@@ -145,7 +352,6 @@ WowWindow {
 
         Frame {
             name: "ClassTrainerFrameDiabolicBorder"
-            wowParent: "ClassTrainerFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 418
@@ -163,7 +369,6 @@ WowWindow {
                 FontString {
                     name: "ClassTrainerNameText"
                     text: "High Priestess Laurena"
-                    wowParent: "ClassTrainerFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -174,8 +379,8 @@ WowWindow {
         }
 
         Frame {
+            id: classTrainerFrameDiabolicFoot
             name: "ClassTrainerFrameDiabolicFoot"
-            wowParent: "ClassTrainerFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -185,86 +390,6 @@ WowWindow {
             anchors.rightMargin: 23
             width: 372
             height: 35
-
-            Frame {
-                name: "ClassTrainerMoneyFrame"
-                wowParent: "ClassTrainerFrame"
-                pin: "place"
-                anchors.right: parent.left
-                anchors.rightMargin: -181
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 12
-                width: 126.4
-                height: 13
-
-                Button {
-                    id: classTrainerMoneyFrameCopperButton
-                    name: "ClassTrainerMoneyFrameCopperButton"
-                    text: "63"
-                    wowParent: "ClassTrainerMoneyFrame"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 13
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 30.4
-                    height: 13
-
-                    FontString {
-                        name: "ClassTrainerMoneyFrameCopperButtonText"
-                        text: "63"
-                        wowParent: "ClassTrainerMoneyFrameCopperButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 17.4
-                        height: 14.2
-                    }
-                }
-
-                Button {
-                    name: "ClassTrainerMoneyFrameGoldButton"
-                    text: "3653"
-                    wowParent: "ClassTrainerMoneyFrame"
-                    anchors.right: classTrainerMoneyFrameSilverButton.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: classTrainerMoneyFrameSilverButton.verticalCenter
-                    width: 44.6
-                    height: 13
-
-                    FontString {
-                        name: "ClassTrainerMoneyFrameGoldButtonText"
-                        text: "3653"
-                        wowParent: "ClassTrainerMoneyFrameGoldButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 31.6
-                        height: 14.2
-                    }
-                }
-
-                Button {
-                    id: classTrainerMoneyFrameSilverButton
-                    name: "ClassTrainerMoneyFrameSilverButton"
-                    text: "55"
-                    wowParent: "ClassTrainerMoneyFrame"
-                    anchors.right: classTrainerMoneyFrameCopperButton.left
-                    anchors.rightMargin: 4
-                    anchors.verticalCenter: classTrainerMoneyFrameCopperButton.verticalCenter
-                    width: 30.4
-                    height: 13
-
-                    FontString {
-                        name: "ClassTrainerMoneyFrameSilverButtonText"
-                        text: "55"
-                        wowParent: "ClassTrainerMoneyFrameSilverButton"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 17.4
-                        height: 14.2
-                    }
-                }
-            }
 
             WowRow {
                 name: "TrainerButtons"
@@ -288,7 +413,6 @@ WowWindow {
                     FontString {
                         name: "ClassTrainerTrainButtonText"
                         text: "Train"
-                        wowParent: "ClassTrainerTrainButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 41.9
@@ -308,7 +432,6 @@ WowWindow {
                     FontString {
                         name: "ClassTrainerCancelButtonText"
                         text: "Exit"
-                        wowParent: "ClassTrainerCancelButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 32.4
@@ -320,7 +443,6 @@ WowWindow {
 
         Frame {
             name: "ClassTrainerFrameDiabolicSocket"
-            wowParent: "ClassTrainerFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -328,6 +450,92 @@ WowWindow {
             width: 42
             height: 42
         }
+
+        Frame {
+            name: "ClassTrainerMoneyFrame"
+            wowParent: "ClassTrainerFrame"
+            pin: "place"
+            anchors.right: classTrainerFrameDiabolicFoot.left
+            anchors.rightMargin: -181
+            anchors.bottom: classTrainerFrameDiabolicFoot.bottom
+            anchors.bottomMargin: 12
+            width: 126.4
+            height: 13
+
+            Button {
+                id: classTrainerMoneyFrameCopperButton
+                name: "ClassTrainerMoneyFrameCopperButton"
+                text: "63"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 30.4
+                height: 13
+
+                FontString {
+                    name: "ClassTrainerMoneyFrameCopperButtonText"
+                    text: "63"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 17.4
+                    height: 14.2
+                }
+            }
+
+            Button {
+                name: "ClassTrainerMoneyFrameGoldButton"
+                text: "3653"
+                anchors.right: classTrainerMoneyFrameSilverButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: classTrainerMoneyFrameSilverButton.verticalCenter
+                width: 44.6
+                height: 13
+
+                FontString {
+                    name: "ClassTrainerMoneyFrameGoldButtonText"
+                    text: "3653"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 31.6
+                    height: 14.2
+                }
+            }
+
+            Button {
+                id: classTrainerMoneyFrameSilverButton
+                name: "ClassTrainerMoneyFrameSilverButton"
+                text: "55"
+                anchors.right: classTrainerMoneyFrameCopperButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: classTrainerMoneyFrameCopperButton.verticalCenter
+                width: 30.4
+                height: 13
+
+                FontString {
+                    name: "ClassTrainerMoneyFrameSilverButtonText"
+                    text: "55"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 17.4
+                    height: 14.2
+                }
+            }
+        }
+    }
+
+    Frame {
+        name: "ClassTrainerFrameDiabolicIronBar"
+        wowParent: "ClassTrainerFrameDiabolic"
+        pin: "all"
+        anchors.left: classTrainerListScrollFrame.left
+        anchors.leftMargin: -30
+        anchors.top: classTrainerListScrollFrame.bottom
+        anchors.topMargin: 6.5
+        width: 388
+        height: 16
     }
 
     // the greeting across the list's width under the band, its panel's left on
@@ -335,7 +543,6 @@ WowWindow {
     FontString {
         name: "ClassTrainerGreetingText"
         text: "Hello, priest!  Ready for some training?"
-        wowParent: "ClassTrainerFrame"
         pin: "all"
         anchors.left: parent.left
         anchors.leftMargin: 11
@@ -357,8 +564,8 @@ WowWindow {
     }
 
     ScrollFrame {
+        id: classTrainerListScrollFrame
         name: "ClassTrainerListScrollFrame"
-        wowParent: "ClassTrainerFrame"
         pin: "all"
         anchors.right: parent.right
         anchors.rightMargin: 67
@@ -366,246 +573,6 @@ WowWindow {
         anchors.topMargin: 72
         width: 296
         height: 158
-
-        // the chosen one's page 6 under the list's (Blizzard's 8 under its text)
-        ScrollFrame {
-            name: "ClassTrainerDetailScrollFrame"
-            wowParent: "ClassTrainerFrame"
-            pin: "all"
-            anchors.left: parent.left
-            anchors.top: parent.bottom
-            anchors.topMargin: 28
-            width: 296
-            height: 121
-
-            Frame {
-                name: "ClassTrainerDetailScrollChildFrame"
-                wowParent: "ClassTrainerDetailScrollFrame"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 296
-                height: 50
-
-                FontString {
-                    name: "ClassTrainerCostLabel"
-                    text: "Cost:"
-                    wowParent: "ClassTrainerDetailScrollChildFrame"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 5
-                    anchors.top: parent.top
-                    anchors.topMargin: 50
-                    width: 27.7
-                    height: 10.3
-
-                    Frame {
-                        name: "ClassTrainerDetailMoneyFrame"
-                        wowParent: "ClassTrainerDetailScrollChildFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 70.7
-                        height: 13
-
-                        Button {
-                            id: classTrainerDetailMoneyFrameCopperButton
-                            name: "ClassTrainerDetailMoneyFrameCopperButton"
-                            text: "8"
-                            wowParent: "ClassTrainerDetailMoneyFrame"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 23.3
-                            height: 13
-
-                            FontString {
-                                name: "ClassTrainerDetailMoneyFrameCopperButtonText"
-                                text: "8"
-                                wowParent: "ClassTrainerDetailMoneyFrameCopperButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 10.3
-                                height: 14.2
-                            }
-                        }
-
-                        Button {
-                            name: "ClassTrainerDetailMoneyFrameGoldButton"
-                            text: "3"
-                            wowParent: "ClassTrainerDetailMoneyFrame"
-                            anchors.right: classTrainerDetailMoneyFrameSilverButton.left
-                            anchors.rightMargin: 4
-                            anchors.verticalCenter: classTrainerDetailMoneyFrameSilverButton.verticalCenter
-                            width: 23.3
-                            height: 13
-
-                            FontString {
-                                name: "ClassTrainerDetailMoneyFrameGoldButtonText"
-                                text: "3"
-                                wowParent: "ClassTrainerDetailMoneyFrameGoldButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 10.3
-                                height: 14.2
-                            }
-                        }
-
-                        Button {
-                            id: classTrainerDetailMoneyFrameSilverButton
-                            name: "ClassTrainerDetailMoneyFrameSilverButton"
-                            text: "68"
-                            wowParent: "ClassTrainerDetailMoneyFrame"
-                            anchors.right: classTrainerDetailMoneyFrameCopperButton.right
-                            anchors.verticalCenter: classTrainerDetailMoneyFrameCopperButton.verticalCenter
-                            width: 30.4
-                            height: 13
-
-                            FontString {
-                                name: "ClassTrainerDetailMoneyFrameSilverButtonText"
-                                text: "68"
-                                wowParent: "ClassTrainerDetailMoneyFrameSilverButton"
-                                anchors.right: parent.right
-                                anchors.rightMargin: 13
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 17.4
-                                height: 14.2
-                            }
-                        }
-                    }
-
-                    FontString {
-                        name: "ClassTrainerSkillDescription"
-                        text: "Power infuses all party and raid members, increasing their Stamina by 70 for 1 hour."
-                        wowParent: "ClassTrainerDetailScrollChildFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 10
-                        width: 290
-                        height: 20.5
-                    }
-                }
-
-                Button {
-                    name: "ClassTrainerSkillIcon"
-                    wowParent: "ClassTrainerDetailScrollChildFrame"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 5
-                    anchors.top: parent.top
-                    anchors.topMargin: 4
-                    width: 37
-                    height: 37
-                }
-
-                FontString {
-                    name: "ClassTrainerSkillName"
-                    text: "Prayer of Fortitude"
-                    wowParent: "ClassTrainerDetailScrollChildFrame"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 46
-                    anchors.top: parent.top
-                    anchors.topMargin: 2
-                    width: 244
-                    height: 11.9
-
-                    FontString {
-                        name: "ClassTrainerSkillRequirements"
-                        wowParent: "ClassTrainerDetailScrollChildFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        width: 244
-                        height: 20.5
-                    }
-
-                    FontString {
-                        name: "ClassTrainerSubSkillName"
-                        text: "(Rank 2)"
-                        wowParent: "ClassTrainerDetailScrollChildFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 48.2
-                        height: 11.9
-                    }
-                }
-            }
-
-            Frame {
-                name: "ClassTrainerDetailScrollFrameDiabolicPanel"
-                wowParent: "ClassTrainerFrame"
-                anchors.left: parent.left
-                anchors.leftMargin: -16
-                anchors.top: parent.top
-                anchors.topMargin: -6
-                width: 360
-                height: 133
-            }
-
-            Frame {
-                name: "ClassTrainerDetailScrollFrameDiabolicParchment"
-                wowParent: "ClassTrainerFrame"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 5
-                anchors.top: parent.top
-                anchors.topMargin: -4
-                width: 334
-                height: 129
-            }
-
-            Slider {
-                name: "ClassTrainerDetailScrollFrameScrollBar"
-                wowParent: "ClassTrainerDetailScrollFrame"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 26
-                anchors.top: parent.top
-                anchors.topMargin: 2
-                width: 16
-                height: 103
-
-                Button {
-                    name: "ClassTrainerDetailScrollFrameScrollBarScrollDownButton"
-                    wowParent: "ClassTrainerDetailScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    width: 16
-                    height: 16
-                }
-
-                Button {
-                    name: "ClassTrainerDetailScrollFrameScrollBarScrollUpButton"
-                    wowParent: "ClassTrainerDetailScrollFrameScrollBar"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
-
-                    Frame {
-                        name: "ClassTrainerDetailScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "ClassTrainerDetailScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 137
-                    }
-                }
-            }
-        }
-
-        Frame {
-            name: "ClassTrainerFrameDiabolicIronBar"
-            wowParent: "ClassTrainerFrameDiabolic"
-            pin: "all"
-            anchors.left: parent.left
-            anchors.leftMargin: -30
-            anchors.top: parent.bottom
-            anchors.topMargin: 6.5
-            width: 388
-            height: 16
-        }
 
         Frame {
             name: "ClassTrainerListScrollFrameDiabolicPanel"
@@ -631,7 +598,6 @@ WowWindow {
 
         Slider {
             name: "ClassTrainerListScrollFrameScrollBar"
-            wowParent: "ClassTrainerListScrollFrame"
             style: "ScrollBar"
             anchors.left: parent.right
             anchors.leftMargin: 26
@@ -640,9 +606,17 @@ WowWindow {
             width: 16
             height: 126
 
+            Frame {
+                name: "ClassTrainerListScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: classTrainerListScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: classTrainerListScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 160
+            }
+
             Button {
                 name: "ClassTrainerListScrollFrameScrollBarScrollDownButton"
-                wowParent: "ClassTrainerListScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
@@ -651,29 +625,18 @@ WowWindow {
             }
 
             Button {
+                id: classTrainerListScrollFrameScrollBarScrollUpButton
                 name: "ClassTrainerListScrollFrameScrollBarScrollUpButton"
-                wowParent: "ClassTrainerListScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.top
                 width: 16
                 height: 16
-
-                Frame {
-                    name: "ClassTrainerListScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "ClassTrainerListScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 160
-                }
             }
         }
 
         Frame {
             name: "ClassTrainerListScrollFrameScrollChildFrame"
-            wowParent: "ClassTrainerListScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 300
@@ -684,7 +647,6 @@ WowWindow {
     Button {
         name: "ClassTrainerSkill1"
         text: "Discipline"
-        wowParent: "ClassTrainerFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 22
@@ -696,7 +658,6 @@ WowWindow {
         FontString {
             name: "ClassTrainerSkill1SubText"
             text: "(Rank 5)"
-            wowParent: "ClassTrainerSkill1"
             anchors.right: parent.right
             anchors.rightMargin: 2
             anchors.verticalCenter: parent.verticalCenter

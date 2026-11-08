@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -11,8 +11,8 @@ WowWindow {
     // the slots, logs and info 27 higher than Blizzard's: as far from the band
     // as from the foot's iron bar
     Frame {
+        id: guildBankColumn1
         name: "GuildBankColumn1"
-        wowParent: "GuildBankFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 30
@@ -23,7 +23,6 @@ WowWindow {
 
         Button {
             name: "GuildBankColumn1Button1"
-            wowParent: "GuildBankColumn1"
             anchors.left: parent.left
             anchors.leftMargin: 7
             anchors.top: parent.top
@@ -34,7 +33,6 @@ WowWindow {
             FontString {
                 name: "GuildBankColumn1Button1Count"
                 text: "2"
-                wowParent: "GuildBankColumn1Button1"
                 anchors.right: parent.right
                 anchors.rightMargin: 5
                 anchors.bottom: parent.bottom
@@ -43,71 +41,70 @@ WowWindow {
                 height: 14.2
             }
         }
-
-        Frame {
-            name: "GuildBankColumn2"
-            wowParent: "GuildBankFrame"
-            anchors.left: parent.right
-            anchors.leftMargin: 3
-            anchors.top: parent.top
-            width: 100
-            height: 311
-
-            Frame {
-                name: "GuildBankColumn3"
-                wowParent: "GuildBankFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 3
-                anchors.top: parent.top
-                width: 100
-                height: 311
-
-                Frame {
-                    name: "GuildBankColumn4"
-                    wowParent: "GuildBankFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 3
-                    anchors.top: parent.top
-                    width: 100
-                    height: 311
-
-                    Frame {
-                        name: "GuildBankColumn5"
-                        wowParent: "GuildBankFrame"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 3
-                        anchors.top: parent.top
-                        width: 100
-                        height: 311
-
-                        Frame {
-                            name: "GuildBankColumn6"
-                            wowParent: "GuildBankFrame"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 3
-                            anchors.top: parent.top
-                            width: 100
-                            height: 311
-
-                            Frame {
-                                name: "GuildBankColumn7"
-                                wowParent: "GuildBankFrame"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 3
-                                anchors.top: parent.top
-                                width: 100
-                                height: 311
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     Frame {
+        id: guildBankColumn2
+        name: "GuildBankColumn2"
+        anchors.left: guildBankColumn1.right
+        anchors.leftMargin: 3
+        anchors.top: guildBankColumn1.top
+        width: 100
+        height: 311
+    }
+
+    Frame {
+        id: guildBankColumn3
+        name: "GuildBankColumn3"
+        anchors.left: guildBankColumn2.right
+        anchors.leftMargin: 3
+        anchors.top: guildBankColumn2.top
+        width: 100
+        height: 311
+    }
+
+    Frame {
+        id: guildBankColumn4
+        name: "GuildBankColumn4"
+        anchors.left: guildBankColumn3.right
+        anchors.leftMargin: 3
+        anchors.top: guildBankColumn3.top
+        width: 100
+        height: 311
+    }
+
+    Frame {
+        id: guildBankColumn5
+        name: "GuildBankColumn5"
+        anchors.left: guildBankColumn4.right
+        anchors.leftMargin: 3
+        anchors.top: guildBankColumn4.top
+        width: 100
+        height: 311
+    }
+
+    Frame {
+        id: guildBankColumn6
+        name: "GuildBankColumn6"
+        anchors.left: guildBankColumn5.right
+        anchors.leftMargin: 3
+        anchors.top: guildBankColumn5.top
+        width: 100
+        height: 311
+    }
+
+    Frame {
+        name: "GuildBankColumn7"
+        anchors.left: guildBankColumn6.right
+        anchors.leftMargin: 3
+        anchors.top: guildBankColumn6.top
+        width: 100
+        height: 311
+    }
+
+    Frame {
+        id: guildBankFrameDiabolic
         name: "GuildBankFrameDiabolic"
-        wowParent: "GuildBankFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -116,24 +113,24 @@ WowWindow {
         height: 508
 
         Frame {
+            name: "GuildBankEmblemFrame"
+            wowParent: "GuildBankFrame"
+            anchors.horizontalCenter: guildBankFrameDiabolicBorder.horizontalCenter
+            anchors.horizontalCenterOffset: -70
+            anchors.bottom: guildBankFrameDiabolicBorder.top
+            anchors.bottomMargin: -15
+            width: 700
+            height: 80
+        }
+
+        Frame {
+            id: guildBankFrameDiabolicBorder
             name: "GuildBankFrameDiabolicBorder"
-            wowParent: "GuildBankFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
             width: 817
             height: 476
-
-            Frame {
-                name: "GuildBankEmblemFrame"
-                wowParent: "GuildBankFrame"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: -70
-                anchors.bottom: parent.top
-                anchors.bottomMargin: -15
-                width: 700
-                height: 80
-            }
 
             Frame {
                 name: "GuildBankFrameDiabolicTitlePlate"
@@ -147,7 +144,6 @@ WowWindow {
                 FontString {
                     name: "GuildBankFrameDiabolicTitle"
                     text: "Guild Bank"
-                    wowParent: "GuildBankFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -159,7 +155,6 @@ WowWindow {
 
         Frame {
             name: "GuildBankFrameDiabolicFoot"
-            wowParent: "GuildBankFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -185,7 +180,6 @@ WowWindow {
                     id: guildBankMoneyFrameCopperButton
                     name: "GuildBankMoneyFrameCopperButton"
                     text: "6"
-                    wowParent: "GuildBankMoneyFrame"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -195,7 +189,6 @@ WowWindow {
                     FontString {
                         name: "GuildBankMoneyFrameCopperButtonText"
                         text: "6"
-                        wowParent: "GuildBankMoneyFrameCopperButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -207,7 +200,6 @@ WowWindow {
                 Button {
                     name: "GuildBankMoneyFrameGoldButton"
                     text: "12023"
-                    wowParent: "GuildBankMoneyFrame"
                     anchors.right: guildBankMoneyFrameSilverButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: guildBankMoneyFrameSilverButton.verticalCenter
@@ -217,7 +209,6 @@ WowWindow {
                     FontString {
                         name: "GuildBankMoneyFrameGoldButtonText"
                         text: "12023"
-                        wowParent: "GuildBankMoneyFrameGoldButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -230,7 +221,6 @@ WowWindow {
                     id: guildBankMoneyFrameSilverButton
                     name: "GuildBankMoneyFrameSilverButton"
                     text: "16"
-                    wowParent: "GuildBankMoneyFrame"
                     anchors.right: guildBankMoneyFrameCopperButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: guildBankMoneyFrameCopperButton.verticalCenter
@@ -240,7 +230,6 @@ WowWindow {
                     FontString {
                         name: "GuildBankMoneyFrameSilverButtonText"
                         text: "16"
-                        wowParent: "GuildBankMoneyFrameSilverButton"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -251,6 +240,7 @@ WowWindow {
             }
 
             FontString {
+                id: guildBankMoneyLimitLabel
                 name: "GuildBankMoneyLimitLabel"
                 text: "Available Amount:"
                 wowParent: "GuildBankFrame"
@@ -261,36 +251,34 @@ WowWindow {
                 anchors.bottomMargin: 29
                 width: 98
                 height: 13
+            }
 
-                Frame {
-                    name: "GuildBankWithdrawMoneyFrame"
-                    wowParent: "GuildBankFrame"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 13
+            Frame {
+                name: "GuildBankWithdrawMoneyFrame"
+                wowParent: "GuildBankFrame"
+                anchors.left: guildBankMoneyLimitLabel.right
+                anchors.leftMargin: 13
+                anchors.verticalCenter: guildBankMoneyLimitLabel.verticalCenter
+                width: 36.3
+                height: 13
+
+                Button {
+                    name: "GuildBankWithdrawMoneyFrameCopperButton"
+                    text: "0"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 36.3
+                    width: 23.3
                     height: 13
 
-                    Button {
-                        name: "GuildBankWithdrawMoneyFrameCopperButton"
+                    FontString {
+                        name: "GuildBankWithdrawMoneyFrameCopperButtonText"
                         text: "0"
-                        wowParent: "GuildBankWithdrawMoneyFrame"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 23.3
-                        height: 13
-
-                        FontString {
-                            name: "GuildBankWithdrawMoneyFrameCopperButtonText"
-                            text: "0"
-                            wowParent: "GuildBankWithdrawMoneyFrameCopperButton"
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 10.3
-                            height: 14.2
-                        }
+                        width: 10.3
+                        height: 14.2
                     }
                 }
             }
@@ -317,7 +305,6 @@ WowWindow {
                     FontString {
                         name: "GuildBankFrameWithdrawButtonText"
                         text: "Withdraw"
-                        wowParent: "GuildBankFrameWithdrawButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 76.6
@@ -337,7 +324,6 @@ WowWindow {
                     FontString {
                         name: "GuildBankFrameDepositButtonText"
                         text: "Deposit"
-                        wowParent: "GuildBankFrameDepositButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 56.1
@@ -349,7 +335,6 @@ WowWindow {
 
         Frame {
             name: "GuildBankFrameDiabolicRail"
-            wowParent: "GuildBankFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 18
             anchors.top: parent.bottom
@@ -360,7 +345,6 @@ WowWindow {
 
         Frame {
             name: "GuildBankFrameDiabolicSocket"
-            wowParent: "GuildBankFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -368,63 +352,10 @@ WowWindow {
             width: 42
             height: 42
         }
-
-        Button {
-            name: "GuildBankFrameTab1"
-            text: "Guild Bank"
-            wowParent: "GuildBankFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 28
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "GuildBankFrameTab2"
-            text: "Log"
-            wowParent: "GuildBankFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 86
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "GuildBankFrameTab3"
-            text: "Money Log"
-            wowParent: "GuildBankFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 144
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
-
-        Button {
-            name: "GuildBankFrameTab4"
-            text: "Info"
-            wowParent: "GuildBankFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 202
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
     }
 
     Frame {
         name: "GuildBankFrameLog"
-        wowParent: "GuildBankFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.top: parent.top
@@ -434,7 +365,6 @@ WowWindow {
 
         ScrollingMessageFrame {
             name: "GuildBankMessageFrame"
-            wowParent: "GuildBankFrameLog"
             anchors.left: parent.left
             anchors.leftMargin: 33
             anchors.top: parent.top
@@ -466,9 +396,56 @@ WowWindow {
         }
     }
 
+    Button {
+        name: "GuildBankFrameTab1"
+        text: "Guild Bank"
+        style: "Banner"
+        anchors.left: guildBankFrameDiabolic.left
+        anchors.leftMargin: 28
+        anchors.top: guildBankFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "GuildBankFrameTab2"
+        text: "Log"
+        style: "Banner"
+        anchors.left: guildBankFrameDiabolic.left
+        anchors.leftMargin: 86
+        anchors.top: guildBankFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "GuildBankFrameTab3"
+        text: "Money Log"
+        style: "Banner"
+        anchors.left: guildBankFrameDiabolic.left
+        anchors.leftMargin: 144
+        anchors.top: guildBankFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
+    Button {
+        name: "GuildBankFrameTab4"
+        text: "Info"
+        style: "Banner"
+        anchors.left: guildBankFrameDiabolic.left
+        anchors.leftMargin: 202
+        anchors.top: guildBankFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
+
     Frame {
         name: "GuildBankInfo"
-        wowParent: "GuildBankFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 33
@@ -480,7 +457,6 @@ WowWindow {
         // the info's page the logs' size, in the same place
         ScrollFrame {
             name: "GuildBankInfoScrollFrame"
-            wowParent: "GuildBankInfo"
             pin: "size"
             anchors.left: parent.left
             anchors.top: parent.top
@@ -511,7 +487,6 @@ WowWindow {
 
             Slider {
                 name: "GuildBankInfoScrollFrameScrollBar"
-                wowParent: "GuildBankInfoScrollFrame"
                 style: "ScrollBar"
                 anchors.left: parent.right
                 anchors.leftMargin: 4
@@ -520,9 +495,17 @@ WowWindow {
                 width: 16
                 height: 272
 
+                Frame {
+                    name: "GuildBankInfoScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: guildBankInfoScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: guildBankInfoScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 306
+                }
+
                 Button {
                     name: "GuildBankInfoScrollFrameScrollBarScrollDownButton"
-                    wowParent: "GuildBankInfoScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.bottom
@@ -531,29 +514,18 @@ WowWindow {
                 }
 
                 Button {
+                    id: guildBankInfoScrollFrameScrollBarScrollUpButton
                     name: "GuildBankInfoScrollFrameScrollBarScrollUpButton"
-                    wowParent: "GuildBankInfoScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
                     width: 16
                     height: 16
-
-                    Frame {
-                        name: "GuildBankInfoScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "GuildBankInfoScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 306
-                    }
                 }
             }
 
             EditBox {
                 name: "GuildBankTabInfoEditBox"
-                wowParent: "GuildBankInfoScrollFrame"
                 pin: "size"
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -564,8 +536,8 @@ WowWindow {
     }
 
     Frame {
+        id: guildBankTab1
         name: "GuildBankTab1"
-        wowParent: "GuildBankFrame"
         anchors.left: parent.right
         anchors.leftMargin: -1
         anchors.top: parent.top
@@ -575,7 +547,6 @@ WowWindow {
 
         CheckButton {
             name: "GuildBankTab1Button"
-            wowParent: "GuildBankTab1"
             anchors.left: parent.left
             anchors.leftMargin: 2
             anchors.top: parent.top
@@ -583,105 +554,99 @@ WowWindow {
             width: 36
             height: 34
         }
+    }
 
-        Frame {
-            name: "GuildBankTab2"
-            wowParent: "GuildBankFrame"
+    Frame {
+        id: guildBankTab2
+        name: "GuildBankTab2"
+        anchors.left: guildBankTab1.left
+        anchors.top: guildBankTab1.bottom
+        width: 42
+        height: 50
+
+        CheckButton {
+            name: "GuildBankTab2Button"
             anchors.left: parent.left
-            anchors.top: parent.bottom
-            width: 42
-            height: 50
+            anchors.leftMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            width: 36
+            height: 34
+        }
+    }
 
-            CheckButton {
-                name: "GuildBankTab2Button"
-                wowParent: "GuildBankTab2"
-                anchors.left: parent.left
-                anchors.leftMargin: 2
-                anchors.top: parent.top
-                anchors.topMargin: 8
-                width: 36
-                height: 34
-            }
+    Frame {
+        id: guildBankTab3
+        name: "GuildBankTab3"
+        anchors.left: guildBankTab2.left
+        anchors.top: guildBankTab2.bottom
+        width: 42
+        height: 50
 
-            Frame {
-                name: "GuildBankTab3"
-                wowParent: "GuildBankFrame"
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                width: 42
-                height: 50
+        CheckButton {
+            name: "GuildBankTab3Button"
+            anchors.left: parent.left
+            anchors.leftMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            width: 36
+            height: 34
+        }
+    }
 
-                CheckButton {
-                    name: "GuildBankTab3Button"
-                    wowParent: "GuildBankTab3"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 2
-                    anchors.top: parent.top
-                    anchors.topMargin: 8
-                    width: 36
-                    height: 34
-                }
+    Frame {
+        id: guildBankTab4
+        name: "GuildBankTab4"
+        anchors.left: guildBankTab3.left
+        anchors.top: guildBankTab3.bottom
+        width: 42
+        height: 50
 
-                Frame {
-                    name: "GuildBankTab4"
-                    wowParent: "GuildBankFrame"
-                    anchors.left: parent.left
-                    anchors.top: parent.bottom
-                    width: 42
-                    height: 50
+        CheckButton {
+            name: "GuildBankTab4Button"
+            anchors.left: parent.left
+            anchors.leftMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            width: 36
+            height: 34
+        }
+    }
 
-                    CheckButton {
-                        name: "GuildBankTab4Button"
-                        wowParent: "GuildBankTab4"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 2
-                        anchors.top: parent.top
-                        anchors.topMargin: 8
-                        width: 36
-                        height: 34
-                    }
+    Frame {
+        id: guildBankTab5
+        name: "GuildBankTab5"
+        anchors.left: guildBankTab4.left
+        anchors.top: guildBankTab4.bottom
+        width: 42
+        height: 50
 
-                    Frame {
-                        name: "GuildBankTab5"
-                        wowParent: "GuildBankFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        width: 42
-                        height: 50
+        CheckButton {
+            name: "GuildBankTab5Button"
+            anchors.left: parent.left
+            anchors.leftMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            width: 36
+            height: 34
+        }
+    }
 
-                        CheckButton {
-                            name: "GuildBankTab5Button"
-                            wowParent: "GuildBankTab5"
-                            anchors.left: parent.left
-                            anchors.leftMargin: 2
-                            anchors.top: parent.top
-                            anchors.topMargin: 8
-                            width: 36
-                            height: 34
-                        }
+    Frame {
+        name: "GuildBankTab6"
+        anchors.left: guildBankTab5.left
+        anchors.top: guildBankTab5.bottom
+        width: 42
+        height: 50
 
-                        Frame {
-                            name: "GuildBankTab6"
-                            wowParent: "GuildBankFrame"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            width: 42
-                            height: 50
-
-                            CheckButton {
-                                name: "GuildBankTab6Button"
-                                wowParent: "GuildBankTab6"
-                                anchors.left: parent.left
-                                anchors.leftMargin: 2
-                                anchors.top: parent.top
-                                anchors.topMargin: 8
-                                width: 36
-                                height: 34
-                            }
-                        }
-                    }
-                }
-            }
+        CheckButton {
+            name: "GuildBankTab6Button"
+            anchors.left: parent.left
+            anchors.leftMargin: 2
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            width: 36
+            height: 34
         }
     }
 
@@ -698,7 +663,6 @@ WowWindow {
 
         Slider {
             name: "GuildBankTransactionsScrollFrameScrollBar"
-            wowParent: "GuildBankTransactionsScrollFrame"
             style: "ScrollBar"
             anchors.left: parent.right
             anchors.leftMargin: 6
@@ -707,9 +671,17 @@ WowWindow {
             width: 16
             height: 272
 
+            Frame {
+                name: "GuildBankTransactionsScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: guildBankTransactionsScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: guildBankTransactionsScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 306
+            }
+
             Button {
                 name: "GuildBankTransactionsScrollFrameScrollBarScrollDownButton"
-                wowParent: "GuildBankTransactionsScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
@@ -718,29 +690,18 @@ WowWindow {
             }
 
             Button {
+                id: guildBankTransactionsScrollFrameScrollBarScrollUpButton
                 name: "GuildBankTransactionsScrollFrameScrollBarScrollUpButton"
-                wowParent: "GuildBankTransactionsScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.top
                 width: 16
                 height: 16
-
-                Frame {
-                    name: "GuildBankTransactionsScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "GuildBankTransactionsScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 306
-                }
             }
         }
 
         Frame {
             name: "GuildBankTransactionsScrollFrameScrollChildFrame"
-            wowParent: "GuildBankTransactionsScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 300

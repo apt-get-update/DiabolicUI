@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "QuestLogCount"
-        wowParent: "QuestLogFrame"
         anchors.left: parent.left
         anchors.leftMargin: 80
         anchors.top: parent.top
@@ -41,7 +40,6 @@ WowWindow {
     Button {
         name: "QuestLogFrameCancelButton"
         text: "Close"
-        wowParent: "QuestLogFrame"
         anchors.right: parent.right
         anchors.rightMargin: 7
         anchors.bottom: parent.bottom
@@ -52,7 +50,6 @@ WowWindow {
         FontString {
             name: "QuestLogFrameCancelButtonText"
             text: "Close"
-            wowParent: "QuestLogFrameCancelButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 34.8
@@ -62,7 +59,6 @@ WowWindow {
 
     Frame {
         name: "QuestLogFrameDiabolic"
-        wowParent: "QuestLogFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.topMargin: -36
@@ -81,208 +77,203 @@ WowWindow {
 
             Frame {
                 name: "QuestLogDetailScrollChildFrame"
-                wowParent: "QuestLogDetailScrollFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 298
                 height: 333
 
+                Frame {
+                    name: "QuestInfoObjectivesFrame"
+                    anchors.left: questInfoObjectivesText.left
+                    anchors.top: questInfoObjectivesText.bottom
+                    anchors.topMargin: 10
+                    width: 285
+                    height: 10
+
+                    FontString {
+                        id: questInfoDescriptionHeader
+                        name: "QuestInfoDescriptionHeader"
+                        text: "Description"
+                        wowParent: "QuestLogDetailScrollChildFrame"
+                        anchors.left: questInfoObjective1.left
+                        anchors.top: questInfoObjective1.bottom
+                        anchors.topMargin: 10
+                        width: 285
+                        height: 15.8
+                    }
+
+                    FontString {
+                        id: questInfoDescriptionText
+                        name: "QuestInfoDescriptionText"
+                        wowParent: "QuestLogDetailScrollChildFrame"
+                        anchors.left: questInfoDescriptionHeader.left
+                        anchors.top: questInfoDescriptionHeader.bottom
+                        anchors.topMargin: 5
+                        width: 285
+                        height: 202.3
+                    }
+
+                    FontString {
+                        id: questInfoObjective1
+                        name: "QuestInfoObjective1"
+                        text: "Ahn'kahar Watcher Corpse Burned: 0/1"
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        width: 285
+                        height: 11.9
+                    }
+
+                    Frame {
+                        name: "QuestInfoRewardsFrame"
+                        wowParent: "QuestLogDetailScrollChildFrame"
+                        anchors.left: questInfoDescriptionText.left
+                        anchors.top: questInfoDescriptionText.bottom
+                        anchors.topMargin: 10
+                        width: 285
+                        height: 10
+
+                        FontString {
+                            id: questInfoItemReceiveText
+                            name: "QuestInfoItemReceiveText"
+                            text: "You will receive:"
+                            anchors.left: questInfoRewardsHeader.left
+                            anchors.leftMargin: 3
+                            anchors.top: questInfoRewardsHeader.bottom
+                            anchors.topMargin: 5
+                            width: 106.7
+                            height: 12.6
+                        }
+
+                        Frame {
+                            name: "QuestInfoMoneyFrame"
+                            anchors.left: questInfoItemReceiveText.right
+                            anchors.leftMargin: 15
+                            anchors.verticalCenter: questInfoItemReceiveText.verticalCenter
+                            width: 91
+                            height: 28
+
+                            Ghost {
+                                name: "QuestInfoMoneyFrameCopperButton"
+                                x: 78
+                                y: 14
+                                width: 0
+                                height: 0
+
+                                Button {
+                                    name: "QuestInfoMoneyFrameGoldButton"
+                                    text: "42"
+                                    wowParent: "QuestInfoMoneyFrame"
+                                    anchors.right: questInfoMoneyFrameSilverButton.left
+                                    anchors.rightMargin: 4
+                                    anchors.verticalCenter: questInfoMoneyFrameSilverButton.verticalCenter
+                                    width: 38
+                                    height: 19
+
+                                    FontString {
+                                        name: "QuestInfoMoneyFrameGoldButtonText"
+                                        text: "42"
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 19
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 19
+                                        height: 15.8
+                                    }
+                                }
+
+                                Button {
+                                    id: questInfoMoneyFrameSilverButton
+                                    name: "QuestInfoMoneyFrameSilverButton"
+                                    text: "6"
+                                    wowParent: "QuestInfoMoneyFrame"
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 30.1
+                                    height: 19
+
+                                    FontString {
+                                        name: "QuestInfoMoneyFrameSilverButtonText"
+                                        text: "6"
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 19
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 11.1
+                                        height: 15.8
+                                    }
+                                }
+                            }
+                        }
+
+                        FontString {
+                            id: questInfoRewardsHeader
+                            name: "QuestInfoRewardsHeader"
+                            text: "Rewards"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 285
+                            height: 15.8
+                        }
+
+                        Frame {
+                            name: "QuestInfoSpacerFrame"
+                            wowParent: "QuestLogDetailScrollChildFrame"
+                            anchors.left: questInfoItemReceiveText.left
+                            anchors.top: questInfoItemReceiveText.bottom
+                            anchors.topMargin: 10
+                            width: 5
+                            height: 5
+                        }
+
+                        Frame {
+                            name: "QuestInfoXPFrame"
+                            anchors.left: questInfoItemReceiveText.left
+                            anchors.top: questInfoItemReceiveText.bottom
+                            anchors.topMargin: 5
+                            width: 280
+                            height: 20
+
+                            FontString {
+                                name: "QuestInfoXPFramePoints"
+                                text: "10050"
+                                anchors.left: questInfoXPFrameReceiveText.right
+                                anchors.leftMargin: 15
+                                anchors.verticalCenter: questInfoXPFrameReceiveText.verticalCenter
+                                width: 42.7
+                                height: 15.8
+                            }
+
+                            FontString {
+                                id: questInfoXPFrameReceiveText
+                                name: "QuestInfoXPFrameReceiveText"
+                                text: "Experience:"
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 74.3
+                                height: 12.6
+                            }
+                        }
+                    }
+                }
+
                 FontString {
+                    id: questInfoObjectivesText
+                    name: "QuestInfoObjectivesText"
+                    anchors.left: questInfoTitleHeader.left
+                    anchors.top: questInfoTitleHeader.bottom
+                    anchors.topMargin: 5
+                    width: 285
+                    height: 88.5
+                }
+
+                FontString {
+                    id: questInfoTitleHeader
                     name: "QuestInfoTitleHeader"
                     text: "All Things in Good Time"
-                    wowParent: "QuestLogDetailScrollChildFrame"
                     anchors.left: parent.left
                     anchors.leftMargin: 5
                     anchors.top: parent.top
                     anchors.topMargin: 5
                     width: 285
                     height: 15.8
-
-                    FontString {
-                        name: "QuestInfoObjectivesText"
-                        wowParent: "QuestLogDetailScrollChildFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 5
-                        width: 285
-                        height: 88.5
-
-                        Frame {
-                            name: "QuestInfoObjectivesFrame"
-                            wowParent: "QuestLogDetailScrollChildFrame"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 10
-                            width: 285
-                            height: 10
-
-                            FontString {
-                                name: "QuestInfoObjective1"
-                                text: "Ahn'kahar Watcher Corpse Burned: 0/1"
-                                wowParent: "QuestInfoObjectivesFrame"
-                                anchors.left: parent.left
-                                anchors.top: parent.top
-                                width: 285
-                                height: 11.9
-
-                                FontString {
-                                    name: "QuestInfoDescriptionHeader"
-                                    text: "Description"
-                                    wowParent: "QuestLogDetailScrollChildFrame"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 10
-                                    width: 285
-                                    height: 15.8
-
-                                    FontString {
-                                        name: "QuestInfoDescriptionText"
-                                        wowParent: "QuestLogDetailScrollChildFrame"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 5
-                                        width: 285
-                                        height: 202.3
-
-                                        Frame {
-                                            name: "QuestInfoRewardsFrame"
-                                            wowParent: "QuestLogDetailScrollChildFrame"
-                                            anchors.left: parent.left
-                                            anchors.top: parent.bottom
-                                            anchors.topMargin: 10
-                                            width: 285
-                                            height: 10
-
-                                            FontString {
-                                                name: "QuestInfoRewardsHeader"
-                                                text: "Rewards"
-                                                wowParent: "QuestInfoRewardsFrame"
-                                                anchors.left: parent.left
-                                                anchors.top: parent.top
-                                                width: 285
-                                                height: 15.8
-
-                                                FontString {
-                                                    name: "QuestInfoItemReceiveText"
-                                                    text: "You will receive:"
-                                                    wowParent: "QuestInfoRewardsFrame"
-                                                    anchors.left: parent.left
-                                                    anchors.leftMargin: 3
-                                                    anchors.top: parent.bottom
-                                                    anchors.topMargin: 5
-                                                    width: 106.7
-                                                    height: 12.6
-
-                                                    Frame {
-                                                        name: "QuestInfoMoneyFrame"
-                                                        wowParent: "QuestInfoRewardsFrame"
-                                                        anchors.left: parent.right
-                                                        anchors.leftMargin: 15
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                        width: 91
-                                                        height: 28
-
-                                                        Ghost {
-                                                            name: "QuestInfoMoneyFrameCopperButton"
-                                                            x: 78
-                                                            y: 14
-                                                            width: 0
-                                                            height: 0
-
-                                                            Button {
-                                                                name: "QuestInfoMoneyFrameGoldButton"
-                                                                text: "42"
-                                                                wowParent: "QuestInfoMoneyFrame"
-                                                                anchors.right: questInfoMoneyFrameSilverButton.left
-                                                                anchors.rightMargin: 4
-                                                                anchors.verticalCenter: questInfoMoneyFrameSilverButton.verticalCenter
-                                                                width: 38
-                                                                height: 19
-
-                                                                FontString {
-                                                                    name: "QuestInfoMoneyFrameGoldButtonText"
-                                                                    text: "42"
-                                                                    wowParent: "QuestInfoMoneyFrameGoldButton"
-                                                                    anchors.right: parent.right
-                                                                    anchors.rightMargin: 19
-                                                                    anchors.verticalCenter: parent.verticalCenter
-                                                                    width: 19
-                                                                    height: 15.8
-                                                                }
-                                                            }
-
-                                                            Button {
-                                                                id: questInfoMoneyFrameSilverButton
-                                                                name: "QuestInfoMoneyFrameSilverButton"
-                                                                text: "6"
-                                                                wowParent: "QuestInfoMoneyFrame"
-                                                                anchors.right: parent.right
-                                                                anchors.verticalCenter: parent.verticalCenter
-                                                                width: 30.1
-                                                                height: 19
-
-                                                                FontString {
-                                                                    name: "QuestInfoMoneyFrameSilverButtonText"
-                                                                    text: "6"
-                                                                    wowParent: "QuestInfoMoneyFrameSilverButton"
-                                                                    anchors.right: parent.right
-                                                                    anchors.rightMargin: 19
-                                                                    anchors.verticalCenter: parent.verticalCenter
-                                                                    width: 11.1
-                                                                    height: 15.8
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    Frame {
-                                                        name: "QuestInfoSpacerFrame"
-                                                        wowParent: "QuestLogDetailScrollChildFrame"
-                                                        anchors.left: parent.left
-                                                        anchors.top: parent.bottom
-                                                        anchors.topMargin: 10
-                                                        width: 5
-                                                        height: 5
-                                                    }
-
-                                                    Frame {
-                                                        name: "QuestInfoXPFrame"
-                                                        wowParent: "QuestInfoRewardsFrame"
-                                                        anchors.left: parent.left
-                                                        anchors.top: parent.bottom
-                                                        anchors.topMargin: 5
-                                                        width: 280
-                                                        height: 20
-
-                                                        FontString {
-                                                            name: "QuestInfoXPFrameReceiveText"
-                                                            text: "Experience:"
-                                                            wowParent: "QuestInfoXPFrame"
-                                                            anchors.left: parent.left
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            width: 74.3
-                                                            height: 12.6
-
-                                                            FontString {
-                                                                name: "QuestInfoXPFramePoints"
-                                                                text: "10050"
-                                                                wowParent: "QuestInfoXPFrame"
-                                                                anchors.left: parent.right
-                                                                anchors.leftMargin: 15
-                                                                anchors.verticalCenter: parent.verticalCenter
-                                                                width: 42.7
-                                                                height: 15.8
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
 
@@ -299,7 +290,6 @@ WowWindow {
 
             Frame {
                 name: "QuestLogDetailScrollFrameDiabolicParchment"
-                wowParent: "QuestLogDetailScrollFrame"
                 anchors.left: parent.left
                 anchors.leftMargin: -14
                 anchors.top: parent.top
@@ -310,7 +300,6 @@ WowWindow {
 
             Slider {
                 name: "QuestLogDetailScrollFrameScrollBar"
-                wowParent: "QuestLogDetailScrollFrame"
                 style: "ScrollBar"
                 anchors.left: parent.right
                 anchors.leftMargin: 26
@@ -319,9 +308,17 @@ WowWindow {
                 width: 16
                 height: 304
 
+                Frame {
+                    name: "QuestLogDetailScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: questLogDetailScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: questLogDetailScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 338
+                }
+
                 Button {
                     name: "QuestLogDetailScrollFrameScrollBarScrollDownButton"
-                    wowParent: "QuestLogDetailScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.bottom
@@ -330,23 +327,13 @@ WowWindow {
                 }
 
                 Button {
+                    id: questLogDetailScrollFrameScrollBarScrollUpButton
                     name: "QuestLogDetailScrollFrameScrollBarScrollUpButton"
-                    wowParent: "QuestLogDetailScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
                     width: 16
                     height: 16
-
-                    Frame {
-                        name: "QuestLogDetailScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "QuestLogDetailScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 338
-                    }
                 }
             }
         }
@@ -365,7 +352,6 @@ WowWindow {
 
         Frame {
             name: "QuestLogFrameDiabolicBorder"
-            wowParent: "QuestLogFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 752
@@ -383,7 +369,6 @@ WowWindow {
                 FontString {
                     name: "QuestLogTitleText"
                     text: "Quest Log  23/25"
-                    wowParent: "QuestLogFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -395,7 +380,6 @@ WowWindow {
 
         Frame {
             name: "QuestLogFrameDiabolicFoot"
-            wowParent: "QuestLogFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -420,7 +404,6 @@ WowWindow {
                     id: questLogFrameAbandonButton
                     name: "QuestLogFrameAbandonButton"
                     text: "Abandon"
-                    wowParent: "QuestLogControlPanel"
                     style: "Button"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -431,7 +414,6 @@ WowWindow {
                     FontString {
                         name: "QuestLogFrameAbandonButtonText"
                         text: "Abandon"
-                        wowParent: "QuestLogFrameAbandonButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 64.8
@@ -442,7 +424,6 @@ WowWindow {
                 Button {
                     name: "QuestLogFramePushQuestButton"
                     text: "Share"
-                    wowParent: "QuestLogControlPanel"
                     style: "Button"
                     anchors.left: questLogFrameAbandonButton.right
                     anchors.leftMargin: 6
@@ -453,7 +434,6 @@ WowWindow {
                     FontString {
                         name: "QuestLogFramePushQuestButtonText"
                         text: "Share"
-                        wowParent: "QuestLogFramePushQuestButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 41.1
@@ -464,7 +444,6 @@ WowWindow {
                 Button {
                     name: "QuestLogFrameTrackButton"
                     text: "Track"
-                    wowParent: "QuestLogControlPanel"
                     style: "Button"
                     anchors.right: parent.right
                     anchors.rightMargin: 3
@@ -476,7 +455,6 @@ WowWindow {
                     FontString {
                         name: "QuestLogFrameTrackButtonText"
                         text: "Track"
-                        wowParent: "QuestLogFrameTrackButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 43.5
@@ -488,7 +466,6 @@ WowWindow {
 
         Frame {
             name: "QuestLogFrameDiabolicSocket"
-            wowParent: "QuestLogFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -510,7 +487,6 @@ WowWindow {
 
             Frame {
                 name: "QuestLogScrollFrameDiabolicZone"
-                wowParent: "QuestLogScrollFrame"
                 anchors.left: parent.left
                 anchors.leftMargin: -6
                 anchors.top: parent.top
@@ -521,7 +497,6 @@ WowWindow {
 
             Slider {
                 name: "QuestLogScrollFrameScrollBar"
-                wowParent: "QuestLogScrollFrame"
                 style: "ScrollBar"
                 anchors.left: parent.right
                 anchors.top: parent.top
@@ -529,9 +504,17 @@ WowWindow {
                 width: 20
                 height: 313
 
+                Frame {
+                    name: "QuestLogScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: questLogScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: questLogScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 343
+                }
+
                 Button {
                     name: "QuestLogScrollFrameScrollBarScrollDownButton"
-                    wowParent: "QuestLogScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.bottom
@@ -541,30 +524,19 @@ WowWindow {
                 }
 
                 Button {
+                    id: questLogScrollFrameScrollBarScrollUpButton
                     name: "QuestLogScrollFrameScrollBarScrollUpButton"
-                    wowParent: "QuestLogScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
                     anchors.bottomMargin: -2
                     width: 16
                     height: 16
-
-                    Frame {
-                        name: "QuestLogScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "QuestLogScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 343
-                    }
                 }
             }
 
             Frame {
                 name: "QuestLogScrollFrameScrollChild"
-                wowParent: "QuestLogScrollFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 305
@@ -573,7 +545,6 @@ WowWindow {
                 Button {
                     name: "QuestLogScrollFrameButton1"
                     text: "Ahn'kahet: The Old Kingdom"
-                    wowParent: "QuestLogScrollFrameScrollChild"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 299
@@ -582,7 +553,6 @@ WowWindow {
                     FontString {
                         name: "QuestLogScrollFrameButton1NormalText"
                         text: "Ahn'kahet: The Old Kingdom"
-                        wowParent: "QuestLogScrollFrameButton1"
                         anchors.left: parent.left
                         anchors.leftMargin: 20
                         anchors.verticalCenter: parent.verticalCenter

@@ -181,6 +181,10 @@ local ReadWindow = function(path)
 				names[block.id or block.name] = block.name
 				if (block.what == "Part") then
 					block.tail = statement.tail
+					-- (none written: the part it's in, or the window)
+					if (not block.wowParent) and ((block.over == window) or (block.over.what == "Part")) then
+						block.wowParent, block.guessedParent = block.over.name, true
+					end
 					window.parts[block.name] = block
 					raw[block.name] = block
 					if (block.over.what == "WowRow") then
@@ -412,7 +416,7 @@ for _, title in ipairs(Sorted(layout.windows or {})) do
 		local entry = seen.parts[name]
 		if (type(entry) == "table") and (not (owner[name] and windows[owner[name]].parts[name] and windows[owner[name]].parts[name].seen)) then
 			local part = PartNamed(name, title)
-			part.seen, part.kind, part.text, part.wowParent = entry, entry.kind, entry.text, entry.parent
+			part.seen, part.kind, part.text, part.wowParent, part.guessedParent = entry, entry.kind, entry.text, entry.parent, nil
 			part.style = entry.style or part.style
 			Follow(part)
 		end
@@ -796,9 +800,8 @@ for _, title in ipairs(Sorted(windows)) do
 end
 
 -- A part's block, what's placed on it inside it (`kids`, by what they're on).
-local BUTTONS = { Button = true, CheckButton = true }
 local WriteKids
-local WritePart = function(out, part, kids, indent, inRow)
+local WritePart = function(out, part, kids, indent, inRow, inBlock)
 	for _, note in ipairs(part.notes or {}) do
 		out[#out + 1] = indent .. note
 	end
@@ -817,7 +820,7 @@ local WritePart = function(out, part, kids, indent, inRow)
 	if part.text then
 		Set("text", Quote(part.text))
 	end
-	if part.wowParent then
+	if part.wowParent and (not part.guessedParent) and (part.wowParent ~= inBlock) then
 		Set("wowParent", Quote(part.wowParent))
 	end
 	if part.style then
@@ -900,7 +903,7 @@ end
 WriteKids = function(out, these, kids, indent)
 	for _, part in ipairs(these and these.parts or {}) do
 		out[#out + 1] = ""
-		WritePart(out, part, kids, indent)
+		WritePart(out, part, kids, indent, nil, these.name)
 	end
 	for _, row in ipairs(these and these.rows or {}) do
 		out[#out + 1] = ""
@@ -965,13 +968,15 @@ local WriteWindow = function(window)
 			loose[up], part.loose = true, true
 		end
 	end
-	-- A button next to another (coins, tabs, a list's): not in it, side by side in
-	-- what that one's in. (Blizzard's anchors kept: a row would pin them.)
+	-- A part next to the one it's placed on (the next line of a list, a value after
+	-- its label): not in it, side by side in what that one's in, on its id. Its own
+	-- child stays in it, wherever it hangs. (Blizzard's anchors kept: a row would
+	-- pin them.)
 	local Beside = function(name)
 		local part = window.parts[name]
 		local on = part.place and part.place[2]
 		local other = on and window.parts[on]
-		if (not other) or (not BUTTONS[part.kind]) or (not BUTTONS[other.kind]) or loose[name] or inRow[on] or (not inFile[on]) then
+		if (not other) or (part.wowParent == on) or loose[name] or inRow[on] or (not inFile[on]) then
 			return false
 		end
 		local x, y, toX, toY = AcrossOf(part.place[1]), DownOf(part.place[1]), AcrossOf(part.place[3]), DownOf(part.place[3])
@@ -989,7 +994,8 @@ local WriteWindow = function(window)
 	end
 	local kids = {}
 	local Into = function(on, kind, item)
-		kids[on] = kids[on] or { parts = {}, rows = {}, ghosts = {}, window = window }
+		-- (`name`: what a part in it needs no wowParent for; a Ghost's isn't a frame)
+		kids[on] = kids[on] or { name = (not ghosts[on]) and on or nil, parts = {}, rows = {}, ghosts = {}, window = window }
 		table.insert(kids[on][kind], item)
 	end
 	-- A Ghost in the part the parts placed on it are in (one of that frame's
@@ -1042,7 +1048,7 @@ local WriteWindow = function(window)
 	end
 	local width, height = WindowSize(window)
 	local out = { "// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part",
-		"// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua (\"all\",",
+		"// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua (\"all\",",
 		"// or only its \"place\" or its \"size\"), the others follow /dui layout's scan.",
 		"import QtQuick", "", "WowWindow {",
 		"    name: " .. Quote(window.name),

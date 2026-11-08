@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "AdiBagsContainer2Diabolic"
-        wowParent: "AdiBagsContainer2"
         anchors.left: parent.left
         anchors.leftMargin: -18
         anchors.top: parent.top
@@ -20,7 +19,6 @@ WowWindow {
 
         Frame {
             name: "AdiBagsContainer2DiabolicBorder"
-            wowParent: "AdiBagsContainer2Diabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 1179.7
@@ -29,7 +27,6 @@ WowWindow {
 
         Frame {
             name: "AdiBagsContainer2DiabolicSocket"
-            wowParent: "AdiBagsContainer2Diabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -39,35 +36,34 @@ WowWindow {
         }
     }
 
+    FontString {
+        name: "AdiBagsContainer2Title"
+        text: "Bank"
+        anchors.left: adiBagsSimpleLayeredRegion5.right
+        anchors.leftMargin: 4
+        anchors.verticalCenter: adiBagsSimpleLayeredRegion5.verticalCenter
+        width: 1077.6
+        height: 18
+
+        Frame {
+            name: "AdiBagsAnchor3"
+            wowParent: "AdiBagsContainer2"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 1077.6
+            height: 18
+        }
+    }
+
     Frame {
+        id: adiBagsSimpleLayeredRegion5
         name: "AdiBagsSimpleLayeredRegion5"
-        wowParent: "AdiBagsContainer2"
         anchors.left: parent.left
         anchors.leftMargin: 8
         anchors.top: parent.top
         anchors.topMargin: 8
         width: 18
         height: 18
-
-        FontString {
-            name: "AdiBagsContainer2Title"
-            text: "Bank"
-            wowParent: "AdiBagsContainer2"
-            anchors.left: parent.right
-            anchors.leftMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-            width: 1077.6
-            height: 18
-
-            Frame {
-                name: "AdiBagsAnchor3"
-                wowParent: "AdiBagsContainer2"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 1077.6
-                height: 18
-            }
-        }
     }
 
     Ghost {

@@ -19,8 +19,11 @@ Item {
     property var look: ({}) // (how its text is drawn: GameText.qml)
     property bool wordless // (its text not to draw, not there when the scan last looked, or faded)
     property bool labelled // (a button whose text has no part of its own)
+    // (from the part it's in, any kind: not known to the linter)
+    // qmllint disable missing-property
     property real px: parent && parent.px !== undefined ? parent.px : 1 // (one screen pixel at the editor's zoom)
     property bool outlines: parent && parent.outlines !== undefined ? parent.outlines : true
+    // qmllint enable missing-property
 
     // (outlines off: only what's picked has its box; a text still shows, it's what the window says)
     readonly property bool boxed: picked || placedOn || outlines

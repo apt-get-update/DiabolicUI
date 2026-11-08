@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -9,8 +9,8 @@ WowWindow {
     height: 512
 
     Frame {
+        id: inspectFrameDiabolic
         name: "InspectFrameDiabolic"
-        wowParent: "InspectFrame"
         anchors.left: parent.left
         anchors.leftMargin: -19
         anchors.top: parent.top
@@ -32,7 +32,6 @@ WowWindow {
 
         Frame {
             name: "InspectFrameDiabolicBorder"
-            wowParent: "InspectFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: 32
@@ -51,7 +50,6 @@ WowWindow {
                 FontString {
                     name: "InspectNameText"
                     text: "Wolvenblood"
-                    wowParent: "InspectFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -63,7 +61,6 @@ WowWindow {
 
         Frame {
             name: "InspectFrameDiabolicRail"
-            wowParent: "InspectFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 18
             anchors.top: parent.bottom
@@ -74,7 +71,6 @@ WowWindow {
 
         Frame {
             name: "InspectFrameDiabolicSocket"
-            wowParent: "InspectFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -82,50 +78,46 @@ WowWindow {
             width: 42
             height: 42
         }
+    }
 
-        Button {
-            name: "InspectFrameTab1"
-            text: "Character"
-            wowParent: "InspectFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 28
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
+    Button {
+        name: "InspectFrameTab1"
+        text: "Character"
+        style: "Banner"
+        anchors.left: inspectFrameDiabolic.left
+        anchors.leftMargin: 28
+        anchors.top: inspectFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
 
-        Button {
-            name: "InspectFrameTab2"
-            text: "PvP"
-            wowParent: "InspectFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 86
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
+    Button {
+        name: "InspectFrameTab2"
+        text: "PvP"
+        style: "Banner"
+        anchors.left: inspectFrameDiabolic.left
+        anchors.leftMargin: 86
+        anchors.top: inspectFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
+    }
 
-        Button {
-            name: "InspectFrameTab3"
-            text: "Talents"
-            wowParent: "InspectFrame"
-            style: "Banner"
-            anchors.left: parent.left
-            anchors.leftMargin: 144
-            anchors.top: parent.bottom
-            anchors.topMargin: -23
-            width: 52
-            height: 116
-        }
+    Button {
+        name: "InspectFrameTab3"
+        text: "Talents"
+        style: "Banner"
+        anchors.left: inspectFrameDiabolic.left
+        anchors.leftMargin: 144
+        anchors.top: inspectFrameDiabolic.bottom
+        anchors.topMargin: -23
+        width: 52
+        height: 116
     }
 
     Frame {
         name: "InspectNameFrame"
-        wowParent: "InspectFrame"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 6
         anchors.verticalCenter: parent.verticalCenter
@@ -136,7 +128,6 @@ WowWindow {
 
     Frame {
         name: "InspectPVPFrame"
-        wowParent: "InspectFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 384
@@ -162,7 +153,6 @@ WowWindow {
                 FontString {
                     name: "InspectPVPFrameArenaLabel"
                     text: "ARENA:"
-                    wowParent: "InspectPVPFrameArena"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: 41.9
@@ -183,7 +173,6 @@ WowWindow {
                 FontString {
                     name: "InspectPVPFrameHonorLabel"
                     text: "HONOR:"
-                    wowParent: "InspectPVPFrameHonor"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: 47.4
@@ -202,130 +191,147 @@ WowWindow {
                 height: 100
 
                 FontString {
+                    name: "InspectPVPHonorHonorLabel"
+                    text: "Honor"
+                    anchors.right: inspectPVPHonorKillsLabel.right
+                    anchors.top: inspectPVPHonorKillsLabel.bottom
+                    anchors.topMargin: 10
+                    width: 34.8
+                    height: 10.3
+                }
+
+                FontString {
+                    id: inspectPVPHonorKillsLabel
                     name: "InspectPVPHonorKillsLabel"
                     text: "Kills"
-                    wowParent: "InspectPVPHonor"
                     anchors.left: parent.left
                     anchors.leftMargin: 25
                     anchors.top: parent.top
                     anchors.topMargin: 24
                     width: 22.9
                     height: 10.3
+                }
 
-                    FontString {
-                        name: "InspectPVPHonorHonorLabel"
-                        text: "Honor"
-                        wowParent: "InspectPVPHonor"
-                        anchors.right: parent.right
-                        anchors.top: parent.bottom
-                        anchors.topMargin: 10
-                        width: 34.8
-                        height: 10.3
-                    }
+                FontString {
+                    name: "InspectPVPHonorLifetimeHonor"
+                    text: "-"
+                    anchors.horizontalCenter: inspectPVPHonorLifetimeKills.horizontalCenter
+                    anchors.top: inspectPVPHonorLifetimeKills.bottom
+                    anchors.topMargin: 10
+                    width: 5.5
+                    height: 10.3
+                }
 
-                    FontString {
-                        name: "InspectPVPHonorTodayLabel"
-                        text: "Today"
-                        wowParent: "InspectPVPHonor"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 30
-                        anchors.bottom: parent.top
-                        anchors.bottomMargin: 10
-                        width: 34.8
-                        height: 10.3
+                FontString {
+                    id: inspectPVPHonorLifetimeKills
+                    name: "InspectPVPHonorLifetimeKills"
+                    text: "30"
+                    anchors.horizontalCenter: inspectPVPHonorLifetimeLabel.horizontalCenter
+                    anchors.top: inspectPVPHonorLifetimeLabel.bottom
+                    anchors.topMargin: 10
+                    width: 15
+                    height: 10.3
+                }
 
-                        FontString {
-                            name: "InspectPVPHonorTodayKills"
-                            text: "0"
-                            wowParent: "InspectPVPHonor"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 10
-                            width: 7.9
-                            height: 10.3
+                FontString {
+                    id: inspectPVPHonorLifetimeLabel
+                    name: "InspectPVPHonorLifetimeLabel"
+                    text: "Lifetime"
+                    anchors.left: inspectPVPHonorYesterdayLabel.right
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: inspectPVPHonorYesterdayLabel.verticalCenter
+                    width: 45
+                    height: 10.3
+                }
 
-                            FontString {
-                                name: "InspectPVPHonorTodayHonor"
-                                text: "0"
-                                wowParent: "InspectPVPHonor"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 10
-                                width: 7.9
-                                height: 14
-                            }
-                        }
+                FontString {
+                    name: "InspectPVPHonorTodayHonor"
+                    text: "0"
+                    anchors.horizontalCenter: inspectPVPHonorTodayKills.horizontalCenter
+                    anchors.top: inspectPVPHonorTodayKills.bottom
+                    anchors.topMargin: 10
+                    width: 7.9
+                    height: 14
+                }
 
-                        FontString {
-                            name: "InspectPVPHonorYesterdayLabel"
-                            text: "Yesterday"
-                            wowParent: "InspectPVPHonor"
-                            anchors.left: parent.right
-                            anchors.leftMargin: 30
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 53.7
-                            height: 10.3
+                FontString {
+                    id: inspectPVPHonorTodayKills
+                    name: "InspectPVPHonorTodayKills"
+                    text: "0"
+                    anchors.horizontalCenter: inspectPVPHonorTodayLabel.horizontalCenter
+                    anchors.top: inspectPVPHonorTodayLabel.bottom
+                    anchors.topMargin: 10
+                    width: 7.9
+                    height: 10.3
+                }
 
-                            FontString {
-                                name: "InspectPVPHonorLifetimeLabel"
-                                text: "Lifetime"
-                                wowParent: "InspectPVPHonor"
-                                anchors.left: parent.right
-                                anchors.leftMargin: 30
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 45
-                                height: 10.3
+                FontString {
+                    id: inspectPVPHonorTodayLabel
+                    name: "InspectPVPHonorTodayLabel"
+                    text: "Today"
+                    anchors.left: inspectPVPHonorKillsLabel.right
+                    anchors.leftMargin: 30
+                    anchors.bottom: inspectPVPHonorKillsLabel.top
+                    anchors.bottomMargin: 10
+                    width: 34.8
+                    height: 10.3
+                }
 
-                                FontString {
-                                    name: "InspectPVPHonorLifetimeKills"
-                                    text: "30"
-                                    wowParent: "InspectPVPHonor"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 10
-                                    width: 15
-                                    height: 10.3
+                FontString {
+                    name: "InspectPVPHonorYesterdayHonor"
+                    text: "0"
+                    anchors.horizontalCenter: inspectPVPHonorYesterdayKills.horizontalCenter
+                    anchors.top: inspectPVPHonorYesterdayKills.bottom
+                    anchors.topMargin: 10
+                    width: 7.9
+                    height: 10.3
+                }
 
-                                    FontString {
-                                        name: "InspectPVPHonorLifetimeHonor"
-                                        text: "-"
-                                        wowParent: "InspectPVPHonor"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 10
-                                        width: 5.5
-                                        height: 10.3
-                                    }
-                                }
-                            }
+                FontString {
+                    id: inspectPVPHonorYesterdayKills
+                    name: "InspectPVPHonorYesterdayKills"
+                    text: "0"
+                    anchors.horizontalCenter: inspectPVPHonorYesterdayLabel.horizontalCenter
+                    anchors.top: inspectPVPHonorYesterdayLabel.bottom
+                    anchors.topMargin: 10
+                    width: 7.9
+                    height: 10.3
+                }
 
-                            FontString {
-                                name: "InspectPVPHonorYesterdayKills"
-                                text: "0"
-                                wowParent: "InspectPVPHonor"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 10
-                                width: 7.9
-                                height: 10.3
+                FontString {
+                    id: inspectPVPHonorYesterdayLabel
+                    name: "InspectPVPHonorYesterdayLabel"
+                    text: "Yesterday"
+                    anchors.left: inspectPVPHonorTodayLabel.right
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: inspectPVPHonorTodayLabel.verticalCenter
+                    width: 53.7
+                    height: 10.3
+                }
+            }
 
-                                FontString {
-                                    name: "InspectPVPHonorYesterdayHonor"
-                                    text: "0"
-                                    wowParent: "InspectPVPHonor"
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 10
-                                    width: 7.9
-                                    height: 10.3
-                                }
-                            }
-                        }
-                    }
+            Button {
+                name: "InspectPVPTeam1"
+                wowParent: "InspectPVPFrame"
+                anchors.left: inspectPVPTeam1Standard.left
+                anchors.leftMargin: 33
+                anchors.verticalCenter: inspectPVPTeam1Standard.verticalCenter
+                width: 300
+                height: 78
+
+                FontString {
+                    name: "InspectPVPTeam1TeamType"
+                    text: "(2v2)"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: -8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 41.9
+                    height: 15.8
                 }
             }
 
             Frame {
+                id: inspectPVPTeam1Standard
                 name: "InspectPVPTeam1Standard"
                 wowParent: "InspectPVPFrame"
                 anchors.left: parent.left
@@ -334,30 +340,30 @@ WowWindow {
                 anchors.verticalCenterOffset: -85
                 width: 64
                 height: 64
+            }
 
-                Button {
-                    name: "InspectPVPTeam1"
-                    wowParent: "InspectPVPFrame"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 33
+            Button {
+                name: "InspectPVPTeam2"
+                wowParent: "InspectPVPFrame"
+                anchors.left: inspectPVPTeam2Standard.left
+                anchors.leftMargin: 33
+                anchors.verticalCenter: inspectPVPTeam2Standard.verticalCenter
+                width: 300
+                height: 78
+
+                FontString {
+                    name: "InspectPVPTeam2TeamType"
+                    text: "(3v3)"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: -8
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 300
-                    height: 78
-
-                    FontString {
-                        name: "InspectPVPTeam1TeamType"
-                        text: "(2v2)"
-                        wowParent: "InspectPVPTeam1"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 41.9
-                        height: 15.8
-                    }
+                    width: 41.9
+                    height: 15.8
                 }
             }
 
             Frame {
+                id: inspectPVPTeam2Standard
                 name: "InspectPVPTeam2Standard"
                 wowParent: "InspectPVPFrame"
                 anchors.left: parent.left
@@ -365,30 +371,30 @@ WowWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 64
                 height: 64
+            }
 
-                Button {
-                    name: "InspectPVPTeam2"
-                    wowParent: "InspectPVPFrame"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 33
+            Button {
+                name: "InspectPVPTeam3"
+                wowParent: "InspectPVPFrame"
+                anchors.left: inspectPVPTeam3Standard.left
+                anchors.leftMargin: 33
+                anchors.verticalCenter: inspectPVPTeam3Standard.verticalCenter
+                width: 300
+                height: 78
+
+                FontString {
+                    name: "InspectPVPTeam3TeamType"
+                    text: "(5v5)"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: -8
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 300
-                    height: 78
-
-                    FontString {
-                        name: "InspectPVPTeam2TeamType"
-                        text: "(3v3)"
-                        wowParent: "InspectPVPTeam2"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 41.9
-                        height: 15.8
-                    }
+                    width: 41.9
+                    height: 15.8
                 }
             }
 
             Frame {
+                id: inspectPVPTeam3Standard
                 name: "InspectPVPTeam3Standard"
                 wowParent: "InspectPVPFrame"
                 anchors.left: parent.left
@@ -397,34 +403,12 @@ WowWindow {
                 anchors.verticalCenterOffset: 85
                 width: 64
                 height: 64
-
-                Button {
-                    name: "InspectPVPTeam3"
-                    wowParent: "InspectPVPFrame"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 33
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 300
-                    height: 78
-
-                    FontString {
-                        name: "InspectPVPTeam3TeamType"
-                        text: "(5v5)"
-                        wowParent: "InspectPVPTeam3"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: -8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 41.9
-                        height: 15.8
-                    }
-                }
             }
         }
     }
 
     Frame {
         name: "InspectPaperDollFrame"
-        wowParent: "InspectFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 384
@@ -433,7 +417,6 @@ WowWindow {
         Button {
             id: inspectBackSlot
             name: "InspectBackSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectShoulderSlot.left
             anchors.top: inspectShoulderSlot.bottom
             anchors.topMargin: 4
@@ -444,7 +427,6 @@ WowWindow {
         Button {
             id: inspectChestSlot
             name: "InspectChestSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectBackSlot.left
             anchors.top: inspectBackSlot.bottom
             anchors.topMargin: 4
@@ -455,7 +437,6 @@ WowWindow {
         Button {
             id: inspectFeetSlot
             name: "InspectFeetSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectLegsSlot.left
             anchors.top: inspectLegsSlot.bottom
             anchors.topMargin: 4
@@ -466,7 +447,6 @@ WowWindow {
         Button {
             id: inspectFinger0Slot
             name: "InspectFinger0Slot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectFeetSlot.left
             anchors.top: inspectFeetSlot.bottom
             anchors.topMargin: 4
@@ -477,7 +457,6 @@ WowWindow {
         Button {
             id: inspectFinger1Slot
             name: "InspectFinger1Slot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectFinger0Slot.left
             anchors.top: inspectFinger0Slot.bottom
             anchors.topMargin: 4
@@ -488,7 +467,6 @@ WowWindow {
         Button {
             id: inspectHandsSlot
             name: "InspectHandsSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
             anchors.leftMargin: 305
             anchors.top: parent.top
@@ -500,7 +478,6 @@ WowWindow {
         Button {
             id: inspectHeadSlot
             name: "InspectHeadSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
             anchors.leftMargin: 21
             anchors.top: parent.top
@@ -512,7 +489,6 @@ WowWindow {
         Button {
             id: inspectLegsSlot
             name: "InspectLegsSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectWaistSlot.left
             anchors.top: inspectWaistSlot.bottom
             anchors.topMargin: 4
@@ -520,10 +496,21 @@ WowWindow {
             height: 37
         }
 
+        // the level line (the guild's under it) out of the band, over the model
+        FontString {
+            name: "InspectLevelText"
+            text: "Level 61 Human Warrior"
+            pin: "place"
+            anchors.horizontalCenter: inspectModelFrame.horizontalCenter
+            anchors.bottom: inspectModelFrame.top
+            anchors.bottomMargin: 22
+            width: 218.1
+            height: 14.2
+        }
+
         Button {
             id: inspectMainHandSlot
             name: "InspectMainHandSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
             anchors.leftMargin: 122
             anchors.top: parent.bottom
@@ -533,8 +520,8 @@ WowWindow {
         }
 
         PlayerModel {
+            id: inspectModelFrame
             name: "InspectModelFrame"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: parent.left
             anchors.leftMargin: 65
             anchors.top: parent.top
@@ -542,23 +529,9 @@ WowWindow {
             width: 233
             height: 300
 
-            // the level line (the guild's under it) out of the band, over the model
-            FontString {
-                name: "InspectLevelText"
-                text: "Level 61 Human Warrior"
-                wowParent: "InspectPaperDollFrame"
-                pin: "place"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                anchors.bottomMargin: 22
-                width: 218.1
-                height: 14.2
-            }
-
             Button {
                 id: inspectModelRotateLeftButton
                 name: "InspectModelRotateLeftButton"
-                wowParent: "InspectModelFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 35
@@ -567,7 +540,6 @@ WowWindow {
 
             Button {
                 name: "InspectModelRotateRightButton"
-                wowParent: "InspectModelFrame"
                 anchors.left: inspectModelRotateLeftButton.right
                 anchors.top: inspectModelRotateLeftButton.top
                 width: 35
@@ -578,7 +550,6 @@ WowWindow {
         Button {
             id: inspectNeckSlot
             name: "InspectNeckSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectHeadSlot.left
             anchors.top: inspectHeadSlot.bottom
             anchors.topMargin: 4
@@ -588,7 +559,6 @@ WowWindow {
 
         Button {
             name: "InspectRangedSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectSecondaryHandSlot.right
             anchors.leftMargin: 5
             anchors.top: inspectSecondaryHandSlot.top
@@ -599,7 +569,6 @@ WowWindow {
         Button {
             id: inspectSecondaryHandSlot
             name: "InspectSecondaryHandSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectMainHandSlot.right
             anchors.leftMargin: 5
             anchors.top: inspectMainHandSlot.top
@@ -610,7 +579,6 @@ WowWindow {
         Button {
             id: inspectShirtSlot
             name: "InspectShirtSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectChestSlot.left
             anchors.top: inspectChestSlot.bottom
             anchors.topMargin: 4
@@ -621,7 +589,6 @@ WowWindow {
         Button {
             id: inspectShoulderSlot
             name: "InspectShoulderSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectNeckSlot.left
             anchors.top: inspectNeckSlot.bottom
             anchors.topMargin: 4
@@ -632,7 +599,6 @@ WowWindow {
         Button {
             id: inspectTabardSlot
             name: "InspectTabardSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectShirtSlot.left
             anchors.top: inspectShirtSlot.bottom
             anchors.topMargin: 4
@@ -643,7 +609,6 @@ WowWindow {
         Button {
             id: inspectTrinket0Slot
             name: "InspectTrinket0Slot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectFinger1Slot.left
             anchors.top: inspectFinger1Slot.bottom
             anchors.topMargin: 4
@@ -653,7 +618,6 @@ WowWindow {
 
         Button {
             name: "InspectTrinket1Slot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectTrinket0Slot.left
             anchors.top: inspectTrinket0Slot.bottom
             anchors.topMargin: 4
@@ -664,7 +628,6 @@ WowWindow {
         Button {
             id: inspectWaistSlot
             name: "InspectWaistSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectHandsSlot.left
             anchors.top: inspectHandsSlot.bottom
             anchors.topMargin: 4
@@ -674,7 +637,6 @@ WowWindow {
 
         Button {
             name: "InspectWristSlot"
-            wowParent: "InspectPaperDollFrame"
             anchors.left: inspectTabardSlot.left
             anchors.top: inspectTabardSlot.bottom
             anchors.topMargin: 4
@@ -685,7 +647,6 @@ WowWindow {
 
     Frame {
         name: "InspectTalentFrame"
-        wowParent: "InspectFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 384
@@ -693,7 +654,6 @@ WowWindow {
 
         Button {
             name: "InspectTalentFrameCloseButton"
-            wowParent: "InspectTalentFrame"
             anchors.horizontalCenter: parent.right
             anchors.horizontalCenterOffset: -44
             anchors.verticalCenter: parent.top
@@ -704,7 +664,6 @@ WowWindow {
 
         Frame {
             name: "InspectTalentFramePointsBar"
-            wowParent: "InspectTalentFrame"
             anchors.left: parent.left
             anchors.leftMargin: 16
             anchors.verticalCenter: parent.verticalCenter
@@ -714,7 +673,6 @@ WowWindow {
 
             FontString {
                 name: "InspectTalentFrameSpentPointsText"
-                wowParent: "InspectTalentFramePointsBar"
                 anchors.left: parent.left
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
@@ -725,7 +683,6 @@ WowWindow {
 
             FontString {
                 name: "InspectTalentFrameTalentPointsText"
-                wowParent: "InspectTalentFramePointsBar"
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
@@ -736,8 +693,8 @@ WowWindow {
         }
 
         ScrollFrame {
+            id: inspectTalentFrameScrollFrame
             name: "InspectTalentFrameScrollFrame"
-            wowParent: "InspectTalentFrame"
             anchors.right: parent.right
             anchors.rightMargin: 65
             anchors.top: parent.top
@@ -747,7 +704,6 @@ WowWindow {
 
             Frame {
                 name: "InspectTalentFrameScrollChildFrame"
-                wowParent: "InspectTalentFrameScrollFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 320
@@ -755,7 +711,6 @@ WowWindow {
 
                 Frame {
                     name: "InspectTalentFrameArrowFrame"
-                    wowParent: "InspectTalentFrameScrollChildFrame"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 320
@@ -764,7 +719,6 @@ WowWindow {
 
                 Button {
                     name: "InspectTalentFrameTalent1"
-                    wowParent: "InspectTalentFrameScrollChildFrame"
                     anchors.left: parent.left
                     anchors.leftMargin: 35
                     anchors.top: parent.top
@@ -805,7 +759,6 @@ WowWindow {
 
             Slider {
                 name: "InspectTalentFrameScrollFrameScrollBar"
-                wowParent: "InspectTalentFrameScrollFrame"
                 style: "ScrollBar"
                 anchors.left: parent.right
                 anchors.leftMargin: 6
@@ -814,9 +767,17 @@ WowWindow {
                 width: 16
                 height: 296
 
+                Frame {
+                    name: "InspectTalentFrameScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: inspectTalentFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: inspectTalentFrameScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 330
+                }
+
                 Button {
                     name: "InspectTalentFrameScrollFrameScrollBarScrollDownButton"
-                    wowParent: "InspectTalentFrameScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.bottom
@@ -825,64 +786,51 @@ WowWindow {
                 }
 
                 Button {
+                    id: inspectTalentFrameScrollFrameScrollBarScrollUpButton
                     name: "InspectTalentFrameScrollFrameScrollBarScrollUpButton"
-                    wowParent: "InspectTalentFrameScrollFrameScrollBar"
                     style: "ScrollBar"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
                     width: 16
                     height: 16
-
-                    Frame {
-                        name: "InspectTalentFrameScrollFrameScrollBarDiabolicTrack"
-                        wowParent: "InspectTalentFrameScrollFrameScrollBar"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: -1
-                        width: 18
-                        height: 330
-                    }
                 }
             }
+        }
 
-            Button {
-                id: inspectTalentFrameTab1
-                name: "InspectTalentFrameTab1"
-                text: "Arms"
-                wowParent: "InspectTalentFrame"
-                pin: "place"
-                anchors.left: parent.left
-                anchors.leftMargin: -6
-                anchors.bottom: parent.top
-                anchors.bottomMargin: 12
-                width: 28
-                height: 28
-            }
+        Button {
+            id: inspectTalentFrameTab1
+            name: "InspectTalentFrameTab1"
+            text: "Arms"
+            pin: "place"
+            anchors.left: inspectTalentFrameScrollFrame.left
+            anchors.leftMargin: -6
+            anchors.bottom: inspectTalentFrameScrollFrame.top
+            anchors.bottomMargin: 12
+            width: 28
+            height: 28
+        }
 
-            Button {
-                id: inspectTalentFrameTab2
-                name: "InspectTalentFrameTab2"
-                text: "Fury"
-                wowParent: "InspectTalentFrame"
-                pin: "place"
-                anchors.left: inspectTalentFrameTab1.right
-                anchors.leftMargin: 6
-                anchors.verticalCenter: inspectTalentFrameTab1.verticalCenter
-                width: 28
-                height: 28
-            }
+        Button {
+            id: inspectTalentFrameTab2
+            name: "InspectTalentFrameTab2"
+            text: "Fury"
+            pin: "place"
+            anchors.left: inspectTalentFrameTab1.right
+            anchors.leftMargin: 6
+            anchors.verticalCenter: inspectTalentFrameTab1.verticalCenter
+            width: 28
+            height: 28
+        }
 
-            Button {
-                name: "InspectTalentFrameTab3"
-                text: "Protection"
-                wowParent: "InspectTalentFrame"
-                pin: "place"
-                anchors.left: inspectTalentFrameTab2.right
-                anchors.leftMargin: 6
-                anchors.verticalCenter: inspectTalentFrameTab2.verticalCenter
-                width: 28
-                height: 28
-            }
+        Button {
+            name: "InspectTalentFrameTab3"
+            text: "Protection"
+            pin: "place"
+            anchors.left: inspectTalentFrameTab2.right
+            anchors.leftMargin: 6
+            anchors.verticalCenter: inspectTalentFrameTab2.verticalCenter
+            width: 28
+            height: 28
         }
     }
 }

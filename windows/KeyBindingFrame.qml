@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "KeyBindingFrameBinding1"
-        wowParent: "KeyBindingFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 27
@@ -22,7 +21,6 @@ WowWindow {
         FontString {
             name: "KeyBindingFrameBinding1Description"
             text: "Earth Totem"
-            wowParent: "KeyBindingFrameBinding1"
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             width: 170
@@ -32,7 +30,6 @@ WowWindow {
         FontString {
             name: "KeyBindingFrameBinding1Header"
             text: "Movement Keys"
-            wowParent: "KeyBindingFrameBinding1"
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             width: 97.2
@@ -53,7 +50,6 @@ WowWindow {
 
         FontString {
             name: "KeyBindingFrameBinding1Key1ButtonText"
-            wowParent: "KeyBindingFrameBinding1Key1Button"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 71.1
@@ -62,42 +58,19 @@ WowWindow {
     }
 
     FontString {
+        id: keyBindingFrameCommandLabel
         name: "KeyBindingFrameCommandLabel"
         text: "Command"
-        wowParent: "KeyBindingFrame"
         anchors.left: parent.left
         anchors.leftMargin: 26
         anchors.top: parent.top
         anchors.topMargin: 35
         width: 61.6
         height: 11.9
-
-        FontString {
-            name: "KeyBindingFrameKey1Label"
-            text: "Key 1"
-            wowParent: "KeyBindingFrame"
-            anchors.left: parent.right
-            anchors.leftMargin: 185
-            anchors.verticalCenter: parent.verticalCenter
-            width: 32.4
-            height: 11.9
-
-            FontString {
-                name: "KeyBindingFrameKey2Label"
-                text: "Key 2"
-                wowParent: "KeyBindingFrame"
-                anchors.left: parent.right
-                anchors.leftMargin: 145
-                anchors.verticalCenter: parent.verticalCenter
-                width: 34
-                height: 11.9
-            }
-        }
     }
 
     Frame {
         name: "KeyBindingFrameDiabolic"
-        wowParent: "KeyBindingFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -107,7 +80,6 @@ WowWindow {
 
         Frame {
             name: "KeyBindingFrameDiabolicBand"
-            wowParent: "KeyBindingFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -127,7 +99,6 @@ WowWindow {
 
                 FontString {
                     name: "KeyBindingFrameCharacterButtonText"
-                    wowParent: "KeyBindingFrameCharacterButton"
                     anchors.left: parent.right
                     anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
@@ -139,7 +110,6 @@ WowWindow {
 
         Frame {
             name: "KeyBindingFrameDiabolicBorder"
-            wowParent: "KeyBindingFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 634
@@ -157,7 +127,6 @@ WowWindow {
                 FontString {
                     name: "KeyBindingFrameHeaderText"
                     text: "Key Bindings"
-                    wowParent: "KeyBindingFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -169,7 +138,6 @@ WowWindow {
 
         Frame {
             name: "KeyBindingFrameDiabolicFoot"
-            wowParent: "KeyBindingFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -217,7 +185,6 @@ WowWindow {
                     FontString {
                         name: "KeyBindingFrameUnbindButtonText"
                         text: "Unbind Key"
-                        wowParent: "KeyBindingFrameUnbindButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 73.5
@@ -237,7 +204,6 @@ WowWindow {
                     FontString {
                         name: "KeyBindingFrameOkayButtonText"
                         text: "Okay"
-                        wowParent: "KeyBindingFrameOkayButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 32.4
@@ -257,7 +223,6 @@ WowWindow {
                     FontString {
                         name: "KeyBindingFrameCancelButtonText"
                         text: "Cancel"
-                        wowParent: "KeyBindingFrameCancelButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 45.8
@@ -268,10 +233,30 @@ WowWindow {
         }
     }
 
+    FontString {
+        id: keyBindingFrameKey1Label
+        name: "KeyBindingFrameKey1Label"
+        text: "Key 1"
+        anchors.left: keyBindingFrameCommandLabel.right
+        anchors.leftMargin: 185
+        anchors.verticalCenter: keyBindingFrameCommandLabel.verticalCenter
+        width: 32.4
+        height: 11.9
+    }
+
+    FontString {
+        name: "KeyBindingFrameKey2Label"
+        text: "Key 2"
+        anchors.left: keyBindingFrameKey1Label.right
+        anchors.leftMargin: 145
+        anchors.verticalCenter: keyBindingFrameKey1Label.verticalCenter
+        width: 34
+        height: 11.9
+    }
+
     // what a key was bound to between the list and the foot
     FontString {
         name: "KeyBindingFrameOutputText"
-        wowParent: "KeyBindingFrame"
         pin: "place"
         anchors.horizontalCenter: parent.left
         anchors.horizontalCenterOffset: 293
@@ -284,7 +269,6 @@ WowWindow {
     // the list (its rows too) 6 under the column names
     ScrollFrame {
         name: "KeyBindingFrameScrollFrame"
-        wowParent: "KeyBindingFrame"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 2
@@ -306,7 +290,6 @@ WowWindow {
 
         Slider {
             name: "KeyBindingFrameScrollFrameScrollBar"
-            wowParent: "KeyBindingFrameScrollFrame"
             style: "ScrollBar"
             anchors.left: parent.right
             anchors.leftMargin: 6
@@ -315,9 +298,17 @@ WowWindow {
             width: 16
             height: 358
 
+            Frame {
+                name: "KeyBindingFrameScrollFrameScrollBarDiabolicTrack"
+                anchors.horizontalCenter: keyBindingFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
+                anchors.top: keyBindingFrameScrollFrameScrollBarScrollUpButton.top
+                anchors.topMargin: -1
+                width: 18
+                height: 392
+            }
+
             Button {
                 name: "KeyBindingFrameScrollFrameScrollBarScrollDownButton"
-                wowParent: "KeyBindingFrameScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
@@ -326,29 +317,18 @@ WowWindow {
             }
 
             Button {
+                id: keyBindingFrameScrollFrameScrollBarScrollUpButton
                 name: "KeyBindingFrameScrollFrameScrollBarScrollUpButton"
-                wowParent: "KeyBindingFrameScrollFrameScrollBar"
                 style: "ScrollBar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.top
                 width: 16
                 height: 16
-
-                Frame {
-                    name: "KeyBindingFrameScrollFrameScrollBarDiabolicTrack"
-                    wowParent: "KeyBindingFrameScrollFrameScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 392
-                }
             }
         }
 
         Frame {
             name: "KeyBindingFrameScrollFrameScrollChildFrame"
-            wowParent: "KeyBindingFrameScrollFrame"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 300

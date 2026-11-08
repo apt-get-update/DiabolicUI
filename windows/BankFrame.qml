@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "BankFrameDiabolic"
-        wowParent: "BankFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -31,7 +30,6 @@ WowWindow {
 
         Frame {
             name: "BankFrameDiabolicBorder"
-            wowParent: "BankFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 443
@@ -49,7 +47,6 @@ WowWindow {
                 FontString {
                     name: "BankFrameTitleText"
                     text: "Newton Burnside"
-                    wowParent: "BankFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -61,7 +58,6 @@ WowWindow {
 
         Frame {
             name: "BankFrameDiabolicSocket"
-            wowParent: "BankFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -73,7 +69,6 @@ WowWindow {
 
     Button {
         name: "BankFrameItem1"
-        wowParent: "BankFrame"
         anchors.left: parent.left
         anchors.leftMargin: 40
         anchors.top: parent.top
@@ -84,7 +79,6 @@ WowWindow {
         FontString {
             name: "BankFrameItem1Count"
             text: "18"
-            wowParent: "BankFrameItem1"
             anchors.right: parent.right
             anchors.rightMargin: 5
             anchors.bottom: parent.bottom
@@ -96,7 +90,6 @@ WowWindow {
 
     Frame {
         name: "BankFrameMoneyFrame"
-        wowParent: "BankFrame"
         anchors.right: parent.right
         anchors.rightMargin: 30
         anchors.bottom: parent.bottom
@@ -108,7 +101,6 @@ WowWindow {
             id: bankFrameMoneyFrameCopperButton
             name: "BankFrameMoneyFrameCopperButton"
             text: "13"
-            wowParent: "BankFrameMoneyFrame"
             anchors.right: parent.right
             anchors.rightMargin: 13
             anchors.verticalCenter: parent.verticalCenter
@@ -118,7 +110,6 @@ WowWindow {
             FontString {
                 name: "BankFrameMoneyFrameCopperButtonText"
                 text: "13"
-                wowParent: "BankFrameMoneyFrameCopperButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -130,7 +121,6 @@ WowWindow {
         Button {
             name: "BankFrameMoneyFrameGoldButton"
             text: "3654"
-            wowParent: "BankFrameMoneyFrame"
             anchors.right: bankFrameMoneyFrameSilverButton.left
             anchors.rightMargin: 4
             anchors.verticalCenter: bankFrameMoneyFrameSilverButton.verticalCenter
@@ -140,7 +130,6 @@ WowWindow {
             FontString {
                 name: "BankFrameMoneyFrameGoldButtonText"
                 text: "3654"
-                wowParent: "BankFrameMoneyFrameGoldButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -153,7 +142,6 @@ WowWindow {
             id: bankFrameMoneyFrameSilverButton
             name: "BankFrameMoneyFrameSilverButton"
             text: "16"
-            wowParent: "BankFrameMoneyFrame"
             anchors.right: bankFrameMoneyFrameCopperButton.left
             anchors.rightMargin: 4
             anchors.verticalCenter: bankFrameMoneyFrameCopperButton.verticalCenter
@@ -163,7 +151,6 @@ WowWindow {
             FontString {
                 name: "BankFrameMoneyFrameSilverButtonText"
                 text: "16"
-                wowParent: "BankFrameMoneyFrameSilverButton"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -192,7 +179,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag1HighlightFrame"
-                wowParent: "BankFrameBag1"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37
@@ -212,7 +198,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag2HighlightFrame"
-                wowParent: "BankFrameBag2"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37
@@ -232,7 +217,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag3HighlightFrame"
-                wowParent: "BankFrameBag3"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37
@@ -252,7 +236,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag4HighlightFrame"
-                wowParent: "BankFrameBag4"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37
@@ -272,7 +255,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag5HighlightFrame"
-                wowParent: "BankFrameBag5"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37
@@ -292,7 +274,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag6HighlightFrame"
-                wowParent: "BankFrameBag6"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37
@@ -311,7 +292,6 @@ WowWindow {
 
             Frame {
                 name: "BankFrameBag7HighlightFrame"
-                wowParent: "BankFrameBag7"
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 37

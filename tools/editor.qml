@@ -61,7 +61,7 @@ ApplicationWindow {
     }
 
     // ---- the window opened
-    property var data: null          // its part of layout.json
+    property var windowData: null          // its part of layout.json
     property string title_: ""
     property var parts: ({})         // its parts, by name
     property var items: ({})         // the QML items, by name (the window's, the Ghosts' and the rows' too)
@@ -90,7 +90,7 @@ ApplicationWindow {
     property var views: []           // what it shows by its tabs: { key, label, rect, window, art }
     property int viewIndex: 0
     readonly property var view_: views[viewIndex] || null
-    readonly property var viewRect: (view_ && view_.rect) || (data ? data.rect : null)
+    readonly property var viewRect: (view_ && view_.rect) || (windowData ? windowData.rect : null)
 
     Settings {
         id: settings
@@ -135,14 +135,14 @@ ApplicationWindow {
         if (root) root.destroy()
         root = null
         unfolded = {}
-        data = JSON.parse(backend.window(name))
+        windowData = JSON.parse(backend.window(name))
         title_ = name
         settings.lastWindow = name
         windowPick.currentIndex = windowPick.model.indexOf(name)
-        parts = data.parts
-        views = data.views || []
+        parts = windowData.parts
+        views = windowData.views || []
         viewIndex = 0
-        const component = Qt.createComponent(data.url)
+        const component = Qt.createComponent(windowData.url)
         if (component.status !== Component.Ready) {
             status = component.errorString()
             return
@@ -169,7 +169,7 @@ ApplicationWindow {
             if (says(parts[n]) && parts[n].kind !== "FontString" && !worded[n] && !/Tab\d+$/.test(n)) items[n].labelled = true
         }
         for (const n in edits) if (edits[n].window === name && items[n] && parts[n]) applyItem(n)
-        for (const row of data.rows || []) applyRow(row)
+        for (const row of windowData.rows || []) applyRow(row)
         followSides()
         for (const n in parts) if (items[n] && !parts[n].preview && parts[n].justify) items[n].justify = justifyOf(parts[n], items[n].width)
         // the art follows its part from where the part is now
@@ -207,7 +207,7 @@ ApplicationWindow {
                 } else if (line === lineY && side === "bottom" && items[other[1]]) { // (a track between its arrows: anchors can't reach)
                     const to = other[1], below = other[4]
                     const track = n
-                    item.height = Qt.binding(() => { moved; if (!root || !items[track] || !items[to]) return 1; const t = rectOf(to); return Math.max(1, t[1] + t[3] - below - items[track].mapToItem(root, 0, 0).y) })
+                    item.height = Qt.binding(() => { void moved; if (!root || !items[track] || !items[to]) return 1; const t = rectOf(to); return Math.max(1, t[1] + t[3] - below - items[track].mapToItem(root, 0, 0).y) })
                 }
             }
             stretch(lineX, 3)
@@ -219,7 +219,7 @@ ApplicationWindow {
     function sizer(name) { return follows[name] && !edits[name] ? follows[name] : name }
     // A list made shorter than the scan saw it: are these rows now under it?
     function cutOff(x, y, width, height) {
-        moved // (again as parts move)
+        void moved // (again as parts move)
         const cx = x + width / 2, cy = y + height / 2
         for (const n of scrollFrames) {
             const was = previewBox(parts[n].rect), now = rectOf(n)
@@ -229,7 +229,7 @@ ApplicationWindow {
     }
     // A scroll bar's thumb where the scan saw it, past the end of a bar made shorter?
     function thumbPast(name, y, height) {
-        moved
+        void moved
         if (!/ScrollBarThumbTexture$/.test(name)) return false
         const bar = name.replace(/ThumbTexture$/, "")
         return !!items[bar] && y + height > rectOf(bar)[1] + rectOf(bar)[3] + 1
@@ -291,7 +291,7 @@ ApplicationWindow {
     function showView(index) {
         artModel = []
         viewIndex = index
-        artModel = (view_ ? view_.art : data.art) || []
+        artModel = (view_ ? view_.art : windowData.art) || []
         previewUpdate()
         applyShown()
         if (picked && !(items[picked] && items[picked].shown)) pick("")
@@ -435,7 +435,7 @@ ApplicationWindow {
         const before = edits
         edits = JSON.parse(text)
         for (const n in Object.assign({}, before, edits)) if (parts[n]) applyItem(n)
-        for (const row of (data && data.rows) || []) applyRow(row)
+        for (const row of (windowData && windowData.rows) || []) applyRow(row)
         drawSample()
         if (picked) pickedEntry = pickedNow()
         changed()
@@ -463,7 +463,7 @@ ApplicationWindow {
     readonly property bool pickedHeld: !!pickedRow || !!(pickedEntry && pickedEntry.second) // (not dragged, no handles: its row or its sides place it)
     function rowOf(name) {
         const row = parts[name] && parts[name].inRow
-        return row ? (data.rows || []).filter(r => r.name === row)[0] || null : null
+        return row ? (windowData.rows || []).filter(r => r.name === row)[0] || null : null
     }
     function rowEdit(row) {
         const rows = edits["@rows"], mine = rows && rows[title_]
@@ -487,7 +487,7 @@ ApplicationWindow {
     // `changes` (fit, spacing, left, right, y) to a row. Quiet: while dragged.
     function setRow(row, changes, quiet) {
         if (!quiet) remember()
-        const file = (data.rows || []).filter(r => r.name === row.name)[0]
+        const file = (windowData.rows || []).filter(r => r.name === row.name)[0]
         const next = Object.assign({}, rowNow(row), changes)
         const edit = { fit: next.fit, left: next.left, right: next.right, y: next.y }
         const spacing = next.spacing === undefined || next.spacing === null ? file.spacing : next.spacing
@@ -506,7 +506,7 @@ ApplicationWindow {
         if (!quiet) changed()
     }
     function resetRow(row) {
-        const file = (data.rows || []).filter(r => r.name === row.name)[0]
+        const file = (windowData.rows || []).filter(r => r.name === row.name)[0]
         setRow(row, { fit: file.fit, spacing: file.spacing === undefined ? null : file.spacing, left: file.left, right: file.right, y: file.y })
     }
 
@@ -719,7 +719,7 @@ ApplicationWindow {
     property bool fitLater: false
     function fit(animated) {
         let r = [0, 0, root ? root.width : 400, root ? root.height : 400]
-        const w = (view_ && view_.window) || (data && data.window), f = viewRect
+        const w = (view_ && view_.window) || (windowData && windowData.window), f = viewRect
         if (componentsMode) {
             if (!sample) return // (once it's drawn)
             r = [0, 0, sample.rect[2], sample.rect[3]]
@@ -1234,7 +1234,7 @@ ApplicationWindow {
                             readonly property Item owner: ownerName ? app.items[ownerName] || null : null
                             // (where its part was when the scan drew it, not where it's saved to be since)
                             readonly property var base: !owner ? null : app.parts[ownerName].rect ? app.previewBox(app.parts[ownerName].rect) : app.artBase[ownerName]
-                            readonly property var at: { app.moved; return owner && owner.parent ? owner.mapToItem(app.root, 0, 0) : null }
+                            readonly property var at: { void app.moved; return owner && owner.parent ? owner.mapToItem(app.root, 0, 0) : null }
                             readonly property real ax: modelData.rect[0] - f[0]
                             readonly property real ay: (f[1] + f[3]) - (modelData.rect[1] + modelData.rect[3])
                             // (sized with its part if it's on it: a tab can draw it elsewhere)
@@ -1250,7 +1250,7 @@ ApplicationWindow {
                             width: spanX[1]
                             height: spanY[1]
                             opacity: (modelData.alpha === undefined ? 1 : modelData.alpha) * (modelData.backdrop || !modelData.color ? 1 : modelData.color[3])
-                            source: "image://art/" + app.data.generation + "/" + app.title_ + "/" + app.viewIndex + "/" + index
+                            source: "image://art/" + app.windowData.generation + "/" + app.title_ + "/" + app.viewIndex + "/" + index
                             cache: false
                             smooth: true
                         }
@@ -1717,7 +1717,7 @@ ApplicationWindow {
                                 visible: fieldRow.kind === "color"
                                 Rectangle {
                                     objectName: "swatch"
-                                    width: 48; height: 22
+                                    Layout.preferredWidth: 48; Layout.preferredHeight: 22
                                     radius: 2
                                     border.color: app.dim
                                     color: fieldRow.kind === "color" ? Qt.rgba(Math.min(1, fieldRow.current[0]), Math.min(1, fieldRow.current[1]), Math.min(1, fieldRow.current[2]), 1) : "transparent"

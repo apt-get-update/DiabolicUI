@@ -1,5 +1,5 @@
 // Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
-// is in what it's placed on, buttons next to the one they're on. One with a pin is put in settings/positions.lua ("all",
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
 // or only its "place" or its "size"), the others follow /dui layout's scan.
 import QtQuick
 
@@ -10,7 +10,6 @@ WowWindow {
 
     Frame {
         name: "LFDParentFrameDiabolic"
-        wowParent: "LFDParentFrame"
         anchors.left: parent.left
         anchors.leftMargin: -24
         anchors.top: parent.top
@@ -20,7 +19,6 @@ WowWindow {
 
         Frame {
             name: "LFDParentFrameDiabolicBand"
-            wowParent: "LFDParentFrameDiabolic"
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -40,7 +38,6 @@ WowWindow {
 
                 Frame {
                     name: "LFDQueueFrameTypeDropDownDiabolicField"
-                    wowParent: "LFDQueueFrameTypeDropDown"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: 280
@@ -60,7 +57,6 @@ WowWindow {
                 FontString {
                     name: "LFDQueueFrameTypeDropDownName"
                     text: "Type:"
-                    wowParent: "LFDQueueFrameTypeDropDown"
                     anchors.right: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -2
@@ -71,7 +67,6 @@ WowWindow {
                 FontString {
                     name: "LFDQueueFrameTypeDropDownText"
                     text: "Random Lich King Heroic"
-                    wowParent: "LFDQueueFrameTypeDropDown"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.horizontalCenterOffset: -11
                     anchors.verticalCenter: parent.verticalCenter
@@ -83,7 +78,6 @@ WowWindow {
 
         Frame {
             name: "LFDParentFrameDiabolicBorder"
-            wowParent: "LFDParentFrameDiabolic"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 413
@@ -101,7 +95,6 @@ WowWindow {
                 FontString {
                     name: "LFDQueueFrameTitleText"
                     text: "Dungeon Finder"
-                    wowParent: "LFDParentFrameDiabolicTitlePlate"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
@@ -113,7 +106,6 @@ WowWindow {
 
         Frame {
             name: "LFDParentFrameDiabolicFoot"
-            wowParent: "LFDParentFrameDiabolic"
             pin: "place"
             anchors.left: parent.left
             anchors.leftMargin: 23
@@ -147,7 +139,6 @@ WowWindow {
                     FontString {
                         name: "LFDQueueFrameFindGroupButtonText"
                         text: "Find Group"
-                        wowParent: "LFDQueueFrameFindGroupButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 82.2
@@ -167,7 +158,6 @@ WowWindow {
                     FontString {
                         name: "LFDQueueFrameCancelButtonText"
                         text: "Close"
-                        wowParent: "LFDQueueFrameCancelButton"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         width: 40.3
@@ -179,7 +169,6 @@ WowWindow {
 
         Frame {
             name: "LFDParentFrameDiabolicSocket"
-            wowParent: "LFDParentFrameDiabolic"
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
@@ -235,7 +224,6 @@ WowWindow {
 
     Frame {
         name: "LFDParentFramePortrait"
-        wowParent: "LFDParentFrame"
         anchors.left: parent.left
         anchors.leftMargin: 9
         anchors.top: parent.top
@@ -246,7 +234,6 @@ WowWindow {
 
     Frame {
         name: "LFDQueueFrame"
-        wowParent: "LFDParentFrame"
         anchors.left: parent.left
         anchors.top: parent.top
         width: 355
@@ -254,7 +241,6 @@ WowWindow {
 
         Frame {
             name: "LFDQueueFrameRandom"
-            wowParent: "LFDQueueFrame"
             pin: "place"
             anchors.left: parent.left
             anchors.top: parent.top
@@ -267,7 +253,6 @@ WowWindow {
 
             ScrollFrame {
                 name: "LFDQueueFrameRandomScrollFrame"
-                wowParent: "LFDQueueFrameRandom"
                 pin: "all"
                 anchors.right: parent.right
                 anchors.rightMargin: 34
@@ -278,210 +263,204 @@ WowWindow {
 
                 Frame {
                     name: "LFDQueueFrameRandomScrollFrameChildFrame"
-                    wowParent: "LFDQueueFrameRandomScrollFrame"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 1
                     height: 1
 
                     FontString {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameDescription
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameDescription"
+                        text: "Using the Dungeon Finder to do a Random Dungeon will earn you extra rewards."
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameTitle.left
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameTitle.bottom
+                        anchors.topMargin: 5
+                        width: 280
+                        height: 25.3
+                    }
+
+                    Button {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameItem1
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameRewardsDescription.left
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameRewardsDescription.bottom
+                        anchors.topMargin: 10
+                        width: 147
+                        height: 41
+
+                        Ghost {
+                            name: "LFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture"
+                            x: 39
+                            y: 39
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Count"
+                                text: "2"
+                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 1
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 1
+                                width: 10.3
+                                height: 14.2
+                            }
+                        }
+
+                        Ghost {
+                            name: "LFDQueueFrameRandomScrollFrameChildFrameItem1NameFrame"
+                            x: 29
+                            y: 19.5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Name"
+                                text: "Emblem of Conquest"
+                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
+                                anchors.left: parent.left
+                                anchors.leftMargin: 15
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 90
+                                height: 36
+                            }
+                        }
+                    }
+
+                    Frame {
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.right
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.verticalCenter
+                        width: 80.9
+                        height: 28
+
+                        Ghost {
+                            name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton"
+                            x: 68
+                            y: 14
+                            width: 0
+                            height: 0
+
+                            Button {
+                                name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
+                                text: "22"
+                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
+                                anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.left
+                                anchors.rightMargin: 4
+                                anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.verticalCenter
+                                width: 32
+                                height: 19
+
+                                FontString {
+                                    name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText"
+                                    text: "22"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 13
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 19
+                                    height: 15.8
+                                }
+                            }
+
+                            Button {
+                                id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton
+                                name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton"
+                                text: "20"
+                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 32
+                                height: 19
+
+                                FontString {
+                                    name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButtonText"
+                                    text: "20"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 13
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 19
+                                    height: 15.8
+                                }
+                            }
+                        }
+                    }
+
+                    FontString {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyLabel"
+                        text: "Money:"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameItem1.left
+                        anchors.leftMargin: 20
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameItem1.bottom
+                        anchors.topMargin: 10
+                        width: 49
+                        height: 12.6
+                    }
+
+                    FontString {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameRewardsDescription
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription"
+                        text: "The first random dungeon that you complete each day will earn you:"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameRewardsLabel.left
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameRewardsLabel.bottom
+                        anchors.topMargin: 5
+                        width: 280
+                        height: 25.3
+                    }
+
+                    FontString {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameRewardsLabel
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel"
+                        text: "Rewards"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameDescription.left
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameDescription.bottom
+                        anchors.topMargin: 10
+                        width: 84.5
+                        height: 15.8
+                    }
+
+                    Frame {
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameSpacer"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.left
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.bottom
+                        anchors.topMargin: 10
+                        width: 2
+                        height: 2
+                    }
+
+                    FontString {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameTitle
                         name: "LFDQueueFrameRandomScrollFrameChildFrameTitle"
                         text: "Random Dungeon"
-                        wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
                         anchors.left: parent.left
                         anchors.leftMargin: 10
                         anchors.top: parent.top
                         anchors.topMargin: 15
                         width: 171.5
                         height: 15.8
+                    }
 
-                        FontString {
-                            name: "LFDQueueFrameRandomScrollFrameChildFrameDescription"
-                            text: "Using the Dungeon Finder to do a Random Dungeon will earn you extra rewards."
-                            wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                            anchors.left: parent.left
-                            anchors.top: parent.bottom
-                            anchors.topMargin: 5
-                            width: 280
-                            height: 25.3
+                    FontString {
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameXPAmount"
+                        text: "16000"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameXPLabel.right
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameXPLabel.verticalCenter
+                        width: 42.7
+                        height: 15.8
+                    }
 
-                            FontString {
-                                name: "LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel"
-                                text: "Rewards"
-                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                anchors.left: parent.left
-                                anchors.top: parent.bottom
-                                anchors.topMargin: 10
-                                width: 84.5
-                                height: 15.8
-
-                                FontString {
-                                    name: "LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription"
-                                    text: "The first random dungeon that you complete each day will earn you:"
-                                    wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                    anchors.left: parent.left
-                                    anchors.top: parent.bottom
-                                    anchors.topMargin: 5
-                                    width: 280
-                                    height: 25.3
-
-                                    Button {
-                                        name: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
-                                        wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                        anchors.left: parent.left
-                                        anchors.top: parent.bottom
-                                        anchors.topMargin: 10
-                                        width: 147
-                                        height: 41
-
-                                        FontString {
-                                            name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyLabel"
-                                            text: "Money:"
-                                            wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 20
-                                            anchors.top: parent.bottom
-                                            anchors.topMargin: 10
-                                            width: 49
-                                            height: 12.6
-
-                                            Frame {
-                                                name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
-                                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                                anchors.left: parent.right
-                                                anchors.leftMargin: 10
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                width: 80.9
-                                                height: 28
-
-                                                Ghost {
-                                                    name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameCopperButton"
-                                                    x: 68
-                                                    y: 14
-                                                    width: 0
-                                                    height: 0
-
-                                                    Button {
-                                                        name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
-                                                        text: "22"
-                                                        wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
-                                                        anchors.right: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.left
-                                                        anchors.rightMargin: 4
-                                                        anchors.verticalCenter: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton.verticalCenter
-                                                        width: 32
-                                                        height: 19
-
-                                                        FontString {
-                                                            name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButtonText"
-                                                            text: "22"
-                                                            wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameGoldButton"
-                                                            anchors.right: parent.right
-                                                            anchors.rightMargin: 13
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            width: 19
-                                                            height: 15.8
-                                                        }
-                                                    }
-
-                                                    Button {
-                                                        id: lFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton
-                                                        name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton"
-                                                        text: "20"
-                                                        wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrame"
-                                                        anchors.right: parent.right
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                        width: 32
-                                                        height: 19
-
-                                                        FontString {
-                                                            name: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButtonText"
-                                                            text: "20"
-                                                            wowParent: "LFDQueueFrameRandomScrollFrameChildFrameMoneyFrameSilverButton"
-                                                            anchors.right: parent.right
-                                                            anchors.rightMargin: 13
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            width: 19
-                                                            height: 15.8
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            Frame {
-                                                name: "LFDQueueFrameRandomScrollFrameChildFrameSpacer"
-                                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                                anchors.left: parent.left
-                                                anchors.top: parent.bottom
-                                                anchors.topMargin: 10
-                                                width: 2
-                                                height: 2
-                                            }
-
-                                            FontString {
-                                                name: "LFDQueueFrameRandomScrollFrameChildFrameXPLabel"
-                                                text: "Experience:"
-                                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                                anchors.left: parent.left
-                                                anchors.top: parent.bottom
-                                                anchors.topMargin: 5
-                                                width: 74.3
-                                                height: 12.6
-
-                                                FontString {
-                                                    name: "LFDQueueFrameRandomScrollFrameChildFrameXPAmount"
-                                                    text: "16000"
-                                                    wowParent: "LFDQueueFrameRandomScrollFrameChildFrame"
-                                                    anchors.left: parent.right
-                                                    anchors.leftMargin: 10
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                    width: 42.7
-                                                    height: 15.8
-                                                }
-                                            }
-                                        }
-
-                                        Ghost {
-                                            name: "LFDQueueFrameRandomScrollFrameChildFrameItem1IconTexture"
-                                            x: 39
-                                            y: 39
-                                            width: 0
-                                            height: 0
-
-                                            FontString {
-                                                name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Count"
-                                                text: "2"
-                                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
-                                                anchors.right: parent.right
-                                                anchors.rightMargin: 1
-                                                anchors.bottom: parent.bottom
-                                                anchors.bottomMargin: 1
-                                                width: 10.3
-                                                height: 14.2
-                                            }
-                                        }
-
-                                        Ghost {
-                                            name: "LFDQueueFrameRandomScrollFrameChildFrameItem1NameFrame"
-                                            x: 29
-                                            y: 19.5
-                                            width: 0
-                                            height: 0
-
-                                            FontString {
-                                                name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Name"
-                                                text: "Emblem of Conquest"
-                                                wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                width: 90
-                                                height: 36
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    FontString {
+                        id: lFDQueueFrameRandomScrollFrameChildFrameXPLabel
+                        name: "LFDQueueFrameRandomScrollFrameChildFrameXPLabel"
+                        text: "Experience:"
+                        anchors.left: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.left
+                        anchors.top: lFDQueueFrameRandomScrollFrameChildFrameMoneyLabel.bottom
+                        anchors.topMargin: 5
+                        width: 74.3
+                        height: 12.6
                     }
                 }
 
@@ -500,7 +479,6 @@ WowWindow {
 
         Frame {
             name: "LFDQueueFrameSpecific"
-            wowParent: "LFDQueueFrame"
             pin: "place"
             anchors.left: parent.left
             anchors.top: parent.top
@@ -512,8 +490,8 @@ WowWindow {
             height: 456
 
             Frame {
+                id: lFDQueueFrameSpecificListButton1
                 name: "LFDQueueFrameSpecificListButton1"
-                wowParent: "LFDQueueFrameSpecific"
                 anchors.left: parent.left
                 anchors.leftMargin: 25
                 anchors.top: parent.top
@@ -523,7 +501,6 @@ WowWindow {
 
                 Button {
                     name: "LFDQueueFrameSpecificListButton1ExpandOrCollapseButton"
-                    wowParent: "LFDQueueFrameSpecificListButton1"
                     anchors.left: parent.left
                     anchors.leftMargin: 3
                     anchors.verticalCenter: parent.verticalCenter
@@ -534,7 +511,6 @@ WowWindow {
                 FontString {
                     name: "LFDQueueFrameSpecificListButton1InstanceLevel"
                     text: "(69 - 80)"
-                    wowParent: "LFDQueueFrameSpecificListButton1"
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     width: 60
@@ -544,85 +520,11 @@ WowWindow {
                 FontString {
                     name: "LFDQueueFrameSpecificListButton1InstanceName"
                     text: "The Nexus"
-                    wowParent: "LFDQueueFrameSpecificListButton1"
                     anchors.left: parent.left
                     anchors.leftMargin: 40
                     anchors.verticalCenter: parent.verticalCenter
                     width: 185
                     height: 16
-                }
-
-                ScrollFrame {
-                    name: "LFDQueueFrameSpecificListScrollFrame"
-                    wowParent: "LFDQueueFrameSpecific"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.topMargin: -7
-                    width: 296
-                    height: 270
-
-                    Frame {
-                        name: "LFDQueueFrameSpecificListScrollFrameDiabolicZone"
-                        wowParent: "LFDQueueFrameSpecific"
-                        anchors.left: parent.left
-                        anchors.leftMargin: -6
-                        anchors.top: parent.top
-                        anchors.topMargin: -6
-                        width: 330
-                        height: 282
-                    }
-
-                    Slider {
-                        name: "LFDQueueFrameSpecificListScrollFrameScrollBar"
-                        wowParent: "LFDQueueFrameSpecificListScrollFrame"
-                        style: "ScrollBar"
-                        anchors.left: parent.right
-                        anchors.leftMargin: 6
-                        anchors.top: parent.top
-                        anchors.topMargin: 16
-                        width: 16
-                        height: 238
-
-                        Button {
-                            name: "LFDQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
-                            wowParent: "LFDQueueFrameSpecificListScrollFrameScrollBar"
-                            style: "ScrollBar"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.bottom
-                            width: 16
-                            height: 16
-                        }
-
-                        Button {
-                            name: "LFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
-                            wowParent: "LFDQueueFrameSpecificListScrollFrameScrollBar"
-                            style: "ScrollBar"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottom: parent.top
-                            width: 16
-                            height: 16
-
-                            Frame {
-                                name: "LFDQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
-                                wowParent: "LFDQueueFrameSpecificListScrollFrameScrollBar"
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.top
-                                anchors.topMargin: -1
-                                width: 18
-                                height: 272
-                            }
-                        }
-                    }
-
-                    Frame {
-                        name: "LFDQueueFrameSpecificListScrollFrameScrollChildFrame"
-                        wowParent: "LFDQueueFrameSpecificListScrollFrame"
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.topMargin: -288
-                        width: 300
-                        height: 544
-                    }
                 }
 
                 Ghost {
@@ -640,6 +542,74 @@ WowWindow {
                         width: 20
                         height: 20
                     }
+                }
+            }
+
+            ScrollFrame {
+                name: "LFDQueueFrameSpecificListScrollFrame"
+                anchors.left: lFDQueueFrameSpecificListButton1.left
+                anchors.top: lFDQueueFrameSpecificListButton1.top
+                anchors.topMargin: -7
+                width: 296
+                height: 270
+
+                Frame {
+                    name: "LFDQueueFrameSpecificListScrollFrameDiabolicZone"
+                    wowParent: "LFDQueueFrameSpecific"
+                    anchors.left: parent.left
+                    anchors.leftMargin: -6
+                    anchors.top: parent.top
+                    anchors.topMargin: -6
+                    width: 330
+                    height: 282
+                }
+
+                Slider {
+                    name: "LFDQueueFrameSpecificListScrollFrameScrollBar"
+                    style: "ScrollBar"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 6
+                    anchors.top: parent.top
+                    anchors.topMargin: 16
+                    width: 16
+                    height: 238
+
+                    Frame {
+                        name: "LFDQueueFrameSpecificListScrollFrameScrollBarDiabolicTrack"
+                        anchors.horizontalCenter: lFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.horizontalCenter
+                        anchors.top: lFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 272
+                    }
+
+                    Button {
+                        name: "LFDQueueFrameSpecificListScrollFrameScrollBarScrollDownButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.bottom
+                        width: 16
+                        height: 16
+                    }
+
+                    Button {
+                        id: lFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton
+                        name: "LFDQueueFrameSpecificListScrollFrameScrollBarScrollUpButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.top
+                        width: 16
+                        height: 16
+                    }
+                }
+
+                Frame {
+                    name: "LFDQueueFrameSpecificListScrollFrameScrollChildFrame"
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.topMargin: -288
+                    width: 300
+                    height: 544
                 }
             }
         }
