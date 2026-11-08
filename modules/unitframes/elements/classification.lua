@@ -54,7 +54,7 @@ local Update = function(self, event, ...)
 		level = nil
 	end
 
-	local msg
+	local msg = nil
 
 	if UnitIsPlayer(unit) then
 		if race then

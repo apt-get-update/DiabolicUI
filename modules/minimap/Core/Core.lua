@@ -134,7 +134,7 @@ ns.SwitchUI = function(self, input)
 	local target = arg and self._ui_list[arg]
 	if (target) then
 		EnableAddOn(target)      -- Enable the desired UI
-		for cmd, ui in next, self._ui_list do
+		for _, ui in next, self._ui_list do
 			if (ui ~= target) then -- Don't disable target UI
 				DisableAddOn(ui) -- Disable all other UIs
 			end

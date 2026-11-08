@@ -221,7 +221,7 @@ end
 -- the list's item names, the rolled one marked with a *
 local function listed()
 	local names = {}
-	for i, item in ipairs(preview().items) do
+	for i, _ in ipairs(preview().items) do
 		local row = preview().rows[i]
 		names[i] = row.Name:GetText():match("%[(.-)%]") .. (row.Rolling:IsShown() and "*" or "")
 	end

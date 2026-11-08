@@ -11,7 +11,6 @@ local _G = _G
 local math_ceil = math.ceil
 local math_floor = math.floor
 local math_min = math.min
-local ipairs = ipairs
 local setmetatable = setmetatable
 local tostring = tostring
 

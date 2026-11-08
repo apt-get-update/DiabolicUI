@@ -201,7 +201,7 @@ refresher:SetScript("OnUpdate", function(self, elapsed)
 	end
 	self.elapsed = 0
 
-	for unit, frame in pairs(activeFrames) do
+	for _, frame in pairs(activeFrames) do
 		Update(frame, "ROLE_REFRESH")
 	end
 end)

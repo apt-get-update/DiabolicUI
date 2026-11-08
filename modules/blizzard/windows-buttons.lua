@@ -339,7 +339,7 @@ Module.StyleButtons = function(self, frame)
 	-- as one
 	local all = CollectStyled(frame, {})
 	local fonts = { Module.config.button_font, Module.config.button_font_small, Module.config.button_font_narrow }
-	for i, font in ipairs(fonts) do
+	for _, font in ipairs(fonts) do
 		for _, button in ipairs(all) do
 			self:SetButtonFont(button, font)
 		end

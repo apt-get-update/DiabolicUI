@@ -23,14 +23,13 @@
 	SOFTWARE.
 
 --]]
-local _, ns = ...
 
 -- This module now loads as part of DiabolicUI's own .toc, so the second
 -- vararg every file receives is no longer a fresh private table - it's
 -- DiabolicUI's own (protected) Engine object, shared by the whole addon.
 -- Use a dedicated global instead of trying to repurpose that one.
 DiabolicUIMinimapNS = DiabolicUIMinimapNS or {}
-ns = DiabolicUIMinimapNS
+local ns = DiabolicUIMinimapNS
 
 local mt = getmetatable(ns) or {}
 local private = {}

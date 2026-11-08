@@ -13,7 +13,7 @@ local lu = require("luaunit")
 local Client = require("mocks.client")
 local Session = require("mocks.session")
 
-local assertClean, stripColors = Session.assertClean, Session.stripColors
+local assertClean = Session.assertClean
 
 local client, module
 

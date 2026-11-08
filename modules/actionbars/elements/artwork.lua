@@ -333,10 +333,6 @@ Button.PostCreate = function(self, buttonType)
 		self.autocast:SetFrameLevel(border:GetFrameLevel() + 4)
 	end
 
-	local chargeCooldown = self.chargeCooldown
-	if chargeCooldown then
-	end
-
 	-- Reparent existing texts to our border frame
 	keybind:SetParent(border)
 	stack:SetParent(border)
@@ -393,7 +389,6 @@ end
 
 Widget.LoadArtwork = function(self)
 	local config = self.config.visuals.artwork
-	local db = self.db
 	
 	local Main = Module:GetWidget("Controller: Main"):GetFrame()
 
@@ -442,7 +437,6 @@ end
 
 Widget.LoadPetBarArtwork = function(self)
 	local config = Module.config.visuals.artwork.pet
-	local db = Module.db
 
 	-- Hooking the visibility to the bar, the position to the controller
 	local artworkHolder = Module:GetWidget("Bar: Pet"):GetFrame():CreateFrame("Frame")
@@ -463,7 +457,6 @@ Widget.LoadPetBarArtwork = function(self)
 end
 
 Widget.UpdateArtwork = function(self, event, ...)
-	local db = self.db
 
 	-- On a fresh login (as opposed to a UI reload), a side bar (bar4/bar5 -
 	-- confirmed by direct in-game print debugging) loses its explicitly-set
@@ -474,8 +467,8 @@ Widget.UpdateArtwork = function(self, event, ...)
 	-- to whatever its bar's *current* level actually is, on every single
 	-- call, unconditionally and before the "avoid pointless updates"
 	-- early-return below - cheap and idempotent to just always redo it.
-	for barNum, bar in pairs(Module:GetBars()) do
-		for i, button in bar:GetAll() do
+	for _, bar in pairs(Module:GetBars()) do
+		for _, button in bar:GetAll() do
 			button:SetFrameLevel(bar:GetFrameLevel() + 1)
 		end
 	end
@@ -507,7 +500,7 @@ Widget.UpdateArtwork = function(self, event, ...)
 	end
 
 	if PLAYER_BAR_ID ~= barID then
-		for barNum, bar in pairs(Module:GetBars()) do
+		for _, bar in pairs(Module:GetBars()) do
 			if bar:IsShown() and bar.PostUpdate then
 				bar:PostUpdate()
 			end

@@ -399,7 +399,6 @@ local elements = {
 		OnDisable = function(self)
 			local UIHider = UIHider
 			local disableUnitFrame = disableUnitFrame
-			local killUnitFrame = killUnitFrame
 
 			local _G = _G
 			local InterfaceOptionsUnitFramePanelPartyBackground = _G.InterfaceOptionsUnitFramePanelPartyBackground

@@ -371,7 +371,7 @@ end
 
 -- Your roll's result, in place of the buttons
 Module.OnSystemMessage = function(self, event, message)
-	local name, roll, low, high = (message or ""):match(ROLL_PATTERN)
+	local name, roll, _, high = (message or ""):match(ROLL_PATTERN)
 	if (name ~= UnitName("player")) then
 		return
 	end

@@ -97,8 +97,6 @@ local Style = function(self, unit)
 end
 
 UnitFrameWidget.OnEnable = function(self)
-	local config = self:GetDB("UnitFrames").visuals.units.pet
-	local db = self:GetConfig("UnitFrames") 
 
 	self.UnitFrame = UnitFrame:New("pet", Engine:GetFrame(), Style) 
 	self.UnitFrame:SetFrameStrata("MEDIUM") -- get it above player orbs

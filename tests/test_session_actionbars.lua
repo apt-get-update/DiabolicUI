@@ -284,7 +284,6 @@ function TestMenus:test_the_spec_switch_on_the_skull()
 		world.talents = { { "Holy", "", 51 }, { "Protection", "", 20 }, { "Retribution", "", 0 } }
 		world.secondaryTalents = { { "Holy", "", 0 }, { "Protection", "", 5 }, { "Retribution", "", 66 } }
 	end })
-	local L = client.Engine:GetLocale()
 	local config = client:GetModule("ActionBars"):GetDB("ActionBars").visuals.specswitch
 	local switch = widget("Button: Spec Switch")
 	local button = switch:GetFrame()

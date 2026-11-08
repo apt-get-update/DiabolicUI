@@ -100,7 +100,6 @@ Bar_XP.OnEnter = function(self)
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 
-	local r, g, b = unpack(C.General.Highlight)
 	local r2, g2, b2 = unpack(C.General.OffWhite)
 
 	GameTooltip:AddLine(shortLevelString:format(LEVEL, UnitLevel("player")))
@@ -191,7 +190,6 @@ BarWidget.UpdateBarSettings = function(self)
 end
 
 BarWidget.OnEnable = function(self)
-	local structure_config = Module.config.structure.controllers.xp
 	local art_config = Module.config.visuals.xp
 	local num_bars = tostring(Module.db.num_bars)
 

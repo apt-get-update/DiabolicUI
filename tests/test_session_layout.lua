@@ -91,7 +91,7 @@ end
 function TestLayoutAudit:test_a_bag_keeps_only_what_it_shows()
 	boot()
 	local frame = window("AuditBag")
-	local one, two = button(frame, "AdiBagsItemButton1", 40, 100, 30, "1"), button(frame, "AdiBagsItemButton2", 80, 100, 30, "2")
+	local one, _ = button(frame, "AdiBagsItemButton1", 40, 100, 30, "1"), button(frame, "AdiBagsItemButton2", 80, 100, 30, "2")
 	local other = button(frame, "AuditBagOther", 120, 100, 30, "3")
 	slash("layout")
 	frame:Show()

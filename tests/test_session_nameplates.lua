@@ -159,7 +159,7 @@ function TestNamePlates:test_threat_glow_and_raid_icons()
 	client:FireEvent("UNIT_THREAT_SITUATION_UPDATE", "player")
 	local C = client.Engine:GetDB("Data: Colors")
 	for status = 1, 3 do
-		local r, g, b = ours(client, plates[status]).Health.Glow:GetVertexColor()
+		local r, g, _ = ours(client, plates[status]).Health.Glow:GetVertexColor()
 		lu.assertAlmostEquals(r, C.Threat[status][1], 0.01)
 		lu.assertAlmostEquals(g, C.Threat[status][2], 0.01)
 		lu.assertEquals(ours(client, plates[status]).Health.Glow:IsShown(), 1)

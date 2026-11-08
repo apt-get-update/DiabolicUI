@@ -157,7 +157,6 @@ Module.StyleTalents = function(self)
 
 	-- the spec's state, or the button that makes it the active one, in the
 	-- band's middle
-	local status = _G.PlayerTalentFrameStatusFrame
 	Hide("PlayerTalentFramePointsLeft", "PlayerTalentFramePointsMiddle", "PlayerTalentFramePointsRight")
 	kit:StyleBandText(_G.PlayerTalentFrameStatusText)
 	local activate = _G.PlayerTalentFrameActivateButton

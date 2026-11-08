@@ -225,7 +225,6 @@ end
 -- their size), its stone instead.
 Module.SetBackground = function(self, window, name)
 	local spec = config.backgrounds[name]
-	local insets = config.backdrop.insets
 	if spec.tile then
 		window.DiabolicTile = spec
 		if window.DiabolicBackground then

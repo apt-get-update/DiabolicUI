@@ -186,7 +186,7 @@ Module.StyleControls = function(self, panel)
 	end
 	for _, child in ipairs({ panel:GetChildren() }) do
 		local name = child:GetName()
-		if child.DiabolicStyled then
+		if child.DiabolicStyled then -- luacheck: ignore 542
 			-- (done)
 		elseif IsPanelButton(child) then
 			child.DiabolicStyled = true

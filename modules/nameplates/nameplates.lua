@@ -567,7 +567,6 @@ end
 
 NamePlate_WotLK.OnShow = function(self)
 	local info = self.info
-	local baseFrame = self.baseFrame
 
 	info.level = nil
 	info.name = nil
@@ -925,7 +924,7 @@ Module.UpdateAllScales = function(self)
 		SCALE = scale
 	end
 	if (oldScale ~= SCALE) then
-		for baseFrame, plate in pairs(self.allPlates) do
+		for _, plate in pairs(self.allPlates) do
 			if plate then
 				plate:SetScale(SCALE)
 			end
@@ -969,27 +968,27 @@ Module.OnEvent = function(self, event, ...)
 
 
 	elseif event == "RAID_TARGET_UPDATE" then
-		for baseFrame, plate in pairs(self.allPlates) do
+		for _, plate in pairs(self.allPlates) do
 			plate:UpdateRaidTarget()
 		end
 
 	elseif (event == "UNIT_FACTION") then
-		for baseFrame, plate in pairs(self.allPlates) do
+		for _, plate in pairs(self.allPlates) do
 			plate:UpdateFaction()
 		end
 
 	elseif (event == "UNIT_THREAT_SITUATION_UPDATE") then
-		for baseFrame, plate in pairs(self.allPlates) do
+		for _, plate in pairs(self.allPlates) do
 			plate:UpdateThreat()
 		end
 
 	elseif (event == "ZONE_CHANGED_NEW_AREA") then
-		for baseFrame, plate in pairs(self.allPlates) do
+		for _, plate in pairs(self.allPlates) do
 			plate:UpdateAll()
 		end
 
 	elseif (event == "UNIT_LEVEL") then
-		for baseFrame, plate in pairs(self.allPlates) do
+		for _, plate in pairs(self.allPlates) do
 			plate:UpdateLevel()
 		end
 
@@ -1023,7 +1022,7 @@ Module.OnSpellCast = function(self, event, unit)
 	if not name then return end
 
 	local plate
-	for baseFrame, p in pairs(self.allPlates) do
+	for _, p in pairs(self.allPlates) do
 		-- Only consider visible/active plates and match by the cached plate name.
 		if self.visiblePlates[p] and p.info and p.info.name == name then
 			plate = p

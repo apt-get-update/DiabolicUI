@@ -402,7 +402,6 @@ MenuWidget.CreateMicroWindow = function(self, menu)
 
 	self.MicroMenuWindow = MicroMenuWindow -- needed for some callbacks later on
 	
-	local button_to_icon = {} -- simple mapping of icons to the buttons
 	local faction = UnitFactionGroup("player") -- to get the right faction icon, or neutral
 	
 	MicroMenuWindow:InsertButton(CharacterMicroButton)
@@ -416,7 +415,7 @@ MenuWidget.CreateMicroWindow = function(self, menu)
 	MicroMenuWindow:InsertButton(MainMenuMicroButton)
 	MicroMenuWindow:InsertButton(HelpMicroButton)
 
-	button_to_icon = {
+	local button_to_icon = { -- simple mapping of icons to the buttons
 		[CharacterMicroButton] = "character", 
 		[SpellbookMicroButton] = "spellbook", 
 		[TalentMicroButton] = "talents", 
@@ -431,7 +430,7 @@ MenuWidget.CreateMicroWindow = function(self, menu)
 
 	-- Disable Blizzard texture changes and stuff from these buttons.
 	-- Also re-align their tooltips to be above our menu.
-	for index,button in MicroMenuWindow:GetAll() do
+	for _,button in MicroMenuWindow:GetAll() do
 	
 		self:Strip(button)
 		self:Skin(button, micro_menu_config, button_to_icon[button])
@@ -730,8 +729,6 @@ MenuWidget.MoveBagButtons = function(self, menu)
 	BagBarMenuButton.OnClick = function(self, button) 
 		if button == "LeftButton" then
 			OpenAllBags() -- Toggle bag frames. This was actually a toggle function in WotLK.
-		elseif button == "RightButton" then
-			-- Bagbar was toggled by the secure environement. Put any post updates here, if needed.
 		end
 		self:OnEnter() -- update tooltips
 	end

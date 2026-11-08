@@ -55,7 +55,7 @@ local updateWindowAlpha = function(frame)
 	else
 		alpha = 0
 	end
-	for index, value in pairs(CHAT_FRAME_TEXTURES) do
+	for _, value in pairs(CHAT_FRAME_TEXTURES) do
 		if not value:find("Tab") then
 			local object = _G[frame:GetName()..value]
 			if object:IsShown() then
@@ -229,7 +229,7 @@ Module.StyleFrame = function(self, frame)
 	frame:SetClampRectInsets(unpack(config.clamps))
 	frame:SetMinResize(unpack(config.minimum_size))
 	
-	for i,v in pairs(CHAT_FRAME_TEXTURES) do
+	for _,v in pairs(CHAT_FRAME_TEXTURES) do
 		if strfind(v, "ButtonFrame") then
 			_G[name .. v]:SetTexture("")
 		end
@@ -572,7 +572,6 @@ local SetPoint = function(self, ...)
 	self:ClearAllPoints()
 	self:SetPoint(unpack(points))
 	wipe(points)
-	points = nil
 end
 
 Module.PositionChatFrames = function(self)

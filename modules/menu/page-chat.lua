@@ -19,7 +19,6 @@ local CreateValueSlider = C.CreateValueSlider
 -- The Chat page
 Module.CreateChatPage = function(self)
 	local chatDB = Engine:GetConfig("ChatWindows")
-	local chatFiltersDB = Engine:GetConfig("ChatFilters")
 	local applyChatFadeSettings = function()
 		Engine:GetModule("ChatWindows"):ApplyFadeSettings()
 	end

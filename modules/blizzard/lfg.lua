@@ -14,7 +14,6 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
-local pairs = pairs
 local select = select
 local unpack = unpack
 

@@ -7,7 +7,7 @@
 -- Styles the tooltips filled by SetAction (spells and macros on action
 -- bars), SetSpell (spellbook), SetTalent, SetShapeshift and spell links,
 -- right after Blizzard fills them; auras and items are left alone.
-local ADDON, Engine = ...
+local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: SpellTooltips")
 local Shared = Engine:GetModule("Blizzard: ItemTooltips").Shared
 

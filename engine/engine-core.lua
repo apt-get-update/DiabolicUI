@@ -110,7 +110,6 @@ local initializedObjects = {} -- hash table for initialized objects
 local enabledObjects = {} -- hash table for enabled modules, widgets and handler elements
 
 local objectName = {} -- table to hold the display names (ID) of all handlers, modules, widgets and elements
-local objectType = {} -- table to quickly look up what sort of object we're working with (handler, module, widget, element)
 
 local queue = {} -- [func] = its arguments, for calls the out of combat wrapper put off
 
@@ -486,21 +485,21 @@ Engine.ParseSavedVariables = function(self)
 
 			-- add stored realm dbs to our db
 			if profiles.realm then
-				for realm,realmdata in pairs(profiles.realm) do
+				for realm,_ in pairs(profiles.realm) do
 					configs[name].profiles.realm[realm] = copyTable(profiles.realm[realm], configs[name].profiles.realm[realm])
 				end
 			end
 
 			-- add stored faction dbs to our db
 			if profiles.faction then
-				for faction,factiondata in pairs(profiles.faction) do
+				for faction,_ in pairs(profiles.faction) do
 					configs[name].profiles.faction[faction] = copyTable(profiles.faction[faction], configs[name].profiles.faction[faction])
 				end
 			end
 
 			-- add stored character dbs to our db
 			if profiles.character then
-				for char,chardata in pairs(profiles.character) do
+				for char,_ in pairs(profiles.character) do
 					configs[name].profiles.character[char] = copyTable(profiles.character[char], configs[name].profiles.character[char])
 				end
 			end
@@ -516,7 +515,7 @@ Engine.ParseSavedVariables = function(self)
 	-- *This isn't redundant, because there can be new configs here 
 	--  that hasn't previously been saved either because of me adding a new module, 
 	--	or because it's the first time running the addon.
-	for name,data in pairs(configs) do
+	for name,_ in pairs(configs) do
 		DiabolicUI_DB[name] = { profiles = configs[name].profiles }
 	end
 end
@@ -839,7 +838,6 @@ local handlerPrototype = setmetatable({
 		local element = setmetatable(template or {}, elementPrototype_MT)
 
 		objectName[element] = name
-		objectType[element] = "element"
 		
 		if handlerElementsEnabledState[self] then
 			enabledObjects[element] = true
@@ -890,7 +888,6 @@ local modulePrototype = setmetatable({
 		local widget = setmetatable({}, widgetPrototype_MT)
 		
 		objectName[widget] = name -- store the name
-		objectType[widget] = "widget" -- store the object type
 		
 		widgetPool[name] = widget
 		
@@ -1029,7 +1026,7 @@ end
 Engine.IsAddOnLoadable = function(self, target)
 	local target = string_lower(target)
 	for i = 1,GetNumAddOns() do
-		local name, title, notes, enabled, loadable, reason, security = self:GetAddOnInfo(i)
+		local name, _, _, _, loadable, reason, _ = self:GetAddOnInfo(i)
 		if (string_lower(name) == target) then
 			-- If its dependency is disabled, it can't be loaded.
 			-- *an exception might be if the dependency is ondemand too. But really...
@@ -1057,7 +1054,7 @@ end
 Engine.IsAddOnEnabled = function(self, target)
 	local target = string_lower(target)
 	for i = 1,GetNumAddOns() do
-		local name, title, notes, enabled, loadable, reason, security = self:GetAddOnInfo(i)
+		local name, _, _, enabled, _, _, _ = self:GetAddOnInfo(i)
 		if (string_lower(name) == target) then
 			if enabled then
 				return true
@@ -1083,7 +1080,6 @@ Engine.NewHandler = function(self, name)
 	handlerElements[handler] = {} -- local elementpool for the handler
 	
 	objectName[handler] = name -- store the handler name for easier reference
-	objectType[handler] = "handler" -- store the object type
 
 	handlers[name] = handler
 	
@@ -1114,7 +1110,6 @@ Engine.NewModule = function(self, name, loadPriority)
 	moduleWidgets[module] = {} -- local widgetpool for the module
 
 	objectName[module] = name -- store the module name for easier reference
-	objectType[module] = "module" -- store the object type
 
 	moduleLoadPriority[loadPriority][name] = module -- store the module load priority
 
@@ -1141,7 +1136,7 @@ Engine.ForAll = function(self, method, priority, ...)
 		return error(L["Bad argument #%d to '%s': The load priority '%s' is invalid! Valid priorities are: %s"]:format(2, "ForAll", priority, table_concat(PRIORITY_INDEX, ", ")))
 	end
 	local numArgs, args = select("#", ...), { ... }
-	for name, module in pairs(moduleLoadPriority[priority]) do
+	for _, module in pairs(moduleLoadPriority[priority]) do
 		if module[method] and (not failedModules[module]) then
 			-- Lua 5.1's xpcall passes no arguments, hence the closure
 			if (not xpcall(function() return module[method](module, unpack(args, 1, numArgs)) end, reportError)) then
@@ -1339,7 +1334,7 @@ Engine.Init = function(self, event, ...)
 
 	-- Initialize all handlers here.
 	-- They will not be optional.
-	for name, handler in pairs(handlers) do
+	for _, handler in pairs(handlers) do
 		handler:Enable()
 	end
 

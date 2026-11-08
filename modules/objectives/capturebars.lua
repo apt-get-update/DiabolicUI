@@ -209,7 +209,7 @@ Module.UpdateWorldStates = function(self)
 	-- we only have a single bar currently in WoW, but our system supports multiple, 
 	-- and thus we need to realign them on worldstate updates.
 	local previousBar
-	for i,captureBar in ipairs(captureBars) do
+	for _,captureBar in ipairs(captureBars) do
 		if visibleCaptureBars[captureBar.id] then
 			captureBar:ClearAllPoints()
 			if previousBar then 
@@ -222,7 +222,7 @@ Module.UpdateWorldStates = function(self)
 	end
 
 	-- hide unused bars
-	for i,captureBar in ipairs(captureBars) do
+	for _,captureBar in ipairs(captureBars) do
 		if (not visibleCaptureBars[captureBar.id]) then
 			captureBar:Hide()
 		end
@@ -230,7 +230,7 @@ Module.UpdateWorldStates = function(self)
 end
 
 Module.Clear = function(self)
-	for i,captureBar in ipairs(self.captureBars) do
+	for _,captureBar in ipairs(self.captureBars) do
 		captureBar:Hide()
 	end
 end

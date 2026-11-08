@@ -13,6 +13,8 @@ lua5.1 tests/test_chat_cleaner.lua                         # one file
 lua5.1 tests/test_chat_cleaner.lua TestChatCleaner.test_x  # one test
 tests/run_all.sh                                           # all of them, six at once: not while the game runs
 JOBS=1 tests/run_all.sh                                    # one after another, about 5 minutes
+luacheck .                                                 # unused locals, undefined globals (.luacheckrc)
+stylua .                                                   # formats the Lua (stylua.toml)
 tests/coverage/run.sh                                      # line coverage, before a release
 ----
 

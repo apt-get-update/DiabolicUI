@@ -402,7 +402,6 @@ end
 
 -- show a popup
 Handler.ShowPopUp = function(self, id, styleTable)
-	local popup = popups[id]
 
 	-- is it already visible?
 	local frame = activePopups[id]
@@ -531,7 +530,7 @@ Handler.UpdateLayout = function(self)
 	end
 	table_sort(order)
 	local first, previous
-	for i, activeID in ipairs(order) do
+	for _, activeID in ipairs(order) do
 		local popupFrame = activePopups[activeID]
 		if previous then
 			popupFrame:ClearAllPoints()

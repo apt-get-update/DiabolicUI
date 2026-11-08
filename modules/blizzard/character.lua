@@ -23,7 +23,6 @@ local kit
 -- Lua API
 local _G = _G
 local ipairs = ipairs
-local math_ceil = math.ceil
 local math_cos = math.cos
 local math_floor = math.floor
 local math_max = math.max
@@ -902,7 +901,7 @@ end
 -- with no set chosen).
 Module.AddNewSet = function(self, dialog)
 	local update = function()
-		for i, button in ipairs(dialog.buttons) do
+		for _, button in ipairs(dialog.buttons) do
 			button.icon:SetTexCoord(0, 1, 0, 1)
 			button.DiabolicNew = nil
 		end

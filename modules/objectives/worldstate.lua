@@ -251,7 +251,7 @@ Module.UpdateStates = function(self)
 	local uiIndex, infoIndex, timerIndex = 0, 0, 0
 	
 	-- halt all timers until new data has been processed
-	for msg, info in pairs(activeTimers) do
+	for _, info in pairs(activeTimers) do
 		info.ui = nil
 		info.enabled = false
 	end

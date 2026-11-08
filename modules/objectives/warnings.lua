@@ -95,7 +95,7 @@ Module.AddMessage = function(self, msg, type, r, g, b)
 
 	if (not hasPriority) then
 		-- first check if it's blacklisted
-		for i,pattern in ipairs(config.blacklist.pattern) do
+		for _,pattern in ipairs(config.blacklist.pattern) do
 			if strmatch(msg, pattern) then
 				isBlackListed = true
 				break
@@ -103,7 +103,7 @@ Module.AddMessage = function(self, msg, type, r, g, b)
 		end
 		-- then do a sweep to see if it's whitelisted
 		if (not isBlackListed) then
-			for i,pattern in ipairs(config.whitelist.pattern) do
+			for _,pattern in ipairs(config.whitelist.pattern) do
 				if strmatch(msg, pattern) then
 					hasPriority = true
 					break
@@ -112,7 +112,7 @@ Module.AddMessage = function(self, msg, type, r, g, b)
 			-- quest update?
 			isQuestProgress = config.tracker.plain[msg]
 			if not isQuestProgress then
-				for i,pattern in ipairs(config.tracker.pattern) do
+				for _,pattern in ipairs(config.tracker.pattern) do
 					if strmatch(msg, pattern) then
 						isQuestProgress = true
 						break

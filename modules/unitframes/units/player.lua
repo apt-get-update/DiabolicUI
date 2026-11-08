@@ -10,7 +10,6 @@ local Library = Engine:GetDB("Library: UnitFrames")
 local _G = _G
 local ipairs = ipairs
 local unpack = unpack
-local pairs = pairs
 local tostring = tostring
 
 -- WoW API
@@ -389,7 +388,6 @@ end
 -- Right orb (power, minimap auras)
 local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	local config = Module:GetDB("UnitFrames").visuals.units.player
-	local db = Module:GetConfig("UnitFrames")
 
 	local configPower = config.right.power
 	local configPowerSpark = config.right.power.spark

@@ -17,7 +17,6 @@ local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
 
 local NUM_ITEMS = 12 -- the buyback tab's; the merchant's shows 10
 

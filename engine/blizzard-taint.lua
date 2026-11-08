@@ -29,7 +29,7 @@ if ((UIDROPDOWNMENU_VALUE_PATCH_VERSION or 0) < 2) then
 				if not (issecurevariable(b, "value") or b:IsShown()) then
 					b.value = nil
 					repeat
-						j, b["fx" .. j] = j+1
+						j, b["fx" .. j] = j+1 -- luacheck: ignore 532
 					until issecurevariable(b, "value")
 				end
 			end

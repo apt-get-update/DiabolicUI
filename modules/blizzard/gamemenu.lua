@@ -41,7 +41,7 @@ Module.UpdateButtonLayout = Module:Wrap(function(self)
 
 	local previous
 	local first, last
-	for i,v in ipairs(self.buttons) do
+	for _,v in ipairs(self.buttons) do
 		local button = v.button
 		if button and button:IsShown() then
 			button:ClearAllPoints()
@@ -72,7 +72,7 @@ Module.StyleButtons = function(self)
 	local uiconfig = self.uiconfig
 
 	local need_addon_watch
-	for i,v in ipairs(self.buttons) do
+	for _,v in ipairs(self.buttons) do
 		-- figure out the real frame handle of the button
 		local button
 		if type(v.content) == "string" then
@@ -81,7 +81,7 @@ Module.StyleButtons = function(self)
 			button = v.content
 		end
 
-		if v.styled then
+		if v.styled then -- luacheck: ignore 542
 			-- already done
 		elseif button then
 			local label

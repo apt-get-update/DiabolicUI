@@ -446,8 +446,7 @@ do
 			end
 		end
 		if maxTree then
-			local name, _
-			name = GetTalentTabInfo(maxTree, isInspect, nil, group)
+			local name = GetTalentTabInfo(maxTree, isInspect, nil, group)
 			specName = string_format("%d/%d/%d (%s)", tree[1], tree[2], tree[3], name)
 		else
 			specName = NONE
@@ -1014,7 +1013,7 @@ end
 Module.StyleMenus = function(self)
 	local styled = self:GetStyledCache()
 
-	for i, name in ipairs(menus) do
+	for _, name in ipairs(menus) do
 		local object = _G[name]
 		if object and (not styled[object]) then
 			self:StyleMenu(object)
@@ -1026,7 +1025,7 @@ end
 Module.StyleTooltips = function(self)
 	local styled = self:GetStyledCache()
 
-	for i, name in ipairs(tooltips) do
+	for _, name in ipairs(tooltips) do
 		local object = _G[name]
 		if object and (not styled[object]) then
 			self:StyleTooltip(object)

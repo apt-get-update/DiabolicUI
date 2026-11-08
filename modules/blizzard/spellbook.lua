@@ -113,7 +113,6 @@ end
 
 Module.LayoutSpells = function(self, window)
 	local config = self.config
-	local frame = _G.SpellBookFrame
 	self.Book = self:CreateBook(window)
 	local x, y = unpack(config.spells)
 	for i = 1, NUM_SPELLS do
@@ -228,7 +227,6 @@ end
 -- ranks" box, then ours for the spells on no action bar (their labels
 -- short, their tooltips say it all), over the band.
 Module.PlaceBoxes = function(self)
-	local config = self.config
 	local ranks, label = _G.ShowAllSpellRanksCheckBox, _G.ShowAllSpellRanksCheckBoxText
 	kit:StyleCheckBox(ranks)
 	label:SetText(L["All ranks"])

@@ -18,7 +18,6 @@ local lu = require("luaunit")
 local EngineMock = require("mocks.engine_mock")
 
 local Module
-local calls
 
 -- A texture/frame stand-in that just records every method call made on it
 -- (dropping the leading `self` a colon call passes, so a recorded call is

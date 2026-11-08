@@ -502,7 +502,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	-- Questie's tracker: unlocked, then locked back as it was
 	local updates = 0
 	_G.Questie = { db = { profile = { trackerEnabled = true, trackerLocked = true } } }
-	local questieFrame = CreateFrame("Frame", "Questie_BaseFrame", _G.UIParent)
+	CreateFrame("Frame", "Questie_BaseFrame", _G.UIParent)
 	_G.QuestieLoader = { ImportModule = function() return { Update = function() updates = updates + 1 end } end }
 	client:Click(unlock)
 	lu.assertFalse(_G.Questie.db.profile.trackerLocked)

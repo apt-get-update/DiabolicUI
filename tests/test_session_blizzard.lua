@@ -579,7 +579,7 @@ function TestCharacter:test_the_right_column()
 	lu.assertEquals(first:GetText(), "PLAYERSTAT_BASE_STATS 1")
 	lu.assertEquals(second:GetText(), "PLAYERSTAT_MELEE_COMBAT 1")
 	-- a click on a title bar shows the next group, the last the first
-	local point, header = _G.DiabolicUICharacterStats21:GetPoint()
+	local _, header = _G.DiabolicUICharacterStats21:GetPoint()
 	lu.assertEquals(header.title:GetText(), "Melee")
 	client:Click(header)
 	lu.assertEquals(client.api.GetCVar("playerStatRightDropdown"), "PLAYERSTAT_RANGED_COMBAT")
@@ -638,7 +638,7 @@ function TestCharacter:test_the_equipment_manager()
 
 	-- equip, save and delete as icons in a column right of the shorter
 	-- rows, their text in a tooltip
-	local equip, save, delete = _G.GearManagerDialogEquipSet, _G.GearManagerDialogSaveSet, _G.GearManagerDialogDeleteSet
+	local equip, save, _ = _G.GearManagerDialogEquipSet, _G.GearManagerDialogSaveSet, _G.GearManagerDialogDeleteSet
 	local point, relative, relativePoint = equip:GetPoint()
 	lu.assertEquals({ point, relative, relativePoint }, { "TOP", module.GearHeader, "BOTTOMLEFT" })
 	lu.assertEquals({ save:GetPoint() }, { "TOP", equip, "BOTTOM", 0, -config.action_gap })
@@ -908,7 +908,6 @@ function TestCharacter:test_a_factions_details()
 	end })
 	local config = client.Engine:GetDB("Blizzard").character
 	local C = client.Engine:GetDB("Data: Colors")
-	local module = client:GetModule("Blizzard: Character")
 	-- a dark panel right of the window, its name in its standing's color
 	local detail = _G.ReputationDetailFrame
 	Session.assertPlaced(client, "ReputationDetailFrame")
