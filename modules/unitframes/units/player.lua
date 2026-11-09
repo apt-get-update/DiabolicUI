@@ -301,6 +301,8 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 		CastBar.SafeZone:SetWidth(0.0001)
 		CastBar.SafeZone:Hide()
 
+		CastBar.Ticks = {} -- the channels' ticks are marked on this bar
+
 		CastBar.Name = CastBar:CreateFontString(nil, "OVERLAY")
 		CastBar.Name:SetFontObject(config.castbar.name.font_object)
 		CastBar.Name:SetPoint(unpack(config.castbar.name.position))
