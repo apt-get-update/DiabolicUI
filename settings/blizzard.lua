@@ -149,6 +149,16 @@ Engine:NewStaticConfig("Blizzard", {
 			-- in the game's lists of windows but not one to style
 			not_windows = { GameMenuFrame = true, LootFrame = true, ItemRefTooltip = true, CinematicFrame = true },
 		},
+		-- one pale glyph in a window's corner, by its name
+		watermark = {
+			texture = path .. [[textures\DiabolicUI_Runes.tga]],
+			glyph_size = { 128 / 1024, 128 / 512 },
+			count = 8,
+			row = 1,
+			size = 220,
+			alpha = 0.07,
+			position = { "TOPRIGHT", -24, -56 },
+		},
 		-- Diablo III's bars for a row: the chosen one (copper), a section's
 		-- or a column's header (dark)
 		row_bars = {
@@ -156,6 +166,17 @@ Engine:NewStaticConfig("Blizzard", {
 			dark = path .. [[textures\DiabolicUI_D3_Material_BarDark.tga]],
 			header = path .. [[textures\DiabolicUI_D3_Material_Header.tga]], -- a zone's title with its seal
 		},
+	},
+	-- what the control under the mouse does, right of the options' settings
+	-- (modules/blizzard/options.lua; their windows' right inset makes the room)
+	options = {
+		width = 224,
+		gap = 10,
+		top = -44,
+		bottom = 56,
+		line_gap = 8,
+		title_font = "DiabolicFont_HeaderRegular16",
+		body_font = "GameFontHighlight",
 	},
 	durability = {
 		position = { "CENTER", "UICenter", "CENTER", 190, 0 },
@@ -1104,6 +1125,28 @@ Engine:NewStaticConfig("Blizzard", {
 					"GuildBankTabTitleBackgroundLeft",
 					"GuildBankTabTitleBackgroundRight",
 				},
+			},
+			-- the options: room at the right for what a control does (options.lua)
+			{
+				frame = "InterfaceOptionsFrame",
+				no_backdrop = true,
+				insets = { 16, 40, 248, 16 },
+				panel = false,
+				title = "InterfaceOptionsFrameHeaderText",
+			},
+			{
+				frame = "VideoOptionsFrame",
+				no_backdrop = true,
+				insets = { 16, 40, 248, 16 },
+				panel = false,
+				title = "VideoOptionsFrameHeaderText",
+			},
+			{
+				frame = "AudioOptionsFrame",
+				no_backdrop = true,
+				insets = { 16, 40, 248, 16 },
+				panel = false,
+				title = "AudioOptionsFrameHeaderText",
 			},
 			-- (its right: as far from the list's scroll bar as the window's
 			-- left from the list)

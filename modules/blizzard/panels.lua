@@ -318,6 +318,9 @@ Module.StylePanel = function(self, spec)
 		insets = { insets[1], insets[2] - config.header_height, insets[3], insets[4] }
 		offsetY = (offsetY or 0) + config.header_height
 	end
+	if spec.no_backdrop then
+		frame:SetBackdrop(nil)
+	end
 	local window = kit:CreateWindow(frame, insets)
 	kit:SetBackground(window, spec.background or config.background)
 	if type(spec.footer) == "table" then

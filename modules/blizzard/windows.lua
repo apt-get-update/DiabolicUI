@@ -269,6 +269,23 @@ local PlaceBorder = function(window)
 	border:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT")
 end
 
+-- One pale glyph in `window`'s corner, a different one by its name.
+local AddWatermark = function(window)
+	local spec = config.watermark
+	local name, sum = window:GetName() or "", 0
+	for i = 1, #name do
+		sum = sum + name:byte(i)
+	end
+	local glyph, width, height = sum % spec.count, spec.glyph_size[1], spec.glyph_size[2]
+	local mark = window:CreateTexture(nil, "ARTWORK")
+	mark:SetTexture(spec.texture)
+	mark:SetTexCoord(glyph * width, (glyph + 1) * width, spec.row * height, (spec.row + 1) * height)
+	mark:SetSize(spec.size, spec.size)
+	mark:SetPoint(unpack(spec.position))
+	mark:SetAlpha(spec.alpha)
+	window.DiabolicWatermark = mark
+end
+
 -- The window behind `frame`, from its corners by `insets` (left, top,
 -- right, bottom; positive outward), under its children: its stone our
 -- tiles, its iron frame a backdrop over the title bar's band, so the band
@@ -294,6 +311,7 @@ Module.CreateWindow = function(self, frame, insets)
 	window:SetScript("OnSizeChanged", LayoutStone)
 	window:HookScript("OnShow", LayoutStone) -- (its size may have come with no change told)
 	LayoutStone(window)
+	AddWatermark(window)
 	window.Frame = frame
 	Windows[#Windows + 1] = window
 	Engine:GetModule("Blizzard: Adjust"):PlaceWaiting()
