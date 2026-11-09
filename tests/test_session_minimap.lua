@@ -529,4 +529,17 @@ function TestMinimap:test_the_tooltips()
 	assertClean(client)
 end
 
+function TestMinimap:test_the_overlay_waits_for_a_drag_and_the_panel_is_made_once()
+	module:EnterEditMode()
+	local point = { _G.Minimap:GetPoint() }
+	client:RunScript(overlay(), "OnUpdate", 0.1)
+	lu.assertEquals({ _G.Minimap:GetPoint() }, point)
+	module:ExitEditMode()
+
+	local menu = ns:GetModule("Menu")
+	lu.assertIs(menu:CreatePanel(), menu:CreatePanel())
+	lu.assertNotNil(menu.panel)
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

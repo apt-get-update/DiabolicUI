@@ -53,7 +53,6 @@ local GetSelectedFaction = _G.GetSelectedFaction
 local GameTooltip = _G.GameTooltip
 local GetTalentTabInfo = _G.GetTalentTabInfo
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 local SetCVar = _G.SetCVar
 local SetPortraitTexture = _G.SetPortraitTexture
 local SetPortraitToTexture = _G.SetPortraitToTexture
@@ -1378,14 +1377,6 @@ Module.StyleCharacter = function(self)
 	self:CreateSpec()
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == "Blizzard_TokenUI" then
-		self:StyleTokens()
-	elseif addon == "Blizzard_InspectUI" then
-		self:StyleInspect()
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").character
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -1396,11 +1387,6 @@ Module.OnEnable = function(self)
 		return
 	end
 	self:StyleCharacter()
-	if IsAddOnLoaded("Blizzard_TokenUI") then
-		self:StyleTokens()
-	end
-	if IsAddOnLoaded("Blizzard_InspectUI") then
-		self:StyleInspect()
-	end
-	self:RegisterEvent("ADDON_LOADED")
+	self:WhenLoaded("Blizzard_TokenUI", "StyleTokens")
+	self:WhenLoaded("Blizzard_InspectUI", "StyleInspect")
 end

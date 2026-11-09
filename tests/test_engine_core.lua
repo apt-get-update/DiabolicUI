@@ -48,6 +48,7 @@ local function loadEngine()
 		lockdown = false,
 		loggedIn = false,
 		addons = {},
+		loaded = {},
 		errors = {}, -- what reached the client's error handler
 	}
 	frames = FrameMock.new()
@@ -92,6 +93,9 @@ local function loadEngine()
 	end
 	_G.GetNumAddOns = function()
 		return #state.addons
+	end
+	_G.IsAddOnLoaded = function(name)
+		return state.loaded[name]
 	end
 	_G.GetAddOnInfo = function(index)
 		local addon = state.addons[index]
@@ -903,6 +907,38 @@ function TestEngineAddOns:test_is_addon_loadable()
 	lu.assertTrue(Engine:IsAddOnLoadable("Blizzard_TalentUI"))
 	lu.assertNil(Engine:IsAddOnLoadable("Broken"))
 	lu.assertNil(Engine:IsAddOnLoadable("NotInstalled"))
+end
+
+function TestEngineAddOns:test_when_loaded_runs_now_or_once_the_addon_has_loaded()
+	local module = Engine:NewModule("Waiter")
+	local calls = {}
+	module.Style = function(self)
+		calls[#calls + 1] = self
+	end
+
+	-- loaded already: at once, a method's name
+	state.loaded.Early = true
+	module:WhenLoaded("Early", "Style")
+	lu.assertEquals(#calls, 1)
+	lu.assertIs(calls[1], module)
+
+	-- not yet: a method's name and a function, in that order, once
+	local order = {}
+	module.Named = function()
+		order[#order + 1] = "named"
+	end
+	module:WhenLoaded("Late", "Named")
+	module:WhenLoaded("Late", function(self)
+		lu.assertIs(self, module)
+		order[#order + 1] = "function"
+	end)
+	lu.assertEquals(order, {})
+	fire("ADDON_LOADED", "Other")
+	lu.assertEquals(order, {})
+	fire("ADDON_LOADED", "Late")
+	lu.assertEquals(order, { "named", "function" })
+	fire("ADDON_LOADED", "Late")
+	lu.assertEquals(#order, 2)
 end
 
 os.exit(lu.LuaUnit.run())

@@ -92,6 +92,13 @@ To wait out combat, register `PLAYER_REGEN_ENABLED` and unregister it on arrival
 function: `Module.Update = Module:Wrap(function(self) ... end)`. Moving Blizzard's secure frames in
 combat causes taint.
 
+An event registered without a function goes through the module's `Update`, which calls the method
+named after the event. So don't name a method `Update` on a module that does that: its events stop
+arriving, with no error. Call an `OnUpdate` step `Tick`.
+
+To style what another addon makes, `self:WhenLoaded("Blizzard_TalentUI", "StyleTalents")` (a method's
+name, or a function) runs it now if that addon has loaded, otherwise as it does.
+
 == Two kinds of config
 
 |===

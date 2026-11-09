@@ -69,6 +69,7 @@ end
 -- make at file scope (not inside a function body), so loading the file
 -- doesn't error before we ever get to the functions we actually want to test.
 function ModuleMT:SetIncompatible() end
+function ModuleMT:WhenLoaded() end
 function ModuleMT:SetWidget(name)
 	self.widgets[name] = self.widgets[name] or newModuleInstance(self._engine, name)
 	return self.widgets[name]

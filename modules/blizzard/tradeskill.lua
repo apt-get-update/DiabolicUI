@@ -24,7 +24,6 @@ local GetTradeSkillInfo = _G.GetTradeSkillInfo
 local GetTradeSkillLine = _G.GetTradeSkillLine
 local GetTradeSkillReagentItemLink = _G.GetTradeSkillReagentItemLink
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 local SetPortraitToTexture = _G.SetPortraitToTexture
 
 local ADDON = "Blizzard_TradeSkillUI"
@@ -252,13 +251,6 @@ Module.StyleTradeSkill = function(self)
 	_G.TradeSkillRankFrame:Hide() -- (still there for its event: Blizzard updates on it)
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == ADDON then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleTradeSkill()
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").tradeskill
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -268,9 +260,5 @@ Module.OnEnable = function(self)
 	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded(ADDON) then
-		self:StyleTradeSkill()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded(ADDON, "StyleTradeSkill")
 end

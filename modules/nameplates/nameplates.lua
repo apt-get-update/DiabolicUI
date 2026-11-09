@@ -147,9 +147,6 @@ local formatTime = function(time)
 end
 
 local utf8sub = function(str, i, dots)
-	if not str then
-		return
-	end
 	local bytes = str:len()
 	if bytes <= i then
 		return str

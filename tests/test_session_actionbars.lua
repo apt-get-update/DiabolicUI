@@ -1119,4 +1119,40 @@ function TestBarSettings:test_cast_on_key_down_after_a_reload()
 	assertClean(client)
 end
 
+function TestXPBars:test_a_faction_with_no_range_fills_nothing_by_zero()
+	boot({
+		world = function(world)
+			world.units.player.level = 80
+		end,
+	})
+	client.world.watchedFaction = { name = "Exalted Ones", standing = 8, min = 100, max = 100, value = 100, id = 1 }
+	client:FireEvent("UPDATE_FACTION")
+	local rep = widget("Bar: Reputation")
+	lu.assertEquals(rep.Bar.data.maxRep, 1)
+	assertClean(client)
+end
+
+function TestXPBars:test_stance_and_empty_buttons_answer_for_themselves()
+	boot({
+		class = "WARRIOR",
+		world = function(world)
+			world.forms = forms(3, 1)
+		end,
+	})
+	local button = widget("Bar: Stance"):GetFrame().buttons[1]
+	lu.assertTrue(button:IsCurrentlyActive() and true or false)
+	button:SetTooltip()
+
+	-- the generic button: what a slot of no known type falls back on
+	local Base = getmetatable(getmetatable(button).__index).__index
+	lu.assertNil(Base.HasAction(button))
+	lu.assertNil(Base.GetTexture(button))
+	lu.assertEquals(Base.GetCount(button), 0)
+	lu.assertEquals({ Base.GetCooldown(button) }, { 0, 0, 0 })
+	lu.assertNil(Base.IsCurrentlyActive(button))
+	lu.assertNil(Base.IsUsable(button))
+	lu.assertNil(Base.SetTooltip(button))
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

@@ -18,6 +18,9 @@ stylua .                                                   # formats the Lua (st
 tests/coverage/run.sh                                      # line coverage, before a release
 ----
 
+The coverage report leaves out what the compiler adds and nothing can run (the `return` after a
+tail call, a jump after a `break`): `tests/coverage/report.lua` lists them.
+
 Close the game first for the slow ones (`+test_session_*.lua+`, the full run): they use a lot of
 memory. Otherwise run only the files you touched.
 

@@ -1715,4 +1715,96 @@ function TestBulletinBoard:test_loaded_before_us()
 	assertClean(client)
 end
 
+-- What a call of Blizzard's or a script runs again -----------------------------------
+
+local function counting(object, method)
+	local count = { n = 0 }
+	local old = object[method]
+	object[method] = function(...)
+		count.n = count.n + 1
+		count.last = select(3, ...)
+		if old then
+			return old(...)
+		end
+	end
+	return count
+end
+
+function TestAdiBags:test_styled_again_as_it_shows()
+	boot({ world = adiBags })
+	client.api.LoadAddOn("AdiBags")
+	local kit = client:GetModule("Blizzard: Windows")
+	local panels, buttons = counting(kit, "StylePanel"), counting(kit, "StyleButtons")
+	client:RunScript(_G.AdiBagsContainer1.BagSlotPanel, "OnShow")
+	client:RunScript(_G.AdiBagsContainer1, "OnShow")
+	lu.assertEquals(panels.n, 1)
+	lu.assertEquals(buttons.n, 1)
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_battlegrounds_foot_is_on_their_page_only()
+	boot()
+	local footer = counting(client:GetModule("Blizzard: Windows"), "SetFooter")
+	client:RunScript(_G.PVPBattlegroundFrame, "OnShow")
+	lu.assertEquals(footer.n, 1)
+	lu.assertTrue(footer.last)
+	client:RunScript(_G.PVPBattlegroundFrame, "OnHide")
+	lu.assertEquals(footer.n, 2)
+	lu.assertNil(footer.last)
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_stack_splits_okay_is_not_lit_when_disabled()
+	boot()
+	local okay = _G.StackSplitOkayButton
+	okay:Disable()
+	lu.assertTrue(okay.DiabolicNotLit())
+	okay:Enable()
+	lu.assertFalse(okay.DiabolicNotLit())
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_who_dropdown_is_one_control_with_its_arrow()
+	boot()
+	local dropdown, button = _G.WhoFrameDropDown, _G.WhoFrameDropDownButton
+	local click, lock, unlock =
+		counting(button, "Click"), counting(button, "LockHighlight"), counting(button, "UnlockHighlight")
+	client:RunScript(dropdown, "OnEnter")
+	client:RunScript(dropdown, "OnMouseUp")
+	client:RunScript(dropdown, "OnLeave")
+	lu.assertEquals({ lock.n, click.n, unlock.n }, { 1, 1, 1 })
+	assertClean(client)
+end
+
+function TestWindowKit:test_a_box_hint_comes_back_when_it_loses_the_focus()
+	boot()
+	local box = _G.WhoFrameEditBox
+	client:RunScript(box, "OnEditFocusGained")
+	lu.assertTrue(box.DiabolicFocused)
+	client:RunScript(box, "OnEditFocusLost")
+	lu.assertNil(box.DiabolicFocused)
+	assertClean(client)
+end
+
+function TestWindowKit:test_all_ranks_is_saved()
+	boot()
+	local module = client:GetModule("Blizzard: Spellbook")
+	local box = _G.ShowAllSpellRanksCheckBox
+	box:SetChecked(true)
+	client:RunScript(box, "OnClick")
+	lu.assertTrue(module.db.showAllRanks)
+	box:SetChecked(false)
+	client:RunScript(box, "OnClick")
+	lu.assertFalse(module.db.showAllRanks)
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_quest_map_button_is_placed_again_with_blizzards()
+	boot()
+	local place = counting(client:GetModule("Blizzard: Quest Log"), "PlaceMapButton")
+	_G.QuestLogShowMapPOI_UpdatePosition()
+	lu.assertEquals(place.n, 1)
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

@@ -29,7 +29,6 @@ local tonumber = tonumber
 local unpack = unpack
 
 -- WoW API
-local IsAddOnLoaded = _G.IsAddOnLoaded
 
 -- their scroll bars' tracks, by file (lowercase, as patterns)
 local ART = { "ui%-character%-scrollbar", "ui%-classtrainer%-scrollbar", "ui%-itemsocketingframe%-scrollbar" }
@@ -564,13 +563,6 @@ Module.StyleAddon = function(self, addon)
 	end
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if self.Waiting[addon] then
-		self.Waiting[addon] = nil
-		self:StyleAddon(addon)
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").panels
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -581,17 +573,14 @@ Module.OnEnable = function(self)
 		return
 	end
 	self:StyleAddon(nil)
-	self.Waiting = {}
+	local seen = {}
 	for _, spec in ipairs(self.config.frames) do
-		if spec.addon then
-			self.Waiting[spec.addon] = true
+		local addon = spec.addon
+		if addon and not seen[addon] then
+			seen[addon] = true
+			self:WhenLoaded(addon, function()
+				self:StyleAddon(addon)
+			end)
 		end
 	end
-	for addon in pairs(self.Waiting) do
-		if IsAddOnLoaded(addon) then
-			self.Waiting[addon] = nil
-			self:StyleAddon(addon)
-		end
-	end
-	self:RegisterEvent("ADDON_LOADED")
 end

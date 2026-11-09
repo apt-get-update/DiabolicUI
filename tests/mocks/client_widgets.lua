@@ -2147,7 +2147,7 @@ define(GameTooltip, {
 	SetShapeshift = function(self, index)
 		local _, name = client.api.GetShapeshiftFormInfo(index)
 		if name then
-			showTooltipContent(self, nil, nil, nil, { { name } })
+			showTooltipContent(self, "shapeshift", index, nil, { { name } })
 		end
 	end,
 	-- (world.spells[id].lines: its lines, as showTooltipContent takes them)

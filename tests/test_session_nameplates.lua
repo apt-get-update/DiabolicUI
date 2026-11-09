@@ -350,6 +350,7 @@ function TestNamePlates:test_the_targets_cast_shows_on_its_plate()
 	lu.assertStrContains(cast.Value:GetText(), "|cffff0000")
 
 	unit.casting = nil
+	client:FireEvent("UNIT_SPELLCAST_DELAYED", "target") -- (gone already: nothing to push back)
 	client:FireEvent("UNIT_SPELLCAST_STOP", "target")
 	lu.assertNil(cast:IsShown())
 

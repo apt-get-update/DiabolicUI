@@ -1199,10 +1199,7 @@ end
 
 Module.OnEvent = function(self, event, ...)
 	local arg1 = ...
-	if (event == "ADDON_LOADED") and (arg1 == "Blizzard_DebugTools") then
-		self:UnregisterEvent("ADDON_LOADED", "OnEvent")
-		self:SkinDebugTools()
-	elseif event == "PLAYER_ENTERING_WORLD" then
+	if event == "PLAYER_ENTERING_WORLD" then
 		self:HookGameTooltip()
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	elseif (event == "UNIT_INVENTORY_CHANGED") and arg1 and (UnitGUID(arg1) == currentGUID) then
@@ -1262,9 +1259,9 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
 	self:RegisterEvent("MODIFIER_STATE_CHANGED", "OnEvent")
-	self:RegisterEvent("ADDON_LOADED", "OnEvent")
 
 	self:UpdateStyles()
+	self:WhenLoaded("Blizzard_DebugTools", "SkinDebugTools")
 
 	self.inspect:SetScript("OnUpdate", function(_, elapsed)
 		nextInspectRequest = nextInspectRequest - elapsed

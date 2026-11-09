@@ -400,7 +400,14 @@ function TestTargetFrame:test_cast_bars()
 	target.casting.endTime = target.casting.endTime + 500
 	client:FireEvent("UNIT_SPELLCAST_DELAYED", "target")
 	client:Tick(0.5)
+	-- a start after the clock: none of it done
+	local started = target.casting.startTime
+	target.casting.startTime = started + 9000
+	client:FireEvent("UNIT_SPELLCAST_DELAYED", "target")
+	lu.assertEquals(castBar:GetValue(), 0)
+	target.casting.startTime = started
 	target.casting = nil
+	client:FireEvent("UNIT_SPELLCAST_DELAYED", "target") -- (gone already: left as it is)
 	client:FireEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
 	client:Tick(1)
 

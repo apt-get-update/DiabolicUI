@@ -27,7 +27,6 @@ local CreateFrame = _G.CreateFrame
 local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetItemInfo = _G.GetItemInfo
-local IsAddOnLoaded = _G.IsAddOnLoaded
 local UnitClass = _G.UnitClass
 local UnitLevel = _G.UnitLevel
 
@@ -238,13 +237,6 @@ Module.StyleInspect = function(self)
 	end
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == "Blizzard_InspectUI" then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleInspect()
-	end
-end
-
 Module.OnEvent = function(self, event, unit)
 	if event == "INSPECT_TALENT_READY" then
 		self:UpdateInspect()
@@ -269,9 +261,5 @@ end
 Module.OnEnable = function(self)
 	self:RegisterEvent("INSPECT_TALENT_READY", "OnEvent")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
-	if IsAddOnLoaded("Blizzard_InspectUI") then
-		self:StyleInspect()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("Blizzard_InspectUI", "StyleInspect")
 end

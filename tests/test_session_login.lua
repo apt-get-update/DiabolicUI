@@ -46,6 +46,7 @@ local EVENT_ARGS = {
 		4,
 		500,
 	},
+	CHAT_MSG_LOOT = { "You receive loot: |cff1eff00|Hitem:100:0:0:0:0:0:0:0:80|h[Big Sword]|h|r." },
 	CVAR_UPDATE = { "USE_UISCALE", "1" },
 	MODIFIER_STATE_CHANGED = { "LSHIFT", 1 },
 	PLAYER_ENTERING_WORLD = {},
@@ -276,6 +277,32 @@ function TestSessionLogin:test_warnings_with_the_same_text_are_matched_once()
 	end
 	lu.assertEquals(count, 1)
 	assertClean(client)
+end
+
+function TestSessionLogin:test_the_engine_names_keywords_and_size_changes()
+	local client = Client.boot({ class = "PRIEST" })
+	local Engine = client.Engine
+	lu.assertStrContains(tostring(client:GetModule("ActionBars")), "ActionBars")
+	lu.assertStrContains(tostring(client:GetModule("ActionBars"):GetWidget("Bar: Stance")), "Bar: Stance")
+	lu.assertNotNil(Engine:GetFrame("UIConfig"))
+	lu.assertIs(Engine:GetFrame("PetFrame"), client:GetModule("UnitFrames"):GetWidget("Unit: Pet"):GetFrame())
+
+	local count, old = 0, Engine.OnDisplayScaleEvent
+	Engine.OnDisplayScaleEvent = function(...)
+		count = count + 1
+		return old(...)
+	end
+	client:RunScript(_G.UIParent, "OnSizeChanged")
+	client:RunScript(_G.WorldFrame, "OnSizeChanged")
+	lu.assertEquals(count, 2)
+end
+
+function TestSessionLogin:test_the_talent_window_loaded_later_stops_switching_bars_too()
+	local client = Client.boot({ class = "PRIEST" })
+	lu.assertNil(_G.PlayerTalentFrame)
+	_G.TalentFrame_LoadUI()
+	lu.assertNil(_G.PlayerTalentFrame:IsEventRegistered("ACTIVE_TALENT_GROUP_CHANGED"))
+	lu.assertEquals(client:Problems(), "")
 end
 
 os.exit(lu.LuaUnit.run())

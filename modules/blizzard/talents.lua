@@ -21,7 +21,6 @@ local unpack = unpack
 local CreateFrame = _G.CreateFrame
 local GetTalentTabInfo = _G.GetTalentTabInfo
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 
 local NUM_SPECS = 3 -- the player's two and the pet's
 local SPEC_NAMES = { _G.TALENT_SPEC_PRIMARY, _G.TALENT_SPEC_SECONDARY, _G.TALENT_SPEC_PET_PRIMARY }
@@ -235,17 +234,6 @@ Module.StyleTalents = function(self)
 	kit:StyleScrollBars(frame)
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == "Blizzard_TalentUI" then
-		self:StyleTalents()
-	elseif (addon == "Blizzard_GlyphUI") and self.Window then
-		self:StyleGlyphs()
-	end
-	if self.Window and self.GlyphsStyled then
-		self:UnregisterEvent("ADDON_LOADED")
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").talents
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -268,10 +256,10 @@ Module.OnEnable = function(self)
 	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded("Blizzard_TalentUI") then
-		self:StyleTalents()
-	end
-	if not (self.Window and self.GlyphsStyled) then
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("Blizzard_TalentUI", "StyleTalents")
+	self:WhenLoaded("Blizzard_GlyphUI", function()
+		if self.Window then -- (or StyleTalents does it)
+			self:StyleGlyphs()
+		end
+	end)
 end

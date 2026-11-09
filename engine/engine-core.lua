@@ -75,6 +75,7 @@ local GetNumAddOns = _G.GetNumAddOns
 local GetRealmName = _G.GetRealmName
 local geterrorhandler = _G.geterrorhandler
 local InCombatLockdown = _G.InCombatLockdown
+local IsAddOnLoaded = _G.IsAddOnLoaded
 local IsLoggedIn = _G.IsLoggedIn
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitFactionGroup = _G.UnitFactionGroup
@@ -800,6 +801,37 @@ local SetIncompatible = function(self, ...)
 	end
 end
 
+-- What waits for an addon to load: addon -> { { object, func }, ... }
+local waitingFor = {}
+
+local RunFor = function(object, func)
+	if type(func) == "string" then
+		object[func](object)
+	else
+		func(object)
+	end
+end
+
+-- Runs `func` (a method's name or a function, given the object) once `addon`
+-- has loaded: right now if it has.
+local WhenLoaded = function(self, addon, func)
+	if IsAddOnLoaded(addon) then
+		RunFor(self, func)
+	else
+		local waiting = waitingFor[addon] or {}
+		waitingFor[addon] = waiting
+		waiting[#waiting + 1] = { self, func }
+	end
+end
+
+Engine.RunWaiting = function(self, event, addon)
+	local waiting = waitingFor[addon]
+	waitingFor[addon] = nil
+	for _, entry in ipairs(waiting or {}) do
+		RunFor(entry[1], entry[2])
+	end
+end
+
 -- core object that all inherits from
 local corePrototype = {
 	Check = check,
@@ -809,6 +841,7 @@ local corePrototype = {
 	IsEnabled = IsEnabled,
 	RegisterEvent = RegisterEvent,
 	RegisterMessage = RegisterMessage,
+	WhenLoaded = WhenLoaded,
 	UnregisterEvent = UnregisterEvent,
 	UnregisterMessage = UnregisterMessage,
 	IsEventRegistered = IsEventRegistered,
@@ -824,12 +857,7 @@ local corePrototype = {
 	GetDB = GetDB,
 	Wrap = wrap,
 }
-local corePrototype_MT = {
-	__index = corePrototype,
-	__tostring = function(t)
-		return objectName[t]
-	end,
-}
+local corePrototype_MT = { __index = corePrototype }
 
 -------------------------------------------------------------
 -- Handlers & Elements
@@ -1543,6 +1571,7 @@ Engine:RegisterEvent("PLAYER_REGEN_ENABLED", combatEnds)
 -- or its method fired directly if the player already has logged into the game.
 Engine:RegisterEvent("ADDON_LOADED", "PreInit")
 Engine:RegisterEvent("VARIABLES_LOADED", "PreInit")
+Engine:RegisterEvent("ADDON_LOADED", "RunWaiting")
 
 -- apply scripts to our event frame
 Frame:SetScript("OnEvent", OnEvent)

@@ -450,4 +450,38 @@ function TestChatCopy:test_keeps_the_last_200_lines()
 	assertClean(client)
 end
 
+function TestChatCopy:test_escape_in_its_text_closes_it()
+	boot({ savedVariables = chatWindows({}) })
+	client:RunScript(_G.ChatFrame1Tab, "OnDoubleClick", "LeftButton")
+	client:RunScript(client:GetModule("ChatCopy").editBox, "OnEscapePressed")
+	lu.assertFalse(shown(_G.DiabolicChatCopyFrame))
+	assertClean(client)
+end
+
+function TestCopyLinks:test_escape_and_enter_close_the_box()
+	boot()
+	local info = _G.StaticPopupDialogs.DIABOLICUI_COPY_CHAT_TEXT
+	local box = _G.StaticPopup1.editBox
+	for _, handler in ipairs({ info.EditBoxOnEscapePressed, info.EditBoxOnEnterPressed }) do
+		_G.StaticPopup1:Show()
+		handler(box)
+		lu.assertFalse(shown(_G.StaticPopup1))
+	end
+	assertClean(client)
+end
+
+function TestChatCopy:test_a_chat_frame_is_set_up_once_and_its_box_shows_with_the_focus()
+	boot({ savedVariables = chatWindows({}) })
+	local old = _G.ChatFrame1.old
+	client:GetModule("ChatFilters"):SetUpFrame(_G.ChatFrame1)
+	lu.assertIs(_G.ChatFrame1.old, old)
+
+	local box = _G.ChatFrame1EditBox
+	client:RunScript(box, "OnEditFocusGained")
+	lu.assertTrue(shown(box))
+	client:RunScript(box, "OnEditFocusLost")
+	lu.assertFalse(shown(box))
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

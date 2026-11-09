@@ -1738,4 +1738,30 @@ function TestSellJunk:test_only_on_the_merchants_tab_and_bags_watched_while_open
 	assertClean(client)
 end
 
+function TestStyling:test_popups_and_talents_follow_blizzards_updates()
+	boot()
+	local popups = client:GetModule("Blizzard: PopUps")
+	local layouts, old = 0, popups.UpdateLayout
+	popups.UpdateLayout = function(...)
+		layouts = layouts + 1
+		return old(...)
+	end
+	_G.StaticPopup_SetUpPosition(_G.StaticPopup1)
+	lu.assertEquals(layouts, 1)
+
+	client.api.LoadAddOn("Blizzard_TalentUI")
+	local talents = client:GetModule("Blizzard: Talents")
+	local icons, bars = 0, 0
+	talents.UpdateTreeIcons = function()
+		icons = icons + 1
+	end
+	talents.LayoutBars = function()
+		bars = bars + 1
+	end
+	_G.PlayerTalentFrame_UpdateTabs()
+	_G.PlayerTalentFrame_UpdateControls()
+	lu.assertEquals({ icons, bars }, { 1, 1 })
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

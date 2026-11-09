@@ -131,14 +131,4 @@ Module:SetUp()
 Module:SetGameEngineFonts()
 Module:SetFontObjects()
 
-if IsAddOnLoaded("Blizzard_CombatText") then
-	Module:HookCombatText()
-else
-	Module.ADDON_LOADED = function(self, event, addon, ...)
-		if addon == "Blizzard_CombatText" then
-			self:HookCombatText()
-			self:UnregisterEvent("ADDON_LOADED")
-		end
-	end
-	Module:RegisterEvent("ADDON_LOADED")
-end
+Module:WhenLoaded("Blizzard_CombatText", "HookCombatText")

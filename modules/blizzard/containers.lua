@@ -25,7 +25,6 @@ local GetInventoryItemLink = _G.GetInventoryItemLink
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetItemInfo = _G.GetItemInfo
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 local BANK_CONTAINER = _G.BANK_CONTAINER
 
 -- Item qualities
@@ -364,17 +363,8 @@ Module.OnInit = function(self)
 	self:RegisterEvent("SKILL_LINES_CHANGED", "ForgetUnusable")
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "ForgetUnusable")
 	hooksecurefunc("PaperDollItemSlotButton_Update", updateCharacterSlot)
-	if IsAddOnLoaded("Blizzard_InspectUI") then
+	-- (the inspect window loads on demand)
+	self:WhenLoaded("Blizzard_InspectUI", function()
 		hooksecurefunc("InspectPaperDollItemSlotButton_Update", updateInspectSlot)
-	else
-		self:RegisterEvent("ADDON_LOADED", "ADDON_LOADED")
-	end
-end
-
--- The inspect window loads on demand.
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == "Blizzard_InspectUI" then
-		hooksecurefunc("InspectPaperDollItemSlotButton_Update", updateInspectSlot)
-		self:UnregisterEvent("ADDON_LOADED", "ADDON_LOADED")
-	end
+	end)
 end

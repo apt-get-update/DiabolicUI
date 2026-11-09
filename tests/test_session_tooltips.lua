@@ -587,4 +587,33 @@ function TestSpellTooltips:test_laid_out_once_its_on_screen()
 	assertClean(client)
 end
 
+function TestTooltips:test_a_scan_of_someone_no_longer_under_the_mouse_stops()
+	local module = client:GetModule("Blizzard: Tooltips")
+	client.world.units.mouseover = nil
+	module:SetUnitInfo("gear", "spec")
+	lu.assertNil(module:GetUnitGear(nil))
+	lu.assertNil(module:GetUnitSpec(nil))
+
+	local unit = Client.newUnit({ name = "Far", class = "MAGE" })
+	hover(unit)
+	-- someone else than who's in the tooltip
+	client.world.units.target = Client.newUnit({ name = "Other", class = "MAGE" })
+	module:ScanUnit("target")
+	-- out of sight
+	unit.visible = false
+	module:ScanUnit("mouseover")
+	lu.assertNil(client.world.inspecting)
+	assertClean(client)
+end
+
+function TestTooltips:test_our_backdrop_stays_with_the_tooltip_and_blizzards_is_faked()
+	local tooltip = _G.GameTooltip
+	local config = client:GetModule("Blizzard: Tooltips").config
+	tooltip:SetFrameStrata("DIALOG")
+	tooltip:SetParent(_G.UIParent)
+	lu.assertEquals({ tooltip:GetBackdropColor() }, config.dummy_backdrop_color)
+	lu.assertEquals({ tooltip:GetBackdropBorderColor() }, config.dummy_backdrop_border_color)
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

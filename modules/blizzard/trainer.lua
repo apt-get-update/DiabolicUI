@@ -17,7 +17,6 @@ local unpack = unpack
 local CreateFont = _G.CreateFont
 local GetTrainerServiceInfo = _G.GetTrainerServiceInfo
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 
 local ADDON = "Blizzard_TrainerUI"
 
@@ -124,13 +123,6 @@ Module.StyleTrainer = function(self)
 	end)
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == ADDON then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleTrainer()
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").trainer
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -140,9 +132,5 @@ Module.OnEnable = function(self)
 	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded(ADDON) then
-		self:StyleTrainer()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded(ADDON, "StyleTrainer")
 end

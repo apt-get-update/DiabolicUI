@@ -76,9 +76,6 @@ local formatTime = function(time)
 end
 
 local utf8sub = function(str, i, dots)
-	if not str then
-		return
-	end
 	local bytes = str:len()
 	if bytes <= i then
 		return str
@@ -300,7 +297,7 @@ Update = function(self, event, ...)
 		CastBar:SetValue(castdata.duration)
 
 		if CastBar.Name then
-			CastBar.Name:SetText(utf8sub(text, 32, true))
+			CastBar.Name:SetText(utf8sub(text or name, 32, true))
 		end
 		if CastBar.Value then
 			CastBar.Value:SetText("")

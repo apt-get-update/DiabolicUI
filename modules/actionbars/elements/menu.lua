@@ -803,35 +803,15 @@ MenuWidget.MoveBagButtons = function(self, menu)
 	end)
 
 	if Engine:IsAddOnEnabled("Bagnon") then
-		if IsAddOnLoaded("Bagnon") then
+		self:WhenLoaded("Bagnon", function()
 			self:HookBagnon(BagBarMenuButton, BagBarMenuWindow)
-		else
-			local proxy
-			proxy = function(_, event, addon)
-				if addon ~= "Bagnon" then
-					return
-				end
-				self:HookBagnon(BagBarMenuButton, BagBarMenuWindow)
-				self:UnregisterEvent("ADDON_LOADED", proxy)
-			end
-			self:RegisterEvent("ADDON_LOADED", proxy)
-		end
+		end)
 	end
 
 	if Engine:IsAddOnEnabled("LiteBag") then
-		if IsAddOnLoaded("LiteBag") then
+		self:WhenLoaded("LiteBag", function()
 			self:HookLiteBag(BagBarMenuButton, BagBarMenuWindow)
-		else
-			local proxy
-			proxy = function(_, event, addon)
-				if addon ~= "LiteBag" then
-					return
-				end
-				self:HookLiteBag(BagBarMenuButton, BagBarMenuWindow)
-				self:UnregisterEvent("ADDON_LOADED", proxy)
-			end
-			self:RegisterEvent("ADDON_LOADED", proxy)
-		end
+		end)
 	end
 	menu.BagWindow = BagWindow
 end

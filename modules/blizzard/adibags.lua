@@ -15,7 +15,6 @@ local unpack = unpack
 
 -- WoW API
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 
 -- A bag's frame (once): our window around it, its X, title, buttons and
 -- equipped bags' panel ours.
@@ -78,13 +77,6 @@ Module.StyleAdiBags = function(self)
 	end
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == "AdiBags" then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleAdiBags()
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").adibags
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -94,9 +86,5 @@ Module.OnEnable = function(self)
 	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded("AdiBags") then
-		self:StyleAdiBags()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("AdiBags", "StyleAdiBags")
 end

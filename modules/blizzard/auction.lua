@@ -28,7 +28,6 @@ local CanSendAuctionQuery = _G.CanSendAuctionQuery
 local CreateFrame = _G.CreateFrame
 local GetNumAuctionItems = _G.GetNumAuctionItems
 local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
 
 -- Each part named is placed from windows/AuctionFrame.qml: kept where it
 -- is (panels' raise and lower are for what's not ours).
@@ -353,13 +352,6 @@ Module.StyleAuctionHouse = function(self)
 	end)
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if addon == "Blizzard_AuctionUI" then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleAuctionHouse()
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").auction
 	kit = Engine:GetModule("Blizzard: Windows")
@@ -369,9 +361,5 @@ Module.OnEnable = function(self)
 	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded("Blizzard_AuctionUI") then
-		self:StyleAuctionHouse()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("Blizzard_AuctionUI", "StyleAuctionHouse")
 end

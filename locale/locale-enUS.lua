@@ -4,9 +4,6 @@
 local _, Engine = ...
 
 local L = Engine:NewLocale("enUS")
-if not L then
-	return
-end
 
 ---------------------------------------------------------------------
 -- System Messages
