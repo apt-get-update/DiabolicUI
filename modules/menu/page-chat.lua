@@ -167,6 +167,16 @@ Module.CreateMessagesPage = function(self)
 			L["Hide Channel Notices"],
 			L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."],
 		},
+		{
+			"shortChannels",
+			L["Short Channel Names"],
+			L["Guild, Party and Raid lines start with G, P and R, and numbered channels with only their number."],
+		},
+		{
+			"chatHistory",
+			L["Chat History"],
+			L["What people said comes back after a reload or a relog, the last 100 lines of each chat window."],
+		},
 	}) do
 		local setting = option[1]
 		local check = CreateCheckbox(messagesPanel, "MessagesCleaner" .. i, option[2], option[3], function(button)

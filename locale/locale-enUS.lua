@@ -347,6 +347,21 @@ L["Achievements"] = true
 L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] = true
 L["Hide Channel Notices"] = true
 L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] = true
+L["Short Channel Names"] = true
+L["Guild, Party and Raid lines start with G, P and R, and numbered channels with only their number."] = true
+L["Chat History"] = true
+L["What people said comes back after a reload or a relog, the last 100 lines of each chat window."] = true
+L["(earlier messages)"] = true
+-- the channels' short names at the start of a chat line
+L["G"] = true -- Guild
+L["O"] = true -- Officer
+L["P"] = true -- Party
+L["PL"] = true -- Party Leader
+L["DG"] = true -- Dungeon Guide
+L["R"] = true -- Raid
+L["RL"] = true -- Raid Leader
+L["BG"] = true -- Battleground
+L["BL"] = true -- Battleground Leader
 
 -- worldmap module
 ---------------------------------------------------------------------

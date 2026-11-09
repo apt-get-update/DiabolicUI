@@ -508,3 +508,6 @@ end
 
 -- Exposed for tests/test_chat_cleaner.lua.
 Module.ToPattern = ToPattern
+
+-- For history.lua: the events of what players say.
+Module.PLAYER_CHAT = PLAYER_CHAT

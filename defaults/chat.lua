@@ -30,4 +30,11 @@ Engine:NewConfig("ChatFilters", {
 	cleanAuctions = true, -- auctions created, sold, won, outbid, expired
 	cleanAchievements = true, -- "Name: [Achievement]"
 	hideChatNoise = true, -- channel join/leave/change notices, empty lines
+
+	shortChannels = true, -- "Guild", "2. Trade - City" become "G", "2."
+	chatHistory = true, -- conversation comes back after a /reload or a relog
 })
+
+-- the saved lines of conversation (modules/chat/history.lua), per character:
+-- [chat window's name] = { { text, r, g, b }, ... }
+Engine:NewConfig("ChatHistory", {})
