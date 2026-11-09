@@ -113,6 +113,7 @@ local queue = {} -- [func] = its arguments, for calls the out of combat wrapper 
 local keyWords = {} -- keyword registry to translate words to frame handles used for anchoring or parenting
 
 local incompats = {} -- table holding module/widget/handler incompatibilities
+local conflicts = {} -- [addon] = true: the addons that made an object stand down
 
 -------------------------------------------------------------
 -- Flags and other values meant to be read-only
@@ -758,14 +759,15 @@ local IsIncompatible = function(self)
 		return false
 	end
 	for addonName, condition in pairs(incompats[self]) do
-		if type(condition) == "function" then
-			if Engine:IsAddOnEnabled(addonName) then
-				return condition(self)
+		if Engine:IsAddOnEnabled(addonName) then
+			local incompatible = true
+			if type(condition) == "function" then
+				incompatible = condition(self)
 			end
-		else
-			if Engine:IsAddOnEnabled(addonName) then
-				return true
+			if incompatible then
+				conflicts[addonName] = true
 			end
+			return incompatible
 		end
 	end
 	return false
@@ -1092,6 +1094,11 @@ Engine.GetAddOnInfo = function(self, index)
 		enabled = nil
 	end
 	return name, title, notes, enabled, loadable, reason, security
+end
+
+-- The addons that have turned a part of DiabolicUI off, so far.
+Engine.GetAddOnConflicts = function(self)
+	return conflicts
 end
 
 -- Check if an addon is enabled	in the addon listing

@@ -11,5 +11,6 @@
 <Script file='page-quests.lua'/>
 <Script file='page-tooltips.lua'/>
 <Script file='page-addons.lua'/>
+<Script file='conflicts.lua'/>
 
 </Ui>

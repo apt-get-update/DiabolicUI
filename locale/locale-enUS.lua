@@ -347,6 +347,11 @@ L["Achievements"] = true
 L["'Name has earned the achievement [Name]!' becomes 'Name: [Name]'."] = true
 L["Hide Channel Notices"] = true
 L["Hides the notices of joining, leaving and changing chat channels, and empty chat lines."] = true
+L["AddOn Conflict"] = true
+L["%s does a job DiabolicUI also does, so DiabolicUI has turned that part of itself off.|n|nKeep %s, or turn it off and use DiabolicUI's?"] =
+	true
+L["Keep It"] = true
+L["Turn It Off"] = true
 L["Short Channel Names"] = true
 L["Guild, Party and Raid lines start with G, P and R, and numbered channels with only their number."] = true
 L["Chat History"] = true
