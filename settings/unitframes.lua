@@ -337,6 +337,7 @@ Engine:NewStaticConfig("UnitFrames", {
 						size = { 150, 150 },
 						position = { "CENTER" },
 						color = { 175 / 255, 17 / 255, 28 / 255 }, -- blood
+						cutaway_color = { 1, 0.8, 0.5, 0.9 }, -- the health just lost, behind the fluid
 						spark = {
 							size = { 128, 128 },
 							texture = path .. [[statusbars\DiabolicUI_StatusBar_128x128_SparkVertical_Warcraft.tga]],

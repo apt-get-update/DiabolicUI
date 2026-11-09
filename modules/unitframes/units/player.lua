@@ -254,6 +254,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health:SetSparkSize(unpack(configHealthSpark.size))
 	Health:SetSparkFlashSize(unpack(configHealthSpark.flash_size))
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
+	Health:EnableCutaway(configHealthLayers.gradient.texture, unpack(configHealth.cutaway_color))
 
 	Health.useClassColor = db.showClassColors
 	Health.frequent = 1 / 30

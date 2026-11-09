@@ -201,6 +201,76 @@ Orb.DisableSmoothing = function(self, disable)
 	self._ignoresmoothing = disable
 end
 
+-- Cutaway: what the orb just lost stays lit behind the fluid for a moment,
+-- then drains away. It's made like the fluid, a level under it; nothing runs
+-- while there's nothing to show.
+local cutawayHold = 0.4 -- seconds it stays before it drains (a new loss starts this over)
+local cutawayDrain = 0.35 -- share of the orb it drains per second
+
+local PlaceCutaway = function(self)
+	local cutaway = self.cutaway
+	local _, height = self.scaffold:GetSize()
+	local newHeight = (cutaway.value - self.minValue) / (self.maxValue - self.minValue) * height
+	cutaway:SetHeight(math_max(newHeight, 0.0001))
+	cutaway:SetVerticalScroll(height - newHeight)
+end
+
+local OnUpdateCutaway = function(cutaway, elapsed)
+	if cutaway.hold > 0 then
+		cutaway.hold = cutaway.hold - elapsed
+		return
+	end
+	local orb = cutaway.orb
+	cutaway.value = cutaway.value - (orb.maxValue - orb.minValue) * cutawayDrain * elapsed
+	if cutaway.value <= orb.value then
+		cutaway:Hide()
+	else
+		PlaceCutaway(orb)
+	end
+end
+
+-- Called with what the orb's value was before it was set.
+local UpdateCutaway = function(self, previous)
+	local cutaway = self.cutaway
+	local value = self.value
+	if value < previous then
+		if not cutaway:IsShown() then
+			cutaway.value = previous
+			cutaway:Show()
+		end
+		cutaway.hold = cutawayHold
+		PlaceCutaway(self)
+	elseif cutaway:IsShown() and (value >= cutaway.value) then
+		cutaway:Hide()
+	end
+end
+
+-- Call once, after the orb has its size.
+Orb.EnableCutaway = function(self, path, r, g, b, a)
+	local scaffold = self.scaffold
+	local width, height = scaffold:GetSize()
+
+	local child = CreateFrame("Frame", nil, scaffold)
+	child:SetFrameLevel(scaffold:GetFrameLevel())
+	child:SetSize(width, height)
+
+	local cutaway = CreateFrame("ScrollFrame", nil, scaffold)
+	cutaway:SetFrameLevel(scaffold:GetFrameLevel())
+	cutaway:SetScrollChild(child)
+	cutaway:SetPoint("BOTTOM")
+	cutaway:SetSize(width, height)
+	cutaway:Hide()
+	cutaway:SetScript("OnUpdate", OnUpdateCutaway)
+	cutaway.orb = self
+
+	local texture = child:CreateTexture(nil, "BACKGROUND")
+	texture:SetAllPoints()
+	texture:SetTexture(path)
+	texture:SetVertexColor(r, g, b, a)
+
+	self.cutaway = cutaway
+end
+
 -- sets the value the orb should move towards
 Orb.SetValue = function(self, value)
 	local min, max = self.minValue, self.maxValue
@@ -209,7 +279,11 @@ Orb.SetValue = function(self, value)
 	elseif value < min then
 		value = min
 	end
+	local previous = self.value
 	self.value = value
+	if self.cutaway then
+		UpdateCutaway(self, previous)
+	end
 	if value ~= self.displayValue then
 		self.smoothing = true
 	end
@@ -243,6 +317,9 @@ Orb.SetMinMaxValues = function(self, min, max)
 		self.displayValue = max
 	elseif self.displayValue < min then
 		self.displayValue = min
+	end
+	if self.cutaway and (max ~= self.maxValue) then
+		self.cutaway:Hide()
 	end
 	self.minValue = min
 	self.maxValue = max
