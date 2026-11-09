@@ -2079,6 +2079,12 @@ local function frameXML(client)
 		tooltip:SetPoint("BOTTOMRIGHT", _G.UIParent, "BOTTOMRIGHT", -13, 64)
 		tooltip.default = 1
 	end
+	f.SetRaidTargetIconTexture = function(texture, index)
+		index = index - 1
+		local left = (index % 4) * 0.25
+		local top = math.floor(index / 4) * 0.25
+		texture:SetTexCoord(left, left + 0.25, top, top + 0.25)
+	end
 	f.GameTooltip_UnitColor = function(unit)
 		local r, g, b = 1, 1, 1
 		if api.UnitIsPlayer(unit) then

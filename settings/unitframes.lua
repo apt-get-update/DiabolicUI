@@ -858,6 +858,15 @@ Engine:NewStaticConfig("UnitFrames", {
 						position = { "CENTER", 4, 0 },
 					},
 				},
+				outside_range_alpha = 0.45,
+				mark = {
+					size = { 14, 14 },
+					position = { "LEFT", "RIGHT", 2, 0 }, -- right of the health bar
+				},
+				readycheck = {
+					size = { 20, 20 },
+					position = { "CENTER", 0, 0 }, -- on the health bar
+				},
 				role = {
 					size = { 22, 22 },
 					position = { "LEFT", -42, 0 }, -- relative to the health bar

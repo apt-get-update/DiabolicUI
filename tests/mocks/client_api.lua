@@ -749,6 +749,10 @@ function Api.install(client)
 		local u = resolve(unit)
 		return u and u.raidTarget
 	end
+	api.GetReadyCheckStatus = function(unit)
+		local u = resolve(unit)
+		return u and u.readyCheck
+	end
 	api.SetRaidTarget = function(unit, index)
 		local u = resolve(unit)
 		if u then

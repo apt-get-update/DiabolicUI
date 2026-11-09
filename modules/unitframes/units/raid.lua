@@ -197,6 +197,40 @@ local Style = function(self, unit)
 	Role:SetTexture(config.role.texture)
 	Role:Hide()
 
+	-- Raid Mark
+	-------------------------------------------------------------------
+	local RaidMark = Border:CreateTexture(nil, "OVERLAY")
+	RaidMark:SetSize(unpack(config.mark.size))
+	RaidMark:SetPoint(
+		config.mark.position[1],
+		Health,
+		config.mark.position[2],
+		config.mark.position[3],
+		config.mark.position[4]
+	)
+	RaidMark:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
+	RaidMark:Hide()
+
+	-- Ready Check
+	-------------------------------------------------------------------
+	local ReadyCheck = Border:CreateFrame("Frame")
+	ReadyCheck:SetFrameLevel(Border:GetFrameLevel() + 2) -- above the health value
+	ReadyCheck:SetSize(unpack(config.readycheck.size))
+	ReadyCheck:SetPoint(
+		config.readycheck.position[1],
+		Health,
+		config.readycheck.position[1],
+		config.readycheck.position[2],
+		config.readycheck.position[3]
+	)
+	ReadyCheck:Hide()
+
+	ReadyCheck.Icon = ReadyCheck:CreateTexture(nil, "OVERLAY")
+	ReadyCheck.Icon:SetAllPoints()
+
+	self.Range = { outsideAlpha = config.outside_range_alpha }
+	self.RaidMark = RaidMark
+	self.ReadyCheck = ReadyCheck
 	self.Auras = auras
 	self.CastBar = CastBar
 	self.Health = Health
