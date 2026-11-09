@@ -13,7 +13,7 @@ weight: 8
 | `nameplates/` | `nameplates.lua`, `auras.lua` | 3.3.5 plates have no unit: one learns its GUID while it's the target or mouseover
 | `blizzard/` | One file per Blizzard piece, named after it | Below
 | `chat/` | `windows`, `bubbles`, `filters`, `cleaner`, `slide`, `copy` | Web links use our own `url` link type, so `filters.lua` overrides `SetItemRef`
-| `objectives/` | Tracker, capture bars, world state, warnings | The tracker only changes alpha: its item buttons are secure
+| `objectives/` | Tracker, capture bars, world state, warnings, `banners` (boss and zone cards), `gains` (gold, XP and loot lines) | The tracker only changes alpha: its item buttons are secure
 | `minimap/` | An Ace3 addon kept as it is | Its own namespace and `+DiabolicUI_Minimap_DB+`: don't merge it into `+DiabolicUI_DB+`
 | `menu/` | `/dui config`: one `page-*.lua` per page, `controls.lua`, `movers.lua` |
 |===

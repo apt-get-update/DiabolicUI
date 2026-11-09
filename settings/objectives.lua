@@ -2,6 +2,62 @@ local ADDON, Engine = ...
 local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 
 Engine:NewStaticConfig("Objectives", {
+	-- the cards over the world (modules/objectives/banners.lua)
+	banners = {
+		font = "DiabolicFont_HeaderRegular18Title",
+		boss = {
+			position = { "CENTER", "UICenter", "CENTER", 0, 190 },
+			size = { 620, 160 },
+			fade_in = 0.4,
+			hold = 2.6,
+			fade_out = 1.2,
+			again_after = 300, -- seconds before the same boss gets its card again
+			small_size = 16,
+			small_color = { 0.8, 0.25, 0.15 },
+			name_size = 44,
+			name_color = { 1, 0.93, 0.76 },
+			text_x = 96,
+			text_y = -46,
+			line_gap = 6,
+			banner = {
+				texture = path .. [[textures\DiabolicUI_D3_BannerCloth.tga]],
+				size = { 80, 160 },
+				color = { 0.45, 0.07, 0.05 },
+			},
+			glyph = {
+				texture = path .. [[textures\DiabolicUI_Runes.tga]],
+				size = 52,
+				y = 24,
+				coords = { 0, 128 / 1024, 128 / 512, 256 / 512 }, -- the first glyph's pale row
+				alpha = 0.8,
+			},
+		},
+		zone = {
+			position = { "RIGHT", "UICenter", "RIGHT", -60, 90 },
+			size = { 520, 70 },
+			fade_in = 0.5,
+			hold = 2.5,
+			fade_out = 1.5,
+			small_size = 14,
+			name_size = 30,
+			name_color = { 1, 0.93, 0.76 },
+			text_x = 0,
+			text_y = 0,
+			line_gap = 4,
+		},
+	},
+	-- what you gain, at the right (modules/objectives/gains.lua)
+	gains = {
+		position = { "BOTTOMRIGHT", "UICenter", "BOTTOMRIGHT", -20, 200 },
+		font = "DiabolicFont_HeaderRegular14",
+		row_width = 320,
+		row_height = 20,
+		row_gap = 4,
+		max_rows = 6,
+		hold = 3,
+		fade = 1,
+		icon_coords = { 0.07, 0.93, 0.07, 0.93 },
+	},
 	capturebar = {
 		position = { "TOP", "UICenter", "TOP", 0, -300 },
 		size = { 195, 13 + 2 }, -- bar size
