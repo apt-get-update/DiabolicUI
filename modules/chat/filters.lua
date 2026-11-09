@@ -261,7 +261,10 @@ Module.OnInit = function(self, event, ...)
 		CHAT_BATTLEGROUND_GET = L["BG"],
 		CHAT_BATTLEGROUND_LEADER_GET = L["BL"],
 	}) do
-		SHORT_CHANNELS[_G[format]:match("%[(.-)%]")] = short
+		local name = _G[format]:match("%[(.-)%]")
+		if name then -- (a translation could do without the brackets)
+			SHORT_CHANNELS[name] = short
+		end
 	end
 end
 
