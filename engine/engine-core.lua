@@ -1054,21 +1054,33 @@ end
 -- Addon handling
 -------------------------------------------------------------
 
+-- [lowercase name] = place in the addon list, built on the first question:
+-- the list can't change while the game runs, only what's enabled in it can.
+local addonIndexes
+local GetAddOnIndex = function(target)
+	if not addonIndexes then
+		addonIndexes = {}
+		for i = 1, GetNumAddOns() do
+			addonIndexes[string_lower((GetAddOnInfo(i)))] = i
+		end
+	end
+	return addonIndexes[string_lower(target)]
+end
+
 -- Check if an addon exists in the addon listing and loadable on demand
 Engine.IsAddOnLoadable = function(self, target)
-	local target = string_lower(target)
-	for i = 1, GetNumAddOns() do
-		local name, _, _, _, loadable, reason, _ = self:GetAddOnInfo(i)
-		if string_lower(name) == target then
-			-- If its dependency is disabled, it can't be loaded.
-			-- *an exception might be if the dependency is ondemand too. But really...
-			if reason and (reason == "DISABLED" or reason == "DEP_DISABLED") then
-				return
-			end
-			if loadable then
-				return true
-			end
-		end
+	local index = GetAddOnIndex(target)
+	if not index then
+		return
+	end
+	local _, _, _, _, loadable, reason = self:GetAddOnInfo(index)
+	-- If its dependency is disabled, it can't be loaded.
+	-- *an exception might be if the dependency is ondemand too. But really...
+	if reason and (reason == "DISABLED" or reason == "DEP_DISABLED") then
+		return
+	end
+	if loadable then
+		return true
 	end
 end
 
@@ -1084,14 +1096,9 @@ end
 
 -- Check if an addon is enabled	in the addon listing
 Engine.IsAddOnEnabled = function(self, target)
-	local target = string_lower(target)
-	for i = 1, GetNumAddOns() do
-		local name, _, _, enabled, _, _, _ = self:GetAddOnInfo(i)
-		if string_lower(name) == target then
-			if enabled then
-				return true
-			end
-		end
+	local index = GetAddOnIndex(target)
+	if index and select(4, self:GetAddOnInfo(index)) then
+		return true
 	end
 end
 
