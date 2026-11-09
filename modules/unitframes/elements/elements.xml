@@ -3,6 +3,7 @@
 <Script file='aura.lua'/>
 <Script file='cast.lua'/>
 <Script file='classification.lua'/>
+<Script file='combopoints.lua'/>
 <Script file='health.lua'/>
 <Script file='name.lua'/>
 <Script file='portraits.lua'/>

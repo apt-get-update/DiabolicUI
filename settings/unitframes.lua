@@ -88,6 +88,12 @@ Engine:NewStaticConfig("UnitFrames", {
 					glow_alpha = 0.75,
 					alpha_recharging = 0.5,
 				},
+				-- Combo points: the runes' row and glyphs (their art is in runes above).
+				combopoints = {
+					size = { 350, 70 },
+					position = { "BOTTOM", "Main", "TOP", 0, 140 },
+					positionPet = { "BOTTOM", "Main", "TOP", 0, 140 + petOffset },
+				},
 				castbar = {
 					size = { 227, 15 },
 					position = { "BOTTOM", "Main", "TOP", 0, 210 + 20 }, -- 0, 210

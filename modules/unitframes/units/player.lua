@@ -181,6 +181,50 @@ local longBuffFilter = function(
 	end
 end
 
+-- A row of glyphs from the runes' texture, `art` saying which parts of it,
+-- `layout` where the row goes: row 0 of the texture is the empty slot,
+-- row 1 the fill and row 2 its glow.
+local CreateGlyphRow = function(self, art, count, layout, hasPet)
+	local glyphWidth, glyphHeight = unpack(art.glyph_size)
+	local size = art.rune_size
+
+	local row = self:CreateFrame("Frame")
+	row:SetSize(unpack(layout.size))
+	row:Place(unpack(hasPet and layout.positionPet or layout.position))
+
+	for i = 1, count do
+		local rune = CreateFrame("Frame", nil, row)
+		rune:SetSize(size, size)
+		rune:SetPoint("BOTTOMLEFT", (i - 1) * size, 0)
+		rune.size = size
+
+		local glyph = function(glyphRow, drawLayer)
+			local texture = rune:CreateTexture(nil, drawLayer)
+			local top = glyphRow * glyphHeight
+			texture.texCoords = { (i - 1) * glyphWidth, i * glyphWidth, top, top + glyphHeight }
+			texture:SetTexture(art.texture)
+			texture:SetTexCoord(unpack(texture.texCoords))
+			return texture
+		end
+
+		rune.Slot = glyph(art.glyph_rows.slot, "BACKGROUND")
+		rune.Slot:SetAllPoints()
+
+		rune.Fill = glyph(art.glyph_rows.fill, "ARTWORK")
+		rune.Glow = glyph(art.glyph_rows.glow, "OVERLAY")
+		rune.Glow:SetBlendMode("ADD")
+		rune.layers = { rune.Fill, rune.Glow }
+		for _, texture in ipairs(rune.layers) do
+			texture:SetPoint("BOTTOMLEFT")
+			texture:SetPoint("BOTTOMRIGHT")
+			texture:SetHeight(size)
+		end
+
+		row[i] = rune
+	end
+	return row
+end
+
 -- Left orb (health, castbar, actionbar auras)
 local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	local config = Module:GetDB("UnitFrames").visuals.units.player
@@ -330,55 +374,23 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 
 	-- Runes (death knights)
 	-------------------------------------------------------------------
-	-- Six glyphs from one texture: row 0 is the empty slot, row 1 the fill
-	-- and row 2 its glow. The Runes element fills and colors them.
 	local Runes
 	if CLASS == "DEATHKNIGHT" then
-		local configRunes = config.runes
-		local glyphWidth, glyphHeight = unpack(configRunes.glyph_size)
-		local size = configRunes.rune_size
-
-		Runes = self:CreateFrame("Frame")
-		Runes:SetSize(unpack(configRunes.size))
-		Runes:Place(unpack(hasPet and configRunes.positionPet or configRunes.position))
-		Runes.config = configRunes
-
-		for i = 1, 6 do
-			local rune = CreateFrame("Frame", nil, Runes)
-			rune:SetSize(size, size)
-			rune:SetPoint("BOTTOMLEFT", (i - 1) * size, 0)
-			rune.size = size
-
-			local glyph = function(row, drawLayer)
-				local texture = rune:CreateTexture(nil, drawLayer)
-				local top = row * glyphHeight
-				texture.texCoords = { (i - 1) * glyphWidth, i * glyphWidth, top, top + glyphHeight }
-				texture:SetTexture(configRunes.texture)
-				texture:SetTexCoord(unpack(texture.texCoords))
-				return texture
-			end
-
-			rune.Slot = glyph(configRunes.glyph_rows.slot, "BACKGROUND")
-			rune.Slot:SetAllPoints()
-
-			rune.Fill = glyph(configRunes.glyph_rows.fill, "ARTWORK")
-			rune.Glow = glyph(configRunes.glyph_rows.glow, "OVERLAY")
-			rune.Glow:SetBlendMode("ADD")
-			rune.layers = { rune.Fill, rune.Glow }
-			for _, texture in ipairs(rune.layers) do
-				texture:SetPoint("BOTTOMLEFT")
-				texture:SetPoint("BOTTOMRIGHT")
-				texture:SetHeight(size)
-			end
-
-			Runes[i] = rune
-		end
+		Runes = CreateGlyphRow(self, config.runes, 6, config.runes, hasPet)
+		Runes.config = config.runes
 	end
+
+	-- Combo points (rogues, cat druids, and the vehicles that have them)
+	-------------------------------------------------------------------
+	local ComboPoints = CreateGlyphRow(self, config.runes, 5, config.combopoints, hasPet)
+	ComboPoints:Hide()
+	ComboPoints.config = config.runes
 
 	self:HookScript("OnEnter", onEnterLeft)
 	self:HookScript("OnLeave", onLeaveLeft)
 
 	self.Runes = Runes
+	self.ComboPoints = ComboPoints
 	self.Buffs = Buffs
 	self.Debuffs = Debuffs
 	self.Health = Health
@@ -566,6 +578,7 @@ UnitFrameWidget.OnEvent = function(self, event, ...)
 		if Left.Runes then
 			Left.Runes:Place(unpack(self.config.runes[position]))
 		end
+		Left.ComboPoints:Place(unpack(self.config.combopoints[position]))
 	end
 end
 
