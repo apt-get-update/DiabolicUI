@@ -320,6 +320,18 @@ function TestChatHistory:test_a_mark_goes_stale()
 	assertClean(client)
 end
 
+function TestChatHistory:test_a_whisper_window_opened_later_keeps_none()
+	boot()
+	local history = client:GetModule("ChatHistory")
+	local whisperWindow = {}
+	for _, filter in ipairs(client.chatFilters.CHAT_MSG_GUILD) do
+		filter(whisperWindow, "CHAT_MSG_GUILD", "hello")
+	end
+	history:Record(whisperWindow, "hello")
+	lu.assertNil(next(history.db))
+	assertClean(client)
+end
+
 function TestChatHistory:test_the_last_100_lines()
 	boot()
 	local frame = _G.ChatFrame1

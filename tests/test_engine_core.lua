@@ -902,6 +902,7 @@ function TestEngineAddOns:test_is_addon_loadable()
 	state.addons[2].loadable = true
 	lu.assertTrue(Engine:IsAddOnLoadable("Blizzard_TalentUI"))
 	lu.assertNil(Engine:IsAddOnLoadable("Broken"))
+	lu.assertNil(Engine:IsAddOnLoadable("NotInstalled"))
 end
 
 os.exit(lu.LuaUnit.run())
