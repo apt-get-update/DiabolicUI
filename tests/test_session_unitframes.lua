@@ -1075,4 +1075,74 @@ function TestLowHealthWarning:test_can_be_turned_off()
 	assertClean(client)
 end
 
+-- Fading when idle -------------------------------------------------------------------
+
+TestIdleFade = {}
+
+function TestIdleFade:tearDown()
+	client, module = nil, nil
+end
+
+local function mainBars()
+	return client:GetModule("ActionBars"):GetWidget("Controller: Main"):GetFrame()
+end
+
+-- Long enough to fade out: `shown` whether the bars are there after it.
+local function afterAWhile(shown)
+	client:Tick(6, 0.1)
+	lu.assertEquals(mainBars():GetAlpha(), shown and 1 or 0.35)
+end
+
+local function fullHealthAndMana()
+	local me = client.world.units.player
+	me.health, me.healthMax = 100, 100
+	me.power, me.powerMax = 100, 100
+end
+
+function TestIdleFade:test_bars_and_orbs_fade_until_something_happens()
+	boot({ class = "MAGE" })
+	fullHealthAndMana()
+	local left = frameOf("Unit: Player")
+	afterAWhile(false)
+	lu.assertEquals(left.Health:GetAlpha(), 0.35)
+	lu.assertEquals(left.Buffs:GetAlpha(), 1) -- (the auras stay)
+
+	-- combat brings them back at once, they fade again after it
+	client:EnterCombat()
+	client:Tick(0.5, 0.05)
+	lu.assertEquals(mainBars():GetAlpha(), 1)
+	lu.assertEquals(left.Health:GetAlpha(), 1)
+	client:LeaveCombat()
+	afterAWhile(false)
+
+	-- a target
+	client:SetUnit("target", npc({ name = "Boar" }))
+	afterAWhile(true)
+	client:SetUnit("target", nil)
+	afterAWhile(false)
+
+	-- something on the cursor
+	client.world.cursorInfo = "spell"
+	afterAWhile(true)
+	client.world.cursorInfo = nil
+	afterAWhile(false)
+
+	-- short of mana
+	client.world.units.player.power = 50
+	afterAWhile(true)
+	fullHealthAndMana()
+	afterAWhile(false)
+
+	-- the mouse over the bars, faded or not
+	client:Hover(mainBars())
+	afterAWhile(true)
+	client:Leave()
+	afterAWhile(false)
+
+	-- turned off
+	client.Engine:GetConfig("ActionBars", "character").fadeWhenIdle = false
+	afterAWhile(true)
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

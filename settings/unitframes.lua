@@ -73,13 +73,13 @@ Engine:NewStaticConfig("UnitFrames", {
 		},
 		units = {
 			player = {
-				-- Death knight runes: a row of six rune glyphs between the
-				-- player auras and the castbar (layout from DiabolicUI2).
+				-- Death knight runes: a row of six small glyphs against the
+				-- power orb, over the xp bar and under the debuffs.
 				runes = {
-					size = { 420, 70 },
-					position = { "BOTTOM", "Main", "TOP", 0, 140 },
-					positionPet = { "BOTTOM", "Main", "TOP", 0, 140 + petOffset },
-					rune_size = 70,
+					size = { 168, 28 },
+					position = { "BOTTOMRIGHT", "Main", "TOPRIGHT", -4, 18 },
+					positionPet = { "BOTTOMRIGHT", "Main", "TOPRIGHT", -4, 18 + petOffset },
+					rune_size = 28,
 					texture = path .. [[textures\DiabolicUI_Runes.tga]], -- 8 glyphs x 3 rows (slot, fill, glow)
 					glyph_size = { 128 / 1024, 128 / 512 }, -- one glyph, in texture coordinates
 					glyph_rows = { slot = 0, fill = 1, glow = 2 },
@@ -90,9 +90,9 @@ Engine:NewStaticConfig("UnitFrames", {
 				},
 				-- Combo points: the runes' row and glyphs (their art is in runes above).
 				combopoints = {
-					size = { 350, 70 },
-					position = { "BOTTOM", "Main", "TOP", 0, 140 },
-					positionPet = { "BOTTOM", "Main", "TOP", 0, 140 + petOffset },
+					size = { 140, 28 },
+					position = { "BOTTOMRIGHT", "Main", "TOPRIGHT", -4, 18 },
+					positionPet = { "BOTTOMRIGHT", "Main", "TOPRIGHT", -4, 18 + petOffset },
 				},
 				castbar = {
 					size = { 227, 15 },

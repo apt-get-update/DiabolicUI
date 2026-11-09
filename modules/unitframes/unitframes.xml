@@ -7,5 +7,6 @@
 <Include file='units\units.xml'/>
 
 <Script file='lowhealth.lua'/>
+<Script file='idlefade.lua'/>
 
 </Ui>

@@ -91,6 +91,11 @@ function TestOptionsMenu:test_the_menu_checkboxes()
 	lu.assertEquals(bars.showGold, not gold)
 	click("ShowGold")
 	lu.assertEquals(bars.showGold, gold)
+	local fade = bars.fadeWhenIdle
+	click("FadeWhenIdle")
+	lu.assertEquals(bars.fadeWhenIdle, not fade)
+	click("FadeWhenIdle")
+	lu.assertEquals(bars.fadeWhenIdle, fade)
 	local performance = bars.showPerformance
 	click("ShowPerformance")
 	lu.assertEquals(bars.showPerformance, not performance)

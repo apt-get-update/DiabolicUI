@@ -1,5 +1,5 @@
 -- The Action Bars page of /dui config: the gold and fps next to the menu
--- buttons.
+-- buttons, the bars and orbs fading when idle.
 local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
@@ -41,10 +41,24 @@ Module.CreateActionBarsPage = function(self)
 	)
 	layout:Place(showPerformance, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
 
+	CreateHeader(actionBarsPanel, layout, L["Bars and Orbs"])
+
+	local fadeWhenIdle = CreateCheckbox(
+		actionBarsPanel,
+		"FadeWhenIdle",
+		L["Fade When Idle"],
+		L["Dims the action bars and orbs while nothing's going on. They come back in combat, with a target, while casting, short of health or mana, and with the mouse over them."],
+		function(button)
+			actionbarsDB.fadeWhenIdle = button:GetChecked() and true or false
+		end
+	)
+	layout:Place(fadeWhenIdle, CHECK_X, layout:Row(CHECK_HEIGHT, HEADER_GAP))
+
 	actionBarsPanel.okay = function() end
 	actionBarsPanel.cancel = function()
 		showGold:SetChecked(actionbarsDB.showGold)
 		showPerformance:SetChecked(actionbarsDB.showPerformance)
+		fadeWhenIdle:SetChecked(actionbarsDB.fadeWhenIdle)
 	end
 	actionBarsPanel.refresh = actionBarsPanel.cancel
 	actionBarsPanel.cancel()

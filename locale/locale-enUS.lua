@@ -217,6 +217,10 @@ L["Show Gold"] = true
 L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] = true
 L["Show FPS & Latency"] = true
 L["Shows your framerate and latency, next to the menu button in the bottom right corner."] = true
+L["Bars and Orbs"] = true
+L["Fade When Idle"] = true
+L["Dims the action bars and orbs while nothing's going on. They come back in combat, with a target, while casting, short of health or mana, and with the mouse over them."] =
+	true
 L["Objectives"] = true
 L["Fade Quest Tracker"] = true
 L["Fades the quest tracker out after it hasn't been moused over for a while, and shows it again as soon as you mouse over it.|n|nUses Questie's tracker when it's enabled, Blizzard's otherwise."] =
