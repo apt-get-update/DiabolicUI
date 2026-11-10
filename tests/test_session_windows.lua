@@ -1807,46 +1807,9 @@ function TestWindowKit:test_the_quest_map_button_is_placed_again_with_blizzards(
 	assertClean(client)
 end
 
-function TestWindowKit:test_the_options_say_what_a_control_does_beside_it()
+function TestWindowKit:test_the_options_lose_blizzards_backdrop()
 	boot()
-	local options = _G.InterfaceOptionsFrame
-	lu.assertNil(options:GetBackdrop())
-	options:Show()
-	local pane = client:GetModule("Blizzard: Options").Panes.InterfaceOptionsFrame
-	local control = _G.CreateFrame("Button", nil, _G.InterfaceOptionsFramePanelContainer)
-	local tooltip = _G.GameTooltip
-	tooltip:SetOwner(control, "ANCHOR_RIGHT")
-	tooltip:SetText("Scale")
-	tooltip:AddLine("How big it all is.", 1, 1, 1, true)
-	tooltip:Show()
-	client:Tick(0.05)
-	lu.assertEquals(pane.Title:GetText(), "Scale")
-	lu.assertEquals(pane.Body:GetText(), "How big it all is.")
-	lu.assertEquals(tooltip:GetAlpha(), 0)
-
-	-- gone with the mouse: back to normal, what it said still beside the settings
-	tooltip:Hide()
-	client:Tick(0.05)
-	lu.assertEquals(tooltip:GetAlpha(), 1)
-
-	-- a tooltip for something else stays
-	tooltip:SetOwner(_G.CreateFrame("Frame", nil, _G.UIParent), "ANCHOR_RIGHT")
-	tooltip:SetText("Other")
-	tooltip:Show()
-	client:Tick(0.05)
-	lu.assertEquals(tooltip:IsShown(), 1)
-	lu.assertEquals(tooltip:GetAlpha(), 1)
-	lu.assertEquals(pane.Title:GetText(), "Scale")
-
-	-- closed with one up: the tooltip back to normal, an empty pane next time
-	tooltip:SetOwner(control, "ANCHOR_RIGHT")
-	tooltip:SetText("Scale")
-	tooltip:Show()
-	client:Tick(0.05)
-	options:Hide()
-	lu.assertEquals(tooltip:GetAlpha(), 1)
-	options:Show()
-	lu.assertEquals(pane.Title:GetText(), "")
+	lu.assertNil(_G.InterfaceOptionsFrame:GetBackdrop())
 	assertClean(client)
 end
 

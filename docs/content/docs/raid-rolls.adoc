@@ -41,4 +41,4 @@ party chat from the master looter or an assistant.
 Anyone with DiabolicUI who opens a corpse under master loot also sends the items as addon messages
 (prefix `DiabolicUI`).
 
-*To try it:* `/dui config` → Units → *Fake Loot Roll*. Tests: `tests/test_session_rollwindow.lua`.
+*To try it:* `/dui loot`. Tests: `tests/test_session_rollwindow.lua`.

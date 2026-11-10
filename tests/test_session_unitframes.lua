@@ -1075,73 +1075,40 @@ function TestLowHealthWarning:test_can_be_turned_off()
 	assertClean(client)
 end
 
--- Fading when idle -------------------------------------------------------------------
+-- Names and nameplates only in combat ---------------------------------------------
 
-TestIdleFade = {}
+TestCombatNames = {}
 
-function TestIdleFade:tearDown()
+function TestCombatNames:tearDown()
 	client, module = nil, nil
 end
 
-local function mainBars()
-	return client:GetModule("ActionBars"):GetWidget("Controller: Main"):GetFrame()
-end
-
--- Long enough to fade out: `shown` whether the bars are there after it.
-local function afterAWhile(shown)
-	client:Tick(6, 0.1)
-	lu.assertEquals(mainBars():GetAlpha(), shown and 1 or 0.35)
-end
-
-local function fullHealthAndMana()
-	local me = client.world.units.player
-	me.health, me.healthMax = 100, 100
-	me.power, me.powerMax = 100, 100
-end
-
-function TestIdleFade:test_bars_and_orbs_fade_until_something_happens()
-	boot({ class = "MAGE" })
-	fullHealthAndMana()
-	local left = frameOf("Unit: Player")
-	afterAWhile(false)
-	lu.assertEquals(left.Health:GetAlpha(), 0.35)
-	lu.assertEquals(left.Buffs:GetAlpha(), 1) -- (the auras stay)
-
-	-- combat brings them back at once, they fade again after it
+function TestCombatNames:test_names_and_nameplates_only_in_combat()
+	boot()
+	local GetCVar, SetCVar = _G.GetCVar, _G.SetCVar
+	local names = client:GetModule("CombatNames")
+	-- out of combat: off
+	lu.assertEquals(GetCVar("UnitNameNPC"), "0")
+	lu.assertEquals(GetCVar("nameplateShowEnemies"), "0")
+	-- in combat: as they were, and yours changed then kept
 	client:EnterCombat()
-	client:Tick(0.5, 0.05)
-	lu.assertEquals(mainBars():GetAlpha(), 1)
-	lu.assertEquals(left.Health:GetAlpha(), 1)
+	SetCVar("UnitNameNPC", "1")
 	client:LeaveCombat()
-	afterAWhile(false)
-
-	-- a target
-	client:SetUnit("target", npc({ name = "Boar" }))
-	afterAWhile(true)
-	client:SetUnit("target", nil)
-	afterAWhile(false)
-
-	-- something on the cursor
-	client.world.cursorInfo = "spell"
-	afterAWhile(true)
-	client.world.cursorInfo = nil
-	afterAWhile(false)
-
-	-- short of mana
-	client.world.units.player.power = 50
-	afterAWhile(true)
-	fullHealthAndMana()
-	afterAWhile(false)
-
-	-- the mouse over the bars, faded or not
-	client:Hover(mainBars())
-	afterAWhile(true)
-	client:Leave()
-	afterAWhile(false)
-
-	-- turned off
-	client.Engine:GetConfig("ActionBars", "character").fadeWhenIdle = false
-	afterAWhile(true)
+	lu.assertEquals(GetCVar("UnitNameNPC"), "0")
+	client:EnterCombat()
+	lu.assertEquals(GetCVar("UnitNameNPC"), "1")
+	client:LeaveCombat()
+	-- logging out: yours back for Config.wtf
+	client:FireEvent("PLAYER_LOGOUT")
+	lu.assertEquals(GetCVar("UnitNameNPC"), "1")
+	names:Apply()
+	lu.assertEquals(GetCVar("UnitNameNPC"), "0")
+	-- the option off: yours back, and kept so
+	client.Engine:GetConfig("UnitFrames").combatNames = false
+	names:Apply()
+	lu.assertEquals(GetCVar("UnitNameNPC"), "1")
+	names:Apply()
+	lu.assertEquals(GetCVar("UnitNameNPC"), "1")
 	assertClean(client)
 end
 

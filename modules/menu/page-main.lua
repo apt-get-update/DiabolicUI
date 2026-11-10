@@ -1,5 +1,6 @@
 -- The main page of /dui config: what's where, the UI scale, Unlock Frames
--- and Reset Positions, and the chat commands.
+-- and Reset Positions, world messages and names in combat, and the chat
+-- commands.
 local Addon, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
@@ -18,6 +19,7 @@ local BUTTON_HEIGHT, SLIDER_BLOCK_HEIGHT, INTRO_WIDTH, LOGO_HEIGHT =
 	C.BUTTON_HEIGHT, C.SLIDER_BLOCK_HEIGHT, C.INTRO_WIDTH, C.LOGO_HEIGHT
 local SECTION_GAP, HEADER_GAP, NewLayout, CreateTitle = C.SECTION_GAP, C.HEADER_GAP, C.NewLayout, C.CreateTitle
 local CreateHeader, CreateButton, CreateValueSlider = C.CreateHeader, C.CreateButton, C.CreateValueSlider
+local CreateCheckbox, CHECK_X, CHECK_HEIGHT = C.CreateCheckbox, C.CHECK_X, C.CHECK_HEIGHT
 
 -- The DiabolicUI page itself; the others go under it
 Module.CreateMainPage = function(self)
@@ -89,14 +91,41 @@ Module.CreateMainPage = function(self)
 	layout:Place(resetPositions, EDGE + SLIDER_COLUMN, moveRow)
 	self.UnlockFramesButton = unlockFrames
 
+	local objectivesDB = Engine:GetConfig("ObjectiveTracker")
+	local worldMessages = CreateCheckbox(
+		panel,
+		"WorldMessages",
+		L["World Messages"],
+		L["A boss's name and each new zone over the world, and the small lines at the right for the gold, XP and loot you gain."],
+		function(button)
+			objectivesDB.worldMessages = button:GetChecked() and true or false
+		end
+	)
+	local unitsDB = Engine:GetConfig("UnitFrames")
+	local combatNames = CreateCheckbox(
+		panel,
+		"CombatNames",
+		L["Names in Combat Only"],
+		L["Names over heads and nameplates only in combat, as the game's own settings, back as they were when this is off. Enemy players' names stay."],
+		function(button)
+			unitsDB.combatNames = button:GetChecked() and true or false
+			Engine:GetModule("CombatNames"):Apply()
+		end
+	)
+	local checkRow = layout:Row(CHECK_HEIGHT, SECTION_GAP)
+	layout:Place(worldMessages, CHECK_X, checkRow)
+	layout:Place(combatNames, CHECK_X + SLIDER_COLUMN, checkRow)
+
 	CreateHeader(panel, layout, L["Chat Commands"])
 	local commands = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	commands:SetJustifyH("LEFT")
 	commands:SetWidth(INTRO_WIDTH)
 	commands:SetText(
 		L["/dui config - these options|n/dui move - unlocks the minimap, the chat, the menu buttons and the quest tracker to move them"]
+			.. "|n"
+			.. L["/dui party, /dui raid, /dui loot - a fake party, raid or loot roll to preview them"]
 	)
-	layout:Place(commands, EDGE, layout:Row(LABEL_HEIGHT * 3, HEADER_GAP))
+	layout:Place(commands, EDGE, layout:Row(LABEL_HEIGHT * 4, HEADER_GAP))
 
 	local version = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
 	version:SetPoint("BOTTOMRIGHT", -EDGE, EDGE)
@@ -106,7 +135,10 @@ Module.CreateMainPage = function(self)
 	panel.cancel = function()
 		unlockFrames:SetText(self:AreFramesUnlocked() and L["Lock Frames"] or L["Unlock Frames"])
 		uiScale:SetValueSilently(math_floor(scaling.scale * 100 + 0.5))
+		worldMessages:SetChecked(objectivesDB.worldMessages)
+		combatNames:SetChecked(unitsDB.combatNames)
 	end
 	panel.refresh = panel.cancel
+	panel.cancel()
 	return panel
 end

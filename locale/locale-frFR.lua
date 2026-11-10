@@ -84,12 +84,6 @@ L["Colors the player, target, party, raid and tab-target of target health bars b
 L["Show Portrait"] = "Afficher le portrait"
 L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] =
 	"Affiche un portrait animé en 3D sur les cadres de groupe et de cible secondaire.|n|nNécessite un rechargement de l'interface pour s'appliquer."
-L["Toggle Fake Party"] = "Basculer faux groupe"
-L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] =
-	"Affiche ou masque un faux groupe de membres fictifs, pour prévisualiser l'apparence des cadres de groupe sans avoir besoin d'un vrai groupe."
-L["Toggle Fake Raid"] = "Basculer faux raid"
-L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."] =
-	"Affiche ou masque un faux raid de membres fictifs, pour prévisualiser l'apparence des cadres de raid sans avoir besoin d'un vrai groupe."
 L["Menu"] = "Menu"
 L["Show Gold"] = "Afficher l'argent"
 L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] =
@@ -132,10 +126,7 @@ L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzar
 	"Relooke la fenêtre de butin pour correspondre au reste de l'interface. Si désactivé, la fenêtre de butin par défaut de Blizzard est utilisée à la place.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Roll Window"] = "Fenêtre de jets"
 L["Coming Up"] = "À venir"
-L["Fake Loot Roll"] = "Faux jet de butin"
 L["Fake Boss"] = "Faux boss"
-L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."] =
-	"Affiche la fenêtre de jets et la liste du butin avec du faux butin, pour les essayer sans raid. Nécessite la fenêtre de jets activée."
 L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."] =
 	"Affiche une fenêtre quand le maître du butin, le chef ou un avertissement de raid met un objet en jeu, avec le temps restant et des boutons pour le tirer : Spé principale (/roll 100) ou Spé secondaire (/roll 99). Le butin du boss qu'ils annoncent dans le chat s'affiche dans une liste à droite.|n|nNécessite un rechargement de l'interface pour s'appliquer."
 L["Rolls"] = "Jets" -- roll window title
@@ -249,7 +240,6 @@ L["DiabolicUI: Questie has changed, its tracker is left as it is."] =
 	"DiabolicUI : Questie a changé, son suivi de quêtes est laissé tel quel."
 L["Drag to move the tracker"] = "Glissez pour déplacer le suivi"
 L["Reset Positions"] = "Positions par défaut"
-L["Preview"] = "Aperçu"
 L["Puts the menu buttons, the chat and Blizzard's quest tracker back in their places."] =
 	"Remet les boutons du menu, le chat et le suivi de quêtes de Blizzard à leur place."
 L["Frames & AddOns"] = "Fenêtres et addons"

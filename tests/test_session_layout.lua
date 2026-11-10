@@ -366,6 +366,24 @@ function TestLayoutAudit:test_a_part_waits_for_the_window_its_placed_on()
 	assertClean(client)
 end
 
+-- One that would loop with a part still waiting for its window (Blizzard's
+-- anchors the other way round): it waits as well, both placed once it's made.
+function TestLayoutAudit:test_a_part_that_would_loop_waits_too()
+	boot()
+	local adjust = client:GetModule("Blizzard: Adjust")
+	local frame = CreateFrame("Frame", "LoopFrame", _G.UIParent)
+	local main = CreateFrame("Frame", "LoopMain", frame)
+	local off = CreateFrame("Frame", "LoopOff", frame)
+	off:SetPoint("LEFT", main, "RIGHT", 0, 0)
+	adjust.config.LoopMain = { "RIGHT", "LoopOff", "LEFT", -6, 0 }
+	adjust.config.LoopOff = { "TOP", "LoopFrameDiabolic", "TOP", 0, -10 }
+	adjust:Apply()
+	local win = kit:CreateWindow(frame, { 0, 0, 0, 0 })
+	lu.assertEquals({ off:GetPoint() }, { "TOP", win, "TOP", 0, -10 })
+	lu.assertEquals({ main:GetPoint() }, { "RIGHT", off, "LEFT", -6, 0 })
+	assertClean(client)
+end
+
 -- settings/positions.lua (modules/blizzard/adjust.lua): a part moved
 -- and resized by its name, kept so whatever moves it again; one made later
 -- once an addon loads; a protected one after combat.
@@ -412,11 +430,9 @@ function TestLayoutAudit:test_parts_sized_only_and_chains_swapped()
 	local first = button(frame, "ChainFirst", 10, 10, 80, "Join")
 	local second = CreateFrame("Button", "ChainSecond", frame)
 	second:SetSize(80, 22)
-	second:SetPoint("LEFT", first, "RIGHT", 8, 0)
+	second:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 10)
 	first:ClearAllPoints()
 	first:SetPoint("RIGHT", second, "LEFT", -8, 0) -- (Blizzard's: the first hangs off the second)
-	second:ClearAllPoints()
-	second:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 10)
 	local positions = adjust.config
 	positions.ChainSecond = { "LEFT", "ChainFirst", "RIGHT", 8, 0 }
 	positions.ChainFirst = { "BOTTOM", "ChainFrame", "BOTTOM", 0, 10, 100, 24 }

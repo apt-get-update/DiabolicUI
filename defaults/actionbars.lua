@@ -7,7 +7,6 @@ Engine:NewConfig("ActionBars", {
 	cast_on_down = 0, -- this setting is only used for WotLK
 	showGold = true,
 	showPerformance = false,
-	fadeWhenIdle = true, -- the bars and orbs dim while nothing's going on (modules/unitframes/idlefade.lua)
 	-- what runs after switching to the primary (1) or secondary (2)
 	-- specialization; false leaves it as it is
 	specEquipSet1 = false, -- an equipment set's name

@@ -7,6 +7,7 @@ Engine:NewConfig("UnitFrames", {
 	testRaidMode = false, -- preview a mock raid with fake members
 	showPortrait = false, -- show an animated 3D model portrait on party and focus frames
 	lowHealthWarning = true, -- the screen's edges pulse red while your health is low (modules/unitframes/lowhealth.lua)
+	combatNames = true, -- names over heads and nameplates only in combat (modules/nameplates/combatnames.lua)
 	player = {},
 	target = {},
 })

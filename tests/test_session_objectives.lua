@@ -587,6 +587,18 @@ function TestBanners:test_a_new_zone_gets_its_card()
 	assertClean(client)
 end
 
+function TestBanners:test_world_messages_can_be_turned_off()
+	boot()
+	client.Engine:GetConfig("ObjectiveTracker").worldMessages = false
+	local card, gains = client:GetModule("Banners").Zone, client:GetModule("Gains")
+	client.world.zone.zone = "Duskwood"
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertFalse(shown(card))
+	gains:Add("xp", nil, tostring, 5)
+	lu.assertNil(gains.active[1])
+	assertClean(client)
+end
+
 -- What you gain ----------------------------------------------------------------------
 
 TestGains = {}

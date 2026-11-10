@@ -33,7 +33,7 @@ Engine:NewStaticConfig("Objectives", {
 			},
 		},
 		zone = {
-			position = { "RIGHT", "UICenter", "RIGHT", -60, 90 },
+			position = { "CENTER", "UICenter", "CENTER", 0, 260 },
 			size = { 520, 70 },
 			fade_in = 0.5,
 			hold = 2.5,

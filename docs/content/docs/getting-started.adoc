@@ -44,6 +44,7 @@ Then `/reload` in game. A texture or a new file needs a full restart.
 
 | `/dui config` | The options
 | `/dui move` | Unlock and move frames
+| `/dui party`, `/dui raid`, `/dui loot` | A fake party, raid or loot roll, to preview them
 | `/dui layout` | Save the open windows for the editor
 | `/rl` | Reload
 |===

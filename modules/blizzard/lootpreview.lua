@@ -255,7 +255,7 @@ Module.OnChat = function(self, event, message, sender)
 	end
 end
 
--- Fake Loot Roll (/dui config, AddOns): a boss's loot and a roll on its
+-- Fake loot roll (/dui loot): a boss's loot and a roll on its
 -- first item, as a raid warning puts them, to try both windows solo
 local FAKE_LOOT = {
 	"|cffff8000|Hitem:19019:0:0:0:0:0:0:0:0|h[Thunderfury, Blessed Blade of the Windseeker]|h|r",

@@ -236,6 +236,41 @@ local POINT_OFFSETS = {
 	BOTTOMRIGHT = { 1, 0 },
 }
 
+-- Whether `widget` is anchored (through any chain of anchors) to `target`.
+local function hangsOff(widget, target)
+	if widget == target then
+		return true
+	end
+	local s = state[widget]
+	if not s then
+		return false
+	end
+	if s.allPoints and hangsOff(s.allPoints, target) then
+		return true
+	end
+	for _, p in ipairs(s.points or {}) do
+		if p[2] and hangsOff(p[2], target) then
+			return true
+		end
+	end
+	return false
+end
+
+-- The client refuses an anchor that would loop.
+local function refuseLoop(widget, relativeTo, method)
+	if relativeTo and hangsOff(relativeTo, widget) then
+		error(
+			string.format(
+				"%s:%s(): %s is dependent on this",
+				tostring(widget:GetName()),
+				method,
+				tostring(relativeTo:GetName())
+			),
+			3
+		)
+	end
+end
+
 -- Whether `widget` is a texture or font string, or anchored (through any
 -- chain of anchors) to one.
 local function anchoredToRegion(widget, seen)
@@ -426,6 +461,7 @@ define(Region, {
 	end,
 	SetPoint = function(self, ...)
 		local point, relativeTo, relativePoint, x, y = normalizePoint(self, ...)
+		refuseLoop(self, relativeTo, "SetPoint")
 		local s = state[self]
 		-- the 3.3.5 client silently drops a protected frame's anchor to a
 		-- texture or font string, or to anything anchored to one
@@ -446,6 +482,7 @@ define(Region, {
 			relativeTo = _G[relativeTo]
 		end
 		relativeTo = resolve(relativeTo)
+		refuseLoop(self, relativeTo, "SetAllPoints")
 		local s = state[self]
 		if s.protected and relativeTo and anchoredToRegion(relativeTo) then
 			return

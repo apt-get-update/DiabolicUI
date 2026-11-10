@@ -1,8 +1,10 @@
--- User settings for the quest tracker fade (saved per profile in DiabolicUI_DB).
+-- User settings for the quest tracker fade and the messages over the world
+-- (saved per profile in DiabolicUI_DB).
 local _, Engine = ...
 
 Engine:NewConfig("ObjectiveTracker", {
 	fadeTracker = false, -- fade the quest tracker (Questie's if in use, else Blizzard's) out when it hasn't been moused over for a while
 	fadeDelay = 3, -- seconds the tracker stays fully visible before it starts fading, 1-30
 	fadeOpacity = 25, -- opacity (%) the tracker fades down to, 0-100
+	worldMessages = true, -- a boss's name and each new zone over the world, and the gold, XP and loot you gain
 })

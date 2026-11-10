@@ -1,5 +1,5 @@
 -- The Units page of /dui config: class colors, portraits, the low health
--- warning, and the fake party, raid and loot roll to preview them.
+-- warning.
 local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
@@ -7,14 +7,12 @@ local Module = Engine:GetModule("Menu")
 -- the controls (controls.lua)
 local C = Module.Controls
 local NewPage = C.NewPage
-local EDGE, CHECK_X, SLIDER_COLUMN, CHECK_HEIGHT = C.EDGE, C.CHECK_X, C.SLIDER_COLUMN, C.CHECK_HEIGHT
-local BUTTON_HEIGHT, HEADER_GAP, ROW_GAP, CreateHeader = C.BUTTON_HEIGHT, C.HEADER_GAP, C.ROW_GAP, C.CreateHeader
-local CreateCheckbox, CreateButton = C.CreateCheckbox, C.CreateButton
+local CHECK_X, CHECK_HEIGHT, HEADER_GAP, ROW_GAP = C.CHECK_X, C.CHECK_HEIGHT, C.HEADER_GAP, C.ROW_GAP
+local CreateHeader, CreateCheckbox = C.CreateHeader, C.CreateCheckbox
 
 -- The Units page
 Module.CreateUnitsPage = function(self)
 	local db = self:GetConfig("UnitFrames")
-	local UnitFrames = Engine:GetModule("UnitFrames")
 	local unitsPanel, layout = NewPage("DiabolicUIOptionsPanelUnits", L["Units"])
 
 	CreateHeader(unitsPanel, layout, L["Appearance"])
@@ -63,42 +61,6 @@ Module.CreateUnitsPage = function(self)
 		end
 	)
 	layout:Place(lowHealthWarning, CHECK_X, layout:Row(CHECK_HEIGHT, ROW_GAP))
-
-	-- fake members and loot, to see the frames without a group
-	CreateHeader(unitsPanel, layout, L["Preview"])
-	local toggleFakeParty = CreateButton(
-		unitsPanel,
-		"ToggleFakeParty",
-		L["Toggle Fake Party"],
-		L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."],
-		function(button)
-			db.testPartyMode = not db.testPartyMode
-			UnitFrames:SetPartyMockShown(db.testPartyMode)
-		end
-	)
-	local toggleFakeRaid = CreateButton(
-		unitsPanel,
-		"ToggleFakeRaid",
-		L["Toggle Fake Raid"],
-		L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."],
-		function(button)
-			db.testRaidMode = not db.testRaidMode
-			UnitFrames:SetRaidMockShown(db.testRaidMode)
-		end
-	)
-	local fakeLootRoll = CreateButton(
-		unitsPanel,
-		"FakeLootRoll",
-		L["Fake Loot Roll"],
-		L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."],
-		function()
-			Engine:GetModule("Blizzard: LootPreview"):ShowFakeRoll()
-		end
-	)
-	local previewRow = layout:Row(BUTTON_HEIGHT, HEADER_GAP)
-	layout:Place(toggleFakeParty, EDGE, previewRow)
-	layout:Place(toggleFakeRaid, EDGE + SLIDER_COLUMN, previewRow)
-	layout:Place(fakeLootRoll, EDGE, layout:Row(BUTTON_HEIGHT, ROW_GAP))
 
 	unitsPanel.okay = function() end
 	unitsPanel.cancel = function()

@@ -9,7 +9,8 @@
 --             Blizzard UI pieces handlers/blizzard.lua can disable.
 --   Modules   Engine:NewModule(name[, priority])  Features. They get an
 --             OnInit and an OnEnable call; priority is "HIGH", "NORMAL"
---             (default) or "LOW".
+--             (default), "LOW" or "LAST" (after every other module: within
+--             a priority, the order isn't fixed).
 --   Widgets   module:SetWidget(name)    Parts of a module, which enables
 --             them itself. They receive events while their module is enabled.
 --
@@ -102,7 +103,7 @@ local handlerElementsEnabledState = {} -- registry to "reverse" the enable/disab
 
 local modules = {} -- module registry
 local moduleWidgets = {} -- module widget registry
-local moduleLoadPriority = { HIGH = {}, NORMAL = {}, LOW = {} } -- module load priorities
+local moduleLoadPriority = { HIGH = {}, NORMAL = {}, LOW = {}, LAST = {} } -- module load priorities
 
 local initializedObjects = {} -- hash table for initialized objects
 local enabledObjects = {} -- hash table for enabled modules, widgets and handler elements
@@ -122,8 +123,8 @@ local conflicts = {} -- [addon] = true: the addons that made an object stand dow
 local INCOMBAT = UnitAffectingCombat("player") -- flag to track combat status
 local INLOCKDOWN = InCombatLockdown() -- flag to track combat lockdown status
 
-local PRIORITY_HASH = { HIGH = true, NORMAL = true, LOW = true } -- hashed priority table, for faster validity checks
-local PRIORITY_INDEX = { "HIGH", "NORMAL", "LOW" } -- indexed/ordered priority table
+local PRIORITY_HASH = { HIGH = true, NORMAL = true, LOW = true, LAST = true } -- hashed priority table, for faster validity checks
+local PRIORITY_INDEX = { "HIGH", "NORMAL", "LOW", "LAST" } -- indexed/ordered priority table
 local DEFAULT_MODULE_PRIORITY = "NORMAL" -- default load priority for new modules
 
 local KEYWORD_DEFAULT -- default keyword used as a fallback. this will not be user editable.

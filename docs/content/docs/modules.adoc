@@ -9,7 +9,7 @@ weight: 8
 | Folder | What's there | Good to know
 
 | `actionbars/` | One module, one widget per file (`bar1.lua`, `pet.lua`, `xp.lua`...) | Buttons come from the `ActionButton` handler
-| `unitframes/` | `units/` the frames, `elements/` what they show, `idlefade.lua` the bars and orbs fading when idle | Built by the `UnitFrame` handler
+| `unitframes/` | `units/` the frames, `elements/` what they show | Built by the `UnitFrame` handler
 | `nameplates/` | `nameplates.lua`, `auras.lua` | 3.3.5 plates have no unit: one learns its GUID while it's the target or mouseover
 | `blizzard/` | One file per Blizzard piece, named after it | Below
 | `chat/` | `windows`, `bubbles`, `filters`, `cleaner`, `slide`, `copy` | Web links use our own `url` link type, so `filters.lua` overrides `SetItemRef`
@@ -25,7 +25,6 @@ weight: 8
 
 | `windows.lua` and `windows-*.lua` | The kit: stone, iron, red band, title plate and foot; `-tabs`, `-controls`, `-buttons` and `-zones` hold those parts
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
-| `options.lua` | The Interface, Video and Audio options: what the control under the mouse does, beside the settings. It reads the control's tooltip, so a new control needs nothing
 | `character.lua`, `mail.lua`, `auction.lua`... | A window that needs more than that line
 | `adjust.lua` | Puts parts where `settings/positions.lua` says
 | `layout-scan.lua` | `/dui layout`, for the link:{{< relref "windows-editor" >}}[editor]

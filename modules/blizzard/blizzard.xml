@@ -31,7 +31,6 @@
 <Script file='mail.lua'/>
 <Script file='merchant.lua'/>
 <Script file='panels.lua'/>
-<Script file='options.lua'/>
 <Script file='mirrortimers.lua'/>
 <Script file='popups.lua'/>
 <Script file='questlog.lua'/>

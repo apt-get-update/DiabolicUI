@@ -2,7 +2,7 @@
 -- (and the bags, unless a bag addon replaces them), in DiabolicUI's colors:
 -- textures in the backdrop color, text in the title color.
 local _, Engine = ...
-local Module = Engine:NewModule("Blizzard: Styling", "LOW")
+local Module = Engine:NewModule("Blizzard: Styling", "HIGH") -- (first: only Blizzard's own textures and texts to tint, not the windows built on them)
 local C = Engine:GetDB("Data: Colors")
 
 -- Lua API

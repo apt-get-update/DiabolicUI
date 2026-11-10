@@ -150,7 +150,22 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnCombatStart")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEnteringWorld")
 	self:RegisterMessage("ENGINE_UI_SCALE_CHANGED", "ApplyUIScale") -- /dui setscale
-	self:GetHandler("ChatCommand"):Register("move", function()
+	local commands = self:GetHandler("ChatCommand")
+	commands:Register("move", function()
 		self:SetFramesUnlocked(not self:AreFramesUnlocked())
+	end)
+
+	-- fake members and loot, to see the frames without a group
+	local units = self:GetConfig("UnitFrames")
+	commands:Register("party", function()
+		units.testPartyMode = not units.testPartyMode
+		Engine:GetModule("UnitFrames"):SetPartyMockShown(units.testPartyMode)
+	end)
+	commands:Register("raid", function()
+		units.testRaidMode = not units.testRaidMode
+		Engine:GetModule("UnitFrames"):SetRaidMockShown(units.testRaidMode)
+	end)
+	commands:Register("loot", function()
+		Engine:GetModule("Blizzard: LootPreview"):ShowFakeRoll()
 	end)
 end

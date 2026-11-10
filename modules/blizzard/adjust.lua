@@ -3,7 +3,7 @@
 -- addon's once it loads), and again each time something else moves or resizes
 -- it. A part Blizzard protects waits out combat.
 local _, Engine = ...
-local Module = Engine:NewModule("Blizzard: Adjust", "LOW")
+local Module = Engine:NewModule("Blizzard: Adjust", "LAST") -- (after the modules making the parts it places)
 
 local kit
 
@@ -43,6 +43,23 @@ local CanMove = function(part)
 	return not (Applying or (part.IsProtected and part:IsProtected() and InCombatLockdown()))
 end
 
+-- Is `frame` anchored to `part`, directly or through others? The game won't
+-- place `part` on it then.
+local HangsOff
+HangsOff = function(frame, part)
+	if frame == part then
+		return true
+	end
+	for i = 1, frame:GetNumPoints() do
+		local _, relative = frame:GetPoint(i)
+		if relative and HangsOff(relative, part) then
+			return true
+		end
+	end
+	return false
+end
+
+-- (true if it was placed)
 local Place = function(part)
 	local entry = Module:GetEntry(Placed[part])
 	if (not IsPlace(entry)) or (not CanMove(part)) then
@@ -50,7 +67,7 @@ local Place = function(part)
 	end
 	local point, relative, relativePoint, x, y = unpack(entry)
 	local target = _G[relative]
-	if not target then
+	if (not target) or HangsOff(target, part) then
 		Waiting[part] = true
 		return
 	end
@@ -64,6 +81,7 @@ local Place = function(part)
 		part:SetPoint(second[1], target, second[2], second[3], second[4])
 	end
 	Applying = nil
+	return true
 end
 
 local Size = function(part)
@@ -121,11 +139,16 @@ Module.Apply = function(self)
 	end
 end
 
--- Those waiting for a frame to be placed on, now one's been made.
+-- Those waiting for a frame to be placed on, now one's been made. (Until none
+-- moves: placing one can free another that was waiting on it.)
 Module.PlaceWaiting = function(self)
-	for part in pairs(Waiting) do
-		Place(part)
-	end
+	local moved
+	repeat
+		moved = false
+		for part in pairs(Waiting) do
+			moved = Place(part) or moved
+		end
+	until not moved
 end
 
 -- A part of ours made after the others were placed (a page's zone, as the

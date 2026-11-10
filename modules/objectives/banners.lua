@@ -46,7 +46,7 @@ local OnUpdate = function(card, elapsed)
 	end
 end
 
--- Its small line over its big one, from `side` ("LEFT" or "RIGHT").
+-- Its small line over its big one, from `side` ("LEFT"; "": centered).
 Module.CreateCard = function(self, spec, side)
 	local path = _G[self.config.font]:GetFont()
 	local card = Engine:CreateFrame("Frame", nil, Engine:GetFrame())
@@ -69,6 +69,9 @@ Module.CreateCard = function(self, spec, side)
 end
 
 Module.ShowCard = function(self, card, small, big)
+	if not self.db.worldMessages then
+		return
+	end
 	card.Small:SetText(small)
 	card.Big:SetText(big)
 	card.age = 0
@@ -138,6 +141,7 @@ end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Objectives").banners
+	self.db = self:GetConfig("ObjectiveTracker")
 end
 
 Module.OnEnable = function(self)
@@ -146,7 +150,7 @@ Module.OnEnable = function(self)
 	self.Boss = self:CreateCard(config.boss, "LEFT")
 	self:AddBanner(self.Boss, config.boss)
 	self.Boss.Small:SetTextColor(unpack(config.boss.small_color))
-	self.Zone = self:CreateCard(config.zone, "RIGHT")
+	self.Zone = self:CreateCard(config.zone, "")
 	self.zone = GetZoneText() -- (where you log in: no card)
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")

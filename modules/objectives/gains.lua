@@ -64,6 +64,9 @@ end
 
 -- `amount` more of `key`: its line says Describe(the amount so far).
 Module.Add = function(self, key, icon, Describe, amount)
+	if not self.db.worldMessages then
+		return
+	end
 	local row
 	for _, active in ipairs(self.active) do
 		if active.key == key then
@@ -156,6 +159,7 @@ end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Objectives").gains
+	self.db = self:GetConfig("ObjectiveTracker")
 end
 
 Module.OnEnable = function(self)

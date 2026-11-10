@@ -167,17 +167,6 @@ Engine:NewStaticConfig("Blizzard", {
 			header = path .. [[textures\DiabolicUI_D3_Material_Header.tga]], -- a zone's title with its seal
 		},
 	},
-	-- what the control under the mouse does, right of the options' settings
-	-- (modules/blizzard/options.lua; their windows' right inset makes the room)
-	options = {
-		width = 224,
-		gap = 10,
-		top = -44,
-		bottom = 56,
-		line_gap = 8,
-		title_font = "DiabolicFont_HeaderRegular16",
-		body_font = "GameFontHighlight",
-	},
 	durability = {
 		position = { "CENTER", "UICenter", "CENTER", 190, 0 },
 	},
@@ -1126,25 +1115,25 @@ Engine:NewStaticConfig("Blizzard", {
 					"GuildBankTabTitleBackgroundRight",
 				},
 			},
-			-- the options: room at the right for what a control does (options.lua)
+			-- the options
 			{
 				frame = "InterfaceOptionsFrame",
 				no_backdrop = true,
-				insets = { 16, 40, 248, 16 },
+				insets = { 16, 40, 16, 16 },
 				panel = false,
 				title = "InterfaceOptionsFrameHeaderText",
 			},
 			{
 				frame = "VideoOptionsFrame",
 				no_backdrop = true,
-				insets = { 16, 40, 248, 16 },
+				insets = { 16, 40, 16, 16 },
 				panel = false,
 				title = "VideoOptionsFrameHeaderText",
 			},
 			{
 				frame = "AudioOptionsFrame",
 				no_backdrop = true,
-				insets = { 16, 40, 248, 16 },
+				insets = { 16, 40, 16, 16 },
 				panel = false,
 				title = "AudioOptionsFrameHeaderText",
 			},

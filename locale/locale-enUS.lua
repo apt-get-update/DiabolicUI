@@ -208,18 +208,17 @@ L["Colors the player, target, party, raid and tab-target of target health bars b
 	true
 L["Show Portrait"] = true
 L["Shows an animated 3D model portrait on party and focus frames.|n|nRequires a UI reload to apply."] = true
-L["Toggle Fake Party"] = true
-L["Shows or hides a mock party of fake members, to preview the party frames' look without needing a real group."] = true
-L["Toggle Fake Raid"] = true
-L["Shows or hides a mock raid of fake members, to preview the raid frames' look without needing a real group."] = true
 L["Menu"] = true
 L["Show Gold"] = true
 L["Shows how much money you're carrying, next to the menu button in the bottom right corner."] = true
 L["Show FPS & Latency"] = true
 L["Shows your framerate and latency, next to the menu button in the bottom right corner."] = true
-L["Bars and Orbs"] = true
-L["Fade When Idle"] = true
-L["Dims the action bars and orbs while nothing's going on. They come back in combat, with a target, while casting, short of health or mana, and with the mouse over them."] =
+L["World Messages"] = true
+L["A boss's name and each new zone over the world, and the small lines at the right for the gold, XP and loot you gain."] =
+	true
+L["/dui party, /dui raid, /dui loot - a fake party, raid or loot roll to preview them"] = true
+L["Names in Combat Only"] = true
+L["Names over heads and nameplates only in combat, as the game's own settings, back as they were when this is off. Enemy players' names stay."] =
 	true
 L["Objectives"] = true
 L["Fade Quest Tracker"] = true
@@ -251,10 +250,7 @@ L["Re-styles the loot window to match the rest of the UI. When disabled, Blizzar
 	true
 L["Roll Window"] = true
 L["Coming Up"] = true
-L["Fake Loot Roll"] = true
 L["Fake Boss"] = true
-L["Shows the roll window and the loot list with fake loot, to try them without a raid. Needs the roll window on."] =
-	true
 L["Shows a window when the master looter, the leader or a raid warning puts an item up for a roll, with its time left and buttons to roll for it: Main Spec (/roll 100) or Off Spec (/roll 99). The boss's loot they post in the chat shows in a list on the right.|n|nRequires a UI reload to apply."] =
 	true
 L["Rolls"] = true -- roll window title
@@ -383,7 +379,6 @@ L["s"] = true -- abbreviation for "seconds" when showing time
 L["DiabolicUI: Questie has changed, its tracker is left as it is."] = true
 L["Drag to move the tracker"] = true
 L["Reset Positions"] = true
-L["Preview"] = true
 L["Puts the menu buttons, the chat and Blizzard's quest tracker back in their places."] = true
 L["Sell Junk"] = true
 L["Sold %d junk items for %s."] = true
