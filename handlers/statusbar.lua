@@ -1,7 +1,8 @@
 -- "StatusBar" handler: a StatusBar lookalike with smoothing and a spark.
 -- Handler:New(parent) returns an object with the usual SetValue /
 -- SetMinMaxValues / SetStatusBarColor / SetOrientation API; the texture is
--- cropped (not squashed) to the current value.
+-- cropped (not squashed) to the current value. SetIncoming(amount) shows
+-- the heals on their way as a paler bar past the end of it.
 local _, Engine = ...
 local Handler = Engine:NewHandler("StatusBar")
 
@@ -30,6 +31,41 @@ local SetPulse = function(spark)
 	spark._pulse_in:SetChange(range)
 	spark._pulse_out:SetDuration(spark._duration_out)
 	spark._pulse_out:SetChange(-range)
+end
+
+local INCOMING_ALPHA = 0.45 -- how much paler the incoming heals are than the bar
+
+-- The incoming heals: the bar's texture, from where the bar ends to where
+-- they'll take it (never past the end).
+local UpdateIncoming = function(self, value, min, max, width, height)
+	local incoming = self.incoming
+	local amount = math_min(self._incoming, max - value)
+	if (amount <= 0) or (value == min) or (max == min) then
+		incoming:Hide()
+		return
+	end
+	local from, to = (value - min) / (max - min), (value + amount - min) / (max - min)
+	local orientation = self._orientation
+	local bar = self.bar
+	incoming:ClearAllPoints()
+	if orientation == "RIGHT" then
+		incoming:SetTexCoord(from, to, 0, 1)
+		incoming:SetPoint("LEFT", bar, "RIGHT")
+		incoming:SetSize((to - from) * width, height)
+	elseif orientation == "LEFT" then
+		incoming:SetTexCoord(1 - to, 1 - from, 0, 1)
+		incoming:SetPoint("RIGHT", bar, "LEFT")
+		incoming:SetSize((to - from) * width, height)
+	elseif orientation == "UP" then
+		incoming:SetTexCoord(0, 1, 1 - to, 1 - from)
+		incoming:SetPoint("BOTTOM", bar, "TOP")
+		incoming:SetSize(width, (to - from) * height)
+	else -- DOWN
+		incoming:SetTexCoord(0, 1, from, to)
+		incoming:SetPoint("TOP", bar, "BOTTOM")
+		incoming:SetSize(width, (to - from) * height)
+	end
+	incoming:Show()
 end
 
 StatusBar.Update = function(self)
@@ -128,6 +164,7 @@ StatusBar.Update = function(self)
 			bar:Show()
 		end
 	end
+	UpdateIncoming(self, value, min, max, width, height)
 end
 
 local smooth_minimum_value = 1 -- if a value is lower than this, we won't smoothe
@@ -220,10 +257,21 @@ end
 
 StatusBar.SetStatusBarColor = function(self, ...)
 	self.bar:SetVertexColor(...)
+	local r, g, b, a = ...
+	self.incoming:SetVertexColor(r, g, b, (a or 1) * INCOMING_ALPHA)
+end
+
+-- The heals on their way, in health: shown past the end of the bar.
+StatusBar.SetIncoming = function(self, amount)
+	if amount ~= self._incoming then
+		self._incoming = amount
+		self:Update()
+	end
 end
 
 StatusBar.SetStatusBarTexture = function(self, ...)
 	self.bar:SetTexture(...)
+	self.incoming:SetTexture(...)
 	self._laid.value = nil -- a new texture needs its crop again
 	self:Update()
 end
@@ -419,6 +467,10 @@ Handler.New = function(self, parent)
 	bar:SetPoint("LEFT")
 	bar:SetWidth(scaffold:GetWidth())
 
+	-- the incoming heals, past the end of the bar
+	local incoming = scaffold:CreateTexture(nil, "BORDER")
+	incoming:Hide()
+
 	-- the spark texture
 	local spark = scaffold:CreateTexture(nil, "OVERLAY")
 	spark:SetPoint("CENTER", bar, "RIGHT", 0, 0)
@@ -448,12 +500,14 @@ Handler.New = function(self, parent)
 	statusbar._max = 1 -- max value
 	statusbar._value = 0 -- real value
 	statusbar._displayvalue = 0 -- displayed value while smoothing
+	statusbar._incoming = 0 -- the heals on their way
 	statusbar._orientation = "RIGHT" -- direction the bar is growing in
 	statusbar._laid = {} -- what Update last laid out
 
 	-- I usually don't like exposing things like this to the user,
 	-- but we're going for performance here.
 	statusbar.bar = bar
+	statusbar.incoming = incoming
 	statusbar.spark = spark
 	statusbar.scaffold = scaffold
 

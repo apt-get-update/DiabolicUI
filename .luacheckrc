@@ -18,6 +18,7 @@ stds.wow = {
 
 exclude_files = {
 	"modules/minimap/Libs/**", -- (Ace3)
+	"Libs/**", -- (LibHealComm-4.0)
 	"tests/luaunit.lua",
 	"settings/positions.lua", -- (written by tools/positions.lua)
 	"settings/components.lua", -- (and this one)

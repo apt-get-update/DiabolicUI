@@ -1,7 +1,8 @@
 -- "Orb" handler: the round health and power globes. Handler:New(parent)
 -- returns an object that behaves like a StatusBar (SetValue, SetMinMaxValues,
 -- SetStatusBarColor, ...) but fills a circle from the bottom, with smoothing,
--- rotating layers and a spark riding the fluid surface.
+-- rotating layers and a spark riding the fluid surface. SetIncoming(amount)
+-- shows the heals on their way as a paler band above the fluid.
 local _, Engine = ...
 local Handler = Engine:NewHandler("Orb")
 
@@ -47,6 +48,30 @@ local CreatePulse = function(texture)
 	texture.pulseIn:SetOrder(1)
 	texture.pulseOut = texture.pulse:CreateAnimation("Alpha")
 	texture.pulseOut:SetOrder(2)
+end
+
+local INCOMING_LIGHTER = 0.3 -- the band: the fluid's color, this much towards white
+local INCOMING_ALPHA = 0.6 -- and this see-through
+
+-- The incoming heals: a band from the fluid's surface to where they'll take
+-- it (never past the top), cut from the fluid's texture like the fluid is.
+local UpdateIncoming = function(self, value, min, max, width, height)
+	local incoming = self.incoming
+	local amount = math_min(self._incoming, max - value)
+	if (amount <= 0) or (value <= min) or (max == min) then
+		incoming:Hide()
+		return
+	end
+	local from = (value - min) / (max - min) * height
+	local to = (value + amount - min) / (max - min) * height
+	local leftCrop, rightCrop = self.leftCrop, self.rightCrop
+	incoming.child:SetSize(width, height)
+	incoming:SetSize(width - leftCrop - rightCrop, math_max(to - from, 0.0001))
+	incoming:SetHorizontalScroll(leftCrop)
+	incoming:SetVerticalScroll(height - to)
+	incoming:ClearAllPoints()
+	incoming:SetPoint("BOTTOM", leftCrop / 2 - rightCrop / 2, from)
+	incoming:Show()
 end
 
 Orb.Update = function(self)
@@ -158,6 +183,7 @@ Orb.Update = function(self)
 			glow.pulse:Play()
 		end
 	end
+	UpdateIncoming(self, value, min, max, width, height)
 end
 
 local smoothMinValue = 1 -- if a value is lower than this, we won't smoothe
@@ -215,33 +241,41 @@ local PlaceCutaway = function(self)
 	cutaway:SetVerticalScroll(height - newHeight)
 end
 
+-- Whether the fluid covers it: what's shown, and where it's going (a heal
+-- rises under it, a loss drains it down to the new value).
+local IsCovered = function(orb)
+	return orb.cutaway.value <= math_min(orb.value, orb.displayValue)
+end
+
 local OnUpdateCutaway = function(cutaway, elapsed)
+	local orb = cutaway.orb
+	if IsCovered(orb) then
+		cutaway:Hide()
+		return
+	end
 	if cutaway.hold > 0 then
 		cutaway.hold = cutaway.hold - elapsed
 		return
 	end
-	local orb = cutaway.orb
 	cutaway.value = cutaway.value - (orb.maxValue - orb.minValue) * cutawayDrain * elapsed
-	if cutaway.value <= orb.value then
+	if IsCovered(orb) then
 		cutaway:Hide()
 	else
 		PlaceCutaway(orb)
 	end
 end
 
--- Called with what the orb's value was before it was set.
+-- Called with what the orb's value was before it was set. A heal doesn't
+-- end it: the rising fluid covers it (OnUpdateCutaway).
 local UpdateCutaway = function(self, previous)
 	local cutaway = self.cutaway
-	local value = self.value
-	if value < previous then
+	if self.value < previous then
 		if not cutaway:IsShown() then
 			cutaway.value = previous
 			cutaway:Show()
 		end
 		cutaway.hold = cutawayHold
 		PlaceCutaway(self)
-	elseif cutaway:IsShown() and (value >= cutaway.value) then
-		cutaway:Hide()
 	end
 end
 
@@ -269,6 +303,14 @@ Orb.EnableCutaway = function(self, path, r, g, b, a)
 	texture:SetVertexColor(r, g, b, a)
 
 	self.cutaway = cutaway
+end
+
+-- The heals on their way, in health: shown above the fluid.
+Orb.SetIncoming = function(self, amount)
+	if amount ~= self._incoming then
+		self._incoming = amount
+		self:Update()
+	end
 end
 
 -- sets the value the orb should move towards
@@ -318,11 +360,18 @@ Orb.SetMinMaxValues = function(self, min, max)
 	elseif self.displayValue < min then
 		self.displayValue = min
 	end
-	if self.cutaway and (max ~= self.maxValue) then
-		self.cutaway:Hide()
+	-- a new maximum (a buff, a vehicle): it keeps its share of the orb
+	local cutaway = self.cutaway
+	local rescale = cutaway and cutaway:IsShown() and (max ~= self.maxValue) and (self.maxValue > self.minValue)
+	if rescale then
+		local share = (cutaway.value - self.minValue) / (self.maxValue - self.minValue)
+		cutaway.value = min + share * (max - min)
 	end
 	self.minValue = min
 	self.maxValue = max
+	if rescale then
+		PlaceCutaway(self)
+	end
 	self:Update()
 end
 
@@ -365,6 +414,17 @@ Orb.SetStatusBarColor = function(self, r, g, b, ...)
 			colorTable[4] = a
 		end
 		scaffold[id]:SetVertexColor(r, g, b, a)
+	end
+
+	-- the incoming heals: a lighter, see-through fluid
+	if (id == "bar") or (id == "ALL") then
+		local bar = colors.bar
+		self.incoming.texture:SetVertexColor(
+			bar[1] + (1 - bar[1]) * INCOMING_LIGHTER,
+			bar[2] + (1 - bar[2]) * INCOMING_LIGHTER,
+			bar[3] + (1 - bar[3]) * INCOMING_LIGHTER,
+			(bar[4] or 1) * INCOMING_ALPHA
+		)
 	end
 
 	-- Changed the base color for the spark from "bar" to "smoke",
@@ -410,6 +470,13 @@ Orb.SetStatusBarTexture = function(self, ...)
 		self.scaffold[id]:SetTexture(path)
 	else
 		self.scaffold[id]:SetTexture(r, g, b, a)
+	end
+	if id == "bar" then
+		if path then
+			self.incoming.texture:SetTexture(path)
+		else
+			self.incoming.texture:SetTexture(r, g, b, a)
+		end
 	end
 end
 
@@ -581,6 +648,18 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	scrollframe:SetPoint("BOTTOM")
 	scrollframe:SetSize(1, 1)
 
+	-- The incoming heals, a band above the fluid (and over the cutaway).
+	local incomingChild = CreateFrame("Frame", nil, scaffold)
+	incomingChild:SetSize(1, 1)
+	local incoming = CreateFrame("ScrollFrame", nil, scaffold)
+	incoming:SetFrameLevel(scaffold:GetFrameLevel() + 2)
+	incoming:SetScrollChild(incomingChild)
+	incoming:SetSize(1, 1)
+	incoming:Hide()
+	incoming.child = incomingChild
+	incoming.texture = incomingChild:CreateTexture(nil, "BACKGROUND")
+	incoming.texture:SetAllPoints()
+
 	-- The overlay is meant to hold overlay textures like the spark, glow, etc
 	local overlay = CreateFrame("Frame", nil, scaffold)
 	overlay:SetFrameLevel(scaffold:GetFrameLevel() + 5)
@@ -662,6 +741,7 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	orb.maxValue = 1
 	orb.value = 0
 	orb.displayValue = 0
+	orb._incoming = 0 -- the heals on their way
 	orb.leftCrop = 0
 	orb.rightCrop = 0
 	orb._laid = {} -- what Update last placed
@@ -669,6 +749,7 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	-- I usually don't like exposing things like this to the user,
 	-- but we're going for maximum performance here.
 	orb.overlay = overlay
+	orb.incoming = incoming
 	orb.scrollchild = scrollchild
 	orb.scrollframe = scrollframe
 	orb.scaffold = scaffold

@@ -1145,4 +1145,61 @@ function TestIdleFade:test_bars_and_orbs_fade_until_something_happens()
 	assertClean(client)
 end
 
+-- Incoming heals ------------------------------------------------------------------
+
+TestIncomingHeals = {}
+
+-- LibHealComm answering `heals` (amount by GUID), and telling the frames.
+local function incoming(heals)
+	local HealComm = _G.LibStub("LibHealComm-4.0")
+	HealComm.GetHealAmount = function(_, guid)
+		return heals[guid]
+	end
+	HealComm.callbacks:Fire("HealComm_HealStarted")
+	client:Tick(1, 0.05)
+end
+
+function TestIncomingHeals:tearDown()
+	client, module = nil, nil
+end
+
+function TestIncomingHeals:test_the_orb_shows_them_above_the_fluid()
+	boot({ class = "PRIEST" })
+	local me = client.world.units.player
+	me.healthMax, me.health = 1000, 500
+	client:Tick(1, 0.05)
+	local orb = frameOf("Unit: Player").Health
+	lu.assertNil(orb.incoming:IsShown())
+
+	incoming({ [me.guid] = 200 })
+	lu.assertEquals(orb.incoming:IsShown(), 1)
+	local _, height = orb.scaffold:GetSize()
+	lu.assertAlmostEquals(orb.incoming:GetHeight(), height * 0.2, 0.01)
+
+	-- never past the top
+	incoming({ [me.guid] = 900 })
+	lu.assertAlmostEquals(orb.incoming:GetHeight(), height * 0.5, 0.01)
+
+	incoming({})
+	lu.assertNil(orb.incoming:IsShown())
+	assertClean(client)
+end
+
+function TestIncomingHeals:test_a_bar_shows_them_past_its_end()
+	boot({ class = "PRIEST" })
+	local friend = Client.newUnit({ class = "WARRIOR", healthMax = 1000, health = 400 })
+	client:SetUnit("target", friend)
+	client:Tick(1, 0.05)
+	local health = frameOf("Unit: Target").Health
+	incoming({ [friend.guid] = 300 })
+	lu.assertEquals(health.incoming:IsShown(), 1)
+	lu.assertAlmostEquals(health.incoming:GetWidth(), health:GetWidth() * 0.3, 0.01)
+
+	-- none for the dead
+	friend.dead = true
+	client:Tick(1, 0.05)
+	lu.assertNil(health.incoming:IsShown())
+	assertClean(client)
+end
+
 os.exit(lu.LuaUnit.run())

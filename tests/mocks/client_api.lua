@@ -1827,6 +1827,16 @@ function Api.install(client)
 		return #world().talents
 	end
 
+	-- six glyph sockets (major 1, 4, 6; minor 2, 3, 5), empty:
+	-- enabled, glyphType, glyphSpellID, icon
+	api.GetNumGlyphSockets = function()
+		return 6
+	end
+	api.GetGlyphSocketInfo = function(socket)
+		local major = (socket == 1) or (socket == 4) or (socket == 6)
+		return 1, major and 1 or 2, nil, nil
+	end
+
 	-- a round copy of `path` in `texture` (a texture or its name)
 	api.SetPortraitToTexture = function(texture, path)
 		if type(texture) == "string" then
@@ -1923,6 +1933,12 @@ function Api.install(client)
 			return t[1], t[2], t[3], t[4]
 		end
 	end
+	-- the talents in a tab: the fake world's tabs list none
+	-- (name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq)
+	api.GetNumTalents = function(tab, inspect, pet)
+		return 0
+	end
+	api.GetTalentInfo = function(tab, index, inspect, pet, group) end
 	api.CanInspect = function(unit)
 		local u = resolve(unit)
 		return flag(u and u.isPlayer and world().inspectReady)
@@ -2295,6 +2311,10 @@ function Api.install(client)
 	api.PetAttack = function() end
 	api.SpellStopCasting = function() end
 	api.TargetUnit = function() end
+	api.SpellTargetUnit = function() end
+	api.TargetLastFriend = function() end
+	api.TargetLastTarget = function() end
+	api.CastSpellByID = function() end
 	api.AssistUnit = function() end
 	api.FocusUnit = function() end
 	api.ClearTarget = function()

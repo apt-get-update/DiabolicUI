@@ -63,6 +63,7 @@ local EVENT_ARGS = {
 	UNIT_LEVEL = { "target" },
 	UNIT_NAME_UPDATE = { "target" },
 	UNIT_PET = { "player" },
+	UNIT_SPELLCAST_SUCCEEDED = { "player", "Fireball", "Rank 1", 0 }, -- unit, spell, rank, cast id
 	UNIT_TARGET = { "target" },
 	UNIT_THREAT_SITUATION_UPDATE = { "player" },
 	VARIABLES_LOADED = {},

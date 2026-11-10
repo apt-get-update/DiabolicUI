@@ -8,6 +8,9 @@
 ## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB, DiabolicUI_Layout
 ## X-Category: Interface Enhancements
 
+### vendored libraries (LibHealComm-4.0)
+Libs\libs.xml
+
 ### localization
 locale\locale.xml
 

@@ -12,8 +12,8 @@ weight: 6
 local ADDON, Engine = ...
 ----
 
-`DiabolicUI.toc` loads one XML per folder, in order: `locale`, `engine`, `data`, `handlers`, `media`,
-`settings`, `defaults`, `modules`. A new `.lua` goes in its folder's `.xml`.
+`DiabolicUI.toc` loads one XML per folder, in order: `Libs` (vendored LibHealComm-4.0), `locale`, `engine`, `data`,
+`handlers`, `media`, `settings`, `defaults`, `modules`. A new `.lua` goes in its folder's `.xml`.
 
 == The pieces
 

@@ -226,20 +226,25 @@ function TestCutaway:test_a_loss_stays_then_drains_away()
 	assertClean(client)
 end
 
-function TestCutaway:test_healing_past_it_ends_it()
+function TestCutaway:test_healing_past_it_is_covered_by_the_rising_fluid()
 	self.me.health = 500
 	client:Tick(0.1, 0.05)
 	self.me.health = 1000
-	client:Tick(0.1, 0.05)
+	client:Tick(0.05, 0.05)
+	lu.assertTrue(shown(self.orb.cutaway)) -- not gone at once: the fluid still rises
+	client:Tick(1, 0.05)
 	lu.assertFalse(shown(self.orb.cutaway))
 	assertClean(client)
 end
 
-function TestCutaway:test_a_new_maximum_ends_it()
+function TestCutaway:test_a_new_maximum_keeps_its_share()
 	self.me.health = 500
 	client:Tick(0.1, 0.05)
 	self.me.healthMax = 800
-	client:Tick(0.1, 0.05)
+	client:Tick(0.05, 0.05)
+	lu.assertTrue(shown(self.orb.cutaway))
+	lu.assertEquals(self.orb.cutaway.value, 800) -- all of the orb, as before
+	client:Tick(3, 0.05)
 	lu.assertFalse(shown(self.orb.cutaway))
 	assertClean(client)
 end
