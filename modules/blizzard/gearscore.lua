@@ -10,26 +10,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: GearScore", "LOW")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local next = next
-local pairs = pairs
-local select = select
-local string_format = string.format
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetItemInfo = _G.GetItemInfo
-local UnitClass = _G.UnitClass
-local UnitLevel = _G.UnitLevel
-
 -- each slot's share of the score
 local SLOT_SCALE = {
 	INVTYPE_HEAD = 1,
@@ -82,8 +62,8 @@ Module.GetColor = function(self, score)
 	if (not score) or (score <= 0) then
 		return 0.55, 0.55, 0.55
 	end
-	score = math_min(score, 5999)
-	local band = COLORS[math_floor((score - 1) / 1000) + 1]
+	score = math.min(score, 5999)
+	local band = COLORS[math.floor((score - 1) / 1000) + 1]
 	local color = {}
 	for i = 1, 3 do
 		local c = band[i]
@@ -115,8 +95,8 @@ Module.GetItemScore = function(self, item)
 	if not curve then
 		return 0, level
 	end
-	local score = math_floor((level - curve[1]) / curve[2] * slot * SCALE * qualityScale)
-	return math_max(score, 0), level
+	local score = math.floor((level - curve[1]) / curve[2] * slot * SCALE * qualityScale)
+	return math.max(score, 0), level
 end
 
 -- Heirlooms scale with the wearer: their item level from theirs.
@@ -170,13 +150,13 @@ Module.GetUnitScore = function(self, unit)
 		end
 	end
 	local slots = (twoHander and not offHand) and 16 or 17
-	return math_floor(score), (count > 0) and (levels / slots) or 0
+	return math.floor(score), (count > 0) and (levels / slots) or 0
 end
 
 -- "GS 5234   Item Level 245", the score in its color.
 Module.FormatUnit = function(self, score, level)
 	local r, g, b = self:GetColor(score)
-	return string_format("|cff%02x%02x%02xGS %d|r   %s", r * 255, g * 255, b * 255, score, _G.ITEM_LEVEL:format(level))
+	return string.format("|cff%02x%02x%02xGS %d|r   %s", r * 255, g * 255, b * 255, score, _G.ITEM_LEVEL:format(level))
 end
 
 -- The line under a model: the score and average item level of `unit`,
@@ -191,7 +171,7 @@ end
 Module.UpdateLine = function(self, line, unit)
 	local score, level = self:GetUnitScore(unit)
 	if score then
-		line:SetText(self:FormatUnit(score, math_floor(level)))
+		line:SetText(self:FormatUnit(score, math.floor(level)))
 		line.tries = nil
 	else
 		line:SetText("")

@@ -6,18 +6,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("ChatHistory")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local table_insert = table.insert
-local table_remove = table.remove
-local wipe = _G.wipe
-
--- WoW API
-local ChatFrame_AddMessageEventFilter = _G.ChatFrame_AddMessageEventFilter
-local GetTime = _G.GetTime
-
 local MAX_LINES = 100 -- per window
 
 local names = {} -- [chat window] = its name, for the windows that keep a history
@@ -47,9 +35,9 @@ Module.Record = function(self, frame, msg, r, g, b)
 		lines = {}
 		self.db[name] = lines
 	end
-	table_insert(lines, { msg, r, g, b })
+	table.insert(lines, { msg, r, g, b })
 	if #lines > MAX_LINES then
-		table_remove(lines, 1)
+		table.remove(lines, 1)
 	end
 end
 

@@ -3,17 +3,6 @@
 local _, Engine = ...
 local Module = Engine:GetModule("Blizzard: Windows")
 
--- Lua and WoW API
-local _G = _G
-local ipairs = ipairs
-local math_min = math.min
-local pairs = pairs
-local select = select
-local type = type
-local unpack = unpack
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 local Private = Module.Private
 local NameFor = Private.NameFor
 local Gradient = Private.Gradient
@@ -134,7 +123,7 @@ local Field = function(plate, inset, owner)
 		for _, segment in ipairs(FIELD_SEGMENTS) do
 			local light = spec.bevel[segment[1]]
 			local r, g, b =
-				math_min(1, look[1][1] * light), math_min(1, look[1][2] * light), math_min(1, look[1][3] * light)
+				math.min(1, look[1][1] * light), math.min(1, look[1][2] * light), math.min(1, look[1][3] * light)
 			local ends = spec.sheen_ends
 			local line = owner:CreateTexture(nil, look[2])
 			line:SetTexture(spec.texture)

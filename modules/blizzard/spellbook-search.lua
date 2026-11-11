@@ -10,28 +10,6 @@ local L = Engine:GetLocale()
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_ceil = math.ceil
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local string_lower = string.lower
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetCVar = _G.GetCVar
-local GetNumSpellTabs = _G.GetNumSpellTabs
-local GetSpellName = _G.GetSpellName
-local GetSpellTabInfo = _G.GetSpellTabInfo
-local GetSpellTexture = _G.GetSpellTexture
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-local IsPassiveSpell = _G.IsPassiveSpell
-local PickupSpell = _G.PickupSpell
-
 local NUM_FOUND = 12 -- a page, as the spells'
 
 -- A found spell's button: its icon in the action buttons' border, its
@@ -46,7 +24,7 @@ Module.CreateFoundButton = function(self, parent, window, i)
 	-- down the left page, then the right one, as Blizzard's spells
 	local x, y = unpack(config.spells)
 	local half = NUM_FOUND / 2
-	local row, column = (i - 1) % half, math_floor((i - 1) / half)
+	local row, column = (i - 1) % half, math.floor((i - 1) / half)
 	button:SetPoint(
 		"TOPLEFT",
 		window,
@@ -192,17 +170,17 @@ end
 -- The player's spells whose names hold `query` (in any case): the best
 -- rank of each, or every rank while all ranks show (Blizzard's box).
 Module.FindSpells = function(self, query)
-	query = string_lower(query)
+	query = string.lower(query)
 	local total = 0
 	for tab = 1, GetNumSpellTabs() do
 		local _, _, offset, count = GetSpellTabInfo(tab)
-		total = math_max(total, offset + count)
+		total = math.max(total, offset + count)
 	end
 	local everyRank = (GetCVar("ShowAllSpellRanks") == "1")
 	local found, byName = {}, {}
 	for index = 1, total do
 		local name, rank = GetSpellName(index, _G.BOOKTYPE_SPELL)
-		if name and string_lower(name):find(query, 1, true) then
+		if name and string.lower(name):find(query, 1, true) then
 			local spell = byName[name]
 			if spell and not everyRank then
 				spell.index, spell.rank = index, rank -- a later rank, a better one
@@ -254,8 +232,8 @@ Module.TurnFound = function(self, step)
 	if InCombatLockdown() then
 		return
 	end
-	local pages = math_max(1, math_ceil(#self.FoundSpells / NUM_FOUND))
-	self.FoundPage = math_min(pages, math_max(1, self.FoundPage + step))
+	local pages = math.max(1, math.ceil(#self.FoundSpells / NUM_FOUND))
+	self.FoundPage = math.min(pages, math.max(1, self.FoundPage + step))
 	self:UpdateFound()
 end
 
@@ -265,7 +243,7 @@ Module.UpdateFound = function(self)
 		return
 	end
 	local spells = self.FoundSpells or {}
-	local pages = math_max(1, math_ceil(#spells / NUM_FOUND))
+	local pages = math.max(1, math.ceil(#spells / NUM_FOUND))
 	local first = (self.FoundPage - 1) * NUM_FOUND
 	for i, button in ipairs(self.FoundButtons) do
 		local spell = spells[first + i]

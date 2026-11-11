@@ -5,10 +5,6 @@ local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: Vehicle")
 
 -- Lua API
-local tinsert, tconcat, twipe = table.insert, table.concat, table.wipe
-
--- WoW API
-local RegisterStateDriver = RegisterStateDriver
 
 local NUM_BUTTONS = VEHICLE_MAX_ACTIONBUTTONS or 6
 
@@ -66,7 +62,7 @@ BarWidget.OnEnable = function(self)
 	tinsert(driver, "[bonusbar:5]11")
 
 	tinsert(driver, "11")
-	local page_driver = tconcat(driver, "; ")
+	local page_driver = table.concat(driver, "; ")
 
 	-- enable the new page driver
 	RegisterStateDriver(Bar, "page", page_driver)
@@ -85,13 +81,13 @@ BarWidget.OnEnable = function(self)
   ]]
 	)
 
-	twipe(driver)
+	table.wipe(driver)
 	tinsert(driver, "[bonusbar:5]show")
 	tinsert(driver, "[vehicleui]show")
 	tinsert(driver, "hide")
 
 	-- Register a proxy visibility driver
-	local visibility_driver = tconcat(driver, "; ")
+	local visibility_driver = table.concat(driver, "; ")
 	RegisterStateDriver(Bar, "vis", visibility_driver)
 
 	-- store bar settings

@@ -15,33 +15,7 @@ Module:SetIncompatible("TidyPlates")
 Module:SetIncompatible("TidyPlates_ThreatPlates")
 Module:SetIncompatible("TidyPlatesContinued")
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local select = select
-local setmetatable = setmetatable
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetTime = _G.GetTime
-local GetQuestGreenRange = _G.GetQuestGreenRange
-local SetCVar = _G.SetCVar
-local UnitCastingInfo = _G.UnitCastingInfo
-local UnitChannelInfo = _G.UnitChannelInfo
-local UnitExists = _G.UnitExists
-local UnitLevel = _G.UnitLevel
-local UnitName = _G.UnitName
-
--- Engine API
-
 -- WoW Frames & Objects
-local WorldFrame = WorldFrame
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
 -- Plate Registries
 local AllPlates, VisiblePlates = {}, {}
@@ -132,13 +106,13 @@ end
 -- Return a more readable time format for auras and castbars
 local formatTime = function(time)
 	if time > DAY then -- more than a day
-		return ("%1d%s"):format(math_floor(time / DAY), L["d"])
+		return ("%1d%s"):format(math.floor(time / DAY), L["d"])
 	elseif time > HOUR then -- more than an hour
-		return ("%1d%s"):format(math_floor(time / HOUR), L["h"])
+		return ("%1d%s"):format(math.floor(time / HOUR), L["h"])
 	elseif time > MINUTE then -- more than a minute
-		return ("%1d%s %d%s"):format(math_floor(time / MINUTE), L["m"], floor(time % MINUTE), L["s"])
+		return ("%1d%s %d%s"):format(math.floor(time / MINUTE), L["m"], floor(time % MINUTE), L["s"])
 	elseif time > 10 then -- more than 10 seconds
-		return ("%d%s"):format(math_floor(time), L["s"])
+		return ("%d%s"):format(math.floor(time), L["s"])
 	elseif time > 0 then
 		return ("%.1f"):format(time)
 	else
@@ -198,12 +172,9 @@ NamePlate_WotLK.UpdateUnitData = function(self)
 	-- If the dragon texture is shown, this is an elite or a rare or both
 	local dragon = oldRegions.eliteicon:IsShown()
 	if dragon then
-		-- Speeeeed!
-		local math_floor = math_floor
-
 		-- The texture is golden, so a white vertexcolor means it's not a rare, but an elite
 		r, g, b = oldRegions.eliteicon:GetVertexColor()
-		r, g, b = math_floor(r * 100 + 0.5) / 100, math_floor(g * 100 + 0.5) / 100, math_floor(b * 100 + 0.5) / 100
+		r, g, b = math.floor(r * 100 + 0.5) / 100, math.floor(g * 100 + 0.5) / 100, math.floor(b * 100 + 0.5) / 100
 		if r + g + b == 3 then
 			info.isElite = true
 		else
@@ -247,7 +218,6 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 	local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
 	-- More Lua speed
-	local math_floor = math_floor
 	local pairs = pairs
 	local select = select
 
@@ -257,7 +227,7 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 	-- check for threat situation
 	if oldRegions.threat:IsShown() then
 		r, g, b = oldRegions.threat:GetVertexColor()
-		r, g, b = math_floor(r * 100 + 0.5) / 100, math_floor(g * 100 + 0.5) / 100, math_floor(b * 100 + 0.5) / 100
+		r, g, b = math.floor(r * 100 + 0.5) / 100, math.floor(g * 100 + 0.5) / 100, math.floor(b * 100 + 0.5) / 100
 		if r > 0 then
 			if g > 0 then
 				if b > 0 then
@@ -283,7 +253,7 @@ NamePlate_WotLK.UpdateCombatData = function(self)
 
 	-- figure out class
 	r, g, b = oldBars.health:GetStatusBarColor()
-	r, g, b = math_floor(r * 100 + 0.5) / 100, math_floor(g * 100 + 0.5) / 100, math_floor(b * 100 + 0.5) / 100
+	r, g, b = math.floor(r * 100 + 0.5) / 100, math.floor(g * 100 + 0.5) / 100, math.floor(b * 100 + 0.5) / 100
 
 	for class in pairs(RAID_CLASS_COLORS) do
 		if RAID_CLASS_COLORS[class].r == r and RAID_CLASS_COLORS[class].g == g and RAID_CLASS_COLORS[class].b == b then
@@ -1278,9 +1248,9 @@ Module.OnUpdate = function(self, elapsed)
 		local current, target = plate.currentAlpha, plate.targetAlpha
 		if current ~= target then
 			if target > current then
-				current = math_min(target, current + step_in)
+				current = math.min(target, current + step_in)
 			else
-				current = math_max(target, current - step_out)
+				current = math.max(target, current - step_out)
 			end
 			plate.currentAlpha = current
 			plate:SetAlpha(current)

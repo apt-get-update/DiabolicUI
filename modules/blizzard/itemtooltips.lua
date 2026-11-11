@@ -20,30 +20,6 @@ Module:SetIncompatible("TipTac")
 Module:SetIncompatible("TinyTip")
 Module:SetIncompatible("TinyTooltip")
 
--- Lua API
-local _G = _G
-local CreateFrame = _G.CreateFrame
-local ipairs = ipairs
-local pairs = pairs
-local unpack = unpack
-local math_abs = math.abs
-local math_max = math.max
-local math_floor = math.floor
-local math_min = math.min
-local string_gsub = string.gsub
-local string_find = string.find
-local string_gmatch = string.gmatch
-local string_lower = string.lower
-local string_match = string.match
-local table_concat = table.concat
-local xpcall = xpcall
-
--- WoW API
-local geterrorhandler = _G.geterrorhandler
-local GetItemInfo = _G.GetItemInfo
-local GetItemQualityColor = _G.GetItemQualityColor
-local hooksecurefunc = _G.hooksecurefunc
-
 -- Tooltips that show items
 local TOOLTIPS = {
 	"GameTooltip",
@@ -120,11 +96,11 @@ local COIN_Y_OFFSET = -2 -- centers the coin icons on the footer's 12px text
 -- pattern capturing its numbers and texts, so it works for every client
 -- language.
 local ToPattern = function(template)
-	local pattern = string_gsub(template, "%%[%d%.]*s", "\002")
-	pattern = string_gsub(pattern, "%%[%d%.]*[df]", "\001")
-	pattern = string_gsub(pattern, "([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
-	pattern = string_gsub(pattern, "\001", "([%%d%%.,]+)")
-	pattern = string_gsub(pattern, "\002", "(.-)")
+	local pattern = string.gsub(template, "%%[%d%.]*s", "\002")
+	pattern = string.gsub(pattern, "%%[%d%.]*[df]", "\001")
+	pattern = string.gsub(pattern, "([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
+	pattern = string.gsub(pattern, "\001", "([%%d%%.,]+)")
+	pattern = string.gsub(pattern, "\002", "(.-)")
 	return "^" .. pattern .. "$"
 end
 
@@ -166,7 +142,7 @@ local IsTagLine = function(text)
 		return true
 	end
 	for _, pattern in ipairs(TAG_LINE_PATTERNS) do
-		if string_match(text, pattern) then
+		if string.match(text, pattern) then
 			return true
 		end
 	end
@@ -189,18 +165,18 @@ local HighlightTagLine = function(line)
 	if not text then
 		return
 	end
-	if (not string_find(text, "\n", 1, true)) and (not string_find(text, "|c", 1, true)) then
+	if (not string.find(text, "\n", 1, true)) and (not string.find(text, "|c", 1, true)) then
 		if IsTagLine(text) and IsDefaultColor(line) then
 			line:SetTextColor(unpack(TAG_COLOR))
 		end
 		return
 	end
 	local segments, changed = {}, false
-	for segment in string_gmatch(text .. "\n", "(.-)\n") do
-		local plain = string_gsub(string_gsub(segment, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
+	for segment in string.gmatch(text .. "\n", "(.-)\n") do
+		local plain = string.gsub(string.gsub(segment, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
 		local isWhite
-		if string_find(segment, "|c", 1, true) then
-			isWhite = string_find(string_lower(segment), "^|c%x%xffffff") and true
+		if string.find(segment, "|c", 1, true) then
+			isWhite = string.find(string.lower(segment), "^|c%x%xffffff") and true
 		else
 			isWhite = IsDefaultColor(line)
 		end
@@ -211,7 +187,7 @@ local HighlightTagLine = function(line)
 		segments[#segments + 1] = segment
 	end
 	if changed then
-		line:SetText(table_concat(segments, "\n"))
+		line:SetText(table.concat(segments, "\n"))
 	end
 end
 
@@ -282,7 +258,7 @@ local PlaceHeader = function(header, tooltip, top, bottom, r, g, b)
 	header:ClearAllPoints()
 	header:SetPoint("TOPLEFT", tooltip, "TOPLEFT", 1, top)
 	header:SetPoint("BOTTOMRIGHT", tooltip, "TOPRIGHT", -1, bottom)
-	local edgeSize = math_min(HEADER_EDGE_SIZE, math_floor((top - bottom) / 2))
+	local edgeSize = math.min(HEADER_EDGE_SIZE, math.floor((top - bottom) / 2))
 	if header.edgeSize ~= edgeSize then
 		header.edgeSize = edgeSize
 		header:SetBackdrop({
@@ -560,13 +536,13 @@ local Layout = function(tooltip)
 	-- Start from Blizzard's own measurement; when the tooltip still has the
 	-- size set here last time, that's the one measured back then.
 	local baseWidth, baseHeight = tooltip:GetWidth(), tooltip:GetHeight()
-	if info.width and (math_abs(baseWidth - info.width) < 0.5) and (math_abs(baseHeight - info.height) < 0.5) then
+	if info.width and (math.abs(baseWidth - info.width) < 0.5) and (math.abs(baseHeight - info.height) < 0.5) then
 		baseWidth, baseHeight = info.baseWidth, info.baseHeight
 	end
 	info.baseWidth, info.baseHeight = baseWidth, baseHeight
-	local width = math_max(baseWidth + SHIFT, parts.title:GetStringWidth() + PADDING * 4)
+	local width = math.max(baseWidth + SHIFT, parts.title:GetStringWidth() + PADDING * 4)
 	local height = baseHeight + (BANNER_PAD + TITLE_GAP - 2) + bigExtra + (tagLine and (TAG_GAP - 2) or 0)
-	height = math_max(height, -bannerBottom + TITLE_GAP + ICON_BOX + PADDING)
+	height = math.max(height, -bannerBottom + TITLE_GAP + ICON_BOX + PADDING)
 	if hasFooter then
 		height = height + FOOTER_HEIGHT
 	end
@@ -575,7 +551,7 @@ local Layout = function(tooltip)
 	info.width, info.height = width, height
 
 	-- the glow stays inside the banner's border
-	local glowWidth = math_min(parts.title:GetStringWidth() + TITLE_GLOW_MARGIN * 2, width - PADDING * 4)
+	local glowWidth = math.min(parts.title:GetStringWidth() + TITLE_GLOW_MARGIN * 2, width - PADDING * 4)
 	parts.titleGlow:SetSize(glowWidth, bannerTop - bannerBottom)
 
 	-- Content box: from under the banner to above the price box
@@ -637,21 +613,21 @@ local CheckLayout = function(tooltip)
 		return Layout(tooltip)
 	end
 	local width, height = tooltip:GetWidth(), tooltip:GetHeight()
-	if (math_abs(width - info.width) > 0.5) or (math_abs(height - info.height) > 0.5) then
+	if (math.abs(width - info.width) > 0.5) or (math.abs(height - info.height) > 0.5) then
 		return Layout(tooltip)
 	end
 	local name = tooltip:GetName()
 	local bodyTop = GetBodyTop(tooltip, info)
 	if bodyTop then
 		local _, relativeTo, _, x = bodyTop:GetPoint()
-		if (relativeTo ~= _G[name .. "TextLeft" .. info.titleIndex]) or not x or (math_abs(x - SHIFT) > 0.5) then
+		if (relativeTo ~= _G[name .. "TextLeft" .. info.titleIndex]) or not x or (math.abs(x - SHIFT) > 0.5) then
 			return Layout(tooltip)
 		end
 	end
 	if info.gapOffset then
 		local afterBig = _G[name .. "TextLeft" .. (info.bigLine + 1)]
 		local _, _, _, _, y = afterBig:GetPoint()
-		if (not y) or (math_abs(y - info.gapOffset) > 0.5) then
+		if (not y) or (math.abs(y - info.gapOffset) > 0.5) then
 			Layout(tooltip)
 		end
 	end
@@ -718,15 +694,15 @@ Module.OnTooltipSetItem = function(self, tooltip)
 		local line = _G[name .. "TextLeft" .. i]
 		local text = line and line:GetText()
 		if text then
-			local dps = string_match(text, DPS_PATTERN)
-			local armor = (not dps) and string_match(text, ARMOR_PATTERN)
+			local dps = string.match(text, DPS_PATTERN)
+			local armor = (not dps) and string.match(text, ARMOR_PATTERN)
 			if (dps or armor) and not info.bigLine then
 				info.bigLine = i
 				info.bigNumber = dps or armor
 				info.bigLabel = dps and _G.ITEM_MOD_DAMAGE_PER_SECOND_SHORT or _G.ARMOR
 				info.bigText = text
 				line:SetText(" ")
-			elseif string_match(text, DURABILITY_PATTERN) then
+			elseif string.match(text, DURABILITY_PATTERN) then
 				info.durability = text
 				info.durabilityLine = i
 				line:SetText("")

@@ -5,12 +5,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Styling", "HIGH") -- (first: only Blizzard's own textures and texts to tint, not the windows built on them)
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local select = select
-local unpack = unpack
-
 -- Ignore the container frames if one of our standalone bag addons are loaded
 local Backpacker = not (Engine:IsAddOnEnabled("Backpacker") or Engine:IsAddOnEnabled("BlizzardBagsPlus")) or nil
 

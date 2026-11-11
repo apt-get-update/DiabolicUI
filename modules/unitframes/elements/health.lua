@@ -5,19 +5,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-
--- WoW API
-local GetTime = _G.GetTime
-local UnitGUID = _G.UnitGUID
-local UnitHealth = _G.UnitHealth
-local UnitHealthMax = _G.UnitHealthMax
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsPlayer = _G.UnitIsPlayer
-
 -- Most frames poll their health 30 times a second ("FREQUENT"). A poll that finds
 -- nothing changed skips the work, but a full refresh still happens this
 -- often, for colors that change on their own (a mob getting tapped).

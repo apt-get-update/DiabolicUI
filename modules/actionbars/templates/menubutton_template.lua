@@ -4,11 +4,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local MenuButtonWidget = Module:SetWidget("Template: MenuButton")
 
--- Lua API
-local setmetatable = setmetatable
-
--- WoW API
-
 -- our new flyout template
 local MenuButton = CreateFrame("CheckButton")
 local MenuButton_MT = { __index = MenuButton }

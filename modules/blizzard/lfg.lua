@@ -11,15 +11,6 @@ local Module = Engine:NewModule("Blizzard: LFG", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-
 -- their frame art, by its file (lowercase, as patterns)
 local ART = {
 	"ui%-lfg%-frame",

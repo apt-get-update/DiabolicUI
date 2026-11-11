@@ -4,15 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Anchors")
 
--- Lua API
-local _G = _G
-local getmetatable = getmetatable
-local pairs = pairs
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-
 -- Blizzard frame -> its settings in the "Blizzard" static config
 local frames = {
 	DurabilityFrame = "durability",

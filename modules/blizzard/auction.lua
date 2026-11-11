@@ -12,23 +12,6 @@ local Module = Engine:NewModule("Blizzard: Auction House", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local math_ceil = math.ceil
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local select = select
-local unpack = unpack
-
--- WoW API
-local CanSendAuctionQuery = _G.CanSendAuctionQuery
-local CreateFrame = _G.CreateFrame
-local GetNumAuctionItems = _G.GetNumAuctionItems
-local hooksecurefunc = _G.hooksecurefunc
-
 -- Each part named is placed from windows/AuctionFrame.qml: kept where it
 -- is (panels' raise and lower are for what's not ours).
 local Ours = function(...)
@@ -149,10 +132,10 @@ Module.CreatePages = function(self)
 	self.Pages = buttons -- (the rightmost first)
 	local Update = function()
 		local total = select(2, GetNumAuctionItems("list")) or 0
-		local pages = math_ceil(total / _G.NUM_AUCTION_ITEMS_PER_PAGE)
+		local pages = math.ceil(total / _G.NUM_AUCTION_ITEMS_PER_PAGE)
 		local current = browse.page or 0
-		local count = (pages > 1) and math_min(pages, spec.shown) or 0
-		local first = math_max(0, math_min(current - math_floor(spec.shown / 2), pages - count))
+		local count = (pages > 1) and math.min(pages, spec.shown) or 0
+		local first = math.max(0, math.min(current - math.floor(spec.shown / 2), pages - count))
 		-- from the right, the last one by the next arrow
 		local anchor = nextPage
 		for i = 1, spec.shown do

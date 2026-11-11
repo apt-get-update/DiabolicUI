@@ -16,20 +16,6 @@ local Module = Engine:NewModule("Blizzard: Panels", "LOW")
 local kit
 local Placed = {} -- the bands' parts placed (PlaceBand), by their settings
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local type = type
-local select = select
-local string_format = string.format
-local math_max = math.max
-local math_min = math.min
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-
 -- their scroll bars' tracks, by file (lowercase, as patterns)
 local ART = { "ui%-character%-scrollbar", "ui%-classtrainer%-scrollbar", "ui%-itemsocketingframe%-scrollbar" }
 
@@ -74,10 +60,7 @@ HideText = function(frame, text)
 	end
 end
 
--- `color`'s code for a text's colors.
-local ColorCode = function(color)
-	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
-end
+local ColorCode = Engine.ColorCode
 
 -- A text's other colors as dark inks on parchment: white `ink` (its
 -- code), the others (item qualities, Blizzard's red) darkened to `bright`
@@ -86,10 +69,10 @@ local DarkenCodes = function(text, ink, bright)
 	return (
 		text:gsub("|c%x%x(%x%x)(%x%x)(%x%x)", function(r, g, b)
 			r, g, b = tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255
-			local top = math_max(r, g, b)
+			local top = math.max(r, g, b)
 			if top <= bright then
 				return nil
-			elseif math_min(r, g, b) > 0.8 then
+			elseif math.min(r, g, b) > 0.8 then
 				return ink
 			end
 			return ColorCode({ r * bright / top, g * bright / top, b * bright / top })
@@ -181,7 +164,7 @@ local ExtendRail = function(window, rail)
 			return
 		end
 		for _, fit in ipairs(fits) do
-			fit[1]:SetWidth(math_max(1, fit[2]()))
+			fit[1]:SetWidth(math.max(1, fit[2]()))
 		end
 	end
 	window:HookScript("OnShow", Fit)

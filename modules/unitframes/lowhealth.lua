@@ -5,17 +5,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("LowHealthWarning")
 
--- Lua API
-local _G = _G
-local math_cos = math.cos
-local math_pi = math.pi
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local UnitHealth = _G.UnitHealth
-local UnitHealthMax = _G.UnitHealthMax
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-
 local THRESHOLD = 0.35 -- the share of health under which the edges show
 local PULSE = 1.4 -- seconds for one pulse, in and out
 local MIN_ALPHA, MAX_ALPHA = 0.3, 0.8
@@ -31,7 +20,7 @@ end
 -- Fades between MIN_ALPHA and MAX_ALPHA, only while shown.
 local OnUpdate = function(frame, elapsed)
 	frame.elapsed = (frame.elapsed + elapsed) % PULSE
-	local wave = 0.5 - 0.5 * math_cos(2 * math_pi * frame.elapsed / PULSE)
+	local wave = 0.5 - 0.5 * math.cos(2 * math.pi * frame.elapsed / PULSE)
 	frame:SetAlpha(MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * wave)
 end
 

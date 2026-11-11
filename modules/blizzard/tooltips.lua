@@ -13,57 +13,9 @@ Module:SetIncompatible("TipTac")
 Module:SetIncompatible("TinyTip")
 Module:SetIncompatible("TinyTooltip")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local select = select
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local string_find = string.find
-local string_format = string.format
-local string_match = string.match
-local table_concat = table.concat
-local table_insert = table.insert
-local table_wipe = table.wipe
-local unpack = unpack
-
--- WoW API
-local CanInspect = _G.CanInspect
-local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetCursorPosition = _G.GetCursorPosition
-local GetItemInfo = _G.GetItemInfo
-local GetItemStats = _G.GetItemStats
-local GetTime = _G.GetTime
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-local IsShiftKeyDown = _G.IsShiftKeyDown
-local NotifyInspect = _G.NotifyInspect
-local UnitClass = _G.UnitClass
-local UnitClassification = _G.UnitClassification
-local UnitExists = _G.UnitExists
-local UnitFactionGroup = _G.UnitFactionGroup
-local UnitGUID = _G.UnitGUID
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsDead = _G.UnitIsDead
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsGhost = _G.UnitIsGhost
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsPVP = _G.UnitIsPVP
-local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
-local UnitIsUnit = _G.UnitIsUnit
-local UnitIsVisible = _G.UnitIsVisible
-local UnitLevel = _G.UnitLevel
-local UnitName = _G.UnitName
-local UnitOnTaxi = _G.UnitOnTaxi
-local UnitReaction = _G.UnitReaction
-
 local UnitIsTapDenied = Engine.UnitIsTapDenied
 
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Blizzard textures we use
 local BOSS_TEXTURE = "|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:16:16:-2:1|t"
@@ -249,32 +201,32 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	end
 
 	local name_string = self.name_string or {}
-	table_wipe(name_string)
+	table.wipe(name_string)
 
 	if isplayer then
 		if ffa then
-			table_insert(name_string, FFA_TEXTURE)
+			table.insert(name_string, FFA_TEXTURE)
 		elseif pvp and faction then
 			if faction == "Horde" then
-				table_insert(name_string, FACTION_HORDE_TEXTURE)
+				table.insert(name_string, FACTION_HORDE_TEXTURE)
 			elseif faction == "Alliance" then
-				table_insert(name_string, FACTION_ALLIANCE_TEXTURE)
+				table.insert(name_string, FACTION_ALLIANCE_TEXTURE)
 			elseif faction == "Neutral" then
-				table_insert(name_string, FACTION_NEUTRAL_TEXTURE)
+				table.insert(name_string, FACTION_NEUTRAL_TEXTURE)
 			end
 		end
-		table_insert(name_string, name)
+		table.insert(name_string, name)
 	else
 		if isboss then
-			table_insert(name_string, BOSS_TEXTURE)
+			table.insert(name_string, BOSS_TEXTURE)
 		end
-		table_insert(name_string, name)
+		table.insert(name_string, name)
 	end
 
 	-- Need color codes for the text to always be correctly colored,
 	-- or blizzard will from time to time overwrite it with their own.
 	local title = _G[tooltip:GetName() .. "TextLeft1"]
-	title:SetText(F.Colorize(table_concat(name_string, " "), unpack(color)))
+	title:SetText(F.Colorize(table.concat(name_string, " "), unpack(color)))
 
 	-- Color the statusbar in the same color as the unit name.
 	local statusbar = _G[tooltip:GetName() .. "StatusBar"]
@@ -315,9 +267,9 @@ Module.SetUnitInfo = function(self, gear, spec)
 		local line = _G["GameTooltipTextLeft" .. i]
 		local text = line:GetText()
 		if text then
-			if string_find(text, gearPrefix) then
+			if string.find(text, gearPrefix) then
 				gearLine = _G["GameTooltipTextRight" .. i]
-			elseif string_find(text, specPrefix) then
+			elseif string.find(text, specPrefix) then
 				specLine = _G["GameTooltipTextRight" .. i]
 			end
 		end
@@ -421,26 +373,26 @@ Module.GetUnitGear = function(self, unit)
 		return -- some item isn't in the cache yet
 	end
 
-	local ilvl = string_format("%.1f", total / count)
+	local ilvl = string.format("%.1f", total / count)
 	local extras = {}
 	local score = Engine:GetModule("Blizzard: GearScore"):GetUnitScore(unit)
 	if score and (score > 0) then
-		table_insert(extras, F.Colorize("GS " .. score, Engine:GetModule("Blizzard: GearScore"):GetColor(score)))
+		table.insert(extras, F.Colorize("GS " .. score, Engine:GetModule("Blizzard: GearScore"):GetColor(score)))
 	end
 	if boa > 0 then
-		table_insert(
+		table.insert(
 			extras,
 			F.Colorize(boa, unpack(C.General.BoA)) .. " " .. F.Colorize(L["BoA"], unpack(C.General.BoA))
 		)
 	end
 	if pvp > 0 then
-		table_insert(
+		table.insert(
 			extras,
 			F.Colorize(pvp, unpack(C.General.PvP)) .. " " .. F.Colorize(L["PvP"], unpack(C.General.PvP))
 		)
 	end
 	if #extras > 0 then
-		return ilvl .. "  " .. table_concat(extras, ", ")
+		return ilvl .. "  " .. table.concat(extras, ", ")
 	end
 	return ilvl
 end
@@ -466,7 +418,7 @@ do
 		end
 		if maxTree then
 			local name = GetTalentTabInfo(maxTree, isInspect, nil, group)
-			specName = string_format("%d/%d/%d (%s)", tree[1], tree[2], tree[3], name)
+			specName = string.format("%d/%d/%d (%s)", tree[1], tree[2], tree[3], name)
 		else
 			specName = NONE
 		end
@@ -588,7 +540,7 @@ local StyleAuraTooltip = function(tooltip, name, rank, debuffType, unitCaster, s
 		if msg then
 			local isTime
 			for j = 1, #remainingTime do
-				if string_match(msg, remainingTime[j]) then
+				if string.match(msg, remainingTime[j]) then
 					isTime = true
 					break
 				end
@@ -1031,7 +983,7 @@ end
 Module.GetMenuFont = function(self)
 	local spec = self.config.menu
 	local size = spec.font_size * Engine:GetFrame():GetEffectiveScale() / _G.UIParent:GetEffectiveScale()
-	size = math_max(9, math_min(14, math_floor(size + 0.5)))
+	size = math.max(9, math.min(14, math.floor(size + 0.5)))
 	return spec.fonts[size]
 end
 

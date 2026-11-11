@@ -5,15 +5,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local Widget = Module:SetWidget("Keybinds")
 
--- Lua API
-local ipairs = ipairs
-
--- WoW API
-local ClearOverrideBindings = _G.ClearOverrideBindings
-local GetBindingKey = _G.GetBindingKey
-local RegisterStateDriver = _G.RegisterStateDriver
-local SetOverrideBindingClick = _G.SetOverrideBindingClick
-
 Widget.OnEnable = function(self)
 	self.config = self:GetDB("ActionBars") -- static config
 	self.db = self:GetConfig("ActionBars", "character") -- per user settings for bars

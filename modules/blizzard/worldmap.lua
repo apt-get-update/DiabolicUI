@@ -4,12 +4,6 @@
 local ADDON, Engine = ...
 local Module = Engine:NewModule("Blizzard: WorldMap", "LOW")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-
 local FONT = ([[Interface\AddOns\%s\media\fonts\ExocetBlizzardMedium.ttf]]):format(ADDON)
 
 -- Same size and outline, only the typeface changes.

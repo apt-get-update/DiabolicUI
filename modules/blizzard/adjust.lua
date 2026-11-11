@@ -7,15 +7,6 @@ local Module = Engine:NewModule("Blizzard: Adjust", "LAST") -- (after the module
 
 local kit
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-
 local Placed, Sized = {}, {} -- the parts followed: their names (by part)
 local Applying -- (our own moves, not to be undone)
 local Waiting = {} -- the parts whose frame to be placed on isn't made yet (a window styled later)

@@ -10,35 +10,6 @@ local Module = Engine:NewModule("Blizzard: LootPreview", "LOW")
 local RollWindow = Engine:GetModule("Blizzard: RollWindow")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local string_gmatch = string.gmatch
-local table_concat = table.concat
-local table_remove = table.remove
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetItemInfo = _G.GetItemInfo
-local GetLootMethod = _G.GetLootMethod
-local GetLootSlotInfo = _G.GetLootSlotInfo
-local GetLootSlotLink = _G.GetLootSlotLink
-local GetLootThreshold = _G.GetLootThreshold
-local GetNumLootItems = _G.GetNumLootItems
-local GetNumPartyMembers = _G.GetNumPartyMembers
-local GetNumRaidMembers = _G.GetNumRaidMembers
-local GetTime = _G.GetTime
-local SendAddonMessage = _G.SendAddonMessage
-local UnitGUID = _G.UnitGUID
-local UnitIsDead = _G.UnitIsDead
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitName = _G.UnitName
-
 local CHATS = {
 	CHAT_MSG_RAID_WARNING = true,
 	CHAT_MSG_RAID = true,
@@ -128,9 +99,9 @@ Module.Update = function(self)
 	for i = 1, #items do
 		local name = self.rows[i].Name
 		name:SetWidth(config.max_width) -- (measured cut short otherwise)
-		nameWidth = math_max(nameWidth, name:GetStringWidth())
+		nameWidth = math.max(nameWidth, name:GetStringWidth())
 	end
-	local width = math_min(math_max(config.width, config.icon_size + config.gap + nameWidth + 4), config.max_width)
+	local width = math.min(math.max(config.width, config.icon_size + config.gap + nameWidth + 4), config.max_width)
 	for i = 1, #items do
 		self.rows[i]:SetWidth(width)
 		self.rows[i].Name:SetWidth(width - config.icon_size - config.gap)
@@ -158,7 +129,7 @@ Module.AddLinks = function(self, message)
 			listed[item.link] = true
 		end
 	end
-	for link in string_gmatch(message, LINK) do
+	for link in string.gmatch(message, LINK) do
 		if not listed[link] then
 			self.items[#self.items + 1] = { link = link }
 		end
@@ -186,7 +157,7 @@ end
 Module.OnRollEnded = function(self, event, link)
 	for i, item in ipairs(self.items) do
 		if (item.link == link) and item.rolling then
-			table_remove(self.items, i)
+			table.remove(self.items, i)
 			return self:Update()
 		end
 	end
@@ -283,7 +254,7 @@ Module.ShowFakeRoll = function(self)
 		return
 	end
 	local player = UnitName("player")
-	self:OnChat("CHAT_MSG_RAID_WARNING", "Loot from " .. L["Fake Boss"] .. ": " .. table_concat(FAKE_LOOT, " "), player)
+	self:OnChat("CHAT_MSG_RAID_WARNING", "Loot from " .. L["Fake Boss"] .. ": " .. table.concat(FAKE_LOOT, " "), player)
 	RollWindow:OnChat("CHAT_MSG_RAID_WARNING", "Roll for " .. FAKE_LOOT[1] .. " 20s", player)
 end
 

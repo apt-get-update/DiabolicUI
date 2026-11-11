@@ -4,13 +4,6 @@ local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
 
--- Lua API
-local ipairs = ipairs
-
--- WoW API
-local CreateFrame = CreateFrame
-local InCombatLockdown = InCombatLockdown
-
 -- the controls (controls.lua)
 local C = Module.Controls
 local BUTTON_HEIGHT = C.BUTTON_HEIGHT

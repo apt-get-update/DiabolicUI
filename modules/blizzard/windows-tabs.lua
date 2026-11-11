@@ -5,18 +5,6 @@ local Module = Engine:GetModule("Blizzard: Windows")
 
 local BannerIndex -- an emblem's place in the banners' atlas, by name (OnInit)
 
--- Lua and WoW API
-local _G = _G
-local ipairs = ipairs
-local table_insert = table.insert
-local math_floor = math.floor
-local math_max = math.max
-local setmetatable = setmetatable
-local string_find = string.find
-local unpack = unpack
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 local Private = Module.Private
 local NameFor = Private.NameFor
 local Gradient = Private.Gradient
@@ -227,12 +215,12 @@ Module.SetBannerIcon = function(self, tab, icon)
 	local art, spec = tab.DiabolicBanner, Module.config.banner
 	local sigil = art.sigil
 	local index = icon and BannerIndex[icon]
-	if (not index) and not (icon and string_find(icon, "\\", 1, true)) then
+	if (not index) and not (icon and string.find(icon, "\\", 1, true)) then
 		index = BannerIndex[spec.fallback]
 	end
 	if index then
 		local columns, rows = spec.sigil_columns, spec.sigil_rows
-		local column, row = (index - 1) % columns, math_floor((index - 1) / columns)
+		local column, row = (index - 1) % columns, math.floor((index - 1) / columns)
 		sigil:SetTexture(spec.sigils)
 		sigil:SetTexCoord(column / columns, (column + 1) / columns, row / rows, (row + 1) / rows)
 		sigil:SetSize(spec.sigil_size, spec.sigil_size)
@@ -306,7 +294,7 @@ Module.StyleBanner = function(self, tab, icon)
 		shadow:SetPoint("TOP", art.cloth, "TOP", 0, 0)
 		shadow:SetSize(spec.width, spec.shadow)
 		Gradient(shadow, "VERTICAL", 0, 0, 0, 0, 0, 0, 0, spec.shadow_alpha)
-		table_insert(art.shadows, shadow)
+		table.insert(art.shadows, shadow)
 	end
 	tab.DiabolicBanner = art
 	tab.DiabolicNotLit = IsSelected
@@ -371,7 +359,7 @@ local HangBanners = function(window)
 	-- over every banner (Blizzard's tabs aren't all at one level)
 	local level = 0
 	for _, tab in ipairs(shown) do
-		level = math_max(level, tab:GetFrameLevel())
+		level = math.max(level, tab:GetFrameLevel())
 	end
 	rail:SetFrameLevel(level + 1)
 	rail:SetWidth(#shown * spec.width + (#shown - 1) * spec.gap + 2 * spec.rail.overhang)
@@ -423,7 +411,7 @@ Module.HangTabs = function(self, window, tabs, icons)
 		if not tab.DiabolicBanner then
 			self:StyleBanner(tab, icons and icons[i])
 			tab.DiabolicWindow = window
-			table_insert(window.DiabolicBanners, tab)
+			table.insert(window.DiabolicBanners, tab)
 			hooksecurefunc(tab, "SetPoint", Rehang)
 			tab:HookScript("OnShow", Rehang)
 			tab:HookScript("OnHide", Rehang)

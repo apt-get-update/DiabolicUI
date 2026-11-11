@@ -44,51 +44,6 @@ local ADDON, Engine = ...
 local L = Engine:GetLocale()
 
 -------------------------------------------------------------
--- Lua API
--------------------------------------------------------------
-local _G = _G
-local assert = assert
-local debugstack = debugstack
-local error = error
-local getmetatable = getmetatable
-local ipairs = ipairs
-local math_floor = math.floor
-local pairs = pairs
-local select = select
-local setmetatable = setmetatable
-local string_join = string.join
-local string_lower = string.lower
-local string_match = string.match
-local table_concat = table.concat
-local table_remove = table.remove
-local tonumber = tonumber
-local tostring = tostring
-local type = type
-local unpack = unpack
-local xpcall = xpcall
-
--------------------------------------------------------------
--- WOW API
--------------------------------------------------------------
-local CreateFrame = _G.CreateFrame
-local GetAddOnInfo = _G.GetAddOnInfo
-local GetNumAddOns = _G.GetNumAddOns
-local GetRealmName = _G.GetRealmName
-local geterrorhandler = _G.geterrorhandler
-local InCombatLockdown = _G.InCombatLockdown
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local IsLoggedIn = _G.IsLoggedIn
-local UnitAffectingCombat = _G.UnitAffectingCombat
-local UnitFactionGroup = _G.UnitFactionGroup
-local UnitName = _G.UnitName
-
--------------------------------------------------------------
--- WOW Frames & Tables
--------------------------------------------------------------
-local UIParent = _G.UIParent
-local WorldFrame = _G.WorldFrame
-
--------------------------------------------------------------
 -- Engine Registries
 -------------------------------------------------------------
 local events = {} -- event registry
@@ -176,8 +131,8 @@ local check = function(self, value, num, ...)
 			return
 		end
 	end
-	local types = string_join(", ", ...)
-	local name = string_match(debugstack(2, 2, 0), ": in function [`<](.-)['>]")
+	local types = string.join(", ", ...)
+	local name = string.match(debugstack(2, 2, 0), ": in function [`<](.-)['>]")
 	error(L["Bad argument #%d to '%s': %s expected, got %s"]:format(num, name, types, type(value)), 3)
 end
 
@@ -376,7 +331,7 @@ local UnregisterEvent = function(self, event, func)
 	end
 	for i = #events[event][self], 1, -1 do
 		if events[event][self][i] == func then
-			table_remove(events[event][self], i)
+			table.remove(events[event][self], i)
 			if Frame.eventRegistry and Frame.eventRegistry[event] then
 				Frame.eventRegistry[event] = Frame.eventRegistry[event] - 1
 				if Frame.eventRegistry[event] == 0 then
@@ -467,7 +422,7 @@ local UnregisterMessage = function(self, message, func)
 	end
 	for i = #events[message][self], 1, -1 do
 		if events[message][self][i] == func then
-			table_remove(events[message][self], i)
+			table.remove(events[message][self], i)
 			return
 		end
 	end
@@ -673,9 +628,6 @@ local wrap = function(self, func)
 	end
 end
 
--------------------------------------------------------------
--------------------------------------------------------------
--- Prototypes
 -------------------------------------------------------------
 -------------------------------------------------------------
 
@@ -1028,9 +980,6 @@ embed(framePrototype, frameWidgetPrototype)
 
 -------------------------------------------------------------
 -------------------------------------------------------------
--- Engine
--------------------------------------------------------------
--------------------------------------------------------------
 
 -------------------------------------------------------------
 -- Keyword handling
@@ -1092,10 +1041,10 @@ local GetAddOnIndex = function(target)
 	if not addonIndexes then
 		addonIndexes = {}
 		for i = 1, GetNumAddOns() do
-			addonIndexes[string_lower((GetAddOnInfo(i)))] = i
+			addonIndexes[string.lower((GetAddOnInfo(i)))] = i
 		end
 	end
-	return addonIndexes[string_lower(target)]
+	return addonIndexes[string.lower(target)]
 end
 
 -- Check if an addon exists in the addon listing and loadable on demand
@@ -1179,7 +1128,7 @@ Engine.NewModule = function(self, name, loadPriority)
 				2,
 				"New",
 				loadPriority,
-				table_concat(PRIORITY_INDEX, ", ")
+				table.concat(PRIORITY_INDEX, ", ")
 			)
 		)
 	end
@@ -1220,7 +1169,7 @@ Engine.ForAll = function(self, method, priority, ...)
 				2,
 				"ForAll",
 				priority,
-				table_concat(PRIORITY_INDEX, ", ")
+				table.concat(PRIORITY_INDEX, ", ")
 			)
 		)
 	end
@@ -1286,7 +1235,7 @@ do
 
 	Engine.GetFrameSize = function(self, frame)
 		local width, height = frame:GetSize()
-		return math_floor(width + 0.5), math_floor(height + 0.5)
+		return math.floor(width + 0.5), math.floor(height + 0.5)
 	end
 
 	Engine.UpdateWorldScales = function(self)
@@ -1295,9 +1244,9 @@ do
 
 		local oldScale
 		if oldWidth and oldHeight then
-			oldScale = math_floor((oldWidth / oldHeight) * 100) * 100
+			oldScale = math.floor((oldWidth / oldHeight) * 100) * 100
 		end
-		local newScale = math_floor((newWidth / newHeight) * 100) * 100
+		local newScale = math.floor((newWidth / newHeight) * 100) * 100
 
 		data.worldWidth = newWidth
 		data.worldHeight = newHeight
@@ -1312,9 +1261,9 @@ do
 
 		local oldScale
 		if oldWidth and oldHeight then
-			oldScale = math_floor((oldWidth / oldHeight) * 100) * 100
+			oldScale = math.floor((oldWidth / oldHeight) * 100) * 100
 		end
-		local newScale = math_floor((newWidth / newHeight) * 100) * 100
+		local newScale = math.floor((newWidth / newHeight) * 100) * 100
 
 		data.interfaceWidth = newWidth
 		data.interfaceHeight = newHeight

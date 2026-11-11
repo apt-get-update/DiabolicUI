@@ -3,19 +3,6 @@
 local _, Engine = ...
 local Module = Engine:GetModule("Blizzard: Windows")
 
--- Lua and WoW API
-local _G = _G
-local ipairs = ipairs
-local table_sort = table.sort
-local math_abs = math.abs
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local select = select
-local unpack = unpack
-local CreateFrame = _G.CreateFrame
-local InCombatLockdown = _G.InCombatLockdown
-
 local Private = Module.Private
 local NameFor = Private.NameFor
 
@@ -176,7 +163,7 @@ Module.StyleScrollBar = function(self, bar)
 	-- the track from the up arrow's top to the down arrow's bottom, the
 	-- line just outside it
 	local track = CreateFrame("Frame", NameFor(bar, "DiabolicTrack"), bar)
-	track:SetFrameLevel(math_max(bar:GetFrameLevel() - 1, 0))
+	track:SetFrameLevel(math.max(bar:GetFrameLevel() - 1, 0))
 	track:SetPoint("TOP", up, "TOP", 0, spec.line)
 	track:SetPoint("BOTTOM", down, "BOTTOM", 0, -spec.line)
 	track:SetWidth(spec.width + spec.line * 2)
@@ -285,7 +272,7 @@ end
 local LineRows = function(frame)
 	local wanted = Module.config.layout.button_gap
 	local buttons = CollectShown(frame, {})
-	table_sort(buttons, ByLeft)
+	table.sort(buttons, ByLeft)
 	local taken = {}
 	for i, first in ipairs(buttons) do
 		if not taken[first] then
@@ -294,7 +281,7 @@ local LineRows = function(frame)
 			for j = i + 1, #buttons do
 				local other = buttons[j]
 				local _, otherBottom, _, otherTop = Edges(other)
-				if (not taken[other]) and (math_abs((otherBottom + otherTop - bottom - top) / 2) <= 2) then
+				if (not taken[other]) and (math.abs((otherBottom + otherTop - bottom - top) / 2) <= 2) then
 					row[#row + 1] = other
 					taken[other] = true
 				end
@@ -310,7 +297,7 @@ local LineRows = function(frame)
 				if
 					apart
 					and (apart < wanted - 0.5)
-					and (apart > -math_min(before:GetWidth(), button:GetWidth()) / 2)
+					and (apart > -math.min(before:GetWidth(), button:GetWidth()) / 2)
 				then
 					close[#close + 1] = button
 				else

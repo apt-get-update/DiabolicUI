@@ -5,18 +5,6 @@ local UnitFrameWidget = Module:SetWidget("Unit: Raid")
 local StatusBar = Engine:GetHandler("StatusBar")
 local Library = Engine:GetDB("Library: UnitFrames")
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local string_match = string.match
-local unpack = unpack
-
--- WoW API
-local GetNumRaidMembers = _G.GetNumRaidMembers
-local GetRaidRosterInfo = _G.GetRaidRosterInfo
-local GetSpellInfo = _G.GetSpellInfo
-local UnitClass = _G.UnitClass
-
 -- No buffs at all on raid frames
 local buffFilter = function(self, ...)
 	return false
@@ -80,7 +68,7 @@ local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.raid
 	local db = Module:GetConfig("UnitFrames")
 
-	local unitNum = string_match(unit, "%d") -- (raid1 to raid40)
+	local unitNum = string.match(unit, "%d") -- (raid1 to raid40)
 
 	self:SetSize(unpack(config.size))
 	self:Place("TOP", 0, -((unitNum - 1) * 90))
@@ -260,7 +248,7 @@ local MEMBERS_PER_GROUP, GROUPS_PER_COLUMN = 5, 2
 
 -- Where group `subgroup` (1-8) starts, from the top left of the raid frames.
 local GetGroupPosition = function(config, subgroup)
-	local column = math_floor((subgroup - 1) / GROUPS_PER_COLUMN)
+	local column = math.floor((subgroup - 1) / GROUPS_PER_COLUMN)
 	local width = config.size[1] + config.offset + config.auras.button.size[1] + 3 -- the frame and its auras
 	local height = config.groups.label_height
 		+ MEMBERS_PER_GROUP * (config.size[2] + config.offset)

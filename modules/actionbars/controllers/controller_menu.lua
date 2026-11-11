@@ -6,14 +6,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Menu")
 
--- Lua API
-local unpack = unpack
-local setmetatable = setmetatable
-
--- WoW API
-local CreateFrame = CreateFrame
-local InCombatLockdown = InCombatLockdown
-
 local Controller = CreateFrame("Frame")
 local Controller_MT = { __index = Controller }
 

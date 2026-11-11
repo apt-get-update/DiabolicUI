@@ -8,25 +8,7 @@ local L = Engine:GetLocale()
 local C = Engine:GetDB("Data: Colors")
 local F = Engine:GetDB("Library: Format")
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local math_min = math.min
-local tostring = tostring
-local unpack = unpack
-
--- WoW API
-
-local GetRestState = _G.GetRestState
-local GetTimeToWellRested = _G.GetTimeToWellRested
-local GetXPExhaustion = _G.GetXPExhaustion
-local IsResting = _G.IsResting
-local UnitLevel = _G.UnitLevel
-local UnitXP = _G.UnitXP
-local UnitXPMax = _G.UnitXPMax
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 local MINUTE, HOUR = 60, 3600
 
@@ -88,7 +70,7 @@ Bar_XP.Update = function(self)
 	self.XP:SetMinMaxValues(0, data.xpMax)
 	self.XP:SetValue(data.xp)
 	self.Rested:SetMinMaxValues(0, data.xpMax)
-	self.Rested:SetValue(math_min(data.xpMax, data.xp + (data.restedLeft or 0)))
+	self.Rested:SetValue(math.min(data.xpMax, data.xp + (data.restedLeft or 0)))
 	if data.restedLeft then
 		r, g, b = unpack(C.General.XPRestedBonus)
 	end
@@ -150,14 +132,14 @@ Bar_XP.OnEnter = function(self)
 			if data.restedTimeLeft > HOUR * 2 then
 				GameTooltip:AddLine(
 					L["You must rest for %s additional\nhours to become fully rested."]:format(
-						F.Colorize(math_floor(data.restedTimeLeft / HOUR), "OffWhite")
+						F.Colorize(math.floor(data.restedTimeLeft / HOUR), "OffWhite")
 					),
 					unpack(C.General.Normal)
 				)
 			else
 				GameTooltip:AddLine(
 					L["You must rest for %s additional\nminutes to become fully rested."]:format(
-						F.Colorize(math_floor(data.restedTimeLeft / MINUTE), "OffWhite")
+						F.Colorize(math.floor(data.restedTimeLeft / MINUTE), "OffWhite")
 					),
 					unpack(C.General.Normal)
 				)

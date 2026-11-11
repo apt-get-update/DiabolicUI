@@ -9,32 +9,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: RollWindow", "LOW")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_ceil = math.ceil
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local string_gmatch = string.gmatch
-local string_lower = string.lower
-local table_concat = table.concat
-local table_remove = table.remove
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetItemInfo = _G.GetItemInfo
-local GetItemQualityColor = _G.GetItemQualityColor
-local GetLootMethod = _G.GetLootMethod
-local GetNumRaidMembers = _G.GetNumRaidMembers
-local GetRaidRosterInfo = _G.GetRaidRosterInfo
-local GetTime = _G.GetTime
-local RandomRoll = _G.RandomRoll
-local UnitClass = _G.UnitClass
-local UnitName = _G.UnitName
-
 -- Words that end a roll, in the message naming its winner
 local ENDINGS = { "wins", "won", "winner", "awarded", "finished", "no one", "nobody", "cancel" }
 
@@ -118,7 +92,7 @@ local BisText = function(link)
 		end
 	end
 	if #specs > 0 then
-		return phase .. ": " .. table_concat(specs, ", ")
+		return phase .. ": " .. table.concat(specs, ", ")
 	end
 end
 
@@ -137,7 +111,7 @@ local OnRowUpdate = function(row, elapsed)
 	if row.appear then
 		local config = Module.config
 		row.appear = row.appear + elapsed
-		local progress = math_min(row.appear / config.appear_time, 1)
+		local progress = math.min(row.appear / config.appear_time, 1)
 		row:SetAlpha(progress)
 		SetItemScale(row, config.appear_scale + (1 - config.appear_scale) * progress)
 		if progress >= 1 then
@@ -149,7 +123,7 @@ local OnRowUpdate = function(row, elapsed)
 		return Module:RemoveRow(row)
 	end
 	row.Bar:SetValue(timeLeft)
-	row.Time:SetText(math_ceil(timeLeft))
+	row.Time:SetText(math.ceil(timeLeft))
 	if not row.hasInfo then
 		Module:UpdateItem(row) -- not seen by the client yet when it was put up
 	end
@@ -187,7 +161,7 @@ local ShowResult = function(row, text)
 		button:Hide()
 	end
 	row.Result:SetText(text)
-	row.Slot:SetWidth(math_max(row.Result:GetStringWidth(), ButtonsWidth()))
+	row.Slot:SetWidth(math.max(row.Result:GetStringWidth(), ButtonsWidth()))
 end
 
 -- Not rolling is passing: nothing to send
@@ -371,10 +345,10 @@ Module.Layout = function(self)
 	local nameWidth = 0
 	for _, row in ipairs(rows) do
 		row:SetWidth(config.max_width) -- (its name measured cut short otherwise)
-		nameWidth = math_max(nameWidth, row.Name:GetStringWidth())
+		nameWidth = math.max(nameWidth, row.Name:GetStringWidth())
 	end
-	local width = math_min(
-		math_max(config.width, config.icon_size + config.gap + nameWidth + 4 + config.gap + ButtonsWidth()),
+	local width = math.min(
+		math.max(config.width, config.icon_size + config.gap + nameWidth + 4 + config.gap + ButtonsWidth()),
 		config.max_width
 	)
 	frame:SetWidth(width + 2 * config.side_padding)
@@ -405,7 +379,7 @@ end
 Module.AddRoll = function(self, link, seconds)
 	local row = self:FindRow(link)
 	if not row then
-		row = table_remove(self.unused) or self:CreateRow()
+		row = table.remove(self.unused) or self:CreateRow()
 		row.link, row.rolling, row.rolled = link, nil, nil
 		ShowButtons(row)
 		self.rows[#self.rows + 1] = row
@@ -425,7 +399,7 @@ end
 Module.RemoveRow = function(self, row)
 	for i, shown in ipairs(self.rows) do
 		if shown == row then
-			table_remove(self.rows, i)
+			table.remove(self.rows, i)
 			break
 		end
 	end
@@ -448,7 +422,7 @@ Module.OnChat = function(self, event, message, sender)
 	if (not message) or not CanPutUpRolls(event, sender) then
 		return
 	end
-	local lower = string_lower(message)
+	local lower = string.lower(message)
 	local ending
 	for _, word in ipairs(ENDINGS) do
 		if lower:find(word, 1, true) then
@@ -457,7 +431,7 @@ Module.OnChat = function(self, event, message, sender)
 		end
 	end
 	local found
-	for link in string_gmatch(message, "|c%x+|Hitem:[^|]+|h%[[^%]]+%]|h|r") do
+	for link in string.gmatch(message, "|c%x+|Hitem:[^|]+|h%[[^%]]+%]|h|r") do
 		found = true
 		local row = self:FindRow(link)
 		if ending then
@@ -465,7 +439,7 @@ Module.OnChat = function(self, event, message, sender)
 				self:RemoveRow(row)
 			end
 		elseif lower:find("roll", 1, true) then
-			self:AddRoll(link, math_max(SecondsIn(lower:gsub("|c%x+|h.-|h|r", "")) or self.config.seconds, 1))
+			self:AddRoll(link, math.max(SecondsIn(lower:gsub("|c%x+|h.-|h|r", "")) or self.config.seconds, 1))
 		end
 	end
 	-- "Stopping rolls in 3": the last item's time

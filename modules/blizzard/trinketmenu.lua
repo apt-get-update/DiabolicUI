@@ -6,13 +6,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: TrinketMenu", "LOW")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local unpack = unpack
-
--- WoW API
-
 -- How many menu buttons TrinketMenu.xml makes (TrinketMenu.MaxTrinkets).
 local NUM_MENU_BUTTONS = 30
 

@@ -4,23 +4,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: LootFrame")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local select = select
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CloseLoot = CloseLoot
-local CreateFrame = CreateFrame
-local GetItemQualityColor = GetItemQualityColor
-local GetLootSlotInfo = GetLootSlotInfo
-local GetNumLootItems = GetNumLootItems
-local LootSlot = LootSlot
-local LootSlotIsCoin = LootSlotIsCoin
-
 --[[
 	Rather than re-skinning Blizzard's own live LootFrame (which this module
 	used to do), this builds an entirely separate, self-owned loot window,
@@ -243,7 +226,7 @@ Module.Update = function(self)
 				button.text:SetTextColor(r, g, b)
 			end
 
-			maxTextWidth = math_max(maxTextWidth, button.text:GetStringWidth())
+			maxTextWidth = math.max(maxTextWidth, button.text:GetStringWidth())
 			button:Show()
 		end
 	end
@@ -260,8 +243,8 @@ Module.Update = function(self)
 	-- as wide as the longest name needs, up to max_width (longer ones wrap)
 	local textLeft = iconConfig.icon_padding + iconConfig.size + rowConfig.text_offset
 	local sides = config.row_padding * 2
-	local rowWidth = math_min(
-		math_max(config.width - sides, textLeft + maxTextWidth + rowConfig.text_padding),
+	local rowWidth = math.min(
+		math.max(config.width - sides, textLeft + maxTextWidth + rowConfig.text_padding),
 		config.max_width - sides
 	)
 	local textWidth = rowWidth - textLeft - rowConfig.text_padding
@@ -280,7 +263,7 @@ Module.Update = function(self)
 
 	self.frame:SetWidth(rowWidth + sides)
 	self.frame:SetHeight(
-		config.top_padding + (shown * rowHeight) + math_max(0, shown - 1) * rowConfig.gap + config.bottom_padding
+		config.top_padding + (shown * rowHeight) + math.max(0, shown - 1) * rowConfig.gap + config.bottom_padding
 	)
 	self.frame:Show()
 end

@@ -2,14 +2,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: Stance")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
-local GetShapeshiftForm = _G.GetShapeshiftForm
-local RegisterStateDriver = _G.RegisterStateDriver
-
 local NUM_BUTTONS = NUM_SHAPESHIFT_SLOTS
 
 local UIHider = CreateFrame("Frame")

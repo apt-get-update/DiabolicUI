@@ -11,20 +11,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: QuestieTracker", "LOW")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local type = type
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-local CreateFrame = _G.CreateFrame
-local InCombatLockdown = _G.InCombatLockdown
-local IsShiftKeyDown = _G.IsShiftKeyDown
-local PlaySound = _G.PlaySound
-
 -- Blizzard's tracker title (WatchFrameTitle)
 local OBJECTIVES = _G.OBJECTIVES_TRACKER_LABEL
 
@@ -266,7 +252,7 @@ Module.UpdateSpacing = function(self)
 			else
 				gap = (line.mode == "objective") and 1 or 4
 			end
-			line:SetHeight(math_max(label:GetHeight(), FONT_SIZE) + gap)
+			line:SetHeight(math.max(label:GetHeight(), FONT_SIZE) + gap)
 		end
 	end
 	tracker:UpdateHeight()

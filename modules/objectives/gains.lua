@@ -4,22 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Gains", "LOW")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_min = math.min
-local string_format = string.format
-local table_insert = table.insert
-local table_remove = table.remove
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetItemIcon = _G.GetItemIcon
-local GetMoney = _G.GetMoney
-local UnitXP = _G.UnitXP
-
 -- A global string ("You receive loot: %sx%d.") as a pattern: the link, the count.
 local ToPattern = function(text)
 	text = text:gsub("%%%d?%$?s", "\1"):gsub("%%%d?%$?d", "\2")
@@ -36,14 +20,14 @@ Module.Layout = function(self)
 end
 
 Module.Release = function(self, index)
-	local row = table_remove(self.active, index)
+	local row = table.remove(self.active, index)
 	row:Hide()
 	row.key = nil
-	table_insert(self.free, row)
+	table.insert(self.free, row)
 end
 
 Module.NewRow = function(self)
-	local row = table_remove(self.free)
+	local row = table.remove(self.free)
 	if row then
 		return row
 	end
@@ -79,7 +63,7 @@ Module.Add = function(self, key, icon, Describe, amount)
 		row.key, row.amount = key, amount
 		row.Icon:SetTexture(icon)
 		row:Show()
-		table_insert(self.active, 1, row)
+		table.insert(self.active, 1, row)
 		while #self.active > self.config.max_rows do
 			self:Release(#self.active)
 		end
@@ -101,7 +85,7 @@ Module.Tick = function(self, elapsed)
 			self:Release(i)
 			released = true
 		else
-			row:SetAlpha(math_min(1, left / config.fade))
+			row:SetAlpha(math.min(1, left / config.fade))
 		end
 	end
 	if released then
@@ -117,7 +101,7 @@ local DescribeMoney = function(amount)
 end
 
 local DescribeXP = function(amount)
-	return string_format("+%d %s", amount, _G.XP)
+	return string.format("+%d %s", amount, _G.XP)
 end
 
 Module.PLAYER_MONEY = function(self)
@@ -142,7 +126,7 @@ Module.AddItem = function(self, link, count)
 	local color = link:match("|c%x%x%x%x%x%x%x%x") or ""
 	local name = color .. (link:match("%[(.-)%]") or link)
 	self:Add(link, GetItemIcon(link), function(amount)
-		return (amount > 1) and string_format("%s x%d", name, amount) or name
+		return (amount > 1) and string.format("%s x%d", name, amount) or name
 	end, count)
 end
 

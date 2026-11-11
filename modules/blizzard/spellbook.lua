@@ -19,32 +19,6 @@ local Module = Engine:NewModule("Blizzard: Spellbook", "LOW")
 local kit
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_floor = math.floor
-local math_max = math.max
-local pairs = pairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetActionInfo = _G.GetActionInfo
-local GetCompanionInfo = _G.GetCompanionInfo
-local GetMacroSpell = _G.GetMacroSpell
-local GetNumSpellTabs = _G.GetNumSpellTabs
-local GetSpellInfo = _G.GetSpellInfo
-local GetSpellName = _G.GetSpellName
-local GetSpellTabInfo = _G.GetSpellTabInfo
-local GetSpellTexture = _G.GetSpellTexture
-local GetNumCompanions = _G.GetNumCompanions
-local HasPetUI = _G.HasPetUI
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-local IsPassiveSpell = _G.IsPassiveSpell
-local SetCVar = _G.SetCVar
-
 local NUM_SPELLS = 12 -- SPELLS_PER_PAGE
 local NUM_SCHOOLS = 8 -- MAX_SKILLLINE_TABS
 local NUM_COMPANIONS = 12 -- NUM_COMPANIONS_PER_PAGE
@@ -118,7 +92,7 @@ Module.LayoutSpells = function(self, window)
 	for i = 1, NUM_SPELLS do
 		local button = _G["SpellButton" .. i]
 		local name = button:GetName()
-		local row, column = math_floor((i - 1) / 2), (i - 1) % 2
+		local row, column = math.floor((i - 1) / 2), (i - 1) % 2
 		button:ClearAllPoints()
 		button:SetPoint(
 			"TOPLEFT",
@@ -620,7 +594,7 @@ Module.FitCover = function(self)
 			cover,
 			"TOPLEFT",
 			0,
-			-math_max(0, config.cover_insets[2] - top - config.companions_rise)
+			-math.max(0, config.cover_insets[2] - top - config.companions_rise)
 		)
 	end
 end

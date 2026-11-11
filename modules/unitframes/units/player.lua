@@ -6,21 +6,7 @@ local UnitFrameWidget = Module:SetWidget("Unit: Player")
 local C = Engine:GetDB("Data: Colors")
 local Library = Engine:GetDB("Library: UnitFrames")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local unpack = unpack
-local tostring = tostring
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local UnitAffectingCombat = _G.UnitAffectingCombat
-local UnitClass = _G.UnitClass
-local UnitPowerMax = _G.UnitPowerMax
-local UnitPowerType = _G.UnitPowerType
-
 -- WoW constants
-local SPELL_POWER_MANA = _G.SPELL_POWER_MANA
 
 -- player class
 local _, CLASS = UnitClass("player")

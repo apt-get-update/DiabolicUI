@@ -9,12 +9,6 @@ local Module = Engine:NewModule("Blizzard: Bulletin Board", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-
--- WoW API
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 local ADDON = "GroupBulletinBoard"
 
 Module.StyleBoard = function(self)

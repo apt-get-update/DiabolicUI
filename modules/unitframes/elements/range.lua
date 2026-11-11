@@ -4,14 +4,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local UnitInRange = _G.UnitInRange
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsUnit = _G.UnitIsUnit
-
 local INTERVAL = 0.2 -- seconds between looks
 
 local Update = function(self)

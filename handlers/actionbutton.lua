@@ -7,44 +7,7 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("ActionButton")
 
--- Lua API
-local _G = _G
-local math_ceil = math.ceil
-local next = next
-local pairs = pairs
-local select = select
-local setmetatable = setmetatable
-local tonumber = tonumber
-local tostring = tostring
-local unpack = unpack
-
--- WoW API
-local AutoCastShine_AutoCastStart = _G.AutoCastShine_AutoCastStart
-local AutoCastShine_AutoCastStop = _G.AutoCastShine_AutoCastStop
-local CreateFrame = _G.CreateFrame
-local GetActionCooldown = _G.GetActionCooldown
-local GetActionCount = _G.GetActionCount
-local GetActionTexture = _G.GetActionTexture
-local GetPetActionCooldown = _G.GetPetActionCooldown
-local GetPetActionInfo = _G.GetPetActionInfo
-local GetPetActionsUsable = _G.GetPetActionsUsable
-local GetShapeshiftFormCooldown = _G.GetShapeshiftFormCooldown
-local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetTime = _G.GetTime
-local HasAction = _G.HasAction
-local InCombatLockdown = _G.InCombatLockdown
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local IsActionInRange = _G.IsActionInRange
-local IsAttackAction = _G.IsAttackAction
-local IsAutoRepeatAction = _G.IsAutoRepeatAction
-local IsCurrentAction = _G.IsCurrentAction
-local IsConsumableAction = _G.IsConsumableAction
-local IsStackableAction = _G.IsStackableAction
-local IsUsableAction = _G.IsUsableAction
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-
 -- Will replace these with our custom tooltiplib later on!
-local GameTooltip = _G.GameTooltip
 
 -- Registries
 local ButtonRegistry = {} -- all buttons
@@ -498,15 +461,15 @@ local MIN_COUNT_DURATION = 2
 local COUNT_HZ = 0.1
 
 local FormatCooldown = function(timeLeft)
-	local seconds = math_ceil(timeLeft)
+	local seconds = math.ceil(timeLeft)
 	if seconds < 60 then
 		return seconds
 	end
-	local minutes = math_ceil(timeLeft / 60)
+	local minutes = math.ceil(timeLeft / 60)
 	if minutes < 60 then
 		return minutes .. "m"
 	end
-	return math_ceil(timeLeft / 3600) .. "h"
+	return math.ceil(timeLeft / 3600) .. "h"
 end
 
 -- the cooldown frame's: it runs while the cooldown shows

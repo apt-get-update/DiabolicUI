@@ -5,13 +5,6 @@ local Addon, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
 
--- Lua API
-local ipairs = ipairs
-
--- WoW API
-local CreateFrame = CreateFrame
-local GetAddOnMetadata = GetAddOnMetadata
-
 -- the controls (controls.lua)
 local C = Module.Controls
 local EDGE, SLIDER_COLUMN, TITLE_HEIGHT, LOGO_HEIGHT = C.EDGE, C.SLIDER_COLUMN, C.TITLE_HEIGHT, C.LOGO_HEIGHT

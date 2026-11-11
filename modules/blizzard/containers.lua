@@ -10,23 +10,6 @@ local C = Engine:GetDB("Data: Colors")
 Module:SetIncompatible("BlizzardBagsPlus")
 Module:SetIncompatible("Backpacker")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetContainerItemInfo = _G.GetContainerItemInfo
-local GetContainerItemLink = _G.GetContainerItemLink
-local GetContainerItemQuestInfo = _G.GetContainerItemQuestInfo
-local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetItemInfo = _G.GetItemInfo
-local hooksecurefunc = _G.hooksecurefunc
-local BANK_CONTAINER = _G.BANK_CONTAINER
-
 -- Item qualities
 local QUALITY_POOR = 0
 local QUALITY_COMMON = 1

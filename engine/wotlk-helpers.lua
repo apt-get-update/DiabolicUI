@@ -16,19 +16,6 @@
 -- addons use the presence of newer API names to detect the client version.
 local _, Engine = ...
 
--- Lua API
-local ipairs = ipairs
-local math_floor = math.floor
-local table_concat = table.concat
-local unpack = unpack
-
--- WoW API
-local UnitIsFriend = _G.UnitIsFriend
-local UnitIsTapped = _G.UnitIsTapped
-local UnitIsTappedByAllThreatList = _G.UnitIsTappedByAllThreatList
-local UnitIsTappedByPlayer = _G.UnitIsTappedByPlayer
-local UnitPlayerControlled = _G.UnitPlayerControlled
-
 -- True when someone outside your group tagged the unit, so you won't get
 -- loot or credit from it (grayed-out health bars).
 Engine.UnitIsTapDenied = function(unit)
@@ -65,13 +52,18 @@ end
 Engine.CoinString = function(amount)
 	local parts = {}
 	for _, kind in ipairs(COINS) do
-		local count = math_floor(amount / kind[2])
+		local count = math.floor(amount / kind[2])
 		amount = amount - count * kind[2]
 		if count > 0 then
 			parts[#parts + 1] = count .. CoinIcon(kind[1])
 		end
 	end
-	return (parts[1] and table_concat(parts, " ")) or ("0" .. CoinIcon("copper"))
+	return (parts[1] and table.concat(parts, " ")) or ("0" .. CoinIcon("copper"))
+end
+
+-- An { r, g, b } color as a text's color code ("|cffrrggbb").
+Engine.ColorCode = function(color)
+	return string.format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
 end
 
 -- `text` with Blizzard's coin icons (GOLD_AMOUNT_TEXTURE and the others:

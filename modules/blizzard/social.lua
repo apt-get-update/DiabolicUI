@@ -12,22 +12,7 @@ local L = Engine:GetLocale()
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_floor = math.floor
-local select = select
-local string_format = string.format
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
--- A color as a text's code.
-local ColorCode = function(color)
-	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
-end
+local ColorCode = Engine.ColorCode
 
 -- `text` kept in `color` (Blizzard colours some on each update).
 local KeepColor = function(text, color)
@@ -240,7 +225,7 @@ Module.LayoutWho = function(self, window)
 	local Count = function()
 		local _, total = _G.GetNumWhoResults()
 		if _G.WhoFrame:IsShown() and (total > 0) then
-			_G.FriendsFrameTitleText:SetText(string_format(L["%s (%d found)"], _G.WHO_LIST, total))
+			_G.FriendsFrameTitleText:SetText(string.format(L["%s (%d found)"], _G.WHO_LIST, total))
 		end
 	end
 	hooksecurefunc("WhoList_Update", Count)
@@ -253,7 +238,7 @@ Module.LayoutWho = function(self, window)
 	-- rows of Blizzard's template in the room gained, the list told of them
 	local count, height = _G.WHOS_TO_DISPLAY, _G.FRIENDS_FRAME_WHO_HEIGHT
 	-- (and in the room the search left over the foot)
-	local extra = math_floor(raise / height) + config.who_search_rows
+	local extra = math.floor(raise / height) + config.who_search_rows
 	for i = count + 1, count + extra do
 		local row = CreateFrame("Button", "WhoFrameButton" .. i, _G.WhoFrame, "FriendsFrameWhoButtonTemplate")
 		row:SetID(i)
@@ -459,7 +444,7 @@ Module.StyleRaid = function(self)
 		kit:CreateNine(panel, "BACKGROUND", "parchment")
 		panel.DiabolicContent = true
 		panel.DiabolicMaterial = "parchment"
-		local code = string_format("|cff%02x%02x%02x", ink[1] * 255, ink[2] * 255, ink[3] * 255)
+		local code = string.format("|cff%02x%02x%02x", ink[1] * 255, ink[2] * 255, ink[3] * 255)
 		text:SetFontObject(config.raid_description_font)
 		text:SetText((_G.RAID_DESCRIPTION:gsub("|c%x%x%x%x%x%x%x%x", code)))
 		text:SetTextColor(unpack(config.motd_title_color))

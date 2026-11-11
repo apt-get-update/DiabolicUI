@@ -9,13 +9,6 @@ local Module = Engine:NewModule("Blizzard: AdiBags", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-
 -- A bag's frame (once): our window around it, its X, title, buttons and
 -- equipped bags' panel ours.
 Module.StyleContainer = function(self, frame)

@@ -5,14 +5,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local FlyoutBarWidget = Module:SetWidget("Template: FlyoutBar")
 
--- Lua API
-local ipairs, unpack = ipairs, unpack
-local ceil, floor = math.ceil, math.floor
-local tinsert = table.insert
-
--- WoW API
-local CreateFrame = CreateFrame
-
 -- our new flyout template
 local FlyoutBar = CreateFrame("Frame")
 local FlyoutBar_MT = { __index = FlyoutBar }

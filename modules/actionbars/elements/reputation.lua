@@ -6,16 +6,7 @@ local L = Engine:GetLocale()
 local C = Engine:GetDB("Data: Colors")
 local F = Engine:GetDB("Library: Format")
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local GetWatchedFactionInfo = _G.GetWatchedFactionInfo
-local ToggleCharacter = _G.ToggleCharacter
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Track reputation bar visibility
 local REPBARVISIBLE

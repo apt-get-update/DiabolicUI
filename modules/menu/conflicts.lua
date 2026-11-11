@@ -4,14 +4,6 @@ local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:NewModule("AddOnConflicts", "LOW")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-
--- WoW API
-local DisableAddOn = _G.DisableAddOn
-local ReloadUI = _G.ReloadUI
-
 Module.Ask = function(self, addon)
 	local id = "DIABOLICUI_ADDON_CONFLICT_" .. addon
 	local PopUpMessage = self:GetHandler("PopUpMessage")

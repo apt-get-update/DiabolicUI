@@ -5,24 +5,6 @@ local L = Engine:GetLocale()
 -- Bail if Prat is enabled
 Module:SetIncompatible("Prat-3.0")
 
--- Lua API
-local _G = _G
-local pairs, unpack = pairs, unpack
-local strlen, strfind, strsub = string.len, string.find, string.sub
-
--- WoW API
-local FCF_GetCurrentChatFrame = FCF_GetCurrentChatFrame
-local FCF_SetWindowAlpha = FCF_SetWindowAlpha
-local FCF_SetWindowColor = FCF_SetWindowColor
-local FCF_Tab_OnClick = FCF_Tab_OnClick
-local FCF_UpdateButtonSide = FCF_UpdateButtonSide
-local IsShiftKeyDown = IsShiftKeyDown
-local UIFrameFadeRemoveFrame = UIFrameFadeRemoveFrame
-local UnitAffectingCombat = UnitAffectingCombat
-
--- WoW Frames and Objects
-local FriendsMicroButton = FriendsMicroButton
-
 local selectedFrame = function()
 	return SELECTED_CHAT_FRAME
 end

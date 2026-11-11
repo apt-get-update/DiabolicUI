@@ -6,10 +6,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local FloatButtonWidget = Module:SetWidget("Template: FloatButton")
 
--- Lua API
-local ipairs = ipairs
-local pairs = pairs
-
 local LAYERS = { "Normal", "Highlight", "Pushed" }
 
 -- Our button template

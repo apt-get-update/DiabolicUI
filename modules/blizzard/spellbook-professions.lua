@@ -11,18 +11,6 @@ local L = Engine:GetLocale()
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetNumSkillLines = _G.GetNumSkillLines
-local GetSkillLineInfo = _G.GetSkillLineInfo
-local GetSpellInfo = _G.GetSpellInfo
-local InCombatLockdown = _G.InCombatLockdown
-
 local NUM_PRIMARY = 2
 
 -- the secondary ones, a panel each in this order (Pretty GUI's): their

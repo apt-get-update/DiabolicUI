@@ -20,45 +20,6 @@ local L = Engine:GetLocale()
 local C = Engine:GetDB("Data: Colors")
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_cos = math.cos
-local math_floor = math.floor
-local math_max = math.max
-local math_pi = math.pi
-local math_rad = math.rad
-local math_sin = math.sin
-local select = select
-local string_format = string.format
-local table_insert = table.insert
-local table_sort = table.sort
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetActiveTalentGroup = _G.GetActiveTalentGroup
-local GetCVar = _G.GetCVar
-local GetCVarBool = _G.GetCVarBool
-local GetCurrentTitle = _G.GetCurrentTitle
-local GetNumTitles = _G.GetNumTitles
-local GetTitleName = _G.GetTitleName
-local IsTitleKnown = _G.IsTitleKnown
-local MouseIsOver = _G.MouseIsOver
-local PlaySound = _G.PlaySound
-local SetCurrentTitle = _G.SetCurrentTitle
-local GetFactionInfo = _G.GetFactionInfo
-local GetNumEquipmentSets = _G.GetNumEquipmentSets
-local GetSelectedFaction = _G.GetSelectedFaction
-local GameTooltip = _G.GameTooltip
-local GetTalentTabInfo = _G.GetTalentTabInfo
-local hooksecurefunc = _G.hooksecurefunc
-local SetCVar = _G.SetCVar
-local SetPortraitTexture = _G.SetPortraitTexture
-local SetPortraitToTexture = _G.SetPortraitToTexture
-local UnitLevel = _G.UnitLevel
-local UnitRace = _G.UnitRace
-
 -- The character's home city behind the model: the dressing room's art of
 -- its race's capital (Blizzard's DressUpTexturePath picks it: Gnomes get
 -- Ironforge, Trolls Orgrimmar), its left tiles (the picture and the floor
@@ -157,7 +118,7 @@ Module.GetSpec = function(self)
 	end
 	if best then
 		local name, icon = GetTalentTabInfo(best, nil, nil, group)
-		return name, icon, string_format("%d/%d/%d", points[1], points[2], points[3])
+		return name, icon, string.format("%d/%d/%d", points[1], points[2], points[3])
 	end
 end
 
@@ -422,7 +383,7 @@ Module.CreateColumn = function(self, window)
 	local elapsed = 0
 	star:SetScript("OnUpdate", function(_, delta)
 		elapsed = (elapsed + delta) % penta.glow_period
-		glow:SetAlpha(low + (high - low) * (1 - math_cos(elapsed / penta.glow_period * 2 * math_pi)) / 2)
+		glow:SetAlpha(low + (high - low) * (1 - math.cos(elapsed / penta.glow_period * 2 * math.pi)) / 2)
 	end)
 	self.Level = star:CreateFontString(nil, "OVERLAY")
 	self.Level:SetFont(unpack(layout.score_font))
@@ -445,8 +406,8 @@ Module.CreateColumn = function(self, window)
 			"CENTER",
 			star,
 			"CENTER",
-			reach * math_cos(math_rad(angle)),
-			reach * math_sin(math_rad(angle))
+			reach * math.cos(math.rad(angle)),
+			reach * math.sin(math.rad(angle))
 		)
 		-- its school's icon without Blizzard's bevel
 		for _, region in ipairs({ resistance:GetRegions() }) do
@@ -659,10 +620,10 @@ Module.CreateTitles = function(self, page)
 				titles[#titles + 1] = { id = id, name = GetTitleName(id):match("^%s*(.-)%s*$") }
 			end
 		end
-		table_sort(titles, function(a, b)
+		table.sort(titles, function(a, b)
 			return a.name < b.name
 		end)
-		table_insert(titles, 1, { id = -1, name = _G.NONE })
+		table.insert(titles, 1, { id = -1, name = _G.NONE })
 		for i, title in ipairs(titles) do
 			local row = Row(i)
 			local worn = (title.id == current) or ((title.id == -1) and (current <= 0))
@@ -708,7 +669,7 @@ Module.UpdateScore = function(self)
 	local gearScore = Engine:GetModule("Blizzard: GearScore")
 	local score, level = gearScore:GetUnitScore("player")
 	if score then
-		self.Score:SetText(gearScore:FormatUnit(score, math_floor(level)))
+		self.Score:SetText(gearScore:FormatUnit(score, math.floor(level)))
 	end
 end
 
@@ -847,7 +808,7 @@ Module.LayoutSets = function(self)
 	local room = header:GetWidth()
 	local perRow = 0
 	for _, count in ipairs(rows) do
-		perRow = math_max(perRow, count)
+		perRow = math.max(perRow, count)
 	end
 	local row = perRow * size + (perRow - 1) * spec.set_gap
 	if (room <= 0) or (size <= 0) then
@@ -880,7 +841,7 @@ Module.LayoutSets = function(self)
 	for _, button in ipairs(self.GearActions) do
 		icons = icons + button:GetHeight()
 	end
-	local span = (math_max(short, 1) * size + (math_max(short, 1) - 1) * spec.row_gap) * fit
+	local span = (math.max(short, 1) * size + (math.max(short, 1) - 1) * spec.row_gap) * fit
 	local x = left + ((perRow - 1) * (size + spec.set_gap) + size / 2) * fit
 	for i, button in ipairs(self.GearActions) do
 		button:SetScale(ratio)
@@ -1242,7 +1203,7 @@ Module.StyleReputationDetail = function(self)
 	-- again as they show: the window's levels shift when it's raised,
 	-- the ribbon left under their parchment
 	local Raise = function()
-		holder:SetFrameLevel(math_max(self.Backdrop.Border:GetFrameLevel(), detail:GetFrameLevel()) + 2)
+		holder:SetFrameLevel(math.max(self.Backdrop.Border:GetFrameLevel(), detail:GetFrameLevel()) + 2)
 		close:SetFrameLevel(holder:GetFrameLevel() + 1)
 	end
 	Raise()
@@ -1270,7 +1231,7 @@ Module.StyleReputationDetail = function(self)
 			+ config.reputation_detail_name_gap
 			+ description:GetHeight()
 			+ config.reputation_detail_boxes
-		detail:SetHeight(math_max(height, text))
+		detail:SetHeight(math.max(height, text))
 		local war = _G.ReputationDetailAtWarCheckBox
 		_G.ReputationDetailAtWarCheckBoxText:SetTextColor(unpack((war:IsEnabled() == 1) and ink.war or ink.off))
 		for _, name in ipairs({ "ReputationDetailInactiveCheckBox", "ReputationDetailMainScreenCheckBox" }) do

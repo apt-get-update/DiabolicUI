@@ -6,29 +6,6 @@ local ADDON, Engine = ...
 local Handler = Engine:NewHandler("Profiler")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local coroutine_create = coroutine.create
-local ipairs = ipairs
-local math_min = math.min
-local next = next
-local pairs = pairs
-local pcall = pcall
-local rawget = rawget
-local string_format = string.format
-local table_sort = table.sort
-local tonumber = tonumber
-local tostring = tostring
-local type = type
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local EnumerateFrames = _G.EnumerateFrames
-local GetAddOnCPUUsage = _G.GetAddOnCPUUsage
-local GetCVar = _G.GetCVar
-local GetFunctionCPUUsage = _G.GetFunctionCPUUsage
-local UpdateAddOnCPUUsage = _G.UpdateAddOnCPUUsage
-
 local TOP = 15 -- lines printed
 local DEPTH = 3 -- how far into the objects' tables frames and functions are looked for
 local SCRIPTS = { "OnUpdate", "OnEvent" }
@@ -42,7 +19,7 @@ end
 -- isn't used at all). A coroutine can only be made from a Lua function, and
 -- making one runs nothing.
 local IsLuaFunction = function(func)
-	return type(func) == "function" and (pcall(coroutine_create, func))
+	return type(func) == "function" and (pcall(coroutine.create, func))
 end
 
 local IsFrame = function(value)
@@ -105,11 +82,11 @@ local Collect = function()
 		while parent do
 			local parentName = (parent == Engine:GetFrame() and "UICenter") or frames[parent] or parent:GetName()
 			if parentName then
-				return string_format("(%s in %s)", frame:GetObjectType(), parentName)
+				return string.format("(%s in %s)", frame:GetObjectType(), parentName)
 			end
 			parent = parent:GetParent()
 		end
-		return string_format("(%s without a parent)", frame:GetObjectType())
+		return string.format("(%s without a parent)", frame:GetObjectType())
 	end
 	local frame = EnumerateFrames()
 	while frame do
@@ -148,7 +125,7 @@ Handler.Measure = function(self, seconds)
 	local functions = Collect()
 	local before, addonBefore = Snapshot(functions)
 
-	Print(string_format(L["Measuring DiabolicUI's CPU use for %d seconds..."], seconds))
+	Print(string.format(L["Measuring DiabolicUI's CPU use for %d seconds..."], seconds))
 	self.timer = self.timer or CreateFrame("Frame")
 	self.timer.left = seconds
 	self.timer:SetScript("OnUpdate", function(timer, elapsed)
@@ -165,17 +142,17 @@ Handler.Measure = function(self, seconds)
 				rows[#rows + 1] = { functions[func], used / seconds }
 			end
 		end
-		table_sort(rows, function(a, b)
+		table.sort(rows, function(a, b)
 			return a[2] > b[2]
 		end)
 		Print(
-			string_format(
+			string.format(
 				L["DiabolicUI used %.2f ms per second. The busiest functions, with what they call (ms per second):"],
 				(addonAfter - addonBefore) / seconds
 			)
 		)
-		for i = 1, math_min(TOP, #rows) do
-			Print(string_format("  %.2f  %s", rows[i][2], rows[i][1]))
+		for i = 1, math.min(TOP, #rows) do
+			Print(string.format("  %.2f  %s", rows[i][2], rows[i][1]))
 		end
 	end)
 	self.timer:Show()

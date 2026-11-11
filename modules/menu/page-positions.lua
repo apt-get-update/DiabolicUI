@@ -7,12 +7,6 @@ local Addon, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-
 -- the controls (controls.lua)
 local C = Module.Controls
 local NewPage, EDGE, SLIDER_COLUMN, BUTTON_HEIGHT, ROW_GAP =
@@ -104,7 +98,7 @@ Module.CreatePositionsPage = function(self)
 		50,
 		150,
 		function()
-			return math_floor(scaling.scale * 100 + 0.5)
+			return math.floor(scaling.scale * 100 + 0.5)
 		end,
 		function(value)
 			scaling.scale = value / 100
@@ -157,7 +151,7 @@ Module.CreatePositionsPage = function(self)
 		L["The point of the tooltip that sits on your cursor."]
 	)
 	local slidersHeight = SLIDER_BLOCK_HEIGHT * 2 + ROW_GAP
-	PlaceCard(layout, tooltip, -CONTENT_TOP + math_max(PICKER_BLOCK_HEIGHT, slidersHeight) + CARD_PAD)
+	PlaceCard(layout, tooltip, -CONTENT_TOP + math.max(PICKER_BLOCK_HEIGHT, slidersHeight) + CARD_PAD)
 
 	local tooltipPicker = CreateAnchorPointPicker(tooltip, "Anchor", ANCHOR_POINTS, function()
 		return tooltipsDB.anchorPoint
@@ -172,7 +166,7 @@ Module.CreatePositionsPage = function(self)
 	cursor:SetSize(20, 20)
 	tooltipPicker.OnRefresh = function(box, point)
 		local reach = function(offset)
-			return math_max(-TOOLTIP_PREVIEW_REACH, math_min(TOOLTIP_PREVIEW_REACH, -offset * TOOLTIP_PREVIEW_SCALE))
+			return math.max(-TOOLTIP_PREVIEW_REACH, math.min(TOOLTIP_PREVIEW_REACH, -offset * TOOLTIP_PREVIEW_SCALE))
 		end
 		cursor:ClearAllPoints()
 		cursor:SetPoint("TOPLEFT", box, point or "BOTTOM", reach(tooltipsDB.offsetX), reach(tooltipsDB.offsetY))
@@ -205,7 +199,7 @@ Module.CreatePositionsPage = function(self)
 			tooltipPicker:Refresh()
 		end
 	)
-	local slidersTop = CONTENT_TOP - math_max(0, PICKER_BLOCK_HEIGHT - slidersHeight) / 2
+	local slidersTop = CONTENT_TOP - math.max(0, PICKER_BLOCK_HEIGHT - slidersHeight) / 2
 	PlaceSlider(offsetX, tooltip, CARD_PAD + SLIDER_COLUMN, slidersTop)
 	PlaceSlider(offsetY, tooltip, CARD_PAD + SLIDER_COLUMN, slidersTop - SLIDER_BLOCK_HEIGHT - ROW_GAP)
 
@@ -224,7 +218,7 @@ Module.CreatePositionsPage = function(self)
 			L["Minimap Anchor"],
 			L["The screen corner or edge the minimap snaps to."]
 		)
-		PlaceCard(layout, minimap, -CONTENT_TOP + math_max(PICKER_BLOCK_HEIGHT, SLIDER_BLOCK_HEIGHT) + CARD_PAD)
+		PlaceCard(layout, minimap, -CONTENT_TOP + math.max(PICKER_BLOCK_HEIGHT, SLIDER_BLOCK_HEIGHT) + CARD_PAD)
 
 		minimapPicker = CreateAnchorPointPicker(minimap, "MinimapAnchor", MINIMAP_POINTS, function()
 			return (ns.API.GetPosition(_G.Minimap))
@@ -306,7 +300,7 @@ Module.CreatePositionsPage = function(self)
 	page.okay = function() end
 	page.cancel = function()
 		unlockFrames:SetText(self:AreFramesUnlocked() and L["Lock Frames"] or L["Unlock Frames"])
-		uiScale:SetValueSilently(math_floor(scaling.scale * 100 + 0.5))
+		uiScale:SetValueSilently(math.floor(scaling.scale * 100 + 0.5))
 		offsetX:SetValueSilently(tooltipsDB.offsetX)
 		offsetY:SetValueSilently(tooltipsDB.offsetY)
 		tooltipPicker:Refresh()

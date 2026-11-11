@@ -7,20 +7,7 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("BlizzardUI")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local type = type
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-local RegisterStateDriver = _G.RegisterStateDriver
-local SetCVar = _G.SetCVar
-local TargetofTarget_Update = _G.TargetofTarget_Update
-
 -- WoW Frames & Tables
-local UIParent = _G.UIParent
 
 -- Frame to securely hide items
 local UIHider = CreateFrame("Frame", nil, UIParent)

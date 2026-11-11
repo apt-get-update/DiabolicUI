@@ -4,19 +4,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- WoW API
-local GetShapeshiftForm = GetShapeshiftForm
-local IsMounted = IsMounted
-local SetPortraitTexture = SetPortraitTexture
-local UnitAura = UnitAura
-local UnitClass = UnitClass
-local UnitExists = UnitExists
-local UnitIsConnected = UnitIsConnected
-local UnitIsPlayer = UnitIsPlayer
-local UnitIsUnit = UnitIsUnit
-local UnitIsVisible = UnitIsVisible
-local UnitSex = UnitSex
-
 local unit_events = {
 	UNIT_PORTRAIT_UPDATE = true,
 	UNIT_MODEL_CHANGED = true,

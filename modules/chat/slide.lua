@@ -10,14 +10,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("ChatSlide")
 
--- Lua API
-local _G = _G
-local select = select
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-local MouseIsOver = _G.MouseIsOver
-
 local SLIDE_DURATION = 0.3
 local LINE_SPACING = 2
 

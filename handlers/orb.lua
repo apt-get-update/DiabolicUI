@@ -6,20 +6,6 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("Orb")
 
--- Lua API
-local _G = _G
-local math_abs = math.abs
-local math_max = math.max
-local math_min = math.min
-local math_sqrt = math.sqrt
-local pairs = pairs
-local select = select
-local setmetatable = setmetatable
-local type = type
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-
 local Orb = CreateFrame("Frame")
 local Orb_MT = { __index = Orb }
 
@@ -57,7 +43,7 @@ local INCOMING_MIN_HEIGHT = 3 -- thinner, it's left out (a flickering line)
 -- it (never past the top), cut from the fluid's texture like the fluid is.
 local UpdateIncoming = function(self, value, min, max, width, height)
 	local incoming = self.incoming
-	local amount = math_min(self._incoming, max - value)
+	local amount = math.min(self._incoming, max - value)
 	if (amount <= 0) or (value <= min) or (max == min) then
 		incoming:Hide()
 		return
@@ -70,7 +56,7 @@ local UpdateIncoming = function(self, value, min, max, width, height)
 	end
 	local leftCrop, rightCrop = self.leftCrop, self.rightCrop
 	incoming.child:SetSize(width, height)
-	incoming:SetSize(width - leftCrop - rightCrop, math_max(to - from, 0.0001))
+	incoming:SetSize(width - leftCrop - rightCrop, math.max(to - from, 0.0001))
 	incoming:SetHorizontalScroll(leftCrop)
 	incoming:SetVerticalScroll(height - to)
 	incoming:ClearAllPoints()
@@ -111,7 +97,7 @@ Orb.Update = function(self)
 		self.scrollframe:Hide()
 		laid.value = nil -- placed again once it shows
 	elseif changed then
-		self.scrollframe:SetHeight(math_max(newHeight, 0.0001)) -- (WoW takes a size of 0 as no size set at all)
+		self.scrollframe:SetHeight(math.max(newHeight, 0.0001)) -- (WoW takes a size of 0 as no size set at all)
 		self.scrollframe:SetVerticalScroll(height - newHeight)
 
 		if not self.scrollframe:IsShown() then
@@ -132,9 +118,9 @@ Orb.Update = function(self)
 			--	r^2 = x^2 + y^2
 			--	x^2 = r^2 - y^2
 			--	x = sqrt(r^2 - y^2)
-			local y = math_abs(height / 2 - newHeight)
+			local y = math.abs(height / 2 - newHeight)
 			local r = height / 2
-			local x = math_sqrt(r ^ 2 - y ^ 2) * 2 -- never 0: neither empty nor full here
+			local x = math.sqrt(r ^ 2 - y ^ 2) * 2 -- never 0: neither empty nor full here
 			local sparkWidth = x
 			local sparkHeight = spark._height / 2 + sparkWidth / width * spark._height
 
@@ -207,10 +193,10 @@ Orb.OnUpdate = function(self, elapsed)
 		local display = self.displayValue
 		-- Closing a share of the gap every frame never quite gets there,
 		-- so the last bit is jumped (and so is all of it from nothing).
-		local nextDisplay = display + (goal - display) * math_min(elapsed / smoothHZ, 1)
+		local nextDisplay = display + (goal - display) * math.min(elapsed / smoothHZ, 1)
 		if
 			(display < smoothMinValue)
-			or (math_abs(goal - nextDisplay) <= (self.maxValue - self.minValue) * smoothFinish)
+			or (math.abs(goal - nextDisplay) <= (self.maxValue - self.minValue) * smoothFinish)
 		then
 			self.displayValue = goal
 			self.smoothing = nil
@@ -257,14 +243,14 @@ local PlaceCutaway = function(self)
 	local cutaway = self.cutaway
 	local _, height = self.scaffold:GetSize()
 	local newHeight = (cutaway.value - self.minValue) / (self.maxValue - self.minValue) * height
-	cutaway:SetHeight(math_max(newHeight, 0.0001))
+	cutaway:SetHeight(math.max(newHeight, 0.0001))
 	cutaway:SetVerticalScroll(height - newHeight)
 end
 
 -- Whether the fluid covers it: what's shown, and where it's going (a heal
 -- rises under it, a loss drains it down to the new value).
 local IsCovered = function(orb)
-	return orb.cutaway.value <= math_min(orb.value, orb.displayValue)
+	return orb.cutaway.value <= math.min(orb.value, orb.displayValue)
 end
 
 local OnUpdateCutaway = function(cutaway, elapsed)

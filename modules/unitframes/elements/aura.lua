@@ -6,27 +6,10 @@ local Handler = Engine:GetHandler("UnitFrame")
 local AuraFunctions = Engine:GetDB("Library: AuraFunctions")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local math_ceil = math.ceil
-local math_floor = math.floor
-local math_min = math.min
-local setmetatable = setmetatable
-local tostring = tostring
-
--- WoW API
-local CancelUnitBuff = _G.CancelUnitBuff
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetTime = _G.GetTime
-local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
-local UnitExists = _G.UnitExists
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-
 -- Inventory slot ids for the main hand and off hand weapons
 local MAINHAND_SLOT, OFFHAND_SLOT = 16, 17
 
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Engine API
 local UnitAura = AuraFunctions.UnitAura
@@ -46,13 +29,13 @@ local DAY, HOUR, MINUTE = 86400, 3600, 60
 
 local formatTime = function(time)
 	if time > DAY then -- more than a day
-		return "%1d%s", math_ceil(time / DAY), day
+		return "%1d%s", math.ceil(time / DAY), day
 	elseif time > HOUR then -- more than an hour
-		return "%1d%s", math_ceil(time / HOUR), hour
+		return "%1d%s", math.ceil(time / HOUR), hour
 	elseif time > MINUTE then -- more than a minute
-		return "%1d%s", math_ceil(time / MINUTE), minute
+		return "%1d%s", math.ceil(time / MINUTE), minute
 	elseif time > 5 then -- more than 5 seconds
-		return "%d", math_ceil(time)
+		return "%d", math.ceil(time)
 	else -- (only ever asked with some time left)
 		return "|cffff0000%.1f|r", time
 	end
@@ -255,9 +238,9 @@ local SetPosition = function(self, visible)
 	local spacingH = self.spacingH
 	local spacingV = self.spacingV
 	local cols, rows =
-		math_floor((width + spacingH) / (auraWidth + spacingH)),
-		math_floor((height + spacingV) / (auraHeight + spacingV))
-	local visibleButtons = math_min(cols * rows, visible)
+		math.floor((width + spacingH) / (auraWidth + spacingH)),
+		math.floor((height + spacingV) / (auraHeight + spacingV))
+	local visibleButtons = math.min(cols * rows, visible)
 	local growthX = self.growthX
 	local growthY = self.growthY
 
@@ -274,7 +257,7 @@ local SetPosition = function(self, visible)
 				self,
 				point,
 				0,
-				(math_floor((i - 1) / cols) * (auraHeight + spacingV)) * (growthY == "DOWN" and -1 or 1)
+				(math.floor((i - 1) / cols) * (auraHeight + spacingV)) * (growthY == "DOWN" and -1 or 1)
 			)
 		else
 			self[tostring(i)]:Place(

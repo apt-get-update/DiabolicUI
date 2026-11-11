@@ -4,14 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Menu")
 
--- Lua API
-local ipairs = ipairs
-
--- WoW API
-local InCombatLockdown = InCombatLockdown
-local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
-local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
-
 -- Pages
 -------------------------------------------------------
 Module.CreateOptionsPanel = function(self)

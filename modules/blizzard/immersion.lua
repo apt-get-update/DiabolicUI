@@ -9,16 +9,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Immersion", "LOW")
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 Module.StyleImmersion = function(self)
 	local config = self.config
 	local talkBox = _G.ImmersionFrame.TalkBox

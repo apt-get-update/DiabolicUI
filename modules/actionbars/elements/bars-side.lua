@@ -3,13 +3,6 @@
 local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-
--- WoW API
-local RegisterStateDriver = RegisterStateDriver
-
 local NUM_ACTIONBAR_BUTTONS = NUM_ACTIONBAR_BUTTONS or 12
 
 -- `page`: Blizzard's name for its action page; `visible`: what it does when one

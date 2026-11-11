@@ -6,15 +6,6 @@ local _, Engine = ...
 local Handler = Engine:NewHandler("ActionBar")
 local ActionButton = Engine:GetHandler("ActionButton")
 
--- Lua API
-local ipairs = ipairs
-local pairs = pairs
-local setmetatable = setmetatable
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local PlaySound = _G.PlaySound
-
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }
 

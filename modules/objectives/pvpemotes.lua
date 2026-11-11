@@ -3,19 +3,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("PvPEmotes")
 
--- Lua API
-local _G = _G
-local bit_band = bit.band
-local math_random = math.random
-local select = select
-
--- Wow API
-local DoEmote = _G.DoEmote
-local GetAchievementInfo = _G.GetAchievementInfo
-local GetTime = _G.GetTime
-local UnitGUID = _G.UnitGUID
-local COMBATLOG_OBJECT_TYPE_PLAYER = _G.COMBATLOG_OBJECT_TYPE_PLAYER
-
 -- Obey the alphabet!
 local emotes = {
 	"BARK",
@@ -81,7 +68,7 @@ local overkillIndex = {
 }
 
 Module.OnEvent = function(self, event, _, subEvent, sourceGUID, _, _, destGUID, destName, destFlags, ...)
-	if bit_band(destFlags or 0, COMBATLOG_OBJECT_TYPE_PLAYER) == 0 then
+	if bit.band(destFlags or 0, COMBATLOG_OBJECT_TYPE_PLAYER) == 0 then
 		return
 	end
 
@@ -104,7 +91,7 @@ Module.OnEvent = function(self, event, _, subEvent, sourceGUID, _, _, destGUID, 
 
 	if self.alreadyHugged or select(4, GetAchievementInfo(247)) then
 		-- Fire off a random emote, to keep it interesting.
-		DoEmote(emotes[math_random(1, #emotes)], destName)
+		DoEmote(emotes[math.random(1, #emotes)], destName)
 	else
 		-- Do a hug to attempt to get the achievement "Make love, not Warcraft".
 		DoEmote("HUG", destName)

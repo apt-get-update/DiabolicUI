@@ -3,15 +3,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- WoW API
-local UnitClassification = UnitClassification
-local UnitCreatureFamily = UnitCreatureFamily
-local UnitCreatureType = UnitCreatureType
-local UnitLevel = UnitLevel
-local UnitIsDead = UnitIsDead
-local UnitIsGhost = UnitIsGhost
-local UnitIsPlayer = UnitIsPlayer
-
 local add = function(msg, addition)
 	if msg then
 		return msg .. " " .. addition

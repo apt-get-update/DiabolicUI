@@ -13,20 +13,6 @@ local Module = Engine:NewModule("Blizzard: Mail", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_huge = math.huge
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 -- the frames' art, by its file (lowercase, as patterns)
 local ART = {
 	"ui%-itemtext%-",
@@ -266,7 +252,7 @@ Module.PlaceOpenBand = function(self, header)
 		kit:StyleBandText(text, true)
 		text:SetPoint("LEFT", label, "RIGHT", spec.label_gap, 0)
 		text:SetJustifyH("LEFT")
-		width = math_max(width, label:GetStringWidth())
+		width = math.max(width, label:GetStringWidth())
 	end
 	labels[1]:SetPoint("BOTTOMRIGHT", header, "LEFT", spec.x + width, 0)
 	labels[2]:SetPoint("TOPRIGHT", header, "LEFT", spec.x + width, 0)
@@ -282,7 +268,7 @@ Module.PlaceOpenBand = function(self, header)
 			right = right - spam:GetWidth() - layout.band_gap
 		end
 		for _, text in ipairs(texts) do
-			text:SetWidth(math_max(1, right - spec.x - width - spec.label_gap))
+			text:SetWidth(math.max(1, right - spec.x - width - spec.label_gap))
 		end
 	end
 	spam:HookScript("OnShow", Stretch)
@@ -324,13 +310,13 @@ Module.PlaceOpenAttachments = function(self)
 	hooksecurefunc("OpenMail_Update", function()
 		-- (those placed: the letter's, the money's, the items'; once per
 		-- place Blizzard gives them: its update may stop before it does)
-		local placed, left, right, top, bottom = {}, math_huge, -math_huge, -math_huge, math_huge
+		local placed, left, right, top, bottom = {}, math.huge, -math.huge, -math.huge, math.huge
 		for _, button in ipairs(frame.activeAttachmentButtons or {}) do
 			local _, _, _, x, y = button:GetPoint()
 			if y and (y ~= button.DiabolicPlaced) then
 				placed[#placed + 1] = button
-				left, right = math_min(left, x), math_max(right, x + button:GetWidth())
-				top, bottom = math_max(top, y), math_min(bottom, y - button:GetHeight())
+				left, right = math.min(left, x), math.max(right, x + button:GetWidth())
+				top, bottom = math.max(top, y), math.min(bottom, y - button:GetHeight())
 			end
 		end
 		local frameLeft, frameBottom = frame:GetLeft(), frame:GetBottom()

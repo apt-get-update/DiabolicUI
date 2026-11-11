@@ -4,18 +4,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("CaptureBars")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local unpack = unpack
-
--- WoW API
-local GetNumWorldStateUI = _G.GetNumWorldStateUI
-local GetWorldStateUIInfo = _G.GetWorldStateUIInfo
-
 local CaptureBar = Engine:CreateFrame("Frame")
 local CaptureBar_MT = { __index = CaptureBar }
 
@@ -116,7 +104,7 @@ Module.UpdateCaptureBar = function(self, barID, value, neutralZone, min, max)
 	local oldMax = captureBar.max
 
 	-- it needs a minimum size, or it'll disappear and bug out the bar
-	local adjustedNeutralZone = math_min(math_max(neutralZone, 0.0001), 100)
+	local adjustedNeutralZone = math.min(math.max(neutralZone, 0.0001), 100)
 	if oldNeutralZone ~= adjustedNeutralZone then
 		-- Resize and adjust the size and textures
 		local x = adjustedNeutralZone / 100

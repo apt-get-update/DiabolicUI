@@ -4,18 +4,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: SellJunk")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local select = select
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetContainerItemInfo = _G.GetContainerItemInfo
-local GetContainerNumSlots = _G.GetContainerNumSlots
-local GetItemInfo = _G.GetItemInfo
-local hooksecurefunc = _G.hooksecurefunc
-local UseContainerItem = _G.UseContainerItem
-
 -- Grey links start with this color, even before the item's info is cached.
 local JUNK_COLOR = "|cff9d9d9d"
 

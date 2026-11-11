@@ -4,9 +4,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Pet")
 
--- Lua API
-local setmetatable = setmetatable
-
 local Controller = Engine:CreateFrame("Frame")
 local Controller_MT = { __index = Controller }
 

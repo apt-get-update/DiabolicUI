@@ -6,18 +6,7 @@ local L = Engine:GetLocale()
 -- hook themselves into its frames!
 local Module = Engine:NewModule("ActionBars", "HIGH")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetAccountExpansionLevel = _G.GetAccountExpansionLevel
-local SetActionBarToggles = _G.SetActionBarToggles
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-local UnitLevel = _G.UnitLevel
-
 -- WoW tables and objects
-local MAX_PLAYER_LEVEL_TABLE = _G.MAX_PLAYER_LEVEL_TABLE
 
 -- By a bar's growth direction: where its first button sits, and which way
 -- (x, y) the next ones go. Used by the pet and stance bars.

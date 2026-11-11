@@ -5,20 +5,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Banners", "LOW")
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local GetTime = _G.GetTime
-local GetZonePVPInfo = _G.GetZonePVPInfo
-local GetZoneText = _G.GetZoneText
-local UnitCanAttack = _G.UnitCanAttack
-local UnitClassification = _G.UnitClassification
-local UnitExists = _G.UnitExists
-local UnitIsDead = _G.UnitIsDead
-local UnitName = _G.UnitName
-
 local MAX_BOSSES = 4
 
 -- A zone's PvP state: Blizzard's line for it, in Blizzard's color.

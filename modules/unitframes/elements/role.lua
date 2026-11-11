@@ -1,19 +1,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- WoW API
-local UnitGroupRolesAssigned = UnitGroupRolesAssigned
-local UnitClass = UnitClass
-local UnitName = UnitName
-local UnitExists = UnitExists
-local UnitIsConnected = UnitIsConnected
-local CanInspect = CanInspect
-local NotifyInspect = NotifyInspect
-local GetTalentTabInfo = GetTalentTabInfo
-local GetNumPartyMembers = GetNumPartyMembers
-local GetNumRaidMembers = GetNumRaidMembers
-local GetTime = GetTime
-
 -- Each role icon occupies one quadrant of a 64x64 grid, but the artwork's
 -- edge glow bleeds a texel or two past its own quadrant boundary. Sampled
 -- at the exact 0.5 seam, bilinear filtering blends that bleed in from the

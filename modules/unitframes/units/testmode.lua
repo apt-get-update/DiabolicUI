@@ -1,14 +1,6 @@
 local _, Engine = ...
 local Module = Engine:GetModule("UnitFrames")
 
--- Lua API
-local ipairs = ipairs
-local math_floor = math.floor
-local unpack = unpack
-
--- WoW API
-local IsMounted = IsMounted
-
 local C = Engine:GetDB("Data: Colors")
 
 -- Test Mode: mock party/raid preview
@@ -66,11 +58,11 @@ local FAKE_ROLES = { "TANK", "HEALER", "DAMAGER", "DAMAGER", "DAMAGER" }
 local GetFakeUnitData = function(i)
 	local name = FAKE_NAMES[((i - 1) % #FAKE_NAMES) + 1]
 	if i > #FAKE_NAMES then
-		name = name .. math_floor((i - 1) / #FAKE_NAMES) + 1
+		name = name .. math.floor((i - 1) / #FAKE_NAMES) + 1
 	end
 
 	local max = 18000 + ((i * 733) % 9000)
-	local cur = (i % 4 == 0) and math_floor(max * 0.62) or max
+	local cur = (i % 4 == 0) and math.floor(max * 0.62) or max
 
 	return {
 		name = name,
@@ -202,7 +194,7 @@ Module.SetRaidMockShown = function(self, shown)
 				"TOPLEFT",
 				container,
 				"TOPLEFT",
-				RaidWidget.GetMemberPosition(config, math_floor((i - 1) / 5) + 1, (i - 1) % 5)
+				RaidWidget.GetMemberPosition(config, math.floor((i - 1) / 5) + 1, (i - 1) % 5)
 			)
 			frame:Show()
 

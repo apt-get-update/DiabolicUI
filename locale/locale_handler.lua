@@ -4,9 +4,6 @@
 -- text is the key itself.
 local _, Engine = ...
 
--- Lua API
-local rawset, rawget = rawset, rawget
-
 local gameLocale = GetLocale() -- current game client locale
 local fallbackLocale = "enUS" -- fallback language for the UI if no translation is present
 

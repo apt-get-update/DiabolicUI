@@ -2,13 +2,6 @@ local _, Engine = ...
 local C = Engine:GetDB("Data: Colors")
 local F = {}
 
--- Lua API
-local math_floor = math.floor
-local tonumber = tonumber
-local tostring = tostring
-local type = type
-local unpack = unpack
-
 -- Get the current client locale
 local gameLocale = GetLocale()
 
@@ -32,7 +25,7 @@ F.Short = (gameLocale == "zhCN")
 			elseif value >= 1e4 or value <= -1e3 then
 				return abbreviate(value, 1e4, "万")
 			else
-				return tostring(math_floor(value))
+				return tostring(math.floor(value))
 			end
 		end
 	or function(value)
@@ -47,7 +40,7 @@ F.Short = (gameLocale == "zhCN")
 		elseif value >= 1e3 or value <= -1e3 then
 			return abbreviate(value, 1e3, "k")
 		else
-			return tostring(math_floor(value))
+			return tostring(math.floor(value))
 		end
 	end
 
@@ -60,7 +53,7 @@ F.Colorize = function(str, ...)
 	elseif type(r) == "string" then
 		r, g, b = unpack(C.General[r])
 	end
-	return ("|cff%02X%02X%02X%s|r"):format(math_floor(r * 255), math_floor(g * 255), math_floor(b * 255), str or "")
+	return ("|cff%02X%02X%02X%s|r"):format(math.floor(r * 255), math.floor(g * 255), math.floor(b * 255), str or "")
 end
 
 -- Money with coin icons ("12[g] 34[s] 56[c]"), leaving out leading zero
@@ -104,9 +97,9 @@ F.Money = function(money, yOffset)
 		}
 		coinIconSets[yOffset] = coinIcons
 	end
-	money = math_floor(tonumber(money) or 0)
-	local gold = math_floor(money / 10000)
-	local silver = math_floor((money / 100) % 100)
+	money = math.floor(tonumber(money) or 0)
+	local gold = math.floor(money / 10000)
+	local silver = math.floor((money / 100) % 100)
 	local copper = money % 100
 	if gold > 0 then
 		return ("%d%s %d%s %d%s"):format(gold, coinIcons.gold, silver, coinIcons.silver, copper, coinIcons.copper)

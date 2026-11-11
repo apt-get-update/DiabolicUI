@@ -16,29 +16,6 @@ Module:SetIncompatible("TipTac")
 Module:SetIncompatible("TinyTip")
 Module:SetIncompatible("TinyTooltip")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local select = select
-local tonumber = tonumber
-local unpack = unpack
-local math_abs = math.abs
-local math_max = math.max
-local string_find = string.find
-local string_gsub = string.gsub
-local string_match = string.match
-local xpcall = xpcall
-
--- WoW API
-local GetActionTexture = _G.GetActionTexture
-local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetSpellInfo = _G.GetSpellInfo
-local GetSpellTexture = _G.GetSpellTexture
-local GetTalentInfo = _G.GetTalentInfo
-local geterrorhandler = _G.geterrorhandler
-local hooksecurefunc = _G.hooksecurefunc
-
 local CreateBox, PlaceBox = Shared.CreateBox, Shared.PlaceBox
 local CreateHeader, PlaceHeader = Shared.CreateHeader, Shared.PlaceHeader
 local OffsetFromTop, IsDefaultColor = Shared.OffsetFromTop, Shared.IsDefaultColor
@@ -72,7 +49,7 @@ local ICONS = {
 		return (GetShapeshiftFormInfo(index))
 	end,
 	SetHyperlink = function(tooltip, link)
-		local id = string_match(link or "", "spell:(%d+)")
+		local id = string.match(link or "", "spell:(%d+)")
 		return id and (select(3, GetSpellInfo(tonumber(id))))
 	end,
 }
@@ -202,15 +179,15 @@ local Layout = function(tooltip)
 	-- Blizzard's own measurement; when the tooltip still has the size set
 	-- here last time, that's the one measured back then.
 	local baseWidth, baseHeight = tooltip:GetWidth(), tooltip:GetHeight()
-	if info.width and (math_abs(baseWidth - info.width) < 0.5) and (math_abs(baseHeight - info.height) < 0.5) then
+	if info.width and (math.abs(baseWidth - info.width) < 0.5) and (math.abs(baseHeight - info.height) < 0.5) then
 		baseWidth, baseHeight = info.baseWidth, info.baseHeight
 	end
 	info.baseWidth, info.baseHeight = baseWidth, baseHeight
 	-- the name stays centered, clear of the rank on either side
 	local titleWidth = parts.title:GetStringWidth() + (info.rank and (parts.rank:GetStringWidth() + PADDING) * 2 or 0)
-	local width = math_max(baseWidth + SHIFT, titleWidth + PADDING * 4)
+	local width = math.max(baseWidth + SHIFT, titleWidth + PADDING * 4)
 	local height = baseHeight + (BANNER_PAD + TITLE_GAP - 2) + (info.descLine and DESCRIPTION_GAP or 0)
-	height = math_max(height, -bannerBottom + TITLE_GAP + ICON_BOX + PADDING)
+	height = math.max(height, -bannerBottom + TITLE_GAP + ICON_BOX + PADDING)
 	tooltip:SetWidth(width)
 	tooltip:SetHeight(height)
 	info.width, info.height = width, height
@@ -229,8 +206,8 @@ local CheckLayout = function(tooltip)
 	local info = tooltip.DiabolicSpellInfo
 	if
 		not info.width
-		or (math_abs(tooltip:GetWidth() - info.width) > 0.5)
-		or (math_abs(tooltip:GetHeight() - info.height) > 0.5)
+		or (math.abs(tooltip:GetWidth() - info.width) > 0.5)
+		or (math.abs(tooltip:GetHeight() - info.height) > 0.5)
 	then
 		return Layout(tooltip)
 	end
@@ -240,8 +217,8 @@ end
 -- "Requires ...") or that already carry colors are left alone.
 local ColorNumbers = function(info, line)
 	local text = line and line:IsShown() and line:GetText()
-	if text and (not string_find(text, "|c", 1, true)) and IsDefaultColor(line) then
-		local colored, count = string_gsub(text, "(%d[%d%.,]*)", NUMBER_COLOR .. "%1|r")
+	if text and (not string.find(text, "|c", 1, true)) and IsDefaultColor(line) then
+		local colored, count = string.gsub(text, "(%d[%d%.,]*)", NUMBER_COLOR .. "%1|r")
 		if count > 0 then
 			info.texts[line] = text
 			line:SetText(colored)

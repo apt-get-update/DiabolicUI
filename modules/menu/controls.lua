@@ -5,23 +5,6 @@ local Addon, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
 
--- Lua API
-local ipairs = ipairs
-local pairs = pairs
-local tonumber = tonumber
-local math_floor = math.floor
-local setmetatable = setmetatable
-local unpack = unpack
-
--- WoW API
-local CreateFrame = CreateFrame
-local UIDropDownMenu_AddButton = UIDropDownMenu_AddButton
-local UIDropDownMenu_CreateInfo = UIDropDownMenu_CreateInfo
-local UIDropDownMenu_Initialize = UIDropDownMenu_Initialize
-local UIDropDownMenu_JustifyText = UIDropDownMenu_JustifyText
-local UIDropDownMenu_SetText = UIDropDownMenu_SetText
-local UIDropDownMenu_SetWidth = UIDropDownMenu_SetWidth
-
 -- Layout grid
 -------------------------------------------------------
 -- Every control is positioned from its page's top left corner on a shared
@@ -251,7 +234,7 @@ local CreateValueSlider = function(parent, name, label, tooltipText, minValue, m
 	-- updates both widgets to match, without re-triggering the slider's
 	-- own OnValueChanged (which would otherwise snap it again and re-save)
 	local setSilently = function(value)
-		value = math_floor(value + 0.5)
+		value = math.floor(value + 0.5)
 		silent = true
 		slider:SetValue(value)
 		silent = false
@@ -272,7 +255,7 @@ local CreateValueSlider = function(parent, name, label, tooltipText, minValue, m
 		if silent then
 			return
 		end
-		value = math_floor(value + 0.5)
+		value = math.floor(value + 0.5)
 		if snapRange and (value ~= 0) and (value > -snapRange) and (value < snapRange) then
 			value = 0
 		end
@@ -284,23 +267,23 @@ local CreateValueSlider = function(parent, name, label, tooltipText, minValue, m
 		if value then
 			commitValue(value)
 		else
-			self:SetText(tostring(math_floor(slider:GetValue() + 0.5)))
+			self:SetText(tostring(math.floor(slider:GetValue() + 0.5)))
 		end
 		self:ClearFocus()
 	end)
 
 	input:SetScript("OnEscapePressed", function(self)
-		self:SetText(tostring(math_floor(slider:GetValue() + 0.5)))
+		self:SetText(tostring(math.floor(slider:GetValue() + 0.5)))
 		self:ClearFocus()
 	end)
 
 	-- leaving the box keeps a new number typed in it
 	input:SetScript("OnEditFocusLost", function(self)
 		local value = tonumber(self:GetText())
-		if value and (value ~= math_floor(slider:GetValue() + 0.5)) then
+		if value and (value ~= math.floor(slider:GetValue() + 0.5)) then
 			commitValue(value)
 		else
-			self:SetText(tostring(math_floor(slider:GetValue() + 0.5)))
+			self:SetText(tostring(math.floor(slider:GetValue() + 0.5)))
 		end
 	end)
 

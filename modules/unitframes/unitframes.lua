@@ -4,12 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("UnitFrames")
 
--- Lua API
-local unpack = unpack
-
--- WoW API
-local CreateFrame = CreateFrame
-
 Module.LoadArtWork = function(self)
 	local config = self.config.visuals.artwork
 

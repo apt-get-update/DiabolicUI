@@ -11,17 +11,6 @@ local Module = Engine:NewModule("Blizzard: Talents", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetTalentTabInfo = _G.GetTalentTabInfo
-local hooksecurefunc = _G.hooksecurefunc
-
 local NUM_SPECS = 3 -- the player's two and the pet's
 local SPEC_NAMES = { _G.TALENT_SPEC_PRIMARY, _G.TALENT_SPEC_SECONDARY, _G.TALENT_SPEC_PET_PRIMARY }
 local NUM_TABS = 4 -- three trees and the glyphs

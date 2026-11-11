@@ -5,15 +5,11 @@ local UnitFrameWidget = Module:SetWidget("Unit: Party")
 local StatusBar = Engine:GetHandler("StatusBar")
 local Library = Engine:GetDB("Library: UnitFrames")
 
--- Lua API
-local string_match = string.match
-local unpack = unpack
-
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.party
 	local db = Module:GetConfig("UnitFrames")
 
-	local unitNum = string_match(unit, "%d") -- (party1 to party4)
+	local unitNum = string.match(unit, "%d") -- (party1 to party4)
 
 	self:SetSize(unpack(config.size))
 	self:Place("TOP", 0, -((unitNum - 1) * 90))

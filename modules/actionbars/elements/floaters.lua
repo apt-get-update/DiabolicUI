@@ -5,23 +5,7 @@ local FloatButton = Module:GetWidget("Template: FloatButton")
 local C = Engine:GetDB("Data: Colors")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
-local GetShapeshiftForm = _G.GetShapeshiftForm
-local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetSpellTexture = _G.GetSpellTexture
-local InCombatLockdown = _G.InCombatLockdown
-local RegisterStateDriver = _G.RegisterStateDriver
-local TaxiRequestEarlyLanding = _G.TaxiRequestEarlyLanding
-local UnitOnTaxi = _G.UnitOnTaxi
-local UnregisterStateDriver = _G.UnregisterStateDriver
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Tracking number of visible forms
 local NUM_FORMS = 0

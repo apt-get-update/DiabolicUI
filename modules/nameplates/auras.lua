@@ -12,24 +12,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("NamePlates")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local pairs = pairs
-local math_min = math.min
-local table_sort = table.sort
-local unpack = unpack
-local wipe = _G.wipe
-
--- WoW API
-local GetSpellInfo = _G.GetSpellInfo
-local GetTime = _G.GetTime
-local UnitAura = _G.UnitAura
-local UnitExists = _G.UnitExists
-local UnitGUID = _G.UnitGUID
-local UnitIsFriend = _G.UnitIsFriend
-local UnitName = _G.UnitName
-
 local DAY, HOUR, MINUTE = 86400, 3600, 60
 
 -- how often the time left is written again
@@ -46,11 +28,11 @@ local PLAYER_GUID
 
 local formatTime = function(time)
 	if time >= DAY then
-		return ("%d%s"):format(math_floor(time / DAY), L["d"])
+		return ("%d%s"):format(math.floor(time / DAY), L["d"])
 	elseif time >= HOUR then
-		return ("%d%s"):format(math_floor(time / HOUR), L["h"])
+		return ("%d%s"):format(math.floor(time / HOUR), L["h"])
 	elseif time >= MINUTE then
-		return ("%d%s"):format(math_floor(time / MINUTE), L["m"])
+		return ("%d%s"):format(math.floor(time / MINUTE), L["m"])
 	elseif time >= 10 then
 		return ("%d"):format(time)
 	end
@@ -156,10 +138,10 @@ Module.UpdatePlateAuras = function(self, plate)
 				list[#list + 1] = aura
 			end
 		end
-		table_sort(list, SortAuras)
+		table.sort(list, SortAuras)
 	end
 
-	local shown = math_min(#list, config.max)
+	local shown = math.min(#list, config.max)
 	local width, spacing = config.size[1], config.spacing
 	local left = -(shown * width + (shown - 1) * spacing) / 2
 	for i = 1, shown do

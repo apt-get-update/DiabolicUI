@@ -5,20 +5,6 @@ local _, Engine = ...
 local L = Engine:GetLocale()
 local Handler = Engine:GetHandler("UnitFrame")
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local select = select
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetNetStats = _G.GetNetStats
-local GetTime = _G.GetTime
-local UnitCastingInfo = _G.UnitCastingInfo
-local UnitChannelInfo = _G.UnitChannelInfo
-local UnitExists = _G.UnitExists
-local UnitIsUnit = _G.UnitIsUnit
-
 local CastData = {}
 local CastBarPool = {}
 
@@ -35,13 +21,13 @@ local DAY, HOUR, MINUTE = 86400, 3600, 60
 
 local formatTime = function(time)
 	if time > DAY then -- more than a day
-		return ("%1d%s"):format(math_floor(time / DAY), day)
+		return ("%1d%s"):format(math.floor(time / DAY), day)
 	elseif time > HOUR then -- more than an hour
-		return ("%1d%s"):format(math_floor(time / HOUR), hour)
+		return ("%1d%s"):format(math.floor(time / HOUR), hour)
 	elseif time > MINUTE then -- more than a minute
-		return ("%1d%s %d%s"):format(math_floor(time / MINUTE), minute, math_floor(time % MINUTE), second)
+		return ("%1d%s %d%s"):format(math.floor(time / MINUTE), minute, math.floor(time % MINUTE), second)
 	elseif time > 10 then -- more than 10 seconds
-		return ("%d%s"):format(math_floor(time), second)
+		return ("%d%s"):format(math.floor(time), second)
 	elseif time > 0 then
 		return ("%.1f"):format(time)
 	else
@@ -148,7 +134,7 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 			elseif castdata.delay and castdata.delay ~= 0 then
 				CastBar.Value:SetFormattedText(
 					"%s|cffff0000 -%s|r",
-					formatTime(math_floor(castdata.max - duration)),
+					formatTime(math.floor(castdata.max - duration)),
 					formatTime(castdata.delay)
 				)
 			else

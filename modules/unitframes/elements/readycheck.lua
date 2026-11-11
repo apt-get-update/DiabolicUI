@@ -4,12 +4,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local GetReadyCheckStatus = _G.GetReadyCheckStatus
-
 local STAY_TIME = 10 -- seconds the answers stay up once it's over, as on Blizzard's frames
 
 local TEXTURES = {

@@ -1,28 +1,20 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("ChatCommand")
 
--- Lua API
-local string_find = string.find
-local string_gsub = string.gsub
-local string_split = string.split
-
--- WoW API
-local SlashCmdList = _G.SlashCmdList
-
 -- command registry for all modules
 local commandRegistry = {}
 
 Handler.ParseCommand = function(self, msg)
 	-- Remove spaces at the start and end
-	msg = string_gsub(msg, "^%s+", "")
-	msg = string_gsub(msg, "%s+$", "")
+	msg = string.gsub(msg, "^%s+", "")
+	msg = string.gsub(msg, "%s+$", "")
 
 	-- Replace all space characters with single spaces
-	msg = string_gsub(msg, "%s+", " ")
+	msg = string.gsub(msg, "%s+", " ")
 
 	-- If multiple arguments exist, split them into separate return values
-	if string_find(msg, "%s") then
-		return string_split(" ", msg)
+	if string.find(msg, "%s") then
+		return string.split(" ", msg)
 	else
 		return msg
 	end

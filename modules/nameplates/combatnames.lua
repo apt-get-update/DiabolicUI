@@ -6,17 +6,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("CombatNames", "LOW")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local table_insert = table.insert
-
--- WoW API
-local GetCVar = _G.GetCVar
-local GetZonePVPInfo = _G.GetZonePVPInfo
-local InCombatLockdown = _G.InCombatLockdown
-local SetCVar = _G.SetCVar
-
 local CVARS = {
 	"UnitNameOwn",
 	"UnitNameNPC",
@@ -37,7 +26,7 @@ local SANCTUARY_CVARS = {
 	"UnitNameEnemyTotemName",
 }
 for _, cvar in ipairs(CVARS) do
-	table_insert(SANCTUARY_CVARS, cvar)
+	table.insert(SANCTUARY_CVARS, cvar)
 end
 
 -- These names off (CVARS or SANCTUARY_CVARS), yours kept to put back.

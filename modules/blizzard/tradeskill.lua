@@ -8,24 +8,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trade Skill", "LOW")
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFont = _G.CreateFont
-local GetItemInfo = _G.GetItemInfo
-local GetSpellInfo = _G.GetSpellInfo
-local GetTradeSkillInfo = _G.GetTradeSkillInfo
-local GetTradeSkillLine = _G.GetTradeSkillLine
-local GetTradeSkillReagentItemLink = _G.GetTradeSkillReagentItemLink
-local hooksecurefunc = _G.hooksecurefunc
-local SetPortraitToTexture = _G.SetPortraitToTexture
-
 local ADDON = "Blizzard_TradeSkillUI"
 
 -- The recipes' text in their difficulty's ink (Blizzard's colors are for
@@ -85,9 +67,9 @@ Module.ClearScan = function(self)
 	if not (scan and scan:IsShown() and scan:GetLeft() and text:GetLeft()) then
 		return
 	end
-	text:SetWidth(math_max(1, scan:GetLeft() - text:GetLeft() - config.scan_gap))
-	local lowest = math_min(_G.TradeSkillSkillIcon:GetBottom(), text:GetBottom(), scan:GetBottom())
-	local top = math_max(config.description_top, child:GetTop() - lowest + config.scan_gap)
+	text:SetWidth(math.max(1, scan:GetLeft() - text:GetLeft() - config.scan_gap))
+	local lowest = math.min(_G.TradeSkillSkillIcon:GetBottom(), text:GetBottom(), scan:GetBottom())
+	local top = math.max(config.description_top, child:GetTop() - lowest + config.scan_gap)
 	description:SetPoint("TOPLEFT", child, "TOPLEFT", config.description_left, -top)
 end
 

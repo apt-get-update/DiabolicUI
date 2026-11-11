@@ -4,20 +4,7 @@ local L = Engine:GetLocale()
 
 Module:SetIncompatible("gUI4_Chat")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local select = select
-local table_concat = table.concat
-
--- WoW API
-local FCF_GetCurrentChatFrame = _G.FCF_GetCurrentChatFrame
-local StaticPopup_Show = _G.StaticPopup_Show
-local hooksecurefunc = _G.hooksecurefunc
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 local handled = {}
 
@@ -105,7 +92,7 @@ local WrapWebLinks = function(msg)
 		pos = (last or bar) + 1
 	end
 	out[#out + 1] = msg:sub(plain):gsub("[^%s|]+", LinkWord)
-	return table_concat(out)
+	return table.concat(out)
 end
 
 local ShowCopyTextPopup = function(text)

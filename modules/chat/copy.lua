@@ -5,15 +5,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("ChatCopy")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local table_concat = table.concat
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 local MAX_LINES = 200 -- kept per chat window
 local WIDTH, HEIGHT = 560, 380
 local SIDE = 36 -- the text from the window's sides and bottom (its iron is 23)
@@ -47,7 +38,7 @@ Module.GetText = function(self, frame)
 	for i = (first > 1 and first or 1), lines.count do
 		text[#text + 1] = PlainText(lines[(i - 1) % MAX_LINES + 1])
 	end
-	return table_concat(text, "\n")
+	return table.concat(text, "\n")
 end
 
 Module.CreateWindow = function(self)

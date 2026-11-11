@@ -20,36 +20,7 @@ local Module = Engine:GetModule("ActionBars")
 local ButtonWidget = Module:SetWidget("Button: Spec Switch")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local select = select
-local table_concat = table.concat
-local table_sort = table.sort
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local CreateMacro = _G.CreateMacro
-local GetActiveTalentGroup = _G.GetActiveTalentGroup
-local GetEquipmentSetInfo = _G.GetEquipmentSetInfo
-local GetEquipmentSetInfoByName = _G.GetEquipmentSetInfoByName
-local GetMacroIndexByName = _G.GetMacroIndexByName
-local GetMacroInfo = _G.GetMacroInfo
-local GetNumEquipmentSets = _G.GetNumEquipmentSets
-local GetNumMacros = _G.GetNumMacros
-local GetNumTalentGroups = _G.GetNumTalentGroups
-local GetNumTalentTabs = _G.GetNumTalentTabs
-local GetTalentTabInfo = _G.GetTalentTabInfo
-local InCombatLockdown = _G.InCombatLockdown
-local RegisterStateDriver = _G.RegisterStateDriver
-local SetActiveTalentGroup = _G.SetActiveTalentGroup
-local UnitClass = _G.UnitClass
-local UnregisterStateDriver = _G.UnregisterStateDriver
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Seconds to wait after a switch before setting it up, so the server is
 -- done handing out the new specialization's action bars.
@@ -74,7 +45,7 @@ local GetSpec = function(group)
 			name, icon, most = tabName, tabIcon, spent
 		end
 	end
-	return name, table_concat(points, "/"), icon
+	return name, table.concat(points, "/"), icon
 end
 ButtonWidget.GetSpec = function(self, group)
 	return GetSpec(group)
@@ -245,7 +216,7 @@ ButtonWidget.GetActionBarProfiles = function(self)
 	for name in pairs(db.sets[select(2, UnitClass("player"))] or {}) do
 		profiles[#profiles + 1] = name
 	end
-	table_sort(profiles)
+	table.sort(profiles)
 	for i, name in ipairs(profiles) do
 		profiles[i] = { text = name, value = name }
 	end

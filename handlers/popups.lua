@@ -6,22 +6,6 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("PopUpMessage")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local unpack = unpack
-local setmetatable = setmetatable
-local table_insert = table.insert
-local table_sort = table.sort
-local table_wipe = table.wipe
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local PlaySound = _G.PlaySound
-
 local popups = {} -- registry of virtual popup tables
 local popupFrames = {} -- registry of all created popup frames
 local activePopups = {} -- registry of active popup frames
@@ -332,7 +316,7 @@ PopUp.Update = function(self, styleTable)
 	end
 
 	-- figure out frame width
-	local width = math_min(styleTable.maxwidth, math_max(buttonWidth, styleTable.minwidth))
+	local width = math.min(styleTable.maxwidth, math.max(buttonWidth, styleTable.minwidth))
 	self:SetWidth(width)
 
 	-- Now we can set up the message, since we've found our frame width
@@ -511,11 +495,11 @@ end
 -- update the layout and position of visible popups
 Handler.UpdateLayout = function(self)
 	local order = self.order
-	table_wipe(order)
+	table.wipe(order)
 	for activeID in pairs(activePopups) do
-		table_insert(order, activeID)
+		table.insert(order, activeID)
 	end
-	table_sort(order)
+	table.sort(order)
 	local first, previous
 	for _, activeID in ipairs(order) do
 		local popupFrame = activePopups[activeID]

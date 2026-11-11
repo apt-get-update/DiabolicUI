@@ -5,9 +5,6 @@ local ADDON, Engine = ...
 local C = Engine:GetDB("Data: Colors")
 local path = ([[Interface\AddOns\%s\media\]]):format(ADDON)
 
--- Lua API
-local math_floor = math.floor
-
 local BUTTON_SIZE_VEHICLE = Engine:GetConstant("BUTTON_SIZE_VEHICLE") -- button size with a vehicle UI
 local BUTTON_SIZE_SINGLE = Engine:GetConstant("BUTTON_SIZE_SINGLE") -- button size with a single action bar
 local BUTTON_SIZE_DOUBLE = Engine:GetConstant("BUTTON_SIZE_DOUBLE") -- button size with two action bars
@@ -185,25 +182,25 @@ Engine:NewStaticConfig("UnitFrames", {
 					positionPet = { "BOTTOMLEFT", "Main", "TOPLEFT", 26, 46 + petOffset },
 					size = {
 						["1"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_SINGLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
 						},
 						["2"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_DOUBLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
 						},
 						["3"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_TRIPLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
 						},
 						["vehicle"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_VEHICLE * NUM_VEHICLE_SLOTS + bar_padding * (NUM_VEHICLE_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
@@ -257,25 +254,25 @@ Engine:NewStaticConfig("UnitFrames", {
 					positionPet = { "BOTTOMRIGHT", "Main", "TOPRIGHT", 26, 46 + petOffset },
 					size = {
 						["1"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_SINGLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
 						},
 						["2"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_DOUBLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
 						},
 						["3"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_TRIPLE * NUM_ACTIONBAR_SLOTS + bar_padding * (NUM_ACTIONBAR_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,
 						},
 						["vehicle"] = {
-							math_floor(
+							math.floor(
 								(BUTTON_SIZE_VEHICLE * NUM_VEHICLE_SLOTS + bar_padding * (NUM_VEHICLE_SLOTS - 1)) / 2
 							) - (16 + 10),
 							38 * 2 + 8 + 3 + 2,

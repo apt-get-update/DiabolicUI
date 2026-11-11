@@ -7,15 +7,6 @@ local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-
--- WoW API
-local CreateFrame = CreateFrame
-local GetActiveTalentGroup = _G.GetActiveTalentGroup
-local GetNumTalentGroups = _G.GetNumTalentGroups
-
 -- the controls (controls.lua)
 local C = Module.Controls
 local NewPage = C.NewPage

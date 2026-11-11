@@ -3,13 +3,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local GetRaidTargetIndex = _G.GetRaidTargetIndex
-local SetRaidTargetIconTexture = _G.SetRaidTargetIconTexture
-
 local Update = function(self)
 	local RaidMark = self.RaidMark
 	local index = GetRaidTargetIndex(self.unit)

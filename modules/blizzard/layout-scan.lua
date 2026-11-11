@@ -11,27 +11,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Scan", "LOW")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local pcall = pcall
-local select = select
-local string_find = string.find
-local string_format = string.format
-local table_concat = table.concat
-local table_sort = table.sort
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetAddOnInfo = _G.GetAddOnInfo
-local GetTime = _G.GetTime
-local InCombatLockdown = _G.InCombatLockdown
-local date = _G.date
-
 local kit
 local Said -- what's been said (by text)
 local Counted -- the windows whose parts were counted (by name)
@@ -100,7 +79,7 @@ end
 -- where it is on screen ({ left, bottom, width, height } in UIParent's
 -- units), its strata and level (a text: its layer and its frame's level).
 local Round = function(value)
-	return math_floor(value * 10 + 0.5) / 10
+	return math.floor(value * 10 + 0.5) / 10
 end
 
 local NameOf = function(frame)
@@ -132,7 +111,7 @@ end
 local Round3 = function(...)
 	local values = { ... }
 	for i, value in ipairs(values) do
-		values[i] = math_floor(value * 1000 + 0.5) / 1000
+		values[i] = math.floor(value * 1000 + 0.5) / 1000
 	end
 	return values
 end
@@ -146,11 +125,11 @@ local ScrolledOut = function(region)
 		if frame:IsObjectType("ScrollFrame") and (frame:GetScrollChild() == child) then
 			local outerLeft, outerBottom, outerRight, outerTop = kit.Edges(frame)
 			if outerLeft then
-				local across = math_min(right, outerRight) - math_max(left, outerLeft)
-				local down = math_min(top, outerTop) - math_max(bottom, outerBottom)
+				local across = math.min(right, outerRight) - math.max(left, outerLeft)
+				local down = math.min(top, outerTop) - math.max(bottom, outerBottom)
 				if
-					(across < math_min(right - left, outerRight - outerLeft) / 2)
-					or (down < math_min(top - bottom, outerTop - outerBottom) / 2)
+					(across < math.min(right - left, outerRight - outerLeft) / 2)
+					or (down < math.min(top - bottom, outerTop - outerBottom) / 2)
 				then
 					return true
 				end
@@ -165,7 +144,7 @@ local LookOf = function(text, entry)
 	local file, size, flags = text:GetFont()
 	if file then
 		entry.font, entry.fontSize = file, Round(size)
-		entry.outline = (flags and string_find(flags, "OUTLINE")) and true or nil
+		entry.outline = (flags and string.find(flags, "OUTLINE")) and true or nil
 	end
 	entry.color = Round3(text:GetTextColor())
 	entry.shadow = (text:GetShadowOffset() ~= 0) or nil
@@ -193,7 +172,7 @@ local Entry = function(part, window, rows)
 	entry.kind = part:GetObjectType()
 	entry.style = part.DiabolicStyle -- (windows/components/: what it inherits)
 	local text = part.GetText and part:GetText()
-	if text and (text ~= "") and (not string_find(text, "[|\n]")) then
+	if text and (text ~= "") and (not string.find(text, "[|\n]")) then
 		entry.text = text
 	end
 	-- (a button's text is drawn by its font string, named or not)
@@ -302,7 +281,7 @@ end
 
 local Art = function(frame)
 	local art = CollectArt(frame, nil, 1, {})
-	table_sort(art, DrawnFirst)
+	table.sort(art, DrawnFirst)
 	for _, item in ipairs(art) do
 		item.order = nil
 	end
@@ -316,7 +295,7 @@ local Packed
 Packed = function(value)
 	local kind = type(value)
 	if kind == "string" then
-		return string_format("%q", value)
+		return string.format("%q", value)
 	elseif kind ~= "table" then
 		return tostring(value)
 	end
@@ -329,7 +308,7 @@ Packed = function(value)
 			out[#out + 1] = key .. "=" .. Packed(item)
 		end
 	end
-	return "{" .. table_concat(out, ",") .. "}"
+	return "{" .. table.concat(out, ",") .. "}"
 end
 
 local PackedArt = function(frame)
@@ -343,14 +322,14 @@ end
 -- What's in a bag changes all the time and AdiBags places it: only what the
 -- last look saw is kept, for the editor's preview.
 local IsBagItem = function(name)
-	return string_find(name, "^AdiBagsItemButton%d") or string_find(name, "^AdiBagsBankItemButton%d")
+	return string.find(name, "^AdiBagsItemButton%d") or string.find(name, "^AdiBagsBankItemButton%d")
 end
 
 -- The tabs chosen among `named` (a window's parts, a tab bar in a tab too):
 -- what the window shows now, by their names and as they read. (Our own
 -- pages' too: the spellbook's companions, mounts and professions.)
 local IsTab = function(name, part)
-	return (string_find(name, "Tab%d+$") or string_find(name, "TabButton%d+$") or part.DiabolicPageTab)
+	return (string.find(name, "Tab%d+$") or string.find(name, "TabButton%d+$") or part.DiabolicPageTab)
 		and part:IsObjectType("Button")
 end
 
@@ -371,12 +350,12 @@ local ViewOf = function(named)
 			names[#names + 1] = name
 		end
 	end
-	table_sort(names)
+	table.sort(names)
 	local labels = {}
 	for i, name in ipairs(names) do
 		labels[i] = LabelOf(name, named[name])
 	end
-	return table_concat(names, "+"), table_concat(labels, " / ")
+	return table.concat(names, "+"), table.concat(labels, " / ")
 end
 
 -- `window` saved: its parts with where they are and the tabs they showed in,
@@ -446,7 +425,7 @@ local Scan = function(window)
 		for _, entry in pairs(parts) do
 			total = total + ((type(entry) == "table") and 1 or 0)
 		end
-		Print(title .. ": " .. string_format(L["%d parts saved (%d new)."], total, new))
+		Print(title .. ": " .. string.format(L["%d parts saved (%d new)."], total, new))
 	end
 end
 
@@ -500,7 +479,7 @@ local NoteUnstyled = function(name)
 		and not Saved.unstyled[name]
 	then
 		Saved.unstyled[name] = true
-		Print(string_format(L["Not styled: %s."], name))
+		Print(string.format(L["Not styled: %s."], name))
 	end
 end
 
@@ -538,8 +517,8 @@ local Left = function()
 				end
 			end
 			if labels[1] then
-				table_sort(labels)
-				left.tabs[#left.tabs + 1] = name .. " (" .. table_concat(labels, ", ") .. ")"
+				table.sort(labels)
+				left.tabs[#left.tabs + 1] = name .. " (" .. table.concat(labels, ", ") .. ")"
 				left.count = left.count + #labels
 			end
 		end
@@ -553,10 +532,10 @@ local Left = function()
 			left.unstyled[#left.unstyled + 1] = name
 		end
 	end
-	table_sort(left.windows)
-	table_sort(left.old)
-	table_sort(left.tabs)
-	table_sort(left.unstyled)
+	table.sort(left.windows)
+	table.sort(left.old)
+	table.sort(left.tabs)
+	table.sort(left.unstyled)
 	Saved.left = left
 	return left
 end
@@ -566,16 +545,16 @@ Module.Report = function(self)
 	local left = Left()
 	LeftCount = left.count
 	if left.windows[1] then
-		Print(string_format(L["Still to open: %s."], table_concat(left.windows, ", ")))
+		Print(string.format(L["Still to open: %s."], table.concat(left.windows, ", ")))
 	end
 	if left.old[1] then
-		Print(string_format(L["Scanned by an older version, open again: %s."], table_concat(left.old, ", ")))
+		Print(string.format(L["Scanned by an older version, open again: %s."], table.concat(left.old, ", ")))
 	end
 	if left.tabs[1] then
-		Print(string_format(L["Tabs not visited: %s."], table_concat(left.tabs, ", ")))
+		Print(string.format(L["Tabs not visited: %s."], table.concat(left.tabs, ", ")))
 	end
 	if left.unstyled[1] then
-		Print(string_format(L["Not styled: %s."], table_concat(left.unstyled, ", ")))
+		Print(string.format(L["Not styled: %s."], table.concat(left.unstyled, ", ")))
 	end
 	if left.count == 0 then
 		Print(L["Every window scanned, every tab visited."])
@@ -624,7 +603,7 @@ local CheckShown = function()
 			end
 			if (not ok) and not Said[err] then
 				Said[err] = true
-				Print(string_format(L["%s couldn't be scanned: %s"], window.Frame:GetName() or L["a window"], err))
+				Print(string.format(L["%s couldn't be scanned: %s"], window.Frame:GetName() or L["a window"], err))
 			end
 		end
 	end
@@ -632,7 +611,7 @@ local CheckShown = function()
 	-- (less left: how much, as it goes)
 	local left = Left()
 	if LeftCount and (left.count < LeftCount) then
-		Print(string_format(L["%d left to scan (/dui layout left)."], left.count))
+		Print(string.format(L["%d left to scan (/dui layout left)."], left.count))
 	end
 	LeftCount = left.count
 end
@@ -839,13 +818,13 @@ Module.Sweep = function(self)
 			for _ in pairs(Saved.windows) do
 				windows = windows + 1
 			end
-			Print(string_format(L["Layout scan done: %d windows saved (/reload to write them)."], windows))
+			Print(string.format(L["Layout scan done: %d windows saved (/reload to write them)."], windows))
 			self:Report()
 			return
 		end
 		local ok, err = pcall(STEPS[step])
 		if not ok then
-			Print(string_format(L["%s couldn't be scanned: %s"], L["a window"], err))
+			Print(string.format(L["%s couldn't be scanned: %s"], L["a window"], err))
 		end
 	end)
 end

@@ -8,9 +8,6 @@ local Library = Engine:GetDB("Library: UnitFrames")
 
 local UnitFrameWidget = Module:SetWidget("Unit: ToT")
 
--- Lua API
-local unpack = unpack
-
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.tot
 	local db = Module:GetConfig("UnitFrames")

@@ -8,27 +8,6 @@ local Library = Engine:GetDB("Library: UnitFrames")
 local Module = Engine:GetModule("UnitFrames")
 local UnitFrameWidget = Module:SetWidget("Unit: Target")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local unpack = unpack
-
--- WoW API
-local IsInInstance = _G.IsInInstance
-local PlaySound = _G.PlaySound
-local UnitCanAttack = _G.UnitCanAttack
-local UnitClassification = _G.UnitClassification
-local UnitPlayerControlled = _G.UnitPlayerControlled
-local UnitExists = _G.UnitExists
-local UnitLevel = _G.UnitLevel
-local UnitPowerType = _G.UnitPowerType
-local UnitPower = _G.UnitPower
-local UnitPowerMax = _G.UnitPowerMax
-local UnitIsEnemy = _G.UnitIsEnemy
-local UnitIsFriend = _G.UnitIsFriend
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsUnit = _G.UnitIsUnit
-
 -- Time limit in seconds where we separate between short and long buffs
 local TIME_LIMIT = Engine:GetConstant("AURA_TIME_LIMIT")
 

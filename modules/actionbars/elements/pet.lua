@@ -2,10 +2,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local BarWidget = Module:SetWidget("Bar: Pet")
 
--- WoW API
-local InCombatLockdown = _G.InCombatLockdown
-local RegisterStateDriver = _G.RegisterStateDriver
-
 local NUM_BUTTONS = NUM_PET_ACTION_SLOTS
 
 -- Picks the pet bar's vertical clearance depending on whether the

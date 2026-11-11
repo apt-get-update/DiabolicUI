@@ -13,28 +13,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Windows")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local table_insert = table.insert
-local table_remove = table.remove
-local math_abs = math.abs
-local math_ceil = math.ceil
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local rawget = rawget
-local select = select
-local setmetatable = setmetatable
-local string_upper = string.upper
-local type = type
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 local config
 local Windows = {} -- every window made, its Blizzard frame its .Frame (/dui layout saves them)
 Module.Windows = Windows
@@ -148,10 +126,10 @@ local TileStone = function(frame, left, top, x, y, width, height)
 		return
 	end
 	local n = 0
-	for row = math_floor(y / size), math_ceil((y + height) / size) - 1 do
-		local y0, y1 = math_max(y, row * size), math_min(y + height, (row + 1) * size)
-		for column = math_floor(x / size), math_ceil((x + width) / size) - 1 do
-			local x0, x1 = math_max(x, column * size), math_min(x + width, (column + 1) * size)
+	for row = math.floor(y / size), math.ceil((y + height) / size) - 1 do
+		local y0, y1 = math.max(y, row * size), math.min(y + height, (row + 1) * size)
+		for column = math.floor(x / size), math.ceil((x + width) / size) - 1 do
+			local x0, x1 = math.max(x, column * size), math.min(x + width, (column + 1) * size)
 			n = n + 1
 			local tile = tiles[n]
 			if not tile then
@@ -275,7 +253,7 @@ end
 local FitWatermark = function(window)
 	local spec, mark = config.watermark, window.DiabolicWatermark
 	local x, y = spec.position[2], spec.position[3]
-	if (window:GetWidth() >= spec.size + math_abs(x)) and (window:GetHeight() >= spec.size + math_abs(y)) then
+	if (window:GetWidth() >= spec.size + math.abs(x)) and (window:GetHeight() >= spec.size + math.abs(y)) then
 		mark:Show()
 	else
 		mark:Hide()
@@ -347,7 +325,7 @@ Module.CreateCover = function(self, window, insets, level)
 	cover:EnableMouse(true)
 	cover.DiabolicX, cover.DiabolicY = insets[1], insets[2]
 	cover.DiabolicWindow = window
-	table_insert(window.DiabolicCovers, cover)
+	table.insert(window.DiabolicCovers, cover)
 	cover.DiabolicTile = window.DiabolicTile
 	cover.DiabolicStone = {}
 	cover:SetScript("OnSizeChanged", LayoutCover)
@@ -387,14 +365,14 @@ LayoutBand = function(header)
 		Later(header, LayoutBand)
 		return
 	end
-	for i = 1, math_ceil(width / size) do
+	for i = 1, math.ceil(width / size) do
 		local tile = tiles[i]
 		if not tile then
 			tile = header:CreateTexture(nil, "BACKGROUND")
 			tile:SetTexture(band.texture)
 			tiles[i] = tile
 		end
-		local w = math_min(size, width - (i - 1) * size)
+		local w = math.min(size, width - (i - 1) * size)
 		tile:ClearAllPoints()
 		tile:SetPoint("TOPLEFT", header, "TOPLEFT", (i - 1) * size, 0)
 		tile:SetSize(w, height)
@@ -418,7 +396,7 @@ Module.CreateHeader = function(self, window, height, insets)
 	header.DiabolicInsets = insets
 	PlaceHeader(header)
 	if window.DiabolicHeaders then
-		table_insert(window.DiabolicHeaders, header)
+		table.insert(window.DiabolicHeaders, header)
 	end
 	header:SetHeight(height)
 	header.DiabolicBand = {}
@@ -436,7 +414,7 @@ Module.DropBand = function(self, header)
 	local headers = header:GetParent().DiabolicHeaders
 	for i = #headers, 1, -1 do
 		if headers[i] == header then
-			table_remove(headers, i)
+			table.remove(headers, i)
 		end
 	end
 end
@@ -459,7 +437,7 @@ local FitTitle = function(title)
 	local plate = title:GetParent()
 	local margin = spec.width - spec.text_width
 	local room = plate:GetParent():GetWidth() - 2 * spec.side_room
-	local most = math_max(spec.text_width, math_min(spec.max_width, room) - margin)
+	local most = math.max(spec.text_width, math.min(spec.max_width, room) - margin)
 	title:SetSize(0, 0)
 	if title:GetStringWidth() > most then
 		title:SetSize(most, select(2, title:GetFont()) + 2)
@@ -467,7 +445,7 @@ local FitTitle = function(title)
 	local width = spec.width
 	for _, shown in ipairs(plate.DiabolicTitles) do
 		if shown:IsShown() and ((shown:GetText() or "") ~= "") then
-			width = math_max(width, math_min(shown:GetStringWidth(), most) + margin)
+			width = math.max(width, math.min(shown:GetStringWidth(), most) + margin)
 		end
 	end
 	SizePlate(plate, width)
@@ -734,7 +712,7 @@ Module.OnInit = function(self)
 			name = frame:GetName()
 		end
 		for _, kind in ipairs({ "gold", "silver", "copper" }) do
-			local button = name and _G[name .. kind:gsub("^%l", string_upper) .. "Button"]
+			local button = name and _G[name .. kind:gsub("^%l", string.upper) .. "Button"]
 			local texture = button and button:GetNormalTexture()
 			if texture then
 				texture:SetTexture(coin[kind .. "_texture"])

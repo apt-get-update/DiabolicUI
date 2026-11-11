@@ -8,25 +8,6 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("UnitFrame")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local setmetatable = setmetatable
-local string_format = string.format
-local string_match = string.match
-local string_upper = string.upper
-local table_insert = table.insert
-local table_remove = table.remove
-local tonumber = tonumber
-
--- Blizzard API
-local CreateFrame = _G.CreateFrame
-local FriendsDropDown = _G.FriendsDropDown
-local GameTooltip = _G.GameTooltip
-local GetCurrentTitle = _G.GetCurrentTitle
-local GetTitleName = _G.GetTitleName
-local ToggleDropDownMenu = _G.ToggleDropDownMenu
-
 local Elements = {} -- element registry
 local Events = {} -- registry of frame and element event callbacks
 local FrequentUpdates = {} -- registry of frame updates
@@ -58,12 +39,11 @@ local UnWanted = {
 	["RESET_TARGET_FRAME_POSITION"] = true,
 }
 
-local UnitPopupMenus = _G.UnitPopupMenus
 for id, menu in pairs(UnitPopupMenus) do
 	for i = #menu, 1, -1 do
 		local option = UnitPopupMenus[id][i]
 		if option and UnWanted[option] then
-			table_remove(UnitPopupMenus[id], i)
+			table.remove(UnitPopupMenus[id], i)
 		end
 	end
 end
@@ -75,7 +55,7 @@ local UnitFrameMenu = function(self)
 	if self.unit == "targettarget" or self.unit == "focustarget" or self.unit == "pettarget" then
 		return
 	end
-	local unit = self.unit:gsub("(.)", string_upper, 1)
+	local unit = self.unit:gsub("(.)", string.upper, 1)
 	if _G[unit .. "FrameDropDown"] then
 		ToggleDropDownMenu(1, nil, _G[unit .. "FrameDropDown"], "cursor")
 		return
@@ -160,7 +140,7 @@ UnitFrame.RegisterEvent = function(self, event, func)
 	end
 
 	-- insert the function into the event's registry
-	table_insert(events, func)
+	table.insert(events, func)
 
 	-- register the event
 	if not IsEventRegistered(self, event) then
@@ -242,7 +222,7 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 	object:SetFrameStrata("LOW")
 
 	object.unit = unit
-	object.id = tonumber((string_match(unit, "%d+"))) -- the index of numbered units
+	object.id = tonumber((string.match(unit, "%d+"))) -- the index of numbered units
 	object._enabledelements = {}
 
 	-- Apply these script before the styling function,
@@ -359,7 +339,7 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		RegisterStateDriver(VehicleUpdater, "vehicleupdate", "[bonusbar:5][vehicleui] invehicle; notinvehicle")
 	else
 		-- Other units only need their own existence checks.
-		RegisterStateDriver(object, "visibility", string_format("[@%s,exists]show;hide", object.unit))
+		RegisterStateDriver(object, "visibility", string.format("[@%s,exists]show;hide", object.unit))
 	end
 
 	return object

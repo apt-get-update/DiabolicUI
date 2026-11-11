@@ -3,14 +3,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- Lua API
-local unpack = unpack
-
--- WoW API
-local UnitClassification = UnitClassification
-local UnitExists = UnitExists
-local UnitName = UnitName
-
 local colors = {
 	elite = { 0 / 255, 112 / 255, 221 / 255 },
 	boss = { 163 / 255, 53 / 255, 255 / 238 },

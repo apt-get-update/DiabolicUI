@@ -6,13 +6,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: WatchFrame", "LOW")
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-
 local style = Engine:GetDB("Objectives").style
 
 -- Our red square on a collapse button, with the texture coordinates its

@@ -4,17 +4,8 @@ local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local ipairs = ipairs
-local unpack = unpack
-
 -- WoW API
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 local UnitIsTapDenied = Engine.UnitIsTapDenied
-local UnitPower = _G.UnitPower
-local UnitPowerMax = _G.UnitPowerMax
-local UnitPowerType = _G.UnitPowerType
 
 local _SECONDARY_RESOURCE_TOKEN = SPELL_POWER_MANA
 

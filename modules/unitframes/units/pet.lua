@@ -7,13 +7,6 @@ local UnitFrameWidget = Module:SetWidget("Unit: Pet")
 local UnitFrame = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local ipairs, unpack = ipairs, unpack
-
--- WoW API
-local UnitClass = _G.UnitClass
-local UnitIsPlayer = _G.UnitIsPlayer
-
 local _, playerClass = UnitClass("player")
 -- Health: in a vehicle the player is the pet unit, in its class colors a
 -- shade darker; the pet itself can take the player's class colors, darker

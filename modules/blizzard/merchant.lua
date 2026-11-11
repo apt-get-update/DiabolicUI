@@ -10,14 +10,6 @@ local Module = Engine:NewModule("Blizzard: Merchant", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-
 local NUM_ITEMS = 12 -- the buyback tab's; the merchant's shows 10
 
 -- Where the icon box is in a slot `size` big (the slot's art stretched to

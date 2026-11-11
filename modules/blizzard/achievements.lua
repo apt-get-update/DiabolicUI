@@ -11,17 +11,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Achievements", "LOW")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local type = type
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 -- Blizzard's art in the window, by name: the header's banner (its points
 -- and shield stay), and the backgrounds of the lists.
 local HIDDEN = {

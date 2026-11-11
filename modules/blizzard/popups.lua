@@ -4,12 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: PopUps")
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local select = select
-local unpack = unpack
-
 -- Our backdrops on a Blizzard dialog box: a bigger one around it, with
 -- room for our larger buttons, and the header's inside.
 Module.StyleFrame = function(self, frame)

@@ -3,13 +3,10 @@
 -- carries a ready-made |cff color code in .colorCode.
 local _, Engine = ...
 
--- Lua API
-local math_floor = math.floor
-
 local _, playerClass = UnitClass("player")
 
 local hex = function(r, g, b)
-	return ("|cff%02x%02x%02x"):format(math_floor(r * 255), math_floor(g * 255), math_floor(b * 255))
+	return ("|cff%02x%02x%02x"):format(math.floor(r * 255), math.floor(g * 255), math.floor(b * 255))
 end
 
 -- An {r, g, b} color, with its |cff color code in .colorCode

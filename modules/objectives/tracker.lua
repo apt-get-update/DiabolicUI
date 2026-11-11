@@ -2,12 +2,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("ObjectiveTracker")
 local L = Engine:GetLocale()
 
--- WoW API
-local CreateFrame = CreateFrame
-local GetCursorPosition = GetCursorPosition
-local GetTime = GetTime
-local hooksecurefunc = hooksecurefunc
-
 -- How long the actual fade transition itself takes. The delay before it
 -- starts (Time Fading) and how far it fades (Opacity) are user settings.
 local FADE_DURATION = 0.3

@@ -3,19 +3,6 @@
 local _, Engine = ...
 local Module = Engine:GetModule("Blizzard: Windows")
 
--- Lua and WoW API
-local _G = _G
-local ipairs = ipairs
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local select = select
-local setmetatable = setmetatable
-local unpack = unpack
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 local LitRows = Module.LitRows
 local Private = Module.Private
 local NameFor = Private.NameFor
@@ -47,7 +34,7 @@ local FitNine = function(frame, slices, spec)
 		return
 	end
 	local artWidth, artHeight = width - 2 * spec.border, height - 2 * spec.border
-	local scale = math_max(shownWidth / artWidth, shownHeight / artHeight)
+	local scale = math.max(shownWidth / artWidth, shownHeight / artHeight)
 	local u, v = spec.border / width, spec.border / height
 	-- the middle's span: what's shown of it, centred
 	local cutU = (1 - 2 * u) * (1 - shownWidth / scale / artWidth) / 2
@@ -55,7 +42,7 @@ local FitNine = function(frame, slices, spec)
 	local columns = { { 0, u }, { u + cutU, 1 - u - cutU }, { 1 - u, 1 } }
 	local rows = { { 0, v }, { v + cutV, 1 - v - cutV }, { 1 - v, 1 } }
 	for i, slice in ipairs(slices) do
-		local column, row = columns[(i - 1) % 3 + 1], rows[math_floor((i - 1) / 3) + 1]
+		local column, row = columns[(i - 1) % 3 + 1], rows[math.floor((i - 1) / 3) + 1]
 		slice:SetTexCoord(column[1], column[2], row[1], row[2])
 	end
 end
@@ -348,7 +335,7 @@ end
 Module.RowsFitting = function(self, list, height, most, first)
 	local top, bottom = first and first:GetTop(), list:GetBottom()
 	local room = (top and bottom) and (top - bottom) or list:GetHeight()
-	return math_max(0, math_min(math_floor(room / height + 0.25), most))
+	return math.max(0, math.min(math.floor(room / height + 0.25), most))
 end
 
 -- A parchment's scroll bar (UIPanelScrollFrameTemplate's) out past its

@@ -4,14 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: GameMenu")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local table_insert = table.insert
-local type = type
-local unpack = unpack
-
 -- A button's three looks
 local LAYERS = { "normal", "highlight", "pushed" }
 
@@ -235,7 +227,7 @@ Module.OnInit = function(self)
 
 	-- the mac options button, on a mac client only
 	if IsMacClient() then
-		table_insert(self.buttons, 4, { content = GameMenuButtonMacOptions, label = MAC_OPTIONS })
+		table.insert(self.buttons, 4, { content = GameMenuButtonMacOptions, label = MAC_OPTIONS })
 	else
 		local UIHider = CreateFrame("Frame")
 		UIHider:Hide()

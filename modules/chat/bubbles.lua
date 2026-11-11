@@ -7,19 +7,6 @@ local Module = Engine:NewModule("ChatBubbles")
 -- Allow the user to use the stand-alone instead
 Module:SetIncompatible("NiceBubbles")
 
--- Lua API
-local _G = _G
-
-local math_abs = math.abs
-local math_floor = math.floor
-local pairs = pairs
-local select = select
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local SetCVar = _G.SetCVar
-local WorldFrame = _G.WorldFrame
-
 -- Bubble Data
 local bubbles = {} -- local bubble registry
 local numChildren, numBubbles = -1, 0 -- bubble counters
@@ -38,7 +25,7 @@ end
 
 -- let the bubble size scale from 400 to 660ish (font size 22)
 local getMaxWidth = function()
-	return 400 + math_floor((fontsize - 14) / 22 * 260)
+	return 400 + math.floor((fontsize - 14) / 22 * 260)
 end
 
 local getBackdrop = function(scale)
@@ -96,8 +83,8 @@ Updater.OnUpdate = function(self, elapsed)
 			-- continuing the fight against overlaps blending into each other!
 			bubbles[bubble]:SetFrameLevel(bubble:GetFrameLevel()) -- this works?
 
-			local blizzTextWidth = math_floor(bubble.text:GetWidth())
-			local blizzTextHeight = math_floor(bubble.text:GetHeight())
+			local blizzTextWidth = math.floor(bubble.text:GetWidth())
+			local blizzTextHeight = math.floor(bubble.text:GetHeight())
 			local point, _, rpoint, blizzX, blizzY = bubble.text:GetPoint()
 			local r, g, b = bubble.text:GetTextColor()
 			if blizzTextWidth and blizzTextHeight and point and rpoint and blizzX and blizzY then
@@ -120,17 +107,17 @@ Updater.OnUpdate = function(self, elapsed)
 				local ourTextWidth = bubbles[bubble].text:GetWidth()
 				local ourTextHeight = bubbles[bubble].text:GetHeight()
 				local ourX =
-					math_floor(offsetX + (blizzX - blizzTextWidth / 2) / scale - (ourTextWidth - blizzTextWidth) / 2) -- chatbubbles are rendered at BOTTOM, WorldFrame, BOTTOMLEFT, x, y
-				local ourY = math_floor(offsetY + blizzY / scale - (ourTextHeight - blizzTextHeight) / 2) -- get correct bottom coordinate
-				local ourWidth = math_floor(ourTextWidth + space * 2)
-				local ourHeight = math_floor(ourTextHeight + space * 2)
+					math.floor(offsetX + (blizzX - blizzTextWidth / 2) / scale - (ourTextWidth - blizzTextWidth) / 2) -- chatbubbles are rendered at BOTTOM, WorldFrame, BOTTOMLEFT, x, y
+				local ourY = math.floor(offsetY + blizzY / scale - (ourTextHeight - blizzTextHeight) / 2) -- get correct bottom coordinate
+				local ourWidth = math.floor(ourTextWidth + space * 2)
+				local ourHeight = math.floor(ourTextHeight + space * 2)
 				-- only resize and move when it changed: this runs every frame
 				if (ourWidth ~= bubbles[bubble].width) or (ourHeight ~= bubbles[bubble].height) then
 					bubbles[bubble]:SetSize(ourWidth, ourHeight)
 					bubbles[bubble].width, bubbles[bubble].height = ourWidth, ourHeight
 				end
 				local oldX, oldY = select(4, bubbles[bubble]:GetPoint())
-				if not (oldX and oldY) or ((math_abs(oldX - ourX) > 0.5) or (math_abs(oldY - ourY) > 0.5)) then
+				if not (oldX and oldY) or ((math.abs(oldX - ourX) > 0.5) or (math.abs(oldY - ourY) > 0.5)) then
 					bubbles[bubble]:ClearAllPoints()
 					bubbles[bubble]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", ourX, ourY)
 				end

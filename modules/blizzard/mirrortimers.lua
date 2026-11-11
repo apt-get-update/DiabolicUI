@@ -5,16 +5,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: MirrorTimers")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local _G = _G
-local table_insert = table.insert
-local table_sort = table.sort
-local table_wipe = table.wipe
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = hooksecurefunc
-
 local sort = function(a, b)
 	return a.id < b.id
 end
@@ -40,19 +30,19 @@ Module.UpdateAnchors = function(self)
 	local timers = self.timers
 	local order = self.order
 
-	table_wipe(order)
+	table.wipe(order)
 
 	-- parse mirror timers
 	for frame, timer in pairs(timers) do
 		frame:ClearAllPoints() -- clear points of hidden too
 		if frame:IsShown() then
-			table_insert(order, timer) -- only include visible timers
+			table.insert(order, timer) -- only include visible timers
 		end
 	end
 
 	-- sort and arrange visible timers
 	if #order > 0 then
-		table_sort(order, sort)
+		table.sort(order, sort)
 		-- one slot down while a capture bar sits in the first one
 		order[1].frame:SetPoint(unpack(self.captureBarVisible and config.positionOffsetByOne or config.position))
 		for i = 2, #order do

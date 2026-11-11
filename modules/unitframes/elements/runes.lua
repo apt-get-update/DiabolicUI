@@ -7,16 +7,6 @@ local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local ipairs = ipairs
-
--- WoW API
-local GetRuneCooldown = GetRuneCooldown
-local GetRuneType = GetRuneType
-local GetTime = GetTime
-local UnitAffectingCombat = UnitAffectingCombat
-local UnitHasVehicleUI = UnitHasVehicleUI
-
 -- Blizzard's display order: blood, blood, frost, frost, unholy, unholy.
 -- (Rune IDs 1-2 are blood, 3-4 unholy and 5-6 frost.)
 local RUNE_ORDER = { 1, 2, 5, 6, 3, 4 }

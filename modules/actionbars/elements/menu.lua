@@ -3,27 +3,7 @@ local Module = Engine:GetModule("ActionBars")
 local MenuWidget = Module:SetWidget("Menu: Main")
 local L = Engine:GetLocale()
 
--- Lua API
-local ipairs, select, unpack = ipairs, select, unpack
-local floor = math.floor
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetBindingKey = _G.GetBindingKey
-local GetFramerate = _G.GetFramerate
-local GetGuildRosterInfo = _G.GetGuildRosterInfo
-local GetNetStats = _G.GetNetStats
-local GetNumFriends = _G.GetNumFriends
-local GetNumGuildMembers = _G.GetNumGuildMembers
-local GuildRoster = _G.GuildRoster
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-local IsInGuild = _G.IsInGuild
-local PlaySound = _G.PlaySound
-local UnitFactionGroup = _G.UnitFactionGroup
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 local UIHider = CreateFrame("Frame")
 UIHider:Hide()

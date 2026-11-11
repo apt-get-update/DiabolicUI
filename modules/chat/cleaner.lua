@@ -14,22 +14,6 @@ local F = Engine:GetDB("Library: Format")
 Module:SetIncompatible("ChatCleaner")
 Module:SetIncompatible("CleanerChat")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local select = select
-local string_find = string.find
-local string_format = string.format
-local string_gsub = string.gsub
-local string_len = string.len
-local string_match = string.match
-local string_upper = string.upper
-local tonumber = tonumber
-
--- WoW API
-local ChatFrame_AddMessageEventFilter = _G.ChatFrame_AddMessageEventFilter
-
 local PLUS = "|cff33cc33+|r "
 local MINUS = "|cffcc3333-|r "
 local HIGHLIGHT = "|cffffd200%s|r"
@@ -45,20 +29,20 @@ local STATUS_OFF = "|cff33cc33- %s|r"
 -- capture (experience lines can end with a rested bonus).
 local ToPattern = function(template, open)
 	local order, count = {}, 0
-	local pattern = string_gsub(template, "%%(%d*)%$?([sd])", function(index, kind)
+	local pattern = string.gsub(template, "%%(%d*)%$?([sd])", function(index, kind)
 		count = count + 1
 		order[count] = tonumber(index) or count
 		return (kind == "d") and "\2" or "\1"
 	end)
-	pattern = string_gsub(pattern, "[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%0")
-	pattern = string_gsub(string_gsub(pattern, "\1", "(.-)"), "\2", "(%%d+)")
+	pattern = string.gsub(pattern, "[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%0")
+	pattern = string.gsub(string.gsub(pattern, "\1", "(.-)"), "\2", "(%%d+)")
 	return "^" .. pattern .. (open and "(.*)$" or "$"), order
 end
 
 -- The arguments `msg` was printed with, in their own order, or nil when
 -- the rule's global string didn't print it.
 local Match = function(rule, msg)
-	local captures = { string_match(msg, rule.pattern) }
+	local captures = { string.match(msg, rule.pattern) }
 	if captures[1] == nil then
 		return
 	end
@@ -78,13 +62,13 @@ local coins
 local ParseMoney = function(text)
 	coins = coins
 		or {
-			{ (string_gsub(_G.GOLD_AMOUNT, "%%d", "(%%d+)")), 10000 },
-			{ (string_gsub(_G.SILVER_AMOUNT, "%%d", "(%%d+)")), 100 },
-			{ (string_gsub(_G.COPPER_AMOUNT, "%%d", "(%%d+)")), 1 },
+			{ (string.gsub(_G.GOLD_AMOUNT, "%%d", "(%%d+)")), 10000 },
+			{ (string.gsub(_G.SILVER_AMOUNT, "%%d", "(%%d+)")), 100 },
+			{ (string.gsub(_G.COPPER_AMOUNT, "%%d", "(%%d+)")), 1 },
 		}
 	local copper, found = 0, false
 	for _, coin in ipairs(coins) do
-		local amount = string_match(text, coin[1])
+		local amount = string.match(text, coin[1])
 		if amount then
 			copper = copper + tonumber(amount) * coin[2]
 			found = true
@@ -95,7 +79,7 @@ end
 
 -- The line without its final period.
 local Trim = function(msg)
-	return (string_gsub(msg, "%.$", ""))
+	return (string.gsub(msg, "%.$", ""))
 end
 
 -- Rules ----------------------------------------------------------------------
@@ -104,7 +88,7 @@ local Item = function(args)
 	return PLUS .. args[1]
 end
 local Items = function(args)
-	return string_format("%s%s (%d)", PLUS, args[1], args[2])
+	return string.format("%s%s (%d)", PLUS, args[1], args[2])
 end
 local Money = function(args)
 	local copper = ParseMoney(args[1])
@@ -118,19 +102,19 @@ local Lost = function(args, msg)
 end
 -- "+ 250 XP: Kobold Vermin (+125 exp Rested bonus)", the bonus dimmed
 local Experience = function(args, msg, source)
-	local rest = string_gsub(args.rest or "", "^%s+", "")
+	local rest = string.gsub(args.rest or "", "^%s+", "")
 	return PLUS
 		.. args[1]
 		.. " "
 		.. _G.XP
 		.. (source and (": " .. source) or "")
-		.. ((rest ~= "") and (" " .. string_format(DIM, rest)) or "")
+		.. ((rest ~= "") and (" " .. string.format(DIM, rest)) or "")
 end
 local Status = function(label, message, default)
 	if message and (message ~= "") and (message ~= default) then
-		return string_format(STATUS_ON, label .. ": " .. message)
+		return string.format(STATUS_ON, label .. ": " .. message)
 	end
-	return string_format(STATUS_ON, label)
+	return string.format(STATUS_ON, label)
 end
 
 -- Each group: per chat event the rules tried in turn (the
@@ -151,7 +135,7 @@ local GROUPS = {
 				{
 					"LOOT_ITEM_MULTIPLE",
 					function(args)
-						return string_format("%s: %s (%d)", args[1], args[2], args[3])
+						return string.format("%s: %s (%d)", args[1], args[2], args[3])
 					end,
 				},
 				{
@@ -169,7 +153,7 @@ local GROUPS = {
 				{
 					"ERR_QUEST_REWARD_ITEM_MULT_IS",
 					function(args)
-						return string_format("%s%s (%d)", PLUS, args[2], args[1])
+						return string.format("%s%s (%d)", PLUS, args[2], args[1])
 					end,
 				},
 				{ "ERR_QUEST_REWARD_ITEM_S", Item },
@@ -193,31 +177,31 @@ local GROUPS = {
 				{
 					"FACTION_STANDING_INCREASED",
 					function(args)
-						return string_format("%s%d %s: " .. HIGHLIGHT, PLUS, args[2], _G.REPUTATION, args[1])
+						return string.format("%s%d %s: " .. HIGHLIGHT, PLUS, args[2], _G.REPUTATION, args[1])
 					end,
 				},
 				{
 					"FACTION_STANDING_DECREASED",
 					function(args)
-						return string_format("%s%d %s: " .. HIGHLIGHT, MINUS, args[2], _G.REPUTATION, args[1])
+						return string.format("%s%d %s: " .. HIGHLIGHT, MINUS, args[2], _G.REPUTATION, args[1])
 					end,
 				},
 				{
 					"FACTION_STANDING_INCREASED_GENERIC",
 					function(args)
-						return string_format("%s%s: " .. HIGHLIGHT, PLUS, _G.REPUTATION, args[1])
+						return string.format("%s%s: " .. HIGHLIGHT, PLUS, _G.REPUTATION, args[1])
 					end,
 				},
 				{
 					"FACTION_STANDING_DECREASED_GENERIC",
 					function(args)
-						return string_format("%s%s: " .. HIGHLIGHT, MINUS, _G.REPUTATION, args[1])
+						return string.format("%s%s: " .. HIGHLIGHT, MINUS, _G.REPUTATION, args[1])
 					end,
 				},
 				{
 					"FACTION_STANDING_CHANGED",
 					function(args)
-						return string_format(HIGHLIGHT .. ": %s", args[2], args[1])
+						return string.format(HIGHLIGHT .. ": %s", args[2], args[1])
 					end,
 				},
 			},
@@ -225,19 +209,19 @@ local GROUPS = {
 				{
 					"COMBATLOG_HONORGAIN",
 					function(args)
-						return string_format("%s%d %s: %s (%s)", PLUS, args[3], _G.HONOR, args[1], args[2])
+						return string.format("%s%d %s: %s (%s)", PLUS, args[3], _G.HONOR, args[1], args[2])
 					end,
 				},
 				{
 					"COMBATLOG_HONORGAIN_NO_RANK",
 					function(args)
-						return string_format("%s%d %s: %s", PLUS, args[2], _G.HONOR, args[1])
+						return string.format("%s%d %s: %s", PLUS, args[2], _G.HONOR, args[1])
 					end,
 				},
 				{
 					"COMBATLOG_HONORAWARD",
 					function(args)
-						return string_format("%s%d %s", PLUS, args[1], _G.HONOR)
+						return string.format("%s%d %s", PLUS, args[1], _G.HONOR)
 					end,
 				},
 			},
@@ -245,7 +229,7 @@ local GROUPS = {
 				{
 					"SKILL_RANK_UP",
 					function(args)
-						return string_format("%s" .. HIGHLIGHT .. ": %d", PLUS, args[1], args[2])
+						return string.format("%s" .. HIGHLIGHT .. ": %d", PLUS, args[1], args[2])
 					end,
 				},
 			},
@@ -254,25 +238,25 @@ local GROUPS = {
 				{
 					"LEVEL_UP",
 					function(args)
-						return string_format("%s" .. HIGHLIGHT, PLUS, _G.LEVEL .. " " .. args[1])
+						return string.format("%s" .. HIGHLIGHT, PLUS, _G.LEVEL .. " " .. args[1])
 					end,
 				},
 				{
 					"LEVEL_UP_HEALTH_MANA",
 					function(args)
-						return string_format("%s%d %s, %s%d %s", PLUS, args[1], _G.HEALTH, PLUS, args[2], _G.MANA)
+						return string.format("%s%d %s, %s%d %s", PLUS, args[1], _G.HEALTH, PLUS, args[2], _G.MANA)
 					end,
 				},
 				{
 					"LEVEL_UP_HEALTH",
 					function(args)
-						return string_format("%s%d %s", PLUS, args[1], _G.HEALTH)
+						return string.format("%s%d %s", PLUS, args[1], _G.HEALTH)
 					end,
 				},
 				{
 					"LEVEL_UP_STAT",
 					function(args)
-						return string_format("%s%d %s", PLUS, args[2], args[1])
+						return string.format("%s%d %s", PLUS, args[2], args[1])
 					end,
 				},
 			},
@@ -284,13 +268,13 @@ local GROUPS = {
 				{
 					"ERR_QUEST_ACCEPTED_S",
 					function(args)
-						return PLUS .. string_format(_G.ERR_QUEST_ACCEPTED_S, string_format(HIGHLIGHT, args[1]))
+						return PLUS .. string.format(_G.ERR_QUEST_ACCEPTED_S, string.format(HIGHLIGHT, args[1]))
 					end,
 				},
 				{
 					"ERR_QUEST_COMPLETE_S",
 					function(args)
-						return PLUS .. Trim(string_format(_G.ERR_QUEST_COMPLETE_S, string_format(HIGHLIGHT, args[1])))
+						return PLUS .. Trim(string.format(_G.ERR_QUEST_COMPLETE_S, string.format(HIGHLIGHT, args[1])))
 					end,
 				},
 			},
@@ -314,7 +298,7 @@ local GROUPS = {
 				{
 					"CLEARED_AFK",
 					function()
-						return string_format(STATUS_OFF, _G.FRIENDS_LIST_AWAY)
+						return string.format(STATUS_OFF, _G.FRIENDS_LIST_AWAY)
 					end,
 				},
 				{
@@ -326,7 +310,7 @@ local GROUPS = {
 				{
 					"CLEARED_DND",
 					function()
-						return string_format(STATUS_OFF, _G.FRIENDS_LIST_BUSY)
+						return string.format(STATUS_OFF, _G.FRIENDS_LIST_BUSY)
 					end,
 				},
 				{
@@ -344,7 +328,7 @@ local GROUPS = {
 				{
 					"ERR_EXHAUSTION_NORMAL",
 					function()
-						return string_format(DIM, "- " .. _G.TUTORIAL_TITLE26)
+						return string.format(DIM, "- " .. _G.TUTORIAL_TITLE26)
 					end,
 				},
 			},
@@ -357,7 +341,7 @@ local GROUPS = {
 				{
 					"ERR_FRIEND_OFFLINE_S",
 					function(args, msg)
-						return string_format(DIM, "- " .. Trim(msg))
+						return string.format(DIM, "- " .. Trim(msg))
 					end,
 				},
 			},
@@ -440,7 +424,7 @@ local CleanLine = function(frame, event, msg, ...)
 end
 
 local HideEmptyLine = function(frame, event, msg)
-	return Module.db.hideChatNoise and (not string_find(msg, "%S"))
+	return Module.db.hideChatNoise and (not string.find(msg, "%S"))
 end
 
 -- The notices of joining, changing and leaving a channel. Blizzard forgets
@@ -459,10 +443,10 @@ local HideChannelNotice = function(frame, event, notice, ...)
 		local channel, _, _, zoneChannel, _, name = select(3, ...)
 		for index, value in pairs(frame.channelList) do
 			if
-				(string_len(channel) > string_len(value))
+				(string.len(channel) > string.len(value))
 				and (
 					((zoneChannel > 0) and (frame.zoneChannelList[index] == zoneChannel))
-					or (string_upper(value) == string_upper(name))
+					or (string.upper(value) == string.upper(name))
 				)
 			then
 				frame.channelList[index] = nil

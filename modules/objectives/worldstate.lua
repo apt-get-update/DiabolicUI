@@ -4,20 +4,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("WorldState")
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local pairs = pairs
-local table_insert = table.insert
-local table_remove = table.remove
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local GetNumWorldStateUI = _G.GetNumWorldStateUI
-local GetTime = _G.GetTime
-local GetWorldStateUIInfo = _G.GetWorldStateUIInfo
-
 -- Height of the UIs
 local uiHeight = 24
 
@@ -55,7 +41,7 @@ end
 local MINUTE = 60
 -- (ran out timers are taken away before they get here)
 local formatTime = function(value)
-	return ("%02d:%02d"):format(math_floor(value / MINUTE), value % MINUTE)
+	return ("%02d:%02d"):format(math.floor(value / MINUTE), value % MINUTE)
 end
 
 ------------------------------------------------------------------------
@@ -78,7 +64,7 @@ WorldStateUI:SetScript("OnUpdate", function(self, elapsed)
 
 			-- cancel timers that have ran out
 			if timer.timeLeft < 0 then
-				table_remove(timerInfo, timerIndex) -- pull the timer out of the info table
+				table.remove(timerInfo, timerIndex) -- pull the timer out of the info table
 				timer.timeLeft = 0
 				activeTimers[timer.msg].enabled = false
 				if timer.ui then
@@ -90,7 +76,7 @@ WorldStateUI:SetScript("OnUpdate", function(self, elapsed)
 			-- update the text of active timers
 			if activeTimers[timer.msg].enabled then
 				if timer.ui then
-					timer.ui.text:SetText(formatTime(math_floor(timer.timeLeft)))
+					timer.ui.text:SetText(formatTime(math.floor(timer.timeLeft)))
 				end
 			end
 		end
@@ -177,7 +163,7 @@ Module.GetUI = function(self, uiIndex)
 		if not self.uis then
 			self.uis = {}
 		end
-		table_insert(self.uis, new)
+		table.insert(self.uis, new)
 
 		self.numTotalUIs = #self.uis
 
@@ -284,7 +270,7 @@ Module.UpdateStates = function(self)
 				ui.tooltip = tooltip
 
 				-- calculate actual seconds remaining and grab blizzards msg here
-				local seconds = math_floor((mins and tonumber(mins) * 60 or 0) + tonumber(secs))
+				local seconds = math.floor((mins and tonumber(mins) * 60 or 0) + tonumber(secs))
 				local msg = text:gsub("(%d+):(%d+)", "")
 
 				-- feed the timer into our timer table

@@ -6,16 +6,6 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("StatusBar")
 
--- Lua API
-local _G = _G
-local math_abs = math.abs
-local math_max = math.max
-local math_min = math.min
-local setmetatable = setmetatable
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-
 ----------------------------------------------------------------
 -- Statusbar template
 ----------------------------------------------------------------
@@ -39,7 +29,7 @@ local INCOMING_ALPHA = 0.45 -- how much paler the incoming heals are than the ba
 -- they'll take it (never past the end).
 local UpdateIncoming = function(self, value, min, max, width, height)
 	local incoming = self.incoming
-	local amount = math_min(self._incoming, max - value)
+	local amount = math.min(self._incoming, max - value)
 	if (amount <= 0) or (value == min) or (max == min) then
 		incoming:Hide()
 		return
@@ -102,7 +92,7 @@ StatusBar.Update = function(self)
 			local mult = (value - min) / (max - min)
 			-- (WoW takes a size of 0 as no size set at all)
 			local display_size =
-				math_max(mult * ((orientation == "RIGHT" or orientation == "LEFT") and width or height), 0.0001)
+				math.max(mult * ((orientation == "RIGHT" or orientation == "LEFT") and width or height), 0.0001)
 
 			if orientation == "RIGHT" then
 				bar:SetTexCoord(0, mult, 0, 1)
@@ -185,10 +175,10 @@ StatusBar.OnUpdate = function(self, elapsed)
 		local display = self._displayvalue
 		-- Closing a share of the gap every frame never quite gets there,
 		-- so the last bit is jumped (and so is all of it from nothing).
-		local next_display = display + (goal - display) * math_min(elapsed / smooth_HZ, 1)
+		local next_display = display + (goal - display) * math.min(elapsed / smooth_HZ, 1)
 		if
 			(display < smooth_minimum_value)
-			or (math_abs(goal - next_display) <= (self._max - self._min) * smooth_finish)
+			or (math.abs(goal - next_display) <= (self._max - self._min) * smooth_finish)
 		then
 			self._displayvalue = goal
 			self.smoothing = nil

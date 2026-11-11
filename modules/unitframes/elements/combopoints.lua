@@ -5,14 +5,6 @@ local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-
--- WoW API
-local GetComboPoints = _G.GetComboPoints
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-
 local Update = function(self)
 	local ComboPoints = self.ComboPoints
 	local points = GetComboPoints(UnitHasVehicleUI("player") and "vehicle" or "player", "target")

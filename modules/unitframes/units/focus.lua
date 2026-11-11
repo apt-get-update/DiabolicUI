@@ -7,9 +7,6 @@ local UnitFrame = Engine:GetHandler("UnitFrame")
 local StatusBar = Engine:GetHandler("StatusBar")
 local Library = Engine:GetDB("Library: UnitFrames")
 
--- Lua API
-local unpack = unpack
-
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.focus
 	local db = Module:GetConfig("UnitFrames")

@@ -8,12 +8,6 @@ local Module = Engine:NewModule("Blizzard: StackSplit", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local select = select
-local unpack = unpack
-
 -- A part of the atlas, at `x`, `y` and `width` by `height`, as texcoords.
 local Coords = function(spec, x, y, width, height)
 	local w, h = spec.atlas_size[1], spec.atlas_size[2]

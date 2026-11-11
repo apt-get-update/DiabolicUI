@@ -6,16 +6,11 @@ local Module = Engine:GetModule("UnitFrames")
 local StatusBar = Engine:GetHandler("StatusBar")
 local Library = Engine:GetDB("Library: UnitFrames")
 
--- Lua API
-local string_match = string.match
-local tonumber = tonumber
-local unpack = unpack
-
 -- Builds one frame; `kind` is "boss" or "arena".
 local Style = function(self, unit, kind)
 	local config = Module:GetDB("UnitFrames").visuals.units[kind]
 
-	local unitNum = tonumber(string_match(unit, "%d"))
+	local unitNum = tonumber(string.match(unit, "%d"))
 
 	self:SetSize(unpack(config.size))
 	self:Place("TOP", 0, -((unitNum - 1) * 90))

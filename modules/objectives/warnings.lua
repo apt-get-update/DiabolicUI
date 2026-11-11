@@ -6,15 +6,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Warnings")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local unpack = unpack
-local strmatch = string.match
-
--- WoW API
-local GetTime = _G.GetTime
-
 local OnUpdate = function(self, elapsed)
 	if self.new_message then
 		self.showing_message = self.new_message

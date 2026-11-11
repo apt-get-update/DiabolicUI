@@ -4,16 +4,6 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local Widget = Module:SetWidget("Bar: 1")
 
--- Lua API
-local _G = _G
-local table_concat = table.concat
-local table_insert = table.insert
-local table_wipe = table.wipe
-
--- WoW API
-local RegisterStateDriver = _G.RegisterStateDriver
-local UnitClass = _G.UnitClass
-
 local NUM_ACTIONBAR_BUTTONS = _G.NUM_ACTIONBAR_BUTTONS or 12
 
 Widget.OnEnable = function(self)
@@ -69,26 +59,26 @@ Widget.OnEnable = function(self)
 	local driver = {}
 	local _, playerClass = UnitClass("player")
 
-	table_insert(driver, "[bonusbar:5]11")
-	table_insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
+	table.insert(driver, "[bonusbar:5]11")
+	table.insert(driver, "[bar:2]2; [bar:3]3; [bar:4]4; [bar:5]5; [bar:6]6")
 
 	if playerClass == "DRUID" then
-		table_insert(
+		table.insert(
 			driver,
 			"[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 7; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10"
 		)
 	elseif playerClass == "PRIEST" then
-		table_insert(driver, "[bonusbar:1] 7")
+		table.insert(driver, "[bonusbar:1] 7")
 	elseif playerClass == "ROGUE" then
-		table_insert(driver, "[bonusbar:1] 7; [form:3] 8")
+		table.insert(driver, "[bonusbar:1] 7; [form:3] 8")
 	elseif playerClass == "WARLOCK" then
-		table_insert(driver, "[form:2] 7")
+		table.insert(driver, "[form:2] 7")
 	elseif playerClass == "WARRIOR" then
-		table_insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
+		table.insert(driver, "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9")
 	end
 
-	table_insert(driver, "1")
-	local pageDriver = table_concat(driver, "; ")
+	table.insert(driver, "1")
+	local pageDriver = table.concat(driver, "; ")
 
 	-- enable the new page driver
 	RegisterStateDriver(Bar, "page", pageDriver)
@@ -107,13 +97,13 @@ Widget.OnEnable = function(self)
 	]]
 	)
 
-	table_wipe(driver)
-	table_insert(driver, "[bonusbar:5]hide")
-	table_insert(driver, "[vehicleui]hide")
-	table_insert(driver, "show")
+	table.wipe(driver)
+	table.insert(driver, "[bonusbar:5]hide")
+	table.insert(driver, "[vehicleui]hide")
+	table.insert(driver, "show")
 
 	-- Register a proxy visibility driver
-	local visibilityDriver = table_concat(driver, "; ")
+	local visibilityDriver = table.concat(driver, "; ")
 	RegisterStateDriver(Bar, "vis", visibilityDriver)
 
 	local Visibility = Bar:GetParent()

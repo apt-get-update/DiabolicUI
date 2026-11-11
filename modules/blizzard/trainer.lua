@@ -7,17 +7,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trainer", "LOW")
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local string_format = string.format
-local unpack = unpack
-
--- WoW API
-local CreateFont = _G.CreateFont
-local GetTrainerServiceInfo = _G.GetTrainerServiceInfo
-local hooksecurefunc = _G.hooksecurefunc
-
 local ADDON = "Blizzard_TrainerUI"
 
 -- The trainings' text in their kind's ink (Blizzard's colors are for a
@@ -55,10 +44,7 @@ local FitList = function()
 	end
 end
 
--- A color as a text's code.
-local ColorCode = function(color)
-	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
-end
+local ColorCode = Engine.ColorCode
 
 -- The chosen training's requirements and cost in ink, on its lined
 -- parchment: Blizzard's white (met) in ink, its red (not met) in red ink.

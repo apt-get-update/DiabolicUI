@@ -6,21 +6,7 @@
 local _, Engine = ...
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
 -- WoW API
-local IsInInstance = _G.IsInInstance
-local UnitAffectingCombat = _G.UnitAffectingCombat
-local UnitCanAttack = _G.UnitCanAttack
-local UnitClass = _G.UnitClass
-local UnitIsEnemy = _G.UnitIsEnemy
-local UnitIsFriend = _G.UnitIsFriend
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsUnit = _G.UnitIsUnit
-local UnitPlayerControlled = _G.UnitPlayerControlled
-local UnitReaction = _G.UnitReaction
 local UnitIsTapDenied = Engine.UnitIsTapDenied
 
 -- Time limit in seconds where we separate between short and long buffs

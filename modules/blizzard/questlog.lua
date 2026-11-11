@@ -10,20 +10,6 @@ local Module = Engine:NewModule("Blizzard: Quest Log", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetDailyQuestsCompleted = _G.GetDailyQuestsCompleted
-local GetMaxDailyQuests = _G.GetMaxDailyQuests
-local GetQuestLogLeaderBoard = _G.GetQuestLogLeaderBoard
-local GetQuestResetTime = _G.GetQuestResetTime
-local hooksecurefunc = _G.hooksecurefunc
-
 -- the details' text, by its color: Blizzard's titles and the rest
 local HEADERS =
 	{ "QuestInfoTitleHeader", "QuestInfoDescriptionHeader", "QuestInfoObjectivesHeader", "QuestInfoRewardsHeader" }

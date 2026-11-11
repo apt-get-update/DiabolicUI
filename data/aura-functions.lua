@@ -5,12 +5,6 @@ local _, Engine = ...
 -- "bossN" unit) and isCastByPlayer (cast by the player, their pet, or their
 -- vehicle while they're in one).
 
--- Blizzard API
-local UnitAura = _G.UnitAura
-local UnitBuff = _G.UnitBuff
-local UnitDebuff = _G.UnitDebuff
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-
 -- UnitAura on the WotLK 3.3.5 client:
 -- local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster,
 --       isStealable, shouldConsolidate, spellId = UnitAura(unit, index, filter)
