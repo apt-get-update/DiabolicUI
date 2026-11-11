@@ -327,6 +327,11 @@ function TestOptionsMenu:test_the_specializations_page()
 	lu.assertTrue(bars.specActions1 and true)
 	lu.assertEquals(restore:IsEnabled(), 1)
 	client:Click(restore)
+	-- the other specialization's: off, the bars on screen aren't its own
+	lu.assertEquals(_G.DiabolicUIOptionsPanelSpec2SaveBars:IsEnabled(), 0)
+	bars.specActions2 = { bars = 1 }
+	_G.DiabolicUIOptionsPanelSpecs.refresh()
+	lu.assertEquals(_G.DiabolicUIOptionsPanelSpec2RestoreBars:IsEnabled(), 0)
 
 	-- a saved set that's gone shows greyed out
 	client.world.equipmentSets = {}

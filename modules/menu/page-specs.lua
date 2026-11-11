@@ -213,8 +213,15 @@ Module.CreateSpecsPage = function(self)
 		save:SetPoint("LEFT")
 		restore:SetParent(actions)
 		restore:SetPoint("LEFT", save, "RIGHT", BARS_BUTTON_GAP, 0)
+		-- only on the active one's card: the bars on screen are its own
 		actions.Refresh = function()
-			if profiles:HasSaved(group) then
+			local active = group == GetActiveTalentGroup()
+			if active then
+				save:Enable()
+			else
+				save:Disable()
+			end
+			if active and profiles:HasSaved(group) then
 				restore:Enable()
 			else
 				restore:Disable()
