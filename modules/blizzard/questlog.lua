@@ -134,7 +134,7 @@ Module.PlaceDetails = function(self)
 	if scroll:GetParent() == _G.QuestLogFrame then
 		scroll:ClearAllPoints()
 		scroll:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", unpack(self.config.details))
-		scroll:SetHeight(self.config.details_height)
+		scroll:SetHeight(self.config.details_height + self.config.taller)
 		kit:PlaceParchmentBar(scroll)
 	end
 end
@@ -171,6 +171,15 @@ Module.StyleQuestLog = function(self)
 
 	-- the quests on the left on slate, the details on the right on parchment
 	local list = _G.QuestLogScrollFrame
+	-- taller, for most quests' text whole (the details follow in
+	-- PlaceDetails); the list given rows down to its bottom, whenever its
+	-- height changes (settings/positions.lua sets it)
+	frame:SetHeight(frame:GetHeight() + config.taller)
+	local fill = function()
+		_G.HybridScrollFrame_CreateButtons(list, "QuestLogTitleButtonTemplate")
+		kit:StyleExpanders(unpack(list.buttons))
+	end
+	list:HookScript("OnSizeChanged", fill)
 	kit:AddZone(list, "slate", config.list_panel_insets, list) -- (in the list: over the painting, under its rows)
 	local empty = _G.EmptyQuestLogFrame
 	kit:HideTextures(empty)
@@ -191,7 +200,7 @@ Module.StyleQuestLog = function(self)
 	-- to the scroll bar (Blizzard's row starts on the edge, stops short of it)
 	local highlight = _G.QuestLogSkillHighlight
 	kit:LightRow(highlight)
-	kit:StyleExpanders(unpack(_G.QuestLogScrollFrame.buttons or {}))
+	fill()
 	highlight:ClearAllPoints()
 	highlight:SetPoint("TOPLEFT", _G.QuestLogHighlightFrame, "TOPLEFT", config.highlight_left, 0)
 	highlight:SetPoint("BOTTOMRIGHT", _G.QuestLogHighlightFrame, "BOTTOMRIGHT", config.highlight_reach, 0)
@@ -199,6 +208,9 @@ Module.StyleQuestLog = function(self)
 	-- Abandon, Share and Track under the quests
 	local abandon, share, track =
 		_G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton
+	-- (Share's own width is 1, its anchors stretch it: a real one, or it's
+	-- styled as too narrow for the red button)
+	share:SetWidth(abandon:GetWidth())
 	for _, button in ipairs({ abandon, share, track }) do
 		kit:StyleButton(button, config.button_height)
 	end
@@ -212,6 +224,9 @@ Module.StyleQuestLog = function(self)
 		self:PlaceControls()
 	end)
 	kit:StyleScrollBars(frame)
+	-- the quests' bar down into the slate's bottom right corner (the
+	-- quests a row short of it; Blizzard's template ends it with them)
+	_G.QuestLogScrollFrameScrollBar:SetPoint("BOTTOMLEFT", list, "BOTTOMRIGHT", 0, config.list_bar_bottom)
 	kit:StyleScrollBar(_G.QuestLogDetailScrollFrameScrollBar) -- (the details' window's until it shows)
 end
 

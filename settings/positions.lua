@@ -11,7 +11,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- AuctionFrame ----------------------------------------------------------
 	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 548, 7, 84.3, 22 }, -- Button "Buy"
-	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auction"
+	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auctions"
 	-- Auctionator's left column (its parts: auction.lua)
 	Atr_Main_PanelDiabolicLeft = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -46, 212, 367 }, -- Frame
 	-- Auctionator's results, right of it
@@ -115,7 +115,7 @@ Engine:NewStaticConfig("Positions", {
 	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Hello, priest!  Ready for some training?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -72, 296, 158 }, -- ScrollFrame
 	ClassTrainerMoneyFrame = { "BOTTOMRIGHT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 181, 12 }, -- Frame
-	ClassTrainerSkill1 = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 22, -90 }, -- Button "Discipline"
+	ClassTrainerSkill1 = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 22, -90 }, -- Button "  Power Word: Fortitude"
 	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 83.5, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
@@ -251,7 +251,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- OpenMailFrame ---------------------------------------------------------
 	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Close"
-	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Return"
+	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Delete"
 	OpenMailFrameDiabolicFoot = { "BOTTOMLEFT", "OpenMailFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolicFoot", "BOTTOMLEFT", 94, 7, 78, 22 }, -- Button "Reply"
 
@@ -281,7 +281,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- QuestLogFrame ---------------------------------------------------------
 	QuestLogFrameDiabolicFoot = { "BOTTOMLEFT", "QuestLogFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	QuestLogScrollFrame = { "TOPLEFT", "QuestLogFrameDiabolic", "TOPLEFT", 30, -40, 305, 340 }, -- ScrollFrame
+	QuestLogScrollFrame = { "TOPLEFT", "QuestLogFrameDiabolic", "TOPLEFT", 30, -44, 305, 413 }, -- ScrollFrame
 
 	-- SpellBookFrame --------------------------------------------------------
 	CompanionButton1 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 16, -189 }, -- CheckButton
@@ -297,7 +297,7 @@ Engine:NewStaticConfig("Positions", {
 	CompanionButton8 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 178, -285 }, -- CheckButton
 	CompanionButton9 = { "TOPLEFT", "PetPaperDollFrameCompanionFrame", "TOPLEFT", 340, -285 }, -- CheckButton
 	CompanionNextPageButton = { "TOPRIGHT", "PetPaperDollFrameCompanionFrame", "TOPRIGHT", -12, -387 }, -- Button
-	CompanionPageNumber = { "RIGHT", "CompanionNextPageButton", "LEFT", -4, 0 }, -- FontString "Page 1 of 1"
+	CompanionPageNumber = { "RIGHT", "CompanionNextPageButton", "LEFT", -4, 0 }, -- FontString "Page 1 of 2"
 	CompanionPrevPageButton = { "RIGHT", "CompanionPageNumber", "LEFT", -4, 0 }, -- Button
 	SpellBookSkillLineTab1 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -116 }, -- CheckButton
 	SpellBookSkillLineTab2 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -164 }, -- CheckButton

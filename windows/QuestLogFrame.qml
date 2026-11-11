@@ -6,7 +6,7 @@ import QtQuick
 WowWindow {
     name: "QuestLogFrame"
     width: 682
-    height: 447
+    height: 532
 
     Frame {
         name: "QuestLogCount"
@@ -14,12 +14,12 @@ WowWindow {
         anchors.leftMargin: 80
         anchors.top: parent.top
         anchors.topMargin: 41
-        width: 92.4
+        width: 91.6
         height: 20
 
         Ghost {
             name: "QuestLogCountTopRight"
-            x: 84.4
+            x: 83.6
             y: 7.9
             width: 0
             height: 0
@@ -31,7 +31,7 @@ WowWindow {
                 anchors.rightMargin: -1
                 anchors.top: parent.bottom
                 anchors.topMargin: -3
-                width: 77.4
+                width: 76.6
                 height: 10.3
             }
         }
@@ -63,7 +63,7 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: -36
         width: 752
-        height: 463
+        height: 548
 
         ScrollFrame {
             name: "QuestLogDetailScrollFrame"
@@ -73,7 +73,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 44
             width: 298
-            height: 336
+            height: 427
 
             Frame {
                 name: "QuestLogDetailScrollChildFrame"
@@ -110,17 +110,17 @@ WowWindow {
                         anchors.top: questInfoDescriptionHeader.bottom
                         anchors.topMargin: 5
                         width: 285
-                        height: 202.3
+                        height: 151.7
                     }
 
                     FontString {
                         id: questInfoObjective1
                         name: "QuestInfoObjective1"
-                        text: "Ahn'kahar Watcher Corpse Burned: 0/1"
+                        text: "Cluck like a chicken for Innkeeper Firebrew: 1/1 (Complete)"
                         anchors.left: parent.left
                         anchors.top: parent.top
                         width: 285
-                        height: 11.9
+                        height: 23.7
                     }
 
                     Frame {
@@ -132,6 +132,84 @@ WowWindow {
                         width: 285
                         height: 10
 
+                        Button {
+                            id: questInfoItem1
+                            name: "QuestInfoItem1"
+                            anchors.left: questInfoItemReceiveText.left
+                            anchors.leftMargin: -3
+                            anchors.top: questInfoItemReceiveText.bottom
+                            anchors.topMargin: 5
+                            width: 147
+                            height: 41
+
+                            Ghost {
+                                name: "QuestInfoItem1IconTexture"
+                                x: 39
+                                y: 23.9
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "QuestInfoItem1Count"
+                                    text: "3"
+                                    wowParent: "QuestInfoItem1"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 1
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 1
+                                    width: 10.3
+                                    height: 14.2
+                                }
+                            }
+
+                            Ghost {
+                                name: "QuestInfoItem1NameFrame"
+                                x: 29
+                                y: 19.5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "QuestInfoItem1Name"
+                                    text: "Ironforge Mint"
+                                    wowParent: "QuestInfoItem1"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 90
+                                    height: 36
+                                }
+                            }
+                        }
+
+                        Button {
+                            name: "QuestInfoItem2"
+                            anchors.left: questInfoItem1.right
+                            anchors.leftMargin: 1
+                            anchors.top: questInfoItem1.top
+                            width: 147
+                            height: 41
+
+                            Ghost {
+                                name: "QuestInfoItem2NameFrame"
+                                x: 29
+                                y: 19.5
+                                width: 0
+                                height: 0
+
+                                FontString {
+                                    name: "QuestInfoItem2Name"
+                                    text: "Weighted Jack-o'-Lantern"
+                                    wowParent: "QuestInfoItem2"
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 90
+                                    height: 36
+                                }
+                            }
+                        }
+
                         FontString {
                             id: questInfoItemReceiveText
                             name: "QuestInfoItemReceiveText"
@@ -139,7 +217,7 @@ WowWindow {
                             anchors.left: questInfoRewardsHeader.left
                             anchors.leftMargin: 3
                             anchors.top: questInfoRewardsHeader.bottom
-                            anchors.topMargin: 5
+                            anchors.topMargin: 5.1
                             width: 106.7
                             height: 12.6
                         }
@@ -149,19 +227,19 @@ WowWindow {
                             anchors.left: questInfoItemReceiveText.right
                             anchors.leftMargin: 15
                             anchors.verticalCenter: questInfoItemReceiveText.verticalCenter
-                            width: 91
+                            width: 98.9
                             height: 28
 
                             Ghost {
                                 name: "QuestInfoMoneyFrameCopperButton"
-                                x: 78
+                                x: 85.9
                                 y: 14
                                 width: 0
                                 height: 0
 
                                 Button {
                                     name: "QuestInfoMoneyFrameGoldButton"
-                                    text: "42"
+                                    text: "20"
                                     wowParent: "QuestInfoMoneyFrame"
                                     anchors.right: questInfoMoneyFrameSilverButton.left
                                     anchors.rightMargin: 4
@@ -171,7 +249,7 @@ WowWindow {
 
                                     FontString {
                                         name: "QuestInfoMoneyFrameGoldButtonText"
-                                        text: "42"
+                                        text: "20"
                                         anchors.right: parent.right
                                         anchors.rightMargin: 19
                                         anchors.verticalCenter: parent.verticalCenter
@@ -183,20 +261,20 @@ WowWindow {
                                 Button {
                                     id: questInfoMoneyFrameSilverButton
                                     name: "QuestInfoMoneyFrameSilverButton"
-                                    text: "6"
+                                    text: "63"
                                     wowParent: "QuestInfoMoneyFrame"
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: 30.1
+                                    width: 38
                                     height: 19
 
                                     FontString {
                                         name: "QuestInfoMoneyFrameSilverButtonText"
-                                        text: "6"
+                                        text: "63"
                                         anchors.right: parent.right
                                         anchors.rightMargin: 19
                                         anchors.verticalCenter: parent.verticalCenter
-                                        width: 11.1
+                                        width: 19
                                         height: 15.8
                                     }
                                 }
@@ -216,8 +294,8 @@ WowWindow {
                         Frame {
                             name: "QuestInfoSpacerFrame"
                             wowParent: "QuestLogDetailScrollChildFrame"
-                            anchors.left: questInfoItemReceiveText.left
-                            anchors.top: questInfoItemReceiveText.bottom
+                            anchors.left: questInfoItem1.left
+                            anchors.top: questInfoItem1.bottom
                             anchors.topMargin: 10
                             width: 5
                             height: 5
@@ -257,23 +335,24 @@ WowWindow {
                 FontString {
                     id: questInfoObjectivesText
                     name: "QuestInfoObjectivesText"
+                    text: "Do a chicken emote at Innkeeper Firebrew, and in exchange you'll receive an Ironforge Mint!"
                     anchors.left: questInfoTitleHeader.left
                     anchors.top: questInfoTitleHeader.bottom
                     anchors.topMargin: 5
                     width: 285
-                    height: 88.5
+                    height: 37.9
                 }
 
                 FontString {
                     id: questInfoTitleHeader
                     name: "QuestInfoTitleHeader"
-                    text: "All Things in Good Time"
+                    text: "Chicken Clucking for a Mint"
                     anchors.left: parent.left
                     anchors.leftMargin: 5
                     anchors.top: parent.top
                     anchors.topMargin: 5
                     width: 285
-                    height: 15.8
+                    height: 31.6
                 }
             }
 
@@ -285,7 +364,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -6
                 width: 362
-                height: 348
+                height: 439
             }
 
             Frame {
@@ -295,7 +374,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -4
                 width: 336
-                height: 344
+                height: 435
             }
 
             Slider {
@@ -306,7 +385,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 16
                 width: 16
-                height: 304
+                height: 395
 
                 Frame {
                     name: "QuestLogDetailScrollFrameScrollBarDiabolicTrack"
@@ -314,7 +393,7 @@ WowWindow {
                     anchors.top: questLogDetailScrollFrameScrollBarScrollUpButton.top
                     anchors.topMargin: -1
                     width: 18
-                    height: 338
+                    height: 429
                 }
 
                 Button {
@@ -355,7 +434,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 752
-            height: 463
+            height: 548
 
             Frame {
                 name: "QuestLogFrameDiabolicTitlePlate"
@@ -368,11 +447,11 @@ WowWindow {
 
                 FontString {
                     name: "QuestLogTitleText"
-                    text: "Quest Log  23/25"
+                    text: "Quest Log  21/25"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 145.4
+                    width: 143.8
                     height: 14.2
                 }
             }
@@ -481,9 +560,9 @@ WowWindow {
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.top: parent.top
-            anchors.topMargin: 40
+            anchors.topMargin: 44
             width: 305
-            height: 340
+            height: 413
 
             Frame {
                 name: "QuestLogScrollFrameDiabolicZone"
@@ -492,7 +571,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: -6
                 width: 333
-                height: 350
+                height: 439
             }
 
             Slider {
@@ -502,7 +581,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 13
                 width: 20
-                height: 313
+                height: 401
 
                 Frame {
                     name: "QuestLogScrollFrameScrollBarDiabolicTrack"
@@ -510,7 +589,7 @@ WowWindow {
                     anchors.top: questLogScrollFrameScrollBarScrollUpButton.top
                     anchors.topMargin: -1
                     width: 18
-                    height: 343
+                    height: 431
                 }
 
                 Button {
@@ -540,7 +619,7 @@ WowWindow {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 305
-                height: 352
+                height: 432
 
                 Button {
                     name: "QuestLogScrollFrameButton1"
@@ -565,20 +644,28 @@ WowWindow {
     }
 
     Ghost {
-        name: "QuestLogScrollFrameButton2"
+        name: "QuestLogScrollFrameButton19"
         x: 30
-        y: 20
+        y: 296
         width: 299
         height: 16
 
         Frame {
             name: "QuestLogHighlightFrame"
-            wowParent: "QuestLogScrollFrameButton2"
+            wowParent: "QuestLogScrollFrameButton19"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 299
             height: 16
         }
+    }
+
+    Ghost {
+        name: "QuestLogScrollFrameButton2"
+        x: 30
+        y: 24
+        width: 299
+        height: 16
 
         FontString {
             name: "QuestLogScrollFrameButton2Tag"

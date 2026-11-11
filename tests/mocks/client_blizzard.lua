@@ -1529,6 +1529,14 @@ local function buildFrames()
 	button("CheckButton", "GameTimeFrame", minimap)
 
 	fromFrameXML(nil)
+	-- the quest log's rows (QuestLogScrollFrame_OnLoad's; its scroll child
+	-- and bar its parentKeys, the rows QuestLogTitleButtonTemplate's 16 high)
+	local quests = _G.QuestLogScrollFrame
+	quests.scrollChild = _G.QuestLogScrollFrameScrollChild
+	quests.scrollBar = _G.QuestLogScrollFrameScrollBar
+	button("Button", "QuestLogScrollFrameButton1", quests.scrollChild):SetSize(299, 16)
+	quests.buttons = { _G.QuestLogScrollFrameButton1 }
+	_G.HybridScrollFrame_CreateButtons(quests, "QuestLogTitleButtonTemplate")
 	-- the Dungeon Finder's list over its rows, made by hand before them
 	scroll:SetPoint("TOPLEFT", _G.LFDQueueFrameSpecificListButton1, "TOPLEFT", 0, 7)
 	scroll:SetPoint("BOTTOMRIGHT", _G.LFDQueueFrameSpecificListButton15, "BOTTOMRIGHT", 1, -7)
@@ -2457,6 +2465,24 @@ local function frameXML(client)
 	f.MerchantFrame_UpdateRepairButtons = noop
 	-- the quest log (QuestLogFrame.lua, QuestInfo.lua)
 	f.QuestInfo_Display = noop
+	-- HybridScrollFrame.lua's: rows down to the frame's height, and one more
+	f.HybridScrollFrame_CreateButtons = function(self, template)
+		local buttons, child = self.buttons, self.scrollChild
+		local height = buttons[1]:GetHeight()
+		self.buttonHeight = math.floor(height + 0.5)
+		local count = math.ceil(self:GetHeight() / height) + 1
+		for i = #buttons + 1, count do
+			local row = _G.CreateFrame("Button", self:GetName() .. "Button" .. i, child, template)
+			row:SetSize(buttons[1]:GetWidth(), height)
+			row:SetPoint("TOPLEFT", buttons[i - 1], "BOTTOMLEFT", 0, 0)
+			buttons[i] = row
+		end
+		child:SetWidth(self:GetWidth())
+		child:SetHeight(count * height)
+		self:SetVerticalScroll(0)
+		self.scrollBar:SetMinMaxValues(0, count * height)
+		self.scrollBar:SetValue(0)
+	end
 	f.QuestLogControlPanel_UpdatePosition = noop
 	f.QuestLogDetailFrame_AttachToQuestLog = noop
 	f.QuestLogShowMapPOI_UpdatePosition = noop
