@@ -4,9 +4,9 @@
 --
 -- Whichever way the specialization gets switched, once the switch completes
 -- what's saved for the new one (set on the options' Specializations page)
--- runs, in this order: its equipment set ("specEquipSet1"/"2"), its Action
--- Bar Saver profile ("specProfile1"/"2"), then its number of action bars and
--- side bars ("specBars1"/"2", "specSideBars1"/"2"). false leaves it as it is.
+-- runs, in this order: its equipment set ("specEquipSet1"/"2"), then its
+-- saved action bars and how many were shown ("specActions1"/"2",
+-- profiles.lua). false leaves it as it is.
 --
 -- A specialization can also have two macros. Blizzard never lets an addon
 -- run a macro (nor /use, /cast...), only a click on a secure button, so the
@@ -205,15 +205,6 @@ ButtonWidget.GetMacros = function(self)
 	return macros
 end
 
--- The action bar profiles for your class (profiles.lua), by name.
-ButtonWidget.GetActionBarProfiles = function(self)
-	local profiles = {}
-	for i, name in ipairs(Engine:GetModule("ActionBars: Profiles"):GetNames()) do
-		profiles[i] = { text = name, value = name }
-	end
-	return profiles
-end
-
 -- Everything saved for talent group `group`, in order.
 local RunSpec = function(group)
 	local db = Module.db
@@ -227,16 +218,9 @@ local RunSpec = function(group)
 		end
 	end
 
-	local profile = db["specProfile" .. group]
-	if profile then
-		Engine:GetModule("ActionBars: Profiles"):Restore(profile)
-	end
-
-	local bars, sideBars = db["specBars" .. group], db["specSideBars" .. group]
-	if bars or sideBars then
-		db.num_bars = bars or db.num_bars
-		db.num_side_bars = sideBars or db.num_side_bars
-		Module:ApplySettings()
+	local profiles = Engine:GetModule("ActionBars: Profiles")
+	if profiles:HasSaved(group) then
+		profiles:Restore(group)
 	end
 
 	ButtonWidget:SetMacro(db["specMacroName" .. group])

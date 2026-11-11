@@ -1,6 +1,8 @@
--- Action bar profiles: what's on your bars saved under a name, put back as it
--- was (/dui bars, and the specialization button). Action Bar Saver's
--- profiles are brought over while it's still installed.
+-- Each specialization's action bars: saved from the options' Specializations
+-- page, put back as they were once switched to it (or by Restore there),
+-- with how many bars and side bars were shown.
+-- The Action Bar Saver profiles the specializations used come over while
+-- that addon is still installed.
 local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:NewModule("ActionBars: Profiles", "LOW")
@@ -17,21 +19,10 @@ local IsSaved = function(slot)
 	return slot < POSSESS_FIRST or slot > POSSESS_LAST
 end
 
--- This class's profiles, by name.
-Module.GetSets = function(self)
-	local class = select(2, UnitClass("player"))
-	self.db.sets[class] = self.db.sets[class] or {}
-	return self.db.sets[class]
-end
-
--- Their names, sorted.
-Module.GetNames = function(self)
-	local names = {}
-	for name in pairs(self:GetSets()) do
-		names[#names + 1] = name
-	end
-	table.sort(names)
-	return names
+-- Talent group `group`'s name ("Shadow"), or Primary / Secondary.
+local SpecName = function(group)
+	local name = Engine:GetModule("ActionBars"):GetWidget("Button: Spec Switch"):GetSpec(group)
+	return name or (group == 1 and _G.PRIMARY or _G.SECONDARY)
 end
 
 -- What's in `slot`, as saved: { kind, what to find it by }.
@@ -40,36 +31,33 @@ local ReadSlot = function(slot)
 	if kind == "spell" then
 		local name = GetSpellName(id, BOOKTYPE_SPELL)
 		return name and { kind, name }
-	elseif kind == "item" then
+	elseif kind == "item" or kind == "equipmentset" then
 		return { kind, id }
 	elseif kind == "macro" then
 		local name, _, body = GetMacroInfo(id)
 		return name and { kind, name, body }
-	elseif kind == "equipmentset" then
-		return { kind, id }
 	elseif kind == "companion" then
 		return { kind, subType, id }
 	end
 end
 
-Module.Save = function(self, name)
+Module.HasSaved = function(self, group)
+	return self.db["specActions" .. group] and true or false
+end
+
+Module.Save = function(self, group)
 	local set = {}
 	for slot = 1, SLOTS do
 		if IsSaved(slot) then
 			set[slot] = ReadSlot(slot)
 		end
 	end
-	self:GetSets()[name] = set
-	Print(L["Action bars saved as '%s'."]:format(name))
+	set.bars, set.sideBars = self.db.num_bars, self.db.num_side_bars
+	self.db["specActions" .. group] = set
+	Print(L["Action bars saved for %s."]:format(SpecName(group)))
 end
 
-Module.Delete = function(self, name)
-	self:GetSets()[name] = nil
-	Print(L["Action bar profile '%s' deleted."]:format(name))
-end
-
--- The spellbook's spells by name, at their highest rank; the macros by body,
--- then by name.
+-- The spellbook's spells by name, at their highest rank.
 local FindSpells = function()
 	local spells = {}
 	for tab = 1, GetNumSpellTabs() do
@@ -84,6 +72,7 @@ local FindSpells = function()
 	return spells
 end
 
+-- A macro by its body, else its name.
 local FindMacro = function(name, body)
 	local byName
 	for index = 1, MAX_MACROS do
@@ -127,10 +116,10 @@ end
 -- Every slot as saved, emptied when it was; what can't be found any more
 -- (a spell not learned, an item not carried) left empty and counted. Out
 -- of combat: waits for its end.
-Module.Restore = Engine:Wrap(function(self, name)
-	local set = self:GetSets()[name]
+Module.Restore = Engine:Wrap(function(self, group)
+	local set = self.db["specActions" .. group]
 	if not set then
-		Print(L["No action bar profile named '%s'."]:format(name))
+		Print(L["No action bars saved for %s yet."]:format(SpecName(group)))
 		return
 	end
 	local spells, missing = FindSpells(), 0
@@ -155,65 +144,53 @@ Module.Restore = Engine:Wrap(function(self, name)
 		end
 	end
 	SetCVar("Sound_EnableAllSound", sound)
+	if set.bars then
+		self.db.num_bars, self.db.num_side_bars = set.bars, set.sideBars
+		Engine:GetModule("ActionBars"):ApplySettings()
+	end
 	if missing > 0 then
-		Print(L["Action bars '%s' restored, %d buttons couldn't be found."]:format(name, missing))
+		Print(L["%s's action bars restored, %d buttons couldn't be found."]:format(SpecName(group), missing))
 	else
-		Print(L["Action bars '%s' restored."]:format(name))
+		Print(L["%s's action bars restored."]:format(SpecName(group)))
 	end
 end)
 
--- Action Bar Saver's profiles we don't have yet, in our form (its are
--- "kind|id|binding|name|...").
+-- The Action Bar Saver profile each specialization used (its name, kept
+-- in specProfile until then), in our form: its are "kind|id|binding|...".
 Module.ImportActionBarSaver = function(self)
 	local old = _G.ActionBarSaverDB
-	for class, sets in pairs(old and old.sets or {}) do
-		self.db.sets[class] = self.db.sets[class] or {}
-		for name, set in pairs(sets) do
-			if not self.db.sets[class][name] then
-				local ours = {}
-				for slot, text in pairs(set) do
-					local kind, id, _, a, b, c = string.split("|", text)
-					if kind == "spell" then
-						ours[slot] = { kind, a }
-					elseif kind == "item" then
-						ours[slot] = { kind, tonumber(id) }
-					elseif kind == "macro" then
-						ours[slot] = { kind, (a:gsub("/124", "|")), (c:gsub("/n", "\n"):gsub("/124", "|")) }
-					elseif kind == "equipmentset" then
-						ours[slot] = { kind, id }
-					elseif kind == "companion" then
-						ours[slot] = { kind, b, tonumber(id) }
-					end
+	local sets = old and old.sets and old.sets[select(2, UnitClass("player"))] or {}
+	for group = 1, 2 do
+		local set = sets[self.db["specProfile" .. group] or ""]
+		if set and not self.db["specActions" .. group] then
+			local ours = {}
+			for slot, text in pairs(set) do
+				local kind, id, _, a, b, c = string.split("|", text)
+				if kind == "spell" then
+					ours[slot] = { kind, a }
+				elseif kind == "item" then
+					ours[slot] = { kind, tonumber(id) }
+				elseif kind == "macro" then
+					ours[slot] = { kind, (a:gsub("/124", "|")), (c:gsub("/n", "\n"):gsub("/124", "|")) }
+				elseif kind == "equipmentset" then
+					ours[slot] = { kind, id }
+				elseif kind == "companion" then
+					ours[slot] = { kind, b, tonumber(id) }
 				end
-				self.db.sets[class][name] = ours
 			end
+			-- (with the bar counts the specialization was set to)
+			ours.bars = self.db["specBars" .. group] or self.db.num_bars
+			ours.sideBars = self.db["specSideBars" .. group] or self.db.num_side_bars
+			self.db["specActions" .. group] = ours
+			self.db["specProfile" .. group] = false
 		end
 	end
 end
 
--- /dui bars [save|restore|delete <name>]: the profiles listed without.
-Module.OnCommand = function(self, action, ...)
-	local name = table.concat({ ... }, " ")
-	if (action == "save" or action == "restore" or action == "delete") and name ~= "" then
-		local run = { save = self.Save, restore = self.Restore, delete = self.Delete }
-		run[action](self, name)
-		return
-	end
-	local names = self:GetNames()
-	Print(
-		#names > 0 and L["Action bar profiles: %s."]:format(table.concat(names, ", "))
-			or L["No action bar profiles yet."]
-	)
-	Print(L["/dui bars save, restore or delete <name>"])
-end
-
 Module.OnInit = function(self)
-	self.db = Engine:GetConfig("ActionBarProfiles")
+	self.db = Engine:GetConfig("ActionBars", "character")
 end
 
 Module.OnEnable = function(self)
 	self:ImportActionBarSaver()
-	self:GetHandler("ChatCommand"):Register("bars", function(...)
-		self:OnCommand(...)
-	end)
 end

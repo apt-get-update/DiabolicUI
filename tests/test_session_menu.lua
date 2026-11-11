@@ -271,19 +271,6 @@ local function specsRegions()
 	return texts, icons
 end
 
--- The chosen value's button of a row of choices is the gold one.
-local function chosen(name)
-	local i, lit = 1, nil
-	while widget(name .. i) do
-		local r, g = widget(name .. i):GetFontString():GetTextColor()
-		if r == 1 and g == 0.82 then
-			lit = widget(name .. i):GetText()
-		end
-		i = i + 1
-	end
-	return lit
-end
-
 -- Opens a dropdown and returns its choices' texts, and picks `pick` (a
 -- choice's text) if given.
 local function openDropDown(name, pick)
@@ -312,7 +299,7 @@ function TestOptionsMenu:test_the_specializations_page()
 		{ { "Discipline", "", 14 }, { "Holy", "", 0 }, { "Shadow", "Interface\\Icons\\Shadow", 57 } }
 	client.world.equipmentSets =
 		{ { "Holy", "Interface\\Icons\\HolySet" }, { "Shadow", "Interface\\Icons\\ShadowSet" } }
-	bars.specEquipSet2, bars.specBars2 = "Shadow", 3
+	bars.specEquipSet2 = "Shadow"
 	_G.DiabolicUIOptionsPanelSpecs.refresh()
 
 	-- one column per specialization: its icon and name over its settings
@@ -321,8 +308,6 @@ function TestOptionsMenu:test_the_specializations_page()
 	lu.assertTrue(icons["Interface\\Icons\\Holy"] and icons["Interface\\Icons\\Shadow"])
 	lu.assertEquals(widget("Spec2EquipSet").text, "|TInterface\\Icons\\ShadowSet:16:16:0:0|t Shadow")
 	lu.assertEquals(widget("Spec1EquipSet").text, L["None"])
-	lu.assertEquals(chosen("Spec2Bars"), "3")
-	lu.assertEquals(chosen("Spec2SideBars"), L["Keep"])
 	-- the active one lit
 	lu.assertTrue(texts[L["Active"]])
 
@@ -334,22 +319,14 @@ function TestOptionsMenu:test_the_specializations_page()
 	})
 	lu.assertEquals(bars.specEquipSet1, "Holy")
 	lu.assertEquals(widget("Spec1EquipSet").text, "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy")
-	-- the bar counts: a click on a button
-	client:Click(widget("Spec1Bars3"))
-	lu.assertEquals(bars.specBars1, 2)
-	lu.assertEquals(chosen("Spec1Bars"), "2")
-	client:Click(widget("Spec1SideBars2"))
-	lu.assertEquals(bars.specSideBars1, 0)
-	lu.assertEquals(chosen("Spec1SideBars"), L["None"])
-	client:Click(widget("Spec2Bars1"))
-	lu.assertFalse(bars.specBars2)
 
-	-- the action bar profiles
-	client.Engine:GetConfig("ActionBarProfiles").sets.WARRIOR = { holy = {}, shadow = {} }
-	_G.DiabolicUIOptionsPanelSpecs.refresh()
-	lu.assertEquals(widget("Spec1Profile").text, L["None"])
-	lu.assertEquals(openDropDown("Spec1Profile", "holy"), { L["None"], "holy", "shadow" })
-	lu.assertEquals(bars.specProfile1, "holy")
+	-- the action bars: Restore once saved
+	local restore = _G.DiabolicUIOptionsPanelSpec1RestoreBars
+	lu.assertEquals(restore:IsEnabled(), 0)
+	client:Click(_G.DiabolicUIOptionsPanelSpec1SaveBars)
+	lu.assertTrue(bars.specActions1 and true)
+	lu.assertEquals(restore:IsEnabled(), 1)
+	client:Click(restore)
 
 	-- a saved set that's gone shows greyed out
 	client.world.equipmentSets = {}

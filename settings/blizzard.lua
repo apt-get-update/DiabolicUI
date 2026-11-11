@@ -329,8 +329,8 @@ Engine:NewStaticConfig("Blizzard", {
 				row_gap = 14, -- room for their names
 				names_height = 14, -- under the last row
 				-- equip, save and delete as icons in a column right of the sets
-				icons = path .. [[textures\DiabolicUI_Window_Icons.tga]], -- new, equip, delete, save
-				icon_count = 4,
+				icons = path .. [[textures\DiabolicUI_Window_Icons.tga]], -- new, equip, delete, save, restore (32 apart)
+				icon_count = 8, -- (the sheet's room: 256 wide)
 				equip = { size = 30, icon_size = 22 }, -- the one used most
 				save = { size = 24, icon_size = 16 },
 				delete = { size = 24, icon_size = 16, color = { 1, 0.25, 0.18 } },

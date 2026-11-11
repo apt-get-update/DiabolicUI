@@ -32,7 +32,6 @@ local CARD_PAD = 8 -- inside a card, around what it holds; its border this far o
 local CARD_WIDTH = SPEC_COLUMN * 2 - 5 -- a card across the page
 local CARD_TITLE_GAP = 6 -- between a card's title and what it holds
 local DROPDOWN_HEIGHT = 32
-local CHOICE_WIDTH = 28 -- a choice button, "1"
 local CHOICE_HEIGHT = 22
 local DROPDOWN_OVERHANG = 16 -- the template's art starts this far right of its frame
 
@@ -368,45 +367,6 @@ local CreateAnchorPointPicker = function(parent, name, points, getValue, setValu
 	return box
 end
 
--- A row of buttons, one per choice ({ text, value, width }), the chosen one
--- lit; `getValue()` and `setValue(value)` read and save it. Its buttons
--- are named after it, 1 to n. Placed by the caller.
-local CreateChoiceButtons = function(parent, name, choices, getValue, setValue)
-	local row = CreateFrame("Frame", "DiabolicUIOptionsPanel" .. name, parent)
-	local x = 0
-	for i, choice in ipairs(choices) do
-		local button = CreateFrame("Button", row:GetName() .. i, row, "UIPanelButtonTemplate")
-		button:SetSize(choice.width or CHOICE_WIDTH, CHOICE_HEIGHT)
-		button:SetPoint("LEFT", x, 0)
-		button:SetText(choice.text)
-		button:SetScript("OnClick", function()
-			setValue(choice.value)
-			row:Refresh()
-		end)
-		x = x + (choice.width or CHOICE_WIDTH) + 2
-	end
-	row:SetSize(x - 2, CHOICE_HEIGHT)
-
-	row.Refresh = function(self)
-		local current = getValue()
-		for i, choice in ipairs(choices) do
-			local button = _G[self:GetName() .. i]
-			-- lit and gold when chosen, white otherwise (a color on the text
-			-- itself: the Diablo III skin sets one over the font's)
-			local text = button:GetFontString()
-			if choice.value == current then
-				button:LockHighlight()
-				text:SetTextColor(1, 0.82, 0)
-			else
-				button:UnlockHighlight()
-				text:SetTextColor(1, 1, 1)
-			end
-		end
-	end
-	row:Refresh()
-	return row
-end
-
 -- A Blizzard dropdown. `getItems()` lists the choices, each { text, value,
 -- icon }, fresh every time it opens; `getValue()` and `setValue(value)` read
 -- and save the chosen one. Placed by the caller, its art DROPDOWN_OVERHANG
@@ -505,6 +465,5 @@ Module.Controls = {
 	CreateAnchorPointPicker = CreateAnchorPointPicker,
 	ANCHOR_POINTS = ANCHOR_POINT_ORDER,
 	CreateDropDown = CreateDropDown,
-	CreateChoiceButtons = CreateChoiceButtons,
 	NewPage = NewPage,
 }
