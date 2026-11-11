@@ -10,12 +10,16 @@ local _, Engine = ...
 Engine:NewStaticConfig("Positions", {
 
 	-- AuctionFrame ----------------------------------------------------------
-	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 548, 7, 84.3, 22 }, -- Button "Buy"
-	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auctions"
+	Atr_AddToSListButton = { "BOTTOMLEFT", "AuctionFrame", "BOTTOMLEFT", 0, 123, 90, 20 }, -- Button "Add Item"
+	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 516, 7, 84.3, 22 }, -- Button "Buy"
+	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 138, 22 }, -- Button "Cancel Auctions"
+	Atr_CheckActiveButton = { "TOPLEFT", "Atr_Main_Panel", "TOPLEFT", -210, -388, 172, 20 }, -- Button "Check for Undercuts"
+	Atr_FullScanButton = { "RIGHT", "Auctionator1Button", "LEFT", -12, 0, 90, 22 }, -- Button "Full Scan..."
 	-- Auctionator's left column (its parts: auction.lua)
 	Atr_Main_PanelDiabolicLeft = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -46, 212, 367 }, -- Frame
 	-- Auctionator's results, right of it
 	Atr_Main_PanelDiabolicRight = { "TOPLEFT", "AuctionFrame", "TOPLEFT", 212, -46, 628, 367 }, -- Frame
+	Atr_RemFromSListButton = { "BOTTOMLEFT", "AuctionFrame", "BOTTOMLEFT", 96, 123, 106, 20 }, -- Button "Remove Item"
 	AuctionFilterButton1 = { "TOPLEFT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 10, -4 }, -- Button "Weapon"
 	-- Auctions' results, right of it
 	AuctionFrameAuctionsDiabolicResults = { "TOPLEFT", "AuctionFrame", "TOPLEFT", 210, -46, 630, 367 }, -- Frame
@@ -31,7 +35,7 @@ Engine:NewStaticConfig("Positions", {
 	AuctionFrameMoneyFrame = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 182, 13 }, -- Frame
 	AuctionatorCloseButton = { "LEFT", "Atr_CancelSelectionButton", "RIGHT", 6, 0, 74.9, 22 }, -- Button "Close"
 	AuctionsButton1 = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -25 }, -- Button
-	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 621, 7, 121.1, 22 }, -- Button "Cancel Auction"
+	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 611, 7, 131, 22 }, -- Button "Cancel Auction"
 	AuctionsCloseButton = { "LEFT", "AuctionsCancelAuctionButton", "RIGHT", 6, 0, 76.9, 22 }, -- Button "Close"
 	AuctionsCreateAuctionButton = { "BOTTOM", "AuctionFrameAuctionsDiabolicSelling", "BOTTOM", 0, 7 }, -- Button "Create Auction"
 	AuctionsQualitySort = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -4 }, -- Button "Rarity"
@@ -329,6 +333,7 @@ Engine:NewStaticConfig("Positions", {
 
 	-- TradeSkillFrame -------------------------------------------------------
 	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 85.5, 22 }, -- Button "Exit"
+	TradeSkillCreateAllButton = { "RIGHT", "TradeSkillCreateButton", "LEFT", -86, 0, 90, 22 }, -- Button "Create All"
 	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 85.5, 22 }, -- Button "Create"
 	TradeSkillDecrementButton = { "LEFT", "TradeSkillCreateAllButton", "RIGHT", 2, 0 }, -- Button
 	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -1, -34, 297, 157 }, -- ScrollFrame
