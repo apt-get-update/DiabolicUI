@@ -514,7 +514,6 @@ WowWindow {
                 name: "TradeSkillFrameAvailableFilterCheckButton"
                 wowParent: "TradeSkillFrame"
                 style: "CheckBox"
-                pin: "place"
                 anchors.left: tradeSkillFrameEditBox.right
                 anchors.leftMargin: 12
                 anchors.verticalCenter: tradeSkillFrameEditBox.verticalCenter

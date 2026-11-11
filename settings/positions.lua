@@ -333,7 +333,6 @@ Engine:NewStaticConfig("Positions", {
 	TradeSkillDecrementButton = { "LEFT", "TradeSkillCreateAllButton", "RIGHT", 2, 0 }, -- Button
 	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -1, -34, 297, 157 }, -- ScrollFrame
 	TradeSkillExpandButtonFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 15, -64 }, -- Frame
-	TradeSkillFrameAvailableFilterCheckButton = { "LEFT", "TradeSkillFrameEditBox", "RIGHT", 12, 0 }, -- CheckButton
 	TradeSkillFrameDiabolicFoot = { "BOTTOMLEFT", "TradeSkillFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	TradeSkillFrameDiabolicIronBar = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -30, -6.5, 392, 16 }, -- Frame
 	TradeSkillIncrementButton = { "LEFT", "TradeSkillInputBox", "RIGHT", 8, 0 }, -- Button

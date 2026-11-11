@@ -1035,7 +1035,13 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	_G.TradeSkillFrame_Update()
 	lu.assertEquals((select(2, search:GetPoint())), _G.TradeSkillFrameTitleText.DiabolicHeader)
 	lu.assertEquals(search:GetWidth(), config.search_width)
-	Session.assertPlaced(client, filter:GetName())
+	lu.assertEquals({ filter:GetPoint() }, { "LEFT", search, "RIGHT", config.filter_gap, 0 })
+	-- no search below 75 in the skill (Blizzard hides it): Have Materials in its place
+	search:Hide()
+	_G.TradeSkillFrame_Update()
+	lu.assertEquals({ filter:GetPoint() }, { "LEFT", search, "LEFT", 0, 0 })
+	search:Show()
+	_G.TradeSkillFrame_Update()
 	lu.assertEquals(search:GetFrameLevel(), frame:GetFrameLevel() + 2)
 	-- Blizzard's "Search" pale until something's typed
 	local book = client.Engine:GetDB("Blizzard").spellbook
