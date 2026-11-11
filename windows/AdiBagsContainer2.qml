@@ -68,8 +68,8 @@ WowWindow {
 
     Ghost {
         name: "AdiBagsContainer1"
-        x: 915.1
-        y: 104.8
+        x: 499.2
+        y: 79.8
         width: 0
         height: 0
 
@@ -77,9 +77,9 @@ WowWindow {
             name: "AdiBagsSection12"
             wowParent: "AdiBagsContainer1"
             anchors.left: parent.left
-            anchors.leftMargin: 184.3
+            anchors.leftMargin: 278.7
             anchors.top: parent.top
-            anchors.topMargin: 91
+            anchors.topMargin: 291
             width: 37
             height: 55
         }

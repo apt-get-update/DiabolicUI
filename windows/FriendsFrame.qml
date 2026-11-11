@@ -39,7 +39,7 @@ WowWindow {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 145
-                height: -380
+                height: -320
 
                 Button {
                     name: "ChannelButton1"
@@ -950,7 +950,7 @@ WowWindow {
 
                 FontString {
                     name: "FriendsFrameFriendsScrollFrameButton1Info"
-                    text: "Unknown"
+                    text: "Orgrimmar"
                     anchors.left: friendsFrameFriendsScrollFrameButton1Name.left
                     anchors.top: friendsFrameFriendsScrollFrameButton1Name.bottom
                     anchors.topMargin: 2
@@ -961,7 +961,7 @@ WowWindow {
                 FontString {
                     id: friendsFrameFriendsScrollFrameButton1Name
                     name: "FriendsFrameFriendsScrollFrameButton1Name"
-                    text: "Annah"
+                    text: "Enby, Level 80 Rogue"
                     anchors.left: parent.left
                     anchors.leftMargin: 20
                     anchors.top: parent.top
@@ -1262,7 +1262,7 @@ WowWindow {
             FontString {
                 id: guildFrameButton1Class
                 name: "GuildFrameButton1Class"
-                text: "Priest"
+                text: "Death Knight"
                 anchors.left: guildFrameButton1Level.right
                 anchors.leftMargin: 12
                 anchors.verticalCenter: guildFrameButton1Level.verticalCenter
@@ -1292,7 +1292,7 @@ WowWindow {
             FontString {
                 id: guildFrameButton1Name
                 name: "GuildFrameButton1Name"
-                text: "Padirac"
+                text: "Chiftea"
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
@@ -1304,7 +1304,7 @@ WowWindow {
             FontString {
                 id: guildFrameButton1Zone
                 name: "GuildFrameButton1Zone"
-                text: "Stormwind City"
+                text: "Icecrown"
                 anchors.left: guildFrameButton1Name.right
                 anchors.leftMargin: 3
                 anchors.verticalCenter: guildFrameButton1Name.verticalCenter
@@ -2290,7 +2290,7 @@ WowWindow {
     Ghost {
         name: "FriendsFrameFriendsScrollFrameButton3"
         x: 21
-        y: 104
+        y: 86
         width: 298
         height: 34
 

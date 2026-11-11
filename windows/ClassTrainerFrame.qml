@@ -42,7 +42,7 @@ WowWindow {
                 anchors.left: classTrainerCostLabel.right
                 anchors.leftMargin: 5
                 anchors.verticalCenter: classTrainerCostLabel.verticalCenter
-                width: 70.7
+                width: 36.3
                 height: 13
 
                 Button {
@@ -109,7 +109,7 @@ WowWindow {
 
             FontString {
                 name: "ClassTrainerSkillDescription"
-                text: "Power infuses all party and raid members, increasing their Stamina by 70 for 1 hour."
+                text: "Power infuses the target, increasing their Stamina by 3 for 30 min."
                 anchors.left: classTrainerCostLabel.left
                 anchors.top: classTrainerCostLabel.bottom
                 anchors.topMargin: 10
@@ -130,7 +130,7 @@ WowWindow {
             FontString {
                 id: classTrainerSkillName
                 name: "ClassTrainerSkillName"
-                text: "Prayer of Fortitude"
+                text: "Power Word: Fortitude"
                 anchors.left: parent.left
                 anchors.leftMargin: 46
                 anchors.top: parent.top
@@ -144,12 +144,12 @@ WowWindow {
                 anchors.left: classTrainerSkillName.left
                 anchors.top: classTrainerSkillName.bottom
                 width: 244
-                height: 20.5
+                height: 1
             }
 
             FontString {
                 name: "ClassTrainerSubSkillName"
-                text: "(Rank 2)"
+                text: "(Rank 1)"
                 anchors.left: classTrainerSkillName.right
                 anchors.leftMargin: 5
                 anchors.verticalCenter: classTrainerSkillName.verticalCenter
@@ -184,9 +184,9 @@ WowWindow {
             name: "ClassTrainerDetailScrollFrameScrollBar"
             style: "ScrollBar"
             anchors.left: parent.right
-            anchors.leftMargin: 26
+            anchors.leftMargin: -14.3
             anchors.top: parent.top
-            anchors.topMargin: 2
+            anchors.topMargin: -71.4
             width: 16
             height: 103
 
@@ -465,7 +465,7 @@ WowWindow {
             Button {
                 id: classTrainerMoneyFrameCopperButton
                 name: "ClassTrainerMoneyFrameCopperButton"
-                text: "63"
+                text: "75"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -474,7 +474,7 @@ WowWindow {
 
                 FontString {
                     name: "ClassTrainerMoneyFrameCopperButtonText"
-                    text: "63"
+                    text: "75"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -485,7 +485,7 @@ WowWindow {
 
             Button {
                 name: "ClassTrainerMoneyFrameGoldButton"
-                text: "3653"
+                text: "3663"
                 anchors.right: classTrainerMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: classTrainerMoneyFrameSilverButton.verticalCenter
@@ -494,7 +494,7 @@ WowWindow {
 
                 FontString {
                     name: "ClassTrainerMoneyFrameGoldButtonText"
-                    text: "3653"
+                    text: "3663"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -506,7 +506,7 @@ WowWindow {
             Button {
                 id: classTrainerMoneyFrameSilverButton
                 name: "ClassTrainerMoneyFrameSilverButton"
-                text: "55"
+                text: "24"
                 anchors.right: classTrainerMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: classTrainerMoneyFrameCopperButton.verticalCenter
@@ -515,7 +515,7 @@ WowWindow {
 
                 FontString {
                     name: "ClassTrainerMoneyFrameSilverButtonText"
-                    text: "55"
+                    text: "24"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -639,14 +639,16 @@ WowWindow {
             name: "ClassTrainerListScrollFrameScrollChildFrame"
             anchors.left: parent.left
             anchors.top: parent.top
+            anchors.topMargin: -400
             width: 300
             height: 3536
         }
     }
 
     Button {
+        id: classTrainerSkill1
         name: "ClassTrainerSkill1"
-        text: "Discipline"
+        text: "  Power Word: Fortitude"
         pin: "place"
         anchors.left: parent.left
         anchors.leftMargin: 22
@@ -674,32 +676,23 @@ WowWindow {
 
             FontString {
                 name: "ClassTrainerSkill1Text"
-                text: "Discipline"
+                text: "  Power Word: Fortitude"
                 wowParent: "ClassTrainerSkill1"
                 anchors.left: parent.right
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -1
-                width: 270
+                width: 210
                 height: 13
             }
         }
     }
 
-    Ghost {
-        name: "ClassTrainerSkill7"
-        x: 22
-        y: 186
+    Frame {
+        name: "ClassTrainerSkillHighlightFrame"
+        anchors.left: classTrainerSkill1.left
+        anchors.top: classTrainerSkill1.top
         width: 293
         height: 16
-
-        Frame {
-            name: "ClassTrainerSkillHighlightFrame"
-            wowParent: "ClassTrainerFrame"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: 293
-            height: 16
-        }
     }
 }

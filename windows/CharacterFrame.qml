@@ -96,7 +96,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 418
-            height: 490
+            height: 478
 
             Button {
                 name: "CharacterAmmoSlot"
@@ -223,6 +223,17 @@ WowWindow {
                 anchors.topMargin: 62
                 width: 248
                 height: 322
+
+                PlayerModel {
+                    name: "CharacterModelFrame"
+                    wowParent: "PaperDollFrame"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 4
+                    anchors.top: parent.top
+                    anchors.topMargin: -22
+                    width: 240
+                    height: 372
+                }
 
                 Button {
                     id: characterModelFrameRotateLeftButton
@@ -985,16 +996,6 @@ WowWindow {
         width: 384
         height: 512
 
-        PlayerModel {
-            name: "CharacterModelFrame"
-            anchors.left: parent.left
-            anchors.leftMargin: 89
-            anchors.top: parent.top
-            anchors.topMargin: 44
-            width: 240
-            height: 372
-        }
-
         Frame {
             name: "CharacterResistanceFrame"
             anchors.right: parent.left
@@ -1621,33 +1622,33 @@ WowWindow {
             anchors.rightMargin: 44
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 84
-            width: 126.4
+            width: 124.8
             height: 13
 
             Button {
                 id: tokenFrameMoneyFrameCopperButton
                 name: "TokenFrameMoneyFrameCopperButton"
-                text: "63"
+                text: "71"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
-                width: 30.4
+                width: 28.8
                 height: 13
 
                 FontString {
                     name: "TokenFrameMoneyFrameCopperButtonText"
-                    text: "63"
+                    text: "71"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
+                    width: 15.8
                     height: 14.2
                 }
             }
 
             Button {
                 name: "TokenFrameMoneyFrameGoldButton"
-                text: "3653"
+                text: "1820"
                 anchors.right: tokenFrameMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: tokenFrameMoneyFrameSilverButton.verticalCenter
@@ -1656,7 +1657,7 @@ WowWindow {
 
                 FontString {
                     name: "TokenFrameMoneyFrameGoldButtonText"
-                    text: "3653"
+                    text: "1820"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -1668,7 +1669,7 @@ WowWindow {
             Button {
                 id: tokenFrameMoneyFrameSilverButton
                 name: "TokenFrameMoneyFrameSilverButton"
-                text: "55"
+                text: "16"
                 anchors.right: tokenFrameMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: tokenFrameMoneyFrameCopperButton.verticalCenter
@@ -1677,7 +1678,7 @@ WowWindow {
 
                 FontString {
                     name: "TokenFrameMoneyFrameSilverButtonText"
-                    text: "55"
+                    text: "16"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter

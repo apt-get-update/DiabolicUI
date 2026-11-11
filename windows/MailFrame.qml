@@ -59,7 +59,7 @@ WowWindow {
 
             Button {
                 name: "MailItem1ExpireTime"
-                text: "27 Days "
+                text: "24 Days "
                 anchors.right: parent.right
                 anchors.rightMargin: -10
                 anchors.top: parent.top
@@ -150,7 +150,7 @@ WowWindow {
 
             Button {
                 name: "MailItem2ExpireTime"
-                text: "3626 Days "
+                text: "3624 Days "
                 anchors.right: parent.right
                 anchors.rightMargin: -10
                 anchors.top: parent.top
@@ -920,11 +920,11 @@ WowWindow {
 
                 FontString {
                     name: "MailFrameDiabolicTitle"
-                    text: "Send Mail"
+                    text: "Inbox"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 86.9
+                    width: 52.1
                     height: 14.2
                 }
             }
@@ -1197,7 +1197,7 @@ WowWindow {
             Button {
                 id: sendMailMoneyFrameCopperButton
                 name: "SendMailMoneyFrameCopperButton"
-                text: "13"
+                text: "75"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
@@ -1206,7 +1206,7 @@ WowWindow {
 
                 FontString {
                     name: "SendMailMoneyFrameCopperButtonText"
-                    text: "13"
+                    text: "75"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -1217,7 +1217,7 @@ WowWindow {
 
             Button {
                 name: "SendMailMoneyFrameGoldButton"
-                text: "3654"
+                text: "3663"
                 anchors.right: sendMailMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: sendMailMoneyFrameSilverButton.verticalCenter
@@ -1226,7 +1226,7 @@ WowWindow {
 
                 FontString {
                     name: "SendMailMoneyFrameGoldButtonText"
-                    text: "3654"
+                    text: "3663"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -1238,7 +1238,7 @@ WowWindow {
             Button {
                 id: sendMailMoneyFrameSilverButton
                 name: "SendMailMoneyFrameSilverButton"
-                text: "16"
+                text: "24"
                 anchors.right: sendMailMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: sendMailMoneyFrameCopperButton.verticalCenter
@@ -1247,7 +1247,7 @@ WowWindow {
 
                 FontString {
                     name: "SendMailMoneyFrameSilverButtonText"
-                    text: "16"
+                    text: "24"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
