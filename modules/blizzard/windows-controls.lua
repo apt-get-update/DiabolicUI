@@ -261,6 +261,22 @@ Module.StyleCheckBox = function(self, button, look)
 	local spec = Module.config.check_box
 	look = look or spec
 	button:SetSize(look.size, look.size)
+	self:SkinCheckBox(button)
+	local label = _G[button:GetName() .. "Text"]
+	button.DiabolicLabel = label
+	if label then
+		self:StyleBandText(label)
+		label:SetFontObject(look.font)
+		label:ClearAllPoints()
+		label:SetPoint("LEFT", button, "RIGHT", spec.label_gap, 0)
+	end
+end
+
+-- The checkbox's art alone (its box, lit, its X), the one look of every
+-- checkbox: the options pages' and the parchment's too. With `size`, the
+-- art that size in the middle of a larger button (its label left where it is).
+Module.SkinCheckBox = function(self, button, size)
+	local spec = Engine:GetDB("Blizzard").window.check_box
 	button:SetNormalTexture(spec.texture)
 	button:SetPushedTexture(spec.texture)
 	button:SetHighlightTexture(spec.texture)
@@ -277,13 +293,12 @@ Module.StyleCheckBox = function(self, button, look)
 	local disabled = button:GetDisabledCheckedTexture()
 	disabled:SetTexCoord(unpack(spec.checked))
 	disabled:SetDesaturated(true)
-	local label = _G[button:GetName() .. "Text"]
-	button.DiabolicLabel = label
-	if label then
-		self:StyleBandText(label)
-		label:SetFontObject(look.font)
-		label:ClearAllPoints()
-		label:SetPoint("LEFT", button, "RIGHT", spec.label_gap, 0)
+	if size then
+		for _, texture in ipairs({ button:GetNormalTexture(), pushed, lit, button:GetCheckedTexture(), disabled }) do
+			texture:ClearAllPoints()
+			texture:SetPoint("CENTER")
+			texture:SetSize(size, size)
+		end
 	end
 end
 

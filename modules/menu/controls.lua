@@ -130,6 +130,8 @@ local CreateCheckbox = function(parent, name, label, tooltipText, onClick)
 	local checkbox =
 		CreateFrame("CheckButton", "DiabolicUIOptionsPanel" .. name, parent, "InterfaceOptionsCheckButtonTemplate")
 	_G[checkbox:GetName() .. "Text"]:SetText(label)
+	-- the windows' checkbox, not Blizzard's yellow tick
+	Engine:GetModule("Blizzard: Windows"):SkinCheckBox(checkbox, Engine:GetDB("Blizzard").window.check_box.size)
 	checkbox.tooltipText = label
 	checkbox.tooltipRequirement = tooltipText
 	checkbox:SetScript("OnClick", onClick)

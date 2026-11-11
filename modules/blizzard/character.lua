@@ -1208,6 +1208,10 @@ Module.StyleReputationDetail = function(self)
 	end
 	Raise()
 	detail:HookScript("OnShow", Raise)
+	-- the windows' checkbox, not Blizzard's grey tick
+	for _, name in ipairs({ "ReputationDetailAtWarCheckBox", "ReputationDetailInactiveCheckBox", "ReputationDetailMainScreenCheckBox" }) do
+		kit:SkinCheckBox(_G[name], kit.config.check_box.size)
+	end
 	-- the boxes' labels: Blizzard colors them on each update (red, its
 	-- font's yellow or grey), drawn for its dark frame
 	-- as tall as its text needs over the boxes (Blizzard's are anchored to
