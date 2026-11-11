@@ -608,6 +608,8 @@ Engine:NewStaticConfig("Blizzard", {
 		out_of_range_alpha = 0.4, -- an affliction too far to dispel
 		away_alpha = 0.35, -- a healthy one far away, gone or blacklisted
 		cleansed_time = 2, -- the glass dark after your dispel, then stone
+		-- Decursive's timer, small and light in the bottom left corner
+		timer = { font = DiabolicFont_SansBold10, color = { 0.95, 0.9, 0.8 }, offset = { -2, -2 } },
 		-- the border by the affliction's type (Blizzard's debuff colours)
 		colors = {
 			none = { 0.8, 0, 0 },

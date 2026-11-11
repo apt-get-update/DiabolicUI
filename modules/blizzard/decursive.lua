@@ -91,6 +91,11 @@ Module.StyleSquare = function(self, square)
 	-- (its ornaments past the square: its glass as big as the square)
 	medallion:SetSize(frame:GetWidth() * spec.medallion_scale, frame:GetHeight() * spec.medallion_scale)
 	square.DiabolicMedallion = medallion
+	-- its timer small and light in a corner, the glass seen through
+	local timer = square.ChronoFontString
+	timer:SetFontObject(spec.timer.font)
+	timer:ClearAllPoints()
+	timer:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", spec.timer.offset[1], spec.timer.offset[2])
 	square.DiabolicMouse = CreateMouse(frame, spec.mouse)
 	square.DiabolicBurst = CreateBurst(frame, spec.burst)
 	-- the glass kept dark a moment after you dispel it, then stone again
@@ -118,6 +123,7 @@ Module.UpdateSquare = function(self, square)
 	local spec = self.config
 	local cells, size = spec.medallions, spec.cell
 	square.Texture:Hide() -- (Decursive's square of colour)
+	square.ChronoFontString:SetTextColor(unpack(spec.timer.color)) -- (Decursive's red again on a full update)
 	local debuff = square.IsDebuffed and square.Debuffs and square.Debuffs[1]
 	local type = debuff and _G.DcrC and _G.DcrC.TypeNames and _G.DcrC.TypeNames[debuff.Type]
 	if debuff and cells[type] then
