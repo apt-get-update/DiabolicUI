@@ -623,17 +623,20 @@ Module.AddPane = function(self, first, last, open)
 end
 
 -- A status bar in Diablo III's orange, in the spiked frame; its own
--- `regions` (Blizzard's frame) out of sight.
-Module.StyleBar = function(self, bar, regions)
+-- `regions` (Blizzard's frame) out of sight. With `tint`, its fill greyed
+-- and in that colour instead.
+Module.StyleBar = function(self, bar, regions, tint)
 	bar.DiabolicStyle = "Bar"
 	for _, region in ipairs(regions or {}) do
 		region:SetAlpha(0)
 	end
 	local spec = config.bar
+	local color = tint or spec.color
 	bar:SetStatusBarTexture(spec.statusbar)
-	bar:SetStatusBarColor(unpack(spec.color))
-	-- kept orange: Blizzard colors some on each update (the professions' blue)
-	local r, g, b = unpack(spec.color)
+	bar:GetStatusBarTexture():SetDesaturated(tint and true or false)
+	bar:SetStatusBarColor(unpack(color))
+	-- kept as is: Blizzard colors some on each update (the professions' blue)
+	local r, g, b = unpack(color)
 	hooksecurefunc(bar, "SetStatusBarColor", function(_, red, green, blue)
 		if (red ~= r) or (green ~= g) or (blue ~= b) then
 			bar:SetStatusBarColor(r, g, b)
