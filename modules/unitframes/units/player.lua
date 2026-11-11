@@ -519,6 +519,16 @@ local StyleRightOrb = function(self, unit, index, numBars, inVehicle)
 	Buffs.BuffFilter = longBuffFilter
 	Buffs.PostCreateButton = Library.PostCreateAuraButton
 
+	-- out of sight in a fight: the long buffs (flasks, raid buffs) need
+	-- nothing from you there; the short ones by the action bars stay
+	local fight = CreateFrame("Frame", nil, self)
+	fight:RegisterEvent("PLAYER_REGEN_DISABLED")
+	fight:RegisterEvent("PLAYER_REGEN_ENABLED")
+	fight:SetScript("OnEvent", function(_, event)
+		Buffs.combatHidden = (event == "PLAYER_REGEN_DISABLED")
+		Buffs:ForceUpdate("Buffs")
+	end)
+
 	self:HookScript("OnEnter", onEnterRight)
 	self:HookScript("OnLeave", onLeaveRight)
 
