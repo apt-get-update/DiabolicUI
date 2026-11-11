@@ -1112,6 +1112,33 @@ function TestCombatNames:test_names_and_nameplates_only_in_combat()
 	assertClean(client)
 end
 
+function TestCombatNames:test_enemy_names_hidden_in_a_sanctuary_only()
+	boot({
+		world = function(world)
+			world.zone.pvpType = "contested"
+			world.cvars.UnitNameEnemyPlayerName = "1" -- yours: shown
+		end,
+	})
+	local GetCVar = _G.GetCVar
+	lu.assertEquals(GetCVar("UnitNameEnemyPlayerName"), "1")
+	-- Dalaran: the enemies' names too, the rest still hidden
+	client.world.zone.pvpType = "sanctuary"
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertEquals(GetCVar("UnitNameEnemyPlayerName"), "0")
+	lu.assertEquals(GetCVar("UnitNameNPC"), "0")
+	-- in combat all back, out of it hidden again
+	client:EnterCombat()
+	lu.assertEquals(GetCVar("UnitNameEnemyPlayerName"), "1")
+	client:LeaveCombat()
+	lu.assertEquals(GetCVar("UnitNameEnemyPlayerName"), "0")
+	-- out of the city: the enemies' names back
+	client.world.zone.pvpType = "contested"
+	client:FireEvent("ZONE_CHANGED")
+	lu.assertEquals(GetCVar("UnitNameEnemyPlayerName"), "1")
+	lu.assertEquals(GetCVar("UnitNameNPC"), "0")
+	assertClean(client)
+end
+
 -- Incoming heals ------------------------------------------------------------------
 
 TestIncomingHeals = {}
@@ -1119,7 +1146,9 @@ TestIncomingHeals = {}
 -- LibHealComm answering `heals` (amount by GUID), and telling the frames.
 local function incoming(heals)
 	local HealComm = _G.LibStub("LibHealComm-4.0")
-	HealComm.GetHealAmount = function(_, guid)
+	HealComm.GetHealAmount = function(_, guid, flags)
+		-- (cast heals only: a HoT's ticks would make it flicker)
+		lu.assertEquals(flags, HealComm.DIRECT_HEALS)
 		return heals[guid]
 	end
 	HealComm.callbacks:Fire("HealComm_HealStarted")
@@ -1146,6 +1175,10 @@ function TestIncomingHeals:test_the_orb_shows_them_above_the_fluid()
 	-- never past the top
 	incoming({ [me.guid] = 900 })
 	lu.assertAlmostEquals(orb.incoming:GetHeight(), height * 0.5, 0.01)
+
+	-- not as a thin line
+	incoming({ [me.guid] = 2 })
+	lu.assertNil(orb.incoming:IsShown())
 
 	incoming({})
 	lu.assertNil(orb.incoming:IsShown())

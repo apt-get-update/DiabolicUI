@@ -1318,6 +1318,34 @@ local function kitFrame(name, places)
 	return frame, window, buttons
 end
 
+function TestWindowKit:test_a_narrow_button_in_a_plain_field()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	-- "1", "Keep" and an icon's square (no text) too narrow for the red
+	-- button's corners, Okay wide enough
+	local frame, _, buttons = kitFrame("NarrowFrame", { { 0, 0, 28 }, { 40, 0, 44 }, { 100, 0, 90 }, { 200, 0, 32 } })
+	for i, text in ipairs({ "1", "Keep", "Okay" }) do
+		buttons[i]:SetText(text)
+	end
+	frame:Show()
+	kit:StyleButtons(frame)
+	lu.assertTrue(buttons[1].DiabolicNarrow)
+	lu.assertTrue(buttons[2].DiabolicNarrow)
+	lu.assertNil(buttons[3].DiabolicNarrow)
+	lu.assertTrue(buttons[4].DiabolicNarrow)
+	-- lit under the mouse, dark while disabled, like the red one
+	for _, button in ipairs(buttons) do
+		lu.assertEquals(button.DiabolicStyle, "Button")
+	end
+	buttons[1]:LockHighlight()
+	lu.assertTrue(buttons[1].DiabolicLit:IsShown() and true)
+	buttons[1]:UnlockHighlight()
+	lu.assertNil(buttons[1].DiabolicLit:IsShown())
+	buttons[1]:Disable()
+	near({ buttons[1]:GetFontString():GetTextColor() }, kit.config.button_disabled_color)
+	assertClean(client)
+end
+
 function TestWindowKit:test_buttons_on_a_row_spread_apart()
 	boot()
 	local kit = client:GetModule("Blizzard: Windows")
@@ -1819,6 +1847,15 @@ function TestWindowKit:test_a_window_has_a_pale_glyph_in_its_corner()
 	local spec = client:GetModule("Blizzard: Windows").config.watermark
 	lu.assertNotNil(window.DiabolicWatermark)
 	lu.assertEquals(window.DiabolicWatermark:GetAlpha(), spec.alpha)
+	-- only where it fits all of it: not hanging out of a small one
+	_G.CharacterFrame:Show()
+	lu.assertEquals(window.DiabolicWatermark:IsShown(), 1)
+	local kit = client:GetModule("Blizzard: Windows")
+	local small = _G.CreateFrame("Frame", "SmallKitFrame", _G.UIParent)
+	small:SetSize(200, 120)
+	small:SetPoint("CENTER")
+	local smallWindow = kit:CreateWindow(small, { 0, 0, 0, 0 })
+	lu.assertNil(smallWindow.DiabolicWatermark:IsShown())
 	assertClean(client)
 end
 

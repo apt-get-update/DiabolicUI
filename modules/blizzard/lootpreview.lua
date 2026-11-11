@@ -13,6 +13,8 @@ local L = Engine:GetLocale()
 -- Lua API
 local _G = _G
 local ipairs = ipairs
+local math_max = math.max
+local math_min = math.min
 local pairs = pairs
 local string_gmatch = string.gmatch
 local table_concat = table.concat
@@ -121,6 +123,20 @@ Module.Update = function(self)
 		frame:Hide()
 		return
 	end
+	-- as wide as the longest name needs, from width up to max_width
+	local nameWidth = 0
+	for i = 1, #items do
+		local name = self.rows[i].Name
+		name:SetWidth(config.max_width) -- (measured cut short otherwise)
+		nameWidth = math_max(nameWidth, name:GetStringWidth())
+	end
+	local width = math_min(math_max(config.width, config.icon_size + config.gap + nameWidth + 4), config.max_width)
+	for i = 1, #items do
+		self.rows[i]:SetWidth(width)
+		self.rows[i].Name:SetWidth(width - config.icon_size - config.gap)
+	end
+	self.title:SetWidth(width - 20) -- (clear of the X)
+	frame:SetWidth(width + 2 * config.side_padding)
 	frame:SetHeight(config.top_padding + #items * config.row_height + config.bottom_padding)
 	frame:Show()
 end
@@ -281,9 +297,6 @@ Module.CreateWindow = function(self)
 	frame:SetClampedToScreen(true)
 	frame:SetWidth(config.width + 2 * config.side_padding)
 	frame:SetPoint(unpack(config.position))
-	frame:SetBackdrop(look.backdrop)
-	frame:SetBackdropColor(unpack(look.backdrop_color))
-	frame:SetBackdropBorderColor(unpack(look.backdrop_border_color))
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
 	frame:RegisterForDrag("LeftButton")
@@ -299,13 +312,20 @@ Module.CreateWindow = function(self)
 		end
 	end)
 
+	-- the loot window's light popup: the boss's name a small line on top,
+	-- the windows' X at that line's right, inside the frame
+	frame:SetBackdrop(look.backdrop)
+	frame:SetBackdropColor(unpack(look.backdrop_color))
+	frame:SetBackdropBorderColor(unpack(look.backdrop_border_color))
 	local title = frame:CreateFontString(nil, "OVERLAY")
 	title:SetFontObject(config.title_font)
-	title:SetPoint("TOP", 0, -14)
-
+	title:SetTextColor(1, 0.82, 0)
+	title:SetJustifyH("LEFT")
+	title:SetWidth(config.width - 20) -- (clear of the X)
+	title:SetPoint("TOPLEFT", unpack(config.title_offset))
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	Engine:GetModule("Blizzard: Windows"):SkinClose(close)
-	close:SetPoint("TOPRIGHT", unpack(look.close_button_offset))
+	close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", unpack(config.close_offset))
 	close:SetScript("OnClick", function()
 		self:Start()
 		self:Update()
@@ -316,7 +336,7 @@ end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").preview
-	self.look = self:GetDB("Blizzard").loot
+	self.look = self:GetDB("Blizzard").loot -- (its frame, its icons' crop)
 	self.items, self.rows, self.lastLine = {}, {}, 0
 end
 

@@ -69,23 +69,16 @@ function TestOptionsMenu:test_the_pages_under_diabolicui()
 	end
 	lu.assertEquals(names, {
 		"DiabolicUI",
-		"DiabolicUI/Action Bars",
+		"DiabolicUI/Positions",
 		"DiabolicUI/Specializations",
-		"DiabolicUI/Units",
-		"DiabolicUI/Chat",
-		"DiabolicUI/Messages",
-		"DiabolicUI/Quests",
-		"DiabolicUI/Tooltips",
-		"DiabolicUI/Frames & AddOns",
 	})
-	-- the main page: what's where, the commands and the version
+	-- the main page: the switches and the version
 	_G.DiabolicUIOptionsPanel.refresh()
 	assertClean(client)
 end
 
 function TestOptionsMenu:test_the_menu_checkboxes()
 	local bars = db("ActionBars", "character")
-	local menu = client:GetModule("ActionBars"):GetWidget("Menu: Main")
 	local gold = bars.showGold
 	click("ShowGold")
 	lu.assertEquals(bars.showGold, not gold)
@@ -101,59 +94,40 @@ function TestOptionsMenu:test_the_menu_checkboxes()
 	lu.assertFalse(units.combatNames)
 	click("CombatNames")
 	lu.assertTrue(units.combatNames)
-	local performance = bars.showPerformance
-	click("ShowPerformance")
-	lu.assertEquals(bars.showPerformance, not performance)
-	lu.assertEquals(menu.MasterMenuButton.Performance:IsShown() == 1, not performance)
 	assertClean(client)
 end
 
-function TestOptionsMenu:test_the_tracker_fade_and_its_sliders()
-	local objectives = db("ObjectiveTracker")
-	objectives.fadeTracker = true
-	widget("FadeTracker"):SetChecked(true)
-	click("FadeTracker")
-	lu.assertFalse(objectives.fadeTracker)
-	-- greyed out while the fade is off
-	local slider = widget("ObjectivesTimeFading")
-	lu.assertEquals(slider:GetAlpha(), 0.5)
-	lu.assertNil(widget("ObjectivesTimeFadingInput"):IsMouseEnabled())
-	click("FadeTracker")
-	lu.assertTrue(objectives.fadeTracker)
-	lu.assertEquals(slider:GetAlpha(), 1)
-
-	-- dragged: whole seconds, both ways in sync
-	slider:SetValue(12.4)
-	lu.assertEquals(objectives.fadeDelay, 12)
-	lu.assertEquals(widget("ObjectivesTimeFadingInput"):GetText(), "12")
+function TestOptionsMenu:test_typing_in_a_slider()
+	local scaling = db("ScreenScaling")
 	-- typed in, kept in range
-	enter("ObjectivesOpacity", "40")
-	lu.assertEquals(objectives.fadeOpacity, 40)
-	lu.assertEquals(widget("ObjectivesOpacity"):GetValue(), 40)
-	enter("ObjectivesOpacity", "500")
-	lu.assertEquals(objectives.fadeOpacity, 100)
-	enter("ObjectivesOpacity", "-5")
-	lu.assertEquals(objectives.fadeOpacity, 0)
+	enter("UIScale", "90")
+	lu.assertEquals(scaling.scale, 0.9)
+	lu.assertEquals(widget("UIScale"):GetValue(), 90)
+	enter("UIScale", "500")
+	lu.assertEquals(scaling.scale, 1.5)
+	enter("UIScale", "5")
+	lu.assertEquals(scaling.scale, 0.5)
 	-- not a number, or escape: back to what it was
-	enter("ObjectivesOpacity", "lots")
-	lu.assertEquals(widget("ObjectivesOpacityInput"):GetText(), "0")
-	widget("ObjectivesOpacityInput"):SetText("77")
-	client:RunScript(widget("ObjectivesOpacityInput"), "OnEscapePressed")
-	lu.assertEquals(widget("ObjectivesOpacityInput"):GetText(), "0")
-	lu.assertEquals(objectives.fadeOpacity, 0)
+	enter("UIScale", "lots")
+	lu.assertEquals(widget("UIScaleInput"):GetText(), "50")
+	widget("UIScaleInput"):SetText("77")
+	client:RunScript(widget("UIScaleInput"), "OnEscapePressed")
+	lu.assertEquals(widget("UIScaleInput"):GetText(), "50")
+	lu.assertEquals(scaling.scale, 0.5)
 
 	-- the entry box lights up on hover
-	local input = widget("ObjectivesOpacityInput")
+	local input = widget("UIScaleInput")
 	client:Hover(input)
 	lu.assertEquals(select(4, input:GetBackdropBorderColor()), 1)
 	client:Leave()
+	widget("UIScale"):SetValue(100)
 	assertClean(client)
 end
 
 function TestOptionsMenu:test_settings_needing_a_reload_ask_for_it()
-	local loot = db("LootFrame")
-	click("ReskinLoot")
-	lu.assertTrue(loot.enableSkin)
+	local windows = db("Windows")
+	click("ReskinWindows")
+	lu.assertFalse(windows.enableSkin)
 	local popup = popupFrame("ENGINE_GENERAL_RELOADUI")
 	lu.assertNotNil(popup)
 	client:Click(popup.button1)
@@ -183,11 +157,8 @@ function TestOptionsMenu:test_settings_needing_a_reload_ask_for_it()
 	assertClean(client)
 end
 
-function TestOptionsMenu:test_the_tooltip_page()
+function TestOptionsMenu:test_the_tooltip_anchor()
 	local tooltips = db("Tooltips")
-	click("ReskinTooltip")
-	lu.assertEquals(tooltips.reskinTooltip, widget("ReskinTooltip"):GetChecked() and true or false)
-
 	-- the anchor picker
 	client:RunScript(widget("AnchorTOPLEFT"), "OnClick", "LeftButton")
 	lu.assertEquals(tooltips.anchorPoint, "TOPLEFT")
@@ -204,29 +175,17 @@ function TestOptionsMenu:test_the_tooltip_page()
 
 	-- cancel puts the widgets back to the saved values
 	tooltips.offsetX, tooltips.anchorPoint = 40, "CENTER"
-	_G.DiabolicUIOptionsPanelTooltips.cancel()
+	_G.DiabolicUIOptionsPanelPositions.cancel()
 	lu.assertEquals(widget("TooltipOffsetX"):GetValue(), 40)
 	lu.assertEquals(widget("AnchorCENTER"):GetChecked(), 1)
 	assertClean(client)
 end
 
 function TestOptionsMenu:test_descriptions_on_hover()
-	-- the anchor picker's label
-	local label
-	for _, region in ipairs({ _G.DiabolicUIOptionsPanelTooltips:GetRegions() }) do
-		if
-			region:GetObjectType() == "FontString"
-			and region:GetText() == client.Engine:GetLocale()["Tooltip mouse anchor"]
-		then
-			label = region
-		end
-	end
-	local hitbox
-	for _, child in ipairs({ _G.DiabolicUIOptionsPanelTooltips:GetChildren() }) do
-		if child:GetPoint() and select(2, child:GetPoint()) == label then
-			hitbox = child
-		end
-	end
+	-- the tooltip card's title
+	local card = widget("TooltipCard")
+	local label, hitbox = card.title, card.hitbox
+	lu.assertEquals(label:GetText(), client.Engine:GetLocale()["Tooltip Anchor"])
 	client:Hover(hitbox)
 	lu.assertEquals(tooltipLines(_G.GameTooltip)[1], label:GetText())
 	client:Leave()
@@ -239,24 +198,14 @@ function TestOptionsMenu:test_descriptions_on_hover()
 	assertClean(client)
 end
 
-function TestOptionsMenu:test_the_pages_go_from_the_main_frames_to_the_extras()
+function TestOptionsMenu:test_the_pages_under_the_main_one()
 	local names = {}
 	for _, category in ipairs(_G.INTERFACEOPTIONS_ADDONCATEGORIES) do
 		if category.parent == "DiabolicUI" then
 			names[#names + 1] = category.name
 		end
 	end
-	lu.assertEquals(names, {
-		"Action Bars",
-		"Specializations",
-		"Units",
-		"Chat",
-		"Messages",
-		"Minimap",
-		"Quests",
-		"Tooltips",
-		"Frames & AddOns",
-	})
+	lu.assertEquals(names, { "Positions", "Specializations" })
 end
 
 function TestOptionsMenu:test_the_fake_group_commands()
@@ -272,61 +221,67 @@ function TestOptionsMenu:test_the_fake_group_commands()
 	assertClean(client)
 end
 
-function TestOptionsMenu:test_the_chat_page()
-	local chat, filters = db("ChatWindows"), db("ChatFilters")
-	widget("ChatBackgroundOpacity"):SetValue(60)
-	lu.assertEquals(chat.backgroundOpacity, 60)
-
-	chat.fadeChat = true
-	widget("FadeChat"):SetChecked(true)
-	click("FadeChat")
-	lu.assertFalse(chat.fadeChat)
-	lu.assertNil(_G.ChatFrame1:GetFading())
-	lu.assertEquals(widget("ChatTimeVisible"):GetAlpha(), 0.5)
-	click("FadeChat")
-	widget("ChatTimeFading"):SetValue(4)
-	lu.assertEquals(_G.CHAT_FRAME_FADE_OUT_TIME, 4)
-	widget("ChatTimeVisible"):SetValue(30)
-	lu.assertEquals(_G.ChatFrame1:GetTimeVisible(), 30)
-
-	-- the shorter messages, on their own page, one checkbox each
-	for i, setting in ipairs({
-		"cleanProgress",
-		"cleanQuests",
-		"cleanStatus",
-		"cleanOnline",
-		"cleanLoot",
-		"cleanAuctions",
-		"cleanAchievements",
-		"hideChatNoise",
+function TestOptionsMenu:test_the_chat_checkboxes()
+	local filters = db("ChatFilters")
+	for name, setting in pairs({
+		ShortMessages = "shortMessages",
+		HideChannelNotices = "hideChatNoise",
+		ShortChannels = "shortChannels",
+		ChatHistory = "chatHistory",
 	}) do
 		local before = filters[setting]
-		click("MessagesCleaner" .. i)
+		click(name)
 		lu.assertEquals(filters[setting], not before, setting)
 		filters[setting] = before
 	end
-	_G.DiabolicUIOptionsPanelMessages.refresh()
-	lu.assertEquals(widget("MessagesCleaner1"):GetChecked() and true or false, filters.cleanProgress)
-
-	chat.timeVisible = 90
-	_G.DiabolicUIOptionsPanelChat.refresh()
-	lu.assertEquals(widget("ChatTimeVisibleInput"):GetText(), "90")
+	_G.DiabolicUIOptionsPanel.refresh()
+	lu.assertEquals(widget("ShortMessages"):GetChecked() and true or false, filters.shortMessages)
 	assertClean(client)
 end
 
 -- Every page fits in Blizzard's options window (648x520, its pages
 -- 424 high): the lowest widget of each stays above the page's bottom.
 -- The texts and icons of the Specializations page's regions.
+-- (on the page and on its shown cards)
+local function specsCards()
+	local cards = {}
+	for _, child in ipairs({ _G.DiabolicUIOptionsPanelSpecs:GetChildren() }) do
+		if child:GetBackdrop() then
+			cards[#cards + 1] = child
+		end
+	end
+	return cards
+end
+
 local function specsRegions()
 	local texts, icons = {}, {}
-	for _, region in ipairs({ _G.DiabolicUIOptionsPanelSpecs:GetRegions() }) do
-		if region:GetObjectType() == "FontString" then
-			texts[region:GetText() or ""] = true
-		elseif region:GetObjectType() == "Texture" then
-			icons[region:GetTexture() or ""] = true
+	local frames = specsCards()
+	table.insert(frames, _G.DiabolicUIOptionsPanelSpecs)
+	for _, frame in ipairs(frames) do
+		for _, region in ipairs({ frame:GetRegions() }) do
+			if region:IsShown() and (frame == _G.DiabolicUIOptionsPanelSpecs or frame:IsShown()) then
+				if region:GetObjectType() == "FontString" then
+					texts[region:GetText() or ""] = true
+				elseif region:GetObjectType() == "Texture" then
+					icons[region:GetTexture() or ""] = true
+				end
+			end
 		end
 	end
 	return texts, icons
+end
+
+-- The chosen value's button of a row of choices is the gold one.
+local function chosen(name)
+	local i, lit = 1, nil
+	while widget(name .. i) do
+		local r, g = widget(name .. i):GetFontString():GetTextColor()
+		if r == 1 and g == 0.82 then
+			lit = widget(name .. i):GetText()
+		end
+		i = i + 1
+	end
+	return lit
 end
 
 -- Opens a dropdown and returns its choices' texts, and picks `pick` (a
@@ -366,9 +321,11 @@ function TestOptionsMenu:test_the_specializations_page()
 	lu.assertTrue(icons["Interface\\Icons\\Holy"] and icons["Interface\\Icons\\Shadow"])
 	lu.assertEquals(widget("Spec2EquipSet").text, "|TInterface\\Icons\\ShadowSet:16:16:0:0|t Shadow")
 	lu.assertEquals(widget("Spec1EquipSet").text, L["None"])
-	lu.assertEquals(widget("Spec2Bars").text, "3")
-	lu.assertEquals(widget("Spec2SideBars").text, L["Unchanged"])
-	lu.assertEquals(widget("Spec1Profile").text, "|cff808080" .. L["Action Bar Saver isn't loaded"] .. "|r")
+	lu.assertEquals(chosen("Spec2Bars"), "3")
+	lu.assertEquals(chosen("Spec2SideBars"), L["Keep"])
+	-- the active one lit, Action Bar Saver's row only with it
+	lu.assertTrue(texts[L["Active"]])
+	lu.assertNil(widget("Spec1Profile"):IsShown())
 
 	-- picking from the dropdowns saves
 	lu.assertEquals(openDropDown("Spec1EquipSet", "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy"), {
@@ -378,17 +335,21 @@ function TestOptionsMenu:test_the_specializations_page()
 	})
 	lu.assertEquals(bars.specEquipSet1, "Holy")
 	lu.assertEquals(widget("Spec1EquipSet").text, "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy")
-	lu.assertEquals(openDropDown("Spec1Bars", "2"), { L["Unchanged"], "1", "2", "3" })
+	-- the bar counts: a click on a button
+	client:Click(widget("Spec1Bars3"))
 	lu.assertEquals(bars.specBars1, 2)
-	lu.assertEquals(openDropDown("Spec1SideBars", "0"), { L["Unchanged"], "0", "1", "2" })
+	lu.assertEquals(chosen("Spec1Bars"), "2")
+	client:Click(widget("Spec1SideBars2"))
 	lu.assertEquals(bars.specSideBars1, 0)
-	openDropDown("Spec2Bars", L["Unchanged"])
+	lu.assertEquals(chosen("Spec1SideBars"), L["None"])
+	client:Click(widget("Spec2Bars1"))
 	lu.assertFalse(bars.specBars2)
 
 	-- Action Bar Saver loaded: its profiles
 	_G.SlashCmdList.ABS = function() end
 	_G.ActionBarSaverDB = { sets = { WARRIOR = { holy = {}, shadow = {} } } }
 	_G.DiabolicUIOptionsPanelSpecs.refresh()
+	lu.assertEquals(widget("Spec1Profile"):IsShown(), 1)
 	lu.assertEquals(widget("Spec1Profile").text, L["None"])
 	lu.assertEquals(openDropDown("Spec1Profile", "holy"), { L["None"], "holy", "shadow" })
 	lu.assertEquals(bars.specProfile1, "holy")
@@ -407,6 +368,14 @@ function TestOptionsMenu:test_the_specializations_page()
 	lu.assertTrue(icons["Interface\\Icons\\INV_Misc_QuestionMark"])
 
 	lu.assertTrue(texts[L["Macro Before"]] and texts[L["Macro After"]])
+
+	-- no Dual Talent Specialization yet: only a hint
+	client.world.numTalentGroups = 1
+	_G.DiabolicUIOptionsPanelSpecs.refresh()
+	texts = specsRegions()
+	lu.assertTrue(texts[L["Learn Dual Talent Specialization to set this up."]])
+	lu.assertNil(texts[L["Macro Before"]])
+	client.world.numTalentGroups = nil
 	assertClean(client)
 end
 
@@ -446,7 +415,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	client:RunScript(widget("RollWindow"), "OnClick", "LeftButton")
 	lu.assertNil(popupFrame("ENGINE_GENERAL_RELOADUI"))
 	loot.rollWindow = false
-	_G.DiabolicUIOptionsPanelAddOns.refresh()
+	_G.DiabolicUIOptionsPanel.refresh()
 	lu.assertNil(widget("RollWindow"):GetChecked())
 	-- /dui loot with the roll window off (its default): nothing
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("loot")
@@ -468,7 +437,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 		lock.Hint:GetText(),
 		L["Drag the highlighted frames to move them. Right-drag the minimap to resize it."]
 	)
-	_G.DiabolicUIOptionsPanel.refresh()
+	_G.DiabolicUIOptionsPanelPositions.refresh()
 	lu.assertEquals(unlock:GetText(), L["Lock Frames"])
 	client:Click(lock)
 	lu.assertFalse(menu:AreFramesUnlocked())
@@ -638,7 +607,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 
 	-- a specialization label's description on hover
 	local label
-	for _, child in ipairs({ _G.DiabolicUIOptionsPanelSpecs:GetChildren() }) do
+	for _, child in ipairs({ specsCards()[1]:GetChildren() }) do
 		if child:GetScript("OnEnter") and child:GetObjectType() == "Frame" and not child.initialize then
 			label = child
 			break
@@ -721,7 +690,7 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 	lu.assertAlmostEquals(frame:GetScale(), before * 0.8, 1e-6)
 	-- the page shows the saved value, /dui setscale included
 	_G.SlashCmdList.DIABOLICUISLASHHANDLER("setscale 1.2")
-	_G.DiabolicUIOptionsPanel.refresh()
+	_G.DiabolicUIOptionsPanelPositions.refresh()
 	lu.assertEquals(widget("UIScale"):GetValue(), 120)
 	-- in combat, it waits for its end
 	client:EnterCombat()
@@ -897,15 +866,15 @@ function TestOptionsMenu:test_every_page_fits_in_the_window()
 	assertClean(client)
 end
 
-function TestOptionsMenu:test_cancel_on_the_action_bars_and_units_pages()
+function TestOptionsMenu:test_cancel_on_the_main_page()
 	local bars = db("ActionBars", "character")
 	bars.showGold = true
 	widget("ShowGold"):SetChecked(false)
-	_G.DiabolicUIOptionsPanelActionBars.cancel()
+	_G.DiabolicUIOptionsPanel.cancel()
 	lu.assertEquals(widget("ShowGold"):GetChecked(), 1)
 	local units = db("UnitFrames")
 	units.showPortrait = true
-	_G.DiabolicUIOptionsPanelUnits.refresh()
+	_G.DiabolicUIOptionsPanel.refresh()
 	lu.assertEquals(widget("ShowPortrait"):GetChecked(), 1)
 	assertClean(client)
 end

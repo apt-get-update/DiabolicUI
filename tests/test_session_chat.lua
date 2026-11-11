@@ -372,6 +372,29 @@ function TestChatCleaner:test_the_filters_are_in_place_after_login()
 	assertClean(client)
 end
 
+-- Coins -------------------------------------------------------------------------------------
+
+TestChatCoins = {}
+
+function TestChatCoins:tearDown()
+	client = nil
+end
+
+function TestChatCoins:test_blizzard_coins_become_ours()
+	boot()
+	local frame = _G.ChatFrame1
+	-- Postal's "Collected" line: GOLD_AMOUNT_TEXTURE and the others
+	local icon = "%d|TInterface\\MoneyFrame\\UI-%sIcon:0:0:2:0|t"
+	frame:AddMessage("Postal: Collected " .. icon:format(3, "Gold") .. " " .. icon:format(5, "Copper"))
+	local last = client.widgetState[frame].messages[#client.widgetState[frame].messages].text
+	lu.assertEquals(last, "Postal: Collected " .. client.Engine.CoinString(30005))
+	lu.assertNotStrContains(last, "MoneyFrame")
+	-- the coins of 0 left out, nothing for none
+	lu.assertEquals(select(2, client.Engine.CoinString(10025):gsub("|T", "")), 2)
+	lu.assertStrContains(client.Engine.CoinString(0), "0|T")
+	assertClean(client)
+end
+
 -- Copying web links -----------------------------------------------------------------------
 
 TestCopyLinks = {}

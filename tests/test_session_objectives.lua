@@ -619,7 +619,12 @@ function TestGains:test_gold_and_experience_add_up_on_their_lines()
 	client.world.money = client.world.money + 50
 	client:FireEvent("PLAYER_MONEY")
 	lu.assertEquals(#module.active, 1)
-	lu.assertStrContains(module.active[1].Text:GetText(), _G.GetCoinTextureString(200))
+	-- in our coins: 2 silver, no copper
+	local coin = client.Engine:GetDB("UI").coin
+	local text = module.active[1].Text:GetText()
+	lu.assertStrContains(text, "+2|T" .. coin.silver_texture .. ":16:16:2:0:64:64:32:64:0:32|t")
+	lu.assertNotStrContains(text, coin.gold_texture .. ":16:16:2:0:64:64:0:32:0:32")
+	lu.assertEquals(select(2, text:gsub("|T", "")), 1)
 
 	-- spending, or a new level: nothing
 	client.world.money = client.world.money - 500

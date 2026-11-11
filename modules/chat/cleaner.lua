@@ -1,6 +1,6 @@
 -- Chat cleaner: Blizzard's long system lines (loot, money, experience,
 -- reputation, quests, ...) rewritten as short colored ones, "+ [Item] (3)"
--- or "+ 75 Reputation: Argent Crusade", each group behind its own option.
+-- or "+ 75 Reputation: Argent Crusade", all behind one option.
 -- In the spirit of Goldpaw's ChatCleaner (backported in CleanerChat), so
 -- it stays off when either is loaded.
 --
@@ -133,13 +133,12 @@ local Status = function(label, message, default)
 	return string_format(STATUS_ON, label)
 end
 
--- Each group: its option, and per chat event the rules tried in turn (the
+-- Each group: per chat event the rules tried in turn (the
 -- one with a count before the one without: "%sx%d." also reads as "%s.").
 -- A rule: the global string it reads, and what the line becomes (nil
 -- leaves it as it is).
 local GROUPS = {
 	{
-		setting = "cleanLoot",
 		events = {
 			CHAT_MSG_LOOT = {
 				{ "LOOT_ITEM_SELF_MULTIPLE", Items },
@@ -179,7 +178,6 @@ local GROUPS = {
 		},
 	},
 	{
-		setting = "cleanProgress",
 		events = {
 			CHAT_MSG_COMBAT_XP_GAIN = {
 				{
@@ -281,7 +279,6 @@ local GROUPS = {
 		},
 	},
 	{
-		setting = "cleanQuests",
 		events = {
 			CHAT_MSG_SYSTEM = {
 				{
@@ -300,7 +297,6 @@ local GROUPS = {
 		},
 	},
 	{
-		setting = "cleanStatus",
 		events = {
 			CHAT_MSG_SYSTEM = {
 				{
@@ -355,7 +351,6 @@ local GROUPS = {
 		},
 	},
 	{
-		setting = "cleanOnline",
 		events = {
 			CHAT_MSG_SYSTEM = {
 				{ "ERR_FRIEND_ONLINE_SS", Gained },
@@ -369,7 +364,6 @@ local GROUPS = {
 		},
 	},
 	{
-		setting = "cleanAuctions",
 		events = {
 			CHAT_MSG_SYSTEM = {
 				{ "ERR_AUCTION_STARTED", Gained },
@@ -383,7 +377,6 @@ local GROUPS = {
 		},
 	},
 	{
-		setting = "cleanAchievements",
 		events = {
 			-- "%s has earned the achievement [Name]!": the %s is left in, Blizzard
 			-- puts the player's name there afterwards
@@ -429,18 +422,18 @@ local PLAYER_CHAT = {
 
 -- Filters -------------------------------------------------------------------
 
--- event -> the rules for it, each with its group's setting
+-- event -> the rules for it
 local rulesByEvent = {}
 
 local CleanLine = function(frame, event, msg, ...)
-	local db = Module.db
+	if not Module.db.shortMessages then
+		return false
+	end
 	for _, rule in ipairs(rulesByEvent[event]) do
-		if db[rule.setting] then
-			local args = Match(rule, msg)
-			local cleaned = args and rule.clean(args, msg) -- (nil: not for this rule after all)
-			if cleaned then
-				return false, cleaned, ...
-			end
+		local args = Match(rule, msg)
+		local cleaned = args and rule.clean(args, msg) -- (nil: not for this rule after all)
+		if cleaned then
+			return false, cleaned, ...
 		end
 	end
 	return false
@@ -490,7 +483,7 @@ Module.OnInit = function(self)
 			for _, rule in ipairs(rules) do
 				local pattern, order = ToPattern(_G[rule[1]], rule.open)
 				local list = rulesByEvent[event]
-				list[#list + 1] = { setting = group.setting, pattern = pattern, order = order, clean = rule[2] }
+				list[#list + 1] = { pattern = pattern, order = order, clean = rule[2] }
 			end
 		end
 	end

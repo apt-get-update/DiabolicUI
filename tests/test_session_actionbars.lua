@@ -72,7 +72,13 @@ function TestMenus:test_the_main_menu_opens_its_windows()
 	local menu = widget("Menu: Main")
 	local master, micro = menu.MasterMenuButton, menu.MicroMenuWindow
 	client:Hover(master)
-	lu.assertEquals(tooltip()[1], client.Engine:GetLocale()["Main Menu"])
+	local L = client.Engine:GetLocale()
+	lu.assertEquals(tooltip()[1], L["Main Menu"])
+	lu.assertNil(tooltip()[3]) -- no framerate key bound: no hint
+	client:Leave()
+	client.world.bindings.TOGGLEFPS = { "CTRL-R" }
+	client:Hover(master)
+	lu.assertEquals(tooltip()[3], L["<%s> to show FPS & latency."]:format("CTRL-R"))
 	client:Click(master)
 	lu.assertTrue(shown(menu.MasterMenuWindow))
 	lu.assertEquals(master:GetButtonState(), "PUSHED")

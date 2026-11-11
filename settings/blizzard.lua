@@ -1397,13 +1397,15 @@ Engine:NewStaticConfig("Blizzard", {
 		-- own live LootFrame - so every size/position below is something we
 		-- fully own and control, not a guess about somebody else's layout.
 		position = { "CENTER", 200, 0 }, -- relative to UIParent itself (plain SetPoint, not Engine's "UICenter" keyword - see CreateWindow for why)
-		width = 260, -- minimum/default content width, grows for longer item names
-		top_padding = 44, -- room left for the title before the first row
-		bottom_padding = 12,
-		row_padding = 15, -- gap kept from the window's own left/right border to each row
+		width = 200, -- minimum window width, grows for longer item names
+		max_width = 360, -- up to this; longer names wrap on two lines
+		top_padding = 8, -- no title: tight around the rows
+		close_offset = { -7, -7 }, -- the X, from the top right
+		bottom_padding = 8,
+		row_padding = 8, -- from the window's sides to each row
 
-		-- Same window skin as GameTooltip's own border, so it reads as the
-		-- same "Diablo tooltip" family as the rest of the UI.
+		-- a light popup (as the tooltips' border), not the windows' iron
+		-- frame: their title plate and close socket are made for big windows
 		backdrop = {
 			bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 			edgeFile = path .. [[textures\DiabolicUI_Tooltip_Small.tga]],
@@ -1419,9 +1421,6 @@ Engine:NewStaticConfig("Blizzard", {
 		},
 		backdrop_color = { 0, 0, 0, 0.95 },
 		backdrop_border_color = { 1, 1, 1, 1 },
-		title_font = DiabolicFont_HeaderRegular18Title,
-		title_offset = { 0, -16 }, -- relative to the window's own TOP
-		close_button_offset = { -8, -8 }, -- the windows' close button (windows.lua), in the window's top right corner, clear of the centered title
 
 		icon = {
 			-- crops the outer bleed baked into most item icon textures
@@ -1438,38 +1437,42 @@ Engine:NewStaticConfig("Blizzard", {
 		row = {
 			gap = 5, -- vertical space kept between one row and the next
 			text_font = DiabolicFont_SansBold12,
-			text_offset = 10, -- gap kept between the icon and the item name text
-			text_padding = 10, -- room left after the text before the row's own right edge
-			-- the wide ornate button background used for the gamemenu's own
-			-- big buttons. Its visible art (size) only fills part of its own
-			-- texture canvas (texture_size, with transparent padding around
-			-- it), so matching a row's actual size means scaling the whole
-			-- canvas up by that same ratio - sizing it to just the row's
-			-- pixel dimensions would render the visible art far smaller.
-			size = { 300, 51 }, -- the visible button art's own design size
-			texture_size = { 512, 128 }, -- the full canvas it sits within
-			texture = {
-				normal = path .. [[textures\DiabolicUI_UIButton_300x51_Normal.tga]],
-				highlight = path .. [[textures\DiabolicUI_UIButton_300x51_Highlight.tga]],
-				pushed = path .. [[textures\DiabolicUI_UIButton_300x51_Pushed.tga]],
-			},
+			text_offset = 10, -- between the icon and the name
+			text_padding = 10, -- room left after the name
+			highlight_color = { 1, 0.82, 0, 0.15 }, -- under the mouse (the loot preview's)
 		},
 	},
 	-- the master looter's rolls (modules/blizzard/rollwindow.lua), in the
 	-- loot window's look: its backdrop, title and icon border
 	rolls = {
 		position = { "TOP", 0, -160 }, -- relative to UIParent, as the loot window's
-		width = 44 + 8 + 3 * 110 + 2 * 8, -- the icon, then the three buttons
+		width = 360, -- at least: the icon, the name, the three buttons
+		max_width = 600, -- grows up to this for a long name
+		-- in the loot window's light popup frame, no title: the rows from the top
 		side_padding = 15,
-		top_padding = 44, -- room for the title
+		top_padding = 14,
 		bottom_padding = 14,
-		row_height = 14 + 4 + 8 + 6 + 22, -- the name, the bar, the buttons
+		row_height = 56, -- the icon's; the name and the bar beside it
+		-- the item, bigger than the loot window's, in its quality's color: the
+		-- icon's border, a glow behind it and the window's border (from
+		-- uncommon up, the best item's)
+		icon_size = 56,
+		border_size = { 64 * 56 / 44, 64 * 56 / 44 }, -- the loot window's border, scaled
+		border_offset = { -10 * 56 / 44, 10 * 56 / 44 },
+		glow_texture = [[Interface\Buttons\UI-ActionButton-Border]],
+		glow_size = 56 * 1.9, -- (its glow's about half of its canvas)
+		glow_alpha = 0.8,
+		min_quality = 2, -- uncommon
+		-- a new item lands: it fades in, its icon from bigger
+		appear_time = 0.35,
+		appear_scale = 1.5,
 		row_gap = 10,
 		gap = 8,
 		seconds = 15, -- when the message doesn't say
 		main_spec = 100, -- /roll 100
 		off_spec = 99, -- /roll 99
-		name_font = DiabolicFont_SansBold12,
+		name_font = DiabolicFont_HeaderRegular14,
+		name_height = 16,
 		time_font = DiabolicFont_SansBold10,
 		result_font = DiabolicFont_HeaderRegular12,
 		bis_font = DiabolicFont_SansRegular10, -- BiS-Tooltip's ranks, under the buttons
@@ -1480,30 +1483,38 @@ Engine:NewStaticConfig("Blizzard", {
 			color = { 1, 0.82, 0 },
 			texture = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]],
 		},
-		-- the loot window's row buttons, scaled as a whole to this width
+		-- the rolls as icon buttons right of the name, Blizzard's group loot
+		-- dice (main spec) and coin (off spec), and the windows' X to pass
 		button = {
-			size = { 110, 22 },
-			art_size = { 300, 51 },
-			texture_size = { 512, 128 },
-			font = DiabolicFont_HeaderRegular12,
-			texture = {
-				normal = path .. [[textures\DiabolicUI_UIButton_300x51_Normal.tga]],
-				highlight = path .. [[textures\DiabolicUI_UIButton_300x51_Highlight.tga]],
-				pushed = path .. [[textures\DiabolicUI_UIButton_300x51_Pushed.tga]],
+			size = 28,
+			gap = 4,
+			main_spec = {
+				normal = [[Interface\Buttons\UI-GroupLoot-Dice-Up]],
+				highlight = [[Interface\Buttons\UI-GroupLoot-Dice-Highlight]],
+				pushed = [[Interface\Buttons\UI-GroupLoot-Dice-Down]],
+			},
+			off_spec = {
+				normal = [[Interface\Buttons\UI-GroupLoot-Coin-Up]],
+				highlight = [[Interface\Buttons\UI-GroupLoot-Coin-Highlight]],
+				pushed = [[Interface\Buttons\UI-GroupLoot-Coin-Down]],
 			},
 		},
 	},
 	-- the boss's loot coming up, posted by the master looter (lootpreview.lua)
 	preview = {
 		position = { "RIGHT", -110, 60 }, -- relative to UIParent, left of the side bars
-		width = 220,
-		side_padding = 12,
-		top_padding = 40, -- room for the title
-		bottom_padding = 12,
+		width = 220, -- at least; grows leftwards to the longest name
+		max_width = 360, -- up to this (longer names cut short)
+		-- in the loot window's light popup frame: the boss's name on top
+		side_padding = 15,
+		top_padding = 32,
+		bottom_padding = 14,
+		title_font = DiabolicFont_HeaderRegular12,
+		title_offset = { 15, -12 }, -- the boss's name, from the top left
+		close_offset = { -7, -7 }, -- the X, at that line's right
 		row_height = 22,
 		icon_size = 20,
 		gap = 6,
-		title_font = DiabolicFont_HeaderRegular12,
 		name_font = DiabolicFont_SansBold12,
 		waiting_alpha = 0.6, -- the items not rolled yet, dimmer than the one being rolled
 		rolling_color = { 1, 0.82, 0, 0.15 }, -- behind the one being rolled

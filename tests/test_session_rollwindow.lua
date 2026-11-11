@@ -52,10 +52,19 @@ function TestRollWindow:test_the_master_looters_roll_and_yours()
 	lu.assertEquals(#rows(), 1)
 	local row = rows()[1]
 	lu.assertEquals(_G.DiabolicRollFrame:IsShown(), 1)
+	lu.assertNotNil(_G.DiabolicRollFrame:GetBackdrop()) -- the loot window's light popup
 	lu.assertEquals(row.Icon:GetTexture(), "Interface\\Icons\\Sword")
 	lu.assertEquals(row.Name:GetText(), sword)
 	client:Tick(5)
 	lu.assertEquals(row.Time:GetText(), "15")
+
+	-- the buttons are icons, named in their tooltips
+	client:RunScript(row.MainSpec, "OnEnter")
+	lu.assertEquals(Session.tooltipLines(_G.GameTooltip), { "Main Spec", "/roll 100" })
+	client:RunScript(row.Pass, "OnEnter")
+	lu.assertEquals(Session.tooltipLines(_G.GameTooltip), { "Pass" })
+	client:RunScript(row.Pass, "OnLeave")
+	lu.assertNil(_G.GameTooltip:IsShown())
 
 	-- off spec
 	row.OffSpec:Click()

@@ -2,7 +2,7 @@
 -- returns an object that behaves like a StatusBar (SetValue, SetMinMaxValues,
 -- SetStatusBarColor, ...) but fills a circle from the bottom, with smoothing,
 -- rotating layers and a spark riding the fluid surface. SetIncoming(amount)
--- shows the heals on their way as a paler band above the fluid.
+-- shows the heals on their way as a see-through band above the fluid.
 local _, Engine = ...
 local Handler = Engine:NewHandler("Orb")
 
@@ -50,8 +50,8 @@ local CreatePulse = function(texture)
 	texture.pulseOut:SetOrder(2)
 end
 
-local INCOMING_LIGHTER = 0.3 -- the band: the fluid's color, this much towards white
-local INCOMING_ALPHA = 0.6 -- and this see-through
+local INCOMING_ALPHA = 0.35 -- the band: the fluid's color, this see-through
+local INCOMING_MIN_HEIGHT = 3 -- thinner, it's left out (a flickering line)
 
 -- The incoming heals: a band from the fluid's surface to where they'll take
 -- it (never past the top), cut from the fluid's texture like the fluid is.
@@ -64,6 +64,10 @@ local UpdateIncoming = function(self, value, min, max, width, height)
 	end
 	local from = (value - min) / (max - min) * height
 	local to = (value + amount - min) / (max - min) * height
+	if to - from < INCOMING_MIN_HEIGHT then
+		incoming:Hide()
+		return
+	end
 	local leftCrop, rightCrop = self.leftCrop, self.rightCrop
 	incoming.child:SetSize(width, height)
 	incoming:SetSize(width - leftCrop - rightCrop, math_max(to - from, 0.0001))
@@ -231,7 +235,23 @@ end
 -- then drains away. It's made like the fluid, a level under it; nothing runs
 -- while there's nothing to show.
 local cutawayHold = 0.4 -- seconds it stays before it drains (a new loss starts this over)
-local cutawayDrain = 0.35 -- share of the orb it drains per second
+local cutawayDrain = 0.6 -- share of the orb it drains per second
+local CUTAWAY_LIGHTER = 0.5 -- the fluid's color, this much towards white
+local CUTAWAY_ALPHA = 0.5 -- and this see-through
+
+-- The health just lost in the fluid's color (a class color too), paler and
+-- see-through: a ghost of the fluid, not a slab of its own.
+local TintCutaway = function(self)
+	local cutaway, bar = self.cutaway, self.scaffold.colors.bar
+	if cutaway and bar[1] then
+		cutaway.texture:SetVertexColor(
+			bar[1] + (1 - bar[1]) * CUTAWAY_LIGHTER,
+			bar[2] + (1 - bar[2]) * CUTAWAY_LIGHTER,
+			bar[3] + (1 - bar[3]) * CUTAWAY_LIGHTER,
+			(bar[4] or 1) * CUTAWAY_ALPHA
+		)
+	end
+end
 
 local PlaceCutaway = function(self)
 	local cutaway = self.cutaway
@@ -280,7 +300,7 @@ local UpdateCutaway = function(self, previous)
 end
 
 -- Call once, after the orb has its size.
-Orb.EnableCutaway = function(self, path, r, g, b, a)
+Orb.EnableCutaway = function(self, path)
 	local scaffold = self.scaffold
 	local width, height = scaffold:GetSize()
 
@@ -300,9 +320,10 @@ Orb.EnableCutaway = function(self, path, r, g, b, a)
 	local texture = child:CreateTexture(nil, "BACKGROUND")
 	texture:SetAllPoints()
 	texture:SetTexture(path)
-	texture:SetVertexColor(r, g, b, a)
+	cutaway.texture = texture
 
 	self.cutaway = cutaway
+	TintCutaway(self)
 end
 
 -- The heals on their way, in health: shown above the fluid.
@@ -416,15 +437,11 @@ Orb.SetStatusBarColor = function(self, r, g, b, ...)
 		scaffold[id]:SetVertexColor(r, g, b, a)
 	end
 
-	-- the incoming heals: a lighter, see-through fluid
+	-- the incoming heals: the fluid, see-through
 	if (id == "bar") or (id == "ALL") then
 		local bar = colors.bar
-		self.incoming.texture:SetVertexColor(
-			bar[1] + (1 - bar[1]) * INCOMING_LIGHTER,
-			bar[2] + (1 - bar[2]) * INCOMING_LIGHTER,
-			bar[3] + (1 - bar[3]) * INCOMING_LIGHTER,
-			(bar[4] or 1) * INCOMING_ALPHA
-		)
+		self.incoming.texture:SetVertexColor(bar[1], bar[2], bar[3], (bar[4] or 1) * INCOMING_ALPHA)
+		TintCutaway(self)
 	end
 
 	-- Changed the base color for the spark from "bar" to "smoke",
@@ -700,10 +717,12 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	spark:SetPoint("CENTER", scrollframe, "TOP", 0, -1)
 	spark:SetSize(1, 1)
 	spark._height = 1
+	-- steady, half lit (a pulse on the fluid's top read as a blinking line;
+	-- SetSparkFlash makes it pulse)
 	spark.durationIn = 0.75
 	spark.durationOut = 0.55
-	spark.minAlpha = 0.35
-	spark.maxAlpha = 0.85
+	spark.minAlpha = 0.5
+	spark.maxAlpha = 0.5
 
 	local glow = overlay:CreateTexture(nil, "ARTWORK")
 	glow:SetPoint("CENTER", scrollframe, "TOP", 0, -1)

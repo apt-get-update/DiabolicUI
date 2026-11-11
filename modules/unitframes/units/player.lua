@@ -254,7 +254,7 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 	Health:SetSparkSize(unpack(configHealthSpark.size))
 	Health:SetSparkFlashSize(unpack(configHealthSpark.flash_size))
 	Health:SetSparkFlashTexture(configHealthSpark.flash_texture)
-	Health:EnableCutaway(configHealthLayers.gradient.texture, unpack(configHealth.cutaway_color))
+	Health:EnableCutaway(configHealthLayers.gradient.texture)
 
 	Health.useClassColor = db.showClassColors
 	Health.frequent = 1 / 30
@@ -301,8 +301,6 @@ local StyleLeftOrb = function(self, unit, index, numBars, inVehicle)
 		CastBar.SafeZone:SetTexture(0.7, 0, 0, 0.25)
 		CastBar.SafeZone:SetWidth(0.0001)
 		CastBar.SafeZone:Hide()
-
-		CastBar.Ticks = {} -- the channels' ticks are marked on this bar
 
 		CastBar.Name = CastBar:CreateFontString(nil, "OVERLAY")
 		CastBar.Name:SetFontObject(config.castbar.name.font_object)

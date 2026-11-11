@@ -15,7 +15,7 @@ weight: 8
 | `chat/` | `windows`, `bubbles`, `filters`, `cleaner`, `slide`, `copy` | Web links use our own `url` link type, so `filters.lua` overrides `SetItemRef`
 | `objectives/` | Tracker, capture bars, world state, warnings, `banners` (boss and zone cards), `gains` (gold, XP and loot lines) | The tracker only changes alpha: its item buttons are secure
 | `minimap/` | An Ace3 addon kept as it is | Its own namespace and `+DiabolicUI_Minimap_DB+`: don't merge it into `+DiabolicUI_DB+`
-| `menu/` | `/dui config`: one `page-*.lua` per page, `controls.lua`, `movers.lua` |
+| `menu/` | `/dui config`: `page-main` (the toggles), `page-positions` (UI scale, tooltip and minimap anchors), `page-specs` (what each specialization sets up); `controls.lua` (cards, sliders, choice buttons, anchor picker), `movers.lua` | The minimap's own options page is gone: its anchor and size are on Positions
 |===
 
 == The windows (`blizzard/`)
@@ -33,4 +33,5 @@ weight: 8
 
 The kit's calls, on `Engine:GetModule("Blizzard: Windows")`: `CreateWindow`, `CreateHeader`, `SetTitle`,
 `AddFooter`, `HangTabs`, `StyleButtons`, `StyleDropDown`, `StyleEditBox`, `StyleCheckBox`,
-`StyleScrollBars`, `AddPanel`, `AddZone`, `AddParchment`, `LineBand`.
+`StyleScrollBars`, `AddPanel`, `AddZone`, `AddParchment`, `LineBand`, and `SkinClose` (the X alone,
+for a popup of our own).

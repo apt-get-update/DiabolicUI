@@ -9,6 +9,7 @@ local floor = math.floor
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
+local GetBindingKey = _G.GetBindingKey
 local GetFramerate = _G.GetFramerate
 local GetGuildRosterInfo = _G.GetGuildRosterInfo
 local GetNetStats = _G.GetNetStats
@@ -685,6 +686,11 @@ MenuWidget.AddTooltips = function(self, menu)
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:AddLine(L["Main Menu"])
 		GameTooltip:AddLine(L["<Left-click> to toggle menu."], 0, 0.7, 0)
+		-- the framerate key (Ctrl-R) toggles our fps and latency (TogglePerformance)
+		local key = GetBindingKey("TOGGLEFPS")
+		if key then
+			GameTooltip:AddLine(L["<%s> to show FPS & latency."]:format(key), 0, 0.7, 0)
+		end
 		GameTooltip:Show()
 	end
 	MasterMenuButton:SetScript("OnEnter", MasterMenuButton.OnEnter)
@@ -1168,8 +1174,9 @@ MenuWidget.UpdatePerformanceVisibility = function(self)
 	self:UpdatePerformanceAnchor()
 end
 
--- Same setting as the "Show FPS & Latency" option. Blizzard's framerate
--- text stays hidden, so its toggle always takes the "show" branch.
+-- The framerate key (Ctrl-R) shows or hides ours, saved ("showPerformance").
+-- Blizzard's framerate text stays hidden, so its toggle always takes the
+-- "show" branch.
 MenuWidget.TogglePerformance = function(self)
 	for _, name in ipairs({ "FramerateLabel", "FramerateText", "MapFramerateLabel", "MapFramerateText" }) do
 		_G[name]:Hide()

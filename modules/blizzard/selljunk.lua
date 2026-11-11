@@ -10,7 +10,6 @@ local select = select
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
-local GetCoinTextureString = _G.GetCoinTextureString
 local GetContainerItemInfo = _G.GetContainerItemInfo
 local GetContainerNumSlots = _G.GetContainerNumSlots
 local GetItemInfo = _G.GetItemInfo
@@ -64,7 +63,7 @@ Module.SellJunk = function(self)
 	ForEachJunk(function(bag, slot)
 		UseContainerItem(bag, slot)
 	end)
-	_G.DEFAULT_CHAT_FRAME:AddMessage(L["Sold %d junk items for %s."]:format(items, GetCoinTextureString(money)))
+	_G.DEFAULT_CHAT_FRAME:AddMessage(L["Sold %d junk items for %s."]:format(items, Engine.CoinString(money)))
 end
 
 -- Greyed out when there's nothing to sell.
@@ -83,7 +82,7 @@ Module.ShowTooltip = function(self, button)
 	tooltip:SetOwner(button, "ANCHOR_RIGHT")
 	tooltip:SetText(L["Sell Junk"])
 	if items > 0 then
-		tooltip:AddLine(L["%d grey items, for %s."]:format(items, GetCoinTextureString(money)), 1, 1, 1)
+		tooltip:AddLine(L["%d grey items, for %s."]:format(items, Engine.CoinString(money)), 1, 1, 1)
 	else
 		tooltip:AddLine(L["No grey items in your bags."], 1, 1, 1)
 	end

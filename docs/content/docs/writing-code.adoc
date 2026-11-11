@@ -37,7 +37,9 @@ flowchart TD
 | Element | What a unit frame shows | `Handler:RegisterElement(...)` | `Handler:GetElement(name)`
 |===
 
-A helper several modules use goes on `Engine`, in `engine/wotlk-helpers.lua`.
+A helper several modules use goes on `Engine`, in `engine/wotlk-helpers.lua`. Money, for one:
+`Engine.CoinString(copper)` writes it with our coins, `Engine.OurCoins(text)` swaps Blizzard's coin
+icons in a text for ours.
 
 == A module
 

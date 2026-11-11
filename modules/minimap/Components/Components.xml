@@ -1,4 +1,3 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Include file="Misc\Misc.xml"/>
-	<Include file="Menu\Menu.xml"/>
 </Ui>

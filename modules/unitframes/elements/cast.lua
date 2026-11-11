@@ -8,42 +8,16 @@ local Handler = Engine:GetHandler("UnitFrame")
 -- Lua API
 local _G = _G
 local math_floor = math.floor
-local pairs = pairs
 local select = select
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
 local GetNetStats = _G.GetNetStats
-local GetSpellInfo = _G.GetSpellInfo
 local GetTime = _G.GetTime
 local UnitCastingInfo = _G.UnitCastingInfo
 local UnitChannelInfo = _G.UnitChannelInfo
 local UnitExists = _G.UnitExists
 local UnitIsUnit = _G.UnitIsUnit
-
--- How many times a channel ticks, by a spell ID of it (any rank has its name).
-local CHANNEL_TICKS = {
-	[1120] = 5, -- Drain Soul
-	[689] = 5, -- Drain Life
-	[5138] = 5, -- Drain Mana
-	[5740] = 4, -- Rain of Fire
-	[755] = 10, -- Health Funnel
-	[1949] = 15, -- Hellfire
-	[740] = 4, -- Tranquility
-	[16914] = 10, -- Hurricane
-	[15407] = 3, -- Mind Flay
-	[48045] = 5, -- Mind Sear
-	[47540] = 2, -- Penance (its first bolt leaves at the start)
-	[64843] = 4, -- Divine Hymn
-	[64901] = 4, -- Hymn of Hope
-	[5143] = 5, -- Arcane Missiles
-	[10] = 8, -- Blizzard
-	[12051] = 4, -- Evocation
-	[1510] = 6, -- Volley
-	[42650] = 8, -- Army of the Dead
-}
-
-local TICK_WIDTH = 2
 
 local CastData = {}
 local CastBarPool = {}
@@ -135,53 +109,6 @@ local UpdateSafeZone = function(CastBar, unit, castdata)
 	end
 	SafeZone:SetWidth(CastBar:GetWidth() * share)
 	SafeZone:Show()
-end
-
--- The same table by spell name, built when the first channel asks.
-local ticksByName
-local GetChannelTicks = function(name)
-	if not ticksByName then
-		ticksByName = {}
-		for spellID, ticks in pairs(CHANNEL_TICKS) do
-			local spellName = GetSpellInfo(spellID)
-			if spellName then
-				ticksByName[spellName] = ticks
-			end
-		end
-	end
-	return ticksByName[name]
-end
-
--- Marks the ticks still to come on a bar with .Ticks (the player's). A
--- channel's bar empties towards its left, so they're counted from the right;
--- by the interval rather than as equal parts, because pushback cuts the
--- channel's end off and leaves the ticks before it where they were.
-local PlaceTicks = function(CastBar, castdata)
-	local Ticks = CastBar.Ticks
-	if not Ticks then
-		return
-	end
-	local interval, shown = castdata.tickInterval, 0
-	if interval then
-		local width, height = CastBar:GetWidth(), CastBar:GetHeight()
-		local time = interval
-		while time < castdata.max - 1e-3 do
-			shown = shown + 1
-			local tick = Ticks[shown]
-			if not tick then
-				tick = CastBar:CreateTexture(nil, "OVERLAY")
-				tick:SetTexture(0, 0, 0, 0.7)
-				Ticks[shown] = tick
-			end
-			tick:SetSize(TICK_WIDTH, height)
-			tick:SetPoint("RIGHT", -(width * time / castdata.max), 0)
-			tick:Show()
-			time = time + interval
-		end
-	end
-	for i = shown + 1, #Ticks do
-		Ticks[i]:Hide()
-	end
 end
 
 -- The bar moves every frame; its time text (tenths of a second at most)
@@ -290,8 +217,6 @@ Update = function(self, event, ...)
 		castdata.casting = true
 		castdata.channeling = nil
 		castdata.tradeskill = isTradeSkill
-		castdata.tickInterval = nil
-		PlaceTicks(CastBar, castdata)
 
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(castdata.duration)
@@ -350,10 +275,6 @@ Update = function(self, event, ...)
 		castdata.castID = nil
 		castdata.tradeskill = nil
 
-		local ticks = CastBar.Ticks and (unit == "player") and GetChannelTicks(name)
-		castdata.tickInterval = ticks and (castdata.max / ticks) or nil
-		PlaceTicks(CastBar, castdata)
-
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(castdata.duration)
 
@@ -377,7 +298,6 @@ Update = function(self, event, ...)
 		castdata.sinceText = nil
 		castdata.duration = duration
 		castdata.max = (endTime - startTime) / 1000
-		PlaceTicks(CastBar, castdata)
 		CastBar:SetMinMaxValues(0, castdata.max)
 		CastBar:SetValue(duration)
 	elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then

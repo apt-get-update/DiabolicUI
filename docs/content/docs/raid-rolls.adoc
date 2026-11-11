@@ -5,14 +5,14 @@ weight: 9
 
 = Raid Rolls
 
-Two windows, off unless `rollWindow` is on (`/dui config` → AddOns). They read the master looter's
+Two windows, off unless `rollWindow` is on (`/dui config`, Master Loot Rolls). They read the master looter's
 chat, whatever addon wrote it, so raiders need nothing else.
 
 |===
 | File | Shows
 
-| `rollwindow.lua` | The item up for a roll, its time left, Main Spec, Off Spec and Pass, then your roll
-| `lootpreview.lua` | The boss's loot still to roll, the item being rolled in gold
+| `rollwindow.lua` | The item up for a roll, its time left, then your roll. From uncommon up, the icon's border, a glow and the window's border take the quality's color. The buttons are Blizzard's dice (Main Spec, `/roll 100`), coin (Off Spec, `/roll 99`) and our X (Pass)
+| `lootpreview.lua` | The boss's loot still to roll, the item being rolled in gold. It grows to its longest name
 |===
 
 ++++
@@ -40,5 +40,8 @@ party chat from the master looter or an assistant.
 
 Anyone with DiabolicUI who opens a corpse under master loot also sends the items as addon messages
 (prefix `DiabolicUI`).
+
+Both are light popups in the loot window's look (`loot` in `settings/blizzard.lua`), no title
+plate or red band: those are for big windows.
 
 *To try it:* `/dui loot`. Tests: `tests/test_session_rollwindow.lua`.

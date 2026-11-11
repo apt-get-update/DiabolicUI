@@ -18,6 +18,7 @@ local _G = _G
 local ipairs = ipairs
 local table_insert = table.insert
 local table_remove = table.remove
+local math_abs = math.abs
 local math_ceil = math.ceil
 local math_floor = math.floor
 local math_max = math.max
@@ -269,6 +270,18 @@ local PlaceBorder = function(window)
 	border:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT")
 end
 
+-- The glyph only where the window holds all of it (a small one, the loot
+-- preview's, would have it hanging out below).
+local FitWatermark = function(window)
+	local spec, mark = config.watermark, window.DiabolicWatermark
+	local x, y = spec.position[2], spec.position[3]
+	if (window:GetWidth() >= spec.size + math_abs(x)) and (window:GetHeight() >= spec.size + math_abs(y)) then
+		mark:Show()
+	else
+		mark:Hide()
+	end
+end
+
 -- One pale glyph in `window`'s corner, a different one by its name.
 local AddWatermark = function(window)
 	local spec = config.watermark
@@ -284,6 +297,9 @@ local AddWatermark = function(window)
 	mark:SetPoint(unpack(spec.position))
 	mark:SetAlpha(spec.alpha)
 	window.DiabolicWatermark = mark
+	window:HookScript("OnSizeChanged", FitWatermark)
+	window:HookScript("OnShow", FitWatermark)
+	FitWatermark(window)
 end
 
 -- The window behind `frame`, from its corners by `insets` (left, top,

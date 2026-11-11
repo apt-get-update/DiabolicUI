@@ -18,20 +18,8 @@ Module.CreateOptionsPanel = function(self)
 	local panel = self:CreateMainPage()
 	InterfaceOptions_AddCategory(panel)
 
-	-- the pages, from the main frames to the extras (the minimap's goes
-	-- before Quests, modules/minimap/Components/Menu/Menu.lua)
-	for _, page in ipairs({
-		self:CreateActionBarsPage(),
-		self:CreateSpecsPage(),
-		self:CreateUnitsPage(),
-		self:CreateChatPage(),
-		self:CreateMessagesPage(),
-		self:CreateQuestsPage(),
-		self:CreateTooltipsPage(),
-		self:CreateAddOnsPage(),
-	}) do
-		InterfaceOptions_AddCategory(page)
-	end
+	InterfaceOptions_AddCategory(self:CreatePositionsPage())
+	InterfaceOptions_AddCategory(self:CreateSpecsPage())
 
 	self.OptionsPanel = panel
 

@@ -78,7 +78,7 @@ local Style = function(self, unit)
 	-------------------------------------------------------------------
 	-- Optional animated 3D model portrait, sitting on top of the health
 	-- bar. Off by default, and only created here at frame-creation time
-	-- (like Show Class Colors) since adding or removing it after the
+	-- (like Class-Colored Health) since adding or removing it after the
 	-- fact needs a UI reload anyway.
 	local Portrait, PortraitBorderNormal, PortraitBorderHighlight, PortraitGlow
 	if db.showPortrait then

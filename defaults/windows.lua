@@ -2,5 +2,5 @@
 local _, Engine = ...
 
 Engine:NewConfig("Windows", {
-	enableSkin = true, -- character, spellbook, quest log and the other windows (modules/blizzard/windows.lua and its skins); Blizzard's own otherwise
+	enableSkin = true, -- character, spellbook, quest log, loot and the other windows (modules/blizzard/windows.lua and its skins, lootframe.lua); Blizzard's own otherwise
 })

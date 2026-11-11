@@ -4,13 +4,8 @@
 <Script file='controls.lua'/>
 <Script file='movers.lua'/>
 <Script file='page-main.lua'/>
-<Script file='page-actionbars.lua'/>
+<Script file='page-positions.lua'/>
 <Script file='page-specs.lua'/>
-<Script file='page-units.lua'/>
-<Script file='page-chat.lua'/>
-<Script file='page-quests.lua'/>
-<Script file='page-tooltips.lua'/>
-<Script file='page-addons.lua'/>
 <Script file='conflicts.lua'/>
 
 </Ui>

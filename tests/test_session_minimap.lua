@@ -414,22 +414,26 @@ end
 
 -- The options page --------------------------------------------------------------
 
+-- the Positions page, in the open options window, with its minimap card's
+-- size slider and box and its anchor radios
 local function panel()
-	return ns:GetModule("Menu").panel
+	_G.InterfaceOptionsFrame:Show()
+	local page = _G.DiabolicUIOptionsPanelPositions
+	page.sizeSlider = _G.DiabolicUIOptionsPanelMinimapSize
+	page.sizeInput = _G.DiabolicUIOptionsPanelMinimapSizeInput
+	page.anchorRadios = {}
+	for _, point in ipairs({ "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" }) do
+		page.anchorRadios[point] = _G["DiabolicUIOptionsPanelMinimapAnchor" .. point]
+	end
+	return page
 end
 
-function TestMinimap:test_the_options_page_is_a_diabolicui_subcategory()
+function TestMinimap:test_its_options_are_on_the_positions_page()
 	local page = panel()
-	lu.assertEquals(page.parent, "DiabolicUI")
-	local found
-	for _, registered in ipairs(client.optionsPanels) do
-		if registered == page then
-			found = true
-		end
-	end
-	lu.assertTrue(found)
+	lu.assertIs(page, _G.DiabolicUIOptionsPanelPositions)
 	_G.Minimap:SetScale(1) -- (the fake client lays frames out without their scales)
 	page:Show()
+	page.refresh()
 	lu.assertEquals(page.sizeInput:GetText(), "100")
 	lu.assertEquals(page.anchorRadios.TOPRIGHT:GetChecked(), 1)
 	client:Tick(0.3) -- kept live while open
@@ -468,47 +472,13 @@ function TestMinimap:test_the_size_slider_and_its_box()
 	client:RunScript(page.sizeInput, "OnEscapePressed")
 	lu.assertEquals(module:GetUserScale(), 0.9)
 
-	-- the slider doesn't overwrite the box while it's being typed in
+	-- kept live, but not over the box while it's being typed in
 	page.sizeInput:SetFocus()
 	page.sizeInput:SetText("7")
-	page.sizeSlider:SetValue(100)
+	client:Tick(0.3)
 	lu.assertEquals(page.sizeInput:GetText(), "7")
-	page.sizeInput:ClearFocus()
-	assertClean(client)
-end
-
-function TestMinimap:test_the_zone_fade_options()
-	local page = panel()
-	page:Show()
-	local slider = page.zoneFadeDurationSlider
-	client:Click(page.zoneFadeCheckbox)
-	lu.assertFalse(ns.db.global.minimap.zoneFadeEnabled)
-	lu.assertNil(slider:IsEnabled())
-	lu.assertEquals(slider:GetAlpha(), 0.5)
-	client:Click(page.zoneFadeCheckbox)
-	lu.assertTrue(ns.db.global.minimap.zoneFadeEnabled)
-	lu.assertEquals(slider:IsEnabled(), 1)
-
-	slider:SetValue(500)
-	lu.assertEquals(ns.db.global.minimap.zoneFadeDuration, 0.5)
-	for _, case in ipairs({ { "300", 0.3 }, { "5000", 1 }, { "1", 0.05 } }) do
-		slider.input:SetFocus()
-		slider.input:SetText(case[1])
-		client:RunScript(slider.input, "OnEnterPressed")
-		lu.assertAlmostEquals(ns.db.global.minimap.zoneFadeDuration, case[2], 0.0001)
-	end
-	slider.input:SetFocus()
-	slider.input:SetText("x")
-	client:RunScript(slider.input, "OnEscapePressed")
-	slider.input:SetFocus()
-	slider.input:SetText("250")
-	slider.input:ClearFocus()
-	lu.assertAlmostEquals(ns.db.global.minimap.zoneFadeDuration, 0.25, 0.0001)
-	-- while typing, the slider leaves the box alone
-	slider.input:SetFocus()
-	slider:SetValue(800)
-	slider.Refresh()
-	slider.input:ClearFocus()
+	client:RunScript(page.sizeInput, "OnEscapePressed")
+	lu.assertEquals(page.sizeInput:GetText(), "90")
 	assertClean(client)
 end
 
@@ -535,10 +505,6 @@ function TestMinimap:test_the_overlay_waits_for_a_drag_and_the_panel_is_made_onc
 	client:RunScript(overlay(), "OnUpdate", 0.1)
 	lu.assertEquals({ _G.Minimap:GetPoint() }, point)
 	module:ExitEditMode()
-
-	local menu = ns:GetModule("Menu")
-	lu.assertIs(menu:CreatePanel(), menu:CreatePanel())
-	lu.assertNotNil(menu.panel)
 	assertClean(client)
 end
 

@@ -38,9 +38,7 @@ end
 
 -- The loot window --------------------------------------------------------------
 
-TestLootWindow = {}
-
-local SKIN = { DiabolicUI_DB = { LootFrame = { profiles = { global = { enableSkin = true } } } } }
+TestLootWindow = {} -- on with Diablo III Windows, so by default
 
 function TestLootWindow:tearDown()
 	client, C = nil, nil
@@ -51,8 +49,8 @@ local function openLoot(items)
 	client:FireEvent("LOOT_OPENED", 0)
 end
 
-function TestLootWindow:test_off_by_default()
-	boot()
+function TestLootWindow:test_off_with_reskin_windows_off()
+	boot({ savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } } })
 	lu.assertNil(_G.DiabolicLootFrame)
 	-- Blizzard's window still handles the loot
 	lu.assertEquals(_G.LootFrame:IsEventRegistered("LOOT_OPENED"), 1)
@@ -60,11 +58,11 @@ function TestLootWindow:test_off_by_default()
 end
 
 function TestLootWindow:test_shows_the_loot_in_rows()
-	boot({ savedVariables = SKIN })
+	boot()
 	local frame = _G.DiabolicLootFrame
 	openLoot({
 		{ name = "Linen Cloth", quantity = 3, quality = 1 },
-		{ name = "12 Copper", quantity = 0, isCoin = true },
+		{ name = "35 Silver\n74 Copper", quantity = 0, isCoin = true },
 		{ name = "Sword of the Very Long Name", quality = 4 },
 	})
 	lu.assertTrue(shown(frame))
@@ -75,6 +73,13 @@ function TestLootWindow:test_shows_the_loot_in_rows()
 	lu.assertEquals(rows[1].text:GetText(), "Linen Cloth")
 	lu.assertEquals(_G.DiabolicLootButton1Count:GetText(), "3")
 	near(color(rows[2].text:GetTextColor()), C.General.Title, "coins")
+	-- the money in our coins, on one line; the count on the icon's corner
+	lu.assertEquals(rows[2].text:GetText(), client.Engine.CoinString(3574))
+	lu.assertEquals({ _G.DiabolicLootButton1Count:GetPoint() }, { "BOTTOMRIGHT", rows[1].icon, "BOTTOMRIGHT", -4, 4 })
+	-- names on one line where they fit: as wide as the row has room for
+	local config = module.config
+	local textLeft = config.icon.icon_padding + config.icon.size + config.row.text_offset
+	lu.assertEquals(rows[1].text:GetWidth(), rows[1]:GetWidth() - textLeft - config.row.text_padding)
 	near(color(rows[3].text:GetTextColor()), color(_G.GetItemQualityColor(4)), "epic")
 	-- stacked, all as wide as the longest name needs
 	lu.assertEquals({ rows[2]:GetPoint() }, { "TOPLEFT", rows[1], "BOTTOMLEFT", 0, -module.config.row.gap })
@@ -88,29 +93,31 @@ function TestLootWindow:test_shows_the_loot_in_rows()
 		end
 	end
 	lu.assertTrue(special)
+	-- a light popup (not the windows' iron frame), no title, rows from its top
+	lu.assertEquals(frame:GetBackdrop(), module.config.backdrop)
+	lu.assertNil(_G.DiabolicLootFrameDiabolic)
+	lu.assertEquals(select(5, rows[1]:GetPoint()), -module.config.top_padding)
 	assertClean(client)
 end
 
 function TestLootWindow:test_hovering_and_clicking_a_row()
-	boot({ savedVariables = SKIN })
+	boot()
 	local wool = Session.item(client, 2592, { name = "Wool Cloth" })
 	openLoot({ { name = "Linen Cloth" }, { name = "Wool Cloth", link = wool } })
 	local row = client:GetModule("Blizzard: LootFrame").rows[2]
 	client:Hover(row)
 	lu.assertTrue(shown(_G.GameTooltip))
 	lu.assertTrue(shown(row.highlight))
-	lu.assertFalse(shown(row.normal))
 	client:Leave()
 	lu.assertFalse(shown(_G.GameTooltip))
 	lu.assertFalse(shown(row.highlight))
-	lu.assertTrue(shown(row.normal))
 	client:Click(row)
 	lu.assertEquals(client.world.looted, 2)
 	assertClean(client)
 end
 
 function TestLootWindow:test_rows_go_as_items_are_looted()
-	boot({ savedVariables = SKIN })
+	boot()
 	local frame = _G.DiabolicLootFrame
 	openLoot({ { name = "Linen Cloth" }, { name = "Wool Cloth" } })
 	local rows = client:GetModule("Blizzard: LootFrame").rows
@@ -130,22 +137,16 @@ function TestLootWindow:test_rows_go_as_items_are_looted()
 end
 
 function TestLootWindow:test_closing()
-	boot({ savedVariables = SKIN })
+	boot()
 	local frame = _G.DiabolicLootFrame
 	openLoot({ { name = "Linen Cloth" } })
 	client:FireEvent("LOOT_CLOSED")
 	lu.assertFalse(shown(frame))
 
-	-- the close button
+	-- Escape (hiding it) ends the looting: no X, no title line for one
 	openLoot({ { name = "Linen Cloth" } })
 	client.world.lootClosed = nil
-	local close
-	for _, child in ipairs({ frame:GetChildren() }) do
-		if not child:GetName() then
-			close = child -- the rows have names
-		end
-	end
-	client:Click(close)
+	frame:Hide()
 	lu.assertTrue(client.world.lootClosed)
 	assertClean(client)
 end
@@ -1704,7 +1705,7 @@ function TestSellJunk:test_sells_the_grey_items_a_merchant_takes()
 	lu.assertEquals(client.world.sold[1].count, 3)
 	lu.assertNotNil(client.world.containers[0].items[2], "worth nothing: kept")
 	lu.assertNotNil(client.world.containers[0].items[3], "not junk")
-	lu.assertStrContains(said[#said], "Sold 1 junk items for " .. _G.GetCoinTextureString(75))
+	lu.assertStrContains(said[#said], "Sold 1 junk items for " .. client.Engine.CoinString(75))
 
 	-- nothing left to sell: greyed out, said so, and nothing sold
 	client:FireEvent("BAG_UPDATE", 0)

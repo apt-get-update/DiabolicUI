@@ -55,74 +55,6 @@ function TestComboPoints:test_lit_up_to_the_points_on_the_target()
 	assertClean(client)
 end
 
--- Channel ticks ------------------------------------------------------------------
-
-TestChannelTicks = {}
-
-function TestChannelTicks:setUp()
-	boot({
-		class = "MAGE",
-		world = function(world)
-			world.spells[5143] = { name = "Arcane Missiles" }
-		end,
-	})
-	self.bar = playerOrb().CastBar
-	self.me = client.world.units.player
-end
-
-function TestChannelTicks:tearDown()
-	client, module, self.bar, self.me = nil, nil, nil, nil
-end
-
-local function channel(me, name, seconds)
-	local now = client.world.time * 1000
-	me.channeling = { name = name, startTime = now, endTime = now + seconds * 1000 }
-	client:FireEvent("UNIT_SPELLCAST_CHANNEL_START", "player")
-end
-
-local function shownTicks(bar)
-	local count = 0
-	for _, tick in ipairs(bar.Ticks) do
-		if shown(tick) then
-			count = count + 1
-		end
-	end
-	return count
-end
-
-function TestChannelTicks:test_marks_between_the_ticks_counted_from_the_right()
-	channel(self.me, "Arcane Missiles", 5)
-	lu.assertEquals(shownTicks(self.bar), 4)
-	local point, _, _, x = self.bar.Ticks[1]:GetPoint()
-	lu.assertEquals(point, "RIGHT")
-	lu.assertAlmostEquals(x, -self.bar:GetWidth() / 5, 0.01)
-	assertClean(client)
-end
-
-function TestChannelTicks:test_pushback_drops_the_last_marks_and_keeps_the_interval()
-	channel(self.me, "Arcane Missiles", 5)
-	self.me.channeling.endTime = self.me.channeling.endTime - 1000
-	client:FireEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "player")
-	lu.assertEquals(shownTicks(self.bar), 3)
-	local _, _, _, x = self.bar.Ticks[1]:GetPoint()
-	lu.assertAlmostEquals(x, -self.bar:GetWidth() / 4, 0.01)
-	assertClean(client)
-end
-
-function TestChannelTicks:test_other_channels_and_casts_have_none()
-	channel(self.me, "Arcane Missiles", 5)
-	channel(self.me, "Fishing", 5)
-	lu.assertEquals(shownTicks(self.bar), 0)
-
-	channel(self.me, "Arcane Missiles", 5)
-	self.me.channeling = nil
-	local now = client.world.time * 1000
-	self.me.casting = { name = "Frostbolt", startTime = now, endTime = now + 2000 }
-	client:FireEvent("UNIT_SPELLCAST_START", "player")
-	lu.assertEquals(shownTicks(self.bar), 0)
-	assertClean(client)
-end
-
 -- Raid frames --------------------------------------------------------------------
 
 TestRaidStatus = {}
@@ -221,6 +153,13 @@ function TestCutaway:test_a_loss_stays_then_drains_away()
 	client:Tick(0.1, 0.05)
 	lu.assertTrue(shown(self.orb.cutaway))
 	lu.assertEquals(self.orb.cutaway.value, 1000)
+	-- the fluid's color, paler and see-through
+	local bar = self.orb.scaffold.colors.bar
+	local r, g, b, a = self.orb.cutaway.texture:GetVertexColor()
+	lu.assertAlmostEquals(r, bar[1] + (1 - bar[1]) * 0.5, 1e-6)
+	lu.assertAlmostEquals(g, bar[2] + (1 - bar[2]) * 0.5, 1e-6)
+	lu.assertAlmostEquals(b, bar[3] + (1 - bar[3]) * 0.5, 1e-6)
+	lu.assertAlmostEquals(a, (bar[4] or 1) * 0.5, 1e-6)
 	client:Tick(3, 0.05)
 	lu.assertFalse(shown(self.orb.cutaway))
 	assertClean(client)

@@ -293,6 +293,31 @@ function TestStatusBars:test_it_fills_in_every_direction()
 	assertClean(client)
 end
 
+function TestStatusBars:test_heals_on_their_way_show_past_its_end_in_every_direction()
+	local bar = self.bar
+	bar:DisableSmoothing(true)
+	bar:SetValue(25)
+	bar:SetIncoming(25)
+	lu.assertEquals(crop(bar.incoming), { 0.25, 0.5, 0, 1 })
+	lu.assertAlmostEquals(bar.incoming:GetWidth(), 50, 1e-9)
+
+	bar:SetOrientation("LEFT")
+	bar:Update()
+	lu.assertEquals(crop(bar.incoming), { 0.5, 0.75, 0, 1 })
+	lu.assertEquals(bar.incoming:GetPoint(1), "RIGHT")
+
+	bar:SetOrientation("UP")
+	bar:Update()
+	lu.assertEquals(crop(bar.incoming), { 0, 1, 0.5, 0.75 })
+	lu.assertAlmostEquals(bar.incoming:GetHeight(), 5, 1e-9)
+
+	bar:SetOrientation("DOWN")
+	bar:Update()
+	lu.assertEquals(crop(bar.incoming), { 0, 1, 0.25, 0.5 })
+	lu.assertEquals(bar.incoming:GetPoint(1), "TOP")
+	assertClean(client)
+end
+
 function TestStatusBars:test_values_stay_in_range()
 	local bar = self.bar
 	bar:DisableSmoothing(true)

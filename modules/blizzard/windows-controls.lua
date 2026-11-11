@@ -386,8 +386,19 @@ Module.LineBand = function(self, header, parts, fromRight)
 	end
 end
 
+-- Whether `button`, `height` high, is so narrow the red button's corners
+-- would take over half of it, covering its text or icon: "1", "Keep", the
+-- equipment manager's squares. (Its width, not its text's: some get
+-- wider, or a smaller font, once styled.)
+local IsNarrow = function(button, height)
+	local spec = Module.config.rect_button
+	local corners = (spec.left[2] - spec.left[1] + spec.right[2] - spec.right[1]) * height / (spec.art[4] - spec.art[2])
+	return button:GetWidth() < corners * 2
+end
+
 -- A push button (UIPanelButtonTemplate's) as a flat red one, `height`
--- high: lit under the mouse, dark while disabled.
+-- high: lit under the mouse, dark while disabled. One too narrow for the
+-- red one's corners gets the dropdowns' field, its stone lit orange.
 Module.StyleButton = function(self, button, height)
 	button.DiabolicStyle = "Button"
 	for _, texture in ipairs({
@@ -400,21 +411,47 @@ Module.StyleButton = function(self, button, height)
 			texture:SetAlpha(0)
 		end
 	end
+	self:SetButtonFont(button, Module.config.button_font)
 	local spec = Module.config.rect_button
-	local normal = self:CreateSlices(button, "BACKGROUND", spec, spec.texture.normal, height)
-	local dark = self:CreateSlices(button, "BACKGROUND", spec, spec.texture.dark, height)
+	local setDark
+	if IsNarrow(button, height) then
+		button.DiabolicNarrow = true
+		local fill = Field(button, 0, button)[1]
+		-- the red button's lit middle, inside the field's two lines
+		local lit = button:CreateTexture(nil, "BORDER")
+		lit:SetTexture(spec.texture.lit)
+		lit:SetTexCoord(
+			spec.middle[1] / spec.canvas[1],
+			spec.middle[2] / spec.canvas[1],
+			spec.art[2] / spec.canvas[2],
+			spec.art[4] / spec.canvas[2]
+		)
+		lit:SetPoint("TOPLEFT", 2, -2)
+		lit:SetPoint("BOTTOMRIGHT", -2, 2)
+		self:AddLit(button, lit)
+		setDark = function(dark)
+			local shade = dark and 0.5 or 1
+			fill:SetVertexColor(shade, shade, shade)
+		end
+	else
+		local normal = self:CreateSlices(button, "BACKGROUND", spec, spec.texture.normal, height)
+		local dark = self:CreateSlices(button, "BACKGROUND", spec, spec.texture.dark, height)
+		self:AddLit(button, self:CreateSlices(button, "BORDER", spec, spec.texture.lit, height))
+		setDark = function(isDark)
+			if isDark then
+				normal:Hide()
+				dark:Show()
+			else
+				normal:Show()
+				dark:Hide()
+			end
+		end
+	end
 	button.DiabolicNotLit = function()
 		return button:IsEnabled() == 0
 	end
-	self:AddLit(button, self:CreateSlices(button, "BORDER", spec, spec.texture.lit, height))
 	local update = function()
-		if button:IsEnabled() == 0 then
-			normal:Hide()
-			dark:Show()
-		else
-			normal:Show()
-			dark:Hide()
-		end
+		setDark(button:IsEnabled() == 0)
 		UpdateLit(button)
 		-- its text grey while disabled, back to its own color once enabled
 		-- (a color set on the text stays until another is)
@@ -429,7 +466,6 @@ Module.StyleButton = function(self, button, height)
 	end
 	hooksecurefunc(button, "Enable", update)
 	hooksecurefunc(button, "Disable", update)
-	self:SetButtonFont(button, Module.config.button_font)
 	update()
 end
 

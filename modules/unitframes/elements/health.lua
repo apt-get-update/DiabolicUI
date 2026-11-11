@@ -51,7 +51,7 @@ local GetIncoming = function(unit)
 	if not guid then
 		return 0
 	end
-	local amount = HealComm:GetHealAmount(guid, HealComm.ALL_HEALS, GetTime() + INCOMING_WINDOW)
+	local amount = HealComm:GetHealAmount(guid, HealComm.DIRECT_HEALS, GetTime() + INCOMING_WINDOW)
 	return amount and (amount * HealComm:GetHealModifier(guid)) or 0
 end
 

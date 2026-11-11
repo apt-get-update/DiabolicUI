@@ -218,6 +218,9 @@ local AddMessage = function(frame, msg, ...)
 
 	msg = WrapWebLinks(msg)
 
+	-- Blizzard's coins (Postal's, an addon's) as ours
+	msg = Engine.OurCoins(msg)
+
 	if Module.history then
 		Module.history:Record(frame, msg, ...)
 	end

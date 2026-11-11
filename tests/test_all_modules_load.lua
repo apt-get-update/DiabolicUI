@@ -46,6 +46,13 @@ for _, path in ipairs(FILES) do
 		lu.assertNotNil(chunk, path .. " failed to parse: " .. tostring(loadErr))
 
 		local Engine = EngineMock.new()
+		-- the options' pages size themselves from the shared controls at file
+		-- scope: those load first, as in menu.xml
+		if path:find("^modules/menu/page%-") then
+			for _, before in ipairs({ "modules/menu/menu.lua", "modules/menu/controls.lua" }) do
+				assert(loadfile(before))("DiabolicUI", Engine)
+			end
+		end
 		local ok, runErr = pcall(chunk, "DiabolicUI", Engine)
 		lu.assertTrue(ok, path .. " errored while loading: " .. tostring(runErr))
 	end

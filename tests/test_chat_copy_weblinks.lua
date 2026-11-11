@@ -67,6 +67,10 @@ local function loadFiltersModule()
 	end
 
 	local Engine = EngineMock.new()
+	-- Blizzard's coins as ours (engine/wotlk-helpers.lua): none in these
+	Engine.OurCoins = function(msg)
+		return msg
+	end
 	local chunk = assert(loadfile("modules/chat/filters.lua"))
 	chunk("DiabolicUI", Engine)
 	local Module = Engine:GetModule("ChatFilters")

@@ -1,13 +1,15 @@
--- Optional custom loot window ("LootFrame" settings, off by default).
+-- Our loot window, with Diablo III Windows ("Windows" settings); Blizzard's
+-- own otherwise.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: LootFrame")
-local L = Engine:GetLocale()
 local C = Engine:GetDB("Data: Colors")
 
 -- Lua API
+local ipairs = ipairs
 local math_max = math.max
-local pairs = pairs
+local math_min = math.min
 local select = select
+local tonumber = tonumber
 local unpack = unpack
 
 -- WoW API
@@ -44,7 +46,22 @@ local LootSlotIsCoin = LootSlotIsCoin
 	frame outright removes the need for any of those workarounds.
 --]]
 
--- Builds the standalone window itself: backdrop, title, close button.
+-- A coin slot's name ("35 Silver\n74 Copper", from GOLD_AMOUNT and the
+-- others) as copper, nil if it reads otherwise.
+local COIN_UNITS = { { "GOLD_AMOUNT", 10000 }, { "SILVER_AMOUNT", 100 }, { "COPPER_AMOUNT", 1 } }
+local CoinValue = function(name)
+	local copper, found = 0, false
+	for _, unit in ipairs(COIN_UNITS) do
+		local pattern = _G[unit[1]] and _G[unit[1]]:gsub("%%d", "(%%d+)")
+		local count = pattern and name:match(pattern)
+		if count then
+			copper, found = copper + tonumber(count) * unit[2], true
+		end
+	end
+	return found and copper or nil
+end
+
+-- Builds the standalone window itself.
 -- Called once, the first time the feature is ever enabled.
 Module.CreateWindow = function(self)
 	local config = self.config
@@ -54,9 +71,6 @@ Module.CreateWindow = function(self)
 	frame:SetToplevel(true)
 	frame:SetClampedToScreen(true)
 	frame:SetPoint(unpack(config.position))
-	frame:SetBackdrop(config.backdrop)
-	frame:SetBackdropColor(unpack(config.backdrop_color))
-	frame:SetBackdropBorderColor(unpack(config.backdrop_border_color))
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
 	frame:RegisterForDrag("LeftButton")
@@ -70,17 +84,16 @@ Module.CreateWindow = function(self)
 	end)
 	table.insert(UISpecialFrames, "DiabolicLootFrame")
 
-	local title = frame:CreateFontString(nil, "OVERLAY")
-	title:SetFontObject(config.title_font)
-	title:SetPoint("TOP", config.title_offset[1], config.title_offset[2])
-	title:SetText(L["Items"])
-
+	-- a light popup: no title (its rows say what it is), the windows' X at
+	-- the top right, over the rows
+	frame:SetBackdrop(config.backdrop)
+	frame:SetBackdropColor(unpack(config.backdrop_color))
+	frame:SetBackdropBorderColor(unpack(config.backdrop_border_color))
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	Engine:GetModule("Blizzard: Windows"):SkinClose(close)
-	close:SetPoint("TOPRIGHT", config.close_button_offset[1], config.close_button_offset[2])
-	close:SetScript("OnClick", function()
-		CloseLoot()
-	end)
+	close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", unpack(config.close_offset))
+	close:SetFrameLevel(frame:GetFrameLevel() + 5) -- (above the rows)
+	frame.close = close
 
 	self.frame = frame
 	self.rows = {}
@@ -121,25 +134,26 @@ Module.CreateRow = function(self, index)
 	borderHighlight:SetPoint("TOPLEFT", icon, "TOPLEFT", iconConfig.border_offset[1], iconConfig.border_offset[2])
 	borderHighlight:Hide()
 
-	-- The wide row background, behind the icon and text - our own texture
-	-- on our own button, so (unlike the old re-skin) there's no clipping
-	-- ancestor to worry about and no need to guess at frame levels.
-	local normal = button:CreateTexture(nil, "BACKGROUND")
-	normal:SetTexture(rowConfig.texture.normal)
-
-	local highlight = button:CreateTexture(nil, "BACKGROUND", nil, 1)
-	highlight:SetTexture(rowConfig.texture.highlight)
+	-- no art behind the row (as the loot preview's list): a soft gold
+	-- light under the mouse
+	local highlight = button:CreateTexture(nil, "BACKGROUND")
+	highlight:SetTexture([[Interface\Buttons\WHITE8X8]])
+	highlight:SetVertexColor(unpack(rowConfig.highlight_color))
+	highlight:SetAllPoints(button)
 	highlight:Hide()
-
-	local pushed = button:CreateTexture(nil, "BACKGROUND", nil, 2)
-	pushed:SetTexture(rowConfig.texture.pushed)
-	pushed:Hide()
 
 	local text = _G[button:GetName() .. "Text"]
 	text:SetFontObject(rowConfig.text_font)
 	text:ClearAllPoints()
 	text:SetPoint("LEFT", icon, "RIGHT", rowConfig.text_offset, 0)
 	text:SetJustifyH("LEFT")
+
+	-- the stack's count on the icon's corner, as in the bags (in from its
+	-- border)
+	local count = _G[button:GetName() .. "Count"]
+	count:ClearAllPoints()
+	count:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", -4, 4)
+	count:SetDrawLayer("OVERLAY") -- (over the icon's border)
 
 	-- The template also carries other decorative texture pieces we didn't
 	-- ask for (e.g. a border sized around where its own tiny default text
@@ -150,9 +164,7 @@ Module.CreateRow = function(self, index)
 		[icon] = true,
 		[border] = true,
 		[borderHighlight] = true,
-		[normal] = true,
 		[highlight] = true,
-		[pushed] = true,
 	}
 	for i = 1, select("#", button:GetRegions()) do
 		local region = select(i, button:GetRegions())
@@ -173,7 +185,6 @@ Module.CreateRow = function(self, index)
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetLootItem(self:GetID())
 		highlight:Show()
-		normal:Hide()
 		borderHighlight:Show()
 		border:Hide()
 	end)
@@ -181,7 +192,6 @@ Module.CreateRow = function(self, index)
 	button:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 		highlight:Hide()
-		normal:Show()
 		borderHighlight:Hide()
 		border:Show()
 	end)
@@ -195,7 +205,7 @@ Module.CreateRow = function(self, index)
 
 	button.icon = icon
 	button.text = text
-	button.normal, button.highlight, button.pushed = normal, highlight, pushed
+	button.highlight = highlight
 
 	self.rows[index] = button
 	return button
@@ -223,7 +233,9 @@ Module.Update = function(self)
 			SetItemButtonTexture(button, texture)
 			SetItemButtonCount(button, quantity)
 
-			button.text:SetText(item)
+			-- money in our coins, on one line
+			local coins = LootSlotIsCoin(slot) and CoinValue(item or "")
+			button.text:SetText(coins and Engine.CoinString(coins) or item)
 			if LootSlotIsCoin(slot) then
 				button.text:SetTextColor(unpack(C.General.Title))
 			else
@@ -245,36 +257,28 @@ Module.Update = function(self)
 		return
 	end
 
-	local rowWidth = math_max(
-		config.width - config.row_padding * 2,
-		iconConfig.icon_padding + iconConfig.size + rowConfig.text_offset + maxTextWidth + rowConfig.text_padding
+	-- as wide as the longest name needs, up to max_width (longer ones wrap)
+	local textLeft = iconConfig.icon_padding + iconConfig.size + rowConfig.text_offset
+	local sides = config.row_padding * 2
+	local rowWidth = math_min(
+		math_max(config.width - sides, textLeft + maxTextWidth + rowConfig.text_padding),
+		config.max_width - sides
 	)
+	local textWidth = rowWidth - textLeft - rowConfig.text_padding
 
 	for i = 1, shown do
 		local button = self.rows[i]
 		button:SetWidth(rowWidth)
+		button.text:SetWidth(textWidth) -- (the template's is 93: short names wrapped)
 		button:ClearAllPoints()
 		if i == 1 then
 			button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", config.row_padding, -config.top_padding)
 		else
 			button:SetPoint("TOPLEFT", self.rows[i - 1], "BOTTOMLEFT", 0, -rowConfig.gap)
 		end
-
-		-- The visible button art only fills part of its own canvas
-		-- (rowConfig.size vs rowConfig.texture_size, symmetrically centered
-		-- within it) - scale the whole canvas by the same ratio the row
-		-- itself is being stretched by, so the visible art actually
-		-- matches the row's real size instead of rendering undersized.
-		local scaleX, scaleY = rowWidth / rowConfig.size[1], rowHeight / rowConfig.size[2]
-		local canvasWidth, canvasHeight = rowConfig.texture_size[1] * scaleX, rowConfig.texture_size[2] * scaleY
-		for _, texture in pairs({ button.normal, button.highlight, button.pushed }) do
-			texture:ClearAllPoints()
-			texture:SetSize(canvasWidth, canvasHeight)
-			texture:SetPoint("CENTER", button, "CENTER")
-		end
 	end
 
-	self.frame:SetWidth(rowWidth + config.row_padding * 2)
+	self.frame:SetWidth(rowWidth + sides)
 	self.frame:SetHeight(
 		config.top_padding + (shown * rowHeight) + math_max(0, shown - 1) * rowConfig.gap + config.bottom_padding
 	)
@@ -283,12 +287,11 @@ end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").loot
-	self.db = self:GetConfig("LootFrame") -- user setting: disabled by default
+	self.db = self:GetConfig("Windows")
 end
 
 Module.OnEnable = function(self)
-	-- Disabled by default - Blizzard's own loot window is left completely
-	-- untouched unless the user has explicitly opted into the replacement.
+	-- Diablo III Windows off: Blizzard's own loot window, left untouched
 	if not self.db.enableSkin then
 		return
 	end

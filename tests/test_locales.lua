@@ -72,7 +72,7 @@ function TestLocaleHandler:test_english_client_reads_english()
 	local Engine = loadLocales("enUS", { "locale/locale-enUS.lua" })
 	local L = Engine:GetLocale()
 	-- `L[key] = true` entries read back as the key itself
-	lu.assertEquals(L["Show Portrait"], "Show Portrait")
+	lu.assertEquals(L["3D Portraits"], "3D Portraits")
 end
 
 function TestLocaleHandler:test_translation_wins_and_english_fills_gaps()

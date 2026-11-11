@@ -107,13 +107,7 @@ local function load()
 		end,
 	})
 	db = {
-		cleanLoot = true,
-		cleanProgress = true,
-		cleanQuests = true,
-		cleanStatus = true,
-		cleanOnline = true,
-		cleanAuctions = true,
-		cleanAchievements = true,
+		shortMessages = true,
 		hideChatNoise = true,
 	}
 	Engine.GetConfig = function()
@@ -281,20 +275,20 @@ function TestChatCleaner:test_achievements_keep_the_name_slot()
 	)
 end
 
-function TestChatCleaner:test_each_group_has_its_option()
-	for setting, line in pairs({
-		cleanLoot = { "CHAT_MSG_LOOT", "You receive loot: " .. ITEM .. "." },
-		cleanProgress = { "CHAT_MSG_COMBAT_XP_GAIN", "You gain 80 experience." },
-		cleanQuests = { "CHAT_MSG_SYSTEM", "Quest accepted: The Lich King" },
-		cleanStatus = { "CHAT_MSG_SYSTEM", "You are now Away." },
-		cleanOnline = { "CHAT_MSG_SYSTEM", "Ally has gone offline." },
-		cleanAuctions = { "CHAT_MSG_SYSTEM", "Auction created." },
-		cleanAchievements = { "CHAT_MSG_ACHIEVEMENT", "%s has earned the achievement [x]!" },
+function TestChatCleaner:test_one_option_for_every_group()
+	for _, line in ipairs({
+		{ "CHAT_MSG_LOOT", "You receive loot: " .. ITEM .. "." },
+		{ "CHAT_MSG_COMBAT_XP_GAIN", "You gain 80 experience." },
+		{ "CHAT_MSG_SYSTEM", "Quest accepted: The Lich King" },
+		{ "CHAT_MSG_SYSTEM", "You are now Away." },
+		{ "CHAT_MSG_SYSTEM", "Ally has gone offline." },
+		{ "CHAT_MSG_SYSTEM", "Auction created." },
+		{ "CHAT_MSG_ACHIEVEMENT", "%s has earned the achievement [x]!" },
 	}) do
-		db[setting] = false
-		lu.assertEquals(chat(line[1], line[2]), line[2], setting)
-		db[setting] = true
-		lu.assertNotEquals(chat(line[1], line[2]), line[2], setting)
+		db.shortMessages = false
+		lu.assertEquals(chat(line[1], line[2]), line[2], line[2])
+		db.shortMessages = true
+		lu.assertNotEquals(chat(line[1], line[2]), line[2], line[2])
 	end
 end
 

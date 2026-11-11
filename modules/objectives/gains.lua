@@ -16,7 +16,6 @@ local unpack = unpack
 
 -- WoW API
 local CreateFrame = _G.CreateFrame
-local GetCoinTextureString = _G.GetCoinTextureString
 local GetItemIcon = _G.GetItemIcon
 local GetMoney = _G.GetMoney
 local UnitXP = _G.UnitXP
@@ -114,7 +113,7 @@ Module.Tick = function(self, elapsed)
 end
 
 local DescribeMoney = function(amount)
-	return "+" .. GetCoinTextureString(amount)
+	return "+" .. Engine.CoinString(amount)
 end
 
 local DescribeXP = function(amount)
