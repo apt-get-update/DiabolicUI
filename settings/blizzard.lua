@@ -1303,6 +1303,7 @@ Engine:NewStaticConfig("Blizzard", {
 		profession_done_color = { 0.95, 0.76, 0.32 }, -- its rank's title once there
 		profession_cap = 450, -- Grand Master's
 		profession_step = 75, -- a rank's worth
+		profession_tick = 3, -- a step's ticks, from the bar's top and bottom
 		profession_step_lit = { 1, 0.93, 0.75, 0.8 }, -- a step reached
 		profession_step_dim = { 0.47, 0.39, 0.31, 0.6 }, -- one still ahead
 		profession_extra = 36, -- its other spell's button

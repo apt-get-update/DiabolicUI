@@ -159,13 +159,17 @@ Module.CreateProfession = function(self, parent, primary)
 	bar:SetSize(width, barHeight)
 	bar:SetPoint("BOTTOMLEFT", row.Icon, "BOTTOMRIGHT", config.name_offset, 2)
 	kit:StyleBar(bar)
-	-- the six ranks along it: a notch between each and the next
+	-- the six ranks along it: a tick between each and the next, from its
+	-- top and from its bottom (its middle clear for its text)
 	bar.Steps = {}
 	for i = 1, config.profession_cap / config.profession_step - 1 do
-		local notch = bar:CreateTexture(nil, "OVERLAY")
-		notch:SetSize(1, barHeight - 6)
-		notch:SetPoint("CENTER", bar, "LEFT", width * i * config.profession_step / config.profession_cap, 0)
-		bar.Steps[i] = notch
+		local x = width * i * config.profession_step / config.profession_cap
+		for _, edge in ipairs({ "TOP", "BOTTOM" }) do
+			local tick = bar:CreateTexture(nil, "OVERLAY")
+			tick:SetSize(1, config.profession_tick)
+			tick:SetPoint(edge, bar, edge .. "LEFT", x, (edge == "TOP") and -2 or 2)
+			bar.Steps[#bar.Steps + 1] = { tick = tick, rank = i * config.profession_step }
+		end
 	end
 	bar.Text = bar:CreateFontString(nil, "OVERLAY")
 	bar.Text:SetFontObject(config.rank_font)
@@ -259,8 +263,8 @@ Module.FillProfession = function(self, row, skill)
 	local done = skill.rank >= config.profession_cap
 	row.Bar:SetStatusBarTexture(done and config.profession_fill_done or config.profession_fill)
 	row.Rank:SetTextColor(unpack(done and config.profession_done_color or config.profession_rank_color))
-	for i, notch in ipairs(row.Bar.Steps) do
-		notch:SetTexture(unpack((skill.rank >= i * config.profession_step) and config.profession_step_lit or config.profession_step_dim))
+	for _, step in ipairs(row.Bar.Steps) do
+		step.tick:SetTexture(unpack((skill.rank >= step.rank) and config.profession_step_lit or config.profession_step_dim))
 	end
 	row.Bar:SetMinMaxValues(0, config.profession_cap)
 	row.Bar:SetValue(skill.rank)
