@@ -61,6 +61,7 @@ Merge(window, {
 		middle = { 14, 200 },
 		right = { 200, 214 },
 		statusbar = path .. [[textures\DiabolicUI_D3_BreathMeterFill.tga]],
+		tint_statusbar = path .. [[statusbars\DiabolicUI_StatusBar_128x16_Normal_Warcraft.tga]], -- a tinted one's fill
 		track = path .. [[textures\DiabolicUI_D3_BreathMeterTrack.tga]],
 		color = { 1, 1, 1 },
 		spike = 8,

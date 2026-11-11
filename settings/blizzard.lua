@@ -1297,7 +1297,7 @@ Engine:NewStaticConfig("Blizzard", {
 		profession_icons = { 48, 36 }, -- primary, secondary
 		profession_inset = 11, -- the icon from the panel's left
 		profession_bar = { 240, 14 }, -- its rank's bar
-		profession_bar_color = { 0.72, 0.52, 0.28 }, -- its fill: muted bronze (progress, not red)
+		profession_bar_color = { 0.66, 0.47, 0.24 }, -- its fill: muted bronze (progress, not red)
 		profession_extra = 36, -- its other spell's button
 		profession_title_font = DiabolicFont_HeaderRegular14,
 		profession_title_color = { 0.86, 0.76, 0.6 },
