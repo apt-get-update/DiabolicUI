@@ -23,14 +23,14 @@ jobs:
     env:
       HUGO_VERSION: 0.166.0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Hugo and Asciidoctor
         run: |
           wget -q -O hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
           sudo dpkg -i hugo.deb
-          sudo apt-get update
-          sudo apt-get install -y asciidoctor ruby-rouge
+          sudo apt-get -o Acquire::Retries=5 update
+          sudo apt-get -o Acquire::Retries=5 install -y --no-install-recommends asciidoctor ruby-rouge
 
       - id: pages
         uses: actions/configure-pages@v5
