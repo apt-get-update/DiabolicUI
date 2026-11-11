@@ -11,20 +11,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: QuestieTracker", "LOW")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local type = type
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-local CreateFrame = _G.CreateFrame
-local InCombatLockdown = _G.InCombatLockdown
-local IsShiftKeyDown = _G.IsShiftKeyDown
-local PlaySound = _G.PlaySound
-
 -- Blizzard's tracker title (WatchFrameTitle)
 local OBJECTIVES = _G.OBJECTIVES_TRACKER_LABEL
 
@@ -36,7 +22,7 @@ local FONT_SIZE = 12
 
 -- the color Questie's lines start with (GameFontNormal's): its own colors
 -- come in the text
-local QUESTIE_COLOR = { 1, .82, 0 }
+local QUESTIE_COLOR = { 1, 0.82, 0 }
 
 -- What the skin relies on in Questie's code, none of it an API Questie
 -- promises: one missing, and Questie has changed. Its tracker is then left
@@ -99,7 +85,7 @@ local SetMode = function(line, mode)
 	end
 	line.DiabolicTitle = nil
 	local font, color
-	if (mode == "zone") then
+	if mode == "zone" then
 		font, color = style.header_font, style.header_color
 	elseif IsTitle(mode) then
 		font, color = style.title_font, style.title_color
@@ -119,9 +105,9 @@ end
 -- once collapsed.
 local UpdateCollapseButton = function(line)
 	local button, expanded = line.CollapseButton, (line.expandZone.mode == 1)
-	local top = expanded and .5 or 0
-	button:GetNormalTexture():SetTexCoord(0, .5, top, top + .5)
-	button:GetPushedTexture():SetTexCoord(.5, 1, top, top + .5)
+	local top = expanded and 0.5 or 0
+	button:GetNormalTexture():SetTexCoord(0, 0.5, top, top + 0.5)
+	button:GetPushedTexture():SetTexCoord(0.5, 1, top, top + 0.5)
 	-- at the tracker's right edge on the "OBJECTIVES" line (the first), as
 	-- in Diablo III; just after the text on a zone's
 	button:ClearAllPoints()
@@ -162,7 +148,7 @@ end
 -- click, and Blizzard's sounds. A right-click: Questie's options.
 local ToggleZone = function(expandZone, original, mouseButton)
 	original(expandZone, mouseButton)
-	if (mouseButton == "RightButton") then
+	if mouseButton == "RightButton" then
 		OpenOptions()
 	elseif (mouseButton == "LeftButton") and not IsShiftKeyDown() then
 		PlaySound((expandZone.mode == 1) and "igMiniMapOpen" or "igMiniMapClose")
@@ -173,11 +159,15 @@ end
 local CreateCollapseButton = function(line)
 	local expandZone = line.expandZone
 	local original = expandZone:GetScript("OnMouseUp")
-	expandZone:SetScript("OnMouseUp", function(self, mouseButton) ToggleZone(self, original, mouseButton) end)
+	expandZone:SetScript("OnMouseUp", function(self, mouseButton)
+		ToggleZone(self, original, mouseButton)
+	end)
 	local button = CreateFrame("Button", nil, line)
 	button:SetFrameLevel(expandZone:GetFrameLevel() + 1) -- over the line's click area
 	Engine:GetModule("Blizzard: WatchFrame"):StyleCollapseButton(button)
-	button:SetScript("OnClick", function() ToggleZone(expandZone, original, "LeftButton") end)
+	button:SetScript("OnClick", function()
+		ToggleZone(expandZone, original, "LeftButton")
+	end)
 	line.CollapseButton = button
 end
 
@@ -186,12 +176,12 @@ end
 -- "Quests (By ...)", and its button instead of Questie's " +".
 local SetText = function(label, text)
 	local line = label.frame
-	if broken or (not text) then
+	if broken or not text then
 		return
 	end
 	if IsTitle(line.mode) then
 		local plain = (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""))
-		if (line.mode == "zone") then
+		if line.mode == "zone" then
 			plain = plain:gsub(" %+$", "")
 			line.DiabolicTitle = (plain:find("^Quests %(By .*%)$") ~= nil) or nil
 			if line.DiabolicTitle then
@@ -199,7 +189,7 @@ local SetText = function(label, text)
 			end
 			plain = plain:upper()
 		end
-		if (plain ~= text) then
+		if plain ~= text then
 			label:_SetText(plain) -- Questie's label keeps the original as _SetText
 		end
 		if (line.mode == "zone") and line.expandZone then
@@ -251,7 +241,7 @@ Module.UpdateSpacing = function(self)
 		if line and line:IsShown() and line.mode then
 			local label = line.label
 			local lines = label.GetNumLines and label:GetNumLines() or 1
-			if (lines > 1) then
+			if lines > 1 then
 				local _, size = label:GetFont()
 				label:SetHeight((size + 1) * lines + 1)
 			end
@@ -262,7 +252,7 @@ Module.UpdateSpacing = function(self)
 			else
 				gap = (line.mode == "objective") and 1 or 4
 			end
-			line:SetHeight(math_max(label:GetHeight(), FONT_SIZE) + gap)
+			line:SetHeight(math.max(label:GetHeight(), FONT_SIZE) + gap)
 		end
 	end
 	tracker:UpdateHeight()
@@ -301,7 +291,7 @@ local SetItem = function(button)
 	Place(button:GetHighlightTexture(), style.border_normal_highlight, scale)
 	-- the cooldown over the icon, the charges in the bars' font
 	for _, child in ipairs({ button:GetChildren() }) do
-		if (child:GetObjectType() == "Cooldown") then
+		if child:GetObjectType() == "Cooldown" then
 			child:ClearAllPoints()
 			child:SetAllPoints(button:GetNormalTexture())
 		end
@@ -312,7 +302,7 @@ local SetItem = function(button)
 end
 
 local StyleItemButton = function(button)
-	if button and (not button.DiabolicStyled) and (type(button.SetItem) == "function") then
+	if button and not button.DiabolicStyled and (type(button.SetItem) == "function") then
 		hooksecurefunc(button, "SetItem", SetItem)
 		button.DiabolicStyled = true
 	end
@@ -338,7 +328,8 @@ Module.StyleQuestie = function(self)
 		return Break("QuestieLoader.ImportModule")
 	end
 	local pool, tracker = loader:ImportModule("TrackerLinePool"), loader:ImportModule("QuestieTracker")
-	local missing = MissingFunction(pool, "TrackerLinePool", POOL_FUNCTIONS) or MissingFunction(tracker, "QuestieTracker", TRACKER_FUNCTIONS)
+	local missing = MissingFunction(pool, "TrackerLinePool", POOL_FUNCTIONS)
+		or MissingFunction(tracker, "QuestieTracker", TRACKER_FUNCTIONS)
 	if missing then
 		return Break(missing)
 	end
@@ -349,7 +340,9 @@ Module.StyleQuestie = function(self)
 		hooksecurefunc(header, "Update", HideQuestieIcon)
 		HideQuestieIcon()
 	end
-	hooksecurefunc(self.Tracker, "Update", function() self:UpdateSpacing() end)
+	hooksecurefunc(self.Tracker, "Update", function()
+		self:UpdateSpacing()
+	end)
 	hooksecurefunc(pool, "GetNextLine", function()
 		local line = (not broken) and pool.GetCurrentLine()
 		if line then

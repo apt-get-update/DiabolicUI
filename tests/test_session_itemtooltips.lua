@@ -22,7 +22,10 @@ local client
 local SHIFT = 56 + 10 -- ICON_BOX + ICON_GAP
 
 local WEAPON = {
-	name = "Shadowmourne", quality = 5, vendorPrice = 123456, texture = "Interface\\Icons\\Axe",
+	name = "Shadowmourne",
+	quality = 5,
+	vendorPrice = 123456,
+	texture = "Interface\\Icons\\Axe",
 	lines = {
 		{ "Shadowmourne", nil, { 1, 0.5, 0 } },
 		"Binds when picked up",
@@ -37,7 +40,8 @@ local WEAPON = {
 }
 
 local ARMOR = {
-	name = "Plain Vest", quality = 1,
+	name = "Plain Vest",
+	quality = 1,
 	lines = { "Plain Vest", { "Chest", "Cloth" }, "35 Armor" },
 }
 
@@ -164,7 +168,12 @@ end
 
 function TestItemTooltipLayout:test_comparison_tooltips_get_the_equipped_tag()
 	local tooltip = _G.ShoppingTooltip1
-	local item = { name = "Old Axe", quality = 3, vendorPrice = 100, lines = { _G.CURRENTLY_EQUIPPED, "Old Axe", "(80.0 damage per second)" } }
+	local item = {
+		name = "Old Axe",
+		quality = 3,
+		vendorPrice = 100,
+		lines = { _G.CURRENTLY_EQUIPPED, "Old Axe", "(80.0 damage per second)" },
+	}
 	show(tooltip, 3000, item)
 	local p = parts(tooltip)
 	lu.assertEquals(p.title:GetText(), "Old Axe")
@@ -298,7 +307,13 @@ end
 
 function TestItemTooltipLayout:test_prices_reach_the_footer_whenever_they_arrive()
 	local tooltip = _G.GameTooltip
-	local late = { name = "Late Price", quality = 2, vendorPrice = 555, moneyFirst = false, lines = { "Late Price", "Durability 1 / 1" } }
+	local late = {
+		name = "Late Price",
+		quality = 2,
+		vendorPrice = 555,
+		moneyFirst = false,
+		lines = { "Late Price", "Durability 1 / 1" },
+	}
 	show(tooltip, 4000, late)
 	lu.assertStrContains(parts(tooltip).sellValue:GetText(), _G.SELL_PRICE)
 
@@ -383,7 +398,11 @@ function TestItemTooltipLayout:test_hiding_puts_everything_back()
 
 	-- comparison tooltips too
 	local compare = _G.ShoppingTooltip1
-	show(compare, 3000, { name = "Old", quality = 2, lines = { _G.CURRENTLY_EQUIPPED, "Old", "10 Armor", "Soulbound" } })
+	show(
+		compare,
+		3000,
+		{ name = "Old", quality = 2, lines = { _G.CURRENTLY_EQUIPPED, "Old", "10 Armor", "Soulbound" } }
+	)
 	compare:Hide()
 	lu.assertEquals(_G.ShoppingTooltip1TextLeft1:GetAlpha(), 1)
 	assertClean(client)

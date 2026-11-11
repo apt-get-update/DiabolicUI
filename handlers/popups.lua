@@ -6,23 +6,6 @@
 local _, Engine = ...
 local Handler = Engine:NewHandler("PopUpMessage")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local pairs = pairs
-local unpack = unpack
-local setmetatable = setmetatable
-local table_insert = table.insert
-local table_sort = table.sort
-local table_wipe = table.wipe
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local PlaySound = _G.PlaySound
-
-
 local popups = {} -- registry of virtual popup tables
 local popupFrames = {} -- registry of all created popup frames
 local activePopups = {} -- registry of active popup frames
@@ -73,7 +56,6 @@ local OnClick = function(self)
 	frame:Hide()
 end
 
-
 PopUp.OnShow = function(self)
 	PlaySound("igMainMenuOpen")
 
@@ -102,10 +84,8 @@ PopUp.OnHide = function(self)
 	Handler:UpdateLayout()
 end
 
-
 -- updates the content, style and layout of a popup frame
 PopUp.Update = function(self, styleTable)
-
 	-- Get the virtual popup registered to this frame
 	local id = self.id
 	local popup = popups[id]
@@ -143,11 +123,9 @@ PopUp.Update = function(self, styleTable)
 		self:SetBackdropBorderColor(unpack(styleTable.backdropBorderColor))
 	end
 
-
 	-- header
 	------------------------------------------------------
 	if popup.title then
-
 		title:SetFontObject(style.title.normalFont)
 		title:SetText(popup.title)
 		title:Show()
@@ -164,13 +142,11 @@ PopUp.Update = function(self, styleTable)
 		header:SetPoint("LEFT", style.insets[1], 0)
 		header:SetPoint("RIGHT", -style.insets[2], 0)
 		header:SetHeight(style.height)
-
 	else
 		title:Hide()
 		header:SetHeight(0.0001)
 		header:SetBackdrop(nil)
 	end
-
 
 	-- body (below the header, a sliver without a title)
 	------------------------------------------------------
@@ -185,8 +161,6 @@ PopUp.Update = function(self, styleTable)
 		body:SetBackdropColor(unpack(styleBody.backdropColor))
 		body:SetBackdropBorderColor(unpack(styleBody.backdropBorderColor))
 	end
-
-
 
 	-- footer
 	------------------------------------------------------
@@ -233,8 +207,8 @@ PopUp.Update = function(self, styleTable)
 	-- and re-align them if need be
 	local numButtons = 0
 	local buttonWidth = 0
-	for i = 1,3 do
-		local button = self["button"..i]
+	for i = 1, 3 do
+		local button = self["button" .. i]
 		if button:IsShown() then
 			button:SetSize(unpack(styleFooterButton.size))
 
@@ -258,7 +232,7 @@ PopUp.Update = function(self, styleTable)
 			button.text.highlightColor = styleFooterButton.fontColor.highlight
 			button.text.pushedColor = styleFooterButton.fontColor.pushed
 
-			button.text:SetText(popup["button"..i])
+			button.text:SetText(popup["button" .. i])
 
 			button.isDown = false -- not still held from the last time it showed
 			button:UpdateLayers()
@@ -283,7 +257,6 @@ PopUp.Update = function(self, styleTable)
 		buttonWidth = buttonWidth + styleFooter.button_spacing * 2
 		buttonWidth = buttonWidth + styleFooterButton.insets[2]
 		buttonWidth = buttonWidth + styleFooter.insets[2]
-
 	elseif numButtons == 2 then
 		if button1:IsShown() then
 			button1:ClearAllPoints()
@@ -309,10 +282,9 @@ PopUp.Update = function(self, styleTable)
 		buttonWidth = buttonWidth + styleFooter.button_spacing
 		buttonWidth = buttonWidth + styleFooterButton.insets[2]
 		buttonWidth = buttonWidth + styleFooter.insets[2]
-
 	elseif numButtons == 1 then
-		for i = 1,3 do
-			local button = self["button"..i]
+		for i = 1, 3 do
+			local button = self["button" .. i]
 			if button:IsShown() then
 				button:ClearAllPoints()
 				button:SetPoint("BOTTOM", 0, styleFooterButton.insets[4])
@@ -326,13 +298,15 @@ PopUp.Update = function(self, styleTable)
 		buttonWidth = buttonWidth + styleFooterButton.size[1]
 		buttonWidth = buttonWidth + styleFooterButton.insets[2]
 		buttonWidth = buttonWidth + styleFooter.insets[2]
-
 	end
 
 	local footerHeight = 0.0001
 	if numButtons > 0 then
 		footerHeight = footerHeight + styleFooter.insets[3]
-		footerHeight = footerHeight + styleFooterButton.insets[3] + styleFooterButton.size[2] + styleFooterButton.insets[4]
+		footerHeight = footerHeight
+			+ styleFooterButton.insets[3]
+			+ styleFooterButton.size[2]
+			+ styleFooterButton.insets[4]
 		footerHeight = footerHeight + styleFooter.insets[4]
 		footer:SetHeight(footerHeight)
 		footer:Show()
@@ -342,7 +316,7 @@ PopUp.Update = function(self, styleTable)
 	end
 
 	-- figure out frame width
-	local width = math_min(styleTable.maxwidth, math_max(buttonWidth, styleTable.minwidth))
+	local width = math.min(styleTable.maxwidth, math.max(buttonWidth, styleTable.minwidth))
 	self:SetWidth(width)
 
 	-- Now we can set up the message, since we've found our frame width
@@ -387,7 +361,6 @@ PopUp.Update = function(self, styleTable)
 		frameHeight = frameHeight + footerHeight
 	end
 	self:SetHeight(frameHeight)
-
 end
 
 -- register a new popup
@@ -402,8 +375,6 @@ end
 
 -- show a popup
 Handler.ShowPopUp = function(self, id, styleTable)
-	local popup = popups[id]
-
 	-- is it already visible?
 	local frame = activePopups[id]
 
@@ -443,7 +414,6 @@ Handler.ShowPopUp = function(self, id, styleTable)
 			title:SetJustifyV("TOP")
 			title:SetJustifyH("CENTER")
 
-
 			-- Body
 			------------------------------------------------------------------
 			local body = CreateFrame("Frame", nil, new)
@@ -474,7 +444,7 @@ Handler.ShowPopUp = function(self, id, styleTable)
 			footer:SetPoint("BOTTOM")
 			footer:SetHeight(0.0001)
 
-			for i = 1,3 do
+			for i = 1, 3 do
 				local button = CreateFrame("Button", nil, footer)
 
 				button.normal = button:CreateTexture(nil, "ARTWORK")
@@ -498,7 +468,7 @@ Handler.ShowPopUp = function(self, id, styleTable)
 				button:SetScript("OnMouseUp", OnMouseUp)
 				button:SetScript("OnClick", OnClick)
 
-				new["button"..i] = button
+				new["button" .. i] = button
 			end
 
 			new.body = body
@@ -525,13 +495,13 @@ end
 -- update the layout and position of visible popups
 Handler.UpdateLayout = function(self)
 	local order = self.order
-	table_wipe(order)
+	table.wipe(order)
 	for activeID in pairs(activePopups) do
-		table_insert(order, activeID)
+		table.insert(order, activeID)
 	end
-	table_sort(order)
+	table.sort(order)
 	local first, previous
-	for i, activeID in ipairs(order) do
+	for _, activeID in ipairs(order) do
 		local popupFrame = activePopups[activeID]
 		if previous then
 			popupFrame:ClearAllPoints()
@@ -551,7 +521,7 @@ Handler.UpdateLayout = function(self)
 		local available = Engine:GetFrame():GetHeight()
 
 		first:ClearAllPoints()
-		first:SetPoint("TOP", Engine:GetFrame(), "TOP", 0, -(available - (top-bottom))/3)
+		first:SetPoint("TOP", Engine:GetFrame(), "TOP", 0, -(available - (top - bottom)) / 3)
 	end
 end
 

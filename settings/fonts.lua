@@ -8,74 +8,74 @@ Engine:NewStaticConfig("Fonts", {
 		text_normal = {
 			path = path .. "NotoSans-Bold.ttf", -- DejaVuSans
 			locales = {
-				enUS  = true,
+				enUS = true,
 				enGB = true,
 				deDE = true,
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		text_narrow = {
 			path = path .. "NotoSans-Bold.ttf", -- DejaVuSansCondensed
 			locales = {
-				enUS  = true,
+				enUS = true,
 				enGB = true,
 				deDE = true,
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		text_serif = {
 			path = path .. "NotoSans-Bold.ttf", -- DejaVuSerifCondensed
 			locales = {
-				enUS  = true,
+				enUS = true,
 				enGB = true,
 				deDE = true,
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		text_serif_italic = {
 			path = path .. "NotoSans-Bold.ttf", -- DejaVuSerifCondensed-Italic
 			locales = {
-				enUS  = true,
+				enUS = true,
 				enGB = true,
 				deDE = true,
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		header_normal = {
 			path = path .. "ExocetBlizzardMedium.ttf",
 			locales = {
-				enUS  = true,
+				enUS = true,
 				enGB = true,
 				deDE = true,
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		header_light = {
 			path = path .. "ExocetBlizzardLight.ttf",
 			locales = {
-				enUS  = true,
+				enUS = true,
 				enGB = true,
 				deDE = true,
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		number = {
 			path = path .. "Sylfaen.ttf",
@@ -86,8 +86,8 @@ Engine:NewStaticConfig("Fonts", {
 				esES = true,
 				esMX = true,
 				frFR = true,
-				ruRU = true
-			}
+				ruRU = true,
+			},
 		},
 		damage = {
 			path = path .. "ExocetBlizzardMedium.ttf",
@@ -97,8 +97,8 @@ Engine:NewStaticConfig("Fonts", {
 				deDE = true,
 				esES = true,
 				esMX = true,
-				frFR = true
-			}
-		}
-	}
+				frFR = true,
+			},
+		},
+	},
 })

@@ -20,23 +20,41 @@ local state
 
 local function newToggle()
 	return {
-		shown = false, enabled = false, alpha = 1,
-		Show = function(self) self.shown = true end,
-		Hide = function(self) self.shown = false end,
-		Enable = function(self) self.enabled = true end,
-		Disable = function(self) self.enabled = false end,
-		SetAlpha = function(self, alpha) self.alpha = alpha end,
+		shown = false,
+		enabled = false,
+		alpha = 1,
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
+		Enable = function(self)
+			self.enabled = true
+		end,
+		Disable = function(self)
+			self.enabled = false
+		end,
+		SetAlpha = function(self, alpha)
+			self.alpha = alpha
+		end,
 	}
 end
 
 local function loadFloaters()
 	state = { onTaxi = false, lockdown = false }
-	_G.UnitOnTaxi = function() return state.onTaxi end
-	_G.InCombatLockdown = function() return state.lockdown end
+	_G.UnitOnTaxi = function()
+		return state.onTaxi
+	end
+	_G.InCombatLockdown = function()
+		return state.lockdown
+	end
 
 	local Engine = EngineMock.new()
 	local Module = Engine:NewModule("ActionBars")
-	Engine.Wrap = function(_, func) return func end
+	Engine.Wrap = function(_, func)
+		return func
+	end
 	assert(loadfile("modules/actionbars/elements/floaters.lua"))("DiabolicUI", Engine)
 
 	local widget = Module:GetWidget("Bar: Floaters")
@@ -44,8 +62,12 @@ local function loadFloaters()
 	widget.TaxiExitButton = newToggle()
 	widget.StanceBarButton = newToggle()
 	widget.registered = {}
-	widget.RegisterEvent = function(self, event, method) self.registered[event] = method end
-	widget.UnregisterEvent = function(self, event) self.registered[event] = nil end
+	widget.RegisterEvent = function(self, event, method)
+		self.registered[event] = method
+	end
+	widget.UnregisterEvent = function(self, event)
+		self.registered[event] = nil
+	end
 	return widget
 end
 

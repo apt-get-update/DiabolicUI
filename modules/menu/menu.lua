@@ -4,26 +4,14 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Menu")
 
--- Lua API
-local ipairs = ipairs
-
--- WoW API
-local InCombatLockdown = InCombatLockdown
-local InterfaceOptions_AddCategory = InterfaceOptions_AddCategory
-local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory
-
 -- Pages
 -------------------------------------------------------
 Module.CreateOptionsPanel = function(self)
 	local panel = self:CreateMainPage()
 	InterfaceOptions_AddCategory(panel)
 
-	-- the pages, from the main frames to the extras (the minimap's goes
-	-- before Quests, modules/minimap/Components/Menu/Menu.lua)
-	for _, page in ipairs({ self:CreateActionBarsPage(), self:CreateSpecsPage(), self:CreateUnitsPage(), self:CreateChatPage(),
-		self:CreateMessagesPage(), self:CreateQuestsPage(), self:CreateTooltipsPage(), self:CreateAddOnsPage() }) do
-		InterfaceOptions_AddCategory(page)
-	end
+	InterfaceOptions_AddCategory(self:CreatePositionsPage())
+	InterfaceOptions_AddCategory(self:CreateSpecsPage())
 
 	self.OptionsPanel = panel
 
@@ -118,7 +106,7 @@ end
 -- Questie builds its tracker some time after login: scaled once it's updated.
 Module.OnEnteringWorld = function(self)
 	local loader = _G.QuestieLoader
-	if loader and (not self.questieHooked) then
+	if loader and not self.questieHooked then
 		self.questieHooked = true
 		hooksecurefunc(loader:ImportModule("TrackerBaseFrame"), "Update", function()
 			local frame = _G.Questie_BaseFrame
@@ -142,7 +130,22 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnCombatStart")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEnteringWorld")
 	self:RegisterMessage("ENGINE_UI_SCALE_CHANGED", "ApplyUIScale") -- /dui setscale
-	self:GetHandler("ChatCommand"):Register("move", function()
+	local commands = self:GetHandler("ChatCommand")
+	commands:Register("move", function()
 		self:SetFramesUnlocked(not self:AreFramesUnlocked())
+	end)
+
+	-- fake members and loot, to see the frames without a group
+	local units = self:GetConfig("UnitFrames")
+	commands:Register("party", function()
+		units.testPartyMode = not units.testPartyMode
+		Engine:GetModule("UnitFrames"):SetPartyMockShown(units.testPartyMode)
+	end)
+	commands:Register("raid", function()
+		units.testRaidMode = not units.testRaidMode
+		Engine:GetModule("UnitFrames"):SetRaidMockShown(units.testRaidMode)
+	end)
+	commands:Register("loot", function()
+		Engine:GetModule("Blizzard: LootPreview"):ShowFakeRoll()
 	end)
 end

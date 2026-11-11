@@ -10,7 +10,7 @@ Module.OnInit = function(self)
 	if anchor == "Main" then
 		anchor = Engine:GetModule("ActionBars"):GetWidget("Controller: Main"):GetFrame()
 	end
-	
+
 	local TotemBarHolder = CreateFrame("Frame", nil, Engine:GetFrame())
 	TotemBarHolder:SetPoint(point, anchor, rpoint, x, y)
 	TotemBarHolder:SetWidth(MultiCastActionBarFrame:GetWidth())
@@ -27,5 +27,4 @@ Module.OnInit = function(self)
 	MultiCastActionBarFrame.SetParent = function() end
 	MultiCastActionBarFrame.SetPoint = function() end
 	MultiCastRecallSpellButton.SetPoint = function() end
-	
 end

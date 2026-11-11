@@ -20,5 +20,5 @@ Engine:NewConfig("ActionBars", {
 	specMacroBefore1 = false, -- a macro's name, run by the button's click that switches
 	specMacroBefore2 = false,
 	specMacroName1 = false, -- a macro's name, run by a click on the button after the switch
-	specMacroName2 = false
+	specMacroName2 = false,
 })

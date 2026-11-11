@@ -20,36 +20,16 @@ Module:SetIncompatible("TipTac")
 Module:SetIncompatible("TinyTip")
 Module:SetIncompatible("TinyTooltip")
 
--- Lua API
-local _G = _G
-local CreateFrame = _G.CreateFrame
-local ipairs = ipairs
-local pairs = pairs
-local unpack = unpack
-local math_abs = math.abs
-local math_max = math.max
-local math_floor = math.floor
-local math_min = math.min
-local string_gsub = string.gsub
-local string_find = string.find
-local string_gmatch = string.gmatch
-local string_lower = string.lower
-local string_match = string.match
-local table_concat = table.concat
-local xpcall = xpcall
-
--- WoW API
-local geterrorhandler = _G.geterrorhandler
-local GetItemInfo = _G.GetItemInfo
-local GetItemQualityColor = _G.GetItemQualityColor
-local hooksecurefunc = _G.hooksecurefunc
-
 -- Tooltips that show items
 local TOOLTIPS = {
 	"GameTooltip",
 	"ItemRefTooltip",
-	"ShoppingTooltip1", "ShoppingTooltip2", "ShoppingTooltip3",
-	"ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3"
+	"ShoppingTooltip1",
+	"ShoppingTooltip2",
+	"ShoppingTooltip3",
+	"ItemRefShoppingTooltip1",
+	"ItemRefShoppingTooltip2",
+	"ItemRefShoppingTooltip3",
 }
 
 -- Layout, in tooltip pixels
@@ -63,8 +43,8 @@ local ICON_BOX = 56 -- the quality-colored box around the icon
 local ICON_TEXTURES = [[Interface\AddOns\]] .. ADDON .. [[\media\textures\]]
 local ICON_FRAME = ICON_TEXTURES .. "DiabolicUI_Button_64x64_Border.tga"
 local ICON_QUALITY_BORDER = ICON_TEXTURES .. "DiabolicUI_Button_64x64_BorderHighlight.tga"
-local ICON_ART_SCALE = 128/64
-local ICON_SIZE = ICON_BOX * 54/64
+local ICON_ART_SCALE = 128 / 64
+local ICON_SIZE = ICON_BOX * 54 / 64
 local ICON_QUALITY_MIN = 2 -- colored border from uncommon (green) up, like bag addons
 local ICON_GAP = 10 -- between the box and the text beside it
 local SHIFT = ICON_BOX + ICON_GAP -- how far the body text moves right
@@ -82,12 +62,12 @@ local HEADER_INSET = 3
 -- quality, behind the name.
 local TITLE_GLOW = [[Interface\AddOns\]] .. ADDON .. [[\media\textures\DiabolicUI_Tooltip_Header_TitleBackground.tga]]
 local TITLE_GLOW_MARGIN = 40 -- how far the glow reaches past the name on each side
-local TITLE_GLOW_ALPHA = .6
+local TITLE_GLOW_ALPHA = 0.6
 
 -- Comparison tooltips: "Currently Equipped" becomes an "Equipped" tag in
 -- its own frame above the name, as in Diablo III.
 local TAG_GAP = 12 -- between the tag's line and the name's line
-local TAG_COLOR = { .85, .75, .55 }
+local TAG_COLOR = { 0.85, 0.75, 0.55 }
 
 -- Space between side by side tooltips (comparisons): the backdrop reaches
 -- past each tooltip's edge by its border offsets, plus this much air.
@@ -99,8 +79,8 @@ local BIG_NUMBER_HEIGHT = 66 -- from the big number's line to the next one: numb
 -- price) and the price bar separately: thin bronze borders, the price bar
 -- on a slightly lighter background.
 local BOX_INSET = 2 -- boxes stay this far inside the tooltip's edges
-local BOX_BORDER_COLOR = { .38, .32, .22, 1 }
-local FOOTER_COLOR = { .1, .1, .1, 1 }
+local BOX_BORDER_COLOR = { 0.38, 0.32, 0.22, 1 }
+local FOOTER_COLOR = { 0.1, 0.1, 0.1, 1 }
 local CONTENT_TOP_GAP = 3 -- between the title banner and the content box
 local FOOTER_BOX = 22 -- height of the price box
 local FOOTER_GAP = 4 -- between the content box and the price box
@@ -116,11 +96,11 @@ local COIN_Y_OFFSET = -2 -- centers the coin icons on the footer's 12px text
 -- pattern capturing its numbers and texts, so it works for every client
 -- language.
 local ToPattern = function(template)
-	local pattern = string_gsub(template, "%%[%d%.]*s", "\002")
-	pattern = string_gsub(pattern, "%%[%d%.]*[df]", "\001")
-	pattern = string_gsub(pattern, "([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
-	pattern = string_gsub(pattern, "\001", "([%%d%%.,]+)")
-	pattern = string_gsub(pattern, "\002", "(.-)")
+	local pattern = string.gsub(template, "%%[%d%.]*s", "\002")
+	pattern = string.gsub(pattern, "%%[%d%.]*[df]", "\001")
+	pattern = string.gsub(pattern, "([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
+	pattern = string.gsub(pattern, "\001", "([%%d%%.,]+)")
+	pattern = string.gsub(pattern, "\002", "(.-)")
 	return "^" .. pattern .. "$"
 end
 
@@ -141,7 +121,7 @@ local TAG_LINES = {
 	[_G.ITEM_ACCOUNTBOUND] = true,
 	[_G.ITEM_BIND_QUEST] = true,
 	[_G.ITEM_UNIQUE] = true,
-	[_G.ITEM_UNIQUE_EQUIPPABLE] = true
+	[_G.ITEM_UNIQUE_EQUIPPABLE] = true,
 }
 local TAG_LINE_PATTERNS = {
 	ToPattern(_G.ITEM_CLASSES_ALLOWED),
@@ -154,7 +134,7 @@ local TAG_LINE_PATTERNS = {
 	ToPattern(_G.ITEM_MIN_SKILL),
 	ToPattern(_G.ITEM_REQ_SKILL),
 	ToPattern(_G.ITEM_REQ_REPUTATION),
-	ToPattern(_G.ITEM_REQ_ARENA_RATING)
+	ToPattern(_G.ITEM_REQ_ARENA_RATING),
 }
 
 local IsTagLine = function(text)
@@ -162,7 +142,7 @@ local IsTagLine = function(text)
 		return true
 	end
 	for _, pattern in ipairs(TAG_LINE_PATTERNS) do
-		if string_match(text, pattern) then
+		if string.match(text, pattern) then
 			return true
 		end
 	end
@@ -171,7 +151,7 @@ end
 -- Blizzard's default tooltip text color is pure white.
 local IsDefaultColor = function(line)
 	local r, g, b = line:GetTextColor()
-	return (r > .99) and (g > .99) and (b > .99)
+	return (r > 0.99) and (g > 0.99) and (b > 0.99)
 end
 
 local TAG_COLOR_CODE = ("|cff%02x%02x%02x"):format(TAG_COLOR[1] * 255, TAG_COLOR[2] * 255, TAG_COLOR[3] * 255)
@@ -182,21 +162,21 @@ local TAG_COLOR_CODE = ("|cff%02x%02x%02x"):format(TAG_COLOR[1] * 255, TAG_COLOR
 -- by part with color codes, leaving the other parts alone.
 local HighlightTagLine = function(line)
 	local text = line:GetText()
-	if (not text) then
+	if not text then
 		return
 	end
-	if (not string_find(text, "\n", 1, true)) and (not string_find(text, "|c", 1, true)) then
+	if (not string.find(text, "\n", 1, true)) and (not string.find(text, "|c", 1, true)) then
 		if IsTagLine(text) and IsDefaultColor(line) then
 			line:SetTextColor(unpack(TAG_COLOR))
 		end
 		return
 	end
 	local segments, changed = {}, false
-	for segment in string_gmatch(text .. "\n", "(.-)\n") do
-		local plain = string_gsub(string_gsub(segment, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
+	for segment in string.gmatch(text .. "\n", "(.-)\n") do
+		local plain = string.gsub(string.gsub(segment, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
 		local isWhite
-		if string_find(segment, "|c", 1, true) then
-			isWhite = string_find(string_lower(segment), "^|c%x%xffffff") and true
+		if string.find(segment, "|c", 1, true) then
+			isWhite = string.find(string.lower(segment), "^|c%x%xffffff") and true
 		else
 			isWhite = IsDefaultColor(line)
 		end
@@ -207,7 +187,7 @@ local HighlightTagLine = function(line)
 		segments[#segments + 1] = segment
 	end
 	if changed then
-		line:SetText(table_concat(segments, "\n"))
+		line:SetText(table.concat(segments, "\n"))
 	end
 end
 
@@ -236,7 +216,7 @@ local CreateBox = function(tooltip, backgroundColor)
 		top = { "TOPLEFT", "TOPRIGHT" },
 		bottom = { "BOTTOMLEFT", "BOTTOMRIGHT" },
 		left = { "TOPLEFT", "BOTTOMLEFT" },
-		right = { "TOPRIGHT", "BOTTOMRIGHT" }
+		right = { "TOPRIGHT", "BOTTOMRIGHT" },
 	}
 	box.regions = { box.bg }
 	for side, points in pairs(lines) do
@@ -278,14 +258,14 @@ local PlaceHeader = function(header, tooltip, top, bottom, r, g, b)
 	header:ClearAllPoints()
 	header:SetPoint("TOPLEFT", tooltip, "TOPLEFT", 1, top)
 	header:SetPoint("BOTTOMRIGHT", tooltip, "TOPRIGHT", -1, bottom)
-	local edgeSize = math_min(HEADER_EDGE_SIZE, math_floor((top - bottom) / 2))
-	if (header.edgeSize ~= edgeSize) then
+	local edgeSize = math.min(HEADER_EDGE_SIZE, math.floor((top - bottom) / 2))
+	if header.edgeSize ~= edgeSize then
 		header.edgeSize = edgeSize
 		header:SetBackdrop({
 			bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 			edgeFile = HEADER_BORDER,
 			edgeSize = edgeSize,
-			insets = { left = HEADER_INSET, right = HEADER_INSET, top = HEADER_INSET, bottom = HEADER_INSET }
+			insets = { left = HEADER_INSET, right = HEADER_INSET, top = HEADER_INSET, bottom = HEADER_INSET },
 		})
 	end
 	header:SetBackdropColor(r, g, b, 1)
@@ -324,7 +304,7 @@ local GetParts = function(tooltip)
 	parts.iconBox:SetSize(ICON_BOX, ICON_BOX)
 
 	parts.icon = tooltip:CreateTexture(nil, "BORDER")
-	parts.icon:SetTexCoord(5/64, 59/64, 5/64, 59/64)
+	parts.icon:SetTexCoord(5 / 64, 59 / 64, 5 / 64, 59 / 64)
 	parts.icon:SetPoint("CENTER", parts.iconBox, "CENTER", 0, 0)
 	parts.icon:SetSize(ICON_SIZE, ICON_SIZE)
 
@@ -344,7 +324,7 @@ local GetParts = function(tooltip)
 
 	parts.bigLabel = tooltip:CreateFontString(nil, "ARTWORK")
 	parts.bigLabel:SetFontObject(DiabolicFont_SansRegular12)
-	parts.bigLabel:SetTextColor(.6, .6, .6)
+	parts.bigLabel:SetTextColor(0.6, 0.6, 0.6)
 	parts.bigLabel:SetPoint("TOPLEFT", parts.bigNumber, "BOTTOMLEFT", 1, -1)
 
 	parts.contentBox = CreateBox(tooltip)
@@ -352,16 +332,23 @@ local GetParts = function(tooltip)
 
 	parts.sellValue = tooltip:CreateFontString(nil, "ARTWORK")
 	parts.sellValue:SetFontObject(DiabolicFont_SansRegular12)
-	parts.sellValue:SetTextColor(.75, .75, .75)
+	parts.sellValue:SetTextColor(0.75, 0.75, 0.75)
 
 	parts.durability = tooltip:CreateFontString(nil, "ARTWORK")
 	parts.durability:SetFontObject(DiabolicFont_SansRegular12)
-	parts.durability:SetTextColor(.75, .75, .75)
+	parts.durability:SetTextColor(0.75, 0.75, 0.75)
 
 	parts.all = {
-		parts.header, parts.tagHeader,
-		parts.iconBox, parts.icon, parts.iconBorder, parts.iconQuality,
-		parts.bigNumber, parts.bigLabel, parts.sellValue, parts.durability
+		parts.header,
+		parts.tagHeader,
+		parts.iconBox,
+		parts.icon,
+		parts.iconBorder,
+		parts.iconQuality,
+		parts.bigNumber,
+		parts.bigLabel,
+		parts.sellValue,
+		parts.durability,
 	}
 	for _, box in ipairs({ parts.contentBox, parts.footerBox }) do
 		for _, region in ipairs(box.regions) do
@@ -398,7 +385,7 @@ local Reset = function(tooltip)
 			tooltip.TransmogText1:ClearAllPoints()
 			tooltip.TransmogText1:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -2)
 		end
-		if (info.titleIndex == 2) then
+		if info.titleIndex == 2 then
 			local tagLine = _G[name .. "TextLeft1"]
 			tagLine:SetAlpha(1)
 			title:ClearAllPoints()
@@ -445,11 +432,11 @@ end
 -- its lines, then grows it to fit.
 local Layout = function(tooltip)
 	local info = tooltip.DiabolicItemInfo
-	if (not info) then
+	if not info then
 		return
 	end
 	local _, link = tooltip:GetItem()
-	if (link ~= info.link) then
+	if link ~= info.link then
 		return Reset(tooltip)
 	end
 
@@ -486,22 +473,22 @@ local Layout = function(tooltip)
 
 	local titleTop = OffsetFromTop(tooltip, titleLine, "TOP")
 	local titleBottom = OffsetFromTop(tooltip, titleLine, "BOTTOM")
-	if (not titleTop) or (not titleBottom) then
+	if (not titleTop) or not titleBottom then
 		return -- not placed on screen yet; CheckLayout retries next frame
 	end
 
 	-- Title banner
 	local bannerTop, bannerBottom = titleTop + BANNER_PAD, titleBottom - BANNER_PAD
-	if (info.titleIndex == 1) then
+	if info.titleIndex == 1 then
 		bannerTop = -1
 	end
 	-- nearly black, so the glow behind the name stands out
-	PlaceHeader(parts.header, tooltip, bannerTop, bannerBottom, r * .08, g * .08, b * .08)
+	PlaceHeader(parts.header, tooltip, bannerTop, bannerBottom, r * 0.08, g * 0.08, b * 0.08)
 
 	-- "Equipped" tag, in the room left by the "Currently Equipped" line
 	if tagLine then
 		local tagBottom = OffsetFromTop(tooltip, tagLine, "BOTTOM") - 4
-		PlaceHeader(parts.tagHeader, tooltip, -1, tagBottom, .1, .09, .07)
+		PlaceHeader(parts.tagHeader, tooltip, -1, tagBottom, 0.1, 0.09, 0.07)
 	end
 
 	parts.title:SetText(info.name)
@@ -512,7 +499,7 @@ local Layout = function(tooltip)
 	-- Icon box
 	parts.iconBox:ClearAllPoints()
 	parts.iconBox:SetPoint("TOPLEFT", tooltip, "TOPLEFT", PADDING, bannerBottom - TITLE_GAP)
-	parts.iconBox:SetGradientAlpha("VERTICAL", r * .15, g * .15, b * .15, 1, r * .55, g * .55, b * .55, 1)
+	parts.iconBox:SetGradientAlpha("VERTICAL", r * 0.15, g * 0.15, b * 0.15, 1, r * 0.55, g * 0.55, b * 0.55, 1)
 	parts.icon:SetTexture(info.icon)
 	parts.iconQuality:SetVertexColor(r, g, b)
 
@@ -549,13 +536,13 @@ local Layout = function(tooltip)
 	-- Start from Blizzard's own measurement; when the tooltip still has the
 	-- size set here last time, that's the one measured back then.
 	local baseWidth, baseHeight = tooltip:GetWidth(), tooltip:GetHeight()
-	if info.width and (math_abs(baseWidth - info.width) < .5) and (math_abs(baseHeight - info.height) < .5) then
+	if info.width and (math.abs(baseWidth - info.width) < 0.5) and (math.abs(baseHeight - info.height) < 0.5) then
 		baseWidth, baseHeight = info.baseWidth, info.baseHeight
 	end
 	info.baseWidth, info.baseHeight = baseWidth, baseHeight
-	local width = math_max(baseWidth + SHIFT, parts.title:GetStringWidth() + PADDING * 4)
+	local width = math.max(baseWidth + SHIFT, parts.title:GetStringWidth() + PADDING * 4)
 	local height = baseHeight + (BANNER_PAD + TITLE_GAP - 2) + bigExtra + (tagLine and (TAG_GAP - 2) or 0)
-	height = math_max(height, -bannerBottom + TITLE_GAP + ICON_BOX + PADDING)
+	height = math.max(height, -bannerBottom + TITLE_GAP + ICON_BOX + PADDING)
 	if hasFooter then
 		height = height + FOOTER_HEIGHT
 	end
@@ -564,11 +551,17 @@ local Layout = function(tooltip)
 	info.width, info.height = width, height
 
 	-- the glow stays inside the banner's border
-	local glowWidth = math_min(parts.title:GetStringWidth() + TITLE_GLOW_MARGIN * 2, width - PADDING * 4)
+	local glowWidth = math.min(parts.title:GetStringWidth() + TITLE_GLOW_MARGIN * 2, width - PADDING * 4)
 	parts.titleGlow:SetSize(glowWidth, bannerTop - bannerBottom)
 
 	-- Content box: from under the banner to above the price box
-	PlaceBox(parts.contentBox, tooltip, "TOPLEFT", bannerBottom - CONTENT_TOP_GAP, hasFooter and FOOTER_HEIGHT or BOTTOM_Y)
+	PlaceBox(
+		parts.contentBox,
+		tooltip,
+		"TOPLEFT",
+		bannerBottom - CONTENT_TOP_GAP,
+		hasFooter and FOOTER_HEIGHT or BOTTOM_Y
+	)
 
 	if hasFooter then
 		PlaceBox(parts.footerBox, tooltip, "BOTTOMLEFT", BOTTOM_Y + FOOTER_BOX, BOTTOM_Y)
@@ -584,21 +577,21 @@ local Layout = function(tooltip)
 	for _, region in ipairs(parts.all) do
 		region:Show()
 	end
-	if (not bigLine) then
+	if not bigLine then
 		parts.bigNumber:Hide()
 		parts.bigLabel:Hide()
 	end
-	if (info.quality < ICON_QUALITY_MIN) then
+	if info.quality < ICON_QUALITY_MIN then
 		parts.iconQuality:Hide()
 	end
-	if (not hasFooter) then
+	if not hasFooter then
 		for _, region in ipairs(parts.footerBox.regions) do
 			region:Hide()
 		end
 		parts.sellValue:Hide()
 		parts.durability:Hide()
 	end
-	if (not tagLine) then
+	if not tagLine then
 		for _, region in ipairs(parts.tag) do
 			region:Hide()
 		end
@@ -613,28 +606,28 @@ end
 -- wasn't placed on screen yet when it was shown (chat links can be).
 local CheckLayout = function(tooltip)
 	local info = tooltip.DiabolicItemInfo
-	if (not info) then
+	if not info then
 		return
 	end
-	if (not info.width) then
+	if not info.width then
 		return Layout(tooltip)
 	end
 	local width, height = tooltip:GetWidth(), tooltip:GetHeight()
-	if (math_abs(width - info.width) > .5) or (math_abs(height - info.height) > .5) then
+	if (math.abs(width - info.width) > 0.5) or (math.abs(height - info.height) > 0.5) then
 		return Layout(tooltip)
 	end
 	local name = tooltip:GetName()
 	local bodyTop = GetBodyTop(tooltip, info)
 	if bodyTop then
 		local _, relativeTo, _, x = bodyTop:GetPoint()
-		if (relativeTo ~= _G[name .. "TextLeft" .. info.titleIndex]) or (not x) or (math_abs(x - SHIFT) > .5) then
+		if (relativeTo ~= _G[name .. "TextLeft" .. info.titleIndex]) or not x or (math.abs(x - SHIFT) > 0.5) then
 			return Layout(tooltip)
 		end
 	end
 	if info.gapOffset then
 		local afterBig = _G[name .. "TextLeft" .. (info.bigLine + 1)]
 		local _, _, _, _, y = afterBig:GetPoint()
-		if (not y) or (math_abs(y - info.gapOffset) > .5) then
+		if (not y) or (math.abs(y - info.gapOffset) > 0.5) then
 			Layout(tooltip)
 		end
 	end
@@ -660,14 +653,14 @@ Module.OnTooltipSetItem = function(self, tooltip)
 	local _, link = tooltip:GetItem()
 	local scored = link and AddGearScore(tooltip, link)
 	local itemName, quality, icon, sellPrice
-	if link and self.db.reskinTooltip and (not self.failed[link]) then
+	if link and self.db.reskinTooltip and not self.failed[link] then
 		itemName, _, quality, _, _, _, _, _, _, icon, sellPrice = GetItemInfo(link)
 	end
-	if (not itemName) or (not quality) then
+	if (not itemName) or not quality then
 		-- Reskin turned off, not an item, not cached yet, or its layout failed
 		-- before: Blizzard's plain tooltip.
 		tooltip.DiabolicItemState = "plain"
-		if link and self.db.reskinTooltip and (not self.failed[link]) then
+		if link and self.db.reskinTooltip and not self.failed[link] then
 			tooltip.DiabolicPending = link -- not cached yet: shown again once it is
 		end
 		if self:ReleasePrice(tooltip) or scored then
@@ -691,7 +684,9 @@ Module.OnTooltipSetItem = function(self, tooltip)
 		sellPrice = sellPrice,
 		quality = quality,
 		titleIndex = titleIndex,
-		r = r, g = g, b = b
+		r = r,
+		g = g,
+		b = b,
 	}
 	tooltip.DiabolicItemInfo = info -- already, so Unstyle can undo a partial edit
 
@@ -699,15 +694,15 @@ Module.OnTooltipSetItem = function(self, tooltip)
 		local line = _G[name .. "TextLeft" .. i]
 		local text = line and line:GetText()
 		if text then
-			local dps = string_match(text, DPS_PATTERN)
-			local armor = (not dps) and string_match(text, ARMOR_PATTERN)
-			if (dps or armor) and (not info.bigLine) then
+			local dps = string.match(text, DPS_PATTERN)
+			local armor = (not dps) and string.match(text, ARMOR_PATTERN)
+			if (dps or armor) and not info.bigLine then
 				info.bigLine = i
 				info.bigNumber = dps or armor
 				info.bigLabel = dps and _G.ITEM_MOD_DAMAGE_PER_SECOND_SHORT or _G.ARMOR
 				info.bigText = text
 				line:SetText(" ")
-			elseif string_match(text, DURABILITY_PATTERN) then
+			elseif string.match(text, DURABILITY_PATTERN) then
 				info.durability = text
 				info.durabilityLine = i
 				line:SetText("")
@@ -734,11 +729,11 @@ end
 
 Module.OnTooltipAddMoney = function(self, tooltip, cost, maxcost)
 	local state = tooltip.DiabolicItemState
-	if maxcost or (state == "plain") or (not self.db.reskinTooltip) or (not IS_STYLED_TOOLTIP[tooltip:GetName() or ""]) then
+	if maxcost or (state == "plain") or not self.db.reskinTooltip or not IS_STYLED_TOOLTIP[tooltip:GetName() or ""] then
 		return self.AddMoney(tooltip, cost, maxcost)
 	end
 	tooltip.DiabolicSellPrice = cost
-	if (state == "styled") then
+	if state == "styled" then
 		tooltip:Show() -- lay out again, now with the price
 	end
 end
@@ -811,9 +806,9 @@ Module.SpaceComparisons = function(self, tooltip)
 	for _, compare in ipairs(tooltip.shoppingTooltips or {}) do
 		if compare:IsShown() then
 			local point, relativeTo, relativePoint, _, y = compare:GetPoint()
-			if (point == "TOPLEFT") then
+			if point == "TOPLEFT" then
 				compare:SetPoint(point, relativeTo, relativePoint, gap, y)
-			elseif (point == "TOPRIGHT") then
+			elseif point == "TOPRIGHT" then
 				compare:SetPoint(point, relativeTo, relativePoint, -gap, y)
 			end
 		end
@@ -838,7 +833,9 @@ Module.OnEnable = function(self)
 	self.db = self:GetConfig("Tooltips") -- reskinTooltip, read on every tooltip so the option applies at once
 	local offsets = self:GetDB("Tooltips").border.offsets
 	self.compareGap = offsets[1] + offsets[2] + COMPARE_GAP
-	hooksecurefunc("GameTooltip_ShowCompareItem", function(tooltip) self:SpaceComparisons(tooltip) end)
+	hooksecurefunc("GameTooltip_ShowCompareItem", function(tooltip)
+		self:SpaceComparisons(tooltip)
+	end)
 
 	self.AddMoney = _G.GameTooltip_OnTooltipAddMoney
 	_G.GameTooltip_OnTooltipAddMoney = function(tooltip, cost, maxcost)
@@ -846,9 +843,15 @@ Module.OnEnable = function(self)
 	end
 
 	self.failed = {} -- links whose layout errored: shown plain from then on
-	local setItem = function(tooltip) return self:OnTooltipSetItem(tooltip) end
-	local onTooltipSetItem = function(tooltip) self:Guard(tooltip, setItem) end
-	local onShow = function(tooltip) self:Guard(tooltip, Layout) end
+	local setItem = function(tooltip)
+		return self:OnTooltipSetItem(tooltip)
+	end
+	local onTooltipSetItem = function(tooltip)
+		self:Guard(tooltip, setItem)
+	end
+	local onShow = function(tooltip)
+		self:Guard(tooltip, Layout)
+	end
 	local onUpdate = function(tooltip)
 		if tooltip.DiabolicItemInfo then
 			self:Guard(tooltip, CheckLayout)
@@ -871,7 +874,7 @@ Module.OnEnable = function(self)
 			-- and hide, which drops hooks: hook it again each time.
 			tooltip:HookScript("OnUpdate", onUpdate)
 			hooksecurefunc(tooltip, "SetScript", function(tooltip, script)
-				if (script == "OnUpdate") then
+				if script == "OnUpdate" then
 					tooltip:HookScript("OnUpdate", onUpdate)
 				end
 			end)
@@ -881,13 +884,22 @@ end
 
 -- The look shared with spelltooltips.lua (ability tooltips).
 Module.Shared = {
-	CreateBox = CreateBox, PlaceBox = PlaceBox,
-	CreateHeader = CreateHeader, PlaceHeader = PlaceHeader,
-	OffsetFromTop = OffsetFromTop, IsDefaultColor = IsDefaultColor,
-	PADDING = PADDING, ICON_BOX = ICON_BOX, ICON_SIZE = ICON_SIZE,
-	ICON_FRAME = ICON_FRAME, ICON_ART_SCALE = ICON_ART_SCALE,
-	SHIFT = SHIFT, TITLE_GAP = TITLE_GAP, BANNER_PAD = BANNER_PAD,
-	CONTENT_TOP_GAP = CONTENT_TOP_GAP, BOTTOM_Y = BOTTOM_Y
+	CreateBox = CreateBox,
+	PlaceBox = PlaceBox,
+	CreateHeader = CreateHeader,
+	PlaceHeader = PlaceHeader,
+	OffsetFromTop = OffsetFromTop,
+	IsDefaultColor = IsDefaultColor,
+	PADDING = PADDING,
+	ICON_BOX = ICON_BOX,
+	ICON_SIZE = ICON_SIZE,
+	ICON_FRAME = ICON_FRAME,
+	ICON_ART_SCALE = ICON_ART_SCALE,
+	SHIFT = SHIFT,
+	TITLE_GAP = TITLE_GAP,
+	BANNER_PAD = BANNER_PAD,
+	CONTENT_TOP_GAP = CONTENT_TOP_GAP,
+	BOTTOM_Y = BOTTOM_Y,
 }
 
 -- Exposed for tests/test_blizzard_itemtooltips.lua.

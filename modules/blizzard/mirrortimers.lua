@@ -5,16 +5,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: MirrorTimers")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local _G = _G
-local table_insert = table.insert
-local table_sort = table.sort
-local table_wipe = table.wipe
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = hooksecurefunc
-
 local sort = function(a, b)
 	return a.id < b.id
 end
@@ -23,7 +13,7 @@ Module.UpdateTimer = function(self, frame)
 	local timer = self.timers[frame]
 	local min, max = timer.bar:GetMinMaxValues()
 	local value = timer.bar:GetValue()
-	if (not min) or (not max) or (not value) then
+	if (not min) or not max or not value then
 		return
 	end
 	if value > max then
@@ -31,7 +21,7 @@ Module.UpdateTimer = function(self, frame)
 	elseif value < min then
 		value = min
 	end
-	timer.bar:GetStatusBarTexture():SetTexCoord(0, (value-min)/(max-min), 0, 1) -- cropping, not shrinking
+	timer.bar:GetStatusBarTexture():SetTexCoord(0, (value - min) / (max - min), 0, 1) -- cropping, not shrinking
 end
 
 -- Stacks the visible timers (not secure frames: movable in combat too).
@@ -40,23 +30,23 @@ Module.UpdateAnchors = function(self)
 	local timers = self.timers
 	local order = self.order
 
-	table_wipe(order)
-	
-	-- parse mirror timers	
-	for frame,timer in pairs(timers) do
+	table.wipe(order)
+
+	-- parse mirror timers
+	for frame, timer in pairs(timers) do
 		frame:ClearAllPoints() -- clear points of hidden too
 		if frame:IsShown() then
-			table_insert(order, timer) -- only include visible timers
+			table.insert(order, timer) -- only include visible timers
 		end
-	end	
-	
+	end
+
 	-- sort and arrange visible timers
 	if #order > 0 then
-		table_sort(order, sort)
+		table.sort(order, sort)
 		-- one slot down while a capture bar sits in the first one
 		order[1].frame:SetPoint(unpack(self.captureBarVisible and config.positionOffsetByOne or config.position))
 		for i = 2, #order do
-			order[i].frame:SetPoint("CENTER", order[i-1].frame, "CENTER", 0, -config.padding)
+			order[i].frame:SetPoint("CENTER", order[i - 1].frame, "CENTER", 0, -config.padding)
 		end
 	end
 end
@@ -101,27 +91,32 @@ Module.Skin = function(self, frame)
 	timer.msg:ClearAllPoints()
 	timer.msg:SetPoint("CENTER", 0, 0)
 	timer.msg:SetFontObject(config.font_object)
-	
-	hooksecurefunc(timer.bar, "SetValue", function(...) self:UpdateTimer(frame) end)
-	hooksecurefunc(timer.bar, "SetMinMaxValues", function(...) self:UpdateTimer(frame) end)
+
+	hooksecurefunc(timer.bar, "SetValue", function(...)
+		self:UpdateTimer(frame)
+	end)
+	hooksecurefunc(timer.bar, "SetMinMaxValues", function(...)
+		self:UpdateTimer(frame)
+	end)
 
 	-- the others move up when one is done
-	frame:HookScript("OnHide", function() self:UpdateAnchors() end)
+	frame:HookScript("OnHide", function()
+		self:UpdateAnchors()
+	end)
 
 	self:UpdateAnchors()
 end
 
-
 Module.MirrorTimer_Show = function(self, timer, value, maxvalue, scale, paused, label)
 	local timers = self.timers
 	for i = 1, MIRRORTIMER_NUMTIMERS do
-		local frame = _G["MirrorTimer"..i]
-		if frame and (not timers[frame]) then
+		local frame = _G["MirrorTimer" .. i]
+		if frame and not timers[frame] then
 			timers[frame] = {}
 			timers[frame].frame = frame
-			timers[frame].bar = _G[frame:GetName().."StatusBar"]
-			timers[frame].msg = _G[frame:GetName().."Text"] or _G[frame:GetName().."StatusBarTimeText"]
-			timers[frame].border = _G[frame:GetName().."Border"] or _G[frame:GetName().."StatusBarBorder"]
+			timers[frame].bar = _G[frame:GetName() .. "StatusBar"]
+			timers[frame].msg = _G[frame:GetName() .. "Text"] or _G[frame:GetName() .. "StatusBarTimeText"]
+			timers[frame].border = _G[frame:GetName() .. "Border"] or _G[frame:GetName() .. "StatusBarBorder"]
 			timers[frame].id = i
 			self:Skin(frame)
 		end
@@ -150,14 +145,15 @@ Module.OnInit = function(self)
 	self.timers = {}
 	self.order = {}
 	self.captureBarVisible = false
-	
+
 	if MirrorTimer_Show then
-		hooksecurefunc("MirrorTimer_Show", function(...) self:MirrorTimer_Show(...) end)
+		hooksecurefunc("MirrorTimer_Show", function(...)
+			self:MirrorTimer_Show(...)
+		end)
 	end
-	
+
 	self:RegisterMessage("ENGINE_CAPTUREBAR_VISIBLE", "CaptureBarVisible")
 	self:RegisterMessage("ENGINE_CAPTUREBAR_HIDDEN", "CaptureBarHidden")
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdateAnchors")
 end
-

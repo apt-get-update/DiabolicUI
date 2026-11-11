@@ -72,7 +72,9 @@ end
 
 function TestChatCommands:test_calls_the_registered_command_with_its_arguments()
 	local received
-	Handler:Register("num_bars", function(...) received = { ... } end)
+	Handler:Register("num_bars", function(...)
+		received = { ... }
+	end)
 
 	Handler:PerformCommand("num_bars", "2")
 
@@ -86,7 +88,9 @@ end
 
 function TestChatCommands:test_empty_or_nil_command_defaults_to_config()
 	local calledConfig = false
-	Handler:Register("config", function() calledConfig = true end)
+	Handler:Register("config", function()
+		calledConfig = true
+	end)
 
 	Handler:PerformCommand("")
 	lu.assertTrue(calledConfig)
@@ -101,8 +105,12 @@ end
 
 function TestChatCommands:test_register_first_write_wins()
 	local firstCalled, secondCalled = false, false
-	Handler:Register("autoposition", function() firstCalled = true end)
-	Handler:Register("autoposition", function() secondCalled = true end) -- silently ignored
+	Handler:Register("autoposition", function()
+		firstCalled = true
+	end)
+	Handler:Register("autoposition", function()
+		secondCalled = true
+	end) -- silently ignored
 
 	Handler:PerformCommand("autoposition")
 
@@ -115,7 +123,9 @@ end
 
 function TestChatCommands:test_slash_handler_parses_and_dispatches_in_one_call()
 	local received
-	Handler:Register("num_side_bars", function(...) received = { ... } end)
+	Handler:Register("num_side_bars", function(...)
+		received = { ... }
+	end)
 	Handler:OnEnable()
 
 	_G.SlashCmdList["DIABOLICUISLASHHANDLER"]("num_side_bars 1")

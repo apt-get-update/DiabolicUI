@@ -1,6 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
+<Script file='banners.lua'/>
 <Script file='capturebars.lua'/>
+<Script file='gains.lua'/>
 <Script file='pvpemotes.lua'/>
 <Script file='tracker.lua'/>
 <Script file='warnings.lua'/>

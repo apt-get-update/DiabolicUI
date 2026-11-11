@@ -22,8 +22,14 @@ local Stub = {}
 -- A table (itself permissive) rather than a function, so code that grabs
 -- the shared frame methods with `getmetatable(frame).__index` - the engine
 -- does - gets something it can index, just like with a real frame.
-Stub.__index = setmetatable({}, { __index = function() return Stub.new() end })
-Stub.__call = function(_, ...) return Stub.new() end
+Stub.__index = setmetatable({}, {
+	__index = function()
+		return Stub.new()
+	end,
+})
+Stub.__call = function(_, ...)
+	return Stub.new()
+end
 Stub.__concat = function(a, b)
 	local function str(v)
 		if type(v) == "table" and getmetatable(v) == Stub then
@@ -33,9 +39,15 @@ Stub.__concat = function(a, b)
 	end
 	return str(a) .. str(b)
 end
-Stub.__tostring = function() return "" end
-Stub.__unm = function() return Stub.new() end
-Stub.__len = function() return 0 end
+Stub.__tostring = function()
+	return ""
+end
+Stub.__unm = function()
+	return Stub.new()
+end
+Stub.__len = function()
+	return 0
+end
 
 function Stub.new()
 	return setmetatable({}, Stub)
@@ -45,7 +57,9 @@ AutoStub.Stub = Stub
 
 function AutoStub.install()
 	setmetatable(_G, {
-		__index = function(_, _) return Stub.new() end,
+		__index = function(_, _)
+			return Stub.new()
+		end,
 	})
 end
 

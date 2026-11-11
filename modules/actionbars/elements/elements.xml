@@ -2,10 +2,8 @@
 
 <!-- Bars and XP -->
 <Script file='bar1.lua'/>
-<Script file='bar2.lua'/>
-<Script file='bar3.lua'/>
-<Script file='bar4.lua'/>
-<Script file='bar5.lua'/>
+<Script file='bars-bottom.lua'/>
+<Script file='bars-side.lua'/>
 <Script file='pet.lua'/>
 <Script file='stance.lua'/>
 <Script file='vehicle.lua'/>

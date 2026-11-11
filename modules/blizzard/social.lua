@@ -8,31 +8,17 @@
 -- Art, fonts and places only: Blizzard's code is left as it is.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Social", "LOW")
+local L = Engine:GetLocale()
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_floor = math.floor
-local select = select
-local string_format = string.format
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
--- A color as a text's code.
-local ColorCode = function(color)
-	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
-end
+local ColorCode = Engine.ColorCode
 
 -- `text` kept in `color` (Blizzard colours some on each update).
 local KeepColor = function(text, color)
 	local busy
 	local Paint = function()
-		if (not busy) then
+		if not busy then
 			busy = true
 			text:SetTextColor(unpack(color))
 			busy = nil
@@ -45,18 +31,29 @@ end
 -- the tabs' art, by its file (lowercase, as patterns): the frames, their
 -- scroll bar tracks, the column headers' backgrounds
 local ART = {
-	"ui%-friendsframe", "friendsframescrollicon", "ui%-character%-scrollbar", "ui%-classtrainer%-",
-	"whoframe%-", "guildframe%-", "ui%-channelframe", "ui%-character%-general", "ui%-raidframe%-"
+	"ui%-friendsframe",
+	"friendsframescrollicon",
+	"ui%-character%-scrollbar",
+	"ui%-classtrainer%-",
+	"whoframe%-",
+	"guildframe%-",
+	"ui%-channelframe",
+	"ui%-character%-general",
+	"ui%-raidframe%-",
 }
 
 -- the tabs' frames
-local TABS = { "FriendsListFrame", "IgnoreListFrame", "PendingListFrame", "WhoFrame", "GuildFrame", "ChannelFrame", "RaidFrame" }
+local TABS =
+	{ "FriendsListFrame", "IgnoreListFrame", "PendingListFrame", "WhoFrame", "GuildFrame", "ChannelFrame", "RaidFrame" }
 
 -- the lists, each in a darker panel (not the chat channels': their rows
 -- are bars of their own)
 local LISTS = {
-	"FriendsFrameFriendsScrollFrame", "FriendsFrameIgnoreScrollFrame", "FriendsFramePendingScrollFrame",
-	"WhoListScrollFrame", "GuildListScrollFrame"
+	"FriendsFrameFriendsScrollFrame",
+	"FriendsFrameIgnoreScrollFrame",
+	"FriendsFramePendingScrollFrame",
+	"WhoListScrollFrame",
+	"GuildListScrollFrame",
 }
 
 Module.StyleSocial = function(self)
@@ -65,12 +62,14 @@ Module.StyleSocial = function(self)
 
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "cracked")
-	-- the rough stone foot up to the page shown's buttons
+	-- the rough stone foot, on the pages with buttons
 	local foot = kit:AddFooter(window)
 	for _, name in ipairs(TABS) do
 		local page = _G[name]
 		if page then
-			page:HookScript("OnShow", function() kit:SetFooter(foot, config.footers[name]) end)
+			page:HookScript("OnShow", function()
+				kit:SetFooter(foot, config.footers[name])
+			end)
 		end
 	end
 	kit:AddDrag(window, frame)
@@ -112,14 +111,19 @@ Module.StyleSocial = function(self)
 		if list then
 			local insets = config.list_panel_overrides[name] or config.list_panel_insets
 			local zone = kit:AddZone(list, "leather", insets)
-			local button = _G[config.list_bottoms[name] or ""]
-			if button then
-				self:SetZoneBottom(zone, list, insets, button, kit:FootReach() + (config.list_gaps[name] or config.list_gap))
+			if config.lists_on_foot[name] then
+				self:SetZoneBottom(
+					zone,
+					list,
+					insets,
+					window.DiabolicFoot,
+					kit:FootBar() + (config.list_gaps[name] or config.list_gap)
+				)
 			elseif (name == "GuildListScrollFrame") and self.MOTD then
 				self:SetZoneBottom(zone, list, insets, self.MOTD, config.list_gap)
 			end
 			if config.header_bars[name] then
-				self:AddHeaderBar(zone)
+				kit:AddHeaderBar(zone)
 			end
 		end
 	end
@@ -133,18 +137,6 @@ Module.SetZoneBottom = function(self, zone, list, insets, under, gap)
 	zone:SetPoint("TOPLEFT", list, "TOPLEFT", -insets[1], insets[2])
 	zone:SetPoint("TOPRIGHT", list, "TOPRIGHT", insets[3], insets[2])
 	zone:SetPoint("BOTTOM", under, "TOP", 0, gap)
-end
-
--- A table's column names on a dark bar, over its panel's top.
-Module.AddHeaderBar = function(self, zone)
-	local section = kit.config.section
-	local bar = CreateFrame("Frame", nil, zone)
-	bar:SetFrameLevel(zone:GetFrameLevel())
-	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
-	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
-	bar:SetHeight(section.height)
-	kit:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
-	bar.DiabolicContent = true -- (the list's top: its names on it)
 end
 
 -- A part moved `by` up from where Blizzard put it.
@@ -178,20 +170,6 @@ Module.LayoutFriends = function(self, window)
 	list:SetPoint("TOPLEFT", _G.FriendsFrame, "TOPLEFT", x, config.friends_top)
 	list:SetHeight(config.friends_bottom + config.friends_top)
 	list.scrollHeight = list:GetHeight()
-	-- its scroll bar up with it (Blizzard's top hangs off the frame's)
-	local bar = _G.FriendsFrameFriendsScrollFrameScrollBar
-	bar:ClearAllPoints()
-	bar:SetPoint("TOPLEFT", list, "TOPRIGHT", 6, -15)
-	bar:SetPoint("BOTTOMLEFT", list, "BOTTOMRIGHT", 6, 15)
-	-- the ignored as high, under their tabs too, down to the same bottom
-	local ignored = _G.FriendsFrameIgnoreScrollFrame
-	local raise = config.friends_top - select(5, ignored:GetPoint())
-	for _, part in ipairs({ ignored, _G.FriendsFrameIgnoreButton1 }) do
-		local point, relative, relativePoint, px, py = part:GetPoint()
-		part:ClearAllPoints()
-		part:SetPoint(point, relative, relativePoint, px, py + raise)
-	end
-	ignored:SetHeight(config.friends_bottom + config.friends_top)
 end
 
 -- The who list with more room: the column's dropdown (zone, guild or
@@ -211,9 +189,15 @@ Module.LayoutWho = function(self, window)
 	-- the list sorted by the choice instead
 	local button = _G.WhoFrameDropDownButton
 	_G.WhoFrameDropDownHighlightTexture:SetAlpha(0)
-	dropdown:SetScript("OnMouseUp", function() button:Click() end)
-	dropdown:HookScript("OnEnter", function() button:LockHighlight() end)
-	dropdown:HookScript("OnLeave", function() button:UnlockHighlight() end)
+	dropdown:SetScript("OnMouseUp", function()
+		button:Click()
+	end)
+	dropdown:HookScript("OnEnter", function()
+		button:LockHighlight()
+	end)
+	dropdown:HookScript("OnLeave", function()
+		button:UnlockHighlight()
+	end)
 	hooksecurefunc("WhoFrameDropDownButton_OnClick", function()
 		local choice = _G.WHOFRAME_DROPDOWN_LIST[_G.UIDropDownMenu_GetSelectedID(dropdown)]
 		if choice and choice.sortType then
@@ -229,33 +213,32 @@ Module.LayoutWho = function(self, window)
 	NameColumn()
 	hooksecurefunc("WhoList_Update", NameColumn)
 
-	-- "1612 People Found" in the band right of the dropdown
-	local totals = _G.WhoFrameTotals
-	totals:SetParent(self.Header)
-	totals:SetDrawLayer("OVERLAY")
-	totals:SetJustifyH("LEFT")
-	kit:LineBand(self.Header, { dropdown, totals })
-	-- the search (/who's) on the foot over the buttons, on our plate
-	-- (Blizzard draws its box in the frame's art, out of sight)
-	kit:StyleEditBox(_G.WhoFrameEditBox)
-	-- (the band's on every tab: there while the who list is)
-	_G.WhoFrame:HookScript("OnShow", function() totals:Show() end)
-	_G.WhoFrame:HookScript("OnHide", function() totals:Hide() end)
-	if not _G.WhoFrame:IsShown() then
-		totals:Hide()
+	-- the search (/who's) in the band right of the dropdown, in our field;
+	-- how many were found in the title ("Who List (809 found)"), Blizzard's
+	-- line under the list hidden (no room left for it in the band)
+	local search = _G.WhoFrameEditBox
+	search:SetSize(unpack(config.who_search_size))
+	kit:StyleEditBox(search)
+	kit:AddHint(search, _G.SEARCH)
+	search:SetFrameLevel(self.Header:GetFrameLevel() + 1)
+	_G.WhoFrameTotals:SetAlpha(0)
+	local Count = function()
+		local _, total = _G.GetNumWhoResults()
+		if _G.WhoFrame:IsShown() and (total > 0) then
+			_G.FriendsFrameTitleText:SetText(string.format(L["%s (%d found)"], _G.WHO_LIST, total))
+		end
 	end
+	hooksecurefunc("WhoList_Update", Count)
+	hooksecurefunc("FriendsFrame_Update", Count) -- (Blizzard's title set as the tab shows)
+	kit:LineBand(self.Header, { dropdown, search })
 	local header = _G.WhoFrameColumnHeader1
-	local _, _, _, x, y = header:GetPoint()
-	header:ClearAllPoints()
-	header:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, config.who_top)
+	local y = select(5, header:GetPoint())
+	kit:StyleColumnHeaders("WhoFrameColumnHeader", 4)
 	local raise = config.who_top - y
-	local first = _G.WhoFrameButton1
-	_, _, _, x, y = first:GetPoint()
-	first:ClearAllPoints()
-	first:SetPoint("TOPLEFT", _G.WhoFrame, "TOPLEFT", x, y + raise)
 	-- rows of Blizzard's template in the room gained, the list told of them
 	local count, height = _G.WHOS_TO_DISPLAY, _G.FRIENDS_FRAME_WHO_HEIGHT
-	local extra = math_floor(raise / height)
+	-- (and in the room the search left over the foot)
+	local extra = math.floor(raise / height) + config.who_search_rows
 	for i = count + 1, count + extra do
 		local row = CreateFrame("Button", "WhoFrameButton" .. i, _G.WhoFrame, "FriendsFrameWhoButtonTemplate")
 		row:SetID(i)
@@ -263,10 +246,6 @@ Module.LayoutWho = function(self, window)
 	end
 	_G.WHOS_TO_DISPLAY = count + extra
 	local list = _G.WhoListScrollFrame
-	local point, relative, relativePoint
-	point, relative, relativePoint, x, y = list:GetPoint()
-	list:ClearAllPoints()
-	list:SetPoint(point, relative, relativePoint, x, y + raise)
 	list:SetHeight(list:GetHeight() + extra * height - config.who_list_trim)
 end
 
@@ -276,6 +255,9 @@ end
 -- picker's), its notes in darker ones, its X and buttons ours.
 Module.StyleGuild = function(self, window)
 	local config = self.config
+	-- its column names (by player, by guild status) as the who list's
+	kit:StyleColumnHeaders("GuildFrameColumnHeader", 4)
+	kit:StyleColumnHeaders("GuildFrameGuildStatusColumnHeader", 4)
 	local label, text = _G.GuildFrameNotesLabel, _G.GuildFrameNotesText
 	if label and text then
 		local insets = config.motd_panel_insets
@@ -320,22 +302,16 @@ Module.StyleGuild = function(self, window)
 			end
 		end
 	end
-	-- the foot's buttons the rows' gap apart (Blizzard's 2), from Guild
-	-- Control's left
-	local gap = kit.config.layout.button_gap
-	local previous = _G.GuildFrameControlButton
-	for _, name in ipairs({ "GuildFrameAddMemberButton", "GuildFrameGuildInformationButton" }) do
-		local button = _G[name]
-		if button and previous then
-			button:ClearAllPoints()
-			button:SetPoint("RIGHT", previous, "LEFT", -gap, 0)
-			previous = button
-		end
-	end
 	if toggle then
 		local Place = function()
 			local point, relative, relativePoint, x = toggle:GetPoint()
-			toggle:SetPoint(point, relative, relativePoint, x, config.guild_toggle_y + config.guild_totals_raise + config.guild_raise)
+			toggle:SetPoint(
+				point,
+				relative,
+				relativePoint,
+				x,
+				config.guild_toggle_y + config.guild_totals_raise + config.guild_raise
+			)
 		end
 		hooksecurefunc("GuildStatus_Update", Place)
 		Place()
@@ -358,8 +334,6 @@ Module.StyleGuild = function(self, window)
 	kit:HideTextures(card)
 	kit:StylePanel(card)
 	card:SetBackdropColor(unpack(self:GetDB("Blizzard").character.popup_color))
-	card:ClearAllPoints()
-	card:SetPoint("TOPLEFT", window, "TOPRIGHT", unpack(config.guild_detail_offset))
 	for _, name in ipairs({ "GuildMemberNoteBackground", "GuildMemberOfficerNoteBackground" }) do
 		if _G[name] then
 			kit:StylePanel(_G[name])
@@ -368,11 +342,9 @@ Module.StyleGuild = function(self, window)
 	kit:SkinClose(_G.GuildMemberDetailCloseButton)
 	kit:StyleButtons(card)
 	-- the guild's information and its log the same, their text on
-	-- parchment in ink (the message of the day's), where the card is (not
-	-- over the window's frame), their page lower: clear of their X
-	local Place = function(popup, page, scroll)
-		popup:ClearAllPoints()
-		popup:SetPoint("TOPLEFT", window, "TOPRIGHT", unpack(config.guild_detail_offset))
+	-- parchment in ink (the message of the day's), their page lower: clear
+	-- of their X
+	local Place = function(page, scroll)
 		local lower = config.guild_page_lower
 		local point, relative, relativePoint, x, y = page:GetPoint()
 		page:SetPoint(point, relative, relativePoint, x, y - lower)
@@ -381,14 +353,14 @@ Module.StyleGuild = function(self, window)
 	end
 	if _G.GuildInfoFrame then
 		self:StylePopup(_G.GuildInfoFrame, _G.GuildInfoTitle, _G.GuildInfoCloseButton)
-		Place(_G.GuildInfoFrame, _G.GuildInfoTextBackground, _G.GuildInfoFrameScrollFrame)
+		Place(_G.GuildInfoTextBackground, _G.GuildInfoFrameScrollFrame)
 		self:AddPage(_G.GuildInfoTextBackground, _G.GuildInfoEditBox, config.raid_description_font)
 		kit:StyleScrollBar(_G.GuildInfoFrameScrollFrameScrollBar)
 	end
 	if _G.GuildEventLogFrame then
 		local inks = self:GetDB("Blizzard").panels.log_inks
 		self:StylePopup(_G.GuildEventLogFrame, _G.GuildEventLogTitle, _G.GuildEventLogCloseButton)
-		Place(_G.GuildEventLogFrame, _G.GuildEventFrame, _G.GuildEventLogScrollFrame)
+		Place(_G.GuildEventFrame, _G.GuildEventLogScrollFrame)
 		local text = _G.GuildEventMessage
 		self:AddPage(_G.GuildEventFrame, text, inks.font)
 		-- in from the page's left as the guild information's
@@ -472,7 +444,7 @@ Module.StyleRaid = function(self)
 		kit:CreateNine(panel, "BACKGROUND", "parchment")
 		panel.DiabolicContent = true
 		panel.DiabolicMaterial = "parchment"
-		local code = string_format("|cff%02x%02x%02x", ink[1] * 255, ink[2] * 255, ink[3] * 255)
+		local code = string.format("|cff%02x%02x%02x", ink[1] * 255, ink[2] * 255, ink[3] * 255)
 		text:SetFontObject(config.raid_description_font)
 		text:SetText((_G.RAID_DESCRIPTION:gsub("|c%x%x%x%x%x%x%x%x", code)))
 		text:SetTextColor(unpack(config.motd_title_color))
@@ -486,7 +458,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleSocial()

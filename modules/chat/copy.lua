@@ -5,15 +5,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("ChatCopy")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local table_concat = table.concat
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local hooksecurefunc = _G.hooksecurefunc
-
 local MAX_LINES = 200 -- kept per chat window
 local WIDTH, HEIGHT = 560, 380
 local SIDE = 36 -- the text from the window's sides and bottom (its iron is 23)
@@ -40,14 +31,14 @@ end
 -- The window's lines, oldest first.
 Module.GetText = function(self, frame)
 	local lines = history[frame]
-	if (not lines) then
+	if not lines then
 		return ""
 	end
 	local text, first = {}, lines.count - MAX_LINES + 1
 	for i = (first > 1 and first or 1), lines.count do
 		text[#text + 1] = PlainText(lines[(i - 1) % MAX_LINES + 1])
 	end
-	return table_concat(text, "\n")
+	return table.concat(text, "\n")
 end
 
 Module.CreateWindow = function(self)
@@ -72,7 +63,7 @@ Module.CreateWindow = function(self)
 	local window = kit:CreateWindow(frame, { 0, 0, 0, 0 })
 	kit:SetBackground(window, "dome")
 	local header = kit:CreateHeader(window, look.header_height, look.header_insets)
-	local title = frame:CreateFontString(nil, "OVERLAY")
+	local title = frame:CreateFontString(kit.NameFor(frame, "DiabolicTitle"), "OVERLAY")
 	kit:SetTitle(header, title)
 	title:SetText(L["Copy Chat"])
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
@@ -91,14 +82,16 @@ Module.CreateWindow = function(self)
 	editBox:SetAutoFocus(false)
 	editBox:SetFontObject(_G.ChatFontNormal)
 	editBox:SetWidth(WIDTH - 2 * SIDE - BAR)
-	editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
+	editBox:SetScript("OnEscapePressed", function()
+		frame:Hide()
+	end)
 	scroll:SetScrollChild(editBox)
 
 	self.frame, self.editBox = frame, editBox
 end
 
 Module.Show = function(self, chatFrame)
-	if (not self.frame) then
+	if not self.frame then
 		self:CreateWindow()
 	end
 	self.frame:Show()
@@ -115,7 +108,7 @@ Module.HookFrame = function(self, frame)
 	hooksecurefunc(frame, "AddMessage", OnAddMessage)
 	-- Blizzard's double-click only minimizes undocked windows
 	_G[frame:GetName() .. "Tab"]:HookScript("OnDoubleClick", function(_, button)
-		if (button ~= "RightButton") then
+		if button ~= "RightButton" then
 			self:Show(frame)
 		end
 	end)
@@ -124,7 +117,7 @@ end
 Module.OnEnable = function(self)
 	for i = 1, _G.NUM_CHAT_WINDOWS do
 		-- not the combat log: it scrolls constantly
-		if (i ~= 2) then
+		if i ~= 2 then
 			self:HookFrame(_G["ChatFrame" .. i])
 		end
 	end

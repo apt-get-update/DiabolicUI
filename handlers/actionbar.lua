@@ -6,15 +6,6 @@ local _, Engine = ...
 local Handler = Engine:NewHandler("ActionBar")
 local ActionButton = Engine:GetHandler("ActionButton")
 
--- Lua API
-local ipairs = ipairs
-local pairs = pairs
-local setmetatable = setmetatable
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local PlaySound = _G.PlaySound
-
 local Bar = Engine:CreateFrame("Button")
 local Bar_MT = { __index = Bar }
 
@@ -45,7 +36,7 @@ Bar.NewButton = function(self, button_type, button_id, ...)
 	local num = #self.buttons + 1
 
 	-- Add a secure reference to the button
-	self:SetFrameRef("Button"..num, Button)
+	self:SetFrameRef("Button" .. num, Button)
 
 	-- Update the secure button count
 	self:SetAttribute("num_buttons", num)
@@ -57,11 +48,10 @@ Bar.NewButton = function(self, button_type, button_id, ...)
 end
 
 Handler.New = function(self, id, parent, barTemplate)
-
 	-- the visibility layer is used for user controlled toggling of bars
 	local visibility = CreateFrame("Frame", nil, parent, "SecureHandlerStateTemplate")
 	visibility:SetAllPoints()
-	
+
 	local bar = setmetatable(Engine:CreateFrame("Frame", nil, visibility, "SecureHandlerStateTemplate"), Bar_MT)
 	bar:SetFrameStrata("LOW")
 	bar.id = id or 0
@@ -71,8 +61,12 @@ Handler.New = function(self, id, parent, barTemplate)
 	bar:SetFrameRef("Visibility", visibility)
 
 	-- Sounds
-	bar:HookScript("OnShow", function(self) PlaySound("igCharacterInfoOpen") end)
-	bar:HookScript("OnHide", function(self) PlaySound("igCharacterInfoClose") end)
+	bar:HookScript("OnShow", function(self)
+		PlaySound("igCharacterInfoOpen")
+	end)
+	bar:HookScript("OnHide", function(self)
+		PlaySound("igCharacterInfoClose")
+	end)
 
 	-- Tell the visibility layer where to find the bar
 	visibility:SetFrameRef("Bar", bar)
@@ -80,11 +74,10 @@ Handler.New = function(self, id, parent, barTemplate)
 	-- Add the template's methods.
 	-- This can NOT override existing methods!
 	for name, method in pairs(barTemplate) do
-		if (not bar[name]) then
+		if not bar[name] then
 			bar[name] = method
 		end
 	end
 
 	return bar
 end
-

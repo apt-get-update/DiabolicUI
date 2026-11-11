@@ -5,23 +5,7 @@ local FloatButton = Module:GetWidget("Template: FloatButton")
 local C = Engine:GetDB("Data: Colors")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
-local GetShapeshiftForm = _G.GetShapeshiftForm
-local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetSpellTexture = _G.GetSpellTexture
-local InCombatLockdown = _G.InCombatLockdown
-local RegisterStateDriver = _G.RegisterStateDriver
-local TaxiRequestEarlyLanding = _G.TaxiRequestEarlyLanding
-local UnitOnTaxi = _G.UnitOnTaxi
-local UnregisterStateDriver = _G.UnregisterStateDriver
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Tracking number of visible forms
 local NUM_FORMS = 0
@@ -30,7 +14,7 @@ BarWidget.UpdateTaxiExitButtonVisibility = Engine:Wrap(function(self, event, ...
 	if InCombatLockdown() then
 		return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateTaxiExitButtonVisibility")
 	end
-	if (event == "PLAYER_REGEN_ENABLED") then
+	if event == "PLAYER_REGEN_ENABLED" then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateTaxiExitButtonVisibility")
 	end
 	if UnitOnTaxi("player") then
@@ -60,10 +44,10 @@ BarWidget.UpdateStanceButtonIcon = function(self)
 	local numForms = GetNumShapeshiftForms()
 	local form = GetShapeshiftForm()
 	local r = 1
-	if (numForms == 1) then
+	if numForms == 1 then
 		icon:SetTexture(GetFormIcon(1))
-		if (form ~= 1) then
-			r = .5
+		if form ~= 1 then
+			r = 0.5
 		end
 	elseif form and (form > 0) and (form <= numForms) then
 		icon:SetTexture(GetFormIcon(form))
@@ -79,7 +63,7 @@ end
 BarWidget.UpdateStanceButtonMode = function(self, numForms)
 	local stanceBar = Module:GetWidget("Bar: Stance"):GetFrame()
 	local proxy = self.StanceProxyButton
-	if (numForms == 1) then
+	if numForms == 1 then
 		proxy:SetAttribute("clickbutton1", stanceBar.buttons[1])
 		stanceBar:GetParent():Hide() -- nothing to pick from
 	else
@@ -91,19 +75,19 @@ end
 -- The stance bar toggle: shown while the player has forms, outside
 -- vehicles and possession.
 BarWidget.UpdateStanceButtonVisibility = function(self, event)
-	if (event == "PLAYER_REGEN_ENABLED") then
+	if event == "PLAYER_REGEN_ENABLED" then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButtonVisibility")
 	end
 	self:UpdateStanceButtonIcon()
 	local numForms = GetNumShapeshiftForms()
-	if (numForms == NUM_FORMS) then
+	if numForms == NUM_FORMS then
 		return
 	end
 	if InCombatLockdown() then
 		return self:RegisterEvent("PLAYER_REGEN_ENABLED", "UpdateStanceButtonVisibility")
 	end
 	UnregisterStateDriver(self.StanceBarButton, "visibility")
-	if (numForms == 0) then
+	if numForms == 0 then
 		RegisterStateDriver(self.StanceBarButton, "visibility", "hide")
 	else
 		RegisterStateDriver(self.StanceBarButton, "visibility", "[bonusbar:5][vehicleui]hide;show")
@@ -117,7 +101,7 @@ BarWidget.OnEnable = function(self)
 
 	local Artwork = Module:GetWidget("Artwork")
 	local Main = Module:GetWidget("Controller: Main"):GetFrame()
-	
+
 	local Bar = Module:GetHandler("ActionBar"):New("floaters", Main, Artwork:GetBarTemplate())
 	Bar:SetSize(unpack(barConfig.size))
 	Bar:SetPoint(unpack(barConfig.position))
@@ -130,18 +114,16 @@ BarWidget.OnEnable = function(self)
 	-- Exit buttons
 	self.VehicleExitButton = self:SpawnVehicleExitButton()
 	self.TaxiBar, self.TaxiExitButton = self:SpawnTaxiExitButton()
-
 end
 
 BarWidget.GetFrame = function(self)
 	return self.Bar
 end
 
-
 BarWidget.SpawnStanceBarButton = function(self)
 	local visualConfig = Module.config.visuals.floaters.stance
 
-	local StanceBarButton = FloatButton:New("Click", self:GetFrame(), "EngineStanceBarButton") 
+	local StanceBarButton = FloatButton:New("Click", self:GetFrame(), "EngineStanceBarButton")
 	StanceBarButton:Hide()
 	StanceBarButton:SetFrameLevel(10)
 	StanceBarButton:SetSize(unpack(visualConfig.size))
@@ -176,14 +158,14 @@ BarWidget.SpawnStanceBarButton = function(self)
 		end
 
 		local form = GetShapeshiftForm(true)
-		if (form and (form ~= 0)) then 
+		if form and (form ~= 0) then
 			GameTooltip:AddLine(L["<Right-click> to cancel current form."], unpack(C.General.OffGreen))
 		end
 
 		GameTooltip:Show()
 	end
-	
-	StanceBarButton.PostLeave = function(self) 
+
+	StanceBarButton.PostLeave = function(self)
 		GameTooltip:Hide()
 	end
 
@@ -196,12 +178,16 @@ BarWidget.SpawnStanceBarButton = function(self)
 	ProxyButton:SetAttribute("clickbutton1", StanceBarButton)
 	ProxyButton:SetAttribute("type2", "macro")
 	ProxyButton:SetAttribute("macrotext", "/cancelform [form]")
-	ProxyButton:SetScript("OnEnter", function() StanceBarButton:GetScript("OnEnter")(StanceBarButton) end)
-	ProxyButton:SetScript("OnLeave", function() StanceBarButton:GetScript("OnLeave")(StanceBarButton) end)
+	ProxyButton:SetScript("OnEnter", function()
+		StanceBarButton:GetScript("OnEnter")(StanceBarButton)
+	end)
+	ProxyButton:SetScript("OnLeave", function()
+		StanceBarButton:GetScript("OnLeave")(StanceBarButton)
+	end)
 
 	ProxyButton:SetScript("OnEvent", function(self)
 		widget:UpdateStanceButtonIcon()
-		if (GameTooltip:GetOwner() == StanceBarButton) then
+		if GameTooltip:GetOwner() == StanceBarButton then
 			self:GetScript("OnEnter")()
 		end
 	end)
@@ -219,7 +205,7 @@ BarWidget.SpawnStanceBarButton = function(self)
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("UPDATE_SHAPESHIFT_USABLE", "UpdateStanceButtonVisibility")
 	self:RegisterEvent("UPDATE_POSSESS_BAR", "UpdateStanceButtonVisibility")
-	
+
 	return StanceBarButton
 end
 
@@ -248,21 +234,21 @@ BarWidget.SpawnVehicleExitButton = function(self)
 	VehicleExitButton.Disabled:SetSize(unpack(visualConfig.texture_size))
 	VehicleExitButton.Disabled:SetPoint(unpack(visualConfig.texture_position))
 	VehicleExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
-	
+
 	VehicleExitButton.PostEnter = function(self)
 		GameTooltip_SetDefaultAnchor(GameTooltip, self)
 		GameTooltip:SetText(LEAVE_VEHICLE, 1, 1, 1)
 		GameTooltip:AddLine(L["<Left-click> to leave the vehicle."], unpack(C.General.OffGreen))
 		GameTooltip:Show()
 	end
-	
-	VehicleExitButton.PostLeave = function(self) 
+
+	VehicleExitButton.PostLeave = function(self)
 		GameTooltip:Hide()
 	end
 
 	VehicleExitButton:SetAttribute("type", "macro")
 	VehicleExitButton:SetAttribute("macrotext", "/leavevehicle [target=vehicle,exists]")
-	
+
 	RegisterStateDriver(VehicleExitButton, "visibility", "[target=vehicle,exists] show; hide")
 
 	return VehicleExitButton
@@ -270,13 +256,13 @@ end
 
 BarWidget.SpawnTaxiExitButton = function(self)
 	local visualConfig = Module.config.visuals.floaters.exit
-	
+
 	local TaxiBar = self:GetFrame():CreateFrame("Frame")
 	TaxiBar:SetFrameLevel(20)
-	TaxiBar:SetFrameStrata("MEDIUM") 
+	TaxiBar:SetFrameStrata("MEDIUM")
 	TaxiBar:SetAllPoints()
 	TaxiBar:SetHitRectInsets(-1, -1, -1, -1)
-	
+
 	local TaxiExitButton = FloatButton:New("Click", TaxiBar, "EngineTaxiExitButton")
 	TaxiExitButton:Hide()
 	TaxiExitButton:SetSize(unpack(visualConfig.size))
@@ -297,7 +283,7 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	TaxiExitButton.Disabled:SetSize(unpack(visualConfig.texture_size))
 	TaxiExitButton.Disabled:SetPoint(unpack(visualConfig.texture_position))
 	TaxiExitButton.Disabled:SetTexture(visualConfig.textures.disabled)
-	
+
 	TaxiExitButton.PostEnter = function(self)
 		if UnitOnTaxi("player") then
 			GameTooltip_SetDefaultAnchor(GameTooltip, self)
@@ -306,8 +292,8 @@ BarWidget.SpawnTaxiExitButton = function(self)
 			GameTooltip:Show()
 		end
 	end
-	
-	TaxiExitButton.PostLeave = function(self) 
+
+	TaxiExitButton.PostLeave = function(self)
 		GameTooltip:Hide()
 	end
 
@@ -320,7 +306,6 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	-- It doesn't toggle a window, so no click target: a plain click.
 	TaxiExitButton:SetScript("OnClick", TaxiExitButton.OnClick)
 
-			
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("UPDATE_MULTI_CAST_ACTIONBAR", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "UpdateTaxiExitButtonVisibility")
@@ -333,8 +318,8 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	-- trigger a recheck.
 	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdateTaxiExitButtonVisibility")
-	
+
 	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists,canexitvehicle] hide; show")
-	
+
 	return TaxiBar, TaxiExitButton
 end

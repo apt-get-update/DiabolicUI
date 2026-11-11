@@ -5,18 +5,14 @@ local UnitFrameWidget = Module:SetWidget("Unit: Party")
 local StatusBar = Engine:GetHandler("StatusBar")
 local Library = Engine:GetDB("Library: UnitFrames")
 
--- Lua API
-local string_match = string.match
-local unpack = unpack
-
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.party
 	local db = Module:GetConfig("UnitFrames")
 
-	local unitNum = string_match(unit, "%d") -- (party1 to party4)
+	local unitNum = string.match(unit, "%d") -- (party1 to party4)
 
 	self:SetSize(unpack(config.size))
-	self:Place("TOP", 0, -((unitNum-1) * 90))
+	self:Place("TOP", 0, -((unitNum - 1) * 90))
 
 	-- Artwork
 	-------------------------------------------------------------------
@@ -48,7 +44,6 @@ local Style = function(self, unit)
 	BorderNormalHighlight:SetTexture(config.border.textures.highlight)
 	BorderNormalHighlight:Hide()
 
-
 	-- Threat
 	-------------------------------------------------------------------
 	local Threat = self:CreateTexture(nil, "BACKGROUND")
@@ -57,14 +52,13 @@ local Style = function(self, unit)
 	Threat:SetPoint(unpack(config.border.texture_position))
 	Threat:SetTexture(config.border.textures.threat)
 
-
 	-- Health
 	-------------------------------------------------------------------
 	local Health = StatusBar:New(self)
 	Health:SetSize(unpack(config.health.size))
 	Health:SetPoint(unpack(config.health.position))
 	Health:SetStatusBarTexture(config.health.texture)
-	Health.frequent = 1/30
+	Health.frequent = 1 / 30
 
 	local HealthValueHolder = Health:CreateFrame("Frame")
 	HealthValueHolder:SetAllPoints()
@@ -80,16 +74,14 @@ local Style = function(self, unit)
 	Health.useClassColor = db.showClassColors
 	Health.dimOutOfCombat = true
 
-
 	-- CastBar
 	-------------------------------------------------------------------
 	local CastBar = StatusBar:New(Health)
 	CastBar:Hide()
 	CastBar:SetAllPoints()
-	CastBar:SetStatusBarTexture(1, 1, 1, .15)
+	CastBar:SetStatusBarTexture(1, 1, 1, 0.15)
 	CastBar:SetSize(Health:GetSize())
 	CastBar:DisableSmoothing(true)
-
 
 	-- Auras
 	-------------------------------------------------------------------
@@ -109,7 +101,6 @@ local Style = function(self, unit)
 	auras.BuffFilter = Library.GroupBuffFilter
 	auras.DebuffFilter = Library.GroupDebuffFilter
 	auras.PostCreateButton = Library.PostCreateAuraButton
-
 
 	-- Texts
 	-------------------------------------------------------------------
@@ -134,7 +125,6 @@ local Style = function(self, unit)
 	Name:SetWordWrap(true)
 	Name:SetNonSpaceWrap(false)
 
-
 	-- Role Icon
 	-------------------------------------------------------------------
 	-- Parented to Border (elevated frame level) so it isn't drawn behind
@@ -145,12 +135,11 @@ local Style = function(self, unit)
 	Role:SetTexture(config.role.texture)
 	Role:Hide()
 
-
 	-- Portrait
 	-------------------------------------------------------------------
 	-- Optional animated 3D model portrait, sitting on top of the health
 	-- bar. Off by default, and only created here at frame-creation time
-	-- (like Show Class Colors) since adding or removing it after the
+	-- (like Class-Colored Health) since adding or removing it after the
 	-- fact needs a UI reload anyway.
 	local Portrait, Portrait2D, PortraitBorderNormal, PortraitBorderHighlight, PortraitGlow
 	if db.showPortrait then
@@ -204,10 +193,14 @@ local Style = function(self, unit)
 		-- button's own rect, so clicking it wouldn't select the unit
 		-- without extending the button's hit-test area to cover it.
 		local chromeOverflow = (config.portrait.texture_size[2] - config.portrait.size[2]) / 2
-		local topOverflow = config.health.position[3] + config.health.size[2] + portraitPos[4] + config.portrait.size[2] + chromeOverflow - config.size[2]
+		local topOverflow = config.health.position[3]
+			+ config.health.size[2]
+			+ portraitPos[4]
+			+ config.portrait.size[2]
+			+ chromeOverflow
+			- config.size[2]
 		self:SetHitRectInsets(0, 0, -topOverflow, 0)
 	end
-
 
 	self.Auras = auras
 	self.CastBar = CastBar
@@ -226,8 +219,6 @@ local Style = function(self, unit)
 
 	self:HookScript("OnEnter", Library.UpdateLayers)
 	self:HookScript("OnLeave", Library.UpdateLayers)
-
-
 end
 
 -- Exposed so units/testmode.lua's Toggle Fake Party can reuse this purely-visual
@@ -244,14 +235,13 @@ UnitFrameWidget.OnEnable = function(self)
 	-- Spawn a holder for all party frames
 	self.UnitFrame = Engine:CreateFrame("Frame", nil, "UICenter", "SecureHandlerAttributeTemplate")
 	self.UnitFrame:Place(unpack(config.position))
-	self.UnitFrame:SetSize(config.size[1], config.size[2]*4 + config.offset*3)
+	self.UnitFrame:SetSize(config.size[1], config.size[2] * 4 + config.offset * 3)
 	RegisterStateDriver(self.UnitFrame, "visibility", "[@raid1,exists]hide;show")
 
 	-- The four frames show and hide themselves with their units.
-	for i = 1,4 do
-		self.UnitFrame[i] = UnitFrame:New("party"..i, self.UnitFrame, Style)
+	for i = 1, 4 do
+		self.UnitFrame[i] = UnitFrame:New("party" .. i, self.UnitFrame, Style)
 	end
-
 end
 
 UnitFrameWidget.GetFrame = function(self, numPartyMember)

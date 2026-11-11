@@ -8,12 +8,6 @@ local Module = Engine:NewModule("Blizzard: StackSplit", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local pairs = pairs
-local select = select
-local unpack = unpack
-
 -- A part of the atlas, at `x`, `y` and `width` by `height`, as texcoords.
 local Coords = function(spec, x, y, width, height)
 	local w, h = spec.atlas_size[1], spec.atlas_size[2]
@@ -28,8 +22,12 @@ local SetStates = function(spec, button, states, width, height)
 	button:SetDisabledTexture(spec.texture)
 	button:SetHighlightTexture(spec.texture)
 	button:GetHighlightTexture():SetBlendMode("BLEND")
-	local textures = { normal = button:GetNormalTexture(), pushed = button:GetPushedTexture(),
-		disabled = button:GetDisabledTexture(), lit = button:GetHighlightTexture() }
+	local textures = {
+		normal = button:GetNormalTexture(),
+		pushed = button:GetPushedTexture(),
+		disabled = button:GetDisabledTexture(),
+		lit = button:GetHighlightTexture(),
+	}
 	for state, texture in pairs(textures) do
 		local place = states[state]
 		texture:SetTexCoord(Coords(spec, place[1], place[2], width, height))
@@ -88,8 +86,13 @@ Module.StyleSplit = function(self, prefix)
 	local states = spec.button_states
 	for place, name in pairs({ okay = "OkayButton", cancel = "CancelButton" }) do
 		local button = _G[prefix .. name]
-		SetStates(spec, button, { normal = states.normal, lit = states.lit, pushed = states.dark, disabled = states.dark },
-			spec.button[1], spec.button[2])
+		SetStates(
+			spec,
+			button,
+			{ normal = states.normal, lit = states.lit, pushed = states.dark, disabled = states.dark },
+			spec.button[1],
+			spec.button[2]
+		)
 		button:GetNormalTexture():SetAlpha(0)
 		button:GetHighlightTexture():SetAlpha(0)
 		button:SetSize(spec.button[1] * scale, spec.button[2] * scale)
@@ -101,8 +104,10 @@ Module.StyleSplit = function(self, prefix)
 			art:SetTexture(spec.texture)
 			art:SetTexCoord(Coords(spec, state[1], state[2], spec.button[1], spec.button[2]))
 			art:SetAllPoints()
-			if (layer == "BORDER") then
-				button.DiabolicNotLit = function() return button:IsEnabled() == 0 end
+			if layer == "BORDER" then
+				button.DiabolicNotLit = function()
+					return button:IsEnabled() == 0
+				end
 				kit:AddLit(button, art)
 			end
 		end

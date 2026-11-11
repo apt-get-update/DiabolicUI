@@ -18,7 +18,6 @@ local lu = require("luaunit")
 local EngineMock = require("mocks.engine_mock")
 
 local Module
-local calls
 
 -- A texture/frame stand-in that just records every method call made on it
 -- (dropping the leading `self` a colon call passes, so a recorded call is
@@ -26,9 +25,13 @@ local calls
 -- would make its own growing `.calls` list self-referential).
 local function newSpy()
 	local spy = { calls = {} }
-	setmetatable(spy, { __index = function(t, key)
-		return function(_, ...) table.insert(t.calls, { key, ... }) end
-	end })
+	setmetatable(spy, {
+		__index = function(t, key)
+			return function(_, ...)
+				table.insert(t.calls, { key, ... })
+			end
+		end,
+	})
 	return spy
 end
 
@@ -36,7 +39,7 @@ local function newFakeCaptureBar()
 	return {
 		width = 200,
 		neutralZone = 0.0001,
-		value = 1/2,
+		value = 1 / 2,
 		min = 0,
 		max = 1,
 		middle = newSpy(),
@@ -46,8 +49,12 @@ local function newFakeCaptureBar()
 		leftIndicator = newSpy(),
 		rightIndicator = newSpy(),
 		shown = true,
-		IsShown = function(self) return self.shown end,
-		Show = function(self) self.shown = true end,
+		IsShown = function(self)
+			return self.shown
+		end,
+		Show = function(self)
+			self.shown = true
+		end,
 	}
 end
 
@@ -109,10 +116,14 @@ function TestCaptureBars:test_shows_the_right_indicator_when_the_value_increases
 
 	local hidLeft, shownRight
 	for _, call in ipairs(self.bar.leftIndicator.calls) do
-		if call[1] == "Hide" then hidLeft = true end
+		if call[1] == "Hide" then
+			hidLeft = true
+		end
 	end
 	for _, call in ipairs(self.bar.rightIndicator.calls) do
-		if call[1] == "Show" then shownRight = true end
+		if call[1] == "Show" then
+			shownRight = true
+		end
 	end
 	lu.assertTrue(hidLeft)
 	lu.assertTrue(shownRight)
@@ -123,10 +134,14 @@ function TestCaptureBars:test_shows_the_left_indicator_when_the_value_decreases(
 
 	local shownLeft, hidRight
 	for _, call in ipairs(self.bar.leftIndicator.calls) do
-		if call[1] == "Show" then shownLeft = true end
+		if call[1] == "Show" then
+			shownLeft = true
+		end
 	end
 	for _, call in ipairs(self.bar.rightIndicator.calls) do
-		if call[1] == "Hide" then hidRight = true end
+		if call[1] == "Hide" then
+			hidRight = true
+		end
 	end
 	lu.assertTrue(shownLeft)
 	lu.assertTrue(hidRight)
@@ -137,10 +152,14 @@ function TestCaptureBars:test_hides_both_indicators_near_the_edges()
 
 	local hidLeft, hidRight
 	for _, call in ipairs(self.bar.leftIndicator.calls) do
-		if call[1] == "Hide" then hidLeft = true end
+		if call[1] == "Hide" then
+			hidLeft = true
+		end
 	end
 	for _, call in ipairs(self.bar.rightIndicator.calls) do
-		if call[1] == "Hide" then hidRight = true end
+		if call[1] == "Hide" then
+			hidRight = true
+		end
 	end
 	lu.assertTrue(hidLeft)
 	lu.assertTrue(hidRight)

@@ -7,26 +7,19 @@ local UnitFrameWidget = Module:SetWidget("Unit: Pet")
 local UnitFrame = Engine:GetHandler("UnitFrame")
 local C = Engine:GetDB("Data: Colors")
 
--- Lua API
-local ipairs, unpack = ipairs, unpack
-
--- WoW API
-local UnitClass = _G.UnitClass
-local UnitIsPlayer = _G.UnitIsPlayer
-
 local _, playerClass = UnitClass("player")
 -- Health: in a vehicle the player is the pet unit, in its class colors a
 -- shade darker; the pet itself can take the player's class colors, darker
 -- still; otherwise it's blood red.
 local postUpdateHealth = function(health, unit)
 	local colors, shade
-	if (health.useClassColor and UnitIsPlayer(unit)) then
+	if health.useClassColor and UnitIsPlayer(unit) then
 		local _, class = UnitClass(unit)
-		colors, shade = C.Orb[class], .75
-	elseif (health.useClassColorPet and UnitIsUnit("pet", unit)) then
-		colors, shade = C.Orb[playerClass], .5
+		colors, shade = C.Orb[class], 0.75
+	elseif health.useClassColorPet and UnitIsUnit("pet", unit) then
+		colors, shade = C.Orb[playerClass], 0.5
 	end
-	if (not colors) then
+	if not colors then
 		colors, shade = C.Orb.HEALTH, 1
 	end
 	for _, layer in ipairs(colors) do
@@ -34,10 +27,9 @@ local postUpdateHealth = function(health, unit)
 	end
 end
 
-
 local Style = function(self, unit)
 	local config = Module:GetDB("UnitFrames").visuals.units.pet
-	local db = Module:GetConfig("UnitFrames") 
+	local db = Module:GetConfig("UnitFrames")
 
 	local configHealth = config.health
 	local configHealthSpark = config.health.spark
@@ -45,7 +37,6 @@ local Style = function(self, unit)
 
 	self:SetSize(unpack(config.size))
 	self:Place(unpack(config.position))
-
 
 	-- Health
 	-------------------------------------------------------------------
@@ -63,10 +54,9 @@ local Style = function(self, unit)
 
 	Health.useClassColor = db.showClassColors
 	Health.useClassColorPet = db.showClassColors
-	Health.frequent = 1/30
+	Health.frequent = 1 / 30
 
 	Health.PostUpdate = postUpdateHealth
-
 
 	-- Artwork
 	-------------------------------------------------------------------
@@ -88,23 +78,18 @@ local Style = function(self, unit)
 	OverlayTexture:SetTexture(configHealth.overlay.texture)
 	OverlayTexture:SetVertexColor(unpack(configHealth.overlay.color))
 
-
 	-- Threat
 	-------------------------------------------------------------------
-	
-	self.Health = Health
 
+	self.Health = Health
 end
 
 UnitFrameWidget.OnEnable = function(self)
-	local config = self:GetDB("UnitFrames").visuals.units.pet
-	local db = self:GetConfig("UnitFrames") 
-
-	self.UnitFrame = UnitFrame:New("pet", Engine:GetFrame(), Style) 
+	self.UnitFrame = UnitFrame:New("pet", Engine:GetFrame(), Style)
 	self.UnitFrame:SetFrameStrata("MEDIUM") -- get it above player orbs
 	self.UnitFrame:SetFrameLevel(25) -- get it above player orbs
 
-	-- Disable Blizzard's castbars for pet 
+	-- Disable Blizzard's castbars for pet
 	self:GetHandler("BlizzardUI"):GetElement("CastBars"):Remove("pet")
 end
 

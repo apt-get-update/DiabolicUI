@@ -6,14 +6,6 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: TrinketMenu", "LOW")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local unpack = unpack
-
--- WoW API
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 -- How many menu buttons TrinketMenu.xml makes (TrinketMenu.MaxTrinkets).
 local NUM_MENU_BUTTONS = 30
 
@@ -92,17 +84,6 @@ Module.StyleTrinketMenu = function(self)
 	end
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "TrinketMenu") then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleTrinketMenu()
-	end
-end
-
 Module.OnEnable = function(self)
-	if IsAddOnLoaded("TrinketMenu") then
-		self:StyleTrinketMenu()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("TrinketMenu", "StyleTrinketMenu")
 end

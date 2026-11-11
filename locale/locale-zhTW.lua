@@ -1,19 +1,20 @@
 local _, Engine = ...
 
 local L = Engine:NewLocale("zhTW")
-if not L then return end
+if not L then
+	return
+end
 
 ---------------------------------------------------------------------
 -- System Messages
 ---------------------------------------------------------------------
 
-
 L["Accept"] = "接受"
-L["Cancel"] = "取消" 
+L["Cancel"] = "取消"
 L["Reload Needed"] = "需要重新加載"
-L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] = "用戶界面必須重新加載應用更改.妳想現在這樣做嗎?"
+L["The user interface has to be reloaded for the changes to be applied.|n|nDo you wish to do this now?"] =
+	"用戶界面必須重新加載應用更改.妳想現在這樣做嗎?"
 L["The Engine can't be tampered with!"] = "引擎不能被篡改!"
-
 
 ---------------------------------------------------------------------
 -- User Interface
@@ -32,7 +33,8 @@ L["Chat"] = "聊天"
 
 -- actionbar menu
 L["Side Bars"] = "側邊欄"
-L["Hold |cff00b200<Alt+Ctrl+Shift>|r and drag to remove spells, macros and items from the action buttons."] = "按住|cff00b200<Alt+Ctrl+Shift>|r拖動或移除動作按鈕上的法術、宏和物品"
+L["Hold |cff00b200<Alt+Ctrl+Shift>|r and drag to remove spells, macros and items from the action buttons."] =
+	"按住|cff00b200<Alt+Ctrl+Shift>|r拖動或移除動作按鈕上的法術、宏和物品"
 L["No Bars"] = "無"
 L["One"] = "壹欄"
 L["Two"] = "兩欄"
@@ -112,14 +114,16 @@ L["Up Arrow"] = "上"
 
 -- chat module
 L["Chat Setup"] = "聊天設置"
-L["Would you like to automatically have the main chat window sized and positioned to match Diablo III, or would you like to manually handle this yourself?|n|nIf you choose to manually position things yourself, you won't be asked about this issue again."] = "妳願意自動設置主聊天窗口的大小和位置,以配合暗黑3,或者妳想手動設置嗎?|n|n如果妳選擇手動設置位置,妳就不會再被問到這個問題了"
+L["Would you like to automatically have the main chat window sized and positioned to match Diablo III, or would you like to manually handle this yourself?|n|nIf you choose to manually position things yourself, you won't be asked about this issue again."] =
+	"妳願意自動設置主聊天窗口的大小和位置,以配合暗黑3,或者妳想手動設置嗎?|n|n如果妳選擇手動設置位置,妳就不會再被問到這個問題了"
 L["Auto"] = "自動"
 L["Manual"] = "說明"
-L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] = "妳可以通過在聊天框輸入|cff448800/diabolic autoposition|r啟用自動定位"
+L["You can re-enable the auto positioning by typing |cff448800/diabolic autoposition|r in the chat at any time."] =
+	"妳可以通過在聊天框輸入|cff448800/diabolic autoposition|r啟用自動定位"
 L["Auto positioning of chat windows has been enabled."] = "聊天窗口自動定位已啟用"
 L["Auto positioning of chat windows has been disabled."] = "聊天窗口自動定位已禁用"
 
--- minimap 
+-- minimap
 
 --Tooltip
 L["BoA"] = "件傳家寶"

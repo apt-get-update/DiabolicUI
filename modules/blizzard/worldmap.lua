@@ -4,19 +4,13 @@
 local ADDON, Engine = ...
 local Module = Engine:NewModule("Blizzard: WorldMap", "LOW")
 
--- Lua API
-local _G = _G
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-
 local FONT = ([[Interface\AddOns\%s\media\fonts\ExocetBlizzardMedium.ttf]]):format(ADDON)
 
 -- Same size and outline, only the typeface changes.
 local SetTypeface = function(fontString)
 	if fontString then
 		local file, size, flags = fontString:GetFont()
-		if (file ~= FONT) then
+		if file ~= FONT then
 			fontString:SetFont(FONT, size, flags)
 		end
 	end
@@ -30,5 +24,7 @@ end
 Module.OnEnable = function(self)
 	self:UpdateFonts()
 	-- again whenever the map redraws, should anything have reset them
-	hooksecurefunc("WorldMapFrame_Update", function() self:UpdateFonts() end)
+	hooksecurefunc("WorldMapFrame_Update", function()
+		self:UpdateFonts()
+	end)
 end

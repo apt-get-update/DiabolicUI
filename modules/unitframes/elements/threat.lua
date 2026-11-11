@@ -3,10 +3,6 @@
 local _, Engine = ...
 local Handler = Engine:GetHandler("UnitFrame")
 
--- WoW API
-local GetThreatStatusColor = GetThreatStatusColor
-local UnitThreatSituation = UnitThreatSituation
-
 local Update = function(self, event, unit)
 	if event == "UNIT_THREAT_SITUATION_UPDATE" and unit ~= self.unit then
 		return
@@ -16,7 +12,7 @@ local Update = function(self, event, unit)
 	if not unit or not UnitExists(unit) then
 		return
 	end
-	
+
 	local Threat = self.Threat
 
 	local status = UnitThreatSituation(unit)

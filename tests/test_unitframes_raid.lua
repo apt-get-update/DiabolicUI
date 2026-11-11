@@ -25,8 +25,12 @@ local state
 local function loadRaidDebuffFilter()
 	state = { class = "PRIEST", knowsCleanseSpirit = false }
 
-	_G.UnitClass = function() return state.class, state.class end
-	_G.GetNumRaidMembers = function() return 0 end
+	_G.UnitClass = function()
+		return state.class, state.class
+	end
+	_G.GetNumRaidMembers = function()
+		return 0
+	end
 	-- By spell ID it always answers; by name only when the spell is in the
 	-- player's spellbook - same as the real client.
 	_G.GetSpellInfo = function(spell)
@@ -75,8 +79,7 @@ function TestRaidDebuffFilter:test_each_class_sees_what_it_can_dispel()
 	for class, expected in pairs(EXPECTED) do
 		state.class = class
 		for _, debuffType in ipairs(DEBUFF_TYPES) do
-			lu.assertEquals(shows(self.filter, debuffType), expected[debuffType] or false,
-				class .. " / " .. debuffType)
+			lu.assertEquals(shows(self.filter, debuffType), expected[debuffType] or false, class .. " / " .. debuffType)
 		end
 	end
 end
@@ -106,40 +109,83 @@ TestRaidLayout = {}
 
 local function newFrame()
 	local frame = { points = {}, shown = true, events = {} }
-	function frame:ClearAllPoints() self.points = {} end
-	function frame:SetPoint(...) self.points[#self.points + 1] = { ... } end
-	function frame:Show() self.shown = true end
-	function frame:Hide() self.shown = false end
+	function frame:ClearAllPoints()
+		self.points = {}
+	end
+	function frame:SetPoint(...)
+		self.points[#self.points + 1] = { ... }
+	end
+	function frame:Show()
+		self.shown = true
+	end
+	function frame:Hide()
+		self.shown = false
+	end
 	function frame:Place() end
-	function frame:RegisterEvent(event) self.events[event] = true end
-	function frame:UnregisterEvent(event) self.events[event] = nil end
-	function frame:SetScript(script, func) self.onEvent = func end
+	function frame:RegisterEvent(event)
+		self.events[event] = true
+	end
+	function frame:UnregisterEvent(event)
+		self.events[event] = nil
+	end
+	function frame:SetScript(script, func)
+		self.onEvent = func
+	end
 	function frame:SetFontObject() end
-	function frame:SetWidth(width) self.width = width end
-	function frame:SetJustifyH(justify) self.justify = justify end
-	function frame:SetText(text) self.text = text end
-	function frame:CreateFontString() return newFrame() end
+	function frame:SetWidth(width)
+		self.width = width
+	end
+	function frame:SetJustifyH(justify)
+		self.justify = justify
+	end
+	function frame:SetText(text)
+		self.text = text
+	end
+	function frame:CreateFontString()
+		return newFrame()
+	end
 	return frame
 end
 
 function TestRaidLayout:setUp()
 	state = { class = "PRIEST", inCombat = false, roster = { { "Tank", 1 }, { "Healer", 2 } } }
-	_G.UnitClass = function() return state.class, state.class end
+	_G.UnitClass = function()
+		return state.class, state.class
+	end
 	_G.GetSpellInfo = function() end
-	_G.InCombatLockdown = function() return state.inCombat end
+	_G.InCombatLockdown = function()
+		return state.inCombat
+	end
 	_G.RegisterStateDriver = function() end
-	_G.GetNumRaidMembers = function() return #state.roster end
-	_G.GetRaidRosterInfo = function(i) return state.roster[i][1], nil, state.roster[i][2] end
+	_G.GetNumRaidMembers = function()
+		return #state.roster
+	end
+	_G.GetRaidRosterInfo = function(i)
+		return state.roster[i][1], nil, state.roster[i][2]
+	end
 	_G.GROUP = "Group"
 
 	local Engine = EngineMock.new()
-	Engine:NewStaticConfig("UnitFrames", { visuals = { units = { raid = {
-		position = { "TOPLEFT", 0, 0 }, size = { 100, 30 }, offset = 5, auras = { button = { size = { 20, 20 } } },
-		groups = { label_height = 40, spacing = 10 },
-	} } } })
-	Engine.CreateFrame = function() return newFrame() end
+	Engine:NewStaticConfig("UnitFrames", {
+		visuals = {
+			units = {
+				raid = {
+					position = { "TOPLEFT", 0, 0 },
+					size = { 100, 30 },
+					offset = 5,
+					auras = { button = { size = { 20, 20 } } },
+					groups = { label_height = 40, spacing = 10 },
+				},
+			},
+		},
+	})
+	Engine.CreateFrame = function()
+		return newFrame()
+	end
 	local UnitFrame = Engine:NewHandler("UnitFrame")
-	UnitFrame.New = function() return newFrame() end
+	UnitFrame.New = function()
+		return newFrame()
+	end
 	local Module = Engine:NewModule("UnitFrames")
 	assert(loadfile("modules/unitframes/units/raid.lua"))("DiabolicUI", Engine)
 	self.Widget = Module:GetWidget("Unit: Raid")

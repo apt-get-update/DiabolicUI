@@ -3,8 +3,8 @@
 -- Loads the *whole addon* the way the WoW client does: reads DiabolicUI.toc,
 -- follows every <Include> and <Script> in the XML files it lists, in order,
 -- and runs each Lua file with the same ("DiabolicUI", addonTable) pair -
--- the real engine, real handlers, real settings and the embedded minimap
--- module with its vendored Ace3 libraries, all sharing one load.
+-- the real engine, real handlers, real settings and modules, all sharing
+-- one load.
 --
 -- Unlike test_all_modules_load.lua (each file alone, against a mock
 -- Engine), this catches load-order problems: a file using a handler,
@@ -102,13 +102,29 @@ local CLIENT_GLOBALS = {
 	BUFF_MAX_DISPLAY = 32,
 	DEBUFF_MAX_DISPLAY = 16,
 	UIDROPDOWNMENU_VALUE_PATCH_VERSION = 2,
-	GetBuildInfo = function() return "3.3.5", "12340", "Jun 24 2010", 30300 end,
-	GetTime = function() return 1000 end,
-	GetNumAddOns = function() return 0 end,
-	GetLocale = function() return "enUS" end,
-	UnitAffectingCombat = function() return false end,
-	InCombatLockdown = function() return false end,
-	IsLoggedIn = function() return false end,
+	MAX_PARTY_MEMBERS = 4,
+	MAX_RAID_MEMBERS = 40,
+	GetBuildInfo = function()
+		return "3.3.5", "12340", "Jun 24 2010", 30300
+	end,
+	GetTime = function()
+		return 1000
+	end,
+	GetNumAddOns = function()
+		return 0
+	end,
+	GetLocale = function()
+		return "enUS"
+	end,
+	UnitAffectingCombat = function()
+		return false
+	end,
+	InCombatLockdown = function()
+		return false
+	end,
+	IsLoggedIn = function()
+		return false
+	end,
 	-- WoW's string.split(sep, text)
 	strsplit = function(sep, text)
 		local parts = {}
@@ -130,7 +146,6 @@ local CLIENT_GLOBALS = {
 local UNDEFINED = {
 	LibStub = true,
 	ChatThrottleLib = true,
-	DiabolicUIMinimapNS = true,
 	DiabolicUI_DB = true,
 	DiabolicUI_Minimap_DB = true,
 }
@@ -168,24 +183,51 @@ end
 
 local function screenFrame()
 	return newFrame({
-		GetSize = function() return 1920, 1080 end,
-		GetWidth = function() return 1920 end,
-		GetHeight = function() return 1080 end,
-		GetScale = function() return 1 end,
-		GetEffectiveScale = function() return 1 end,
+		GetSize = function()
+			return 1920, 1080
+		end,
+		GetWidth = function()
+			return 1920
+		end,
+		GetHeight = function()
+			return 1080
+		end,
+		GetScale = function()
+			return 1
+		end,
+		GetEffectiveScale = function()
+			return 1
+		end,
 	})
 end
 
 -- WoW's global shortcuts to the Lua standard library.
 local LUA_ALIASES = {
-	strbyte = string.byte, strchar = string.char, strfind = string.find,
-	strformat = string.format, format = string.format, gsub = string.gsub,
-	strlen = string.len, strlower = string.lower, strmatch = string.match,
-	strrep = string.rep, strrev = string.reverse, strsub = string.sub,
-	strupper = string.upper, gmatch = string.gmatch,
-	tinsert = table.insert, tremove = table.remove, sort = table.sort,
-	abs = math.abs, ceil = math.ceil, floor = math.floor, max = math.max,
-	min = math.min, mod = math.fmod, sqrt = math.sqrt, random = math.random,
+	strbyte = string.byte,
+	strchar = string.char,
+	strfind = string.find,
+	strformat = string.format,
+	format = string.format,
+	gsub = string.gsub,
+	strlen = string.len,
+	strlower = string.lower,
+	strmatch = string.match,
+	strrep = string.rep,
+	strrev = string.reverse,
+	strsub = string.sub,
+	strupper = string.upper,
+	gmatch = string.gmatch,
+	tinsert = table.insert,
+	tremove = table.remove,
+	sort = table.sort,
+	abs = math.abs,
+	ceil = math.ceil,
+	floor = math.floor,
+	max = math.max,
+	min = math.min,
+	mod = math.fmod,
+	sqrt = math.sqrt,
+	random = math.random,
 }
 
 local function installClient()
@@ -197,7 +239,9 @@ local function installClient()
 		_G[name] = value
 	end
 	string.split = string.split or CLIENT_GLOBALS.strsplit
-	_G.CreateFrame = function() return newFrame() end
+	_G.CreateFrame = function()
+		return newFrame()
+	end
 	_G.UIParent = screenFrame()
 	_G.WorldFrame = screenFrame()
 
@@ -245,6 +289,9 @@ end
 
 -- Files deliberately left out of the load order, and why.
 local NOT_LOADED = {
+	["tools/positions.lua"] = "run outside the game: writes settings/positions.lua",
+	["tools/shared.lua"] = "run outside the game: what tools/positions.lua and tools/sample.lua share",
+	["tools/sample.lua"] = "run outside the game: the editor's sample window",
 }
 
 function TestAddonLoads:test_every_lua_file_is_in_the_load_order()
@@ -257,7 +304,9 @@ function TestAddonLoads:test_every_lua_file_is_in_the_load_order()
 	for _, path in ipairs(loadOrder) do
 		loaded[path] = true
 	end
-	local pipe = assert(io.popen("find . -name '*.lua' -not -path './tests/*' -not -path './docs/*' -not -path '*/Libs/*' | sort"))
+	local pipe = assert(
+		io.popen("find . -name '*.lua' -not -path './tests/*' -not -path './docs/*' -not -path '*/Libs/*' | sort")
+	)
 	local orphans = {}
 	for path in pipe:lines() do
 		path = path:gsub("^%./", "")
@@ -287,7 +336,7 @@ function TestAddonLoads:test_whole_addon_loads_in_toc_order()
 	lu.assertEquals(failures, {})
 
 	-- The load really happened: the engine registered every module and
-	-- handler, and the minimap module set up its Ace3 addon object.
+	-- handler.
 	local Engine = addonTable
 	for _, name in ipairs({ "ActionBars", "UnitFrames", "ChatWindows", "ObjectiveTracker", "Blizzard: LootFrame" }) do
 		lu.assertNotNil(Engine:GetModule(name, true), "module " .. name)
@@ -296,7 +345,7 @@ function TestAddonLoads:test_whole_addon_loads_in_toc_order()
 		lu.assertNotNil(Engine:GetHandler(name, true), "handler " .. name)
 	end
 	lu.assertEquals(type(Engine:GetDB("Data: Colors").General), "table")
-	lu.assertNotNil(_G.LibStub("AceAddon-3.0"):GetAddon(ADDON, true), "minimap Ace3 addon")
+	lu.assertNotNil(Engine:GetModule("Minimap", true), "module Minimap")
 end
 
 os.exit(lu.LuaUnit.run())

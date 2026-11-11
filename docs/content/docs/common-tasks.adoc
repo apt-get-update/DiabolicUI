@@ -1,0 +1,57 @@
+---
+title: "Common Tasks"
+weight: 3
+---
+
+= Common Tasks
+
+For a window's look, use the link:{{< relref "windows-editor" >}}[Windows Editor]. For the rest:
+
+== Change a size, a gap or a colour
+
+They're values in `settings/`, one file per area: `blizzard.lua` (the windows), `unitframes.lua`,
+`actionbars.lua`, `chat.lua`, `tooltips.lua`... To find one:
+
+. In game, `/fstack` and hover the thing: it shows the frame's name.
+. Search `modules/` for that name: next to it, the code reads `config.something`.
+. Search `settings/` for `something`: a comment beside it says what it does.
+
+Change it, `/reload`.
+
+== Restyle a Blizzard window
+
+One line in `panels` in `settings/blizzard.lua`:
+
+[source,lua]
+----
+{ frame = "BankFrame", band = false, insets = { 24, 40, -6, -34 }, offset_y = -4,
+  title = "BankFrameTitleText", close = "BankCloseButton" },
+----
+
+Copy the line of a window like it and change the names. `insets` is how far our window reaches
+past the frame: left, top, right, bottom. The comment above the table explains the other keys.
+Then `/reload`, open it, `/dui layout`, and carry on in the editor. A window that needs more has
+its own file in `modules/blizzard/`.
+
+== Style another addon
+
+The same line, with its folder's name: `{ frame = "ItsFrame", addon = "ItsAddon", panel = false,
+insets = { 24, 40, 24, 36 } }`. `panel = false` when the addon places its window itself (most do).
+Parts it adds once shown go under `late` (see Auctionator's line).
+
+== Put a part in a window's red band
+
+In its `panels` line: `band = { left = { "ItsSearchBox" }, right = { "ItsButton" } }`.
+
+== Move a frame in game
+
+`/dui move`. To add a frame there, copy the TrinketMenu line in `GetMovers`
+(`modules/menu/movers.lua`).
+
+== Add an option
+
+See link:{{< relref "writing-code#add-an-option" >}}[Writing Code].
+
+== Reload or restart?
+
+`/reload` for a `.lua` or `.xml` that already existed. Restart for a texture or a new file.

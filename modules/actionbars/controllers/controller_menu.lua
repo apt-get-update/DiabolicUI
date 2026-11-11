@@ -6,30 +6,21 @@ local _, Engine = ...
 local Module = Engine:GetModule("ActionBars")
 local ControllerWidget = Module:SetWidget("Controller: Menu")
 
--- Lua API
-local unpack = unpack
-local setmetatable = setmetatable
-
--- WoW API
-local CreateFrame = CreateFrame
-local InCombatLockdown = InCombatLockdown
-
-
 local Controller = CreateFrame("Frame")
 local Controller_MT = { __index = Controller }
-
 
 ControllerWidget.OnEnable = function(self)
 	local config = Module.config
 	local db = Module.db
 
-	self.Controller = setmetatable(CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"), Controller_MT)
+	self.Controller =
+		setmetatable(CreateFrame("Frame", nil, Engine:GetFrame(), "SecureHandlerAttributeTemplate"), Controller_MT)
 	self.Controller:SetFrameStrata("BACKGROUND")
 	self.Controller:SetAllPoints()
 	self.Controller.db = db
 
 	local control_config = config.structure.controllers.mainmenu
-	
+
 	local point = control_config.position.point
 	local anchor = control_config.position.anchor
 	local anchor_point = control_config.position.anchor_point
@@ -69,7 +60,7 @@ end
 
 ControllerWidget.ResetPosition = function(self)
 	Module.db.menuPosition = nil
-	if (not InCombatLockdown()) then
+	if not InCombatLockdown() then
 		self:PlaceController()
 	end
 end

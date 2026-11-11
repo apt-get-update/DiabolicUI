@@ -10,28 +10,6 @@ local L = Engine:GetLocale()
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_ceil = math.ceil
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local string_lower = string.lower
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetCVar = _G.GetCVar
-local GetNumSpellTabs = _G.GetNumSpellTabs
-local GetSpellName = _G.GetSpellName
-local GetSpellTabInfo = _G.GetSpellTabInfo
-local GetSpellTexture = _G.GetSpellTexture
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-local IsPassiveSpell = _G.IsPassiveSpell
-local PickupSpell = _G.PickupSpell
-
 local NUM_FOUND = 12 -- a page, as the spells'
 
 -- A found spell's button: its icon in the action buttons' border, its
@@ -46,10 +24,14 @@ Module.CreateFoundButton = function(self, parent, window, i)
 	-- down the left page, then the right one, as Blizzard's spells
 	local x, y = unpack(config.spells)
 	local half = NUM_FOUND / 2
-	local row, column = (i - 1) % half, math_floor((i - 1) / half)
-	button:SetPoint("TOPLEFT", window, "TOPLEFT",
+	local row, column = (i - 1) % half, math.floor((i - 1) / half)
+	button:SetPoint(
+		"TOPLEFT",
+		window,
+		"TOPLEFT",
 		x + column * config.slot_pitch[1] + config.icon_inset,
-		y - row * config.slot_pitch[2] - (config.slot_size[2] - size) / 2)
+		y - row * config.slot_pitch[2] - (config.slot_size[2] - size) / 2
+	)
 	button.Icon = button:CreateTexture(nil, "ARTWORK")
 	button.Icon:SetAllPoints()
 	kit:AddBorder(button, size)
@@ -74,9 +56,11 @@ Module.CreateFoundButton = function(self, parent, window, i)
 		_G.GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 		_G.GameTooltip:SetSpell(button.index, _G.BOOKTYPE_SPELL)
 	end)
-	button:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+	button:SetScript("OnLeave", function()
+		_G.GameTooltip:Hide()
+	end)
 	button:SetScript("OnDragStart", function()
-		if (not InCombatLockdown()) then
+		if not InCombatLockdown() then
 			PickupSpell(button.index, _G.BOOKTYPE_SPELL)
 		end
 	end)
@@ -102,9 +86,11 @@ Module.CreateSearch = function(self, window, cover)
 	hint:SetTextColor(unpack(config.search_hint_color))
 	hint:SetPoint("LEFT", box, "LEFT", config.search_inset, 0)
 	hint:SetText(_G.SEARCH)
-	box:SetScript("OnEditFocusGained", function() hint:Hide() end)
+	box:SetScript("OnEditFocusGained", function()
+		hint:Hide()
+	end)
 	box:SetScript("OnEditFocusLost", function()
-		if (box:GetText() == "") then
+		if box:GetText() == "" then
 			hint:Show()
 		end
 	end)
@@ -112,9 +98,11 @@ Module.CreateSearch = function(self, window, cover)
 		box:SetText("")
 		box:ClearFocus()
 	end)
-	box:SetScript("OnEnterPressed", function() box:ClearFocus() end)
+	box:SetScript("OnEnterPressed", function()
+		box:ClearFocus()
+	end)
 	box:SetScript("OnTextChanged", function()
-		if (not self.Clearing) then
+		if not self.Clearing then
 			self:Search(box:GetText())
 		end
 	end)
@@ -139,13 +127,17 @@ Module.CreateSearch = function(self, window, cover)
 
 	-- its pages, as the spells' (PlacePages, StylePager)
 	local nextPage = CreateFrame("Button", nil, found)
-	nextPage:SetScript("OnClick", function() self:TurnFound(1) end)
+	nextPage:SetScript("OnClick", function()
+		self:TurnFound(1)
+	end)
 	local text = found:CreateFontString(nil, "OVERLAY")
 	text:SetFontObject(_G.SpellBookPageText:GetFontObject())
 	text:SetTextColor(unpack(kit.config.ink))
 	text:SetShadowColor(0, 0, 0, 0)
 	local prev = CreateFrame("Button", nil, found)
-	prev:SetScript("OnClick", function() self:TurnFound(-1) end)
+	prev:SetScript("OnClick", function()
+		self:TurnFound(-1)
+	end)
 	self:PlacePages(window, prev, nextPage, text)
 	kit:StylePager(prev, nextPage)
 	found.Next, found.Prev, found.Page = nextPage, prev, text
@@ -178,19 +170,19 @@ end
 -- The player's spells whose names hold `query` (in any case): the best
 -- rank of each, or every rank while all ranks show (Blizzard's box).
 Module.FindSpells = function(self, query)
-	query = string_lower(query)
+	query = string.lower(query)
 	local total = 0
 	for tab = 1, GetNumSpellTabs() do
 		local _, _, offset, count = GetSpellTabInfo(tab)
-		total = math_max(total, offset + count)
+		total = math.max(total, offset + count)
 	end
 	local everyRank = (GetCVar("ShowAllSpellRanks") == "1")
 	local found, byName = {}, {}
 	for index = 1, total do
 		local name, rank = GetSpellName(index, _G.BOOKTYPE_SPELL)
-		if name and string_lower(name):find(query, 1, true) then
+		if name and string.lower(name):find(query, 1, true) then
 			local spell = byName[name]
-			if spell and (not everyRank) then
+			if spell and not everyRank then
 				spell.index, spell.rank = index, rank -- a later rank, a better one
 			else
 				spell = { index = index, name = name, rank = rank }
@@ -204,19 +196,19 @@ end
 
 -- What's typed: its spells on the cover, the spells again once it's empty.
 Module.Search = function(self, text)
-	if (text == "") then
-		if (self.page == "SEARCH") then
+	if text == "" then
+		if self.page == "SEARCH" then
 			self:ShowPage(nil)
 		end
 		return
 	end
 	if InCombatLockdown() then
-		_G.UIErrorsFrame:AddMessage(_G.ERR_NOT_IN_COMBAT, 1, .1, .1)
+		_G.UIErrorsFrame:AddMessage(_G.ERR_NOT_IN_COMBAT, 1, 0.1, 0.1)
 		return
 	end
 	self.FoundSpells = self:FindSpells(text)
 	self.FoundPage = 1
-	if (self.page == "SEARCH") then
+	if self.page == "SEARCH" then
 		self:UpdateFound()
 	else
 		self:ShowPage("SEARCH")
@@ -240,8 +232,8 @@ Module.TurnFound = function(self, step)
 	if InCombatLockdown() then
 		return
 	end
-	local pages = math_max(1, math_ceil(#self.FoundSpells / NUM_FOUND))
-	self.FoundPage = math_min(pages, math_max(1, self.FoundPage + step))
+	local pages = math.max(1, math.ceil(#self.FoundSpells / NUM_FOUND))
+	self.FoundPage = math.min(pages, math.max(1, self.FoundPage + step))
 	self:UpdateFound()
 end
 
@@ -251,7 +243,7 @@ Module.UpdateFound = function(self)
 		return
 	end
 	local spells = self.FoundSpells or {}
-	local pages = math_max(1, math_ceil(#spells / NUM_FOUND))
+	local pages = math.max(1, math.ceil(#spells / NUM_FOUND))
 	local first = (self.FoundPage - 1) * NUM_FOUND
 	for i, button in ipairs(self.FoundButtons) do
 		local spell = spells[first + i]
@@ -278,18 +270,18 @@ Module.UpdateFound = function(self)
 		end
 	end
 	local found = self.Found
-	if (#spells == 0) then
+	if #spells == 0 then
 		found.None:Show()
 	else
 		found.None:Hide()
 	end
 	found.Page:SetText(_G.PAGE_NUMBER:format(self.FoundPage))
-	if (self.FoundPage > 1) then
+	if self.FoundPage > 1 then
 		found.Prev:Enable()
 	else
 		found.Prev:Disable()
 	end
-	if (self.FoundPage < pages) then
+	if self.FoundPage < pages then
 		found.Next:Enable()
 	else
 		found.Next:Disable()

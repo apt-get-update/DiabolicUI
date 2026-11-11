@@ -15,20 +15,22 @@ Engine:NewConfig("ChatWindows", {
 	positionX = nil,
 	positionY = nil,
 	width = nil,
-	height = nil
+	height = nil,
 })
 
 -- chat filters and emoticons
 Engine:NewConfig("ChatFilters", {
 
 	-- shorter system lines (modules/chat/cleaner.lua)
-	cleanLoot = true, -- loot, money, quest rewards: "+ [Item] (3)"
-	cleanProgress = true, -- experience, reputation, honor, skills, level ups
-	cleanQuests = true, -- quests accepted and completed
-	cleanStatus = true, -- away, busy, rested
-	cleanOnline = true, -- friends and guild members coming online / going offline
-	cleanAuctions = true, -- auctions created, sold, won, outbid, expired
-	cleanAchievements = true, -- "Name: [Achievement]"
-	hideChatNoise = true -- channel join/leave/change notices, empty lines
+	-- loot, money, experience, reputation, quests, away, online, auctions,
+	-- achievements: "+ [Item] (3)", "+ 75 Reputation: Argent Crusade"
+	shortMessages = true,
+	hideChatNoise = true, -- channel join/leave/change notices, empty lines
+
+	shortChannels = true, -- "Guild", "2. Trade - City" become "G", "2."
+	chatHistory = true, -- conversation comes back after a /reload or a relog
 })
 
+-- the saved lines of conversation (modules/chat/history.lua), per character:
+-- [chat window's name] = { { text, r, g, b }, ... }
+Engine:NewConfig("ChatHistory", {})

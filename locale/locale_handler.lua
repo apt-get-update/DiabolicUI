@@ -4,9 +4,6 @@
 -- text is the key itself.
 local _, Engine = ...
 
--- Lua API
-local rawset, rawget = rawset, rawget
-
 local gameLocale = GetLocale() -- current game client locale
 local fallbackLocale = "enUS" -- fallback language for the UI if no translation is present
 
@@ -22,11 +19,11 @@ local L = setmetatable({}, {
 	__newindex = store,
 	__index = function(self, key)
 		local value = rawget(L_fallback, key)
-		if (not value) then
+		if not value then
 			print("Tell Goldpaw! There's a missing locale: ", key)
 		end
 		return value or key
-	end
+	end,
 })
 
 -- The table a locale file fills in: English's, the client's own, or none

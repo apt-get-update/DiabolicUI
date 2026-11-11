@@ -4,19 +4,7 @@ local L = Engine:GetLocale()
 
 Module:SetIncompatible("gUI4_Chat")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local table_concat = table.concat
-
--- WoW API
-local FCF_GetCurrentChatFrame = _G.FCF_GetCurrentChatFrame
-local StaticPopup_Show = _G.StaticPopup_Show
-local hooksecurefunc = _G.hooksecurefunc
-
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 local handled = {}
 
@@ -32,17 +20,35 @@ local handled = {}
 local URL_COLOR = "|cff40a6ff"
 
 local COMMON_TLDS = {
-	app = true, biz = true, co = true, com = true, dev = true, edu = true, gg = true, gl = true, gov = true,
-	info = true, io = true, me = true, net = true, online = true, org = true, tv = true, wiki = true, xyz = true,
+	app = true,
+	biz = true,
+	co = true,
+	com = true,
+	dev = true,
+	edu = true,
+	gg = true,
+	gl = true,
+	gov = true,
+	info = true,
+	io = true,
+	me = true,
+	net = true,
+	online = true,
+	org = true,
+	tv = true,
+	wiki = true,
+	xyz = true,
 }
 
 local IsWebAddress = function(word)
-	if word:find("^%a[%w%+%.%-]*://.") -- scheme://...
-	or word:find("^[Ww][Ww][Ww]%.[%w%.%-]+%.%a%a") -- www.domain.tld
-	or word:find("^mailto:.")
-	or word:find("^[%w%.%-_%+]+@[%w%.%-]+%.%a%a+$") -- e-mail
-	or word:find("^%d+%.%d+%.%d+%.%d+") -- IPv4, with a port or a path
-	or word:find("^[%w%.%-]+%.[%w%-]+[:/]") then -- domain.tld:port or domain.tld/path
+	if
+		word:find("^%a[%w%+%.%-]*://.") -- scheme://...
+		or word:find("^[Ww][Ww][Ww]%.[%w%.%-]+%.%a%a") -- www.domain.tld
+		or word:find("^mailto:.")
+		or word:find("^[%w%.%-_%+]+@[%w%.%-]+%.%a%a+$") -- e-mail
+		or word:find("^%d+%.%d+%.%d+%.%d+") -- IPv4, with a port or a path
+		or word:find("^[%w%.%-]+%.[%w%-]+[:/]")
+	then -- domain.tld:port or domain.tld/path
 		return true
 	end
 	local tld = word:match("^[%w%.%-]+%.(%a%a+)$") -- domain.tld
@@ -62,13 +68,13 @@ end
 local ESCAPES = { "^|H.-|h.-|h", "^|T.-|t", "^|c%x%x%x%x%x%x%x%x", "^|r", "^||" }
 
 local WrapWebLinks = function(msg)
-	if (not msg:find(".", 1, true)) then -- every web address has a dot
+	if not msg:find(".", 1, true) then -- every web address has a dot
 		return msg
 	end
 	local out, plain, pos = {}, 1, 1
 	while true do
 		local bar = msg:find("|", pos, true)
-		if (not bar) then
+		if not bar then
 			break
 		end
 		local last
@@ -86,7 +92,7 @@ local WrapWebLinks = function(msg)
 		pos = (last or bar) + 1
 	end
 	out[#out + 1] = msg:sub(plain):gsub("[^%s|]+", LinkWord)
-	return table_concat(out)
+	return table.concat(out)
 end
 
 local ShowCopyTextPopup = function(text)
@@ -106,13 +112,17 @@ _G.StaticPopupDialogs["DIABOLICUI_COPY_CHAT_TEXT"] = {
 	end,
 	-- read only: any change puts the text back, selected
 	EditBoxOnTextChanged = function(self, data)
-		if (self:GetText() ~= (data or "")) then
+		if self:GetText() ~= (data or "") then
 			self:SetText(data or "")
 			self:HighlightText()
 		end
 	end,
-	EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
-	EditBoxOnEnterPressed = function(self) self:GetParent():Hide() end,
+	EditBoxOnEscapePressed = function(self)
+		self:GetParent():Hide()
+	end,
+	EditBoxOnEnterPressed = function(self)
+		self:GetParent():Hide()
+	end,
 	timeout = 0,
 	whileDead = true,
 	hideOnEscape = true,
@@ -150,8 +160,20 @@ local OnHyperlinkEnter = function(frame, link)
 end
 
 local OnHyperlinkLeave = function(frame)
-	if (GameTooltip:GetOwner() == frame) then
+	if GameTooltip:GetOwner() == frame then
 		GameTooltip:Hide()
+	end
+end
+
+-- What the channels' names shorten to, filled in OnInit. The name is what
+-- the link shows (leaders have their own, on the same link as the others').
+local SHORT_CHANNELS = {}
+
+-- A numbered channel ("2. Trade - City") keeps its number.
+local ShortenChannel = function(link, name)
+	local short = SHORT_CHANNELS[name] or name:match("^(%d+%.)")
+	if short then
+		return "|Hchannel:" .. link .. "|h" .. short .. "|h"
 	end
 end
 
@@ -162,6 +184,9 @@ local AddMessage = function(frame, msg, ...)
 	msg = msg:gsub("|HBNplayer:(.-)|h%[(.-)%]|h", "|HBNplayer:%1|h%2|h")
 
 	-- channel names
+	if Module.db and Module.db.shortChannels then
+		msg = msg:gsub("|Hchannel:(.-)|h%[(.-)%]|h", ShortenChannel)
+	end
 	msg = msg:gsub("|Hchannel:(%w+):(%d)|h%[(%d)%. (%w+)%]|h", "|Hchannel:%1:%2|h%3.|h") -- numbered channels
 	msg = msg:gsub("|Hchannel:(%w+)|h%[(%w+)%]|h", "|Hchannel:%1|h%2|h") -- non-numbered channels
 
@@ -172,19 +197,28 @@ local AddMessage = function(frame, msg, ...)
 	msg = msg:gsub("^(.-|h) yells", "%1")
 
 	-- player status messages
-	msg = msg:gsub("<"..AFK..">", "|cffFF0000<"..AFK..">|r ")
-	msg = msg:gsub("<"..DND..">", "|cffE7E716<"..DND..">|r ")
+	msg = msg:gsub("<" .. AFK .. ">", "|cffFF0000<" .. AFK .. ">|r ")
+	msg = msg:gsub("<" .. DND .. ">", "|cffE7E716<" .. DND .. ">|r ")
 
 	-- raid warnings
-	msg = msg:gsub("^%["..RAID_WARNING.."%]", "|cffff0000!|r")
+	msg = msg:gsub("^%[" .. RAID_WARNING .. "%]", "|cffff0000!|r")
 
 	msg = WrapWebLinks(msg)
+
+	-- Blizzard's coins (Postal's, an addon's) as ours
+	msg = Engine.OurCoins(msg)
+
+	if Module.history then
+		Module.history:Record(frame, msg, ...)
+	end
 
 	return frame.old.message(frame, msg, ...)
 end
 
 Module.SetUpFrame = function(self, frame)
-	if handled[frame] then return end
+	if handled[frame] then
+		return
+	end
 	handled[frame] = true
 
 	frame.old = {}
@@ -201,17 +235,32 @@ Module.SetUpFrame = function(self, frame)
 	frame:HookScript("OnHyperlinkLeave", OnHyperlinkLeave)
 end
 
-Module.SetUpFilters = function(self)
-end
+Module.SetUpFilters = function(self) end
 
 Module.OnInit = function(self, event, ...)
 	self.config = self:GetDB("ChatFilters")
 	self.db = self:GetConfig("ChatFilters")
+	for format, short in pairs({
+		CHAT_GUILD_GET = L["G"],
+		CHAT_OFFICER_GET = L["O"],
+		CHAT_PARTY_GET = L["P"],
+		CHAT_PARTY_LEADER_GET = L["PL"],
+		CHAT_PARTY_GUIDE_GET = L["DG"],
+		CHAT_RAID_GET = L["R"],
+		CHAT_RAID_LEADER_GET = L["RL"],
+		CHAT_BATTLEGROUND_GET = L["BG"],
+		CHAT_BATTLEGROUND_LEADER_GET = L["BL"],
+	}) do
+		local name = _G[format]:match("%[(.-)%]")
+		if name then -- (a translation could do without the brackets)
+			SHORT_CHANNELS[name] = short
+		end
+	end
 end
 
 Module.OnEnable = function(self, event, ...)
-
-	for _,name in ipairs(CHAT_FRAMES) do
+	self.history = Engine:GetModule("ChatHistory")
+	for _, name in ipairs(CHAT_FRAMES) do
 		self:SetUpFrame(_G[name])
 	end
 

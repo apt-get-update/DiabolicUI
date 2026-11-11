@@ -72,11 +72,21 @@ local function loadModule(strings)
 	_G.GetItemInfo = function(link)
 		local item = items[link]
 		if item then
-			return item.name, link, item.quality, 200, 80, "Weapon", "Swords", 1, "INVTYPE_WEAPON", item.icon, item.sellPrice
+			return item.name,
+				link,
+				item.quality,
+				200,
+				80,
+				"Weapon",
+				"Swords",
+				1,
+				"INVTYPE_WEAPON",
+				item.icon,
+				item.sellPrice
 		end
 	end
 	_G.GetItemQualityColor = function(quality)
-		return quality / 10, .5, 1
+		return quality / 10, 0.5, 1
 	end
 	-- a working hooksecurefunc: the hook runs after the original
 	_G.hooksecurefunc = function(tbl, name, hook)
@@ -93,13 +103,21 @@ local function loadModule(strings)
 	end
 	errors = {}
 	_G.geterrorhandler = function()
-		return function(err) errors[#errors + 1] = err end
+		return function(err)
+			errors[#errors + 1] = err
+		end
 	end
 
 	local Engine = EngineMock.new()
-	Engine:NewStaticConfig("Library: Format", { Money = function(money) return money .. "c" end })
+	Engine:NewStaticConfig("Library: Format", {
+		Money = function(money)
+			return money .. "c"
+		end,
+	})
 	-- no GearScore line here (test_session_itemtooltips.lua has it)
-	Engine:NewModule("Blizzard: GearScore").GetItemScore = function() return 0 end
+	Engine:NewModule("Blizzard: GearScore").GetItemScore = function()
+		return 0
+	end
 	assert(loadfile("modules/blizzard/itemtooltips.lua"))("DiabolicUI", Engine)
 	local Module = Engine:GetModule("Blizzard: ItemTooltips")
 	Module.db = { reskinTooltip = true } -- the "Reskin Tooltip" option
@@ -112,10 +130,18 @@ end
 -- Lines are "text" or { "text", r, g, b }; plain text is Blizzard's white.
 local function newTooltip(link, lines, tooltipName)
 	local tooltip = { shows = 0 }
-	function tooltip:GetName() return tooltipName or "TestTooltip" end
-	function tooltip:GetItem() return link and "Item", link end
-	function tooltip:NumLines() return #lines end
-	function tooltip:Show() self.shows = self.shows + 1 end
+	function tooltip:GetName()
+		return tooltipName or "TestTooltip"
+	end
+	function tooltip:GetItem()
+		return link and "Item", link
+	end
+	function tooltip:NumLines()
+		return #lines
+	end
+	function tooltip:Show()
+		self.shows = self.shows + 1
+	end
 	for i, line in ipairs(lines) do
 		local text, r, g, b = line, 1, 1, 1
 		if type(line) == "table" then
@@ -124,10 +150,18 @@ local function newTooltip(link, lines, tooltipName)
 		_G["TestTooltipTextLeft" .. i] = {
 			text = text,
 			color = { r, g, b },
-			GetText = function(self) return self.text end,
-			SetText = function(self, value) self.text = value end,
-			GetTextColor = function(self) return unpack(self.color) end,
-			SetTextColor = function(self, r, g, b) self.color = { r, g, b } end,
+			GetText = function(self)
+				return self.text
+			end,
+			SetText = function(self, value)
+				self.text = value
+			end,
+			GetTextColor = function(self)
+				return unpack(self.color)
+			end,
+			SetTextColor = function(self, r, g, b)
+				self.color = { r, g, b }
+			end,
 			SetAlpha = function() end,
 			ClearAllPoints = function() end,
 			SetPoint = function() end,
@@ -146,7 +180,10 @@ function TestItemTooltipPatterns:test_english()
 	local Module = loadModule(ENGLISH)
 	lu.assertEquals(string.match("(50.5 damage per second)", Module.ToPattern(ENGLISH.DPS_TEMPLATE)), "50.5")
 	lu.assertEquals(string.match("1234 Armor", Module.ToPattern(ENGLISH.ARMOR_TEMPLATE)), "1234")
-	lu.assertEquals({ string.match("Durability 31 / 50", Module.ToPattern(ENGLISH.DURABILITY_TEMPLATE)) }, { "31", "50" })
+	lu.assertEquals(
+		{ string.match("Durability 31 / 50", Module.ToPattern(ENGLISH.DURABILITY_TEMPLATE)) },
+		{ "31", "50" }
+	)
 	-- whole-line matches only
 	lu.assertNil(string.match("Equip: +10 Armor", Module.ToPattern(ENGLISH.ARMOR_TEMPLATE)))
 end
@@ -154,14 +191,20 @@ end
 function TestItemTooltipPatterns:test_text_placeholders()
 	local Module = loadModule(ENGLISH)
 	lu.assertEquals(string.match("Classes: Priest, Mage", Module.ToPattern("Classes: %s")), "Priest, Mage")
-	lu.assertEquals({ string.match("Unique-Equipped: Jewelcrafter's Gems (3)", Module.ToPattern("Unique-Equipped: %s (%d)")) }, { "Jewelcrafter's Gems", "3" })
+	lu.assertEquals(
+		{ string.match("Unique-Equipped: Jewelcrafter's Gems (3)", Module.ToPattern("Unique-Equipped: %s (%d)")) },
+		{ "Jewelcrafter's Gems", "3" }
+	)
 end
 
 function TestItemTooltipPatterns:test_french()
 	local Module = loadModule(FRENCH)
 	lu.assertEquals(string.match("(50,5 dégâts par seconde)", Module.ToPattern(FRENCH.DPS_TEMPLATE)), "50,5")
 	lu.assertEquals(string.match("Armure : 1234", Module.ToPattern(FRENCH.ARMOR_TEMPLATE)), "1234")
-	lu.assertEquals({ string.match("Durabilité 31 / 50", Module.ToPattern(FRENCH.DURABILITY_TEMPLATE)) }, { "31", "50" })
+	lu.assertEquals(
+		{ string.match("Durabilité 31 / 50", Module.ToPattern(FRENCH.DURABILITY_TEMPLATE)) },
+		{ "31", "50" }
+	)
 end
 
 TestItemTooltipSetItem = {}
@@ -176,9 +219,14 @@ end
 
 function TestItemTooltipSetItem:test_weapon()
 	local tooltip = newTooltip("item:1", {
-		"Gladiator's Sword", "Binds when picked up", "One-Hand      Sword",
-		"145 - 218 Damage      Speed 2.60", "(50.5 damage per second)",
-		"+35 Strength", "Durability 31 / 50", "Requires Level 80",
+		"Gladiator's Sword",
+		"Binds when picked up",
+		"One-Hand      Sword",
+		"145 - 218 Damage      Speed 2.60",
+		"(50.5 damage per second)",
+		"+35 Strength",
+		"Durability 31 / 50",
+		"Requires Level 80",
 	})
 	self.Module:OnTooltipSetItem(tooltip)
 	local info = tooltip.DiabolicItemInfo
@@ -186,7 +234,7 @@ function TestItemTooltipSetItem:test_weapon()
 	lu.assertEquals(info.name, "Gladiator's Sword")
 	lu.assertEquals(info.icon, "icon-sword")
 	lu.assertEquals(info.sellPrice, 12345)
-	lu.assertEquals({ info.r, info.g, info.b }, { .4, .5, 1 })
+	lu.assertEquals({ info.r, info.g, info.b }, { 0.4, 0.5, 1 })
 	lu.assertEquals(info.titleIndex, 1)
 
 	lu.assertEquals(info.bigLine, 5)
@@ -202,11 +250,15 @@ end
 
 function TestItemTooltipSetItem:test_binding_class_and_unique_lines_are_highlighted()
 	local tooltip = newTooltip("item:2", {
-		"Chestguard", "Soulbound", "Unique-Equipped", "Classes: Priest",
-		"Unique-Equipped: Jewelcrafter's Gems (3)", "+20 Stamina",
+		"Chestguard",
+		"Soulbound",
+		"Unique-Equipped",
+		"Classes: Priest",
+		"Unique-Equipped: Jewelcrafter's Gems (3)",
+		"+20 Stamina",
 	})
 	self.Module:OnTooltipSetItem(tooltip)
-	local gold = { .85, .75, .55 }
+	local gold = { 0.85, 0.75, 0.55 }
 	for i = 2, 5 do
 		lu.assertEquals(_G["TestTooltipTextLeft" .. i].color, gold, lineText(i))
 	end
@@ -227,28 +279,33 @@ end
 
 function TestItemTooltipSetItem:test_quest_item_and_requirements_are_highlighted()
 	local tooltip = newTooltip("item:2", {
-		"Chestguard", "Quest Item", "Requires Level 80", "Requires Tailoring (400)",
-		"Requires Kirin Tor - Exalted", "Requires personal and team arena rating of 1800",
+		"Chestguard",
+		"Quest Item",
+		"Requires Level 80",
+		"Requires Tailoring (400)",
+		"Requires Kirin Tor - Exalted",
+		"Requires personal and team arena rating of 1800",
 		"Equip: Improves critical strike rating by 20.",
 	})
 	self.Module:OnTooltipSetItem(tooltip)
-	local gold = { .85, .75, .55 }
+	local gold = { 0.85, 0.75, 0.55 }
 	for i = 2, 6 do
 		lu.assertEquals(_G["TestTooltipTextLeft" .. i].color, gold, lineText(i))
 	end
 	lu.assertEquals(_G["TestTooltipTextLeft7"].color, { 1, 1, 1 })
 
 	-- a level you don't have yet: Blizzard's red stays
-	tooltip = newTooltip("item:2", { "Chestguard", { "Requires Level 80", 1, .13, .13 } })
+	tooltip = newTooltip("item:2", { "Chestguard", { "Requires Level 80", 1, 0.13, 0.13 } })
 	self.Module:OnTooltipSetItem(tooltip)
-	lu.assertEquals(_G["TestTooltipTextLeft2"].color, { 1, .13, .13 })
+	lu.assertEquals(_G["TestTooltipTextLeft2"].color, { 1, 0.13, 0.13 })
 end
 
 function TestItemTooltipSetItem:test_red_restrictions_stay_red()
-	local tooltip = newTooltip("item:2", { "Chestguard", { "Classes: Mage", 1, .13, .13 }, { "Unique-Equipped", 1, .13, .13 } })
+	local tooltip =
+		newTooltip("item:2", { "Chestguard", { "Classes: Mage", 1, 0.13, 0.13 }, { "Unique-Equipped", 1, 0.13, 0.13 } })
 	self.Module:OnTooltipSetItem(tooltip)
-	lu.assertEquals(_G["TestTooltipTextLeft2"].color, { 1, .13, .13 })
-	lu.assertEquals(_G["TestTooltipTextLeft3"].color, { 1, .13, .13 })
+	lu.assertEquals(_G["TestTooltipTextLeft2"].color, { 1, 0.13, 0.13 })
+	lu.assertEquals(_G["TestTooltipTextLeft3"].color, { 1, 0.13, 0.13 })
 end
 
 function TestItemTooltipSetItem:test_armor()
@@ -355,9 +412,15 @@ TestItemTooltipCompare = {}
 local function newCompareTooltip(point, shown)
 	return {
 		point = { point, "Anchor", point == "TOPLEFT" and "TOPRIGHT" or "TOPLEFT", 0, -10 },
-		IsShown = function() return shown end,
-		GetPoint = function(self) return unpack(self.point) end,
-		SetPoint = function(self, ...) self.point = { ... } end,
+		IsShown = function()
+			return shown
+		end,
+		GetPoint = function(self)
+			return unpack(self.point)
+		end,
+		SetPoint = function(self, ...)
+			self.point = { ... }
+		end,
 	}
 end
 
@@ -415,8 +478,12 @@ local function addScripts(tooltip)
 end
 
 local function enable(Module)
-	Module.GetConfig = function() return Module.db end
-	Module.GetDB = function() return { border = { offsets = { 0, 0 } } } end
+	Module.GetConfig = function()
+		return Module.db
+	end
+	Module.GetDB = function()
+		return { border = { offsets = { 0, 0 } } }
+	end
 	_G.GameTooltip_OnTooltipAddMoney = function() end
 	Module:OnEnable()
 end
@@ -457,7 +524,9 @@ function TestItemTooltipGuard:test_failing_step_puts_back_blizzards_tooltip()
 	tooltip.DiabolicSellPrice = 2000 -- held back for the footer
 	lu.assertEquals(lineText(2), " ")
 
-	self.Module:Guard(tooltip, function() error("boom") end)
+	self.Module:Guard(tooltip, function()
+		error("boom")
+	end)
 
 	lu.assertEquals(#errors, 1)
 	lu.assertStrContains(errors[1], "boom")
@@ -469,7 +538,9 @@ function TestItemTooltipGuard:test_failing_step_puts_back_blizzards_tooltip()
 end
 
 function TestItemTooltipGuard:test_failed_item_stays_plain()
-	self.Module:Guard(self.tooltip, function() error("boom") end)
+	self.Module:Guard(self.tooltip, function()
+		error("boom")
+	end)
 	self.Module:OnTooltipSetItem(self.tooltip) -- the next refresh
 	lu.assertNil(self.tooltip.DiabolicItemInfo)
 	lu.assertEquals(lineText(2), "(50.5 damage per second)")

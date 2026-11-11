@@ -6,28 +6,10 @@ local Handler = Engine:GetHandler("UnitFrame")
 local AuraFunctions = Engine:GetDB("Library: AuraFunctions")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local math_ceil = math.ceil
-local math_floor = math.floor
-local math_min = math.min
-local ipairs = ipairs
-local setmetatable = setmetatable
-local tostring = tostring
-
--- WoW API
-local CancelUnitBuff = _G.CancelUnitBuff
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetTime = _G.GetTime
-local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
-local UnitExists = _G.UnitExists
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-
 -- Inventory slot ids for the main hand and off hand weapons
 local MAINHAND_SLOT, OFFHAND_SLOT = 16, 17
 
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
 
 -- Engine API
 local UnitAura = AuraFunctions.UnitAura
@@ -35,8 +17,7 @@ local UnitBuff = AuraFunctions.UnitBuff
 local UnitDebuff = AuraFunctions.UnitDebuff
 
 -- Blank texture used for the borders
-local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]] 
-
+local BLANK_TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 
 -- Speeeeed!
 local day = L["d"]
@@ -48,13 +29,13 @@ local DAY, HOUR, MINUTE = 86400, 3600, 60
 
 local formatTime = function(time)
 	if time > DAY then -- more than a day
-		return "%1d%s", math_ceil(time / DAY), day
+		return "%1d%s", math.ceil(time / DAY), day
 	elseif time > HOUR then -- more than an hour
-		return "%1d%s", math_ceil(time / HOUR), hour
+		return "%1d%s", math.ceil(time / HOUR), hour
 	elseif time > MINUTE then -- more than a minute
-		return "%1d%s", math_ceil(time / MINUTE), minute
+		return "%1d%s", math.ceil(time / MINUTE), minute
 	elseif time > 5 then -- more than 5 seconds
-		return "%d", math_ceil(time)
+		return "%d", math.ceil(time)
 	else -- (only ever asked with some time left)
 		return "|cffff0000%.1f|r", time
 	end
@@ -64,15 +45,15 @@ end
 local auraCache = {}
 
 -- Caches of aura button elements
-local Elements = setmetatable({}, { __index = function(self, element) 
-	local tbl = {}
+local Elements = setmetatable({}, {
+	__index = function(self, element)
+		local tbl = {}
 
-	rawset(self, element, tbl)
+		rawset(self, element, tbl)
 
-	return tbl
-end })
-
-
+		return tbl
+	end,
+})
 
 -- Aura Button Template
 -----------------------------------------------------
@@ -126,8 +107,8 @@ Aura.SetCooldownTimer = function(self, start, duration)
 	local cooldown = self:GetElement("Cooldown")
 
 	-- Try to prevent the strange WotLK bug where the end shine effect
-	-- constantly pops up for a random period of time. 
-	if duration > .5 then
+	-- constantly pops up for a random period of time.
+	if duration > 0.5 then
 		cooldown:SetCooldown(start, duration)
 		if self._owner.hideCooldownSpiral then
 			cooldown:Hide()
@@ -139,7 +120,7 @@ Aura.SetCooldownTimer = function(self, start, duration)
 	end
 end
 
-local HZ = 1/10 -- the text shows tenths of a second at most
+local HZ = 1 / 10 -- the text shows tenths of a second at most
 Aura.UpdateTimer = function(self, elapsed)
 	if self.timeLeft then
 		self.elapsed = (self.elapsed or 0) + elapsed
@@ -151,7 +132,7 @@ Aura.UpdateTimer = function(self, elapsed)
 				self:SetScript("OnUpdate", nil)
 				self:SetCooldownTimer(0, 0)
 				self:GetElement("Time"):SetText("")
-			end	
+			end
 			self.elapsed = 0
 		end
 	end
@@ -169,7 +150,7 @@ Aura.SetTimer = function(self, fullDuration, expirationTime)
 		self:SetCooldownTimer(self.timeStarted, self.fullDuration)
 	else
 		self:SetScript("OnUpdate", nil)
-		self:SetCooldownTimer(0,0)
+		self:SetCooldownTimer(0, 0)
 
 		self:GetElement("Time"):SetText("")
 
@@ -193,8 +174,8 @@ local CreateAuraButton = function(self)
 			left = -1,
 			right = -1,
 			top = -1,
-			bottom = -1
-		}
+			bottom = -1,
+		},
 	}
 
 	local Scaffold = button:CreateFrame()
@@ -206,7 +187,7 @@ local CreateAuraButton = function(self)
 	local Icon = Scaffold:CreateTexture()
 	Icon:SetPoint("TOPLEFT", 2, -2)
 	Icon:SetPoint("BOTTOMRIGHT", -2, 2)
-	Icon:SetTexCoord(5/64, 59/64, 5/64, 59/64) 
+	Icon:SetTexCoord(5 / 64, 59 / 64, 5 / 64, 59 / 64)
 	Icon:SetDrawLayer("ARTWORK")
 
 	local Cooldown = button:CreateFrame("Cooldown")
@@ -231,7 +212,7 @@ local CreateAuraButton = function(self)
 	Time:SetDrawLayer("OVERLAY")
 	Time:SetFontObject(DiabolicFont_SansBold10)
 	Time:SetPoint("TOPLEFT", Icon, "TOPLEFT", -1, 1)
-	
+
 	button:SetElement("Icon", Icon)
 	button:SetElement("Count", Count)
 	button:SetElement("Cooldown", Cooldown)
@@ -242,14 +223,13 @@ local CreateAuraButton = function(self)
 	button:SetScript("OnEnter", Aura.OnEnter)
 	button:SetScript("OnLeave", Aura.OnLeave)
 	button:SetScript("OnClick", Aura.OnClick)
-	
+
 	button.UpdateTooltip = Aura.OnEnter
 
 	auraCache[button] = true
-	
+
 	return button
 end
-
 
 local SetPosition = function(self, visible)
 	-- arranges auras based on available space and visible auras
@@ -257,20 +237,36 @@ local SetPosition = function(self, visible)
 	local auraWidth, auraHeight = unpack(self.auraSize)
 	local spacingH = self.spacingH
 	local spacingV = self.spacingV
-	local cols, rows = math_floor((width + spacingH) / (auraWidth + spacingH)), math_floor((height + spacingV) / (auraHeight + spacingV))
-	local visibleButtons = math_min(cols * rows, visible)
+	local cols, rows =
+		math.floor((width + spacingH) / (auraWidth + spacingH)),
+		math.floor((height + spacingV) / (auraHeight + spacingV))
+	local visibleButtons = math.min(cols * rows, visible)
 	local growthX = self.growthX
 	local growthY = self.growthY
 
 	for i = 1, visibleButtons do
-		if (i == 1) then
-			local point = ((growthY == "UP") and "BOTTOM" or (growthY == "DOWN") and "TOP") .. ((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT")
+		if i == 1 then
+			local point = ((growthY == "UP") and "BOTTOM" or (growthY == "DOWN") and "TOP")
+				.. ((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT")
 			self[tostring(i)]:Place(point, self, point, 0, 0)
-		elseif ((i - 1)%cols == 0) then
-			local point = ((growthY == "UP") and "BOTTOM" or (growthY == "DOWN") and "TOP") .. ((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT")
-			self[tostring(i)]:Place(point, self, point, 0, (math_floor((i-1) / cols) * (auraHeight + spacingV))*(growthY == "DOWN" and -1 or 1))
+		elseif (i - 1) % cols == 0 then
+			local point = ((growthY == "UP") and "BOTTOM" or (growthY == "DOWN") and "TOP")
+				.. ((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT")
+			self[tostring(i)]:Place(
+				point,
+				self,
+				point,
+				0,
+				(math.floor((i - 1) / cols) * (auraHeight + spacingV)) * (growthY == "DOWN" and -1 or 1)
+			)
 		else
-			self[tostring(i)]:Place(((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT"), self[tostring(i-1)], growthX, (growthX == "RIGHT") and spacingH or -spacingH, 0)
+			self[tostring(i)]:Place(
+				((growthX == "RIGHT") and "LEFT" or (growthX == "LEFT") and "RIGHT"),
+				self[tostring(i - 1)],
+				growthX,
+				(growthX == "RIGHT") and spacingH or -spacingH,
+				0
+			)
 		end
 	end
 
@@ -280,12 +276,11 @@ end
 local UpdateTooltip = function(self, event, ...)
 	local arg1 = ...
 	if (event == "MODIFIER_STATE_CHANGED") and ((arg1 == "LSHIFT") or (arg1 == "RSHIFT")) then
-		if GameTooltip:IsShown() and auraCache[GameTooltip:GetOwner()] then 
+		if GameTooltip:IsShown() and auraCache[GameTooltip:GetOwner()] then
 			GameTooltip:GetOwner():UpdateTooltip()
 		end
 	end
 end
-
 
 -- The owner's (Auras, Buffs or Debuffs) visible-th button, made on first
 -- use and styled by the owner's PostCreateButton (its look, and the
@@ -293,7 +288,7 @@ end
 local GetButton = function(owner, visible)
 	local key = tostring(visible)
 	local button = owner[key]
-	if (not button) then
+	if not button then
 		button = CreateAuraButton(owner)
 		owner[key] = button
 		owner:PostCreateButton(button)
@@ -309,7 +304,7 @@ local ShowButton = function(owner, button, icon, count, duration, expirationTime
 	button:GetElement("Icon"):SetTexture(icon)
 	button:GetElement("Count"):SetText((count and count > 1) and count or "")
 	button:SetTimer(duration, expirationTime)
-	if (not button:IsShown()) then
+	if not button:IsShown() then
 		button:Show()
 	end
 end
@@ -319,11 +314,29 @@ end
 -- already shown. Returns the new number of shown buttons.
 local AddAuras = function(owner, unit, visible, query, filter, maxAuras, isBuff, accept)
 	for i = 1, maxAuras do
-		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer = query(unit, i, filter)
-		if (not name) then
+		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer =
+			query(unit, i, filter)
+		if not name then
 			break
 		end
-		if (not accept) or accept(owner, name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId, isBossDebuff, isCastByPlayer) then
+		if
+			not accept
+			or accept(
+				owner,
+				name,
+				rank,
+				icon,
+				count,
+				debuffType,
+				duration,
+				expirationTime,
+				unitCaster,
+				isStealable,
+				spellId,
+				isBossDebuff,
+				isCastByPlayer
+			)
+		then
 			visible = visible + 1
 			local button = GetButton(owner, visible)
 			button:SetID(i)
@@ -353,7 +366,7 @@ end
 -- is full.
 -- One weapon's enchant, in the next button
 local AddWeaponEnchant = function(owner, unit, filter, visible, has, expiration, charges, slotID)
-	if (not has) then
+	if not has then
 		return visible
 	end
 	visible = visible + 1
@@ -383,21 +396,21 @@ end
 -- Hides the buttons after the visible ones, lays the rest out, and shows
 -- or hides the whole owner.
 local Finish = function(owner, visible)
-	if (visible == 0) then
+	if visible == 0 then
 		if owner:IsShown() then
 			owner:Hide()
 		end
 	else
 		local nextButton = SetPosition(owner, visible) + 1
 		local key = tostring(nextButton)
-		while (owner[key]) do
+		while owner[key] do
 			owner[key]:Hide()
 			owner[key]:SetScript("OnUpdate", nil)
-			owner[key]:SetTimer(0,0)
+			owner[key]:SetTimer(0, 0)
 			nextButton = nextButton + 1
 			key = tostring(nextButton)
 		end
-		if (not owner:IsShown()) then
+		if not owner:IsShown() then
 			owner:Show()
 		end
 	end
@@ -407,18 +420,29 @@ local Update = function(self, event, ...)
 	local unit = self.unit
 	local arg1 = ...
 
-	-- The secure state driver that changes the unit when entering a vehicle 
+	-- The secure state driver that changes the unit when entering a vehicle
 	-- can sometimes be fairly slow, so when relying on that alone auras won't
-	-- be properly updated before the auras on your vehicle change again. 
+	-- be properly updated before the auras on your vehicle change again.
 	-- So we hook into vehicle events to figure out what unit actually to query.
 	local realUnit = self:GetRealUnit()
-	if (realUnit == "player") and ((event == "UNIT_ENTERED_VEHICLE") or (event == "UNIT_ENTERING_VEHICLE") or (event == "UNIT_EXITED_VEHICLE") or (event == "UNIT_EXITING_VEHICLE")) then
+	if
+		(realUnit == "player")
+		and (
+			(event == "UNIT_ENTERED_VEHICLE")
+			or (event == "UNIT_ENTERING_VEHICLE")
+			or (event == "UNIT_EXITED_VEHICLE")
+			or (event == "UNIT_EXITING_VEHICLE")
+		)
+	then
 		if UnitHasVehicleUI(realUnit) then
 			unit = "vehicle"
 		else
 			unit = realUnit
 		end
-	elseif not((event == "PLAYER_ENTERING_WORLD") or (event == "FORCED") or (event == "PLAYER_TARGET_CHANGED")) and (unit ~= arg1) then
+	elseif
+		not ((event == "PLAYER_ENTERING_WORLD") or (event == "FORCED") or (event == "PLAYER_TARGET_CHANGED"))
+		and (unit ~= arg1)
+	then
 		return
 	end
 	local exists = UnitExists(unit)
@@ -426,11 +450,12 @@ local Update = function(self, event, ...)
 	-- Buffs and debuffs together
 	local Auras = self.Auras
 	if Auras then
-		if (not exists) then
+		if not exists then
 			Auras:Hide()
 		else
 			local visible = AddAuras(Auras, unit, 0, UnitBuff, Auras.filter, BUFF_MAX_DISPLAY, true, Auras.BuffFilter)
-			visible = AddAuras(Auras, unit, visible, UnitDebuff, Auras.filter, DEBUFF_MAX_DISPLAY, false, Auras.DebuffFilter)
+			visible =
+				AddAuras(Auras, unit, visible, UnitDebuff, Auras.filter, DEBUFF_MAX_DISPLAY, false, Auras.DebuffFilter)
 			Finish(Auras, visible)
 		end
 	end
@@ -438,7 +463,7 @@ local Update = function(self, event, ...)
 	-- Buffs, the player's weapon enchants first
 	local Buffs = self.Buffs
 	if Buffs then
-		if (not exists) then
+		if not exists then
 			Buffs:Hide()
 		else
 			local visible = (unit == "player") and AddWeaponEnchants(Buffs, unit, Buffs.filter) or 0
@@ -450,10 +475,11 @@ local Update = function(self, event, ...)
 	-- Debuffs
 	local Debuffs = self.Debuffs
 	if Debuffs then
-		if (not exists) then
+		if not exists then
 			Debuffs:Hide()
 		else
-			local visible = AddAuras(Debuffs, unit, 0, UnitAura, Debuffs.filter, DEBUFF_MAX_DISPLAY, false, Debuffs.DebuffFilter)
+			local visible =
+				AddAuras(Debuffs, unit, 0, UnitAura, Debuffs.filter, DEBUFF_MAX_DISPLAY, false, Debuffs.DebuffFilter)
 			Finish(Debuffs, visible)
 		end
 	end
@@ -496,7 +522,7 @@ local Enable = function(self, unit)
 			self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
 		end
 
-		if (unit == "player") then
+		if unit == "player" then
 			self:RegisterEvent("UNIT_INVENTORY_CHANGED", Update)
 		end
 

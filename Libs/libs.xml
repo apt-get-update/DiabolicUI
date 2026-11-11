@@ -1,0 +1,11 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+<!-- Vendored libraries. LibHealComm-4.0: Tsoukie's 3.3.5a backport
+     (gitlab.com/Tsoukie/libhealcomm-4.0-3.3.5), for the incoming heals on
+     the health bars and orbs. -->
+<Script file='LibStub\LibStub.lua'/>
+<Script file='CallbackHandler-1.0\CallbackHandler-1.0.lua'/>
+<Script file='LibHealComm-4.0\ChatThrottleLib.lua'/>
+<Script file='LibHealComm-4.0\LibHealComm-4.0.lua'/>
+
+</Ui>

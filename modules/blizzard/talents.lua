@@ -11,19 +11,8 @@ local Module = Engine:NewModule("Blizzard: Talents", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local select = select
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetTalentTabInfo = _G.GetTalentTabInfo
-local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 local NUM_SPECS = 3 -- the player's two and the pet's
+local SPEC_NAMES = { _G.TALENT_SPEC_PRIMARY, _G.TALENT_SPEC_SECONDARY, _G.TALENT_SPEC_PET_PRIMARY }
 local NUM_TABS = 4 -- three trees and the glyphs
 
 -- Named textures out of sight.
@@ -76,8 +65,13 @@ Module.LayoutGlyphs = function(self)
 	local scale = config.glyph_height / height
 	glyphs:SetScale(scale)
 	glyphs:ClearAllPoints()
-	glyphs:SetPoint("TOPLEFT", self.Window, "TOPLEFT",
-		(self.Window:GetWidth() - width * scale) / 2 / scale - x, config.glyph_top / scale + y)
+	glyphs:SetPoint(
+		"TOPLEFT",
+		self.Window,
+		"TOPLEFT",
+		(self.Window:GetWidth() - width * scale) / 2 / scale - x,
+		config.glyph_top / scale + y
+	)
 	local art = _G.GlyphFrameBackground
 	art:ClearAllPoints()
 	art:SetPoint("TOPLEFT", glyphs, "TOPLEFT", x, -y)
@@ -103,7 +97,7 @@ end
 
 Module.StyleGlyphs = function(self)
 	local glyphs = _G.GlyphFrame
-	if glyphs and (not self.GlyphsStyled) then
+	if glyphs and not self.GlyphsStyled then
 		self.GlyphsStyled = true
 		local cover = kit:CreateCover(self.Window, self.config.glyph_cover_insets, self.config.glyph_cover_level)
 		-- the tree's scroll bar is drawn as high as the cover: out of sight
@@ -145,24 +139,22 @@ Module.StyleTalents = function(self)
 	-- the specs in the band, as icons in the action buttons' border
 	for i = 1, NUM_SPECS do
 		local tab = _G["PlayerSpecTab" .. i]
+		tab.tooltip = SPEC_NAMES[i] -- (what it reads as in /dui layout)
 		Hide(tab:GetName() .. "Background")
 		tab:SetFrameLevel(window:GetFrameLevel() + 4)
 		tab:SetSize(config.spec_size, config.spec_size)
 		kit:AddBorder(tab, config.spec_size)
 	end
-	hooksecurefunc("PlayerTalentFrame_UpdateSpecs", function() self:LayoutSpecs() end)
+	hooksecurefunc("PlayerTalentFrame_UpdateSpecs", function()
+		self:LayoutSpecs()
+	end)
 	self:LayoutSpecs()
 
 	-- the spec's state, or the button that makes it the active one, in the
 	-- band's middle
-	local status = _G.PlayerTalentFrameStatusFrame
 	Hide("PlayerTalentFramePointsLeft", "PlayerTalentFramePointsMiddle", "PlayerTalentFramePointsRight")
-	status:ClearAllPoints()
-	status:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
 	kit:StyleBandText(_G.PlayerTalentFrameStatusText)
 	local activate = _G.PlayerTalentFrameActivateButton
-	activate:ClearAllPoints()
-	activate:SetPoint("CENTER", self.Header, "CENTER", 0, 0)
 	activate:SetFrameLevel(window:GetFrameLevel() + 4)
 	kit:StyleButton(activate, config.button_height)
 	-- as wide as its text in our font, with room at its ends (Blizzard's
@@ -182,7 +174,9 @@ Module.StyleTalents = function(self)
 	end
 	kit:HangTabs(window, tabs, { nil, nil, nil, config.glyph_sigil })
 	kit:DropTop(window)
-	hooksecurefunc("PlayerTalentFrame_UpdateTabs", function() self:UpdateTreeIcons() end)
+	hooksecurefunc("PlayerTalentFrame_UpdateTabs", function()
+		self:UpdateTreeIcons()
+	end)
 	self:UpdateTreeIcons()
 
 	-- the tree in a darker panel, its scroll bar inside it
@@ -200,10 +194,16 @@ Module.StyleTalents = function(self)
 	kit:StylePanel(panel)
 
 	-- the points, and the preview's buttons under them
-	Hide("PlayerTalentFramePointsBarBackground", "PlayerTalentFramePointsBarBorderLeft",
-		"PlayerTalentFramePointsBarBorderRight", "PlayerTalentFramePointsBarBorderMiddle",
-		"PlayerTalentFramePreviewBarButtonBorder", "PlayerTalentFramePreviewBarFillerButtonBackgroundLeft",
-		"PlayerTalentFramePreviewBarFillerButtonBackgroundRight", "PlayerTalentFramePreviewBarFillerButtonBackgroundMiddle")
+	Hide(
+		"PlayerTalentFramePointsBarBackground",
+		"PlayerTalentFramePointsBarBorderLeft",
+		"PlayerTalentFramePointsBarBorderRight",
+		"PlayerTalentFramePointsBarBorderMiddle",
+		"PlayerTalentFramePreviewBarButtonBorder",
+		"PlayerTalentFramePreviewBarFillerButtonBackgroundLeft",
+		"PlayerTalentFramePreviewBarFillerButtonBackgroundRight",
+		"PlayerTalentFramePreviewBarFillerButtonBackgroundMiddle"
+	)
 	local preview = _G.PlayerTalentFramePreviewBar
 	for _, row in ipairs({ bar, preview }) do
 		row:ClearAllPoints()
@@ -212,24 +212,15 @@ Module.StyleTalents = function(self)
 	end
 	preview:SetPoint("BOTTOM", window, "BOTTOM", 0, config.bars_bottom)
 	self:LayoutBars()
-	hooksecurefunc("PlayerTalentFrame_UpdateControls", function() self:LayoutBars() end)
+	hooksecurefunc("PlayerTalentFrame_UpdateControls", function()
+		self:LayoutBars()
+	end)
 	for _, button in ipairs({ _G.PlayerTalentFrameLearnButton, _G.PlayerTalentFrameResetButton }) do
 		kit:StyleButton(button, config.button_height)
 	end
 
 	self:StyleGlyphs()
 	kit:StyleScrollBars(frame)
-end
-
-Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "Blizzard_TalentUI") then
-		self:StyleTalents()
-	elseif (addon == "Blizzard_GlyphUI") and self.Window then
-		self:StyleGlyphs()
-	end
-	if self.Window and self.GlyphsStyled then
-		self:UnregisterEvent("ADDON_LOADED")
-	end
 end
 
 Module.OnInit = function(self)
@@ -251,13 +242,13 @@ Module.UpdateTreeIcons = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded("Blizzard_TalentUI") then
-		self:StyleTalents()
-	end
-	if not (self.Window and self.GlyphsStyled) then
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("Blizzard_TalentUI", "StyleTalents")
+	self:WhenLoaded("Blizzard_GlyphUI", function()
+		if self.Window then -- (or StyleTalents does it)
+			self:StyleGlyphs()
+		end
+	end)
 end

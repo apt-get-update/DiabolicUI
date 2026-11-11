@@ -31,23 +31,57 @@ local function newFake()
 	return setmetatable({ calls = {}, width = 0, height = 0, alpha = 1, shown = true, scripts = {} }, Fake)
 end
 
-function Methods:SetSize(width, height) self.width, self.height = width, height end
-function Methods:SetWidth(width) self.width = width end
-function Methods:SetHeight(height) self.height = height end
-function Methods:GetSize() return self.width, self.height end
-function Methods:GetWidth() return self.width end
-function Methods:GetHeight() return self.height end
-function Methods:SetAlpha(alpha) self.alpha = alpha end
-function Methods:GetAlpha() return self.alpha end
-function Methods:Show() self.shown = true end
-function Methods:Hide() self.shown = false end
-function Methods:IsShown() return self.shown end
-function Methods:SetScript(script, func) self.scripts[script] = func end
-function Methods:GetScript(script) return self.scripts[script] end
-function Methods:GetFrameLevel() return 1 end
-function Methods:CreateTexture() return newFake() end
-function Methods:CreateAnimationGroup() return newFake() end
-function Methods:CreateAnimation() return newFake() end
+function Methods:SetSize(width, height)
+	self.width, self.height = width, height
+end
+function Methods:SetWidth(width)
+	self.width = width
+end
+function Methods:SetHeight(height)
+	self.height = height
+end
+function Methods:GetSize()
+	return self.width, self.height
+end
+function Methods:GetWidth()
+	return self.width
+end
+function Methods:GetHeight()
+	return self.height
+end
+function Methods:SetAlpha(alpha)
+	self.alpha = alpha
+end
+function Methods:GetAlpha()
+	return self.alpha
+end
+function Methods:Show()
+	self.shown = true
+end
+function Methods:Hide()
+	self.shown = false
+end
+function Methods:IsShown()
+	return self.shown
+end
+function Methods:SetScript(script, func)
+	self.scripts[script] = func
+end
+function Methods:GetScript(script)
+	return self.scripts[script]
+end
+function Methods:GetFrameLevel()
+	return 1
+end
+function Methods:CreateTexture()
+	return newFake()
+end
+function Methods:CreateAnimationGroup()
+	return newFake()
+end
+function Methods:CreateAnimation()
+	return newFake()
+end
 function Methods:SetTexCoord(...)
 	self.calls.SetTexCoord = (self.calls.SetTexCoord or 0) + 1
 end
@@ -63,7 +97,7 @@ local Prototype = {
 	end,
 }
 _G.CreateFrame = function(frameType, name, parent)
-	if (not parent) then
+	if not parent then
 		return setmetatable({}, Prototype)
 	end
 	return newFake()
@@ -71,7 +105,9 @@ end
 
 local function loadHandler(path, name)
 	local Engine = EngineMock.new()
-	Engine.CreateFrame = function(self, ...) return _G.CreateFrame(...) end
+	Engine.CreateFrame = function(self, ...)
+		return _G.CreateFrame(...)
+	end
 	assert(loadfile(path))("DiabolicUI", Engine)
 	return Engine:GetHandler(name)
 end

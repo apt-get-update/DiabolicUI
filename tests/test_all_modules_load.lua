@@ -28,7 +28,7 @@ AutoStub.install()
 -- checks the real load order). The embedded minimap module doesn't use the
 -- Engine at all and is covered by test_addon_loads.lua instead.
 local FILES = {}
-local pipe = assert(io.popen("find handlers modules -name '*.lua' -not -path 'modules/minimap/*' | sort"))
+local pipe = assert(io.popen("find handlers modules -name '*.lua' | sort"))
 for path in pipe:lines() do
 	FILES[#FILES + 1] = path
 end
@@ -46,6 +46,13 @@ for _, path in ipairs(FILES) do
 		lu.assertNotNil(chunk, path .. " failed to parse: " .. tostring(loadErr))
 
 		local Engine = EngineMock.new()
+		-- the options' pages size themselves from the shared controls at file
+		-- scope: those load first, as in menu.xml
+		if path:find("^modules/menu/page%-") then
+			for _, before in ipairs({ "modules/menu/menu.lua", "modules/menu/controls.lua" }) do
+				assert(loadfile(before))("DiabolicUI", Engine)
+			end
+		end
 		local ok, runErr = pcall(chunk, "DiabolicUI", Engine)
 		lu.assertTrue(ok, path .. " errored while loading: " .. tostring(runErr))
 	end

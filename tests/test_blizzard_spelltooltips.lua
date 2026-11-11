@@ -18,20 +18,32 @@ local lu = require("luaunit")
 local EngineMock = require("mocks.engine_mock")
 
 local GREEN = "|cff3fc83f"
-local GOLD = { 1, .82, 0 }
-local RED = { 1, .125, .125 }
+local GOLD = { 1, 0.82, 0 }
+local RED = { 1, 0.125, 0.125 }
 
 local errors -- what reached the error handler
 
 local function loadModule()
-	_G.GetActionTexture = function(slot) return "icon-action-" .. slot end
-	_G.GetSpellTexture = function(id, book) return "icon-book-" .. id .. "-" .. book end
-	_G.GetTalentInfo = function(tab, index) return "Talent", "icon-talent-" .. tab .. "-" .. index end
-	_G.GetShapeshiftFormInfo = function(index) return "icon-form-" .. index end
-	_G.GetSpellInfo = function(id) return "Spell", nil, "icon-spell-" .. id end
+	_G.GetActionTexture = function(slot)
+		return "icon-action-" .. slot
+	end
+	_G.GetSpellTexture = function(id, book)
+		return "icon-book-" .. id .. "-" .. book
+	end
+	_G.GetTalentInfo = function(tab, index)
+		return "Talent", "icon-talent-" .. tab .. "-" .. index
+	end
+	_G.GetShapeshiftFormInfo = function(index)
+		return "icon-form-" .. index
+	end
+	_G.GetSpellInfo = function(id)
+		return "Spell", nil, "icon-spell-" .. id
+	end
 	errors = {}
 	_G.geterrorhandler = function()
-		return function(err) errors[#errors + 1] = err end
+		return function(err)
+			errors[#errors + 1] = err
+		end
 	end
 
 	local Engine = EngineMock.new()
@@ -39,8 +51,8 @@ local function loadModule()
 	Engine:NewModule("Blizzard: ItemTooltips").Shared = {
 		IsDefaultColor = function(line)
 			local r, g, b = line:GetTextColor()
-			return (r > .99) and (g > .99) and (b > .99)
-		end
+			return (r > 0.99) and (g > 0.99) and (b > 0.99)
+		end,
 	}
 	assert(loadfile("modules/blizzard/spelltooltips.lua"))("DiabolicUI", Engine)
 	local Module = Engine:GetModule("Blizzard: SpellTooltips")
@@ -54,10 +66,18 @@ local function newLine(text, color)
 		text = text,
 		color = color or { 1, 1, 1 },
 		shown = text ~= nil,
-		GetText = function(self) return self.text end,
-		SetText = function(self, value) self.text = value end,
-		IsShown = function(self) return self.shown end,
-		GetTextColor = function(self) return unpack(self.color) end,
+		GetText = function(self)
+			return self.text
+		end,
+		SetText = function(self, value)
+			self.text = value
+		end,
+		IsShown = function(self)
+			return self.shown
+		end,
+		GetTextColor = function(self)
+			return unpack(self.color)
+		end,
 		SetAlpha = function() end,
 		ClearAllPoints = function() end,
 		SetPoint = function() end,
@@ -68,11 +88,21 @@ end
 -- Lines are { left, right, leftColor }; colors default to Blizzard's white.
 local function newTooltip(lines, item, spell)
 	local tooltip = { shows = 0 }
-	function tooltip:GetName() return "TestTooltip" end
-	function tooltip:GetItem() return item and "Item", item end
-	function tooltip:GetSpell() return spell end
-	function tooltip:NumLines() return #lines end
-	function tooltip:Show() self.shows = self.shows + 1 end
+	function tooltip:GetName()
+		return "TestTooltip"
+	end
+	function tooltip:GetItem()
+		return item and "Item", item
+	end
+	function tooltip:GetSpell()
+		return spell
+	end
+	function tooltip:NumLines()
+		return #lines
+	end
+	function tooltip:Show()
+		self.shows = self.shows + 1
+	end
 	for i, line in ipairs(lines) do
 		_G["TestTooltipTextLeft" .. i] = newLine(line[1], line[3])
 		_G["TestTooltipTextRight" .. i] = newLine(line[2])
@@ -80,8 +110,12 @@ local function newTooltip(lines, item, spell)
 	return tooltip
 end
 
-local function left(i) return _G["TestTooltipTextLeft" .. i].text end
-local function right(i) return _G["TestTooltipTextRight" .. i].text end
+local function left(i)
+	return _G["TestTooltipTextLeft" .. i].text
+end
+local function right(i)
+	return _G["TestTooltipTextRight" .. i].text
+end
 
 -- Blizzard's 3.3.5 Frostbolt tooltip
 local FROSTBOLT = {

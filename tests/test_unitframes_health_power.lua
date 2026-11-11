@@ -19,35 +19,76 @@ local lu = require("luaunit")
 local EngineMock = require("mocks.engine_mock")
 
 local COLORS = {
-	Power = { MANA = { 0, 0, 1 }, RAGE = { 1, 0, 0 }, ENERGY = { 1, 1, 0 }, UNUSED = { .5, .5, .5 } },
-	Orb = { MANA = { { 0, 0, .1, 1, "bar" }, { 0, 0, .2, .9, "moon" }, { 0, 0, .3, .5, "smoke" }, { 0, 0, 0, 1, "shade" } } },
-	Status = { Dead = { .3, .3, .3 }, Disconnected = { .2, .2, .2 }, Tapped = { .4, .4, .4 } },
+	Power = { MANA = { 0, 0, 1 }, RAGE = { 1, 0, 0 }, ENERGY = { 1, 1, 0 }, UNUSED = { 0.5, 0.5, 0.5 } },
+	Orb = {
+		MANA = {
+			{ 0, 0, 0.1, 1, "bar" },
+			{ 0, 0, 0.2, 0.9, "moon" },
+			{ 0, 0, 0.3, 0.5, "smoke" },
+			{
+				0,
+				0,
+				0,
+				1,
+				"shade",
+			},
+		},
+	},
+	Status = { Dead = { 0.3, 0.3, 0.3 }, Disconnected = { 0.2, 0.2, 0.2 }, Tapped = { 0.4, 0.4, 0.4 } },
 }
 
 local unit -- scripted state of the frame's unit
 
 local function resetUnit()
 	unit = {
-		health = 800, healthMax = 1000,
-		isPlayer = true, connected = true, dead = false, ghost = false,
-		powerType = "MANA", powerID = 0,
-		power = { [0] = 300, [1] = 50 }, powerMax = { [0] = 600, [1] = 100 },
+		health = 800,
+		healthMax = 1000,
+		isPlayer = true,
+		connected = true,
+		dead = false,
+		ghost = false,
+		powerType = "MANA",
+		powerID = 0,
+		power = { [0] = 300, [1] = 50 },
+		powerMax = { [0] = 600, [1] = 100 },
 		tapped = false,
 	}
 end
 resetUnit()
 
-_G.UnitHealth = function() return unit.health end
-_G.UnitHealthMax = function() return unit.healthMax end
-_G.UnitIsPlayer = function() return unit.isPlayer end
-_G.UnitIsConnected = function() return unit.connected end
-_G.UnitIsDeadOrGhost = function() return unit.dead or unit.ghost end
-_G.UnitIsGhost = function() return unit.ghost end
-_G.UnitIsDead = function() return unit.dead end
-_G.UnitPowerType = function() return unit.powerID, unit.powerType end
-_G.UnitPower = function(_, id) return unit.power[id] end
-_G.UnitPowerMax = function(_, id) return unit.powerMax[id] end
-_G.UnitClass = function() return "Druid", "DRUID" end
+_G.UnitHealth = function()
+	return unit.health
+end
+_G.UnitHealthMax = function()
+	return unit.healthMax
+end
+_G.UnitIsPlayer = function()
+	return unit.isPlayer
+end
+_G.UnitIsConnected = function()
+	return unit.connected
+end
+_G.UnitIsDeadOrGhost = function()
+	return unit.dead or unit.ghost
+end
+_G.UnitIsGhost = function()
+	return unit.ghost
+end
+_G.UnitIsDead = function()
+	return unit.dead
+end
+_G.UnitPowerType = function()
+	return unit.powerID, unit.powerType
+end
+_G.UnitPower = function(_, id)
+	return unit.power[id]
+end
+_G.UnitPowerMax = function(_, id)
+	return unit.powerMax[id]
+end
+_G.UnitClass = function()
+	return "Druid", "DRUID"
+end
 _G.SPELL_POWER_MANA = 0
 _G.DEAD = "Dead"
 _G.PLAYER_OFFLINE = "Offline"
@@ -55,7 +96,9 @@ _G.PLAYER_OFFLINE = "Offline"
 local function loadElement(path)
 	local Engine = EngineMock.new()
 	Engine:NewStaticConfig("Data: Colors", COLORS)
-	Engine.UnitIsTapDenied = function() return unit.tapped end
+	Engine.UnitIsTapDenied = function()
+		return unit.tapped
+	end
 	local Handler = Engine:NewHandler("UnitFrame")
 	local captured
 	Handler.RegisterElement = function(self, name, Enable, Update)
@@ -67,8 +110,12 @@ end
 
 local function newText(flags)
 	local text = {
-		SetText = function(self, value) self.text = value end,
-		SetFormattedText = function(self, format, ...) self.text = string.format(format, ...) end,
+		SetText = function(self, value)
+			self.text = value
+		end,
+		SetFormattedText = function(self, format, ...)
+			self.text = string.format(format, ...)
+		end,
 	}
 	for key, value in pairs(flags or {}) do
 		text[key] = value
@@ -79,13 +126,28 @@ end
 local function newBar(valueFlags)
 	return {
 		shown = true,
-		GetObjectType = function() return "StatusBar" end,
-		SetMinMaxValues = function(self, min, max) self.min, self.max = min, max end,
-		SetValue = function(self, value) self.value = value; self.sets = (self.sets or 0) + 1 end,
-		SetStatusBarColor = function(self, r, g, b) self.color = { r, g, b } end,
-		IsShown = function(self) return self.shown end,
-		Show = function(self) self.shown = true end,
-		Hide = function(self) self.shown = false end,
+		GetObjectType = function()
+			return "StatusBar"
+		end,
+		SetMinMaxValues = function(self, min, max)
+			self.min, self.max = min, max
+		end,
+		SetValue = function(self, value)
+			self.value = value
+			self.sets = (self.sets or 0) + 1
+		end,
+		SetStatusBarColor = function(self, r, g, b)
+			self.color = { r, g, b }
+		end,
+		IsShown = function(self)
+			return self.shown
+		end,
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
 		Value = valueFlags and newText(valueFlags),
 	}
 end
@@ -137,21 +199,23 @@ end
 function TestHealthElement:test_post_update_gets_the_state()
 	unit.dead = true
 	local frame = { unit = "target", Health = newBar() }
-	frame.Health.PostUpdate = function(self, unit, cur, max, state) self.post = { unit, cur, max, state } end
+	frame.Health.PostUpdate = function(self, unit, cur, max, state)
+		self.post = { unit, cur, max, state }
+	end
 	self.element.Update(frame, "UNIT_HEALTH", "target")
 	lu.assertEquals(frame.Health.post, { "target", 0, 0, "dead" })
 end
 
 function TestHealthElement:test_unchanged_polls_skip_the_work()
 	local frame = { unit = "target", Health = newBar({}) }
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	lu.assertEquals(frame.Health.sets, 1)
 
-	self.element.Update(frame, "FREQUENT", 1/60) -- nothing changed
+	self.element.Update(frame, "FREQUENT", 1 / 60) -- nothing changed
 	lu.assertEquals(frame.Health.sets, 1)
 
 	unit.health = 700
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	lu.assertEquals(frame.Health.sets, 2)
 	lu.assertEquals(frame.Health.Value.text, 700)
 
@@ -161,22 +225,22 @@ end
 
 function TestHealthElement:test_unchanged_polls_still_refresh_twice_a_second()
 	local frame = { unit = "target", Health = newBar() }
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	for _ = 1, 20 do
-		self.element.Update(frame, "FREQUENT", 1/60) -- a third of a second
+		self.element.Update(frame, "FREQUENT", 1 / 60) -- a third of a second
 	end
 	lu.assertEquals(frame.Health.sets, 1)
 	for _ = 1, 20 do
-		self.element.Update(frame, "FREQUENT", 1/60)
+		self.element.Update(frame, "FREQUENT", 1 / 60)
 	end
 	lu.assertEquals(frame.Health.sets, 2)
 end
 
 function TestHealthElement:test_unit_change_updates()
 	local frame = { unit = "party1", Health = newBar() }
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	frame.unit = "party2" -- same health, another unit
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	lu.assertEquals(frame.Health.sets, 2)
 end
 
@@ -228,8 +292,12 @@ end
 
 function TestPowerElement:test_orb_colors_by_power_type()
 	local frame = { unit = "player", Power = newBar() }
-	frame.Power.GetObjectType = function() return "Orb" end
-	frame.Power.Clear = function(self) self.cleared = (self.cleared or 0) + 1 end
+	frame.Power.GetObjectType = function()
+		return "Orb"
+	end
+	frame.Power.Clear = function(self)
+		self.cleared = (self.cleared or 0) + 1
+	end
 	self.element.Update(frame) -- mana: the orb's mana layers, the shade last
 	lu.assertEquals(frame.Power.color, { 0, 0, 0 })
 	unit.powerType, unit.powerID = "POWER_TYPE_STEAM", 1 -- a vehicle's, with no orb colors
@@ -241,7 +309,9 @@ end
 function TestPowerElement:test_enable_reports_success()
 	local registered = {}
 	local frame = { unit = "player", Power = newBar(), Mana = newBar() }
-	frame.RegisterEvent = function(_, event) registered[event] = true end
+	frame.RegisterEvent = function(_, event)
+		registered[event] = true
+	end
 	lu.assertTrue(self.element.Enable(frame))
 	lu.assertTrue(registered.UNIT_MANA)
 	lu.assertTrue(registered.UNIT_DISPLAYPOWER)
@@ -257,22 +327,24 @@ end
 function TestPowerElement:test_unchanged_polls_skip_the_work()
 	local frame = { unit = "player", Power = newBar(), Mana = newBar() }
 	unit.powerType, unit.powerID = "RAGE", 1
-	self.element.Update(frame, "FREQUENT", 1/60)
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	lu.assertEquals({ frame.Power.sets, frame.Mana.sets }, { 1, 1 })
 
 	unit.power[0] = 400 -- only the druid's mana changed
-	self.element.Update(frame, "FREQUENT", 1/60)
+	self.element.Update(frame, "FREQUENT", 1 / 60)
 	lu.assertEquals({ frame.Power.sets, frame.Mana.sets }, { 2, 2 })
 	lu.assertEquals(frame.Mana.value, 400)
 end
 
 function TestPowerElement:test_frequent_updates()
 	local frame = { unit = "target", Power = newBar() }
-	frame.Power.frequent = 1/120
-	frame.EnableFrequentUpdates = function(self, element, hz) self.frequent = { element, hz } end
+	frame.Power.frequent = 1 / 120
+	frame.EnableFrequentUpdates = function(self, element, hz)
+		self.frequent = { element, hz }
+	end
 	lu.assertTrue(self.element.Enable(frame))
-	lu.assertEquals(frame.frequent, { "Power", 1/120 })
+	lu.assertEquals(frame.frequent, { "Power", 1 / 120 })
 end
 
 os.exit(lu.LuaUnit.run())

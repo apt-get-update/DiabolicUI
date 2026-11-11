@@ -13,58 +13,9 @@ Module:SetIncompatible("TipTac")
 Module:SetIncompatible("TinyTip")
 Module:SetIncompatible("TinyTooltip")
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs= pairs
-local select = select
-local math_floor = math.floor
-local math_max = math.max
-local math_min = math.min
-local string_find = string.find
-local string_format = string.format
-local string_match = string.match
-local table_concat = table.concat
-local table_insert = table.insert
-local table_wipe = table.wipe
-local unpack = unpack
-
--- WoW API
-local CanInspect = _G.CanInspect
-local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetCursorPosition = _G.GetCursorPosition
-local GetItemInfo = _G.GetItemInfo
-local GetItemStats = _G.GetItemStats
-local GetTime = _G.GetTime
-local hooksecurefunc = _G.hooksecurefunc
-local InCombatLockdown = _G.InCombatLockdown
-local IsShiftKeyDown = _G.IsShiftKeyDown
-local NotifyInspect = _G.NotifyInspect
-local UnitClass = _G.UnitClass
-local UnitClassification = _G.UnitClassification
-local UnitExists = _G.UnitExists
-local UnitFactionGroup = _G.UnitFactionGroup
-local UnitGUID = _G.UnitGUID
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsDead = _G.UnitIsDead
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local UnitIsGhost = _G.UnitIsGhost
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitIsPVP = _G.UnitIsPVP
-local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
-local UnitIsUnit = _G.UnitIsUnit
-local UnitIsVisible = _G.UnitIsVisible
-local UnitLevel = _G.UnitLevel
-local UnitName = _G.UnitName
-local UnitOnTaxi = _G.UnitOnTaxi
-local UnitReaction = _G.UnitReaction
-
 local UnitIsTapDenied = Engine.UnitIsTapDenied
 
 -- WoW Frames & Objects
-local GameTooltip = _G.GameTooltip
-
 
 -- Blizzard textures we use
 local BOSS_TEXTURE = "|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:16:16:-2:1|t"
@@ -75,15 +26,28 @@ local FACTION_HORDE_TEXTURE = "|TInterface\\TargetingFrame\\UI-PVP-Horde:16:16:-
 
 -- Item stats indicating an item is a PvP item
 local KnownPvPStats = {
-	ITEM_MOD_RESILIENCE_RATING_SHORT = true
+	ITEM_MOD_RESILIENCE_RATING_SHORT = true,
 }
 
 -- Inventory Slot IDs we need to check for average item levels
 local InventorySlots = {
-	INVSLOT_HEAD, INVSLOT_NECK, INVSLOT_SHOULDER, INVSLOT_CHEST,
-	INVSLOT_WAIST, INVSLOT_LEGS, INVSLOT_FEET, INVSLOT_WRIST, INVSLOT_HAND,
-	INVSLOT_FINGER1, INVSLOT_FINGER2, INVSLOT_TRINKET1, INVSLOT_TRINKET2,
-	INVSLOT_BACK, INVSLOT_MAINHAND, INVSLOT_OFFHAND, INVSLOT_RANGED
+	INVSLOT_HEAD,
+	INVSLOT_NECK,
+	INVSLOT_SHOULDER,
+	INVSLOT_CHEST,
+	INVSLOT_WAIST,
+	INVSLOT_LEGS,
+	INVSLOT_FEET,
+	INVSLOT_WRIST,
+	INVSLOT_HAND,
+	INVSLOT_FINGER1,
+	INVSLOT_FINGER2,
+	INVSLOT_TRINKET1,
+	INVSLOT_TRINKET2,
+	INVSLOT_BACK,
+	INVSLOT_MAINHAND,
+	INVSLOT_OFFHAND,
+	INVSLOT_RANGED,
 }
 
 -- Menus to skin
@@ -92,7 +56,7 @@ local menus = {
 	"EmoteMenu",
 	"FriendsTooltip",
 	"LanguageMenu",
-	"VoiceMacroMenu"
+	"VoiceMacroMenu",
 }
 
 -- Tooltips to skin
@@ -113,7 +77,7 @@ local tooltips = {
 	"hbGameTooltip",
 	"EventTraceTooltip",
 	"FrameStackTooltip",
-	"LFDSearchStatus" -- the Dungeon Finder queue, on the minimap's eye
+	"LFDSearchStatus", -- the Dungeon Finder queue, on the minimap's eye
 }
 
 local GearDB, SpecDB = {}, {}
@@ -125,7 +89,6 @@ gearPrefix = ITEM_LEVEL:gsub("(%%d)", ""):gsub("(%s)$", "") .. ": "
 
 local specPrefix
 specPrefix = TALENTS .. ": " -- still using talent builds in WotLK and Cata
-
 
 -- Utility Functions
 ------------------------------------------------------------
@@ -152,7 +115,6 @@ local GetBOALevel = function(level)
 
 	return level
 end
-
 
 -- Unit Tooltips
 ------------------------------------------------------------
@@ -224,7 +186,7 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 
 	-- clean up the tip
 	for i = 2, tooltip:NumLines() do
-		local line = _G[tooltip:GetName().."TextLeft"..i]
+		local line = _G[tooltip:GetName() .. "TextLeft" .. i]
 		if line then
 			local text = line:GetText()
 			if text then
@@ -239,35 +201,35 @@ Module.Tooltip_OnTooltipSetUnit = function(self, tooltip)
 	end
 
 	local name_string = self.name_string or {}
-	table_wipe(name_string)
+	table.wipe(name_string)
 
 	if isplayer then
 		if ffa then
-			table_insert(name_string, FFA_TEXTURE)
+			table.insert(name_string, FFA_TEXTURE)
 		elseif pvp and faction then
 			if faction == "Horde" then
-				table_insert(name_string, FACTION_HORDE_TEXTURE)
+				table.insert(name_string, FACTION_HORDE_TEXTURE)
 			elseif faction == "Alliance" then
-				table_insert(name_string, FACTION_ALLIANCE_TEXTURE)
+				table.insert(name_string, FACTION_ALLIANCE_TEXTURE)
 			elseif faction == "Neutral" then
-				table_insert(name_string, FACTION_NEUTRAL_TEXTURE)
+				table.insert(name_string, FACTION_NEUTRAL_TEXTURE)
 			end
 		end
-		table_insert(name_string, name)
+		table.insert(name_string, name)
 	else
 		if isboss then
-			table_insert(name_string, BOSS_TEXTURE)
+			table.insert(name_string, BOSS_TEXTURE)
 		end
-		table_insert(name_string, name)
+		table.insert(name_string, name)
 	end
 
 	-- Need color codes for the text to always be correctly colored,
 	-- or blizzard will from time to time overwrite it with their own.
-	local title = _G[tooltip:GetName().."TextLeft1"]
-	title:SetText(F.Colorize(table_concat(name_string, " "), unpack(color)))
+	local title = _G[tooltip:GetName() .. "TextLeft1"]
+	title:SetText(F.Colorize(table.concat(name_string, " "), unpack(color)))
 
 	-- Color the statusbar in the same color as the unit name.
-	local statusbar = _G[tooltip:GetName().."StatusBar"]
+	local statusbar = _G[tooltip:GetName() .. "StatusBar"]
 	if statusbar and statusbar:IsShown() then
 		if color == C.General.Normal then
 			statusbar:SetStatusBarColor(unpack(C.General.HealthGreen))
@@ -288,7 +250,6 @@ end
 -- Set Unit Info: the gear (item level and GearScore) always, the talents
 -- with Shift held.
 Module.SetUnitInfo = function(self, gear, spec)
-
 	if not (gear and spec) then
 		return
 	end
@@ -297,22 +258,24 @@ Module.SetUnitInfo = function(self, gear, spec)
 	end
 
 	local unit = self:GetTooltipUnit(GameTooltip)
-	if (not unit) or (UnitGUID(unit) ~= currentGUID) then return end
+	if (not unit) or (UnitGUID(unit) ~= currentGUID) then
+		return
+	end
 
 	local gearLine, specLine
 	for i = 2, GameTooltip:NumLines() do
 		local line = _G["GameTooltipTextLeft" .. i]
 		local text = line:GetText()
 		if text then
-			if string_find(text, gearPrefix) then
+			if string.find(text, gearPrefix) then
 				gearLine = _G["GameTooltipTextRight" .. i]
-			elseif string_find(text, specPrefix) then
+			elseif string.find(text, specPrefix) then
 				specLine = _G["GameTooltipTextRight" .. i]
 			end
 		end
 	end
 
-	if (gear == CONTINUED) and (not gearLine) and (not IsShiftKeyDown()) then
+	if (gear == CONTINUED) and not gearLine and (not IsShiftKeyDown()) then
 		gear = nil -- nothing known yet, and not asked for: no line yet
 	end
 	if not (gear or spec) then
@@ -349,7 +312,9 @@ end
 
 -- Unit Gear Info
 Module.GetUnitGear = function(self, unit)
-	if (not unit) or (UnitGUID(unit) ~= currentGUID) then return end
+	if (not unit) or (UnitGUID(unit) ~= currentGUID) then
+		return
+	end
 
 	local ulvl = UnitLevel(unit)
 	local delay
@@ -357,7 +322,7 @@ Module.GetUnitGear = function(self, unit)
 	local total, count = 0, 17 -- include the relic/ranged slot in WotLK
 	local mainhand, offhand, twohand = 1, 1, 0
 
-	for _,i in ipairs(InventorySlots) do
+	for _, i in ipairs(InventorySlots) do
 		local itemTexture = GetInventoryItemTexture(unit, i)
 		if itemTexture then
 			local itemLink = GetInventoryItemLink(unit, i)
@@ -367,10 +332,10 @@ Module.GetUnitGear = function(self, unit)
 			else
 				local _, _, quality, level, _, _, _, _, slot = GetItemInfo(itemLink)
 
-				if (not quality) or (not level) then
+				if (not quality) or not level then
 					delay = true
 				else
-					if (quality == 7) then
+					if quality == 7 then
 						boa = boa + 1
 						total = total + GetBOALevel(ulvl)
 					else
@@ -381,11 +346,11 @@ Module.GetUnitGear = function(self, unit)
 						total = total + level
 					end
 
-					if (i >= 16) then
+					if i >= 16 then
 						-- INVTYPE_RANGED = Bows
 						-- INVTYPE_RANGEDRIGHT = Wands, Guns, and Crossbows
 						-- INVTYPE_THROWN = Ranged (throwing weapons for Warriors, Rogues in WotLK/Cata)
-						if (slot == "INVTYPE_2HWEAPON") then
+						if slot == "INVTYPE_2HWEAPON" then
 							twohand = twohand + 1
 						end
 					end
@@ -408,20 +373,26 @@ Module.GetUnitGear = function(self, unit)
 		return -- some item isn't in the cache yet
 	end
 
-	local ilvl = string_format("%.1f", total / count)
+	local ilvl = string.format("%.1f", total / count)
 	local extras = {}
 	local score = Engine:GetModule("Blizzard: GearScore"):GetUnitScore(unit)
 	if score and (score > 0) then
-		table_insert(extras, F.Colorize("GS " .. score, Engine:GetModule("Blizzard: GearScore"):GetColor(score)))
+		table.insert(extras, F.Colorize("GS " .. score, Engine:GetModule("Blizzard: GearScore"):GetColor(score)))
 	end
 	if boa > 0 then
-		table_insert(extras, F.Colorize(boa, unpack(C.General.BoA)) .. " " .. F.Colorize(L["BoA"], unpack(C.General.BoA)))
+		table.insert(
+			extras,
+			F.Colorize(boa, unpack(C.General.BoA)) .. " " .. F.Colorize(L["BoA"], unpack(C.General.BoA))
+		)
 	end
 	if pvp > 0 then
-		table_insert(extras, F.Colorize(pvp, unpack(C.General.PvP)) .. " " .. F.Colorize(L["PvP"], unpack(C.General.PvP)))
+		table.insert(
+			extras,
+			F.Colorize(pvp, unpack(C.General.PvP)) .. " " .. F.Colorize(L["PvP"], unpack(C.General.PvP))
+		)
 	end
 	if #extras > 0 then
-		return ilvl .. "  " .. table_concat(extras, ", ")
+		return ilvl .. "  " .. table.concat(extras, ", ")
 	end
 	return ilvl
 end
@@ -446,9 +417,8 @@ do
 			end
 		end
 		if maxTree then
-			local name, _
-			name = GetTalentTabInfo(maxTree, isInspect, nil, group)
-			specName = string_format("%d/%d/%d (%s)", tree[1], tree[2], tree[3], name)
+			local name = GetTalentTabInfo(maxTree, isInspect, nil, group)
+			specName = string.format("%d/%d/%d (%s)", tree[1], tree[2], tree[3], name)
 		else
 			specName = NONE
 		end
@@ -458,7 +428,9 @@ end
 
 -- Unit Specialization & Talent Build
 Module.GetUnitSpec = function(self, unit)
-	if (not unit) or (UnitGUID(unit) ~= currentGUID) then return end
+	if (not unit) or (UnitGUID(unit) ~= currentGUID) then
+		return
+	end
 
 	local specName
 	if UnitIsUnit("player", unit) then
@@ -468,7 +440,6 @@ Module.GetUnitSpec = function(self, unit)
 	end
 	return specName
 end
-
 
 -- Scan Current Unit
 Module.ScanUnit = function(self, unit, forced)
@@ -480,10 +451,18 @@ Module.ScanUnit = function(self, unit, forced)
 
 		self:SetUnitInfo(cachedGear or CONTINUED, cachedSpec or CONTINUED)
 	else
-		if UnitIsDeadOrGhost("player") or UnitOnTaxi("player") then return end
-		if InspectFrame and InspectFrame:IsShown() then return end
-		if (not unit) or (UnitGUID(unit) ~= currentGUID) then return end
-		if (not UnitIsVisible(unit)) then return end
+		if UnitIsDeadOrGhost("player") or UnitOnTaxi("player") then
+			return
+		end
+		if InspectFrame and InspectFrame:IsShown() then
+			return
+		end
+		if (not unit) or (UnitGUID(unit) ~= currentGUID) then
+			return
+		end
+		if not UnitIsVisible(unit) then
+			return
+		end
 
 		cachedGear = GearDB[currentGUID]
 		cachedSpec = SpecDB[currentGUID]
@@ -496,7 +475,7 @@ Module.ScanUnit = function(self, unit, forced)
 		end
 
 		--if cachedGear then
-			self:SetUnitInfo(cachedGear or CONTINUED, cachedSpec)
+		self:SetUnitInfo(cachedGear or CONTINUED, cachedSpec)
 		--end
 
 		if InCombatLockdown() then
@@ -505,7 +484,7 @@ Module.ScanUnit = function(self, unit, forced)
 		end
 
 		local timeSinceLastInspect = GetTime() - lastInspectRequest
-		if (timeSinceLastInspect >= 1.5) then
+		if timeSinceLastInspect >= 1.5 then
 			nextInspectRequest = 0
 		else
 			nextInspectRequest = 1.5 - timeSinceLastInspect
@@ -513,7 +492,6 @@ Module.ScanUnit = function(self, unit, forced)
 		self.inspect:Show()
 	end
 end
-
 
 local singlePattern = function(msg, plain)
 	msg = msg:gsub("%%%d?$?c", ".+")
@@ -533,7 +511,6 @@ local pluralPattern = function(msg, plain)
 	return plain and msg or ("^" .. msg)
 end
 
-
 local remainingTime = {
 	singlePattern(_G.SPELL_TIME_REMAINING_DAYS),
 	singlePattern(_G.SPELL_TIME_REMAINING_HOURS),
@@ -542,7 +519,7 @@ local remainingTime = {
 	pluralPattern(_G.SPELL_TIME_REMAINING_DAYS),
 	pluralPattern(_G.SPELL_TIME_REMAINING_HOURS),
 	pluralPattern(_G.SPELL_TIME_REMAINING_MIN),
-	pluralPattern(_G.SPELL_TIME_REMAINING_SEC)
+	pluralPattern(_G.SPELL_TIME_REMAINING_SEC),
 }
 
 -- Recolors an aura tooltip, and with Shift down adds its spell ID and caster.
@@ -551,19 +528,19 @@ local StyleAuraTooltip = function(tooltip, name, rank, debuffType, unitCaster, s
 	local gray = C.General.Gray
 
 	local tooltipName = tooltip:GetName()
-	_G[tooltipName.."TextLeft1"]:SetText(name)
-	_G[tooltipName.."TextLeft1"]:SetTextColor(color[1], color[2], color[3])
-	_G[tooltipName.."TextRight1"]:SetText(rank)
-	_G[tooltipName.."TextRight1"]:SetTextColor(gray[1], gray[2], gray[3])
+	_G[tooltipName .. "TextLeft1"]:SetText(name)
+	_G[tooltipName .. "TextLeft1"]:SetTextColor(color[1], color[2], color[3])
+	_G[tooltipName .. "TextRight1"]:SetText(rank)
+	_G[tooltipName .. "TextRight1"]:SetTextColor(gray[1], gray[2], gray[3])
 
 	-- the remaining time in the title color, the description grayed out
 	for i = 2, tooltip:NumLines() do
-		local line = _G[tooltipName.."TextLeft"..i]
+		local line = _G[tooltipName .. "TextLeft" .. i]
 		local msg = line and line:GetText()
 		if msg then
 			local isTime
 			for j = 1, #remainingTime do
-				if string_match(msg, remainingTime[j]) then
+				if string.match(msg, remainingTime[j]) then
 					isTime = true
 					break
 				end
@@ -582,7 +559,9 @@ local StyleAuraTooltip = function(tooltip, name, rank, debuffType, unitCaster, s
 		tooltip:AddDoubleLine(L["SpellID:"], spellId, blue[1], blue[2], blue[3], white[1], white[2], white[3])
 		if unitCaster then
 			local casterName = UnitName(unitCaster)
-			local caster = (unitCaster == "player") and YOU or (casterName and (casterName ~= "")) and casterName or unitCaster
+			local caster = (unitCaster == "player") and YOU
+				or (casterName and (casterName ~= "")) and casterName
+				or unitCaster
 			tooltip:AddDoubleLine(L["Caster:"], caster, blue[1], blue[2], blue[3], white[1], white[2], white[3])
 		end
 		tooltip:Show()
@@ -599,7 +578,6 @@ Module.Tooltip_SetUnitDebuff = function(self, tooltip, unit, index, filter)
 	StyleAuraTooltip(tooltip, name, rank, debuffType, unitCaster, spellId)
 end
 
-
 -- General
 ------------------------------------------------------------
 -- Where on the tooltip the cursor (plus the user's offset) is anchored to,
@@ -607,15 +585,15 @@ end
 -- e.g. BOTTOM is horizontally centered (half the width) and at the bottom
 -- edge (no height), CENTER is half the width and half the height, and so on.
 local ANCHOR_POINTS = {
-	TOPLEFT     = { 0,   1   },
-	TOP         = { .5,  1   },
-	TOPRIGHT    = { 1,   1   },
-	LEFT        = { 0,   .5  },
-	CENTER      = { .5,  .5  },
-	RIGHT       = { 1,   .5  },
-	BOTTOMLEFT  = { 0,   0   },
-	BOTTOM      = { .5,  0   },
-	BOTTOMRIGHT = { 1,   0   }
+	TOPLEFT = { 0, 1 },
+	TOP = { 0.5, 1 },
+	TOPRIGHT = { 1, 1 },
+	LEFT = { 0, 0.5 },
+	CENTER = { 0.5, 0.5 },
+	RIGHT = { 1, 0.5 },
+	BOTTOMLEFT = { 0, 0 },
+	BOTTOM = { 0.5, 0 },
+	BOTTOMRIGHT = { 1, 0 },
 }
 
 Module.Tooltip_GetAnchorFractions = function(self)
@@ -638,18 +616,23 @@ Module.Tooltip_PositionAtCursor = function(self, tooltip)
 	local hFraction, vFraction = self:Tooltip_GetAnchorFractions()
 
 	tooltip:ClearAllPoints()
-	tooltip:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x - (width * hFraction) + db.offsetX, y - (height * vFraction) + db.offsetY)
+	tooltip:SetPoint(
+		"BOTTOMLEFT",
+		UIParent,
+		"BOTTOMLEFT",
+		x - (width * hFraction) + db.offsetX,
+		y - (height * vFraction) + db.offsetY
+	)
 end
 
 Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
-
 	-- instantly hide fading structure tips (walls, gates, etc) instead of fading
-	if (tooltip:GetAlpha() < 1) then
+	if tooltip:GetAlpha() < 1 then
 		tooltip:Show() -- this kills the blizzard fading
 		tooltip:Hide()
 	end
 
-	if (tooltip:GetAnchorType() == "ANCHOR_CURSOR") then
+	if tooltip:GetAnchorType() == "ANCHOR_CURSOR" then
 		-- World mouseover tooltips (units and objects like mailboxes
 		-- alike) are fully managed by the client every frame - including
 		-- deciding when to fade/hide once nothing is hovered anymore.
@@ -687,7 +670,13 @@ Module.Tooltip_OnUpdate = function(self, tooltip, elapsed)
 			local hFraction, vFraction = self:Tooltip_GetAnchorFractions()
 			local refX = left + (width * hFraction)
 			local refY = bottom + (height * vFraction)
-			tooltip:SetPoint(point, relativeTo, relativePoint, xOfs + ((cursorX + db.offsetX) - refX), yOfs + ((cursorY + db.offsetY) - refY))
+			tooltip:SetPoint(
+				point,
+				relativeTo,
+				relativePoint,
+				xOfs + ((cursorX + db.offsetX) - refX),
+				yOfs + ((cursorY + db.offsetY) - refY)
+			)
 		end
 	else
 		-- Everything else (action bar/spell tooltips, unit frames, items,
@@ -708,7 +697,7 @@ end
 Module.Tooltip_SetDefaultAnchor = function(self, tooltip, owner)
 	-- We're only repositioning from the default position,
 	-- and we shouldn't interfere with tooltips placed next to their owners.
-	if (tooltip:GetAnchorType() ~= "ANCHOR_NONE") then
+	if tooltip:GetAnchorType() ~= "ANCHOR_NONE" then
 		return
 	end
 
@@ -745,15 +734,15 @@ Module.StatusBar_OnValueChanged = function(self, statusbar)
 		elseif value == max then
 			statusbar.value:SetFormattedText("%s", F.Short(max))
 		elseif value > 1 then
-			statusbar.value:SetFormattedText("%s ∕ %d%%", F.Short(value), floor((value-min)/max*100))
+			statusbar.value:SetFormattedText("%s ∕ %d%%", F.Short(value), floor((value - min) / max * 100))
 		else
 			-- walls and gates only have 1 health, so only percentage is needed.
-			statusbar.value:SetFormattedText("%d%%", floor((value-min)/max*100))
+			statusbar.value:SetFormattedText("%d%%", floor((value - min) / max * 100))
 		end
 	end
 
 	-- Because blizzard shrink the textures instead of cropping them.
-	statusbar:GetStatusBarTexture():SetTexCoord(0, (value-min)/(max-min), 0, 1)
+	statusbar:GetStatusBarTexture():SetTexCoord(0, (value - min) / (max - min), 0, 1)
 
 	-- The color needs to be updated, or it will pop back to green
 	if statusbar.color then
@@ -789,16 +778,27 @@ Module.CreateBackdrop = function(self, object, menu)
 	backdrop:SetBackdropColor(unpack(config.backdrop_color))
 	backdrop:SetBackdropBorderColor(unpack(config.backdrop_border_color))
 
-	hooksecurefunc(object, "SetFrameStrata", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
-	hooksecurefunc(object, "SetFrameLevel", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
-	hooksecurefunc(object, "SetParent", function(self) backdrop:SetFrameLevel(self:GetFrameLevel()) end)
+	hooksecurefunc(object, "SetFrameStrata", function(self)
+		backdrop:SetFrameLevel(self:GetFrameLevel())
+	end)
+	hooksecurefunc(object, "SetFrameLevel", function(self)
+		backdrop:SetFrameLevel(self:GetFrameLevel())
+	end)
+	hooksecurefunc(object, "SetParent", function(self)
+		backdrop:SetFrameLevel(self:GetFrameLevel())
+	end)
 
 	object:SetBackdrop(nil) -- a reset is needed first, or we'll get weird bugs
 	object.SetBackdrop = function() end -- kill off the original backdrop function
-	object.GetBackdrop = function() return config.dummy_backdrop end
-	object.GetBackdropColor = function() return unpack(config.dummy_backdrop_color) end
-	object.GetBackdropBorderColor = function() return unpack(config.dummy_backdrop_border_color) end
-
+	object.GetBackdrop = function()
+		return config.dummy_backdrop
+	end
+	object.GetBackdropColor = function()
+		return unpack(config.dummy_backdrop_color)
+	end
+	object.GetBackdropBorderColor = function()
+		return unpack(config.dummy_backdrop_border_color)
+	end
 end
 
 Module.StyleMenu = function(self, object)
@@ -819,7 +819,7 @@ Module.StyleMenu = function(self, object)
 		-- a menu of its own (the friends' tooltip): the backdrop under its
 		-- text
 		local Lower = function()
-			if (object:GetFrameLevel() < 1) then
+			if object:GetFrameLevel() < 1 then
 				object:SetFrameLevel(1)
 			end
 			backdrop:SetFrameLevel(object:GetFrameLevel() - 1)
@@ -860,11 +860,23 @@ Module.StyleTooltip = function(self, object)
 	end)
 
 	-- modify the health bar
-	local statusbar = _G[object:GetName().."StatusBar"]
-	if statusbar and (not self.styled[object]) then
+	local statusbar = _G[object:GetName() .. "StatusBar"]
+	if statusbar and not self.styled[object] then
 		statusbar:ClearAllPoints()
-		statusbar:SetPoint("BOTTOMLEFT", object, "BOTTOMLEFT", -config.statusbar.offsets[1], -config.statusbar.offsets[4])
-		statusbar:SetPoint("BOTTOMRIGHT", object, "BOTTOMRIGHT", config.statusbar.offsets[2], -config.statusbar.offsets[4])
+		statusbar:SetPoint(
+			"BOTTOMLEFT",
+			object,
+			"BOTTOMLEFT",
+			-config.statusbar.offsets[1],
+			-config.statusbar.offsets[4]
+		)
+		statusbar:SetPoint(
+			"BOTTOMRIGHT",
+			object,
+			"BOTTOMRIGHT",
+			config.statusbar.offsets[2],
+			-config.statusbar.offsets[4]
+		)
 		statusbar:SetHeight(config.statusbar.size)
 		statusbar:SetStatusBarTexture(config.statusbar.texture)
 
@@ -874,15 +886,20 @@ Module.StyleTooltip = function(self, object)
 		statusbar.value:SetPoint("CENTER")
 
 		-- this allows us to track unitless tips with healthbars (walls, gates, etc)
-		statusbar:HookScript("OnShow", function(...) self:StatusBar_OnShow(...) end)
-		statusbar:HookScript("OnHide", function(...) self:StatusBar_OnHide(...) end)
-		statusbar:HookScript("OnValueChanged", function(...) self:StatusBar_OnValueChanged(...) end)
+		statusbar:HookScript("OnShow", function(...)
+			self:StatusBar_OnShow(...)
+		end)
+		statusbar:HookScript("OnHide", function(...)
+			self:StatusBar_OnHide(...)
+		end)
+		statusbar:HookScript("OnValueChanged", function(...)
+			self:StatusBar_OnValueChanged(...)
+		end)
 	end
-
 end
 
 Module.GetStyledCache = function(self)
-	if (not self.styled) then
+	if not self.styled then
 		self.styled = {}
 	end
 	return self.styled
@@ -914,9 +931,13 @@ local StyleMenuLine = function(spec, button)
 	SpanBar(spec, chosen, button)
 	button.DiabolicChosen = chosen
 	check:SetAlpha(0)
-	hooksecurefunc(check, "Show", function() chosen:Show() end)
-	hooksecurefunc(check, "Hide", function() chosen:Hide() end)
-	if (check:IsShown() ~= 1) then
+	hooksecurefunc(check, "Show", function()
+		chosen:Show()
+	end)
+	hooksecurefunc(check, "Hide", function()
+		chosen:Hide()
+	end)
+	if check:IsShown() ~= 1 then
 		chosen:Hide()
 	end
 	local arrow = _G[name .. "ExpandArrow"]:GetNormalTexture()
@@ -933,8 +954,8 @@ Module.StyleDropDowns = function(self)
 	local styled = self:GetStyledCache()
 
 	for i = 1, UIDROPDOWNMENU_MAXLEVELS do
-		local menu =  _G["DropDownList"..i.."MenuBackdrop"]
-		local dropdown = _G["DropDownList"..i.."Backdrop"]
+		local menu = _G["DropDownList" .. i .. "MenuBackdrop"]
+		local dropdown = _G["DropDownList" .. i .. "Backdrop"]
 
 		if menu and not styled[menu] then
 			self:StyleMenu(menu)
@@ -947,7 +968,7 @@ Module.StyleDropDowns = function(self)
 		end
 
 		for j = 1, UIDROPDOWNMENU_MAXBUTTONS do
-			local button = _G["DropDownList"..i.."Button"..j]
+			local button = _G["DropDownList" .. i .. "Button" .. j]
 			if button and not styled[button] then
 				StyleMenuLine(self.config.menu, button)
 				styled[button] = true
@@ -962,7 +983,7 @@ end
 Module.GetMenuFont = function(self)
 	local spec = self.config.menu
 	local size = spec.font_size * Engine:GetFrame():GetEffectiveScale() / _G.UIParent:GetEffectiveScale()
-	size = math_max(9, math_min(14, math_floor(size + .5)))
+	size = math.max(9, math.min(14, math.floor(size + 0.5)))
 	return spec.fonts[size]
 end
 
@@ -980,7 +1001,7 @@ Module.StyleMenuText = function(self, info, level)
 	if not text then
 		return
 	end
-	if (list.numButtons == 1) then
+	if list.numButtons == 1 then
 		self.menu_font = self:GetMenuFont() -- (a menu opening: our UI's scale may have changed)
 	end
 	if not info.fontObject then
@@ -1003,8 +1024,14 @@ Module.StyleMenuText = function(self, info, level)
 		text:ClearAllPoints()
 		text:SetPoint("LEFT", button, "LEFT", inset, 0)
 	end
-	local width = inset + text:GetStringWidth() + spec.text_pad + spec.edge - (25 - border)
-		+ ((info.hasArrow and spec.arrow_room) or 0) + (((info.icon or info.hasColorSwatch) and spec.icon_room) or 0) + (info.padding or 0)
+	local width = inset
+		+ text:GetStringWidth()
+		+ spec.text_pad
+		+ spec.edge
+		- (25 - border)
+		+ ((info.hasArrow and spec.arrow_room) or 0)
+		+ (((info.icon or info.hasColorSwatch) and spec.icon_room) or 0)
+		+ (info.padding or 0)
 	if (list.numButtons == 1) or (width > (list.DiabolicWidth or 0)) then
 		list.DiabolicWidth = width
 	end
@@ -1014,9 +1041,9 @@ end
 Module.StyleMenus = function(self)
 	local styled = self:GetStyledCache()
 
-	for i, name in ipairs(menus) do
+	for _, name in ipairs(menus) do
 		local object = _G[name]
-		if object and (not styled[object]) then
+		if object and not styled[object] then
 			self:StyleMenu(object)
 			styled[object] = true
 		end
@@ -1026,9 +1053,9 @@ end
 Module.StyleTooltips = function(self)
 	local styled = self:GetStyledCache()
 
-	for i, name in ipairs(tooltips) do
+	for _, name in ipairs(tooltips) do
 		local object = _G[name]
-		if object and (not styled[object]) then
+		if object and not styled[object] then
 			self:StyleTooltip(object)
 			styled[object] = true
 		end
@@ -1058,12 +1085,15 @@ Module.UpdateStyles = function(self)
 
 	-- hook the creation of further dropdown levels
 	if not self.dropdowns_hooked then
-		hooksecurefunc("UIDropDownMenu_CreateFrames", function(...) self:StyleDropDowns(...) end)
-		hooksecurefunc("UIDropDownMenu_AddButton", function(info, level) self:StyleMenuText(info, level) end)
+		hooksecurefunc("UIDropDownMenu_CreateFrames", function(...)
+			self:StyleDropDowns(...)
+		end)
+		hooksecurefunc("UIDropDownMenu_AddButton", function(info, level)
+			self:StyleMenuText(info, level)
+		end)
 		self.dropdowns_hooked = true
 	end
 end
-
 
 -- This requires both VARIABLES_LOADED and PLAYER_ENTERING_WORLD to have fired!
 Module.HookGameTooltip = function(self)
@@ -1074,13 +1104,25 @@ Module.HookGameTooltip = function(self)
 	-- stick out past the edge and making it look like the tooltip shrank.
 	tooltip:SetClampedToScreen(true)
 
-	tooltip:HookScript("OnUpdate", function(...) self:Tooltip_OnUpdate(...) end)
-	tooltip:HookScript("OnHide", function(...) self:Tooltip_OnHide(...) end)
+	tooltip:HookScript("OnUpdate", function(...)
+		self:Tooltip_OnUpdate(...)
+	end)
+	tooltip:HookScript("OnHide", function(...)
+		self:Tooltip_OnHide(...)
+	end)
 
-	tooltip:HookScript("OnTooltipSetUnit", function(...) self:Tooltip_OnTooltipSetUnit(...) end)
-	hooksecurefunc(tooltip, "SetUnitBuff", function(...) self:Tooltip_SetUnitBuff(...) end)
-	hooksecurefunc(tooltip, "SetUnitDebuff", function(...) self:Tooltip_SetUnitDebuff(...) end)
-	hooksecurefunc("GameTooltip_SetDefaultAnchor", function(...) self:Tooltip_SetDefaultAnchor(...) end)
+	tooltip:HookScript("OnTooltipSetUnit", function(...)
+		self:Tooltip_OnTooltipSetUnit(...)
+	end)
+	hooksecurefunc(tooltip, "SetUnitBuff", function(...)
+		self:Tooltip_SetUnitBuff(...)
+	end)
+	hooksecurefunc(tooltip, "SetUnitDebuff", function(...)
+		self:Tooltip_SetUnitDebuff(...)
+	end)
+	hooksecurefunc("GameTooltip_SetDefaultAnchor", function(...)
+		self:Tooltip_SetDefaultAnchor(...)
+	end)
 
 	self:Tooltip_SetDefaultAnchor(tooltip, UIParent)
 end
@@ -1091,7 +1133,9 @@ Module.SkinDebugTools = function(self)
 	local eventFrame = _G.EventTraceFrame
 	local UICenter = Engine:GetFrame()
 
-	_G.FrameStackTooltip:HookScript("OnShow", function(self) self:SetScale(UICenter:GetEffectiveScale()) end)
+	_G.FrameStackTooltip:HookScript("OnShow", function(self)
+		self:SetScale(UICenter:GetEffectiveScale())
+	end)
 
 	-- Strip away border textures
 	for i = 1, eventFrame:GetNumRegions() do
@@ -1107,22 +1151,18 @@ end
 
 Module.OnEvent = function(self, event, ...)
 	local arg1 = ...
-	if (event == "ADDON_LOADED") and (arg1 == "Blizzard_DebugTools") then
-		self:UnregisterEvent("ADDON_LOADED", "OnEvent")
-		self:SkinDebugTools()
-
-
-	elseif event == "PLAYER_ENTERING_WORLD" then
+	if event == "PLAYER_ENTERING_WORLD" then
 		self:HookGameTooltip()
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-
 	elseif (event == "UNIT_INVENTORY_CHANGED") and arg1 and (UnitGUID(arg1) == currentGUID) then
 		self:ScanUnit(arg1, true)
-
 	elseif (event == "MODIFIER_STATE_CHANGED") and ((arg1 == "LSHIFT") or (arg1 == "RSHIFT")) then
 		if GameTooltip:IsShown() then
 			local unit = self:GetTooltipUnit(GameTooltip)
-			if (unit and currentUNIT and currentGUID) and (UnitIsUnit(unit, currentUNIT) and (UnitGUID(unit) == currentGUID)) then
+			if
+				(unit and currentUNIT and currentGUID)
+				and (UnitIsUnit(unit, currentUNIT) and (UnitGUID(unit) == currentGUID))
+			then
 				GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
 				GameTooltip:SetUnit(unit)
 				GameTooltip:Show()
@@ -1139,7 +1179,7 @@ Module.OnEvent = function(self, event, ...)
 				local spec = self:GetUnitSpec(currentUNIT)
 				SpecDB[currentGUID] = spec
 
-				if not(gear and spec) then
+				if not (gear and spec) then
 					self:ScanUnit(currentUNIT, true)
 				else
 					self:SetUnitInfo(gear, spec)
@@ -1152,7 +1192,6 @@ Module.OnEvent = function(self, event, ...)
 			self:UnregisterEvent("INSPECT_TALENT_READY", "OnEvent")
 		end
 	end
-
 end
 
 Module.OnInit = function(self)
@@ -1161,7 +1200,7 @@ Module.OnInit = function(self)
 
 	-- create an anchor to hook the tooltip to
 	self.anchor = CreateFrame("Frame", nil, Engine:GetFrame())
-	self.anchor:SetSize(1,1)
+	self.anchor:SetSize(1, 1)
 	self.anchor:SetPoint(unpack(self.config.position))
 
 	-- we need a frame with its on update handler for our inspect script
@@ -1172,9 +1211,9 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
 	self:RegisterEvent("MODIFIER_STATE_CHANGED", "OnEvent")
-	self:RegisterEvent("ADDON_LOADED", "OnEvent")
 
 	self:UpdateStyles()
+	self:WhenLoaded("Blizzard_DebugTools", "SkinDebugTools")
 
 	self.inspect:SetScript("OnUpdate", function(_, elapsed)
 		nextInspectRequest = nextInspectRequest - elapsed
@@ -1193,6 +1232,5 @@ Module.OnEnable = function(self)
 			self:RegisterEvent("INSPECT_TALENT_READY", "OnEvent")
 			NotifyInspect(currentUNIT)
 		end
-
 	end)
 end

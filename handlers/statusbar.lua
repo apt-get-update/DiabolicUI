@@ -1,20 +1,10 @@
 -- "StatusBar" handler: a StatusBar lookalike with smoothing and a spark.
 -- Handler:New(parent) returns an object with the usual SetValue /
 -- SetMinMaxValues / SetStatusBarColor / SetOrientation API; the texture is
--- cropped (not squashed) to the current value.
+-- cropped (not squashed) to the current value. SetIncoming(amount) shows
+-- the heals on their way as a paler bar past the end of it.
 local _, Engine = ...
 local Handler = Engine:NewHandler("StatusBar")
-
--- Lua API
-local _G = _G
-local math_abs = math.abs
-local math_max = math.max
-local math_min = math.min
-local setmetatable = setmetatable
-local type = type
-
--- WoW API
-local CreateFrame = _G.CreateFrame
 
 ----------------------------------------------------------------
 -- Statusbar template
@@ -33,11 +23,46 @@ local SetPulse = function(spark)
 	spark._pulse_out:SetChange(-range)
 end
 
+local INCOMING_ALPHA = 0.45 -- how much paler the incoming heals are than the bar
+
+-- The incoming heals: the bar's texture, from where the bar ends to where
+-- they'll take it (never past the end).
+local UpdateIncoming = function(self, value, min, max, width, height)
+	local incoming = self.incoming
+	local amount = math.min(self._incoming, max - value)
+	if (amount <= 0) or (value == min) or (max == min) then
+		incoming:Hide()
+		return
+	end
+	local from, to = (value - min) / (max - min), (value + amount - min) / (max - min)
+	local orientation = self._orientation
+	local bar = self.bar
+	incoming:ClearAllPoints()
+	if orientation == "RIGHT" then
+		incoming:SetTexCoord(from, to, 0, 1)
+		incoming:SetPoint("LEFT", bar, "RIGHT")
+		incoming:SetSize((to - from) * width, height)
+	elseif orientation == "LEFT" then
+		incoming:SetTexCoord(1 - to, 1 - from, 0, 1)
+		incoming:SetPoint("RIGHT", bar, "LEFT")
+		incoming:SetSize((to - from) * width, height)
+	elseif orientation == "UP" then
+		incoming:SetTexCoord(0, 1, 1 - to, 1 - from)
+		incoming:SetPoint("BOTTOM", bar, "TOP")
+		incoming:SetSize(width, (to - from) * height)
+	else -- DOWN
+		incoming:SetTexCoord(0, 1, from, to)
+		incoming:SetPoint("TOP", bar, "BOTTOM")
+		incoming:SetSize(width, (to - from) * height)
+	end
+	incoming:Show()
+end
+
 StatusBar.Update = function(self)
 	local value = self._ignoresmoothing and self._value or self._displayvalue
 	local min, max = self._min, self._max
 	local orientation = self._orientation
-	local width, height = self:GetSize() 
+	local width, height = self:GetSize()
 	local bar = self.bar
 	local spark = self.spark
 
@@ -52,14 +77,23 @@ StatusBar.Update = function(self)
 	else
 		-- The bar only needs laying out again when its value or shape changed.
 		local laid = self._laid
-		if (value ~= laid.value) or (min ~= laid.min) or (max ~= laid.max) or (width ~= laid.width) or (height ~= laid.height)
-		or (orientation ~= laid.orientation) or (spark._width ~= laid.sparkWidth) or (spark._height ~= laid.sparkHeight) then
+		if
+			(value ~= laid.value)
+			or (min ~= laid.min)
+			or (max ~= laid.max)
+			or (width ~= laid.width)
+			or (height ~= laid.height)
+			or (orientation ~= laid.orientation)
+			or (spark._width ~= laid.sparkWidth)
+			or (spark._height ~= laid.sparkHeight)
+		then
 			laid.value, laid.min, laid.max, laid.width, laid.height = value, min, max, width, height
 			laid.orientation, laid.sparkWidth, laid.sparkHeight = orientation, spark._width, spark._height
-			local mult = (value-min)/(max-min)
+			local mult = (value - min) / (max - min)
 			-- (WoW takes a size of 0 as no size set at all)
-			local display_size = math_max(mult * ((orientation == "RIGHT" or orientation == "LEFT") and width or height), 0.0001)
-		
+			local display_size =
+				math.max(mult * ((orientation == "RIGHT" or orientation == "LEFT") and width or height), 0.0001)
+
 			if orientation == "RIGHT" then
 				bar:SetTexCoord(0, mult, 0, 1)
 				bar:ClearAllPoints()
@@ -67,35 +101,32 @@ StatusBar.Update = function(self)
 				bar:SetPoint("BOTTOM")
 				bar:SetPoint("LEFT")
 				bar:SetSize(display_size, height)
-			
+
 				spark:ClearAllPoints()
 				spark:SetPoint("CENTER", bar, "RIGHT", 0, 0)
 				spark:SetSize(spark._width, height)
-		
 			elseif orientation == "LEFT" then
-				bar:SetTexCoord(1-mult, 1, 0, 1)
+				bar:SetTexCoord(1 - mult, 1, 0, 1)
 				bar:ClearAllPoints()
 				bar:SetPoint("TOP")
 				bar:SetPoint("BOTTOM")
 				bar:SetPoint("RIGHT")
 				bar:SetSize(display_size, height)
-			
+
 				spark:ClearAllPoints()
 				spark:SetPoint("CENTER", bar, "LEFT", 0, 0)
 				spark:SetSize(spark._width, height)
-
 			elseif orientation == "UP" then
-				bar:SetTexCoord(0, 1, 1-mult, 1)
+				bar:SetTexCoord(0, 1, 1 - mult, 1)
 				bar:ClearAllPoints()
 				bar:SetPoint("LEFT")
 				bar:SetPoint("RIGHT")
 				bar:SetPoint("BOTTOM")
 				bar:SetSize(width, display_size)
-			
+
 				spark:ClearAllPoints()
 				spark:SetPoint("CENTER", bar, "TOP", 0, 0)
 				spark:SetSize(width, spark._height)
-
 			elseif orientation == "DOWN" then
 				bar:SetTexCoord(0, 1, 0, mult)
 				bar:ClearAllPoints()
@@ -123,13 +154,13 @@ StatusBar.Update = function(self)
 			bar:Show()
 		end
 	end
-
+	UpdateIncoming(self, value, min, max, width, height)
 end
 
 local smooth_minimum_value = 1 -- if a value is lower than this, we won't smoothe
-local smooth_HZ = .2 -- each frame closes elapsed/smooth_HZ of the gap
-local smooth_limit = 1/120 -- max updates per second
-local smooth_finish = 1/1000 -- the last bit of the gap (a share of the range) is jumped
+local smooth_HZ = 0.2 -- each frame closes elapsed/smooth_HZ of the gap
+local smooth_limit = 1 / 120 -- max updates per second
+local smooth_finish = 1 / 1000 -- the last bit of the gap (a share of the range) is jumped
 
 -- Runs only while the shown value slides towards the real one.
 StatusBar.OnUpdate = function(self, elapsed)
@@ -144,8 +175,11 @@ StatusBar.OnUpdate = function(self, elapsed)
 		local display = self._displayvalue
 		-- Closing a share of the gap every frame never quite gets there,
 		-- so the last bit is jumped (and so is all of it from nothing).
-		local next_display = display + (goal - display) * math_min(elapsed/smooth_HZ, 1)
-		if (display < smooth_minimum_value) or (math_abs(goal - next_display) <= (self._max - self._min) * smooth_finish) then
+		local next_display = display + (goal - display) * math.min(elapsed / smooth_HZ, 1)
+		if
+			(display < smooth_minimum_value)
+			or (math.abs(goal - next_display) <= (self._max - self._min) * smooth_finish)
+		then
 			self._displayvalue = goal
 			self.smoothing = nil
 		else
@@ -181,7 +215,9 @@ StatusBar.SetValue = function(self, value)
 		self.smoothing = nil
 	elseif self.smoothing then
 		if not self.scaffold:GetScript("OnUpdate") then
-			self.scaffold:SetScript("OnUpdate", function(_, ...) self:OnUpdate(...) end)
+			self.scaffold:SetScript("OnUpdate", function(_, ...)
+				self:OnUpdate(...)
+			end)
 		end
 	end
 	self:Update()
@@ -211,10 +247,21 @@ end
 
 StatusBar.SetStatusBarColor = function(self, ...)
 	self.bar:SetVertexColor(...)
+	local r, g, b, a = ...
+	self.incoming:SetVertexColor(r, g, b, (a or 1) * INCOMING_ALPHA)
+end
+
+-- The heals on their way, in health: shown past the end of the bar.
+StatusBar.SetIncoming = function(self, amount)
+	if amount ~= self._incoming then
+		self._incoming = amount
+		self:Update()
+	end
 end
 
 StatusBar.SetStatusBarTexture = function(self, ...)
 	self.bar:SetTexture(...)
+	self.incoming:SetTexture(...)
 	self._laid.value = nil -- a new texture needs its crop again
 	self:Update()
 end
@@ -380,19 +427,28 @@ StatusBar.GetParent = function(self)
 	return self.scaffold and self.scaffold:GetParent()
 end
 
-StatusBar.GetObjectType = function(self) return "StatusBar" end
-StatusBar.IsObjectType = function(self, type) return type == "StatusBar" end
+StatusBar.GetObjectType = function(self)
+	return "StatusBar"
+end
+StatusBar.IsObjectType = function(self, type)
+	return type == "StatusBar"
+end
 
-StatusBar.Show = function(self) self.scaffold:Show() end
-StatusBar.Hide = function(self) self.scaffold:Hide() end
-StatusBar.IsShown = function(self) return self.scaffold:IsShown() end
+StatusBar.Show = function(self)
+	self.scaffold:Show()
+end
+StatusBar.Hide = function(self)
+	self.scaffold:Hide()
+end
+StatusBar.IsShown = function(self)
+	return self.scaffold:IsShown()
+end
 
 Handler.New = function(self, parent)
-
-	-- The scaffold is the top level frame object 
+	-- The scaffold is the top level frame object
 	-- that will respond to SetSize, SetPoint and similar.
 	local scaffold = CreateFrame("Frame", nil, parent)
-	scaffold:SetSize(1,1)
+	scaffold:SetSize(1, 1)
 
 	-- the bar texture
 	local bar = scaffold:CreateTexture(nil, "BORDER")
@@ -400,17 +456,21 @@ Handler.New = function(self, parent)
 	bar:SetPoint("BOTTOM")
 	bar:SetPoint("LEFT")
 	bar:SetWidth(scaffold:GetWidth())
-	
+
+	-- the incoming heals, past the end of the bar
+	local incoming = scaffold:CreateTexture(nil, "BORDER")
+	incoming:Hide()
+
 	-- the spark texture
 	local spark = scaffold:CreateTexture(nil, "OVERLAY")
 	spark:SetPoint("CENTER", bar, "RIGHT", 0, 0)
-	spark:SetSize(1,1)
+	spark:SetSize(1, 1)
 	spark._width = 1
 	spark._height = 1
 	spark._duration_in = 2.75
 	spark._duration_out = 1.25
-	spark._min_alpha = .35
-	spark._max_alpha = .85
+	spark._min_alpha = 0.35
+	spark._max_alpha = 0.85
 	spark._pulse = spark:CreateAnimationGroup()
 	spark._pulse:SetLooping("REPEAT")
 	spark._pulse_in = spark._pulse:CreateAnimation("Alpha")
@@ -430,15 +490,17 @@ Handler.New = function(self, parent)
 	statusbar._max = 1 -- max value
 	statusbar._value = 0 -- real value
 	statusbar._displayvalue = 0 -- displayed value while smoothing
-	statusbar._orientation = "RIGHT" -- direction the bar is growing in 
+	statusbar._incoming = 0 -- the heals on their way
+	statusbar._orientation = "RIGHT" -- direction the bar is growing in
 	statusbar._laid = {} -- what Update last laid out
 
-	-- I usually don't like exposing things like this to the user, 
-	-- but we're going for performance here. 
+	-- I usually don't like exposing things like this to the user,
+	-- but we're going for performance here.
 	statusbar.bar = bar
+	statusbar.incoming = incoming
 	statusbar.spark = spark
 	statusbar.scaffold = scaffold
-	
+
 	statusbar:Update()
 
 	return statusbar

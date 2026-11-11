@@ -16,16 +16,15 @@ Engine:NewStaticConfig("Tooltips", {
 				left = 6,
 				right = 6,
 				top = 6,
-				bottom = 6
-			}
+				bottom = 6,
+			},
 		},
-		backdrop_color = { 0, 0, 0, .95 }, -- just very slightly transparent
-		backdrop_border_color = { 1, 1, 1, 1 } 
+		backdrop_color = { 0, 0, 0, 0.95 }, -- just very slightly transparent
+		backdrop_border_color = { 1, 1, 1, 1 },
 	},
 	statusbar = {
 		size = 3, -- the height of the bar, the width adjusts itself to the tooltip
 		offsets = { -2, -2, 0, 3 }, -- make the bar align to the backdrop border edges
-		texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]]
-	}
-
+		texture = path .. [[statusbars\DiabolicUI_StatusBar_512x64_Dark_Warcraft.tga]],
+	},
 })

@@ -9,14 +9,6 @@ local Module = Engine:NewModule("Blizzard: AdiBags", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 -- A bag's frame (once): our window around it, its X, title, buttons and
 -- equipped bags' panel ours.
 Module.StyleContainer = function(self, frame)
@@ -39,16 +31,22 @@ Module.StyleContainer = function(self, frame)
 		kit:StylePanel(panel)
 		panel.Title:SetFontObject(config.title_font)
 		panel.Title:SetTextColor(unpack(kit.config.title_plate.color))
-		panel:HookScript("OnShow", function() kit:StylePanel(panel) end)
+		panel:HookScript("OnShow", function()
+			kit:StylePanel(panel)
+		end)
 	end
 	-- its push buttons ours, each once (its modules add theirs as it
 	-- shows: sorting, search)
-	frame:HookScript("OnShow", function() kit:StyleButtons(frame) end)
+	frame:HookScript("OnShow", function()
+		kit:StyleButtons(frame)
+	end)
 	kit:StyleButtons(frame)
 end
 
 Module.StyleAdiBags = function(self)
-	local AdiBags = _G.LibStub("AceAddon-3.0"):GetAddon("AdiBags", true)
+	-- (AdiBags brings its own Ace3: another addon by that name doesn't)
+	local AceAddon = _G.LibStub("AceAddon-3.0", true)
+	local AdiBags = AceAddon and AceAddon:GetAddon("AdiBags", true)
 	if not AdiBags then
 		return
 	end
@@ -60,7 +58,9 @@ Module.StyleAdiBags = function(self)
 			frame:SetBackdrop(nil)
 		end
 	end)
-	hooksecurefunc(container, "OnShow", function(frame) self:StyleContainer(frame) end)
+	hooksecurefunc(container, "OnShow", function(frame)
+		self:StyleContainer(frame)
+	end)
 	-- the slots after AdiBags (and its modules) drew theirs
 	hooksecurefunc(AdiBags:GetClass("ItemButton").prototype, "UpdateBorder", function(button)
 		slots:StyleSlot(button, button.bag)
@@ -72,25 +72,14 @@ Module.StyleAdiBags = function(self)
 	end
 end
 
-Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == "AdiBags") then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleAdiBags()
-	end
-end
-
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").adibags
 	kit = Engine:GetModule("Blizzard: Windows")
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded("AdiBags") then
-		self:StyleAdiBags()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded("AdiBags", "StyleAdiBags")
 end

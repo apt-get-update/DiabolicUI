@@ -56,10 +56,19 @@ end
 
 function TestWorldState:test_scores_show_with_our_faction_icons()
 	setWorldStates({
-		{ text = "Bases: 3  Resources: 1200/1600", icon = [[Interface\TargetingFrame\UI-PVP-Alliance]],
-			tooltip = "Alliance score", dynamicIcon = [[Interface\WorldStateFrame\AllianceFlag]], state = 2 },
-		{ text = "Bases: 2  Resources: 900/1600", icon = [[Interface\Icons\Something]],
-			dynamicIcon = [[Interface\Icons\Else]], state = 3 },
+		{
+			text = "Bases: 3  Resources: 1200/1600",
+			icon = [[Interface\TargetingFrame\UI-PVP-Alliance]],
+			tooltip = "Alliance score",
+			dynamicIcon = [[Interface\WorldStateFrame\AllianceFlag]],
+			state = 2,
+		},
+		{
+			text = "Bases: 2  Resources: 900/1600",
+			icon = [[Interface\Icons\Something]],
+			dynamicIcon = [[Interface\Icons\Else]],
+			state = 3,
+		},
 		{ text = "Not shown", state = 0 },
 		{ text = "Captured", icon = [[Interface\WorldStateFrame\NeutralTower]] },
 	})
@@ -97,8 +106,12 @@ function TestWorldState:test_scores_show_with_our_faction_icons()
 end
 
 function TestWorldState:test_a_dynamic_icon_hides_when_the_state_stops_flashing()
-	local flag = { text = "Flag", icon = [[Interface\WorldStateFrame\HordeFlag]],
-		dynamicIcon = [[Interface\WorldStateFrame\HordeFlag]], state = 2 }
+	local flag = {
+		text = "Flag",
+		icon = [[Interface\WorldStateFrame\HordeFlag]],
+		dynamicIcon = [[Interface\WorldStateFrame\HordeFlag]],
+		state = 2,
+	}
 	setWorldStates({ flag })
 	lu.assertTrue(shown(self.module:GetUI(1).dynamicIcon))
 	flag.state = 1
@@ -286,11 +299,13 @@ end
 TestWarnings = {}
 
 function TestWarnings:setUp()
-	boot({ world = function()
-		_G.ERR_QUEST_ADD_KILL_SII = "%s slain: %d/%d"
-		_G.ERR_LOOT_GONE = "Already looted (%d/%d)"
-		_G.ERR_OUT_OF_POWER_DISPLAY = "Not enough %s"
-	end })
+	boot({
+		world = function()
+			_G.ERR_QUEST_ADD_KILL_SII = "%s slain: %d/%d"
+			_G.ERR_LOOT_GONE = "Already looted (%d/%d)"
+			_G.ERR_OUT_OF_POWER_DISPLAY = "Not enough %s"
+		end,
+	})
 	self.module = client:GetModule("Warnings")
 	self.chat = {}
 	local chat = self.chat
@@ -419,8 +434,18 @@ function TestPvPEmotes:tearDown()
 end
 
 local function combatLog(subEvent, sourceGUID, destGUID, destName, destFlags, ...)
-	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 1000, subEvent, sourceGUID, "Source", 0x511,
-		destGUID, destName, destFlags, ...)
+	client:FireEvent(
+		"COMBAT_LOG_EVENT_UNFILTERED",
+		1000,
+		subEvent,
+		sourceGUID,
+		"Source",
+		0x511,
+		destGUID,
+		destName,
+		destFlags,
+		...
+	)
 end
 
 function TestPvPEmotes:test_hugs_the_first_victim_then_picks_random_emotes()
@@ -458,7 +483,18 @@ function TestPvPEmotes:test_overkill_from_the_player_or_pet_counts()
 	client:SetUnit("pet", pet)
 	combatLog("SWING_DAMAGE", pet.guid, "0x0100000000000002", "Grumpy", PLAYER_FLAGS, 800, 50)
 	lu.assertEquals(client.emotes, { { "HUG", "Grumpy" } })
-	combatLog("SPELL_PERIODIC_DAMAGE", self.me, "0x0100000000000003", "Sneaky", PLAYER_FLAGS, 172, "Corruption", 32, 300, 1)
+	combatLog(
+		"SPELL_PERIODIC_DAMAGE",
+		self.me,
+		"0x0100000000000003",
+		"Sneaky",
+		PLAYER_FLAGS,
+		172,
+		"Corruption",
+		32,
+		300,
+		1
+	)
 	lu.assertEquals(#client.emotes, 2)
 	assertClean(client)
 end
@@ -475,6 +511,179 @@ function TestPvPEmotes:test_no_emote_without_a_killing_blow_on_a_player()
 	combatLog("SPELL_AURA_APPLIED", self.me, "", nil, nil, 1, "Aura", 1, "BUFF")
 	combatLog("SPELL_CAST_SUCCESS", self.me, "0x0100000000000002", "Grumpy", PLAYER_FLAGS, 133, "Fireball", 4)
 	lu.assertEquals(client.emotes, {})
+	assertClean(client)
+end
+
+-- The cards over the world ------------------------------------------------------------
+
+TestBanners = {}
+
+function TestBanners:tearDown()
+	client = nil
+end
+
+function TestBanners:test_a_boss_gets_its_card_once_in_a_while()
+	boot()
+	local module = client:GetModule("Banners")
+	local card = module.Boss
+	lu.assertFalse(shown(card))
+
+	-- someone ordinary, or dead: none
+	client:SetUnit("target", Client.newUnit({ name = "Boar", isPlayer = false, canAttack = true }))
+	lu.assertFalse(shown(card))
+	local dead = Client.newUnit({ name = "Gone", isPlayer = false, classification = "worldboss", canAttack = true })
+	dead.dead = true
+	client:SetUnit("target", dead)
+	lu.assertFalse(shown(card))
+
+	-- a boss: in, held, out
+	local boss =
+		Client.newUnit({ name = "Lich King", isPlayer = false, classification = "worldboss", canAttack = true })
+	client:SetUnit("target", boss)
+	lu.assertTrue(shown(card))
+	lu.assertEquals(card.Big:GetText(), "Lich King")
+	client:Tick(0.2, 0.05)
+	lu.assertTrue(card:GetAlpha() > 0 and card:GetAlpha() < 1)
+	client:Tick(1, 0.1)
+	lu.assertEquals(card:GetAlpha(), 1)
+	client:Tick(2.5, 0.1)
+	lu.assertTrue(card:GetAlpha() < 1)
+	client:Tick(2, 0.1)
+	lu.assertFalse(shown(card))
+
+	-- not again so soon
+	client:SetUnit("target", nil)
+	client:SetUnit("target", boss)
+	lu.assertFalse(shown(card))
+
+	-- the encounter's units
+	client.world.units.boss1 = Client.newUnit({ name = "Sindragosa", isPlayer = false })
+	client:FireEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+	lu.assertTrue(shown(card))
+	lu.assertEquals(card.Big:GetText(), "Sindragosa")
+	assertClean(client)
+end
+
+function TestBanners:test_a_new_zone_gets_its_card()
+	boot()
+	local card = client:GetModule("Banners").Zone
+	-- the same zone, or none yet: nothing
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertFalse(shown(card))
+	local zone = client.world.zone
+	zone.zone = ""
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertFalse(shown(card))
+
+	zone.zone, zone.pvpType, zone.faction = "Duskwood", "friendly", "Alliance"
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertTrue(shown(card))
+	lu.assertEquals(card.Big:GetText(), "Duskwood")
+	lu.assertEquals(card.Small:GetText(), _G.FACTION_CONTROLLED_TERRITORY:format("Alliance"))
+
+	zone.zone, zone.pvpType, zone.faction = "Nowhere", nil, nil
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertEquals(card.Small:GetText(), "")
+	assertClean(client)
+end
+
+function TestBanners:test_world_messages_can_be_turned_off()
+	boot()
+	client.Engine:GetConfig("ObjectiveTracker").worldMessages = false
+	local card, gains = client:GetModule("Banners").Zone, client:GetModule("Gains")
+	client.world.zone.zone = "Duskwood"
+	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	lu.assertFalse(shown(card))
+	gains:Add("xp", nil, tostring, 5)
+	lu.assertNil(gains.active[1])
+	assertClean(client)
+end
+
+-- What you gain ----------------------------------------------------------------------
+
+TestGains = {}
+
+function TestGains:tearDown()
+	client = nil
+end
+
+local function gains()
+	return client:GetModule("Gains")
+end
+
+function TestGains:test_gold_and_experience_add_up_on_their_lines()
+	boot()
+	local module = gains()
+	client.world.money = client.world.money + 150
+	client:FireEvent("PLAYER_MONEY")
+	client.world.money = client.world.money + 50
+	client:FireEvent("PLAYER_MONEY")
+	lu.assertEquals(#module.active, 1)
+	-- in our coins: 2 silver, no copper
+	local coin = client.Engine:GetDB("UI").coin
+	local text = module.active[1].Text:GetText()
+	lu.assertStrContains(text, "+2|T" .. coin.silver_texture .. ":16:16:2:0:64:64:32:64:0:32|t")
+	lu.assertNotStrContains(text, coin.gold_texture .. ":16:16:2:0:64:64:0:32:0:32")
+	lu.assertEquals(select(2, text:gsub("|T", "")), 1)
+
+	-- spending, or a new level: nothing
+	client.world.money = client.world.money - 500
+	client:FireEvent("PLAYER_MONEY")
+	client.world.xp = 900
+	client:FireEvent("PLAYER_XP_UPDATE")
+	lu.assertEquals(#module.active, 1)
+
+	client.world.xp = 950
+	client:FireEvent("PLAYER_XP_UPDATE")
+	lu.assertEquals(#module.active, 2)
+	lu.assertStrContains(module.active[1].Text:GetText(), "+50")
+
+	-- they fade and go
+	client:Tick(3.5, 0.1)
+	lu.assertTrue(module.active[1]:GetAlpha() < 1)
+	client:Tick(1, 0.1)
+	lu.assertEquals(#module.active, 0)
+	lu.assertFalse(shown(module.Holder))
+
+	-- the next gains use the lines again
+	lu.assertEquals(#module.free, 2)
+	client.world.money = client.world.money + 1
+	client:FireEvent("PLAYER_MONEY")
+	lu.assertEquals(#module.free, 1)
+	lu.assertTrue(shown(module.Holder))
+	assertClean(client)
+end
+
+function TestGains:test_loot_with_its_count_and_no_more_than_fit()
+	boot()
+	local module = gains()
+	local link = "|cff1eff00|Hitem:100:0:0:0:0:0:0:0:80|h[Big Sword]|h|r"
+	client:FireEvent("CHAT_MSG_LOOT", _G.LOOT_ITEM_SELF:format(link))
+	lu.assertEquals(module.active[1].Text:GetText(), "|cff1eff00Big Sword")
+	client:FireEvent("CHAT_MSG_LOOT", _G.LOOT_ITEM_PUSHED_SELF_MULTIPLE:format(link, 2))
+	lu.assertEquals(#module.active, 1)
+	lu.assertEquals(module.active[1].Text:GetText(), "|cff1eff00Big Sword x3")
+
+	-- someone else's: not ours
+	client:FireEvent("CHAT_MSG_LOOT", "Tester2 receives loot: " .. link .. ".")
+	lu.assertEquals(#module.active, 1)
+
+	-- the oldest makes way, its line used again
+	for i = 1, module.config.max_rows do
+		client:FireEvent("CHAT_MSG_LOOT", _G.LOOT_ITEM_SELF:format("[Thing " .. i .. "]"))
+	end
+	lu.assertEquals(#module.active, module.config.max_rows)
+	lu.assertEquals(module.active[#module.active].Text:GetText(), "Thing 1")
+	assertClean(client)
+end
+
+function TestGains:test_another_addon_shows_the_loot()
+	boot({
+		world = function(world)
+			table.insert(world.addons, { name = "pretty_lootalert", enabled = true })
+		end,
+	})
+	lu.assertNil(gains().patterns)
 	assertClean(client)
 end
 

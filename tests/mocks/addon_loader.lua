@@ -92,16 +92,24 @@ function Loader.parseFont(attributes, body)
 		return attributes:match(name .. "%s*=%s*[\"']([^\"']*)[\"']")
 	end
 	local spec = {
-		name = attr("name"), inherits = attr("inherits"), font = attr("font"),
-		justifyH = attr("justifyH"), justifyV = attr("justifyV"), outline = attr("outline"),
+		name = attr("name"),
+		inherits = attr("inherits"),
+		font = attr("font"),
+		justifyH = attr("justifyH"),
+		justifyV = attr("justifyV"),
+		outline = attr("outline"),
 		height = tonumber(body:match("<FontHeight>.-val%s*=%s*[\"']([%d%.]+)")),
 	}
 	local shadow = body:match("<Shadow>(.-)</Shadow>")
 	if shadow then
-		spec.shadowOffset = { tonumber(shadow:match("x%s*=%s*[\"']([-%d%.]+)")) or 0, tonumber(shadow:match("y%s*=%s*[\"']([-%d%.]+)")) or 0 }
+		spec.shadowOffset = {
+			tonumber(shadow:match("x%s*=%s*[\"']([-%d%.]+)")) or 0,
+			tonumber(shadow:match("y%s*=%s*[\"']([-%d%.]+)")) or 0,
+		}
 		body = body:gsub("<Shadow>.-</Shadow>", "")
 	end
-	local r, g, b = body:match("<Color%s+r%s*=%s*[\"']([%d%.]+)[\"']%s+g%s*=%s*[\"']([%d%.]+)[\"']%s+b%s*=%s*[\"']([%d%.]+)")
+	local r, g, b =
+		body:match("<Color%s+r%s*=%s*[\"']([%d%.]+)[\"']%s+g%s*=%s*[\"']([%d%.]+)[\"']%s+b%s*=%s*[\"']([%d%.]+)")
 	if r then
 		spec.color = { tonumber(r), tonumber(g), tonumber(b) }
 	end
@@ -130,7 +138,9 @@ function Loader.load(addonTable, createFont)
 		else
 			local chunk, err = Loader.loadFile(entry)
 			if chunk then
-				local ok, runErr = xpcall(function() return chunk(Loader.ADDON, addonTable) end, function(message)
+				local ok, runErr = xpcall(function()
+					return chunk(Loader.ADDON, addonTable)
+				end, function(message)
 					return debug.traceback(tostring(message), 2)
 				end)
 				if not ok then

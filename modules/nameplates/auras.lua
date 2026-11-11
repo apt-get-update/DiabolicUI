@@ -12,28 +12,10 @@ local _, Engine = ...
 local Module = Engine:GetModule("NamePlates")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local math_floor = math.floor
-local pairs = pairs
-local math_min = math.min
-local table_sort = table.sort
-local unpack = unpack
-local wipe = _G.wipe
-
--- WoW API
-local GetSpellInfo = _G.GetSpellInfo
-local GetTime = _G.GetTime
-local UnitAura = _G.UnitAura
-local UnitExists = _G.UnitExists
-local UnitGUID = _G.UnitGUID
-local UnitIsFriend = _G.UnitIsFriend
-local UnitName = _G.UnitName
-
 local DAY, HOUR, MINUTE = 86400, 3600, 60
 
 -- how often the time left is written again
-local TIMER_HZ = .1
+local TIMER_HZ = 0.1
 
 -- yours, from the combat log
 local ADDED = { SPELL_AURA_APPLIED = true, SPELL_AURA_REFRESH = true, SPELL_AURA_APPLIED_DOSE = true }
@@ -46,11 +28,11 @@ local PLAYER_GUID
 
 local formatTime = function(time)
 	if time >= DAY then
-		return ("%d%s"):format(math_floor(time / DAY), L["d"])
+		return ("%d%s"):format(math.floor(time / DAY), L["d"])
 	elseif time >= HOUR then
-		return ("%d%s"):format(math_floor(time / HOUR), L["h"])
+		return ("%d%s"):format(math.floor(time / HOUR), L["h"])
 	elseif time >= MINUTE then
-		return ("%d%s"):format(math_floor(time / MINUTE), L["m"])
+		return ("%d%s"):format(math.floor(time / MINUTE), L["m"])
 	elseif time >= 10 then
 		return ("%d"):format(time)
 	end
@@ -61,12 +43,12 @@ end
 
 local UpdateTimer = function(button, elapsed)
 	button.elapsed = (button.elapsed or 0) + elapsed
-	if (button.elapsed < TIMER_HZ) then
+	if button.elapsed < TIMER_HZ then
 		return
 	end
 	button.elapsed = 0
 	local timeLeft = button.expirationTime - GetTime()
-	if (timeLeft > 0) then
+	if timeLeft > 0 then
 		button.Time:SetText(formatTime(timeLeft))
 	else
 		-- run out: gone from the plate
@@ -92,7 +74,7 @@ local CreateButton = function(plate)
 	scaffold:SetAllPoints()
 	scaffold:SetFrameLevel(button:GetFrameLevel() + 1)
 	scaffold:SetBackdrop(config.border)
-	scaffold:SetBackdropColor(r/3, g/3, b/3)
+	scaffold:SetBackdropColor(r / 3, g / 3, b / 3)
 	scaffold:SetBackdropBorderColor(r, g, b)
 
 	local glow = button:CreateFrame()
@@ -100,13 +82,13 @@ local CreateButton = function(plate)
 	glow:SetPoint("TOPLEFT", scaffold, "TOPLEFT", -4, 4)
 	glow:SetPoint("BOTTOMRIGHT", scaffold, "BOTTOMRIGHT", 3, -3)
 	glow:SetBackdrop(config.glow)
-	glow:SetBackdropBorderColor(r/3, g/3, b/3, .75)
+	glow:SetBackdropBorderColor(r / 3, g / 3, b / 3, 0.75)
 
 	local icon = scaffold:CreateTexture(nil, "ARTWORK")
 	icon:SetPoint("TOPLEFT", 2, -2)
 	icon:SetPoint("BOTTOMRIGHT", -2, 2)
-	icon:SetTexCoord(5/64, 59/64, 5/64, 59/64)
-	icon:SetVertexColor(.85, .85, .85)
+	icon:SetTexCoord(5 / 64, 59 / 64, 5 / 64, 59 / 64)
+	icon:SetVertexColor(0.85, 0.85, 0.85)
 
 	local shade = scaffold:CreateTexture(nil, "OVERLAY")
 	shade:SetAllPoints(icon)
@@ -156,10 +138,10 @@ Module.UpdatePlateAuras = function(self, plate)
 				list[#list + 1] = aura
 			end
 		end
-		table_sort(list, SortAuras)
+		table.sort(list, SortAuras)
 	end
 
-	local shown = math_min(#list, config.max)
+	local shown = math.min(#list, config.max)
 	local width, spacing = config.size[1], config.spacing
 	local left = -(shown * width + (shown - 1) * spacing) / 2
 	for i = 1, shown do
@@ -171,7 +153,7 @@ Module.UpdatePlateAuras = function(self, plate)
 		button.Count:SetText((aura.count and aura.count > 1) and aura.count or "")
 		button:ClearAllPoints()
 		button:SetPoint("BOTTOMLEFT", holder, "BOTTOM", left + (i - 1) * (width + spacing), 0)
-		if (aura.expirationTime > 0) then
+		if aura.expirationTime > 0 then
 			button.expirationTime = aura.expirationTime
 			button.elapsed = TIMER_HZ -- written straight away
 			button:SetScript("OnUpdate", UpdateTimer)
@@ -241,7 +223,13 @@ local PlateForUnit = function(unit, guid)
 		return plate
 	end
 	for p, baseFrame in pairs(Module.visiblePlates) do
-		if baseFrame and (((unit == "target") and p.info.isTarget) or ((unit == "mouseover") and p.old.regions.highlight:IsShown())) then
+		if
+			baseFrame
+			and (
+				((unit == "target") and p.info.isTarget)
+				or ((unit == "mouseover") and p.old.regions.highlight:IsShown())
+			)
+		then
 			plate = p
 			break
 		end
@@ -299,13 +287,13 @@ end
 -- Events ------------------------------------------------------------------
 
 Module.OnAuraEvent = function(self, event, ...)
-	if (event == "UNIT_AURA") then
+	if event == "UNIT_AURA" then
 		self:ScanUnit((...))
-	elseif (event == "UPDATE_MOUSEOVER_UNIT") then
+	elseif event == "UPDATE_MOUSEOVER_UNIT" then
 		self:ScanUnit("mouseover")
-	elseif (event == "PLAYER_FOCUS_CHANGED") then
+	elseif event == "PLAYER_FOCUS_CHANGED" then
 		self:ScanUnit("focus")
-	elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		local _, logEvent, sourceGUID, _, _, destGUID, _, _, spellId = ...
 		if DIED[logEvent] then
 			Auras[destGUID] = nil
@@ -340,7 +328,7 @@ Module.OnAuraEvent = function(self, event, ...)
 		if plate then
 			self:UpdatePlateAuras(plate)
 		end
-	elseif (event == "PLAYER_ENTERING_WORLD") then
+	elseif event == "PLAYER_ENTERING_WORLD" then
 		PLAYER_GUID = UnitGUID("player")
 		wipe(Auras)
 	end

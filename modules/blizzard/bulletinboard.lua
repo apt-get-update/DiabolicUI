@@ -9,12 +9,6 @@ local Module = Engine:NewModule("Blizzard: Bulletin Board", "LOW")
 
 local kit
 
--- Lua API
-local _G = _G
-
--- WoW API
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 local ADDON = "GroupBulletinBoard"
 
 Module.StyleBoard = function(self)
@@ -27,18 +21,17 @@ Module.StyleBoard = function(self)
 	kit:SetTitle(header, _G.GroupBulletinBoardFrameTitle)
 	local close = _G.GroupBulletinBoardFrameCloseButton
 	kit:StyleClose(close, window, header)
+	-- (its settings button left of it: windows/GroupBulletinBoardFrame.qml)
 	local settings = _G.GroupBulletinBoardFrameSettingsButton
 	if settings then
 		settings:SetFrameLevel(close:GetFrameLevel())
-		settings:ClearAllPoints()
-		settings:SetPoint("RIGHT", close, "LEFT", -config.button_gap, 0)
 	end
 	kit:AddZone(_G.GroupBulletinBoardFrame_ScrollFrame, "slate", config.list_panel_insets)
 	kit:StyleButtons(frame)
 end
 
 Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == ADDON) then
+	if addon == ADDON then
 		self:UnregisterEvent("ADDON_LOADED")
 		self:StyleBoard()
 	end
@@ -50,7 +43,7 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	if IsAddOnLoaded(ADDON) and _G.GroupBulletinBoardFrame then

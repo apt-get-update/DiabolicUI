@@ -4,19 +4,10 @@
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Anchors")
 
--- Lua API
-local _G = _G
-local getmetatable = getmetatable
-local pairs = pairs
-local unpack = unpack
-
--- WoW API
-local hooksecurefunc = _G.hooksecurefunc
-
 -- Blizzard frame -> its settings in the "Blizzard" static config
 local frames = {
 	DurabilityFrame = "durability",
-	VehicleSeatIndicator = "vehicleseat"
+	VehicleSeatIndicator = "vehicleseat",
 }
 
 -- Anchors the frame to a holder at `position`, for good.
@@ -43,7 +34,7 @@ Module.Lock = function(self, content, position)
 	SetPoint(content, "BOTTOM", holder, "BOTTOM", 0, 0)
 
 	hooksecurefunc(content, "SetPoint", function(self, _, anchor)
-		if (anchor ~= holder) then
+		if anchor ~= holder then
 			ClearAllPoints(self)
 			SetPoint(self, "BOTTOM", holder, "BOTTOM", 0, 0)
 		end

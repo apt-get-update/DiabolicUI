@@ -1,0 +1,9 @@
+# Vendored or written by a tool
+Libs/
+tests/luaunit.lua
+settings/positions.lua
+settings/components.lua
+docs/
+graft/
+.kiss/
+tests/data/

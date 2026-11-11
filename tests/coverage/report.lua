@@ -6,12 +6,16 @@
 -- A line counts as "executable" when the Lua 5.1 compiler emits at least one
 -- instruction for it (read from `luac5.1 -l`), so comments, blank lines and
 -- the insides of table constructors spanning several lines don't count.
--- Two kinds of instructions that can never run are left out, as they'd
--- leave a line (often an `end`) that never counts as covered:
+-- Instructions that can never run are left out, as they'd leave a line
+-- (often an `end` or a call's closing bracket) that never counts as covered:
 --  - the jump back that follows a `for ... in` loop's TFORLOOP, which
 --    TFORLOOP carries out itself
 --  - a jump right after a `return` that nothing jumps to: the compiler
 --    still ends a `return`ing `if` branch with a jump past the rest
+--  - a jump right after a plain jump that nothing jumps to: a `while`'s jump
+--    back after an `if ... break end`, its test jumping back by itself
+--  - the `return` the compiler adds after a tail call: `return error(...)`
+--    never gets there
 --
 -- Writes the full per-file table to tests/coverage/report.txt and prints the
 -- per-area summary. With --readme, also rewrites the coverage badge between
@@ -20,6 +24,7 @@
 local LUAC = os.getenv("LUAC") or "luac5.1"
 local STATS_FILE = os.getenv("DIABOLICUI_COVERAGE_STATS") or "tests/coverage/stats.out"
 local REPORT_FILE = "tests/coverage/report.txt"
+local TESTS = { EQ = true, LT = true, LE = true, TEST = true, TESTSET = true, TFORLOOP = true }
 
 local function readLines(cmd)
 	local pipe = assert(io.popen(cmd))
@@ -33,7 +38,8 @@ end
 
 -- Every addon source file: the same set hook.lua records.
 local function listSourceFiles()
-	local files = readLines("find . -name '*.lua' -not -path './tests/*' -not -path './docs/*' -not -path '*/Libs/*' | sort")
+	local files =
+		readLines("find . -name '*.lua' -not -path './tests/*' -not -path './docs/*' -not -path '*/Libs/*' | sort")
 	for i, path in ipairs(files) do
 		files[i] = path:gsub("^%./", "")
 	end
@@ -52,7 +58,8 @@ local function executableLines(path)
 			local number, line, opcode = row:match("^%s+(%d+)%s+%[(%d+)%]%s+(%u+)")
 			if number and current then
 				current[#current + 1] = {
-					line = tonumber(line), opcode = opcode,
+					line = tonumber(line),
+					opcode = opcode,
 					target = tonumber(row:match("; to (%d+)")),
 				}
 			end
@@ -67,10 +74,15 @@ local function executableLines(path)
 		end
 		for i, instruction in ipairs(code) do
 			local previous = code[i - 1] and code[i - 1].opcode
-			local unreachable = (instruction.opcode == "JMP") and ((previous == "TFORLOOP")
-				or ((previous == "RETURN") and (not targets[i])))
+			local before = code[i - 2] and code[i - 2].opcode
+			-- (a test skips the jump after it: what follows that jump can run)
+			local afterJump = (previous == "JMP") and not TESTS[before]
+			local unreachable = (
+				(instruction.opcode == "JMP")
+				and ((previous == "TFORLOOP") or (((previous == "RETURN") or afterJump) and not targets[i]))
+			) or ((instruction.opcode == "RETURN") and (previous == "TAILCALL") and not targets[i])
 			local line = instruction.line
-			if (not unreachable) and (line > 0) and (not lines[line]) then
+			if (not unreachable) and (line > 0) and not lines[line] then
 				lines[line] = true
 				count = count + 1
 			end
@@ -145,13 +157,17 @@ for _, path in ipairs(listSourceFiles()) do
 	totalLines = totalLines + count
 end
 
-table.sort(areaOrder, function(a, b) return a.name < b.name end)
+table.sort(areaOrder, function(a, b)
+	return a.name < b.name
+end)
 
 -- Full per-file report.
 local out = assert(io.open(REPORT_FILE, "w"))
 out:write(string.format("%-60s %8s %8s %8s\n", "File", "Lines", "Covered", "Percent"))
 for _, file in ipairs(files) do
-	out:write(string.format("%-60s %8d %8d %8s\n", file.path, file.total, file.covered, fmtPercent(file.covered, file.total)))
+	out:write(
+		string.format("%-60s %8d %8d %8s\n", file.path, file.total, file.covered, fmtPercent(file.covered, file.total))
+	)
 end
 out:write(string.format("%-60s %8d %8d %8s\n", "TOTAL", totalLines, totalCovered, fmtPercent(totalCovered, totalLines)))
 out:close()
@@ -159,9 +175,27 @@ out:close()
 -- Summary on stdout.
 print(string.format("%-28s %6s %8s %8s %8s", "Area", "Files", "Lines", "Covered", "Percent"))
 for _, area in ipairs(areaOrder) do
-	print(string.format("%-28s %6d %8d %8d %8s", area.name, area.files, area.total, area.covered, fmtPercent(area.covered, area.total)))
+	print(
+		string.format(
+			"%-28s %6d %8d %8d %8s",
+			area.name,
+			area.files,
+			area.total,
+			area.covered,
+			fmtPercent(area.covered, area.total)
+		)
+	)
 end
-print(string.format("%-28s %6d %8d %8d %8s", "TOTAL", #files, totalLines, totalCovered, fmtPercent(totalCovered, totalLines)))
+print(
+	string.format(
+		"%-28s %6d %8d %8d %8s",
+		"TOTAL",
+		#files,
+		totalLines,
+		totalCovered,
+		fmtPercent(totalCovered, totalLines)
+	)
+)
 print("\nPer-file report: " .. REPORT_FILE)
 
 -- README badge.
@@ -176,10 +210,18 @@ if not readme then
 end
 
 local function badgeColor(value)
-	if value >= 80 then return "brightgreen" end
-	if value >= 60 then return "yellowgreen" end
-	if value >= 40 then return "yellow" end
-	if value >= 20 then return "orange" end
+	if value >= 80 then
+		return "brightgreen"
+	end
+	if value >= 60 then
+		return "yellowgreen"
+	end
+	if value >= 40 then
+		return "yellow"
+	end
+	if value >= 20 then
+		return "orange"
+	end
 	return "red"
 end
 
@@ -187,8 +229,13 @@ local total = percent(totalCovered, totalLines)
 local block = {
 	"// coverage:begin",
 	"// Generated by tests/coverage/run.sh --readme. Don't edit by hand.",
-	string.format("image:https://img.shields.io/badge/coverage-%.1f%%25-%s[\"Line coverage %.1f%% on %s\",height=20]",
-		total, badgeColor(total), total, os.date("%Y-%m-%d")),
+	string.format(
+		'image:https://img.shields.io/badge/coverage-%.1f%%25-%s["Line coverage %.1f%% on %s",height=20]',
+		total,
+		badgeColor(total),
+		total,
+		os.date("%Y-%m-%d")
+	),
 	"// coverage:end",
 }
 

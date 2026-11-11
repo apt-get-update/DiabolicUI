@@ -1,0 +1,302 @@
+// Written by tools/positions.lua, yours to change (docs: Windows Editor): each part
+// is in what it's placed on, one next to it beside it, on its id. One with a pin is put in settings/positions.lua ("all",
+// or only its "place" or its "size"), the others follow /dui layout's scan.
+import QtQuick
+
+WowWindow {
+    name: "BankFrame"
+    width: 425
+    height: 512
+
+    Frame {
+        name: "BankFrameDiabolic"
+        anchors.left: parent.left
+        anchors.leftMargin: -24
+        anchors.top: parent.top
+        width: 443
+        height: 478
+
+        Button {
+            name: "BankCloseButton"
+            wowParent: "BankFrame"
+            style: "CloseButton"
+            anchors.horizontalCenter: parent.right
+            anchors.horizontalCenterOffset: -31
+            anchors.verticalCenter: parent.top
+            anchors.verticalCenterOffset: 31
+            width: 22
+            height: 22
+        }
+
+        Frame {
+            name: "BankFrameDiabolicBorder"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 443
+            height: 478
+
+            Frame {
+                name: "BankFrameDiabolicTitlePlate"
+                wowParent: "BankFrameDiabolic"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.top
+                anchors.verticalCenterOffset: 15
+                width: 300
+                height: 41
+
+                FontString {
+                    name: "BankFrameTitleText"
+                    text: "Newton Burnside"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -1
+                    width: 157.2
+                    height: 14.2
+                }
+            }
+        }
+
+        Frame {
+            name: "BankFrameDiabolicSocket"
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            width: 42
+            height: 42
+        }
+    }
+
+    Button {
+        name: "BankFrameItem1"
+        anchors.left: parent.left
+        anchors.leftMargin: 40
+        anchors.top: parent.top
+        anchors.topMargin: 73
+        width: 37
+        height: 37
+
+        FontString {
+            name: "BankFrameItem1Count"
+            text: "18"
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            width: 17.4
+            height: 14.2
+        }
+    }
+
+    Frame {
+        name: "BankFrameMoneyFrame"
+        anchors.right: parent.right
+        anchors.rightMargin: 30
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 103
+        width: 126.4
+        height: 13
+
+        Button {
+            id: bankFrameMoneyFrameCopperButton
+            name: "BankFrameMoneyFrameCopperButton"
+            text: "13"
+            anchors.right: parent.right
+            anchors.rightMargin: 13
+            anchors.verticalCenter: parent.verticalCenter
+            width: 30.4
+            height: 13
+
+            FontString {
+                name: "BankFrameMoneyFrameCopperButtonText"
+                text: "13"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 17.4
+                height: 14.2
+            }
+        }
+
+        Button {
+            name: "BankFrameMoneyFrameGoldButton"
+            text: "3654"
+            anchors.right: bankFrameMoneyFrameSilverButton.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: bankFrameMoneyFrameSilverButton.verticalCenter
+            width: 44.6
+            height: 13
+
+            FontString {
+                name: "BankFrameMoneyFrameGoldButtonText"
+                text: "3654"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 31.6
+                height: 14.2
+            }
+        }
+
+        Button {
+            id: bankFrameMoneyFrameSilverButton
+            name: "BankFrameMoneyFrameSilverButton"
+            text: "16"
+            anchors.right: bankFrameMoneyFrameCopperButton.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: bankFrameMoneyFrameCopperButton.verticalCenter
+            width: 30.4
+            height: 13
+
+            FontString {
+                name: "BankFrameMoneyFrameSilverButtonText"
+                text: "16"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 17.4
+                height: 14.2
+            }
+        }
+    }
+
+    Ghost {
+        name: "BankFrameItem22"
+        x: 40
+        y: 205
+        width: 37
+        height: 37
+
+        Button {
+            id: bankFrameBag1
+            name: "BankFrameBag1"
+            wowParent: "BankFrame"
+            anchors.left: parent.left
+            anchors.top: parent.bottom
+            anchors.topMargin: 32
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag1HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+
+        Button {
+            id: bankFrameBag2
+            name: "BankFrameBag2"
+            wowParent: "BankFrame"
+            anchors.left: bankFrameBag1.right
+            anchors.leftMargin: 12
+            anchors.top: bankFrameBag1.top
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag2HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+
+        Button {
+            id: bankFrameBag3
+            name: "BankFrameBag3"
+            wowParent: "BankFrame"
+            anchors.left: bankFrameBag2.right
+            anchors.leftMargin: 12
+            anchors.top: bankFrameBag2.top
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag3HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+
+        Button {
+            id: bankFrameBag4
+            name: "BankFrameBag4"
+            wowParent: "BankFrame"
+            anchors.left: bankFrameBag3.right
+            anchors.leftMargin: 12
+            anchors.top: bankFrameBag3.top
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag4HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+
+        Button {
+            id: bankFrameBag5
+            name: "BankFrameBag5"
+            wowParent: "BankFrame"
+            anchors.left: bankFrameBag4.right
+            anchors.leftMargin: 12
+            anchors.top: bankFrameBag4.top
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag5HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+
+        Button {
+            id: bankFrameBag6
+            name: "BankFrameBag6"
+            wowParent: "BankFrame"
+            anchors.left: bankFrameBag5.right
+            anchors.leftMargin: 12
+            anchors.top: bankFrameBag5.top
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag6HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+
+        Button {
+            name: "BankFrameBag7"
+            wowParent: "BankFrame"
+            anchors.left: bankFrameBag6.right
+            anchors.leftMargin: 12
+            anchors.top: bankFrameBag6.top
+            width: 37
+            height: 37
+
+            Frame {
+                name: "BankFrameBag7HighlightFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 37
+                height: 37
+            }
+        }
+    }
+}

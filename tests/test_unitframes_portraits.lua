@@ -32,9 +32,17 @@ local function newRecorder(methods)
 			table.insert(self.calls, { name, ... })
 		end
 	end
-	object.Show = function(self) self.shown = true; table.insert(self.calls, { "Show" }) end
-	object.Hide = function(self) self.shown = false; table.insert(self.calls, { "Hide" }) end
-	object.IsShown = function(self) return self.shown end
+	object.Show = function(self)
+		self.shown = true
+		table.insert(self.calls, { "Show" })
+	end
+	object.Hide = function(self)
+		self.shown = false
+		table.insert(self.calls, { "Hide" })
+	end
+	object.IsShown = function(self)
+		return self.shown
+	end
 	return object
 end
 
@@ -62,18 +70,40 @@ local function loadPortraitElement()
 	units = {}
 	portraitTextures = {}
 
-	_G.UnitExists = function(unit) return units[unit] ~= nil end
-	_G.UnitIsConnected = function(unit) return units[unit] and not units[unit].offline end
-	_G.UnitIsVisible = function(unit) return units[unit] and not units[unit].far end
-	_G.IsMounted = function(unit) return units[unit] and units[unit].mounted end
-	_G.UnitSex = function(unit) return units[unit] and units[unit].sex or 2 end
-	_G.UnitIsPlayer = function(unit) return not units[unit].npc end
-	_G.UnitRace = function(unit) return units[unit].race, units[unit].race end
-	_G.UnitClass = function(unit) return units[unit].class, units[unit].class end
-	_G.UnitCreatureType = function(unit) return units[unit].creature end
-	_G.UnitIsUnit = function(a, b) return a == b end
+	_G.UnitExists = function(unit)
+		return units[unit] ~= nil
+	end
+	_G.UnitIsConnected = function(unit)
+		return units[unit] and not units[unit].offline
+	end
+	_G.UnitIsVisible = function(unit)
+		return units[unit] and not units[unit].far
+	end
+	_G.IsMounted = function(unit)
+		return units[unit] and units[unit].mounted
+	end
+	_G.UnitSex = function(unit)
+		return units[unit] and units[unit].sex or 2
+	end
+	_G.UnitIsPlayer = function(unit)
+		return not units[unit].npc
+	end
+	_G.UnitRace = function(unit)
+		return units[unit].race, units[unit].race
+	end
+	_G.UnitClass = function(unit)
+		return units[unit].class, units[unit].class
+	end
+	_G.UnitCreatureType = function(unit)
+		return units[unit].creature
+	end
+	_G.UnitIsUnit = function(a, b)
+		return a == b
+	end
 	form = 0
-	_G.GetShapeshiftForm = function() return form end
+	_G.GetShapeshiftForm = function()
+		return form
+	end
 	-- the name and spell id (the 11th return) of the unit's i-th aura
 	_G.UnitAura = function(unit, i)
 		local spellId = units[unit].auras and units[unit].auras[i]
@@ -228,7 +258,9 @@ end
 function TestUnitFramePortrait:test_enable_registers_and_paints()
 	local element = loadPortraitElement()
 	local registered = {}
-	self.frame.RegisterEvent = function(_, event) registered[event] = true end
+	self.frame.RegisterEvent = function(_, event)
+		registered[event] = true
+	end
 	units.party1 = { far = true }
 
 	lu.assertTrue(element.Enable(self.frame, "party1"))

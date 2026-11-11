@@ -2,29 +2,11 @@
 -- the chosen one's details on it): the recipes in inks of their
 -- difficulty, the chosen one in an orange box, the reagents' names in
 -- ink (Blizzard sets both again as it updates, so after it does); the
--- search on our plate in a row of its own under the rank, Have Materials
--- right of it, the dropdowns on our plate.
+-- search in the band, Have Materials right of it, the rank in the title,
+-- the dropdowns under the band.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trade Skill", "LOW")
 local kit
-
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local math_max = math.max
-local math_min = math.min
-local select = select
-local unpack = unpack
-
--- WoW API
-local GetItemInfo = _G.GetItemInfo
-local GetSpellInfo = _G.GetSpellInfo
-local GetTradeSkillInfo = _G.GetTradeSkillInfo
-local GetTradeSkillLine = _G.GetTradeSkillLine
-local GetTradeSkillReagentItemLink = _G.GetTradeSkillReagentItemLink
-local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local SetPortraitToTexture = _G.SetPortraitToTexture
 
 local ADDON = "Blizzard_TradeSkillUI"
 
@@ -58,14 +40,14 @@ Module.InkReagents = function(self, id)
 	label:SetTextColor(unpack(kit.config.ink))
 	label:SetShadowColor(0, 0, 0, 0)
 	local point, relative, relativePoint = label:GetPoint()
-	if (relativePoint == "BOTTOMLEFT") then
+	if relativePoint == "BOTTOMLEFT" then
 		label:SetPoint(point, relative, relativePoint, 0, -self.config.reagents_label_gap)
 	end
 	for i = 1, _G.MAX_TRADE_SKILL_REAGENTS do
 		local name, icon = _G["TradeSkillReagent" .. i .. "Name"], _G["TradeSkillReagent" .. i .. "IconTexture"]
 		if name then
 			local r = name:GetTextColor()
-			name:SetTextColor(unpack((r < .9) and self.config.missing_color or kit.config.ink))
+			name:SetTextColor(unpack((r < 0.9) and self.config.missing_color or kit.config.ink))
 			name:SetShadowColor(0, 0, 0, 0)
 		end
 		if icon then
@@ -85,9 +67,9 @@ Module.ClearScan = function(self)
 	if not (scan and scan:IsShown() and scan:GetLeft() and text:GetLeft()) then
 		return
 	end
-	text:SetWidth(math_max(1, scan:GetLeft() - text:GetLeft() - config.scan_gap))
-	local lowest = math_min(_G.TradeSkillSkillIcon:GetBottom(), text:GetBottom(), scan:GetBottom())
-	local top = math_max(config.description_top, child:GetTop() - lowest + config.scan_gap)
+	text:SetWidth(math.max(1, scan:GetLeft() - text:GetLeft() - config.scan_gap))
+	local lowest = math.min(_G.TradeSkillSkillIcon:GetBottom(), text:GetBottom(), scan:GetBottom())
+	local top = math.max(config.description_top, child:GetTop() - lowest + config.scan_gap)
 	description:SetPoint("TOPLEFT", child, "TOPLEFT", config.description_left, -top)
 end
 
@@ -108,16 +90,33 @@ Module.SpanHighlight = function(self)
 	bar:SetWidth(list:GetWidth() + insets[1] + insets[3] - inset * 2)
 end
 
--- A part moved `down` from where Blizzard put it.
-local Lower = function(part, down)
-	local point, relative, relativePoint, x, y = part:GetPoint()
-	part:ClearAllPoints()
-	part:SetPoint(point, relative, relativePoint, x, y - down)
+-- The profession's rank in its title ("Enchanting 450/450"), its bar hidden:
+-- the dropdowns in its row (settings/positions.lua). Blizzard sets the title
+-- as it updates and on each choice.
+Module.RankTitle = function(self)
+	local name, rank, most = GetTradeSkillLine()
+	if name and most and (most > 0) then
+		_G.TradeSkillFrameTitleText:SetFormattedText("%s %d/%d", name, rank, most)
+	end
+end
+
+-- As many recipes as fit the list (its height: settings/positions.lua), the
+-- others hidden. Whether that changed the count.
+Module.FitList = function(self)
+	local rows = kit:RowsFitting(_G.TradeSkillListScrollFrame, _G.TRADE_SKILL_HEIGHT, self.Rows, _G.TradeSkillSkill1)
+	if rows == _G.TRADE_SKILLS_DISPLAYED then
+		return false
+	end
+	_G.TRADE_SKILLS_DISPLAYED = rows
+	for i = rows + 1, self.Rows do
+		_G["TradeSkillSkill" .. i]:Hide()
+	end
+	return true
 end
 
 -- The search in the band (the title on the window's top edge), Have
 -- Materials right of it; the filters, the recipes and the chosen one up
--- into the search's old row, the buttons lower; the dropdowns and the reagents' names on
+-- into the search's old row; the dropdowns and the reagents' names on
 -- the parchment, without Blizzard's plates.
 Module.Layout = function(self)
 	local config = self.config
@@ -131,7 +130,7 @@ Module.Layout = function(self)
 	search:SetFontObject(book.search_font)
 	local r, g, b = unpack(kit.config.band_text.value)
 	local Hint = function()
-		if (search:GetText() == _G.SEARCH) then
+		if search:GetText() == _G.SEARCH then
 			search:SetTextColor(unpack(book.search_hint_color))
 		else
 			search:SetTextColor(r, g, b)
@@ -140,26 +139,9 @@ Module.Layout = function(self)
 	search:HookScript("OnTextChanged", Hint)
 	Hint()
 	kit:StyleCheckBox(filter)
-	filter:ClearAllPoints()
-	filter:SetPoint("LEFT", search, "RIGHT", config.filter_gap, 0)
 	-- over the band (the window's level + 1), under the iron's (+ 3)
 	for _, part in ipairs({ search, filter }) do
 		part:SetFrameLevel(frame:GetFrameLevel() + 2)
-	end
-	for _, name in ipairs({ "TradeSkillExpandButtonFrame", "TradeSkillInvSlotDropDown" }) do
-		Lower(_G[name], config.filters_lower)
-	end
-	for _, name in ipairs({ "TradeSkillSkill1", "TradeSkillListScrollFrame" }) do
-		Lower(_G[name], config.list_lower)
-	end
-	local list = _G.TradeSkillListScrollFrame
-	list:SetHeight(list:GetHeight() - config.list_trim)
-	local detail = _G.TradeSkillDetailScrollFrame
-	detail:ClearAllPoints()
-	detail:SetPoint("TOPLEFT", frame, "TOPLEFT", unpack(config.detail))
-	detail:SetHeight(config.detail_height)
-	for _, name in ipairs({ "TradeSkillCreateButton", "TradeSkillCancelButton" }) do
-		Lower(_G[name], config.buttons_lower)
 	end
 	-- how many to make: our box between our arrows (the pages'), in the
 	-- room between Create All and Create
@@ -171,29 +153,10 @@ Module.Layout = function(self)
 	more:SetSize(count.arrow_size, count.arrow_size)
 	box:SetWidth(count.box_width)
 	box:SetJustifyH("CENTER")
-	less:ClearAllPoints()
-	less:SetPoint("LEFT", _G.TradeSkillCreateAllButton, "RIGHT", count.gap, 0)
-	box:ClearAllPoints()
-	box:SetPoint("LEFT", less, "RIGHT", kit.config.edit_padding, 0)
-	more:ClearAllPoints()
-	more:SetPoint("LEFT", box, "RIGHT", kit.config.edit_padding, 0)
 	_G.TradeSkillDescription:SetFontObject(config.description_font)
-	-- the reagents' rows apart for their icons' frames (InkReagents)
-	Lower(_G.TradeSkillReagent1, config.reagents_top)
-	for _, i in ipairs({ 3, 5, 7 }) do
-		Lower(_G["TradeSkillReagent" .. i], config.reagents_gap)
-	end
 	for _, name in ipairs({ "TradeSkillSubClassDropDown", "TradeSkillInvSlotDropDown" }) do
 		kit:StyleDropDown(_G[name])
 	end
-	-- a gap between the dropdowns (Blizzard's overlap their empty sides,
-	-- ours have none): half each way
-	local half = config.dropdowns_gap / 2
-	local slot, subclass = _G.TradeSkillInvSlotDropDown, _G.TradeSkillSubClassDropDown
-	local point, relative, relativePoint, x, y = slot:GetPoint()
-	slot:SetPoint(point, relative, relativePoint, x + half, y)
-	point, relative, relativePoint, x, y = subclass:GetPoint()
-	subclass:SetPoint(point, relative, relativePoint, x - config.dropdowns_gap, y)
 	-- the chosen recipe's name in ink on the parchment, out of its box,
 	-- its icon in the action buttons' border
 	kit:HideArt(_G.TradeSkillDetailScrollChildFrame, { "ui%-classtrainer%-detailheader" })
@@ -218,9 +181,9 @@ end
 -- the panel's, made as Blizzard's addon loads).
 Module.UpdateGem = function(self)
 	local holder = self.Gem
-	if (not holder) then
+	if not holder then
 		local header = _G.TradeSkillFrameTitleText.DiabolicHeader
-		if (not header) then
+		if not header then
 			return
 		end
 		holder = kit:AddTitleGem(header)
@@ -240,26 +203,34 @@ end
 
 Module.StyleTradeSkill = function(self)
 	self:Layout()
+	self.Rows = _G.TRADE_SKILLS_DISPLAYED
 	kit:LightRow(_G.TradeSkillHighlight) -- the chosen recipe in an orange box
-	kit:StyleExpanderRows("TradeSkillSkill", _G.TRADE_SKILLS_DISPLAYED)
+	kit:StyleExpanderRows("TradeSkillSkill", self.Rows)
 	kit:StyleExpanders(_G.TradeSkillCollapseAllButton)
-	kit:StyleLabelButton(_G.TradeSkillCollapseAllButton) -- (its All)
+	-- its All on the recipes' parchment (settings/positions.lua), in the headers' ink
+	local all = CreateFont("DiabolicUITradeSkillAll")
+	all:SetFont(_G.GameFontNormalLeft:GetFont())
+	all:SetTextColor(unpack(self.config.inks.header))
+	all:SetShadowColor(0, 0, 0, 0)
+	_G.TradeSkillCollapseAllButton:SetNormalFontObject(all)
+	_G.TradeSkillCollapseAllButton:SetHighlightFontObject(all)
 	self:SpanHighlight()
 	hooksecurefunc("TradeSkillFrame_Update", function()
+		-- (its count changed: again with it, for the scroll bar)
+		if self:FitList() then
+			_G.TradeSkillFrame_Update()
+			return
+		end
 		self:ShadeList()
 		self:UpdateGem()
+		self:RankTitle()
 	end)
 	hooksecurefunc("TradeSkillFrame_SetSelection", function(id)
 		self:InkReagents(id)
 		self:ClearScan()
+		self:RankTitle()
 	end)
-end
-
-Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == ADDON) then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleTradeSkill()
-	end
+	_G.TradeSkillRankFrame:Hide() -- (still there for its event: Blizzard updates on it)
 end
 
 Module.OnInit = function(self)
@@ -268,12 +239,8 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded(ADDON) then
-		self:StyleTradeSkill()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded(ADDON, "StyleTradeSkill")
 end

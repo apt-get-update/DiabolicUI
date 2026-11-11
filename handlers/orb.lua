@@ -1,23 +1,10 @@
 -- "Orb" handler: the round health and power globes. Handler:New(parent)
 -- returns an object that behaves like a StatusBar (SetValue, SetMinMaxValues,
 -- SetStatusBarColor, ...) but fills a circle from the bottom, with smoothing,
--- rotating layers and a spark riding the fluid surface.
+-- rotating layers and a spark riding the fluid surface. SetIncoming(amount)
+-- shows the heals on their way as a see-through band above the fluid.
 local _, Engine = ...
 local Handler = Engine:NewHandler("Orb")
-
--- Lua API
-local _G = _G
-local math_abs = math.abs
-local math_max = math.max
-local math_min = math.min
-local math_sqrt = math.sqrt
-local pairs = pairs
-local select = select
-local setmetatable = setmetatable
-local type = type
-
--- WoW API
-local CreateFrame = _G.CreateFrame
 
 local Orb = CreateFrame("Frame")
 local Orb_MT = { __index = Orb }
@@ -25,8 +12,7 @@ local Orb_MT = { __index = Orb }
 -- How bright each layer is drawn when one color is given for them all
 -- (SetStatusBarColor(r, g, b, "ALL")). These are the factors the hand-picked
 -- orb colors in data/colors.lua started from.
-local SHADES = { bar = 1/4, moon = 1/2, smoke = 1, shade = 1/10 }
-
+local SHADES = { bar = 1 / 4, moon = 1 / 2, smoke = 1, shade = 1 / 10 }
 
 -- The spark and its glow pulse in a looping alpha animation the client
 -- plays by itself, so an orb that holds still runs no Lua at all.
@@ -50,6 +36,34 @@ local CreatePulse = function(texture)
 	texture.pulseOut:SetOrder(2)
 end
 
+local INCOMING_ALPHA = 0.35 -- the band: the fluid's color, this see-through
+local INCOMING_MIN_HEIGHT = 3 -- thinner, it's left out (a flickering line)
+
+-- The incoming heals: a band from the fluid's surface to where they'll take
+-- it (never past the top), cut from the fluid's texture like the fluid is.
+local UpdateIncoming = function(self, value, min, max, width, height)
+	local incoming = self.incoming
+	local amount = math.min(self._incoming, max - value)
+	if (amount <= 0) or (value <= min) or (max == min) then
+		incoming:Hide()
+		return
+	end
+	local from = (value - min) / (max - min) * height
+	local to = (value + amount - min) / (max - min) * height
+	if to - from < INCOMING_MIN_HEIGHT then
+		incoming:Hide()
+		return
+	end
+	local leftCrop, rightCrop = self.leftCrop, self.rightCrop
+	incoming.child:SetSize(width, height)
+	incoming:SetSize(width - leftCrop - rightCrop, math.max(to - from, 0.0001))
+	incoming:SetHorizontalScroll(leftCrop)
+	incoming:SetVerticalScroll(height - to)
+	incoming:ClearAllPoints()
+	incoming:SetPoint("BOTTOM", leftCrop / 2 - rightCrop / 2, from)
+	incoming:Show()
+end
+
 Orb.Update = function(self)
 	local value = self._ignoresmoothing and self.value or self.smoothing and self.displayValue or self.value
 	local min, max = self.minValue, self.maxValue
@@ -61,28 +75,36 @@ Orb.Update = function(self)
 	-- shape changed.
 	local laid = self._laid
 	local glow = spark.glow
-	local changed = (value ~= laid.value) or (min ~= laid.min) or (max ~= laid.max) or (width ~= laid.width) or (height ~= laid.height)
-		or (self.leftCrop ~= laid.leftCrop) or (self.rightCrop ~= laid.rightCrop) or (spark._height ~= laid.sparkHeight) or (glow._height ~= laid.glowHeight)
+	local changed = (value ~= laid.value)
+		or (min ~= laid.min)
+		or (max ~= laid.max)
+		or (width ~= laid.width)
+		or (height ~= laid.height)
+		or (self.leftCrop ~= laid.leftCrop)
+		or (self.rightCrop ~= laid.rightCrop)
+		or (spark._height ~= laid.sparkHeight)
+		or (glow._height ~= laid.glowHeight)
 	if changed then
 		laid.value, laid.min, laid.max, laid.width, laid.height = value, min, max, width, height
-		laid.leftCrop, laid.rightCrop, laid.sparkHeight, laid.glowHeight = self.leftCrop, self.rightCrop, spark._height, glow._height
+		laid.leftCrop, laid.rightCrop, laid.sparkHeight, laid.glowHeight =
+			self.leftCrop, self.rightCrop, spark._height, glow._height
 	end
 
-	local newHeight = (max > min) and (value-min)/(max-min) * height or 0
+	local newHeight = (max > min) and (value - min) / (max - min) * height or 0
 
 	if value <= min or max == min then
 		-- empty: no fluid at all, rather than a sliver of it
 		self.scrollframe:Hide()
 		laid.value = nil -- placed again once it shows
 	elseif changed then
-		self.scrollframe:SetHeight(math_max(newHeight, 0.0001)) -- (WoW takes a size of 0 as no size set at all)
+		self.scrollframe:SetHeight(math.max(newHeight, 0.0001)) -- (WoW takes a size of 0 as no size set at all)
 		self.scrollframe:SetVerticalScroll(height - newHeight)
-		
+
 		if not self.scrollframe:IsShown() then
 			self.scrollframe:Show()
 		end
 	end
-	
+
 	if value == max or value == min then
 		if spark:IsShown() then
 			spark:Hide()
@@ -96,26 +118,26 @@ Orb.Update = function(self)
 			--	r^2 = x^2 + y^2
 			--	x^2 = r^2 - y^2
 			--	x = sqrt(r^2 - y^2)
-			local y = math_abs(height/2 - newHeight)
-			local r = height/2
-			local x = math_sqrt(r^2 - y^2) * 2 -- never 0: neither empty nor full here
+			local y = math.abs(height / 2 - newHeight)
+			local r = height / 2
+			local x = math.sqrt(r ^ 2 - y ^ 2) * 2 -- never 0: neither empty nor full here
 			local sparkWidth = x
-			local sparkHeight = spark._height/2 + sparkWidth/width * spark._height
+			local sparkHeight = spark._height / 2 + sparkWidth / width * spark._height
 
 			local scrollframe = self.scrollframe
 			local leftCrop, rightCrop = self.leftCrop, self.rightCrop
 
 			local texLeft, texRight = 0, 1 -- spark texcoords
-			local sparkSpace = (width - x)/2 -- space between spark and the full frame width
+			local sparkSpace = (width - x) / 2 -- space between spark and the full frame width
 
 			local sparkAnchor = "TOP"
 			local sparkPoint = "CENTER"
 
-			-- The orb is cropped over the edges of the spark, 
+			-- The orb is cropped over the edges of the spark,
 			-- so we need to adjust its size and texcoords.
 			if leftCrop > sparkSpace then
 				local overflow = leftCrop - sparkSpace
-				texLeft = overflow/x
+				texLeft = overflow / x
 				sparkWidth = sparkWidth - overflow
 				sparkAnchor = "TOPLEFT"
 				sparkPoint = "LEFT"
@@ -123,7 +145,7 @@ Orb.Update = function(self)
 
 			if rightCrop > sparkSpace then
 				local overflow = rightCrop - sparkSpace
-				texRight = 1 - overflow/x
+				texRight = 1 - overflow / x
 				sparkWidth = sparkWidth - overflow
 				sparkAnchor = "TOPRIGHT"
 				sparkPoint = "RIGHT"
@@ -137,7 +159,7 @@ Orb.Update = function(self)
 			glow:SetTexCoord(texLeft, texRight, 0, 1)
 			glow:ClearAllPoints()
 			glow:SetPoint(sparkPoint, scrollframe, sparkAnchor, 0, -1)
-			glow:SetSize(sparkWidth, sparkHeight/spark._height * spark.glow._height)
+			glow:SetSize(sparkWidth, sparkHeight / spark._height * spark.glow._height)
 		end
 
 		if not spark:IsShown() then
@@ -151,12 +173,13 @@ Orb.Update = function(self)
 			glow.pulse:Play()
 		end
 	end
+	UpdateIncoming(self, value, min, max, width, height)
 end
 
 local smoothMinValue = 1 -- if a value is lower than this, we won't smoothe
-local smoothHZ = .2 -- each frame closes elapsed/smoothHZ of the gap
-local smoothLimit = 1/120 -- max updates per second
-local smoothFinish = 1/1000 -- the last bit of the gap (a share of the range) is jumped
+local smoothHZ = 0.2 -- each frame closes elapsed/smoothHZ of the gap
+local smoothLimit = 1 / 120 -- max updates per second
+local smoothFinish = 1 / 1000 -- the last bit of the gap (a share of the range) is jumped
 -- Runs only while the shown value slides towards the real one.
 Orb.OnUpdate = function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
@@ -170,8 +193,11 @@ Orb.OnUpdate = function(self, elapsed)
 		local display = self.displayValue
 		-- Closing a share of the gap every frame never quite gets there,
 		-- so the last bit is jumped (and so is all of it from nothing).
-		local nextDisplay = display + (goal - display) * math_min(elapsed/smoothHZ, 1)
-		if (display < smoothMinValue) or (math_abs(goal - nextDisplay) <= (self.maxValue - self.minValue) * smoothFinish) then
+		local nextDisplay = display + (goal - display) * math.min(elapsed / smoothHZ, 1)
+		if
+			(display < smoothMinValue)
+			or (math.abs(goal - nextDisplay) <= (self.maxValue - self.minValue) * smoothFinish)
+		then
 			self.displayValue = goal
 			self.smoothing = nil
 		else
@@ -191,6 +217,109 @@ Orb.DisableSmoothing = function(self, disable)
 	self._ignoresmoothing = disable
 end
 
+-- Cutaway: what the orb just lost stays lit behind the fluid for a moment,
+-- then drains away. It's made like the fluid, a level under it; nothing runs
+-- while there's nothing to show.
+local cutawayHold = 0.4 -- seconds it stays before it drains (a new loss starts this over)
+local cutawayDrain = 0.6 -- share of the orb it drains per second
+local CUTAWAY_LIGHTER = 0.5 -- the fluid's color, this much towards white
+local CUTAWAY_ALPHA = 0.5 -- and this see-through
+
+-- The health just lost in the fluid's color (a class color too), paler and
+-- see-through: a ghost of the fluid, not a slab of its own.
+local TintCutaway = function(self)
+	local cutaway, bar = self.cutaway, self.scaffold.colors.bar
+	if cutaway and bar[1] then
+		cutaway.texture:SetVertexColor(
+			bar[1] + (1 - bar[1]) * CUTAWAY_LIGHTER,
+			bar[2] + (1 - bar[2]) * CUTAWAY_LIGHTER,
+			bar[3] + (1 - bar[3]) * CUTAWAY_LIGHTER,
+			(bar[4] or 1) * CUTAWAY_ALPHA
+		)
+	end
+end
+
+local PlaceCutaway = function(self)
+	local cutaway = self.cutaway
+	local _, height = self.scaffold:GetSize()
+	local newHeight = (cutaway.value - self.minValue) / (self.maxValue - self.minValue) * height
+	cutaway:SetHeight(math.max(newHeight, 0.0001))
+	cutaway:SetVerticalScroll(height - newHeight)
+end
+
+-- Whether the fluid covers it: what's shown, and where it's going (a heal
+-- rises under it, a loss drains it down to the new value).
+local IsCovered = function(orb)
+	return orb.cutaway.value <= math.min(orb.value, orb.displayValue)
+end
+
+local OnUpdateCutaway = function(cutaway, elapsed)
+	local orb = cutaway.orb
+	if IsCovered(orb) then
+		cutaway:Hide()
+		return
+	end
+	if cutaway.hold > 0 then
+		cutaway.hold = cutaway.hold - elapsed
+		return
+	end
+	cutaway.value = cutaway.value - (orb.maxValue - orb.minValue) * cutawayDrain * elapsed
+	if IsCovered(orb) then
+		cutaway:Hide()
+	else
+		PlaceCutaway(orb)
+	end
+end
+
+-- Called with what the orb's value was before it was set. A heal doesn't
+-- end it: the rising fluid covers it (OnUpdateCutaway).
+local UpdateCutaway = function(self, previous)
+	local cutaway = self.cutaway
+	if self.value < previous then
+		if not cutaway:IsShown() then
+			cutaway.value = previous
+			cutaway:Show()
+		end
+		cutaway.hold = cutawayHold
+		PlaceCutaway(self)
+	end
+end
+
+-- Call once, after the orb has its size.
+Orb.EnableCutaway = function(self, path)
+	local scaffold = self.scaffold
+	local width, height = scaffold:GetSize()
+
+	local child = CreateFrame("Frame", nil, scaffold)
+	child:SetFrameLevel(scaffold:GetFrameLevel())
+	child:SetSize(width, height)
+
+	local cutaway = CreateFrame("ScrollFrame", nil, scaffold)
+	cutaway:SetFrameLevel(scaffold:GetFrameLevel())
+	cutaway:SetScrollChild(child)
+	cutaway:SetPoint("BOTTOM")
+	cutaway:SetSize(width, height)
+	cutaway:Hide()
+	cutaway:SetScript("OnUpdate", OnUpdateCutaway)
+	cutaway.orb = self
+
+	local texture = child:CreateTexture(nil, "BACKGROUND")
+	texture:SetAllPoints()
+	texture:SetTexture(path)
+	cutaway.texture = texture
+
+	self.cutaway = cutaway
+	TintCutaway(self)
+end
+
+-- The heals on their way, in health: shown above the fluid.
+Orb.SetIncoming = function(self, amount)
+	if amount ~= self._incoming then
+		self._incoming = amount
+		self:Update()
+	end
+end
+
 -- sets the value the orb should move towards
 Orb.SetValue = function(self, value)
 	local min, max = self.minValue, self.maxValue
@@ -199,7 +328,11 @@ Orb.SetValue = function(self, value)
 	elseif value < min then
 		value = min
 	end
+	local previous = self.value
 	self.value = value
+	if self.cutaway then
+		UpdateCutaway(self, previous)
+	end
 	if value ~= self.displayValue then
 		self.smoothing = true
 	end
@@ -208,7 +341,9 @@ Orb.SetValue = function(self, value)
 		self.smoothing = nil
 	elseif self.smoothing then
 		if not self.scaffold:GetScript("OnUpdate") then
-			self.scaffold:SetScript("OnUpdate", function(_, ...) self:OnUpdate(...) end)
+			self.scaffold:SetScript("OnUpdate", function(_, ...)
+				self:OnUpdate(...)
+			end)
 		end
 	end
 	self:Update()
@@ -232,8 +367,18 @@ Orb.SetMinMaxValues = function(self, min, max)
 	elseif self.displayValue < min then
 		self.displayValue = min
 	end
+	-- a new maximum (a buff, a vehicle): it keeps its share of the orb
+	local cutaway = self.cutaway
+	local rescale = cutaway and cutaway:IsShown() and (max ~= self.maxValue) and (self.maxValue > self.minValue)
+	if rescale then
+		local share = (cutaway.value - self.minValue) / (self.maxValue - self.minValue)
+		cutaway.value = min + share * (max - min)
+	end
 	self.minValue = min
 	self.maxValue = max
+	if rescale then
+		PlaceCutaway(self)
+	end
 	self:Update()
 end
 
@@ -262,7 +407,7 @@ Orb.SetStatusBarColor = function(self, r, g, b, ...)
 			colorTable[1] = r * factor
 			colorTable[2] = g * factor
 			colorTable[3] = b * factor
-			if a then 
+			if a then
 				colorTable[4] = a
 			end
 			scaffold[layerID]:SetVertexColor(colorTable[1], colorTable[2], colorTable[3], colorTable[4])
@@ -277,21 +422,28 @@ Orb.SetStatusBarColor = function(self, r, g, b, ...)
 		end
 		scaffold[id]:SetVertexColor(r, g, b, a)
 	end
-	
-	-- Changed the base color for the spark from "bar" to "smoke", 
+
+	-- the incoming heals: the fluid, see-through
+	if (id == "bar") or (id == "ALL") then
+		local bar = colors.bar
+		self.incoming.texture:SetVertexColor(bar[1], bar[2], bar[3], (bar[4] or 1) * INCOMING_ALPHA)
+		TintCutaway(self)
+	end
+
+	-- Changed the base color for the spark from "bar" to "smoke",
 	-- as in most cases its' the smoke layer that has the original color.
 	if (id == "smoke") or (id == "ALL") then
-		-- make the spark a really bright shade of the same colors, 
+		-- make the spark a really bright shade of the same colors,
 		-- but take the "green" effect of darker overlays into account.
-		local newRed =  (1 - r)*.75 + r
-		local newGreen =  (1 - g)*.75 + g
-		local newBlue =  (1 - b)*.75 + b
-		if (newRed > newGreen) and (newRed > newBlue) then 
-			newGreen = newGreen * .8
+		local newRed = (1 - r) * 0.75 + r
+		local newGreen = (1 - g) * 0.75 + g
+		local newBlue = (1 - b) * 0.75 + b
+		if (newRed > newGreen) and (newRed > newBlue) then
+			newGreen = newGreen * 0.8
 		end
-		if (newBlue > newRed) and (newBlue > newGreen) then 
-			newGreen = newGreen * .75
-			newRed = newRed * .5
+		if (newBlue > newRed) and (newBlue > newGreen) then
+			newGreen = newGreen * 0.75
+			newRed = newRed * 0.5
 		end
 
 		self.overlay.spark:SetVertexColor(newRed, newGreen, newBlue)
@@ -321,6 +473,13 @@ Orb.SetStatusBarTexture = function(self, ...)
 		self.scaffold[id]:SetTexture(path)
 	else
 		self.scaffold[id]:SetTexture(r, g, b, a)
+	end
+	if id == "bar" then
+		if path then
+			self.incoming.texture:SetTexture(path)
+		else
+			self.incoming.texture:SetTexture(r, g, b, a)
+		end
 	end
 end
 
@@ -381,7 +540,7 @@ end
 Orb.SetSize = function(self, width, height)
 	local leftCrop, rightCrop = self.leftCrop, self.rightCrop
 	local crop = leftCrop + rightCrop
-	local offset = leftCrop/2 - rightCrop/2
+	local offset = leftCrop / 2 - rightCrop / 2
 
 	self.scaffold:SetSize(width, height)
 	self.scrollchild:SetSize(width, height)
@@ -398,7 +557,7 @@ end
 Orb.SetWidth = function(self, width)
 	local leftCrop, rightCrop = self.leftCrop, self.rightCrop
 	local crop = leftCrop + rightCrop
-	local offset = leftCrop/2 - rightCrop/2
+	local offset = leftCrop / 2 - rightCrop / 2
 
 	self.scaffold:SetWidth(width)
 	self.scrollchild:SetWidth(width)
@@ -448,38 +607,61 @@ Orb.GetScript = function(self, ...)
 	return self.scaffold:GetScript(...)
 end
 
-Orb.GetObjectType = function(self) return "Orb" end
-Orb.IsObjectType = function(self, type) return type == "Orb" end
+Orb.GetObjectType = function(self)
+	return "Orb"
+end
+Orb.IsObjectType = function(self, type)
+	return type == "Orb"
+end
 
-Orb.Show = function(self) self.scaffold:Show() end
-Orb.Hide = function(self) self.scaffold:Hide() end
-Orb.IsShown = function(self) return self.scaffold:IsShown() end
+Orb.Show = function(self)
+	self.scaffold:Show()
+end
+Orb.Hide = function(self)
+	self.scaffold:Hide()
+end
+Orb.IsShown = function(self)
+	return self.scaffold:IsShown()
+end
 
 -- proxy method to return the orbs's overlay frame, for adding texts, icons etc
-Orb.GetOverlay = function(self) return self.overlay end
+Orb.GetOverlay = function(self)
+	return self.overlay
+end
 
 -- Fancy method allowing us to crop the orb's sides
 Orb.SetCrop = function(self, leftCrop, rightCrop)
 	self.leftCrop = leftCrop
 	self.rightCrop = rightCrop
-	self:SetSize(self.scrollchild:GetSize()) 
+	self:SetSize(self.scrollchild:GetSize())
 end
 
 Handler.New = function(self, parent, rotateClockwise, speedModifier)
-
-	-- The scaffold is the top level frame object 
+	-- The scaffold is the top level frame object
 	-- that will respond to SetSize, SetPoint and similar.
 	local scaffold = CreateFrame("Frame", nil, parent)
 
 	-- The scrollchild is where we put rotating textures that needs to be cropped.
 	local scrollchild = CreateFrame("Frame", nil, scaffold)
-	scrollchild:SetSize(1,1)
+	scrollchild:SetSize(1, 1)
 
 	-- The scrollframe defines the height/filling of the orb.
 	local scrollframe = CreateFrame("ScrollFrame", nil, scaffold)
 	scrollframe:SetScrollChild(scrollchild)
 	scrollframe:SetPoint("BOTTOM")
-	scrollframe:SetSize(1,1)
+	scrollframe:SetSize(1, 1)
+
+	-- The incoming heals, a band above the fluid (and over the cutaway).
+	local incomingChild = CreateFrame("Frame", nil, scaffold)
+	incomingChild:SetSize(1, 1)
+	local incoming = CreateFrame("ScrollFrame", nil, scaffold)
+	incoming:SetFrameLevel(scaffold:GetFrameLevel() + 2)
+	incoming:SetScrollChild(incomingChild)
+	incoming:SetSize(1, 1)
+	incoming:Hide()
+	incoming.child = incomingChild
+	incoming.texture = incomingChild:CreateTexture(nil, "BACKGROUND")
+	incoming.texture:SetAllPoints()
 
 	-- The overlay is meant to hold overlay textures like the spark, glow, etc
 	local overlay = CreateFrame("Frame", nil, scaffold)
@@ -488,24 +670,24 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 
 	local bar = scrollchild:CreateTexture(nil, "BACKGROUND")
 	bar:SetAllPoints()
-	
+
 	local moon = scrollchild:CreateTexture(nil, "BORDER")
 	moon:SetAllPoints()
 
-	local moonAnimGroup = moon:CreateAnimationGroup()    
+	local moonAnimGroup = moon:CreateAnimationGroup()
 	local moonAnim = moonAnimGroup:CreateAnimation("Rotation")
 	moonAnim:SetDegrees(rotateClockwise and 360 or -360)
-	moonAnim:SetDuration(20 * 1/(speedModifier or 1))
+	moonAnim:SetDuration(20 * 1 / (speedModifier or 1))
 	moonAnimGroup:SetLooping("REPEAT")
 	moonAnimGroup:Play()
 
 	local smoke = scrollchild:CreateTexture(nil, "ARTWORK")
 	smoke:SetAllPoints()
 
-	local smokeAnimGroup = smoke:CreateAnimationGroup()    
+	local smokeAnimGroup = smoke:CreateAnimationGroup()
 	local smokeAnim = smokeAnimGroup:CreateAnimation("Rotation")
 	smokeAnim:SetDegrees(rotateClockwise and -360 or 360)
-	smokeAnim:SetDuration(30 * 1/(speedModifier or 1))
+	smokeAnim:SetDuration(30 * 1 / (speedModifier or 1))
 	smokeAnimGroup:SetLooping("REPEAT")
 	smokeAnimGroup:Play()
 
@@ -519,12 +701,14 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 
 	local spark = scrollchild:CreateTexture(nil, "OVERLAY")
 	spark:SetPoint("CENTER", scrollframe, "TOP", 0, -1)
-	spark:SetSize(1,1)
+	spark:SetSize(1, 1)
 	spark._height = 1
-	spark.durationIn = .75
-	spark.durationOut = .55
-	spark.minAlpha = .35
-	spark.maxAlpha = .85
+	-- steady, half lit (a pulse on the fluid's top read as a blinking line;
+	-- SetSparkFlash makes it pulse)
+	spark.durationIn = 0.75
+	spark.durationOut = 0.55
+	spark.minAlpha = 0.5
+	spark.maxAlpha = 0.5
 
 	local glow = overlay:CreateTexture(nil, "ARTWORK")
 	glow:SetPoint("CENTER", scrollframe, "TOP", 0, -1)
@@ -543,10 +727,10 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	scaffold.smoke = smoke
 	scaffold.shade = shade
 	scaffold.colors = {
-		bar = { .6, .6, .6, 1 },
-		smoke = { .6, .6, .6, .9 },
-		moon = { .6, .6, .6, .5 },
-		shade = { .1, .1, .1, 1 }
+		bar = { 0.6, 0.6, 0.6, 1 },
+		smoke = { 0.6, 0.6, 0.6, 0.9 },
+		moon = { 0.6, 0.6, 0.6, 0.5 },
+		shade = { 0.1, 0.1, 0.1, 1 },
 	}
 
 	-- The orb is the virtual object that we return to the user.
@@ -562,17 +746,19 @@ Handler.New = function(self, parent, rotateClockwise, speedModifier)
 	orb.maxValue = 1
 	orb.value = 0
 	orb.displayValue = 0
+	orb._incoming = 0 -- the heals on their way
 	orb.leftCrop = 0
 	orb.rightCrop = 0
 	orb._laid = {} -- what Update last placed
 
-	-- I usually don't like exposing things like this to the user, 
-	-- but we're going for maximum performance here. 
+	-- I usually don't like exposing things like this to the user,
+	-- but we're going for maximum performance here.
 	orb.overlay = overlay
+	orb.incoming = incoming
 	orb.scrollchild = scrollchild
 	orb.scrollframe = scrollframe
 	orb.scaffold = scaffold
-	
+
 	orb:Update()
 
 	return orb

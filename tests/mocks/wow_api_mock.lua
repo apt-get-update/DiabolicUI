@@ -14,7 +14,9 @@ function WowApiMock.install()
 	-- playerLevel from the (fake) currently logged in character.
 	_G.ITEM_LEVEL = "Item Level %d"
 	_G.TALENTS = "Talents"
-	_G.UnitLevel = _G.UnitLevel or function() return 80 end
+	_G.UnitLevel = _G.UnitLevel or function()
+		return 80
+	end
 
 	-- used to build match patterns for remaining-buff-time tooltip lines
 	_G.SPELL_TIME_REMAINING_DAYS = "%d Days"

@@ -16,22 +16,6 @@ local Module = Engine:NewModule("Blizzard: Panels", "LOW")
 local kit
 local Placed = {} -- the bands' parts placed (PlaceBand), by their settings
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local type = type
-local select = select
-local string_format = string.format
-local math_max = math.max
-local math_min = math.min
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 -- their scroll bars' tracks, by file (lowercase, as patterns)
 local ART = { "ui%-character%-scrollbar", "ui%-classtrainer%-scrollbar", "ui%-itemsocketingframe%-scrollbar" }
 
@@ -76,25 +60,24 @@ HideText = function(frame, text)
 	end
 end
 
--- `color`'s code for a text's colors.
-local ColorCode = function(color)
-	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
-end
+local ColorCode = Engine.ColorCode
 
 -- A text's other colors as dark inks on parchment: white `ink` (its
 -- code), the others (item qualities, Blizzard's red) darkened to `bright`
 -- at most.
 local DarkenCodes = function(text, ink, bright)
-	return (text:gsub("|c%x%x(%x%x)(%x%x)(%x%x)", function(r, g, b)
-		r, g, b = tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255
-		local top = math_max(r, g, b)
-		if (top <= bright) then
-			return nil
-		elseif (math_min(r, g, b) > .8) then
-			return ink
-		end
-		return ColorCode({ r * bright / top, g * bright / top, b * bright / top })
-	end))
+	return (
+		text:gsub("|c%x%x(%x%x)(%x%x)(%x%x)", function(r, g, b)
+			r, g, b = tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255
+			local top = math.max(r, g, b)
+			if top <= bright then
+				return nil
+			elseif math.min(r, g, b) > 0.8 then
+				return ink
+			end
+			return ColorCode({ r * bright / top, g * bright / top, b * bright / top })
+		end)
+	)
 end
 
 -- The dark text in `frame` and all it holds (drawn for parchment) pale.
@@ -104,7 +87,7 @@ PaleText = function(frame, color)
 		local region = select(i, frame:GetRegions())
 		if region:IsObjectType("FontString") then
 			local r, g, b = region:GetTextColor()
-			if (r + g + b < 1) then
+			if r + g + b < 1 then
 				region:SetTextColor(unpack(color))
 			end
 		end
@@ -155,23 +138,33 @@ local ExtendRail = function(window, rail)
 			art:SetWidth(file - to)
 			art:SetTexCoord(to / file, 1, top, bottom)
 			stretch:SetPoint("TOPRIGHT", art, "TOPLEFT")
-			fits[#fits + 1] = { stretch, function() return art:GetLeft() - (from - tip) - window:GetLeft() - rail.reach end }
+			fits[#fits + 1] = {
+				stretch,
+				function()
+					return art:GetLeft() - (from - tip) - window:GetLeft() - rail.reach
+				end,
+			}
 		else
 			local tipPiece = Piece(to, tip)
 			tipPiece:SetPoint("TOPLEFT", stretch, "TOPRIGHT")
 			art:SetWidth(from)
 			art:SetTexCoord(0, from / file, top, bottom)
 			stretch:SetPoint("TOPLEFT", art, "TOPRIGHT")
-			fits[#fits + 1] = { stretch, function() return window:GetRight() - rail.reach - (tip - to) - art:GetRight() end }
+			fits[#fits + 1] = {
+				stretch,
+				function()
+					return window:GetRight() - rail.reach - (tip - to) - art:GetRight()
+				end,
+			}
 		end
 	end
 	-- (as wide as the room left, once the window is placed)
 	local Fit = function()
-		if (not window:GetLeft()) then
+		if not window:GetLeft() then
 			return
 		end
 		for _, fit in ipairs(fits) do
-			fit[1]:SetWidth(math_max(1, fit[2]()))
+			fit[1]:SetWidth(math.max(1, fit[2]()))
 		end
 	end
 	window:HookScript("OnShow", Fit)
@@ -197,8 +190,7 @@ end
 -- The parts an addon adds to a window once it's shown (`late`, its
 -- spec's), each once.
 -- Controls moved into `header`'s band (the band's rule: LineBand), once:
--- `left`, from its left end (a table in it: controls one under the
--- other); `right`, from its right end; `hints`, edit boxes' labels (their
+-- `left`, from its left end; `right`, from its right end; `hints`, edit boxes' labels (their
 -- global strings' names) pale in them while they're empty. Its texts in
 -- its labels' font, its boxes on Diablo III's plates, its checkboxes
 -- Diablo III's, all over the band.
@@ -207,7 +199,7 @@ Module.PlaceBand = function(self, header, band)
 		return
 	end
 	local level = header:GetFrameLevel() + 1
-	local Prepare = function(name, stacked)
+	local Prepare = function(name)
 		local part = _G[name]
 		if not part then
 			return
@@ -218,9 +210,9 @@ Module.PlaceBand = function(self, header, band)
 		if part:IsObjectType("EditBox") then
 			kit:StyleEditBox(part)
 		elseif part:IsObjectType("CheckButton") then
-			kit:StyleCheckBox(part, stacked and kit.config.check_box.stacked)
+			kit:StyleCheckBox(part)
 		end
-		if (part:GetFrameLevel() < level) then
+		if part:GetFrameLevel() < level then
 			part:SetFrameLevel(level)
 		end
 		return part
@@ -231,26 +223,8 @@ Module.PlaceBand = function(self, header, band)
 		end
 	end
 	local left, right = {}, {}
-	for _, entry in ipairs(band.left or {}) do
-		if (type(entry) == "table") then
-			-- one under the other, in a holder as wide as the widest
-			local holder = CreateFrame("Frame", nil, header)
-			local width, height = 0, 0
-			for _, name in ipairs(entry) do
-				local part = Prepare(name, true)
-				if part then
-					local inLeft, inRight = kit.ArtInsets(part)
-					part:ClearAllPoints()
-					part:SetPoint("TOPLEFT", holder, "TOPLEFT", -inLeft, -height)
-					width = math_max(width, part:GetWidth() - inLeft - inRight)
-					height = height + part:GetHeight()
-				end
-			end
-			holder:SetSize(width, height)
-			left[#left + 1] = holder
-		else
-			left[#left + 1] = Prepare(entry)
-		end
+	for _, name in ipairs(band.left or {}) do
+		left[#left + 1] = Prepare(name)
 	end
 	for _, name in ipairs(band.right or {}) do
 		right[#right + 1] = Prepare(name)
@@ -323,27 +297,34 @@ Module.StylePanel = function(self, spec)
 	-- no band (nothing in it): its room given back, the frame and all it
 	-- holds up into it, the window's top where it was, its foot higher
 	local insets, offsetY = spec.insets, spec.offset_y
-	if (spec.band == false) then
+	if spec.band == false then
 		insets = { insets[1], insets[2] - config.header_height, insets[3], insets[4] }
 		offsetY = (offsetY or 0) + config.header_height
 	end
+	if spec.no_backdrop then
+		frame:SetBackdrop(nil)
+	end
 	local window = kit:CreateWindow(frame, insets)
 	kit:SetBackground(window, spec.background or config.background)
-	if (type(spec.footer) == "table") then
+	if type(spec.footer) == "table" then
 		-- one page's: there while it shows
 		local foot = kit:AddFooter(window)
-		for page, top in pairs(spec.footer) do
+		for page, height in pairs(spec.footer) do
 			if _G[page] then
-				_G[page]:HookScript("OnShow", function() kit:SetFooter(foot, top) end)
-				_G[page]:HookScript("OnHide", function() kit:SetFooter(foot, nil) end)
-				kit:SetFooter(foot, _G[page]:IsShown() and top or nil)
+				_G[page]:HookScript("OnShow", function()
+					kit:SetFooter(foot, height)
+				end)
+				_G[page]:HookScript("OnHide", function()
+					kit:SetFooter(foot, nil)
+				end)
+				kit:SetFooter(foot, _G[page]:IsShown() and height or nil)
 			end
 		end
 	elseif spec.footer then
 		kit:AddFooter(window, spec.footer)
 	end
 	kit:AddDrag(window, frame)
-	if (spec.panel ~= false) then
+	if spec.panel ~= false then
 		kit:SetPanelLayout(frame, insets, insets[1], offsetY)
 	end
 	HideOwnArt(frame, spec.keep)
@@ -362,35 +343,13 @@ Module.StylePanel = function(self, spec)
 			end
 		end
 	end
-	-- every part let go first: Blizzard's own anchors may chain them the
-	-- other way round (the PvP Join button hangs off Cancel)
-	for name in pairs(spec.places or {}) do
-		if _G[name] then
-			_G[name]:ClearAllPoints()
-		end
-	end
-	for name, place in pairs(spec.places or {}) do
-		local part = _G[name]
-		if part then
-			local point, relative, relativePoint, x, y = unpack(place)
-			part:SetPoint(point, _G[relative], relativePoint, x, y)
-		end
-	end
 	for _, y in ipairs(spec.iron_bars or {}) do
 		kit:AddIronBar(window, y)
 	end
 	for _, name in ipairs(spec.outside or {}) do
 		if _G[name] then
-			_G[name].DiabolicOutside = true -- (/dui layout: not out of the window by mistake)
+			_G[name].DiabolicOutside = true -- (the rules: not out of the window by mistake)
 		end
-	end
-	for name, size in pairs(spec.sizes or {}) do
-		if _G[name] then
-			_G[name]:SetSize(unpack(size))
-		end
-	end
-	for _, name in ipairs(spec.bars or {}) do
-		kit:StyleBar(_G[name], { _G[name .. "Border"], _G[name .. "Background"] })
 	end
 	kit:HideArt(frame, ART)
 	if spec.art then
@@ -402,7 +361,7 @@ Module.StylePanel = function(self, spec)
 	if (not title) and spec.text then
 		-- a title of our own, Blizzard's (no name to it) out of sight
 		HideText(frame, _G[spec.text])
-		title = frame:CreateFontString(nil, "OVERLAY")
+		title = frame:CreateFontString(kit.NameFor(frame, "DiabolicTitle"), "OVERLAY")
 		title:SetFontObject(_G.GameFontNormal)
 		title:SetText(_G[spec.text])
 	end
@@ -425,7 +384,7 @@ Module.StylePanel = function(self, spec)
 			kit:StyleDropDown(dropdown)
 		end
 	end
-	if (spec.band == false) then
+	if spec.band == false then
 		kit:DropBand(header)
 	elseif spec.band then
 		self:PlaceBand(header, spec.band)
@@ -478,8 +437,12 @@ Module.StylePanel = function(self, spec)
 		end
 		if _G[name] then
 			local insets = spec.list_insets or config.list_panel_insets
-			local zone = kit:AddZone(_G[name], material or spec.list_material or "slate", { insets[1] + wider, insets[2], insets[3], insets[4] },
-				inside and _G[name] or nil)
+			local zone = kit:AddZone(
+				_G[name],
+				material or spec.list_material or "slate",
+				{ insets[1] + wider, insets[2], insets[3], insets[4] },
+				inside and _G[name] or nil
+			)
 			zones[name] = zone
 			-- (a zone on the frame itself: the window under it, not drawn
 			-- level with it in an order of the client's choosing)
@@ -505,7 +468,9 @@ Module.StylePanel = function(self, spec)
 		end
 		local scroll = _G[name]
 		if scroll then
-			kit:AddPanel(scroll, spec.parchment_panel or kit.config.parchment_panel_insets)
+			local panel = spec.parchment_panel or kit.config.parchment_panel_insets
+			-- (up with its page, when that reaches over its text's)
+			kit:AddPanel(scroll, { panel[1], panel[2] + (raise or 0), panel[3], panel[4] })
 			-- (its window's: Blizzard hides a list's scroll frame when it all fits)
 			local page = kit:AddParchment(scroll, nil, material, scroll:GetParent())[1]:GetParent()
 			pages[name] = page
@@ -578,16 +543,9 @@ end
 -- The windows of `addon` (nil: those always loaded).
 Module.StyleAddon = function(self, addon)
 	for _, spec in ipairs(self.config.frames) do
-		if (spec.addon == addon) then
+		if spec.addon == addon then
 			self:StylePanel(spec)
 		end
-	end
-end
-
-Module.ADDON_LOADED = function(self, event, addon)
-	if self.Waiting[addon] then
-		self.Waiting[addon] = nil
-		self:StyleAddon(addon)
 	end
 end
 
@@ -597,21 +555,18 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
 	self:StyleAddon(nil)
-	self.Waiting = {}
+	local seen = {}
 	for _, spec in ipairs(self.config.frames) do
-		if spec.addon then
-			self.Waiting[spec.addon] = true
+		local addon = spec.addon
+		if addon and not seen[addon] then
+			seen[addon] = true
+			self:WhenLoaded(addon, function()
+				self:StyleAddon(addon)
+			end)
 		end
 	end
-	for addon in pairs(self.Waiting) do
-		if IsAddOnLoaded(addon) then
-			self.Waiting[addon] = nil
-			self:StyleAddon(addon)
-		end
-	end
-	self:RegisterEvent("ADDON_LOADED")
 end

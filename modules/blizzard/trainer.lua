@@ -7,18 +7,6 @@ local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trainer", "LOW")
 local kit
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local string_format = string.format
-local unpack = unpack
-
--- WoW API
-local CreateFont = _G.CreateFont
-local GetTrainerServiceInfo = _G.GetTrainerServiceInfo
-local hooksecurefunc = _G.hooksecurefunc
-local IsAddOnLoaded = _G.IsAddOnLoaded
-
 local ADDON = "Blizzard_TrainerUI"
 
 -- The trainings' text in their kind's ink (Blizzard's colors are for a
@@ -44,10 +32,19 @@ Module.ShadeList = function(self)
 	end
 end
 
--- A color as a text's code.
-local ColorCode = function(color)
-	return string_format("|cff%02x%02x%02x", color[1] * 255, color[2] * 255, color[3] * 255)
+-- As many trainings as fit the list (its height: settings/positions.lua), the
+-- others hidden. (Blizzard sets its count as it opens, by the trainer's kind.)
+local ROWS = 11
+local FitList = function()
+	local rows =
+		kit:RowsFitting(_G.ClassTrainerListScrollFrame, _G.CLASS_TRAINER_SKILL_HEIGHT, ROWS, _G.ClassTrainerSkill1)
+	_G.CLASS_TRAINER_SKILLS_DISPLAYED = rows
+	for i = rows + 1, ROWS do
+		_G["ClassTrainerSkill" .. i]:Hide()
+	end
 end
+
+local ColorCode = Engine.ColorCode
 
 -- The chosen training's requirements and cost in ink, on its lined
 -- parchment: Blizzard's white (met) in ink, its red (not met) in red ink.
@@ -74,9 +71,15 @@ end
 Module.StyleTrainer = function(self)
 	local config = self.config
 	kit:LightRow(_G.ClassTrainerSkillHighlight) -- the chosen one in an orange box
-	kit:StyleExpanderRows("ClassTrainerSkill", 11) -- (Blizzard shows 10 or 11)
+	kit:StyleExpanderRows("ClassTrainerSkill", ROWS) -- (Blizzard shows 10 or 11)
 	kit:StyleExpanders(_G.ClassTrainerCollapseAllButton)
-	kit:StyleLabelButton(_G.ClassTrainerCollapseAllButton) -- (its All)
+	-- its All on the list's parchment, in the headers' ink
+	local all = CreateFont("DiabolicUITrainerAll")
+	all:SetFont(_G.GameFontNormalLeft:GetFont())
+	all:SetTextColor(unpack(config.inks.header))
+	all:SetShadowColor(0, 0, 0, 0)
+	_G.ClassTrainerCollapseAllButton:SetNormalFontObject(all)
+	_G.ClassTrainerCollapseAllButton:SetHighlightFontObject(all)
 	-- the trainer's words in the middle of their panel
 	local greeting = _G.ClassTrainerGreetingText
 	greeting:SetJustifyH("CENTER")
@@ -88,7 +91,7 @@ Module.StyleTrainer = function(self)
 	hover:SetJustifyH("LEFT")
 	hover:SetTextColor(unpack(config.hover_color))
 	hover:SetShadowColor(0, 0, 0, 0)
-	for i = 1, _G.CLASS_TRAINER_SKILLS_DISPLAYED do
+	for i = 1, ROWS do
 		local button = _G["ClassTrainerSkill" .. i]
 		button:SetHighlightFontObject(hover)
 		button:HookScript("OnEnter", function()
@@ -96,23 +99,14 @@ Module.StyleTrainer = function(self)
 		end)
 	end
 	_G.UIDropDownMenu_SetWidth(_G.ClassTrainerFrameFilterDropDown, config.filter_width)
-	-- the chosen one's over the foot (Blizzard sets its height as it opens,
-	-- by the trainer's kind)
-	local Trim = function()
-		local detail = _G.ClassTrainerDetailScrollFrame
-		detail:SetHeight(detail:GetHeight() - config.detail_trim)
-	end
-	hooksecurefunc("ClassTrainer_SetToClassTrainer", Trim)
-	hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", Trim)
-	hooksecurefunc("ClassTrainerFrame_Update", function() self:ShadeList() end)
-	hooksecurefunc("ClassTrainer_SetSelection", function() self:InkDetails() end)
-end
-
-Module.ADDON_LOADED = function(self, event, addon)
-	if (addon == ADDON) then
-		self:UnregisterEvent("ADDON_LOADED")
-		self:StyleTrainer()
-	end
+	hooksecurefunc("ClassTrainer_SetToClassTrainer", FitList)
+	hooksecurefunc("ClassTrainer_SetToTradeSkillTrainer", FitList)
+	hooksecurefunc("ClassTrainerFrame_Update", function()
+		self:ShadeList()
+	end)
+	hooksecurefunc("ClassTrainer_SetSelection", function()
+		self:InkDetails()
+	end)
 end
 
 Module.OnInit = function(self)
@@ -121,12 +115,8 @@ Module.OnInit = function(self)
 end
 
 Module.OnEnable = function(self)
-	if (not kit:IsSkinning()) then
+	if not kit:IsSkinning() then
 		return
 	end
-	if IsAddOnLoaded(ADDON) then
-		self:StyleTrainer()
-	else
-		self:RegisterEvent("ADDON_LOADED")
-	end
+	self:WhenLoaded(ADDON, "StyleTrainer")
 end

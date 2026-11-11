@@ -34,17 +34,29 @@ local elements
 -- permissiveness" pitfall from tests/README.md, just self-inflicted this
 -- time. Only the few real methods each element calls are defined below.
 local function newFakeNameText()
-	return { calls = {},
-		SetText = function(self, text) table.insert(self.calls, { "SetText", text }) end,
-		SetTextColor = function(self, r, g, b) table.insert(self.calls, { "SetTextColor", r, g, b }) end,
+	return {
+		calls = {},
+		SetText = function(self, text)
+			table.insert(self.calls, { "SetText", text })
+		end,
+		SetTextColor = function(self, r, g, b)
+			table.insert(self.calls, { "SetTextColor", r, g, b })
+		end,
 	}
 end
 
 local function newFakeThreatTexture()
-	return { calls = {},
-		SetVertexColor = function(self, r, g, b) table.insert(self.calls, { "SetVertexColor", r, g, b }) end,
-		Show = function(self) table.insert(self.calls, { "Show" }) end,
-		Hide = function(self) table.insert(self.calls, { "Hide" }) end,
+	return {
+		calls = {},
+		SetVertexColor = function(self, r, g, b)
+			table.insert(self.calls, { "SetVertexColor", r, g, b })
+		end,
+		Show = function(self)
+			table.insert(self.calls, { "Show" })
+		end,
+		Hide = function(self)
+			table.insert(self.calls, { "Hide" })
+		end,
 	}
 end
 
@@ -55,13 +67,25 @@ local units
 local function loadUnitFrameElements()
 	units = {}
 
-	_G.UnitExists = function(unit) return units[unit] ~= nil end
-	_G.UnitName = function(unit) return units[unit] and units[unit].name end
-	_G.UnitClassification = function(unit) return units[unit] and units[unit].classification end
-	_G.UnitIsUnit = function(a, b) return a == b end
-	_G.UnitThreatSituation = function(unit) return units[unit] and units[unit].threat end
+	_G.UnitExists = function(unit)
+		return units[unit] ~= nil
+	end
+	_G.UnitName = function(unit)
+		return units[unit] and units[unit].name
+	end
+	_G.UnitClassification = function(unit)
+		return units[unit] and units[unit].classification
+	end
+	_G.UnitIsUnit = function(a, b)
+		return a == b
+	end
+	_G.UnitThreatSituation = function(unit)
+		return units[unit] and units[unit].threat
+	end
 	_G.GetThreatStatusColor = function(status)
-		if status == 3 then return 1, 0, 0 end -- tanking, securely
+		if status == 3 then
+			return 1, 0, 0
+		end -- tanking, securely
 		return 1, 1, 0 -- has threat, not securely tanking
 	end
 
@@ -103,7 +127,7 @@ function TestUnitFrameName:test_colors_a_world_boss_purple_only_when_opted_in()
 
 	self.Update(frame, "UNIT_NAME_UPDATE")
 
-	lu.assertEquals(self.Name.calls[2], { "SetTextColor", 163/255, 53/255, 255/238 })
+	lu.assertEquals(self.Name.calls[2], { "SetTextColor", 163 / 255, 53 / 255, 255 / 238 })
 end
 
 function TestUnitFrameName:test_world_boss_is_not_colored_without_opting_in()
@@ -122,7 +146,7 @@ function TestUnitFrameName:test_colors_an_elite_blue_only_when_opted_in()
 
 	self.Update(frame, "UNIT_NAME_UPDATE")
 
-	lu.assertEquals(self.Name.calls[2], { "SetTextColor", 0, 112/255, 221/255 })
+	lu.assertEquals(self.Name.calls[2], { "SetTextColor", 0, 112 / 255, 221 / 255 })
 end
 
 function TestUnitFrameName:test_does_nothing_when_the_unit_does_not_exist()

@@ -18,47 +18,67 @@ local lu = require("luaunit")
 local EngineMock = require("mocks.engine_mock")
 
 local COLORS = {
-	RUNES = { .4, .6, .9 },
-	RUNES_BLOOD = { .8, .1, .2 },
-	RUNES_UNHOLY = { .3, .7, .1 },
-	RUNES_FROST = { .2, .4, .6 },
-	RUNES_DEATH = { .7, .2, .6 },
+	RUNES = { 0.4, 0.6, 0.9 },
+	RUNES_BLOOD = { 0.8, 0.1, 0.2 },
+	RUNES_UNHOLY = { 0.3, 0.7, 0.1 },
+	RUNES_FROST = { 0.2, 0.4, 0.6 },
+	RUNES_DEATH = { 0.7, 0.2, 0.6 },
 }
 
 local CONFIG = {
-	fill_multiplier = .5,
-	slot_multiplier = .25,
-	glow_alpha = .75,
-	alpha_recharging = .5,
+	fill_multiplier = 0.5,
+	slot_multiplier = 0.25,
+	glow_alpha = 0.75,
+	alpha_recharging = 0.5,
 }
 
 local state -- scripted game state
 
 local function newTexture(coords)
 	return {
-		texCoords = coords, shown = true,
-		SetVertexColor = function(self, r, g, b, a) self.color = { r, g, b, a } end,
-		SetHeight = function(self, h) self.height = h end,
-		SetTexCoord = function(self, ...) self.coords = { ... } end,
-		Show = function(self) self.shown = true end,
-		Hide = function(self) self.shown = false end,
+		texCoords = coords,
+		shown = true,
+		SetVertexColor = function(self, r, g, b, a)
+			self.color = { r, g, b, a }
+		end,
+		SetHeight = function(self, h)
+			self.height = h
+		end,
+		SetTexCoord = function(self, ...)
+			self.coords = { ... }
+		end,
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
 	}
 end
 
 local function newRunes()
 	local Runes = {
-		config = CONFIG, shown = true,
-		SetScript = function(self, script, func) self.onUpdate = func end,
-		Show = function(self) self.shown = true end,
-		Hide = function(self) self.shown = false end,
+		config = CONFIG,
+		shown = true,
+		SetScript = function(self, script, func)
+			self.onUpdate = func
+		end,
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
 	}
 	for i = 1, 6 do
 		local rune = {
 			size = 70,
-			SetAlpha = function(self, alpha) self.alpha = alpha end,
-			Slot = newTexture({ 0, .125, 0, .25 }),
-			Fill = newTexture({ 0, .125, .25, .5 }),
-			Glow = newTexture({ 0, .125, .5, .75 }),
+			SetAlpha = function(self, alpha)
+				self.alpha = alpha
+			end,
+			Slot = newTexture({ 0, 0.125, 0, 0.25 }),
+			Fill = newTexture({ 0, 0.125, 0.25, 0.5 }),
+			Glow = newTexture({ 0, 0.125, 0.5, 0.75 }),
 		}
 		rune.layers = { rune.Fill, rune.Glow }
 		Runes[i] = rune
@@ -73,16 +93,30 @@ local function loadRunesElement()
 		inVehicle = false,
 		-- rune ID -> { start, duration, ready, type }
 		runes = {
-			{ 0, 10, true, 1 }, { 0, 10, true, 1 },
-			{ 0, 10, true, 2 }, { 0, 10, true, 2 },
-			{ 0, 10, true, 3 }, { 0, 10, true, 3 },
+			{ 0, 10, true, 1 },
+			{ 0, 10, true, 1 },
+			{ 0, 10, true, 2 },
+			{ 0, 10, true, 2 },
+			{ 0, 10, true, 3 },
+			{ 0, 10, true, 3 },
 		},
 	}
-	_G.GetTime = function() return state.now end
-	_G.GetRuneCooldown = function(id) local r = state.runes[id]; return r[1], r[2], r[3] end
-	_G.GetRuneType = function(id) return state.runes[id][4] end
-	_G.UnitAffectingCombat = function() return state.inCombat end
-	_G.UnitHasVehicleUI = function() return state.inVehicle end
+	_G.GetTime = function()
+		return state.now
+	end
+	_G.GetRuneCooldown = function(id)
+		local r = state.runes[id]
+		return r[1], r[2], r[3]
+	end
+	_G.GetRuneType = function(id)
+		return state.runes[id][4]
+	end
+	_G.UnitAffectingCombat = function()
+		return state.inCombat
+	end
+	_G.UnitHasVehicleUI = function()
+		return state.inVehicle
+	end
 
 	local Engine = EngineMock.new()
 	Engine:NewStaticConfig("Data: Colors", { Power = COLORS })
@@ -115,13 +149,20 @@ end
 function TestRunes:test_display_order_and_colors()
 	self:update("PLAYER_ENTERING_WORLD")
 	-- slots 1-2 blood, 3-4 frost (rune IDs 5-6), 5-6 unholy (rune IDs 3-4)
-	local expected = { COLORS.RUNES_BLOOD, COLORS.RUNES_BLOOD, COLORS.RUNES_FROST, COLORS.RUNES_FROST, COLORS.RUNES_UNHOLY, COLORS.RUNES_UNHOLY }
+	local expected = {
+		COLORS.RUNES_BLOOD,
+		COLORS.RUNES_BLOOD,
+		COLORS.RUNES_FROST,
+		COLORS.RUNES_FROST,
+		COLORS.RUNES_UNHOLY,
+		COLORS.RUNES_UNHOLY,
+	}
 	for i, color in ipairs(expected) do
 		local fill = self.Runes[i].Fill.color
-		lu.assertAlmostEquals(fill[1], color[1] * .5, 1e-9)
-		lu.assertAlmostEquals(fill[2], color[2] * .5, 1e-9)
-		lu.assertAlmostEquals(self.Runes[i].Slot.color[1], color[1] * .25, 1e-9)
-		lu.assertEquals(self.Runes[i].Glow.color[4], .75)
+		lu.assertAlmostEquals(fill[1], color[1] * 0.5, 1e-9)
+		lu.assertAlmostEquals(fill[2], color[2] * 0.5, 1e-9)
+		lu.assertAlmostEquals(self.Runes[i].Slot.color[1], color[1] * 0.25, 1e-9)
+		lu.assertEquals(self.Runes[i].Glow.color[4], 0.75)
 	end
 end
 
@@ -129,7 +170,7 @@ function TestRunes:test_death_rune_recolors()
 	self:update("PLAYER_ENTERING_WORLD")
 	state.runes[5][4] = 4 -- a frost rune converted to death
 	self:update("RUNE_TYPE_UPDATE", 5)
-	lu.assertAlmostEquals(self.Runes[3].Fill.color[1], COLORS.RUNES_DEATH[1] * .5, 1e-9)
+	lu.assertAlmostEquals(self.Runes[3].Fill.color[1], COLORS.RUNES_DEATH[1] * 0.5, 1e-9)
 end
 
 function TestRunes:test_progress_stays_between_empty_and_full()
@@ -138,7 +179,7 @@ function TestRunes:test_progress_stays_between_empty_and_full()
 	recharge(1, 98)
 	self:update("RUNE_POWER_UPDATE", 1)
 	state.now = 112 -- past the end, still not ready
-	self.Runes.onUpdate(self.Runes, .1)
+	self.Runes.onUpdate(self.Runes, 0.1)
 	lu.assertEquals(self.Runes[1].progress, 1)
 	recharge(1, 120)
 	self:update("RUNE_POWER_UPDATE", 1)
@@ -150,14 +191,14 @@ function TestRunes:test_recharging_fill_is_cropped()
 	recharge(1, 97.5) -- 25% through a 10 second recharge
 	self:update("RUNE_POWER_UPDATE", 1)
 	local fill = self.Runes[1].Fill
-	lu.assertAlmostEquals(fill.height, 70 * .25, 1e-9)
+	lu.assertAlmostEquals(fill.height, 70 * 0.25, 1e-9)
 	-- the bottom quarter of the glyph's fill row (.25 to .5)
-	lu.assertAlmostEquals(fill.coords[3], .5 - .25 * .25, 1e-9)
-	lu.assertEquals(fill.coords[4], .5)
+	lu.assertAlmostEquals(fill.coords[3], 0.5 - 0.25 * 0.25, 1e-9)
+	lu.assertEquals(fill.coords[4], 0.5)
 
 	state.now = 101.5 -- 40% through
-	self.Runes.onUpdate(self.Runes, .1)
-	lu.assertAlmostEquals(fill.height, 70 * .4, 1e-9)
+	self.Runes.onUpdate(self.Runes, 0.1)
+	lu.assertAlmostEquals(fill.height, 70 * 0.4, 1e-9)
 end
 
 function TestRunes:test_hidden_out_of_combat_when_all_ready()
@@ -178,7 +219,7 @@ end
 function TestRunes:test_recharging_runes_are_dimmed()
 	recharge(3, 99)
 	self:update("RUNE_POWER_UPDATE", 3)
-	lu.assertEquals(self.Runes[5].alpha, .5) -- rune ID 3 sits in slot 5
+	lu.assertEquals(self.Runes[5].alpha, 0.5) -- rune ID 3 sits in slot 5
 	lu.assertEquals(self.Runes[1].alpha, 1)
 	lu.assertNotNil(self.Runes.onUpdate)
 end
@@ -207,7 +248,9 @@ end
 
 function TestRunes:test_enable_only_for_the_player()
 	local registered = {}
-	self.frame.RegisterEvent = function(_, event) registered[event] = true end
+	self.frame.RegisterEvent = function(_, event)
+		registered[event] = true
+	end
 	lu.assertNil(self.element.Enable(self.frame, "target"))
 	lu.assertTrue(self.element.Enable(self.frame, "player"))
 	lu.assertTrue(registered.RUNE_POWER_UPDATE)

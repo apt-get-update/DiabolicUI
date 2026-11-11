@@ -10,36 +10,12 @@ local Module = Engine:NewModule("Blizzard: LootPreview", "LOW")
 local RollWindow = Engine:GetModule("Blizzard: RollWindow")
 local L = Engine:GetLocale()
 
--- Lua API
-local _G = _G
-local ipairs = ipairs
-local pairs = pairs
-local string_gmatch = string.gmatch
-local table_concat = table.concat
-local table_remove = table.remove
-local tonumber = tonumber
-local unpack = unpack
-
--- WoW API
-local CreateFrame = _G.CreateFrame
-local GetItemInfo = _G.GetItemInfo
-local GetLootMethod = _G.GetLootMethod
-local GetLootSlotInfo = _G.GetLootSlotInfo
-local GetLootSlotLink = _G.GetLootSlotLink
-local GetLootThreshold = _G.GetLootThreshold
-local GetNumLootItems = _G.GetNumLootItems
-local GetNumPartyMembers = _G.GetNumPartyMembers
-local GetNumRaidMembers = _G.GetNumRaidMembers
-local GetTime = _G.GetTime
-local SendAddonMessage = _G.SendAddonMessage
-local UnitGUID = _G.UnitGUID
-local UnitIsDead = _G.UnitIsDead
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitName = _G.UnitName
-
 local CHATS = {
-	CHAT_MSG_RAID_WARNING = true, CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true,
-	CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true
+	CHAT_MSG_RAID_WARNING = true,
+	CHAT_MSG_RAID = true,
+	CHAT_MSG_RAID_LEADER = true,
+	CHAT_MSG_PARTY = true,
+	CHAT_MSG_PARTY_LEADER = true,
 }
 
 local LINK = "|c%x+|Hitem:[^|]+|h%[[^%]]+%]|h|r"
@@ -97,7 +73,7 @@ Module.Update = function(self)
 		local row = self.rows[i] or self:CreateRow()
 		self.rows[i] = row
 		local _, _, _, _, _, _, _, _, _, texture = GetItemInfo(item.link)
-		self.waitingForInfo = self.waitingForInfo or (not texture)
+		self.waitingForInfo = self.waitingForInfo or not texture
 		row.link = item.link
 		row.Icon:SetTexture(texture or [[Interface\Icons\INV_Misc_QuestionMark]])
 		row.Name:SetText(item.link)
@@ -114,10 +90,24 @@ Module.Update = function(self)
 	for i = #items + 1, #self.rows do
 		self.rows[i]:Hide()
 	end
-	if (#items == 0) then
+	if #items == 0 then
 		frame:Hide()
 		return
 	end
+	-- as wide as the longest name needs, from width up to max_width
+	local nameWidth = 0
+	for i = 1, #items do
+		local name = self.rows[i].Name
+		name:SetWidth(config.max_width) -- (measured cut short otherwise)
+		nameWidth = math.max(nameWidth, name:GetStringWidth())
+	end
+	local width = math.min(math.max(config.width, config.icon_size + config.gap + nameWidth + 4), config.max_width)
+	for i = 1, #items do
+		self.rows[i]:SetWidth(width)
+		self.rows[i].Name:SetWidth(width - config.icon_size - config.gap)
+	end
+	self.title:SetWidth(width - 20) -- (clear of the X)
+	frame:SetWidth(width + 2 * config.side_padding)
 	frame:SetHeight(config.top_padding + #items * config.row_height + config.bottom_padding)
 	frame:Show()
 end
@@ -139,8 +129,8 @@ Module.AddLinks = function(self, message)
 			listed[item.link] = true
 		end
 	end
-	for link in string_gmatch(message, LINK) do
-		if (not listed[link]) then
+	for link in string.gmatch(message, LINK) do
+		if not listed[link] then
 			self.items[#self.items + 1] = { link = link }
 		end
 	end
@@ -150,7 +140,7 @@ end
 -- The first of these items not rolled yet, or the first rolled
 local Find = function(items, link, rolling)
 	for i, item in ipairs(items) do
-		if (item.link == link) and ((not rolling) or (not item.rolling)) then
+		if (item.link == link) and ((not rolling) or not item.rolling) then
 			return i, item
 		end
 	end
@@ -167,7 +157,7 @@ end
 Module.OnRollEnded = function(self, event, link)
 	for i, item in ipairs(self.items) do
 		if (item.link == link) and item.rolling then
-			table_remove(self.items, i)
+			table.remove(self.items, i)
 			return self:Update()
 		end
 	end
@@ -197,17 +187,17 @@ end
 
 -- Anyone's, yours included: each slot of a corpse once, whoever opened it
 Module.OnAddonMessage = function(self, event, prefix, message)
-	if (prefix ~= PREFIX) then
+	if prefix ~= PREFIX then
 		return
 	end
 	local corpse, boss, slot, link = message:match("^(.-)~(.-)~(%d+)~(" .. LINK .. ")$")
 	if not corpse then
 		return
 	end
-	if (corpse ~= self.source) then
+	if corpse ~= self.source then
 		self:Start((boss ~= "") and boss or nil, corpse)
 	end
-	if (not self.slots[slot]) then
+	if not self.slots[slot] then
 		self.slots[slot] = true
 		self.items[#self.items + 1] = { link = link }
 		self:Update()
@@ -252,19 +242,19 @@ Module.OnChat = function(self, event, message, sender)
 	end
 end
 
--- Fake Loot Roll (/dui config, AddOns): a boss's loot and a roll on its
+-- Fake loot roll (/dui loot): a boss's loot and a roll on its
 -- first item, as a raid warning puts them, to try both windows solo
 local FAKE_LOOT = {
 	"|cffff8000|Hitem:19019:0:0:0:0:0:0:0:0|h[Thunderfury, Blessed Blade of the Windseeker]|h|r",
-	"|cff0070dd|Hitem:6182:0:0:0:0:0:0:0:0|h[Wirt's Third Leg]|h|r"
+	"|cff0070dd|Hitem:6182:0:0:0:0:0:0:0:0|h[Wirt's Third Leg]|h|r",
 }
 
 Module.ShowFakeRoll = function(self)
-	if (not self.frame) then
+	if not self.frame then
 		return
 	end
 	local player = UnitName("player")
-	self:OnChat("CHAT_MSG_RAID_WARNING", "Loot from " .. L["Fake Boss"] .. ": " .. table_concat(FAKE_LOOT, " "), player)
+	self:OnChat("CHAT_MSG_RAID_WARNING", "Loot from " .. L["Fake Boss"] .. ": " .. table.concat(FAKE_LOOT, " "), player)
 	RollWindow:OnChat("CHAT_MSG_RAID_WARNING", "Roll for " .. FAKE_LOOT[1] .. " 20s", player)
 end
 
@@ -278,9 +268,6 @@ Module.CreateWindow = function(self)
 	frame:SetClampedToScreen(true)
 	frame:SetWidth(config.width + 2 * config.side_padding)
 	frame:SetPoint(unpack(config.position))
-	frame:SetBackdrop(look.backdrop)
-	frame:SetBackdropColor(unpack(look.backdrop_color))
-	frame:SetBackdropBorderColor(unpack(look.backdrop_border_color))
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
 	frame:RegisterForDrag("LeftButton")
@@ -290,19 +277,26 @@ Module.CreateWindow = function(self)
 	local sinceUpdate = 0
 	frame:SetScript("OnUpdate", function(_, elapsed)
 		sinceUpdate = sinceUpdate + elapsed
-		if self.waitingForInfo and (sinceUpdate > .5) then
+		if self.waitingForInfo and (sinceUpdate > 0.5) then
 			sinceUpdate = 0
 			self:Update()
 		end
 	end)
 
+	-- the loot window's light popup: the boss's name a small line on top,
+	-- the windows' X at that line's right, inside the frame
+	frame:SetBackdrop(look.backdrop)
+	frame:SetBackdropColor(unpack(look.backdrop_color))
+	frame:SetBackdropBorderColor(unpack(look.backdrop_border_color))
 	local title = frame:CreateFontString(nil, "OVERLAY")
 	title:SetFontObject(config.title_font)
-	title:SetPoint("TOP", 0, -14)
-
+	title:SetTextColor(1, 0.82, 0)
+	title:SetJustifyH("LEFT")
+	title:SetWidth(config.width - 20) -- (clear of the X)
+	title:SetPoint("TOPLEFT", unpack(config.title_offset))
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	Engine:GetModule("Blizzard: Windows"):SkinClose(close)
-	close:SetPoint("TOPRIGHT", unpack(look.close_button_offset))
+	close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", unpack(config.close_offset))
 	close:SetScript("OnClick", function()
 		self:Start()
 		self:Update()
@@ -313,12 +307,12 @@ end
 
 Module.OnInit = function(self)
 	self.config = self:GetDB("Blizzard").preview
-	self.look = self:GetDB("Blizzard").loot
+	self.look = self:GetDB("Blizzard").loot -- (its frame, its icons' crop)
 	self.items, self.rows, self.lastLine = {}, {}, 0
 end
 
 Module.OnEnable = function(self)
-	if (not self:GetConfig("LootFrame").rollWindow) then
+	if not self:GetConfig("LootFrame").rollWindow then
 		return
 	end
 	self:CreateWindow()
