@@ -110,6 +110,12 @@ Module.LayoutSpells = function(self, window)
 		ring:SetSize(button:GetWidth() * spec.scale, button:GetHeight() * spec.scale)
 		ring:SetPoint("CENTER", button, "CENTER", 0, 0)
 		ring:Hide()
+		-- pulsing, not a still square
+		ring.Pulse = ring:CreateAnimationGroup()
+		ring.Pulse:SetLooping("BOUNCE")
+		local fade = ring.Pulse:CreateAnimation("Alpha")
+		fade:SetChange(-spec.pulse)
+		fade:SetDuration(spec.pulse_time)
 		button.DiabolicUnassigned = ring
 		local spell, rank = _G[name .. "SpellName"], _G[name .. "SubSpellName"]
 		spell:SetFontObject(config.name_font)
@@ -309,8 +315,12 @@ Module.UpdateUnassigned = function(self, button)
 	end
 	if show then
 		ring:Show()
+		if not ring.Pulse:IsPlaying() then
+			ring.Pulse:Play()
+		end
 	else
 		ring:Hide()
+		ring.Pulse:Stop()
 	end
 end
 
@@ -487,6 +497,13 @@ Module.LayoutCompanions = function(self, cover)
 			empty:SetAlpha(0)
 		end
 		slot.border = kit:AddBorder(button, button:GetWidth())
+		-- the chosen one in Blizzard's outline (the summoned one's glow, in
+		-- its shape), its blue made the theme's orange
+		local checked = button:GetCheckedTexture()
+		if checked then
+			checked:SetDesaturated(true)
+			checked:SetVertexColor(unpack(config.companion_chosen_color))
+		end
 		self.CompanionSlots[i] = slot
 		local label = button:CreateFontString(nil, "OVERLAY")
 		label:SetFontObject(config.name_font)

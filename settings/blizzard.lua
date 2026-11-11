@@ -1243,6 +1243,8 @@ Engine:NewStaticConfig("Blizzard", {
 			texture = path .. [[textures\DiabolicUI_D3_SpellGlowGold.tga]], -- (its orange one in gold)
 			scale = 72 / 44, -- its canvas over the icon's (its brightest ring just past the border)
 			color = { 1, 1, 1, 1 },
+			pulse = 0.75, -- how much it fades, back and forth
+			pulse_time = 0.9, -- each way, in seconds
 		},
 		-- the search box (in the band), the spells found on the book's pages
 		search_size = { 160, 20 },
@@ -1278,6 +1280,7 @@ Engine:NewStaticConfig("Blizzard", {
 		summon_size = { 140, 24 },
 		summon_bottom = 6, -- Summon and the turning arrows, in from the model's foot (the arrows from its corners)
 		companion_slot_size = { 156, 45 },
+		companion_chosen_color = { 1, 0.45, 0.1 }, -- the chosen one's outline (Blizzard's, blue), in orange
 		companion_name_width = 98,
 		-- the professions page, in the cover: the primary ones, then the
 		-- secondary ones, a panel each (its icon opens it, its rank in a
