@@ -128,6 +128,28 @@ function TestNamePlates:test_every_kind_of_unit_reads_right()
 	lu.assertFalse(info("enemyPlayer").isFriendly)
 end
 
+-- ChromieCraft's cross-faction groups: a group member of the other faction
+-- (class-colored, so an enemy to the client) gets its plate out of sight;
+-- out of the group again, and a Horde stranger, a plate as any.
+function TestNamePlates:test_the_other_factions_players_in_your_group_get_no_plate()
+	local client = self.client
+	local mate = client:AddNamePlate({ name = "Thrall", level = 80, color = { 0, 0.44, 0.87 } })
+	local stranger = client:AddNamePlate({ name = "Garrosh", level = 80, color = { 0.78, 0.61, 0.43 } })
+	client:Tick(1)
+	client:SetUnit("party1", Client.newUnit({ name = "Thrall", isPlayer = true }))
+	client:Tick(3)
+	lu.assertAlmostEquals(ours(client, mate):GetAlpha(), 0.01, 0.001)
+	lu.assertAlmostEquals(ours(client, stranger):GetAlpha(), 0.7, 0.01)
+	-- a raid: its members
+	client:SetUnit("party1", nil)
+	client:SetUnit("raid1", Client.newUnit({ name = "Garrosh", isPlayer = true }))
+	client:SetUnit("raid2", Client.newUnit({ isPlayer = true }))
+	client:Tick(3)
+	lu.assertAlmostEquals(ours(client, stranger):GetAlpha(), 0.01, 0.001)
+	lu.assertAlmostEquals(ours(client, mate):GetAlpha(), 0.7, 0.01)
+	assertClean(client)
+end
+
 function TestNamePlates:test_the_target_stands_out_and_others_dim()
 	local client = self.client
 	local target = client:AddNamePlate({ name = "Target", level = 80, color = HOSTILE })

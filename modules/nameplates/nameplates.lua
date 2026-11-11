@@ -21,6 +21,10 @@ Module:SetIncompatible("TidyPlatesContinued")
 local AllPlates, VisiblePlates = {}, {}
 local CastData, CastBarPool = {}, {}
 
+-- Your group's players by name (ChromieCraft's cross-faction groups: the
+-- other faction's among them still look like enemies to the client)
+local GROUP = {}
+
 -- WorldFrame child registry to rule out elements already checked faster
 local AllChildren = {}
 
@@ -457,10 +461,11 @@ NamePlate_WotLK.UpdateAlpha = function(self)
 		local current, max = oldHealth:GetValue(), select(2, oldHealth:GetMinMaxValues())
 		if (current == 0) or (max == 0) then
 			self.targetAlpha = 0 -- just fade out the dead units fast, they tend to get stuck. weird.
-		elseif (not info.isFriendly) and info.name and (UnitInRaid(info.name) or UnitInParty(info.name)) then
+		elseif info.isPlayer and (info.isFriendly == false) and GROUP[info.name] then
 			-- one of the other faction in your group (ChromieCraft's cross-faction
-			-- groups: the client still takes them for enemies): no plate
-			self.targetAlpha = 0
+			-- groups: the client still takes them for enemies): out of sight like
+			-- a friendly NPC's (not 0: a faded out plate's let go of until shown again)
+			self.targetAlpha = ALPHA_MINIMAL
 		elseif TARGET then
 			if info.isTarget then
 				self.targetAlpha = ALPHA_TARGET
@@ -906,6 +911,20 @@ end
 -- NamePlate Event Handling
 ----------------------------------------------------------
 local hasSetBlizzardSettings
+-- Who's in your group, by name: its players' plates (when of the other faction) hidden.
+Module.UpdateGroup = function(self)
+	wipe(GROUP)
+	local raid = GetNumRaidMembers()
+	local prefix, count = (raid > 0) and "raid" or "party", (raid > 0) and raid or GetNumPartyMembers()
+	for i = 1, count do
+		local name = UnitName(prefix .. i)
+		if name then
+			GROUP[name] = true
+		end
+	end
+	FORCEUPDATE = true
+end
+
 Module.OnEvent = function(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
 		if not hasSetBlizzardSettings then
@@ -913,6 +932,7 @@ Module.OnEvent = function(self, event, ...)
 			hasSetBlizzardSettings = true
 		end
 		self:UpdateAllScales()
+		self:UpdateGroup()
 		self.Updater:SetScript("OnUpdate", function(_, ...)
 			self:OnUpdate(...)
 		end)
@@ -936,6 +956,8 @@ Module.OnEvent = function(self, event, ...)
 		elseif UnitChannelInfo("target") then
 			self:OnSpellCast("UNIT_SPELLCAST_CHANNEL_START", "target")
 		end
+	elseif (event == "PARTY_MEMBERS_CHANGED") or (event == "RAID_ROSTER_UPDATE") then
+		self:UpdateGroup()
 	elseif event == "RAID_TARGET_UPDATE" then
 		for _, plate in pairs(self.allPlates) do
 			plate:UpdateRaidTarget()
@@ -1310,6 +1332,8 @@ Module.OnEnable = function(self)
 	self:RegisterEvent("PLAYER_LEVEL_UP", "OnEvent")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnEvent")
 	self:RegisterEvent("RAID_TARGET_UPDATE", "OnEvent")
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "OnEvent")
+	self:RegisterEvent("RAID_ROSTER_UPDATE", "OnEvent")
 	self:RegisterEvent("UNIT_FACTION", "OnEvent")
 	self:RegisterEvent("UNIT_LEVEL", "OnEvent")
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnEvent")
