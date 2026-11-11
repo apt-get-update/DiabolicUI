@@ -380,7 +380,6 @@ local function constants()
 		TIMEMANAGER_TOOLTIP_REALMTIME = "Realm Time:",
 		TIMEMANAGER_TOOLTIP_TITLE = "Time Info",
 		GAMETIME_TOOLTIP_TOGGLE_CALENDAR = "Click to toggle the calendar.",
-		MBB_TOOLTIP1 = nil,
 		SLASH_RELOADUI1 = nil,
 	}
 	for class, color in pairs(CLASS_COLORS) do
@@ -424,7 +423,6 @@ end
 -- them a string).
 local NIL_CAPS = {
 	CUSTOM_CLASS_COLORS = true,
-	MBB_TOOLTIP1 = true,
 	SLASH_RELOADUI1 = true,
 	SLASH_RELOADUI2 = true,
 	UIDROPDOWNMENU_VALUE_PATCH_VERSION = true,

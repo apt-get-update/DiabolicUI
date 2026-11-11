@@ -61,7 +61,6 @@ https://github.com/sloan-008/Questie-335[Questie],
 https://github.com/paokkerkir/Mapster[Mapster],
 https://github.com/NoM0Re/WoW-3.3.5a-Addons#action-bar-saver-2[Action Bar Saver],
 https://github.com/thierbig/TrinketMenu-3.3.5[TrinketMenu],
-https://www.curseforge.com/wow/addons/mbb/files/all?page=1&pageSize=20&version=3.3.5&showAlphaFiles=hide[MBB],
 https://github.com/bkader/Masque-WoTLK[Masque] with https://www.curseforge.com/wow/addons/masque-diabolic[Masque_Diabolic],
 https://github.com/Stormhand-dev/Lexara---HD-Font-Renderer-for-WoW-3.3.5[Lexara].
 
@@ -75,4 +74,4 @@ Developer docs: https://apt-get-update.github.io/DiabolicUI/[apt-get-update.gith
 
 == 📜 Credits
 
-Lars "Goldpaw" Norberg (DiabolicUI, DiabolicUI2, the minimap, ChatCleaner), https://github.com/Hrishi29x/DiabolicUI[Hrishi29x] (the first 3.3.5 fork), GearScoreLite, Kui_Nameplates, Masque_Diabolic, and Blizzard Entertainment (Diablo III's art and the Exocet font). Questie, TrinketMenu, Immersion, AdiBags and BiS-Tooltip Renewed are restyled or read from; their code stays theirs. GShade credits: link:extras/gshade/README.adoc[its README].
+Lars "Goldpaw" Norberg (DiabolicUI, DiabolicUI2, the minimap, ChatCleaner), https://github.com/Hrishi29x/DiabolicUI[Hrishi29x] (the first 3.3.5 fork), GearScoreLite, Kui_Nameplates, Masque_Diabolic, and Blizzard Entertainment (Diablo III's art and the Exocet font). Thanks to MinimapButtonBag (karlsnyder), whose job the minimap's "+" now does. Questie, TrinketMenu, Immersion, AdiBags and BiS-Tooltip Renewed are restyled or read from; their code stays theirs. GShade credits: link:extras/gshade/README.adoc[its README].

@@ -376,3 +376,5 @@ L["Not in combat."] = true
 L["%d parts saved (%d new)."] = true
 L["a window"] = true
 L["The size of DiabolicUI's bars, orbs and frames.|n|nAlso: /dui setscale 0.9"] = true
+L["Minimap Buttons"] = true
+L["Click to show your addons' minimap buttons."] = true

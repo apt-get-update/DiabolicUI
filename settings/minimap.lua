@@ -21,6 +21,10 @@ Engine:NewStaticConfig("Minimap", {
 	compassNorthTag = "N",
 	mailSize = { 48, 48 },
 
+	-- the addons' minimap buttons' drawer (modules/minimap/buttons.lua): its
+	-- "+", then each button's cell, in rows of `columns`
+	buttons = { toggle_size = 48, cell = 33, columns = 6, padding = 8 },
+
 	colors = {
 		normal = color(229, 178, 38),
 		highlight = color(250, 250, 250),
