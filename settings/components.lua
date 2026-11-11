@@ -85,7 +85,9 @@ Merge(window, {
 		texture = path .. [[textures\DiabolicUI_D3_CheckBox.tga]],
 		box = { 0, 0.1640625, 0, 0.671875 },
 		lit = { 0.25, 0.4140625, 0, 0.671875 },
-		checked = { 0.5, 0.6640625, 0, 0.671875 },
+		check = [[Interface\Buttons\UI-CheckBox-Check]], -- Blizzard's gold tick, over our box
+		check_disabled = [[Interface\Buttons\UI-CheckBox-Check-Disabled]],
+		check_scale = 1.6, -- its file's 32 for Blizzard's box of about 20: as big over ours
 		size = 20,
 		pushed_color = { 0.7, 0.7, 0.7 },
 		label_gap = 4,

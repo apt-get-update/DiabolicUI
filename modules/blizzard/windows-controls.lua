@@ -253,7 +253,7 @@ Module.StyleEditBox = function(self, box)
 end
 
 -- A checkbox (OptionsCheckButtonTemplate's) as Diablo III's: its dark box
--- in a bronze frame, the frame lit under the mouse, its orange X checked;
+-- in a bronze frame, the frame lit under the mouse, Blizzard's gold tick checked;
 -- its label (Blizzard's "Text") right of it in the title's gold; its size
 -- and its label's font `look`'s (check_box.stacked) if not check_box's.
 Module.StyleCheckBox = function(self, button, look)
@@ -280,8 +280,9 @@ Module.SkinCheckBox = function(self, button, size)
 	button:SetNormalTexture(spec.texture)
 	button:SetPushedTexture(spec.texture)
 	button:SetHighlightTexture(spec.texture)
-	button:SetCheckedTexture(spec.texture)
-	button:SetDisabledCheckedTexture(spec.texture)
+	-- its tick Blizzard's gold one, over our box
+	button:SetCheckedTexture(spec.check)
+	button:SetDisabledCheckedTexture(spec.check_disabled)
 	button:GetNormalTexture():SetTexCoord(unpack(spec.box))
 	local pushed = button:GetPushedTexture()
 	pushed:SetTexCoord(unpack(spec.box))
@@ -289,16 +290,21 @@ Module.SkinCheckBox = function(self, button, size)
 	local lit = button:GetHighlightTexture()
 	lit:SetTexCoord(unpack(spec.lit))
 	lit:SetBlendMode("ADD")
-	button:GetCheckedTexture():SetTexCoord(unpack(spec.checked))
-	local disabled = button:GetDisabledCheckedTexture()
-	disabled:SetTexCoord(unpack(spec.checked))
-	disabled:SetDesaturated(true)
+	local checked, disabled = button:GetCheckedTexture(), button:GetDisabledCheckedTexture()
 	if size then
-		for _, texture in ipairs({ button:GetNormalTexture(), pushed, lit, button:GetCheckedTexture(), disabled }) do
+		for _, texture in ipairs({ button:GetNormalTexture(), pushed, lit }) do
 			texture:ClearAllPoints()
 			texture:SetPoint("CENTER")
 			texture:SetSize(size, size)
 		end
+	end
+	-- (Blizzard's tick spills past its box, as on Blizzard's own)
+	local tick = (size or button:GetWidth()) * spec.check_scale
+	for _, texture in ipairs({ checked, disabled }) do
+		texture:SetTexCoord(0, 1, 0, 1)
+		texture:ClearAllPoints()
+		texture:SetPoint("CENTER")
+		texture:SetSize(tick, tick)
 	end
 end
 
