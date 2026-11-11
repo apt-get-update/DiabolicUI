@@ -319,7 +319,7 @@ BarWidget.SpawnTaxiExitButton = function(self)
 	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateTaxiExitButtonVisibility")
 	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdateTaxiExitButtonVisibility")
 
-	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists,canexitvehicle] hide; show")
+	RegisterStateDriver(TaxiExitButton, "visibility", "[target=vehicle,exists] hide; show") -- (in a vehicle: its own exit button)
 
 	return TaxiBar, TaxiExitButton
 end

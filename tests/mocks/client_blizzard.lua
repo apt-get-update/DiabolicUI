@@ -2934,8 +2934,6 @@ local function installConditions(client)
 					result = w.inCombat
 				elseif name == "vehicleui" then
 					result = w.units.player.hasVehicleUI
-				elseif name == "canexitvehicle" then
-					result = w.units.player.inVehicle
 				elseif name == "bonusbar" then
 					result = (arg == "" and w.bonusBarOffset > 0) or (arg ~= "" and tostring(w.bonusBarOffset) == arg)
 				elseif name == "possessbar" then
