@@ -1,10 +1,11 @@
 -- Gives Decursive's squares (its micro unit frames) Diablo III's look when
--- it's loaded: each a dark stone socket in the action buttons' bronze
--- border; an afflicted player's showing the affliction's icon, the border
--- in its type's colour, and a little mouse with the button to click lit
--- (and its modifier's letter); a short burst in that colour as you
--- dispel it. Art only: Decursive's code and its secure clicks are left as
--- they are.
+-- it's loaded: each a stained-glass medallion (the quests' medallions of
+-- Diablo III's acts). A healthy player's is dormant grey stone; an
+-- afflicted player's glass lit in the affliction's colour (Magic blue,
+-- Curse purple, Disease orange, Poison gold), with a little mouse showing
+-- the button to click (and its modifier's letter). As you dispel it, a
+-- burst in that colour, its glass dark for a moment, then stone again.
+-- Art only: Decursive's code and its secure clicks are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Decursive", "LOW")
 
@@ -68,61 +69,71 @@ local CreateBurst = function(frame, spec)
 	return burst
 end
 
--- A square (once): its socket, border, icon, mouse and burst.
+-- A medallion's place in the sheet (settings: decursive.medallions).
+local SetMedallion = function(texture, cell, size)
+	local column, row = unpack(cell)
+	texture:SetTexCoord(column * size, (column + 1) * size, row * size, (row + 1) * size)
+end
+
+-- A square (once): its medallion, mouse and burst; Decursive's own
+-- squares of colour and its class border out of sight.
 Module.StyleSquare = function(self, square)
-	if square.DiabolicSocket then
+	if square.DiabolicMedallion then
 		return
 	end
 	local spec, frame = self.config, square.Frame
 	for i = 1, 4 do
-		square["OuterTexture" .. i]:Hide() -- (its class border: ours instead)
+		square["OuterTexture" .. i]:Hide()
 	end
-	local socket = frame:CreateTexture(nil, "BACKGROUND")
-	socket:SetTexture(unpack(spec.socket_color))
-	socket:SetPoint("CENTER")
-	socket:SetSize(frame:GetWidth() - 2, frame:GetHeight() - 2)
-	square.DiabolicSocket = socket
-	square.DiabolicBorder = kit:AddBorder(frame, frame:GetWidth())
-	local icon = frame:CreateTexture(nil, "ARTWORK")
-	icon:SetPoint("CENTER")
-	icon:SetSize(frame:GetWidth() - 4, frame:GetHeight() - 4)
-	icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	icon:Hide()
-	square.DiabolicIcon = icon
+	local medallion = frame:CreateTexture(nil, "BORDER") -- (under its timer and raid icon)
+	medallion:SetTexture(spec.texture)
+	medallion:SetPoint("CENTER")
+	-- (its ornaments past the square: its glass as big as the square)
+	medallion:SetSize(frame:GetWidth() * spec.medallion_scale, frame:GetHeight() * spec.medallion_scale)
+	square.DiabolicMedallion = medallion
 	square.DiabolicMouse = CreateMouse(frame, spec.mouse)
 	square.DiabolicBurst = CreateBurst(frame, spec.burst)
+	-- the glass kept dark a moment after you dispel it, then stone again
+	local hold = frame:CreateAnimationGroup()
+	local wait = hold:CreateAnimation("Alpha")
+	wait:SetChange(0)
+	wait:SetDuration(spec.cleansed_time)
+	hold:SetScript("OnFinished", function()
+		square.DiabolicCleansed = nil
+		self:UpdateSquare(square)
+	end)
+	square.DiabolicHold = hold
 	self:UpdateSquare(square)
 end
 
--- What a square shows, after Decursive set its colour: the stone alone
--- while all is well, Decursive's colour for its other states (far, gone,
--- blacklisted), the affliction's icon (dimmer out of range) and the mouse
--- button to click while afflicted.
+-- What a square shows, after Decursive set its state: the lit glass while
+-- afflicted (dimmer out of range) and the mouse button to click; the dark
+-- glass just after your dispel; dormant stone while all is well (dimmer
+-- far away, gone or blacklisted).
 Module.UpdateSquare = function(self, square)
-	if not square.DiabolicSocket then
+	local medallion = square.DiabolicMedallion
+	if not medallion then
 		return
 	end
 	local spec = self.config
+	local cells, size = spec.medallions, spec.cell
+	square.Texture:Hide() -- (Decursive's square of colour)
 	local debuff = square.IsDebuffed and square.Debuffs and square.Debuffs[1]
 	local type = debuff and _G.DcrC and _G.DcrC.TypeNames and _G.DcrC.TypeNames[debuff.Type]
-	local status = square.UnitStatus
-	if debuff then
-		square.Texture:Hide()
-		square.DiabolicIcon:SetTexture(debuff.Texture)
-		square.DiabolicIcon:SetAlpha((status == AFFLICTED_NIR) and spec.out_of_range_alpha or 1)
-		square.DiabolicIcon:Show()
-		square.DiabolicBorder:SetVertexColor(unpack(spec.colors[type] or spec.colors.none))
+	if debuff and cells[type] then
+		SetMedallion(medallion, cells[type].lit, size)
+		medallion:SetAlpha((square.UnitStatus == AFFLICTED_NIR) and spec.out_of_range_alpha or 1)
 		square.DiabolicType = type
 		self:ShowMouse(square)
+		return
+	end
+	square.DiabolicMouse:Hide()
+	if square.DiabolicCleansed and cells[square.DiabolicCleansed] then
+		SetMedallion(medallion, cells[square.DiabolicCleansed].dark, size)
+		medallion:SetAlpha(1)
 	else
-		if status == NORMAL then
-			square.Texture:Hide()
-		else
-			square.Texture:Show()
-		end
-		square.DiabolicIcon:Hide()
-		square.DiabolicBorder:SetVertexColor(1, 1, 1)
-		square.DiabolicMouse:Hide()
+		SetMedallion(medallion, cells.healthy, size)
+		medallion:SetAlpha((square.UnitStatus == NORMAL) and 1 or spec.away_alpha)
 	end
 end
 
@@ -145,7 +156,7 @@ Module.ShowMouse = function(self, square)
 end
 
 -- A dispel of yours: the burst on that player's square, in the colour of
--- what it showed.
+-- what it showed, its glass dark a moment.
 Module.OnCombatLog = function(self, event, _, subEvent, sourceGUID, _, _, destGUID)
 	if (subEvent ~= "SPELL_DISPEL") or (sourceGUID ~= UnitGUID("player")) then
 		return
@@ -159,6 +170,10 @@ Module.OnCombatLog = function(self, event, _, subEvent, sourceGUID, _, _, destGU
 			burst:Show()
 			burst.Play:Stop()
 			burst.Play:Play()
+			square.DiabolicCleansed = square.DiabolicType
+			square.DiabolicHold:Stop()
+			square.DiabolicHold:Play()
+			self:UpdateSquare(square)
 			return
 		end
 	end

@@ -593,8 +593,21 @@ Engine:NewStaticConfig("Blizzard", {
 	-- against it, up over the band and the tabs (Blizzard's start 37 down)
 	-- AdiBags' bags (modules/blizzard/adibags.lua)
 	decursive = {
-		socket_color = { 0.05, 0.04, 0.03, 0.9 }, -- an empty socket's stone
-		out_of_range_alpha = 0.4, -- an affliction's icon too far to dispel
+		-- the medallions (Diablo III's quests'), by type: lit, dark; and the
+		-- healthy one's dormant stone; columns and rows of 128 in 512
+		texture = path .. [[textures\DiabolicUI_D3_Medallions.tga]],
+		cell = 0.25,
+		medallions = {
+			Magic = { lit = { 0, 0 }, dark = { 0, 1 } },
+			Curse = { lit = { 1, 0 }, dark = { 1, 1 } },
+			Disease = { lit = { 2, 0 }, dark = { 2, 1 } },
+			Poison = { lit = { 3, 0 }, dark = { 3, 1 } },
+			healthy = { 0, 2 },
+		},
+		medallion_scale = 1.3, -- its ornaments past the square, its glass as big as it
+		out_of_range_alpha = 0.4, -- an affliction too far to dispel
+		away_alpha = 0.35, -- a healthy one far away, gone or blacklisted
+		cleansed_time = 2, -- the glass dark after your dispel, then stone
 		-- the border by the affliction's type (Blizzard's debuff colours)
 		colors = {
 			none = { 0.8, 0, 0 },
