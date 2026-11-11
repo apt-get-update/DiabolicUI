@@ -3,7 +3,7 @@
 -- difficulty, the chosen one in an orange box, the reagents' names in
 -- ink (Blizzard sets both again as it updates, so after it does); the
 -- search in the band, Have Materials right of it, the rank in the title,
--- the dropdowns under the band.
+-- the dropdowns under the band; the chosen recipe as a chapter's title.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trade Skill", "LOW")
 local kit
@@ -162,6 +162,13 @@ Module.Layout = function(self)
 	kit:HideArt(_G.TradeSkillDetailScrollChildFrame, { "ui%-classtrainer%-detailheader" })
 	local icon = _G.TradeSkillSkillIcon
 	kit:AddBorder(icon, icon:GetWidth())
+	-- its icon and name as a chapter's title, on a dark strip
+	local chapter = config.chapter
+	local strip = _G.TradeSkillDetailScrollChildFrame:CreateTexture(nil, "BACKGROUND")
+	strip:SetTexture(chapter.texture)
+	strip:SetTexCoord(unpack(chapter.texcoords))
+	strip:SetSize(unpack(chapter.size))
+	strip:SetPoint("TOPLEFT", _G.TradeSkillDetailScrollChildFrame, "TOPLEFT", chapter.offset[1], chapter.offset[2])
 	-- the reagents' names smaller, wider: most on one line
 	for i = 1, _G.MAX_TRADE_SKILL_REAGENTS do
 		local plate = _G["TradeSkillReagent" .. i .. "NameFrame"]

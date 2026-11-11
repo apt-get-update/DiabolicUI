@@ -937,12 +937,12 @@ Engine:NewStaticConfig("Blizzard", {
 				-- (their colors darkened for it: modules/blizzard/tradeskill.lua)
 				parchments = {
 					{ "TradeSkillListScrollFrame", "parchment" },
-					{ "TradeSkillDetailScrollFrame", "lined", "TradeSkillListScrollFrame", 6 },
+					-- (plain: a lined one's lines stay put while its text scrolls)
+					{ "TradeSkillDetailScrollFrame", "parchment", "TradeSkillListScrollFrame", 6 },
 				},
+				-- (the recipe's name and requirements on its dark chapter strip:
+				-- Blizzard's own colours, for a dark background)
 				ink = {
-					"TradeSkillSkillName",
-					"TradeSkillRequirementLabel",
-					"TradeSkillRequirementText",
 					"TradeSkillSkillLineName",
 					"TradeSkillDescription",
 					"TradeSkillReagentLabel",
@@ -1335,6 +1335,14 @@ Engine:NewStaticConfig("Blizzard", {
 		count = { arrow_size = 20, box_width = 26 }, -- how many to make: its arrows, its box (its plate past it), from Create All (86 to Create)
 		reagent_font = DiabolicFont_SansBold10,
 		reagent_name_width = 100, -- their names (Blizzard's 12, 90 wide): most on one line
+		-- the chosen recipe as a chapter's title: its icon and name on Diablo
+		-- III's dark strip (the artisans' page's), scrolling with its text
+		chapter = {
+			texture = path .. [[textures\DiabolicUI_D3_ChapterStrip.tga]],
+			texcoords = { 0, 468 / 512, 0, 42 / 64 },
+			size = { 290, 46 },
+			offset = { 1, 1 }, -- from the details' top left
+		},
 		highlight_inset = 6, -- the chosen recipe's copper bar, in from the parchment's sides
 		scan_gap = 6, -- the requirement short of Auctionator's Scan AH, the description under them
 		description_left = 5,
