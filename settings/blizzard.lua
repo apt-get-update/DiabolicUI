@@ -551,6 +551,7 @@ Engine:NewStaticConfig("Blizzard", {
 		tree = { 42, -110 }, -- its top left
 		tree_gap = 8, -- over the points
 		tree_panel_insets = { 6, 6, 30, 6 }, -- the scroll bar inside on the right
+		tree_art_color = { 0.45, 0.45, 0.45 }, -- the tree's art dimmed: the icons over it stand out
 		bars_inset = 32, -- the points and the preview's bar, from the window's sides
 		bars_bottom = 30, -- the lowest, from the window's bottom
 		-- the glyphs under the tabs: their art's parchment (x, y, width,
@@ -1476,7 +1477,7 @@ Engine:NewStaticConfig("Blizzard", {
 		seconds = 15, -- when the message doesn't say
 		main_spec = 100, -- /roll 100
 		off_spec = 99, -- /roll 99
-		name_font = DiabolicFont_HeaderRegular14,
+		name_font = DiabolicFont_SansBold14, -- readable, as the Master Loot list's (not the titles' capitals)
 		name_height = 16,
 		time_font = DiabolicFont_SansBold10,
 		result_font = DiabolicFont_HeaderRegular12,
