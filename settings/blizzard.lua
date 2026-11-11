@@ -1291,10 +1291,10 @@ Engine:NewStaticConfig("Blizzard", {
 		professions_inset = 24, -- the page inside the leather's stitched border
 		professions_scale = 0.9, -- and scaled down to fit in it
 		profession_width = 480,
-		profession_heights = { 70, 52 }, -- a primary one's, a secondary one's
-		profession_gap = 8,
-		profession_section_gap = 30, -- above a section, for its title
-		profession_icons = { 48, 36 }, -- primary, secondary
+		profession_heights = { 70, 70 }, -- a primary one's, a secondary one's: the same, they hold the same
+		profession_gap = 6,
+		profession_section_gap = 24, -- above a section, for its title
+		profession_icons = { 48, 48 }, -- primary, secondary
 		profession_inset = 11, -- the icon from the panel's left
 		profession_bar = { 240, 14 }, -- its rank's bar
 		profession_bar_color = { 0.66, 0.47, 0.24 }, -- its fill: muted bronze (progress, not red)
