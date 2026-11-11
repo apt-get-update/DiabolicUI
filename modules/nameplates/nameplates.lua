@@ -457,6 +457,10 @@ NamePlate_WotLK.UpdateAlpha = function(self)
 		local current, max = oldHealth:GetValue(), select(2, oldHealth:GetMinMaxValues())
 		if (current == 0) or (max == 0) then
 			self.targetAlpha = 0 -- just fade out the dead units fast, they tend to get stuck. weird.
+		elseif (not info.isFriendly) and info.name and (UnitInRaid(info.name) or UnitInParty(info.name)) then
+			-- one of the other faction in your group (ChromieCraft's cross-faction
+			-- groups: the client still takes them for enemies): no plate
+			self.targetAlpha = 0
 		elseif TARGET then
 			if info.isTarget then
 				self.targetAlpha = ALPHA_TARGET
