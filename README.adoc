@@ -32,19 +32,31 @@ image::docs/screenshots/character.webp[The character window]
 
 [cols="2*a",frame=none,grid=none]
 |===
+|image::docs/screenshots/quest-log.webp[Quest log]
+|image::docs/screenshots/spellbook.webp[Spellbook, unassigned spells lit]
+|image::docs/screenshots/talents.webp[Talents]
+|image::docs/screenshots/reputation.webp[Reputation]
+|image::docs/screenshots/options.webp[Options (/dui config)]
+|image::docs/screenshots/options-positions.webp[Positions page]
 |image::docs/screenshots/specialization.webp[Specializations page]
 |image::docs/screenshots/talent-skull.webp[Specialization button]
 |image::docs/screenshots/raid.webp[Raid frames by group]
 |image::docs/screenshots/party.webp[Party frames]
 |image::docs/screenshots/move-mode.webp[Unlock Frames (/dui move)]
-|image::docs/screenshots/loot.webp[Loot window]
+|image::docs/screenshots/roll-window.webp[Roll window]
 |===
 
 [cols="3*a",frame=none,grid=none]
 |===
+|image::docs/screenshots/loot.webp[Loot window]
+|image::docs/screenshots/loot-preview.webp[Loot preview]
+|image::docs/screenshots/gains.webp[Gold and loot gained]
 |image::docs/screenshots/tooltip.webp[Item tooltip]
+|image::docs/screenshots/spell-tooltip.webp[Spell tooltip]
+|image::docs/screenshots/spec-button-tooltip.webp[Specialization button tooltip]
 |image::docs/screenshots/reputation-hover.webp[Reputation bar tooltip]
 |image::docs/screenshots/chat-loot.webp[Shorter loot messages]
+|
 |===
 
 == 🧩 Recommended addons
