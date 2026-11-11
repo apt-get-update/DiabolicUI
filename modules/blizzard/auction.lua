@@ -31,12 +31,25 @@ local Zone = function(page, name)
 	return kit:AddZone(holder, "slate", { 0, 0, 0, 0 }, page)
 end
 
+-- Each list's column names (Blizzard's sort buttons), by its first.
+local SORTS = {
+	BrowseQualitySort = { "BrowseQualitySort", "BrowseLevelSort", "BrowseDurationSort", "BrowseHighBidderSort", "BrowseCurrentBidSort" },
+	BidQualitySort = { "BidQualitySort", "BidLevelSort", "BidDurationSort", "BidBuyoutSort", "BidStatusSort", "BidBidSort" },
+	AuctionsQualitySort = { "AuctionsQualitySort", "AuctionsDurationSort", "AuctionsHighBidderSort", "AuctionsBidSort" },
+}
+
 -- A list of results on `page`, on slate (the zone `name`): its column names
 -- (from `header`, the first) along its top, its rows (from `row`, the first)
 -- and their scroll frame `list` (Blizzard's: its bar by their end) under them.
 Module.PlaceResults = function(self, page, name, header, row, list)
 	Zone(page, name)
 	Ours(header, row, list)
+	-- its column names as the other tables': no tab art, a thin line under
+	local sorts = {}
+	for _, sort in ipairs(SORTS[header] or {}) do
+		sorts[#sorts + 1] = _G[sort]
+	end
+	kit:StyleColumnButtons(sorts, true)
 end
 
 -- A category's button as our flat red one (a subcategory's fainter, an

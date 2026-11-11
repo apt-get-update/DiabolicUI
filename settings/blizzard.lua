@@ -304,6 +304,7 @@ Engine:NewStaticConfig("Blizzard", {
 					}, -- the combat ones
 				},
 				icon_dim = 0.55, -- the unchosen tabs' icons
+				tab_dim = 0.6, -- the unchosen tabs themselves (their frames)
 				gap = 4, -- the pages, under the tabs
 			},
 			-- the titles' page: the known ones in a list

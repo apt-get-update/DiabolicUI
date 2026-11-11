@@ -509,6 +509,8 @@ Module.CreatePages = function(self, column)
 			local shade = (i == chosen) and 1 or spec.icon_dim
 			tabs[i].Icon:SetVertexColor(shade, shade, shade)
 			tabs[i].Icon:SetDesaturated(i ~= chosen)
+			-- (and their frames dimmed with them: the chosen one stands out)
+			tabs[i]:SetAlpha((i == chosen) and 1 or spec.tab_dim)
 		end
 	end
 	for i, name in ipairs(PAGES) do
@@ -1253,6 +1255,22 @@ Module.StyleReputationDetail = function(self)
 	end
 end
 
+-- The list's column names (Faction, Standing) as the windows' table
+-- headers: gold capitals over a thin line along the list's top.
+Module.StyleReputationHeader = function(self)
+	local section = kit.config.section
+	for _, name in ipairs({ "ReputationFrameFactionLabel", "ReputationFrameStandingLabel" }) do
+		local label = _G[name]
+		label:SetFontObject(section.font)
+		label:SetTextColor(unpack(section.color))
+	end
+	local first = _G.ReputationBar1
+	local line = _G.ReputationFrame:CreateTexture(nil, "ARTWORK")
+	line:SetTexture(unpack(section.line_color))
+	line:SetSize(first:GetWidth(), 1)
+	line:SetPoint("BOTTOMLEFT", first, "TOPLEFT", 0, 1)
+end
+
 -- The reputation bars in our standings' colors (Blizzard's on each update).
 Module.ColorReputation = function(self)
 	for i = 1, _G.NUM_FACTIONS_DISPLAYED do
@@ -1335,6 +1353,7 @@ Module.StyleCharacter = function(self)
 	self:StyleCompanions()
 	self:StyleSkills()
 	self:StyleReputationDetail()
+	self:StyleReputationHeader()
 	kit:StyleScrollBars(frame)
 	for _, name in ipairs(CLOSE_BUTTONS) do
 		HideClose(_G[name])

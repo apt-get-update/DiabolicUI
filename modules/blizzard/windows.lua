@@ -574,7 +574,12 @@ Module.StyleSection = function(self, frame, title, regions)
 		region:SetAlpha(0)
 	end
 	local spec = config.section
-	self:CreateSlices(frame, "BACKGROUND", spec, spec.texture, spec.height)
+	-- no bar: a thin line under its title, the title's gold capitals over it
+	local line = frame:CreateTexture(nil, "BACKGROUND")
+	line:SetTexture(unpack(spec.line_color))
+	line:SetHeight(1)
+	line:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", spec.text_offset[1], 0)
+	line:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 	if title then
 		title:SetFontObject(spec.font)
 		title:SetTextColor(unpack(spec.color))

@@ -177,16 +177,11 @@ Merge(window, {
 -- Section
 Merge(window, {
 	section = {
-		texture = path .. [[textures\DiabolicUI_Window_Section.tga]],
-		canvas = { 512, 32 },
-		art = { 0, 3, 512, 29 },
-		left = { 0, 32 },
-		middle = { 32, 480 },
-		right = { 480, 512 },
-		height = 22,
+		height = 22, -- a table's column names' (its sections' line under their title)
 		font = DiabolicFont_HeaderRegular12,
 		color = { 1, 0.6, 0.2 },
-		text_offset = { 28, 1 },
+		line_color = { 0.43, 0.33, 0.2, 1 }, -- the thin line under the title
+		text_offset = { 4, 1 },
 	},
 })
 

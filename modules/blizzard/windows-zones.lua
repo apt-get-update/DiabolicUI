@@ -101,7 +101,8 @@ Module.AddZone = function(self, frame, material, insets, parent)
 	return zone
 end
 
--- A table's column names on a dark bar, over its zone's top.
+-- A table's column names over a thin line (the sections' look), on its
+-- zone's top.
 Module.AddHeaderBar = function(self, zone)
 	local section = Module.config.section
 	local bar = CreateFrame("Frame", NameFor(zone, "ColumnBar"), zone)
@@ -109,40 +110,59 @@ Module.AddHeaderBar = function(self, zone)
 	bar:SetPoint("BOTTOMLEFT", zone, "TOPLEFT", 0, 0)
 	bar:SetPoint("BOTTOMRIGHT", zone, "TOPRIGHT", 0, 0)
 	bar:SetHeight(section.height)
-	local slices = self:CreateSlices(bar, "ARTWORK", section, section.texture, section.height)
-	-- (its ends plain, the middle's: their diamonds would sit under the
-	-- first and last columns)
-	local width = section.canvas[1]
-	for i, cap in pairs({ [1] = section.left, [3] = section.right }) do
-		slices[i]:SetTexCoord(section.middle[1] / width, (section.middle[1] + cap[2] - cap[1]) / width, 0, 1)
-	end
+	local line = bar:CreateTexture(nil, "ARTWORK")
+	line:SetTexture(unpack(section.line_color))
+	line:SetHeight(1)
+	line:SetPoint("BOTTOMLEFT")
+	line:SetPoint("BOTTOMRIGHT")
 	bar.DiabolicContent = true -- (the list's top: its names on it)
 	return bar
 end
 
 -- A table's column names (Blizzard's buttons `prefix`1 to `count`): as
--- tall as their dark bar, Diablo III's red under the one hovered, a thin
+-- tall as their bar, Diablo III's red under the one hovered, a thin
 -- bronze line between each and the next (window.columns).
 Module.StyleColumnHeaders = function(self, prefix, count)
-	local spec = Module.config.columns
+	local buttons = {}
 	for i = 1, count do
-		local header = _G[prefix .. i]
-		if header then
-			header:SetHeight(Module.config.section.height)
-			local highlight = header:GetHighlightTexture()
-			if highlight then
-				highlight:SetTexture(unpack(spec.hover_color))
-				highlight:SetBlendMode("BLEND")
-				highlight:ClearAllPoints()
-				highlight:SetAllPoints(header)
+		buttons[#buttons + 1] = _G[prefix .. i]
+	end
+	self:StyleColumnButtons(buttons)
+end
+
+-- The same for column names by their buttons (their tab art gone);
+-- `underline`: the thin line under them too (a table with no bar).
+Module.StyleColumnButtons = function(self, buttons, underline)
+	local spec = Module.config.columns
+	for i, header in ipairs(buttons) do
+		local name = header:GetName()
+		for _, part in ipairs({ "Left", "Middle", "Right" }) do
+			local region = name and _G[name .. part]
+			if region and region.SetAlpha then
+				region:SetAlpha(0)
 			end
-			if i < count then
-				local line = header:CreateTexture(nil, "OVERLAY")
-				line:SetTexture(unpack(spec.line_color))
-				line:SetWidth(1)
-				line:SetPoint("TOPRIGHT", header, "TOPRIGHT", -1, -spec.line_inset) -- (the next one starts 2 left of its right)
-				line:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, spec.line_inset)
-			end
+		end
+		header:SetHeight(Module.config.section.height)
+		local highlight = header:GetHighlightTexture()
+		if highlight then
+			highlight:SetTexture(unpack(spec.hover_color))
+			highlight:SetBlendMode("BLEND")
+			highlight:ClearAllPoints()
+			highlight:SetAllPoints(header)
+		end
+		if i < #buttons then
+			local line = header:CreateTexture(nil, "OVERLAY")
+			line:SetTexture(unpack(spec.line_color))
+			line:SetWidth(1)
+			line:SetPoint("TOPRIGHT", header, "TOPRIGHT", -1, -spec.line_inset) -- (the next one starts 2 left of its right)
+			line:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, spec.line_inset)
+		end
+		if underline then
+			local under = header:CreateTexture(nil, "OVERLAY")
+			under:SetTexture(unpack(Module.config.section.line_color))
+			under:SetHeight(1)
+			under:SetPoint("BOTTOMLEFT")
+			under:SetPoint("BOTTOMRIGHT")
 		end
 	end
 end
