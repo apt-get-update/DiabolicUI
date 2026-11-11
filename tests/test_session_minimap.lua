@@ -354,7 +354,7 @@ end
 -- Addons' minimap buttons made at login (LibDBIcon's names), one hidden, a
 -- map pin and an unclickable frame, then the world entered.
 local function makeButtons()
-	for _, name in ipairs({ "LibDBIcon10_SomeAddon", "LibDBIcon10_Hidden" }) do
+	for _, name in ipairs({ "LibDBIcon10_SomeAddon", "LibDBIcon10_Hidden", "LibDBIcon10_Questie" }) do
 		local button = _G.CreateFrame("Button", name, _G.Minimap)
 		button:SetSize(31, 31)
 		button:SetScript("OnClick", function() end)
@@ -372,6 +372,7 @@ function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
 	local button, plus, drawer = _G.LibDBIcon10_SomeAddon, buttons.toggle, buttons.drawer
 	-- off the minimap, into the closed drawer; pins and the unclickable left
 	lu.assertEquals(button:GetParent(), drawer)
+	lu.assertEquals(_G.LibDBIcon10_Questie:GetParent(), drawer)
 	lu.assertEquals(_G.QuestieFrame1:GetParent(), _G.Minimap)
 	lu.assertEquals(_G.SomeAddonNoClick:GetParent(), _G.Minimap)
 	lu.assertEvalToFalse(drawer:IsShown())
@@ -390,7 +391,7 @@ function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
 		{ button:GetPoint() },
 		{ "TOPLEFT", drawer, "TOPLEFT", config.buttons.padding, -config.buttons.padding }
 	)
-	lu.assertEquals(drawer:GetWidth(), config.buttons.padding * 2 + config.buttons.cell)
+	lu.assertEquals(drawer:GetWidth(), config.buttons.padding * 2 + config.buttons.cell * 2)
 	-- its addon can't move it back
 	button:ClearAllPoints()
 	button:SetPoint("CENTER", _G.Minimap, "CENTER")
@@ -403,7 +404,7 @@ function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
 	late:SetScript("OnClick", function() end)
 	client:Click(plus)
 	lu.assertEquals(late:GetParent(), drawer)
-	lu.assertEquals(drawer:GetWidth(), config.buttons.padding * 2 + config.buttons.cell * 2)
+	lu.assertEquals(drawer:GetWidth(), config.buttons.padding * 2 + config.buttons.cell * 3)
 
 	-- edit mode's box covers the "+", drawn over it
 	module:EnterEditMode()

@@ -8,18 +8,20 @@ Module:SetIncompatible("MBB")
 local TEXTURES = ([[Interface\AddOns\%s\media\textures\]]):format(ADDON)
 
 -- Named frames on the minimap that aren't addon buttons: Blizzard's pieces,
--- and other addons' map pins.
+-- and other addons' map pins (by their exact names: Questie's own button is
+-- LibDBIcon10_Questie).
 local IGNORE = {
 	"^MiniMap",
 	"^Minimap",
 	"^GameTimeFrame",
 	"^TimeManager",
-	"Questie",
-	"HandyNotes",
-	"Gather",
-	"Pin",
+	"^QuestieFrame",
+	"^HandyNotesPin",
+	"^GatherMatePin",
+	"^GatherNote",
+	"^GatherArchNote",
+	"^ZGVMarker",
 	"POI",
-	"Note",
 }
 
 local noop = function() end
