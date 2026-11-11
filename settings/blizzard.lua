@@ -1334,6 +1334,7 @@ Engine:NewStaticConfig("Blizzard", {
 		search_width = 128,
 		count = { arrow_size = 20, box_width = 26 }, -- how many to make: its arrows, its box (its plate past it), from Create All (86 to Create)
 		reagent_font = DiabolicFont_SansBold10,
+		filter_gap = 12, -- Have Materials, right of the search (settings/positions.lua's)
 		reagent_name_width = 100, -- their names (Blizzard's 12, 90 wide): most on one line
 		-- the chosen recipe as a chapter's title: its icon and name on Diablo
 		-- III's dark strip (the artisans' page's), scrolling with its text

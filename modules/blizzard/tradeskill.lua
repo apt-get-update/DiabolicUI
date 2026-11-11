@@ -208,6 +208,18 @@ Module.UpdateGem = function(self)
 	end
 end
 
+-- Have Materials right of the search, or in its place while Blizzard
+-- hides it (a skill under 75: the search would be cleared on each update).
+Module.PlaceFilter = function(self)
+	local search, filter = _G.TradeSkillFrameEditBox, _G.TradeSkillFrameAvailableFilterCheckButton
+	filter:ClearAllPoints()
+	if search:IsShown() then
+		filter:SetPoint("LEFT", search, "RIGHT", self.config.filter_gap, 0)
+	else
+		filter:SetPoint("LEFT", search, "LEFT", 0, 0)
+	end
+end
+
 Module.StyleTradeSkill = function(self)
 	self:Layout()
 	self.Rows = _G.TRADE_SKILLS_DISPLAYED
@@ -231,6 +243,7 @@ Module.StyleTradeSkill = function(self)
 		self:ShadeList()
 		self:UpdateGem()
 		self:RankTitle()
+		self:PlaceFilter()
 	end)
 	hooksecurefunc("TradeSkillFrame_SetSelection", function(id)
 		self:InkReagents(id)
