@@ -21,9 +21,11 @@ Engine:NewStaticConfig("Minimap", {
 	compassNorthTag = "N",
 	mailSize = { 48, 48 },
 
-	-- the addons' minimap buttons' drawer (modules/minimap/buttons.lua): its
-	-- "+", then each button's cell, in rows of `columns`
-	buttons = { toggle_size = 48, cell = 33, columns = 6, padding = 8 },
+	-- the addons' minimap buttons (modules/minimap/buttons.lua): the "+",
+	-- each button (the "+"'s ring) and the gap between them in their row,
+	-- their icon's size of it (inside the ring's opening), and how often (in
+	-- seconds) the minimap is looked at for new ones
+	buttons = { toggle_size = 48, size = 40, gap = -8, icon = 0.42, scan_every = 3 }, -- (negative: the ring art has room around it)
 
 	colors = {
 		normal = color(229, 178, 38),

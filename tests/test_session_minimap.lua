@@ -351,19 +351,21 @@ end
 
 -- The addons' minimap buttons --------------------------------------------------
 
--- Addons' minimap buttons made at login (LibDBIcon's names), one hidden, a
--- map pin and an unclickable frame, then the world entered.
+-- Addons' minimap buttons made after login (LibDBIcon's names), one hidden,
+-- a map pin and an unclickable frame, then the next look at the minimap.
 local function makeButtons()
 	for _, name in ipairs({ "LibDBIcon10_SomeAddon", "LibDBIcon10_Hidden", "LibDBIcon10_Questie" }) do
 		local button = _G.CreateFrame("Button", name, _G.Minimap)
 		button:SetSize(31, 31)
 		button:SetScript("OnClick", function() end)
 		button:RegisterForDrag("LeftButton")
+		button:CreateTexture(name .. "Icon", "ARTWORK"):SetTexture("Interface\\Icons\\Some")
+		button:CreateTexture(name .. "Border", "OVERLAY"):SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
 	end
 	_G.LibDBIcon10_Hidden:Hide()
 	_G.CreateFrame("Button", "QuestieFrame1", _G.Minimap):SetScript("OnClick", function() end)
 	_G.CreateFrame("Button", "SomeAddonNoClick", _G.Minimap)
-	client:FireEvent("PLAYER_ENTERING_WORLD")
+	client:Tick(config.buttons.scan_every + 0.1)
 end
 
 function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
@@ -381,30 +383,36 @@ function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
 	client:Hover(plus)
 	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "Minimap Buttons")
 	client:Leave()
+	client:Hover(button)
+	client:Leave()
 
-	-- the "+" opens it under itself, towards the screen's middle: the shown
-	-- buttons only, in a row
+	-- each in the "+"'s ring, its own ring hidden, its icon inside
+	local spec = config.buttons
+	lu.assertEquals(_G.LibDBIcon10_SomeAddonBorder:GetAlpha(), 0)
+	lu.assertEquals(_G.LibDBIcon10_SomeAddonIcon:GetWidth(), spec.size * spec.icon)
+	lu.assertEquals(button:GetWidth(), spec.size)
+
+	-- the "+" opens them beside itself, towards the screen's middle: the
+	-- shown buttons only, in a row
 	client:Click(plus)
 	lu.assertEvalToTrue(drawer:IsShown())
-	lu.assertEquals({ drawer:GetPoint() }, { "TOPRIGHT", plus, "BOTTOMLEFT", 0, 0 })
-	lu.assertEquals(
-		{ button:GetPoint() },
-		{ "TOPLEFT", drawer, "TOPLEFT", config.buttons.padding, -config.buttons.padding }
-	)
-	lu.assertEquals(drawer:GetWidth(), config.buttons.padding * 2 + config.buttons.cell * 2)
+	lu.assertEquals({ drawer:GetPoint() }, { "RIGHT", plus, "LEFT", -spec.gap, 0 })
+	lu.assertEquals({ button:GetPoint() }, { "RIGHT", drawer, "RIGHT", 0, 0 })
+	lu.assertEquals(drawer:GetWidth(), 2 * (spec.size + spec.gap) - spec.gap)
 	-- its addon can't move it back
 	button:ClearAllPoints()
 	button:SetPoint("CENTER", _G.Minimap, "CENTER")
-	lu.assertEquals(select(1, button:GetPoint()), "TOPLEFT")
+	lu.assertEquals(select(1, button:GetPoint()), "RIGHT")
 	client:Click(plus)
 	lu.assertEvalToFalse(drawer:IsShown())
 
-	-- a button made later is gathered when the drawer opens
+	-- a button made later is gathered a few seconds later
 	local late = _G.CreateFrame("Button", "LateAddonButton", _G.Minimap)
 	late:SetScript("OnClick", function() end)
-	client:Click(plus)
+	client:Tick(config.buttons.scan_every + 0.1)
 	lu.assertEquals(late:GetParent(), drawer)
-	lu.assertEquals(drawer:GetWidth(), config.buttons.padding * 2 + config.buttons.cell * 3)
+	client:Click(plus)
+	lu.assertEquals(drawer:GetWidth(), 3 * (spec.size + spec.gap) - spec.gap)
 
 	-- edit mode's box covers the "+", drawn over it
 	module:EnterEditMode()
@@ -420,7 +428,8 @@ function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
 	lu.assertEquals(select(1, plus:GetPoint()), "BOTTOMRIGHT")
 	client:Click(plus)
 	client:Click(plus)
-	lu.assertEquals({ drawer:GetPoint() }, { "TOPLEFT", plus, "BOTTOMRIGHT", 0, 0 })
+	lu.assertEquals({ drawer:GetPoint() }, { "LEFT", plus, "RIGHT", spec.gap, 0 })
+	lu.assertEquals({ button:GetPoint() }, { "LEFT", drawer, "LEFT", 0, 0 })
 	assertClean(client)
 end
 
