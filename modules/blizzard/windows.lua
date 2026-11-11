@@ -623,21 +623,18 @@ Module.AddPane = function(self, first, last, open)
 end
 
 -- A status bar in Diablo III's orange, in the spiked frame; its own
--- `regions` (Blizzard's frame) out of sight. With `tint`, its fill a
--- neutral one in that colour instead (the orange art greyed is too dark to tint).
-Module.StyleBar = function(self, bar, regions, tint)
+-- `regions` (Blizzard's frame) out of sight.
+Module.StyleBar = function(self, bar, regions)
 	bar.DiabolicStyle = "Bar"
 	for _, region in ipairs(regions or {}) do
 		region:SetAlpha(0)
 	end
 	local spec = config.bar
-	local color = tint or spec.color
-	bar:SetStatusBarTexture(tint and spec.tint_statusbar or spec.statusbar)
-	bar.DiabolicColor = color
-	bar:SetStatusBarColor(unpack(color))
-	-- kept as is: Blizzard colors some on each update (the professions' blue)
+	bar:SetStatusBarTexture(spec.statusbar)
+	bar:SetStatusBarColor(unpack(spec.color))
+	-- kept orange: Blizzard colors some on each update (the professions' blue)
+	local r, g, b = unpack(spec.color)
 	hooksecurefunc(bar, "SetStatusBarColor", function(_, red, green, blue)
-		local r, g, b = unpack(bar.DiabolicColor)
 		if (red ~= r) or (green ~= g) or (blue ~= b) then
 			bar:SetStatusBarColor(r, g, b)
 		end
@@ -649,12 +646,6 @@ Module.StyleBar = function(self, bar, regions, tint)
 		bar.DiabolicTrack = track
 	end
 	bar.DiabolicBorder = self:CreateSlices(bar, "OVERLAY", spec, spec.texture, bar:GetHeight())
-end
-
--- A styled bar's fill in another colour (kept as StyleBar keeps it).
-Module.SetBarColor = function(self, bar, color)
-	bar.DiabolicColor = color
-	bar:SetStatusBarColor(unpack(color))
 end
 
 -- Lit art for `button`, shown under the mouse and while it's locked lit

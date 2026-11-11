@@ -158,7 +158,15 @@ Module.CreateProfession = function(self, parent, primary)
 	local bar = CreateFrame("StatusBar", nil, row)
 	bar:SetSize(width, barHeight)
 	bar:SetPoint("BOTTOMLEFT", row.Icon, "BOTTOMRIGHT", config.name_offset, 2)
-	kit:StyleBar(bar, nil, config.profession_bar_color) -- (progress, not a warning: muted bronze)
+	kit:StyleBar(bar)
+	-- the six ranks along it: a notch between each and the next
+	bar.Steps = {}
+	for i = 1, config.profession_cap / config.profession_step - 1 do
+		local notch = bar:CreateTexture(nil, "OVERLAY")
+		notch:SetSize(1, barHeight - 6)
+		notch:SetPoint("CENTER", bar, "LEFT", width * i * config.profession_step / config.profession_cap, 0)
+		bar.Steps[i] = notch
+	end
 	bar.Text = bar:CreateFontString(nil, "OVERLAY")
 	bar.Text:SetFontObject(config.rank_font)
 	bar.Text:SetPoint("CENTER", bar, "CENTER", 0, 0)
@@ -245,11 +253,16 @@ Module.FillProfession = function(self, row, skill)
 	row.Icon:SetDesaturated(false)
 	row.Name:SetText(skill.name)
 	row.Rank:SetText(RankTitle(skill.max))
-	-- filled to the cap: a reward, its bar and its rank's title in gold
-	local done = (skill.rank >= skill.max) and (skill.max >= self.config.profession_cap)
-	kit:SetBarColor(row.Bar, done and self.config.profession_done_color or self.config.profession_bar_color)
-	row.Rank:SetTextColor(unpack(done and self.config.profession_done_color or self.config.profession_rank_color))
-	row.Bar:SetMinMaxValues(0, (skill.max > 0) and skill.max or 1)
+	-- the whole road to Grand Master, its ranks reached lit; walked to its
+	-- end, a reward: the bar and its rank's title in gold
+	local config = self.config
+	local done = skill.rank >= config.profession_cap
+	row.Bar:SetStatusBarTexture(done and config.profession_fill_done or config.profession_fill)
+	row.Rank:SetTextColor(unpack(done and config.profession_done_color or config.profession_rank_color))
+	for i, notch in ipairs(row.Bar.Steps) do
+		notch:SetTexture(unpack((skill.rank >= i * config.profession_step) and config.profession_step_lit or config.profession_step_dim))
+	end
+	row.Bar:SetMinMaxValues(0, config.profession_cap)
 	row.Bar:SetValue(skill.rank)
 	row.Bar.Text:SetText(skill.rank .. " / " .. skill.max)
 	row.Bar:Show()

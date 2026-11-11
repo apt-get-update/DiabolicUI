@@ -1297,9 +1297,14 @@ Engine:NewStaticConfig("Blizzard", {
 		profession_icons = { 48, 48 }, -- primary, secondary
 		profession_inset = 11, -- the icon from the panel's left
 		profession_bar = { 240, 14 }, -- its rank's bar
-		profession_bar_color = { 0.66, 0.47, 0.24 }, -- its fill: muted bronze (progress, not red)
-		profession_done_color = { 0.95, 0.76, 0.32 }, -- filled to the cap: gold, its rank's title too
+		-- the road to Grand Master in six steps, one per rank: amber on it, gold once all walked
+		profession_fill = path .. [[textures\DiabolicUI_D3_BreathMeterFill_Amber.tga]],
+		profession_fill_done = path .. [[textures\DiabolicUI_D3_BreathMeterFill_Gold.tga]],
+		profession_done_color = { 0.95, 0.76, 0.32 }, -- its rank's title once there
 		profession_cap = 450, -- Grand Master's
+		profession_step = 75, -- a rank's worth
+		profession_step_lit = { 1, 0.93, 0.75, 0.8 }, -- a step reached
+		profession_step_dim = { 0.47, 0.39, 0.31, 0.6 }, -- one still ahead
 		profession_extra = 36, -- its other spell's button
 		profession_title_font = DiabolicFont_HeaderRegular14,
 		profession_title_color = { 0.86, 0.76, 0.6 },
