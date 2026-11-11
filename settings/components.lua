@@ -85,9 +85,9 @@ Merge(window, {
 		texture = path .. [[textures\DiabolicUI_D3_CheckBox.tga]],
 		box = { 0, 0.1640625, 0, 0.671875 },
 		lit = { 0.25, 0.4140625, 0, 0.671875 },
-		check = [[Interface\Buttons\UI-CheckBox-Check]], -- Blizzard's gold tick, over our box
+		check = [[Interface\Buttons\UI-CheckBox-Check]],
 		check_disabled = [[Interface\Buttons\UI-CheckBox-Check-Disabled]],
-		check_scale = 1.6, -- its file's 32 for Blizzard's box of about 20: as big over ours
+		check_scale = 1.6,
 		size = 20,
 		pushed_color = { 0.7, 0.7, 0.7 },
 		label_gap = 4,
@@ -179,10 +179,10 @@ Merge(window, {
 -- Section
 Merge(window, {
 	section = {
-		height = 22, -- a table's column names' (its sections' line under their title)
+		height = 22,
 		font = DiabolicFont_HeaderRegular12,
 		color = { 1, 0.6, 0.2 },
-		line_color = { 0.43, 0.33, 0.2, 1 }, -- the thin line under the title
+		line_color = { 0.43, 0.33, 0.2, 1 },
 		text_offset = { 4, 1 },
 	},
 })
