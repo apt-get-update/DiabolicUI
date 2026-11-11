@@ -1,10 +1,10 @@
 -- Gives Decursive's squares (its micro unit frames) Diablo III's look when
--- it's loaded: each a stained-glass medallion (the quests' medallions of
--- Diablo III's acts). A healthy player's is dormant grey stone; an
--- afflicted player's glass lit in the affliction's colour (Magic blue,
+-- it's loaded: an afflicted player's a stained-glass medallion (the
+-- quests' medallions of Diablo III's acts), a healthy one's nothing: its
+-- glass lit in the affliction's colour (Magic blue,
 -- Curse purple, Disease orange, Poison gold), with a little mouse showing
 -- the button to click (and its modifier's letter). As you dispel it, a
--- burst in that colour, its glass dark for a moment, then stone again.
+-- burst in that colour, its glass dark for a moment, then gone.
 -- Art only: Decursive's code and its secure clicks are left as they are.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Decursive", "LOW")
@@ -12,7 +12,7 @@ local Module = Engine:NewModule("Blizzard: Decursive", "LOW")
 local kit
 
 -- Decursive's statuses (DcrC's): the ones we draw differently
-local NORMAL, AFFLICTED_NIR = 8, 512
+local AFFLICTED_NIR = 512
 
 -- The little mouse: its two buttons over its body, the one to click lit.
 local CreateMouse = function(frame, spec)
@@ -113,8 +113,7 @@ end
 
 -- What a square shows, after Decursive set its state: the lit glass while
 -- afflicted (dimmer out of range) and the mouse button to click; the dark
--- glass just after your dispel; dormant stone while all is well (dimmer
--- far away, gone or blacklisted).
+-- glass just after your dispel; nothing while all is well.
 Module.UpdateSquare = function(self, square)
 	local medallion = square.DiabolicMedallion
 	if not medallion then
@@ -129,6 +128,7 @@ Module.UpdateSquare = function(self, square)
 	if debuff and cells[type] then
 		SetMedallion(medallion, cells[type].lit, size)
 		medallion:SetAlpha((square.UnitStatus == AFFLICTED_NIR) and spec.out_of_range_alpha or 1)
+		medallion:Show()
 		square.DiabolicType = type
 		self:ShowMouse(square)
 		return
@@ -137,9 +137,9 @@ Module.UpdateSquare = function(self, square)
 	if square.DiabolicCleansed and cells[square.DiabolicCleansed] then
 		SetMedallion(medallion, cells[square.DiabolicCleansed].dark, size)
 		medallion:SetAlpha(1)
+		medallion:Show()
 	else
-		SetMedallion(medallion, cells.healthy, size)
-		medallion:SetAlpha((square.UnitStatus == NORMAL) and 1 or spec.away_alpha)
+		medallion:Hide() -- (nothing to do there: nothing shown)
 	end
 end
 

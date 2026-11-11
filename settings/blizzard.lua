@@ -593,8 +593,8 @@ Engine:NewStaticConfig("Blizzard", {
 	-- against it, up over the band and the tabs (Blizzard's start 37 down)
 	-- AdiBags' bags (modules/blizzard/adibags.lua)
 	decursive = {
-		-- the medallions (Diablo III's quests'), by type: lit, dark; and the
-		-- healthy one's dormant stone; columns and rows of 128 in 512
+		-- the medallions (Diablo III's quests'), by type: lit, dark; columns
+		-- and rows of 128 in 512
 		texture = path .. [[textures\DiabolicUI_D3_Medallions.tga]],
 		cell = 0.25,
 		medallions = {
@@ -602,12 +602,10 @@ Engine:NewStaticConfig("Blizzard", {
 			Curse = { lit = { 1, 0 }, dark = { 1, 1 } },
 			Disease = { lit = { 2, 0 }, dark = { 2, 1 } },
 			Poison = { lit = { 3, 0 }, dark = { 3, 1 } },
-			healthy = { 0, 2 },
 		},
 		medallion_scale = 1.3, -- its ornaments past the square, its glass as big as it
 		out_of_range_alpha = 0.4, -- an affliction too far to dispel
-		away_alpha = 0.35, -- a healthy one far away, gone or blacklisted
-		cleansed_time = 2, -- the glass dark after your dispel, then stone
+		cleansed_time = 2, -- the glass dark after your dispel, then gone
 		-- Decursive's timer, small and light in the bottom left corner
 		timer = { font = DiabolicFont_SansBold10, color = { 0.95, 0.9, 0.8 }, offset = { -2, -2 } },
 		-- the border by the affliction's type (Blizzard's debuff colours)
