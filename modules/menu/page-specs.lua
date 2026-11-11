@@ -1,8 +1,7 @@
 -- The Specializations page of /dui config: what each talent specialization
 -- sets up once you switch to it (modules/actionbars/elements/specswitch.lua).
 -- A card across the page per specialization, the active one lit, its
--- settings two to a row; the Action Bar Saver one only with that addon,
--- and only a hint before Dual Talent Specialization.
+-- settings two to a row, and only a hint before Dual Talent Specialization.
 local _, Engine = ...
 local L = Engine:GetLocale()
 local Module = Engine:GetModule("Menu")
@@ -156,11 +155,11 @@ Module.CreateSpecsPage = function(self)
 			1,
 			specLabel(
 				card,
-				L["Action Bar Saver Profile"],
-				L["The Action Bar Saver profile to load. Save one with '/abs save <name>'."]
+				L["Action Bar Profile"],
+				L["The action bars to put back. Save them with '/dui bars save <name>'."]
 			),
 			CreateDropDown(card, "Spec" .. group .. "Profile", DROPDOWN_WIDTH, function()
-				return withNone(specSwitch:GetActionBarProfiles() or {})
+				return withNone(specSwitch:GetActionBarProfiles())
 			end, getProfile, setProfile),
 			true
 		)
@@ -217,7 +216,6 @@ Module.CreateSpecsPage = function(self)
 	specsPanel.cancel = function()
 		local dual = GetNumTalentGroups() > 1
 		local active = GetActiveTalentGroup()
-		local profilesLoaded = specSwitch:GetActionBarProfiles() and true
 		ShowIf(hint, not dual)
 		for group, card in ipairs(specCards) do
 			ShowIf(card, dual)
@@ -228,10 +226,6 @@ Module.CreateSpecsPage = function(self)
 			local color = (group == active) and ACTIVE_COLOR or IDLE_COLOR
 			card:SetBackdropBorderColor(color[1], color[2], color[3], 1)
 			for _, row in ipairs(card.rows) do
-				-- (Action Bar Saver's only with it)
-				local shown = (row.key ~= "profile") or profilesLoaded
-				ShowIf(row.label, shown)
-				ShowIf(row.control, shown)
 				row.control:Refresh()
 			end
 		end

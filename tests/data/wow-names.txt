@@ -20,6 +20,7 @@ ChatFrame1
 ChatFrame1EditBox
 ChatFrameMenuButton
 ChatFrame_AddMessageEventFilter
+ClearCursor
 ClearOverrideBindings
 CloseAllBags
 CloseLoot
@@ -118,6 +119,7 @@ GetContainerItemLink
 GetContainerItemQuestInfo
 GetContainerNumSlots
 GetCurrentTitle
+GetCursorInfo
 GetCursorPosition
 GetDailyQuestsCompleted
 GetEquipmentSetInfo
@@ -287,7 +289,13 @@ OpenAllBags
 PVPBattleground_UpdateQueueStatus
 PVPMicroButton
 PVPMicroButtonTexture
+PickupAction
+PickupCompanion
+PickupEquipmentSet
+PickupItem
+PickupMacro
 PickupSpell
+PlaceAction
 PlaySound
 QuestFont_Large
 QuestFont_Shadow_Huge

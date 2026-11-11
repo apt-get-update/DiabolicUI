@@ -323,9 +323,8 @@ function TestOptionsMenu:test_the_specializations_page()
 	lu.assertEquals(widget("Spec1EquipSet").text, L["None"])
 	lu.assertEquals(chosen("Spec2Bars"), "3")
 	lu.assertEquals(chosen("Spec2SideBars"), L["Keep"])
-	-- the active one lit, Action Bar Saver's row only with it
+	-- the active one lit
 	lu.assertTrue(texts[L["Active"]])
-	lu.assertNil(widget("Spec1Profile"):IsShown())
 
 	-- picking from the dropdowns saves
 	lu.assertEquals(openDropDown("Spec1EquipSet", "|TInterface\\Icons\\HolySet:16:16:0:0|t Holy"), {
@@ -345,11 +344,9 @@ function TestOptionsMenu:test_the_specializations_page()
 	client:Click(widget("Spec2Bars1"))
 	lu.assertFalse(bars.specBars2)
 
-	-- Action Bar Saver loaded: its profiles
-	_G.SlashCmdList.ABS = function() end
-	_G.ActionBarSaverDB = { sets = { WARRIOR = { holy = {}, shadow = {} } } }
+	-- the action bar profiles
+	client.Engine:GetConfig("ActionBarProfiles").sets.WARRIOR = { holy = {}, shadow = {} }
 	_G.DiabolicUIOptionsPanelSpecs.refresh()
-	lu.assertEquals(widget("Spec1Profile"):IsShown(), 1)
 	lu.assertEquals(widget("Spec1Profile").text, L["None"])
 	lu.assertEquals(openDropDown("Spec1Profile", "holy"), { L["None"], "holy", "shadow" })
 	lu.assertEquals(bars.specProfile1, "holy")
@@ -358,7 +355,6 @@ function TestOptionsMenu:test_the_specializations_page()
 	client.world.equipmentSets = {}
 	_G.DiabolicUIOptionsPanelSpecs.refresh()
 	lu.assertEquals(widget("Spec1EquipSet").text, "|cff808080Holy|r")
-	_G.SlashCmdList.ABS, _G.ActionBarSaverDB = nil, nil
 
 	-- no points spent yet: the group's name and a question mark
 	client.world.secondaryTalents = { { "Discipline", "", 0 }, { "Holy", "", 0 }, { "Shadow", "", 0 } }

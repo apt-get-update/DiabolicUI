@@ -205,19 +205,10 @@ ButtonWidget.GetMacros = function(self)
 	return macros
 end
 
--- Action Bar Saver's profiles for your class, by name, or nil while the
--- addon isn't loaded. It saves the names in lower case.
+-- The action bar profiles for your class (profiles.lua), by name.
 ButtonWidget.GetActionBarProfiles = function(self)
-	local db = _G.ActionBarSaverDB
-	if not (db and db.sets and _G.SlashCmdList.ABS) then
-		return
-	end
 	local profiles = {}
-	for name in pairs(db.sets[select(2, UnitClass("player"))] or {}) do
-		profiles[#profiles + 1] = name
-	end
-	table.sort(profiles)
-	for i, name in ipairs(profiles) do
+	for i, name in ipairs(Engine:GetModule("ActionBars: Profiles"):GetNames()) do
 		profiles[i] = { text = name, value = name }
 	end
 	return profiles
@@ -238,11 +229,7 @@ local RunSpec = function(group)
 
 	local profile = db["specProfile" .. group]
 	if profile then
-		if _G.SlashCmdList.ABS then
-			_G.SlashCmdList.ABS("restore " .. profile)
-		else
-			Print(L["Action Bar Saver isn't loaded, can't restore '%s'."]:format(profile))
-		end
+		Engine:GetModule("ActionBars: Profiles"):Restore(profile)
 	end
 
 	local bars, sideBars = db["specBars" .. group], db["specSideBars" .. group]

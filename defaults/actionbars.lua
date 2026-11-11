@@ -11,7 +11,7 @@ Engine:NewConfig("ActionBars", {
 	-- specialization; false leaves it as it is
 	specEquipSet1 = false, -- an equipment set's name
 	specEquipSet2 = false,
-	specProfile1 = false, -- an Action Bar Saver profile's name
+	specProfile1 = false, -- an action bar profile's name (ActionBarProfiles)
 	specProfile2 = false,
 	specBars1 = false, -- num_bars (1-3)
 	specBars2 = false,
@@ -21,4 +21,10 @@ Engine:NewConfig("ActionBars", {
 	specMacroBefore2 = false,
 	specMacroName1 = false, -- a macro's name, run by a click on the button after the switch
 	specMacroName2 = false,
+})
+
+-- Action bar profiles (modules/actionbars/profiles.lua): sets[class][name]
+-- = { [slot] = { kind, what to find it by } }, shared by your characters.
+Engine:NewConfig("ActionBarProfiles", {
+	sets = {},
 })
