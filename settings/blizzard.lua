@@ -1298,6 +1298,8 @@ Engine:NewStaticConfig("Blizzard", {
 		profession_inset = 11, -- the icon from the panel's left
 		profession_bar = { 240, 14 }, -- its rank's bar
 		profession_bar_color = { 0.66, 0.47, 0.24 }, -- its fill: muted bronze (progress, not red)
+		profession_done_color = { 0.95, 0.76, 0.32 }, -- filled to the cap: gold, its rank's title too
+		profession_cap = 450, -- Grand Master's
 		profession_extra = 36, -- its other spell's button
 		profession_title_font = DiabolicFont_HeaderRegular14,
 		profession_title_color = { 0.86, 0.76, 0.6 },

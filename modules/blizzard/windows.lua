@@ -633,10 +633,11 @@ Module.StyleBar = function(self, bar, regions, tint)
 	local spec = config.bar
 	local color = tint or spec.color
 	bar:SetStatusBarTexture(tint and spec.tint_statusbar or spec.statusbar)
+	bar.DiabolicColor = color
 	bar:SetStatusBarColor(unpack(color))
 	-- kept as is: Blizzard colors some on each update (the professions' blue)
-	local r, g, b = unpack(color)
 	hooksecurefunc(bar, "SetStatusBarColor", function(_, red, green, blue)
+		local r, g, b = unpack(bar.DiabolicColor)
 		if (red ~= r) or (green ~= g) or (blue ~= b) then
 			bar:SetStatusBarColor(r, g, b)
 		end
@@ -648,6 +649,12 @@ Module.StyleBar = function(self, bar, regions, tint)
 		bar.DiabolicTrack = track
 	end
 	bar.DiabolicBorder = self:CreateSlices(bar, "OVERLAY", spec, spec.texture, bar:GetHeight())
+end
+
+-- A styled bar's fill in another colour (kept as StyleBar keeps it).
+Module.SetBarColor = function(self, bar, color)
+	bar.DiabolicColor = color
+	bar:SetStatusBarColor(unpack(color))
 end
 
 -- Lit art for `button`, shown under the mouse and while it's locked lit
