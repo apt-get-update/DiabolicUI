@@ -882,6 +882,168 @@ function TestImmersion:test_the_ui_hiding_immersion_is_left_alone()
 	assertClean(client)
 end
 
+-- Decursive -----------------------------------------------------------------------
+
+-- Decursive 2.5.1's squares (MicroUnitF), the parts the skin uses: each made
+-- from the prototype and init'ed, SetColor after Decursive set its state; its
+-- debuff types' names (DcrC) and the clicks it gave its spells.
+-- (loadedBeforeUs: loaded with the game, before us)
+local function decursive(world, _, loadedBeforeUs)
+	local addon = {
+		name = "Decursive",
+		enabled = true,
+		onLoad = function()
+			local prototype = {
+				init = function() end,
+				SetColor = function() end,
+			}
+			local squares = { prototype = prototype, ExistingPerUNIT = {} }
+			squares.Create = function(_, unit)
+				local frame = CreateFrame("Button", nil, _G.UIParent)
+				frame:SetSize(20, 20)
+				local square = setmetatable({ Frame = frame, CurrUnit = unit }, { __index = prototype })
+				square.Texture = frame:CreateTexture(nil, "ARTWORK")
+				for i = 1, 4 do
+					square["OuterTexture" .. i] = frame:CreateTexture(nil, "BACKGROUND")
+				end
+				square.ChronoFontString = frame:CreateFontString(nil, "OVERLAY")
+				squares.ExistingPerUNIT[unit] = square
+				square:init()
+				return square
+			end
+			_G.Dcr = {
+				MicroUnitF = squares,
+				db = { global = { AvailableButtons = { "%s1", "%s2", "ctrl-%s1" } } },
+			}
+			_G.DcrC = { TypeNames = { [1] = "Magic", [4] = "Curse", [8] = "Poison", [16] = "Disease", [32] = "Charm" } }
+			squares:Create("party1") -- (one there before us)
+		end,
+	}
+	table.insert(world.addons, addon)
+	if loadedBeforeUs then
+		addon.loaded = true
+		addon.onLoad()
+	end
+end
+
+-- Decursive's state on a square, then its SetColor.
+local function afflict(square, type, prio, status)
+	square.IsDebuffed = type and true or false
+	square.Debuffs = type and { { Type = type } } or {}
+	square.Debuff1Prio = prio
+	square.UnitStatus = status or 8
+	square:SetColor()
+end
+
+TestDecursive = {}
+
+function TestDecursive:tearDown()
+	client = nil
+	_G.Dcr, _G.DcrC = nil, nil
+end
+
+function TestDecursive:test_afflicted_players_get_a_medallion_and_the_click()
+	boot({ world = decursive })
+	client.api.LoadAddOn("Decursive")
+	local spec = client.Engine:GetDB("Blizzard").decursive
+	local squares = _G.Dcr.MicroUnitF
+	local first, second = squares.ExistingPerUNIT.party1, squares:Create("party2")
+	for _, square in ipairs({ first, second }) do
+		-- Decursive's own border out of sight, its timer small in a corner,
+		-- nothing while all is well
+		lu.assertFalse(shown(square.OuterTexture1))
+		lu.assertEquals(square.ChronoFontString:GetFontObject(), spec.timer.font)
+		lu.assertFalse(shown(square.DiabolicMedallion))
+	end
+	-- Magic, left click: its lit glass, the left button lit
+	afflict(first, 1, 1)
+	local medallion, mouse = first.DiabolicMedallion, first.DiabolicMouse
+	lu.assertTrue(shown(medallion))
+	lu.assertEquals({ medallion:GetTexCoord() }, { 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25 })
+	lu.assertEquals(medallion:GetAlpha(), 1)
+	lu.assertFalse(shown(first.Texture))
+	lu.assertTrue(shown(mouse))
+	lu.assertEquals(client.widgetState[mouse.Left].color, spec.mouse.lit_color)
+	lu.assertEquals(client.widgetState[mouse.Right].color, spec.mouse.dim_color)
+	lu.assertEquals(mouse.Key:GetText(), "")
+	-- Curse, ctrl-left, too far: dimmer, its modifier's letter
+	afflict(first, 4, 3, 512)
+	lu.assertEquals({ medallion:GetTexCoord() }, { 0.25, 0, 0.25, 0.25, 0.5, 0, 0.5, 0.25 })
+	lu.assertEquals(medallion:GetAlpha(), spec.out_of_range_alpha)
+	lu.assertEquals(mouse.Key:GetText(), "C")
+	-- right click: the right button lit
+	afflict(first, 4, 2)
+	lu.assertEquals(client.widgetState[mouse.Right].color, spec.mouse.lit_color)
+	lu.assertEquals(client.widgetState[mouse.Left].color, spec.mouse.dim_color)
+	-- no click for it: no mouse; a type without a medallion: nothing
+	afflict(first, 8, nil)
+	lu.assertFalse(shown(mouse))
+	afflict(first, 32, 1)
+	lu.assertFalse(shown(medallion))
+	lu.assertFalse(shown(mouse))
+	-- styled once; a square we never styled left alone
+	local module = client:GetModule("Blizzard: Decursive")
+	module:StyleSquare(first)
+	module:UpdateSquare({})
+	assertClean(client)
+end
+
+function TestDecursive:test_your_dispel_bursts_and_darkens_the_glass_a_moment()
+	boot({ world = decursive })
+	client.api.LoadAddOn("Decursive")
+	local spec = client.Engine:GetDB("Blizzard").decursive
+	local square = _G.Dcr.MicroUnitF.ExistingPerUNIT.party1
+	local unit = Client.newUnit({ name = "Friend" })
+	client:SetUnit("party1", unit)
+	local me = client.api.UnitGUID("player")
+	afflict(square, 16, 2) -- Disease, right click
+	-- someone else's dispel, or another event: nothing
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_DISPEL", "0xOTHER", "x", 0, unit.guid)
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_HEAL", me, "x", 0, unit.guid)
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_DISPEL", me, "x", 0, "0xNOBODY")
+	lu.assertFalse(shown(square.DiabolicBurst))
+	-- yours: a burst, then the glass dark (Disease's), then nothing
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_DISPEL", me, "x", 0, unit.guid)
+	afflict(square, nil)
+	lu.assertTrue(shown(square.DiabolicBurst))
+	near(color(square.DiabolicBurst.Star:GetVertexColor()), spec.colors.Disease)
+	lu.assertTrue(shown(square.DiabolicMedallion))
+	lu.assertEquals({ square.DiabolicMedallion:GetTexCoord() }, { 0.5, 0.25, 0.5, 0.5, 0.75, 0.25, 0.75, 0.5 })
+	client:Tick(spec.burst.duration + 0.1)
+	lu.assertFalse(shown(square.DiabolicBurst))
+	client:Tick(spec.cleansed_time)
+	lu.assertFalse(shown(square.DiabolicMedallion))
+	-- a dispel on one never seen afflicted: the plain colour, no glass
+	square.DiabolicType = nil
+	client:FireEvent("COMBAT_LOG_EVENT_UNFILTERED", 0, "SPELL_DISPEL", me, "x", 0, unit.guid)
+	near(color(square.DiabolicBurst.Star:GetVertexColor()), spec.colors.none)
+	lu.assertFalse(shown(square.DiabolicMedallion))
+	assertClean(client)
+end
+
+function TestDecursive:test_loaded_before_us_too()
+	boot({
+		world = function(world)
+			decursive(world, nil, true)
+		end,
+	})
+	lu.assertNotNil(_G.Dcr.MicroUnitF.ExistingPerUNIT.party1.DiabolicMedallion)
+	assertClean(client)
+end
+
+function TestDecursive:test_left_alone_without_the_skin_or_its_squares()
+	boot({
+		world = decursive,
+		savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } },
+	})
+	client.api.LoadAddOn("Decursive")
+	lu.assertNil(_G.Dcr.MicroUnitF.ExistingPerUNIT.party1.DiabolicMedallion)
+	-- another Decursive, without its squares
+	_G.Dcr = {}
+	client:GetModule("Blizzard: Decursive"):StyleDecursive()
+	assertClean(client)
+end
+
 -- The world map -------------------------------------------------------------------
 
 TestWorldMap = {}
