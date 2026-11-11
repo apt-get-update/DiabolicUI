@@ -97,6 +97,7 @@ L["Expert"] = "Expert"
 L["Artisan"] = "Artisan"
 L["Master"] = "Maître"
 L["Grand Master"] = "Grand maître"
+L["Herbalism"] = "Herboristerie"
 L["Missing Primary Profession"] = "Métier principal manquant"
 L["Visit a profession trainer in a capital city to learn one."] =
 	"Rendez-vous chez un maître de métier dans une capitale pour en apprendre un."

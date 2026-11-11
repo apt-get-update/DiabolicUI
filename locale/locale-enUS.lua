@@ -224,6 +224,7 @@ L["Expert"] = true
 L["Artisan"] = true
 L["Master"] = true
 L["Grand Master"] = true
+L["Herbalism"] = true
 L["Missing Primary Profession"] = true
 L["Visit a profession trainer in a capital city to learn one."] = true
 L["Not learned yet: visit its trainer to learn it."] = true

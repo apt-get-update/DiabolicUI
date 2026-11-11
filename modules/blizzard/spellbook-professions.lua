@@ -51,7 +51,7 @@ local PROFESSIONS = {
 	{ skill = 2108 }, -- Leatherworking
 	{ skill = 3908 }, -- Tailoring
 	{ skill = 2575, open = 2656, extra = 2580 }, -- Mining, Smelting, Find Minerals
-	{ skill = 2366, open = false, extra = 2383 }, -- Herbalism, Find Herbs
+	{ skill = 2366, line = L["Herbalism"], open = false, extra = 2383 }, -- Herb Gathering, Find Herbs (its spell isn't named as its skill line)
 	{ skill = 8613, open = false }, -- Skinning
 	{ skill = 2550, extra = 818 }, -- Cooking, Basic Campfire
 	{ skill = 3273 }, -- First Aid
@@ -68,10 +68,10 @@ local SpellOf = function(id)
 	return name, icon, name and (GetSpellInfo(name) ~= nil)
 end
 
--- A profession's data by its skill line's name.
+-- A profession's data by its skill line's name (its spell's, or `line`).
 local Find = function(name)
 	for _, data in ipairs(PROFESSIONS) do
-		if GetSpellInfo(data.skill) == name then
+		if (GetSpellInfo(data.skill) == name) or (data.line == name) then
 			return data
 		end
 	end
