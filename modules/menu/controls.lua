@@ -381,11 +381,19 @@ local CreateDropDown = function(parent, name, width, getItems, getValue, setValu
 	end
 
 	-- the closed dropdown shows the saved choice, or the saved name greyed
-	-- out when it's gone (a deleted equipment set)
+	-- out when it's gone (a deleted equipment set). Its icon loaded first
+	-- and its text set anew: an inline icon not loaded yet draws blank, and
+	-- the same text set again doesn't redraw it.
+	local preload = dropDown:CreateTexture(nil, "BACKGROUND")
+	preload:Hide()
 	dropDown.Refresh = function(self)
 		local current = getValue()
 		for _, item in ipairs(getItems()) do
 			if item.value == current then
+				if item.icon then
+					preload:SetTexture(item.icon)
+				end
+				UIDropDownMenu_SetText(self, "")
 				UIDropDownMenu_SetText(self, label(item))
 				return
 			end
