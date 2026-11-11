@@ -20,7 +20,7 @@ What's new in each version: https://github.com/apt-get-update/DiabolicUI/release
 == ✨ Features
 
 * *Diablo III style*: health and mana orbs, restyled windows, loot and roll windows; optional GShade for a darker look (see below).
-* *All in one*: specializations in one click (talents, gear, bars, macros), GearScore, movable frames, shorter chat.
+* *All in one*: specializations in one click (talents, gear, bars, macros), GearScore, movable frames, shorter chat, addons' minimap buttons in one row.
 * *Options*: intuitive and easy to tweak.
 * *In combat*: incoming heals on the orbs, gold, XP and loot gained shown at the right.
 
@@ -52,7 +52,7 @@ image::docs/screenshots/character.webp[The character window]
 |image::docs/screenshots/spec-button-tooltip.webp[Specialization button tooltip]
 |image::docs/screenshots/reputation-hover.webp[Reputation bar tooltip]
 |image::docs/screenshots/chat-loot.webp[Shorter loot messages]
-|
+|image::docs/screenshots/minimap-buttons.webp[Addons' minimap buttons in a row behind the "+"]
 |===
 
 == 🧩 Recommended addons
