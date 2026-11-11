@@ -592,6 +592,35 @@ Engine:NewStaticConfig("Blizzard", {
 	-- window grows around Blizzard's 384x512 frame, whose tabs are placed
 	-- against it, up over the band and the tabs (Blizzard's start 37 down)
 	-- AdiBags' bags (modules/blizzard/adibags.lua)
+	decursive = {
+		socket_color = { 0.05, 0.04, 0.03, 0.9 }, -- an empty socket's stone
+		out_of_range_alpha = 0.4, -- an affliction's icon too far to dispel
+		-- the border by the affliction's type (Blizzard's debuff colours)
+		colors = {
+			none = { 0.8, 0, 0 },
+			Magic = { 0.2, 0.6, 1 },
+			Curse = { 0.6, 0, 1 },
+			Disease = { 0.6, 0.4, 0 },
+			Poison = { 0, 0.6, 0 },
+		},
+		-- the little mouse, the button to click lit
+		mouse = {
+			size = { 7, 10 },
+			offset = { 2, -2 }, -- over the square's bottom right corner
+			button_height = 4,
+			back_color = { 0, 0, 0, 0.85 },
+			lit_color = { 1, 0.82, 0.3, 1 },
+			dim_color = { 0.3, 0.27, 0.22, 1 },
+			font = DiabolicFont_SansBold8, -- a modifier's letter
+		},
+		-- the burst as you dispel
+		burst = {
+			texture = [[Interface\Cooldown\star4]],
+			size = 24,
+			scale = 2.2,
+			duration = 0.5,
+		},
+	},
 	adibags = {
 		insets = { 18, 18, 18, 18 }, -- the window past its frame: the iron over its 8px margin's outer half
 		panel_gap = 4, -- its equipped bags' panel, over the window

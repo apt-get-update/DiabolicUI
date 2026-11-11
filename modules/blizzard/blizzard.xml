@@ -16,6 +16,7 @@
 <Script file='spellbook-professions.lua'/>
 <Script file='spellbook-search.lua'/>
 <Script file='containers.lua'/>
+<Script file='decursive.lua'/>
 <Script file='adibags.lua'/>
 <Script file='fonts.lua'/>
 <Script file='gearscore.lua'/>
