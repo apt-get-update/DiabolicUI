@@ -163,11 +163,7 @@ end
 
 function TestLocaleFiles:test_code_only_uses_known_keys()
 	local english = keysOf("locale/locale-enUS.lua")
-	local pipe = assert(
-		io.popen(
-			"find engine handlers modules data defaults settings -name '*.lua' -not -path 'modules/minimap/*' | sort"
-		)
-	)
+	local pipe = assert(io.popen("find engine handlers modules data defaults settings -name '*.lua' | sort"))
 	local missing = {}
 	for path in pipe:lines() do
 		for _, key in ipairs(literalKeysUsedBy(path)) do
@@ -184,11 +180,7 @@ end
 -- (looked up as L["..."], or handed to code that looks it up).
 function TestLocaleFiles:test_every_english_key_is_used()
 	local sources = {}
-	local pipe = assert(
-		io.popen(
-			"find engine handlers modules data defaults settings -name '*.lua' -not -path 'modules/minimap/*' | sort"
-		)
-	)
+	local pipe = assert(io.popen("find engine handlers modules data defaults settings -name '*.lua' | sort"))
 	for path in pipe:lines() do
 		local file = assert(io.open(path, "r"))
 		sources[#sources + 1] = file:read("*a")

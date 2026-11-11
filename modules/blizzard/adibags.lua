@@ -44,7 +44,9 @@ Module.StyleContainer = function(self, frame)
 end
 
 Module.StyleAdiBags = function(self)
-	local AdiBags = _G.LibStub("AceAddon-3.0"):GetAddon("AdiBags", true)
+	-- (AdiBags brings its own Ace3: another addon by that name doesn't)
+	local AceAddon = _G.LibStub("AceAddon-3.0", true)
+	local AdiBags = AceAddon and AceAddon:GetAddon("AdiBags", true)
 	if not AdiBags then
 		return
 	end

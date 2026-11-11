@@ -1575,7 +1575,12 @@ local function adiBags(world)
 		name = "AdiBags",
 		enabled = true,
 		onLoad = function()
-			local addon = _G.LibStub("AceAddon-3.0"):NewAddon("AdiBags")
+			-- its own AceAddon-3.0, as much of it as the skin uses
+			local addon = {}
+			local AceAddon = _G.LibStub:NewLibrary("AceAddon-3.0", 1)
+			AceAddon.GetAddon = function(_, name)
+				return name == "AdiBags" and addon or nil
+			end
 			local classes = { Container = { prototype = {} }, ItemButton = { prototype = {} } }
 			local container, button = classes.Container.prototype, classes.ItemButton.prototype
 			container.UpdateSkin = function(frame)
@@ -1633,7 +1638,7 @@ end
 function TestAdiBags:test_its_bags_in_our_windows()
 	boot({ world = adiBags })
 	client.api.LoadAddOn("AdiBags")
-	local AdiBags = _G.LibStub("AceAddon-3.0"):GetAddon("AdiBags")
+	local AdiBags = _G.LibStub("AceAddon-3.0"):GetAddon("AdiBags", true)
 	local backpack = _G.AdiBagsContainer1
 	-- our stone, its backdrop gone (and kept gone)
 	lu.assertNotNil(backpack.DiabolicWindow)

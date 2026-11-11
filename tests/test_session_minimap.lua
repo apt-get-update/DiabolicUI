@@ -1,11 +1,12 @@
 -- Run from the addon root: lua5.1 tests/test_session_minimap.lua
 --
--- The embedded minimap module (modules/minimap) in the fake client: the
+-- The minimap module (modules/minimap) in the fake client: the
 -- Diabolic look replacing Blizzard's minimap pieces, the zone name with its
 -- fade, the clock and its tooltip, the mail button, the compass on a
 -- rotating minimap, zooming and clicking, edit mode (drag to move, right
 -- drag to resize, saved and restored), the options page, the MinimapButtonBag
--- integration, and the /setscale, /resetscale, /clear and /go commands.
+-- integration, the settings brought over from 1.6.6, and the /clear and /go
+-- commands.
 
 package.path = "./tests/?.lua;" .. package.path
 
@@ -15,18 +16,17 @@ local Session = require("mocks.session")
 
 local assertClean = Session.assertClean
 
-local client, module, ns
+local client, module, db, config
 
 local function boot(options)
 	client = Client.boot(options or {})
-	ns = _G.DiabolicUIMinimapNS
-	module = ns:GetModule("Minimap")
+	module = client:GetModule("Minimap")
+	db = client.Engine:GetConfig("Minimap")
+	config = client.Engine:GetDB("Minimap")
 	client:Tick(0.1)
 end
 
-local function slash(command, text)
-	local key = "ACECONSOLE_" .. command:upper()
-	lu.assertNotNil(_G.SlashCmdList[key], "/" .. command)
+local function slash(key, text)
 	_G.SlashCmdList[key](text or "")
 end
 
@@ -37,7 +37,7 @@ function TestMinimap:setUp()
 end
 
 function TestMinimap:tearDown()
-	client, module, ns = nil, nil, nil
+	client, module, db, config = nil, nil, nil, nil
 end
 
 function TestMinimap:test_the_diabolic_look_replaces_blizzards_pieces()
@@ -54,7 +54,7 @@ function TestMinimap:test_the_diabolic_look_replaces_blizzards_pieces()
 		"MiniMapInstanceDifficulty",
 		"TimeManagerClockButton",
 	}) do
-		lu.assertEquals(_G[name]:GetParent(), ns.Hider, name)
+		lu.assertEquals(_G[name]:GetParent(), module.hider, name)
 	end
 	-- the dungeon finder eye becomes a border button
 	lu.assertEquals(_G.MiniMapLFGFrame:GetParent(), _G.Minimap)
@@ -87,22 +87,24 @@ function TestMinimap:test_the_zone_name_fades_to_the_new_zone()
 	client:FireEvent("ZONE_CHANGED_INDOORS")
 	lu.assertAlmostEquals(module.zoneName:GetAlpha(), 0.85, 0.001)
 
-	-- with the fade off, the name changes at once; unknown PvP types are gold
-	ns.db.global.minimap.zoneFadeEnabled = false
+	-- a PvP status change in the same zone: its new color at once
+	client.world.zone.pvpType = "sanctuary"
+	client:FireEvent("ZONE_CHANGED")
+	lu.assertAlmostEquals(module.zoneName:GetTextColor(), 104 / 255, 0.001)
+
+	-- unknown PvP types are gold
 	client.world.zone.minimap = "Durotar"
 	client.world.zone.pvpType = nil
 	client:FireEvent("ZONE_CHANGED_NEW_AREA")
+	client:Tick(1)
 	lu.assertEquals(module.zoneName:GetText(), "Durotar")
-	lu.assertAlmostEquals(module.zoneName:GetTextColor(), ns.Colors.normal[1], 0.001)
+	lu.assertAlmostEquals(module.zoneName:GetTextColor(), config.colors.normal[1], 0.001)
 	assertClean(client)
 end
 
 function TestMinimap:test_the_clock_and_its_tooltip()
+	-- the computer's time, the realm's in its tooltip
 	client.world.gameTime = { 21, 5 }
-	ns.db.global.minimap.useServerTime = true
-	client:Tick(1.1)
-	lu.assertEquals(module.time:GetText(), "21:05")
-	ns.db.global.minimap.useServerTime = false
 	client:Tick(1.1)
 	lu.assertEquals(module.time:GetText(), os.date("%H:%M"))
 
@@ -156,12 +158,12 @@ function TestMinimap:test_the_compass_turns_with_a_rotating_minimap()
 	lu.assertTrue(x > 0, "north moved right when facing west")
 
 	client.world.facing = nil -- no facing (a cinematic)
-	client:Tick(0.5) -- AceTimer runs about every 0.1s
+	client:Tick(0.1)
 	lu.assertEquals(module.compass:GetAlpha(), 0)
 
 	client.world.cvars.rotateMinimap = "0"
 	client:FireEvent("CVAR_UPDATE", "ROTATE_MINIMAP", "0")
-	lu.assertNil(module.compassTimer)
+	lu.assertNil(module.compass:GetScript("OnUpdate"))
 	lu.assertEquals(module.compass:GetAlpha(), 0)
 	assertClean(client)
 end
@@ -196,8 +198,7 @@ function TestMinimap:test_edit_mode_moves_and_resizes_the_minimap()
 	_G.Minimap:ClearAllPoints()
 	_G.Minimap:SetPoint("CENTER", _G.UIParent, "CENTER", -600, 0) -- the drag moved it left
 	client:RunScript(overlay(), "OnDragStop")
-	local stored = ns.db.global.minimap.storedPosition
-	lu.assertEquals(stored.point, "LEFT")
+	lu.assertEquals(db.position.point, "LEFT")
 	-- on the left half, the outer elements mirror
 	lu.assertEquals(select(1, _G.MiniMapLFGFrame:GetPoint()), "TOPLEFT")
 	lu.assertEquals(select(1, module.zoneName:GetPoint()), "TOPLEFT")
@@ -228,8 +229,7 @@ end
 function TestMinimap:test_its_art_keeps_its_proportions_at_any_size()
 	-- the border, clock and zone text grow and shrink with the map
 	for _, size in ipairs({ 0.5, 1, 1.5 }) do
-		ns.db.global.minimap.userScale = size
-		module:UpdateSize()
+		module:SetUserScale(size)
 		lu.assertAlmostEquals(module.widgetFrame:GetScale(), 1 / 1.614, 1e-6)
 		-- the frame its border buttons sit on too: laid out for the Diabolic size
 		lu.assertAlmostEquals(_G.Minimap:GetWidth(), 280 / 1.614, 1e-6)
@@ -241,9 +241,9 @@ function TestMinimap:test_no_edit_mode_in_combat_and_resizes_wait_for_its_end()
 	client:EnterCombat()
 	module:EnterEditMode()
 	lu.assertFalse(module:IsEditModeActive())
-	ns.db.global.minimap.userScale = 1.2
-	module:UpdateSize()
-	lu.assertTrue(module.updateneeded)
+	local before = _G.Minimap:GetScale()
+	module:SetUserScale(1.2)
+	lu.assertEquals(_G.Minimap:GetScale(), before)
 	client:LeaveCombat()
 	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale() * 1.2, 0.0001)
 	client:FireEvent("PLAYER_REGEN_ENABLED") -- nothing pending: nothing to do
@@ -257,8 +257,7 @@ function TestMinimap:test_the_saved_position_comes_back_after_a_reload()
 	_G.Minimap:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 100, 100)
 	module:ExitEditMode() -- left mid-drag
 	client:FireEvent("PLAYER_LOGOUT")
-	local saved = { DiabolicUI_DB = _G.DiabolicUI_DB, DiabolicUI_Minimap_DB = _G.DiabolicUI_Minimap_DB }
-	boot({ savedVariables = saved })
+	boot({ savedVariables = { DiabolicUI_DB = _G.DiabolicUI_DB } })
 	lu.assertEquals(select(1, _G.Minimap:GetPoint()), "BOTTOMLEFT")
 	-- a late VARIABLES_LOADED (3.3.5) applies them again, and the stopwatch
 	-- settings Blizzard_TimeManager lost are made again
@@ -285,51 +284,50 @@ function TestMinimap:test_positions_are_saved_relative_to_the_nearest_edge()
 		_G.Minimap:ClearAllPoints()
 		_G.Minimap:SetPoint(case[1], _G.UIParent, case[1], case[2], case[3])
 		module:SavePosition()
-		lu.assertEquals(ns.db.global.minimap.storedPosition.point, case[4])
+		lu.assertEquals(db.position.point, case[4])
 	end
-	-- a frame that isn't placed anywhere
-	lu.assertEquals({ ns.API.GetPosition(_G.CreateFrame("Frame")) }, { "CENTER", 0, 0 })
+	-- not placed anywhere
+	_G.Minimap:ClearAllPoints()
+	lu.assertEquals({ module:GetAnchor() }, { "CENTER", 0, 0 })
 	assertClean(client)
 end
 
-function TestMinimap:test_the_namespace_keeps_its_private_values()
-	local ok, err = pcall(function()
-		ns.Prefix = "Other"
-	end)
-	lu.assertFalse(ok)
-	lu.assertStrContains(err, "Can't replace the protected")
-	ns.Custom = true -- anything else is fine
-	lu.assertTrue(ns.Custom)
+-- Settings from 1.6.6 ------------------------------------------------------------
+
+-- the minimap's own saved variable then: its size, /setscale's and its place
+local function bootWithOld(minimap, core)
+	boot({ savedVariables = { DiabolicUI_Minimap_DB = { global = { minimap = minimap, core = core } } } })
+end
+
+function TestMinimap:test_its_settings_up_to_1_6_6_are_brought_over_once()
+	local position = { point = "LEFT", x = 30, y = 0 }
+	bootWithOld({ userScale = 0.8, sizeRebased = true, storedPosition = position }, { relativeScale = 1.2 })
+	lu.assertEquals(db.size, 0.96, "/setscale multiplied it")
+	lu.assertEquals(db.position.point, "LEFT")
+	lu.assertEquals(select(1, _G.Minimap:GetPoint()), "LEFT")
+	lu.assertNil(_G.DiabolicUI_Minimap_DB, "then dropped")
+
+	-- counted from the original Diabolic size's 100%: beyond the slider's 150%
+	bootWithOld({ userScale = 1.6 })
+	lu.assertEquals(db.size, 1.5)
+	-- saved against the 100% it briefly had (.64 of the original)
+	bootWithOld({ userScale = 1.25, sizeBase = 0.64 })
+	lu.assertEquals(db.size, 1)
+	-- already against this 100%
+	bootWithOld({ userScale = 0.8, sizeRebased = true })
+	lu.assertEquals(db.size, 0.8)
+	-- never resized
+	bootWithOld({})
+	lu.assertEquals(db.size, 1)
+	assertClean(client)
 end
 
 -- Commands -----------------------------------------------------------------------
 
-function TestMinimap:test_setscale_and_resetscale()
-	slash("setscale", "1.2")
-	lu.assertEquals(ns.db.global.core.relativeScale, 1.2)
-	lu.assertAlmostEquals(_G.Minimap:GetScale(), module:GetBaseScale(), 0.0001)
-	local bigger = _G.Minimap:GetScale()
-	slash("setscale", "9") -- kept within bounds
-	lu.assertEquals(ns.db.global.core.relativeScale, 1.5)
-	slash("setscale", "1.5") -- no change
-	slash("setscale", "big") -- not a number
-	slash("resetscale")
-	lu.assertEquals(ns.db.global.core.relativeScale, 1)
-	lu.assertTrue(_G.Minimap:GetScale() < bigger)
-	slash("resetscale") -- already the default
-
-	client:EnterCombat()
-	slash("setscale", "0.7")
-	slash("resetscale")
-	lu.assertEquals(ns.db.global.core.relativeScale, 1, "not in combat")
-	client:LeaveCombat()
-	assertClean(client)
-end
-
 function TestMinimap:test_clear_empties_the_shown_chat_frames()
 	_G.ChatFrame1:AddMessage("Hello")
 	_G.ChatFrame3:AddMessage("Hidden")
-	slash("clear")
+	slash("DIABOLICUICLEAR")
 	lu.assertEquals(_G.ChatFrame1:GetNumMessages(), 0)
 	lu.assertEquals(_G.ChatFrame3:GetNumMessages(), 1, "hidden frames are left alone")
 	assertClean(client)
@@ -339,9 +337,10 @@ function TestMinimap:test_go_switches_to_another_goldpaw_ui()
 	table.insert(client.world.addons, { name = "DiabolicUI2", enabled = false })
 	table.insert(client.world.addons, { name = "AzeriteUI", enabled = true })
 	table.insert(client.world.addons, { name = "DiabolicUI", enabled = true, loaded = true })
-	slash("go", "nothing")
+	lu.assertEquals(_G.SLASH_DIABOLICUIGO2, "/switchto")
+	slash("DIABOLICUIGO", "nothing")
 	lu.assertNil(client.reloaded)
-	slash("switchto", "Diabolic")
+	slash("DIABOLICUIGO", "Diabolic")
 	lu.assertEquals(client.reloaded, 1)
 	lu.assertTrue(client.api.GetAddOnInfo("DiabolicUI2") ~= nil)
 	lu.assertEquals(select(4, client.api.GetAddOnInfo("DiabolicUI2")), 1)
@@ -444,7 +443,7 @@ function TestMinimap:test_the_anchor_picker_snaps_the_minimap()
 	local page = panel()
 	page:Show()
 	client:Click(page.anchorRadios.BOTTOMLEFT)
-	lu.assertEquals(ns.db.global.minimap.storedPosition.point, "BOTTOMLEFT")
+	lu.assertEquals(db.position.point, "BOTTOMLEFT")
 	lu.assertEquals(select(1, _G.Minimap:GetPoint()), "BOTTOMLEFT")
 	assertClean(client)
 end

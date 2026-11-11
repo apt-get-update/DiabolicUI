@@ -3,8 +3,8 @@
 -- Loads the *whole addon* the way the WoW client does: reads DiabolicUI.toc,
 -- follows every <Include> and <Script> in the XML files it lists, in order,
 -- and runs each Lua file with the same ("DiabolicUI", addonTable) pair -
--- the real engine, real handlers, real settings and the embedded minimap
--- module with its vendored Ace3 libraries, all sharing one load.
+-- the real engine, real handlers, real settings and modules, all sharing
+-- one load.
 --
 -- Unlike test_all_modules_load.lua (each file alone, against a mock
 -- Engine), this catches load-order problems: a file using a handler,
@@ -146,7 +146,6 @@ local CLIENT_GLOBALS = {
 local UNDEFINED = {
 	LibStub = true,
 	ChatThrottleLib = true,
-	DiabolicUIMinimapNS = true,
 	DiabolicUI_DB = true,
 	DiabolicUI_Minimap_DB = true,
 }
@@ -337,7 +336,7 @@ function TestAddonLoads:test_whole_addon_loads_in_toc_order()
 	lu.assertEquals(failures, {})
 
 	-- The load really happened: the engine registered every module and
-	-- handler, and the minimap module set up its Ace3 addon object.
+	-- handler.
 	local Engine = addonTable
 	for _, name in ipairs({ "ActionBars", "UnitFrames", "ChatWindows", "ObjectiveTracker", "Blizzard: LootFrame" }) do
 		lu.assertNotNil(Engine:GetModule(name, true), "module " .. name)
@@ -346,7 +345,7 @@ function TestAddonLoads:test_whole_addon_loads_in_toc_order()
 		lu.assertNotNil(Engine:GetHandler(name, true), "handler " .. name)
 	end
 	lu.assertEquals(type(Engine:GetDB("Data: Colors").General), "table")
-	lu.assertNotNil(_G.LibStub("AceAddon-3.0"):GetAddon(ADDON, true), "minimap Ace3 addon")
+	lu.assertNotNil(Engine:GetModule("Minimap", true), "module Minimap")
 end
 
 os.exit(lu.LuaUnit.run())

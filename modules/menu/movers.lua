@@ -16,8 +16,7 @@ local BUTTON_HEIGHT = C.BUTTON_HEIGHT
 -- the menu buttons are secure, and entering combat locks them.
 -------------------------------------------------------
 local GetMinimap = function()
-	local minimap = _G.DiabolicUIMinimapNS
-	return minimap and minimap:GetModule("Minimap", true)
+	return Engine:GetModule("Minimap", true)
 end
 Module.GetMinimap = GetMinimap -- for the UI scale (menu.lua)
 

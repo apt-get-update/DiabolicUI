@@ -51,19 +51,18 @@ git-ignored.
 - `test_no_global_leaks.lua` - fails if any addon file assigns a global
   variable (a missing `local`) that isn't on its explicit per-file `ALLOWED`
   list. Reads the compiler's bytecode listing (`luac5.1 -l`), so it needs
-  `luac5.1` on the PATH (override with `LUAC=...`). Vendored code under
-  `modules/minimap/Libs/` is skipped.
+  `luac5.1` on the PATH (override with `LUAC=...`).
 
 - `test_addon_loads.lua` - loads the **whole addon** the way the client
   does: `DiabolicUI.toc`, then every `<Include>`/`<Script>` of its XML files
   in order, with one shared addon table - the real engine, handlers,
-  settings, and the minimap module with its vendored Ace3 libraries. Also
+  settings and modules. Also
   fails when an XML file points at a file that doesn't exist, or when a
   `.lua` file (outside vendored `Libs/`) isn't loaded by anything - except
   the ones listed in its `NOT_LOADED` table, with the reason.
 - `test_all_modules_load.lua` - a load-only "smoke test" for **every**
   `handlers/` and `modules/` file (found on disk, so new files are covered
-  automatically; the minimap module is left to `test_addon_loads.lua`):
+  automatically):
   each one is loaded standalone against a fresh Engine mock and we assert
   it doesn't error while doing so. This can't verify behaviour, but it
   catches load-time regressions - typos, a removed function a file still
@@ -205,14 +204,6 @@ git-ignored.
   `threat.lua` (shows the threat glow in the aggro-status color while the
   unit has a threat situation, hides it otherwise, ignoring the event
   entirely for a different unit than its own).
-- `test_minimap_api.lua` - three of the embedded minimap module's own small
-  `Core/API/*.lua` utility functions: `Positions.lua`'s
-  `GetParsedPosition` (which of the 9 anchor regions a coordinate within a
-  frame falls into), `Abbreviations.lua`'s `AbbreviateNumber` /
-  `AbbreviateNumberBalanced` / `AbbreviateTime` (number/time -> short
-  display-string formatting), and `Addons.lua`'s `IsAddOnAvailable` /
-  `IsAddOnEnabled` / `IsAddOnLoadable` (case-insensitive lookups against a
-  faked addon listing).
 
 ### Session tests
 
@@ -247,8 +238,9 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
 - `test_session_tooltips.lua` / `test_session_itemtooltips.lua` - unit and
   aura tooltips, inspecting with Shift, following the cursor, the skins;
   the Diablo III item and ability tooltip layouts.
-- `test_session_minimap.lua` - the embedded minimap module: its look, zone
-  text, clock, mail, compass, edit mode, options page and slash commands.
+- `test_session_minimap.lua` - the minimap module: its look, zone text,
+  clock, mail, compass, edit mode, options page, the settings brought over
+  from 1.6.6, and the /clear and /go commands.
 - `test_session_objectives.lua` - world state scores and timers, capture
   bars, error and quest messages, PvP emotes.
 - `test_session_blizzard.lua` - the loot window, bag and bank slots, tinted
@@ -371,16 +363,6 @@ files (not reimplementations of their logic) without a WoW client:
   it consistently. Have the spy's recorder drop the leading `self` a colon
   call passes instead, so a recorded call is just `{methodName, arg1, ...}`
   with no reference back to the spy.
-- The embedded minimap module (`modules/minimap/`) doesn't use the
-  `Engine`/`local Addon, Engine = ...` convention at all - its files do
-  `local Addon, ns = ..., DiabolicUIMinimapNS`, reading a *global*
-  `DiabolicUIMinimapNS` table instead. Set `_G.DiabolicUIMinimapNS = {}`
-  once before loading any of its files, and call `chunk("DiabolicUI")`
-  with just the one argument (see `test_minimap_api.lua`). Its
-  `Core/API/*.lua` files each do `local API = ns.API or {}; ns.API = API`,
-  so loading several of them against the same table accumulates all of
-  their functions onto one shared `ns.API`, same as the real addon's own
-  load order.
 
 ## The fake client
 

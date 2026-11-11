@@ -1,5 +1,4 @@
 # Vendored or written by a tool
-modules/minimap/Libs/
 Libs/
 tests/luaunit.lua
 settings/positions.lua

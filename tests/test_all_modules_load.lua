@@ -28,7 +28,7 @@ AutoStub.install()
 -- checks the real load order). The embedded minimap module doesn't use the
 -- Engine at all and is covered by test_addon_loads.lua instead.
 local FILES = {}
-local pipe = assert(io.popen("find handlers modules -name '*.lua' -not -path 'modules/minimap/*' | sort"))
+local pipe = assert(io.popen("find handlers modules -name '*.lua' | sort"))
 for path in pipe:lines() do
 	FILES[#FILES + 1] = path
 end

@@ -147,9 +147,8 @@ function TestSessionLogin:test_reload_keeps_the_saved_settings()
 	db.fadeChat = not db.fadeChat
 	local fade = db.fadeChat
 	client:FireEvent("PLAYER_LOGOUT")
-	local saved = { DiabolicUI_DB = _G.DiabolicUI_DB, DiabolicUI_Minimap_DB = _G.DiabolicUI_Minimap_DB }
+	local saved = { DiabolicUI_DB = _G.DiabolicUI_DB }
 	lu.assertNotNil(saved.DiabolicUI_DB)
-	lu.assertNotNil(saved.DiabolicUI_Minimap_DB)
 
 	local reloaded = Client.boot({ class = "MAGE", savedVariables = saved })
 	assertClean(reloaded, "after the reload")

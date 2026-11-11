@@ -46,30 +46,13 @@ local ALLOWED = {
 	["modules/chat/windows.lua"] = {
 		CHAT_FRAME_BUTTON_FRAME_MIN_ALPHA = true, -- Blizzard chat constant
 	},
-	["modules/minimap/Core/Private.lua"] = {
-		DiabolicUIMinimapNS = true, -- the minimap module's namespace, shared by its files
-	},
-	["modules/minimap/Components/Misc/Minimap.lua"] = {
-		MBB_ShowTimeout = true, -- a setting of the optional MBB addon
-	},
 }
-
--- Vendored third-party code (Ace3 etc.) manages its own globals.
-local EXCLUDED_PREFIXES = { "modules/minimap/Libs/" }
 
 local listSourceFiles = function()
 	local files = {}
 	local pipe = io.popen("find engine handlers modules settings defaults data locale -name '*.lua' | sort")
 	for path in pipe:lines() do
-		local excluded = false
-		for _, prefix in ipairs(EXCLUDED_PREFIXES) do
-			if path:sub(1, #prefix) == prefix then
-				excluded = true
-			end
-		end
-		if not excluded then
-			files[#files + 1] = path
-		end
+		files[#files + 1] = path
 	end
 	pipe:close()
 	return files

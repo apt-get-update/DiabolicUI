@@ -14,7 +14,7 @@
 -- Small WotLK 3.3.5 helpers shared by the rest of the addon. They live on
 -- the addon's private Engine table, never in the global namespace: other
 -- addons use the presence of newer API names to detect the client version.
-local _, Engine = ...
+local ADDON, Engine = ...
 
 -- True when someone outside your group tagged the unit, so you won't get
 -- loot or credit from it (grayed-out health bars).
@@ -84,3 +84,56 @@ _G.SLASH_RELOADUI1 = "/rl"
 _G.SLASH_RELOADUI2 = "/reload"
 _G.SLASH_RELOADUI3 = "/reloadui"
 _G.SlashCmdList.RELOADUI = _G.ReloadUI
+
+-- /clear: empties the shown chat frames (before a screenshot, say)
+_G.SLASH_DIABOLICUICLEAR1 = "/clear"
+_G.SlashCmdList.DIABOLICUICLEAR = function()
+	for _, name in ipairs(_G.CHAT_FRAMES) do
+		local frame = _G[name]
+		if frame:IsShown() then
+			frame:Clear()
+		end
+	end
+end
+
+-- /go and /switchto <name>: switches to another of Goldpaw's UIs that's
+-- installed (DiabolicUI2, AzeriteUI...), turning the others and this one off.
+local UIS = {
+	AzeriteUI = { "azerite", "azui" },
+	DiabolicUI2 = { "diabolic", "diablo", "dui" },
+	GoldpawUI = { "goldpaw", "gui" },
+	JourneyUI = { "journey", "jui" },
+}
+
+local IsInstalled = function(addon)
+	for i = 1, GetNumAddOns() do
+		if string.lower((GetAddOnInfo(i))) == string.lower(addon) then
+			return true
+		end
+	end
+end
+
+_G.SLASH_DIABOLICUIGO1 = "/go"
+_G.SLASH_DIABOLICUIGO2 = "/switchto"
+_G.SlashCmdList.DIABOLICUIGO = function(input)
+	local wanted = string.lower(string.match(input, "%S+") or "")
+	local target
+	for ui, names in pairs(UIS) do
+		for _, name in ipairs(names) do
+			if name == wanted and IsInstalled(ui) then
+				target = ui
+			end
+		end
+	end
+	if not target then
+		return
+	end
+	EnableAddOn(target)
+	for ui in pairs(UIS) do
+		if ui ~= target and IsInstalled(ui) then
+			DisableAddOn(ui)
+		end
+	end
+	DisableAddOn(ADDON)
+	ReloadUI()
+end

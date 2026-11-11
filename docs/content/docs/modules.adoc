@@ -14,7 +14,7 @@ weight: 8
 | `blizzard/` | One file per Blizzard piece, named after it | Below
 | `chat/` | `windows`, `bubbles`, `filters`, `cleaner`, `slide`, `copy` | Web links use our own `url` link type, so `filters.lua` overrides `SetItemRef`
 | `objectives/` | Tracker, capture bars, world state, warnings, `banners` (boss and zone cards), `gains` (gold, XP and loot lines) | The tracker only changes alpha: its item buttons are secure
-| `minimap/` | An Ace3 addon kept as it is | Its own namespace and `+DiabolicUI_Minimap_DB+`: don't merge it into `+DiabolicUI_DB+`
+| `minimap/` | `minimap.lua`, a module like the others | Its size and place are the `Minimap` config; the old `+DiabolicUI_Minimap_DB+` is read once and dropped
 | `menu/` | `/dui config`: `page-main` (the toggles), `page-positions` (UI scale, tooltip and minimap anchors), `page-specs` (what each specialization sets up); `controls.lua` (cards, sliders, choice buttons, anchor picker), `movers.lua` | The minimap's own options page is gone: its anchor and size are on Positions
 |===
 

@@ -424,7 +424,7 @@ function TestOptionsMenu:test_the_addons_page_and_the_tracker_buttons()
 	-- Unlock Frames: the minimap and the tracker at once, one button to lock
 	local menu = client:GetModule("Menu")
 	local tracker = client:GetModule("ObjectiveTracker")
-	local minimap = _G.DiabolicUIMinimapNS:GetModule("Minimap")
+	local minimap = client:GetModule("Minimap")
 	local unlock = widget("UnlockFrames")
 	client:Click(unlock)
 	lu.assertTrue(menu:AreFramesUnlocked())
@@ -700,7 +700,7 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 	lu.assertAlmostEquals(frame:GetScale(), before, 1e-6)
 
 	-- the minimap, Questie's tracker and TrinketMenu's windows scale with it
-	local minimap = _G.DiabolicUIMinimapNS:GetModule("Minimap")
+	local minimap = client:GetModule("Minimap")
 	local mapBefore = minimap:GetBaseScale()
 	local questie = CreateFrame("Frame", "Questie_BaseFrame", _G.UIParent)
 	local trinkets = CreateFrame("Frame", "TrinketMenu_MainFrame", _G.UIParent)
@@ -753,38 +753,16 @@ function TestOptionsMenu:test_the_ui_scale_slider()
 end
 
 function TestOptionsMenu:test_scales_chosen_before_keep_their_size()
-	-- 110% of the UI Scale is the new 100%, 80% of the minimap's size too
+	-- 110% of the UI Scale is the new 100% (the minimap's: test_session_minimap.lua)
 	client = nil
 	boot({
 		savedVariables = {
 			DiabolicUI_DB = { ScreenScaling = { profiles = { global = { scale = 1.21 } } } },
-			DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.6 } } },
 		},
 	})
 	lu.assertEquals(db("ScreenScaling").scale, 1.1)
-	-- (2.0 in the new sizes, beyond the slider's 150%)
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1.5)
 	-- only once
 	lu.assertTrue(db("ScreenScaling").rebased)
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.sizeBase, 0.8)
-	client = nil
-
-	-- saved against the 100% it briefly had (.64 of the original): back
-	boot({
-		savedVariables = {
-			DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 1.25, sizeBase = 0.64 } } },
-		},
-	})
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 1)
-	client = nil
-
-	-- already against this 100%: left as it is
-	boot({
-		savedVariables = {
-			DiabolicUI_Minimap_DB = { global = { minimap = { userScale = 0.8, sizeRebased = true } } },
-		},
-	})
-	lu.assertEquals(_G.DiabolicUIMinimapNS.db.global.minimap.userScale, 0.8)
 	assertClean(client)
 end
 

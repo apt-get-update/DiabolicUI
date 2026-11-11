@@ -5,6 +5,7 @@
 ## Author: Lars "Goldpaw" Norberg, modified by apt-get-update
 ## Version: 1.6.6-Release
 ## DefaultState: Enabled
+# DiabolicUI_Minimap_DB: the minimap's settings up to 1.6.6, read once (modules/minimap/minimap.lua)
 ## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB, DiabolicUI_Layout
 ## X-Category: Interface Enhancements
 

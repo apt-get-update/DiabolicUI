@@ -60,7 +60,6 @@ DiabolicFont_SansRegular12
 DiabolicFont_SansRegular12White
 DiabolicFont_SansRegular14
 DiabolicFont_SerifRegular28
-DiabolicUIMinimapNS
 DiabolicUI_DB
 DisableAddOn
 DoEmote

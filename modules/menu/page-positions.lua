@@ -1,6 +1,6 @@
 -- The Positions page of /dui config, a card for each: the UI scale with
 -- Unlock Frames and Reset Positions; the tooltip on the cursor; the
--- minimap's screen anchor and size (the minimap module's own settings).
+-- minimap's screen anchor and size.
 -- The pickers show what they pick: a tooltip with the cursor on it, a
 -- screen with the minimap in its place.
 local Addon, Engine = ...
@@ -203,14 +203,11 @@ Module.CreatePositionsPage = function(self)
 	PlaceSlider(offsetX, tooltip, CARD_PAD + SLIDER_COLUMN, slidersTop)
 	PlaceSlider(offsetY, tooltip, CARD_PAD + SLIDER_COLUMN, slidersTop - SLIDER_BLOCK_HEIGHT - ROW_GAP)
 
-	-- The minimap (its own module and settings) ----------------------------------
-	local ns = _G.DiabolicUIMinimapNS
+	-- The minimap -----------------------------------------------------------------
+	local minimapModule = Engine:GetModule("Minimap", true)
 	local minimapPicker, minimapSize
-	if ns then
-		local minimapModule = ns:GetModule("Minimap")
-		local minimapDB = function()
-			return ns.db.global.minimap
-		end
+	if minimapModule then
+		local minimapDB = Engine:GetConfig("Minimap")
 		local minimap = CreateCard(
 			page,
 			"Minimap",
@@ -221,10 +218,10 @@ Module.CreatePositionsPage = function(self)
 		PlaceCard(layout, minimap, -CONTENT_TOP + math.max(PICKER_BLOCK_HEIGHT, SLIDER_BLOCK_HEIGHT) + CARD_PAD)
 
 		minimapPicker = CreateAnchorPointPicker(minimap, "MinimapAnchor", MINIMAP_POINTS, function()
-			return (ns.API.GetPosition(_G.Minimap))
+			return (minimapModule:GetAnchor())
 		end, function(point)
 			local offset = MINIMAP_OFFSETS[point]
-			minimapDB().storedPosition = { point = point, x = offset[1], y = offset[2] }
+			minimapDB.position = { point = point, x = offset[1], y = offset[2] }
 			minimapModule:UpdatePosition()
 		end)
 		PlacePicker(minimapPicker, minimap, CONTENT_TOP)
@@ -239,7 +236,7 @@ Module.CreatePositionsPage = function(self)
 		ring:SetVertexColor(0.62, 0.48, 0.25, 1)
 		ring:SetPoint("CENTER", map, "CENTER")
 		minimapPicker.OnRefresh = function(box, point)
-			local size = MINIMAP_PREVIEW_SIZE * (minimapDB().userScale or 1)
+			local size = MINIMAP_PREVIEW_SIZE * minimapDB.size
 			map:SetSize(size, size)
 			ring:SetSize(size + MINIMAP_PREVIEW_RIM * 2, size + MINIMAP_PREVIEW_RIM * 2)
 			local x, y = Direction(point or "TOPRIGHT")
@@ -253,20 +250,19 @@ Module.CreatePositionsPage = function(self)
 			)
 		end
 
-		local config = ns.Config.Minimap
+		local config = Engine:GetDB("Minimap")
 		minimapSize = CreateValueSlider(
 			minimap,
 			"MinimapSize",
 			L["Minimap Size"],
 			L["Also: right-drag the minimap while frames are unlocked."],
-			config.MinUserScale * 100,
-			config.MaxUserScale * 100,
+			config.minSize * 100,
+			config.maxSize * 100,
 			function()
-				return (minimapDB().userScale or 1) * 100
+				return minimapDB.size * 100
 			end,
 			function(value)
-				minimapDB().userScale = value / 100
-				minimapModule:UpdateSize()
+				minimapModule:SetUserScale(value / 100)
 				minimapPicker:Refresh()
 			end
 		)
@@ -284,7 +280,7 @@ Module.CreatePositionsPage = function(self)
 		if minimapPicker then
 			minimapPicker:Refresh()
 			if not minimapSize.Input:HasFocus() then
-				minimapSize:SetValueSilently((ns.db.global.minimap.userScale or 1) * 100)
+				minimapSize:SetValueSilently(minimapModule:GetUserScale() * 100)
 			end
 		end
 	end
