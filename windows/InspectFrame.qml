@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "InspectFrame"
+    kind: "book"
     width: 384
     height: 512
 
@@ -49,11 +50,11 @@ WowWindow {
 
                 FontString {
                     name: "InspectNameText"
-                    text: "Wolvenblood"
+                    text: "Fanord"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 123.3
+                    width: 65.6
                     height: 14.2
                 }
             }
@@ -499,12 +500,12 @@ WowWindow {
         // the level line (the guild's under it) out of the band, over the model
         FontString {
             name: "InspectLevelText"
-            text: "Level 61 Human Warrior"
+            text: "Level 80 Draenei Paladin"
             pin: "place"
             anchors.horizontalCenter: inspectModelFrame.horizontalCenter
             anchors.bottom: inspectModelFrame.top
             anchors.bottomMargin: 22
-            width: 218.1
+            width: 226.8
             height: 14.2
         }
 

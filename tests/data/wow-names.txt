@@ -20,6 +20,7 @@ ChatFrame1
 ChatFrame1EditBox
 ChatFrameMenuButton
 ChatFrame_AddMessageEventFilter
+ClearCursor
 ClearOverrideBindings
 CloseAllBags
 CloseLoot
@@ -54,11 +55,14 @@ DiabolicFont_SansBold10Title
 DiabolicFont_SansBold12
 DiabolicFont_SansBold12White
 DiabolicFont_SansBold13
+DiabolicFont_SansBold14
 DiabolicFont_SansBold8
 DiabolicFont_SansRegular10
 DiabolicFont_SansRegular12
 DiabolicFont_SansRegular12White
 DiabolicFont_SansRegular14
+DiabolicFont_SerifRegular10
+DiabolicFont_SerifRegular12
 DiabolicFont_SerifRegular28
 DiabolicUI_DB
 DisableAddOn
@@ -118,6 +122,7 @@ GetContainerItemLink
 GetContainerItemQuestInfo
 GetContainerNumSlots
 GetCurrentTitle
+GetCursorInfo
 GetCursorPosition
 GetDailyQuestsCompleted
 GetEquipmentSetInfo
@@ -146,6 +151,7 @@ GetMaxDailyQuests
 GetMinimapZoneText
 GetMoney
 GetNetStats
+GetNewSocketInfo
 GetNumAddOns
 GetNumAuctionItems
 GetNumCompanions
@@ -158,6 +164,7 @@ GetNumPartyMembers
 GetNumRaidMembers
 GetNumShapeshiftForms
 GetNumSkillLines
+GetNumSockets
 GetNumSpellTabs
 GetNumTalentGroups
 GetNumTalentTabs
@@ -182,6 +189,8 @@ GetShapeshiftForm
 GetShapeshiftFormCooldown
 GetShapeshiftFormInfo
 GetSkillLineInfo
+GetSocketItemInfo
+GetSocketTypes
 GetSpellInfo
 GetSpellName
 GetSpellTabInfo
@@ -287,7 +296,13 @@ OpenAllBags
 PVPBattleground_UpdateQueueStatus
 PVPMicroButton
 PVPMicroButtonTexture
+PickupAction
+PickupCompanion
+PickupEquipmentSet
+PickupItem
+PickupMacro
 PickupSpell
+PlaceAction
 PlaySound
 QuestFont_Large
 QuestFont_Shadow_Huge

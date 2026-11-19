@@ -150,10 +150,11 @@ Module.StyleTalents = function(self)
 	end)
 	self:LayoutSpecs()
 
-	-- the spec's state, or the button that makes it the active one, in the
-	-- band's middle
+	-- the button that makes the spec shown the active one, in the band's
+	-- middle; nothing there for the active one ("These are your active
+	-- talents" says what the window already shows)
 	Hide("PlayerTalentFramePointsLeft", "PlayerTalentFramePointsMiddle", "PlayerTalentFramePointsRight")
-	kit:StyleBandText(_G.PlayerTalentFrameStatusText)
+	_G.PlayerTalentFrameStatusText:SetAlpha(0)
 	local activate = _G.PlayerTalentFrameActivateButton
 	activate:SetFrameLevel(window:GetFrameLevel() + 4)
 	kit:StyleButton(activate, config.button_height)
@@ -192,6 +193,9 @@ Module.StyleTalents = function(self)
 	panel:SetPoint("TOPLEFT", scroll, "TOPLEFT", -insets[1], insets[2])
 	panel:SetPoint("BOTTOMRIGHT", scroll, "BOTTOMRIGHT", insets[3], -insets[4])
 	kit:StylePanel(panel)
+	for _, corner in ipairs({ "TopLeft", "TopRight", "BottomLeft", "BottomRight" }) do
+		_G["PlayerTalentFrameBackground" .. corner]:SetVertexColor(unpack(config.tree_art_color))
+	end
 
 	-- the points, and the preview's buttons under them
 	Hide(

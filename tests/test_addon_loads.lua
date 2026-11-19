@@ -292,6 +292,8 @@ local NOT_LOADED = {
 	["tools/positions.lua"] = "run outside the game: writes settings/positions.lua",
 	["tools/shared.lua"] = "run outside the game: what tools/positions.lua and tools/sample.lua share",
 	["tools/sample.lua"] = "run outside the game: the editor's sample window",
+	["tools/realm/lua/windows.lua"] = "run by the test realm's server: its .ui command",
+	["tools/realm/scan.lua"] = "loaded by the test realm's client alone (its own DiabolicUI.toc): /dui layout",
 }
 
 function TestAddonLoads:test_every_lua_file_is_in_the_load_order()

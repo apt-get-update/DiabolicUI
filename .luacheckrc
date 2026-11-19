@@ -34,3 +34,4 @@ ignore = {
 }
 
 files["tests/**"] = { ignore = { "1" } } -- (the fake client and LuaUnit's test tables are globals)
+files["tools/realm/lua/**"] = { read_globals = { "RegisterPlayerEvent", "WorldDBQuery" } } -- (the test realm's server's Lua)

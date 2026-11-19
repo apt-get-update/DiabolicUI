@@ -9,9 +9,18 @@ local _, Engine = ...
 
 Engine:NewStaticConfig("Positions", {
 
+	-- ArenaFrame ------------------------------------------------------------
+	ArenaFrameCancelButton = { "LEFT", "ArenaFrameJoinButton", "RIGHT", 8, 0, 78.4, 22 }, -- Button "Cancel"
+	ArenaFrameDiabolicFoot = { "BOTTOMLEFT", "ArenaFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
+	ArenaFrameGroupJoinButton = { "BOTTOMLEFT", "ArenaFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 122.7, 22 }, -- Button "Join as Group"
+	ArenaFrameJoinButton = { "LEFT", "ArenaFrameGroupJoinButton", "RIGHT", 8, 0, 106.9, 22 }, -- Button "Join Battle"
+	ArenaFrameNameHeader = { "BOTTOMLEFT", "ArenaZone1", "TOPLEFT", 0, 12 }, -- FontString "Rated Battle:"
+	ArenaFrameNameHeader2 = { "BOTTOMLEFT", "ArenaZone4", "TOPLEFT", 0, 12 }, -- FontString "Practice Battle:"
+	ArenaFrameZoneDescription = { "TOPLEFT", "ArenaZone6", "BOTTOMLEFT", 8, -30, 299, 72 }, -- FontString "Let the games begin!  The door is open to all who wish to find glory in the arena, and the Steamwheedle Cartel is prepared to accept your entry into the games.  If victory is your destiny, then register a team with an Arena Organizer, or join one that has already been registered!"
+
 	-- AuctionFrame ----------------------------------------------------------
-	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 548, 7, 84.3, 22 }, -- Button "Buy"
-	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 6, 0, 105.8, 22 }, -- Button "Cancel Auctions"
+	Atr_Buy1_Button = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 539, 7, 84.3, 22 }, -- Button "Buy"
+	Atr_CancelSelectionButton = { "LEFT", "Atr_Buy1_Button", "RIGHT", 8, 0, 105.8, 22 }, -- Button "Cancel Auctions"
 	-- Auctionator's left column (its parts: auction.lua)
 	Atr_Main_PanelDiabolicLeft = { "TOPLEFT", "AuctionFrame", "TOPLEFT", -8, -46, 212, 367 }, -- Frame
 	-- Auctionator's results, right of it
@@ -29,27 +38,27 @@ Engine:NewStaticConfig("Positions", {
 	AuctionFrameBrowseDiabolicResults = { "TOPLEFT", "AuctionFrame", "TOPLEFT", 178, -78, 662, 335 }, -- Frame
 	AuctionFrameDiabolicFoot = { "BOTTOMLEFT", "AuctionFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	AuctionFrameMoneyFrame = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 182, 13 }, -- Frame
-	AuctionatorCloseButton = { "LEFT", "Atr_CancelSelectionButton", "RIGHT", 6, 0, 74.9, 22 }, -- Button "Close"
+	AuctionatorCloseButton = { "LEFT", "Atr_CancelSelectionButton", "RIGHT", 8, 0, 74.9, 22 }, -- Button "Close"
 	AuctionsButton1 = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -25 }, -- Button
-	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 621, 7, 121.1, 22 }, -- Button "Cancel Auction"
-	AuctionsCloseButton = { "LEFT", "AuctionsCancelAuctionButton", "RIGHT", 6, 0, 76.9, 22 }, -- Button "Close"
+	AuctionsCancelAuctionButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 614, 7, 121.1, 22 }, -- Button "Cancel Auction"
+	AuctionsCloseButton = { "LEFT", "AuctionsCancelAuctionButton", "RIGHT", 8, 0, 76.9, 22 }, -- Button "Close"
 	AuctionsCreateAuctionButton = { "BOTTOM", "AuctionFrameAuctionsDiabolicSelling", "BOTTOM", 0, 7 }, -- Button "Create Auction"
 	AuctionsQualitySort = { "TOPLEFT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 14, -4 }, -- Button "Rarity"
 	AuctionsScrollFrame = { "TOPRIGHT", "AuctionFrameAuctionsDiabolicResults", "TOPLEFT", 593, -25, 435, 338 }, -- ScrollFrame
-	BidBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
+	BidBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 576, 7, 76, 22 }, -- Button "Bid"
 	BidBidPrice = { "BOTTOM", "AuctionFrameDiabolicFoot", "BOTTOM", -52, 11 }, -- Frame
 	BidBidText = { "BOTTOMRIGHT", "AuctionFrameDiabolicFoot", "BOTTOM", -151.9, 14 }, -- FontString "Bid"
 	-- its rows (shown with bids: a scan without any doesn't see them)
 	BidButton1 = { "TOPLEFT", "AuctionFrameBidDiabolicResults", "TOPLEFT", 27, -25 }, -- Button
-	BidBuyoutButton = { "LEFT", "BidBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
-	BidCloseButton = { "LEFT", "BidBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
+	BidBuyoutButton = { "LEFT", "BidBidButton", "RIGHT", 8, 0, 76, 22 }, -- Button "Buyout"
+	BidCloseButton = { "LEFT", "BidBuyoutButton", "RIGHT", 8, 0, 76, 22 }, -- Button "Close"
 	BidQualitySort = { "TOPLEFT", "AuctionFrameBidDiabolicResults", "TOPLEFT", 65, -4 }, -- Button "Rarity"
 	BidScrollFrame = { "TOPRIGHT", "AuctionFrameBidDiabolicResults", "TOPLEFT", 798, -25, 625, 338 }, -- ScrollFrame
-	BrowseBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 585, 7, 76, 22 }, -- Button "Bid"
+	BrowseBidButton = { "BOTTOMLEFT", "AuctionFrameDiabolicFoot", "BOTTOMLEFT", 576, 7, 76, 22 }, -- Button "Bid"
 	BrowseBidPrice = { "BOTTOM", "AuctionFrameDiabolicFoot", "BOTTOM", -12, 11 }, -- Frame
 	BrowseButton1 = { "TOPLEFT", "AuctionFrameBrowseDiabolicResults", "TOPLEFT", 18, -25 }, -- Button
-	BrowseBuyoutButton = { "LEFT", "BrowseBidButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Buyout"
-	BrowseCloseButton = { "LEFT", "BrowseBuyoutButton", "RIGHT", 6, 0, 76, 22 }, -- Button "Close"
+	BrowseBuyoutButton = { "LEFT", "BrowseBidButton", "RIGHT", 8, 0, 76, 22 }, -- Button "Buyout"
+	BrowseCloseButton = { "LEFT", "BrowseBuyoutButton", "RIGHT", 8, 0, 76, 22 }, -- Button "Close"
 	BrowseFilterScrollFrame = { "TOPRIGHT", "AuctionFrameBrowseDiabolicCategories", "TOPLEFT", 146, -4, 160, 327 }, -- ScrollFrame
 	BrowseNextPageButton = { "RIGHT", "AuctionFrameBrowseDiabolicResults", "TOPRIGHT", -16, 20, 24, 24 }, -- Button
 	BrowseNoResultsText = { "TOP", "AuctionFrameBrowseDiabolicResults", "TOP", 0, -40 }, -- FontString "Choose search criteria and press \"Search\""
@@ -61,13 +70,13 @@ Engine:NewStaticConfig("Positions", {
 	ShowOnPlayerCheckButton = { "LEFT", "IsUsableCheckButtonText", "RIGHT", 16, 0 }, -- CheckButton
 
 	-- BattlefieldFrame ------------------------------------------------------
-	BattlefieldFrameCancelButton = { "LEFT", "BattlefieldFrameJoinButton", "RIGHT", 6, 0, 75.6, 22 }, -- Button "Cancel"
+	BattlefieldFrameCancelButton = { "LEFT", "BattlefieldFrameJoinButton", "RIGHT", 8, 0, 78.4, 22 }, -- Button "Cancel"
 	BattlefieldFrameDiabolicFoot = { "BOTTOMLEFT", "BattlefieldFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	BattlefieldFrameGroupJoinButton = { "BOTTOMLEFT", "BattlefieldFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 127.7, 22 }, -- Button "Join as Group"
+	BattlefieldFrameGroupJoinButton = { "BOTTOMLEFT", "BattlefieldFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 122.7, 22 }, -- Button "Join as Group"
 	-- the rewards on slate too, under the instances: 16 higher (its panel clear
 	-- of the buttons), its top 7 lower (apart from theirs; Blizzard's 232 high)
 	BattlefieldFrameInfoScrollFrame = { "BOTTOMLEFT", "BattlefieldFrame", "BOTTOMLEFT", 19, 116, 298, 209 }, -- ScrollFrame
-	BattlefieldFrameJoinButton = { "LEFT", "BattlefieldFrameGroupJoinButton", "RIGHT", 6, 0, 108.7, 22 }, -- Button "Join Battle"
+	BattlefieldFrameJoinButton = { "LEFT", "BattlefieldFrameGroupJoinButton", "RIGHT", 8, 0, 106.9, 22 }, -- Button "Join Battle"
 	-- "Battlefield Instance:" 5 higher, apart from its list
 	BattlefieldFrameNameHeader = { "TOPLEFT", "BattlefieldFrame", "TOPLEFT", 75, -50 }, -- FontString "Battlefield Instance:"
 
@@ -103,7 +112,7 @@ Engine:NewStaticConfig("Positions", {
 	TokenFramePopupCloseButton = { "TOPRIGHT", "TokenFramePopup", "TOPRIGHT", -1, -1 }, -- Button
 
 	-- ClassTrainerFrame -----------------------------------------------------
-	ClassTrainerCancelButton = { "LEFT", "ClassTrainerTrainButton", "RIGHT", 6, 0, 83.5, 22 }, -- Button "Exit"
+	ClassTrainerCancelButton = { "LEFT", "ClassTrainerTrainButton", "RIGHT", 8, 0, 82.5, 22 }, -- Button "Exit"
 	-- the chosen one's page 6 under the list's (Blizzard's 8 under its text)
 	ClassTrainerDetailScrollFrame = { "TOPLEFT", "ClassTrainerListScrollFrame", "BOTTOMLEFT", 0, -28, 296, 121 }, -- ScrollFrame
 	-- "All" and the list under the greeting (the chosen one's height: trainer.lua)
@@ -115,34 +124,33 @@ Engine:NewStaticConfig("Positions", {
 	ClassTrainerGreetingText = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 11, -34, 350, 24 }, -- FontString "Hello, priest!  Ready for some training?"
 	ClassTrainerListScrollFrame = { "TOPRIGHT", "ClassTrainerFrame", "TOPRIGHT", -67, -72, 296, 158 }, -- ScrollFrame
 	ClassTrainerMoneyFrame = { "BOTTOMRIGHT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 181, 12 }, -- Frame
-	ClassTrainerSkill1 = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 22, -90 }, -- Button "  Power Word: Fortitude"
-	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 83.5, 22 }, -- Button "Train"
+	ClassTrainerSkill1 = { "TOPLEFT", "ClassTrainerFrame", "TOPLEFT", 22, -90 }, -- Button "Discipline"
+	ClassTrainerTrainButton = { "BOTTOMLEFT", "ClassTrainerFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 82.5, 22 }, -- Button "Train"
 
 	-- DressUpFrame ----------------------------------------------------------
 	-- its "CTRL-Left Click..." under the band, over the picture (Blizzard's hangs from the title)
 	DressUpFrameDescriptionText = { "CENTER", "DressUpFrame", "TOP", -11, -50 }, -- FontString "CTRL-Left Click additional items to display them on your character"
 
 	-- FriendsFrame ----------------------------------------------------------
-	ChannelFrameNewButton = { "BOTTOMRIGHT", "FriendsFrameDiabolicFoot", "BOTTOMRIGHT", -14, 9 }, -- Button "Add"
-	FriendsFrameAddFriendButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 8 }, -- Button "Add Friend"
+	ChannelFrameNewButton = { "BOTTOMRIGHT", "FriendsFrameDiabolicFoot", "BOTTOMRIGHT", -14, 7 }, -- Button "Add"
+	FriendsFrameAddFriendButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 131, 22 }, -- Button "Add Friend"
 	FriendsFrameDiabolicFoot = { "BOTTOMLEFT", "FriendsFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	FriendsFrameFriendsScrollFrameScrollBar = { "TOPLEFT", "FriendsFrameFriendsScrollFrame", "TOPRIGHT", 6, -15, second = { "BOTTOMLEFT", "BOTTOMRIGHT", 6, 15 } }, -- Slider
 	FriendsFrameIgnoreButton1 = { "TOPLEFT", "FriendsFrame", "TOPLEFT", 21, -39 }, -- Button
-	FriendsFrameIgnorePlayerButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 8 }, -- Button "Ignore Player"
+	FriendsFrameIgnorePlayerButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 131, 22 }, -- Button "Ignore Player"
 	FriendsFrameIgnoreScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -65, -36, 298, 340 }, -- ScrollFrame
-	FriendsFrameSendMessageButton = { "LEFT", "FriendsFrameAddFriendButton", "RIGHT", 64, 0 }, -- Button "Send Message"
-	FriendsFrameUnsquelchButton = { "BOTTOMRIGHT", "FriendsFrameDiabolicFoot", "BOTTOMRIGHT", -14, 8 }, -- Button "Remove Player"
+	FriendsFrameSendMessageButton = { "LEFT", "FriendsFrameAddFriendButton", "RIGHT", 64, 0, 131, 22 }, -- Button "Send Message"
+	FriendsFrameUnsquelchButton = { "BOTTOMRIGHT", "FriendsFrameDiabolicFoot", "BOTTOMRIGHT", -14, 7, 134, 22 }, -- Button "Remove Player"
 	GuildEventLogFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
-	GuildFrameAddMemberButton = { "LEFT", "GuildFrameGuildInformationButton", "RIGHT", 6, 0, 94.4, 22 }, -- Button "Add Member"
-	GuildFrameControlButton = { "LEFT", "GuildFrameAddMemberButton", "RIGHT", 6, 0, 96.7, 22 }, -- Button "Guild Control"
-	GuildFrameGuildInformationButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 122.9, 22 }, -- Button "Guild Information"
+	GuildFrameAddMemberButton = { "LEFT", "GuildFrameGuildInformationButton", "RIGHT", 8, 0, 93, 22 }, -- Button "Add Member"
+	GuildFrameControlButton = { "LEFT", "GuildFrameAddMemberButton", "RIGHT", 8, 0, 95.5, 22 }, -- Button "Guild Control"
+	GuildFrameGuildInformationButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 121.5, 22 }, -- Button "Guild Information"
 	GuildInfoFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
 	GuildMemberDetailFrame = { "TOPLEFT", "FriendsFrameDiabolic", "TOPRIGHT", 6, -96 }, -- Frame
-	WhoFrameAddFriendButton = { "LEFT", "WhoFrameWhoButton", "RIGHT", 6, 0, 106.8, 22 }, -- Button "Add Friend"
+	WhoFrameAddFriendButton = { "LEFT", "WhoFrameWhoButton", "RIGHT", 8, 0, 105.5, 22 }, -- Button "Add Friend"
 	WhoFrameButton1 = { "TOPLEFT", "WhoFrame", "TOPLEFT", 15, -61 }, -- Button
 	WhoFrameColumnHeader1 = { "TOPLEFT", "WhoFrame", "TOPLEFT", 20, -34 }, -- Button "Name"
-	WhoFrameGroupInviteButton = { "LEFT", "WhoFrameAddFriendButton", "RIGHT", 6, 0, 117.8, 22 }, -- Button "Group Invite"
-	WhoFrameWhoButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 89.4, 22 }, -- Button "Refresh"
+	WhoFrameGroupInviteButton = { "LEFT", "WhoFrameAddFriendButton", "RIGHT", 8, 0, 116.4, 22 }, -- Button "Group Invite"
+	WhoFrameWhoButton = { "BOTTOMLEFT", "FriendsFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 88.1, 22 }, -- Button "Refresh"
 	WhoListScrollFrame = { "TOPRIGHT", "FriendsFrame", "TOPRIGHT", -67, -62 }, -- ScrollFrame
 
 	-- GroupBulletinBoardFrame -----------------------------------------------
@@ -152,10 +160,10 @@ Engine:NewStaticConfig("Positions", {
 	-- the slots, logs and info 27 higher than Blizzard's: as far from the band
 	-- as from the foot's iron bar
 	GuildBankColumn1 = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 30, -43 }, -- Frame
-	GuildBankFrameDepositButton = { "LEFT", "GuildBankFrameWithdrawButton", "RIGHT", 6, 0, 94.5, 21 }, -- Button "Deposit"
+	GuildBankFrameDepositButton = { "LEFT", "GuildBankFrameWithdrawButton", "RIGHT", 8, 0, 93.5, 22 }, -- Button "Deposit"
 	GuildBankFrameDiabolicFoot = { "BOTTOMLEFT", "GuildBankFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	GuildBankFrameLog = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 0, 27 }, -- Frame
-	GuildBankFrameWithdrawButton = { "BOTTOMLEFT", "GuildBankFrameDiabolicFoot", "BOTTOMLEFT", 562, 50, 94.5, 21 }, -- Button "Withdraw"
+	GuildBankFrameWithdrawButton = { "BOTTOMLEFT", "GuildBankFrameDiabolicFoot", "BOTTOMLEFT", 562, 50, 93.5, 22 }, -- Button "Withdraw"
 	GuildBankInfo = { "TOPLEFT", "GuildBankFrame", "TOPLEFT", 33, -46 }, -- Frame
 	-- the info's page the logs' size, in the same place
 	GuildBankInfoScrollFrame = { 688, 304 }, -- ScrollFrame
@@ -166,41 +174,41 @@ Engine:NewStaticConfig("Positions", {
 
 	-- InspectFrame ----------------------------------------------------------
 	-- the level line (the guild's under it) out of the band, over the model
-	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 61 Human Warrior"
+	InspectLevelText = { "BOTTOM", "InspectModelFrame", "TOP", 0, 22 }, -- FontString "Level 80 Draenei Paladin"
 	InspectTalentFrameTab1 = { "BOTTOMLEFT", "InspectTalentFrameScrollFrame", "TOPLEFT", -6, 12 }, -- Button "Arms"
 	InspectTalentFrameTab2 = { "LEFT", "InspectTalentFrameTab1", "RIGHT", 6, 0 }, -- Button "Fury"
 	InspectTalentFrameTab3 = { "LEFT", "InspectTalentFrameTab2", "RIGHT", 6, 0 }, -- Button "Protection"
 
 	-- KeyBindingFrame -------------------------------------------------------
 	KeyBindingFrameBinding1 = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 27, -72 }, -- Frame
-	KeyBindingFrameCancelButton = { "LEFT", "KeyBindingFrameOkayButton", "RIGHT", 6, 0, 125, 22 }, -- Button "Cancel"
+	KeyBindingFrameCancelButton = { "LEFT", "KeyBindingFrameOkayButton", "RIGHT", 8, 0, 123.6, 22 }, -- Button "Cancel"
 	-- the buttons 16 lower, on the foot, as far in from both sides
 	KeyBindingFrameDefaultButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolicFoot", "BOTTOMLEFT", 14, 7 }, -- Button "Reset To Default"
 	KeyBindingFrameDiabolicFoot = { "BOTTOMLEFT", "KeyBindingFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	KeyBindingFrameOkayButton = { "LEFT", "KeyBindingFrameUnbindButton", "RIGHT", 6, 0, 125, 22 }, -- Button "Okay"
+	KeyBindingFrameOkayButton = { "LEFT", "KeyBindingFrameUnbindButton", "RIGHT", 8, 0, 123.7, 22 }, -- Button "Okay"
 	-- what a key was bound to between the list and the foot
 	KeyBindingFrameOutputText = { "TOP", "KeyBindingFrame", "TOPLEFT", 293, -465 }, -- FontString
 	-- the list (its rows too) 6 under the column names
 	KeyBindingFrameScrollFrame = { "TOPLEFT", "KeyBindingFrame", "TOPLEFT", 2, -72 }, -- ScrollFrame
-	KeyBindingFrameUnbindButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolicFoot", "BOTTOMLEFT", 187, 7, 125, 22 }, -- Button "Unbind Key"
+	KeyBindingFrameUnbindButton = { "BOTTOMLEFT", "KeyBindingFrameDiabolicFoot", "BOTTOMLEFT", 187, 7, 123.7, 22 }, -- Button "Unbind Key"
 
 	-- LFDParentFrame --------------------------------------------------------
 	LFDParentFrameDiabolicFoot = { "BOTTOMLEFT", "LFDParentFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	LFDQueueFrameCancelButton = { "LEFT", "LFDQueueFrameFindGroupButton", "RIGHT", 92, 0 }, -- Button "Close"
-	LFDQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFDParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7 }, -- Button "Find Group"
+	LFDQueueFrameCancelButton = { "LEFT", "LFDQueueFrameFindGroupButton", "RIGHT", 69, 0, 135, 22 }, -- Button "Close"
+	LFDQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFDParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7 }, -- Button "Join as Party"
 	LFDQueueFrameRandom = { "TOPLEFT", "LFDQueueFrame", "TOPLEFT", 0, 62, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 46 } }, -- Frame
 	LFDQueueFrameRandomScrollFrame = { "BOTTOMRIGHT", "LFDQueueFrameRandom", "BOTTOMRIGHT", -34, 34, 298, 265 }, -- ScrollFrame
 	LFDQueueFrameSpecific = { "TOPLEFT", "LFDQueueFrame", "TOPLEFT", 0, 62, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 46 } }, -- Frame
 
 	-- LFRParentFrame --------------------------------------------------------
 	LFRBrowseFrameColumnHeader1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 26, -40 }, -- Button "Name"
-	LFRBrowseFrameInviteButton = { "LEFT", "LFRBrowseFrameSendMessageButton", "RIGHT", 6, 0, 74.1, 22 }, -- Button "Invite"
+	LFRBrowseFrameInviteButton = { "LEFT", "LFRBrowseFrameSendMessageButton", "RIGHT", 8, 0, 75.4, 22 }, -- Button "Invite"
 	LFRBrowseFrameListButton1 = { "TOPLEFT", "LFRBrowseFrame", "TOPLEFT", 12, -66 }, -- Button
-	LFRBrowseFrameRefreshButton = { "LEFT", "LFRBrowseFrameInviteButton", "RIGHT", 6, 0, 83.6, 22 }, -- Button "Refresh"
-	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 126.3, 22 }, -- Button "Send Message"
+	LFRBrowseFrameRefreshButton = { "LEFT", "LFRBrowseFrameInviteButton", "RIGHT", 8, 0, 84.2, 22 }, -- Button "Refresh"
+	LFRBrowseFrameSendMessageButton = { "BOTTOMLEFT", "LFRParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 120.4, 22 }, -- Button "Send Message"
 	LFRParentFrameDiabolicFoot = { "BOTTOMLEFT", "LFRParentFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	LFRQueueFrameAcceptCommentButton = { "LEFT", "LFRQueueFrameFindGroupButton", "RIGHT", 56, 0 }, -- Button "Set Comment"
-	LFRQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFRParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7 }, -- Button "List My Name"
+	LFRQueueFrameFindGroupButton = { "BOTTOMLEFT", "LFRParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7 }, -- Button "List My Group"
 	LFRQueueFrameSpecificListButton1 = { "TOPLEFT", "LFRQueueFrameSpecific", "TOPLEFT", 17, -132 }, -- Frame
 
 	-- MacroFrame ------------------------------------------------------------
@@ -209,26 +217,27 @@ Engine:NewStaticConfig("Positions", {
 	MacroButtonScrollFrame = { "TOPLEFT", "MacroFrame", "TOPLEFT", 17, -56 }, -- ScrollFrame
 	-- the buttons 10 down (30 over the window's bottom)
 	MacroDeleteButton = { "BOTTOMLEFT", "MacroFrameDiabolicFoot", "BOTTOMLEFT", 14, 7 }, -- Button "Delete"
-	MacroExitButton = { "LEFT", "MacroNewButton", "RIGHT", 6, 0, 80, 22 }, -- Button "Exit"
+	MacroExitButton = { "LEFT", "MacroNewButton", "RIGHT", 8, 0, 79, 22 }, -- Button "Exit"
 	-- the count of characters right of "Enter Macro Commands:" (Blizzard's
 	-- under the text, over the foot)
-	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "80/255 Characters Used"
+	MacroFrameCharLimitText = { "BOTTOMRIGHT", "MacroFrameScrollFrame", "TOPRIGHT", 0, 8 }, -- FontString "166/255 Characters Used"
 	MacroFrameDiabolicFoot = { "BOTTOMLEFT", "MacroFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	MacroFrameSelectedMacroBackground = { "TOPLEFT", "MacroFrame", "TOPLEFT", 10, -208 },
-	MacroNewButton = { "BOTTOMLEFT", "MacroFrameDiabolicFoot", "BOTTOMLEFT", 172, 7, 80, 22 }, -- Button "New"
+	MacroNewButton = { "BOTTOMLEFT", "MacroFrameDiabolicFoot", "BOTTOMLEFT", 172, 7, 79, 22 }, -- Button "New"
 
 	-- MailFrame -------------------------------------------------------------
 	InboxCurrentPage = { "BOTTOM", "MailFrameDiabolicFoot", "BOTTOM", -6, 8 }, -- FontString
 	InboxNextPageButton = { "CENTER", "MailFrameDiabolicFoot", "BOTTOMLEFT", 307, 16 }, -- Button
 	InboxPrevPageButton = { "CENTER", "MailFrameDiabolicFoot", "BOTTOMLEFT", 43, 16 }, -- Button
 	MailFrameDiabolicFoot = { "BOTTOMLEFT", "MailFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Cancel"
-	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 178, 7, 78, 22 }, -- Button "Send"
+	PostalOpenAllButton = { "CENTER", "MailFrameDiabolicFoot", "BOTTOM", -14, 18, 120, 22 }, -- Button "Open All"
+	SendMailCancelButton = { "LEFT", "SendMailMailButton", "RIGHT", 8, 0, 77, 22 }, -- Button "Cancel"
+	SendMailMailButton = { "BOTTOMLEFT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 178, 7, 77, 22 }, -- Button "Send"
 	SendMailMoneyButton = { "BOTTOMLEFT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 23, 47 }, -- Frame
 	SendMailMoneyFrame = { "BOTTOMRIGHT", "MailFrameDiabolicFoot", "BOTTOMLEFT", 176, 11 }, -- Frame
 
 	-- MerchantFrame ---------------------------------------------------------
-	DiabolicSellJunkButton = { "TOPRIGHT", "MerchantFrameDiabolicFoot", "TOPRIGHT", -9, -14 }, -- Button "Sell Junk"
+	DiabolicSellJunkButton = { "TOPRIGHT", "MerchantFrameDiabolicFoot", "TOPRIGHT", -14, -14 }, -- Button "Sell Junk"
 	MerchantBuyBackItem = { "TOPLEFT", "MerchantFrameDiabolicFoot", "TOPLEFT", 16.2, -13.8 }, -- Frame
 	MerchantFrameDiabolicFoot = { "BOTTOMLEFT", "MerchantFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	MerchantItem1 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -72 }, -- Frame
@@ -245,34 +254,37 @@ Engine:NewStaticConfig("Positions", {
 	MerchantItem9 = { "TOPLEFT", "MerchantFrameDiabolic", "TOPLEFT", 39.3, -280 }, -- Frame
 	MerchantMoneyFrame = { "BOTTOMRIGHT", "MerchantFrameDiabolicFoot", "BOTTOMRIGHT", -1, 7 }, -- Frame
 	MerchantNextPageButton = { "LEFT", "MerchantPageText", "RIGHT", 8, 0 }, -- Button
-	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 3"
+	MerchantPageText = { "CENTER", "MerchantFrameDiabolic", "TOP", 0, -384 }, -- FontString "Page 1 of 2"
 	MerchantPrevPageButton = { "RIGHT", "MerchantPageText", "LEFT", -8, 0 }, -- Button
 	MerchantRepairAllButton = { "TOPLEFT", "MerchantFrameDiabolicFoot", "TOPLEFT", 265, -14 }, -- Button
 
 	-- OpenMailFrame ---------------------------------------------------------
-	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Close"
-	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 6, 0, 78, 22 }, -- Button "Delete"
+	OpenMailCancelButton = { "LEFT", "OpenMailDeleteButton", "RIGHT", 8, 0, 76.6, 22 }, -- Button "Close"
+	OpenMailDeleteButton = { "LEFT", "OpenMailReplyButton", "RIGHT", 8, 0, 76.7, 22 }, -- Button "Delete"
 	OpenMailFrameDiabolicFoot = { "BOTTOMLEFT", "OpenMailFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
-	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolicFoot", "BOTTOMLEFT", 94, 7, 78, 22 }, -- Button "Reply"
+	OpenMailReplyButton = { "BOTTOMLEFT", "OpenMailFrameDiabolicFoot", "BOTTOMLEFT", 94, 7, 76.7, 22 }, -- Button "Reply"
 
 	-- PVPParentFrame --------------------------------------------------------
 	-- the battlegrounds' block (title row, list, rewards) 5 left: in the middle
 	BattlegroundType1 = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 18, -79 }, -- Button "Random Battleground"
 	-- 8 apart
-	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 6, 0, 77.4, 22 }, -- Button "Cancel"
+	PVPBattlegroundFrameCancelButton = { "LEFT", "PVPBattlegroundFrameJoinButton", "RIGHT", 8, 0, 85.6, 22 }, -- Button "Cancel"
 	-- 8 apart
-	PVPBattlegroundFrameGroupJoinButton = { "BOTTOMLEFT", "PVPParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 128, 22 }, -- Button "Join as Party"
+	PVPBattlegroundFrameGroupJoinButton = { "BOTTOMLEFT", "PVPParentFrameDiabolicFoot", "BOTTOMLEFT", 14, 7, 118.7, 22 }, -- Button "Join as Party"
 	-- the rewards 208 high (Blizzard's 232): 6 over the foot's iron bar, 6 under the list
 	PVPBattlegroundFrameInfoScrollFrame = { "BOTTOMLEFT", "PVPBattlegroundFrame", "BOTTOMLEFT", 15, 122, 298, 208 }, -- ScrollFrame
 	-- the buttons in the middle of the window's foot (its middle 15 left of the
 	-- frame's; Join as Party wider than Cancel, so Join Battle 27 right of it),
 	-- room between the rewards and the foot
-	PVPBattlegroundFrameJoinButton = { "LEFT", "PVPBattlegroundFrameGroupJoinButton", "RIGHT", 6, 0, 110.6, 22 }, -- Button "Join Battle"
+	PVPBattlegroundFrameJoinButton = { "LEFT", "PVPBattlegroundFrameGroupJoinButton", "RIGHT", 8, 0, 107.7, 22 }, -- Button "Join Battle"
 	PVPBattlegroundFrameNameHeader = { "TOPLEFT", "PVPBattlegroundFrame", "TOPLEFT", 65, -53 }, -- FontString "Battleground"
 	-- as wide with no scroll bar: Blizzard widens the rows it hangs from when
 	-- the list doesn't scroll, and the panels would follow
 	PVPBattlegroundFrameTypeScrollFrame = { "TOPLEFT", "BattlegroundType1", "TOPLEFT", 0, 2, 295, 87 }, -- ScrollFrame
 	PVPParentFrameDiabolicFoot = { "BOTTOMLEFT", "PVPParentFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
+	PVPTeam1 = { 294, 78 }, -- Button
+	PVPTeam2 = { 294, 78 }, -- Button
+	PVPTeam3 = { 294, 78 }, -- Button
 	WintergraspTimer = { "RIGHT", "PVPBattlegroundFrame", "TOPRIGHT", -45, -53 }, -- Frame
 
 	-- PlayerTalentFrame -----------------------------------------------------
@@ -309,14 +321,14 @@ Engine:NewStaticConfig("Positions", {
 	SpellBookSkillLineTab8 = { "TOPLEFT", "SpellBookFrameDiabolic", "TOPLEFT", 486, -452 }, -- CheckButton
 
 	-- TradeFrame ------------------------------------------------------------
-	TradeFrameCancelButton = { "LEFT", "TradeFrameTradeButton", "RIGHT", 6, 0, 80, 22 }, -- Button "Cancel"
+	TradeFrameCancelButton = { "LEFT", "TradeFrameTradeButton", "RIGHT", 8, 0, 79, 22 }, -- Button "Cancel"
 	TradeFrameDiabolicFoot = { "BOTTOMLEFT", "TradeFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	TradeFramePlayerEnchantText = { "TOPLEFT", "TradePlayerItem7", "TOPLEFT", 0, 18 }, -- FontString "Will not be traded"
 	-- the names over their columns, out from under the band (Blizzard's beside portraits)
 	TradeFramePlayerNameText = { "BOTTOM", "TradePlayerItem1", "TOP", 0, 44 }, -- FontString "Padirac"
 	TradeFrameRecipientEnchantText = { "TOPLEFT", "TradeRecipientItem7", "TOPLEFT", 0, 18 }, -- FontString "Will not be traded"
 	TradeFrameRecipientNameText = { "BOTTOM", "TradeRecipientItem1", "TOP", 0, 44 }, -- FontString "Tmanx"
-	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolicFoot", "BOTTOMLEFT", 196, 7, 80, 22 }, -- Button "Trade"
+	TradeFrameTradeButton = { "BOTTOMLEFT", "TradeFrameDiabolicFoot", "BOTTOMLEFT", 196, 7, 79, 22 }, -- Button "Trade"
 	TradeHighlightPlayer = { "TOPLEFT", "TradePlayerItem1", "TOPLEFT", -7, 4 }, -- Frame
 	-- the recipient's accepted glow, as yours (not seen by a scan made before they accept)
 	TradeHighlightRecipient = { "TOPLEFT", "TradeRecipientItem1", "TOPLEFT", -6, 4 }, -- Frame
@@ -328,12 +340,13 @@ Engine:NewStaticConfig("Positions", {
 	TradeRecipientMoneyFrame = { "RIGHT", "TradeRecipientItem1", "TOPRIGHT", 0, 22 }, -- Frame
 
 	-- TradeSkillFrame -------------------------------------------------------
-	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 6, 0, 85.5, 22 }, -- Button "Exit"
-	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 85.5, 22 }, -- Button "Create"
+	Auctionator_Search = { "TOPRIGHT", "TradeSkillDetailScrollChildFrame", "TOPRIGHT", -14, -11, 96, 22 }, -- Button "Scan AH"
+	TradeSkillCancelButton = { "LEFT", "TradeSkillCreateButton", "RIGHT", 8, 0, 84.5, 22 }, -- Button "Exit"
+	TradeSkillCreateAllButton = { "RIGHT", "TradeSkillCreateButton", "LEFT", -91, 0 }, -- Button "Create All"
+	TradeSkillCreateButton = { "BOTTOMLEFT", "TradeSkillFrameDiabolicFoot", "BOTTOMLEFT", 185, 7, 84.5, 22 }, -- Button "Create"
 	TradeSkillDecrementButton = { "LEFT", "TradeSkillCreateAllButton", "RIGHT", 2, 0 }, -- Button
 	TradeSkillDetailScrollFrame = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -1, -34, 297, 157 }, -- ScrollFrame
 	TradeSkillExpandButtonFrame = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 15, -64 }, -- Frame
-	TradeSkillFrameAvailableFilterCheckButton = { "LEFT", "TradeSkillFrameEditBox", "RIGHT", 12, 0 }, -- CheckButton
 	TradeSkillFrameDiabolicFoot = { "BOTTOMLEFT", "TradeSkillFrameDiabolic", "BOTTOMLEFT", 23, 23, second = { "BOTTOMRIGHT", "BOTTOMRIGHT", -23, 23 } }, -- Frame
 	TradeSkillFrameDiabolicIronBar = { "TOPLEFT", "TradeSkillListScrollFrame", "BOTTOMLEFT", -30, -6.5, 392, 16 }, -- Frame
 	TradeSkillIncrementButton = { "LEFT", "TradeSkillInputBox", "RIGHT", 8, 0 }, -- Button
@@ -349,6 +362,6 @@ Engine:NewStaticConfig("Positions", {
 	TradeSkillReagent5 = { "TOPLEFT", "TradeSkillReagent3", "BOTTOMLEFT", 0, -6 }, -- Button
 	TradeSkillReagent6 = { "LEFT", "TradeSkillReagent5", "RIGHT", 0, 0 }, -- Button
 	TradeSkillReagent7 = { "TOPLEFT", "TradeSkillReagent6", "BOTTOMLEFT", 0, -6 }, -- Button
-	TradeSkillSkill1 = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 22, -88 }, -- Button " Frostweave Bag"
+	TradeSkillSkill1 = { "TOPLEFT", "TradeSkillFrame", "TOPLEFT", 22, -88 }, -- Button "Embroider"
 	TradeSkillSubClassDropDown = { "RIGHT", "TradeSkillInvSlotDropDown", "LEFT", 27, 0 }, -- Frame
 })

@@ -20,8 +20,8 @@ QtObject {
     property string button_font_small: "DiabolicFont_HeaderRegular10"
     property string button_font_narrow: "DiabolicFont_SansBold10"
 
-    // kept free at each end
-    property real button_text_margin: 6
+    // kept free at each end: clear of the ends' ornaments (48 of the art's 63 high: 17 at 22)
+    property real button_text_margin: 14
 
     // an enabled button's text (its font's own)
     property var button_text_color: [1, 1, 1]

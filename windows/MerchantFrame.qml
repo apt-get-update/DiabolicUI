@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "MerchantFrame"
+    kind: "grid"
     width: 384
     height: 512
 
@@ -46,13 +47,22 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "MerchantFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "MerchantNameText"
-                    text: "Innkeeper Allison"
+                    text: "Tharynn Bouden"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 161.2
+                    width: 150.9
                     height: 14.2
                 }
             }
@@ -77,7 +87,7 @@ WowWindow {
                 style: "Button"
                 pin: "place"
                 anchors.right: parent.right
-                anchors.rightMargin: 9
+                anchors.rightMargin: 14
                 anchors.top: parent.top
                 anchors.topMargin: 14
                 width: 90
@@ -211,33 +221,33 @@ WowWindow {
                 anchors.rightMargin: 1
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 7
-                width: 126.4
+                width: 112.1
                 height: 13
 
                 Button {
                     id: merchantMoneyFrameCopperButton
                     name: "MerchantMoneyFrameCopperButton"
-                    text: "63"
+                    text: "0"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 30.4
+                    width: 23.3
                     height: 13
 
                     FontString {
                         name: "MerchantMoneyFrameCopperButtonText"
-                        text: "63"
+                        text: "0"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 17.4
+                        width: 10.3
                         height: 14.2
                     }
                 }
 
                 Button {
                     name: "MerchantMoneyFrameGoldButton"
-                    text: "3653"
+                    text: "5000"
                     anchors.right: merchantMoneyFrameSilverButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: merchantMoneyFrameSilverButton.verticalCenter
@@ -246,7 +256,7 @@ WowWindow {
 
                     FontString {
                         name: "MerchantMoneyFrameGoldButtonText"
-                        text: "3653"
+                        text: "5000"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
@@ -258,20 +268,20 @@ WowWindow {
                 Button {
                     id: merchantMoneyFrameSilverButton
                     name: "MerchantMoneyFrameSilverButton"
-                    text: "55"
+                    text: "0"
                     anchors.right: merchantMoneyFrameCopperButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: merchantMoneyFrameCopperButton.verticalCenter
-                    width: 30.4
+                    width: 23.3
                     height: 13
 
                     FontString {
                         name: "MerchantMoneyFrameSilverButtonText"
-                        text: "55"
+                        text: "0"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 17.4
+                        width: 10.3
                         height: 14.2
                     }
                 }
@@ -354,7 +364,7 @@ WowWindow {
 
             FontString {
                 name: "MerchantItem1Name"
-                text: "Refreshing Spring Water"
+                text: "Coarse Thread"
                 anchors.left: merchantItem1ItemButton.right
                 anchors.leftMargin: 16
                 anchors.top: merchantItem1ItemButton.top
@@ -365,7 +375,7 @@ WowWindow {
 
             Ghost {
                 name: "MerchantItem1NameFrame"
-                x: 54.1
+                x: 54.2
                 y: 69.1
                 width: 0
                 height: 0
@@ -377,26 +387,26 @@ WowWindow {
                     anchors.leftMargin: 2
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 31
-                    width: 43.4
+                    width: 36.3
                     height: 13
 
                     Button {
                         id: merchantItem1MoneyFrameCopperButton
                         name: "MerchantItem1MoneyFrameCopperButton"
-                        text: "20"
+                        text: "9"
                         anchors.right: parent.right
                         anchors.rightMargin: 13
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 30.4
+                        width: 23.3
                         height: 13
 
                         FontString {
                             name: "MerchantItem1MoneyFrameCopperButtonText"
-                            text: "20"
+                            text: "9"
                             anchors.right: parent.right
                             anchors.rightMargin: 13
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 17.4
+                            width: 10.3
                             height: 14.2
                         }
                     }
@@ -570,7 +580,7 @@ WowWindow {
         FontString {
             id: merchantPageText
             name: "MerchantPageText"
-            text: "Page 1 of 3"
+            text: "Page 1 of 2"
             wowParent: "MerchantFrame"
             pin: "place"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -628,6 +638,35 @@ WowWindow {
     }
 
     Ghost {
+        name: "MerchantItem10MoneyFrameCopperButton"
+        x: 339.2
+        y: 269.1
+        width: 30.4
+        height: 13
+
+        Button {
+            name: "MerchantItem10MoneyFrameSilverButton"
+            text: "1"
+            wowParent: "MerchantItem10MoneyFrame"
+            anchors.right: parent.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            width: 21.7
+            height: 13
+
+            FontString {
+                name: "MerchantItem10MoneyFrameSilverButtonText"
+                text: "1"
+                anchors.right: parent.right
+                anchors.rightMargin: 13
+                anchors.verticalCenter: parent.verticalCenter
+                width: 8.7
+                height: 14.2
+            }
+        }
+    }
+
+    Ghost {
         name: "MerchantItem3ItemButton"
         x: 39.3
         y: 88
@@ -642,6 +681,26 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 2
             width: 19
+            height: 14.2
+        }
+    }
+
+    Ghost {
+        name: "MerchantItem4ItemButton"
+        x: 257.3
+        y: 88
+        width: 38.2
+        height: 38.1
+
+        FontString {
+            name: "MerchantItem4ItemButtonCount"
+            text: "5"
+            wowParent: "MerchantItem4ItemButton"
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            width: 10.3
             height: 14.2
         }
     }
@@ -748,6 +807,26 @@ WowWindow {
                 width: 17.4
                 height: 14.2
             }
+        }
+    }
+
+    Ghost {
+        name: "MerchantItem7ItemButton"
+        x: 39.3
+        y: 192
+        width: 38.2
+        height: 38.1
+
+        FontString {
+            name: "MerchantItem7ItemButtonCount"
+            text: "5"
+            wowParent: "MerchantItem7ItemButton"
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            width: 10.3
+            height: 14.2
         }
     }
 

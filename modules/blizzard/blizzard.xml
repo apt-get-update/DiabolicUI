@@ -7,7 +7,6 @@
 <Script file='windows-buttons.lua'/>
 <Script file='windows-zones.lua'/>
 <Script file='adjust.lua'/>
-<Script file='layout-scan.lua'/>
 <Script file='achievements.lua'/>
 <Script file='auction.lua'/>
 <Script file='bulletinboard.lua'/>
@@ -16,6 +15,7 @@
 <Script file='spellbook-professions.lua'/>
 <Script file='spellbook-search.lua'/>
 <Script file='containers.lua'/>
+<Script file='decursive.lua'/>
 <Script file='adibags.lua'/>
 <Script file='fonts.lua'/>
 <Script file='gearscore.lua'/>
@@ -25,6 +25,7 @@
 <Script file='lootframe.lua'/>
 <Script file='rollwindow.lua'/>
 <Script file='selljunk.lua'/>
+<Script file='socketing.lua'/>
 <Script file='social.lua'/>
 <Script file='talents.lua'/>
 <Script file='lootpreview.lua'/>

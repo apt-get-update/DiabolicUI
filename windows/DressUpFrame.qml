@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "DressUpFrame"
+    kind: "sheet"
     width: 384
     height: 512
 
@@ -16,7 +17,7 @@ WowWindow {
         anchors.rightMargin: 39
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 79
-        width: 77
+        width: 76
         height: 22
 
         FontString {
@@ -45,7 +46,7 @@ WowWindow {
     Frame {
         name: "DressUpFrameDiabolic"
         anchors.left: parent.left
-        anchors.leftMargin: -24
+        anchors.leftMargin: -20
         anchors.top: parent.top
         width: 402
         height: 503
@@ -78,6 +79,15 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "DressUpFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "DressUpFrameTitleText"
                     text: "Dressing Room"
@@ -106,10 +116,10 @@ WowWindow {
         text: "Reset"
         style: "Button"
         anchors.right: parent.right
-        anchors.rightMargin: 122
+        anchors.rightMargin: 123
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 79
-        width: 77
+        width: 76
         height: 22
 
         FontString {

@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "LFDParentFrame"
+    kind: "list"
     width: 355
     height: 440
 
@@ -92,6 +93,15 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "LFDParentFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "LFDQueueFrameTitleText"
                     text: "Dungeon Finder"
@@ -129,7 +139,7 @@ WowWindow {
 
                 Button {
                     name: "LFDQueueFrameFindGroupButton"
-                    text: "Find Group"
+                    text: "Join as Party"
                     wowParent: "LFDQueueFrame"
                     style: "Button"
                     pin: "place"
@@ -138,10 +148,10 @@ WowWindow {
 
                     FontString {
                         name: "LFDQueueFrameFindGroupButtonText"
-                        text: "Find Group"
+                        text: "Join as Party"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 82.2
+                        width: 101.9
                         height: 11.9
                     }
                 }
@@ -151,8 +161,8 @@ WowWindow {
                     text: "Close"
                     wowParent: "LFDQueueFrame"
                     style: "Button"
-                    pin: "place"
-                    width: 112
+                    pin: "all"
+                    width: 135
                     height: 22
 
                     FontString {
@@ -317,7 +327,7 @@ WowWindow {
 
                             FontString {
                                 name: "LFDQueueFrameRandomScrollFrameChildFrameItem1Name"
-                                text: "Emblem of Conquest"
+                                text: "Emblem of Frost"
                                 wowParent: "LFDQueueFrameRandomScrollFrameChildFrameItem1"
                                 anchors.left: parent.left
                                 anchors.leftMargin: 15

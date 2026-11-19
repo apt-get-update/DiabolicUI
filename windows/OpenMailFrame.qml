@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "OpenMailFrame"
+    kind: "sheet"
     width: 384
     height: 512
 
@@ -61,7 +62,7 @@ WowWindow {
 
             FontString {
                 name: "OpenMailSender"
-                text: "Unknown"
+                text: "Brew of the Month Club"
                 anchors.left: openMailSenderLabel.right
                 anchors.leftMargin: 5
                 anchors.verticalCenter: openMailSenderLabel.verticalCenter
@@ -82,6 +83,7 @@ WowWindow {
 
             FontString {
                 name: "OpenMailSubject"
+                text: "Fun For You And Your Friends"
                 anchors.left: openMailSubjectLabel.right
                 anchors.leftMargin: 5
                 anchors.verticalCenter: openMailSubjectLabel.verticalCenter
@@ -157,7 +159,7 @@ WowWindow {
                     wowParent: "OpenMailFrame"
                     style: "Button"
                     pin: "all"
-                    width: 78
+                    width: 76.7
                     height: 22
 
                     FontString {
@@ -172,19 +174,19 @@ WowWindow {
 
                 Button {
                     name: "OpenMailDeleteButton"
-                    text: "Return"
+                    text: "Delete"
                     wowParent: "OpenMailFrame"
                     style: "Button"
                     pin: "all"
-                    width: 78
+                    width: 76.7
                     height: 22
 
                     FontString {
                         name: "OpenMailDeleteButtonText"
-                        text: "Return"
+                        text: "Delete"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 53.7
+                        width: 48.2
                         height: 11.9
                     }
                 }
@@ -195,7 +197,7 @@ WowWindow {
                     wowParent: "OpenMailFrame"
                     style: "Button"
                     pin: "all"
-                    width: 78
+                    width: 76.6
                     height: 22
 
                     FontString {
@@ -248,14 +250,14 @@ WowWindow {
         anchors.top: parent.top
         anchors.topMargin: 13
         width: 296
-        height: 362
+        height: 314.7
 
         Frame {
             name: "OpenMailScrollChildFrame"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 296
-            height: 362
+            height: 314.7
 
             FontString {
                 name: "OpenMailBodyText"
@@ -264,7 +266,7 @@ WowWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 10
                 width: 276
-                height: 1
+                height: 240.2
             }
 
             Frame {
@@ -604,7 +606,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -6
             width: 330
-            height: 374
+            height: 326.7
         }
 
         Frame {
@@ -614,7 +616,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: -4
             width: 304
-            height: 370
+            height: 322.7
         }
 
         Slider {
@@ -625,7 +627,7 @@ WowWindow {
             anchors.top: parent.top
             anchors.topMargin: 16
             width: 16
-            height: 330
+            height: 282.7
 
             Frame {
                 name: "OpenMailScrollFrameScrollBarDiabolicTrack"
@@ -633,7 +635,7 @@ WowWindow {
                 anchors.top: openMailScrollFrameScrollBarScrollUpButton.top
                 anchors.topMargin: -1
                 width: 18
-                height: 364
+                height: 316.7
             }
 
             Button {

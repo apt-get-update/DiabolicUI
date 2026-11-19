@@ -208,14 +208,16 @@ Module.StyleQuestLog = function(self)
 	-- Abandon, Share and Track under the quests
 	local abandon, share, track =
 		_G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton
-	-- (Share's own width is 1, its anchors stretch it: a real one, or it's
-	-- styled as too narrow for the red button)
-	share:SetWidth(abandon:GetWidth())
+	-- one width for the three, the foot's height (Share's own width is 1,
+	-- its anchors stretch it: a real one, or it's styled as too narrow for
+	-- the red button; Track 3 in from the panel's right, Blizzard's)
+	local gap = kit.config.layout.button_gap
+	local width = (config.controls_width - 3 - 2 * gap) / 3
 	for _, button in ipairs({ abandon, share, track }) do
+		button:SetSize(width, config.button_height)
 		kit:StyleButton(button, config.button_height)
 	end
 	-- apart (Blizzard's touch: Share stretched between the other two)
-	local gap = kit.config.layout.button_gap
 	share:ClearAllPoints()
 	share:SetPoint("LEFT", abandon, "RIGHT", gap, 0)
 	share:SetPoint("RIGHT", track, "LEFT", -gap, 0)

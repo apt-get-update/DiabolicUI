@@ -1000,11 +1000,31 @@ function Api.install(client)
 	api.SetActionBarToggles = function(...)
 		world().barToggles = { ... }
 	end
-	api.PickupAction = function(slot)
-		world().cursorAction = slot
+	-- The cursor (client.cursor: { kind, ... }, GetCursorInfo's values) and
+	-- a slot swap: what's held goes in, what was there comes up.
+	local function swap(slot)
+		local held, there = client.cursor, world().actions[slot]
+		world().actions[slot] = held and { type = held[1], id = held[2], subType = held[3] }
+		client.cursor = there and { there.type, there.id, there.subType }
 	end
-	api.PlaceAction = function(slot)
-		world().cursorAction = nil
+	api.PickupAction = swap
+	api.PlaceAction = swap
+	api.PickupItem = function(item)
+		client.cursor = { "item", item }
+	end
+	api.PickupMacro = function(index)
+		if api.GetMacroInfo(index) then
+			client.cursor = { "macro", index }
+		end
+	end
+	api.PickupEquipmentSet = function(index)
+		local name = api.GetEquipmentSetInfo(index)
+		if name then
+			client.cursor = { "equipmentset", name }
+		end
+	end
+	api.PickupCompanion = function(kind, index)
+		client.cursor = { "companion", index, kind }
 	end
 	-- (world.macroSpells: the spell a macro casts, by its id)
 	api.GetMacroSpell = function(id)
@@ -1837,6 +1857,35 @@ function Api.install(client)
 		return 1, major and 1 or 2, nil, nil
 	end
 
+	-- the item in the socketing window: world.socketing = { item = { name,
+	-- icon, quality }, sockets = { { type = "Red", new = { name, icon,
+	-- matches }, existing = { ... } }, ... } } (new: a gem put in, not yet
+	-- socketed)
+	local socketAt = function(i)
+		return world().socketing and world().socketing.sockets[i]
+	end
+	api.GetSocketItemInfo = function()
+		if world().socketing then
+			return unpack(world().socketing.item, 1, 3)
+		end
+	end
+	api.GetNumSockets = function()
+		return world().socketing and #world().socketing.sockets or 0
+	end
+	api.GetSocketTypes = function(i)
+		return socketAt(i) and socketAt(i).type
+	end
+	api.GetNewSocketInfo = function(i)
+		if socketAt(i) and socketAt(i).new then
+			return unpack(socketAt(i).new, 1, 3)
+		end
+	end
+	api.GetExistingSocketInfo = function(i)
+		if socketAt(i) and socketAt(i).existing then
+			return unpack(socketAt(i).existing, 1, 3)
+		end
+	end
+
 	-- a round copy of `path` in `texture` (a texture or its name)
 	api.SetPortraitToTexture = function(texture, path)
 		if type(texture) == "string" then
@@ -2207,13 +2256,15 @@ function Api.install(client)
 		return world().cursor[1], world().cursor[2]
 	end
 	api.GetCursorInfo = function()
-		return world().cursorInfo
+		if client.cursor then
+			return unpack(client.cursor)
+		end
 	end
 	api.CursorHasItem = function()
 		return nil
 	end
 	api.ClearCursor = function()
-		world().cursorInfo = nil
+		client.cursor = nil
 	end
 	api.GetMouseFocus = function()
 		return client.mouseFocus

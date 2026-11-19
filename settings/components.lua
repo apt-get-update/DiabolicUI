@@ -74,7 +74,7 @@ Merge(window, {
 	button_font = DiabolicFont_HeaderRegular12,
 	button_font_small = DiabolicFont_HeaderRegular10,
 	button_font_narrow = DiabolicFont_SansBold10,
-	button_text_margin = 6,
+	button_text_margin = 14,
 	button_text_color = { 1, 1, 1 },
 	button_disabled_color = { 0.5, 0.47, 0.44 },
 })
@@ -85,7 +85,9 @@ Merge(window, {
 		texture = path .. [[textures\DiabolicUI_D3_CheckBox.tga]],
 		box = { 0, 0.1640625, 0, 0.671875 },
 		lit = { 0.25, 0.4140625, 0, 0.671875 },
-		checked = { 0.5, 0.6640625, 0, 0.671875 },
+		check = [[Interface\Buttons\UI-CheckBox-Check]],
+		check_disabled = [[Interface\Buttons\UI-CheckBox-Check-Disabled]],
+		check_scale = 1.6,
 		size = 20,
 		pushed_color = { 0.7, 0.7, 0.7 },
 		label_gap = 4,
@@ -171,22 +173,18 @@ Merge(window, {
 		line = 1,
 		track_color = { 0, 0, 0, 0.85 },
 		line_color = { 0.35, 0.27, 0.15, 1 },
+		seat = 6,
 	},
 })
 
 -- Section
 Merge(window, {
 	section = {
-		texture = path .. [[textures\DiabolicUI_Window_Section.tga]],
-		canvas = { 512, 32 },
-		art = { 0, 3, 512, 29 },
-		left = { 0, 32 },
-		middle = { 32, 480 },
-		right = { 480, 512 },
 		height = 22,
 		font = DiabolicFont_HeaderRegular12,
 		color = { 1, 0.6, 0.2 },
-		text_offset = { 28, 1 },
+		line_color = { 0.43, 0.33, 0.2, 1 },
+		text_offset = { 4, 1 },
 	},
 })
 
@@ -210,10 +208,10 @@ Merge(window, {
 	backdrop_color = { 0.8, 0.65, 0.65, 1 },
 	backdrop_border_color = { 1, 1, 1, 1 },
 	band = { canvas = { 364, 104 }, texture = path .. [[textures\DiabolicUI_D3_Band.tga]] },
-	band_text = { label = { 0.86, 0.76, 0.6 }, label_button_font = DiabolicFont_Narrow14Gold, label_font = DiabolicFont_Narrow14, value = { 1, 1, 1 }, value_font = DiabolicFont_Narrow14 },
-	title_plate = { color = { 0.86, 0.76, 0.6 }, cuts = { 96, 140, 376, 420 }, file_width = 512, font = DiabolicFont_HeaderRegular14, gem = { glass = 0.66, glass_offset = { 0, 0 }, ring = path .. [[textures\DiabolicUI_D3_GemRing.tga]], size = 40, x = 35, y = 0 }, height = 41, max_width = 440, rows = 0.546875, side_room = 62, text_offset = 1, text_width = 200, texture = path .. [[textures\DiabolicUI_D3_TitlePlate.tga]], width = 300, y = -15 },
+	band_text = { label = { 0.86, 0.76, 0.6 }, label_font = DiabolicFont_Narrow14, value = { 1, 1, 1 }, value_font = DiabolicFont_Narrow14 },
+	title_plate = { color = { 0.86, 0.76, 0.6 }, cuts = { 96, 140, 376, 420 }, file_width = 512, font = DiabolicFont_HeaderRegular14, font_small = DiabolicFont_HeaderRegular12, gem = { glass = 0.66, glass_offset = { 0, 0 }, ring = path .. [[textures\DiabolicUI_D3_GemRing.tga]], size = 40, x = 35, y = 0 }, height = 41, max_width = 440, rows = 0.546875, side_room = 62, text_offset = 1, text_width = 200, texture = path .. [[textures\DiabolicUI_D3_TitlePlate.tga]], width = 300, y = -15 },
 	title_font = DiabolicFont_HeaderRegular18Title,
 	footer_height = 35,
 	footer_rail = { bar = { 15, 24 }, cut = { 12, 28 } },
-	layout = { band_edge = 10, band_gap = 12, band_right_edge = 48, button_gap = 6, content_gap = 6, uneven = 8 },
+	layout = { band_edge = 10, band_gap = 12, band_right_edge = 48, button_gap = 8, button_height = 22, content_gap = 6, foot_bottom = 7, foot_side = 14, uneven = 8 },
 })

@@ -6,7 +6,7 @@
 ## Version: 1.6.7-Release
 ## DefaultState: Enabled
 # DiabolicUI_Minimap_DB: the minimap's settings up to 1.6.6, read once (modules/minimap/minimap.lua)
-## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB, DiabolicUI_Layout
+## SavedVariables: DiabolicUI_DB, DiabolicUI_Minimap_DB
 ## X-Category: Interface Enhancements
 
 ### vendored libraries (LibHealComm-4.0)

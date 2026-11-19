@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "GuildBankFrame"
+    kind: "grid"
     width: 769
     height: 444
 
@@ -299,8 +300,8 @@ WowWindow {
                     wowParent: "GuildBankFrame"
                     style: "Button"
                     pin: "all"
-                    width: 94.5
-                    height: 21
+                    width: 93.5
+                    height: 22
 
                     FontString {
                         name: "GuildBankFrameWithdrawButtonText"
@@ -318,8 +319,8 @@ WowWindow {
                     wowParent: "GuildBankFrame"
                     style: "Button"
                     pin: "all"
-                    width: 94.5
-                    height: 21
+                    width: 93.5
+                    height: 22
 
                     FontString {
                         name: "GuildBankFrameDepositButtonText"

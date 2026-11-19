@@ -379,44 +379,33 @@ function TestMenus:test_what_a_specialization_sets_up_once_switched_to_it()
 	local bars = client.Engine:GetConfig("ActionBars", "character")
 	local switch = widget("Button: Spec Switch")
 	local calls = {}
-	_G.SLASH_ABS1, _G.SLASH_ABS2 = "/abs", "/actionbarsaver"
-	_G.SlashCmdList.ABS = function(arguments)
-		calls[#calls + 1] = "abs " .. arguments
+	client:GetModule("ActionBars: Profiles").Restore = function(_, group)
+		calls[#calls + 1] = "restore " .. group
 	end
 	local messages = client.widgetState[_G.ChatFrame1].messages
 	local lastMessage = function()
 		return messages[#messages].text
 	end
 
-	bars.specEquipSet2, bars.specProfile2, bars.specBars2, bars.specSideBars2 = "Shadow", "shadow", 3, 2
-	bars.num_bars, bars.num_side_bars = 1, 0
+	bars.specEquipSet2, bars.specActions2 = "Shadow", {}
 
-	-- the switch completes: a moment later, the set, the profile, the bars
+	-- the switch completes: a moment later, the set, then the bars
 	_G.SetActiveTalentGroup(2)
 	client:Tick(0.5)
 	lu.assertEquals(calls, {})
 	client:Tick(0.6)
 	lu.assertEquals(client.world.equippedSet, "Shadow")
-	lu.assertEquals(calls, { "abs restore shadow" })
-	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 2 })
+	lu.assertEquals(calls, { "restore 2" })
 	client:Tick(2)
 	lu.assertEquals(#calls, 1) -- once
 
-	-- and back: left as it is, but a gone set and a missing addon say so
-	bars.specEquipSet1, bars.specProfile1 = "Deleted", "holy"
-	_G.SlashCmdList.ABS = nil
+	-- and back: left as it is, but a gone set says so
+	bars.specEquipSet1 = "Deleted"
 	_G.SetActiveTalentGroup(1)
 	client:Tick(1.1)
 	lu.assertEquals(client.world.equippedSet, "Shadow")
-	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 2 })
-	lu.assertEquals(messages[#messages - 1].text, L["Equipment set '%s' not found."]:format("Deleted"))
-	lu.assertEquals(lastMessage(), L["Action Bar Saver isn't loaded, can't restore '%s'."]:format("holy"))
-
-	-- only one of the bar counts set
-	bars.specBars2, bars.specSideBars2 = false, 1
-	_G.SetActiveTalentGroup(2)
-	client:Tick(1.1)
-	lu.assertEquals({ bars.num_bars, bars.num_side_bars }, { 3, 1 })
+	lu.assertEquals(#calls, 1) -- (nothing saved for it)
+	lu.assertEquals(lastMessage(), L["Equipment set '%s' not found."]:format("Deleted"))
 
 	-- no switch: the event repeating the current group, or before the first
 	-- loading screen (the group at login)
@@ -431,8 +420,6 @@ function TestMenus:test_what_a_specialization_sets_up_once_switched_to_it()
 	lu.assertEquals(#calls, count)
 	lu.assertNil(client.world.equippedSet)
 	lu.assertEquals(switch.talentGroup, 1)
-
-	_G.SLASH_ABS1, _G.SLASH_ABS2 = nil, nil
 	assertClean(client)
 end
 
@@ -568,8 +555,9 @@ function TestMenus:test_a_specialization_macro_before_the_switch()
 	lu.assertStrContains(table.concat(tooltip(), "\n"), L["<Left-click> to run your '%s' macro"]:format("Power"))
 	client:Leave()
 
-	-- what a specialization sets up, run directly
-	bars.specBars1 = 2
+	-- what a specialization sets up, run directly: its saved bars, with
+	-- how many were shown
+	bars.specActions1 = { bars = 2, sideBars = bars.num_side_bars }
 	switch:RunSpec(1)
 	lu.assertEquals(bars.num_bars, 2)
 
@@ -665,16 +653,6 @@ function TestMenus:test_the_dropdown_choices()
 	})
 	local switch = widget("Button: Spec Switch")
 	lu.assertEquals(switch:GetEquipmentSets(), { { text = "Holy", value = "Holy", icon = "Interface\\Icons\\Holy" } })
-	lu.assertNil(switch:GetActionBarProfiles()) -- not loaded
-	_G.SlashCmdList.ABS = function() end
-	_G.ActionBarSaverDB = { sets = { WARRIOR = { tank = {}, arms = {} }, PRIEST = { holy = {} } } }
-	lu.assertEquals(
-		switch:GetActionBarProfiles(),
-		{ { text = "arms", value = "arms" }, { text = "tank", value = "tank" } }
-	)
-	_G.ActionBarSaverDB.sets.WARRIOR = nil
-	lu.assertEquals(switch:GetActionBarProfiles(), {})
-	_G.SlashCmdList.ABS, _G.ActionBarSaverDB = nil, nil
 
 	-- the macros: the account ones, then the character ones
 	client.world.macros = {
@@ -1158,6 +1136,135 @@ function TestXPBars:test_stance_and_empty_buttons_answer_for_themselves()
 	lu.assertNil(Base.IsCurrentlyActive(button))
 	lu.assertNil(Base.IsUsable(button))
 	lu.assertNil(Base.SetTooltip(button))
+	assertClean(client)
+end
+
+-- Each specialization's action bars ---------------------------------------------
+
+TestBarProfiles = {}
+
+function TestBarProfiles:tearDown()
+	client, module = nil, nil
+end
+
+-- The chat's message `back` from the last (0), without our name before it.
+local function said(back)
+	local messages = client.widgetState[_G.ChatFrame1].messages
+	return (messages[#messages - (back or 0)].text:gsub("^|c%x+DiabolicUI|r: ", ""))
+end
+
+local function slot(index)
+	local action = client.world.actions[index]
+	return action and { action.type, action.id, action.subType }
+end
+
+function TestBarProfiles:test_save_and_restore()
+	boot()
+	local L = client.Engine:GetLocale()
+	local profiles = client:GetModule("ActionBars: Profiles")
+	local name = widget("Button: Spec Switch"):GetSpec(1) or _G.PRIMARY
+	local world = client.world
+	world.spellBook =
+		{ { name = "Flash Heal", rank = "Rank 1" }, { name = "Flash Heal", rank = "Rank 9" }, { name = "Smite" } }
+	world.macros = { [1] = { "Heal", "Interface\\Icons\\Heal", "/cast Flash Heal" } }
+	world.equipmentSets = { { "Holy", "Interface\\Icons\\Holy" } }
+	world.actions = {
+		[1] = { type = "spell", id = 1 },
+		[2] = { type = "item", id = 6948 },
+		[3] = { type = "macro", id = 1 },
+		[4] = { type = "equipmentset", id = "Holy" },
+		[5] = { type = "companion", id = 3, subType = "MOUNT" },
+		[6] = { type = "spell", id = 99 }, -- (not in the book: not saved)
+		[125] = { type = "spell", id = 3 }, -- (the possess bar's: the game's own)
+	}
+	lu.assertFalse(profiles:HasSaved(1))
+	profiles:Restore(1)
+	lu.assertEquals(said(), L["No action bars saved for %s yet."]:format(name))
+
+	local db = client.Engine:GetConfig("ActionBars", "character")
+	db.num_bars, db.num_side_bars = 3, 2
+	profiles:Save(1)
+	lu.assertTrue(profiles:HasSaved(1))
+	db.num_bars, db.num_side_bars = 1, 0
+	lu.assertEquals(said(), L["Action bars saved for %s."]:format(name))
+
+	-- messed up, then put back: each slot as saved, the spell at its highest
+	-- rank, the slots empty then emptied, the possess bar left alone
+	world.actions = { [7] = { type = "item", id = 1 }, [125] = { type = "spell", id = 3 } }
+	local sound = _G.GetCVar("Sound_EnableAllSound")
+	profiles:Restore(1)
+	lu.assertEquals(slot(1), { "spell", 2, _G.BOOKTYPE_SPELL })
+	lu.assertEquals(slot(2), { "item", 6948 })
+	lu.assertEquals(slot(3), { "macro", 1 })
+	lu.assertEquals(slot(4), { "equipmentset", "Holy" })
+	lu.assertEquals(slot(5), { "companion", 3, "MOUNT" })
+	lu.assertNil(slot(6))
+	lu.assertNil(slot(7))
+	lu.assertEquals(slot(125), { "spell", 3 })
+	lu.assertNil(client.cursor)
+	lu.assertEquals(_G.GetCVar("Sound_EnableAllSound"), sound)
+	lu.assertEquals(said(), L["%s's action bars restored."]:format(name))
+	lu.assertEquals({ db.num_bars, db.num_side_bars }, { 3, 2 })
+
+	-- a macro edited since: still found, by its name
+	world.macros = { [2] = { "Other", "Interface\\Icons\\Other", "/say hi" }, [4] = { "Heal", "", "/cast Smite" } }
+	profiles:Restore(1)
+	lu.assertEquals(slot(3), { "macro", 4 })
+
+	-- what's gone is left empty and counted
+	world.macros = { [2] = { "Other", "Interface\\Icons\\Other", "/say hi" } }
+	world.equipmentSets = {}
+	world.spellBook = { { name = "Smite" } }
+	profiles:Restore(1)
+	lu.assertNil(slot(1))
+	lu.assertNil(slot(3))
+	lu.assertEquals(said(), L["%s's action bars restored, %d buttons couldn't be found."]:format(name, 3))
+
+	-- in combat: once it ends
+	world.actions = {}
+	client:EnterCombat()
+	profiles:Restore(1)
+	lu.assertNil(slot(2))
+	client:LeaveCombat()
+	lu.assertEquals(slot(2), { "item", 6948 })
+	assertClean(client)
+end
+
+function TestBarProfiles:test_the_action_bar_saver_profiles_in_use_come_over()
+	boot()
+	local profiles = client:GetModule("ActionBars: Profiles")
+	local db = client.Engine:GetConfig("ActionBars", "character")
+	db.specProfile1, db.specProfile2, db.specBars1 = "shadow", "gone", 2
+	db.num_side_bars = 1
+	_G.ActionBarSaverDB = {
+		sets = {
+			WARRIOR = {
+				shadow = {
+					[1] = "spell|1||Flash Heal|Rank 1|",
+					[2] = "item|6948||Hearthstone",
+					[3] = "macro|3||Big/124Heal|Interface\\Icons\\Heal|/cast Flash Heal/n/say /124cffhi",
+					[4] = "equipmentset|Holy|",
+					[5] = "companion|3||Horse|MOUNT|1234",
+					[6] = "unknown|1|",
+				},
+			},
+		},
+	}
+	profiles:ImportActionBarSaver()
+	lu.assertEquals(db.specActions1, {
+		[1] = { "spell", "Flash Heal" },
+		[2] = { "item", 6948 },
+		[3] = { "macro", "Big|Heal", "/cast Flash Heal\n/say |cffhi" },
+		[4] = { "equipmentset", "Holy" },
+		[5] = { "companion", "MOUNT", 3 },
+		bars = 2,
+		sideBars = 1,
+	})
+	lu.assertFalse(db.specProfile1)
+	-- a profile that's gone: kept for later
+	lu.assertFalse(db.specActions2)
+	lu.assertEquals(db.specProfile2, "gone")
+	_G.ActionBarSaverDB = nil
 	assertClean(client)
 end
 

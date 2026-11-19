@@ -25,4 +25,7 @@ QtObject {
     property real line: 1
     property var track_color: [0, 0, 0, .85]
     property var line_color: [.35, .27, .15, 1]
+
+    // on a zone (a list's): its track's line this far in from the zone's top, right and bottom
+    property real seat: 6
 }

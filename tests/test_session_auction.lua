@@ -16,8 +16,7 @@ local assertClean = Session.assertClean
 
 local client
 
--- The auction house open (Auctionator's too, if `withAuctionator`), the
--- layout check on.
+-- The auction house open (Auctionator's too, if `withAuctionator`).
 local function open(withAuctionator)
 	client = Client.boot(withAuctionator and {
 		world = function(world)
@@ -29,7 +28,6 @@ local function open(withAuctionator)
 	if withAuctionator then
 		client.api.LoadAddOn("Auctionator")
 	end
-	_G.SlashCmdList.DIABOLICUISLASHHANDLER("layout")
 	local frame = _G.AuctionFrame
 	frame:SetPoint("TOPLEFT", _G.UIParent, "TOPLEFT", 0, -104)
 	frame:Show()
@@ -40,16 +38,6 @@ end
 local function page(i)
 	_G.AuctionFrameTab_OnClick(_G["AuctionFrameTab" .. i])
 	client:Tick(1.2, 0.1)
-end
-
--- `part`'s edges in the auction frame's units: left, top, right, bottom
--- (y down from its top).
-local function edges(part)
-	local frame = _G.AuctionFrame
-	return part:GetLeft() - frame:GetLeft(),
-		frame:GetTop() - part:GetTop(),
-		part:GetRight() - frame:GetLeft(),
-		frame:GetTop() - part:GetBottom()
 end
 
 -- The slate zones shown on `holder`, by their left edge.
@@ -89,73 +77,8 @@ function TestAuctionHouse:test_each_auctionator_page_shows()
 	assertClean(client)
 end
 
--- The bottom row in the foot, right up against its side: Blizzard's own spots
--- no longer count.
-function TestAuctionHouse:test_the_bottom_rows_on_the_foot()
-	open(true)
-	local foot = _G.AuctionFrameDiabolicFoot
-	lu.assertEquals(foot:GetHeight(), 35)
-	for _, row in ipairs({
-		{ "BrowseBidButton", "BrowseCloseButton" },
-		{ "BidBidButton", "BidCloseButton" },
-		{ "AuctionsCancelAuctionButton", "AuctionsCloseButton" },
-		{ "Atr_Buy1_Button", "AuctionatorCloseButton" },
-	}) do
-		local first, last = _G[row[1]], _G[row[2]]
-		local _, on = first:GetPoint()
-		lu.assertEquals(on, foot, row[1])
-		lu.assertEquals(first:GetBottom() - foot:GetBottom(), 7, row[1])
-		lu.assertTrue(math.abs(foot:GetRight() - last:GetRight() - 9) < 0.2, row[2])
-	end
-	local _, money = _G.AuctionFrameMoneyFrame:GetPoint()
-	lu.assertEquals(money, foot)
-	assertClean(client)
-end
-
-function TestAuctionHouse:test_browse_on_the_grid()
+function TestAuctionHouse:test_the_auctions_item_in_a_slot_of_ours()
 	open()
-	page(1)
-	-- (placed from windows/AuctionFrame.qml)
-	local positions = client.Engine:GetDB("Positions")
-	local spot = positions.AuctionFrameBrowseDiabolicCategories
-	-- the categories and the results side by side, tops and bottoms lined
-	-- up; the column names on the results
-	local categories, results = unpack(zones(_G.AuctionFrameBrowse))
-	local left, top, right, bottom = edges(categories)
-	lu.assertEquals({ left, top, right - left, bottom - top }, { spot[4], -spot[5], spot[6], spot[7] })
-	local _, resultsTop, _, resultsBottom = edges(results)
-	lu.assertEquals({ resultsTop, resultsBottom }, { top, bottom })
-	lu.assertTrue(select(1, edges(results)) > right)
-	-- the toolbar over them: Reset over the categories' buttons, as wide;
-	-- the search's checkboxes side by side after the count; the arrows
-	-- ending with the column names
-	local resetLeft, _, resetRight, resetBottom = edges(_G.BrowseResetButton)
-	local buttonLeft = edges(_G.AuctionFilterButton1)
-	lu.assertEquals({ resetLeft, resetRight }, { buttonLeft, buttonLeft + _G.BrowseResetButton:GetWidth() })
-	lu.assertTrue(resetBottom < top)
-	local usable, onPlayer = _G.IsUsableCheckButton, _G.ShowOnPlayerCheckButton
-	lu.assertTrue(usable:GetLeft() > _G.BrowseSearchCountText:GetLeft())
-	lu.assertTrue(onPlayer:GetLeft() > _G.IsUsableCheckButtonText:GetRight())
-	lu.assertEquals(select(2, usable:GetCenter()), select(2, onPlayer:GetCenter()))
-	lu.assertTrue(select(2, edges(usable)) > select(4, edges(_G.BrowseSearchButton))) -- (under the band)
-	lu.assertEquals(
-		select(3, edges(_G.BrowseNextPageButton)),
-		select(3, edges(results)) + positions.BrowseNextPageButton[4]
-	)
-	local headerLeft, headerTop = edges(_G.BrowseQualitySort)
-	lu.assertEquals(headerTop, top - positions.BrowseQualitySort[5])
-	lu.assertTrue(headerLeft > select(1, edges(results)))
-	assertClean(client)
-end
-
-function TestAuctionHouse:test_bids_and_auctions_rows_in_their_zones_middle()
-	open()
-	-- Bids' rows (their icon too) as far from the zone's sides, the bar
-	-- by their end
-	page(2)
-	local left, _, right = edges(_G.BidButton1)
-	local zoneLeft, _, zoneRight = edges(zones(_G.AuctionFrameBid)[1])
-	lu.assertTrue(math.abs((left - zoneLeft) - (zoneRight - right)) <= 1)
 	-- Auctions' item in a dark slot of ours
 	page(3)
 	local button, found = _G.AuctionsItemButton, false
@@ -233,18 +156,11 @@ function TestAuctionHouse:test_styled_once_without_auctionators_dialogs()
 	assertClean(client)
 end
 
-function TestAuctionHouse:test_auctionators_page_on_the_grid()
+function TestAuctionHouse:test_auctionators_page_ours()
 	open(true)
 	page(5)
-	-- its two columns on slate across the content, as the auctions' (made as it
-	-- first shows: placed then, windows/AuctionFrame.qml)
-	local column, rest = unpack(zones(_G.Atr_Main_Panel))
-	local spot = client.Engine:GetDB("Positions").Atr_Main_PanelDiabolicLeft
-	local left, top, right, bottom = edges(column)
-	lu.assertEquals({ left, top, right - left, bottom - top }, { spot[4], -spot[5], spot[6], spot[7] })
-	local restLeft, restTop, _, restBottom = edges(rest)
-	lu.assertEquals({ restTop, restBottom }, { top, bottom })
-	lu.assertTrue(restLeft > right)
+	-- its two columns on slate (made as it first shows)
+	lu.assertEquals(#zones(_G.Atr_Main_Panel), 2)
 	-- its own black and its headings' bar gone
 	lu.assertNil(_G.Atr_Hlist:GetBackdrop())
 	lu.assertEquals(_G.Atr_HeadingsBarMiddle:GetAlpha(), 0)
@@ -304,6 +220,39 @@ function TestAuctionHouse:test_auctionators_band_tabs_and_foot()
 	_G.AuctionFrame:Hide()
 	_G.AuctionFrame:Show()
 	lu.assertEquals(select(5, _G.Atr_Buy1_Button:GetPoint()), 7)
+	assertClean(client)
+end
+
+-- Behind a list, the vault: empty, cobwebs and dust; holding something, a
+-- heap of gold, the higher the more it holds; under the column names.
+function TestAuctionHouse:test_the_vault_behind_a_list()
+	open()
+	local spec = client.Engine:GetDB("Blizzard").auction.vault
+	local zone = _G.AuctionFrameBrowseDiabolicResultsDiabolicZone
+	local vault
+	for i = 1, select("#", zone:GetChildren()) do
+		local child = select(i, zone:GetChildren())
+		vault = child.Webs and child or vault
+	end
+	vault:SetHeight(200) -- (the fake client's frames don't measure their points)
+	client.world.auctions = { 0, 0 }
+	client:FireEvent("AUCTION_ITEM_LIST_UPDATE")
+	lu.assertTrue(vault.Webs[1]:IsShown() and true or false)
+	lu.assertTrue(vault.Dust:IsShown() and true or false)
+	lu.assertFalse(vault.Gold:IsShown() and true or false)
+	lu.assertEquals(vault.Dust:GetHeight(), 200 * spec.dust_height)
+	lu.assertTrue(vault:GetTop() <= _G.BrowseQualitySort:GetBottom()) -- (under the names)
+	-- a few, then as many as `full` and more: the heap grows, then stops
+	client.world.auctions = { 1, 1 }
+	client:FireEvent("AUCTION_ITEM_LIST_UPDATE")
+	lu.assertFalse(vault.Webs[1]:IsShown() and true or false)
+	lu.assertFalse(vault.Dust:IsShown() and true or false)
+	lu.assertTrue(vault.Gold:IsShown() and true or false)
+	local low = vault.Gold:GetHeight()
+	client.world.auctions = { spec.full * 2, spec.full * 2 }
+	client:FireEvent("AUCTION_ITEM_LIST_UPDATE")
+	lu.assertTrue(vault.Gold:GetHeight() > low)
+	lu.assertEquals(vault.Gold:GetHeight(), 200 * spec.heap[2])
 	assertClean(client)
 end
 

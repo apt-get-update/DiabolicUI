@@ -257,6 +257,20 @@ Module.StyleOverachiever = function(self)
 	self:StyleRows()
 end
 
+-- The summary's latest achievements one under the other, touching
+-- (Blizzard's overlap by 3, their frames over each other).
+Module.StackSummary = function(self)
+	for i = 2, _G.ACHIEVEMENTUI_MAX_SUMMARY_ACHIEVEMENTS or 0 do
+		local row, above =
+			_G["AchievementFrameSummaryAchievement" .. i], _G["AchievementFrameSummaryAchievement" .. (i - 1)]
+		if row and above then
+			row:ClearAllPoints()
+			row:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, 0)
+			row:SetPoint("TOPRIGHT", above, "BOTTOMRIGHT", 0, 0)
+		end
+	end
+end
+
 Module.StyleAchievements = function(self)
 	local config = self.config
 	local frame = _G.AchievementFrame
@@ -353,6 +367,7 @@ Module.StyleAchievements = function(self)
 	self:StyleRows()
 	hooksecurefunc("AchievementFrameSummary_UpdateAchievements", function()
 		self:StyleRows()
+		self:StackSummary()
 	end)
 
 	-- Blizzard's header (its art hidden) over the band only: it reached

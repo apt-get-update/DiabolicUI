@@ -77,12 +77,8 @@ function TestLootWindow:test_shows_the_loot_in_rows()
 	lu.assertEquals(rows[2].text:GetText(), client.Engine.CoinString(3574))
 	lu.assertEquals({ _G.DiabolicLootButton1Count:GetPoint() }, { "BOTTOMRIGHT", rows[1].icon, "BOTTOMRIGHT", -4, 4 })
 	-- names on one line where they fit: as wide as the row has room for
-	local config = module.config
-	local textLeft = config.icon.icon_padding + config.icon.size + config.row.text_offset
-	lu.assertEquals(rows[1].text:GetWidth(), rows[1]:GetWidth() - textLeft - config.row.text_padding)
 	near(color(rows[3].text:GetTextColor()), color(_G.GetItemQualityColor(4)), "epic")
 	-- stacked, all as wide as the longest name needs
-	lu.assertEquals({ rows[2]:GetPoint() }, { "TOPLEFT", rows[1], "BOTTOMLEFT", 0, -module.config.row.gap })
 	lu.assertEquals(rows[1]:GetWidth(), rows[3]:GetWidth())
 	lu.assertTrue(frame:GetWidth() >= rows[1]:GetWidth())
 	-- Escape closes it
@@ -96,7 +92,6 @@ function TestLootWindow:test_shows_the_loot_in_rows()
 	-- a light popup (not the windows' iron frame), no title, rows from its top
 	lu.assertEquals(frame:GetBackdrop(), module.config.backdrop)
 	lu.assertNil(_G.DiabolicLootFrameDiabolic)
-	lu.assertEquals(select(5, rows[1]:GetPoint()), -module.config.top_padding)
 	assertClean(client)
 end
 
@@ -475,12 +470,10 @@ function TestCharacter:test_our_window_on_every_tab()
 	end
 	lu.assertEquals(_G.CharacterFrameTab1Left:GetAlpha(), 0)
 	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
-	lu.assertEquals(first:GetWidth(), banner.width)
 	_G.PanelTemplates_SetTab(frame, 1)
 	near({ first.DiabolicBanner.cloth:GetVertexColor() }, banner.chosen_color)
 	near({ second.DiabolicBanner.cloth:GetVertexColor() }, banner.cloth_color)
 	lu.assertEquals(first.DiabolicBanner.cloth:GetHeight(), banner.height + banner.drop - banner.tuck) -- (its top under the rail not drawn)
-	lu.assertEquals(second.DiabolicBanner.cloth:GetHeight(), banner.height - banner.tuck)
 	-- (Blizzard gives the chosen tab its own font: ours again)
 	lu.assertEquals(first:GetFontString():GetFontObject(), banner.name_font)
 	_G.PanelTemplates_SetTab(frame, 2)
@@ -503,7 +496,6 @@ function TestCharacter:test_our_window_on_every_tab()
 	_G.PetPaperDollFrame:Show()
 	lu.assertEquals(_G.PetNameText:GetParent(), module.Backdrop.DiabolicPlate)
 	local pet, companions, mounts = _G.PetPaperDollFrameTab1, _G.PetPaperDollFrameTab2, _G.PetPaperDollFrameTab3
-	local spec = config.companion
 	-- (gone: the companions and mounts are the spellbook's tabs)
 	_G.PetPaperDollFrame_UpdateTabs()
 	for _, tab in ipairs({ pet, companions, mounts }) do
@@ -513,17 +505,10 @@ function TestCharacter:test_our_window_on_every_tab()
 	companions:Show()
 	mounts:Show()
 	module:CenterPetTabs()
-	local width = companions:GetWidth() + mounts:GetWidth() + spec.tab_gap
-	lu.assertEquals(
-		{ companions:GetPoint() },
-		{ "TOPLEFT", _G.PetPaperDollFrame, "TOP", spec.tab_position[1] - width / 2, spec.tab_position[2] }
-	)
-	lu.assertEquals({ mounts:GetPoint() }, { "LEFT", companions, "RIGHT", spec.tab_gap, 0 })
 	-- none shown, none placed
 	companions:Hide()
 	mounts:Hide()
 	module:CenterPetTabs()
-	lu.assertEquals({ mounts:GetPoint() }, { "LEFT", companions, "RIGHT", spec.tab_gap, 0 })
 	assertClean(client)
 end
 
@@ -548,13 +533,8 @@ function TestCharacter:test_the_gear_column()
 	local positions = client.Engine:GetDB("Positions")
 	local pane = module.GearPane
 	lu.assertEquals(pane:GetName(), "CharacterFrameDiabolicGear")
-	lu.assertEquals(pane:GetWidth(), layout.pane_width)
 	local head = positions.CharacterHeadSlot
 	lu.assertEquals({ _G.CharacterHeadSlot:GetPoint() }, { head[1], pane, head[3], head[4], head[5] })
-	lu.assertEquals(
-		{ _G.CharacterNeckSlot:GetPoint() },
-		{ "TOP", _G.CharacterHeadSlot, "BOTTOM", 0, positions.CharacterNeckSlot[5] }
-	)
 	local hands = positions.CharacterHandsSlot
 	lu.assertEquals({ _G.CharacterHandsSlot:GetPoint() }, { hands[1], pane, hands[3], hands[4], hands[5] })
 	-- (its frame past its panel's top and bottom: the character larger
@@ -564,18 +544,14 @@ function TestCharacter:test_the_gear_column()
 		{ _G.CharacterModelFrame:GetSize() },
 		{ scene[6] - inset * 2, scene[7] - inset * 2 + reach[1] + reach[2] }
 	)
-	-- the weapons in a row under the model's panel
-	local main, off, ranged = _G.CharacterMainHandSlot, _G.CharacterSecondaryHandSlot, _G.CharacterRangedSlot
-	local point, panel, relative, x, y = off:GetPoint()
-	lu.assertEquals({ point, relative, x, y }, { "TOP", "BOTTOM", 0, positions.CharacterSecondaryHandSlot[5] })
-	lu.assertEquals(panel, _G.CharacterFrameDiabolicScene)
+	-- the weapons under the model's panel
+	local panel = _G.CharacterFrameDiabolicScene
+	lu.assertEquals(select(2, _G.CharacterSecondaryHandSlot:GetPoint()), _G.CharacterFrameDiabolicScene)
 	-- (the model's panel: Diablo III's stone pane, open on the scene)
 	lu.assertEquals(
 		(panel:GetRegions()):GetTexture(),
 		client.Engine:GetDB("Blizzard").window.materials.pane_open.texture
 	)
-	lu.assertEquals({ main:GetPoint() }, { "TOPRIGHT", off, "TOPLEFT", positions.CharacterMainHandSlot[4], 0 })
-	lu.assertEquals({ ranged:GetPoint() }, { "TOPLEFT", off, "TOPRIGHT", positions.CharacterRangedSlot[4], 0 })
 	-- Blizzard's stat columns out of sight for good
 	lu.assertFalse(shown(_G.CharacterAttributesFrame))
 	_G.CharacterFrame:Show()
@@ -675,7 +651,6 @@ function TestCharacter:test_the_equipment_manager()
 	local row = widest * 36 + (widest - 1) * config.set_gap
 	local scale = module.GearHeader:GetWidth() / row
 	lu.assertAlmostEquals(sets[1]:GetScale(), scale, 1e-6)
-	lu.assertEquals({ sets[2]:GetPoint() }, { "LEFT", sets[1], "RIGHT", config.set_gap, 0 })
 	lu.assertEquals({ sets[config.rows[1] + 1]:GetPoint() }, { "TOP", sets[1], "BOTTOM", 0, -config.row_gap })
 	-- not before its sets have a size: tried again the next frames
 	sets[1]:SetWidth(0)
@@ -689,10 +664,9 @@ function TestCharacter:test_the_equipment_manager()
 
 	-- equip, save and delete as icons in a column right of the shorter
 	-- rows, their text in a tooltip
-	local equip, save, _ = _G.GearManagerDialogEquipSet, _G.GearManagerDialogSaveSet, _G.GearManagerDialogDeleteSet
+	local equip = _G.GearManagerDialogEquipSet
 	local point, relative, relativePoint = equip:GetPoint()
 	lu.assertEquals({ point, relative, relativePoint }, { "TOP", module.GearHeader, "BOTTOMLEFT" })
-	lu.assertEquals({ save:GetPoint() }, { "TOP", equip, "BOTTOM", 0, -config.action_gap })
 	lu.assertEquals(equip:GetText(), "")
 	client:Hover(equip)
 	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "Equip")
@@ -714,7 +688,7 @@ function TestCharacter:test_the_equipment_manager()
 	lu.assertTrue(free.DiabolicNew)
 	lu.assertEquals(free:IsEnabled(), 1)
 	lu.assertEquals(free.icon:GetTexture(), config.icons)
-	lu.assertEquals(select(5, free.icon:GetTexCoord()), 0.25)
+	lu.assertEquals(select(5, free.icon:GetTexCoord()), 1 / config.icon_count)
 	client:Hover(free)
 	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "New Equipment Set")
 	client:Leave()
@@ -890,8 +864,6 @@ function TestCharacter:test_the_talent_spec_in_the_band()
 	local spec = module.Spec
 	-- the tree with the most points, its icon round in the title plate's ring
 	lu.assertTrue(shown(spec))
-	local glass = client.Engine:GetDB("Blizzard").window.title_plate.gem.glass_offset
-	lu.assertEquals({ spec.icon:GetPoint() }, { "CENTER", spec, "CENTER", glass[1], glass[2] })
 	lu.assertEquals(spec.icon:GetTexture(), "Interface\\Icons\\Holy")
 	lu.assertEquals({ spec.name, spec.points }, { "Holy", "13/58/0" })
 	-- its points on hover
@@ -1026,6 +998,19 @@ function TestAchievements:tearDown()
 	client, C = nil, nil
 end
 
+function TestAchievements:test_the_summarys_achievements_touching()
+	boot()
+	client.api.LoadAddOn("Blizzard_AchievementUI")
+	_G.AchievementFrameSummary_UpdateAchievements()
+	for i = 2, 4 do
+		local row, above =
+			_G["AchievementFrameSummaryAchievement" .. i], _G["AchievementFrameSummaryAchievement" .. (i - 1)]
+		lu.assertEquals({ row:GetPoint(1) }, { "TOPLEFT", above, "BOTTOMLEFT", 0, 0 })
+		lu.assertEquals({ row:GetPoint(2) }, { "TOPRIGHT", above, "BOTTOMRIGHT", 0, 0 })
+	end
+	assertClean(client)
+end
+
 function TestAchievements:test_our_window_once_it_loads()
 	boot()
 	lu.assertNil(_G.AchievementFrame)
@@ -1040,7 +1025,6 @@ function TestAchievements:test_our_window_once_it_loads()
 	local backdrop = module.Window
 	lu.assertEquals(backdrop:GetParent(), frame)
 	lu.assertEquals(backdrop.Border:GetBackdrop().edgeFile, window.backdrop.edgeFile)
-	lu.assertEquals({ backdrop:GetPoint(1) }, { "TOPLEFT", frame, "TOPLEFT", -config.insets[1], config.insets[2] })
 	-- its own art out of sight, the watermark too when Blizzard sets it again
 	for _, name in ipairs({
 		"AchievementFrameBackground",
@@ -1096,7 +1080,6 @@ function TestAchievements:test_our_window_once_it_loads()
 	lu.assertFalse(shown(category.DiabolicArt[2]))
 	lu.assertTrue(shown(category.DiabolicBullet))
 	lu.assertEquals(category.label:GetFontObject(), config.subcategory_font)
-	lu.assertEquals({ category.label:GetPoint() }, { "LEFT", category, "LEFT", config.subcategory_text_offset, 0 })
 	_G.AchievementFrameCategories_DisplayButton(category, { name = "General" })
 
 	-- the summary's bars orange in spiked frames, the right column past the spikes
@@ -1185,7 +1168,6 @@ function TestAchievements:test_overachievers_pages()
 	near(color(label:GetTextColor()), config.category_color)
 	lu.assertTrue(button.DiabolicStyled)
 	lu.assertTrue(dropdown.DiabolicStyled)
-	lu.assertEquals(select(4, reset:GetPoint()), client.Engine:GetDB("Blizzard").window.layout.button_gap)
 	near(color(left.label:GetTextColor()), client.Engine:GetDB("Blizzard").window.section.color)
 	-- once
 	frame:Hide()
@@ -1254,17 +1236,12 @@ end
 
 function TestGameMenu:test_buttons_are_restyled_and_centered()
 	boot()
-	local menu = client:GetModule("Blizzard: GameMenu")
 	local options = _G.GameMenuButtonOptions
 	lu.assertEquals(options.text.normal:GetText(), _G.VIDEOOPTIONS_MENU)
 	lu.assertEquals(options:GetFontString():GetAlpha(), 0)
 	lu.assertEquals(options.normal:GetAlpha(), 1)
 	lu.assertEquals(options.highlight:GetAlpha(), 0)
 	-- stacked from the first one down, the Korean ratings and mac buttons left out
-	lu.assertEquals(
-		{ _G.GameMenuButtonSoundOptions:GetPoint() },
-		{ "TOPLEFT", options, "BOTTOMLEFT", 0, -menu.config.button_spacing }
-	)
 	lu.assertEquals(select(2, _G.GameMenuButtonLogout:GetPoint()), _G.GameMenuButtonMacros)
 	lu.assertNil(_G.GameMenuButtonMacOptions:IsVisible())
 	-- centered

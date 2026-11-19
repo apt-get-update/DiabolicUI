@@ -220,7 +220,7 @@ end
 local OUTER = {
 	eye = { { "TOPRIGHT", 4, 2 }, { "TOPLEFT", -4, 2 } },
 	mail = { { "TOPLEFT", -4, 2 }, { "TOPRIGHT", 4, 2 } },
-	mbb = { { "BOTTOMLEFT", -4, -2 }, { "BOTTOMRIGHT", 4, -2 } },
+	buttons = { { "BOTTOMLEFT", -4, -2 }, { "BOTTOMRIGHT", 4, -2 } }, -- the addons' buttons' "+" (buttons.lua)
 }
 
 local PlaceOuter = function(frame, where, left)
@@ -229,12 +229,16 @@ local PlaceOuter = function(frame, where, left)
 	frame:SetPoint(point, Minimap, x, y)
 end
 
+Module.IsOnTheLeft = function(self)
+	return IsOnTheLeft()
+end
+
 Module.UpdateOuterElements = function(self)
 	local left = IsOnTheLeft()
 	PlaceOuter(MiniMapLFGFrame, OUTER.eye, left)
 	PlaceOuter(self.mail.frame, OUTER.mail, left)
-	if self.mbbButton then
-		PlaceOuter(self.mbbButton, OUTER.mbb, left)
+	if self.buttonsToggle then
+		PlaceOuter(self.buttonsToggle, OUTER.buttons, left)
 	end
 	-- the zone name's outer edge flush with the minimap's
 	local zoneName = self.zoneName
@@ -415,65 +419,6 @@ Module.CreateCustomElements = function(self)
 	MiniMapBattlefieldFrame:SetScale(1 / DIABOLIC_MAP_SCALE)
 end
 
--- MinimapButtonBag: its button as a "+" on the minimap's border.
-Module.StyleMBB = function(self)
-	local button = CreateFrame("Frame", nil, Minimap)
-	button:SetFrameLevel(button:GetFrameLevel() + 10)
-	button:SetSize(48, 48)
-	button:SetFrameStrata("LOW") -- MEDIUM collides with Immersion
-	self.mbbButton = button
-
-	local frame = _G.MBB_MinimapButtonFrame
-	frame:SetParent(button)
-	frame:RegisterForDrag()
-	frame:SetSize(48, 48)
-	frame:ClearAllPoints()
-	frame:SetFrameStrata("LOW")
-	frame:SetPoint("CENTER", 0, 0)
-	frame:SetHighlightTexture("")
-	frame:DisableDrawLayer("OVERLAY")
-	local noop = function() end
-	frame.ClearAllPoints = noop
-	frame.SetPoint = noop
-	frame.SetAllPoints = noop
-
-	local icon = _G.MBB_MinimapButtonFrame_Texture
-	icon:ClearAllPoints()
-	icon:SetPoint("CENTER", 0, 0)
-	icon:SetSize(48, 48)
-	icon:SetTexture(TEXTURES .. "button-toggle-plus")
-	icon:SetTexCoord(0, 1, 0, 1)
-	icon:SetAlpha(0.85)
-
-	local down, over
-	local SetAlpha = function()
-		icon:SetAlpha((down and over) and 1 or (down or over) and 0.95 or 0.85)
-	end
-	frame:SetScript("OnMouseDown", function()
-		down = true
-		SetAlpha()
-	end)
-	frame:SetScript("OnMouseUp", function()
-		down = false
-		SetAlpha()
-	end)
-	frame:SetScript("OnEnter", function(frame)
-		_G.MBB_ShowTimeout = -1
-		over = true
-		SetAlpha()
-		GameTooltip_SetDefaultAnchor(GameTooltip, frame)
-		GameTooltip:AddLine("MinimapButtonBag v" .. _G.MBB_Version)
-		GameTooltip:AddLine(_G.MBB_TOOLTIP1, 0, 1, 0, true)
-		GameTooltip:Show()
-	end)
-	frame:SetScript("OnLeave", function()
-		_G.MBB_ShowTimeout = 0
-		over = false
-		SetAlpha()
-		GameTooltip:Hide()
-	end)
-end
-
 -- Size and place -------------------------------------------------------------
 
 -- The map's scale at 100%: the Diabolic size on a 1080 pixels high screen,
@@ -582,7 +527,7 @@ end
 -- frames' (modules/menu/movers.lua), covering the border ring too.
 Module.CreateEditModeWidgets = function(self)
 	local highlight = CreateFrame("Frame", nil, Minimap)
-	highlight:SetFrameStrata("FULLSCREEN_DIALOG") -- over MBB's "+" and the mail and eye buttons too
+	highlight:SetFrameStrata("FULLSCREEN_DIALOG") -- over the addons' buttons' "+" and the mail and eye buttons too
 	highlight:SetBackdrop({
 		bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
 		edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]],
@@ -603,18 +548,18 @@ Module.CreateEditModeWidgets = function(self)
 	self.editHighlight = highlight
 end
 
--- The box covers the border ring, and MBB's button when it's shown: measured
+-- The box covers the border ring, and the addons' buttons' "+" when it's shown: measured
 -- each time edit mode starts, as offsets from the minimap.
 local RING = 19
 Module.FitEditHighlight = function(self)
 	local left, right, top, bottom = Minimap:GetLeft(), Minimap:GetRight(), Minimap:GetTop(), Minimap:GetBottom()
 	local l, r, t, b = -RING, RING, RING, -RING
-	local mbb = _G.MBB_MinimapButtonFrame
-	if (left and right and top and bottom) and (mbb and mbb:IsShown()) then
-		local fl, fr, ft, fb = mbb:GetLeft(), mbb:GetRight(), mbb:GetTop(), mbb:GetBottom()
+	local plus = self.buttonsToggle
+	if (left and right and top and bottom) and (plus and plus:IsShown()) then
+		local fl, fr, ft, fb = plus:GetLeft(), plus:GetRight(), plus:GetTop(), plus:GetBottom()
 		if fl and fr and ft and fb then
 			-- in the minimap's own scale (it's resizable, the button isn't)
-			local scale = mbb:GetEffectiveScale() / Minimap:GetEffectiveScale()
+			local scale = plus:GetEffectiveScale() / Minimap:GetEffectiveScale()
 			fl, fr, ft, fb = fl * scale, fr * scale, ft * scale, fb * scale
 			l, r = math.min(l, fl - left), math.max(r, fr - right)
 			t, b = math.max(t, ft - top), math.min(b, fb - bottom)
@@ -738,12 +683,6 @@ Module.OnEnable = function(self)
 
 	self:CreateCustomElements()
 	self:ApplyTheme()
-	if Engine:IsAddOnEnabled("MBB") then
-		if not IsAddOnLoaded("MBB") then
-			LoadAddOn("MBB")
-		end
-		self:StyleMBB()
-	end
 	self:UpdateMail()
 	self:UpdateRotation()
 	self:UpdateClock()

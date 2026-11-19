@@ -32,7 +32,7 @@ pipe:close()
 -- Runs tools/positions.lua with `args` (paths) from `dir` (the addon's
 -- folder by default), what it says returned; its lines recorded when the
 -- coverage runs (tests/coverage/run.sh), into a file of its own there.
-local Run = function(args, dir)
+local Run = function(args, dir, env)
 	local quoted = {}
 	for i, path in ipairs(args) do
 		quoted[i] = string.format("%q", path)
@@ -45,7 +45,7 @@ local Run = function(args, dir)
 		table.concat(quoted, ", "),
 		ROOT .. "/tools/positions.lua"
 	)
-	local env = ""
+	env = env or ""
 	local stats = os.getenv("DIABOLICUI_COVERAGE_STATS")
 	if stats then
 		stats = (stats:sub(1, 1) == "/") and stats or (ROOT .. "/" .. stats)
@@ -53,7 +53,7 @@ local Run = function(args, dir)
 		code = string.format("dofile(%q); local ok, problem = pcall(function() ", ROOT .. "/tests/coverage/hook.lua")
 			.. code
 			.. " end); if not ok then print(problem) end; os.exit(0)"
-		env = "DIABOLICUI_COVERAGE_STATS=" .. stats:gsub("%.out$", "") .. ".tool.out "
+		env = env .. "DIABOLICUI_COVERAGE_STATS=" .. stats:gsub("%.out$", "") .. ".tool.out "
 	end
 	local run = io.popen("cd '" .. (dir or ROOT) .. "' && " .. env .. LUA .. " -e '" .. code .. "' 2>&1")
 	local said = run:read("*a")
@@ -501,23 +501,22 @@ function TestPositionsTool:test_the_files_agree()
 	lu.assertEquals(same, 0)
 end
 
--- Without paths: the newest saved variables, three folders up (the game's
--- WTF), into settings/positions.lua (not there yet).
+-- Without paths: the newest saved variables of the test realm's client (its
+-- WTF, DIABOLIC_REALM's: only it scans), into settings/positions.lua (not there yet).
 function TestPositionsTool:test_the_newest_saved_variables_by_default()
 	local base = TempName()
 	local addon = base .. "/Interface/AddOns/DiabolicUI"
-	os.execute(
-		"mkdir -p '" .. addon .. "/settings' '" .. addon .. "/tools' '" .. base .. "/WTF/Account/ME/SavedVariables'"
-	)
+	local saved = base .. "/realm/client/WTF/Account/DUI/SavedVariables"
+	os.execute("mkdir -p '" .. addon .. "/settings' '" .. addon .. "/tools' '" .. saved .. "'")
 	Write(
-		base .. "/WTF/Account/ME/SavedVariables/DiabolicUI.lua",
+		saved .. "/DiabolicUI.lua",
 		[[
 DiabolicUI_Layout = { ["windows"] = { ["BankFrame"] = { ["parts"] = {
 	["BankCloseButton"] = { "TOPRIGHT", "BankFrame", "TOPRIGHT", -46, -8, 32, 32, kind = "Button" },
 } } } }
 ]]
 	)
-	local said = Run({}, addon)
+	local said = Run({}, addon, "DIABOLIC_REALM='" .. base .. "/realm' ")
 	lu.assertStrContains(said, "settings/positions.lua: 1 parts, 0 in use.")
 	local window = Read(addon .. "/windows/BankFrame.qml")
 	lu.assertStrContains(Read(addon .. "/tools/layout.json"), '"BankCloseButton":{"kind":"Button"')

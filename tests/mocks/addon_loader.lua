@@ -127,10 +127,15 @@ function Loader.loadFile(path)
 	return loadstring(text, "@" .. path)
 end
 
--- Runs every file in load order. Returns a list of "path: error" strings.
-function Loader.load(addonTable, createFont)
+-- Runs every file in load order, then `extra`'s (files the test realm's
+-- client adds: tools/realm/scan.lua). Returns a list of "path: error" strings.
+function Loader.load(addonTable, createFont, extra)
 	local failures = {}
-	for _, entry in ipairs(Loader.loadOrder()) do
+	local order = Loader.loadOrder()
+	for _, path in ipairs(extra or {}) do
+		order[#order + 1] = path
+	end
+	for _, entry in ipairs(order) do
 		if type(entry) == "table" then
 			if createFont then
 				createFont(entry.font)

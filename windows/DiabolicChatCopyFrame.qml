@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "DiabolicChatCopyFrame"
+    kind: "sheet"
     width: 560
     height: 340
 
@@ -60,7 +61,7 @@ WowWindow {
         anchors.leftMargin: 36
         anchors.top: parent.top
         anchors.topMargin: 36
-        width: 464
+        width: 462
         height: 268
 
         Frame {
@@ -70,7 +71,7 @@ WowWindow {
             anchors.leftMargin: -6
             anchors.top: parent.top
             anchors.topMargin: -6
-            width: 498
+            width: 496
             height: 280
         }
 

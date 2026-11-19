@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "MacroFrame"
+    kind: "list"
     width: 384
     height: 512
 
@@ -38,7 +39,6 @@ WowWindow {
 
                 FontString {
                     name: "MacroButton1Name"
-                    text: "DUI Holy End"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 2
@@ -57,44 +57,45 @@ WowWindow {
             anchors.topMargin: -6
             width: 328
             height: 158
-        }
 
-        Slider {
-            name: "MacroButtonScrollFrameScrollBar"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 114
-
-            Frame {
-                name: "MacroButtonScrollFrameScrollBarDiabolicTrack"
-                anchors.horizontalCenter: macroButtonScrollFrameScrollBarScrollUpButton.horizontalCenter
-                anchors.top: macroButtonScrollFrameScrollBarScrollUpButton.top
-                anchors.topMargin: -1
-                width: 18
-                height: 148
-            }
-
-            Button {
-                name: "MacroButtonScrollFrameScrollBarScrollDownButton"
+            Slider {
+                name: "MacroButtonScrollFrameScrollBar"
+                wowParent: "MacroButtonScrollFrame"
                 style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: 7
+                anchors.top: parent.top
+                anchors.topMargin: 23
                 width: 16
-                height: 16
-            }
+                height: 112
 
-            Button {
-                id: macroButtonScrollFrameScrollBarScrollUpButton
-                name: "MacroButtonScrollFrameScrollBarScrollUpButton"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
+                Frame {
+                    name: "MacroButtonScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: macroButtonScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: macroButtonScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 146
+                }
+
+                Button {
+                    name: "MacroButtonScrollFrameScrollBarScrollDownButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    id: macroButtonScrollFrameScrollBarScrollUpButton
+                    name: "MacroButtonScrollFrameScrollBarScrollUpButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+                }
             }
         }
     }
@@ -103,12 +104,12 @@ WowWindow {
     // under the text, over the foot)
     FontString {
         name: "MacroFrameCharLimitText"
-        text: "80/255 Characters Used"
+        text: "166/255 Characters Used"
         pin: "place"
         anchors.right: macroFrameScrollFrame.right
         anchors.bottom: macroFrameScrollFrame.top
         anchors.bottomMargin: 8
-        width: 129.6
+        width: 135.9
         height: 10
     }
 
@@ -160,6 +161,15 @@ WowWindow {
                     width: 134.3
                     height: 14.2
                 }
+
+                Button {
+                    name: "MacroFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
             }
         }
 
@@ -206,7 +216,7 @@ WowWindow {
                     wowParent: "MacroFrame"
                     style: "Button"
                     pin: "all"
-                    width: 80
+                    width: 79
                     height: 22
 
                     FontString {
@@ -225,7 +235,7 @@ WowWindow {
                     wowParent: "MacroFrame"
                     style: "Button"
                     pin: "all"
-                    width: 80
+                    width: 79
                     height: 22
 
                     FontString {
@@ -283,69 +293,69 @@ WowWindow {
 
         Frame {
             name: "MacroFrameScrollFrameDiabolicZone"
-            anchors.left: parent.left
-            anchors.leftMargin: -6
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: 11
             anchors.top: parent.top
             anchors.topMargin: -6
-            width: 320
+            width: 328
             height: 97
-        }
 
-        Slider {
-            name: "MacroFrameScrollFrameScrollBar"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 53
-
-            Frame {
-                name: "MacroFrameScrollFrameScrollBarDiabolicTrack"
-                anchors.horizontalCenter: macroFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
-                anchors.top: macroFrameScrollFrameScrollBarScrollUpButton.top
-                anchors.topMargin: -1
-                width: 18
-                height: 87
-            }
-
-            Button {
-                name: "MacroFrameScrollFrameScrollBarScrollDownButton"
+            Slider {
+                name: "MacroFrameScrollFrameScrollBar"
+                wowParent: "MacroFrameScrollFrame"
                 style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: 7
+                anchors.top: parent.top
+                anchors.topMargin: 23
                 width: 16
-                height: 16
-            }
+                height: 51
 
-            Button {
-                id: macroFrameScrollFrameScrollBarScrollUpButton
-                name: "MacroFrameScrollFrameScrollBarScrollUpButton"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
+                Frame {
+                    name: "MacroFrameScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: macroFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: macroFrameScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 85
+                }
+
+                Button {
+                    name: "MacroFrameScrollFrameScrollBarScrollDownButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    id: macroFrameScrollFrameScrollBarScrollUpButton
+                    name: "MacroFrameScrollFrameScrollBarScrollUpButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+                }
             }
         }
 
         EditBox {
-            id: macroFrameText
             name: "MacroFrameText"
             anchors.left: parent.left
             anchors.top: parent.top
             width: 286
-            height: 30.8
-        }
+            height: 51.4
 
-        Button {
-            name: "MacroFrameTextButton"
-            wowParent: "MacroFrame"
-            anchors.left: macroFrameText.left
-            anchors.top: macroFrameText.top
-            width: 286
-            height: 85
+            Button {
+                name: "MacroFrameTextButton"
+                wowParent: "MacroFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 286
+                height: 85
+            }
         }
     }
 
@@ -405,7 +415,7 @@ WowWindow {
 
     FontString {
         name: "MacroFrameSelectedMacroName"
-        text: "DUI Holy End"
+        text: "Decursive"
         anchors.left: macroFrameSelectedMacroBackground.right
         anchors.leftMargin: -4
         anchors.top: macroFrameSelectedMacroBackground.top
@@ -428,7 +438,7 @@ WowWindow {
 
     Button {
         name: "MacroFrameTab2"
-        text: "Padirac Specific Macros"
+        text: "Diabolica Specific Macros"
         style: "Banner"
         anchors.left: macroFrameDiabolic.left
         anchors.leftMargin: 86

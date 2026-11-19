@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "QuestLogFrame"
+    kind: "list"
     width: 682
     height: 532
 
@@ -14,12 +15,12 @@ WowWindow {
         anchors.leftMargin: 80
         anchors.top: parent.top
         anchors.topMargin: 41
-        width: 91.6
+        width: 85.3
         height: 20
 
         Ghost {
             name: "QuestLogCountTopRight"
-            x: 83.6
+            x: 77.3
             y: 7.9
             width: 0
             height: 0
@@ -31,7 +32,7 @@ WowWindow {
                 anchors.rightMargin: -1
                 anchors.top: parent.bottom
                 anchors.topMargin: -3
-                width: 76.6
+                width: 70.3
                 height: 10.3
             }
         }
@@ -60,6 +61,7 @@ WowWindow {
     Frame {
         name: "QuestLogFrameDiabolic"
         anchors.left: parent.left
+        anchors.leftMargin: -1
         anchors.top: parent.top
         anchors.topMargin: -36
         width: 752
@@ -445,13 +447,22 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "QuestLogFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "QuestLogTitleText"
-                    text: "Quest Log  21/25"
+                    text: "Quest Log  0/25"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 143.8
+                    width: 140.6
                     height: 14.2
                 }
             }
@@ -473,9 +484,9 @@ WowWindow {
                 name: "QuestLogControlPanel"
                 wowParent: "QuestLogFrame"
                 anchors.left: parent.left
-                anchors.leftMargin: 7
+                anchors.leftMargin: 14
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 5
+                anchors.bottomMargin: 4
                 width: 321
                 height: 26
 
@@ -487,8 +498,8 @@ WowWindow {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 110
-                    height: 21
+                    width: 100.7
+                    height: 22
 
                     FontString {
                         name: "QuestLogFrameAbandonButtonText"
@@ -505,10 +516,10 @@ WowWindow {
                     text: "Share"
                     style: "Button"
                     anchors.left: questLogFrameAbandonButton.right
-                    anchors.leftMargin: 6
+                    anchors.leftMargin: 8
                     anchors.verticalCenter: questLogFrameAbandonButton.verticalCenter
-                    width: 96
-                    height: 21
+                    width: 100.7
+                    height: 22
 
                     FontString {
                         name: "QuestLogFramePushQuestButtonText"
@@ -528,8 +539,8 @@ WowWindow {
                     anchors.rightMargin: 3
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 100
-                    height: 21
+                    width: 100.7
+                    height: 22
 
                     FontString {
                         name: "QuestLogFrameTrackButtonText"
@@ -565,6 +576,26 @@ WowWindow {
             height: 413
 
             Frame {
+                name: "EmptyQuestLogFrame"
+                wowParent: "QuestLogFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 305
+                height: 413
+
+                FontString {
+                    name: "QuestLogNoQuestsText"
+                    text: "No Active Quests"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: -6
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -16
+                    width: 200
+                    height: 11.9
+                }
+            }
+
+            Frame {
                 name: "QuestLogScrollFrameDiabolicZone"
                 anchors.left: parent.left
                 anchors.leftMargin: -6
@@ -572,45 +603,45 @@ WowWindow {
                 anchors.topMargin: -6
                 width: 333
                 height: 439
-            }
 
-            Slider {
-                name: "QuestLogScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.top: parent.top
-                anchors.topMargin: 13
-                width: 20
-                height: 401
-
-                Frame {
-                    name: "QuestLogScrollFrameScrollBarDiabolicTrack"
-                    anchors.horizontalCenter: questLogScrollFrameScrollBarScrollUpButton.horizontalCenter
-                    anchors.top: questLogScrollFrameScrollBarScrollUpButton.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 431
-                }
-
-                Button {
-                    name: "QuestLogScrollFrameScrollBarScrollDownButton"
+                Slider {
+                    name: "QuestLogScrollFrameScrollBar"
+                    wowParent: "QuestLogScrollFrame"
                     style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
-                    anchors.topMargin: -2
-                    width: 16
-                    height: 16
-                }
+                    anchors.right: parent.right
+                    anchors.rightMargin: 7
+                    anchors.top: parent.top
+                    anchors.topMargin: 23
+                    width: 15
+                    height: 397
 
-                Button {
-                    id: questLogScrollFrameScrollBarScrollUpButton
-                    name: "QuestLogScrollFrameScrollBarScrollUpButton"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    anchors.bottomMargin: -2
-                    width: 16
-                    height: 16
+                    Frame {
+                        name: "QuestLogScrollFrameScrollBarDiabolicTrack"
+                        anchors.horizontalCenter: questLogScrollFrameScrollBarScrollUpButton.horizontalCenter
+                        anchors.top: questLogScrollFrameScrollBarScrollUpButton.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 431
+                    }
+
+                    Button {
+                        name: "QuestLogScrollFrameScrollBarScrollDownButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.bottom
+                        width: 16
+                        height: 16
+                    }
+
+                    Button {
+                        id: questLogScrollFrameScrollBarScrollUpButton
+                        name: "QuestLogScrollFrameScrollBarScrollUpButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.top
+                        width: 16
+                        height: 16
+                    }
                 }
             }
 
