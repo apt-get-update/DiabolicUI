@@ -315,15 +315,6 @@ end
 local STAT_PREFIX = "DiabolicUICharacterStats"
 local STAT_CVARS = { "playerStatLeftDropdown", "playerStatRightDropdown" }
 
--- `frame` at `level`, all it holds a level over what holds it.
-local Stack
-Stack = function(frame, level)
-	frame:SetFrameLevel(level)
-	for i = 1, select("#", frame:GetChildren()) do
-		Stack(select(i, frame:GetChildren()), level + 1)
-	end
-end
-
 -- A section's title bar across `column`, `y` from its top.
 local CreateSection = function(column, spec, y, text, kind)
 	local header = CreateFrame(kind or "Frame", nil, column)
@@ -479,7 +470,7 @@ Module.CreateColumn = function(self, window)
 		-- its painted background hiding all but their top layers)
 		local level = _G.PaperDollFrame:GetFrameLevel()
 		if column:GetFrameLevel() <= level then
-			Stack(column, level + 1)
+			kit:Stack(column, level + 1)
 		end
 		self:UpdateScore()
 	end)

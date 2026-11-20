@@ -136,6 +136,14 @@ Module.PlaceDetails = function(self)
 		scroll:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", unpack(self.config.details))
 		scroll:SetHeight(self.config.details_height + self.config.taller)
 		kit:PlaceParchmentBar(scroll)
+		-- over the window's painting (they come at their own window's
+		-- level), their parchment under their text
+		local level = self.Window:GetFrameLevel() + 1
+		kit:Stack(scroll, level)
+		local parchment = _G.QuestLogDetailScrollFrameDiabolicParchment
+		if parchment then -- (not yet on the log's first placing)
+			parchment:SetFrameLevel(level)
+		end
 	end
 end
 

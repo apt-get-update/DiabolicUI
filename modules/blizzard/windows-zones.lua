@@ -8,6 +8,14 @@ local Private = Module.Private
 local NameFor = Private.NameFor
 local Slices = Private.Slices
 
+-- `frame` at `level`, all it holds a level over what holds it.
+Module.Stack = function(self, frame, level)
+	frame:SetFrameLevel(level)
+	for i = 1, select("#", frame:GetChildren()) do
+		self:Stack((select(i, frame:GetChildren())), level + 1)
+	end
+end
+
 -- A darker panel behind `frame` (a list's scroll frame), `insets` (left,
 -- top, right, bottom) past it, under what its parent (`parent`, its own
 -- by default) shows.
