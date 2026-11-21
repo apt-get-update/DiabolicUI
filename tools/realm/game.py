@@ -9,6 +9,7 @@ started both).
   game.py type <text>       text typed
   game.py click <x> <y> [3] a click (3: the right button)
   game.py say <line>        a chat line (Enter, the line, Enter): /dui layout all, .ui all
+  game.py record on | off   film the client (in film mode: remote.py's DUI_FILM)
 """
 import base64
 import json
@@ -70,6 +71,8 @@ def main(args):
         print(remote("type", t=" ".join(rest)))
     elif what == "key":
         print(remote("key", k=" ".join(rest)))
+    elif what == "record":
+        print(remote("record", on="1" if rest and rest[0] == "on" else "0"))
     elif what == "click":
         print(remote("click", x=rest[0], y=rest[1], b=rest[2] if len(rest) > 2 else "1"))
     else:

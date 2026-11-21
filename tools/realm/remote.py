@@ -10,6 +10,12 @@ over 127.0.0.1:7999 by a few fixed actions, for checks run where Wine can't
   /type?t=/reload        text typed
   /click?x=10&y=20&b=1   a click (b: 1 left, 3 right)
   /status                is it running
+  /record?on=1           film the client's window (on=0 stops): <realm>/film/take-*.mp4
+
+Filming (DUI_FILM=1 DUI_DISPLAY=:1, run from your desktop's terminal): the
+client on your screen (the GPU, not Xvfb's CPU) with the game's GShade and
+Lumenveil, its shots the game's own (Print Screen), the takes through the
+desktop's screen sharing (pick the game's window the first time).
 
 The test client: <realm>/client, links to the game's files, its own WTF
 (realmlist 127.0.0.1), without the game's d3d9, dinput8 and version DLLs
@@ -30,8 +36,10 @@ from urllib.parse import parse_qs, urlparse
 
 GAME, REALM = os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2])
 CLIENT, PREFIX, SHOTS = os.path.join(REALM, "client"), os.path.join(REALM, "prefix"), os.path.join(REALM, "shots")
-DISPLAY = ":99"
+FILM = os.environ.get("DUI_FILM") == "1"
+DISPLAY = os.environ.get("DUI_DISPLAY", ":99")
 LEFT_OUT = re.compile(r"^(Data|WTF|Interface|Screenshots|Cache|Logs|Errors|d3d9\.dll|version\.dll|dinput8\.dll|gshade.*|lumenveil.*|_disabled|.*backup.*|__pycache__)$", re.I)
+FILM_ONLY = re.compile(r"^(d3d9\.dll|version\.dll|gshade.*|lumenveil.*)$", re.I)  # (not dinput8: its shoulder camera)
 CONFIG = """SET realmList "127.0.0.1"
 SET gxWindow "1"
 SET gxMaximize "0"
@@ -53,7 +61,8 @@ SET screenshotQuality "10"
 SET uiScale "1"
 SET useUiScale "0"
 """
-env = dict(os.environ, DISPLAY=DISPLAY, WINEPREFIX=PREFIX, WINEDEBUG="-all", WINEDLLOVERRIDES="mscoree,mshtml=")
+env = dict(os.environ, DISPLAY=DISPLAY, WINEPREFIX=PREFIX, WINEDEBUG="-all",
+           WINEDLLOVERRIDES="mscoree,mshtml=;d3d9,version=n,b" if FILM else "mscoree,mshtml=")
 processes = {}
 
 
@@ -92,8 +101,11 @@ def build_client():
     os.makedirs(os.path.join(CLIENT, "WTF"), exist_ok=True)
     os.makedirs(SHOTS, exist_ok=True)
     for name in os.listdir(GAME):
-        if not LEFT_OUT.match(name):
-            link(os.path.join(GAME, name), os.path.join(CLIENT, name))
+        target = os.path.join(CLIENT, name)
+        if not LEFT_OUT.match(name) or (FILM and FILM_ONLY.match(name)):
+            link(os.path.join(GAME, name), target)
+        elif FILM_ONLY.match(name) and os.path.islink(target):
+            os.unlink(target)  # (a film's, gone for the checks)
     for name in os.listdir(os.path.join(GAME, "Data")):
         if name != "enUS":
             link(os.path.join(GAME, "Data", name), os.path.join(CLIENT, "Data", name))
@@ -116,7 +128,7 @@ def running(name):
 
 def start():
     build_client()
-    if not running("x"):
+    if not running("x") and "DUI_DISPLAY" not in os.environ:
         processes["x"] = subprocess.Popen(["Xvfb", DISPLAY, "-screen", "0", "1920x1080x24", "+extension", "GLX", "-nolisten", "tcp"])
         time.sleep(2)
     if not running("wow"):
@@ -139,8 +151,34 @@ def xdotool(*args):
 
 def shot():
     path = os.path.join(SHOTS, "screen.png")
+    if FILM:  # (the game's own: the desktop's screen can't be read from here)
+        folder = os.path.join(CLIENT, "Screenshots")
+        before = set(os.listdir(folder)) if os.path.isdir(folder) else set()
+        xdotool("key", "Print")
+        for _ in range(30):
+            time.sleep(0.2)
+            new = set(os.listdir(folder)) - before if os.path.isdir(folder) else set()
+            if new:
+                time.sleep(0.5)
+                done = subprocess.run(["magick", os.path.join(folder, new.pop()), path], capture_output=True, text=True)
+                return {"ok": done.returncode == 0, "file": path, "said": done.stderr.strip()}
+        return {"ok": False, "said": "no screenshot"}
     done = subprocess.run(["import", "-display", DISPLAY, "-window", "root", path], capture_output=True, text=True)
     return {"ok": done.returncode == 0, "file": path, "said": done.stderr.strip()}
+
+
+def record(on):
+    if on and not running("rec"):
+        os.makedirs(os.path.join(REALM, "film"), exist_ok=True)
+        out = os.path.join(REALM, "film", time.strftime("take-%H%M%S.mp4"))
+        processes["rec"] = subprocess.Popen(["gpu-screen-recorder", "-w", "portal", "-restore-portal-session", "yes",
+                                             "-f", "60", "-q", "very_high", "-cursor", "no", "-o", out],
+                                            stdout=subprocess.DEVNULL, stderr=open(os.path.join(REALM, "logs", "rec.log"), "w"))
+        return {"recording": out}
+    if not on and running("rec"):
+        processes["rec"].send_signal(2)  # (SIGINT: the file finished)
+        processes["rec"].wait(timeout=30)
+    return {"recording": running("rec")}
 
 
 KEYS = re.compile(r"^[A-Za-z0-9_+]{1,40}( [A-Za-z0-9_+]{1,40}){0,9}$")
@@ -156,6 +194,8 @@ def act(path, query):
         return {"x": running("x"), "wow": running("wow")}
     if path == "/shot":
         return shot()
+    if path == "/record" and one("on") in ("0", "1"):
+        return record(one("on") == "1")
     if path == "/key" and KEYS.match(one("k")):
         return xdotool("key", "--delay", "60", *one("k").split(" "))
     if path == "/type" and 0 < len(one("t")) <= 255 and one("t").isprintable():
