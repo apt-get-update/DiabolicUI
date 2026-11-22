@@ -14,7 +14,8 @@ over 127.0.0.1:7999 by a few fixed actions, for checks run where Wine can't
 
 Filming (DUI_FILM=1 DUI_DISPLAY=:1, run from your desktop's terminal): the
 client on your screen (the GPU, not Xvfb's CPU) with the game's GShade and
-Lumenveil, its shots the game's own (Print Screen), the takes through the
+Lumenveil (and with DUI_PREFIX=<your prefix> DUI_PROTON=GE-Proton10-34,
+through Faugus' umu-run in your own prefix, as you play), its shots the game's own (Print Screen), the takes through the
 desktop's screen sharing (pick the game's window the first time).
 
 The test client: <realm>/client, links to the game's files, its own WTF
@@ -61,8 +62,10 @@ SET screenshotQuality "10"
 SET uiScale "1"
 SET useUiScale "0"
 """
-env = dict(os.environ, DISPLAY=DISPLAY, WINEPREFIX=PREFIX, WINEDEBUG="-all",
-           WINEDLLOVERRIDES="mscoree,mshtml=;d3d9,version=n,b" if FILM else "mscoree,mshtml=")
+PROTON = os.environ.get("DUI_PROTON")  # (with DUI_PREFIX: run as Faugus runs the game)
+UMU = os.path.expanduser("~/.local/share/faugus-launcher/umu-run")
+env = dict(os.environ, DISPLAY=DISPLAY, WINEPREFIX=os.environ.get("DUI_PREFIX", PREFIX), WINEDEBUG="-all",
+           WINEDLLOVERRIDES="mscoree,mshtml=;d3d9,version,d3dcompiler_47=n,b" if FILM else "mscoree,mshtml=")
 processes = {}
 
 
@@ -132,19 +135,32 @@ def start():
         processes["x"] = subprocess.Popen(["Xvfb", DISPLAY, "-screen", "0", "1920x1080x24", "+extension", "GLX", "-nolisten", "tcp"])
         time.sleep(2)
     if not running("wow"):
-        processes["wow"] = subprocess.Popen(["wine", "Wow.exe"], cwd=CLIENT, env=env,
+        run = [UMU, os.path.join(CLIENT, "Wow.exe")] if PROTON else ["wine", "Wow.exe"]
+        if PROTON:
+            env.update(PROTONPATH=PROTON, GAMEID="umu-default")
+        processes["wow"] = subprocess.Popen(run, cwd=CLIENT, env=env,
                                             stdout=subprocess.DEVNULL, stderr=open(os.path.join(REALM, "logs", "wine.log"), "w"))
     return {"started": True}
 
 
 def stop():
     if running("wow"):
-        subprocess.run(["wineserver", "-k"], env=env)
+        if PROTON:  # (Proton's own wineserver: the game itself stopped)
+            subprocess.run(["pkill", "-f", os.path.join(CLIENT, "Wow.exe")])
+        else:
+            subprocess.run(["wineserver", "-k"], env=env)
         processes["wow"].wait(timeout=30)
     return {"stopped": True}
 
 
 def xdotool(*args):
+    # (in film mode, to the game's window itself: the desktop takes no faked
+    # input, a window's own events it does)
+    if FILM and args[0] in ("key", "type", "click"):
+        found = subprocess.run(["xdotool", "search", "--name", "World of Warcraft"], env=env, capture_output=True, text=True)
+        windows = found.stdout.split()
+        if windows:
+            args = (args[0], "--window", windows[0]) + args[1:]
     done = subprocess.run(["xdotool", *args], env=env, capture_output=True, text=True)
     return {"ok": done.returncode == 0, "said": done.stderr.strip()}
 
@@ -172,7 +188,7 @@ def record(on):
         os.makedirs(os.path.join(REALM, "film"), exist_ok=True)
         out = os.path.join(REALM, "film", time.strftime("take-%H%M%S.mp4"))
         processes["rec"] = subprocess.Popen(["gpu-screen-recorder", "-w", "portal", "-restore-portal-session", "yes",
-                                             "-f", "60", "-q", "very_high", "-cursor", "no", "-o", out],
+                                             "-f", "60", "-q", "very_high", "-cursor", "no", "-a", "default_output", "-o", out],
                                             stdout=subprocess.DEVNULL, stderr=open(os.path.join(REALM, "logs", "rec.log"), "w"))
         return {"recording": out}
     if not on and running("rec"):
