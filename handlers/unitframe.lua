@@ -11,6 +11,15 @@ local Handler = Engine:NewHandler("UnitFrame")
 local Elements = {} -- element registry
 local Events = {} -- registry of frame and element event callbacks
 local FrequentUpdates = {} -- registry of frame updates
+-- the polled frames shown (their OnShow and OnHide keep it): the loop runs
+-- over these alone, not the 40 raid frames hidden out of a raid
+local Visible = {}
+local AddVisible = function(object)
+	Visible[object] = true
+end
+local RemoveVisible = function(object)
+	Visible[object] = nil
+end
 
 -- UnitFrame Right Click Menus
 --------------------------------------------------------------------------
@@ -73,8 +82,7 @@ end
 -- Hidden frames (empty raid and party slots, boss and arena frames outside
 -- those fights, everything while the UI is hidden) are skipped: they're
 -- brought up to date by the first update after they show again.
--- The loop itself asks every polled frame (hidden raid frames too) whether
--- it's shown, so it runs no more often than the fastest poll needs.
+-- The loop runs no more often than the fastest poll needs.
 local LOOP_INTERVAL = 1 / 30
 local sinceLoop = 0
 local OnUpdate = function(self, elapsed)
@@ -83,9 +91,9 @@ local OnUpdate = function(self, elapsed)
 		return
 	end
 	elapsed, sinceLoop = sinceLoop, 0
-	for object, elements in pairs(FrequentUpdates) do
+	for object in pairs(Visible) do
 		if object:IsVisible() then
-			for element, frequency in pairs(elements) do
+			for element, frequency in pairs(FrequentUpdates[object]) do
 				frequency.elapsed = frequency.elapsed + elapsed
 				if frequency.elapsed >= frequency.hz then
 					-- (passes the time since its last poll, not the last frame)
@@ -165,6 +173,11 @@ end
 UnitFrame.EnableFrequentUpdates = function(self, element, frequency)
 	if not FrequentUpdates[self] then
 		FrequentUpdates[self] = {}
+		self:HookScript("OnShow", AddVisible)
+		self:HookScript("OnHide", RemoveVisible)
+		if self:IsVisible() then
+			Visible[self] = true
+		end
 	end
 	FrequentUpdates[self][element] = { elapsed = 0, hz = frequency }
 	if not updater then
@@ -338,7 +351,9 @@ Handler.New = function(self, unit, parent, styleFunc, nonSecure, ...)
 		-- Register our vehicleswitcher
 		RegisterStateDriver(VehicleUpdater, "vehicleupdate", "[bonusbar:5][vehicleui] invehicle; notinvehicle")
 	else
-		-- Other units only need their own existence checks.
+		-- Other units only need their own existence checks. (Not Blizzard's
+		-- unit watch: measured in game, its Lua costs more than the state
+		-- driver's one C call.)
 		RegisterStateDriver(object, "visibility", string.format("[@%s,exists]show;hide", object.unit))
 	end
 

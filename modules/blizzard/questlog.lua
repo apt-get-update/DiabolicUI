@@ -157,7 +157,7 @@ Module.StyleQuestLog = function(self)
 	self.Window = window
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
-	frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + config.insets[3])
+	kit:SetPanelLayout(frame, config.insets, config.insets[1]) -- (its left on the screen's)
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
 	kit:SetTitle(self.Header, _G.QuestLogTitleText)
 	kit:StyleClose(_G.QuestLogFrameCloseButton, window, self.Header)

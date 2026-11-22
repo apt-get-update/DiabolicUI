@@ -577,8 +577,6 @@ Module.CreateTitles = function(self, page)
 		local row = rows[i]
 		if not row then
 			row = CreateFrame("Button", nil, list)
-			row:SetHeight(spec.row_height)
-			row:SetPoint("TOPLEFT", 0, -(i - 1) * spec.row_height)
 			row:SetPoint("RIGHT", scroll, "RIGHT")
 			local lit = row:CreateTexture(nil, "HIGHLIGHT")
 			lit:SetTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]])
@@ -588,11 +586,12 @@ Module.CreateTitles = function(self, page)
 			local check = row:CreateTexture(nil, "ARTWORK")
 			check:SetTexture([[Interface\Buttons\UI-CheckBox-Check]])
 			check:SetSize(spec.row_height, spec.row_height)
-			check:SetPoint("LEFT")
+			check:SetPoint("TOPLEFT")
+			-- (a long one on two lines: its own width, no right point)
 			local text = row:CreateFontString(nil, "OVERLAY")
 			text:SetFont(unpack(spec.font))
-			text:SetPoint("LEFT", check, "RIGHT", 2, 0)
-			text:SetPoint("RIGHT")
+			text:SetSpacing(spec.line_spacing)
+			text:SetPoint("TOPLEFT", spec.row_height + 2, -spec.text_top)
 			text:SetJustifyH("LEFT")
 			row.check, row.text = check, text
 			row:SetScript("OnClick", function()
@@ -607,6 +606,14 @@ Module.CreateTitles = function(self, page)
 	-- (`current`: the one just chosen, before the client tells of it)
 	Update = function(current)
 		current = current or GetCurrentTitle()
+		-- (seen in game: shown with the window, not sized yet; then a frame later)
+		if scroll:GetWidth() <= spec.row_height then
+			list:SetScript("OnUpdate", function()
+				list:SetScript("OnUpdate", nil)
+				Update(current)
+			end)
+			return
+		end
 		local titles = {}
 		for id = 1, GetNumTitles() do
 			if IsTitleKnown(id) ~= 0 then
@@ -617,11 +624,16 @@ Module.CreateTitles = function(self, page)
 			return a.name < b.name
 		end)
 		table.insert(titles, 1, { id = -1, name = _G.NONE })
+		local y, width = 0, scroll:GetWidth() - spec.row_height - 2
 		for i, title in ipairs(titles) do
 			local row = Row(i)
 			local worn = (title.id == current) or ((title.id == -1) and (current <= 0))
 			row.id = title.id
+			row.text:SetWidth(width)
 			row.text:SetText(title.name)
+			row:SetPoint("TOPLEFT", 0, -y)
+			row:SetHeight(math.max(spec.row_height, row.text:GetStringHeight() + spec.text_top * 2))
+			y = y + row:GetHeight()
 			row.text:SetTextColor(unpack(worn and spec.worn_color or spec.color))
 			if worn then
 				row.check:Show()
@@ -633,11 +645,26 @@ Module.CreateTitles = function(self, page)
 		for i = #titles + 1, #rows do
 			rows[i]:Hide()
 		end
-		list:SetSize(scroll:GetWidth(), #titles * spec.row_height)
+		list:SetSize(scroll:GetWidth(), y)
+		-- (its bar only when they don't all fit)
+		local bar = _G[scroll:GetName() .. "ScrollBar"]
+		if y > scroll:GetHeight() then
+			bar:Show()
+		else
+			bar:Hide()
+		end
 	end
 	page:HookScript("OnShow", function()
 		Update()
 	end)
+	-- (a title worn or earned elsewhere: a macro, another addon, the server)
+	local Refresh = function(_, event, unit)
+		if page:IsVisible() and ((event ~= "UNIT_NAME_UPDATE") or (unit == "player")) then
+			Update()
+		end
+	end
+	self:RegisterEvent("KNOWN_TITLES_UPDATE", Refresh)
+	self:RegisterEvent("UNIT_NAME_UPDATE", Refresh)
 end
 
 -- The next group of stats in a section (Blizzard's dropdowns' list).

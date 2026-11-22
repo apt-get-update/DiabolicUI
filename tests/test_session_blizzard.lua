@@ -914,6 +914,13 @@ function TestCharacter:test_the_titles_page()
 	lu.assertEquals(client.world.currentTitle, -1)
 	lu.assertTrue(shown(rows[1].check))
 	lu.assertFalse(shown(rows[2].check))
+	-- all fit: no scroll bar
+	lu.assertFalse(shown(_G.DiabolicUICharacterTitlesScrollBar))
+	-- worn elsewhere (a macro, the server): checked here too
+	client.world.currentTitle = 3
+	client:FireEvent("UNIT_NAME_UPDATE", "player")
+	lu.assertTrue(shown(rows[2].check))
+	lu.assertFalse(shown(rows[1].check))
 	-- fewer titles: the rows left over hidden
 	client.world.titles = { { name = "Private %s" } }
 	client:Click(_G.DiabolicUICharacterSideTab1)

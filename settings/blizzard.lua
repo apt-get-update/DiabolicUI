@@ -233,7 +233,7 @@ Engine:NewStaticConfig("Blizzard", {
 		-- the window past Blizzard's frame: 5 out at the sides (its lists reach 21 from its
 		-- edges, the iron is 23), up over the band, down past the lists' panels
 		insets = { 5, 64, 5, 18 },
-		offset_y = 32, -- Blizzard's frame up into its tabs' old row (the tabs hang from the foot): the lists 6 under the band
+		offset_y = -28, -- Blizzard's frame that much lower: the window's top with the others' (its insets' 64 over it)
 		header_height = 48, -- the red band
 		header_insets = { 24, 24 }, -- inside the iron frame, its solid part
 		tab_sigils = { "star", "sun", "AllSeeing", "owl", "crow" }, -- the tabs' emblems (window.banner's): achievements, statistics, Overachiever's search, suggestions, watch
@@ -362,6 +362,8 @@ Engine:NewStaticConfig("Blizzard", {
 				bottom = 24, -- (its parchment as far in from the column's foot as from its sides)
 				bar_room = 22, -- its scroll bar, right of it
 				row_height = 16,
+				text_top = 2, -- its text's first line, down from its row's top
+				line_spacing = 2, -- a long one's two lines apart
 				font = { path .. [[fonts\NotoSans-Bold.ttf]], 11 }, -- bold, to read on the parchment
 				parchment_insets = { 4, 4, 4, 4 }, -- the parchment around the list
 				color = { 0.18, 0.12, 0.06 }, -- ink (the windows')

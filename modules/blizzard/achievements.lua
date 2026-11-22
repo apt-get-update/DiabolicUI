@@ -287,9 +287,8 @@ Module.StyleAchievements = function(self)
 	if _G.AchievementFrameStatsBG then
 		kit:HideTextures(_G.AchievementFrameStatsBG)
 	end
-	-- (Blizzard's frame up by `offset_y`, the window's top where it was:
-	-- its lists close under the band)
-	frame:SetAttribute("UIPanelLayout-yoffset", config.offset_y)
+	-- (Blizzard's frame placed so the window's left and top are the others')
+	kit:SetPanelLayout(frame, config.insets, config.insets[1], config.offset_y)
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "zoltun")
 	self.Window = window
