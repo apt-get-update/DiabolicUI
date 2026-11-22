@@ -9,8 +9,6 @@ A full Diablo III-style UI for the WoW 3.3.5a client: Goldpaw's DiabolicUI, fork
 
 video::https://github.com/user-attachments/assets/c23bfca7-dd73-4842-aaf5-eb25b36d1b93[width=100%]
 
-image::docs/screenshots/trailer.webp[The 1.7.0 trailer,link=https://github.com/apt-get-update/DiabolicUI/releases/download/v1.7.0/trailer-1.7.0.mp4]
-
 == 🚀 Install
 
 . Download the zip from https://github.com/apt-get-update/DiabolicUI/releases/latest[the latest release].
