@@ -394,9 +394,10 @@ local AddWeaponEnchants = function(owner, unit, filter)
 end
 
 -- Hides the buttons after the visible ones, lays the rest out, and shows
--- or hides the whole owner.
+-- or hides the whole owner (hidden too while `combatHidden`: the long
+-- buffs in a fight).
 local Finish = function(owner, visible)
-	if visible == 0 then
+	if (visible == 0) or owner.combatHidden then
 		if owner:IsShown() then
 			owner:Hide()
 		end

@@ -5,8 +5,9 @@ import QtQuick
 
 WowWindow {
     name: "AdiBagsContainer1"
-    width: 828
-    height: 445
+    kind: "grid"
+    width: 336
+    height: 122
 
     Frame {
         name: "AdiBagsContainer1Diabolic"
@@ -14,15 +15,15 @@ WowWindow {
         anchors.leftMargin: -18
         anchors.top: parent.top
         anchors.topMargin: -18
-        width: 864
-        height: 481
+        width: 372
+        height: 158
 
         Frame {
             name: "AdiBagsContainer1DiabolicBorder"
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 864
-            height: 481
+            width: 372
+            height: 158
         }
 
         Frame {
@@ -42,7 +43,7 @@ WowWindow {
         anchors.left: adiBagsSimpleLayeredRegion1.right
         anchors.leftMargin: 4
         anchors.verticalCenter: adiBagsSimpleLayeredRegion1.verticalCenter
-        width: 761.9
+        width: 269.9
         height: 18
 
         Frame {
@@ -50,7 +51,7 @@ WowWindow {
             wowParent: "AdiBagsContainer1"
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 761.9
+            width: 269.9
             height: 18
         }
     }
@@ -58,11 +59,51 @@ WowWindow {
     Frame {
         name: "AdiBagsSection1"
         anchors.left: parent.left
-        anchors.leftMargin: 225.3
+        anchors.leftMargin: 237.7
         anchors.top: parent.top
-        anchors.topMargin: 250
+        anchors.topMargin: 32
         width: 37
         height: 55
+    }
+
+    Frame {
+        name: "AdiBagsSection2"
+        anchors.left: parent.left
+        anchors.leftMargin: 143.3
+        anchors.top: parent.top
+        anchors.topMargin: 32
+        width: 78
+        height: 55
+    }
+
+    Frame {
+        name: "AdiBagsSection3"
+        anchors.left: parent.left
+        anchors.leftMargin: 8
+        anchors.top: parent.top
+        anchors.topMargin: 32
+        width: 119
+        height: 55
+    }
+
+    Frame {
+        name: "AdiBagsSection4"
+        anchors.left: parent.left
+        anchors.leftMargin: 291
+        anchors.top: parent.top
+        anchors.topMargin: 32
+        width: 37
+        height: 55
+
+        Frame {
+            name: "AdiBagsStackButton1"
+            wowParent: "AdiBagsContainer1"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: 18
+            width: 37
+            height: 37
+        }
     }
 
     Frame {
@@ -82,7 +123,7 @@ WowWindow {
         anchors.rightMargin: 8
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
-        width: 156.7
+        width: 140.9
         height: 19
 
         Frame {
@@ -91,33 +132,33 @@ WowWindow {
             anchors.right: parent.right
             anchors.rightMargin: -13
             anchors.bottom: parent.bottom
-            width: 156.7
+            width: 140.9
             height: 19
 
             Button {
                 id: adiBagsMoneyFrameCopperButton
                 name: "AdiBagsMoneyFrameCopperButton"
-                text: "63"
+                text: "0"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
-                width: 38
+                width: 30.1
                 height: 19
 
                 FontString {
                     name: "AdiBagsMoneyFrameCopperButtonText"
-                    text: "63"
+                    text: "0"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 19
+                    width: 11.1
                     height: 15.8
                 }
             }
 
             Button {
                 name: "AdiBagsMoneyFrameGoldButton"
-                text: "3653"
+                text: "5000"
                 anchors.right: adiBagsMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: adiBagsMoneyFrameSilverButton.verticalCenter
@@ -126,7 +167,7 @@ WowWindow {
 
                 FontString {
                     name: "AdiBagsMoneyFrameGoldButtonText"
-                    text: "3653"
+                    text: "5000"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter
@@ -138,41 +179,23 @@ WowWindow {
             Button {
                 id: adiBagsMoneyFrameSilverButton
                 name: "AdiBagsMoneyFrameSilverButton"
-                text: "55"
+                text: "0"
                 anchors.right: adiBagsMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: adiBagsMoneyFrameCopperButton.verticalCenter
-                width: 38
+                width: 30.1
                 height: 19
 
                 FontString {
                     name: "AdiBagsMoneyFrameSilverButtonText"
-                    text: "55"
+                    text: "0"
                     anchors.right: parent.right
                     anchors.rightMargin: 19
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 19
+                    width: 11.1
                     height: 15.8
                 }
             }
-        }
-    }
-
-    Ghost {
-        name: "AdiBagsSection2"
-        x: 783
-        y: 32
-        width: 37
-        height: 55
-
-        Frame {
-            name: "AdiBagsStackButton1"
-            wowParent: "AdiBagsContainer1"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.topMargin: 18
-            width: 37
-            height: 37
         }
     }
 }

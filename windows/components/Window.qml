@@ -17,16 +17,17 @@ QtObject {
     property var band: ({ texture: "textures/DiabolicUI_D3_Band.tga", canvas: [364, 104] })
 
     // every text in a band: the chat's Arial Narrow, a label in the title's gold,
-    // what's typed or chosen in white, a button's text as a label (a list's All)
-    property var band_text: ({ label_font: "DiabolicFont_Narrow14", label: [.86, .76, .6], value_font: "DiabolicFont_Narrow14", value: [1, 1, 1], label_button_font: "DiabolicFont_Narrow14Gold" })
+    // what's typed or chosen in white
+    property var band_text: ({ label_font: "DiabolicFont_Narrow14", label: [.86, .76, .6], value_font: "DiabolicFont_Narrow14", value: [1, 1, 1] })
 
     // the title on the window's top edge: Diablo III's skills pane's plate (its art
     // 512 x 70 in its 512 x 128 file), y its middle from the window's top, text_width
     // its inlay. Longer titles: wider up to max_width (cuts: its pieces in its file's
     // pixels, the 2nd and 4th stretched), short of the sides by side_room (the X's
-    // socket). text_offset: Exocet's capitals sit low. gem: a window's icon (the spec,
+    // socket). text_offset: Exocet's capitals sit low. font_small: a title too long
+    // for the plate's room, before it's cut. gem: a window's icon (the spec,
     // the profession) in its left cross, in the minimap's spiked bronze ring
-    property var title_plate: ({ texture: "textures/DiabolicUI_D3_TitlePlate.tga", rows: 70/128, width: 300, height: 41, y: -15, text_width: 200, file_width: 512, cuts: [96, 140, 376, 420], max_width: 440, side_room: 62, text_offset: 1, font: "DiabolicFont_HeaderRegular14", color: [.86, .76, .6], gem: { ring: "textures/DiabolicUI_D3_GemRing.tga", size: 40, x: 35, y: 0, glass: .66, glass_offset: [0, 0] } })
+    property var title_plate: ({ texture: "textures/DiabolicUI_D3_TitlePlate.tga", rows: 70/128, width: 300, height: 41, y: -15, text_width: 200, file_width: 512, cuts: [96, 140, 376, 420], max_width: 440, side_room: 62, text_offset: 1, font: "DiabolicFont_HeaderRegular14", font_small: "DiabolicFont_HeaderRegular12", color: [.86, .76, .6], gem: { ring: "textures/DiabolicUI_D3_GemRing.tga", size: 40, x: 35, y: 0, glass: .66, glass_offset: [0, 0] } })
     property string title_font: "DiabolicFont_HeaderRegular18Title"
 
     // a window's foot (its rough stone, inside its iron frame): how high for a row of buttons
@@ -41,6 +42,8 @@ QtObject {
     // band_edge, the band's first control from its left end; band_gap, between its
     // controls; band_right_edge, its last on the right from its right end (short of
     // the X's socket); content_gap, the least room over the content and under it;
-    // uneven, the most the room over it may differ from the room under it
-    property var layout: ({ button_gap: 6, band_edge: 10, band_gap: 12, band_right_edge: 48, content_gap: 6, uneven: 8 })
+    // uneven, the most the room over it may differ from the room under it;
+    // foot_bottom, a row of buttons over the foot's bottom; foot_side, its ends from
+    // the foot's sides; button_height, a button's (tools/check.py checks them all)
+    property var layout: ({ button_gap: 8, band_edge: 10, band_gap: 12, band_right_edge: 48, content_gap: 6, uneven: 8, foot_bottom: 7, foot_side: 14, button_height: 22 })
 }

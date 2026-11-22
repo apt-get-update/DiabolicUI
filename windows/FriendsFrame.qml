@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "FriendsFrame"
+    kind: "list"
     width: 384
     height: 512
 
@@ -42,6 +43,7 @@ WowWindow {
                 height: -380
 
                 Button {
+                    id: channelButton1
                     name: "ChannelButton1"
                     anchors.left: parent.left
                     anchors.top: parent.top
@@ -49,7 +51,164 @@ WowWindow {
                     height: 20
 
                     FontString {
+                        name: "ChannelButton1Collapsed"
+                        text: "-"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 7.9
+                        height: 15.8
+                    }
+
+                    FontString {
                         name: "ChannelButton1Text"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 135
+                        height: 8
+                    }
+                }
+
+                Button {
+                    id: channelButton2
+                    name: "ChannelButton2"
+                    anchors.left: channelButton1.left
+                    anchors.top: channelButton1.bottom
+                    width: 155
+                    height: 20
+
+                    FontString {
+                        name: "ChannelButton2Collapsed"
+                        text: "-"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 7.9
+                        height: 15.8
+                    }
+
+                    FontString {
+                        name: "ChannelButton2Text"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 119
+                        height: 8
+                    }
+                }
+
+                Button {
+                    id: channelButton3
+                    name: "ChannelButton3"
+                    anchors.left: channelButton2.left
+                    anchors.top: channelButton2.bottom
+                    width: 155
+                    height: 20
+
+                    FontString {
+                        name: "ChannelButton3Collapsed"
+                        text: "-"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 7.9
+                        height: 15.8
+                    }
+
+                    FontString {
+                        name: "ChannelButton3Text"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 135
+                        height: 8
+                    }
+                }
+
+                Button {
+                    id: channelButton4
+                    name: "ChannelButton4"
+                    anchors.left: channelButton3.left
+                    anchors.top: channelButton3.bottom
+                    width: 155
+                    height: 20
+
+                    FontString {
+                        name: "ChannelButton4Text"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 119
+                        height: 8
+                    }
+                }
+
+                Button {
+                    id: channelButton5
+                    name: "ChannelButton5"
+                    anchors.left: channelButton4.left
+                    anchors.top: channelButton4.bottom
+                    width: 155
+                    height: 20
+
+                    FontString {
+                        name: "ChannelButton5Text"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 119
+                        height: 8
+                    }
+                }
+
+                Button {
+                    id: channelButton6
+                    name: "ChannelButton6"
+                    anchors.left: channelButton5.left
+                    anchors.top: channelButton5.bottom
+                    width: 155
+                    height: 20
+
+                    FontString {
+                        name: "ChannelButton6Collapsed"
+                        text: "-"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 7.9
+                        height: 15.8
+                    }
+
+                    FontString {
+                        name: "ChannelButton6Text"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 119
+                        height: 8
+                    }
+                }
+
+                Button {
+                    name: "ChannelButton7"
+                    anchors.left: channelButton6.left
+                    anchors.top: channelButton6.bottom
+                    width: 155
+                    height: 20
+
+                    FontString {
+                        name: "ChannelButton7Collapsed"
+                        text: "-"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 7.9
+                        height: 15.8
+                    }
+
+                    FontString {
+                        name: "ChannelButton7Text"
                         anchors.left: parent.left
                         anchors.leftMargin: 5
                         anchors.verticalCenter: parent.verticalCenter
@@ -572,6 +731,15 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "FriendsFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "FriendsFrameTitleText"
                     text: "Raid"
@@ -605,7 +773,7 @@ WowWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 14
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 9
+                anchors.bottomMargin: 7
                 width: 80
                 height: 22
 
@@ -624,13 +792,13 @@ WowWindow {
                 text: "Ignore Player"
                 wowParent: "IgnoreListFrame"
                 style: "Button"
-                pin: "place"
+                pin: "all"
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
+                anchors.bottomMargin: 7
                 width: 131
-                height: 21
+                height: 22
 
                 FontString {
                     name: "FriendsFrameIgnorePlayerButtonText"
@@ -647,13 +815,13 @@ WowWindow {
                 text: "Remove Player"
                 wowParent: "IgnoreListFrame"
                 style: "Button"
-                pin: "place"
+                pin: "all"
                 anchors.right: parent.right
                 anchors.rightMargin: 14
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
+                anchors.bottomMargin: 7
                 width: 134
-                height: 21
+                height: 22
 
                 FontString {
                     name: "FriendsFrameUnsquelchButtonText"
@@ -674,16 +842,16 @@ WowWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 14
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
+                anchors.bottomMargin: 7
 
                 Button {
                     name: "FriendsFrameAddFriendButton"
                     text: "Add Friend"
                     wowParent: "FriendsListFrame"
                     style: "Button"
-                    pin: "place"
+                    pin: "all"
                     width: 131
-                    height: 21
+                    height: 22
 
                     FontString {
                         name: "FriendsFrameAddFriendButtonText"
@@ -700,9 +868,9 @@ WowWindow {
                     text: "Send Message"
                     wowParent: "FriendsListFrame"
                     style: "Button"
-                    pin: "place"
+                    pin: "all"
                     width: 131
-                    height: 21
+                    height: 22
 
                     FontString {
                         name: "FriendsFrameSendMessageButtonText"
@@ -730,7 +898,7 @@ WowWindow {
                     wowParent: "WhoFrame"
                     style: "Button"
                     pin: "all"
-                    width: 89.4
+                    width: 88.1
                     height: 22
 
                     FontString {
@@ -749,7 +917,7 @@ WowWindow {
                     wowParent: "WhoFrame"
                     style: "Button"
                     pin: "all"
-                    width: 106.8
+                    width: 105.5
                     height: 22
 
                     FontString {
@@ -768,7 +936,7 @@ WowWindow {
                     wowParent: "WhoFrame"
                     style: "Button"
                     pin: "all"
-                    width: 117.8
+                    width: 116.4
                     height: 22
 
                     FontString {
@@ -797,7 +965,7 @@ WowWindow {
                     wowParent: "GuildFrame"
                     style: "Button"
                     pin: "all"
-                    width: 122.9
+                    width: 121.5
                     height: 22
 
                     FontString {
@@ -816,7 +984,7 @@ WowWindow {
                     wowParent: "GuildFrame"
                     style: "Button"
                     pin: "all"
-                    width: 94.4
+                    width: 93
                     height: 22
 
                     FontString {
@@ -835,7 +1003,7 @@ WowWindow {
                     wowParent: "GuildFrame"
                     style: "Button"
                     pin: "all"
-                    width: 96.7
+                    width: 95.5
                     height: 22
 
                     FontString {
@@ -885,52 +1053,50 @@ WowWindow {
             name: "FriendsFrameFriendsScrollFrameDiabolicZone"
             wowParent: "FriendsListFrame"
             anchors.left: parent.left
-            anchors.leftMargin: -6
+            anchors.leftMargin: -9
             anchors.top: parent.top
             anchors.topMargin: -2
             width: 336
             height: 352
-        }
 
-        Slider {
-            name: "FriendsFrameFriendsScrollFrameScrollBar"
-            style: "ScrollBar"
-            pin: "place"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 15
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 15
-            width: 16
-            height: 310
-
-            Frame {
-                name: "FriendsFrameFriendsScrollFrameScrollBarDiabolicTrack"
-                anchors.horizontalCenter: friendsFrameFriendsScrollFrameScrollBarScrollUpButton.horizontalCenter
-                anchors.top: friendsFrameFriendsScrollFrameScrollBarScrollUpButton.top
-                anchors.topMargin: -1
-                width: 18
-                height: 344
-            }
-
-            Button {
-                name: "FriendsFrameFriendsScrollFrameScrollBarScrollDownButton"
+            Slider {
+                name: "FriendsFrameFriendsScrollFrameScrollBar"
+                wowParent: "FriendsFrameFriendsScrollFrame"
                 style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: 7
+                anchors.top: parent.top
+                anchors.topMargin: 23
                 width: 16
-                height: 16
-            }
+                height: 306
 
-            Button {
-                id: friendsFrameFriendsScrollFrameScrollBarScrollUpButton
-                name: "FriendsFrameFriendsScrollFrameScrollBarScrollUpButton"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
+                Frame {
+                    name: "FriendsFrameFriendsScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: friendsFrameFriendsScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: friendsFrameFriendsScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 340
+                }
+
+                Button {
+                    name: "FriendsFrameFriendsScrollFrameScrollBarScrollDownButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    id: friendsFrameFriendsScrollFrameScrollBarScrollUpButton
+                    name: "FriendsFrameFriendsScrollFrameScrollBarScrollUpButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+                }
             }
         }
 
@@ -942,6 +1108,7 @@ WowWindow {
             height: 10
 
             Button {
+                id: friendsFrameFriendsScrollFrameButton1
                 name: "FriendsFrameFriendsScrollFrameButton1"
                 anchors.left: parent.left
                 anchors.top: parent.top
@@ -961,7 +1128,7 @@ WowWindow {
                 FontString {
                     id: friendsFrameFriendsScrollFrameButton1Name
                     name: "FriendsFrameFriendsScrollFrameButton1Name"
-                    text: "Annah"
+                    text: "Almaaraal"
                     anchors.left: parent.left
                     anchors.leftMargin: 20
                     anchors.top: parent.top
@@ -970,10 +1137,128 @@ WowWindow {
                     height: 12
                 }
             }
+
+            Button {
+                id: friendsFrameFriendsScrollFrameButton2
+                name: "FriendsFrameFriendsScrollFrameButton2"
+                anchors.left: friendsFrameFriendsScrollFrameButton1.left
+                anchors.top: friendsFrameFriendsScrollFrameButton1.bottom
+                width: 298
+                height: 34
+
+                FontString {
+                    name: "FriendsFrameFriendsScrollFrameButton2Info"
+                    text: "Unknown"
+                    anchors.left: friendsFrameFriendsScrollFrameButton2Name.left
+                    anchors.top: friendsFrameFriendsScrollFrameButton2Name.bottom
+                    anchors.topMargin: 2
+                    width: 260
+                    height: 10
+                }
+
+                FontString {
+                    id: friendsFrameFriendsScrollFrameButton2Name
+                    name: "FriendsFrameFriendsScrollFrameButton2Name"
+                    text: "Burmir"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 20
+                    anchors.top: parent.top
+                    anchors.topMargin: 3
+                    width: 248
+                    height: 12
+                }
+            }
+
+            Button {
+                id: friendsFrameFriendsScrollFrameButton3
+                name: "FriendsFrameFriendsScrollFrameButton3"
+                anchors.left: friendsFrameFriendsScrollFrameButton2.left
+                anchors.top: friendsFrameFriendsScrollFrameButton2.bottom
+                width: 298
+                height: 34
+
+                FontString {
+                    name: "FriendsFrameFriendsScrollFrameButton3Info"
+                    text: "Unknown"
+                    anchors.left: friendsFrameFriendsScrollFrameButton3Name.left
+                    anchors.top: friendsFrameFriendsScrollFrameButton3Name.bottom
+                    anchors.topMargin: 2
+                    width: 260
+                    height: 10
+                }
+
+                FontString {
+                    id: friendsFrameFriendsScrollFrameButton3Name
+                    name: "FriendsFrameFriendsScrollFrameButton3Name"
+                    text: "Fanord"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 20
+                    anchors.top: parent.top
+                    anchors.topMargin: 3
+                    width: 248
+                    height: 12
+                }
+            }
+
+            Frame {
+                name: "FriendsTooltip"
+                wowParent: "FriendsFrame"
+                anchors.left: friendsFrameFriendsScrollFrameButton3.right
+                anchors.leftMargin: 36
+                anchors.top: friendsFrameFriendsScrollFrameButton3.top
+                width: 64
+                height: 35.8
+
+                FontString {
+                    id: friendsTooltipHeader
+                    name: "FriendsTooltipHeader"
+                    text: "Annah"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 12
+                    anchors.top: parent.top
+                    anchors.topMargin: 12
+                    width: 152.9
+                    height: 10.3
+                }
+
+                FontString {
+                    name: "FriendsTooltipNoteText"
+                    text: "THE ONLY ONE"
+                    anchors.horizontalCenter: friendsTooltipHeader.horizontalCenter
+                    anchors.horizontalCenterOffset: 7.8
+                    anchors.top: friendsTooltipHeader.bottom
+                    anchors.topMargin: 126.9
+                    width: 137.3
+                    height: 8.7
+                }
+
+                FontString {
+                    name: "FriendsTooltipToon1Info"
+                    text: "Dalaran"
+                    anchors.horizontalCenter: friendsTooltipToon1Name.horizontalCenter
+                    anchors.horizontalCenterOffset: 3.5
+                    anchors.top: friendsTooltipToon1Name.bottom
+                    anchors.topMargin: 3.5
+                    width: 146
+                    height: 8.7
+                }
+
+                FontString {
+                    id: friendsTooltipToon1Name
+                    name: "FriendsTooltipToon1Name"
+                    text: "Level 80 Rogue"
+                    anchors.horizontalCenter: friendsTooltipHeader.horizontalCenter
+                    anchors.top: friendsTooltipHeader.bottom
+                    anchors.topMargin: -46.6
+                    width: 152.9
+                    height: 8.7
+                }
+            }
         }
     }
 
     Button {
+        id: friendsFrameIgnoreButton1
         name: "FriendsFrameIgnoreButton1"
         wowParent: "IgnoreListFrame"
         pin: "place"
@@ -1014,6 +1299,26 @@ WowWindow {
         }
     }
 
+    Button {
+        name: "FriendsFrameIgnoreButton2"
+        wowParent: "IgnoreListFrame"
+        anchors.horizontalCenter: friendsFrameIgnoreButton1.horizontalCenter
+        anchors.top: friendsFrameIgnoreButton1.bottom
+        width: 298
+        height: 16
+
+        FontString {
+            name: "FriendsFrameIgnoreButton2Name"
+            text: "Teroneth"
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -1
+            width: 288
+            height: 12
+        }
+    }
+
     ScrollFrame {
         name: "FriendsFrameIgnoreScrollFrame"
         wowParent: "IgnoreListFrame"
@@ -1029,7 +1334,7 @@ WowWindow {
             name: "FriendsFrameIgnoreScrollFrameDiabolicZone"
             wowParent: "IgnoreListFrame"
             anchors.left: parent.left
-            anchors.leftMargin: -6
+            anchors.leftMargin: -7
             anchors.top: parent.top
             anchors.topMargin: -2
             width: 332
@@ -1292,7 +1597,7 @@ WowWindow {
             FontString {
                 id: guildFrameButton1Name
                 name: "GuildFrameButton1Name"
-                text: "Padirac"
+                text: "Diabolica"
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
@@ -1308,6 +1613,257 @@ WowWindow {
                 anchors.left: guildFrameButton1Name.right
                 anchors.leftMargin: 3
                 anchors.verticalCenter: guildFrameButton1Name.verticalCenter
+                width: 110
+                height: 14
+            }
+        }
+
+        Button {
+            id: guildFrameButton2
+            name: "GuildFrameButton2"
+            wowParent: "GuildPlayerStatusFrame"
+            anchors.left: guildFrameButton1.left
+            anchors.top: guildFrameButton1.bottom
+            width: 298
+            height: 16
+
+            FontString {
+                id: guildFrameButton2Class
+                name: "GuildFrameButton2Class"
+                text: "Mage"
+                anchors.left: guildFrameButton2Level.right
+                anchors.leftMargin: 12
+                anchors.verticalCenter: guildFrameButton2Level.verticalCenter
+                width: 80
+                height: 14
+            }
+
+            FontString {
+                name: "GuildFrameButton2Group"
+                anchors.left: guildFrameButton2Class.right
+                anchors.verticalCenter: guildFrameButton2Class.verticalCenter
+                width: 40
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton2Level
+                name: "GuildFrameButton2Level"
+                text: "80"
+                anchors.left: guildFrameButton2Zone.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: guildFrameButton2Zone.verticalCenter
+                width: 20
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton2Name
+                name: "GuildFrameButton2Name"
+                text: "Burmir"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 78
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton2Zone
+                name: "GuildFrameButton2Zone"
+                text: "Stormwind City"
+                anchors.left: guildFrameButton2Name.right
+                anchors.leftMargin: 3
+                anchors.verticalCenter: guildFrameButton2Name.verticalCenter
+                width: 110
+                height: 14
+            }
+        }
+
+        Button {
+            id: guildFrameButton3
+            name: "GuildFrameButton3"
+            wowParent: "GuildPlayerStatusFrame"
+            anchors.left: guildFrameButton2.left
+            anchors.top: guildFrameButton2.bottom
+            width: 298
+            height: 16
+
+            FontString {
+                id: guildFrameButton3Class
+                name: "GuildFrameButton3Class"
+                text: "Paladin"
+                anchors.left: guildFrameButton3Level.right
+                anchors.leftMargin: 12
+                anchors.verticalCenter: guildFrameButton3Level.verticalCenter
+                width: 80
+                height: 14
+            }
+
+            FontString {
+                name: "GuildFrameButton3Group"
+                anchors.left: guildFrameButton3Class.right
+                anchors.verticalCenter: guildFrameButton3Class.verticalCenter
+                width: 40
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton3Level
+                name: "GuildFrameButton3Level"
+                text: "80"
+                anchors.left: guildFrameButton3Zone.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: guildFrameButton3Zone.verticalCenter
+                width: 20
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton3Name
+                name: "GuildFrameButton3Name"
+                text: "Fanord"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 78
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton3Zone
+                name: "GuildFrameButton3Zone"
+                text: "Stormwind City"
+                anchors.left: guildFrameButton3Name.right
+                anchors.leftMargin: 3
+                anchors.verticalCenter: guildFrameButton3Name.verticalCenter
+                width: 110
+                height: 14
+            }
+        }
+
+        Button {
+            id: guildFrameButton4
+            name: "GuildFrameButton4"
+            wowParent: "GuildPlayerStatusFrame"
+            anchors.left: guildFrameButton3.left
+            anchors.top: guildFrameButton3.bottom
+            width: 298
+            height: 16
+
+            FontString {
+                id: guildFrameButton4Class
+                name: "GuildFrameButton4Class"
+                text: "Rogue"
+                anchors.left: guildFrameButton4Level.right
+                anchors.leftMargin: 12
+                anchors.verticalCenter: guildFrameButton4Level.verticalCenter
+                width: 80
+                height: 14
+            }
+
+            FontString {
+                name: "GuildFrameButton4Group"
+                anchors.left: guildFrameButton4Class.right
+                anchors.verticalCenter: guildFrameButton4Class.verticalCenter
+                width: 40
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton4Level
+                name: "GuildFrameButton4Level"
+                text: "80"
+                anchors.left: guildFrameButton4Zone.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: guildFrameButton4Zone.verticalCenter
+                width: 20
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton4Name
+                name: "GuildFrameButton4Name"
+                text: "Teroneth"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 78
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton4Zone
+                name: "GuildFrameButton4Zone"
+                text: "Stormwind City"
+                anchors.left: guildFrameButton4Name.right
+                anchors.leftMargin: 3
+                anchors.verticalCenter: guildFrameButton4Name.verticalCenter
+                width: 110
+                height: 14
+            }
+        }
+
+        Button {
+            name: "GuildFrameButton5"
+            wowParent: "GuildPlayerStatusFrame"
+            anchors.left: guildFrameButton4.left
+            anchors.top: guildFrameButton4.bottom
+            width: 298
+            height: 16
+
+            FontString {
+                id: guildFrameButton5Class
+                name: "GuildFrameButton5Class"
+                text: "Priest"
+                anchors.left: guildFrameButton5Level.right
+                anchors.leftMargin: 12
+                anchors.verticalCenter: guildFrameButton5Level.verticalCenter
+                width: 80
+                height: 14
+            }
+
+            FontString {
+                name: "GuildFrameButton5Group"
+                anchors.left: guildFrameButton5Class.right
+                anchors.verticalCenter: guildFrameButton5Class.verticalCenter
+                width: 40
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton5Level
+                name: "GuildFrameButton5Level"
+                text: "80"
+                anchors.left: guildFrameButton5Zone.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: guildFrameButton5Zone.verticalCenter
+                width: 20
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton5Name
+                name: "GuildFrameButton5Name"
+                text: "Diabolica"
+                anchors.left: parent.left
+                anchors.leftMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                width: 78
+                height: 14
+            }
+
+            FontString {
+                id: guildFrameButton5Zone
+                name: "GuildFrameButton5Zone"
+                text: "Stormwind City"
+                anchors.left: guildFrameButton5Name.right
+                anchors.leftMargin: 3
+                anchors.verticalCenter: guildFrameButton5Name.verticalCenter
                 width: 110
                 height: 14
             }
@@ -1455,7 +2011,7 @@ WowWindow {
 
         FontString {
             name: "GuildFrameNotesText"
-            text: "https://discord.gg/Xkh2Q6kW4m - WE NEED MORE PET PICTURES "
+            text: "No message set."
             anchors.left: guildFrameNotesLabel.left
             anchors.top: guildFrameNotesLabel.bottom
             anchors.topMargin: 3
@@ -1488,7 +2044,7 @@ WowWindow {
             anchors.horizontalCenterOffset: 75
             anchors.bottom: parent.verticalCenter
             anchors.bottomMargin: -42
-            width: 92.4
+            width: 87.7
             height: 16
         }
 
@@ -1644,7 +2200,7 @@ WowWindow {
             anchors.rightMargin: 9
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 12
-            width: 87
+            width: 86
             height: 22
 
             FontString {
@@ -1693,10 +2249,10 @@ WowWindow {
             text: "Accept"
             style: "Button"
             anchors.right: parent.right
-            anchors.rightMargin: 102
+            anchors.rightMargin: 103
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 12
-            width: 87
+            width: 86
             height: 22
 
             FontString {
@@ -1729,10 +2285,11 @@ WowWindow {
 
                 EditBox {
                     name: "GuildInfoEditBox"
+                    text: "Click here to set message"
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: 240
-                    height: 118.5
+                    height: 11.9
                 }
 
                 Slider {
@@ -2227,126 +2784,6 @@ WowWindow {
             anchors.top: parent.top
             width: 300
             height: 784
-        }
-    }
-
-    Ghost {
-        name: "ChannelButton2"
-        x: 20
-        y: 96
-        width: 155
-        height: 20
-
-        FontString {
-            name: "ChannelButton2Collapsed"
-            text: "-"
-            wowParent: "ChannelButton2"
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 7.9
-            height: 15.8
-        }
-    }
-
-    Ghost {
-        name: "ChannelButton6"
-        x: 20
-        y: 176
-        width: 155
-        height: 20
-
-        FontString {
-            name: "ChannelButton6Collapsed"
-            text: "-"
-            wowParent: "ChannelButton6"
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 7.9
-            height: 15.8
-        }
-    }
-
-    Ghost {
-        name: "ChannelButton7"
-        x: 20
-        y: 196
-        width: 155
-        height: 20
-
-        FontString {
-            name: "ChannelButton7Collapsed"
-            text: "-"
-            wowParent: "ChannelButton7"
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 7.9
-            height: 15.8
-        }
-    }
-
-    Ghost {
-        name: "FriendsFrameFriendsScrollFrameButton3"
-        x: 21
-        y: 104
-        width: 298
-        height: 34
-
-        Frame {
-            name: "FriendsTooltip"
-            wowParent: "FriendsFrame"
-            anchors.left: parent.right
-            anchors.leftMargin: 36
-            anchors.top: parent.top
-            width: 64
-            height: 35.8
-
-            FontString {
-                id: friendsTooltipHeader
-                name: "FriendsTooltipHeader"
-                text: "Annah"
-                anchors.left: parent.left
-                anchors.leftMargin: 12
-                anchors.top: parent.top
-                anchors.topMargin: 12
-                width: 152.9
-                height: 10.3
-            }
-
-            FontString {
-                name: "FriendsTooltipNoteText"
-                text: "THE ONLY ONE"
-                anchors.horizontalCenter: friendsTooltipHeader.horizontalCenter
-                anchors.horizontalCenterOffset: 7.8
-                anchors.top: friendsTooltipHeader.bottom
-                anchors.topMargin: 126.9
-                width: 137.3
-                height: 8.7
-            }
-
-            FontString {
-                name: "FriendsTooltipToon1Info"
-                text: "Dalaran"
-                anchors.horizontalCenter: friendsTooltipToon1Name.horizontalCenter
-                anchors.horizontalCenterOffset: 3.5
-                anchors.top: friendsTooltipToon1Name.bottom
-                anchors.topMargin: 3.5
-                width: 146
-                height: 8.7
-            }
-
-            FontString {
-                id: friendsTooltipToon1Name
-                name: "FriendsTooltipToon1Name"
-                text: "Level 80 Rogue"
-                anchors.horizontalCenter: friendsTooltipHeader.horizontalCenter
-                anchors.top: friendsTooltipHeader.bottom
-                anchors.topMargin: -46.6
-                width: 152.9
-                height: 8.7
-            }
         }
     }
 }

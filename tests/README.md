@@ -259,7 +259,7 @@ Each one boots the addon in the fake client (`tests/mocks/client.lua`, see
 - `test_session_auction.lua` - the auction house on its grid: each page,
   Blizzard's and Auctionator's, its zones and toolbar where the grid puts them, the
   categories as our buttons, Auctionator's band and foot.
-- `test_session_layout.lua` - `/dui layout`: what it saves, parts
+- `test_session_layout.lua` - `/dui layout` (`tools/realm/scan.lua`, the live client's): what it saves, parts
   placed by `settings/positions.lua`, and `/dui layout all` opening each window
   in turn.
 - `test_sample_tool.lua` - `tools/sample.lua`, Components' sample window in the

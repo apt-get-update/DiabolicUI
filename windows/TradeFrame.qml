@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "TradeFrame"
+    kind: "grid"
     width: 384
     height: 512
 
@@ -84,7 +85,7 @@ WowWindow {
                     wowParent: "TradeFrame"
                     style: "Button"
                     pin: "all"
-                    width: 80
+                    width: 79
                     height: 22
                 }
 
@@ -94,7 +95,7 @@ WowWindow {
                     wowParent: "TradeFrame"
                     style: "Button"
                     pin: "all"
-                    width: 80
+                    width: 79
                     height: 22
                 }
             }

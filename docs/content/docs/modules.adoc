@@ -27,7 +27,6 @@ weight: 8
 | `panels.lua` | Every window listed in `panels` in `settings/blizzard.lua`
 | `character.lua`, `mail.lua`, `auction.lua`... | A window that needs more than that line
 | `adjust.lua` | Puts parts where `settings/positions.lua` says
-| `layout-scan.lua` | `/dui layout`, for the link:{{< relref "windows-editor" >}}[editor]
 | `lootframe.lua`, `rollwindow.lua`, `lootpreview.lua` | Loot (link:{{< relref "raid-rolls" >}}[Raid Rolls])
 |===
 

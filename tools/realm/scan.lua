@@ -1,4 +1,6 @@
--- /dui layout: saves the windows as they show, for tools/positions.lua and
+-- The test realm's scan (tools/realm: its client alone loads it, from a
+-- DiabolicUI.toc of its own; never the addon players get). /dui layout:
+-- saves the windows as they show, for tools/positions.lua and
 -- the editor (tools/editor.py), in DiabolicUI_Layout (WTF, after a /reload):
 -- each named part with where it is and how it's placed, the tabs it shows in,
 -- each window's art by the tabs chosen. While it's on each window is saved as it shows and each second (for
@@ -9,7 +11,7 @@
 -- that we don't style.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Layout Scan", "LOW")
-local L = Engine:GetLocale()
+local L = setmetatable({}, { __index = function(_, text) return text end }) -- (a tool: English only)
 
 local kit
 local Said -- what's been said (by text)
@@ -140,6 +142,7 @@ local ScrolledOut = function(region)
 end
 
 -- How `text` (a font string) is drawn, for the editor.
+local LOOK = { "font", "fontSize", "outline", "color", "shadow", "justifyV" }
 local LookOf = function(text, entry)
 	local file, size, flags = text:GetFont()
 	if file then
@@ -409,6 +412,17 @@ local Scan = function(window)
 			entry.last[view] = Saved.stamp
 			entry.words = (type(old) == "table") and old.words or {}
 			entry.words[view] = WordsOf(part)
+			-- (where it is in each: a tab can move it, as the spellbook's ranks)
+			entry.rects = (type(old) == "table") and old.rects or {}
+			entry.rects[view] = entry.rect
+			entry.widths = (type(old) == "table") and old.widths or {}
+			entry.widths[view] = entry.textWidth
+			-- (a text's look from a tab it said something in, when this one's empty)
+			if (not entry.font) and (type(old) == "table") and old.font then
+				for _, key in ipairs(LOOK) do
+					entry[key] = old[key]
+				end
+			end
 			parts[name] = entry
 		end
 	end
@@ -860,7 +874,7 @@ Module.OnEnable = function(self)
 					seen.views = nil
 					for _, part in pairs(seen.parts or {}) do
 						if type(part) == "table" then
-							part.tabs, part.last, part.words = nil, nil, nil
+							part.tabs, part.last, part.words, part.rects, part.widths = nil, nil, nil, nil, nil
 						end
 					end
 				end

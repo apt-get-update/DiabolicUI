@@ -205,8 +205,8 @@ local PlaceBackground = function(window)
 end
 
 -- `window`'s painted background (config.backgrounds' `name`) over its
--- stone, inside the iron, under all it shows; or, one in tiles (`tile`,
--- their size), its stone instead.
+-- stone, inside the iron, under all it shows (dyed `color`, darker where
+-- it's under text); or, one in tiles (`tile`, their size), its stone instead.
 Module.SetBackground = function(self, window, name)
 	local spec = config.backgrounds[name]
 	if spec.tile then
@@ -225,6 +225,7 @@ Module.SetBackground = function(self, window, name)
 		PlaceBackground(window)
 	end
 	background:SetTexture(spec.texture)
+	background:SetVertexColor(unpack(spec.color or { 1, 1, 1 })) -- (darker under what's read)
 	background:Show()
 	window.DiabolicBackgroundAspect = spec.aspect
 	LayoutStone(window)
@@ -246,38 +247,6 @@ local PlaceBorder = function(window)
 	border:ClearAllPoints()
 	border:SetPoint("TOPLEFT", window, "TOPLEFT", 0, -Drop(window))
 	border:SetPoint("BOTTOMRIGHT", window, "BOTTOMRIGHT")
-end
-
--- The glyph only where the window holds all of it (a small one, the loot
--- preview's, would have it hanging out below).
-local FitWatermark = function(window)
-	local spec, mark = config.watermark, window.DiabolicWatermark
-	local x, y = spec.position[2], spec.position[3]
-	if (window:GetWidth() >= spec.size + math.abs(x)) and (window:GetHeight() >= spec.size + math.abs(y)) then
-		mark:Show()
-	else
-		mark:Hide()
-	end
-end
-
--- One pale glyph in `window`'s corner, a different one by its name.
-local AddWatermark = function(window)
-	local spec = config.watermark
-	local name, sum = window:GetName() or "", 0
-	for i = 1, #name do
-		sum = sum + name:byte(i)
-	end
-	local glyph, width, height = sum % spec.count, spec.glyph_size[1], spec.glyph_size[2]
-	local mark = window:CreateTexture(nil, "ARTWORK")
-	mark:SetTexture(spec.texture)
-	mark:SetTexCoord(glyph * width, (glyph + 1) * width, spec.row * height, (spec.row + 1) * height)
-	mark:SetSize(spec.size, spec.size)
-	mark:SetPoint(unpack(spec.position))
-	mark:SetAlpha(spec.alpha)
-	window.DiabolicWatermark = mark
-	window:HookScript("OnSizeChanged", FitWatermark)
-	window:HookScript("OnShow", FitWatermark)
-	FitWatermark(window)
 end
 
 -- The window behind `frame`, from its corners by `insets` (left, top,
@@ -305,7 +274,6 @@ Module.CreateWindow = function(self, frame, insets)
 	window:SetScript("OnSizeChanged", LayoutStone)
 	window:HookScript("OnShow", LayoutStone) -- (its size may have come with no change told)
 	LayoutStone(window)
-	AddWatermark(window)
 	window.Frame = frame
 	Windows[#Windows + 1] = window
 	Engine:GetModule("Blizzard: Adjust"):PlaceWaiting()
@@ -432,13 +400,34 @@ end
 -- The title on its plate, the plate as wide as its widest title shown (up
 -- to `max_width`, and clear of the window's corners: `side_room` from each
 -- side), cut short past that (one line).
+-- `title` in the font object `name`, its font set too (one set by SetFont,
+-- as Group Bulletin Board does, outlasts a font object set after it).
+local fitting
+local SetTitleFont = function(title, name)
+	title:SetFontObject(name)
+	local object = (type(name) == "string") and _G[name] or name
+	if object and object.GetFont and object:GetFont() then
+		title:SetFont(object:GetFont())
+	end
+end
+
 local FitTitle = function(title)
+	if fitting then -- (our own SetFont, hooked)
+		return
+	end
+	fitting = true
 	local spec = config.title_plate
 	local plate = title:GetParent()
 	local margin = spec.width - spec.text_width
 	local room = plate:GetParent():GetWidth() - 2 * spec.side_room
 	local most = math.max(spec.text_width, math.min(spec.max_width, room) - margin)
+	-- (the plate's font, whatever another addon set on it; a size smaller
+	-- when too long, before it's cut)
 	title:SetSize(0, 0)
+	SetTitleFont(title, spec.font)
+	if title:GetStringWidth() > most then
+		SetTitleFont(title, spec.font_small)
+	end
 	if title:GetStringWidth() > most then
 		title:SetSize(most, select(2, title:GetFont()) + 2)
 	end
@@ -449,6 +438,7 @@ local FitTitle = function(title)
 		end
 	end
 	SizePlate(plate, width)
+	fitting = false
 end
 
 -- `title` (a font string) on Diablo III's plate on the top edge of
@@ -511,8 +501,18 @@ Module.SetTitle = function(self, header, title)
 		title.DiabolicFitted = true
 		hooksecurefunc(title, "SetText", FitTitle)
 		hooksecurefunc(title, "SetFormattedText", FitTitle)
+		hooksecurefunc(title, "SetFont", FitTitle) -- (Group Bulletin Board sets its own)
 	end
 	FitTitle(title)
+	-- what the window's about, in the plate's gem (window.title_gems: an
+	-- icon, or one by faction), once
+	local icon = config.title_gems[(window:GetName() or ""):gsub("Diabolic$", "")]
+	if icon and not header.DiabolicGem then
+		local gem = self:AddTitleGem(header)
+		gem:EnableMouse(false)
+		SetPortraitToTexture(gem.icon, (type(icon) == "table") and icon[UnitFactionGroup("player")] or icon)
+		header.DiabolicGem = gem
+	end
 end
 
 -- A gem socketed in the left cross of `header`'s title plate (SetTitle's,
@@ -574,7 +574,12 @@ Module.StyleSection = function(self, frame, title, regions)
 		region:SetAlpha(0)
 	end
 	local spec = config.section
-	self:CreateSlices(frame, "BACKGROUND", spec, spec.texture, spec.height)
+	-- no bar: a thin line under its title, the title's gold capitals over it
+	local line = frame:CreateTexture(nil, "BACKGROUND")
+	line:SetTexture(unpack(spec.line_color))
+	line:SetHeight(1)
+	line:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", spec.text_offset[1], 0)
+	line:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 	if title then
 		title:SetFontObject(spec.font)
 		title:SetTextColor(unpack(spec.color))
@@ -692,6 +697,50 @@ Module.IsSkinning = function(self)
 	return self.db.enableSkin
 end
 
+-- Embers of combat: in a fight, every window's iron smoulders at its edge
+-- (a faint ember glow round it, faded in), cooling as it ends. Seen at the
+-- edge of the eye, no word said (pop-out: colour is seen before attention).
+local Embers = function(window)
+	local spec = config.embers
+	local glow = window.DiabolicEmbers
+	if not glow then
+		glow = CreateFrame("Frame", nil, window.Border)
+		glow:SetFrameLevel(math.max(window:GetFrameLevel() - 1, 0))
+		-- (round the border: the window's own top can stand above it, its drop)
+		glow:SetPoint("TOPLEFT", window.Border, "TOPLEFT", -spec.outset, spec.outset)
+		glow:SetPoint("BOTTOMRIGHT", window.Border, "BOTTOMRIGHT", spec.outset, -spec.outset)
+		glow:SetBackdrop({ edgeFile = spec.texture, edgeSize = spec.size })
+		glow:SetBackdropBorderColor(unpack(spec.color))
+		glow:Hide()
+		window.DiabolicEmbers = glow
+	end
+	return glow
+end
+
+Module.StartEmbers = function(self)
+	local spec = config.embers
+	self:RegisterEvent("PLAYER_REGEN_DISABLED", function()
+		for _, window in ipairs(Windows) do
+			_G.UIFrameFadeIn(Embers(window), spec.fade_in, 0, 1)
+		end
+	end)
+	self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+		for _, window in ipairs(Windows) do
+			local glow = window.DiabolicEmbers
+			if glow and glow:IsShown() then
+				_G.UIFrameFade(glow, {
+					mode = "OUT",
+					timeToFade = spec.fade_out,
+					startAlpha = glow:GetAlpha(),
+					endAlpha = 0,
+					finishedFunc = glow.Hide,
+					finishedArg1 = glow,
+				})
+			end
+		end
+	end)
+end
+
 Module.OnInit = function(self)
 	config = self:GetDB("Blizzard").window
 	self.config = config
@@ -703,6 +752,7 @@ Module.OnInit = function(self)
 	end
 	self:StartLiner()
 	self:HookTabs()
+	self:StartEmbers()
 	-- every money frame's coins ours (Blizzard makes them on its first update)
 	local coin = Engine:GetDB("UI").coin
 	hooksecurefunc("MoneyFrame_Update", function(frame)

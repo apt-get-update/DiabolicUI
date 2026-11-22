@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "AchievementFrame"
+    kind: "book"
     width: 768
     height: 500
 
@@ -961,7 +962,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 530
-            height: 461
+            height: 440
 
             ScrollFrame {
                 name: "Overachiever_SearchFrameContainer"
@@ -988,7 +989,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 530
-            height: 461
+            height: 440
 
             ScrollFrame {
                 name: "Overachiever_SuggestionsFrameContainer"
@@ -1007,6 +1008,7 @@ WowWindow {
                     height: 588
 
                     Button {
+                        id: overachiever_SuggestionsFrameContainerButton1
                         name: "Overachiever_SuggestionsFrameContainerButton1"
                         anchors.left: parent.left
                         anchors.top: parent.top
@@ -1083,6 +1085,177 @@ WowWindow {
                             }
                         }
                     }
+
+                    Button {
+                        id: overachiever_SuggestionsFrameContainerButton2
+                        name: "Overachiever_SuggestionsFrameContainerButton2"
+                        anchors.left: overachiever_SuggestionsFrameContainerButton1.left
+                        anchors.top: overachiever_SuggestionsFrameContainerButton1.bottom
+                        width: 522
+                        height: 84
+
+                        FontString {
+                            id: overachiever_SuggestionsFrameContainerButton2Description
+                            name: "Overachiever_SuggestionsFrameContainerButton2Description"
+                            text: "Visit a Barber Shop and get your hair cut."
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton2Highlight"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 522
+                            height: 84
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton2Icon"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton2Objectives"
+                            anchors.horizontalCenter: overachiever_SuggestionsFrameContainerButton2Description.horizontalCenter
+                            anchors.horizontalCenterOffset: -2
+                            anchors.top: overachiever_SuggestionsFrameContainerButton2Description.bottom
+                            anchors.topMargin: 7.9
+                            width: 366
+                            height: -8.4
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton2Shield"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
+
+                            FontString {
+                                name: "Overachiever_SuggestionsFrameContainerButton2ShieldPoints"
+                                text: "10"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+
+                        Ghost {
+                            name: "Overachiever_SuggestionsFrameContainerButton2TitleBackground"
+                            x: 261
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "Overachiever_SuggestionsFrameContainerButton2Label"
+                                text: "Shave and a Haircut"
+                                wowParent: "Overachiever_SuggestionsFrameContainerButton2"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
+                            }
+                        }
+                    }
+
+                    Button {
+                        name: "Overachiever_SuggestionsFrameContainerButton3"
+                        anchors.left: overachiever_SuggestionsFrameContainerButton2.left
+                        anchors.top: overachiever_SuggestionsFrameContainerButton2.bottom
+                        width: 522
+                        height: 84
+
+                        FontString {
+                            id: overachiever_SuggestionsFrameContainerButton3Description
+                            name: "Overachiever_SuggestionsFrameContainerButton3Description"
+                            text: "Fish something up in Orgrimmar and Stormwind."
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: 330
+                            height: 30
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton3Highlight"
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 522
+                            height: 84
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton3Icon"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 8
+                            anchors.top: parent.top
+                            anchors.topMargin: 9
+                            width: 60
+                            height: 60
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton3Objectives"
+                            anchors.horizontalCenter: overachiever_SuggestionsFrameContainerButton3Description.horizontalCenter
+                            anchors.horizontalCenterOffset: -2
+                            anchors.top: overachiever_SuggestionsFrameContainerButton3Description.bottom
+                            anchors.topMargin: 7.9
+                            width: 366
+                            height: -8.4
+                        }
+
+                        Frame {
+                            name: "Overachiever_SuggestionsFrameContainerButton3Shield"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.top: parent.top
+                            width: 64
+                            height: 64
+
+                            FontString {
+                                name: "Overachiever_SuggestionsFrameContainerButton3ShieldPoints"
+                                text: "10"
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 26
+                                width: 32
+                                height: 16
+                            }
+                        }
+
+                        Ghost {
+                            name: "Overachiever_SuggestionsFrameContainerButton3TitleBackground"
+                            x: 261
+                            y: 5
+                            width: 0
+                            height: 0
+
+                            FontString {
+                                name: "Overachiever_SuggestionsFrameContainerButton3Label"
+                                text: "The Fishing Diplomat"
+                                wowParent: "Overachiever_SuggestionsFrameContainerButton3"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                width: 320
+                                height: 20
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1093,7 +1266,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 530
-            height: 461
+            height: 440
 
             ScrollFrame {
                 name: "Overachiever_WatchFrameContainer"
@@ -1212,7 +1385,7 @@ WowWindow {
                 text: "Clear"
                 wowParent: "?"
                 anchors.left: parent.left
-                anchors.leftMargin: 54.6
+                anchors.leftMargin: 56.6
                 anchors.top: parent.top
                 anchors.topMargin: 135.4
                 width: 41.9
@@ -1706,9 +1879,10 @@ WowWindow {
         id: achievementFrameDiabolic
         name: "AchievementFrameDiabolic"
         anchors.left: parent.left
+        anchors.leftMargin: -5
         anchors.top: parent.top
         anchors.topMargin: -64
-        width: 768
+        width: 778
         height: 582
 
         Button {
@@ -1729,7 +1903,7 @@ WowWindow {
             anchors.leftMargin: 24
             anchors.top: parent.top
             anchors.topMargin: 24
-            width: 720
+            width: 730
             height: 48
 
             Frame {
@@ -1778,7 +1952,7 @@ WowWindow {
                 wowParent: "AchievementFrame"
                 anchors.left: parent.left
                 anchors.top: parent.top
-                width: 720
+                width: 730
                 height: 48
             }
 
@@ -1786,16 +1960,16 @@ WowWindow {
                 name: "AchievementFrameHeaderPointsDiabolicCartouche"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                width: 107.4
+                width: 82.1
                 height: 38
 
                 FontString {
                     name: "AchievementFrameHeaderPoints"
-                    text: "3460"
+                    text: "80"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.horizontalCenterOffset: 10
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 51.4
+                    width: 26.1
                     height: 12
                 }
             }
@@ -1805,7 +1979,7 @@ WowWindow {
             name: "AchievementFrameDiabolicBorder"
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 768
+            width: 778
             height: 582
 
             Frame {
@@ -1816,6 +1990,15 @@ WowWindow {
                 anchors.verticalCenterOffset: 15
                 width: 300
                 height: 41
+
+                Button {
+                    name: "AchievementFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
 
                 FontString {
                     name: "AchievementFrameHeaderTitle"
@@ -1981,7 +2164,7 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement1DateCompleted"
-                    text: "10/30/26"
+                    text: "11/19/26"
                     anchors.right: parent.right
                     anchors.rightMargin: 63
                     anchors.top: parent.top
@@ -1992,7 +2175,7 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement1Description"
-                    text: "Show off your sparkling smile by using a Tooth Pick."
+                    text: "First human on the realm to achieve level 80."
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 30
@@ -2029,7 +2212,6 @@ WowWindow {
 
                     FontString {
                         name: "AchievementFrameSummaryAchievement1ShieldPoints"
-                        text: "10"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.horizontalCenterOffset: -1
                         anchors.verticalCenter: parent.verticalCenter
@@ -2048,7 +2230,7 @@ WowWindow {
 
                     FontString {
                         name: "AchievementFrameSummaryAchievement1Label"
-                        text: "That Sparkling Smile"
+                        text: "Realm First! Level 80 Human"
                         wowParent: "AchievementFrameSummaryAchievement1"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
@@ -2063,13 +2245,12 @@ WowWindow {
                 name: "AchievementFrameSummaryAchievement2"
                 anchors.left: achievementFrameSummaryAchievement1.left
                 anchors.top: achievementFrameSummaryAchievement1.bottom
-                anchors.topMargin: -3
                 width: 484
                 height: 48
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement2DateCompleted"
-                    text: "10/30/26"
+                    text: "11/19/26"
                     anchors.right: parent.right
                     anchors.rightMargin: 63
                     anchors.top: parent.top
@@ -2080,7 +2261,7 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement2Description"
-                    text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
+                    text: "Reach level 80."
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 30
@@ -2128,7 +2309,7 @@ WowWindow {
 
                     FontString {
                         name: "AchievementFrameSummaryAchievement2Label"
-                        text: "Exalted Argent Champion of the Alliance"
+                        text: "Level 80"
                         wowParent: "AchievementFrameSummaryAchievement2"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
@@ -2143,13 +2324,12 @@ WowWindow {
                 name: "AchievementFrameSummaryAchievement3"
                 anchors.left: achievementFrameSummaryAchievement2.left
                 anchors.top: achievementFrameSummaryAchievement2.bottom
-                anchors.topMargin: -3
                 width: 484
                 height: 48
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement3DateCompleted"
-                    text: "10/30/26"
+                    text: "11/19/26"
                     anchors.right: parent.right
                     anchors.rightMargin: 63
                     anchors.top: parent.top
@@ -2160,7 +2340,7 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement3Description"
-                    text: "Earn exalted status with and the right to represent every Alliance race's faction in the Argent Tournament."
+                    text: "Reach level 70."
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 30
@@ -2172,6 +2352,7 @@ WowWindow {
                     name: "AchievementFrameSummaryAchievement3Highlight"
                     anchors.left: parent.left
                     anchors.top: parent.top
+                    anchors.topMargin: -6
                     width: 484
                     height: 48
                 }
@@ -2216,7 +2397,7 @@ WowWindow {
 
                     FontString {
                         name: "AchievementFrameSummaryAchievement3Label"
-                        text: "Exalted Champion of the Alliance"
+                        text: "Level 70"
                         wowParent: "AchievementFrameSummaryAchievement3"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
@@ -2230,13 +2411,12 @@ WowWindow {
                 name: "AchievementFrameSummaryAchievement4"
                 anchors.left: achievementFrameSummaryAchievement3.left
                 anchors.top: achievementFrameSummaryAchievement3.bottom
-                anchors.topMargin: -3
                 width: 484
                 height: 48
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement4DateCompleted"
-                    text: "10/30/26"
+                    text: "11/19/26"
                     anchors.right: parent.right
                     anchors.rightMargin: 63
                     anchors.top: parent.top
@@ -2247,7 +2427,7 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryAchievement4Description"
-                    text: "Earn exalted reputation with 5 home cities."
+                    text: "Reach level 60."
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 30
@@ -2303,7 +2483,7 @@ WowWindow {
 
                     FontString {
                         name: "AchievementFrameSummaryAchievement4Label"
-                        text: "Ambassador of the Alliance"
+                        text: "Level 60"
                         wowParent: "AchievementFrameSummaryAchievement4"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
@@ -2326,7 +2506,7 @@ WowWindow {
                     name: "AchievementFrameSummaryAchievementsHeaderTitle"
                     text: "Recent Achievements"
                     anchors.left: parent.left
-                    anchors.leftMargin: 28
+                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
                     width: 158.8
@@ -2373,11 +2553,11 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryCategoriesCategory1Text"
-                    text: "29/54"
+                    text: "8/54"
                     anchors.right: parent.right
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 30.8
+                    width: 24.5
                     height: 14
                 }
             }
@@ -2395,7 +2575,7 @@ WowWindow {
                     name: "AchievementFrameSummaryCategoriesHeaderTitle"
                     text: "Progress Overview"
                     anchors.left: parent.left
-                    anchors.leftMargin: 28
+                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
                     width: 143.8
@@ -2415,11 +2595,11 @@ WowWindow {
 
                 FontString {
                     name: "AchievementFrameSummaryCategoriesStatusBarText"
-                    text: "330/1058"
+                    text: "8/1058"
                     anchors.right: parent.right
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 49
+                    width: 36.3
                     height: 14
                 }
 

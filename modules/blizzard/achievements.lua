@@ -257,6 +257,20 @@ Module.StyleOverachiever = function(self)
 	self:StyleRows()
 end
 
+-- The summary's latest achievements one under the other, touching
+-- (Blizzard's overlap by 3, their frames over each other).
+Module.StackSummary = function(self)
+	for i = 2, _G.ACHIEVEMENTUI_MAX_SUMMARY_ACHIEVEMENTS or 0 do
+		local row, above =
+			_G["AchievementFrameSummaryAchievement" .. i], _G["AchievementFrameSummaryAchievement" .. (i - 1)]
+		if row and above then
+			row:ClearAllPoints()
+			row:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, 0)
+			row:SetPoint("TOPRIGHT", above, "BOTTOMRIGHT", 0, 0)
+		end
+	end
+end
+
 Module.StyleAchievements = function(self)
 	local config = self.config
 	local frame = _G.AchievementFrame
@@ -273,9 +287,8 @@ Module.StyleAchievements = function(self)
 	if _G.AchievementFrameStatsBG then
 		kit:HideTextures(_G.AchievementFrameStatsBG)
 	end
-	-- (Blizzard's frame up by `offset_y`, the window's top where it was:
-	-- its lists close under the band)
-	frame:SetAttribute("UIPanelLayout-yoffset", config.offset_y)
+	-- (Blizzard's frame placed so the window's left and top are the others')
+	kit:SetPanelLayout(frame, config.insets, config.insets[1], config.offset_y)
 	local window = kit:CreateWindow(frame, config.insets)
 	kit:SetBackground(window, "zoltun")
 	self.Window = window
@@ -353,6 +366,7 @@ Module.StyleAchievements = function(self)
 	self:StyleRows()
 	hooksecurefunc("AchievementFrameSummary_UpdateAchievements", function()
 		self:StyleRows()
+		self:StackSummary()
 	end)
 
 	-- Blizzard's header (its art hidden) over the band only: it reached

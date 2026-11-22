@@ -1,6 +1,6 @@
 -- Run from the addon root: lua5.1 tests/test_session_layout.lua
 --
--- /dui layout (modules/blizzard/layout-scan.lua) in the fake client: what it
+-- /dui layout (tools/realm/scan.lua, the test realm's client's) in the fake client: what it
 -- saves, parts placed by settings/positions.lua (adjust.lua), and /dui layout
 -- all opening each window in turn.
 
@@ -15,6 +15,8 @@ local assertClean = Session.assertClean
 local client, kit
 
 local function boot(options)
+	options = options or {}
+	options.extra = { "tools/realm/scan.lua" } -- (the test realm's client loads it, the addon doesn't)
 	client = Client.boot(options)
 	client:Tick(0.2)
 	kit = client:GetModule("Blizzard: Windows")
@@ -223,10 +225,15 @@ function TestLayoutAudit:test_a_window_by_its_tabs()
 	icon:SetTexture([[Interface\Icons\INV_Misc_QuestionMark]])
 	icon:SetAllPoints()
 	zone(frame, "AuditPageOne", 30, -80, 340, 150, "parchment")
+	local words = frame:CreateFontString("AuditTabbedWords", "OVERLAY", "GameFontNormal")
+	words:SetPoint("TOPLEFT", 30, -40)
+	words:SetText("Said")
 	first:Disable()
 	frame:Show()
 	slash("layout")
 	local seen = _G.DiabolicUI_Layout.windows.AuditTabbed
+	local font = seen.parts.AuditTabbedWords.font
+	lu.assertNotNil(font)
 	lu.assertEquals(seen.views.AuditTabbedTab1.label, "First")
 	-- (the game's art too)
 	local files = {}
@@ -242,7 +249,10 @@ function TestLayoutAudit:test_a_window_by_its_tabs()
 	second:Disable()
 	_G.AuditPageOne:Hide()
 	zone(frame, "AuditPageTwo", 30, -80, 340, 150, "parchment")
+	words:SetText("")
 	client:Tick(1.1)
+	-- (a text empty in this tab: its look the one it had where it said something)
+	lu.assertEquals(seen.parts.AuditTabbedWords.font, font)
 	lu.assertEquals(seen.views.AuditTabbedTab2.label, "AuditTabbedTab2")
 	-- (an icon's reads as its tooltip)
 	second.tooltip = "Second"

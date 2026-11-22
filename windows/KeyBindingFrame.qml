@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "KeyBindingFrame"
+    kind: "list"
     width: 640
     height: 512
 
@@ -53,6 +54,28 @@ WowWindow {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 71.1
+            height: 10.3
+        }
+    }
+
+    Button {
+        name: "KeyBindingFrameBinding2Key1Button"
+        text: "Middle Mouse"
+        wowParent: "KeyBindingFrameBinding2"
+        style: "Button"
+        anchors.right: parent.right
+        anchors.rightMargin: 262
+        anchors.top: parent.top
+        anchors.topMargin: 96.5
+        width: 176
+        height: 22
+
+        FontString {
+            name: "KeyBindingFrameBinding2Key1ButtonText"
+            text: "Middle Mouse"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: 77.4
             height: 10.3
         }
     }
@@ -124,6 +147,15 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "KeyBindingFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "KeyBindingFrameHeaderText"
                     text: "Key Bindings"
@@ -179,7 +211,7 @@ WowWindow {
                     wowParent: "KeyBindingFrame"
                     style: "Button"
                     pin: "all"
-                    width: 125
+                    width: 123.7
                     height: 22
 
                     FontString {
@@ -187,7 +219,7 @@ WowWindow {
                         text: "Unbind Key"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 73.5
+                        width: 62.4
                         height: 10.3
                     }
                 }
@@ -198,7 +230,7 @@ WowWindow {
                     wowParent: "KeyBindingFrame"
                     style: "Button"
                     pin: "all"
-                    width: 125
+                    width: 123.7
                     height: 22
 
                     FontString {
@@ -206,7 +238,7 @@ WowWindow {
                         text: "Okay"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 32.4
+                        width: 28.4
                         height: 10.3
                     }
                 }
@@ -217,7 +249,7 @@ WowWindow {
                     wowParent: "KeyBindingFrame"
                     style: "Button"
                     pin: "all"
-                    width: 125
+                    width: 123.6
                     height: 22
 
                     FontString {
@@ -225,7 +257,7 @@ WowWindow {
                         text: "Cancel"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 45.8
+                        width: 35.6
                         height: 10.3
                     }
                 }
@@ -286,44 +318,45 @@ WowWindow {
             anchors.topMargin: -6
             width: 594
             height: 402
-        }
 
-        Slider {
-            name: "KeyBindingFrameScrollFrameScrollBar"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 358
-
-            Frame {
-                name: "KeyBindingFrameScrollFrameScrollBarDiabolicTrack"
-                anchors.horizontalCenter: keyBindingFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
-                anchors.top: keyBindingFrameScrollFrameScrollBarScrollUpButton.top
-                anchors.topMargin: -1
-                width: 18
-                height: 392
-            }
-
-            Button {
-                name: "KeyBindingFrameScrollFrameScrollBarScrollDownButton"
+            Slider {
+                name: "KeyBindingFrameScrollFrameScrollBar"
+                wowParent: "KeyBindingFrameScrollFrame"
                 style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: 7
+                anchors.top: parent.top
+                anchors.topMargin: 23
                 width: 16
-                height: 16
-            }
+                height: 356
 
-            Button {
-                id: keyBindingFrameScrollFrameScrollBarScrollUpButton
-                name: "KeyBindingFrameScrollFrameScrollBarScrollUpButton"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
+                Frame {
+                    name: "KeyBindingFrameScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: keyBindingFrameScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: keyBindingFrameScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 390
+                }
+
+                Button {
+                    name: "KeyBindingFrameScrollFrameScrollBarScrollDownButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    id: keyBindingFrameScrollFrameScrollBarScrollUpButton
+                    name: "KeyBindingFrameScrollFrameScrollBarScrollUpButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+                }
             }
         }
 
@@ -332,7 +365,7 @@ WowWindow {
             anchors.left: parent.left
             anchors.top: parent.top
             width: 300
-            height: 7775
+            height: 7725
         }
     }
 
@@ -351,6 +384,24 @@ WowWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: 87.7
             height: 11.9
+        }
+    }
+
+    Ghost {
+        name: "KeyBindingFrameBinding2"
+        x: 27
+        y: 95
+        width: 560
+        height: 25
+
+        FontString {
+            name: "KeyBindingFrameBinding2Description"
+            text: "Move and Steer"
+            wowParent: "KeyBindingFrameBinding2"
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            width: 170
+            height: 24
         }
     }
 

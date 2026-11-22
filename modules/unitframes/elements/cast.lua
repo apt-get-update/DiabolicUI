@@ -161,13 +161,18 @@ local UpdateCastBar = function(CastBar, unit, castdata, elapsed)
 end
 
 -- Only bars with a cast running need a tick. (A bar shows only while one
--- does: Stop hides it.)
+-- does: Stop hides it.) None running: the timer stops, a cast starts it.
 local OnUpdate = function(self, elapsed)
+	local running
 	for owner, CastBar in pairs(CastBarPool) do
 		local castdata = CastData[CastBar]
 		if castdata.casting or castdata.channeling or castdata.tradeskill then
+			running = true
 			UpdateCastBar(CastBar, owner.unit, castdata, elapsed)
 		end
+	end
+	if not running then
+		self:Hide()
 	end
 end
 CastTimer:SetScript("OnUpdate", OnUpdate)
@@ -216,6 +221,7 @@ Update = function(self, event, ...)
 		UpdateSafeZone(CastBar, unit, castdata)
 
 		CastBar:Show()
+		CastTimer:Show()
 
 	-- (the 4th argument of these is the cast's ID)
 	elseif
@@ -273,6 +279,7 @@ Update = function(self, event, ...)
 		UpdateSafeZone(CastBar, unit, castdata)
 
 		CastBar:Show()
+		CastTimer:Show()
 	elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
 		local unit = ...
 		local name, _, _, _, startTime, endTime = UnitChannelInfo(unit)

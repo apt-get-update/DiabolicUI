@@ -191,7 +191,7 @@ Module.LayoutPaperDoll = function(self, window)
 	panel:SetFrameLevel(_G.PaperDollFrame:GetFrameLevel())
 	kit:StylePane(panel, true) -- (Diablo III's stone around your home city)
 	panel.DiabolicContent = true
-	self:AddScene(panel)
+	self:AddScene(panel, nil, _G.CharacterModelFrame)
 	-- the GearScore and average item level in its bottom, as the
 	-- inspected one's (gearscore.lua)
 	local score = _G.CharacterModelFrame:CreateFontString(nil, "OVERLAY")
@@ -314,15 +314,6 @@ end
 -- equipment manager.
 local STAT_PREFIX = "DiabolicUICharacterStats"
 local STAT_CVARS = { "playerStatLeftDropdown", "playerStatRightDropdown" }
-
--- `frame` at `level`, all it holds a level over what holds it.
-local Stack
-Stack = function(frame, level)
-	frame:SetFrameLevel(level)
-	for i = 1, select("#", frame:GetChildren()) do
-		Stack(select(i, frame:GetChildren()), level + 1)
-	end
-end
 
 -- A section's title bar across `column`, `y` from its top.
 local CreateSection = function(column, spec, y, text, kind)
@@ -479,7 +470,7 @@ Module.CreateColumn = function(self, window)
 		-- its painted background hiding all but their top layers)
 		local level = _G.PaperDollFrame:GetFrameLevel()
 		if column:GetFrameLevel() <= level then
-			Stack(column, level + 1)
+			kit:Stack(column, level + 1)
 		end
 		self:UpdateScore()
 	end)
@@ -509,6 +500,8 @@ Module.CreatePages = function(self, column)
 			local shade = (i == chosen) and 1 or spec.icon_dim
 			tabs[i].Icon:SetVertexColor(shade, shade, shade)
 			tabs[i].Icon:SetDesaturated(i ~= chosen)
+			-- (and their frames dimmed with them: the chosen one stands out)
+			tabs[i]:SetAlpha((i == chosen) and 1 or spec.tab_dim)
 		end
 	end
 	for i, name in ipairs(PAGES) do
@@ -584,8 +577,6 @@ Module.CreateTitles = function(self, page)
 		local row = rows[i]
 		if not row then
 			row = CreateFrame("Button", nil, list)
-			row:SetHeight(spec.row_height)
-			row:SetPoint("TOPLEFT", 0, -(i - 1) * spec.row_height)
 			row:SetPoint("RIGHT", scroll, "RIGHT")
 			local lit = row:CreateTexture(nil, "HIGHLIGHT")
 			lit:SetTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]])
@@ -595,11 +586,12 @@ Module.CreateTitles = function(self, page)
 			local check = row:CreateTexture(nil, "ARTWORK")
 			check:SetTexture([[Interface\Buttons\UI-CheckBox-Check]])
 			check:SetSize(spec.row_height, spec.row_height)
-			check:SetPoint("LEFT")
+			check:SetPoint("TOPLEFT")
+			-- (a long one on two lines: its own width, no right point)
 			local text = row:CreateFontString(nil, "OVERLAY")
 			text:SetFont(unpack(spec.font))
-			text:SetPoint("LEFT", check, "RIGHT", 2, 0)
-			text:SetPoint("RIGHT")
+			text:SetSpacing(spec.line_spacing)
+			text:SetPoint("TOPLEFT", spec.row_height + 2, -spec.text_top)
 			text:SetJustifyH("LEFT")
 			row.check, row.text = check, text
 			row:SetScript("OnClick", function()
@@ -614,6 +606,14 @@ Module.CreateTitles = function(self, page)
 	-- (`current`: the one just chosen, before the client tells of it)
 	Update = function(current)
 		current = current or GetCurrentTitle()
+		-- (seen in game: shown with the window, not sized yet; then a frame later)
+		if scroll:GetWidth() <= spec.row_height then
+			list:SetScript("OnUpdate", function()
+				list:SetScript("OnUpdate", nil)
+				Update(current)
+			end)
+			return
+		end
 		local titles = {}
 		for id = 1, GetNumTitles() do
 			if IsTitleKnown(id) ~= 0 then
@@ -624,11 +624,16 @@ Module.CreateTitles = function(self, page)
 			return a.name < b.name
 		end)
 		table.insert(titles, 1, { id = -1, name = _G.NONE })
+		local y, width = 0, scroll:GetWidth() - spec.row_height - 2
 		for i, title in ipairs(titles) do
 			local row = Row(i)
 			local worn = (title.id == current) or ((title.id == -1) and (current <= 0))
 			row.id = title.id
+			row.text:SetWidth(width)
 			row.text:SetText(title.name)
+			row:SetPoint("TOPLEFT", 0, -y)
+			row:SetHeight(math.max(spec.row_height, row.text:GetStringHeight() + spec.text_top * 2))
+			y = y + row:GetHeight()
 			row.text:SetTextColor(unpack(worn and spec.worn_color or spec.color))
 			if worn then
 				row.check:Show()
@@ -640,11 +645,26 @@ Module.CreateTitles = function(self, page)
 		for i = #titles + 1, #rows do
 			rows[i]:Hide()
 		end
-		list:SetSize(scroll:GetWidth(), #titles * spec.row_height)
+		list:SetSize(scroll:GetWidth(), y)
+		-- (its bar only when they don't all fit)
+		local bar = _G[scroll:GetName() .. "ScrollBar"]
+		if y > scroll:GetHeight() then
+			bar:Show()
+		else
+			bar:Hide()
+		end
 	end
 	page:HookScript("OnShow", function()
 		Update()
 	end)
+	-- (a title worn or earned elsewhere: a macro, another addon, the server)
+	local Refresh = function(_, event, unit)
+		if page:IsVisible() and ((event ~= "UNIT_NAME_UPDATE") or (unit == "player")) then
+			Update()
+		end
+	end
+	self:RegisterEvent("KNOWN_TITLES_UPDATE", Refresh)
+	self:RegisterEvent("UNIT_NAME_UPDATE", Refresh)
 end
 
 -- The next group of stats in a section (Blizzard's dropdowns' list).
@@ -1007,9 +1027,38 @@ local HomePath = function(unit)
 	return [[Interface\DressUpFrame\DressUpBackground-]] .. race
 end
 
+-- The hour's light (config.daylight, by the game's clock): r, g, b.
+Module.DayColor = function(self)
+	local keys = self.config.daylight
+	local hour, minute = GetGameTime()
+	local now = hour + minute / 60
+	local i = 2 -- (the keys from 0 to 24: now between the one before i and i)
+	while (i < #keys) and (now > keys[i][1]) do
+		i = i + 1
+	end
+	local a, b = keys[i - 1], keys[i]
+	local t = (now - a[1]) / (b[1] - a[1])
+	return a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t, a[4] + (b[4] - a[4]) * t
+end
+
+-- The hour's light on `textures` (a scene's, dimmed by `dim`) and `model`.
+Module.LightScene = function(self, textures, model, dim)
+	local r, g, b = self:DayColor()
+	dim = dim or 1
+	for _, texture in ipairs(textures) do
+		texture:SetVertexColor(r * dim, g * dim, b * dim)
+	end
+	if model then
+		local spec = self.config.model_light
+		local x, y, z = unpack(spec.direction)
+		model:SetLight(1, 0, x, y, z, spec.ambient, r, g, b, spec.sun, r, g, b)
+	end
+end
+
 -- Your home city in `panel` (`path`'s, yours by default), inside its
--- bronze line, dimmed under the model; the scene returned.
-Module.AddScene = function(self, panel, path)
+-- bronze line, dimmed under the model, in the hour's light (with `model`'s,
+-- each time it shows); the scene returned.
+Module.AddScene = function(self, panel, path, model)
 	local config = self.config
 	path = path or (_G.DressUpTexturePath and _G.DressUpTexturePath())
 	if not path then
@@ -1027,9 +1076,11 @@ Module.AddScene = function(self, panel, path)
 	bottom:SetTexture(path .. 3)
 	bottom:SetPoint("BOTTOMLEFT", scene)
 	bottom:SetPoint("BOTTOMRIGHT", scene)
-	for _, texture in ipairs({ top, bottom }) do
-		texture:SetVertexColor(unpack(config.scene_color))
+	local Light = function()
+		self:LightScene({ top, bottom }, model, config.scene_color[1])
 	end
+	panel:HookScript("OnShow", Light)
+	Light()
 	scene.Top, scene.Bottom = top, bottom
 	scene:SetScript("OnSizeChanged", LayoutScene)
 	LayoutScene(scene)
@@ -1050,7 +1101,7 @@ Module.StyleInspect = function(self)
 	panel:SetPoint("TOPLEFT", model, "TOPLEFT", -inset, inset)
 	panel:SetPoint("BOTTOMRIGHT", model, "BOTTOMRIGHT", inset, -inset)
 	kit:StylePane(panel, true)
-	local scene = self:AddScene(panel, HomePath("player"))
+	local scene = self:AddScene(panel, HomePath("player"), model)
 	self.InspectScene = scene
 	local Update = function()
 		local unit = _G.InspectFrame.unit
@@ -1208,6 +1259,10 @@ Module.StyleReputationDetail = function(self)
 	end
 	Raise()
 	detail:HookScript("OnShow", Raise)
+	-- the windows' checkbox, not Blizzard's grey tick
+	for _, name in ipairs({ "ReputationDetailAtWarCheckBox", "ReputationDetailInactiveCheckBox", "ReputationDetailMainScreenCheckBox" }) do
+		kit:SkinCheckBox(_G[name], kit.config.check_box.size)
+	end
 	-- the boxes' labels: Blizzard colors them on each update (red, its
 	-- font's yellow or grey), drawn for its dark frame
 	-- as tall as its text needs over the boxes (Blizzard's are anchored to
@@ -1247,6 +1302,22 @@ Module.StyleReputationDetail = function(self)
 	for i = 1, _G.NUM_FACTIONS_DISPLAYED do
 		kit:StyleExpanders(_G["ReputationBar" .. i .. "ExpandOrCollapseButton"])
 	end
+end
+
+-- The list's column names (Faction, Standing) as the windows' table
+-- headers: gold capitals over a thin line along the list's top.
+Module.StyleReputationHeader = function(self)
+	local section = kit.config.section
+	for _, name in ipairs({ "ReputationFrameFactionLabel", "ReputationFrameStandingLabel" }) do
+		local label = _G[name]
+		label:SetFontObject(section.font)
+		label:SetTextColor(unpack(section.color))
+	end
+	local first = _G.ReputationBar1
+	local line = _G.ReputationFrame:CreateTexture(nil, "ARTWORK")
+	line:SetTexture(unpack(section.line_color))
+	line:SetSize(first:GetWidth(), 1)
+	line:SetPoint("BOTTOMLEFT", first, "TOPLEFT", 0, 1)
 end
 
 -- The reputation bars in our standings' colors (Blizzard's on each update).
@@ -1331,6 +1402,7 @@ Module.StyleCharacter = function(self)
 	self:StyleCompanions()
 	self:StyleSkills()
 	self:StyleReputationDetail()
+	self:StyleReputationHeader()
 	kit:StyleScrollBars(frame)
 	for _, name in ipairs(CLOSE_BUTTONS) do
 		HideClose(_G[name])
@@ -1348,6 +1420,14 @@ Module.OnEnable = function(self)
 		return
 	end
 	self:StyleCharacter()
+	-- the dressing room in the hour's light too
+	_G.DressUpFrame:HookScript("OnShow", function()
+		local parts = {}
+		for _, part in ipairs({ "TopLeft", "TopRight", "BotLeft", "BotRight" }) do
+			parts[#parts + 1] = _G["DressUpBackground" .. part]
+		end
+		self:LightScene(parts, _G.DressUpModel)
+	end)
 	self:WhenLoaded("Blizzard_TokenUI", "StyleTokens")
 	self:WhenLoaded("Blizzard_InspectUI", "StyleInspect")
 end

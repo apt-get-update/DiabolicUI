@@ -136,6 +136,14 @@ Module.PlaceDetails = function(self)
 		scroll:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", unpack(self.config.details))
 		scroll:SetHeight(self.config.details_height + self.config.taller)
 		kit:PlaceParchmentBar(scroll)
+		-- over the window's painting (they come at their own window's
+		-- level), their parchment under their text
+		local level = self.Window:GetFrameLevel() + 1
+		kit:Stack(scroll, level)
+		local parchment = _G.QuestLogDetailScrollFrameDiabolicParchment
+		if parchment then -- (not yet on the log's first placing)
+			parchment:SetFrameLevel(level)
+		end
 	end
 end
 
@@ -149,7 +157,7 @@ Module.StyleQuestLog = function(self)
 	self.Window = window
 	kit:AddDrag(window, frame)
 	kit:HideTextures(frame)
-	frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + config.insets[3])
+	kit:SetPanelLayout(frame, config.insets, config.insets[1]) -- (its left on the screen's)
 	self.Header = kit:CreateHeader(window, config.header_height, config.header_insets)
 	kit:SetTitle(self.Header, _G.QuestLogTitleText)
 	kit:StyleClose(_G.QuestLogFrameCloseButton, window, self.Header)
@@ -208,14 +216,16 @@ Module.StyleQuestLog = function(self)
 	-- Abandon, Share and Track under the quests
 	local abandon, share, track =
 		_G.QuestLogFrameAbandonButton, _G.QuestLogFramePushQuestButton, _G.QuestLogFrameTrackButton
-	-- (Share's own width is 1, its anchors stretch it: a real one, or it's
-	-- styled as too narrow for the red button)
-	share:SetWidth(abandon:GetWidth())
+	-- one width for the three, the foot's height (Share's own width is 1,
+	-- its anchors stretch it: a real one, or it's styled as too narrow for
+	-- the red button; Track 3 in from the panel's right, Blizzard's)
+	local gap = kit.config.layout.button_gap
+	local width = (config.controls_width - 3 - 2 * gap) / 3
 	for _, button in ipairs({ abandon, share, track }) do
+		button:SetSize(width, config.button_height)
 		kit:StyleButton(button, config.button_height)
 	end
 	-- apart (Blizzard's touch: Share stretched between the other two)
-	local gap = kit.config.layout.button_gap
 	share:ClearAllPoints()
 	share:SetPoint("LEFT", abandon, "RIGHT", gap, 0)
 	share:SetPoint("RIGHT", track, "LEFT", -gap, 0)

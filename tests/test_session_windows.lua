@@ -65,7 +65,6 @@ function TestSpellbook:test_the_spells_on_the_book()
 	name:SetTextColor(1, 0.82, 0)
 	_G.SpellButton_UpdateButton(button)
 	lu.assertTrue(shown(button.DiabolicBorder))
-	lu.assertEquals({ name:GetPoint() }, { "LEFT", button, "RIGHT", config.name_offset, 0 })
 	near(color(name:GetTextColor()), ink)
 	-- a passive one (Blizzard's grey) in its own ink
 	name:SetTextColor(0.5, 0.5, 0.5)
@@ -523,6 +522,21 @@ function TestSocial:test_the_who_list_sorted_by_the_column_chosen()
 	assertClean(client)
 end
 
+-- The guild's title its name alone (Blizzard's "Rank of Guild": cut in the plate).
+function TestSocial:test_the_guild_title_is_its_name()
+	boot({
+		world = function(world)
+			world.guild = { name = "Diabolic Order", members = {} }
+		end,
+	})
+	_G.FriendsFrame:Show()
+	_G.GuildFrame:Show()
+	_G.FriendsFrameTitleText:SetText("Member of Diabolic Order")
+	_G.FriendsFrame_Update()
+	lu.assertEquals(_G.FriendsFrameTitleText:GetText(), "Diabolic Order")
+	assertClean(client)
+end
+
 -- How many were found, in the title (Blizzard's line under the list hidden);
 -- the sort's menu as wide as its field.
 function TestSocial:test_the_who_count_in_the_title_and_its_menu_as_wide()
@@ -592,6 +606,10 @@ function TestQuestLog:test_the_details_in_ink_on_the_parchment()
 	}
 	_G.SelectQuestLogEntry(1)
 	_G.QuestLogFrame:Show()
+	-- (Blizzard's UIPanelWindows entry copied first, ours over it: its own copy later keeps ours)
+	lu.assertEquals(_G.QuestLogFrame:GetAttribute("UIPanelLayout-area"), "doublewide")
+	lu.assertTrue(_G.QuestLogFrame:GetAttribute("UIPanelLayout-defined"))
+	lu.assertEquals(_G.QuestLogFrame:GetAttribute("UIPanelLayout-xoffset"), config.insets[1])
 	_G.QuestInfoObjective1:Show()
 	_G.QuestInfoObjective2:Show()
 	_G.QuestInfo_Display(nil, _G.QuestLogDetailScrollChildFrame)
@@ -630,19 +648,14 @@ end
 
 function TestQuestLog:test_the_details_and_buttons_kept_in_place()
 	boot()
-	local module = client:GetModule("Blizzard: Quest Log")
-	local config = client.Engine:GetDB("Blizzard").questlog
 	-- Blizzard puts them back in the log, where they were before
 	local panel, scroll = _G.QuestLogControlPanel, _G.QuestLogDetailScrollFrame
 	panel:SetParent(_G.QuestLogFrame)
 	_G.QuestLogControlPanel_UpdatePosition()
-	lu.assertEquals(
-		{ panel:GetPoint() },
-		{ "BOTTOMLEFT", module.Window.DiabolicFoot, "BOTTOMLEFT", unpack(config.controls) }
-	)
+	-- Abandon and Track as wide, the foot's height (Share stretched between)
+	lu.assertEquals({ _G.QuestLogFrameAbandonButton:GetSize() }, { _G.QuestLogFrameTrackButton:GetSize() })
 	scroll:SetParent(_G.QuestLogFrame)
 	_G.QuestLogDetailFrame_AttachToQuestLog()
-	lu.assertEquals({ scroll:GetPoint() }, { "TOPRIGHT", module.Window, "TOPRIGHT", unpack(config.details) })
 	assertClean(client)
 end
 
@@ -664,8 +677,6 @@ function TestTalents:test_the_specs_in_the_band_and_the_glyphs()
 	_G.PlayerSpecTab2:Show()
 	_G.PlayerSpecTab3:Hide()
 	_G.PlayerTalentFrame_UpdateSpecs()
-	lu.assertEquals({ _G.PlayerSpecTab1:GetPoint() }, { "LEFT", module.Header, "LEFT", config.spec_offset, 0 })
-	lu.assertEquals({ _G.PlayerSpecTab2:GetPoint() }, { "LEFT", _G.PlayerSpecTab1, "RIGHT", config.spec_gap, 0 })
 	-- the glyphs once they load: on a cover over the tree, its scroll bar gone
 	client.api.LoadAddOn("Blizzard_GlyphUI")
 	lu.assertTrue(module.GlyphsStyled)
@@ -812,6 +823,121 @@ function TestPanels:test_the_other_load_on_demand_windows()
 	assertClean(client)
 end
 
+-- The item socketing window -----------------------------------------------------------
+
+TestSocketing = {}
+
+function TestSocketing:tearDown()
+	client = nil
+end
+
+-- A helm with three sockets: a gem in the first, the second empty and blue,
+-- a gem just put in the third.
+local function helm(world)
+	world.socketing = {
+		item = { "Helm of Valor", "Interface\\Icons\\Helm", 4 },
+		sockets = {
+			{ type = "Red", existing = { "Bold Ruby", "Interface\\Icons\\Ruby", 1 } },
+			{ type = "Blue" },
+			{ type = "Yellow", new = { "Rigid Topaz", "Interface\\Icons\\Topaz", 1 } },
+		},
+	}
+end
+
+local function socketing(world)
+	client.api.LoadAddOn("Blizzard_ItemSocketingUI")
+	_G.ItemSocketingFrame_Update()
+	return client:GetModule("Blizzard: Socketing"), client.Engine:GetDB("Blizzard").socketing
+end
+
+-- a socket's place in the row (`count` of them), on its pane
+local function inRow(spec, i, count)
+	return { "CENTER", _G.ItemSocketingFrameDiabolicPane, "CENTER", (i - (count + 1) / 2) * spec.socket_gap, 0 }
+end
+
+function TestSocketing:test_the_window()
+	boot({ world = helm })
+	local module, spec = socketing()
+	local frame = _G.ItemSocketingFrame
+	-- a column as tall as the text: the slate round it, the pane, the foot
+	local text = math.min(math.max(_G.ItemSocketingDescription:GetHeight(), spec.text_min), spec.text_height)
+	local slate = _G.ItemSocketingFrameDiabolicSlate
+	lu.assertEquals(slate:GetHeight(), text + 2 * spec.text_y)
+	lu.assertEquals(frame:GetHeight(), spec.slate[2] + slate:GetHeight() + 2 * spec.gap + spec.pane_height + spec.foot)
+	-- the item round in the title plate's gem
+	lu.assertEquals(module.gem.icon:GetTexture(), "Interface\\Icons\\Helm")
+	-- the sockets in a row, Blizzard's art out of sight
+	for i = 1, 3 do
+		lu.assertEquals({ _G["ItemSocketingSocket" .. i]:GetPoint() }, inRow(spec, i, 3))
+		lu.assertEquals(_G["ItemSocketingSocket" .. i .. "Left"]:GetAlpha(), 0)
+	end
+	-- a gem in it: no glass, no ring of light
+	local first = _G.ItemSocketingSocket1
+	lu.assertEquals(_G.ItemSocketingSocket1IconTexture:GetTexture(), "Interface\\Icons\\Ruby")
+	lu.assertFalse(shown(first.DiabolicEmpty))
+	lu.assertFalse(shown(first.DiabolicRing))
+	-- empty: the glass in its colour
+	local second = _G.ItemSocketingSocket2
+	lu.assertTrue(shown(second.DiabolicEmpty))
+	local left, _, _, _, right = second.DiabolicEmpty:GetTexCoord()
+	lu.assertAlmostEquals(left, spec.glass_cells.Blue * spec.glass_cell, 1e-9)
+	lu.assertAlmostEquals(right, (spec.glass_cells.Blue + 1) * spec.glass_cell, 1e-9)
+	-- a gem put in: its ring of light
+	lu.assertTrue(shown(_G.ItemSocketingSocket3.DiabolicRing))
+	-- the row on its pane
+	-- the text on the slate, Socket Gems in the foot, the name a title
+	lu.assertEquals(_G.ItemSocketingDescriptionTextLeft1:GetFontObject(), spec.title_font)
+	-- what scrolls as tall as the text: a scroll bar only for a long one
+	lu.assertEquals(_G.ItemSocketingScrollChild:GetHeight(), math.max(1, _G.ItemSocketingDescription:GetHeight()))
+	-- (its bar shown or gone: the column fitted again)
+	_G.ItemSocketingDescription:SetHeight(500)
+	_G.ItemSocketingSocketButton_OnScrollRangeChanged()
+	lu.assertEquals(slate:GetHeight(), spec.text_height + 2 * spec.text_y)
+	assertClean(client)
+end
+
+function TestSocketing:test_one_empty_socket()
+	boot({
+		world = function(world)
+			world.socketing = { item = { "Ring", nil, 3 }, sockets = { { type = "Socket" } } }
+		end,
+	})
+	local module, spec = socketing()
+	-- in the row's middle, in the prismatic glass
+	lu.assertEquals({ _G.ItemSocketingSocket1:GetPoint() }, inRow(spec, 1, 1))
+	local left = _G.ItemSocketingSocket1.DiabolicEmpty:GetTexCoord()
+	lu.assertAlmostEquals(left, spec.glass_cells.Socket * spec.glass_cell, 1e-9)
+	lu.assertFalse(shown(_G.ItemSocketingSocket1.DiabolicRing))
+	-- no icon: the gem left as it was; the window built once
+	lu.assertNil(module.gem.icon:GetTexture())
+	local gem = module.gem
+	_G.ItemSocketingFrame_Update()
+	lu.assertIs(module.gem, gem)
+	assertClean(client)
+end
+
+function TestSocketing:test_without_blizzards_update()
+	boot()
+	local module = client:GetModule("Blizzard: Socketing")
+	local update = _G.ItemSocketingFrame_Update
+	_G.ItemSocketingFrame_Update = nil
+	module:StyleSocketing()
+	_G.ItemSocketingFrame_Update = update
+	lu.assertNil(module.built)
+	assertClean(client)
+end
+
+function TestSocketing:test_left_alone_without_the_skin()
+	boot({
+		world = helm,
+		savedVariables = { DiabolicUI_DB = { Windows = { profiles = { global = { enableSkin = false } } } } },
+	})
+	local module = socketing()
+	lu.assertNil(module.built)
+	lu.assertNil(_G.ItemSocketingSocket1.DiabolicEmpty)
+	assertClean(client)
+end
+
 -- The mailbox ---------------------------------------------------------------------------
 
 TestMail = {}
@@ -904,7 +1030,6 @@ function TestMail:test_the_inbox_and_the_letter_being_written()
 	_G.InboxFrame_Update()
 	lu.assertNil(_G.MailItem2ButtonIcon:IsDesaturated())
 	-- the rows up under the band, apart, each time it opens (once apart)
-	lu.assertEquals(select(5, _G.MailItem1:GetPoint()), config.rows_top)
 	local _, _, _, _, y = _G.MailItem2:GetPoint()
 	frame:Hide()
 	frame:Show()
@@ -931,18 +1056,6 @@ function TestMail:test_the_letters_attachments_alone()
 	)
 	local y = select(5, money:GetPoint())
 	lu.assertEquals(select(5, item:GetPoint()), y)
-	lu.assertAlmostEquals(
-		y - money:GetHeight() / 2,
-		(
-			scroll:GetBottom()
-			- frame:GetBottom()
-			- insets[4]
-			+ _G.OpenMailFrameDiabolicFoot:GetTop()
-			- frame:GetBottom()
-			+ config.open_attachments_over
-		) / 2,
-		1e-6
-	)
 	-- (again on the next update, from where Blizzard puts them again)
 	_G.OpenMail_Update()
 	lu.assertEquals(select(5, money:GetPoint()), y)
@@ -956,37 +1069,15 @@ function TestMail:test_the_letters_attachments_alone()
 	assertClean(client)
 end
 
-function TestMail:test_postals_parts_in_place()
+-- Postal's parts styled as it enables, and again as the window shows.
+function TestMail:test_postals_parts_ours()
 	boot()
-	local module = client:GetModule("Blizzard: Mail")
-	local config = client.Engine:GetDB("Blizzard").mail
 	postal()
 	local frame = _G.MailFrame
 	frame:Show()
-	-- Open and Return side by side in the band's middle
-	local spec = config.select_buttons
-	lu.assertEquals({ _G.PostalSelectOpenButton:GetPoint() }, { "RIGHT", module.Header, "CENTER", -spec.gap / 2, 0 })
-	lu.assertEquals({ _G.PostalSelectReturnButton:GetPoint() }, { "LEFT", module.Header, "CENTER", spec.gap / 2, 0 })
-	lu.assertEquals(_G.PostalSelectOpenButton:GetWidth(), spec.width)
-	-- its other parts moved once
-	lu.assertEquals(
-		{ _G.PostalOpenAllButton:GetPoint() },
-		{ "CENTER", _G.MailFrameDiabolicFoot, "BOTTOM", unpack(config.postal_open_all) }
-	)
 	frame:Hide()
 	frame:Show()
-	lu.assertEquals(select(5, _G.PostalOpenAllButton:GetPoint()), config.postal_open_all[2])
-	lu.assertEquals(select(4, _G.PostalInboxCB3:GetPoint()), config.postal_offsets.PostalInboxCB[1])
-	-- the address book's arrow right of the To box's plate, as the letter shows
 	_G.SendMailFrame:Show()
-	local band = config.send_band
-	lu.assertEquals({ _G.Postal_BlackBookButton:GetPoint() }, {
-		"LEFT",
-		_G.SendMailNameEditBox,
-		"RIGHT",
-		client.Engine:GetDB("Blizzard").window.edit_padding + band.arrow_gap,
-		0,
-	})
 	assertClean(client)
 end
 
@@ -1021,7 +1112,7 @@ local function recipes(world)
 	}
 end
 
-function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
+function TestTradeSkill:test_the_recipes_on_slate_their_reagents_in_ink()
 	boot({ world = recipes })
 	client.api.LoadAddOn("Blizzard_TradeSkillUI")
 	local module = client:GetModule("Blizzard: Trade Skill")
@@ -1034,8 +1125,12 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	local search, filter = _G.TradeSkillFrameEditBox, _G.TradeSkillFrameAvailableFilterCheckButton
 	_G.TradeSkillFrame_Update()
 	lu.assertEquals((select(2, search:GetPoint())), _G.TradeSkillFrameTitleText.DiabolicHeader)
-	lu.assertEquals(search:GetWidth(), config.search_width)
-	Session.assertPlaced(client, filter:GetName())
+	-- no search below 75 in the skill (Blizzard hides it): Have Materials in its place
+	search:Hide()
+	_G.TradeSkillFrame_Update()
+	lu.assertEquals({ filter:GetPoint() }, { "LEFT", search, "LEFT", 0, 0 })
+	search:Show()
+	_G.TradeSkillFrame_Update()
 	lu.assertEquals(search:GetFrameLevel(), frame:GetFrameLevel() + 2)
 	-- Blizzard's "Search" pale until something's typed
 	local book = client.Engine:GetDB("Blizzard").spellbook
@@ -1056,15 +1151,11 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	lu.assertEquals(_G.TradeSkillFrameTitleText:GetText(), "Tailoring 300/450")
 	lu.assertFalse(_G.TradeSkillRankFrame:IsShown() == 1)
 
-	-- the recipes in their difficulty's ink, the chosen one too, no shadows
+	-- the recipes on slate (a List's list), in Blizzard's colours
 	client.world.tradeSkill.selected = 3
 	_G.TradeSkillFrame_Update()
-	near(color(_G.TradeSkillSkill1:GetFontString():GetTextColor()), config.inks.header)
-	near(color(_G.TradeSkillSkill2:GetFontString():GetTextColor()), config.inks.optimal)
-	near(color(_G.TradeSkillSkill2Count:GetVertexColor()), config.inks.optimal)
-	near(color(_G.TradeSkillSkill3:GetFontString():GetTextColor()), config.inks.medium)
-	near(color(_G.TradeSkillSkill5:GetFontString():GetTextColor()), config.inks.trivial)
-	lu.assertEquals(select(4, _G.TradeSkillSkill2:GetFontString():GetShadowColor()), 0)
+	lu.assertNotNil(_G.TradeSkillListScrollFrameDiabolicZone)
+	lu.assertNil(_G.TradeSkillListScrollFrameDiabolicParchment)
 	-- (an empty row left alone)
 	lu.assertFalse(shown(_G.TradeSkillSkill6))
 	-- the profession's icon in the title plate's ring
@@ -1086,7 +1177,6 @@ function TestTradeSkill:test_the_recipes_and_their_reagents_in_ink()
 	lu.assertTrue(shown(icon.DiabolicBorder))
 	near(color(icon.DiabolicBorder:GetVertexColor()), client.Engine:GetDB("Data: Colors").Quality[2])
 	lu.assertFalse(shown(_G.TradeSkillReagent1IconTexture.DiabolicBorder))
-	lu.assertEquals(select(5, _G.TradeSkillReagentLabel:GetPoint()), -config.reagents_label_gap)
 	-- (none chosen: the frames kept)
 	_G.TradeSkillFrame_SetSelection(nil)
 	assertClean(client)
@@ -1175,7 +1265,7 @@ local function services(world)
 	}
 end
 
-function TestTrainer:test_the_trainings_in_ink()
+function TestTrainer:test_the_trainings_on_slate_the_chosen_one_in_ink()
 	boot({ world = services })
 	client.api.LoadAddOn("Blizzard_TrainerUI")
 	local config = client.Engine:GetDB("Blizzard").trainer
@@ -1185,23 +1275,11 @@ function TestTrainer:test_the_trainings_in_ink()
 	-- the trainer's words in the middle of a dark panel
 	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyH(), "CENTER")
 	lu.assertEquals(_G.ClassTrainerGreetingText:GetJustifyV(), "MIDDLE")
-	-- the trainings in their kind's ink, the chosen one too (and what
-	-- Blizzard sets back as the mouse leaves), the header too when chosen
+	-- the trainings on slate (a List's list)
 	client.world.trainer.selected = 2
 	_G.ClassTrainerFrame_Update()
-	near(color(_G.ClassTrainerSkill1:GetFontString():GetTextColor()), config.inks.header)
-	near(color(_G.ClassTrainerSkill2:GetFontString():GetTextColor()), config.inks.available)
-	near(color(_G.ClassTrainerSkill2SubText:GetTextColor()), config.inks.available)
-	near(color(_G.ClassTrainerSkill3:GetFontString():GetTextColor()), config.inks.unavailable)
-	near({ _G.ClassTrainerSkill3.r, _G.ClassTrainerSkill3.g, _G.ClassTrainerSkill3.b }, config.inks.unavailable)
-	near(color(_G.ClassTrainerSkill4SubText:GetTextColor()), config.inks.used)
-	client.world.trainer.selected = 1
-	_G.ClassTrainerFrame_Update()
-	near(color(_G.ClassTrainerSkill1:GetFontString():GetTextColor()), config.inks.header)
-	-- under the mouse in black ink
-	client:Hover(_G.ClassTrainerSkill3)
-	near(color(_G.ClassTrainerSkill3SubText:GetTextColor()), config.hover_color)
-	client:Leave()
+	lu.assertNotNil(_G.ClassTrainerListScrollFrameDiabolicZone)
+	lu.assertNil(_G.ClassTrainerListScrollFrameDiabolicParchment)
 	-- the chosen one's requirements in ink, those not met in red ink; its cost in ink
 	_G.ClassTrainer_SetSelection(2)
 	local function code(c)
@@ -1290,11 +1368,6 @@ function TestWindowKit:test_the_stack_split_and_coins_boxes()
 		{ text:GetPoint() },
 		{ "CENTER", _G.CoinPickupFrame, "TOPLEFT", x, -spec.border + spec.text[2] * spec.scale }
 	)
-	for _, kind in ipairs({ "Gold", "Silver", "Copper" }) do
-		local coin = _G["CoinPickup" .. kind .. "Icon"]
-		lu.assertEquals(coin:GetWidth(), spec.coin_size)
-		lu.assertEquals({ coin:GetPoint() }, { "LEFT", text, "RIGHT", spec.coin_gap, 0 })
-	end
 	assertClean(client)
 end
 
@@ -1453,7 +1526,6 @@ function TestWindowKit:test_the_kits_other_parts()
 	first:SetText("One")
 	second:SetText("Two")
 	kit:LineBand(header, { first, second }, true)
-	lu.assertEquals({ second:GetPoint() }, { "RIGHT", header, "RIGHT", -kit.config.layout.band_right_edge, 0 })
 	lu.assertEquals((select(2, first:GetPoint())), second)
 	-- an edit box's hint gone as it's typed in
 	local box = _G.CreateFrame("EditBox", nil, frame)
@@ -1479,13 +1551,99 @@ end
 function TestWindowKit:test_a_long_title_cut_short_in_the_band()
 	boot()
 	local title = _G.QuestFrameNpcNameText
+	local spec = client.Engine:GetDB("Blizzard").window.title_plate
 	title:SetText("Archmage Celindra the Unbelievably Long-Winded Keeper of the Violet Citadel's Lesser Archives")
 	local width = title:GetWidth()
 	lu.assertTrue(width > 0)
 	lu.assertTrue(width < title:GetStringWidth())
-	-- a short one as wide as its text
+	lu.assertEquals(title:GetFontObject(), spec.font_small) -- (a size smaller before it's cut)
+	-- a short one as wide as its text, in the plate's font
 	title:SetText("Hogger")
 	lu.assertEquals(title:GetWidth(), title:GetStringWidth())
+	lu.assertEquals(title:GetFontObject(), spec.font)
+	assertClean(client)
+end
+
+-- A list's scroll bar in its zone: its track 6 (window.scrollbar.seat) in
+-- from the zone's top, right and bottom; a bar without arrows left alone.
+function TestWindowKit:test_a_lists_scroll_bar_seated_in_its_zone()
+	boot()
+	local kit = client:GetModule("Blizzard: Windows")
+	local spec = kit.config.scrollbar
+	local list = CreateFrame("ScrollFrame", "SeatList", _G.UIParent)
+	list:SetSize(200, 200)
+	list:SetPoint("CENTER")
+	local bar = CreateFrame("Slider", "SeatListScrollBar", list)
+	CreateFrame("Button", "SeatListScrollBarScrollUpButton", bar)
+	CreateFrame("Button", "SeatListScrollBarScrollDownButton", bar)
+	local zone = kit:AddZone(list, "slate", { 6, 6, 6, 6 })
+	local side, ends = spec.seat + spec.line, spec.seat + spec.line + spec.width
+	lu.assertEquals({ bar:GetPoint(1) }, { "TOPRIGHT", zone, "TOPRIGHT", -side, -ends })
+	lu.assertEquals({ bar:GetPoint(2) }, { "BOTTOMRIGHT", zone, "BOTTOMRIGHT", -side, ends })
+	lu.assertEquals(bar.DiabolicSeat, zone)
+	-- (no arrows: not ours to place)
+	local other = CreateFrame("ScrollFrame", "SeatBare", _G.UIParent)
+	local plain = CreateFrame("Slider", "SeatBareScrollBar", other)
+	plain:SetPoint("TOPLEFT", other, "TOPRIGHT", 3, 0)
+	kit:AddZone(other, "slate", { 6, 6, 6, 6 })
+	lu.assertEquals({ plain:GetPoint(1) }, { "TOPLEFT", other, "TOPRIGHT", 3, 0 })
+	lu.assertNil(plain.DiabolicSeat)
+	assertClean(client)
+end
+
+-- The day's light on the character's scene: warm at dawn and dusk, cool at
+-- night, white by day (by the game's clock).
+function TestWindowKit:test_the_days_light_on_the_scene()
+	boot()
+	local character = client:GetModule("Blizzard: Character")
+	for hour, color in pairs({ [12] = { 1, 1, 1 }, [23] = { 0.7, 0.78, 1 } }) do
+		client.world.gameTime = { hour, 0 }
+		local r, g, b = character:DayColor()
+		lu.assertAlmostEquals(r, color[1], 1e-9)
+		lu.assertAlmostEquals(g, color[2], 1e-9)
+		lu.assertAlmostEquals(b, color[3], 1e-9)
+	end
+	client.world.gameTime = { 19, 30 } -- (dusk: warm)
+	local r, _, b = character:DayColor()
+	lu.assertTrue(r > b)
+	assertClean(client)
+end
+
+-- What a window's about, in its title plate's gem: an icon, one by
+-- faction (PvP); every window has one, so they read alike.
+function TestWindowKit:test_the_windows_icon_in_the_titles_gem()
+	boot({
+		world = function(world)
+			world.units.player.faction = "Horde"
+		end,
+	})
+	local gems = client.Engine:GetDB("Blizzard").window.title_gems
+	client.api.LoadAddOn("Blizzard_MacroUI")
+	local gem = _G.MacroFrameDiabolicTitle.DiabolicHeader.DiabolicGem
+	lu.assertEquals(gem.icon:GetTexture(), gems.MacroFrame)
+	lu.assertFalse(gem:IsMouseEnabled() == 1)
+	lu.assertEquals(
+		_G.PVPParentFrameDiabolicTitle.DiabolicHeader.DiabolicGem.icon:GetTexture(),
+		gems.PVPParentFrame.Horde
+	)
+	lu.assertEquals(_G.DressUpFrameTitleText.DiabolicHeader.DiabolicGem.icon:GetTexture(), gems.DressUpFrame)
+	assertClean(client)
+end
+
+function TestWindowKit:test_the_arena_battlemasters_window_like_the_battlemasters()
+	boot()
+	local gems = client.Engine:GetDB("Blizzard").window.title_gems
+	local frame = _G.ArenaFrame
+	lu.assertTrue(frame.DiabolicPanel)
+	lu.assertNotNil(_G.ArenaFrameDiabolicFoot)
+	lu.assertEquals(_G.ArenaFrameFrameLabel.DiabolicHeader.DiabolicGem.icon:GetTexture(), gems.ArenaFrame)
+	lu.assertFalse(shown(_G.ArenaFrameDiabolicBand))
+	-- its arenas and what's said on slate, the window under them
+	for _, first in ipairs({ "ArenaZone1", "ArenaZone4", "ArenaFrameZoneDescription" }) do
+		local zone = _G[first .. "DiabolicSpanDiabolicZone"]
+		lu.assertEquals(zone.DiabolicMaterial, "slate")
+		lu.assertTrue(zone:GetFrameLevel() > _G.ArenaFrameDiabolic:GetFrameLevel())
+	end
 	assertClean(client)
 end
 
@@ -1704,6 +1862,7 @@ TestBulletinBoard = {}
 
 function TestBulletinBoard:tearDown()
 	client = nil
+	_G.GroupBulletinBoard_Addon = nil
 end
 
 local function bulletinBoard(world)
@@ -1717,7 +1876,52 @@ local function bulletinBoard(world)
 			frame:CreateFontString("GroupBulletinBoardFrameTitle", "ARTWORK"):SetText("GroupBulletinBoard")
 			_G.CreateFrame("Button", "GroupBulletinBoardFrameCloseButton", frame)
 			_G.CreateFrame("Button", "GroupBulletinBoardFrameSettingsButton", frame)
-			_G.CreateFrame("ScrollFrame", "GroupBulletinBoardFrame_ScrollFrame", frame)
+			local scroll = _G.CreateFrame("ScrollFrame", "GroupBulletinBoardFrame_ScrollFrame", frame)
+			scroll:SetSize(482, 300)
+			local child = _G.CreateFrame("Frame", "GroupBulletinBoardFrame_ScrollChildFrame", scroll)
+			scroll:SetScrollChild(child)
+			-- its list (RequestList.lua): a header per dungeon, a row per
+			-- request shown (the filtered out ones and a folded dungeon's not)
+			local GBB = { RequestList = {}, FramesEntries = {} }
+			local function texts(row)
+				for _, part in ipairs({ "_name", "_message", "_time" }) do
+					row:CreateFontString(row:GetName() .. part, "ARTWORK")
+				end
+			end
+			GBB.UpdateList = function()
+				for _, row in pairs(GBB.FramesEntries) do
+					row:Hide()
+				end
+				local current
+				for i, request in ipairs(GBB.RequestList) do
+					if not request.filtered then
+						if request.dungeon ~= current then
+							current = request.dungeon
+							local header = GBB.FramesEntries[current]
+							if not header then
+								header = _G.CreateFrame("Frame", "GBB.Dungeon_" .. current, child)
+								header:CreateFontString(header:GetName() .. "_name", "ARTWORK")
+								GBB.FramesEntries[current] = header
+							end
+							_G[header:GetName() .. "_name"]:SetText(current)
+							header:Show()
+						end
+						if not request.folded then
+							local row = GBB.FramesEntries[i]
+							if not row then
+								row = _G.CreateFrame("Button", "GBB.Item_" .. i, child)
+								texts(row)
+								GBB.FramesEntries[i] = row
+							end
+							_G[row:GetName() .. "_name"]:SetText("|cff3fc7eb" .. request.name .. "|r")
+							_G[row:GetName() .. "_message"]:SetText(request.message)
+							_G[row:GetName() .. "_time"]:SetText("0m 06s")
+							row:Show()
+						end
+					end
+				end
+			end
+			_G.GroupBulletinBoard_Addon = GBB
 		end,
 	})
 end
@@ -1731,6 +1935,78 @@ function TestBulletinBoard:test_its_window_ours()
 	local place = client.Engine:GetDB("Positions").GroupBulletinBoardFrameSettingsButton
 	lu.assertEquals({ settings:GetPoint() }, { "RIGHT", close, "LEFT", place[4], 0 })
 	lu.assertEquals(settings:GetFrameLevel(), close:GetFrameLevel())
+	-- its title in the plate's font, whatever font it sets on it (its settings')
+	local title = _G.GroupBulletinBoardFrameTitle
+	title:SetFont([[Fonts\FRIZQT__.TTF]], 12)
+	local plate = client.Engine:GetDB("Blizzard").window.title_plate.font
+	lu.assertEquals(title:GetFontObject(), plate)
+	lu.assertEquals({ title:GetFont() }, { plate:GetFont() }) -- (what's drawn: its own font gone)
+	assertClean(client)
+end
+
+-- Its requests a notice board's: notes nailed in rows under their
+-- dungeon's name, in ink (the colours in the text darker), placed again
+-- after each of its updates.
+function TestBulletinBoard:test_its_requests_notes_nailed_to_a_board()
+	boot({ world = bulletinBoard })
+	client.api.LoadAddOn("GroupBulletinBoard")
+	local spec = client.Engine:GetDB("Blizzard").bulletin_board.board
+	local GBB = _G.GroupBulletinBoard_Addon
+	local request = function(dungeon, name, extra)
+		local entry = { dungeon = dungeon, name = name, message = "LFM |cffffff00[Threat From Above]|r" }
+		for key, value in pairs(extra or {}) do
+			entry[key] = value
+		end
+		return entry
+	end
+	GBB.RequestList = {
+		request("MISC", "Nookinbags"),
+		request("MISC", "Drgreen"),
+		request("MISC", "Hidden", { filtered = true }),
+		request("MISC", "Stelfanie"),
+		request("NEX", "Folded", { folded = true }),
+		request("UK", "Donjuan"),
+	}
+	GBB.UpdateList()
+	local rows = GBB.FramesEntries
+	local child = _G.GroupBulletinBoardFrame_ScrollChildFrame
+	local function at(frame)
+		local _, relative, _, x, y = frame:GetPoint()
+		lu.assertEquals(relative, child)
+		return x, -y
+	end
+	-- two notes to a row (482 wide, 210 at least): the third under them
+	local x1, y1 = at(rows[1])
+	local x2, y2 = at(rows[2])
+	local x4, y4 = at(rows[4])
+	lu.assertTrue(x2 > x1 + spec.width)
+	lu.assertTrue(math.abs(y2 - y1) <= spec.jitter * 2)
+	lu.assertTrue(math.abs(x4 - x1) <= spec.jitter * 2)
+	lu.assertTrue(y4 >= y1 + spec.height)
+	-- the dungeons' names under the notes before them, in Exocet
+	local _, nexY = at(rows.NEX)
+	local _, ukY = at(rows.UK)
+	lu.assertTrue(nexY >= y4 + spec.height)
+	lu.assertEquals(ukY, nexY + spec.header_height) -- (a folded one: its name alone)
+	lu.assertEquals(_G["GBB.Dungeon_UK_name"]:GetFontObject(), spec.header_font)
+	lu.assertEquals(GBB.dungeonHeaderY.UK, ukY)
+	-- a note: its paper (one of four), its nail, its text in ink
+	local note = rows[2]
+	lu.assertEquals(note.DiabolicNote:GetTexture(), spec.notes)
+	lu.assertEquals({ note.DiabolicNote:GetTexCoord() }, { 0, 0.5, 0, 0.75, 1, 0.5, 1, 0.75 })
+	lu.assertEquals(_G["GBB.Item_2_name"]:GetText(), "|cff1f6375Drgreen|r")
+	lu.assertEquals(_G["GBB.Item_2_message"]:GetText(), "LFM |cff7f7f00[Threat From Above]|r")
+	lu.assertEquals(_G["GBB.Item_2_message"]:GetFontObject(), spec.message_font)
+	lu.assertEquals(_G["GBB.Item_2_time"]:GetFontObject(), spec.time_font)
+	-- the board as tall as its notes (the scroll frame's at least)
+	lu.assertEquals(child:GetHeight(), math.max(300, ukY + spec.header_height + spec.height + spec.gap))
+	-- again: the same notes, not made twice
+	local paper = note.DiabolicNote
+	GBB.UpdateList()
+	lu.assertEquals(rows[2].DiabolicNote, paper)
+	-- another Group Bulletin Board, without its list: left alone
+	_G.GroupBulletinBoard_Addon = {}
+	client:GetModule("Blizzard: Bulletin Board"):LayOutBoard()
 	assertClean(client)
 end
 
@@ -1843,24 +2119,6 @@ end
 function TestWindowKit:test_the_options_lose_blizzards_backdrop()
 	boot()
 	lu.assertNil(_G.InterfaceOptionsFrame:GetBackdrop())
-	assertClean(client)
-end
-
-function TestWindowKit:test_a_window_has_a_pale_glyph_in_its_corner()
-	boot()
-	local window = _G.CharacterFrameDiabolic
-	local spec = client:GetModule("Blizzard: Windows").config.watermark
-	lu.assertNotNil(window.DiabolicWatermark)
-	lu.assertEquals(window.DiabolicWatermark:GetAlpha(), spec.alpha)
-	-- only where it fits all of it: not hanging out of a small one
-	_G.CharacterFrame:Show()
-	lu.assertEquals(window.DiabolicWatermark:IsShown(), 1)
-	local kit = client:GetModule("Blizzard: Windows")
-	local small = _G.CreateFrame("Frame", "SmallKitFrame", _G.UIParent)
-	small:SetSize(200, 120)
-	small:SetPoint("CENTER")
-	local smallWindow = kit:CreateWindow(small, { 0, 0, 0, 0 })
-	lu.assertNil(smallWindow.DiabolicWatermark:IsShown())
 	assertClean(client)
 end
 

@@ -234,7 +234,9 @@ local function constants()
 		DELETE = "Delete",
 		EQUIPSET_EQUIP = "Equip",
 		SAVE = "Save",
-		UIPanelWindows = {},
+		UIPanelWindows = { -- (UIParent.lua's, the ones tests open)
+			QuestLogFrame = { area = "doublewide", pushable = 0, whileDead = 1 },
+		},
 		COMBAT_TEXT_LOCATIONS = {
 			startX = 0,
 			startY = 384,
@@ -380,7 +382,6 @@ local function constants()
 		TIMEMANAGER_TOOLTIP_REALMTIME = "Realm Time:",
 		TIMEMANAGER_TOOLTIP_TITLE = "Time Info",
 		GAMETIME_TOOLTIP_TOGGLE_CALENDAR = "Click to toggle the calendar.",
-		MBB_TOOLTIP1 = nil,
 		SLASH_RELOADUI1 = nil,
 	}
 	for class, color in pairs(CLASS_COLORS) do
@@ -424,7 +425,6 @@ end
 -- them a string).
 local NIL_CAPS = {
 	CUSTOM_CLASS_COLORS = true,
-	MBB_TOOLTIP1 = true,
 	SLASH_RELOADUI1 = true,
 	SLASH_RELOADUI2 = true,
 	UIDROPDOWNMENU_VALUE_PATCH_VERSION = true,
@@ -1544,6 +1544,30 @@ end
 
 -- Frames of Blizzard's load-on-demand addons, made by LoadAddOn.
 local ON_DEMAND = {
+	-- Blizzard_ItemSocketingUI.lua: each socket shown with its gem (the one
+	-- put in, else the one in it), the others hidden, the item's portrait
+	-- (without the brackets, the shine and the scroll frame's width)
+	Blizzard_ItemSocketingUI = function()
+		_G.ItemSocketingFrame_Update = function()
+			local count = _G.GetNumSockets()
+			for i = 1, 3 do
+				local socket = _G["ItemSocketingSocket" .. i]
+				if i <= count then
+					local _, icon = _G.GetNewSocketInfo(i)
+					if not icon then
+						_, icon = _G.GetExistingSocketInfo(i)
+					end
+					_G.SetItemButtonTexture(socket, icon)
+					socket:Show()
+				else
+					socket:Hide()
+				end
+			end
+			local _, icon = _G.GetSocketItemInfo()
+			_G.SetPortraitToTexture("ItemSocketingFramePortrait", icon)
+		end
+		_G.ItemSocketingSocketButton_OnScrollRangeChanged = function() end
+	end,
 	Blizzard_TimeManager = function()
 		local clock = button("Button", "TimeManagerClockButton", _G.Minimap)
 		new("FontString", "TimeManagerClockTicker", clock)
@@ -1880,7 +1904,28 @@ local ON_DEMAND = {
 		_G.PanelTemplates_SetTab(frame, 1)
 
 		-- Blizzard_AchievementUI.lua
-		_G.AchievementFrameSummary_UpdateAchievements = function() end
+		-- (the summary's latest achievements, made as it first updates, each
+		-- 3 up into the one above)
+		_G.ACHIEVEMENTUI_MAX_SUMMARY_ACHIEVEMENTS = 4
+		_G.AchievementFrameSummary_UpdateAchievements = function()
+			local list = _G.AchievementFrameSummaryAchievements
+			for i = 1, _G.ACHIEVEMENTUI_MAX_SUMMARY_ACHIEVEMENTS do
+				if not list.buttons[i] then
+					local row = new("Button", "AchievementFrameSummaryAchievement" .. i, list)
+					row:SetHeight(48)
+					list.buttons[i] = row -- (SummaryAchievementTemplate's OnLoad)
+					if i == 1 then
+						local header = _G.AchievementFrameSummaryAchievementsHeader
+						row:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 18, 2)
+						row:SetPoint("TOPRIGHT", header, "BOTTOMRIGHT", -18, 2)
+					else
+						local above = list.buttons[i - 1]
+						row:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, 3)
+						row:SetPoint("TOPRIGHT", above, "BOTTOMRIGHT", 0, 3)
+					end
+				end
+			end
+		end
 		_G.AchievementFrameCategories_DisplayButton = function(b, element)
 			if type(element.parent) == "number" then
 				b.label:SetFontObject(_G.GameFontHighlight)
@@ -2733,9 +2778,15 @@ local function frameXML(client)
 	f.AutoCastShine_AutoCastStop = function(shine)
 		shine.autocasting = false
 	end
+	-- (ItemButtonTemplate.lua: the icon shown only with a texture)
 	f.SetItemButtonTexture = function(b, texture)
 		local icon = _G[b:GetName() .. "IconTexture"]
 		if icon then
+			if texture then
+				icon:Show()
+			else
+				icon:Hide()
+			end
 			icon:SetTexture(texture)
 		end
 	end
@@ -2936,8 +2987,6 @@ local function installConditions(client)
 					result = w.inCombat
 				elseif name == "vehicleui" then
 					result = w.units.player.hasVehicleUI
-				elseif name == "canexitvehicle" then
-					result = w.units.player.inVehicle
 				elseif name == "bonusbar" then
 					result = (arg == "" and w.bonusBarOffset > 0) or (arg ~= "" and tostring(w.bonusBarOffset) == arg)
 				elseif name == "possessbar" then

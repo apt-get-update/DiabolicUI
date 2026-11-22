@@ -36,10 +36,13 @@ local function readLines(cmd)
 	return lines
 end
 
--- Every addon source file: the same set hook.lua records.
+-- Every addon source file: the same set hook.lua records (not the test
+-- realm's server script, tools/realm/lua: AzerothCore runs it, not the client).
 local function listSourceFiles()
-	local files =
-		readLines("find . -name '*.lua' -not -path './tests/*' -not -path './docs/*' -not -path '*/Libs/*' | sort")
+	local files = readLines(
+		"find . -name '*.lua' -not -path './tests/*' -not -path './docs/*' -not -path '*/Libs/*'"
+			.. " -not -path './tools/realm/lua/*' | sort"
+	)
 	for i, path in ipairs(files) do
 		files[i] = path:gsub("^%./", "")
 	end

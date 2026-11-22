@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "MailFrame"
+    kind: "list"
     width: 384
     height: 512
 
@@ -59,7 +60,7 @@ WowWindow {
 
             Button {
                 name: "MailItem1ExpireTime"
-                text: "27 Days "
+                text: "89 Days "
                 anchors.right: parent.right
                 anchors.rightMargin: -10
                 anchors.top: parent.top
@@ -71,7 +72,7 @@ WowWindow {
             FontString {
                 id: mailItem1Sender
                 name: "MailItem1Sender"
-                text: "Brew of the Month Club"
+                text: "Customer Support"
                 anchors.left: parent.left
                 anchors.leftMargin: 47
                 anchors.top: parent.top
@@ -82,7 +83,7 @@ WowWindow {
 
             FontString {
                 name: "MailItem1Subject"
-                text: "Fun For You And Your Friends"
+                text: "Brew of the Month Club"
                 anchors.left: mailItem1Sender.left
                 anchors.top: mailItem1Sender.bottom
                 width: 248
@@ -150,7 +151,7 @@ WowWindow {
 
             Button {
                 name: "MailItem2ExpireTime"
-                text: "3626 Days "
+                text: "29 Days "
                 anchors.right: parent.right
                 anchors.rightMargin: -10
                 anchors.top: parent.top
@@ -162,7 +163,7 @@ WowWindow {
             FontString {
                 id: mailItem2Sender
                 name: "MailItem2Sender"
-                text: "Customer Support"
+                text: "Rhonin"
                 anchors.left: parent.left
                 anchors.leftMargin: 47
                 anchors.top: parent.top
@@ -173,7 +174,7 @@ WowWindow {
 
             FontString {
                 name: "MailItem2Subject"
-                text: "Recovered items"
+                text: "Level 80"
                 anchors.left: mailItem2Sender.left
                 anchors.top: mailItem2Sender.bottom
                 width: 248
@@ -625,7 +626,7 @@ WowWindow {
         id: mailFrameDiabolic
         name: "MailFrameDiabolic"
         anchors.left: parent.left
-        anchors.leftMargin: -16
+        anchors.leftMargin: -20
         anchors.top: parent.top
         anchors.topMargin: -68
         width: 400
@@ -668,8 +669,8 @@ WowWindow {
                     text: "Open"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 34.8
-                    height: 11.9
+                    width: 30
+                    height: 10.3
                 }
             }
 
@@ -689,8 +690,8 @@ WowWindow {
                     text: "Return"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 53.7
-                    height: 11.9
+                    width: 46.6
+                    height: 10.3
                 }
             }
 
@@ -737,7 +738,6 @@ WowWindow {
             EditBox {
                 id: sendMailNameEditBox
                 name: "SendMailNameEditBox"
-                text: "Padizwerch"
                 wowParent: "SendMailFrame"
                 style: "EditBox"
                 anchors.left: parent.left
@@ -920,12 +920,21 @@ WowWindow {
 
                 FontString {
                     name: "MailFrameDiabolicTitle"
-                    text: "Send Mail"
+                    text: "Inbox"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 86.9
+                    width: 52.1
                     height: 14.2
+                }
+
+                Button {
+                    name: "MailFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
                 }
             }
         }
@@ -985,20 +994,21 @@ WowWindow {
                 text: "Open All"
                 wowParent: "InboxFrame"
                 style: "Button"
+                pin: "all"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.horizontalCenterOffset: -14
                 anchors.verticalCenter: parent.bottom
-                anchors.verticalCenterOffset: -16
+                anchors.verticalCenterOffset: -18
                 width: 120
-                height: 25
+                height: 22
 
                 FontString {
                     name: "PostalOpenAllButtonText"
                     text: "Open All"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 64
-                    height: 11.9
+                    width: 56.1
+                    height: 10.3
                 }
             }
 
@@ -1028,7 +1038,7 @@ WowWindow {
                     wowParent: "SendMailFrame"
                     style: "Button"
                     pin: "all"
-                    width: 78
+                    width: 77
                     height: 22
 
                     FontString {
@@ -1036,8 +1046,8 @@ WowWindow {
                         text: "Send"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 33.2
-                        height: 11.9
+                        width: 30
+                        height: 10.3
                     }
                 }
 
@@ -1047,7 +1057,7 @@ WowWindow {
                     wowParent: "SendMailFrame"
                     style: "Button"
                     pin: "all"
-                    width: 78
+                    width: 77
                     height: 22
 
                     FontString {
@@ -1055,8 +1065,8 @@ WowWindow {
                         text: "Cancel"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 51.4
-                        height: 11.9
+                        width: 45.8
+                        height: 10.3
                     }
                 }
             }
@@ -1191,33 +1201,33 @@ WowWindow {
             anchors.rightMargin: -176
             anchors.bottom: mailFrameDiabolicFoot.bottom
             anchors.bottomMargin: 11
-            width: 126.4
+            width: 112.1
             height: 13
 
             Button {
                 id: sendMailMoneyFrameCopperButton
                 name: "SendMailMoneyFrameCopperButton"
-                text: "13"
+                text: "0"
                 anchors.right: parent.right
                 anchors.rightMargin: 13
                 anchors.verticalCenter: parent.verticalCenter
-                width: 30.4
+                width: 23.3
                 height: 13
 
                 FontString {
                     name: "SendMailMoneyFrameCopperButtonText"
-                    text: "13"
+                    text: "0"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
+                    width: 10.3
                     height: 14.2
                 }
             }
 
             Button {
                 name: "SendMailMoneyFrameGoldButton"
-                text: "3654"
+                text: "5000"
                 anchors.right: sendMailMoneyFrameSilverButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: sendMailMoneyFrameSilverButton.verticalCenter
@@ -1226,7 +1236,7 @@ WowWindow {
 
                 FontString {
                     name: "SendMailMoneyFrameGoldButtonText"
-                    text: "3654"
+                    text: "5000"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
@@ -1238,20 +1248,20 @@ WowWindow {
             Button {
                 id: sendMailMoneyFrameSilverButton
                 name: "SendMailMoneyFrameSilverButton"
-                text: "16"
+                text: "0"
                 anchors.right: sendMailMoneyFrameCopperButton.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: sendMailMoneyFrameCopperButton.verticalCenter
-                width: 30.4
+                width: 23.3
                 height: 13
 
                 FontString {
                     name: "SendMailMoneyFrameSilverButtonText"
-                    text: "16"
+                    text: "0"
                     anchors.right: parent.right
                     anchors.rightMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 17.4
+                    width: 10.3
                     height: 14.2
                 }
             }

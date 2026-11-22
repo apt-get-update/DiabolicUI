@@ -51,7 +51,7 @@ local PROFESSIONS = {
 	{ skill = 2108 }, -- Leatherworking
 	{ skill = 3908 }, -- Tailoring
 	{ skill = 2575, open = 2656, extra = 2580 }, -- Mining, Smelting, Find Minerals
-	{ skill = 2366, open = false, extra = 2383 }, -- Herbalism, Find Herbs
+	{ skill = 2366, line = L["Herbalism"], open = false, extra = 2383 }, -- Herb Gathering, Find Herbs (its spell isn't named as its skill line)
 	{ skill = 8613, open = false }, -- Skinning
 	{ skill = 2550, extra = 818 }, -- Cooking, Basic Campfire
 	{ skill = 3273 }, -- First Aid
@@ -68,10 +68,10 @@ local SpellOf = function(id)
 	return name, icon, name and (GetSpellInfo(name) ~= nil)
 end
 
--- A profession's data by its skill line's name.
+-- A profession's data by its skill line's name (its spell's, or `line`).
 local Find = function(name)
 	for _, data in ipairs(PROFESSIONS) do
-		if GetSpellInfo(data.skill) == name then
+		if (GetSpellInfo(data.skill) == name) or (data.line == name) then
 			return data
 		end
 	end
@@ -159,6 +159,18 @@ Module.CreateProfession = function(self, parent, primary)
 	bar:SetSize(width, barHeight)
 	bar:SetPoint("BOTTOMLEFT", row.Icon, "BOTTOMRIGHT", config.name_offset, 2)
 	kit:StyleBar(bar)
+	-- the six ranks along it: a tick between each and the next, from its
+	-- top and from its bottom (its middle clear for its text)
+	bar.Steps = {}
+	for i = 1, config.profession_cap / config.profession_step - 1 do
+		local x = width * i * config.profession_step / config.profession_cap
+		for _, edge in ipairs({ "TOP", "BOTTOM" }) do
+			local tick = bar:CreateTexture(nil, "OVERLAY")
+			tick:SetSize(1, config.profession_tick)
+			tick:SetPoint(edge, bar, edge .. "LEFT", x, (edge == "TOP") and -2 or 2)
+			bar.Steps[#bar.Steps + 1] = { tick = tick, rank = i * config.profession_step }
+		end
+	end
 	bar.Text = bar:CreateFontString(nil, "OVERLAY")
 	bar.Text:SetFontObject(config.rank_font)
 	bar.Text:SetPoint("CENTER", bar, "CENTER", 0, 0)
@@ -190,6 +202,11 @@ Module.CreateProfessions = function(self, cover)
 		title:SetTextColor(unpack(config.profession_title_color))
 		title:SetPoint("BOTTOMLEFT", page, "TOPLEFT", x, y + 6)
 		title:SetText(label)
+		-- the windows' header: a thin line under it, as wide as the rows
+		local line = page:CreateTexture(nil, "ARTWORK")
+		line:SetTexture(unpack(kit.config.section.line_color))
+		line:SetSize(config.profession_width, 1)
+		line:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -2)
 		local height = config.profession_heights[(kind == "primary") and 1 or 2]
 		for i = 1, count do
 			local row = self:CreateProfession(page, kind == "primary")
@@ -240,7 +257,16 @@ Module.FillProfession = function(self, row, skill)
 	row.Icon:SetDesaturated(false)
 	row.Name:SetText(skill.name)
 	row.Rank:SetText(RankTitle(skill.max))
-	row.Bar:SetMinMaxValues(0, (skill.max > 0) and skill.max or 1)
+	-- the whole road to Grand Master, its ranks reached lit; walked to its
+	-- end, a reward: the bar and its rank's title in gold
+	local config = self.config
+	local done = skill.rank >= config.profession_cap
+	row.Bar:SetStatusBarTexture(done and config.profession_fill_done or config.profession_fill)
+	row.Rank:SetTextColor(unpack(done and config.profession_done_color or config.profession_rank_color))
+	for _, step in ipairs(row.Bar.Steps) do
+		step.tick:SetTexture(unpack((skill.rank >= step.rank) and config.profession_step_lit or config.profession_step_dim))
+	end
+	row.Bar:SetMinMaxValues(0, config.profession_cap)
 	row.Bar:SetValue(skill.rank)
 	row.Bar.Text:SetText(skill.rank .. " / " .. skill.max)
 	row.Bar:Show()

@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "PVPParentFrame"
+    kind: "list"
     width: 384
     height: 512
 
@@ -45,7 +46,7 @@ WowWindow {
         Button {
             id: battlegroundType2
             name: "BattlegroundType2"
-            text: "Arathi Basin (Call to Arms)"
+            text: "Warsong Gulch"
             anchors.left: battlegroundType1.left
             anchors.top: battlegroundType1.bottom
             width: 295
@@ -53,12 +54,12 @@ WowWindow {
 
             FontString {
                 name: "BattlegroundType2Text"
-                text: "Arathi Basin (Call to Arms)"
+                text: "Warsong Gulch"
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -1
-                width: 155.7
+                width: 91.7
                 height: 11.9
             }
         }
@@ -66,7 +67,7 @@ WowWindow {
         Button {
             id: battlegroundType3
             name: "BattlegroundType3"
-            text: "Warsong Gulch"
+            text: "Arathi Basin"
             anchors.left: battlegroundType2.left
             anchors.top: battlegroundType2.bottom
             width: 295
@@ -74,12 +75,12 @@ WowWindow {
 
             FontString {
                 name: "BattlegroundType3Text"
-                text: "Warsong Gulch"
+                text: "Arathi Basin"
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -1
-                width: 91.7
+                width: 72.7
                 height: 11.9
             }
         }
@@ -302,44 +303,45 @@ WowWindow {
                 anchors.topMargin: -6
                 width: 329
                 height: 220
-            }
 
-            Slider {
-                name: "PVPBattlegroundFrameInfoScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                anchors.topMargin: 16
-                width: 16
-                height: 176
-
-                Frame {
-                    name: "PVPBattlegroundFrameInfoScrollFrameScrollBarDiabolicTrack"
-                    anchors.horizontalCenter: pVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton.horizontalCenter
-                    anchors.top: pVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 210
-                }
-
-                Button {
-                    name: "PVPBattlegroundFrameInfoScrollFrameScrollBarScrollDownButton"
+                Slider {
+                    name: "PVPBattlegroundFrameInfoScrollFrameScrollBar"
+                    wowParent: "PVPBattlegroundFrameInfoScrollFrame"
                     style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
+                    anchors.right: parent.right
+                    anchors.rightMargin: 7
+                    anchors.top: parent.top
+                    anchors.topMargin: 23
                     width: 16
-                    height: 16
-                }
+                    height: 174
 
-                Button {
-                    id: pVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton
-                    name: "PVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
+                    Frame {
+                        name: "PVPBattlegroundFrameInfoScrollFrameScrollBarDiabolicTrack"
+                        anchors.horizontalCenter: pVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton.horizontalCenter
+                        anchors.top: pVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 208
+                    }
+
+                    Button {
+                        name: "PVPBattlegroundFrameInfoScrollFrameScrollBarScrollDownButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.bottom
+                        width: 16
+                        height: 16
+                    }
+
+                    Button {
+                        id: pVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton
+                        name: "PVPBattlegroundFrameInfoScrollFrameScrollBarScrollUpButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.top
+                        width: 16
+                        height: 16
+                    }
                 }
             }
         }
@@ -376,44 +378,45 @@ WowWindow {
                 anchors.topMargin: -6
                 width: 329
                 height: 99
-            }
 
-            Slider {
-                name: "PVPBattlegroundFrameTypeScrollFrameScrollBar"
-                style: "ScrollBar"
-                anchors.left: parent.right
-                anchors.leftMargin: 6
-                anchors.top: parent.top
-                anchors.topMargin: 16
-                width: 16
-                height: 55
-
-                Frame {
-                    name: "PVPBattlegroundFrameTypeScrollFrameScrollBarDiabolicTrack"
-                    anchors.horizontalCenter: pVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton.horizontalCenter
-                    anchors.top: pVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton.top
-                    anchors.topMargin: -1
-                    width: 18
-                    height: 89
-                }
-
-                Button {
-                    name: "PVPBattlegroundFrameTypeScrollFrameScrollBarScrollDownButton"
+                Slider {
+                    name: "PVPBattlegroundFrameTypeScrollFrameScrollBar"
+                    wowParent: "PVPBattlegroundFrameTypeScrollFrame"
                     style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.bottom
+                    anchors.right: parent.right
+                    anchors.rightMargin: 7
+                    anchors.top: parent.top
+                    anchors.topMargin: 23
                     width: 16
-                    height: 16
-                }
+                    height: 53
 
-                Button {
-                    id: pVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton
-                    name: "PVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton"
-                    style: "ScrollBar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.top
-                    width: 16
-                    height: 16
+                    Frame {
+                        name: "PVPBattlegroundFrameTypeScrollFrameScrollBarDiabolicTrack"
+                        anchors.horizontalCenter: pVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton.horizontalCenter
+                        anchors.top: pVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton.top
+                        anchors.topMargin: -1
+                        width: 18
+                        height: 87
+                    }
+
+                    Button {
+                        name: "PVPBattlegroundFrameTypeScrollFrameScrollBarScrollDownButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.bottom
+                        width: 16
+                        height: 16
+                    }
+
+                    Button {
+                        id: pVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton
+                        name: "PVPBattlegroundFrameTypeScrollFrameScrollBarScrollUpButton"
+                        style: "ScrollBar"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.top
+                        width: 16
+                        height: 16
+                    }
                 }
             }
 
@@ -505,11 +508,11 @@ WowWindow {
 
                 FontString {
                     name: "PVPFrameHonorPoints"
-                    text: "50130"
+                    text: "0"
                     anchors.left: pVPFrameHonorLabel.right
                     anchors.leftMargin: 15
                     anchors.verticalCenter: pVPFrameHonorLabel.verticalCenter
-                    width: 38.7
+                    width: 8.7
                     height: 11.9
                 }
             }
@@ -559,7 +562,7 @@ WowWindow {
                 FontString {
                     id: pVPHonorLifetimeKills
                     name: "PVPHonorLifetimeKills"
-                    text: "66"
+                    text: "0"
                     anchors.horizontalCenter: pVPHonorLifetimeLabel.horizontalCenter
                     anchors.top: pVPHonorLifetimeLabel.bottom
                     anchors.topMargin: 10
@@ -649,10 +652,11 @@ WowWindow {
             Button {
                 name: "PVPTeam1"
                 wowParent: "PVPFrame"
+                pin: "size"
                 anchors.left: pVPTeam1Standard.left
                 anchors.leftMargin: 33
                 anchors.verticalCenter: pVPTeam1Standard.verticalCenter
-                width: 300
+                width: 294
                 height: 78
 
                 FontString {
@@ -681,10 +685,11 @@ WowWindow {
             Button {
                 name: "PVPTeam2"
                 wowParent: "PVPFrame"
+                pin: "size"
                 anchors.left: pVPTeam2Standard.left
                 anchors.leftMargin: 33
                 anchors.verticalCenter: pVPTeam2Standard.verticalCenter
-                width: 300
+                width: 294
                 height: 78
 
                 FontString {
@@ -712,10 +717,11 @@ WowWindow {
             Button {
                 name: "PVPTeam3"
                 wowParent: "PVPFrame"
+                pin: "size"
                 anchors.left: pVPTeam3Standard.left
                 anchors.leftMargin: 33
                 anchors.verticalCenter: pVPTeam3Standard.verticalCenter
-                width: 300
+                width: 294
                 height: 78
 
                 FontString {
@@ -747,7 +753,7 @@ WowWindow {
         id: pVPParentFrameDiabolic
         name: "PVPParentFrameDiabolic"
         anchors.left: parent.left
-        anchors.leftMargin: -24
+        anchors.leftMargin: -23
         anchors.top: parent.top
         anchors.topMargin: -28
         width: 402
@@ -791,6 +797,15 @@ WowWindow {
                     width: 158.8
                     height: 14.2
                 }
+
+                Button {
+                    name: "PVPParentFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
             }
         }
 
@@ -822,7 +837,7 @@ WowWindow {
                     wowParent: "PVPBattlegroundFrame"
                     style: "Button"
                     pin: "all"
-                    width: 128
+                    width: 118.7
                     height: 22
 
                     FontString {
@@ -830,8 +845,8 @@ WowWindow {
                         text: "Join as Party"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 101.9
-                        height: 11.9
+                        width: 68.7
+                        height: 10.3
                     }
                 }
 
@@ -844,7 +859,7 @@ WowWindow {
                     wowParent: "PVPBattlegroundFrame"
                     style: "Button"
                     pin: "all"
-                    width: 110.6
+                    width: 107.7
                     height: 22
 
                     FontString {
@@ -852,8 +867,8 @@ WowWindow {
                         text: "Join Battle"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 84.5
-                        height: 11.9
+                        width: 57.7
+                        height: 10.3
                     }
                 }
 
@@ -864,7 +879,7 @@ WowWindow {
                     wowParent: "PVPBattlegroundFrame"
                     style: "Button"
                     pin: "all"
-                    width: 77.4
+                    width: 85.6
                     height: 22
 
                     FontString {
@@ -872,8 +887,8 @@ WowWindow {
                         text: "Cancel"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 51.4
-                        height: 11.9
+                        width: 35.6
+                        height: 10.3
                     }
                 }
             }

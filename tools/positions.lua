@@ -38,7 +38,10 @@ local Round = function(value)
 end
 
 local layout = {}
-local saved = (SAVED == "") and Lines("ls -t ../../../WTF/Account/*/SavedVariables/DiabolicUI.lua 2>/dev/null")[1]
+-- (the test realm's client's: only it scans, tools/realm)
+local REALM = os.getenv("DIABOLIC_REALM") or ((os.getenv("HOME") or "~") .. "/Projects/diabolic-realm")
+local saved = (SAVED == "")
+		and Lines("ls -t " .. REALM .. "/client/WTF/Account/*/SavedVariables/DiabolicUI.lua 2>/dev/null")[1]
 	or SAVED
 if saved and (saved ~= "-") then
 	local env = {}
@@ -46,7 +49,7 @@ if saved and (saved ~= "-") then
 	layout = env.DiabolicUI_Layout or {}
 end
 
--- A window's art, as the scan packs it (Packed, modules/blizzard/layout-scan.lua).
+-- A window's art, as the scan packs it (Packed, tools/realm/scan.lua).
 for _, seen in pairs(layout.windows or {}) do
 	for _, view in pairs(type(seen) == "table" and seen.views or {}) do
 		for i, item in ipairs(view.art or {}) do
@@ -1168,6 +1171,9 @@ local WriteWindow = function(window)
 		"    width: " .. Number(width),
 		"    height: " .. Number(height),
 	}
+	if window.kind then
+		table.insert(out, 8, "    kind: " .. Quote(window.kind))
+	end
 	WriteKids(out, kids[window.name], kids, "    ")
 	out[#out + 1] = "}\n"
 	local path = DIR .. "/" .. window.name:gsub("[^%w_]", "_") .. ".qml"
@@ -1293,6 +1299,8 @@ for title, window in pairs(windows) do
 			"shadow",
 			"textWidth",
 			"words",
+			"rects",
+			"widths",
 		}) do
 			copy[key] = seen[key]
 		end
@@ -1369,6 +1377,7 @@ for title, window in pairs(windows) do
 		parts = parts,
 		art = Pictures(first),
 		file = window.file,
+		kind = window.kind,
 		views = views[1] and views or nil,
 		rows = rows[1] and rows or nil,
 	}

@@ -26,7 +26,9 @@ LAYOUT = "tools/layout.json"
 EDITS = "tools/edits.lua"
 SAMPLE_EDITS = "tools/edits-sample.lua"
 UNSAVED = "tools/editor-unsaved.json"
-SAVED = "../../../WTF/Account/*/SavedVariables/DiabolicUI.lua"
+# the game's scans, and the test realm's client's (tools/realm): the newest is read
+REALM = os.environ.get("DIABOLIC_REALM") or os.path.expanduser("~/Projects/diabolic-realm")
+SAVED = [REALM + "/client/WTF/Account/*/SavedVariables/DiabolicUI.lua"]  # (the test realm's client: only it scans)
 WINDOWS = "windows"
 QUALITY = 2  # the art's pixels per unit
 
@@ -239,7 +241,7 @@ class Backend(QObject):
         self.message = self.run()
         # a new scan, or a window file changed out of the editor
         self.watcher = QFileSystemWatcher(self)
-        for path in glob.glob(SAVED):
+        for path in [p for pattern in SAVED for p in glob.glob(pattern)]:
             self.watcher.addPath(os.path.dirname(path))
         self.watcher.addPath(WINDOWS)
         self.watchFiles()
@@ -254,7 +256,7 @@ class Backend(QObject):
             self.watcher.addPaths(sorted(new))
 
     def stamp(self):
-        files = glob.glob(SAVED) + glob.glob(WINDOWS + "/*.qml")
+        files = [p for pattern in SAVED for p in glob.glob(pattern)] + glob.glob(WINDOWS + "/*.qml")
         return (max((os.path.getmtime(p) for p in files), default=0), len(files))
 
     def written(self):
