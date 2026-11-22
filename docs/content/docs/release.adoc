@@ -8,17 +8,28 @@ weight: 5
 Publishing a new version, say 1.6.7. The game closed: the tests use a lot of
 memory.
 
+Branches: `master` holds one commit per release, tagged. Work collects on
+`develop`; each feature on a `feature/<area>` branch from `develop`, merged
+back when done. The steps below run on `develop`, then the release goes to
+`master`.
+
 . *Version*: in `DiabolicUI.toc`, `## Version: 1.6.7-Release`.
 . *Tests*: `tests/run_all.sh`. All must pass.
 . *Coverage*: `tests/coverage/run.sh --readme` (about 5 minutes). It updates
   the badge in `README.adoc`. Below 100%, the lines it lists need a test.
-. *Commit and tag*:
+. *Commit on `develop`, squash onto `master`, tag, merge back*:
 +
 [source,bash]
 ----
-git commit -am "Release 1.6.7: what changed, in a few words."
+git commit -am "Release prep: 1.6.7."
+git checkout master
+git merge --squash develop
+git commit -m "Release 1.6.7: what changed, in a few words."
 git tag v1.6.7
-git push github master v1.6.7
+git checkout develop
+git merge --no-ff master -m "Merge 1.6.7 into develop."  # (the next squash starts from here)
+git push origin master develop v1.6.7
+git push github master develop v1.6.7
 ----
 . *Zip*: only what the game needs, in a `DiabolicUI/` folder:
 +
