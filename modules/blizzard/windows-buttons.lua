@@ -8,7 +8,18 @@ local NameFor = Private.NameFor
 
 -- Where Blizzard places `frame` as a panel and how wide it is to the next
 -- one, our window (`insets` past it) included: `x`, `y` move it.
+-- (Blizzard copies its UIPanelWindows entry onto the frame the first time it
+-- places it, over ours: seen in game, the achievements' 80 to the right. So
+-- that copy made first, as UIParent.lua's GetUIPanelWindowInfo makes it.)
 Module.SetPanelLayout = function(self, frame, insets, x, y)
+	local info = _G.UIPanelWindows[frame:GetName()]
+	if info and not frame:GetAttribute("UIPanelLayout-defined") then
+		frame:SetAttribute("UIPanelLayout-defined", true)
+		for key, value in pairs(info) do
+			frame:SetAttribute("UIPanelLayout-" .. key, value)
+		end
+		frame:SetAttribute("UIPanelLayout-enabled", true)
+	end
 	frame:SetAttribute("UIPanelLayout-width", frame:GetWidth() + insets[3])
 	if x then
 		frame:SetAttribute("UIPanelLayout-xoffset", x)
@@ -161,20 +172,21 @@ Module.StyleScrollBar = function(self, bar)
 	thumb:SetTexCoord(unpack(spec.thumb_texcoords))
 	thumb:SetSize(spec.width, spec.thumb_height)
 	-- the track from the up arrow's top to the down arrow's bottom, the
-	-- line just outside it
+	-- line just outside it. (Its fill on the bar's own background, under the
+	-- thumb: seen in game, a window raised lifts a child frame over the bar,
+	-- a fill there darkened the thumb. The line, outside the thumb, can be.)
 	local track = CreateFrame("Frame", NameFor(bar, "DiabolicTrack"), bar)
 	track:SetFrameLevel(math.max(bar:GetFrameLevel() - 1, 0))
 	track:SetPoint("TOP", up, "TOP", 0, spec.line)
 	track:SetPoint("BOTTOM", down, "BOTTOM", 0, -spec.line)
 	track:SetWidth(spec.width + spec.line * 2)
-	track:SetBackdrop({
-		bgFile = spec.blank,
-		edgeFile = spec.blank,
-		edgeSize = spec.line,
-		insets = { left = spec.line, right = spec.line, top = spec.line, bottom = spec.line },
-	})
-	track:SetBackdropColor(unpack(spec.track_color))
+	track:SetBackdrop({ edgeFile = spec.blank, edgeSize = spec.line })
 	track:SetBackdropBorderColor(unpack(spec.line_color))
+	local fill = bar:CreateTexture(nil, "BACKGROUND")
+	fill:SetTexture(spec.blank)
+	fill:SetVertexColor(unpack(spec.track_color))
+	fill:SetPoint("TOPLEFT", track, "TOPLEFT", spec.line, -spec.line)
+	fill:SetPoint("BOTTOMRIGHT", track, "BOTTOMRIGHT", -spec.line, spec.line)
 end
 
 -- The scroll bars in `frame` and all it holds as ours.

@@ -4,6 +4,8 @@ import QtQuick
 
 Item {
     property string name
+    // what it is (docs: Windows Editor, the kinds): "list", "grid", "book" or "sheet"; its rules (tools/check.py)
+    property string kind
     property real px: 1 // (one screen pixel at the editor's zoom)
     property bool outlines: true // (each part's box)
 }

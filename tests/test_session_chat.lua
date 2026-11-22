@@ -449,6 +449,12 @@ function TestChatCopy:test_double_clicking_a_tab_shows_its_lines_as_plain_text()
 	client:RunScript(_G.ChatFrame1Tab, "OnDoubleClick", "LeftButton")
 	local frame = _G.DiabolicChatCopyFrame
 	lu.assertTrue(shown(frame))
+	-- the Violet Hold darker under the lines
+	local dome = client.Engine:GetDB("Blizzard").window.backgrounds.dome
+	lu.assertEquals(
+		{ _G.DiabolicChatCopyFrameDiabolic.DiabolicBackground:GetVertexColor() },
+		{ dome.color[1], dome.color[2], dome.color[3], 1 }
+	)
 	lu.assertEquals(client:GetModule("ChatCopy").editBox:GetText(), "Hello there\nLook: [Big Sword] ")
 
 	-- Escape closes it

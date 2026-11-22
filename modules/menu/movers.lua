@@ -182,6 +182,10 @@ Module.GetLockButton = function(self)
 	button:SetSize(160, BUTTON_HEIGHT)
 	button:SetPoint("TOP", UIParent, "TOP", 0, -120)
 	button:SetText(L["Lock Frames"])
+	local kit = Engine:GetModule("Blizzard: Windows")
+	if kit:IsSkinning() then
+		kit:StyleButton(button, BUTTON_HEIGHT) -- (the red button, as on the options' pages)
+	end
 	button:SetScript("OnClick", function()
 		self:SetFramesUnlocked(false)
 	end)

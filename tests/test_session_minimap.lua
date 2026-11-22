@@ -349,66 +349,119 @@ function TestMinimap:test_go_switches_to_another_goldpaw_ui()
 	assertClean(client)
 end
 
--- MinimapButtonBag ------------------------------------------------------------
+-- The addons' minimap buttons --------------------------------------------------
 
-function TestMinimap:test_minimap_button_bag_gets_a_plus_button()
-	local mbb = {
-		name = "MBB",
-		enabled = true,
-		onLoad = function()
-			local frame = _G.CreateFrame("Button", "MBB_MinimapButtonFrame", _G.Minimap)
-			frame:CreateTexture("MBB_MinimapButtonFrame_Texture")
-			_G.MBB_Version = "0.1"
-			_G.MBB_TOOLTIP1 = "Click to open"
-		end,
-	}
-	boot({
-		world = function(world)
-			table.insert(world.addons, mbb)
-		end,
-	})
-	local frame = _G.MBB_MinimapButtonFrame
-	lu.assertEquals(frame:GetParent(), module.mbbButton)
-	lu.assertEquals(select(1, module.mbbButton:GetPoint()), "BOTTOMLEFT")
-	local icon = _G.MBB_MinimapButtonFrame_Texture
-	client:Hover(frame)
-	lu.assertEquals(icon:GetAlpha(), 0.95)
-	lu.assertStrContains(_G.GameTooltipTextLeft1:GetText(), "MinimapButtonBag")
-	client:RunScript(frame, "OnMouseDown")
-	lu.assertEquals(icon:GetAlpha(), 1)
-	client:RunScript(frame, "OnMouseUp")
+-- Addons' minimap buttons made after login (LibDBIcon's names), one hidden,
+-- a map pin and an unclickable frame, then the next look at the minimap.
+local function makeButtons()
+	for _, name in ipairs({ "LibDBIcon10_SomeAddon", "LibDBIcon10_Hidden", "LibDBIcon10_Questie" }) do
+		local button = _G.CreateFrame("Button", name, _G.Minimap)
+		button:SetSize(31, 31)
+		button:SetScript("OnClick", function() end)
+		button:RegisterForDrag("LeftButton")
+		button:CreateTexture(name .. "Icon", "ARTWORK"):SetTexture("Interface\\Icons\\Some")
+		button:CreateTexture(name .. "Border", "OVERLAY"):SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+	end
+	_G.LibDBIcon10_Hidden:Hide()
+	_G.CreateFrame("Button", "QuestieFrame1", _G.Minimap):SetScript("OnClick", function() end)
+	_G.CreateFrame("Button", "SomeAddonNoClick", _G.Minimap)
+	client:Tick(config.buttons.scan_every + 0.1)
+end
+
+function TestMinimap:test_the_addons_buttons_go_in_a_drawer()
+	makeButtons()
+	local buttons = client:GetModule("Minimap: Buttons")
+	local button, plus, drawer = _G.LibDBIcon10_SomeAddon, buttons.toggle, buttons.drawer
+	-- off the minimap, into the closed drawer; pins and the unclickable left
+	lu.assertEquals(button:GetParent(), drawer)
+	lu.assertEquals(_G.LibDBIcon10_Questie:GetParent(), drawer)
+	lu.assertEquals(_G.QuestieFrame1:GetParent(), _G.Minimap)
+	lu.assertEquals(_G.SomeAddonNoClick:GetParent(), _G.Minimap)
+	lu.assertEvalToFalse(drawer:IsShown())
+	lu.assertEquals(module.buttonsToggle, plus)
+	lu.assertEquals(select(1, plus:GetPoint()), "BOTTOMLEFT")
+	client:Hover(plus)
+	lu.assertEquals(_G.GameTooltipTextLeft1:GetText(), "Minimap Buttons")
+	client:Leave()
+	client:Hover(button)
 	client:Leave()
 
-	-- edit mode's overlay covers it too (it sits in its "+" on the border)
+	-- each in the "+"'s ring, its own ring hidden, its icon inside
+	local spec = config.buttons
+	lu.assertEquals(_G.LibDBIcon10_SomeAddonBorder:GetAlpha(), 0)
+	lu.assertEquals(_G.LibDBIcon10_SomeAddonIcon:GetWidth(), spec.size * spec.icon)
+	lu.assertEquals(button:GetWidth(), spec.size)
+
+	-- the "+" opens them beside itself, towards the screen's middle: the
+	-- shown buttons only, in a row
+	client:Click(plus)
+	lu.assertEvalToTrue(drawer:IsShown())
+	lu.assertEquals({ drawer:GetPoint() }, { "RIGHT", plus, "LEFT", -spec.gap, 0 })
+	lu.assertEquals({ button:GetPoint() }, { "RIGHT", drawer, "RIGHT", 0, 0 })
+	lu.assertEquals(drawer:GetWidth(), 2 * (spec.size + spec.gap) - spec.gap)
+	-- its addon can't move it back
+	button:ClearAllPoints()
+	button:SetPoint("CENTER", _G.Minimap, "CENTER")
+	lu.assertEquals(select(1, button:GetPoint()), "RIGHT")
+	client:Click(plus)
+	lu.assertEvalToFalse(drawer:IsShown())
+	-- one clicked: the row closes
+	client:Click(plus)
+	client:Click(button)
+	lu.assertEvalToFalse(drawer:IsShown())
+	-- its addon puts it back on the minimap: still in the row, once
+	button:SetParent(_G.Minimap)
+	lu.assertEquals(button:GetParent(), drawer)
+	getmetatable(button).__index.SetParent(button, _G.Minimap)
+	client:Tick(config.buttons.scan_every + 0.1)
+	lu.assertEquals(button:GetParent(), drawer)
+	client:Click(plus)
+	lu.assertEquals(drawer:GetWidth(), 2 * (spec.size + spec.gap) - spec.gap)
+	client:Click(plus)
+
+	-- a button made later is gathered a few seconds later
+	local late = _G.CreateFrame("Button", "LateAddonButton", _G.Minimap)
+	late:SetScript("OnClick", function() end)
+	client:Tick(config.buttons.scan_every + 0.1)
+	lu.assertEquals(late:GetParent(), drawer)
+	client:Click(plus)
+	lu.assertEquals(drawer:GetWidth(), 3 * (spec.size + spec.gap) - spec.gap)
+
+	-- edit mode's box covers the "+", drawn over it
 	module:EnterEditMode()
-	local box, plus = module.editHighlight, module.mbbButton
+	local box = module.editHighlight
 	lu.assertTrue(box:GetLeft() <= plus:GetLeft() and box:GetRight() >= plus:GetRight())
 	lu.assertTrue(box:GetTop() >= plus:GetTop() and box:GetBottom() <= plus:GetBottom())
-	-- and is drawn over it, like the other frames' boxes
-	lu.assertEquals({ box:GetFrameStrata(), frame:GetFrameStrata() }, { "FULLSCREEN_DIALOG", "LOW" })
 	module:ExitEditMode()
-	lu.assertEquals(icon:GetAlpha(), 0.85)
-	client:RunScript(frame, "OnMouseDown")
-	lu.assertEquals(icon:GetAlpha(), 0.95)
-	-- it can't be moved away from its place
-	frame:SetPoint("TOPLEFT")
-	lu.assertEquals(select(1, frame:GetPoint()), "CENTER")
-	-- the minimap moves left: the button mirrors
+
+	-- the minimap moves left: the "+" and the drawer mirror
 	_G.Minimap:ClearAllPoints()
 	_G.Minimap:SetPoint("LEFT", _G.UIParent, "LEFT", 30, 0)
 	module:SavePosition()
-	lu.assertEquals(select(1, module.mbbButton:GetPoint()), "BOTTOMRIGHT")
+	lu.assertEquals(select(1, plus:GetPoint()), "BOTTOMRIGHT")
+	client:Click(plus)
+	client:Click(plus)
+	lu.assertEquals({ drawer:GetPoint() }, { "LEFT", plus, "RIGHT", spec.gap, 0 })
+	lu.assertEquals({ button:GetPoint() }, { "LEFT", drawer, "LEFT", 0, 0 })
 	assertClean(client)
 end
 
-function TestMinimap:test_a_disabled_minimap_button_bag_is_left_alone()
+function TestMinimap:test_no_addon_buttons_no_plus()
+	local buttons = client:GetModule("Minimap: Buttons")
+	lu.assertEvalToFalse(buttons.toggle:IsShown())
+	assertClean(client)
+end
+
+function TestMinimap:test_minimap_button_bag_turns_the_drawer_off()
 	boot({
 		world = function(world)
-			table.insert(world.addons, { name = "MBB", enabled = false })
+			table.insert(world.addons, { name = "MBB", enabled = true })
 		end,
 	})
-	lu.assertNil(module.mbbButton)
-	assertClean(client)
+	lu.assertNil(client:GetModule("Minimap: Buttons").toggle)
+	lu.assertNil(module.buttonsToggle)
+	lu.assertTrue(client.Engine:GetAddOnConflicts().MBB)
+	client:ClearProblems()
 end
 
 -- The options page --------------------------------------------------------------

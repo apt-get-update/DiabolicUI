@@ -20,16 +20,17 @@ tools/install-editor.sh      # optional: adds it to your desktop's menu
 ++++
 {{< mermaid >}}
 flowchart LR
-    game["🎮 Game<br/>/dui layout, /reload"] -- "what each window shows" --> editor["🖱️ Editor<br/>pick, drag, size"]
+    game["🎮 Live client<br/>the test realm's"] -- "what each window shows" --> editor["🖱️ Editor<br/>pick, drag, size"]
     editor -- "Ctrl+S" --> files["📄 windows/*.qml<br/>settings/positions.lua"]
     files -- "/reload" --> game
 {{< /mermaid >}}
 ++++
 
-. *In game:* `/dui layout all`, then `/reload`. It opens every window that needs no NPC. Open
-  the others yourself while it's on (mail, auction house, bank, vendor, trainer): the mail's, the
-  auction house's, the vendor's and the guild bank's tabs turn by themselves. It reports in a chat
-  tab named Layout.
+. *In the live client* (the test realm's, below): `/dui layout all`, then `/reload`. It opens
+  every window that needs no NPC; `.ui all` brings the NPCs' (mail, auction house, bank, vendor,
+  trainer), their tabs turned by themselves. It reports in a chat tab named Layout. The scan is
+  the live client's alone (`tools/realm/scan.lua`, from a `.toc` of its own): the addon players
+  get has no such command and no scan to load.
 . *In the editor:* pick a window at the top, a tab under it, and change what you want. It reads a
   new scan by itself, and a window file changed outside it. *Still to scan* on the right says what's missing.
 . *Ctrl+S*, then `/reload` in game.
@@ -86,14 +87,85 @@ gold ends change its room.
 == The foot
 
 A window's buttons and money sit in its foot, so moving the foot moves them. A row of buttons
-goes 7 over its bottom and 14 from its sides. It's 35 high: `footer_height` in *Components*, or
+goes 7 over its bottom and 14 from its sides (`foot_bottom`, `foot_side`). It's 35 high: `footer_height` in *Components*, or
 `footer` in that window's settings in `settings/blizzard.lua` for a taller one.
+
+== The rules
+
+*Rules* in the top bar counts what breaks one in the tab shown; press it to mark them on the
+window, hover a mark to read it. The rules, from *Components'* `Window`:
+
+* Nothing past the iron: everything 23 in from the window's edge (a panel out beside it aside).
+* Nothing over anything: no two buttons or texts over each other.
+* No text cut: no line longer than its box.
+* The foot: its row of buttons 7 over its bottom, 14 from its sides, 22 high, 6 apart.
+* No empty band: a band with nothing in it goes (`band = false` in `settings/blizzard.lua`).
+* Its kind's (below).
+
+`tools/check.py` runs them on every window and tab, offscreen, and exits 1 if anything's
+broken; `--marked` also draws each tab that breaks one into `tools/pictures/marked`.
+
+== The kinds
+
+Every window is one of four, its `kind` in its file:
+
+[cols="1,3,3"]
+|===
+| Kind | What it is | Windows
+
+| `list` | a list to pick from on slate, what's picked read on parchment beside or under it
+| quest log, trainer, professions, friends, mail, dungeon finder, raid browser, PvP, battlemaster,
+key bindings, macros, auction house, bulletin board
+
+| `grid` | things in slots on the stone, the money in the foot
+| merchant, bank, guild bank, bags, trade
+
+| `book` | pages behind the banners hanging under it
+| character, inspect, spellbook, talents, achievements
+
+| `sheet` | one thing to read or handle
+| a letter, socketing, dressing room, copy chat
+|===
+
+A new window picks its kind first; the rest follows from it.
+
+== The pictures
+
+`tools/check.py --pictures` draws every tab into `tools/pictures/new`. Once there are kept ones,
+it compares: those that changed go side by side, before and after, into
+`tools/pictures/changed.png`. `tools/check.py --keep` keeps the new ones. Draw them before a
+change and after it: a change to *Components* can't quietly move another window.
+
+== The test realm
+
+A server of our own on this PC, the core ChromieCraft runs (AzerothCore), with playerbots and
+its Lua engine, and a live client of the game that runs headless. No NPC to walk to, no dungeon
+to queue for: `.ui all` in its chat opens every NPC's window in turn, from the server. Every
+check runs there: the scans, the pictures of the real windows, performance; nothing is asked of
+the game you play.
+
+[source,bash]
+----
+tools/realm/up.sh        # in your own terminal: builds it the first time (an hour), starts it
+tools/realm/up.sh down   # stops it
+----
+
+Account `DUI`, password `DUI` (a game master). Its files are in `~/Projects/diabolic-realm`: the
+live client links to the game's files with its own `WTF` (realm 127.0.0.1) and its own
+`Interface`: your addons linked, DiabolicUI with a `.toc` that adds the scan. The game you play
+isn't touched. `tools/realm/remote.py` drives the test client (start, keys, text, clicks, the
+screen) on 127.0.0.1:7999. `tools/check.py --scan` reads the test client's scan:
+
+[source,bash]
+----
+tools/check.py --scan ~/Projects/diabolic-realm/client/WTF/Account/DUI/SavedVariables/DiabolicUI.lua
+----
 
 == Every window at once
 
 *Components* in the top bar, or *Styled as...* on a part: buttons, scroll bars, dropdowns, the
 window itself. Press a control in the sample window and change its values: it shows at once.
-Save and `/reload`. The windows show it in the editor after a new `/dui layout`.
+Save and `/reload`. The windows show it in the editor after the live client scans them again.
 
 == By hand
 

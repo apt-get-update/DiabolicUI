@@ -10,7 +10,7 @@ Item {
     id: row
     property string name
     property string fit: "fill"
-    property real spacing: 6
+    property real spacing: 8 // (Window.qml's layout.button_gap)
     property real px: parent && parent.px !== undefined ? parent.px : 1
     property bool outlines: parent && parent.outlines !== undefined ? parent.outlines : true
 

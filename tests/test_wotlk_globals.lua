@@ -25,10 +25,7 @@ local LUAC = os.getenv("LUAC") or "luac5.1"
 local KNOWN_FILE = "tests/data/wotlk-globals.txt"
 
 -- Reads that are fine even though 3.3.5 doesn't define them, and why.
-local ALLOWED = {
-	MBB_M = "defined by the optional MBB addon; the minimap checks for it",
-	MBB_TOOLTIP1 = "defined by the optional MBB addon; the minimap checks for it",
-}
+local ALLOWED = {}
 
 local readFile = function(path)
 	local file = assert(io.open(path, "rb"))

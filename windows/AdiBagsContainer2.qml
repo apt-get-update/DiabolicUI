@@ -5,8 +5,9 @@ import QtQuick
 
 WowWindow {
     name: "AdiBagsContainer2"
-    width: 1143.7
-    height: 418
+    kind: "grid"
+    width: 104
+    height: 95
 
     Frame {
         name: "AdiBagsContainer2Diabolic"
@@ -14,15 +15,15 @@ WowWindow {
         anchors.leftMargin: -18
         anchors.top: parent.top
         anchors.topMargin: -18
-        width: 1179.7
-        height: 454
+        width: 140
+        height: 131
 
         Frame {
             name: "AdiBagsContainer2DiabolicBorder"
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 1179.7
-            height: 454
+            width: 140
+            height: 131
         }
 
         Frame {
@@ -42,7 +43,7 @@ WowWindow {
         anchors.left: adiBagsSimpleLayeredRegion5.right
         anchors.leftMargin: 4
         anchors.verticalCenter: adiBagsSimpleLayeredRegion5.verticalCenter
-        width: 1077.6
+        width: 37.9
         height: 18
 
         Frame {
@@ -50,8 +51,28 @@ WowWindow {
             wowParent: "AdiBagsContainer2"
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 1077.6
+            width: 37.9
             height: 18
+        }
+    }
+
+    Frame {
+        name: "AdiBagsSection5"
+        anchors.left: parent.left
+        anchors.leftMargin: 8
+        anchors.top: parent.top
+        anchors.topMargin: 32
+        width: 37
+        height: 55
+
+        Frame {
+            name: "AdiBagsStackButton2"
+            wowParent: "AdiBagsContainer2"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: 18
+            width: 37
+            height: 37
         }
     }
 
@@ -68,8 +89,8 @@ WowWindow {
 
     Ghost {
         name: "AdiBagsContainer1"
-        x: 915.1
-        y: 104.8
+        x: 499.2
+        y: 79.8
         width: 0
         height: 0
 
@@ -77,29 +98,11 @@ WowWindow {
             name: "AdiBagsSection12"
             wowParent: "AdiBagsContainer1"
             anchors.left: parent.left
-            anchors.leftMargin: 184.3
+            anchors.leftMargin: 278.7
             anchors.top: parent.top
-            anchors.topMargin: 91
+            anchors.topMargin: 291
             width: 37
             height: 55
-        }
-    }
-
-    Ghost {
-        name: "AdiBagsSection21"
-        x: 947
-        y: 332
-        width: 37
-        height: 55
-
-        Frame {
-            name: "AdiBagsStackButton2"
-            wowParent: "AdiBagsContainer2"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.topMargin: 18
-            width: 37
-            height: 37
         }
     }
 }

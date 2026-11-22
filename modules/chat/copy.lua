@@ -9,7 +9,7 @@ local MAX_LINES = 200 -- kept per chat window
 local WIDTH, HEIGHT = 560, 380
 local SIDE = 36 -- the text from the window's sides and bottom (its iron is 23)
 local PADDING = 12 -- the text under the band (its panel 6 under it, window.layout.content_gap)
-local BAR = 24 -- the scroll bar's room, inside the text's panel
+local BAR = 26 -- the scroll bar's room, inside the text's panel (its panel then as far from the iron right as left)
 
 local history = {} -- [chat window] = { lines in a ring, count = lines ever added }
 

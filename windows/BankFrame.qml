@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "BankFrame"
+    kind: "grid"
     width: 425
     height: 512
 

@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "PlayerTalentFrame"
+    kind: "book"
     width: 384
     height: 512
 
@@ -97,11 +98,11 @@ WowWindow {
 
             FontString {
                 name: "GlyphFrameTitleText"
-                text: "Secondary Glyphs"
+                text: "Glyphs"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: 18
-                width: 96.4
+                width: 37.9
                 height: 10.3
             }
         }
@@ -205,13 +206,22 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "PlayerTalentFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "PlayerTalentFrameTitleText"
-                    text: "Secondary Talents"
+                    text: "Talents"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 175.4
+                    width: 71.9
                     height: 14.2
                 }
             }

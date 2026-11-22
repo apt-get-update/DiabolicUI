@@ -30,7 +30,7 @@ One line in `panels` in `settings/blizzard.lua`:
 
 Copy the line of a window like it and change the names. `insets` is how far our window reaches
 past the frame: left, top, right, bottom. The comment above the table explains the other keys.
-Then `/reload`, open it, `/dui layout`, and carry on in the editor. A window that needs more has
+Then open it in the live client (link:{{< relref "windows-editor" >}}[the test realm]), `/dui layout`, and carry on in the editor. A window that needs more has
 its own file in `modules/blizzard/`.
 
 == Style another addon

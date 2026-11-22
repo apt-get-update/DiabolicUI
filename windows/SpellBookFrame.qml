@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "SpellBookFrame"
+    kind: "book"
     width: 384
     height: 512
 
@@ -37,7 +38,7 @@ WowWindow {
         text: "Professions"
         style: "Banner"
         anchors.left: spellBookFrameDiabolic.left
-        anchors.leftMargin: 202
+        anchors.leftMargin: 86
         anchors.top: spellBookFrameDiabolic.bottom
         anchors.topMargin: -23
         width: 52
@@ -156,13 +157,22 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "SpellBookFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "SpellBookTitleText"
-                    text: "Professions"
+                    text: "Spellbook"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 106.7
+                    width: 88.5
                     height: 14.2
                 }
             }
@@ -384,12 +394,12 @@ WowWindow {
                 FontString {
                     id: companionPageNumber
                     name: "CompanionPageNumber"
-                    text: "Page 1 of 1"
+                    text: "Page 1 of 2"
                     pin: "place"
                     anchors.right: companionNextPageButton.left
                     anchors.rightMargin: 4
                     anchors.verticalCenter: companionNextPageButton.verticalCenter
-                    width: 60
+                    width: 61.6
                     height: 10.3
                 }
 
@@ -422,7 +432,7 @@ WowWindow {
             anchors.leftMargin: 18
             anchors.top: parent.bottom
             anchors.topMargin: -19
-            width: 246
+            width: 130
             height: 18
         }
 
@@ -480,6 +490,15 @@ WowWindow {
             anchors.topMargin: 116
             width: 36
             height: 36
+
+            Frame {
+                name: "SpellBookTabFlashFrame"
+                wowParent: "SpellBookFrame"
+                anchors.left: parent.left
+                anchors.top: parent.top
+                width: 10
+                height: 10
+            }
         }
 
         CheckButton {
@@ -609,5 +628,23 @@ WowWindow {
         anchors.topMargin: -23
         width: 52
         height: 116
+    }
+
+    Ghost {
+        name: "SpellButton9"
+        x: 50
+        y: 304
+        width: 37
+        height: 37
+
+        Part {
+            name: "SpellButton9Cooldown"
+            kind: "Cooldown"
+            wowParent: "SpellButton9"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: 37
+            height: 37
+        }
     }
 }

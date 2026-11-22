@@ -108,8 +108,8 @@ ApplicationWindow {
     function same(a, b) { return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b) }
     // where a part (or the window) is in the window: x, y, width, height
     function rectOf(name) {
-        const item = items[name], at = item.mapToItem(root, 0, 0)
-        return [at.x, at.y, item.width, item.height]
+        const item = items[name], at = item.mapToItem(root, 0, 0), end = item.mapToItem(root, item.width, item.height)
+        return [at.x, at.y, end.x - at.x, end.y - at.y] // (a scaled frame's too)
     }
     function under(name, over) {
         for (let up = items[name]; up && up !== root; up = up.parent) if (up === items[over]) return true
@@ -205,9 +205,9 @@ ApplicationWindow {
                     item.anchors[marginOf[side][0]] = other[offset] * marginOf[side][1]
                     found[n] = p.place[1]
                 } else if (line === lineY && side === "bottom" && items[other[1]]) { // (a track between its arrows: anchors can't reach)
-                    const to = other[1], below = other[4]
+                    const to = other[1], below = other[4], at = fractionY(other[2]) // (the point of it it's on: its top, its bottom...)
                     const track = n
-                    item.height = Qt.binding(() => { void moved; if (!root || !items[track] || !items[to]) return 1; const t = rectOf(to); return Math.max(1, t[1] + t[3] - below - items[track].mapToItem(root, 0, 0).y) })
+                    item.height = Qt.binding(() => { void moved; if (!root || !items[track] || !items[to]) return 1; const t = rectOf(to); return Math.max(1, t[1] + t[3] * at - below - items[track].mapToItem(root, 0, 0).y) })
                 }
             }
             stretch(lineX, 3)
@@ -217,6 +217,49 @@ ApplicationWindow {
         scrollFrames = lists
     }
     function sizer(name) { return follows[name] && !edits[name] ? follows[name] : name }
+    // What the file can't place as the game does, drawn as the scan saw it: a frame scaled
+    // (the glyphs'), and a part on one the scan never saw (a list's hidden scroll frame, a
+    // texture: no size here).
+    function placeAsSeen() {
+        const k = (view_ && view_.scale) || 1
+        const scaleOf = item => { const a = item.mapToItem(root, 0, 0), b = item.mapToItem(root, 100, 0); return (b.x - a.x) / 100 }
+        const scaled = item => {
+            const n = item.name, p = parts[n]
+            if (n === undefined || !p || p.preview || edits[n] || !p.rect || !p.size || !(p.size[0] > 0) || !item.parent) return
+            if (p.points && p.points.length > 1) return // (stretched: its size its sides')
+            const scale = p.rect[2] / k / p.size[0] / scaleOf(item.parent) // (its own: its parent's is inherited)
+            if (Math.abs(scale - 1) > .02 && Math.abs(p.rect[3] / p.rect[2] * p.size[0] / p.size[1] - 1) < .02) {
+                item.transformOrigin = Item.TopLeft
+                item.scale = scale
+                // (its offsets scaled with it, in the game: where it was seen)
+                const g = previewBox(p.rect), at = item.parent.mapToItem(root, 0, 0)
+                for (const line of ["left", "right", "horizontalCenter", "top", "bottom", "verticalCenter"]) item.anchors[line] = undefined
+                item.x = g[0] / k - at.x; item.y = g[1] / k - at.y
+            }
+        }
+        const walk = item => { for (let i = 0; i < item.children.length; i++) { scaled(item.children[i]); walk(item.children[i]) } }
+        walk(root) // (a parent before what's in it)
+        // (a tab that moves it, the spellbook's ranks: where the game had it in this one)
+        const key = view_ ? view_.key : ""
+        for (const n in parts) {
+            const p = parts[n], item = items[n], seen = p.rects && p.rects[key]
+            if (!item || p.preview || edits[n] || p.pin || !seen || !item.parent || !root) continue
+            const g = previewBox(seen), r = rectOf(n)
+            if (Math.max(Math.abs(r[0] - g[0] / k), Math.abs(r[1] - g[1] / k), Math.abs(r[2] - g[2] / k), Math.abs(r[3] - g[3] / k)) <= 1) continue
+            const at = item.parent.mapToItem(root, 0, 0), scale = (r[2] / Math.max(item.width, .01)) || 1
+            for (const line of ["left", "right", "horizontalCenter", "top", "bottom", "verticalCenter"]) item.anchors[line] = undefined
+            item.x = g[0] / k - at.x; item.y = g[1] / k - at.y
+            item.width = g[2] / k / scale; item.height = g[3] / k / scale // (a tab can size it too: the character's window)
+        }
+        for (const n in parts) {
+            const p = parts[n], item = items[n], on = p.place && items[p.place[1]]
+            if (!item || p.preview || edits[n] || !p.rect || !on || on.width > 0 || on.height > 0 || !item.parent) continue
+            const g = previewBox(p.rect), at = item.parent.mapToItem(root, 0, 0)
+            for (const line of ["left", "right", "horizontalCenter", "top", "bottom", "verticalCenter"]) item.anchors[line] = undefined
+            item.x = g[0] / k - at.x; item.y = g[1] / k - at.y
+            item.width = g[2] / k; item.height = g[3] / k
+        }
+    }
     // A list made shorter than the scan saw it: are these rows now under it?
     function cutOff(x, y, width, height) {
         void moved // (again as parts move)
@@ -292,6 +335,7 @@ ApplicationWindow {
         artModel = []
         viewIndex = index
         artModel = (view_ ? view_.art : windowData.art) || []
+        placeAsSeen() // (the scan's places: this tab's)
         previewUpdate()
         applyShown()
         if (picked && !(items[picked] && items[picked].shown)) pick("")
@@ -715,6 +759,198 @@ ApplicationWindow {
         return entry(name).place || anchored(name, "TOPLEFT", title_, "TOPLEFT")
     }
 
+    // ---- the rules (Components' Window: its iron, its layout; docs: Windows Editor), on the
+    // tab shown: what breaks one, { part, rule, text, rect }. tools/check.py runs them on
+    // every window and tab.
+    readonly property var kinds: ["list", "grid", "book", "sheet"]
+    readonly property var problems: { void moved; void viewIndex; void edits; return root && !componentsMode ? check() : [] }
+    property bool marking: false // (the problems drawn on the window)
+    function rule(key) {
+        const window = components.find(c => c.name === "Window")
+        const field = window && window.fields.find(f => f.key === key)
+        return field ? componentValue("Window", field) : null
+    }
+    function check() {
+        const out = [], name = title_, insets = rule("backdrop.insets.left") || 23
+        const say = (part, rule_, text, rect) => out.push({ part: part, rule: rule_, text: text, rect: rect || (items[part] ? rectOf(part) : [0, 0, 0, 0]) })
+        const up = n => parts[n] && parts[n].parent
+        const within = (n, test) => { for (let p = up(n), i = 0; p && i < 40; p = up(p), i++) if (test(p)) return p; return null }
+        const kindOf_ = n => parts[n].kind
+        // what's on the window: shown in this tab, not our own art (a Diabolic part of another's)
+        // (seen there the last time the scan looked at this tab; not on the title's plate)
+        const fresh = n => !parts[n].current || !view_ || !!parts[n].current[view_.key]
+        const seen = n => items[n] && parts[n] && !parts[n].preview && items[n].shown && items[n].width > .5 && items[n].height > .5
+            && kindOf_(n) !== "Texture" && !/.Diabolic/.test(n) && fresh(n) && !within(n, p => /Diabolic(TitlePlate|Socket)$/.test(p))
+            && parts[n].parent !== "?" // (a name used twice, on two pages: the scan can't tell where it is)
+        const says = n => kindOf_(n) === "FontString" && !items[n].wordless && !!items[n].text && !parts[n].faded
+        const control = n => /^(Button|CheckButton|EditBox|Slider)$/.test(kindOf_(n))
+        const scrolled = n => !!within(n, p => parts[p] && parts[p].kind === "ScrollFrame")
+        const tabbed = n => /Tab(\d+|Button\d+|[A-Z]+)$/.test(n)
+        const tab = n => tabbed(n) || !!within(n, tabbed)
+        const closer = n => parts[n].style === "CloseButton"
+        // a text's width, as the game measures it (in its window's units, as its box), in this tab
+        const wide = n => (parts[n].widths && parts[n].widths[view_ ? view_.key : ""]) || parts[n].textWidth || 0
+        // a text's room: as wide as it's drawn (a line), where it's put in its box
+        const box = n => {
+            const r = rectOf(n)
+            if (!says(n) || !parts[n].textWidth) return r
+            const w = Math.min(wide(n), r[2]), justify = items[n].justify || "LEFT"
+            const x = r[0] + (justify === "CENTER" ? (r[2] - w) / 2 : justify === "RIGHT" ? r[2] - w : 0)
+            // (one line, in a box taller than it: its line, where it's put in the box)
+            const line = parts[n].fontSize || 12
+            if (wide(n) > r[2] + 1 || r[3] <= line) return [x, r[1], w, r[3]]
+            const v = parts[n].justifyV || "MIDDLE"
+            return [x, v === "TOP" ? r[1] : v === "BOTTOM" ? r[1] + r[3] - line : r[1] + (r[3] - line) / 2, w, line]
+        }
+        const all = Object.keys(parts).filter(seen)
+        // the editor against the game: each part not changed since the scan where the scan saw it
+        const edited = Object.keys(edits).some(k => edits[k] && edits[k].window === name)
+        const drawn = Object.keys(parts).filter(n => items[n] && !parts[n].preview && items[n].shown && fresh(n) && kindOf_(n) !== "Texture")
+        if (!edited) for (const n of drawn) {
+            if (!parts[n].rect || kindOf_(n) === "FontString") continue // (a text's box: the scan's is its text's)
+            const seenHere = parts[n].rects && parts[n].rects[view_ ? view_.key : ""]
+            const r = rectOf(n), g = previewBox(seenHere || parts[n].rect), k = (view_ && view_.scale) || 1
+            const off = Math.max(Math.abs(r[0] - g[0] / k), Math.abs(r[1] - g[1] / k), Math.abs(r[2] - g[2] / k), Math.abs(r[3] - g[3] / k))
+            if (off > 1) say(n, "editor", "Drawn " + roundTenth(off) + " off where the game has it", r)
+        }
+        // (a button that says something: its words, or a text of its own; the others, a list's
+        // rows, a click's room, its icons: not checked)
+        const worded = n => !!items[n].labelled || all.some(t => up(t) === n && says(t))
+        const solid_ = n => says(n) || (control(n) && (kindOf_(n) !== "Button" || worded(n))) || kindOf_(n) === "ScrollFrame"
+        if (kinds.indexOf(windowData.kind || "") < 0)
+            say(name, "kind", "No kind: give its file a kind, " + kinds.join(", "))
+
+        // inside the iron
+        const iron = items[name + "DiabolicBorder"] && rectOf(name + "DiabolicBorder")
+        if (iron) {
+            const l = iron[0] + insets, t = iron[1] + insets, r = iron[0] + iron[2] - insets, b = iron[1] + iron[3] - insets
+            for (const n of all) {
+                if (closer(n) || tab(n) || scrolled(n) || !solid_(n)) continue
+                const x = box(n), past = Math.max(l - x[0], x[0] + x[2] - r, t - x[1], x[1] + x[3] - b)
+                const cx = x[0] + x[2] / 2, cy = x[1] + x[3] / 2 // (beside the window, a panel of its own out on purpose: not spilling over)
+                if (past > .5 && cx > l && cx < r && cy > t && cy < b) say(n, "iron", "Past the iron by " + roundTenth(past), x)
+            }
+        }
+        // a text cut, too long for its box
+        for (const n of all) if (says(n) && wide(n) > items[n].width + 1 && items[n].height <= 1.6 * (parts[n].fontSize || 12))
+            say(n, "cut", "Cut: its text " + roundTenth(wide(n)) + " wide in " + roundTenth(items[n].width))
+        // two over each other (controls and texts; a list's rows aside)
+        const solid = all.filter(n => solid_(n) && kindOf_(n) !== "ScrollFrame" && !scrolled(n) && !closer(n) && !tab(n)) // (tabs overlap, as Blizzard's do)
+        const boxes = {}
+        for (const n of solid) boxes[n] = box(n)
+        for (let i = 0; i < solid.length; i++) for (let j = i + 1; j < solid.length; j++) {
+            const a = solid[i], b = solid[j], p = boxes[a], q = boxes[b]
+            const w = Math.min(p[0] + p[2], q[0] + q[2]) - Math.max(p[0], q[0]), h = Math.min(p[1] + p[3], q[1] + q[3]) - Math.max(p[1], q[1])
+            if (w <= 1 || h <= 1 || within(a, x => x === b) || within(b, x => x === a)) continue
+            if (control(a) && control(b) && Math.min(w, h) <= 3) continue // (buttons side by side, their edges shared: a list's headers)
+            say(a, "overlap", "Over " + b, [Math.max(p[0], q[0]), Math.max(p[1], q[1]), w, h])
+        }
+        // the foot's buttons: 7 up (the lowest row), 14 from its sides, 22 high, 6 apart
+        const footName = name + "DiabolicFoot"
+        if (items[footName] && items[footName].shown) {
+            const f = rectOf(footName), bottom = rule("layout.foot_bottom"), side = rule("layout.foot_side")
+            const high = rule("layout.button_height"), gap = rule("layout.button_gap")
+            const buttons = all.filter(n => kindOf_(n) === "Button" && worded(n) && items[n].height >= 16 // (not the money's)
+                && !closer(n) && !tab(n) && (() => { const r = rectOf(n); return r[0] + r[2] / 2 > f[0] && r[0] + r[2] / 2 < f[0] + f[2] && r[1] + r[3] / 2 > f[1] && r[1] + r[3] / 2 < f[1] + f[3] })())
+            const rows = []
+            for (const n of buttons) {
+                const r = rectOf(n), row = rows.find(o => Math.abs(o.y - (r[1] + r[3] / 2)) < 4)
+                if (row) row.parts.push(n)
+                else rows.push({ y: r[1] + r[3] / 2, parts: [n] })
+            }
+            const lowest = Math.max(...rows.map(o => o.y))
+            for (const row of rows) {
+                row.parts.sort((a, b) => rectOf(a)[0] - rectOf(b)[0])
+                row.parts.forEach((n, i) => {
+                    const r = rectOf(n)
+                    if (Math.abs(r[3] - high) > .5) say(n, "foot", roundTenth(r[3]) + " high: " + high)
+                    if (row.y === lowest && f[3] <= rule("footer_height") + .5 && Math.abs(f[1] + f[3] - r[1] - r[3] - bottom) > .5)
+                        say(n, "foot", roundTenth(f[1] + f[3] - r[1] - r[3]) + " up: " + bottom)
+                    if (i === 0 && r[0] - f[0] < 2 * side + 10 && Math.abs(r[0] - f[0] - side) > .5)
+                        say(n, "foot", roundTenth(r[0] - f[0]) + " from the left: " + side)
+                    if (i === row.parts.length - 1 && f[0] + f[2] - r[0] - r[2] < 2 * side + 10 && Math.abs(f[0] + f[2] - r[0] - r[2] - side) > .5)
+                        say(n, "foot", roundTenth(f[0] + f[2] - r[0] - r[2]) + " from the right: " + side)
+                    const next = row.parts[i + 1], s = next ? rectOf(next) : null
+                    if (s && s[0] - r[0] - r[2] < gap - .5 && s[0] - r[0] - r[2] > -1)
+                        say(n, "foot", roundTenth(s[0] - r[0] - r[2]) + " from " + next + ": " + gap)
+                })
+            }
+        }
+        // the surfaces (slate, panels, parchment, panes): 6 over the foot, one column's sides in line
+        const surfaces = Object.keys(parts).filter(n => /Diabolic(Zone|Panel|Parchment|Pane)$/.test(n) && items[n] && items[n].shown
+            && items[n].width > .5 && fresh(n))
+        const gap = rule("layout.content_gap")
+        if (items[footName] && items[footName].shown) {
+            const top = rectOf(footName)[1]
+            for (const n of surfaces) {
+                const r = rectOf(n), room = top - r[1] - r[3]
+                if (r[1] < top && room < gap - .5 && room > -r[3] / 2) say(n, "foot", roundTenth(room) + " over the foot: " + gap)
+            }
+        }
+        // (the outer ones: a parchment in its panel is the panel's)
+        const holds = (a, b) => a[0] <= b[0] + .5 && a[1] <= b[1] + .5 && a[0] + a[2] >= b[0] + b[2] - .5 && a[1] + a[3] >= b[1] + b[3] - .5
+        const outer = surfaces.filter(n => !surfaces.some(m => m !== n && holds(rectOf(m), rectOf(n))))
+        for (let i = 0; i < outer.length; i++) for (let j = i + 1; j < outer.length; j++) {
+            const p = rectOf(outer[i]), q = rectOf(outer[j])
+            const shared = Math.min(p[0] + p[2], q[0] + q[2]) - Math.max(p[0], q[0])
+            if (shared < Math.min(p[2], q[2]) / 2) continue // (side by side: not one column)
+            const left = Math.abs(p[0] - q[0]), right = Math.abs(p[0] + p[2] - q[0] - q[2])
+            if (Math.abs(left - right) < 1 && left > 20) continue // (a narrower one in the middle, on purpose: socketing's pane)
+            if (left > .5 && left < 30) say(outer[i], "line", "Its left " + roundTenth(left) + " off " + outer[j] + "'s")
+            if (right > .5 && right < 30) say(outer[i], "line", "Its right " + roundTenth(right) + " off " + outer[j] + "'s")
+        }
+        // a band with nothing in it (the controls or texts in its room): none, its room given back
+        const bandName = name + "DiabolicBand"
+        if (items[bandName] && items[bandName].shown) {
+            const r = rectOf(bandName)
+            const held = all.some(n => (control(n) || says(n) || /DropDown$/.test(n)) && !closer(n) && (() => {
+                const x = rectOf(n), cx = x[0] + x[2] / 2, cy = x[1] + x[3] / 2
+                return cx > r[0] && cx < r[0] + r[2] && cy > r[1] && cy < r[1] + r[3]
+            })())
+            // (or something placed in it that this character doesn't have: the talents' second spec)
+            const placed = Object.keys(parts).some(n => !/.Diabolic/.test(n) && (entry(n).place || [])[1] === bandName)
+            if (!held && !placed) say(bandName, "band", "Nothing in its band: band = false (settings/blizzard.lua)")
+        }
+        // ma (Zen: the room between things is part of the work): a button's words clear of its
+        // ends' ornaments, Components' Button's button_text_margin each side
+        const marginField = (components.find(c => c.name === "Button") || { fields: [] }).fields.find(f => f.key === "button_text_margin")
+        const margin = marginField ? componentValue("Button", marginField) : 0
+        if (margin) for (const n of all) {
+            if (parts[n].style !== "Button" || closer(n) || tab(n) || scrolled(n)) continue // (our buttons: their ends ornate)
+            const label = all.find(t => up(t) === n && says(t))
+            if (!label) continue
+            const r = rectOf(n), x = box(label), room = Math.min(x[0] - r[0], r[0] + r[2] - x[0] - x[2])
+            if (room < margin - .5) say(n, "ma", "Its words " + roundTenth(room) + " from its end: " + margin, x)
+        }
+        // the vessel (Tao Te Ching, 11: what holds is the room inside it): what's on a surface
+        // (its middle on it) all inside it, its edges the surface's
+        const contained = s => all.filter(n => (control(n) || says(n)) && !closer(n) && !tab(n) && !scrolled(n) && (() => {
+            const x = box(n), r = rectOf(s), cx = x[0] + x[2] / 2, cy = x[1] + x[3] / 2
+            return cx > r[0] && cx < r[0] + r[2] && cy > r[1] && cy < r[1] + r[3]
+        })())
+        for (const s of surfaces) {
+            const r = rectOf(s)
+            for (const n of contained(s)) {
+                if (surfaces.some(o => o !== s && holds(r, rectOf(o)) && contained(o).indexOf(n) >= 0)) continue // (the inner one's)
+                const x = box(n), past = Math.max(r[0] - x[0], x[0] + x[2] - r[0] - r[2], r[1] - x[1], x[1] + x[3] - r[1] - r[3])
+                if (past > .5) say(n, "vessel", "Past " + s + " by " + roundTenth(past), x)
+            }
+        }
+        // balance (the I Ching's yin and yang): the surfaces as far from the iron on the left as
+        // on the right, when they span the window
+        if (iron && outer.length) {
+            const l = Math.min(...outer.map(n => rectOf(n)[0])), r = Math.max(...outer.map(n => rectOf(n)[0] + rectOf(n)[2]))
+            const left = l - iron[0], right = iron[0] + iron[2] - r
+            if ((r - l) > iron[2] * .6 && Math.abs(left - right) > 1)
+                say(name, "balance", "The surfaces " + roundTenth(left) + " from the iron's left, " + roundTenth(right) + " from its right", [l, iron[1], r - l, iron[3]])
+        }
+        // a List: its list on slate, parchment for what's read
+        if (windowData.kind === "list")
+            for (const n in parts) if (/List\w*DiabolicParchment$/.test(n) && items[n] && items[n].shown)
+                say(n, "list", "A list on parchment: a List's is on slate (lists, not parchments)")
+        return out
+    }
+
     // ---- the view
     property bool fitLater: false
     function fit(animated) {
@@ -940,6 +1176,15 @@ ApplicationWindow {
                 Item { Layout.fillWidth: true }
                 Action { objectName: "undoButton"; text: "Undo"; tip: "Ctrl+Z"; enabled: app.undoList.length > 0; onClicked: app.undo() }
                 Action { objectName: "redoButton"; text: "Redo"; tip: "Ctrl+Shift+Z"; enabled: app.redoList.length > 0; onClicked: app.redo() }
+                Action {
+                    objectName: "rulesButton"
+                    visible: !app.componentsMode
+                    text: app.problems.length ? "Rules: " + app.problems.length : "Rules ✓"
+                    tip: app.problems.length ? app.problems.slice(0, 15).map(p => p.part + ": " + p.text).join("\n")
+                        : "Inside the iron, nothing over anything, no text cut, the foot's rule, no empty band, its kind's"
+                    highlighted: app.marking
+                    onClicked: app.marking = !app.marking
+                }
                 Action { text: "Fit"; tip: "See the whole window (F)"; onClicked: app.fit(true) }
                 Action {
                     objectName: "saveButton"
@@ -1278,6 +1523,25 @@ ApplicationWindow {
                         z: 90
                         color: "#18ffffff"
                         border.color: "#ffffff"; border.width: 1 / content.scale
+                    }
+
+                    // what breaks the rules (Rules), on the window
+                    Item {
+                        parent: app.root || holder
+                        z: 95
+                        Repeater {
+                        model: app.marking ? app.problems : []
+                        Rectangle {
+                            required property var modelData
+                            x: modelData.rect[0]; y: modelData.rect[1]
+                            width: Math.max(modelData.rect[2], 3 / content.scale); height: Math.max(modelData.rect[3], 3 / content.scale)
+                            color: "#30ff3030"
+                            border.color: "#ff4040"; border.width: 2 / content.scale
+                            HoverHandler { id: markHover }
+                            ToolTip.visible: markHover.hovered
+                            ToolTip.text: modelData.part + ": " + modelData.text
+                        }
+                        }
                     }
 
                     // the guides it snaps to

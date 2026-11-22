@@ -24,7 +24,7 @@ ROOTS = {
 		"QuestLogFrame", "QuestLogDetailFrame", "QuestLogControlPanel", "LFDParentFrame", "LFRParentFrame",
 		"BankFrame", "TradeFrame", "TaxiFrame", "ItemTextFrame", "QuestFrame", "GossipFrame", "TabardFrame",
 		"PetitionFrame", "GuildRegistrarFrame", "ArenaRegistrarFrame", "PetStableFrame", "DressUpFrame",
-		"PVPParentFrame", "BattlefieldFrame", "PetPaperDollFrame", "DropDownList1", "DropDownList2",
+		"PVPParentFrame", "BattlefieldFrame", "ArenaFrame", "PetPaperDollFrame", "DropDownList1", "DropDownList2",
 		"ReputationFrame", "QuestInfoFrame", "QuestInfoObjectivesFrame", "QuestInfoRewardsFrame", "CoinPickupFrame",
 	],
 	"Blizzard_TalentUI": ["PlayerTalentFrame"],

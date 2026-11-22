@@ -1,35 +1,14 @@
--- The trade skills' window on parchment (panels.lua puts its recipes and
--- the chosen one's details on it): the recipes in inks of their
--- difficulty, the chosen one in an orange box, the reagents' names in
--- ink (Blizzard sets both again as it updates, so after it does); the
+-- The trade skills' window, a List (panels.lua puts its recipes on slate,
+-- the chosen one's details on parchment): the chosen one in an orange box,
+-- the reagents' names in ink (Blizzard sets them again as it updates, so
+-- after it does); the
 -- search in the band, Have Materials right of it, the rank in the title,
--- the dropdowns under the band.
+-- the dropdowns under the band; the chosen recipe as a chapter's title.
 local _, Engine = ...
 local Module = Engine:NewModule("Blizzard: Trade Skill", "LOW")
 local kit
 
 local ADDON = "Blizzard_TradeSkillUI"
-
--- The recipes' text in their difficulty's ink (Blizzard's colors are for
--- a dark background); no shadows (they blur it on parchment).
-Module.ShadeList = function(self)
-	local inks = self.config.inks
-	for i = 1, _G.TRADE_SKILLS_DISPLAYED do
-		local button = _G["TradeSkillSkill" .. i]
-		local text, count = button and button:GetFontString(), _G["TradeSkillSkill" .. i .. "Count"]
-		local _, kind = GetTradeSkillInfo(button:GetID())
-		if text and button:IsShown() and inks[kind] then
-			-- (the chosen one too: its box is see-through)
-			local r, g, b = unpack(inks[kind])
-			text:SetTextColor(r, g, b)
-			text:SetShadowColor(0, 0, 0, 0)
-			if count then
-				count:SetVertexColor(r, g, b)
-				count:SetShadowColor(0, 0, 0, 0)
-			end
-		end
-	end
-end
 
 -- The chosen recipe's (`id`) reagents in ink, red for those short, their
 -- icons framed as in the bags, in their quality's color; their label in
@@ -162,6 +141,13 @@ Module.Layout = function(self)
 	kit:HideArt(_G.TradeSkillDetailScrollChildFrame, { "ui%-classtrainer%-detailheader" })
 	local icon = _G.TradeSkillSkillIcon
 	kit:AddBorder(icon, icon:GetWidth())
+	-- its icon and name as a chapter's title, on a dark strip
+	local chapter = config.chapter
+	local strip = _G.TradeSkillDetailScrollChildFrame:CreateTexture(nil, "BACKGROUND")
+	strip:SetTexture(chapter.texture)
+	strip:SetTexCoord(unpack(chapter.texcoords))
+	strip:SetSize(unpack(chapter.size))
+	strip:SetPoint("TOPLEFT", _G.TradeSkillDetailScrollChildFrame, "TOPLEFT", chapter.offset[1], chapter.offset[2])
 	-- the reagents' names smaller, wider: most on one line
 	for i = 1, _G.MAX_TRADE_SKILL_REAGENTS do
 		local plate = _G["TradeSkillReagent" .. i .. "NameFrame"]
@@ -201,19 +187,24 @@ Module.UpdateGem = function(self)
 	end
 end
 
+-- Have Materials right of the search, or in its place while Blizzard
+-- hides it (a skill under 75: the search would be cleared on each update).
+Module.PlaceFilter = function(self)
+	local search, filter = _G.TradeSkillFrameEditBox, _G.TradeSkillFrameAvailableFilterCheckButton
+	filter:ClearAllPoints()
+	if search:IsShown() then
+		filter:SetPoint("LEFT", search, "RIGHT", self.config.filter_gap, 0)
+	else
+		filter:SetPoint("LEFT", search, "LEFT", 0, 0)
+	end
+end
+
 Module.StyleTradeSkill = function(self)
 	self:Layout()
 	self.Rows = _G.TRADE_SKILLS_DISPLAYED
 	kit:LightRow(_G.TradeSkillHighlight) -- the chosen recipe in an orange box
 	kit:StyleExpanderRows("TradeSkillSkill", self.Rows)
 	kit:StyleExpanders(_G.TradeSkillCollapseAllButton)
-	-- its All on the recipes' parchment (settings/positions.lua), in the headers' ink
-	local all = CreateFont("DiabolicUITradeSkillAll")
-	all:SetFont(_G.GameFontNormalLeft:GetFont())
-	all:SetTextColor(unpack(self.config.inks.header))
-	all:SetShadowColor(0, 0, 0, 0)
-	_G.TradeSkillCollapseAllButton:SetNormalFontObject(all)
-	_G.TradeSkillCollapseAllButton:SetHighlightFontObject(all)
 	self:SpanHighlight()
 	hooksecurefunc("TradeSkillFrame_Update", function()
 		-- (its count changed: again with it, for the scroll bar)
@@ -221,9 +212,9 @@ Module.StyleTradeSkill = function(self)
 			_G.TradeSkillFrame_Update()
 			return
 		end
-		self:ShadeList()
 		self:UpdateGem()
 		self:RankTitle()
+		self:PlaceFilter()
 	end)
 	hooksecurefunc("TradeSkillFrame_SetSelection", function(id)
 		self:InkReagents(id)

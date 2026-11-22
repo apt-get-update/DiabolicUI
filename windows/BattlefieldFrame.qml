@@ -5,6 +5,7 @@ import QtQuick
 
 WowWindow {
     name: "BattlefieldFrame"
+    kind: "list"
     width: 384
     height: 512
 
@@ -44,13 +45,22 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "BattlefieldFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "BattlefieldFrameFrameLabel"
-                    text: "Arathi Basin"
+                    text: "Warsong Gulch"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 113
+                    width: 138.3
                     height: 14.2
                 }
             }
@@ -83,7 +93,7 @@ WowWindow {
                     wowParent: "BattlefieldFrame"
                     style: "Button"
                     pin: "all"
-                    width: 127.7
+                    width: 122.7
                     height: 22
 
                     FontString {
@@ -91,8 +101,8 @@ WowWindow {
                         text: "Join as Group"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 103.5
-                        height: 11.9
+                        width: 90.1
+                        height: 10.3
                     }
                 }
 
@@ -102,7 +112,7 @@ WowWindow {
                     wowParent: "BattlefieldFrame"
                     style: "Button"
                     pin: "all"
-                    width: 108.7
+                    width: 106.9
                     height: 22
 
                     FontString {
@@ -110,8 +120,8 @@ WowWindow {
                         text: "Join Battle"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 84.5
-                        height: 11.9
+                        width: 74.3
+                        height: 10.3
                     }
                 }
 
@@ -121,7 +131,7 @@ WowWindow {
                     wowParent: "BattlefieldFrame"
                     style: "Button"
                     pin: "all"
-                    width: 75.6
+                    width: 78.4
                     height: 22
 
                     FontString {
@@ -129,8 +139,8 @@ WowWindow {
                         text: "Cancel"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 51.4
-                        height: 11.9
+                        width: 45.8
+                        height: 10.3
                     }
                 }
             }
@@ -165,6 +175,16 @@ WowWindow {
             anchors.top: parent.top
             width: 1
             height: 1
+
+            FontString {
+                name: "BattlefieldFrameInfoScrollFrameChildFrameDescription"
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                anchors.top: parent.top
+                anchors.topMargin: 15
+                width: 275
+                height: 199.1
+            }
 
             Frame {
                 name: "BattlefieldFrameInfoScrollFrameChildFrameRewardsInfo"
@@ -315,44 +335,45 @@ WowWindow {
             anchors.topMargin: -6
             width: 330
             height: 221
-        }
 
-        Slider {
-            name: "BattlefieldFrameInfoScrollFrameScrollBar"
-            style: "ScrollBar"
-            anchors.left: parent.right
-            anchors.leftMargin: 6
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            width: 16
-            height: 177
-
-            Frame {
-                name: "BattlefieldFrameInfoScrollFrameScrollBarDiabolicTrack"
-                anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton.horizontalCenter
-                anchors.top: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton.top
-                anchors.topMargin: -1
-                width: 18
-                height: 211
-            }
-
-            Button {
-                name: "BattlefieldFrameInfoScrollFrameScrollBarScrollDownButton"
+            Slider {
+                name: "BattlefieldFrameInfoScrollFrameScrollBar"
+                wowParent: "BattlefieldFrameInfoScrollFrame"
                 style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: 7
+                anchors.top: parent.top
+                anchors.topMargin: 23
                 width: 16
-                height: 16
-            }
+                height: 175
 
-            Button {
-                id: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton
-                name: "BattlefieldFrameInfoScrollFrameScrollBarScrollUpButton"
-                style: "ScrollBar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.top
-                width: 16
-                height: 16
+                Frame {
+                    name: "BattlefieldFrameInfoScrollFrameScrollBarDiabolicTrack"
+                    anchors.horizontalCenter: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton.horizontalCenter
+                    anchors.top: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton.top
+                    anchors.topMargin: -1
+                    width: 18
+                    height: 209
+                }
+
+                Button {
+                    name: "BattlefieldFrameInfoScrollFrameScrollBarScrollDownButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.bottom
+                    width: 16
+                    height: 16
+                }
+
+                Button {
+                    id: battlefieldFrameInfoScrollFrameScrollBarScrollUpButton
+                    name: "BattlefieldFrameInfoScrollFrameScrollBarScrollUpButton"
+                    style: "ScrollBar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    width: 16
+                    height: 16
+                }
             }
         }
     }

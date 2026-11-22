@@ -25,30 +25,54 @@ end
 
 -- A zone of slate named `name` on `page`, under what the page holds (shown
 -- with it), placed and sized from windows/AuctionFrame.qml.
-local Zone = function(page, name)
+local Zone = function(page, name, list)
 	local holder = CreateFrame("Frame", name, page)
 	Engine:GetModule("Blizzard: Adjust"):Add(name)
-	return kit:AddZone(holder, "slate", { 0, 0, 0, 0 }, page)
+	local zone = kit:AddZone(holder, "slate", { 0, 0, 0, 0 }, page)
+	-- (the list's scroll bar on the zone's right, as every list's)
+	local bar = list and _G[list .. "ScrollBar"]
+	if bar then
+		kit:SeatScrollBar(bar, zone)
+	end
+	return zone
 end
+
+-- Each list's column names (Blizzard's sort buttons), by its first.
+local SORTS = {
+	BrowseQualitySort = { "BrowseQualitySort", "BrowseLevelSort", "BrowseDurationSort", "BrowseHighBidderSort", "BrowseCurrentBidSort" },
+	BidQualitySort = { "BidQualitySort", "BidLevelSort", "BidDurationSort", "BidBuyoutSort", "BidStatusSort", "BidBidSort" },
+	AuctionsQualitySort = { "AuctionsQualitySort", "AuctionsDurationSort", "AuctionsHighBidderSort", "AuctionsBidSort" },
+}
 
 -- A list of results on `page`, on slate (the zone `name`): its column names
 -- (from `header`, the first) along its top, its rows (from `row`, the first)
 -- and their scroll frame `list` (Blizzard's: its bar by their end) under them.
 Module.PlaceResults = function(self, page, name, header, row, list)
-	Zone(page, name)
+	Zone(page, name, list)
 	Ours(header, row, list)
+	-- its column names as the other tables': no tab art, a thin line under
+	local sorts = {}
+	for _, sort in ipairs(SORTS[header] or {}) do
+		sorts[#sorts + 1] = _G[sort]
+	end
+	kit:StyleColumnButtons(sorts, true)
 end
 
 -- A category's button as our flat red one (a subcategory's fainter, an
 -- item type's without: Blizzard's own art by its kind, out of sight), lit
--- under the mouse or chosen; as Blizzard sets its kind.
+-- under the mouse or chosen; as Blizzard sets its kind. Its art `gap`
+-- shorter than the button (room between one and the next), its text clear
+-- of the art's ends.
 local StyleFilter = function(button)
-	local alpha = Module.config.browse.filter_alpha
+	local spec = Module.config.browse
 	if not button.DiabolicArt then
-		local spec = kit.config.rect_button
-		local height = button:GetHeight()
-		button.DiabolicArt = kit:CreateSlices(button, "BACKGROUND", spec, spec.texture.normal, height)
-		kit:AddLit(button, kit:CreateSlices(button, "BORDER", spec, spec.texture.lit, height))
+		local art, height = kit.config.rect_button, button:GetHeight() - spec.filter_gap
+		local holder = CreateFrame("Frame", nil, button)
+		holder:SetFrameLevel(button:GetFrameLevel())
+		holder:SetPoint("TOPLEFT", 0, -spec.filter_gap / 2)
+		holder:SetPoint("BOTTOMRIGHT", 0, spec.filter_gap / 2)
+		button.DiabolicArt = kit:CreateSlices(holder, "BACKGROUND", art, art.texture.normal, height)
+		kit:AddLit(button, kit:CreateSlices(holder, "BORDER", art, art.texture.lit, height))
 		local highlight = button:GetHighlightTexture()
 		if highlight then
 			highlight:SetAlpha(0)
@@ -59,7 +83,11 @@ local StyleFilter = function(button)
 	if normal then
 		normal:SetAlpha(0)
 	end
-	button.DiabolicArt:SetAlpha(alpha[button.type or "class"] or 0)
+	button.DiabolicArt:SetAlpha(spec.filter_alpha[button.type or "class"] or 0)
+	local text = name and _G[name .. "NormalText"]
+	if text then
+		text:SetPoint("LEFT", button, "LEFT", spec.filter_text[button.type or "class"] or spec.filter_text.class, 0)
+	end
 end
 
 -- Browse: Reset over the categories, the results' count and the page
@@ -85,7 +113,7 @@ Module.PlaceBrowse = function(self)
 	_G.BrowsePrevPageButton:SetSize(config.toolbar, config.toolbar)
 
 	-- the categories: their buttons, their scroll bar beside them
-	Zone(page, "AuctionFrameBrowseDiabolicCategories")
+	Zone(page, "AuctionFrameBrowseDiabolicCategories", "BrowseFilterScrollFrame")
 	Ours("AuctionFilterButton1", "BrowseFilterScrollFrame", "BrowseNoResultsText")
 	local i = 1
 	while _G["AuctionFilterButton" .. i] do
@@ -320,6 +348,99 @@ Module.PlaceAuctionatorDialogs = function(self)
 	end
 end
 
+-- The vault behind a list (`zone`, its column names `header` on top):
+-- empty, dust and cobwebs in its corners; holding something, a heap of
+-- gold along its bottom, the higher the more it holds (Tao Te Ching, 11:
+-- the room inside is what's used). Under the rows, below the names.
+Module.AddVault = function(self, zone, header)
+	local spec = self.config.vault
+	local vault = CreateFrame("Frame", nil, zone)
+	vault:SetFrameLevel(zone:GetFrameLevel())
+	vault:SetPoint("BOTTOMLEFT", zone, "BOTTOMLEFT", spec.inset, spec.inset)
+	vault:SetPoint("BOTTOMRIGHT", zone, "BOTTOMRIGHT", -spec.inset, spec.inset)
+	vault.Zone, vault.Header = zone, header
+	vault.Webs = {}
+	for i, corner in ipairs(spec.webs) do
+		local web = vault:CreateTexture(nil, "ARTWORK")
+		web:SetTexture(spec.web)
+		web:SetSize(corner[2], corner[2])
+		web:SetPoint(corner[1], vault, corner[1])
+		web:SetTexCoord(unpack(corner[3]))
+		web:SetVertexColor(unpack(spec.web_color))
+		vault.Webs[i] = web
+	end
+	local dust = vault:CreateTexture(nil, "ARTWORK")
+	dust:SetTexture(spec.dust)
+	dust:SetBlendMode("ADD")
+	dust:SetVertexColor(unpack(spec.dust_color))
+	dust:SetPoint("BOTTOMLEFT")
+	dust:SetPoint("BOTTOMRIGHT")
+	vault.Dust = dust
+	local gold = vault:CreateTexture(nil, "ARTWORK")
+	gold:SetTexture(spec.gold)
+	gold:SetPoint("BOTTOMLEFT")
+	gold:SetPoint("BOTTOMRIGHT")
+	vault.Gold = gold
+	return vault
+end
+
+-- The vault for how many a list holds: none, dust and webs; some, the heap.
+Module.FillVault = function(self, vault, count)
+	local spec = self.config.vault
+	-- (its top under the column names: theirs over the list, not drawn over)
+	local top, under = vault.Zone:GetTop(), vault.Header:GetBottom()
+	if top and under then
+		vault:SetPoint("TOP", vault.Zone, "TOP", 0, under - top - spec.inset)
+	end
+	local empty = (count or 0) == 0
+	for _, web in ipairs(vault.Webs) do
+		if empty then
+			web:Show()
+		else
+			web:Hide()
+		end
+	end
+	local height = vault:GetHeight()
+	if empty or (height <= 0) then
+		vault.Gold:Hide()
+		vault.Dust:SetHeight(math.max(1, height * spec.dust_height))
+		vault.Dust:Show()
+		return
+	end
+	vault.Dust:Hide()
+	local share = spec.heap[1] + (spec.heap[2] - spec.heap[1]) * math.min(count / spec.full, 1)
+	vault.Gold:SetHeight(height * share)
+	vault.Gold:Show()
+end
+
+-- Each list's vault, kept to what it holds (the results, your bids, your auctions).
+Module.CreateVaults = function(self)
+	local vaults = {}
+	for list, place in pairs({
+		list = { "AuctionFrameBrowseDiabolicResultsDiabolicZone", "BrowseQualitySort" },
+		bidder = { "AuctionFrameBidDiabolicResultsDiabolicZone", "BidQualitySort" },
+		owner = { "AuctionFrameAuctionsDiabolicResultsDiabolicZone", "AuctionsQualitySort" },
+	}) do
+		local zone, header = _G[place[1]], _G[place[2]]
+		if zone and header then
+			vaults[list] = self:AddVault(zone, header)
+		end
+	end
+	local Fill = function()
+		for list, vault in pairs(vaults) do
+			self:FillVault(vault, (GetNumAuctionItems(list)))
+		end
+	end
+	for _, event in ipairs({ "AUCTION_ITEM_LIST_UPDATE", "AUCTION_BIDDER_LIST_UPDATE", "AUCTION_OWNED_LIST_UPDATE" }) do
+		self:RegisterEvent(event, Fill)
+	end
+	_G.AuctionFrame:HookScript("OnShow", Fill)
+	for _, vault in pairs(vaults) do
+		vault:SetScript("OnSizeChanged", Fill)
+	end
+	Fill()
+end
+
 Module.StyleAuctionHouse = function(self)
 	if self.Styled then
 		return
@@ -329,6 +450,7 @@ Module.StyleAuctionHouse = function(self)
 	self:CreatePages()
 	self:PlaceBids()
 	self:PlaceAuctions()
+	self:CreateVaults()
 	self:PlaceAuctionator()
 	_G.AuctionFrame:HookScript("OnShow", function()
 		self:PlaceAuctionator()

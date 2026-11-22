@@ -425,6 +425,21 @@ Module.StylePanel = function(self, spec)
 			kit:AddPane(first, last, pane[3])
 		end
 	end
+	-- slate behind what isn't one frame (a list of buttons, as the arenas'):
+	-- { the first part, the last, its insets (span_insets') }, round both
+	for _, span in ipairs(spec.spans or {}) do
+		local first, last = _G[span[1]], _G[span[2]]
+		if first and last then
+			local holder = CreateFrame("Frame", kit.NameFor(first, "DiabolicSpan"), frame)
+			holder:SetPoint("TOPLEFT", first, "TOPLEFT")
+			holder:SetPoint("BOTTOMRIGHT", last, "BOTTOMRIGHT")
+			local zone = kit:AddZone(holder, "slate", span[3] or config.span_insets, frame)
+			-- (the window under it, as under a list's)
+			if (zone:GetFrameLevel() <= window:GetFrameLevel()) and (zone:GetFrameLevel() > 0) then
+				window:SetFrameLevel(zone:GetFrameLevel() - 1)
+			end
+		end
+	end
 	local zones = {}
 	for _, list in ipairs(spec.lists or {}) do
 		-- a name, or { name, how much further left its rows start, an
@@ -458,30 +473,19 @@ Module.StylePanel = function(self, spec)
 			end
 		end
 	end
-	local pages = {}
 	for _, parchment in ipairs(spec.parchments or {}) do
-		-- a name, or { name, its material, the page whose sides it takes,
-		-- how far its top reaches over its text's }
-		local name, material, under, raise = parchment, nil, nil, nil
+		-- a name, or { name, its material, how far its panel reaches over its text }
+		local name, material, raise = parchment, nil, nil
 		if type(parchment) == "table" then
-			name, material, under, raise = parchment[1], parchment[2], parchment[3], parchment[4]
+			name, material, raise = parchment[1], parchment[2], parchment[3]
 		end
 		local scroll = _G[name]
 		if scroll then
 			local panel = spec.parchment_panel or kit.config.parchment_panel_insets
-			-- (up with its page, when that reaches over its text's)
+			-- (its top `raise` higher: room over its text)
 			kit:AddPanel(scroll, { panel[1], panel[2] + (raise or 0), panel[3], panel[4] })
 			-- (its window's: Blizzard hides a list's scroll frame when it all fits)
-			local page = kit:AddParchment(scroll, nil, material, scroll:GetParent())[1]:GetParent()
-			pages[name] = page
-			if under and pages[under] then
-				local insets = kit.config.parchment_insets
-				page:ClearAllPoints()
-				page:SetPoint("TOP", scroll, "TOP", 0, insets[2] + (raise or 0))
-				page:SetPoint("BOTTOM", scroll, "BOTTOM", 0, -insets[4])
-				page:SetPoint("LEFT", pages[under], "LEFT", 0, 0)
-				page:SetPoint("RIGHT", pages[under], "RIGHT", 0, 0)
-			end
+			kit:AddParchment(scroll, nil, material, scroll:GetParent())
 			kit:PlaceParchmentBar(scroll, spec.parchment_bar_x)
 		end
 	end

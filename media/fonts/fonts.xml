@@ -538,9 +538,6 @@
 	<Font name="DiabolicFont_Narrow12" inherits="DiabolicFont_Narrow14" virtual="true">
 		<FontHeight><AbsValue val="12"/></FontHeight>
 	</Font>
-	<Font name="DiabolicFont_Narrow14Gold" inherits="DiabolicFont_Narrow14" virtual="true">
-		<Color r="0.86" g="0.76" b="0.6"/>
-	</Font>
 	<!-- the menus' lines: the tooltips' Friz Quadrata (Blizzard's), without a
 	     shadow as theirs; in every size the tooltips' scale may ask for
 	     (modules/blizzard/tooltips.lua GetMenuFont: a Font can't be resized) -->

@@ -632,14 +632,15 @@ end
 
 -- Loads the addon from the .toc and runs the login sequence.
 -- options: class, world = function(world, client), savedVariables = { DiabolicUI_DB = ..., DiabolicUI_Layout = ... },
--- login = false to stop after loading the files.
+-- login = false to stop after loading the files, extra = { files loaded after
+-- the .toc's } (the test realm's scan).
 function Client.boot(options)
 	options = options or {}
 	local client = Client.new(options)
 	client.addonTable = {}
 	local failures = Loader.load(client.addonTable, function(spec)
 		client:CreateXmlFont(spec)
-	end)
+	end, options.extra)
 	for _, failure in ipairs(failures) do
 		client:RecordError(failure)
 	end

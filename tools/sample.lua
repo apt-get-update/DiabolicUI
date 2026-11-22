@@ -33,7 +33,7 @@ end
 pipe:close()
 
 -- as in game, settings read as the modules start: then the changes are theirs
-local client = Client.boot({ login = false })
+local client = Client.boot({ login = false, extra = { "tools/realm/scan.lua" } }) -- (the scan: the test realm's client's)
 generated("DiabolicUI", client.Engine)
 client:Login()
 client:ClearProblems()
@@ -123,12 +123,6 @@ Build[#Build + 1] = function()
 	kit:StyleBandText(label)
 	kit:LineBand(header, { label, drop, box })
 	_G.SampleBandDropDownButton.SamplePressed = true
-	-- from its right end: a button read as a label
-	local all = CreateFrame("Button", "SampleBandAll", frame)
-	all:SetSize(50, 20)
-	all:SetText("All")
-	kit:StyleLabelButton(all)
-	kit:LineBand(header, { all }, true)
 end
 
 -- a section over a panel: a list, its row chosen, its + and -, its scroll bar

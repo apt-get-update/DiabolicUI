@@ -5,16 +5,17 @@ import QtQuick
 
 WowWindow {
     name: "GroupBulletinBoardFrame"
+    kind: "list"
     width: 800
     height: 500
 
     Frame {
         name: "GroupBulletinBoardFrameDiabolic"
         anchors.left: parent.left
-        anchors.leftMargin: -20
+        anchors.leftMargin: -26
         anchors.top: parent.top
         anchors.topMargin: -44
-        width: 840
+        width: 846
         height: 562
 
         Button {
@@ -37,7 +38,7 @@ WowWindow {
             anchors.leftMargin: 24
             anchors.top: parent.top
             anchors.topMargin: 24
-            width: 792
+            width: 798
             height: 40
         }
 
@@ -45,7 +46,7 @@ WowWindow {
             name: "GroupBulletinBoardFrameDiabolicBorder"
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 840
+            width: 846
             height: 562
 
             Frame {
@@ -57,14 +58,23 @@ WowWindow {
                 width: 300
                 height: 41
 
+                Button {
+                    name: "GroupBulletinBoardFrameDiabolicTitlePlateGem"
+                    anchors.horizontalCenter: parent.left
+                    anchors.horizontalCenterOffset: 35
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 40
+                    height: 40
+                }
+
                 FontString {
                     name: "GroupBulletinBoardFrameTitle"
                     text: "Group Bulletin Board"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    width: 123.3
-                    height: 11.9
+                    width: 198.3
+                    height: 14.2
                 }
             }
         }

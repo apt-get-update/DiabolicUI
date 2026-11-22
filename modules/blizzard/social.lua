@@ -230,6 +230,14 @@ Module.LayoutWho = function(self, window)
 	end
 	hooksecurefunc("WhoList_Update", Count)
 	hooksecurefunc("FriendsFrame_Update", Count) -- (Blizzard's title set as the tab shows)
+	-- the guild's title its name alone (Blizzard's "Guild Master of ...": your
+	-- rank is in the list, a long one cut in the plate)
+	hooksecurefunc("FriendsFrame_Update", function()
+		local guild = _G.GuildFrame:IsShown() and _G.GetGuildInfo("player")
+		if guild then
+			_G.FriendsFrameTitleText:SetText(guild)
+		end
+	end)
 	kit:LineBand(self.Header, { dropdown, search })
 	local header = _G.WhoFrameColumnHeader1
 	local y = select(5, header:GetPoint())

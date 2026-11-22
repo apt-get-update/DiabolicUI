@@ -253,7 +253,7 @@ Module.StyleEditBox = function(self, box)
 end
 
 -- A checkbox (OptionsCheckButtonTemplate's) as Diablo III's: its dark box
--- in a bronze frame, the frame lit under the mouse, its orange X checked;
+-- in a bronze frame, the frame lit under the mouse, Blizzard's gold tick checked;
 -- its label (Blizzard's "Text") right of it in the title's gold; its size
 -- and its label's font `look`'s (check_box.stacked) if not check_box's.
 Module.StyleCheckBox = function(self, button, look)
@@ -261,22 +261,7 @@ Module.StyleCheckBox = function(self, button, look)
 	local spec = Module.config.check_box
 	look = look or spec
 	button:SetSize(look.size, look.size)
-	button:SetNormalTexture(spec.texture)
-	button:SetPushedTexture(spec.texture)
-	button:SetHighlightTexture(spec.texture)
-	button:SetCheckedTexture(spec.texture)
-	button:SetDisabledCheckedTexture(spec.texture)
-	button:GetNormalTexture():SetTexCoord(unpack(spec.box))
-	local pushed = button:GetPushedTexture()
-	pushed:SetTexCoord(unpack(spec.box))
-	pushed:SetVertexColor(unpack(spec.pushed_color))
-	local lit = button:GetHighlightTexture()
-	lit:SetTexCoord(unpack(spec.lit))
-	lit:SetBlendMode("ADD")
-	button:GetCheckedTexture():SetTexCoord(unpack(spec.checked))
-	local disabled = button:GetDisabledCheckedTexture()
-	disabled:SetTexCoord(unpack(spec.checked))
-	disabled:SetDesaturated(true)
+	self:SkinCheckBox(button)
 	local label = _G[button:GetName() .. "Text"]
 	button.DiabolicLabel = label
 	if label then
@@ -284,6 +269,42 @@ Module.StyleCheckBox = function(self, button, look)
 		label:SetFontObject(look.font)
 		label:ClearAllPoints()
 		label:SetPoint("LEFT", button, "RIGHT", spec.label_gap, 0)
+	end
+end
+
+-- The checkbox's art alone (its box, lit, its X), the one look of every
+-- checkbox: the options pages' and the parchment's too. With `size`, the
+-- art that size in the middle of a larger button (its label left where it is).
+Module.SkinCheckBox = function(self, button, size)
+	local spec = Engine:GetDB("Blizzard").window.check_box
+	button:SetNormalTexture(spec.texture)
+	button:SetPushedTexture(spec.texture)
+	button:SetHighlightTexture(spec.texture)
+	-- its tick Blizzard's gold one, over our box
+	button:SetCheckedTexture(spec.check)
+	button:SetDisabledCheckedTexture(spec.check_disabled)
+	button:GetNormalTexture():SetTexCoord(unpack(spec.box))
+	local pushed = button:GetPushedTexture()
+	pushed:SetTexCoord(unpack(spec.box))
+	pushed:SetVertexColor(unpack(spec.pushed_color))
+	local lit = button:GetHighlightTexture()
+	lit:SetTexCoord(unpack(spec.lit))
+	lit:SetBlendMode("ADD")
+	local checked, disabled = button:GetCheckedTexture(), button:GetDisabledCheckedTexture()
+	if size then
+		for _, texture in ipairs({ button:GetNormalTexture(), pushed, lit }) do
+			texture:ClearAllPoints()
+			texture:SetPoint("CENTER")
+			texture:SetSize(size, size)
+		end
+	end
+	-- (Blizzard's tick spills past its box, as on Blizzard's own)
+	local tick = (size or button:GetWidth()) * spec.check_scale
+	for _, texture in ipairs({ checked, disabled }) do
+		texture:SetTexCoord(0, 1, 0, 1)
+		texture:ClearAllPoints()
+		texture:SetPoint("CENTER")
+		texture:SetSize(tick, tick)
 	end
 end
 
@@ -314,14 +335,6 @@ Module.StyleBandText = function(self, text, value)
 	text:SetShadowOffset(1, -1)
 end
 
--- A button's text (a list's All) as a band's label: the bands' font, in
--- the title's gold, hovered or not.
-Module.StyleLabelButton = function(self, button)
-	if button then
-		button:SetNormalFontObject(Module.config.band_text.label_button_font)
-		button:SetHighlightFontObject(Module.config.band_text.label_button_font)
-	end
-end
 
 -- `parts` (controls, texts) in a row along `header`'s band from its left:
 -- the first from its end, their art
