@@ -234,7 +234,9 @@ local function constants()
 		DELETE = "Delete",
 		EQUIPSET_EQUIP = "Equip",
 		SAVE = "Save",
-		UIPanelWindows = {},
+		UIPanelWindows = { -- (UIParent.lua's, the ones tests open)
+			QuestLogFrame = { area = "doublewide", pushable = 0, whileDead = 1 },
+		},
 		COMBAT_TEXT_LOCATIONS = {
 			startX = 0,
 			startY = 384,

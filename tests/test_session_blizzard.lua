@@ -927,6 +927,25 @@ function TestCharacter:test_the_titles_page()
 	client:Click(_G.DiabolicUICharacterSideTab2)
 	lu.assertTrue(shown(rows[2]))
 	lu.assertFalse(shown(rows[3]))
+	-- more than fit: the scroll bar
+	client.world.titles = {}
+	for i = 1, 60 do
+		client.world.titles[i] = { name = "Title " .. i }
+	end
+	client:FireEvent("KNOWN_TITLES_UPDATE")
+	lu.assertTrue(shown(_G.DiabolicUICharacterTitlesScrollBar))
+	-- shown before it's sized: the rows a frame later
+	local scroll = _G.DiabolicUICharacterTitles
+	local width = scroll.GetWidth
+	scroll.GetWidth = function()
+		return 0
+	end
+	client.world.titles = { { name = "Private %s" } }
+	client:FireEvent("KNOWN_TITLES_UPDATE")
+	lu.assertTrue(shown(rows[3]))
+	scroll.GetWidth = width
+	client:Tick(0.1)
+	lu.assertFalse(shown(rows[3]))
 	assertClean(client)
 end
 

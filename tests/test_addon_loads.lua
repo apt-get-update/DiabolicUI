@@ -293,6 +293,7 @@ local NOT_LOADED = {
 	["tools/shared.lua"] = "run outside the game: what tools/positions.lua and tools/sample.lua share",
 	["tools/sample.lua"] = "run outside the game: the editor's sample window",
 	["tools/realm/lua/windows.lua"] = "run by the test realm's server: its .ui command",
+	["tools/realm/lua/film.lua"] = "run by the test realm's server: the trailer's .angel and .film commands",
 	["tools/realm/scan.lua"] = "loaded by the test realm's client alone (its own DiabolicUI.toc): /dui layout",
 }
 
